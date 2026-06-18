@@ -290,6 +290,41 @@ document.addEventListener('DOMContentLoaded',()=>{
 </head>
 <body>
 
+<div id="gate-overlay" style="display:none;position:fixed;inset:0;background:rgba(245,244,240,0.97);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;text-align:center;">
+    <div style="font-size:15px;font-weight:600;color:#1a1917;margin-bottom:12px;">Enter PIN</div>
+    <input id="gate-input" type="password" inputmode="numeric" maxlength="6"
+      style="font-size:22px;letter-spacing:6px;text-align:center;width:120px;padding:10px 12px;border:1.5px solid #d8d5ce;border-radius:8px;outline:none;background:#fff;color:#1a1917;">
+    <div id="gate-error" style="font-size:12px;color:#a00020;margin-top:8px;opacity:0;">Incorrect PIN</div>
+  </div>
+</div>
+<script>
+(function(){
+  var PIN='2205';
+  var KEY='trips_unlocked';
+  var overlay=document.getElementById('gate-overlay');
+  var input=document.getElementById('gate-input');
+  var error=document.getElementById('gate-error');
+  try{ if(sessionStorage.getItem(KEY)==='1'){ overlay.style.display='none'; return; } }catch(e){}
+  overlay.style.display='flex';
+  document.body.style.overflow='hidden';
+  input.focus();
+  input.addEventListener('input',function(){
+    if(input.value.length===PIN.length){
+      if(input.value===PIN){
+        try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+        overlay.style.display='none';
+        document.body.style.overflow='';
+      } else {
+        error.style.opacity='1';
+        input.value='';
+        setTimeout(function(){ error.style.opacity='0'; },1500);
+      }
+    }
+  });
+})();
+</script>
+
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
 <script src="../assets/toolbar.js?v=27"></script>
 
@@ -304,42 +339,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
 <!-- ══════════════════════════════ JUNE ══════════════════════════════ -->
-<div class="month-block"><span class="month-label">June</span></div>
-
-<div class="trip">
-  <div class="trip-header">
-    <div class="trip-dates">May 29 — Jun 17</div>
-    <div class="trip-title">🇧🇷 Rio de Janeiro</div>
-  </div>
-  <div class="trip-body">
-    <div class="sec"><span class="who both">Both</span><span class="sec-divider">|</span>Flights</div>
-    <div class="ftable"><span class="fc">May 29</span><span class="fc">1:30 PM</span><span class="fc">SEA → ATL</span><span class="fc">DL542</span><span class="fc">arrive 9:32 PM</span></div>
-    <div class="ftable"><span class="fc">May 29</span><span class="fc">11:45 PM</span><span class="fc">ATL → GIG</span><span class="fc">DL61</span><span class="fc">arrive 10:15 AM +1</span></div>
-    <div class="ftable"><span class="fc">Jun 16</span><span class="fc">9:00 PM</span><span class="fc">GIG → ATL</span><span class="fc">DL60</span><span class="fc">arrive 5:56 AM +1</span></div>
-    <div class="ftable"><span class="fc">Jun 17</span><span class="fc">9:55 AM</span><span class="fc">ATL → SEA</span><span class="fc">DL774</span><span class="fc">arrive 12:25 PM</span></div>
-
-    <div class="sec"><span class="who both">Both</span><span class="sec-divider">|</span>Hotels</div>
-    <div class="hotel">
-      <div class="hotel-name">Fairmont Rio de Janeiro Copacabana<span style="font-weight:400;color:var(--muted)"> · May 30 → Jun 6</span></div>
-      <span class="copy">Av. Atlântica, 4240 - Copacabana, Rio de Janeiro</span>
-      <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=Fairmont+Rio+de+Janeiro+Copacabana+Av+Atlantica+4240+Copacabana+Rio+de+Janeiro">Open in Maps</a></p>
-    </div>
-    <div class="hotel">
-      <div class="hotel-name">Miramar by Windsor<span style="font-weight:400;color:var(--muted)"> · Jun 6 → Jun 7</span></div>
-      <span class="copy">Av. Atlântica, 3668, Copacabana, Rio de Janeiro, 22071-001</span>
-      <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=Av+Atlantica+3668+Copacabana+Rio+de+Janeiro">Open in Maps</a></p>
-      <p>📞 +55 21 2195-6200</p>
-    </div>
-    <div class="hotel">
-      <div class="hotel-name">Emiliano Rio<span style="font-weight:400;color:var(--muted)"> · Jun 7 → Jun 16</span></div>
-      <span class="copy">Av. Atlântica, 3804, Copacabana, Rio de Janeiro, 22070-001</span>
-      <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=Av+Atlantica+3804+Copacabana+Rio+de+Janeiro">Open in Maps</a></p>
-      <p>📞 +55 21 3503-6600</p>
-    </div>
-  </div>
-</div>
-
-
 <!-- ══════════════════════════════ JULY ══════════════════════════════ -->
 <div class="month-block"><span class="month-label">July</span></div>
 
@@ -393,10 +392,16 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <div class="trip">
   <div class="trip-header">
-    <div class="trip-dates">Aug 16 — 22</div>
+    <div class="trip-dates">Aug 14 — 23</div>
     <div class="trip-title">🇩🇪 Germany — Marktoberdorf Summer School</div>
   </div>
   <div class="trip-body">
+
+    <div class="sec"><span class="who both">Both</span><span class="sec-divider">|</span>Flights</div>
+    <div class="ftable"><span class="fc">Aug 14</span><span class="fc">7:16 AM</span><span class="fc">SEA → ATL</span><span class="fc">DL562</span><span class="fc">arrive 3:13 PM</span></div>
+    <div class="ftable"><span class="fc">Aug 14</span><span class="fc">5:25 PM</span><span class="fc">ATL → MUC</span><span class="fc">DL130</span><span class="fc">arrive 8:25 AM +1</span></div>
+    <div class="ftable"><span class="fc">Aug 23</span><span class="fc">9:00 AM</span><span class="fc">MUC → DTW</span><span class="fc">DL23</span><span class="fc">arrive 12:25 PM</span></div>
+    <div class="ftable"><span class="fc">Aug 23</span><span class="fc">4:49 PM</span><span class="fc">DTW → SEA</span><span class="fc">DL944</span><span class="fc">arrive 6:45 PM</span></div>
 
     <div class="sec"><span class="who hubby">Hubby</span><span class="sec-divider">|</span>Hotel + Venue</div>
     <div class="hotel">
@@ -407,7 +412,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     </div>
 
     <div class="action-box">
-      <span class="red">Book</span> Wifey's hotel (separate from Hubby's venue, still TBD). <span class="red">Book</span> flights — to/from together, soon.
+      <span class="red">Book</span> Wifey's hotel (Munich area, Aug 15–22, still TBD).
     </div>
 
   </div>
@@ -416,6 +421,39 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <!-- ══════════════════════════════ PAST TRIPS ══════════════════════════════ -->
 <div class="month-block"><span class="month-label">Past Trips · 2026</span></div>
+
+<div class="trip">
+  <div class="trip-header">
+    <div class="trip-dates">May 29 — Jun 17</div>
+    <div class="trip-title">🇧🇷 Rio de Janeiro</div>
+  </div>
+  <div class="trip-body">
+    <div class="sec"><span class="who both">Both</span><span class="sec-divider">|</span>Flights</div>
+    <div class="ftable"><span class="fc">May 29</span><span class="fc">1:30 PM</span><span class="fc">SEA → ATL</span><span class="fc">DL542</span><span class="fc">arrive 9:32 PM</span></div>
+    <div class="ftable"><span class="fc">May 29</span><span class="fc">11:45 PM</span><span class="fc">ATL → GIG</span><span class="fc">DL61</span><span class="fc">arrive 10:15 AM +1</span></div>
+    <div class="ftable"><span class="fc">Jun 16</span><span class="fc">9:00 PM</span><span class="fc">GIG → ATL</span><span class="fc">DL60</span><span class="fc">arrive 5:56 AM +1</span></div>
+    <div class="ftable"><span class="fc">Jun 17</span><span class="fc">9:55 AM</span><span class="fc">ATL → SEA</span><span class="fc">DL774</span><span class="fc">arrive 12:25 PM</span></div>
+
+    <div class="sec"><span class="who both">Both</span><span class="sec-divider">|</span>Hotels</div>
+    <div class="hotel">
+      <div class="hotel-name">Fairmont Rio de Janeiro Copacabana<span style="font-weight:400;color:var(--muted)"> · May 30 → Jun 6</span></div>
+      <span class="copy">Av. Atlântica, 4240 - Copacabana, Rio de Janeiro</span>
+      <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=Fairmont+Rio+de+Janeiro+Copacabana+Av+Atlantica+4240+Copacabana+Rio+de+Janeiro">Open in Maps</a></p>
+    </div>
+    <div class="hotel">
+      <div class="hotel-name">Miramar by Windsor<span style="font-weight:400;color:var(--muted)"> · Jun 6 → Jun 7</span></div>
+      <span class="copy">Av. Atlântica, 3668, Copacabana, Rio de Janeiro, 22071-001</span>
+      <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=Av+Atlantica+3668+Copacabana+Rio+de+Janeiro">Open in Maps</a></p>
+      <p>📞 +55 21 2195-6200</p>
+    </div>
+    <div class="hotel">
+      <div class="hotel-name">Emiliano Rio<span style="font-weight:400;color:var(--muted)"> · Jun 7 → Jun 16</span></div>
+      <span class="copy">Av. Atlântica, 3804, Copacabana, Rio de Janeiro, 22070-001</span>
+      <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=Av+Atlantica+3804+Copacabana+Rio+de+Janeiro">Open in Maps</a></p>
+      <p>📞 +55 21 3503-6600</p>
+    </div>
+  </div>
+</div>
 
 <div class="trip">
   <div class="trip-header">
