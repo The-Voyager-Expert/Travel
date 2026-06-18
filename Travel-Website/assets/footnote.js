@@ -16,7 +16,7 @@
 
   if (document.querySelector('[data-no-footnote]')) return;
 
-  var SITE_BASE   = 'https://dbellinello.github.io/Travel/';
+  var SITE_BASE   = 'https://the-voyager-expert.github.io/Travel/';
   var decodedPath = decodeURIComponent(location.pathname);
   if (decodedPath.indexOf('.html') < 0 && decodedPath.charAt(decodedPath.length - 1) !== '/') return;
 

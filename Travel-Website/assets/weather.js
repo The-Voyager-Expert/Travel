@@ -9,7 +9,7 @@
  * Two contexts, one component:
  *   · On a guide (Guides/City/file.html) — a 🌡 Climate button (bottom-right)
  *     locked to that city; the panel shows its typical high/low for any month.
- *   · On Guides/guides_index.html — the same 🌡 button, but the panel opens with
+ *   · On Guides/Guides-Index.html — the same 🌡 button, but the panel opens with
  *     a city PICKER, so any city's climate is reachable without opening a guide.
  * Both share: a 12-month range strip, a month selector, and a °C/°F toggle
  * (remembered across pages via localStorage).
@@ -35,7 +35,7 @@
 
   /* Expose the baked climate normals on a global so OTHER pages can reuse the
      exact same data without a second copy. The full-page Climate Finder
-     (Trip Essentials/Climate Finder.html) loads weather.js purely for this —
+     (Trip-Essentials/Climate Finder.html) loads weather.js purely for this —
      weather.js renders no UI off the Guides index (the guard just below). This
      runs before the guard so the data is set wherever weather.js is loaded. */
   try { window.TravelClimate = CLIMATE; } catch (e) {}
@@ -118,7 +118,7 @@
 
     /* ── Per-guide hover — trip snapshot when you hover a card ─────────────
        Shows: days planned · flight time · cost tier · safety level.
-       Data sourced from window globals set by guides_index.html. */
+       Data sourced from window globals set by Guides-Index.html. */
     var GUIDE_DAYS = {
       'Abu Dhabi':2,'Aix-en-Provence':2,'Alaska':5,'Alesund':5,'Amalfi':2,
       'Amsterdam':5,'Annecy':3,'Aruba':2,'Athens':3,'Atlanta':2,'Austin':2,
@@ -417,7 +417,7 @@
              find panel built below — a full page adds nothing on a phone. */
           if (b.dataset.m === 'find' &&
               window.matchMedia && window.matchMedia('(min-width: 760px)').matches) {
-            location.href = '../Trip%20Essentials/Climate%20Finder.html' +
+            location.href = '../Trip-Essentials/Climate%20Finder.html' +
               '?mon=' + fMonth + '&minc=' + Math.round(fMinC) +
               '&maxc=' + Math.round(fMaxC) + '&u=' + unit();
             return;

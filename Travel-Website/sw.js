@@ -34,7 +34,7 @@ self.addEventListener('fetch', function (e) {
         return res;
       }).catch(function () {
         return caches.match(req).then(function (hit) {
-          return hit || caches.match('Guides/guides_index.html');
+          return hit || caches.match('Guides/Guides-Index.html');
         });
       })
     );

@@ -6,10 +6,10 @@
  * guide_v3.css, mobile.css, climate.json) all live in assets/. Every page
  * loads them from assets/ at its own relative depth below the site root:
  *   · index.html (depth 0):                       src="assets/toolbar.js"
- *   · depth-1 pages (Guides/guides_index.html,
- *     Trip Essentials/*.html):                    src="../assets/toolbar.js"
+ *   · depth-1 pages (Guides/Guides-Index.html,
+ *     Trip-Essentials/*.html):                    src="../assets/toolbar.js"
  *   · depth-2 pages (Guides/City/*.html,
- *     Trip Essentials/Maps|Plug Adapter/*.html):  src="../../assets/toolbar.js"
+ *     Trip-Essentials/Maps|Plug Adapter/*.html):  src="../../assets/toolbar.js"
  *
  * Each page needs:
  *   <div id="toolbar-mount" data-depth="N" data-maxwidth="W"></div>
@@ -17,7 +17,7 @@
  *
  *   data-depth    = directory levels below the site root  (0, 1 or 2)
  *                   (depth describes the PAGE's location, not the script's)
- *   data-maxwidth = inner max-width px  (760 for Trip Essentials, 940 for Guides)
+ *   data-maxwidth = inner max-width px  (760 for Trip-Essentials, 940 for Guides)
  *
  * To update the toolbar for every page: edit ONLY this file.
  */
@@ -103,42 +103,42 @@
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     { group: '📆 Trips', children: [
-        { href: base + 'Trip%20Essentials/Trips.html',          text: '📆 Trips' },
-        { href: base + 'Trip%20Essentials/Travel%20Packing.html', text: '👕 Packing' },
+        { href: base + 'Trip-Essentials/Trips.html',          text: '📆 Trips' },
+        { href: base + 'Trip-Essentials/Travel%20Packing.html', text: '👕 Packing' },
       ] },
     null,
     { group: '🌐 Guides', children: [
-        { href: base + 'Guides/guides_index.html',                text: '🌐 Guides' },
-        { href: base + 'Trip%20Essentials/Maps/Europe%20Map.html', text: '🗺️ Maps' },
-        { href: base + 'Trip%20Essentials/Travel%20Stats.html',   text: '📊 Stats' },
+        { href: base + 'Guides/Guides-Index.html',                text: '🌐 Guides' },
+        { href: base + 'Trip-Essentials/Maps/Europe%20Map.html', text: '🗺️ Maps' },
+        { href: base + 'Trip-Essentials/Travel%20Stats.html',   text: '📊 Stats' },
       ] },
     null,
     { group: '💻 Lounges', children: [
-        { href: base + 'Trip%20Essentials/Lounges%20US.html',     text: '💻 US Lounges' },
-        { href: base + 'Trip%20Essentials/Lounges%20Europe.html', text: '💻 EU Lounges' },
+        { href: base + 'Trip-Essentials/Lounges%20US.html',     text: '💻 US Lounges' },
+        { href: base + 'Trip-Essentials/Lounges%20Europe.html', text: '💻 EU Lounges' },
       ] },
     null,
-    { href: base + 'Trip%20Essentials/European%20Train%20Guide.html',               text: '🚆 Trains' },
+    { href: base + 'Trip-Essentials/European%20Train%20Guide.html',               text: '🚆 Trains' },
     null,
     { group: '✈️ Flights', children: [
-        { href: base + 'Trip%20Essentials/Delta%20Routes%20SEA.html',  text: '✈️ Seattle Hub' },
-        { href: base + 'Trip%20Essentials/Delta%20Routes%20Full.html', text: '✈️ Full Network' },
+        { href: base + 'Trip-Essentials/Delta%20Routes%20SEA.html',  text: '✈️ Seattle Hub' },
+        { href: base + 'Trip-Essentials/Delta%20Routes%20Full.html', text: '✈️ Full Network' },
       ] },
     null,
-    { href: base + 'Trip%20Essentials/Plug%20Adapter/Plug%20Adapter%20Guide.html',  text: '🔌 Plugs' },
+    { href: base + 'Trip-Essentials/Plug%20Adapter/Plug%20Adapter%20Guide.html',  text: '🔌 Plugs' },
     null,
-    { href: base + 'Trip%20Essentials/Currency%20Guide.html',                       text: '💰 Currency' },
+    { href: base + 'Trip-Essentials/Currency%20Guide.html',                       text: '💰 Currency' },
     null,
     { group: '🌤️ Weather', children: [
-        { href: base + 'Trip%20Essentials/Climate%20Finder.html', text: '🌤️ By Climate' },
-        { href: base + 'Trip%20Essentials/Weather.html',          text: '🌤️ By City' },
+        { href: base + 'Trip-Essentials/Climate%20Finder.html', text: '🌤️ By Climate' },
+        { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ By City' },
       ] },
     null,
-    { href: base + 'Trip%20Essentials/Safety%20Guide.html',                         text: '🛡️ Safety' },
+    { href: base + 'Trip-Essentials/Safety%20Guide.html',                         text: '🛡️ Safety' },
     null,
-    { href: base + 'Trip%20Essentials/Visas.html',                                  text: '🪪 Visas' },
+    { href: base + 'Trip-Essentials/Visas.html',                                  text: '🪪 Visas' },
     null,
-    { href: base + 'Trip%20Essentials/Resources.html',                              text: '⚙️ Resources' },
+    { href: base + 'Trip-Essentials/Resources.html',                              text: '⚙️ Resources' },
   ];
 
   /* ── Styles ─────────────────────────────────────────────────────────────── */
@@ -522,13 +522,13 @@
   /* ── Last updated stamp — guide pages only ────────────────────────────────
      Injects "Updated Month Year" in small muted text at the bottom of every
      individual city guide. Detected by /Guides/ in the pathname (depth-2
-     city guide pages) — excludes guides_index, Trip Essentials, Maps, etc.
+     city guide pages) — excludes guides_index, Trip-Essentials, Maps, etc.
      Source: document.lastModified (HTTP Last-Modified header; file mtime
      on local). Guard: year > 2000 prevents garbage dates on broken headers. */
   var _path = decodeURIComponent(location.pathname);
   var _isGuide = /\/Guides\/[^/]+\/[^/]+\.html/.test(_path) ||
                  (_path.indexOf('file:') < 0 && _path.indexOf('/Guides/') > -1 &&
-                  curr !== 'guides_index.html');
+                  curr !== 'Guides-Index.html');
   if (_isGuide) {
     var _MONTHS = ['January','February','March','April','May','June',
                    'July','August','September','October','November','December'];
@@ -554,7 +554,7 @@
      panel) and per-guide hover weather on the cards. Deliberately NOT loaded
      on individual guide pages. Bump the ?v= below whenever weather.js changes
      so the browser refreshes it (it has no version tag on the page itself). */
-  if (curr === 'guides_index.html') {
+  if (curr === 'Guides-Index.html') {
     var _wx = document.createElement('script');
     _wx.src = base + 'assets/weather.js?v=4';
     document.head.appendChild(_wx);
