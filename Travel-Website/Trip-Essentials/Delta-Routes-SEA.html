@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>Delta Routes from Seattle (SEA)</title>
+<style>
+  :root {
+    --bg: #f5f4f0; --surface: #ffffff; --surface2: #f0eeea;
+    --border: #d8d5ce; --border2: #e6e2da; --text: #1a1917; --muted: #6b6860;
+    --delta: #b01028; --accent: #8a2010; --gold: #8a6c1a;
+    --c0: #1a5a1a; --c0bg: #e8f5e8;
+    --c1: #1a3a8b; --c1bg: #e8eef8;
+    --c2: #7a4a00; --c2bg: #fdf5e0;
+    --warn: #a06010;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-body,14px); font-weight: 400; padding: 0 0 72px; }
+  
+  .nav { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 0; }
+  .nav-inner { max-width: 940px; margin: 0 auto; padding: 10px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-start; }
+  .nav-logo { font-size: var(--fs-sub,12px); font-weight: 700; color: var(--accent); letter-spacing: 0.06em; margin-right: 6px; white-space: nowrap; text-transform: uppercase; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 5px; }
+  .nav-link { font-size: var(--fs-sub,12px); color: #3d3a32; text-decoration: none; padding: 4px 9px; border: 1px solid #b8b3a8; border-radius: 4px; background: #f0ece4; white-space: nowrap; transition: color .15s, border-color .15s, background .15s; cursor: pointer; }
+  .nav-link:hover { color: var(--accent); border-color: var(--accent); background: rgba(138,108,26,0.07); }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+  .header { padding: 20px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+  .header-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+  .header h1 { font-size: var(--fs-title,14px); font-weight: 600; letter-spacing: -0.01em; color: var(--gold); line-height: 1.2; margin-bottom: 10px; }
+  .header p { font-size: var(--fs-sub,12px); color: var(--muted); line-height: 1.7; max-width: 640px; }
+  .tier-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; margin-bottom: 10px; }
+  .tier-pill { padding: 5px 12px; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; }
+  .tier-pill.t0 { background: var(--c0bg); color: var(--c0); border: 1px solid #a0d8a0; }
+  .tier-pill.t1 { background: var(--c1bg); color: var(--c1); border: 1px solid #a0b8e8; }
+  .tier-pill.t2 { background: var(--c2bg); color: var(--c2); border: 1px solid #e8c870; }
+  .section { margin-bottom: 44px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+  .section-title { font-size: 15px; font-weight: 400; }
+  .tier-block { margin-bottom: 24px; }
+  .tier-badge { display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; letter-spacing: 0.1em; padding: 2px 10px; border-radius: 2px; margin-bottom: 10px; }
+  .tier-badge.t0 { background: var(--c0bg); color: var(--c0); border: 1px solid #a0d8a0; }
+  .tier-badge.t1 { background: var(--c1bg); color: var(--c1); border: 1px solid #a0b8e8; }
+  .tier-badge.t2 { background: var(--c2bg); color: var(--c2); border: 1px solid #e8c870; }
+  .dest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+  .dest-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid; border-radius: 4px; padding: 10px 12px; }
+  .dest-card.t0 { border-left-color: var(--c0); }
+  .dest-card.t1 { border-left-color: var(--c1); }
+  .dest-card.t2 { border-left-color: var(--c2); }
+  .dest-city { font-size: var(--fs-body,14px); font-weight: 500; }
+  .dest-code { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-body,14px); color: var(--muted); margin: 2px 0; }
+  .dest-meta { font-size: var(--fs-body,14px); color: var(--muted); }
+  .tags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+  .tag { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); padding: 1px 6px; border-radius: 2px; }
+  .tag.new { background: var(--c0bg); color: var(--c0); }
+  .tag.seasonal { background: #fff8e8; color: var(--warn); }
+  .tag.d1 { background: #f8e8e8; color: #7a1010; }
+  .tag.partner { background: var(--c1bg); color: var(--c1); }
+  .us-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 10px; }
+  .us-card { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--delta); border-radius: 3px; padding: 7px 10px; }
+  .us-city { font-size: var(--fs-sub,12px); font-weight: 500; }
+  .us-code { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); color: var(--muted); }
+  .note-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 3px; padding: 10px 14px; margin-bottom: 16px; font-size: var(--fs-body,14px); color: var(--muted); line-height: 1.6; }
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 12px; }
+  .connect-card { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 12px 14px; }
+  .connect-hub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; color: var(--accent); margin-bottom: 5px; }
+  .connect-body { font-size: var(--fs-body,14px); color: var(--muted); line-height: 1.6; }
+  .filter-bar { margin-bottom: 10px; }
+.section{scroll-margin-top:100px;}
+
+
+/* unified filter search */
+.filter-bar{display:flex;gap:10px;align-items:center;margin-bottom: 10px;flex-wrap:wrap;}
+.filter-input{width:200px;box-sizing:border-box;padding:6px 12px;font-size:13px;border:1.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;}
+.filter-input:focus{border-color:#B8860B;box-shadow:0 0 0 3px rgba(184,134,11,.12);}
+.filter-input::placeholder{color:#A8895A;}
+.filter-clear{padding: 7px 10px;font-size: var(--fs-body,14px);border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:#7A5C2E;cursor:pointer;white-space:nowrap;}
+.filter-clear:hover{border-color:#B8860B;color:#8a6c1a;}
+.filter-count{font-size: var(--fs-sub,12px);color:#7A5C2E;white-space:nowrap;}
+
+
+/* uniform comfortable page gutter */
+
+/* hide no-results until an empty search */
+.no-results{display:none;padding:14px 4px;font-size: var(--fs-body,14px);color:#7A5C2E;}
+/* hide chrome when search is active */
+body.is-searching #route-nav,
+body.is-searching .tier-legend,
+body.is-searching .hub-strength,
+body.is-searching .hub-header,
+body.is-searching .section-header { display:none !important; }
+/* secondary nav: solid page-bg so content doesn't bleed through on scroll */
+.nav{background:var(--bg)!important;border-bottom:none!important;}
+/* footnote: drop final block margin so gap is uniform */
+.section:last-child, .section:last-child *:last-child{margin-bottom:0 !important}
+/* clickable tier pills */
+.tier-pill{cursor:pointer;transition:box-shadow .12s,transform .12s;}
+@media (max-width:600px){
+  .filter-input { max-width:100%; }
+  .wrap{padding:0 14px;}
+  .tier-legend{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-top:10px;-webkit-mask-image:linear-gradient(to right,black calc(100% - 36px),transparent 100%);mask-image:linear-gradient(to right,black calc(100% - 36px),transparent 100%);}
+  .tier-legend::-webkit-scrollbar{display:none;}
+  .tier-pill{flex-shrink:0;}
+  .nav-inner{padding:8px 14px;}
+  .nav-links{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(to right,black calc(100% - 36px),transparent 100%);mask-image:linear-gradient(to right,black calc(100% - 36px),transparent 100%);}
+  .nav-link{flex-shrink:0;}
+}
+.tier-pill:hover{transform:translateY(-1px);}
+.tier-pill.active{font-weight:700;box-shadow:0 0 0 2px rgba(0,0,0,.30);}
+/* ===== Mobile jump-to menu — replaces the horizontal region row on phones ===== */
+.hub-jump{display:none;}
+.hub-jump-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;
+  background:#f0ece4;border:1px solid #b8b3a8;border-radius:10px;padding:13px 15px;
+  font-size:15px;font-weight:600;color:#3d3a32;cursor:pointer;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple Color Emoji','Segoe UI Emoji',Arial,sans-serif;}
+.hub-jump-toggle .chev{transition:transform .2s;font-size: var(--fs-label,11px);color:var(--muted);}
+.hub-jump.open .hub-jump-toggle .chev{transform:rotate(180deg);}
+.hub-jump-list{display:none;margin-top:8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;overflow-y:auto;max-height:62vh;
+  box-shadow:0 8px 24px rgba(60,50,30,.14);}
+.hub-jump.open .hub-jump-list{display:block;}
+.hub-jump-item{display:block;width:100%;text-align:left;background:none;border:0;
+  border-bottom:1px solid #eceae4;padding:14px 16px;font-size:15px;color:#3d3a32;cursor:pointer;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple Color Emoji','Segoe UI Emoji',Arial,sans-serif;}
+.hub-jump-item:last-child{border-bottom:none;}
+.hub-jump-item:active{background:rgba(138,108,26,.08);}
+@media(max-width:600px){
+  #route-nav{display:none!important;}
+  .hub-jump{display:block;position:sticky;top:0;z-index:60;background:var(--bg);padding:8px 0 10px;}
+}
+.hub-top{display:none;}
+@media(max-width:600px){
+  .hub-top.show{position:fixed;right:14px;bottom:16px;width:46px;height:46px;border-radius:50%;
+    background:#fdf8f0;border:1px solid #c4b896;color:#6b6860;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:70;font-size:20px;line-height:1;box-shadow:0 6px 18px rgba(60,50,30,.20);}
+}
+body.is-searching .hub-jump,body.is-searching .hub-top{display:none!important;}
+/* ===== Guide cross-links — cards with a matching city guide ===== */
+.dest-card.has-guide,.us-card.has-guide{cursor:pointer;transition:box-shadow .12s,transform .12s;}
+.dest-card.has-guide:hover,.us-card.has-guide:hover{box-shadow:0 2px 12px rgba(60,50,30,.14);transform:translateY(-1px);}
+.dest-card.has-guide:focus-within{box-shadow:0 0 0 2px rgba(138,108,26,.45);}
+.guide-link{display:inline-block;margin-top:6px;font-size:var(--fs-sub,12px);font-weight:500;color:var(--accent);text-decoration:none;border:1px solid var(--border2);border-radius:3px;padding:1px 8px;background:var(--surface2);white-space:nowrap;}
+.guide-link:hover{border-color:var(--accent);background:rgba(138,108,26,.08);}
+.guide-link:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+/* nonstop flight time from SEA */
+.flt{font-size:var(--fs-sub,12px);font-weight:600;color:var(--c0);margin-top:3px;letter-spacing:.01em;}
+/* scroll-spy active region in the route nav */
+.nav-link.active{color:var(--accent);border-color:var(--accent);background:rgba(138,108,26,.12);font-weight:600;}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=27"></script>
+<div class="wrap">
+  <div class="header">
+    <h1>Delta from Seattle</h1>
+
+
+</div>
+  <span class="updated-stamp">Updated June 2026</span>
+</div>
+<div style="max-width:940px;margin:0 auto;padding:0 24px;">
+  <div class="filter-bar">
+    <input class="filter-input" id="destFilter" type="search" placeholder="🔍" aria-label="Filter destinations by city or airport code" autocomplete="off">
+    <span class="filter-count" id="filterCount"></span>
+  </div>
+</div>
+<nav class="nav" id="route-nav">
+<div class="nav-inner">
+  <div class="nav-links">
+    <a class="nav-link" href="#europe" onclick="document.getElementById('europe').scrollIntoView({behavior:'smooth'});return false;">Europe</a>
+    <a class="nav-link" href="#asia" onclick="document.getElementById('asia').scrollIntoView({behavior:'smooth'});return false;">Asia–Pacific</a>
+    <a class="nav-link" href="#latam" onclick="document.getElementById('latam').scrollIntoView({behavior:'smooth'});return false;">Latin America</a>
+    <a class="nav-link" href="#canada" onclick="document.getElementById('canada').scrollIntoView({behavior:'smooth'});return false;">Canada</a>
+    <a class="nav-link" href="#mexico" onclick="document.getElementById('mexico').scrollIntoView({behavior:'smooth'});return false;">Mexico</a>
+    <a class="nav-link" href="#africa" onclick="document.getElementById('africa').scrollIntoView({behavior:'smooth'});return false;">Africa & ME</a>
+    <a class="nav-link" href="#us" onclick="document.getElementById('us').scrollIntoView({behavior:'smooth'});return false;">US Domestic</a>
+    <a class="nav-link" href="#connections" onclick="document.getElementById('connections').scrollIntoView({behavior:'smooth'});return false;">Connection Guide</a>
+  </div>
+</div>
+</nav>
+
+<div class="hub-jump" id="hubJump">
+  <button type="button" class="hub-jump-toggle" id="hubJumpToggle" aria-expanded="false" aria-controls="hubJumpList">
+    <span>🌍 Choose Region</span><span class="chev">▼</span>
+  </button>
+  <div class="hub-jump-list" id="hubJumpList" role="menu"></div>
+</div>
+
+<div class="wrap">
+  <div class="tier-legend">
+    <div class="tier-pill t0">🟢 Nonstop</div>
+    <div class="tier-pill t1">🔵 1 connection via Delta hub</div>
+    <div class="tier-pill t2">🟡 2 connections via hub + SkyTeam partner</div>
+  </div>
+  <div class="no-results" id="noResults">No destinations match your search.</div>
+
+  <!-- EUROPE -->
+  <div class="section" id="europe">
+    <div class="section-header"><span>🌍</span><span class="section-title">Europe</span></div>
+    <div class="note-box"><strong>Seasonal:</strong> SEA–BCN and SEA–FCO are summer seasonal (May–Oct 2026). SEA–AMS, SEA–CDG, SEA–LHR year-round.</div>
+    <div class="tier-block">
+      <div class="tier-badge t0">🟢 NONSTOP from SEA</div>
+      <div class="dest-grid">
+        <div class="dest-card t0"><div class="dest-city">Amsterdam</div><div class="dest-code">AMS · Netherlands</div><div class="dest-meta">Year-round · Daily · A330</div><div class="tags"><span class="tag d1">Delta One</span></div></div>
+        <div class="dest-card t0"><div class="dest-city">Barcelona</div><div class="dest-code">BCN · Spain</div><div class="dest-meta">3x weekly · A330-900neo</div><div class="tags"><span class="tag new">New May 2026</span><span class="tag seasonal">Seasonal</span></div></div>
+        <div class="dest-card t0"><div class="dest-city">London Heathrow</div><div class="dest-code">LHR · UK</div><div class="dest-meta">Year-round · Daily</div><div class="tags"><span class="tag d1">Delta One</span></div></div>
+        <div class="dest-card t0"><div class="dest-city">Paris CDG</div><div class="dest-code">CDG · France</div><div class="dest-meta">Year-round · Daily</div><div class="tags"><span class="tag d1">Delta One</span></div></div>
+        <div class="dest-card t0"><div class="dest-city">Rome Fiumicino</div><div class="dest-code">FCO · Italy</div><div class="dest-meta">4x weekly · A330-900neo</div><div class="tags"><span class="tag new">New May 2026</span><span class="tag seasonal">Seasonal</span></div></div>
+      </div>
+    </div>
+    <div class="tier-block">
+      <div class="tier-badge t1">🔵 1 CONNECTION via ATL, JFK, BOS, DTW, MSP</div>
+      <div class="dest-grid">
+        <div class="dest-card t1"><div class="dest-city">Athens</div><div class="dest-code">ATH</div><div class="dest-meta">Via ATL or JFK</div></div>
+        <div class="dest-card t1"><div class="dest-city">Barcelona</div><div class="dest-code">BCN</div><div class="dest-meta">Year-round via JFK when SEA–BCN off</div></div>
+        <div class="dest-card t1"><div class="dest-city">Copenhagen</div><div class="dest-code">CPH</div><div class="dest-meta">Via JFK or MSP · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Dublin</div><div class="dest-code">DUB</div><div class="dest-meta">Via JFK or ATL</div></div>
+        <div class="dest-card t1"><div class="dest-city">Edinburgh</div><div class="dest-code">EDI</div><div class="dest-meta">Via JFK · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Frankfurt</div><div class="dest-code">FRA</div><div class="dest-meta">Via ATL, JFK, or DTW</div></div>
+        <div class="dest-card t1"><div class="dest-city">Geneva</div><div class="dest-code">GVA</div><div class="dest-meta">Via JFK · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Lisbon</div><div class="dest-code">LIS</div><div class="dest-meta">Via JFK or ATL</div></div>
+        <div class="dest-card t1"><div class="dest-city">Madrid</div><div class="dest-code">MAD</div><div class="dest-meta">Via JFK, ATL, or BOS</div></div>
+        <div class="dest-card t1"><div class="dest-city">Malta</div><div class="dest-code">MLA</div><div class="dest-meta">Via JFK · Seasonal</div><div class="tags"><span class="tag new">New 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Milan Malpensa</div><div class="dest-code">MXP</div><div class="dest-meta">Via JFK, ATL, or DTW</div></div>
+        <div class="dest-card t1"><div class="dest-city">Munich</div><div class="dest-code">MUC</div><div class="dest-meta">Via ATL or DTW</div></div>
+        <div class="dest-card t1"><div class="dest-city">Naples</div><div class="dest-code">NAP</div><div class="dest-meta">Via JFK · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Nice</div><div class="dest-code">NCE</div><div class="dest-meta">Via BOS–NCE nonstop · Seasonal</div><div class="tags"><span class="tag new">New 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Olbia (Sardinia)</div><div class="dest-code">OLB</div><div class="dest-meta">Via JFK · Seasonal</div><div class="tags"><span class="tag new">New 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Porto</div><div class="dest-code">OPO</div><div class="dest-meta">Via JFK–OPO daily · Seasonal</div><div class="tags"><span class="tag new">New 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Rome Fiumicino</div><div class="dest-code">FCO</div><div class="dest-meta">Year-round via ATL or JFK when SEA–FCO off</div></div>
+        <div class="dest-card t1"><div class="dest-city">Stockholm</div><div class="dest-code">ARN</div><div class="dest-meta">Via ATL, JFK, or MSP · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Tel Aviv</div><div class="dest-code">TLV</div><div class="dest-meta">Via ATL–TLV nonstop</div><div class="tags"><span class="tag new">Resumed 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Venice</div><div class="dest-code">VCE</div><div class="dest-meta">Via JFK or ATL · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Zurich</div><div class="dest-code">ZRH</div><div class="dest-meta">Via JFK or ATL · Seasonal</div></div>
+      </div>
+    </div>
+    <div class="tier-block">
+      <div class="tier-badge t2">🟡 2 CONNECTIONS via hub + SkyTeam partner</div>
+      <div class="dest-grid">
+        <div class="dest-card t2"><div class="dest-city">Brussels</div><div class="dest-code">BRU</div><div class="dest-meta">SEA→AMS or CDG→Brussels Airlines</div><div class="tags"><span class="tag partner">Via KLM/Air France</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Budapest</div><div class="dest-code">BUD</div><div class="dest-meta">SEA→AMS or CDG→partner</div><div class="tags"><span class="tag partner">Via KLM/Air France</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Dubrovnik</div><div class="dest-code">DBV</div><div class="dest-meta">SEA→CDG or AMS→Croatia Airlines</div><div class="tags"><span class="tag partner">Via Air France/KLM</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Helsinki</div><div class="dest-code">HEL</div><div class="dest-meta">SEA→AMS or CDG→partner</div><div class="tags"><span class="tag partner">Via KLM/Air France</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Lyon</div><div class="dest-code">LYS</div><div class="dest-meta">SEA→CDG→Air France domestic</div><div class="tags"><span class="tag partner">Via Air France</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Manchester</div><div class="dest-code">MAN</div><div class="dest-meta">SEA→LHR or AMS→partner</div><div class="tags"><span class="tag partner">Via Virgin/KLM</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Oslo</div><div class="dest-code">OSL</div><div class="dest-meta">SEA→AMS or CDG→SAS</div><div class="tags"><span class="tag partner">Via KLM/SAS</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Prague</div><div class="dest-code">PRG</div><div class="dest-meta">SEA→AMS or CDG→partner</div><div class="tags"><span class="tag partner">Via KLM/Air France</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Vienna</div><div class="dest-code">VIE</div><div class="dest-meta">SEA→AMS or FRA→partner</div><div class="tags"><span class="tag partner">Via KLM/Air France</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Warsaw</div><div class="dest-code">WAW</div><div class="dest-meta">SEA→AMS or CDG→LOT/KLM</div><div class="tags"><span class="tag partner">Via KLM/Air France</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASIA -->
+  <div class="section" id="asia">
+    <div class="section-header"><span>🌏</span><span class="section-title">Asia-Pacific</span></div>
+    <div class="tier-block">
+      <div class="tier-badge t0">🟢 NONSTOP from SEA</div>
+      <div class="dest-grid">
+        <div class="dest-card t0"><div class="dest-city">Seoul Incheon</div><div class="dest-code">ICN · South Korea</div><div class="dest-meta">Year-round · Daily · A350</div><div class="tags"><span class="tag d1">Delta One</span></div></div>
+        <div class="dest-card t0"><div class="dest-city">Shanghai Pudong</div><div class="dest-code">PVG · China</div><div class="dest-meta">Year-round · Daily · A350</div><div class="tags"><span class="tag d1">Delta One</span></div></div>
+        <div class="dest-card t0"><div class="dest-city">Taipei Taoyuan</div><div class="dest-code">TPE · Taiwan</div><div class="dest-meta">Year-round · Daily · A350</div><div class="tags"><span class="tag d1">Delta One</span></div></div>
+        <div class="dest-card t0"><div class="dest-city">Tokyo Haneda</div><div class="dest-code">HND · Japan</div><div class="dest-meta">Year-round · Daily · A350</div><div class="tags"><span class="tag d1">Delta One</span></div></div>
+      </div>
+    </div>
+    <div class="tier-block">
+      <div class="tier-badge t1">🔵 1 CONNECTION via LAX, DTW, MSP, or ATL</div>
+      <div class="dest-grid">
+        <div class="dest-card t1"><div class="dest-city">Auckland</div><div class="dest-code">AKL · NZ</div><div class="dest-meta">Via LAX–AKL daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Brisbane</div><div class="dest-code">BNE · Australia</div><div class="dest-meta">Via LAX–BNE daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Hong Kong</div><div class="dest-code">HKG</div><div class="dest-meta">Via LAX–HKG daily</div><div class="tags"><span class="tag new">New Jun 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Melbourne</div><div class="dest-code">MEL · Australia</div><div class="dest-meta">Via LAX–MEL daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Sydney</div><div class="dest-code">SYD · Australia</div><div class="dest-meta">Via LAX–SYD daily</div></div>
+      </div>
+    </div>
+    <div class="tier-block">
+      <div class="tier-badge t2">🟡 2 CONNECTIONS via ICN or HND + partner</div>
+      <div class="dest-grid">
+        <div class="dest-card t2"><div class="dest-city">Bangkok</div><div class="dest-code">BKK</div><div class="dest-meta">SEA→ICN→Korean Air</div><div class="tags"><span class="tag partner">Via Korean Air</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Ho Chi Minh City</div><div class="dest-code">SGN</div><div class="dest-meta">SEA→ICN→Korean Air</div><div class="tags"><span class="tag partner">Via Korean Air</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Kuala Lumpur</div><div class="dest-code">KUL</div><div class="dest-meta">SEA→ICN→Korean Air</div><div class="tags"><span class="tag partner">Via Korean Air</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Manila</div><div class="dest-code">MNL</div><div class="dest-meta">SEA→HND or ICN→partner</div><div class="tags"><span class="tag partner">Via partner</span></div></div>
+        <div class="dest-card t2"><div class="dest-city">Singapore</div><div class="dest-code">SIN</div><div class="dest-meta">SEA→ICN or HND→partner</div><div class="tags"><span class="tag partner">Via SkyTeam partner</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LATIN AMERICA -->
+  <div class="section" id="latam">
+    <div class="section-header"><span>🌎</span><span class="section-title">Latin America & Caribbean</span></div>
+    <div class="note-box"><strong>Note:</strong> SEA has no nonstop Delta service to Latin America. All routes connect through ATL (primary), JFK, or SLC.</div>
+    <div class="tier-block">
+      <div class="tier-badge t1">🔵 1 CONNECTION — primarily via ATL</div>
+      <div class="dest-grid">
+        <div class="dest-card t1"><div class="dest-city">Bogotá</div><div class="dest-code">BOG</div><div class="dest-meta">Via ATL–BOG daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Buenos Aires</div><div class="dest-code">EZE</div><div class="dest-meta">Via JFK–EZE nonstop</div></div>
+        <div class="dest-card t1"><div class="dest-city">Cartagena</div><div class="dest-code">CTG</div><div class="dest-meta">Via ATL–CTG daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Guatemala City</div><div class="dest-code">GUA</div><div class="dest-meta">Via ATL–GUA daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Lima</div><div class="dest-code">LIM</div><div class="dest-meta">Via ATL or SLC</div></div>
+        <div class="dest-card t1"><div class="dest-city">Panama City</div><div class="dest-code">PTY</div><div class="dest-meta">Via ATL–PTY daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Rio de Janeiro</div><div class="dest-code">GIG</div><div class="dest-meta">Via ATL–GIG daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Santiago</div><div class="dest-code">SCL</div><div class="dest-meta">Via ATL–SCL daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">São Paulo</div><div class="dest-code">GRU</div><div class="dest-meta">Via ATL–GRU daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Aruba</div><div class="dest-code">AUA</div><div class="dest-meta">Via ATL or JFK</div></div>
+        <div class="dest-card t1"><div class="dest-city">Montego Bay</div><div class="dest-code">MBJ</div><div class="dest-meta">Via ATL</div></div>
+        <div class="dest-card t1"><div class="dest-city">Nassau</div><div class="dest-code">NAS</div><div class="dest-meta">Via ATL or JFK</div></div>
+        <div class="dest-card t1"><div class="dest-city">Punta Cana</div><div class="dest-code">PUJ</div><div class="dest-meta">Via ATL or JFK</div></div>
+        <div class="dest-card t1"><div class="dest-city">San Juan</div><div class="dest-code">SJU</div><div class="dest-meta">Via ATL or JFK</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANADA -->
+  <div class="section" id="canada">
+    <div class="section-header"><span>🇨🇦</span><span class="section-title">Canada</span></div>
+    <div class="tier-block">
+      <div class="tier-badge t0">🟢 NONSTOP from SEA</div>
+      <div class="dest-grid">
+        <div class="dest-card t0"><div class="dest-city">Vancouver</div><div class="dest-code">YVR · BC</div><div class="dest-meta">Saturdays · Seasonal (May 2026)</div><div class="tags"><span class="tag new">New 2026</span><span class="tag seasonal">Seasonal</span></div></div>
+      </div>
+    </div>
+    <div class="tier-block">
+      <div class="tier-badge t1">🔵 1 CONNECTION</div>
+      <div class="dest-grid">
+        <div class="dest-card t1"><div class="dest-city">Calgary</div><div class="dest-code">YYC</div><div class="dest-meta">Via ATL, SLC, or MSP</div></div>
+        <div class="dest-card t1"><div class="dest-city">Halifax</div><div class="dest-code">YHZ</div><div class="dest-meta">Via BOS (new Delta Connection Jun 2026)</div><div class="tags"><span class="tag new">New 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Montreal</div><div class="dest-code">YUL</div><div class="dest-meta">Via ATL or DTW</div></div>
+        <div class="dest-card t1"><div class="dest-city">Toronto</div><div class="dest-code">YYZ</div><div class="dest-meta">Via ATL or DTW</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEXICO -->
+  <div class="section" id="mexico">
+    <div class="section-header"><span>🇲🇽</span><span class="section-title">Mexico</span></div>
+    <div class="tier-block">
+      <div class="tier-badge t1">🔵 1 CONNECTION via ATL, SLC, or LAX</div>
+      <div class="dest-grid">
+        <div class="dest-card t1"><div class="dest-city">Cancún</div><div class="dest-code">CUN</div><div class="dest-meta">Via ATL, SLC, or LAX</div></div>
+        <div class="dest-card t1"><div class="dest-city">Guadalajara</div><div class="dest-code">GDL</div><div class="dest-meta">Via ATL or LAX</div></div>
+        <div class="dest-card t1"><div class="dest-city">Los Cabos</div><div class="dest-code">SJD</div><div class="dest-meta">Via ATL, SLC, or LAX</div></div>
+        <div class="dest-card t1"><div class="dest-city">Mazatlán</div><div class="dest-code">MZT</div><div class="dest-meta">Via ATL or LAX · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Mexico City</div><div class="dest-code">MEX</div><div class="dest-meta">Via ATL or LAX</div></div>
+        <div class="dest-card t1"><div class="dest-city">Puerto Vallarta</div><div class="dest-code">PVR</div><div class="dest-meta">Via ATL, SLC, or LAX</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFRICA & MIDDLE EAST -->
+  <div class="section" id="africa">
+    <div class="section-header"><span>🌍</span><span class="section-title">Africa & Middle East</span></div>
+    <div class="tier-block">
+      <div class="tier-badge t1">🔵 1 CONNECTION via ATL (Africa hub) or BOS (TLV)</div>
+      <div class="dest-grid">
+        <div class="dest-card t1"><div class="dest-city">Accra</div><div class="dest-code">ACC · Ghana</div><div class="dest-meta">Via ATL–ACC daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Cape Town</div><div class="dest-code">CPT</div><div class="dest-meta">Via ATL · Seasonal</div></div>
+        <div class="dest-card t1"><div class="dest-city">Johannesburg</div><div class="dest-code">JNB</div><div class="dest-meta">Via ATL–JNB daily · A350</div></div>
+        <div class="dest-card t1"><div class="dest-city">Lagos</div><div class="dest-code">LOS · Nigeria</div><div class="dest-meta">Via ATL–LOS daily</div></div>
+        <div class="dest-card t1"><div class="dest-city">Marrakech</div><div class="dest-code">RAK · Morocco</div><div class="dest-meta">Via ATL–RAK daily (Oct 2025)</div><div class="tags"><span class="tag new">New 2025</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Riyadh</div><div class="dest-code">RUH · Saudi Arabia</div><div class="dest-meta">Via ATL–RUH (from Oct 2026)</div><div class="tags"><span class="tag new">New Oct 2026</span></div></div>
+        <div class="dest-card t1"><div class="dest-city">Tel Aviv</div><div class="dest-code">TLV · Israel</div><div class="dest-meta">Via ATL–TLV 3x weekly</div><div class="tags"><span class="tag new">Resumed 2026</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- US DOMESTIC -->
+  <div class="section" id="us">
+    <div class="section-header"><span>🇺🇸</span><span class="section-title">US Domestic — Nonstop from SEA</span></div>
+    <div class="note-box"><strong>Delta hubs below.</strong> Connect through any hub for further domestic or international service.</div>
+    <div class="dest-grid" style="margin-bottom:20px;">
+      <div class="dest-card t0" style="border-left-color:#7a1010;"><div class="dest-city">Atlanta</div><div class="dest-code">ATL · Hub</div><div class="dest-meta">Multiple daily · Primary intl gateway</div></div>
+      <div class="dest-card t0" style="border-left-color:#7a1010;"><div class="dest-city">Boston</div><div class="dest-code">BOS · Hub</div><div class="dest-meta">Multiple daily · Europe focus</div></div>
+      <div class="dest-card t0" style="border-left-color:#7a1010;"><div class="dest-city">Detroit</div><div class="dest-code">DTW · Hub</div><div class="dest-meta">Multiple daily · Asia + Europe</div></div>
+      <div class="dest-card t0" style="border-left-color:#7a1010;"><div class="dest-city">Los Angeles</div><div class="dest-code">LAX · Hub</div><div class="dest-meta">Multiple daily · Pacific gateway</div></div>
+      <div class="dest-card t0" style="border-left-color:#7a1010;"><div class="dest-city">Minneapolis</div><div class="dest-code">MSP · Hub</div><div class="dest-meta">Multiple daily</div></div>
+      <div class="dest-card t0" style="border-left-color:#7a1010;"><div class="dest-city">New York JFK</div><div class="dest-code">JFK · Hub</div><div class="dest-meta">Multiple daily · Transatlantic hub</div></div>
+      <div class="dest-card t0" style="border-left-color:#7a1010;"><div class="dest-city">Salt Lake City</div><div class="dest-code">SLC · Hub</div><div class="dest-meta">Multiple daily · Mountain West</div></div>
+    </div>
+    <div style="font-family:monospace;font-size: var(--fs-sub,12px);color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Other nonstop from SEA</div>
+    <div class="us-grid">
+      <div class="us-card"><div class="us-city">Albuquerque</div><div class="us-code">ABQ</div></div>
+      <div class="us-card"><div class="us-city">Anchorage</div><div class="us-code">ANC</div></div>
+      <div class="us-card"><div class="us-city">Austin</div><div class="us-code">AUS</div></div>
+      <div class="us-card"><div class="us-city">Boise</div><div class="us-code">BOI</div></div>
+      <div class="us-card"><div class="us-city">Charlotte</div><div class="us-code">CLT</div></div>
+      <div class="us-card"><div class="us-city">Chicago O'Hare</div><div class="us-code">ORD</div></div>
+      <div class="us-card"><div class="us-city">Dallas Fort Worth</div><div class="us-code">DFW</div></div>
+      <div class="us-card"><div class="us-city">Denver</div><div class="us-code">DEN</div></div>
+      <div class="us-card"><div class="us-city">Eugene</div><div class="us-code">EUG</div></div>
+      <div class="us-card"><div class="us-city">Fort Lauderdale</div><div class="us-code">FLL</div></div>
+      <div class="us-card"><div class="us-city">Honolulu</div><div class="us-code">HNL</div></div>
+      <div class="us-card"><div class="us-city">Houston IAH</div><div class="us-code">IAH</div></div>
+      <div class="us-card"><div class="us-city">Jacksonville</div><div class="us-code">JAX</div></div>
+      <div class="us-card"><div class="us-city">Juneau</div><div class="us-code">JNU</div></div>
+      <div class="us-card"><div class="us-city">Kauai</div><div class="us-code">LIH</div></div>
+      <div class="us-card"><div class="us-city">Kona</div><div class="us-code">KOA</div></div>
+      <div class="us-card"><div class="us-city">Las Vegas</div><div class="us-code">LAS</div></div>
+      <div class="us-card"><div class="us-city">Maui</div><div class="us-code">OGG</div></div>
+      <div class="us-card"><div class="us-city">Miami</div><div class="us-code">MIA</div></div>
+      <div class="us-card"><div class="us-city">Nashville</div><div class="us-code">BNA</div></div>
+      <div class="us-card"><div class="us-city">New Orleans</div><div class="us-code">MSY</div></div>
+      <div class="us-card"><div class="us-city">New York LGA</div><div class="us-code">LGA</div></div>
+      <div class="us-card"><div class="us-city">Orlando</div><div class="us-code">MCO</div></div>
+      <div class="us-card"><div class="us-city">Philadelphia</div><div class="us-code">PHL</div></div>
+      <div class="us-card"><div class="us-city">Phoenix</div><div class="us-code">PHX</div></div>
+      <div class="us-card"><div class="us-city">Portland</div><div class="us-code">PDX</div></div>
+      <div class="us-card"><div class="us-city">Raleigh-Durham</div><div class="us-code">RDU</div></div>
+      <div class="us-card"><div class="us-city">Reno</div><div class="us-code">RNO</div></div>
+      <div class="us-card"><div class="us-city">Sacramento</div><div class="us-code">SMF</div></div>
+      <div class="us-card"><div class="us-city">San Diego</div><div class="us-code">SAN</div></div>
+      <div class="us-card"><div class="us-city">San Francisco</div><div class="us-code">SFO</div></div>
+      <div class="us-card"><div class="us-city">San Jose</div><div class="us-code">SJC</div></div>
+      <div class="us-card"><div class="us-city">Spokane</div><div class="us-code">GEG</div></div>
+      <div class="us-card"><div class="us-city">Tampa</div><div class="us-code">TPA</div></div>
+      <div class="us-card"><div class="us-city">Tucson</div><div class="us-code">TUS</div></div>
+      <div class="us-card"><div class="us-city">Washington DCA</div><div class="us-code">DCA</div></div>
+      <div class="us-card"><div class="us-city">Washington Dulles</div><div class="us-code">IAD</div></div>
+    </div>
+  </div>
+
+  <!-- CONNECTION GUIDE -->
+  <div class="section" id="connections">
+    <div class="section-header"><span>🔀</span><span class="section-title">Connection Strategy from SEA</span></div>
+    <div class="connect-grid">
+      <div class="connect-card"><div class="connect-hub">🇪🇺 EUROPE — SEA nonstop first</div><div class="connect-body">AMS, CDG, LHR year-round. BCN & FCO summer 2026. For other European cities, connect via AMS (KLM) or CDG (Air France) on the nonstop SEA flight.</div></div>
+      <div class="connect-card"><div class="connect-hub">🌏 ASIA — SEA is your best hub</div><div class="connect-body">4 nonstop Asia routes: HND, ICN, PVG, TPE. For deeper Asia, connect via ICN→Korean Air. For HKG and Australia, connect via LAX.</div></div>
+      <div class="connect-card"><div class="connect-hub">🌎 LATIN AMERICA — Route through ATL</div><div class="connect-body">ATL has nonstops to BOG, CTG, LIM, SCL, GRU, GIG, GUA, PTY. JFK for Buenos Aires only.</div></div>
+      <div class="connect-card"><div class="connect-hub">🌍 AFRICA/MIDDLE EAST — Via ATL</div><div class="connect-body">ATL has nonstop to JNB, LOS, ACC, RAK, TLV (2026), RUH (Oct 2026). ATL is always faster than going via Europe.</div></div>
+      <div class="connect-card"><div class="connect-hub">🇵🇹 PORTUGAL — New in 2026</div><div class="connect-body">JFK–OPO daily (new 2026). SEA→JFK→OPO = 1 connection. JFK–LIS year-round.</div></div>
+      <div class="connect-card"><div class="connect-hub">⏱ MINIMIZE CONNECTIONS</div><div class="connect-body">SEA nonstops first. Then: AMS/CDG (Europe), ICN/HND (Asia), ATL (Latin America & Africa), JFK (transatlantic variety).</div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var filterInput=document.getElementById('destFilter');
+  var filterCount=document.getElementById('filterCount');
+  var noResults=document.getElementById('noResults');
+  var pills=[].slice.call(document.querySelectorAll('.tier-pill'));
+  var pagenav=document.getElementById('route-nav');
+  var tierLegend=document.querySelector('.tier-legend');
+  var activeTier='';
+  function norm(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+  function runFilter(){
+    var q=filterInput?filterInput.value.trim():'',shown=0,active=q||activeTier;
+    document.querySelectorAll('.dest-card,.us-card').forEach(function(c){
+      var isUs=c.classList.contains('us-card');
+      var tierOk=!activeTier||(isUs?activeTier==='t0':c.classList.contains(activeTier));
+      var match=(!q||norm(c.textContent).indexOf(q)>-1)&&tierOk;
+      c.style.display=match?'':'none';
+      if(match)shown++;
+    });
+    var noHits=(active&&shown===0);
+    if(noResults)noResults.style.display=noHits?'block':'none';
+    if(filterCount)filterCount.textContent=active?(shown+(shown===1?' destination':' destinations')):'';
+    var ss=document.getElementById('_search_hide');
+    if(!ss){ss=document.createElement('style');ss.id='_search_hide';document.head.appendChild(ss);}
+    ss.textContent=q?'#route-nav,#route-nav *,.tier-legend,.hub-strength,.hub-header,.section-header{display:none!important;visibility:hidden!important}':'';
+    document.body.classList.toggle('is-searching',!!q);
+    var foot=document.querySelector('.tb-footnote');if(foot)foot.style.display=noHits?'none':'';
+    document.querySelectorAll('.dest-grid,.us-grid').forEach(function(g){
+      var anyVis=[].slice.call(g.querySelectorAll('.dest-card,.us-card')).some(function(c){return c.style.display!=='none';});
+      g.style.display=(!active||anyVis)?'':'none';
+      var b=g.previousElementSibling;
+      if(b&&b.classList.contains('tier-badge'))b.style.display=(!active||anyVis)?'':'none';
+    });
+    document.querySelectorAll('.section,.hub-section,.tier-block,.region-block').forEach(function(sec){
+      var anyVisible=[].slice.call(sec.querySelectorAll('.dest-card,.us-card')).some(function(c){return c.style.display!=='none';});
+      sec.style.display=(!active||anyVisible)?'':'none';
+    });
+  }
+  pills.forEach(function(p){
+    p.style.cursor='pointer';
+    p.setAttribute('role','button');
+    p.setAttribute('tabindex','0');
+    p.setAttribute('aria-pressed','false');
+    function toggle(){
+      var t=(p.className.match(/\bt[0-2]\b/)||[''])[0];
+      activeTier=(activeTier===t)?'':t;
+      pills.forEach(function(x){
+        var on=(x===p&&activeTier!=='');
+        x.classList.toggle('active',on);
+        x.setAttribute('aria-pressed',on?'true':'false');
+      });
+      runFilter();
+    }
+    p.addEventListener('click',toggle);
+    p.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}
+    });
+  });
+  if(filterInput)filterInput.addEventListener('input',runFilter);
+  if(filterCount)filterCount.textContent='';
+})();
+</script>
+
+<script>
+/* Mobile jump-to menu — builds a vertical list from the existing #route-nav links */
+(function(){
+  var jump=document.getElementById('hubJump'),
+      toggle=document.getElementById('hubJumpToggle'),
+      list=document.getElementById('hubJumpList');
+  if(!jump||!toggle||!list)return;
+  [].forEach.call(document.querySelectorAll('#route-nav .nav-link'),function(a){
+    var m=(a.getAttribute('onclick')||'').match(/getElementById\(['"]([^'"]+)['"]\)/);
+    if(!m)return;
+    var target=document.getElementById(m[1]), label=(a.textContent||'').trim();
+    if(target){var c=target.querySelector('.hub-city'); if(c)label=label+' · '+c.textContent.trim();}
+    var item=document.createElement('button');
+    item.type='button'; item.className='hub-jump-item'; item.setAttribute('role','menuitem');
+    item.textContent=label;
+    item.addEventListener('click',function(){ if(target)target.scrollIntoView({behavior:'smooth'}); close(); });
+    list.appendChild(item);
+  });
+  function open(){jump.classList.add('open');toggle.setAttribute('aria-expanded','true');}
+  function close(){jump.classList.remove('open');toggle.setAttribute('aria-expanded','false');}
+  toggle.addEventListener('click',function(){jump.classList.contains('open')?close():open();});
+  document.addEventListener('click',function(e){if(!jump.contains(e.target))close();},true);
+  /* Floating back-to-top — mobile only, appears after scrolling */
+  var topBtn=document.createElement('button');
+  topBtn.type='button'; topBtn.className='hub-top'; topBtn.setAttribute('aria-label','Back to top'); topBtn.textContent='↑';
+  document.body.appendChild(topBtn);
+  topBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  window.addEventListener('scroll',function(){topBtn.classList.toggle('show',window.scrollY>400);},{passive:true});
+})();
+</script>
+
+<script>
+/* Guide cross-links — turn any destination card with a matching city guide into a link.
+   GUIDES map is generated from the Guides/ folder; keys are accent-stripped lowercase
+   city names, values are paths relative to Trip Essentials/ (depth-1). */
+(function(){
+  var GUIDES={"abu dhabi":"../Guides/Abu%20Dhabi/abu_dhabi_v1.html","aix-en-provence":"../Guides/Aix-en-Provence/aix-en-provence_v1.html","alaska":"../Guides/Alaska/alaska_v1.html","alesund":"../Guides/Alesund/alesund_v1.html","amalfi":"../Guides/Amalfi/amalfi_v1.html","amsterdam":"../Guides/Amsterdam/amsterdam_v1.html","annecy":"../Guides/Annecy/annecy_v1.html","aruba":"../Guides/Aruba/aruba_v1.html","athens":"../Guides/Athens/athens_v1.html","atlanta":"../Guides/Atlanta/atlanta_v1.html","austin":"../Guides/Austin/austin_v1.html","azores":"../Guides/Azores/guide_v1.html","bahamas":"../Guides/Bahamas/bahamas_v1.html","bali":"../Guides/Bali/bali_v1.html","bangkok":"../Guides/Bangkok/bangkok_v1.html","barbados":"../Guides/Barbados/barbados_v1.html","barcelona":"../Guides/Barcelona/barcelona_v1.html","beijing":"../Guides/Beijing/beijing_v1.html","bend":"../Guides/Bend/bend_v2.html","bergen":"../Guides/Bergen/bergen_v1.html","berlin":"../Guides/Berlin/berlin_v1.html","big island":"../Guides/Big%20Island/big_island_v1.html","bologna":"../Guides/Bologna/bologna_v1.html","bordeaux":"../Guides/Bordeaux/bordeaux_v1.html","boston":"../Guides/Boston/boston_v1.html","bruges":"../Guides/Bruges/bruges_v1.html","brussels":"../Guides/Brussels/brussels_v1.html","budapest":"../Guides/Budapest/budapest_v1.html","buenos aires":"../Guides/Buenos%20Aires/buenos_aires_v1.html","cambridge":"../Guides/Cambridge/cambridge_v1.html","cannes":"../Guides/Cannes/cannes_v1.html","capri":"../Guides/Capri/capri_v1.html","cascais":"../Guides/Cascais/cascais_v2.html","cayman islands":"../Guides/Cayman%20Islands/cayman_islands_v1.html","chicago":"../Guides/Chicago/chicago_v1.html","chongqing":"../Guides/Chongqing/chongqing_v1.html","cinque terre":"../Guides/Cinque%20Terre/cinque_terre_v1.html","colmar":"../Guides/Colmar/colmar_v1.html","copenhagen":"../Guides/Copenhagen/copenhagen_v1.html","corfu":"../Guides/Corfu/corfu_v1.html","curacao":"../Guides/Curacao/curacao_v1.html","cusco":"../Guides/Cusco/cusco_v1.html","dubai":"../Guides/Dubai/dubai_v1.html","dublin":"../Guides/Dublin/dublin_v1.html","dubrovnik":"../Guides/Dubrovnik/guide_v1.html","edinburgh":"../Guides/Edinburgh/edinburgh_v1.html","florence":"../Guides/Florence/florence_v1.html","geneva":"../Guides/Geneva/geneva_v1.html","glasgow":"../Guides/Glasgow/glasgow_v1.html","gothenburg":"../Guides/Gothenburg/gothenburg_v1.html","helsinki":"../Guides/Helsinki/helsinki_v1.html","hong kong":"../Guides/Hong%20Kong/hong_kong_v1.html","iceland":"../Guides/Iceland/reykjavik_v2.html","istanbul":"../Guides/Istanbul/istanbul_v1.html","kauai":"../Guides/Kauai/kauai_v1.html","kyoto":"../Guides/Kyoto/kyoto_v1.html","lagos":"../Guides/Lagos/lagos_v1.html","lake como":"../Guides/Lake%20Como/lake_como_v1.html","lille":"../Guides/Lille/lille_v1.html","lima":"../Guides/Lima/lima_v1.html","lisbon":"../Guides/Lisbon/lisbon_v4.html","ljubljana":"../Guides/Ljubljana/ljubljana_v1.html","london":"../Guides/London/london_v5.html","los angeles":"../Guides/Los%20Angeles/los_angeles_v1.html","lucerne":"../Guides/Lucerne/lucerne_v1.html","luxembourg":"../Guides/Luxembourg/luxembourg_v1.html","lyon":"../Guides/Lyon/lyon_v1.html","machupicchu":"../Guides/MachuPicchu/machupicchu_v1.html","madeira":"../Guides/Madeira/madeira_v1.html","madrid":"../Guides/Madrid/madrid_v1.html","marktoberdorf":"../Guides/Marktoberdorf/marktoberdorf_v1.html","marrakech":"../Guides/Marrakech/marrakech_v1.html","marseille":"../Guides/Marseille/marseille_v1.html","maui":"../Guides/Maui/maui_v1.html","melbourne":"../Guides/Melbourne/melbourne_v1.html","miami":"../Guides/Miami/miami_v1.html","milan":"../Guides/Milan/milan_v1.html","monaco":"../Guides/Monaco/monaco_v1.html","montevideo":"../Guides/Montevideo/montevideo_v1.html","montreal":"../Guides/Montreal/montreal_v1.html","munich":"../Guides/Munich/munich_v2.html","naples":"../Guides/Naples/naples_v1.html","new york":"../Guides/New%20York/new_york_v1.html","nice":"../Guides/Nice/nice_v1.html","oahu":"../Guides/Oahu/oahu_v1.html","orlando":"../Guides/Orlando/orlando_v1.html","oslo":"../Guides/Oslo/oslo_v1.html","oxford":"../Guides/Oxford/oxford_v1.html","palm desert":"../Guides/Palm%20Desert/palm_desert_v1.html","palo alto":"../Guides/Palo%20Alto/palo_alto_v6.html","paris":"../Guides/Paris/paris_v7.html","pasadena":"../Guides/Pasadena/pasadena_v5.html","phuket":"../Guides/Phuket/phuket_v1.html","pisa":"../Guides/Pisa/pisa_v1.html","porto":"../Guides/Porto/porto_v2.html","prague":"../Guides/Prague/prague_v1.html","puerto rico":"../Guides/Puerto%20Rico/puerto_rico_v1.html","quebec city":"../Guides/Quebec%20City/quebec_city_v1.html","queenstown":"../Guides/Queenstown/queenstown_v1.html","rio de janeiro":"../Guides/Rio%20de%20Janeiro/rio_de_janeiro_v1.html","rome":"../Guides/Rome/rome_v1.html","salzburg":"../Guides/Salzburg/salzburg_v1.html","san diego":"../Guides/San%20Diego/san_diego_v1.html","san francisco":"../Guides/San%20Francisco/sf_v3.html","san sebastian":"../Guides/San%20Sebastian/san_sebastian_v1.html","santiago":"../Guides/Santiago/santiago_v1.html","scottsdale":"../Guides/Scottsdale/scottsdale_v1.html","seattle":"../Guides/Seattle/seattle_v1.html","seoul":"../Guides/Seoul/seoul_v1.html","seville":"../Guides/Seville/seville_v1.html","shanghai":"../Guides/Shanghai/shanghai_v1.html","siena":"../Guides/Siena/siena_v1.html","singapore":"../Guides/Singapore/singapore_v3.html","sint maarten":"../Guides/Sint%20Maarten/sint_maarten_v1.html","sintra":"../Guides/Sintra/sintra_v2.html","sorrento":"../Guides/Sorrento/sorrento_v1.html","split":"../Guides/Split/split_v1.html","stockholm":"../Guides/Stockholm/stockholm_v1.html","strasbourg":"../Guides/Strasbourg/strasbourg_v1.html","stuttgart":"../Guides/Stuttgart/stuttgart_v1.html","sydney":"../Guides/Sydney/sydney_v2.html","taipei":"../Guides/Taipei/taipei_v1.html","tallinn":"../Guides/Tallinn/tallinn_v1.html","tokyo":"../Guides/Tokyo/tokyo_v1.html","toledo":"../Guides/Toledo/toledo_v1.html","toronto":"../Guides/Toronto/toronto_v1.html","tromso":"../Guides/Tromso/tromso_v1.html","turin":"../Guides/Turin/turin_v14.html","united arab emirates":"../Guides/United%20Arab%20Emirates/united_arab_emirates_v1.html","vancouver":"../Guides/Vancouver/vancouver_v1.html","venice":"../Guides/Venice/venice_v1.html","verona":"../Guides/Verona/verona_v1.html","vienna":"../Guides/Vienna/vienna_v1.html","virgin islands":"../Guides/Virgin%20Islands/virgin_islands_v1.html","wellington":"../Guides/Wellington/wellington_v1.html","zhangjiajie":"../Guides/Zhangjiajie/zhangjiajie_v1.html","zurich":"../Guides/Zurich/zurich_v1.html"};
+  function norm(s){return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();}
+  var keys=Object.keys(GUIDES).sort(function(a,b){return b.length-a.length;});
+  function findGuide(city){
+    var c=norm(city);
+    if(GUIDES[c])return GUIDES[c];
+    for(var i=0;i<keys.length;i++){var k=keys[i];if(c===k||c.indexOf(k+' ')===0)return GUIDES[k];}
+    return null;
+  }
+  document.querySelectorAll('.dest-card,.us-card').forEach(function(card){
+    var el=card.querySelector('.dest-city,.us-city');if(!el)return;
+    var href=findGuide(el.textContent);if(!href)return;
+    card.classList.add('has-guide');
+    var a=document.createElement('a');
+    a.className='guide-link';a.href=href;a.textContent='📖 Guide';
+    a.setAttribute('aria-label','Open the '+el.textContent.trim()+' guide');
+    card.appendChild(a);
+    card.addEventListener('click',function(e){if(e.target.closest('a'))return;window.location.href=href;});
+  });
+})();
+</script>
+
+<script>
+/* Nonstop flight time from SEA — applied only to tier-0 (nonstop) cards by IATA code.
+   Approximate scheduled block times; westbound/eastbound vary ~30–60 min. */
+(function(){
+  var FT={AMS:'~10h',BCN:'~10½h',LHR:'~9½h',CDG:'~10h',FCO:'~11h',
+          ICN:'~11h',PVG:'~12h',TPE:'~12½h',HND:'~10½h',YVR:'~45m'};
+  document.querySelectorAll('.dest-card.t0').forEach(function(card){
+    var codeEl=card.querySelector('.dest-code');if(!codeEl)return;
+    var code=(codeEl.textContent.trim().split(/[^A-Za-z]/)[0]||'').toUpperCase();
+    if(!FT[code])return;
+    var d=document.createElement('div');
+    d.className='flt';d.textContent='⏱ '+FT[code]+' nonstop';
+    var meta=card.querySelector('.dest-meta');
+    if(meta&&meta.nextSibling)meta.parentNode.insertBefore(d,meta.nextSibling);
+    else card.appendChild(d);
+  });
+})();
+</script>
+
+<script>
+/* Scroll-spy — highlight the route-nav link for the region currently in view. */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('#route-nav .nav-link'));
+  if(!links.length||!('IntersectionObserver' in window))return;
+  var map={};
+  links.forEach(function(a){var id=(a.getAttribute('href')||'').slice(1);if(id)map[id]=a;});
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        links.forEach(function(a){a.classList.toggle('active',a===map[en.target.id]);});
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px',threshold:0});
+  Object.keys(map).forEach(function(id){var s=document.getElementById(id);if(s)obs.observe(s);});
+})();
+</script>
+
+</body>
+</html>

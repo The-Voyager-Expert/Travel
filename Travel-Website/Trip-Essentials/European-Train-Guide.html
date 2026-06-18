@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>European Train Guide</title>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: #d8d4cc;
+    --border2: #e6e2da;
+    --accent: #8a6c1a;
+    --accent2: #2563eb;
+    --text: #1a1917;
+    --muted: #6a6660;
+    --tag-bg: #f0ede8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+    font-size: var(--fs-body,14px);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* WRAP */
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+  /* HEADER - matches other Trip Essentials pages */
+  .header {
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  padding: 14px 18px;
+  border-radius: 10px;
+  border-bottom: none;
+  margin: 8px 0 14px;
+}
+  .header h1 {
+  font-size: var(--fs-title,14px);
+  font-weight: bold;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+  /* BOOKING AGGREGATORS SECTION */
+  .aggregators-section {
+    background: transparent;
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0 20px;
+    margin-bottom: 0;
+  }
+  .agg-inner { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+  .agg-title {
+    font-size: var(--fs-sub,12px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .agg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+    gap: 10px;
+  }
+  .agg-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 12px 14px;
+    text-decoration: none;
+    transition: box-shadow .18s, transform .18s, border-color .15s;
+    display: block;
+  }
+  .agg-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(138,108,26,0.10);
+  }
+  .agg-name { font-weight: 600; color: var(--text); font-size: var(--fs-body,14px); margin-bottom: 3px; }
+  .agg-desc { font-size: var(--fs-body,14px); color: var(--muted); line-height: 1.4; }
+  .agg-link { display: inline-block; margin-top: 5px; font-family: monospace; font-size: var(--fs-body,14px); color: var(--accent); text-decoration: none; }
+
+  /* FILTERS */
+  .controls {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label {
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: var(--fs-sub,12px);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+    color: #ffffff;
+    border-color: #b85c2a;
+    font-weight: 600;
+  }
+
+  /* MAIN CONTENT */
+  main { padding: 20px 24px 32px; max-width: 940px; margin: 0 auto; }
+
+  /* COUNTRY SECTION */
+  .country-section { margin-bottom: 20px; margin-top: 24px; }
+  .country-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  .country-flag { font-size: 22px; line-height: 1; }
+  .country-name { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .country-count {
+    font-size: var(--fs-sub,12px);
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin-left: auto;
+  }
+
+  /* TRAIN CARDS */
+  .trains-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; align-items: stretch; }
+  .train-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    transition: box-shadow .18s, transform .18s, border-color .15s;
+  }
+  .train-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(138,108,26,0.10); transform: translateY(-1px); }
+  .train-card.hidden { display: none; }
+
+  .card-top {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface2);
+  }
+  .train-meta { flex: 1; min-width: 0; }
+  .train-name { font-size: var(--fs-body,14px); font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 3px; }
+  .train-operator { font-size: var(--fs-body,14px); color: var(--muted); font-family: monospace; letter-spacing: 0.3px; }
+
+  .type-badge {
+    flex-shrink: 0;
+    font-size: var(--fs-sub,12px);
+    font-family: monospace;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+  .type-highspeed { background: rgba(37,99,235,0.08); color: #1d4ed8; border: 1px solid rgba(37,99,235,0.22); }
+  .type-night     { background: rgba(124,58,237,0.08); color: #6d28d9; border: 1px solid rgba(124,58,237,0.22); }
+  .type-intercity { background: rgba(138,108,26,0.10); color: #7a5c10; border: 1px solid rgba(138,108,26,0.25); }
+  .type-regional  { background: rgba(5,150,105,0.08);  color: #065f46; border: 1px solid rgba(5,150,105,0.22); }
+  .type-private   { background: rgba(220,38,38,0.08);  color: #991b1b; border: 1px solid rgba(220,38,38,0.22); }
+  .type-pass      { background: rgba(234,88,12,0.08);  color: #9a3412; border: 1px solid rgba(234,88,12,0.22); }
+
+  .card-body { padding: 14px 18px; flex: 1; display: flex; flex-direction: column; }
+  .info-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-start; }
+  .info-icon { font-size: var(--fs-sub,12px); flex-shrink: 0; margin-top: 1px; width: 18px; text-align: center; }
+  .info-content { flex: 1; font-size: var(--fs-body,14px); color: var(--text); }
+  .info-label {
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: monospace;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .country-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .ctag {
+    font-size: var(--fs-sub,12px);
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 2px 7px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .ctag.origin { border-color: rgba(138,108,26,0.45); background: rgba(138,108,26,0.07); color: #7a5c10; }
+  .ctag.cross  { border-color: rgba(37,99,235,0.25);  background: rgba(37,99,235,0.05);  color: #1d4ed8; }
+
+  .routes-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+  .route-item { font-size: var(--fs-body,14px); color: var(--muted); display: flex; align-items: center; gap: 5px; }
+  .route-item::before { content: '↔'; color: var(--border); flex-shrink: 0; }
+
+  .booking-section { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
+  .booking-label {
+    font-size: var(--fs-sub,12px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: monospace;
+    margin-bottom: 7px;
+    display: block;
+  }
+  .booking-links { display: flex; flex-wrap: wrap; gap: 6px; }
+  .book-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    font-size: var(--fs-sub,12px);
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: all 0.15s;
+    border: 1px solid;
+  }
+  .book-link.primary   { background: rgba(37,99,235,0.07); color: #1d4ed8; border-color: rgba(37,99,235,0.25); }
+  .book-link.primary:hover { background: #2563eb; color: #fff; }
+  .book-link.secondary { background: var(--surface2); color: var(--muted); border-color: var(--border); }
+  .book-link.secondary:hover { color: var(--text); border-color: var(--muted); }
+
+  .section-divider { display: flex; align-items: center; gap: 16px; margin: 12px 0 8px; }
+  .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+  .section-divider-text { font-family: monospace; font-size: var(--fs-sub,12px); letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+
+  .multi-section { margin-bottom: 16px; }
+  .multi-header { font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+  .multi-sub { color: var(--muted); font-size: var(--fs-sub,12px); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sub,12px); color: var(--muted); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* hide inline footer and toolbar.js injected footnote */
+  footer, .tb-footnote { display: none !important; }
+  .country-section.all-hidden { display: none; }
+
+  /* uniform gutter */
+  body { padding-left: 20px !important; padding-right: 20px !important; }
+
+
+  @media (max-width: 600px) {
+  #train-search { max-width:100%; }
+    /* body already supplies a 20px side gutter — drop main's extra 24px so the
+       single-column cards fill the width instead of a narrow 301px ribbon */
+    main { padding-left: 0; padding-right: 0; }
+    .trains-grid { grid-template-columns: 1fr; }
+    /* Compact the route cards on phones — tighter padding, gaps, and fonts so
+       the long single-column list scrolls less (~27% shorter than the original). */
+    .trains-grid { gap: 9px; }
+    .card-top { padding: 8px 12px 7px; gap: 8px; }
+    .train-name { font-size: 13px; margin-bottom: 2px; }
+    .train-operator { font-size: var(--fs-sub,12px); }
+    .type-badge { font-size: var(--fs-label,11px); padding: 1px 6px; }
+    .card-body { padding: 9px 12px; }
+    .info-row { margin-bottom: 5px; gap: 7px; }
+    .info-icon { margin-top: 0; }
+    .info-label { margin-bottom: 1px; font-size: var(--fs-label,11px); }
+    .info-content { font-size: 13px; }
+    .country-tags { gap: 4px; margin-top: 3px; }
+    .ctag { font-size: var(--fs-label,11px); padding: 1px 6px; }
+    .routes-list { gap: 3px; margin-top: 3px; }
+    .route-item { font-size: 13px; }
+    .agg-grid { grid-template-columns: repeat(2, 1fr); }
+    .controls { padding: 8px 14px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, black calc(100% - 36px), transparent 100%); mask-image: linear-gradient(to right, black calc(100% - 36px), transparent 100%); }
+    .controls::-webkit-scrollbar { display: none; }
+    .filter-btn { flex-shrink: 0; }
+  }
+  #train-search{width:200px;box-sizing:border-box;padding:6px 12px;margin:0 0 10px;font-size:13px;border:1.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;}
+  #train-search:focus{border-color:#B8860B;box-shadow:0 0 0 3px rgba(184,134,11,.12);}
+  #train-search::placeholder{color:#A8895A;}
+  #train-noresult{display:none;padding:8px 4px;font-size:13px;color:#7A5C2E;}
+  .train-count{font-size:13px;color:#7A5C2E;margin-left:8px;white-space:nowrap;}
+  /* country jump nav */
+  .jump-nav{max-width:940px;margin:0 auto 4px;padding:0 24px 6px;display:flex;flex-wrap:wrap;gap:6px;}
+  .jump-btn{font-size:var(--fs-sub,12px);color:#3d3a32;text-decoration:none;padding:4px 11px;border:1px solid var(--border);border-radius:20px;background:var(--surface2);white-space:nowrap;cursor:pointer;transition:all .15s;}
+  .jump-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(138,108,26,0.07);}
+  .jump-btn.active{border-color:#b85c2a;color:#fff;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);font-weight:600;}
+  .jump-btn:focus-visible{outline:2px solid #B8860B;outline-offset:1px;}
+  .country-section{scroll-margin-top:16px;}
+  .multi-section{scroll-margin-top:16px;}
+  @media (max-width:600px){
+    .jump-nav{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 14px 6px;-webkit-mask-image:linear-gradient(to right,black calc(100% - 36px),transparent 100%);mask-image:linear-gradient(to right,black calc(100% - 36px),transparent 100%);}
+    .jump-nav::-webkit-scrollbar{display:none;}
+    .jump-btn{flex-shrink:0;}
+  }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=27"></script>
+
+<div class="wrap">
+  <div class="header">
+    <h1>European Train Guide</h1>
+  </div>
+  <span class="updated-stamp">Updated May 2026</span>
+  <input id="train-search" type="search" placeholder="🔍" aria-label="Search by operator, country, or route" autocomplete="off" spellcheck="false">
+  <span id="train-count" class="train-count" aria-live="polite"></span>
+  <div id="train-noresult">No operators match that search.</div>
+</div>
+
+
+<!-- FILTERS -->
+<div class="controls">
+  <span class="filter-label">Filter by type:</span>
+  <button class="filter-btn active" onclick="filterCards('all',this)">All</button>
+  <button class="filter-btn" onclick="filterCards('high-speed',this)">🚄 High-Speed</button>
+  <button class="filter-btn" onclick="filterCards('night',this)">🌙 Night Train</button>
+  <button class="filter-btn" onclick="filterCards('intercity',this)">🚆 Intercity</button>
+  <button class="filter-btn" onclick="filterCards('regional',this)">🚊 Regional</button>
+  <button class="filter-btn" onclick="filterCards('private',this)">⚡ Private Operator</button>
+  <button class="filter-btn" onclick="filterCards('pass',this)">🎫 Rail Pass</button>
+</div>
+
+<!-- COUNTRY JUMP NAV (built by script) -->
+<nav class="jump-nav" id="jump-nav" aria-label="Jump to country"></nav>
+
+<main>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#92400e"></div> Gold tag = Origin country</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div> Blue tag = Countries crossed/served</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6a6660"></div> Grey tag = Additional stops</div>
+  </div>
+
+  <!-- ===== MULTI-COUNTRY / INTERNATIONAL ===== -->
+  <div class="multi-section">
+    <div class="multi-header">Multi-Country & International Operators</div>
+    <p class="multi-sub">Operators whose primary identity spans multiple countries</p>
+
+    <div class="trains-grid">
+
+      <!-- Eurostar (inc Thalys) -->
+      <div class="train-card" data-type="high-speed">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 Eurostar (+ former Thalys)</div>
+            <div class="train-operator">EUROSTAR GROUP · merged Oct 2023</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 High-Speed</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin / Hub</span>
+              <div class="country-tags">
+                <span class="ctag origin">🇬🇧 UK</span>
+                <span class="ctag origin">🇧🇪 Belgium</span>
+                <span class="ctag origin">🇫🇷 France</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Crossed & Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇳🇱 Netherlands</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes (Channel)</span>
+              <div class="routes-list">
+                <div class="route-item">London ↔ Paris (via Channel Tunnel)</div>
+                <div class="route-item">London ↔ Brussels</div>
+                <div class="route-item">London ↔ Amsterdam</div>
+              </div>
+              <span class="info-label" style="margin-top:8px">Key Routes (Continental / ex-Thalys)</span>
+              <div class="routes-list">
+                <div class="route-item">Paris ↔ Amsterdam (via Brussels, Rotterdam)</div>
+                <div class="route-item">Paris ↔ Cologne / Dortmund (via Brussels, Aachen)</div>
+                <div class="route-item">Brussels ↔ Amsterdam</div>
+                <div class="route-item">Seasonal: Paris / Brussels → French Alps (Eurostar Snow)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.eurostar.com" target="_blank" class="book-link primary">🎫 eurostar.com</a>
+              <a href="https://www.sncf-connect.com" target="_blank" class="book-link secondary">SNCF Connect</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.trainline.com" target="_blank" class="book-link secondary">Trainline</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+              <a href="https://www.nsinternational.com" target="_blank" class="book-link secondary">NS Intl</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nightjet ÖBB -->
+      <div class="train-card" data-type="night">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🌙 Nightjet</div>
+            <div class="train-operator">ÖBB (Austrian Federal Railways)</div>
+          </div>
+          <span class="type-badge type-night">🌙 Night Train</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin / Hub</span>
+              <div class="country-tags">
+                <span class="ctag origin">🇦🇹 Austria</span>
+                <span class="ctag origin">🇩🇪 Germany</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Crossed & Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇮🇹 Italy</span>
+                <span class="ctag cross">🇨🇭 Switzerland</span>
+                <span class="ctag cross">🇧🇪 Belgium</span>
+                <span class="ctag cross">🇳🇱 Netherlands</span>
+                <span class="ctag cross">🇵🇱 Poland</span>
+                <span class="ctag cross">🇨🇿 Czech Republic</span>
+                <span class="ctag cross">🇭🇺 Hungary</span>
+                <span class="ctag cross">🇸🇮 Slovenia</span>
+                <span class="ctag cross">🇭🇷 Croatia</span>
+                <span class="ctag cross">🇸🇰 Slovakia</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes (2025–2026)</span>
+              <div class="routes-list">
+                <div class="route-item">Vienna ↔ Hamburg / Amsterdam</div>
+                <div class="route-item">Vienna ↔ Zurich</div>
+                <div class="route-item">Vienna ↔ Venice / Rome / Milan</div>
+                <div class="route-item">Munich ↔ Rome / Venice</div>
+                <div class="route-item">Hamburg ↔ Zurich</div>
+                <div class="route-item">Brussels ↔ Vienna</div>
+                <div class="route-item">Berlin ↔ Vienna (EuroNight)</div>
+                <div class="route-item" style="color:#dc2626">⚠ Paris routes discontinued Dec 2025</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.nightjet.com" target="_blank" class="book-link primary">🎫 nightjet.com</a>
+              <a href="https://www.oebb.at" target="_blank" class="book-link primary">oebb.at</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+              <a href="https://www.interrail.eu" target="_blank" class="book-link secondary">Interrail</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- European Sleeper -->
+      <div class="train-card" data-type="night private">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">⚡ European Sleeper</div>
+            <div class="train-operator">Private · Brussels-based startup</div>
+          </div>
+          <span class="type-badge type-private">⚡ Private · Night</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags">
+                <span class="ctag origin">🇳🇱 Netherlands</span>
+                <span class="ctag origin">🇧🇪 Belgium</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇪🇸 Spain (planned)</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Current & Planned Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Brussels / Amsterdam ↔ Berlin (active)</div>
+                <div class="route-item">Paris ↔ Berlin via Brussels (from Mar 2026)</div>
+                <div class="route-item">Netherlands → Barcelona (delayed to 2027)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.europeansleeper.eu" target="_blank" class="book-link primary">🎫 europeansleeper.eu</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eurail / Interrail passes -->
+      <div class="train-card" data-type="pass">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🎫 Eurail / Interrail Pass</div>
+            <div class="train-operator">Not an operator — multi-country rail pass</div>
+          </div>
+          <span class="type-badge type-pass">🎫 Rail Pass</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon"></div>
+            <div class="info-content">
+              <span class="info-label">Coverage</span>
+              <div class="country-tags">
+                <span class="ctag cross">33 European countries</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">ℹ</div>
+            <div class="info-content">
+              <span class="info-label">How It Works</span>
+              Valid on most national railways across Europe. <strong>Eurail</strong> for non-EU residents; <strong>Interrail</strong> for EU/EEA residents. Reservations often required separately (especially high-speed + night trains).
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Passes</span>
+            <div class="booking-links">
+              <a href="https://www.eurail.com" target="_blank" class="book-link primary">🎫 eurail.com</a>
+              <a href="https://www.interrail.eu" target="_blank" class="book-link primary">interrail.eu</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+              <a href="https://www.thetrainline.com" target="_blank" class="book-link secondary">Trainline</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /trains-grid multi -->
+  </div><!-- /multi-section -->
+
+  <div class="section-divider"><hr><span class="section-divider-text">National Operators by Country</span><hr></div>
+
+  <!-- ===== FRANCE ===== -->
+  <div class="country-section" data-country="france">
+    <div class="country-header">
+      <div class="country-flag">🇫🇷</div>
+      <div class="country-name">France</div>
+      <div class="country-count">3 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <!-- SNCF TGV -->
+      <div class="train-card" data-type="high-speed">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 TGV / inOui</div>
+            <div class="train-operator">SNCF (Société Nationale des Chemins de Fer)</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 High-Speed</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇫🇷 France</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">International Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇧🇪 Belgium</span>
+                <span class="ctag cross">🇱🇺 Luxembourg</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇨🇭 Switzerland</span>
+                <span class="ctag cross">🇮🇹 Italy</span>
+                <span class="ctag cross">🇪🇸 Spain (joint)</span>
+                <span class="ctag cross">🇬🇧 UK (via Eurostar)</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Paris ↔ Lyon ↔ Marseille ↔ Nice</div>
+                <div class="route-item">Paris ↔ Bordeaux ↔ Toulouse</div>
+                <div class="route-item">Paris ↔ Nantes / Rennes / Brest</div>
+                <div class="route-item">Paris ↔ Strasbourg ↔ Frankfurt / Stuttgart</div>
+                <div class="route-item">Paris ↔ Geneva / Zurich / Basel</div>
+                <div class="route-item">Paris ↔ Milan (joint with Trenitalia)</div>
+                <div class="route-item">Paris ↔ Barcelona (joint with Renfe)</div>
+                <div class="route-item">Paris ↔ Brussels ↔ Amsterdam</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.sncf-connect.com" target="_blank" class="book-link primary">🎫 sncf-connect.com</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.thetrainline.com" target="_blank" class="book-link secondary">Trainline</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUIGO -->
+      <div class="train-card" data-type="high-speed">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 OUIGO</div>
+            <div class="train-operator">SNCF · Low-cost high-speed</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 Low-Cost HS</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇫🇷 France</span><span class="ctag origin">🇪🇸 Spain</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇧🇪 Belgium</span>
+                <span class="ctag cross">🇪🇸 Spain (OUIGO España)</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Paris → Lyon / Marseille / Montpellier (France domestic)</div>
+                <div class="route-item">Brussels ↔ Paris (from Dec 2024)</div>
+                <div class="route-item">Madrid ↔ Barcelona ↔ Valencia (OUIGO España)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.ouigo.com" target="_blank" class="book-link primary">🎫 ouigo.com</a>
+              <a href="https://www.ouigo.es" target="_blank" class="book-link primary">ouigo.es (Spain)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intercités de Nuit -->
+      <div class="train-card" data-type="night">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🌙 Intercités de Nuit</div>
+            <div class="train-operator">SNCF · Domestic night trains</div>
+          </div>
+          <span class="type-badge type-night">🌙 Night Train</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Domestic Only (France)</span>
+              <div class="country-tags"><span class="ctag origin">🇫🇷 France</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Paris ↔ Nice / Toulouse / Briançon</div>
+                <div class="route-item">Paris ↔ Hendaye (Basque coast)</div>
+                <div class="route-item">Paris ↔ Millau / Rodez / Béziers / Cerbère</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.sncf-connect.com" target="_blank" class="book-link primary">🎫 sncf-connect.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== GERMANY ===== -->
+  <div class="country-section" data-country="germany">
+    <div class="country-header">
+      <div class="country-flag">🇩🇪</div>
+      <div class="country-name">Germany</div>
+      <div class="country-count">2 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="high-speed intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 Deutsche Bahn (ICE / IC / EC)</div>
+            <div class="train-operator">DB · Germany's national railway</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 High-Speed + IC</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇩🇪 Germany</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">International Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇨🇭 Switzerland</span>
+                <span class="ctag cross">🇦🇹 Austria</span>
+                <span class="ctag cross">🇧🇪 Belgium</span>
+                <span class="ctag cross">🇳🇱 Netherlands</span>
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇩🇰 Denmark</span>
+                <span class="ctag cross">🇨🇿 Czech Republic</span>
+                <span class="ctag cross">🇵🇱 Poland</span>
+                <span class="ctag cross">🇭🇺 Hungary</span>
+                <span class="ctag cross">🇦🇹 Austria</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Frankfurt ↔ Hamburg / Berlin / Munich / Cologne</div>
+                <div class="route-item">Berlin ↔ Hamburg / Munich / Frankfurt</div>
+                <div class="route-item">Frankfurt ↔ Paris (joint with SNCF)</div>
+                <div class="route-item">Frankfurt ↔ Brussels (ICE)</div>
+                <div class="route-item">Frankfurt ↔ Amsterdam</div>
+                <div class="route-item">Frankfurt ↔ Basel / Zurich</div>
+                <div class="route-item">Munich ↔ Vienna / Salzburg (Railjet joint)</div>
+                <div class="route-item">Hamburg ↔ Copenhagen (EuroCity)</div>
+                <div class="route-item">Berlin ↔ Prague (EuroCity)</div>
+                <div class="route-item">Paris ↔ Munich (new 2026, joint DB/SNCF)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.bahn.de" target="_blank" class="book-link primary">🎫 bahn.de</a>
+              <a href="https://www.bahn.com" target="_blank" class="book-link primary">bahn.com (English)</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.thetrainline.com" target="_blank" class="book-link secondary">Trainline</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="regional private">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">⚡ FlixTrain</div>
+            <div class="train-operator">Flix SE · Private low-cost</div>
+          </div>
+          <span class="type-badge type-private">⚡ Private</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin / Hub</span>
+              <div class="country-tags"><span class="ctag origin">🇩🇪 Germany</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇸🇪 Sweden</span>
+                <span class="ctag cross">🇩🇰 Denmark</span>
+                <span class="ctag cross">🇳🇱 Netherlands</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Berlin ↔ Hamburg / Cologne / Munich</div>
+                <div class="route-item">Hamburg ↔ Cologne / Munich</div>
+                <div class="route-item">Berlin ↔ Stockholm (via Denmark)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.flixtrain.com" target="_blank" class="book-link primary">🎫 flixtrain.com</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== SPAIN ===== -->
+  <div class="country-section" data-country="spain">
+    <div class="country-header">
+      <div class="country-flag">🇪🇸</div>
+      <div class="country-name">Spain</div>
+      <div class="country-count">2 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="high-speed intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 Renfe (AVE / Avant / MD)</div>
+            <div class="train-operator">Renfe Operadora · Spain's national rail</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 High-Speed + IC</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇪🇸 Spain</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">International Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇵🇹 Portugal</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Madrid ↔ Barcelona (AVE, ~2h 30m)</div>
+                <div class="route-item">Madrid ↔ Seville / Málaga / Valencia</div>
+                <div class="route-item">Barcelona ↔ Paris (joint with SNCF TGV)</div>
+                <div class="route-item">Barcelona ↔ Lyon / Toulouse</div>
+                <div class="route-item">Madrid ↔ Marseille</div>
+                <div class="route-item">Vigo / Porto Lisbon corridor (cross-border)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.renfe.com" target="_blank" class="book-link primary">🎫 renfe.com</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.thetrainline.com" target="_blank" class="book-link secondary">Trainline</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="high-speed private">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">⚡ Iryo</div>
+            <div class="train-operator">Trenitalia + Air Nostrum · Private HS</div>
+          </div>
+          <span class="type-badge type-private">⚡ Private HS</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Domestic Spain Only</span>
+              <div class="country-tags"><span class="ctag origin">🇪🇸 Spain</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Madrid ↔ Barcelona ↔ Valencia</div>
+                <div class="route-item">Madrid ↔ Seville / Málaga / Zaragoza / Alicante</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.iryo.eu" target="_blank" class="book-link primary">🎫 iryo.eu</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ITALY ===== -->
+  <div class="country-section" data-country="italy">
+    <div class="country-header">
+      <div class="country-flag">🇮🇹</div>
+      <div class="country-name">Italy</div>
+      <div class="country-count">2 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="high-speed intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 Trenitalia (Le Frecce / IC)</div>
+            <div class="train-operator">Trenitalia · Italy's national railway</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 High-Speed + IC</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇮🇹 Italy</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">International Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇨🇭 Switzerland</span>
+                <span class="ctag cross">🇦🇹 Austria</span>
+                <span class="ctag cross">🇸🇮 Slovenia</span>
+                <span class="ctag cross">🇭🇷 Croatia</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Turin ↔ Milan ↔ Florence ↔ Rome ↔ Naples (Frecciarossa)</div>
+                <div class="route-item">Venice ↔ Florence ↔ Rome ↔ Naples</div>
+                <div class="route-item">Milan ↔ Paris (Frecciarossa cross-border, 2 trains/day)</div>
+                <div class="route-item">Milan ↔ Lyon / Paris (joint TGV, reopened 2025 via Fréjus)</div>
+                <div class="route-item">Rome / Milan ↔ Zurich (EuroCity)</div>
+                <div class="route-item">Venice ↔ Vienna (EuroCity)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.trenitalia.com" target="_blank" class="book-link primary">🎫 trenitalia.com</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.thetrainline.com" target="_blank" class="book-link secondary">Trainline</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="high-speed private">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">⚡ Italo (NTV)</div>
+            <div class="train-operator">Nuovo Trasporto Viaggiatori · Private HS</div>
+          </div>
+          <span class="type-badge type-private">⚡ Private HS</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Domestic Italy Only</span>
+              <div class="country-tags"><span class="ctag origin">🇮🇹 Italy</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Turin ↔ Milan ↔ Florence ↔ Rome ↔ Naples ↔ Salerno</div>
+                <div class="route-item">Venice ↔ Padua ↔ Bologna ↔ Rome</div>
+                <div class="route-item">Milan ↔ Verona ↔ Venice</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.italotreno.com" target="_blank" class="book-link primary">🎫 italotreno.com</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== AUSTRIA / SWITZERLAND ===== -->
+  <div class="country-section" data-country="austria switzerland">
+    <div class="country-header">
+      <div class="country-flag">🇦🇹🇨🇭</div>
+      <div class="country-name">Austria & Switzerland</div>
+      <div class="country-count">2 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="high-speed intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 ÖBB Railjet</div>
+            <div class="train-operator">ÖBB · Austrian Federal Railways</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 High-Speed</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇦🇹 Austria</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇨🇭 Switzerland</span>
+                <span class="ctag cross">🇭🇺 Hungary</span>
+                <span class="ctag cross">🇨🇿 Czech Republic</span>
+                <span class="ctag cross">🇸🇰 Slovakia</span>
+                <span class="ctag cross">🇸🇮 Slovenia</span>
+                <span class="ctag cross">🇮🇹 Italy (seasonal)</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Vienna ↔ Salzburg ↔ Munich</div>
+                <div class="route-item">Vienna ↔ Budapest ↔ Bratislava</div>
+                <div class="route-item">Vienna ↔ Prague</div>
+                <div class="route-item">Vienna ↔ Zurich</div>
+                <div class="route-item">Vienna ↔ Ljubljana ↔ Zagreb</div>
+                <div class="route-item">Innsbruck ↔ Munich ↔ Frankfurt</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.oebb.at" target="_blank" class="book-link primary">🎫 oebb.at</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="high-speed intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 SBB (Swiss Federal Railways)</div>
+            <div class="train-operator">SBB CFF FFS · Switzerland's national rail</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 Intercity + HS</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇨🇭 Switzerland</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">International Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇮🇹 Italy</span>
+                <span class="ctag cross">🇦🇹 Austria</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Zurich ↔ Basel ↔ Geneva (domestic IC)</div>
+                <div class="route-item">Zurich ↔ Bern ↔ Lausanne</div>
+                <div class="route-item">Zurich ↔ Hamburg (Nightjet joint)</div>
+                <div class="route-item">Geneva ↔ Paris (TGV joint with SNCF)</div>
+                <div class="route-item">Basel ↔ Frankfurt ↔ Paris (EuroCity/ICE)</div>
+                <div class="route-item">Zurich ↔ Milan (EuroCity)</div>
+                <div class="route-item">Scenic: Glacier Express, Bernina Express</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.sbb.ch" target="_blank" class="book-link primary">🎫 sbb.ch</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+              <a href="https://www.raileurope.com" target="_blank" class="book-link secondary">Rail Europe</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== BENELUX ===== -->
+  <div class="country-section" data-country="netherlands belgium luxembourg">
+    <div class="country-header">
+      <div class="country-flag">🇳🇱🇧🇪🇱🇺</div>
+      <div class="country-name">Benelux</div>
+      <div class="country-count">3 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="intercity regional">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 NS International</div>
+            <div class="train-operator">Nederlandse Spoorwegen · Netherlands</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity + Intl</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇳🇱 Netherlands</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇧🇪 Belgium</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇬🇧 UK (via Eurostar)</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Amsterdam ↔ Brussels ↔ Paris (Eurostar)</div>
+                <div class="route-item">Amsterdam ↔ Cologne ↔ Frankfurt (ICE)</div>
+                <div class="route-item">Amsterdam ↔ London (via Eurostar)</div>
+                <div class="route-item">Amsterdam ↔ Berlin</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.nsinternational.com" target="_blank" class="book-link primary">🎫 nsinternational.com</a>
+              <a href="https://www.ns.nl" target="_blank" class="book-link secondary">ns.nl (domestic)</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 SNCB / NMBS</div>
+            <div class="train-operator">Belgian National Railway Company</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity + Intl</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇧🇪 Belgium</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇳🇱 Netherlands</span>
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇱🇺 Luxembourg</span>
+                <span class="ctag cross">🇬🇧 UK (via Eurostar)</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Brussels ↔ Amsterdam / Paris / London (Eurostar)</div>
+                <div class="route-item">Brussels ↔ Cologne / Frankfurt (Thalys/ICE)</div>
+                <div class="route-item">Brussels ↔ Luxembourg City</div>
+                <div class="route-item">Brussels ↔ Vienna (Nightjet)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.b-europe.com" target="_blank" class="book-link primary">🎫 b-europe.com</a>
+              <a href="https://www.belgiantrain.be" target="_blank" class="book-link secondary">belgiantrain.be</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="regional intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚊 CFL (Chemins de Fer Luxembourgeois)</div>
+            <div class="train-operator">Luxembourg National Railway</div>
+          </div>
+          <span class="type-badge type-regional">🚊 Regional + IC</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇱🇺 Luxembourg</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇧🇪 Belgium</span>
+                <span class="ctag cross">🇫🇷 France</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Luxembourg City ↔ Brussels</div>
+                <div class="route-item">Luxembourg City ↔ Metz / Paris</div>
+                <div class="route-item">Luxembourg City ↔ Trier / Koblenz</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.cfl.lu" target="_blank" class="book-link primary">🎫 cfl.lu</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== SCANDINAVIA ===== -->
+  <div class="country-section" data-country="sweden norway denmark finland">
+    <div class="country-header">
+      <div class="country-flag">🇸🇪🇳🇴🇩🇰🇫🇮</div>
+      <div class="country-name">Scandinavia</div>
+      <div class="country-count">4 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="high-speed intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚄 SJ (Swedish Railways)</div>
+            <div class="train-operator">Statens Järnvägar · Sweden</div>
+          </div>
+          <span class="type-badge type-highspeed">🚄 High-Speed + IC</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇸🇪 Sweden</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇳🇴 Norway</span>
+                <span class="ctag cross">🇩🇰 Denmark</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Stockholm ↔ Gothenburg ↔ Malmö</div>
+                <div class="route-item">Stockholm ↔ Oslo</div>
+                <div class="route-item">Stockholm ↔ Copenhagen</div>
+                <div class="route-item">Malmö ↔ Copenhagen (Øresund Bridge)</div>
+                <div class="route-item">Copenhagen ↔ Hamburg (via Denmark/Germany)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.sj.se" target="_blank" class="book-link primary">🎫 sj.se</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity night">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🌙 Snälltåget</div>
+            <div class="train-operator">Sweden · Private sleeper + seasonal</div>
+          </div>
+          <span class="type-badge type-night">🌙 Night + Private</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇸🇪 Sweden</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇩🇰 Denmark</span>
+                <span class="ctag cross">🇧🇪 Belgium</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Stockholm ↔ Hamburg (night, seasonal)</div>
+                <div class="route-item">Stockholm ↔ Berlin (via Copenhagen)</div>
+                <div class="route-item">Stockholm ↔ Malmö ↔ Copenhagen domestic legs</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.snalltaget.se" target="_blank" class="book-link primary">🎫 snalltaget.se</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 DSB (Danish State Railways)</div>
+            <div class="train-operator">Danske Statsbaner · Denmark</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇩🇰 Denmark</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇸🇪 Sweden</span>
+                <span class="ctag cross">🇩🇪 Germany</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Copenhagen ↔ Malmö (Øresund)</div>
+                <div class="route-item">Copenhagen ↔ Hamburg (joint DSB/DB)</div>
+                <div class="route-item">Copenhagen ↔ Odense ↔ Aarhus</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.dsb.dk" target="_blank" class="book-link primary">🎫 dsb.dk</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity regional">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 VR (Finnish Railways)</div>
+            <div class="train-operator">VR Group · Finland</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity + Night</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Domestic Finland</span>
+              <div class="country-tags"><span class="ctag origin">🇫🇮 Finland</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Helsinki ↔ Tampere ↔ Oulu ↔ Rovaniemi (Arctic)</div>
+                <div class="route-item">Helsinki ↔ Turku / Tampere / Jyväskylä</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.vr.fi" target="_blank" class="book-link primary">🎫 vr.fi</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== PORTUGAL ===== -->
+  <div class="country-section" data-country="portugal">
+    <div class="country-header">
+      <div class="country-flag">🇵🇹</div>
+      <div class="country-name">Portugal</div>
+      <div class="country-count">1 operator</div>
+    </div>
+    <div class="trains-grid">
+      <div class="train-card" data-type="intercity regional">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 CP (Comboios de Portugal)</div>
+            <div class="train-operator">Portugal's national railway</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity + Regional</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇵🇹 Portugal</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags"><span class="ctag cross">🇪🇸 Spain (cross-border trains)</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Lisbon (Oriente) ↔ Porto ↔ Braga</div>
+                <div class="route-item">Lisbon ↔ Faro (Algarve)</div>
+                <div class="route-item">Lisbon ↔ Évora / Beja</div>
+                <div class="route-item">Porto ↔ Vigo, Spain (Celta express)</div>
+                <div class="route-item">Lisbon ↔ Madrid (via Badajoz — very limited)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.cp.pt" target="_blank" class="book-link primary">🎫 cp.pt</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EASTERN EUROPE ===== -->
+  <div class="country-section" data-country="poland czech hungary slovakia">
+    <div class="country-header">
+      <div class="country-flag">🇵🇱🇨🇿🇭🇺</div>
+      <div class="country-name">Eastern Europe</div>
+      <div class="country-count">3 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 PKP Intercity</div>
+            <div class="train-operator">Poland's national long-distance rail</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity + HS</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇵🇱 Poland</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇦🇹 Austria</span>
+                <span class="ctag cross">🇨🇿 Czech Republic</span>
+                <span class="ctag cross">🇸🇰 Slovakia</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Warsaw ↔ Gdansk / Kraków / Wrocław</div>
+                <div class="route-item">Warsaw ↔ Berlin (EIC)</div>
+                <div class="route-item">Kraków ↔ Vienna (Nightjet/EuroNight)</div>
+                <div class="route-item">Warsaw ↔ Prague / Vienna</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.intercity.pl/en/" target="_blank" class="book-link primary">🎫 intercity.pl</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 České Dráhy (ČD)</div>
+            <div class="train-operator">Czech Railways · Czech Republic</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇨🇿 Czech Republic</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇩🇪 Germany</span>
+                <span class="ctag cross">🇦🇹 Austria</span>
+                <span class="ctag cross">🇸🇰 Slovakia</span>
+                <span class="ctag cross">🇵🇱 Poland</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Prague ↔ Brno ↔ Bratislava</div>
+                <div class="route-item">Prague ↔ Vienna / Budapest</div>
+                <div class="route-item">Prague ↔ Dresden ↔ Berlin</div>
+                <div class="route-item">Prague ↔ Munich / Nuremberg</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.cd.cz" target="_blank" class="book-link primary">🎫 cd.cz</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 MÁV-START</div>
+            <div class="train-operator">Hungarian State Railways</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇭🇺 Hungary</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇦🇹 Austria</span>
+                <span class="ctag cross">🇸🇰 Slovakia</span>
+                <span class="ctag cross">🇷🇴 Romania</span>
+                <span class="ctag cross">🇷🇸 Serbia</span>
+                <span class="ctag cross">🇭🇷 Croatia</span>
+                <span class="ctag cross">🇸🇮 Slovenia</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Budapest ↔ Vienna (Railjet)</div>
+                <div class="route-item">Budapest ↔ Prague / Warsaw</div>
+                <div class="route-item">Budapest ↔ Bucharest (EuroNight)</div>
+                <div class="route-item">Budapest ↔ Belgrade / Zagreb</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.mavcsoport.hu" target="_blank" class="book-link primary">🎫 mavcsoport.hu</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== UK / IRELAND ===== -->
+  <div class="country-section" data-country="uk ireland">
+    <div class="country-header">
+      <div class="country-flag">🇬🇧🇮🇪</div>
+      <div class="country-name">UK & Ireland</div>
+      <div class="country-count">3 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 Avanti / LNER / GWR / CrossCountry</div>
+            <div class="train-operator">National Rail UK · Multiple operators</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity UK</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Domestic UK Only</span>
+              <div class="country-tags"><span class="ctag origin">🇬🇧 UK</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">London ↔ Manchester / Liverpool / Edinburgh (Avanti)</div>
+                <div class="route-item">London ↔ Edinburgh / Leeds (LNER)</div>
+                <div class="route-item">London ↔ Bristol / Cardiff / Penzance (GWR)</div>
+                <div class="route-item">Birmingham ↔ Manchester ↔ Edinburgh (CrossCountry)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.nationalrail.co.uk" target="_blank" class="book-link primary">🎫 nationalrail.co.uk</a>
+              <a href="https://www.thetrainline.com" target="_blank" class="book-link primary">thetrainline.com</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="night">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🌙 Caledonian Sleeper</div>
+            <div class="train-operator">Serco · London–Scotland overnight</div>
+          </div>
+          <span class="type-badge type-night">🌙 Sleeper</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">UK Only</span>
+              <div class="country-tags"><span class="ctag origin">🇬🇧 UK</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">London Euston ↔ Edinburgh / Glasgow</div>
+                <div class="route-item">London ↔ Fort William / Inverness / Aberdeen</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.sleeper.scot" target="_blank" class="book-link primary">🎫 sleeper.scot</a>
+              <a href="https://www.thetrainline.com" target="_blank" class="book-link secondary">Trainline</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity regional">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 Irish Rail (Iarnród Éireann)</div>
+            <div class="train-operator">IE · Ireland's national railway</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Ireland Only (Republic + NI)</span>
+              <div class="country-tags"><span class="ctag origin">🇮🇪 Ireland</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Dublin ↔ Cork / Limerick / Galway</div>
+                <div class="route-item">Dublin ↔ Belfast (joint with Translink NI)</div>
+                <div class="route-item">Dublin ↔ Waterford / Tralee</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.irishrail.ie" target="_blank" class="book-link primary">🎫 irishrail.ie</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== BALKANS / SE EUROPE ===== -->
+  <div class="country-section" data-country="romania bulgaria slovenia croatia serbia greece">
+    <div class="country-header">
+      <div class="country-flag">🇷🇴🇧🇬🇬🇷🇭🇷</div>
+      <div class="country-name">Balkans & South-East Europe</div>
+      <div class="country-count">4 operators</div>
+    </div>
+    <div class="trains-grid">
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 CFR Călători (Romania)</div>
+            <div class="train-operator">Romanian National Railways</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇷🇴 Romania</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇭🇺 Hungary</span>
+                <span class="ctag cross">🇦🇹 Austria (Nightjet/EuroNight)</span>
+                <span class="ctag cross">🇧🇬 Bulgaria</span>
+                <span class="ctag cross">🇷🇸 Serbia</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Bucharest ↔ Budapest ↔ Vienna (EuroNight)</div>
+                <div class="route-item">Bucharest ↔ Sofia / Belgrade</div>
+                <div class="route-item">Bucharest ↔ Cluj-Napoca / Timișoara</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.cfrcalatori.ro" target="_blank" class="book-link primary">🎫 cfrcalatori.ro</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 SŽ (Slovenian Railways)</div>
+            <div class="train-operator">Slovenske Železnice</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇸🇮 Slovenia</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇦🇹 Austria</span>
+                <span class="ctag cross">🇭🇷 Croatia</span>
+                <span class="ctag cross">🇮🇹 Italy</span>
+                <span class="ctag cross">🇭🇺 Hungary</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Ljubljana ↔ Vienna / Zagreb</div>
+                <div class="route-item">Ljubljana ↔ Trieste (Italy)</div>
+                <div class="route-item">Ljubljana ↔ Budapest</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.slo-zeleznice.si" target="_blank" class="book-link primary">🎫 slo-zeleznice.si</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚆 HŽ Putnički Prijevoz</div>
+            <div class="train-operator">Croatian Passenger Transport</div>
+          </div>
+          <span class="type-badge type-intercity">🚆 Intercity</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇭🇷 Croatia</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags">
+                <span class="ctag cross">🇦🇹 Austria</span>
+                <span class="ctag cross">🇸🇮 Slovenia</span>
+                <span class="ctag cross">🇭🇺 Hungary</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Zagreb ↔ Vienna (Railjet)</div>
+                <div class="route-item">Zagreb ↔ Ljubljana ↔ Zurich / Munich (Nightjet)</div>
+                <div class="route-item">Zagreb ↔ Rijeka / Split / Osijek</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.hzpp.hr" target="_blank" class="book-link primary">🎫 hzpp.hr</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="train-card" data-type="intercity regional">
+        <div class="card-top">
+          <div class="train-meta">
+            <div class="train-name">🚊 Hellenic Train (Greece)</div>
+            <div class="train-operator">Formerly TrainOSE · Greece</div>
+          </div>
+          <span class="type-badge type-regional">🚊 Regional + IC</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-icon">🗺</div>
+            <div class="info-content">
+              <span class="info-label">Origin</span>
+              <div class="country-tags"><span class="ctag origin">🇬🇷 Greece</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">✈</div>
+            <div class="info-content">
+              <span class="info-label">Countries Served</span>
+              <div class="country-tags"><span class="ctag cross">🇧🇬 Bulgaria (limited)</span></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">↔</div>
+            <div class="info-content">
+              <span class="info-label">Key Routes</span>
+              <div class="routes-list">
+                <div class="route-item">Athens ↔ Thessaloniki (IC, ~4h)</div>
+                <div class="route-item">Athens ↔ Patras / Kalamata</div>
+                <div class="route-item">Thessaloniki ↔ Sofia (Bulgaria, cross-border)</div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-section">
+            <span class="booking-label">Buy Tickets</span>
+            <div class="booking-links">
+              <a href="https://www.hellenictrain.gr" target="_blank" class="book-link primary">🎫 hellenictrain.gr</a>
+              <a href="https://www.omio.com" target="_blank" class="book-link secondary">Omio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- AGGREGATORS / BOOKING SITES -->
+<section class="aggregators-section">
+<div class="agg-inner">
+  <div class="agg-title">Pan-European Booking Platforms</div>
+  <div class="agg-grid">
+    <div class="agg-card">
+      <div class="agg-name">Omio</div>
+      <div class="agg-desc">Trains, buses & flights. 2,000+ routes. Best for multi-modal comparison.</div>
+      <a href="https://www.omio.com" target="_blank" class="agg-link">omio.com ↗</a>
+    </div>
+    <div class="agg-card">
+      <div class="agg-name">Trainline</div>
+      <div class="agg-desc">Largest European rail app. Best mobile experience. Wide operator coverage.</div>
+      <a href="https://www.thetrainline.com" target="_blank" class="agg-link">thetrainline.com ↗</a>
+    </div>
+    <div class="agg-card">
+      <div class="agg-name">Rail Europe</div>
+      <div class="agg-desc">200+ operators. Best for Eurail/Interrail passes + reservations in one booking.</div>
+      <a href="https://www.raileurope.com" target="_blank" class="agg-link">raileurope.com ↗</a>
+    </div>
+    <div class="agg-card">
+      <div class="agg-name">Eurail / Interrail</div>
+      <div class="agg-desc">Flexible passes covering 33 countries. Eurail for non-EU, Interrail for EU residents.</div>
+      <a href="https://www.eurail.com" target="_blank" class="agg-link">eurail.com ↗</a>
+    </div>
+    <div class="agg-card">
+      <div class="agg-name">B-Europe (SNCB)</div>
+      <div class="agg-desc">Belgian rail's booking platform. Good for Benelux + international connections.</div>
+      <a href="https://www.b-europe.com" target="_blank" class="agg-link">b-europe.com ↗</a>
+    </div>
+    <div class="agg-card">
+      <div class="agg-name">NS International</div>
+      <div class="agg-desc">Dutch railways' international booking. Best for Netherlands-origin journeys.</div>
+      <a href="https://www.nsinternational.com" target="_blank" class="agg-link">nsinternational.com ↗</a>
+    </div>
+    <div class="agg-card">
+      <div class="agg-name">Loco2 / Seat61</div>
+      <div class="agg-desc">seat61.com: not a booking site but the definitive expert guide to every European route.</div>
+      <a href="https://www.seat61.com" target="_blank" class="agg-link">seat61.com ↗</a>
+    </div>
+    <div class="agg-card">
+      <div class="agg-name">SNCF Connect</div>
+      <div class="agg-desc">France's official booking site. Includes TGV, Intercités, Eurostar, and cross-border.</div>
+      <a href="https://www.sncf-connect.com" target="_blank" class="agg-link">sncf-connect.com ↗</a>
+    </div>
+  </div>
+</div><!-- /.agg-inner -->
+</section>
+
+<footer>
+  Sources: official railway websites, seat61.com, omio.com, eurail.com · Routes subject to change
+</footer>
+
+<script>
+(function(){
+  var activeType='all';
+  var searchEl=document.getElementById('train-search');
+  var countEl=document.getElementById('train-count');
+  var noRes=document.getElementById('train-noresult');
+  var nav=document.getElementById('jump-nav');
+
+  // ---- Assign section ids + build the jump nav ----
+  var sections=[];
+  var pills={};
+  var multi=document.querySelector('.multi-section');
+  if(multi){ if(!multi.id)multi.id='sec-multi'; sections.push(multi); }
+  [].forEach.call(document.querySelectorAll('.country-section'),function(s){
+    if(!s.id){
+      var nm=s.querySelector('.country-name');
+      var base=(s.getAttribute('data-country')||(nm?nm.textContent:'')).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+      s.id='sec-'+base;
+    }
+    sections.push(s);
+  });
+  if(nav){
+    sections.forEach(function(s){
+      var nm=s.querySelector('.country-name,.multi-header');
+      var label=nm?nm.textContent.trim():s.id;
+      if(s===multi)label='Multi-Country';
+      var a=document.createElement('a');
+      a.className='jump-btn'; a.href='#'+s.id; a.textContent=label;
+      a.addEventListener('click',function(e){e.preventDefault();s.scrollIntoView({behavior:'smooth'});history.replaceState(null,'','#'+s.id);});
+      nav.appendChild(a);
+      pills[s.id]=a;
+    });
+  }
+
+  // ---- Filtering ----
+  function applyFilters(){
+    var q=searchEl?searchEl.value.toLowerCase().trim():'';
+    var shown=0;
+    document.querySelectorAll('.train-card').forEach(function(card){
+      var typeMatch=activeType==='all'||(card.dataset.type||'').includes(activeType);
+      var textMatch=!q||card.textContent.toLowerCase().includes(q);
+      if(typeMatch&&textMatch){card.classList.remove('hidden');shown++;}
+      else{card.classList.add('hidden');}
+    });
+    sections.forEach(function(section){
+      var visible=section.querySelectorAll('.train-card:not(.hidden)').length;
+      section.style.display=visible===0?'none':'';
+      var p=pills[section.id]; if(p)p.style.display=visible===0?'none':'';
+    });
+    var agg=document.querySelector('.aggregators-section');
+    var ctrl=document.querySelector('.controls');
+    var legend=document.querySelector('.legend');
+    var foot=document.querySelector('.tb-footnote');
+    if(agg)agg.style.display=q?'none':'';
+    if(legend)legend.style.display=q?'none':'';
+    if(foot)foot.style.display=q?'none':'';
+    if(ctrl)ctrl.style.display=q?'none':'';
+    if(nav)nav.style.display=q?'none':'';
+    if(noRes)noRes.style.display=(shown===0&&q)?'block':'none';
+    var filtering=!!q||activeType!=='all';
+    if(countEl)countEl.textContent=filtering?(shown+(shown===1?' operator':' operators')):'';
+  }
+
+  if(searchEl){searchEl.addEventListener('input',applyFilters);searchEl.addEventListener('search',applyFilters);}
+
+  // Global — called by the inline filter-button onclick handlers
+  window.filterCards=function(type,btn){
+    activeType=type;
+    document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');b.setAttribute('aria-pressed','false');});
+    if(btn){btn.classList.add('active');btn.setAttribute('aria-pressed','true');}
+    applyFilters();
+  };
+
+  // ---- Scroll-spy — highlight the jump pill for the section in view ----
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          var id=en.target.id;
+          Object.keys(pills).forEach(function(k){pills[k].classList.toggle('active',k===id);});
+        }
+      });
+    },{rootMargin:'-20% 0px -70% 0px',threshold:0});
+    sections.forEach(function(s){obs.observe(s);});
+  }
+})();
+</script>
+</body>
+</html>

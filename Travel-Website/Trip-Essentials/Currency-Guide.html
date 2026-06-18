@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>World Currency Guide</title>
+<style>
+/* Typography follows the site scale in _travel_style.css:
+   --font, --fs-body(14) --fs-title(14) --fs-sub(12) --fs-label(11).
+   The page banner (.site-header) and search input are styled site-wide there —
+   not overridden here. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--text,#1a1917);
+  font-size: var(--fs-body,14px); line-height: 1.5; padding-left: 20px !important; padding-right: 20px !important; }
+.index-section { max-width: 940px; margin: 8px auto 0; padding: 0 24px; }
+/* last-update stamp uses shared .updated-stamp from _travel_style.css */
+.index-table thead th {
+  background: var(--surface2, #f0ede8); border-bottom: 2px solid var(--border, #d8d4cc);
+  padding: 8px 12px; text-align: left; font-size: var(--fs-body,14px); font-weight: 700;
+  color: var(--muted, #6a6660);
+}
+.index-table th:last-child, .index-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.index-table .sym-col { text-align: right; }
+.index-table { width: 100%; border-collapse: collapse; border-radius: 0 0 6px 6px; overflow: hidden; box-shadow: 0 2px 12px rgba(92,61,17,0.10); }
+.index-table tbody td { font-size: var(--fs-body,14px); }
+.index-table tbody tr { cursor: pointer; }
+.index-table tbody tr:hover { filter: brightness(0.96); }
+.index-table tbody td a { color: var(--text); text-decoration: none; display: block; }
+.index-table tbody td a:hover { color: var(--accent,#8a6c1a); text-decoration: underline; }
+.index-table tbody tr.idx-hide { display: none; }
+.content-wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+.region-section { margin-top: 20px; margin-bottom: 20px; }
+.region-header {
+  background: var(--banner-gradient, linear-gradient(90deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%));
+  color: var(--banner-text,#fff); font-size: var(--fs-sub,12px); font-weight: 700; padding: 11px 22px;
+  border-radius: 6px; margin-bottom: 18px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.country-block {
+  background: var(--surface,#fff); border: 1px solid #E0D4B8; border-radius: 8px;
+  padding: 20px 24px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(92,61,17,0.07);
+  scroll-margin-top: 72px;
+}
+.country-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 2px solid #E8D9BC; color: #5C3D11; }
+.country-name { font-size: var(--fs-title,14px); font-weight: 700; }
+.cur-full, .cur-code { font-size: var(--fs-body,14px); font-weight: 600; }
+.cur-code { letter-spacing: 0.02em; }
+.hsep { color: #8a6c1a; }
+.cur-symbol { font-weight: 700; margin-left: 2px; }
+.rate-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; padding: 12px 16px; background: #f0eeea; border: 1px solid #EAE0C8; border-radius: 6px; }
+.rate-main { font-size: var(--fs-body,14px); font-weight: 700; color: #5C3D11; display: inline-flex; align-items: baseline; gap: 8px; }
+.rate-from { color: #7A5C2E; font-weight: 600; }
+.rate-eq { color: #C8A96A; }
+.cur-note { font-size: var(--fs-sub,12px); color: #7A5C2E; margin-top: 10px; }
+.cur-cities { font-size: var(--fs-sub,12px); margin-left: auto; padding-left: 16px; }
+.conv { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; font-size: var(--fs-body,14px); color: #5A4A2E; }
+.conv input { width: 96px; padding: 5px 10px; font-size: var(--fs-body,14px); font-family: var(--font); border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px; background: var(--surface,#fff); color: var(--text,#1a1917); outline: none; }
+.conv input:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
+.conv-out { font-variant-numeric: tabular-nums; }
+#cur-noresult { display: none; padding: 12px 4px; font-size: var(--fs-body,14px); color: #5A4A2E; }
+html { scroll-behavior: smooth; }
+.region-section:last-child, .region-section:last-child *:last-child { margin-bottom: 0 !important; }
+@media (max-width: 600px) {
+  .index-section, .content-wrap { padding: 0 12px; }
+  .index-table td, .index-table th { font-size: var(--fs-sub,12px) !important; padding: 4px 8px !important; }
+  .country-block { padding: 14px 14px; }
+  .country-header { flex-direction: row; align-items: center; gap: 10px; }
+  .region-header { padding: 9px 14px; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=6"></script>
+
+<div class="index-section">
+  <div class="site-header">
+    <h1 class="site-title">World Currency Guide</h1>
+  </div>
+  <span class="updated-stamp">Updated June 2026</span>
+  <input id="cur-search" type="search" placeholder="🔍" autocomplete="off" spellcheck="false">
+  <div id="cur-noresult">No country matches that search.</div>
+  <table class="index-table">
+    <colgroup><col style="width:28%"><col style="width:40%"><col style="width:12%"><col style="width:20%"></colgroup>
+    <thead><tr><th>Country</th><th>Currency</th><th class="sym-col">Sym</th><th>US$1</th></tr></thead>
+    <tbody>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Argentina">Argentina</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Argentine Peso <span style="color:var(--accent);">ARS</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">AR$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,431</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Aruba">Aruba</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Aruban Florin <span style="color:var(--accent);">AWG</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Afl.</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.79</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Australia">Australia</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Australian Dollar <span style="color:var(--accent);">AUD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">A$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.41</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Austria">Austria</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Bahamas">Bahamas</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Bahamian Dollar <span style="color:var(--accent);">BSD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">B$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.00</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Barbados">Barbados</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Barbadian Dollar <span style="color:var(--accent);">BBD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Bds$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">2.00</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Belgium">Belgium</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Brazil">Brazil</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Brazilian Real <span style="color:var(--accent);">BRL</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">R$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">5.05</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Canada">Canada</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Canadian Dollar <span style="color:var(--accent);">CAD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">C$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.40</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Cayman_Islands">Cayman Islands</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Cayman Islands Dollar <span style="color:var(--accent);">KYD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">CI$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.833</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Chile">Chile</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Chilean Peso <span style="color:var(--accent);">CLP</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">CL$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">900</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#China">China</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Chinese Yuan (Renminbi) <span style="color:var(--accent);">CNY</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">¥</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">6.77</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Croatia">Croatia</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Curacao">Curaçao</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Caribbean Guilder <span style="color:var(--accent);">XCG</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">ƒ</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.79</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Czech_Republic">Czech Republic</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Czech Koruna <span style="color:var(--accent);">CZK</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Kč</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">20.80</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Denmark">Denmark</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Danish Krone <span style="color:var(--accent);">DKK</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">6.43</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Estonia">Estonia</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Finland">Finland</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#France">France</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Germany">Germany</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Greece">Greece</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Hong_Kong">Hong Kong</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Hong Kong Dollar <span style="color:var(--accent);">HKD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">HK$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">7.83</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Hungary">Hungary</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Hungarian Forint <span style="color:var(--accent);">HUF</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Ft</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">302</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Iceland">Iceland</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Icelandic Króna <span style="color:var(--accent);">ISK</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">124</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Indonesia">Indonesia</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Indonesian Rupiah <span style="color:var(--accent);">IDR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Rp</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">17,707</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Ireland">Ireland</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Italy">Italy</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Japan">Japan</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Japanese Yen <span style="color:var(--accent);">JPY</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">¥</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">160</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Luxembourg">Luxembourg</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Monaco">Monaco</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Morocco">Morocco</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Moroccan Dirham <span style="color:var(--accent);">MAD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">DH</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.25</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Netherlands">Netherlands</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#New_Zealand">New Zealand</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">New Zealand Dollar <span style="color:var(--accent);">NZD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">NZ$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.71</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Norway">Norway</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Norwegian Krone <span style="color:var(--accent);">NOK</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.52</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Peru">Peru</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Peruvian Sol <span style="color:var(--accent);">PEN</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">S/</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.39</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Portugal">Portugal</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Puerto_Rico">Puerto Rico</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">US Dollar <span style="color:var(--accent);">USD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">—</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Singapore">Singapore</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Singapore Dollar <span style="color:var(--accent);">SGD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">S$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.28</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Sint_Maarten">Sint Maarten</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Caribbean Guilder <span style="color:var(--accent);">XCG</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">ƒ</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.79</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Slovenia">Slovenia</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#South_Korea">South Korea</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">South Korean Won <span style="color:var(--accent);">KRW</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₩</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,513</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Spain">Spain</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.862</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Sweden">Sweden</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Swedish Krona <span style="color:var(--accent);">SEK</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.39</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Switzerland">Switzerland</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Swiss Franc <span style="color:var(--accent);">CHF</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Fr</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.794</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Taiwan">Taiwan</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">New Taiwan Dollar <span style="color:var(--accent);">TWD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">NT$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">31.54</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Thailand">Thailand</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Thai Baht <span style="color:var(--accent);">THB</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">฿</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">32.54</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Turkey">Turkey</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Turkish Lira <span style="color:var(--accent);">TRY</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₺</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">46.30</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_Arab_Emirates">United Arab Emirates</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">UAE Dirham <span style="color:var(--accent);">AED</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Dh</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.67</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_Kingdom">United Kingdom</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Pound Sterling <span style="color:var(--accent);">GBP</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">£</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.745</td>
+    </tr>
+<tr style="background:#FFFFFF">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_States">United States</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">US Dollar <span style="color:var(--accent);">USD</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">—</td>
+    </tr>
+<tr style="background:#FAF7F0">
+      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Uruguay">Uruguay</a></td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Uruguayan Peso <span style="color:var(--accent);">UYU</span></td>
+      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$U</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">40.44</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="content-wrap">
+<div class="region-section">
+  <div class="region-header">Europe</div>
+<div class="country-block" id="Austria" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Austria</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Salzburg · Vienna</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Belgium" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Belgium</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Bruges · Brussels</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Croatia" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Croatia</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Dubrovnik · Split</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Adopted the euro in 2023.</div>
+  </div>
+</div>
+<div class="country-block" id="Czech_Republic" data-rate="20.802981" data-sym="Kč">
+  <div class="country-header">
+    <span class="country-name">Czech Republic</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Czech Koruna</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">CZK</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">Kč</span>
+    <span class="cur-cities">Guides: Prague</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Denmark" data-rate="6.434334" data-sym="kr">
+  <div class="country-header">
+    <span class="country-name">Denmark</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Danish Krone</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">DKK</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">kr</span>
+    <span class="cur-cities">Guides: Copenhagen</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Estonia" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Estonia</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Tallinn</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Finland" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Finland</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Helsinki</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="France" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">France</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Aix-en-Provence · Annecy · Bordeaux · Cannes · Colmar · Lille · Lyon · Marseille · Nice · Paris · Strasbourg</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Germany" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Germany</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Berlin · Marktoberdorf · Munich · Stuttgart</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Greece" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Greece</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Athens · Corfu</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Hungary" data-rate="302.086257" data-sym="Ft">
+  <div class="country-header">
+    <span class="country-name">Hungary</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Hungarian Forint</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">HUF</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">Ft</span>
+    <span class="cur-cities">Guides: Budapest</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Iceland" data-rate="124.347225" data-sym="kr">
+  <div class="country-header">
+    <span class="country-name">Iceland</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Icelandic Króna</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">ISK</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">kr</span>
+    <span class="cur-cities">Guides: Reykjavik</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Ireland" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Ireland</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Dublin</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Italy" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Italy</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Amalfi · Bologna · Capri · Cinque Terre · Florence · Lake Como · Milan · Naples · Pisa · Rome · Siena · Sorrento · Turin · Venice · Verona</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Luxembourg" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Luxembourg</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Luxembourg</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Monaco" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Monaco</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Monaco</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Netherlands" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Netherlands</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Amsterdam</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Norway" data-rate="9.524927" data-sym="kr">
+  <div class="country-header">
+    <span class="country-name">Norway</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Norwegian Krone</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">NOK</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">kr</span>
+    <span class="cur-cities">Guides: Ålesund · Bergen · Oslo · Tromsø</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Portugal" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Portugal</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Azores · Cascais · Lagos · Lisbon · Madeira · Porto · Sintra</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Slovenia" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Slovenia</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Ljubljana</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Spain" data-rate="0.86228" data-sym="€">
+  <div class="country-header">
+    <span class="country-name">Spain</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Euro</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">EUR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">€</span>
+    <span class="cur-cities">Guides: Barcelona · Madrid · San Sebastián · Seville · Toledo</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Sweden" data-rate="9.392284" data-sym="kr">
+  <div class="country-header">
+    <span class="country-name">Sweden</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Swedish Krona</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">SEK</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">kr</span>
+    <span class="cur-cities">Guides: Gothenburg · Stockholm</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Switzerland" data-rate="0.794072" data-sym="Fr">
+  <div class="country-header">
+    <span class="country-name">Switzerland</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Swiss Franc</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">CHF</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">Fr</span>
+    <span class="cur-cities">Guides: Geneva · Lucerne · Zurich</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Turkey" data-rate="46.296866" data-sym="₺">
+  <div class="country-header">
+    <span class="country-name">Turkey</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Turkish Lira</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">TRY</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">₺</span>
+    <span class="cur-cities">Guides: Istanbul</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="United_Kingdom" data-rate="0.74516" data-sym="£">
+  <div class="country-header">
+    <span class="country-name">United Kingdom</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Pound Sterling</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">GBP</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">£</span>
+    <span class="cur-cities">Guides: Cambridge · Edinburgh · Glasgow · London · Oxford</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+</div>
+<div class="region-section">
+  <div class="region-header">Middle East</div>
+<div class="country-block" id="United_Arab_Emirates" data-rate="3.6725" data-sym="Dh">
+  <div class="country-header">
+    <span class="country-name">United Arab Emirates</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">UAE Dirham</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">AED</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">Dh</span>
+    <span class="cur-cities">Guides: Abu Dhabi · Dubai · United Arab Emirates</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged to the US dollar (~3.67).</div>
+  </div>
+</div>
+</div>
+<div class="region-section">
+  <div class="region-header">Africa</div>
+<div class="country-block" id="Morocco" data-rate="9.252585" data-sym="DH">
+  <div class="country-header">
+    <span class="country-name">Morocco</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Moroccan Dirham</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">MAD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">DH</span>
+    <span class="cur-cities">Guides: Marrakech</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+</div>
+<div class="region-section">
+  <div class="region-header">Asia</div>
+<div class="country-block" id="China" data-rate="6.771909" data-sym="¥">
+  <div class="country-header">
+    <span class="country-name">China</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Chinese Yuan (Renminbi)</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">CNY</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">¥</span>
+    <span class="cur-cities">Guides: Beijing · Chongqing · Shanghai · Zhangjiajie</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Hong_Kong" data-rate="7.834698" data-sym="HK$">
+  <div class="country-header">
+    <span class="country-name">Hong Kong</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Hong Kong Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">HKD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">HK$</span>
+    <span class="cur-cities">Guides: Hong Kong</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged to the US dollar (~7.8).</div>
+  </div>
+</div>
+<div class="country-block" id="Indonesia" data-rate="17706.658841" data-sym="Rp">
+  <div class="country-header">
+    <span class="country-name">Indonesia</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Indonesian Rupiah</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">IDR</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">Rp</span>
+    <span class="cur-cities">Guides: Bali</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Japan" data-rate="160.165183" data-sym="¥">
+  <div class="country-header">
+    <span class="country-name">Japan</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Japanese Yen</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">JPY</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">¥</span>
+    <span class="cur-cities">Guides: Kyoto · Tokyo</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Singapore" data-rate="1.282409" data-sym="S$">
+  <div class="country-header">
+    <span class="country-name">Singapore</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Singapore Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">SGD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">S$</span>
+    <span class="cur-cities">Guides: Singapore</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="South_Korea" data-rate="1513.37371" data-sym="₩">
+  <div class="country-header">
+    <span class="country-name">South Korea</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">South Korean Won</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">KRW</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">₩</span>
+    <span class="cur-cities">Guides: Seoul</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Taiwan" data-rate="31.541561" data-sym="NT$">
+  <div class="country-header">
+    <span class="country-name">Taiwan</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">New Taiwan Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">TWD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">NT$</span>
+    <span class="cur-cities">Guides: Taipei</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Thailand" data-rate="32.543824" data-sym="฿">
+  <div class="country-header">
+    <span class="country-name">Thailand</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Thai Baht</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">THB</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">฿</span>
+    <span class="cur-cities">Guides: Bangkok · Phuket</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+</div>
+<div class="region-section">
+  <div class="region-header">Oceania</div>
+<div class="country-block" id="Australia" data-rate="1.413978" data-sym="A$">
+  <div class="country-header">
+    <span class="country-name">Australia</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Australian Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">AUD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">A$</span>
+    <span class="cur-cities">Guides: Melbourne · Sydney</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="New_Zealand" data-rate="1.71447" data-sym="NZ$">
+  <div class="country-header">
+    <span class="country-name">New Zealand</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">New Zealand Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">NZD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">NZ$</span>
+    <span class="cur-cities">Guides: Queenstown · Wellington</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+</div>
+<div class="region-section">
+  <div class="region-header">North America</div>
+<div class="country-block" id="United_States" data-rate="1" data-sym="$">
+  <div class="country-header">
+    <span class="country-name">United States</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">US Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">USD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">$</span>
+    <span class="cur-cities">Guides: Alaska · Atlanta · Austin · Bend · Big Island · Boston · Chicago · Kauai · Los Angeles · Maui · Miami · New York · Oahu · Orlando · Palm Desert · Palo Alto · Pasadena · San Diego · San Francisco · Scottsdale · Seattle · Virgin Islands</span>
+  </div>
+  <div class="cur-block">
+    
+    
+  </div>
+</div>
+<div class="country-block" id="Canada" data-rate="1.398203" data-sym="C$">
+  <div class="country-header">
+    <span class="country-name">Canada</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Canadian Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">CAD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">C$</span>
+    <span class="cur-cities">Guides: Montréal · Québec City · Toronto · Vancouver</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+</div>
+<div class="region-section">
+  <div class="region-header">Caribbean</div>
+<div class="country-block" id="Aruba" data-rate="1.79" data-sym="Afl.">
+  <div class="country-header">
+    <span class="country-name">Aruba</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Aruban Florin</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">AWG</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">Afl.</span>
+    <span class="cur-cities">Guides: Aruba</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged to the US dollar; USD widely accepted.</div>
+  </div>
+</div>
+<div class="country-block" id="Bahamas" data-rate="1" data-sym="B$">
+  <div class="country-header">
+    <span class="country-name">Bahamas</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Bahamian Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">BSD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">B$</span>
+    <span class="cur-cities">Guides: The Bahamas</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged 1:1 with the US dollar — USD accepted everywhere.</div>
+  </div>
+</div>
+<div class="country-block" id="Barbados" data-rate="2" data-sym="Bds$">
+  <div class="country-header">
+    <span class="country-name">Barbados</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Barbadian Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">BBD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">Bds$</span>
+    <span class="cur-cities">Guides: Barbados</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged 2:1 with the US dollar — USD widely accepted.</div>
+  </div>
+</div>
+<div class="country-block" id="Cayman_Islands" data-rate="0.833333" data-sym="CI$">
+  <div class="country-header">
+    <span class="country-name">Cayman Islands</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Cayman Islands Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">KYD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">CI$</span>
+    <span class="cur-cities">Guides: Cayman Islands</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged to the US dollar; one of the few currencies worth more than USD.</div>
+  </div>
+</div>
+<div class="country-block" id="Curacao" data-rate="1.79" data-sym="ƒ">
+  <div class="country-header">
+    <span class="country-name">Curaçao</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Caribbean Guilder</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">XCG</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">ƒ</span>
+    <span class="cur-cities">Guides: Curaçao</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged to the US dollar; replaced the Netherlands Antillean guilder.</div>
+  </div>
+</div>
+<div class="country-block" id="Sint_Maarten" data-rate="1.79" data-sym="ƒ">
+  <div class="country-header">
+    <span class="country-name">Sint Maarten</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Caribbean Guilder</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">XCG</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">ƒ</span>
+    <span class="cur-cities">Guides: Sint Maarten</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    <div class="cur-note">Pegged to the US dollar; USD widely accepted.</div>
+  </div>
+</div>
+<div class="country-block" id="Puerto_Rico" data-rate="1" data-sym="$">
+  <div class="country-header">
+    <span class="country-name">Puerto Rico</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">US Dollar</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">USD</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">$</span>
+    <span class="cur-cities">Guides: Puerto Rico</span>
+  </div>
+  <div class="cur-block">
+    
+    <div class="cur-note">US territory — uses the US dollar.</div>
+  </div>
+</div>
+</div>
+<div class="region-section">
+  <div class="region-header">South America</div>
+<div class="country-block" id="Argentina" data-rate="1430.8092" data-sym="AR$">
+  <div class="country-header">
+    <span class="country-name">Argentina</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Argentine Peso</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">ARS</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">AR$</span>
+    <span class="cur-cities">Guides: Buenos Aires</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Brazil" data-rate="5.054189" data-sym="R$">
+  <div class="country-header">
+    <span class="country-name">Brazil</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Brazilian Real</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">BRL</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">R$</span>
+    <span class="cur-cities">Guides: Rio de Janeiro</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Chile" data-rate="899.513816" data-sym="CL$">
+  <div class="country-header">
+    <span class="country-name">Chile</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Chilean Peso</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">CLP</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">CL$</span>
+    <span class="cur-cities">Guides: Santiago</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Peru" data-rate="3.392502" data-sym="S/">
+  <div class="country-header">
+    <span class="country-name">Peru</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Peruvian Sol</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">PEN</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">S/</span>
+    <span class="cur-cities">Guides: Cusco · Lima · Machu Picchu</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+<div class="country-block" id="Uruguay" data-rate="40.43662" data-sym="$U">
+  <div class="country-header">
+    <span class="country-name">Uruguay</span>
+    <span class="hsep">|</span>
+    <span class="cur-full">Uruguayan Peso</span>
+    <span class="hsep">|</span>
+    <span class="cur-code">UYU</span>
+    <span class="hsep">|</span>
+    <span class="cur-symbol">$U</span>
+    <span class="cur-cities">Guides: Montevideo</span>
+  </div>
+  <div class="cur-block">
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out"></span></div>
+    
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+(function(){
+  var input=document.getElementById('cur-search'); if(!input)return;
+  var rows=[].slice.call(document.querySelectorAll('.index-table tbody tr'));
+  var blocks=[].slice.call(document.querySelectorAll('.country-block'));
+  var regions=[].slice.call(document.querySelectorAll('.region-section'));
+  var indexTable=document.querySelector('.index-table');
+  var noRes=document.getElementById('cur-noresult');
+  function norm(s){return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}
+  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();location.hash=hash;var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
+  rows.forEach(function(r){r.addEventListener('click',function(e){var a=r.querySelector('a[href^="#"]');if(!a)return;e.preventDefault();jumpTo(a.getAttribute('href'));});});
+  /* per-country converter: type a US$ amount, see it in that currency */
+  function fmtAmt(v){
+    if(v>=1000)return v.toLocaleString('en-US',{maximumFractionDigits:0});
+    if(v>=1)return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return v.toLocaleString('en-US',{maximumFractionDigits:3});
+  }
+  blocks.forEach(function(b){
+    var inp=b.querySelector('.conv-in'); if(!inp)return;
+    var out=b.querySelector('.conv-out');
+    var rate=parseFloat(b.getAttribute('data-rate'))||0;
+    var sym=b.getAttribute('data-sym')||'';
+    function upd(){var a=parseFloat(inp.value);if(isNaN(a)){out.textContent='';return;}out.textContent=sym+fmtAmt(a*rate);}
+    inp.addEventListener('input',upd); upd();
+  });
+  input.addEventListener('input',function(){
+    var q=norm(input.value.trim()),shown=0;
+    rows.forEach(function(r){var m=q===''||norm(r.textContent).indexOf(q)>-1;r.classList.toggle('idx-hide',!m);if(m)shown++;});
+    blocks.forEach(function(b){var t=norm(b.textContent);b.style.display=(q===''||t.indexOf(q)>-1)?'':'none';});
+    regions.forEach(function(s){var vis=[].slice.call(s.querySelectorAll('.country-block')).some(function(b){return b.style.display!=='none';});s.style.display=(q===''||vis)?'':'none';});
+    var noHits=(shown===0&&q!=='');
+    if(noRes)noRes.style.display=noHits?'block':'none';
+    if(indexTable)indexTable.style.display=noHits?'none':'';
+  });
+})();
+</script>
+</body>
+</html>

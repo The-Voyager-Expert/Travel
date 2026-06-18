@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>Weather</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: #f5f4f0; color: #3d3a32;
+  font-size: var(--fs-body,14px); line-height: 1.5;
+  padding-left: 20px !important; padding-right: 20px !important; }
+.wx-wrap { max-width: 460px; margin: 10px auto 0; padding: 0 16px; }
+.wx-panel { background: #fdf8f0; border: 1px solid #c4b896; border-radius: 14px;
+  box-shadow: 0 6px 26px rgba(0,0,0,.10); padding: 18px 18px 20px; }
+.wx-eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6b6860; margin-bottom: 4px; }
+.wx-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.wx-city { width: 100%; max-width: 230px; font-family: inherit; font-size: 15px; font-weight: 600; color: #8a6c1a;
+  padding: 6px 8px; border: 1px solid #c4b896; border-radius: 7px; background: #fff; cursor: pointer; }
+.wx-unit { display: inline-flex; border: 1px solid #c4b896; border-radius: 7px; overflow: hidden; flex-shrink: 0; }
+.wx-unit button { border: none; cursor: pointer; padding: 6px 11px; font-size: 13px; font-weight: 600;
+  font-family: inherit; background: transparent; color: #6b6860; }
+.wx-unit button.on { background: #8a6c1a; color: #fff; }
+.wx-month { margin-top: 16px; text-align: center; font-size: 13px; color: #6b6860; }
+.wx-bignums { display: flex; justify-content: center; gap: 28px; margin-top: 6px; }
+.wx-bignums .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.wx-bignums .val { font-size: 34px; font-weight: 700; line-height: 1.1; }
+.wx-hi .lbl, .wx-hi .val { color: #a61c00; }
+.wx-lo .lbl, .wx-lo .val { color: #3d5282; }
+.wx-divider { width: 1px; background: #d8d5ce; }
+.wx-chart { margin-top: 18px; display: flex; align-items: flex-end; gap: 2px; }
+.wx-col { flex: 1; display: flex; flex-direction: column; align-items: center; cursor: pointer; min-width: 0; }
+.wx-coltrack { position: relative; width: 100%; display: flex; justify-content: center; }
+.wx-bar { position: absolute; width: 7px; border-radius: 4px; background: rgba(138,108,26,.30); }
+.wx-bar.on { background: #8a6c1a; }
+.wx-collab { font-size: 9px; margin-top: 4px; color: #6b6860; }
+.wx-collab.on { color: #8a6c1a; font-weight: 700; }
+.wx-hint { margin-top: 6px; font-size: 10px; text-align: center; color: #6b6860; }
+.wx-mongrid { margin-top: 14px; display: grid; grid-template-columns: repeat(6,1fr); gap: 5px; }
+.wx-mon { border: 1px solid #c4b896; border-radius: 6px; cursor: pointer; padding: 7px 0; font-size: 12px;
+  font-family: inherit; background: #fff; color: #3d3a32; }
+.wx-mon.on { background: #8a6c1a; color: #fff; font-weight: 600; }
+.wx-note { color: #6b6860; font-size: 11px; margin-top: 14px; text-align: center; }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="460" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=27"></script>
+<script src="../assets/weather.js?v=4"></script>
+
+<div class="wx-wrap">
+  <div class="wx-panel" id="wx-panel"></div>
+</div>
+
+<script>
+(function () {
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MONTHS_LONG = ['January','February','March','April','May','June','July',
+                     'August','September','October','November','December'];
+  var panel = document.getElementById('wx-panel');
+  var DB = {}, cityKeys = [];
+  var curKey = null, selMonth = new Date().getMonth();
+
+  function unit() { try { return localStorage.getItem('guideTempUnit') === 'F' ? 'F' : 'C'; } catch (e) { return 'C'; } }
+  function setUnit(u) { try { localStorage.setItem('guideTempUnit', u); } catch (e) {} }
+  function conv(c) { return unit() === 'F' ? Math.round(c * 9 / 5 + 32) : Math.round(c); }
+
+  function header() {
+    var opts = cityKeys.map(function (k) {
+      return '<option value="' + k + '"' + (k === curKey ? ' selected' : '') + '>' + (DB[k].city || k) + '</option>';
+    }).join('');
+    var u = unit();
+    return '<div class="wx-head">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="wx-eyebrow">Typical Weather</div>' +
+          '<select class="wx-city" id="wx-city">' + opts + '</select>' +
+        '</div>' +
+        '<div class="wx-unit" id="wx-unit">' +
+          '<button data-u="C" class="' + (u === 'C' ? 'on' : '') + '">°C</button>' +
+          '<button data-u="F" class="' + (u === 'F' ? 'on' : '') + '">°F</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function body() {
+    var rec = DB[curKey];
+    var hi = conv(rec.hi[selMonth]) + '°' + unit();
+    var lo = conv(rec.lo[selMonth]) + '°' + unit();
+
+    var vals = [];
+    for (var i = 0; i < 12; i++) { vals.push(rec.hi[i]); vals.push(rec.lo[i]); }
+    var lo0 = Math.min.apply(null, vals), hi0 = Math.max.apply(null, vals);
+    var span = (hi0 - lo0) || 1, H = 86, bars = '';
+    for (var j = 0; j < 12; j++) {
+      var on = (j === selMonth);
+      var top = (1 - (rec.hi[j] - lo0) / span) * H;
+      var bot = (1 - (rec.lo[j] - lo0) / span) * H;
+      var barH = Math.max(3, bot - top);
+      bars += '<div class="wx-col" data-mon="' + j + '">' +
+          '<div class="wx-coltrack" style="height:' + H + 'px;">' +
+            '<div class="wx-bar' + (on ? ' on' : '') + '" style="top:' + top + 'px;height:' + barH + 'px;"></div>' +
+          '</div>' +
+          '<div class="wx-collab' + (on ? ' on' : '') + '">' + MONTHS[j][0] + '</div>' +
+        '</div>';
+    }
+
+    var grid = MONTHS.map(function (mo, k) {
+      return '<button class="wx-mon' + (k === selMonth ? ' on' : '') + '" data-mon="' + k + '">' + mo + '</button>';
+    }).join('');
+
+    return '<div class="wx-month">' + MONTHS_LONG[selMonth] + '</div>' +
+      '<div class="wx-bignums">' +
+        '<div class="wx-hi" style="text-align:center;"><div class="lbl">High</div><div class="val">' + hi + '</div></div>' +
+        '<div class="wx-divider"></div>' +
+        '<div class="wx-lo" style="text-align:center;"><div class="lbl">Low</div><div class="val">' + lo + '</div></div>' +
+      '</div>' +
+      '<div class="wx-chart">' + bars + '</div>' +
+      '<div class="wx-hint">Tap a month · avg daily high/low</div>' +
+      '<div class="wx-mongrid">' + grid + '</div>';
+  }
+
+  function render() {
+    panel.innerHTML = header() + body();
+
+    document.getElementById('wx-city').addEventListener('change', function () { curKey = this.value; render(); });
+    document.querySelectorAll('#wx-unit button').forEach(function (b) {
+      b.addEventListener('click', function () { setUnit(b.dataset.u); render(); });
+    });
+    panel.querySelectorAll('.wx-col').forEach(function (c) {
+      c.addEventListener('click', function () { selMonth = +c.dataset.mon; render(); });
+    });
+    panel.querySelectorAll('.wx-mon').forEach(function (b) {
+      b.addEventListener('click', function () { selMonth = +b.dataset.mon; render(); });
+    });
+  }
+
+  var data = window.TravelClimate || {};
+  Object.keys(data).forEach(function (k) {
+    if (k === '_meta' || !data[k] || !data[k].hi) return;
+    DB[k] = data[k];
+  });
+  cityKeys = Object.keys(DB).sort(function (a, b) { return (DB[a].city || a).localeCompare(DB[b].city || b); });
+  if (cityKeys.length) {
+    curKey = cityKeys.indexOf('Seattle') >= 0 ? 'Seattle' : cityKeys[0];
+    render();
+  } else {
+    panel.innerHTML = '<div style="padding:24px;text-align:center;color:#6b4422;">Could not load climate data.</div>';
+  }
+})();
+</script>
+</body>
+</html>

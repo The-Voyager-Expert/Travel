@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>Travel Stats</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f4f0; --surface: #ffffff; --surface2: #f6f2ec;
+  --border: #d8d4cc; --border2: #e6e2da;
+  --text: #1a1917; --muted: #6a6660;
+  /* Warm rust/terracotta = visited & achieved · navy = on-the-list & aspirational.
+     Matches the site banner gradient + _travel_style.css. No green, no yellow. */
+  --rust: #b85c2a; --rust-deep: #7a3b1e; --copper: #a8521f;
+  --navy: #2f5596; --navy-deep: #1a2e5c;
+  --accent: #b85c2a;
+  --track: #ece6dd;
+}
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: var(--fs-body,14px); line-height: 1.6; padding-bottom: 80px;
+}
+.page { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+/* ===== Unified header ===== */
+.header { background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) !important; padding: 14px 18px !important; border-radius: 10px !important; border-bottom: none !important; margin: 8px 0 14px !important; }
+.header h1 { font-size: var(--fs-title,14px) !important; font-weight: bold !important; color: #ffffff !important; text-transform: uppercase !important; letter-spacing: 0.04em !important; line-height: 1.2 !important; margin: 0 !important; }
+.header-desc { font-size: var(--fs-sub,12px) !important; font-weight: 400 !important; color: rgba(255,255,255,0.72) !important; line-height: 1.5 !important; margin: 4px 0 0 !important; }
+
+/* ===== Hero stat cards ===== */
+.hero-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.hero-card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 14px 16px; text-align: center; overflow: hidden; }
+.hero-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: currentColor; opacity: .9; }
+.hero-icon { font-size: 22px; line-height: 1; margin-bottom: 8px; }
+.hero-num { font-size: 33px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 5px; }
+.hero-label { font-size: var(--fs-label,11px); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.hero-card.total   { color: var(--rust-deep); }
+.hero-card.been    { color: var(--rust); }
+.hero-card.country { color: var(--copper); }
+.hero-card.want    { color: var(--navy); }
+.hero-card .hero-num { color: currentColor; }
+
+/* ===== Quick facts strip ===== */
+.quickfacts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.qf { background: var(--surface2); border: 1px solid var(--border2); border-radius: 9px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.qf-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: #efe7f0; background: rgba(47,85,150,.09); font-size: 15px; line-height: 1; }
+.qf-val { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-top: 4px; }
+.qf-of { font-size: 13px; font-weight: 600; color: var(--muted); }
+.qf-label { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* ===== Section headings ===== */
+.section-title {
+  font-size: var(--fs-label,11px); letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; margin: 24px 0 12px;
+}
+
+/* ===== Been / Want split bar ===== */
+.split-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 20px; }
+.split-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.split-label { font-size: var(--fs-sub,12px); font-weight: 600; }
+.split-label.been { color: var(--rust); }
+.split-label.want { color: var(--navy); }
+.split-track { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; display: flex; }
+.split-been { height: 100%; background: linear-gradient(90deg, var(--rust-deep), var(--rust)); border-radius: 5px 0 0 5px; transition: width 0.6s ease; }
+.split-want { height: 100%; background: var(--navy); flex: 1; border-radius: 0 5px 5px 0; }
+.split-sub { font-size: var(--fs-sub,12px); color: var(--muted); margin-top: 10px; }
+
+/* ===== Region bars ===== */
+.region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.region-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+.region-name { font-size: var(--fs-sub,12px); font-weight: 600; color: var(--text); margin-bottom: 3px; display: flex; align-items: center; justify-content: space-between; }
+.region-count { font-size: var(--fs-label,11px); color: var(--muted); }
+.region-bar-track { height: 4px; background: var(--track); border-radius: 2px; margin: 6px 0; overflow: hidden; }
+.region-bar-fill { height: 100%; border-radius: 2px; background: var(--rust); transition: width 0.5s ease; }
+.region-bar-fill.want { background: var(--navy); }
+.region-cities { font-size: var(--fs-label,11px); color: var(--muted); line-height: 1.5; }
+.region-cities a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted #c0b9b0; transition: color .12s, border-color .12s; }
+.region-cities a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ===== Flight stat cards ===== */
+.flight-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.flight-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; border-top: 3px solid var(--rust); }
+.flight-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; background: #fbeee4; font-size: 17px; margin-bottom: 8px; }
+.flight-val { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; color: var(--rust); line-height: 1.1; margin-bottom: 2px; }
+.flight-label { font-size: var(--fs-label,11px); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.flight-sub { font-size: var(--fs-sub,12px); color: var(--muted); }
+
+/* ===== Bucket list ===== */
+.bucket-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.bucket-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--navy); border-radius: 8px; padding: 12px 14px; }
+.bucket-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+.bucket-name { font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; }
+.bucket-name:hover { color: var(--navy); }
+.bucket-time { font-size: var(--fs-sub,12px); color: var(--navy); font-weight: 700; white-space: nowrap; }
+.bucket-detail { font-size: var(--fs-sub,12px); color: var(--muted); }
+
+/* ===== New frontiers ===== */
+.frontiers-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
+.frontiers-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.frontier-chip { font-size: var(--fs-sub,12px); padding: 5px 12px; border-radius: 20px; font-weight: 600; background: #eef2f9; color: var(--navy); border: 1px solid #c5d3ec; display: flex; align-items: center; gap: 6px; }
+.frontier-chip.visited { background: #fbeee4; color: var(--rust); border-color: #e6c3a8; }
+
+/* ===== By continent ===== */
+.cont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.cont-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; transition: box-shadow .15s, transform .15s; }
+.cont-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
+.cont-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 9px; }
+.cont-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.cont-total { font-size: var(--fs-label,11px); font-weight: 600; color: var(--muted); }
+.cont-track { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; display: flex; }
+.cont-been { height: 100%; background: var(--rust); }
+.cont-want { height: 100%; background: var(--navy); }
+.cont-legend { font-size: var(--fs-label,11px); color: var(--muted); margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+.cont-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.cont-dot.been { background: var(--rust); }
+.cont-dot.want { background: var(--navy); margin-left: 8px; }
+
+/* ===== How you get there (routing) ===== */
+.route-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+.route-track { height: 14px; border-radius: 7px; overflow: hidden; display: flex; background: var(--track); }
+.route-seg { height: 100%; }
+.route-seg.nonstop { background: var(--rust); }
+.route-seg.onestop { background: var(--navy); }
+.route-seg.twostop { background: var(--navy-deep); }
+.route-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px; }
+.route-key { font-size: var(--fs-sub,12px); color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.route-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.route-dot.nonstop { background: var(--rust); }
+.route-dot.onestop { background: var(--navy); }
+.route-dot.twostop { background: var(--navy-deep); }
+
+/* ===== Gateway hubs ===== */
+.hub-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.hub-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 8px 13px; display: flex; align-items: baseline; gap: 8px; transition: box-shadow .15s, transform .15s; }
+.hub-chip:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
+.hub-code { font-size: 15px; font-weight: 800; letter-spacing: 0.04em; color: var(--rust-deep); }
+.hub-count { font-size: var(--fs-label,11px); color: var(--muted); }
+
+/* ===== Most-covered countries ===== */
+.ctry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.ctry-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; transition: box-shadow .15s, transform .15s; }
+.ctry-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
+.ctry-flag { font-size: 26px; line-height: 1; }
+.ctry-body { flex: 1; min-width: 0; }
+.ctry-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.ctry-sub { font-size: var(--fs-label,11px); color: var(--muted); }
+.ctry-count { font-size: 22px; font-weight: 800; color: var(--rust); letter-spacing: -0.02em; }
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .page { padding: 0 14px; }
+  .hero-row { grid-template-columns: repeat(2, 1fr); }
+  .quickfacts { grid-template-columns: repeat(2, 1fr); }
+  .flight-row { grid-template-columns: repeat(2, 1fr); }
+  .region-grid { grid-template-columns: 1fr; }
+  .cont-grid { grid-template-columns: 1fr; }
+  .ctry-grid { grid-template-columns: 1fr; }
+  .bucket-row { grid-template-columns: 1fr; }
+  .hero-num { font-size: 26px; }
+}
+html { scroll-behavior: smooth; }
+body { padding-left: 20px !important; padding-right: 20px !important; }
+.hero-card, .qf, .region-card, .flight-card, .bucket-card { transition: box-shadow .15s, transform .15s; }
+.hero-card:hover, .qf:hover, .region-card:hover, .flight-card:hover, .bucket-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
+/* ===== Section jump nav ===== */
+.stats-nav { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 18px; }
+.stats-nav a { font-size: var(--fs-sub,12px); color: #6a5230; text-decoration: none; padding: 4px 11px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface2); white-space: nowrap; transition: all .15s; }
+.stats-nav a:hover { border-color: var(--accent); color: var(--accent); background: rgba(184,92,42,.08); }
+.stats-nav a.active { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
+.stats-nav a:focus-visible { outline: 2px solid #b85c2a; outline-offset: 1px; }
+.section-title { scroll-margin-top: 14px; }
+#overview { scroll-margin-top: 14px; }
+@media (max-width:600px) {
+  .stats-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right,black calc(100% - 36px),transparent 100%); mask-image: linear-gradient(to right,black calc(100% - 36px),transparent 100%); }
+  .stats-nav::-webkit-scrollbar { display: none; }
+  .stats-nav a { flex-shrink: 0; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=14"></script>
+
+<div class="page">
+
+  <div class="header">
+    <h1>Travel Stats</h1>
+    <div class="header-desc">A look at where I've been — and where I'm going next.</div>
+  </div>
+  <span class="updated-stamp">Updated June 2026</span>
+
+  <!-- SECTION JUMP NAV -->
+  <nav class="stats-nav" aria-label="Jump to section">
+    <a href="#overview">Overview</a>
+    <a href="#sec-split">Been vs Want</a>
+    <a href="#sec-flights">Flights</a>
+    <a href="#sec-been">Been by Region</a>
+    <a href="#sec-bucket">Bucket List</a>
+    <a href="#sec-want">Wishlist</a>
+    <a href="#sec-frontiers">Frontiers</a>
+    <a href="#sec-continents">Continents</a>
+    <a href="#sec-routing">Routing</a>
+    <a href="#sec-hubs">Hubs</a>
+    <a href="#sec-countries">Countries</a>
+  </nav>
+
+  <!-- HERO NUMBERS -->
+  <div class="hero-row" id="overview">
+    <div class="hero-card total">
+      <div class="hero-icon">📚</div>
+      <div class="hero-num">136</div>
+      <div class="hero-label">Total Guides</div>
+    </div>
+    <div class="hero-card been">
+      <div class="hero-icon">📸</div>
+      <div class="hero-num">67</div>
+      <div class="hero-label">Been There</div>
+    </div>
+    <div class="hero-card want">
+      <div class="hero-icon">🗺️</div>
+      <div class="hero-num">69</div>
+      <div class="hero-label">On the List</div>
+    </div>
+    <div class="hero-card country">
+      <div class="hero-icon">🌍</div>
+      <div class="hero-num">26</div>
+      <div class="hero-label">Countries Visited</div>
+    </div>
+  </div>
+
+  <!-- QUICK FACTS -->
+  <div class="quickfacts">
+    <div class="qf">
+      <span class="qf-icon">🧭</span>
+      <span class="qf-val">5<span class="qf-of"> / 9</span></span>
+      <span class="qf-label">Regions visited</span>
+    </div>
+    <div class="qf">
+      <span class="qf-icon">🚩</span>
+      <span class="qf-val">26<span class="qf-of"> / 51</span></span>
+      <span class="qf-label">Countries reached</span>
+    </div>
+    <div class="qf">
+      <span class="qf-icon">⏱</span>
+      <span class="qf-val">9h 31m</span>
+      <span class="qf-label">Avg flight (visited)</span>
+    </div>
+    <div class="qf">
+      <span class="qf-icon">✈️</span>
+      <span class="qf-val">26<span class="qf-of"> / 34</span></span>
+      <span class="qf-label">Nonstop from Seattle</span>
+    </div>
+  </div>
+
+  <!-- BEEN VS WANT SPLIT -->
+  <div class="section-title" id="sec-split">Been vs. Still Want to Go</div>
+  <div class="split-wrap">
+    <div class="split-labels">
+      <span class="split-label been">✓ 67 been &nbsp;(49%)</span>
+      <span class="split-label want">♡ 69 on the list &nbsp;(50%)</span>
+    </div>
+    <div class="split-track">
+      <div class="split-been" style="width:49.3%"></div>
+      <div class="split-want"></div>
+    </div>
+    <div class="split-sub">136 guides total — 67 of 136 guides visited.</div>
+  </div>
+
+  <!-- FLIGHT STATS -->
+  <div class="section-title" id="sec-flights">Flight Stats (from Seattle)</div>
+  <div class="flight-row">
+    <div class="flight-card">
+      <div class="flight-icon">⏳</div>
+      <div class="flight-label">Total one-way time to all been destinations</div>
+      <div class="flight-val">637h 47m</div>
+      <div class="flight-sub">That's 26 days in the air — one-way.</div>
+    </div>
+    <div class="flight-card">
+      <div class="flight-icon">🛬</div>
+      <div class="flight-label">Farthest destination visited</div>
+      <div class="flight-val">18h 30m</div>
+      <div class="flight-sub">🇨🇳 Zhangjiajie · 18h 30m</div>
+    </div>
+    <div class="flight-card">
+      <div class="flight-icon">🌏</div>
+      <div class="flight-label">Farthest on the list</div>
+      <div class="flight-val">19h 05m</div>
+      <div class="flight-sub">🇮🇩 Bali · 2 stops via ICN</div>
+    </div>
+  </div>
+
+  <!-- REGION BREAKDOWN — BEEN -->
+  <div class="section-title" id="sec-been">Where I've Been — By Region</div>
+  <div class="region-grid">
+    <div class="region-card">
+      <div class="region-name">🌍 Europe <span class="region-count">35 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill" style="width:100%"></div></div>
+      <div class="region-cities"><a href="../Guides/London/london_v5.html">London</a> · <a href="../Guides/Copenhagen/copenhagen_v1.html">Copenhagen</a> · <a href="../Guides/Amsterdam/amsterdam_v1.html">Amsterdam</a> · <a href="../Guides/Paris/paris_v7.html">Paris</a> · <a href="../Guides/Bruges/bruges_v1.html">Bruges</a> · <a href="../Guides/Brussels/brussels_v1.html">Brussels</a> · <a href="../Guides/Edinburgh/edinburgh_v1.html">Edinburgh</a> · <a href="../Guides/Stuttgart/stuttgart_v1.html">Stuttgart</a> · <a href="../Guides/Strasbourg/strasbourg_v1.html">Strasbourg</a> · <a href="../Guides/Luxembourg/luxembourg_v1.html">Luxembourg</a> · <a href="../Guides/Geneva/geneva_v1.html">Geneva</a> · <a href="../Guides/Rome/rome_v1.html">Rome</a> · <a href="../Guides/Munich/munich_v2.html">Munich</a> · <a href="../Guides/Turin/turin_v14.html">Turin</a> · <a href="../Guides/Porto/porto_v2.html">Porto</a> · <a href="../Guides/Cannes/cannes_v1.html">Cannes</a> · <a href="../Guides/Nice/nice_v1.html">Nice</a> · <a href="../Guides/Monaco/monaco_v1.html">Monaco</a> · <a href="../Guides/Venice/venice_v1.html">Venice</a> · <a href="../Guides/Vienna/vienna_v1.html">Vienna</a> · <a href="../Guides/San Sebastian/san_sebastian_v1.html">San Sebastián</a> · <a href="../Guides/Cinque Terre/cinque_terre_v1.html">Cinque Terre</a> · <a href="../Guides/Florence/florence_v1.html">Florence</a> · <a href="../Guides/Pisa/pisa_v1.html">Pisa</a> · <a href="../Guides/Cascais/cascais_v2.html">Cascais</a> · <a href="../Guides/Lisbon/lisbon_v4.html">Lisbon</a> · <a href="../Guides/Sintra/sintra_v2.html">Sintra</a> · <a href="../Guides/Capri/capri_v1.html">Capri</a> · <a href="../Guides/Madrid/madrid_v1.html">Madrid</a> · <a href="../Guides/Toledo/toledo_v1.html">Toledo</a> · <a href="../Guides/Lagos/lagos_v1.html">Lagos</a> · <a href="../Guides/Gothenburg/gothenburg_v1.html">Gothenburg</a> · <a href="../Guides/Athens/athens_v1.html">Athens</a> · <a href="../Guides/Verona/verona_v1.html">Verona</a> · <a href="../Guides/Corfu/corfu_v1.html">Corfu</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🌐 North America <span class="region-count">18 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill" style="width:51%"></div></div>
+      <div class="region-cities"><a href="../Guides/Vancouver/vancouver_v1.html">Vancouver</a> · <a href="../Guides/Palo Alto/palo_alto_v6.html">Palo Alto</a> · <a href="../Guides/San Francisco/sf_v3.html">San Francisco</a> · <a href="../Guides/Los Angeles/los_angeles_v1.html">Los Angeles</a> · <a href="../Guides/Pasadena/pasadena_v5.html">Pasadena</a> · <a href="../Guides/San Diego/san_diego_v1.html">San Diego</a> · <a href="../Guides/Scottsdale/scottsdale_v1.html">Scottsdale</a> · <a href="../Guides/Chicago/chicago_v1.html">Chicago</a> · <a href="../Guides/Austin/austin_v1.html">Austin</a> · <a href="../Guides/Toronto/toronto_v1.html">Toronto</a> · <a href="../Guides/Atlanta/atlanta_v1.html">Atlanta</a> · <a href="../Guides/New York/new_york_v1.html">New York</a> · <a href="../Guides/Orlando/orlando_v1.html">Orlando</a> · <a href="../Guides/Maui/maui_v1.html">Maui</a> · <a href="../Guides/Oahu/oahu_v1.html">Oahu</a> · <a href="../Guides/Big Island/big_island_v1.html">Big Island</a> · <a href="../Guides/Kauai/kauai_v1.html">Kauai</a> · <a href="../Guides/Miami/miami_v1.html">Miami</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🌏 Asia <span class="region-count">8 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill" style="width:23%"></div></div>
+      <div class="region-cities"><a href="../Guides/Kyoto/kyoto_v1.html">Kyoto</a> · <a href="../Guides/Tokyo/tokyo_v1.html">Tokyo</a> · <a href="../Guides/Seoul/seoul_v1.html">Seoul</a> · <a href="../Guides/Shanghai/shanghai_v1.html">Shanghai</a> · <a href="../Guides/Taipei/taipei_v1.html">Taipei</a> · <a href="../Guides/Beijing/beijing_v1.html">Beijing</a> · <a href="../Guides/Zhangjiajie/zhangjiajie_v1.html">Zhangjiajie</a> · <a href="../Guides/Chongqing/chongqing_v1.html">Chongqing</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🏝 Caribbean <span class="region-count">5 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill" style="width:14%"></div></div>
+      <div class="region-cities"><a href="../Guides/Bahamas/bahamas_v1.html">The Bahamas</a> · <a href="../Guides/Virgin Islands/virgin_islands_v1.html">Virgin Islands</a> · <a href="../Guides/Sint Maarten/sint_maarten_v1.html">Sint Maarten</a> · <a href="../Guides/Aruba/aruba_v1.html">Aruba</a> · <a href="../Guides/Curacao/curacao_v1.html">Curaçao</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🌎 South America <span class="region-count">1 guide</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill" style="width:3%"></div></div>
+      <div class="region-cities"><a href="../Guides/Rio de Janeiro/rio_de_janeiro_v1.html">Rio de Janeiro</a></div>
+    </div>
+  </div>
+
+  <!-- BUCKET LIST SNEAK PEEK -->
+  <div class="section-title" id="sec-bucket">Bucket List — Top Picks</div>
+  <div class="bucket-row">
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Bali/bali_v1.html">🇮🇩 Bali</a><span class="bucket-time">19h 05m</span></div>
+      <div class="bucket-detail">2 stops via ICN</div>
+    </div>
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Queenstown/queenstown_v1.html">🇳🇿 Queenstown</a><span class="bucket-time">22h</span></div>
+      <div class="bucket-detail">2 stops via SYD</div>
+    </div>
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Sydney/sydney_v2.html">🇦🇺 Sydney</a><span class="bucket-time">20h 10m</span></div>
+      <div class="bucket-detail">1 stop via LAX</div>
+    </div>
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Melbourne/melbourne_v1.html">🇦🇺 Melbourne</a><span class="bucket-time">20h 05m</span></div>
+      <div class="bucket-detail">1 stop via LAX</div>
+    </div>
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Phuket/phuket_v1.html">🇹🇭 Phuket</a><span class="bucket-time">20h 56m</span></div>
+      <div class="bucket-detail">2 stops via ICN</div>
+    </div>
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Hong Kong/hong_kong_v1.html">🇭🇰 Hong Kong</a><span class="bucket-time">18h 25m</span></div>
+      <div class="bucket-detail">1 stop via LAX</div>
+    </div>
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Wellington/wellington_v1.html">🇳🇿 Wellington</a><span class="bucket-time">19h 50m</span></div>
+      <div class="bucket-detail">2 stops via AKL</div>
+    </div>
+    <div class="bucket-card">
+      <div class="bucket-top"><a class="bucket-name" href="../Guides/Dubai/dubai_v1.html">🇦🇪 Dubai</a><span class="bucket-time">18h 15m</span></div>
+      <div class="bucket-detail">1 stop via AMS</div>
+    </div>
+  </div>
+
+  <!-- BUCKET LIST REGIONS — WANT -->
+  <div class="section-title" id="sec-want">On the List — By Region</div>
+  <div class="region-grid">
+    <div class="region-card">
+      <div class="region-name">🌍 Europe <span class="region-count">41 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:100%"></div></div>
+      <div class="region-cities"><a href="../Guides/Iceland/reykjavik_v2.html">Reykjavik</a> · <a href="../Guides/Dublin/dublin_v1.html">Dublin</a> · <a href="../Guides/Helsinki/helsinki_v1.html">Helsinki</a> · <a href="../Guides/Cambridge/cambridge_v1.html">Cambridge</a> · <a href="../Guides/Oxford/oxford_v1.html">Oxford</a> · <a href="../Guides/Lille/lille_v1.html">Lille</a> · <a href="../Guides/Lucerne/lucerne_v1.html">Lucerne</a> · <a href="../Guides/Zurich/zurich_v1.html">Zurich</a> · <a href="../Guides/Barcelona/barcelona_v1.html">Barcelona</a> · <a href="../Guides/Glasgow/glasgow_v1.html">Glasgow</a> · <a href="../Guides/Berlin/berlin_v1.html">Berlin</a> · <a href="../Guides/Annecy/annecy_v1.html">Annecy</a> · <a href="../Guides/Lyon/lyon_v1.html">Lyon</a> · <a href="../Guides/Colmar/colmar_v1.html">Colmar</a> · <a href="../Guides/Marktoberdorf/marktoberdorf_v1.html">Marktoberdorf</a> · <a href="../Guides/Prague/prague_v1.html">Prague</a> · <a href="../Guides/Bordeaux/bordeaux_v1.html">Bordeaux</a> · <a href="../Guides/Lake Como/lake_como_v1.html">Lake Como</a> · <a href="../Guides/Milan/milan_v1.html">Milan</a> · <a href="../Guides/Aix-en-Provence/aix-en-provence_v1.html">Aix-en-Provence</a> · <a href="../Guides/Marseille/marseille_v1.html">Marseille</a> · <a href="../Guides/Oslo/oslo_v1.html">Oslo</a> · <a href="../Guides/Bologna/bologna_v1.html">Bologna</a> · <a href="../Guides/Siena/siena_v1.html">Siena</a> · <a href="../Guides/Bergen/bergen_v1.html">Bergen</a> · <a href="../Guides/Alesund/alesund_v1.html">Ålesund</a> · <a href="../Guides/Stockholm/stockholm_v1.html">Stockholm</a> · <a href="../Guides/Naples/naples_v1.html">Naples</a> · <a href="../Guides/Amalfi/amalfi_v1.html">Amalfi</a> · <a href="../Guides/Sorrento/sorrento_v1.html">Sorrento</a> · <a href="../Guides/Split/split_v1.html">Split</a> · <a href="../Guides/Seville/seville_v1.html">Seville</a> · <a href="../Guides/Tromso/tromso_v1.html">Tromsø</a> · <a href="../Guides/Salzburg/salzburg_v1.html">Salzburg</a> · <a href="../Guides/Ljubljana/ljubljana_v1.html">Ljubljana</a> · <a href="../Guides/Tallinn/tallinn_v1.html">Tallinn</a> · <a href="../Guides/Dubrovnik/guide_v1.html">Dubrovnik</a> · <a href="../Guides/Madeira/madeira_v1.html">Madeira</a> · <a href="../Guides/Azores/guide_v1.html">Azores</a> · <a href="../Guides/Istanbul/istanbul_v1.html">Istanbul</a> · <a href="../Guides/Budapest/budapest_v1.html">Budapest</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🌐 North America <span class="region-count">6 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:15%"></div></div>
+      <div class="region-cities"><a href="../Guides/Bend/bend_v2.html">Bend</a> · <a href="../Guides/Palm Desert/palm_desert_v1.html">Palm Desert</a> · <a href="../Guides/Alaska/alaska_v1.html">Alaska</a> · <a href="../Guides/Boston/boston_v1.html">Boston</a> · <a href="../Guides/Montreal/montreal_v1.html">Montréal</a> · <a href="../Guides/Quebec City/quebec_city_v1.html">Québec City</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🌎 South America <span class="region-count">6 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:15%"></div></div>
+      <div class="region-cities"><a href="../Guides/Lima/lima_v1.html">Lima</a> · <a href="../Guides/Cusco/cusco_v1.html">Cusco</a> · <a href="../Guides/MachuPicchu/machupicchu_v1.html">Machu Picchu</a> · <a href="../Guides/Santiago/santiago_v1.html">Santiago</a> · <a href="../Guides/Buenos Aires/buenos_aires_v1.html">Buenos Aires</a> · <a href="../Guides/Montevideo/montevideo_v1.html">Montevideo</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🌏 Asia <span class="region-count">5 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:12%"></div></div>
+      <div class="region-cities"><a href="../Guides/Hong Kong/hong_kong_v1.html">Hong Kong</a> · <a href="../Guides/Bangkok/bangkok_v1.html">Bangkok</a> · <a href="../Guides/Singapore/singapore_v3.html">Singapore</a> · <a href="../Guides/Phuket/phuket_v1.html">Phuket</a> · <a href="../Guides/Bali/bali_v1.html">Bali</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🦘 Oceania <span class="region-count">4 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:10%"></div></div>
+      <div class="region-cities"><a href="../Guides/Wellington/wellington_v1.html">Wellington</a> · <a href="../Guides/Sydney/sydney_v2.html">Sydney</a> · <a href="../Guides/Queenstown/queenstown_v1.html">Queenstown</a> · <a href="../Guides/Melbourne/melbourne_v1.html">Melbourne</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🏝 Caribbean <span class="region-count">3 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:7%"></div></div>
+      <div class="region-cities"><a href="../Guides/Cayman Islands/cayman_islands_v1.html">Cayman Islands</a> · <a href="../Guides/Puerto Rico/puerto_rico_v1.html">Puerto Rico</a> · <a href="../Guides/Barbados/barbados_v1.html">Barbados</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🕌 Middle East <span class="region-count">3 guides</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:7%"></div></div>
+      <div class="region-cities"><a href="../Guides/Dubai/dubai_v1.html">Dubai</a> · <a href="../Guides/United Arab Emirates/united_arab_emirates_v1.html">United Arab Emirates</a> · <a href="../Guides/Abu Dhabi/abu_dhabi_v1.html">Abu Dhabi</a></div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">🌍 Africa <span class="region-count">1 guide</span></div>
+      <div class="region-bar-track"><div class="region-bar-fill want" style="width:2%"></div></div>
+      <div class="region-cities"><a href="../Guides/Marrakech/marrakech_v1.html">Marrakech</a></div>
+    </div>
+  </div>
+
+  <!-- NEW FRONTIERS -->
+  <div class="section-title" id="sec-frontiers">New Frontiers</div>
+  <div class="frontiers-card">
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;">Regions visited so far are highlighted. The rest are still waiting.</div>
+    <div class="frontiers-chips">
+      <div class="frontier-chip visited">✓ Europe</div>
+      <div class="frontier-chip">♡ United States</div>
+      <div class="frontier-chip visited">✓ Asia</div>
+      <div class="frontier-chip visited">✓ Caribbean</div>
+      <div class="frontier-chip">♡ Canada</div>
+      <div class="frontier-chip visited">✓ South America</div>
+      <div class="frontier-chip">♡ Middle East</div>
+      <div class="frontier-chip">♡ Oceania</div>
+      <div class="frontier-chip">♡ Africa</div>
+    </div>
+  </div>
+
+  <!-- BY CONTINENT -->
+  <div class="section-title" id="sec-continents">By Continent</div>
+  <div class="cont-grid">
+    <div class="cont-card">
+      <div class="cont-head">
+        <span class="cont-name">🗽 North America</span>
+        <span class="cont-total">32 guides</span>
+      </div>
+      <div class="cont-track">
+        <div class="cont-been" style="width:72%"></div>
+        <div class="cont-want" style="width:28%"></div>
+      </div>
+      <div class="cont-legend"><span class="cont-dot been"></span>23 visited<span class="cont-dot want"></span>9 on the list</div>
+    </div>
+    <div class="cont-card">
+      <div class="cont-head">
+        <span class="cont-name">🗿 South America</span>
+        <span class="cont-total">7 guides</span>
+      </div>
+      <div class="cont-track">
+        <div class="cont-been" style="width:14%"></div>
+        <div class="cont-want" style="width:86%"></div>
+      </div>
+      <div class="cont-legend"><span class="cont-dot been"></span>1 visited<span class="cont-dot want"></span>6 on the list</div>
+    </div>
+    <div class="cont-card">
+      <div class="cont-head">
+        <span class="cont-name">🏰 Europe</span>
+        <span class="cont-total">76 guides</span>
+      </div>
+      <div class="cont-track">
+        <div class="cont-been" style="width:46%"></div>
+        <div class="cont-want" style="width:54%"></div>
+      </div>
+      <div class="cont-legend"><span class="cont-dot been"></span>35 visited<span class="cont-dot want"></span>41 on the list</div>
+    </div>
+    <div class="cont-card">
+      <div class="cont-head">
+        <span class="cont-name">🦁 Africa</span>
+        <span class="cont-total">1 guide</span>
+      </div>
+      <div class="cont-track">
+        <div class="cont-been" style="width:0%"></div>
+        <div class="cont-want" style="width:100%"></div>
+      </div>
+      <div class="cont-legend"><span class="cont-dot been"></span>0 visited<span class="cont-dot want"></span>1 on the list</div>
+    </div>
+    <div class="cont-card">
+      <div class="cont-head">
+        <span class="cont-name">⛩ Asia</span>
+        <span class="cont-total">16 guides</span>
+      </div>
+      <div class="cont-track">
+        <div class="cont-been" style="width:50%"></div>
+        <div class="cont-want" style="width:50%"></div>
+      </div>
+      <div class="cont-legend"><span class="cont-dot been"></span>8 visited<span class="cont-dot want"></span>8 on the list</div>
+    </div>
+    <div class="cont-card">
+      <div class="cont-head">
+        <span class="cont-name">🦘 Oceania</span>
+        <span class="cont-total">4 guides</span>
+      </div>
+      <div class="cont-track">
+        <div class="cont-been" style="width:0%"></div>
+        <div class="cont-want" style="width:100%"></div>
+      </div>
+      <div class="cont-legend"><span class="cont-dot been"></span>0 visited<span class="cont-dot want"></span>4 on the list</div>
+    </div>
+  </div>
+
+  <!-- HOW YOU GET THERE -->
+  <div class="section-title" id="sec-routing">How You Get There (from Seattle)</div>
+  <div class="route-wrap">
+    <div class="route-track"><div class="route-seg nonstop" style="width:25.0%"></div><div class="route-seg onestop" style="width:38.2%"></div><div class="route-seg twostop" style="width:36.8%"></div></div>
+    <div class="route-legend"><span class="route-key"><span class="route-dot nonstop"></span>Nonstop · 34</span><span class="route-key"><span class="route-dot onestop"></span>1 connection · 52</span><span class="route-key"><span class="route-dot twostop"></span>2 connections · 50</span></div>
+  </div>
+
+  <!-- GATEWAY HUBS -->
+  <div class="section-title" id="sec-hubs">Gateway Hubs — Top Connecting Airports</div>
+  <div class="hub-strip">
+      <div class="hub-chip">
+        <span class="hub-code">AMS</span>
+        <span class="hub-count">29 guides</span>
+      </div>
+      <div class="hub-chip">
+        <span class="hub-code">JFK</span>
+        <span class="hub-count">23 guides</span>
+      </div>
+      <div class="hub-chip">
+        <span class="hub-code">ATL</span>
+        <span class="hub-count">17 guides</span>
+      </div>
+      <div class="hub-chip">
+        <span class="hub-code">CDG</span>
+        <span class="hub-count">9 guides</span>
+      </div>
+      <div class="hub-chip">
+        <span class="hub-code">ICN</span>
+        <span class="hub-count">6 guides</span>
+      </div>
+      <div class="hub-chip">
+        <span class="hub-code">BOS</span>
+        <span class="hub-count">4 guides</span>
+      </div>
+      <div class="hub-chip">
+        <span class="hub-code">LAX</span>
+        <span class="hub-count">3 guides</span>
+      </div>
+      <div class="hub-chip">
+        <span class="hub-code">OSL</span>
+        <span class="hub-count">2 guides</span>
+      </div>
+  </div>
+
+  <!-- MOST-COVERED COUNTRIES -->
+  <div class="section-title" id="sec-countries">Most-Covered Countries</div>
+  <div class="ctry-grid">
+    <div class="ctry-card">
+      <span class="ctry-flag">🇺🇸</span>
+      <div class="ctry-body">
+        <div class="ctry-name">United States</div>
+        <div class="ctry-sub">21 guides · 17 visited</div>
+      </div>
+      <span class="ctry-count">21</span>
+    </div>
+    <div class="ctry-card">
+      <span class="ctry-flag">🇮🇹</span>
+      <div class="ctry-body">
+        <div class="ctry-name">Italy</div>
+        <div class="ctry-sub">15 guides · 8 visited</div>
+      </div>
+      <span class="ctry-count">15</span>
+    </div>
+    <div class="ctry-card">
+      <span class="ctry-flag">🇫🇷</span>
+      <div class="ctry-body">
+        <div class="ctry-name">France</div>
+        <div class="ctry-sub">11 guides · 4 visited</div>
+      </div>
+      <span class="ctry-count">11</span>
+    </div>
+    <div class="ctry-card">
+      <span class="ctry-flag">🇵🇹</span>
+      <div class="ctry-body">
+        <div class="ctry-name">Portugal</div>
+        <div class="ctry-sub">7 guides · 5 visited</div>
+      </div>
+      <span class="ctry-count">7</span>
+    </div>
+    <div class="ctry-card">
+      <span class="ctry-flag">🇪🇸</span>
+      <div class="ctry-body">
+        <div class="ctry-name">Spain</div>
+        <div class="ctry-sub">5 guides · 3 visited</div>
+      </div>
+      <span class="ctry-count">5</span>
+    </div>
+    <div class="ctry-card">
+      <span class="ctry-flag">🇬🇧</span>
+      <div class="ctry-body">
+        <div class="ctry-name">United Kingdom</div>
+        <div class="ctry-sub">5 guides · 2 visited</div>
+      </div>
+      <span class="ctry-count">5</span>
+    </div>
+  </div>
+
+</div>
+<script>
+/* Scroll-spy — highlight the jump-nav pill for the section in view. */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.stats-nav a'));
+  if(!links.length||!('IntersectionObserver' in window))return;
+  var map={};
+  links.forEach(function(a){var id=(a.getAttribute('href')||'').replace('#','');if(id)map[id]=a;});
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){links.forEach(function(a){a.classList.toggle('active',a===map[en.target.id]);});}
+    });
+  },{rootMargin:'-12% 0px -78% 0px',threshold:0});
+  Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});
+})();
+</script>
+</body>
+</html>

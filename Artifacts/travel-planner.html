@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel Planner</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg:      #f5f4f0;
+  --surface: #ffffff;
+  --surface2:#f0eeea;
+  --border:  #d8d5ce;
+  --border2: #e8e5de;
+  --text:    #1a1917;
+  --muted:   #6b6860;
+  --accent:  #8a6c1a;
+  --red:     #b00020;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding-bottom: 60px;
+}
+.page { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+
+/* ── Header ── */
+.hdr {
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 14px 0 24px;
+}
+.hdr h1 { font-size: 15px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .05em; }
+.hdr p  { font-size: 12px; color: rgba(255,255,255,.72); margin-top: 2px; }
+
+/* ── Section label ── */
+.sec-lbl {
+  font-size: 11px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--accent);
+  margin-bottom: 14px;
+}
+
+/* ── Month divider ── */
+.mo-lbl {
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 16px 0 7px;
+}
+.mo-lbl:first-child { margin-top: 0; }
+
+/* ── Trip row ── */
+.trip-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  transition: box-shadow .15s, transform .15s;
+}
+.trip-row:hover { box-shadow: 0 3px 12px rgba(0,0,0,.07); transform: translateY(-1px); }
+.tr-dates { font-size: 12px; color: var(--muted); white-space: nowrap; min-width: 110px; }
+.tr-name  { font-size: 14px; flex: 1; }
+
+/* ── Badges ── */
+.bdg {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.bdg-now { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.bdg-tbd { background: #fff3cd; color: #8a5a00; border: 1px solid #e8c96a; }
+
+/* ── Loading dots ── */
+.dots { display: flex; gap: 5px; align-items: center; padding: 8px 0; }
+.dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: .3; animation: blink 1.2s infinite; }
+.dot:nth-child(2) { animation-delay: .2s; }
+.dot:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+/* ── Search section ── */
+.srch-wrap { margin-top: 32px; }
+.tabs { display: flex; border-bottom: 1px solid var(--border); }
+.tab {
+  padding: 9px 18px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-family: inherit;
+  transition: color .12s;
+}
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.tab:hover:not(.active) { color: var(--text); }
+.tab-body {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 16px;
+}
+
+/* ── Form ── */
+.frow { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.fg   { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 96px; }
+.fg label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.fg input, .fg select {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  font-family: inherit;
+  -webkit-appearance: none;
+}
+.fg input:focus, .fg select:focus { outline: none; border-color: var(--accent); }
+.btn {
+  padding: 8px 20px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .12s;
+}
+.btn:hover { opacity: .88; }
+.hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: var(--surface2);
+  border-radius: 4px;
+  border-left: 3px solid var(--accent);
+  display: none;
+}
+
+/* ── Misc ── */
+.err { font-size: 12px; color: var(--red); }
+
+@media (max-width: 480px) {
+  .frow { flex-direction: column; }
+  .trip-row { flex-wrap: wrap; }
+  .tr-dates { min-width: auto; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Header -->
+<div class="hdr">
+  <h1>✈ Travel Planner</h1>
+  <p>Live trips from Drive · Hotel & flight search</p>
+</div>
+
+<!-- Upcoming trips -->
+<div class="sec-lbl">Upcoming Trips</div>
+<div id="trips">
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div>
+
+<!-- Search -->
+<div class="srch-wrap">
+  <div class="sec-lbl">Search</div>
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('hotels', this)">Hotels</button>
+    <button class="tab"        onclick="setTab('flights', this)">Flights</button>
+  </div>
+  <div class="tab-body">
+
+    <!-- Hotels -->
+    <div id="t-hotels">
+      <div class="frow">
+        <div class="fg" style="flex:2"><label>Destination</label>
+          <input type="text" id="h-dest" placeholder="e.g. Lisbon, Portugal"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Check-in</label><input type="date" id="h-in"></div>
+        <div class="fg"><label>Check-out</label><input type="date" id="h-out"></div>
+        <div class="fg" style="flex:0 0 72px"><label>Guests</label>
+          <select id="h-guests">
+            <option>1</option><option selected>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="doHotels()">Search Hotels</button>
+      <div class="hint" id="h-hint"></div>
+    </div>
+
+    <!-- Flights -->
+    <div id="t-flights" style="display:none">
+      <div class="frow">
+        <div class="fg"><label>From</label><input type="text" id="f-from" placeholder="SEA"></div>
+        <div class="fg"><label>To</label><input type="text" id="f-to"   placeholder="LIS"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Departure</label><input type="date" id="f-dep"></div>
+        <div class="fg"><label>Return (opt.)</label><input type="date" id="f-ret"></div>
+        <div class="fg" style="flex:0 0 118px"><label>Cabin</label>
+          <select id="f-class">
+            <option value="ECONOMY">Economy</option>
+            <option value="PREMIUMECONOMY">Prem. Economy</option>
+            <option value="BUSINESS">Business</option>
+            <option value="FIRST">First Class</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="doFlights()">Search Flights</button>
+      <div class="hint" id="f-hint"></div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- .page -->
+
+<script>
+const FILE_ID = '1YkkwDE08nWWH3P926vZdYLurkhVW7-Hd';
+const THIS_YEAR = new Date().getFullYear();
+
+// Month name → index
+const MO = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+
+function parseDate(str) {
+  str = (str || '').trim().toLowerCase();
+  const m = str.match(/([a-z]{3,})\s+(\d+)/);
+  if (m) {
+    const mo = MO[m[1].slice(0,3)];
+    if (mo !== undefined) return new Date(THIS_YEAR, mo, parseInt(m[2]));
+  }
+  return null;
+}
+
+function parseDateRange(s) {
+  const parts = (s || '').split(/\s*[-–—]\s*/);
+  if (parts.length < 2) return null;
+  const start = parseDate(parts[0]);
+  let end = parseDate(parts[1]);
+  if (!end && start) {
+    const dm = (parts[1] || '').trim().match(/^(\d+)/);
+    if (dm) end = new Date(THIS_YEAR, start.getMonth(), parseInt(dm[1]));
+  }
+  return (start && end) ? { start, end } : null;
+}
+
+function isCurrent(datesStr) {
+  const r = parseDateRange(datesStr);
+  if (!r) return false;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return today >= r.start && today <= r.end;
+}
+
+// ── Load trips from Drive ────────────────────────────────────
+async function loadTrips() {
+  const el = document.getElementById('trips');
+  try {
+    const r = await window.cowork.callMcpTool(
+      'mcp__c9c414e0-9fa7-4ae9-9b0b-ddc88a9094c9__download_file_content',
+      { fileId: FILE_ID }
+    );
+    const raw  = r.structuredContent ?? JSON.parse(r.content[0].text);
+    const html = atob(raw.content);
+    const doc  = new DOMParser().parseFromString(html, 'text/html');
+    const wrap = doc.querySelector('.wrap') ?? doc.body;
+
+    const months = [];
+    let cur = null, done = false;
+
+    for (const node of Array.from(wrap.children)) {
+      if (done) break;
+      if (node.classList.contains('month-block')) {
+        const lbl = (node.querySelector('.month-label')?.textContent ?? '').trim();
+        if (/past.?trips/i.test(lbl)) { done = true; break; }
+        cur = { label: lbl, trips: [] };
+        months.push(cur);
+      } else if (node.classList.contains('trip') && cur) {
+        const h     = node.querySelector('.trip-header');
+        const dates = (h?.querySelector('.trip-dates')?.textContent ?? '').trim();
+        const name  = (h?.querySelector('.trip-title')?.textContent ?? '').trim();
+        cur.trips.push({
+          dates,
+          name,
+          now:    isCurrent(dates),
+          unconf: !!h?.querySelector('.unconfirmed')
+        });
+      }
+    }
+
+    const active = months.filter(m => m.trips.length);
+    if (!active.length) { el.textContent = 'No upcoming trips.'; return; }
+
+    let out = '';
+    for (const mo of active) {
+      out += `<div class="mo-lbl">${mo.label}</div>`;
+      for (const t of mo.trips) {
+        out += `
+          <div class="trip-row">
+            <div class="tr-dates">${t.dates}</div>
+            <div class="tr-name">${t.name}</div>
+            ${t.now    ? '<span class="bdg bdg-now">Now</span>'           : ''}
+            ${t.unconf ? '<span class="bdg bdg-tbd">Not confirmed</span>' : ''}
+          </div>`;
+      }
+    }
+    el.innerHTML = out;
+  } catch(e) {
+    el.innerHTML = `<span class="err">Could not load trips from Drive.</span>`;
+    console.error(e);
+  }
+}
+
+// ── Tab switching ────────────────────────────────────────────
+function setTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('t-hotels').style.display  = name === 'hotels'  ? '' : 'none';
+  document.getElementById('t-flights').style.display = name === 'flights' ? '' : 'none';
+}
+
+// ── Hotel search → sends to Claude chat ─────────────────────
+function doHotels() {
+  const dest = document.getElementById('h-dest').value.trim();
+  if (!dest) { document.getElementById('h-dest').focus(); return; }
+  const ci     = document.getElementById('h-in').value;
+  const co     = document.getElementById('h-out').value;
+  const guests = document.getElementById('h-guests').value;
+
+  let q = `Search hotels in ${dest}`;
+  if (ci && co) q += ` from ${ci} to ${co}`;
+  if (guests !== '2') q += ` for ${guests} guests`;
+
+  window.cowork.sendPrompt(q);
+
+  const hint = document.getElementById('h-hint');
+  hint.style.display = '';
+  hint.textContent = `Searching hotels in ${dest} — results loading in chat ↗`;
+}
+
+// ── Flight search → sends to Claude chat ────────────────────
+function doFlights() {
+  const from = document.getElementById('f-from').value.trim().toUpperCase();
+  const to   = document.getElementById('f-to').value.trim().toUpperCase();
+  if (!from || !to) return;
+  const dep    = document.getElementById('f-dep').value;
+  const ret    = document.getElementById('f-ret').value;
+  const selEl  = document.getElementById('f-class');
+  const cabin  = selEl.options[selEl.selectedIndex].text;
+
+  let q = `Search ${cabin} flights from ${from} to ${to}`;
+  if (dep) q += ` departing ${dep}`;
+  if (ret) q += `, returning ${ret}`;
+
+  window.cowork.sendPrompt(q);
+
+  const hint = document.getElementById('f-hint');
+  hint.style.display = '';
+  hint.textContent = `Searching ${from} → ${to} — results loading in chat ↗`;
+}
+
+// ── Init ────────────────────────────────────────────────────
+loadTrips();
+</script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide Index</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg:       #f5f4f0;
+  --surface:  #ffffff;
+  --surface2: #f0eeea;
+  --border:   #d8d5ce;
+  --border2:  #e8e5de;
+  --text:     #1a1917;
+  --muted:    #6b6860;
+  --accent:   #8a6c1a;
+  --danger:   #b00020;
+  --bdanger:  #f5c0c0;
+  --info:     #0055bb;
+  --binfo:    #b0ccf5;
+  --success-bg:  #e8f5e9;
+  --success-txt: #2e7d32;
+  --success-bdr: #a5d6a7;
+  --radius-lg: 8px;
+  --radius-md: 5px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.hdr {
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  border-radius: 10px;
+  padding: 13px 16px;
+  margin-bottom: 18px;
+}
+.hdr h1 { font-size: 14px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .05em; }
+.hdr p  { font-size: 12px; color: rgba(255,255,255,.72); margin-top: 2px; }
+
+/* ── Search bar ── */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.search-icon { font-size: 16px; color: var(--muted); flex-shrink: 0; }
+#q2 {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+}
+#q2:focus { outline: none; border-color: var(--accent); }
+#count2 { font-size: 13px; color: var(--muted); min-width: 52px; text-align: right; flex-shrink: 0; }
+
+.sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+/* ── Grid ── */
+#grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 8px;
+}
+
+/* ── Card ── */
+.gc {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 10px 12px;
+  transition: border-color .12s, box-shadow .12s;
+}
+.gc:hover, .gc.open {
+  border-color: var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,.07);
+}
+
+/* ── Day badge ── */
+.db {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 3px;
+  padding: 1px 4px;
+  line-height: 1.5;
+  min-width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+.db.loading { background: var(--border2); color: var(--border2); }
+
+/* ── City name ── */
+.gn {
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.3;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── Actions panel ── */
+.ga {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .18s ease, opacity .18s ease, margin-top .18s ease;
+  margin-top: 0;
+}
+.gc:hover .ga, .gc.open .ga {
+  max-height: 80px;
+  opacity: 1;
+  margin-top: 9px;
+}
+
+/* ── Action buttons ── */
+.gb {
+  font-size: 12px;
+  padding: 5px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  transition: background .12s, transform .08s;
+  font-family: inherit;
+  color: var(--text);
+}
+.gb:hover  { background: var(--surface2); }
+.gb:active { transform: scale(.96); }
+
+.gb.rm {
+  color: var(--danger);
+  border-color: var(--bdanger);
+}
+.gb.rb {
+  grid-column: span 4;
+  color: var(--info);
+  border-color: var(--binfo);
+  font-size: 12px;
+}
+.gb.sent {
+  background: var(--success-bg);
+  color: var(--success-txt);
+  border-color: var(--success-bdr);
+}
+
+/* ── Empty state ── */
+#empty2 { font-size: 14px; color: var(--muted); padding: 16px 0; display: none; }
+
+/* ── Toast ── */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: #1a1917;
+  color: #fff;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity .2s, transform .2s;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 999;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>✈ Guide Index</h1>
+  <p>Hover a city → pick an action. It messages Claude for you.</p>
+</div>
+
+<div class="search-row">
+  <span class="search-icon">🔍</span>
+  <input id="q2" type="text" placeholder="Filter guides… (e.g. Paris, Italy, 🇯🇵)" aria-label="Filter guides">
+  <span id="count2">127</span>
+</div>
+<p class="sub">127 guides · hover to add / remove days or rebuild</p>
+
+<div id="grid2"></div>
+<div id="empty2">No guides match that filter.</div>
+<div id="toast"></div>
+
+<script>
+const G2=[{"flag":"🇦🇷","name":"Buenos Aires"},{"flag":"🇦🇺","name":"Melbourne"},{"flag":"🇦🇺","name":"Sydney"},{"flag":"🇦🇹","name":"Salzburg"},{"flag":"🇦🇹","name":"Vienna"},{"flag":"🇧🇪","name":"Bruges"},{"flag":"🇧🇪","name":"Brussels"},{"flag":"🇧🇷","name":"Rio de Janeiro"},{"flag":"🇨🇦","name":"Montréal"},{"flag":"🇨🇦","name":"Québec City"},{"flag":"🇨🇦","name":"Toronto"},{"flag":"🇨🇦","name":"Vancouver"},{"flag":"🇦🇼","name":"Aruba"},{"flag":"🇧🇸","name":"The Bahamas"},{"flag":"🇧🇧","name":"Barbados"},{"flag":"🇰🇾","name":"Cayman Islands"},{"flag":"🇨🇼","name":"Curaçao"},{"flag":"🇵🇷","name":"Puerto Rico"},{"flag":"🇸🇽","name":"Sint Maarten"},{"flag":"🇺🇸","name":"Virgin Islands"},{"flag":"🇨🇱","name":"Santiago"},{"flag":"🇨🇳","name":"Beijing"},{"flag":"🇨🇳","name":"Chongqing"},{"flag":"🇭🇰","name":"Hong Kong"},{"flag":"🇨🇳","name":"Shanghai"},{"flag":"🇨🇳","name":"Zhangjiajie"},{"flag":"🇨🇿","name":"Prague"},{"flag":"🇩🇰","name":"Copenhagen"},{"flag":"🇪🇪","name":"Tallinn"},{"flag":"🇫🇮","name":"Helsinki"},{"flag":"🇫🇷","name":"Aix-en-Provence"},{"flag":"🇫🇷","name":"Annecy"},{"flag":"🇫🇷","name":"Bordeaux"},{"flag":"🇫🇷","name":"Cannes"},{"flag":"🇫🇷","name":"Colmar"},{"flag":"🇫🇷","name":"Lille"},{"flag":"🇫🇷","name":"Lyon"},{"flag":"🇫🇷","name":"Marseille"},{"flag":"🇫🇷","name":"Nice"},{"flag":"🇫🇷","name":"Paris"},{"flag":"🇫🇷","name":"Strasbourg"},{"flag":"🇩🇪","name":"Berlin"},{"flag":"🇩🇪","name":"Marktoberdorf"},{"flag":"🇩🇪","name":"Munich"},{"flag":"🇩🇪","name":"Stuttgart"},{"flag":"🇬🇷","name":"Athens"},{"flag":"🇬🇷","name":"Corfu"},{"flag":"🇮🇸","name":"Reykjavik"},{"flag":"🇮🇪","name":"Dublin"},{"flag":"🇮🇹","name":"Amalfi"},{"flag":"🇮🇹","name":"Bologna"},{"flag":"🇮🇹","name":"Capri"},{"flag":"🇮🇹","name":"Cinque Terre"},{"flag":"🇮🇹","name":"Florence"},{"flag":"🇮🇹","name":"Lake Como"},{"flag":"🇮🇹","name":"Milan"},{"flag":"🇮🇹","name":"Pisa"},{"flag":"🇮🇹","name":"Rome"},{"flag":"🇮🇹","name":"Siena"},{"flag":"🇮🇹","name":"Sorrento"},{"flag":"🇮🇹","name":"Turin"},{"flag":"🇮🇹","name":"Venice"},{"flag":"🇮🇹","name":"Verona"},{"flag":"🇯🇵","name":"Kyoto"},{"flag":"🇯🇵","name":"Tokyo"},{"flag":"🇱🇺","name":"Luxembourg"},{"flag":"🇲🇨","name":"Monaco"},{"flag":"🇲🇦","name":"Marrakech"},{"flag":"🇳🇱","name":"Amsterdam"},{"flag":"🇳🇿","name":"Queenstown"},{"flag":"🇳🇿","name":"Wellington"},{"flag":"🇳🇴","name":"Ålesund"},{"flag":"🇳🇴","name":"Bergen"},{"flag":"🇳🇴","name":"Oslo"},{"flag":"🇳🇴","name":"Tromsø"},{"flag":"🇵🇪","name":"Cusco"},{"flag":"🇵🇪","name":"Lima"},{"flag":"🇵🇪","name":"Machu Picchu"},{"flag":"🇵🇹","name":"Cascais"},{"flag":"🇵🇹","name":"Lagos"},{"flag":"🇵🇹","name":"Lisbon"},{"flag":"🇵🇹","name":"Porto"},{"flag":"🇵🇹","name":"Sintra"},{"flag":"🇸🇬","name":"Singapore"},{"flag":"🇸🇮","name":"Ljubljana"},{"flag":"🇰🇷","name":"Seoul"},{"flag":"🇪🇸","name":"Barcelona"},{"flag":"🇪🇸","name":"Madrid"},{"flag":"🇪🇸","name":"San Sebastián"},{"flag":"🇪🇸","name":"Toledo"},{"flag":"🇸🇪","name":"Gothenburg"},{"flag":"🇸🇪","name":"Stockholm"},{"flag":"🇨🇭","name":"Geneva"},{"flag":"🇨🇭","name":"Lucerne"},{"flag":"🇨🇭","name":"Zurich"},{"flag":"🇹🇼","name":"Taipei"},{"flag":"🇹🇭","name":"Bangkok"},{"flag":"🇹🇭","name":"Phuket"},{"flag":"🇦🇪","name":"Abu Dhabi"},{"flag":"🇦🇪","name":"Dubai"},{"flag":"🇦🇪","name":"United Arab Emirates"},{"flag":"🇬🇧","name":"Cambridge"},{"flag":"🇬🇧","name":"Edinburgh"},{"flag":"🇬🇧","name":"Glasgow"},{"flag":"🇬🇧","name":"London"},{"flag":"🇬🇧","name":"Oxford"},{"flag":"🇺🇸","name":"Alaska"},{"flag":"🇺🇸","name":"Atlanta"},{"flag":"🇺🇸","name":"Austin"},{"flag":"🇺🇸","name":"Bend"},{"flag":"🇺🇸","name":"Boston"},{"flag":"🇺🇸","name":"Chicago"},{"flag":"🇺🇸","name":"Los Angeles"},{"flag":"🇺🇸","name":"Miami"},{"flag":"🇺🇸","name":"New York"},{"flag":"🇺🇸","name":"Orlando"},{"flag":"🇺🇸","name":"Palm Desert"},{"flag":"🇺🇸","name":"Palo Alto"},{"flag":"🇺🇸","name":"Pasadena"},{"flag":"🇺🇸","name":"San Diego"},{"flag":"🇺🇸","name":"San Francisco"},{"flag":"🇺🇸","name":"Scottsdale"},{"flag":"🇺🇸","name":"Seattle"},{"flag":"🇺🇸","name":"Big Island"},{"flag":"🇺🇸","name":"Kauai"},{"flag":"🇺🇸","name":"Maui"},{"flag":"🇺🇸","name":"Oahu"}];
+
+const grid2   = document.getElementById('grid2');
+const q2      = document.getElementById('q2');
+const countEl = document.getElementById('count2');
+const empty2  = document.getElementById('empty2');
+
+// Day counts — pre-populated from guide files, refreshed from Drive when running as artifact
+const DAYS = {"Buenos Aires":2,"Melbourne":2,"Sydney":8,"Salzburg":2,"Vienna":6,"Bruges":2,"Brussels":3,"Rio de Janeiro":3,"Montréal":4,"Québec City":4,"Toronto":2,"Vancouver":5,"Aruba":2,"The Bahamas":2,"Barbados":2,"Cayman Islands":2,"Curaçao":2,"Puerto Rico":2,"Sint Maarten":1,"Virgin Islands":1,"Santiago":3,"Beijing":4,"Chongqing":2,"Hong Kong":2,"Shanghai":4,"Zhangjiajie":2,"Prague":3,"Copenhagen":6,"Tallinn":2,"Helsinki":5,"Aix-en-Provence":1,"Annecy":1,"Bordeaux":2,"Cannes":2,"Colmar":2,"Lille":1,"Lyon":2,"Marseille":2,"Nice":2,"Paris":6,"Strasbourg":2,"Berlin":5,"Marktoberdorf":7,"Munich":7,"Stuttgart":2,"Athens":3,"Corfu":2,"Reykjavik":8,"Dublin":6,"Amalfi":1,"Bologna":2,"Capri":1,"Cinque Terre":2,"Florence":3,"Lake Como":1,"Milan":3,"Pisa":2,"Rome":3,"Siena":1,"Sorrento":1,"Turin":5,"Venice":2,"Verona":1,"Kyoto":4,"Tokyo":6,"Luxembourg":2,"Monaco":2,"Marrakech":10,"Amsterdam":5,"Queenstown":2,"Wellington":2,"Ålesund":5,"Bergen":1,"Oslo":5,"Tromsø":5,"Cusco":2,"Lima":2,"Machu Picchu":1,"Cascais":3,"Lagos":2,"Lisbon":8,"Porto":3,"Sintra":2,"Singapore":8,"Ljubljana":2,"Seoul":4,"Barcelona":5,"Madrid":5,"San Sebastián":1,"Toledo":1,"Gothenburg":2,"Stockholm":2,"Geneva":2,"Lucerne":2,"Zurich":10,"Taipei":2,"Bangkok":2,"Phuket":2,"Abu Dhabi":2,"Dubai":2,"United Arab Emirates":2,"Cambridge":1,"Edinburgh":5,"Glasgow":3,"London":6,"Oxford":2,"Alaska":5,"Atlanta":2,"Austin":2,"Bend":3,"Boston":2,"Chicago":2,"Los Angeles":2,"Miami":2,"New York":5,"Orlando":2,"Palm Desert":7,"Palo Alto":7,"Pasadena":7,"San Diego":6,"San Francisco":4,"Scottsdale":2,"Seattle":2,"Big Island":2,"Kauai":1,"Maui":2,"Oahu":1};
+
+let toastTimer;
+function showToast(text) {
+  const el = document.getElementById('toast');
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+function send2(btn, msg) {
+  btn.classList.add('sent');
+  const t = btn.textContent;
+  btn.textContent = '✓';
+  setTimeout(() => { btn.classList.remove('sent'); btn.textContent = t; }, 1600);
+
+  // Prefer native cowork sendPrompt (works when pinned as artifact)
+  if (window.cowork && window.cowork.sendPrompt) {
+    window.cowork.sendPrompt(msg);
+    return;
+  }
+  if (window.sendPrompt) {
+    sendPrompt(msg);
+    return;
+  }
+  // Fallback: copy to clipboard so user can paste into Claude chat
+  navigator.clipboard.writeText(msg).then(() => {
+    showToast('📋 Copied — paste into Claude chat');
+  }).catch(() => {
+    showToast('📋 Copy failed — see console');
+    console.log('[Guide Index] Prompt:', msg);
+  });
+}
+
+function adjustDays(city, delta) {
+  DAYS[city] = Math.max(0, (DAYS[city] || 0) + delta);
+  // Update every matching badge (survives filter re-renders via DAYS object)
+  document.querySelectorAll('.gc[data-city]').forEach(card => {
+    if (card.dataset.city === city) {
+      const bdg = card.querySelector('.db');
+      if (bdg) { bdg.textContent = DAYS[city] + 'd'; bdg.classList.remove('loading'); }
+    }
+  });
+}
+
+function mk2(g) {
+  const c = document.createElement('div');
+  c.className = 'gc';
+  c.dataset.city = g.name;
+
+  const acts = [
+    ['+1', 1,  ''],
+    ['+2', 2,  ''],
+    ['+3', 3,  ''],
+    ['−1', -1, 'rm'],
+  ];
+
+  const daysText = g.name in DAYS ? DAYS[g.name] + 'd' : '•';
+  const daysClass = g.name in DAYS ? '' : ' loading';
+  let h = `<div class="gn"><span class="db${daysClass}">${daysText}</span><span>${g.flag}</span><span>${g.name}</span></div><div class="ga">`;
+  acts.forEach(a => {
+    h += `<button class="gb ${a[2]}" data-delta="${a[1]}">${a[0]}</button>`;
+  });
+  h += `<button class="gb rb">↻ Rebuild</button></div>`;
+
+  c.innerHTML = h;
+  c.querySelector('.gn').addEventListener('click', () => c.classList.toggle('open'));
+
+  // +1/+2/+3/−1 buttons — prompt built dynamically so it always reflects the current count
+  c.querySelectorAll('.gb[data-delta]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const delta = parseInt(b.dataset.delta);
+    const before = DAYS[g.name] || 0;
+    const after  = Math.max(0, before + delta);
+    const verb   = delta > 0 ? `Add ${delta} day${delta > 1 ? 's' : ''}` : 'Remove 1 day';
+    const prep   = delta > 0 ? 'to' : 'from';
+    const msg    = `${verb} ${prep} the ${g.name} guide (currently ${before} days → ${after}). When done, update guide_days.json in My Drive/Travel/ — change "${g.name}" from ${before} to ${after}.`;
+    adjustDays(g.name, delta);
+    send2(b, msg);
+  }));
+
+  c.querySelector('.gb.rb').addEventListener('click', e => {
+    e.stopPropagation();
+    const days = DAYS[g.name] || 0;
+    const msg  = `Rebuild the ${g.name} guide from scratch (currently ${days} days). When done, update guide_days.json in My Drive/Travel/ with the final day count.`;
+    send2(e.currentTarget, msg);
+  });
+  return c;
+}
+
+function render2() {
+  const term = q2.value.trim().toLowerCase();
+  const list = G2.filter(g => !term || (g.flag + ' ' + g.name).toLowerCase().includes(term));
+  grid2.innerHTML = '';
+  list.forEach(g => grid2.appendChild(mk2(g)));
+  countEl.textContent = list.length;
+  empty2.style.display = list.length ? 'none' : 'block';
+  document.querySelector('.sub').textContent =
+    `${list.length} guide${list.length !== 1 ? 's' : ''} · hover to add / remove days or rebuild`;
+}
+
+// Load day counts from Drive
+async function loadDays() {
+  if (!window.cowork) return;
+  try {
+    const r = await window.cowork.callMcpTool(
+      'mcp__c9c414e0-9fa7-4ae9-9b0b-ddc88a9094c9__download_file_content',
+      { fileId: '1coQG0KXNfHkpszaeIeiogkCD_lHjk6SA' }
+    );
+    const raw  = r.structuredContent ?? JSON.parse(r.content[0].text);
+    const data = JSON.parse(atob(raw.content));
+    Object.assign(DAYS, data);
+    // Update all visible badges
+    document.querySelectorAll('.gc[data-city]').forEach(card => {
+      const name = card.dataset.city;
+      const bdg  = card.querySelector('.db');
+      if (bdg && name in DAYS) {
+        bdg.textContent = DAYS[name] + 'd';
+        bdg.classList.remove('loading');
+      }
+    });
+  } catch(e) {
+    console.error('guide_days load failed', e);
+  }
+}
+
+q2.addEventListener('input', render2);
+render2();
+loadDays();
+</script>
+</body>
+</html>

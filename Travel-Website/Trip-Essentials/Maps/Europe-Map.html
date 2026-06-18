@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/_travel_style.css">
+<title>Europe Map</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: #f5f4f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; }
+  body { display: flex; flex-direction: column; padding-bottom: 0; }
+  #map-header { background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%); padding: 14px 18px; border-radius: 10px; flex-shrink: 0; margin-bottom: 12px; }
+  #map-header h1 { font-size: 14px; font-weight: bold; color: #ffffff; text-transform: uppercase; letter-spacing: 0.04em; }
+  #wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; border-radius: 10px; }
+  #map { position: absolute; inset: 0; background: #cfe0e4; }
+
+  /* ── Leaflet surface: kill default chrome so it reads as our warm map ── */
+  .leaflet-container { background: #cfe0e4; font-family: inherit; outline: none; }
+  .leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+  .leaflet-bar a:hover { background: #faefd8; }
+
+  /* ── Country polygons ── */
+  .country-label-tip { background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 12px; font-weight: 700; color: #9a8b78;
+    text-shadow: 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95); }
+  .country-label-tip::before { display: none; }
+
+  /* ── Pin markers ── */
+  .city-pin { background: #b85c2a; border: 1.8px solid #fdf8f0; border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.30); transition: transform 0.12s, background 0.12s; }
+  .city-pin:hover { background: #7a3b1e; transform: scale(1.45); }
+  .pin-name-tip { background: none; border: none; box-shadow: none; padding: 0; margin: 0;
+    font-size: 12px; font-weight: 700; color: #5a3115;
+    text-shadow: 0 0 3.5px rgba(253,248,240,0.98), 0 0 3.5px rgba(253,248,240,0.98), 0 0 3.5px rgba(253,248,240,0.98); }
+  .pin-name-tip::before { display: none; }
+
+  /* ── Cluster bubbles (warm palette to match) ── */
+  .city-cluster { background: none; }
+  .city-cluster div { width: 36px; height: 36px; margin-left: 2px; margin-top: 2px;
+    border-radius: 50%; text-align: center; line-height: 36px;
+    color: #fdf8f0; font-weight: 700; font-size: 13px;
+    background: radial-gradient(circle at 35% 30%, #c9743a 0%, #b85c2a 55%, #7a3b1e 100%);
+    border: 2px solid #fdf8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
+  .city-cluster.small div { width: 30px; height: 30px; line-height: 30px; font-size: 12px; }
+  .city-cluster.large div { width: 44px; height: 44px; line-height: 44px; font-size: 14px; }
+
+  #legend { position: absolute; top: 14px; right: 14px; z-index: 600; background: rgba(253,248,240,0.92); border-radius: 8px; padding: 7px 12px; font-size: 12px; color: #6b4422; display: flex; align-items: center; gap: 7px; font-weight: 600; box-shadow: 0 1px 6px rgba(0,0,0,0.10); }
+  .ldot { width: 11px; height: 11px; border-radius: 50%; background: #b85c2a; border: 2px solid #fdf8f0; flex-shrink: 0; }
+
+  #map-left-stack { position:absolute; left:10px; top:16px; display:flex; flex-direction:column; gap:7px; align-items:flex-start; z-index:600; }
+  #left-panel { display:flex; flex-direction:column; background:rgba(247,244,238,0.97); border-radius:10px; padding:7px 6px; box-shadow:0 2px 12px rgba(0,0,0,0.13); backdrop-filter:blur(4px); gap:3px; }
+
+  #zoom-nav { display:flex; flex-direction:column; gap:3px; }
+  .zoom-section-label { font-size: 10px; font-weight:700; color:#9a8870; letter-spacing:0.06em; text-transform:uppercase; padding:1px 3px 0; }
+  .zn { padding:3px 9px; border-radius:13px; border:1.5px solid #d8d4cc; background:#f5f4f0; color:#6b4422; font-size: 11px; font-weight:600; text-decoration:none; white-space:nowrap; display:block; cursor:pointer; transition:background .12s,border-color .12s; }
+  .zn:hover { background:#faefd8; border-color:#8a6c1a; }
+  .zn.zn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color:#fdf8f0; border-color:#b85c2a; }
+
+  .panel-divider { height:1px; background:#ddd9d0; margin:3px 0; }
+
+  #region-nav { display:flex; flex-direction:column; gap:4px; }
+  .rn { padding:5px 14px; border-radius:20px; border:1.5px solid #d8d4cc; background:#f5f4f0; color:#6b4422; font-size: 12px; font-weight:600; text-decoration:none; white-space:nowrap; display:flex; align-items:center; gap:5px; transition:background .12s,border-color .12s; }
+  .rn::before { content:''; width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .rn:hover { background:#faefd8; border-color:#8a6c1a; }
+  .rn-eu  { background:#fde8e8 !important; border-color:#f0a0a0 !important; color:#a02020 !important; }
+  .rn-eu::before  { background:#dc4444; }
+  .rn-na  { background:#fdf0e4 !important; border-color:#f0b878 !important; color:#8a3a08 !important; }
+  .rn-na::before  { background:#e87830; }
+  .rn-cb  { background:#d8efe9 !important; border-color:#7fcabd !important; color:#0c6b5d !important; }
+  .rn-cb::before  { background:#14a18d; }
+  .rn-as  { background:#fdf5d8 !important; border-color:#e8d060 !important; color:#7a5000 !important; }
+  .rn-as::before  { background:#c8940a; }
+  .rn-af  { background:#e4f5e8 !important; border-color:#90d0a0 !important; color:#1a6030 !important; }
+  .rn-af::before  { background:#2ea84e; }
+  .rn-sa  { background:#e4eef8 !important; border-color:#90b8e8 !important; color:#1a3a8b !important; }
+  .rn-sa::before  { background:#3a74d4; }
+  .rn-oc  { background:#f0e8f8 !important; border-color:#c090e0 !important; color:#4a1880 !important; }
+  .rn-oc::before  { background:#8050d0; }
+  .rn.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:#fdf8f0 !important; border-color:#b85c2a !important; }
+  .rn.rn-on::before { background:rgba(255,255,255,0.55); }
+
+  /* Uniform pill width so no label (N. America) sizes the panel differently;
+     widest label sets the width, all others match. */
+  #left-panel .zn, #left-panel .rn { width: 100%; }
+  #zoom-nav .zn { text-align: center; }
+  /* No focus ring on click — keep it only for keyboard nav */
+  .zn:focus:not(:focus-visible), .rn:focus:not(:focus-visible) { outline: none; }
+
+@media (max-width: 640px) {
+  /* ── Mobile: dock the controls into a slim scrollable bottom bar ── */
+  #map-left-stack {
+    position: absolute; left: 0; right: 0; bottom: 0; top: auto;
+    transform: none; flex-direction: column; align-items: stretch;
+    gap: 0; padding: 0; z-index: 600;
+  }
+  #left-panel {
+    flex-direction: row; align-items: center; gap: 8px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    background: rgba(247,244,238,0.97); backdrop-filter: blur(6px);
+    border-radius: 0; border-top: 1px solid #d8d4cc;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.14);
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  }
+  #left-panel::-webkit-scrollbar { display: none; }
+  #zoom-nav { flex-direction: row; align-items: center; gap: 6px; flex-shrink: 0; }
+  .zoom-section-label { font-size: 10px; padding: 0 2px 0 0; flex-shrink: 0; }
+  .panel-divider { width: 1px; height: 22px; margin: 0 4px; flex-shrink: 0; align-self: center; }
+  #region-nav { flex-direction: row !important; gap: 6px; flex-shrink: 0; }
+  .zn, .rn { flex-shrink: 0; width: auto; padding: 7px 13px; font-size: 12px; white-space: nowrap; }
+  .rn::before { width: 8px; height: 8px; }
+  #legend { display: none; }
+  .leaflet-control-zoom { margin-bottom: 70px !important; }
+}
+</style>
+<link rel="stylesheet" href="../../assets/mobile.css">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1400" data-no-footnote="1"></div>
+<script src="../../assets/toolbar.js?v=27"></script>
+
+<div id="wrap">
+  <div id="map"></div>
+  <div id="legend"><div class="ldot"></div> Guide available — tap a pin</div>
+  <div id="map-left-stack">
+    <div id="left-panel">
+      <div id="zoom-nav">
+        <span class="zoom-section-label">Zoom</span>
+        <a class="zn zn-on" data-key="all"   href="#">All Europe</a>
+        <a class="zn"       data-key="west"  href="#">W. Europe</a>
+        <a class="zn"       data-key="north" href="#">N. Europe</a>
+        <a class="zn"       data-key="east"  href="#">E. Europe</a>
+      </div>
+      <div class="panel-divider"></div>
+      <div id="region-nav">
+        <a class="rn rn-eu rn-on" href="Europe%20Map.html">Europe</a>
+        <a class="rn rn-na" href="US%20Map.html">N. America</a>
+        <a class="rn rn-cb" href="Caribbean%20Map.html">Caribbean</a>
+        <a class="rn rn-as" href="Asia%20Map.html">Asia</a>
+        <a class="rn rn-af" href="Africa%20Map.html">Africa</a>
+        <a class="rn rn-sa" href="South%20America%20Map.html">S. America</a>
+        <a class="rn rn-oc" href="Oceania%20Map.html">Oceania</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+const EU = {
+  8:'Albania',20:'Andorra',40:'Austria',112:'Belarus',56:'Belgium',
+  70:'Bosnia and Herzegovina',100:'Bulgaria',191:'Croatia',196:'Cyprus',
+  203:'Czechia',208:'Denmark',233:'Estonia',246:'Finland',250:'France',
+  276:'Germany',300:'Greece',348:'Hungary',352:'Iceland',372:'Ireland',
+  380:'Italy',428:'Latvia',438:'Liechtenstein',440:'Lithuania',442:'Luxembourg',
+  470:'Malta',498:'Moldova',492:'Monaco',499:'Montenegro',528:'Netherlands',
+  807:'North Macedonia',578:'Norway',616:'Poland',620:'Portugal',642:'Romania',
+  643:'Russia',674:'San Marino',688:'Serbia',703:'Slovakia',705:'Slovenia',
+  724:'Spain',752:'Sweden',756:'Switzerland',792:'Turkey',804:'Ukraine',
+  826:'United Kingdom',336:'Vatican City',383:'Kosovo'
+};
+const SHORT = {
+  'Albania':'Albania','Andorra':'AND','Austria':'Austria','Belarus':'Belarus',
+  'Belgium':'Belgium','Bosnia and Herzegovina':'Bosnia','Bulgaria':'Bulgaria',
+  'Croatia':'Croatia','Cyprus':'Cyprus','Czechia':'Czechia','Denmark':'Denmark',
+  'Estonia':'Estonia','Finland':'Finland','France':'France','Germany':'Germany',
+  'Greece':'Greece','Hungary':'Hungary','Iceland':'Iceland','Ireland':'Ireland',
+  'Italy':'Italy','Latvia':'Latvia','Liechtenstein':'LIE','Lithuania':'Lithuania',
+  'Luxembourg':'LUX','Malta':'MT','Moldova':'Moldova','Monaco':'MC',
+  'Montenegro':'MNE','Netherlands':'Neth.','North Macedonia':'N.Mac.',
+  'Norway':'Norway','Poland':'Poland','Portugal':'Portugal','Romania':'Romania',
+  'Russia':'Russia','San Marino':'SM','Serbia':'Serbia','Slovakia':'Slovakia',
+  'Slovenia':'SVN','Spain':'Spain','Sweden':'Sweden','Switzerland':'Switz.',
+  'Turkey':'Turkey','Ukraine':'Ukraine','United Kingdom':'UK',
+  'Vatican City':'VA','Kosovo':'XK'
+};
+const COLORS = {
+  8:'#cda36e',20:'#c98f63',40:'#d8be8f',112:'#bd8a5e',56:'#c7a877',
+  70:'#b89066',100:'#d2b07e',191:'#c0905f',196:'#cbb083',203:'#b58a5c',
+  208:'#d0a96f',233:'#c19064',246:'#cda36e',250:'#c98f63',276:'#d8be8f',
+  300:'#bd8a5e',348:'#c7a877',352:'#b89066',372:'#d2b07e',380:'#c0905f',
+  428:'#cbb083',438:'#b58a5c',440:'#d0a96f',442:'#c19064',470:'#cda36e',
+  498:'#c98f63',492:'#d8be8f',499:'#bd8a5e',528:'#c7a877',807:'#b89066',
+  578:'#d2b07e',616:'#c0905f',620:'#cbb083',642:'#b58a5c',643:'#d0a96f',
+  674:'#c19064',688:'#cda36e',703:'#c98f63',705:'#d8be8f',724:'#bd8a5e',
+  752:'#c7a877',756:'#b89066',792:'#d2b07e',804:'#c0905f',826:'#cbb083',
+  336:'#b58a5c',383:'#d0a96f'
+};
+function darken(hex,f){var n=parseInt(hex.slice(1),16);var r=Math.round(((n>>16)&255)*f),g=Math.round(((n>>8)&255)*f),b=Math.round((n&255)*f);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
+const LARGE = new Set([250,276,724,380,792,826,804,643,616,752,578,246,642,300,348,528,203,112,620,372]);
+
+const PINS = [
+  ['Alesund',        6.15, 62.47, '../../Guides/Alesund/alesund_v1.html'],
+  ['Bergen',         5.32, 60.39, '../../Guides/Bergen/bergen_v1.html'],
+  ['Amsterdam',      4.90, 52.37, '../../Guides/Amsterdam/amsterdam_v1.html'],
+  ['Aix-en-Provence', 5.4474, 43.5297, '../../Guides/Aix-en-Provence/aix-en-provence_v1.html'],
+  ['Annecy',         6.13, 45.90, '../../Guides/Annecy/annecy_v1.html'],
+  ['Athens',        23.73, 37.98, '../../Guides/Athens/athens_v1.html'],
+  ['Istanbul',      28.98, 41.01, '../../Guides/Istanbul/istanbul_v1.html'],
+  ['Barcelona',      2.17, 41.39, '../../Guides/Barcelona/barcelona_v1.html'],
+  ['Berlin',        13.40, 52.52, '../../Guides/Berlin/berlin_v1.html'],
+  ['Bologna',       11.34, 44.49, '../../Guides/Bologna/bologna_v1.html'],
+  ['Bordeaux',      -0.5792, 44.8378, '../../Guides/Bordeaux/bordeaux_v1.html'],
+  ['Bruges',         3.22, 51.21, '../../Guides/Bruges/bruges_v1.html'],
+  ['Brussels',       4.35, 50.85, '../../Guides/Brussels/brussels_v1.html'],
+  ['Naples',         14.2681, 40.8518, '../../Guides/Naples/naples_v1.html'],
+  ['Amalfi',         14.6027, 40.6340, '../../Guides/Amalfi/amalfi_v1.html'],
+  ['Cambridge',      0.1218, 52.2053, '../../Guides/Cambridge/cambridge_v1.html'],
+  ['Cannes',         7.0174, 43.5528, '../../Guides/Cannes/cannes_v1.html'],
+  ['Capri',          14.24,  40.55,   '../../Guides/Capri/capri_v1.html'],
+  ['Cascais',       -9.55, 38.70, '../../Guides/Cascais/cascais_v2.html'],
+  ['Cinque Terre',   9.68, 44.13, '../../Guides/Cinque Terre/cinque_terre_v1.html'],
+  ['Colmar',         7.36, 48.08, '../../Guides/Colmar/colmar_v1.html'],
+  ['Copenhagen',    12.57, 55.68, '../../Guides/Copenhagen/copenhagen_v1.html'],
+  ['Corfu',         19.92, 39.62, '../../Guides/Corfu/corfu_v1.html'],
+  ['Dublin',        -6.27, 53.33, '../../Guides/Dublin/dublin_v1.html'],
+  ['Edinburgh',     -3.19, 55.95, '../../Guides/Edinburgh/edinburgh_v1.html'],
+  ['Florence',      11.26, 43.77, '../../Guides/Florence/florence_v1.html'],
+  ['Geneva',         6.14, 46.20, '../../Guides/Geneva/geneva_v1.html'],
+  ['Glasgow',       -4.25, 55.86, '../../Guides/Glasgow/glasgow_v1.html'],
+  ['Gothenburg',    11.97, 57.70, '../../Guides/Gothenburg/gothenburg_v1.html'],
+  ['Helsinki',      25.00, 60.17, '../../Guides/Helsinki/helsinki_v1.html'],
+  ['Lagos',        -8.67, 37.10, '../../Guides/Lagos/lagos_v1.html'],
+  ['Iceland',     -22.00, 64.10, '../../Guides/Iceland/reykjavik_v2.html'],
+  ['Lille',          3.06, 50.63, '../../Guides/Lille/lille_v1.html'],
+  ['Lake Como',      9.08, 45.81, '../../Guides/Lake Como/lake_como_v1.html'],
+  ['Lisbon',        -9.14, 38.72, '../../Guides/Lisbon/lisbon_v4.html'],
+  ['Madeira',      -16.92, 32.67, '../../Guides/Madeira/madeira_v1.html'],
+  ['Azores',       -25.67, 37.74, '../../Guides/Azores/guide_v1.html'],
+  ['London',        -0.13, 51.51, '../../Guides/London/london_v5.html'],
+  ['Luxembourg',     6.13, 49.61, '../../Guides/Luxembourg/luxembourg_v1.html'],
+  ['Lyon',           4.8357, 45.7640, '../../Guides/Lyon/lyon_v1.html'],
+  ['Madrid',        -3.70, 40.42, '../../Guides/Madrid/madrid_v1.html'],
+  ['San Sebastian', -1.9812, 43.3183, '../../Guides/San Sebastian/san_sebastian_v1.html'],
+  ['Seville',       -5.9845, 37.3891, '../../Guides/Seville/seville_v1.html'],
+  ['Toledo',        -4.025, 39.856, '../../Guides/Toledo/toledo_v1.html'],
+  ['Marseille',      5.37, 43.30, '../../Guides/Marseille/marseille_v1.html'],
+  ['Marktoberdorf', 10.62, 47.78, '../../Guides/Marktoberdorf/marktoberdorf_v1.html'],
+  ['Milan',         9.19, 45.46, '../../Guides/Milan/milan_v1.html'],
+  ['Monaco',        7.42, 43.74, '../../Guides/Monaco/monaco_v1.html'],
+  ['Munich',        11.58, 48.14, '../../Guides/Munich/munich_v2.html'],
+  ['Oslo',          10.75, 59.91, '../../Guides/Oslo/oslo_v1.html'],
+  ['Oxford',        -1.26, 51.75, '../../Guides/Oxford/oxford_v1.html'],
+  ['Paris',          2.35, 48.85, '../../Guides/Paris/paris_v7.html'],
+  ['Nice',           7.27, 43.70, '../../Guides/Nice/nice_v1.html'],
+  ['Pisa',           10.40, 43.72, '../../Guides/Pisa/pisa_v1.html'],
+  ['Porto',         -8.61, 41.15, '../../Guides/Porto/porto_v2.html'],
+  ['Rome',          12.50, 41.90, '../../Guides/Rome/rome_v1.html'],
+  ['Prague',        14.42, 50.09, '../../Guides/Prague/prague_v1.html'],
+  ['Siena',         11.3328, 43.3188, '../../Guides/Siena/siena_v1.html'],
+  ['Sintra',        -9.39, 38.95, '../../Guides/Sintra/sintra_v2.html'],
+  ['Sorrento',      14.375, 40.626, '../../Guides/Sorrento/sorrento_v1.html'],
+  ['Dubrovnik',     18.0944, 42.6507, '../../Guides/Dubrovnik/guide_v1.html'],
+  ['Split',         16.4402, 43.5081, '../../Guides/Split/split_v1.html'],
+  ['Stockholm',     18.07, 59.33, '../../Guides/Stockholm/stockholm_v1.html'],
+  ['Tallinn',       24.75, 59.44, '../../Guides/Tallinn/tallinn_v1.html'],
+  ['Strasbourg',     7.75, 48.58, '../../Guides/Strasbourg/strasbourg_v1.html'],
+  ['Stuttgart',      9.18, 48.78, '../../Guides/Stuttgart/stuttgart_v1.html'],
+  ['Tromso',        18.96, 69.65, '../../Guides/Tromso/tromso_v1.html'],
+  ['Turin',          7.69, 45.07, '../../Guides/Turin/turin_v14.html'],
+  ['Salzburg',      13.05, 47.80, '../../Guides/Salzburg/salzburg_v1.html'],
+  ['Venice',        12.34, 45.44, '../../Guides/Venice/venice_v1.html'],
+  ['Verona',        10.99, 45.44, '../../Guides/Verona/verona_v1.html'],
+  ['Vienna',        16.37, 48.21, '../../Guides/Vienna/vienna_v1.html'],
+  ['Budapest',       19.04, 47.50, '../../Guides/Budapest/budapest_v1.html'],
+  ['Ljubljana',     14.51, 46.05, '../../Guides/Ljubljana/ljubljana_v1.html'],
+  ['Zurich',         8.54, 47.37, '../../Guides/Zurich/zurich_v1.html'],
+  ['Lucerne',        8.31, 47.05, '../../Guides/Lucerne/lucerne_v1.html'],
+];
+
+/* ── Subregion bounds in Leaflet order [[south,west],[north,east]] ── */
+const SUBREGIONS = {
+  all:   [[35.5, -24], [67, 30]],
+  west:  [[36, -12], [63, 20]],
+  north: [[54, -26], [72, 32]],
+  east:  [[33, 5], [58, 43]],
+};
+
+/* ── Map init ── */
+const map = L.map('map', {
+  zoomControl: false,
+  attributionControl: false,
+  minZoom: 3,
+  maxZoom: 11,
+  worldCopyJump: false,
+  zoomSnap: 0.25,
+});
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+map.createPane('countryLabels');
+map.getPane('countryLabels').style.zIndex = 590;
+map.getPane('countryLabels').style.pointerEvents = 'none';
+
+// Keep the framed region clear of the overlay controls: pad left for the
+// desktop panel, pad bottom for the mobile docked bar.
+function fitOpts() {
+  return (window.innerWidth <= 640)
+    ? { paddingTopLeft: [12, 12], paddingBottomRight: [12, 86] }
+    : { paddingTopLeft: [210, 14], paddingBottomRight: [14, 14] };
+}
+map.fitBounds(SUBREGIONS.all, fitOpts());
+
+/* ── Country polygons from world-atlas TopoJSON (GeoJSON-only, no tiles) ── */
+fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  .then(r => r.json())
+  .then(world => {
+    const fc = topojson.feature(world, world.objects.countries);
+    // Antimeridian guard: Russia's mainland ring wraps past 180° (Bering Strait),
+    // which Mercator would smear into a horizontal band across the whole map.
+    // Clamp any eastern / wrapped vertex to ~60°E so Russia crops to its
+    // European extent with a clean vertical edge. (Same pattern will apply to
+    // Alaska on the US map and Fiji/NZ on Oceania.)
+    const clampLon = lon => (lon > 60 || lon < -100) ? 60 : lon;
+    const fixCoords = c => (typeof c[0] === 'number') ? [clampLon(c[0]), c[1]] : c.map(fixCoords);
+    fc.features.forEach(f => { if (+f.id === 643) f.geometry.coordinates = fixCoords(f.geometry.coordinates); });
+    const eu = { type: 'FeatureCollection', features: fc.features.filter(f => EU[+f.id]) };
+    const layer = L.geoJSON(eu, {
+      style: f => ({
+        fillColor: COLORS[+f.id] || '#c2a878',
+        fillOpacity: 1,
+        color: darken(COLORS[+f.id] || '#c2a878', 0.6),
+        weight: 0.8,
+      }),
+      onEachFeature: (f, lyr) => {
+        const name = EU[+f.id];
+        lyr.on('mouseover', () => lyr.setStyle({ fillColor: darken(COLORS[+f.id] || '#c2a878', 1.12) }));
+        lyr.on('mouseout',  () => lyr.setStyle({ fillColor: COLORS[+f.id] || '#c2a878' }));
+        if (LARGE.has(+f.id)) {
+          const c = (+f.id === 643) ? L.latLng(59, 36) : lyr.getBounds().getCenter();
+          lyr.bindTooltip(SHORT[name] || name, {
+            permanent: true, direction: 'center', className: 'country-label-tip',
+            pane: 'countryLabels', interactive: false,
+          });
+          lyr.getTooltip().setLatLng(c);
+        }
+      },
+    }).addTo(map);
+    layer.bringToBack();
+    buildPins();
+  })
+  .catch(() => {
+    document.getElementById('map').insertAdjacentHTML('beforeend',
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6b4422;font-size:15px;text-align:center;padding:20px;">Could not load map data — please check your internet connection.</div>');
+  });
+
+/* ── Pins + clustering ── */
+function buildPins() {
+  const cluster = L.markerClusterGroup({
+    maxClusterRadius: 44,
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    disableClusteringAtZoom: 9,
+    iconCreateFunction: c => {
+      const n = c.getChildCount();
+      const cls = n < 5 ? 'small' : (n < 12 ? '' : 'large');
+      return L.divIcon({
+        html: '<div>' + n + '</div>',
+        className: 'city-cluster ' + cls,
+        iconSize: [40, 40],
+      });
+    },
+  });
+
+  const pinIcon = L.divIcon({
+    className: '',
+    html: '<div class="city-pin" style="width:13px;height:13px;"></div>',
+    iconSize: [13, 13],
+    iconAnchor: [6.5, 6.5],
+  });
+
+  PINS.forEach(p => {
+    const m = L.marker([p[2], p[1]], { icon: pinIcon, title: p[0] });
+    m.bindTooltip(p[0], {
+      permanent: true, direction: 'top', offset: [0, -8],
+      className: 'pin-name-tip', interactive: false,
+    });
+    const href = p[3];
+    m.on('click', () => { window.location.href = href; });
+    cluster.addLayer(m);
+  });
+
+  map.addLayer(cluster);
+}
+
+/* ── Zoom shortcut buttons ── */
+document.querySelectorAll('.zn').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.zn').forEach(z => z.classList.remove('zn-on'));
+    el.classList.add('zn-on');
+    map.flyToBounds(SUBREGIONS[el.dataset.key], Object.assign({ duration: 0.5 }, fitOpts()));
+  });
+});
+</script>
+</body>
+</html>

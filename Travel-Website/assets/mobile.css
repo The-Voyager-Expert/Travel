@@ -1,0 +1,111 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   mobile.css — UNIVERSAL MOBILE BASELINE  (served asset, lives in Travel Website/assets/)
+   ───────────────────────────────────────────────────────────────────────────
+   ONE line fixes mobile on any page. Add to <head> AFTER the page's own
+   stylesheet/<style> so these guards win:
+
+     depth                          link
+     index.html (site root)         <link rel="stylesheet" href="assets/mobile.css">
+     Guides/guides_index.html       <link rel="stylesheet" href="../assets/mobile.css">
+     Guides/{City}/guide.html       <link rel="stylesheet" href="../../assets/mobile.css">
+     Trip Essentials/X.html         <link rel="stylesheet" href="../assets/mobile.css">
+     Trip Essentials/Maps/X.html    <link rel="stylesheet" href="../../assets/mobile.css">
+
+   `Brain/scripts/mobile_check.py --apply` injects the correct line automatically.
+
+   DESIGN RULES
+   - Purely DEFENSIVE and ADDITIVE. Nothing here changes desktop layout.
+   - The universal guards (box-sizing, max-width:100% on media) are safe at any
+     width. Everything layout-shifting is inside @media (max-width:600px) so it
+     only fires on phones.
+   - 600px breakpoint — matches guide_v3.css. One breakpoint across the site.
+   - This is the single source of truth for cross-page mobile behavior. Edit
+     here; every page that links it updates at once. (created 2026-06-12)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Universal box model — width includes padding/border everywhere.
+      The #1 cause of "my padding pushes the box past the screen edge". ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── 2. Media can never be wider than its container. Stops images, video,
+      inline SVG maps, iframes, and embeds from forcing a horizontal scrollbar. ── */
+img, svg, video, canvas, iframe, embed, object {
+  max-width: 100%;
+  height: auto;
+}
+/* SVG maps set explicit height via viewBox/JS — don't force height:auto on those. */
+svg[viewBox] { height: revert; }
+
+/* ── 3. Long unbreakable strings (URLs, long place names) wrap instead of
+      stretching the page. ── */
+a, code, pre { overflow-wrap: break-word; word-break: break-word; }
+pre { white-space: pre-wrap; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHONE ONLY — everything below fires at ≤600px and is invisible on desktop.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* 4. HARD STOP on horizontal scroll. Belt-and-suspenders: even if one
+        element misbehaves, the page itself never scrolls sideways. */
+  html, body { overflow-x: hidden; max-width: 100%; }
+
+  /* 5. Wide fixed-width wrappers (the common 940px / 760px / 600px content
+        rails used across the essentials pages) collapse to the viewport with
+        comfortable gutters instead of overflowing. Targets the usual wrapper
+        class names; harmless if a page doesn't use them. */
+  .wrap, .nav-inner, .container, .content, .page, .main, .header,
+  .card, .panel, .section, .box {
+    max-width: 100% !important;
+  }
+  .wrap, .nav-inner { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* 6. Tables — the worst mobile offender. Let the table scroll inside its own
+        track rather than blowing out the whole page. Pair with an optional
+        .table-scroll wrapper; this also catches bare <table>s. */
+  table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* 7. Tap targets — links/buttons/inputs get a comfortable hit area so the
+        page is actually usable with a thumb. */
+  a, button, input, select, textarea, .btn, [role="button"] {
+    min-height: 40px;
+  }
+  button, input, select, textarea { font-size: 16px !important; } /* 16px stops iOS auto-zoom on focus; !important beats per-page class selectors (.filter-input etc.) */
+
+  /* 8. Multi-column flex/grid rows stack vertically. Only applies to elements
+        explicitly opted-in with .stack-mobile, so it never surprises a layout. */
+  .stack-mobile { flex-direction: column !important; }
+  .stack-mobile > * { width: 100% !important; }
+
+  /* 9. Comfortable reading defaults if the page set nothing. */
+  body { line-height: 1.55; }
+
+  /* 10. Banner consistency — every page's hero header renders at ONE size on
+        phones, matching the European Train Guide banner (the agreed reference).
+        Loads after each page's own <style>, so these !important rules override
+        the per-page header CSS (Resources/Currency/unified-block variants alike). */
+  .header, .page-header, .site-header {
+    background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) !important;
+    padding: 14px 18px !important;
+    border-radius: 10px !important;
+    border: none !important;
+    margin: 8px 0 14px !important;
+  }
+  .header h1, .page-header h1, .site-header h1, .site-title {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #ffffff !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+  }
+  .header-label, .header-eyebrow { display: none !important; }
+
+  /* 11. Mobile "Choose …" jump menu — it sits as a full-bleed child of <body>
+        while page content lives inside .wrap (16px gutter), so its rounded box
+        touched both screen edges and looked misaligned. Inset it to match. */
+  .hub-jump { padding-left: 16px !important; padding-right: 16px !important; }
+
+}

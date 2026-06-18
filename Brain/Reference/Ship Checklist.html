@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pre-Ship Checklist</title>
+<link rel="stylesheet" href="Core Rules Style.css">
+<style>
+code { font-size: inherit; }
+.entry { background: #fef9e0; }
+li { margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<p style="color:#1a5f2a; background:#e6f5ea; padding:10px 14px; border-radius:4px; font-size:15px; line-height:1.5; margin-bottom:28px;"><strong>CLAUDE MAINTAINS THIS FILE — FIX IMMEDIATELY, NO APPROVAL NEEDED</strong><br>
+When this file drifts from Brain/CORE RULES/, fix it in the same pass. CORE RULES is the authority; this file follows. No questions, no permission, no parking for later.</p>
+<h1>✅ Pre-Ship Checklist</h1>
+<div class="meta">
+ <p><strong>Phase:</strong> 6 — Ship gate</p>
+ <p><strong>Summary:</strong> The final self-audit Claude runs before marking any guide build done. Answer each question honestly. Any "no" means the guide is not ready to ship — fix the gap and re-run the checklist.</p>
+</div>
+
+<h2>§ 1. When to run</h2>
+<p>Before marking a guide build "done" — every time. Not optional. § 10 includes running the validator as part of this checklist — answer every section before reaching it.</p>
+<p><strong>This includes patch sessions.</strong> Any session that modifies guide HTML runs this checklist and the validator before saying done. The scope of the change is not an exemption.</p>
+<p><strong>Resuming an incomplete build:</strong> read <code>_build/build_state.md</code> before doing anything. An unchecked Phase 6 means the guide is not done. Complete Phase 6 before any done claim.</p>
+
+<h2>§ 2. Build-state tracker</h2>
+<p>The tracker at <code>Travel-Website/Guides/{City}/_build/build_state.md</code> exists and every <code>[ ]</code> for Phases 0–5 is flipped to <code>[x]</code>? Any unchecked phase means a file was skipped — go read it before continuing.</p>
+
+<h2>§ 3. Research &amp; selection</h2>
+<ul>
+<li>Was the skip list checked first (<code>Brain/Reference/Brain.md (Part 4 — Cities Skip List)</code> at the <code>## [City]</code> heading)?</li>
+<li>Every candidate came from a trusted source — Fodor's, Culture Trip, Rough Guides, Atlas Obscura, Rick Steves (European destinations only), National Geographic, or the official tourism board?</li>
+<li>No blogs, no AI SEO content, no affiliate listicles, no user-generated lists?</li>
+<li>No top-10 thinking — fame alone wasn't a reason to include?</li>
+<li>Meaningful over full — no padded days with filler picks?</li>
+
+</ul>
+
+<h2>§ 4. Day shape</h2>
+<ul>
+<li>Each day opens with the <code>🏨 From Hotel:</code> banner?</li>
+<li>Each day closes with the hotel return?</li>
+<li>Stop count meets the rule: ≥4 for full self-guided days, with down to 1 permitted when a single distant or all-day stop sets the day's pace (per <code>Day Structure.html</code> § 5)?</li>
+<li>Train Day quota satisfied: ≥5-day guide includes at least one Train Day (or explicitly omits when no reachable destination exists); ≤4-day guide includes none (per <code>Day Structure.html</code> §§ 6–7)?</li>
+<li>Geographic clustering — one loop or one path, no backtracking?</li>
+</ul>
+
+<h2>§ 5. Format</h2>
+<ul>
+<li>Title page: three lines (CITY uppercase / Hotel or Rental name / Address — format is <code>{Street number + name} · {Neighborhood}</code>, no postal code, no country, per Hotel Banner.html § 1)? Neighborhood inclusion is a human check — the validator only verifies a house number digit is present.</li>
+<li>Every stop block follows the icon order in <code>Icon Order and Format.html</code>?</li>
+<li>Every motion banner follows <code>Motion Rule.html</code> (opener, between-stop banners, and day closer all present and correct)?</li>
+<li>Every 📍 address row follows <code>Links.html</code> § 6 format: <code>{Street} · {Neighborhood}</code> — no postal code; city included only when the address is in a city different from the destination; country included only when in a different country; the address text itself is the clickable destination anchor (no separate token)?</li>
+<li>Every 🎟 ticket-box follows the format in <code>Tickets.html</code>?</li>
+<li>Toolbar present: the <code>toolbar-mount</code> div + <code>toolbar.js</code> script are the first items inside the container, with <code>data-depth="2"</code> and <code>data-maxwidth="940"</code> (legacy — inert, but still required markup) (per <code>Brain/Reference/Toolbar.html</code>; enforced by validator TB-1 through TB-8)?</li>
+<li>Guide has no inline footer div of its own and does not load <code>footnote.js</code> directly — footer sharing is ⛔ retired (per <code>Brain/Reference/Toolbar.html § 6</code>; enforced by validator TB-9)?</li>
+</ul>
+
+<h2>§ 6. Photos</h2>
+<ul>
+<li>Every stop has a photo harvested in the same pass as the stop research (not deferred)?</li>
+<li>Every photo genuinely depicts the stop's subject — not a generic city shot (per <code>Photos Rules.html</code> § 3; human check — validator cannot verify subject match)?</li>
+<li>Every photo is from Wikimedia Commons with an acceptable license (Public Domain · CC0 · CC-BY · CC-BY-SA)?</li>
+<li>Every photo file is stored locally in <code>Travel-Website/Guides/{City}/_build/assets/</code> and referenced by relative path — downloaded via <code>commons_photo.py --download</code>. No <code>upload.wikimedia.org</code> hotlinks: the validator hard-fails every Commons hotlink and the retired <code>&lt;!-- hotlink: … --&gt;</code> comment no longer authorises one (see <code>Photos Rules.html</code> § 5 step 7 + § 9)?</li>
+<li>Every photo has plain, short alt text — just the subject name, no "photo of" prefix (per <code>Photos Rules.html</code> § 8)?</li>
+<li>Any photo whose filename contains a weak-filename pattern (Building, Main_Building, Exterior, Facade, Outside, Front_view) was checked for a better alternative — or carries the <code>&lt;!-- photo-ok: no better-licensed alternative found for {stop name} --&gt;</code> sign-off comment (per <code>Photos Rules.html</code> § 10)?</li>
+<li>Stops without a usable Commons image ship the "No pictures found" line, not silent omission?</li>
+</ul>
+
+<h2>§ 7. URLs</h2>
+<ul>
+<li>Every URL returns HTTP 200?</li>
+<li>Every URL page carries ≥100 words of editorial content?</li>
+<li>Every Google Maps 📍 URL actually points to the correct place — content correctness, not just format (human check — validator cannot verify)?</li>
+<li>Bot-blocked platforms (Viator, GetYourGuide, TheFork, Michelin, TripAdvisor, Klook) verified via <code>site:</code> search-result inspection?</li>
+<li>Verification log present at <code>Travel-Website/Guides/{City}/_build/verification_log.json</code>?</li>
+<li>Every external anchor carries <code>target="_blank"</code>?</li>
+<li>No link in the guide carries an underline — the stylesheet removes them globally; no element reintroduces one (per <code>Links.html</code> § 8)?</li>
+</ul>
+
+<h2>§ 8. Extra sections</h2>
+<p>Every extra section is present and either populated or carries its negative-finding line — except the conditional sections (❗️ Heads Up, Claude Inspiration, Skip List), which ship nothing when empty (per-item notes below). Order must match this canonical sequence:</p>
+<ul>
+<li>🗓️ Weekly Closures</li>
+<li>📅 Tours — every tour is held in or departs from the guide city; tours that depart from a different city and merely pass through do not qualify (per <code>Tours - Extra Section.html</code> § 1 City rule; human check — validator cannot verify because address format omits the guide city from local addresses)</li>
+<li>☕ Cappuccino</li>
+<li>🫕 Restaurants Near Hotel</li>
+<li>🍽️ Downtown Restaurants</li>
+<li>🍮 Local Tastes</li>
+<li>🚗 Food Delivery</li>
+<li>🎭 Shows, Performances &amp; Concerts — every entry is a destination-permanent performance, not a touring production (per <code>Shows, Performances &amp; Concerts - Extra Section.html</code> § 2); all entries verified to be scheduled and running at time of ship (human check — validator cannot verify)</li>
+<li>🚌 Getting Around</li>
+<li>🚆 Train Stations Near Hotel</li>
+<li>⛲️ Day Trips by Train</li>
+<li>🏓 Pickleball (California, Arizona, and Oregon only — silently omitted elsewhere)</li>
+<li>⭐ Michelin Restaurants</li>
+<li>❗️ Heads Up (conditional — ships only when entries exist)</li>
+<li>✨ Claude Inspiration (optional — silently omitted when nothing surfaced)</li>
+<li>Skip List footnote (conditional — very last; ships only when the city has a skip list)</li>
+</ul>
+
+<h2>§ 9. Data integrity</h2>
+<ul>
+<li>Every factual row (🏛 hours, 🚶 walk, 🚕 ride, ⏰ duration, 📍 address, 🎟 booking) comes from a confirmed source — venue's own site, Google Places, or a verifiable third-party listing?</li>
+<li>No hedging language ("typically open," "usually," "approximately," "around," etc.) in any factual row?</li>
+<li>No fabricated data — every fact live-verified this build, not pulled from memory or past guides?</li>
+<li>No money symbols ($, €, £, ¥, ISO codes) anywhere in the shipped guide?</li>
+<li>No tilde (~) anywhere in the guide except as the ⏰ Avg Time Spent prefix (<code>⏰ ~1 hr</code>) — the single carve-out; never on ⏳ Duration, walk/ride times, or prose (Icon Order and Format.html § 2)?</li>
+<li>No placeholders ({TBD}, {TODO}, "fill in later")?</li>
+</ul>
+
+<h2>§ 10. Validator</h2>
+<ul>
+<li><code>python3 Brain/scripts/brain_check.py</code> passes? (Run separately — not in the ship chain)</li>
+<li><code>python3 Brain/scripts/guide_tools.py validate [Guide]</code> passes with zero ❌ failures? (Run this first — fix all failures before proceeding to ship)</li>
+<li>Validation entry appended to the audit log in <code>Brain/Reference/</code>: <code>{City} {version} · validated {YYYY-MM-DD HH:MM} · ✅ {N} passed / 0 failed</code> (per <code>Rules for Claude.html</code>)?</li>
+<li><code>python3 Brain/scripts/guide_tools.py ship [Guide]</code> passes? (Chains, in order: brain-check → validate_itinerary + verify_urls + verify_booking_links → guides_index coverage → map pin → status-dots → FMAP → <strong>climate (both Weather tabs)</strong> → <strong>safety</strong> → <strong>currency (new country)</strong> → <strong>stats (rebuild+validate)</strong> → <strong>mobile-check <code>--strict</code></strong> → <strong>search-index refresh</strong>. The climate gate hard-fails if the city is absent from <code>assets/climate.json</code> or the baked <code>CLIMATE</code> block in <code>assets/weather.js</code> — the data both <code>🌤️ Weather</code> tabs (By Climate + By City) read; fix by running <code>build_climate.py</code> after the pin is added. The <strong>safety</strong> gate (<code>validate_safety_guide.py</code>) hard-fails if any guides_index city lacks a row in the hardcoded <code>Safety-Guide.html</code>. The <strong>currency</strong> gate (<code>_check_guide_in_currency</code>) hard-fails if the shipping city maps to no country on the Currency Guide — add a new country to <code>build_currency.py</code> COUNTRIES + run it. The <strong>stats</strong> gate rebuilds <code>Travel-Stats.html</code> via <code>build_travel_stats.py</code> then hard-validates with <code>validate_travel_stats.py</code>. All added 2026-06-15. The mobile gate hard-fails if any shareable page — index, Main Pages, Trip Essentials, Maps — is missing the <code>&lt;meta viewport&gt;</code> tag or the <code>assets/mobile.css</code> baseline; fix with <code>mobile_check.py --apply</code>. Added 2026-06-12. As the final step the ship rebuilds <code>Travel-Website/assets/search_index.json</code> via <code>build_search_index.py</code> so the new/edited guide is immediately searchable in the guides_index content search — best-effort, never blocks an otherwise-clean ship. Added 2026-06-14.)</li>
+</ul>
+
+<h2>§ 11. Post-ship</h2>
+<p>All steps below happen in a single pass. Partial updates break the chain and block the validator.</p>
+<ul>
+<li>New card added in the correct country section of <code>guides_index.html</code>, in alphabetical order by city name within that country, with the right <code>data-guide-num</code> and <strong><code>data-status="want"</code></strong> (blue dot — default for every new guide; remove only after you've been)? — when the country has no section yet, create one in alphabetical position using the existing section pattern (flag + country name + count) (per <code>Navigation.html</code> § 5 step 1)</li>
+<li><strong>Card subtitle (<code>dest-sub</code>) — opt-in, gated, rare.</strong> A card may carry one italic sub-line naming a <em>non-obvious natural marquee</em> the guide covers — a major geological phenomenon, famous lake, or national/natural park reached as a day-trip whose presence the city name does NOT telegraph (e.g. Ljubljana → <em>incl. Postojna Cave · Lake Bled</em>; a Milan base → Lake Como; a US base → Grand Canyon or Yosemite). Format: <code>&lt;span class="dest-sub"&gt;incl. Place · Place&lt;/span&gt;</code> placed immediately after the <code>dest-name</code> span. <strong>Hard scope — natural features only:</strong> caves, lakes, canyons, waterfalls, geysers, fjords, parks, geological phenomena. NEVER obvious or man-made city sights — cathedrals, churches, museums, palaces, squares, ordinary landmarks — those are expected from the city name and adding them is drift. <strong>Gate — never autonomous:</strong> a crib does NOT add a subtitle on its own judgement. It parks a one-line proposal in <code>Travel/To Do List/To_Do_List.md</code> under <strong>🪧 Index Subtitle Proposals</strong> and adds the <code>dest-sub</code> span only after Dani approves. The <code>.dest-sub</code> CSS class lives inline in <code>guides_index.html</code> and is theme-safe (<code>--muted</code> / <code>--fs-sub</code>).</li>
+<li>City added to <code>Brain/Reference/Status Dots — guides_index.md</code> master list as <code>[ ]</code> (want to go) in the correct country group, A→Z?</li>
+<li>Predecessor card's <code>data-guide-next</code> and successor card's <code>data-guide-prev</code> updated to point to the new guide?</li>
+<li>Banner counts (guides + countries) and the country section's guide count both updated?</li>
+<li>The guide file's own toolbar-mount <code>data-prev</code> and <code>data-next</code> set to match its neighbours in the chain?</li>
+<li>City pin added to the matching region map — <code>Travel-Website/Trip-Essentials/Maps/Europe-Map.html</code>, <code>Travel-Website/Trip-Essentials/Maps/US-Map.html</code> (North America), <code>Travel-Website/Trip-Essentials/Maps/Asia-Map.html</code>, <code>Travel-Website/Trip-Essentials/Maps/Africa-Map.html</code>, <code>Travel-Website/Trip-Essentials/Maps/Oceania-Map.html</code>, <code>Travel-Website/Trip-Essentials/Maps/South-America-Map.html</code>, or <code>Travel-Website/Trip-Essentials/Maps/Caribbean-Map.html</code>? Entry format in the <code>PINS</code> array: <code>['CityName', lon, lat, '../../Guides/City/file.html']</code>. The ship gate scans all seven maps and hard-fails if no pin is found. Rule: Navigation.html § 5 step 5.</li>
+<li>City added to the <strong>climate / Weather data</strong> so it appears in BOTH <code>🌤️ Weather</code> tabs (By Climate = <code>Climate-Finder.html</code>, By City = <code>Trip-Essentials/Weather.html</code>) — both read <code>window.TravelClimate</code>, baked into <code>assets/weather.js</code> from <code>assets/climate.json</code>. After the map pin is in place, run <code>python3 Brain/scripts/build_climate.py</code> (it reads the map pins to know which cities to fetch), then <code>python3 Brain/scripts/validate_climate_coverage.py</code> (exit 0). The ship gate (<code>_check_guide_in_climate</code>) hard-fails if the city is missing from either source. Added 2026-06-15.</li>
+<li>City added to the <strong>📊 Travel Stats</strong> page — auto-generated from the index, so the ship gate rebuilds <code>Travel-Stats.html</code> (<code>build_travel_stats.py</code>) and hard-validates (<code>validate_travel_stats.py</code>); just ensure the index card is correct. Added 2026-06-15.</li>
+<li>City added to the <strong>🛡️ Safety Guide</strong> — <code>Safety-Guide.html</code> is <strong>hardcoded</strong>, so add the city's row by hand (US State Dept advisory level + official source link), one row per guides_index city. Ship gate <code>validate_safety_guide.py</code> hard-fails otherwise. Added 2026-06-15.</li>
+<li>If the guide adds a <strong>new country</strong>: add it to the <strong>💰 Currency Guide</strong> — append the country (with this city) to the <code>COUNTRIES</code> list in <code>Brain/scripts/build_currency.py</code>, then run <code>python3 Brain/scripts/build_currency.py</code> to regenerate. Ship gate <code>_check_guide_in_currency</code> hard-fails if the shipping city maps to no country. (Same-country guides need no currency change.) Added 2026-06-15.</li>
+</ul>
+
+<hr style="margin: 48px 0 16px 0; border: none; border-top: 1px solid #ddd;">
+</body>
+</html>

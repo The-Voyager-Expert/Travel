@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>Visas</title>
+<style>
+:root {
+  --bg:      #f5f4f0;
+  --warm:    #fdf8f0;
+  --surface: #ffffff;
+  --border:  #d8d4cc;
+  --border2: #e6e2da;
+  --text:    #1a1917;
+  --muted:   #6a6660;
+  --accent:  #8a6c1a;
+  --hover:   #faefd8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Page header ── */
+.page-header {
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  padding: 14px 18px;
+  border-radius: 10px;
+  border-bottom: none;
+  margin: 8px 0 14px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.page-header h1 {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin: 0;
+}
+.page-header p { font-size: 12px; color: rgba(255,255,255,0.72); margin-top: 4px; }
+
+/* ── View toggle (Quick Launch / Visa Check) ── */
+.view-pills {
+  display: flex;
+  gap: 4px;
+  margin: 16px 0 20px;
+  padding-left: 2px;
+}
+.view-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  color: #3d3a32;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .15s, color .15s, border-color .15s;
+  white-space: nowrap;
+  user-select: none;
+  font-family: inherit;
+}
+.view-pill:hover { background: rgba(138,108,26,.06); color: var(--accent); }
+.view-pill.active {
+  background: rgba(138,108,26,.10);
+  color: var(--accent);
+  border-color: rgba(138,108,26,.25);
+  font-weight: 500;
+}
+
+/* ── Views ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── Quick Launch — speed-dial of booking shortcuts ── */
+/* Masonry columns — cards pack tight, no ragged background gaps */
+.launch-grid {
+  column-width: 234px;
+  column-gap: 16px;
+}
+.cat-block {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 12px 14px 13px;
+  margin: 0 0 16px;
+}
+.cat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #efece6;
+}
+.cat-head .ch-emoji { font-size: 16px; line-height: 1; }
+.chips-wrap { display: flex; flex-direction: column; gap: 1px; }
+a.chip-link {
+  display: block;
+  font-size: 13px;
+  color: #3d3a32;
+  text-decoration: none;
+  padding: 5px 8px;
+  border-radius: 6px;
+  line-height: 1.35;
+  transition: background .12s, color .12s;
+}
+a.chip-link:hover {
+  background: var(--hover);
+  color: var(--accent);
+}
+.launch-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .launch-grid { column-width: auto; column-count: 1; }
+  a.chip-link { font-size: 14px; padding: 8px 8px; }
+}
+
+/* ── Visa Check view ── */
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 0 0 18px; }
+.visa-src-link { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; white-space: nowrap; }
+.visa-src-link:hover { text-decoration: underline; }
+.legend .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px;
+  background: var(--warm); border: 1px solid var(--border2); border-radius: 16px; font-size: 11px; color: var(--muted); line-height: 1; }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.d-vf{background:#2a6a2a} .d-card{background:#1a5f8b} .d-eta{background:#b5731a}
+.d-evisa{background:#6b3fa0} .d-voa{background:#0f7d7d} .d-visa{background:#b3402a}
+.etype { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--ec,#999);
+  border-radius: 8px; padding: 16px 20px 18px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(92,61,17,0.06); }
+.etype.vf{--ec:#2a6a2a} .etype.card{--ec:#1a5f8b} .etype.eta{--ec:#b5731a}
+.etype.evisa{--ec:#6b3fa0} .etype.voa{--ec:#0f7d7d} .etype.visa{--ec:#b3402a}
+.etype-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.etype-title { font-size: 14px; font-weight: 700; color: var(--ec); }
+.etype-count { font-size: 11px; color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+.etype-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.enote { font-size: 12px; color: #5C3D11; background: #fbf3e2; border: 1px solid #ecdcbb;
+  border-radius: 6px; padding: 9px 12px; margin: 0 0 12px; line-height: 1.5; }
+.enote b { color: #7a3b1e; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { display: inline-flex; align-items: baseline; gap: 7px; padding: 6px 11px; background: var(--warm);
+  border: 1px solid var(--border2); border-radius: 7px; font-size: 14px; white-space: nowrap; }
+.chip .lim { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rows { display: flex; flex-direction: column; gap: 9px; }
+.row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 10px 12px;
+  background: var(--warm); border: 1px solid var(--border2); border-radius: 7px; }
+.row .cty { font-size: 14px; font-weight: 600; min-width: 150px; }
+.row .lim { font-size: 11px; color: #2a6a2a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.row .rnote { flex: 1 1 100%; font-size: 12px; color: var(--muted); line-height: 1.5; }
+.visa-foot { font-size: 11px; color: var(--muted); margin: 16px 0 0; }
+.visa-foot b { color: var(--text); }
+@media (max-width: 600px) { .row .cty { min-width: 0; } .etype { padding: 14px 14px 16px; } }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=27"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>Visas</h1>
+  </div>
+
+  <!-- ════════════════════ VISA CHECK ════════════════════ -->
+  <div class="view active" id="view-visa">
+    <div class="legend">
+      <span class="pill"><span class="dot d-vf"></span>Visa-free</span>
+      <span class="pill"><span class="dot d-card"></span>Free arrival card</span>
+      <span class="pill"><span class="dot d-eta"></span>Travel authorization (ETA)</span>
+      <span class="pill"><span class="dot d-evisa"></span>eVisa</span>
+      <span class="pill"><span class="dot d-voa"></span>Visa on arrival</span>
+      <span class="pill"><span class="dot d-visa"></span>Visa required</span>
+      <a class="visa-src-link" href="https://travel.state.gov/content/travel/en/international-travel/International-Travel-Country-Information-Pages.html" target="_blank" rel="noopener">travel.state.gov ↗</a>
+    </div>
+
+    <div class="etype vf">
+      <div class="etype-head">
+        <span class="etype-title">🟢 Europe — Schengen Area · visa-free</span>
+        <span class="etype-count">21 countries</span>
+      </div>
+      <div class="etype-desc">No visa. Stay up to <b>90 days within any 180-day</b> period — and that 90 days is a <b>shared pool across all Schengen countries combined</b>, not per country.</div>
+      <div class="enote"><b>Heads-up — ETIAS, late 2026:</b> the EU's ETIAS travel authorization (a quick paid online form, ~€7, like the US ESTA) is expected to launch in the <b>last quarter of 2026</b>. It is <b>not required yet</b> — for now you travel passport-only. Once live, you'll file it before each trip.</div>
+      <div class="chips">
+        <span class="chip">🇦🇹 Austria <span class="lim">90d</span></span>
+        <span class="chip">🇧🇪 Belgium <span class="lim">90d</span></span>
+        <span class="chip">🇭🇷 Croatia <span class="lim">90d</span></span>
+        <span class="chip">🇨🇿 Czechia <span class="lim">90d</span></span>
+        <span class="chip">🇩🇰 Denmark <span class="lim">90d</span></span>
+        <span class="chip">🇪🇪 Estonia <span class="lim">90d</span></span>
+        <span class="chip">🇫🇮 Finland <span class="lim">90d</span></span>
+        <span class="chip">🇫🇷 France <span class="lim">90d</span></span>
+        <span class="chip">🇩🇪 Germany <span class="lim">90d</span></span>
+        <span class="chip">🇬🇷 Greece <span class="lim">90d</span></span>
+        <span class="chip">🇮🇸 Iceland <span class="lim">90d</span></span>
+        <span class="chip">🇮🇹 Italy <span class="lim">90d</span></span>
+        <span class="chip">🇱🇺 Luxembourg <span class="lim">90d</span></span>
+        <span class="chip">🇲🇨 Monaco <span class="lim">90d</span></span>
+        <span class="chip">🇳🇱 Netherlands <span class="lim">90d</span></span>
+        <span class="chip">🇳🇴 Norway <span class="lim">90d</span></span>
+        <span class="chip">🇵🇹 Portugal <span class="lim">90d</span></span>
+        <span class="chip">🇸🇮 Slovenia <span class="lim">90d</span></span>
+        <span class="chip">🇪🇸 Spain <span class="lim">90d</span></span>
+        <span class="chip">🇸🇪 Sweden <span class="lim">90d</span></span>
+        <span class="chip">🇨🇭 Switzerland <span class="lim">90d</span></span>
+      </div>
+    </div>
+
+    <div class="etype vf">
+      <div class="etype-head">
+        <span class="etype-title">🟢 Visa-free — just your passport</span>
+        <span class="etype-count">9 destinations</span>
+      </div>
+      <div class="etype-desc">No visa and nothing to file in advance. Just show up with your passport.</div>
+      <div class="chips">
+        <span class="chip">🇮🇪 Ireland <span class="lim">90d · no ETA</span></span>
+        <span class="chip">🇨🇦 Canada <span class="lim">no eTA for US</span></span>
+        <span class="chip">🇯🇵 Japan <span class="lim">90d</span></span>
+        <span class="chip">🇹🇼 Taiwan <span class="lim">90d</span></span>
+        <span class="chip">🇲🇦 Morocco <span class="lim">90d</span></span>
+        <span class="chip">🇦🇷 Argentina <span class="lim">90d</span></span>
+        <span class="chip">🇨🇱 Chile <span class="lim">90d</span></span>
+        <span class="chip">🇵🇪 Peru <span class="lim">183d</span></span>
+        <span class="chip">🏝️ Caribbean <span class="lim">~90d</span></span>
+      </div>
+      <div class="enote" style="margin:12px 0 0"><b>Caribbean:</b> visa-free for US citizens on the islands with guides (Aruba, Bahamas, etc.), typically up to 90 days — but limits and any arrival form vary by island, so confirm the specific one before you go.</div>
+    </div>
+
+    <div class="etype card">
+      <div class="etype-head">
+        <span class="etype-title">🔵 Visa-free — but file a free arrival card first</span>
+        <span class="etype-count">3 destinations</span>
+      </div>
+      <div class="etype-desc">No visa, but you must submit a <b>free</b> online form shortly before arrival.</div>
+      <div class="rows">
+        <div class="row">
+          <span class="cty">🇹🇭 Thailand</span><span class="lim">60 days</span>
+          <span class="rnote">File the free <b>Thailand Digital Arrival Card (TDAC)</b> online within 72 hours before arrival. <i>(A cut to 30 days was voted in May 2026 but is not yet in force — 60 days still stands.)</i></span>
+        </div>
+        <div class="row">
+          <span class="cty">🇸🇬 Singapore</span><span class="lim">90 days</span>
+          <span class="rnote">File the free <b>SG Arrival Card</b> online within 3 days before arrival.</span>
+        </div>
+        <div class="row">
+          <span class="cty">🇰🇷 South Korea</span><span class="lim">90 days</span>
+          <span class="rnote"><b>K-ETA is waived for US citizens through Dec 31, 2026</b> — file the free <b>e-Arrival Card</b> instead. From <b>Jan 1, 2027</b> the paid K-ETA becomes mandatory.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="etype eta">
+      <div class="etype-head">
+        <span class="etype-title">🟠 Travel authorization required before you fly</span>
+        <span class="etype-count">3 destinations</span>
+      </div>
+      <div class="etype-desc">A paid electronic permit (ETA) you must get approved <b>before boarding</b>. Not a visa — usually approved fast online or via an app.</div>
+      <div class="rows">
+        <div class="row">
+          <span class="cty">🇬🇧 United Kingdom</span><span class="lim" style="color:#b5731a">UK ETA</span>
+          <span class="rnote">Required since <b>Feb 25, 2026</b>. £20, approved in minutes via the UK ETA app, valid <b>2 years</b>, stays up to 6 months. <i>Also covers Northern Ireland.</i></span>
+        </div>
+        <div class="row">
+          <span class="cty">🇦🇺 Australia</span><span class="lim" style="color:#b5731a">ETA (601)</span>
+          <span class="rnote">ETA subclass 601 via the Australian ETA app. AUD 20, multiple entries for 1 year, up to <b>90 days</b> per visit.</span>
+        </div>
+        <div class="row">
+          <span class="cty">🇳🇿 New Zealand</span><span class="lim" style="color:#b5731a">NZeTA</span>
+          <span class="rnote">NZeTA (NZD 17 app / 23 web) <b>plus</b> the mandatory IVL tourism levy (NZD 35), paid together. Valid 2 years, up to <b>90 days</b> per visit.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="etype evisa">
+      <div class="etype-head">
+        <span class="etype-title">🟣 eVisa required — apply online before travel</span>
+        <span class="etype-count">1 destination</span>
+      </div>
+      <div class="rows">
+        <div class="row">
+          <span class="cty">🇧🇷 Brazil</span><span class="lim" style="color:#6b3fa0">eVisa</span>
+          <span class="rnote"><b>Required since Jan 1, 2026</b> (visa-waiver ended). Apply at <b>brazil.vfsevisa.com</b> — about US$80.90, usually issued within 72 hours, multiple-entry valid up to 10 years, <b>90 days</b> per visit. Airlines check it at boarding.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="etype voa">
+      <div class="etype-head">
+        <span class="etype-title">🛬 Visa on arrival — free, at the airport</span>
+        <span class="etype-count">1 destination</span>
+      </div>
+      <div class="rows">
+        <div class="row">
+          <span class="cty">🇦🇪 United Arab Emirates</span><span class="lim" style="color:#0f7d7d">Free on arrival</span>
+          <span class="rnote">No advance visa. US citizens get a <b>free visa on arrival</b> (30 days, extendable). Passport valid 6+ months, return/onward ticket.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="etype visa">
+      <div class="etype-head">
+        <span class="etype-title">🔴 Visa required — arrange before travel</span>
+        <span class="etype-count">1 destination</span>
+      </div>
+      <div class="rows">
+        <div class="row">
+          <span class="cty">🇨🇳 China</span><span class="lim" style="color:#b3402a">Visa needed</span>
+          <span class="rnote">US citizens need a <b>tourist visa arranged in advance</b>. (A <b>240-hour / 10-day visa-free transit</b> exists only if you're continuing to a third country and entering/exiting via eligible ports — not for a round-trip China visit.)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /wrap -->
+
+</body>
+</html>

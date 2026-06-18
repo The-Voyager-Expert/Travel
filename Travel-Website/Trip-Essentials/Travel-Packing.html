@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>Travel Packing</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --accent: #8a6c1a; }
+
+body {
+ background: #f5f4f0;
+ color: #1a1917;
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+ font-size: 14px;
+ line-height: 1.5;
+ padding-bottom: 80px;
+}
+
+
+.page { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+.back-link {
+ display: inline-flex; align-items: center; gap: 6px;
+ font-size: 12px; color: #6a6660; text-decoration: none; margin-top: 24px;
+}
+.back-link:hover { color: #7a5c0e; }
+
+.header { margin-top: 0; margin-bottom: 0; padding: 20px 0 20px; border-bottom: 1px solid #d8d4cc; }
+.header-label { font-size: 12px; letter-spacing: 0.25em; color: #6a6660; text-transform: uppercase; margin-bottom: 10px; }
+.header h1 { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; color: var(--accent); margin-bottom: 10px; }
+.header p { font-size: 12px; color: #6a6660; max-width: 520px; line-height: 1.7; }
+
+.progress-wrap { margin-top: 22px; }
+.progress-meta { font-size: 12px; letter-spacing: 0.1em; color: #6a6660; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 7px; }
+.progress-meta .count { color: #2a6a2a; font-weight: 600; }
+.progress-track { background: #e0ddd6; border-radius: 2px; height: 3px; }
+.progress-fill { height: 3px; border-radius: 2px; background: #2a6a2a; transition: width 0.35s ease; width: 0%; }
+.reset-btn { margin-top: 14px; font-size: 12px; letter-spacing: 0.1em; color: #6a6660; text-transform: uppercase; background: none; border: 1px solid #d8d4cc; border-radius: 3px; padding: 5px 14px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+.reset-btn:hover { color: #5c3d11; border-color: #7a5c0e; }
+
+.section-card {
+ border: 1px solid #d8d4cc;
+ border-radius: 6px;
+ overflow: hidden;
+ margin-bottom: 16px;
+ background: #ffffff;
+}
+.card-header {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ padding: 12px 18px;
+ border-bottom: 1px solid #e6e2da;
+ background: #f0ede8;
+}
+.card-icon { font-size: 18px; line-height: 1; flex-shrink: 0; }
+.card-title {
+ font-size: 12px;
+ letter-spacing: 0.18em;
+ color: #6a6660;
+ text-transform: uppercase;
+ flex: 1;
+ font-weight: 700;
+}
+.card-pill {
+ font-size: 12px;
+ color: #6a6660;
+ background: #e6e2da;
+ border: 1px solid #d8d4cc;
+ padding: 3px 11px;
+ border-radius: 20px;
+ white-space: nowrap;
+ transition: background 0.25s, color 0.25s;
+}
+.card-pill.all-done { background: #e8f4e8; color: #2a6a2a; border-color: #a0c8a0; }
+.card-body { padding: 0 18px; }
+.card-lead { font-size: 14px; color: #6a6660; line-height: 1.7; padding: 14px 0 4px; }
+
+.critical-card {
+ border: 1px solid #d8d4cc;
+ border-top: 3px solid #c8961a;
+ border-radius: 6px;
+ overflow: hidden;
+ margin-bottom: 16px;
+ background: #ffffff;
+}
+.critical-card .card-header { background: #fdf8ee; border-bottom-color: #e8d8a0; }
+.critical-card .card-title { color: #7a5c0e; }
+.critical-card .card-pill { background: #fdf0d0; color: #7a5c0e; border-color: #d8c080; }
+.story-block {
+ margin: 12px 20px 4px;
+ padding: 10px 14px;
+ border-left: 3px solid #e8d8a0;
+ font-size: 14px;
+ color: #6a6660;
+ font-style: italic;
+ line-height: 1.65;
+ background: #fdf8ee;
+}
+
+.sub-label {
+ font-size: 12px;
+ letter-spacing: 0.16em;
+ color: #a09a90;
+ text-transform: uppercase;
+ padding: 16px 0 8px;
+ border-bottom: 1px solid #e6e2da;
+ margin-bottom: 2px;
+ font-weight: 700;
+}
+
+.item {
+ display: flex;
+ align-items: flex-start;
+ gap: 13px;
+ padding: 10px 0;
+ border-bottom: 1px solid #f0ede8;
+}
+.item:last-child { border-bottom: none; }
+
+.item input[type="checkbox"] {
+ appearance: none; -webkit-appearance: none;
+ width: 18px; height: 18px; min-width: 18px;
+ border: 1.5px solid #c0bab2;
+ border-radius: 3px;
+ background: #fff;
+ cursor: pointer;
+ position: relative;
+ margin-top: 2px;
+ flex-shrink: 0;
+ transition: background 0.15s, border-color 0.15s;
+}
+.item input[type="checkbox"]:hover { border-color: #2a6a2a; }
+.item input[type="checkbox"]:checked { background: #2a6a2a; border-color: #2a6a2a; }
+.item input[type="checkbox"]:checked::after {
+ content: '';
+ position: absolute;
+ left: 5px; top: 2px;
+ width: 5px; height: 9px;
+ border: 2px solid #fff;
+ border-top: none; border-left: none;
+ transform: rotate(45deg);
+}
+
+.item label { font-size: 14px; color: #1a1917; cursor: pointer; line-height: 1.45; transition: color 0.15s; }
+.item.checked label { color: #b0aaa2; text-decoration: line-through; text-decoration-color: #c0bab2; }
+.sub-note { font-size: 12px; color: #a09a90; }
+
+.callout {
+ margin: 12px 0;
+ padding: 10px 14px;
+ border-left: 3px solid #d8d4cc;
+ font-size: 14px;
+ color: #6a6660;
+ line-height: 1.7;
+ background: #f5f4f0;
+ border-radius: 0 3px 3px 0;
+}
+.callout.amber { border-left-color: #c8961a; background: #fdf8ee; color: #7a5c0e; }
+.callout.amber strong { color: #5c3d11; font-weight: 600; }
+.callout strong { color: #3a3530; font-weight: 600; }
+
+.dest-tag {
+ display: inline-block;
+ font-size: 12px;
+ letter-spacing: 0.1em;
+ padding: 3px 11px;
+ border-radius: 3px;
+ background: #f0ede8;
+ color: #7a5c0e;
+ border: 1px solid #d8c890;
+ margin: 12px 0 6px;
+}
+
+
+@media (max-width: 600px) {
+ .page { padding: 0 14px; }
+ .card-header { padding: 13px 14px; }
+ .card-body { padding: 0 14px 12px; }
+ .story-block { margin: 10px 14px 4px; }
+}
+
+.essentials {
+  background: #f0ede8;
+  border-bottom: 1px solid #d8d4cc;
+  padding: 6px 0;
+}
+.essentials-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.essentials-link {
+  font-size: 12px;
+  color: #6a6660;
+  text-decoration: none;
+  padding: 3px 9px;
+  border: 1px solid #d8d4cc;
+  border-radius: 3px;
+  background: none;
+  white-space: nowrap;
+}
+.essentials-link:hover { color: #7a5c0e; border-color: #7a5c0e; }
+
+/* ── Polish additions ── */
+html { scroll-behavior: smooth; }
+
+.section-card  { transition: box-shadow .18s, transform .18s; }
+.section-card:hover  { box-shadow: 0 4px 14px rgba(0,0,0,0.07); transform: translateY(-1px); }
+.critical-card { transition: box-shadow .18s, transform .18s; }
+.critical-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.07); transform: translateY(-1px); }
+
+.essentials-link { transition: color .15s, border-color .15s, background .15s; }
+.essentials-link:hover { background: rgba(138,108,26,0.06); }
+
+
+/* uniform comfortable page gutter */
+body{padding-left:20px!important;padding-right:20px!important;}
+
+/* ── Print button ── */
+.print-btn { margin-top: 14px; margin-left: 8px; font-size: 12px; letter-spacing: 0.1em; color: #6a6660; text-transform: uppercase; background: none; border: 1px solid #d8d4cc; border-radius: 3px; padding: 5px 14px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+.print-btn:hover { color: #5c3d11; border-color: #7a5c0e; }
+
+/* ── Print styles ── */
+@media print {
+ body { background: #fff !important; color: #000; padding: 0 !important; font-size: 11px; }
+ #toolbar-mount, .reset-btn, .print-btn, .progress-wrap { display: none !important; }
+ .header { background: none !important; border-radius: 0 !important; border-bottom: 2px solid #000 !important; padding: 0 0 8px !important; margin: 0 0 12px !important; }
+ .header h1 { color: #000 !important; font-size: 18px !important; }
+ .section-card, .critical-card { border: 1px solid #999 !important; box-shadow: none !important; transform: none !important; break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px; }
+ .card-header { background: #eee !important; }
+ .card-title, .critical-card .card-title { color: #000 !important; }
+ .item input[type="checkbox"] { -webkit-appearance: none; appearance: none; border: 1.2px solid #000 !important; }
+ .item.checked label { color: #000 !important; }
+ .page { max-width: 100% !important; }
+ @page { margin: 1.2cm; }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const page = location.pathname.split('/').pop();
+  document.querySelectorAll('.essentials-link').forEach(a=>{
+    if(a.getAttribute('href') && a.getAttribute('href').split('/').pop() === page){
+      a.style.borderColor='#8a6c1a';
+      a.style.color='#8a6c1a';
+      a.style.background='rgba(138,108,26,0.08)';
+    }
+  });
+});
+</script>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=27"></script>
+
+<div class="page">
+
+ 
+
+ <div class="header">
+ <h1>Travel Packing</h1>
+ </div>
+
+<div class="progress-wrap">
+ <div class="progress-meta">
+ <span>Overall progress</span>
+ <span class="count" id="progress-count">0 / 0</span>
+ </div>
+ <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+ </div>
+ <button class="reset-btn" onclick="resetAll()">↺ &nbsp;Reset all</button>
+ <button class="print-btn" onclick="window.print()">🖨 &nbsp;Print list</button>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">🎯</span>
+ <span class="card-title">Important</span>
+ <span class="card-pill" id="pill-critical">0 / 3</span>
+ </div>
+<div class="card-body" style="padding-top:10px;">
+ <div class="item"><input type="checkbox" id="cb-wallet" onchange="toggle(this)"><label for="cb-wallet">Wallet</label></div>
+ <div class="item"><input type="checkbox" id="cb-passport" onchange="toggle(this)"><label for="cb-passport">US Passport</label></div>
+ <div class="item"><input type="checkbox" id="cb-passport-br" onchange="toggle(this)"><label for="cb-passport-br">Brazilian passport</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">🏠</span>
+ <span class="card-title">Pre-Trip Home Tasks</span>
+ <span class="card-pill" id="pill-home">0 / 3</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-h1" onchange="toggle(this)"><label for="cb-h1">Cancel housekeeping for trip dates</label></div>
+ <div class="item"><input type="checkbox" id="cb-h2" onchange="toggle(this)"><label for="cb-h2">Get mail</label></div>
+ <div class="item"><input type="checkbox" id="cb-h3" onchange="toggle(this)"><label for="cb-h3">Throw garbage and recycling out</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">⏬</span>
+ <span class="card-title">Pre-Trip Downloads</span>
+ <span class="card-pill" id="pill-downloads">0 / 3</span>
+ </div>
+ <div class="card-body">
+<div class="item"><input type="checkbox" id="cb-d1" onchange="toggle(this)"><label for="cb-d1">Movies / shows downloaded on iPhone</label></div>
+ <div class="item"><input type="checkbox" id="cb-d2" onchange="toggle(this)"><label for="cb-d2">Movies / shows downloaded on MacBook</label></div>
+ <div class="item"><input type="checkbox" id="cb-d3" onchange="toggle(this)"><label for="cb-d3">Google offline maps</label></div>
+ </div>
+ </div>
+
+
+<div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">🎧</span>
+ <span class="card-title">Electronics</span>
+ <span class="card-pill" id="pill-electronics">0 / 7</span>
+ </div>
+ <div class="card-body">
+<div class="sub-label">Devices</div>
+ <div class="item"><input type="checkbox" id="cb-e9" onchange="toggle(this)"><label for="cb-e9">MacBook charger + wall plug</label></div>
+ <div class="item"><input type="checkbox" id="cb-e4" onchange="toggle(this)"><label for="cb-e4">AirPods</label></div>
+ <div class="item"><input type="checkbox" id="cb-e5" onchange="toggle(this)"><label for="cb-e5">Bose headphones + charger</label></div>
+ <div class="item"><input type="checkbox" id="cb-e6" onchange="toggle(this)"><label for="cb-e6">Battery pack — fully charged</label></div>
+<div class="item"><input type="checkbox" id="cb-e7" onchange="toggle(this)"><label for="cb-e7">iPhone charger + wall plug</label></div>
+ <div class="item"><input type="checkbox" id="cb-e8" onchange="toggle(this)"><label for="cb-e8">Apple Watch charger + wall plug</label></div>
+ <div class="item"><input type="checkbox" id="cb-e12" onchange="toggle(this)"><label for="cb-e12">Onzo sleeping device</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">🔌</span>
+ <span class="card-title">Travel power</span>
+ <span class="card-pill" id="pill-travelpower">0 / 1</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-e11" onchange="toggle(this)"><label for="cb-e11">Outlet adapter</label> <span class="sub-note">— <a href="Plug%20Adapter/Plug%20Adapter%20Guide.html" style="color:#8a6c1a;text-decoration:none">Plug Adapter Guide</a></span></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">🧴</span>
+ <span class="card-title">Essentials</span>
+ <span class="card-pill" id="pill-essentials">0 / 8</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-es1" onchange="toggle(this)"><label for="cb-es1">Toiletries bag</label></div>
+ <div class="item"><input type="checkbox" id="cb-es2" onchange="toggle(this)"><label for="cb-es2">Bar soap</label></div>
+ <div class="item"><input type="checkbox" id="cb-es3" onchange="toggle(this)"><label for="cb-es3">Small crossbody bag</label></div>
+ <div class="item"><input type="checkbox" id="cb-es6" onchange="toggle(this)"><label for="cb-es6">Baseball cap or visor</label></div>
+ <div class="item"><input type="checkbox" id="cb-es7" onchange="toggle(this)"><label for="cb-es7">Sunscreen</label></div>
+ <div class="item"><input type="checkbox" id="cb-es8" onchange="toggle(this)"><label for="cb-es8">Umbrella</label></div>
+ <div class="item"><input type="checkbox" id="cb-es9" onchange="toggle(this)"><label for="cb-es9">Sunglasses</label></div>
+ <div class="item"><input type="checkbox" id="cb-es10" onchange="toggle(this)"><label for="cb-es10">Headband</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">💊</span>
+ <span class="card-title">Meds</span>
+ <span class="card-pill" id="pill-meds">0 / 3</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-m1" onchange="toggle(this)"><label for="cb-m1">Meds bag</label></div>
+ <div class="item"><input type="checkbox" id="cb-m2" onchange="toggle(this)"><label for="cb-m2">Tums</label></div>
+ <div class="item"><input type="checkbox" id="cb-m3" onchange="toggle(this)"><label for="cb-m3">Advil</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">👟</span>
+ <span class="card-title">Shoes</span>
+ <span class="card-pill" id="pill-shoes">0 / 2</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-sh1" onchange="toggle(this)"><label for="cb-sh1">Sandals</label></div>
+ <div class="item"><input type="checkbox" id="cb-sh2" onchange="toggle(this)"><label for="cb-sh2">Boots</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">👕</span>
+ <span class="card-title">Clothes</span>
+ <span class="card-pill" id="pill-clothes">0 / 12</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-c1" onchange="toggle(this)"><label for="cb-c1">Bras</label></div>
+ <div class="item"><input type="checkbox" id="cb-c2" onchange="toggle(this)"><label for="cb-c2">Underwear</label></div>
+ <div class="item"><input type="checkbox" id="cb-c3" onchange="toggle(this)"><label for="cb-c3">Black socks for plane</label></div>
+ <div class="item"><input type="checkbox" id="cb-c4" onchange="toggle(this)"><label for="cb-c4">White sports socks</label></div>
+ <div class="item"><input type="checkbox" id="cb-c5" onchange="toggle(this)"><label for="cb-c5">Short sleeve shirts</label></div>
+ <div class="item"><input type="checkbox" id="cb-c5b" onchange="toggle(this)"><label for="cb-c5b">Long sleeve shirts</label></div>
+ <div class="item"><input type="checkbox" id="cb-c16" onchange="toggle(this)"><label for="cb-c16">Jeans</label></div>
+ <div class="item"><input type="checkbox" id="cb-c7" onchange="toggle(this)"><label for="cb-c7">PJs</label></div>
+ <div class="item"><input type="checkbox" id="cb-c8" onchange="toggle(this)"><label for="cb-c8">Jacket</label></div>
+ <div class="item"><input type="checkbox" id="cb-c10" onchange="toggle(this)"><label for="cb-c10">Capris</label></div>
+ <div class="item"><input type="checkbox" id="cb-c14" onchange="toggle(this)"><label for="cb-c14">Shorts</label></div>
+ <div class="item"><input type="checkbox" id="cb-c15" onchange="toggle(this)"><label for="cb-c15">Formal pants</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">❄️</span>
+ <span class="card-title">Cold weather</span>
+ <span class="card-pill" id="pill-coldweather">0 / 5</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-c17" onchange="toggle(this)"><label for="cb-c17">Sweater</label></div>
+ <div class="item"><input type="checkbox" id="cb-c18" onchange="toggle(this)"><label for="cb-c18">Under pants</label></div>
+ <div class="item"><input type="checkbox" id="cb-c11" onchange="toggle(this)"><label for="cb-c11">Scarf</label></div>
+ <div class="item"><input type="checkbox" id="cb-c12" onchange="toggle(this)"><label for="cb-c12">Gloves</label></div>
+ <div class="item"><input type="checkbox" id="cb-c13" onchange="toggle(this)"><label for="cb-c13">Beanie</label></div>
+ </div>
+ </div>
+
+ <div class="section-card">
+ <div class="card-header">
+ <span class="card-icon">🏓</span>
+ <span class="card-title">Pickleball Kit</span>
+ <span class="card-pill" id="pill-pickleball">0 / 9</span>
+ </div>
+ <div class="card-body">
+ <div class="item"><input type="checkbox" id="cb-p1" onchange="toggle(this)"><label for="cb-p1">Paddle</label></div>
+ <div class="item"><input type="checkbox" id="cb-p2" onchange="toggle(this)"><label for="cb-p2">Ball</label></div>
+ <div class="item"><input type="checkbox" id="cb-p3" onchange="toggle(this)"><label for="cb-p3">Pickleball tennis shoes</label></div>
+ <div class="item"><input type="checkbox" id="cb-p4" onchange="toggle(this)"><label for="cb-p4">Pickleball shorts</label></div>
+ <div class="item"><input type="checkbox" id="cb-p5" onchange="toggle(this)"><label for="cb-p5">Sports shirts</label></div>
+ <div class="item"><input type="checkbox" id="cb-p6" onchange="toggle(this)"><label for="cb-p6">Visor</label></div>
+ <div class="item"><input type="checkbox" id="cb-p7" onchange="toggle(this)"><label for="cb-p7">Headband</label></div>
+ <div class="item"><input type="checkbox" id="cb-p8" onchange="toggle(this)"><label for="cb-p8">White sports socks</label></div>
+ <div class="item"><input type="checkbox" id="cb-p9" onchange="toggle(this)"><label for="cb-p9">Sunscreen</label></div>
+ </div>
+ </div>
+
+
+</div>
+
+
+<script>
+ const STORAGE_KEY = 'packing_v1';
+
+ const sections = {
+ critical:    ['cb-passport','cb-passport-br','cb-wallet'],
+ home:        ['cb-h1','cb-h2','cb-h3'],
+ downloads:   ['cb-d1','cb-d2','cb-d3'],
+ electronics: ['cb-e4','cb-e5','cb-e6','cb-e7','cb-e8','cb-e9','cb-e12'],
+ travelpower: ['cb-e11'],
+ essentials:  ['cb-es1','cb-es2','cb-es3','cb-es6','cb-es7','cb-es8','cb-es9','cb-es10'],
+ meds:        ['cb-m1','cb-m2','cb-m3'],
+ shoes:       ['cb-sh1','cb-sh2'],
+ clothes:     ['cb-c1','cb-c2','cb-c3','cb-c4','cb-c5','cb-c5b','cb-c7','cb-c8','cb-c10','cb-c14','cb-c15','cb-c16'],
+ coldweather: ['cb-c17','cb-c18','cb-c11','cb-c12','cb-c13'],
+ pickleball:  ['cb-p1','cb-p2','cb-p3','cb-p4','cb-p5','cb-p6','cb-p7','cb-p8','cb-p9'],
+ };
+
+ function saveState() {
+ const state = {};
+ document.querySelectorAll('input[type="checkbox"]').forEach(cb => { state[cb.id] = cb.checked; });
+ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+ }
+
+ function loadState() {
+ try {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  const state = JSON.parse(raw);
+  Object.entries(state).forEach(([id, checked]) => {
+  const cb = document.getElementById(id);
+  if (cb) { cb.checked = checked; cb.closest('.item')?.classList.toggle('checked', checked); }
+  });
+ } catch(e) {}
+ }
+
+ function toggle(cb) {
+ cb.closest('.item').classList.toggle('checked', cb.checked);
+ updateProgress();
+ saveState();
+ }
+
+ function updateProgress() {
+ let totalAll = 0, doneAll = 0;
+ for (const [sec, ids] of Object.entries(sections)) {
+  const done = ids.filter(id => document.getElementById(id)?.checked).length;
+  const pill = document.getElementById('pill-' + sec);
+  if (pill) {
+  pill.textContent = done + ' / ' + ids.length;
+  pill.classList.toggle('all-done', done === ids.length);
+  }
+  totalAll += ids.length;
+  doneAll  += done;
+ }
+ document.getElementById('progress-count').textContent = doneAll + ' / ' + totalAll;
+ document.getElementById('progress-fill').style.width = (totalAll ? (doneAll / totalAll * 100) : 0) + '%';
+ }
+
+ function resetAll() {
+ document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+  cb.checked = false;
+  cb.closest('.item')?.classList.remove('checked');
+ });
+ updateProgress();
+ try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+ }
+
+ loadState();
+ updateProgress();
+</script>
+</body>
+</html>

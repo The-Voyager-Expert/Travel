@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>Safety Guide</title>
+<style>
+:root {
+  --bg:      #f5f4f0;
+  --warm:    #fdf8f0;
+  --surface: #ffffff;
+  --border:  #d8d4cc;
+  --border2: #e6e2da;
+  --text:    #1a1917;
+  --muted:   #6a6660;
+  --accent:  #8a6c1a;
+  --hover:   #faefd8;
+  --l1-bg:   #edf7ed;
+  --l1-text: #1e6b2e;
+  --l1-border: #a8d5a8;
+  --l2-bg:   #fef7e0;
+  --l2-text: #7a5200;
+  --l2-border: #e6c96a;
+  --l3-bg:   #fdecea;
+  --l3-text: #9b2020;
+  --l3-border: #e8a5a0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: var(--fs-body,14px);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+
+/* ── Intro & legend ── */
+.intro {
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0 20px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-sub,12px);
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+.badge-l1 { background: var(--l1-bg); color: var(--l1-text); border-color: var(--l1-border); }
+.badge-l2 { background: var(--l2-bg); color: var(--l2-text); border-color: var(--l2-border); }
+.badge-l3 { background: var(--l3-bg); color: var(--l3-text); border-color: var(--l3-border); }
+
+/* ── Search ── */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.search-row label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+#city-search {
+  width: 200px;
+  box-sizing: border-box;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: 1.5px solid #e6e2da;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1a1917;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+#city-search::placeholder { color: #A8895A; }
+#city-search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
+#no-results { display: none; color: var(--muted); font-size: 13px; margin: 12px 0; }
+
+/* ── Level section ── */
+.level-section { margin-bottom: 28px; }
+.level-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 7px;
+}
+.level-heading .badge { font-size: var(--fs-sub,12px); }
+.level-count {
+  font-size: var(--fs-sub,12px);
+  color: var(--muted);
+  margin-left: auto;
+}
+
+/* ── City grid ── */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 7px;
+}
+a.city-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  background: var(--surface);
+  border-radius: 6px;
+  font-size: 13px;
+  text-decoration: none;
+  transition: background .12s;
+}
+a.city-row:hover { background: var(--hover); }
+#grid-l1 a.city-row { border-left: 3px solid var(--l1-border); }
+#grid-l2 a.city-row { border-left: 3px solid var(--l2-border); }
+#grid-l3 a.city-row { border-left: 3px solid var(--l3-border); }
+.city-name { font-weight: 500; color: var(--text); }
+.city-country { font-size: var(--fs-sub,12px); color: var(--muted); margin-left: auto; }
+a.city-row.hidden { display: none; }
+
+/* ── Sources ── */
+.sources {
+  margin-top: 32px;
+  padding-top: 18px;
+}
+.sources h2 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+.source-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.source-list li { font-size: var(--fs-sub,12px); color: var(--muted); }
+.source-list a { color: var(--accent); text-decoration: none; }
+.source-list a:hover { text-decoration: underline; }
+
+/* ── Note box ── */
+.note {
+  background: var(--l3-bg);
+  border: 1px solid var(--l3-border);
+  border-radius: 6px;
+  padding: 10px 13px;
+  font-size: 12.5px;
+  color: #7a2020;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+.note strong { color: var(--l3-text); }
+
+@media (max-width: 600px) {
+  .city-grid { grid-template-columns: 1fr 1fr; }
+
+  .legend { gap: 7px; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
+<script src="../assets/toolbar.js?v=27"></script>
+
+<div class="wrap">
+  <div class="page-header">
+    <h1>Safety Guide</h1>
+  </div>
+  <span class="updated-stamp">Updated June 2026</span>
+
+
+
+  <div class="legend">
+    <span class="badge badge-l1">✅ Level 1 — Normal precautions</span>
+    <span class="badge badge-l2">⚠️ Level 2 — Increased caution</span>
+    <span class="badge badge-l3">🚫 Level 3 — Reconsider travel</span>
+  </div>
+
+  <div class="note">
+    <strong>⚠️ UAE — Level 3 as of March 2026.</strong> Following US–Iran hostilities in February 2026, the State Dept issued a Level 3 advisory for the UAE and ordered non-emergency US government personnel to leave. Monitor <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/united-arab-emirates-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">the advisory</a> closely before any travel to Abu Dhabi or Dubai.
+  </div>
+
+  <div class="search-row">
+    <label for="city-search">Filter cities</label>
+    <input type="search" id="city-search" placeholder="🔍" aria-label="Filter cities">
+  </div>
+  <p id="no-results">No cities match your search.</p>
+
+  <!-- ── LEVEL 1 ── -->
+  <div class="level-section" id="section-l1">
+    <div class="level-heading">
+      <span class="badge badge-l1">✅ Level 1</span>
+      <span style="font-size:13px;color:var(--muted)">Exercise normal precautions</span>
+      <span class="level-count" id="count-l1"></span>
+    </div>
+    <div class="city-grid" id="grid-l1">
+      <a class="city-row" href="../Guides/Alaska/alaska_v1.html" data-city="alaska"><span class="city-name">Alaska</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Alesund/alesund_v1.html" data-city="ålesund alesund"><span class="city-name">Ålesund</span><span class="city-country">🇳🇴 Norway</span></a>
+      <a class="city-row" href="../Guides/Aruba/aruba_v1.html" data-city="aruba"><span class="city-name">Aruba</span><span class="city-country">🇦🇼 Aruba</span></a>
+      <a class="city-row" href="../Guides/Athens/athens_v1.html" data-city="athens"><span class="city-name">Athens</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../Guides/Atlanta/atlanta_v1.html" data-city="atlanta"><span class="city-name">Atlanta</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Austin/austin_v1.html" data-city="austin"><span class="city-name">Austin</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Azores/guide_v1.html" data-city="azores"><span class="city-name">Azores</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../Guides/Barbados/barbados_v1.html" data-city="barbados"><span class="city-name">Barbados</span><span class="city-country">🇧🇧 Barbados</span></a>
+      <a class="city-row" href="../Guides/Bend/bend_v2.html" data-city="bend"><span class="city-name">Bend</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Bergen/bergen_v1.html" data-city="bergen"><span class="city-name">Bergen</span><span class="city-country">🇳🇴 Norway</span></a>
+      <a class="city-row" href="../Guides/Big%20Island/big_island_v1.html" data-city="big island"><span class="city-name">Big Island</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Boston/boston_v1.html" data-city="boston"><span class="city-name">Boston</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Budapest/budapest_v1.html" data-city="budapest"><span class="city-name">Budapest</span><span class="city-country">🇭🇺 Hungary</span></a>
+      <a class="city-row" href="../Guides/Buenos%20Aires/buenos_aires_v1.html" data-city="buenos aires"><span class="city-name">Buenos Aires</span><span class="city-country">🇦🇷 Argentina</span></a>
+      <a class="city-row" href="../Guides/Cascais/cascais_v2.html" data-city="cascais"><span class="city-name">Cascais</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../Guides/Cayman%20Islands/cayman_islands_v1.html" data-city="cayman islands"><span class="city-name">Cayman Islands</span><span class="city-country">🇰🇾 Cayman Is.</span></a>
+      <a class="city-row" href="../Guides/Chicago/chicago_v1.html" data-city="chicago"><span class="city-name">Chicago</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Corfu/corfu_v1.html" data-city="corfu"><span class="city-name">Corfu</span><span class="city-country">🇬🇷 Greece</span></a>
+      <a class="city-row" href="../Guides/Curacao/curacao_v1.html" data-city="curaçao curacao"><span class="city-name">Curaçao</span><span class="city-country">🇨🇼 Curaçao</span></a>
+      <a class="city-row" href="../Guides/Dublin/dublin_v1.html" data-city="dublin"><span class="city-name">Dublin</span><span class="city-country">🇮🇪 Ireland</span></a>
+      <a class="city-row" href="../Guides/Dubrovnik/guide_v1.html" data-city="dubrovnik"><span class="city-name">Dubrovnik</span><span class="city-country">🇭🇷 Croatia</span></a>
+      <a class="city-row" href="../Guides/Geneva/geneva_v1.html" data-city="geneva"><span class="city-name">Geneva</span><span class="city-country">🇨🇭 Switzerland</span></a>
+      <a class="city-row" href="../Guides/Helsinki/helsinki_v1.html" data-city="helsinki"><span class="city-name">Helsinki</span><span class="city-country">🇫🇮 Finland</span></a>
+      <a class="city-row" href="../Guides/Iceland/reykjavik_v2.html" data-city="iceland reykjavik"><span class="city-name">Iceland</span><span class="city-country">🇮🇸 Iceland</span></a>
+      <a class="city-row" href="../Guides/Istanbul/istanbul_v1.html" data-city="istanbul"><span class="city-name">Istanbul</span><span class="city-country">🇹🇷 Turkey</span></a>
+      <a class="city-row" href="../Guides/Kauai/kauai_v1.html" data-city="kauai"><span class="city-name">Kauai</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Kyoto/kyoto_v1.html" data-city="kyoto"><span class="city-name">Kyoto</span><span class="city-country">🇯🇵 Japan</span></a>
+      <a class="city-row" href="../Guides/Lagos/lagos_v1.html" data-city="lagos algarve"><span class="city-name">Lagos</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../Guides/Lisbon/lisbon_v4.html" data-city="lisbon"><span class="city-name">Lisbon</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../Guides/Ljubljana/ljubljana_v1.html" data-city="ljubljana"><span class="city-name">Ljubljana</span><span class="city-country">🇸🇮 Slovenia</span></a>
+      <a class="city-row" href="../Guides/Los%20Angeles/los_angeles_v1.html" data-city="los angeles"><span class="city-name">Los Angeles</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Lucerne/lucerne_v1.html" data-city="lucerne"><span class="city-name">Lucerne</span><span class="city-country">🇨🇭 Switzerland</span></a>
+      <a class="city-row" href="../Guides/Luxembourg/luxembourg_v1.html" data-city="luxembourg"><span class="city-name">Luxembourg</span><span class="city-country">🇱🇺 Luxembourg</span></a>
+      <a class="city-row" href="../Guides/Madeira/madeira_v1.html" data-city="madeira funchal"><span class="city-name">Madeira</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../Guides/Maui/maui_v1.html" data-city="maui"><span class="city-name">Maui</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Melbourne/melbourne_v1.html" data-city="melbourne"><span class="city-name">Melbourne</span><span class="city-country">🇦🇺 Australia</span></a>
+      <a class="city-row" href="../Guides/Miami/miami_v1.html" data-city="miami"><span class="city-name">Miami</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Montevideo/montevideo_v1.html" data-city="montevideo"><span class="city-name">Montevideo</span><span class="city-country">🇺🇾 Uruguay</span></a>
+      <a class="city-row" href="../Guides/Montreal/montreal_v1.html" data-city="montréal montreal"><span class="city-name">Montréal</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../Guides/New%20York/new_york_v1.html" data-city="new york"><span class="city-name">New York</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Oahu/oahu_v1.html" data-city="oahu"><span class="city-name">Oahu</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Orlando/orlando_v1.html" data-city="orlando"><span class="city-name">Orlando</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Oslo/oslo_v1.html" data-city="oslo"><span class="city-name">Oslo</span><span class="city-country">🇳🇴 Norway</span></a>
+      <a class="city-row" href="../Guides/Palm%20Desert/palm_desert_v1.html" data-city="palm desert"><span class="city-name">Palm Desert</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Palo%20Alto/palo_alto_v6.html" data-city="palo alto"><span class="city-name">Palo Alto</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Pasadena/pasadena_v5.html" data-city="pasadena"><span class="city-name">Pasadena</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Porto/porto_v2.html" data-city="porto"><span class="city-name">Porto</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../Guides/Prague/prague_v1.html" data-city="prague"><span class="city-name">Prague</span><span class="city-country">🇨🇿 Czech Rep.</span></a>
+      <a class="city-row" href="../Guides/Puerto%20Rico/puerto_rico_v1.html" data-city="puerto rico"><span class="city-name">Puerto Rico</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Quebec%20City/quebec_city_v1.html" data-city="québec city quebec city"><span class="city-name">Québec City</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../Guides/Queenstown/queenstown_v1.html" data-city="queenstown"><span class="city-name">Queenstown</span><span class="city-country">🇳🇿 New Zealand</span></a>
+      <a class="city-row" href="../Guides/Salzburg/salzburg_v1.html" data-city="salzburg"><span class="city-name">Salzburg</span><span class="city-country">🇦🇹 Austria</span></a>
+      <a class="city-row" href="../Guides/San%20Diego/san_diego_v1.html" data-city="san diego"><span class="city-name">San Diego</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/San%20Francisco/sf_v3.html" data-city="san francisco"><span class="city-name">San Francisco</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Scottsdale/scottsdale_v1.html" data-city="scottsdale"><span class="city-name">Scottsdale</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Seattle/seattle_v1.html" data-city="seattle"><span class="city-name">Seattle</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Seoul/seoul_v1.html" data-city="seoul"><span class="city-name">Seoul</span><span class="city-country">🇰🇷 South Korea</span></a>
+      <a class="city-row" href="../Guides/Singapore/singapore_v3.html" data-city="singapore"><span class="city-name">Singapore</span><span class="city-country">🇸🇬 Singapore</span></a>
+      <a class="city-row" href="../Guides/Sint%20Maarten/sint_maarten_v1.html" data-city="sint maarten"><span class="city-name">Sint Maarten</span><span class="city-country">🇸🇽 Sint Maarten</span></a>
+      <a class="city-row" href="../Guides/Sintra/sintra_v2.html" data-city="sintra"><span class="city-name">Sintra</span><span class="city-country">🇵🇹 Portugal</span></a>
+      <a class="city-row" href="../Guides/Split/split_v1.html" data-city="split"><span class="city-name">Split</span><span class="city-country">🇭🇷 Croatia</span></a>
+      <a class="city-row" href="../Guides/Sydney/sydney_v2.html" data-city="sydney"><span class="city-name">Sydney</span><span class="city-country">🇦🇺 Australia</span></a>
+      <a class="city-row" href="../Guides/Taipei/taipei_v1.html" data-city="taipei taiwan"><span class="city-name">Taipei</span><span class="city-country">🇹🇼 Taiwan</span></a>
+      <a class="city-row" href="../Guides/Tallinn/tallinn_v1.html" data-city="tallinn"><span class="city-name">Tallinn</span><span class="city-country">🇪🇪 Estonia</span></a>
+      <a class="city-row" href="../Guides/Tokyo/tokyo_v1.html" data-city="tokyo"><span class="city-name">Tokyo</span><span class="city-country">🇯🇵 Japan</span></a>
+      <a class="city-row" href="../Guides/Toronto/toronto_v1.html" data-city="toronto"><span class="city-name">Toronto</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../Guides/Tromso/tromso_v1.html" data-city="tromsø tromso"><span class="city-name">Tromsø</span><span class="city-country">🇳🇴 Norway</span></a>
+      <a class="city-row" href="../Guides/Vancouver/vancouver_v1.html" data-city="vancouver"><span class="city-name">Vancouver</span><span class="city-country">🇨🇦 Canada</span></a>
+      <a class="city-row" href="../Guides/Vienna/vienna_v1.html" data-city="vienna"><span class="city-name">Vienna</span><span class="city-country">🇦🇹 Austria</span></a>
+      <a class="city-row" href="../Guides/Virgin%20Islands/virgin_islands_v1.html" data-city="virgin islands"><span class="city-name">Virgin Islands</span><span class="city-country">🇺🇸 USA</span></a>
+      <a class="city-row" href="../Guides/Wellington/wellington_v1.html" data-city="wellington"><span class="city-name">Wellington</span><span class="city-country">🇳🇿 New Zealand</span></a>
+      <a class="city-row" href="../Guides/Zurich/zurich_v1.html" data-city="zürich zurich"><span class="city-name">Zürich</span><span class="city-country">🇨🇭 Switzerland</span></a>
+    </div>
+  </div>
+
+  <!-- ── LEVEL 2 ── -->
+  <div class="level-section" id="section-l2">
+    <div class="level-heading">
+      <span class="badge badge-l2">⚠️ Level 2</span>
+      <span style="font-size:13px;color:var(--muted)">Exercise increased caution</span>
+      <span class="level-count" id="count-l2"></span>
+    </div>
+    <div class="city-grid" id="grid-l2">
+      <a class="city-row" href="../Guides/Aix-en-Provence/aix-en-provence_v1.html" data-city="aix-en-provence aix"><span class="city-name">Aix-en-Provence</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Amalfi/amalfi_v1.html" data-city="amalfi"><span class="city-name">Amalfi</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Amsterdam/amsterdam_v1.html" data-city="amsterdam"><span class="city-name">Amsterdam</span><span class="city-country">🇳🇱 Netherlands</span></a>
+      <a class="city-row" href="../Guides/Annecy/annecy_v1.html" data-city="annecy"><span class="city-name">Annecy</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Bahamas/bahamas_v1.html" data-city="bahamas nassau"><span class="city-name">Bahamas</span><span class="city-country">🇧🇸 Bahamas</span></a>
+      <a class="city-row" href="../Guides/Bali/bali_v1.html" data-city="bali"><span class="city-name">Bali</span><span class="city-country">🇮🇩 Indonesia</span></a>
+      <a class="city-row" href="../Guides/Bangkok/bangkok_v1.html" data-city="bangkok"><span class="city-name">Bangkok</span><span class="city-country">🇹🇭 Thailand</span></a>
+      <a class="city-row" href="../Guides/Barcelona/barcelona_v1.html" data-city="barcelona"><span class="city-name">Barcelona</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../Guides/Beijing/beijing_v1.html" data-city="beijing"><span class="city-name">Beijing</span><span class="city-country">🇨🇳 China</span></a>
+      <a class="city-row" href="../Guides/Berlin/berlin_v1.html" data-city="berlin"><span class="city-name">Berlin</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../Guides/Bologna/bologna_v1.html" data-city="bologna"><span class="city-name">Bologna</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Bordeaux/bordeaux_v1.html" data-city="bordeaux"><span class="city-name">Bordeaux</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Bruges/bruges_v1.html" data-city="bruges"><span class="city-name">Bruges</span><span class="city-country">🇧🇪 Belgium</span></a>
+      <a class="city-row" href="../Guides/Brussels/brussels_v1.html" data-city="brussels"><span class="city-name">Brussels</span><span class="city-country">🇧🇪 Belgium</span></a>
+      <a class="city-row" href="../Guides/Cambridge/cambridge_v1.html" data-city="cambridge"><span class="city-name">Cambridge</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../Guides/Cannes/cannes_v1.html" data-city="cannes"><span class="city-name">Cannes</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Capri/capri_v1.html" data-city="capri"><span class="city-name">Capri</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Chongqing/chongqing_v1.html" data-city="chongqing"><span class="city-name">Chongqing</span><span class="city-country">🇨🇳 China</span></a>
+      <a class="city-row" href="../Guides/Cinque%20Terre/cinque_terre_v1.html" data-city="cinque terre"><span class="city-name">Cinque Terre</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Colmar/colmar_v1.html" data-city="colmar"><span class="city-name">Colmar</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Copenhagen/copenhagen_v1.html" data-city="copenhagen"><span class="city-name">Copenhagen</span><span class="city-country">🇩🇰 Denmark</span></a>
+      <a class="city-row" href="../Guides/Cusco/cusco_v1.html" data-city="cusco"><span class="city-name">Cusco</span><span class="city-country">🇵🇪 Peru</span></a>
+      <a class="city-row" href="../Guides/Edinburgh/edinburgh_v1.html" data-city="edinburgh"><span class="city-name">Edinburgh</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../Guides/Florence/florence_v1.html" data-city="florence firenze"><span class="city-name">Florence</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Glasgow/glasgow_v1.html" data-city="glasgow"><span class="city-name">Glasgow</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../Guides/Gothenburg/gothenburg_v1.html" data-city="gothenburg"><span class="city-name">Gothenburg</span><span class="city-country">🇸🇪 Sweden</span></a>
+      <a class="city-row" href="../Guides/Hong%20Kong/hong_kong_v1.html" data-city="hong kong"><span class="city-name">Hong Kong</span><span class="city-country">🇭🇰 Hong Kong</span></a>
+      <a class="city-row" href="../Guides/Lake%20Como/lake_como_v1.html" data-city="lake como como"><span class="city-name">Lake Como</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Lille/lille_v1.html" data-city="lille"><span class="city-name">Lille</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Lima/lima_v1.html" data-city="lima"><span class="city-name">Lima</span><span class="city-country">🇵🇪 Peru</span></a>
+      <a class="city-row" href="../Guides/London/london_v5.html" data-city="london"><span class="city-name">London</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../Guides/Lyon/lyon_v1.html" data-city="lyon"><span class="city-name">Lyon</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/MachuPicchu/machupicchu_v1.html" data-city="machu picchu"><span class="city-name">Machu Picchu</span><span class="city-country">🇵🇪 Peru</span></a>
+      <a class="city-row" href="../Guides/Madrid/madrid_v1.html" data-city="madrid"><span class="city-name">Madrid</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../Guides/Marktoberdorf/marktoberdorf_v1.html" data-city="marktoberdorf"><span class="city-name">Marktoberdorf</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../Guides/Marrakech/marrakech_v1.html" data-city="marrakech marrakesh"><span class="city-name">Marrakech</span><span class="city-country">🇲🇦 Morocco</span></a>
+      <a class="city-row" href="../Guides/Marseille/marseille_v1.html" data-city="marseille"><span class="city-name">Marseille</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Milan/milan_v1.html" data-city="milan milano"><span class="city-name">Milan</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Monaco/monaco_v1.html" data-city="monaco"><span class="city-name">Monaco</span><span class="city-country">🇲🇨 Monaco</span></a>
+      <a class="city-row" href="../Guides/Munich/munich_v2.html" data-city="munich"><span class="city-name">Munich</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../Guides/Naples/naples_v1.html" data-city="naples napoli"><span class="city-name">Naples</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Nice/nice_v1.html" data-city="nice"><span class="city-name">Nice</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Oxford/oxford_v1.html" data-city="oxford"><span class="city-name">Oxford</span><span class="city-country">🇬🇧 UK</span></a>
+      <a class="city-row" href="../Guides/Paris/paris_v7.html" data-city="paris"><span class="city-name">Paris</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Phuket/phuket_v1.html" data-city="phuket"><span class="city-name">Phuket</span><span class="city-country">🇹🇭 Thailand</span></a>
+      <a class="city-row" href="../Guides/Pisa/pisa_v1.html" data-city="pisa"><span class="city-name">Pisa</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Rio%20de%20Janeiro/rio_de_janeiro_v1.html" data-city="rio de janeiro rio"><span class="city-name">Rio de Janeiro</span><span class="city-country">🇧🇷 Brazil</span></a>
+      <a class="city-row" href="../Guides/Rome/rome_v1.html" data-city="rome roma"><span class="city-name">Rome</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/San%20Sebastian/san_sebastian_v1.html" data-city="san sebastián san sebastian donostia"><span class="city-name">San Sebastián</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../Guides/Santiago/santiago_v1.html" data-city="santiago"><span class="city-name">Santiago</span><span class="city-country">🇨🇱 Chile</span></a>
+      <a class="city-row" href="../Guides/Seville/seville_v1.html" data-city="seville sevilla"><span class="city-name">Seville</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../Guides/Shanghai/shanghai_v1.html" data-city="shanghai"><span class="city-name">Shanghai</span><span class="city-country">🇨🇳 China</span></a>
+      <a class="city-row" href="../Guides/Siena/siena_v1.html" data-city="siena"><span class="city-name">Siena</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Sorrento/sorrento_v1.html" data-city="sorrento"><span class="city-name">Sorrento</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Stockholm/stockholm_v1.html" data-city="stockholm"><span class="city-name">Stockholm</span><span class="city-country">🇸🇪 Sweden</span></a>
+      <a class="city-row" href="../Guides/Strasbourg/strasbourg_v1.html" data-city="strasbourg"><span class="city-name">Strasbourg</span><span class="city-country">🇫🇷 France</span></a>
+      <a class="city-row" href="../Guides/Stuttgart/stuttgart_v1.html" data-city="stuttgart"><span class="city-name">Stuttgart</span><span class="city-country">🇩🇪 Germany</span></a>
+      <a class="city-row" href="../Guides/Toledo/toledo_v1.html" data-city="toledo"><span class="city-name">Toledo</span><span class="city-country">🇪🇸 Spain</span></a>
+      <a class="city-row" href="../Guides/Turin/turin_v14.html" data-city="turin torino"><span class="city-name">Turin</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Venice/venice_v1.html" data-city="venice venezia"><span class="city-name">Venice</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Verona/verona_v1.html" data-city="verona"><span class="city-name">Verona</span><span class="city-country">🇮🇹 Italy</span></a>
+      <a class="city-row" href="../Guides/Zhangjiajie/zhangjiajie_v1.html" data-city="zhangjiajie"><span class="city-name">Zhangjiajie</span><span class="city-country">🇨🇳 China</span></a>
+    </div>
+  </div>
+
+  <!-- ── LEVEL 3 ── -->
+  <div class="level-section" id="section-l3">
+    <div class="level-heading">
+      <span class="badge badge-l3">🚫 Level 3</span>
+      <span style="font-size:13px;color:var(--muted)">Reconsider travel</span>
+      <span class="level-count" id="count-l3"></span>
+    </div>
+    <div class="city-grid" id="grid-l3">
+      <a class="city-row" href="../Guides/Abu%20Dhabi/abu_dhabi_v1.html" data-city="abu dhabi uae emirates"><span class="city-name">Abu Dhabi</span><span class="city-country">🇦🇪 UAE</span></a>
+      <a class="city-row" href="../Guides/Dubai/dubai_v1.html" data-city="dubai uae emirates"><span class="city-name">Dubai</span><span class="city-country">🇦🇪 UAE</span></a>
+      <a class="city-row" href="../Guides/United%20Arab%20Emirates/united_arab_emirates_v1.html" data-city="united arab emirates uae dubai abu dhabi"><span class="city-name">United Arab Emirates</span><span class="city-country">🇦🇪 UAE</span></a>
+    </div>
+  </div>
+
+  <!-- ── Sources ── -->
+  <div class="sources">
+    <h2>Where to check before you book</h2>
+    <ul class="source-list">
+      <li>🇺🇸 <a href="https://travel.state.gov/en/international-travel/travel-advisories.html" target="_blank" rel="noopener">US State Department Travel Advisories</a> — official advisory levels (Levels 1–4) for every country</li>
+      <li>🇬🇧 <a href="https://www.gov.uk/foreign-travel-advice" target="_blank" rel="noopener">UK FCDO Foreign Travel Advice</a> — UK government country-by-country guidance</li>
+      <li>🇨🇦 <a href="https://travel.gc.ca/travelling/advisories" target="_blank" rel="noopener">Canada Travel Advisories</a> — Government of Canada advisory levels</li>
+      <li>🇦🇺 <a href="https://www.smartraveller.gov.au" target="_blank" rel="noopener">Australia Smartraveller</a> — Australian government travel advice</li>
+      <li>📰 <a href="https://www.newsweek.com/map-shows-us-travel-warnings-around-world-for-2026-11171502" target="_blank" rel="noopener">Newsweek — 2026 US Travel Warning Map</a> — current global advisory overview</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function () {
+  function updateCounts() {
+    ['l1','l2','l3'].forEach(function(lvl) {
+      var grid  = document.getElementById('grid-' + lvl);
+      var count = document.getElementById('count-' + lvl);
+      if (!grid || !count) return;
+      var visible = grid.querySelectorAll('.city-row:not(.hidden)').length;
+      var total   = grid.querySelectorAll('.city-row').length;
+      count.textContent = visible === total ? total + ' destinations' : visible + ' of ' + total;
+    });
+  }
+
+  var input = document.getElementById('city-search');
+  var noRes = document.getElementById('no-results');
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    var anyVisible = false;
+    document.querySelectorAll('.city-row').forEach(function (row) {
+      var key = (row.dataset.city || '') + ' ' + row.textContent.toLowerCase();
+      var show = !q || key.indexOf(q) !== -1;
+      row.classList.toggle('hidden', !show);
+      if (show) anyVisible = true;
+    });
+    ['l1','l2','l3'].forEach(function(lvl) {
+      var section = document.getElementById('section-' + lvl);
+      var grid    = document.getElementById('grid-' + lvl);
+      if (!section || !grid) return;
+      var hasVisible = grid.querySelector('.city-row:not(.hidden)');
+      section.style.display = hasVisible ? '' : 'none';
+    });
+    noRes.style.display = anyVisible ? 'none' : 'block';
+    updateCounts();
+  });
+
+  updateCounts();
+})();
+</script>
+</body>
+</html>

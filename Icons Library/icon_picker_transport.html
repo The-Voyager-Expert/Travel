@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚗 Transport Icon Picker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f13;
+    color: #e8e8f0;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: #1a1a24;
+    border-bottom: 1px solid #2a2a38;
+    padding: 18px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .header h1 { font-size: 18px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .header-note { font-size: 12px; color: #7070a0; }
+
+  .selection-bar {
+    background: #1e2d1e;
+    border: 1px solid #2a4a2a;
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 260px;
+  }
+  .selection-bar.visible { display: flex; }
+  .selection-thumb { width: 40px; height: 40px; object-fit: contain; border-radius: 6px; }
+  .selection-info { flex: 1; }
+  .selection-name { font-size: 13px; font-weight: 600; color: #6fe87a; font-family: monospace; }
+  .selection-hint { font-size: 11px; color: #4a8a50; margin-top: 2px; }
+
+  .nav {
+    background: #14141c;
+    padding: 0 28px;
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid #1e1e2a;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6060a0;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .nav-tab:hover { color: #c0c0e0; }
+  .nav-tab.active { color: #a090ff; border-bottom-color: #a090ff; }
+
+  .content { padding: 28px; }
+
+  .section { margin-bottom: 48px; }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .section-title { font-size: 16px; font-weight: 700; color: #c0c0e8; }
+  .section-count {
+    font-size: 12px; color: #4a4a70;
+    background: #1a1a28; padding: 2px 8px; border-radius: 10px;
+  }
+
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+  }
+
+  .icon-card {
+    background: #16161e;
+    border: 1.5px solid #22222e;
+    border-radius: 10px;
+    padding: 14px 8px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .icon-card:hover { background: #1e1e2c; border-color: #6050d0; transform: translateY(-1px); }
+  .icon-card.selected { background: #1a1f2a; border-color: #50c060; box-shadow: 0 0 0 1px #50c06040; }
+  .icon-card.selected::after {
+    content: '✓';
+    position: absolute; top: 5px; right: 8px;
+    font-size: 10px; color: #50c060; font-weight: 700;
+  }
+
+  .icon-img { width: 72px; height: 72px; object-fit: contain; }
+  .icon-name {
+    font-size: 9.5px; font-family: monospace; color: #5050a0;
+    text-align: center; line-height: 1.3; word-break: break-all; max-width: 100%;
+  }
+  .icon-card.selected .icon-name { color: #70a070; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #2a3d2a; border: 1px solid #3a6a3a;
+    color: #80e880; padding: 8px 20px; border-radius: 20px;
+    font-size: 13px; font-weight: 500;
+    opacity: 0; transition: all 0.25s;
+    pointer-events: none; z-index: 999; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🚗 Transport Icon Picker</h1>
+  <span class="header-note">Click an icon to select &amp; copy its filename</span>
+  <div class="selection-bar" id="selectionBar">
+    <img class="selection-thumb" id="selectionThumb" src="" alt="">
+    <div class="selection-info">
+      <div class="selection-name" id="selectionName"></div>
+      <div class="selection-hint">📋 filename copied to clipboard</div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <a class="nav-tab active" href="#cars">🚗 Cars</a>
+  <a class="nav-tab" href="#cabs">🚕 Cabs</a>
+  <a class="nav-tab" href="#buses">🚌 Buses</a>
+  <a class="nav-tab" href="#trams">🚋 Trams</a>
+  <a class="nav-tab" href="#trains">🚆 Trains</a>
+</nav>
+
+<div class="content">
+
+  <div class="section" id="cars">
+    <div class="section-header">
+      <span class="section-title">🚗 Cars</span>
+      <span class="section-count">20 icons · category_car</span>
+    </div>
+    <div class="icon-grid" id="grid-cars"></div>
+  </div>
+
+  <div class="section" id="cabs">
+    <div class="section-header">
+      <span class="section-title">🚕 Cabs &amp; Rickshaws</span>
+      <span class="section-count">7 icons · category_cab</span>
+    </div>
+    <div class="icon-grid" id="grid-cabs"></div>
+  </div>
+
+  <div class="section" id="buses">
+    <div class="section-header">
+      <span class="section-title">🚌 Buses</span>
+      <span class="section-count">4 icons</span>
+    </div>
+    <div class="icon-grid" id="grid-buses"></div>
+  </div>
+
+  <div class="section" id="trams">
+    <div class="section-header">
+      <span class="section-title">🚋 Trams</span>
+      <span class="section-count">1 icon</span>
+    </div>
+    <div class="icon-grid" id="grid-trams"></div>
+  </div>
+
+  <div class="section" id="trains">
+    <div class="section-header">
+      <span class="section-title">🚆 Trains</span>
+      <span class="section-count">13 icons</span>
+    </div>
+    <div class="icon-grid" id="grid-trains"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ICONS = {
+  cars: [
+    'car_13032885.png','car_13032886.png','car_13032887.png','car_13032888.png',
+    'car_13032894.png','car_13032895.png','car_13032896.png','car_13032897.png',
+    'car_13032899.png','car_13032901.png','car_13032906.png','car_13032910.png',
+    'car_13032915.png','car_13032917.png','car_13032929.png',
+    'car_2918619.png','car_3061893.png','car_7870803.png','car_8579911.png','car_9927723.png'
+  ],
+  cabs: [
+    'cabriolet_10863071.png','cabriolet_10887510.png',
+    'driver_4333188.png','driver_4403853.png','driver_4741061.png',
+    'pedicab_5326433.png','rickshaw_7726282.png'
+  ],
+  buses: [
+    'bus_13635893.png','bus_6431330.png','bus_7705280.png','bus_2914599.png'
+  ],
+  trams: [
+    'tramway_3061891.png'
+  ],
+  trains: [
+    'train_3317714.png','train_3317724.png','train_3317734.png',
+    'train_5843465.png','train_6740471.png','train_7705291.png',
+    'train_8304630.png','train_9062668.png','train_9465913.png',
+    'train_9984654.png','train_12211036.png','train_12212907.png','train_14527914.png'
+  ]
+};
+
+let selectedCard = null;
+
+function buildGrid(category, containerId) {
+  const container = document.getElementById(containerId);
+  ICONS[category].forEach(name => {
+    const card = document.createElement('div');
+    card.className = 'icon-card';
+
+    const img = document.createElement('img');
+    img.className = 'icon-img';
+    img.src = `transport_icons/${name}`;
+    img.alt = name;
+
+    const label = document.createElement('div');
+    label.className = 'icon-name';
+    label.textContent = name.replace('.png', '');
+
+    card.appendChild(img);
+    card.appendChild(label);
+    card.addEventListener('click', () => selectIcon(card, name, img));
+    container.appendChild(card);
+  });
+}
+
+function selectIcon(card, name, img) {
+  if (selectedCard) selectedCard.classList.remove('selected');
+  card.classList.add('selected');
+  selectedCard = card;
+
+  const bar = document.getElementById('selectionBar');
+  bar.classList.add('visible');
+  document.getElementById('selectionThumb').src = img.src;
+  document.getElementById('selectionName').textContent = name;
+
+  navigator.clipboard.writeText(name).catch(() => {});
+  showToast(`Copied: ${name}`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = document.querySelector(tab.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+buildGrid('cars',   'grid-cars');
+buildGrid('cabs',   'grid-cabs');
+buildGrid('buses',  'grid-buses');
+buildGrid('trams',  'grid-trams');
+buildGrid('trains', 'grid-trains');
+</script>
+</body>
+</html>

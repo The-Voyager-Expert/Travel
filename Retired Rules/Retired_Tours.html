@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tours</title>
+<link rel="stylesheet" href="../../Universal Formatting Rules/Universal Formatting Rules - _style.css">
+<style>
+code { font-size: inherit; }
+.entry { background: #fef9e0; }
+li { margin-bottom: 12px; }
+.retired-notice { color: #6b2020; background: #fdf0f0; border: 2px solid #cc4444; padding: 10px 14px; border-radius: 4px; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+<p class="banner"><strong>ATTENTION: THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST</strong><br>
+Read the formatting rules first — Travel/Universal Formatting Rules/.<br>
+CSS, HTML, and validator code are not permitted in rule text.<br>
+Rules are written like a legal document — active voice, generic phrasing, no specific examples. The rules state what is; the validator catches what isn't.</p>
+<p class="footer" style="color:#cc0000; background:#e8f4fd; padding:10px 14px; border-radius:4px;"><strong>Format exception:</strong> Claude reference file — MCP tool names, parameters, and code snippets use technical notation. Do not convert to <code>[Placeholder]</code> format.</p>
+<hr style="margin: 16px 0 48px 0; border: none; border-top: 1px solid #ddd;">
+
+<h1>📅 Tours — Retired Stop Type</h1>
+<p class="retired-notice"><strong>⚠️ RETIRED (2026-05-20):</strong> Tours as an in-stop type are no longer built in new guides. The 📅 tour box and Guided Tour Stop pattern are retired. Skip-the-line tickets (🎟) remain active. This file is preserved for reference.</p>
+<div class="meta">
+ <p><strong>Phase:</strong> 3 — Per-stop build <em>(retired)</em></p>
+ <p><strong>Summary:</strong> How to find, qualify, and format guided tours at every stop. Retired — tours are now a guide-level Extra Section only (see <code>Tours - Extra Section.html</code>).</p>
+</div>
+
+<h2>§ 1. Preference order</h2>
+<p>At every stop — self-guided is the fallback, not the default. Always search for a qualifying tour before defaulting to anything else; even lesser-known stops often have one.</p>
+<ol>
+<li><strong>Tour</strong> — someone guides (see for format).</li>
+<li><strong>Skip-the-line ticket</strong> — self-walk, skip the line (see <code>Tickets.html</code>).</li>
+<li><strong>Walk-up</strong> — only when nothing else qualifies.</li>
+</ol>
+
+<h2>§ 2. Sources</h2>
+<ul>
+<li><strong>First tier:</strong> Viator · GetYourGuide · TripAdvisor (flat pool, no order).</li>
+<li><strong>Fallback:</strong> any popular local operator (Asia: Klook).</li>
+</ul>
+<h3>Viator — MCP connector</h3>
+<ol>
+<li><code>search_experiences</code> — natural-language <code>searchTerm</code>, trip start/end dates, currency EUR, locale en-US. Returns up to 10 results with rating, reviewCount, fromPrice, duration, freeCancellation flag, and click-out URL.</li>
+<li><code>get_experience_details</code> — call with the <code>code</code> from step 1 when full details on a specific experience are needed.</li>
+</ol>
+<p>Viator MCP tools are deferred — load schema with <code>ToolSearch</code> before calling. Use a stable <code>sessionId</code> per conversation (e.g. <code>[city]-[year]</code>) and reuse across both calls.</p>
+<h3>GetYourGuide and TripAdvisor — browse directly</h3>
+<p>No connector available for tour searching. Use Claude in Chrome MCP to browse search results and product pages directly.</p>
+
+<h2>§ 3. Rating bar</h2>
+<p>4.5+⭐ · minimum 6 reviews — everywhere. Rating must be visible at page level; not visible = treated as 0.</p>
+<p>When rating is not visible:</p>
+<ol>
+<li>Try a different WebSearch query (e.g., <code>site:viator.com [product-code] rating reviews</code>).</li>
+<li>Escalate to Chrome MCP — live page render.</li>
+<li>Last resort — confirm on the live page manually.</li>
+</ol>
+
+<h2>§ 4. Tour boxes per stop</h2>
+<p>Target 3 tour boxes per stop, ranked by rating + review count. Ship fewer only when 3 qualifying tours can't be found — validator warns.</p>
+
+<h2>§ 5. Tour stop types</h2>
+<p>The address should provide the street name and neighborhood. The city is included only when the address is in a city different from the destination <code>[City]</code>. No postal code or country.</p>
+
+<h3>Case A — Single venue, multiple operators</h3>
+<table class="entry">
+<tr><td>📅 <span class="link">[Tour Name]</span> — <code>[Booking Operator]</code> · <code>[Rating]</code>⭐ · <code>[Review Count]</code>+ reviews</td></tr>
+<tr><td>🕐 <code>[Start Time]</code> · ⏳ <code>[Duration]</code> · 👥 <code>[Group Size]</code></td></tr>
+<tr><td>📍 <span class="link">[Venue Entrance Address]</span></td></tr>
+</table>
+
+<h3>Case B — Multi-location tour</h3>
+<table class="entry">
+<tr><td>📅 <span class="link">[Tour Name]</span> — <code>[Booking Operator]</code> · <code>[Rating]</code>⭐ · <code>[Review Count]</code>+ reviews</td></tr>
+<tr><td><code>[Location A]</code> · <code>[Location B]</code> · <code>[Location C]</code></td></tr>
+<tr><td>🕐 <code>[Start Time]</code> · ⏳ <code>[Duration]</code> · 👥 <code>[Group Size]</code></td></tr>
+<tr><td>📍 <span class="link">[Meeting Point Address]</span></td></tr>
+</table>
+
+<h2>§ 6. Hotel Pick Up / Drop-Off (🚐)</h2>
+<p>When the tour includes hotel pickup or drop-off, add the matching line to the tour box, immediately after the tour title.</p>
+<table class="entry">
+<tr><td><code>🏨 ↔ 🚐</code> &nbsp; round-trip (hotel pickup + drop-off)</td></tr>
+<tr><td><code>🏨 → 🚐</code> &nbsp; pickup only (hotel → tour start)</td></tr>
+<tr><td><code>🏨 ← 🚐</code> &nbsp; drop-off only (tour end → hotel)</td></tr>
+</table>
+
+<h2>§ 7. What follows a guided stop</h2>
+<h3>Case 1 — Operator brings you back (🏨 ↔ 🚐 or 🏨 ← 🚐)</h3>
+<p>No motion banner needed after the stop. The tour ends at the hotel.</p>
+<h3>Case 2 — Operator does not bring you back, and this is the last stop of the day (🏨 → 🚐 or no pickup line)</h3>
+<p>The tour ends at the venue, not the hotel. Add a motion banner back to the hotel.</p>
+<table class="entry">
+<tr><td>🚶 <code>N min</code> · 🚕 <code>M min</code> → hotel</td></tr>
+</table>
+<h3>Case 3 — Guided stop is not the last stop of the day</h3>
+<p>Another stop follows. Add a between-stops motion banner to the next stop.</p>
+<table class="entry">
+<tr><td>🚶 <code>N min</code> · 🚕 <code>M min</code> → <code>[Next Stop]</code></td></tr>
+</table>
+<hr style="margin: 48px 0 16px 0; border: none; border-top: 1px solid #ddd;">
+<p class="banner"><strong>ATTENTION: THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST</strong><br>
+Read the formatting rules first — Travel/Universal Formatting Rules/.<br>
+CSS, HTML, and validator code are not permitted in rule text.<br>
+Rules are written like a legal document — active voice, generic phrasing, no specific examples. The rules state what is; the validator catches what isn't.</p>
+</body>
+</html>

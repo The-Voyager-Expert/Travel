@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Page Visualizer — Desktop &amp; Mobile</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background: #f5f4f0;
+  color: #1a1917;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Toolbar placeholder gap handled by toolbar.js ── */
+
+/* ── Controls bar ── */
+.controls {
+  background: #fff;
+  border-bottom: 1px solid #d8d4cc;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.controls label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6860;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.controls input[type="text"] {
+  flex: 1;
+  padding: 7px 12px;
+  border: 1.5px solid #d8d4cc;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #1a1917;
+  background: #fdfcfa;
+  outline: none;
+  transition: border-color .15s;
+  font-family: 'SF Mono', 'Fira Mono', monospace;
+}
+.controls input[type="text"]:focus { border-color: #8a6c1a; }
+.controls button {
+  padding: 7px 18px;
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 100%);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .15s;
+}
+.controls button:hover { opacity: .88; }
+
+.controls select {
+  padding: 7px 10px;
+  border: 1.5px solid #d8d4cc;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #1a1917;
+  background: #fdfcfa;
+  outline: none;
+  cursor: pointer;
+  max-width: 220px;
+}
+
+/* ── Preview panels ── */
+.panels {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.panel-desktop {
+  flex: 1;
+  border-right: 2px solid #d8d4cc;
+}
+
+.panel-mobile {
+  width: 393px;
+  flex-shrink: 0;
+}
+
+.panel-label {
+  background: #e8e4db;
+  border-bottom: 1px solid #d8d4cc;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b6860;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.panel-label .badge {
+  background: #c4b896;
+  color: #fff;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.panel iframe {
+  flex: 1;
+  border: none;
+  width: 100%;
+  min-height: 0;
+}
+
+/* Mobile panel — iframe is 393px wide, scrolls inside */
+.panel-mobile .iframe-wrap {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #fff;
+  min-height: 0;
+}
+.panel-mobile iframe {
+  width: 393px;
+  height: 100%;
+  min-height: 600px;
+  display: block;
+}
+
+/* ── Empty state ── */
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #a8a09a;
+  font-size: 14px;
+}
+.empty-icon { font-size: 36px; opacity: .5; }
+
+/* ── Sync scroll toggle ── */
+.sync-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b6860;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sync-label input { cursor: pointer; accent-color: #8a6c1a; }
+</style>
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="2" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../../Travel-Website/assets/toolbar.js?v=13"></script>
+
+<div class="controls">
+  <label>Guide path</label>
+  <input type="text" id="path-input" placeholder="e.g. Guides/Lisbon/lisbon_v4.html" autocomplete="off" spellcheck="false">
+  <select id="quick-pick">
+    <option value="">— Quick pick —</option>
+  </select>
+  <label class="sync-label">
+    <input type="checkbox" id="sync-scroll" checked> Sync scroll
+  </label>
+  <button id="load-btn">Load</button>
+</div>
+
+<div class="panels">
+  <div class="panel panel-desktop" id="panel-desktop">
+    <div class="panel-label">🖥 Desktop <span class="badge">full width</span></div>
+    <div class="empty" id="empty-desktop">
+      <div class="empty-icon">🖥</div>
+      <div>Enter a guide path above and click Load</div>
+    </div>
+    <iframe id="iframe-desktop" style="display:none"></iframe>
+  </div>
+
+  <div class="panel panel-mobile" id="panel-mobile">
+    <div class="panel-label">📱 Mobile <span class="badge">393px</span></div>
+    <div class="empty" id="empty-mobile">
+      <div class="empty-icon">📱</div>
+      <div>Mobile view</div>
+    </div>
+    <div class="iframe-wrap" id="mobile-wrap" style="display:none">
+      <iframe id="iframe-mobile"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Quick-pick: scan known guide folders ── */
+  var GUIDES = [
+    '— Trip Essentials —',
+    'Trip-Essentials/Trips.html',
+    'Trip-Essentials/Resources.html',
+    'Trip-Essentials/Travel-Packing.html',
+    'Trip-Essentials/Lounges-US.html',
+    'Trip-Essentials/Delta-Routes-Full.html',
+    'Trip-Essentials/Delta-Routes-SEA.html',
+    'Trip-Essentials/European-Train-Guide.html',
+    'Trip-Essentials/Plug Adapter/Plug-Adapter-Guide.html',
+    'Trip-Essentials/Maps/Lounges-Europe.html',
+    '— Guides —',
+    'Guides/Alaska/alaska_v1.html',
+    'Guides/Alesund/alesund_v1.html',
+    'Guides/Amsterdam/amsterdam_v1.html',
+    'Guides/Athens/athens_v1.html',
+    'Guides/Atlanta/atlanta_v1.html',
+    'Guides/Austin/austin_v1.html',
+    'Guides/Barcelona/barcelona_v1.html',
+    'Guides/Bend/bend_v2.html',
+    'Guides/Berlin/berlin_v1.html',
+    'Guides/Bruges/bruges_v1.html',
+    'Guides/Brussels/brussels_v1.html',
+    'Guides/Cascais/cascais_v2.html',
+    'Guides/Cinque Terre/cinque_terre_v1.html',
+    'Guides/Copenhagen/copenhagen_v1.html',
+    'Guides/Corfu/corfu_v1.html',
+    'Guides/Dublin/dublin_v1.html',
+    'Guides/Edinburgh/edinburgh_v1.html',
+    'Guides/Florence/florence_v1.html',
+    'Guides/Geneva/geneva_v1.html',
+    'Guides/Gothenburg/gothenburg_v1.html',
+    'Guides/Helsinki/helsinki_v1.html',
+    'Guides/Iceland/reykjavik_v2.html',
+    'Guides/Lagos/lagos_v1.html',
+    'Guides/Lisbon/lisbon_v4.html',
+    'Guides/London/london_v5.html',
+    'Guides/Los Angeles/los_angeles_v1.html',
+    'Guides/Luxembourg/luxembourg_v1.html',
+    'Guides/Madrid/madrid_v1.html',
+    'Guides/Marktoberdorf/marktoberdorf_v1.html',
+    'Guides/Marrakech/marrakech_v1.html',
+    'Guides/Miami/miami_v1.html',
+    'Guides/Milan/milan_v1.html',
+    'Guides/Monaco/monaco_v1.html',
+    'Guides/Montreal/montreal_v1.html',
+    'Guides/Munich/munich_v2.html',
+    'Guides/New York/new_york_v1.html',
+    'Guides/Nice/nice_v1.html',
+    'Guides/Orlando/orlando_v1.html',
+    'Guides/Oslo/oslo_v1.html',
+    'Guides/Palm Desert/palm_desert_v1.html',
+    'Guides/Palo Alto/palo_alto_v6.html',
+    'Guides/Paris/paris_v7.html',
+    'Guides/Pasadena/pasadena_v5.html',
+    'Guides/Pisa/pisa_v1.html',
+    'Guides/Porto/porto_v2.html',
+    'Guides/Prague/prague_v1.html',
+    'Guides/Quebec City/quebec_city_v1.html',
+    'Guides/Rome/rome_v1.html',
+    'Guides/San Diego/san_diego_v1.html',
+    'Guides/San Francisco/sf_v3.html',
+    'Guides/Scottsdale/scottsdale_v1.html',
+    'Guides/Seoul/seoul_v1.html',
+    'Guides/Singapore/singapore_v3.html',
+    'Guides/Sintra/sintra_v2.html',
+    'Guides/Strasbourg/strasbourg_v1.html',
+    'Guides/Stuttgart/stuttgart_v1.html',
+    'Guides/Sydney/sydney_v2.html',
+    'Guides/Tromso/tromso_v1.html',
+    'Guides/Turin/turin_v14.html',
+    'Guides/Vancouver/vancouver_v1.html',
+    'Guides/Venice/venice_v1.html',
+    'Guides/Vienna/vienna_v1.html',
+    'Guides/Zurich/zurich_v1.html',
+  ];
+
+  var sel = document.getElementById('quick-pick');
+  var currentGroup = null;
+  GUIDES.forEach(function (g) {
+    if (g.startsWith('—')) {
+      currentGroup = document.createElement('optgroup');
+      currentGroup.label = g.replace(/^— | —$/g, '');
+      sel.appendChild(currentGroup);
+      return;
+    }
+    var opt = document.createElement('option');
+    opt.value = g;
+    opt.textContent = g.split('/').slice(-1)[0].replace(/_v\d+\.html$/, '').replace(/\.html$/, '');
+    (currentGroup || sel).appendChild(opt);
+  });
+
+  sel.addEventListener('change', function () {
+    if (sel.value) {
+      document.getElementById('path-input').value = sel.value;
+      sel.value = '';
+    }
+  });
+
+  /* ── Load ── */
+  var iframeD = document.getElementById('iframe-desktop');
+  var iframeM = document.getElementById('iframe-mobile');
+  var emptyD  = document.getElementById('empty-desktop');
+  var emptyM  = document.getElementById('empty-mobile');
+  var mWrap   = document.getElementById('mobile-wrap');
+
+  // Base = Travel-Website/ site root relative to Brain/Reference/ (2026-06-13 reorg)
+  var BASE = '../../Travel-Website/';
+
+  function resolveUrl(path) {
+    return BASE + path.replace(/^\//, '');
+  }
+
+  function load() {
+    var raw = document.getElementById('path-input').value.trim();
+    if (!raw) return;
+    var url = resolveUrl(raw);
+
+    emptyD.style.display = 'none';
+    iframeD.style.display = 'block';
+    iframeD.src = url;
+
+    emptyM.style.display = 'none';
+    mWrap.style.display = 'flex';
+    iframeM.src = url;
+  }
+
+  document.getElementById('load-btn').addEventListener('click', load);
+  document.getElementById('path-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') load();
+  });
+
+  /* ── Sync scroll ── */
+  var syncing = false;
+
+  function syncFrom(source, target) {
+    if (!document.getElementById('sync-scroll').checked) return;
+    if (syncing) return;
+    try {
+      var srcWin = source.contentWindow;
+      var tgtWin = target.contentWindow;
+      if (!srcWin || !tgtWin) return;
+      var srcDoc = srcWin.document;
+      var tgtDoc = tgtWin.document;
+      if (!srcDoc || !tgtDoc) return;
+      var srcMax = srcDoc.documentElement.scrollHeight - srcWin.innerHeight;
+      var tgtMax = tgtDoc.documentElement.scrollHeight - tgtWin.innerHeight;
+      if (srcMax <= 0 || tgtMax <= 0) return;
+      var pct = srcWin.scrollY / srcMax;
+      syncing = true;
+      tgtWin.scrollTo({ top: pct * tgtMax });
+      setTimeout(function () { syncing = false; }, 50);
+    } catch (e) { /* cross-origin — ignore */ }
+  }
+
+  function attachSync(iframe, other) {
+    iframe.addEventListener('load', function () {
+      try {
+        iframe.contentWindow.addEventListener('scroll', function () {
+          syncFrom(iframe, other);
+        }, { passive: true });
+      } catch (e) {}
+    });
+  }
+
+  attachSync(iframeD, iframeM);
+  attachSync(iframeM, iframeD);
+
+  /* ── Resize mobile panel height to match desktop ── */
+  function sizeMobileIframe() {
+    try {
+      var wrap = document.getElementById('mobile-wrap');
+      var innerH = iframeM.contentWindow
+        ? iframeM.contentWindow.document.documentElement.scrollHeight
+        : 800;
+      iframeM.style.height = Math.max(innerH, wrap.clientHeight) + 'px';
+    } catch (e) {
+      iframeM.style.height = '100%';
+    }
+  }
+  iframeM.addEventListener('load', sizeMobileIframe);
+  window.addEventListener('resize', sizeMobileIframe);
+
+  /* ── Auto-load on open: ?path= query param, else default to the plug page ── */
+  var startParams = new URLSearchParams(window.location.search);
+  var startPath = startParams.get('path') || 'Trip-Essentials/Plug Adapter/Plug-Adapter-Guide.html';
+  document.getElementById('path-input').value = startPath;
+  load();
+
+}());
+</script>
+</body>
+</html>
