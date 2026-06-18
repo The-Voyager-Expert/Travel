@@ -10,7 +10,7 @@
 
 ### 2026-06-16 — Flight-time view: per-leg breakdown + total ✅ COMPLETE 2026-06-17 (102/102)
 
-*Decision (Dani): rework the "By flight time from Seattle" cards to show each flight segment's time + total. **DONE** — every connecting destination now shows its real per-leg breakdown.*
+*Decision: rework the "By flight time from Seattle" cards to show each flight segment's time + total. **DONE** — every connecting destination now shows its real per-leg breakdown.*
 
 **Result:** all **102/102 connecting cities** carry real `lg` legs (92 two-leg, 10 three-leg); nonstops show their single leg. Validator `validate_flight_index.py` = **0 fail · 0 warn** (the old Montevideo/Bali/Istanbul warns cleared). Card example: `SEA→AMS 9h45 · AMS→VIE 1h45 · 11h30 air`.
 
@@ -28,7 +28,7 @@
 - Heads Up note row must start with ↳ (§2).
 - Food Delivery link text must be the bare domain, not the platform name (§2).
 
-**GUIDE-FIX BACKLOG (guides currently failing — not yet fixed, Dani paused fixing):**
+**GUIDE-FIX BACKLOG (guides currently failing — not yet fixed, paused fixing):**
 - Bali — 6 stops no box + 7 stops with rows outside box.
 - 14 guides — ⚠️ placed above the hours (icon order): Aruba, Cayman Islands, Colmar, Curacao, Dublin, Helsinki, London, Lucerne, Marrakech, Montevideo, Paris, Toledo, Vancouver, Zurich.
 - 32 guides — Heads Up note missing ↳.
@@ -54,12 +54,12 @@
 
 **Resolved 2026-06-17 (Dani asked "can the validator check that?"):** Partly — as a WARN SURFACER, not a hard fail. Built `Brain/scripts/audit_transit_dupes.py` (advisory, NOT in validate_itinerary.py, never a ship gate). It groups from-hotel `🚶/🚕` rows by identical time and flags any where one time hits ≥ N distinct 📍 pins (default 4 = strong tier). A naive "any repeated time" check would fire on 107/137 guides (mostly legit); the ≥4-pin tier narrows to **19 guides** — the real placeholder band. It CANNOT hard-fail: the validator sees text, not geography, so it cannot tell a real shared point from a paste (even the 19 include confirmed false positives — Bend/Singapore/Lisbon above). Registered in Validator Index.html (Motion/Transit section) + CLAUDE.md Validators table.
 
-**IN PROGRESS 2026-06-17 — re-lookup + fix (Dani: "fix tons / all of them now"):**
+**IN PROGRESS 2026-06-17 — re-lookup + fix (owner: "fix tons / all of them now"):**
 
 DONE + verified (real Google Maps times, validator no new fails):
 - **San Sebastian** — all 7 pins fixed. Shipped 5/3 on all; real = La Concha 24/12, Parte Vieja venues 3–7 walk / 1–3 ride.
 - **San Francisco** — all 12 pins fixed (done by agent, independently re-verified by me: walking matched 11/11 exactly, driving within traffic variance). Note: changing walk times forced a re-sort of the Restaurants Near Hotel section (ascending-walk-order validator rule) — agent handled it, validates 0 fail.
-- **Munich** — all 9 unique pins fixed (I looked up via Chrome; agent applied edits). Real values diverged a lot from the 18/6 placeholder group (Rumfordstraße 30/15, Hildegardstraße 28/14, Viktualienmarkt 23/11, Max-Joseph-Platz 24/16). **CASCADE (important, will recur):** two venues whose placeholder time (18 min) had wrongly put them inside the 25-min "near hotel" cap turned out to be 28–30 min real → they no longer qualify, so they were DROPPED with a documented `<!-- low-count -->` comment (Vits Der Kaffee from Cappuccino, Conviva im Blauen Haus from Restaurants Near Hotel). Validator stays 714/2 (the 2 fails are pre-existing tram-rule, unrelated). **POLICY APPLIED for the rest:** when a real time pushes a near-hotel/cappuccino/downtown venue past its section's walk cap, drop it + add the low-count comment (keeps the guide valid). Alternative (preserve count by researching a closer replacement) is more work — switch to that if Dani prefers. Re-sort ascending-walk sections after any walk-time change.
+- **Munich** — all 9 unique pins fixed (I looked up via Chrome; agent applied edits). Real values diverged a lot from the 18/6 placeholder group (Rumfordstraße 30/15, Hildegardstraße 28/14, Viktualienmarkt 23/11, Max-Joseph-Platz 24/16). **CASCADE (important, will recur):** two venues whose placeholder time (18 min) had wrongly put them inside the 25-min "near hotel" cap turned out to be 28–30 min real → they no longer qualify, so they were DROPPED with a documented `<!-- low-count -->` comment (Vits Der Kaffee from Cappuccino, Conviva im Blauen Haus from Restaurants Near Hotel). Validator stays 714/2 (the 2 fails are pre-existing tram-rule, unrelated). **POLICY APPLIED for the rest:** when a real time pushes a near-hotel/cappuccino/downtown venue past its section's walk cap, drop it + add the low-count comment (keeps the guide valid). Alternative (preserve count by researching a closer replacement) is more work — switch to that if preferred. Re-sort ascending-walk sections after any walk-time change.
 
 METHOD (locked — use exactly):
 1. Origin MUST be the hotel BY NAME (e.g. "Hyatt Regency San Francisco 5 Embarcadero Center"), NOT just the street address. Street-only geocodes to the wrong end of the street and inflates every time (caught on Budapest: "Kalman Imre utca 19" → Deák tér 15 min/1.1km, but real "Hotel President Budapest" → 12 min/900m). Get the hotel NAME from the guide's title-hotel banner.
@@ -108,7 +108,7 @@ REMAINING (not yet fixed): Budapest (lookups done but ~3min inflated — REDO wi
 
 ## 🪧 Index Subtitle Proposals
 
-*Proposals to add a `dest-sub` line to an index card — the italic sub-line that surfaces a **non-obvious natural marquee** a guide covers (a major geological phenomenon, famous lake, or national/natural park reached as a day-trip that the city name doesn't telegraph — e.g. Ljubljana → "incl. Postojna Cave · Lake Bled"). Scope is natural features ONLY (caves, lakes, canyons, waterfalls, geysers, fjords, parks); never cathedrals, museums, palaces, or other obvious city sights. A crib never adds one on its own — it parks the proposal here, and adds the span only after Dani approves. Flow: proposal here → approved → crib adds `dest-sub` → item deleted. Full rule: `Brain/Reference/Ship Checklist.html` § 11. (Subtitles added 2026-06-12 at Dani's direction: Ljubljana → "incl. Postojna Cave · Lake Bled" [first use]; Zhangjiajie → "incl. Avatar 'Hallelujah' Mountains".)*
+*Proposals to add a `dest-sub` line to an index card — the italic sub-line that surfaces a **non-obvious natural marquee** a guide covers (a major geological phenomenon, famous lake, or national/natural park reached as a day-trip that the city name doesn't telegraph — e.g. Ljubljana → "incl. Postojna Cave · Lake Bled"). Scope is natural features ONLY (caves, lakes, canyons, waterfalls, geysers, fjords, parks); never cathedrals, museums, palaces, or other obvious city sights. A crib never adds one on its own — it parks the proposal here, and adds the span only after owner approves. Flow: proposal here → approved → crib adds `dest-sub` → item deleted. Full rule: `Brain/Reference/Ship Checklist.html` § 11. (Subtitles added 2026-06-12 by owner direction: Ljubljana → "incl. Postojna Cave · Lake Bled" [first use]; Zhangjiajie → "incl. Avatar 'Hallelujah' Mountains".)*
 
 ---
 
@@ -116,14 +116,14 @@ REMAINING (not yet fixed): Budapest (lookups done but ~3min inflated — REDO wi
 
 *Only edits to files inside `Brain/CORE RULES/` get parked here — they require explicit approval before Claude touches them. Flow: proposal here → approved in same session → Claude applies the edit → item deleted. Everything outside `Brain/CORE RULES/` (Reference files, scripts, guides, Trips.html, to-do list, etc.) gets fixed immediately without asking or parking.*
 
-*(All 27-file CORE RULES audit findings #1–19 closed 2026-06-05 — see `Brain/Reference/audit_log.md` for the record. Item #17's guide-side consequence — the Michelin backfill — completed 2026-06-05 and closed out 2026-06-06; record in the audit log. The 2026-06-06 CORE RULES audit's three parked proposals all closed same-day: #1 under Dani's toolbar-move authorization, #2 underline-ban re-homed to `Links.html § 8` and #3 Skip List source + decisions.md relabel both Dani-approved and applied — records in the audit log.)*
+*(All 27-file CORE RULES audit findings #1–19 closed 2026-06-05 — see `Brain/Reference/audit_log.md` for the record. Item #17's guide-side consequence — the Michelin backfill — completed 2026-06-05 and closed out 2026-06-06; record in the audit log. The 2026-06-06 CORE RULES audit's three parked proposals all closed same-day: #1 under Wifey's toolbar-move authorization, #2 underline-ban re-homed to `Links.html § 8` and #3 Skip List source + decisions.md relabel both owner-approved and applied — records in the audit log.)*
 
 
 ### 2026-06-17 — Core Rules audit (non-extra-section): validator-vs-rule contradictions (need decision) + validator backlog
 
 *Full audit: `Travel/Core Rules Validator Audit — 2026-06-17.md`. Covers `Rules for Claude`, `Guide Structure`, `Day Structure`, `Trip Overview`, `Hotel Banner`, `Stops Structure`, `Motion Rule`, `Tickets`, `Icon Order and Format`, `Links`, `Photos Rules`.*
 
-*All three validator-vs-rule contradictions RESOLVED 2026-06-17 (Dani-approved): (1) Trip Overview §3 pill label — doc line 62 fixed to `⛲️ Day Trips`, CORE RULES cascade run; (2) Links §3 — booking-URL 90-day staleness check removed from the validator (rule wins, a logged PASS never expires); (3) Photos Rules §5 step 7 + §9 — rewritten to download-only via `commons_photo.py --download` (validator wins), and the stale "hotlink permitted" language purged from Ship Checklist § 6, Rule Dependencies, and Separation Map.*
+*All three validator-vs-rule contradictions RESOLVED 2026-06-17 (owner-approved): (1) Trip Overview §3 pill label — doc line 62 fixed to `⛲️ Day Trips`, CORE RULES cascade run; (2) Links §3 — booking-URL 90-day staleness check removed from the validator (rule wins, a logged PASS never expires); (3) Photos Rules §5 step 7 + §9 — rewritten to download-only via `commons_photo.py --download` (validator wins), and the stale "hotlink permitted" language purged from Ship Checklist § 6, Rule Dependencies, and Separation Map.*
 
 **Validator-code backlog (pure validator session, no rule decision needed):**
 - Rules for Claude §6 placeholder check misses **bare** `TBD`/`TODO` (only `{braced}` caught globally + hotel-banner scope) and the literal phrases "fill in later" / "tour TBD" (no matcher). Add a body-wide scan next to validate_itinerary.py:8467.
@@ -139,13 +139,13 @@ REMAINING (not yet fixed): Budapest (lookups done but ~3min inflated — REDO wi
 
 ### 2026-06-12 — Mobile baseline — FULLY CLOSED
 
-*DONE & confirmed by Dani: `Guides/mobile.css` (universal defensive baseline) + `Brain/scripts/mobile_check.py` (audit + `--apply` injector + `--strict` gate) + defensive overflow guards in `Brain/Reference/Guide Style.css` → synced to `guide_v3.css`. **Wired into the session:** `guide_tools.py start` runs mobile-check as Step 3/4; `guide_tools.py ship` hard-gates on `mobile-check --strict` after the pin gate. **CORE RULES updated** — `Rules for Claude.html` step-1 enumeration names mobile-check; cascade worked clean (checksum CHANGED(1) `Rules for Claude.html` only; `format_version.json` unchanged; doc_workshop_validator 27/27; brain_check 54/54). Documented in `CLAUDE.md` (ritual + Validators table + DriftyCat) and `Ship Checklist.html` § 10.*
+*DONE & confirmed by owner: `Guides/mobile.css` (universal defensive baseline) + `Brain/scripts/mobile_check.py` (audit + `--apply` injector + `--strict` gate) + defensive overflow guards in `Brain/Reference/Guide Style.css` → synced to `guide_v3.css`. **Wired into the session:** `guide_tools.py start` runs mobile-check as Step 3/4; `guide_tools.py ship` hard-gates on `mobile-check --strict` after the pin gate. **CORE RULES updated** — `Rules for Claude.html` step-1 enumeration names mobile-check; cascade worked clean (checksum CHANGED(1) `Rules for Claude.html` only; `format_version.json` unchanged; doc_workshop_validator 27/27; brain_check 54/54). Documented in `CLAUDE.md` (ritual + Validators table + DriftyCat) and `Ship Checklist.html` § 10.*
 
-***LOCKED DECISION (Dani, 2026-06-12):** new guides do NOT link `mobile.css` — guides use `guide_v3.css` only (already carries the same overflow guards); all other shareable pages use `mobile.css`. One source of truth per surface. No further action.*
+***LOCKED DECISION ( 2026-06-12):** new guides do NOT link `mobile.css` — guides use `guide_v3.css` only (already carries the same overflow guards); all other shareable pages use `mobile.css`. One source of truth per surface. No further action.*
 
 ### 2026-06-06 — CORE RULES cross-check — ALL 25 ITEMS CLOSED
 
-*(All findings approved by Dani and applied same-day, one approval cycle each — full records in `Brain/Reference/audit_log.md`. Final batch: #4 ship-gate standing order now checks Phase 6; #9–18 drift fixes; #21 Train Day destination never repeats in Day Trips by Train; #24 stop templates gained 📒/📖/photo rows; #25 file renamed to `Skip List - Extra Section.html` with validator map + all build_state.md files updated. Convention locked the same day: rule cross-references name the file only, never the § number; "→ hotel" on hotel-scoped extras motion rows is a soft-grey note hint, never shipped guide text.)*
+*(All findings approved by owner and applied same-day, one approval cycle each — full records in `Brain/Reference/audit_log.md`. Final batch: #4 ship-gate standing order now checks Phase 6; #9–18 drift fixes; #21 Train Day destination never repeats in Day Trips by Train; #24 stop templates gained 📒/📖/photo rows; #25 file renamed to `Skip List - Extra Section.html` with validator map + all build_state.md files updated. Convention locked the same day: rule cross-references name the file only, never the § number; "→ hotel" on hotel-scoped extras motion rows is a soft-grey note hint, never shipped guide text.)*
 
 ---
 
@@ -153,6 +153,6 @@ REMAINING (not yet fixed): Budapest (lookups done but ~3min inflated — REDO wi
 
 *Only questions concerning fixes or edits to `Brain/CORE RULES/` files park here — every other gap is resolved in-session with Claude's own tools (Rules for Claude.html § 3, applied 2026-06-06).*
 
-<!-- Resolved 2026-06-13: "CORE RULES checksum drift — 4 files unstamped (flagged 2026-06-12)" — Cappuccino / Michelin Restaurants / Motion Rule / Restaurants Near Hotel now match core_rules_checksums.json (validator: SHA-256 matches for all 27 CORE RULES files). Closed by Dani. -->
-<!-- Resolved 2026-06-15: "Hotel Banner §1 mandates a street number — but some hotels have none (UAE guide)." Decision by Dani: §1 updated to allow street name · neighborhood when no street number is published. validate_itinerary.py updated: passes if digit present OR · present; fails only on bare street name alone. format_version.json bumped → fp e59f9c9f0bcc68c5. UAE guide (Address Downtown) can now re-ship. -->
+<!-- Resolved 2026-06-13: "CORE RULES checksum drift — 4 files unstamped (flagged 2026-06-12)" — Cappuccino / Michelin Restaurants / Motion Rule / Restaurants Near Hotel now match core_rules_checksums.json (validator: SHA-256 matches for all 27 CORE RULES files). Closed by owner. -->
+<!-- Resolved 2026-06-15: "Hotel Banner §1 mandates a street number — but some hotels have none (UAE guide)." Decision by owner: §1 updated to allow street name · neighborhood when no street number is published. validate_itinerary.py updated: passes if digit present OR · present; fails only on bare street name alone. format_version.json bumped → fp e59f9c9f0bcc68c5. UAE guide (Address Downtown) can now re-ship. -->
 

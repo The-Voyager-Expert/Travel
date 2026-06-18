@@ -14,7 +14,7 @@
 **What's in the file:**
 - ❌ Reject table — 13+ hotels with specific rejection reasons (bed bugs, open bathrooms, wrong location, boutique quirks, renovation, etc.)
 - ✅ Vetted options still in play — TA rank, price, notes
-- Dani's non-negotiables (enclosed bathroom, king/double bed, modern/spacious, free cancel, no Centraal Station or Dam Square area)
+- Wifey's non-negotiables (enclosed bathroom, king/double bed, modern/spacious, free cancel, no Centraal Station or Dam Square area)
 
 ---
 

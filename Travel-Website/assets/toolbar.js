@@ -503,7 +503,7 @@
     }, 50);
   }
 
-  /* ── Footnote toolbar — RETIRED 2026-06-06 (Dani) ─────────────────────────
+  /* ── Footnote toolbar — RETIRED 2026-06-06 (owner) ─────────────────────────
      The footer sharing link (footnote.js) is retired for now and must not be
      used in the guides. toolbar.js no longer auto-loads footnote.js on any
      page. The loader below is kept (guarded off) so the feature can be

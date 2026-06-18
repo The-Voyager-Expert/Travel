@@ -259,7 +259,7 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 
 ## Pending builds (not on the index yet)
 
-Unshipped — `_build/` scaffolding only, no guide HTML, no index card. Add to the master list when they ship as `[ ]` (blue dot, want to go) by default, unless Dani confirms they've already been — in that case enter as `[x]`. (Brussels shipped 2026-06-06 and moved to the Europe list as been.)
+Unshipped — `_build/` scaffolding only, no guide HTML, no index card. Add to the master list when they ship as `[ ]` (blue dot, want to go) by default, unless owner confirms they've already been — in that case enter as `[x]`. (Brussels shipped 2026-06-06 and moved to the Europe list as been.)
 
 Current stalled builds (as of 2026-06-15 audit — no HTML yet, Phase 6 unchecked or no scaffolding):
 _(none — all known stalled builds have shipped HTML as of 2026-06-15)_

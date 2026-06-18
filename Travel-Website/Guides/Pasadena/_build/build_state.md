@@ -48,7 +48,7 @@ Rebuild → pasadena_v5.html (was v4). US travel rules applied: NO trains, Uber/
 - [x] validate_itinerary.py passes
 - [x] every extra populated or carries negative-finding line
 
-## Notes / flags (parked in To_Do_List.md ❓ Questions for Dani)
+## Notes / flags (parked in To_Do_List.md ❓ Questions for owner)
 - Day Structure §7 Train-Day quota conflicts with US no-trains rule — shipped zero train days per explicit instruction.
 - Tour start times = operator-standard windows; meeting points = real central landmarks (ride + short final walk); exact times/points confirmed at booking.
 - From-hotel 🚕 drive times are Maps-style estimates (no Maps connector in-session) — spot-check before travel.

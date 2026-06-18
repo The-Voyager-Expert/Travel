@@ -46,7 +46,7 @@ Last updated: 2026-06-12
 
 ## Phase 6 — Ship gate
 - [x] Brain/Reference/Ship Checklist.html
-- [~] validate_itinerary.py passes — 697 passed / 0 guide failures. The ONLY ❌ is a pre-existing CORE RULES checksum drift on 4 files (Cappuccino, Michelin, Motion Rule, Restaurants Near Hotel - Extra Section.html, all mtime 01:50 — after the 14:12 checksum stamp; matches open "Rules for Update" proposals). NOT caused by this build (Annecy never wrote to CORE RULES). Not blessed — flagged to Dani.
+- [~] validate_itinerary.py passes — 697 passed / 0 guide failures. The ONLY ❌ is a pre-existing CORE RULES checksum drift on 4 files (Cappuccino, Michelin, Motion Rule, Restaurants Near Hotel - Extra Section.html, all mtime 01:50 — after the 14:12 checksum stamp; matches open "Rules for Update" proposals). NOT caused by this build (Annecy never wrote to CORE RULES). Not blessed — flagged to owner.
 - [x] verify_urls: 38 passed / 0 failed (3 warns: musees.annecy.fr, bateaux-annecy.com, deliveroo bot-blocks)
 - [x] verify_booking_links: h1-match 3/3 (Château, Lake Annecy Wikipedia; Palais → no-wikipedia sentinel as the EN title redirects to Annecy)
 - [x] index card + carousel chain (Amsterdam ↔ Annecy ↔ Aruba) + Europe map pin wired

@@ -1,4 +1,4 @@
-# 🛒 Dani's Shopping Profile — v2
+# 🛒 Shopping Profile — v2
 _Last updated: May 2026_
 
 ---
@@ -24,7 +24,7 @@ _Last updated: May 2026_
 - Format must be consistent across all results — same card every time
 
 ### 3. Price
-- **Never filter by price** — Dani does not have a budget constraint
+- **Never filter by price** — no budget constraint
 - Never sort by cheapest
 - Never mention price as a reason to recommend or exclude
 
@@ -89,8 +89,8 @@ MagSafe snap-on power bank for iPhone 16. Charges wirelessly at 15W via Qi2, no 
 **This file lives at:** `Travel/shopping_profile_v2.md` in Google Drive (single file at the Travel root, no subfolder — moved here from `On The Go/Shopping Profile/` on 2026-05-18)
 
 ### When to load this file
-- Any time Dani asks to find, buy, or research a product
-- Any time Dani says "look this up," "find me a," "I need a [product]," or similar
+- Any time the user asks to find, buy, or research a product
+- Any time the user says "look this up," "find me a," "I need a [product]," or similar
 - Applies in ALL modes: on-the-go, hotel, Cowork
 
 ---

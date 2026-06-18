@@ -2,16 +2,16 @@
 
 Self-contained workspace for the Trips system. Open, edit, rebuild — everything you need is right here.
 
-All files live in `Travel/Trip Essentials/`. If one wanders out, the folder name is the home — restore it here. (The owner-name prefix `the owner Leo Trips - ` was dropped from every filename on 2026-05-14; pre-rename copies are in `Travel/archive/the owner_Leo_Trips_pre-rename-20260514/`.)
+All files live in `Travel/Trip Essentials/`. If one wanders out, the folder name is the home — restore it here. (The owner-name prefix `the owner Hubby Trips - ` was dropped from every filename on 2026-05-14; pre-rename copies are in `Travel/archive/the owner_Hubby_Trips_pre-rename-20260514/`.)
 
 ## What's in this folder
 
 | File | What it is |
 |------|------------|
-| **`Trips.html`** | **Primary edit target for trip data.** Per-trip rows, TOP/BOTTOM layout (Leo writes top, owner writes below). Claude edits this file. Read directly with the Read tool. |
+| **`Trips.html`** | **Primary edit target for trip data.** Per-trip rows, TOP/BOTTOM layout (Hubby writes top, owner writes below). Claude edits this file. Read directly with the Read tool. |
 | **`Trips - Rules.md`** | Structural and content decisions for `Trips.html` — trip order, archive-vs-past-trips boundaries, badge usage, formatting conventions. Read this before editing `Trips.html`. |
 | **`Archive 2026 Jan-Apr.html`** | **Read-only historical archive.** Completed trips from January–April 2026, separated from the live `Trips.html` for clarity. Never edited. |
-| **`README.md`** | This file. (Was `the owner Leo Trips - README.md` pre-2026-05-14.) |
+| **`README.md`** | This file. (Was `the owner Hubby Trips - README.md` pre-2026-05-14.) |
 
 *Retired 2026-05-18 (no longer in this folder; archived to `Travel/archive/` per the dated retirement entry there): `Specs.html`, `_style.css`, `trips_validator.py`, `trips_fixer.py`. The spec and validators have been consolidated into `Trips - Rules.md` and the regular guide validators.*
 

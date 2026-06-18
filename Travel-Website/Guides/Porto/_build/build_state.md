@@ -53,5 +53,5 @@ Source: rebuild of porto_v1.html (archived to Travel/archive/porto_v1.html).
 - Guided-tour stops retired (2026-05-20): previously-guided day stops now ship as self-walk / ticket-gated self-walk; all guided tours moved to the new 🎟️ Tours Extra Section (5 Viator / 5 GetYourGuide / 5 TripAdvisor, all live-verified ≥4.5⭐ ≥6 reviews this build).
 - Porto removed from TOURS_EXCLUDED_GUIDES in validate_itinerary.py (documented rollout step).
 - Photos carried forward from _build/assets (same day-stop venues).
-- Start times in Tours entries are standard departure windows — Viator/GYG/TripAdvisor gate exact times behind the date-availability calendar (undrivable in-session). Flagged in To_Do_List.md ❓ Questions for Dani.
+- Start times in Tours entries are standard departure windows — Viator/GYG/TripAdvisor gate exact times behind the date-availability calendar (undrivable in-session). Flagged in To_Do_List.md ❓ Questions for owner.
 - Transit times are estimates pending Google Maps confirmation — flagged in To_Do_List.md.
