@@ -197,22 +197,25 @@
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
-    /* Mobile: two-row wrap of centered chips — no horizontal scroll needed. */
+    /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
-      '.tb{padding:6px 0 8px}' +
-      '.tb-inner{overflow-x:visible !important;width:100%}' +
-      '.tb-links{flex-wrap:wrap !important;justify-content:center;gap:6px;padding:0 10px;width:100%;margin:0;max-width:none}' +
-      '.tb-sep{display:none}' +
-      '.tb a{padding:5px 10px !important;font-size:13px !important;line-height:1.4;white-space:nowrap;' +
-        'border:none !important;border-radius:0 !important;background:transparent !important;' +
-        'font-weight:400;color:#3d3a32 !important}' +
-      '.tb a.tb-active{color:' + accent + ' !important;font-weight:600}' +
-      '.tb-ddbtn{padding:5px 10px !important;font-size:13px !important;line-height:1.4;' +
-        'border:none !important;border-radius:0 !important;background:transparent !important;' +
-        'font-weight:400;color:#3d3a32 !important}' +
-      '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:' + accent + ' !important;font-weight:600}' +
+      '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px}' +
+      '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
+      '.tb-ham{display:flex;align-items:center;justify-content:center;' +
+        'width:44px;height:44px;cursor:pointer;background:none;border:none;' +
+        'font-size:20px;color:#3d3a32;flex-shrink:0;margin-left:auto}' +
+      '.tb-ham-label{font-size:13px;font-weight:600;color:#3d3a32;padding-left:14px;letter-spacing:.02em}' +
+      '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
+        'background:#faf9f5;border-bottom:1px solid #e6e2da;' +
+        'box-shadow:0 6px 18px rgba(0,0,0,.08);z-index:999;padding:8px 0 12px}' +
+      '.tb-ham-menu.tb-ham-open{display:block}' +
+      '.tb-ham-menu a{display:block;font-size:15px;color:#3d3a32;text-decoration:none;' +
+        'padding:11px 22px;border-bottom:none}' +
+      '.tb-ham-menu a.tb-active{color:' + accent + ';font-weight:600}' +
+      '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
+      '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:6px 22px}' +
     '}'
     ;
   document.head.appendChild(styleEl);
@@ -346,6 +349,63 @@
     'width:30px;height:30px;border-radius:6px;border:1.5px solid #c4b896;' +
     'background:#fdf8f0;color:#6b6860;font-size:18px;line-height:1;' +
     'padding:0;text-decoration:none;flex-shrink:0;';
+
+  /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
+  var hamBtn = document.createElement('button');
+  hamBtn.type = 'button';
+  hamBtn.className = 'tb-ham';
+  hamBtn.setAttribute('aria-label', 'Menu');
+  hamBtn.textContent = '☰';
+  bar.appendChild(hamBtn);
+
+  var hamMenu = document.createElement('div');
+  hamMenu.className = 'tb-ham-menu';
+  bar.style.position = 'relative';
+
+  /* Build flat link list from ITEMS */
+  var prevWasGroup = false;
+  ITEMS.forEach(function (item) {
+    if (item === null) return; /* skip separators */
+    if (item.children) {
+      if (prevWasGroup) {
+        var sep = document.createElement('div');
+        sep.className = 'tb-ham-sep';
+        hamMenu.appendChild(sep);
+      }
+      item.children.forEach(function (ch) {
+        var a = document.createElement('a');
+        a.href = ch.href;
+        a.textContent = ch.text;
+        if (ch.href.split('/').pop() === curr) a.className = 'tb-active';
+        hamMenu.appendChild(a);
+      });
+      prevWasGroup = true;
+    } else {
+      if (prevWasGroup) {
+        var sep2 = document.createElement('div');
+        sep2.className = 'tb-ham-sep';
+        hamMenu.appendChild(sep2);
+      }
+      var a2 = document.createElement('a');
+      a2.href = item.href;
+      a2.textContent = item.text;
+      if (item.href.split('/').pop() === curr) a2.className = 'tb-active';
+      hamMenu.appendChild(a2);
+      prevWasGroup = false;
+    }
+  });
+  bar.appendChild(hamMenu);
+
+  hamBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    hamMenu.classList.toggle('tb-ham-open');
+    hamBtn.textContent = hamMenu.classList.contains('tb-ham-open') ? '✕' : '☰';
+  });
+  document.addEventListener('click', function () {
+    hamMenu.classList.remove('tb-ham-open');
+    hamBtn.textContent = '☰';
+  });
+  hamMenu.addEventListener('click', function (e) { e.stopPropagation(); });
 
   /* ── Insert toolbar ──────────────────────────────────────────────────────── */
   if (mount) {
