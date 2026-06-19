@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=18">
+<title>Time Zones</title>
+<style>
+:root {
+  --bg:      #f5f4f0;
+  --warm:    #fdf8f0;
+  --surface: #ffffff;
+  --border:  #d8d4cc;
+  --border2: #e6e2da;
+  --text:    #1a1917;
+  --muted:   #6a6660;
+  --accent:  #8a6c1a;
+  --hover:   #faefd8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Page header ── */
+.page-header {
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin: 8px 0 14px;
+}
+.page-header h1 { font-size: 14px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: .04em; margin: 0; }
+.page-header p  { font-size: 12px; color: rgba(255,255,255,.72); margin-top: 4px; }
+
+/* ── Seattle home row ── */
+.home-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.home-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+.home-city  { font-size: 15px; font-weight: 700; color: var(--text); }
+.home-right { text-align: right; }
+.home-time  { font-size: 32px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
+.home-day   { font-size: 12px; color: var(--muted); font-weight: 500; margin-top: 3px; }
+
+/* ── Controls ── */
+.controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.search-wrap { position: relative; flex: 1; min-width: 160px; }
+.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+input.search {
+  width: 100%; padding: 7px 10px 7px 32px;
+  border: 1px solid var(--border); border-radius: 7px;
+  background: var(--surface); font-family: inherit; font-size: 13px; color: var(--text);
+  outline: none; transition: border-color .15s;
+}
+input.search::placeholder { color: var(--muted); }
+input.search:focus { border-color: var(--accent); }
+
+.pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.pill {
+  padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border2);
+  background: transparent; font-family: inherit; font-size: 12px; color: var(--muted);
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.pill:hover  { background: var(--hover); color: var(--text); border-color: var(--border); }
+.pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ── Grid ── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 10px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 7px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.card:hover { border-color: var(--border); box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+
+.card-top    { display: flex; align-items: baseline; gap: 7px; }
+.card-flag   { font-size: 17px; line-height: 1; flex-shrink: 0; }
+.card-city   { font-size: 13px; font-weight: 700; color: var(--text); }
+.card-country{ font-size: 11px; color: var(--muted); }
+
+.card-clock  { display: flex; align-items: baseline; gap: 6px; }
+.card-time   { font-size: 26px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
+.card-day    { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+
+.card-meta   { display: flex; align-items: center; justify-content: space-between; }
+.utc-offset  { font-size: 11px; color: var(--muted); }
+.vs-sea      { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+.vs-sea.ahead  { background: #edf7ed; color: #2e7d32; }
+.vs-sea.behind { background: #fff3e0; color: #bf360c; }
+.vs-sea.same   { background: #f0eeeb; color: var(--muted); }
+
+.empty { grid-column: 1 / -1; text-align: center; padding: 48px 0; color: var(--muted); font-size: 13px; }
+
+/* ── Mobile overrides ── */
+@media (max-width: 600px) {
+  /* Controls: search full-width on top, pills as single scrollable row below */
+  .controls { flex-direction: column; align-items: stretch; gap: 8px; }
+  .search-wrap { min-width: 0; }
+
+  /* Pills row: single line, scroll sideways — no wrapping */
+  .pills {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .pills::-webkit-scrollbar { display: none; }
+
+  /* Exempt pill buttons from mobile.css tap-target rules */
+  .pill {
+    min-height: auto !important;
+    font-size: 12px !important;
+    padding: 5px 11px !important;
+    flex-shrink: 0;
+  }
+
+  /* Home row: stack left and right blocks vertically */
+  .home-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .home-right { align-self: stretch; display: flex; align-items: baseline; gap: 10px; }
+  .home-time { font-size: 28px; }
+  .home-day  { font-size: 12px; }
+
+  /* Grid: 2 columns on phones ≥ 360px, 1 column on very small */
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* Cards: tighten up */
+  .card { padding: 10px 11px; gap: 5px; }
+  .card-time { font-size: 22px; }
+
+  /* Shorten the "Same" label so it fits the chip */
+  /* (handled in JS — see vsSeattle short labels for mobile) */
+
+  /* Search input: keep font-size 16px (from mobile.css) to prevent iOS zoom — don't override */
+}
+
+@media (max-width: 359px) {
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760"></div>
+
+  <div class="page-header">
+    <h1>🕐 Time Zones</h1>
+    <p>Current local time in every guide city · live · updates every minute</p>
+  </div>
+
+  <div class="home-row">
+    <div>
+      <div class="home-label">🏠 Home base</div>
+      <div class="home-city">🇺🇸 Seattle</div>
+    </div>
+    <div class="home-right">
+      <div class="home-time" id="sea-time">--:--</div>
+      <div class="home-day"  id="sea-day"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="8.7" y1="8.7" x2="13" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input class="search" id="search" type="search" placeholder="Search city…" autocomplete="off">
+    </div>
+    <div class="pills" id="region-pills">
+      <button class="pill active" data-region="all">All</button>
+      <button class="pill" data-region="americas">Americas</button>
+      <button class="pill" data-region="caribbean">Caribbean</button>
+      <button class="pill" data-region="europe">Europe</button>
+      <button class="pill" data-region="asiapac">Asia · Pacific</button>
+      <button class="pill" data-region="other">M.E. &amp; Africa</button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+</div>
+
+<script>
+var CITIES = [
+  // Americas
+  {name:'Alaska',          country:'USA',                  tz:'America/Anchorage',              region:'americas',  flag:'🇺🇸'},
+  {name:'Atlanta',         country:'USA · Georgia',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸'},
+  {name:'Austin',          country:'USA · Texas',          tz:'America/Chicago',                region:'americas',  flag:'🇺🇸'},
+  {name:'Bend',            country:'USA · Oregon',         tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸'},
+  {name:'Big Island',      country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸'},
+  {name:'Boston',          country:'USA · Massachusetts',  tz:'America/New_York',               region:'americas',  flag:'🇺🇸'},
+  {name:'Buenos Aires',    country:'Argentina',            tz:'America/Argentina/Buenos_Aires', region:'americas',  flag:'🇦🇷'},
+  {name:'Chicago',         country:'USA · Illinois',       tz:'America/Chicago',                region:'americas',  flag:'🇺🇸'},
+  {name:'Cusco',           country:'Peru',                 tz:'America/Lima',                   region:'americas',  flag:'🇵🇪'},
+  {name:'Kauai',           country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸'},
+  {name:'Lima',            country:'Peru',                 tz:'America/Lima',                   region:'americas',  flag:'🇵🇪'},
+  {name:'Los Angeles',     country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸'},
+  {name:'Machu Picchu',    country:'Peru',                 tz:'America/Lima',                   region:'americas',  flag:'🇵🇪'},
+  {name:'Maui',            country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸'},
+  {name:'Miami',           country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸'},
+  {name:'Montevideo',      country:'Uruguay',              tz:'America/Montevideo',             region:'americas',  flag:'🇺🇾'},
+  {name:'Montreal',        country:'Canada · Quebec',      tz:'America/Toronto',                region:'americas',  flag:'🇨🇦'},
+  {name:'New York',        country:'USA · New York',       tz:'America/New_York',               region:'americas',  flag:'🇺🇸'},
+  {name:'Oahu',            country:'USA · Hawaii',         tz:'Pacific/Honolulu',               region:'americas',  flag:'🇺🇸'},
+  {name:'Orlando',         country:'USA · Florida',        tz:'America/New_York',               region:'americas',  flag:'🇺🇸'},
+  {name:'Palm Desert',     country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸'},
+  {name:'Palo Alto',       country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸'},
+  {name:'Pasadena',        country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸'},
+  {name:'Quebec City',     country:'Canada · Quebec',      tz:'America/Toronto',                region:'americas',  flag:'🇨🇦'},
+  {name:'Rio de Janeiro',  country:'Brazil',               tz:'America/Sao_Paulo',              region:'americas',  flag:'🇧🇷'},
+  {name:'San Diego',       country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸'},
+  {name:'San Francisco',   country:'USA · California',     tz:'America/Los_Angeles',            region:'americas',  flag:'🇺🇸'},
+  {name:'Santiago',        country:'Chile',                tz:'America/Santiago',               region:'americas',  flag:'🇨🇱'},
+  {name:'Scottsdale',      country:'USA · Arizona',        tz:'America/Phoenix',                region:'americas',  flag:'🇺🇸'},
+  {name:'Toronto',         country:'Canada · Ontario',     tz:'America/Toronto',                region:'americas',  flag:'🇨🇦'},
+  {name:'Vancouver',       country:'Canada · BC',          tz:'America/Vancouver',              region:'americas',  flag:'🇨🇦'},
+  // Caribbean
+  {name:'Aruba',           country:'Kingdom of Netherlands', tz:'America/Aruba',               region:'caribbean', flag:'🇦🇼'},
+  {name:'Bahamas',         country:'Bahamas',              tz:'America/Nassau',                 region:'caribbean', flag:'🇧🇸'},
+  {name:'Barbados',        country:'Barbados',             tz:'America/Barbados',               region:'caribbean', flag:'🇧🇧'},
+  {name:'Cayman Islands',  country:'Cayman Islands',       tz:'America/Cayman',                 region:'caribbean', flag:'🇰🇾'},
+  {name:'Curacao',         country:'Netherlands Antilles', tz:'America/Curacao',                region:'caribbean', flag:'🇨🇼'},
+  {name:'Puerto Rico',     country:'USA · Puerto Rico',    tz:'America/Puerto_Rico',            region:'caribbean', flag:'🇵🇷'},
+  {name:'Sint Maarten',    country:'Sint Maarten',         tz:'America/Lower_Princes',          region:'caribbean', flag:'🇸🇽'},
+  {name:'Virgin Islands',  country:'USA · USVI',           tz:'America/St_Thomas',              region:'caribbean', flag:'🇻🇮'},
+  // Europe
+  {name:'Aix-en-Provence', country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Alesund',         country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴'},
+  {name:'Amalfi',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Amsterdam',       country:'Netherlands',          tz:'Europe/Amsterdam',               region:'europe',    flag:'🇳🇱'},
+  {name:'Annecy',          country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Athens',          country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷'},
+  {name:'Azores',          country:'Portugal',             tz:'Atlantic/Azores',                region:'europe',    flag:'🇵🇹'},
+  {name:'Barcelona',       country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸'},
+  {name:'Bergen',          country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴'},
+  {name:'Berlin',          country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪'},
+  {name:'Bologna',         country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Bordeaux',        country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Bruges',          country:'Belgium',              tz:'Europe/Brussels',                region:'europe',    flag:'🇧🇪'},
+  {name:'Brussels',        country:'Belgium',              tz:'Europe/Brussels',                region:'europe',    flag:'🇧🇪'},
+  {name:'Budapest',        country:'Hungary',              tz:'Europe/Budapest',                region:'europe',    flag:'🇭🇺'},
+  {name:'Cambridge',       country:'UK · England',         tz:'Europe/London',                  region:'europe',    flag:'🇬🇧'},
+  {name:'Cannes',          country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Capri',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Cascais',         country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹'},
+  {name:'Cinque Terre',    country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Colmar',          country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Copenhagen',      country:'Denmark',              tz:'Europe/Copenhagen',              region:'europe',    flag:'🇩🇰'},
+  {name:'Corfu',           country:'Greece',               tz:'Europe/Athens',                  region:'europe',    flag:'🇬🇷'},
+  {name:'Dublin',          country:'Ireland',              tz:'Europe/Dublin',                  region:'europe',    flag:'🇮🇪'},
+  {name:'Dubrovnik',       country:'Croatia',              tz:'Europe/Zagreb',                  region:'europe',    flag:'🇭🇷'},
+  {name:'Edinburgh',       country:'UK · Scotland',        tz:'Europe/London',                  region:'europe',    flag:'🇬🇧'},
+  {name:'Florence',        country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Geneva',          country:'Switzerland',          tz:'Europe/Zurich',                  region:'europe',    flag:'🇨🇭'},
+  {name:'Glasgow',         country:'UK · Scotland',        tz:'Europe/London',                  region:'europe',    flag:'🇬🇧'},
+  {name:'Gothenburg',      country:'Sweden',               tz:'Europe/Stockholm',               region:'europe',    flag:'🇸🇪'},
+  {name:'Helsinki',        country:'Finland',              tz:'Europe/Helsinki',                region:'europe',    flag:'🇫🇮'},
+  {name:'Istanbul',        country:'Turkey',               tz:'Europe/Istanbul',                region:'europe',    flag:'🇹🇷'},
+  {name:'Lake Como',       country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Lille',           country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Lisbon',          country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹'},
+  {name:'Ljubljana',       country:'Slovenia',             tz:'Europe/Ljubljana',               region:'europe',    flag:'🇸🇮'},
+  {name:'London',          country:'UK · England',         tz:'Europe/London',                  region:'europe',    flag:'🇬🇧'},
+  {name:'Lucerne',         country:'Switzerland',          tz:'Europe/Zurich',                  region:'europe',    flag:'🇨🇭'},
+  {name:'Luxembourg',      country:'Luxembourg',           tz:'Europe/Luxembourg',              region:'europe',    flag:'🇱🇺'},
+  {name:'Lyon',            country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Madeira',         country:'Portugal',             tz:'Atlantic/Madeira',               region:'europe',    flag:'🇵🇹'},
+  {name:'Madrid',          country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸'},
+  {name:'Marktoberdorf',   country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪'},
+  {name:'Marseille',       country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Milan',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Monaco',          country:'Monaco',               tz:'Europe/Monaco',                  region:'europe',    flag:'🇲🇨'},
+  {name:'Munich',          country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪'},
+  {name:'Naples',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Nice',            country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Oslo',            country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴'},
+  {name:'Oxford',          country:'UK · England',         tz:'Europe/London',                  region:'europe',    flag:'🇬🇧'},
+  {name:'Paris',           country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Pisa',            country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Porto',           country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹'},
+  {name:'Prague',          country:'Czech Republic',       tz:'Europe/Prague',                  region:'europe',    flag:'🇨🇿'},
+  {name:'Reykjavik',       country:'Iceland',              tz:'Atlantic/Reykjavik',             region:'europe',    flag:'🇮🇸'},
+  {name:'Rome',            country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Salzburg',        country:'Austria',              tz:'Europe/Vienna',                  region:'europe',    flag:'🇦🇹'},
+  {name:'San Sebastian',   country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸'},
+  {name:'Seville',         country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸'},
+  {name:'Siena',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Sintra',          country:'Portugal',             tz:'Europe/Lisbon',                  region:'europe',    flag:'🇵🇹'},
+  {name:'Sorrento',        country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Split',           country:'Croatia',              tz:'Europe/Zagreb',                  region:'europe',    flag:'🇭🇷'},
+  {name:'Stockholm',       country:'Sweden',               tz:'Europe/Stockholm',               region:'europe',    flag:'🇸🇪'},
+  {name:'Strasbourg',      country:'France',               tz:'Europe/Paris',                   region:'europe',    flag:'🇫🇷'},
+  {name:'Stuttgart',       country:'Germany',              tz:'Europe/Berlin',                  region:'europe',    flag:'🇩🇪'},
+  {name:'Tallinn',         country:'Estonia',              tz:'Europe/Tallinn',                 region:'europe',    flag:'🇪🇪'},
+  {name:'Toledo',          country:'Spain',                tz:'Europe/Madrid',                  region:'europe',    flag:'🇪🇸'},
+  {name:'Tromsø',          country:'Norway',               tz:'Europe/Oslo',                    region:'europe',    flag:'🇳🇴'},
+  {name:'Turin',           country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Venice',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Verona',          country:'Italy',                tz:'Europe/Rome',                    region:'europe',    flag:'🇮🇹'},
+  {name:'Vienna',          country:'Austria',              tz:'Europe/Vienna',                  region:'europe',    flag:'🇦🇹'},
+  {name:'Zurich',          country:'Switzerland',          tz:'Europe/Zurich',                  region:'europe',    flag:'🇨🇭'},
+  // Asia · Pacific
+  {name:'Bali',            country:'Indonesia',            tz:'Asia/Makassar',                  region:'asiapac',   flag:'🇮🇩'},
+  {name:'Bangkok',         country:'Thailand',             tz:'Asia/Bangkok',                   region:'asiapac',   flag:'🇹🇭'},
+  {name:'Beijing',         country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳'},
+  {name:'Chongqing',       country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳'},
+  {name:'Hong Kong',       country:'Hong Kong SAR',        tz:'Asia/Hong_Kong',                 region:'asiapac',   flag:'🇭🇰'},
+  {name:'Kyoto',           country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵'},
+  {name:'Melbourne',       country:'Australia',            tz:'Australia/Melbourne',            region:'asiapac',   flag:'🇦🇺'},
+  {name:'Phuket',          country:'Thailand',             tz:'Asia/Bangkok',                   region:'asiapac',   flag:'🇹🇭'},
+  {name:'Queenstown',      country:'New Zealand',          tz:'Pacific/Auckland',               region:'asiapac',   flag:'🇳🇿'},
+  {name:'Seoul',           country:'South Korea',          tz:'Asia/Seoul',                     region:'asiapac',   flag:'🇰🇷'},
+  {name:'Shanghai',        country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳'},
+  {name:'Singapore',       country:'Singapore',            tz:'Asia/Singapore',                 region:'asiapac',   flag:'🇸🇬'},
+  {name:'Sydney',          country:'Australia',            tz:'Australia/Sydney',               region:'asiapac',   flag:'🇦🇺'},
+  {name:'Taipei',          country:'Taiwan',               tz:'Asia/Taipei',                    region:'asiapac',   flag:'🇹🇼'},
+  {name:'Tokyo',           country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵'},
+  {name:'Wellington',      country:'New Zealand',          tz:'Pacific/Auckland',               region:'asiapac',   flag:'🇳🇿'},
+  {name:'Zhangjiajie',     country:'China',                tz:'Asia/Shanghai',                  region:'asiapac',   flag:'🇨🇳'},
+  // Middle East & Africa
+  {name:'Abu Dhabi',       country:'UAE',                  tz:'Asia/Dubai',                     region:'other',     flag:'🇦🇪'},
+  {name:'Dubai',           country:'UAE',                  tz:'Asia/Dubai',                     region:'other',     flag:'🇦🇪'},
+  {name:'Lagos',           country:'Nigeria',              tz:'Africa/Lagos',                   region:'other',     flag:'🇳🇬'},
+  {name:'Marrakech',       country:'Morocco',              tz:'Africa/Casablanca',              region:'other',     flag:'🇲🇦'},
+];
+
+var SEA_TZ = 'America/Los_Angeles';
+
+function getOffsetMinutes(tz, date) {
+  var d   = new Date(date.toLocaleString('en-US', {timeZone: tz}));
+  var utc = new Date(date.toLocaleString('en-US', {timeZone: 'UTC'}));
+  return (d - utc) / 60000;
+}
+
+function formatTime(tz, date) {
+  var s = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+  }).format(date);
+  return s.replace(/^24:/, '00:');
+}
+
+function formatFullDay(tz, date) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, weekday: 'long', month: 'short', day: 'numeric'
+  }).format(date);
+}
+
+function formatShortDay(tz, date) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, weekday: 'short'
+  }).format(date);
+}
+
+function formatUTCOffset(tz, date) {
+  var mins = getOffsetMinutes(tz, date);
+  var h = Math.floor(Math.abs(mins) / 60);
+  var m = Math.abs(mins) % 60;
+  var sign = mins >= 0 ? '+' : '−';
+  return 'UTC' + sign + h + (m ? ':' + String(m).padStart(2, '0') : '');
+}
+
+function vsSeattle(tz, date) {
+  var seaMins  = getOffsetMinutes(SEA_TZ, date);
+  var cityMins = getOffsetMinutes(tz, date);
+  var diffH = (cityMins - seaMins) / 60;
+  if (diffH === 0) return {label: 'Same', cls: 'same'};
+  var abs  = Math.abs(diffH);
+  var sign = diffH > 0 ? '+' : '−';
+  var label = sign + abs + (abs === 1 ? ' hr' : ' hrs');
+  return {label: label, cls: diffH > 0 ? 'ahead' : 'behind'};
+}
+
+var activeRegion = 'all';
+var searchVal    = '';
+
+function render() {
+  var now  = new Date();
+  var grid = document.getElementById('grid');
+
+  document.getElementById('sea-time').textContent = formatTime(SEA_TZ, now);
+  document.getElementById('sea-day').textContent  = formatFullDay(SEA_TZ, now);
+
+  var filtered = CITIES.filter(function(c) {
+    if (activeRegion !== 'all' && c.region !== activeRegion) return false;
+    if (searchVal) {
+      var q = searchVal;
+      if (c.name.toLowerCase().indexOf(q) === -1 &&
+          c.country.toLowerCase().indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+
+  filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty">No cities match “' + searchVal + '”</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(function(c) {
+    var time = formatTime(c.tz, now);
+    var day  = formatShortDay(c.tz, now);
+    var utc  = formatUTCOffset(c.tz, now);
+    var vs   = vsSeattle(c.tz, now);
+    return '<div class="card">' +
+      '<div class="card-top">' +
+        '<span class="card-flag">' + c.flag + '</span>' +
+        '<div><div class="card-city">' + c.name + '</div>' +
+        '<div class="card-country">' + c.country + '</div></div>' +
+      '</div>' +
+      '<div class="card-clock">' +
+        '<span class="card-time">' + time + '</span>' +
+        '<span class="card-day">'  + day  + '</span>' +
+      '</div>' +
+      '<div class="card-meta">' +
+        '<span class="utc-offset">' + utc + '</span>' +
+        '<span class="vs-sea ' + vs.cls + '">' + vs.label + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+document.getElementById('region-pills').addEventListener('click', function(e) {
+  var btn = e.target.closest('.pill');
+  if (!btn) return;
+  activeRegion = btn.dataset.region;
+  document.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+});
+
+document.getElementById('search').addEventListener('input', function(e) {
+  searchVal = e.target.value.toLowerCase().trim();
+  render();
+});
+
+render();
+setInterval(render, 60000);
+</script>
+
+<script src="../assets/toolbar.js"></script>
+</body>
+</html>

@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Travel Guides</title>
+<style>
+:root {
+  /* Colors */
+  --bg:           #f5f4f0;
+  --warm:         #fdf8f0;
+  --surface:      #ffffff;
+  --border:       #d8d4cc;
+  --border2:      #e6e2da;
+  --text:         #1a1917;
+  --muted:        #6a6660;
+  --accent:       #8a6c1a;
+  --hover:        #faefd8;
+  --accent-glow:  rgba(138, 108, 26, 0.1);
+  /* Banner */
+  --banner-gradient: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  --banner-text:     #ffffff;
+  --banner-sub:      rgba(255, 255, 255, 0.72);
+  /* Font sizes */
+  --fs-body:      14px;
+  --fs-ui:        14px;
+  --fs-banner:    16px;
+  --fs-sub:       12px;  /* sub-line, intentionally smaller */
+  --fs-label:     12px;  /* country label caps */
+  --fs-card-name: 14px;
+  --fs-flag:      16px;  /* emoji — slightly larger than text is fine */
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Banner — unified header (matches all Essentials pages) ── */
+.header, .page-header, .site-header { background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) !important; padding: 14px 18px !important; min-height: 52px !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; border-radius: 10px !important; border-bottom: none !important; margin: 8px 0 14px !important; }
+.header-label, .header-eyebrow { display: none !important; }
+.header h1, .page-header h1, .site-header h1, .site-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif !important; font-size: 14px !important; font-weight: bold !important; color: #ffffff !important; text-transform: uppercase !important; letter-spacing: 0.04em !important; line-height: 1.2 !important; margin: 0 !important; text-align: center !important; }
+.header-desc { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif !important; font-size: 12px !important; font-weight: 400 !important; color: rgba(255,255,255,0.72) !important; line-height: 1.5 !important; margin: 4px 0 0 !important; }
+
+/* ── Mosaic — country panels pack into balanced columns ── */
+.mosaic { columns: 3; column-gap: 16px; margin-top: 22px; }
+.country {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  background: var(--warm);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 9px 14px 12px;
+  margin-bottom: 10px;
+}
+.country-label {
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.country-label .country-count { letter-spacing: 0.06em; }
+
+/* ── Sub-group header — a region nested inside a country panel (e.g. Hawaii under US) ── */
+.country-sub {
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 11px 0 7px;
+  padding: 4px 0 5px 8px;
+  border-left: 2px solid var(--accent);
+  border-bottom: 1px solid var(--border2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.country-sub .country-count { letter-spacing: 0.06em; }
+
+/* ── Destination cards — stacked inside each panel ── */
+.dest-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+.dest-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 5px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .15s, border-color .15s, background .12s;
+}
+.dest-card:hover { background: var(--surface); }
+/* ── Been: faint green left border ── */
+a.dest-card[data-status="been"] { border-left: 4px solid rgba(60,130,60,0.75); }
+
+/* ── Card subtitle — marquee day-trips for cluster guides (a city base that holds big excursions) ── */
+.dest-sub {
+  flex-basis: 100%;
+  margin-left: 22px;
+  margin-top: -2px;
+  font-size: var(--fs-sub);
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.2;
+}
+
+/* ── Status dot — discreet "want to go" marker (bottom-right). No dot = been. ── */
+.dest-card[data-status="want"]::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6a7fa3; /* dusty blue — want to go */
+  opacity: 0.95;
+}
+
+/* ── Status legend / stats strip ── */
+.status-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; }
+.stat-pill { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 12px; background: var(--warm); border: 1px solid var(--border2); border-radius: 18px; font-size: 12px; color: var(--muted); line-height: 1; }
+.stat-pill b { font-weight: 600; font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
+.stat-pill .dot { width: 6px; height: 6px; border-radius: 50%; align-self: center; }
+/* ── Small stat line — place stats (top) and country summary (by mosaic) ── */
+.stat-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: -6px 0 24px; }
+.stat-line { font-size: 12px; color: var(--muted); margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.stat-line b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat-line--right { justify-content: flex-end; }
+.dot--want { background: #6a7fa3; }
+.dot--been { background: transparent; border: 1px solid var(--border); }
+.dest-flag { font-size: 15px; line-height: 1; flex-shrink: 0; }
+.dest-name { font-size: var(--fs-card-name); font-weight: 600; color: var(--text); }
+
+/* ── Search ── */
+#guide-search{width:200px;box-sizing:border-box;padding:6px 12px;margin:0;font-size:13px;border:1.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;}
+#guide-search:focus{border-color:#B8860B;box-shadow:0 0 0 3px rgba(184,134,11,.12);}
+#guide-search::placeholder{color:#A8895A;}
+#guide-noresult{display:none;padding:8px 4px;font-size:13px;color:var(--muted);}
+/* ── Seasonal month filter ── */
+#season-filter { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:0; }
+#season-filter .sfl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+.mchip { font-family:inherit; font-size:11px; padding:3px 8px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:#3d3a32; cursor:pointer; white-space:nowrap; transition:all .12s; }
+.mchip:hover { border-color:#b85c2a; color:var(--accent); }
+.mchip.on { background:var(--banner-gradient); border-color:#b85c2a; color:#fdf8f0; font-weight:600; }
+.dest-card.season-hide { display:none !important; }
+#season-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; }
+#season-badge.visible { display:inline-block; }
+/* temp range sliders */
+#temp-range { display:flex; align-items:center; gap:10px; margin:14px 0 0; padding-top:14px; border-top:1px solid var(--border2); flex-wrap:wrap; }
+#temp-range .sfl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+#temp-range input[type=range] { width:90px; accent-color:#b85c2a; cursor:pointer; }
+#temp-range .temp-val { font-size:12px; font-weight:600; color:#7a3b1e; min-width:46px; text-align:left; white-space:nowrap; }
+#temp-range .temp-sep { font-size:11px; color:var(--muted); }
+#unit-toggle { display:inline-flex; border:1px solid var(--border2); border-radius:6px; overflow:hidden; margin-left:16px; }
+.utab { font-family:inherit; font-size:11px; font-weight:600; line-height:1; padding:5px 9px; border:none; border-right:1px solid var(--border2); background:var(--surface); color:#8a6c1a; cursor:pointer; transition:background .12s, color .12s; }
+.utab:last-child { border-right:none; }
+.utab:hover { background:var(--warm); color:var(--accent); }
+.utab.on { background:var(--banner-gradient); color:#fdf8f0; }
+
+/* ── Region grouping ── */
+#btn-region-group.active { background:var(--warm); border-color:#b85c2a; color:#7a3b1e; }
+.region-header { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 2px 4px; margin-top:6px; border-top:1px solid var(--border); break-inside:avoid; }
+.region-header:first-child { border-top:none; margin-top:0; }
+
+/* ── Responsive — fewer mosaic columns on narrow screens ── */
+@media (max-width: 860px) {
+  .mosaic { columns: 2; }
+}
+@media (max-width: 600px) {
+  .mosaic { columns: 1; }
+  #guide-search { margin-left:0; max-width:100%; }
+
+  /* Filter chips + view-toggle — visually small at 12px even though tap area
+     hits 40px via mobile.css min-height. Bump to 13px so they read as confident
+     tap targets, not tiny labels. */
+  .fchip { font-size: 13px; }
+  .view-toggle button { font-size: 13px; }
+  #fnoresult button { font-size: 13px; }
+
+  /* Flight-time view — several text elements are set below 11px and don't
+     benefit from mobile.css?v=17's min-height rule (they're <span>s, not links).
+     Raise to 12px minimum so they're legible on a phone. */
+  .fdl  { font-size: 12px; }
+  .fgl  { font-size: 12px; }
+  .fiata { font-size: 12px; }
+  .fonward { font-size: 12px; }
+  .flegend { font-size: 12px; }
+
+  /* Stat row — stack guide count + country count vertically on mobile */
+  .stat-row { flex-direction: column !important; gap: 2px !important; align-items: flex-start !important; margin-bottom: 14px !important; }
+  .stat-line--right { justify-content: flex-start !important; }
+
+  /* Compact topbar controls */
+  .topbar { flex-wrap: wrap !important; gap: 6px !important; }
+  /* Search bar full-width on its own row */
+  #search-wrap { flex: 0 0 100% !important; }
+  /* Compact button heights — match search bar */
+  .stab, .disc-btn { height: 34px !important; font-size: 13px !important; padding: 0 12px !important; min-height: auto !important; }
+  #guide-search { height: 34px !important; min-height: auto !important; font-size: 13px !important; padding: 0 12px !important; }
+  /* Hide Compare and Search-inside-guides — too heavy for phone topbar */
+  #btn-search-guides, #view-compare { display: none !important; }
+
+  /* Banner — strip gradient, show as plain left-accented text (overrides page !important) */
+  .header, .page-header, .site-header {
+    background: none !important;
+    border: none !important;
+    border-left: 3px solid #b85c2a !important;
+    padding: 1px 0 1px 10px !important;
+    border-radius: 0 !important;
+    margin: 2px 0 12px !important;
+    box-shadow: none !important;
+    display: block !important;
+  }
+  .header h1, .page-header h1, .site-header h1 {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #3d3a32 !important;
+    text-align: left !important;
+    text-transform: uppercase !important;
+  }
+}
+
+/* ══ View toggle + Flight-time mode (Getting There from Seattle) ══ */
+.topbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 14px; }
+.view-toggle { display: inline-flex; margin: 0 0 0 auto; }
+.view-toggle button { display: inline-flex; align-items: center; gap: 6px; height: 32px; font-family: inherit; font-size: 12px; font-weight: 500; padding: 0 12px; border: 1.5px solid var(--border2); border-radius: 6px; background: var(--surface); color: #8a6c1a; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.view-toggle button:hover { border-color: #b85c2a; color: var(--accent); }
+.view-toggle button.on { background: var(--surface); border-color: #b85c2a; color: #7a3b1e; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+/* ── Progressive-disclosure toggles (Filters / Views) ── */
+.disc-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; font-family: inherit; font-size: 12px; font-weight: 500; padding: 0 12px; border: 1.5px solid var(--border2); border-radius: 6px; background: var(--surface); color: #8a6c1a; cursor: pointer; white-space: nowrap; transition: all .15s; }
+.disc-btn:hover { border-color: #b85c2a; color: var(--accent); }
+.disc-btn[aria-expanded="true"] { background: var(--warm); border-color: #b85c2a; color: #7a3b1e; }
+.disc-btn .disc-caret { font-size: 10px; transition: transform .15s; }
+.disc-btn[aria-expanded="true"] .disc-caret { transform: rotate(180deg); }
+.disc-btn.has-active { position: relative; }
+.disc-btn.has-active::after { content: ""; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #b85c2a; }
+#views-panel { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 16px 0 26px; padding: 14px 16px; background: var(--warm); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 16px rgba(122,59,30,.08); }
+.browse-lbl { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.seg-toggle { display: inline-flex; border: 1px solid var(--border2); border-radius: 6px; overflow: hidden; }
+.seg-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; font-family: inherit; font-size: 12px; font-weight: 500; padding: 0 14px; border: none; border-right: 1px solid var(--border2); background: var(--surface); color: #8a6c1a; cursor: pointer; transition: background .12s, color .12s; white-space: nowrap; }
+.seg-btn:last-child { border-right: none; }
+.seg-btn:hover { background: var(--warm); color: var(--accent); }
+.seg-btn.on { background: var(--banner-gradient); color: #fdf8f0; }
+#filters-panel { margin: 16px 0 26px; padding: 16px 18px 18px; background: var(--warm); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 16px rgba(122,59,30,.08); }
+#views-panel .view-toggle { margin: 0; }
+#views-panel[hidden], #filters-panel[hidden] { display: none; }
+.flt-controls { display: none; flex-wrap: wrap; gap: 7px 16px; align-items: center; margin: 0 0 14px; }
+body.mode-flights .flt-controls { display: flex; }
+.fcg { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; flex-basis: 100%; }
+.fgl { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); flex: 0 0 58px; text-align: right; }
+.fchip { font-family: inherit; font-size: 12px; padding: 4px 10px; border: 1px solid var(--border2); border-radius: 6px; background: var(--surface); color: #3d3a32; cursor: pointer; white-space: nowrap; transition: all .12s; }
+.fchip:hover { border-color: #b85c2a; color: var(--accent); }
+.fchip.on { background: var(--banner-gradient); border-color: #b85c2a; color: #fdf8f0; }
+#flight-view { display: none; }
+body.mode-flights #flight-view { display: block; }
+body.mode-flights .mosaic { display: none; }
+body.mode-flights #guide-noresult { display: none !important; }
+.fcount { font-size: 11px; color: var(--muted); margin: 2px 0 10px; }
+#fnoresult { display: none; padding: 18px 4px; font-size: 13px; color: var(--muted); }
+#fnoresult button { font-family: inherit; font-size: 12px; margin-left: 8px; padding: 4px 12px; border: 1px solid #b85c2a; border-radius: 6px; background: var(--surface); color: var(--accent); cursor: pointer; }
+#fnoresult button:hover { background: var(--banner-gradient); border-color: #b85c2a; color: #fdf8f0; }
+.flt-grid { column-width: 212px; column-gap: 4px; }
+.flt-grid .dest-card { border-radius: 8px; padding: 9px 12px; align-items: baseline; border-left-width: 5px; break-inside: avoid; -webkit-column-break-inside: avoid; margin: 0 0 4px; }
+.flt-grid .dest-card[data-status="want"]::after { right: 8px; bottom: 8px; }
+/* In flight view the day-trip subtitle is irrelevant and only adds random height */
+.flt-grid .dest-sub { display: none; }
+/* Pin the airport code to a fixed top-right spot so it doesn't drift with card content */
+.flt-grid .fiata { position: absolute; top: 9px; right: 12px; margin-left: 0; }
+.flt { flex-basis: 100%; display: flex; align-items: center; gap: 6px; margin-top: 5px; font-size: 12px; color: var(--muted); }
+.fdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.fdot.r-nonstop { background: #AF52DE; }
+.fdot.r-1stop { background: #46C24E; }
+.fdot.r-2stop { background: #2E90FA; }
+.fdot.r-seasonal { background: #fff; border: 2px solid #AF52DE; width: 6px; height: 6px; }
+.fdot.r-home { background: var(--accent); }
+.ftime { font-size: 12px; font-weight: 600; color: var(--text); }
+.fdl { font-size: 9.5px; font-weight: 700; color: #fff; background: #b01028; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.03em; }
+.fiata { margin-left: auto; font-size: 12px; color: #8a857c; letter-spacing: 0.04em; }
+.fonward { flex-basis: 100%; font-size: 11px; color: #8a857c; margin-top: 3px; }
+.fbreak { flex-basis: 100%; font-size: 11px; color: #8a857c; margin-top: 3px; line-height: 1.5; letter-spacing: 0.01em; }
+.flegend { display: none; flex-wrap: wrap; gap: 14px; margin: 16px 0 4px; font-size: 11.5px; color: var(--muted); }
+body.mode-flights .flegend { display: flex; }
+.flegend span { display: flex; align-items: center; gap: 6px; }
+.fnote { font-size: 11px; color: #8a857c; line-height: 1.7; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border2); max-width: 680px; display: none; }
+body.mode-flights .fnote { display: block; }
+
+/* ── Status filter toggle (All / Been / Want) ── */
+.status-toggle { display: inline-flex; border: 1px solid var(--border2); border-radius: 6px; overflow: hidden; }
+.stab { display: inline-flex; align-items: center; height: 32px; font-family: inherit; font-size: 12px; font-weight: 500; padding: 0 14px; border: none; border-right: 1px solid var(--border2); background: var(--warm); color: #3d3a32; cursor: pointer; transition: background .12s, color .12s; white-space: nowrap; }
+.stab:last-child { border-right: none; }
+.stab:hover { color: var(--accent); background: var(--hover); }
+.stab.on { background: var(--surface); color: #7a3b1e; font-weight: 600; }
+
+/* ══ Compare mode ══ */
+body.mode-compare .mosaic .dest-card { cursor: pointer; user-select: none; }
+body.mode-compare .mosaic .dest-card.cmp-sel {
+  background: rgba(138,108,26,.13);
+  border-left-color: var(--accent);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+body.mode-compare .mosaic .dest-card.cmp-sel .dest-name { color: var(--accent); }
+body.mode-compare .mosaic .dest-card.cmp-sel::after {
+  content: "✓"; position: absolute; right: 8px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  width: auto; height: auto; border-radius: 0; background: none;
+}
+body.mode-compare .mosaic .dest-card[data-status="want"].cmp-sel::after {
+  /* override the "want" blue dot with a checkmark */
+  content: "✓"; width: auto; height: auto; background: none;
+  border-radius: 0; font-size: 11px; color: var(--accent);
+}
+/* Dim non-selected cards once 3 are chosen */
+body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
+
+/* Compare selection panel — sits in the same band as When-to-go / Browse-by */
+.cmp-sel-bar {
+  margin: 16px 0 26px; padding: 14px 18px;
+  background: var(--warm); border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(122,59,30,.08);
+  display: none; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.cmp-sel-bar.cmp-visible { display: flex; }
+.cmp-sel-chips { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; min-width: 0; align-items: center; }
+.cmp-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--warm); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 3px 8px 3px 10px;
+  font-size: 12px; color: var(--text); white-space: nowrap;
+}
+.cmp-chip-x {
+  background: none; border: none; cursor: pointer; color: var(--muted);
+  font-size: 14px; line-height: 1; padding: 0 1px; font-family: inherit;
+}
+.cmp-chip-x:hover { color: #c0392b; }
+.cmp-hint { font-size: 11px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+.cmp-go-btn {
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 7px 18px; border-radius: 20px;
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  color: #fff; border: none; cursor: pointer; flex-shrink: 0;
+  transition: opacity .15s; white-space: nowrap;
+}
+.cmp-go-btn:disabled { opacity: .35; cursor: default; }
+.cmp-exit-btn {
+  font-family: inherit; font-size: 12px; padding: 7px 14px; border-radius: 20px;
+  background: var(--warm); border: 1px solid var(--border2);
+  color: var(--muted); cursor: pointer; flex-shrink: 0; white-space: nowrap;
+}
+.cmp-exit-btn:hover { border-color: #b85c2a; color: var(--accent); }
+
+/* Compare panel */
+#compare-view { padding-bottom: 100px; }
+.cmp-back {
+  font-family: inherit; font-size: 12px; padding: 5px 12px; border-radius: 16px;
+  background: var(--warm); border: 1px solid var(--border2); color: var(--muted);
+  cursor: pointer; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 5px;
+}
+.cmp-back:hover { border-color: #b85c2a; color: var(--accent); }
+.cmp-table-wrap { overflow-x: auto; }
+.cmp-table { border-collapse: separate; border-spacing: 0; min-width: 420px; }
+.cmp-table td { padding: 9px 14px; border-bottom: 1px solid var(--border2); font-size: 13px; vertical-align: middle; }
+.cmp-row-label {
+  font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600; white-space: nowrap;
+  padding-right: 10px; min-width: 90px;
+}
+.cmp-col {
+  text-align: center; min-width: 140px;
+  border-left: 1px solid var(--border2); border-right: 1px solid var(--border2);
+}
+.cmp-col:last-child { border-right: 1px solid var(--border2); }
+.cmp-city-cell {
+  background: var(--warm);
+  border-radius: 8px 8px 0 0;
+  border-top: 1px solid var(--border2) !important;
+  padding: 12px 10px !important;
+}
+.cmp-city-flag { font-size: 24px; display: block; line-height: 1; margin-bottom: 5px; }
+.cmp-city-name { font-size: 13px; font-weight: 700; color: var(--text); display: block; }
+.cmp-city-status { font-size: 11px; color: var(--muted); display: block; margin-top: 3px; }
+.cmp-remove-btn {
+  font-family: inherit; font-size: 10px; color: var(--muted);
+  background: none; border: 1px solid var(--border2);
+  border-radius: 10px; padding: 2px 7px; cursor: pointer; margin-top: 7px;
+}
+.cmp-remove-btn:hover { color: #c0392b; border-color: #c0392b; }
+/* Close bottom border on last row */
+.cmp-table tr:last-child td { border-bottom: 1px solid var(--border2); border-radius: 0 0 4px 4px; }
+
+/* Climate bars */
+.cmp-bars { display: flex; gap: 2px; align-items: flex-end; height: 42px; justify-content: center; margin: 4px auto 2px; }
+.cmp-bar-col { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.cmp-bar { width: 9px; border-radius: 2px 2px 0 0; min-height: 3px; }
+.cmp-bar.cmp-cur { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 2px 2px 0 0; }
+.cmp-bar-lbl { font-size: 9px; color: var(--muted); line-height: 1; }
+.cmp-temp-now { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+/* Guide link */
+.cmp-guide-link {
+  display: inline-block; font-size: 12px; font-weight: 600;
+  color: var(--accent); text-decoration: none;
+  padding: 6px 14px; border: 1px solid var(--accent); border-radius: 14px;
+  transition: background .12s, color .12s;
+}
+.cmp-guide-link:hover { background: var(--accent); color: #fff; }
+
+@media (max-width: 600px) {
+  .cmp-sel-bar { padding: 8px 12px; gap: 7px; }
+  .cmp-table td { padding: 8px 10px; }
+  .cmp-col { min-width: 110px; }
+  .cmp-bar { width: 7px; }
+  .cmp-bar-lbl { font-size: 8px; }
+  /* Group-by seg toggle — make full-width so "Flight time" isn't clipped */
+  .seg-toggle { display: flex !important; width: 100% !important; }
+  .seg-btn { flex: 1 !important; justify-content: center !important; padding: 0 8px !important; font-size: 13px !important; height: 34px !important; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=17">
+</head>
+<body>
+<div class="wrap">
+
+<div id="toolbar-mount" data-no-footnote="1" data-depth="1" data-maxwidth="940" data-toolbar-theme="guide" data-prev="./Zurich/zurich_v1.html" data-next="./Abu Dhabi/abu_dhabi_v1.html"></div>
+<script src="../assets/toolbar.js?v=47"></script>
+
+<div class="header">
+  <h1>Travel Guides</h1>
+</div>
+
+<div class="stat-row">
+  <div class="stat-line" id="guide-count"></div>
+  <div class="stat-line stat-line--right" id="country-count"></div>
+</div>
+
+<div class="topbar">
+  <div id="search-wrap" style="position:relative;display:flex;align-items:center;gap:6px">
+    <input type="search" id="guide-search" placeholder="🔍" aria-label="Search guides" autocomplete="off">
+    <button id="btn-search-guides" title="Search inside guides" style="height:32px;padding:0 12px;font-size:12px;font-weight:500;border:1.5px solid var(--border2);border-radius:6px;background:var(--surface);color:#8a6c1a;cursor:pointer;white-space:nowrap;transition:all .15s">📖 Search guides</button>
+  </div>
+  <div id="status-toggle" class="status-toggle">
+    <button class="stab on" data-s="all">All</button>
+    <button class="stab" data-s="been">Been</button>
+    <button class="stab" data-s="want">Want</button>
+  </div>
+  <div class="view-toggle" style="margin:0">
+    <button id="view-compare">📶 Compare cities</button>
+  </div>
+  <button id="btn-filters-toggle" class="disc-btn" aria-expanded="false" aria-controls="filters-panel">📅 When to go <span class="disc-caret">▾</span></button>
+  <button id="btn-views-toggle" class="disc-btn" aria-expanded="false" aria-controls="views-panel">📑 Browse by <span class="disc-caret">▾</span></button>
+</div>
+<div id="views-panel" hidden>
+  <span class="browse-lbl">Group destinations by</span>
+  <div id="browse-seg" class="seg-toggle" role="group" aria-label="Group destinations by">
+    <button class="seg-btn on" id="view-country" data-view="country">🗾 Country</button>
+    <button class="seg-btn" id="btn-region-group" data-view="region">🌍 Region</button>
+    <button class="seg-btn" id="view-flights" data-view="flights">🛫 Flight time</button>
+  </div>
+</div>
+<div id="compare-mount"></div>
+<div id="guide-noresult">No destinations found.</div>
+
+<style>
+/* ── Global content search (in-guide matches) ── */
+#content-search{margin:10px 0 4px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);padding:6px;max-height:62vh;overflow:auto;box-shadow:0 6px 18px rgba(0,0,0,.06);}
+#content-search[hidden]{display:none;}
+#btn-search-guides.active{background:var(--warm);border-color:#b85c2a;color:#7a3b1e;}
+.cs-head{font-size:12px;color:#A8895A;padding:6px 8px 8px;font-weight:600;}
+.cs-guide{padding:6px 8px;border-top:1px solid var(--border2);}
+.cs-guide:first-of-type{border-top:none;}
+.cs-city{display:inline-block;font-weight:700;font-size:13.5px;color:#8a6c1a;text-decoration:none;margin-bottom:3px;}
+.cs-city:hover{text-decoration:underline;}
+.cs-items{display:flex;flex-direction:column;gap:2px;}
+.cs-item{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;line-height:1.35;color:var(--text);text-decoration:none;padding:4px 6px;border-radius:6px;min-height:32px;}
+.cs-item:hover{background:rgba(184,134,11,.08);}
+.cs-item mark{background:rgba(184,134,11,.28);color:inherit;border-radius:2px;padding:0 1px;}
+.cs-sec{flex:none;font-size:11px;color:#A8895A;white-space:nowrap;}
+.cs-empty,.cs-more{font-size:12px;color:#A8895A;padding:10px 8px;text-align:center;}
+@media(max-width:600px){.cs-item{min-height:40px;}}
+</style>
+<div id="content-search" hidden></div>
+
+<div class="flt-controls">
+  <div class="fcg">
+    <span class="fgl">Stops</span>
+    <button class="fchip stop on" data-stop="all">All</button>
+    <button class="fchip stop" data-stop="nonstop">🟣 Nonstop</button>
+    <button class="fchip stop" data-stop="1stop">🟢 1 connection</button>
+    <button class="fchip stop" data-stop="2stop">🔵 2 connections</button>
+  </div>
+  <div class="fcg">
+    <span class="fgl">Length</span>
+    <button class="fchip dur on" data-dur="all">Any</button>
+    <button class="fchip dur" data-dur="u5">Under 5h</button>
+    <button class="fchip dur" data-dur="u8">Under 8h</button>
+    <button class="fchip dur" data-dur="u10">Under 10h</button>
+    <button class="fchip dur" data-dur="u12">Under 12h</button>
+    <button class="fchip dur" data-dur="u15">Under 15h</button>
+    <button class="fchip dur" data-dur="o15">15h+</button>
+  </div>
+  <div class="fcg" id="freg"><span class="fgl">Region</span><button class="fchip reg on" data-reg="all">All</button></div>
+</div>
+
+
+<div id="filters-panel" hidden>
+<div id="season-filter">
+  <span class="sfl">📅 Best in</span>
+  <button class="mchip" data-m="0">Jan</button>
+  <button class="mchip" data-m="1">Feb</button>
+  <button class="mchip" data-m="2">Mar</button>
+  <button class="mchip" data-m="3">Apr</button>
+  <button class="mchip" data-m="4">May</button>
+  <button class="mchip" data-m="5">Jun</button>
+  <button class="mchip" data-m="6">Jul</button>
+  <button class="mchip" data-m="7">Aug</button>
+  <button class="mchip" data-m="8">Sep</button>
+  <button class="mchip" data-m="9">Oct</button>
+  <button class="mchip" data-m="10">Nov</button>
+  <button class="mchip" data-m="11">Dec</button>
+  <span id="season-badge">✕ clear</span>
+</div>
+<div id="temp-range">
+  <span class="sfl">🌡️ Lo min</span>
+  <input type="range" id="tlomin" min="-20" max="35" value="10" step="1">
+  <span class="temp-val" id="tlomin-val">10°C</span>
+  <span class="temp-sep" style="margin:0 4px">·</span>
+  <span class="sfl">Hi max</span>
+  <input type="range" id="tmin" min="-10" max="45" value="30" step="1">
+  <span class="temp-val" id="tmin-val">30°C</span>
+  <div id="unit-toggle" role="group" aria-label="Temperature unit">
+    <button id="unit-c" class="utab on" data-f="0">°C</button>
+    <button id="unit-f" class="utab" data-f="1">°F</button>
+  </div>
+</div>
+</div><!-- /filters-panel -->
+
+<div class="mosaic">
+
+<!-- ── Argentina ── -->
+<div class="country" data-country="argentina">
+  <div class="country-label">🇦🇷 Argentina · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Buenos Aires/buenos_aires_v1.html" data-guide-num="5" data-guide-prev="./Budapest/budapest_v1.html" data-guide-next="./Cambridge/cambridge_v1.html">
+      <span class="dest-flag">🇦🇷</span><span class="dest-name">Buenos Aires</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Australia ── -->
+<div class="country" data-country="australia">
+  <div class="country-label">🇦🇺 Australia · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Melbourne/melbourne_v1.html" data-guide-num="97" data-guide-prev="./Kauai/kauai_v1.html" data-guide-next="./Miami/miami_v1.html">
+      <span class="dest-flag">🇦🇺</span><span class="dest-name">Melbourne</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Sydney/sydney_v2.html" data-guide-num="2" data-guide-prev="./Stuttgart/stuttgart_v1.html" data-guide-next="./Taipei/taipei_v1.html">
+      <span class="dest-flag">🇦🇺</span><span class="dest-name">Sydney</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Austria ── -->
+<div class="country" data-country="austria">
+  <div class="country-label">🇦🇹 Austria · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Salzburg/salzburg_v1.html" data-guide-num="119" data-guide-prev="./Rome/rome_v1.html" data-guide-next="./San Diego/san_diego_v1.html">
+      <span class="dest-flag">🇦🇹</span><span class="dest-name">Salzburg</span>
+    </a>
+    <a class="dest-card" href="./Vienna/vienna_v1.html" data-guide-num="3" data-guide-prev="./Verona/verona_v1.html" data-guide-next="./Virgin Islands/virgin_islands_v1.html">
+      <span class="dest-flag">🇦🇹</span><span class="dest-name">Vienna</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Belgium ── -->
+<div class="country" data-country="belgium">
+  <div class="country-label">🇧🇪 Belgium · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Bruges/bruges_v1.html" data-guide-num="3" data-guide-prev="./Boston/boston_v1.html" data-guide-next="./Brussels/brussels_v1.html">
+      <span class="dest-flag">🇧🇪</span><span class="dest-name">Bruges</span>
+    </a>
+    <a class="dest-card" href="./Brussels/brussels_v1.html" data-guide-num="4" data-guide-prev="./Bruges/bruges_v1.html" data-guide-next="./Budapest/budapest_v1.html">
+      <span class="dest-flag">🇧🇪</span><span class="dest-name">Brussels</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Brazil ── -->
+<div class="country" data-country="brazil">
+  <div class="country-label">🇧🇷 Brazil · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Rio de Janeiro/rio_de_janeiro_v1.html" data-guide-num="88" data-guide-prev="./Queenstown/queenstown_v1.html" data-guide-next="./Rome/rome_v1.html">
+      <span class="dest-flag">🇧🇷</span><span class="dest-name">Rio de Janeiro</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Canada ── -->
+<div class="country" data-country="canada">
+  <div class="country-label">🇨🇦 Canada · <span class="country-count">4 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Montreal/montreal_v1.html" data-guide-num="5" data-guide-prev="./Monaco/monaco_v1.html" data-guide-next="./Munich/munich_v2.html">
+      <span class="dest-flag">🇨🇦</span><span class="dest-name">Montréal</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Quebec City/quebec_city_v1.html" data-guide-num="6" data-guide-prev="./Puerto Rico/puerto_rico_v1.html" data-guide-next="./Queenstown/queenstown_v1.html">
+      <span class="dest-flag">🇨🇦</span><span class="dest-name">Québec City</span>
+    </a>
+    <a class="dest-card" href="./Toronto/toronto_v1.html" data-guide-num="67" data-guide-prev="./Toledo/toledo_v1.html" data-guide-next="./Tromso/tromso_v1.html">
+      <span class="dest-flag">🇨🇦</span><span class="dest-name">Toronto</span>
+    </a>
+    <a class="dest-card" href="./Vancouver/vancouver_v1.html" data-guide-num="7" data-guide-prev="./Turin/turin_v14.html" data-guide-next="./Venice/venice_v1.html">
+      <span class="dest-flag">🇨🇦</span><span class="dest-name">Vancouver</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Caribbean Islands ── -->
+<div class="country" data-country="caribbean-islands">
+  <div class="country-label">🏝️ Caribbean Islands · <span class="country-count">8 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Aruba/aruba_v1.html" data-guide-num="79" data-guide-prev="./Annecy/annecy_v1.html" data-guide-next="./Bahamas/bahamas_v1.html">
+      <span class="dest-flag">🇦🇼</span><span class="dest-name">Aruba</span>
+    </a>
+    <a class="dest-card" href="./Bahamas/bahamas_v1.html" data-guide-num="91" data-guide-prev="./Aruba/aruba_v1.html" data-guide-next="./Athens/athens_v1.html">
+      <span class="dest-flag">🇧🇸</span><span class="dest-name">The Bahamas</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Barbados/barbados_v1.html" data-guide-num="89" data-guide-prev="./Montevideo/montevideo_v1.html" data-guide-next="./Bangkok/bangkok_v1.html">
+      <span class="dest-flag">🇧🇧</span><span class="dest-name">Barbados</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Cayman Islands/cayman_islands_v1.html" data-guide-num="88" data-guide-prev="./Cascais/cascais_v2.html" data-guide-next="./Chicago/chicago_v1.html">
+      <span class="dest-flag">🇰🇾</span><span class="dest-name">Cayman Islands</span>
+    </a>
+    <a class="dest-card" href="./Curacao/curacao_v1.html" data-guide-num="85" data-guide-prev="./Corfu/corfu_v1.html" data-guide-next="./Cusco/cusco_v1.html">
+      <span class="dest-flag">🇨🇼</span><span class="dest-name">Curaçao</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Puerto Rico/puerto_rico_v1.html" data-guide-num="16" data-guide-prev="./Prague/prague_v1.html" data-guide-next="./Quebec City/quebec_city_v1.html">
+      <span class="dest-flag">🇵🇷</span><span class="dest-name">Puerto Rico</span>
+    </a>
+    <a class="dest-card" href="./Sint Maarten/sint_maarten_v1.html" data-guide-num="86" data-guide-prev="./Singapore/singapore_v3.html" data-guide-next="./Sintra/sintra_v2.html">
+      <span class="dest-flag">🇸🇽</span><span class="dest-name">Sint Maarten</span>
+    </a>
+    <a class="dest-card" href="./Virgin Islands/virgin_islands_v1.html" data-guide-num="90" data-guide-prev="./Vienna/vienna_v1.html" data-guide-next="./Wellington/wellington_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Virgin Islands</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Chile ── -->
+<div class="country" data-country="chile">
+  <div class="country-label">🇨🇱 Chile · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Santiago/santiago_v1.html" data-guide-num="85" data-guide-prev="./San Sebastian/san_sebastian_v1.html" data-guide-next="./Scottsdale/scottsdale_v1.html">
+      <span class="dest-flag">🇨🇱</span><span class="dest-name">Santiago</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── China ── -->
+<div class="country" data-country="china">
+  <div class="country-label">🇨🇳 China · <span class="country-count">5 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Beijing/beijing_v1.html" data-guide-num="20" data-guide-prev="./Bend/bend_v2.html" data-guide-next="./Bergen/bergen_v1.html">
+      <span class="dest-flag">🇨🇳</span><span class="dest-name">Beijing</span>
+    </a>
+    <a class="dest-card" href="./Chongqing/chongqing_v1.html" data-guide-num="21" data-guide-prev="./Chicago/chicago_v1.html" data-guide-next="./Cinque Terre/cinque_terre_v1.html">
+      <span class="dest-flag">🇨🇳</span><span class="dest-name">Chongqing</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Hong Kong/hong_kong_v1.html" data-guide-num="22" data-guide-prev="./Helsinki/helsinki_v1.html" data-guide-next="./Iceland/reykjavik_v2.html">
+      <span class="dest-flag">🇭🇰</span><span class="dest-name">Hong Kong</span>
+    </a>
+    <a class="dest-card" href="./Shanghai/shanghai_v1.html" data-guide-num="23" data-guide-prev="./Seville/seville_v1.html" data-guide-next="./Siena/siena_v1.html">
+      <span class="dest-flag">🇨🇳</span><span class="dest-name">Shanghai</span>
+    </a>
+    <a class="dest-card" href="./Zhangjiajie/zhangjiajie_v1.html" data-guide-num="24" data-guide-prev="./Wellington/wellington_v1.html" data-guide-next="./Zurich/zurich_v1.html">
+      <span class="dest-flag">🇨🇳</span><span class="dest-name">Zhangjiajie</span>
+      <span class="dest-sub">incl. Avatar “Hallelujah” Mountains</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Croatia ── -->
+<div class="country" data-country="croatia">
+  <div class="country-label">🇭🇷 Croatia · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Dubrovnik/guide_v1.html" data-guide-num="112" data-guide-prev="./Dublin/dublin_v1.html" data-guide-next="./Edinburgh/edinburgh_v1.html">
+      <span class="dest-flag">🇭🇷</span><span class="dest-name">Dubrovnik</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Split/split_v1.html" data-guide-num="96" data-guide-prev="./Sorrento/sorrento_v1.html" data-guide-next="./Stockholm/stockholm_v1.html">
+      <span class="dest-flag">🇭🇷</span><span class="dest-name">Split</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Czechia ── -->
+<div class="country" data-country="czechia">
+  <div class="country-label">🇨🇿 Czechia · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Prague/prague_v1.html" data-guide-num="25" data-guide-prev="./Porto/porto_v2.html" data-guide-next="./Puerto Rico/puerto_rico_v1.html">
+      <span class="dest-flag">🇨🇿</span><span class="dest-name">Prague</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Denmark ── -->
+<div class="country" data-country="denmark">
+  <div class="country-label">🇩🇰 Denmark · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Copenhagen/copenhagen_v1.html" data-guide-num="26" data-guide-prev="./Colmar/colmar_v1.html" data-guide-next="./Corfu/corfu_v1.html">
+      <span class="dest-flag">🇩🇰</span><span class="dest-name">Copenhagen</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Estonia ── -->
+<div class="country" data-country="estonia">
+  <div class="country-label">🇪🇪 Estonia · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Tallinn/tallinn_v1.html" data-guide-num="114" data-guide-prev="./Taipei/taipei_v1.html" data-guide-next="./Kyoto/kyoto_v1.html">
+      <span class="dest-flag">🇪🇪</span><span class="dest-name">Tallinn</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Finland ── -->
+<div class="country" data-country="finland">
+  <div class="country-label">🇫🇮 Finland · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Helsinki/helsinki_v1.html" data-guide-num="27" data-guide-prev="./Gothenburg/gothenburg_v1.html" data-guide-next="./Hong Kong/hong_kong_v1.html">
+      <span class="dest-flag">🇫🇮</span><span class="dest-name">Helsinki</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── France ── -->
+<div class="country" data-country="france">
+  <div class="country-label">🇫🇷 France · <span class="country-count">11 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Aix-en-Provence/aix-en-provence_v1.html" data-guide-num="126" data-guide-prev="./Abu Dhabi/abu_dhabi_v1.html" data-guide-next="./Alaska/alaska_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Aix-en-Provence</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Annecy/annecy_v1.html" data-guide-num="122" data-guide-prev="./Amsterdam/amsterdam_v1.html" data-guide-next="./Aruba/aruba_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Annecy</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Bordeaux/bordeaux_v1.html" data-guide-num="79" data-guide-prev="./Bologna/bologna_v1.html" data-guide-next="./Boston/boston_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Bordeaux</span>
+    </a>
+    <a class="dest-card" href="./Cannes/cannes_v1.html" data-guide-num="74" data-guide-prev="./Cambridge/cambridge_v1.html" data-guide-next="./Capri/capri_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Cannes</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Colmar/colmar_v1.html" data-guide-num="76" data-guide-prev="./Cinque Terre/cinque_terre_v1.html" data-guide-next="./Copenhagen/copenhagen_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Colmar</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Lille/lille_v1.html" data-guide-num="97" data-guide-prev="./Lake Como/lake_como_v1.html" data-guide-next="./Lisbon/lisbon_v4.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Lille</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Lyon/lyon_v1.html" data-guide-num="78" data-guide-prev="./Luxembourg/luxembourg_v1.html" data-guide-next="./Turin/turin_v14.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Lyon</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Marseille/marseille_v1.html" data-guide-num="75" data-guide-prev="./Marrakech/marrakech_v1.html" data-guide-next="./Maui/maui_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Marseille</span>
+    </a>
+    <a class="dest-card" href="./Nice/nice_v1.html" data-guide-num="13" data-guide-prev="./New York/new_york_v1.html" data-guide-next="./Oahu/oahu_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Nice</span>
+    </a>
+    <a class="dest-card" href="./Paris/paris_v7.html" data-guide-num="14" data-guide-prev="./Palo Alto/palo_alto_v6.html" data-guide-next="./Pasadena/pasadena_v5.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Paris</span>
+    </a>
+    <a class="dest-card" href="./Strasbourg/strasbourg_v1.html" data-guide-num="15" data-guide-prev="./Stockholm/stockholm_v1.html" data-guide-next="./Stuttgart/stuttgart_v1.html">
+      <span class="dest-flag">🇫🇷</span><span class="dest-name">Strasbourg</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Germany ── -->
+<div class="country" data-country="germany">
+  <div class="country-label">🇩🇪 Germany · <span class="country-count">4 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Berlin/berlin_v1.html" data-guide-num="36" data-guide-prev="./Bergen/bergen_v1.html" data-guide-next="./Big Island/big_island_v1.html">
+      <span class="dest-flag">🇩🇪</span><span class="dest-name">Berlin</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Marktoberdorf/marktoberdorf_v1.html" data-guide-num="37" data-guide-prev="./Madrid/madrid_v1.html" data-guide-next="./Marrakech/marrakech_v1.html">
+      <span class="dest-flag">🇩🇪</span><span class="dest-name">Marktoberdorf</span>
+    </a>
+    <a class="dest-card" href="./Munich/munich_v2.html" data-guide-num="38" data-guide-prev="./Montreal/montreal_v1.html" data-guide-next="./Naples/naples_v1.html">
+      <span class="dest-flag">🇩🇪</span><span class="dest-name">Munich</span>
+    </a>
+    <a class="dest-card" href="./Stuttgart/stuttgart_v1.html" data-guide-num="39" data-guide-prev="./Strasbourg/strasbourg_v1.html" data-guide-next="./Sydney/sydney_v2.html">
+      <span class="dest-flag">🇩🇪</span><span class="dest-name">Stuttgart</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Greece ── -->
+<div class="country" data-country="greece">
+  <div class="country-label">🇬🇷 Greece · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Athens/athens_v1.html" data-guide-num="40" data-guide-prev="./Bahamas/bahamas_v1.html" data-guide-next="./Atlanta/atlanta_v1.html">
+      <span class="dest-flag">🇬🇷</span><span class="dest-name">Athens</span>
+    </a>
+    <a class="dest-card" href="./Corfu/corfu_v1.html" data-guide-num="41" data-guide-prev="./Copenhagen/copenhagen_v1.html" data-guide-next="./Curacao/curacao_v1.html">
+      <span class="dest-flag">🇬🇷</span><span class="dest-name">Corfu</span>
+    </a>
+  </div>
+</div>
+
+
+<!-- ── Hungary ── -->
+<div class="country" data-country="hungary">
+  <div class="country-label">🇭🇺 Hungary · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Budapest/budapest_v1.html" data-guide-num="136" data-guide-prev="./Brussels/brussels_v1.html" data-guide-next="./Buenos Aires/buenos_aires_v1.html">
+      <span class="dest-flag">🇭🇺</span><span class="dest-name">Budapest</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Iceland ── -->
+<div class="country" data-country="iceland">
+  <div class="country-label">🇮🇸 Iceland · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Iceland/reykjavik_v2.html" data-guide-num="46" data-guide-prev="./Hong Kong/hong_kong_v1.html" data-guide-next="./Bali/bali_v1.html">
+      <span class="dest-flag">🇮🇸</span><span class="dest-name">Reykjavik</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Indonesia ── -->
+<div class="country" data-country="indonesia">
+  <div class="country-label">🇮🇩 Indonesia · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Bali/bali_v1.html" data-guide-num="135" data-guide-prev="./Iceland/reykjavik_v2.html" data-guide-next="./Lagos/lagos_v1.html">
+      <span class="dest-flag">🇮🇩</span><span class="dest-name">Bali</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Ireland ── -->
+<div class="country" data-country="ireland">
+  <div class="country-label">🇮🇪 Ireland · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Dublin/dublin_v1.html" data-guide-num="47" data-guide-prev="./Istanbul/istanbul_v1.html" data-guide-next="./Dubrovnik/guide_v1.html">
+      <span class="dest-flag">🇮🇪</span><span class="dest-name">Dublin</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Italy ── -->
+<div class="country" data-country="italy">
+  <div class="country-label">🇮🇹 Italy · <span class="country-count">15 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Amalfi/amalfi_v1.html" data-guide-num="108" data-guide-prev="./Alesund/alesund_v1.html" data-guide-next="./Amsterdam/amsterdam_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Amalfi</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Bologna/bologna_v1.html" data-guide-num="121" data-guide-prev="./Big Island/big_island_v1.html" data-guide-next="./Bordeaux/bordeaux_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Bologna</span>
+    </a>
+    <a class="dest-card" href="./Capri/capri_v1.html" data-guide-num="96" data-guide-prev="./Cannes/cannes_v1.html" data-guide-next="./Cascais/cascais_v2.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Capri</span>
+    </a>
+    <a class="dest-card" href="./Cinque Terre/cinque_terre_v1.html" data-guide-num="48" data-guide-prev="./Chongqing/chongqing_v1.html" data-guide-next="./Colmar/colmar_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Cinque Terre</span>
+    </a>
+    <a class="dest-card" href="./Florence/florence_v1.html" data-guide-num="49" data-guide-prev="./Edinburgh/edinburgh_v1.html" data-guide-next="./Geneva/geneva_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Florence</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Lake Como/lake_como_v1.html" data-guide-num="117" data-guide-prev="./Lagos/lagos_v1.html" data-guide-next="./Lille/lille_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Lake Como</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Milan/milan_v1.html" data-guide-num="50" data-guide-prev="./Miami/miami_v1.html" data-guide-next="./Monaco/monaco_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Milan</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Naples/naples_v1.html" data-guide-num="127" data-guide-prev="./Munich/munich_v2.html" data-guide-next="./New York/new_york_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Naples</span>
+    </a>
+    <a class="dest-card" href="./Pisa/pisa_v1.html" data-guide-num="51" data-guide-prev="./Pasadena/pasadena_v5.html" data-guide-next="./Porto/porto_v2.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Pisa</span>
+    </a>
+    <a class="dest-card" href="./Rome/rome_v1.html" data-guide-num="52" data-guide-prev="./Rio de Janeiro/rio_de_janeiro_v1.html" data-guide-next="./Salzburg/salzburg_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Rome</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Siena/siena_v1.html" data-guide-num="116" data-guide-prev="./Shanghai/shanghai_v1.html" data-guide-next="./Singapore/singapore_v3.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Siena</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Sorrento/sorrento_v1.html" data-guide-num="95" data-guide-prev="./Sintra/sintra_v2.html" data-guide-next="./Split/split_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Sorrento</span>
+    </a>
+    <a class="dest-card" href="./Turin/turin_v14.html" data-guide-num="53" data-guide-prev="./Lyon/lyon_v1.html" data-guide-next="./Vancouver/vancouver_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Turin</span>
+    </a>
+    <a class="dest-card" href="./Venice/venice_v1.html" data-guide-num="54" data-guide-prev="./Vancouver/vancouver_v1.html" data-guide-next="./Verona/verona_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Venice</span>
+    </a>
+    <a class="dest-card" href="./Verona/verona_v1.html" data-guide-num="122" data-guide-prev="./Venice/venice_v1.html" data-guide-next="./Vienna/vienna_v1.html">
+      <span class="dest-flag">🇮🇹</span><span class="dest-name">Verona</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Japan ── -->
+<div class="country" data-country="japan">
+  <div class="country-label">🇯🇵 Japan · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Kyoto/kyoto_v1.html" data-guide-num="55" data-guide-prev="./Tallinn/tallinn_v1.html" data-guide-next="./Tokyo/tokyo_v1.html">
+      <span class="dest-flag">🇯🇵</span><span class="dest-name">Kyoto</span>
+    </a>
+    <a class="dest-card" href="./Tokyo/tokyo_v1.html" data-guide-num="56" data-guide-prev="./Kyoto/kyoto_v1.html" data-guide-next="./Toledo/toledo_v1.html">
+      <span class="dest-flag">🇯🇵</span><span class="dest-name">Tokyo</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Luxembourg ── -->
+<div class="country" data-country="luxembourg">
+  <div class="country-label">🇱🇺 Luxembourg · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Luxembourg/luxembourg_v1.html" data-guide-num="57" data-guide-prev="./Lucerne/lucerne_v1.html" data-guide-next="./Lyon/lyon_v1.html">
+      <span class="dest-flag">🇱🇺</span><span class="dest-name">Luxembourg</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Monaco ── -->
+<div class="country" data-country="monaco">
+  <div class="country-label">🇲🇨 Monaco · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Monaco/monaco_v1.html" data-guide-num="58" data-guide-prev="./Milan/milan_v1.html" data-guide-next="./Montreal/montreal_v1.html">
+      <span class="dest-flag">🇲🇨</span><span class="dest-name">Monaco</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Morocco ── -->
+<div class="country" data-country="morocco">
+  <div class="country-label">🇲🇦 Morocco · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Marrakech/marrakech_v1.html" data-guide-num="59" data-guide-prev="./Marktoberdorf/marktoberdorf_v1.html" data-guide-next="./Marseille/marseille_v1.html">
+      <span class="dest-flag">🇲🇦</span><span class="dest-name">Marrakech</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Netherlands ── -->
+<div class="country" data-country="netherlands">
+  <div class="country-label">🇳🇱 Netherlands · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Amsterdam/amsterdam_v1.html" data-guide-num="60" data-guide-prev="./Amalfi/amalfi_v1.html" data-guide-next="./Annecy/annecy_v1.html">
+      <span class="dest-flag">🇳🇱</span><span class="dest-name">Amsterdam</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── New Zealand ── -->
+<div class="country" data-country="new-zealand">
+  <div class="country-label">🇳🇿 New Zealand · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Queenstown/queenstown_v1.html" data-guide-num="113" data-guide-prev="./Quebec City/quebec_city_v1.html" data-guide-next="./Rio de Janeiro/rio_de_janeiro_v1.html">
+      <span class="dest-flag">🇳🇿</span><span class="dest-name">Queenstown</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Wellington/wellington_v1.html" data-guide-num="115" data-guide-prev="./Virgin Islands/virgin_islands_v1.html" data-guide-next="./Zhangjiajie/zhangjiajie_v1.html">
+      <span class="dest-flag">🇳🇿</span><span class="dest-name">Wellington</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Norway ── -->
+<div class="country" data-country="norway">
+  <div class="country-label">🇳🇴 Norway · <span class="country-count">4 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Alesund/alesund_v1.html" data-guide-num="61" data-guide-prev="./Alaska/alaska_v1.html" data-guide-next="./Amalfi/amalfi_v1.html">
+      <span class="dest-flag">🇳🇴</span><span class="dest-name">Ålesund</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Bergen/bergen_v1.html" data-guide-num="112" data-guide-prev="./Beijing/beijing_v1.html" data-guide-next="./Berlin/berlin_v1.html">
+      <span class="dest-flag">🇳🇴</span><span class="dest-name">Bergen</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Oslo/oslo_v1.html" data-guide-num="62" data-guide-prev="./Orlando/orlando_v1.html" data-guide-next="./Oxford/oxford_v1.html">
+      <span class="dest-flag">🇳🇴</span><span class="dest-name">Oslo</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Tromso/tromso_v1.html" data-guide-num="63" data-guide-prev="./Toronto/toronto_v1.html" data-guide-next="./Lima/lima_v1.html">
+      <span class="dest-flag">🇳🇴</span><span class="dest-name">Tromsø</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Peru ── -->
+<div class="country" data-country="peru">
+  <div class="country-label">🇵🇪 Peru · <span class="country-count">3 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Cusco/cusco_v1.html" data-guide-num="64" data-guide-prev="./Curacao/curacao_v1.html" data-guide-next="./Dubai/dubai_v1.html">
+      <span class="dest-flag">🇵🇪</span><span class="dest-name">Cusco</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Lima/lima_v1.html" data-guide-num="65" data-guide-prev="./Tromso/tromso_v1.html" data-guide-next="./MachuPicchu/machupicchu_v1.html">
+      <span class="dest-flag">🇵🇪</span><span class="dest-name">Lima</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./MachuPicchu/machupicchu_v1.html" data-guide-num="66" data-guide-prev="./Lima/lima_v1.html" data-guide-next="./Madeira/madeira_v1.html">
+      <span class="dest-flag">🇵🇪</span><span class="dest-name">Machu Picchu</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Portugal ── -->
+<div class="country" data-country="portugal">
+  <div class="country-label">🇵🇹 Portugal · <span class="country-count">7 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Azores/guide_v1.html" data-guide-num="129" data-guide-prev="./Austin/austin_v1.html" data-guide-next="./Montevideo/montevideo_v1.html">
+      <span class="dest-flag">🇵🇹</span><span class="dest-name">Azores</span>
+      <span class="dest-sub">São Miguel · Ponta Delgada</span>
+    </a>
+    <a class="dest-card" href="./Cascais/cascais_v2.html" data-guide-num="67" data-guide-prev="./Capri/capri_v1.html" data-guide-next="./Cayman Islands/cayman_islands_v1.html">
+      <span class="dest-flag">🇵🇹</span><span class="dest-name">Cascais</span>
+    </a>
+    <a class="dest-card" href="./Lagos/lagos_v1.html" data-guide-num="68" data-guide-prev="./Bali/bali_v1.html" data-guide-next="./Lake Como/lake_como_v1.html">
+      <span class="dest-flag">🇵🇹</span><span class="dest-name">Lagos</span>
+    </a>
+    <a class="dest-card" href="./Lisbon/lisbon_v4.html" data-guide-num="69" data-guide-prev="./Lille/lille_v1.html" data-guide-next="./Ljubljana/ljubljana_v1.html">
+      <span class="dest-flag">🇵🇹</span><span class="dest-name">Lisbon</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Madeira/madeira_v1.html" data-guide-num="128" data-guide-prev="./MachuPicchu/machupicchu_v1.html" data-guide-next="./Madrid/madrid_v1.html">
+      <span class="dest-flag">🇵🇹</span><span class="dest-name">Madeira</span>
+    </a>
+    <a class="dest-card" href="./Porto/porto_v2.html" data-guide-num="70" data-guide-prev="./Pisa/pisa_v1.html" data-guide-next="./Prague/prague_v1.html">
+      <span class="dest-flag">🇵🇹</span><span class="dest-name">Porto</span>
+    </a>
+    <a class="dest-card" href="./Sintra/sintra_v2.html" data-guide-num="71" data-guide-prev="./Sint Maarten/sint_maarten_v1.html" data-guide-next="./Sorrento/sorrento_v1.html">
+      <span class="dest-flag">🇵🇹</span><span class="dest-name">Sintra</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Singapore ── -->
+<div class="country" data-country="singapore">
+  <div class="country-label">🇸🇬 Singapore · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Singapore/singapore_v3.html" data-guide-num="72" data-guide-prev="./Siena/siena_v1.html" data-guide-next="./Sint Maarten/sint_maarten_v1.html">
+      <span class="dest-flag">🇸🇬</span><span class="dest-name">Singapore</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Slovenia ── -->
+<div class="country" data-country="slovenia">
+  <div class="country-label">🇸🇮 Slovenia · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Ljubljana/ljubljana_v1.html" data-guide-num="120" data-guide-prev="./Lisbon/lisbon_v4.html" data-guide-next="./London/london_v5.html">
+      <span class="dest-flag">🇸🇮</span><span class="dest-name">Ljubljana</span>
+      <span class="dest-sub">incl. Postojna Cave · Lake Bled</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── South Korea ── -->
+<div class="country" data-country="south-korea">
+  <div class="country-label">🇰🇷 South Korea · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Seoul/seoul_v1.html" data-guide-num="44" data-guide-prev="./Seattle/seattle_v1.html" data-guide-next="./Seville/seville_v1.html">
+      <span class="dest-flag">🇰🇷</span><span class="dest-name">Seoul</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Spain ── -->
+<div class="country" data-country="spain">
+  <div class="country-label">🇪🇸 Spain · <span class="country-count">5 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Barcelona/barcelona_v1.html" data-guide-num="45" data-guide-prev="./Phuket/phuket_v1.html" data-guide-next="./Bend/bend_v2.html">
+      <span class="dest-flag">🇪🇸</span><span class="dest-name">Barcelona</span>
+    </a>
+    <a class="dest-card" href="./Madrid/madrid_v1.html" data-guide-num="46" data-guide-prev="./Madeira/madeira_v1.html" data-guide-next="./Marktoberdorf/marktoberdorf_v1.html">
+      <span class="dest-flag">🇪🇸</span><span class="dest-name">Madrid</span>
+    </a>
+    <a class="dest-card" href="./San Sebastian/san_sebastian_v1.html" data-guide-num="76" data-guide-prev="./San Francisco/sf_v3.html" data-guide-next="./Santiago/santiago_v1.html">
+      <span class="dest-flag">🇪🇸</span><span class="dest-name">San Sebastián</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Seville/seville_v1.html" data-guide-num="78" data-guide-prev="./Seoul/seoul_v1.html" data-guide-next="./Shanghai/shanghai_v1.html">
+      <span class="dest-flag">🇪🇸</span><span class="dest-name">Seville</span>
+    </a>
+    <a class="dest-card" href="./Toledo/toledo_v1.html" data-guide-num="77" data-guide-prev="./Tokyo/tokyo_v1.html" data-guide-next="./Toronto/toronto_v1.html">
+      <span class="dest-flag">🇪🇸</span><span class="dest-name">Toledo</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Sweden ── -->
+<div class="country" data-country="sweden">
+  <div class="country-label">🇸🇪 Sweden · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Gothenburg/gothenburg_v1.html" data-guide-num="47" data-guide-prev="./Glasgow/glasgow_v1.html" data-guide-next="./Helsinki/helsinki_v1.html">
+      <span class="dest-flag">🇸🇪</span><span class="dest-name">Gothenburg</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Stockholm/stockholm_v1.html" data-guide-num="79" data-guide-prev="./Split/split_v1.html" data-guide-next="./Strasbourg/strasbourg_v1.html">
+      <span class="dest-flag">🇸🇪</span><span class="dest-name">Stockholm</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Switzerland ── -->
+<div class="country" data-country="switzerland">
+  <div class="country-label">🇨🇭 Switzerland · <span class="country-count">3 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Geneva/geneva_v1.html" data-guide-num="80" data-guide-prev="./Florence/florence_v1.html" data-guide-next="./Glasgow/glasgow_v1.html">
+      <span class="dest-flag">🇨🇭</span><span class="dest-name">Geneva</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Lucerne/lucerne_v1.html" data-guide-num="127" data-guide-prev="./Los Angeles/los_angeles_v1.html" data-guide-next="./Luxembourg/luxembourg_v1.html">
+      <span class="dest-flag">🇨🇭</span><span class="dest-name">Lucerne</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Zurich/zurich_v1.html" data-guide-num="81" data-guide-prev="./Zhangjiajie/zhangjiajie_v1.html" data-guide-next="./Abu Dhabi/abu_dhabi_v1.html">
+      <span class="dest-flag">🇨🇭</span><span class="dest-name">Zurich</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Taiwan ── -->
+<div class="country" data-country="taiwan">
+  <div class="country-label">🇹🇼 Taiwan · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Taipei/taipei_v1.html" data-guide-num="82" data-guide-prev="./Sydney/sydney_v2.html" data-guide-next="./Tallinn/tallinn_v1.html">
+      <span class="dest-flag">🇹🇼</span><span class="dest-name">Taipei</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Thailand ── -->
+<div class="country" data-country="thailand">
+  <div class="country-label">🇹🇭 Thailand · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Bangkok/bangkok_v1.html" data-guide-num="83" data-guide-prev="./Barbados/barbados_v1.html" data-guide-next="./Phuket/phuket_v1.html">
+      <span class="dest-flag">🇹🇭</span><span class="dest-name">Bangkok</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Phuket/phuket_v1.html" data-guide-num="84" data-guide-prev="./Bangkok/bangkok_v1.html" data-guide-next="./Barcelona/barcelona_v1.html">
+      <span class="dest-flag">🇹🇭</span><span class="dest-name">Phuket</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Turkey ── -->
+<div class="country" data-country="turkey">
+  <div class="country-label">🇹🇷 Turkey · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Istanbul/istanbul_v1.html" data-guide-num="120" data-guide-prev="./Dubai/dubai_v1.html" data-guide-next="./Dublin/dublin_v1.html">
+      <span class="dest-flag">🇹🇷</span><span class="dest-name">Istanbul</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── United Arab Emirates ── -->
+<div class="country" data-country="united-arab-emirates">
+  <div class="country-label">🇦🇪 United Arab Emirates · <span class="country-count">2 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Abu Dhabi/abu_dhabi_v1.html" data-guide-num="112" data-guide-prev="./Zurich/zurich_v1.html" data-guide-next="./Aix-en-Provence/aix-en-provence_v1.html">
+      <span class="dest-flag">🇦🇪</span><span class="dest-name">Abu Dhabi</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Dubai/dubai_v1.html" data-guide-num="111" data-guide-prev="./Cusco/cusco_v1.html" data-guide-next="./Istanbul/istanbul_v1.html">
+      <span class="dest-flag">🇦🇪</span><span class="dest-name">Dubai</span>
+    </a>
+
+  </div>
+</div>
+
+<!-- ── United Kingdom ── -->
+<div class="country" data-country="united-kingdom">
+  <div class="country-label">🇬🇧 United Kingdom · <span class="country-count">5 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Cambridge/cambridge_v1.html" data-guide-num="84" data-guide-prev="./Buenos Aires/buenos_aires_v1.html" data-guide-next="./Cannes/cannes_v1.html">
+      <span class="dest-flag">🇬🇧</span><span class="dest-name">Cambridge</span>
+    </a>
+    <a class="dest-card" href="./Edinburgh/edinburgh_v1.html" data-guide-num="85" data-guide-prev="./Dubrovnik/guide_v1.html" data-guide-next="./Florence/florence_v1.html">
+      <span class="dest-flag">🇬🇧</span><span class="dest-name">Edinburgh</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Glasgow/glasgow_v1.html" data-guide-num="117" data-guide-prev="./Geneva/geneva_v1.html" data-guide-next="./Gothenburg/gothenburg_v1.html">
+      <span class="dest-flag">🇬🇧</span><span class="dest-name">Glasgow</span>
+    </a>
+    <a class="dest-card" href="./London/london_v5.html" data-guide-num="86" data-guide-prev="./Ljubljana/ljubljana_v1.html" data-guide-next="./Los Angeles/los_angeles_v1.html">
+      <span class="dest-flag">🇬🇧</span><span class="dest-name">London</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Oxford/oxford_v1.html" data-guide-num="107" data-guide-prev="./Oslo/oslo_v1.html" data-guide-next="./Palm Desert/palm_desert_v1.html">
+      <span class="dest-flag">🇬🇧</span><span class="dest-name">Oxford</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── United States ── -->
+<div class="country" data-country="united-states">
+  <div class="country-label">🇺🇸 United States · <span class="country-count">17 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Alaska/alaska_v1.html" data-guide-num="52" data-guide-prev="./Aix-en-Provence/aix-en-provence_v1.html" data-guide-next="./Alesund/alesund_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Alaska</span>
+    </a>
+    <a class="dest-card" href="./Atlanta/atlanta_v1.html" data-guide-num="53" data-guide-prev="./Athens/athens_v1.html" data-guide-next="./Austin/austin_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Atlanta</span>
+    </a>
+    <a class="dest-card" href="./Austin/austin_v1.html" data-guide-num="54" data-guide-prev="./Atlanta/atlanta_v1.html" data-guide-next="./Azores/guide_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Austin</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Bend/bend_v2.html" data-guide-num="55" data-guide-prev="./Barcelona/barcelona_v1.html" data-guide-next="./Beijing/beijing_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Bend</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Boston/boston_v1.html" data-guide-num="77" data-guide-prev="./Bordeaux/bordeaux_v1.html" data-guide-next="./Bruges/bruges_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Boston</span>
+    </a>
+    <a class="dest-card" href="./Chicago/chicago_v1.html" data-guide-num="74" data-guide-prev="./Cayman Islands/cayman_islands_v1.html" data-guide-next="./Chongqing/chongqing_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Chicago</span>
+    </a>
+    <a class="dest-card" href="./Los Angeles/los_angeles_v1.html" data-guide-num="56" data-guide-prev="./London/london_v5.html" data-guide-next="./Lucerne/lucerne_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Los Angeles</span>
+    </a>
+    <a class="dest-card" href="./Miami/miami_v1.html" data-guide-num="57" data-guide-prev="./Melbourne/melbourne_v1.html" data-guide-next="./Milan/milan_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Miami</span>
+    </a>
+    <a class="dest-card" href="./New York/new_york_v1.html" data-guide-num="58" data-guide-prev="./Naples/naples_v1.html" data-guide-next="./Nice/nice_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">New York</span>
+    </a>
+    <a class="dest-card" href="./Orlando/orlando_v1.html" data-guide-num="59" data-guide-prev="./Oahu/oahu_v1.html" data-guide-next="./Oslo/oslo_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Orlando</span>
+    </a>
+    <a class="dest-card" data-status="want" href="./Palm Desert/palm_desert_v1.html" data-guide-num="60" data-guide-prev="./Oxford/oxford_v1.html" data-guide-next="./Palo Alto/palo_alto_v6.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Palm Desert</span>
+    </a>
+    <a class="dest-card" href="./Palo Alto/palo_alto_v6.html" data-guide-num="61" data-guide-prev="./Palm Desert/palm_desert_v1.html" data-guide-next="./Paris/paris_v7.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Palo Alto</span>
+    </a>
+    <a class="dest-card" href="./Pasadena/pasadena_v5.html" data-guide-num="62" data-guide-prev="./Paris/paris_v7.html" data-guide-next="./Pisa/pisa_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Pasadena</span>
+    </a>
+    <a class="dest-card" href="./San Diego/san_diego_v1.html" data-guide-num="63" data-guide-prev="./Salzburg/salzburg_v1.html" data-guide-next="./San Francisco/sf_v3.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">San Diego</span>
+    </a>
+    <a class="dest-card" href="./San Francisco/sf_v3.html" data-guide-num="64" data-guide-prev="./San Diego/san_diego_v1.html" data-guide-next="./San Sebastian/san_sebastian_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">San Francisco</span>
+    </a>
+    <a class="dest-card" href="./Scottsdale/scottsdale_v1.html" data-guide-num="65" data-guide-prev="./Santiago/santiago_v1.html" data-guide-next="./Seattle/seattle_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Scottsdale</span>
+    </a>
+    <a class="dest-card" href="./Seattle/seattle_v1.html" data-guide-num="66" data-guide-prev="./Scottsdale/scottsdale_v1.html" data-guide-next="./Seoul/seoul_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Seattle</span>
+    </a>
+  </div>
+  <div class="country-sub">🌺 Hawaii · <span class="country-count">4 guides</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" href="./Big Island/big_island_v1.html" data-guide-num="80" data-guide-prev="./Berlin/berlin_v1.html" data-guide-next="./Bologna/bologna_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Big Island</span>
+    </a>
+    <a class="dest-card" href="./Kauai/kauai_v1.html" data-guide-num="93" data-guide-prev="./Maui/maui_v1.html" data-guide-next="./Melbourne/melbourne_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Kauai</span>
+    </a>
+    <a class="dest-card" href="./Maui/maui_v1.html" data-guide-num="92" data-guide-prev="./Marseille/marseille_v1.html" data-guide-next="./Kauai/kauai_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Maui</span>
+    </a>
+    <a class="dest-card" href="./Oahu/oahu_v1.html" data-guide-num="94" data-guide-prev="./Nice/nice_v1.html" data-guide-next="./Orlando/orlando_v1.html">
+      <span class="dest-flag">🇺🇸</span><span class="dest-name">Oahu</span>
+    </a>
+  </div>
+</div>
+
+<!-- ── Uruguay ── -->
+<div class="country" data-country="uruguay">
+  <div class="country-label">🇺🇾 Uruguay · <span class="country-count">1 guide</span></div>
+  <div class="dest-grid">
+    <a class="dest-card" data-status="want" href="./Montevideo/montevideo_v1.html" data-guide-num="130" data-guide-prev="./Azores/guide_v1.html" data-guide-next="./Barbados/barbados_v1.html">
+      <span class="dest-flag">🇺🇾</span><span class="dest-name">Montevideo</span>
+    </a>
+  </div>
+</div>
+
+</div><!-- /mosaic -->
+
+<div id="flight-view">
+  <div class="fcount" id="fcount"></div>
+  <div class="flt-grid" id="flt-grid"></div>
+  <div id="fnoresult">No destinations match those filters. <button id="freset" type="button">Reset</button></div>
+  <div class="flegend">
+    <span><span class="fdot r-nonstop"></span> Nonstop</span>
+    <span><span class="fdot r-seasonal"></span> Nonstop (seasonal)</span>
+    <span><span class="fdot r-1stop"></span> 1 connection</span>
+    <span><span class="fdot r-2stop"></span> 2 connections</span>
+  </div>
+</div>
+
+<div id="compare-view" hidden></div>
+
+</div><!-- /wrap -->
+
+<script>
+/* Shared status-filter state — read by both mosaic and flight-time closures */
+window._giStatusFilter = 'all';
+
+(function () {
+  var input     = document.getElementById('guide-search');
+  var countries = [].slice.call(document.querySelectorAll('.country'));
+  var noRes     = document.getElementById('guide-noresult');
+  var stabs     = [].slice.call(document.querySelectorAll('.stab'));
+  if (!input) return;
+
+  /* Status toggle */
+  stabs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      stabs.forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      window._giStatusFilter = b.dataset.s;
+      applyMosaicFilter();
+      document.dispatchEvent(new Event('gi:status'));
+    });
+  });
+
+  function applyMosaicFilter() {
+    var q  = input.value.trim().toLowerCase();
+    var sf = window._giStatusFilter;
+    var shown = 0;
+    countries.forEach(function (r) {
+      var countryName = (r.getAttribute('data-country') || '').replace(/-/g, ' ');
+      var labelMatch  = q !== '' && countryName.indexOf(q) > -1;
+      var any = false;
+      [].slice.call(r.querySelectorAll('.dest-card')).forEach(function (c) {
+        var name   = ((c.querySelector('.dest-name') || {}).textContent || '').toLowerCase();
+        var isWant = c.getAttribute('data-status') === 'want';
+        var statusOk = sf === 'all' || (sf === 'want' ? isWant : !isWant);
+        var match  = statusOk && (q === '' || labelMatch || name.indexOf(q) > -1);
+        c.style.display = match ? '' : 'none';
+        if (match) { any = true; shown++; }
+      });
+      r.style.display = any ? '' : 'none';
+    });
+    noRes.style.display = (shown === 0 && (q !== '' || sf !== 'all')) ? 'block' : 'none';
+  }
+
+  input.addEventListener('input', applyMosaicFilter);
+}());
+(function () {
+  /* ── Reactive stats: update on load and on Been/Want filter toggle (added 2026-06-15) ── */
+  var elG = document.getElementById('guide-count');
+  var elC = document.getElementById('country-count');
+  if (!elG && !elC) return;
+
+  var allCards = [].slice.call(document.querySelectorAll('.dest-card'));
+  var nonCountries = ['caribbean-islands'];
+  var allSections  = [].slice.call(document.querySelectorAll('.country'))
+    .filter(function (s) { return nonCountries.indexOf(s.getAttribute('data-country')) === -1; });
+
+  function updateStats() {
+    var sf   = window._giStatusFilter || 'all';
+    var want = allCards.filter(function (c) { return c.getAttribute('data-status') === 'want'; }).length;
+    var been = allCards.length - want;
+
+    var beenC = allSections.filter(function (s) {
+      return s.querySelector('.dest-card:not([data-status="want"])');
+    }).length;
+    var wantC = allSections.filter(function (s) {
+      return s.querySelector('.dest-card[data-status="want"]');
+    }).length;
+
+    if (elG) {
+      if (sf === 'all') {
+        elG.textContent = allCards.length + ' guides | ' + been + ' visited | ' + want + ' on the list';
+      } else if (sf === 'been') {
+        elG.textContent = been + ' guides visited';
+      } else {
+        elG.textContent = want + ' guides on the list';
+      }
+    }
+    if (elC) {
+      if (sf === 'all') {
+        elC.textContent = allSections.length + ' countries | ' + beenC + ' visited';
+      } else if (sf === 'been') {
+        elC.textContent = beenC + ' countries visited';
+      } else {
+        elC.textContent = wantC + ' countries on the list';
+      }
+    }
+  }
+
+  updateStats();
+  document.addEventListener('gi:status', updateStats);
+}());
+</script>
+
+
+<script>
+/* ══ Flight-time view — Getting There from Seattle (SEA) ══ */
+(function () {
+  /* ── FLIGHT-TIME VIEW DATA (FMAP) — maintained; validator: Brain/scripts/validate_flight_index.py ──
+     One entry per mosaic guide-card href. Keys:
+       t  display label "Hh MMm" (== m + connection buffer; "Home" for SEA)
+       m  sort minutes; displayed time = m + buffer(r). buffer: nonstop/seasonal 0 · 1stop 90 · 2stop 180
+       r  routing: home|nonstop|seasonal|1stop|2stop  (drives dot colour + Stops filter)
+       d  Delta-operated nonstop flag · i  destination IATA (3 letters)
+       h  connecting-hub IATA for 1stop/2stop; null for nonstop/seasonal/home
+       rg region label · o  onward train/drive/ferry note or null
+       lg OPTIONAL real routing as per-leg block times [["SEA","ATL",292],["ATL","YYZ",140]]
+          (sourced nonstop block times, minutes; ≥2 legs SEA→…→dest). Reflects the REAL
+          shortest routing, so the leg count need NOT equal the marketed r-tier. When
+          present m == sum(lg) (air total) and the headline = m + (legs-1)×90 layover;
+          the card renders the leg breakdown + air total. Absent = single-line m+buffer(r)
+          fallback. nonstop/seasonal/home never carry lg.
+     AUTHORITY: r + h must match Trip-Essentials/Delta Routes SEA.html tiers
+       (t0=nonstop/seasonal · t1=1stop · t2=2stop) for any IATA listed there.
+     COLOUR SCHEME (keep identical across CSS .fdot, JS COL, Stops chips):
+       nonstop 🟣 #AF52DE · 1 connection 🟢 #46C24E · 2 connections 🔵 #2E90FA
+       seasonal = nonstop variant (white dot, nonstop-coloured border). */
+  var FMAP = {"Seattle/seattle_v1.html": {"t": "Home", "m": 0, "r": "home", "d": true, "i": "SEA", "h": null, "rg": "North America", "o": null}, "Vancouver/vancouver_v1.html": {"t": "0h 59m", "m": 59, "r": "seasonal", "d": true, "i": "YVR", "h": null, "rg": "North America", "o": null}, "Bend/bend_v2.html": {"t": "1h 11m", "m": 71, "r": "nonstop", "d": false, "i": "RDM", "h": null, "rg": "North America", "o": null}, "Palo Alto/palo_alto_v6.html": {"t": "2h 02m", "m": 122, "r": "nonstop", "d": true, "i": "SFO", "h": null, "rg": "North America", "o": "🚗 ~40 min drive from SFO"}, "San Francisco/sf_v3.html": {"t": "2h 02m", "m": 122, "r": "nonstop", "d": true, "i": "SFO", "h": null, "rg": "North America", "o": null}, "Los Angeles/los_angeles_v1.html": {"t": "2h 34m", "m": 154, "r": "nonstop", "d": true, "i": "LAX", "h": null, "rg": "North America", "o": null}, "Pasadena/pasadena_v5.html": {"t": "2h 34m", "m": 154, "r": "nonstop", "d": true, "i": "LAX", "h": null, "rg": "North America", "o": "🚗 ~40 min drive from LAX"}, "Palm Desert/palm_desert_v1.html": {"t": "2h 37m", "m": 157, "r": "seasonal", "d": false, "i": "PSP", "h": null, "rg": "North America", "o": null}, "San Diego/san_diego_v1.html": {"t": "2h 44m", "m": 164, "r": "nonstop", "d": true, "i": "SAN", "h": null, "rg": "North America", "o": null}, "Scottsdale/scottsdale_v1.html": {"t": "2h 51m", "m": 171, "r": "nonstop", "d": true, "i": "PHX", "h": null, "rg": "North America", "o": "🚗 ~30 min drive from PHX"}, "Alaska/alaska_v1.html": {"t": "3h 29m", "m": 209, "r": "nonstop", "d": true, "i": "ANC", "h": null, "rg": "North America", "o": null}, "Chicago/chicago_v1.html": {"t": "4h", "m": 240, "r": "nonstop", "d": true, "i": "ORD", "h": null, "rg": "North America", "o": null}, "Austin/austin_v1.html": {"t": "4h 06m", "m": 246, "r": "nonstop", "d": true, "i": "AUS", "h": null, "rg": "North America", "o": null}, "Toronto/toronto_v1.html": {"t": "8h 42m", "m": 432, "r": "1stop", "d": false, "i": "YYZ", "h": "ATL", "rg": "North America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "YYZ", 140]]}, "Atlanta/atlanta_v1.html": {"t": "4h 52m", "m": 292, "r": "nonstop", "d": true, "i": "ATL", "h": null, "rg": "North America", "o": null}, "New York/new_york_v1.html": {"t": "5h 19m", "m": 319, "r": "nonstop", "d": true, "i": "JFK", "h": null, "rg": "North America", "o": null}, "Boston/boston_v1.html": {"t": "5h 28m", "m": 328, "r": "nonstop", "d": true, "i": "BOS", "h": null, "rg": "North America", "o": null}, "Orlando/orlando_v1.html": {"t": "5h 35m", "m": 335, "r": "nonstop", "d": true, "i": "MCO", "h": null, "rg": "North America", "o": null}, "Maui/maui_v1.html": {"t": "5h 45m", "m": 345, "r": "nonstop", "d": true, "i": "OGG", "h": null, "rg": "North America", "o": null}, "Oahu/oahu_v1.html": {"t": "5h 49m", "m": 349, "r": "nonstop", "d": true, "i": "HNL", "h": null, "rg": "North America", "o": null}, "Big Island/big_island_v1.html": {"t": "5h 50m", "m": 350, "r": "nonstop", "d": true, "i": "KOA", "h": null, "rg": "North America", "o": null}, "Kauai/kauai_v1.html": {"t": "5h 52m", "m": 352, "r": "nonstop", "d": true, "i": "LIH", "h": null, "rg": "North America", "o": null}, "Miami/miami_v1.html": {"t": "5h 54m", "m": 354, "r": "nonstop", "d": true, "i": "MIA", "h": null, "rg": "North America", "o": null}, "Montreal/montreal_v1.html": {"t": "8h 59m", "m": 449, "r": "1stop", "d": false, "i": "YUL", "h": "ATL", "rg": "North America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "YUL", 157]]}, "Quebec City/quebec_city_v1.html": {"t": "11h 19m", "m": 499, "r": "1stop", "d": false, "i": "YQB", "h": "DTW", "rg": "North America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "YUL", 157], ["YUL", "YQB", 50]]}, "Bahamas/bahamas_v1.html": {"t": "8h 29m", "m": 419, "r": "1stop", "d": false, "i": "NAS", "h": "ATL", "rg": "Caribbean", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "NAS", 127]]}, "Cayman Islands/cayman_islands_v1.html": {"t": "9h 01m", "m": 451, "r": "1stop", "d": false, "i": "GCM", "h": "ATL", "rg": "Caribbean", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "GCM", 159]]}, "Iceland/reykjavik_v2.html": {"t": "10h 55m", "m": 565, "r": "1stop", "d": false, "i": "KEF", "h": "MSP", "rg": "Europe", "o": null, "lg": [["SEA", "MSP", 200], ["MSP", "KEF", 365]]}, "Puerto Rico/puerto_rico_v1.html": {"t": "10h", "m": 510, "r": "1stop", "d": false, "i": "SJU", "h": "ATL", "rg": "Caribbean", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "SJU", 218]]}, "Virgin Islands/virgin_islands_v1.html": {"t": "10h 11m", "m": 521, "r": "1stop", "d": false, "i": "STT", "h": "ATL", "rg": "Caribbean", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "STT", 229]]}, "Sint Maarten/sint_maarten_v1.html": {"t": "10h 25m", "m": 535, "r": "1stop", "d": false, "i": "SXM", "h": "ATL", "rg": "Caribbean", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "SXM", 243]]}, "Aruba/aruba_v1.html": {"t": "10h 30m", "m": 540, "r": "1stop", "d": false, "i": "AUA", "h": "ATL", "rg": "Caribbean", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "AUA", 248]]}, "Curacao/curacao_v1.html": {"t": "11h 41m", "m": 611, "r": "1stop", "d": false, "i": "CUR", "h": "ATL", "rg": "Caribbean", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "CUR", 292]]}, "Dublin/dublin_v1.html": {"t": "13h 24m", "m": 714, "r": "1stop", "d": false, "i": "DUB", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "DUB", 395]]}, "Helsinki/helsinki_v1.html": {"t": "13h 35m", "m": 725, "r": "2stop", "d": false, "i": "HEL", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "HEL", 140]]}, "Kyoto/kyoto_v1.html": {"t": "10h 25m", "m": 625, "r": "nonstop", "d": true, "i": "HND", "h": null, "rg": "Asia", "o": "🚄 ~2 hr 15 Shinkansen from Tokyo"}, "Tokyo/tokyo_v1.html": {"t": "10h 25m", "m": 625, "r": "nonstop", "d": true, "i": "HND", "h": null, "rg": "Asia", "o": null}, "Cambridge/cambridge_v1.html": {"t": "9h 50m", "m": 590, "r": "nonstop", "d": true, "i": "LHR", "h": null, "rg": "Europe", "o": "🚆 ~1 hr train from London"}, "London/london_v5.html": {"t": "9h 50m", "m": 590, "r": "nonstop", "d": true, "i": "LHR", "h": null, "rg": "Europe", "o": null}, "Oxford/oxford_v1.html": {"t": "9h 50m", "m": 590, "r": "nonstop", "d": true, "i": "LHR", "h": null, "rg": "Europe", "o": "🚆 ~1 hr 30 train/bus from London"}, "Copenhagen/copenhagen_v1.html": {"t": "14h 34m", "m": 784, "r": "1stop", "d": false, "i": "CPH", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "CPH", 465]]}, "Amsterdam/amsterdam_v1.html": {"t": "9h 45m", "m": 585, "r": "nonstop", "d": true, "i": "AMS", "h": null, "rg": "Europe", "o": null}, "Barbados/barbados_v1.html": {"t": "11h 41m", "m": 611, "r": "1stop", "d": false, "i": "BGI", "h": "JFK", "rg": "Caribbean", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "BGI", 292]]}, "Lille/lille_v1.html": {"t": "9h 40m", "m": 580, "r": "nonstop", "d": true, "i": "CDG", "h": null, "rg": "Europe", "o": "🚆 ~1 hr train from Paris"}, "Paris/paris_v7.html": {"t": "9h 40m", "m": 580, "r": "nonstop", "d": true, "i": "CDG", "h": null, "rg": "Europe", "o": null}, "Seoul/seoul_v1.html": {"t": "11h 20m", "m": 680, "r": "nonstop", "d": true, "i": "ICN", "h": null, "rg": "Asia", "o": null}, "Lucerne/lucerne_v1.html": {"t": "14h 44m", "m": 794, "r": "1stop", "d": false, "i": "ZRH", "h": "JFK", "rg": "Europe", "o": "🚆 ~45 min train from Zurich", "lg": [["SEA", "JFK", 319], ["JFK", "ZRH", 475]]}, "Zurich/zurich_v1.html": {"t": "14h 44m", "m": 794, "r": "1stop", "d": false, "i": "ZRH", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "ZRH", 475]]}, "Bruges/bruges_v1.html": {"t": "11h 55m", "m": 625, "r": "2stop", "d": false, "i": "BRU", "h": "AMS", "rg": "Europe", "o": "🚆 ~1 hr 15 train from Brussels", "lg": [["SEA", "AMS", 585], ["AMS", "BRU", 40]]}, "Brussels/brussels_v1.html": {"t": "11h 55m", "m": 625, "r": "2stop", "d": false, "i": "BRU", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "BRU", 40]]}, "Barcelona/barcelona_v1.html": {"t": "10h 35m", "m": 635, "r": "seasonal", "d": true, "i": "BCN", "h": null, "rg": "Europe", "o": null}, "Edinburgh/edinburgh_v1.html": {"t": "13h 38m", "m": 728, "r": "1stop", "d": false, "i": "EDI", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "EDI", 409]]}, "Glasgow/glasgow_v1.html": {"t": "12h 50m", "m": 680, "r": "2stop", "d": false, "i": "GLA", "h": "LHR", "rg": "Europe", "o": null, "lg": [["SEA", "LHR", 590], ["LHR", "GLA", 90]]}, "Stuttgart/stuttgart_v1.html": {"t": "12h 30m", "m": 660, "r": "2stop", "d": false, "i": "STR", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "STR", 75]]}, "Strasbourg/strasbourg_v1.html": {"t": "12h 25m", "m": 655, "r": "2stop", "d": false, "i": "SXB", "h": "CDG", "rg": "Europe", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "SXB", 75]]}, "Luxembourg/luxembourg_v1.html": {"t": "12h 10m", "m": 640, "r": "2stop", "d": false, "i": "LUX", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "LUX", 55]]}, "Berlin/berlin_v1.html": {"t": "12h 30m", "m": 660, "r": "2stop", "d": false, "i": "BER", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "BER", 75]]}, "Annecy/annecy_v1.html": {"t": "14h 39m", "m": 789, "r": "1stop", "d": false, "i": "GVA", "h": "JFK", "rg": "Europe", "o": "🚗 ~45 min drive from Geneva", "lg": [["SEA", "JFK", 319], ["JFK", "GVA", 470]]}, "Lyon/lyon_v1.html": {"t": "12h 20m", "m": 650, "r": "2stop", "d": false, "i": "LYS", "h": "CDG", "rg": "Europe", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "LYS", 70]]}, "Geneva/geneva_v1.html": {"t": "14h 39m", "m": 789, "r": "1stop", "d": false, "i": "GVA", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "GVA", 470]]}, "Colmar/colmar_v1.html": {"t": "12h 30m", "m": 660, "r": "2stop", "d": false, "i": "BSL", "h": "AMS", "rg": "Europe", "o": "🚆 ~30 min train from Basel", "lg": [["SEA", "AMS", 585], ["AMS", "BSL", 75]]}, "Rome/rome_v1.html": {"t": "11h 30m", "m": 690, "r": "seasonal", "d": true, "i": "FCO", "h": null, "rg": "Europe", "o": null}, "Marktoberdorf/marktoberdorf_v1.html": {"t": "15h 22m", "m": 832, "r": "1stop", "d": false, "i": "MUC", "h": "ATL", "rg": "Europe", "o": "🚗 ~1 hr 30 drive from Munich", "lg": [["SEA", "ATL", 292], ["ATL", "MUC", 540]]}, "Munich/munich_v2.html": {"t": "15h 22m", "m": 832, "r": "1stop", "d": false, "i": "MUC", "h": "ATL", "rg": "Europe", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "MUC", 540]]}, "Prague/prague_v1.html": {"t": "12h 40m", "m": 670, "r": "2stop", "d": false, "i": "PRG", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "PRG", 85]]}, "Shanghai/shanghai_v1.html": {"t": "12h 20m", "m": 740, "r": "nonstop", "d": true, "i": "PVG", "h": null, "rg": "Asia", "o": null}, "Bordeaux/bordeaux_v1.html": {"t": "12h 30m", "m": 660, "r": "2stop", "d": false, "i": "BOD", "h": "CDG", "rg": "Europe", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "BOD", 80]]}, "Turin/turin_v14.html": {"t": "12h 35m", "m": 665, "r": "2stop", "d": false, "i": "TRN", "h": "CDG", "rg": "Europe", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "TRN", 85]]}, "Lake Como/lake_como_v1.html": {"t": "14h 44m", "m": 794, "r": "1stop", "d": false, "i": "MXP", "h": "JFK", "rg": "Europe", "o": "🚆 ~1 hr train from Milan", "lg": [["SEA", "JFK", 319], ["JFK", "MXP", 475]]}, "Milan/milan_v1.html": {"t": "14h 44m", "m": 794, "r": "1stop", "d": false, "i": "MXP", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "MXP", 475]]}, "Lima/lima_v1.html": {"t": "13h 07m", "m": 697, "r": "1stop", "d": false, "i": "LIM", "h": "ATL", "rg": "South America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "LIM", 405]]}, "Porto/porto_v2.html": {"t": "13h 54m", "m": 744, "r": "1stop", "d": false, "i": "OPO", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "OPO", 425]]}, "Aix-en-Provence/aix-en-provence_v1.html": {"t": "12h 35m", "m": 665, "r": "2stop", "d": false, "i": "MRS", "h": "CDG", "rg": "Europe", "o": "🚆 ~30 min from Marseille", "lg": [["SEA", "CDG", 580], ["CDG", "MRS", 85]]}, "Marseille/marseille_v1.html": {"t": "12h 35m", "m": 665, "r": "2stop", "d": false, "i": "MRS", "h": "CDG", "rg": "Europe", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "MRS", 85]]}, "Cannes/cannes_v1.html": {"t": "12h 45m", "m": 675, "r": "1stop", "d": false, "i": "NCE", "h": "BOS", "rg": "Europe", "o": "🚆 ~30 min train from Nice", "lg": [["SEA", "CDG", 580], ["CDG", "NCE", 95]]}, "Nice/nice_v1.html": {"t": "12h 45m", "m": 675, "r": "1stop", "d": false, "i": "NCE", "h": "BOS", "rg": "Europe", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "NCE", 95]]}, "Monaco/monaco_v1.html": {"t": "12h 45m", "m": 675, "r": "1stop", "d": false, "i": "NCE", "h": "BOS", "rg": "Europe", "o": "🚆 ~25 min train from Nice", "lg": [["SEA", "CDG", 580], ["CDG", "NCE", 95]]}, "Venice/venice_v1.html": {"t": "15h 14m", "m": 824, "r": "1stop", "d": false, "i": "VCE", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "VCE", 505]]}, "Oslo/oslo_v1.html": {"t": "13h", "m": 690, "r": "2stop", "d": false, "i": "OSL", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "OSL", 105]]}, "Vienna/vienna_v1.html": {"t": "13h", "m": 690, "r": "2stop", "d": false, "i": "VIE", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "VIE", 105]]}, "San Sebastian/san_sebastian_v1.html": {"t": "12h 50m", "m": 680, "r": "2stop", "d": false, "i": "BIO", "h": "CDG", "rg": "Europe", "o": "🚗 ~1 hr 15 from Bilbao", "lg": [["SEA", "CDG", 580], ["CDG", "BIO", 100]]}, "Bologna/bologna_v1.html": {"t": "13h", "m": 690, "r": "2stop", "d": false, "i": "BLQ", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "BLQ", 105]]}, "Cinque Terre/cinque_terre_v1.html": {"t": "13h 10m", "m": 700, "r": "2stop", "d": false, "i": "PSA", "h": "AMS", "rg": "Europe", "o": "🚆 ~1 hr 15 train from Pisa", "lg": [["SEA", "AMS", 585], ["AMS", "PSA", 115]]}, "Florence/florence_v1.html": {"t": "12h 55m", "m": 685, "r": "2stop", "d": false, "i": "FLR", "h": "CDG", "rg": "Europe", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "FLR", 105]]}, "Pisa/pisa_v1.html": {"t": "13h 10m", "m": 700, "r": "2stop", "d": false, "i": "PSA", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "PSA", 115]]}, "Siena/siena_v1.html": {"t": "12h 55m", "m": 685, "r": "2stop", "d": false, "i": "FLR", "h": "CDG", "rg": "Europe", "o": "🚆 ~1 hr 30 train from Florence", "lg": [["SEA", "CDG", 580], ["CDG", "FLR", 105]]}, "Bergen/bergen_v1.html": {"t": "12h 55m", "m": 685, "r": "2stop", "d": false, "i": "BGO", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "BGO", 100]]}, "Alesund/alesund_v1.html": {"t": "15h 25m", "m": 745, "r": "2stop", "d": false, "i": "AES", "h": "OSL", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "OSL", 105], ["OSL", "AES", 55]]}, "Stockholm/stockholm_v1.html": {"t": "13h 10m", "m": 700, "r": "1stop", "d": false, "i": "ARN", "h": "ATL", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "ARN", 115]]}, "Taipei/taipei_v1.html": {"t": "12h 30m", "m": 750, "r": "nonstop", "d": true, "i": "TPE", "h": null, "rg": "Asia", "o": null}, "Beijing/beijing_v1.html": {"t": "15h 10m", "m": 820, "r": "2stop", "d": false, "i": "PEK", "h": "ICN", "rg": "Asia", "o": null, "lg": [["SEA", "ICN", 680], ["ICN", "PEK", 140]]}, "Cascais/cascais_v2.html": {"t": "13h 59m", "m": 749, "r": "1stop", "d": false, "i": "LIS", "h": "JFK", "rg": "Europe", "o": "🚆 ~40 min train from Lisbon", "lg": [["SEA", "JFK", 319], ["JFK", "LIS", 430]]}, "Lisbon/lisbon_v4.html": {"t": "13h 59m", "m": 749, "r": "1stop", "d": false, "i": "LIS", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "LIS", 430]]}, "Sintra/sintra_v2.html": {"t": "13h 59m", "m": 749, "r": "1stop", "d": false, "i": "LIS", "h": "JFK", "rg": "Europe", "o": "🚆 ~40 min train from Lisbon", "lg": [["SEA", "JFK", 319], ["JFK", "LIS", 430]]}, "Naples/naples_v1.html": {"t": "15h 39m", "m": 849, "r": "1stop", "d": false, "i": "NAP", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "NAP", 530]]}, "Amalfi/amalfi_v1.html": {"t": "15h 39m", "m": 849, "r": "1stop", "d": false, "i": "NAP", "h": "JFK", "rg": "Europe", "o": "🚗 ~1 hr 30 drive from Naples", "lg": [["SEA", "JFK", 319], ["JFK", "NAP", 530]]}, "Capri/capri_v1.html": {"t": "15h 39m", "m": 849, "r": "1stop", "d": false, "i": "NAP", "h": "JFK", "rg": "Europe", "o": "⛴ ferry from Naples ~50 min", "lg": [["SEA", "JFK", 319], ["JFK", "NAP", 530]]}, "Sorrento/sorrento_v1.html": {"t": "15h 39m", "m": 849, "r": "1stop", "d": false, "i": "NAP", "h": "JFK", "rg": "Europe", "o": "🚆 ~1 hr 15 from Naples", "lg": [["SEA", "JFK", 319], ["JFK", "NAP", 530]]}, "Split/split_v1.html": {"t": "13h 25m", "m": 715, "r": "1stop", "d": false, "i": "SPU", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "SPU", 130]]}, "Madrid/madrid_v1.html": {"t": "13h 54m", "m": 744, "r": "1stop", "d": false, "i": "MAD", "h": "JFK", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "MAD", 425]]}, "Seville/seville_v1.html": {"t": "14h 10m", "m": 760, "r": "2stop", "d": false, "i": "SVQ", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "SVQ", 175]]}, "Toledo/toledo_v1.html": {"t": "13h 54m", "m": 744, "r": "1stop", "d": false, "i": "MAD", "h": "JFK", "rg": "Europe", "o": "🚆 ~35 min train from Madrid", "lg": [["SEA", "JFK", 319], ["JFK", "MAD", 425]]}, "Tromso/tromso_v1.html": {"t": "16h 25m", "m": 805, "r": "2stop", "d": false, "i": "TOS", "h": "OSL", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "OSL", 105], ["OSL", "TOS", 115]]}, "Cusco/cusco_v1.html": {"t": "15h 57m", "m": 777, "r": "2stop", "d": false, "i": "CUZ", "h": "LIM", "rg": "South America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "LIM", 405], ["LIM", "CUZ", 80]]}, "MachuPicchu/machupicchu_v1.html": {"t": "15h 57m", "m": 777, "r": "2stop", "d": false, "i": "CUZ", "h": "LIM", "rg": "South America", "o": "🚆 ~3 hr 30 train from Cusco", "lg": [["SEA", "ATL", 292], ["ATL", "LIM", 405], ["LIM", "CUZ", 80]]}, "Salzburg/salzburg_v1.html": {"t": "12h 50m", "m": 680, "r": "2stop", "d": false, "i": "SZG", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "SZG", 95]]}, "Lagos/lagos_v1.html": {"t": "14h 15m", "m": 765, "r": "2stop", "d": false, "i": "FAO", "h": "AMS", "rg": "Europe", "o": "🚗 ~1 hr drive from Faro", "lg": [["SEA", "AMS", 585], ["AMS", "FAO", 180]]}, "Gothenburg/gothenburg_v1.html": {"t": "12h 45m", "m": 675, "r": "2stop", "d": false, "i": "GOT", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "GOT", 90]]}, "Athens/athens_v1.html": {"t": "17h 02m", "m": 932, "r": "1stop", "d": false, "i": "ATH", "h": "ATL", "rg": "Europe", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "ATH", 640]]}, "Verona/verona_v1.html": {"t": "13h", "m": 690, "r": "2stop", "d": false, "i": "VRN", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "VRN", 105]]}, "Ljubljana/ljubljana_v1.html": {"t": "13h", "m": 690, "r": "2stop", "d": false, "i": "LJU", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "LJU", 105]]}, "Hong Kong/hong_kong_v1.html": {"t": "18h 39m", "m": 1029, "r": "1stop", "d": false, "i": "HKG", "h": "LAX", "rg": "Asia", "o": null, "lg": [["SEA", "LAX", 154], ["LAX", "HKG", 875]]}, "Tallinn/tallinn_v1.html": {"t": "13h 35m", "m": 725, "r": "2stop", "d": false, "i": "TLL", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "TLL", 140]]}, "Santiago/santiago_v1.html": {"t": "15h 32m", "m": 842, "r": "1stop", "d": false, "i": "SCL", "h": "ATL", "rg": "South America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "SCL", 550]]}, "Rio de Janeiro/rio_de_janeiro_v1.html": {"t": "15h 57m", "m": 867, "r": "1stop", "d": false, "i": "GIG", "h": "ATL", "rg": "South America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "GIG", 575]]}, "Zhangjiajie/zhangjiajie_v1.html": {"t": "19h 10m", "m": 970, "r": "2stop", "d": false, "i": "DYG", "h": "PEK", "rg": "Asia", "o": null, "lg": [["SEA", "ICN", 680], ["ICN", "PEK", 140], ["PEK", "DYG", 150]]}, "Dubai/dubai_v1.html": {"t": "17h 50m", "m": 980, "r": "1stop", "d": false, "i": "DXB", "h": "AMS", "rg": "Middle East", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "DXB", 395]]}, "Dubrovnik/guide_v1.html": {"t": "13h 35m", "m": 725, "r": "2stop", "d": false, "i": "DBV", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "DBV", 140]]}, "Marrakech/marrakech_v1.html": {"t": "14h 35m", "m": 785, "r": "1stop", "d": false, "i": "RAK", "h": "ATL", "rg": "Africa", "o": null, "lg": [["SEA", "CDG", 580], ["CDG", "RAK", 205]]}, "Buenos Aires/buenos_aires_v1.html": {"t": "17h 34m", "m": 964, "r": "1stop", "d": false, "i": "EZE", "h": "JFK", "rg": "South America", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "EZE", 645]]}, "Corfu/corfu_v1.html": {"t": "14h 05m", "m": 755, "r": "2stop", "d": false, "i": "CFU", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "CFU", 170]]}, "Chongqing/chongqing_v1.html": {"t": "16h 40m", "m": 910, "r": "2stop", "d": false, "i": "CKG", "h": "ICN", "rg": "Asia", "o": null, "lg": [["SEA", "ICN", 680], ["ICN", "CKG", 230]]}, "Bangkok/bangkok_v1.html": {"t": "18h 40m", "m": 1030, "r": "2stop", "d": false, "i": "BKK", "h": "ICN", "rg": "Asia", "o": null, "lg": [["SEA", "ICN", 680], ["ICN", "BKK", 350]]}, "Abu Dhabi/abu_dhabi_v1.html": {"t": "17h 50m", "m": 980, "r": "2stop", "d": false, "i": "AUH", "h": "AMS", "rg": "Middle East", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "AUH", 395]]}, "Singapore/singapore_v3.html": {"t": "19h 30m", "m": 1080, "r": "2stop", "d": false, "i": "SIN", "h": "ICN", "rg": "Asia", "o": null, "lg": [["SEA", "ICN", 680], ["ICN", "SIN", 400]]}, "Wellington/wellington_v1.html": {"t": "19h 34m", "m": 994, "r": "2stop", "d": false, "i": "WLG", "h": "AKL", "rg": "Oceania", "o": null, "lg": [["SEA", "LAX", 154], ["LAX", "AKL", 770], ["AKL", "WLG", 70]]}, "Sydney/sydney_v2.html": {"t": "19h 04m", "m": 1054, "r": "1stop", "d": false, "i": "SYD", "h": "LAX", "rg": "Oceania", "o": null, "lg": [["SEA", "LAX", 154], ["LAX", "SYD", 900]]}, "Queenstown/queenstown_v1.html": {"t": "23h 39m", "m": 1239, "r": "2stop", "d": false, "i": "ZQN", "h": "SYD", "rg": "Oceania", "o": null, "lg": [["SEA", "LAX", 154], ["LAX", "SYD", 900], ["SYD", "ZQN", 185]]}, "Phuket/phuket_v1.html": {"t": "19h 15m", "m": 1065, "r": "2stop", "d": false, "i": "HKT", "h": "ICN", "rg": "Asia", "o": null, "lg": [["SEA", "ICN", 680], ["ICN", "HKT", 385]]}, "Madeira/madeira_v1.html": {"t": "17h 19m", "m": 859, "r": "2stop", "d": false, "i": "FNC", "h": "LIS", "rg": "Europe", "o": null, "lg": [["SEA", "JFK", 319], ["JFK", "LIS", 430], ["LIS", "FNC", 110]]}, "Melbourne/melbourne_v1.html": {"t": "19h 59m", "m": 1109, "r": "1stop", "d": false, "i": "MEL", "h": "LAX", "rg": "Oceania", "o": null, "lg": [["SEA", "LAX", 154], ["LAX", "MEL", 955]]}, "Azores/guide_v1.html": {"t": "11h 58m", "m": 628, "r": "2stop", "d": false, "i": "PDL", "h": "BOS", "rg": "Europe", "o": null, "lg": [["SEA", "BOS", 328], ["BOS", "PDL", 300]]}, "Montevideo/montevideo_v1.html": {"t": "19h 57m", "m": 1017, "r": "1stop", "d": false, "i": "MVD", "h": "JFK", "rg": "South America", "o": null, "lg": [["SEA", "ATL", 292], ["ATL", "GRU", 560], ["GRU", "MVD", 165]]}, "Bali/bali_v1.html": {"t": "19h 55m", "m": 1105, "r": "2stop", "d": false, "i": "DPS", "h": "ICN", "rg": "Asia", "o": null, "lg": [["SEA", "ICN", 680], ["ICN", "DPS", 425]]}, "Istanbul/istanbul_v1.html": {"t": "14h 45m", "m": 795, "r": "1stop", "d": false, "i": "IST", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "IST", 210]]}, "Budapest/budapest_v1.html": {"t": "13h 10m", "m": 700, "r": "2stop", "d": false, "i": "BUD", "h": "AMS", "rg": "Europe", "o": null, "lg": [["SEA", "AMS", 585], ["AMS", "BUD", 115]]}};
+  window._FMAP = FMAP;
+  var COL = { nonstop:'#AF52DE', seasonal:'#c9a0e8', '1stop':'#46C24E', '2stop':'#2E90FA', home:'#8a6c1a' };
+  var RL  = { nonstop:'Nonstop', seasonal:'Nonstop · seasonal', '1stop':'1 connection', '2stop':'2 connections' };
+  var grid = document.getElementById('flt-grid');
+  var fcount = document.getElementById('fcount');
+  var search = document.getElementById('guide-search');
+  if (!grid) return;
+  var fst = { stop:'all', dur:'all', reg:'all', q:'', qh:null };
+  function parseQuery(raw) {
+    var v = (raw || '').trim().toLowerCase();
+    var num = v.match(/^(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hours?)?$/);  // "3", "3h", "5 hours"
+    if (num) { fst.qh = parseFloat(num[1]); fst.q = ''; }
+    else { fst.qh = null; fst.q = v; }
+  }
+  function connBuffer(r) {
+    if (r === '1stop') return 90;
+    if (r === '2stop') return 180;
+    return 0;
+  }
+  function fmtMins(m) {
+    var h = Math.floor(m / 60), mn = m % 60;
+    return mn ? h + 'h ' + mn + 'm' : h + 'h';
+  }
+  function fmtLeg(m) {                       // compact "4h52" / "2h" for the leg breakdown
+    var h = Math.floor(m / 60), mn = m % 60;
+    return mn ? h + 'h' + (mn < 10 ? '0' + mn : mn) : h + 'h';
+  }
+
+  var items = [];
+
+  document.querySelectorAll('.mosaic .dest-card').forEach(function (c) {
+    var key = c.getAttribute('href').replace(/^\.\//, '');
+    var d = FMAP[key]; if (!d || d.r === 'home') return;
+    var a = c.cloneNode(true);
+    a.style.borderLeftColor = COL[d.r] || '#bbb';
+    var line = document.createElement('span'); line.className = 'flt';
+    if (d.r === 'home') {
+      line.innerHTML = '<span class="fdot r-home"></span><span class="ftime">🏠 Home</span><span class="fiata">SEA</span>';
+    } else {
+      var r = RL[d.r];
+      var buf = (d.lg && d.lg.length) ? (d.lg.length - 1) * 90 : connBuffer(d.r);
+      var effMins = d.m + buf;
+      line.innerHTML = '<span class="ftime">' + fmtMins(effMins) + '</span> ' + r
+        + '<span class="fiata">' + d.i + '</span>';
+    }
+    a.appendChild(line);
+    if (d.lg && d.lg.length) {                // per-leg breakdown + air total (real sourced block times)
+      var air = 0, legtxt = d.lg.map(function (L) { air += L[2]; return L[0] + '→' + L[1] + ' ' + fmtLeg(L[2]); }).join(' · ');
+      var bk = document.createElement('span'); bk.className = 'fbreak';
+      bk.textContent = legtxt + ' · ' + fmtLeg(air) + ' air';
+      a.appendChild(bk);
+    }
+    if (d.o) { var ow = document.createElement('span'); ow.className = 'fonward'; ow.textContent = d.o; a.appendChild(ow); }
+    a.setAttribute('data-mins', d.m + ((d.lg && d.lg.length) ? (d.lg.length - 1) * 90 : connBuffer(d.r)));
+    a.setAttribute('data-routing', d.r);
+    a.setAttribute('data-delta', d.d ? '1' : '0');
+    a.setAttribute('data-region', d.rg);
+    var cname = ((c.querySelector('.dest-name') || {}).textContent || '');
+    var panel = c.closest ? c.closest('.country') : null;
+    var slug = (panel && panel.getAttribute('data-country') || '').replace(/-/g, ' ');
+    a.setAttribute('data-search', (cname + ' ' + slug + ' ' + d.i + ' ' + (d.h || '')).toLowerCase());
+    items.push(a);
+  });
+  items.sort(function (a, b) { return (+a.dataset.mins) - (+b.dataset.mins); });
+  items.forEach(function (a) { grid.appendChild(a); });
+
+  // region chips
+  var regs = [];
+  items.forEach(function (a) { var r = a.dataset.region; if (r && regs.indexOf(r) < 0) regs.push(r); });
+  regs.sort();
+  var rg = document.getElementById('freg');
+  regs.forEach(function (r) {
+    var b = document.createElement('button'); b.className = 'fchip reg'; b.dataset.reg = r; b.textContent = r; rg.appendChild(b);
+  });
+
+  function ok(a) {
+    var r = a.dataset.routing, mins = +a.dataset.mins, delta = a.dataset.delta === '1', reg = a.dataset.region;
+    // Status filter (All / Been / Want)
+    var sf = window._giStatusFilter || 'all';
+    if (sf !== 'all' && r !== 'home') {
+      var isWant = a.getAttribute('data-status') === 'want';
+      if (sf === 'want' && !isWant) return false;
+      if (sf === 'been' && isWant) return false;
+    }
+    // Numeric query = "max hours" (typing 3 → flights up to ~3h). Applies in every mode.
+    if (fst.qh != null && mins > fst.qh * 60 + 5) return false;
+    if (r === 'home') return fst.stop === 'all' && fst.dur === 'all' && (fst.reg === 'all' || fst.reg === reg) && !fst.q;
+    if (fst.stop === 'nonstop' && !(r === 'nonstop' || r === 'seasonal')) return false;
+    if (fst.stop === '1stop' && r !== '1stop') return false;
+    if (fst.stop === '2stop' && r !== '2stop') return false;
+    if (fst.dur === 'u5' && !(mins < 300)) return false;
+    if (fst.dur === 'u8' && !(mins < 480)) return false;
+    if (fst.dur === 'u10' && !(mins < 600)) return false;
+    if (fst.dur === 'u12' && !(mins < 720)) return false;
+    if (fst.dur === 'u15' && !(mins < 900)) return false;
+    if (fst.dur === 'o15' && !(mins >= 900)) return false;
+    if (fst.reg !== 'all' && reg !== fst.reg) return false;
+    if (fst.q && a.dataset.search.indexOf(fst.q) < 0) return false;
+    return true;
+  }
+  var noRes = document.getElementById('fnoresult');
+  function apply() {
+    var n = 0;
+    items.forEach(function (a) { var v = ok(a); a.style.display = v ? '' : 'none'; if (v && a.dataset.routing !== 'home') n++; });
+    fcount.textContent = n ? (n + ' destination' + (n === 1 ? '' : 's') + ' · sorted by flight time from Seattle') : '';
+    if (noRes) noRes.style.display = n ? 'none' : 'block';
+  }
+  function resetFilters() {
+    fst.stop = 'all'; fst.dur = 'all'; fst.reg = 'all'; fst.q = ''; fst.qh = null;
+    if (search) search.value = '';
+    document.querySelectorAll('.fchip').forEach(function (x) { x.classList.remove('on'); });
+    document.querySelectorAll('.fchip[data-stop="all"], .fchip[data-dur="all"], .fchip[data-reg="all"]').forEach(function (x) { x.classList.add('on'); });
+    apply();
+  }
+  if (noRes) { var rb = document.getElementById('freset'); if (rb) rb.addEventListener('click', resetFilters); }
+
+  function wire(sel, key) {
+    document.querySelectorAll(sel).forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll(sel).forEach(function (x) { x.classList.remove('on'); });
+        b.classList.add('on'); fst[key] = b.dataset[key]; apply();
+      });
+    });
+  }
+  wire('.fchip.stop', 'stop'); wire('.fchip.dur', 'dur'); wire('.fchip.reg', 'reg');
+
+  function setMode(flights) {
+    document.body.classList.toggle('mode-flights', flights);
+    if (search) search.placeholder = '🔍';
+    if (flights) { parseQuery(search ? search.value : ''); apply(); }
+    else if (search) { search.dispatchEvent(new Event('input')); }
+  }
+  /* Driven by the Browse-by segmented control */
+  window._flightsMode = setMode;
+
+  if (search) search.addEventListener('input', function () {
+    if (document.body.classList.contains('mode-flights')) { parseQuery(search.value); apply(); }
+  });
+
+  /* Re-filter when been/want toggle changes */
+  document.addEventListener('gi:status', function () {
+    if (document.body.classList.contains('mode-flights')) apply();
+  });
+
+  /* Always open in "By country" on load (default) — no auto-switch to flights. */
+  setMode(false);
+}());
+</script>
+
+<script>
+/* ══ Global content search — full-text across guide content (stops, venues, tours,
+   restaurants, sections). Lazy-loads assets/search_index.json (built by
+   Brain/scripts/build_search_index.py). Additive: hooks the existing #guide-search
+   input without touching the card filter or flights parser. ══ */
+(function () {
+  var input = document.getElementById('guide-search');
+  var panel = document.getElementById('content-search');
+  if (!input || !panel) return;
+  var data = null, loading = false, prepped = false;
+
+  // length-preserving diacritic fold (é→e, ü→u …) so "gaudi" matches "Gaudí"
+  // and highlight offsets stay aligned with the original text.
+  function fold(s) {
+    var out = '', a = Array.from(s);
+    for (var i = 0; i < a.length; i++) out += a[i].normalize('NFD').charAt(0);
+    return out.toLowerCase();
+  }
+  function prep() {
+    if (prepped) return;
+    data.guides.forEach(function (g) {
+      g.cf = fold(g.c);
+      g.e.forEach(function (e) { e[2] = fold(e[0]); });
+    });
+    prepped = true;
+  }
+  function load(cb) {
+    if (data) { cb(); return; }
+    if (loading) return;
+    loading = true;
+    fetch('../assets/search_index.json')
+      .then(function (r) { return r.json(); })
+      .then(function (j) { data = j; loading = false; prep(); cb(); })
+      .catch(function () { loading = false; });
+  }
+  function esc(s) {
+    return s.replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function label(sid) {
+    var m = /^day(\d+)$/.exec(sid);
+    if (m) return 'Day ' + m[1];
+    return (data.labels && data.labels[sid]) || '';
+  }
+  function hl(text, pos, len) {
+    if (pos < 0) return esc(text);
+    return esc(text.slice(0, pos)) + '<mark>' + esc(text.slice(pos, pos + len)) +
+      '</mark>' + esc(text.slice(pos + len));
+  }
+  function render(q) {
+    var ql = fold(q), n = ql.length;
+    var groups = [];
+    for (var gi = 0; gi < data.guides.length; gi++) {
+      var g = data.guides[gi], items = [], best = 9;
+      for (var ei = 0; ei < g.e.length; ei++) {
+        var tf = g.e[ei][2], pos = tf.indexOf(ql);
+        if (pos < 0) continue;
+        var sc = tf === ql ? 0 : pos === 0 ? 1 : /\s/.test(tf.charAt(pos - 1) || ' ') ? 2 : 3;
+        items.push({ t: g.e[ei][0], s: g.e[ei][1], pos: pos, sc: sc });
+        if (sc < best) best = sc;
+      }
+      if (!items.length) continue;
+      items.sort(function (a, b) { return a.sc - b.sc; });
+      if (g.cf.indexOf(ql) >= 0) best = Math.min(best, 1);
+      groups.push({ city: g.c, url: g.u, score: best, items: items.slice(0, 4), qn: n });
+    }
+    groups.sort(function (a, b) { return a.score - b.score || a.city.localeCompare(b.city); });
+
+    if (!groups.length) {
+      panel.innerHTML = '<div class="cs-empty">No in-guide matches for “' + esc(q) + '”.</div>';
+      panel.hidden = false;
+      return;
+    }
+    var cap = 40, shown = groups.slice(0, cap);
+    var out = '<div class="cs-head">' + groups.length + ' guide' +
+      (groups.length === 1 ? '' : 's') + ' mention “' + esc(q) + '”</div>';
+    shown.forEach(function (gr) {
+      out += '<div class="cs-guide"><a class="cs-city" href="' + gr.url + '">' + esc(gr.city) + '</a><div class="cs-items">';
+      gr.items.forEach(function (it) {
+        var lab = label(it.s);
+        out += '<a class="cs-item" href="' + gr.url + '#' + it.s + '">' +
+          '<span>' + hl(it.t, it.pos, gr.qn) + '</span>' +
+          (lab ? '<span class="cs-sec">' + lab + '</span>' : '') + '</a>';
+      });
+      out += '</div></div>';
+    });
+    if (groups.length > cap) {
+      out += '<div class="cs-more">+' + (groups.length - cap) + ' more guides — refine your search</div>';
+    }
+    panel.innerHTML = out;
+    panel.hidden = false;
+  }
+  function run() {
+    if (document.body.classList.contains('mode-flights')) { panel.hidden = true; return; }
+    var q = input.value.trim();
+    if (q.length < 2) { panel.hidden = true; panel.innerHTML = ''; return; }
+    load(function () {
+      render(q);
+      // suppress the misleading card "no destinations" line when we have in-guide hits
+      var nr = document.getElementById('guide-noresult');
+      if (nr && !panel.hidden && panel.querySelector('.cs-guide')) nr.style.display = 'none';
+    });
+  }
+  input.addEventListener('input', run);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Escape') { panel.hidden = true; } });
+
+  /* ── "Search guides" button — focuses input, sets placeholder, activates mode ── */
+  var btnSG = document.getElementById('btn-search-guides');
+  if (btnSG) {
+    btnSG.addEventListener('click', function () {
+      var active = btnSG.classList.toggle('active');
+      if (active) {
+        input.placeholder = '🔍';
+        input.focus();
+        if (input.value.trim().length >= 2) run();
+      } else {
+        input.placeholder = '🔍';
+        panel.hidden = true; panel.innerHTML = '';
+      }
+    });
+  }
+}());
+</script>
+
+<script>
+/* ══ Compare mode — side-by-side city comparison with flight times + climate ══ */
+(function () {
+  'use strict';
+
+  var MAX = 3;
+  var sel = []; /* [{name,flag,href,status,climateKey}] */
+  var climateData = null;
+  var MNAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MLBLS  = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+  var curMonth = new Date().getMonth(); /* 0-based */
+
+  var compareView = document.getElementById('compare-view');
+  var btnCompare  = document.getElementById('view-compare');
+  var btnFlights  = document.getElementById('view-flights');
+
+  /* ── Sticky bar (injected into body) ─────────────────────────────── */
+  var selBar = document.createElement('div');
+  selBar.className = 'cmp-sel-bar';
+  selBar.innerHTML =
+    '<div class="cmp-sel-chips"></div>' +
+    '<button class="cmp-go-btn" id="cmp-go" disabled>Pick 2–3 cities</button>' +
+    '<button class="cmp-exit-btn" id="cmp-exit">✕ Exit</button>';
+  (document.getElementById('compare-mount') || document.body).appendChild(selBar);
+
+  var goBtn   = document.getElementById('cmp-go');
+  var exitBtn = document.getElementById('cmp-exit');
+
+  /* ── Climate data (inlined — no fetch needed, also exposed globally for seasonal filter) ── */
+  var CLIMATE_INLINE = {"Abu Dhabi":{"hi":[23.6,24.9,28.5,32.6,36.0,38.6,40.0,40.4,38.6,34.9,30.2,26.1],"lo":[17.5,18.0,20.5,23.7,27.0,30.2,32.0,31.8,30.0,27.2,23.6,20.0]},"Aix-en-Provence":{"hi":[10.1,13.3,15.6,18.2,22.2,28.2,31.6,30.7,25.8,21.0,14.5,11.4],"lo":[1.0,3.2,4.7,7.2,11.3,16.5,18.9,18.2,14.9,11.2,6.1,3.3]},"Alaska":{"hi":[-16.6,-13.1,-5.0,2.3,13.5,18.9,20.0,16.7,10.2,1.1,-9.4,-14.3],"lo":[-22.4,-20.5,-13.5,-8.0,3.2,10.0,11.8,9.4,3.2,-4.3,-15.2,-21.0]},"Alesund":{"hi":[3.6,4.3,5.7,8.9,11.1,16.6,16.7,17.1,14.5,10.1,5.8,2.8],"lo":[-0.2,-0.0,0.4,2.1,5.3,10.6,11.4,11.5,9.2,5.2,1.8,-0.8]},"Amalfi":{"hi":[12.5,14.2,15.4,17.7,21.7,27.8,30.8,30.8,27.4,22.7,18.0,14.9],"lo":[5.1,5.8,6.9,9.6,13.9,18.6,21.5,21.7,18.8,14.6,11.7,8.4]},"Amsterdam":{"hi":[7.1,8.9,10.3,13.0,16.1,21.4,21.2,22.1,19.7,15.2,10.5,7.5],"lo":[2.7,3.1,3.4,4.7,8.0,13.0,13.9,14.7,12.0,9.7,5.4,3.0]},"Annecy":{"hi":[6.1,10.3,12.2,15.0,18.4,24.1,26.4,26.1,22.1,17.4,10.4,7.6],"lo":[-0.2,1.1,2.6,4.9,8.9,14.4,16.3,16.1,13.4,9.4,4.4,1.8]},"Aruba":{"hi":[28.5,28.5,28.8,29.5,30.2,30.5,30.4,31.1,31.8,30.8,29.5,29.2],"lo":[24.9,24.8,24.9,25.5,26.2,26.5,26.5,27.0,27.4,26.8,26.1,25.8]},"Athens":{"hi":[12.2,13.2,15.0,18.7,24.6,29.3,33.6,33.1,28.5,23.8,19.0,14.9],"lo":[5.4,5.9,7.2,10.3,15.6,19.9,23.2,23.0,19.5,15.3,11.8,8.5]},"Atlanta":{"hi":[12.0,14.9,18.3,21.6,26.3,29.1,30.8,30.5,28.0,22.8,16.8,13.6],"lo":[2.8,5.0,7.8,10.0,15.5,19.4,21.6,21.4,18.1,12.8,6.5,4.4]},"Austin":{"hi":[16.9,17.0,23.0,26.2,29.5,33.5,35.3,36.3,33.1,27.5,20.8,18.9],"lo":[6.4,5.8,12.0,15.1,19.7,23.2,25.0,25.6,22.9,16.6,10.7,8.3]},"Azores":{"hi":[16.8,16.5,17.0,17.6,19.2,20.9,23.4,24.9,23.6,21.8,19.5,17.5],"lo":[13.7,12.6,13.3,13.9,15.1,16.9,18.9,20.5,19.6,18.2,16.1,14.3]},"Bahamas":{"hi":[24.9,25.9,26.4,27.4,28.1,29.4,30.8,31.0,30.4,29.1,27.2,25.6],"lo":[21.0,22.0,22.1,23.2,24.2,25.7,27.0,27.2,26.7,25.5,24.0,22.1]},"Bangkok":{"hi":[31.6,32.3,33.4,33.8,33.7,32.7,32.0,31.3,30.8,30.6,31.3,31.0],"lo":[22.1,23.7,25.8,26.7,26.6,26.2,25.7,25.4,25.0,24.2,23.7,21.9]},"Barbados":{"hi":[26.4,26.5,26.9,27.5,28.2,28.2,27.8,28.2,29.1,28.2,27.5,27.0],"lo":[22.0,21.8,22.0,22.5,23.5,23.7,23.6,23.7,24.0,23.9,23.3,22.8]},"Barcelona":{"hi":[13.2,15.2,16.3,17.7,21.4,25.9,28.7,28.9,25.8,22.3,17.8,15.4],"lo":[4.0,6.1,8.0,9.9,13.7,18.6,21.6,21.7,18.5,14.8,9.6,6.4]},"Beijing":{"hi":[2.8,6.2,15.2,21.3,27.7,32.6,31.7,29.7,27.2,18.9,10.0,2.4],"lo":[-6.8,-4.7,1.2,7.9,14.2,20.3,22.3,21.1,16.6,7.9,0.3,-6.5]},"Bend":{"hi":[6.1,5.2,7.3,12.6,17.3,22.8,28.7,28.3,23.1,16.1,9.0,5.3],"lo":[-1.7,-3.8,-2.8,0.8,4.7,8.9,12.4,13.1,8.9,4.0,0.1,-2.1]},"Bergen":{"hi":[3.3,4.2,5.9,10.0,11.8,17.8,17.2,17.8,14.8,10.1,6.2,3.0],"lo":[-1.0,-1.0,0.0,1.3,4.7,9.8,10.6,11.1,8.8,5.1,1.6,-1.7]},"Berlin":{"hi":[4.8,7.1,9.7,13.6,18.0,25.7,24.5,25.1,20.6,15.3,8.7,4.9],"lo":[0.4,0.3,1.3,3.7,8.2,14.7,15.1,15.8,11.5,8.4,3.5,0.5]},"Big Island":{"hi":[14.2,12.7,13.9,14.2,15.7,17.0,17.8,17.7,17.6,17.5,15.8,14.5],"lo":[4.9,4.2,5.5,6.0,7.1,7.8,8.4,8.3,8.3,8.1,7.1,6.4]},"Bologna":{"hi":[8.0,12.1,14.8,17.7,21.8,29.0,31.5,31.0,25.8,20.7,13.3,8.8],"lo":[0.6,2.9,4.6,7.5,12.7,18.1,20.3,20.0,16.0,12.0,6.7,2.6]},"Bordeaux":{"hi":[9.7,13.7,15.4,17.9,21.3,25.0,27.5,27.6,25.3,20.5,14.0,11.7],"lo":[3.2,4.8,6.3,8.4,11.5,15.5,16.9,17.1,15.0,12.0,7.3,5.5]},"Boston":{"hi":[3.4,4.5,8.8,13.2,19.5,25.0,28.6,27.7,23.2,17.5,10.9,6.2],"lo":[-4.7,-5.1,-1.5,4.0,9.3,15.2,19.2,18.6,14.5,9.3,2.0,-1.9]},"Bruges":{"hi":[7.2,9.6,11.2,13.6,16.6,21.6,21.9,22.7,20.5,16.0,10.8,8.1],"lo":[2.6,3.2,3.9,4.9,8.3,12.8,13.9,14.7,12.6,9.9,5.7,3.6]},"Brussels":{"hi":[6.4,9.3,11.1,14.0,17.5,22.8,22.6,23.5,20.7,15.8,10.2,7.5],"lo":[1.8,2.8,3.5,4.7,8.1,13.3,13.9,14.8,12.3,9.7,5.2,3.2]},"Buenos Aires":{"hi":[28.2,27.1,25.1,21.3,17.6,14.7,14.1,15.7,17.6,20.9,24.9,27.1],"lo":[20.8,19.2,18.7,14.8,10.8,8.5,7.6,8.4,10.4,12.8,16.9,19.0]},"Cambridge":{"hi":[7.4,9.9,11.0,13.5,16.7,20.7,22.4,22.8,20.5,15.5,10.8,8.3],"lo":[1.8,3.2,3.9,4.1,7.7,11.8,13.8,14.0,11.9,9.0,5.2,3.4]},"Cannes":{"hi":[12.5,14.3,15.8,17.4,21.4,26.3,29.4,29.7,26.2,21.7,17.0,13.9],"lo":[5.0,6.5,7.9,10.1,14.1,18.9,21.7,21.6,18.4,14.5,9.8,6.9]},"Capri":{"hi":[12.8,13.0,13.3,14.8,18.3,23.2,26.3,26.5,24.6,21.1,18.3,15.2],"lo":[10.3,10.7,11.2,12.7,16.3,21.0,24.3,24.6,22.3,18.9,15.7,13.1]},"Cascais":{"hi":[14.6,16.1,17.0,17.4,20.1,20.5,22.5,22.4,22.7,20.8,17.6,16.1],"lo":[9.8,10.9,11.7,13.0,15.3,16.4,17.6,17.8,17.9,16.3,13.5,12.2]},"Cayman Islands":{"hi":[27.6,28.0,28.3,29.3,29.9,30.4,31.3,31.3,31.0,30.0,28.9,28.1],"lo":[24.4,24.6,24.5,25.2,25.8,26.6,27.1,26.9,26.9,26.4,25.9,25.1]},"Chicago":{"hi":[0.3,1.2,7.8,13.2,18.7,25.1,27.3,26.7,23.7,16.1,9.0,4.9],"lo":[-6.4,-7.3,-0.7,4.0,9.7,16.1,19.3,19.0,15.9,8.5,1.1,-2.1]},"Chongqing":{"hi":[11.1,14.3,19.4,23.0,25.9,28.9,31.5,33.7,28.1,22.1,17.7,12.0],"lo":[5.2,7.3,11.4,14.8,18.5,21.9,24.5,25.7,21.2,16.4,11.6,6.6]},"Cinque Terre":{"hi":[11.7,13.3,14.7,16.9,20.5,25.6,28.5,28.7,25.3,20.8,16.3,13.3],"lo":[6.3,7.3,8.3,10.4,14.7,19.4,22.0,22.1,18.9,15.4,11.0,8.2]},"Colmar":{"hi":[5.6,9.9,12.0,15.0,18.5,24.7,25.9,25.4,21.9,16.9,9.8,7.0],"lo":[0.0,1.5,2.9,5.5,9.2,14.9,15.5,15.6,12.4,8.8,3.9,1.8]},"Copenhagen":{"hi":[4.8,5.5,7.1,10.4,14.1,20.0,20.3,20.7,17.7,13.2,8.5,4.9],"lo":[1.5,1.4,1.8,3.7,7.9,13.4,14.7,15.1,12.9,9.4,5.9,2.1]},"Corfu":{"hi":[12.9,14.2,15.2,17.6,22.2,27.8,32.0,31.6,27.4,22.9,18.9,15.3],"lo":[8.6,9.0,9.9,12.0,16.0,20.7,23.8,24.2,21.5,17.8,14.7,11.5]},"Curacao":{"hi":[28.8,29.0,29.3,30.1,30.7,30.8,30.7,31.5,32.2,31.1,29.6,29.4],"lo":[24.8,24.8,24.9,25.5,26.3,26.4,26.4,26.9,27.3,26.6,25.7,25.5]},"Cusco":{"hi":[16.2,16.0,15.9,16.4,16.6,17.1,18.0,18.5,18.4,18.6,18.3,17.0],"lo":[7.5,8.1,7.4,6.6,5.5,4.5,4.4,5.0,6.1,7.2,7.9,8.2]},"Dubai":{"hi":[23.8,25.1,28.5,32.3,35.9,39.4,40.4,40.6,38.9,35.1,30.5,26.4],"lo":[15.2,16.3,19.0,21.9,25.0,28.4,31.1,30.4,27.9,24.5,21.0,17.5]},"Dublin":{"hi":[7.6,9.3,10.2,11.8,15.0,17.6,19.3,18.8,17.2,13.6,10.1,8.0],"lo":[3.0,3.9,3.8,4.7,7.6,10.5,12.5,12.3,10.7,8.3,5.5,3.7]},"Dubrovnik":{"hi":[11.0,12.7,14.2,16.7,21.4,26.8,30.1,30.0,26.1,21.7,17.2,13.5],"lo":[3.4,4.5,6.1,8.9,13.9,18.8,21.3,21.5,17.9,13.4,10.5,7.0]},"Edinburgh":{"hi":[6.5,7.9,8.9,10.7,13.6,16.8,18.4,17.9,16.4,12.4,9.1,6.7],"lo":[2.5,3.1,3.2,3.8,6.9,10.3,12.2,12.1,10.5,7.8,4.8,2.8]},"Florence":{"hi":[10.4,13.5,15.5,18.4,22.4,29.2,32.5,32.1,27.4,22.0,15.8,12.4],"lo":[2.0,3.3,4.5,6.8,11.8,16.4,19.0,19.3,15.6,11.9,8.0,4.6]},"Geneva":{"hi":[5.2,9.1,11.5,14.8,18.3,24.4,26.8,26.3,22.2,16.6,9.6,6.7],"lo":[-0.4,1.0,2.8,5.4,9.5,15.0,16.9,16.6,13.7,9.2,4.0,1.1]},"Glasgow":{"hi":[6.4,7.8,9.2,11.9,14.4,17.9,18.6,18.4,16.6,12.3,9.0,6.4],"lo":[1.5,2.5,2.5,3.3,6.4,10.2,11.7,11.5,9.8,7.0,3.9,1.9]},"Gothenburg":{"hi":[3.6,4.0,6.2,11.0,14.1,20.2,19.6,19.8,16.7,11.5,6.8,2.9],"lo":[-0.5,-1.0,-0.4,1.8,6.3,12.1,13.5,13.4,10.8,7.2,3.2,-1.0]},"Helsinki":{"hi":[0.0,0.3,2.2,7.8,12.8,20.1,20.8,19.9,14.9,9.5,4.5,0.3],"lo":[-4.6,-4.8,-3.5,0.3,5.2,12.5,13.9,13.8,9.6,5.2,1.0,-3.6]},"Hong Kong":{"hi":[18.7,19.7,22.4,24.1,26.7,28.6,29.7,29.2,29.1,26.6,24.3,19.8],"lo":[13.1,14.4,17.9,20.1,23.5,25.6,26.4,25.6,24.9,21.9,18.7,13.2]},"Iceland":{"hi":[1.7,2.3,2.8,6.6,8.7,11.3,13.3,13.2,10.4,6.7,4.3,1.0],"lo":[-2.9,-1.8,-1.6,1.7,3.7,6.6,8.7,8.6,6.0,2.7,0.5,-3.0]},"Kauai":{"hi":[18.0,17.1,17.6,18.5,19.4,20.5,20.8,21.5,21.4,20.8,19.4,18.0],"lo":[10.2,10.1,10.7,11.3,12.3,13.5,14.3,14.2,14.3,13.6,12.8,11.8]},"Kyoto":{"hi":[8.3,9.4,14.5,18.1,23.2,26.8,29.7,31.9,28.4,21.8,16.8,10.7],"lo":[-0.8,-0.0,3.5,7.3,12.7,17.8,22.3,23.9,20.6,12.7,6.8,1.2]},"Lagos":{"hi":[16.1,17.6,19.0,20.5,24.7,26.1,29.4,29.7,26.8,24.3,19.7,17.5],"lo":[9.2,10.6,11.3,12.7,15.5,16.9,18.8,19.1,18.3,16.4,13.0,11.5]},"Lake Como":{"hi":[9.0,12.0,14.0,16.7,20.6,26.3,28.4,27.7,23.3,18.7,12.8,9.3],"lo":[1.5,2.9,4.6,7.6,12.4,17.5,20.0,19.9,16.3,12.2,6.6,3.2]},"Lille":{"hi":[6.9,9.7,11.5,14.3,17.6,22.5,22.9,23.5,21.1,16.2,10.8,8.0],"lo":[1.9,3.0,3.8,4.6,8.2,13.0,13.9,14.7,12.5,9.7,5.5,3.4]},"Lima":{"hi":[23.9,24.9,24.8,23.3,21.0,19.5,18.8,18.3,18.5,19.0,20.3,22.1],"lo":[19.7,20.6,20.4,18.9,16.6,15.1,14.2,13.9,14.1,14.7,15.9,18.0]},"Lisbon":{"hi":[14.4,16.7,18.2,19.4,23.8,24.6,28.4,28.1,26.0,23.2,18.0,16.1],"lo":[8.4,9.3,10.5,11.9,14.8,16.0,18.1,18.3,17.7,15.5,12.1,10.7]},"Ljubljana":{"hi":[5.3,9.6,12.2,15.2,18.8,26.1,27.9,26.6,22.2,17.5,10.3,5.9],"lo":[-3.1,-1.7,-0.2,3.3,8.6,14.3,15.7,15.5,11.2,7.5,2.8,-0.7]},"London":{"hi":[7.7,10.0,11.4,14.0,17.2,21.1,22.7,22.8,20.6,15.7,11.2,8.8],"lo":[1.6,3.0,3.9,4.3,7.9,11.8,13.9,14.0,12.0,9.0,5.2,3.5]},"Los Angeles":{"hi":[18.6,19.8,19.9,23.9,24.5,27.7,30.8,31.7,30.9,28.2,23.8,18.7],"lo":[7.6,7.4,9.0,11.6,13.2,15.3,17.0,17.9,17.7,14.9,10.6,8.4]},"Lucerne":{"hi":[4.9,9.0,11.1,14.1,17.4,23.8,24.7,23.9,20.7,16.2,9.1,6.2],"lo":[-0.5,0.3,1.5,4.3,8.5,14.1,16.3,16.0,13.1,9.2,4.1,0.9]},"Luxembourg":{"hi":[4.5,7.9,10.0,13.3,16.8,22.8,23.3,23.6,20.1,14.8,8.5,5.8],"lo":[0.1,1.1,2.0,3.7,7.6,13.0,13.5,14.4,11.0,8.2,3.5,1.9]},"Lyon":{"hi":[6.2,11.0,13.6,16.8,20.6,26.5,28.6,28.0,24.2,18.4,11.1,8.2],"lo":[0.4,1.7,3.7,6.3,10.6,15.6,17.3,16.8,13.8,10.2,4.8,2.5]},"MachuPicchu":{"hi":[17.9,18.0,18.2,18.2,18.1,17.8,18.5,18.7,19.0,19.0,18.7,18.3],"lo":[11.6,11.8,11.4,11.1,10.0,9.0,9.2,9.2,10.3,11.1,11.6,11.7]},"Madeira":{"hi":[15.9,16.5,17.0,17.7,19.9,20.8,23.2,24.9,23.0,22.3,19.3,17.5],"lo":[11.2,11.1,11.5,12.0,14.0,15.3,16.9,18.2,17.2,16.5,13.9,12.7]},"Madrid":{"hi":[10.1,14.9,16.9,18.9,25.1,29.5,34.8,33.5,26.2,21.8,14.2,11.5],"lo":[0.6,2.9,5.3,7.6,12.0,16.3,20.4,19.6,14.8,10.7,6.1,3.7]},"Marktoberdorf":{"hi":[3.0,7.3,8.8,11.7,14.9,21.7,22.2,21.6,18.3,14.6,7.6,4.8],"lo":[-4.1,-2.3,-0.9,1.6,5.9,11.5,12.8,12.4,9.1,5.5,0.3,-2.3]},"Marrakech":{"hi":[19.7,22.8,23.7,25.9,31.8,33.2,39.1,38.4,33.4,30.5,24.5,21.3],"lo":[5.4,7.8,9.5,11.8,15.7,17.8,21.6,21.5,18.6,15.3,10.3,7.4]},"Marseille":{"hi":[11.0,13.1,14.6,16.6,20.3,25.3,28.4,27.9,24.7,20.5,15.3,12.7],"lo":[5.0,6.4,7.5,9.4,13.4,18.3,20.7,20.1,17.7,14.2,9.7,7.1]},"Maui":{"hi":[22.1,21.3,22.2,22.8,23.9,25.4,26.7,26.6,26.6,25.7,24.6,23.1],"lo":[15.6,15.2,15.7,16.3,17.2,18.2,19.3,19.3,19.2,18.7,18.0,16.8]},"Melbourne":{"hi":[27.0,25.0,23.4,20.2,16.0,13.9,13.4,14.3,17.1,18.8,21.0,23.5],"lo":[15.2,14.2,13.5,10.5,8.3,6.8,6.4,6.9,7.8,8.9,10.9,12.3]},"Miami":{"hi":[24.2,25.5,26.6,28.0,28.8,29.7,30.9,31.1,30.2,28.8,26.7,24.9],"lo":[17.1,19.8,20.4,21.8,23.0,24.5,25.5,25.7,24.7,23.8,21.2,18.7]},"Milan":{"hi":[7.8,12.0,15.0,18.2,22.2,28.5,30.4,29.7,24.9,19.4,12.5,7.7],"lo":[-0.5,1.9,4.2,7.8,12.8,18.1,20.3,19.9,16.0,11.5,5.5,1.7]},"Monaco":{"hi":[11.3,12.9,14.6,16.3,20.1,25.2,27.7,27.8,24.7,20.3,15.7,12.5],"lo":[3.8,5.3,6.6,8.8,13.0,18.1,20.8,20.6,17.3,13.3,8.5,5.7]},"Montreal":{"hi":[-4.9,-3.3,3.5,11.2,18.8,24.2,26.9,25.3,20.8,14.7,6.0,0.8],"lo":[-13.2,-12.7,-5.7,1.0,7.9,14.5,18.3,17.0,12.6,7.2,-0.9,-5.9]},"Montevideo":{"hi":[27.8,27.1,25.4,21.8,18.0,15.1,14.6,15.8,17.5,20.5,23.8,26.5],"lo":[19.2,18.7,17.5,13.9,10.5,8.1,7.4,8.1,9.8,12.6,15.5,18.0]},"Munich":{"hi":[4.1,8.1,10.2,13.5,16.7,23.4,24.4,23.6,19.8,15.9,8.4,5.5],"lo":[-2.3,-0.9,0.4,3.1,7.4,13.0,14.3,14.2,10.4,6.9,1.6,-1.0]},"Naples":{"hi":[12.3,13.9,15.1,17.3,21.4,27.2,30.4,30.5,27.3,22.5,18.0,14.8],"lo":[4.6,5.5,6.7,9.1,13.3,17.9,21.1,21.3,18.6,14.0,11.4,7.9]},"New York":{"hi":[5.2,6.2,10.5,15.6,20.6,26.1,29.9,28.4,24.6,18.8,12.1,7.4],"lo":[-2.6,-2.4,0.9,6.1,11.0,16.8,21.0,20.2,16.2,10.9,3.5,-0.0]},"Nice":{"hi":[12.6,14.0,15.7,17.4,21.1,25.8,28.5,28.8,25.7,21.3,16.9,13.8],"lo":[4.9,6.1,7.9,10.1,14.2,18.8,21.5,21.4,18.5,14.2,9.7,6.6]},"Oahu":{"hi":[26.0,25.3,25.6,26.6,27.6,29.0,29.4,30.1,30.0,29.2,28.0,26.4],"lo":[20.9,20.4,20.9,21.6,22.5,23.6,24.0,24.3,24.3,23.6,22.9,21.6]},"Orlando":{"hi":[21.1,24.6,27.1,28.2,30.6,31.3,31.4,31.6,30.0,28.0,24.2,22.1],"lo":[11.1,14.0,15.6,17.6,20.0,22.8,23.8,24.2,22.8,20.1,16.2,13.0]},"Oslo":{"hi":[1.1,2.9,5.8,11.4,15.4,22.1,21.3,20.9,16.7,10.1,4.7,0.1],"lo":[-3.7,-3.0,-2.2,1.8,6.2,12.8,13.5,13.3,10.0,5.3,1.1,-3.9]},"Oxford":{"hi":[7.3,9.6,10.8,13.5,16.5,20.3,21.8,21.9,19.8,15.0,10.6,8.2],"lo":[1.7,3.0,3.7,4.0,7.6,11.3,13.3,13.5,11.4,8.7,5.1,3.4]},"Palm Desert":{"hi":[19.1,20.5,23.1,30.3,33.5,38.8,42.2,41.3,37.6,31.4,24.6,18.9],"lo":[10.6,10.4,12.3,17.2,20.1,24.9,29.2,28.9,25.1,19.3,14.3,10.8]},"Palo Alto":{"hi":[14.6,15.3,16.4,19.9,22.7,26.5,27.4,28.6,27.0,24.0,17.8,14.2],"lo":[6.8,6.4,7.4,9.1,11.1,13.7,14.2,15.5,14.7,12.5,8.7,7.2]},"Paris":{"hi":[7.2,10.5,12.5,15.6,18.8,24.0,25.5,25.1,22.6,17.2,11.2,8.5],"lo":[2.2,3.2,4.2,5.6,9.3,14.0,15.1,15.4,13.1,10.0,5.7,3.9]},"Pasadena":{"hi":[17.6,18.6,18.8,23.0,24.2,27.9,31.5,32.4,31.0,27.5,22.8,17.8],"lo":[7.4,6.7,7.8,10.5,11.8,14.5,17.0,18.2,17.7,14.5,10.7,8.1]},"Phuket":{"hi":[30.0,31.5,32.4,31.7,30.3,29.7,29.6,29.5,29.1,28.9,28.7,29.0],"lo":[24.3,24.7,25.2,25.6,25.6,25.2,25.2,25.1,24.6,24.2,24.2,24.2]},"Pisa":{"hi":[11.0,13.8,15.7,18.4,22.2,28.1,30.9,31.3,27.2,22.0,16.1,12.5],"lo":[2.1,3.6,4.8,7.2,12.3,16.9,19.7,19.7,16.2,12.6,8.4,4.8]},"Porto":{"hi":[13.3,15.6,16.5,17.3,20.6,21.0,24.1,23.7,23.4,20.3,16.3,14.4],"lo":[6.9,8.2,9.1,10.5,13.2,14.5,16.4,16.2,16.1,13.9,10.8,9.2]},"Prague":{"hi":[4.2,6.9,10.3,14.2,18.5,25.3,25.8,24.9,21.1,16.0,8.5,5.1],"lo":[-1.1,-0.7,1.0,3.5,8.3,14.5,15.4,15.4,11.2,7.3,2.5,-0.2]},"Puerto Rico":{"hi":[28.2,28.2,28.9,29.9,31.5,31.9,31.1,31.3,31.0,30.5,29.5,28.4],"lo":[21.6,21.9,21.8,22.4,23.7,24.6,25.2,25.2,24.9,24.3,23.7,22.8]},"Quebec City":{"hi":[-6.2,-5.0,1.5,8.4,17.5,22.4,25.3,23.9,19.5,13.4,3.9,-0.9],"lo":[-14.3,-14.0,-7.5,-0.9,6.1,12.5,16.1,15.2,10.6,5.3,-3.4,-8.8]},"Queenstown":{"hi":[21.5,20.9,19.1,15.2,12.4,7.7,7.1,8.3,11.3,14.0,17.5,19.0],"lo":[12.5,12.3,11.0,7.8,6.2,2.9,1.9,2.4,3.8,5.5,8.6,10.5]},"Rio de Janeiro":{"hi":[29.8,29.0,29.0,26.7,25.4,25.0,24.8,24.8,26.0,26.4,26.4,27.9],"lo":[23.7,23.6,23.2,21.5,19.7,18.9,18.1,18.2,19.6,20.8,20.9,22.4]},"Rome":{"hi":[12.0,14.8,16.6,18.8,23.3,29.8,33.4,32.6,28.2,23.1,17.7,14.2],"lo":[3.3,4.7,6.0,8.2,13.1,17.8,21.0,21.1,17.5,13.5,10.0,6.4]},"Salzburg":{"hi":[5.0,9.1,11.3,14.2,17.2,24.2,24.7,23.9,20.3,17.0,10.0,6.5],"lo":[-2.7,-1.2,0.4,3.2,7.7,13.4,14.7,14.5,10.9,7.2,1.7,-1.4]},"San Diego":{"hi":[17.3,17.4,17.2,19.2,19.9,21.9,23.9,25.3,25.4,23.9,21.0,17.6],"lo":[8.3,7.9,9.8,12.4,14.1,15.9,18.0,18.9,18.3,14.9,11.0,8.9]},"San Francisco":{"hi":[13.4,14.0,13.8,15.2,16.5,18.3,18.1,19.7,20.5,20.0,16.3,13.2],"lo":[7.9,7.5,8.6,10.0,11.4,13.0,13.2,14.6,14.7,12.8,9.7,8.2]},"San Sebastian":{"hi":[11.3,15.0,15.7,16.8,19.3,22.4,23.8,24.6,23.8,21.3,15.6,14.2],"lo":[5.6,7.4,8.2,9.4,11.8,15.3,17.1,17.4,16.2,13.9,9.8,8.4]},"Santiago":{"hi":[29.7,29.6,28.1,23.8,19.5,15.4,15.0,16.8,18.5,22.6,26.4,29.5],"lo":[15.0,15.3,14.0,11.9,9.7,7.3,6.6,7.6,8.4,10.0,11.9,14.1]},"Scottsdale":{"hi":[18.3,19.6,23.3,30.7,34.4,39.8,41.3,40.1,37.5,31.4,25.1,18.5],"lo":[6.3,7.0,10.3,15.7,20.3,25.6,29.5,28.4,25.1,17.6,12.0,7.5]},"Seattle":{"hi":[8.4,7.4,10.5,13.4,17.7,21.0,24.3,24.8,20.9,14.9,10.0,7.7],"lo":[3.2,1.9,3.1,5.5,9.4,12.3,14.6,15.3,13.2,8.8,4.8,3.3]},"Seoul":{"hi":[2.4,5.3,12.1,17.0,22.5,26.2,28.8,28.5,25.0,18.4,11.4,3.0],"lo":[-6.6,-4.8,0.4,5.9,11.7,17.6,21.8,22.1,17.2,9.0,1.7,-5.7]},"Seville":{"hi":[15.6,19.6,21.3,23.3,29.5,32.4,37.7,37.0,31.1,27.3,20.1,17.0],"lo":[6.3,8.6,10.1,12.2,16.1,18.7,22.1,22.0,19.1,15.8,11.1,8.8]},"Shanghai":{"hi":[9.6,11.0,16.1,20.4,25.3,28.4,31.4,32.4,27.7,22.8,18.4,10.9],"lo":[1.9,3.4,7.2,11.1,16.1,21.0,24.9,25.4,21.2,15.6,10.3,2.7]},"Siena":{"hi":[9.6,12.7,14.6,17.5,22.0,29.1,32.3,31.9,26.7,21.1,14.9,11.4],"lo":[1.5,2.8,3.8,6.3,11.0,16.3,18.9,18.8,15.2,11.3,7.2,4.0]},"Singapore":{"hi":[29.1,30.1,30.6,30.2,30.0,29.2,29.3,29.3,29.6,29.7,29.4,29.1],"lo":[23.5,23.6,24.0,24.5,25.3,25.0,24.8,24.8,24.6,24.2,23.9,23.6]},"Sint Maarten":{"hi":[25.8,25.6,25.6,26.0,27.0,27.8,28.2,28.5,28.7,28.5,27.6,26.7],"lo":[24.3,24.0,24.1,24.6,25.6,26.3,26.5,26.8,26.9,26.6,26.0,25.2]},"Sintra":{"hi":[14.0,15.8,16.6,17.1,20.0,20.5,22.6,22.8,22.9,20.8,17.1,15.6],"lo":[8.5,9.8,10.5,12.0,14.3,15.8,17.0,17.3,17.2,15.5,12.5,11.1]},"Sorrento":{"hi":[12.3,13.7,14.7,17.0,21.0,26.9,29.9,29.9,26.6,22.1,17.8,14.7],"lo":[6.2,7.0,7.8,10.1,14.2,19.2,22.3,22.4,19.6,15.7,12.5,9.3]},"Split":{"hi":[10.8,12.9,14.6,17.2,21.9,28.0,31.4,31.0,26.6,21.7,16.8,13.2],"lo":[3.8,4.7,6.3,9.3,14.3,19.4,22.0,22.3,18.2,13.7,10.6,7.2]},"Stockholm":{"hi":[2.0,2.8,5.8,10.0,14.8,22.3,21.7,21.3,16.4,10.7,5.5,1.4],"lo":[-2.6,-3.2,-2.1,0.0,4.7,11.7,12.8,12.9,9.3,5.2,1.5,-2.8]},"Strasbourg":{"hi":[5.6,9.6,12.3,15.7,19.5,25.8,26.5,25.9,22.5,16.8,9.6,6.7],"lo":[0.3,1.5,2.7,5.2,9.5,15.1,15.8,16.2,12.5,9.0,4.0,1.7]},"Stuttgart":{"hi":[5.1,9.1,11.2,14.1,17.6,24.1,24.9,24.5,21.1,16.5,9.3,6.5],"lo":[-0.4,1.0,1.8,4.0,8.2,13.9,14.8,15.1,11.6,8.5,3.2,1.2]},"Sydney":{"hi":[26.5,25.7,24.5,22.4,19.4,17.0,17.1,18.3,20.7,22.6,23.3,25.1],"lo":[19.3,18.7,17.6,13.8,10.6,8.5,8.2,8.3,10.4,12.7,14.7,16.8]},"Taipei":{"hi":[19.4,20.7,23.3,25.3,28.7,31.4,33.6,32.7,30.5,27.0,24.9,20.1],"lo":[14.0,14.6,16.1,18.3,22.0,24.5,25.8,25.7,24.1,22.0,19.4,15.4]},"Tallinn":{"hi":[0.3,0.7,3.7,8.7,14.0,21.5,21.3,20.9,15.6,10.1,4.5,0.1],"lo":[-3.7,-3.5,-2.5,0.8,5.2,12.2,13.7,13.7,9.5,5.6,1.0,-3.7]},"Tokyo":{"hi":[9.0,10.8,15.3,18.2,22.9,26.2,29.6,32.0,27.8,21.5,17.5,11.6],"lo":[-0.1,0.9,5.5,8.8,14.2,18.6,22.7,24.4,20.9,13.9,8.3,2.3]},"Toledo":{"hi":[10.3,15.0,17.1,19.2,25.5,29.8,35.2,33.9,26.8,22.5,14.7,12.3],"lo":[2.0,4.5,6.4,8.5,12.8,17.0,21.3,20.7,15.9,12.2,7.2,5.1]},"Toronto":{"hi":[-0.1,0.6,5.4,10.8,17.1,23.4,26.5,25.8,21.8,15.1,7.8,3.6],"lo":[-7.0,-7.9,-3.2,2.0,7.6,14.3,17.7,17.3,13.8,8.2,0.8,-2.2]},"Tromso":{"hi":[-2.6,-1.9,-0.7,2.8,7.0,13.8,16.7,15.5,10.5,4.1,-0.3,-2.6],"lo":[-6.8,-6.2,-5.3,-1.8,1.3,7.5,10.3,9.7,5.9,-0.3,-4.4,-7.2]},"Turin":{"hi":[7.9,11.7,14.8,18.2,21.8,27.9,30.7,29.5,24.7,19.0,12.0,7.3],"lo":[-2.4,-0.0,2.8,6.6,11.4,16.8,19.3,18.5,14.6,10.0,3.4,-0.9]},"Vancouver":{"hi":[6.5,5.3,8.7,11.3,15.8,18.9,21.9,22.2,18.6,12.9,8.2,5.6],"lo":[2.0,0.4,2.5,4.8,9.3,12.4,14.7,15.3,12.7,8.0,3.5,1.4]},"Venice":{"hi":[7.6,10.1,12.8,15.7,20.2,26.1,28.4,28.3,24.3,19.3,13.3,8.9],"lo":[0.7,2.5,4.8,8.4,13.5,19.0,20.7,20.6,16.8,12.3,6.9,3.0]},"Verona":{"hi":[7.7,11.6,14.7,17.9,21.9,28.3,30.6,29.7,25.3,19.9,13.0,8.6],"lo":[-0.0,2.4,4.5,8.1,13.1,18.3,20.4,20.0,15.8,11.4,5.7,2.4]},"Vienna":{"hi":[4.4,8.4,11.5,14.9,18.7,25.6,27.3,26.2,21.9,16.5,9.5,5.4],"lo":[-1.1,0.7,2.0,5.2,9.8,15.7,17.1,17.0,12.7,8.3,3.4,0.1]},"Virgin Islands":{"hi":[25.5,25.2,25.1,25.6,26.6,27.4,27.8,28.1,28.3,28.1,27.3,26.4],"lo":[23.9,23.7,23.7,24.2,25.2,25.9,26.2,26.4,26.5,26.2,25.6,24.8]},"Wellington":{"hi":[19.9,19.7,18.5,16.7,15.5,13.5,12.6,12.4,13.4,14.6,16.7,18.2],"lo":[15.2,15.2,14.1,12.7,11.8,9.9,8.6,8.6,9.4,10.4,12.5,13.8]},"Zhangjiajie":{"hi":[8.5,10.6,16.6,20.1,24.1,28.1,30.0,30.8,27.3,20.6,16.5,10.2],"lo":[2.4,3.8,9.2,12.7,17.2,21.6,23.8,24.3,20.6,14.5,9.9,3.5]},"Zurich":{"hi":[4.2,8.4,10.8,14.2,17.5,23.9,24.8,24.1,20.7,15.7,8.5,5.3],"lo":[-1.5,-0.3,1.0,3.8,8.0,13.7,15.3,15.1,11.9,7.9,2.9,-0.2]},"Bali":{"hi":[29.6,29.8,30.1,30.0,29.5,28.8,28.7,28.9,29.1,29.2,29.3,29.4],"lo":[21.4,21.4,21.5,21.7,21.8,21.2,21.0,21.2,21.3,21.4,21.4,21.4]},"Istanbul":{"hi":[9.1,9.5,11.8,16.2,20.9,25.5,28.0,28.0,24.4,19.5,14.5,10.6],"lo":[3.4,3.6,5.5,9.4,13.7,18.3,21.0,21.0,17.4,13.0,8.9,5.3]},"Budapest":{"hi":[5.0,7.0,11.0,16.0,21.0,26.0,28.0,27.0,23.0,17.0,10.0,5.0],"lo":[-1.0,0.0,3.0,7.0,12.0,17.0,19.0,18.0,14.0,9.0,4.0,0.0]}};
+  window._CLIMATE = CLIMATE_INLINE;
+  function loadClimate(cb) { climateData = CLIMATE_INLINE; cb(); }
+
+  /* ── Temperature → colour ────────────────────────────────────────── */
+  function tempColor(hi) {
+    if (hi <=  4) return '#6ba3d6';
+    if (hi <= 10) return '#8ab8d4';
+    if (hi <= 17) return '#7dbf8e';
+    if (hi <= 23) return '#e8c15a';
+    if (hi <= 29) return '#e89a4a';
+    return '#d95f45';
+  }
+
+  /* ── Climate bar strip (12 months, selected month highlighted) ───── */
+  var pickedMonth = new Date().getMonth(); /* default = current month, user can change */
+
+  function inRange(hi, lo) {
+    var t = window._getTempThreshold ? window._getTempThreshold() : { hi: 999, lo: -999 };
+    return hi <= t.hi && lo >= t.lo;
+  }
+
+  function renderBars(key) {
+    var d = climateData && climateData[key];
+    if (!d || !d.hi) return '<span style="font-size:11px;color:var(--muted)">—</span>';
+    var maxHi = Math.max.apply(null, d.hi);
+    var H = 38;
+    var out = '<div class="cmp-bars" data-key="' + key + '">';
+    for (var i = 0; i < 12; i++) {
+      var hi = d.hi[i], lo = d.lo[i];
+      var px = Math.max(3, Math.round((hi / maxHi) * H));
+      var isSel = (i === pickedMonth);
+      var good  = inRange(hi, lo);
+      var lbl = (isSel || i % 2 === 0) ? MLBLS[i] : '';
+      var barOpacity = good ? '1' : '0.28';
+      var lblColor = isSel ? 'color:var(--accent);font-weight:700' : good ? 'color:var(--text)' : 'color:var(--muted)';
+      out += '<div class="cmp-bar-col" data-m="' + i + '" style="cursor:pointer" title="' + MNAMES[i] + ': ' + Math.round(hi) + '° hi / ' + Math.round(lo) + '° lo">' +
+        '<div class="cmp-bar' + (isSel ? ' cmp-cur' : '') + '" ' +
+        'style="height:' + px + 'px;background:' + tempColor(hi) + ';opacity:' + barOpacity + '"></div>' +
+        '<span class="cmp-bar-lbl" style="' + lblColor + '">' + lbl + '</span>' +
+        '</div>';
+    }
+    out += '</div>';
+    var chi = d.hi[pickedMonth], clo = d.lo[pickedMonth];
+    var selGood = inRange(chi, clo);
+    out += '<div class="cmp-temp-now" data-key="' + key + '" style="' + (selGood ? 'color:#2a7a2a;font-weight:600' : '') + '">'
+      + MNAMES[pickedMonth] + ': <strong>' + Math.round(chi) + '°</strong> hi / ' + Math.round(clo) + '° lo'
+      + (selGood ? ' ✓' : '') + '</div>';
+    return out;
+  }
+
+  /* Update all bar strips + temp readouts when user clicks a bar */
+  function onBarClick(e) {
+    var col = e.target.closest ? e.target.closest('.cmp-bar-col') : null;
+    if (!col) return;
+    var m = parseInt(col.getAttribute('data-m'), 10);
+    if (isNaN(m)) return;
+    pickedMonth = m;
+    /* Re-render just the climate cells without rebuilding the whole table */
+    document.querySelectorAll('.cmp-bars').forEach(function(strip) {
+      var key = strip.getAttribute('data-key');
+      var d = climateData && climateData[key];
+      if (!d) return;
+      var maxHi = Math.max.apply(null, d.hi);
+      var H = 38;
+      strip.innerHTML = '';
+      for (var i = 0; i < 12; i++) {
+        var hi = d.hi[i], lo = d.lo[i];
+        var px = Math.max(3, Math.round((hi / maxHi) * H));
+        var isSel = (i === pickedMonth);
+        var div = document.createElement('div');
+        div.className = 'cmp-bar-col';
+        div.setAttribute('data-m', i);
+        div.style.cursor = 'pointer';
+        div.title = MNAMES[i] + ': ' + Math.round(hi) + '° hi / ' + Math.round(lo) + '° lo';
+        var good2 = inRange(hi, lo);
+        var lbl2 = (isSel || i % 2 === 0) ? MLBLS[i] : '';
+        var lblCol2 = isSel ? 'color:var(--accent);font-weight:700' : good2 ? 'color:var(--text)' : 'color:var(--muted)';
+        div.innerHTML = '<div class="cmp-bar' + (isSel ? ' cmp-cur' : '') + '" style="height:' + px + 'px;background:' + tempColor(hi) + ';opacity:' + (good2 ? '1' : '0.28') + '"></div>'
+          + '<span class="cmp-bar-lbl" style="' + lblCol2 + '">' + lbl2 + '</span>';
+        strip.appendChild(div);
+      }
+      /* update readout */
+      var readout = document.querySelector('.cmp-temp-now[data-key="' + key + '"]');
+      if (readout) {
+        var chi = d.hi[pickedMonth], clo = d.lo[pickedMonth];
+        var selGood2 = inRange(chi, clo);
+        readout.style.color = selGood2 ? '#2a7a2a' : '';
+        readout.style.fontWeight = selGood2 ? '600' : '';
+        readout.innerHTML = MNAMES[pickedMonth] + ': <strong>' + Math.round(chi) + '°</strong> hi / ' + Math.round(clo) + '° lo' + (selGood2 ? ' ✓' : '');
+      }
+    });
+  }
+  document.addEventListener('click', onBarClick);
+
+  /* ── Best season (comfortable 15–30 °C high, collapsed to ranges) ── */
+  function bestSeason(key) {
+    var d = climateData && climateData[key];
+    if (!d || !d.hi) return '—';
+    var good = [];
+    for (var i = 0; i < 12; i++) { if (d.hi[i] >= 15 && d.hi[i] <= 30) good.push(i); }
+    if (!good.length) {
+      /* fallback: 3 months closest to 22 °C */
+      var ranked = d.hi.map(function(v,i){ return {v:v,i:i}; })
+        .sort(function(a,b){ return Math.abs(a.v-22) - Math.abs(b.v-22); });
+      good = ranked.slice(0,3).map(function(x){ return x.i; }).sort(function(a,b){ return a-b; });
+    }
+    var ranges = [], s = good[0], p = good[0];
+    for (var j = 1; j < good.length; j++) {
+      if (good[j] === p + 1) { p = good[j]; }
+      else { ranges.push([s, p]); s = good[j]; p = good[j]; }
+    }
+    ranges.push([s, p]);
+    return ranges.map(function(r){
+      return r[0] === r[1] ? MNAMES[r[0]] : MNAMES[r[0]] + '–' + MNAMES[r[1]];
+    }).join(', ');
+  }
+
+  /* ── Cost & Safety data (static, approximate — good for trip planning) ── */
+  // tier: Budget = USD goes far, Moderate = average, Expensive = pricey, Premium = very expensive
+  var COST_DATA = {
+    "Abu Dhabi":{"tier":"Expensive","currency":"AED (dirham)"},
+    "Aix-en-Provence":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Alaska":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Alesund":{"tier":"Premium","currency":"NOK (krone)"},
+    "Amalfi":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Amsterdam":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Annecy":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Aruba":{"tier":"Expensive","currency":"AWG (florin)"},
+    "Athens":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Atlanta":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Austin":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Azores":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Bahamas":{"tier":"Expensive","currency":"BSD (dollar)"},
+    "Bangkok":{"tier":"Budget","currency":"THB (baht)"},
+    "Barbados":{"tier":"Expensive","currency":"BBD (dollar)"},
+    "Barcelona":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Beijing":{"tier":"Moderate","currency":"CNY (yuan)"},
+    "Bend":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Bergen":{"tier":"Premium","currency":"NOK (krone)"},
+    "Berlin":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Big Island":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Bologna":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Bordeaux":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Boston":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Bruges":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Brussels":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Buenos Aires":{"tier":"Budget","currency":"ARS (peso)"},
+    "Cambridge":{"tier":"Expensive","currency":"GBP (pound)"},
+    "Cannes":{"tier":"Premium","currency":"EUR (euro)"},
+    "Capri":{"tier":"Premium","currency":"EUR (euro)"},
+    "Cascais":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Cayman Islands":{"tier":"Premium","currency":"KYD (dollar)"},
+    "Chicago":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Chongqing":{"tier":"Budget","currency":"CNY (yuan)"},
+    "Cinque Terre":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Colmar":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Copenhagen":{"tier":"Premium","currency":"DKK (krone)"},
+    "Corfu":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Curacao":{"tier":"Expensive","currency":"ANG (guilder)"},
+    "Cusco":{"tier":"Budget","currency":"PEN (sol)"},
+    "Dubai":{"tier":"Expensive","currency":"AED (dirham)"},
+    "Dublin":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Dubrovnik":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Edinburgh":{"tier":"Moderate","currency":"GBP (pound)"},
+    "Florence":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Geneva":{"tier":"Premium","currency":"CHF (franc)"},
+    "Glasgow":{"tier":"Moderate","currency":"GBP (pound)"},
+    "Gothenburg":{"tier":"Premium","currency":"SEK (krona)"},
+    "Helsinki":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Hong Kong":{"tier":"Expensive","currency":"HKD (dollar)"},
+    "Iceland":{"tier":"Premium","currency":"ISK (krona)"},
+    "Kauai":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Kyoto":{"tier":"Moderate","currency":"JPY (yen)"},
+    "Lagos":{"tier":"Budget","currency":"EUR (euro)"},
+    "Lake Como":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Lille":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Lima":{"tier":"Budget","currency":"PEN (sol)"},
+    "Lisbon":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Ljubljana":{"tier":"Moderate","currency":"EUR (euro)"},
+    "London":{"tier":"Expensive","currency":"GBP (pound)"},
+    "Los Angeles":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Lucerne":{"tier":"Premium","currency":"CHF (franc)"},
+    "Luxembourg":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Lyon":{"tier":"Moderate","currency":"EUR (euro)"},
+    "MachuPicchu":{"tier":"Budget","currency":"PEN (sol)"},
+    "Madeira":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Madrid":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Marktoberdorf":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Marrakech":{"tier":"Budget","currency":"MAD (dirham)"},
+    "Marseille":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Maui":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Melbourne":{"tier":"Moderate","currency":"AUD (dollar)"},
+    "Miami":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Milan":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Monaco":{"tier":"Premium","currency":"EUR (euro)"},
+    "Montreal":{"tier":"Moderate","currency":"CAD (dollar)"},
+    "Montevideo":{"tier":"Moderate","currency":"UYU (peso)"},"Munich":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Naples":{"tier":"Moderate","currency":"EUR (euro)"},
+    "New York":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Nice":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Oahu":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Orlando":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Oslo":{"tier":"Premium","currency":"NOK (krone)"},
+    "Oxford":{"tier":"Expensive","currency":"GBP (pound)"},
+    "Palm Desert":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Palo Alto":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Paris":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Pasadena":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Phuket":{"tier":"Budget","currency":"THB (baht)"},
+    "Pisa":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Porto":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Prague":{"tier":"Moderate","currency":"CZK (koruna)"},
+    "Puerto Rico":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Quebec City":{"tier":"Moderate","currency":"CAD (dollar)"},
+    "Queenstown":{"tier":"Expensive","currency":"NZD (dollar)"},
+    "Rio de Janeiro":{"tier":"Budget","currency":"BRL (real)"},
+    "Rome":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Salzburg":{"tier":"Expensive","currency":"EUR (euro)"},
+    "San Diego":{"tier":"Expensive","currency":"USD (dollar)"},
+    "San Francisco":{"tier":"Premium","currency":"USD (dollar)"},
+    "San Sebastian":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Santiago":{"tier":"Budget","currency":"CLP (peso)"},
+    "Scottsdale":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Seattle":{"tier":"Expensive","currency":"USD (dollar)"},
+    "Seoul":{"tier":"Moderate","currency":"KRW (won)"},
+    "Seville":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Shanghai":{"tier":"Moderate","currency":"CNY (yuan)"},
+    "Siena":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Singapore":{"tier":"Expensive","currency":"SGD (dollar)"},
+    "Sint Maarten":{"tier":"Expensive","currency":"USD/ANG"},
+    "Sintra":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Sorrento":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Split":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Stockholm":{"tier":"Premium","currency":"SEK (krona)"},
+    "Strasbourg":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Stuttgart":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Sydney":{"tier":"Expensive","currency":"AUD (dollar)"},
+    "Taipei":{"tier":"Budget","currency":"TWD (dollar)"},
+    "Tallinn":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Tokyo":{"tier":"Moderate","currency":"JPY (yen)"},
+    "Toledo":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Toronto":{"tier":"Moderate","currency":"CAD (dollar)"},
+    "Tromso":{"tier":"Premium","currency":"NOK (krone)"},
+    "Turin":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Istanbul":{"tier":"Moderate","currency":"TRY (lira)"},
+    
+    "Vancouver":{"tier":"Expensive","currency":"CAD (dollar)"},
+    "Venice":{"tier":"Expensive","currency":"EUR (euro)"},
+    "Verona":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Vienna":{"tier":"Moderate","currency":"EUR (euro)"},
+    "Virgin Islands":{"tier":"Moderate","currency":"USD (dollar)"},
+    "Wellington":{"tier":"Expensive","currency":"NZD (dollar)"},
+    "Zhangjiajie":{"tier":"Budget","currency":"CNY (yuan)"},
+    "Zurich":{"tier":"Premium","currency":"CHF (franc)"},
+    "Bali":{"tier":"Budget","currency":"IDR (rupiah)"},
+    "Budapest":{"tier":"Budget","currency":"HUF (forint)"}
+  };
+
+  // Safety levels: Very Safe / Safe / Moderate / Caution / High Risk
+  var SAFETY_DATA = {
+    "Abu Dhabi":{"level":"Very Safe","note":"Low crime, strict laws"},
+    "Aix-en-Provence":{"level":"Safe","note":""},
+    "Alaska":{"level":"Safe","note":"Wildlife awareness needed"},
+    "Alesund":{"level":"Very Safe","note":""},
+    "Amalfi":{"level":"Safe","note":"Watch for pickpockets"},
+    "Amsterdam":{"level":"Safe","note":"Bike theft common"},
+    "Annecy":{"level":"Very Safe","note":""},
+    "Aruba":{"level":"Safe","note":"Outside resort areas, take care"},
+    "Athens":{"level":"Safe","note":"Pickpockets in tourist areas"},
+    "Atlanta":{"level":"Moderate","note":"Varies by neighborhood"},
+    "Austin":{"level":"Safe","note":""},
+    "Azores":{"level":"Very Safe","note":""},
+    "Bahamas":{"level":"Moderate","note":"Stick to tourist areas"},
+    "Bangkok":{"level":"Safe","note":"Scams common near attractions"},
+    "Barbados":{"level":"Safe","note":"Petty theft on beaches"},
+    "Barcelona":{"level":"Moderate","note":"High pickpocket risk"},
+    "Beijing":{"level":"Safe","note":"Low crime for tourists"},
+    "Bend":{"level":"Very Safe","note":""},
+    "Bergen":{"level":"Very Safe","note":""},
+    "Berlin":{"level":"Safe","note":""},
+    "Big Island":{"level":"Safe","note":"Lava zone awareness needed"},
+    "Bologna":{"level":"Safe","note":""},
+    "Bordeaux":{"level":"Safe","note":""},
+    "Boston":{"level":"Safe","note":""},
+    "Bruges":{"level":"Very Safe","note":""},
+    "Brussels":{"level":"Safe","note":"Stay alert in some areas"},
+    "Buenos Aires":{"level":"Moderate","note":"Petty theft common"},
+    "Cambridge":{"level":"Safe","note":""},
+    "Cannes":{"level":"Safe","note":"Watch valuables"},
+    "Capri":{"level":"Very Safe","note":""},
+    "Cascais":{"level":"Very Safe","note":""},
+    "Cayman Islands":{"level":"Very Safe","note":""},
+    "Chicago":{"level":"Moderate","note":"Varies by neighborhood"},
+    "Chongqing":{"level":"Safe","note":""},
+    "Cinque Terre":{"level":"Safe","note":""},
+    "Colmar":{"level":"Very Safe","note":""},
+    "Copenhagen":{"level":"Very Safe","note":""},
+    "Corfu":{"level":"Safe","note":""},
+    "Curacao":{"level":"Moderate","note":"Petty crime in some areas"},
+    "Cusco":{"level":"Moderate","note":"Altitude + petty theft"},
+    "Dubai":{"level":"Very Safe","note":"Very low crime"},
+    "Dublin":{"level":"Safe","note":""},
+    "Dubrovnik":{"level":"Very Safe","note":""},
+    "Edinburgh":{"level":"Safe","note":""},
+    "Florence":{"level":"Safe","note":"Pickpockets near Duomo"},
+    "Geneva":{"level":"Very Safe","note":""},
+    "Glasgow":{"level":"Safe","note":""},
+    "Gothenburg":{"level":"Very Safe","note":""},
+    "Helsinki":{"level":"Very Safe","note":""},
+    "Hong Kong":{"level":"Safe","note":"Very low violent crime"},
+    "Iceland":{"level":"Very Safe","note":"Weather risks outdoors"},
+    "Kauai":{"level":"Safe","note":"Ocean safety awareness"},
+    "Kyoto":{"level":"Very Safe","note":""},
+    "Lagos":{"level":"Safe","note":"Portugal — low crime"},
+    "Lake Como":{"level":"Very Safe","note":""},
+    "Lille":{"level":"Safe","note":""},
+    "Lima":{"level":"Moderate","note":"Petty theft, avoid at night"},
+    "Lisbon":{"level":"Safe","note":"Pickpockets in Alfama"},
+    "Ljubljana":{"level":"Very Safe","note":""},
+    "London":{"level":"Safe","note":"Pickpockets on tube"},
+    "Los Angeles":{"level":"Moderate","note":"Varies by neighborhood"},
+    "Lucerne":{"level":"Very Safe","note":""},
+    "Luxembourg":{"level":"Very Safe","note":""},
+    "Lyon":{"level":"Safe","note":""},
+    "MachuPicchu":{"level":"Safe","note":""},
+    "Madeira":{"level":"Very Safe","note":""},
+    "Madrid":{"level":"Safe","note":"Pickpockets on metro"},
+    "Marktoberdorf":{"level":"Very Safe","note":""},
+    "Marrakech":{"level":"Moderate","note":"Persistent touts in medina"},
+    "Marseille":{"level":"Moderate","note":"Avoid certain suburbs"},
+    "Maui":{"level":"Safe","note":"Ocean safety awareness"},
+    "Melbourne":{"level":"Safe","note":""},
+    "Miami":{"level":"Moderate","note":"Varies by area"},
+    "Milan":{"level":"Safe","note":"Pickpockets on trams"},
+    "Monaco":{"level":"Very Safe","note":""},
+    "Montreal":{"level":"Safe","note":""},
+    "Montevideo":{"level":"Safe","note":"Petty theft in Old City; avoid outskirts at night"},"Munich":{"level":"Very Safe","note":""},
+    "Naples":{"level":"Moderate","note":"Scooter theft, stay aware"},
+    "New York":{"level":"Safe","note":"Stay aware in crowds"},
+    "Nice":{"level":"Safe","note":""},
+    "Oahu":{"level":"Safe","note":"Car break-ins at beaches"},
+    "Orlando":{"level":"Safe","note":"Tourist areas well-patrolled"},
+    "Oslo":{"level":"Very Safe","note":""},
+    "Oxford":{"level":"Safe","note":""},
+    "Palm Desert":{"level":"Very Safe","note":""},
+    "Palo Alto":{"level":"Very Safe","note":""},
+    "Paris":{"level":"Moderate","note":"High pickpocket risk"},
+    "Pasadena":{"level":"Safe","note":""},
+    "Phuket":{"level":"Safe","note":"Beach scams common"},
+    "Pisa":{"level":"Safe","note":"Pickpockets near Tower"},
+    "Porto":{"level":"Safe","note":""},
+    "Prague":{"level":"Safe","note":"Tourist scams in center"},
+    "Puerto Rico":{"level":"Moderate","note":"Stay in tourist zones"},
+    "Quebec City":{"level":"Very Safe","note":""},
+    "Queenstown":{"level":"Very Safe","note":"Outdoor adventure risks"},
+    "Rio de Janeiro":{"level":"Caution","note":"Petty crime, avoid favelas"},
+    "Rome":{"level":"Moderate","note":"High pickpocket risk"},
+    "Salzburg":{"level":"Very Safe","note":""},
+    "San Diego":{"level":"Safe","note":""},
+    "San Francisco":{"level":"Moderate","note":"Property crime high"},
+    "San Sebastian":{"level":"Very Safe","note":""},
+    "Santiago":{"level":"Moderate","note":"Petty theft improving"},
+    "Scottsdale":{"level":"Very Safe","note":""},
+    "Seattle":{"level":"Moderate","note":"Property crime common"},
+    "Seoul":{"level":"Very Safe","note":""},
+    "Seville":{"level":"Safe","note":""},
+    "Shanghai":{"level":"Very Safe","note":"Very low crime"},
+    "Siena":{"level":"Very Safe","note":""},
+    "Singapore":{"level":"Very Safe","note":"Very strict laws"},
+    "Sint Maarten":{"level":"Moderate","note":"Hurricane recovery ongoing"},
+    "Sintra":{"level":"Safe","note":""},
+    "Sorrento":{"level":"Safe","note":""},
+    "Split":{"level":"Very Safe","note":""},
+    "Stockholm":{"level":"Safe","note":""},
+    "Strasbourg":{"level":"Safe","note":""},
+    "Stuttgart":{"level":"Safe","note":""},
+    "Sydney":{"level":"Safe","note":""},
+    "Taipei":{"level":"Very Safe","note":""},
+    "Tallinn":{"level":"Safe","note":""},
+    "Tokyo":{"level":"Very Safe","note":"Extremely safe"},
+    "Toledo":{"level":"Safe","note":""},
+    "Toronto":{"level":"Safe","note":""},
+    "Tromso":{"level":"Very Safe","note":"Arctic weather risks"},
+    "Turin":{"level":"Safe","note":""},
+    "Istanbul":{"level":"Safe","note":"Pickpockets in tourist areas"},
+    
+    "Vancouver":{"level":"Safe","note":"Downtown East Side area"},
+    "Venice":{"level":"Safe","note":"Pickpockets on waterbuses"},
+    "Verona":{"level":"Safe","note":""},
+    "Vienna":{"level":"Very Safe","note":""},
+    "Virgin Islands":{"level":"Moderate","note":"Petty crime, check advisories"},
+    "Wellington":{"level":"Very Safe","note":""},
+    "Zhangjiajie":{"level":"Safe","note":""},
+    "Zurich":{"level":"Very Safe","note":""},
+    "Bali":{"level":"Safe","note":"Mind drink spiking and motorbike theft"},
+    "Budapest":{"level":"Safe","note":"Pickpockets in tourist areas"}
+  };
+  window._COST_DATA   = COST_DATA;
+  window._SAFETY_DATA = SAFETY_DATA;
+
+  /* ── Build comparison table ──────────────────────────────────────── */
+  function buildTable() {
+    var FMAP = window._FMAP || {};
+    var fltColors = { nonstop:'#AF52DE', seasonal:'#AF52DE', '1stop':'#2a6a2a', '2stop':'#e0a615' };
+    var fltLabels = { nonstop:'Nonstop ✈', seasonal:'Nonstop (seasonal)', '1stop':'1 connection', '2stop':'2 connections' };
+
+    var out = '<div class="cmp-table-wrap"><table class="cmp-table"><tbody>';
+
+    /* City header row */
+    out += '<tr><td class="cmp-row-label"></td>';
+    sel.forEach(function(c) {
+      out += '<td class="cmp-col cmp-city-cell">' +
+        '<span class="cmp-city-flag">' + c.flag + '</span>' +
+        '<span class="cmp-city-name">' + esc(c.name) + '</span>' +
+        '<span class="cmp-city-status">' + (c.status === 'want' ? '⭕ Want to go' : '✅ Been') + '</span>' +
+        '<br><button class="cmp-remove-btn" data-href="' + esc(c.href) + '">✕ Remove</button>' +
+        '</td>';
+    });
+    out += '</tr>';
+
+    /* Flight row */
+    out += '<tr><td class="cmp-row-label">✈️ Flight<br>from SEA</td>';
+    sel.forEach(function(c) {
+      var key = c.href.replace(/^\.\//, '');
+      var f = FMAP[key];
+      if (f && f.r !== 'home') {
+        out += '<td class="cmp-col"><span style="font-size:13px;font-weight:700;color:var(--text)">' + f.t + '</span>' +
+          '<br><span style="font-size:10px;color:' + (fltColors[f.r]||'#888') + '">' + (fltLabels[f.r]||f.r) + '</span>' +
+          (f.o ? '<br><span style="font-size:10px;color:var(--muted);line-height:1.4;display:inline-block;margin-top:2px">' + esc(f.o) + '</span>' : '') +
+          '</td>';
+      } else {
+        out += '<td class="cmp-col"><span style="font-size:12px;color:var(--muted)">—</span></td>';
+      }
+    });
+    out += '</tr>';
+
+    /* Climate bars row */
+    out += '<tr><td class="cmp-row-label">🌡️ Climate<br><span style="font-weight:400;font-size:10px">tap a month</span></td>';
+    sel.forEach(function(c) {
+      out += '<td class="cmp-col">' + renderBars(c.climateKey) + '</td>';
+    });
+    out += '</tr>';
+
+    /* Best season row */
+    out += '<tr><td class="cmp-row-label">Best<br>season</td>';
+    sel.forEach(function(c) {
+      out += '<td class="cmp-col" style="font-size:13px;font-weight:700;color:var(--text)">' + bestSeason(c.climateKey) + '</td>';
+    });
+    out += '</tr>';
+
+    /* Currency / cost row */
+    var USD_RATES = {
+      'EUR':0.92,'GBP':0.79,'CHF':0.89,'NOK':10.5,'SEK':10.3,'DKK':6.9,'ISK':138,
+      'THB':35,'JPY':148,'KRW':1320,'CNY':7.2,'HKD':7.8,'SGD':1.35,'TWD':32,
+      'AUD':1.55,'NZD':1.68,'CAD':1.36,'AED':3.67,'MAD':10.1,'CZK':23,
+      'PEN':3.75,'ARS':900,'BRL':5.0,'CLP':950,'KYD':0.82,'AWG':1.79,
+      'BBD':2.0,'BSD':1.0,'ANG':1.79,'USD':1.0
+    };
+    out += '<tr><td class="cmp-row-label">💵 Currency<br><span style="font-weight:400;font-size:10px">1 USD =</span></td>';
+    sel.forEach(function(c) {
+      var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
+      if (ci) {
+        var code = ci.currency.split('/')[0].split(' ')[0].trim();  // "EUR (euro)" → "EUR", "USD/ANG" → "USD"
+        var rate = USD_RATES[code] || null;
+        var rateStr = rate ? (rate >= 100 ? Math.round(rate) : rate % 1 === 0 ? rate : rate.toFixed(2)) + ' ' + code : ci.currency;
+        var dotColor = ci.tier === 'Budget' ? '#2a7a2a' : ci.tier === 'Moderate' ? '#8a6c1a' : ci.tier === 'Expensive' ? '#c06000' : '#b00000';
+        out += '<td class="cmp-col">'
+          + '<span style="font-size:13px;font-weight:700;color:' + dotColor + '">' + rateStr + '</span>'
+          + '<br><span style="font-size:10px;color:var(--muted)">' + ci.tier + ' destination</span></td>';
+      } else {
+        out += '<td class="cmp-col"><span style="font-size:12px;color:var(--muted)">—</span></td>';
+      }
+    });
+    out += '</tr>';
+
+    /* Safety row */
+    var SAFE_LEVELS = {'Very Safe':1,'Safe':2,'Moderate':3,'Caution':4,'High Risk':5};
+    var SAFE_COLORS = {'Very Safe':'#2a7a2a','Safe':'#4a8a2a','Moderate':'#8a6c1a','Caution':'#c06000','High Risk':'#b00000'};
+    var SAFE_LEGEND = [
+      {lvl:1,label:'Very Safe', col:'#2a7a2a'},
+      {lvl:2,label:'Safe',      col:'#4a8a2a'},
+      {lvl:3,label:'Moderate',  col:'#8a6c1a'},
+      {lvl:4,label:'Caution',   col:'#c06000'},
+      {lvl:5,label:'High Risk', col:'#b00000'}
+    ];
+    var legendHtml = '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center">'
+      + SAFE_LEGEND.map(function(s){
+          return '<span style="font-size:10px;color:var(--muted)"><span style="font-weight:700;color:' + s.col + '">Level ' + s.lvl + '</span> = ' + s.label + '</span>';
+        }).join('')
+      + '</div>';
+    out += '<tr><td class="cmp-row-label">🛡️ Safety</td>';
+    sel.forEach(function(c) {
+      var si = SAFETY_DATA[c.climateKey] || SAFETY_DATA[c.name] || null;
+      if (si) {
+        var lvl = SAFE_LEVELS[si.level] || 3;
+        var col = SAFE_COLORS[si.level] || '#8a6c1a';
+        out += '<td class="cmp-col">'
+          + '<span style="font-size:13px;font-weight:700;color:' + col + '">' + si.level + '</span>'
+          + '<br><span style="font-size:10px;color:var(--muted)">Level ' + lvl + '</span>'
+          + (si.note ? '<br><span style="font-size:10px;color:var(--muted);line-height:1.4;display:inline-block;margin-top:2px">' + esc(si.note) + '</span>' : '')
+          + '</td>';
+      } else {
+        out += '<td class="cmp-col"><span style="font-size:12px;color:var(--muted)">—</span></td>';
+      }
+    });
+    out += '</tr>';
+    /* Legend row spanning all columns */
+    out += '<tr><td colspan="' + (sel.length + 1) + '" style="padding:2px 8px 10px;text-align:center">' + legendHtml + '</td></tr>';
+
+    /* Guide link row */
+    out += '<tr><td class="cmp-row-label"></td>';
+    sel.forEach(function(c) {
+      out += '<td class="cmp-col" style="padding-bottom:16px"><a class="cmp-guide-link" href="' + c.href + '">Open guide →</a></td>';
+    });
+    out += '</tr>';
+
+    out += '</tbody></table></div>';
+    return out;
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  /* ── Show compare panel ───────────────────────────────────────────── */
+  function showPanel() {
+    if (!compareView || sel.length < 2) return;
+    loadClimate(function() {
+      compareView.hidden = false;
+      compareView.innerHTML =
+        '<button class="cmp-back" id="cmp-back">← Back to cities</button>' +
+        buildTable();
+      document.querySelector('.mosaic').style.display = 'none';
+      var fv = document.getElementById('flight-view');
+      if (fv) fv.style.display = 'none';
+      /* wire remove buttons */
+      compareView.querySelectorAll('.cmp-remove-btn').forEach(function(b) {
+        b.addEventListener('click', function(){ deselect(b.dataset.href); });
+      });
+      document.getElementById('cmp-back').addEventListener('click', function() {
+        compareView.hidden = true; compareView.innerHTML = '';
+        document.querySelector('.mosaic').style.display = '';
+      });
+    });
+  }
+
+  /* ── Selection bar update ────────────────────────────────────────── */
+  function updateBar() {
+    var chips = sel.map(function(c){
+      return '<span class="cmp-chip">' + c.flag + ' ' + esc(c.name) +
+        ' <button class="cmp-chip-x" data-href="' + esc(c.href) + '" title="Remove">×</button></span>';
+    }).join('');
+    selBar.querySelector('.cmp-sel-chips').innerHTML = chips;
+    goBtn.disabled = sel.length < 2;
+    goBtn.textContent = sel.length >= 2 ? 'Compare ' + sel.length + ' cities →' : 'Pick 2–3 cities';
+    selBar.classList.toggle('cmp-visible', document.body.classList.contains('mode-compare'));
+    document.body.classList.toggle('cmp-full', sel.length >= MAX);
+    /* wire chip remove buttons */
+    selBar.querySelectorAll('.cmp-chip-x').forEach(function(b){
+      b.addEventListener('click', function(e){ e.stopPropagation(); deselect(b.dataset.href); });
+    });
+    /* if panel is open, refresh it */
+    if (!compareView.hidden) showPanel();
+  }
+
+  function deselect(href) {
+    sel = sel.filter(function(c){ return c.href !== href; });
+    document.querySelectorAll('.mosaic .dest-card[href="' + href + '"]').forEach(function(el){
+      el.classList.remove('cmp-sel');
+    });
+    updateBar();
+  }
+
+  /* ── Enter / exit compare mode ──────────────────────────────────── */
+  function enterCompare() {
+    document.body.classList.add('mode-compare');
+    /* close When-to-go / Browse-by panels — all three are mutually exclusive */
+    if (window._closeDisclosure) window._closeDisclosure();
+    /* disable flights view (grouping already reset to Country by _closeDisclosure) */
+    document.body.classList.remove('mode-flights');
+    var fv = document.getElementById('flight-view');
+    if (fv) fv.style.display = 'none';
+    document.querySelector('.mosaic').style.display = '';
+    if (btnCompare) { btnCompare.classList.add('on'); btnCompare.innerHTML = '📶 Compare cities'; }
+    updateBar();
+  }
+
+  function exitCompare() {
+    document.body.classList.remove('mode-compare');
+    document.body.classList.remove('cmp-full');
+    sel = [];
+    document.querySelectorAll('.mosaic .dest-card.cmp-sel').forEach(function(el){ el.classList.remove('cmp-sel'); });
+    selBar.classList.remove('cmp-visible');
+    compareView.hidden = true; compareView.innerHTML = '';
+    document.querySelector('.mosaic').style.display = '';
+    var fv = document.getElementById('flight-view');
+    if (fv) fv.style.display = '';
+    if (btnCompare) { btnCompare.classList.remove('on'); btnCompare.innerHTML = '📶 Compare cities'; }
+  }
+
+  /* Expose so the When-to-go / Browse-by panels can exit compare mode */
+  window._exitCompareMode = function () {
+    if (document.body.classList.contains('mode-compare')) exitCompare();
+  };
+
+  /* ── Wire buttons ────────────────────────────────────────────────── */
+  if (btnCompare) {
+    btnCompare.addEventListener('click', function(){
+      if (document.body.classList.contains('mode-compare')) exitCompare();
+      else enterCompare();
+    });
+  }
+  goBtn.addEventListener('click', showPanel);
+  exitBtn.addEventListener('click', exitCompare);
+
+  /* Exit compare when flights mode is activated */
+  if (btnFlights) {
+    btnFlights.addEventListener('click', function(){
+      if (document.body.classList.contains('mode-compare')) exitCompare();
+    }, true /* capture — runs before the flights script's own listener */);
+  }
+
+  /* ── Card click handler ──────────────────────────────────────────── */
+  document.querySelectorAll('.mosaic .dest-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      if (!document.body.classList.contains('mode-compare')) return;
+      e.preventDefault();
+      var href = card.getAttribute('href');
+      if (card.classList.contains('cmp-sel')) {
+        deselect(href);
+        return;
+      }
+      if (sel.length >= MAX) return; /* already at limit */
+      card.classList.add('cmp-sel');
+      var flag = (card.querySelector('.dest-flag') || {}).textContent || '';
+      var name = (card.querySelector('.dest-name') || {}).textContent || '';
+      var status = card.getAttribute('data-status') || 'been';
+      /* climate.json key = folder name from href */
+      var climateKey = decodeURIComponent(href).replace(/^\.\//, '').split('/')[0];
+      sel.push({ href: href, flag: flag, name: name, status: status, climateKey: climateKey });
+      updateBar();
+    });
+  });
+
+}());
+</script>
+
+<script>
+/* ══ Seasonal filter — "Where to go in [month]" ══
+   Uses window._CLIMATE (inlined in compare script).
+   A city is "good" for a month if its daily high is 15–30 °C.
+   Composable with status filter + search — hides cards that fail,
+   lets existing applyMosaicFilter handle the rest. ══ */
+(function () {
+  var chips   = [].slice.call(document.querySelectorAll('.mchip'));
+  var badge   = document.getElementById('season-badge');
+  var cards   = [].slice.call(document.querySelectorAll('.dest-card'));
+  var activeMo = null; /* null = off */
+  var sliderHi  = document.getElementById('tmin');
+  var valHi     = document.getElementById('tmin-val');
+  var sliderLo  = document.getElementById('tlomin');
+  var valLo     = document.getElementById('tlomin-val');
+  var unitC     = document.getElementById('unit-c');
+  var unitF     = document.getElementById('unit-f');
+  var useFahr   = false;
+
+  function cToF(c) { return Math.round(c * 9/5 + 32); }
+  function fToC(f) { return Math.round((f - 32) * 5/9); }
+
+  function getThresholdC() {
+    var hi = parseInt(sliderHi.value, 10);
+    var lo = parseInt(sliderLo.value, 10);
+    return {
+      hi: useFahr ? fToC(hi) : hi,
+      lo: useFahr ? fToC(lo) : lo
+    };
+  }
+
+  function updateLabels() {
+    var hi = parseInt(sliderHi.value, 10);
+    var lo = parseInt(sliderLo.value, 10);
+    var u = '°' + (useFahr ? 'F' : 'C');
+    valHi.textContent = hi + u;
+    valLo.textContent = lo + u;
+  }
+
+  function setUnit(f) {
+    var t = getThresholdC();
+    useFahr = f;
+    if (useFahr) {
+      sliderHi.min = -14; sliderHi.max = 113; sliderHi.value = cToF(t.hi);
+      sliderLo.min = -22; sliderLo.max = 95;  sliderLo.value = cToF(t.lo);
+    } else {
+      sliderHi.min = -10; sliderHi.max = 45; sliderHi.value = t.hi;
+      sliderLo.min = -20; sliderLo.max = 35; sliderLo.value = t.lo;
+    }
+    unitC.classList.toggle('on', !useFahr);
+    unitF.classList.toggle('on', useFahr);
+    updateLabels();
+  }
+
+  window._getTempThreshold = getThresholdC; /* expose for compare bars */
+
+  unitC.addEventListener('click', function () { if (useFahr) { setUnit(false); applySeasonFilter(); } });
+  unitF.addEventListener('click', function () { if (!useFahr) { setUnit(true); applySeasonFilter(); } });
+  sliderHi.addEventListener('input', function () { updateLabels(); applySeasonFilter(); });
+  sliderLo.addEventListener('input', function () { updateLabels(); applySeasonFilter(); });
+
+  /* Extract city folder name from card href — same logic as compare mode */
+  function climateKey(card) {
+    var href = card.getAttribute('href') || '';
+    return decodeURIComponent(href).replace(/^\.\//, '').split('/')[0];
+  }
+
+  /* Hi must be ≤ max, lo must be ≥ min */
+  function goodMonth(key, m) {
+    var cl = window._CLIMATE;
+    if (!cl) return true;
+    var d = cl[key];
+    if (!d || !d.hi || !d.lo) return false;
+    var t = getThresholdC();
+    return d.hi[m] <= t.hi && d.lo[m] >= t.lo;
+  }
+
+  function applySeasonFilter() {
+    /* Wait until climate data is available */
+    if (activeMo === null) {
+      cards.forEach(function (c) { c.classList.remove('season-hide'); });
+      badge.classList.remove('visible');
+      return;
+    }
+    var m = activeMo;
+    cards.forEach(function (c) {
+      var key = climateKey(c);
+      if (goodMonth(key, m)) {
+        c.classList.remove('season-hide');
+      } else {
+        c.classList.add('season-hide');
+      }
+    });
+    badge.classList.add('visible');
+    /* Trigger existing mosaic "no results" check */
+    var inputEvt = document.createEvent('Event');
+    inputEvt.initEvent('input', true, true);
+    var inp = document.getElementById('guide-search');
+    if (inp) inp.dispatchEvent(inputEvt);
+  }
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      var m = parseInt(chip.getAttribute('data-m'), 10);
+      if (activeMo === m) {
+        /* clicking same month toggles off */
+        activeMo = null;
+        chips.forEach(function (c) { c.classList.remove('on'); });
+      } else {
+        activeMo = m;
+        chips.forEach(function (c) { c.classList.remove('on'); });
+        chip.classList.add('on');
+      }
+      applySeasonFilter();
+    });
+  });
+
+  badge.addEventListener('click', function () {
+    activeMo = null;
+    chips.forEach(function (c) { c.classList.remove('on'); });
+    applySeasonFilter();
+  });
+}());
+</script>
+
+<script>
+/* ══ Region grouping toggle ══ */
+(function () {
+  var btn    = document.getElementById('btn-region-group');
+  var mosaic = document.querySelector('.mosaic');
+  if (!btn || !mosaic) return;
+
+  /* Map country slug → region */
+  var REGION = {
+    'canada':'North America','united-states':'North America',
+    'argentina':'South America','brazil':'South America','chile':'South America',
+    'peru':'South America','uruguay':'South America',
+    'caribbean-islands':'Caribbean',
+    'austria':'Europe','belgium':'Europe','croatia':'Europe',
+    'czechia':'Europe','denmark':'Europe','estonia':'Europe',
+    'finland':'Europe','france':'Europe','germany':'Europe',
+    'greece':'Europe','iceland':'Europe','ireland':'Europe',
+    'italy':'Europe','luxembourg':'Europe','monaco':'Europe',
+    'netherlands':'Europe','norway':'Europe','portugal':'Europe',
+    'slovenia':'Europe','spain':'Europe','sweden':'Europe',
+    'switzerland':'Europe','turkey':'Europe','united-kingdom':'Europe',
+    'china':'Asia','japan':'Asia','singapore':'Asia',
+    'south-korea':'Asia','taiwan':'Asia','thailand':'Asia',
+    'australia':'Oceania','new-zealand':'Oceania',
+    'morocco':'Africa',
+    
+  };
+
+  var REGION_ORDER = ['Europe','North America','South America','Asia','Oceania','Caribbean','Middle East','Africa'];
+  var REGION_ICON  = {
+    'Europe':'🌍','North America':'🌎','South America':'🌎','Asia':'🌏',
+    'Oceania':'🌏','Caribbean':'🏝️','Middle East':'🕌','Africa':'🌍'
+  };
+
+  var active = false;
+  /* stash original order of country divs */
+  var origCountries = [].slice.call(mosaic.querySelectorAll('.country'));
+  var injectedHeaders = [];
+
+  function enterRegionMode() {
+    /* Group country divs by region */
+    var groups = {};
+    REGION_ORDER.forEach(function (r) { groups[r] = []; });
+
+    origCountries.forEach(function (el) {
+      var slug = el.getAttribute('data-country');
+      var r = REGION[slug] || 'Other';
+      if (!groups[r]) groups[r] = [];
+      groups[r].push(el);
+    });
+
+    /* Detach all country divs silently */
+    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
+    /* Clear any old injected headers */
+    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
+    injectedHeaders = [];
+
+    /* Re-insert in region order */
+    REGION_ORDER.forEach(function (r) {
+      var els = groups[r];
+      if (!els || !els.length) return;
+      var hdr = document.createElement('div');
+      hdr.className = 'region-header';
+      hdr.textContent = (REGION_ICON[r] || '') + ' ' + r;
+      mosaic.appendChild(hdr);
+      injectedHeaders.push(hdr);
+      els.forEach(function (el) { mosaic.appendChild(el); });
+    });
+  }
+
+  function exitRegionMode() {
+    /* Remove injected headers */
+    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
+    injectedHeaders = [];
+    /* Detach country divs */
+    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
+    /* Re-insert in original order */
+    origCountries.forEach(function (el) { mosaic.appendChild(el); });
+  }
+
+  /* Driven by the Browse-by segmented control */
+  window._regionMode = function (on) {
+    if (on === active) return;
+    active = on;
+    if (active) enterRegionMode(); else exitRegionMode();
+  };
+}());
+
+/* ══ Browse-by controller — single-select: Country / Region / Flight time ══ */
+(function () {
+  var seg = document.getElementById('browse-seg');
+  if (!seg) return;
+  var btns = [].slice.call(seg.querySelectorAll('.seg-btn'));
+  function setActive(view) {
+    btns.forEach(function (b) { b.classList.toggle('on', b.dataset.view === view); });
+  }
+  window._setBrowseView = function (view) {
+    if (view === 'region') {
+      if (window._flightsMode) window._flightsMode(false);
+      if (window._regionMode) window._regionMode(true);
+    } else if (view === 'flights') {
+      if (window._regionMode) window._regionMode(false);
+      if (window._flightsMode) window._flightsMode(true);
+    } else {
+      if (window._regionMode) window._regionMode(false);
+      if (window._flightsMode) window._flightsMode(false);
+    }
+    setActive(view);
+  };
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () { window._setBrowseView(b.dataset.view); });
+  });
+}());
+
+/* ── Progressive disclosure: When-to-go / Browse-by panels (mutually exclusive) ── */
+(function () {
+  var fBtn = document.getElementById('btn-filters-toggle');
+  var vBtn = document.getElementById('btn-views-toggle');
+  var fPanel = document.getElementById('filters-panel');
+  var vPanel = document.getElementById('views-panel');
+
+  function setState(btn, panel, open) {
+    panel.hidden = !open;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  /* Opening one panel closes the other and hides its button, so the row stays uncluttered */
+  function toggle(btn, panel, otherBtn, otherPanel, resetViews) {
+    var open = panel.hidden;
+    if (open) {
+      if (window._exitCompareMode) window._exitCompareMode();
+      /* Opening When-to-go returns the mosaic to its default Country grouping */
+      if (resetViews && window._setBrowseView) window._setBrowseView('country');
+    }
+    setState(otherBtn, otherPanel, false);
+    otherBtn.hidden = open;
+    setState(btn, panel, open);
+  }
+
+  if (fBtn && vBtn && fPanel && vPanel) {
+    fBtn.addEventListener('click', function () { toggle(fBtn, fPanel, vBtn, vPanel, true); });
+    vBtn.addEventListener('click', function () { toggle(vBtn, vPanel, fBtn, fPanel, false); });
+  }
+
+  /* Let compare mode collapse both disclosure panels, restore both buttons, reset grouping */
+  window._closeDisclosure = function () {
+    if (!fBtn || !vBtn) return;
+    setState(fBtn, fPanel, false);
+    setState(vBtn, vPanel, false);
+    fBtn.hidden = false;
+    vBtn.hidden = false;
+    if (window._setBrowseView) window._setBrowseView('country');
+  };
+
+  /* Dot on When-to-go when a month filter is engaged, so a collapsed filter isn't forgotten */
+  function refreshActive() {
+    if (!fBtn) return;
+    fBtn.classList.toggle('has-active', !!document.querySelector('#season-filter .mchip.on'));
+  }
+  document.querySelectorAll('#season-filter .mchip, #season-badge').forEach(function (el) {
+    el.addEventListener('click', function () { setTimeout(refreshActive, 0); });
+  });
+  refreshActive();
+}());
+</script>
+</body>
+</html>
