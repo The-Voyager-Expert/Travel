@@ -200,8 +200,8 @@
     /* Mobile: two-row wrap of centered chips — no horizontal scroll needed. */
     '@media(max-width:600px){' +
       '.tb{padding:6px 0 8px}' +
-      '.tb-inner{overflow-x:visible}' +
-      '.tb-links{flex-wrap:wrap;justify-content:center;gap:6px;padding:0 10px;width:100%;margin:0}' +
+      '.tb-inner{overflow-x:visible;width:100%}' +
+      '.tb-links{flex-wrap:wrap;justify-content:center;gap:6px;padding:0 10px;width:100%;margin:0;max-width:none}' +
       '.tb-sep{display:none}' +
       '.tb a{padding:5px 10px;font-size:11.5px;line-height:1;white-space:nowrap;' +
         'border:1px solid #d8d5ce;border-radius:999px;background:#fff;font-weight:500;color:#5a5650}' +
