@@ -197,26 +197,21 @@
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
-    /* Mobile: single-row, horizontally-scrollable strip of rounded chips.
-       Wrapping 12 links stacked into a ~146px-tall block; one scrolling row
-       is ~42px and reads as a clean nav strip (same model as desktop). */
+    /* Mobile: two-row wrap of centered chips — no horizontal scroll needed. */
     '@media(max-width:600px){' +
-      '.tb{padding:7px 0;position:relative}' +
-      '.tb-links{flex-wrap:nowrap;gap:6px;padding:0 12px}' +   /* keeps desktop max-content + scroll */
+      '.tb{padding:6px 0 8px}' +
+      '.tb-inner{overflow-x:visible}' +
+      '.tb-links{flex-wrap:wrap;justify-content:center;gap:6px;padding:0 10px;width:100%;margin:0}' +
       '.tb-sep{display:none}' +
-      '.tb a{padding:6px 11px;font-size:12px;line-height:1;white-space:nowrap;' +
+      '.tb a{padding:5px 10px;font-size:11.5px;line-height:1;white-space:nowrap;' +
         'border:1px solid #d8d5ce;border-radius:999px;background:#fff;font-weight:500;color:#5a5650}' +
       '.tb a.tb-active{color:' + accent + ';border-color:' + accent + ';background:' + acLt + '}' +
-      '.tb-ddbtn{padding:6px 11px;font-size:12px;line-height:1;border:1px solid #d8d5ce;' +
+      '.tb-ddbtn{padding:5px 10px;font-size:11.5px;line-height:1;border:1px solid #d8d5ce;' +
         'border-radius:999px;background:#fff;font-weight:500;color:#5a5650}' +
       '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:' + accent + ';border-color:' + accent + ';background:' + acLt + '}' +
       '.tb a:hover{color:' + accent + ';background:#fff}' +
-      '.tb-scroll-wrap{right:8px!important;gap:6px!important}' +
-      '.tb-scroll-wrap button{width:30px!important;height:30px!important}' +
-      /* Right-edge fade — signals that the chip strip scrolls horizontally */
-      '.tb::after{content:"";position:absolute;right:0;top:0;bottom:0;width:36px;' +
-        'background:linear-gradient(to right,transparent,rgba(245,244,240,.96));' +
-        'pointer-events:none}' +
+      '.tb-scroll-wrap{display:none}' +
+      '.tb::after{display:none}' +
     '}'
     ;
   document.head.appendChild(styleEl);
