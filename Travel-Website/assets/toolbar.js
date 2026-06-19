@@ -110,7 +110,7 @@
     { group: '🌐 Guides', children: [
         { href: base + 'Guides/Guides-Index.html',                text: '🌐 Guides' },
         { href: base + 'Trip-Essentials/Maps/Europe-Map.html', text: '🗺️ Maps' },
-        { href: base + 'Trip-Essentials/Travel-Stats.html',   text: '📊 Stats' },
+        { href: base + 'Trip-Essentials/Travel-Stats.html',   text: '📊 Travel Stats' },
       ] },
     null,
     { group: '💻 Lounges', children: [
