@@ -126,14 +126,14 @@ REMAINING (not yet fixed): Budapest (lookups done but ~3min inflated — REDO wi
 *All three validator-vs-rule contradictions RESOLVED 2026-06-17 (owner-approved): (1) Trip Overview §3 pill label — doc line 62 fixed to `⛲️ Day Trips`, CORE RULES cascade run; (2) Links §3 — booking-URL 90-day staleness check removed from the validator (rule wins, a logged PASS never expires); (3) Photos Rules §5 step 7 + §9 — rewritten to download-only via `commons_photo.py --download` (validator wins), and the stale "hotlink permitted" language purged from Ship Checklist § 6, Rule Dependencies, and Separation Map.*
 
 **Validator-code backlog (pure validator session, no rule decision needed):**
-- Rules for Claude §6 placeholder check misses **bare** `TBD`/`TODO` (only `{braced}` caught globally + hotel-banner scope) and the literal phrases "fill in later" / "tour TBD" (no matcher). Add a body-wide scan next to validate_itinerary.py:8467.
-- Day Structure §6/§7 train-day quota: 5+ day "must include" is only a suppressible `warn`; the ≤4-day "must NOT include" has no check at all (vacuous pass).
-- Day Structure §5 ≥4-stop floor is a `warn`, not a hard fail.
-- Motion Rule §1: metro (🚝) inline sub-line has no shape check (tram does); ferry (🚢) standalone banner shape unchecked; `_MOTION_LEAD_RE` omits 🚝/🚎.
-- Trip Overview §4 text-transform ban regex only catches the exact `a, a:visited { text-transform: lowercase }` — misses uppercase/capitalize, bare `a`, and `*`/body-level cascades.
-- Tickets: ticket-row **field order** (Title · ⭐ · reviews · platform) unchecked (only presence); §1 source waterfall unenforced (mostly behavioral).
-- Links §4: TheFork named bot-blocked but no `thefork.com` URL pattern / no log-coverage (low severity — §4 defers to Platforms.md).
-- Hotel Banner §1 "no postal code" only caught when a comma is present and no middle-dot (`Calle Mayor · 28013 Madrid` passes).
+- ~~Rules for Claude §6 placeholder check misses **bare** `TBD`/`TODO` (only `{braced}` caught globally + hotel-banner scope) and the literal phrases "fill in later" / "tour TBD" (no matcher). Add a body-wide scan next to validate_itinerary.py:8467.~~ **DONE 2026-06-19 (B1) — body-wide bare-placeholder hard fail.**
+- ~~Day Structure §6/§7 train-day quota: 5+ day "must include" is only a suppressible `warn`; the ≤4-day "must NOT include" has no check at all (vacuous pass).~~ **DONE 2026-06-19 (B2) — ≤4-day prohibition now enforced.**
+- ~~Day Structure §5 ≥4-stop floor is a `warn`, not a hard fail.~~ **DONE 2026-06-19 (B3) — flipped to `check()` hard fail.**
+- ~~Motion Rule §1: metro (🚝) inline sub-line has no shape check (tram does); ferry (🚢) standalone banner shape unchecked; `_MOTION_LEAD_RE` omits 🚝/🚎.~~ **DONE 2026-06-19 (B4) — `_MOTION_LEAD_RE` broadened to include 🚝/🚎.** (metro/tram inline shape + ferry standalone shape remain ❌ human.)
+- ~~Trip Overview §4 text-transform ban regex only catches the exact `a, a:visited { text-transform: lowercase }` — misses uppercase/capitalize, bare `a`, and `*`/body-level cascades.~~ **DONE 2026-06-19 (B5) — now scans all CSS rules.**
+- Tickets: ticket-row **field order** (Title · ⭐ · reviews · platform) unchecked (only presence); §1 source waterfall unenforced (mostly behavioral). **(B6 — open)**
+- Links §4: TheFork named bot-blocked but no `thefork.com` URL pattern / no log-coverage (low severity — §4 defers to Platforms.md). **(B7 — already in `BOT_BLOCKED_TICKET_HOSTS`; confirmed present 2026-06-19; closed)**
+- Hotel Banner §1 "no postal code" only caught when a comma is present and no middle-dot (`Calle Mayor · 28013 Madrid` passes). **(B8 — intentional limitation; indistinguishable from house numbers; documented)**
 
 *Confirmed CORRECT (no action): Icon Order (all formats + tilde carve-out), Guide Structure (incl. the inter-section order the Icon Order doc lists), Hotel Banner middle-dot leniency (intended, resolved 2026-06-15), money/hedging/date/on-demand-leak bans, Stops Structure box shape, Links/Photos shape. Live URL-health + h1 subject-drift correctly live in verify_urls.py / verify_booking_links.py.*
 

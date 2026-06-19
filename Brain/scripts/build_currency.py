@@ -59,7 +59,7 @@ COUNTRIES = [
  ("Turkey","Europe","Turkish Lira","₺","TRY","TRY","", ["Istanbul"]),
  ("United Kingdom","Europe","Pound Sterling","£","GBP","GBP","", ["Cambridge","Edinburgh","Glasgow","London","Oxford"]),
 
- ("United Arab Emirates","Middle East","UAE Dirham","Dh","AED","AED","Pegged to the US dollar (~3.67).", ["Abu Dhabi","Dubai","United Arab Emirates"]),
+ ("United Arab Emirates","Middle East","UAE Dirham","Dh","AED","AED","Pegged to the US dollar (~3.67).", ["Abu Dhabi","Dubai"]),
 
  ("Morocco","Africa","Moroccan Dirham","DH","MAD","MAD","", ["Marrakech"]),
 
@@ -234,6 +234,10 @@ def build():
     )
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
+        f.write(page)
+    # keep dash-named copy in sync (validate_currency.py reads Currency-Guide.html)
+    out_dash = os.path.join(os.path.dirname(OUT), "Currency-Guide.html")
+    with open(out_dash, "w", encoding="utf-8") as f:
         f.write(page)
     print(f"✓ wrote {OUT}")
     print(f"  {len(COUNTRIES)} countries · rates as of {updated}")

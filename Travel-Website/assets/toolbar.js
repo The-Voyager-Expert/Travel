@@ -362,11 +362,12 @@
   hamLabel.textContent = 'THE VOYAGER EXPERT';
   bar.appendChild(hamLabel);
 
-  var hamBtn = document.createElement('button');
-  hamBtn.type = 'button';
+  var hamBtn = document.createElement('div');
   hamBtn.className = 'tb-ham';
+  hamBtn.setAttribute('role', 'button');
   hamBtn.setAttribute('aria-label', 'Menu');
-  hamBtn.style.cssText = '-webkit-appearance:none;appearance:none;background:none;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:4px 14px 4px 8px;margin:0;min-height:auto;cursor:pointer;';
+  hamBtn.setAttribute('tabindex', '0');
+  hamBtn.style.cssText = 'background:none;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:4px 14px 4px 8px;margin:0;min-height:auto;cursor:pointer;user-select:none;';
   hamBtn.innerHTML = '☰ <span style="font-size:11px;letter-spacing:.04em;font-weight:600">MENU</span>';
   bar.appendChild(hamBtn);
 

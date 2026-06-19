@@ -55,6 +55,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-19", "AUDIT BACKLOG — 5 checks from 2026-06-17 Core Rules audit (B1/B2/B3/B4/B5). B1: global body-wide bare-placeholder scan — TBD/TODO/FIXME/'fill in later'/'tour TBD' in visible body text now hard-fail (title-page already caught these; body was missed). B2: ≤4-day Train Day prohibition now enforced — the short-guide branch silently passed even when Train Day cards were present; now checks _quota_train_day_count == 0 and hard-fails if any Train Days found (Day Structure §6 'must NOT include'). B3: stop-count floor ≥4 flipped from warn() to check() (hard fail) — sentinel exemption (<!-- day-count: N — reason --> with carve-out keyword) still suppresses; Validator Index already documented this as enforced. B4: _MOTION_LEAD_RE broadened from [🚶🚕🚢] to [🚶🚕🚢🚝🚎] — metro (🚝) and tram (🚎) consecutive-motion-row check now fires correctly. B5: CSS text-transform ban broadened from one exact pattern (a, a:visited { text-transform: lowercase }) to any text-transform value on any <a>-targeting or cascading selector (Trip Overview §4 'any global text-transform on anchors')."),
     ("2026-06-17", "GETTING AROUND §2 TRAM — negative-finding line REMOVED + tram no longer mandatory-present (Dani 2026-06-17: 'tram has to be checked and the negative line has to come out — cribs are lazy and dont check when we had the other way'). Mirrors the §4 Ferry fix: a tram is always researched, the 🚎 Tram subsection ships ONLY when a usable tram exists, and a no-tram city OMITS the subsection entirely. CORE RULES edited: Getting Around - Extra Section.html §2a/§2b — dropped 'If no tram is available, ship the negative-finding line: No tram available in [City].'; §2a now says always-check + omit-when-none (checksums regenerated, doc_workshop_validator clean). Validator: (1) the 'TRAM SECTION MANDATORY' check (subsection OR negative line) is replaced by 'TRAM NEGATIVE LINE IS DRIFT' — a 'No tram available' / 'does not have a tram' line hard-fails; (2) TRAM TEMPLATE ADHERENCE reduced from 4 templates to the 2 positive ones (the two negative templates retired). Narrowed the drift regex so template 2 ('[City] has a tram system … No tram rides on this trip.' — a positive entry, tram exists) is NOT caught. EXPECTED to fail: every guide currently shipping a tram negative-finding line, until the subsection is removed or replaced with a real tram entry (Dani: guides failing is fine)."),
     ("2026-06-17", "WIKIPEDIA REQUIRED PER STOP — HARD FAIL (Dani 2026-06-17). Every stop-block must carry a 📖 Wikipedia row. The old <!-- no-wikipedia: --> sentinel NO LONGER exempts a stop. Sole allowance: a guide may omit the 📖 on AT MOST ONE stop, and only when a full written explanation (>= 40 chars) is logged in the guide log _build/verification_log.json as an entry with platform 'wikipedia-omit' (or result 'OMIT'). Zero omissions = fine; one omission = needs the logged explanation; two or more = hard fail regardless. EXPECTED to fail: every guide currently relying on inline no-wikipedia sentinels (≈70 guides) until each missing stop gains a 📖 link or the single allowed omission is logged."),
     ("2026-06-17", "LINKS §3 — booking-URL 'within 90 days' staleness check REMOVED (Dani-approved; rule wins). Links.html §3 states a logged PASS permanently clears the warning with no age expiry, and Wikipedia PASS was already exempt — but a separate hard check still failed any bot-blocked booking-URL (Viator/GYG/Michelin/TripAdvisor) verification_log.json entry older than 90 days. Removed the _stale/_today/_age logic and the 'within 90 days' check(); the 'has a log entry' and 'is PASS' checks stay, and verified_on is still format-validated (a malformed date still flags). No CORE RULES edit needed — Links.html already matched the kept behavior. Effect: guides with PASS log entries >90d old no longer fail (e.g. one of Zurich's fails clears)."),
@@ -2214,6 +2215,39 @@ def validate(html: str, filename: str):
         (f"{len(hr_placeholder_hits)} placeholder hit(s) on title page: "
          + "; ".join(hr_placeholder_hits[:3]))
         if hr_placeholder_hits else "",
+    )
+
+    # ─── GLOBAL BODY — BARE PLACEHOLDER TOKENS ────────────────────────────────
+    # Rules for Claude.html DriftyCat: "No placeholders — TBD/TODO/fill in later
+    # = fabrication." The title-page check above catches hotel/address surfaces;
+    # this scan catches bare tokens anywhere in visible body text (stop names,
+    # descriptions, motion rows, extras entries, annotations).
+    # "fill in later" / "tour TBD" have no matcher elsewhere (B1 audit fix 2026-06-19).
+    # Scoped to rendered text (tags stripped); excludes href/src attribute values
+    # so URL tokens ("?todo=…") don't false-positive.
+    print("\n── GLOBAL BODY — bare placeholder tokens ──")
+    _body_m = re.search(r'<body\b[^>]*>(.*)</body>', html, re.IGNORECASE | re.DOTALL)
+    _body_plain = RE_STRIP_TAGS.sub(' ', _body_m.group(1) if _body_m else html)
+    _BARE_PLACEHOLDER_PATS = [
+        (r'\bTBD\b',           'TBD'),
+        (r'\bTODO\b',          'TODO'),
+        (r'\bFIXME\b',         'FIXME'),
+        (r'fill[\s\-]?in\s+later', 'fill in later'),
+        (r'\btour\s+TBD\b',    'tour TBD'),
+    ]
+    _body_placeholder_hits: list[str] = []
+    for _bpat, _blabel in _BARE_PLACEHOLDER_PATS:
+        for _bm in re.finditer(_bpat, _body_plain, re.IGNORECASE):
+            _snip = _body_plain[max(0, _bm.start()-30):_bm.end()+30].strip()
+            _body_placeholder_hits.append(f'{_blabel}: "…{_snip}…"')
+    check(
+        'Guide body contains no bare placeholder tokens (TBD / TODO / FIXME / '
+        '"fill in later" / "tour TBD") — per Rules for Claude.html DriftyCat '
+        '(no fabrication / no placeholders)',
+        not _body_placeholder_hits,
+        f"{len(_body_placeholder_hits)} placeholder token(s) in body: "
+        + "; ".join(_body_placeholder_hits[:5])
+        if _body_placeholder_hits else '',
     )
 
     # ─── HOTEL NAMING PROTOCOL ─────────────────────────────────
@@ -5061,11 +5095,10 @@ def validate(html: str, filename: str):
 
     # ─── STOPS PER DAY — floor ≥4 ────────────────────────────────────────────
     # Rule source: Day Structure.html — full day ≥4 stops.
-    # Warns when any day block has fewer than 4 stop-blocks. Not a hard fail
-    # because a half-day or explicitly approved 3-stop day is a valid design
-    # choice — but it always needs to surface so it can be confirmed.
+    # Hard-fails when any day block has fewer than 4 stop-blocks (B3 audit fix
+    # 2026-06-19 — was a warn; Index documents this as an enforced hard fail).
     # Sentinel-aware: <!-- day-count: N — reason --> with a recognised carve-out
-    # keyword suppresses this warning (same keyword list as the phase-4 check).
+    # keyword suppresses this check (same keyword list as the phase-4 check).
     print("\n── STOPS PER DAY — floor ≥4 ──")
     _thin_days: list[str] = []
     _day_block_open_re = re.compile(
@@ -5104,13 +5137,15 @@ def validate(html: str, filename: str):
             _thin_days.append(
                 f'"{_day_label}" ({_stop_count} stop{"s" if _stop_count != 1 else ""})'
             )
-    if _thin_days:
-        warn(
-            f"{len(_thin_days)} day(s) with fewer than 4 stops "
-            f"(floor: ≥4 for a full day — confirm this is an intentional half-day "
-            f"or Dani-approved short day)",
-            "; ".join(_thin_days[:5]),
-        )
+    check(
+        'Stops per day ≥4 — every full day must have at least 4 stops '
+        '(Day Structure.html §5; suppress with <!-- day-count: N — reason --> '
+        'containing a carve-out keyword)',
+        not _thin_days,
+        f"{len(_thin_days)} day(s) with fewer than 4 stops: "
+        + "; ".join(_thin_days[:5])
+        if _thin_days else '',
+    )
 
     # ─── TOTAL TOUR BOXES IN GUIDE — must have at least one ──────────────────
     # Catches guides where the crib skipped tour research entirely.
@@ -6456,7 +6491,7 @@ def validate(html: str, filename: str):
     # two separate adjacent <div> rows inside the same box, it is format drift.
     print("\n── CONSECUTIVE MOTION ROWS ──")
     _consec_motion_hits: list[str] = []
-    _MOTION_LEAD_RE = re.compile(r'^[🚶🚕🚢]')
+    _MOTION_LEAD_RE = re.compile(r'^[🚶🚕🚢🚝🚎]')
     for _cbm in _EOI_BOX_RE.finditer(html):
         _cb_inner, _ = _walk_balanced_div(html, _cbm.end())
         _prec2 = html[max(0, _cbm.start() - 400):_cbm.start()]
@@ -16455,10 +16490,12 @@ def validate(html: str, filename: str):
         if _quota_touring_days <= 4:
             # Short guide — quota does not apply; Train Day is forbidden at ≤4 days.
             check(
-                'Train Day quota — guide has ≤4 touring days; quota not applicable '
-                '(Day Structure.html §6 — Train Day required for 5+ day guides only)',
-                True,
-                '',
+                'Train Day quota — guide has ≤4 touring days; a Train Day must NOT '
+                'be included (Day Structure.html §6)',
+                _quota_train_day_count == 0,
+                f'{_quota_train_day_count} Train Day(s) found — forbidden in guides '
+                f'with ≤4 touring days (Day Structure.html §6)'
+                if _quota_train_day_count > 0 else '',
             )
         elif _quota_train_day_count >= 1:
             check(
@@ -24789,20 +24826,42 @@ def validate(html: str, filename: str):
 
     # ─── CSS COMPANION FILE — BANNED RULES ─────────────────────
     # Reads guide_v3.css and verifies no banned CSS rules crept back in.
-    # text-transform:lowercase on <a> is banned: it lowercases proper nouns,
-    # museum names, and tour names inside links. Links display as written in
-    # source. Rule removed 2026-05-19. Validator prevents regression.
+    # text-transform on <a> selectors is banned: it lowercases/uppercases proper
+    # nouns, museum names, and tour names inside links. Links display as written
+    # in source. Rule removed 2026-05-19. Validator broadened 2026-06-19 (B5
+    # audit fix): now catches any text-transform value (not just lowercase) on
+    # any <a>-targeting selector (a, a:visited, a:hover, a:focus, a:active, a:link,
+    # or body/*/universal rules that cascade to anchors).
     _css_path = Path(filename).parent.parent.parent / "assets" / "guide_v3.css"
     if _css_path.exists():
         _css_text = _css_path.read_text(encoding="utf-8")
-        _has_a_lowercase = bool(re.search(
-            r'a\s*,\s*a:visited\s*\{[^}]*text-transform\s*:\s*lowercase', _css_text))
+        # Strip CSS comments before scanning.
+        _css_stripped = re.sub(r'/\*.*?\*/', '', _css_text, flags=re.DOTALL)
+        # Match any rule-block that targets <a> elements and sets text-transform.
+        # Catches: a {...}, a:visited {...}, a:hover {...}, a, a:visited {...}, etc.
+        # Also catches body/*/html-level text-transform that cascades to links.
+        _css_a_transform_hits: list[str] = []
+        for _css_rule in re.finditer(r'([^{}]+)\{([^{}]*)\}', _css_stripped):
+            _sel = _css_rule.group(1).strip()
+            _decl = _css_rule.group(2)
+            _has_transform = re.search(r'\btext-transform\s*:', _decl, re.IGNORECASE)
+            if not _has_transform:
+                continue
+            # Selector targets <a> elements (any pseudo-class) or broad cascading selectors.
+            _targets_a = bool(re.search(r'\ba\b|^\s*\*\s*$|^\s*html\s*$|^\s*body\s*$', _sel, re.IGNORECASE))
+            if _targets_a:
+                _tv = re.search(r'\btext-transform\s*:\s*(\S+)', _decl, re.IGNORECASE)
+                _val = _tv.group(1).rstrip(';').strip() if _tv else '?'
+                if _val.lower() != 'none':
+                    _css_a_transform_hits.append(f'`{_sel.strip()[:60]}` → text-transform:{_val}')
         check(
-            'guide_v3.css — text-transform:lowercase on <a> is banned '
-            '(lowercases proper nouns and tour/museum names; removed 2026-05-19)',
-            not _has_a_lowercase,
-            'guide_v3.css still applies text-transform:lowercase to <a> tags. '
-            'Remove it: links must display as written in source.',
+            'guide_v3.css — text-transform on <a> selectors is banned '
+            '(lowercases/uppercases proper nouns and tour/museum names; removed 2026-05-19)',
+            not _css_a_transform_hits,
+            'guide_v3.css still applies text-transform to <a>-targeting selector(s): '
+            + '; '.join(_css_a_transform_hits[:3])
+            + ' — remove: links must display as written in source.'
+            if _css_a_transform_hits else '',
         )
     # ─── TITLE DRIFT CHECKS ────────────────────────────────────
     # Rule 1: <title> must be a plain place name — no date, year, month,

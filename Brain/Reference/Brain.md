@@ -18,7 +18,7 @@
 
 > **Read this at every session start.** It is your complete map of what exists, where it lives, and what it's for. If you don't know where something is — it's in here.
 >
-> **Last updated: 2026-06-15**
+> **Last updated: 2026-06-19**
 
 ---
 
