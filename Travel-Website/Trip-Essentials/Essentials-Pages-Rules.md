@@ -79,7 +79,7 @@ Refresh: monthly (and on demand) via `python3 Brain/scripts/build_currency.py &&
 ## Banner rules (all Essentials pages)
 
 - **No emoji in the banner `h1`.** The h1 is text-only, uppercase. Emoji belong in the toolbar link label and the page subtitle, not the heading itself.
-- **Active / selected filter pill color: `var(--text)` (dark), never `var(--accent)` or the banner gradient.** Using the accent or terra cotta orange for selection states was a recurring mistake (added 2026-06-19). Any pill, chip, or tab that indicates "currently selected" uses `background: var(--text); color: #fff; border-color: var(--text)` — dark/neutral, not gold or orange.
+- **Active / selected filter pill color: terracotta `#b85c2a`, matching the banner.** Any pill, chip, or tab that indicates "currently selected" uses `background: #b85c2a; color: #fff; border-color: #b85c2a` — the same mid-tone as the banner gradient. Do not use `var(--text)` (dark/black) or `var(--accent)` (gold) for selected state. (added 2026-06-19, corrected 2026-06-19)
 
 ---
 *Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19.*
