@@ -125,7 +125,7 @@
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Full Network' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Plug Adapter/Plug-Adapter-Guide.html',  text: '🔌 Plugs' },
+    { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html',  text: '🔌 Plugs' },
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html',                       text: '💰 Currency' },
     null,
