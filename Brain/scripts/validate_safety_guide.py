@@ -21,7 +21,7 @@ HERE   = os.path.dirname(os.path.abspath(__file__))
 TRAVEL = os.path.abspath(os.path.join(HERE, "..", ".."))
 WEB    = os.path.join(TRAVEL, "Travel-Website")
 INDEX  = os.path.join(WEB, "Guides", "guides_index.html")
-PAGE   = os.path.join(WEB, "Trip-Essentials", "Safety Guide.html")
+PAGE   = os.path.join(WEB, "Trip-Essentials", "Safety-Guide.html")
 GUIDES = os.path.join(WEB, "Guides")
 
 

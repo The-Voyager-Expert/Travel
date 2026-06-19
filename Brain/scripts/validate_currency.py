@@ -20,7 +20,7 @@ import os, re, sys, importlib.util, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 TRAVEL = os.path.abspath(os.path.join(HERE, "..", ".."))
 INDEX = os.path.join(TRAVEL, "Travel-Website", "Guides", "guides_index.html")
-PAGE = os.path.join(TRAVEL, "Travel-Website", "Trip-Essentials", "Currency Guide.html")
+PAGE = os.path.join(TRAVEL, "Travel-Website", "Trip-Essentials", "Currency-Guide.html")
 SCRIPT = os.path.join(HERE, "build_currency.py")
 
 MONTHS = {m: i for i, m in enumerate(

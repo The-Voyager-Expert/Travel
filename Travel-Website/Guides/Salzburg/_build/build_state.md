@@ -1,6 +1,6 @@
 # Build state — Salzburg
 Started: 2026-06-12
-Last updated: 2026-06-12 (ship gate auto-flipped 3 build_state boxes on clean ship)
+Last updated: 2026-06-18 (Days 3–7 added; 7-day guide at 0 validator failures)
 
 ## Phase 0 — Session start
 - [x] Rules for Claude.html

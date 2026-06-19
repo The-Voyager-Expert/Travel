@@ -24886,9 +24886,9 @@ def validate(html: str, filename: str):
         f"Guide not found in guides_index.html: {_fg_rel}" if not _fg_in_index else "",
     )
     _fg_ess = _fg_guide.parent.parent.parent / "Trip-Essentials"
-    _fg_map_names = ("Europe Map.html","US Map.html","Asia Map.html",
-                     "Africa Map.html","Oceania Map.html","South America Map.html",
-                     "Caribbean Map.html")
+    _fg_map_names = ("Europe-Map.html","US-Map.html","Asia-Map.html",
+                     "Africa-Map.html","Oceania-Map.html","South-America-Map.html",
+                     "Caribbean-Map.html")
     _fg_maps = [_fg_ess / "Maps" / n for n in _fg_map_names] + [_fg_ess / n for n in _fg_map_names]
     # Match a pin by EITHER the city-name label OR the guide's href path in the
     # PINS array. The href path (Guides/{folder}/{file}) is the robust key — it is

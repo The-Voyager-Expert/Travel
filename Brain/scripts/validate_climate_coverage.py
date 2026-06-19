@@ -138,7 +138,7 @@ def main():
     # entry its By-Climate card is a dead, non-clickable tile. By City (Weather.html)
     # is a pure weather lookup and needs no per-page link — this is the one
     # asymmetric gap between the two tabs, so it gets its own check. (Added 2026-06-15.)
-    cfinder = os.path.join(WEB, "Trip-Essentials", "Climate Finder.html")
+    cfinder = os.path.join(WEB, "Trip-Essentials", "Climate-Finder.html")
     if not os.path.exists(cfinder):
         fails.append("Trip-Essentials/Climate Finder.html not found — cannot check By-Climate guide links")
     else:
