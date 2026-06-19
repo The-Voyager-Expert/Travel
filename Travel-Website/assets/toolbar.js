@@ -203,9 +203,9 @@
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
-      '.tb-ham{display:flex;align-items:center;justify-content:center;' +
-        'width:44px;height:44px;cursor:pointer;background:none;border:none;' +
-        'font-size:20px;color:#3d3a32;flex-shrink:0;margin-left:auto}' +
+      '.tb-ham{display:flex;align-items:center;gap:4px;cursor:pointer;background:none;' +
+        'border:1px solid #c8c4bc;border-radius:5px;padding:5px 10px;' +
+        'font-size:13px;color:#3d3a32;flex-shrink:0;margin-left:auto;margin-right:4px;line-height:1}' +
       '.tb-ham-label{font-size:13px;font-weight:600;color:#3d3a32;padding-left:14px;letter-spacing:.02em}' +
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
         'background:#faf9f5;border-bottom:1px solid #e6e2da;' +
@@ -360,7 +360,7 @@
   hamBtn.type = 'button';
   hamBtn.className = 'tb-ham';
   hamBtn.setAttribute('aria-label', 'Menu');
-  hamBtn.textContent = '☰';
+  hamBtn.innerHTML = '☰ <span style="font-size:11px;letter-spacing:.04em;font-weight:600">MENU</span>';
   bar.appendChild(hamBtn);
 
   var hamMenu = document.createElement('div');
@@ -404,11 +404,12 @@
   hamBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     hamMenu.classList.toggle('tb-ham-open');
-    hamBtn.textContent = hamMenu.classList.contains('tb-ham-open') ? '✕' : '☰';
+    var open = hamMenu.classList.contains('tb-ham-open');
+    hamBtn.innerHTML = (open ? '✕' : '☰') + ' <span style="font-size:11px;letter-spacing:.04em;font-weight:600">' + (open ? 'CLOSE' : 'MENU') + '</span>';
   });
   document.addEventListener('click', function () {
     hamMenu.classList.remove('tb-ham-open');
-    hamBtn.textContent = '☰';
+    hamBtn.innerHTML = '☰ <span style="font-size:11px;letter-spacing:.04em;font-weight:600">MENU</span>';
   });
   hamMenu.addEventListener('click', function (e) { e.stopPropagation(); });
 
