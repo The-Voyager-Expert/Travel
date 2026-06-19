@@ -204,8 +204,8 @@
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
       '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;background:none;' +
-        'border:none;padding:4px 14px 4px 8px;' +
-        'font-size:12px;color:#6a6660;flex-shrink:0;margin-left:auto;line-height:1}' +
+        'border:none;-webkit-appearance:none;appearance:none;padding:4px 14px 4px 8px;' +
+        'font-size:12px;color:#6a6660;flex-shrink:0;margin-left:auto;line-height:1;min-height:auto}' +
       '.tb-ham-label{font-size:13px;font-weight:600;color:#3d3a32;padding-left:14px;letter-spacing:.02em}' +
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
         'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
