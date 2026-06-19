@@ -8591,7 +8591,15 @@ def validate(html: str, filename: str):
 
     # ─── YEAR-IN-GUIDE CHECK (P10 — added 2026-05-03) ──────────────────────
     html_no_head = re.sub(r'<head\b[^>]*>.*?</head>', '', html, flags=re.DOTALL | re.IGNORECASE)
-    _rendered_no_head = RE_STRIP_TAGS.sub( ' ', html_no_head).replace('&nbsp;', ' ')
+    # Strip Maps link anchor text before scanning — Google Maps 📍 addresses legitimately
+    # contain 4-digit street numbers (e.g. "2050 Shelter Island Dr") which match the year
+    # regex and are false positives. Strip any <a href="*maps*">…</a> content. (2026-06-19)
+    _html_year_scan = re.sub(
+        r'<a\b[^>]*href\s*=\s*"[^"]*maps[^"]*"[^>]*>.*?</a>',
+        ' ',
+        html_no_head, flags=re.DOTALL | re.IGNORECASE,
+    )
+    _rendered_no_head = RE_STRIP_TAGS.sub( ' ', _html_year_scan).replace('&nbsp;', ' ')
     year_bad: list[str] = []
     for m in re.finditer(r'\b(20[2-9][0-9])\b', _rendered_no_head):
         snip = _rendered_no_head[max(0, m.start()-30):m.end()+30].strip()

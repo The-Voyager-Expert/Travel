@@ -56,11 +56,16 @@ The format lives in `Brain/CORE RULES/` — never in memory, never in past guide
 Runs before the first response, every session. Auto-authorized — no asking.
 
 1. `python3 Brain/scripts/guide_tools.py start` — runs brain-check + sweep-stray + mobile-check (audit) + surfaces open To Do items. On brain-check failures: fix before any task work. On strays: run `--apply` automatically, note in opening message. On mobile-check misses (a shareable page missing the viewport tag or `assets/mobile.css` baseline): run `python3 Brain/scripts/mobile_check.py --apply` automatically, note in opening message.
-2. Read `Brain/Reference/Brain.md`
-3. Read `Brain/CORE RULES/Rules for Claude.html`
-4. Check `Brain/Reference/Platforms.md` — note any ❌ or ⏳ in opening message, do not block
-5. Read `Brain/Reference/Connectors.html` — know what's available, do not announce or prompt
-6. Check `Brain/Reference/audit_log.md` — if last entry > 7 days ago, note in opening message: "Last audit: {date} ({N} days ago)." Continue immediately.
+2. Read `Travel/CLAUDE.md`.
+3. Read `Brain/Reference/Brain.md` (Part 1 — Travel Folder Map) — the complete map of every folder, file, and resource available.
+4. Read `Brain/CORE RULES/Rules for Claude.html`.
+5. Check `Brain/Reference/Platforms.md` — note any ❌ or ⏳ in opening message, do not block.
+6. Read `Brain/Reference/Connectors.html` — know what's available, do not announce or prompt.
+7. Check `Brain/Reference/audit_log.md` — if last entry > 7 days ago, note in opening message: "Last audit: {date} ({N} days ago)." Continue immediately.
+
+**Two-track ritual — choose based on whether the session will write guide HTML:**
+- **Non-build sessions** (flights, hotel research, to-do updates, shopping, on-demand docs, audits): run steps 1–3 only + step 7 (audit log). Steps 4–6 are skipped.
+- **Guide-build sessions** (any session that will write guide HTML): run all 7 steps.
 
 ---
 

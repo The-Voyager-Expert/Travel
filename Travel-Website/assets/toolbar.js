@@ -129,6 +129,8 @@
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html',                       text: '💰 Currency' },
     null,
+    { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
+    null,
     { group: '🌤️ Weather', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ By Climate' },
         { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ By City' },
@@ -209,7 +211,7 @@
       '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;background:none;' +
         'border:none;-webkit-appearance:none;appearance:none;box-shadow:none;outline:none;' +
         '-webkit-tap-highlight-color:transparent;' +
-        'padding:4px 14px 4px 8px;font-size:12px;color:#6a6660;flex-shrink:0;margin-left:auto;line-height:1;min-height:auto}' +
+        'padding:4px 14px 4px 8px;font-size:13px;color:#3d3a32;flex-shrink:0;margin-left:auto;line-height:1;min-height:auto}' +
       '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{background:none !important;box-shadow:none !important;outline:none !important}' +
       '.tb-ham-label{display:block;font-size:13px;font-weight:600;color:#3d3a32;padding-left:14px;letter-spacing:.02em}' +
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
