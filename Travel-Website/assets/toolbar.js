@@ -210,7 +210,6 @@
         'border-radius:999px;background:#fff;font-weight:500;color:#5a5650}' +
       '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:' + accent + ';border-color:' + accent + ';background:' + acLt + '}' +
       '.tb a:hover{color:' + accent + ';background:#fff}' +
-      '.tb-scroll-wrap{display:none}' +
       '.tb::after{display:none}' +
     '}'
     ;
