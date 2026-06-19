@@ -202,7 +202,7 @@
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
-      '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px;border-bottom:2px solid #c8c4bc;background:#ffffff;box-shadow:0 1px 4px rgba(0,0,0,.06)}' +
+      '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px;border-bottom:none;background:transparent;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
