@@ -465,6 +465,7 @@
 
   /* Hide entirely on non-scrollable pages (e.g. maps); dim individual buttons at limits */
   function updateScrollBtns() {
+    if (window.innerWidth <= 600) { scrollWrap.style.display = 'none'; return; }
     var scrollY   = window.scrollY;
     var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     var canScroll = maxScroll > 1;
