@@ -27,7 +27,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent                       # …/Travel
 INDEX = ROOT / "Travel-Website" / "Guides" / "guides_index.html"
-SEA   = ROOT / "Travel-Website" / "Trip-Essentials" / "Delta Routes SEA.html"
+SEA   = ROOT / "Travel-Website" / "Trip-Essentials" / "Delta-Routes-SEA.html"
 
 REQUIRED_KEYS = {"t", "m", "r", "d", "i", "h", "rg", "o"}
 OPTIONAL_KEYS = {"lg"}                          # per-leg block-time breakdown (connecting routes)

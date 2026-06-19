@@ -43,7 +43,7 @@ Each doc has ONE job. If a topic isn't listed under a file, it doesn't go there.
 
 ---
 
-## Stops Structure
+## Stops Structure.html
 
 - Stop selection criteria (what qualifies, what doesn't ship — include/exclude lists, quality bar)
 - Research flow and trusted sources (Fodor's, Culture Trip, Rough Guides, Atlas Obscura, Rick Steves, NatGeo, official tourism boards)
@@ -57,11 +57,9 @@ Each doc has ONE job. If a topic isn't listed under a file, it doesn't go there.
 - Entry formats (§ 2): 2a via platform (`🎟 [Title] · [N.N]⭐ · [Review Count]+ reviews · [Platform]`) · 2b venue site (`🎟 [Title] · [N.N]⭐ · [venue.domain]`) · 2c URL-only (`🎟 [Booking Platform]`)
 - No rating floor — unlike Tours, any rating ships
 
-## Tours.html — ~~Retired 2026-05-20~~
-
-Moved to `Travel/Retired Rules/Retired_Tours.html`. In-stop tour boxes and the Guided Tour Stop pattern are retired. All tour rules now live in `Tours - Extra Section.html`.
-
 ## Tours - Extra Section
+
+*(Tours.html retired 2026-05-20 — moved to `Travel/Retired Rules/Retired_Tours.html`. In-stop tour boxes and the Guided Tour Stop pattern are retired. All tour rules now live here. Sealed — never reference in builds.)*
 
 - Per-source minimums (≥5 Viator, ≥5 GetYourGuide, ≥5 TripAdvisor; ship fewer when not enough qualify)
 - Walking tour cap (minimum 2 target, not a floor — ship fewer when not enough qualify; maximum 4 is a hard cap; both across all platforms combined)
@@ -101,7 +99,7 @@ Moved to `Travel/Retired Rules/Retired_Tours.html`. In-stop tour boxes and the G
 
 ## Trip Overview
 
-- Day-type icons: 🚩 Self-Guided (CSS ::before icon removed 2026-06-16) · 🚆 Train Day (defined in § 1)
+- Day-type icons: ~~🚩 Self-Guided~~ [RETIRED 2026-05-20; CSS ::before icon also removed 2026-06-16] · 🚆 Train Day (defined in § 1)
 - Self-Guided card format: `Day N – [Stop 1] · [Stop 2] · [Stop 3]`
 - Train Day card format: `Day N · 🚆 Train Day — [Destination]`
 - Day order (in-city days first, Train Days last)
@@ -174,7 +172,7 @@ Train day-trips only (by-car/Uber retired 2026-05-03).
 - No overlap with Train Days already in the itinerary (rule preserved unchanged in the 2026-06-15 § 4 addition)
 - Format: `[Destination] [Travel Time]` + `↳ description ≤320 chars` + `🎫 book at: [Operator] or [omio]`
 - Negative-finding line when none qualify
-- § 4 European-country minimum: guides in European countries must ship ≥5 entries — hard fail below the floor (added 2026-06-15)
+- § 3 European-country minimum: guides in European countries must ship ≥5 entries — hard fail below the floor (added 2026-06-15)
 
 ## Getting Around
 
@@ -241,6 +239,12 @@ Train day-trips only (by-car/Uber retired 2026-05-03).
 - Per-trip "wish I'd known" intel — venue notes, timing tricks, booking quirks
 - Source: Brain/Reference/Brain.md Part 3 (Heads Up region) — city must appear there; no entry = section skips, no negative-finding line
 - Format per entry: `❗️ [Venue] — [Short Title]` + `↳ [Note] ≤150 chars` + `Workaround: [What To Do Instead]`
+
+## Claude Inspiration - Extra Section.html
+
+- Claude's inspiration note section (optional; always the final element before Skip List)
+- A short, genuine, non-promotional note from Claude about what makes the destination worth visiting
+- Ships when Claude has a compelling authentic observation; skipped when no standout insight exists
 
 ## Pickleball
 

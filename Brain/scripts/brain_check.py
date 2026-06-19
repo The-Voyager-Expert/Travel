@@ -1610,7 +1610,7 @@ def check_banner_title_size(report: "Report") -> None:
 
     OK_VALUES = {"14px", "var(--fs-title)", "var(--fs-title,14px)", "var(--fs-title, 14px)"}
     pages = list((WEB_ROOT / "Trip-Essentials").rglob("*.html"))
-    for extra in ("Guides/guides_index.html", "Website Main Pages Links.html", "index.html"):
+    for extra in ("Guides/guides_index.html", "Website-Main-Pages-Links.html", "index.html"):
         p = WEB_ROOT / extra
         if p.exists():
             pages.append(p)
@@ -1666,7 +1666,7 @@ def check_banner_content(report: "Report") -> None:
     _ANY_TAG_RE = re.compile(r'<(/?\w+)[^>]*>', re.I)
 
     pages = list((WEB_ROOT / "Trip-Essentials").rglob("*.html"))
-    for extra in ("Guides/guides_index.html", "Website Main Pages Links.html", "index.html"):
+    for extra in ("Guides/guides_index.html", "Website-Main-Pages-Links.html", "index.html"):
         p = WEB_ROOT / extra
         if p.exists():
             pages.append(p)

@@ -145,6 +145,7 @@ SUBCOMMANDS = {
     "brain-check":    "brain_check.py",
     "sweep-stray":    "sweep_stray_travel.py",   # added 2026-04-30: enforces HARD RULE (all travel work under Travel/)
     "mobile-check":   "mobile_check.py",          # added 2026-06-12: viewport + mobile.css baseline across shareable pages
+    "validate-safety": "validate_safety_guide.py", # added 2026-06-19: Safety Guide coverage — every guides_index city has exactly one row
     "pdf":            "render_pdf.py",
     "validate-pdf":   "validate_pdf.py",
     # test — handled by _run_tests() (Rule 56); not a script delegation
@@ -393,8 +394,8 @@ def _run_start() -> int:
             else:
                 print(f"\n  {heading}: (empty)")
 
-    # Step 4: in-progress builds — FLAG ONLY, never archived or cleaned up
-    print("\n▶ In-progress builds (flag only — never archive)")
+    # Step 5: in-progress builds — FLAG ONLY, never archived or cleaned up
+    print("\n▶ Step 5/5 — In-progress builds (flag only — never archive)")
     _ip = _in_progress_builds()
     if _ip:
         print("  🚧 These guides look unfinished — a crib may have stalled mid-build.")
@@ -637,15 +638,13 @@ def _check_guide_pinned(guide_path: Path) -> int:
     essentials = WEB_ROOT / "Trip-Essentials"
     maps_dir  = essentials / "Maps"
     map_files = [
-        maps_dir  / "Europe Map.html",
-        maps_dir  / "US Map.html",
-        maps_dir  / "Asia Map.html",
-        maps_dir  / "Africa Map.html",
-        maps_dir  / "Oceania Map.html",
-        maps_dir  / "South America Map.html",
-        maps_dir  / "Caribbean Map.html",
-        essentials / "Europe Map.html",
-        essentials / "US Map.html",
+        maps_dir / "Europe-Map.html",
+        maps_dir / "US-Map.html",
+        maps_dir / "Asia-Map.html",
+        maps_dir / "Africa-Map.html",
+        maps_dir / "Oceania-Map.html",
+        maps_dir / "South-America-Map.html",
+        maps_dir / "Caribbean-Map.html",
     ]
 
     # Match by EITHER the city-name label OR the guide's href path in the PINS
@@ -861,9 +860,9 @@ def _check_guide_in_climate(guide_path: Path) -> int:
     # tile with no link to the guide. By City (Weather.html) is pure weather lookup and
     # needs no per-page link, so this is the one asymmetric gap between the two tabs.
     # (Added 2026-06-15 — caught Azores + Dubrovnik shipping without By-Climate links.)
-    climate_finder = WEB_ROOT / "Trip-Essentials" / "Climate Finder.html"
+    climate_finder = WEB_ROOT / "Trip-Essentials" / "Climate-Finder.html"
     if not climate_finder.exists():
-        missing.append("Trip-Essentials/Climate Finder.html (file missing)")
+        missing.append("Trip-Essentials/Climate-Finder.html (file missing)")
     else:
         cf_text = climate_finder.read_text(encoding="utf-8", errors="replace")
         gm = _re.search(r"var GUIDE_LINKS\s*=\s*\{(.*?)\};", cf_text, _re.DOTALL)

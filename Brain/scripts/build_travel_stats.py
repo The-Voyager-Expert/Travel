@@ -25,7 +25,7 @@ from pathlib import Path
 SCRIPT_DIR  = Path(__file__).resolve().parent
 TRAVEL_ROOT = SCRIPT_DIR.parent.parent           # …/Travel/
 INDEX_HTML  = TRAVEL_ROOT / 'Travel-Website' / 'Guides' / 'guides_index.html'
-STATS_HTML  = TRAVEL_ROOT / 'Travel-Website' / 'Trip-Essentials' / 'Travel Stats.html'
+STATS_HTML  = TRAVEL_ROOT / 'Travel-Website' / 'Trip-Essentials' / 'Travel-Stats.html'
 
 DRY_RUN = '--dry-run' in sys.argv
 
