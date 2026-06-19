@@ -199,7 +199,7 @@
       'transition:width .08s linear}' +
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
-      '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px;border-bottom:1px solid #d8d5ce;background:rgba(245,244,240,.98)}' +
+      '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px;border-bottom:2px solid #c8c4bc;background:#ffffff;box-shadow:0 1px 4px rgba(0,0,0,.06)}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
@@ -351,6 +351,11 @@
     'padding:0;text-decoration:none;flex-shrink:0;';
 
   /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
+  var hamLabel = document.createElement('span');
+  hamLabel.className = 'tb-ham-label';
+  hamLabel.textContent = 'THE VOYAGER EXPERT';
+  bar.appendChild(hamLabel);
+
   var hamBtn = document.createElement('button');
   hamBtn.type = 'button';
   hamBtn.className = 'tb-ham';
