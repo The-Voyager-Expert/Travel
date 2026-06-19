@@ -75,4 +75,11 @@ Country block — one combined header line: **Country | Currency | EUR | €**  
 Refresh: monthly (and on demand) via `python3 Brain/scripts/build_currency.py && python3 Brain/scripts/validate_currency.py`.
 
 ---
-*Added 2026-05-29. Currency Guide section added 2026-06-14.*
+
+## Banner rules (all Essentials pages)
+
+- **No emoji in the banner `h1`.** The h1 is text-only, uppercase. Emoji belong in the toolbar link label and the page subtitle, not the heading itself.
+- **Active / selected filter pill color: `var(--text)` (dark), never `var(--accent)` or the banner gradient.** Using the accent or terra cotta orange for selection states was a recurring mistake (added 2026-06-19). Any pill, chip, or tab that indicates "currently selected" uses `background: var(--text); color: #fff; border-color: var(--text)` — dark/neutral, not gold or orange.
+
+---
+*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19.*
