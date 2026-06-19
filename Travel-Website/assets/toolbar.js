@@ -366,6 +366,7 @@
   hamBtn.type = 'button';
   hamBtn.className = 'tb-ham';
   hamBtn.setAttribute('aria-label', 'Menu');
+  hamBtn.style.cssText = '-webkit-appearance:none;appearance:none;background:none;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:4px 14px 4px 8px;margin:0;min-height:auto;cursor:pointer;';
   hamBtn.innerHTML = '☰ <span style="font-size:11px;letter-spacing:.04em;font-weight:600">MENU</span>';
   bar.appendChild(hamBtn);
 
