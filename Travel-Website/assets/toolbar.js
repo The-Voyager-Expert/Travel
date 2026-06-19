@@ -193,10 +193,11 @@
     '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + ';font-weight:500}' +
     /* Separator */
     '.tb-sep{width:1px;height:18px;background:#d8d5ce;margin:0;flex-shrink:0}' +
-    /* Scroll progress bar */
+    /* Scroll progress bar — hidden on mobile (overlaps toolbar) */
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
+    '@media(max-width:600px){.tb-progress{display:none}}' +
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
       '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px;border-bottom:2px solid #c8c4bc;background:#ffffff;box-shadow:0 1px 4px rgba(0,0,0,.06)}' +
