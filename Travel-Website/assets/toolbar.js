@@ -517,15 +517,17 @@
     return btn;
   }
 
-  var btnUp   = makeScrollBtn('up');
-  var btnDown = makeScrollBtn('down');
-  scrollWrap.appendChild(btnUp);
-  scrollWrap.appendChild(btnDown);
-  document.body.appendChild(scrollWrap);
+  if (window.innerWidth > 600) {
+    var btnUp   = makeScrollBtn('up');
+    var btnDown = makeScrollBtn('down');
+    scrollWrap.appendChild(btnUp);
+    scrollWrap.appendChild(btnDown);
+    document.body.appendChild(scrollWrap);
+  }
 
   /* Hide entirely on non-scrollable pages (e.g. maps); dim individual buttons at limits */
   function updateScrollBtns() {
-    if (window.innerWidth <= 600) { scrollWrap.style.display = 'none'; return; }
+    if (window.innerWidth <= 600 || !scrollWrap.parentNode) { return; }
     var scrollY   = window.scrollY;
     var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     var canScroll = maxScroll > 1;
