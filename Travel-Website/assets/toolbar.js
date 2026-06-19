@@ -208,8 +208,8 @@
         'font-size:12px;color:#6a6660;flex-shrink:0;margin-left:auto;line-height:1}' +
       '.tb-ham-label{font-size:13px;font-weight:600;color:#3d3a32;padding-left:14px;letter-spacing:.02em}' +
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
-        'background:#faf9f5;border-bottom:1px solid #e6e2da;' +
-        'box-shadow:0 6px 18px rgba(0,0,0,.08);z-index:999;padding:8px 0 12px}' +
+        'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
+        'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:999;padding:8px 0 12px}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
       '.tb-ham-menu a{display:block;font-size:15px;color:#3d3a32;text-decoration:none;' +
         'padding:11px 22px;border-bottom:none}' +
