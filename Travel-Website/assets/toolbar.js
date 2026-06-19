@@ -368,7 +368,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('tabindex', '0');
   hamBtn.style.cssText = 'background:none;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:4px 14px 4px 8px;margin:0;min-height:auto;cursor:pointer;user-select:none;';
-  hamBtn.innerHTML = '☰ <span style="font-size:11px;letter-spacing:.04em;font-weight:600">MENU</span>';
+  hamBtn.innerHTML = '☰ <span style="font-size:13px;letter-spacing:.04em;font-weight:600">MENU</span>';
   bar.appendChild(hamBtn);
 
   var hamMenu = document.createElement('div');
@@ -413,11 +413,11 @@
     e.stopPropagation();
     hamMenu.classList.toggle('tb-ham-open');
     var open = hamMenu.classList.contains('tb-ham-open');
-    hamBtn.innerHTML = (open ? '✕' : '☰') + ' <span style="font-size:11px;letter-spacing:.04em;font-weight:600">' + (open ? 'CLOSE' : 'MENU') + '</span>';
+    hamBtn.innerHTML = (open ? '✕' : '☰') + ' <span style="font-size:13px;letter-spacing:.04em;font-weight:600">' + (open ? 'CLOSE' : 'MENU') + '</span>';
   });
   document.addEventListener('click', function () {
     hamMenu.classList.remove('tb-ham-open');
-    hamBtn.innerHTML = '☰ <span style="font-size:11px;letter-spacing:.04em;font-weight:600">MENU</span>';
+    hamBtn.innerHTML = '☰ <span style="font-size:13px;letter-spacing:.04em;font-weight:600">MENU</span>';
   });
   hamMenu.addEventListener('click', function (e) { e.stopPropagation(); });
 
