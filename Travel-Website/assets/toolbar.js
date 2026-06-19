@@ -198,6 +198,8 @@
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
     '@media(max-width:600px){.tb-progress{display:none}}' +
+    /* Hide ham elements on desktop — mobile @media shows them */
+    '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
       '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px;border-bottom:2px solid #c8c4bc;background:#ffffff;box-shadow:0 1px 4px rgba(0,0,0,.06)}' +
