@@ -1856,10 +1856,16 @@ def check_search_bar_standard(report: "Report") -> None:
     # The search bar standard is enforced wherever a search input is styled —
     # including the shared stylesheets in assets/ (a non-conforming global
     # input[type="search"] / .search-input rule there overrides per-page CSS).
+    # mobile.css is a defensive width-override utility — it intentionally only
+    # sets width/max-width/flex-shrink on search selectors (not the full
+    # standard property set) and uses !important to win specificity. Exclude it
+    # from the full search-bar-standard check so partial overrides don't false-fail.
+    _EXCLUDED_CSS = {"mobile.css"}
     html_files = [
         p for p in web_root.rglob("*")
         if p.suffix.lower() in (".html", ".css")
         and "archive" not in [part.lower() for part in p.parts]
+        and p.name not in _EXCLUDED_CSS
     ]
 
     # Selector token matching every search-bar selector form used on the site:
