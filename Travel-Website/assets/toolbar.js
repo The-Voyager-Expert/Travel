@@ -199,7 +199,7 @@
       'transition:width .08s linear}' +
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
-      '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px}' +
+      '.tb{padding:0;display:flex;align-items:center;justify-content:space-between;min-height:44px;border-bottom:1px solid #d8d5ce;background:rgba(245,244,240,.98)}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
