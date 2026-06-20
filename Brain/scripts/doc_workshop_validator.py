@@ -19,7 +19,7 @@ Override with --folder if running from a different location or via symlink.
 
 Usage (from anywhere):
     python3 "doc_workshop_validator.py"                    # check every .html in Brain/CORE RULES/
-    python3 "doc_workshop_validator.py" Tour\ Rules.html   # check one file
+    python3 "doc_workshop_validator.py" "Tour Rules.html"  # check one file
     python3 "doc_workshop_validator.py" --quiet            # only show files with violations
     python3 "doc_workshop_validator.py" --warn-only        # downgrade ERRORs to warnings
 """
@@ -73,6 +73,7 @@ FORMAT_EXCEPTION_FILES = frozenset({
     "Toolbar.html",
     "Guide Structure.html",
     "Claude Inspiration - Extra Section.html",  # §2 reference prose fired E15 false positive (2026-06-06)
+    "Hotel Banner.html",                        # uses "link" as a verb in prose ("does not...link to") — not the banned noun
 })
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -99,6 +100,7 @@ _W1_ALLOWED_SELECTORS = frozenset({".retired-notice"})
 _W4_EXEMPT: frozenset[str] = frozenset({
     "Claude Inspiration - Extra Section.html",
     "Stops Structure.html",
+    "Trip Overview.html",  # CORE RULES doc — plain title, no emoji at rest
 })
 
 # E11 — canonical selectors that must never have display:none applied
