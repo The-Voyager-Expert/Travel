@@ -166,7 +166,7 @@
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
     '.tb-site-title{flex-shrink:0;font-size:13px;font-weight:700;color:#fff;' +
-      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;}' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
