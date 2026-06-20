@@ -244,7 +244,13 @@
     progress.style.width = (total > 0 ? (window.scrollY / total * 100) : 0) + '%';
   }, { passive: true });
 
-  function isActiveHref(href) { return href.split('/').pop() === curr && curr !== ''; }
+  function isActiveHref(href) { return !!href && href.split('/').pop() === curr && curr !== ''; }
+  /* True if a group (or any of its nested sub-groups) contains the current page. */
+  function groupHasActive(children) {
+    return children.some(function (ch) {
+      return ch.children ? groupHasActive(ch.children) : isActiveHref(ch.href);
+    });
+  }
 
   /* ── Bar shell ──────────────────────────────────────────────────────────── */
   var bar = document.createElement('div');
@@ -283,14 +289,25 @@
 
     var menu = document.createElement('div');
     menu.className = 'tb-menu';
-    var groupActive = false;
-    item.children.forEach(function (ch) {
-      var ca = document.createElement('a');
-      ca.href = ch.href; ca.textContent = ch.text;
-      if (isActiveHref(ch.href)) { ca.classList.add('tb-active'); groupActive = true; }
-      menu.appendChild(ca);
-    });
-    if (groupActive) btn.classList.add('tb-active');
+    /* Children are links, or nested sub-groups rendered inline under a small
+       sub-header (e.g. Getting There → Trains → its links). One nest level. */
+    (function renderInto(container, children) {
+      children.forEach(function (ch) {
+        if (ch.children) {
+          var sl = document.createElement('div');
+          sl.className = 'tb-menu-sublabel';
+          sl.textContent = ch.group;
+          container.appendChild(sl);
+          renderInto(container, ch.children);
+        } else {
+          var ca = document.createElement('a');
+          ca.href = ch.href; ca.textContent = ch.text;
+          if (isActiveHref(ch.href)) ca.classList.add('tb-active');
+          container.appendChild(ca);
+        }
+      });
+    })(menu, item.children);
+    if (groupHasActive(item.children)) btn.classList.add('tb-active');
     document.body.appendChild(menu);
 
     function position() {
@@ -369,15 +386,25 @@
       var hc = document.createElement('span'); hc.className = 'tb-caret'; hc.textContent = '▾';
       head.appendChild(hl); head.appendChild(hc);
       var sub = document.createElement('div'); sub.className = 'tb-m-sub';
-      var hasActive = false;
-      item.children.forEach(function (ch) {
-        var a = document.createElement('a');
-        a.href = ch.href; a.textContent = ch.text;
-        if (isActiveHref(ch.href)) { a.classList.add('tb-active'); hasActive = true; }
-        sub.appendChild(a);
-      });
+      /* Links, or nested sub-groups rendered inline under a sub-header. One nest level. */
+      (function renderInto(container, children) {
+        children.forEach(function (ch) {
+          if (ch.children) {
+            var sl = document.createElement('div');
+            sl.className = 'tb-m-sublabel';
+            sl.textContent = ch.group;
+            container.appendChild(sl);
+            renderInto(container, ch.children);
+          } else {
+            var a = document.createElement('a');
+            a.href = ch.href; a.textContent = ch.text;
+            if (isActiveHref(ch.href)) a.classList.add('tb-active');
+            container.appendChild(a);
+          }
+        });
+      })(sub, item.children);
       grp.appendChild(head); grp.appendChild(sub);
-      if (hasActive) { grp.classList.add('tb-m-exp'); openGroup = grp; }  // open the active section
+      if (groupHasActive(item.children)) { grp.classList.add('tb-m-exp'); openGroup = grp; }  // open the active section
       head.addEventListener('click', function (e) {
         e.stopPropagation();
         var isOpen = grp.classList.contains('tb-m-exp');

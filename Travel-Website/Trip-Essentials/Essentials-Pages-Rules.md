@@ -17,6 +17,7 @@ Seven pages carry an in-page search box:
 | `Lounges Europe.html` | airport cards inside country blocks | country blocks |
 | `Delta Routes SEA.html` | destination cards | sections (also has tier-pill filters) |
 | `Delta Routes Full.html` | destination cards | hub sections + the cross-hub table |
+| `Guide-Days-Coverage.html` | city pills (by name) | tier sections (collapses non-matching tiers) |
 
 `Travel Packing.html` has no search box.
 
