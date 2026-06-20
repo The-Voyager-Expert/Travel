@@ -704,6 +704,20 @@ def run_gate(guide_path: Path, *, static_only: bool, verbose: bool,
             verdict, detail = h1_match_verdict(stop_name, h1)
             return (verdict, platform_of(url), url, detail)
 
+        # Skip H1 check for URLs explicitly logged as wikipedia-omit.
+        if log_data is not None:
+            omit_urls = {
+                url for url, entry in log_data["entries"].items()
+                if entry.get("platform") == "wikipedia-omit"
+            }
+            for item in h1_required:
+                if item["url"] in omit_urls:
+                    passes.append(
+                        f"[H1 ]    wikipedia · {item['url'][:80]}\n"
+                        f"     → omit: logged as wikipedia-omit in verification_log.json"
+                    )
+            h1_required = [item for item in h1_required if item["url"] not in omit_urls]
+
         if h1_required:
             h1_pass_entries: list[tuple[str, str, str]] = []  # (url, plat, stop_name)
             with ThreadPoolExecutor(max_workers=workers) as ex:
