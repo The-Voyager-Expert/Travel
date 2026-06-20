@@ -623,28 +623,22 @@ def _check_guide_indexed(guide_path: Path) -> int:
 
 def _check_guide_pinned(guide_path: Path) -> int:
     """
-    Ship gate: verify this guide's city has a pin in at least one map file.
+    Ship gate: verify this guide's city has a pin in the unified world map.
 
-    All seven region maps are checked:
-      Europe Map, US Map, Asia Map, Africa Map, Oceania Map, South America Map,
-      Caribbean Map.
-    The city name just needs to be present in one of them.
+    One map now holds every pin: Trip-Essentials/Maps/World-Map.html (the 7
+    region maps were consolidated into a single fly-to-region world map). The
+    city name (or its href path) just needs to be present in the PINS array.
 
     Added 2026-06-02: enforces Navigation.html § 5 step 5 (map pin rule).
     Updated 2026-06-02: expanded from 2 maps to all 6 continent maps.
     Updated 2026-06-13: added Caribbean Map (7th) — Travel-Website reorg pin target.
+    Updated 2026-06-20: 7 region maps → one unified World-Map.html.
     """
     city_folder = guide_path.parent.name  # e.g. "Amsterdam"
     essentials = WEB_ROOT / "Trip-Essentials"
     maps_dir  = essentials / "Maps"
     map_files = [
-        maps_dir / "Europe-Map.html",
-        maps_dir / "US-Map.html",
-        maps_dir / "Asia-Map.html",
-        maps_dir / "Africa-Map.html",
-        maps_dir / "Oceania-Map.html",
-        maps_dir / "South-America-Map.html",
-        maps_dir / "Caribbean-Map.html",
+        maps_dir / "World-Map.html",
     ]
 
     # Match by EITHER the city-name label OR the guide's href path in the PINS
@@ -668,14 +662,9 @@ def _check_guide_pinned(guide_path: Path) -> int:
 
     print(
         f"\n🚫  SHIP BLOCKED — no map pin found for {city_folder}.\n"
-        f"    Add a pin to the appropriate continent map before shipping:\n"
-        f"    • European guides   → Trip-Essentials/Maps/Europe Map.html\n"
-        f"    • US/Canada guides  → Trip-Essentials/Maps/US Map.html\n"
-        f"    • Asian guides      → Trip-Essentials/Maps/Asia Map.html\n"
-        f"    • African guides    → Trip-Essentials/Maps/Africa Map.html\n"
-        f"    • Oceania guides    → Trip-Essentials/Maps/Oceania Map.html\n"
-        f"    • S. America guides → Trip-Essentials/Maps/South America Map.html\n"
-        f"    • Caribbean guides  → Trip-Essentials/Maps/Caribbean Map.html\n"
+        f"    Add a pin to the unified world map before shipping:\n"
+        f"    • Trip-Essentials/Maps/World-Map.html — add to the PINS array,\n"
+        f"      under the matching region comment block.\n"
         f"    Entry format in the PINS array:\n"
         f"    ['{city_folder}', lon, lat, '../../Guides/{city_folder}/file.html']\n"
         f"    Full rule: Brain/Reference/Navigation.html § 5 step 5\n",

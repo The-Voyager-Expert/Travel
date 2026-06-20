@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/_travel_style.css">
+<title>Asia Map</title>
+<style>
+  .tb { margin-bottom: 0 !important; }   /* maps are full-bleed — toolbar sits flush */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: #f5f4f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; }
+  body { display: flex; flex-direction: column; }
+  #map-header { background: none; padding: 10px 0 8px; border-radius: 0; flex-shrink: 0; margin-bottom: 12px; border-bottom: 3px solid transparent; border-image: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) 1; }
+  #map-header h1 { font-size: 14px; font-weight: bold; color: #3d3a32; text-transform: uppercase; letter-spacing: 0.04em; }
+  #wrap { position: relative; flex: 1 1 auto; min-height: 0; background: #cfe0e4; overflow: hidden; }
+  svg { width: 100%; height: 100%; display: block; }
+  .country { stroke: #fdf8f0; stroke-width: 1.4; cursor: default; transition: filter 0.12s; }
+  .country:hover { filter: brightness(1.12); }
+  .borders { fill: none; stroke: none; pointer-events: none; }
+  .country-label { font-size: 12px; font-weight: 700; fill: #9a8b78; text-anchor: middle; dominant-baseline: central; pointer-events: none; user-select: none; paint-order: stroke; stroke: rgba(253,248,240,0.8); stroke-width: 3px; }
+  .country-label.large { font-size: 12px; }
+  .country-label.medium { font-size: 12px; }
+  .pin-group { cursor: pointer; }
+  .pin-circle { fill: #b85c2a; stroke: #fdf8f0; stroke-width: 1.8; transition: transform 0.15s, fill 0.15s; transform-origin: center; transform-box: fill-box; }
+  .pin-group:hover .pin-circle { fill: #7a3b1e; transform: scale(1.5); }
+  .pin-leader { stroke: #b85c2a; stroke-width: 1; opacity: 0.45; pointer-events: none; }
+  .pin-label { font-size: 12px; font-weight: 700; fill: #5a3115; text-anchor: middle; dominant-baseline: central; pointer-events: none; user-select: none; paint-order: stroke; stroke: rgba(253,248,240,0.95); stroke-width: 3.5px; }
+  .pin-group:hover .pin-label { fill: #b85c2a; }
+  #tip { position: absolute; pointer-events: none; background: #6b4422; color: #fdf8f0; padding: 7px 15px; border-radius: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; box-shadow: 0 4px 18px rgba(0,0,0,0.28); white-space: nowrap; opacity: 0; transition: opacity 0.1s; z-index: 99; }
+  .tip-sub { font-size: 12px; color: #e5c99a; margin-top: 2px; }
+#legend { position: absolute; top: 14px; right: 14px; background: rgba(253,248,240,0.90); border-radius: 8px; padding: 7px 12px; font-size: 12px; color: #6b4422; display: flex; align-items: center; gap: 7px; font-weight: 600; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+  .ldot { width: 10px; height: 10px; border-radius: 50%; background: #b85c2a; border: 2px solid #fdf8f0; box-shadow: 0 0 0 1px #b85c2a; flex-shrink: 0; }
+  #region-nav { position:absolute; left:16px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:7px; z-index:10; padding:0; background:none; border:none; overflow:visible; }
+  .rn { padding:5px 14px; border-radius:20px; border:1.5px solid #d8d4cc; background:#f5f4f0; color:#6b4422; font-size: 12px; font-weight:600; text-decoration:none; white-space:nowrap; transition:background .12s,border-color .12s; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.22); }
+  .rn:hover { background:#faefd8; border-color:#8a6c1a; }
+  .rn.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color:#fdf8f0; border-color:#b85c2a; }
+  /* ── Compact toolbar on map pages ── */
+
+  #map-left-stack { position:absolute; left:14px; top:35%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; align-items:flex-start; z-index:10; }
+  #left-panel { display:flex; flex-direction:column; background:rgba(247,244,238,0.97); border-radius:12px; padding:10px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.13); backdrop-filter:blur(4px); }
+  #guide-legend { background:rgba(247,244,238,0.97); border-radius:8px; padding:6px 12px; font-size: 12px; color:#6b4422; display:flex; align-items:center; gap:7px; font-weight:600; box-shadow:0 1px 6px rgba(0,0,0,0.10); }
+  #region-nav { position:static !important; left:auto; top:auto; transform:none; display:flex; flex-direction:column; gap:7px; z-index:auto; }
+
+  /* ── Region-coloured nav pills ── */
+  .rn { display:flex; align-items:center; gap:7px; }
+  .rn::before { content:''; width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .rn-eu  { background:#fde8e8 !important; border-color:#f0a0a0 !important; color:#a02020 !important; }
+  .rn-eu::before  { background:#dc4444; }
+  .rn-na  { background:#fdf0e4 !important; border-color:#f0b878 !important; color:#8a3a08 !important; }
+  .rn-na::before  { background:#e87830; }
+  .rn-cb  { background:#d8efe9 !important; border-color:#7fcabd !important; color:#0c6b5d !important; }
+  .rn-cb::before  { background:#14a18d; }
+  .rn-as  { background:#fdf5d8 !important; border-color:#e8d060 !important; color:#7a5000 !important; }
+  .rn-as::before  { background:#c8940a; }
+  .rn-af  { background:#e4f5e8 !important; border-color:#90d0a0 !important; color:#1a6030 !important; }
+  .rn-af::before  { background:#2ea84e; }
+  .rn-sa  { background:#e4eef8 !important; border-color:#90b8e8 !important; color:#1a3a8b !important; }
+  .rn-sa::before  { background:#3a74d4; }
+  .rn-oc  { background:#f0e8f8 !important; border-color:#c090e0 !important; color:#4a1880 !important; }
+  .rn-oc::before  { background:#8050d0; }
+  .rn.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:#fdf8f0 !important; border-color:#b85c2a !important; }
+  .rn.rn-on::before { background:rgba(255,255,255,0.55); }
+@media (max-width: 640px) {
+  /* ── Mobile: lift controls off the map into a slim docked bottom bar ── */
+  #map-left-stack {
+    position: absolute; left: 0; right: 0; bottom: 0; top: auto;
+    transform: none; flex-direction: column; align-items: stretch;
+    gap: 0; padding: 0; z-index: 30;
+  }
+  #guide-legend { display: none; }            /* save the row; pins are self-evident */
+  #left-panel {
+    flex-direction: row; align-items: center; gap: 8px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    background: rgba(247,244,238,0.97); backdrop-filter: blur(6px);
+    border-radius: 0; border-top: 1px solid #d8d4cc;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.14);
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  }
+  #left-panel::-webkit-scrollbar { display: none; }
+  #zoom-nav { flex-direction: row; align-items: center; gap: 6px; flex-shrink: 0; }
+  .zoom-section-label { font-size: 10px; padding: 0 2px 0 0; flex-shrink: 0; }
+  .panel-divider { width: 1px; height: 22px; margin: 0 4px; flex-shrink: 0; align-self: center; }
+  #region-nav { flex-direction: row !important; gap: 6px; flex-shrink: 0; }
+  .zn, .rn { flex-shrink: 0; padding: 7px 13px; font-size: 12px; white-space: nowrap; }
+  .rn::before { width: 8px; height: 8px; }
+}
+</style>
+<link rel="stylesheet" href="../../assets/mobile.css?v=45">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1400" data-no-footnote="1"></div>
+<script src="../../assets/toolbar.js?v=58"></script>
+
+<div id="wrap">
+  <svg id="svg"></svg>
+<div id="map-left-stack">
+<div id="left-panel">
+<div id="region-nav">
+  <a class="rn rn-eu" href="Europe-Map.html">Europe</a>
+  <a class="rn rn-na" href="US-Map.html">N. America</a>
+  <a class="rn rn-cb" href="Caribbean-Map.html">Caribbean</a>
+  <a class="rn rn-as rn-on" href="Asia-Map.html">Asia</a>
+  <a class="rn rn-af" href="Africa-Map.html">Africa</a>
+  <a class="rn rn-sa" href="South-America-Map.html">S. America</a>
+  <a class="rn rn-oc" href="Oceania-Map.html">Oceania</a>
+</div>
+</div>
+</div>
+  <div id="tip"><div id="tn"></div><div class="tip-sub" id="ts"></div></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+const COUNTRIES = {"4": "Afghanistan", "31": "Azerbaijan", "48": "Bahrain", "50": "Bangladesh", "51": "Armenia", "64": "Bhutan", "96": "Brunei", "104": "Myanmar", "116": "Cambodia", "144": "Sri Lanka", "156": "China", "158": "Taiwan", "268": "Georgia", "275": "Palestine", "356": "India", "360": "Indonesia", "364": "Iran", "368": "Iraq", "376": "Israel", "392": "Japan", "398": "Kazakhstan", "400": "Jordan", "408": "N. Korea", "410": "South Korea", "414": "Kuwait", "417": "Kyrgyzstan", "418": "Laos", "422": "Lebanon", "458": "Malaysia", "462": "Maldives", "496": "Mongolia", "512": "Oman", "524": "Nepal", "586": "Pakistan", "608": "Philippines", "626": "Timor-Leste", "634": "Qatar", "682": "Saudi Arabia", "702": "Singapore", "704": "Vietnam", "760": "Syria", "762": "Tajikistan", "764": "Thailand", "784": "UAE", "795": "Turkmenistan", "860": "Uzbekistan", "887": "Yemen"};
+const SHORT = {"South Korea": "S. Korea", "Saudi Arabia": "S. Arabia", "Kyrgyzstan": "KGZ", "Turkmenistan": "TKM", "Uzbekistan": "UZB", "Tajikistan": "TJK", "Azerbaijan": "AZE", "Kazakhstan": "KAZ", "Afghanistan": "AFG", "Bangladesh": "BGD", "N. Korea": "N. Korea", "Philippines": "Philippines", "Oman": "Oman", "Yemen": "Yemen", "Laos": "Laos"};
+const COLORS = {"4": "#cda36e", "31": "#c98f63", "48": "#d8be8f", "50": "#bd8a5e", "51": "#c7a877", "64": "#b89066", "96": "#d2b07e", "104": "#c0905f", "116": "#cbb083", "144": "#b58a5c", "156": "#d0a96f", "158": "#c19064", "268": "#cda36e", "275": "#c98f63", "356": "#d8be8f", "360": "#bd8a5e", "364": "#c7a877", "368": "#b89066", "376": "#d2b07e", "392": "#c0905f", "398": "#cbb083", "400": "#b58a5c", "408": "#d0a96f", "410": "#c19064", "414": "#cda36e", "417": "#c98f63", "418": "#d8be8f", "422": "#bd8a5e", "458": "#c7a877", "462": "#b89066", "496": "#d2b07e", "512": "#c0905f", "524": "#cbb083", "586": "#b58a5c", "608": "#d0a96f", "626": "#c19064", "634": "#cda36e", "682": "#c98f63", "702": "#d8be8f", "704": "#bd8a5e", "760": "#c7a877", "762": "#b89066", "764": "#d2b07e", "784": "#c0905f", "795": "#cbb083", "860": "#b58a5c", "887": "#d0a96f"};
+function darken(hex,f){var n=parseInt(hex.slice(1),16);var r=Math.round(((n>>16)&255)*f),g=Math.round(((n>>8)&255)*f),b=Math.round((n&255)*f);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
+const LARGE = new Set([104,156,356,360,364,392,398,586,682,704,764]);
+const MEDIUM = new Set([4,50,116,368,408,410,418,458,496,512,524,608,704,760,784,795,860,887]);
+const PINS = [["Beijing", 116.40, 39.90, "../../Guides/Beijing/beijing_v1.html"], ["Chongqing", 106.55, 29.56, "../../Guides/Chongqing/chongqing_v1.html"], ["Hong Kong", 114.16, 22.30, "../../Guides/Hong Kong/hong_kong_v1.html"], ["Seoul", 126.98, 37.57, "../../Guides/Seoul/seoul_v1.html"], ["Shanghai", 121.47, 31.23, "../../Guides/Shanghai/shanghai_v1.html"], ["Singapore", 103.82, 1.35, "../../Guides/Singapore/singapore_v3.html"], ["Zhangjiajie", 110.54, 29.34, "../../Guides/Zhangjiajie/zhangjiajie_v1.html"], ["Taipei", 121.5654, 25.0330, "../../Guides/Taipei/taipei_v1.html"], ["Kyoto", 135.7681, 35.0116, "../../Guides/Kyoto/kyoto_v1.html"], ["Tokyo", 139.6917, 35.6895, "../../Guides/Tokyo/tokyo_v1.html"], ["Bangkok", 100.5018, 13.7563, "../../Guides/Bangkok/bangkok_v1.html"], ["Phuket", 98.3923, 7.8804, "../../Guides/Phuket/phuket_v1.html"], ["Dubai", 55.2708, 25.2048, "../../Guides/Dubai/dubai_v1.html"], ["Abu Dhabi", 54.3773, 24.4539, "../../Guides/Abu Dhabi/abu_dhabi_v1.html"], ["Bali", 115.1889, -8.4095, "../../Guides/Bali/bali_v1.html"]];
+const BOUNDS = [[24, -16], [152, 55]];
+
+const tip=document.getElementById('tip'),tn=document.getElementById('tn'),ts=document.getElementById('ts');
+const wrap=document.getElementById('wrap');
+let worldData=null;
+
+function showTip(e,name,sub){
+  tn.textContent=name;ts.textContent=sub||'';tip.style.opacity='1';
+  const r=wrap.getBoundingClientRect();
+  let x=e.clientX-r.left+14,y=e.clientY-r.top-44;
+  const tw=tip.offsetWidth||140;
+  if(x+tw>r.width-8)x=e.clientX-r.left-tw-14;
+  if(y<4)y=e.clientY-r.top+14;
+  tip.style.left=x+'px';tip.style.top=y+'px';
+}
+
+let _zoomBeh=null;
+function _zoomed(ev){
+  var t=ev.transform, g=d3.select('#svg').select('.zroot');
+  if(g.empty())return;
+  g.attr('transform',t);
+  var inv=1/t.k;
+  g.selectAll('.pin-group').attr('transform',function(){return 'translate('+this.getAttribute('data-bx')+','+this.getAttribute('data-by')+') scale('+inv+')';});
+  g.selectAll('.country-label,.state-label,.cap-label').attr('transform',function(){return 'translate('+this.getAttribute('data-bx')+','+this.getAttribute('data-by')+') scale('+inv+')';});
+}
+function _tagBase(node){var t=node.getAttribute('transform')||'';var m=/translate\(\s*([-0-9.]+)[ ,]+([-0-9.]+)\s*\)/.exec(t);if(m){node.setAttribute('data-bx',m[1]);node.setAttribute('data-by',m[2]);}}
+function _afterRender(){
+  var svgSel=d3.select('#svg'), g=svgSel.select('.zroot');
+  if(g.empty())return;
+  g.selectAll('.pin-group').each(function(){_tagBase(this);});
+  g.selectAll('.country-label,.state-label,.cap-label').each(function(){_tagBase(this);});
+  var W=(typeof wrap!=='undefined'?wrap.clientWidth:svgSel.node().clientWidth);
+  var H=(typeof wrap!=='undefined'?wrap.clientHeight:svgSel.node().clientHeight);
+  if(!_zoomBeh){_zoomBeh=d3.zoom().scaleExtent([1,12]).on('zoom',_zoomed);svgSel.call(_zoomBeh);}
+  _zoomBeh.extent([[0,0],[W,H]]).translateExtent([[0,0],[W,H]]);
+  svgSel.call(_zoomBeh.transform, d3.zoomIdentity);
+}
+function buildMap(){ _renderMap(); _afterRender(); }
+function _renderMap(){
+  const W=wrap.clientWidth,H=wrap.clientHeight;
+  if(!W||!H||!worldData)return;
+  document.getElementById('svg').setAttribute('viewBox','0 0 '+W+' '+H);
+  const countries=topojson.feature(worldData,worldData.objects.countries);
+  const borders=topojson.mesh(worldData,worldData.objects.countries,(a,b)=>a!==b);
+  const feats=countries.features.filter(f=>COUNTRIES[+f.id]);
+  const proj=d3.geoMercator().fitExtent([[10,8],[W-10,H-8]],
+    {type:'Feature',geometry:{type:'LineString',coordinates:[BOUNDS[0],BOUNDS[1]]}});
+  const pathGen=d3.geoPath().projection(proj);
+  const svgSel=d3.select('#svg'); svgSel.selectAll('*').remove();
+  const svg=svgSel.append('g').attr('class','zroot');
+  svg.selectAll('.country').data(feats).join('path').attr('class','country').attr('d',pathGen)
+    .style('fill',d=>COLORS[+d.id]||'#c2a878').style('stroke',d=>darken(COLORS[+d.id]||'#c2a878',0.6)).style('stroke-width',0.8)
+    .on('mousemove',(e,d)=>{showTip(e,COUNTRIES[+d.id],'');})
+    .on('mouseleave',()=>{tip.style.opacity='0';});
+  svg.append('path').datum(borders).attr('class','borders').attr('d',pathGen);
+  const placed=[];
+  const _ov=(a,b)=>!(a.x2<b.x1||b.x2<a.x1||a.y2<b.y1||b.y2<a.y1);
+  const _fits=r=>!placed.some(p=>_ov(p,r));
+  function _reserve(cx,cy,w,h){placed.push({x1:cx-w/2,y1:cy-h/2,x2:cx+w/2,y2:cy+h/2});}
+  function _best(cx,cy,w,h,cands){for(const[dx,dy]of cands){const r={x1:cx+dx-w/2,y1:cy+dy-h/2,x2:cx+dx+w/2,y2:cy+dy+h/2};if(_fits(r)){placed.push(r);return[dx,dy];}}return null;}
+  const _vis=[];
+  PINS.forEach(([name,lon,lat,href])=>{const pt=proj([lon,lat]);if(!pt||isNaN(pt[0]))return;const px=pt[0],py=pt[1];if(px<0||px>W||py<0||py>H)return;_vis.push({name,href,px,py});});
+  _vis.forEach(v=>_reserve(v.px,v.py,13,13));
+  const pinG=svg.append('g');
+  const _FS=11.5;
+  _vis.forEach(v=>{
+    const g=pinG.append('g').attr('class','pin-group').attr('transform','translate('+v.px+','+v.py+')')
+      .on('click',()=>{window.location.href=v.href;})
+      .on('mousemove',e=>{showTip(e,v.name,'📖 Open Guide');})
+      .on('mouseleave',()=>{tip.style.opacity='0';})
+      .on('touchstart',function(e){e.preventDefault();showTip(e.touches[0],v.name,'📖 Open Guide');})
+      .on('touchend',function(e){e.preventDefault();tip.style.opacity='0';window.location.href=v.href;});
+    const w=v.name.length*_FS*0.62+4,h=_FS+4;
+    const up=-(h/2+8),dn=(h/2+8),rt=(w/2+11),lf=-(w/2+11);
+    const cands=[[0,up],[0,dn],[rt,0],[lf,0],[rt,up],[lf,up],[rt,dn],[lf,dn],[0,up-h],[0,dn+h],[0,up-2*h],[0,dn+2*h]];
+    const s=_best(v.px,v.py,w,h,cands)||[0,up];
+    const dist=Math.sqrt(s[0]*s[0]+s[1]*s[1]);
+    if(dist>15){const ux=s[0]/dist,uy=s[1]/dist;g.append('line').attr('class','pin-leader').attr('x1',ux*5.5).attr('y1',uy*5.5).attr('x2',s[0]-ux*6).attr('y2',s[1]-uy*6);}
+    g.append('circle').attr('fill','transparent').attr('stroke','none').attr('r',22);
+    g.append('circle').attr('class','pin-circle').attr('r',5.5);
+    g.append('text').attr('class','pin-label').attr('x',s[0]).attr('y',s[1]).text(v.name);
+  });
+  const _ld=feats.filter(f=>LARGE.has(+f.id)||MEDIUM.has(+f.id)).sort((a,b)=>(LARGE.has(+b.id)?1:0)-(LARGE.has(+a.id)?1:0));
+  const _cl=svg.append('g');
+  _ld.forEach(d=>{
+    const c=pathGen.centroid(d);if(!c||isNaN(c[0]))return;
+    const txt=SHORT[COUNTRIES[+d.id]]||COUNTRIES[+d.id];
+    const w=txt.length*12*0.6+2,h=14;
+    const s=_best(c[0],c[1],w,h,[[0,0],[0,-13],[0,13],[16,0],[-16,0]]);if(!s)return;
+    _cl.append('text').attr('class',LARGE.has(+d.id)?'country-label large':'country-label medium').attr('transform','translate('+(c[0]+s[0])+','+(c[1]+s[1])+')').text(txt);
+  });
+}
+
+fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  .then(r=>r.json()).then(w=>{worldData=w;buildMap();});
+let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(buildMap,80);});
+</script>
+</body>
+</html>

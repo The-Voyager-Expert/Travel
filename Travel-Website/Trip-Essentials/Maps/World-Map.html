@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/_travel_style.css">
+<title>World Map</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<style>
+  .tb { margin-bottom: 0 !important; }   /* maps are full-bleed — toolbar sits flush */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: #f5f4f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; }
+  body { display: flex; flex-direction: column; padding-bottom: 0; }
+  #wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; border-radius: 10px; }
+  #map { position: absolute; inset: 0; background: #cfe0e4; }
+
+  /* ── Leaflet surface: kill default chrome so it reads as our warm map ── */
+  .leaflet-container { background: #cfe0e4; font-family: inherit; outline: none; }
+  .leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+  .leaflet-bar a:hover { background: #faefd8; }
+
+  /* ── Country polygons ── */
+  .country-label-tip { background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 12px; font-weight: 700; color: #9a8b78;
+    text-shadow: 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95); }
+  .country-label-tip::before { display: none; }
+
+  /* ── Pin markers ── */
+  .city-pin { background: #b85c2a; border: 1.8px solid #fdf8f0; border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.30); transition: transform 0.12s, background 0.12s; }
+  .city-pin:hover { background: #7a3b1e; transform: scale(1.45); }
+  .pin-name-tip { background: none; border: none; box-shadow: none; padding: 0; margin: 0;
+    font-size: 12px; font-weight: 700; color: #5a3115;
+    text-shadow: 0 0 3.5px rgba(253,248,240,0.98), 0 0 3.5px rgba(253,248,240,0.98), 0 0 3.5px rgba(253,248,240,0.98); }
+  .pin-name-tip::before { display: none; }
+
+  /* ── Cluster bubbles (warm palette to match) ── */
+  .city-cluster { background: none; }
+  .city-cluster div { width: 36px; height: 36px; margin-left: 2px; margin-top: 2px;
+    border-radius: 50%; text-align: center; line-height: 36px;
+    color: #fdf8f0; font-weight: 700; font-size: 13px;
+    background: radial-gradient(circle at 35% 30%, #c9743a 0%, #b85c2a 55%, #7a3b1e 100%);
+    border: 2px solid #fdf8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
+  .city-cluster.small div { width: 30px; height: 30px; line-height: 30px; font-size: 12px; }
+  .city-cluster.large div { width: 44px; height: 44px; line-height: 44px; font-size: 14px; }
+
+  #map-left-stack { position:absolute; left:10px; top:16px; display:flex; flex-direction:column; gap:7px; align-items:flex-start; z-index:600; }
+  #left-panel { display:flex; flex-direction:column; background:rgba(247,244,238,0.97); border-radius:10px; padding:7px 6px; box-shadow:0 2px 12px rgba(0,0,0,0.13); backdrop-filter:blur(4px); gap:3px; }
+
+  .panel-section-label { font-size: 10px; font-weight:700; color:#9a8870; letter-spacing:0.06em; text-transform:uppercase; padding:1px 3px 2px; }
+
+  #region-nav { display:flex; flex-direction:column; gap:4px; }
+  .rn { padding:5px 14px; border-radius:20px; border:1.5px solid #d8d4cc; background:#f5f4f0; color:#6b4422; font-size: 12px; font-weight:600; text-decoration:none; white-space:nowrap; display:flex; align-items:center; gap:5px; transition:background .12s,border-color .12s; cursor:pointer; }
+  .rn::before { content:''; width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .rn:hover { background:#faefd8; border-color:#8a6c1a; }
+  .rn-wd  { background:#eee9e2 !important; border-color:#c4bcae !important; color:#5a5446 !important; }
+  .rn-wd::before  { background:#8a8270; }
+  .rn-eu  { background:#fde8e8 !important; border-color:#f0a0a0 !important; color:#a02020 !important; }
+  .rn-eu::before  { background:#dc4444; }
+  .rn-na  { background:#fdf0e4 !important; border-color:#f0b878 !important; color:#8a3a08 !important; }
+  .rn-na::before  { background:#e87830; }
+  .rn-cb  { background:#d8efe9 !important; border-color:#7fcabd !important; color:#0c6b5d !important; }
+  .rn-cb::before  { background:#14a18d; }
+  .rn-as  { background:#fdf5d8 !important; border-color:#e8d060 !important; color:#7a5000 !important; }
+  .rn-as::before  { background:#c8940a; }
+  .rn-af  { background:#e4f5e8 !important; border-color:#90d0a0 !important; color:#1a6030 !important; }
+  .rn-af::before  { background:#2ea84e; }
+  .rn-sa  { background:#e4eef8 !important; border-color:#90b8e8 !important; color:#1a3a8b !important; }
+  .rn-sa::before  { background:#3a74d4; }
+  .rn-oc  { background:#f0e8f8 !important; border-color:#c090e0 !important; color:#4a1880 !important; }
+  .rn-oc::before  { background:#8050d0; }
+  .rn.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:#fdf8f0 !important; border-color:#b85c2a !important; }
+  .rn.rn-on::before { background:rgba(255,255,255,0.55); }
+
+  /* Uniform pill width so no label sizes the panel differently. */
+  #left-panel .rn { width: 100%; }
+  /* No focus ring on click — keep it only for keyboard nav */
+  .rn:focus:not(:focus-visible) { outline: none; }
+
+@media (max-width: 640px) {
+  /* ── Mobile: dock the controls into a slim scrollable bottom bar ── */
+  #map-left-stack {
+    position: absolute; left: 0; right: 0; bottom: 0; top: auto;
+    transform: none; flex-direction: column; align-items: stretch;
+    gap: 0; padding: 0; z-index: 600;
+  }
+  #left-panel {
+    flex-direction: row; align-items: center; gap: 8px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    background: rgba(247,244,238,0.97); backdrop-filter: blur(6px);
+    border-radius: 0; border-top: 1px solid #d8d4cc;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.14);
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  }
+  #left-panel::-webkit-scrollbar { display: none; }
+  .panel-section-label { display: none; }
+  #region-nav { flex-direction: row !important; gap: 6px; flex-shrink: 0; }
+  .rn { flex-shrink: 0; width: auto; padding: 7px 13px; font-size: 12px; white-space: nowrap; }
+  .rn::before { width: 8px; height: 8px; }
+  .leaflet-control-zoom { margin-bottom: 70px !important; }
+}
+</style>
+<link rel="stylesheet" href="../../assets/mobile.css?v=45">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1400" data-no-footnote="1"></div>
+<script src="../../assets/toolbar.js?v=58"></script>
+
+<div id="wrap">
+  <div id="map"></div>
+  <div id="map-left-stack">
+    <div id="left-panel">
+      <span class="panel-section-label">Region</span>
+      <div id="region-nav">
+        <a class="rn rn-wd rn-on" data-region="world" href="#">World</a>
+        <a class="rn rn-eu" data-region="eu" href="#">Europe</a>
+        <a class="rn rn-na" data-region="na" href="#">N. America</a>
+        <a class="rn rn-cb" data-region="cb" href="#">Caribbean</a>
+        <a class="rn rn-as" data-region="as" href="#">Asia</a>
+        <a class="rn rn-af" data-region="af" href="#">Africa</a>
+        <a class="rn rn-sa" data-region="sa" href="#">S. America</a>
+        <a class="rn rn-oc" data-region="oc" href="#">Oceania</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+/* ── Country labels: curated major countries only, for geographic anchoring.
+   id = numeric ISO 3166-1 (matches world-atlas TopoJSON feature id). ── */
+const LABEL = {
+  840:'United States',124:'Canada',484:'Mexico',76:'Brazil',32:'Argentina',
+  152:'Chile',604:'Peru',170:'Colombia',862:'Venezuela',643:'Russia',
+  156:'China',356:'India',392:'Japan',364:'Iran',682:'Saudi Arabia',
+  360:'Indonesia',764:'Thailand',704:'Vietnam',608:'Philippines',586:'Pakistan',
+  36:'Australia',554:'New Zealand',710:'South Africa',818:'Egypt',504:'Morocco',
+  231:'Ethiopia',566:'Nigeria',404:'Kenya',12:'Algeria',729:'Sudan',
+  250:'France',276:'Germany',724:'Spain',380:'Italy',826:'United Kingdom',
+  752:'Sweden',578:'Norway',616:'Poland',804:'Ukraine',792:'Turkey',
+  398:'Kazakhstan',430:'Libya',466:'Mali',562:'Niger',148:'Chad',
+};
+/* Hand-placed label anchors for sprawling countries whose polygon centroid
+   lands offshore or skewed (Alaska drags the US centroid, etc.). */
+const CENTERS = {
+  840:[39,-98], 124:[58,-101], 643:[60,90], 36:[-25,134], 76:[-10,-52],
+};
+/* Warm earth-tone palette — deterministic per country id so the map is stable. */
+const PALETTE = ['#cda36e','#c98f63','#d8be8f','#bd8a5e','#c7a877','#b89066',
+  '#d2b07e','#c0905f','#cbb083','#b58a5c','#d0a96f','#c19064'];
+// Robust to negative / NaN ids (world-atlas tags disputed land as id -99).
+const colorFor = id => PALETTE[((id % PALETTE.length) + PALETTE.length) % PALETTE.length] || '#c2a878';
+function darken(hex,f){var n=parseInt(hex.slice(1),16);var r=Math.round(((n>>16)&255)*f),g=Math.round(((n>>8)&255)*f),b=Math.round((n&255)*f);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
+
+/* ══════════════════════════════════════════════════════════════
+ * PINS — every shipped guide, all regions. Format: [name, lon, lat, href].
+ * Map sits at depth-2, so hrefs climb two levels to Guides/.
+ * Ship adds the new city's pin here (one unified map, no per-region files).
+ * ══════════════════════════════════════════════════════════════ */
+const PINS = [
+  /* ── Europe ── */
+  ['Alesund',        6.15, 62.47, '../../Guides/Alesund/alesund_v1.html'],
+  ['Bergen',         5.32, 60.39, '../../Guides/Bergen/bergen_v1.html'],
+  ['Amsterdam',      4.90, 52.37, '../../Guides/Amsterdam/amsterdam_v1.html'],
+  ['Aix-en-Provence', 5.4474, 43.5297, '../../Guides/Aix-en-Provence/aix-en-provence_v1.html'],
+  ['Annecy',         6.13, 45.90, '../../Guides/Annecy/annecy_v1.html'],
+  ['Athens',        23.73, 37.98, '../../Guides/Athens/athens_v1.html'],
+  ['Istanbul',      28.98, 41.01, '../../Guides/Istanbul/istanbul_v1.html'],
+  ['Barcelona',      2.17, 41.39, '../../Guides/Barcelona/barcelona_v1.html'],
+  ['Berlin',        13.40, 52.52, '../../Guides/Berlin/berlin_v1.html'],
+  ['Bologna',       11.34, 44.49, '../../Guides/Bologna/bologna_v1.html'],
+  ['Bordeaux',      -0.5792, 44.8378, '../../Guides/Bordeaux/bordeaux_v1.html'],
+  ['Bruges',         3.22, 51.21, '../../Guides/Bruges/bruges_v1.html'],
+  ['Brussels',       4.35, 50.85, '../../Guides/Brussels/brussels_v1.html'],
+  ['Naples',         14.2681, 40.8518, '../../Guides/Naples/naples_v1.html'],
+  ['Amalfi',         14.6027, 40.6340, '../../Guides/Amalfi/amalfi_v1.html'],
+  ['Cambridge',      0.1218, 52.2053, '../../Guides/Cambridge/cambridge_v1.html'],
+  ['Cannes',         7.0174, 43.5528, '../../Guides/Cannes/cannes_v1.html'],
+  ['Capri',          14.24,  40.55,   '../../Guides/Capri/capri_v1.html'],
+  ['Cascais',       -9.55, 38.70, '../../Guides/Cascais/cascais_v2.html'],
+  ['Cinque Terre',   9.68, 44.13, '../../Guides/Cinque Terre/cinque_terre_v1.html'],
+  ['Colmar',         7.36, 48.08, '../../Guides/Colmar/colmar_v1.html'],
+  ['Copenhagen',    12.57, 55.68, '../../Guides/Copenhagen/copenhagen_v1.html'],
+  ['Corfu',         19.92, 39.62, '../../Guides/Corfu/corfu_v1.html'],
+  ['Dublin',        -6.27, 53.33, '../../Guides/Dublin/dublin_v1.html'],
+  ['Edinburgh',     -3.19, 55.95, '../../Guides/Edinburgh/edinburgh_v1.html'],
+  ['Florence',      11.26, 43.77, '../../Guides/Florence/florence_v1.html'],
+  ['Geneva',         6.14, 46.20, '../../Guides/Geneva/geneva_v1.html'],
+  ['Glasgow',       -4.25, 55.86, '../../Guides/Glasgow/glasgow_v1.html'],
+  ['Gothenburg',    11.97, 57.70, '../../Guides/Gothenburg/gothenburg_v1.html'],
+  ['Helsinki',      25.00, 60.17, '../../Guides/Helsinki/helsinki_v1.html'],
+  ['Lagos',        -8.67, 37.10, '../../Guides/Lagos/lagos_v1.html'],
+  ['Iceland',     -22.00, 64.10, '../../Guides/Iceland/reykjavik_v2.html'],
+  ['Lille',          3.06, 50.63, '../../Guides/Lille/lille_v1.html'],
+  ['Lake Como',      9.08, 45.81, '../../Guides/Lake Como/lake_como_v1.html'],
+  ['Lisbon',        -9.14, 38.72, '../../Guides/Lisbon/lisbon_v4.html'],
+  ['Madeira',      -16.92, 32.67, '../../Guides/Madeira/madeira_v1.html'],
+  ['Azores',       -25.67, 37.74, '../../Guides/Azores/guide_v1.html'],
+  ['London',        -0.13, 51.51, '../../Guides/London/london_v5.html'],
+  ['Luxembourg',     6.13, 49.61, '../../Guides/Luxembourg/luxembourg_v1.html'],
+  ['Lyon',           4.8357, 45.7640, '../../Guides/Lyon/lyon_v1.html'],
+  ['Madrid',        -3.70, 40.42, '../../Guides/Madrid/madrid_v1.html'],
+  ['San Sebastian', -1.9812, 43.3183, '../../Guides/San Sebastian/san_sebastian_v1.html'],
+  ['Seville',       -5.9845, 37.3891, '../../Guides/Seville/seville_v1.html'],
+  ['Toledo',        -4.025, 39.856, '../../Guides/Toledo/toledo_v1.html'],
+  ['Marseille',      5.37, 43.30, '../../Guides/Marseille/marseille_v1.html'],
+  ['Marktoberdorf', 10.62, 47.78, '../../Guides/Marktoberdorf/marktoberdorf_v1.html'],
+  ['Milan',         9.19, 45.46, '../../Guides/Milan/milan_v1.html'],
+  ['Monaco',        7.42, 43.74, '../../Guides/Monaco/monaco_v1.html'],
+  ['Munich',        11.58, 48.14, '../../Guides/Munich/munich_v2.html'],
+  ['Oslo',          10.75, 59.91, '../../Guides/Oslo/oslo_v1.html'],
+  ['Oxford',        -1.26, 51.75, '../../Guides/Oxford/oxford_v1.html'],
+  ['Paris',          2.35, 48.85, '../../Guides/Paris/paris_v7.html'],
+  ['Nice',           7.27, 43.70, '../../Guides/Nice/nice_v1.html'],
+  ['Pisa',           10.40, 43.72, '../../Guides/Pisa/pisa_v1.html'],
+  ['Porto',         -8.61, 41.15, '../../Guides/Porto/porto_v2.html'],
+  ['Rome',          12.50, 41.90, '../../Guides/Rome/rome_v1.html'],
+  ['Prague',        14.42, 50.09, '../../Guides/Prague/prague_v1.html'],
+  ['Siena',         11.3328, 43.3188, '../../Guides/Siena/siena_v1.html'],
+  ['Sintra',        -9.39, 38.95, '../../Guides/Sintra/sintra_v2.html'],
+  ['Sorrento',      14.375, 40.626, '../../Guides/Sorrento/sorrento_v1.html'],
+  ['Dubrovnik',     18.0944, 42.6507, '../../Guides/Dubrovnik/guide_v1.html'],
+  ['Split',         16.4402, 43.5081, '../../Guides/Split/split_v1.html'],
+  ['Stockholm',     18.07, 59.33, '../../Guides/Stockholm/stockholm_v1.html'],
+  ['Tallinn',       24.75, 59.44, '../../Guides/Tallinn/tallinn_v1.html'],
+  ['Strasbourg',     7.75, 48.58, '../../Guides/Strasbourg/strasbourg_v1.html'],
+  ['Stuttgart',      9.18, 48.78, '../../Guides/Stuttgart/stuttgart_v1.html'],
+  ['Tromso',        18.96, 69.65, '../../Guides/Tromso/tromso_v1.html'],
+  ['Turin',          7.69, 45.07, '../../Guides/Turin/turin_v14.html'],
+  ['Salzburg',      13.05, 47.80, '../../Guides/Salzburg/salzburg_v1.html'],
+  ['Venice',        12.34, 45.44, '../../Guides/Venice/venice_v1.html'],
+  ['Verona',        10.99, 45.44, '../../Guides/Verona/verona_v1.html'],
+  ['Vienna',        16.37, 48.21, '../../Guides/Vienna/vienna_v1.html'],
+  ['Budapest',       19.04, 47.50, '../../Guides/Budapest/budapest_v1.html'],
+  ['Ljubljana',     14.51, 46.05, '../../Guides/Ljubljana/ljubljana_v1.html'],
+  ['Zurich',         8.54, 47.37, '../../Guides/Zurich/zurich_v1.html'],
+  ['Lucerne',        8.31, 47.05, '../../Guides/Lucerne/lucerne_v1.html'],
+  /* ── North America ── */
+  ['Alaska',       -153.00, 64.20, '../../Guides/Alaska/alaska_v1.html'],
+  ['Atlanta',      -84.39, 33.77, '../../Guides/Atlanta/atlanta_v1.html'],
+  ['Austin',       -97.74, 30.27, '../../Guides/Austin/austin_v1.html'],
+  ['Bend',         -121.31, 44.06, '../../Guides/Bend/bend_v2.html'],
+  ['Big Island',   -155.50, 19.60, '../../Guides/Big Island/big_island_v1.html'],
+  ['Maui',         -156.33, 20.80, '../../Guides/Maui/maui_v1.html'],
+  ['Kauai',        -159.50, 22.05, '../../Guides/Kauai/kauai_v1.html'],
+  ['Oahu',         -157.85, 21.30, '../../Guides/Oahu/oahu_v1.html'],
+  ['Boston',        -71.06, 42.36, '../../Guides/Boston/boston_v1.html'],
+  ['Chicago',       -87.63, 41.88, '../../Guides/Chicago/chicago_v1.html'],
+  ['Los Angeles',  -118.24, 34.05, '../../Guides/Los Angeles/los_angeles_v1.html'],
+  ['Miami',         -80.19, 25.77, '../../Guides/Miami/miami_v1.html'],
+  ['New York',      -74.00, 40.71, '../../Guides/New York/new_york_v1.html'],
+  ['Orlando',       -81.38, 28.54, '../../Guides/Orlando/orlando_v1.html'],
+  ['Palm Desert',  -116.37, 33.72, '../../Guides/Palm Desert/palm_desert_v1.html'],
+  ['Palo Alto',    -122.14, 37.44, '../../Guides/Palo Alto/palo_alto_v6.html'],
+  ['Pasadena',     -118.14, 34.15, '../../Guides/Pasadena/pasadena_v5.html'],
+  ['San Diego',    -117.16, 32.72, '../../Guides/San Diego/san_diego_v1.html'],
+  ['San Francisco',-122.42, 37.77, '../../Guides/San Francisco/sf_v3.html'],
+  ['Scottsdale',   -111.93, 33.49, '../../Guides/Scottsdale/scottsdale_v1.html'],
+  ['Seattle',      -122.33, 47.61, '../../Guides/Seattle/seattle_v1.html'],
+  ['Montreal',   -73.57, 45.50, '../../Guides/Montreal/montreal_v1.html'],
+  ['Quebec City',-71.21, 46.81, '../../Guides/Quebec City/quebec_city_v1.html'],
+  ['Toronto',    -79.38, 43.65, '../../Guides/Toronto/toronto_v1.html'],
+  ['Vancouver',  -123.12, 49.28, '../../Guides/Vancouver/vancouver_v1.html'],
+  /* ── Caribbean ── */
+  ['The Bahamas',    -77.35, 25.05, '../../Guides/Bahamas/bahamas_v1.html'],
+  ['Cayman Islands', -81.24, 19.31, '../../Guides/Cayman Islands/cayman_islands_v1.html'],
+  ['Puerto Rico',    -66.10, 18.47, '../../Guides/Puerto Rico/puerto_rico_v1.html'],
+  ['Virgin Islands', -64.90, 18.34, '../../Guides/Virgin Islands/virgin_islands_v1.html'],
+  ['Sint Maarten',   -63.05, 18.04, '../../Guides/Sint Maarten/sint_maarten_v1.html'],
+  ['Barbados',       -59.54, 13.19, '../../Guides/Barbados/barbados_v1.html'],
+  ['Aruba',          -70.02, 12.52, '../../Guides/Aruba/aruba_v1.html'],
+  ['Curaçao',        -68.97, 12.11, '../../Guides/Curacao/curacao_v1.html'],
+  /* ── Asia ── */
+  ['Beijing', 116.40, 39.90, '../../Guides/Beijing/beijing_v1.html'],
+  ['Chongqing', 106.55, 29.56, '../../Guides/Chongqing/chongqing_v1.html'],
+  ['Hong Kong', 114.16, 22.30, '../../Guides/Hong Kong/hong_kong_v1.html'],
+  ['Seoul', 126.98, 37.57, '../../Guides/Seoul/seoul_v1.html'],
+  ['Shanghai', 121.47, 31.23, '../../Guides/Shanghai/shanghai_v1.html'],
+  ['Singapore', 103.82, 1.35, '../../Guides/Singapore/singapore_v3.html'],
+  ['Zhangjiajie', 110.54, 29.34, '../../Guides/Zhangjiajie/zhangjiajie_v1.html'],
+  ['Taipei', 121.5654, 25.0330, '../../Guides/Taipei/taipei_v1.html'],
+  ['Kyoto', 135.7681, 35.0116, '../../Guides/Kyoto/kyoto_v1.html'],
+  ['Tokyo', 139.6917, 35.6895, '../../Guides/Tokyo/tokyo_v1.html'],
+  ['Bangkok', 100.5018, 13.7563, '../../Guides/Bangkok/bangkok_v1.html'],
+  ['Phuket', 98.3923, 7.8804, '../../Guides/Phuket/phuket_v1.html'],
+  ['Dubai', 55.2708, 25.2048, '../../Guides/Dubai/dubai_v1.html'],
+  ['Abu Dhabi', 54.3773, 24.4539, '../../Guides/Abu Dhabi/abu_dhabi_v1.html'],
+  ['Bali', 115.1889, -8.4095, '../../Guides/Bali/bali_v1.html'],
+  /* ── Africa ── */
+  ['Marrakech', -7.99, 31.63, '../../Guides/Marrakech/marrakech_v1.html'],
+  /* ── South America ── */
+  ['Buenos Aires', -58.38, -34.61, '../../Guides/Buenos Aires/buenos_aires_v1.html'],
+  ['Cusco', -71.978, -13.525, '../../Guides/Cusco/cusco_v1.html'],
+  ['MachuPicchu', -72.545, -13.163, '../../Guides/MachuPicchu/machupicchu_v1.html'],
+  ['Lima', -77.0428, -12.0464, '../../Guides/Lima/lima_v1.html'],
+  ['Rio de Janeiro', -43.1729, -22.9068, '../../Guides/Rio de Janeiro/rio_de_janeiro_v1.html'],
+  ['Santiago', -70.6693, -33.4489, '../../Guides/Santiago/santiago_v1.html'],
+  ['Montevideo', -56.1645, -34.9011, '../../Guides/Montevideo/montevideo_v1.html'],
+  /* ── Oceania ── */
+  ['Sydney', 151.21, -33.87, '../../Guides/Sydney/sydney_v2.html'],
+  ['Melbourne', 144.96, -37.81, '../../Guides/Melbourne/melbourne_v1.html'],
+  ['Queenstown', 168.66, -45.03, '../../Guides/Queenstown/queenstown_v1.html'],
+  ['Wellington', 174.78, -41.29, '../../Guides/Wellington/wellington_v1.html'],
+];
+
+/* ── Region bounds in Leaflet order [[south,west],[north,east]] ── */
+const REGIONS = {
+  world: [[-50, -160], [72, 178]],
+  eu:    [[35, -25], [67, 42]],
+  na:    [[17, -162], [66, -66]],
+  cb:    [[11, -85], [27, -58]],
+  as:    [[-12, 48], [44, 146]],
+  af:    [[18, -16], [37, 16]],
+  sa:    [[-40, -82], [-6, -38]],
+  oc:    [[-48, 140], [-31, 177]],
+};
+
+/* ── Map init ── */
+const map = L.map('map', {
+  zoomControl: false,
+  attributionControl: false,
+  minZoom: 1,
+  maxZoom: 11,
+  worldCopyJump: false,
+  zoomSnap: 0.25,
+  maxBounds: [[-85, -200], [85, 200]],
+  maxBoundsViscosity: 0.7,
+});
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+map.createPane('countryLabels');
+map.getPane('countryLabels').style.zIndex = 590;
+map.getPane('countryLabels').style.pointerEvents = 'none';
+
+// Keep the framed region clear of the overlay controls: pad left for the
+// desktop panel, pad bottom for the mobile docked bar.
+function fitOpts() {
+  return (window.innerWidth <= 640)
+    ? { paddingTopLeft: [12, 12], paddingBottomRight: [12, 86] }
+    : { paddingTopLeft: [150, 14], paddingBottomRight: [14, 14] };
+}
+map.fitBounds(REGIONS.world, fitOpts());
+
+/* ── Country polygons from world-atlas TopoJSON (GeoJSON-only, no tiles) ── */
+fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  .then(r => r.json())
+  .then(world => {
+    const fc = topojson.feature(world, world.objects.countries);
+    // Antimeridian guard: Russia and Fiji have rings that wrap past ±180°
+    // (Chukotka, the Fiji group), which Mercator smears into a horizontal
+    // band across the whole map. Pin any wrapped (far-negative) vertex to the
+    // right edge so the polygon crops cleanly instead of streaking.
+    const clampWrap = lon => (lon < -100) ? 179.9 : lon;
+    const fixCoords = c => (typeof c[0] === 'number') ? [clampWrap(c[0]), c[1]] : c.map(fixCoords);
+    fc.features.forEach(f => {
+      if (+f.id === 643 || +f.id === 242) f.geometry.coordinates = fixCoords(f.geometry.coordinates);
+    });
+    const layer = L.geoJSON(fc, {
+      style: f => ({
+        fillColor: colorFor(+f.id),
+        fillOpacity: 1,
+        color: darken(colorFor(+f.id), 0.6),
+        weight: 0.6,
+      }),
+      onEachFeature: (f, lyr) => {
+        const id = +f.id;
+        lyr.on('mouseover', () => lyr.setStyle({ fillColor: darken(colorFor(id), 1.12) }));
+        lyr.on('mouseout',  () => lyr.setStyle({ fillColor: colorFor(id) }));
+        if (LABEL[id]) {
+          const c = CENTERS[id] ? L.latLng(CENTERS[id][0], CENTERS[id][1]) : lyr.getBounds().getCenter();
+          lyr.bindTooltip(LABEL[id], {
+            permanent: true, direction: 'center', className: 'country-label-tip',
+            pane: 'countryLabels', interactive: false,
+          });
+          lyr.getTooltip().setLatLng(c);
+        }
+      },
+    }).addTo(map);
+    layer.bringToBack();
+    buildPins();
+  })
+  .catch(() => {
+    document.getElementById('map').insertAdjacentHTML('beforeend',
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6b4422;font-size:15px;text-align:center;padding:20px;">Could not load map data — please check your internet connection.</div>');
+  });
+
+/* ── Pins + clustering ── */
+function buildPins() {
+  const cluster = L.markerClusterGroup({
+    maxClusterRadius: 44,
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    disableClusteringAtZoom: 9,
+    iconCreateFunction: c => {
+      const n = c.getChildCount();
+      const cls = n < 5 ? 'small' : (n < 12 ? '' : 'large');
+      return L.divIcon({
+        html: '<div>' + n + '</div>',
+        className: 'city-cluster ' + cls,
+        iconSize: [40, 40],
+      });
+    },
+  });
+
+  const pinIcon = L.divIcon({
+    className: '',
+    html: '<div class="city-pin" style="width:13px;height:13px;"></div>',
+    iconSize: [13, 13],
+    iconAnchor: [6.5, 6.5],
+  });
+
+  PINS.forEach(p => {
+    const m = L.marker([p[2], p[1]], { icon: pinIcon, title: p[0] });
+    m.bindTooltip(p[0], {
+      permanent: true, direction: 'top', offset: [0, -8],
+      className: 'pin-name-tip', interactive: false,
+    });
+    const href = p[3];
+    m.on('click', () => { window.location.href = href; });
+    cluster.addLayer(m);
+  });
+
+  map.addLayer(cluster);
+}
+
+/* ── Region fly-to buttons — switch region in place, no page reload ── */
+document.querySelectorAll('.rn').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.rn').forEach(r => r.classList.remove('rn-on'));
+    el.classList.add('rn-on');
+    map.flyToBounds(REGIONS[el.dataset.region], Object.assign({ duration: 0.6 }, fitOpts()));
+  });
+});
+</script>
+</body>
+</html>

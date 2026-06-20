@@ -24956,9 +24956,9 @@ def validate(html: str, filename: str):
         f"Guide not found in Guides-Index.html: {_fg_rel}" if not _fg_in_index else "",
     )
     _fg_ess = _fg_guide.parent.parent.parent / "Trip-Essentials"
-    _fg_map_names = ("Europe-Map.html","US-Map.html","Asia-Map.html",
-                     "Africa-Map.html","Oceania-Map.html","South-America-Map.html",
-                     "Caribbean-Map.html")
+    # One unified map now holds every pin (the 7 region maps were consolidated
+    # into Maps/World-Map.html on 2026-06-20).
+    _fg_map_names = ("World-Map.html",)
     _fg_maps = [_fg_ess / "Maps" / n for n in _fg_map_names] + [_fg_ess / n for n in _fg_map_names]
     # Match a pin by EITHER the city-name label OR the guide's href path in the
     # PINS array. The href path (Guides/{folder}/{file}) is the robust key — it is
@@ -24974,11 +24974,11 @@ def validate(html: str, filename: str):
                 _fg_pinned = True
                 break
     check(
-        f"FINAL GATE — {_fg_city} is pinned in a continent map "
+        f"FINAL GATE — {_fg_city} is pinned in the world map "
         f"(end-of-validation gate; Navigation.html § 5 step 5)",
         _fg_pinned,
-        f"{_fg_city} not found in any continent map PINS array — add "
-        f"['{_fg_city}', lon, lat, '../../Guides/{_fg_city}/file.html'] to the correct map."
+        f"{_fg_city} not found in World-Map.html PINS array — add "
+        f"['{_fg_city}', lon, lat, '../../Guides/{_fg_city}/file.html'] to Maps/World-Map.html."
         if not _fg_pinned else "",
     )
 

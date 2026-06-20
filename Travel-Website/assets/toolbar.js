@@ -109,7 +109,7 @@
     null,
     { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides' },
     null,
-    { href: base + 'Trip-Essentials/Maps/Europe-Map.html', text: '🗺️ Maps' },
+    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps' },
     null,
     { href: base + 'Trip-Essentials/Travel-Stats.html', text: '📊 Stats' },
     null,
