@@ -107,9 +107,9 @@
         { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing' },
       ] },
     null,
-    { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides' },
+    { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
     null,
-    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps' },
+    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
     null,
     { group: '📊 Stats', children: [
         { href: base + 'Trip-Essentials/Travel-Stats.html',         text: '📊 Travel Stats' },
@@ -148,7 +148,7 @@
         { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ Browse by City' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Safety-Guide.html',                         text: '🛡️ Safety' },
+    { href: base + 'Trip-Essentials/Safety-Guide.html',                         text: '🛡️ Safety', full: '🛡️ Safety Guide' },
     null,
     { href: base + 'Trip-Essentials/Visas.html',                                  text: '🪪 Visas' },
     null,
@@ -432,7 +432,7 @@
       item.children.forEach(function (ch) {
         var a = document.createElement('a');
         a.href = ch.href;
-        a.textContent = ch.text;
+        a.textContent = ch.full || ch.text;   /* full name on mobile (there's room) */
         if (ch.href.split('/').pop() === curr) a.className = 'tb-active';
         hamMenu.appendChild(a);
       });
@@ -445,7 +445,7 @@
       }
       var a2 = document.createElement('a');
       a2.href = item.href;
-      a2.textContent = item.text;
+      a2.textContent = item.full || item.text;   /* full name on mobile (there's room) */
       if (item.href.split('/').pop() === curr) a2.className = 'tb-active';
       hamMenu.appendChild(a2);
       prevWasGroup = false;
