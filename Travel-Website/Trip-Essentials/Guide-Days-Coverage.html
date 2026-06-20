@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<title>Guide Days Coverage</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f4f0; --surface: #ffffff; --surface2: #f6f2ec;
+  --border: #d8d4cc; --border2: #e6e2da;
+  --text: #1a1917; --muted: #6a6660;
+  --rust: #b85c2a; --rust-deep: #7a3b1e; --copper: #a8521f;
+  --navy: #2f5596; --navy-deep: #1a2e5c;
+  --accent: #b85c2a;
+  --track: #ece6dd;
+}
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: 14px; line-height: 1.6; padding-bottom: 80px;
+}
+.page { max-width: none; margin: 0 auto; padding: 0 32px; }
+
+/* ── Summary stat cards ── */
+.hero-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.hero-card {
+  position: relative; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 12px 11px; text-align: center;
+  overflow: hidden;
+}
+.hero-card::before {
+  content: ""; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: currentColor; opacity: .85;
+}
+.hero-num {
+  font-size: 26px; font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1;
+  margin-bottom: 3px;
+}
+.hero-label {
+  font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 2px;
+}
+.hero-pct { font-size: 11px; color: var(--muted); }
+.hero-card.total  { color: #3d3a32; }
+.hero-card.d2     { color: #185FA5; }
+.hero-card.d3     { color: #3B6D11; }
+.hero-card.d4     { color: #854F0B; }
+.hero-card.d5     { color: #534AB7; }
+.hero-card.d6     { color: #993C1D; }
+.hero-card.d7p    { color: #7a3a6e; }
+
+/* ── Distribution bar ── */
+.dist-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 20px; margin-bottom: 18px;
+}
+.dist-label {
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; margin-bottom: 10px;
+}
+.dist-bar {
+  display: flex; height: 18px; border-radius: 6px;
+  overflow: hidden; gap: 2px;
+}
+.dist-seg {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff;
+  min-width: 4px; cursor: default;
+  transition: opacity .15s;
+}
+.dist-seg:hover { opacity: .82; }
+.dist-legend {
+  display: flex; flex-wrap: wrap;
+  gap: 8px 16px; margin-top: 10px;
+}
+.dist-legend-item {
+  display: flex; align-items: center;
+  gap: 5px; font-size: 11px; color: var(--muted);
+}
+.dist-dot {
+  width: 8px; height: 8px;
+  border-radius: 2px; flex-shrink: 0;
+}
+
+/* ── Section title ── */
+.section-title {
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; margin: 22px 0 10px;
+}
+
+/* ── Search ── */
+.search-row {
+  display: flex; align-items: center;
+  gap: 10px; margin-bottom: 12px;
+}
+.search-input {
+  flex: 1; font-size: 13px; font-family: inherit;
+  padding: 8px 12px 8px 34px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236a6660' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 11px center;
+  color: var(--text); outline: none;
+  transition: border-color .15s;
+}
+.search-input::placeholder { color: #b0aba6; }
+.search-input:focus { border-color: var(--rust); }
+.search-count {
+  font-size: 12px; color: var(--muted);
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* ── No results ── */
+.no-results {
+  display: none; padding: 2rem; text-align: center;
+  font-size: 13px; color: var(--muted);
+}
+
+/* ── Tier cards ── */
+.tier-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  border-left-width: 3px; border-left-style: solid;
+  margin-bottom: 8px;
+}
+.tier-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border2);
+  cursor: pointer; user-select: none;
+}
+.tier-head:hover { background: rgba(0,0,0,.02); }
+.tier-badge {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap; letter-spacing: 0.04em;
+}
+.tier-sub {
+  font-size: 12px; color: var(--muted);
+}
+.tier-count {
+  margin-left: auto; font-size: 12px; color: var(--muted);
+  background: var(--surface2); border: 1px solid var(--border2);
+  padding: 2px 9px; border-radius: 20px; white-space: nowrap;
+}
+.tier-chevron {
+  font-size: 10px; color: #b8b2aa; margin-left: 4px;
+  transition: transform .2s;
+}
+.tier-card.collapsed .tier-chevron { transform: rotate(-90deg); }
+.tier-card.collapsed .city-grid    { display: none; }
+
+.city-grid {
+  display: flex; flex-wrap: wrap;
+  gap: 5px; padding: 12px 16px;
+}
+a.city-pill {
+  font-size: 12px; padding: 4px 11px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  color: var(--text); background: var(--surface2);
+  text-decoration: none;
+  transition: background .1s, border-color .1s, color .1s;
+}
+a.city-pill:hover {
+  background: var(--track);
+  border-color: var(--border);
+  color: var(--rust);
+}
+a.city-pill.hidden { display: none; }
+
+@media (max-width: 600px) {
+  .hero-row { grid-template-columns: repeat(4, 1fr); }
+  .hero-card.total { grid-column: span 4; }
+  .page { padding: 0 14px; }
+}
+</style>
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
+<script src="../assets/toolbar.js?v=59"></script>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Guide Days Coverage</h1>
+  </div>
+
+  <!-- Hero stat cards -->
+  <div class="hero-row">
+    <div class="hero-card total">
+      <div class="hero-label">Total</div>
+      <div class="hero-num">136</div>
+      <div class="hero-pct">guides</div>
+    </div>
+    <div class="hero-card d2">
+      <div class="hero-label">2 days</div>
+      <div class="hero-num">53</div>
+      <div class="hero-pct">39%</div>
+    </div>
+    <div class="hero-card d3">
+      <div class="hero-label">3 days</div>
+      <div class="hero-num">37</div>
+      <div class="hero-pct">27%</div>
+    </div>
+    <div class="hero-card d4">
+      <div class="hero-label">4 days</div>
+      <div class="hero-num">13</div>
+      <div class="hero-pct">10%</div>
+    </div>
+    <div class="hero-card d5">
+      <div class="hero-label">5 days</div>
+      <div class="hero-num">14</div>
+      <div class="hero-pct">10%</div>
+    </div>
+    <div class="hero-card d6">
+      <div class="hero-label">6 days</div>
+      <div class="hero-num">7</div>
+      <div class="hero-pct">5%</div>
+    </div>
+    <div class="hero-card d7p">
+      <div class="hero-label">7+ days</div>
+      <div class="hero-num">12</div>
+      <div class="hero-pct">9%</div>
+    </div>
+  </div>
+
+  <!-- Distribution bar -->
+  <div class="dist-card">
+    <div class="dist-label">Distribution</div>
+    <div class="dist-bar">
+      <div class="dist-seg" style="background:#185FA5;width:38.97%;" title="2 days — 53 guides">53</div>
+      <div class="dist-seg" style="background:#3B6D11;width:27.21%;" title="3 days — 37 guides">37</div>
+      <div class="dist-seg" style="background:#854F0B;width:9.56%;"  title="4 days — 13 guides"></div>
+      <div class="dist-seg" style="background:#534AB7;width:10.29%;" title="5 days — 14 guides"></div>
+      <div class="dist-seg" style="background:#993C1D;width:5.15%;"  title="6 days — 7 guides"></div>
+      <div class="dist-seg" style="background:#993556;width:4.41%;"  title="7 days — 6 guides"></div>
+      <div class="dist-seg" style="background:#0F6E56;width:2.94%;"  title="8 days — 4 guides"></div>
+      <div class="dist-seg" style="background:#444441;width:1.47%;"  title="10 days — 2 guides"></div>
+    </div>
+    <div class="dist-legend">
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#185FA5;"></span>2d · 53</span>
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#3B6D11;"></span>3d · 37</span>
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#854F0B;"></span>4d · 13</span>
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#534AB7;"></span>5d · 14</span>
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#993C1D;"></span>6d · 7</span>
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#993556;"></span>7d · 6</span>
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#0F6E56;"></span>8d · 4</span>
+      <span class="dist-legend-item"><span class="dist-dot" style="background:#444441;"></span>10d · 2</span>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-row">
+    <input class="search-input" type="search" id="citySearch" placeholder="Search guides…" autocomplete="off">
+    <span class="search-count" id="searchCount">136 guides</span>
+  </div>
+
+  <div class="no-results" id="noResults">No guides found for "<span id="noResultsTerm"></span>"</div>
+
+  <!-- 2 days -->
+  <div class="tier-card" style="border-left-color:#185FA5;" id="tier-2">
+    <div class="tier-head" onclick="toggleTier('tier-2')">
+      <span class="tier-badge" style="background:#E6F1FB;color:#185FA5;">2 days</span>
+      <span class="tier-sub">Expansion candidates</span>
+      <span class="tier-count">53 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Amalfi/amalfi_v1.html">Amalfi</a>
+      <a class="city-pill" href="../Guides/Aruba/aruba_v1.html">Aruba</a>
+      <a class="city-pill" href="../Guides/Azores/guide_v1.html">Azores</a>
+      <a class="city-pill" href="../Guides/Bahamas/bahamas_v1.html">Bahamas</a>
+      <a class="city-pill" href="../Guides/Bangkok/bangkok_v1.html">Bangkok</a>
+      <a class="city-pill" href="../Guides/Big%20Island/big_island_v1.html">Big Island</a>
+      <a class="city-pill" href="../Guides/Bologna/bologna_v1.html">Bologna</a>
+      <a class="city-pill" href="../Guides/Bruges/bruges_v1.html">Bruges</a>
+      <a class="city-pill" href="../Guides/Buenos%20Aires/buenos_aires_v1.html">Buenos Aires</a>
+      <a class="city-pill" href="../Guides/Cannes/cannes_v1.html">Cannes</a>
+      <a class="city-pill" href="../Guides/Capri/capri_v1.html">Capri</a>
+      <a class="city-pill" href="../Guides/Cayman%20Islands/cayman_islands_v1.html">Cayman Islands</a>
+      <a class="city-pill" href="../Guides/Chongqing/chongqing_v1.html">Chongqing</a>
+      <a class="city-pill" href="../Guides/Cinque%20Terre/cinque_terre_v1.html">Cinque Terre</a>
+      <a class="city-pill" href="../Guides/Colmar/colmar_v1.html">Colmar</a>
+      <a class="city-pill" href="../Guides/Corfu/corfu_v1.html">Corfu</a>
+      <a class="city-pill" href="../Guides/Curacao/curacao_v1.html">Curacao</a>
+      <a class="city-pill" href="../Guides/Cusco/cusco_v1.html">Cusco</a>
+      <a class="city-pill" href="../Guides/Dubai/dubai_v1.html">Dubai</a>
+      <a class="city-pill" href="../Guides/Geneva/geneva_v1.html">Geneva</a>
+      <a class="city-pill" href="../Guides/Gothenburg/gothenburg_v1.html">Gothenburg</a>
+      <a class="city-pill" href="../Guides/Kauai/kauai_v1.html">Kauai</a>
+      <a class="city-pill" href="../Guides/Lagos/lagos_v1.html">Lagos</a>
+      <a class="city-pill" href="../Guides/Lake%20Como/lake_como_v1.html">Lake Como</a>
+      <a class="city-pill" href="../Guides/Ljubljana/ljubljana_v1.html">Ljubljana</a>
+      <a class="city-pill" href="../Guides/Los%20Angeles/los_angeles_v1.html">Los Angeles</a>
+      <a class="city-pill" href="../Guides/Luxembourg/luxembourg_v1.html">Luxembourg</a>
+      <a class="city-pill" href="../Guides/MachuPicchu/machupicchu_v1.html">MachuPicchu</a>
+      <a class="city-pill" href="../Guides/Maui/maui_v1.html">Maui</a>
+      <a class="city-pill" href="../Guides/Melbourne/melbourne_v1.html">Melbourne</a>
+      <a class="city-pill" href="../Guides/Miami/miami_v1.html">Miami</a>
+      <a class="city-pill" href="../Guides/Monaco/monaco_v1.html">Monaco</a>
+      <a class="city-pill" href="../Guides/Nice/nice_v1.html">Nice</a>
+      <a class="city-pill" href="../Guides/Orlando/orlando_v1.html">Orlando</a>
+      <a class="city-pill" href="../Guides/Oxford/oxford_v1.html">Oxford</a>
+      <a class="city-pill" href="../Guides/Phuket/phuket_v1.html">Phuket</a>
+      <a class="city-pill" href="../Guides/Pisa/pisa_v1.html">Pisa</a>
+      <a class="city-pill" href="../Guides/San%20Sebastian/san_sebastian_v1.html">San Sebastian</a>
+      <a class="city-pill" href="../Guides/Scottsdale/scottsdale_v1.html">Scottsdale</a>
+      <a class="city-pill" href="../Guides/Seattle/seattle_v1.html">Seattle</a>
+      <a class="city-pill" href="../Guides/Siena/siena_v1.html">Siena</a>
+      <a class="city-pill" href="../Guides/Sint%20Maarten/sint_maarten_v1.html">Sint Maarten</a>
+      <a class="city-pill" href="../Guides/Sintra/sintra_v2.html">Sintra</a>
+      <a class="city-pill" href="../Guides/Sorrento/sorrento_v1.html">Sorrento</a>
+      <a class="city-pill" href="../Guides/Strasbourg/strasbourg_v1.html">Strasbourg</a>
+      <a class="city-pill" href="../Guides/Stuttgart/stuttgart_v1.html">Stuttgart</a>
+      <a class="city-pill" href="../Guides/Taipei/taipei_v1.html">Taipei</a>
+      <a class="city-pill" href="../Guides/Tallinn/tallinn_v1.html">Tallinn</a>
+      <a class="city-pill" href="../Guides/Toledo/toledo_v1.html">Toledo</a>
+      <a class="city-pill" href="../Guides/Venice/venice_v1.html">Venice</a>
+      <a class="city-pill" href="../Guides/Virgin%20Islands/virgin_islands_v1.html">Virgin Islands</a>
+      <a class="city-pill" href="../Guides/Wellington/wellington_v1.html">Wellington</a>
+      <a class="city-pill" href="../Guides/Zhangjiajie/zhangjiajie_v1.html">Zhangjiajie</a>
+    </div>
+  </div>
+
+  <!-- 3 days -->
+  <div class="tier-card" style="border-left-color:#3B6D11;" id="tier-3">
+    <div class="tier-head" onclick="toggleTier('tier-3')">
+      <span class="tier-badge" style="background:#EAF3DE;color:#3B6D11;">3 days</span>
+      <span class="tier-sub">Standard depth</span>
+      <span class="tier-count">37 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Aix-en-Provence/aix-en-provence_v1.html">Aix-en-Provence</a>
+      <a class="city-pill" href="../Guides/Annecy/annecy_v1.html">Annecy</a>
+      <a class="city-pill" href="../Guides/Athens/athens_v1.html">Athens</a>
+      <a class="city-pill" href="../Guides/Atlanta/atlanta_v1.html">Atlanta</a>
+      <a class="city-pill" href="../Guides/Austin/austin_v1.html">Austin</a>
+      <a class="city-pill" href="../Guides/Bali/bali_v1.html">Bali</a>
+      <a class="city-pill" href="../Guides/Barbados/barbados_v1.html">Barbados</a>
+      <a class="city-pill" href="../Guides/Bend/bend_v2.html">Bend</a>
+      <a class="city-pill" href="../Guides/Bergen/bergen_v1.html">Bergen</a>
+      <a class="city-pill" href="../Guides/Bordeaux/bordeaux_v1.html">Bordeaux</a>
+      <a class="city-pill" href="../Guides/Boston/boston_v1.html">Boston</a>
+      <a class="city-pill" href="../Guides/Brussels/brussels_v1.html">Brussels</a>
+      <a class="city-pill" href="../Guides/Budapest/budapest_v1.html">Budapest</a>
+      <a class="city-pill" href="../Guides/Cambridge/cambridge_v1.html">Cambridge</a>
+      <a class="city-pill" href="../Guides/Cascais/cascais_v2.html">Cascais</a>
+      <a class="city-pill" href="../Guides/Chicago/chicago_v1.html">Chicago</a>
+      <a class="city-pill" href="../Guides/Dubrovnik/guide_v1.html">Dubrovnik</a>
+      <a class="city-pill" href="../Guides/Florence/florence_v1.html">Florence</a>
+      <a class="city-pill" href="../Guides/Glasgow/glasgow_v1.html">Glasgow</a>
+      <a class="city-pill" href="../Guides/Hong%20Kong/hong_kong_v1.html">Hong Kong</a>
+      <a class="city-pill" href="../Guides/Istanbul/istanbul_v1.html">Istanbul</a>
+      <a class="city-pill" href="../Guides/Lille/lille_v1.html">Lille</a>
+      <a class="city-pill" href="../Guides/Lucerne/lucerne_v1.html">Lucerne</a>
+      <a class="city-pill" href="../Guides/Madeira/madeira_v1.html">Madeira</a>
+      <a class="city-pill" href="../Guides/Marseille/marseille_v1.html">Marseille</a>
+      <a class="city-pill" href="../Guides/Milan/milan_v1.html">Milan</a>
+      <a class="city-pill" href="../Guides/Naples/naples_v1.html">Naples</a>
+      <a class="city-pill" href="../Guides/Oahu/oahu_v1.html">Oahu</a>
+      <a class="city-pill" href="../Guides/Porto/porto_v2.html">Porto</a>
+      <a class="city-pill" href="../Guides/Prague/prague_v1.html">Prague</a>
+      <a class="city-pill" href="../Guides/Rio%20de%20Janeiro/rio_de_janeiro_v1.html">Rio de Janeiro</a>
+      <a class="city-pill" href="../Guides/Rome/rome_v1.html">Rome</a>
+      <a class="city-pill" href="../Guides/Santiago/santiago_v1.html">Santiago</a>
+      <a class="city-pill" href="../Guides/Seville/seville_v1.html">Seville</a>
+      <a class="city-pill" href="../Guides/Split/split_v1.html">Split</a>
+      <a class="city-pill" href="../Guides/Stockholm/stockholm_v1.html">Stockholm</a>
+      <a class="city-pill" href="../Guides/Verona/verona_v1.html">Verona</a>
+    </div>
+  </div>
+
+  <!-- 4 days -->
+  <div class="tier-card" style="border-left-color:#854F0B;" id="tier-4">
+    <div class="tier-head" onclick="toggleTier('tier-4')">
+      <span class="tier-badge" style="background:#FAEEDA;color:#854F0B;">4 days</span>
+      <span class="tier-sub">Extended depth</span>
+      <span class="tier-count">13 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Abu%20Dhabi/abu_dhabi_v1.html">Abu Dhabi</a>
+      <a class="city-pill" href="../Guides/Beijing/beijing_v1.html">Beijing</a>
+      <a class="city-pill" href="../Guides/Kyoto/kyoto_v1.html">Kyoto</a>
+      <a class="city-pill" href="../Guides/Lima/lima_v1.html">Lima</a>
+      <a class="city-pill" href="../Guides/Lyon/lyon_v1.html">Lyon</a>
+      <a class="city-pill" href="../Guides/Montreal/montreal_v1.html">Montreal</a>
+      <a class="city-pill" href="../Guides/Puerto%20Rico/puerto_rico_v1.html">Puerto Rico</a>
+      <a class="city-pill" href="../Guides/Quebec%20City/quebec_city_v1.html">Quebec City</a>
+      <a class="city-pill" href="../Guides/Queenstown/queenstown_v1.html">Queenstown</a>
+      <a class="city-pill" href="../Guides/San%20Francisco/sf_v3.html">San Francisco</a>
+      <a class="city-pill" href="../Guides/Seoul/seoul_v1.html">Seoul</a>
+      <a class="city-pill" href="../Guides/Shanghai/shanghai_v1.html">Shanghai</a>
+      <a class="city-pill" href="../Guides/Toronto/toronto_v1.html">Toronto</a>
+    </div>
+  </div>
+
+  <!-- 5 days -->
+  <div class="tier-card" style="border-left-color:#534AB7;" id="tier-5">
+    <div class="tier-head" onclick="toggleTier('tier-5')">
+      <span class="tier-badge" style="background:#EEEDFE;color:#534AB7;">5 days</span>
+      <span class="tier-sub">Deep guides</span>
+      <span class="tier-count">14 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Alaska/alaska_v1.html">Alaska</a>
+      <a class="city-pill" href="../Guides/Alesund/alesund_v1.html">Alesund</a>
+      <a class="city-pill" href="../Guides/Amsterdam/amsterdam_v1.html">Amsterdam</a>
+      <a class="city-pill" href="../Guides/Barcelona/barcelona_v1.html">Barcelona</a>
+      <a class="city-pill" href="../Guides/Berlin/berlin_v1.html">Berlin</a>
+      <a class="city-pill" href="../Guides/Edinburgh/edinburgh_v1.html">Edinburgh</a>
+      <a class="city-pill" href="../Guides/Helsinki/helsinki_v1.html">Helsinki</a>
+      <a class="city-pill" href="../Guides/Madrid/madrid_v1.html">Madrid</a>
+      <a class="city-pill" href="../Guides/Montevideo/montevideo_v1.html">Montevideo</a>
+      <a class="city-pill" href="../Guides/New%20York/new_york_v1.html">New York</a>
+      <a class="city-pill" href="../Guides/Oslo/oslo_v1.html">Oslo</a>
+      <a class="city-pill" href="../Guides/Tromso/tromso_v1.html">Tromso</a>
+      <a class="city-pill" href="../Guides/Turin/turin_v14.html">Turin</a>
+      <a class="city-pill" href="../Guides/Vancouver/vancouver_v1.html">Vancouver</a>
+    </div>
+  </div>
+
+  <!-- 6 days -->
+  <div class="tier-card" style="border-left-color:#993C1D;" id="tier-6">
+    <div class="tier-head" onclick="toggleTier('tier-6')">
+      <span class="tier-badge" style="background:#FAECE7;color:#993C1D;">6 days</span>
+      <span class="tier-sub">Deep guides</span>
+      <span class="tier-count">7 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Copenhagen/copenhagen_v1.html">Copenhagen</a>
+      <a class="city-pill" href="../Guides/Dublin/dublin_v1.html">Dublin</a>
+      <a class="city-pill" href="../Guides/London/london_v5.html">London</a>
+      <a class="city-pill" href="../Guides/Paris/paris_v7.html">Paris</a>
+      <a class="city-pill" href="../Guides/San%20Diego/san_diego_v1.html">San Diego</a>
+      <a class="city-pill" href="../Guides/Tokyo/tokyo_v1.html">Tokyo</a>
+      <a class="city-pill" href="../Guides/Vienna/vienna_v1.html">Vienna</a>
+    </div>
+  </div>
+
+  <!-- 7 days -->
+  <div class="tier-card" style="border-left-color:#993556;" id="tier-7">
+    <div class="tier-head" onclick="toggleTier('tier-7')">
+      <span class="tier-badge" style="background:#FBEAF0;color:#993556;">7 days</span>
+      <span class="tier-sub">Deep guides</span>
+      <span class="tier-count">6 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Marktoberdorf/marktoberdorf_v1.html">Marktoberdorf</a>
+      <a class="city-pill" href="../Guides/Munich/munich_v2.html">Munich</a>
+      <a class="city-pill" href="../Guides/Palm%20Desert/palm_desert_v1.html">Palm Desert</a>
+      <a class="city-pill" href="../Guides/Palo%20Alto/palo_alto_v6.html">Palo Alto</a>
+      <a class="city-pill" href="../Guides/Pasadena/pasadena_v5.html">Pasadena</a>
+      <a class="city-pill" href="../Guides/Salzburg/salzburg_v1.html">Salzburg</a>
+    </div>
+  </div>
+
+  <!-- 8 days -->
+  <div class="tier-card" style="border-left-color:#0F6E56;" id="tier-8">
+    <div class="tier-head" onclick="toggleTier('tier-8')">
+      <span class="tier-badge" style="background:#E1F5EE;color:#0F6E56;">8 days</span>
+      <span class="tier-sub">Deep guides</span>
+      <span class="tier-count">4 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Iceland/reykjavik_v2.html">Iceland</a>
+      <a class="city-pill" href="../Guides/Lisbon/lisbon_v4.html">Lisbon</a>
+      <a class="city-pill" href="../Guides/Singapore/singapore_v3.html">Singapore</a>
+      <a class="city-pill" href="../Guides/Sydney/sydney_v2.html">Sydney</a>
+    </div>
+  </div>
+
+  <!-- 10 days -->
+  <div class="tier-card" style="border-left-color:#444441;" id="tier-10">
+    <div class="tier-head" onclick="toggleTier('tier-10')">
+      <span class="tier-badge" style="background:#F1EFE8;color:#444441;">10 days</span>
+      <span class="tier-sub">Deep guides</span>
+      <span class="tier-count">2 guides</span>
+      <span class="tier-chevron">▾</span>
+    </div>
+    <div class="city-grid">
+      <a class="city-pill" href="../Guides/Marrakech/marrakech_v1.html">Marrakech</a>
+      <a class="city-pill" href="../Guides/Zurich/zurich_v1.html">Zurich</a>
+    </div>
+  </div>
+
+</div><!-- /.page -->
+
+<script>
+  function toggleTier(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+  }
+
+  var searchInput  = document.getElementById('citySearch');
+  var searchCount  = document.getElementById('searchCount');
+  var noResults    = document.getElementById('noResults');
+  var noResultsTerm = document.getElementById('noResultsTerm');
+  var TOTAL = 136;
+
+  searchInput.addEventListener('input', function() {
+    var q = this.value.trim().toLowerCase();
+    var visible = 0;
+
+    document.querySelectorAll('.tier-card').forEach(function(section) {
+      var pills = section.querySelectorAll('.city-pill');
+      var tierVisible = 0;
+
+      pills.forEach(function(pill) {
+        var match = !q || pill.textContent.toLowerCase().includes(q);
+        pill.classList.toggle('hidden', !match);
+        if (match) tierVisible++;
+      });
+
+      visible += tierVisible;
+
+      if (q) {
+        section.style.display = tierVisible ? '' : 'none';
+        if (tierVisible) section.classList.remove('collapsed');
+      } else {
+        section.style.display = '';
+      }
+    });
+
+    if (q) {
+      searchCount.textContent = visible + (visible === 1 ? ' guide' : ' guides');
+      noResults.style.display  = visible === 0 ? 'block' : 'none';
+      noResultsTerm.textContent = this.value.trim();
+    } else {
+      searchCount.textContent = TOTAL + ' guides';
+      noResults.style.display  = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>

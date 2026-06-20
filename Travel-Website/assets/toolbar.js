@@ -136,6 +136,7 @@
         { href: base + 'Trip-Essentials/Visas.html',                          text: '🪪 Visas' },
         { href: base + 'Trip-Essentials/Time-Zones.html',                     text: '🕐 Time Zones' },
         { href: base + 'Trip-Essentials/Travel-Stats.html',                   text: '📊 Travel Stats' },
+        { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',            text: '📅 Guide Days Coverage' },
         { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',                      text: '📲 SIM Cards' },
         { href: base + 'Trip-Essentials/Before-You-Go.html',                  text: '📋 Before You Go' },
