@@ -666,8 +666,24 @@ def run_gate(guide_path: Path, *, static_only: bool, verbose: bool,
         # Auto-prune stale log entries: URLs in the log that are no longer in
         # the guide (guide was trimmed, tour was swapped, etc.). Silently
         # remove them and rewrite the log — no warning, no manual step needed.
+        # PROTECTED: wikipedia-omit / OMIT entries are intentionally keyed by a
+        # non-URL label (the omitted stop has no Wikipedia URL in the HTML) and
+        # are REQUIRED by validate_itinerary.py's "📖 row per stop" check — never
+        # prune them, or the two validators contradict each other (added
+        # 2026-06-20: the omit mechanism shipped 2026-06-17 but this pruner was
+        # silently deleting the omit entries, re-failing Alaska / Bend).
+        def _is_protected(_e: object) -> bool:
+            if not isinstance(_e, dict):
+                return False
+            _plat = str(_e.get("platform", "")).lower()
+            _res = str(_e.get("result", "")).upper()
+            return _plat in ("wikipedia-omit", "wikipedia_omit") or _res == "OMIT"
+
         guide_urls = {u["url"] for u in unique}
-        stale_log_urls = [u for u in list(entries.keys()) if u not in guide_urls]
+        stale_log_urls = [
+            u for u in list(entries.keys())
+            if u not in guide_urls and not _is_protected(entries[u])
+        ]
         if stale_log_urls:
             for u in stale_log_urls:
                 del entries[u]
