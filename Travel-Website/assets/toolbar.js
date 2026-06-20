@@ -131,7 +131,7 @@
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
       ] },
     null,
-    { group: '🔌 Plugs', children: [
+    { group: '🔌 Devices', children: [
         { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',                        text: '📲 SIM Cards' },
       ]},
