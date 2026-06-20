@@ -235,7 +235,11 @@ a.dest-card[data-status="been"] { border-left: 4px solid rgba(60,130,60,0.75); }
 /* ── Progressive-disclosure toggles (Filters / Views) ── */
 .disc-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; font-family: inherit; font-size: 12px; font-weight: 500; padding: 0 12px; border: 1.5px solid var(--border2); border-radius: 6px; background: var(--surface); color: #8a6c1a; cursor: pointer; white-space: nowrap; transition: all .15s; }
 .disc-btn:hover { border-color: #b85c2a; color: var(--accent); }
-.disc-btn[aria-expanded="true"] { background: var(--warm); border-color: #b85c2a; color: #7a3b1e; }
+/* Open (panel showing) is a QUIET state — neutral grey, not the orange a
+   selected filter uses, so an open toggle doesn't read as a second active
+   filter next to Been/Want. The rotated caret + the has-active dot signal
+   open / engaged. */
+.disc-btn[aria-expanded="true"] { background: var(--surface2); border-color: var(--border); color: #6a6660; }
 .disc-btn .disc-caret { font-size: 10px; transition: transform .15s; }
 .disc-btn[aria-expanded="true"] .disc-caret { transform: rotate(180deg); }
 .disc-btn.has-active { position: relative; }
@@ -1537,7 +1541,7 @@ window._giStatusFilter = 'all';
 
   function setMode(flights) {
     document.body.classList.toggle('mode-flights', flights);
-    if (search) search.placeholder = '🔍';
+    if (search) search.placeholder = flights ? '🔍  City or route' : '🔍  City or destination';
     if (flights) { parseQuery(search ? search.value : ''); apply(); }
     else if (search) { search.dispatchEvent(new Event('input')); }
   }
@@ -1671,11 +1675,11 @@ window._giStatusFilter = 'all';
     btnSG.addEventListener('click', function () {
       var active = btnSG.classList.toggle('active');
       if (active) {
-        input.placeholder = '🔍';
+        input.placeholder = '🔍  Search inside guides';
         input.focus();
         if (input.value.trim().length >= 2) run();
       } else {
-        input.placeholder = '🔍';
+        input.placeholder = '🔍  Search inside guides';
         panel.hidden = true; panel.innerHTML = '';
       }
     });
