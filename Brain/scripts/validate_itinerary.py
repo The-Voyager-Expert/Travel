@@ -55,6 +55,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-20", "NO-PHOTO-REASON SENTINEL REQUIRED (Dani 2026-06-20). Every .stop-photos-empty wrapper must now be preceded (within 600 chars) by <!-- no-photo-reason: {reason ≥ 10 chars} --> confirming Commons was fully searched. Previously the single allowed empty stop had no written-reason requirement — it could ship with no explanation. New check K hard-fails any empty wrapper missing the sentinel. If a second stop genuinely has no Commons photo and the reason comment is already in use for a different stop, the second stop must be replaced with a stop that has available photos rather than left empty. Photos Rules.html §7 updated; Validator Index.html and Cleanliness Checks.md item 216b updated; checksums regenerated. Format: <!-- no-photo-reason: no suitable licensed photo found on Commons for {stop name} -->"),
     ("2026-06-20", "PHOTO EMPTY CAP TIGHTENED ≤2 → ≤1 (Dani 2026-06-20). Guide-level 'No pictures found.' cap reduced from at most 2 to at most 1. Two or more empty photo wrappers in a single guide now hard-fail regardless of whether each wrapper is individually valid. Rationale: a single genuinely unfindable stop is acceptable; two or more signals the harvest step was skipped or abandoned. Photos Rules.html §7 updated with the guide-level cap; Validator Index.html entry updated. The check label updated from 'at most 2' to 'at most 1'."),
     ("2026-06-20", "TITLE PAGE PALETTE FOLLOWS 2026-06-20 REDESIGN — the title card was redesigned today (commits 3bb19927 'Match guide title to site' → 6f868a0f) from the 2026-06-15 dark-bg/light-text palette to a light-bg/dark-text palette matching the site header: .title-page background:none, .title-city/.title-hotel/.title-country → #3d3a32, .title-address → #6a6660 (set in Guide Style.css + guide_v3.css). The validator allowlist was never updated, so all 134 live guides hard-failed 'Link-color overrides match allowlist' (offender: .title-page .title-address a #6a6660 vs stale-expected rgba(255,255,255,0.60)). Fixes: (1) LINK_COLOR_ALLOWLIST '.title-page .title-address a' rgba(255,255,255,0.60) → #6a6660; (2) the local-<style>-override canonical set {#f5e0b8, rgba(255,255,255,0.60)} → {#3d3a32, #6a6660} (+ comment). No guide HTML touched — the guides inherit guide_v3.css and were correct; the validator was stale (same pattern as the 2026-06-11 / 2026-06-01 allowlist-vs-CSS sync fixes)."),
     ("2026-06-19", "AUDIT BACKLOG — 5 checks from 2026-06-17 Core Rules audit (B1/B2/B3/B4/B5). B1: global body-wide bare-placeholder scan — TBD/TODO/FIXME/'fill in later'/'tour TBD' in visible body text now hard-fail (title-page already caught these; body was missed). B2: ≤4-day Train Day prohibition now enforced — the short-guide branch silently passed even when Train Day cards were present; now checks _quota_train_day_count == 0 and hard-fails if any Train Days found (Day Structure §6 'must NOT include'). Threshold uses TOTAL days (including Train Days) — a 6-day guide with 3 Train Days is not a 3-day guide; only guides with ≤4 total days in the overview are short guides. B3: stop-count floor ≥4 flipped from warn() to check() (hard fail) — sentinel exemption (<!-- day-count: N — reason --> with carve-out keyword) still suppresses; Validator Index already documented this as enforced. B4: _MOTION_LEAD_RE broadened from [🚶🚕🚢] to [🚶🚕🚢🚝🚎] — metro (🚝) and tram (🚎) consecutive-motion-row check now fires correctly. B5: CSS text-transform ban broadened from one exact pattern (a, a:visited { text-transform: lowercase }) to any text-transform value on any <a>-targeting or cascading selector (Trip Overview §4 'any global text-transform on anchors')."),
@@ -4493,6 +4494,17 @@ def validate(html: str, filename: str):
     )
     _photo_ok_re = re.compile(r'<!--\s*photo-ok\s*:.{5,}?-->', re.DOTALL)
 
+    # no-photo-reason sentinel — required immediately before any .stop-photos-empty
+    # div (within 600 chars).  Format: <!-- no-photo-reason: {reason ≥ 10 chars} -->
+    # Photos Rules.html §7: a single genuinely empty stop is acceptable only when
+    # accompanied by a written reason confirming Commons was fully searched.
+    # Added 2026-06-20 (Dani: "the 1 empty needs to have a written reason to pass").
+    _no_photo_reason_re = re.compile(
+        r'<!--\s*no-photo-reason\s*:\s*.{10,}?-->',
+        re.DOTALL,
+    )
+    empty_missing_reason: list[int] = []  # K — empty wrapper has no reason comment
+
     # Banned alt-text lead patterns. Anchored on string start with optional
     # leading article ("a "/"the ") so "Photo of {Venue}" / "A picture of
     # {Venue}" / "The image of {Subject}" all fire, but a real venue name
@@ -4551,6 +4563,7 @@ def validate(html: str, filename: str):
             if re.search(r'<img\b', inner, re.IGNORECASE):
                 empty_has_img.append(i)
             continue
+        # (K populated below via raw-HTML position scan, outside this loop)
         # Standard wrapper — must contain exactly 1 <img> with non-empty alt.
         imgs = RE_IMG_TAG.findall( inner)
         total_imgs_in_wrappers += len(imgs)
@@ -4617,6 +4630,20 @@ def validate(html: str, filename: str):
         _wpre = html[max(0, _wm.start() - 500):_wm.start()]
         if not _photo_ok_re.search(_wpre):
             src_weak_filename_hits.append(_wbase[:80])
+
+    # ─── PHOTOS — K: populate empty_missing_reason via raw-HTML position scan ──
+    # Scan every .stop-photos-empty div position in the raw HTML and check
+    # whether a <!-- no-photo-reason: {≥10 chars} --> comment appears in the
+    # 600 chars immediately before it.  Uses finditer so the empty-wrapper index
+    # is independent of the all-wrappers `i` counter above.
+    # Added 2026-06-20 (Dani: "the 1 empty needs to have a written reason to pass").
+    _empty_div_re = re.compile(
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-photos-empty\b[^"]*"'
+    )
+    for _k_idx, _km in enumerate(_empty_div_re.finditer(html), 1):
+        _preceding = html[max(0, _km.start() - 600):_km.start()]
+        if not _no_photo_reason_re.search(_preceding):
+            empty_missing_reason.append(_k_idx)
 
     check(
         "Every .stop-photos wrapper contains exactly 1 <img> tag (or .stop-photos-empty negative-finding line)",
@@ -4698,6 +4725,27 @@ def validate(html: str, filename: str):
         f'{len(empty_has_img)} .stop-photos-empty wrapper(s) contain an <img> tag '
         f'(wrapper#): {empty_has_img[:5]} — remove either the <img> or the empty class'
         if empty_has_img else '',
+    )
+
+    # ─── PHOTOS — K: no-photo-reason COMMENT REQUIRED ────────────────────────
+    # Every .stop-photos-empty wrapper must be preceded (within 600 chars) by a
+    # <!-- no-photo-reason: {reason ≥ 10 chars} --> comment confirming that
+    # Commons was fully searched.  Photos Rules.html §7 (Dani 2026-06-20:
+    # "the 1 empty needs to have a written reason to pass").
+    # If the stop genuinely has no Commons photo and the reason comment is present,
+    # the guide-level cap (≤1 empty) enforces that only one such stop per guide
+    # may ship; a second empty requires the stop to be replaced entirely.
+    # Added 2026-06-20.
+    check(
+        'Every "No pictures found." stop must be preceded by '
+        '<!-- no-photo-reason: {reason} --> confirming Commons was fully searched '
+        '(Photos Rules.html §7)',
+        len(empty_missing_reason) == 0,
+        f'{len(empty_missing_reason)} "No pictures found." stop(s) missing the '
+        f'<!-- no-photo-reason: reason --> sentinel (wrapper#): {empty_missing_reason[:5]} — '
+        'add <!-- no-photo-reason: no suitable licensed photo found on Commons for {stop name} --> '
+        'immediately before the <div class="stop-photos stop-photos-empty"> line'
+        if empty_missing_reason else '',
     )
 
     # ─── PHOTOS — J: NO BUILD ANNOTATIONS IN alt TEXT ────────────────────────
