@@ -121,8 +121,8 @@
     { href: base + 'Trip-Essentials/European-Train-Guide.html',               text: '🚆 Trains' },
     null,
     { group: '✈️ Flights', children: [
-        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Seattle Hub' },
-        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Full Network' },
+        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
+        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html',  text: '🔌 Plugs' },
