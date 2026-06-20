@@ -116,7 +116,10 @@
     { group: '✈️ Getting There', children: [
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',     text: '✈️ Delta — Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html',    text: '🌐 Delta — Full Network' },
-        { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Trains' },
+        { group: '🚆 Trains', children: [
+            { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Train Guide' },
+            { href: base + 'Trip-Essentials/City-Transit-Cards.html',   text: '🚇 City Transit Cards' },
+        ] },
         { href: base + 'Trip-Essentials/Lounges-US.html',           text: '💻 US Lounges' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',       text: '💻 EU Lounges' },
     ] },

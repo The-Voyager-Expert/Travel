@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=45">
+<title>City Transit Cards</title>
+<style>
+:root {
+  --bg:      #f5f4f0;
+  --warm:    #fdf8f0;
+  --surface: #ffffff;
+  --border:  #d8d4cc;
+  --border2: #e6e2da;
+  --text:    #1a1917;
+  --muted:   #6a6660;
+  --accent:  #8a6c1a;
+  --hover:   #faefd8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* ── Controls ── */
+.controls { display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 16px; }
+.search-wrap { position: relative; }
+#tc-search {
+  width: 360px; padding: 11px 18px;
+  border: 1.5px solid #e6e2da; border-radius: 6px;
+  background: #fff; font-family: inherit; font-size: 15px; color: #1a1917;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+#tc-search::placeholder { color: #A8895A; }
+#tc-search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
+
+.pills { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.pill {
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2);
+  background: var(--warm); font-family: inherit; font-size: 13px; line-height: 1; color: var(--muted);
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.pill:hover, .pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a; font-weight: 600; }
+
+/* ── No results ── */
+#no-results { display: none; color: var(--muted); font-size: 13px; margin: 12px 0; }
+
+/* ── Section header ── */
+.section-head {
+  font-size: 13px; font-weight: 700; color: #5C3D11;
+  border-bottom: 2px solid #B8860B; padding-bottom: 8px;
+  margin: 26px 0 12px; display: flex; align-items: center; gap: 8px;
+}
+.section-head .sh-emoji { font-size: 16px; line-height: 1; }
+
+/* ── Transit rows ── */
+.row-list { display: flex; flex-direction: column; gap: 8px; }
+
+.transit-row {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 15px; display: flex; flex-direction: column; gap: 7px;
+}
+.transit-row.hidden { display: none; }
+
+.tc-header {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+.tc-city { font-size: 13px; font-weight: 700; color: var(--text); }
+.tc-card-name {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px;
+  background: var(--warm); border: 1px solid var(--border2); color: var(--muted);
+}
+.tc-site {
+  margin-left: auto;
+  display: inline-block; padding: 2px 9px; border-radius: 6px;
+  border: 1px solid var(--border2); background: var(--warm);
+  color: var(--text); text-decoration: none; font-size: 11px; font-weight: 700;
+  transition: background .12s, border-color .12s; white-space: nowrap;
+}
+.tc-site:hover { background: var(--hover); border-color: #c8b480; text-decoration: none; }
+
+.tc-network { font-size: 12px; color: var(--muted); }
+
+.tc-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5px 20px;
+}
+.tc-cell { font-size: 12px; }
+.tc-label {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px;
+}
+.tc-val { font-size: 13px; color: var(--text); line-height: 1.4; }
+.tc-tip { grid-column: 1 / -1; }
+.tc-tip .tc-val { color: var(--muted); }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  #tc-search { width: 100%; max-width: 100%; box-sizing: border-box; }
+  .pill { font-size: 12px !important; padding: 5px 11px !important; }
+  .tc-grid { grid-template-columns: 1fr; }
+  .tc-site { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760"></div>
+  <script src="../assets/toolbar.js?v=57"></script>
+
+  <div class="page-header">
+    <h1>City Transit Cards</h1>
+  </div>
+  <span class="updated-stamp">Updated June 2026</span>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="text" id="tc-search" placeholder="🔍  City or card name" aria-label="Search by city or card name" autocomplete="off">
+    </div>
+    <div class="pills">
+      <button class="pill active" data-filter="all">All</button>
+      <button class="pill" data-filter="europe">🇪🇺 Europe</button>
+      <button class="pill" data-filter="asia">🌏 Asia</button>
+      <button class="pill" data-filter="americas">🌎 Americas</button>
+      <button class="pill" data-filter="oceania">🇦🇺 Oceania</button>
+    </div>
+  </div>
+
+  <p id="no-results">Nothing matches your search.</p>
+
+
+  <!-- ── Europe ── -->
+  <div class="section" data-section="europe">
+    <div class="section-head"><span class="sh-emoji">🇪🇺</span> Europe</div>
+    <div class="row-list">
+
+      <div class="transit-row" data-tags="europe london uk england">
+        <div class="tc-header">
+          <span class="tc-city">🇬🇧 London</span>
+          <span class="tc-card-name">Oyster Card</span>
+          <a class="tc-site" href="https://tfl.gov.uk/fares/how-to-pay-and-where-to-buy-tickets-and-oyster" target="_blank" rel="noopener">tfl.gov.uk</a>
+        </div>
+        <div class="tc-network">Underground · Overground · Elizabeth line · DLR · Bus · Tram · some National Rail</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Any Tube station ticket machine or visitor centre</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Deposit</div>
+            <div class="tc-val">£5 refundable; load any amount on top</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Contactless bank cards and Apple/Google Pay work on all TfL transport with the same daily and weekly fare caps — skip the Oyster entirely if your card is contactless.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe paris france">
+        <div class="tc-header">
+          <span class="tc-city">🇫🇷 Paris</span>
+          <span class="tc-card-name">Navigo Easy</span>
+          <a class="tc-site" href="https://www.navigo.fr" target="_blank" rel="noopener">navigo.fr</a>
+        </div>
+        <div class="tc-network">Métro · RER · Bus · Tram · Transilien</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Any Métro station ticket machine; €2 card fee</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">Navigo Easy (PAYG/carnets) · Navigo Liberté+ (monthly PAYG) · Navigo Découverte (weekly/monthly flat)</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Navigo Découverte (weekly pass, ~€30) covers all zones Mon–Sun and is cheaper than individual tickets for any stay over 4 days. Weeks run Monday–Sunday, not 7 rolling days.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe amsterdam netherlands holland">
+        <div class="tc-header">
+          <span class="tc-city">🇳🇱 Amsterdam</span>
+          <span class="tc-card-name">OV-chipkaart</span>
+          <a class="tc-site" href="https://www.ov-chipkaart.nl/en/" target="_blank" rel="noopener">ov-chipkaart.nl</a>
+        </div>
+        <div class="tc-network">GVB Tram · Metro · Bus · NS trains · Intercity</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">GVB service points, station machines, or Schiphol airport</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Deposit</div>
+            <div class="tc-val">€7.50 refundable; separate balance for GVB and NS</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">GVB trams and metro now accept contactless bank cards and Apple/Google Pay directly — no OV-chipkaart needed for city transit. You still need it for NS intercity trains.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe berlin germany">
+        <div class="tc-header">
+          <span class="tc-city">🇩🇪 Berlin</span>
+          <span class="tc-card-name">BVG Ticket / Berlin WelcomeCard</span>
+          <a class="tc-site" href="https://www.bvg.de/en" target="_blank" rel="noopener">bvg.de</a>
+        </div>
+        <div class="tc-network">U-Bahn · S-Bahn · Bus · Tram · Ferry</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Station machines, BVG app, or Berlin WelcomeCard at airport and hotels</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">Single (€3.50) · Day ticket (€10.40) · 7-day (€41.30) · WelcomeCard includes museum discounts</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Berlin has no reloadable card — buy the BVG app on your phone for single trips or use a day/week paper ticket. Validate before boarding; inspectors check frequently.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe rome italy">
+        <div class="tc-header">
+          <span class="tc-city">🇮🇹 Rome</span>
+          <span class="tc-card-name">BIT / Time-based passes</span>
+          <a class="tc-site" href="https://www.atac.roma.it" target="_blank" rel="noopener">atac.roma.it</a>
+        </div>
+        <div class="tc-network">Metro · Bus · Tram</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Tabacchi, newsstands, Metro station machines, ATAC app</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">BIT single €2 (100 min) · 24h €7 · 48h €12.50 · 72h €18 · 7-day €24</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Validate every time you board — even with a multi-day pass. Inspectors are active on the Metro and buses near tourist areas. Machines often out of service; buy at tabacchi instead.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe barcelona spain">
+        <div class="tc-header">
+          <span class="tc-city">🇪🇸 Barcelona</span>
+          <span class="tc-card-name">T-Casual</span>
+          <a class="tc-site" href="https://www.tmb.cat/en/barcelona-transport/types-of-tickets" target="_blank" rel="noopener">tmb.cat</a>
+        </div>
+        <div class="tc-network">Metro · Bus · Tram · FGC · Rodalies (suburban rail)</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Metro station machines; requires a reloadable T-Card or use physical T-Casual</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Cost</div>
+            <div class="tc-val">T-Casual: 10 trips ~€12.15 (Zone 1) · shareable between travellers · single trip €2.55</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">One T-Casual card can be used by multiple people — tap once per person. The Hola BCN tourist pass (2–5 days unlimited) is worth it only if you make 4+ trips per day.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe madrid spain">
+        <div class="tc-header">
+          <span class="tc-city">🇪🇸 Madrid</span>
+          <span class="tc-card-name">Multi Card / Tourist Travel Pass</span>
+          <a class="tc-site" href="https://www.metromadrid.es/en" target="_blank" rel="noopener">metromadrid.es</a>
+        </div>
+        <div class="tc-network">Metro · EMT Bus · Cercanías (suburban rail)</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Metro station machines; Tourist Travel Pass at airport T4 or Nuevos Ministerios</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">Single €1.50–€2 (zone-based) · Tourist Pass Zone A: 1-day €8.40, 2-day €14.20, 3-day €18.40, 5-day €26.80, 7-day €35.40</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">The Tourist Travel Pass includes airport Line 8 surcharge (€3 normally). Zone A covers all central Madrid attractions. Get it at the airport on arrival — it pays off immediately.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe vienna austria">
+        <div class="tc-header">
+          <span class="tc-city">🇦🇹 Vienna</span>
+          <span class="tc-card-name">Wiener Linien Pass</span>
+          <a class="tc-site" href="https://www.wienerlinien.at/web/wl-en" target="_blank" rel="noopener">wienerlinien.at</a>
+        </div>
+        <div class="tc-network">U-Bahn · Tram · Bus · S-Bahn (within Vienna zones)</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">U-Bahn station machines, Tabak shops, WienMobil app</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">24h €8 · 48h €14.10 · 72h €17.10 · 8-day €40.80 (non-consecutive days OK) · Vienna City Card adds museum discounts</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">The 8-day pass is 8 individual day validations — stamp once per day, usable across multiple trips. Ideal for longer stays. Validate at the blue stamping machines on first use each day.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe lisbon portugal">
+        <div class="tc-header">
+          <span class="tc-city">🇵🇹 Lisbon</span>
+          <span class="tc-card-name">Viva Viagem</span>
+          <a class="tc-site" href="https://www.metrolisboa.pt/en/travel/viva-viagem-card/" target="_blank" rel="noopener">metrolisboa.pt</a>
+        </div>
+        <div class="tc-network">Metro · Carris Bus · Tram · Ferry · Suburban trains (CP)</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Any Metro station machine; €0.50 card fee</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">Zapping (PAYG credit) · 24h unlimited €6.80 · Lisboa Card includes museums and transport</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Load Zapping credit — it works on Metro, bus, tram, and Tagus ferries at the lowest per-trip rate. Historic tram lines 28 and 15E accept the card; avoid buying single tickets on board.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="europe prague czech republic">
+        <div class="tc-header">
+          <span class="tc-city">🇨🇿 Prague</span>
+          <span class="tc-card-name">Lítačka / Time tickets</span>
+          <a class="tc-site" href="https://www.dpp.cz/en" target="_blank" rel="noopener">dpp.cz</a>
+        </div>
+        <div class="tc-network">Metro · Tram · Bus · Funicular</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Metro machines, DPP offices, tobacconists, PID Lítačka app, or SMS</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">30 min CZK 30 · 90 min CZK 40 · 24h CZK 120 · 3-day CZK 330 · short-term paper or app-based</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Buy tickets before boarding — on-board purchase only available on some night buses at a surcharge. Validate on entry each time. Night trams run on separate routes 00:30–04:30.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ── Asia ── -->
+  <div class="section" data-section="asia">
+    <div class="section-head"><span class="sh-emoji">🌏</span> Asia</div>
+    <div class="row-list">
+
+      <div class="transit-row" data-tags="asia tokyo japan">
+        <div class="tc-header">
+          <span class="tc-city">🇯🇵 Tokyo</span>
+          <span class="tc-card-name">Suica / Pasmo</span>
+          <a class="tc-site" href="https://www.jreast.co.jp/e/products/iccard/suica/" target="_blank" rel="noopener">jreast.co.jp</a>
+        </div>
+        <div class="tc-network">JR lines · Tokyo Metro · Toei Subway · Bus · Monorail · convenience stores · taxis</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">JR station machines, or add Suica to Apple Wallet (iPhone with Japanese region or via Express Transit) — no physical card needed</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Deposit</div>
+            <div class="tc-val">¥500 refundable for physical card; none for Apple Wallet</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Suica works at nearly every transit system across Japan — not just Tokyo. Also accepted at 7-Eleven, FamilyMart, Lawson, and most vending machines. Add it to Apple Wallet before departure for the simplest setup.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="asia osaka kyoto japan">
+        <div class="tc-header">
+          <span class="tc-city">🇯🇵 Osaka / Kyoto</span>
+          <span class="tc-card-name">ICOCA</span>
+          <a class="tc-site" href="https://www.westjr.co.jp/global/en/ticket/icoca/" target="_blank" rel="noopener">westjr.co.jp</a>
+        </div>
+        <div class="tc-network">JR West · Osaka Metro · Keihan · Hankyu · Kintetsu · most local transit</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">JR West ticket machines at Osaka, Kyoto, or Kansai Airport stations</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Deposit</div>
+            <div class="tc-val">¥500 refundable; load as needed at any JR machine</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">ICOCA is fully interoperable with Suica — if you already have a Suica from Tokyo, use it in Osaka and Kyoto without getting ICOCA. Both work at convenience stores throughout Japan.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="asia hong kong">
+        <div class="tc-header">
+          <span class="tc-city">🇭🇰 Hong Kong</span>
+          <span class="tc-card-name">Octopus Card</span>
+          <a class="tc-site" href="https://www.octopus.com.hk/en/consumer/index.html" target="_blank" rel="noopener">octopus.com.hk</a>
+        </div>
+        <div class="tc-network">MTR · Bus · Tram · Ferry · Light Rail · Airport Express · 7-Eleven · convenience stores</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Airport MTR station or any MTR customer service centre; also available as app</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Deposit</div>
+            <div class="tc-val">HK$50 refundable; minimum HK$100 initial load</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Refund the full balance at any MTR station on departure — staff can process it even with a negative balance. The Octopus app (HK residents) replaces the physical card but requires a local bank account.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="asia singapore">
+        <div class="tc-header">
+          <span class="tc-city">🇸🇬 Singapore</span>
+          <span class="tc-card-name">EZ-Link / Contactless</span>
+          <a class="tc-site" href="https://www.ezlink.com.sg" target="_blank" rel="noopener">ezlink.com.sg</a>
+        </div>
+        <div class="tc-network">MRT · LRT · Bus</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">TransitLink counters at MRT stations, 7-Eleven; S$5 non-refundable card fee</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Contactless</div>
+            <div class="tc-val">Visa/Mastercard contactless and Apple/Google Pay accepted on all MRT and bus — no EZ-Link needed</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Skip EZ-Link entirely — just tap your contactless card or phone. Fares are identical and you avoid the S$5 non-refundable card fee. Daily and weekly caps apply to contactless too.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="asia seoul south korea">
+        <div class="tc-header">
+          <span class="tc-city">🇰🇷 Seoul</span>
+          <span class="tc-card-name">T-money</span>
+          <a class="tc-site" href="https://www.t-money.co.kr/ncs/pct/bnfmGuideEngInfo/ReadBnfmGuideEngInfo.dev" target="_blank" rel="noopener">t-money.co.kr</a>
+        </div>
+        <div class="tc-network">Metro · Bus · some taxis · convenience stores</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">CU, GS25, 7-Eleven, or Ministop convenience stores; W3,000–4,000 card fee</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Transfers</div>
+            <div class="tc-val">Free transfer between metro and bus within 30 minutes — tap on and off every time</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Always tap off when exiting the bus and metro — distance-based fares mean not tapping off overcharges you. Reload at convenience stores or metro machines. T-money also works in Busan, Daegu, and most Korean cities.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="asia taipei taiwan">
+        <div class="tc-header">
+          <span class="tc-city">🇹🇼 Taipei</span>
+          <span class="tc-card-name">EasyCard</span>
+          <a class="tc-site" href="https://www.easycard.com.tw/en/" target="_blank" rel="noopener">easycard.com.tw</a>
+        </div>
+        <div class="tc-network">MRT · Bus · Taiwan Railways · YouBike · convenience stores</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Any MRT station service centre or 7-Eleven; NT$100 refundable deposit</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Discount</div>
+            <div class="tc-val">20% discount on MRT fares vs single-trip tickets</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Refund remaining balance at any MRT station on departure. The EasyCard also works on YouBike city bikes at a discounted rate — first 30 min free for MRT-connected trips.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ── Americas ── -->
+  <div class="section" data-section="americas">
+    <div class="section-head"><span class="sh-emoji">🌎</span> Americas</div>
+    <div class="row-list">
+
+      <div class="transit-row" data-tags="americas new york nyc usa">
+        <div class="tc-header">
+          <span class="tc-city">🇺🇸 New York</span>
+          <span class="tc-card-name">OMNY (tap to pay)</span>
+          <a class="tc-site" href="https://omny.mta.info" target="_blank" rel="noopener">omny.mta.info</a>
+        </div>
+        <div class="tc-network">Subway · Local Bus · Express Bus · Staten Island Railway</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">No card needed — tap any contactless Visa/Mastercard, or Apple/Google Pay at any turnstile</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Fare cap</div>
+            <div class="tc-val">$34/week cap — after 12 paid rides in a week, additional rides are free through Sunday</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">MetroCard is being phased out. OMNY contactless is the current standard — just tap your phone or card. The OMNY card (available at station machines) works identically if you prefer a dedicated card.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="americas washington dc usa">
+        <div class="tc-header">
+          <span class="tc-city">🇺🇸 Washington DC</span>
+          <span class="tc-card-name">SmarTrip</span>
+          <a class="tc-site" href="https://www.wmata.com/fares/smartrip/" target="_blank" rel="noopener">wmata.com</a>
+        </div>
+        <div class="tc-network">Metro · Metrobus · DC Circulator · MARC · VRE</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Metro station machines, CVS/Walgreens, or add to Apple/Google Wallet; $2 card fee</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Fares</div>
+            <div class="tc-val">Distance-based $2.25–$6.75 peak / $2–$3.85 off-peak; bus $2 flat</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Always tap out when exiting the Metro — distance-based fares require exit tap. Forgetting to tap out charges the maximum fare. Contactless bank cards now accepted at most Metro gates.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="americas chicago usa">
+        <div class="tc-header">
+          <span class="tc-city">🇺🇸 Chicago</span>
+          <span class="tc-card-name">Ventra</span>
+          <a class="tc-site" href="https://www.ventrachicago.com" target="_blank" rel="noopener">ventrachicago.com</a>
+        </div>
+        <div class="tc-network">CTA El (train) · CTA Bus</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">CTA station machines, Walgreens, or Ventra app; $5 card fee (refunded after $5 in rides)</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Options</div>
+            <div class="tc-val">PAYG $2.50/ride with free transfer within 2h · 1-day $10 · 3-day $20 · 7-day $28</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">The Ventra app works as a mobile card — load it and tap your phone at turnstiles. Contactless bank cards accepted at all CTA gates. Free transfer applies once within a 2-hour window (train-to-bus or bus-to-bus).</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ── Oceania ── -->
+  <div class="section" data-section="oceania">
+    <div class="section-head"><span class="sh-emoji">🇦🇺</span> Oceania</div>
+    <div class="row-list">
+
+      <div class="transit-row" data-tags="oceania sydney australia">
+        <div class="tc-header">
+          <span class="tc-city">🇦🇺 Sydney</span>
+          <span class="tc-card-name">Opal Card</span>
+          <a class="tc-site" href="https://www.opal.com.au" target="_blank" rel="noopener">opal.com.au</a>
+        </div>
+        <div class="tc-network">Train · Bus · Ferry · Light Rail</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">Convenience stores, newsagencies, station machines, or opal.com.au; no card fee</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Fare cap</div>
+            <div class="tc-val">Daily cap A$17.80 · Weekly cap A$50 (free travel once cap reached)</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Contactless bank cards and Apple/Google Pay accepted on all Opal-enabled transport — same fares and caps as the Opal card. No separate card needed if you tap with your phone or contactless card.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="transit-row" data-tags="oceania melbourne australia">
+        <div class="tc-header">
+          <span class="tc-city">🇦🇺 Melbourne</span>
+          <span class="tc-card-name">Myki</span>
+          <a class="tc-site" href="https://www.ptv.vic.gov.au/tickets/myki/" target="_blank" rel="noopener">ptv.vic.gov.au</a>
+        </div>
+        <div class="tc-network">Train · Tram · Bus</div>
+        <div class="tc-grid">
+          <div class="tc-cell">
+            <div class="tc-label">Get it</div>
+            <div class="tc-val">7-Eleven, train stations, Melbourne Airport; A$6 non-refundable card fee</div>
+          </div>
+          <div class="tc-cell">
+            <div class="tc-label">Free tram zone</div>
+            <div class="tc-val">CBD tram network is free — no need to tap within the Free Tram Zone boundary</div>
+          </div>
+          <div class="tc-cell tc-tip">
+            <div class="tc-label">Tip</div>
+            <div class="tc-val">Always touch on and off for trains and buses — failure to touch off is charged the maximum fare. Trams only require touch on (not off). The A$6 card fee is not refundable; buy one on arrival and top up as needed.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+</div><!-- /.wrap -->
+
+<script>
+(function () {
+  var search      = document.getElementById('tc-search');
+  var pills       = document.querySelectorAll('.pill');
+  var noRes       = document.getElementById('no-results');
+  var allRows     = document.querySelectorAll('.transit-row');
+  var sections    = document.querySelectorAll('.section');
+  var activeFilter = 'all';
+
+  function matchFilter(tags) {
+    if (activeFilter === 'all') return true;
+    return tags.split(' ').indexOf(activeFilter) !== -1;
+  }
+
+  function applyFilter() {
+    var q = search.value.trim().toLowerCase();
+    var anyVisible = false;
+
+    allRows.forEach(function (row) {
+      var tags = row.getAttribute('data-tags') || '';
+      var text = row.textContent.toLowerCase();
+      var filterOk = matchFilter(tags);
+      var searchOk = !q || text.indexOf(q) !== -1;
+      var show = filterOk && searchOk;
+      row.classList.toggle('hidden', !show);
+      if (show) anyVisible = true;
+    });
+
+    sections.forEach(function (sec) {
+      var hasVisible = Array.from(sec.querySelectorAll('.transit-row')).some(function (r) {
+        return !r.classList.contains('hidden');
+      });
+      sec.style.display = hasVisible ? '' : 'none';
+    });
+
+    noRes.style.display = anyVisible ? 'none' : 'block';
+  }
+
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      pills.forEach(function (p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+      activeFilter = pill.getAttribute('data-filter');
+      applyFilter();
+    });
+  });
+
+  search.addEventListener('input', applyFilter);
+})();
+</script>
+</body>
+</html>
