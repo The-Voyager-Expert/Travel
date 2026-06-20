@@ -3,22 +3,22 @@ Started: 2026-06-20
 Last updated: 2026-06-20
 
 ## Phase 0 — Session start
-- [ ] Rules for Claude.html
-- [ ] Format + content sourced ONLY from CORE RULES and live research — NO sibling guide in Guides/ opened as a template, shape reference, or content source (reading another guide imports its drift; one stale guide becomes many)
+- [x] Rules for Claude.html
+- [x] Format + content sourced ONLY from CORE RULES and live research — NO sibling guide in Guides/ opened as a template, shape reference, or content source (reading another guide imports its drift; one stale guide becomes many)
 
 ## Phase 1 — Technical prerequisites
-- [ ] Links.html
-- [ ] Photos Rules.html
-- [ ] Connectors.html
-- [ ] Platforms.md
+- [x] Links.html
+- [x] Photos Rules.html
+- [x] Connectors.html
+- [x] Platforms.md
 
 ## Phase 2 — Guide structure
-- [ ] Guide Structure.html
-- [ ] Stops Structure.html
-- [ ] Hotel Banner.html
-- [ ] Trip Overview.html
-- [ ] Toolbar.html
-- [ ] Navigation.html
+- [x] Guide Structure.html
+- [x] Stops Structure.html
+- [x] Hotel Banner.html
+- [x] Trip Overview.html
+- [x] Toolbar.html
+- [x] Navigation.html
 
 ## Phase 3 — Day shape
 - [ ] Day Structure.html
