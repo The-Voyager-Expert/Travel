@@ -653,7 +653,7 @@ body {{ padding-left: 20px !important; padding-right: 20px !important; }}
   .stats-nav a {{ flex-shrink: 0; }}
 }}
 </style>
-<link rel="stylesheet" href="../assets/mobile.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=41">
 </head>
 <body>
 
