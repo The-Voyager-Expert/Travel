@@ -386,6 +386,21 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6b4422;font-size:15px;text-align:center;padding:20px;">Could not load map data — please check your internet connection.</div>');
   });
 
+/* ── US state boundaries ── world-atlas is country-level (the US is one polygon),
+   so overlay all 50 states + DC (lat/lon GeoJSON) on top of the US country so
+   every state is visible — guide or not. Non-interactive, lands in the overlay
+   pane (below the pins). No antimeridian clamp here: the country clamp pins
+   lon < -100° to the right edge, which would destroy the whole western US. ── */
+fetch('https://cdn.jsdelivr.net/gh/PublicaMundi/MappingAPI@master/data/geojson/us-states.json')
+  .then(r => r.json())
+  .then(us => {
+    L.geoJSON(us, {
+      interactive: false,
+      style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
+    }).addTo(map);
+  })
+  .catch(() => {});
+
 /* ── Pins + clustering ── */
 function buildPins() {
   const cluster = L.markerClusterGroup({
