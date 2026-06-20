@@ -1,9 +1,15 @@
-/* Travel — service worker. Cache-as-you-visit so any page/asset opened once is
-   readable offline (planes, tunnels, abroad with no data). Lives at the site
-   root (Travel Website/ → /Travel/ on GitHub Pages) so its scope covers every
-   page. Navigations: network-first with offline cache fallback. Assets:
-   stale-while-revalidate (instant from cache, refreshed in the background). */
-var CACHE = 'travel-cache-v29';
+/* Travel — service worker. NETWORK-FIRST for everything: when you are online you
+   ALWAYS get the latest from the server (no stale cached pages/assets), so deploys
+   go live immediately on the next load. The cache is only an offline fallback
+   (planes, tunnels, abroad with no data) — a page/asset opened once stays readable
+   offline. Lives at the site root (→ /Travel/ on GitHub Pages) so its scope covers
+   every page.
+
+   History: previously assets were stale-while-revalidate, which served the OLD
+   cached copy first and refreshed in the background — so CSS/JS edits only appeared
+   on the SECOND visit ("updates don't go live"). Switched to network-first so the
+   cache can never hide a fresh deploy. (2026-06-20) */
+var CACHE = 'travel-cache-v30';
 
 self.addEventListener('install', function (e) {
   self.skipWaiting();
@@ -26,29 +32,19 @@ self.addEventListener('fetch', function (e) {
   try { url = new URL(req.url); } catch (_) { return; }
   if (url.origin !== self.location.origin) return;
 
-  if (req.mode === 'navigate') {
-    e.respondWith(
-      fetch(req).then(function (res) {
-        var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put(req, copy); });
-        return res;
-      }).catch(function () {
-        return caches.match(req).then(function (hit) {
-          return hit || caches.match('Guides/Guides-Index.html');
-        });
-      })
-    );
-    return;
-  }
-
+  // Network-first: try the network, cache the fresh copy, and only fall back to
+  // the cache when the network fails (offline). Navigations fall back to the
+  // Guides index when the exact page isn't cached.
   e.respondWith(
-    caches.open(CACHE).then(function (c) {
-      return c.match(req).then(function (hit) {
-        var net = fetch(req).then(function (res) {
-          c.put(req, res.clone());
-          return res;
-        }).catch(function () { return hit; });
-        return hit || net;
+    fetch(req).then(function (res) {
+      var copy = res.clone();
+      caches.open(CACHE).then(function (c) { c.put(req, copy); });
+      return res;
+    }).catch(function () {
+      return caches.match(req).then(function (hit) {
+        if (hit) return hit;
+        if (req.mode === 'navigate') return caches.match('Guides/Guides-Index.html');
+        return Response.error();
       });
     })
   );
