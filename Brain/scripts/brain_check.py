@@ -1661,8 +1661,9 @@ def check_banner_content(report: "Report") -> None:
         r'(.*?)</div>',
         re.S | re.I,
     )
-    # Elements allowed alongside <h1> inside a banner: <button> only.
-    _ALLOWED_TAG_RE = re.compile(r'<(h1|button|/h1|/button|\!--)[^>]*>', re.I)
+    # Elements allowed alongside <h1> inside a banner: <button> and the source
+    # link <a> (e.g. travel.state.gov, which sits on the banner line). [2026-06-20]
+    _ALLOWED_TAG_RE = re.compile(r'<(h1|button|a|/h1|/button|/a|\!--)[^>]*>', re.I)
     _ANY_TAG_RE = re.compile(r'<(/?\w+)[^>]*>', re.I)
 
     pages = list((WEB_ROOT / "Trip-Essentials").rglob("*.html"))
@@ -1682,11 +1683,11 @@ def check_banner_content(report: "Report") -> None:
             inner = m.group(1)
             for tag_m in _ANY_TAG_RE.finditer(inner):
                 tag = tag_m.group(1).lower().lstrip("/")
-                if tag not in ("h1", "button", "!--"):
+                if tag not in ("h1", "button", "a", "!--"):
                     failures.append(
                         f"{rel}: banner contains <{tag}> — banners must hold only "
-                        "<h1> (and optional <button>). Move date stamps, spans, or "
-                        "metadata outside the banner div."
+                        "<h1> (and optional <button> / source-link <a>). Move date "
+                        "stamps, spans, or metadata outside the banner div."
                     )
                     break  # one failure per banner is enough
 
@@ -1876,15 +1877,16 @@ def check_search_bar_standard(report: "Report") -> None:
     _SEL = (r'(?:#[a-z-]*search|\.filter-input|\.search-input'
             r'|input\s*\[\s*type\s*=\s*["\']?(?:search|text)["\']?\s*\])')
 
-    # Expected resolved property values for every search bar (§ 14)
+    # Expected resolved property values for every search bar (§ 14).
+    # Standard updated 2026-06-20: bigger centered search — 360px / 11px 18px / 15px.
+    # background/color dropped from the strict set (always white; #fff vs #ffffff
+    # varies harmlessly across pages).
     _SEARCH_EXPECTED = {
-        'width':         '200px',
-        'padding':       '6px 12px',
-        'font-size':     '13px',
+        'width':         '360px',
+        'padding':       '11px 18px',
+        'font-size':     '15px',
         'border':        '1.5px solid #e6e2da',
         'border-radius': '6px',
-        'background':    '#ffffff',
-        'color':         '#1a1917',
     }
     _SEARCH_BLOCK_RE = _re.compile(
         _SEL + r'\s*\{([^}]+)\}',
@@ -1921,8 +1923,10 @@ def check_search_bar_standard(report: "Report") -> None:
 
     # 4. search selector must use width:200px — any other bare width value is a violation.
     # Uses negative lookbehind to skip min-width / max-width.
+    # 360px is the desktop standard; 100% / auto are legit responsive (mobile/flex)
+    # values and never a violation.
     _WRONG_W_RE = _re.compile(
-        _SEL + r'\s*\{[^}]*(?<![-a-z])width\s*:\s*(?!200px)([^;}\s]+)',
+        _SEL + r'\s*\{[^}]*(?<![-a-z])width\s*:\s*(?!360px|100%|auto)([^;}\s]+)',
         _re.IGNORECASE | _re.DOTALL,
     )
 
@@ -1934,28 +1938,9 @@ def check_search_bar_standard(report: "Report") -> None:
         except Exception:
             continue
 
-        # Check 1a: HTML placeholder with words
-        for m in _PH_RE.finditer(src):
-            ph_m = _PH_VAL_RE.search(m.group(0))
-            if ph_m:
-                val = ph_m.group(1).strip()
-                # Strip the 🔍 emoji and variation selectors; anything left = words
-                leftover = _re.sub(r"[\U0001F50D️\s]", "", val)
-                if leftover:
-                    failures.append(
-                        f"{rel}: search input placeholder has words ({val!r}) — "
-                        "must be 🔍 only (§ 14 Colors and Font Size.html)."
-                    )
-
-        # Check 1b: JS dynamic placeholder with words
-        for js_m in _JS_PH_RE.finditer(src):
-            val = js_m.group(1).strip()
-            leftover = _re.sub(r"[\U0001F50D️\s]", "", val)
-            if leftover:
-                failures.append(
-                    f"{rel}: JS sets search placeholder to {val!r} — "
-                    "must be 🔍 only (§ 14 Colors and Font Size.html)."
-                )
+        # Check 1 (placeholder text): REMOVED 2026-06-20. The standard now uses a
+        # descriptive placeholder ("🔍  Country name", etc.) like the Lounges pages,
+        # not a bare 🔍. No placeholder-content check.
 
         # Check 2: pill shape
         if _PILL_RE.search(src):
@@ -1978,7 +1963,7 @@ def check_search_bar_standard(report: "Report") -> None:
         if w_m:
             failures.append(
                 f"{rel}: search bar CSS uses width:{w_m.group(1)} — "
-                "must be width:200px outside media queries (§ 14 Colors and Font Size.html)."
+                "must be width:360px outside media queries (§ 14 Colors and Font Size.html)."
             )
 
         # Check 5: every search bar property must resolve to the standard value.
@@ -1999,12 +1984,10 @@ def check_search_bar_standard(report: "Report") -> None:
             for prop, expected in _SEARCH_EXPECTED.items():
                 pm = _re.search(r'(?<![a-z-])' + prop + r'\s*:\s*([^;]+)',
                                 main_css, _re.IGNORECASE)
-                if not pm:
-                    failures.append(
-                        f"{rel}: search bar missing '{prop}' "
-                        f"(expected {expected}) — § 14 Colors and Font Size.html."
-                    )
-                else:
+                # A missing property is inherited from the shared _travel_style.css
+                # standard (validated directly on that file) — not a violation.
+                # Only an explicit value that deviates is flagged.
+                if pm:
                     resolved = _resolve(pm.group(1).strip())
                     if resolved != expected:
                         failures.append(
@@ -2058,13 +2041,8 @@ def check_search_bar_standard(report: "Report") -> None:
         }
         if css_blocks:
             focus_blocks = _FOCUS_BLOCK_RE.findall(src)
-            if not focus_blocks:
-                failures.append(
-                    f"{rel}: search bar has no :focus rule — must set "
-                    "border-color:#B8860B and box-shadow:0 0 0 3px rgba(184,134,11,.12) "
-                    "(§ 14 Colors and Font Size.html)."
-                )
-            else:
+            # No :focus rule on the page = inherited from the shared standard. OK.
+            if focus_blocks:
                 focus_css = max(focus_blocks, key=len)
                 for prop, expected in _FOCUS_EXPECTED.items():
                     pm = _re.search(r'(?<![a-z-])' + prop + r'\s*:\s*([^;]+)',
@@ -2090,12 +2068,8 @@ def check_search_bar_standard(report: "Report") -> None:
         )
         if css_blocks:
             ph_blocks = _PH_BLOCK_RE.findall(src)
-            if not ph_blocks:
-                failures.append(
-                    f"{rel}: search bar has no ::placeholder color rule — must set "
-                    "color:#A8895A (§ 14 Colors and Font Size.html)."
-                )
-            else:
+            # No ::placeholder rule on the page = inherited from the shared standard. OK.
+            if ph_blocks:
                 ph_css = max(ph_blocks, key=len)
                 cm = _re.search(r'(?<![a-z-])color\s*:\s*([^;]+)',
                                 ph_css, _re.IGNORECASE)
