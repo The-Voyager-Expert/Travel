@@ -650,7 +650,7 @@ html {{ scroll-behavior: smooth; }}
   .stats-nav {{ flex-wrap: wrap; }}
 }}
 </style>
-<link rel="stylesheet" href="../assets/mobile.css?v=48">
+<link rel="stylesheet" href="../assets/mobile.css?v=49">
 </head>
 <body>
 
