@@ -201,9 +201,9 @@
        forces overflow-y to clip and the flyout gets cut off. */
     '.tb-menu{position:fixed;transform:translateX(-50%);' +
       'background:#fff;border:1px solid #e6e2da;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.13);' +
-      'padding:5px;display:none;flex-direction:column;gap:2px;min-width:196px;z-index:1000}' +
+      'padding:4px;display:none;flex-direction:column;gap:0;min-width:196px;z-index:1000}' +
     '.tb-menu.tb-menu-open{display:flex}' +
-    '.tb-menu a{display:block;font-size:13px;color:#3d3a32;text-decoration:none;padding:7px 11px;' +
+    '.tb-menu a{display:block;font-size:13px;line-height:1.2;color:#3d3a32;text-decoration:none;padding:6px 11px;' +
       'border:none;border-radius:6px;background:transparent;white-space:nowrap}' +
     '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '}' +
     '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + ';font-weight:500}' +
@@ -314,7 +314,18 @@
         menu.style.left = Math.round(cx) + 'px';
         menu.style.top  = Math.round(r.bottom + 6) + 'px';
       }
-      function openMenu()  { menu.classList.add('tb-menu-open'); dd.classList.add('tb-open'); btn.setAttribute('aria-expanded', 'true'); positionMenu(); }
+      function openMenu()  {
+        /* Only one dropdown open at a time — close any others first. */
+        var openMenus = document.querySelectorAll('.tb-menu.tb-menu-open');
+        for (var i = 0; i < openMenus.length; i++) openMenus[i].classList.remove('tb-menu-open');
+        var openDds = document.querySelectorAll('.tb-dd.tb-open');
+        for (var j = 0; j < openDds.length; j++) {
+          openDds[j].classList.remove('tb-open');
+          var ob = openDds[j].querySelector('.tb-ddbtn');
+          if (ob) ob.setAttribute('aria-expanded', 'false');
+        }
+        menu.classList.add('tb-menu-open'); dd.classList.add('tb-open'); btn.setAttribute('aria-expanded', 'true'); positionMenu();
+      }
       function closeMenu() { menu.classList.remove('tb-menu-open'); dd.classList.remove('tb-open'); btn.setAttribute('aria-expanded', 'false'); }
 
       btn.addEventListener('click', function (e) {
