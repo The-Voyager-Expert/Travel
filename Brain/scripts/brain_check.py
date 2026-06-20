@@ -787,6 +787,52 @@ def check_no_dup_suffix_files(report: Report) -> None:
         report.ok("No duplicate-suffix (N) doc files — in-place edits holding.")
 
 
+def check_no_deploy_breakers(report: Report) -> None:
+    """Fail on committed files that break the GitHub Pages build.
+
+    The legacy Pages build errors ("Page build failed") on (a) symlinks and
+    (b) Google-Drive/FUSE mount artifacts (.fuse_hidden*, .DS_Store). When that
+    happens, commits push fine but NOTHING deploys — the live site silently
+    freezes on the last good build. Catch them at session start so they're
+    removed before a deploy breaks. (Added 2026-06-20 after both broke deploys.)
+    """
+    import subprocess
+    try:
+        out = subprocess.run(
+            ["git", "ls-files", "-s"],
+            cwd=str(TRAVEL_ROOT), capture_output=True, text=True, timeout=30,
+        ).stdout
+    except Exception as e:
+        report.warn(f"[deploy-safety] could not run git ls-files ({e}) — skipped.")
+        return
+    symlinks: list[str] = []
+    artifacts: list[str] = []
+    for line in out.splitlines():
+        parts = line.split("\t", 1)
+        if len(parts) != 2:
+            continue
+        meta, path = parts
+        mode = meta.split(" ", 1)[0]
+        name = path.rsplit("/", 1)[-1]
+        if mode == "120000":
+            symlinks.append(path)
+        if name.startswith(".fuse_hidden") or name == ".DS_Store":
+            artifacts.append(path)
+    if not symlinks and not artifacts:
+        report.ok("No deploy-breakers — no committed symlinks or mount artifacts.")
+        return
+    for p in symlinks:
+        report.fail(
+            f"[deploy-safety] committed symlink: {p} — GitHub Pages fails on "
+            f"symlinks. Replace it with a real file (e.g. a redirect HTML)."
+        )
+    for p in artifacts:
+        report.fail(
+            f"[deploy-safety] committed mount artifact: {p} — `git rm` it (keep "
+            f"it gitignored); these break the Pages build."
+        )
+
+
 def check_guide_roots(report: Report) -> None:
     """
     Fail if any file other than {city}_vN.html or {city}_vN.pdf exists at the
@@ -2499,6 +2545,7 @@ def main(argv: list[str]) -> int:
     check_no_dup_suffix_files(report)              # fails on 'Name (N).html/.md' duplicates = failed in-place edit (added 2026-06-12)
     check_no_resurrected_merged_mds(report)        # fails if decisions.md / Heads Up.md / Cities Skip List.md / travel_map.md reappear standalone (merged into Brain.md 2026-06-05)
     check_guide_roots(report)                       # fails on stray files at guide root (added 2026-05-09)
+    check_no_deploy_breakers(report)                # fails on committed symlinks / .fuse_hidden / .DS_Store that break the GitHub Pages build (added 2026-06-20)
     check_banned_brain_files(report)                # fails on snippet/scaffold/template files in Brain/ (added 2026-05-24)
     check_stray_auto_generated_files(report)        # fails if profile_watermark/verify_cache appear outside Brain/Reference/, or retired global ship_log still exists (added 2026-06-15)
     check_guide_ship_logs(report)                   # fails if ship_log.md is nested inside _build/ or misplaced — must be direct child of city folder (added 2026-06-15)
