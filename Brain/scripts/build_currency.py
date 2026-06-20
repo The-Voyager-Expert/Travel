@@ -274,6 +274,7 @@ body {{ font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--te
 .index-table tbody td a {{ color: var(--text); text-decoration: none; display: block; }}
 .index-table tbody td a:hover {{ color: var(--accent,#8a6c1a); text-decoration: underline; }}
 .index-table tbody tr.idx-hide {{ display: none; }}
+#cur-search {{ display: block; margin-left: auto; margin-right: auto; }}
 .content-wrap {{ max-width: none; margin: 0 auto; padding: 0 32px; }}
 .region-section {{ margin-top: 20px; margin-bottom: 20px; }}
 .region-header {{
