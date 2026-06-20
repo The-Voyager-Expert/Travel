@@ -127,7 +127,10 @@
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html',  text: '🔌 Plugs' },
     null,
-    { href: base + 'Trip-Essentials/Currency-Guide.html',                       text: '💰 Currency' },
+    { group: '💰 Money', children: [
+        { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency' },
+        { href: base + 'Trip-Essentials/Tipping-Guide.html',  text: '🧾 Tipping' },
+      ]},
     null,
     { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
     null,
