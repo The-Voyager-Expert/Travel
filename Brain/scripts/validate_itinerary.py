@@ -55,6 +55,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-20", "TITLE PAGE PALETTE FOLLOWS 2026-06-20 REDESIGN — the title card was redesigned today (commits 3bb19927 'Match guide title to site' → 6f868a0f) from the 2026-06-15 dark-bg/light-text palette to a light-bg/dark-text palette matching the site header: .title-page background:none, .title-city/.title-hotel/.title-country → #3d3a32, .title-address → #6a6660 (set in Guide Style.css + guide_v3.css). The validator allowlist was never updated, so all 134 live guides hard-failed 'Link-color overrides match allowlist' (offender: .title-page .title-address a #6a6660 vs stale-expected rgba(255,255,255,0.60)). Fixes: (1) LINK_COLOR_ALLOWLIST '.title-page .title-address a' rgba(255,255,255,0.60) → #6a6660; (2) the local-<style>-override canonical set {#f5e0b8, rgba(255,255,255,0.60)} → {#3d3a32, #6a6660} (+ comment). No guide HTML touched — the guides inherit guide_v3.css and were correct; the validator was stale (same pattern as the 2026-06-11 / 2026-06-01 allowlist-vs-CSS sync fixes)."),
     ("2026-06-19", "AUDIT BACKLOG — 5 checks from 2026-06-17 Core Rules audit (B1/B2/B3/B4/B5). B1: global body-wide bare-placeholder scan — TBD/TODO/FIXME/'fill in later'/'tour TBD' in visible body text now hard-fail (title-page already caught these; body was missed). B2: ≤4-day Train Day prohibition now enforced — the short-guide branch silently passed even when Train Day cards were present; now checks _quota_train_day_count == 0 and hard-fails if any Train Days found (Day Structure §6 'must NOT include'). Threshold uses TOTAL days (including Train Days) — a 6-day guide with 3 Train Days is not a 3-day guide; only guides with ≤4 total days in the overview are short guides. B3: stop-count floor ≥4 flipped from warn() to check() (hard fail) — sentinel exemption (<!-- day-count: N — reason --> with carve-out keyword) still suppresses; Validator Index already documented this as enforced. B4: _MOTION_LEAD_RE broadened from [🚶🚕🚢] to [🚶🚕🚢🚝🚎] — metro (🚝) and tram (🚎) consecutive-motion-row check now fires correctly. B5: CSS text-transform ban broadened from one exact pattern (a, a:visited { text-transform: lowercase }) to any text-transform value on any <a>-targeting or cascading selector (Trip Overview §4 'any global text-transform on anchors')."),
     ("2026-06-17", "GETTING AROUND §2 TRAM — negative-finding line REMOVED + tram no longer mandatory-present (Dani 2026-06-17: 'tram has to be checked and the negative line has to come out — cribs are lazy and dont check when we had the other way'). Mirrors the §4 Ferry fix: a tram is always researched, the 🚎 Tram subsection ships ONLY when a usable tram exists, and a no-tram city OMITS the subsection entirely. CORE RULES edited: Getting Around - Extra Section.html §2a/§2b — dropped 'If no tram is available, ship the negative-finding line: No tram available in [City].'; §2a now says always-check + omit-when-none (checksums regenerated, doc_workshop_validator clean). Validator: (1) the 'TRAM SECTION MANDATORY' check (subsection OR negative line) is replaced by 'TRAM NEGATIVE LINE IS DRIFT' — a 'No tram available' / 'does not have a tram' line hard-fails; (2) TRAM TEMPLATE ADHERENCE reduced from 4 templates to the 2 positive ones (the two negative templates retired). Narrowed the drift regex so template 2 ('[City] has a tram system … No tram rides on this trip.' — a positive entry, tram exists) is NOT caught. EXPECTED to fail: every guide currently shipping a tram negative-finding line, until the subsection is removed or replaced with a real tram entry (Dani: guides failing is fine)."),
     ("2026-06-17", "WIKIPEDIA REQUIRED PER STOP — HARD FAIL (Dani 2026-06-17). Every stop-block must carry a 📖 Wikipedia row. The old <!-- no-wikipedia: --> sentinel NO LONGER exempts a stop. Sole allowance: a guide may omit the 📖 on AT MOST ONE stop, and only when a full written explanation (>= 40 chars) is logged in the guide log _build/verification_log.json as an entry with platform 'wikipedia-omit' (or result 'OMIT'). Zero omissions = fine; one omission = needs the logged explanation; two or more = hard fail regardless. EXPECTED to fail: every guide currently relying on inline no-wikipedia sentinels (≈70 guides) until each missing stop gains a 📖 link or the single allowed omission is logged."),
@@ -1956,11 +1957,12 @@ def validate(html: str, filename: str):
     )
 
     # ─── TITLE PAGE COLOR DRIFT: no local style override allowed ───────────
-    # Canonical colors (set 2026-06-15, Dani-approved):
-    #   .title-city    → #f5e0b8
-    #   .title-hotel   → rgba(255,255,255,0.60)
-    #   .title-address → rgba(255,255,255,0.60)
-    #   .title-country → rgba(255,255,255,0.60)
+    # Canonical colors (title-page redesigned 2026-06-20 to light-bg/dark-text
+    # matching the site header — supersedes the 2026-06-15 dark-bg/light-text palette):
+    #   .title-city    → #3d3a32
+    #   .title-hotel   → #3d3a32
+    #   .title-country → #3d3a32
+    #   .title-address → #6a6660
     # If a local <style> block overrides any of these with a different value,
     # the guide will look wrong. Hard-fail.
     print("\n── TITLE PAGE: no local color override on title-city / title-hotel / title-address / title-country ──")
@@ -1977,7 +1979,7 @@ def validate(html: str, filename: str):
             _val = re.search(r'color\s*:\s*([^;]+)', _rule, re.IGNORECASE)
             if _val:
                 _v = _val.group(1).strip().lower().replace(' ', '')
-                _canonical = {'#f5e0b8', 'rgba(255,255,255,0.60)', 'rgba(255,255,255,.60)'}
+                _canonical = {'#3d3a32', '#6a6660'}
                 if _v not in _canonical:
                     _color_override_hits.append(_rule[:120])
     check(
@@ -23339,7 +23341,7 @@ def validate(html: str, filename: str):
         "#tours .extras-sub a":            ("#2867c4", "tours extras-sub links use blue (--c-link restored 2026-06-01) — tours section uses var(--c-link) directly"),
         "#heads-up .transit-box a":  ("#a61c00", "heads-up tip links use --c-headsup-link (#a61c00 tours-border red) per guide_v3.css — updated 2026-06-01 from #a36009"),
         ".index-banner-sub a":             ("#8a6c1a", "guides-index banner sub-links use gold accent (--c-purple = #8a6c1a) — index page only, not guide content"),
-        ".title-page .title-address a":    ("rgba(255,255,255,0.60)", "muted white address link on title-card — palette updated 2026-06-15 (Dani-approved): #ffffff → rgba(255,255,255,0.60)"),
+        ".title-page .title-address a":    ("#6a6660", "muted warm-grey address link on title-card — title-page redesigned to light-bg/dark-text matching site header (2026-06-20): rgba(255,255,255,0.60) → #6a6660"),
         # Guide-toolbar base colour — default toolbar accent before any theme override (--c-title-bg = #6b4422 warm chestnut)
         ".toolbar-nav a":                                     ("#6b4422", "toolbar accent — default (--c-title-bg)"),
         ".toolbar-essentials a":                              ("#6b4422", "toolbar accent — default (--c-title-bg)"),

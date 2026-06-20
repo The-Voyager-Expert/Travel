@@ -159,7 +159,7 @@
   var styleEl = document.createElement('style');
   styleEl.textContent =
     /* Toolbar outer — flex row so title + nav sit side by side */
-    '.tb{padding:10px 0;position:relative;top:auto;z-index:auto;margin-bottom:0;' +
+    '.tb{padding:10px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
       'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
       'border-bottom:none;box-shadow:none;' +
       'display:flex;align-items:center}' +

@@ -3,7 +3,7 @@
    root (Travel Website/ → /Travel/ on GitHub Pages) so its scope covers every
    page. Navigations: network-first with offline cache fallback. Assets:
    stale-while-revalidate (instant from cache, refreshed in the background). */
-var CACHE = 'travel-cache-v18';
+var CACHE = 'travel-cache-v19';
 
 self.addEventListener('install', function (e) {
   self.skipWaiting();

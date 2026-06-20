@@ -650,12 +650,12 @@ html {{ scroll-behavior: smooth; }}
   .stats-nav {{ flex-wrap: wrap; }}
 }}
 </style>
-<link rel="stylesheet" href="../assets/mobile.css?v=41">
+<link rel="stylesheet" href="../assets/mobile.css?v=45">
 </head>
 <body>
 
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
-<script src="../assets/toolbar.js?v=51"></script>
+<script src="../assets/toolbar.js?v=53"></script>
 
 <div class="page">
 
