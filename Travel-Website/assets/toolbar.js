@@ -132,8 +132,8 @@
     { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
     null,
     { group: '🌤️ Weather', children: [
-        { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ By Climate' },
-        { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ By City' },
+        { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ Browse by Climate' },
+        { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ Browse by City' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Safety-Guide.html',                         text: '🛡️ Safety' },
