@@ -146,7 +146,10 @@
     null,
     { href: base + 'Trip-Essentials/Visas.html',                                  text: '🪪 Visas' },
     null,
-    { href: base + 'Trip-Essentials/Resources.html',                              text: '⚙️ Resources' },
+    { group: '⚙️ Resources', children: [
+        { href: base + 'Trip-Essentials/Resources.html',       text: '⚙️ Quick Launch' },
+        { href: base + 'Trip-Essentials/Before-You-Go.html',   text: '📋 Before You Go' },
+      ]},
   ];
 
   /* ── Styles ─────────────────────────────────────────────────────────────── */
