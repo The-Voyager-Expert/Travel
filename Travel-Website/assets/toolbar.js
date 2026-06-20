@@ -121,7 +121,7 @@
         { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '💻 EU Lounges' },
       ] },
     null,
-    { group: '🚆 Trains', children: [
+    { group: '🚆 Transit', children: [
         { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Train Guide' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html',   text: '🚇 City Transit Cards' },
       ]},
