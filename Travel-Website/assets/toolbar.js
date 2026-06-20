@@ -165,8 +165,9 @@
       'display:flex;align-items:center}' +
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
-    '.tb-site-title{flex-shrink:0;font-size:15px;font-weight:700;color:#3d3a32;' +
-      'letter-spacing:.08em;text-transform:uppercase;padding:0 18px;white-space:nowrap}' +
+    '.tb-site-title{flex-shrink:0;font-size:13px;font-weight:700;color:#fff;' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;' +
+      'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);border-radius:6px;}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
