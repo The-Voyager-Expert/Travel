@@ -655,7 +655,7 @@ html {{ scroll-behavior: smooth; }}
 <body>
 
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
-<script src="../assets/toolbar.js?v=53"></script>
+<script src="../assets/toolbar.js?v=62"></script>
 
 <div class="page">
 
