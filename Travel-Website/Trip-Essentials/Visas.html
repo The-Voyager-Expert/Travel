@@ -385,13 +385,17 @@ html { scroll-behavior: smooth; }
   if (!input) return;
   input.addEventListener('input', function () {
     var q = input.value.trim().toLowerCase();
-    var rows = document.querySelectorAll('.row');
     var visible = 0;
-    rows.forEach(function (row) {
-      var text = (row.querySelector('.cty') || row).textContent.toLowerCase();
-      var show = !q || text.indexOf(q) > -1;
-      row.style.display = show ? '' : 'none';
-      if (show) visible++;
+    document.querySelectorAll('.etype').forEach(function (sec) {
+      var secVisible = 0;
+      sec.querySelectorAll('.row').forEach(function (row) {
+        var text = (row.querySelector('.cty') || row).textContent.toLowerCase();
+        var show = !q || text.indexOf(q) > -1;
+        row.style.display = show ? '' : 'none';
+        if (show) { secVisible++; visible++; }
+      });
+      /* hide a whole type-section (header, description, note) when it has no match */
+      sec.style.display = (q && secVisible === 0) ? 'none' : '';
     });
     noresult.style.display = (q && visible === 0) ? '' : 'none';
   });
