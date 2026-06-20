@@ -215,16 +215,16 @@
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
       '.tb-site-title{display:none}' +
-      '.tb{padding:6px 0 4px;display:flex;align-items:center;justify-content:space-between;min-height:auto;border-bottom:none;background:transparent;box-shadow:none}' +
+      '.tb{padding:6px 0 4px;display:flex;align-items:center;justify-content:space-between;min-height:auto;border-bottom:none;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
       '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;background:none;' +
         'border:none;-webkit-appearance:none;appearance:none;box-shadow:none;outline:none;' +
         '-webkit-tap-highlight-color:transparent;' +
-        'padding:4px 14px 4px 8px;font-size:13px;color:#3d3a32;flex-shrink:0;margin-left:auto;line-height:1;min-height:auto}' +
+        'padding:4px 14px 4px 8px;font-size:13px;color:#fff;flex-shrink:0;margin-left:auto;line-height:1;min-height:auto}' +
       '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{background:none !important;box-shadow:none !important;outline:none !important}' +
-      '.tb-ham-label{display:block;font-size:13px;font-weight:600;color:#3d3a32;padding-left:14px;letter-spacing:.02em}' +
+      '.tb-ham-label{display:block;font-size:13px;font-weight:700;color:#fff;padding-left:14px;letter-spacing:.06em;text-transform:uppercase}' +
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
         'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
         'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:999;padding:4px 0 8px;' +
