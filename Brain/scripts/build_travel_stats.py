@@ -506,10 +506,10 @@ body {{
 
 /* ===== Hero stat cards ===== */
 .hero-row {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }}
-.hero-card {{ position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 14px 16px; text-align: center; overflow: hidden; }}
+.hero-card {{ position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 12px 12px; text-align: center; overflow: hidden; }}
 .hero-card::before {{ content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: currentColor; opacity: .9; }}
-.hero-icon {{ font-size: 18px; line-height: 1; margin-bottom: 6px; }}
-.hero-num {{ font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }}
+.hero-icon {{ font-size: 16px; line-height: 1; margin-bottom: 5px; }}
+.hero-num {{ font-size: 22px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 3px; }}
 .hero-label {{ font-size: var(--fs-label,11px); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }}
 .hero-card.total   {{ color: var(--rust-deep); }}
 .hero-card.been    {{ color: var(--rust); }}
@@ -633,7 +633,7 @@ body {{
   .cont-grid {{ grid-template-columns: 1fr; }}
   .ctry-grid {{ grid-template-columns: 1fr; }}
   .bucket-row {{ grid-template-columns: 1fr; }}
-  .hero-num {{ font-size: 26px; }}
+  .hero-num {{ font-size: 22px; }}
 }}
 html {{ scroll-behavior: smooth; }}
 .hero-card, .qf, .region-card, .flight-card, .bucket-card {{ transition: box-shadow .15s, transform .15s; }}
@@ -647,9 +647,7 @@ html {{ scroll-behavior: smooth; }}
 .section-title {{ scroll-margin-top: 14px; }}
 #overview {{ scroll-margin-top: 14px; }}
 @media (max-width:600px) {{
-  .stats-nav {{ flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right,black calc(100% - 36px),transparent 100%); mask-image: linear-gradient(to right,black calc(100% - 36px),transparent 100%); }}
-  .stats-nav::-webkit-scrollbar {{ display: none; }}
-  .stats-nav a {{ flex-shrink: 0; }}
+  .stats-nav {{ flex-wrap: wrap; }}
 }}
 </style>
 <link rel="stylesheet" href="../assets/mobile.css?v=41">
