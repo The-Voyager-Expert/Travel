@@ -19,13 +19,14 @@
  *                   (depth describes the PAGE's location, not the script's)
  *   data-maxwidth = legacy hint, no longer caps the bar (see § 7 Centering)
  *
- * ── Navigation model (rebuilt 2026-06-20) ──────────────────────────────────
- * Two primary links (Guides, Maps) + five category dropdowns (Trips, Getting
- * There, Money, Weather, Essentials). One consistent type scale everywhere —
- * bar, desktop flyouts, and the mobile accordion all use the same font stack
- * and a single size per surface, so nothing "changes size" between contexts.
- * Desktop: click a category → flyout (one open at a time). Mobile: hamburger →
- * full-width accordion (tap a category to expand; one section open at a time).
+ * ── Navigation model ───────────────────────────────────────────────────────
+ * ITEMS entries are: a plain link { href, text }; a dropdown group
+ * { group, children:[…] } (children may themselves be a nested { group, children }
+ * group — rendered inline under a sub-header, one level); or null (a separator
+ * between groups of links). One pinned font stack + a single size per surface —
+ * bar, desktop flyouts, and the mobile accordion — so nothing "changes size"
+ * between contexts. Desktop: click a category → flyout (one open at a time).
+ * Mobile: hamburger → full-width accordion (tap a category to expand; one open).
  *
  * To update the toolbar for every page: edit ONLY this file.
  */
@@ -175,13 +176,16 @@
       'padding:0 22px;min-height:48px;margin-bottom:18px;background:' + GRAD + ';' +
       'box-shadow:0 1px 2px rgba(60,30,10,.10)}' +
     '.tb *{font-family:' + TBFONT + ';box-sizing:border-box}' +
-    '.tb-side{flex:1 1 0;min-width:0;display:flex;align-items:center}' +
+    /* Title reserves its own space (never shrinks/overlaps); nav fills the rest
+       and scrolls horizontally if the row is wider than the viewport. */
+    '.tb-side{flex:0 0 auto;display:flex;align-items:center}' +
     '.tb-left{justify-content:flex-start}' +
     '.tb-right{justify-content:flex-end}' +
     '.tb-site-title{flex-shrink:0;font-size:13px;font-weight:700;color:#fff;letter-spacing:.11em;' +
       'text-transform:uppercase;white-space:nowrap;text-decoration:none}' +
-    /* Nav scroller (center zone) — natural width, scrolls only if a narrow desktop forces it */
-    '.tb-inner{flex:0 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none}' +
+    /* Nav scroller (center zone) — fills remaining width; .tb-links centers within it
+       when it fits, scrolls when it does not (many-item bars). */
+    '.tb-inner{flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
     '.tb-links{display:flex;flex-wrap:nowrap;gap:3px;align-items:center;width:max-content;margin:0 auto}' +
     /* A nav item — links and dropdown buttons render IDENTICALLY (same size/weight) */
@@ -192,6 +196,8 @@
     '.tb-item:hover{color:#fff;background:rgba(255,255,255,.16)}' +
     '.tb-item.tb-active{color:#fff;background:rgba(255,255,255,.22);font-weight:600}' +
     '.tb-caret{font-size:9px;opacity:.85;transition:transform .18s;margin-left:1px}' +
+    /* Thin divider between groups of links (null entries in ITEMS) */
+    '.tb-sep{width:1px;height:18px;background:rgba(255,255,255,.28);flex-shrink:0;margin:0 3px}' +
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
     '.tb-dd.tb-open>.tb-item{color:#fff;background:rgba(255,255,255,.22)}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
@@ -368,6 +374,12 @@
   }
 
   ITEMS.forEach(function (item) {
+    if (item === null) {                 // separator between groups of links
+      var sep = document.createElement('span');
+      sep.className = 'tb-sep';
+      inner.appendChild(sep);
+      return;
+    }
     if (item.children) {
       inner.appendChild(buildDesktopGroup(item));
     } else {
@@ -400,6 +412,7 @@
   var openGroup = null;  // currently-expanded accordion group (one at a time)
 
   ITEMS.forEach(function (item) {
+    if (item === null) return;           // separators aren't shown in the mobile accordion
     if (item.children) {
       var grp = document.createElement('div');
       grp.className = 'tb-m-group';
