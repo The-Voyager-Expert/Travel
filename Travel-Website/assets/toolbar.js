@@ -103,44 +103,61 @@
      every label the same shape and size across the bar, flyouts, and mobile. */
   var TBFONT = "'Roboto','Helvetica Neue',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
 
-  /* ── Links ──────────────────────────────────────────────────────────────────
-     Two primary links + five category groups. Every page the site owns is
-     reachable here (brain_check enumerates these hrefs against Brain.md Part 1). */
+  /* ── Links ─────────────────────────────────────────────────────────────────
+     Every page the site owns is reachable here (brain_check enumerates these
+     hrefs against Brain.md Part 1). null entries render as separators. */
   var ITEMS = [
-    { href: base + 'Guides/Guides-Index.html',            text: '🌐 Guides' },
-    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps' },
     { group: '📆 Trips', children: [
         { href: base + 'Trip-Essentials/Trips.html',          text: '📆 Trips' },
         { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing' },
     ] },
-    { group: '✈️ Getting There', children: [
-        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',     text: '✈️ Delta — Seattle Hub' },
-        { href: base + 'Trip-Essentials/Delta-Routes-Full.html',    text: '🌐 Delta — Full Network' },
-        { group: '🚆 Trains', children: [
-            { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Train Guide' },
-            { href: base + 'Trip-Essentials/City-Transit-Cards.html',   text: '🚇 City Transit Cards' },
-        ] },
-        { href: base + 'Trip-Essentials/Lounges-US.html',           text: '💻 US Lounges' },
-        { href: base + 'Trip-Essentials/Lounges-Europe.html',       text: '💻 EU Lounges' },
+    null,
+    { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides' },
+    null,
+    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps' },
+    null,
+    { href: base + 'Trip-Essentials/Travel-Stats.html', text: '📊 Stats' },
+    null,
+    { group: '💻 Lounges', children: [
+        { href: base + 'Trip-Essentials/Lounges-US.html',     text: '💻 US Lounges' },
+        { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '💻 EU Lounges' },
     ] },
+    null,
+    { group: '🚆 Trains', children: [
+        { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Train Guide' },
+        { href: base + 'Trip-Essentials/City-Transit-Cards.html',   text: '🚇 City Transit Cards' },
+    ] },
+    null,
+    { group: '✈️ Flights', children: [
+        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
+        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
+    ] },
+    null,
+    { group: '🔌 Plugs', children: [
+        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
+        { href: base + 'Trip-Essentials/SIM-Cards.html',                        text: '📲 SIM Cards' },
+    ] },
+    null,
     { group: '💰 Money', children: [
         { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',  text: '🧾 Tipping' },
     ] },
+    null,
+    { href: base + 'Trip-Essentials/Time-Zones.html', text: '🕐 Time Zones' },
+    null,
     { group: '🌤️ Weather', children: [
-        { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ By Climate' },
-        { href: base + 'Trip-Essentials/Weather.html',        text: '🌡️ By City' },
+        { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ Browse by Climate' },
+        { href: base + 'Trip-Essentials/Weather.html',        text: '🌤️ Browse by City' },
     ] },
-    { group: '🧭 Essentials', children: [
-        { href: base + 'Trip-Essentials/Safety-Guide.html',                   text: '🛡️ Safety' },
-        { href: base + 'Trip-Essentials/Visas.html',                          text: '🪪 Visas' },
-        { href: base + 'Trip-Essentials/Time-Zones.html',                     text: '🕐 Time Zones' },
-        { href: base + 'Trip-Essentials/Travel-Stats.html',                   text: '📊 Travel Stats' },
-        { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',            text: '📅 Guide Days Coverage' },
-        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
-        { href: base + 'Trip-Essentials/SIM-Cards.html',                      text: '📲 SIM Cards' },
-        { href: base + 'Trip-Essentials/Before-You-Go.html',                  text: '📋 Before You Go' },
-        { href: base + 'Trip-Essentials/Resources.html',                      text: '🔗 Web Resources' },
+    null,
+    { href: base + 'Trip-Essentials/Safety-Guide.html', text: '🛡️ Safety' },
+    null,
+    { href: base + 'Trip-Essentials/Visas.html', text: '🪪 Visas' },
+    null,
+    { group: '⚙️ Resources', children: [
+        { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
+        { href: base + 'Trip-Essentials/Before-You-Go.html',         text: '📋 Before You Go' },
+        { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',   text: '📅 Guide Days Coverage' },
     ] },
   ];
 
@@ -188,6 +205,10 @@
       'transition:background .12s,color .12s}' +
     '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '}' +
     '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + ';font-weight:600}' +
+    /* Nested sub-group header inside a flyout */
+    '.tb-menu-sublabel{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;' +
+      'color:#a8987c;padding:9px 13px 3px;margin-top:2px;border-top:1px solid #f0ece4}' +
+    '.tb-menu-sublabel:first-child{border-top:0;margin-top:0}' +
     /* Scroll progress bar — hidden on mobile (overlaps toolbar) */
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:' + accent + ';' +
       'z-index:200;pointer-events:none;transition:width .08s linear}' +
@@ -226,6 +247,8 @@
       '.tb-m-sub a{display:flex;align-items:center;font-size:14px;font-weight:500;color:#4a463e;' +
         'text-decoration:none;padding:13px 18px 13px 34px;border-bottom:1px solid #efeae1}' +
       '.tb-m-sub a:last-child{border-bottom:0}' +
+      '.tb-m-sublabel{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;' +
+        'color:#a8987c;padding:12px 18px 5px 30px;border-bottom:1px solid #efeae1}' +
       '.tb-m-link:active,.tb-m-sub a:active{background:rgba(0,0,0,.045)}' +
       '.tb-m-link.tb-active,.tb-m-sub a.tb-active{color:' + accent + '}' +
       '.tb-m-link.tb-active{background:#faf6ee}' +
