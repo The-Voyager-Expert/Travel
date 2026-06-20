@@ -126,7 +126,7 @@ CHANGELOG = [
     ("2026-06-05", "A4 follow-up (Dani) — NEW global hard-fail: any bare ❗ (U+2757 not followed by U+FE0F) anywhere in a guide fails (regex ❗(?!️) over full html, including comments). Guarantees every ❗ — pill, section title, and each entry marker — uses +VS16; bare entries previously slipped through (entry parser startswith('❗️ ') silently skipped them). Caught + fixed a bare ❗ in Berlin's '<!-- ❗ HEADS UP -->' build comment. All guides re-swept: zero bare ❗ remain."),
     ("2026-06-05", "A4 (To Do List) — Heads Up icon glyph unified to +VS16 per Dani. Title check (_cg_title_exact) flipped from bare '❗ Heads Up' to '❗️ Heads Up' (U+2757+FE0F); comment + fail messages updated; pill expected-label map and icon-map check display string updated to +VS16 (pill compare already FE0F-normalized, so cosmetic). Entry parser unchanged (already required +VS16). CORE RULES docs (Trip Overview pill, Heads Up <h1> title) and all 16 guides carrying a Heads Up section migrated bare→+VS16; re-validated — title check passes, no Heads-Up-related failures introduced."),
     ("2026-06-05", "Deep-audit fix pass (Lane 1-5, non-CORE-RULES items). LANE 1: closer-format + logistic-row-parenthetical checks now match div bodies tolerant of inline markup (the old [^<]* grab skipped any row with a <strong>/<a>, a false negative); STOP_TYPE_ICONS gained bare 🎟; _day_idx prefix branch guarded to len>=3; pill-label compare FE0F-normalized; closer-format LABEL corrected to match regex+rule (ride-only 🚕 valid when walk>40min). LANE 2: T_NEW5 relaxed to any lowercase theme token (§2 'choose freely'); NEW T_NEW8 — CI title icon must not reuse a section-header icon (§2). (CI pill-label enforcement deliberately NOT added — unresolved fixed-vs-free contradiction parked in To Do List.) LANE 3: removed 2 dead always-pass checks (Day Trips 'always allowed', Day Trips 'section present'); collapsed 41 mislabeled Heads-Up 'section absent' placeholders (fired on spec-file-unreadable) to one honest line. LANE 5: Count Reference.html -> Guide Entry Counts.html in all check labels/comments. Verified via golden-master harness — only intended output changes, no new guide failures."),
-    ("2026-06-05", "REMOVED idx-coverage-all check (the 'all guide folders listed in guides_index.html' check / former Check B) — it scanned every Guides/ folder and hard-failed the guide under test whenever ANY sibling guide's HTML was absent from guides_index.html. With multiple cribs building guides concurrently, a sibling's in-progress or not-yet-indexed build is routinely present, so this check cross-failed essentially every guide for a condition the current guide cannot control. Index coverage is now fully self-scoped: idx-coverage-self (Check A, retained) verifies THIS guide is indexed, and guide_tools.py ship gate (_check_guide_indexed) enforces it at ship time per crib (per the 2026-06-02 'each crib checks only its own guide' decision). Empty _build-only folders never triggered the removed check (no top-level HTML); the trigger was always a concurrent shipped-but-unindexed sibling. Validator Index.html updated."),
+    ("2026-06-05", "REMOVED idx-coverage-all check (the 'all guide folders listed in Guides-Index.html' check / former Check B) — it scanned every Guides/ folder and hard-failed the guide under test whenever ANY sibling guide's HTML was absent from Guides-Index.html. With multiple cribs building guides concurrently, a sibling's in-progress or not-yet-indexed build is routinely present, so this check cross-failed essentially every guide for a condition the current guide cannot control. Index coverage is now fully self-scoped: idx-coverage-self (Check A, retained) verifies THIS guide is indexed, and guide_tools.py ship gate (_check_guide_indexed) enforces it at ship time per crib (per the 2026-06-02 'each crib checks only its own guide' decision). Empty _build-only folders never triggered the removed check (no top-level HTML); the trigger was always a concurrent shipped-but-unindexed sibling. Validator Index.html updated."),
     ("2026-06-05", "Robustness fix (validator audit): results.clear() added at the top of validate() — the module-level results list was never reset, so a second in-process validate() call would accumulate the prior run's entries and double-count the pass/fail/warn tally. Harmless under CLI single-call use; closes the latent bug for any future import/reuse. No check logic changed; _warn_ok_tags already reset at top of validate()."),
     ("2026-06-02", "Validator fix: _idx_hrefs uses dest-card class (was overview-day — guides_index was redesigned to use dest-card); map lookup now checks Trip-Essentials/Maps/ first; _INDEX_EXCLUDED_GUIDES emptied (Copenhagen + Edinburgh shipped)."),
     ("2026-06-02", "MAP PIN check added: FAIL if the guide's city name is not present as a PINS entry in Trip-Essentials/Europe Map.html or Trip-Essentials/US Map.html. Enforces Navigation.html § 5 step 5 (map pin rule added 2026-06-02). Check runs after the GUIDES INDEX coverage check. Companion changes: guide_tools.py ship gate (_check_guide_pinned), CLAUDE.md DriftyCat, Navigation.html § 5, Ship Checklist.html § 11, Validator Index.html."),
@@ -152,7 +152,7 @@ CHANGELOG = [
     ("2026-05-19", "CSS check flipped: text-transform:lowercase on <a> is now banned (was: required with exemptions)"),
     ("2026-05-19", "Stale stamp check: FAIL if guide edited after last validation stamp (mtime > stamp + 60s grace) — REMOVED 2026-05-26 at Dani's request; fired on every edit, noise without value."),
     ("2026-05-19", "Title drift check: <title> must be plain place name — no year/month/season/duration/'Travel Guide'"),
-    ("2026-05-19", "Title/index sync check: <title> must exactly match guides_index.html entry (number prefix stripped)"),
+    ("2026-05-19", "Title/index sync check: <title> must exactly match Guides-Index.html entry (number prefix stripped)"),
     ("2026-05-19", "🏛️ strict regex extended: optional trailing parenthetical qualifier allowed (Option B consolidated hours)"),
     ("2026-05-19", "3+ consecutive 🏛️ rows check: must be consolidated to Option B format — hard fail"),
     ("2026-05-19", "Logistic-row parenthetical check: 🏛️ rows excluded (Option B qualifier allowed; checked by _HRS_STRICT_RE)"),
@@ -273,20 +273,20 @@ CHANGELOG = [
     ("2026-05-30", '"→ time from hotel" global template-leakage check added — guide-wide hard fail (not just Tours section) when the literal phrase "time from hotel" appears anywhere in shipped HTML. Covers all sections: Tours, day blocks, stops. Scans after stripping <script>/<style>/comments. Per Tours - Extra Section.html § 4.'),
     ("2026-05-29", "TOOLBAR section added (TB-1 through TB-8): TB-1 toolbar-mount div present; TB-2 data-depth='2' for Guides pages; TB-3 data-maxwidth='940' for guides; TB-4 toolbar.js script tag present with correct ../../toolbar.js path; TB-5 toolbar-mount appears before .title-page (toolbar is first item inside .container — all guides place it there, not outside the container); TB-6 script tag immediately follows mount div (closing </div> + whitespace only between); TB-7/TB-8 data-prev/data-next (when present) are relative intra-Guides paths (../CityName/file.html), never external URLs — prev/next stay inside Guides/. 'Nothing before .title-page' check updated to exempt toolbar mount + script. ↑ back-to-top button (.tb-top) is JS-generated at runtime — not in source HTML, not validated. Source: Brain/Reference/Toolbar.html."),
     ("2026-05-29", "TB-9 added — footer sharing link check: every shipped guide must include a centered div containing dbellinello.github.io/travel_guides/Guides/{City}/{file}.html as the last element before </body>. Cosmetic public URL for sharing. Rule added to Toolbar.html §6; Rules for Claude.html §4 publishing section updated to reference it."),
-    ("2026-05-29", "TB-7/TB-8 updated — data-prev/data-next now accept both ../ (guide→guide or guide→index) and ./ (index→guide) relative paths. guides_index.html added to the guide cycle as a full stop between Marrakech and Bend."),
+    ("2026-05-29", "TB-7/TB-8 updated — data-prev/data-next now accept both ../ (guide→guide or guide→index) and ./ (index→guide) relative paths. Guides-Index.html added to the guide cycle as a full stop between Marrakech and Bend."),
     ("2026-05-30", "Tram template: accept 'Lines' as well as 'Line(s)' — global parentheses ban conflicts with original template literal; both forms now pass."),
     ("2026-05-31", "TB-10 added — carousel chain check: every depth-2 guide page must have both data-prev and data-next on its toolbar-mount (being in the carousel is mandatory, not optional); chain must also be bidirectionally consistent (prev.data-next and next.data-prev must both resolve back to this guide). Catches the Alaska failure mode: guide listed in guides_index but unreachable via ←/→ because toolbar-mount had no prev/next. urllib.parse.unquote added to imports for %20-encoded paths."),
     ("2026-05-30", "TB-9 rewritten — the footer sharing link is now INJECTED by toolbar.js (one definition for every page) instead of a per-file inline div. Each page links to its own live URL (location-based), so it is repo-rename-proof. TB-9 now passes when a guide loads toolbar.js AND has no stale inline footer div; it fails on a leftover hardcoded github.io footer. Triggered by the GitHub repo rename travel_guides → Travel and footer centralization. Toolbar.html §5 rewritten to match."),
-    ("2026-06-06", "TOOLBAR HOME MOVED INSIDE Guides/ — toolbar.js and footnote.js now live at Guides/toolbar.js and Guides/footnote.js, PERMANENTLY. They must never be moved back to Travel root. TB-4 updated: guide pages load <script src=\"../toolbar.js\"> (1 level up to Guides/), not ../../. toolbar.js loads footnote.js from {base}Guides/footnote.js. Non-guide pages: depth-1 pages use ../Guides/toolbar.js, depth-2 pages outside Guides/ use ../../Guides/toolbar.js, guides_index.html uses toolbar.js. brain_check.py fails if either script is missing from Guides/ or a stray copy reappears at Travel root. Source: Brain/Reference/Toolbar.html §1."),
+    ("2026-06-06", "TOOLBAR HOME MOVED INSIDE Guides/ — toolbar.js and footnote.js now live at Guides/toolbar.js and Guides/footnote.js, PERMANENTLY. They must never be moved back to Travel root. TB-4 updated: guide pages load <script src=\"../toolbar.js\"> (1 level up to Guides/), not ../../. toolbar.js loads footnote.js from {base}Guides/footnote.js. Non-guide pages: depth-1 pages use ../Guides/toolbar.js, depth-2 pages outside Guides/ use ../../Guides/toolbar.js, Guides-Index.html uses toolbar.js. brain_check.py fails if either script is missing from Guides/ or a stray copy reappears at Travel root. Source: Brain/Reference/Toolbar.html §1."),
     ("2026-05-30", "CORE RULES integrity guard hardened — the checksum loop now re-reads a file (2 retries, 0.25s apart) before recording a mismatch. The CORE RULES files stream from Google Drive File Stream; a cold read of a not-yet-hydrated file returned partial bytes and produced a spurious hash mismatch, which failed the ship-gate at random on the first run of a session (observed: Oslo 671/2-fail on cold run, 673/0 on every warm run). A real unauthorized edit never self-heals, so the retry only clears hydration flakes. Found in the 2026-05-30 validator audit."),
     ("2026-05-31", "Train Day destination ≠ guide city check added — hard fail when a 'Day N — Train Day — {City}' header lists the guide's own city as the destination. Stops Structure.html §3c defines Train Day as a round-trip to ANOTHER city; a self-referential Train Day is nonsensical."),
     ("2026-05-31", "Day Trips destination conflict check added — hard fail when a Day Trips entry lists (A) the guide's own city or (B) a city already covered in the itinerary. Suggesting a city you are already visiting is redundant regardless of how it is structured. City comparison is case-insensitive; travel-time suffix stripped before compare."),
     ("2026-05-31", "Link-color allowlist updated for 2026-05-31 CSS design token changes: CANONICAL_LINK_BLUE #2867c4 → #8a6c1a (global link color changed to gold in guide_v2.css); toolbar-nav/essentials expected color #3d5f80 → #6b4422 (--c-title-bg warm chestnut); #tours .extras-sub a and .title-page .title-address a added to allowlist."),
     ("2026-05-31", "Day Trips duplicate-destination check label updated — removed incorrect framing 'Train Day is a full itinerary day, not an optional excursion' (Train Days and Day Trips have the same time requirements; the only reason to exclude is redundancy with the planned itinerary)."),
     ("2026-05-31", "Getting Around icon allowlist expanded: 🚢 (Ferry) added to _GA_ALLOWED_ICONS alongside 🚕 🚎 🚝. Getting Around - Extra Section.html §4 defines ferry as a valid subsection when a ferry route is relevant to in-city travel. 🚢 is not added to the GA drift check because it is also a legitimate motion banner icon used elsewhere in guides."),
-    ("2026-05-31", "idx-coverage-self + idx-coverage-all: FAIL if this guide or any guide folder is absent from guides_index.html — unlisted guide is invisible to carousel and navigation"),
-    ("2026-05-31", "carousel-alpha: FAIL if carousel chain (data-guide-next in guides_index.html) is not in pure global A\u2192Z order by city name (diacritics normalized). Carousel ignores region grouping used by the index."),
-    ("2026-05-31", "guides_index.html alphabetical order check added — within each .overview-section (region), guides must be in alphabetical order by city name (case-insensitive, diacritics normalized: Ålesund → Alesund, Montréal → Montreal). One violation reported per out-of-order region. Rule added to Navigation.html §4."),
+    ("2026-05-31", "idx-coverage-self + idx-coverage-all: FAIL if this guide or any guide folder is absent from Guides-Index.html — unlisted guide is invisible to carousel and navigation"),
+    ("2026-05-31", "carousel-alpha: FAIL if carousel chain (data-guide-next in Guides-Index.html) is not in pure global A\u2192Z order by city name (diacritics normalized). Carousel ignores region grouping used by the index."),
+    ("2026-05-31", "Guides-Index.html alphabetical order check added — within each .overview-section (region), guides must be in alphabetical order by city name (case-insensitive, diacritics normalized: Ålesund → Alesund, Montréal → Montreal). One violation reported per out-of-order region. Rule added to Navigation.html §4."),
     ("2026-06-01", ".title-hotel banned suffix check added: hard-fail when .title-hotel text ends with a generic accommodation word (Home, House, Apartment, Airbnb, Condo, Villa, Cottage, Cabin, Rental Home). Property name only — accommodation type is implicit. Bend guide fixed: 'Sunriver Rental Home' → 'Sunriver Rental'. No other guides affected."),
     ("2026-06-01", "Hotel banner formatting enforcement added: (1) .title-address must not contain <strong>/<b> or inline font-weight:bold — address is plain weight, subordinate to hotel name; (2) .title-hotel must not have an inline style stripping its bold (font-weight:normal/400/etc.) — hotel name is the primary label and must remain bold. Both checks enforce the guide_v3.css hierarchy: city (large bold) > hotel name (medium bold) > address (small plain). Per Hotel Banner.html §1."),
     ("2026-06-01", "Link-color allowlist restored: CANONICAL_LINK_BLUE #8a6c1a → #2867c4 (guide_v3.css restored --c-link to blue on 2026-06-01; validator not updated at the time — fixed now). #tours .extras-sub a allowlist entry updated to match (#8a6c1a → #2867c4). .index-banner-sub a remains #8a6c1a (--c-purple unchanged). Toolbar colors (#6b4422) unchanged."),
@@ -296,7 +296,7 @@ CHANGELOG = [
     ("2026-06-05", "TILDE BAN CONSOLIDATED to a single global check with ONE carve-out (⏰ Avg Time Spent). Drift fixed: Icon Order and Format.html showed `⏳ ~45 min` — wrong; ⏳ Duration is exact (`⏳ 45 min`), the tilde belongs to ⏰ only. The former per-section tilde scans (banner body, Weekly Closures WC-X6, Local Tastes, Shows 🗒, Pickleball, Heads Up note/heading) were removed — all now covered by the one GLOBAL TILDE BAN, broadened from `~\\d` to any `~` not immediately preceded by ⏰. Leftover `~?` tolerances stripped from 🚶/🚕 motion-parse regexes and cappuccino negative-finding sentinels. CORE RULES updated: Icon Order (⏳ examples + Tilde rule note), Rules for Claude.html §6. CLAUDE.md, Validator Index, Rule Dependencies updated to match."),
     ("2026-06-05", "TERMINOLOGY CLEANUP (Dani): the word 'gotcha' is removed everywhere — the section is 'Heads Up' and its detail field is '[Note]'. All validator labels/comments/vars renamed gotcha→note / 'Cities Gotchas'→'Heads Up'. CORE RULES (Heads Up Extra Section, Icon Order) field renamed [Gotcha]→[Note]; Rules for Claude PDF line 'all gotchas'→'all edge cases'. Swept across Reference docs, mds, CLAUDE.md, guide comments, and CSS comments."),
     ("2026-06-05", "DECISION LOCKS extended (so renames cannot drift back): (5) literal 'Trip at a Glance' anywhere in a guide hard-fails — the section is 'Trip Overview'; (6) 'Gotcha(s)' wording hard-fails — the section is 'Heads Up'. From-Hotel casing already locked by the case-sensitive `🏨 From Hotel:` titlecase check. All all-caps 'FROM HOTEL' literals removed from active rules/refs (historical decision/audit entries reworded to 'uppercase → titlecase')."),
-    ("2026-06-05", "FINAL GATE relocated to the very END of validation (Dani): the two membership checks — guide listed in guides_index.html AND city pinned in a continent map — now run last, as the final gate, instead of mid-run. A guide fails for a missing index entry / map pin only at the end. Self-contained block (recomputes paths); the mid-validation copies were removed (CAROUSEL keeps its own _idx_html2)."),
+    ("2026-06-05", "FINAL GATE relocated to the very END of validation (Dani): the two membership checks — guide listed in Guides-Index.html AND city pinned in a continent map — now run last, as the final gate, instead of mid-run. A guide fails for a missing index entry / map pin only at the end. Self-contained block (recomputes paths); the mid-validation copies were removed (CAROUSEL keeps its own _idx_html2)."),
     ("2026-06-05", "HEADS UP false-positive fixed: trip-city↔Heads Up entry matching was a bare substring scan, which fired 'nice' inside 'venice' — Venice wrongly required a Heads Up section it has no entry for. Switched to a word-boundary regex match (\\b…\\b); still matches compound titles like 'PASADENA & GREATER LA' → 'Pasadena'."),
     ("2026-06-06", "Underline ban re-homed to Links.html § 8 (Dani-approved): the rule lost its CORE RULES home when Icon Order § 6 was dropped in a rewrite. New § 8 added to Links.html; check label + comment now cite Links.html § 8. Check logic unchanged."),
     ("2026-06-06", "Label fix only — inline-underline check cited Icon Order and Format.html § 6, a section that no longer exists (file now has §§ 1–4). Label now cites the guide_v3.css global a/a:visited rule. Check logic unchanged."),
@@ -814,7 +814,7 @@ def validate(html: str, filename: str):
     check(
         'Guide has a <title> tag with non-empty content',
         has_title,
-        'No <title> tag found or empty — add one matching the guides_index.html entry. '
+        'No <title> tag found or empty — add one matching the Guides-Index.html entry. '
         'Per Guide Structure.html',
     )
 
@@ -1014,10 +1014,10 @@ def validate(html: str, filename: str):
     # the file pointed to by data-prev must have a data-next that resolves back
     # to THIS guide, and the file pointed to by data-next must have a data-prev
     # that resolves back to THIS guide. This catches the Alaska failure mode:
-    # a guide can appear in guides_index.html yet be unreachable by ←/→ arrows
+    # a guide can appear in Guides-Index.html yet be unreachable by ←/→ arrows
     # because its toolbar-mount has no prev/next, or because the adjacent guides
     # in the chain don't point back to it. Only runs for depth-2 guide pages
-    # (guides_index.html, depth=1, is not a validated guide page).
+    # (Guides-Index.html, depth=1, is not a validated guide page).
     # Source: Navigation.html § 2–§3.
     _tb10_is_depth2 = bool(_tb_mount_m and re.search(r'data-depth\s*=\s*"2"', _tb_mount_m.group(0)))
     if _tb10_is_depth2:
@@ -19576,7 +19576,7 @@ def validate(html: str, filename: str):
     )
 
     # ─── GUIDES INDEX — TITLE-ONLY ENTRIES + BLUE BANNER ─────────────────────
-    # Per Dani 2026-05-19: `Guides/guides_index.html` carries:
+    # Per Dani 2026-05-19: `Guides/Guides-Index.html` carries:
     #   • One `.title-page` blue banner at the top (e.g. "MY TRAVEL GUIDES")
     #   • One `.overview-section` per region with a `.overview-title` heading
     #   • One `<a class="overview-day">` per shipped guide, containing EXACTLY
@@ -19584,7 +19584,7 @@ def validate(html: str, filename: str):
     #     else (no `.overview-day-stops` editorial tagline, no description divs,
     #     no trailing text). Tagline drift killed at the validator level.
     print("\n── GUIDES INDEX — title-only entries + blue banner ──")
-    _idx_path = Path(filename).resolve().parent.parent / 'guides_index.html'
+    _idx_path = Path(filename).resolve().parent.parent / 'Guides-Index.html'
     _idx_violations: list[str] = []
     if _idx_path.is_file():
         _idx_html = _idx_path.read_text(encoding='utf-8', errors='ignore')
@@ -19667,7 +19667,7 @@ def validate(html: str, filename: str):
                     )
                     break  # one violation per region is enough to signal the problem
     else:
-        _idx_violations.append(f'guides_index.html not found at {_idx_path}')
+        _idx_violations.append(f'Guides-Index.html not found at {_idx_path}')
     check(
         'GUIDES INDEX — top blue banner present + every entry is title-only '
         '(no `.overview-day-stops` tagline, no description, no trailing text; '
@@ -19680,17 +19680,17 @@ def validate(html: str, filename: str):
 
 
     # ─── GUIDES INDEX — guide present in index ────────────────────────────────
-    # Every guide HTML that exists in Guides/ must be listed in guides_index.html.
+    # Every guide HTML that exists in Guides/ must be listed in Guides-Index.html.
     # Hard-fail: a guide not in the index is invisible to navigation and the
     # carousel — it effectively does not exist for the reader.
     # Check A: this guide is in the index.
     # Check B: scan ALL Guides/ folders — any guide HTML absent from index fails.
     print("\n── GUIDES INDEX — coverage check ──")
     _guides_root = Path(filename).resolve().parent.parent  # Guides/
-    _idx_path2 = _guides_root / 'guides_index.html'
+    _idx_path2 = _guides_root / 'Guides-Index.html'
 
     def _idx_hrefs(idx_html):
-        """Return set of normalized href paths from guides_index.html overview-day links."""
+        """Return set of normalized href paths from Guides-Index.html overview-day links."""
         import unicodedata as _ud2
         hrefs = set()
         for _m in re.finditer(
@@ -19709,13 +19709,13 @@ def validate(html: str, filename: str):
 
     # ─── CAROUSEL — globally alphabetical order ───────────────────────────────
     # The ←/→ carousel chain must follow pure A→Z order across ALL guides
-    # (city name, diacritics normalized). Within guides_index.html guides are
+    # (city name, diacritics normalized). Within Guides-Index.html guides are
     # grouped by region; the carousel ignores regions and is strictly A→Z.
     # Rule: Navigation.html — added 2026-05-31.
     print("\n── CAROUSEL — global alphabetical order ──")
     _carousel_violations: list[str] = []
     if _idx_path2.is_file():
-        # Build ordered list: walk data-guide-next chain from guides_index.html
+        # Build ordered list: walk data-guide-next chain from Guides-Index.html
         # Each overview-day has href + data-guide-next; reconstruct the full sequence
         # by following next pointers. Also extract city name for each.
         import unicodedata as _ud3
@@ -24895,11 +24895,11 @@ def validate(html: str, filename: str):
         f'title must be the city/place name only, matching the index entry.',
     )
 
-    # Rule 2: <title> must match the guide's entry in guides_index.html
+    # Rule 2: <title> must match the guide's entry in Guides-Index.html
     # (number prefix stripped). If the index says "Bend Area, Oregon" then
     # the guide title must be exactly "Bend Area, Oregon". Any divergence
     # means either the index or the guide was updated without syncing the other.
-    _index_path = Path(filename).parent.parent / "guides_index.html"
+    _index_path = Path(filename).parent.parent / "Guides-Index.html"
     if _index_path.exists():
         _index_html = _index_path.read_text(encoding='utf-8')
         # Build relative href that would appear in the index: ./City/filename.html
@@ -24915,7 +24915,7 @@ def validate(html: str, filename: str):
             # Strip leading number prefix "N · " if present
             _index_entry = re.sub(r'^\d+\s*·\s*', '', _entry_m.group(1).strip())
             check(
-                'Guide <title> matches its guides_index.html entry '
+                'Guide <title> matches its Guides-Index.html entry '
                 '(index is the canonical name — drift caught 2026-05-19)',
                 _title_text == _index_entry,
                 f'<title> is "{_title_text}" but index entry is "{_index_entry}" — '
@@ -24928,7 +24928,7 @@ def validate(html: str, filename: str):
     # longer warns when the file mtime is newer than the stamp.
     # ════════════════════════════════════════════════════════════════════════
     # FINAL GATE — runs LAST. A guide FAILS at the end of validation if it is
-    # not listed in guides_index.html OR not pinned in a continent map. These two
+    # not listed in Guides-Index.html OR not pinned in a continent map. These two
     # are deliberately the final checks (Dani 2026-06-05): the index entry and the
     # map pin are wired in at the very end of a build, so this gate is what
     # confirms the guide is fully connected to navigation. Only here — not mid-run.
@@ -24936,7 +24936,7 @@ def validate(html: str, filename: str):
     print("\n══ FINAL GATE — guides_index + map pin (end of validation) ══")
     _fg_guide   = Path(filename).resolve()
     _fg_root    = _fg_guide.parent.parent                       # Guides/
-    _fg_idx     = _fg_root / "guides_index.html"
+    _fg_idx     = _fg_root / "Guides-Index.html"
     _fg_city    = _fg_guide.parent.name
     _fg_rel     = str(_fg_guide.relative_to(_fg_root))
     _fg_in_index = False
@@ -24950,10 +24950,10 @@ def validate(html: str, filename: str):
         }
         _fg_in_index = _fg_rel in _fg_hrefs
     check(
-        "FINAL GATE — guide is listed in guides_index.html "
+        "FINAL GATE — guide is listed in Guides-Index.html "
         "(end-of-validation gate; unlisted guide = invisible to navigation + carousel)",
         _fg_in_index,
-        f"Guide not found in guides_index.html: {_fg_rel}" if not _fg_in_index else "",
+        f"Guide not found in Guides-Index.html: {_fg_rel}" if not _fg_in_index else "",
     )
     _fg_ess = _fg_guide.parent.parent.parent / "Trip-Essentials"
     _fg_map_names = ("Europe-Map.html","US-Map.html","Asia-Map.html",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 validate_flight_index.py — integrity checks for the "By flight time from Seattle"
-view in Travel-Website/Guides/guides_index.html (the FMAP data block + its colours).
+view in Travel-Website/Guides/Guides-Index.html (the FMAP data block + its colours).
 
 Enforces, in one place, every rule this feature depends on:
   • FMAP parses as JSON; every entry has the exact schema (t,m,r,d,i,h,rg,o).
@@ -26,7 +26,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent                       # …/Travel
-INDEX = ROOT / "Travel-Website" / "Guides" / "guides_index.html"
+INDEX = ROOT / "Travel-Website" / "Guides" / "Guides-Index.html"
 SEA   = ROOT / "Travel-Website" / "Trip-Essentials" / "Delta-Routes-SEA.html"
 
 REQUIRED_KEYS = {"t", "m", "r", "d", "i", "h", "rg", "o"}
@@ -106,7 +106,7 @@ def main():
     # ---- FMAP ----
     m = re.search(r"var FMAP = (\{.*?\});", html)
     if not m:
-        FAIL("FMAP object not found in guides_index.html")
+        FAIL("FMAP object not found in Guides-Index.html")
         report(); return
     try:
         fmap = json.loads(m.group(1))

@@ -1,6 +1,6 @@
 # Status Dots — guides_index
 
-Source-of-truth for the been / want-to-go markers on `guides_index.html`.
+Source-of-truth for the been / want-to-go markers on `Guides-Index.html`.
 Edit the checklist below, and Claude syncs the dots into the index from it.
 
 ## What the dots mean
@@ -268,7 +268,7 @@ _(none — all known stalled builds have shipped HTML as of 2026-06-15)_
 
 The legend row (right-aligned) shows a live total: **`N guides · N countries · N visited · N on the list`**.
 
-It's computed by a small script at the bottom of `guides_index.html` — it counts every `.dest-card`, counts the ones with `data-status="want"`, and derives visited = total − want. Nothing to update by hand: add a guide or clear a dot and the numbers re-derive on load. The markup is `<span class="legend-count" id="guide-count">` inside `.status-legend`.
+It's computed by a small script at the bottom of `Guides-Index.html` — it counts every `.dest-card`, counts the ones with `data-status="want"`, and derives visited = total − want. Nothing to update by hand: add a guide or clear a dot and the numbers re-derive on load. The markup is `<span class="legend-count" id="guide-count">` inside `.status-legend`.
 
 ## Keeping it in sync
 

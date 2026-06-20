@@ -46,7 +46,7 @@ Last updated: 2026-05-30
 - [x] validate_itinerary.py passes (687 passed, 0 failed)
 - [x] every extra populated or carries negative-finding line
 - [x] guide_tools.py ship passes (687 + 9 + 39 + 16 passed, 0 failed)
-- [x] Added to guides_index.html as guide #23
+- [x] Added to Guides-Index.html as guide #23
 
 ## Notes
 - Hotel: La Quinta Resort & Club · 49-499 Eisenhower Dr · La Quinta

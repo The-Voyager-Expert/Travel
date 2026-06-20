@@ -47,4 +47,4 @@ Last updated: 2026-05-30
 - [x] verify_urls.py passes (90 ✅ 0 ❌)
 - [x] verify_booking_links.py passes (23 ✅ 0 ❌)
 - [x] every extra populated or carries negative-finding line
-- [x] guides_index.html updated
+- [x] Guides-Index.html updated

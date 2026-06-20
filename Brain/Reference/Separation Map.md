@@ -28,7 +28,7 @@ Each doc has ONE job. If a topic isn't listed under a file, it doesn't go there.
 - The shared footnote — ⛔ retired 2026-06-06 (was: sharing link on every page, auto-loaded by `toolbar.js`); retired mechanics kept in Navigation.html § 1 for the re-enable path
 - `data-prev` / `data-next` attributes on the toolbar mount div (guide pages only)
 - Chain integrity rule (bidirectional consistency — predecessor's next must match successor's prev)
-- `guides_index.html` wiring (matching `data-guide-prev` / `data-guide-next` on index cards)
+- `Guides-Index.html` wiring (matching `data-guide-prev` / `data-guide-next` on index cards)
 - Procedure for inserting a new guide into the chain (5 steps, all in one pass — see Navigation.html § 5)
 - Scroll progress bar and scroll button (passive aids on every page)
 - Guides index full-text content search (§ 8 — search index file existence and staleness check; added 2026-06-14)

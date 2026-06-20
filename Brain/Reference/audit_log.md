@@ -31,7 +31,7 @@
 
 **Two additional ship-gate checks added (same session, owner-approved):**
 - `_check_guide_in_status_dots()` — hard-fail at ship time if city folder name not present anywhere in Status Dots — guides_index.md. Catches "never added to dot tracker at all" (complementary to the brain_check stalled-builds check). Wired into guide_tools.py ship gate after `_check_guide_pinned`.
-- `_check_guide_fmap()` — hard-fail at ship time if city folder name not found in guides_index.html `var FMAP` block. Catches guide shipped without flight-time view entry. Wired into guide_tools.py ship gate after `_check_guide_in_status_dots`.
+- `_check_guide_fmap()` — hard-fail at ship time if city folder name not found in Guides-Index.html `var FMAP` block. Catches guide shipped without flight-time view entry. Wired into guide_tools.py ship gate after `_check_guide_in_status_dots`.
 - Both verified: Amsterdam passes both; FakeCity hard-fails both with actionable error messages.
 - Cleanliness Checks.md #415 and #416 added · Validator Index.html ship gate section added.
 
@@ -366,7 +366,7 @@ Sorrento v1 · validated 2026-06-12 01:22 · ✅ 703 passed / 0 failed
 
 **Build.** Oahu v1 · validated 2026-06-11 · ✅ 698 passed / 0 failed. Hotel: Halekulani · 2199 Kālia Rd · Waikiki. Day 1: USS Arizona Memorial · Nuʻuanu Pali Lookout · Hanauma Bay Nature Preserve · Diamond Head State Monument. 4 Commons photos local in _build/assets.
 
-**Ship.** Inserted into carousel between Nice and Orlando. Added to US section of guides_index.html (21 guides). Pinned on US Map.html at [-157.85, 21.30]. guide_v3.css theme-coral / theme-sage / theme-green toolbar link-color vars aligned to allowlist.
+**Ship.** Inserted into carousel between Nice and Orlando. Added to US section of Guides-Index.html (21 guides). Pinned on US Map.html at [-157.85, 21.30]. guide_v3.css theme-coral / theme-sage / theme-green toolbar link-color vars aligned to allowlist.
 
 ## 2026-06-11 — Big Island v1 build + ship (2 days)
 
@@ -374,7 +374,7 @@ Sorrento v1 · validated 2026-06-12 01:22 · ✅ 703 passed / 0 failed
 
 **Sections.** Tours ships 5 Viator entries (low-count: island is a small market). Cappuccino: negative-finding (no walkable café within 25 min). Restaurants Near Hotel: 1 entry — hotel is an isolated resort; 'Ulu Ocean Grill excluded (seafood-only rule). Downtown (Historic Kailua Village): 5 entries. Local Tastes: Poke · Kona Coffee · Plate Lunch · Loco Moco. Food Delivery: Uber Eats · DoorDash. Shows: Island Breeze Luau. Getting Around: Uber + no tram + no ferry. Train Stations: negative-finding. Day Trips: negative-finding (no rail). Michelin: negative-finding. Claude Inspiration: theme-teal — active volcano → black-sand beach → manta rays → Mauna Kea.
 
-**Index + maps.** guides_index.html: Big Island added to United States section (20 guides). Carousel chain Berlin → Big Island → Bordeaux rewired in guides_index, both guide HTML toolbar files, and toolbar of each neighbour. US Map pin added at lon −155.50 lat 19.60.
+**Index + maps.** Guides-Index.html: Big Island added to United States section (20 guides). Carousel chain Berlin → Big Island → Bordeaux rewired in guides_index, both guide HTML toolbar files, and toolbar of each neighbour. US Map pin added at lon −155.50 lat 19.60.
 
 ## 2026-06-11 — Santiago v1 build + ship (3 days)
 
@@ -382,7 +382,7 @@ Sorrento v1 · validated 2026-06-12 01:22 · ✅ 703 passed / 0 failed
 
 **Sections.** Tours ships 2 Viator + 3 GYG + 1 TripAdvisor (low-count sentinel). Restaurants Near Hotel: 6 entries (1 hotel + 5 walk-distance). Downtown: 5 entries. Local Tastes: Pastel de choclo · Empanadas de pino · Pisco Sour. Food Delivery: Rappi · PedidosYa. Shows: Teatro Municipal + Movistar Arena. Getting Around: Metro Santiago + Cabify/inDriver (no Uber). Stations: Baquedano (L1/L5) · Bellas Artes (L5). Day Trips: Valparaíso (1h30m) · Rancagua (1h10m). Michelin: negative-finding. Weekly Closures: Museums closed Monday.
 
-**Index + maps.** guides_index.html: Santiago added as first Chile guide (new country block). Carousel chain San Sebastian → Santiago → Scottsdale rewired in guides_index, both guide HTML toolbar files, and toolbar of each neighbour. South America Map pin added at lon −70.6693 lat −33.4489.
+**Index + maps.** Guides-Index.html: Santiago added as first Chile guide (new country block). Carousel chain San Sebastian → Santiago → Scottsdale rewired in guides_index, both guide HTML toolbar files, and toolbar of each neighbour. South America Map pin added at lon −70.6693 lat −33.4489.
 
 ## 2026-06-11 — Cayman Islands v1 build + ship (2 days)
 
@@ -390,7 +390,7 @@ Sorrento v1 · validated 2026-06-12 01:22 · ✅ 703 passed / 0 failed
 
 **Sections.** Tours ships 4 Viator entries (low-count: island is a small market). Cappuccino ships 3 entries (low-count: resort corridor). Restaurants Near Hotel ships 5 (2 hotel + 3 walk). Downtown ships 5. Local Tastes: Conch Fritters · Tortuga Rum Cake · Fish Rundown. Food Delivery: Let's Eat · Bento. Shows negative-finding. Getting Around: Drift/Island GO (no Uber/Lyft). Train Stations negative-finding. Day Trips negative-finding (no rail network). Michelin negative-finding. Claude Inspiration: "The Stingray Agreement" + Blue Iguana recovery.
 
-**Index + maps.** guides_index.html: Cayman Islands added as new country block between Canada and China. Carousel chain Cascais → Cayman Islands → Chicago rewired in guides_index, both guide HTML toolbar files, and toolbar of each neighbour. US Map pin added at lon −81.24 lat 19.31.
+**Index + maps.** Guides-Index.html: Cayman Islands added as new country block between Canada and China. Carousel chain Cascais → Cayman Islands → Chicago rewired in guides_index, both guide HTML toolbar files, and toolbar of each neighbour. US Map pin added at lon −81.24 lat 19.31.
 
 ## 2026-06-10 — Rules for Claude.html: two approved CORE RULES edits applied
 
@@ -414,7 +414,7 @@ Sorrento v1 · validated 2026-06-12 01:22 · ✅ 703 passed / 0 failed
 
 **Sections.** Tours ships 4 entries (1 Viator · 2 GYG · 1 TripAdvisor) — Zhangjiajie's market is dominated by private tours (excluded); low-count comments in place. Cappuccino, Restaurants Near Hotel, Downtown, Day Trips by Train, Michelin ship negative-finding lines (reasons in low-count comments). Shows ships Charming Xiangxi. Heads Up / Pickleball / Skip List don't ship.
 
-**Index + maps.** guides_index.html: Zhangjiajie added to the existing China section (Chongqing landed from a sibling crib mid-session — duplicate China section I created was merged away), chain Vienna → Zhangjiajie → Zürich rewired in both index cards and the two neighbour guide files, data-guide-num renumbered to document order, banner corrected to live counts (66 guides · 27 countries — the old 64·26 was stale even before this ship). Asia Map pin added.
+**Index + maps.** Guides-Index.html: Zhangjiajie added to the existing China section (Chongqing landed from a sibling crib mid-session — duplicate China section I created was merged away), chain Vienna → Zhangjiajie → Zürich rewired in both index cards and the two neighbour guide files, data-guide-num renumbered to document order, banner corrected to live counts (66 guides · 27 countries — the old 64·26 was stale even before this ship). Asia Map pin added.
 
 **Working-surface fixes.** verify_urls.py: klook.com added to BOT_BLOCKED_HOSTS (Platforms.md marks Klook ⚡; the 403 was a bot-block, per the script's own cascade step 1).
 
@@ -528,7 +528,7 @@ Orlando v1 · validated 2026-06-06 13:59 · ✅ 745 passed / 0 failed [7 warning
 
 4. **DOCUMENTED + FLAGGED — `european train guide.html` at Travel root.** 97 KB standalone reference doc (created 2026-05-30), absent from Brain.md Part 1. Documented in the root table; flagged for owner — likely belongs in `Trip-Essentials/` or `On Demand/`; not moved (non-stray file moves get a confirm).
 
-5. **FLAGGED — `Brain/Reference/Status Dots — guides_index.md` (created 2026-06-06 01:54).** Source-of-truth checklist for been/want-to-go dots on guides_index.html. Brain/Reference/ is a fixed 2-file set ("no new files without explicit permission") and no approval record exists in audit_log or the To Do List. Documented in Brain.md mds table with ⚠️; awaiting Wifey's call — bless or relocate. Not moved (may be another crib's owner-requested work this morning).
+5. **FLAGGED — `Brain/Reference/Status Dots — guides_index.md` (created 2026-06-06 01:54).** Source-of-truth checklist for been/want-to-go dots on Guides-Index.html. Brain/Reference/ is a fixed 2-file set ("no new files without explicit permission") and no approval record exists in audit_log or the To Do List. Documented in Brain.md mds table with ⚠️; awaiting Wifey's call — bless or relocate. Not moved (may be another crib's owner-requested work this morning).
 
 6. **PARKED — 3 standing doc_workshop errors, all CORE RULES files** (present since ≥2026-06-05, checksums blessed with the errors in): Tickets.html E15 ("booking link" in visible text → propose "booking URL"); Claude Inspiration - Extra Section.html E15 ("pill that links here" → propose "pill pointing here"); Trip Overview.html E16 (two `<em>` tags in §8 → propose strip tags, keep words). Proposals parked in 🔧 Rules for Update.
 
@@ -562,7 +562,7 @@ Orlando v1 · validated 2026-06-06 13:59 · ✅ 745 passed / 0 failed [7 warning
 
 2026-06-05 — mds audit (Brain/Reference/, all 5 files). Trigger: "audit all the mds under folder mds." Method: full read of all 5 files + cross-check against disk (Brain/Reference/ confirmed 5-file fixed set; Brain/Reference/ listing). Findings + fixes: (1) Heads Up.md — duplicate `## Edinburgh` section (two blocks covering the same 3 venues: Holyroodhouse closure dates / Edinburgh Castle sell-out / RBGE glasshouses) merged into one, keeping the richest detail from each. (2) Heads Up.md — `## Template for new entries` was stranded mid-file (between Copenhagen and Vienna) → moved to end-of-file. (3) Heads Up.md — Prague section reformatted from ad-hoc `❗️` lines to canonical `### Venue — topic / **Note** / **Workaround** / **Source**` format; missing `---` separator before `## Prague` added (Source left as "guide build research" — no date in original, not fabricated). (4) decisions.md — 7 entries (2026-05-21 → 05-30) had been appended BELOW the "File created" footer, violating the append-at-top descending rule → re-sorted into strict descending order, footer moved to true bottom. Content verified byte-identical (27 entries, sorted-line diff empty — only reordered + uniform `---` separators). Reported, not fixed: audit_log.md tail (below ~L780) is out of chronological order (rolling log — left as-is, high-risk/low-value to reorder); (5) travel_map.md — Reference table was missing `Preview.html` (guide preview utility, confirmed by reading it) and the `Brain/Reference/archive/` subfolder → both added; "Last updated" bumped to 2026-06-05 + footer changelog line. The `Brain/Reference/archive/` subfolder (3 snapshot files) is noted as a deviation from the single flat `Travel/archive/` vault rule — flagged for owner to consolidate, not relocated (sealed-archive content). Reported, not fixed: audit_log.md tail (below ~L780) out of chronological order (rolling log under live concurrent writes — left as-is). Clean, no action: Cities Skip List.md. No CORE RULES touched; no scripts touched.
 
-2026-06-05 — Cross-crib fix (owner): REMOVED idx-coverage-all from validate_itinerary.py — the "all guide folders listed in guides_index.html" check (former Check B) scanned every Guides/ folder and hard-failed the guide under test whenever ANY sibling guide's HTML was absent from the index. With multiple cribs building concurrently, a sibling's in-progress/unindexed build cross-failed essentially every guide. Index coverage is now fully self-scoped: idx-coverage-self (Check A, retained) + guide_tools.py ship gate _check_guide_indexed() per crib — completes the 2026-06-02 "each crib checks only its own guide" decision (brain_check's check_guides_index_coverage() call was retired then; this was the leftover validator twin). Empty _build-only folders never triggered it (no top-level HTML). Verified via golden-master harness (outputs/golden_harness.py): only effect across all 45 guides = idx-coverage-all line gone + passed tally −1; no other check changed. Corpus after: 0 guides fail on index coverage; remaining failures are pre-existing content issues (Copenhagen in-progress 43, Marrakech 4, Zurich 3, London/Iceland/Tromso/Venice 1). Validator Index.html updated. +CHANGELOG. brain_check 49/49. Not a CORE RULES edit — no checksum change.
+2026-06-05 — Cross-crib fix (owner): REMOVED idx-coverage-all from validate_itinerary.py — the "all guide folders listed in Guides-Index.html" check (former Check B) scanned every Guides/ folder and hard-failed the guide under test whenever ANY sibling guide's HTML was absent from the index. With multiple cribs building concurrently, a sibling's in-progress/unindexed build cross-failed essentially every guide. Index coverage is now fully self-scoped: idx-coverage-self (Check A, retained) + guide_tools.py ship gate _check_guide_indexed() per crib — completes the 2026-06-02 "each crib checks only its own guide" decision (brain_check's check_guides_index_coverage() call was retired then; this was the leftover validator twin). Empty _build-only folders never triggered it (no top-level HTML). Verified via golden-master harness (outputs/golden_harness.py): only effect across all 45 guides = idx-coverage-all line gone + passed tally −1; no other check changed. Corpus after: 0 guides fail on index coverage; remaining failures are pre-existing content issues (Copenhagen in-progress 43, Marrakech 4, Zurich 3, London/Iceland/Tromso/Venice 1). Validator Index.html updated. +CHANGELOG. brain_check 49/49. Not a CORE RULES edit — no checksum change.
 
 2026-06-05 — verify_urls.py: added LINK-FAILURE REMEDIATION banner (2026-06-05 11:27). When the link gate reports any fail, the script now prints a cascade reminder: a 403/406/410/429/timeout is usually a bot-block / geo-block / JS-rendered page, not a dead link — go back to Brain/Reference/Platforms.md and work every solution in order (check ⚡/❌ status + BOT_BLOCKED_HOSTS → site: search → Chrome navigate+get_page_text → Chrome javascript_tool JSON-LD/h1 read for never-idle SPAs) before replacing/removing any link. Removing a link without working the cascade = violation. Working-surface fix, no CORE RULES touched.
 
@@ -570,14 +570,14 @@ Orlando v1 · validated 2026-06-06 13:59 · ✅ 745 passed / 0 failed [7 warning
 
 2026-06-05 — Nice v1 · validated 2026-06-05 11:04 · ✅ 752 passed / 0 failed · ship gate exit 0. 2-day guide: Day 1 Old Town / seafront / Castle Hill (Promenade des Anglais, Place Masséna, Vieux Nice, Colline du Château); Day 2 Cimiez & Russian quarter (Cathédrale Saint-Nicolas, Arènes de Cimiez, Jardins du Monastère de Cimiez). Hotel: Hôtel La Pérouse. 7 stops, all free open-air/architecture (no-skip-the-line). 13 extra sections; Tours 4 Viator + 1 GYG (verified ratings; TripAdvisor JS-only, parked). wiki-alias used for Castle of Nice + Russian Orthodox Cathedral h1-match. Brain fix: verify_urls.py — added deliveroo.fr + just-eat.fr to BOT_BLOCKED_HOSTS (French delivery sites geo-block US sandbox). Heads Up.md: Nice section added. Carousel: New York → Nice → Oslo; Europe Map pin added.
 2026-06-05 — Athens v1 · validated 2026-06-05 04:05 · ✅ 709 passed / 0 failed · 3-day guide: Day 1 Acropolis & slopes, Day 2 Ancient/Roman Athens, Day 3 Classical & Modern Athens (14 stops). Hotel: Electra Palace Athens. 15 tours (5 Viator/5 GYG/5 TripAdvisor). Brain fix: added hellenictrain.gr to Day Trips train-operator allowlist in validate_itinerary.py (Greece — first Greek guide). Chain: Amsterdam → Athens → Barcelona; Europe Map pin added.
-2026-06-05 03:50 — Berlin v1 shipped · validated 2026-06-05 03:50 · ✅ 754 passed / 0 failed · ship gate exit 0. 5-day guide: Days 1–4 Berlin self-guided (Mitte/Unter den Linden · Museum Island & Alexanderplatz · Wall & Cold War · West Berlin & Tiergarten) + Day 5 Train Day to Potsdam (Sanssouci). Hotel: Hotel Adlon Kempinski. 16 stops, photos downloaded to _build/assets. 14 extra sections. Brain fixes: (1) verify_urls.py — lieferando.de added to BOT_BLOCKED_HOSTS; (2) guides_index.html + Europe Map — reconciled 4 stale-missing guides (Athens, Prague, Rome, Venice) into carousel chain + map pins so all-folders ship gate passes; Berlin inserted Bend→Berlin→Cascais. Heads Up.md: Berlin section added.
+2026-06-05 03:50 — Berlin v1 shipped · validated 2026-06-05 03:50 · ✅ 754 passed / 0 failed · ship gate exit 0. 5-day guide: Days 1–4 Berlin self-guided (Mitte/Unter den Linden · Museum Island & Alexanderplatz · Wall & Cold War · West Berlin & Tiergarten) + Day 5 Train Day to Potsdam (Sanssouci). Hotel: Hotel Adlon Kempinski. 16 stops, photos downloaded to _build/assets. 14 extra sections. Brain fixes: (1) verify_urls.py — lieferando.de added to BOT_BLOCKED_HOSTS; (2) Guides-Index.html + Europe Map — reconciled 4 stale-missing guides (Athens, Prague, Rome, Venice) into carousel chain + map pins so all-folders ship gate passes; Berlin inserted Bend→Berlin→Cascais. Heads Up.md: Berlin section added.
 
 
 2026-06-05 — Validator audit (validate_itinerary.py) + 2 fixes. Method: py_compile · in-place runs across all 37 shipped guides · code scan (broad excepts, dead/always-pass checks, global state) · coverage cross-check vs Validator Index.html. Findings: validator healthy — compiles clean, ~0.8s/guide, 31/37 guides pass 0 failures; the 12 literal `check(...,True)` calls are all the clean-branch of an `if offenders:` block (not dead checks); 2 broad excepts both justified (PIL read, date parse). Copenhagen 43 + Berlin = in-progress builds from other cribs (no validation stamp, Phase 6 unchecked) — validator correctly flagging, left untouched. Fixes: (1) validate_itinerary.py — `results.clear()` added at top of validate(); module-level results list never reset → latent double-count if imported/called twice. CLI single-call unaffected; +CHANGELOG entry. (2) Naming drift: file renamed Validator Coverage.html → Validator Index.html on 2026-05-27 but live refs lagged — fixed Rules for Claude.html § 4 (2 spots, CORE RULES), Validator Index.html own footer, Rule Dependencies.html § skip-list note. Historical log/changelog refs left as-is. Cascade: checksums regenerated (Rules for Claude.html) · doc_workshop_validator 27 clean · brain_check 49/49. NOT done: monolithic 23.2k-line validate() function — flagged, deferred (high-risk restructure, zero behavior change, needs own session).
 
 2026-06-05 — Full guide audit (audit_all_guides.py --static) + approved convention change. Day-opener banner casing (uppercase → titlecase From Hotel) applied across 4 CORE RULES files, 8 Reference/CSS files, validator case check, + 2 outlier guides (Amsterdam, Barcelona) migrated. Checksums regenerated · doc_workshop_validator 27 clean · brain_check 49/49. Audit result: 33/37 clean. Remaining (pre-existing, not convention-related): Copenhagen 41 (known incomplete build — To Do List), Marrakech 8 (Wikipedia rows, hedging, booking-log, ticket-box link text), Iceland 1 (missing continent-map pin), Tromso 1 (missing Wikipedia row).
 
-2026-06-02 — Guides/map pins/index audit · 37/37 guides present · guides_index.html: 37 entries, 37 destinations count, next/prev chain complete · US Map: 11 pins ✅ · Asia Map: 2 pins ✅ · Africa Map: 1 pin ✅ · Oceania Map: 1 pin ✅ · Europe Map: ❌ Copenhagen missing → FIXED: added pin at [12.57, 55.68] · Europe Map now 22 pins for 22 European guides.
+2026-06-02 — Guides/map pins/index audit · 37/37 guides present · Guides-Index.html: 37 entries, 37 destinations count, next/prev chain complete · US Map: 11 pins ✅ · Asia Map: 2 pins ✅ · Africa Map: 1 pin ✅ · Oceania Map: 1 pin ✅ · Europe Map: ❌ Copenhagen missing → FIXED: added pin at [12.57, 55.68] · Europe Map now 22 pins for 22 European guides.
 
 2026-06-02 — toolbar.js: added two fixed SVG-chevron scroll buttons (∧ up / ∨ down) to all pages. Positioned fixed at right edge of viewport, vertically centred. Up scrolls to top, down scrolls to bottom. Same visual style as prev/next guide arrows. Navigation.html § 7 updated. travel_map.md toolbar.js entry updated.
 
@@ -1134,7 +1134,7 @@ div.arrive-first
 
 **Trigger.** owner: "deep audit all the guides" — full cross-guide scan per § 9.
 
-**Method.** `audit_all_guides.py` run across all guides → full validator output for each failing guide → structural checks (naming, _build debris, guides_index.html accuracy) → targeted fixes.
+**Method.** `audit_all_guides.py` run across all guides → full validator output for each failing guide → structural checks (naming, _build debris, Guides-Index.html accuracy) → targeted fixes.
 
 **Validator results (pre-fix):** 13 clean / 2 with failures across 15 guides (Marrakech skipped — non-standard filename).
 
@@ -1146,7 +1146,7 @@ div.arrive-first
 
 3. **Sintra v2 — ❌ Tours entry format (1 residual failure, KNOWN)** — already documented in To_Do_List.md as an unresolvable validator self-contradiction (Motion Rule requires 🚕-only when walk >40 min; Tours format check requires both 🚶 + 🚕). No guide change made. Needs validator rule fix (needs owner OK per To Do List entry).
 
-4. **guides_index.html — 6 stale version links** — London v2→v5, Lisbon v3→v4, Palo Alto v5→v6, Pasadena v4→v5, Munich v1→v2, Sydney v1→v2. All corrected. Marrakech entry added (entry #16).
+4. **Guides-Index.html — 6 stale version links** — London v2→v5, Lisbon v3→v4, Palo Alto v5→v6, Pasadena v4→v5, Munich v1→v2, Sydney v1→v2. All corrected. Marrakech entry added (entry #16).
 
 5. **_build debris archived** — 3 non-standard files moved to Travel/archive/: `Iceland/_build/Iceland_Verification_Report.xlsx`, `Porto/_build/dl_aveiro.py`, `Sintra/_build/dl_extra.py`.
 
@@ -1194,7 +1194,7 @@ div.arrive-first
 
 **Trigger.** Verify two new Tours-Extra-Section rules (Tours - Extra Section.html § 1: "Private tours do not ship. Small-group departures take priority over large-group and coach tours.") across the four most-recently-rebuilt guides.
 
-**Method.** Read the shipped Tours section of each (latest version per guides_index.html). Checked all 60 entries (15 per guide) for (a) private/private-only bookings and (b) large-group/coach tours where a small-group equivalent plausibly existed. Confirmed tour type/group size on the ambiguous cases: Viator MCP get_experience_details on the four lowest-review-count Viator products (SF 30758P28 open-air van 5.0/19 — small-group product with optional private upgrade, ships as small-group; SG 430482P4 colonial walk; SG 260863P1 Peranakan mansion; Porto 65386P6 six-bridges cruise — all confirmed shared small-group). The one real private-risk item — Porto TripAdvisor "Porto 360° Helicopter Flight" (d26877684) — verified via the operator's own page (livingtours): per-seat shared product (tuk-tuk cap 6, panoramic helicopter cap 3, shared cruise), 69+ TA reviews — NOT private-only. High review counts (hundreds–thousands) on the remainder rule out private bookings.
+**Method.** Read the shipped Tours section of each (latest version per Guides-Index.html). Checked all 60 entries (15 per guide) for (a) private/private-only bookings and (b) large-group/coach tours where a small-group equivalent plausibly existed. Confirmed tour type/group size on the ambiguous cases: Viator MCP get_experience_details on the four lowest-review-count Viator products (SF 30758P28 open-air van 5.0/19 — small-group product with optional private upgrade, ships as small-group; SG 430482P4 colonial walk; SG 260863P1 Peranakan mansion; Porto 65386P6 six-bridges cruise — all confirmed shared small-group). The one real private-risk item — Porto TripAdvisor "Porto 360° Helicopter Flight" (d26877684) — verified via the operator's own page (livingtours): per-seat shared product (tuk-tuk cap 6, panoramic helicopter cap 3, shared cruise), 69+ TA reviews — NOT private-only. High review counts (hundreds–thousands) on the remainder rule out private bookings.
 
 **Findings.** All four guides COMPLIANT as-is. Zero private tours in any guide. No coach/large-group tour shipped where a small-group option was skipped — every entry is small-group or shared (largest cap 👥 15 small-group walking; SF day trips 👥 12 "Premium Small Group" / 👥 15 already the small-group, not coach, variant; Sintra all 👥 8). The 2026-05-21 rebuilds had already applied the rule correctly.
 
@@ -1522,7 +1522,7 @@ Added TripAdvisor #5 to restore 5×5×5 minimum (TA was at 4/5 after zoo-tour re
 
 **Oslo v1 · re-validated 2026-05-29 · ✅ 685 passed / 0 failed / 0 warnings**
 
-5 post-build failures fixed: (1) guide-toolbar was inside `.container` before `.title-page` — moved outside container per guide HTML contract; (2) 15 toolbar/nav links missing `target="_blank"` — added; (3) Claude Inspiration nested-div capture — moved `essentials-toolbar` + `guide-nav` before `claude-inspiration` section (same fix as Ålesund); (4) `✈` glyph banned in guide — removed `✈️ Delta Routes` links from both top toolbar and bottom essentials-toolbar; (5) `<title>Oslo</title>` → `<title>Oslo, Norway</title>` to match guides_index.html canonical name.
+5 post-build failures fixed: (1) guide-toolbar was inside `.container` before `.title-page` — moved outside container per guide HTML contract; (2) 15 toolbar/nav links missing `target="_blank"` — added; (3) Claude Inspiration nested-div capture — moved `essentials-toolbar` + `guide-nav` before `claude-inspiration` section (same fix as Ålesund); (4) `✈` glyph banned in guide — removed `✈️ Delta Routes` links from both top toolbar and bottom essentials-toolbar; (5) `<title>Oslo</title>` → `<title>Oslo, Norway</title>` to match Guides-Index.html canonical name.
 
 ---
 
@@ -1563,7 +1563,7 @@ New guide. Ship-gate summary:
 
 8. **Second archive on mobile crib — `On The Go/Rules/archive/`** (27 old rule versions + 4 ghost `Untitled` files). Possibly intentional (mobile add-only, Cowork tidies). **Parked** — flag for consolidation into `Travel/archive/`.
 
-**Clean / no issues:** guides_index.html lists all 21 shipped guides · all 21 guides pass validation apart from the universal checksum failure (finding 1) and Montreal's ticket-box (finding 4) · sweep_stray_travel 0 stray · On The Go non-archive = single current rules file (v27).
+**Clean / no issues:** Guides-Index.html lists all 21 shipped guides · all 21 guides pass validation apart from the universal checksum failure (finding 1) and Montreal's ticket-box (finding 4) · sweep_stray_travel 0 stray · On The Go non-archive = single current rules file (v27).
 
 **Scripts changed this session:** `validate_itinerary.py` (+coverage check), `brain_check.py` (+checksum verification). Both additive. No CORE RULES files touched. No removals.
 
@@ -1649,7 +1649,7 @@ Marktoberdorf v1 · validated 2026-05-30 08:52 · ✅ 663 passed / 0 failed. 7-d
 **Tilde (one carve-out):** `~` is valid only after `⏰` (Avg Time Spent). Fixed drift in Icon Order (`⏳ ~45 min` → `⏳ 45 min`) and added a Tilde-rule note; narrowed the money rule in Rules for Claude §6 (removed `~`, added a "Tilde has one home — ⏰" tripwire). Validator consolidated to ONE global tilde check (broadened `~\d`→`~`); removed 8 redundant per-section scans and all `~?` tolerances. CLAUDE.md, Validator Index, Rule Dependencies aligned.
 **Terminology:** removed the word "gotcha" everywhere — section is "Heads Up", field is "[Note]" (CORE RULES, Reference, mds, validator labels/vars, guide comments, CSS). "Trip at a Glance" → "Trip Overview" (only stale `.bak2`/`.fuse` remained; live files already correct; stale `.bak2` archived). All-caps "FROM HOTEL" literals removed from active files (historical/decision entries reworded; casing already locked by the case-sensitive titlecase check).
 **Anti-drift:** DECISION LOCKS extended — guides now hard-fail on literal "Trip at a Glance" (Lock 5) or "Gotcha(s)" (Lock 6).
-**FINAL GATE:** the two membership checks (guide in guides_index.html + city pinned in a continent map) relocated to run LAST, as the end-of-validation gate.
+**FINAL GATE:** the two membership checks (guide in Guides-Index.html + city pinned in a continent map) relocated to run LAST, as the end-of-validation gate.
 **Verification:** validator compiles; doc_workshop_validator 27/27 clean; brain_check 47/47; checksums regenerated. Guide sweep green except pre-existing issues (Zurich 3 Food-Delivery/inclusion-bar, Iceland 1 missing pin — now surfaced by FINAL GATE). No regressions from these changes.
 
 ---
@@ -1752,7 +1752,7 @@ Applied the parked Claude Inspiration E15 fix and two same-family findings surfa
 2026-06-06 — Michelin backfill record closed out: Seoul Jungsik ⭐⭐ printed address corrected to 11 Seolleung-ro 158-gil · Cheongdam (verified via Michelin Guide + TripAdvisor; the 🚕 30 Kakao ride time was already measured to this location, so motion rows unchanged). Seoul re-validated 704/0. The ✅ DONE backfill record (2026-06-05, 50/50 guides) deleted from ✈️ My Tasks per the resolved-items rule — its full record lives in this log.
 
 ## 2026-06-06 — "Fix all approved" sweep — every open item closed
-Per Wifey's blanket approval, every remaining open item across the workspace was executed: (1) **guides_index.html duplicate data-guide-num fixed** — five collision pairs had accumulated under concurrent multi-crib edits (37 Milan/Vienna · 38 Berlin/Zurich · 45 Scottsdale/Geneva · 46 Bruges/Gothenburg · 53 Miami/Cinque Terre); the global chain was renumbered 1–62 sequentially in document order (region → alphabetical), 0 duplicates remain; data-guide-prev/next hrefs untouched. (2) **🔧 doc_workshop proposals block closed** — all three conformance fixes (Tickets E15, Claude Inspiration E15, Trip Overview E16) were already applied and validated earlier this session (27/27 clean); the parked proposals were deleted as completed (note: Claude Inspiration used the format-exception-banner remedy per the Guide Structure 2026-05-31 precedent rather than the proposed reword — equivalent outcome, validator clean). (3) **Seoul Jungsik ⚠️ address note confirmed resolved** — the guide already prints 11 Seolleung-ro 158-gil · Cheongdam, re-verified live against the Michelin Guide and TripAdvisor listings; no edit needed. (4) ❓ Open Questions and 🔧 Rules for Update are both empty. brain_check 49/49.
+Per Wifey's blanket approval, every remaining open item across the workspace was executed: (1) **Guides-Index.html duplicate data-guide-num fixed** — five collision pairs had accumulated under concurrent multi-crib edits (37 Milan/Vienna · 38 Berlin/Zurich · 45 Scottsdale/Geneva · 46 Bruges/Gothenburg · 53 Miami/Cinque Terre); the global chain was renumbered 1–62 sequentially in document order (region → alphabetical), 0 duplicates remain; data-guide-prev/next hrefs untouched. (2) **🔧 doc_workshop proposals block closed** — all three conformance fixes (Tickets E15, Claude Inspiration E15, Trip Overview E16) were already applied and validated earlier this session (27/27 clean); the parked proposals were deleted as completed (note: Claude Inspiration used the format-exception-banner remedy per the Guide Structure 2026-05-31 precedent rather than the proposed reword — equivalent outcome, validator clean). (3) **Seoul Jungsik ⚠️ address note confirmed resolved** — the guide already prints 11 Seolleung-ro 158-gil · Cheongdam, re-verified live against the Michelin Guide and TripAdvisor listings; no edit needed. (4) ❓ Open Questions and 🔧 Rules for Update are both empty. brain_check 49/49.
 
 2026-06-06 — 🔧 proposals 1–3 approved by owner and applied: Tickets.html "booking link"→"booking URL" + Trip Overview.html <em> strip (landed via sibling crib), Claude Inspiration "pill that links here"→"pill pointing here" (applied this crib, on top of the sibling's format-exception fix). Checksums regenerated, doc_workshop 27 clean / 0 errors, brain_check intact. Proposals deleted from To_Do_List.
 
@@ -1840,7 +1840,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Day 1: Palais des Festivals · Vieux-Port · Le Suquet · Musée de la Castre
 - Day 2: Île Sainte-Marguerite · Île Saint-Honorat · La Malmaison (all-day islands excursion, §5 exception)
 - Navigation chain: Brussels → Cannes → Cascais
-- guides_index.html updated (France 3→4, guide #74); Europe Map pinned; Brussels/Cascais toolbars updated
+- Guides-Index.html updated (France 3→4, guide #74); Europe Map pinned; Brussels/Cascais toolbars updated
 - guide_tools.py ship: 676 passed · 0 failed; brain_check 50/50; verify_urls 5/5; verify_booking 8/8
 - Notes: Musée de la Castre renamed to Musée des Explorations du Monde on cannes.com; Wikipedia article absent (no-wikipedia sentinel added); Théâtre Croisette excluded (below calibration bar); Heads Up section omitted (no Brain.md entries for Cannes); Format Quick-Reference.html is in Brain/Reference/ not CORE RULES/ (corrected CLAUDE.md and checksums)
 
@@ -1850,7 +1850,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Day 1: MuCEM · Centre de la Vieille Charité · Notre-Dame de la Garde
 - Day 2: Château d'If (island ferry) · Cité Radieuse — Unité d'Habitation
 - Navigation chain: Marrakech → Marseille → Miami
-- guides_index.html updated (France 4→5, guide #75); Europe Map pinned; Marrakech/Miami toolbars updated
+- Guides-Index.html updated (France 4→5, guide #75); Europe Map pinned; Marrakech/Miami toolbars updated
 - guide_tools.py ship: 699 passed · 0 failed; brain_check pass; verify_urls pass; verify_booking 11/11
 - Notes: Food tours and tasting tours excluded per Stops Structure rules; Cité Radieuse ferry+car chained motion (walk-over-40 sentinel used); tram section added with RTM description (no tram rides on itinerary); 5 orphaned photo assets archived to _build/assets/_archive/
 
@@ -1859,7 +1859,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Day 1: Boston Common & Public Garden · Beacon Hill · Old North Church · USS Constitution
 - Day 2: Museum of Fine Arts · Fenway Park · View Boston · Trinity Church
 - Navigation chain: Berlin → Boston → Bruges
-- guides_index.html updated (US 16→17, guide #77); US Map pinned; Berlin/Bruges toolbars updated
+- Guides-Index.html updated (US 16→17, guide #77); US Map pinned; Berlin/Bruges toolbars updated
 - guide_tools.py ship: 699 passed · 0 failed; brain_check 50/50 pass; verify_urls pass; verify_booking 7/7
 - Notes: 4 stops converted ticket-box→tour-box+🎫; Weekly Closures consolidated (Society On High removed, Amber Road Sunday kept); View Boston has no-wikipedia sentinel (no dedicated article); DoorDash/BSO/oldnorth URLs corrected during verify-booking; GYG entries site_search only (warn-ok pending Chrome verify)
 
@@ -1870,7 +1870,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Hotel: Áurea Toledo by Eurostars · Bajada Pozo Amargo 1–13
 - Validator: 745 passed · 0 failed · 5 warnings
 - Carousel: Tokyo → Toledo → Toronto
-- Index: guides_index.html updated (Spain 2→3 guides · num=75)
+- Index: Guides-Index.html updated (Spain 2→3 guides · num=75)
 - Map: Toledo pin added to Europe Map.html (−4.025 · 39.856)
 - Brain.md: Toledo Heads Up section added (Toledo Train — Renfe Avant · Not AVE)
 
@@ -1882,7 +1882,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Tours: 5 Viator · 2 GetYourGuide · 0 TripAdvisor (low-count warning — small market)
 - Validator: 701 passed · 0 failed · 4 warnings
 - Carousel: San Francisco → San Sebastian → Scottsdale
-- Index: guides_index.html updated (Spain 3→4 guides · num=80)
+- Index: Guides-Index.html updated (Spain 3→4 guides · num=80)
 - Map: San Sebastian pin added to Europe Map.html (−1.9812 · 43.3183)
 
 ## Bordeaux · bordeaux_v1.html · 2026-06-10
@@ -1892,7 +1892,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Validator: 677 passed · 0 failed · 7 warnings
 - Ship: 677 passed · 0 failed · 44 link checks · 0 link failures
 - Carousel: Berlin → Bordeaux → Boston
-- Index: guides_index.html updated (France 7→8 guides · num=79)
+- Index: Guides-Index.html updated (France 7→8 guides · num=79)
 - Map: Bordeaux pin added to Europe Map.html (−0.5792 · 44.8378)
 - Notes: 3 Wikipedia rows dropped (no EN articles for Grosse Cloche/Palais Gallien; H1 mismatch for Basilique Saint-Michel); laciteduvin.com added to BOT_BLOCKED_HOSTS (sandbox SSL cert issue); 2 orphaned images archived to _build/assets/_archive/
 
@@ -1903,7 +1903,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Validator: 701 passed · 0 failed · 6 warnings
 - Ship: 701 passed · 0 failed · 42 link checks · 0 link failures (6 bot-blocked: 5 Viator + Uber)
 - Carousel: Lima → Machu Picchu → Turin
-- Index: guides_index.html updated (Peru 1→2 guides · num=85)
+- Index: Guides-Index.html updated (Peru 1→2 guides · num=85)
 - Map: MachuPicchu pin added to South America Map.html (−72.545 · −13.163)
 - Notes: stop-photos are 300×250 placeholder JPEGs (Wikimedia bot-blocked); day-count sentinel used (3 stops — single-site Inca destination); Cusco/photos/ archived to Cusco/_build/photos/ (brain_check fix)
 
@@ -1914,7 +1914,7 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - Validator: 700 passed · 0 failed · 5 warnings
 - Ship: 700 passed · 0 failed · 9 link checks · 0 link failures (6 bot-blocked: 5 Viator + 1 GYG, logged in verification_log.json)
 - Carousel: Singapore → Sint Maarten → Sintra
-- Index: guides_index.html updated (num=86)
+- Index: Guides-Index.html updated (num=86)
 - Map: Sint Maarten pin added to Caribbean/Americas map
 - Notes: No train/metro (Caribbean island); no Michelin; no Pickleball; no Heads Up; no day trips by train; Concordia Monument no-wikipedia sentinel (no dedicated article); photos fetched via commons_photo.py (Wikimedia CDN bot-blocked for curl)
 
@@ -1986,8 +1986,8 @@ All 7 guides had Phase 1–4 complete; this session ran Phase 5 (pre-ship checkl
 - **UAE — parentheses FIXED, street-number PARKED.** Removed the banned `(UAE)` parentheses from both `<title>` ("The United Arab Emirates") and `.title-city` ("THE UNITED ARAB EMIRATES") — the 2 prose-paren hits the validator also reported were inside builder `<!-- -->` comments (correctly ignored). Re-validated: paren check now passes; guide down to 1 fail.
 - **UAE remaining fail = genuine rule-vs-reality conflict (parked in ❓ Open Questions).** `.title-address` "Sheikh Mohammed bin Rashid Boulevard · Downtown Dubai" has no street number. Hotel Banner.html §1 mandates a street number and the validator hard-fails without a digit — but Address Downtown has NO published street number (official address on addresshotels.com is the boulevard + "PO Box 123234"; confirmed across listings). Will not fabricate a number, will not unilaterally relax a validator faithfully enforcing a CORE rule. Parked a CORE-RULES question for owner: should §1 + the validator accept a number-less street-name + neighborhood address? The Dubai guide's "1 Sheikh Mohammed bin Rashid Blvd" uses the Burj Khalifa complex number, not verifiably the Address Downtown tower's, so it was not borrowed. UAE guide holds at 1 fail until owner decides.
 - **brain_check:** clean after changes.
-- **Azores (São Miguel · Ponta Delgada) — SHIPPED.** 2-day guide built from scratch: hotel Octant Ponta Delgada, 8 itinerary stops (Sete Cidades, Caldeira Velha, Lagoa do Fogo, Furnas caldeiras, Terra Nostra, Lagoa das Furnas, Pico do Ferro, Ponta Delgada waterfront), all 12 extras sections. 9 validator batch-fix passes. Key resolutions: Wikimedia hotlinks → `_build/assets/800px-*` via commons_photo.py; review links → Google Maps place pages; Train Stations/Michelin/Day Trips sections → extras-empty; motion rows merged; section title corrected to "🚆 Train Stations Near Hotel". Final: 698 passed / 0 failed. Added to guides_index.html (guide-num 129, Portugal section, 7 guides), FMAP (PDL · BOS · 15h 25m · 1stop), Europe Map.html PINS array (lon −25.67, lat 37.74). Status Dots updated: Azores [ ], Funchal [ ] added.
-- **Funchal (Madeira) v1 — SHIPPED.** 1-day guide built from scratch: hotel Savoy Palace, 5 itinerary stops (Teleférico do Funchal, Monte Palace Tropical Garden, Sé Cathedral, Rua de Santa Maria, Forte de São Tiago), all extras sections (Shows + Train Stations + Day Trips → extras-empty; Michelin: 3 starred restaurants). Three HTML rewrite passes (69 → 19 → 0 validator failures). Key resolutions: 🏛️ rows required full weekday names (Monday - Saturday, not Mon–Sat); Tours low-count comment position within 300 chars of section opening tag; shows overview pill = `🎭 Shows` (short); section id `stations-near-hotel` (not `train-stations-near-hotel`); id `day-trips-by-train` (not `day-trips`); Sé Cathedral description trimmed to ≤320 chars; downtown descriptions ≤80 chars; Monte Palace Wikipedia → `Monte_(Funchal)` (original article 404); cable car ticket URL → `tickets.madeiracablecar.com`. Final: 702 passed / 0 failed. Chain: MachuPicchu → Funchal → Madrid. Added to guides_index.html Portugal section (guide-num 128, 6 guides), FMAP (FNC · LIS · 13h 20m · 1stop), Europe Map.html PINS (lon −16.92, lat 32.67). Status Dots Funchal [ ] already present.
+- **Azores (São Miguel · Ponta Delgada) — SHIPPED.** 2-day guide built from scratch: hotel Octant Ponta Delgada, 8 itinerary stops (Sete Cidades, Caldeira Velha, Lagoa do Fogo, Furnas caldeiras, Terra Nostra, Lagoa das Furnas, Pico do Ferro, Ponta Delgada waterfront), all 12 extras sections. 9 validator batch-fix passes. Key resolutions: Wikimedia hotlinks → `_build/assets/800px-*` via commons_photo.py; review links → Google Maps place pages; Train Stations/Michelin/Day Trips sections → extras-empty; motion rows merged; section title corrected to "🚆 Train Stations Near Hotel". Final: 698 passed / 0 failed. Added to Guides-Index.html (guide-num 129, Portugal section, 7 guides), FMAP (PDL · BOS · 15h 25m · 1stop), Europe Map.html PINS array (lon −25.67, lat 37.74). Status Dots updated: Azores [ ], Funchal [ ] added.
+- **Funchal (Madeira) v1 — SHIPPED.** 1-day guide built from scratch: hotel Savoy Palace, 5 itinerary stops (Teleférico do Funchal, Monte Palace Tropical Garden, Sé Cathedral, Rua de Santa Maria, Forte de São Tiago), all extras sections (Shows + Train Stations + Day Trips → extras-empty; Michelin: 3 starred restaurants). Three HTML rewrite passes (69 → 19 → 0 validator failures). Key resolutions: 🏛️ rows required full weekday names (Monday - Saturday, not Mon–Sat); Tours low-count comment position within 300 chars of section opening tag; shows overview pill = `🎭 Shows` (short); section id `stations-near-hotel` (not `train-stations-near-hotel`); id `day-trips-by-train` (not `day-trips`); Sé Cathedral description trimmed to ≤320 chars; downtown descriptions ≤80 chars; Monte Palace Wikipedia → `Monte_(Funchal)` (original article 404); cable car ticket URL → `tickets.madeiracablecar.com`. Final: 702 passed / 0 failed. Chain: MachuPicchu → Funchal → Madrid. Added to Guides-Index.html Portugal section (guide-num 128, 6 guides), FMAP (FNC · LIS · 13h 20m · 1stop), Europe Map.html PINS (lon −16.92, lat 32.67). Status Dots Funchal [ ] already present.
 Dubrovnik guide_v1 · validated 2026-06-15 12:25 · ✅ 702 passed / 0 failed · shipped (URLs repaired: 5 Wikipedia, 7 official ticket links)
 Azores guide_v1 · re-validated 2026-06-15 12:29 · ✅ 698 passed / 0 failed · ship gate cleared (URLs repaired: Sete Cidades→Lagoa das Sete Cidades, 4 no-wikipedia sentinels for viewpoints/article-less features, colistar.pt→coliseumicaelense.bol.pt). Phase 5 Heads Up = negative finding (no Brain.md Part 3 entry).
 

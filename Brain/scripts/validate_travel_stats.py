@@ -22,7 +22,7 @@ import importlib.util, os, re, sys
 HERE   = os.path.dirname(os.path.abspath(__file__))
 TRAVEL = os.path.abspath(os.path.join(HERE, "..", ".."))
 WEB    = os.path.join(TRAVEL, "Travel-Website")
-INDEX  = os.path.join(WEB, "Guides", "guides_index.html")
+INDEX  = os.path.join(WEB, "Guides", "Guides-Index.html")
 PAGE   = os.path.join(WEB, "Trip-Essentials", "Travel-Stats.html")
 BTS    = os.path.join(HERE, "build_travel_stats.py")
 

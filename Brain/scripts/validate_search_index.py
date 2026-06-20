@@ -31,7 +31,7 @@ def guide_files_on_disk():
         if not entry.is_dir():
             continue
         for f in os.scandir(entry.path):
-            if f.name.endswith(".html") and f.name != "guides_index.html":
+            if f.name.endswith(".html") and f.name != "Guides-Index.html":
                 found.add(f"{entry.name}/{f.name}")
     return found
 

@@ -38,7 +38,7 @@ MOBILE_CSS  = os.path.join(WEB_ROOT, "assets", "mobile.css")  # assets/ home (mo
 # Website surfaces are relative to Travel-Website/; On The Go stays under Travel/.
 WEB_GLOBS = [
     "index.html",                  # site home / Main Pages hub
-    "Guides/guides_index.html",
+    "Guides/Guides-Index.html",
     "Trip-Essentials/**/*.html",
 ]
 TRAVEL_GLOBS = [

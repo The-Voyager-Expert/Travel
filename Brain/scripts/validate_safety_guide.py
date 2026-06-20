@@ -3,7 +3,7 @@
 validate_safety_guide.py — integrity check for Trip-Essentials/Safety Guide.html
 
 Verifies (no network, local files only):
-  1. Every guide city in guides_index.html has exactly one row in the Safety Guide.
+  1. Every guide city in Guides-Index.html has exactly one row in the Safety Guide.
   2. No city appears in more than one advisory level section (no duplicates).
   3. Every city-row href resolves to a guide file that exists on disk.
   4. No extra rows in the Safety Guide for cities not in guides_index
@@ -20,7 +20,7 @@ import os, re, sys, urllib.parse
 HERE   = os.path.dirname(os.path.abspath(__file__))
 TRAVEL = os.path.abspath(os.path.join(HERE, "..", ".."))
 WEB    = os.path.join(TRAVEL, "Travel-Website")
-INDEX  = os.path.join(WEB, "Guides", "guides_index.html")
+INDEX  = os.path.join(WEB, "Guides", "Guides-Index.html")
 PAGE   = os.path.join(WEB, "Trip-Essentials", "Safety-Guide.html")
 GUIDES = os.path.join(WEB, "Guides")
 
@@ -44,7 +44,7 @@ def _parse_safety_hrefs(html):
 def main():
     fails = []
 
-    for path, label in [(INDEX, "guides_index.html"), (PAGE, "Safety Guide.html")]:
+    for path, label in [(INDEX, "Guides-Index.html"), (PAGE, "Safety Guide.html")]:
         if not os.path.exists(path):
             print(f"ERROR: {label} not found at {path}", file=sys.stderr)
             sys.exit(2)

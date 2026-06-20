@@ -3,7 +3,7 @@
 build_search_index.py — Global guide content search index generator.
 
 Parses every shipped guide HTML under Travel-Website/Guides/{City}/ and emits a
-compact JSON at Travel-Website/assets/search_index.json. The guides_index.html
+compact JSON at Travel-Website/assets/search_index.json. The Guides-Index.html
 search box lazy-loads this file to offer full-text search across guide content
 (stops, venues, tours, restaurants, sections) that deep-links into each guide.
 
@@ -19,7 +19,7 @@ from datetime import date
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SITE = os.path.join(ROOT, "Travel-Website")
 GUIDES = os.path.join(SITE, "Guides")
-INDEX = os.path.join(GUIDES, "guides_index.html")
+INDEX = os.path.join(GUIDES, "Guides-Index.html")
 OUT = os.path.join(SITE, "assets", "search_index.json")
 
 # Section id -> human label. day\d+ handled specially on the client ("Day N").

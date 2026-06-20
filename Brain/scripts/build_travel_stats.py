@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-build_travel_stats.py — regenerate Travel Stats.html from guides_index.html live data.
+build_travel_stats.py — regenerate Travel Stats.html from Guides-Index.html live data.
 
 Usage:
     python3 Brain/scripts/build_travel_stats.py [--dry-run]
 
-Reads:   Travel-Website/Guides/guides_index.html  (FMAP block + dest-card markup)
+Reads:   Travel-Website/Guides/Guides-Index.html  (FMAP block + dest-card markup)
 Writes:  Travel-Website/Trip-Essentials/Travel Stats.html
 
 Sources:
@@ -24,7 +24,7 @@ from pathlib import Path
 # ── Paths ──────────────────────────────────────────────────────────────────────
 SCRIPT_DIR  = Path(__file__).resolve().parent
 TRAVEL_ROOT = SCRIPT_DIR.parent.parent           # …/Travel/
-INDEX_HTML  = TRAVEL_ROOT / 'Travel-Website' / 'Guides' / 'guides_index.html'
+INDEX_HTML  = TRAVEL_ROOT / 'Travel-Website' / 'Guides' / 'Guides-Index.html'
 STATS_HTML  = TRAVEL_ROOT / 'Travel-Website' / 'Trip-Essentials' / 'Travel-Stats.html'
 
 DRY_RUN = '--dry-run' in sys.argv
@@ -94,7 +94,7 @@ NAV_SECTIONS = [
 def parse_fmap(html):
     m = re.search(r'var FMAP\s*=\s*(\{.*?\});', html, re.DOTALL)
     if not m:
-        sys.exit('ERROR: FMAP block not found in guides_index.html')
+        sys.exit('ERROR: FMAP block not found in Guides-Index.html')
     return json.loads(m.group(1))
 
 # ── Parse dest-cards ───────────────────────────────────────────────────────────

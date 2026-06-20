@@ -4,7 +4,7 @@ validate_currency.py — integrity check for the Currency Guide.
 
 Verifies, with no network:
   1. The country set on the page is EXACTLY the set of countries in the guide
-     index (guides_index.html) — no more, no less. Every guide city maps to one
+     index (Guides-Index.html) — no more, no less. Every guide city maps to one
      country block; no orphan cities; no extra countries.
   2. The page exists and carries the "Last update <Mon Year>" stat pill.
   3. The "Last update" month is not stale — it should be the current month or
@@ -19,7 +19,7 @@ import os, re, sys, importlib.util, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TRAVEL = os.path.abspath(os.path.join(HERE, "..", ".."))
-INDEX = os.path.join(TRAVEL, "Travel-Website", "Guides", "guides_index.html")
+INDEX = os.path.join(TRAVEL, "Travel-Website", "Guides", "Guides-Index.html")
 PAGE = os.path.join(TRAVEL, "Travel-Website", "Trip-Essentials", "Currency-Guide.html")
 SCRIPT = os.path.join(HERE, "build_currency.py")
 

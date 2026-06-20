@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """validate_guides_index_inline.py
 
-FINAL GATE check: every dest-card in guides_index.html must have an entry in
+FINAL GATE check: every dest-card in Guides-Index.html must have an entry in
 all three inline JS data blocks used by the index page:
 
   • CLIMATE_INLINE  — monthly hi/lo temps displayed on the index weather filter
@@ -26,11 +26,11 @@ from urllib.parse import unquote
 # ── paths ────────────────────────────────────────────────────────────────────
 _HERE     = Path(__file__).parent
 _WEB_ROOT = _HERE.parent.parent / "Travel-Website" / "Guides"
-_IDX      = _WEB_ROOT / "guides_index.html"
+_IDX      = _WEB_ROOT / "Guides-Index.html"
 
 def main() -> int:
     if not _IDX.exists():
-        print(f"ERROR: guides_index.html not found at {_IDX}", file=sys.stderr)
+        print(f"ERROR: Guides-Index.html not found at {_IDX}", file=sys.stderr)
         return 1
 
     html = _IDX.read_text(encoding="utf-8", errors="replace")
@@ -64,7 +64,7 @@ def main() -> int:
         html, re.DOTALL
     )
     if not cards:
-        print("ERROR: no dest-card entries found in guides_index.html", file=sys.stderr)
+        print("ERROR: no dest-card entries found in Guides-Index.html", file=sys.stderr)
         return 1
 
     def _climate_key(href: str) -> str:
@@ -85,11 +85,11 @@ def main() -> int:
 
     # ── report ───────────────────────────────────────────────────────────────
     if errors:
-        print(f"FAIL: {len(errors)} missing inline data entr{'y' if len(errors)==1 else 'ies'} in guides_index.html:")
+        print(f"FAIL: {len(errors)} missing inline data entr{'y' if len(errors)==1 else 'ies'} in Guides-Index.html:")
         for e in errors:
             print(e)
         print()
-        print("Fix: add the missing entry/entries to the relevant var block in guides_index.html.")
+        print("Fix: add the missing entry/entries to the relevant var block in Guides-Index.html.")
         print("  CLIMATE_INLINE — monthly hi/lo 12-value arrays (copy from assets/climate.json)")
         print("  COST_DATA      — {\"tier\": \"...\", \"currency\": \"...\"}")
         print("  SAFETY_DATA    — {\"level\": \"...\", \"note\": \"...\"}")

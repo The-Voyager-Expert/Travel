@@ -52,5 +52,5 @@ Last updated: 2026-05-24 (GYG tour #3 replaced — cycling content removed)
 - [x] validate_itinerary.py — ✅ 602 passed / 0 failed (thin-day warning resolved)
 - [x] verify_booking_links.py — ✅ 41 passed / 0 failed (25 Wikipedia h1-match PASS)
 - [x] live-URL sweep — 0 dead links (109 OK · 29 expected bot-blocks · 2 official MBS anti-bot timeouts carried from v2)
-- [x] guides_index.html updated Singapore v1 → v3
+- [x] Guides-Index.html updated Singapore v1 → v3
 - [~] Single-pass `guide_tools.py ship` exit code not capturable in-session — sandbox 45s wall truncates the 141-URL serial live sweep. All three component gates pass independently.

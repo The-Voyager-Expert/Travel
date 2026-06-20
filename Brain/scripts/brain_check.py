@@ -1098,7 +1098,7 @@ _REF_CTX_PATTERNS = [
 # Filenames / patterns that intentionally live outside Brain/ — skip ghost check.
 _REF_GHOST_ALLOWLIST: set[str] = {
     "guide_v3.css",         # Travel-Website/assets/
-    "guides_index.html",    # Travel-Website/Guides/
+    "Guides-Index.html",    # Travel-Website/Guides/
     "index.html",           # Travel-Website/ (site home / Main Pages hub)
     "Trips.html",           # Travel-Website/Trip-Essentials/
 }
@@ -1610,7 +1610,7 @@ def check_banner_title_size(report: "Report") -> None:
 
     OK_VALUES = {"14px", "var(--fs-title)", "var(--fs-title,14px)", "var(--fs-title, 14px)"}
     pages = list((WEB_ROOT / "Trip-Essentials").rglob("*.html"))
-    for extra in ("Guides/guides_index.html", "Website-Main-Pages-Links.html", "index.html"):
+    for extra in ("Guides/Guides-Index.html", "Website-Main-Pages-Links.html", "index.html"):
         p = WEB_ROOT / extra
         if p.exists():
             pages.append(p)
@@ -1666,7 +1666,7 @@ def check_banner_content(report: "Report") -> None:
     _ANY_TAG_RE = re.compile(r'<(/?\w+)[^>]*>', re.I)
 
     pages = list((WEB_ROOT / "Trip-Essentials").rglob("*.html"))
-    for extra in ("Guides/guides_index.html", "Website-Main-Pages-Links.html", "index.html"):
+    for extra in ("Guides/Guides-Index.html", "Website-Main-Pages-Links.html", "index.html"):
         p = WEB_ROOT / extra
         if p.exists():
             pages.append(p)
@@ -2120,7 +2120,7 @@ def check_search_bar_standard(report: "Report") -> None:
 
 
 def check_guides_index_banner_subtitle(report: "Report") -> None:
-    """Fail if guides_index.html has a subtitle element inside the Travel Guides banner.
+    """Fail if Guides-Index.html has a subtitle element inside the Travel Guides banner.
 
     The banner must contain only the <h1> title — no sub-caption, count badge, or
     secondary text. The old markup used .index-banner-sub; future drift might use
@@ -2128,7 +2128,7 @@ def check_guides_index_banner_subtitle(report: "Report") -> None:
     This check catches both the old class name and any new subtitle element.
     Reference: Brain/Reference/Toolbar.html (banner drift fix 2026-06-12).
     """
-    guides_index = WEB_ROOT / "Guides" / "guides_index.html"
+    guides_index = WEB_ROOT / "Guides" / "Guides-Index.html"
     if not guides_index.exists():
         return  # caught by check_required_files if ever listed there
 
@@ -2137,7 +2137,7 @@ def check_guides_index_banner_subtitle(report: "Report") -> None:
     # 1. Hard fail: the retired subtitle class must never reappear.
     if "index-banner-sub" in html:
         report.fail(
-            "[guides_index banner] guides_index.html still contains .index-banner-sub "
+            "[guides_index banner] Guides-Index.html still contains .index-banner-sub "
             "— the subtitle under the Travel Guides banner was removed (2026-06-12). "
             "Delete the subtitle element and its class; the banner must hold only <h1>."
         )
@@ -2157,7 +2157,7 @@ def check_guides_index_banner_subtitle(report: "Report") -> None:
         leftover = _re.sub(r"\s+", "", leftover)
         if leftover:
             report.fail(
-                "[guides_index banner] guides_index.html has extra content inside the "
+                "[guides_index banner] Guides-Index.html has extra content inside the "
                 "Travel Guides banner beyond <h1> — remove it. The banner must contain "
                 "only the page title, no subtitle, count, or secondary text."
             )
@@ -2167,7 +2167,7 @@ def check_guides_index_banner_subtitle(report: "Report") -> None:
 
 
 def check_index_stat_row(report: "Report") -> None:
-    """Fail if the guides_index.html stat row drifts from the § 15 standard.
+    """Fail if the Guides-Index.html stat row drifts from the § 15 standard.
 
     Standard (Brain/Reference/Colors and Font Size.html § 15, locked 2026-06-14):
     one .stat-row directly under the banner holding two small grey text lines —
@@ -2177,7 +2177,7 @@ def check_index_stat_row(report: "Report") -> None:
     total guides = visited (been) + on the list (want).
     """
     import re as _re
-    guides_index = WEB_ROOT / "Guides" / "guides_index.html"
+    guides_index = WEB_ROOT / "Guides" / "Guides-Index.html"
     if not guides_index.exists():
         return  # caught elsewhere if ever required
 
@@ -2542,7 +2542,7 @@ def main(argv: list[str]) -> int:
     check_section_citation_targets(report)          # warns on `{File}.html § N` citations whose target heading no longer exists (added 2026-06-06)
     check_profile_watermark(report)                     # warns on unexplained CLAUDE.md line/section drops (Rule 49; added 2026-06-11)
     check_pdf_gradient_sync(report)                     # warns if Guide Style.css title-page gradient diverges from PDF Render Notes.md (added 2026-06-11)
-    check_guides_index_banner_subtitle(report)          # fails if guides_index.html banner has a subtitle element (added 2026-06-12)
+    check_guides_index_banner_subtitle(report)          # fails if Guides-Index.html banner has a subtitle element (added 2026-06-12)
     check_search_bar_standard(report)                   # fails if any search input has placeholder words, pill shape, fixed width, or width animation (added 2026-06-13)
     check_index_stat_row(report)                        # fails if guides_index stat row drifts from § 15 — places left, countries right, small grey text (added 2026-06-14)
     check_emoji_library_no_retired_section(report)     # fails if a 'retired' subsection appears in Emoji Library — only 'in use, with location' and 'available' are valid states (added 2026-06-15)

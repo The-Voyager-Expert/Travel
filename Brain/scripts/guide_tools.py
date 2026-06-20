@@ -68,7 +68,7 @@ Dispatches to the underlying scripts that each do one thing well:
                                               open To Do items. One command replaces the
                                               manual 7-step session ritual. Added 2026-05-09.)
   update-index   →  5-step ship tail        (verifies all 5 post-build steps for a city:
-                                              guides_index.html card, prev/next wiring,
+                                              Guides-Index.html card, prev/next wiring,
                                               banner counts, toolbar-mount data-prev/next,
                                               and map pin. Run after completing each step
                                               manually — the command confirms all 5 are done
@@ -583,7 +583,7 @@ def _run_preflight(city: str) -> int:
 
 def _check_guide_indexed(guide_path: Path) -> int:
     """
-    Ship gate: verify this specific guide's city folder is in guides_index.html.
+    Ship gate: verify this specific guide's city folder is in Guides-Index.html.
 
     Each crib checks only its own guide — not all guides. Fires at ship time only.
     The city folder is the parent directory of the guide HTML file
@@ -595,11 +595,11 @@ def _check_guide_indexed(guide_path: Path) -> int:
     crib only validates its own guide's entry.
     """
     guides_dir = WEB_ROOT / "Guides"
-    index_file = guides_dir / "guides_index.html"
+    index_file = guides_dir / "Guides-Index.html"
 
     if not index_file.exists():
         print(
-            "\n🚫  SHIP BLOCKED — Guides/guides_index.html missing.\n"
+            "\n🚫  SHIP BLOCKED — Guides/Guides-Index.html missing.\n"
             "    The master index does not exist.\n",
             file=sys.stderr,
         )
@@ -610,14 +610,14 @@ def _check_guide_indexed(guide_path: Path) -> int:
 
     if f"./{city_folder}/" not in index_html and f'href="./{city_folder}/' not in index_html:
         print(
-            f"\n🚫  SHIP BLOCKED — guides_index.html has no entry for Guides/{city_folder}/.\n"
+            f"\n🚫  SHIP BLOCKED — Guides-Index.html has no entry for Guides/{city_folder}/.\n"
             f"    Complete the 4-step index update before shipping:\n"
             f"    Brain/Reference/Navigation.html § 5\n",
             file=sys.stderr,
         )
         return 1
 
-    print(f"  ✅  guides_index.html — {city_folder} entry found.")
+    print(f"  ✅  Guides-Index.html — {city_folder} entry found.")
     return 0
 
 
@@ -733,9 +733,9 @@ def _check_guide_in_status_dots(guide_path: Path) -> int:
 
 
 def _check_guide_fmap(guide_path: Path) -> int:
-    """Ship gate: verify the guide has an entry in the FMAP block of guides_index.html.
+    """Ship gate: verify the guide has an entry in the FMAP block of Guides-Index.html.
 
-    The FMAP (flight-time map data) in guides_index.html must have an entry for
+    The FMAP (flight-time map data) in Guides-Index.html must have an entry for
     every mosaic dest-card. validate_flight_index.py enforces this on both sides
     (card without FMAP = fail; FMAP without card = orphan). This ship gate catches
     the forward direction: the guide being shipped has no FMAP entry, meaning the
@@ -752,7 +752,7 @@ def _check_guide_fmap(guide_path: Path) -> int:
 
     city_folder = guide_path.parent.name  # e.g. "Amsterdam"
     guides_dir = WEB_ROOT / "Guides"
-    index_file = guides_dir / "guides_index.html"
+    index_file = guides_dir / "Guides-Index.html"
 
     if not index_file.exists():
         # Already caught by _check_guide_indexed — skip here
@@ -785,7 +785,7 @@ def _check_guide_fmap(guide_path: Path) -> int:
         return 0
 
     print(
-        f"\n🚫  SHIP BLOCKED — no FMAP entry found for {city_folder} in guides_index.html.\n"
+        f"\n🚫  SHIP BLOCKED — no FMAP entry found for {city_folder} in Guides-Index.html.\n"
         f"    Add a FMAP entry to the var FMAP block so the flight-time view includes this guide.\n"
         f"    Schema: \"{city_folder}/file.html\": {{\"t\": \"Xh Ym\", \"m\": N, \"r\": \"nonstop\", "
         f"\"d\": \"N h Nm\", \"i\": \"AAA\", \"h\": null, \"rg\": \"RegionName\", \"o\": \"{city_folder}/file.html\"}}\n"
@@ -1099,9 +1099,9 @@ def _run_update_index(city: str) -> int:
     Verifies each of the five post-build steps defined in
     Brain/Reference/Navigation.html § 5:
 
-      1. guides_index.html card
-      2. Predecessor/successor data-guide-prev/next wiring in guides_index.html
-      3. Banner counts (guides + countries) in guides_index.html
+      1. Guides-Index.html card
+      2. Predecessor/successor data-guide-prev/next wiring in Guides-Index.html
+      3. Banner counts (guides + countries) in Guides-Index.html
       4. Guide HTML toolbar-mount data-prev / data-next
       5. Map pin in the matching continent map
 
@@ -1115,8 +1115,8 @@ def _run_update_index(city: str) -> int:
 
     print(f"\n── UPDATE-INDEX checklist for: {city} ──\n")
 
-    # ── Step 1: guides_index.html card ─────────────────────────────────────────
-    print("Step 1 — guides_index.html card")
+    # ── Step 1: Guides-Index.html card ─────────────────────────────────────────
+    print("Step 1 — Guides-Index.html card")
     if guide_path is None:
         print(
             f"  ⚠  No guide HTML found in Guides/{city}/ — cannot verify steps 1–4.\n"
@@ -1126,13 +1126,13 @@ def _run_update_index(city: str) -> int:
         return 1
     rc1 = _check_guide_indexed(guide_path)
     if rc1 != 0:
-        fails.append("Step 1: guides_index.html card missing")
+        fails.append("Step 1: Guides-Index.html card missing")
     else:
         print()
 
-    # ── Step 2: prev/next wiring in guides_index.html ─────────────────────────
-    print("Step 2 — prev/next wiring in guides_index.html")
-    guides_index = WEB_ROOT / "Guides" / "guides_index.html"
+    # ── Step 2: prev/next wiring in Guides-Index.html ─────────────────────────
+    print("Step 2 — prev/next wiring in Guides-Index.html")
+    guides_index = WEB_ROOT / "Guides" / "Guides-Index.html"
     step2_ok = False
     if guides_index.exists():
         idx_html = guides_index.read_text(encoding="utf-8")
@@ -1198,12 +1198,12 @@ def _run_update_index(city: str) -> int:
             print(f"  ⏭  No card found for {city} in index — see Step 1.")
             step2_ok = True  # don't double-count
     else:
-        print("  🚫  guides_index.html not found.", file=sys.stderr)
-        fails.append("Step 2: guides_index.html missing")
+        print("  🚫  Guides-Index.html not found.", file=sys.stderr)
+        fails.append("Step 2: Guides-Index.html missing")
     print()
 
     # ── Step 3: banner counts ──────────────────────────────────────────────────
-    print("Step 3 — banner counts in guides_index.html")
+    print("Step 3 — banner counts in Guides-Index.html")
     if guides_index.exists():
         idx_html_s3 = guides_index.read_text(encoding="utf-8")
 
@@ -1219,14 +1219,14 @@ def _run_update_index(city: str) -> int:
             else:
                 msg = (
                     f"Banner says {banner_count} guides but {card_count} dest-card elements found. "
-                    f"Update the banner text in guides_index.html."
+                    f"Update the banner text in Guides-Index.html."
                 )
                 print(f"  🚫  {msg}", file=sys.stderr)
                 fails.append(f"Step 3: {msg}")
         else:
-            print("  ⚠  Could not parse banner count from guides_index.html — verify manually.")
+            print("  ⚠  Could not parse banner count from Guides-Index.html — verify manually.")
     else:
-        print("  ⏭  guides_index.html not found — skipping.")
+        print("  ⏭  Guides-Index.html not found — skipping.")
     print()
 
     # ── Step 4: toolbar-mount data-prev / data-next ────────────────────────────
@@ -1523,7 +1523,7 @@ def main() -> int:
         if rc_brain != 0:
             print(
                 "\n🚫  SHIP BLOCKED — brain-check failed.\n"
-                "    Fix brain integrity issues (e.g. missing guides_index.html entry),\n"
+                "    Fix brain integrity issues (e.g. missing Guides-Index.html entry),\n"
                 "    then re-run ship.\n",
                 file=sys.stderr,
             )
@@ -1536,8 +1536,8 @@ def main() -> int:
             if rc != 0:
                 return rc
 
-        # ── guides_index.html gate (added 2026-06-02) ─────────────────────────
-        # Each crib checks only its own guide. Verifies that guides_index.html
+        # ── Guides-Index.html gate (added 2026-06-02) ─────────────────────────
+        # Each crib checks only its own guide. Verifies that Guides-Index.html
         # has an entry for the city folder containing the guide being shipped.
         # Fires at ship time — never at session start. Replaced the old
         # check_guides_index_coverage in brain_check.py which ran at session
@@ -1568,7 +1568,7 @@ def main() -> int:
         # ──────────────────────────────────────────────────────────────────────
 
         # ── FMAP gate (added 2026-06-15) ──────────────────────────────────────
-        # Verifies the guide has a flight-time map entry in guides_index.html's
+        # Verifies the guide has a flight-time map entry in Guides-Index.html's
         # FMAP block. A missing entry means the city is invisible in the
         # flight-time view. validate_flight_index.py enforces bi-directional
         # coverage; this gate fires earlier, at ship time, for the shipped guide.
@@ -1634,7 +1634,7 @@ def main() -> int:
         # ──────────────────────────────────────────────────────────────────────
 
         # ── mobile baseline gate (added 2026-06-12) ───────────────────────────
-        # Shipping a guide edits guides_index.html + the continent maps (new card
+        # Shipping a guide edits Guides-Index.html + the continent maps (new card
         # + pin). Confirm every shareable page still carries the viewport tag and
         # the assets/mobile.css baseline — --strict exits 1 on any miss. Guides
         # themselves are covered by guide_v3.css and are out of this check's scope.

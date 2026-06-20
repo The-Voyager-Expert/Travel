@@ -45,6 +45,6 @@ Last updated: 2026-06-10
 
 ## Phase 6 — Ship gate
 - [x] chicago_v1.html written 2026-06-10
-- [x] guides_index.html updated
+- [x] Guides-Index.html updated
 - [x] US Map.html pin added
 - [x] audit_log.md entry appended
