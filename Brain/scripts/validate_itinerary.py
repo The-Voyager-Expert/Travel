@@ -55,6 +55,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-20", "PHOTO EMPTY CAP TIGHTENED ≤2 → ≤1 (Dani 2026-06-20). Guide-level 'No pictures found.' cap reduced from at most 2 to at most 1. Two or more empty photo wrappers in a single guide now hard-fail regardless of whether each wrapper is individually valid. Rationale: a single genuinely unfindable stop is acceptable; two or more signals the harvest step was skipped or abandoned. Photos Rules.html §7 updated with the guide-level cap; Validator Index.html entry updated. The check label updated from 'at most 2' to 'at most 1'."),
     ("2026-06-20", "TITLE PAGE PALETTE FOLLOWS 2026-06-20 REDESIGN — the title card was redesigned today (commits 3bb19927 'Match guide title to site' → 6f868a0f) from the 2026-06-15 dark-bg/light-text palette to a light-bg/dark-text palette matching the site header: .title-page background:none, .title-city/.title-hotel/.title-country → #3d3a32, .title-address → #6a6660 (set in Guide Style.css + guide_v3.css). The validator allowlist was never updated, so all 134 live guides hard-failed 'Link-color overrides match allowlist' (offender: .title-page .title-address a #6a6660 vs stale-expected rgba(255,255,255,0.60)). Fixes: (1) LINK_COLOR_ALLOWLIST '.title-page .title-address a' rgba(255,255,255,0.60) → #6a6660; (2) the local-<style>-override canonical set {#f5e0b8, rgba(255,255,255,0.60)} → {#3d3a32, #6a6660} (+ comment). No guide HTML touched — the guides inherit guide_v3.css and were correct; the validator was stale (same pattern as the 2026-06-11 / 2026-06-01 allowlist-vs-CSS sync fixes)."),
     ("2026-06-19", "AUDIT BACKLOG — 5 checks from 2026-06-17 Core Rules audit (B1/B2/B3/B4/B5). B1: global body-wide bare-placeholder scan — TBD/TODO/FIXME/'fill in later'/'tour TBD' in visible body text now hard-fail (title-page already caught these; body was missed). B2: ≤4-day Train Day prohibition now enforced — the short-guide branch silently passed even when Train Day cards were present; now checks _quota_train_day_count == 0 and hard-fails if any Train Days found (Day Structure §6 'must NOT include'). Threshold uses TOTAL days (including Train Days) — a 6-day guide with 3 Train Days is not a 3-day guide; only guides with ≤4 total days in the overview are short guides. B3: stop-count floor ≥4 flipped from warn() to check() (hard fail) — sentinel exemption (<!-- day-count: N — reason --> with carve-out keyword) still suppresses; Validator Index already documented this as enforced. B4: _MOTION_LEAD_RE broadened from [🚶🚕🚢] to [🚶🚕🚢🚝🚎] — metro (🚝) and tram (🚎) consecutive-motion-row check now fires correctly. B5: CSS text-transform ban broadened from one exact pattern (a, a:visited { text-transform: lowercase }) to any text-transform value on any <a>-targeting or cascading selector (Trip Overview §4 'any global text-transform on anchors')."),
     ("2026-06-17", "GETTING AROUND §2 TRAM — negative-finding line REMOVED + tram no longer mandatory-present (Dani 2026-06-17: 'tram has to be checked and the negative line has to come out — cribs are lazy and dont check when we had the other way'). Mirrors the §4 Ferry fix: a tram is always researched, the 🚎 Tram subsection ships ONLY when a usable tram exists, and a no-tram city OMITS the subsection entirely. CORE RULES edited: Getting Around - Extra Section.html §2a/§2b — dropped 'If no tram is available, ship the negative-finding line: No tram available in [City].'; §2a now says always-check + omit-when-none (checksums regenerated, doc_workshop_validator clean). Validator: (1) the 'TRAM SECTION MANDATORY' check (subsection OR negative line) is replaced by 'TRAM NEGATIVE LINE IS DRIFT' — a 'No tram available' / 'does not have a tram' line hard-fails; (2) TRAM TEMPLATE ADHERENCE reduced from 4 templates to the 2 positive ones (the two negative templates retired). Narrowed the drift regex so template 2 ('[City] has a tram system … No tram rides on this trip.' — a positive entry, tram exists) is NOT caught. EXPECTED to fail: every guide currently shipping a tram negative-finding line, until the subsection is removed or replaced with a real tram entry (Dani: guides failing is fine)."),
@@ -4502,27 +4503,27 @@ def validate(html: str, filename: str):
         re.IGNORECASE,
     )
 
-    # Guide-level cap — at most 2 stops across the whole guide may carry the
-    # "No pictures found." empty wrapper.  More than 2 means the photo-harvest
+    # Guide-level cap — at most 1 stop across the whole guide may carry the
+    # "No pictures found." empty wrapper.  More than 1 means the photo-harvest
     # step was skipped or abandoned — a process violation per Photos Rules.html
     # § 4 ("harvest during research, not as a separate cleanup phase").
     # Empty wrappers are legitimate for individual stops where Commons genuinely
-    # comes up empty, but 3+ empty stops signals the harvest was never properly
+    # comes up empty, but 2+ empty stops signals the harvest was never properly
     # completed.
     # Root cause: per-stop structural checks pass when every stop has a valid
     # empty wrapper, so an all-empty guide publishes silently.
-    # Added 2026-05-17.
+    # Added 2026-05-17. Tightened from ≤2 to ≤1 on 2026-06-20.
     _guide_empty_photo_count = sum(
         1
         for _open_tag, _inner in wrappers_full
         if RE_STOP_PHOTOS_EMPTY.search(_open_tag)
     )
     check(
-        'Guide has at most 2 "No pictures found." stops (Photos Rules.html § 4 — harvest during research)',
-        _guide_empty_photo_count <= 2,
+        'Guide has at most 1 "No pictures found." stop (Photos Rules.html § 4 — harvest during research)',
+        _guide_empty_photo_count <= 1,
         f'Guide contains {_guide_empty_photo_count} "No pictures found." stop(s) — '
-        'maximum 2 allowed; harvest photos for the remaining stops before publishing'
-        if _guide_empty_photo_count > 2 else '',
+        'maximum 1 allowed; harvest photos for the remaining stops before publishing'
+        if _guide_empty_photo_count > 1 else '',
     )
 
     for i, (open_tag, inner) in enumerate(wrappers_full, 1):
