@@ -318,7 +318,7 @@ html {{ scroll-behavior: smooth; }}
 <body>
 
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
-<script src="../assets/toolbar.js?v=6"></script>
+<script src="../assets/toolbar.js?v=51"></script>
 
 <div class="index-section">
   <div class="site-header">

@@ -501,10 +501,8 @@ body {{
 }}
 .page {{ max-width: 940px; margin: 0 auto; padding: 0 24px; }}
 
-/* ===== Unified header ===== */
-.header {{ background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) !important; padding: 14px 18px !important; border-radius: 10px !important; border-bottom: none !important; margin: 8px 0 14px !important; }}
-.header h1 {{ font-size: var(--fs-title,14px) !important; font-weight: bold !important; color: #ffffff !important; text-transform: uppercase !important; letter-spacing: 0.04em !important; line-height: 1.2 !important; margin: 0 !important; }}
-.header-desc {{ font-size: var(--fs-sub,12px) !important; font-weight: 400 !important; color: rgba(255,255,255,0.72) !important; line-height: 1.5 !important; margin: 4px 0 0 !important; }}
+/* ===== Unified header — underline style, inherits from _travel_style.css ===== */
+.header-desc {{ display: none !important; }}
 
 /* ===== Hero stat cards ===== */
 .hero-row {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }}
@@ -660,7 +658,7 @@ body {{ padding-left: 20px !important; padding-right: 20px !important; }}
 <body>
 
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-no-footnote="1"></div>
-<script src="../assets/toolbar.js?v=14"></script>
+<script src="../assets/toolbar.js?v=51"></script>
 
 <div class="page">
 
