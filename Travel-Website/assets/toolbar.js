@@ -107,11 +107,11 @@
         { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing' },
       ] },
     null,
-    { group: '🌐 Guides', children: [
-        { href: base + 'Guides/Guides-Index.html',                text: '🌐 Guides' },
-        { href: base + 'Trip-Essentials/Maps/Europe-Map.html', text: '🗺️ Maps' },
-        { href: base + 'Trip-Essentials/Travel-Stats.html',   text: '📊 Travel Stats' },
-      ] },
+    { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides' },
+    null,
+    { href: base + 'Trip-Essentials/Maps/Europe-Map.html', text: '🗺️ Maps' },
+    null,
+    { href: base + 'Trip-Essentials/Travel-Stats.html', text: '📊 Stats' },
     null,
     { group: '💻 Lounges', children: [
         { href: base + 'Trip-Essentials/Lounges-US.html',     text: '💻 US Lounges' },
@@ -164,7 +164,7 @@
       'border-bottom:none;box-shadow:none;' +
       'display:flex;align-items:center}' +
     /* Site title — desktop only */
-    '.tb-site-title{flex-shrink:0;font-size:11.5px;font-weight:700;color:#b85c2a;' +
+    '.tb-site-title{flex-shrink:0;font-size:13px;font-weight:700;color:#b85c2a;' +
       'letter-spacing:.08em;text-transform:uppercase;padding:0 18px;white-space:nowrap}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
@@ -174,14 +174,14 @@
       'gap:1px;align-items:center;padding:0 24px;' +
       'width:-webkit-max-content;width:max-content;margin:0 auto}' +
     /* Desktop nav links — no rectangle border, just subtle background */
-    '.tb a{font-size:11.5px;color:#3d3a32;text-decoration:none;padding:4px 8px;' +
+    '.tb a{font-size:13px;color:#3d3a32;text-decoration:none;padding:4px 8px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:' + accent + ';background:' + acLt + '}' +
     '.tb a.tb-active{color:' + accent + ';background:' + acMd + ';font-weight:500}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;color:#3d3a32;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:#3d3a32;' +
       'padding:4px 8px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:' + accent + ';background:' + acLt + '}' +
@@ -196,7 +196,7 @@
       'background:#fff;border:1px solid #e6e2da;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.13);' +
       'padding:5px;display:none;flex-direction:column;gap:2px;min-width:196px;z-index:1000}' +
     '.tb-menu.tb-menu-open{display:flex}' +
-    '.tb-menu a{display:block;font-size:12px;color:#3d3a32;text-decoration:none;padding:7px 11px;' +
+    '.tb-menu a{display:block;font-size:13px;color:#3d3a32;text-decoration:none;padding:7px 11px;' +
       'border:none;border-radius:6px;background:transparent;white-space:nowrap}' +
     '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '}' +
     '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + ';font-weight:500}' +
