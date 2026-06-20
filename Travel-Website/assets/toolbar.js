@@ -160,14 +160,13 @@
   styleEl.textContent =
     /* Toolbar outer — flex row so title + nav sit side by side */
     '.tb{padding:10px 0;position:relative;top:auto;z-index:auto;margin-bottom:0;' +
-      'background:rgba(245,244,240,.96);' +
+      'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
       'border-bottom:none;box-shadow:none;' +
       'display:flex;align-items:center}' +
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
     '.tb-site-title{flex-shrink:0;font-size:13px;font-weight:700;color:#fff;' +
-      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;' +
-      'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);border-radius:6px;}' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
@@ -175,19 +174,19 @@
     '.tb-links{display:flex;flex-wrap:nowrap;' +
       'gap:1px;align-items:center;padding:0 24px;' +
       'width:-webkit-max-content;width:max-content;margin:0 auto}' +
-    /* Desktop nav links — no rectangle border, just subtle background */
-    '.tb a{font-size:13px;color:#3d3a32;text-decoration:none;padding:4px 8px;' +
+    /* Desktop nav links — white text on gradient bar */
+    '.tb a{font-size:13px;color:rgba(255,255,255,0.9);text-decoration:none;padding:4px 8px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
-    '.tb a:hover{color:' + accent + ';background:' + acLt + '}' +
-    '.tb a.tb-active{color:' + accent + ';background:' + acMd + ';font-weight:500}' +
+    '.tb a:hover{color:#fff;background:rgba(255,255,255,0.18)}' +
+    '.tb a.tb-active{color:#fff;background:rgba(255,255,255,0.25);font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:#3d3a32;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:rgba(255,255,255,0.9);' +
       'padding:4px 8px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
-    '.tb-ddbtn:hover{color:' + accent + ';background:' + acLt + '}' +
-    '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:' + accent + ';background:' + acMd + ';font-weight:500}' +
+    '.tb-ddbtn:hover{color:#fff;background:rgba(255,255,255,0.18)}' +
+    '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:#fff;background:rgba(255,255,255,0.25);font-weight:600}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
@@ -203,7 +202,7 @@
     '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '}' +
     '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + ';font-weight:500}' +
     /* Separator */
-    '.tb-sep{width:1px;height:18px;background:#d8d5ce;margin:0;flex-shrink:0}' +
+    '.tb-sep{width:1px;height:18px;background:rgba(255,255,255,0.3);margin:0;flex-shrink:0}' +
     /* Scroll progress bar — hidden on mobile (overlaps toolbar) */
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
