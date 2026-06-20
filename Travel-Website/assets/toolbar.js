@@ -158,12 +158,16 @@
 
   var styleEl = document.createElement('style');
   styleEl.textContent =
-    /* Toolbar outer — static, sits at top of page */
+    /* Toolbar outer — flex row so title + nav sit side by side */
     '.tb{padding:10px 0;position:relative;top:auto;z-index:auto;margin-bottom:0;' +
       'background:rgba(245,244,240,.96);' +
-      'border-bottom:none;box-shadow:none}' +
-    /* Scroll container */
-    '.tb-inner{overflow-x:auto;scrollbar-width:none}' +
+      'border-bottom:none;box-shadow:none;' +
+      'display:flex;align-items:center}' +
+    /* Site title — desktop only */
+    '.tb-site-title{flex-shrink:0;font-size:11.5px;font-weight:700;color:#3d3a32;' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:0 18px;white-space:nowrap}' +
+    /* Scroll container — takes remaining space */
+    '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
     /* Flex row — centered, width:max-content so it never left-packs */
     '.tb-links{display:flex;flex-wrap:nowrap;' +
@@ -205,8 +209,11 @@
     '@media(max-width:600px){.tb-progress{display:none}}' +
     /* Hide ham elements on desktop — mobile @media shows them */
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
+    /* Hide desktop title on mobile — hamLabel covers it there */
+    '.tb-site-title{display:block}' +
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
+      '.tb-site-title{display:none}' +
       '.tb{padding:6px 0 4px;display:flex;align-items:center;justify-content:space-between;min-height:auto;border-bottom:none;background:transparent;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
@@ -342,6 +349,12 @@
 
   var bar = document.createElement('div');
   bar.className = 'tb';
+
+  var siteTitle = document.createElement('span');
+  siteTitle.className = 'tb-site-title';
+  siteTitle.textContent = 'The Voyager Expert';
+  bar.appendChild(siteTitle);
+
   bar.appendChild(scroller);
 
 
