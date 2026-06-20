@@ -111,7 +111,10 @@
     null,
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps' },
     null,
-    { href: base + 'Trip-Essentials/Travel-Stats.html', text: '📊 Stats' },
+    { group: '📊 Stats', children: [
+        { href: base + 'Trip-Essentials/Travel-Stats.html',         text: '📊 Travel Stats' },
+        { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',  text: '📅 Guide Days Coverage' },
+      ]},
     null,
     { group: '💻 Lounges', children: [
         { href: base + 'Trip-Essentials/Lounges-US.html',     text: '💻 US Lounges' },
@@ -152,7 +155,6 @@
     { group: '⚙️ Resources', children: [
         { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
         { href: base + 'Trip-Essentials/Before-You-Go.html',         text: '📋 Before You Go' },
-        { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',   text: '📅 Guide Days Coverage' },
       ]},
   ];
 
@@ -184,19 +186,21 @@
     '.tb-links{display:flex;flex-wrap:nowrap;' +
       'gap:1px;align-items:center;padding:0 24px;' +
       'width:-webkit-max-content;width:max-content;margin:0 auto}' +
-    /* Desktop nav links — white text on gradient bar */
-    '.tb a{font-size:13px;color:rgba(255,255,255,0.9);text-decoration:none;padding:4px 8px;' +
+    /* Desktop nav links — white text on gradient bar.
+       Colours use !important so a page's own `a{}` / `a:visited{}` rules
+       (e.g. guide_v3.css link colours) can NEVER bleed into the shared bar. */
+    '.tb a,.tb a:visited{font-size:13px;color:rgba(255,255,255,0.9)!important;text-decoration:none;padding:4px 8px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
-    '.tb a:hover{color:#fff;background:rgba(255,255,255,0.18)}' +
-    '.tb a.tb-active{color:#fff;background:rgba(255,255,255,0.25);font-weight:600}' +
+    '.tb a:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
+    '.tb a.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:rgba(255,255,255,0.9);' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:rgba(255,255,255,0.9)!important;' +
       'padding:4px 8px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
-    '.tb-ddbtn:hover{color:#fff;background:rgba(255,255,255,0.18)}' +
-    '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:#fff;background:rgba(255,255,255,0.25);font-weight:600}' +
+    '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
+    '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
@@ -207,10 +211,10 @@
       'background:#fff;border:1px solid #e6e2da;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.13);' +
       'padding:4px;display:none;flex-direction:column;gap:0;min-width:196px;z-index:1000}' +
     '.tb-menu.tb-menu-open{display:flex}' +
-    '.tb-menu a{display:block;font-size:13px;line-height:1.2;color:#3d3a32;text-decoration:none;padding:6px 11px;' +
+    '.tb-menu a,.tb-menu a:visited{display:block;font-size:13px;line-height:1.2;color:#3d3a32!important;text-decoration:none;padding:6px 11px;' +
       'border:none;border-radius:6px;background:transparent;white-space:nowrap}' +
-    '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '}' +
-    '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + ';font-weight:500}' +
+    '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '!important}' +
+    '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + '!important;font-weight:500}' +
     /* Separator */
     '.tb-sep{width:1px;height:18px;background:rgba(255,255,255,0.3);margin:0;flex-shrink:0}' +
     /* Scroll progress bar — hidden on mobile (overlaps toolbar) */
@@ -240,9 +244,9 @@
         'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:999;padding:4px 0 8px;' +
         'max-height:calc(100dvh - 52px);overflow-y:auto;-webkit-overflow-scrolling:touch}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
-      '.tb-ham-menu a{display:block;font-size:14px;color:#3d3a32;text-decoration:none;' +
+      '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:14px;color:#3d3a32!important;text-decoration:none;' +
         'padding:10px 18px;border-bottom:none;-webkit-tap-highlight-color:transparent}' +
-      '.tb-ham-menu a.tb-active{color:' + accent + ';font-weight:600}' +
+      '.tb-ham-menu a.tb-active{color:' + accent + '!important;font-weight:600}' +
       '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 18px}' +
     '}'
