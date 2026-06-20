@@ -114,6 +114,7 @@
     { group: '📊 Stats', children: [
         { href: base + 'Trip-Essentials/Travel-Stats.html',         text: '📊 Travel Stats' },
         { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',  text: '📅 Guide Days Coverage' },
+        { href: base + 'Trip-Essentials/US-States.html',            text: '🗺️ US States' },
       ]},
     null,
     { group: '💻 Lounges', children: [

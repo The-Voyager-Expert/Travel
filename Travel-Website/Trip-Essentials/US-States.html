@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/_travel_style.css">
+<title>US States</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f4f0; --surface: #ffffff; --surface2: #f6f2ec;
+  --border: #d8d4cc; --border2: #e6e2da;
+  --text: #1a1917; --muted: #6a6660;
+  --rust: #b85c2a; --rust-deep: #7a3b1e; --copper: #a8521f;
+  --navy: #2f5596; --navy-deep: #1a2e5c;
+  --accent: #b85c2a;
+}
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-size: var(--fs-body,14px); line-height: 1.6; padding-bottom: 80px;
+}
+
+/* ── Search row ── */
+.search-row {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 14px;
+}
+#state-search {
+  width: 260px;
+  padding: 9px 16px;
+  font-size: 14px;
+  line-height: 1;
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+#state-search::placeholder { color: #a8895a; }
+#state-search:focus { border-color: var(--rust); box-shadow: 0 0 0 3px rgba(184,92,42,.1); }
+
+/* ── Region filter pills ── */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+.filter-pill {
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  background: #fdf8f0;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+  user-select: none;
+  white-space: nowrap;
+}
+.filter-pill:hover { border-color: var(--rust); color: var(--rust); }
+.filter-pill.active {
+  background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+  border-color: var(--rust);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Hero stat strip ── */
+.hero-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.hero-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: currentColor;
+}
+.hero-card.c1 { color: var(--rust-deep); }
+.hero-card.c2 { color: var(--rust); }
+.hero-card.c3 { color: var(--copper); }
+.hero-card.c4 { color: var(--navy); }
+.hero-num { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; color: currentColor; line-height: 1; margin-bottom: 4px; }
+.hero-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+/* ── Table wrapper ── */
+.tbl-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead th {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid var(--border2);
+  transition: background .12s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #faf7f2; }
+tbody tr.hidden { display: none; }
+td {
+  padding: 11px 14px;
+  vertical-align: middle;
+  font-size: 13px;
+}
+
+/* ── State name cell ── */
+.state-name { font-weight: 700; color: var(--text); font-size: 13px; }
+.state-abbr {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--muted);
+  margin-left: 5px;
+  vertical-align: middle;
+  letter-spacing: 0.08em;
+}
+
+/* ── Capital / cities ── */
+.capital { font-weight: 600; color: var(--text); }
+.cities { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ── Population ── */
+.pop { font-weight: 700; color: var(--text); }
+.pop-sub { font-size: 11px; color: var(--muted); }
+
+/* ── Crime badge ── */
+.crime {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.crime-low    { background: #eef2f9; color: var(--navy-deep); border: 1px solid #c5d3ec; }
+.crime-medium { background: #fef3e8; color: #7a4800; border: 1px solid #e6c088; }
+.crime-high   { background: #fdecea; color: #8a2020; border: 1px solid #e8a5a0; }
+
+/* ── Key stat ── */
+.stat-text { font-size: 12px; color: var(--muted); max-width: 220px; }
+
+/* ── Guide links ── */
+.guide-links { display: flex; flex-wrap: wrap; gap: 5px; }
+.guide-link {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: #fdf8f0;
+  color: var(--rust-deep);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all .14s;
+}
+.guide-link:hover {
+  background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+  border-color: var(--rust);
+  color: #fff;
+}
+
+/* ── No results ── */
+#no-results {
+  display: none;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 28px 16px;
+}
+
+/* ── Section title ── */
+.section-title {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  margin: 24px 0 12px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .hero-strip { grid-template-columns: repeat(2, 1fr); }
+  td.col-stat, th.col-stat { display: none; }
+  td, th { padding: 9px 10px; }
+}
+@media (max-width: 500px) {
+  td.col-cities, th.col-cities { display: none; }
+  #state-search { width: 100%; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=49">
+</head>
+<body>
+<div class="wrap" data-toolbar-title="🗺️ US States" data-maxwidth="1100">
+  <script src="../assets/toolbar.js"></script>
+
+  <div class="hero-strip">
+    <div class="hero-card c1">
+      <div class="hero-num">50</div>
+      <div class="hero-label">States</div>
+    </div>
+    <div class="hero-card c2">
+      <div class="hero-num">21</div>
+      <div class="hero-label">Guides</div>
+    </div>
+    <div class="hero-card c3">
+      <div class="hero-num">5</div>
+      <div class="hero-label">Regions</div>
+    </div>
+    <div class="hero-card c4">
+      <div class="hero-num">335M</div>
+      <div class="hero-label">US Population</div>
+    </div>
+  </div>
+
+  <div class="search-row">
+    <input type="text" id="state-search" placeholder="🔍  State, city, or capital" aria-label="Filter states">
+  </div>
+
+  <div class="filter-row">
+    <span class="filter-pill active" data-region="all">All States</span>
+    <span class="filter-pill" data-region="northeast">Northeast</span>
+    <span class="filter-pill" data-region="southeast">Southeast</span>
+    <span class="filter-pill" data-region="midwest">Midwest</span>
+    <span class="filter-pill" data-region="southwest">Southwest</span>
+    <span class="filter-pill" data-region="west">West</span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>State</th>
+          <th>Capital</th>
+          <th class="col-cities">Notable Cities</th>
+          <th>Population</th>
+          <th>Crime Level</th>
+          <th class="col-stat">Key Facts</th>
+          <th>Guides</th>
+        </tr>
+      </thead>
+      <tbody id="states-tbody">
+
+        <!-- Alabama -->
+        <tr data-region="southeast" data-search="alabama al montgomery birmingham huntsville mobile tuscaloosa">
+          <td><span class="state-name">Alabama</span><span class="state-abbr">AL</span></td>
+          <td><div class="capital">Montgomery</div></td>
+          <td class="col-cities"><div class="cities">Birmingham · Huntsville · Mobile · Tuscaloosa</div></td>
+          <td><div class="pop">5.1M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">US Space &amp; Rocket Center in Huntsville; NASA Marshall Space Flight Center</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Alaska -->
+        <tr data-region="west" data-search="alaska ak juneau anchorage fairbanks sitka ketchikan">
+          <td><span class="state-name">Alaska</span><span class="state-abbr">AK</span></td>
+          <td><div class="capital">Juneau</div></td>
+          <td class="col-cities"><div class="cities">Anchorage · Fairbanks · Sitka · Ketchikan</div></td>
+          <td><div class="pop">733K</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Largest state (663K sq mi); Northern Lights; lowest population density of any state</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Alaska/alaska_v1.html">Alaska</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Arizona -->
+        <tr data-region="southwest" data-search="arizona az phoenix tucson scottsdale mesa tempe chandler">
+          <td><span class="state-name">Arizona</span><span class="state-abbr">AZ</span></td>
+          <td><div class="capital">Phoenix</div></td>
+          <td class="col-cities"><div class="cities">Tucson · Scottsdale · Mesa · Tempe · Chandler</div></td>
+          <td><div class="pop">7.4M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Grand Canyon; Phoenix is the 5th largest US city; hottest average temperatures of any US city</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Scottsdale/scottsdale_v1.html">Scottsdale</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Arkansas -->
+        <tr data-region="southeast" data-search="arkansas ar little rock fayetteville fort smith jonesboro">
+          <td><span class="state-name">Arkansas</span><span class="state-abbr">AR</span></td>
+          <td><div class="capital">Little Rock</div></td>
+          <td class="col-cities"><div class="cities">Fayetteville · Fort Smith · Jonesboro</div></td>
+          <td><div class="pop">3.1M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Walmart &amp; Tyson Foods HQ; Buffalo National River was first US national river</div></td>
+          <td></td>
+        </tr>
+
+        <!-- California -->
+        <tr data-region="west" data-search="california ca sacramento los angeles san francisco san diego san jose fresno long beach oakland palm desert palo alto pasadena santa barbara">
+          <td><span class="state-name">California</span><span class="state-abbr">CA</span></td>
+          <td><div class="capital">Sacramento</div></td>
+          <td class="col-cities"><div class="cities">Los Angeles · San Francisco · San Diego · San Jose · Fresno</div></td>
+          <td><div class="pop">39.0M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Largest state GDP (~$3.9T; 5th largest economy in the world); most populous state; Silicon Valley; Hollywood</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Los Angeles/los_angeles_v1.html">Los Angeles</a>
+              <a class="guide-link" href="../Guides/San Francisco/sf_v3.html">San Francisco</a>
+              <a class="guide-link" href="../Guides/San Diego/san_diego_v1.html">San Diego</a>
+              <a class="guide-link" href="../Guides/Palo Alto/palo_alto_v6.html">Palo Alto</a>
+              <a class="guide-link" href="../Guides/Pasadena/pasadena_v5.html">Pasadena</a>
+              <a class="guide-link" href="../Guides/Palm Desert/palm_desert_v1.html">Palm Desert</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Colorado -->
+        <tr data-region="west" data-search="colorado co denver colorado springs aurora boulder fort collins">
+          <td><span class="state-name">Colorado</span><span class="state-abbr">CO</span></td>
+          <td><div class="capital">Denver</div></td>
+          <td class="col-cities"><div class="cities">Colorado Springs · Aurora · Boulder · Fort Collins</div></td>
+          <td><div class="pop">5.9M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Highest average elevation (6,800 ft); most craft breweries per capita; Rocky Mountain National Park</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Connecticut -->
+        <tr data-region="northeast" data-search="connecticut ct hartford new haven bridgeport stamford waterbury">
+          <td><span class="state-name">Connecticut</span><span class="state-abbr">CT</span></td>
+          <td><div class="capital">Hartford</div></td>
+          <td class="col-cities"><div class="cities">New Haven · Bridgeport · Stamford · Waterbury</div></td>
+          <td><div class="pop">3.6M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Highest per-capita income in the US; Yale University; insurance industry capital of the world</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Delaware -->
+        <tr data-region="northeast" data-search="delaware de dover wilmington newark middletown">
+          <td><span class="state-name">Delaware</span><span class="state-abbr">DE</span></td>
+          <td><div class="capital">Dover</div></td>
+          <td class="col-cities"><div class="cities">Wilmington · Newark · Middletown</div></td>
+          <td><div class="pop">1.0M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">First state to ratify the Constitution (1787); no sales tax; more corporations incorporated here than residents</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Florida -->
+        <tr data-region="southeast" data-search="florida fl tallahassee miami orlando tampa jacksonville fort lauderdale st petersburg">
+          <td><span class="state-name">Florida</span><span class="state-abbr">FL</span></td>
+          <td><div class="capital">Tallahassee</div></td>
+          <td class="col-cities"><div class="cities">Miami · Orlando · Tampa · Jacksonville · Fort Lauderdale</div></td>
+          <td><div class="pop">22.6M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">3rd most populous state; no state income tax; most lightning strikes per square mile; #1 US tourism destination</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Miami/miami_v1.html">Miami</a>
+              <a class="guide-link" href="../Guides/Orlando/orlando_v1.html">Orlando</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Georgia -->
+        <tr data-region="southeast" data-search="georgia ga atlanta savannah augusta columbus macon">
+          <td><span class="state-name">Georgia</span><span class="state-abbr">GA</span></td>
+          <td><div class="capital">Atlanta</div></td>
+          <td class="col-cities"><div class="cities">Savannah · Augusta · Columbus · Macon</div></td>
+          <td><div class="pop">11.0M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">World's busiest airport (Hartsfield-Jackson); #1 US film &amp; TV production state; Coca-Cola HQ</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Atlanta/atlanta_v1.html">Atlanta</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Hawaii -->
+        <tr data-region="west" data-search="hawaii hi honolulu hilo kailua lahaina kailua-kona oahu maui kauai big island">
+          <td><span class="state-name">Hawaii</span><span class="state-abbr">HI</span></td>
+          <td><div class="capital">Honolulu</div></td>
+          <td class="col-cities"><div class="cities">Hilo · Kailua · Kailua-Kona · Lahaina (Maui)</div></td>
+          <td><div class="pop">1.4M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Only island state; only state outside North America; most isolated population center on Earth; 8 main islands</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Oahu/oahu_v1.html">Oahu</a>
+              <a class="guide-link" href="../Guides/Maui/maui_v1.html">Maui</a>
+              <a class="guide-link" href="../Guides/Kauai/kauai_v1.html">Kauai</a>
+              <a class="guide-link" href="../Guides/Big Island/big_island_v1.html">Big Island</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Idaho -->
+        <tr data-region="west" data-search="idaho id boise nampa meridian idaho falls pocatello">
+          <td><span class="state-name">Idaho</span><span class="state-abbr">ID</span></td>
+          <td><div class="capital">Boise</div></td>
+          <td class="col-cities"><div class="cities">Nampa · Meridian · Idaho Falls · Pocatello</div></td>
+          <td><div class="pop">2.0M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Produces ~1/3 of all US potatoes; Boise was one of the fastest-growing US cities in recent years</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Illinois -->
+        <tr data-region="midwest" data-search="illinois il springfield chicago aurora rockford naperville peoria">
+          <td><span class="state-name">Illinois</span><span class="state-abbr">IL</span></td>
+          <td><div class="capital">Springfield</div></td>
+          <td class="col-cities"><div class="cities">Chicago · Aurora · Rockford · Naperville · Peoria</div></td>
+          <td><div class="pop">12.5M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Chicagoland metro = 9.5M people; nation's rail hub; Willis Tower was tallest building in world 1973–1998</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Chicago/chicago_v1.html">Chicago</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Indiana -->
+        <tr data-region="midwest" data-search="indiana in indianapolis fort wayne evansville south bend">
+          <td><span class="state-name">Indiana</span><span class="state-abbr">IN</span></td>
+          <td><div class="capital">Indianapolis</div></td>
+          <td class="col-cities"><div class="cities">Fort Wayne · Evansville · South Bend · Carmel</div></td>
+          <td><div class="pop">6.9M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Indianapolis 500 (world's largest single-day sporting event); top US steel producer; Eli Lilly HQ</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Iowa -->
+        <tr data-region="midwest" data-search="iowa ia des moines cedar rapids davenport sioux city waterloo">
+          <td><span class="state-name">Iowa</span><span class="state-abbr">IA</span></td>
+          <td><div class="capital">Des Moines</div></td>
+          <td class="col-cities"><div class="cities">Cedar Rapids · Davenport · Sioux City · Waterloo</div></td>
+          <td><div class="pop">3.2M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Produces 16% of US corn and #1 in pork production; first state to hold presidential primary caucuses</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Kansas -->
+        <tr data-region="midwest" data-search="kansas ks topeka wichita overland park olathe lawrence">
+          <td><span class="state-name">Kansas</span><span class="state-abbr">KS</span></td>
+          <td><div class="capital">Topeka</div></td>
+          <td class="col-cities"><div class="cities">Wichita · Overland Park · Olathe · Lawrence</div></td>
+          <td><div class="pop">3.0M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Geographic center of the contiguous US (Lebanon, KS); #1 wheat producer; aviation manufacturing hub (Wichita)</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Kentucky -->
+        <tr data-region="southeast" data-search="kentucky ky frankfort louisville lexington bowling green owensboro">
+          <td><span class="state-name">Kentucky</span><span class="state-abbr">KY</span></td>
+          <td><div class="capital">Frankfort</div></td>
+          <td class="col-cities"><div class="cities">Louisville · Lexington · Bowling Green · Owensboro</div></td>
+          <td><div class="pop">4.5M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">95% of world's bourbon production; Kentucky Derby (oldest US sporting event); Mammoth Cave (world's longest cave system)</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Louisiana -->
+        <tr data-region="southeast" data-search="louisiana la baton rouge new orleans shreveport lafayette lake charles">
+          <td><span class="state-name">Louisiana</span><span class="state-abbr">LA</span></td>
+          <td><div class="capital">Baton Rouge</div></td>
+          <td class="col-cities"><div class="cities">New Orleans · Shreveport · Lafayette · Lake Charles</div></td>
+          <td><div class="pop">4.6M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">New Orleans: jazz birthplace &amp; Mardi Gras; highest imprisonment rate in the world; most diverse cuisine of any US state</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Maine -->
+        <tr data-region="northeast" data-search="maine me augusta portland bangor lewiston">
+          <td><span class="state-name">Maine</span><span class="state-abbr">ME</span></td>
+          <td><div class="capital">Augusta</div></td>
+          <td class="col-cities"><div class="cities">Portland · Bangor · Lewiston · Auburn</div></td>
+          <td><div class="pop">1.4M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Easternmost state in the US; produces 90% of US lobsters; Acadia National Park; longest coastline per square mile</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Maryland -->
+        <tr data-region="northeast" data-search="maryland md annapolis baltimore frederick rockville gaithersburg">
+          <td><span class="state-name">Maryland</span><span class="state-abbr">MD</span></td>
+          <td><div class="capital">Annapolis</div></td>
+          <td class="col-cities"><div class="cities">Baltimore · Frederick · Rockville · Gaithersburg</div></td>
+          <td><div class="pop">6.2M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Median household income among top 5 US states; US Naval Academy; Chesapeake Bay crab capital</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Massachusetts -->
+        <tr data-region="northeast" data-search="massachusetts ma boston worcester springfield cambridge lowell new bedford">
+          <td><span class="state-name">Massachusetts</span><span class="state-abbr">MA</span></td>
+          <td><div class="capital">Boston</div></td>
+          <td class="col-cities"><div class="cities">Worcester · Springfield · Cambridge · Lowell</div></td>
+          <td><div class="pop">7.0M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Most educated state (% with bachelor's degree); home of Harvard, MIT, &amp; 120+ colleges; birthplace of the American Revolution</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Boston/boston_v1.html">Boston</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Michigan -->
+        <tr data-region="midwest" data-search="michigan mi lansing detroit grand rapids ann arbor warren sterling heights">
+          <td><span class="state-name">Michigan</span><span class="state-abbr">MI</span></td>
+          <td><div class="capital">Lansing</div></td>
+          <td class="col-cities"><div class="cities">Detroit · Grand Rapids · Ann Arbor · Warren</div></td>
+          <td><div class="pop">10.1M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Auto industry capital (Ford, GM, Stellantis HQ); 3,288 miles of Great Lakes shoreline; Mackinac Island</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Minnesota -->
+        <tr data-region="midwest" data-search="minnesota mn saint paul minneapolis rochester duluth bloomington">
+          <td><span class="state-name">Minnesota</span><span class="state-abbr">MN</span></td>
+          <td><div class="capital">St. Paul</div></td>
+          <td class="col-cities"><div class="cities">Minneapolis · Rochester · Duluth · Bloomington</div></td>
+          <td><div class="pop">5.8M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Most Fortune 500 companies per capita; Mall of America (largest US mall); 10,000+ lakes; Mayo Clinic in Rochester</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Mississippi -->
+        <tr data-region="southeast" data-search="mississippi ms jackson gulfport biloxi hattiesburg southaven">
+          <td><span class="state-name">Mississippi</span><span class="state-abbr">MS</span></td>
+          <td><div class="capital">Jackson</div></td>
+          <td class="col-cities"><div class="cities">Gulfport · Biloxi · Hattiesburg · Southaven</div></td>
+          <td><div class="pop">3.0M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Lowest median household income of any US state; birthplace of the blues; Mississippi River runs the length of the state</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Missouri -->
+        <tr data-region="midwest" data-search="missouri mo jefferson city kansas city st. louis springfield columbia independence">
+          <td><span class="state-name">Missouri</span><span class="state-abbr">MO</span></td>
+          <td><div class="capital">Jefferson City</div></td>
+          <td class="col-cities"><div class="cities">Kansas City · St. Louis · Springfield · Columbia</div></td>
+          <td><div class="pop">6.2M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Gateway Arch (tallest monument in US); birthplace of Mark Twain; where Lewis &amp; Clark began their expedition</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Montana -->
+        <tr data-region="west" data-search="montana mt helena billings missoula bozeman great falls">
+          <td><span class="state-name">Montana</span><span class="state-abbr">MT</span></td>
+          <td><div class="capital">Helena</div></td>
+          <td class="col-cities"><div class="cities">Billings · Missoula · Bozeman · Great Falls</div></td>
+          <td><div class="pop">1.1M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">4th largest state; Glacier National Park; part of Yellowstone National Park; more cattle than people</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Nebraska -->
+        <tr data-region="midwest" data-search="nebraska ne lincoln omaha bellevue grand island kearney">
+          <td><span class="state-name">Nebraska</span><span class="state-abbr">NE</span></td>
+          <td><div class="capital">Lincoln</div></td>
+          <td class="col-cities"><div class="cities">Omaha · Bellevue · Grand Island · Kearney</div></td>
+          <td><div class="pop">2.0M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Warren Buffett &amp; Berkshire Hathaway headquartered in Omaha; corn and beef production powerhouse; Chimney Rock landmark</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Nevada -->
+        <tr data-region="west" data-search="nevada nv carson city las vegas reno henderson sparks">
+          <td><span class="state-name">Nevada</span><span class="state-abbr">NV</span></td>
+          <td><div class="capital">Carson City</div></td>
+          <td class="col-cities"><div class="cities">Las Vegas · Reno · Henderson · Sparks</div></td>
+          <td><div class="pop">3.2M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Las Vegas: most hotel rooms in world; driest state (avg 9.5 in rain/yr); no state income tax; Area 51</div></td>
+          <td></td>
+        </tr>
+
+        <!-- New Hampshire -->
+        <tr data-region="northeast" data-search="new hampshire nh concord manchester nashua dover rochester">
+          <td><span class="state-name">New Hampshire</span><span class="state-abbr">NH</span></td>
+          <td><div class="capital">Concord</div></td>
+          <td class="col-cities"><div class="cities">Manchester · Nashua · Dover · Rochester</div></td>
+          <td><div class="pop">1.4M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">No income tax, no sales tax; First in the Nation primary; "Live Free or Die" motto; Mount Washington (highest wind speed ever recorded: 231 mph)</div></td>
+          <td></td>
+        </tr>
+
+        <!-- New Jersey -->
+        <tr data-region="northeast" data-search="new jersey nj trenton newark jersey city paterson elizabeth passaic">
+          <td><span class="state-name">New Jersey</span><span class="state-abbr">NJ</span></td>
+          <td><div class="capital">Trenton</div></td>
+          <td class="col-cities"><div class="cities">Newark · Jersey City · Paterson · Elizabeth</div></td>
+          <td><div class="pop">9.3M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Most densely populated state (1,263/sq mi); highest income density in US; Princeton University; boardwalk capital</div></td>
+          <td></td>
+        </tr>
+
+        <!-- New Mexico -->
+        <tr data-region="southwest" data-search="new mexico nm santa fe albuquerque las cruces rio rancho roswell">
+          <td><span class="state-name">New Mexico</span><span class="state-abbr">NM</span></td>
+          <td><div class="capital">Santa Fe</div></td>
+          <td class="col-cities"><div class="cities">Albuquerque · Las Cruces · Rio Rancho · Roswell</div></td>
+          <td><div class="pop">2.1M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Oldest state capital in US (Santa Fe, 1610); 2nd highest violent crime rate; Carlsbad Caverns; White Sands National Park</div></td>
+          <td></td>
+        </tr>
+
+        <!-- New York -->
+        <tr data-region="northeast" data-search="new york ny albany new york city buffalo rochester syracuse yonkers">
+          <td><span class="state-name">New York</span><span class="state-abbr">NY</span></td>
+          <td><div class="capital">Albany</div></td>
+          <td class="col-cities"><div class="cities">New York City · Buffalo · Rochester · Syracuse · Yonkers</div></td>
+          <td><div class="pop">19.6M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Financial capital of the world; 4th most populous state; Ellis Island; Niagara Falls; NYC metro = 20M people</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/New York/new_york_v1.html">New York City</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- North Carolina -->
+        <tr data-region="southeast" data-search="north carolina nc raleigh charlotte greensboro durham winston-salem cary">
+          <td><span class="state-name">North Carolina</span><span class="state-abbr">NC</span></td>
+          <td><div class="capital">Raleigh</div></td>
+          <td class="col-cities"><div class="cities">Charlotte · Greensboro · Durham · Winston-Salem · Cary</div></td>
+          <td><div class="pop">10.8M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Research Triangle Park (RTP); Charlotte is 2nd largest US banking hub; Wright Brothers first flight (Kitty Hawk)</div></td>
+          <td></td>
+        </tr>
+
+        <!-- North Dakota -->
+        <tr data-region="midwest" data-search="north dakota nd bismarck fargo grand forks minot">
+          <td><span class="state-name">North Dakota</span><span class="state-abbr">ND</span></td>
+          <td><div class="capital">Bismarck</div></td>
+          <td class="col-cities"><div class="cities">Fargo · Grand Forks · Minot · West Fargo</div></td>
+          <td><div class="pop">779K</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">2nd least populous state; highest oil production in lower 48; lowest unemployment rate; Theodore Roosevelt National Park</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Ohio -->
+        <tr data-region="midwest" data-search="ohio oh columbus cleveland cincinnati toledo akron dayton">
+          <td><span class="state-name">Ohio</span><span class="state-abbr">OH</span></td>
+          <td><div class="capital">Columbus</div></td>
+          <td class="col-cities"><div class="cities">Cleveland · Cincinnati · Toledo · Akron · Dayton</div></td>
+          <td><div class="pop">11.8M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Most US presidents born here (8 of 45); more NASA astronauts than any state (25+); Rock &amp; Roll Hall of Fame (Cleveland)</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Oklahoma -->
+        <tr data-region="southwest" data-search="oklahoma ok oklahoma city tulsa norman broken arrow lawton">
+          <td><span class="state-name">Oklahoma</span><span class="state-abbr">OK</span></td>
+          <td><div class="capital">Oklahoma City</div></td>
+          <td class="col-cities"><div class="cities">Tulsa · Norman · Broken Arrow · Lawton</div></td>
+          <td><div class="pop">4.1M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Tornado Alley center; 39 sovereign Native American tribal nations; highest proportion of Native American residents of any state</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Oregon -->
+        <tr data-region="west" data-search="oregon or salem portland eugene gresham hillsboro bend beaverton">
+          <td><span class="state-name">Oregon</span><span class="state-abbr">OR</span></td>
+          <td><div class="capital">Salem</div></td>
+          <td class="col-cities"><div class="cities">Portland · Eugene · Gresham · Bend · Hillsboro</div></td>
+          <td><div class="pop">4.3M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Only US state flag with different designs on each side; Nike HQ (Beaverton); Crater Lake (deepest US lake); no sales tax</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Bend/bend_v2.html">Bend</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Pennsylvania -->
+        <tr data-region="northeast" data-search="pennsylvania pa harrisburg philadelphia pittsburgh allentown erie reading">
+          <td><span class="state-name">Pennsylvania</span><span class="state-abbr">PA</span></td>
+          <td><div class="capital">Harrisburg</div></td>
+          <td class="col-cities"><div class="cities">Philadelphia · Pittsburgh · Allentown · Erie · Reading</div></td>
+          <td><div class="pop">13.0M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">First US capital (Philadelphia); Liberty Bell; Amish Country; first US daily newspaper; Carnegie Mellon &amp; University of Pennsylvania</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Rhode Island -->
+        <tr data-region="northeast" data-search="rhode island ri providence newport cranston pawtucket woonsocket">
+          <td><span class="state-name">Rhode Island</span><span class="state-abbr">RI</span></td>
+          <td><div class="capital">Providence</div></td>
+          <td class="col-cities"><div class="cities">Newport · Cranston · Pawtucket · Woonsocket</div></td>
+          <td><div class="pop">1.1M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Smallest state (1,214 sq mi); Newport mansions (Gilded Age); oldest US shopping mall; Brown University</div></td>
+          <td></td>
+        </tr>
+
+        <!-- South Carolina -->
+        <tr data-region="southeast" data-search="south carolina sc columbia charleston greenville myrtle beach rock hill">
+          <td><span class="state-name">South Carolina</span><span class="state-abbr">SC</span></td>
+          <td><div class="capital">Columbia</div></td>
+          <td class="col-cities"><div class="cities">Charleston · Greenville · Myrtle Beach · Rock Hill</div></td>
+          <td><div class="pop">5.4M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">First state to secede (Civil War, 1860); first shot of the Civil War fired at Fort Sumter; Greenville one of the fastest-growing metros</div></td>
+          <td></td>
+        </tr>
+
+        <!-- South Dakota -->
+        <tr data-region="midwest" data-search="south dakota sd pierre sioux falls rapid city aberdeen brookings">
+          <td><span class="state-name">South Dakota</span><span class="state-abbr">SD</span></td>
+          <td><div class="capital">Pierre</div></td>
+          <td class="col-cities"><div class="cities">Sioux Falls · Rapid City · Aberdeen · Brookings</div></td>
+          <td><div class="pop">920K</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Mount Rushmore; Badlands National Park; no state income tax; Sturgis Motorcycle Rally (500K+ attendees)</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Tennessee -->
+        <tr data-region="southeast" data-search="tennessee tn nashville memphis knoxville chattanooga clarksville murfreesboro">
+          <td><span class="state-name">Tennessee</span><span class="state-abbr">TN</span></td>
+          <td><div class="capital">Nashville</div></td>
+          <td class="col-cities"><div class="cities">Memphis · Knoxville · Chattanooga · Clarksville</div></td>
+          <td><div class="pop">7.1M</div></td>
+          <td><span class="crime crime-high">High</span></td>
+          <td class="col-stat"><div class="stat-text">Country music capital (Nashville); Graceland in Memphis; Great Smoky Mountains (most visited US national park); no state income tax</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Texas -->
+        <tr data-region="southwest" data-search="texas tx austin houston dallas san antonio fort worth el paso arlington corpus christi">
+          <td><span class="state-name">Texas</span><span class="state-abbr">TX</span></td>
+          <td><div class="capital">Austin</div></td>
+          <td class="col-cities"><div class="cities">Houston · Dallas · San Antonio · Fort Worth · El Paso</div></td>
+          <td><div class="pop">30.5M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">2nd most populous &amp; 2nd largest economy ($2.0T GDP); 2nd largest area in lower 48; no state income tax; NASA Johnson Space Center (Houston)</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Austin/austin_v1.html">Austin</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Utah -->
+        <tr data-region="west" data-search="utah ut salt lake city provo west valley city ogden st george">
+          <td><span class="state-name">Utah</span><span class="state-abbr">UT</span></td>
+          <td><div class="capital">Salt Lake City</div></td>
+          <td class="col-cities"><div class="cities">Provo · West Valley City · Ogden · St. George</div></td>
+          <td><div class="pop">3.5M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">5 national parks ("The Mighty Five"); fastest-growing state (recent years); Greatest Snow on Earth; 2002 Winter Olympics host</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Vermont -->
+        <tr data-region="northeast" data-search="vermont vt montpelier burlington essex south burlington rutland">
+          <td><span class="state-name">Vermont</span><span class="state-abbr">VT</span></td>
+          <td><div class="capital">Montpelier</div></td>
+          <td class="col-cities"><div class="cities">Burlington · Essex · South Burlington · Rutland</div></td>
+          <td><div class="pop">648K</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">2nd least populous; smallest state capital (8,000 residents); #1 maple syrup producer; Ben &amp; Jerry's HQ; most rural state</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Virginia -->
+        <tr data-region="southeast" data-search="virginia va richmond virginia beach arlington alexandria norfolk chesapeake">
+          <td><span class="state-name">Virginia</span><span class="state-abbr">VA</span></td>
+          <td><div class="capital">Richmond</div></td>
+          <td class="col-cities"><div class="cities">Virginia Beach · Arlington · Alexandria · Norfolk · Chesapeake</div></td>
+          <td><div class="pop">8.7M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Pentagon &amp; CIA HQ; Amazon HQ2; 8 US presidents born here (most of any state); Colonial Williamsburg; Shenandoah National Park</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Washington -->
+        <tr data-region="west" data-search="washington wa olympia seattle spokane tacoma bellevue everett">
+          <td><span class="state-name">Washington</span><span class="state-abbr">WA</span></td>
+          <td><div class="capital">Olympia</div></td>
+          <td class="col-cities"><div class="cities">Seattle · Spokane · Tacoma · Bellevue · Everett</div></td>
+          <td><div class="pop">7.8M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">No state income tax; tech hub (Amazon, Microsoft, Boeing HQ); most active volcanoes (5); Olympic &amp; North Cascades national parks</div></td>
+          <td>
+            <div class="guide-links">
+              <a class="guide-link" href="../Guides/Seattle/seattle_v1.html">Seattle</a>
+            </div>
+          </td>
+        </tr>
+
+        <!-- West Virginia -->
+        <tr data-region="southeast" data-search="west virginia wv charleston huntington morgantown parkersburg wheeling">
+          <td><span class="state-name">West Virginia</span><span class="state-abbr">WV</span></td>
+          <td><div class="capital">Charleston</div></td>
+          <td class="col-cities"><div class="cities">Huntington · Morgantown · Parkersburg · Wheeling</div></td>
+          <td><div class="pop">1.8M</div></td>
+          <td><span class="crime crime-medium">Medium</span></td>
+          <td class="col-stat"><div class="stat-text">Only state formed from another state (Virginia, 1863); top whitewater rafting destination (New River Gorge); most forested state east of the Mississippi</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Wisconsin -->
+        <tr data-region="midwest" data-search="wisconsin wi madison milwaukee green bay kenosha racine appleton">
+          <td><span class="state-name">Wisconsin</span><span class="state-abbr">WI</span></td>
+          <td><div class="capital">Madison</div></td>
+          <td class="col-cities"><div class="cities">Milwaukee · Green Bay · Kenosha · Racine · Appleton</div></td>
+          <td><div class="pop">5.9M</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">#1 US cheese producer (2.9B lbs/yr, 600+ varieties); Harley-Davidson HQ (Milwaukee); Green Bay Packers (only community-owned NFL franchise)</div></td>
+          <td></td>
+        </tr>
+
+        <!-- Wyoming -->
+        <tr data-region="west" data-search="wyoming wy cheyenne casper laramie gillette jackson">
+          <td><span class="state-name">Wyoming</span><span class="state-abbr">WY</span></td>
+          <td><div class="capital">Cheyenne</div></td>
+          <td class="col-cities"><div class="cities">Casper · Laramie · Gillette · Jackson</div></td>
+          <td><div class="pop">585K</div></td>
+          <td><span class="crime crime-low">Low</span></td>
+          <td class="col-stat"><div class="stat-text">Least populous state; first US territory to grant women's right to vote (1869); Yellowstone National Park; no state income tax</div></td>
+          <td></td>
+        </tr>
+
+      </tbody>
+    </table>
+    <div id="no-results">No states match your search.</div>
+  </div>
+
+  <p class="section-title">Crime level note</p>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.7;">
+    Crime levels are relative classifications based on FBI Uniform Crime Reporting data (violent crime per 100K residents). <span style="font-weight:600;color:var(--navy-deep);">Low</span> = below 200 per 100K. <span style="font-weight:600;color:#7a4800;">Medium</span> = 200–400 per 100K. <span style="font-weight:600;color:#8a2020;">High</span> = above 400 per 100K. Rates vary significantly within a state — urban areas may differ substantially from statewide figures. Always check local advisories for your specific destination.
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var search = document.getElementById('state-search');
+  var rows   = document.querySelectorAll('#states-tbody tr');
+  var noRes  = document.getElementById('no-results');
+  var pills  = document.querySelectorAll('.filter-pill');
+  var activeRegion = 'all';
+
+  function applyFilters() {
+    var q = search.value.trim().toLowerCase();
+    var visible = 0;
+    rows.forEach(function (row) {
+      var regionOk = activeRegion === 'all' || row.getAttribute('data-region') === activeRegion;
+      var searchOk = !q || (row.getAttribute('data-search') || '').indexOf(q) !== -1;
+      if (regionOk && searchOk) {
+        row.classList.remove('hidden');
+        visible++;
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+    noRes.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  search.addEventListener('input', applyFilters);
+
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      pills.forEach(function (p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+      activeRegion = pill.getAttribute('data-region');
+      applyFilters();
+    });
+  });
+})();
+</script>
+</body>
+</html>
