@@ -125,7 +125,10 @@
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html',  text: '🔌 Plugs' },
+    { group: '🔌 Plugs', children: [
+        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
+        { href: base + 'Trip-Essentials/SIM-Cards.html',                        text: '📶 SIM Cards' },
+      ]},
     null,
     { group: '💰 Money', children: [
         { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency' },
