@@ -499,7 +499,7 @@ body {{
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
   font-size: var(--fs-body,14px); line-height: 1.6; padding-bottom: 80px;
 }}
-.page {{ max-width: 940px; margin: 0 auto; padding: 0 24px; }}
+.page {{ max-width: none; margin: 0 auto; padding: 0 32px; }}
 
 /* ===== Unified header — underline style, inherits from _travel_style.css ===== */
 .header-desc {{ display: none !important; }}
