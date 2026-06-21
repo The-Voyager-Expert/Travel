@@ -114,9 +114,8 @@
     { group: '📊 Stats', children: [
         { href: base + 'Trip-Essentials/Travel-Stats.html',         text: '📊 Travel Stats' },
         { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',  text: '📅 Guide Days Coverage' },
-        { href: base + 'Trip-Essentials/US-States.html',                  text: '🇺🇸 US States' },
         { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: '📊 Stats Across the US' },
-        { href: base + 'Trip-Essentials/Europe-Stats.html',              text: '📊 Stats Across Western Europe' },
+        { href: base + 'Trip-Essentials/Europe-Stats.html',              text: '📊 Stats Across Europe' },
         { href: base + 'Trip-Essentials/Pickleball.html',                text: '🏓 Pickleball' },
       ]},
     null,
