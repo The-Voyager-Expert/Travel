@@ -761,6 +761,35 @@ Use this file to inform future guide generation: when a city/venue listed here a
 
 ---
 
+## Santa Cruz
+
+### Boardwalk Rides — Seasonal Operation
+- **Note:** Full daily ride operation runs mid-June through Labor Day only. Off-season, rides open weekends and holidays only. Arcade, mini-golf, and bowling are open year-round.
+- **Workaround:** Check the exact schedule at beachboardwalk.com before visiting.
+- **Source:** 2026-06-20 build.
+
+### Hwy 17 — Weekend Traffic Jams
+- **Note:** Highway 17 over the Santa Cruz Mountains backs up severely on Friday afternoons and Sunday evenings from Silicon Valley.
+- **Workaround:** Arrive mid-week or Saturday morning to avoid the worst congestion.
+- **Source:** 2026-06-20 build.
+
+### Boardwalk Parking — First Come First Served
+- **Note:** Boardwalk lots have no in-and-out privileges and fill by late morning on summer weekends.
+- **Workaround:** Stay at the Dream Inn and walk 5 minutes to the Boardwalk, bypassing the parking problem entirely.
+- **Source:** 2026-06-20 build.
+
+### Natural Bridges Butterflies — October to February Only
+- **Note:** The monarch butterfly grove is empty in summer. Natural Bridges is still worth visiting for the arch and beach.
+- **Workaround:** Visit mid-October through November for peak butterfly numbers.
+- **Source:** 2026-06-20 build.
+
+### Henry Cowell — No Public Transit
+- **Note:** No bus serves the park in Felton. A car or rideshare is required for the 20-minute drive from downtown.
+- **Workaround:** Arrange rideshare before heading out — or combine with a Roaring Camp Railroads visit nearby.
+- **Source:** 2026-06-20 build.
+
+---
+
 ## Santa Barbara · California
 
 ### Lotusland — Advance Reservation Mandatory
@@ -869,6 +898,30 @@ Use this file to inform future guide generation: when a city/venue listed here a
 - **Note:** A dated ticket alone is not enough on busy days; the park reservation and the dated ticket must be for the same park, and they are two separate purchases.
 - **Workaround:** Link the ticket in the Disneyland app and lock the park reservation the night before.
 - **Source:** 2026-05-21 — guide v5 rebuild research.
+
+---
+
+## Phoenix
+
+### Camelback Mountain — Extreme Heat Closures
+- **Note:** Echo Canyon Trail and Cholla Trail close from 11:00am to 5:00pm on days when the National Weather Service issues an Extreme Heat Warning. Warnings are common June through August and can begin as early as May.
+- **Workaround:** Start Camelback before 7:00am and descend by 10:30am on summer days to avoid the closure window.
+- **Source:** 2026-06-20 — guide build research (phoenix.gov Heat Safety + 12news.com 2026).
+
+### Echo Canyon Trailhead — No Parking Lot
+- **Note:** There are no designated parking lots at Echo Canyon Trailhead. Street parking on the west side of Invergordon Road fills before sunrise on weekends.
+- **Workaround:** Use rideshare drop-off directly at the trailhead entrance rather than searching for parking.
+- **Source:** 2026-06-20 — guide build research (City of Phoenix parks + AllTrails).
+
+### Musical Instrument Museum — Distance from Downtown
+- **Note:** MIM is in Desert Ridge, 20 miles north of downtown Phoenix. The rideshare ride from the Hyatt Regency takes 20 minutes each way.
+- **Workaround:** Schedule MIM as the last stop of the day so the return ride coincides with end-of-itinerary.
+- **Source:** 2026-06-20 — guide build research.
+
+### Phoenix Convention Center — Restaurant Surge at Lunch
+- **Note:** The Convention Center is adjacent to the Hyatt Regency Phoenix. During large conferences, restaurants within two blocks of the hotel fill quickly at lunch.
+- **Workaround:** Book dinner reservations in advance and plan lunch at off-peak times or slightly further afield.
+- **Source:** 2026-06-20 — guide build research.
 
 ---
 
