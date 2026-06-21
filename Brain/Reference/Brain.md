@@ -761,6 +761,20 @@ Use this file to inform future guide generation: when a city/venue listed here a
 
 ---
 
+## Santa Barbara · California
+
+### Lotusland — Advance Reservation Mandatory
+- **Note:** Lotusland requires reservations 3 to 4 weeks in advance — new slots release Monday mornings and sell out fast. County permit caps annual attendance at 15,000 visitors.
+- **Workaround:** Book the moment your dates are set; if fully booked, the Santa Barbara Botanic Garden covers the same Mission Canyon afternoon.
+- **Source:** 2026-06-20 build.
+
+### Downtown Parking — Metered and Limited
+- **Note:** Downtown Santa Barbara parking near State Street is metered and fills quickly during the day, especially on weekends.
+- **Workaround:** Use city parking structures on Carrillo or Ortega Streets, or walk from the hotel — most Day 1 stops are within 10 minutes on foot.
+- **Source:** 2026-06-20 build.
+
+---
+
 ## Tokyo
 
 ### Imperial Palace East Garden — Dual Closure
