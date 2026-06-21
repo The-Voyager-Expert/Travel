@@ -114,9 +114,14 @@
     { group: '📊 Stats', children: [
         { href: base + 'Trip-Essentials/Travel-Stats.html',         text: '📊 Travel Stats' },
         { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',  text: '📅 Guide Days Coverage' },
-        { href: base + 'Trip-Essentials/US-States.html',            text: '🇺🇸 US States' },
-        { href: base + 'Trip-Essentials/Europe-Countries.html',    text: '🌍 European Countries' },
-        { href: base + 'Trip-Essentials/Pickleball.html',           text: '🏓 Pickleball' },
+        { href: base + 'Trip-Essentials/US-States.html',                  text: '🇺🇸 US States' },
+        { href: base + 'Trip-Essentials/Europe-Countries.html',          text: '🌍 European Countries' },
+        { href: base + 'Trip-Essentials/Asia-Countries.html',            text: '🌏 Asia Countries' },
+        { href: base + 'Trip-Essentials/Caribbean-Islands.html',         text: '🏝️ Caribbean Islands' },
+        { href: base + 'Trip-Essentials/South-America-Countries.html',   text: '🌎 South America' },
+        { href: base + 'Trip-Essentials/Oceania.html',                   text: '🦘 Oceania' },
+        { href: base + 'Trip-Essentials/Middle-East-Africa.html',        text: '🌍 Middle East &amp; Africa' },
+        { href: base + 'Trip-Essentials/Pickleball.html',                text: '🏓 Pickleball' },
       ]},
     null,
     { group: '💻 Lounges', children: [
