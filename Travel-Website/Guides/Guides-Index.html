@@ -2809,70 +2809,67 @@ window._giStatusFilter = 'all';
   var chips  = [].slice.call(document.querySelectorAll('#theme-panel .tchip'));
   var badge  = document.getElementById('theme-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
-  var active = []; /* [] = off; one or more theme keys when engaged */
+
+  /* Checkbox tree:  Outdoor > Nature > Beach > Islands , and  Outdoor > Ski.
+     `selected` = the nodes the user actually chose. Clicking a chip that is OFF
+     selects it + all its descendants; clicking one that is ON (lit) deselects it
+     + its descendants. A chip is LIT when it OR any descendant is selected, so:
+       - checking Beach lights Nature + Outdoor (upward); Outdoor stays lit while
+         anything under it is checked;
+       - unchecking a child removes only it (+ its descendants) — ancestors stay,
+         so you can uncheck just Ski.
+     The RESULT is the union of the selected leaves' tags ('outdoor' excluded —
+     every natural city already carries a leaf tag); ancestors that are merely
+     lit-by-a-descendant never widen the result. */
+  var CHILDREN = { outdoor: ['nature', 'snow'], nature: ['beach'], beach: ['islands'] };
+  function descendants(t) {
+    var out = [];
+    (CHILDREN[t] || []).forEach(function (c) { out.push(c); out = out.concat(descendants(c)); });
+    return out;
+  }
+  function isLit(t) {
+    if (selected[t]) return true;
+    return descendants(t).some(function (d) { return selected[d]; });
+  }
+  var selected = {};
 
   function cityName(card) {
     return ((card.querySelector('.dest-name') || {}).textContent || '').trim();
   }
   function applyThemeFilter() {
-    /* 'outdoor' is an umbrella CONTROL (it checks/unchecks its children), not a
-       filter facet — drop it when matching so unchecking a child (e.g. Ski)
-       actually removes that child's cities even while the Outdoor chip stays lit.
-       The real filtering is the union of the checked LEAF themes. */
-    var sel = active.filter(function (t) { return t !== 'outdoor'; });
+    chips.forEach(function (chip) {
+      chip.classList.toggle('on', isLit(chip.getAttribute('data-theme')));
+    });
+    var sel = Object.keys(selected).filter(function (t) { return t !== 'outdoor'; });
     if (sel.length === 0) {
       cards.forEach(function (c) { c.classList.remove('theme-hide'); });
-      if (badge) badge.hidden = (active.length === 0);
+      if (badge) badge.hidden = (Object.keys(selected).length === 0);
     } else {
       cards.forEach(function (c) {
         var tags = THEME_DATA[cityName(c)] || [];
-        /* union — show the card if it carries ANY of the selected leaf themes */
         var hit = sel.some(function (t) { return tags.indexOf(t) > -1; });
         if (hit) c.classList.remove('theme-hide');
         else c.classList.add('theme-hide');
       });
       if (badge) badge.hidden = false;
     }
-    window._giThemeFilter = active.slice();
-    /* re-run the mosaic filter so section headers + "no results" recompute */
+    window._giThemeFilter = sel.slice();
     var inp = document.getElementById('guide-search');
     if (inp) { var e = document.createEvent('Event'); e.initEvent('input', true, true); inp.dispatchEvent(e); }
   }
   window._applyThemeFilter = applyThemeFilter;
 
-  /* Outdoor selection tree — Nature / Beach / Islands / Ski are all DIRECT children
-     of Outdoor (siblings). Checking/unchecking a node cascades the SAME state DOWN
-     to its descendants; ancestors are never auto-changed.
-       check Outdoor → Nature + Beach + Islands + Ski all on (shows everything natural)
-       uncheck Ski → just Ski off (Outdoor + others stay)
-       Beach and Islands are NOT linked — toggling Beach never touches Islands
-       (island cities already carry the 'beach' tag, so Beach alone still shows them).
-     Foodie / History / Art / etc. are independent leaves (no entry here). */
-  var CHILDREN = { outdoor: ['nature', 'beach', 'islands', 'snow'] };
-  function descendants(t) {
-    var out = [];
-    (CHILDREN[t] || []).forEach(function (c) { out.push(c); out = out.concat(descendants(c)); });
-    return out;
-  }
-  function chipFor(t) {
-    return chips.filter(function (c) { return c.getAttribute('data-theme') === t; })[0];
-  }
-
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () {
       var t = chip.getAttribute('data-theme');
-      var turningOn = !chip.classList.contains('on');
-      chip.classList.toggle('on');
-      descendants(t).forEach(function (d) {
-        var el = chipFor(d); if (el) el.classList.toggle('on', turningOn);
-      });
-      active = chips.filter(function (c) { return c.classList.contains('on'); })
-                    .map(function (c) { return c.getAttribute('data-theme'); });
+      var group = [t].concat(descendants(t));
+      if (isLit(t)) { group.forEach(function (g) { delete selected[g]; }); }
+      else { group.forEach(function (g) { selected[g] = true; }); }
       applyThemeFilter();
     });
   });
   if (badge) badge.addEventListener('click', function () {
-    active = []; chips.forEach(function (c) { c.classList.remove('on'); }); applyThemeFilter();
+    selected = {}; applyThemeFilter();
   });
 }());
 </script>
