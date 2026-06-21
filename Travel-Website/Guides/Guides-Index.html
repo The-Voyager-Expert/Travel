@@ -2814,10 +2814,13 @@ window._giStatusFilter = 'all';
   }
   window._applyThemeFilter = applyThemeFilter;
 
-  /* Containment for selection linkage — unchecking a parent clears its
-     descendants (uncheck Outdoor → Nature/Beach/Islands/Snow off; uncheck Beach
-     → Islands off). Unchecking a child leaves its parents on. Checking does NOT
-     cascade up, so checking Beach shows only beaches (not the whole umbrella). */
+  /* Outdoor selection tree — checking/unchecking a node cascades the SAME state
+     DOWN to its descendants; ancestors are never auto-changed.
+       check Outdoor → Nature + Beach + Islands + Ski all on (shows everything natural)
+       check Beach   → Islands on (shows beaches + islands)
+       check Ski / Nature → just itself (leaves)
+       uncheck Beach → Islands off; uncheck Islands → Beach stays on
+     Foodie / History / Art are independent leaves (no entry here) — toggle freely. */
   var CHILDREN = { outdoor: ['nature', 'beach', 'snow'], beach: ['islands'] };
   function descendants(t) {
     var out = [];
@@ -2833,9 +2836,9 @@ window._giStatusFilter = 'all';
       var t = chip.getAttribute('data-theme');
       var turningOn = !chip.classList.contains('on');
       chip.classList.toggle('on');
-      if (!turningOn) {
-        descendants(t).forEach(function (d) { var el = chipFor(d); if (el) el.classList.remove('on'); });
-      }
+      descendants(t).forEach(function (d) {
+        var el = chipFor(d); if (el) el.classList.toggle('on', turningOn);
+      });
       active = chips.filter(function (c) { return c.classList.contains('on'); })
                     .map(function (c) { return c.getAttribute('data-theme'); });
       applyThemeFilter();
