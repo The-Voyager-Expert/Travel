@@ -1,0 +1,67 @@
+name: Deploy site (block unvalidated guides)
+
+# Server-side enforcement of the same rule as the local pre-push guard, but on a
+# path that --no-verify (the auto-push automation) cannot bypass: if any guide HTML
+# lacks the <!-- validation: passed --> stamp, the deploy is blocked. Site fixes
+# (CSS/toolbar/assets/index/data pages) carry no guide stamp and deploy freely.
+#
+# Preserves the legacy serving exactly: legacy Pages served the repo root at
+# https://the-voyager-expert.github.io/Travel/, so content sat under /Travel-Website/.
+# The deploy job stages Travel-Website/ + .nojekyll into the artifact root, keeping
+# every existing URL identical. (.github/ and .git are NOT published.)
+#
+# Added 2026-06-21. Rollback: set Pages build type back to "legacy" (Settings → Pages →
+# Source → Deploy from a branch), or `gh api -X POST repos/.../pages -f build_type=legacy`.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Block unvalidated guides
+        run: |
+          set -euo pipefail
+          unvalidated="$(grep -L '<!-- validation: passed' Travel-Website/Guides/*/*.html 2>/dev/null || true)"
+          if [ -n "$unvalidated" ]; then
+            echo "::error::Deploy blocked — guide(s) missing the <!-- validation: passed --> stamp:"
+            printf '%s\n' "$unvalidated" | sed 's/^/  - /'
+            echo "Run guide_tools.py ship on each, or git rm --cached an in-progress guide, then re-push."
+            exit 1
+          fi
+          count="$(ls Travel-Website/Guides/*/*.html 2>/dev/null | wc -l | tr -d ' ')"
+          echo "All ${count} guides carry the passed stamp — proceeding to deploy."
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Stage published files (mirror legacy repo-root serving)
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp -R Travel-Website _site/
+          [ -f .nojekyll ] && cp .nojekyll _site/ || true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
