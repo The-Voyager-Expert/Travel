@@ -154,6 +154,9 @@ a.dest-card[data-status="been"] { border-left: 4px solid rgba(60,130,60,0.75); }
 #guide-search{width:360px;box-sizing:border-box;padding:11px 18px;margin:0;font-size:15px;border:1.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;}
 #guide-search:focus{border-color:#B8860B;box-shadow:0 0 0 3px rgba(184,134,11,.12);}
 #guide-search::placeholder{color:#A8895A;}
+/* Smart-input: keyboard-active card (↑/↓ nav) + alias/fuzzy hit ring */
+.mosaic .dest-card.kbd-active{outline:2px solid #B8860B;outline-offset:1px;background:var(--surface);}
+.mosaic .dest-card.match-alias{box-shadow:inset 0 0 0 1.5px rgba(184,134,11,.55);border-radius:8px;}
 #guide-noresult{display:none;padding:8px 4px;font-size:13px;color:var(--muted);}
 /* ── Seasonal month filter ── */
 #season-filter { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:0; }
@@ -1366,6 +1369,77 @@ window._giStatusFilter = 'all';
   var stabs     = [].slice.call(document.querySelectorAll('.stab'));
   if (!input) return;
 
+  /* ── Alias / nickname / airport-code / region / landmark → city map ──
+     Additive: lets the card filter find a destination by what people actually
+     type. Keys and target city names are lowercase; targets must be cities that
+     exist in the mosaic. A key matches when the query equals it, or (for keys
+     ≥3 chars) the query is a prefix of it. Pure front-end, no data pipeline. */
+  var ALIAS = {
+    // nicknames / abbreviations
+    'nyc':['new york'],'ny':['new york'],'big apple':['new york'],'manhattan':['new york'],'gotham':['new york'],
+    'sf':['san francisco'],'san fran':['san francisco'],'frisco':['san francisco'],
+    'la':['los angeles'],'philly':['philadelphia'],'vegas':['las vegas'],'sin city':['las vegas'],
+    'nola':['new orleans'],'big easy':['new orleans'],'dc':['washington dc'],'the district':['washington dc'],
+    // airport codes
+    'lhr':['london'],'lon':['london'],'cdg':['paris'],'ory':['paris'],'par':['paris'],
+    'nrt':['tokyo'],'hnd':['tokyo'],'tyo':['tokyo'],'fco':['rome'],'rom':['rome'],
+    'bcn':['barcelona'],'mad':['madrid'],'ams':['amsterdam'],'ist':['istanbul'],'dxb':['dubai'],
+    'auh':['abu dhabi'],'sin':['singapore'],'hkg':['hong kong'],'syd':['sydney'],'mel':['melbourne'],
+    'yyz':['toronto'],'yul':['montréal'],'yvr':['vancouver'],'sea':['seattle'],'ord':['chicago'],'chi':['chicago'],
+    'mia':['miami'],'bos':['boston'],'atl':['atlanta'],'aus':['austin'],'phx':['phoenix'],'lax':['los angeles'],
+    'sfo':['san francisco'],'san':['san diego'],'pdx':['portland'],'hnl':['oahu'],'ogg':['maui'],'lih':['kauai'],
+    'kef':['reykjavik'],'ath':['athens'],'lis':['lisbon'],'opo':['porto'],'ber':['berlin'],'muc':['munich'],
+    'str':['stuttgart'],'vie':['vienna'],'zrh':['zurich'],'gva':['geneva'],'cph':['copenhagen'],'arn':['stockholm'],
+    'osl':['oslo'],'hel':['helsinki'],'dub':['dublin'],'edi':['edinburgh'],'gla':['glasgow'],'prg':['prague'],
+    'bud':['budapest'],'tll':['tallinn'],'icn':['seoul'],'seo':['seoul'],'bkk':['bangkok'],'hkt':['phuket'],
+    'dps':['bali'],'pek':['beijing'],'pvg':['shanghai'],'sha':['shanghai'],'tpe':['taipei'],'gru':['rio de janeiro'],
+    'gig':['rio de janeiro'],'scl':['santiago'],'lim':['lima'],'eze':['buenos aires'],'bue':['buenos aires'],
+    'mvd':['montevideo'],'cuz':['cusco'],'akl':['wellington'],'zqn':['queenstown'],'rak':['marrakech'],
+    // regions → member cities
+    'tuscany':['florence','siena','pisa'],'riviera':['nice','cannes','monaco'],'french riviera':['nice','cannes','monaco'],
+    'cote dazur':['nice','cannes','monaco'],"côte d'azur":['nice','cannes','monaco'],
+    'amalfi coast':['amalfi','sorrento','capri'],'provence':['aix-en-provence','marseille'],
+    'bavaria':['munich','marktoberdorf'],'catalonia':['barcelona'],'andalusia':['seville'],'algarve':['lagos'],
+    'hawaii':['maui','oahu','kauai','big island'],'scandinavia':['oslo','stockholm','copenhagen','bergen','helsinki'],
+    'swiss alps':['lucerne','geneva','zurich'],'alps':['lucerne','geneva','zurich','annecy'],
+    // landmarks → city
+    'sagrada familia':['barcelona'],'park guell':['barcelona'],'gaudi':['barcelona'],
+    'colosseum':['rome'],'vatican':['rome'],'trevi':['rome'],'eiffel tower':['paris'],'eiffel':['paris'],
+    'big ben':['london'],'acropolis':['athens'],'parthenon':['athens'],'burj khalifa':['dubai'],
+    'sheikh zayed':['abu dhabi'],'statue of liberty':['new york'],'times square':['new york'],'central park':['new york'],
+    'golden gate':['san francisco'],'mount fuji':['tokyo'],'fuji':['tokyo'],'shibuya':['tokyo'],'great wall':['beijing'],
+    'neuschwanstein':['munich','marktoberdorf']
+  };
+
+  /* edit-distance ≤ 1 — typo tolerance fallback (barcelna → barcelona) */
+  function within1(a, b) {
+    if (a === b) return true;
+    var la = a.length, lb = b.length;
+    if (Math.abs(la - lb) > 1) return false;
+    var i = 0, j = 0, edits = 0;
+    while (i < la && j < lb) {
+      if (a[i] === b[j]) { i++; j++; continue; }
+      if (++edits > 1) return false;
+      if (la > lb) i++;            // deletion from a
+      else if (lb > la) j++;       // insertion into a
+      else { i++; j++; }           // substitution
+    }
+    if (i < la || j < lb) edits++;
+    return edits <= 1;
+  }
+
+  /* cities whose query maps via an alias key */
+  function aliasCities(q) {
+    var out = {};
+    if (!q) return out;
+    for (var k in ALIAS) {
+      if (q === k || (k.length >= 3 && q.length >= 3 && k.indexOf(q) === 0)) {
+        ALIAS[k].forEach(function (c) { out[c] = 1; });
+      }
+    }
+    return out;
+  }
+
   /* Status toggle */
   stabs.forEach(function (b) {
     b.addEventListener('click', function () {
@@ -1380,25 +1454,75 @@ window._giStatusFilter = 'all';
   function applyMosaicFilter() {
     var q  = input.value.trim().toLowerCase();
     var sf = window._giStatusFilter;
-    var shown = 0;
-    countries.forEach(function (r) {
-      var countryName = (r.getAttribute('data-country') || '').replace(/-/g, ' ');
-      var labelMatch  = q !== '' && countryName.indexOf(q) > -1;
-      var any = false;
-      [].slice.call(r.querySelectorAll('.dest-card')).forEach(function (c) {
-        var name   = ((c.querySelector('.dest-name') || {}).textContent || '').toLowerCase();
-        var isWant = c.getAttribute('data-status') === 'want';
-        var statusOk = sf === 'all' || (sf === 'want' ? isWant : !isWant);
-        var match  = statusOk && (q === '' || labelMatch || name.indexOf(q) > -1);
-        c.style.display = match ? '' : 'none';
-        if (match) { any = true; shown++; }
+    var alias = aliasCities(q);
+
+    function pass(allowFuzzy) {
+      var shown = 0;
+      countries.forEach(function (r) {
+        var countryName = (r.getAttribute('data-country') || '').replace(/-/g, ' ');
+        var labelMatch  = q !== '' && countryName.indexOf(q) > -1;
+        var any = false;
+        [].slice.call(r.querySelectorAll('.dest-card')).forEach(function (c) {
+          var name   = ((c.querySelector('.dest-name') || {}).textContent || '').toLowerCase();
+          var isWant = c.getAttribute('data-status') === 'want';
+          var statusOk = sf === 'all' || (sf === 'want' ? isWant : !isWant);
+          var textMatch  = q === '' || labelMatch || name.indexOf(q) > -1;
+          var aliasMatch = !!alias[name];
+          var fuzzyMatch = false;
+          if (allowFuzzy && !textMatch && !aliasMatch) {
+            fuzzyMatch = within1(q, name) || name.split(/[\s-]+/).some(function (w) { return within1(q, w); });
+          }
+          var match = statusOk && (textMatch || aliasMatch || fuzzyMatch);
+          c.style.display = match ? '' : 'none';
+          c.classList.toggle('match-alias', match && q !== '' && !textMatch && (aliasMatch || fuzzyMatch));
+          if (match) { any = true; shown++; }
+        });
+        r.style.display = any ? '' : 'none';
       });
-      r.style.display = any ? '' : 'none';
-    });
+      return shown;
+    }
+
+    var shown = pass(false);
+    if (shown === 0 && q.length >= 4) shown = pass(true);  // typo fallback
     noRes.style.display = (shown === 0 && (q !== '' || sf !== 'all')) ? 'block' : 'none';
+    clearKbd();
+  }
+
+  /* ── Keyboard navigation: ↑/↓ move a highlight across visible cards,
+     Enter opens it (or the first visible card if none highlighted). ── */
+  function visibleCards() {
+    return [].slice.call(document.querySelectorAll('.mosaic .dest-card'))
+      .filter(function (c) { return c.style.display !== 'none' && c.offsetParent !== null; });
+  }
+  function clearKbd() {
+    var a = document.querySelector('.mosaic .dest-card.kbd-active');
+    if (a) a.classList.remove('kbd-active');
+  }
+  function moveKbd(dir) {
+    if (document.body.classList.contains('mode-flights') ||
+        document.body.classList.contains('mode-compare')) return;
+    var cards = visibleCards();
+    if (!cards.length) return;
+    var cur = document.querySelector('.mosaic .dest-card.kbd-active');
+    var idx = cur ? cards.indexOf(cur) : -1;
+    if (cur) cur.classList.remove('kbd-active');
+    idx = (idx + dir + cards.length) % cards.length;
+    var next = cards[idx];
+    next.classList.add('kbd-active');
+    next.scrollIntoView({ block: 'nearest' });
   }
 
   input.addEventListener('input', applyMosaicFilter);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); moveKbd(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); moveKbd(-1); }
+    else if (e.key === 'Enter') {
+      if (document.body.classList.contains('mode-flights') ||
+          document.body.classList.contains('mode-compare')) return;
+      var target = document.querySelector('.mosaic .dest-card.kbd-active') || visibleCards()[0];
+      if (target && target.href) { e.preventDefault(); window.location.href = target.href; }
+    }
+  });
 }());
 (function () {
   /* ── Reactive stats: update on load and on Been/Want filter toggle (added 2026-06-15) ── */
