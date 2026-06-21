@@ -430,6 +430,28 @@ fetch('data/us-states.json')
   })
   .catch(() => {});
 
+/* ── Canada province/territory boundaries ── same treatment as US states: overlay
+   all 13 provinces + territories on top of the single Canada polygon so every one
+   is visible, with names revealed at the same zoom gate. ── */
+fetch('data/canada-provinces.json')
+  .then(r => r.json())
+  .then(ca => {
+    L.geoJSON(ca, {
+      interactive: false,
+      style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
+      onEachFeature: (f, lyr) => {
+        const nm = f.properties && f.properties.name;
+        if (!nm) return;
+        lyr.bindTooltip(nm, {
+          permanent: true, direction: 'center', className: 'state-label-tip',
+          pane: 'stateLabels', interactive: false,
+        });
+      },
+    }).addTo(map);
+    toggleStateLabels();
+  })
+  .catch(() => {});
+
 /* ── Pins + clustering ── */
 function buildPins() {
   const cluster = L.markerClusterGroup({
