@@ -82,7 +82,7 @@ Refresh: monthly (and on demand) via `python3 Brain/scripts/build_currency.py &&
 The full spec and rationale live in `Brain/Reference/Colors and Font Size.html` § 16. Short version — every page's banner is **identical**, so do not invent a variant:
 
 - **Markup:** one `<div class="page-header">` (or `header` / `site-header`) holding a single `<h1>`. Nothing else inside the banner div — no `<span>`, `<p>`, eyebrow, date stamp, or subtitle. The "Updated …" stamp and any subtitle go **below** the banner.
-- **The `<h1>` is text-only — NO emoji.** The tab's emoji lives in the toolbar label, never in the heading. (Cribs keep pasting it in — Pickleball 🏓, US-States 🇺🇸 — don't.)
+- **The `<h1>` is text-only — NO emoji.** The tab's emoji lives in the toolbar label, never in the heading. (Cribs keep pasting it in — e.g. Pickleball 🏓 — don't.)
 - **Look:** transparent block with a 3px warm-terracotta gradient **bottom border** (an underline, not a filled band). Title `<h1>`: **14px (`var(--fs-title)`), weight 700, colour `#3d3a32` (dark — never white/gold/terracotta/accent), uppercase, letter-spacing 0.06em.** Same on desktop and mobile — one size everywhere.
 - **Don't re-style it per page.** The shared sheets (`assets/_travel_style.css` desktop + `assets/mobile.css` mobile) already define the banner with `!important`. If you inline a copy, it must match the values above exactly — an off-standard inline copy renders fine but is a misleading template the next crib clones, and `brain_check` now rejects it.
 
