@@ -30,6 +30,12 @@
     font-size: 10px; font-weight: 600; color: #7a5c3a; letter-spacing: 0.02em;
     text-shadow: 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95); }
   .state-label-tip::before { display: none; }
+  /* Smaller countries (everything outside the always-on major set) — revealed once
+     you zoom into a region (see minorLabels pane toggle), so the world view stays clean. */
+  .minor-label-tip { background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 9.5px; font-weight: 600; color: #8a7a66; letter-spacing: 0.01em;
+    text-shadow: 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95); }
+  .minor-label-tip::before { display: none; }
 
   /* ── Pin markers ── */
   .city-pin { background: #b85c2a; border: 1.8px solid #fdf8f0; border-radius: 50%;
@@ -347,12 +353,20 @@ map.getPane('countryLabels').style.pointerEvents = 'none';
 map.createPane('stateLabels');
 map.getPane('stateLabels').style.zIndex = 591;
 map.getPane('stateLabels').style.pointerEvents = 'none';
-// State names would smear across the US at world zoom — only reveal them once
-// zoomed into the country (the N. America region button + any manual zoom-in).
+map.createPane('minorLabels');           // all non-major country names
+map.getPane('minorLabels').style.zIndex = 589;
+map.getPane('minorLabels').style.pointerEvents = 'none';
+// State/province names smear across the US/Canada at world zoom — reveal them only
+// when zoomed into the country. Minor country names reveal one level earlier, at
+// continent zoom, so the region buttons (Africa, S. America, Caribbean) show every
+// country. The ~45 major countries stay labelled at world zoom (countryLabels).
 function toggleStateLabels() {
   map.getPane('stateLabels').style.display = (map.getZoom() >= 3.25) ? '' : 'none';
 }
-map.on('zoomend', toggleStateLabels);
+function toggleMinorLabels() {
+  map.getPane('minorLabels').style.display = (map.getZoom() >= 2.5) ? '' : 'none';
+}
+map.on('zoomend', () => { toggleStateLabels(); toggleMinorLabels(); });
 
 // Keep the framed region clear of the overlay controls: pad left for the
 // desktop panel, pad bottom for the mobile docked bar.
@@ -395,10 +409,18 @@ fetch('data/countries-50m.json')
             pane: 'countryLabels', interactive: false,
           });
           lyr.getTooltip().setLatLng(c);
+        } else if (f.properties && f.properties.name) {
+          // Every other country gets its name too — in the minor-labels pane, which
+          // is hidden at world zoom and revealed at continent zoom (region buttons).
+          lyr.bindTooltip(f.properties.name, {
+            permanent: true, direction: 'center', className: 'minor-label-tip',
+            pane: 'minorLabels', interactive: false,
+          });
         }
       },
     }).addTo(map);
     layer.bringToBack();
+    toggleMinorLabels();   // respect current zoom (hidden until continent zoom)
     buildPins();
   })
   .catch(() => {
