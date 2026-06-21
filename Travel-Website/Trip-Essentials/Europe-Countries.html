@@ -62,8 +62,8 @@ body {
 .country-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
 .country-capital { font-size: 12px; color: var(--muted); }
 .country-capital strong { color: var(--text); font-weight: 600; }
-.country-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
-.badge { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 4px; border: 1px solid; }
+.country-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.badge { font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 6px; border: 1px solid; line-height: 1; display: inline-flex; align-items: center; gap: 5px; }
 .badge-eu { background: #e8edf8; color: #1a3a8b; border-color: #c5d3ec; }
 .badge-sch { background: #edf4ee; color: #1a5c2a; border-color: #a8d5a8; }
 .badge-noeu { background: #f5f0eb; color: var(--muted); border-color: var(--border2); }
@@ -76,8 +76,8 @@ body {
 .country-divider { height: 1px; background: var(--border2); margin: 10px 0; }
 
 .cities-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 700; margin-bottom: 5px; }
-.cities-list { display: flex; flex-wrap: wrap; gap: 5px; }
-.city-chip { font-size: 12px; padding: 3px 9px; border-radius: 6px; background: var(--surface2); border: 1px solid var(--border2); color: var(--muted); white-space: nowrap; }
+.cities-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.city-chip { font-size: 13px; padding: 6px 12px; border-radius: 6px; background: var(--surface2); border: 1px solid var(--border2); color: var(--muted); white-space: nowrap; line-height: 1; }
 .city-chip a { color: var(--rust); text-decoration: none; font-weight: 600; }
 .city-chip a:hover { color: var(--rust-deep); text-decoration: underline; }
 .city-chip.capital-chip { border-color: #c5d3ec; background: #eef2f9; }
@@ -97,8 +97,8 @@ body {
 .membership-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
 .mem-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
 .mem-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-.mem-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-.mem-chip { font-size: 12px; padding: 3px 9px; border-radius: 6px; border: 1px solid; white-space: nowrap; }
+.mem-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mem-chip { font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid; white-space: nowrap; line-height: 1; }
 .mem-chip.eu { background: #e8edf8; color: #1a3a8b; border-color: #c5d3ec; }
 .mem-chip.sch { background: #edf4ee; color: #1a5c2a; border-color: #a8d5a8; }
 
@@ -122,6 +122,25 @@ body {
 .bar-fill.alt { background: linear-gradient(90deg, var(--navy-deep), var(--navy)); }
 .bar-val { width: 70px; font-size: 11px; color: var(--muted); text-align: right; flex-shrink: 0; }
 
+/* ===== Search ===== */
+.search-row { display: flex; justify-content: center; margin: 0 0 20px; }
+#country-search {
+  width: 360px;
+  box-sizing: border-box;
+  padding: 11px 18px;
+  font-size: 15px;
+  line-height: 1;
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+#country-search::placeholder { color: #A8895A; }
+#country-search:focus { border-color: var(--rust); box-shadow: 0 0 0 3px rgba(184,92,42,.12); }
+#no-results { display: none; color: var(--muted); font-size: 13px; margin: 8px 0 16px; text-align: center; }
+
 @media (max-width: 700px) {
   .hero-row { grid-template-columns: repeat(2,1fr); }
   .quickfacts { grid-template-columns: repeat(2,1fr); }
@@ -129,8 +148,13 @@ body {
   .membership-grid { grid-template-columns: 1fr; }
   .micro-row { grid-template-columns: repeat(2,1fr); }
   .bar-country { width: 90px; font-size: 11px; }
+  #country-search { width: 100%; }
+  .badge { font-size: 12px; padding: 5px 10px; }
+  .city-chip { font-size: 12px; padding: 5px 10px; }
+  .mem-chip { font-size: 12px; padding: 5px 10px; }
 }
 </style>
+<link rel="stylesheet" href="../assets/mobile.css?v=67">
 </head>
 <body>
 
@@ -144,6 +168,12 @@ body {
     <div class="header-desc">All sovereign nations of Europe — capitals, cities, population, and key stats.</div>
   </div>
   <span class="updated-stamp">Updated June 2026</span>
+
+  <!-- SEARCH -->
+  <div class="search-row">
+    <input type="text" id="country-search" placeholder="🔍  Search country or city" aria-label="Filter countries">
+  </div>
+  <p id="no-results">No countries match your search.</p>
 
   <!-- SECTION JUMP NAV -->
   <nav class="stats-nav" aria-label="Jump to section">
@@ -1696,6 +1726,25 @@ body {
 </div><!-- /page -->
 
 <script>
+// Country search filter
+(function(){
+  var input = document.getElementById('country-search');
+  var noResults = document.getElementById('no-results');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = input.value.trim().toLowerCase();
+    var cards = document.querySelectorAll('.country-card');
+    var visible = 0;
+    cards.forEach(function(card){
+      var text = card.textContent.toLowerCase();
+      var show = !q || text.indexOf(q) !== -1;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    noResults.style.display = (q && visible === 0) ? 'block' : 'none';
+  });
+})();
+
 // Active section highlight in nav
 (function(){
   var links = [].slice.call(document.querySelectorAll('.stats-nav a'));
