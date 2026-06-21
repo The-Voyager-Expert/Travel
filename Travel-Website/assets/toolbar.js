@@ -2,7 +2,7 @@
  * toolbar.js — shared travel navigation bar
  *
  * ⚠️ HOME: Travel Website/assets/toolbar.js — site-wide shared asset.
- * The shared scripts/styles (toolbar.js, footnote.js, weather.js,
+ * The shared scripts/styles (toolbar.js, weather.js,
  * guide_v3.css, mobile.css, climate.json) all live in assets/. Every page
  * loads them from assets/ at its own relative depth below the site root:
  *   · index.html (depth 0):                       src="assets/toolbar.js"
@@ -95,7 +95,6 @@
   // § 7 Centering; brain_check.py check_toolbar_centering enforces it.
   var maxWidth   = mount ? parseInt(mount.dataset.maxwidth || '760', 10) : 760;
   var base       = new Array(depth + 1).join('../');   // e.g. depth=2 → '../../'
-  var noFootnote = mount ? !!mount.dataset.noFootnote : false;  // read BEFORE mount is removed
   var curr     = location.pathname.split('/').pop() || '';
   var prevHref = mount ? (mount.dataset.prev || '') : '';
   var nextHref = mount ? (mount.dataset.next || '') : '';
@@ -623,43 +622,34 @@
     }, 50);
   }
 
-  /* ── Footnote toolbar — RETIRED 2026-06-06 (owner) ─────────────────────────
-     The footer sharing link (footnote.js) is retired for now and must not be
-     used in the guides. toolbar.js no longer auto-loads footnote.js on any
-     page. The loader below is kept (guarded off) so the feature can be
-     re-enabled later by flipping FOOTNOTE_RETIRED to false.
-     Validator: TB-9/TB-11 now enforce the retirement (no footnote.js load,
-     no inline footer). Rule: Brain/Reference/Toolbar.html § 6. */
-  var FOOTNOTE_RETIRED = true;   // retired 2026-06-06 — do not load footnote.js
-  if (!FOOTNOTE_RETIRED && !noFootnote) {
-    var _fn = document.createElement('script');
-    /* footnote.js lives next to toolbar.js inside assets/ — permanent home.
-       base resolves to the site root, so prefix with assets/. */
-    _fn.src = base + 'assets/footnote.js';
-    document.head.appendChild(_fn);
-  }
-
-  /* ── Last updated stamp — guide pages only ────────────────────────────────
-     Injects "Updated Month Year" in small muted text at the bottom of every
-     individual city guide. Detected by /Guides/ in the pathname (depth-2
-     city guide pages) — excludes guides_index, Trip-Essentials, Maps, etc.
-     Source: document.lastModified (HTTP Last-Modified header; file mtime
-     on local). Guard: year > 2000 prevents garbage dates on broken headers. */
-  var _path = decodeURIComponent(location.pathname);
-  var _isGuide = /\/Guides\/[^/]+\/[^/]+\.html/.test(_path) ||
-                 (_path.indexOf('file:') < 0 && _path.indexOf('/Guides/') > -1 &&
-                  curr !== 'Guides-Index.html');
-  if (_isGuide) {
+  /* ── Last-updated stamp — guide pages only ────────────────────────────────
+     Renders "Updated Month Year" as a small muted line at the TOP of the
+     guide, tucked under the title block (right-aligned, last row of
+     .title-page). Source: the EXPLICIT data-updated="YYYY-MM" attribute on
+     the toolbar-mount div — NOT document.lastModified. This is deliberate:
+     lastModified bumps on every file touch (bug fix, validation re-stamp,
+     GitHub Pages deploy → all guides read the deploy month), which is the
+     opposite of "content currency". data-updated only moves when a crib
+     bumps it on a genuine content refresh, so cosmetic/bug-fix edits and
+     format changes leave it untouched. No attribute → no stamp (silent).
+     Spec: Brain/Reference/Toolbar.html § 10. */
+  var _updated = mount ? (mount.dataset.updated || '') : '';
+  if (_updated) {
     var _MONTHS = ['January','February','March','April','May','June',
                    'July','August','September','October','November','December'];
     function _injectUpdated() {
-      var lm = new Date(document.lastModified);
-      if (!lm || lm.getFullYear() <= 2000) return;
+      var m = /^(\d{4})-(\d{2})$/.exec(_updated);
+      if (!m) return;
+      var yr = parseInt(m[1], 10), mo = parseInt(m[2], 10);
+      if (yr <= 2000 || mo < 1 || mo > 12) return;
       var el = document.createElement('div');
-      el.style.cssText = 'text-align:center;padding:32px 16px 28px;font-size:11px;' +
-                         'color:#b0aaa0;letter-spacing:0.06em;';
-      el.textContent = 'Updated ' + _MONTHS[lm.getMonth()] + ' ' + lm.getFullYear();
-      document.body.appendChild(el);
+      el.className = 'title-updated';
+      el.style.cssText = 'order:6;width:100%;text-align:right;font-size:13px;' +
+                         'color:#9a948a;margin-top:12px;';
+      el.textContent = 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
+      var tp = document.querySelector('.title-page');
+      if (tp) tp.appendChild(el);
+      else document.body.appendChild(el);
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _injectUpdated);
