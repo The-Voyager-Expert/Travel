@@ -2794,14 +2794,19 @@ window._giStatusFilter = 'all';
     return ((card.querySelector('.dest-name') || {}).textContent || '').trim();
   }
   function applyThemeFilter() {
-    if (active.length === 0) {
+    /* 'outdoor' is an umbrella CONTROL (it checks/unchecks its children), not a
+       filter facet — drop it when matching so unchecking a child (e.g. Ski)
+       actually removes that child's cities even while the Outdoor chip stays lit.
+       The real filtering is the union of the checked LEAF themes. */
+    var sel = active.filter(function (t) { return t !== 'outdoor'; });
+    if (sel.length === 0) {
       cards.forEach(function (c) { c.classList.remove('theme-hide'); });
-      if (badge) badge.hidden = true;
+      if (badge) badge.hidden = (active.length === 0);
     } else {
       cards.forEach(function (c) {
         var tags = THEME_DATA[cityName(c)] || [];
-        /* union — show the card if it carries ANY of the selected themes */
-        var hit = active.some(function (t) { return tags.indexOf(t) > -1; });
+        /* union — show the card if it carries ANY of the selected leaf themes */
+        var hit = sel.some(function (t) { return tags.indexOf(t) > -1; });
         if (hit) c.classList.remove('theme-hide');
         else c.classList.add('theme-hide');
       });
