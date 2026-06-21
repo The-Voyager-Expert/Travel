@@ -761,6 +761,35 @@ Use this file to inform future guide generation: when a city/venue listed here a
 
 ---
 
+## Carmel-by-the-Sea
+
+### Point Lobos — Parking fills by 9am weekends
+- **Note:** The main lot holds fewer than 150 cars and fills within an hour of opening on summer weekends.
+- **Workaround:** Arrive before 8:30am or use the CA-1 shoulder pullout north of the entrance — foot entry has no fee.
+- **Source:** 2026-06-21 guide build
+
+### No Street Addresses
+- **Note:** Carmel-by-the-Sea has no street numbers by law — addresses are intersections, not numbers. GPS navigation works but may require the intersection or venue name.
+- **Workaround:** Search by business name or cross-street intersection in any mapping app — the town is one square mile and every venue is within a 10-minute walk.
+- **Source:** 2026-06-21 guide build
+
+### Tor House — Reservation required
+- **Note:** Tours run only Friday and Saturday 10:00am–3:00pm, with small-group capacity. Tours sell out weeks in advance during summer.
+- **Workaround:** Book at torhouse.org at least 2 weeks before arrival; if sold out, the exterior and Hawk Tower are visible from the public sidewalk.
+- **Source:** 2026-06-21 guide build
+
+### Carmel Beach — No fires or alcohol
+- **Note:** Open fires and alcohol are prohibited on Carmel Beach year-round. Dogs must be leashed during the day.
+- **Workaround:** Carmel River State Beach, 1 mile south on Scenic Road, has designated fire rings where open fires are permitted.
+- **Source:** 2026-06-21 guide build
+
+### Parking — Downtown Carmel
+- **Note:** The municipal lots off Junipero Street and Vista Lobos are the main parking areas. Most street parking is 2-hour limited.
+- **Workaround:** Park at the Vista Lobos lot on Torres Street or use on-site hotel parking — walking the village eliminates the need to move the car mid-day.
+- **Source:** 2026-06-21 guide build
+
+---
+
 ## Santa Cruz
 
 ### Boardwalk Rides — Seasonal Operation

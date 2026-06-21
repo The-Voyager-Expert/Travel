@@ -24176,8 +24176,8 @@ def validate(html: str, filename: str):
             'tickets', 'ticket', 'biglietti', 'billetterie',
             'buy', 'purchase', 'booking', 'reservations', 'reserve',
             'shop', 'boutique', 'admission', 'plan-your-visit',
-            'tour-reservations', 'organise-your-visit',
-        } and len(path_part) >= 7:
+            'tour-reservations', 'organise-your-visit', 'tours',
+        }:
             continue
         # A non-trivial path (≥ 8 chars) also suggests a specific booking page
         # (very short paths like /en/ or /it/ are just language homepages)
