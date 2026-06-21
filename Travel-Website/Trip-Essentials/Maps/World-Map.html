@@ -25,6 +25,11 @@
     font-size: 12px; font-weight: 700; color: #9a8b78;
     text-shadow: 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95); }
   .country-label-tip::before { display: none; }
+  /* US state names — only shown when zoomed into the US (see stateLabels pane toggle) */
+  .state-label-tip { background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 10px; font-weight: 600; color: #7a5c3a; letter-spacing: 0.02em;
+    text-shadow: 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95), 0 0 3px rgba(253,248,240,0.95); }
+  .state-label-tip::before { display: none; }
 
   /* ── Pin markers ── */
   .city-pin { background: #b85c2a; border: 1.8px solid #fdf8f0; border-radius: 50%;
@@ -339,6 +344,15 @@ L.control.zoom({ position: 'bottomright' }).addTo(map);
 map.createPane('countryLabels');
 map.getPane('countryLabels').style.zIndex = 590;
 map.getPane('countryLabels').style.pointerEvents = 'none';
+map.createPane('stateLabels');
+map.getPane('stateLabels').style.zIndex = 591;
+map.getPane('stateLabels').style.pointerEvents = 'none';
+// State names would smear across the US at world zoom — only reveal them once
+// zoomed into the country (the N. America region button + any manual zoom-in).
+function toggleStateLabels() {
+  map.getPane('stateLabels').style.display = (map.getZoom() >= 3.25) ? '' : 'none';
+}
+map.on('zoomend', toggleStateLabels);
 
 // Keep the framed region clear of the overlay controls: pad left for the
 // desktop panel, pad bottom for the mobile docked bar.
@@ -403,7 +417,16 @@ fetch('data/us-states.json')
     L.geoJSON(us, {
       interactive: false,
       style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
+      onEachFeature: (f, lyr) => {
+        const nm = f.properties && f.properties.name;
+        if (!nm) return;
+        lyr.bindTooltip(nm, {
+          permanent: true, direction: 'center', className: 'state-label-tip',
+          pane: 'stateLabels', interactive: false,
+        });
+      },
     }).addTo(map);
+    toggleStateLabels();   // respect current zoom (hidden until zoomed into the US)
   })
   .catch(() => {});
 
