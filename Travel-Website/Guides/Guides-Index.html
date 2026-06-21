@@ -1769,6 +1769,10 @@ window._giStatusFilter = 'all';
       g.cf = fold(g.c);
       g.e.forEach(function (e) { e[2] = fold(e[0]); });
     });
+    (data.pages || []).forEach(function (p) {
+      p.tf = fold(p.t);
+      p.e.forEach(function (e) { e[2] = fold(e[0]); });
+    });
     prepped = true;
   }
   function load(cb) {
@@ -1814,13 +1818,49 @@ window._giStatusFilter = 'all';
     }
     groups.sort(function (a, b) { return a.score - b.score || a.city.localeCompare(b.city); });
 
+    // ── Trip-Essentials / main pages (separate "pages" list) ──
+    var pageHits = [];
+    var pages = data.pages || [];
+    for (var pi = 0; pi < pages.length; pi++) {
+      var p = pages[pi], pitems = [], pbest = 9;
+      for (var pe = 0; pe < p.e.length; pe++) {
+        var ptf = p.e[pe][2], ppos = ptf.indexOf(ql);
+        if (ppos < 0) continue;
+        var psc = ptf === ql ? 0 : ppos === 0 ? 1 : /\s/.test(ptf.charAt(ppos - 1) || ' ') ? 2 : 3;
+        pitems.push({ t: p.e[pe][0], pos: ppos, sc: psc });
+        if (psc < pbest) pbest = psc;
+      }
+      if (!pitems.length && p.tf.indexOf(ql) < 0) continue;
+      pitems.sort(function (a, b) { return a.sc - b.sc; });
+      pageHits.push({ title: p.t, url: p.u, score: pbest, items: pitems.slice(0, 3), qn: n });
+    }
+    pageHits.sort(function (a, b) { return a.score - b.score || a.title.localeCompare(b.title); });
+
+    if (!groups.length && !pageHits.length) {
+      panel.innerHTML = '<div class="cs-empty">No guide or page matches for “' + esc(q) + '”.</div>';
+      panel.hidden = false;
+      return;
+    }
+    var out = '';
+    if (pageHits.length) {
+      out += '<div class="cs-head">' + pageHits.length + ' page' +
+        (pageHits.length === 1 ? '' : 's') + ' for “' + esc(q) + '”</div>';
+      pageHits.slice(0, 8).forEach(function (pr) {
+        out += '<div class="cs-guide"><a class="cs-city" href="' + pr.url + '">' + esc(pr.title) + '</a><div class="cs-items">';
+        pr.items.forEach(function (it) {
+          out += '<a class="cs-item" href="' + pr.url + '">' +
+            '<span>' + hl(it.t, it.pos, pr.qn) + '</span></a>';
+        });
+        out += '</div></div>';
+      });
+    }
     if (!groups.length) {
-      panel.innerHTML = '<div class="cs-empty">No in-guide matches for “' + esc(q) + '”.</div>';
+      panel.innerHTML = out;
       panel.hidden = false;
       return;
     }
     var cap = 40, shown = groups.slice(0, cap);
-    var out = '<div class="cs-head">' + groups.length + ' guide' +
+    out += '<div class="cs-head">' + groups.length + ' guide' +
       (groups.length === 1 ? '' : 's') + ' mention “' + esc(q) + '”</div>';
     shown.forEach(function (gr) {
       out += '<div class="cs-guide"><a class="cs-city" href="' + gr.url + '">' + esc(gr.city) + '</a><div class="cs-items">';
