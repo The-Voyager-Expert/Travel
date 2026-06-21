@@ -1971,26 +1971,24 @@ City-level data sourced from respective municipal and regional surveys. All figu
 (function() {
   var input = document.getElementById('place-search');
   var hint  = document.getElementById('search-hint');
+  if (!input) return;
 
-  // Add data-name to every tbody tr based on its first text-content td (the name cell)
-  // and mark which column it's in (states vs cities)
+  // Tag every data row with data-name from its name cell (2nd td)
   document.querySelectorAll('.data-table tbody tr').forEach(function(tr) {
-    var nameTd = tr.querySelector('td:nth-child(2)');
-    if (nameTd) {
-      tr.dataset.name = nameTd.textContent.trim().toLowerCase();
-    }
+    var nameTd = tr.cells[1];
+    if (nameTd) tr.dataset.name = nameTd.textContent.trim().toLowerCase();
   });
 
-  input.addEventListener('input', function() {
-    var q = this.value.trim().toLowerCase();
+  function run() {
+    var q = input.value.trim().toLowerCase();
 
     if (!q) {
-      // Reset — show everything
       document.querySelectorAll('.data-table tbody tr').forEach(function(tr) {
-        if (!tr.classList.contains('no-match-placeholder')) tr.classList.remove('stat-hidden');
+        tr.style.display = '';
       });
-      document.querySelectorAll('.no-match-placeholder').forEach(function(tr) { tr.remove(); });
-      document.querySelectorAll('.cat-section').forEach(function(s) { s.classList.remove('all-hidden'); });
+      document.querySelectorAll('.cat-section').forEach(function(s) {
+        s.style.opacity = '';
+      });
       hint.textContent = '';
       return;
     }
@@ -1998,52 +1996,35 @@ City-level data sourced from respective municipal and regional surveys. All figu
     var totalMatches = 0;
 
     document.querySelectorAll('.data-table').forEach(function(table) {
-      var rows = table.querySelectorAll('tbody tr:not(.no-match-placeholder)');
+      var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
       var matches = 0;
       rows.forEach(function(tr) {
         var name = tr.dataset.name || '';
         if (name.indexOf(q) !== -1) {
-          tr.classList.remove('stat-hidden');
+          tr.style.display = '';
           matches++;
           totalMatches++;
         } else {
-          tr.classList.add('stat-hidden');
+          tr.style.display = 'none';
         }
       });
-
-      // Remove old placeholder
-      var old = table.querySelector('.no-match-placeholder');
-      if (old) old.remove();
-
-      if (matches === 0) {
-        var ph = document.createElement('tr');
-        ph.className = 'no-match-placeholder';
-        ph.innerHTML = '<td colspan="4">No data for "' + q + '"</td>';
-        table.querySelector('tbody').appendChild(ph);
-      }
     });
 
-    // Mark sections where BOTH tables have no match
+    // Dim sections where neither table has a visible row
     document.querySelectorAll('.cat-section').forEach(function(section) {
-      var cols = section.querySelectorAll('.data-col');
-      var anyMatch = false;
-      cols.forEach(function(col) {
-        var visible = col.querySelectorAll('tbody tr:not(.stat-hidden):not(.no-match-placeholder)');
-        if (visible.length > 0) anyMatch = true;
-      });
-      if (!anyMatch) {
-        section.classList.add('all-hidden');
-      } else {
-        section.classList.remove('all-hidden');
-      }
+      var visible = section.querySelectorAll('.data-table tbody tr');
+      var anyVisible = false;
+      visible.forEach(function(tr) { if (tr.style.display !== 'none') anyVisible = true; });
+      section.style.opacity = anyVisible ? '' : '0.25';
     });
 
-    if (totalMatches > 0) {
-      hint.textContent = totalMatches + ' result' + (totalMatches !== 1 ? 's' : '') + ' across all categories';
-    } else {
-      hint.textContent = 'No results found';
-    }
-  });
+    hint.textContent = totalMatches > 0
+      ? totalMatches + ' match' + (totalMatches !== 1 ? 'es' : '') + ' across all categories'
+      : 'No results — try a state or city name';
+  }
+
+  input.addEventListener('input', run);
+  input.addEventListener('search', run);  // fires when clear button is clicked
 })();
 </script>
 </body>
