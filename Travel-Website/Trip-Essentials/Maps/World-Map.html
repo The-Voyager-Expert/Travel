@@ -540,15 +540,26 @@ function renderCities() {
   const b = map.getBounds();
   const CAP = 260;
   let shown = 0;
+  const placed = [];   // screen rects of placed labels — skip any name that would overlap
   for (const c of CITY_DATA) {        // sorted by tier → biggest cities first
     if (c[3] > dt) break;             // past the dot tier: nothing smaller qualifies
     if (!b.contains([c[2], c[1]])) continue;
     const m = L.marker([c[2], c[1]], { icon: cityIcon, pane: 'cityDots', interactive: false, keyboard: false });
-    if (nt >= 0 && c[3] <= nt) {      // big enough to also show its name at this zoom
-      m.bindTooltip(c[0], {
-        permanent: true, direction: 'right', offset: [3, 0],
-        className: 'city-name-tip', pane: 'cityLabels', interactive: false,
-      });
+    if (nt >= 0 && c[3] <= nt) {       // big enough to also show its name at this zoom…
+      const p = map.latLngToContainerPoint([c[2], c[1]]);
+      const w = c[0].length * 6.4 + 8, h = 15;          // est. label box, sits to the right of the dot
+      const r = { x: p.x + 4, y: p.y - h / 2, w, h };
+      let clash = false;
+      for (const q of placed) {
+        if (r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y) { clash = true; break; }
+      }
+      if (!clash) {                    // …and only if it doesn't collide with a bigger city's label
+        m.bindTooltip(c[0], {
+          permanent: true, direction: 'right', offset: [3, 0],
+          className: 'city-name-tip', pane: 'cityLabels', interactive: false,
+        });
+        placed.push(r);
+      }
     }
     cityLayer.addLayer(m);
     if (++shown >= CAP) break;
