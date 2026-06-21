@@ -2840,14 +2840,15 @@ window._giStatusFilter = 'all';
   }
   window._applyThemeFilter = applyThemeFilter;
 
-  /* Outdoor selection tree — checking/unchecking a node cascades the SAME state
-     DOWN to its descendants; ancestors are never auto-changed.
+  /* Outdoor selection tree — Nature / Beach / Islands / Ski are all DIRECT children
+     of Outdoor (siblings). Checking/unchecking a node cascades the SAME state DOWN
+     to its descendants; ancestors are never auto-changed.
        check Outdoor → Nature + Beach + Islands + Ski all on (shows everything natural)
-       check Beach   → Islands on (shows beaches + islands)
-       check Ski / Nature → just itself (leaves)
-       uncheck Beach → Islands off; uncheck Islands → Beach stays on
-     Foodie / History / Art are independent leaves (no entry here) — toggle freely. */
-  var CHILDREN = { outdoor: ['nature', 'beach', 'snow'], beach: ['islands'] };
+       uncheck Ski → just Ski off (Outdoor + others stay)
+       Beach and Islands are NOT linked — toggling Beach never touches Islands
+       (island cities already carry the 'beach' tag, so Beach alone still shows them).
+     Foodie / History / Art / etc. are independent leaves (no entry here). */
+  var CHILDREN = { outdoor: ['nature', 'beach', 'islands', 'snow'] };
   function descendants(t) {
     var out = [];
     (CHILDREN[t] || []).forEach(function (c) { out.push(c); out = out.concat(descendants(c)); });
