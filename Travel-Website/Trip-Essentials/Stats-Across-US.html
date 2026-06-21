@@ -55,9 +55,19 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 .search-box::placeholder { color: #A8895A; }
 .search-box:focus { border-color: #B8860B; }
 .search-hint { font-size: 12px; color: var(--muted); margin-top: 6px; min-height: 18px; }
-.no-match-row td { color: var(--muted); font-style: italic; font-size: 11px; text-align: center; padding: 8px; }
-tr.stat-hidden { display: none; }
-.cat-section.all-hidden .data-col { opacity: 0.35; }
+#search-results { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+#search-results.active { display: block; }
+.sr-title { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+.sr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sr-table thead th { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 6px 7px; border-bottom: 1px solid var(--border2); text-align: left; }
+.sr-table thead th.sr-val { text-align: right; }
+.sr-table tbody tr { border-bottom: 1px solid var(--border2); }
+.sr-table tbody tr:last-child { border-bottom: none; }
+.sr-table tbody td { padding: 6px; line-height: 1.3; }
+.sr-table td.sr-cat { color: var(--muted); font-size: 11px; width: 160px; }
+.sr-table td.sr-name { font-weight: 600; color: var(--text); }
+.sr-table td.sr-val { font-weight: 700; color: var(--rust); text-align: right; white-space: nowrap; }
+.sr-none { color: var(--muted); font-size: 13px; font-style: italic; }
 </style>
 </head>
 <body>
@@ -72,8 +82,12 @@ tr.stat-hidden { display: none; }
   <div class="hero-card"><div class="hc-val">38%</div><div class="hc-lbl">Bachelor's Degree+</div></div>
 </div>
 <div class="search-row">
-  <input type="search" id="place-search" class="search-box" placeholder="Filter by state or city…" autocomplete="off" spellcheck="false">
+  <input type="search" id="place-search" class="search-box" placeholder="Search a state or city…" autocomplete="off" spellcheck="false">
   <div id="search-hint" class="search-hint"></div>
+</div>
+<div id="search-results">
+  <div class="sr-title" id="sr-title"></div>
+  <div id="sr-body"></div>
 </div>
 <div class="section-nav">
   <a href="#cat-1">🎓 Education</a>
@@ -1969,62 +1983,68 @@ City-level data sourced from respective municipal and regional surveys. All figu
 </div><!-- .wrap -->
 <script>
 (function() {
-  var input = document.getElementById('place-search');
-  var hint  = document.getElementById('search-hint');
+  var input   = document.getElementById('place-search');
+  var hint    = document.getElementById('search-hint');
+  var box     = document.getElementById('search-results');
+  var srTitle = document.getElementById('sr-title');
+  var srBody  = document.getElementById('sr-body');
   if (!input) return;
 
-  // Tag every data row with data-name from its name cell (2nd td)
+  // Pre-tag every .data-table row (skip .sun-grid)
   document.querySelectorAll('.data-table tbody tr').forEach(function(tr) {
-    var nameTd = tr.cells[1];
-    if (nameTd) tr.dataset.name = nameTd.textContent.trim().toLowerCase();
+    var cell = tr.cells[1];
+    if (cell) tr.dataset.name = cell.textContent.trim().toLowerCase();
   });
+
+  function getCatName(table) {
+    var sec = table.closest('.cat-section');
+    if (!sec) return '';
+    var el = sec.querySelector('.cat-sec-name');
+    return el ? el.textContent.trim() : '';
+  }
 
   function run() {
     var q = input.value.trim().toLowerCase();
 
     if (!q) {
-      document.querySelectorAll('.data-table tbody tr').forEach(function(tr) {
-        tr.style.display = '';
-      });
-      document.querySelectorAll('.cat-section').forEach(function(s) {
-        s.style.opacity = '';
-      });
+      box.classList.remove('active');
       hint.textContent = '';
       return;
     }
 
-    var totalMatches = 0;
-
-    document.querySelectorAll('.data-table').forEach(function(table) {
-      var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
-      var matches = 0;
-      rows.forEach(function(tr) {
-        var name = tr.dataset.name || '';
-        if (name.indexOf(q) !== -1) {
-          tr.style.display = '';
-          matches++;
-          totalMatches++;
-        } else {
-          tr.style.display = 'none';
-        }
-      });
+    var rows = [];
+    document.querySelectorAll('.data-table tbody tr').forEach(function(tr) {
+      var name = tr.dataset.name || '';
+      if (name.indexOf(q) !== -1) {
+        var cat   = getCatName(tr.closest('table'));
+        var label = tr.cells[1] ? tr.cells[1].textContent.trim() : '';
+        var val   = tr.cells[3] ? tr.cells[3].textContent.trim() : '';
+        rows.push({ cat: cat, label: label, val: val });
+      }
     });
 
-    // Dim sections where neither table has a visible row
-    document.querySelectorAll('.cat-section').forEach(function(section) {
-      var visible = section.querySelectorAll('.data-table tbody tr');
-      var anyVisible = false;
-      visible.forEach(function(tr) { if (tr.style.display !== 'none') anyVisible = true; });
-      section.style.opacity = anyVisible ? '' : '0.25';
-    });
+    box.classList.add('active');
 
-    hint.textContent = totalMatches > 0
-      ? totalMatches + ' match' + (totalMatches !== 1 ? 'es' : '') + ' across all categories'
-      : 'No results — try a state or city name';
+    if (rows.length === 0) {
+      srTitle.textContent = '';
+      srBody.innerHTML = '<p class="sr-none">No data found for "' + input.value.trim() + '"</p>';
+      hint.textContent = '';
+      return;
+    }
+
+    srTitle.textContent = rows[0].label + ' — ' + rows.length + ' categor' + (rows.length !== 1 ? 'ies' : 'y');
+    hint.textContent = '';
+
+    var html = '<table class="sr-table"><thead><tr><th>Category</th><th class="sr-val">Value</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      html += '<tr><td class="sr-cat">' + r.cat + '</td><td class="sr-val">' + r.val + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    srBody.innerHTML = html;
   }
 
   input.addEventListener('input', run);
-  input.addEventListener('search', run);  // fires when clear button is clicked
+  input.addEventListener('search', run);
 })();
 </script>
 </body>
