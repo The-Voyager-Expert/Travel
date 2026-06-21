@@ -511,31 +511,43 @@ fetch('data/world-cities.json')
   })
   .catch(() => {});
 
-// Deepest population tier visible at a given zoom (−1 = none): z4 → 1M, z5 → 250k,
-// z6 → 100k, z7+ → 50k. Country zoom (≈6) therefore shows everything down to 100k.
-function maxCityTier(z) {
+// Progressive disclosure, tier 0=>1M … 4=>50k:
+//  DOTS appear first (from continent zoom), NAMES fade in a couple levels later, so
+//  the Europe/continent view shows just dots like before, then fills in as you zoom.
+function dotTier(z) {            // which cities show as a dot
+  if (z >= 6) return 4;
+  if (z >= 5) return 3;
+  if (z >= 4) return 2;
+  if (z >= 3.5) return 1;
+  if (z >= 2.8) return 0;
+  return -1;
+}
+function nameTier(z) {           // which of those dots also get a name label
   if (z >= 7) return 4;
   if (z >= 6) return 3;
-  if (z >= 5) return 2;
-  if (z >= 4) return 1;
-  if (z >= 3.5) return 0;
-  return -1;
+  if (z >= 5.5) return 2;
+  if (z >= 5) return 1;
+  if (z >= 4.5) return 0;
+  return -1;                     // < 4.5 → dots only, no names
 }
 function renderCities() {
   cityLayer.clearLayers();
-  const maxTier = maxCityTier(map.getZoom());
-  if (maxTier < 0 || !CITY_DATA.length) return;
+  const z = map.getZoom();
+  const dt = dotTier(z), nt = nameTier(z);
+  if (dt < 0 || !CITY_DATA.length) return;
   const b = map.getBounds();
-  const CAP = 240;
+  const CAP = 260;
   let shown = 0;
   for (const c of CITY_DATA) {        // sorted by tier → biggest cities first
-    if (c[3] > maxTier) break;        // past the visible tier: nothing smaller qualifies
+    if (c[3] > dt) break;             // past the dot tier: nothing smaller qualifies
     if (!b.contains([c[2], c[1]])) continue;
     const m = L.marker([c[2], c[1]], { icon: cityIcon, pane: 'cityDots', interactive: false, keyboard: false });
-    m.bindTooltip(c[0], {
-      permanent: true, direction: 'right', offset: [3, 0],
-      className: 'city-name-tip', pane: 'cityLabels', interactive: false,
-    });
+    if (nt >= 0 && c[3] <= nt) {      // big enough to also show its name at this zoom
+      m.bindTooltip(c[0], {
+        permanent: true, direction: 'right', offset: [3, 0],
+        className: 'city-name-tip', pane: 'cityLabels', interactive: false,
+      });
+    }
     cityLayer.addLayer(m);
     if (++shown >= CAP) break;
   }
