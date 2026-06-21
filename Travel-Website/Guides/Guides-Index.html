@@ -336,11 +336,31 @@ body.mode-flights .fnote { display: block; }
 .lchip.on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:#b85c2a; color:#fff; font-weight:600; }
 #lang-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; margin-top:10px; }
 #lang-badge.visible { display:inline-block; }
+/* ── Language sub-mode buttons ── */
+.lang-mode-row { display: flex; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border2); }
+.lang-mode-btn { font-family:inherit; font-size:12px; font-weight:500; padding:5px 14px; border:1px solid var(--border2); border-radius:6px; background:#fdf8f0; color:#3d3a32; cursor:pointer; transition:all .12s; white-space:nowrap; }
+.lang-mode-btn:hover { border-color:#b85c2a; color:#7a3b1e; background:#f6e7d4; }
+.lang-mode-btn.on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:#b85c2a; color:#fff; font-weight:600; }
 /* ── By-guide language view ── */
 #lang-guide-view { display: none; }
 body.mode-lang-guide #lang-guide-view { display: block; }
 body.mode-lang-guide .mosaic { display: none; }
 body.mode-lang-guide #guide-noresult { display: none !important; }
+/* ── By-language grouped view ── */
+#lang-lang-view { display: none; }
+body.mode-lang-lang #lang-lang-view { display: block; }
+body.mode-lang-lang .mosaic { display: none; }
+body.mode-lang-lang #guide-noresult { display: none !important; }
+.ll-section { margin-bottom: 28px; }
+.ll-header { font-size: 13px; font-weight: 700; color: #3d3a32; letter-spacing: .06em; text-transform: uppercase; padding: 6px 0 10px; border-bottom: 2px solid var(--border2); margin-bottom: 10px; }
+.ll-header span { font-weight: 400; font-size: 11px; color: var(--muted); margin-left: 8px; text-transform: none; letter-spacing: 0; }
+.ll-cards { display: flex; flex-wrap: wrap; gap: 8px; }
+.ll-card { display: flex; align-items: center; gap: 8px; padding: 7px 12px; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; text-decoration: none; color: var(--text); font-size: 13px; font-weight: 500; transition: all .12s; border-left: 3px solid transparent; }
+.ll-card:hover { border-color: #b85c2a; color: var(--accent); background: var(--warm); }
+.ll-card.been { border-left-color: rgba(60,130,60,.7); }
+.ll-card .ll-flag { font-size: 16px; line-height: 1; }
+.ll-card .ll-primary { font-size: 10px; color: var(--muted); }
+#ll-noresult { display: none; padding: 18px 4px; font-size: 13px; color: var(--muted); }
 .lg-count { font-size: 11px; color: var(--muted); margin: 2px 0 10px; }
 .lg-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; }
 .lg-table thead th { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 0 10px 6px; text-align: left; font-weight: 500; }
@@ -536,7 +556,6 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
     <button class="seg-btn" id="btn-region-group" data-view="region">🌍 Region</button>
     <button class="seg-btn" id="btn-continent-group" data-view="continent">🌐 Continent</button>
     <button class="seg-btn" id="view-flights" data-view="flights">🛫 Flight time</button>
-    <button class="seg-btn" id="view-lang-guide" data-view="lang-guide">🗣 Guide</button>
   </div>
 </div>
 <div id="compare-mount"></div>
@@ -673,6 +692,11 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
     </div>
   </div>
   <span id="lang-badge">✕ clear</span>
+  <div class="lang-mode-row">
+    <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:6px;">Browse</span>
+    <button class="lang-mode-btn" id="lang-mode-by-lang" data-lmode="lang">By Language</button>
+    <button class="lang-mode-btn" id="lang-mode-by-guide" data-lmode="guide">By Guide</button>
+  </div>
 </div><!-- /lang-panel -->
 
 <div class="mosaic">
@@ -1477,6 +1501,12 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
     <span><span class="fdot r-1stop"></span> 1 connection</span>
     <span><span class="fdot r-2stop"></span> 2 connections</span>
   </div>
+</div>
+
+<div id="lang-lang-view">
+  <div class="lg-count" id="ll-count"></div>
+  <div id="ll-noresult">No guides match.</div>
+  <div id="ll-sections"></div>
 </div>
 
 <div id="lang-guide-view">
@@ -3197,16 +3227,12 @@ window._giStatusFilter = 'all';
       if (window._regionMode) window._regionMode(false);
       if (window._continentMode) window._continentMode(false);
       if (window._flightsMode) window._flightsMode(true);
-    } else if (view === 'lang-guide') {
-      if (window._regionMode) window._regionMode(false);
-      if (window._continentMode) window._continentMode(false);
-      if (window._flightsMode) window._flightsMode(false);
-      if (window._langGuideMode) window._langGuideMode(true);
     } else {
       if (window._regionMode) window._regionMode(false);
       if (window._continentMode) window._continentMode(false);
       if (window._flightsMode) window._flightsMode(false);
       if (window._langGuideMode) window._langGuideMode(false);
+      if (window._langLangMode) window._langLangMode(false);
     }
     setActive(view);
   };
@@ -3276,7 +3302,7 @@ window._giStatusFilter = 'all';
 </script>
 
 <script>
-/* ══ Language filter + By-Guide view ══ */
+/* ══ Language filter + browse views ══ */
 (function () {
   var LANG_NAMES = {
     en:'English', fr:'French', es:'Spanish', it:'Italian', de:'German',
@@ -3302,7 +3328,6 @@ window._giStatusFilter = 'all';
       var match = activeLangs.some(function (l) { return dl.indexOf(l) >= 0; });
       c.classList.toggle('lang-hide', !match);
     });
-    /* Rerun mosaic filter so country panels collapse/expand correctly */
     var inp = document.getElementById('guide-search');
     if (inp) inp.dispatchEvent(new Event('input'));
     if (langBadge) langBadge.className = activeLangs.length ? 'visible' : '';
@@ -3327,6 +3352,8 @@ window._giStatusFilter = 'all';
         if (!activeLangs.length && allBtn) allBtn.classList.add('on');
       }
       applyLangFilter();
+      if (document.body.classList.contains('mode-lang-guide')) buildGuideView();
+      if (document.body.classList.contains('mode-lang-lang')) buildLangView();
     });
   }
 
@@ -3337,44 +3364,46 @@ window._giStatusFilter = 'all';
       if (langChips) [].slice.call(langChips.querySelectorAll('.lchip')).forEach(function (c) { c.classList.remove('on'); });
       if (allBtn) allBtn.classList.add('on');
       applyLangFilter();
+      if (document.body.classList.contains('mode-lang-guide')) buildGuideView();
+      if (document.body.classList.contains('mode-lang-lang')) buildLangView();
     });
   }
 
+  /* ── Helpers ── */
+  function statusFilter(c) {
+    var sf = window._giStatusFilter || 'all';
+    var isWant = c.getAttribute('data-status') === 'want';
+    if (sf === 'want' && !isWant) return false;
+    if (sf === 'been' && isWant) return false;
+    return true;
+  }
+
+  function cardLangs(c) { return (c.dataset.lang || '').split(' ').filter(Boolean); }
+
   /* ── By-Guide table view ── */
-  var tbody = document.getElementById('lg-tbody');
+  var tbody  = document.getElementById('lg-tbody');
   var lgCount = document.getElementById('lg-count');
   var lgNoRes = document.getElementById('lg-noresult');
 
   function buildGuideView() {
     if (!tbody) return;
     tbody.innerHTML = '';
-    var sf = window._giStatusFilter || 'all';
-
     var visible = allCards.filter(function (c) {
-      var isWant = c.getAttribute('data-status') === 'want';
-      if (sf === 'want' && !isWant) return false;
-      if (sf === 'been' &&  isWant) return false;
+      if (!statusFilter(c)) return false;
       if (!activeLangs.length) return true;
-      var dl = (c.dataset.lang || '').split(' ');
-      return activeLangs.some(function (l) { return dl.indexOf(l) >= 0; });
+      return activeLangs.some(function (l) { return cardLangs(c).indexOf(l) >= 0; });
     });
-
     visible.forEach(function (c) {
       var name   = ((c.querySelector('.dest-name') || {}).textContent || '').trim();
       var flag   = ((c.querySelector('.dest-flag') || {}).textContent || '').trim();
-      var langs  = (c.dataset.lang || '').split(' ').filter(Boolean);
+      var langs  = cardLangs(c);
       var panel  = c.closest ? c.closest('.country') : null;
       var country = (panel ? panel.getAttribute('data-country') || '' : '').replace(/-/g, ' ');
       var href   = c.getAttribute('href') || '#';
       var isBeen = c.getAttribute('data-status') !== 'want';
-
       var tags = langs.map(function (l, i) {
         return '<span class="ltag' + (i === 0 ? ' ltag-primary' : '') + '">' + (LANG_NAMES[l] || l) + '</span>';
       }).join('');
-
-      var statusTxt   = isBeen ? 'Been' : 'Want';
-      var statusColor = isBeen ? 'color:rgba(60,130,60,.9)' : 'color:#6a7fa3';
-
       var tr = document.createElement('tr');
       tr.className = 'lg-row' + (isBeen ? ' been' : '');
       tr.innerHTML =
@@ -3382,28 +3411,118 @@ window._giStatusFilter = 'all';
         '<td><a class="lg-link" href="' + href + '">' + name + '</a>' +
           '<div class="lg-dest-country">' + country + '</div></td>' +
         '<td><div class="lg-langs">' + tags + '</div></td>' +
-        '<td class="lg-status" style="' + statusColor + '">' + statusTxt + '</td>';
+        '<td class="lg-status" style="' + (isBeen ? 'color:rgba(60,130,60,.9)' : 'color:#6a7fa3') + '">' + (isBeen ? 'Been' : 'Want') + '</td>';
       tbody.appendChild(tr);
     });
-
     var n = visible.length;
-    if (lgCount) {
-      lgCount.textContent = n + ' guide' + (n !== 1 ? 's' : '') +
-        (activeLangs.length ? ' · ' + activeLangs.map(function (l) { return LANG_NAMES[l] || l; }).join(', ') : '') +
-        ' · sorted by index order';
-    }
+    if (lgCount) lgCount.textContent = n + ' guide' + (n !== 1 ? 's' : '') + (activeLangs.length ? ' · ' + activeLangs.map(function (l) { return LANG_NAMES[l] || l; }).join(', ') : '');
     if (lgNoRes) lgNoRes.style.display = n ? 'none' : 'block';
   }
 
-  /* ── Mode toggle ── */
+  /* ── By-Language grouped view ── */
+  var llSections = document.getElementById('ll-sections');
+  var llCount    = document.getElementById('ll-count');
+  var llNoRes    = document.getElementById('ll-noresult');
+
+  function buildLangView() {
+    if (!llSections) return;
+    llSections.innerHTML = '';
+    var sf = window._giStatusFilter || 'all';
+
+    /* Collect all language codes that appear in visible cards */
+    var langOrder = [];
+    var langMap = {}; /* lang → array of cards */
+
+    allCards.forEach(function (c) {
+      if (!statusFilter(c)) return;
+      var langs = cardLangs(c);
+      if (activeLangs.length && !activeLangs.some(function (l) { return langs.indexOf(l) >= 0; })) return;
+      langs.forEach(function (l) {
+        if (!langMap[l]) { langMap[l] = []; langOrder.push(l); }
+        langMap[l].push(c);
+      });
+    });
+
+    /* Sort languages by guide count desc, then name */
+    langOrder.sort(function (a, b) {
+      var diff = langMap[b].length - langMap[a].length;
+      return diff !== 0 ? diff : (LANG_NAMES[a] || a).localeCompare(LANG_NAMES[b] || b);
+    });
+
+    var totalGuides = 0;
+    langOrder.forEach(function (l) {
+      var cards = langMap[l];
+      var sec = document.createElement('div');
+      sec.className = 'll-section';
+      var langName = LANG_NAMES[l] || l;
+      sec.innerHTML = '<div class="ll-header">' + langName + '<span>' + cards.length + ' guide' + (cards.length !== 1 ? 's' : '') + '</span></div>' +
+        '<div class="ll-cards" id="ll-cards-' + l + '"></div>';
+      llSections.appendChild(sec);
+      var cardsCont = sec.querySelector('.ll-cards');
+      cards.forEach(function (c) {
+        var name  = ((c.querySelector('.dest-name') || {}).textContent || '').trim();
+        var flag  = ((c.querySelector('.dest-flag') || {}).textContent || '').trim();
+        var href  = c.getAttribute('href') || '#';
+        var isBeen = c.getAttribute('data-status') !== 'want';
+        var cLangs = cardLangs(c);
+        var isPrimary = cLangs[0] === l;
+        var a = document.createElement('a');
+        a.className = 'll-card' + (isBeen ? ' been' : '');
+        a.href = href;
+        a.innerHTML = '<span class="ll-flag">' + flag + '</span><span>' + name + (isPrimary ? '' : '<div class="ll-primary">also ' + langName + '</div>') + '</span>';
+        cardsCont.appendChild(a);
+      });
+      totalGuides += cards.length;
+    });
+
+    var n = langOrder.length;
+    if (llCount) llCount.textContent = n + ' language' + (n !== 1 ? 's' : '') + ' · ' + allCards.filter(statusFilter).length + ' guides';
+    if (llNoRes) llNoRes.style.display = n ? 'none' : 'block';
+  }
+
+  /* ── Mode toggles ── */
+  function exitLangModes() {
+    document.body.classList.remove('mode-lang-guide', 'mode-lang-lang');
+    [].slice.call(document.querySelectorAll('.lang-mode-btn')).forEach(function (b) { b.classList.remove('on'); });
+  }
+
   window._langGuideMode = function (on) {
-    document.body.classList.toggle('mode-lang-guide', on);
-    if (on) buildGuideView();
+    if (!on) { exitLangModes(); return; }
+    exitLangModes();
+    document.body.classList.add('mode-lang-guide');
+    document.getElementById('lang-mode-by-guide') && document.getElementById('lang-mode-by-guide').classList.add('on');
+    buildGuideView();
   };
+
+  window._langLangMode = function (on) {
+    if (!on) { exitLangModes(); return; }
+    exitLangModes();
+    document.body.classList.add('mode-lang-lang');
+    document.getElementById('lang-mode-by-lang') && document.getElementById('lang-mode-by-lang').classList.add('on');
+    buildLangView();
+  };
+
+  /* ── Sub-mode button wiring ── */
+  var modeRow = document.querySelector('.lang-mode-row');
+  if (modeRow) {
+    modeRow.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-lmode]');
+      if (!btn) return;
+      var lmode = btn.dataset.lmode;
+      if (lmode === 'guide') {
+        if (document.body.classList.contains('mode-lang-guide')) { window._langGuideMode(false); }
+        else { window._langGuideMode(true); }
+      } else if (lmode === 'lang') {
+        if (document.body.classList.contains('mode-lang-lang')) { window._langLangMode(false); }
+        else { window._langLangMode(true); }
+      }
+    });
+  }
 
   /* Refresh when Been/Want toggle changes */
   document.addEventListener('gi:status', function () {
     if (document.body.classList.contains('mode-lang-guide')) buildGuideView();
+    if (document.body.classList.contains('mode-lang-lang')) buildLangView();
   });
 }());
 </script>
