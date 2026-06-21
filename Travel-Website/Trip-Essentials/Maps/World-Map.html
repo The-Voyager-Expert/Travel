@@ -45,13 +45,6 @@
     text-shadow: -1px 0 2px #fdf8f0, 1px 0 2px #fdf8f0, 0 -1px 2px #fdf8f0, 0 1px 2px #fdf8f0,
                  0 0 4px #fdf8f0, 0 0 4px #fdf8f0; }
   .city-name-tip::before { display: none; }
-  /* Tier gating — hidden by default; #map gets a .ctier-N class on zoom revealing
-     tiers 0..N (0 = pop >= 1M, 1 = >= 500k, 2 = >= 250k, 3 = >= 150k). */
-  #map .city-dot-icon, #map .city-name-tip { display: none; }
-  #map.ctier-0 .ct0,
-  #map.ctier-1 .ct0, #map.ctier-1 .ct1,
-  #map.ctier-2 .ct0, #map.ctier-2 .ct1, #map.ctier-2 .ct2,
-  #map.ctier-3 .ct0, #map.ctier-3 .ct1, #map.ctier-3 .ct2, #map.ctier-3 .ct3 { display: block; }
 
   /* ── Pin markers ── */
   .city-pin { background: #b85c2a; border: 1.8px solid #fdf8f0; border-radius: 50%;
@@ -388,17 +381,15 @@ function toggleStateLabels() {
 function toggleMinorLabels() {
   map.getPane('minorLabels').style.display = (map.getZoom() >= 2.5) ? '' : 'none';
 }
-// Major cities reveal by population as you zoom: tier 0 (>=1M) at z4, then +1 tier
-// every zoom level, all (>=150k) by z7. Below z4 → no city class → all hidden.
-function setCityTier() {
-  const z = map.getZoom(), c = map.getContainer();
-  c.classList.remove('ctier-0', 'ctier-1', 'ctier-2', 'ctier-3');
-  if (z >= 7)      c.classList.add('ctier-3');
-  else if (z >= 6) c.classList.add('ctier-2');
-  else if (z >= 5) c.classList.add('ctier-1');
-  else if (z >= 4) c.classList.add('ctier-0');
-}
-map.on('zoomend', () => { toggleStateLabels(); toggleMinorLabels(); setCityTier(); });
+map.on('zoomend', () => { toggleStateLabels(); toggleMinorLabels(); });
+// Major cities: render only the ones IN VIEW, biggest-first, up to a per-zoom
+// population tier — so we can carry 12k cities without lag. Declared here (before
+// the handler) so an early moveend can't hit them in the temporal dead zone;
+// CITY_DATA is filled by the fetch below, renderCities() is hoisted.
+let CITY_DATA = [];
+const cityIcon = L.divIcon({ className: 'city-dot-icon', iconSize: [5, 5], iconAnchor: [2.5, 2.5] });
+const cityLayer = L.layerGroup().addTo(map);
+map.on('moveend', () => renderCities());
 
 // Keep the framed region clear of the overlay controls: pad left for the
 // desktop panel, pad bottom for the mobile docked bar.
@@ -506,28 +497,49 @@ fetch('data/canada-provinces.json')
   })
   .catch(() => {});
 
-/* ── Major world cities (non-guide) ── every city pop >= 150k gets a dot + name,
-   revealed by population as you zoom in (tier gating). Guide cities already have
-   their own orange pins, so skip any city matching a guide name to avoid doubles. */
+/* ── Major world cities (non-guide) ── 12k cities (pop >= 50k, tiered 0=>1M …
+   4=>50k). To carry that many without lag we render ONLY the cities currently in
+   view, biggest-first, capped — re-running on every pan/zoom. Guide cities already
+   have their own orange pins, so they're filtered out to avoid doubles.
+   (CITY_DATA / cityLayer / cityIcon are declared up by the move handler.) */
 fetch('data/world-cities.json')
   .then(r => r.json())
   .then(cities => {
     const guideNames = new Set(PINS.map(p => p[0].toLowerCase()));
-    cities.forEach(c => {
-      const [name, lon, lat, tier] = c;
-      if (guideNames.has(name.toLowerCase())) return;
-      L.marker([lat, lon], {
-        pane: 'cityDots', interactive: false, keyboard: false,
-        icon: L.divIcon({ className: 'city-dot-icon ct' + tier, iconSize: [4, 4], iconAnchor: [2, 2] }),
-      }).addTo(map)
-        .bindTooltip(name, {
-          permanent: true, direction: 'right', offset: [3, 0],
-          className: 'city-name-tip ct' + tier, pane: 'cityLabels', interactive: false,
-        });
-    });
-    setCityTier();   // respect current zoom (hidden until zoomed in)
+    CITY_DATA = cities.filter(c => !guideNames.has(c[0].toLowerCase()));  // pre-sorted by tier (biggest first)
+    renderCities();
   })
   .catch(() => {});
+
+// Deepest population tier visible at a given zoom (−1 = none): z4 → 1M, z5 → 250k,
+// z6 → 100k, z7+ → 50k. Country zoom (≈6) therefore shows everything down to 100k.
+function maxCityTier(z) {
+  if (z >= 7) return 4;
+  if (z >= 6) return 3;
+  if (z >= 5) return 2;
+  if (z >= 4) return 1;
+  if (z >= 3.5) return 0;
+  return -1;
+}
+function renderCities() {
+  cityLayer.clearLayers();
+  const maxTier = maxCityTier(map.getZoom());
+  if (maxTier < 0 || !CITY_DATA.length) return;
+  const b = map.getBounds();
+  const CAP = 240;
+  let shown = 0;
+  for (const c of CITY_DATA) {        // sorted by tier → biggest cities first
+    if (c[3] > maxTier) break;        // past the visible tier: nothing smaller qualifies
+    if (!b.contains([c[2], c[1]])) continue;
+    const m = L.marker([c[2], c[1]], { icon: cityIcon, pane: 'cityDots', interactive: false, keyboard: false });
+    m.bindTooltip(c[0], {
+      permanent: true, direction: 'right', offset: [3, 0],
+      className: 'city-name-tip', pane: 'cityLabels', interactive: false,
+    });
+    cityLayer.addLayer(m);
+    if (++shown >= CAP) break;
+  }
+}
 
 /* ── Pins + clustering ── */
 function buildPins() {
