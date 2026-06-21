@@ -32,7 +32,6 @@ body {
 .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border2); }
 
 .bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
-.bar-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
 .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
 .bar-country { width: 155px; font-size: 12px; color: var(--text); font-weight: 600; flex-shrink: 0; }
 .bar-track { flex: 1; height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; }
@@ -53,11 +52,27 @@ body {
 .sun-c5 { background: #ff7700; color: #fff; }
 .sun-c6 { background: #e85d00; color: #fff; }
 
+.search-row { display: flex; flex-direction: column; align-items: center; margin: 0 0 18px; }
+.search-box { width: 360px; max-width: 100%; padding: 9px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: var(--surface); color: var(--text); outline: none; transition: border-color .15s; }
+.search-box::placeholder { color: #A8895A; }
+.search-box:focus { border-color: #b85c2a; }
+.search-hint { font-size: 12px; color: var(--muted); margin-top: 6px; min-height: 18px; }
+#search-results { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+#search-results.active { display: block; }
+.sr-title { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+.sr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sr-table thead th { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 6px 7px; border-bottom: 1px solid var(--border2); text-align: left; }
+.sr-table td { padding: 5px 6px; border-bottom: 1px solid var(--border2); }
+.sr-table tr:last-child td { border-bottom: none; }
+.sr-table td.sr-cat { color: var(--muted); font-size: 12px; }
+.sr-table td.sr-val { font-weight: 700; color: var(--rust); text-align: right; white-space: nowrap; }
+.sr-none { color: var(--muted); font-size: 13px; font-style: italic; }
+
 @media (max-width: 700px) {
-  .bar-2col { grid-template-columns: 1fr; }
   .bar-country { width: 120px; }
   .bar-val { width: 60px; }
   .page { padding: 0 12px; }
+  .search-box { width: 100%; }
 }
 </style>
 </head>
@@ -91,11 +106,18 @@ body {
   <a href="#sunshine">Sunshine</a>
 </nav>
 
+<div class="search-row">
+  <input type="search" id="country-search" class="search-box" placeholder="Search a country…" autocomplete="off" spellcheck="false">
+  <div id="search-hint" class="search-hint"></div>
+</div>
+<div id="search-results">
+  <div id="sr-title" class="sr-title"></div>
+  <div id="sr-body"></div>
+</div>
+
 <!-- POPULATION -->
 <div id="population" class="section-title">Population</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">84.4M</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">68.0M</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">67.8M</span></div>
@@ -108,8 +130,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span class="bar-val">10.4M</span></div>
       <div class="bar-row"><span class="bar-country">🇵🇹 Portugal</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span class="bar-val">10.2M</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span class="bar-val">9.7M</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:11%"></div></div><span class="bar-val">9.1M</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><span class="bar-val">8.7M</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇰 Denmark</span><div class="bar-track"><div class="bar-fill" style="width:7%"></div></div><span class="bar-val">5.9M</span></div>
@@ -122,16 +142,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0.66M</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0.38M</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0.04M</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: World Bank 2024</div>
 </div>
 
 <!-- HAPPINESS -->
 <div id="happiness" class="section-title">Happiness Index (World Happiness Report)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">7.74</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇰 Denmark</span><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><span class="bar-val">7.58</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span class="bar-val">7.52</span></div>
@@ -144,8 +160,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:87%"></div></div><span class="bar-val">6.75</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill" style="width:87%"></div></div><span class="bar-val">6.74</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><span class="bar-val">6.68</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill" style="width:84%"></div></div><span class="bar-val">6.52</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:84%"></div></div><span class="bar-val">6.49</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill" style="width:83%"></div></div><span class="bar-val">6.44</span></div>
@@ -157,16 +171,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><span class="bar-val">5.87</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill" style="width:71%"></div></div><span class="bar-val">5.48</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:71%"></div></div><span class="bar-val">5.47</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: World Happiness Report 2024 (score out of 10) · Monaco not included in WHR</div>
 </div>
 
 <!-- GDP/CAPITA -->
 <div id="gdp" class="section-title">GDP per Capita (USD)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">$240,000</span></div>
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill" style="width:57%"></div></div><span class="bar-val">$135,600</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:41%"></div></div><span class="bar-val">$98,800</span></div>
@@ -179,8 +189,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:23%"></div></div><span class="bar-val">$54,600</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><span class="bar-val">$53,200</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span class="bar-val">$51,200</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span class="bar-val">$50,800</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div><span class="bar-val">$43,700</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div><span class="bar-val">$42,300</span></div>
@@ -193,16 +201,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><span class="bar-val">$23,000</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><span class="bar-val">$21,500</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><span class="bar-val">$21,600</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: IMF World Economic Outlook 2024</div>
 </div>
 
 <!-- MEDIAN HOUSEHOLD INCOME -->
 <div id="income" class="section-title">Median Household Income (USD/year)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">$68,300</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill alt" style="width:92%"></div></div><span class="bar-val">$62,900</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill alt" style="width:88%"></div></div><span class="bar-val">~$60,000</span></div>
@@ -215,8 +219,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill alt" style="width:59%"></div></div><span class="bar-val">$40,300</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill alt" style="width:57%"></div></div><span class="bar-val">$39,100</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill alt" style="width:55%"></div></div><span class="bar-val">$37,700</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill alt" style="width:52%"></div></div><span class="bar-val">$35,500</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill alt" style="width:51%"></div></div><span class="bar-val">$34,900</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill alt" style="width:48%"></div></div><span class="bar-val">$32,800</span></div>
@@ -229,16 +231,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill alt" style="width:20%"></div></div><span class="bar-val">$13,900</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill alt" style="width:20%"></div></div><span class="bar-val">$13,500</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill alt" style="width:18%"></div></div><span class="bar-val">$12,000</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: Eurostat, OECD 2023</div>
 </div>
 
 <!-- COST OF LIVING -->
 <div id="cost" class="section-title">Cost of Living Index (NYC = 100)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">150.0</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:68%"></div></div><span class="bar-val">101.6</span></div>
       <div class="bar-row"><span class="bar-country">🇳🇴 Norway</span><div class="bar-track"><div class="bar-fill" style="width:56%"></div></div><span class="bar-val">83.8</span></div>
@@ -251,8 +249,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇳🇱 Netherlands</span><div class="bar-track"><div class="bar-fill" style="width:45%"></div></div><span class="bar-val">67.4</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:44%"></div></div><span class="bar-val">65.3</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill" style="width:43%"></div></div><span class="bar-val">65.0</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:43%"></div></div><span class="bar-val">64.2</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill" style="width:42%"></div></div><span class="bar-val">63.3</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:41%"></div></div><span class="bar-val">61.7</span></div>
@@ -265,16 +261,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><span class="bar-val">38.0</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:23%"></div></div><span class="bar-val">35.0</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><span class="bar-val">33.0</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: Numbeo Cost of Living Index 2024</div>
 </div>
 
 <!-- LIFE EXPECTANCY -->
 <div id="life" class="section-title">Life Expectancy (years)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">89.4</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:94%"></div></div><span class="bar-val">84.0</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">83.5</span></div>
@@ -287,8 +279,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">82.3</span></div>
       <div class="bar-row"><span class="bar-country">🇳🇱 Netherlands</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">82.0</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">81.9</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">81.9</span></div>
       <div class="bar-row"><span class="bar-country">🇵🇹 Portugal</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">81.9</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:91%"></div></div><span class="bar-val">81.5</span></div>
@@ -301,16 +291,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇪🇪 Estonia</span><div class="bar-track"><div class="bar-fill" style="width:87%"></div></div><span class="bar-val">77.5</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:87%"></div></div><span class="bar-val">77.5</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><span class="bar-val">76.9</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: WHO / World Bank 2023</div>
 </div>
 
 <!-- MEDIAN AGE -->
 <div id="medage" class="section-title">Median Age (years)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">55.4</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill alt" style="width:85%"></div></div><span class="bar-val">47.3</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill alt" style="width:82%"></div></div><span class="bar-val">45.7</span></div>
@@ -323,8 +309,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill alt" style="width:79%"></div></div><span class="bar-val">43.7</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill alt" style="width:79%"></div></div><span class="bar-val">43.5</span></div>
       <div class="bar-row"><span class="bar-country">🇪🇪 Estonia</span><div class="bar-track"><div class="bar-fill alt" style="width:77%"></div></div><span class="bar-val">42.8</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇸🇪 Sweden</span><div class="bar-track"><div class="bar-fill alt" style="width:75%"></div></div><span class="bar-val">41.5</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">41.2</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">40.8</span></div>
@@ -337,16 +321,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill alt" style="width:70%"></div></div><span class="bar-val">38.8</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill alt" style="width:65%"></div></div><span class="bar-val">36.1</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill alt" style="width:64%"></div></div><span class="bar-val">35.6</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: UN World Population Prospects 2024</div>
 </div>
 
 <!-- HOMEOWNERSHIP -->
 <div id="homeown" class="section-title">Homeownership Rate (%)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">91%</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span class="bar-val">90%</span></div>
       <div class="bar-row"><span class="bar-country">🇳🇴 Norway</span><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="bar-val">82%</span></div>
@@ -359,8 +339,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇵🇹 Portugal</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">73%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div><span class="bar-val">71%</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div><span class="bar-val">68%</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><span class="bar-val">67%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill" style="width:71%"></div></div><span class="bar-val">65%</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:71%"></div></div><span class="bar-val">65%</span></div>
@@ -373,16 +351,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><span class="bar-val">36%</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div><span class="bar-val">35%</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:33%"></div></div><span class="bar-val">30%</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: Eurostat Housing Statistics 2023</div>
 </div>
 
 <!-- POVERTY RATE -->
 <div id="poverty" class="section-title">Poverty Rate (% at risk of poverty)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇪🇪 Estonia</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">22.4%</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:87%"></div></div><span class="bar-val">19.5%</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">19.0%</span></div>
@@ -395,8 +369,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><span class="bar-val">13.4%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill" style="width:58%"></div></div><span class="bar-val">13.1%</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill" style="width:57%"></div></div><span class="bar-val">12.7%</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill" style="width:54%"></div></div><span class="bar-val">12.1%</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:54%"></div></div><span class="bar-val">12.0%</span></div>
       <div class="bar-row"><span class="bar-country">🇸🇪 Sweden</span><div class="bar-track"><div class="bar-fill" style="width:52%"></div></div><span class="bar-val">11.6%</span></div>
@@ -409,16 +381,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:41%"></div></div><span class="bar-val">9.3%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill" style="width:36%"></div></div><span class="bar-val">8.0%</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><span class="bar-val">2.0%</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: Eurostat SILC 2023</div>
 </div>
 
 <!-- ADULT LOW-LITERACY -->
 <div id="literacy" class="section-title">Adult Low-Literacy Rate (% scoring below basic literacy)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">28%</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">28%</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:89%"></div></div><span class="bar-val">25%</span></div>
@@ -431,8 +399,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇸🇮 Slovenia</span><div class="bar-track"><div class="bar-fill" style="width:61%"></div></div><span class="bar-val">17%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill" style="width:57%"></div></div><span class="bar-val">16%</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:54%"></div></div><span class="bar-val">15%</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇪🇪 Estonia</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="bar-val">14%</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="bar-val">14%</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill" style="width:46%"></div></div><span class="bar-val">13%</span></div>
@@ -444,16 +410,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇳🇴 Norway</span><div class="bar-track"><div class="bar-fill" style="width:36%"></div></div><span class="bar-val">10%</span></div>
       <div class="bar-row"><span class="bar-country">🇸🇪 Sweden</span><div class="bar-track"><div class="bar-fill" style="width:32%"></div></div><span class="bar-val">9%</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill" style="width:29%"></div></div><span class="bar-val">8%</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: OECD PIAAC Survey of Adult Skills 2023</div>
 </div>
 
 <!-- UNIVERSITY -->
 <div id="university" class="section-title">Tertiary Education Attainment (% adults 25–64)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">57%</span></div>
       <div class="bar-row"><span class="bar-country">🇳🇴 Norway</span><div class="bar-track"><div class="bar-fill alt" style="width:91%"></div></div><span class="bar-val">52%</span></div>
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill alt" style="width:86%"></div></div><span class="bar-val">49%</span></div>
@@ -466,8 +428,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill alt" style="width:75%"></div></div><span class="bar-val">43%</span></div>
       <div class="bar-row"><span class="bar-country">🇪🇪 Estonia</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">42%</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill alt" style="width:70%"></div></div><span class="bar-val">40%</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill alt" style="width:70%"></div></div><span class="bar-val">40%</span></div>
       <div class="bar-row"><span class="bar-country">🇸🇮 Slovenia</span><div class="bar-track"><div class="bar-fill alt" style="width:68%"></div></div><span class="bar-val">39%</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill alt" style="width:68%"></div></div><span class="bar-val">39%</span></div>
@@ -479,16 +439,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill alt" style="width:46%"></div></div><span class="bar-val">26%</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill alt" style="width:46%"></div></div><span class="bar-val">26%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill alt" style="width:37%"></div></div><span class="bar-val">21%</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: OECD Education at a Glance 2023</div>
 </div>
 
 <!-- INTERNET -->
 <div id="internet" class="section-title">Internet Penetration (%)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇳🇴 Norway</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">99%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">99%</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">99%</span></div>
@@ -501,8 +457,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:95%"></div></div><span class="bar-val">94%</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:94%"></div></div><span class="bar-val">93%</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">92%</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">92%</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">91%</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill" style="width:91%"></div></div><span class="bar-val">90%</span></div>
@@ -515,16 +469,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:83%"></div></div><span class="bar-val">82%</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">79%</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:79%"></div></div><span class="bar-val">78%</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: ITU / World Bank 2023</div>
 </div>
 
 <!-- VACATION DAYS -->
 <div id="vacation" class="section-title">Statutory Paid Vacation Days (minimum by law)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">38 days</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill alt" style="width:89%"></div></div><span class="bar-val">34 days</span></div>
       <div class="bar-row"><span class="bar-country">🇸🇪 Sweden</span><div class="bar-track"><div class="bar-fill alt" style="width:89%"></div></div><span class="bar-val">34 days</span></div>
@@ -537,8 +487,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">28 days</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">28 days</span></div>
       <div class="bar-row"><span class="bar-country">🇳🇱 Netherlands</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">28 days</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">28 days</span></div>
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">28 days</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill alt" style="width:74%"></div></div><span class="bar-val">28 days</span></div>
@@ -551,16 +499,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill alt" style="width:68%"></div></div><span class="bar-val">26 days</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill alt" style="width:68%"></div></div><span class="bar-val">26 days</span></div>
       <div class="bar-row"><span class="bar-country">🇪🇸 Spain</span><div class="bar-track"><div class="bar-fill alt" style="width:63%"></div></div><span class="bar-val">24 days</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: OECD / ILO 2023 (vacation + public holidays)</div>
 </div>
 
 <!-- ALCOHOL/CAPITA -->
 <div id="alcohol" class="section-title">Alcohol Consumption per Capita (liters pure alcohol/year)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">14.4 L</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><span class="bar-val">12.4 L</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">12.3 L</span></div>
@@ -573,8 +517,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div><span class="bar-val">11.2 L</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇰 Denmark</span><div class="bar-track"><div class="bar-fill" style="width:77%"></div></div><span class="bar-val">11.1 L</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><span class="bar-val">11.0 L</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇸🇮 Slovenia</span><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><span class="bar-val">11.0 L</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><span class="bar-val">10.7 L</span></div>
       <div class="bar-row"><span class="bar-country">🇸🇪 Sweden</span><div class="bar-track"><div class="bar-fill" style="width:69%"></div></div><span class="bar-val">9.9 L</span></div>
@@ -587,16 +529,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill" style="width:57%"></div></div><span class="bar-val">8.2 L</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill" style="width:56%"></div></div><span class="bar-val">8.0 L</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:56%"></div></div><span class="bar-val">8.0 L</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: WHO Global Status Report on Alcohol 2023</div>
 </div>
 
 <!-- CORRUPTION -->
 <div id="corruption" class="section-title">Corruption Perceptions Index (100 = least corrupt)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇩🇰 Denmark</span><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">90</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill alt" style="width:97%"></div></div><span class="bar-val">87</span></div>
       <div class="bar-row"><span class="bar-country">🇳🇴 Norway</span><div class="bar-track"><div class="bar-fill alt" style="width:93%"></div></div><span class="bar-val">84</span></div>
@@ -609,8 +547,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill alt" style="width:82%"></div></div><span class="bar-val">74</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill alt" style="width:80%"></div></div><span class="bar-val">72</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill alt" style="width:79%"></div></div><span class="bar-val">71</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill alt" style="width:79%"></div></div><span class="bar-val">71</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill alt" style="width:78%"></div></div><span class="bar-val">70</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill alt" style="width:78%"></div></div><span class="bar-val">70</span></div>
@@ -623,16 +559,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill alt" style="width:56%"></div></div><span class="bar-val">50</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill alt" style="width:54%"></div></div><span class="bar-val">49</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill alt" style="width:47%"></div></div><span class="bar-val">42</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: Transparency International CPI 2023</div>
 </div>
 
 <!-- RENEWABLES -->
 <div id="renewables" class="section-title">Renewable Energy Share (% of electricity)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">99%</span></div>
       <div class="bar-row"><span class="bar-country">🇳🇴 Norway</span><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span class="bar-val">98%</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">80%</span></div>
@@ -645,8 +577,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇫🇮 Finland</span><div class="bar-track"><div class="bar-fill" style="width:56%"></div></div><span class="bar-val">55%</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:51%"></div></div><span class="bar-val">50%</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇧 United Kingdom</span><div class="bar-track"><div class="bar-fill" style="width:45%"></div></div><span class="bar-val">45%</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill" style="width:43%"></div></div><span class="bar-val">43%</span></div>
       <div class="bar-row"><span class="bar-country">🇸🇮 Slovenia</span><div class="bar-track"><div class="bar-fill" style="width:42%"></div></div><span class="bar-val">42%</span></div>
       <div class="bar-row"><span class="bar-country">🇬🇷 Greece</span><div class="bar-track"><div class="bar-fill" style="width:42%"></div></div><span class="bar-val">42%</span></div>
@@ -659,16 +589,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><span class="bar-val">25%</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div><span class="bar-val">18%</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div><span class="bar-val">18%</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: Ember Climate / IEA 2023</div>
 </div>
 
 <!-- ANNUAL VISITORS -->
 <div id="visitors" class="section-title">International Tourist Arrivals (millions/year)</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">100M</span></div>
       <div class="bar-row"><span class="bar-country">🇪🇸 Spain</span><div class="bar-track"><div class="bar-fill alt" style="width:85%"></div></div><span class="bar-val">85M</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill alt" style="width:57%"></div></div><span class="bar-val">57M</span></div>
@@ -681,8 +607,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇳🇱 Netherlands</span><div class="bar-track"><div class="bar-fill alt" style="width:20%"></div></div><span class="bar-val">20M</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill alt" style="width:17%"></div></div><span class="bar-val">17M</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇺 Hungary</span><div class="bar-track"><div class="bar-fill alt" style="width:16%"></div></div><span class="bar-val">16M</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇨🇿 Czech Republic</span><div class="bar-track"><div class="bar-fill alt" style="width:12%"></div></div><span class="bar-val">12M</span></div>
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill alt" style="width:11%"></div></div><span class="bar-val">11M</span></div>
       <div class="bar-row"><span class="bar-country">🇧🇪 Belgium</span><div class="bar-track"><div class="bar-fill alt" style="width:9%"></div></div><span class="bar-val">9M</span></div>
@@ -695,16 +619,12 @@ body {
       <div class="bar-row"><span class="bar-country">🇮🇸 Iceland</span><div class="bar-track"><div class="bar-fill alt" style="width:2%"></div></div><span class="bar-val">2.2M</span></div>
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill alt" style="width:1%"></div></div><span class="bar-val">1.1M</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill alt" style="width:1%"></div></div><span class="bar-val">0.35M</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: UNWTO 2023</div>
 </div>
 
 <!-- UNESCO SITES -->
 <div id="unesco" class="section-title">UNESCO World Heritage Sites</div>
 <div class="bar-section">
-  <div class="bar-2col">
-    <div>
       <div class="bar-row"><span class="bar-country">🇮🇹 Italy</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">58 sites</span></div>
       <div class="bar-row"><span class="bar-country">🇫🇷 France</span><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">54 sites</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇪 Germany</span><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="bar-val">52 sites</span></div>
@@ -717,8 +637,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇸🇪 Sweden</span><div class="bar-track"><div class="bar-fill" style="width:26%"></div></div><span class="bar-val">15 sites</span></div>
       <div class="bar-row"><span class="bar-country">🇨🇭 Switzerland</span><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><span class="bar-val">13 sites</span></div>
       <div class="bar-row"><span class="bar-country">🇦🇹 Austria</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span class="bar-val">12 sites</span></div>
-    </div>
-    <div>
       <div class="bar-row"><span class="bar-country">🇳🇱 Netherlands</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span class="bar-val">12 sites</span></div>
       <div class="bar-row"><span class="bar-country">🇭🇷 Croatia</span><div class="bar-track"><div class="bar-fill" style="width:17%"></div></div><span class="bar-val">10 sites</span></div>
       <div class="bar-row"><span class="bar-country">🇩🇰 Denmark</span><div class="bar-track"><div class="bar-fill" style="width:17%"></div></div><span class="bar-val">10 sites</span></div>
@@ -731,8 +649,6 @@ body {
       <div class="bar-row"><span class="bar-country">🇮🇪 Ireland</span><div class="bar-track"><div class="bar-fill" style="width:3%"></div></div><span class="bar-val">2 sites</span></div>
       <div class="bar-row"><span class="bar-country">🇱🇺 Luxembourg</span><div class="bar-track"><div class="bar-fill" style="width:2%"></div></div><span class="bar-val">1 site</span></div>
       <div class="bar-row"><span class="bar-country">🇲🇨 Monaco</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0 sites</span></div>
-    </div>
-  </div>
   <div class="source-note">Source: UNESCO World Heritage List 2024</div>
 </div>
 
@@ -866,5 +782,70 @@ body {
 </div>
 
 </div>
+<script>
+(function() {
+  var input   = document.getElementById('country-search');
+  var hint    = document.getElementById('search-hint');
+  var box     = document.getElementById('search-results');
+  var srTitle = document.getElementById('sr-title');
+  var srBody  = document.getElementById('sr-body');
+  if (!input) return;
+
+  // Pre-tag every .bar-row with country name and category
+  document.querySelectorAll('.bar-row').forEach(function(row) {
+    var countryEl = row.querySelector('.bar-country');
+    var valEl     = row.querySelector('.bar-val');
+    if (!countryEl) return;
+    row.dataset.country = countryEl.textContent.trim().toLowerCase();
+    row.dataset.label   = countryEl.textContent.trim();
+    row.dataset.val     = valEl ? valEl.textContent.trim() : '';
+    var section = row.closest('.bar-section');
+    if (section) {
+      var prev = section.previousElementSibling;
+      row.dataset.cat = (prev && prev.classList.contains('section-title'))
+        ? prev.textContent.trim() : '';
+    }
+  });
+
+  function run() {
+    var q = input.value.trim().toLowerCase();
+    if (!q) {
+      box.classList.remove('active');
+      hint.textContent = '';
+      return;
+    }
+
+    var rows = [];
+    document.querySelectorAll('.bar-row').forEach(function(row) {
+      if ((row.dataset.country || '').indexOf(q) !== -1) {
+        rows.push({ cat: row.dataset.cat, label: row.dataset.label, val: row.dataset.val });
+      }
+    });
+
+    box.classList.add('active');
+
+    if (rows.length === 0) {
+      srTitle.textContent = '';
+      srBody.innerHTML = '<p class="sr-none">No data found for "' + input.value.trim() + '"</p>';
+      hint.textContent = '';
+      return;
+    }
+
+    var name = rows[0].label;
+    srTitle.textContent = name + ' — ' + rows.length + ' categor' + (rows.length !== 1 ? 'ies' : 'y');
+    hint.textContent = '';
+
+    var html = '<table class="sr-table"><thead><tr><th>Category</th><th class="sr-val">Value</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      html += '<tr><td class="sr-cat">' + r.cat + '</td><td class="sr-val">' + r.val + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    srBody.innerHTML = html;
+  }
+
+  input.addEventListener('input', run);
+  input.addEventListener('search', run);
+})();
+</script>
 </body>
 </html>
