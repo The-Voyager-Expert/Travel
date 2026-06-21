@@ -165,6 +165,16 @@ a.dest-card[data-status="been"] { border-left: 4px solid rgba(60,130,60,0.75); }
 .mchip:hover { border-color:#b85c2a; color:#fff; background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight:600; }
 .mchip.on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:#b85c2a; color:#fff; font-weight:600; }
 .dest-card.season-hide { display:none !important; }
+.dest-card.theme-hide { display:none !important; }
+/* ── Trip-type (theme) filter ── */
+.tchip { font-family:inherit; font-size:13px; line-height:1; padding:6px 12px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fdf8f0; color:#3d3a32; cursor:pointer; white-space:nowrap; transition:all .12s; }
+.tchip:hover { border-color:#b85c2a; color:#fff; background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight:600; }
+.tchip.on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:#b85c2a; color:#fff; font-weight:600; }
+#theme-panel { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:16px 0 26px; padding:14px 16px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); }
+#theme-panel[hidden] { display:none; }
+#theme-panel .sfl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+#theme-badge { cursor:pointer; font-size:12px; color:#A8895A; padding:4px 8px; white-space:nowrap; }
+#theme-badge:hover { color:var(--accent); }
 #season-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; }
 #season-badge.visible { display:inline-block; }
 /* temp range sliders */
@@ -464,6 +474,7 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   <div class="view-toggle" style="margin:0">
     <button id="view-compare">📶 Compare cities</button>
   </div>
+  <button id="btn-theme-toggle" class="disc-btn" aria-expanded="false" aria-controls="theme-panel">🎯 Trip type <span class="disc-caret">▾</span></button>
   <button id="btn-filters-toggle" class="disc-btn" aria-expanded="false" aria-controls="filters-panel">📅 When to go <span class="disc-caret">▾</span></button>
   <button id="btn-views-toggle" class="disc-btn" aria-expanded="false" aria-controls="views-panel">📑 Browse by <span class="disc-caret">▾</span></button>
 </div>
@@ -555,6 +566,19 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   </div>
 </div>
 </div><!-- /filters-panel -->
+
+<div id="theme-panel" hidden>
+  <span class="sfl">🎯 What kind of trip</span>
+  <button class="tchip" data-theme="beach">🏖 Beach</button>
+  <button class="tchip" data-theme="islands">🏝 Islands</button>
+  <button class="tchip" data-theme="snow">⛷ Snow / Ski</button>
+  <button class="tchip" data-theme="wine">🍷 Wine</button>
+  <button class="tchip" data-theme="nature">🏞 Nature</button>
+  <button class="tchip" data-theme="history">🏛 History</button>
+  <button class="tchip" data-theme="art">🎨 Art &amp; Museums</button>
+  <button class="tchip" data-theme="family">👨‍👩‍👧 Family</button>
+  <span id="theme-badge" hidden>✕ clear</span>
+</div><!-- /theme-panel -->
 
 <div class="mosaic">
 
@@ -1475,7 +1499,10 @@ window._giStatusFilter = 'all';
           var match = statusOk && (textMatch || aliasMatch || fuzzyMatch);
           c.style.display = match ? '' : 'none';
           c.classList.toggle('match-alias', match && q !== '' && !textMatch && (aliasMatch || fuzzyMatch));
-          if (match) { any = true; shown++; }
+          /* a card only counts toward its section + the result tally if it also
+             survives the season + theme filters (which hide via !important class) */
+          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide');
+          if (visible) { any = true; shown++; }
         });
         r.style.display = any ? '' : 'none';
       });
@@ -2744,6 +2771,57 @@ window._giStatusFilter = 'all';
 </script>
 
 <script>
+/* ══ Trip-type (theme) filter — "What kind of trip" ══
+   Curated tags per guide (auto-derived from guide content via
+   Brain/scripts/build_theme_tags.py, then hand-corrected). Single-select like the
+   season filter; composes with status + search + season — hides cards lacking the
+   chosen theme, lets applyMosaicFilter retidy section headers + the result tally. ══ */
+(function () {
+  var THEME_DATA = {"Abu Dhabi":["beach","history","family"],"Aix-en-Provence":["wine"],"Alaska":["snow","nature"],"Amalfi":["beach"],"Amsterdam":["art"],"Annecy":["snow","nature","history"],"Aruba":["beach","islands","nature"],"Athens":["history","art"],"Atlanta":["family"],"Azores":["beach","islands","nature"],"Bali":["beach","islands","nature","history"],"Bangkok":["history"],"Barbados":["beach","islands"],"Barcelona":["history","art"],"Beijing":["history"],"Bend":["snow","nature"],"Bergen":["snow","nature","family"],"Berlin":["history","art"],"Big Island":["beach","islands","nature"],"Bologna":["wine","history","art"],"Bordeaux":["wine","history"],"Boston":["art"],"Boulder":["nature"],"Bruges":["history"],"Brussels":["history"],"Budapest":["wine","history","art"],"Buenos Aires":["art"],"Cambridge":["family"],"Cannes":["beach","history"],"Capri":["beach","islands"],"Carmel-by-the-Sea":["beach"],"Cascais":["beach","history"],"Cayman Islands":["beach","islands"],"Chicago":["art","family"],"Chongqing":["nature"],"Cinque Terre":["wine","nature"],"Colmar":["wine","history"],"Copenhagen":["history","art","family"],"Corfu":["beach","islands","history"],"Curaçao":["beach","islands"],"Cusco":["nature","history"],"Dubai":["beach"],"Dublin":["history"],"Dubrovnik":["beach","history"],"Edinburgh":["history"],"Florence":["wine","history","art"],"Geneva":["history"],"Glasgow":["history","art"],"Gothenburg":["history","family"],"Helsinki":["islands","history"],"Hong Kong":["islands"],"Istanbul":["history","art"],"Kauai":["beach","islands","nature"],"Kyoto":["history"],"La Jolla":["beach","family"],"Lagos":["beach","history"],"Lake Como":["nature"],"Las Vegas":["nature"],"Lille":["history"],"Lisbon":["history","art"],"Ljubljana":["nature","history"],"London":["history","art"],"Los Angeles":["art","family"],"Lucerne":["snow","nature","history"],"Luxembourg":["history"],"Lyon":["wine","history","art"],"Machu Picchu":["nature","history"],"Madeira":["beach","islands","nature","history"],"Madrid":["wine","history","art"],"Malibu":["beach","nature"],"Marktoberdorf":["snow","nature","history"],"Marrakech":["nature","history"],"Marseille":["beach"],"Maui":["beach","islands","nature"],"Miami":["beach"],"Milan":["history","art"],"Monaco":["history"],"Montevideo":["wine"],"Munich":["snow","history","art"],"Napa":["wine"],"Naples":["history","art"],"New York":["art"],"Nice":["beach","history"],"Oahu":["beach","islands","history"],"Orlando":["family"],"Oslo":["snow","nature","history"],"Palm Desert":["nature"],"Paris":["history","art","family"],"Pasadena":["family"],"Philadelphia":["art"],"Phoenix":["nature"],"Phuket":["beach","islands","nature","history"],"Pisa":["history"],"Porto":["wine","history"],"Prague":["history"],"Puerto Rico":["beach","islands"],"Queenstown":["snow","wine","nature"],"Québec City":["history"],"Reykjavik":["snow","nature"],"Rio de Janeiro":["beach","nature"],"Rome":["history","art"],"Salzburg":["snow","nature","history"],"San Diego":["beach","family"],"San Sebastián":["beach","history"],"Santa Barbara":["beach"],"Santa Cruz":["beach","family"],"Santa Monica":["beach","family"],"Santiago":["wine"],"Scottsdale":["nature"],"Seattle":["family"],"Seoul":["history","art"],"Seville":["history"],"Shanghai":["history","art"],"Siena":["wine","history"],"Singapore":["islands","history","family"],"Sint Maarten":["beach","islands"],"Sintra":["history"],"Sorrento":["beach","nature","history"],"Split":["beach","nature","history"],"Stockholm":["islands","history","art"],"Strasbourg":["wine","history"],"Stuttgart":["wine","history"],"Sydney":["beach","nature"],"Taipei":["nature","art"],"Tallinn":["history"],"The Bahamas":["beach","islands","nature"],"Tokyo":["art","family"],"Toledo":["history"],"Toronto":["history","family"],"Tromsø":["snow","nature"],"Turin":["wine","history","art"],"Vancouver":["nature"],"Venice":["islands","history","art"],"Verona":["wine","history"],"Vienna":["history","art"],"Virgin Islands":["beach","islands","nature"],"Washington DC":["history","art"],"Wellington":["wine"],"Zhangjiajie":["nature"],"Zurich":["nature","history"],"Ålesund":["islands"]};
+  window._THEME_DATA = THEME_DATA;
+  var chips  = [].slice.call(document.querySelectorAll('#theme-panel .tchip'));
+  var badge  = document.getElementById('theme-badge');
+  var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
+  var active = null; /* null = off */
+
+  function cityName(card) {
+    return ((card.querySelector('.dest-name') || {}).textContent || '').trim();
+  }
+  function applyThemeFilter() {
+    if (active === null) {
+      cards.forEach(function (c) { c.classList.remove('theme-hide'); });
+      if (badge) badge.hidden = true;
+    } else {
+      cards.forEach(function (c) {
+        var tags = THEME_DATA[cityName(c)] || [];
+        if (tags.indexOf(active) > -1) c.classList.remove('theme-hide');
+        else c.classList.add('theme-hide');
+      });
+      if (badge) badge.hidden = false;
+    }
+    window._giThemeFilter = active;
+    /* re-run the mosaic filter so section headers + "no results" recompute */
+    var inp = document.getElementById('guide-search');
+    if (inp) { var e = document.createEvent('Event'); e.initEvent('input', true, true); inp.dispatchEvent(e); }
+  }
+  window._applyThemeFilter = applyThemeFilter;
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      var t = chip.getAttribute('data-theme');
+      chips.forEach(function (c) { c.classList.remove('on'); });
+      if (active === t) { active = null; }
+      else { active = t; chip.classList.add('on'); }
+      applyThemeFilter();
+    });
+  });
+  if (badge) badge.addEventListener('click', function () {
+    active = null; chips.forEach(function (c) { c.classList.remove('on'); }); applyThemeFilter();
+  });
+}());
+</script>
+
+<script>
 /* ══ Region grouping toggle ══ */
 (function () {
   var btn    = document.getElementById('btn-region-group');
@@ -2936,51 +3014,55 @@ window._giStatusFilter = 'all';
   });
 }());
 
-/* ── Progressive disclosure: When-to-go / Browse-by panels (mutually exclusive) ── */
+/* ── Progressive disclosure: Trip-type / When-to-go / Browse-by panels (mutually exclusive) ── */
 (function () {
+  var tBtn = document.getElementById('btn-theme-toggle');
   var fBtn = document.getElementById('btn-filters-toggle');
   var vBtn = document.getElementById('btn-views-toggle');
+  var tPanel = document.getElementById('theme-panel');
   var fPanel = document.getElementById('filters-panel');
   var vPanel = document.getElementById('views-panel');
+  if (!(tBtn && fBtn && vBtn && tPanel && fPanel && vPanel)) return;
+
+  /* reset:true panels return the mosaic to its default Country grouping when opened */
+  var groups = [
+    { btn: tBtn, panel: tPanel, reset: true },
+    { btn: fBtn, panel: fPanel, reset: true },
+    { btn: vBtn, panel: vPanel, reset: false }
+  ];
 
   function setState(btn, panel, open) {
     panel.hidden = !open;
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
-  /* Opening one panel closes the other and hides its button, so the row stays uncluttered */
-  function toggle(btn, panel, otherBtn, otherPanel, resetViews) {
-    var open = panel.hidden;
-    if (open) {
+  function closeAll() {
+    groups.forEach(function (g) { setState(g.btn, g.panel, false); });
+  }
+  /* Panels are mutually exclusive — opening one collapses the others. All three
+     toggle buttons stay visible so you can switch facets directly. */
+  function toggle(target) {
+    var opening = target.panel.hidden;
+    closeAll();
+    if (opening) {
       if (window._exitCompareMode) window._exitCompareMode();
-      /* Opening When-to-go returns the mosaic to its default Country grouping */
-      if (resetViews && window._setBrowseView) window._setBrowseView('country');
+      if (target.reset && window._setBrowseView) window._setBrowseView('country');
+      setState(target.btn, target.panel, true);
     }
-    setState(otherBtn, otherPanel, false);
-    otherBtn.hidden = open;
-    setState(btn, panel, open);
   }
+  groups.forEach(function (g) { g.btn.addEventListener('click', function () { toggle(g); }); });
 
-  if (fBtn && vBtn && fPanel && vPanel) {
-    fBtn.addEventListener('click', function () { toggle(fBtn, fPanel, vBtn, vPanel, true); });
-    vBtn.addEventListener('click', function () { toggle(vBtn, vPanel, fBtn, fPanel, false); });
-  }
-
-  /* Let compare mode collapse both disclosure panels, restore both buttons, reset grouping */
+  /* Let compare mode collapse every disclosure panel, restore all buttons, reset grouping */
   window._closeDisclosure = function () {
-    if (!fBtn || !vBtn) return;
-    setState(fBtn, fPanel, false);
-    setState(vBtn, vPanel, false);
-    fBtn.hidden = false;
-    vBtn.hidden = false;
+    closeAll();
     if (window._setBrowseView) window._setBrowseView('country');
   };
 
-  /* Dot on When-to-go when a month filter is engaged, so a collapsed filter isn't forgotten */
+  /* Dot on a collapsed toggle when its filter is engaged, so it isn't forgotten */
   function refreshActive() {
-    if (!fBtn) return;
     fBtn.classList.toggle('has-active', !!document.querySelector('#season-filter .mchip.on'));
+    tBtn.classList.toggle('has-active', !!document.querySelector('#theme-panel .tchip.on'));
   }
-  document.querySelectorAll('#season-filter .mchip, #season-badge').forEach(function (el) {
+  document.querySelectorAll('#season-filter .mchip, #season-badge, #theme-panel .tchip, #theme-badge').forEach(function (el) {
     el.addEventListener('click', function () { setTimeout(refreshActive, 0); });
   });
   refreshActive();
