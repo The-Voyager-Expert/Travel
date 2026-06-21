@@ -469,6 +469,7 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   <div id="browse-seg" class="seg-toggle" role="group" aria-label="Group destinations by">
     <button class="seg-btn on" id="view-country" data-view="country">🗾 Country</button>
     <button class="seg-btn" id="btn-region-group" data-view="region">🌍 Region</button>
+    <button class="seg-btn" id="btn-continent-group" data-view="continent">🌐 Continent</button>
     <button class="seg-btn" id="view-flights" data-view="flights">🛫 Flight time</button>
   </div>
 </div>
@@ -2609,6 +2610,78 @@ window._giStatusFilter = 'all';
   };
 }());
 
+/* ══ Continent grouping toggle ══ */
+(function () {
+  var mosaic = document.querySelector('.mosaic');
+  if (!mosaic) return;
+
+  var CONTINENT = {
+    'canada':'North America','united-states':'North America',
+    'caribbean-islands':'North America',
+    'argentina':'South America','brazil':'South America','chile':'South America',
+    'peru':'South America','uruguay':'South America',
+    'austria':'Europe','belgium':'Europe','croatia':'Europe',
+    'czechia':'Europe','denmark':'Europe','estonia':'Europe',
+    'finland':'Europe','france':'Europe','germany':'Europe',
+    'greece':'Europe','hungary':'Europe','iceland':'Europe','ireland':'Europe',
+    'italy':'Europe','luxembourg':'Europe','monaco':'Europe',
+    'netherlands':'Europe','norway':'Europe','portugal':'Europe',
+    'slovenia':'Europe','spain':'Europe','sweden':'Europe',
+    'switzerland':'Europe','turkey':'Europe','united-kingdom':'Europe',
+    'china':'Asia','indonesia':'Asia','japan':'Asia','singapore':'Asia',
+    'south-korea':'Asia','taiwan':'Asia','thailand':'Asia',
+    'united-arab-emirates':'Asia',
+    'australia':'Oceania','new-zealand':'Oceania',
+    'morocco':'Africa',
+  };
+
+  var CONTINENT_ORDER = ['Europe','Asia','North America','South America','Oceania','Africa'];
+  var CONTINENT_ICON  = {
+    'Europe':'🌍','Asia':'🌏','North America':'🌎','South America':'🌎','Oceania':'🌏','Africa':'🌍'
+  };
+
+  var active = false;
+  var origCountries = [].slice.call(mosaic.querySelectorAll('.country'));
+  var injectedHeaders = [];
+
+  function enterContinentMode() {
+    var groups = {};
+    CONTINENT_ORDER.forEach(function (c) { groups[c] = []; });
+    origCountries.forEach(function (el) {
+      var slug = el.getAttribute('data-country');
+      var c = CONTINENT[slug] || 'Other';
+      if (!groups[c]) groups[c] = [];
+      groups[c].push(el);
+    });
+    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
+    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
+    injectedHeaders = [];
+    CONTINENT_ORDER.forEach(function (c) {
+      var els = groups[c];
+      if (!els || !els.length) return;
+      var hdr = document.createElement('div');
+      hdr.className = 'region-header';
+      hdr.textContent = (CONTINENT_ICON[c] || '') + ' ' + c;
+      mosaic.appendChild(hdr);
+      injectedHeaders.push(hdr);
+      els.forEach(function (el) { mosaic.appendChild(el); });
+    });
+  }
+
+  function exitContinentMode() {
+    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
+    injectedHeaders = [];
+    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
+    origCountries.forEach(function (el) { mosaic.appendChild(el); });
+  }
+
+  window._continentMode = function (on) {
+    if (on === active) return;
+    active = on;
+    if (active) enterContinentMode(); else exitContinentMode();
+  };
+}());
+
 /* ══ Browse-by controller — single-select: Country / Region / Flight time ══ */
 (function () {
   var seg = document.getElementById('browse-seg');
@@ -2620,12 +2693,19 @@ window._giStatusFilter = 'all';
   window._setBrowseView = function (view) {
     if (view === 'region') {
       if (window._flightsMode) window._flightsMode(false);
+      if (window._continentMode) window._continentMode(false);
       if (window._regionMode) window._regionMode(true);
+    } else if (view === 'continent') {
+      if (window._flightsMode) window._flightsMode(false);
+      if (window._regionMode) window._regionMode(false);
+      if (window._continentMode) window._continentMode(true);
     } else if (view === 'flights') {
       if (window._regionMode) window._regionMode(false);
+      if (window._continentMode) window._continentMode(false);
       if (window._flightsMode) window._flightsMode(true);
     } else {
       if (window._regionMode) window._regionMode(false);
+      if (window._continentMode) window._continentMode(false);
       if (window._flightsMode) window._flightsMode(false);
     }
     setActive(view);
