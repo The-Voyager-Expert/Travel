@@ -44,6 +44,16 @@ jobs:
           fi
           count="$(ls Travel-Website/Guides/*/*.html 2>/dev/null | wc -l | tr -d ' ')"
           echo "All ${count} guides carry the passed stamp — proceeding to deploy."
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Block guides missing from cross-guide surfaces
+        # Whole-fleet coverage gate on a path --no-verify cannot bypass: every shipped
+        # guide must appear (with a resolving link) in the index card, FMAP, map pin,
+        # travel stats, safety guide, both Weather tabs, and search. Mirrors — and is
+        # the repo-resident subset of — Brain/scripts/validate_guide_coverage.py.
+        run: python3 .github/scripts/check_coverage.py
 
   deploy:
     needs: validate
