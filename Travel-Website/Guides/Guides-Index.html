@@ -339,17 +339,13 @@ body.mode-flights .fnote { display: block; }
 .lchip.on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:#b85c2a; color:#fff; font-weight:600; }
 #lang-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; margin-top:10px; }
 #lang-badge.visible { display:inline-block; }
-/* ── Language view dropdown (By Language / By Guide) — compact ── */
-.lang-dd { display:inline-block; min-width:180px; margin-bottom:14px; }
-.lang-dd-toggle { width:100%; display:flex; align-items:center; gap:14px; justify-content:space-between; font-size:14px; font-weight:700; color:#3d3a32; background:var(--surface); border:1px solid #b8b3a8; border-radius:7px; padding:9px 14px; cursor:pointer; font-family:inherit; }
-.lang-dd-toggle .chev { transition:transform .2s; font-size:11px; color:var(--muted); }
-.lang-dd.open .lang-dd-toggle .chev { transform:rotate(180deg); }
-.lang-dd-menu { display:none; min-width:180px; margin-top:6px; background:var(--surface); border:1px solid var(--border); border-radius:7px; overflow:hidden; }
-.lang-dd.open .lang-dd-menu { display:block; }
-.lang-dd-item { display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--border2); padding:11px 14px; font-size:13px; color:#3d3a32; cursor:pointer; font-family:inherit; }
-.lang-dd-item:last-child { border-bottom:none; }
-.lang-dd-item:hover { background:var(--warm); }
-.lang-dd-item.on { background:rgba(184,92,42,.10); color:#7a3b1e; font-weight:700; }
+/* ── Language view menu (By Language / By Guide) ── */
+.lang-menu { display:inline-block; min-width:200px; background:var(--surface); border:1px solid #b8b3a8; border-radius:7px; overflow:hidden; }
+.lang-menu-item { display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--border2); padding:12px 16px; font-size:14px; font-weight:500; color:#3d3a32; cursor:pointer; font-family:inherit; }
+.lang-menu-item:last-child { border-bottom:none; }
+.lang-menu-item:hover:not(.on) { background:var(--warm); }
+.lang-menu-item.on { background:rgba(184,92,42,.10); color:#7a3b1e; font-weight:700; }
+#lang-pane-lang { margin-top:14px; }
 #lang-pane-guide { max-width:320px; }
 .gp-search-wrap { position:relative; margin-bottom:8px; }
 .gp-search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:12px; opacity:.55; pointer-events:none; }
@@ -677,16 +673,11 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
 </div><!-- /theme-panel -->
 
 <div id="lang-panel" hidden>
-  <div class="lang-dd" id="langDD">
-    <button type="button" class="lang-dd-toggle" id="langDDToggle" aria-expanded="false" aria-controls="langDDMenu">
-      <span id="langDDLabel">🗣 By Language</span><span class="chev">▾</span>
-    </button>
-    <div class="lang-dd-menu" id="langDDMenu" role="menu">
-      <button class="lang-dd-item on" data-lview="lang" role="menuitem">By Language</button>
-      <button class="lang-dd-item" data-lview="guide" role="menuitem">By Guide</button>
-    </div>
+  <div class="lang-menu" id="langMenu" role="menu">
+    <button class="lang-menu-item" data-lview="lang" role="menuitem">🗣 By Language</button>
+    <button class="lang-menu-item" data-lview="guide" role="menuitem">📍 By Guide</button>
   </div>
-  <div id="lang-pane-lang">
+  <div id="lang-pane-lang" hidden>
     <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;">
       <span class="sfl" style="padding-top:7px;min-width:64px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">🗣 Spoken</span>
       <div id="lang-chips" style="display:flex;flex-wrap:wrap;gap:6px;">
@@ -3359,33 +3350,22 @@ window._giStatusFilter = 'all';
     });
   }
 
-  /* ── View dropdown: By Language / By Guide ── */
-  var dd = document.getElementById('langDD');
-  var ddToggle = document.getElementById('langDDToggle');
-  var ddLabel = document.getElementById('langDDLabel');
+  /* ── View menu: By Language / By Guide ── */
+  var langMenu = document.getElementById('langMenu');
   var paneLang = document.getElementById('lang-pane-lang');
   var paneGuide = document.getElementById('lang-pane-guide');
 
   function selectView(v) {
-    [].slice.call(document.querySelectorAll('.lang-dd-item')).forEach(function (b) { b.classList.toggle('on', b.dataset.lview === v); });
+    [].slice.call(document.querySelectorAll('.lang-menu-item')).forEach(function (b) { b.classList.toggle('on', b.dataset.lview === v); });
     var isLang = v === 'lang';
     if (paneLang) paneLang.hidden = !isLang;
-    if (paneGuide) paneGuide.hidden = isLang;
-    if (ddLabel) ddLabel.textContent = isLang ? '\uD83D\uDDE3 By Language' : '\uD83D\uDCCD By Guide';
+    if (paneGuide) { paneGuide.hidden = isLang; if (!isLang) buildGuidePicker(); }
   }
 
-  if (ddToggle) {
-    ddToggle.addEventListener('click', function () {
-      var open = dd.classList.toggle('open');
-      ddToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-  }
-  if (dd) {
-    dd.addEventListener('click', function (e) {
+  if (langMenu) {
+    langMenu.addEventListener('click', function (e) {
       var it = e.target.closest('[data-lview]'); if (!it) return;
       selectView(it.dataset.lview);
-      dd.classList.remove('open');
-      ddToggle.setAttribute('aria-expanded', 'false');
     });
   }
   /* ── By Guide: destination picker ── */
