@@ -109,5 +109,9 @@ A new shareable page is **not** done until `python3 Brain/scripts/brain_check.py
 
 - **Active / selected filter pill color: terracotta `#b85c2a`, matching the banner.** Any pill, chip, or tab that indicates "currently selected" uses `background: #b85c2a; color: #fff; border-color: #b85c2a` — the same mid-tone as the banner gradient. Do not use `var(--text)` (dark/black) or `var(--accent)` (gold) for selected state. (added 2026-06-19, corrected 2026-06-19)
 
+## Pickleball page — bar chart color (LOCKED)
+
+- **`.pkl-bar-fill` and `.pkl-state-bar-fill` must use a yellow gradient: `linear-gradient(90deg,#c8960c,#e8c020)`.** These are the stat bars (player growth, age demographics, state court counts, state bar chart). Yellow distinguishes them visually from the rust/terracotta accent used for text and pills — they must never revert to the rust-orange gradient (`#b85c2a`/`#d4874a`). Enforced by `brain_check` `check_pickleball_bar_color` (hard-fail). (added 2026-06-22)
+
 ---
-*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`).*
+*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22.*
