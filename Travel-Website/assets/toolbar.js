@@ -117,6 +117,7 @@
         { href: base + 'Trip-Essentials/Europe-Stats.html',              text: '📊 Stats Across Europe' },
         { href: base + 'Trip-Essentials/Asia-Stats.html',                text: '📊 Stats Across Asia' },
         { href: base + 'Trip-Essentials/South-America-Stats.html',       text: '📊 Stats Across South America' },
+        { href: base + 'Trip-Essentials/Caribbean-Stats.html',           text: '📊 Stats Across the Caribbean' },
         { href: base + 'Trip-Essentials/Pickleball.html',                text: '🏓 Pickleball' },
       ]},
     null,
