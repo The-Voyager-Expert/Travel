@@ -350,7 +350,31 @@ body.mode-flights .fnote { display: block; }
 .lang-dd-item:last-child { border-bottom:none; }
 .lang-dd-item:hover { background:var(--warm); }
 .lang-dd-item.on { background:rgba(184,92,42,.10); color:#7a3b1e; font-weight:700; }
-#lang-pane-guide { font-size:13px; color:var(--muted); padding:10px 2px; }
+#lang-pane-guide { max-width:320px; }
+.gp-search-wrap { position:relative; margin-bottom:8px; }
+.gp-search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:12px; opacity:.55; pointer-events:none; }
+#guide-pick-search { width:100%; box-sizing:border-box; font-family:inherit; font-size:13px; padding:9px 12px 9px 32px; border:1px solid #b8b3a8; border-radius:6px; background:var(--surface); color:#3d3a32; outline:none; }
+#guide-pick-search:focus { border-color:#b85c2a; }
+#guide-pick-search::placeholder { color:var(--muted); }
+#guide-pick-list { max-height:240px; overflow-y:auto; overflow-x:hidden; border:1px solid var(--border); border-radius:6px; background:var(--surface); }
+.gp-row { display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; font-family:inherit; font-size:13px; text-align:left; padding:11px 14px; border:0; border-bottom:1px solid var(--border2); background:none; color:#3d3a32; cursor:pointer; }
+.gp-row:last-child { border-bottom:none; }
+.gp-row.hide { display:none; }
+.gp-row .gp-name { flex:1; }
+.gp-row .gp-country { color:var(--muted); text-transform:capitalize; }
+@media (hover:hover){ .gp-row:not(.on):hover { background:var(--warm); } }
+.gp-row.on { background:rgba(184,92,42,.10); color:#7a3b1e; font-weight:600; }
+#gp-empty { display:none; padding:14px; font-size:12px; color:var(--muted); }
+#guide-pick-result { margin-top:12px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
+#guide-pick-result.empty { color:var(--muted); font-size:13px; background:transparent; border-style:dashed; }
+.gpr-name { font-size:15px; font-weight:600; color:#3d3a32; }
+.gpr-name a { color:inherit; text-decoration:none; }
+.gpr-name a:hover { color:var(--accent); }
+.gpr-country { font-size:11px; color:var(--muted); text-transform:capitalize; margin:1px 0 10px; }
+.gpr-label { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+.gpr-langs { display:flex; flex-wrap:wrap; gap:6px; }
+.gtag { display:inline-flex; align-items:center; font-size:12px; padding:4px 10px; border:1px solid var(--border2); border-radius:5px; background:var(--warm); color:#3d3a32; }
+.gtag.primary { border-color:rgba(138,108,26,.4); background:rgba(138,108,26,.07); color:#5a4410; font-weight:600; }
 /* ── Status filter toggle (All / Been / Want) ── */
 .status-toggle { display: inline-flex; border: 1px solid var(--border2); border-radius: 6px; overflow: hidden; }
 .stab { display: inline-flex; align-items: center; height: 32px; font-family: inherit; font-size: 12px; font-weight: 500; padding: 0 14px; border: none; border-right: 1px solid var(--border2); background: var(--warm); color: #3d3a32; cursor: pointer; transition: background .12s, color .12s; white-space: nowrap; }
@@ -688,7 +712,14 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
     </div>
     <span id="lang-badge">✕ clear</span>
   </div>
-  <div id="lang-pane-guide" hidden>By Guide view — coming soon.</div>
+  <div id="lang-pane-guide" hidden>
+    <div class="gp-search-wrap">
+      <span class="gp-search-icon">🔍</span>
+      <input type="text" id="guide-pick-search" placeholder="Search destination…" autocomplete="off" spellcheck="false">
+    </div>
+    <div id="guide-pick-list" role="listbox" aria-label="Choose a destination"></div>
+    <div id="guide-pick-result" class="empty">Pick a destination to see its languages.</div>
+  </div>
 </div><!-- /lang-panel -->
 
 <div class="mosaic">
@@ -3357,6 +3388,53 @@ window._giStatusFilter = 'all';
       ddToggle.setAttribute('aria-expanded', 'false');
     });
   }
+  /* ── By Guide: destination picker ── */
+  var GLN = { en:'English', fr:'French', es:'Spanish', it:'Italian', de:'German', pt:'Portuguese', nl:'Dutch', ja:'Japanese', zh:'Mandarin', ar:'Arabic', ko:'Korean', sv:'Swedish', no:'Norwegian', da:'Danish', fi:'Finnish', hr:'Croatian', cs:'Czech', el:'Greek', hu:'Hungarian', is:'Icelandic', id:'Indonesian', sl:'Slovenian', th:'Thai', tr:'Turkish', ca:'Catalan', eu:'Basque', pap:'Papiamentu', lb:'Luxembourgish', ms:'Malay', ta:'Tamil', et:'Estonian' };
+  var gpList = document.getElementById('guide-pick-list');
+  var gpSearch = document.getElementById('guide-pick-search');
+  var gpResult = document.getElementById('guide-pick-result');
+  var gpTerm = '', gpActive = null, gpCards = [];
+
+  function gName(c){ return ((c.querySelector('.dest-name')||{}).textContent||'').trim(); }
+  function gCountry(c){ var p=c.closest?c.closest('.country'):null; return (p?p.getAttribute('data-country')||'':'').replace(/-/g,' '); }
+  function gLangs(c){ return (c.dataset.lang||'').split(' ').filter(Boolean); }
+  function gMatch(c){ return !(gpTerm && (gName(c)+' '+gCountry(c)).toLowerCase().indexOf(gpTerm)<0); }
+
+  function buildGuidePicker(){
+    if(!gpList) return;
+    gpCards = allCards.slice().sort(function(a,b){ return gName(a).localeCompare(gName(b)); });
+    var html='';
+    gpCards.forEach(function(c,i){
+      html += '<button class="gp-row'+(gpActive===c?' on':'')+(gMatch(c)?'':' hide')+'" data-gi="'+i+'" role="option">'+
+        '<span class="gp-name">'+gName(c)+'</span><span class="gp-country">'+gCountry(c)+'</span></button>';
+    });
+    html += '<div id="gp-empty">No destination matches.</div>';
+    gpList.innerHTML = html;
+    var empty=document.getElementById('gp-empty');
+    if(empty) empty.style.display = gpCards.some(gMatch)?'none':'block';
+  }
+
+  function renderGuideResult(c){
+    if(!gpResult) return;
+    if(!c){ gpResult.className='empty'; gpResult.textContent='Pick a destination to see its languages.'; return; }
+    var langs=gLangs(c), href=c.getAttribute('href')||'#', isBeen=c.getAttribute('data-status')!=='want';
+    var tags=langs.map(function(l,i){ return '<span class="gtag'+(i===0?' primary':'')+'">'+(GLN[l]||l)+'</span>'; }).join('');
+    gpResult.className='';
+    gpResult.innerHTML='<div class="gpr-name"><a href="'+href+'">'+gName(c)+'</a></div>'+
+      '<div class="gpr-country">'+gCountry(c)+' · '+(isBeen?'Been':'Want to go')+'</div>'+
+      '<div class="gpr-label">'+langs.length+' language'+(langs.length!==1?'s':'')+' spoken here</div>'+
+      '<div class="gpr-langs">'+tags+'</div>';
+  }
+
+  function selectGuide(c){
+    gpActive=c; renderGuideResult(c);
+    [].slice.call(gpList.querySelectorAll('.gp-row')).forEach(function(r){ r.classList.toggle('on', gpCards[+r.dataset.gi]===c); });
+  }
+
+  if(gpList){ gpList.addEventListener('click', function(e){ var r=e.target.closest('[data-gi]'); if(!r) return; selectGuide(gpCards[+r.dataset.gi]); }); }
+  if(gpSearch){ gpSearch.addEventListener('input', function(){ gpTerm=this.value.trim().toLowerCase(); buildGuidePicker(); }); }
+
+  buildGuidePicker();
 }());
 </script>
 </body>
