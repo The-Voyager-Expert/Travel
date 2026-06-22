@@ -362,10 +362,12 @@ body.mode-flights .fnote { display: block; }
 .lang-menu-item:hover:not(.on) { background:var(--warm); }
 .lang-menu-item.on { background:none; color:#7a3b1e; font-weight:700; }
 #lang-pane-lang { margin-top:14px; }
-#lang-pane-guide { display:grid; grid-template-columns:300px 1fr; gap:16px; align-items:stretch; }
+#lang-pane-guide { display:block; }
 #lang-pane-guide[hidden] { display:none; }
-@media (max-width:640px){ #lang-pane-guide { grid-template-columns:1fr; } }
-.gp-left { display:flex; flex-direction:column; min-width:0; }
+#lang-pane-guide.has-pick { display:grid; grid-template-columns:300px 1fr; gap:16px; align-items:stretch; }
+@media (max-width:640px){ #lang-pane-guide.has-pick { grid-template-columns:1fr; } }
+.gp-left { display:flex; flex-direction:column; min-width:0; max-width:380px; }
+#lang-pane-guide.has-pick .gp-left { max-width:none; }
 .gp-search-wrap { position:relative; margin-bottom:8px; }
 .gp-search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:12px; opacity:.55; pointer-events:none; }
 #guide-pick-search { width:100%; box-sizing:border-box; font-family:inherit; font-size:13px; padding:9px 12px 9px 32px; border:1px solid #b8b3a8; border-radius:6px; background:var(--surface); color:#3d3a32; outline:none; }
@@ -381,8 +383,8 @@ body.mode-flights .fnote { display: block; }
 .gp-row.on { background:rgba(184,92,42,.10); color:#7a3b1e; font-weight:600; }
 #gp-empty { display:none; padding:14px; font-size:12px; color:var(--muted); }
 #guide-pick-result { align-self:stretch; padding:16px 18px; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
-#guide-pick-result.empty { display:flex; align-items:center; justify-content:center; text-align:center; color:var(--muted); font-size:13px; background:transparent; border-style:dashed; min-height:120px; }
-@media (max-width:640px){ #guide-pick-result.empty { min-height:64px; } }
+#guide-pick-result[hidden] { display:none; }
+@media (max-width:640px){ #guide-pick-result { margin-top:12px; } }
 .gpr-name { font-size:15px; font-weight:600; color:#3d3a32; }
 .gpr-name a { color:inherit; text-decoration:none; }
 .gpr-name a:hover { color:var(--accent); }
@@ -738,7 +740,7 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
       </div>
       <div id="guide-pick-list" role="listbox" aria-label="Choose a destination"></div>
     </div>
-    <div id="guide-pick-result" class="empty">Pick a destination to see its languages.</div>
+    <div id="guide-pick-result" hidden></div>
   </div>
 </div><!-- /lang-content -->
 
@@ -3446,10 +3448,11 @@ window._giStatusFilter = 'all';
 
   function renderGuideResult(c){
     if(!gpResult) return;
-    if(!c){ gpResult.className='empty'; gpResult.textContent='Pick a destination to see its languages.'; return; }
+    var pane=document.getElementById('lang-pane-guide');
+    if(!c){ gpResult.hidden=true; gpResult.innerHTML=''; if(pane)pane.classList.remove('has-pick'); return; }
     var langs=gLangs(c), href=c.getAttribute('href')||'#', isBeen=c.getAttribute('data-status')!=='want';
     var tags=langs.map(function(l,i){ return '<span class="gtag'+(i===0?' primary':'')+'">'+(GLN[l]||l)+'</span>'; }).join('');
-    gpResult.className='';
+    gpResult.hidden=false; if(pane)pane.classList.add('has-pick');
     gpResult.innerHTML='<div class="gpr-name"><a href="'+href+'">'+gName(c)+'</a></div>'+
       '<div class="gpr-country">'+gCountry(c)+' · '+(isBeen?'Been':'Want to go')+'</div>'+
       '<div class="gpr-label">'+langs.length+' language'+(langs.length!==1?'s':'')+' spoken here</div>'+
