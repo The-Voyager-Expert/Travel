@@ -98,6 +98,17 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 .section-nav .nav-grp:first-child{margin-top:0}
 .data-scroll{overflow:auto;max-height:320px;border:1px solid var(--border2);border-radius:6px}
 .data-scroll thead th{position:sticky;top:0;background:var(--surface);z-index:2}
+.stat-jump{display:none}
+.stat-jump-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#3d3a32;background:var(--surface);border:1px solid #b8b3a8;border-radius:6px;padding:10px 14px;cursor:pointer;font-family:inherit}
+.stat-jump-toggle .chev{transition:transform .2s;font-size:11px;color:var(--muted)}
+.stat-jump.open .stat-jump-toggle .chev{transform:rotate(180deg)}
+.stat-jump-list{display:none;margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow-y:auto;max-height:62vh}
+.stat-jump.open .stat-jump-list{display:block}
+.stat-jump-grp{padding:9px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface2)}
+.stat-jump-item{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--border2);padding:11px 14px;font-size:13px;color:#3d3a32;cursor:pointer;font-family:inherit}
+.stat-jump-item:last-child{border-bottom:none}
+.stat-jump-item:active{background:rgba(138,108,26,.08)}
+@media(max-width:600px){.section-nav{display:none!important}.stat-jump{display:block;position:sticky;top:0;z-index:60;background:var(--bg);padding:8px 0 10px}}
 </style>
 <link rel="stylesheet" href="../assets/mobile.css">
 </head>
@@ -144,6 +155,10 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
   <a href="#cat-10">🚨 Violent Crime</a>
   <a href="#cat-11">🚗 Traffic Fatalities</a>
   <a href="#cat-12">⏱️ Commute Time</a>
+</div>
+<div class="stat-jump" id="statJump">
+  <button type="button" class="stat-jump-toggle" id="statJumpToggle" aria-expanded="false" aria-controls="statJumpList"><span>📊 Choose a stat</span><span class="chev">▼</span></button>
+  <div class="stat-jump-list" id="statJumpList" role="menu"></div>
 </div>
 <div id="compare-bar" class="active">
   <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text)">Compare up to 3 places</div>
@@ -2845,6 +2860,30 @@ City-level data sourced from respective municipal and regional surveys. All figu
     inputs.forEach(function(s){ s.inp.value=''; s.sug.classList.remove('open'); });
     result.classList.remove('active'); result.innerHTML='';
   });
+})();
+</script>
+<script>
+/* buildStatJump — mobile "Choose a stat" menu built from the grouped section-nav */
+(function(){
+  var jump=document.getElementById('statJump'),toggle=document.getElementById('statJumpToggle'),list=document.getElementById('statJumpList');
+  var nav=document.querySelector('.section-nav');
+  if(!jump||!toggle||!list||!nav)return;
+  [].forEach.call(nav.children,function(el){
+    if(el.classList&&el.classList.contains('nav-grp')){
+      var h=document.createElement('div');h.className='stat-jump-grp';h.textContent=el.textContent.trim();list.appendChild(h);
+    }else if(el.tagName==='A'){
+      var href=el.getAttribute('href')||'',id=href.charAt(0)==='#'?href.slice(1):'';
+      var target=document.getElementById(id);
+      var item=document.createElement('button');item.type='button';item.className='stat-jump-item';item.setAttribute('role','menuitem');
+      item.textContent=el.textContent.trim();
+      item.addEventListener('click',function(){if(target)target.scrollIntoView({behavior:'smooth'});close();history.replaceState(null,'',href);});
+      list.appendChild(item);
+    }
+  });
+  function open(){jump.classList.add('open');toggle.setAttribute('aria-expanded','true');}
+  function close(){jump.classList.remove('open');toggle.setAttribute('aria-expanded','false');}
+  toggle.addEventListener('click',function(e){e.stopPropagation();jump.classList.contains('open')?close():open();});
+  document.addEventListener('click',function(e){if(!jump.contains(e.target))close();},true);
 })();
 </script>
 </body>
