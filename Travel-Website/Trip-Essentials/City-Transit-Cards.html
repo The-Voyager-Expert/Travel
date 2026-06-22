@@ -824,21 +824,8 @@ body {
   var result      = document.getElementById('tc-result');
   var total       = allRows.length;
   var activeFilter = 'all';
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function countUp(el, target) {
-    if (!el) return;
-    if (reduceMotion || !window.requestAnimationFrame) { el.textContent = target; return; }
-    var dur = 900, start = null;
-    requestAnimationFrame(function step(ts) {
-      if (start === null) start = ts;
-      var p = Math.min((ts - start) / dur, 1);
-      var eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(target * eased);
-      if (p < 1) requestAnimationFrame(step);
-      else el.textContent = target;
-    });
-  }
+  function setText(el, val) { if (el) el.textContent = val; }
 
   function matchFilter(tags) {
     if (activeFilter === 'all') return true;
@@ -886,9 +873,9 @@ body {
   search.addEventListener('input', applyFilter);
 
   applyFilter();
-  countUp(document.getElementById('stat-cities'), total);
-  countUp(document.getElementById('stat-regions'), sections.length);
-  countUp(document.getElementById('stat-tap'), document.querySelectorAll('.transit-row[data-tags~="contactless"]').length);
+  setText(document.getElementById('stat-cities'), total);
+  setText(document.getElementById('stat-regions'), sections.length);
+  setText(document.getElementById('stat-tap'), document.querySelectorAll('.transit-row[data-tags~="contactless"]').length);
 })();
 </script>
 </body>

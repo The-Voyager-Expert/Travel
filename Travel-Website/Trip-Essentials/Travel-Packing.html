@@ -239,7 +239,6 @@ html { scroll-behavior: smooth; }
 .ring-fg {
  fill: none; stroke: #2a6a2a; stroke-width: 9; stroke-linecap: round;
  stroke-dasharray: 326.726; stroke-dashoffset: 326.726;
- transition: stroke-dashoffset .65s cubic-bezier(.45,.05,.2,1);
 }
 .ring-pct {
  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
@@ -265,13 +264,6 @@ html { scroll-behavior: smooth; }
 body.hide-packed .item.checked { display: none; }
 body.hide-packed .section-card.complete .card-body,
 body.hide-packed .critical-card.complete .card-body { display: none; }
-
-@keyframes pill-pop { 0% { transform: scale(1); } 42% { transform: scale(1.16); } 100% { transform: scale(1); } }
-.card-pill.pop { animation: pill-pop .42s ease; }
-@media (prefers-reduced-motion: reduce) {
- .ring-fg { transition: none; }
- .card-pill.pop { animation: none; }
-}
 
 /* ── Print styles ── */
 @media print {
@@ -550,30 +542,8 @@ document.addEventListener('DOMContentLoaded',()=>{
  }
 
  var RING_C = 326.726;
- var prevDone = {};
- var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
- function setRing(pct) {
- var fg = document.getElementById('ring-fg');
- if (fg) fg.style.strokeDashoffset = (RING_C * (1 - pct)).toFixed(2);
- }
-
- function tweenPct(target) {
- var el = document.getElementById('ring-pct');
- if (!el) return;
- if (reduceMotion || !window.requestAnimationFrame) { el.textContent = Math.round(target * 100); return; }
- var dur = 650, start = null;
- requestAnimationFrame(function step(ts) {
-  if (start === null) start = ts;
-  var p = Math.min((ts - start) / dur, 1);
-  var eased = 1 - Math.pow(1 - p, 3);
-  el.textContent = Math.round(target * 100 * eased);
-  if (p < 1) requestAnimationFrame(step);
-  else el.textContent = Math.round(target * 100);
- });
- }
-
- function updateProgress(animate) {
+ function updateProgress() {
  var totalAll = 0, doneAll = 0, catsDone = 0, catsTotal = 0;
  for (var sec in sections) {
   if (!sections.hasOwnProperty(sec)) continue;
@@ -584,13 +554,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   if (pill) {
   pill.textContent = done + ' / ' + ids.length;
   pill.classList.toggle('all-done', full);
-  if (full && prevDone[sec] === false && !animate && !reduceMotion) {
-   pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop');
-  }
   var card = pill.closest('.section-card, .critical-card');
   if (card) card.classList.toggle('complete', full);
   }
-  prevDone[sec] = full;
   catsTotal++; if (full) catsDone++;
   totalAll += ids.length; doneAll += done;
  }
@@ -600,13 +566,8 @@ document.addEventListener('DOMContentLoaded',()=>{
  var cd = document.getElementById('cats-done'); if (cd) cd.textContent = catsDone;
  var ct = document.getElementById('cats-total'); if (ct) ct.textContent = catsTotal;
  var il = document.getElementById('items-left'); if (il) il.textContent = (totalAll - doneAll);
- if (animate) {
-  requestAnimationFrame(function () { setRing(pct); });
-  tweenPct(pct);
- } else {
-  setRing(pct);
-  var rp = document.getElementById('ring-pct'); if (rp) rp.textContent = Math.round(pct * 100);
- }
+ var fg = document.getElementById('ring-fg'); if (fg) fg.style.strokeDashoffset = (RING_C * (1 - pct)).toFixed(2);
+ var rp = document.getElementById('ring-pct'); if (rp) rp.textContent = Math.round(pct * 100);
  }
 
  function toggleHidePacked() {
