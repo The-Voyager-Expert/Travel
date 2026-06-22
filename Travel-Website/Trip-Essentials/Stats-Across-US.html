@@ -96,8 +96,18 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 .cat-group-head:first-of-type{margin-top:8px}
 .section-nav .nav-grp{flex-basis:100%;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:8px;margin-bottom:-2px}
 .section-nav .nav-grp:first-child{margin-top:0}
-.data-scroll{overflow:auto;max-height:320px;border:1px solid var(--border2);border-radius:6px}
-.data-scroll thead th{position:sticky;top:0;background:var(--surface);z-index:2}
+.data-scroll{border:1px solid var(--border2);border-radius:6px}
+.data-scroll thead th{background:var(--surface)}
+/* ── Category accordion (expand/collapse — replaces the inner scrollbars) ── */
+.cat-sec-head{cursor:pointer;user-select:none}
+.cat-sec-head:hover{background:#efe9e0}
+.cat-sec-chev{font-size:11px;color:var(--muted);transition:transform .2s;margin-left:6px;flex-shrink:0}
+.cat-section.collapsed .cat-sec-chev{transform:rotate(-90deg)}
+.cat-section.collapsed > *:not(.cat-sec-head){display:none}
+.cat-section.collapsed .cat-sec-head{border-bottom:none}
+.cat-controls{display:flex;justify-content:flex-end;gap:8px;margin:0 0 18px}
+.cat-ctrl-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px;color:var(--text);cursor:pointer;font-family:inherit}
+.cat-ctrl-btn:hover{background:var(--surface2)}
 .stat-jump{display:none}
 .stat-jump-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#3d3a32;background:var(--surface);border:1px solid #b8b3a8;border-radius:6px;padding:10px 14px;cursor:pointer;font-family:inherit}
 .stat-jump-toggle .chev{transition:transform .2s;font-size:11px;color:var(--muted)}
@@ -2863,6 +2873,70 @@ City-level data sourced from respective municipal and regional surveys. All figu
 })();
 </script>
 <script>
+/* Category accordion — expand/collapse per category; expanded shows the full graphic (no inner scrollbar) */
+(function(){
+  var sections = [].slice.call(document.querySelectorAll('.cat-section'));
+  if(!sections.length) return;
+
+  function setState(sec, collapsed){
+    sec.classList.toggle('collapsed', collapsed);
+    var h = sec.querySelector('.cat-sec-head');
+    if(h) h.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function expand(sec){ if(sec) setState(sec, false); }
+
+  // Expand-all / Collapse-all controls, placed above the first category group
+  var firstGroup = document.querySelector('.cat-group-head');
+  if(firstGroup){
+    var bar = document.createElement('div');
+    bar.className = 'cat-controls';
+    bar.innerHTML = '<button type="button" class="cat-ctrl-btn" id="catExpandAll">Expand all</button>'
+                  + '<button type="button" class="cat-ctrl-btn" id="catCollapseAll">Collapse all</button>';
+    firstGroup.parentNode.insertBefore(bar, firstGroup);
+    document.getElementById('catExpandAll').addEventListener('click', function(){ sections.forEach(function(s){ setState(s, false); }); });
+    document.getElementById('catCollapseAll').addEventListener('click', function(){ sections.forEach(function(s){ setState(s, true); }); });
+  }
+
+  // Add a chevron + toggle behavior to each category header; start collapsed
+  sections.forEach(function(sec){
+    var head = sec.querySelector('.cat-sec-head');
+    if(!head) return;
+    var chev = document.createElement('span');
+    chev.className = 'cat-sec-chev';
+    chev.textContent = '▼';
+    chev.setAttribute('aria-hidden','true');
+    head.appendChild(chev);
+    head.setAttribute('role','button');
+    head.setAttribute('tabindex','0');
+    setState(sec, true);
+    head.addEventListener('click', function(){ setState(sec, sec.classList.contains('collapsed') ? false : true); });
+    head.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setState(sec, sec.classList.contains('collapsed') ? false : true); }
+    });
+  });
+
+  // Open the first category by default so the page isn't a blank stack on load
+  if(sections[0]) expand(sections[0]);
+
+  // Navigating to a category (anchor link, hash, or mobile menu) expands it first
+  function jumpTo(id){
+    var sec = document.getElementById(id);
+    if(sec && sec.classList.contains('cat-section')){ expand(sec); sec.scrollIntoView({behavior:'smooth'}); }
+  }
+  document.querySelectorAll('.section-nav a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href').slice(1);
+      if(document.getElementById(id)){ e.preventDefault(); jumpTo(id); history.replaceState(null,'','#'+id); }
+    });
+  });
+  if(location.hash) jumpTo(location.hash.slice(1));
+  window.addEventListener('hashchange', function(){ if(location.hash) jumpTo(location.hash.slice(1)); });
+
+  // Shared hook for the mobile "Choose a stat" menu
+  window.__expandCat = expand;
+})();
+</script>
+<script>
 /* buildStatJump — mobile "Choose a stat" menu built from the grouped section-nav */
 (function(){
   var jump=document.getElementById('statJump'),toggle=document.getElementById('statJumpToggle'),list=document.getElementById('statJumpList');
@@ -2876,7 +2950,7 @@ City-level data sourced from respective municipal and regional surveys. All figu
       var target=document.getElementById(id);
       var item=document.createElement('button');item.type='button';item.className='stat-jump-item';item.setAttribute('role','menuitem');
       item.textContent=el.textContent.trim();
-      item.addEventListener('click',function(){if(target)target.scrollIntoView({behavior:'smooth'});close();history.replaceState(null,'',href);});
+      item.addEventListener('click',function(){if(target){if(window.__expandCat)window.__expandCat(target);target.scrollIntoView({behavior:'smooth'});}close();history.replaceState(null,'',href);});
       list.appendChild(item);
     }
   });
