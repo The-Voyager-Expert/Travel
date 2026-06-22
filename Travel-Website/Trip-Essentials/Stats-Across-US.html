@@ -36,8 +36,8 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 .data-table td.v{font-size:11px;font-weight:700;color:var(--muted);text-align:right;white-space:nowrap}
 .bw{width:100%;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
 .b{height:100%;border-radius:3px}
-/* All category bars share one colour (blue). Swap this single gradient to restyle every bar. */
-.b-green,.b-rust,.b-amber,.b-red,.b-blue{background:linear-gradient(90deg,#4a8ab5,#95b8d8)}
+/* All category bars share one colour (amber/yellow). Swap this single gradient to restyle every bar. */
+.b-green,.b-rust,.b-amber,.b-red,.b-blue{background:linear-gradient(90deg,#c88a1a,#e6ab30)}
 .footnotes{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-top:28px;font-size:11px;color:var(--muted);line-height:1.7}
 .footnotes strong{color:var(--text)}
 .footnotes ul.src-list{margin:10px 0 0;padding-left:20px}
@@ -2777,10 +2777,21 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
       return;
     }
 
+    // Match the start of the place name or the start of any word in it
+    // (so "san" → San Diego, "york" → New York) — not arbitrary substrings.
+    function placeMatches(name) {
+      if (name.indexOf(q) === 0) return true;
+      var words = name.split(/[^a-z0-9]+/);
+      for (var i = 0; i < words.length; i++) {
+        if (words[i] && words[i].indexOf(q) === 0) return true;
+      }
+      return false;
+    }
+
     var rows = [];
     document.querySelectorAll('.data-table tbody tr').forEach(function(tr) {
       var name = tr.dataset.name || '';
-      if (name.indexOf(q) !== -1) {
+      if (placeMatches(name)) {
         var cat   = getCatName(tr.closest('table'));
         var label = tr.cells[1] ? tr.cells[1].textContent.trim() : '';
         var val   = tr.cells[3] ? tr.cells[3].textContent.trim() : '';
