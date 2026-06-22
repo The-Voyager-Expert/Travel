@@ -378,14 +378,19 @@ body.mode-lang-guide #guide-noresult { display: none !important; }
 body.mode-lang-lang #lang-lang-view { display: block; }
 body.mode-lang-lang .mosaic { display: none; }
 body.mode-lang-lang #guide-noresult { display: none !important; }
-.ll-section { margin-bottom: 28px; }
-.ll-header { font-size: 13px; font-weight: 700; color: #3d3a32; letter-spacing: .06em; text-transform: uppercase; padding: 6px 0 10px; border-bottom: 2px solid var(--border2); margin-bottom: 10px; }
-.ll-header span { font-weight: 400; font-size: 11px; color: var(--muted); margin-left: 8px; text-transform: none; letter-spacing: 0; }
-.ll-cards { display: flex; flex-wrap: wrap; gap: 8px; }
-.ll-card { display: flex; align-items: center; gap: 8px; padding: 7px 12px; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; text-decoration: none; color: var(--text); font-size: 13px; font-weight: 500; transition: all .12s; border-left: 3px solid transparent; }
-.ll-card:hover { border-color: #b85c2a; color: var(--accent); background: var(--warm); }
-.ll-card.been { border-left-color: rgba(60,130,60,.7); }
-.ll-card .ll-flag { font-size: 16px; line-height: 1; }
+#ll-sections { columns: 2; column-gap: 14px; }
+.ll-section { break-inside: avoid; -webkit-column-break-inside: avoid; display: inline-block; width: 100%; background: var(--warm); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px 10px; margin-bottom: 10px; }
+.ll-header { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid var(--border2); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.ll-hcount { letter-spacing: .06em; white-space: nowrap; }
+.ll-grid { display: flex; flex-direction: column; gap: 4px; }
+.ll-card { position: relative; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 5px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; text-decoration: none; transition: border-color .12s; }
+.ll-card.been { border-left: 4px solid rgba(60,130,60,.75); }
+.ll-card:hover { border-color: #b85c2a; }
+.ll-flag { font-size: 15px; line-height: 1; }
+.ll-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.ll-codes { margin-left: auto; padding-left: 8px; font-size: 11px; color: var(--muted); }
+.ll-dot-want { position: absolute; right: 5px; bottom: 5px; width: 6px; height: 6px; border-radius: 50%; background: #6a7fa3; }
+@media (max-width: 640px) { #ll-sections { columns: 1; } }
 #ll-noresult { display: none; padding: 18px 4px; font-size: 13px; color: var(--muted); }
 .ll-count { font-size: 11px; color: var(--muted); margin: 2px 0 14px; }
 .ltag { display: inline-flex; align-items: center; font-size: 12px; padding: 4px 10px; border: 1px solid var(--border2); border-radius: 5px; background: var(--warm); color: #3d3a32; white-space: nowrap; }
@@ -3315,6 +3320,12 @@ window._giStatusFilter = 'all';
     ca:'Catalan', eu:'Basque', pap:'Papiamentu', lb:'Luxembourgish',
     ms:'Malay', ta:'Tamil', et:'Estonian'
   };
+  var LANG_FLAGS = {
+    en:'🇬🇧', fr:'🇫🇷', es:'🇪🇸', it:'🇮🇹', de:'🇩🇪', pt:'🇵🇹', nl:'🇳🇱',
+    ja:'🇯🇵', zh:'🇨🇳', ar:'🇸🇦', ko:'🇰🇷', sv:'🇸🇪', no:'🇳🇴', da:'🇩🇰',
+    fi:'🇫🇮', hr:'🇭🇷', cs:'🇨🇿', el:'🇬🇷', hu:'🇭🇺', is:'🇮🇸', id:'🇮🇩',
+    sl:'🇸🇮', th:'🇹🇭', tr:'🇹🇷', pap:'🇨🇼', lb:'🇱🇺', ms:'🇲🇾', ta:'🇮🇳', et:'🇪🇪'
+  };
 
   var allCards = [].slice.call(document.querySelectorAll('.mosaic .dest-card'));
 
@@ -3439,18 +3450,23 @@ window._giStatusFilter = 'all';
       var cards = langMap[l];
       var sec = document.createElement('div');
       sec.className = 'll-section';
-      var langName = LANG_NAMES[l] || l;
-      sec.innerHTML = '<div class="ll-header">' + langName + '<span>' + cards.length + ' guide' + (cards.length !== 1 ? 's' : '') + '</span></div>' +
-        '<div class="ll-cards" id="ll-cards-' + l + '"></div>';
+      var langName = (LANG_FLAGS[l] ? LANG_FLAGS[l] + ' ' : '') + (LANG_NAMES[l] || l);
+      sec.innerHTML = '<div class="ll-header"><span>' + langName + '</span>' +
+        '<span class="ll-hcount">' + cards.length + ' guide' + (cards.length !== 1 ? 's' : '') + '</span></div>' +
+        '<div class="ll-grid"></div>';
       llSections.appendChild(sec);
-      var cardsCont = sec.querySelector('.ll-cards');
+      var grid = sec.querySelector('.ll-grid');
       cards.forEach(function (c) {
         var isBeen = c.getAttribute('data-status') !== 'want';
+        var codes = cardLangs(c).join(' · ');
         var a = document.createElement('a');
         a.className = 'll-card' + (isBeen ? ' been' : '');
         a.href = c.getAttribute('href') || '#';
-        a.innerHTML = '<span class="ll-flag">' + cardFlag(c) + '</span><span>' + cardName(c) + '</span>';
-        cardsCont.appendChild(a);
+        a.innerHTML = '<span class="ll-flag">' + cardFlag(c) + '</span>' +
+          '<span class="ll-name">' + cardName(c) + '</span>' +
+          '<span class="ll-codes">' + codes + '</span>' +
+          (isBeen ? '' : '<span class="ll-dot-want"></span>');
+        grid.appendChild(a);
       });
       totalGuides += cards.length;
     });
