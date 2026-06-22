@@ -332,7 +332,12 @@ body.mode-flights .fnote { display: block; }
 
 /* ── Language filter ── */
 .dest-card.lang-hide { display: none !important; }
-#lang-panel { margin: 16px 0 26px; padding: 14px 16px 16px; background: var(--warm); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 16px rgba(122,59,30,.08); }
+.lang-jump { position:relative; display:inline-flex; }
+#lang-panel { position:absolute; top:calc(100% + 6px); left:0; z-index:50; width:340px; max-width:92vw; margin:0; padding:14px 16px 16px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.14); }
+@media (max-width:640px){
+  .lang-jump { position:static; display:block; flex-basis:100%; }
+  #lang-panel { position:static; width:auto; max-width:none; margin:10px 0 0; box-shadow:none; }
+}
 #lang-panel[hidden] { display: none; }
 .lchip { font-family:inherit; font-size:13px; line-height:1; padding:6px 12px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fdf8f0; color:#3d3a32; cursor:pointer; white-space:nowrap; transition:all .12s; }
 @media (hover:hover){ .lchip:not(.on):hover { border-color:#b85c2a; color:#7a3b1e; background:#f6e7d4; } }
@@ -540,7 +545,48 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   </div>
   <button id="btn-theme-toggle" class="disc-btn" aria-expanded="false" aria-controls="theme-panel">🌆 Type <span class="disc-caret">▾</span></button>
   <button id="btn-filters-toggle" class="disc-btn" aria-expanded="false" aria-controls="filters-panel">📅 When to go <span class="disc-caret">▾</span></button>
-  <button id="btn-lang-toggle" class="disc-btn" aria-expanded="false" aria-controls="lang-panel">🗣 Language <span class="disc-caret">▾</span></button>
+  <div class="lang-jump" id="langJump"><button id="btn-lang-toggle" class="disc-btn" aria-expanded="false" aria-controls="lang-panel">🗣 Language <span class="disc-caret">▾</span></button>
+<div id="lang-panel" hidden>
+  <div class="lang-menu" id="langMenu" role="menu">
+    <button class="lang-menu-item" data-lview="lang" role="menuitem">🗣 By Language</button>
+    <button class="lang-menu-item" data-lview="guide" role="menuitem">📍 By Guide</button>
+  </div>
+  <div id="lang-pane-lang" hidden>
+    <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+      <span class="sfl" style="padding-top:7px;min-width:64px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">🗣 Spoken</span>
+      <div id="lang-chips" style="display:flex;flex-wrap:wrap;gap:6px;">
+      <button class="lchip on" data-l="all">All</button>
+      <button class="lchip" data-l="en">English</button>
+      <button class="lchip" data-l="fr">French</button>
+      <button class="lchip" data-l="es">Spanish</button>
+      <button class="lchip" data-l="it">Italian</button>
+      <button class="lchip" data-l="de">German</button>
+      <button class="lchip" data-l="pt">Portuguese</button>
+      <button class="lchip" data-l="nl">Dutch</button>
+      <button class="lchip" data-l="ja">Japanese</button>
+      <button class="lchip" data-l="zh">Mandarin</button>
+      <button class="lchip" data-l="ar">Arabic</button>
+      <button class="lchip" data-l="ko">Korean</button>
+      <button class="lchip" data-l="sv">Swedish</button>
+      <button class="lchip" data-l="no">Norwegian</button>
+      <button class="lchip" data-l="da">Danish</button>
+      <button class="lchip" data-l="fi">Finnish</button>
+      <button class="lchip" data-l="th">Thai</button>
+      <button class="lchip" data-l="tr">Turkish</button>
+      </div>
+    </div>
+    <span id="lang-badge">✕ clear</span>
+  </div>
+  <div id="lang-pane-guide" hidden>
+    <div class="gp-search-wrap">
+      <span class="gp-search-icon">🔍</span>
+      <input type="text" id="guide-pick-search" placeholder="Search destination…" autocomplete="off" spellcheck="false">
+    </div>
+    <div id="guide-pick-list" role="listbox" aria-label="Choose a destination"></div>
+    <div id="guide-pick-result" class="empty">Pick a destination to see its languages.</div>
+  </div>
+</div><!-- /lang-panel -->
+  </div>
   <button id="btn-views-toggle" class="disc-btn" aria-expanded="false" aria-controls="views-panel">📑 Browse by <span class="disc-caret">▾</span></button>
   <div class="days-jump" id="daysJump">
     <button type="button" class="days-jump-toggle disc-btn" id="daysJumpToggle" aria-expanded="false" aria-controls="daysJumpList">
@@ -617,7 +663,6 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   <div class="fcg" id="freg"><span class="fgl">Region</span><button class="fchip reg on" data-reg="all">All</button></div>
 </div>
 
-
 <div id="filters-panel" hidden>
 <div id="season-filter">
   <span class="sfl">📅 Best in</span>
@@ -672,46 +717,6 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   <span id="theme-badge" hidden>✕ clear</span>
 </div><!-- /theme-panel -->
 
-<div id="lang-panel" hidden>
-  <div class="lang-menu" id="langMenu" role="menu">
-    <button class="lang-menu-item" data-lview="lang" role="menuitem">🗣 By Language</button>
-    <button class="lang-menu-item" data-lview="guide" role="menuitem">📍 By Guide</button>
-  </div>
-  <div id="lang-pane-lang" hidden>
-    <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;">
-      <span class="sfl" style="padding-top:7px;min-width:64px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">🗣 Spoken</span>
-      <div id="lang-chips" style="display:flex;flex-wrap:wrap;gap:6px;">
-      <button class="lchip on" data-l="all">All</button>
-      <button class="lchip" data-l="en">English</button>
-      <button class="lchip" data-l="fr">French</button>
-      <button class="lchip" data-l="es">Spanish</button>
-      <button class="lchip" data-l="it">Italian</button>
-      <button class="lchip" data-l="de">German</button>
-      <button class="lchip" data-l="pt">Portuguese</button>
-      <button class="lchip" data-l="nl">Dutch</button>
-      <button class="lchip" data-l="ja">Japanese</button>
-      <button class="lchip" data-l="zh">Mandarin</button>
-      <button class="lchip" data-l="ar">Arabic</button>
-      <button class="lchip" data-l="ko">Korean</button>
-      <button class="lchip" data-l="sv">Swedish</button>
-      <button class="lchip" data-l="no">Norwegian</button>
-      <button class="lchip" data-l="da">Danish</button>
-      <button class="lchip" data-l="fi">Finnish</button>
-      <button class="lchip" data-l="th">Thai</button>
-      <button class="lchip" data-l="tr">Turkish</button>
-      </div>
-    </div>
-    <span id="lang-badge">✕ clear</span>
-  </div>
-  <div id="lang-pane-guide" hidden>
-    <div class="gp-search-wrap">
-      <span class="gp-search-icon">🔍</span>
-      <input type="text" id="guide-pick-search" placeholder="Search destination…" autocomplete="off" spellcheck="false">
-    </div>
-    <div id="guide-pick-list" role="listbox" aria-label="Choose a destination"></div>
-    <div id="guide-pick-result" class="empty">Pick a destination to see its languages.</div>
-  </div>
-</div><!-- /lang-panel -->
 
 <div class="mosaic">
 
@@ -984,7 +989,6 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
     </a>
   </div>
 </div>
-
 
 <!-- ── Hungary ── -->
 <div class="country" data-country="hungary">
@@ -1737,7 +1741,6 @@ window._giStatusFilter = 'all';
   document.addEventListener('gi:status', updateStats);
 }());
 </script>
-
 
 <script>
 /* ══ Flight-time view — Getting There from Seattle (SEA) ══ */
