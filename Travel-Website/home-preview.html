@@ -31,8 +31,8 @@ body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--tex
 .tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px;
   min-height: 134px; text-align: center; background: var(--surface,#fff);
   border: 1px solid var(--border,#d8d4cc); border-radius: 10px; padding: 20px 16px;
-  text-decoration: none; color: var(--text,#1a1917); transition: box-shadow .15s, border-color .15s; }
-a.tile:hover { box-shadow: 0 6px 18px rgba(92,61,17,.13); border-color: var(--accent,#8a6c1a); text-decoration: none; }
+  text-decoration: none; color: var(--text,#1a1917); transition: box-shadow .18s, border-color .18s, transform .18s; }
+a.tile:hover { box-shadow: 0 8px 22px rgba(92,61,17,.16); border-color: var(--accent,#8a6c1a); transform: translateY(-3px); text-decoration: none; }
 .tile-num { font-size: 38px; font-weight: 700; color: var(--accent,#8a6c1a); line-height: 1; }
 .tile-emoji { font-size: 30px; line-height: 1; }
 .tile-name { font-size: var(--fs-title,14px); font-weight: 700; }
@@ -84,14 +84,10 @@ a.tile:hover { box-shadow: 0 6px 18px rgba(92,61,17,.13); border-color: var(--ac
       <div class="tile-num" id="tile-places">6,300+</div>
       <div class="tile-label">Places mapped</div>
     </a>
-    <a class="tile" href="Website-Main-Pages-Links.html">
+    <div class="tile">
       <div class="tile-num">25</div>
       <div class="tile-label">Tools</div>
-    </a>
-    <a class="tile" href="Trip-Essentials/Trips.html">
-      <div class="tile-emoji">📆</div>
-      <div class="tile-name">Trips</div>
-    </a>
+    </div>
     <a class="tile" href="Trip-Essentials/Lounges-US.html">
       <div class="tile-emoji">💻</div>
       <div class="tile-name">Lounges</div>
@@ -157,6 +153,25 @@ a.tile:hover { box-shadow: 0 6px 18px rgba(92,61,17,.13); border-color: var(--ac
 
   function setNum(id, v) { var el = document.getElementById(id); if (el && v) el.textContent = v; }
 
+  // Count-up animation — the stat numbers tick up from 0 on load.
+  function animateNum(el) {
+    var txt = el.textContent.trim(), m = txt.match(/[\d,]+/);
+    if (!m) return;
+    var target = parseInt(m[0].replace(/,/g, ''), 10);
+    if (!target) return;
+    var prefix = txt.slice(0, m.index), suffix = txt.slice(m.index + m[0].length);
+    var comma = m[0].indexOf(',') > -1 || target >= 1000, dur = 1000, t0 = null;
+    function fmt(v) { return comma ? v.toLocaleString() : String(v); }
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = prefix + fmt(Math.round(target * e)) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function animateStats() { [].forEach.call(document.querySelectorAll('.tile-num'), animateNum); }
+
   fetch('assets/search_index.json').then(function (r) { return r.json(); }).then(function (data) {
     var raw = data.guides || [], seen = {};
     raw.forEach(function (g) {
@@ -165,7 +180,8 @@ a.tile:hover { box-shadow: 0 6px 18px rgba(92,61,17,.13); border-color: var(--ac
     var places = raw.reduce(function (s, g) { return s + ((g.e && g.e.length) || 0); }, 0);
     setNum('tile-cities', cities.length);    // unique cities
     if (places) setNum('tile-places', (Math.floor(places / 100) * 100).toLocaleString() + '+');
-  }).catch(function () { /* file:// or offline — tool search still works */ });
+    animateStats();
+  }).catch(animateStats);
 
   var active = -1, items = [];
 
