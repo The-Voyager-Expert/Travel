@@ -332,11 +332,28 @@ body.mode-flights .fnote { display: block; }
 .dest-card.lang-hide { display: none !important; }
 #lang-panel { margin: 16px 0 26px; padding: 14px 16px 16px; background: var(--warm); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 16px rgba(122,59,30,.08); }
 #lang-panel[hidden] { display: none; }
-.lchip { font-family:inherit; font-size:13px; line-height:1; padding:6px 12px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fdf8f0; color:#3d3a32; cursor:pointer; white-space:nowrap; transition:all .12s; }
-@media (hover:hover){ .lchip:not(.on):hover { border-color:#b85c2a; color:#7a3b1e; background:#f6e7d4; } }
-.lchip.on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:#b85c2a; color:#fff; font-weight:600; }
-#lang-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; margin-top:10px; }
-#lang-badge.visible { display:inline-block; }
+/* ── Language scroll-picker (tap-list) ── */
+.lang-picker { max-width: 340px; }
+.lang-search-wrap { position: relative; margin-bottom: 8px; }
+.lang-search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: .55; pointer-events: none; }
+#lang-search { width: 100%; box-sizing: border-box; font-family: inherit; font-size: 13px; padding: 8px 12px 8px 32px; border: 1px solid var(--border2,#e6e2da); border-radius: 8px; background: #fdf8f0; color: #3d3a32; outline: none; transition: border-color .12s; }
+#lang-search:focus { border-color: #b85c2a; }
+#lang-search::placeholder { color: var(--muted); }
+#lang-list { max-height: 248px; overflow-y: auto; border: 1px solid var(--border2,#e6e2da); border-radius: 8px; background: var(--surface); -webkit-overflow-scrolling: touch; }
+#lang-list::-webkit-scrollbar { width: 8px; }
+#lang-list::-webkit-scrollbar-thumb { background: rgba(122,59,30,.2); border-radius: 4px; }
+.lang-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; box-sizing: border-box; font-family: inherit; font-size: 13.5px; text-align: left; padding: 10px 14px; border: none; border-bottom: 1px solid var(--border2,#eee5d8); background: transparent; color: #3d3a32; cursor: pointer; transition: background .1s; }
+.lang-row:last-child { border-bottom: none; }
+.lang-row.hide { display: none; }
+@media (hover:hover){ .lang-row:not(.on):hover { background: var(--warm); } }
+.lang-row.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; font-weight: 600; }
+.lang-row-name { display: flex; align-items: center; gap: 8px; }
+.lang-row-check { width: 14px; font-size: 12px; opacity: 0; }
+.lang-row.on .lang-row-check { opacity: 1; }
+.lang-row-count { font-size: 11px; font-variant-numeric: tabular-nums; color: var(--muted); background: var(--warm); border-radius: 10px; padding: 1px 9px; min-width: 22px; text-align: center; }
+.lang-row.on .lang-row-count { color: #fff; background: rgba(255,255,255,.22); }
+.lang-row.all-row { border-bottom: 2px solid var(--border2,#e6e2da); font-weight: 600; }
+#lang-list-empty { display: none; padding: 16px 14px; font-size: 12px; color: var(--muted); }
 /* ── Language sub-mode buttons ── */
 .lang-mode-row { display: flex; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border2); }
 .lang-mode-btn { font-family:inherit; font-size:12px; font-weight:500; padding:5px 14px; border:1px solid var(--border2); border-radius:6px; background:#fdf8f0; color:#3d3a32; cursor:pointer; transition:all .12s; white-space:nowrap; }
@@ -671,30 +688,13 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
 </div><!-- /theme-panel -->
 
 <div id="lang-panel" hidden>
-  <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;">
-    <span class="sfl" style="padding-top:7px;min-width:64px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">🗣 Spoken</span>
-    <div id="lang-chips" style="display:flex;flex-wrap:wrap;gap:6px;">
-      <button class="lchip on" data-l="all">All</button>
-      <button class="lchip" data-l="en">English</button>
-      <button class="lchip" data-l="fr">French</button>
-      <button class="lchip" data-l="es">Spanish</button>
-      <button class="lchip" data-l="it">Italian</button>
-      <button class="lchip" data-l="de">German</button>
-      <button class="lchip" data-l="pt">Portuguese</button>
-      <button class="lchip" data-l="nl">Dutch</button>
-      <button class="lchip" data-l="ja">Japanese</button>
-      <button class="lchip" data-l="zh">Mandarin</button>
-      <button class="lchip" data-l="ar">Arabic</button>
-      <button class="lchip" data-l="ko">Korean</button>
-      <button class="lchip" data-l="sv">Swedish</button>
-      <button class="lchip" data-l="no">Norwegian</button>
-      <button class="lchip" data-l="da">Danish</button>
-      <button class="lchip" data-l="fi">Finnish</button>
-      <button class="lchip" data-l="th">Thai</button>
-      <button class="lchip" data-l="tr">Turkish</button>
+  <div class="lang-picker">
+    <div class="lang-search-wrap">
+      <span class="lang-search-icon">🔍</span>
+      <input type="text" id="lang-search" placeholder="Search language…" autocomplete="off" spellcheck="false">
     </div>
+    <div id="lang-list" role="listbox" aria-label="Choose a language"></div>
   </div>
-  <span id="lang-badge">✕ clear</span>
   <div class="lang-mode-row">
     <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:6px;">Browse</span>
     <button class="lang-mode-btn" id="lang-mode-by-lang" data-lmode="lang">By Language</button>
@@ -3299,9 +3299,9 @@ window._giStatusFilter = 'all';
     fBtn.classList.toggle('has-active', !!document.querySelector('#season-filter .mchip.on'));
     dBtn.classList.toggle('has-active', !!document.querySelector('#days-panel .dchip.on'));
     tBtn.classList.toggle('has-active', !!document.querySelector('#theme-panel .tchip.on'));
-    lBtn.classList.toggle('has-active', !!document.querySelector('#lang-chips .lchip.on:not([data-l="all"])'));
+    lBtn.classList.toggle('has-active', !!document.querySelector('#lang-list .lang-row.on:not([data-l="all"])'));
   }
-  document.querySelectorAll('#season-filter .mchip, #season-badge, #theme-panel .tchip, #theme-badge, #lang-chips .lchip, #lang-badge, #days-panel .dchip, #days-badge').forEach(function (el) {
+  document.querySelectorAll('#season-filter .mchip, #season-badge, #theme-panel .tchip, #theme-badge, #days-panel .dchip, #days-badge').forEach(function (el) {
     el.addEventListener('click', function () { setTimeout(refreshActive, 0); });
   });
   refreshActive();
@@ -3321,60 +3321,8 @@ window._giStatusFilter = 'all';
     ms:'Malay', ta:'Tamil', et:'Estonian'
   };
 
-  var activeLangs = [];
+  var activeLangs = [];   /* holds 0 or 1 code — single-select picker */
   var allCards = [].slice.call(document.querySelectorAll('.mosaic .dest-card'));
-
-  /* ── Language filter chip logic ── */
-  var langChips = document.getElementById('lang-chips');
-  var langBadge = document.getElementById('lang-badge');
-
-  function applyLangFilter() {
-    allCards.forEach(function (c) {
-      if (!activeLangs.length) { c.classList.remove('lang-hide'); return; }
-      var dl = (c.dataset.lang || '').split(' ');
-      var match = activeLangs.some(function (l) { return dl.indexOf(l) >= 0; });
-      c.classList.toggle('lang-hide', !match);
-    });
-    var inp = document.getElementById('guide-search');
-    if (inp) inp.dispatchEvent(new Event('input'));
-    if (langBadge) langBadge.className = activeLangs.length ? 'visible' : '';
-    if (window._refreshDisclosureActive) window._refreshDisclosureActive();
-  }
-
-  if (langChips) {
-    langChips.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-l]');
-      if (!btn) return;
-      var l = btn.dataset.l;
-      if (l === 'all') {
-        activeLangs = [];
-        [].slice.call(langChips.querySelectorAll('.lchip')).forEach(function (c) { c.classList.remove('on'); });
-        btn.classList.add('on');
-      } else {
-        var allBtn = langChips.querySelector('[data-l="all"]');
-        if (allBtn) allBtn.classList.remove('on');
-        var idx = activeLangs.indexOf(l);
-        if (idx >= 0) { activeLangs.splice(idx, 1); btn.classList.remove('on'); }
-        else { activeLangs.push(l); btn.classList.add('on'); }
-        if (!activeLangs.length && allBtn) allBtn.classList.add('on');
-      }
-      applyLangFilter();
-      if (document.body.classList.contains('mode-lang-guide')) buildGuideView();
-      if (document.body.classList.contains('mode-lang-lang')) buildLangView();
-    });
-  }
-
-  if (langBadge) {
-    langBadge.addEventListener('click', function () {
-      activeLangs = [];
-      var allBtn = langChips && langChips.querySelector('[data-l="all"]');
-      if (langChips) [].slice.call(langChips.querySelectorAll('.lchip')).forEach(function (c) { c.classList.remove('on'); });
-      if (allBtn) allBtn.classList.add('on');
-      applyLangFilter();
-      if (document.body.classList.contains('mode-lang-guide')) buildGuideView();
-      if (document.body.classList.contains('mode-lang-lang')) buildLangView();
-    });
-  }
 
   /* ── Helpers ── */
   function statusFilter(c) {
@@ -3386,6 +3334,82 @@ window._giStatusFilter = 'all';
   }
 
   function cardLangs(c) { return (c.dataset.lang || '').split(' ').filter(Boolean); }
+
+  function applyLangFilter() {
+    allCards.forEach(function (c) {
+      if (!activeLangs.length) { c.classList.remove('lang-hide'); return; }
+      var dl = cardLangs(c);
+      c.classList.toggle('lang-hide', dl.indexOf(activeLangs[0]) < 0);
+    });
+    var inp = document.getElementById('guide-search');
+    if (inp) inp.dispatchEvent(new Event('input'));
+    if (window._refreshDisclosureActive) window._refreshDisclosureActive();
+  }
+
+  /* ── Language scroll-picker (tap-list) ── */
+  var langList   = document.getElementById('lang-list');
+  var langSearch = document.getElementById('lang-search');
+  var searchTerm = '';
+
+  function langCounts() {
+    var counts = {}, total = 0;
+    allCards.forEach(function (c) {
+      if (!statusFilter(c)) return;
+      total++;
+      cardLangs(c).forEach(function (l) { counts[l] = (counts[l] || 0) + 1; });
+    });
+    return { counts: counts, total: total };
+  }
+
+  function buildLangList() {
+    if (!langList) return;
+    var data = langCounts();
+    var codes = Object.keys(data.counts).sort(function (a, b) {
+      var diff = data.counts[b] - data.counts[a];
+      return diff !== 0 ? diff : (LANG_NAMES[a] || a).localeCompare(LANG_NAMES[b] || b);
+    });
+    var rows = '<button class="lang-row all-row' + (activeLangs.length ? '' : ' on') + '" data-l="all" role="option">' +
+        '<span class="lang-row-name"><span class="lang-row-check">✓</span>All languages</span>' +
+        '<span class="lang-row-count">' + data.total + '</span></button>';
+    codes.forEach(function (l) {
+      var name = LANG_NAMES[l] || l;
+      var hidden = searchTerm && name.toLowerCase().indexOf(searchTerm) < 0;
+      rows += '<button class="lang-row' + (activeLangs[0] === l ? ' on' : '') + (hidden ? ' hide' : '') +
+        '" data-l="' + l + '" role="option">' +
+        '<span class="lang-row-name"><span class="lang-row-check">✓</span>' + name + '</span>' +
+        '<span class="lang-row-count">' + data.counts[l] + '</span></button>';
+    });
+    rows += '<div id="lang-list-empty">No language matches.</div>';
+    langList.innerHTML = rows;
+    var anyVisible = codes.some(function (l) {
+      return !(searchTerm && (LANG_NAMES[l] || l).toLowerCase().indexOf(searchTerm) < 0);
+    });
+    var empty = document.getElementById('lang-list-empty');
+    if (empty) empty.style.display = anyVisible ? 'none' : 'block';
+  }
+
+  function selectLang(l) {
+    activeLangs = (l === 'all') ? [] : [l];
+    buildLangList();
+    applyLangFilter();
+    if (document.body.classList.contains('mode-lang-guide')) buildGuideView();
+    if (document.body.classList.contains('mode-lang-lang')) buildLangView();
+  }
+
+  if (langList) {
+    langList.addEventListener('click', function (e) {
+      var row = e.target.closest('[data-l]');
+      if (!row) return;
+      selectLang(row.dataset.l);
+    });
+  }
+
+  if (langSearch) {
+    langSearch.addEventListener('input', function () {
+      searchTerm = this.value.trim().toLowerCase();
+      buildLangList();
+    });
+  }
 
   /* ── By-Guide table view ── */
   var tbody  = document.getElementById('lg-tbody');
@@ -3526,11 +3550,15 @@ window._giStatusFilter = 'all';
     });
   }
 
-  /* Refresh when Been/Want toggle changes */
+  /* Refresh when Been/Want toggle changes — counts + active views */
   document.addEventListener('gi:status', function () {
+    buildLangList();
     if (document.body.classList.contains('mode-lang-guide')) buildGuideView();
     if (document.body.classList.contains('mode-lang-lang')) buildLangView();
   });
+
+  /* Initial render of the picker list */
+  buildLangList();
 }());
 </script>
 </body>
