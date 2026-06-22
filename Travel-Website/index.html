@@ -32,12 +32,28 @@ body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--tex
 .tile-links a { color: var(--accent,#8a6c1a); text-decoration: none; }
 .tile-links a:hover { text-decoration: underline; }
 
+/* ── Creative motion — resting look unchanged; honours reduced-motion ── */
+/* subtle accent brighten on hover (resting border stays #8a6c1a) */
+.tile:hover { border-left-color: #b8923a; }
+/* springy emoji bounce on hover only */
+.tile-emoji { display: inline-block; transform-origin: center; transition: transform .28s cubic-bezier(.34,1.56,.64,1); }
+.tile:hover .tile-emoji { transform: scale(1.18) rotate(-6deg); }
+/* staggered fade-in on load — opacity only, so hover transform stays snappy */
+@keyframes tile-fade { to { opacity: 1; } }
+.js .tile { opacity: 0; }
+.js .tiles.in .tile { animation: tile-fade .55s ease forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .js .tile, .js .tiles.in .tile { opacity: 1 !important; animation: none !important; }
+  .tile:hover .tile-emoji { transform: none; }
+}
+
 @media (max-width: 600px) {
   .index-section { padding: 24px 12px; }
   .tiles { grid-template-columns: repeat(2,1fr); gap: 10px; }
 }
 </style>
 <link rel="stylesheet" href="assets/mobile.css">
+<script>document.documentElement.className += ' js';</script>
 </head>
 <body>
 
@@ -136,6 +152,48 @@ body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--tex
 
   </div>
 </div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Count-up on the stat numbers — keeps any prefix/suffix ("6,300+") intact. */
+  function countUp(el) {
+    var raw = el.textContent.trim();
+    var m = raw.match(/[\d,]+/);
+    if (!m) return;
+    var target = parseInt(m[0].replace(/,/g, ''), 10);
+    var prefix = raw.slice(0, m.index);
+    var suffix = raw.slice(m.index + m[0].length);
+    var fmt = function (n) { return n.toLocaleString('en-US'); };
+    if (reduce || !window.requestAnimationFrame) { el.textContent = prefix + fmt(target) + suffix; return; }
+    var dur = 1100, start = null;
+    el.textContent = prefix + '0' + suffix;
+    requestAnimationFrame(function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = prefix + fmt(Math.round(target * eased)) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = prefix + fmt(target) + suffix;
+    });
+  }
+
+  function go() {
+    var tiles = document.querySelectorAll('.tiles .tile');
+    for (var i = 0; i < tiles.length; i++) {
+      tiles[i].style.animationDelay = (i * 40) + 'ms';
+    }
+    var grid = document.querySelector('.tiles');
+    if (grid) grid.className += ' in';
+    var nums = document.querySelectorAll('.stat-num');
+    for (var j = 0; j < nums.length; j++) countUp(nums[j]);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+  else go();
+})();
+</script>
 
 </body>
 </html>
