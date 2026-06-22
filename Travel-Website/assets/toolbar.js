@@ -114,6 +114,7 @@
         { href: base + 'Trip-Essentials/Travel-Stats.html',         text: '📊 Travel Stats' },
         { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',  text: '📅 Guide Days Coverage' },
         { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: '📊 Stats Across US' },
+        { href: base + 'Trip-Essentials/Stats-Across-Canada.html',       text: '📊 Stats Across Canada' },
         { href: base + 'Trip-Essentials/Europe-Stats.html',              text: '📊 Stats Across Europe' },
         { href: base + 'Trip-Essentials/Asia-Stats.html',                text: '📊 Stats Across Asia' },
         { href: base + 'Trip-Essentials/South-America-Stats.html',       text: '📊 Stats Across South America' },
