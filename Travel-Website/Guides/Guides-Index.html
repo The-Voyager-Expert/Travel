@@ -3390,7 +3390,8 @@ window._giStatusFilter = 'all';
   function gName(c){ return ((c.querySelector('.dest-name')||{}).textContent||'').trim(); }
   function gCountry(c){ var p=c.closest?c.closest('.country'):null; return (p?p.getAttribute('data-country')||'':'').replace(/-/g,' '); }
   function gLangs(c){ return (c.dataset.lang||'').split(' ').filter(Boolean); }
-  function gMatch(c){ return !(gpTerm && (gName(c)+' '+gCountry(c)).toLowerCase().indexOf(gpTerm)<0); }
+  function gNorm(s){ return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
+  function gMatch(c){ return !(gpTerm && gNorm(gName(c)+' '+gCountry(c)).indexOf(gpTerm)<0); }
 
   function buildGuidePicker(){
     if(!gpList) return;
@@ -3424,7 +3425,7 @@ window._giStatusFilter = 'all';
   }
 
   if(gpList){ gpList.addEventListener('click', function(e){ var r=e.target.closest('[data-gi]'); if(!r) return; selectGuide(gpCards[+r.dataset.gi]); }); }
-  if(gpSearch){ gpSearch.addEventListener('input', function(){ gpTerm=this.value.trim().toLowerCase(); buildGuidePicker(); }); }
+  if(gpSearch){ gpSearch.addEventListener('input', function(){ gpTerm=gNorm(this.value.trim()); buildGuidePicker(); }); }
 
   buildGuidePicker();
 }());
