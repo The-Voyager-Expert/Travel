@@ -3076,8 +3076,9 @@ window._giStatusFilter = 'all';
   }
   window._applyDaysFilter = applyDaysFilter;
 
-  function openMenu()  { jump.classList.add('open');  toggle.setAttribute('aria-expanded', 'true');  }
+  function openMenu()  { if (window._collapseFacetPanels) window._collapseFacetPanels(); jump.classList.add('open');  toggle.setAttribute('aria-expanded', 'true');  }
   function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+  window._closeDaysMenu = closeMenu;
   toggle.addEventListener('click', function () {
     jump.classList.contains('open') ? closeMenu() : openMenu();
   });
@@ -3312,11 +3313,15 @@ window._giStatusFilter = 'all';
   function closeAll() {
     groups.forEach(function (g) { setState(g.btn, g.panel, false); });
   }
+  /* Trip Length lives in its own dropdown; let it collapse these facet panels
+     too, so opening any one control closes all the others. */
+  window._collapseFacetPanels = closeAll;
   /* Panels are mutually exclusive — opening one collapses the others. All three
      toggle buttons stay visible so you can switch facets directly. */
   function toggle(target) {
     var opening = target.panel.hidden;
     closeAll();
+    if (window._closeDaysMenu) window._closeDaysMenu();
     if (opening) {
       if (window._exitCompareMode) window._exitCompareMode();
       if (target.reset && window._setBrowseView) window._setBrowseView('country');
