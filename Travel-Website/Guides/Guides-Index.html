@@ -167,11 +167,13 @@ a.dest-card[data-status="been"] { border-left: 4px solid rgba(60,130,60,0.75); }
 .dest-card.season-hide { display:none !important; }
 .dest-card.theme-hide { display:none !important; }
 .dest-card.days-hide  { display:none !important; }
-/* ── Trip-length filter chips (own disclosure panel) ── */
-#days-panel { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:16px 0 26px; padding:14px 16px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); }
-#days-panel[hidden] { display:none; }
-#days-panel .sfl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
-.dchip { font-family:inherit; font-size:13px; line-height:1; padding:6px 12px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fdf8f0; color:#3d3a32; cursor:pointer; white-space:nowrap; transition:all .12s; }
+/* ── Trip-length filter — standalone scrollable tap-list (always visible) ── */
+#days-bar { display:flex; align-items:center; gap:8px; margin:6px 0 16px; padding:2px 0 8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+#days-bar::-webkit-scrollbar { height:6px; }
+#days-bar::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+#days-bar > * { flex:0 0 auto; }
+#days-bar .sfl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+.dchip { font-family:inherit; font-size:13px; line-height:1; padding:7px 14px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fdf8f0; color:#3d3a32; cursor:pointer; white-space:nowrap; transition:all .12s; }
 .dchip:hover { border-color:#b85c2a; color:#fff; background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight:600; }
 .dchip.on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:#b85c2a; color:#fff; font-weight:600; }
 #days-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; }
@@ -564,9 +566,16 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   </div>
   <button id="btn-theme-toggle" class="disc-btn" aria-expanded="false" aria-controls="theme-panel">🌆 Type <span class="disc-caret">▾</span></button>
   <button id="btn-filters-toggle" class="disc-btn" aria-expanded="false" aria-controls="filters-panel">📅 When to go <span class="disc-caret">▾</span></button>
-  <button id="btn-days-toggle" class="disc-btn" aria-expanded="false" aria-controls="days-panel">🗓️ Trip length <span class="disc-caret">▾</span></button>
   <button id="btn-lang-toggle" class="disc-btn" aria-expanded="false" aria-controls="lang-panel">🗣 Language <span class="disc-caret">▾</span></button>
   <button id="btn-views-toggle" class="disc-btn" aria-expanded="false" aria-controls="views-panel">📑 Browse by <span class="disc-caret">▾</span></button>
+</div>
+
+<div id="days-bar">
+  <span class="sfl">🗓️ Trip length</span>
+  <button class="dchip" data-days="3">≤ 3 days</button>
+  <button class="dchip" data-days="5">4 – 5 days</button>
+  <button class="dchip" data-days="7">6+ days</button>
+  <span id="days-badge">✕ clear</span>
 </div>
 <div id="views-panel" hidden>
   <span class="browse-lbl">Group destinations by</span>
@@ -656,14 +665,6 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   </div>
 </div>
 </div><!-- /filters-panel -->
-
-<div id="days-panel" hidden>
-  <span class="sfl">🗓️ Trip length</span>
-  <button class="dchip" data-days="3">≤ 3 days</button>
-  <button class="dchip" data-days="5">4 – 5 days</button>
-  <button class="dchip" data-days="7">6+ days</button>
-  <span id="days-badge">✕ clear</span>
-</div><!-- /days-panel -->
 
 <div id="theme-panel" hidden>
   <span class="theme-tree">
@@ -3011,7 +3012,7 @@ window._giStatusFilter = 'all';
 (function () {
   var DAYS_DATA = {"Abu Dhabi":4,"Aix-en-Provence":3,"Alaska":5,"Amalfi":2,"Amsterdam":5,"Annecy":3,"Aruba":2,"Athens":3,"Atlanta":3,"Austin":3,"Azores":4,"Bali":3,"Bangkok":4,"Barbados":3,"Beijing":4,"Bend":3,"Bergen":3,"Berlin":5,"Big Island":3,"Bologna":3,"Bordeaux":3,"Boston":3,"Boulder":2,"Bruges":2,"Brussels":3,"Budapest":3,"Buenos Aires":4,"Cambridge":3,"Cannes":2,"Capri":2,"Carmel-by-the-Sea":2,"Cascais":3,"Cayman Islands":3,"Charlotte":2,"Chicago":3,"Chongqing":2,"Cinque Terre":2,"Colmar":2,"Columbia":2,"Copenhagen":6,"Corfu":2,"Curaçao":2,"Cusco":2,"Dallas":2,"Denver":2,"Dublin":6,"Dubrovnik":3,"Edinburgh":5,"Florence":3,"Geneva":2,"Glasgow":3,"Gothenburg":2,"Hamburg":2,"Helsinki":5,"Hong Kong":3,"Istanbul":3,"Kauai":2,"Kyoto":4,"La Jolla":2,"Lagos":2,"Lake Como":2,"Las Vegas":2,"Lille":3,"Lima":4,"Lisbon":8,"Ljubljana":2,"London":6,"Los Angeles":2,"Lucerne":3,"Luxembourg":2,"Lyon":4,"Machu Picchu":2,"Madeira":3,"Madrid":5,"Malibu":2,"Marktoberdorf":7,"Marrakech":10,"Marseille":3,"Maui":2,"Melbourne":4,"Miami":2,"Milan":3,"Monaco":2,"Montevideo":5,"Montréal":4,"Munich":7,"Napa":2,"Naples":3,"Nashville":2,"New Orleans":3,"New York":5,"Nice":4,"Oahu":3,"Orlando":2,"Oslo":5,"Oxford":2,"Palm Desert":7,"Palo Alto":7,"Paris":6,"Pasadena":7,"Philadelphia":3,"Phoenix":2,"Phuket":2,"Pisa":2,"Portland":2,"Porto":3,"Prague":3,"Puerto Rico":4,"Québec City":4,"Queenstown":4,"Reykjavik":8,"Rio de Janeiro":3,"Rome":3,"Salzburg":7,"San Diego":6,"San Francisco":4,"San Jose":2,"San Sebastián":2,"Santa Barbara":2,"Santa Cruz":2,"Santa Monica":2,"Santiago":4,"Scottsdale":2,"Seattle":2,"Seoul":4,"Seville":3,"Shanghai":4,"Siena":2,"Singapore":8,"Sint Maarten":2,"Sintra":2,"Sorrento":2,"Split":3,"Stockholm":5,"Strasbourg":4,"Stuttgart":2,"Sydney":8,"Taipei":3,"Tallinn":2,"The Bahamas":2,"Tokyo":6,"Toledo":2,"Toronto":4,"Tromsø":5,"Turin":5,"Vancouver":5,"Venice":2,"Verona":3,"Vienna":6,"Virgin Islands":2,"Washington DC":3,"Wellington":4,"Zhangjiajie":2,"Zurich":10,"Ålesund":5};
 
-  var chips  = [].slice.call(document.querySelectorAll('#days-panel .dchip'));
+  var chips  = [].slice.call(document.querySelectorAll('#days-bar .dchip'));
   var badge  = document.getElementById('days-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
   var active = null; /* "3", "5", or "7" — or null for no filter */
@@ -3248,21 +3249,18 @@ window._giStatusFilter = 'all';
 (function () {
   var tBtn = document.getElementById('btn-theme-toggle');
   var fBtn = document.getElementById('btn-filters-toggle');
-  var dBtn = document.getElementById('btn-days-toggle');
   var lBtn = document.getElementById('btn-lang-toggle');
   var vBtn = document.getElementById('btn-views-toggle');
   var tPanel = document.getElementById('theme-panel');
   var fPanel = document.getElementById('filters-panel');
-  var dPanel = document.getElementById('days-panel');
   var lPanel = document.getElementById('lang-panel');
   var vPanel = document.getElementById('views-panel');
-  if (!(tBtn && fBtn && dBtn && lBtn && vBtn && tPanel && fPanel && dPanel && lPanel && vPanel)) return;
+  if (!(tBtn && fBtn && lBtn && vBtn && tPanel && fPanel && lPanel && vPanel)) return;
 
   /* reset:true panels return the mosaic to its default Country grouping when opened */
   var groups = [
     { btn: tBtn, panel: tPanel, reset: true },
     { btn: fBtn, panel: fPanel, reset: true },
-    { btn: dBtn, panel: dPanel, reset: true },
     { btn: lBtn, panel: lPanel, reset: false },
     { btn: vBtn, panel: vPanel, reset: false }
   ];
@@ -3297,11 +3295,10 @@ window._giStatusFilter = 'all';
   /* Dot on a collapsed toggle when its filter is engaged, so it isn't forgotten */
   function refreshActive() {
     fBtn.classList.toggle('has-active', !!document.querySelector('#season-filter .mchip.on'));
-    dBtn.classList.toggle('has-active', !!document.querySelector('#days-panel .dchip.on'));
     tBtn.classList.toggle('has-active', !!document.querySelector('#theme-panel .tchip.on'));
     lBtn.classList.toggle('has-active', !!document.querySelector('#lang-list .lang-row.on:not([data-l="all"])'));
   }
-  document.querySelectorAll('#season-filter .mchip, #season-badge, #theme-panel .tchip, #theme-badge, #days-panel .dchip, #days-badge').forEach(function (el) {
+  document.querySelectorAll('#season-filter .mchip, #season-badge, #theme-panel .tchip, #theme-badge').forEach(function (el) {
     el.addEventListener('click', function () { setTimeout(refreshActive, 0); });
   });
   refreshActive();
