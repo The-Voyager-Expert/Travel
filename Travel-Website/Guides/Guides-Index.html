@@ -572,9 +572,16 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
 
 <div id="days-bar">
   <span class="sfl">🗓️ Trip length</span>
-  <button class="dchip" data-days="3">≤ 3 days</button>
-  <button class="dchip" data-days="5">4 – 5 days</button>
-  <button class="dchip" data-days="7">6+ days</button>
+  <button class="dchip" data-days="1">1</button>
+  <button class="dchip" data-days="2">2</button>
+  <button class="dchip" data-days="3">3</button>
+  <button class="dchip" data-days="4">4</button>
+  <button class="dchip" data-days="5">5</button>
+  <button class="dchip" data-days="6">6</button>
+  <button class="dchip" data-days="7">7</button>
+  <button class="dchip" data-days="8">8</button>
+  <button class="dchip" data-days="9">9</button>
+  <button class="dchip" data-days="10">10</button>
   <span id="days-badge">✕ clear</span>
 </div>
 <div id="views-panel" hidden>
@@ -3015,16 +3022,10 @@ window._giStatusFilter = 'all';
   var chips  = [].slice.call(document.querySelectorAll('#days-bar .dchip'));
   var badge  = document.getElementById('days-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
-  var active = null; /* "3", "5", or "7" — or null for no filter */
+  var active = null; /* exact day count as a string ("1"…"10") — or null for no filter */
 
   function cityName(card) {
     return ((card.querySelector('.dest-name') || {}).textContent || '').trim();
-  }
-  function inBucket(days, bucket) {
-    if (bucket === '3') return days <= 3;
-    if (bucket === '5') return days >= 4 && days <= 5;
-    if (bucket === '7') return days >= 6;
-    return true;
   }
   function applyDaysFilter() {
     chips.forEach(function (c) { c.classList.toggle('on', c.dataset.days === active); });
@@ -3032,7 +3033,7 @@ window._giStatusFilter = 'all';
     cards.forEach(function (c) {
       if (active === null) { c.classList.remove('days-hide'); return; }
       var d = DAYS_DATA[cityName(c)];
-      c.classList.toggle('days-hide', d === undefined || !inBucket(d, active));
+      c.classList.toggle('days-hide', String(d) !== active);
     });
     window._giDaysFilter = active;
     var inp = document.getElementById('guide-search');
