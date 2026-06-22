@@ -14,18 +14,6 @@ body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--tex
   font-size: var(--fs-body,14px); line-height: 1.5; }
 .index-section { max-width: none; margin: 8px auto 0; padding: 0 32px; }
 
-/* ── Combined search ── */
-.search-wrap { position: relative; max-width: 360px; }
-#hub-results { position: absolute; top: 46px; left: 0; right: 0; z-index: 40;
-  background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da); border-radius: 8px;
-  box-shadow: 0 8px 22px rgba(92,61,17,.14); max-height: 56vh; overflow: auto; padding: 4px; }
-#hub-results[hidden] { display: none; }
-.hr-item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 6px;
-  text-decoration: none; color: var(--text,#1a1917); font-size: 13.5px; }
-.hr-item:hover, .hr-item.active { background: rgba(184,134,11,.10); text-decoration: none; }
-.hr-tag { margin-left: auto; font-size: 11px; color: #A8895A; white-space: nowrap; }
-.hr-empty { padding: 12px 10px; font-size: 13px; color: #A8895A; text-align: center; }
-
 /* ── Highlight-reel hero — one big white box ── */
 .hero { background: var(--surface,#fff); border: 1px solid var(--border,#d8d4cc); border-radius: 16px;
   box-shadow: 0 10px 30px rgba(92,61,17,.08); padding: 36px 30px; margin: 18px 0 26px;
@@ -37,21 +25,22 @@ body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--tex
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .hero-stat .l { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
   color: var(--muted,#6a6660); margin-top: 8px; }
-.hero-feats { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-.hero-feat { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px;
-  border: 1px solid var(--border,#d8d4cc); border-radius: 10px; background: var(--warm,#fdf8f0);
-  color: var(--text,#1a1917); font-size: 14px; font-weight: 600; text-decoration: none;
+.hero-feats { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 12px; }
+.hero-feat { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px 20px; text-align: center; border: 1px solid var(--border,#d8d4cc); border-radius: 10px;
+  background: var(--warm,#fdf8f0); color: var(--text,#1a1917); font-size: 14px; font-weight: 600; text-decoration: none;
   transition: box-shadow .18s, border-color .18s, transform .18s; }
-.hero-feat:hover { border-color: var(--accent,#8a6c1a); box-shadow: 0 6px 16px rgba(92,61,17,.14);
+a.hero-feat:hover { border-color: var(--accent,#8a6c1a); box-shadow: 0 6px 16px rgba(92,61,17,.14);
   transform: translateY(-2px); text-decoration: none; }
-.hero .search-wrap { width: 100%; max-width: 360px; }
+.hero-feat .fl { font-size: 12px; font-weight: 600; color: var(--muted,#6a6660); }
+.hero-feat .fl a { color: var(--accent,#8a6c1a); text-decoration: none; }
+.hero-feat .fl a:hover { text-decoration: underline; }
 
 @media (max-width: 600px) {
   .index-section { padding: 0 12px; }
   .hero { padding: 24px 16px; gap: 22px; }
   .hero-stats { gap: 18px 28px; }
   .hero-stat .n { font-size: 34px; }
-  .search-wrap { max-width: 100%; }
 }
 </style>
 <link rel="stylesheet" href="assets/mobile.css">
@@ -81,28 +70,19 @@ body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--tex
       <a class="hero-feat" href="Trip-Essentials/Climate-Finder.html">🌤️ Explore by Climate</a>
       <a class="hero-feat" href="Trip-Essentials/Delta-Routes-Full.html">✈️ Flying Delta</a>
       <a class="hero-feat" href="Trip-Essentials/Lounges-US.html">💻 Lounges</a>
-    </div>
-
-    <div class="search-wrap">
-      <input type="search" id="hub-search" placeholder="🔍  Search a city or tool" aria-label="Search a city or tool" autocomplete="off" spellcheck="false">
-      <div id="hub-results" hidden></div>
+      <div class="hero-feat">💰 Money
+        <div class="fl"><a href="Trip-Essentials/Currency-Guide.html">Currency</a> · <a href="Trip-Essentials/Tipping-Guide.html">Tipping</a></div>
+      </div>
+      <div class="hero-feat">🎒 Know What to Carry
+        <div class="fl"><a href="Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html">Plug Adapters</a> · <a href="Trip-Essentials/SIM-Cards.html">SIM Cards</a></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-/* ── Combined search: cities (from search_index.json) + tools (this page) ── */
+/* ── Stat counts + count-up animation ── */
 (function () {
-  var input = document.getElementById('hub-search');
-  var box   = document.getElementById('hub-results');
-  if (!input || !box) return;
-
-  // Feature names come from the rendered hero links so search never drifts from the page.
-  var tools = [].slice.call(document.querySelectorAll('.hero-feat')).map(function (a) {
-    return { name: a.textContent.replace(/^[^A-Za-z]+/, '').trim(), url: a.getAttribute('href'), tag: 'Page' };
-  }).filter(function (t) { return t.name && t.url; });
-  var cities = [];
-
   function setNum(id, v) { var el = document.getElementById(id); if (el && v) el.textContent = v; }
 
   // Count-up animation — the stat numbers tick up from 0 on load.
@@ -125,63 +105,13 @@ body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--tex
   function animateStats() { [].forEach.call(document.querySelectorAll('.hero-stat .n'), animateNum); }
 
   fetch('assets/search_index.json').then(function (r) { return r.json(); }).then(function (data) {
-    var raw = data.guides || [], seen = {};
-    raw.forEach(function (g) {
-      if (g.c && !seen[g.c]) { seen[g.c] = 1; cities.push({ name: g.c, url: 'Guides/' + g.u, tag: 'City' }); }
-    });
+    var raw = data.guides || [], seen = {}, n = 0;
+    raw.forEach(function (g) { if (g.c && !seen[g.c]) { seen[g.c] = 1; n++; } });
     var places = raw.reduce(function (s, g) { return s + ((g.e && g.e.length) || 0); }, 0);
-    setNum('stat-cities', cities.length);    // unique cities
+    setNum('stat-cities', n);                // unique cities
     if (places) setNum('stat-places', (Math.floor(places / 100) * 100).toLocaleString() + '+');
     animateStats();
   }).catch(animateStats);
-
-  var active = -1, items = [];
-
-  function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
-  function esc(s) { return s.replace(/[&<>]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]; }); }
-
-  function render(q) {
-    var nq = norm(q);
-    var pool = tools.concat(cities).filter(function (it) { return norm(it.name).indexOf(nq) > -1; });
-    pool.sort(function (a, b) {
-      var pa = norm(a.name).indexOf(nq) === 0, pb = norm(b.name).indexOf(nq) === 0;
-      if (pa !== pb) return pa ? -1 : 1;
-      return a.name < b.name ? -1 : 1;
-    });
-    pool = pool.slice(0, 12);
-    items = pool; active = -1;
-    if (!pool.length) { box.innerHTML = '<div class="hr-empty">No city or tool matches that.</div>'; box.hidden = false; return; }
-    box.innerHTML = pool.map(function (it) {
-      return '<a class="hr-item" href="' + it.url + '">' + esc(it.name) + '<span class="hr-tag">' + it.tag + '</span></a>';
-    }).join('');
-    box.hidden = false;
-  }
-
-  function setActive(i) {
-    var els = box.querySelectorAll('.hr-item');
-    els.forEach(function (e) { e.classList.remove('active'); });
-    if (i >= 0 && els[i]) { els[i].classList.add('active'); els[i].scrollIntoView({ block: 'nearest' }); }
-    active = i;
-  }
-
-  input.addEventListener('input', function () {
-    var q = input.value.trim();
-    if (!q) { box.hidden = true; box.innerHTML = ''; return; }
-    render(q);
-  });
-  input.addEventListener('keydown', function (e) {
-    if (box.hidden) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(active + 1, items.length - 1)); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(active - 1, 0)); }
-    else if (e.key === 'Enter') {
-      var els = box.querySelectorAll('.hr-item');
-      var pick = els[active >= 0 ? active : 0];
-      if (pick) { e.preventDefault(); location.href = pick.getAttribute('href'); }
-    } else if (e.key === 'Escape') { box.hidden = true; }
-  });
-  document.addEventListener('click', function (e) {
-    if (!box.contains(e.target) && e.target !== input) box.hidden = true;
-  });
 })();
 </script>
 </body>
