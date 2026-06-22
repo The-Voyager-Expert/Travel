@@ -102,6 +102,7 @@ SURFACES = {
     "card": "index card", "inline": "index inline data", "fmap": "FMAP",
     "pin": "map pin", "stats": "travel stats", "safety": "safety guide",
     "climate": "climate (weather tabs)", "search": "search index",
+    "resources": "trip-resources links",
 }
 
 
@@ -207,6 +208,18 @@ def main() -> int:
         if folder not in search_folders and not (name and name in search_names):
             missing["search"].append(folder)
 
+        # trip-resources: block must exist + all four universal links present
+        _TR_REQUIRED = ["Safety-Guide.html", "Visas.html", "Before-You-Go.html", "Weather.html"]
+        guide_html = ""
+        for html in (GUIDES_DIR / folder).glob("*.html"):
+            if STAMP in _read(html):
+                guide_html = _read(html).lower()
+                break
+        if "<!-- trip-resources -->" not in guide_html or any(
+            f.lower() not in guide_html for f in _TR_REQUIRED
+        ):
+            missing["resources"].append(folder)
+
     gaps = {k: v for k, v in missing.items() if v}
     if not gaps:
         print(f"check_coverage: OK — all {len(guides)} shipped guides present in every "
@@ -218,7 +231,8 @@ def main() -> int:
         if missing[key]:
             print(f"  {label}: missing {', '.join(missing[key])}")
     print("Each shipped guide must appear (with a working link) in the index card, "
-          "FMAP, map pin, travel stats, safety guide, both Weather tabs, and search.")
+          "FMAP, map pin, travel stats, safety guide, both Weather tabs, search, "
+          "and have a trip-resources block with Safety · Visas · Before You Go · Weather links.")
     print("Fix locally with: python3 Brain/scripts/validate_guide_coverage.py")
     return 1
 
