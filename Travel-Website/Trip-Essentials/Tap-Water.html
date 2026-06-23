@@ -23,7 +23,18 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
   font-size: 14px; line-height: 1.5; min-height: 100vh; padding-bottom: 80px;
 }
-.search-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+.controls { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pill {
+  font-family: inherit; font-size: 13px; line-height: 1; padding: 6px 12px;
+  border: 1px solid var(--border2); border-radius: 6px; background: #fff;
+  color: var(--text); cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s, transform .08s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+}
+.pill:hover { border-color: #b85c2a; box-shadow: 0 2px 8px rgba(184,92,42,.12); transform: translateY(-1px); }
+.pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a; }
+.search-wrap { display: flex; justify-content: center; }
 #tw-search {
   width: 360px; padding: 11px 18px;
   border: 1.5px solid #e6e2da; border-radius: 6px;
@@ -37,6 +48,7 @@ body {
 .water-row {
   background: var(--surface); border: 1px solid var(--border2); border-left: 4px solid #ccc;
   border-radius: 8px; padding: 12px 15px; display: flex; flex-direction: column; gap: 5px;
+  scroll-margin-top: 70px;
 }
 .water-row.hidden { display: none; }
 .water-row.ws-safe   { border-left-color: #22c55e; }
@@ -64,20 +76,27 @@ body {
 
   <div class="page-header"><h1>Tap Water</h1></div>
 
-  <div class="search-wrap">
-    <input type="text" id="tw-search" placeholder="🔍  Search region or country" aria-label="Search" autocomplete="off">
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="text" id="tw-search" placeholder="🔍  Search region or country" aria-label="Search" autocomplete="off">
+    </div>
+    <div class="pills">
+      <button class="pill" data-filter="safe"   onclick="filterStatus(this,'safe')">🟢 Safe</button>
+      <button class="pill" data-filter="varies" onclick="filterStatus(this,'varies')">🟡 Varies</button>
+      <button class="pill" data-filter="unsafe" onclick="filterStatus(this,'avoid')">🔴 Avoid</button>
+    </div>
   </div>
   <p id="no-results">Nothing matches your search.</p>
 
   <div class="row-list">
 
-    <div class="water-row ws-safe">
+    <div class="water-row ws-safe" id="section-safe">
       <div class="wr-header"><span class="wr-region">Western Europe</span><span class="water-status ws-safe">Safe</span></div>
       <div class="wr-countries">Austria · Belgium · Denmark · Finland · France · Germany · Iceland · Ireland · Luxembourg · Netherlands · Norway · Sweden · Switzerland · UK</div>
       <div class="wr-note">Tap water meets EU drinking water standards and is safe to drink in all major cities. Iceland tap water is glacier-fed and among the cleanest in the world.</div>
     </div>
 
-    <div class="water-row ws-varies">
+    <div class="water-row ws-varies" id="section-varies">
       <div class="wr-header"><span class="wr-region">Southern Europe</span><span class="water-status ws-varies">Varies</span></div>
       <div class="wr-countries">Croatia · Greece · Italy · Portugal · Spain</div>
       <div class="wr-note">Technically safe in major cities but often heavily chlorinated and unpleasant-tasting. Most locals drink bottled water. Stick to bottled in rural areas and islands (Croatia, Greek islands). Spain and Portugal tap water is safe in cities.</div>
@@ -105,7 +124,7 @@ body {
       <div class="wr-note">Tap water in Tokyo, Kyoto, Osaka, and Seoul is safe to drink and routinely rated among the best in Asia. Filtered water dispensers are common in hotels.</div>
     </div>
 
-    <div class="water-row ws-unsafe">
+    <div class="water-row ws-unsafe" id="section-avoid">
       <div class="wr-header"><span class="wr-region">Southeast Asia</span><span class="water-status ws-unsafe">Avoid</span></div>
       <div class="wr-countries">Thailand · Vietnam · Indonesia · Philippines</div>
       <div class="wr-note">Do not drink tap water. Use bottled or filtered water for drinking and brushing teeth. Ice in restaurants is typically made from purified water but verify at street stalls.</div>
@@ -155,11 +174,38 @@ body {
 </div>
 
 <script>
+var activeFilter = null;
+
+function filterStatus(btn, status) {
+  var rows = document.querySelectorAll('.water-row');
+  var pills = document.querySelectorAll('.pill[data-filter]');
+  if (activeFilter === status) {
+    // toggle off
+    activeFilter = null;
+    pills.forEach(function(p) { p.classList.remove('active'); });
+    rows.forEach(function(r) { r.classList.remove('hidden'); });
+  } else {
+    activeFilter = status;
+    pills.forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    rows.forEach(function(r) {
+      var show = r.classList.contains('ws-' + status);
+      r.classList.toggle('hidden', !show);
+    });
+    // anchor to first visible
+    var anchor = document.getElementById('section-' + status);
+    if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('no-results').style.display = 'none';
+}
+
 (function () {
   var search = document.getElementById('tw-search');
   var rows   = document.querySelectorAll('.water-row');
   var noRes  = document.getElementById('no-results');
   search.addEventListener('input', function () {
+    activeFilter = null;
+    document.querySelectorAll('.pill[data-filter]').forEach(function(p) { p.classList.remove('active'); });
     var q = search.value.trim().toLowerCase();
     var visible = 0;
     rows.forEach(function (r) {
