@@ -296,6 +296,42 @@ document.addEventListener('DOMContentLoaded',()=>{
 </head>
 <body>
 
+
+<div id="gate-overlay" style="display:none;position:fixed;inset:0;background:rgba(245,244,240,0.97);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;text-align:center;">
+    <div style="font-size:15px;font-weight:600;color:#1a1917;margin-bottom:12px;">Enter PIN</div>
+    <input id="gate-input" type="password" inputmode="numeric" maxlength="6"
+      style="font-size:22px;letter-spacing:6px;text-align:center;width:180px;padding:14px 16px;border:1.5px solid #d8d5ce;border-radius:8px;outline:none;background:#fff;color:#1a1917;">
+    <div id="gate-error" style="font-size:12px;color:#a00020;margin-top:8px;opacity:0;">Incorrect PIN</div>
+  </div>
+</div>
+<script>
+(function(){
+  var PIN='2205';
+  var KEY='packing_unlocked';
+  var overlay=document.getElementById('gate-overlay');
+  var input=document.getElementById('gate-input');
+  var error=document.getElementById('gate-error');
+  try{ if(sessionStorage.getItem(KEY)==='1'){ overlay.style.display='none'; return; } }catch(e){}
+  overlay.style.display='flex';
+  document.body.style.overflow='hidden';
+  input.focus();
+  input.addEventListener('input',function(){
+    if(input.value.length===PIN.length){
+      if(input.value===PIN){
+        try{ sessionStorage.setItem(KEY,'1'); }catch(e){}
+        overlay.style.display='none';
+        document.body.style.overflow='';
+      } else {
+        error.style.opacity='1';
+        input.value='';
+        setTimeout(function(){ error.style.opacity='0'; },1500);
+      }
+    }
+  });
+})();
+</script>
+
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
 <script src="../assets/toolbar.js?v=71"></script>
 
