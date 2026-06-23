@@ -161,6 +161,7 @@
         { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📱 SIM Cards' },
         { href: base + 'Trip-Essentials/Pickleball.html',            text: '🏓 Pickleball' },
       ]},
+  ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
   // retired 2026-05-31 when the guide palette was reskinned to match essentials.
