@@ -39,6 +39,20 @@ body {
 #bg-search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
 #no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
 
+/* Airline pills */
+.pill-wrap {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  justify-content: center; margin-bottom: 20px;
+}
+.apill {
+  padding: 6px 13px; border-radius: 6px; border: 1.5px solid #d9d4cb;
+  background: #fff; color: var(--text); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background .12s, border-color .12s, color .12s;
+  white-space: nowrap;
+}
+.apill:hover { background: #f0ece3; border-color: #c4bfb6; }
+.apill.active { background: #8a6c1a; border-color: #8a6c1a; color: #fff; }
+
 /* Cards */
 .row-list { display: flex; flex-direction: column; gap: 12px; }
 .bag-row { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; }
@@ -142,12 +156,25 @@ body {
   <div class="search-wrap">
     <input type="text" id="bg-search" placeholder="🔍  Search airline" aria-label="Search" autocomplete="off">
   </div>
+  <div class="pill-wrap">
+    <button class="apill active" data-filter="all">All</button>
+    <button class="apill" data-filter="delta">Delta</button>
+    <button class="apill" data-filter="united">United</button>
+    <button class="apill" data-filter="american">American</button>
+    <button class="apill" data-filter="lufthansa">Lufthansa Group</button>
+    <button class="apill" data-filter="airfrance">Air France / KLM</button>
+    <button class="apill" data-filter="british">British Airways</button>
+    <button class="apill" data-filter="jal">JAL / ANA</button>
+    <button class="apill" data-filter="budget">Budget Europe</button>
+    <button class="apill" data-filter="general">General Rules</button>
+  </div>
+
   <p id="no-results">Nothing matches your search.</p>
 
   <div class="row-list">
 
     <!-- Delta -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="delta">
       <div class="bag-airline"><a href="https://www.delta.com" target="_blank" rel="noopener">✈️ Delta Air Lines</a></div>
       <div class="bag-cols">
         <div class="bag-col">
@@ -167,7 +194,7 @@ body {
     </div>
 
     <!-- United -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="united">
       <div class="bag-airline"><a href="https://www.united.com" target="_blank" rel="noopener">✈️ United Airlines</a></div>
       <div class="bag-cols">
         <div class="bag-col">
@@ -187,7 +214,7 @@ body {
     </div>
 
     <!-- American -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="american">
       <div class="bag-airline"><a href="https://www.aa.com" target="_blank" rel="noopener">✈️ American Airlines</a></div>
       <div class="bag-cols">
         <div class="bag-col">
@@ -207,7 +234,7 @@ body {
     </div>
 
     <!-- Lufthansa group -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="lufthansa">
       <div class="bag-airline">
         <a href="https://www.lufthansa.com" target="_blank" rel="noopener">✈️ Lufthansa</a> /
         <a href="https://www.swiss.com" target="_blank" rel="noopener">Swiss</a> /
@@ -231,7 +258,7 @@ body {
     </div>
 
     <!-- Air France / KLM -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="airfrance">
       <div class="bag-airline">
         <a href="https://www.airfrance.us" target="_blank" rel="noopener">✈️ Air France</a> /
         <a href="https://www.klm.com" target="_blank" rel="noopener">KLM</a>
@@ -254,7 +281,7 @@ body {
     </div>
 
     <!-- British Airways -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="british">
       <div class="bag-airline"><a href="https://www.britishairways.com" target="_blank" rel="noopener">✈️ British Airways</a></div>
       <div class="bag-cols">
         <div class="bag-col">
@@ -274,7 +301,7 @@ body {
     </div>
 
     <!-- JAL / ANA -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="jal">
       <div class="bag-airline">
         <a href="https://www.jal.co.jp/en/" target="_blank" rel="noopener">✈️ Japan Airlines</a> /
         <a href="https://www.ana.co.jp/en/us/" target="_blank" rel="noopener">ANA</a>
@@ -297,7 +324,7 @@ body {
     </div>
 
     <!-- Budget Europe -->
-    <div class="bag-row">
+    <div class="bag-row" data-airline="budget">
       <div class="bag-airline">
         <a href="https://www.ryanair.com" target="_blank" rel="noopener">✈️ Ryanair</a> /
         <a href="https://www.easyjet.com" target="_blank" rel="noopener">easyJet</a>
@@ -321,7 +348,7 @@ body {
     </div>
 
     <!-- General rules -->
-    <div class="bag-row gen-row">
+    <div class="bag-row gen-row" data-airline="general">
       <div class="bag-airline">🌍 General rules — all airlines</div>
       <div class="bag-cols">
         <div class="gen-rule-item">
@@ -348,19 +375,35 @@ body {
 
 <script>
 (function () {
-  var search = document.getElementById('bg-search');
-  var rows   = document.querySelectorAll('.bag-row');
-  var noRes  = document.getElementById('no-results');
-  search.addEventListener('input', function () {
+  var search   = document.getElementById('bg-search');
+  var rows     = document.querySelectorAll('.bag-row');
+  var noRes    = document.getElementById('no-results');
+  var pills    = document.querySelectorAll('.apill');
+  var active   = 'all';
+
+  function applyFilters() {
     var q = search.value.trim().toLowerCase();
     var visible = 0;
     rows.forEach(function (r) {
-      var show = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+      var matchPill  = active === 'all' || r.dataset.airline === active;
+      var matchSearch = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+      var show = matchPill && matchSearch;
       r.classList.toggle('hidden', !show);
       if (show) visible++;
     });
     noRes.style.display = visible === 0 ? '' : 'none';
+  }
+
+  pills.forEach(function (p) {
+    p.addEventListener('click', function () {
+      pills.forEach(function (x) { x.classList.remove('active'); });
+      p.classList.add('active');
+      active = p.dataset.filter;
+      applyFilters();
+    });
   });
+
+  search.addEventListener('input', applyFilters);
 })();
 </script>
 <script src="../assets/toolbar.js?v=71"></script>
