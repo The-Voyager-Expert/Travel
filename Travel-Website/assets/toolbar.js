@@ -150,12 +150,9 @@
     null,
     { group: '⚙️ Resources', children: [
         { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
-        { group: '📋 Before You Go', children: [
-          { href: base + 'Trip-Essentials/Before-You-Go.html',           text: '📋 Before You Go Checklist' },
-          { href: base + 'Trip-Essentials/Travel-Packing-Generic.html',  text: '👕 Packing Checklist' },
-          { href: base + 'Trip-Essentials/Tipping-Guide.html',           text: '🧾 Tipping' },
-          { href: base + 'Trip-Essentials/Budget-Guide.html',            text: '💵 Budget' },
-        ]},
+        { href: base + 'Trip-Essentials/Travel-Packing-Generic.html',  text: '👕 Packing Checklist' },
+        { href: base + 'Trip-Essentials/Tipping-Guide.html',           text: '🧾 Tipping' },
+        { href: base + 'Trip-Essentials/Budget-Guide.html',            text: '💵 Budget' },
         { href: base + 'Trip-Essentials/Tap-Water.html',             text: '🚰 Tap Water' },
         { href: base + 'Trip-Essentials/Vaccines.html',              text: '💉 Vaccines' },
         { href: base + 'Trip-Essentials/Baggage.html',               text: '🧳 Baggage' },
