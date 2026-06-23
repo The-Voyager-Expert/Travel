@@ -119,7 +119,6 @@
         { href: base + 'Trip-Essentials/Asia-Stats.html',                text: '📊 Stats Across Asia' },
         { href: base + 'Trip-Essentials/South-America-Stats.html',       text: '📊 Stats Across South America' },
         { href: base + 'Trip-Essentials/Caribbean-Stats.html',           text: '📊 Stats Across the Caribbean' },
-        { href: base + 'Trip-Essentials/Pickleball.html',                text: '🏓 Pickleball' },
       ]},
     null,
     { group: '💻 Lounges', children: [
@@ -161,6 +160,7 @@
     { group: '⚙️ Resources', children: [
         { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
         { href: base + 'Trip-Essentials/Before-You-Go.html',         text: '📋 Before You Go' },
+        { href: base + 'Trip-Essentials/Pickleball.html',            text: '🏓 Pickleball' },
       ]},
   ];
 
