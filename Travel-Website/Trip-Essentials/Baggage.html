@@ -14,13 +14,20 @@
   --text:    #1a1917;
   --muted:   #6a6660;
   --accent:  #8a6c1a;
+  --free:    #2d6a3f;
+  --free-bg: #eaf5ed;
+  --paid:    #7a3a10;
+  --paid-bg: #fdf0e8;
+  --dim-bg:  #f8f7f3;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: var(--bg); color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   font-size: 14px; line-height: 1.5; min-height: 100vh; padding-bottom: 80px;
 }
+
+/* Search */
 .search-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
 #bg-search {
   width: 360px; padding: 11px 18px;
@@ -31,20 +38,97 @@ body {
 #bg-search::placeholder { color: #A8895A; }
 #bg-search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
 #no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
-.row-list { display: flex; flex-direction: column; gap: 8px; }
-.bag-row { background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 12px 15px; }
+
+/* Cards */
+.row-list { display: flex; flex-direction: column; gap: 12px; }
+.bag-row { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; }
 .bag-row.hidden { display: none; }
-.bag-airline { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 7px; flex-wrap: wrap; }
-.bag-airline a { color: var(--accent); text-decoration: none; font-weight: 700; transition: color .12s; }
+
+/* Airline header */
+.bag-airline {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 11px 16px; background: var(--dim-bg);
+  border-bottom: 1px solid var(--border2);
+  font-size: 14px; font-weight: 700; color: var(--text);
+}
+.bag-airline a { color: var(--accent); text-decoration: none; font-weight: 700; }
 .bag-airline a:hover { text-decoration: underline; }
-.bag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
-.bag-cell { font-size: 12px; }
-.bag-label { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
-.bag-val   { color: var(--text); font-size: 13px; line-height: 1.4; }
-.bag-note  { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
+
+/* Limit columns */
+.bag-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.bag-col {
+  padding: 14px 16px;
+  border-right: 1px solid var(--border2);
+}
+.bag-col:last-child { border-right: none; }
+
+.col-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px;
+}
+
+/* Size pill */
+.size-pill {
+  display: inline-flex; align-items: center;
+  background: #f0ece3; border: 1px solid #ddd8cd;
+  border-radius: 5px; padding: 3px 8px;
+  font-size: 12px; font-weight: 600; color: #3d3530;
+  margin-bottom: 5px; letter-spacing: 0.01em;
+}
+
+/* Weight pill */
+.weight-pill {
+  display: inline-flex; align-items: center;
+  background: #e8f0fb; border: 1px solid #c5d5ee;
+  border-radius: 5px; padding: 3px 8px;
+  font-size: 12px; font-weight: 600; color: #2a4a7f;
+  margin-bottom: 5px; letter-spacing: 0.01em;
+}
+
+/* Fee badge */
+.fee-badge {
+  display: inline-flex; align-items: center;
+  border-radius: 5px; padding: 4px 9px;
+  font-size: 13px; font-weight: 700;
+  margin-bottom: 5px;
+}
+.fee-badge.free { background: var(--free-bg); color: var(--free); }
+.fee-badge.paid { background: var(--paid-bg); color: var(--paid); }
+
+/* Sub-detail */
+.col-detail { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+
+/* Notes row */
+.bag-note {
+  padding: 9px 16px;
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+  border-top: 1px solid var(--border2);
+  background: var(--dim-bg);
+}
+.bag-note strong { color: var(--text); font-weight: 600; }
+
+/* General rules card */
+.gen-row .bag-cols { grid-template-columns: 1fr 1fr; }
+.gen-rule-item { padding: 14px 16px; border-right: 1px solid var(--border2); }
+.gen-rule-item:last-child { border-right: none; }
+.gen-rule-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px;
+}
+.gen-rule-val { font-size: 13px; color: var(--text); line-height: 1.5; }
+
 @media (max-width: 600px) {
   #bg-search { width: 100%; max-width: 100%; }
-  .bag-grid  { grid-template-columns: 1fr 1fr; }
+  .bag-cols { grid-template-columns: 1fr; }
+  .bag-col { border-right: none; border-bottom: 1px solid var(--border2); }
+  .bag-col:last-child { border-bottom: none; }
+  .gen-row .bag-cols { grid-template-columns: 1fr; }
+  .gen-rule-item { border-right: none; border-bottom: 1px solid var(--border2); }
+  .gen-rule-item:last-child { border-bottom: none; }
 }
 </style>
 </head>
@@ -62,85 +146,201 @@ body {
 
   <div class="row-list">
 
+    <!-- Delta -->
     <div class="bag-row">
       <div class="bag-airline"><a href="https://www.delta.com" target="_blank" rel="noopener">✈️ Delta Air Lines</a></div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Carry-on</div><div class="bag-val">22 × 14 × 9 in · 1 bag + 1 personal item · no weight limit</div></div>
-        <div class="bag-cell"><div class="bag-label">Checked (1st bag)</div><div class="bag-val">62 in linear · 50 lb · $35 (Main Cabin) · free from Comfort+ up</div></div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Carry-on</div>
+          <div class="size-pill">22 × 14 × 9 in</div><br>
+          <div class="fee-badge free">Free</div>
+          <div class="col-detail">1 bag + 1 personal item · no weight limit</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">Checked — 1st bag</div>
+          <div class="weight-pill">50 lb · 62 in linear</div><br>
+          <div class="fee-badge paid">$35 Main Cabin</div>
+          <div class="col-detail">Free from Comfort+ up · Overweight 51–70 lb: $100</div>
+        </div>
       </div>
-      <div class="bag-note">Medallion members: free checked bags based on status. Checked bag fee waived with Delta credit cards (Platinum/Reserve). Overweight (51–70 lb): $100 fee.</div>
+      <div class="bag-note"><strong>Free bags:</strong> Medallion members by status · Delta Platinum/Reserve card holders. Basic Economy: same carry-on rules apply.</div>
     </div>
 
+    <!-- United -->
     <div class="bag-row">
       <div class="bag-airline"><a href="https://www.united.com" target="_blank" rel="noopener">✈️ United Airlines</a></div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Carry-on</div><div class="bag-val">22 × 14 × 9 in · 1 bag + 1 personal item · no weight limit</div></div>
-        <div class="bag-cell"><div class="bag-label">Checked (1st bag)</div><div class="bag-val">62 in linear · 50 lb · $35 domestic · $60 international (some routes)</div></div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Carry-on</div>
+          <div class="size-pill">22 × 14 × 9 in</div><br>
+          <div class="fee-badge free">Free</div>
+          <div class="col-detail">1 bag + 1 personal item · no weight limit</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">Checked — 1st bag</div>
+          <div class="weight-pill">50 lb · 62 in linear</div><br>
+          <div class="fee-badge paid">$35 domestic · $60 intl</div>
+          <div class="col-detail">Some international routes vary</div>
+        </div>
       </div>
-      <div class="bag-note">MileagePlus Premier members and United credit card holders: free checked bags. Basic Economy does not include a carry-on on some routes.</div>
+      <div class="bag-note"><strong>Free bags:</strong> MileagePlus Premier members · United credit card holders. <strong>Watch out:</strong> Basic Economy may not allow a carry-on in the overhead on some routes.</div>
     </div>
 
+    <!-- American -->
     <div class="bag-row">
       <div class="bag-airline"><a href="https://www.aa.com" target="_blank" rel="noopener">✈️ American Airlines</a></div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Carry-on</div><div class="bag-val">22 × 14 × 9 in · 1 bag + 1 personal item · no weight limit</div></div>
-        <div class="bag-cell"><div class="bag-label">Checked (1st bag)</div><div class="bag-val">62 in linear · 50 lb · $35 domestic · free on most international routes</div></div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Carry-on</div>
+          <div class="size-pill">22 × 14 × 9 in</div><br>
+          <div class="fee-badge free">Free</div>
+          <div class="col-detail">1 bag + 1 personal item · no weight limit</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">Checked — 1st bag</div>
+          <div class="weight-pill">50 lb · 62 in linear</div><br>
+          <div class="fee-badge paid">$35 domestic</div>
+          <div class="col-detail">Free on most international routes</div>
+        </div>
       </div>
-      <div class="bag-note">AAdvantage status and co-branded Citi/Barclays AA credit cards: 1 free checked bag. Basic Economy: carry-on only in overhead — personal item under the seat still included.</div>
+      <div class="bag-note"><strong>Free bags:</strong> AAdvantage status · Citi/Barclays AA card (1 free checked bag). Basic Economy: carry-on must go under the seat — no overhead bin.</div>
     </div>
 
+    <!-- Lufthansa group -->
     <div class="bag-row">
-      <div class="bag-airline"><a href="https://www.lufthansa.com" target="_blank" rel="noopener">✈️ Lufthansa</a> / <a href="https://www.swiss.com" target="_blank" rel="noopener">Swiss</a> / <a href="https://www.austrian.com" target="_blank" rel="noopener">Austrian</a></div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Carry-on</div><div class="bag-val">21.7 × 15.7 × 9.1 in · 18 lb · 1 bag + 1 small personal item</div></div>
-        <div class="bag-cell"><div class="bag-label">Checked (1st bag)</div><div class="bag-val">62 in linear · 50 lb · included in most transatlantic fares</div></div>
+      <div class="bag-airline">
+        <a href="https://www.lufthansa.com" target="_blank" rel="noopener">✈️ Lufthansa</a> /
+        <a href="https://www.swiss.com" target="_blank" rel="noopener">Swiss</a> /
+        <a href="https://www.austrian.com" target="_blank" rel="noopener">Austrian</a>
       </div>
-      <div class="bag-note">Carry-on weight limit (18 lb / 8 kg) is enforced on European short-haul flights. Economy Light fares: no checked bag included, carry-on fee may apply.</div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Carry-on</div>
+          <div class="size-pill">21.7 × 15.7 × 9.1 in</div><br>
+          <div class="weight-pill">18 lb enforced on EU short-haul</div>
+          <div class="col-detail">1 bag + 1 small personal item</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">Checked — 1st bag</div>
+          <div class="weight-pill">50 lb · 62 in linear</div><br>
+          <div class="fee-badge free">Included — most transatlantic fares</div>
+          <div class="col-detail">Economy Light: no checked bag · carry-on fee may apply</div>
+        </div>
+      </div>
+      <div class="bag-note">The 18 lb carry-on weight limit is actively enforced on European short-haul — pack light or check a bag.</div>
     </div>
 
+    <!-- Air France / KLM -->
     <div class="bag-row">
-      <div class="bag-airline"><a href="https://www.airfrance.us" target="_blank" rel="noopener">✈️ Air France</a> / <a href="https://www.klm.com" target="_blank" rel="noopener">KLM</a></div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Carry-on</div><div class="bag-val">21.7 × 13.8 × 9.8 in · 26 lb · 1 bag + 1 personal item</div></div>
-        <div class="bag-cell"><div class="bag-label">Checked (1st bag)</div><div class="bag-val">62 in linear · 50 lb · included on long-haul, paid on short-haul Light</div></div>
+      <div class="bag-airline">
+        <a href="https://www.airfrance.us" target="_blank" rel="noopener">✈️ Air France</a> /
+        <a href="https://www.klm.com" target="_blank" rel="noopener">KLM</a>
       </div>
-      <div class="bag-note">Flying Blue Elite members: extra free bags. Light fares on intra-Europe routes include only a personal item; carry-on must be paid.</div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Carry-on</div>
+          <div class="size-pill">21.7 × 13.8 × 9.8 in</div><br>
+          <div class="weight-pill">26 lb</div>
+          <div class="col-detail">1 bag + 1 personal item</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">Checked — 1st bag</div>
+          <div class="weight-pill">50 lb · 62 in linear</div><br>
+          <div class="fee-badge free">Included — long-haul</div>
+          <div class="col-detail">Light fares on intra-Europe: paid · carry-on also paid</div>
+        </div>
+      </div>
+      <div class="bag-note">Flying Blue Elite members get extra free bags. Light fares on intra-Europe routes include only a personal item under the seat.</div>
     </div>
 
+    <!-- British Airways -->
     <div class="bag-row">
       <div class="bag-airline"><a href="https://www.britishairways.com" target="_blank" rel="noopener">✈️ British Airways</a></div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Carry-on</div><div class="bag-val">22 × 18 × 10 in · 51 lb · 1 bag + 1 personal item</div></div>
-        <div class="bag-cell"><div class="bag-label">Checked (1st bag)</div><div class="bag-val">62 in linear · 50 lb · included in World Traveller and above; paid on Basic</div></div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Carry-on</div>
+          <div class="size-pill">22 × 18 × 10 in</div><br>
+          <div class="weight-pill">51 lb — generous allowance</div>
+          <div class="col-detail">1 bag + 1 personal item</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">Checked — 1st bag</div>
+          <div class="weight-pill">51 lb · 62 in linear</div><br>
+          <div class="fee-badge free">Included — World Traveller and above</div>
+          <div class="col-detail">Basic: hand baggage only · no overhead bin on short-haul</div>
+        </div>
       </div>
-      <div class="bag-note">BA allows a generous 23 kg (51 lb) for each checked bag — more than most US carriers. Basic fares: hand baggage only (no overhead cabin bag on short-haul).</div>
+      <div class="bag-note">BA's 23 kg (51 lb) per checked bag is more generous than most US carriers. Basic fares on short-haul: only a small personal item.</div>
     </div>
 
+    <!-- JAL / ANA -->
     <div class="bag-row">
-      <div class="bag-airline"><a href="https://www.jal.co.jp/en/" target="_blank" rel="noopener">✈️ Japan Airlines</a> / <a href="https://www.ana.co.jp/en/us/" target="_blank" rel="noopener">ANA</a></div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Carry-on</div><div class="bag-val">21.7 × 15.7 × 9.9 in · 22 lb · 1 bag + 1 personal item</div></div>
-        <div class="bag-cell"><div class="bag-label">Checked (1st bag)</div><div class="bag-val">62 in linear · 50 lb · 2 bags included on international routes</div></div>
+      <div class="bag-airline">
+        <a href="https://www.jal.co.jp/en/" target="_blank" rel="noopener">✈️ Japan Airlines</a> /
+        <a href="https://www.ana.co.jp/en/us/" target="_blank" rel="noopener">ANA</a>
       </div>
-      <div class="bag-note">JAL and ANA both allow 2 checked bags on international routes (Economy), making them generous by global standards. Domestic Japan flights: 22 lb carry-on limit enforced.</div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Carry-on</div>
+          <div class="size-pill">21.7 × 15.7 × 9.9 in</div><br>
+          <div class="weight-pill">22 lb enforced domestic</div>
+          <div class="col-detail">1 bag + 1 personal item</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">Checked — 1st &amp; 2nd bag</div>
+          <div class="weight-pill">50 lb · 62 in linear</div><br>
+          <div class="fee-badge free">2 bags included — international Economy</div>
+          <div class="col-detail">Among the most generous international allowances</div>
+        </div>
+      </div>
+      <div class="bag-note">Both JAL and ANA allow 2 free checked bags on international routes in Economy — standout value. Domestic Japan: carry-on weight limit is enforced.</div>
     </div>
 
+    <!-- Budget Europe -->
     <div class="bag-row">
-      <div class="bag-airline"><a href="https://www.ryanair.com" target="_blank" rel="noopener">✈️ Ryanair</a> / <a href="https://www.easyjet.com" target="_blank" rel="noopener">easyJet</a> (Europe budget)</div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Ryanair carry-on</div><div class="bag-val">Small bag only (40 × 20 × 25 cm) free. Cabin bag (55 × 40 × 20 cm) requires Priority or fee (~€6–€30)</div></div>
-        <div class="bag-cell"><div class="bag-label">easyJet carry-on</div><div class="bag-val">Cabin bag (56 × 45 × 25 cm) included. Overhead access requires Plus or fee.</div></div>
+      <div class="bag-airline">
+        <a href="https://www.ryanair.com" target="_blank" rel="noopener">✈️ Ryanair</a> /
+        <a href="https://www.easyjet.com" target="_blank" rel="noopener">easyJet</a>
+        <span style="font-weight:400; color:var(--muted); font-size:12px;">— European budget</span>
       </div>
-      <div class="bag-note">Budget European carriers charge for almost everything above a small personal item. Book bags when you buy your ticket — airport bag fees are significantly higher. Weigh luggage before going to the airport.</div>
+      <div class="bag-cols">
+        <div class="bag-col">
+          <div class="col-label">Ryanair carry-on</div>
+          <div class="size-pill">40 × 20 × 25 cm — small bag, free</div><br>
+          <div class="fee-badge paid">Cabin bag needs Priority or fee (~€6–€30)</div>
+          <div class="col-detail">Cabin bag: 55 × 40 × 20 cm</div>
+        </div>
+        <div class="bag-col">
+          <div class="col-label">easyJet carry-on</div>
+          <div class="size-pill">56 × 45 × 25 cm — cabin bag included</div><br>
+          <div class="fee-badge paid">Overhead access needs Plus or fee</div>
+          <div class="col-detail">Without Plus: bag goes under the seat</div>
+        </div>
+      </div>
+      <div class="bag-note"><strong>Always buy bags when booking</strong> — airport bag fees are significantly higher. Weigh luggage before leaving. Both carriers charge for almost everything beyond a small personal item.</div>
     </div>
 
-    <div class="bag-row">
-      <div class="bag-airline">🌍 General rules</div>
-      <div class="bag-grid">
-        <div class="bag-cell"><div class="bag-label">Liquids (carry-on)</div><div class="bag-val">100 ml / 3.4 oz per container · 1 quart-size clear bag per person (US/EU TSA rules)</div></div>
-        <div class="bag-cell"><div class="bag-label">Lithium batteries</div><div class="bag-val">Carry-on only — not in checked bags. Power banks must be in carry-on.</div></div>
+    <!-- General rules -->
+    <div class="bag-row gen-row">
+      <div class="bag-airline">🌍 General rules — all airlines</div>
+      <div class="bag-cols">
+        <div class="gen-rule-item">
+          <div class="gen-rule-label">Liquids (carry-on)</div>
+          <div class="gen-rule-val">100 ml / 3.4 oz max per container<br>1 quart-size clear bag per person<br><span style="font-size:12px;color:var(--muted);">US TSA / EU rules</span></div>
+        </div>
+        <div class="gen-rule-item">
+          <div class="gen-rule-label">Lithium batteries &amp; power banks</div>
+          <div class="gen-rule-val">Carry-on only — never in checked bags<br><span style="font-size:12px;color:var(--muted);">All airlines, all routes</span></div>
+        </div>
+        <div class="gen-rule-item">
+          <div class="gen-rule-label">Overweight fees</div>
+          <div class="gen-rule-val">51–70 lb: typically $100–$150<br>Over 70 lb: $200+ or refused<br><span style="font-size:12px;color:var(--muted);">Standard limit: 50 lb / 23 kg</span></div>
+        </div>
+        <div class="gen-rule-item">
+          <div class="gen-rule-label">Locks on checked bags</div>
+          <div class="gen-rule-val">TSA-approved locks only on US flights<br><span style="font-size:12px;color:var(--muted);">Screeners can open without cutting</span></div>
+        </div>
       </div>
-      <div class="bag-note">Checked bag weight limits: 50 lb / 23 kg on most carriers. Overweight fees typically $100–$200 per bag. Locked bags: TSA-approved locks only on US flights so screeners can open without cutting.</div>
     </div>
 
   </div>
