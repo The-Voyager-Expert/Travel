@@ -23,20 +23,43 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
   font-size: 14px; line-height: 1.5; min-height: 100vh; padding-bottom: 80px;
 }
-.controls { display: flex; flex-direction: column; align-items: center; gap: 10px;
+
+/* Tips strip */
+.tips-strip {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  background: var(--warm); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 20px;
+}
+.tip-item {
+  display: flex; align-items: flex-start; gap: 6px;
+  font-size: 12.5px; color: var(--muted); flex: 1 1 220px;
+}
+.tip-item .tip-icon { font-size: 14px; flex-shrink: 0; line-height: 1.4; }
+
+/* Controls */
+.controls {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
   padding: 12px 0 14px; margin: 0 0 20px;
   position: sticky; top: 0; z-index: 10;
-  background: var(--bg); border-bottom: 1px solid var(--border2); }
+  background: var(--bg); border-bottom: 1px solid var(--border2);
+}
 .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
 .pill {
   font-family: inherit; font-size: 13px; line-height: 1; padding: 6px 12px;
   border: 1px solid var(--border2); border-radius: 6px; background: #fff;
   color: var(--text); cursor: pointer; white-space: nowrap;
-  transition: border-color .15s, box-shadow .15s, transform .08s;
+  transition: border-color .15s, box-shadow .15s;
   text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
 }
 .pill:hover { border-color: #b85c2a; box-shadow: 0 2px 8px rgba(184,92,42,.12); }
 .pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a; }
+.pill-count {
+  font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+  background: rgba(0,0,0,.07); color: inherit;
+}
+.pill.active .pill-count { background: rgba(255,255,255,.25); }
+
+/* Search */
 .search-wrap { display: flex; justify-content: center; }
 #tw-search {
   width: 360px; padding: 11px 18px;
@@ -47,17 +70,19 @@ body {
 #tw-search::placeholder { color: #A8895A; }
 #tw-search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
 #no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
+
+/* Rows */
 .row-list { display: flex; flex-direction: column; gap: 8px; }
 .water-row {
-  background: var(--surface); border: 1px solid var(--border2); border-left: 4px solid #ccc;
+  border: 1px solid var(--border2); border-left: 4px solid #ccc;
   border-radius: 8px; padding: 12px 15px; display: flex; flex-direction: column; gap: 5px;
-  scroll-margin-top: 100px;
+  scroll-margin-top: 110px;
 }
 .water-row.hidden { display: none; }
 .water-row.ws-safe   { border-left-color: #22c55e; background: #f0faf0; border-color: #b8e8b8; }
 .water-row.ws-unsafe { border-left-color: #ef4444; background: #fdf2f2; border-color: #f5b8b8; }
 .water-row.ws-varies { border-left-color: #f59e0b; background: #fdf9ee; border-color: #e8d080; }
-.wr-header { display: flex; justify-content: space-between; align-items: center; }
+.wr-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .wr-region { font-size: 13px; font-weight: 700; color: var(--text); }
 .wr-countries { font-size: 12px; color: var(--muted); }
 .wr-note { font-size: 13px; color: var(--muted); line-height: 1.5; }
@@ -67,8 +92,10 @@ body {
 .ws-safe   { background: #e8f5e8; color: #2a6a2a; border: 1px solid #a0d8a0; }
 .ws-unsafe { background: #fdecea; color: #9b2020; border: 1px solid #f5a0a0; }
 .ws-varies { background: #fdf5e0; color: #7a4a0a; border: 1px solid #e8c870; }
+
 @media (max-width: 600px) {
   #tw-search { width: 100%; max-width: 100%; }
+  .tips-strip { gap: 6px; }
 }
 </style>
 </head>
@@ -79,98 +106,190 @@ body {
 
   <div class="page-header"><h1>Tap Water</h1></div>
 
+  <div class="tips-strip">
+    <div class="tip-item"><span class="tip-icon">🧴</span><span>Carry a filtered water bottle (LifeStraw, Brita, GRAYL) in Avoid regions — cuts plastic waste and always gives you clean water.</span></div>
+    <div class="tip-item"><span class="tip-icon">🦷</span><span>In Avoid regions, brush teeth with bottled water too. The small amount you swallow while brushing is enough to cause issues.</span></div>
+    <div class="tip-item"><span class="tip-icon">🧊</span><span>Ice at sit-down restaurants in Avoid regions is usually made from purified water. At street stalls, skip it or ask first.</span></div>
+    <div class="tip-item"><span class="tip-icon">🏨</span><span>Hotels in Avoid regions always provide bottled water. Ask for extra at check-in rather than buying from minibar.</span></div>
+  </div>
+
   <div class="controls">
     <div class="search-wrap">
       <input type="text" id="tw-search" placeholder="🔍  Search region or country" aria-label="Search" autocomplete="off">
     </div>
     <div class="pills">
-      <button class="pill" data-filter="safe"   onclick="filterStatus(this,'safe')">🟢 Safe</button>
-      <button class="pill" data-filter="varies" onclick="filterStatus(this,'varies')">🟡 Varies</button>
-      <button class="pill" data-filter="unsafe" onclick="filterStatus(this,'avoid')">🔴 Avoid</button>
+      <button class="pill" data-filter="safe"   onclick="filterStatus(this,'safe')">🟢 Safe <span class="pill-count" id="cnt-safe"></span></button>
+      <button class="pill" data-filter="varies" onclick="filterStatus(this,'varies')">🟡 Varies <span class="pill-count" id="cnt-varies"></span></button>
+      <button class="pill" data-filter="unsafe" onclick="filterStatus(this,'avoid')">🔴 Avoid <span class="pill-count" id="cnt-avoid"></span></button>
     </div>
   </div>
   <p id="no-results">Nothing matches your search.</p>
 
   <div class="row-list">
 
+    <!-- SAFE -->
     <div class="water-row ws-safe" id="section-safe">
       <div class="wr-header"><span class="wr-region">Western Europe</span><span class="water-status ws-safe">Safe</span></div>
       <div class="wr-countries">Austria · Belgium · Denmark · Finland · France · Germany · Iceland · Ireland · Luxembourg · Netherlands · Norway · Sweden · Switzerland · UK</div>
-      <div class="wr-note">Tap water meets EU drinking water standards and is safe to drink in all major cities. Iceland tap water is glacier-fed and among the cleanest in the world.</div>
+      <div class="wr-note">Tap water meets EU drinking water standards and is safe to drink in all major cities. Iceland tap water is glacier-fed and among the cleanest in the world. In France, free drinking fountains (fontaines Wallace) are plentiful in Paris.</div>
     </div>
 
-    <div class="water-row ws-varies" id="section-varies">
-      <div class="wr-header"><span class="wr-region">Southern Europe</span><span class="water-status ws-varies">Varies</span></div>
-      <div class="wr-countries">Croatia · Greece · Italy · Portugal · Spain</div>
-      <div class="wr-note">Technically safe in major cities but often heavily chlorinated and unpleasant-tasting. Most locals drink bottled water. Stick to bottled in rural areas and islands (Croatia, Greek islands). Spain and Portugal tap water is safe in cities.</div>
-    </div>
-
-    <div class="water-row ws-varies">
-      <div class="wr-header"><span class="wr-region">Eastern Europe</span><span class="water-status ws-varies">Varies</span></div>
-      <div class="wr-countries">Czech Republic · Hungary · Poland · Slovenia · Slovakia</div>
-      <div class="wr-note">Prague, Budapest, Warsaw, and Ljubljana all have safe, clean tap water. Bottled water is widely used by locals in smaller cities and rural areas as a habit, not a necessity.</div>
+    <div class="water-row ws-safe">
+      <div class="wr-header"><span class="wr-region">Baltic States</span><span class="water-status ws-safe">Safe</span></div>
+      <div class="wr-countries">Estonia · Latvia · Lithuania</div>
+      <div class="wr-note">Tap water is safe to drink in Tallinn, Riga, and Vilnius. Meets EU standards. Locals drink it without hesitation.</div>
     </div>
 
     <div class="water-row ws-safe">
       <div class="wr-header"><span class="wr-region">USA &amp; Canada</span><span class="water-status ws-safe">Safe</span></div>
       <div class="wr-countries">All major cities</div>
-      <div class="wr-note">Tap water is regulated and safe to drink in all US and Canadian cities covered in the guides. Older buildings in some US cities may have lead pipes — use a filter or bottled water if the building is pre-1986.</div>
+      <div class="wr-note">Tap water is regulated and safe to drink in all US and Canadian cities. Older buildings in some US cities may have lead pipes — use a filter or bottled water if the building is pre-1986. Flint, MI remains an exception.</div>
     </div>
 
     <div class="water-row ws-safe">
       <div class="wr-header"><span class="wr-region">Australia &amp; New Zealand</span><span class="water-status ws-safe">Safe</span></div>
-      <div class="wr-note">Tap water is safe and well-regulated across all major cities. No precautions needed.</div>
+      <div class="wr-countries">Australia · New Zealand</div>
+      <div class="wr-note">Tap water is safe and well-regulated across all major cities. No precautions needed anywhere in Australia or New Zealand.</div>
     </div>
 
     <div class="water-row ws-safe">
       <div class="wr-header"><span class="wr-region">Japan &amp; South Korea</span><span class="water-status ws-safe">Safe</span></div>
-      <div class="wr-note">Tap water in Tokyo, Kyoto, Osaka, and Seoul is safe to drink and routinely rated among the best in Asia. Filtered water dispensers are common in hotels.</div>
-    </div>
-
-    <div class="water-row ws-unsafe" id="section-avoid">
-      <div class="wr-header"><span class="wr-region">Southeast Asia</span><span class="water-status ws-unsafe">Avoid</span></div>
-      <div class="wr-countries">Thailand · Vietnam · Indonesia · Philippines</div>
-      <div class="wr-note">Do not drink tap water. Use bottled or filtered water for drinking and brushing teeth. Ice in restaurants is typically made from purified water but verify at street stalls.</div>
+      <div class="wr-countries">Japan · South Korea</div>
+      <div class="wr-note">Tap water in Tokyo, Kyoto, Osaka, and Seoul is safe to drink and routinely rated among the best in Asia. Filtered water dispensers are common in hotels. Japan's tap water is extensively treated and excellent-tasting.</div>
     </div>
 
     <div class="water-row ws-safe">
       <div class="wr-header"><span class="wr-region">Singapore &amp; Hong Kong</span><span class="water-status ws-safe">Safe</span></div>
-      <div class="wr-note">Tap water meets WHO standards and is safe to drink directly from the tap. Singapore's water is among the most rigorously treated in Asia.</div>
+      <div class="wr-countries">Singapore · Hong Kong</div>
+      <div class="wr-note">Tap water meets WHO standards in both cities. Singapore's water is among the most rigorously treated in Asia, using multiple purification stages. Safe to drink directly from the tap.</div>
     </div>
 
-    <div class="water-row ws-unsafe">
-      <div class="wr-header"><span class="wr-region">China</span><span class="water-status ws-unsafe">Avoid</span></div>
-      <div class="wr-countries">Beijing · Shanghai · Chongqing · Zhangjiajie</div>
-      <div class="wr-note">Tap water is not safe to drink. Hotels provide bottled water. Boiled water from hotel kettles is generally safe if the kettle is clean.</div>
+    <div class="water-row ws-safe">
+      <div class="wr-header"><span class="wr-region">Taiwan</span><span class="water-status ws-safe">Safe</span></div>
+      <div class="wr-countries">Taiwan</div>
+      <div class="wr-note">Tap water in Taipei meets international safety standards, but locals typically boil it or use filters due to old pipe concerns in some buildings. Most hotels and restaurants serve filtered or boiled water. Bottled water is inexpensive and widely available.</div>
+    </div>
+
+    <!-- VARIES -->
+    <div class="water-row ws-varies" id="section-varies">
+      <div class="wr-header"><span class="wr-region">Southern Europe</span><span class="water-status ws-varies">Varies</span></div>
+      <div class="wr-countries">Croatia · Greece · Italy · Portugal · Spain</div>
+      <div class="wr-note">Technically safe in major cities but often heavily chlorinated and poor-tasting. Most locals drink bottled water. Stick to bottled in rural areas and islands — especially Croatian islands and Greek islands. Spain and Portugal tap water is safe in cities and fine to drink.</div>
+    </div>
+
+    <div class="water-row ws-varies">
+      <div class="wr-header"><span class="wr-region">Eastern Europe</span><span class="water-status ws-varies">Varies</span></div>
+      <div class="wr-countries">Czech Republic · Hungary · Poland · Slovakia · Slovenia</div>
+      <div class="wr-note">Prague, Budapest, Warsaw, Bratislava, and Ljubljana all have safe, clean tap water. Bottled water is widely used by locals in smaller cities and rural areas as a habit, not a necessity.</div>
+    </div>
+
+    <div class="water-row ws-varies">
+      <div class="wr-header"><span class="wr-region">Balkans</span><span class="water-status ws-varies">Varies</span></div>
+      <div class="wr-countries">Albania · Bosnia &amp; Herzegovina · Bulgaria · North Macedonia · Romania · Serbia</div>
+      <div class="wr-note">Technically treated in capital cities (Bucharest, Sofia, Belgrade) but water quality varies by neighborhood and pipe age. Most travelers use bottled water. In Albania and Bosnia, tap water outside Tirana and Sarajevo is unreliable. When in doubt, stick to bottled.</div>
     </div>
 
     <div class="water-row ws-varies">
       <div class="wr-header"><span class="wr-region">Middle East</span><span class="water-status ws-varies">Varies</span></div>
-      <div class="wr-countries">UAE · Israel</div>
-      <div class="wr-note">Technically meets WHO standards in Dubai and Abu Dhabi but tastes strongly of desalination. Bottled water is universally used. Israel tap water is safe to drink.</div>
-    </div>
-
-    <div class="water-row ws-unsafe">
-      <div class="wr-header"><span class="wr-region">Morocco &amp; Africa</span><span class="water-status ws-unsafe">Avoid</span></div>
-      <div class="wr-countries">Morocco · Nigeria · Lagos</div>
-      <div class="wr-note">Do not drink tap water. Use sealed bottled water. Avoid ice, salads washed in tap water, and fruit you haven't peeled yourself at street stalls.</div>
+      <div class="wr-countries">Israel · UAE</div>
+      <div class="wr-note">Israel tap water is safe and of good quality — drink freely in Tel Aviv and Jerusalem. Dubai and Abu Dhabi technically meet WHO standards but taste strongly of desalination; bottled water is universally preferred and cheap.</div>
     </div>
 
     <div class="water-row ws-varies">
       <div class="wr-header"><span class="wr-region">Latin America</span><span class="water-status ws-varies">Varies</span></div>
-      <div class="wr-countries">Mexico · Peru · Brazil · Argentina · Colombia · Chile</div>
-      <div class="wr-note">Avoid tap water in Mexico, Peru, Colombia, and Brazil. Chile (Santiago) and Argentina (Buenos Aires) have generally safe tap water but most travelers use bottled. Lima tap water is not safe.</div>
+      <div class="wr-countries">Argentina · Brazil · Chile · Colombia · Mexico · Peru</div>
+      <div class="wr-note">Avoid tap water in Mexico, Peru, Colombia, and most of Brazil. Chile (Santiago) and Argentina (Buenos Aires) have generally safe tap water by local standards, but most travelers use bottled out of caution. Lima tap water is not safe — use bottled for drinking and brushing teeth.</div>
     </div>
 
     <div class="water-row ws-varies">
       <div class="wr-header"><span class="wr-region">Caribbean</span><span class="water-status ws-varies">Varies</span></div>
-      <div class="wr-countries">Aruba · Barbados · Cayman Islands · Puerto Rico · USVI · Sint Maarten · Bahamas · Curaçao</div>
-      <div class="wr-note">Aruba, Barbados, Cayman Islands, Puerto Rico, USVI, and Curaçao have safe tap water. Bahamas and Sint Maarten tap water is technically treated but most visitors use bottled. Follow hotel guidance.</div>
+      <div class="wr-countries">Aruba · Barbados · Cayman Islands · Curaçao · Puerto Rico · Sint Maarten · USVI · Bahamas</div>
+      <div class="wr-note">Aruba, Barbados, Cayman Islands, Puerto Rico, USVI, and Curaçao have safe tap water. Bahamas and Sint Maarten water is technically treated but most visitors use bottled as a precaution. Follow hotel guidance — resort properties typically use filtered systems regardless.</div>
+    </div>
+
+    <div class="water-row ws-varies">
+      <div class="wr-header"><span class="wr-region">South Africa</span><span class="water-status ws-varies">Varies</span></div>
+      <div class="wr-countries">South Africa</div>
+      <div class="wr-note">Cape Town and Johannesburg tap water is technically treated and meets national standards, but aging infrastructure means quality varies widely by neighborhood. Most travelers and many locals use filtered or bottled water. Outside major cities, stick to bottled.</div>
+    </div>
+
+    <div class="water-row ws-varies">
+      <div class="wr-header"><span class="wr-region">Central America</span><span class="water-status ws-varies">Varies</span></div>
+      <div class="wr-countries">Belize · Costa Rica · Guatemala · Panama</div>
+      <div class="wr-note">Costa Rica (San José and major tourist areas) has generally safe tap water, one of the best in the region. Panama City tap water is treated and safe in the city. Guatemala and Belize: avoid tap water and use bottled throughout. Rural areas in all countries: always bottled.</div>
+    </div>
+
+    <div class="water-row ws-varies">
+      <div class="wr-header"><span class="wr-region">Pacific Islands</span><span class="water-status ws-varies">Varies</span></div>
+      <div class="wr-countries">Fiji · Hawaii · New Caledonia · Tahiti</div>
+      <div class="wr-note">Hawaii tap water is safe (US-regulated). Tahiti and Papeete tap water is treated and generally safe in the city. Fiji tap water in Suva is treated but most tourists use bottled; outer islands — always bottled. New Caledonia (Nouméa) tap water is safe.</div>
+    </div>
+
+    <!-- AVOID -->
+    <div class="water-row ws-unsafe" id="section-avoid">
+      <div class="wr-header"><span class="wr-region">Southeast Asia</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Cambodia · Indonesia · Laos · Myanmar · Philippines · Thailand · Vietnam</div>
+      <div class="wr-note">Do not drink tap water anywhere in Southeast Asia. Use bottled or filtered water for drinking and brushing teeth. Ice at restaurants is typically made from purified water, but skip it at street stalls. Bottled water is extremely cheap throughout the region.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">China</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Beijing · Chongqing · Shanghai · Zhangjiajie</div>
+      <div class="wr-note">Tap water is not safe to drink. Hotels provide complimentary bottled water daily. Boiled water from hotel kettles is safe if the kettle is clean. In-room hot water dispensers are standard in Chinese hotels and are safe to use.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">India</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">India</div>
+      <div class="wr-note">Never drink tap water in India, regardless of city. Use sealed bottled water for drinking, brushing teeth, and rinsing. Avoid ice in drinks unless you are certain it came from purified water. Sealed bottled water is available everywhere and very cheap.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">Nepal &amp; Sri Lanka</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Nepal · Sri Lanka</div>
+      <div class="wr-note">Do not drink tap water. Use sealed bottled water or water purification tablets. In Nepal, trekking lodges often have filtered water available for refilling bottles at low cost — a good option to reduce plastic waste. In Sri Lanka, bottled water is cheap and universal.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">Egypt</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Egypt</div>
+      <div class="wr-note">Do not drink tap water in Cairo, Luxor, or anywhere in Egypt. Stick to sealed bottled water for all drinking and teeth brushing. Nile River pollution and aging pipes make tap water unsafe for travelers. Bottled water is inexpensive and available everywhere.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">Jordan &amp; Saudi Arabia</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Jordan · Saudi Arabia</div>
+      <div class="wr-note">Tap water is technically treated in Amman and Riyadh but is not considered safe to drink due to desalination by-products and aging infrastructure. Bottled water is the universal standard. Use bottled for teeth brushing too.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">Morocco &amp; West Africa</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Ghana · Morocco · Nigeria · Senegal</div>
+      <div class="wr-note">Do not drink tap water. Use sealed bottled water throughout. Avoid ice, salads washed in tap water, and fruit you haven't peeled yourself at street stalls. This applies across Morocco, Nigeria, Ghana, and Senegal equally.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">East Africa</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Ethiopia · Kenya · Rwanda · Tanzania · Uganda</div>
+      <div class="wr-note">Do not drink tap water anywhere in East Africa. Nairobi, Dar es Salaam, Kampala, and Kigali all rely on aging infrastructure with inconsistent treatment. Use sealed bottled water or water purification tablets. Safari camps typically provide purified water — confirm at booking.</div>
     </div>
 
     <div class="water-row ws-unsafe">
       <div class="wr-header"><span class="wr-region">Turkey</span><span class="water-status ws-unsafe">Avoid</span></div>
-      <div class="wr-note">Do not drink tap water in Istanbul or anywhere in Turkey. Bottled water is cheap and widely available. Use bottled for teeth brushing too.</div>
+      <div class="wr-countries">Turkey</div>
+      <div class="wr-note">Do not drink tap water in Istanbul or anywhere in Turkey. The water is chlorinated but heavy metal content and pipe age make it unsuitable for drinking. Bottled water is cheap and widely available. Use bottled for teeth brushing as well.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">Cuba</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Cuba</div>
+      <div class="wr-note">Do not drink tap water in Havana or anywhere in Cuba. Infrastructure is aged and water treatment is inconsistent. Bottled water is available at hotels and stores. Bring water purification tablets as a backup since bottled water can occasionally be scarce outside resort areas.</div>
+    </div>
+
+    <div class="water-row ws-unsafe">
+      <div class="wr-header"><span class="wr-region">Maldives</span><span class="water-status ws-unsafe">Avoid</span></div>
+      <div class="wr-countries">Maldives</div>
+      <div class="wr-note">Tap water on most Maldivian islands is desalinated but not reliably safe to drink. Resort islands provide sealed or filtered water — always use what the property provides. On local islands, sealed bottled water only.</div>
     </div>
 
   </div>
@@ -179,14 +298,25 @@ body {
 <script>
 var activeFilter = null;
 
+function countRows() {
+  var counts = { safe: 0, varies: 0, avoid: 0 };
+  document.querySelectorAll('.water-row').forEach(function(r) {
+    if (r.classList.contains('ws-safe'))   counts.safe++;
+    if (r.classList.contains('ws-varies')) counts.varies++;
+    if (r.classList.contains('ws-unsafe')) counts.avoid++;
+  });
+  document.getElementById('cnt-safe').textContent   = counts.safe;
+  document.getElementById('cnt-varies').textContent = counts.varies;
+  document.getElementById('cnt-avoid').textContent  = counts.avoid;
+}
+
 function filterStatus(btn, status) {
-  var rows = document.querySelectorAll('.water-row');
+  var rows  = document.querySelectorAll('.water-row');
   var pills = document.querySelectorAll('.pill[data-filter]');
   if (activeFilter === status) {
-    // toggle off
     activeFilter = null;
     pills.forEach(function(p) { p.classList.remove('active'); });
-    rows.forEach(function(r) { r.classList.remove('hidden'); });
+    rows.forEach(function(r)  { r.classList.remove('hidden'); });
   } else {
     activeFilter = status;
     pills.forEach(function(p) { p.classList.remove('active'); });
@@ -195,7 +325,6 @@ function filterStatus(btn, status) {
       var show = r.classList.contains('ws-' + status);
       r.classList.toggle('hidden', !show);
     });
-    // anchor to first visible
     var anchor = document.getElementById('section-' + status);
     if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -211,13 +340,14 @@ function filterStatus(btn, status) {
     document.querySelectorAll('.pill[data-filter]').forEach(function(p) { p.classList.remove('active'); });
     var q = search.value.trim().toLowerCase();
     var visible = 0;
-    rows.forEach(function (r) {
+    rows.forEach(function(r) {
       var show = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
       r.classList.toggle('hidden', !show);
       if (show) visible++;
     });
     noRes.style.display = visible === 0 ? '' : 'none';
   });
+  countRows();
 })();
 </script>
 <script src="../assets/toolbar.js?v=71"></script>
