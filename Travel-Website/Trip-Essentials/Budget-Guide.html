@@ -10,6 +10,15 @@
 body { font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--text,#1a1917);
   font-size: var(--fs-body,14px); line-height: 1.5; }
 .index-section { max-width: none; margin: 8px auto 0; padding: 0 32px; }
+.sort-controls { margin: 12px 0; display: flex; gap: 8px; }
+.sort-btn { 
+  font-family: inherit; font-size: var(--fs-sub,12px); font-weight: 600;
+  padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border,#d8d4cc);
+  background: var(--surface,#fff); color: var(--text,#1a1917); cursor: pointer;
+  transition: all .15s;
+}
+.sort-btn:hover { border-color: var(--accent,#8a6c1a); color: var(--accent,#8a6c1a); }
+.sort-btn.active { background: var(--accent,#8a6c1a); color: #fff; border-color: var(--accent,#8a6c1a); }
 .index-table thead th {
   background: var(--surface2, #f0ede8); border-bottom: 2px solid var(--border, #d8d4cc);
   padding: 8px 12px; text-align: left; font-size: var(--fs-body,14px); font-weight: 700;
@@ -31,6 +40,7 @@ html { scroll-behavior: smooth; }
 @media (max-width: 600px) {
   .index-section { padding: 0 12px; }
   .index-table td, .index-table th { font-size: var(--fs-sub,12px) !important; padding: 4px 8px !important; }
+  .sort-controls { flex-wrap: wrap; }
 }
 </style>
 <link rel="stylesheet" href="../assets/mobile.css?v=50">
@@ -47,13 +57,18 @@ html { scroll-behavior: smooth; }
   <span class="updated-stamp">Updated June 2026</span>
   <input id="budget-search" type="search" placeholder="🔍  City name" aria-label="Search by city" autocomplete="off" spellcheck="false">
   <div id="budget-noresult">No city matches that search.</div>
+  <div class="sort-controls">
+    <button class="sort-btn" id="sort-asc" title="Sort by total cost: cheapest first">💰 Cheapest First</button>
+    <button class="sort-btn" id="sort-desc" title="Sort by total cost: most expensive first">💸 Most Expensive First</button>
+    <button class="sort-btn" id="sort-reset" title="Reset to alphabetical order">🔄 Reset</button>
+  </div>
   <table class="index-table">
-    <colgroup><col style="width:35%"><col style="width:32.5%"><col style="width:32.5%"></colgroup>
-    <thead><tr><th>City</th><th>Hotel (mid-range/night)</th><th>Food (per person/day)</th></tr></thead>
+    <colgroup><col style="width:30%"><col style="width:23%"><col style="width:23%"><col style="width:24%"></colgroup>
+    <thead><tr><th>City</th><th>Hotel (mid-range/night)</th><th>Food (per person/day)</th><th>Total (daily)</th></tr></thead>
     <tbody id="budget-tbody">
     </tbody>
   </table>
-  <p class="note">Prices are estimated daily costs per person for mid-range travel. Hotel prices are for one night in a mid-range hotel; food estimates include meals at casual restaurants. Costs vary by season and specific venue choices.</p>
+  <p class="note">Prices are estimated daily costs per person for mid-range travel. Hotel prices are for one night in a mid-range hotel; food estimates include meals at casual restaurants. Total is the sum of hotel and food costs. Costs vary by season and specific venue choices.</p>
 </div>
 
 <script>
@@ -220,15 +235,29 @@ const CITIES = [
   { name: "Zurich", hotel: "140-200", food: "45-75" }
 ];
 
-function initBudgetTable() {
+function parseRange(range) {
+  const [low, high] = range.split('-').map(x => parseInt(x, 10));
+  return { low, high, mid: Math.round((low + high) / 2) };
+}
+
+function calculateTotal(city) {
+  const hotelMid = parseRange(city.hotel).mid;
+  const foodMid = parseRange(city.food).mid;
+  return hotelMid + foodMid;
+}
+
+function initBudgetTable(cities) {
   const tbody = document.getElementById('budget-tbody');
-  CITIES.forEach(city => {
+  tbody.innerHTML = '';
+  cities.forEach((city, idx) => {
+    const total = calculateTotal(city);
     const row = document.createElement('tr');
-    row.style.background = CITIES.indexOf(city) % 2 === 0 ? '#FAF7F0' : '#FFFFFF';
+    row.style.background = idx % 2 === 0 ? '#FAF7F0' : '#FFFFFF';
     row.innerHTML = `
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);">${city.name}</td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">$${city.hotel}</td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">$${city.food}</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;font-weight:600;">$${total}</td>
     `;
     tbody.appendChild(row);
   });
@@ -258,9 +287,54 @@ function initSearch() {
   });
 }
 
+function initSorting() {
+  let currentSort = 'original';
+  const sortAsc = document.getElementById('sort-asc');
+  const sortDesc = document.getElementById('sort-desc');
+  const sortReset = document.getElementById('sort-reset');
+
+  function updateButtons() {
+    sortAsc.classList.remove('active');
+    sortDesc.classList.remove('active');
+    sortReset.classList.remove('active');
+    if (currentSort === 'asc') sortAsc.classList.add('active');
+    else if (currentSort === 'desc') sortDesc.classList.add('active');
+    else sortReset.classList.add('active');
+  }
+
+  sortAsc.addEventListener('click', () => {
+    if (currentSort !== 'asc') {
+      currentSort = 'asc';
+      const sorted = [...CITIES].sort((a, b) => calculateTotal(a) - calculateTotal(b));
+      initBudgetTable(sorted);
+    }
+    updateButtons();
+  });
+
+  sortDesc.addEventListener('click', () => {
+    if (currentSort !== 'desc') {
+      currentSort = 'desc';
+      const sorted = [...CITIES].sort((a, b) => calculateTotal(b) - calculateTotal(a));
+      initBudgetTable(sorted);
+    }
+    updateButtons();
+  });
+
+  sortReset.addEventListener('click', () => {
+    if (currentSort !== 'original') {
+      currentSort = 'original';
+      initBudgetTable(CITIES);
+    }
+    updateButtons();
+  });
+
+  updateButtons();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  initBudgetTable();
+  initBudgetTable(CITIES);
   initSearch();
+  initSorting();
 });
 </script>
 </body>
