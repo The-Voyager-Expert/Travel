@@ -137,6 +137,8 @@
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency', full: '💰 Currency' },
     null,
+    { href: base + 'Trip-Essentials/Budget-Guide.html', text: '💵 Budget', full: '💵 Budget Guide' },
+    null,
     { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
     null,
     { group: '🌤️ Weather', children: [
