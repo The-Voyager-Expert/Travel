@@ -150,7 +150,10 @@
     null,
     { group: '⚙️ Resources', children: [
         { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
-        { href: base + 'Trip-Essentials/Before-You-Go.html',         text: '📋 Before You Go' },
+        { href: base + 'Trip-Essentials/Tap-Water.html',             text: '🚰 Tap Water' },
+        { href: base + 'Trip-Essentials/Vaccines.html',              text: '💉 Vaccines' },
+        { href: base + 'Trip-Essentials/Baggage.html',               text: '🧳 Baggage' },
+        { href: base + 'Trip-Essentials/Cards-ATM.html',             text: '💳 Cards & ATM' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📲 SIM Cards' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',         text: '🧾 Tipping' },
