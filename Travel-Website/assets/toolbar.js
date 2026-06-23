@@ -135,7 +135,7 @@
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },
     null,
-    { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Money', full: '💰 Currency' },
+    { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency', full: '💰 Currency' },
     null,
     { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
     null,
