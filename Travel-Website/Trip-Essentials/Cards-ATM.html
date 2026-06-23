@@ -23,7 +23,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif;
   font-size: 14px; line-height: 1.5; min-height: 100vh; padding-bottom: 80px;
 }
-.search-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+
+/* ── Controls ── */
+.controls { display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 20px; }
+.search-wrap { display: flex; justify-content: center; }
 #ca-search {
   width: 360px; padding: 11px 18px;
   border: 1.5px solid #e6e2da; border-radius: 6px;
@@ -32,11 +35,31 @@ body {
 }
 #ca-search::placeholder { color: #A8895A; }
 #ca-search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
+
+.pills { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.pill {
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2);
+  background: #fff; font-family: inherit; font-size: 13px; line-height: 1; color: var(--text);
+  cursor: pointer; transition: background .15s, border-color .15s, color .15s; white-space: nowrap;
+}
+.pill:hover, .pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a; }
+
 #no-results { display: none; color: var(--muted); font-size: 13px; margin-bottom: 12px; text-align: center; }
+
+/* ── Section header ── */
+.section-head {
+  font-size: 13px; font-weight: 700; color: #5C3D11;
+  border-bottom: 2px solid #B8860B; padding-bottom: 8px;
+  margin: 28px 0 12px; display: flex; align-items: center; gap: 8px;
+}
+.section-head .sh-emoji { font-size: 16px; line-height: 1; }
+.section-block.hidden { display: none; }
+
+/* ── Card rows ── */
 .row-list { display: flex; flex-direction: column; gap: 8px; }
 .card-row {
   background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
-  padding: 12px 15px; display: grid; grid-template-columns: 180px 1fr; gap: 0 16px; align-items: start;
+  padding: 12px 15px; display: grid; grid-template-columns: 200px 1fr; gap: 0 16px; align-items: start;
 }
 .card-row.hidden { display: none; }
 .card-name { font-size: 13px; font-weight: 700; color: var(--text); }
@@ -47,8 +70,16 @@ body {
   transition: background .12s, border-color .12s;
 }
 .card-name a:hover { background: var(--hover); border-color: #c8b480; text-decoration: none; }
+.card-name .plain { display: inline-block; padding: 2px 9px; border-radius: 6px; border: 1px solid var(--border2); background: var(--warm); font-weight: 700; }
 .card-type { font-size: 11px; color: var(--muted); margin-top: 2px; }
 .card-note { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px;
+  border-radius: 4px; margin-left: 5px; vertical-align: middle; white-space: nowrap;
+}
+.badge-top { background: #fdecc8; color: #7a4d00; border: 1px solid #e8c97a; }
+.badge-warn { background: #fce4e4; color: #8b2020; border: 1px solid #e8a0a0; }
+
 @media (max-width: 600px) {
   #ca-search { width: 100%; max-width: 100%; }
   .card-row  { grid-template-columns: 1fr; gap: 4px 0; }
@@ -62,70 +93,271 @@ body {
 
   <div class="page-header"><h1>Cards &amp; ATM</h1></div>
 
-  <div class="search-wrap">
-    <input type="text" id="ca-search" placeholder="🔍  Search card or topic" aria-label="Search" autocomplete="off">
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="text" id="ca-search" placeholder="🔍  Search card or topic" aria-label="Search" autocomplete="off">
+    </div>
+    <div class="pills">
+      <button class="pill active" data-filter="all">All</button>
+      <button class="pill" data-filter="credit">Credit Cards</button>
+      <button class="pill" data-filter="debit">Debit &amp; ATM</button>
+      <button class="pill" data-filter="prepaid">Prepaid</button>
+      <button class="pill" data-filter="tips">ATM Tips</button>
+      <button class="pill" data-filter="cash">Cash by Region</button>
+    </div>
   </div>
+
   <p id="no-results">Nothing matches your search.</p>
 
-  <div class="row-list">
+  <!-- ── Credit Cards ── -->
+  <div class="section-block" data-section="credit">
+    <div class="section-head"><span class="sh-emoji">💳</span> Credit Cards — No Foreign Transaction Fee</div>
+    <div class="row-list">
 
-    <div class="card-row">
-      <div><div class="card-name"><a href="https://creditcards.chase.com/travel-credit-cards/sapphire" target="_blank" rel="noopener">Chase Sapphire Preferred / Reserve</a></div><div class="card-type">No foreign transaction fee</div></div>
-      <div class="card-note">No foreign transaction fee on all purchases. Reserve earns 3x on dining and travel abroad. Both use the Visa network — widely accepted globally. Reserve also includes trip delay and cancellation insurance.</div>
+      <div class="card-row" data-tags="credit">
+        <div>
+          <div class="card-name"><a href="https://creditcards.chase.com/travel-credit-cards/sapphire" target="_blank" rel="noopener">Chase Sapphire Preferred / Reserve</a></div>
+          <div class="card-type">Visa · No foreign transaction fee</div>
+        </div>
+        <div class="card-note">No foreign transaction fee on all purchases. Reserve earns 3× on dining and travel abroad. Both run on Visa — widely accepted globally. Reserve includes trip delay and cancellation insurance.</div>
+      </div>
+
+      <div class="card-row" data-tags="credit">
+        <div>
+          <div class="card-name"><a href="https://www.capitalone.com/credit-cards/venture/" target="_blank" rel="noopener">Capital One Venture / Venture X</a></div>
+          <div class="card-type">Visa · No foreign transaction fee</div>
+        </div>
+        <div class="card-note">No foreign transaction fee. Earns 2× on all purchases everywhere — no category complexity. One of the most straightforward cards for international spending.</div>
+      </div>
+
+      <div class="card-row" data-tags="credit">
+        <div>
+          <div class="card-name"><a href="https://www.citibank.com/us/cards/citi-strata-premier-card/" target="_blank" rel="noopener">Citi Strata Premier</a></div>
+          <div class="card-type">Mastercard · No foreign transaction fee</div>
+        </div>
+        <div class="card-note">No foreign transaction fee. Earns 3× on air travel, hotels, restaurants, and groceries. Mastercard network — strong acceptance in Europe and Latin America where Amex is weaker.</div>
+      </div>
+
+      <div class="card-row" data-tags="credit">
+        <div>
+          <div class="card-name"><a href="https://www.americanexpress.com/us/credit-cards/category/travel/" target="_blank" rel="noopener">Amex Gold / Platinum</a></div>
+          <div class="card-type">Amex · No foreign transaction fee</div>
+          <span class="badge badge-warn">Carry backup Visa/MC</span>
+        </div>
+        <div class="card-note">No foreign transaction fee. Amex acceptance is lower outside the US — always carry a Visa or Mastercard as backup in Europe, Asia, and Latin America. Amex is well-accepted in UAE, Australia, Japan, and UK.</div>
+      </div>
+
     </div>
-
-    <div class="card-row">
-      <div><div class="card-name"><a href="https://www.capitalone.com/credit-cards/venture/" target="_blank" rel="noopener">Capital One Venture / Venture X</a></div><div class="card-type">No foreign transaction fee</div></div>
-      <div class="card-note">No foreign transaction fee. Visa network. Venture X earns 2x on all purchases everywhere — simple and reliable for international spending. One of the easiest cards for international use with no category complexity.</div>
-    </div>
-
-    <div class="card-row">
-      <div><div class="card-name"><a href="https://www.schwab.com/checking" target="_blank" rel="noopener">Charles Schwab Debit</a></div><div class="card-type">Best ATM card abroad</div></div>
-      <div class="card-note">Reimburses all ATM fees worldwide — including the foreign bank's own surcharge. No foreign transaction fee. No monthly balance minimum. The best debit card for international ATM withdrawals, full stop. Requires a Schwab brokerage account.</div>
-    </div>
-
-    <div class="card-row">
-      <div><div class="card-name"><a href="https://www.americanexpress.com/us/credit-cards/category/travel/" target="_blank" rel="noopener">Amex Gold / Platinum</a></div><div class="card-type">No foreign transaction fee</div></div>
-      <div class="card-note">No foreign transaction fee. American Express acceptance is lower outside the US — always carry a Visa or Mastercard as backup in Europe, Asia, and Latin America. Amex is widely accepted in UAE, Australia, Japan, and UK.</div>
-    </div>
-
-    <div class="card-row">
-      <div><div class="card-name"><a href="https://wise.com/us/card/" target="_blank" rel="noopener">Wise</a> / <a href="https://www.revolut.com/en-US/" target="_blank" rel="noopener">Revolut</a></div><div class="card-type">Multi-currency prepaid</div></div>
-      <div class="card-note">Wise uses the mid-market exchange rate with a small transparent fee — usually the best rate available. Revolut offers fee-free exchange up to a monthly limit. Both are useful for currencies where ATM access is limited or rates are poor. Not a substitute for a primary bank card.</div>
-    </div>
-
-    <div class="card-row">
-      <div><div class="card-name">Cards to avoid abroad</div><div class="card-type">High-fee cards</div></div>
-      <div class="card-note">Most standard bank debit cards (Chase, Bank of America, Wells Fargo checking) charge 1–3% foreign transaction fees plus $2–$5 ATM fees per withdrawal. Check your card's terms before relying on it internationally.</div>
-    </div>
-
-    <div class="card-row">
-      <div><div class="card-name">ATM tips</div><div class="card-type">General guidance</div></div>
-      <div class="card-note">Use bank ATMs (not independent kiosks in airports/tourist areas — they charge high fees). Always decline "dynamic currency conversion" (DCC) when asked — choose to be charged in the local currency, not USD. Withdraw larger amounts less frequently to minimize per-transaction fees. Notify your bank before departure to avoid card freezes.</div>
-    </div>
-
-    <div class="card-row">
-      <div><div class="card-name">Cash by region</div><div class="card-type">When to carry cash</div></div>
-      <div class="card-note">Japan: cash is still widely used — many restaurants, temples, and smaller shops are cash-only. Morocco, Vietnam, Peru: cash needed for markets and small vendors. Western Europe, Australia, Singapore: card or contactless payment accepted almost everywhere. Always carry some local currency for taxis, tips, and emergencies.</div>
-    </div>
-
   </div>
+
+  <!-- ── Debit & ATM ── -->
+  <div class="section-block" data-section="debit">
+    <div class="section-head"><span class="sh-emoji">🏧</span> Debit Cards &amp; ATM</div>
+    <div class="row-list">
+
+      <div class="card-row" data-tags="debit">
+        <div>
+          <div class="card-name"><a href="https://www.schwab.com/checking" target="_blank" rel="noopener">Charles Schwab Debit</a> <span class="badge badge-top">Best ATM card</span></div>
+          <div class="card-type">Visa Debit · Reimburses all ATM fees</div>
+        </div>
+        <div class="card-note">Reimburses all ATM fees worldwide — including the foreign bank's own surcharge. No foreign transaction fee. No monthly balance minimum. Requires a Schwab brokerage account (free to open).</div>
+      </div>
+
+      <div class="card-row" data-tags="debit">
+        <div>
+          <div class="card-name"><a href="https://www.fidelity.com/spend-save/fidelity-cash-management-account" target="_blank" rel="noopener">Fidelity Cash Management</a></div>
+          <div class="card-type">Visa Debit · Reimburses ATM fees</div>
+        </div>
+        <div class="card-note">Reimburses ATM fees worldwide (up to $10 per ATM). No foreign transaction fee. Good backup to Schwab for anyone already in the Fidelity ecosystem.</div>
+      </div>
+
+      <div class="card-row" data-tags="debit">
+        <div>
+          <div class="card-name"><span class="plain">Cards to avoid abroad</span></div>
+          <div class="card-type">High-fee checking debit cards</div>
+          <span class="badge badge-warn">High fees</span>
+        </div>
+        <div class="card-note">Most standard bank debit cards (Chase, Bank of America, Wells Fargo checking) charge 1–3% foreign transaction fees plus $2–$5 per ATM withdrawal. Check your card's terms before relying on it internationally.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Prepaid / Multi-currency ── -->
+  <div class="section-block" data-section="prepaid">
+    <div class="section-head"><span class="sh-emoji">🔄</span> Prepaid &amp; Multi-Currency</div>
+    <div class="row-list">
+
+      <div class="card-row" data-tags="prepaid">
+        <div>
+          <div class="card-name"><a href="https://wise.com/us/card/" target="_blank" rel="noopener">Wise</a></div>
+          <div class="card-type">Multi-currency · Mid-market rate</div>
+        </div>
+        <div class="card-note">Uses the mid-market exchange rate with a small transparent fee — usually the best rate available. Useful for currencies where ATM access is limited or exchange rates are poor. Not a substitute for a primary bank card.</div>
+      </div>
+
+      <div class="card-row" data-tags="prepaid">
+        <div>
+          <div class="card-name"><a href="https://www.revolut.com/en-US/" target="_blank" rel="noopener">Revolut</a></div>
+          <div class="card-type">Multi-currency · Fee-free exchange (monthly limit)</div>
+        </div>
+        <div class="card-note">Fee-free currency exchange up to a monthly limit on free plans. Paid plans raise or remove the limit. Handy for holding a balance in local currency before a trip. Not a substitute for a primary bank card.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ATM Tips ── -->
+  <div class="section-block" data-section="tips">
+    <div class="section-head"><span class="sh-emoji">📋</span> ATM Tips</div>
+    <div class="row-list">
+
+      <div class="card-row" data-tags="tips">
+        <div>
+          <div class="card-name"><span class="plain">Choose local currency</span></div>
+          <div class="card-type">Dynamic currency conversion (DCC)</div>
+        </div>
+        <div class="card-note">When an ATM or card terminal asks "Pay in USD or local currency?" — always choose local currency. Choosing USD activates dynamic currency conversion, which applies a bad exchange rate set by the merchant, not your bank.</div>
+      </div>
+
+      <div class="card-row" data-tags="tips">
+        <div>
+          <div class="card-name"><span class="plain">Use bank ATMs only</span></div>
+          <div class="card-type">Avoid independent kiosks</div>
+        </div>
+        <div class="card-note">Stick to ATMs attached to a physical bank branch. Independent kiosks in airports, tourist areas, and convenience stores charge high fees and sometimes offer poor rates. Look for ATMs from national banks or major international networks (Cirrus, Plus).</div>
+      </div>
+
+      <div class="card-row" data-tags="tips">
+        <div>
+          <div class="card-name"><span class="plain">Withdraw larger amounts</span></div>
+          <div class="card-type">Reduce per-transaction costs</div>
+        </div>
+        <div class="card-note">Per-transaction ATM fees add up fast if you withdraw small amounts frequently. Take out enough for 2–4 days at once. Keep excess in a hotel safe if needed.</div>
+      </div>
+
+      <div class="card-row" data-tags="tips">
+        <div>
+          <div class="card-name"><span class="plain">4-digit PIN required</span></div>
+          <div class="card-type">PIN format</div>
+        </div>
+        <div class="card-note">Most ATMs outside the US only accept 4-digit PINs. If your card has a longer PIN, set a 4-digit one before departure. If your PIN starts with 0, some older European ATMs may not accept it — check with your bank.</div>
+      </div>
+
+      <div class="card-row" data-tags="tips">
+        <div>
+          <div class="card-name"><span class="plain">Notify your bank before travel</span></div>
+          <div class="card-type">Prevent card freezes</div>
+        </div>
+        <div class="card-note">Many banks flag out-of-country transactions and freeze the card automatically. Call or set a travel notice in your bank's app before departure. Carry two cards from different networks in case one is blocked.</div>
+      </div>
+
+      <div class="card-row" data-tags="tips">
+        <div>
+          <div class="card-name"><span class="plain">ATM skimming</span></div>
+          <div class="card-type">Security</div>
+        </div>
+        <div class="card-note">Skimming devices are more common in tourist areas and older ATMs. Wiggle the card slot before inserting — skimmers are loose. Cover the keypad with your hand when entering your PIN. Prefer tap-to-pay (contactless) for purchases to avoid card data exposure entirely.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Cash by Region ── -->
+  <div class="section-block" data-section="cash">
+    <div class="section-head"><span class="sh-emoji">💵</span> Cash by Region</div>
+    <div class="row-list">
+
+      <div class="card-row" data-tags="cash">
+        <div>
+          <div class="card-name"><span class="plain">Japan</span></div>
+          <div class="card-type">High cash dependency</div>
+        </div>
+        <div class="card-note">Cash is still widely used. Many restaurants, temples, vending machines, and smaller shops are cash-only. 7-Eleven and Japan Post ATMs reliably accept foreign cards. Withdraw cash upon arrival.</div>
+      </div>
+
+      <div class="card-row" data-tags="cash">
+        <div>
+          <div class="card-name"><span class="plain">Morocco · Vietnam · Peru</span></div>
+          <div class="card-type">Partial cash dependency</div>
+        </div>
+        <div class="card-note">Cash needed for markets, street food, smaller vendors, and tips. Cards accepted at hotels and larger restaurants. ATMs available in cities but limited in rural areas.</div>
+      </div>
+
+      <div class="card-row" data-tags="cash">
+        <div>
+          <div class="card-name"><span class="plain">Western Europe · Australia · Singapore</span></div>
+          <div class="card-type">Mostly cashless</div>
+        </div>
+        <div class="card-note">Card or contactless payment accepted almost everywhere. Tap-to-pay (Visa/Mastercard contactless, Apple Pay, Google Pay) is standard. Carrying small amounts of cash for taxis and emergencies is still useful.</div>
+      </div>
+
+      <div class="card-row" data-tags="cash">
+        <div>
+          <div class="card-name"><span class="plain">Contactless &amp; mobile pay abroad</span></div>
+          <div class="card-type">Apple Pay · Google Pay</div>
+        </div>
+        <div class="card-note">Apple Pay and Google Pay work anywhere that accepts contactless Visa or Mastercard — which is most of Western Europe, UK, Australia, Japan, Singapore, and Canada. Your stored card's foreign transaction fee still applies. No separate setup needed.</div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <script>
 (function () {
-  var search = document.getElementById('ca-search');
-  var rows   = document.querySelectorAll('.card-row');
-  var noRes  = document.getElementById('no-results');
-  search.addEventListener('input', function () {
+  var search  = document.getElementById('ca-search');
+  var pills   = document.querySelectorAll('.pill[data-filter]');
+  var rows    = document.querySelectorAll('.card-row');
+  var blocks  = document.querySelectorAll('.section-block');
+  var noRes   = document.getElementById('no-results');
+  var current = 'all';
+
+  function applyFilters() {
     var q = search.value.trim().toLowerCase();
     var visible = 0;
+
+    blocks.forEach(function (b) {
+      var sec = b.dataset.section;
+      var showBlock = current === 'all' || current === sec;
+      b.classList.toggle('hidden', !showBlock);
+    });
+
     rows.forEach(function (r) {
+      if (r.closest('.section-block.hidden')) { r.classList.add('hidden'); return; }
       var show = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
       r.classList.toggle('hidden', !show);
       if (show) visible++;
     });
-    noRes.style.display = visible === 0 ? '' : 'none';
+
+    if (q) {
+      // when searching, show all section blocks that have visible rows
+      blocks.forEach(function (b) {
+        var hasVisible = Array.from(b.querySelectorAll('.card-row')).some(function (r) { return !r.classList.contains('hidden'); });
+        b.classList.toggle('hidden', !hasVisible);
+      });
+      noRes.style.display = visible === 0 ? '' : 'none';
+    } else {
+      noRes.style.display = 'none';
+    }
+  }
+
+  pills.forEach(function (p) {
+    p.addEventListener('click', function () {
+      pills.forEach(function (x) { x.classList.remove('active'); });
+      p.classList.add('active');
+      current = p.dataset.filter;
+      search.value = '';
+      applyFilters();
+    });
+  });
+
+  search.addEventListener('input', function () {
+    pills.forEach(function (x) { x.classList.remove('active'); });
+    document.querySelector('.pill[data-filter="all"]').classList.add('active');
+    current = 'all';
+    applyFilters();
   });
 })();
 </script>
