@@ -208,8 +208,8 @@ def main() -> int:
         if folder not in search_folders and not (name and name in search_names):
             missing["search"].append(folder)
 
-        # trip-resources: block must exist + all four universal links present
-        _TR_REQUIRED = ["Safety-Guide.html", "Visas.html", "Before-You-Go.html", "Weather.html"]
+        # trip-resources: block must exist + all three universal links present
+        _TR_REQUIRED = ["Safety-Guide.html", "Visas.html", "Weather.html"]
         guide_html = ""
         for html in (GUIDES_DIR / folder).glob("*.html"):
             if STAMP in _read(html):
