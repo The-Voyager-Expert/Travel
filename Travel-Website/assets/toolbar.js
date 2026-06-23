@@ -126,10 +126,7 @@
         { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '💻 EU Lounges' },
       ] },
     null,
-    { group: '🚆 Transit', children: [
-        { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Train Guide' },
-        { href: base + 'Trip-Essentials/City-Transit-Cards.html',   text: '🚇 City Transit Cards' },
-      ]},
+    { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 Transit', full: '🚆 European Train Guide' },
     null,
     { group: '✈️ Flights', children: [
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
@@ -160,6 +157,7 @@
     { group: '⚙️ Resources', children: [
         { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
         { href: base + 'Trip-Essentials/Before-You-Go.html',         text: '📋 Before You Go' },
+        { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
         { href: base + 'Trip-Essentials/Pickleball.html',            text: '🏓 Pickleball' },
       ]},
   ];
