@@ -63,21 +63,18 @@ body {
 }
 .section-head .sh-emoji { font-size: 16px; line-height: 1; }
 
-/* ── Option cards ── */
-.option-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-}
-.option-card {
-  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 14px 16px;
-}
+/* ── Decision table ── */
+.dt-wrap { background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; overflow: hidden; }
+.decision-table { width: 100%; border-collapse: collapse; }
+.decision-table th { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px 8px; text-align: left; border-bottom: 1px solid var(--border2); }
+.decision-table td { font-size: 13px; padding: 10px 14px; border-top: 1px solid var(--border2); vertical-align: top; line-height: 1.45; }
+.decision-table tr:first-child td { border-top: none; }
+.dt-option { font-weight: 700; white-space: nowrap; }
+.dt-cost { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.decision-table.hidden { display: none; }
+
+/* ── Option cards (kept for hidden-class compat) ── */
 .option-card.hidden { display: none; }
-.option-title {
-  font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;
-  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-}
-.option-title .ot-emoji { font-size: 17px; line-height: 1; }
 .tag {
   display: inline-block; font-size: 11px; font-weight: 600;
   padding: 2px 7px; border-radius: 4px; margin-left: 4px;
@@ -85,10 +82,17 @@ body {
 .tag-best    { background: #e8f5e8; color: #2a6a2a; border: 1px solid #a0d8a0; }
 .tag-cheap   { background: #e8eef8; color: #2a3a7a; border: 1px solid #a0b8e8; }
 .tag-easiest { background: #fdf5e0; color: #7a4a0a; border: 1px solid #e8c870; }
-.option-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
-.option-meta { margin-top: 8px; display: flex; flex-direction: column; gap: 3px; }
-.meta-row { font-size: 12px; color: var(--text); display: flex; gap: 6px; }
-.meta-label { color: var(--muted); min-width: 60px; flex-shrink: 0; }
+
+/* ── Country SIM cards ── */
+.sim-country-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.sim-country-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 14px 16px; }
+.sim-country-card.hidden { display: none; }
+.sccard-header { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.sccard-rows { display: flex; flex-direction: column; gap: 5px; }
+.sccard-row { font-size: 12px; display: flex; gap: 8px; line-height: 1.45; }
+.sccard-label { color: var(--muted); min-width: 52px; flex-shrink: 0; font-weight: 600; }
+.sccard-note { margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.4; border-top: 1px solid var(--border2); padding-top: 8px; }
+.sccard-note a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
 /* ── Provider / region rows ── */
 .row-list { display: flex; flex-direction: column; gap: 8px; }
@@ -132,8 +136,9 @@ body {
   #sim-search { width: 100%; max-width: 100%; box-sizing: border-box; }
   .pills { flex-wrap: wrap; }
   /* .pill size comes from the shared filter-pill standard in assets/mobile.css */
-  .option-grid { grid-template-columns: 1fr; }
+  .sim-country-grid { grid-template-columns: 1fr; }
   .info-row { grid-template-columns: 1fr; gap: 4px 0; }
+  .decision-table th:last-child, .decision-table td:last-child { display: none; }
 }
 </style>
 </head>
@@ -166,48 +171,34 @@ body {
 
   <!-- ── Option Types ── -->
   <div class="section" data-section="esim local carrier">
-    <div class="section-head"><span class="sh-emoji">📡</span> Option Types</div>
-    <div class="option-grid">
-
-      <div class="option-card" data-tags="esim">
-        <div class="option-title">
-          <span class="ot-emoji">📶</span> eSIM
-          <span class="tag tag-best">Most flexible</span>
-        </div>
-        <div class="option-desc">A digital SIM activated via app before you leave. No physical swap, no lost card. Works on unlocked iPhone XS and later, and most Android phones from 2019+.</div>
-        <div class="option-meta">
-          <div class="meta-row"><span class="meta-label">Cost</span> ~$5–$30 for 7–14 days of data</div>
-          <div class="meta-row"><span class="meta-label">Requires</span> Unlocked phone with eSIM support</div>
-          <div class="meta-row"><span class="meta-label">Best for</span> Short trips, multi-country, last-minute setup</div>
-        </div>
-      </div>
-
-      <div class="option-card" data-tags="local">
-        <div class="option-title">
-          <span class="ot-emoji">🏦</span> Local SIM
-          <span class="tag tag-cheap">Cheapest data</span>
-        </div>
-        <div class="option-desc">Physical SIM bought at the destination airport, phone shop, or convenience store. Usually the lowest per-GB cost.</div>
-        <div class="option-meta">
-          <div class="meta-row"><span class="meta-label">Cost</span> ~$5–$20 for unlimited or large data</div>
-          <div class="meta-row"><span class="meta-label">Requires</span> Unlocked phone, sometimes passport</div>
-          <div class="meta-row"><span class="meta-label">Best for</span> Longer stays, budget trips, high data use</div>
-        </div>
-      </div>
-
-      <div class="option-card" data-tags="carrier">
-        <div class="option-title">
-          <span class="ot-emoji">📱</span> Carrier Plan
-          <span class="tag tag-easiest">Easiest</span>
-        </div>
-        <div class="option-desc">International add-on from your home carrier. No setup — your number works. Most expensive option per GB. Daily pass or included tier depending on carrier and plan.</div>
-        <div class="option-meta">
-          <div class="meta-row"><span class="meta-label">Cost</span> $0 (included) or $10–$15/day</div>
-          <div class="meta-row"><span class="meta-label">Requires</span> Nothing extra — uses your existing plan</div>
-          <div class="meta-row"><span class="meta-label">Best for</span> Short trips, work calls on your number</div>
-        </div>
-      </div>
-
+    <div class="section-head"><span class="sh-emoji">📡</span> Which Option?</div>
+    <div class="dt-wrap">
+      <table class="decision-table" data-tags="esim local carrier">
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>Choose when</th>
+            <th>Typical cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="dt-option">📶 eSIM</span></td>
+            <td>Short trip, multi-country, or you don't want to hunt for a SIM on arrival. Set up before you leave via app.</td>
+            <td class="dt-cost">$5–30 / trip</td>
+          </tr>
+          <tr>
+            <td><span class="dt-option">🏦 Local SIM</span></td>
+            <td>Staying 1+ week in one country, high data use, or on a budget. Cheapest per-GB — see specific cards below.</td>
+            <td class="dt-cost">$3–20 / 30 days</td>
+          </tr>
+          <tr>
+            <td><span class="dt-option">📱 Carrier Plan</span></td>
+            <td>You need your own number to work and don't want to touch anything. T-Mobile Magenta includes it free.</td>
+            <td class="dt-cost">$0 or $10–15/day</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -327,43 +318,128 @@ body {
 
 
   <!-- ── By Region ── -->
-  <div class="section" data-section="region">
-    <div class="section-head"><span class="sh-emoji">🌍</span> By Region</div>
-    <div class="row-list">
+  <div class="section" data-section="region local">
+    <div class="section-head"><span class="sh-emoji">🌍</span> Local SIM by Destination</div>
+    <div class="sim-country-grid">
 
-      <div class="info-row" data-tags="region">
-        <div><div class="row-name">🇪🇺 Europe</div></div>
-        <div class="row-note">eSIM works reliably across all countries. Local SIMs from any EU carrier roam free across the EU — buy one in the first country and use it everywhere. Airalo's Europe regional plan is a strong option.</div>
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇯🇵 Japan</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> IIJmio data SIM — vending machines at Narita/Haneda arrivals, or convenience stores (7-Eleven, FamilyMart)</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 15 GB, 30 days, ~$14</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Data only — no calls. Passport required at counter. eSIM (Airalo/IIJmio) is easier if your phone supports it.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Tokyo/tokyo_v1.html">Tokyo</a> · <a href="../Guides/Kyoto/kyoto_v1.html">Kyoto</a></div>
       </div>
 
-      <div class="info-row" data-tags="region">
-        <div><div class="row-name">🇯🇵 Japan</div></div>
-        <div class="row-note">eSIM is the easiest option — IIJmio, Airalo, and Nomad all work well. Physical tourist SIMs are sold at Narita/Haneda vending machines and convenience stores (data-only; calls require a separate plan). Passport required for physical SIM registration.<div style="font-size:11px;color:var(--muted,#6a6660);margin-top:4px;">Guides: <a href="../Guides/Tokyo/tokyo_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Tokyo</a> · <a href="../Guides/Kyoto/kyoto_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Kyoto</a></div></div>
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇹🇭 Thailand</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> AIS Tourist SIM — yellow AIS booth in Suvarnabhumi arrivals hall, or any 7-Eleven</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 30 GB + unlimited social media, 30 days, ~$8 (฿299)</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Unlimited calls within Thailand included. DTAC is a cheaper alternative but AIS has wider coverage outside Bangkok.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Bangkok/bangkok_v1.html">Bangkok</a> · <a href="../Guides/Phuket/phuket_v1.html">Phuket</a></div>
       </div>
 
-      <div class="info-row" data-tags="region">
-        <div><div class="row-name">🌏 Southeast Asia</div></div>
-        <div class="row-note">Local SIMs are extremely cheap and widely available at airports. Thailand (AIS, DTAC), Singapore (Singtel, StarHub), and Vietnam all sell tourist SIMs at the arrivals hall. eSIM also works in most major cities.<div style="font-size:11px;color:var(--muted,#6a6660);margin-top:4px;">Guides: <a href="../Guides/Bangkok/bangkok_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Bangkok</a> · <a href="../Guides/Singapore/singapore_v3.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Singapore</a> · <a href="../Guides/Bali/bali_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Bali</a> · <a href="../Guides/Phuket/phuket_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Phuket</a></div></div>
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇸🇬 Singapore</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Singtel Tourist SIM — Changi Airport Terminal 1/2/3 arrivals counters, or any 7-Eleven in the city</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 100 GB, 30 days, ~S$18 (~$13)</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> StarHub and M1 are similar in price and coverage. The Singtel card activates immediately — no passport required.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Singapore/singapore_v3.html">Singapore</a></div>
       </div>
 
-      <div class="info-row" data-tags="region">
-        <div><div class="row-name">🇬🇧 United Kingdom</div></div>
-        <div class="row-note">No longer in the EU — your EU SIM won't roam there free. Get a separate plan. eSIM works on all major UK networks (EE, O2, Vodafone). Three UK physical SIMs offer strong global roaming if you're also visiting other countries.<div style="font-size:11px;color:var(--muted,#6a6660);margin-top:4px;">Guides: <a href="../Guides/London/london_v5.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">London</a> · <a href="../Guides/Edinburgh/edinburgh_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Edinburgh</a> · <a href="../Guides/Glasgow/glasgow_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Glasgow</a> · <a href="../Guides/Oxford/oxford_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Oxford</a> · <a href="../Guides/Cambridge/cambridge_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Cambridge</a></div></div>
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇮🇩 Indonesia / Bali</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Telkomsel — counters at Ngurah Rai Airport arrivals, or Indomaret/Alfamart convenience stores</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 30 GB, 30 days, ~$6 (Rp 100,000)</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Telkomsel is the only carrier with reliable coverage across Bali's rural areas and smaller islands. XL Axiata is cheaper in cities but drops out in Ubud and the north.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Bali/bali_v1.html">Bali</a></div>
       </div>
 
-      <div class="info-row" data-tags="region">
-        <div><div class="row-name">🌎 Middle East / Gulf</div></div>
-        <div class="row-note">eSIM works in UAE, Saudi Arabia, and Israel (Airalo, Holafly). Physical SIM purchase requires passport registration and can take time at the counter. Some VoIP apps are blocked in UAE — check ahead.</div>
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇬🇧 United Kingdom</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> giffgaff SIM — order free online before you leave (delivered to your home); or Three UK at WHSmith in any major airport</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 80 GB, 30 days, ~£10 (~$13) via giffgaff; or 100 GB, 30 days, ~£15 via Three</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> giffgaff uses O2's network — good London coverage. Three UK has the best coverage outside London. Your EU SIM will not roam free in the UK — it needs its own plan.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/London/london_v5.html">London</a> · <a href="../Guides/Edinburgh/edinburgh_v1.html">Edinburgh</a> · <a href="../Guides/Glasgow/glasgow_v1.html">Glasgow</a> · <a href="../Guides/Oxford/oxford_v1.html">Oxford</a> · <a href="../Guides/Cambridge/cambridge_v1.html">Cambridge</a></div>
       </div>
 
-      <div class="info-row" data-tags="region">
-        <div><div class="row-name">🌎 Latin America</div></div>
-        <div class="row-note">eSIM coverage is expanding but variable — verify country support before departure. Local SIMs are easy in Mexico, Colombia, Argentina, and Brazil. Airalo's Latin America regional plan covers multiple countries.<div style="font-size:11px;color:var(--muted,#6a6660);margin-top:4px;">Guides: <a href="../Guides/Buenos Aires/buenos_aires_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Buenos Aires</a> · <a href="../Guides/Rio de Janeiro/rio_de_janeiro_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Rio de Janeiro</a> · <a href="../Guides/Lima/lima_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Lima</a> · <a href="../Guides/Santiago/santiago_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Santiago</a> · <a href="../Guides/Cusco/cusco_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Cusco</a></div></div>
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇪🇺 Europe (multi-country)</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Any EU carrier SIM in your first country — roams free across all EU member states. Orange Holiday (France) is widely recommended: sold at airports and Orange stores.</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> Orange Holiday: 20 GB EU-wide, 14 days, ~€25 (~$27). Renew for another 14 days if needed.</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> For EU-only trips, Airalo's Europe regional eSIM is often cleaner and comparably priced. Local SIM makes more sense for longer stays.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Paris/paris_v7.html">Paris</a> · <a href="../Guides/Amsterdam/amsterdam_v1.html">Amsterdam</a> · <a href="../Guides/Berlin/berlin_v1.html">Berlin</a> · <a href="../Guides/Rome/rome_v1.html">Rome</a> · <a href="../Guides/Barcelona/barcelona_v1.html">Barcelona</a></div>
       </div>
 
-      <div class="info-row" data-tags="region">
-        <div><div class="row-name">🇦🇺 Australia &amp; NZ</div></div>
-        <div class="row-note">eSIM works on Telstra, Optus, and Vodafone AU networks. Airalo and Nomad both offer Australia plans. Woolworths Mobile and Amaysim sell cheap prepaid SIMs at major supermarkets. New Zealand: Spark and One NZ are reliable — physical SIM is the more consistent option there.<div style="font-size:11px;color:var(--muted,#6a6660);margin-top:4px;">Guides: <a href="../Guides/Sydney/sydney_v2.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Sydney</a> · <a href="../Guides/Melbourne/melbourne_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Melbourne</a> · <a href="../Guides/Wellington/wellington_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Wellington</a> · <a href="../Guides/Queenstown/queenstown_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Queenstown</a></div></div>
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇦🇺 Australia</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Telstra Prepaid — airport kiosks (Sydney, Melbourne), Woolworths, post offices, or Telstra stores in the city</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 40 GB, 28 days, ~A$30 (~$20)</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Telstra is the only realistic choice if you're leaving major cities — Optus and Vodafone drop out in regional areas and anywhere outside the coast. Worth the small premium.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Sydney/sydney_v2.html">Sydney</a> · <a href="../Guides/Melbourne/melbourne_v1.html">Melbourne</a></div>
+      </div>
+
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇳🇿 New Zealand</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Spark NZ — Auckland or Queenstown Airport kiosks, Countdown supermarkets, or Spark stores downtown</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 7 GB, 28 days, ~NZ$19 (~$11); or 30 GB for ~NZ$29</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Spark has the best rural and South Island coverage — important if you're doing Fiordland, Wanaka, or the West Coast. 1degrees is cheaper for city-only stays.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Wellington/wellington_v1.html">Wellington</a> · <a href="../Guides/Queenstown/queenstown_v1.html">Queenstown</a></div>
+      </div>
+
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇵🇪 Peru</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Bitel — airport kiosks at Jorge Chávez (Lima) arrivals, or Bitel stores throughout Cusco and Lima</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 10 GB, 30 days, ~$5</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Bitel has the best signal in the Andes and Sacred Valley — Claro and Movistar lose coverage above 3,000m. Essential if you're going to Cusco, Machu Picchu, or anywhere outside Lima.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Lima/lima_v1.html">Lima</a> · <a href="../Guides/Cusco/cusco_v1.html">Cusco</a></div>
+      </div>
+
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇨🇱 Chile</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Entel — Arturo Merino Benítez Airport (Santiago) arrivals kiosk, or Entel stores in the city center</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 30 GB, 30 days, ~CLP 15,000 (~$15)</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Entel has the best national coverage, including Patagonia and the Lake District. WOM is cheaper in Santiago but drops out in the south.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Santiago/santiago_v1.html">Santiago</a></div>
+      </div>
+
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇦🇷 Argentina</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Claro or Personal — kiosks at Ezeiza Airport arrivals, or any electronics shop (Garbarino, Frávega) in Buenos Aires</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> ~10–15 GB, 30 days, ~$5–10 (pricing fluctuates with peso rate)</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Buy with USD cash converted at the blue rate for best value. Passport required. Personal has slightly better Buenos Aires coverage; Claro is stronger in Patagonia.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Buenos Aires/buenos_aires_v1.html">Buenos Aires</a></div>
+      </div>
+
+      <div class="sim-country-card" data-tags="region local">
+        <div class="sccard-header">🇧🇷 Brazil</div>
+        <div class="sccard-rows">
+          <div class="sccard-row"><span class="sccard-label">Buy</span> Vivo — Galeão Airport (Rio) or Guarulhos (São Paulo) arrivals counters, or Vivo stores downtown</div>
+          <div class="sccard-row"><span class="sccard-label">Gets you</span> 20 GB, 30 days, ~R$30 (~$6)</div>
+          <div class="sccard-row"><span class="sccard-label">Note</span> Vivo has the best national coverage. TIM is a solid backup. Passport required for registration. eSIM via Airalo is increasingly reliable if you want to avoid the counter.</div>
+        </div>
+        <div class="sccard-note">Guides: <a href="../Guides/Rio de Janeiro/rio_de_janeiro_v1.html">Rio de Janeiro</a></div>
       </div>
 
     </div>
