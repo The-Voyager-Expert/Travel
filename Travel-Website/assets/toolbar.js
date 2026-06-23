@@ -137,8 +137,6 @@
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency', full: '💰 Currency' },
     null,
-    { href: base + 'Trip-Essentials/Budget-Guide.html', text: '💵 Budget', full: '💵 Budget Guide' },
-    null,
     { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
     null,
     { group: '🌤️ Weather', children: [
@@ -159,6 +157,7 @@
         { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📱 SIM Cards' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',         text: '🧾 Tipping' },
+        { href: base + 'Trip-Essentials/Budget-Guide.html',           text: '💵 Budget' },
         { href: base + 'Trip-Essentials/Pickleball.html',            text: '🏓 Pickleball' },
       ]},
   ];
