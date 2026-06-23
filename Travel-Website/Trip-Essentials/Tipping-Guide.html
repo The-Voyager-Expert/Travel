@@ -17,6 +17,12 @@
   --muted:   #6a6660;
   --accent:  #8a6c1a;
   --hover:   #faefd8;
+
+  /* norm border-left accents */
+  --c-expected:    #5aaa5a;
+  --c-appreciated: #5a82c8;
+  --c-check:       #c8a030;
+  --c-skip:        #b0aca6;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -28,64 +34,92 @@ body {
   min-height: 100vh;
   padding-bottom: 80px;
 }
-/* .wrap — fluid width from _travel_style.css */
 
-/* ── Legend ── */
-.legend {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  margin-bottom: 16px;
+/* ── Stat bar ── */
+.stat-bar {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 16px 0 18px;
 }
-.leg {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11.5px; color: var(--muted);
+.stat-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 6px;
+  background: var(--surface); border: 1px solid var(--border2);
+  font-size: 12.5px; color: var(--text); white-space: nowrap;
 }
-.leg-dot {
-  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
-  flex-shrink: 0;
-}
-/* dots use each level's chip background + border so they read as mini chips */
-.leg-dot.expected    { background: #e8f5e8; border: 2px solid #a0d8a0; }
-.leg-dot.appreciated { background: #e8eef8; border: 2px solid #a0b8e8; }
-.leg-dot.check       { background: #fdf5e0; border: 2px solid #e8c870; }
-.leg-dot.skip        { background: #f0eeeb; border: 2px solid #d8d4cc; }
+.stat-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.stat-dot.expected    { background: var(--c-expected); }
+.stat-dot.appreciated { background: var(--c-appreciated); }
+.stat-dot.check       { background: var(--c-check); }
+.stat-dot.skip        { background: var(--c-skip); }
+.stat-label { color: var(--muted); }
+.stat-count { font-weight: 700; }
 
 /* ── Controls ── */
 .controls {
-  display: flex; flex-direction: column; align-items: center; flex-wrap: wrap;
-  gap: 14px; margin-bottom: 16px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; margin-bottom: 18px;
 }
-.controls input[type="search"] { margin-bottom: 0; order: -1; }
+.controls input[type="search"] { order: -1; }
 
-.pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.pills { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
 .pill {
   padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2);
   background: #fff; font-family: inherit; font-size: 13px; line-height: 1; color: var(--text);
   cursor: pointer; transition: background .15s, border-color .15s, color .15s; white-space: nowrap;
 }
-.pill:hover, .pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a; }
+.pill:hover, .pill.active {
+  background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+  color: #fff; border-color: #b85c2a;
+}
 
-/* ── Country rows ── */
-.country-list { display: flex; flex-direction: column; gap: 10px; }
+/* ── Region headers ── */
+.region-header {
+  background: linear-gradient(90deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  color: #fff; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 9px 16px; border-radius: 6px;
+  margin: 20px 0 10px;
+}
+.region-header:first-child { margin-top: 0; }
 
+/* ── Country list ── */
+.country-list { display: flex; flex-direction: column; gap: 0; }
+
+/* ── Country cards ── */
 .country-row {
-  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
-  padding: 13px 16px; display: grid;
-  grid-template-columns: 200px auto;
-  gap: 0 20px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 14px 16px 14px 20px;
+  display: grid;
+  grid-template-columns: 210px auto;
+  gap: 0 24px;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(26,25,23,.04);
+  transition: box-shadow .15s;
 }
-.country-left { }
-.country-name { font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px; }
-.country-flag { font-size: 17px; line-height: 1; }
-.country-cities {
-  font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5;
+.country-row::before {
+  content: '';
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 4px; border-radius: 8px 0 0 8px;
 }
+.country-row.norm-expected::before    { background: var(--c-expected); }
+.country-row.norm-appreciated::before { background: var(--c-appreciated); }
+.country-row.norm-check::before       { background: var(--c-check); }
+.country-row.norm-skip::before        { background: var(--c-skip); }
+.country-row:hover { box-shadow: 0 2px 10px rgba(26,25,23,.09); }
+
+.country-left { display: flex; flex-direction: column; justify-content: flex-start; }
+.country-name { font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px; line-height: 1.2; }
+.country-flag { font-size: 18px; line-height: 1; }
+.country-cities { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.55; }
 
 .country-right { }
-.tip-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.tip-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 
 .norm-chip {
-  display: inline-block; font-size: 10.5px; font-weight: 700;
-  padding: 2px 8px; border-radius: 999px; letter-spacing: .02em;
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; letter-spacing: .04em;
   text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
 }
 .norm-chip.expected    { background: #e8f5e8; color: #1a5a1a; border: 1px solid #a0d8a0; }
@@ -93,10 +127,17 @@ body {
 .norm-chip.check       { background: #fdf5e0; color: #7a4a00; border: 1px solid #e8c870; }
 .norm-chip.skip        { background: #f0eeeb; color: #6a6660; border: 1px solid #d8d4cc; }
 
-.tip-rows { display: flex; flex-direction: column; gap: 3px; }
-.tip-row  { font-size: 12.5px; color: var(--text); display: flex; gap: 6px; }
-.tip-label { color: var(--muted); flex-shrink: 0; width: 134px; }
-.tip-note  { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.4; font-style: italic; }
+.tip-rows { display: flex; flex-direction: column; gap: 4px; }
+.tip-row  {
+  font-size: 12.5px; color: var(--text);
+  display: flex; gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid #f0ede8;
+}
+.tip-row:last-child { border-bottom: none; }
+.tip-label { color: var(--muted); flex-shrink: 0; width: 140px; }
+.tip-value { color: var(--text); font-weight: 500; }
+.tip-note  { font-size: 11.5px; color: var(--muted); margin-top: 7px; line-height: 1.45; }
 
 .empty { text-align: center; padding: 48px 0; color: var(--muted); font-size: 13px; }
 
@@ -105,10 +146,11 @@ body {
   .controls { align-items: center; }
   .controls input[type="search"] { width: 100%; }
   .pills { flex-wrap: wrap; }
-  /* .pill size comes from the shared filter-pill standard in assets/mobile.css */
+  .stat-bar { gap: 6px; }
+  .stat-pill { font-size: 11.5px; padding: 6px 11px; }
 
-  .country-row { grid-template-columns: 1fr; gap: 10px; }
-  .tip-label { width: 110px; }
+  .country-row { grid-template-columns: 1fr; gap: 12px; padding: 13px 14px 13px 18px; }
+  .tip-label { width: 120px; }
 }
 @media (max-width: 359px) {
   .wrap { padding: 0 14px; }
@@ -125,14 +167,10 @@ body {
   </div>
   <span class="updated-stamp">Updated June 2026</span>
 
-  <div class="legend">
-    <span class="leg"><span class="leg-dot expected"></span> Expected</span>
-    <span class="leg"><span class="leg-dot appreciated"></span> Appreciated</span>
-    <span class="leg"><span class="leg-dot check"></span> Check Bill</span>
-    <span class="leg"><span class="leg-dot skip"></span> Not Customary</span>
-  </div>
+  <div class="stat-bar" id="stat-bar"></div>
 
   <div class="controls">
+    <input type="search" id="search" placeholder="🔍  Country or city" aria-label="Search by country or city" autocomplete="off">
     <div class="pills" id="region-pills">
       <button class="pill active" data-region="all">All</button>
       <button class="pill" data-region="americas">Americas</button>
@@ -141,7 +179,6 @@ body {
       <button class="pill" data-region="asiapac">Asia · Pacific</button>
       <button class="pill" data-region="other">M.E. &amp; Africa</button>
     </div>
-    <input type="search" id="search" placeholder="🔍  Country or city" aria-label="Search by country or city" autocomplete="off">
   </div>
 
   <div class="country-list" id="list"></div>
@@ -766,16 +803,40 @@ var COUNTRIES = [
 var activeRegion = 'all';
 var searchVal    = '';
 
+var REGION_LABELS = {
+  americas: 'Americas',
+  caribbean: 'Caribbean',
+  europe: 'Europe',
+  asiapac: 'Asia · Pacific',
+  other: 'Middle East & Africa'
+};
+var REGION_ORDER = ['americas','caribbean','europe','asiapac','other'];
+
 function norm(n) {
   var map = {expected:'Expected', appreciated:'Appreciated', check:'Check Bill', skip:'Not Customary'};
   return map[n] || n;
 }
 
+function buildStatBar() {
+  var counts = {expected:0, appreciated:0, check:0, skip:0};
+  COUNTRIES.forEach(function(c) { if (counts[c.norm] !== undefined) counts[c.norm]++; });
+  var labels = {expected:'Expected', appreciated:'Appreciated', check:'Check Bill', skip:'Not Customary'};
+  var html = '';
+  ['expected','appreciated','check','skip'].forEach(function(k) {
+    html += '<div class="stat-pill">' +
+      '<span class="stat-dot ' + k + '"></span>' +
+      '<span class="stat-label">' + labels[k] + '</span>' +
+      '<span class="stat-count">' + counts[k] + '</span>' +
+    '</div>';
+  });
+  document.getElementById('stat-bar').innerHTML = html;
+}
+
 function renderCard(c) {
   var tipRows = c.tips.map(function(t) {
-    return '<div class="tip-row"><span class="tip-label">' + t.label + '</span><span>' + t.value + '</span></div>';
+    return '<div class="tip-row"><span class="tip-label">' + t.label + '</span><span class="tip-value">' + t.value + '</span></div>';
   }).join('');
-  return '<div class="country-row" data-region="' + c.region + '" data-search="' + (c.name + ' ' + c.cities).toLowerCase() + '">' +
+  return '<div class="country-row norm-' + c.norm + '">' +
     '<div class="country-left">' +
       '<div class="country-name"><span class="country-flag">' + c.flag + '</span>' + c.name + '</div>' +
       '<div class="country-cities">' + c.cities + '</div>' +
@@ -792,17 +853,36 @@ function render() {
   var list = document.getElementById('list');
   var filtered = COUNTRIES.filter(function(c) {
     if (activeRegion !== 'all' && c.region !== activeRegion) return false;
-    if (searchVal) {
-      var q = searchVal;
-      if ((c.name + ' ' + c.cities).toLowerCase().indexOf(q) === -1) return false;
-    }
+    if (searchVal && (c.name + ' ' + c.cities).toLowerCase().indexOf(searchVal) === -1) return false;
     return true;
   });
   if (filtered.length === 0) {
     list.innerHTML = '<div class="empty">No results for "' + searchVal + '"</div>';
     return;
   }
-  list.innerHTML = filtered.map(renderCard).join('');
+
+  // Group by region in canonical order (only regions that appear in filtered set)
+  var grouped = {};
+  filtered.forEach(function(c) {
+    if (!grouped[c.region]) grouped[c.region] = [];
+    grouped[c.region].push(c);
+  });
+
+  var html = '';
+  var regions = activeRegion === 'all'
+    ? REGION_ORDER.filter(function(r) { return grouped[r]; })
+    : [activeRegion];
+
+  regions.forEach(function(r) {
+    if (!grouped[r]) return;
+    // Only show region headers when "All" is active or when searching
+    if (activeRegion === 'all' || searchVal) {
+      html += '<div class="region-header">' + REGION_LABELS[r] + '</div>';
+    }
+    html += grouped[r].map(renderCard).join('');
+  });
+
+  list.innerHTML = html;
 }
 
 document.getElementById('region-pills').addEventListener('click', function(e) {
@@ -819,6 +899,7 @@ document.getElementById('search').addEventListener('input', function(e) {
   render();
 });
 
+buildStatBar();
 render();
 </script>
 
