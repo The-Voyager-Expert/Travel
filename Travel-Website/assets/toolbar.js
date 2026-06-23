@@ -133,12 +133,9 @@
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Devices', full: '🔌 Plug Adapters' },
+    { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },
     null,
-    { group: '💰 Money', children: [
-        { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency' },
-        { href: base + 'Trip-Essentials/Tipping-Guide.html',  text: '🧾 Tipping' },
-      ]},
+    { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Money', full: '💰 Currency' },
     null,
     { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
     null,
@@ -156,6 +153,7 @@
         { href: base + 'Trip-Essentials/Before-You-Go.html',         text: '📋 Before You Go' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📲 SIM Cards' },
+        { href: base + 'Trip-Essentials/Tipping-Guide.html',         text: '🧾 Tipping' },
         { href: base + 'Trip-Essentials/Pickleball.html',            text: '🏓 Pickleball' },
       ]},
   ];
