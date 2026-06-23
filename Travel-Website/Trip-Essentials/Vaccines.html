@@ -41,6 +41,23 @@ body {
 #vc-search::placeholder { color: #A8895A; }
 #vc-search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
 
+/* ── Legend ── */
+.tier-legend {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; margin-bottom: 18px;
+}
+.tleg {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--muted);
+}
+.tleg-dot {
+  width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+}
+.tleg-dot.req { background: #f0c040; }
+.tleg-dot.rec { background: #6db96d; }
+.tleg-dot.con { background: #93a8d8; }
+.tleg-dot.med { background: #e08080; }
+
 /* ── Region pills ── */
 .region-bar {
   display: flex; flex-wrap: wrap; gap: 6px;
@@ -62,9 +79,12 @@ body {
 #dest-panel.hidden { display: none; }
 .dest-header {
   font-size: 15px; font-weight: 700; color: var(--text);
-  margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
 }
-.dest-header span { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 8px; }
+.dest-countries {
+  font-size: 12px; color: var(--muted); margin-bottom: 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
 
 /* ── Vaccine cards ── */
 .vc-grid { display: flex; flex-direction: column; gap: 8px; }
@@ -76,7 +96,6 @@ body {
 .vc-card.rec  { background: var(--rec-bg); border-color: var(--rec-bd); }
 .vc-card.con  { background: var(--con-bg); border-color: var(--con-bd); }
 .vc-card.med  { background: var(--med-bg); border-color: var(--med-bd); }
-.vc-card.base { background: var(--surface); border-color: var(--border); border-left-width: 1px; border-radius: 8px; }
 
 .vc-left { display: flex; flex-direction: column; gap: 3px; }
 .vc-name { font-size: 13px; font-weight: 700; color: var(--text); }
@@ -88,24 +107,17 @@ body {
 .rec .vc-badge  { background: #6db96d; color: #fff; }
 .con .vc-badge  { background: #93a8d8; color: #fff; }
 .med .vc-badge  { background: #e08080; color: #fff; }
-.base .vc-badge { background: #d0cdc7; color: #4a4845; }
 
 .vc-note { font-size: 13px; color: var(--muted); line-height: 1.5; }
 .vc-note strong { color: var(--text); }
 
-/* ── Timing note ── */
-.timing-bar {
-  margin-top: 14px; padding: 10px 14px; border-radius: 6px;
-  background: var(--surface); border: 1px solid var(--border);
-  font-size: 12px; color: var(--muted);
-}
-.timing-bar strong { color: var(--text); }
-
-/* ── Routine section ── */
+/* ── Section labels ── */
 .section-label {
   font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--muted); margin: 24px 0 10px;
 }
+
+/* ── Routine chips ── */
 .routine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
 .routine-chip {
   background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
@@ -113,14 +125,20 @@ body {
 }
 .routine-chip span { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; }
 
-/* ── Placeholder (no region selected) ── */
-#prompt-text {
-  text-align: center; color: var(--muted); font-size: 13px;
-  padding: 32px 0 8px;
+/* ── Timing / info bars ── */
+.info-bar {
+  margin-top: 14px; padding: 11px 14px; border-radius: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: 12px; color: var(--muted); line-height: 1.6;
 }
+.info-bar strong { color: var(--text); }
+.info-bar + .info-bar { margin-top: 8px; }
 
 /* ── Search results ── */
-.search-row { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 15px; display: none; }
+.search-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 15px; margin-bottom: 8px; display: none;
+}
 .search-row.match { display: block; }
 .sr-name { font-size: 13px; font-weight: 700; }
 .sr-dest { font-size: 11px; color: var(--muted); margin-top: 1px; }
@@ -143,119 +161,200 @@ body {
   <div id="toolbar-mount" data-depth="1" data-maxwidth="760"></div>
   <div class="page-header"><h1>Vaccines</h1></div>
 
-  <!-- Search -->
   <div class="search-wrap">
     <input type="text" id="vc-search" placeholder="🔍  Search vaccine or destination" autocomplete="off">
   </div>
   <p id="no-results">Nothing matches your search.</p>
 
-  <!-- Search results (shown when typing) -->
-  <div id="search-panel">
-    <div id="search-rows"></div>
-  </div>
+  <div id="search-panel"><div id="search-rows"></div></div>
 
-  <!-- Main UI (region picker + cards) -->
   <div id="main-ui">
+
+    <!-- Legend -->
+    <div class="tier-legend">
+      <div class="tleg"><div class="tleg-dot req"></div>Required for entry</div>
+      <div class="tleg"><div class="tleg-dot rec"></div>Recommended</div>
+      <div class="tleg"><div class="tleg-dot con"></div>Consider based on activities</div>
+      <div class="tleg"><div class="tleg-dot med"></div>Prescription medication</div>
+    </div>
 
     <!-- Region pills -->
     <div class="region-bar" id="region-bar">
       <div class="rpill active" data-region="all">All destinations</div>
-      <div class="rpill" data-region="africa">Sub-Saharan Africa</div>
+      <div class="rpill" data-region="africa-sub">Sub-Saharan Africa</div>
+      <div class="rpill" data-region="africa-east">East Africa</div>
+      <div class="rpill" data-region="africa-north">North Africa</div>
       <div class="rpill" data-region="sea">Southeast Asia</div>
       <div class="rpill" data-region="south-asia">South Asia</div>
       <div class="rpill" data-region="latin">Latin America</div>
       <div class="rpill" data-region="caribbean">Caribbean</div>
-      <div class="rpill" data-region="mideast">Middle East</div>
+      <div class="rpill" data-region="mideast">Middle East & Gulf</div>
       <div class="rpill" data-region="east-asia">East Asia</div>
+      <div class="rpill" data-region="eastern-europe">Eastern Europe</div>
+      <div class="rpill" data-region="central-asia">Central Asia</div>
+      <div class="rpill" data-region="pacific">Pacific Islands</div>
+      <div class="rpill" data-region="australia">Australia & NZ</div>
       <div class="rpill" data-region="europe">Western Europe</div>
     </div>
 
-    <!-- Destination-specific panel -->
     <div id="dest-panel" class="hidden"></div>
-
-    <!-- All-destinations / routine always shown -->
     <div id="all-panel"></div>
 
-  </div><!-- /main-ui -->
-
-</div><!-- /wrap -->
+  </div>
+</div>
 
 <script>
-/* ── Data ── */
 var REGIONS = {
-  africa: {
+  'africa-sub': {
     label: 'Sub-Saharan Africa',
-    countries: 'Kenya, Tanzania, Ghana, Senegal, Rwanda, Uganda, Zambia, Zimbabwe, and most of sub-Saharan Africa',
+    countries: 'Nigeria, Ghana, Senegal, Côte d\'Ivoire, Cameroon, DRC, Zambia, Zimbabwe, Mozambique, Ethiopia, and most of West and Central Africa',
     cards: [
-      { type:'req', name:'Yellow Fever', badge:'Required for entry', note:'<strong>Proof of vaccination required</strong> to enter most sub-Saharan African countries, and on arrival from endemic countries. Given at certified travel clinics only. One dose — lasts for life.' },
-      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Risk is high across the region, especially outside major hotels and tourist restaurants. Oral vaccine (4 doses over 1 week) or single injection — get the injection at least 2 weeks before travel.' },
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water — common risk in the region. Two doses provide long-term (20+ year) protection. First dose can be given as close as 2 weeks before departure.' },
-      { type:'med', name:'Malaria (medication)', badge:'Prescription required', note:'No vaccine. Prescription antimalarials (atovaquone-proguanil, doxycycline, or mefloquine) are essential for most of sub-Saharan Africa. See a travel doctor at least 4–6 weeks before departure. Use DEET repellent and long sleeves at dusk.' },
-      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for safari, camping, cycling, or any trip where you\'ll be far from urban medical care. Pre-exposure series is 3 doses over 3 weeks — start at least 4 weeks before travel.' },
+      { type:'req', name:'Yellow Fever', badge:'Required for entry', note:'<strong>Proof of vaccination is a legal entry requirement</strong> for most sub-Saharan African countries, and for any traveler arriving from an endemic country. Must be given at an approved travel clinic. One dose — lasts for life. Get the International Certificate of Vaccination (yellow card) — border officials check it.' },
+      { type:'rec', name:'Meningococcal (MenACWY)', badge:'Recommended', note:'Essential for travel through the <strong>African meningitis belt</strong> — a band stretching from Senegal to Ethiopia (Burkina Faso, Chad, Mali, Niger, Nigeria, northern Ghana and Cameroon). Risk peaks during dry season (December–June). Single dose of MenACWY vaccine. Also required for Hajj/Umrah in Saudi Arabia.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'High risk across the region, especially outside tourist hotels. Oral vaccine (4 doses over 1 week) or single injection. Get the injection at least 2 weeks before departure. Oral vaccine must be refrigerated and requires 4 weeks before it\'s effective.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water — common across the region. Two doses provide 20+ years of protection. First dose can be given as close as 2 weeks before departure.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription required', note:'No vaccine for travelers. <strong>Prescription antimalarials are essential</strong> for most of sub-Saharan Africa — atovaquone-proguanil (Malarone), doxycycline, or mefloquine. Start Malarone 1–2 days before, doxycycline 2 days before, mefloquine 2–3 weeks before. Use DEET 30%+ and permethrin-treated clothing. See a travel doctor at least 4–6 weeks out.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for safari trips, cycling, camping, or any stay far from urban medical care. Dog, bat, and monkey bites are the main risks. Pre-exposure series is 3 doses over 3 weeks — must start at least 4 weeks before travel. Seek medical care immediately after any bite regardless of vaccination status.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider', note:'An adult booster (IPV) is recommended for travel to parts of West and Central Africa where poliovirus circulation has been reported. Check CDC/WHO advisories for your specific countries.' },
+    ]
+  },
+  'africa-east': {
+    label: 'East Africa',
+    countries: 'Kenya, Tanzania, Rwanda, Uganda, Ethiopia, Burundi, Eritrea, Somalia — including safari destinations',
+    cards: [
+      { type:'req', name:'Yellow Fever', badge:'Required for entry', note:'<strong>Required for entry to Uganda, Rwanda, Tanzania, and Ethiopia</strong>, and for any traveler arriving via an endemic country. Kenya requires it only if arriving from an endemic country. Must be given at an approved travel clinic. One dose — lasts for life. Carry the International Certificate of Vaccination (yellow card) at all times.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for all travelers regardless of accommodation tier — food and water risk is present even in lodges near national parks. Single injection at least 2 weeks before travel or 4-dose oral course (must refrigerate).' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water. Two doses provide 20+ years of protection. Can start the series as close as 2 weeks before departure.' },
+      { type:'rec', name:'Meningococcal (MenACWY)', badge:'Recommended', note:'Recommended for Ethiopia and northern parts of Uganda and Kenya, which fall within or near the African meningitis belt. Risk highest in dry season (December–June). Single dose of MenACWY.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription required', note:'<strong>Essential for all safari regions</strong> — Masai Mara, Serengeti, Amboseli, Queen Elizabeth NP, Bwindi (gorilla trekking), and most lowland/coastal areas. Nairobi and Kigali are at low risk. Atovaquone-proguanil or doxycycline preferred. See a travel doctor at least 4–6 weeks before departure. Use DEET 30%+ at dawn and dusk.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for camping, cycling, or any wildlife-heavy itinerary where you could be far from a city for multiple days. Pre-exposure series is 3 doses over 3 weeks.' },
+      { type:'con', name:'Cholera', badge:'Consider for aid/relief work', note:'Not generally recommended for safari tourists. Recommended for aid workers, healthcare volunteers, or travelers to refugee settings or areas with active outbreaks. Oral vaccine (Vaxchora) is a single dose taken at least 10 days before travel.' },
+    ]
+  },
+  'africa-north': {
+    label: 'North Africa',
+    countries: 'Egypt, Morocco, Tunisia, Algeria, Libya',
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Risk is significant across the region, especially when eating at local restaurants or street food. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for Egypt and Morocco in particular. Risk is higher if eating outside tourist areas. Single injection at least 2 weeks before departure.' },
+      { type:'con', name:'Hepatitis B', badge:'Consider for longer stays', note:'Recommended for travel longer than 1 month, or for anyone who might need medical procedures. 3-dose series; faster 2-dose schedule (Heplisav-B) available.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for camping, desert trekking, or travel to rural areas away from urban medical care. Dog bites are the main risk in Egypt and Morocco.' },
     ]
   },
   sea: {
     label: 'Southeast Asia',
-    countries: 'Thailand, Vietnam, Indonesia, Cambodia, Laos, Myanmar, Philippines, Malaysia',
+    countries: 'Thailand, Vietnam, Indonesia (Bali, Lombok, Komodo), Cambodia, Laos, Myanmar, Philippines, Malaysia, Singapore',
     cards: [
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through food and water across the region. Two doses provide long-term protection. First dose can be given as close as 2 weeks before departure.' },
-      { type:'rec', name:'Typhoid', badge:'Recommended', note:'High risk if eating at local markets or outside tourist restaurants. Injection preferred for travel to high-risk areas — single dose, effective in 2 weeks.' },
-      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural stays', note:'Recommended if staying in rural areas for more than a month, spending nights outdoors, or traveling outside tourist routes. Urban risk is low. 2-dose vaccine series.' },
-      { type:'con', name:'Malaria (medication)', badge:'Consider for rural areas', note:'Risk is low in most cities and major tourist destinations. Prescription antimalarials recommended for rural areas of Myanmar, parts of Indonesia, and border regions. Confirm with a travel clinic based on your specific itinerary.' },
-      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for adventure travel, hiking, cycling, or long stays where emergency care is not readily accessible. Pre-exposure series is 3 doses over 3 weeks.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through food and water across the region — present even in upscale restaurants. Two doses provide 20+ years of protection. First dose can be given as close as 2 weeks before departure.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'High risk if eating at street markets, local restaurants, or anywhere outside resort food service. Injection preferred — single dose, effective within 2 weeks. Oral vaccine requires refrigeration and 4 doses over 1 week.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural stays', note:'Recommended if spending more than a month in rural areas, staying in accommodation without air conditioning/screens, or doing outdoor activities at dusk. Low risk in Bangkok, Bali resort areas, Singapore, and most major cities. 2-dose series (Ixiaro) over 4 weeks — start early.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'A newer vaccine (2023). Qdenga is approved for ages 4–60 for travelers to dengue-endemic areas (most of Southeast Asia). 2 doses, 3 months apart — requires lead time. Provides strong protection against all 4 dengue serotypes. Mosquito avoidance (DEET, long sleeves) remains essential regardless.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription for some areas', note:'Risk is low in most tourist destinations — Bangkok, Bali, Phuket, Ho Chi Minh City, Singapore. <strong>Prescription antimalarials recommended for</strong>: rural Myanmar, parts of Indonesian Papua, border regions of Thailand/Cambodia/Laos, and rural Philippines. Confirm with a travel clinic based on your specific itinerary before deciding.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for adventure travel, island-hopping, cycling, or long stays where emergency care is not readily accessible within 24 hours. Bali has a known dog rabies problem. Pre-exposure series is 3 doses over 3 weeks.' },
     ]
   },
   'south-asia': {
     label: 'South Asia',
-    countries: 'India, Nepal, Sri Lanka, Bangladesh, Pakistan',
+    countries: 'India, Nepal, Sri Lanka, Bangladesh, Pakistan, Bhutan, Maldives',
     cards: [
-      { type:'rec', name:'Typhoid', badge:'Recommended', note:'India and Nepal have some of the highest typhoid rates worldwide. Recommended for all travelers regardless of hotel tier — contaminated food and water risk is significant. Single injection or 4-dose oral course.' },
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Risk is high across the region. Two doses provide long-term protection. First dose can be given close to departure.' },
-      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural stays', note:'Recommended for extended rural travel or outdoor activities, particularly in Nepal and parts of India. Urban tourist stays have low risk. 2-dose vaccine series.' },
-      { type:'con', name:'Malaria (medication)', badge:'Consider for rural areas', note:'Risk varies significantly by area. Most major cities have low risk. Prescription antimalarials recommended for rural parts of India, Nepal\'s lower elevations, and parts of Pakistan. Verify with a travel clinic.' },
-      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Significant dog and monkey populations across the region make bite risk higher than average. Recommended for rural travel, trekking, or trips away from major cities.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'<strong>India and Nepal have among the highest typhoid rates worldwide</strong>. Recommended for all travelers regardless of accommodation — contaminated food and water risk is significant even in cities. Single injection at least 2 weeks before departure.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'High risk across the region. Two doses provide 20+ years of protection. Can start as close as 2 weeks before departure.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural stays', note:'Recommended for extended rural travel, trekking in Nepal\'s Terai belt, or outdoor activities in rural India. Low risk in Delhi, Mumbai, Kathmandu, and most urban tourist stays. 2-dose series over 4 weeks.' },
+      { type:'con', name:'Malaria (medication)', badge:'Consider for rural areas', note:'Most major cities (Delhi, Mumbai, Bangalore, Kathmandu) are low risk. <strong>Prescription antimalarials recommended for</strong>: rural India outside major cities, Nepal\'s Terai lowlands (below 2000m), Bangladesh, and most of Pakistan outside major cities. Confirm with a travel clinic.' },
+      { type:'con', name:'Rabies', badge:'Consider — higher risk than average', note:'<strong>Significant dog and monkey populations</strong> in India and Nepal make bite exposure more common than in most other regions. Recommended for any rural travel, trekking, or extended stays away from major cities. Pre-exposure series is 3 doses over 3 weeks.' },
+      { type:'con', name:'Polio (booster)', badge:'Consider — Pakistan/Afghanistan', note:'An adult IPV booster is recommended for travelers to Pakistan, where wild poliovirus continues to circulate. Some countries require proof of polio vaccination within the past 12 months for travelers arriving from Pakistan — check entry requirements for your onward destinations.' },
+      { type:'con', name:'Cholera', badge:'Consider for Bangladesh/flood zones', note:'Bangladesh has the highest cholera burden in the region. Recommended for humanitarian workers or travelers going to rural/flood-affected areas. Oral vaccine (Dukoral) is 2 doses 1–6 weeks apart.' },
     ]
   },
   latin: {
     label: 'Latin America',
-    countries: 'Mexico, Colombia, Peru, Brazil, Ecuador, Bolivia, Argentina, Costa Rica, Panama, and most of Central and South America',
+    countries: 'Mexico, Colombia, Peru, Brazil, Ecuador, Bolivia, Argentina, Chile, Costa Rica, Panama, Guatemala, Honduras, El Salvador, Nicaragua',
     cards: [
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through food and water throughout the region. Risk is highest outside major resort areas. Two doses provide long-term protection.' },
-      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for most of Latin America, especially Mexico, Peru, Bolivia, and Central America — particularly if eating outside tourist restaurants.' },
-      { type:'con', name:'Yellow Fever', badge:'Required for some countries', note:'Required for entry to Bolivia and parts of Brazil when arriving from endemic countries. Also recommended for travel to jungle regions of Peru, Ecuador, Colombia, and the Amazon basin. Check entry requirements for your specific route.' },
-      { type:'con', name:'Malaria (medication)', badge:'Consider for jungle/rural areas', note:'Risk is low in most cities and coastal areas. Prescription antimalarials recommended for travel to the Amazon basin, jungle regions, and rural parts of Central America. Confirm with a travel clinic based on your itinerary.' },
-      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for adventure travel, hiking, or travel to remote areas far from medical care. Pre-exposure series is 3 doses.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water throughout the region. Risk is highest outside major resort areas. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for most of Latin America, especially Mexico, Peru, Bolivia, and Central America — particularly if eating outside tourist restaurants or at street markets.' },
+      { type:'con', name:'Yellow Fever', badge:'Required for some countries/areas', note:'<strong>Required for entry to Bolivia</strong> (all travelers). Required by Brazil for entry into Amazônia and Centro-Oeste states. Recommended for travel to the Amazon basin in Peru, Ecuador, Colombia, and Venezuela. Some countries require proof if arriving from an endemic country — check your specific route. One dose, lasts for life.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Most of Latin America is dengue-endemic. Qdenga (approved for ages 4–60) provides protection against all 4 serotypes. 2 doses, 3 months apart — requires lead time. DEET and long sleeves remain essential — daytime mosquitoes carry dengue.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription for jungle/rural areas', note:'Risk is low in most cities, beach resorts, and highland destinations (Mexico City, Bogotá, Lima, Buenos Aires, Santiago — all low risk). <strong>Prescription antimalarials recommended for</strong>: Amazon basin travel, rural Panama/Honduras/Nicaragua, and specific risk zones in Colombia and Venezuela. Confirm with a travel clinic.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for jungle treks, adventure travel, or any trip to remote areas more than a few hours from a city hospital. Pre-exposure series is 3 doses over 3 weeks.' },
     ]
   },
   caribbean: {
     label: 'Caribbean',
-    countries: 'Dominican Republic, Jamaica, Cuba, Barbados, The Bahamas, Trinidad, Puerto Rico, and most Caribbean islands',
+    countries: 'Dominican Republic, Jamaica, Cuba, Barbados, The Bahamas, Trinidad & Tobago, Grenada, Sint Maarten, Turks & Caicos, US Virgin Islands, Puerto Rico, Cayman Islands, Aruba, Curaçao',
     cards: [
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Risk is present across the Caribbean, especially outside large resorts. Two doses provide long-term protection.' },
-      { type:'con', name:'Typhoid', badge:'Consider', note:'Recommended for travel to Haiti and the Dominican Republic, or if eating at local restaurants away from resort food service.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Risk is present across the Caribbean, especially outside large resorts. Two doses provide 20+ years of protection.' },
+      { type:'con', name:'Typhoid', badge:'Consider for Haiti & Dominican Republic', note:'Recommended for travel to Haiti and the Dominican Republic — food and water quality is more variable than in other Caribbean islands. Less relevant for Barbados, Cayman Islands, and the US territories.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Dengue is endemic throughout the Caribbean. Qdenga approved for ages 4–60. 2 doses, 3 months apart. DEET and long sleeves during daytime remain the primary protection.' },
+      { type:'con', name:'Malaria (medication)', badge:'Consider for Haiti', note:'Haiti has the highest malaria risk in the Caribbean. Prescription antimalarials (atovaquone-proguanil or doxycycline) are recommended for travel outside Port-au-Prince. The Dominican Republic has isolated low-risk zones — confirm with a travel clinic. Other Caribbean islands are generally malaria-free.' },
     ]
   },
   mideast: {
-    label: 'Middle East',
-    countries: 'Jordan, Israel, Egypt, Morocco, UAE, Saudi Arabia, Turkey, Lebanon',
+    label: 'Middle East & Gulf',
+    countries: 'Jordan, Israel, UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, Lebanon, Iraq, Turkey',
     cards: [
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through food and water. Risk is present across the region. Two doses provide long-term protection.' },
-      { type:'con', name:'Typhoid', badge:'Consider', note:'Recommended for Egypt and Morocco, especially if eating outside tourist restaurants. Lower risk in the Gulf states and Israel.' },
+      { type:'req', name:'Meningococcal (MenACWY)', badge:'Required for Saudi Arabia', note:'<strong>Mandatory for Hajj and Umrah pilgrims</strong> entering Saudi Arabia — the Saudi government requires proof of MenACWY vaccination issued within the past 3 years. Strongly recommended for any large group travel in the region. Single dose.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through food and water across the region. Risk is highest in Lebanon, Iraq, and when eating at local restaurants away from tourist areas. Two doses provide 20+ years of protection.' },
+      { type:'con', name:'Typhoid', badge:'Consider for Lebanon & Iraq', note:'Recommended for Lebanon and Iraq. Lower risk in UAE, Qatar, Bahrain, Israel, and Jordan\'s major tourist destinations (Petra, Amman, Dead Sea). If eating street food or at local markets, vaccination is advisable anywhere in the region.' },
+      { type:'con', name:'Hepatitis B', badge:'Consider for longer stays', note:'Recommended for stays over 1 month or for anyone who might need medical or dental care. 3-dose series; faster 2-dose schedule (Heplisav-B) available.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for camping, desert treks, or travel to rural areas in Jordan, Turkey, and Lebanon. Dog bites are the main vector. Pre-exposure series is 3 doses over 3 weeks.' },
     ]
   },
   'east-asia': {
     label: 'East Asia',
-    countries: 'Japan, China, South Korea, Taiwan, Hong Kong',
+    countries: 'Japan, China, South Korea, Taiwan, Hong Kong, Mongolia',
     cards: [
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for travel to China. Japan, South Korea, and Taiwan are lower risk but vaccination remains advisable for extended travel.' },
-      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural stays', note:'Low risk in urban Japan and most tourist routes. Recommended for extended rural travel in China or rural Japan, or for stays involving significant outdoor activity. 2-dose vaccine series.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for travel to China and Mongolia. Japan, South Korea, Taiwan, and Hong Kong are lower risk but vaccination remains advisable — particularly for extended stays or adventure travel.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for rural China & rural Japan', note:'Low risk in Tokyo, Osaka, Beijing, Shanghai, Seoul, and most tourist routes. Recommended for extended rural travel in mainland China, rural Japan (especially Kyushu and Okinawa during summer), and rural parts of South Korea. 2-dose series (Ixiaro) over 4 weeks. Mosquito avoidance at dusk is essential in risk areas.' },
+      { type:'con', name:'Typhoid', badge:'Consider for rural China & Mongolia', note:'Low risk in major Chinese cities and Japan. Recommended for rural travel in China, and for any travel to Mongolia where food safety infrastructure is limited.' },
+      { type:'con', name:'Rabies', badge:'Consider for Mongolia', note:'Mongolia has significant dog bite risk, particularly in rural areas. Recommended for any travel outside Ulaanbaatar. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  'eastern-europe': {
+    label: 'Eastern Europe',
+    countries: 'Poland, Czech Republic, Slovakia, Hungary, Romania, Bulgaria, Baltic states (Estonia, Latvia, Lithuania), Ukraine, Serbia, Croatia, Slovenia, Bosnia',
+    cards: [
+      { type:'rec', name:'Tick-Borne Encephalitis (TBE)', badge:'Recommended for forested areas', note:'<strong>A significant risk in forested areas of Central and Eastern Europe</strong> from spring through autumn (April–October). Risk is highest in Poland, Czech Republic, Slovakia, Baltic states, Austria, and parts of Germany. Spread by tick bites. 3-dose primary series (0, 1–3 months, 9–12 months) or an accelerated 3-dose schedule. <strong>Tick checks after any woodland walk are essential</strong> — the vaccine reduces severity but tick avoidance matters too.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Recommended for travel to the Balkans (Serbia, Bosnia, Romania, Bulgaria, North Macedonia) and Ukraine. Lower risk in Czech Republic, Poland, Baltic states, and EU member states with strong water infrastructure.' },
+      { type:'con', name:'Rabies', badge:'Consider for rural stays', note:'Dog and fox bite risk in parts of Eastern Europe, especially Romania, Ukraine, and the Balkans. Recommended for extended rural travel or camping. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  'central-asia': {
+    label: 'Central Asia',
+    countries: 'Kazakhstan, Uzbekistan, Kyrgyzstan, Tajikistan, Turkmenistan',
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Food and water risk is significant across the region — water infrastructure outside major cities is unreliable. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for all destinations in Central Asia. Risk is high when eating outside large hotels. Single injection at least 2 weeks before departure.' },
+      { type:'rec', name:'Tick-Borne Encephalitis (TBE)', badge:'Recommended for spring/summer', note:'Risk is present in forested and mountainous areas of Kazakhstan and Kyrgyzstan, particularly the Tian Shan range. April through October is the active tick season. 3-dose series or accelerated schedule.' },
+      { type:'con', name:'Rabies', badge:'Consider if adventuring', note:'Recommended for travel to rural areas, trekking, or cycling. Dog bites are the main risk. Medical care may be several hours away in remote mountain regions — the pre-exposure series is particularly important here.' },
+      { type:'con', name:'Malaria (medication)', badge:'Consider for Tajikistan border regions', note:'Malaria risk in Central Asia is generally low and decreasing. Some risk remains in southern Tajikistan near the Afghan border. Confirm current advisory with a travel clinic.' },
+    ]
+  },
+  pacific: {
+    label: 'Pacific Islands',
+    countries: 'Fiji, Samoa, Tonga, Vanuatu, Solomon Islands, Papua New Guinea, Micronesia, Palau, Cook Islands, Kiribati',
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for travel to Pacific island nations. Food and water safety varies significantly outside major resort areas. Two doses provide 20+ years of protection.' },
+      { type:'rec', name:'Typhoid', badge:'Recommended', note:'Recommended for Papua New Guinea and the Solomons in particular. Lower risk in Fiji\'s resort areas but advisable if traveling beyond Nadi or eating at local restaurants.' },
+      { type:'med', name:'Malaria (medication)', badge:'Prescription — Papua New Guinea & Solomons', note:'<strong>Papua New Guinea and the Solomon Islands have high malaria transmission</strong> — prescription antimalarials (atovaquone-proguanil or doxycycline) are strongly recommended. Fiji, Samoa, Tonga, Palau, and most smaller Pacific tourist destinations are malaria-free.' },
+      { type:'con', name:'Dengue (Qdenga)', badge:'Consider if previously infected', note:'Dengue outbreaks occur periodically across Pacific island nations, including Fiji and Samoa. DEET and long sleeves are the primary prevention; Qdenga (2 doses, 3 months apart) available for ages 4–60.' },
+      { type:'con', name:'Japanese Encephalitis', badge:'Consider for PNG rural stays', note:'Risk is present in rural Papua New Guinea. Recommended for extended rural travel or fieldwork. 2-dose series over 4 weeks.' },
+      { type:'con', name:'Rabies', badge:'Consider for PNG', note:'Rabies is present in Papua New Guinea. Recommended for any travel to rural areas or wildlife-heavy settings. Pre-exposure series is 3 doses over 3 weeks.' },
+    ]
+  },
+  australia: {
+    label: 'Australia & New Zealand',
+    countries: 'Australia, New Zealand',
+    cards: [
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for most international travel. Risk in Australia and New Zealand is very low — comparable to Western Europe — but vaccination remains advisable as a baseline for any international trip.' },
+      { type:'con', name:'Hepatitis B', badge:'Consider for longer stays', note:'Standard recommendation for extended stays (over 1 month) or for anyone who might need medical or dental care abroad. 3-dose series or faster 2-dose schedule.' },
     ]
   },
   europe: {
     label: 'Western Europe',
-    countries: 'France, Italy, Spain, Germany, UK, Portugal, Greece, Netherlands, and most of Western and Northern Europe',
+    countries: 'France, Italy, Spain, Germany, UK, Portugal, Greece, Netherlands, Scandinavia, Switzerland, Austria, Belgium, Ireland',
     cards: [
-      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard recommendation for most international travel. Risk in Western Europe is low but vaccination remains advisable, particularly for extended trips or adventure travel.' },
+      { type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Standard baseline recommendation for most international travel. Risk in Western Europe is low — comparable to the US — but vaccination remains advisable for extended trips or adventure travel.' },
+      { type:'con', name:'Tick-Borne Encephalitis (TBE)', badge:'Consider for forested areas in Germany/Austria', note:'A real but localized risk in forested regions of <strong>Bavaria, Baden-Württemberg, and most of Austria</strong> during spring through autumn. Also present in Switzerland and parts of Scandinavia. Risk is essentially zero in cities and non-forested areas. 3-dose series or accelerated schedule available. Tick checks after woodland walks are the first line of defense.' },
     ]
   }
 };
@@ -267,9 +366,10 @@ var ROUTINE = [
   { name:'Tdap', sub:'Tetanus · Diphtheria · Pertussis' },
   { name:'Chickenpox', sub:'If not previously vaccinated' },
   { name:'Hepatitis B', sub:'Most international travel' },
+  { name:'Shingles (Shingrix)', sub:'Adults 50+ — 2 doses' },
+  { name:'Pneumococcal', sub:'Adults 65+ or immunocompromised' },
 ];
 
-/* ── Render helpers ── */
 function cardHTML(c) {
   return '<div class="vc-card ' + c.type + '">' +
     '<div class="vc-left"><div class="vc-name">' + c.name + '</div><div class="vc-badge">' + c.badge + '</div></div>' +
@@ -279,34 +379,35 @@ function cardHTML(c) {
 
 function renderAll() {
   var html = '<div class="section-label">Recommended for all international travel</div><div class="vc-grid">';
-  html += cardHTML({ type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water worldwide. Recommended for travel to most non-Western destinations. Two doses provide 20+ years of protection.' });
-  html += cardHTML({ type:'rec', name:'Hepatitis B', badge:'Recommended', note:'Recommended for most international travel, especially longer trips or destinations with limited medical infrastructure. Spread through blood and bodily fluids. 3-dose series; faster 2-dose schedule available.' });
+  html += cardHTML({ type:'rec', name:'Hepatitis A', badge:'Recommended', note:'Spread through contaminated food and water worldwide. Recommended for travel to any non-Western destination and most international travel generally. Two doses provide 20+ years of protection. First dose can be given as close as 2 weeks before departure.' });
+  html += cardHTML({ type:'rec', name:'Hepatitis B', badge:'Recommended', note:'Recommended for most international travel, especially trips over 1 month or to destinations with limited medical infrastructure. Spread through blood, bodily fluids, and contaminated medical equipment. 3-dose series (0, 1, 6 months); faster 2-dose schedule (Heplisav-B) gives full protection in 1 month.' });
   html += '</div>';
-  html += '<div class="section-label">Routine vaccines — required for all destinations</div><div class="routine-grid">';
+  html += '<div class="section-label">Routine vaccines — update before any trip</div><div class="routine-grid">';
   ROUTINE.forEach(function(r) {
     html += '<div class="routine-chip">' + r.name + '<span>' + r.sub + '</span></div>';
   });
   html += '</div>';
-  html += '<div class="timing-bar"><strong>Plan ahead:</strong> Visit a travel clinic at least <strong>4–6 weeks before departure</strong> — some vaccines require multiple doses spaced weeks apart. CDC destination tool: <a href="https://wwwnc.cdc.gov/travel" target="_blank" rel="noopener">wwwnc.cdc.gov/travel</a>. Travel clinics are available at most CVS and Walgreens pharmacies without a referral.</div>';
+  html += '<div class="info-bar"><strong>Timing:</strong> Visit a travel clinic at least <strong>4–6 weeks before departure</strong>. Some vaccines (Japanese Encephalitis, TBE, full Hepatitis B series) require multiple doses spread over weeks and cannot be rushed. Multi-dose series can sometimes be accelerated — ask your travel doctor if time is short.</div>';
+  html += '<div class="info-bar"><strong>Where to go:</strong> Travel clinics are at most CVS and Walgreens pharmacies without a referral. University medical centers and dedicated travel health clinics offer the widest vaccine selection, including Yellow Fever (only at certified clinics) and TBE. CDC destination tool: <a href="https://wwwnc.cdc.gov/travel" target="_blank" rel="noopener">wwwnc.cdc.gov/travel</a>.</div>';
+  html += '<div class="info-bar"><strong>Documentation:</strong> Carry your International Certificate of Vaccination (yellow card) for any trip to sub-Saharan Africa, South America, or Saudi Arabia — border officials check it for Yellow Fever and Meningococcal. Digital records are not universally accepted at border crossings.</div>';
   return html;
 }
 
 function renderRegion(key) {
   var r = REGIONS[key];
   if (!r) return '';
-  var html = '<div class="dest-header">' + r.label + '<span>' + r.countries + '</span></div>';
+  var html = '<div class="dest-header">' + r.label + '</div>';
+  html += '<div class="dest-countries">' + r.countries + '</div>';
   html += '<div class="vc-grid">';
   r.cards.forEach(function(c) { html += cardHTML(c); });
   html += '</div>';
   return html;
 }
 
-/* ── Init ── */
 var allPanel = document.getElementById('all-panel');
 var destPanel = document.getElementById('dest-panel');
 allPanel.innerHTML = renderAll();
 
-/* ── Region pills ── */
 document.getElementById('region-bar').addEventListener('click', function(e) {
   var pill = e.target.closest('.rpill');
   if (!pill) return;
@@ -319,19 +420,24 @@ document.getElementById('region-bar').addEventListener('click', function(e) {
   } else {
     destPanel.innerHTML = renderRegion(region);
     destPanel.classList.remove('hidden');
+    destPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 });
 
-/* ── Search ── */
 var ALL_SEARCH = [
-  { name:'Routine vaccines', dest:'All destinations', note:'MMR, flu, COVID-19, Tdap, and chickenpox — be up to date before any international travel.' },
-  { name:'Hepatitis A', dest:'Most non-Western destinations', note:'Recommended for Mexico, Central and South America, the Caribbean, Africa, Asia, Eastern Europe, and the Middle East. Two doses provide long-term protection.' },
-  { name:'Hepatitis B', dest:'Most international travel', note:'Recommended for most international travel, especially longer trips. 3-dose series; faster 2-dose schedule available.' },
-  { name:'Typhoid', dest:'South/Southeast Asia · Africa · Latin America', note:'Recommended for India, Nepal, Southeast Asia, sub-Saharan Africa, and parts of Latin America — particularly if eating outside tourist restaurants.' },
-  { name:'Yellow Fever', dest:'Sub-Saharan Africa · South America', note:'Required for entry to some countries in Africa and South America. Proof of vaccination required on arrival in many countries. Given at certified travel clinics — one dose lasts for life.' },
-  { name:'Malaria (medication)', dest:'Sub-Saharan Africa · Southeast Asia · Latin America', note:'No vaccine — requires prescription medication (atovaquone-proguanil, doxycycline, or mefloquine). See a travel doctor at least 4–6 weeks before departure.' },
-  { name:'Japanese Encephalitis', dest:'Rural Southeast Asia · China · India', note:'Recommended for rural Asia stays over one month, or significant outdoor time. Low risk on urban tourist routes. 2-dose vaccine series.' },
-  { name:'Rabies', dest:'Adventure travel · rural areas globally', note:'Recommended for hikers, cyclists, and anyone far from urban medical care. 3-dose pre-exposure series. Seek care immediately after any animal bite regardless of vaccination status.' },
+  { name:'Routine vaccines', dest:'All destinations', note:'MMR, flu, COVID-19, Tdap, chickenpox, Hepatitis B, and shingles (50+) — be up to date before any international travel.' },
+  { name:'Hepatitis A', dest:'Most non-Western destinations', note:'Recommended for Mexico, Central and South America, the Caribbean, Africa, Asia, Eastern Europe, and the Middle East. Two doses provide 20+ years of protection.' },
+  { name:'Hepatitis B', dest:'Most international travel', note:'Recommended for most international travel, especially trips over 1 month. 3-dose series; faster 2-dose schedule (Heplisav-B) available.' },
+  { name:'Typhoid', dest:'South/Southeast Asia · Africa · Latin America', note:'Recommended for India, Nepal, Southeast Asia, sub-Saharan Africa, North Africa, and parts of Latin America. Single injection or 4-dose oral course.' },
+  { name:'Yellow Fever', dest:'Sub-Saharan Africa · South America', note:'Required for entry to most of sub-Saharan Africa and Bolivia. Proof of vaccination required on arrival. Certified travel clinics only. One dose — lasts for life.' },
+  { name:'Malaria', dest:'Sub-Saharan Africa · Southeast Asia · Latin America · Pacific', note:'No vaccine for travelers. Prescription medication (atovaquone-proguanil, doxycycline, or mefloquine) required. See a travel doctor 4–6 weeks before departure.' },
+  { name:'Japanese Encephalitis', dest:'Rural Southeast Asia · China · India · Pacific', note:'Recommended for rural Asia stays over one month or significant outdoor time. Low risk on urban tourist routes. 2-dose series (Ixiaro) over 4 weeks.' },
+  { name:'Rabies', dest:'Adventure travel · rural areas globally', note:'Recommended for hikers, cyclists, safari travelers, and anyone far from urban medical care. 3-dose pre-exposure series. Seek care immediately after any animal bite.' },
+  { name:'Meningococcal', dest:'Sub-Saharan Africa meningitis belt · Saudi Arabia (Hajj)', note:'Required for Hajj/Umrah in Saudi Arabia. Essential for the African meningitis belt (Senegal to Ethiopia). Single dose of MenACWY.' },
+  { name:'Tick-Borne Encephalitis', dest:'Eastern Europe · Central Europe · Central Asia · Scandinavia', note:'Recommended for forested areas of Poland, Czech Republic, Baltic states, Austria, Bavaria, Switzerland, and parts of Scandinavia — spring through autumn. 3-dose series.' },
+  { name:'Polio', dest:'Pakistan · Afghanistan · parts of Africa', note:'Adult booster recommended for Pakistan, Afghanistan, and travel to areas with active poliovirus. Some countries require proof of vaccination for travelers arriving from Pakistan.' },
+  { name:'Dengue', dest:'Southeast Asia · Latin America · Caribbean · Pacific', note:'New Qdenga vaccine (2023) approved for ages 4–60. 2 doses, 3 months apart. Covers all 4 dengue serotypes. DEET and long sleeves remain essential.' },
+  { name:'Cholera', dest:'Bangladesh · East Africa · humanitarian travel', note:'Oral vaccine (Vaxchora/Dukoral) recommended for aid workers and healthcare volunteers in areas with active outbreaks. Not generally needed for standard tourism.' },
 ];
 
 var searchInput = document.getElementById('vc-search');
