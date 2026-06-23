@@ -105,6 +105,19 @@ A new shareable page is **not** done until `python3 Brain/scripts/brain_check.py
 3. Wire it into `assets/toolbar.js` ITEMS **and** `Website-Main-Pages-Links.html` (toolbar↔hub parity), then rebuild the search index (`build_search_index.py`).
 4. Run `brain_check.py` (banner size/colour/weight, emoji-free h1, body/`.wrap` margins, filename spaces, toolbar-page standard) and `validate_mobile_render.py` → fix every failure. Filename hyphenated, no spaces.
 
+## Guide linkage — `data-guide` attribute convention
+
+Pages that contain per-city or per-card entries use a `data-guide="FolderName"` attribute on the row or card element to machine-link each entry to its guide folder. This attribute is what the ship gate checks (`_check_guide_in_delta_routes`, `_check_guide_in_transit_cards`). When adding a new entry to any of these pages, always include the attribute:
+
+| Page | Element | Attribute |
+|------|---------|-----------|
+| `Delta-Routes-SEA.html` | `<div class="dest-card">` | `data-guide="FolderName"` |
+| `City-Transit-Cards.html` | `<div class="transit-row">` | `data-guide="FolderName"` |
+
+The folder name must exactly match the guide folder under `Travel-Website/Guides/` (case-sensitive). For cities whose display name differs from the folder (e.g. "Machu Picchu" → folder `MachuPicchu`), the attribute uses the folder name.
+
+Additionally, each guide HTML file itself must carry a silent `<!-- transit-card: ... -->` comment recording the transit card research result (see Ship Checklist § 11 Step 11).
+
 ## Active / selected pill colour (all pages)
 
 - **Active / selected filter pill color: terracotta `#b85c2a`, matching the banner.** Any pill, chip, or tab that indicates "currently selected" uses `background: #b85c2a; color: #fff; border-color: #b85c2a` — the same mid-tone as the banner gradient. Do not use `var(--text)` (dark/black) or `var(--accent)` (gold) for selected state. (added 2026-06-19, corrected 2026-06-19)
@@ -114,4 +127,4 @@ A new shareable page is **not** done until `python3 Brain/scripts/brain_check.py
 - **`.pkl-bar-fill` and `.pkl-state-bar-fill` must use a yellow gradient: `linear-gradient(90deg,#c8960c,#e8c020)`.** These are the stat bars (player growth, age demographics, state court counts, state bar chart). Yellow distinguishes them visually from the rust/terracotta accent used for text and pills — they must never revert to the rust-orange gradient (`#b85c2a`/`#d4874a`). Enforced by `brain_check` `check_pickleball_bar_color` (hard-fail). (added 2026-06-22)
 
 ---
-*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22.*
+*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22. `data-guide` attribute convention + guide HTML transit-card comment documented 2026-06-22.*
