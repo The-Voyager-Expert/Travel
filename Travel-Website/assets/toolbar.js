@@ -126,7 +126,7 @@
         { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '💻 EU Lounges' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 Transit', full: '🚆 European Train Guide' },
+    { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 Trains', full: '🚆 European Train Guide' },
     null,
     { group: '✈️ Flights', children: [
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
