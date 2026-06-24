@@ -432,6 +432,27 @@ a.city-row.hidden { display: none; }
   });
 
   updateCounts();
+
+  var hashCity = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+  if (hashCity) {
+    var target = null;
+    document.querySelectorAll('.city-row').forEach(function (row) {
+      if (!target) {
+        var key = row.dataset.city || '';
+        if (key === hashCity || key.indexOf(hashCity) === 0 || key.indexOf(' ' + hashCity) !== -1) {
+          target = row;
+        }
+      }
+    });
+    if (target) {
+      setTimeout(function () {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.style.transition = 'background 0.3s';
+        target.style.background = 'var(--hover)';
+        setTimeout(function () { target.style.background = ''; }, 1500);
+      }, 300);
+    }
+  }
 })();
 </script>
 </body>
