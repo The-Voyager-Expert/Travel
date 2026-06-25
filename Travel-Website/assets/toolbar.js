@@ -3,7 +3,7 @@
  *
  * ⚠️ HOME: Travel Website/assets/toolbar.js — site-wide shared asset.
  * The shared scripts/styles (toolbar.js, weather.js,
- * guide_v3.css, mobile.css, climate.json) all live in assets/. Every page
+ * guide-style.css, mobile.css, climate.json) all live in assets/. Every page
  * loads them from assets/ at its own relative depth below the site root:
  *   · index.html (depth 0):                       src="assets/toolbar.js"
  *   · depth-1 pages (Guides/Guides-Index.html,
@@ -191,7 +191,7 @@
       'width:-webkit-max-content;width:max-content;margin:0 auto}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
-       (e.g. guide_v3.css link colours) can NEVER bleed into the shared bar. */
+       (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
     '.tb a,.tb a:visited{font-size:13px;color:rgba(255,255,255,0.9)!important;text-decoration:none;padding:4px 8px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +

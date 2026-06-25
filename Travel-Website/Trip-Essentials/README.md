@@ -20,7 +20,7 @@ All files live in `Travel/Trip Essentials/`. If one wanders out, the folder name
 This folder is the **third** of three independent systems:
 
 1. **Core rules** — `Brain/CORE RULES/` + `Universal Formatting Rules/` — rules for building city guides
-2. **Guide** — `Guides/guide_v3.css` + `Guides/` — the rendered city guide deliverable
+2. **Guide** — `Guides/guide-style.css` + `Guides/` — the rendered city guide deliverable
 3. **Trips** — *this folder* — the per-trip data sheet
 
 ## The HTML workflow

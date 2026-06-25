@@ -261,7 +261,7 @@ Per owner 2026-06-14 (*"when not confirmed this is all it should show"*): an unc
 
 Per owner 2026-05-18 (*"The fonts of my trips html is too small. lets increase to match the guide's font size"*):
 
-- Body: `17px` desktop, `21px` mobile. These are the Trips page's own sizes, set larger per owner's request above. Note: `guide_v3.css` itself now uses a unified `14px` scale (mobile = desktop), so the Trips page is intentionally larger than the current guides — do not shrink it to "match."
+- Body: `17px` desktop, `21px` mobile. These are the Trips page's own sizes, set larger per owner's request above. Note: `guide-style.css` itself now uses a unified `14px` scale (mobile = desktop), so the Trips page is intentionally larger than the current guides — do not shrink it to "match."
 - Mobile breakpoint: `@media (max-width: 600px)`.
 - Other elements scale proportionally — see § "Mobile / technical requirements" and the CSS class reference below.
 

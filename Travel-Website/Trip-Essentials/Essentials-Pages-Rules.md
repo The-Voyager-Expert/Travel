@@ -57,7 +57,7 @@ Typography & colour (the page follows the site scale in `Brain/Reference/Colors 
 
 - All type uses `var(--font)` and the `--fs-*` scale — **no hardcoded pixel font sizes**.
 - Banner / region headers use the warm terracotta palette (`var(--banner-gradient)`) — **no green**.
-- The page banner and the search box are styled site-wide in `_travel_style.css` — not overridden on the page.
+- The page banner and the search box are styled site-wide in `web-travel-style.css` — not overridden on the page.
 - "Last update {Mon Year}" shows as a `.stat-pill` (same style/font as the guides-index stat pills); the month auto-refreshes and must not be stale.
 
 Index table — four columns: **Country · Currency · Sym · US$1**.
@@ -84,11 +84,11 @@ The full spec and rationale live in `Brain/Reference/Colors and Font Size.html` 
 - **Markup:** one `<div class="page-header">` (or `header` / `site-header`) holding a single `<h1>`. Nothing else inside the banner div — no `<span>`, `<p>`, eyebrow, date stamp, or subtitle. The "Updated …" stamp and any subtitle go **below** the banner.
 - **The `<h1>` is text-only — NO emoji.** The tab's emoji lives in the toolbar label, never in the heading. (Cribs keep pasting it in — e.g. Pickleball 🏓 — don't.)
 - **Look:** transparent block with a 3px warm-terracotta gradient **bottom border** (an underline, not a filled band). Title `<h1>`: **14px (`var(--fs-title)`), weight 700, colour `#3d3a32` (dark — never white/gold/terracotta/accent), uppercase, letter-spacing 0.06em.** Same on desktop and mobile — one size everywhere.
-- **Don't re-style it per page.** The shared sheets (`assets/_travel_style.css` desktop + `assets/mobile.css` mobile) already define the banner with `!important`. If you inline a copy, it must match the values above exactly — an off-standard inline copy renders fine but is a misleading template the next crib clones, and `brain_check` now rejects it.
+- **Don't re-style it per page.** The shared sheets (`assets/web-travel-style.css` desktop + `assets/mobile.css` mobile) already define the banner with `!important`. If you inline a copy, it must match the values above exactly — an off-standard inline copy renders fine but is a misleading template the next crib clones, and `brain_check` now rejects it.
 
 ## Page margins / gutter — LOCKED (the value, not the class name)
 
-- The locked value is the **horizontal gutter: `0 32px` desktop / `0 14px` mobile**. What carries it is what most pages already do — either the shared `.wrap` (`assets/_travel_style.css`) **or** a page-specific content container set to the same `padding: 0 32px` / `0 14px` (e.g. `.page`, `.cf-wrap`). Both are correct; the majority use a page-specific 32px container. Match the gutter — don't invent a different margin.
+- The locked value is the **horizontal gutter: `0 32px` desktop / `0 14px` mobile**. What carries it is what most pages already do — either the shared `.wrap` (`assets/web-travel-style.css`) **or** a page-specific content container set to the same `padding: 0 32px` / `0 14px` (e.g. `.page`, `.cf-wrap`). Both are correct; the majority use a page-specific 32px container. Match the gutter — don't invent a different margin.
 - **Never put horizontal padding on `<body>`** — a body gutter shifts the whole page (toolbar included) off every other page. Gutters belong on the container.
 - If you override `.wrap` (e.g. a width-capped variant), keep horizontal padding at **32px or 14px** unless the rule also sets `max-width`. `brain_check` fails any body gutter or off-standard `.wrap` padding (a page-specific container at 32/14 passes).
 
@@ -101,7 +101,7 @@ Page files are hyphenated: `Currency-Guide.html`, `Lounges-US.html`, `Delta-Rout
 A new shareable page is **not** done until `python3 Brain/scripts/brain_check.py` exits 0 (it runs first in every session ritual via `guide_tools.py start`, and is glob-driven so it gates a brand-new page automatically). Before that:
 
 1. Copy an existing compliant page's banner + container shell — do **not** design a new title or margin. Title banner per the LOCKED spec above; content in a 32/14-gutter container (the shared `.wrap`, or a page-specific container at `0 32px`/`0 14px` as most pages use).
-2. Load the shared chrome: `<link rel="stylesheet" href="../assets/_travel_style.css">`, the `#toolbar-mount` + `assets/toolbar.js`, the `<meta viewport>` + `assets/mobile.css` baseline (`mobile_check.py --apply` injects the last two), and the canonical `#f5f4f0` background.
+2. Load the shared chrome: `<link rel="stylesheet" href="../assets/web-travel-style.css">`, the `#toolbar-mount` + `assets/toolbar.js`, the `<meta viewport>` + `assets/mobile.css` baseline (`mobile_check.py --apply` injects the last two), and the canonical `#f5f4f0` background.
 3. Wire it into `assets/toolbar.js` ITEMS **and** `Website-Main-Pages-Links.html` (toolbar↔hub parity), then rebuild the search index (`build_search_index.py`).
 4. Run `brain_check.py` (banner size/colour/weight, emoji-free h1, body/`.wrap` margins, filename spaces, toolbar-page standard) and `validate_mobile_render.py` → fix every failure. Filename hyphenated, no spaces.
 

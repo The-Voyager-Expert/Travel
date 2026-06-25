@@ -48,7 +48,7 @@
   var MONTHS_LONG = ['January','February','March','April','May','June','July',
                      'August','September','October','November','December'];
 
-  /* Palette — matches guide_v3.css / toolbar.js */
+  /* Palette — matches guide-style.css / toolbar.js */
   var GOLD = '#8a6c1a', WARM = '#fdf8f0', BORDER = '#c4b896',
       INK = '#3d3a32', MUTE = '#6b6860', PAGEBORDER = '#d8d5ce';
 
