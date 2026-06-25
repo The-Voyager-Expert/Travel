@@ -102,7 +102,7 @@ SURFACES = {
     "card": "index card", "inline": "index inline data", "fmap": "FMAP",
     "pin": "map pin", "stats": "travel stats", "safety": "safety guide",
     "climate": "climate (weather tabs)", "search": "search index",
-    "resources": "trip-resources links",
+    "resources": "also-on-this-site links",
 }
 
 
@@ -208,14 +208,14 @@ def main() -> int:
         if folder not in search_folders and not (name and name in search_names):
             missing["search"].append(folder)
 
-        # trip-resources: block must exist + all three universal links present
+        # also-on-this-site: block must exist + all three universal links present
         _TR_REQUIRED = ["Safety-Guide.html", "Visas.html", "Weather.html"]
         guide_html = ""
         for html in (GUIDES_DIR / folder).glob("*.html"):
             if STAMP in _read(html):
                 guide_html = _read(html).lower()
                 break
-        if "<!-- trip-resources -->" not in guide_html or any(
+        if "<!-- also-on-this-site -->" not in guide_html or any(
             f.lower() not in guide_html for f in _TR_REQUIRED
         ):
             missing["resources"].append(folder)
@@ -232,7 +232,7 @@ def main() -> int:
             print(f"  {label}: missing {', '.join(missing[key])}")
     print("Each shipped guide must appear (with a working link) in the index card, "
           "FMAP, map pin, travel stats, safety guide, both Weather tabs, search, "
-          "and have a trip-resources block with Safety · Visas · Before You Go · Weather links.")
+          "and have a also-on-this-site block with Safety · Visas · Before You Go · Weather links.")
     print("Fix locally with: python3 Brain/scripts/validate_guide_coverage.py")
     return 1
 
