@@ -150,6 +150,7 @@
     null,
     { group: '⚙️ Resources', children: [
         { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
+        { href: base + 'Trip-Essentials/Tours-Tickets.html',         text: '🎟️ Tours & Tickets' },
         { href: base + 'Trip-Essentials/Restaurants.html',           text: '🍽️ Restaurants' },
         { href: base + 'Trip-Essentials/Travel-Guides.html',         text: '📖 Travel Guides' },
         { href: base + 'Trip-Essentials/Hotels-Stays.html',          text: '🏨 Hotels & Stays' },
