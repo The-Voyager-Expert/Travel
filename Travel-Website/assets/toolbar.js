@@ -153,6 +153,7 @@
         { href: base + 'Trip-Essentials/Restaurants.html',           text: '🍽️ Restaurants' },
         { href: base + 'Trip-Essentials/Travel-Guides.html',         text: '📖 Travel Guides' },
         { href: base + 'Trip-Essentials/Hotels-Stays.html',          text: '🏨 Hotels & Stays' },
+        { href: base + 'Trip-Essentials/Rental-Cars.html',           text: '🚙 Rental Cars' },
         { href: base + 'Trip-Essentials/Travel-Packing-Generic.html',  text: '👕 Packing Checklist' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',           text: '🧾 Tipping' },
         { href: base + 'Trip-Essentials/Budget-Guide.html',            text: '💵 Budget' },
