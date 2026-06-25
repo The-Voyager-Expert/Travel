@@ -163,7 +163,7 @@ SURFACES = {
     "search":    "search index",
     "status":    "status dots",
     "currency":  "currency guide",
-    "resources": "trip-resources links",
+    "resources": "also-on-this-site links",
     "delta":     "Delta Routes card (Step 10)",
 }
 
@@ -340,7 +340,7 @@ def run_sweep() -> dict[str, list[str]]:
         if delta_card_guides and folder != "Seattle" and folder not in delta_card_guides:
             missing["delta"].append(folder)
 
-        # trip-resources universal links — the four pages every guide must carry
+        # also-on-this-site universal links — the four pages every guide must carry
         _TR_REQUIRED = [
             "Safety-Guide.html",
             "Visas.html",
@@ -352,7 +352,7 @@ def run_sweep() -> dict[str, list[str]]:
         except OSError:
             guide_html = ""
         guide_lower = guide_html.lower()
-        if "<!-- trip-resources -->" not in guide_lower or any(
+        if "<!-- also-on-this-site -->" not in guide_lower or any(
             f.lower() not in guide_lower for f in _TR_REQUIRED
         ):
             missing["resources"].append(folder)
