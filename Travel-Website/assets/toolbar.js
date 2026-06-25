@@ -151,6 +151,7 @@
     { group: '⚙️ Resources', children: [
         { href: base + 'Trip-Essentials/Resources.html',             text: '🔗 Web Resources' },
         { href: base + 'Trip-Essentials/Restaurants.html',           text: '🍽️ Restaurants' },
+        { href: base + 'Trip-Essentials/Travel-Guides.html',         text: '📖 Travel Guides' },
         { href: base + 'Trip-Essentials/Travel-Packing-Generic.html',  text: '👕 Packing Checklist' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',           text: '🧾 Tipping' },
         { href: base + 'Trip-Essentials/Budget-Guide.html',            text: '💵 Budget' },
