@@ -63,9 +63,10 @@ Per owner 2026-05-18 (*"always this order. Hubby's stuff first"*), trips that in
 
 1. **Trip title + status badge**
 2. **✈️ Flights** — `.sec` with `🟣 Both` pill (or whichever tag fits if they don't fly together). All legs, outbound and return, in chronological order.
-3. **🏨 Hubby's hotel / venue** — `.sec` with `🟢 Hubby` pill. Hubby's offsite hotel, any of his solo transit rows. If hotel and venue are the same place (common for offsites), one block — note "FRO offsite venue" on the dates line.
-4. **🏨 Hotels + 🚆 Trains — Wifey solo** — two distinct `.sec` blocks, both with `🔵 Wifey` pill. Per owner 2026-05-18: `🏨 Hotels` first (grouped by city using `.city-sub` labels), then `🚆 Trains`. Not interleaved.
-5. **🏨 Hotels — Together** — `.sec` with `🟣 Both` pill. Reunion hotels and onward, in chronological order.
+3. **📖 Venue (Hubby)** — always comes BEFORE hotels when Hubby has a separate venue. Use `.hotel.hubby-block` on the venue div for the green left border. Per owner 2026-06-25: *"his hotel always comes first when we are staying separately."*
+4. **🏨 Hubby's hotel** — `.sec` with `🟢 Hubby` pill. Solo hotel block.
+5. **🏨 Hotels + 🚆 Trains — Wifey solo** — two distinct `.sec` blocks, both with `🔵 Wifey` pill. Per owner 2026-05-18: `🏨 Hotels` first (grouped by city using `.city-sub` labels), then `🚆 Trains`. Not interleaved.
+6. **🏨 Hotels — Together** — `.sec` with `🟣 Both` pill. Reunion hotels and onward, in chronological order.
 6. **📖 Venue** (if there's a Wifey or together venue separate from Hubby's offsite) — with the hotel→venue distance line.
 7. **🚗 Car Rental** (if any)
 8. **⏳ Action box** (orange) — only things still to book or confirm
@@ -84,12 +85,13 @@ Each hotel uses this exact order (updated 2026-06-25 — city first so you know 
 
 ```html
 <div class="hotel">
-  <div class="hotel-city">City</div>
-  <div class="hotel-dates">Jul 25 → Aug 3</div>
+  <div class="hotel-meta">City <span class="hotel-sep">·</span> Jul 25 → Aug 3</div>
   <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=...">Hotel Name</a></div>
   <span class="copy">Street address, postal code, city, country</span>
 </div>
 ```
+
+City and dates appear on a single line in `.hotel-meta` (bold accent color). The `·` separator uses `.hotel-sep` (muted color).
 
 Why this order:
 - **City** is bold and first — the instant orientation anchor
@@ -335,6 +337,26 @@ When adding a new trip to the file:
 2. Change card class to `.trip-card.past`
 3. Change badge to `badge-booked` with text "✅ Done"
 4. Remove the action box (nothing left to do)
+
+---
+
+## Canonical spacing values (updated 2026-06-25)
+
+These are the locked CSS values for internal card spacing. Do not drift from them without explicit owner sign-off.
+
+| Element | Property | Desktop | Mobile |
+|---|---|---|---|
+| `.trip-body` | padding | `0 18px 16px` | `0 14px 14px` |
+| `.sec` | padding | `20px 0 6px` | `16px 0 6px` |
+| `.sec` | margin-bottom | `6px` | `6px` |
+| `.trip-body > .sec:first-child` | padding-top | `12px` | `10px` |
+| `.hotel` | margin-bottom | `14px` | `12px` |
+| `.hotel` | padding-top | `2px` | `2px` |
+| `.hotel-meta` | margin-bottom | `4px` | `4px` |
+| `.hotel-name` | margin-bottom / margin-top | `3px / 1px` | `3px / 1px` |
+| `.hotel p` (venue website row) | padding-top | `2px` | `2px` |
+
+**Why:** `.sec` at 28px and `.hotel` at 24px created a 52px gap between the last hotel in a section and the next section label — visually broken on both desktop and mobile. The new values give ~34px between sections (14px hotel-bottom + 20px sec-top), which is tight and intentional.
 
 ---
 
