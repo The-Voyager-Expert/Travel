@@ -80,24 +80,23 @@ Every `.sec` that represents a phase tied to one person gets a who-tag pill at t
 
 ## Hotel block — required structure
 
-Each hotel uses this exact order (per owner 2026-05-18 — "make it easier to find the info"):
+Each hotel uses this exact order (updated 2026-06-25 — city first so you know immediately where you are):
 
 ```html
-<div class="booking-block">
-  <div class="booking-name">Hotel Name · City</div>
-  <p class="booking-dates">Jul 25 → Aug 3</p>
-  <p class="addr-copy">Street address, postal code, city, country</p>
-  <p>📍 <a href="https://www.google.com/maps/search/?api=1&query=...">Open in Maps</a></p>
-  <p>Room type · bed type · meal plan</p>
+<div class="hotel">
+  <div class="hotel-city">City</div>
+  <div class="hotel-dates">Jul 25 → Aug 3</div>
+  <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=...">Hotel Name</a></div>
+  <span class="copy">Street address, postal code, city, country</span>
 </div>
 ```
 
 Why this order:
-- **Hotel name** is the first thing on the line — the section header above already carries the who-tag pill, so no pill on the booking-name itself
-- **Dates line** under the name — Owner sees check-in/out at a glance without parsing prose
-- **Plain-text address** in a copyable gray box — for tap-and-hold → paste into Uber / Bolt / Apple Maps. Single tap selects the whole line (`user-select: all`).
-- **Maps pin link** below — only the words "Open in Maps", not the address again. Saves vertical space and keeps the eye on the copy block.
-- **Room type** as the last short line if useful
+- **City** is bold and first — the instant orientation anchor
+- **Dates** under the city — check-in/out at a glance
+- **Hotel name is the Maps link** — tap the name → opens Maps directly. No separate "Open in Maps" line.
+- **Plain-text address** in a copyable gray box — tap selects all, paste into Uber / Bolt / Apple Maps
+- No phone numbers — per owner 2026-06-25: *"remove phone numbers i dont care"*
 
 ### Who-tag — calendar-matched color scheme
 
@@ -362,6 +361,16 @@ Every finalized booking (flight, train, hotel, car rental, tour) saves directly 
 ### Hotel name is never a hyperlink
 Hotel name is plain text only. The only link on a hotel block is the 📍 Maps pin. Per owner: *"we don't need a link for the hotel website."*
 
+### Venue blocks must have a website link — never miss this
+Per owner 2026-06-25: every venue entry must include a 🌐 website link in addition to the 📍 Maps pin. For conferences, link the conference website. For event venues, link the venue or event page. Look it up if unknown — don't ship a venue block without it.
+
+Format:
+```html
+<p>🌐 <a href="https://...">short-label.org</a></p>
+```
+
+Place it after the Maps link (and after the phone number if one is present). The label should be the bare domain or a short readable name — not the full URL.
+
 ### One 🏨 icon per trip card
 The hotel emoji appears only on the section label. Don't use it again on individual hotel names inside the block — it gets too busy.
 
@@ -499,13 +508,14 @@ Per owner 2026-05-20 (*"the code was adding tons of extras"* + *"did i tell you 
 
 If you're tempted to add a descriptive detail "to be helpful" — don't. owner will ask for it if she wants it. Default to less.
 
-### 🚨 Address + phone are mandatory on every hotel — NEVER miss this
+### 🚨 Address is mandatory on every hotel — NEVER miss this
 
-Per owner 2026-05-20 (*"Why does the calendar not have the hotel address? The most important data?"* + *"address and phone number. ad this to the rules. that cant be missed"*): **every hotel event — on the calendar AND in `Trips.html` — must carry both the full street address and the hotel phone number.** These are the two pieces of data owner actually needs on the ground (navigation + calling the front desk). They are non-negotiable.
+Per owner 2026-05-20 (*"Why does the calendar not have the hotel address? The most important data?"*): **every hotel event — on the calendar AND in `Trips.html` — must carry the full street address.** This is the piece of data owner actually needs on the ground (navigation). Non-negotiable.
 
-- **Calendar:** address goes in the `location` field (so it's tappable → Maps). Phone goes in the `description`, formatted `📞 +country-code …`. Verify both saved — the create_event call has dropped `location` silently before (2026-05-19 bug); always re-read the event after creating and confirm `location` is present.
-- **`Trips.html`:** address in the `.addr-copy` block; phone on its own line right under it, `📞 +…`.
-- If a phone number isn't known yet, research it (hotel's official site / Google listing) before marking the hotel done. Don't ship a hotel block or event without it.
+Per owner 2026-06-25: **phone numbers are no longer included anywhere** — not in `Trips.html`, not in calendar events.
+
+- **Calendar:** address goes in the `location` field (so it's tappable → Maps). Verify it saved — the create_event call has dropped `location` silently before (2026-05-19 bug); always re-read the event after creating and confirm `location` is present.
+- **`Trips.html`:** address in the `.copy` block (copyable, `user-select: all`).
 
 When the create tool silently drops `location`, fix it with `update_event` (which persists it correctly) — don't leave the event address-less.
 
