@@ -55,7 +55,7 @@ COUNTRIES = [
  ("Hungary","Europe","Hungarian Forint","Ft","HUF","HUF","", ["Budapest"]),
  ("Iceland","Europe","Icelandic Króna","kr","ISK","ISK","", ["Reykjavik"]),
  ("Ireland","Europe","Euro","€","EUR","EUR","", ["Dublin"]),
- ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Rome","Siena","Sorrento","Turin","Venice","Verona"]),
+ ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Pisa","Rome","Siena","Sorrento","Turin","Venice","Verona"]),
  ("Luxembourg","Europe","Euro","€","EUR","EUR","", ["Luxembourg"]),
  ("Monaco","Europe","Euro","€","EUR","EUR","", ["Monaco"]),
  ("Netherlands","Europe","Euro","€","EUR","EUR","", ["Amsterdam"]),
@@ -84,7 +84,7 @@ COUNTRIES = [
  ("Australia","Oceania","Australian Dollar","A$","AUD","AUD","", ["Melbourne","Sydney"]),
  ("New Zealand","Oceania","New Zealand Dollar","NZ$","NZD","NZD","", ["Queenstown","Wellington"]),
 
- ("United States","North America","US Dollar","$","USD","USD","", ["Alaska","Atlanta","Austin","Bend","Big Island","Boston","Boulder","Carmel-by-the-Sea","Charlotte","Chicago","Columbia","Dallas","Denver","Kauai","Florida Keys","Key West","La Jolla","Las Vegas","Los Angeles","Malibu","Maui","Miami","Napa","Naples, Florida","Nashville","New Orleans","New York","Oahu","Orlando","Palm Desert","Palo Alto","Pasadena","Philadelphia","Phoenix","Portland","San Diego","San Francisco","San Jose","Sarasota","Orcas Island","San Juan Island","Santa Barbara","Santa Cruz","Santa Monica","Scottsdale","Seattle","Virgin Islands","Washington DC"]),
+ ("United States","North America","US Dollar","$","USD","USD","", ["Alaska","Atlanta","Austin","Bend","Big Island","Boston","Boulder","Carmel-by-the-Sea","Charlotte","Chicago","Columbia","Dallas","Denver","Kauai","Florida Keys","Key West","La Jolla","Las Vegas","Los Angeles","Malibu","Maui","Miami","Napa","Nashville","New Orleans","New York","Oahu","Orlando","Palm Desert","Palo Alto","Pasadena","Philadelphia","Phoenix","Portland","San Diego","San Francisco","San Jose","Sarasota","Orcas Island","Pensacola","San Juan Island","Santa Barbara","Santa Cruz","Santa Monica","Scottsdale","Seattle","Virgin Islands","Washington DC"]),
  ("Canada","North America","Canadian Dollar","C$","CAD","CAD","", ["Montréal","Québec City","Toronto","Vancouver","Victoria","Whistler"]),
 
  ("Aruba","Caribbean","Aruban Florin","Afl.","AWG","AWG","Pegged to the US dollar; USD widely accepted.", ["Aruba"]),
