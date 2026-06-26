@@ -648,13 +648,12 @@
       if (!m) return;
       var yr = parseInt(m[1], 10), mo = parseInt(m[2], 10);
       if (yr <= 2000 || mo < 1 || mo > 12) return;
-      var el = document.createElement('div');
+      var el = document.createElement('span');
       el.className = 'title-updated';
-      el.style.cssText = 'order:6;width:100%;text-align:right;font-size:13px;' +
-                         'color:#9a948a;margin-top:12px;';
+      el.style.cssText = 'font-size:11px;color:#9a948a;margin-left:auto;padding-left:12px;font-weight:normal;text-transform:none;';
       el.textContent = 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
-      var tp = document.querySelector('.title-page');
-      if (tp) tp.appendChild(el);
+      var ot = document.querySelector('.overview-title');
+      if (ot) { ot.style.display = 'flex'; ot.style.alignItems = 'center'; ot.appendChild(el); }
       else document.body.appendChild(el);
     }
     if (document.readyState === 'loading') {
