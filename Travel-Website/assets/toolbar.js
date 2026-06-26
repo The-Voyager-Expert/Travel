@@ -650,10 +650,9 @@
       if (yr <= 2000 || mo < 1 || mo > 12) return;
       var el = document.createElement('div');
       el.className = 'title-updated';
-      el.style.cssText = 'text-align:right;font-size:11px;color:#9a948a;margin-bottom:4px;';
       el.textContent = 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
-      var os = document.querySelector('.overview-section');
-      if (os) os.parentNode.insertBefore(el, os);
+      var tp = document.querySelector('.title-page');
+      if (tp) tp.appendChild(el);
       else document.body.appendChild(el);
     }
     if (document.readyState === 'loading') {
