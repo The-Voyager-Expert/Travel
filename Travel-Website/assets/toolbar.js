@@ -651,8 +651,8 @@
       var el = document.createElement('div');
       el.className = 'title-updated';
       el.textContent = 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
-      var tp = document.querySelector('.title-page');
-      if (tp) tp.appendChild(el);
+      var os = document.querySelector('.overview-section');
+      if (os) os.parentNode.insertBefore(el, os);
       else document.body.appendChild(el);
     }
     if (document.readyState === 'loading') {
