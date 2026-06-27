@@ -48,6 +48,36 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - name: Re-validate all guides (hard gate against fake stamps)
+        # Catches fake-stamped guides that hand-bypass the local pre-push guard.
+        # Runs the full validator on every tracked guide; a guide with the stamp
+        # but failing validation is blocked here (the stamp was not legitimately earned).
+        # This gate cannot be bypassed by --no-verify or any local process.
+        run: |
+          set -euo pipefail
+          failed_guides=""
+          for guide in Travel-Website/Guides/*/*.html; do
+            if grep -q "validation: passed" "$guide"; then
+              if ! python3 Brain/scripts/validate_itinerary.py "$guide" >/dev/null 2>&1; then
+                failed_guides="${failed_guides}$(basename $(dirname "$guide"))/$(basename "$guide")
+"
+              fi
+            fi
+          done
+          if [ -n "$failed_guides" ]; then
+            echo "::error::Deploy blocked — guide(s) fail validation despite stamp:"
+            printf '%s' "$failed_guides" | sed 's/^/  - /'
+            echo ""
+            echo "The stamp was not legitimately earned. This can happen if:"
+            echo "  1. The guide was edited after validation (re-run guide_tools.py ship)"
+            echo "  2. The stamp was manually added (guides MUST ship via guide_tools.py ship)"
+            echo "  3. Validators changed and the guide is now stale (re-run guide_tools.py ship)"
+            echo ""
+            echo "To fix: cd Travel && python3 Brain/scripts/guide_tools.py ship <CityName>"
+            exit 1
+          fi
+          count="$(ls Travel-Website/Guides/*/*.html 2>/dev/null | wc -l | tr -d ' ')"
+          echo "All ${count} guides validated — proceeding to coverage checks."
       - name: Block guides missing from cross-guide surfaces
         # Whole-fleet coverage gate on a path --no-verify cannot bypass: every shipped
         # guide must appear (with a resolving link) in the index card, FMAP, map pin,
