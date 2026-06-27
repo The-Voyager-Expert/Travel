@@ -15,9 +15,12 @@ Added 2026-06-26.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 REPO_ROOT  = Path(__file__).resolve().parents[2]
 GUIDES_DIR = REPO_ROOT / "Travel-Website" / "Guides"
@@ -104,7 +107,87 @@ def check_guide(name: str, path: Path) -> list[str]:
     if "guide-style.css" not in html:
         failures.append("guide-style.css not linked — guide uses stale/wrong stylesheet")
 
+    # 11. Photo authenticity — un-bypassable backstop against fabricated photos.
+    #     Pure-Python (no Pillow on CI), so the pixel placeholder test lives in the
+    #     local validator; here we catch the two fabrication signatures that need
+    #     no image decoding and are safe fleet-wide:
+    #       (a) byte-identical served photos (one placeholder copied to N names)
+    #       (b) a present provenance manifest that doesn't back the photos
+    #           (missing entry, non-Wikimedia source, or swapped file = hash mismatch)
+    #     The manifest is NOT required here (existing guides predate it and must keep
+    #     deploying) — the local ship gate makes it mandatory for newly-validated guides.
+    failures.extend(_photo_failures(path, html))
+
     return failures
+
+
+_IMG_EXTS = (".jpg", ".jpeg", ".png", ".webp")
+_WIKI_SUFFIXES = ("wikimedia.org", "wikipedia.org")
+_SRC_RE = re.compile(r'src\s*=\s*"(_build/assets/[^"]+)"')
+
+
+def _sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fp:
+        for chunk in iter(lambda: fp.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _is_wiki(url) -> bool:
+    if not url:
+        return False
+    try:
+        host = (urlparse(url).hostname or "").lower()
+    except Exception:
+        return False
+    return any(host == s or host.endswith("." + s) for s in _WIKI_SUFFIXES)
+
+
+def _photo_failures(guide_html_path: Path, html: str) -> list[str]:
+    guide_dir = guide_html_path.parent
+    refs = [r for r in _SRC_RE.findall(html) if r.lower().endswith(_IMG_EXTS)]
+    seen = set()
+    refs = [r for r in refs if not (r in seen or seen.add(r))]
+    if not refs:
+        return []
+
+    fails: list[str] = []
+    hashes: dict[str, str] = {}
+    for ref in refs:
+        fp = guide_dir / ref
+        if fp.is_file():
+            hashes[ref] = _sha256(fp)
+
+    by_hash: dict[str, list[str]] = {}
+    for ref, h in hashes.items():
+        by_hash.setdefault(h, []).append(ref)
+    for group in by_hash.values():
+        if len(group) > 1:
+            fails.append(
+                "byte-identical served photos (a placeholder copied to multiple "
+                f"filenames): {sorted(group)}"
+            )
+
+    manifest_fp = guide_dir / "_build" / "assets" / "photo_provenance.json"
+    if manifest_fp.is_file():
+        try:
+            manifest = json.loads(manifest_fp.read_text(encoding="utf-8"))
+        except Exception:
+            manifest = None
+        if not isinstance(manifest, dict):
+            fails.append("photo_provenance.json is present but unreadable/invalid")
+        else:
+            for ref, h in hashes.items():
+                entry = manifest.get(Path(ref).name)
+                if not isinstance(entry, dict):
+                    fails.append(f"photo missing from provenance manifest: {ref}")
+                    continue
+                if not _is_wiki(entry.get("source_url")):
+                    fails.append(f"photo provenance source is not Wikimedia/Wikipedia: {ref}")
+                if entry.get("sha256") and entry["sha256"] != h:
+                    fails.append(f"photo bytes don't match recorded provenance sha256: {ref}")
+    return fails
 
 
 def main() -> int:
