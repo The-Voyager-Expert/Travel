@@ -174,6 +174,8 @@ def reverse(rate, sym):
         val = base / rate
         if val >= 0.5:
             return f"{sym}{base:,} ≈ US${val:,.2f}"
+    # If no base yields val ≥ 0.5 (rate > 200,000), fall through to last-iteration fallback below.
+    # (base and val are still defined from the final loop iteration)
     return f"{sym}{base:,} ≈ US${val:,.2f}"
 
 
@@ -186,7 +188,8 @@ def _parse(stamp):
 
 
 def as_of(stamp):
-    return _parse(stamp).strftime("%-d %B %Y")        # 14 June 2026
+    dt = _parse(stamp)
+    return f"{dt.day} {dt.strftime('%B %Y')}"         # 14 June 2026
 
 
 def as_of_month(stamp):

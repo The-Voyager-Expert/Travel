@@ -55,7 +55,10 @@ def check_guide(name: str, path: Path) -> list[str]:
         failures.append('.stop-num uses "Stop N" format — must be "N." (digit + period)')
 
     # 3. No money figures in guide body
-    money = re.findall(r'(?<![a-zA-Z])[$€£¥₹]\s*\d', html)
+    # Strip script/style blocks before checking for money — avoids false positives
+    # on CSS values and JS strings that happen to contain currency symbols.
+    body_only = re.sub(r'<(script|style)\b[^>]*>.*?</\1>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    money = re.findall(r'(?<![a-zA-Z])[$€£¥₹]\s*\d', body_only)
     if money:
         failures.append(f"money figures found ({', '.join(set(money[:3]))}…) — zero prices in shipped guides")
 

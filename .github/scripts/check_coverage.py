@@ -135,7 +135,13 @@ def main() -> int:
         except json.JSONDecodeError:
             pass
     if not weather_keys:
-        weather_keys = {_norm(k) for k in re.findall(r'"([^"]+)"\s*:', weather_js)}
+        print(
+            "WARN: CLIMATE_DATA_START/END sentinel missing from weather.js — "
+            "climate coverage cannot be verified from weather.js; checking climate.json only.",
+            file=sys.stderr,
+        )
+        # Do not fall back to broad key scan — it extracts every JSON key and
+        # produces a false-pass set that hides real gaps.
 
     search_folders, search_names = set(), set()
     sj = ASSETS_DIR / "search_index.json"

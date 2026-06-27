@@ -345,7 +345,8 @@ def run_sweep() -> dict[str, list[str]]:
             guide_html = _html.read_text(encoding="utf-8", errors="replace")
         except OSError:
             guide_html = ""
-        if "<!-- also-on-this-site -->" not in guide_html.lower():
+        if ("<!-- also-on-this-site -->" not in guide_html.lower()
+                or "<!-- /also-on-this-site -->" not in guide_html.lower()):
             missing["resources"].append(folder)
 
     missing["__count__"] = [str(len(guides))]  # piggyback the total for the report

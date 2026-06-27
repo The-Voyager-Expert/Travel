@@ -200,7 +200,8 @@ def main() -> int:
             import statistics as _stats
             _bands = img.split()
             _max_sd = max(
-                _stats.stdev(list(b.getdata())) for b in _bands
+                (_stats.stdev(data) if (data := list(b.getdata())) and len(data) >= 2 else 0.0)
+                for b in _bands
             )
             if _max_sd < 10:
                 print(
