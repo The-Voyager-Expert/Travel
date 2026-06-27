@@ -654,6 +654,7 @@
       var tp = document.querySelector('.title-page');
       if (tp) tp.appendChild(el);
       else document.body.appendChild(el);
+
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _injectUpdated);
