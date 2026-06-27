@@ -57,7 +57,6 @@ REPO = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"],
                            capture_output=True, text=True).stdout.strip() or ".")
 VALIDATOR = REPO / "Brain" / "scripts" / "validate_itinerary.py"
 SITE_SRC = REPO / "Travel-Website"
-EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 GUIDES_REL = "Travel-Website/Guides"
 
 
@@ -66,41 +65,11 @@ def git(*args: str) -> str:
     return out.stdout.strip()
 
 
-def changed_guide_files() -> list[Path]:
-    """Guide HTML added/modified in this push (depth-4, excludes Guides-Index)."""
-    before = os.environ.get("GITHUB_EVENT_BEFORE", "").strip()
-    after = os.environ.get("GITHUB_SHA", "").strip() or "HEAD"
-
-    # No usable "before" (workflow_dispatch, first push, or all-zero sha) →
-    # don't treat anything as changed; publish the tree as-is.
-    if not before or set(before) == {"0"}:
-        if not git("rev-parse", "--verify", "origin/main^{commit}"):
-            return []
-        # Manual run with a remote present: compare last commit only, so a
-        # dispatch never mass-quarantines the backlog.
-        before = git("rev-parse", "--verify", "HEAD~1") or EMPTY_TREE
-
-    diff = git("diff", "--name-only", "--diff-filter=AM", before, after,
-               "--", GUIDES_REL)
-    files = []
-    for rel in diff.splitlines():
-        p = Path(rel)
-        if p.suffix.lower() != ".html":
-            continue
-        if p.name == "Guides-Index.html":
-            continue
-        if len(p.parts) != 4:          # Guides/<City>/<file>.html only
-            continue
-        if (REPO / p).is_file():
-            files.append(p)
-    return files
-
-
 def all_guide_files() -> list[Path]:
     """Every guide on the site — the main (largest) HTML in each city folder.
 
-    Used by the forced full-fleet quality check (VALIDATE_ALL): every guide must
-    pass the real validator to be served; the rest are held back as placeholders.
+    The gate validates all of these on every deploy: every guide must pass the
+    real validator to be served; the rest are held back as placeholders.
     """
     files: list[Path] = []
     base = REPO / GUIDES_REL
@@ -206,27 +175,14 @@ def main() -> int:
             print(f"::warning::CANARY FAILED — validator does not trust this environment "
                   f"({ctop[:100]}). Falling back to report-only: nothing will be quarantined.")
 
-    # ── FULL-FLEET RESET — mark every guide as held-back ─────────────────────
-    # QUARANTINE_ALL=1: every guide is held back as a placeholder right now,
-    # without validation — regardless of whether it currently passes. WHY: with
-    # ~175 guides, cribs ran only superficial validation and problems accumulated
-    # across the fleet (forged stamps, a hidden SEO <h1> injected into 163 guides,
-    # format drift). This forces every guide off the live site until it is genuinely
-    # re-checked. Flip QUARANTINE_ALL off (and use VALIDATE_ALL) to let guides return
-    # as they pass the real validator.
-    quarantine_all = os.environ.get("QUARANTINE_ALL") == "1"
-
-    if quarantine_all or os.environ.get("VALIDATE_ALL") == "1":
-        targets = all_guide_files()
-    else:
-        targets = changed_guide_files()
-    print(f"Guides to process: {len(targets)}"
-          + ("  —  QUARANTINE_ALL: every guide held back" if quarantine_all else ""))
+    # Validate EVERY guide on the site, every deploy. A guide is served only if it
+    # currently passes the real validator; any guide that fails — including an old
+    # one a rule change just made non-compliant — is held back as a placeholder
+    # until it's fixed. No switch, no list, no stamp: the validator is the gate.
+    targets = all_guide_files()
+    print(f"Validating every guide: {len(targets)}")
 
     def _check(g: Path):
-        if quarantine_all:
-            # Held back unconditionally (no validation) — always applies.
-            return (g, False, 0, "held back — full-fleet reset (must re-pass to return)", True)
         try:
             ok, n, top = validate(g)
         except subprocess.TimeoutExpired:
@@ -275,9 +231,6 @@ def main() -> int:
     if summary:
         with open(summary, "a", encoding="utf-8") as fh:
             fh.write("## Guide deploy gate\n\n")
-            if quarantine_all:
-                fh.write("> 🔒 **QUARANTINE_ALL — full-fleet reset.** Every guide held back as a "
-                         "placeholder until it is genuinely re-checked.\n\n")
             if not canary_ok:
                 fh.write("> ⚠️ **Canary failed** — validation-based holdbacks fell back to report-only "
                          "(accept-list holdbacks still applied). Investigate the runner.\n\n")
