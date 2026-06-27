@@ -79,6 +79,7 @@ COUNTRIES = [
  ("Indonesia","Asia","Indonesian Rupiah","Rp","IDR","IDR","", ["Bali"]),
  ("Japan","Asia","Japanese Yen","¥","JPY","JPY","", ["Kyoto","Tokyo"]),
  ("Singapore","Asia","Singapore Dollar","S$","SGD","SGD","", ["Singapore"]),
+ ("Sri Lanka","Asia","Sri Lankan Rupee","Rs","LKR","LKR","", ["Colombo"]),
  ("South Korea","Asia","South Korean Won","₩","KRW","KRW","", ["Seoul"]),
  ("Taiwan","Asia","New Taiwan Dollar","NT$","TWD","TWD","", ["Taipei"]),
  ("Philippines","Asia","Philippine Peso","₱","PHP","PHP","", ["Palawan"]),
