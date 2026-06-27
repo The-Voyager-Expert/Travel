@@ -162,11 +162,13 @@ def _photo_failures(guide_html_path: Path, html: str) -> list[str]:
     by_hash: dict[str, list[str]] = {}
     for ref, h in hashes.items():
         by_hash.setdefault(h, []).append(ref)
+    # 3+ identical files = lazy-placeholder signature; two copies are tolerated as
+    # legitimate hero/stop reuse of a real photo (matches photo_provenance.py).
     for group in by_hash.values():
-        if len(group) > 1:
+        if len(group) > 2:
             fails.append(
-                "byte-identical served photos (a placeholder copied to multiple "
-                f"filenames): {sorted(group)}"
+                f"{len(group)} byte-identical served photos (one image copied to "
+                f"many filenames): {sorted(group)}"
             )
 
     manifest_fp = guide_dir / "_build" / "assets" / "photo_provenance.json"
