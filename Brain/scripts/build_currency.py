@@ -86,14 +86,14 @@ COUNTRIES = [
  ("Australia","Oceania","Australian Dollar","A$","AUD","AUD","", ["Melbourne","Sydney"]),
  ("New Zealand","Oceania","New Zealand Dollar","NZ$","NZD","NZD","", ["Queenstown","Wellington"]),
 
- ("United States","North America","US Dollar","$","USD","USD","", ["Alaska","Atlanta","Austin","Bend","Big Island","Boston","Boulder","Carmel-by-the-Sea","Charlotte","Chicago","Columbia","Dallas","Denver","Florida Keys","Glacier National Park","Kauai","Key West","La Jolla","Lake Tahoe","Las Vegas","Los Angeles","Malibu","Maui","Miami","Napa","Naples","Nashville","New Orleans","New York","Oahu","Orcas Island","Orlando","Palm Desert","Palo Alto","Pasadena","Pensacola","Philadelphia","Phoenix","Portland","San Diego","San Francisco","San Jose","San Juan Island","Santa Barbara","Santa Cruz","Santa Monica","Sarasota","Scottsdale","Seattle","Sedona","Virgin Islands","Washington DC","Yellowstone"]),
+ ("United States","North America","US Dollar","$","USD","USD","", ["Alaska","Atlanta","Austin","Bend","Big Island","Boston","Boulder","Cape Cod","Carmel-by-the-Sea","Charlotte","Chicago","Columbia","Dallas","Denver","Florida Keys","Glacier National Park","Kauai","Key West","La Jolla","Lake Tahoe","Las Vegas","Los Angeles","Malibu","Maui","Miami","Napa","Naples","Nashville","New Orleans","New York","Oahu","Orcas Island","Orlando","Palm Desert","Palo Alto","Pasadena","Pensacola","Philadelphia","Phoenix","Portland","San Diego","San Francisco","San Jose","San Juan Island","Santa Barbara","Santa Cruz","Santa Monica","Sarasota","Scottsdale","Seattle","Sedona","Virgin Islands","Washington DC","Yellowstone"]),
  ("Canada","North America","Canadian Dollar","C$","CAD","CAD","", ["Montréal","Québec City","Toronto","Vancouver","Victoria","Whistler"]),
 
  ("Aruba","Caribbean","Aruban Florin","Afl.","AWG","AWG","Pegged to the US dollar; USD widely accepted.", ["Aruba"]),
  ("Bahamas","Caribbean","Bahamian Dollar","B$","BSD","BSD","Pegged 1:1 with the US dollar — USD accepted everywhere.", ["The Bahamas"]),
  ("Barbados","Caribbean","Barbadian Dollar","Bds$","BBD","BBD","Pegged 2:1 with the US dollar — USD widely accepted.", ["Barbados"]),
  ("Cayman Islands","Caribbean","Cayman Islands Dollar","CI$","KYD","KYD","Pegged to the US dollar; one of the few currencies worth more than USD.", ["Cayman Islands"]),
- ("Costa Rica","Caribbean","Costa Rican Colón","₡","CRC","CRC","One of the more expensive Central American destinations. Many establishments accept US dollars, especially in tourist areas.", ["San José"]),
+ ("Costa Rica","Caribbean","Costa Rican Colón","₡","CRC","CRC","One of the more expensive Central American destinations. Many establishments accept US dollars, especially in tourist areas.", ["San José","Arenal"]),
  ("Curaçao","Caribbean","Caribbean Guilder","ƒ","XCG","XCG","Pegged to the US dollar; replaced the Netherlands Antillean guilder.", ["Curaçao"]),
  ("Sint Maarten","Caribbean","Caribbean Guilder","ƒ","XCG","XCG","Pegged to the US dollar; USD widely accepted.", ["Sint Maarten"]),
  ("Puerto Rico","Caribbean","US Dollar","$","USD","USD","US territory — uses the US dollar.", ["Puerto Rico"]),
