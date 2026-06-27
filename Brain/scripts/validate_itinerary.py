@@ -55,6 +55,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-27", "TITLE-COUNTRY FULL NAME (Dani-approved). New hard-fail check: .title-country must be the country's full name — no abbreviation, no country code, no subdivision (state/province/territory/region). Detection: a comma or middle-dot in the value = subdivision; a short all-caps token (≤4 letters, dots optional) = abbreviation/code. Empty is left to the pre-existing presence check. Rule home: Hotel Banner.html §1 Entry. Companion: 9 live guides normalized (US/USA/US·Colorado/Florida,USA → United States earlier this session; UK → United Kingdom, NZ → New Zealand, UAE → United Arab Emirates in this pass). Validator Index.html + Cleanliness Checks.md updated."),
     ("2026-06-27", "TR-6 added — required pills check. All 7 canonical 'Also on this site' pills must be present: Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats. European Train Guide exempt (EU only). Previously the validator only checked ORDER of pills that were present — absence of a pill was not caught. Victoria failure mode: missing Time Zones / Plug Adapter / Currency slipped through."),
     ("2026-06-26", "TRIP RESOURCES checks TR-3, TR-4, TR-5 added. TR-3: extras-title div in #also-on-this-site must be EMPTY — title 'Also on this site' is injected by CSS ::before; hardcoded text bypasses CSS. TR-4: pill order enforced — canonical sequence: Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats · European Train Guide (EU guides only, always last); out-of-order pairs hard-fail. TR-5: anchor correctness — #Eurozone is never valid (use per-country: #France / #Italy / etc.); multi-word country names must use underscores matching the target-page getElementById IDs (Czech_Republic, United_Kingdom, New_Zealand, Cayman_Islands, Sint_Maarten); dashes silently miss the scroll-to jump."),
     ("2026-06-26", "TITLE CARD FONT SIZE LOCK. New check: no inline font-size override on .title-hotel / .title-address / .title-country — all three locked at 14px in guide-style.css (Hotel Banner.html §2a, approved 2026-06-26). An inline style override would silently break the standard. Brain_check enforces the CSS source values; this check blocks per-guide overrides in HTML."),
@@ -421,11 +422,27 @@ def validate(html: str, filename: str):
     # ═══════════════════════════════════════════════════════════
     print("── CORE RULES INTEGRITY ──")
 
+    # The CORE RULES integrity guard detects unauthorized LOCAL edits by comparing
+    # every CORE RULES file against core_rules_checksums.json. That file is local
+    # authoring material (gitignored) and is NOT published to the repo, so in CI it
+    # is both absent and meaningless. Allow an explicit skip via env var; default
+    # (unset) keeps the full local guard exactly as before.
+    import os as _os_env
+    _cr_skip = _os_env.environ.get("SKIP_CORE_RULES_INTEGRITY") == "1"
+    if _cr_skip:
+        print("   ⏭  skipped (SKIP_CORE_RULES_INTEGRITY=1 — guards local edits, N/A in CI)")
+
     _cr_checksums_path = Path(__file__).parent / "core_rules_checksums.json"
     _cr_rules_dir = Path(filename).resolve().parent.parent.parent.parent / "Brain" / "CORE RULES"
     _cr_integrity_ok = True
 
-    if not _cr_checksums_path.is_file():
+    if _cr_skip:
+        # Skip the hash comparison, but still populate _cr_stored with the CORE
+        # RULES file list — later CORE RULES CONTENT checks (banned phrases, note
+        # words) iterate _cr_stored.keys() to scan each rule file, and would crash
+        # if it were left undefined.
+        _cr_stored = {p.name: "" for p in _cr_rules_dir.glob("*.html")} if _cr_rules_dir.is_dir() else {}
+    elif not _cr_checksums_path.is_file():
         check(
             'CORE RULES integrity — checksums file present '
             '(core_rules_checksums.json must exist next to validator)',
@@ -452,7 +469,7 @@ def validate(html: str, filename: str):
             )
             _cr_integrity_ok = False
 
-    if _cr_integrity_ok:
+    if _cr_integrity_ok and not _cr_skip:
         _cr_modified:  list[str] = []
         _cr_missing:   list[str] = []
         for _rel, _stored_hash in sorted(_cr_stored.items()):
@@ -1954,6 +1971,26 @@ def validate(html: str, filename: str):
         bool(_tc_text),
         ".title-country div missing or empty — add country name to the title banner"
         if not _tc_text else "",
+    )
+
+    # Hotel Banner.html §1 — the country label is the country's FULL name only:
+    # no abbreviation, no country code, and no subdivision below the national
+    # level (state / province / territory / region). A subdivision shows up as a
+    # comma or middle-dot separator; an abbreviation/code is a short all-caps
+    # token (e.g. two-to-four letters, dots optional). Empty is handled by the
+    # presence check above, so this check passes when the field is blank.
+    print("\n── TITLE PAGE: .title-country is a full country name (no abbreviation or subdivision) ──")
+    _tc_norm = _tc_text.replace('.', '').replace(' ', '')
+    _tc_has_subdivision = (',' in _tc_text) or ('·' in _tc_text)
+    _tc_is_abbreviation = bool(_tc_norm) and _tc_norm.isalpha() and _tc_norm.isupper() and len(_tc_norm) <= 4
+    _tc_bad = _tc_has_subdivision or _tc_is_abbreviation
+    check(
+        ".title-country must be the country's full name — no abbreviation, country code, "
+        "or subdivision (state/province/region) (Hotel Banner.html §1 Entry — added 2026-06-27)",
+        (not _tc_text) or (not _tc_bad),
+        (f'.title-country "{_tc_text}" is not a full country name — '
+         "write the country's full name with no abbreviation and no state/province/region")
+        if _tc_bad else "",
     )
 
     # ─── TITLE PAGE COLOR DRIFT: no local style override allowed ───────────

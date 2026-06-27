@@ -60,6 +60,10 @@ jobs:
         env:
           GITHUB_EVENT_BEFORE: ${{ github.event.before }}
           GITHUB_SHA: ${{ github.sha }}
+          # The validator's CORE RULES integrity check guards against unauthorized
+          # LOCAL edits (compares against the gitignored core_rules_checksums.json).
+          # That file isn't published and the check is meaningless in CI, so skip it.
+          SKIP_CORE_RULES_INTEGRITY: "1"
         run: python3 .github/scripts/quarantine_failing_guides.py --stage _site
 
       - name: Cross-guide surface coverage (advisory — never blocks deploy)
