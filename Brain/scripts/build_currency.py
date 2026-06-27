@@ -81,7 +81,8 @@ COUNTRIES = [
  ("Singapore","Asia","Singapore Dollar","S$","SGD","SGD","", ["Singapore"]),
  ("South Korea","Asia","South Korean Won","₩","KRW","KRW","", ["Seoul"]),
  ("Taiwan","Asia","New Taiwan Dollar","NT$","TWD","TWD","", ["Taipei"]),
- ("Thailand","Asia","Thai Baht","฿","THB","THB","", ["Bangkok","Phuket"]),
+ ("Philippines","Asia","Philippine Peso","₱","PHP","PHP","", ["Palawan"]),
+ ("Thailand","Asia","Thai Baht","฿","THB","THB","", ["Bangkok","Chiang Mai","Phuket"]),
 
  ("Australia","Oceania","Australian Dollar","A$","AUD","AUD","", ["Melbourne","Sydney"]),
  ("New Zealand","Oceania","New Zealand Dollar","NZ$","NZD","NZD","", ["Queenstown","Wellington"]),
