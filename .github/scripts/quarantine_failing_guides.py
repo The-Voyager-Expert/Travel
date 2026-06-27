@@ -26,23 +26,18 @@ Two changes, together:
      normally. Because the path still resolves, the index card, the prev/next
      carousel chain, and search keep working — nothing 404s.
 
-Only guides CHANGED IN THIS PUSH are validated. The existing backlog of
-already-live guides is left exactly as-is (publish untouched) — this gate stops
-NEW breakage and lets correct new guides through; it does not retroactively pull
-the backlog. Cleaning that up is a separate, deliberate effort.
+EVERY guide on the site is validated on EVERY deploy — there is no switch and no
+changed-only path. A guide is served only if it currently passes the real
+validator; any guide that fails, including an old one a rule change just made
+non-compliant, is held back until it's fixed. The validator is the only thing
+that decides whether a guide is pushed.
 
 USAGE
 -----
     python3 .github/scripts/quarantine_failing_guides.py --stage _site
 
-Reads the push range from the environment (GitHub Actions sets these):
-    GITHUB_EVENT_BEFORE  — sha before the push  (github.event.before)
-    GITHUB_SHA           — sha after the push    (github.sha)
-Falls back gracefully when they are absent (workflow_dispatch / first deploy):
-no changed guides → nothing validated → everything publishes as-is.
-
 Exit 0 always, unless an infrastructure error occurs (missing validator, copy
-failure). A failing guide is a normal, expected outcome — it is quarantined,
+failure). A failing guide is a normal, expected outcome — it is held back,
 not escalated to a deploy failure.
 """
 
