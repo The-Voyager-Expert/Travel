@@ -66,9 +66,12 @@ jobs:
           # the cross-surface FINAL GATEs — those are covered by check_coverage.py).
           # All guide-CONTENT checks still run. Default (unset) = full local validation.
           VALIDATOR_PUBLISHED_ONLY: "1"
-          # FULL-FLEET HOLD: every guide is held back as a placeholder, no
-          # exceptions, until each is genuinely re-checked and re-pushed.
-          QUARANTINE_ALL: "1"
+          # ALWAYS ON: on every deploy, run the REAL validator against EVERY guide.
+          # A guide is served only if it currently passes; any guide that fails —
+          # including an old one a rule change just made non-compliant — is held back
+          # as a placeholder until it's fixed. The validator is the single source of
+          # truth for "pushed", recomputed on every deploy. No list, no manual stamp.
+          VALIDATE_ALL: "1"
         run: python3 .github/scripts/quarantine_failing_guides.py --stage _site
 
       - name: Cross-guide surface coverage (advisory — never blocks deploy)
