@@ -1,22 +1,17 @@
-name: Deploy site (verify signed proof, per-guide isolation)
+name: Deploy site (publish only — validation is local)
 
-# Deploy-time PROOF check. Validation itself runs LOCALLY (the crib runs the
-# 400-rule validator and, on a clean pass, writes a content-bound SIGNED stamp —
-# Brain/scripts/validation_stamp.py). This workflow does NOT re-run the validator.
+# The deploy just PUBLISHES. It does not validate, re-validate, quarantine, or
+# hold anything back.
 #
-# What it does:
-#   • VERIFY  — check each guide's signed proof (a cheap HMAC over the guide's
-#     content). A hand-typed / bulk-written stamp carries no matching signature,
-#     and a guide edited after validation no longer matches its signature — both
-#     are held back. This is the un-bypassable backstop for the local pre-push
-#     hook, which `--no-verify` can skip.
-#   • ISOLATE — a held-back guide does NOT block the deploy. Its published page is
-#     swapped (in the artifact only) for a small "being updated" placeholder at the
-#     same URL, so links / carousel chain / search keep resolving. Every other
-#     guide ships normally.
-#   • LEGACY GRACE — guides still carrying an old UNSIGNED stamp are served and
-#     flagged, not held back, so the signed scheme rolls out without quarantining
-#     the existing fleet. They get a signature next time they're validated locally.
+# Validation is purely LOCAL: a crib runs Brain/scripts/validate_itinerary.py,
+# and only on a clean pass does it earn a content-bound SIGNED stamp
+# (Brain/scripts/validation_stamp.py). A guide that fails stays untracked on the
+# Drive and never reaches the repo — the local pre-push hook (pre_push_guard.py)
+# blocks any push that adds/modifies a guide lacking a valid signed stamp.
+#
+# So the repo only ever contains guides that passed locally. There is nothing to
+# check at deploy time — this workflow stages Travel-Website/ and publishes it.
+# No placeholders, no all-or-nothing block, no CI validation.
 #
 # Serving is unchanged: Travel-Website/ is staged at the artifact root + .nojekyll,
 # so https://the-voyager-expert.github.io/Travel/Travel-Website/… URLs stay identical.
@@ -44,36 +39,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Need history so the script can diff this push (before → after) and,
-          # on manual runs, fall back to HEAD~1.
-          fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Verify each guide's signed validation proof, stage artifact
-        # Validation runs LOCALLY (Brain/scripts/validate_itinerary.py writes a
-        # content-bound signed stamp on a clean pass). This step does NOT re-run
-        # the validator — it only verifies that signed proof (a cheap hash) and
-        # holds back any guide whose signature doesn't match its content (a faked
-        # stamp or a post-validation edit). Every other guide ships.
-        env:
-          # Optional: matching HMAC key for signature verification. Unset → the
-          # public default key (still content-bound: defeats bulk/hand stamps and
-          # post-validation edits). Set the secret AND the same value in the cribs'
-          # Brain/scripts/.validation_key together for forgery resistance.
-          VOYAGER_VALIDATION_KEY: ${{ secrets.VOYAGER_VALIDATION_KEY }}
-        run: python3 .github/scripts/quarantine_failing_guides.py --stage _site
-
-      - name: Cross-guide surface coverage (advisory — never blocks deploy)
-        # Reports guides missing from index / maps / stats / search so drift is
-        # visible, but does NOT fail the deploy: one guide's coverage gap must not
-        # hold back the whole site. Hard coverage enforcement lives per-guide in
-        # the LOCAL ship gate (guide_tools.py ship) and the validator's FINAL GATEs.
-        run: python3 .github/scripts/check_coverage.py || echo "::warning::coverage gaps reported above (advisory)"
+      - name: Stage site (publish as-is — validation is enforced locally)
+        run: |
+          mkdir -p _site
+          cp -r Travel-Website _site/Travel-Website
+          if [ -f .nojekyll ]; then cp .nojekyll _site/.nojekyll; else touch _site/.nojekyll; fi
 
       - uses: actions/upload-pages-artifact@v3
         with:
