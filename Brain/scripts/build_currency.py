@@ -70,6 +70,7 @@ COUNTRIES = [
 
  ("United Arab Emirates","Middle East","UAE Dirham","Dh","AED","AED","Pegged to the US dollar (~3.67).", ["Abu Dhabi","Dubai"]),
 
+ ("Egypt","Africa","Egyptian Pound","E£","EGP","EGP","", ["Cairo"]),
  ("Morocco","Africa","Moroccan Dirham","DH","MAD","MAD","", ["Marrakech"]),
 
  ("China","Asia","Chinese Yuan (Renminbi)","¥","CNY","CNY","", ["Beijing","Chongqing","Shanghai","Zhangjiajie"]),
