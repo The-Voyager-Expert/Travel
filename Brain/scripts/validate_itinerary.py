@@ -55,6 +55,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-27", "TR-6 added — required pills check. All 7 canonical 'Also on this site' pills must be present: Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats. European Train Guide exempt (EU only). Previously the validator only checked ORDER of pills that were present — absence of a pill was not caught. Victoria failure mode: missing Time Zones / Plug Adapter / Currency slipped through."),
     ("2026-06-26", "TRIP RESOURCES checks TR-3, TR-4, TR-5 added. TR-3: extras-title div in #also-on-this-site must be EMPTY — title 'Also on this site' is injected by CSS ::before; hardcoded text bypasses CSS. TR-4: pill order enforced — canonical sequence: Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats · European Train Guide (EU guides only, always last); out-of-order pairs hard-fail. TR-5: anchor correctness — #Eurozone is never valid (use per-country: #France / #Italy / etc.); multi-word country names must use underscores matching the target-page getElementById IDs (Czech_Republic, United_Kingdom, New_Zealand, Cayman_Islands, Sint_Maarten); dashes silently miss the scroll-to jump."),
     ("2026-06-26", "TITLE CARD FONT SIZE LOCK. New check: no inline font-size override on .title-hotel / .title-address / .title-country — all three locked at 14px in guide-style.css (Hotel Banner.html §2a, approved 2026-06-26). An inline style override would silently break the standard. Brain_check enforces the CSS source values; this check blocks per-guide overrides in HTML."),
     ("2026-06-25", "STYLESHEET HREF + MICHELIN-COUNT CLASS. (1) Stylesheet href regex updated: guide_v3.css → guide-style.css (CSS file renamed 2026-06-25). (2) New check: Michelin 'Not shown' div must carry class=\"michelin-count\" — without it the 14px top-margin spacing rule in guide-style.css has no effect and the line runs flush against the last restaurant entry."),
@@ -25229,6 +25230,29 @@ def validate(html: str, filename: str):
             'getElementById; wrong fragment = silent miss)',
             not _tr_bad_anchors,
             'Bad anchors found: ' + '; '.join(_tr_bad_anchors),
+        )
+
+        # TR-6: required pills — every guide must link to all canonical trip
+        # resource pages.  Absence of a pill means the traveller can't reach
+        # key reference pages (time zones, plug adapters, currency) from the guide.
+        # European-Train-Guide is exempt (EU guides only); all others are required.
+        _TR_REQUIRED = [
+            ('Weather',       'Weather.html'),
+            ('Time Zones',    'Time-Zones.html'),
+            ('Plug Adapter',  'Plug-Adapter-Guide'),
+            ('Currency',      'Currency-Guide'),
+            ('Safety Guide',  'Safety-Guide'),
+            ('Visas',         'Visas.html'),
+            ('Stats',         'Stats'),   # Asia-Stats / Europe-Stats / Stats-Across-US etc.
+        ]
+        _tr_pills_text = ' '.join(_pill_hrefs)
+        _tr_missing = [label for label, key in _TR_REQUIRED if key not in _tr_pills_text]
+        check(
+            'TR-6 "Also on this site" required pills — all canonical resource pills must be present: '
+            'Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats '
+            '(European Train Guide exempt — EU guides only)',
+            not _tr_missing,
+            'Missing pill(s): ' + ', '.join(_tr_missing),
         )
 
     # STALE STAMP CHECK — REMOVED at Dani's request. The warning fired on every
