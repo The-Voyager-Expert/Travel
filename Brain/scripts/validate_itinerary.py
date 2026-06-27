@@ -15145,6 +15145,7 @@ def validate(html: str, filename: str):
         _tours_src = {'Viator': 0, 'GetYourGuide': 0, 'TripAdvisor': 0, 'Other': 0}
         _tours_present = bool(_tours_sec_m)
         _tours_empty = False
+        _tours_inner: str = ""
         if _tours_sec_m:
             _tours_inner, _ = _walk_balanced_div(html, _tours_sec_m.end())
             _tours_empty = 'extras-empty' in _tours_inner
