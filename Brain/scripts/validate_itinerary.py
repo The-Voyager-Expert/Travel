@@ -15912,6 +15912,36 @@ def validate(html: str, filename: str):
                 if _orphaned_assets else "",
             )
 
+    # ─── PHOTO AUTHENTICITY (no fabricated / placeholder / non-Wikimedia photos) ──
+    # A crib once shipped a guide whose stop photos were one blue-box placeholder
+    # copied to 9 filenames — every other check passed and it stamped + went live.
+    # Every served photo must be a real, byte-distinct photograph downloaded from
+    # Wikimedia Commons via commons_photo.py (which records provenance). No real
+    # Wikimedia-sourced photos → no passed stamp. Rule home: Photos Rules.html.
+    if filename:
+        try:
+            import sys as _sys, os as _os
+            _sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+            from photo_provenance import verify_guide_photos as _verify_photos
+            _photo_fails = _verify_photos(html, Path(filename).resolve().parent)
+            check(
+                'Every served photo is a real, distinct, Wikimedia-sourced photograph '
+                '(no fabricated / placeholder / duplicated / non-Commons images)',
+                len(_photo_fails) == 0,
+                ("photo authenticity failures:\n      - " + "\n      - ".join(_photo_fails)
+                 + "\n      Fix: download each stop photo with "
+                   '`python3 Brain/scripts/commons_photo.py --download '
+                   '"Guides/<City>/_build/assets/800px-Foo.jpg" "File:Foo.jpg"` '
+                   "— it fetches the real Commons file and records its provenance.")
+                if _photo_fails else "",
+            )
+        except Exception as _pe:
+            check(
+                'Photo authenticity check ran',
+                False,
+                f"photo authenticity check failed to run: {_pe}",
+            )
+
     # ─── HOTEL NAME UNIQUENESS ────────────────────────────────────
     print("\n── HOTEL NAME UNIQUENESS ──")
     _hotel_match = re.search(
