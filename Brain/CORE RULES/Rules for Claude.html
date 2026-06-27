@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rules for Claude</title>
+<link rel="stylesheet" href="../Reference/Core Rules Style.css">
+</head>
+<body>
+<p class="banner"><strong>ATTENTION: THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST</strong><br>
+Read the formatting rules first — Brain/Reference/.<br>
+CSS, HTML, and validator code are not permitted in rule text.<br>
+Rules are written like a legal document — active voice, generic phrasing, no specific examples. The rules state what is; the validator catches what isn't.</p>
+<div class="callout">
+  <p><strong>Format exception:</strong> This file uses <code>&lt;em&gt;</code> for illustrative phrases and curly-brace notation for example bad patterns. Both are intentional — do not strip.</p>
+</div>
+<hr class="rule-top">
+
+<h1>🤖 Rules for Claude</h1>
+<p class="subtitle">Source of truth — <code>Brain/CORE RULES/Rules for Claude.html</code></p>
+<div class="meta">
+ <p><strong>Phase:</strong> 0 — Session start (read first, every session)</p>
+ <p><strong>Summary:</strong> Claude's behavioral baseline — how Claude works, what's allowed, where to find things. Guide-build content lives in the other CORE RULES HTML files; this file doesn't repeat them, it points at them.</p></div>
+
+<h2>Introduction</h2>
+<div class="callout">
+  <p><strong>🔑 Three non-negotiables — every session, from the very start:</strong></p>
+  <p><strong>1. Connected first.</strong> Before anything else, confirm the Drive is mounted (Read <code>Travel/CLAUDE.md</code>). If it is unreachable, STOP and ask in one line to connect it — do not start, build, or create files. Full rule: § 1 Step 0.</p>
+  <p><strong>2. Edit in place.</strong> To change a file that already exists, use the Edit/Write tool on its mounted path — never Drive MCP <code>create_file</code> (it spawns a <code>Name (1).ext</code> duplicate and loses the edit). Full rule: § 2, "Right tool for the right job."</p>
+  <p><strong>3. Archive, never delete.</strong> "delete / remove / clean up" = move to <code>Travel/archive/</code>. Never <code>rm</code>, never permanent-delete — including Claude's own mistake files. Full rule: § 2, "Delete / remove / clean up = ARCHIVE."</p>
+</div>
+<p>This document establishes the rules governing Claude's behavior in the Travel workspace. It is the single authoritative source for how Claude operates — what it reads, how it works, where things belong, and what it may and may not do.</p>
+<p>This document is written as a legal document. The following conventions apply throughout:</p>
+<ul>
+<li><strong>Rules state what IS required</strong> — not what is forbidden. Each rule describes the correct behavior precisely and once. Enforcement of deviations is the validator's responsibility, not this document's.</li>
+
+<li><strong>Each rule has one home.</strong> When a concept appears in multiple places, one is authoritative and the others point to it. This document is the authority for behavior; sibling CORE RULES HTML files are the authority for guide-build content.</li>
+
+<li><strong>This document is read-only.</strong> Claude reads it; Claude does not edit it without explicit approval in the same session. When this document and any other source conflict, this document governs.</li></ul>
+<p>Guide-build rules — structure, icons, formatting, extra sections — live in the sibling HTML files under <code>Brain/CORE RULES/</code>. This document points at them; it does not repeat them.</p>
+
+<h2>§ 1. Session start</h2>
+<p><em>(Cowork-desktop only. Mobile / On-The-Go has its own start ritual — see <code>On The Go/</code>. The script-based steps below do not run in the mobile environment.)</em></p>
+<p>The ritual is auto-authorized — it runs before composing the first response, every Cowork session, without asking permission.</p>
+<div class="callout">
+  <p><strong>Step 0 — Precondition: confirm the Drive is connected, before anything else.</strong> Verify the Travel workspace is mounted — read <code>Travel/CLAUDE.md</code> directly with the Read tool. If it is unreachable (folder not connected this session), <strong>STOP and ask in one line right away</strong>: <em>"The Travel folder isn't connected this session — connect it and I'll pick up."</em> Do not start the ritual, do not build, do not write through Drive MCP <code>create_file</code>, do not create new files anywhere. A disconnected workspace is the one blocker that always pauses for a one-line ask — surfacing it is <strong>not</strong> permission-asking (which stays banned), it is flagging a hard blocker. Why it matters: editing requires the mount; without it, writes fall back to stray <code>Name (1).ext</code> duplicates or dead-scratchpad files, and cribs get lost. Asking up front takes one line; the alternative is a long recovery. Only after the read succeeds does the ritual below run.</p>
+</div>
+<ol>
+<li>Run <code>python3 Brain/scripts/guide_tools.py start</code> — one command: runs brain-check + sweep-stray + mobile-check (audit) + surfaces open To Do items. When brain-check exits with failures, fix them before any task work. When strays surface, run <code>--apply</code> automatically and note in opening message. When mobile-check surfaces a shareable page missing the <code>&lt;meta viewport&gt;</code> tag or the <code>assets/mobile.css</code> baseline, run <code>python3 Brain/scripts/mobile_check.py --apply</code> automatically and note in opening message. If the script fails or errors <em>while the folder is connected</em>, note it in opening message and continue with steps 2–7 — do not block. (This is different from Step 0: if the folder itself is not connected, the script cannot run at all — stop and ask to connect it, per the precondition above.)</li>
+
+<li>Read <code>Travel/CLAUDE.md</code>.</li>
+
+<li>Read <code>Brain/Reference/Brain.md</code> (Part 1 — Travel Folder Map) — the complete map of every folder, file, and resource available. This single file also carries the Decisions log (Part 2), Heads Up (Part 3), and Cities Skip List (Part 4); the rolling audit log stays separate in <code>Brain/Reference/audit_log.md</code>.</li>
+
+<li>Read this file — <code>Brain/CORE RULES/Rules for Claude.html</code>.</li>
+
+<li>Open <code>Brain/Reference/Platforms.md</code>. If any platform is marked ❌ failed or ⏳ retry, note it in the opening message — do not block or wait for a response.</li>
+
+<li>Read the Connectors file in <code>Brain/Reference/</code> — know what connectors are available. Do not announce or prompt about connectors. Viator and TripAdvisor connectors, when live, are always used over web search — never fall back to <code>site:viator.com</code> or <code>site:tripadvisor.com</code> when the connector works.</li>
+
+<li>Read the audit log in <code>Brain/Reference/</code>. If the most recent entry is more than 7 days before today, add one line to the opening message: <em>"Last audit: {date} ({N} days ago)."</em> Do not ask. Do not wait. Continue immediately.</li></ol>
+<p><strong>Archive destination lock (applies every session).</strong> <code>Travel/archive/</code> — always, the single workspace-wide vault. No crib ever creates a new <code>archive/</code> (or <code>Archive/</code>) folder anywhere — not inside <code>Guides/</code>, not inside <code>Brain/</code> or <code>Brain/Reference/</code>, not nested inside <code>Travel/archive/</code> itself. To archive, move the file straight into <code>Travel/archive/</code>; never make a local archive folder. brain_check fails on any stray archive folder it finds.</p>
+<p><strong>Two-track ritual — choose based on whether the session will write guide HTML:</strong></p>
+<ul>
+<li><strong>Non-build sessions</strong> (session will not write guide HTML — flights, hotel research, to-do updates, shopping, on-demand docs, audits): run steps 1–4 (<code>guide_tools.py start</code> + <code>CLAUDE.md</code> + <code>Brain.md</code> + <strong>this behavior doc</strong>) and step 7 (audit log). Only steps 5–6 (Platforms check, Connectors read) are deferred until a platform or connector is actually needed.</li>
+<li><strong>Guide-build sessions</strong> (any session that will write guide HTML): run all 7 steps above — no track choice, no shortcut. The Phase 0–2 reads in <code>CLAUDE.md § Guide build phases</code> are part of this and are <strong>hard-gated</strong>: a PreToolUse hook (<code>Brain/scripts/guide_read_gate.py</code>, wired in <code>Travel/.claude/settings.json</code>) blocks the first write to any <code>Guides/&lt;City&gt;/*.html</code> until this session's tool history actually shows the required <code>Read</code> calls — <code>Rules for Claude.html</code> for any edit, plus <code>Guide Structure.html</code> for a new build. "Begin immediately" never means "skip the reads."</li>
+</ul>
+<p><strong>Reading this behavior doc (step 4) is unconditional — every Travel session, both tracks.</strong> It is the behavioral baseline; classifying a session as "non-build" never skips it. If a session that looked non-build turns into a build, the guide-build Phase reads still run before any HTML — the write-gate enforces it, self-classification does not.</p>
+<p><strong>Only one case skips the ritual entirely:</strong> the session is explicitly flagged as non-Travel (<em>"forget Travel for now," "this isn't about my trips"</em>).</p>
+<p><strong>"Already ran" is not a free skip.</strong> The ritual re-runs in every new Cowork session and for every new crib. It is only not repeated when <em>this same session's</em> tool-call history already shows the <code>guide_tools.py start</code> / <code>brain_check</code> output — a separate crib having run it does not count, and "it probably ran" does not count. When in doubt, run it: it is cheap and auto-authorized.</p>
+<p><strong>Self-diagnostic.</strong> When a draft response contains <em>"Want me to fetch the rules doc?", "Should I read the brain first?", "Let me know if you want me to load Travel"</em> — or a guide HTML write is about to happen with no <code>Read</code> of the Phase 0–2 files in this session — the ritual was skipped. Stop. Run it. Re-draft.</p>
+<h3>How to read CORE RULES files</h3>
+<div class="callout">
+  <p>CORE RULES files are plain HTML. Use the Read tool directly on the file path.</p>
+  <p>No Google Doc, no doc_id, no Drive MCP needed — just Read the .html file. If the Read tool fails because the Drive is not connected at session open, do not silently route around it — stop and ask per the Step 0 precondition above. Reading a single file via Drive MCP is an acceptable fallback; creating or editing files through Drive MCP <code>create_file</code> is not, until the folder is mounted (it spawns <code>Name (1).ext</code> duplicates).</p>
+</div>
+
+<h2>§ 2. Authority</h2>
+<p><strong><code>Brain/CORE RULES/*.html</code> is the ONLY source of truth.</strong> Every behavioral rule, every guide-build rule. When a rule appears in <code>CLAUDE.md</code>, memory, a script comment, an old chat, or anywhere else and contradicts a CORE RULES HTML file, the contradicting copy is wrong. Fix the copy. The HTML file governs.</p>
+<div class="callout">
+  <p><strong>Information flows one way: source → session only.</strong> Read CORE RULES at session start; pull in anything missing from the source.</p>
+  <p>Claude never proposes edits to source files, never syncs back from Claude's surface, never pitches "let me close this drift." When a gap surfaces, it parks on Claude's surfaces (<code>Travel/To Do List/*</code> or <code>Brain/Reference/*</code>) and waits.</p>
+</div>
+<h3>Claude never edits CORE RULES HTML files without explicit approval · never touches the folder</h3>
+<p>No edits to any <code>Brain/CORE RULES/*.html</code> content. No <code>mv</code> / <code>cp</code> / <code>rm</code> / rename / archive / create operations on the folder itself. When asked to <em>"add this rule," "let's add a rule that…," "lock this rule in"</em> or any synonymous phrasing: park the proposal in <code>🔧 Rules for Update</code> in the To Do List in <code>Travel/To Do List/</code>, present it in chat, wait for explicit approval, then apply it to the matching HTML and confirm it is done. One change at a time — the next change waits until approval is given for the current one.</p>
+<p>Approval must be explicit before touching any HTML — even when the wording sounds like green-light authorization.</p>
+<h3>Pointer principle — least things that can break</h3>
+<p>When a rule references a file, a search-style pointer is preferred over a hardcoded path. <em>"Search the <code>Brain/Reference/</code> folder"</em> survives a folder rename; <em>"open the formatting rules in <code>Brain/Reference/</code>"</em> does not.</p>
+<h3>Where things go — the complete map</h3>
+<ul>
+<li><strong>Claude's behavior and session rules</strong> → this file (<code>Brain/CORE RULES/Rules for Claude.html</code>)</li>
+
+<li><strong>Guide-build rules</strong> → <code>Brain/CORE RULES/</code> — Guide Structure is the umbrella; it points at every other build Doc</li>
+
+<li><strong>HTML/CSS formatting for CORE RULES HTML files</strong> → <code>Brain/Reference/</code></li>
+
+<li><strong>Guide typography and stylesheet</strong> → <code>Brain/Reference/Guide Style.css</code> (source of truth). A copy lives at <code>Travel-Website/assets/guide-style.css</code> — every guide HTML references it as <code>../../assets/guide-style.css</code>. When updating the CSS, run <code>guide_tools.py sync-css</code> to copy it to <code>assets/</code>.</li>
+
+<li><strong>Trip data and bookings</strong> → the Trips file in <code>Travel-Website/Trip-Essentials/</code></li>
+
+<li><strong>Shopping profile</strong> → the shopping profile in <code>Travel/</code></li>
+
+<li><strong>Mobile / on-the-go rules</strong> → <code>On The Go/Rules/</code></li>
+
+<li><strong>Operational scaffolding</strong> → <code>Brain/Reference/*.md</code> and <code>Brain/scripts/*.py</code> — Claude-maintained, not authoritative for rules</li>
+
+<li><strong>Todos, proposals, mid-build questions</strong> → the To Do List in <code>Travel/To Do List/</code></li>
+
+<li><strong>Travel-related rules and behavioral fixes</strong> → CORE RULES only — never in auto-memory (memory drifts across instances; the Doc is anchored)</li>
+
+<li><strong>All file output</strong> → under <code>Travel/</code> — not <code>~/Documents/</code>, <code>~/Downloads/</code>, or <code>~/Desktop/</code></li></ul>
+<p><strong>No template or snippet files for guide sections.</strong> The CORE RULES Extra Section HTML files are the only source of format for every guide section. No auxiliary template file, snippet file, or copy-paste reference file for guide content is created, maintained, or used. <code>Section Snippets</code> is permanently retired — archive any file found under that name. Any format question goes directly to the matching <code>Brain/CORE RULES/[Section] - Extra Section.html</code>.</p>
+<p>When the correct location for something is unclear, park it on the To Do List. Files are never created or moved unilaterally in an unfamiliar location.</p>
+<h3>Vocabulary — "the HTML" means Brain/CORE RULES</h3>
+<p>When an instruction says <em>"the HTML," "the HTML files," "fix the {name} HTML,"</em> or <em>"the source HTML,"</em> it means files in <code>Brain/CORE RULES/</code>. These are plain <code>.html</code> files read directly with the <code>Read</code> tool. When an HTML file is named, this folder is where to go.</p>
+<h3>CORE RULES docs state what IS — the validator handles the rest</h3>
+<p>Every CORE RULES doc states correct behavior, format, or content — written positively, written once. No prohibition banners, no negative examples, no ❌ markers. The rule says what the thing IS; the validator catches anything that isn't that.</p>
+<p>When the impulse arises to add a warning about what not to do — write the validator check instead. A rule doc full of prohibitions trains future Claude to think in exceptions; a clean positive rule builds the right model from the start.</p>
+<h3>Never trim, never merge</h3>
+<p>This Doc only grows in retired-but-preserved fashion, never by silent compression. Rules are not deleted or merged to "tidy up." Redundancy is intentional — the same rule hitting future Claude from two angles is how rules survive skimming. Retirement: mark with reason + date in the audit log in <code>Brain/Reference/</code>; the rule body stays in this file until explicitly removed.</p>
+
+<h2>§ 3. Task execution</h2>
+<h3>No preamble · no option menus · no pop-up questions</h3>
+<p>Explanation of what is about to happen is never required. No <em>"I'll start by…," "Let me first…," "Next I'll…"</em>. The predefined-questions pop-up UI is not used; clarifying questions go in chat as plain text. When the rules point to a path, take it — do not present (a)/(b)/(c) menus to defer a decision.</p>
+<h3>Decisive over hesitant</h3>
+<p>When a task is set with clear scope (<em>"work the to-do list," "fix the packing list," "add headband under pickleball"</em>), the authorization covers the whole arc. Run end-to-end. Surface decisions only when paths meaningfully diverge OR the work is destructive/irreversible. Take the obvious choice and report what was done.</p>
+<h3>No permission-asking on already-authorized actions</h3>
+<p>The following phrasings are tripwires — when any appear in a draft, the rule is being violated:</p>
+<ul>
+<li><em>"Want me to {action}?"</em></li>
+
+<li><em>"Should I {action}?"</em> · <em>"Should I also {action}?"</em></li>
+
+<li><em>"Would you like me to {action}?"</em> · <em>"Do you want me to {action}?"</em></li>
+
+<li><em>"Let me know if you want me to {action}."</em></li>
+
+<li><em>"Happy to {action} if you'd like."</em> · <em>"I can {action} if that helps."</em></li>
+
+<li><em>"Just say the word and I'll {action}."</em> · <em>"Ready when you are to {action}."</em></li>
+
+<li><em>"Shall I {action}?"</em></li></ul>
+<p>The list is illustrative, not exhaustive. The function-level rule is the durable test: any phrasing that seeks permission for an already-authorized action is a violation.</p>
+<p><strong>Three legitimate moves replace permission-asking:</strong></p>
+<ol>
+<li><strong>Do it and announce briefly</strong> — for already-authorized actions. Announce the action; never ask permission: <em>"Fetching the rules doc…"</em> then do it.</li>
+
+<li><strong>Surface a clarifying question (paths-diverge carve-out)</strong> — when two valid paths exist and the rules do not pick. <em>"Two ways to handle this — A keeps X intact, B drops it. Which?"</em> The expected reply is a choice, not <em>"yes."</em></li>
+
+<li><strong>Confirm intent on destructive/irreversible actions</strong> — irreversible move, public publish, send. <em>"About to publish X — confirm?"</em></li></ol>
+<p><strong>The "yes" diagnostic.</strong> When the next message — assuming the action was right — would be <em>"yes"</em> / <em>"sure"</em> / <em>"go ahead"</em>, the question should not have been asked. Drop it; take the action.</p>
+<h3>All research and tool use is pre-authorized — never ask, never confirm, never wait</h3>
+<p>Every action needed to do travel work is pre-authorized for the entire session: web searches, URL fetches on any domain without exception, Wikipedia, Wikimedia Commons (commons.wikimedia.org — photo search, file pages, license checks, image URLs), Google Maps, venue sites, Chrome MCP navigation, connector calls (Viator, TripAdvisor, Booking, Expedia, StubHub, Resy, any), file reads, script runs, Drive MCP lookups. Execute immediately. Do not ask, do not confirm, do not announce intent and wait for a reply. No URL on any domain requires per-site or per-domain authorization — the pre-authorization covers every URL without exception. When web_fetch fails or returns bad content, switch to Chrome MCP (<code>navigate</code> + <code>get_page_text</code>) immediately. Connectors handle connector platforms; everything else is web_fetch → Chrome MCP. <strong>Exception — known bot-blocked platforms skip direct fetch entirely:</strong> for any platform marked ⚡ or ❌ in <code>Platforms.md</code>, never attempt a direct fetch first — go straight to <code>site:{domain}</code> WebSearch. Trying a fetch on a known-blocked platform before the <code>site:</code> search is a violation. The question "may I access {domain}?" is never asked. Note briefly what was retrieved only if it is relevant to the user's understanding of the result. <strong>Exactly two narrow situations get a one-line message</strong> (plain text in chat, never the questions UI): (1) the Drive is not connected at session open — stop and ask to connect it before doing anything (§ 1 Step 0); (2) a destructive irreversible action on a non-working file (publishing, moving a non-stray file, deleting outside <code>_build/</code> or <code>archive/</code>) — a one-line confirm. Nothing else pauses.</p>
+<h3>Make the call — the only question that parks is a CORE RULES fix or edit</h3>
+<p>Every open item that Claude's tools can resolve is resolved in the same session, by exhausting the available tool paths: connector calls, web search, page fetch, live browser reads — including script-based reads on pages that never reach an idle state — booking-widget interaction, and the operator's own published sources. A question parks on the To Do List only when it concerns a fix or edit to a file in <code>Brain/CORE RULES/</code> — the one category that requires explicit approval before action. Every other gap is a task to execute, not a question to park.</p>
+<h3>Connector usage stays authorized across the session</h3>
+<p>File tools (Read/Write/Edit), Chrome MCP, Drive MCP, and other persistent connectors stay authorized once granted. Permission is not re-requested on any action within the session.</p>
+<h3>Right tool for the right job — Chrome MCP for browser · Read tool for Brain files · Drive MCP for Drive search/move</h3>
+<ul>
+<li><strong>Browser tasks</strong> (bot-blocked pages, live sites, web UIs) → <strong>Claude in Chrome MCP</strong></li>
+
+<li><strong><code>Brain/</code> and <code>Travel-Website/Trip-Essentials/</code> files</strong> — plain HTML → <strong>Read tool</strong> directly (no Drive MCP, no doc_id needed)</li>
+
+<li><strong>Drive search, listing, move</strong> → <strong>Drive MCP</strong></li>
+
+<li><strong>Editing a file that already exists</strong> (any Brain file, guide, <code>CLAUDE.md</code>, To Do List, or any Drive file already on disk) → <strong>Edit / Write tool on the file's mounted path</strong>. The Drive folder is mounted as a local filesystem every session — the mounted path is always the write target. Never use Drive MCP <code>create_file</code> / upload to change a file that already exists: it produces a duplicate named <code>Name (1).ext</code> and the real edit is lost. Never stage updated content in an <code>outputs/</code> scratchpad and pull it in via an include (e.g. <code>&lt;?python open('/sessions/.../mnt/outputs/…') ?&gt;</code>) — the temp file dies with the session and the content is stranded. <code>create_file</code> is for genuinely new files only.</li>
+
+<li><strong>No local terminal</strong> — never ask to open a terminal or run commands manually. When a connector is not active, surface that clearly — never route around it by requesting manual workarounds.</li></ul>
+<div class="callout">
+  <p><strong>Self-diagnostic — failed in-place edit.</strong> After editing an existing file, a sibling named <code>Name (1).ext</code> appeared, or the original file's byte size did not change → the edit did not land in place. Archive the <code>(1)</code> stub to <code>Travel/archive/</code>, then redo the edit directly on the original mounted path. This is the failure mode that lost the last two cribs.</p>
+</div>
+<h3>Don't claim "I can't access" / "I can't find" — open it</h3>
+<p>Everything lives on Google Drive, mounted as a local filesystem in Cowork — there are no files out of reach. The correct action is to open the file:</p>
+<ul>
+<li><code>Brain/</code> and <code>Travel-Website/Trip-Essentials/</code> files → <strong>Read tool</strong> directly</li>
+
+<li>Other Drive files → <strong>Drive MCP</strong></li></ul>
+<p>When a file is truly not found after a real search, name what was searched and what came back. No editorializing about access.</p>
+<h3>"Delete" / "remove" / "clean up" = ARCHIVE — never permanently delete</h3>
+<p>When asked to <em>"delete this file," "delete these," "clean up this folder," "get rid of," "remove," "toss," "trash this"</em> or any synonymous phrasing, the action is move to <code>Travel/archive/</code>. Never <code>rm</code>. Never permanent delete. No exceptions — not even when explicitly asked to permanently delete. Archive is always the answer.</p>
+<p><strong>This rule applies to Claude's own mistakes too.</strong> When Claude creates a file or folder in the wrong place, cleanup is still <code>mv</code> to <code>Travel/archive/</code>. Never <code>rm</code>, never <code>rmdir</code>, never leaving it in place. Same rule, no exception for self-cleanup.</p>
+<p><strong>Technical roadblocks never justify leaving a file in place.</strong> When <code>rm</code> or <code>rmdir</code> fails for any reason, the action is <code>mv</code> to <code>Travel/archive/</code>. A blocked delete is not a blocker — it is a redirect to archive.</p>
+<div class="callout">
+  <p>This rule applies to whole files, not to content inside a file.</p>
+  <p>File-level cleanup → archive.</p>
+  <p>In-file content cleanup ("delete this paragraph") → just delete the lines (Drive's revision history preserves them).</p>
+</div>
+<p><strong>Wall 1 — Auto-archive before every new version. Pre-authorized.</strong> The trigger is <em>creating a new file to replace an old one</em> — not editing an existing file. Before creating a new versioned file (e.g. <code>{city}_v4.html</code> replacing <code>{city}_v3.html</code>), move the current version to <code>Travel/archive/</code> first. Editing a file that already exists never triggers archiving — just edit it. Standing authorization — no asking needed.</p>
+<p><strong>What triggers auto-archiving:</strong></p>
+<ul>
+<li>A new guide version ships (e.g. before creating <code>{city}_v4.html</code>, move <code>{city}_v3.html</code> to <code>Travel/archive/</code>)</li>
+
+<li>A photo is replaced or swapped out → old photo to <code>Travel/archive/</code></li>
+
+<li>Any photo or asset file from a previous guide version that does not carry forward into the new version → archive it. Every file not in active use in the new guide goes to <code>Travel/archive/</code>.</li>
+
+<li>Any file superseded by a new versioned file → old version to <code>Travel/archive/</code></li>
+
+<li>Any file confirmed stale/unused during a sweep → to <code>Travel/archive/</code></li></ul>
+<p><strong>What does NOT trigger auto-archiving:</strong></p>
+<ul>
+<li><strong>Editing a file in place</strong> — fixing content, correcting data, updating a rule, patching CSS, any change that keeps the same filename — just edit the file directly. Drive's revision history preserves the prior state. No archive step, no snapshot, no pre-edit copy.</li>
+
+<li>Files that are current and in use — leave in place</li>
+
+<li>Files in <code>Brain/CORE RULES/</code> — user-only, never touched by Claude without explicit approval</li>
+
+<li><strong>An in-progress or incomplete guide build</strong> — any guide folder under <code>Guides/</code> that has a <code>_build/build_state.md</code> (Phase 6 unchecked, or no guide HTML yet). <strong>Never archived, removed, deleted, or "cleaned up" — not even when it looks empty or stalled.</strong> A build tracker means the work is resumable: a stalled crib is finished by another crib from <code>build_state.md</code>, never discarded. There is no step, anywhere, that gets rid of incomplete guides. They are surfaced at session start by <code>guide_tools.py start</code> as a "maybe in progress — check later" flag, and that flag is the only action taken on them. Archiving one happens only on an explicit, per-case instruction to do so.</li></ul>
+<p><strong>Archive destination: <code>Travel/archive/</code> — locked.</strong> The single central archive for the entire Travel workspace. One folder, everything goes there. No per-guide, per-city, or per-folder <code>archive/</code> (or <code>Archive/</code>) subfolders anywhere — not inside <code>Guides/</code>, <code>Brain/</code>, <code>Brain/Reference/</code>, or nested inside <code>Travel/archive/</code> itself. Any crib that needs to archive moves the file into <code>Travel/archive/</code> directly; it never creates a local archive folder. brain_check enforces this.</p>
+<p><strong>Wall 2 — Archive is access-locked.</strong> Claude does not access <code>Travel/archive/</code> — for any purpose — without explicit per-session permission. This covers all operations: read, grep, copy, move, delete, or reference. Archive content is not read to learn rules or patterns — the current Brain is the source of truth; archives preserve history, not inform builds. Archive files are never moved back out of <code>Travel/archive/</code> — unarchiving is not a Claude action. Restoring a file from archive is a manual operation — not a Claude action.</p>
+<h3>Read the formatting rules BEFORE reading, editing, or building any guide — or writing any file</h3>
+<p>Before reading, editing, or building any guide, and before creating or updating any file — guide HTML, CORE RULES HTML, on-demand outputs, any structured deliverable — read <code>Brain/Reference/</code> first. This is a hard gate: a crib does not read, touch, or build a guide until it has read the formatting rules. The folder is the format authority:</p>
+<ul>
+<li><code>Brain/Reference/Core Rules Formatting.html</code> — writing standard (red banner, Status/Summary opener, heading hierarchy, examples convention, new-doc checklist) — the complete reference.</li></ul>
+<p>The read runs in the same flow as the write, before the first character of output — never as a follow-up "I'll check format later." Skipping this check is how files ship with broken format.</p>
+<p>To Do List entries are markdown (no HTML format check needed) but still follow the conventions in the Rules.html (calibration anchors in italics, headings consistent, etc.).</p>
+<p><strong>Before editing any CORE RULES HTML file</strong> — read the Change Cascade Map in <code>Brain/Reference/</code> and work the CORE RULES file edited cascade. It lists every downstream file that must follow.</p>
+<p><strong>After applying any approved CORE RULES edit</strong> — immediately work the matching cascade in <code>Brain/Reference/Change Cascade.html</code> end-to-end (every ✅ step for this change type), then run <code>python3 Brain/scripts/doc_workshop_validator.py</code> to confirm formatting conformance (banner, h1, § headings, CSS link, legacy class detection). The cascade is not optional and not deferrable — work it before announcing done. Its companion <code>doc_workshop_fixer.py</code> rewrites non-conforming files — run only on files the validator flags, never blind.</p>
+<h3>Additions, fixes, and maintenance on Claude's working surface</h3>
+<p>On Claude's working surface (everything outside <code>Brain/CORE RULES/</code> — including <code>Brain/Reference/</code>, <code>Brain/scripts/</code>, <code>Travel/CLAUDE.md</code>, <code>Travel/To Do List/</code>, <code>Travel-Website/Guides/</code>): additions, bug fixes, refactors, and dead-code cleanup are all green-lit. These are Claude's files to maintain. Asking permission on routine maintenance of this surface is itself a violation.</p>
+<p><strong>Drift in Reference files and any non-CORE RULES file is fixed immediately — never parked.</strong> When a mismatch is found outside <code>Brain/CORE RULES/</code> (title or h1 out of sync with filename, stale paths, missing entries, inconsistent counts), fix it in the same pass. Do not open a to-do item, do not propose it, do not wait. The To Do List <code>🔧 Rules for Update</code> section is for CORE RULES proposals only — not for Reference fixes.</p>
+<p><strong>Working-surface fixes are always CORE-RULES-anchored — fix immediately, no approval.</strong> When any file outside <code>Brain/CORE RULES/</code> drifts from what a CORE RULES file says — a stale count, wrong section name, outdated path, mismatched rule — the fix is to bring that file into alignment with what the CORE RULES file says. CORE RULES is always the authority; working-surface files are always the followers. Apply the fix immediately, in the same pass the drift is found. No approval, no parking, no waiting — those steps are for CORE RULES edits only.</p>
+<p><strong>Removals require explicit permission only when stripping rule content</strong> — paragraphs in this file or in any markdown rule file. The protection is against silent trimming of rules under "tightening" or "polish." Operational maintenance (deleting retired functions in <code>brain_check.py</code>, removing stale comments, dropping a dead import) is scaffolding hygiene — not "removal" in this sense.</p>
+<p><strong>Every situation on Claude's working surface has a defined path:</strong></p>
+<ul>
+<li>Stale or orphaned file → archive (per the HARD RULE above)</li>
+
+<li>Dead code · stale comment · dead import → delete the lines (Drive revision history preserves them)</li>
+
+<li>Bug in script or scaffolding → fix it</li>
+
+<li>Outdated citation · file path · pointer → update it</li>
+
+<li>Gap that can be filled → fill it; gap that can't be filled yet → park on the To Do List</li>
+
+<li>Scaffolding that needs reorganizing (mds/, scripts/) → reorganize it</li></ul>
+<p>The only situation requiring permission is removing or compressing rule content. Everything else routes to one of the defaults above. On <code>Brain/CORE RULES/*.html</code>: a different rule applies entirely — see HARD RULE.</p>
+<h3>No "I'll remember it" — cross-session thoughts go in a file</h3>
+<p>When the impulse arises to "keep this in mind for next time" — that is a bug. Cross-session thoughts belong in files immediately:</p>
+<ul>
+<li><strong>Rule or behavioral fix</strong> → propose in <code>🔧 Rules for Update</code> in the To Do List (routes to the matching CORE RULES HTML file)</li>
+
+<li><strong>Non-trivial judgment call</strong> (a ban, demotion, retirement, significant trade-off) → append to the decisions log in <code>Brain/Reference/</code> with date, what was decided, why, and what replaced the old approach</li>
+
+<li><strong>Question concerning a CORE RULES fix or edit</strong> → <code>❓ Open Questions</code> in the To Do List (the only question category that parks)</li>
+
+<li><strong>Open task or cross-session commitment</strong> → appropriate section of the To Do List</li></ul>
+<p>Memory evaporates between sessions. the decisions log in <code>Brain/Reference/</code> is the judgment call log — it prevents re-litigating settled calls. Any non-trivial call that needs preserving belongs there, not in memory.</p>
+
+<h2>§ 4. Building a guide</h2>
+<p><strong>A guide build requires zero clarification.</strong> When asked to build a guide, all requirements are fully specified in the Brain files. Do not ask clarifying questions, do not use the questions UI, do not surface options, do not wait for confirmation before starting. Begin immediately and run the full build without stopping.</p>
+<p><strong>The Cowork AskUserQuestion tool is never invoked during any Travel task.</strong> Cowork's default behavior of asking clarifying questions before multi-step tasks is fully overridden by the Travel workspace rules. This applies to every Travel task without exception: guide builds, hotel research, trip updates, audits, shopping research, and any other task in this workspace. Start immediately, run end-to-end, no popup, no question menu, no waiting for a reply.</p>
+<p><strong>"Zero clarification" means zero user questions — not zero file reads.</strong> The CORE RULES files ARE the template and the format. Reading them is the build. A guide written without the Phase reads has no template — it will be wrong. Do not write a single line of HTML until the Phase 1 and Phase 2 reads are done.</p>
+<p><strong>All research actions during a build are pre-authorized.</strong> Do not ask permission before fetching any URL, searching Wikipedia, calling a web search, using a connector, reading a file, or running a script. Every action needed to complete the build — fetch, search, read, run — executes immediately. The only exception is a destructive action on a non-build file (moving or deleting something outside <code>Guides/</code> or <code>_build/</code>). Everything else: do it, note it inline if relevant, keep building.</p>
+<p><strong>Connectors are already configured.</strong> Do not prompt to connect, suggest connectors, or search the connector registry — at session start, before a build, or at any point during a build. Proceed directly with whatever connectors are available. If a specific connector is missing and a task genuinely cannot continue without it, note it once inline — never as a pre-build checklist.</p>
+<p><strong>Guide builds — HARD GATE: no HTML before reads.</strong> Before writing a single line of guide HTML, read the Phase 1+2 files in order (listed in step 2 below). Writing HTML before these reads = building from memory = wrong format. Self-diagnostic: when HTML has been written and Phase 1+2 boxes are unchecked in <code>build_state.md</code> — stop, delete the HTML, do the reads, restart from scratch. The format is in CORE RULES. Not in memory. Not in past guides. Never invent structure.</p>
+<p>When asked to <em>"build a guide"</em>:</p>
+<ol>
+<li><strong>Read the signal in the request, then look up Trips.html accordingly.</strong> Two cases:
+<ul>
+<li><strong>City name only (no day count given)</strong> → open <code>Travel-Website/Trip-Essentials/Trips.html</code>, find the entry for this city. Use the booked hotel name + address for the banner. Read companion and conference venue if present. Infer day count from trip dates if available. Continue to Phase 1 reads immediately. Continue to Phase 2 reads before writing any HTML.</li>
+<li><strong>City name + number of days given</strong> → the day count in the request is the signal that the trip is not yet in Trips.html. Do not look for it. Run the hotel research playbook (<code>Brain/Reference/Connectors.html</code> Hotel Research section) to find the hotel. Use the stated day count. Continue building.</li>
+</ul>
+Dates never appear in the guide (§ 7) and <strong>never block a build</strong>. Always use Day 1 / Day 2 / Day N numbering — never calendar dates in guide content. Never ask for dates.</li>
+
+<li><strong>Read the mandatory CORE RULES files before writing any HTML.</strong> These are the template — not optional prereads:
+<ul>
+<li><strong>Phase 1</strong> (technical prerequisites — Claude's tools, rules, constraints, and link/photo formats): <code>Links.html</code> · <code>Photos Rules.html</code> · Connectors file (<code>Brain/Reference/</code>) · <code>Platforms.md</code> (<code>Brain/Reference/</code>)</li>
+<li><strong>Phase 2</strong> (guide structure and content rules — before researching the city): <code>Guide Structure.html</code> · <code>Stops Structure.html</code> · <code>Hotel Banner.html</code> · <code>Trip Overview.html</code> · <code>Brain/Reference/Toolbar.html</code> · <code>Brain/Reference/Navigation.html</code></li>
+<li><strong>Phase 3</strong> (before locking any day): <code>Day Structure.html</code></li>
+<li><strong>Phase 4</strong> (per stop): <code>Tickets.html</code> · <code>Motion Rule.html</code> · <code>Icon Order and Format.html</code></li>
+<li><strong>Phase 5</strong> (each extra section): the matching <code>*Extra Section*.html</code> file — re-read at the start of that section</li>
+</ul>
+Self-diagnostic: if any HTML has been written before Phase 2 reads are done, the build is already drifting. Stop, do the reads, start the HTML over.</li>
+
+<li>Build the entire guide in one pass following what the CORE RULES files say. No chunks, no returning later.</li>
+
+<li>When anything is unclear, make the best call the rules support and keep building — every gap Claude's tools can resolve is resolved in the same session. Only a question concerning a fix or edit to a <code>Brain/CORE RULES/</code> file parks in <code>❓ Open Questions</code> in the To Do List in <code>Travel/To Do List/</code>. <strong>Never block.</strong></li>
+
+<li><strong>Run the validator, fix all failures, log, then ship.</strong> Run <code>python3 Brain/scripts/guide_tools.py validate &lt;guide.html&gt;</code> — fix every ❌ failure, re-run, repeat until zero failures remain. Then append a validation entry with date and time to the audit log in <code>Brain/Reference/</code>: <code>{City} {version} · validated {YYYY-MM-DD HH:MM} · ✅ {N} passed / 0 failed</code>. Only then run the ship-gate: <code>python3 Brain/scripts/guide_tools.py ship &lt;guide.html&gt;</code>. Exit code 0 = done. A guide with open ❌ failures is not done — it is a fix-and-rerun loop, not a ship-gate call.</li></ol>
+
+<p><strong>⚠️ STANDING ORDER — validator before any "done" claim (2026-05-30)</strong><br>
+Any session that touches guide HTML — whether building from scratch, patching one section, fixing a single stop, or recovering from an API crash — must run <code>validate_itinerary.py</code> (or <code>guide_tools.py validate</code>) and reach 0 failures before telling the user the work is complete. The scope of the change is not an exemption. A patch session that fixes images, descriptions, or broken HTML is not done until the validator passes — the same gate as a full build. Saying "done," "fixed," "shipped," or any equivalent without a passing validator run in the current session is a violation of this rule. Check <code>build_state.md</code> Phase 6 on arrival; if it is unchecked, the guide is not shipped regardless of what a prior session wrote.</p>
+<p>That is the bootstrap. Everything else lives in Guide Structure and the Docs it references — when those rules change, Guide Structure inherits and this file does not need to know.</p>
+<h3>Verified sources only</h3>
+<p>Every fact in the guide traces to one of three sources captured this build:</p>
+<ul>
+<li>A brain rule.</li>
+<li>The trip-doc row for this destination (hotel name and address only).</li>
+<li>A live-verified research result.</li></ul>
+<p><strong>No placeholders.</strong> Every row carries verified data. Placeholders, stub URLs, stub photos, and empty rows are fabrication.</p>
+<h3>Mid-build: only fix non-content infrastructure</h3>
+<p>Validator / CSS / template / script bugs are fixed during a build. Brain content rules (anything under <code>Brain/CORE RULES/</code>) stay untouched mid-build — content ambiguity parks in <code>❓ Open Questions</code> in the To Do List; rule edits happen later, in a separate session.</p>
+<h3>Brain-first — bug-fix freeze during Brain repair sessions</h3>
+<p>When a session's goal is fixing Brain bugs (rule gaps, validator issues, CSS problems, CLAUDE.md updates), no guide rebuilds or PDF renders happen until the Brain work is done. The repair session closes with a clean Brain; guide output happens after. Mixing Brain repair with guide work creates a race: the guide may ship before the fix that was supposed to govern it is in place.</p>
+<h3>Root-cause pass — surface all bugs before fixing any</h3>
+<p>When asked to do a "root-cause pass" — or when a session uncovers multiple related bugs — inventory every instance before touching a single one. Fix order: broadest Brain fix first (rule or validator), then artifacts inherit. The trigger phrase is: <em>"root-cause pass."</em> Never fix one symptom while sibling symptoms wait.</p>
+<h3>Every fix lands in the Brain — never in a guide HTML</h3>
+<p>Bug fixes go to brain rules / CSS / validators — never to a one-off edit on a guide HTML file. Fix once in the Brain; every future guide inherits. A one-off guide edit leaves the Brain with the hole.</p>
+<h3>Validator scope — guide-shipping only</h3>
+<p>Validators check the guide HTML, build artifacts, and supporting scaffolding for ship integrity. They do NOT validate rule content (Rules for Claude, on-demand Docs, CORE RULES HTML files, etc.) — those don't ship; drift in them is not a validator concern.</p>
+<p>The on-demand checks in <code>validate_itinerary.py</code> catch on-demand content LEAKING INTO a shipped guide (a <code>🌤 Weather</code> heading inside guide HTML, delta.com URLs in stop blocks). That is guide-shipping correctness — within scope. Validating the on-demand Docs themselves is out of scope.</p>
+<h3>Validator check before any guide fix</h3>
+<p>When a violation is spotted in a guide — during a build, an audit, or any other work — write the validator check first. Fix the guide only after the check is in place and catching the violation. This applies even mid-build, even for a "quick fix." The guide fix without the validator check leaves the Brain with the hole.</p>
+<h3>Validator-first workflow — the locked five-phase sequence</h3>
+<p>"Work on the validator" means a locked five-phase sequence. Phases are never collapsed. The guide is never fixed before the validator catches everything. The point is to make the validator permanently smarter — not to patch the guide once.</p>
+<ol>
+<li><strong>Phase 1 — AUDIT.</strong> Run the current validator + manually review the guide. Produce a complete list of every violation found — both what the validator already catches and what it misses. Do not touch the guide.</li>
+
+<li><strong>Phase 2 — WRITE.</strong> For every violation the validator does not currently catch, write a new check. Do not touch the guide.</li>
+
+<li><strong>Phase 3 — VERIFY.</strong> Run the validator. It must flag every violation found in Phase 1. When anything is missed, return to Phase 2. Do not touch the guide.</li>
+
+<li><strong>Phase 4 — FIX.</strong> Only now fix the guide — all violations in one pass.</li>
+
+<li><strong>Phase 5 — CONFIRM.</strong> Run the validator one final time. Guide must pass clean. Done.</li></ol>
+<h3>Validator pre-check — search before writing any new check</h3>
+<p>Before any validator work — read the Change Cascade Map in <code>Brain/Reference/</code> and work the Validator check cascade. It governs every downstream file that must follow.</p>
+<p>Before writing any new check in <code>validate_itinerary.py</code> (Phase 2 of the locked workflow above):</p>
+<ol>
+<li><strong>Search for the icon or concept.</strong> Grep the validator for the icon glyph, the rule keyword, and related phrases. Confirm no equivalent check already exists — a duplicate check adds noise and risks false positives.</li>
+<li><strong>Find the correct guide-section block.</strong> <code>validate_itinerary.py</code> is organized in contiguous per-section blocks — one block per guide section: Getting Around, Day Trips by Train, Shows, Day Structure, Restaurants Near Hotel, Downtown Restaurants, Cappuccino, etc. Each block opens with a <code># ═══</code> header. Place any new check inside the matching section block. If no block yet exists for that section, create one using the <code># ═══</code> header pattern following existing conventions. A check placed outside its section block is scatter — the exact problem the per-section reorganization fixed — and breaks the file's enforcer structure.</li>
+<li><strong>Update the Validator Index file (<code>Validator Index.html</code>) in <code>Brain/Reference/</code>.</strong> After adding any new check to <code>validate_itinerary.py</code>, add a matching entry to <code>Validator Index.html</code> in <code>Brain/Reference/</code> under the correct section, with the appropriate ✅ / ❌ / ⚠️ status. This file is the living index of every check — a check added to the validator without a matching entry here is invisible to future review.</li></ol>
+<h3>"Done" = every section verified</h3>
+<p>A guide is complete when:</p>
+<ul>
+<li>Every stop carries a ticket box (🎟) or self-walk entry — with verified URLs and ratings.</li>
+<li>Every stop carries a real photo or the explicit "No pictures found" negative-finding line.</li>
+<li>Every restaurant entry carries address, hours, and walk time.</li>
+<li>Every link is live-verified.</li>
+<li>Every extra section is populated or carries its negative-finding line — except the conditional sections (❗️ Heads Up, Claude Inspiration, Skip List), which ship nothing when empty.</li>
+<li>Every cross-link anchor resolves.</li></ul>
+<p><strong>Partial builds surface explicitly.</strong> When a build cannot complete in one pass, the partial state is reported in the form: <em>"Shipped X. Y is incomplete because Z."</em></p>
+<p><strong>The ship-gate is the arbiter.</strong> Exit code 0 means done. Any other exit code means not done.</p>
+<h3>Publishing guides</h3>
+<p><strong>Publishing = <code>git push</code> to <code>main</code></strong>, which makes GitHub Pages redeploy the <em>entire</em> <code>Travel-Website/</code> tree (only that folder is published; the site lives under a ~1 GB ceiling). Site fixes — toolbar, CSS, shared assets, the index, the data pages — are committed and pushed automatically as part of the work; the single exception is <strong>structural</strong> changes (toolbar/navigation reorganisation, site-wide files), which need explicit approval before pushing. A <strong>guide</strong> is publishable only once it clears the ship gate: <code>guide_tools.py ship</code> must exit 0 (validator + index + every data-page gate), which writes the <code>&lt;!-- validation: passed --&gt;</code> stamp into the guide HTML. That stamp is the publish key: a <strong>pre-push hook</strong> (<code>Brain/scripts/git-hooks/pre-push</code> → <code>pre_push_guard.py</code>, activated repo-wide via <code>core.hooksPath</code>, which <code>guide_tools.py start</code> sets/verifies every session) rejects any push that carries a <em>tracked</em> guide HTML lacking the passed stamp — so an unvalidated or in-progress guide can never reach the live site, even riding along on an unrelated CSS push. In-progress guides therefore stay Drive-only (untracked) until they ship; unblock one with <code>git rm --cached</code> (it stays safe on Drive) or by finishing the ship. Full operational detail: <code>Travel/CLAUDE.md</code> DriftyCat (push-site-fixes-freely / unvalidated-guide-never-pushed) + <code>Brain/Reference/Ship Checklist.html</code>.</p>
+<p>The footer sharing link (footnote toolbar) is ⛔ removed (2026-06-21, by request — retired 2026-06-06, then removed) — <code>footnote.js</code> is archived out of <code>assets/</code>, <code>toolbar.js</code> no longer injects it, and no guide may load it or carry an inline footer of its own. A shipped guide only needs to load <code>toolbar.js</code> (which lives at <code>assets/toolbar.js</code>) and carry <code>data-updated="YYYY-MM"</code> on its toolbar-mount (the content-currency month behind the "Updated Month Year" stamp at the top — bump it only on a genuine content refresh). Full rules + re-enable path: <code>Brain/Reference/Toolbar.html</code> §6 + §10.</p>
+<p><strong>CSS rule:</strong> Every guide HTML references the stylesheet as <code>../../assets/guide-style.css</code> (two levels up — the CSS sits at <code>Travel-Website/assets/guide-style.css</code>). Never use <code>../../Brain/Reference/Guide Style.css</code> — that path only works locally.</p>
+<p><strong>Delivery procedure — every new guide version:</strong></p>
+<ol>
+<li>Finish the guide and pass the validator (exit 0).</li>
+<li>Update <code>Travel-Website/Guides/Guides-Index.html</code> — all four steps in one edit, no partial updates: (a) add the new card in the correct country section (create the section in alphabetical position if the country is new) with the right <code>data-guide-num</code>; (b) update the predecessor card's <code>data-guide-next</code> and the successor card's <code>data-guide-prev</code>; (c) update the banner counts (guides + countries) and the country section's guide count; (d) set the guide file's own toolbar-mount <code>data-prev</code> and <code>data-next</code> to match its neighbours. Full spec: <code>Brain/Reference/Navigation.html</code>.</li></ol>
+<p><strong>Index file:</strong> <code>Travel-Website/Guides/Guides-Index.html</code> — the master list of all shipped guides. Claude updates it on every ship per the four-step procedure above. Verified by <code>brain_check.py</code> at session start.</p>
+<h3>Trip data edits go to <code>Trips.html</code></h3>
+<p>When a booking lands, a flight date changes, a hotel is confirmed, or any trip data updates: edit the Trips file in <code>Travel-Website/Trip-Essentials/</code> directly. The HTML file is the one and only source of truth — there is no gdoc equivalent.</p>
+<h3>Guide roots contain only HTML + PDF — everything else goes in <code>_build/</code></h3>
+<p>A guide directory (e.g. <code>Travel-Website/Guides/{City}/</code>) holds exactly two file types: the guide HTML (<code>{city}_vN.html</code>) and the rendered PDF. All intermediate build artifacts, downloaded images, temporary scripts, working drafts, and non-shipped assets go in <code>_build/</code> inside that directory. Stale or empty folders in a guide root are treated the same as stale files — <code>mv</code> to <code>Travel/archive/</code>, never left in place.</p>
+<h3>Rendering guide PDFs — use WeasyPrint inside Cowork</h3>
+<p>When asked to render a PDF from inside a Cowork session, use WeasyPrint. Full recipe — CSS override block, emoji font setup, all edge cases: <code>Brain/Reference/PDF Render Notes.md</code>. Read it before every WeasyPrint render. For Playwright + headless Chromium rendering, see the Connectors file in <code>Brain/Reference/</code>.</p>
+<p><strong>PDF rendering is on-demand only.</strong> The ship-gate never triggers a PDF render. A PDF is produced only when explicitly requested — never as part of the standard build flow.</p>
+
+<h2>§ 5. Parking surface — one file, three sections</h2>
+<p><strong>One file. One surface. Everything lives in the To Do List in <code>Travel/To Do List/</code>.</strong> No second surface of any kind.</p>
+<p>the To Do List has three sections:</p>
+<ul>
+<li><strong>✈️ My Tasks</strong> — private tasks: bookings, flights, hotels, research, logistics. Anything personal. Read only — never append to this section.</li>
+
+<li><strong>🔧 Rules for Update</strong> — rule proposals + cross-session tasks. Claude proposes here → wait for approval in same session → apply directly to the matching <code>Brain/CORE RULES/*.html</code> file → delete item. No batch, no staging.</li>
+
+<li><strong>❓ Open Questions</strong> — questions concerning fixes or edits to <code>Brain/CORE RULES/</code> files that surface during work — the one category requiring explicit approval before action. Every other gap is resolved in-session with Claude's own tools and is never parked. Park here and keep working. Never blocks ship.</li></ul>
+<p><strong>Routing:</strong> private/personal → ✈️ My Tasks (owner-only). Rule proposals + tasks → 🔧 Rules for Update. CORE RULES fix/edit questions → ❓ Open Questions.</p>
+<p><strong>Triggers:</strong> <em>"park this," "add to the to-do list," "log this," "what's pending?," "add this rule," "new rule:," "amend the {section}"</em></p>
+<p><strong>Same-session application is mandatory.</strong> When a rule is approved in the same session it is proposed, it must be applied to the matching <code>Brain/CORE RULES/*.html</code> file before the session ends. Parking in the To Do List is staging, not the destination — a rule that stays only in the To Do List will be lost between sessions.</p>
+<p>Correct sequence: <strong>propose → approved → read Change Cascade Map → apply to CORE RULES HTML → work cascade end-to-end (all ✅ steps) → regenerate checksums → run doc_workshop_validator → announce done → reviewed → next change.</strong> One change at a time. The cascade fires before "done" is announced — a CORE RULES change without a completed cascade is half-done and will drift.</p>
+<p><strong>Rule-change flow:</strong> park the proposal in 🔧 Rules for Update → describe it briefly in chat → wait for explicit approval → apply to the matching <code>Brain/CORE RULES/*.html</code> → confirm it is done → wait for the owner to review before moving to the next item. Never apply multiple changes without a separate approval and review cycle for each. The red banner on every CORE RULES file ("THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST") means no edits without explicit approval first.</p>
+<p><strong>Never create a second file.</strong> One parking surface, one file. No <code>HAND_OFF.md</code>, no <code>OPEN_ITEMS.md</code>, no <code>rules_updates.md</code>, no per-topic file of any kind. When something does not fit a section of the To Do List, surface it in chat. Never create another file.</p>
+<h3>Two-crib architecture — two environments, two root folders</h3>
+<p>Claude operates across two environments sharing the same Drive workspace. Each has its own root folder and capability set:</p>
+<table class="tbl">
+<tr><th></th><th>Cowork (desktop)</th><th>On The Go (mobile)</th></tr>
+<tr><td><strong>Root folder</strong></td><td><code>Travel/</code></td><td><code>On The Go/</code> (My Drive root)</td></tr>
+<tr><td><strong>Capabilities</strong></td><td>Full read/write/edit/delete</td><td>Read + add files only — cannot edit or delete</td></tr>
+<tr><td><strong>Entry point</strong></td><td><code>Travel/CLAUDE.md</code></td><td>the current rules file in <code>On The Go/Rules/</code></td></tr>
+<tr><td><strong>Where heavy work happens</strong></td><td>Guides, audits, cleanup, scripts</td><td>Fast lookups while moving</td></tr></table>
+<p><strong>File location rule:</strong> Cowork files stay in <code>Travel/</code>. Mobile surface files (rules, shopping profile) live in <code>On The Go/</code>. Never create a Cowork working file in <code>On The Go/</code>, and never place mobile-surface files in <code>Travel/Brain/</code>.</p>
+<p><strong>Why a folder (not a single file) for on-the-go rules:</strong> the mobile crib can only ADD versions, so files accumulate over time; Cowork periodically tidies up. Other shared resources (Shopping Profile, the cross-session to-do list) are single files inside <code>Travel/</code> — Cowork edits them in place.</p>
+
+<h2>§ 6. DriftyCat — short warnings of things that keep breaking</h2>
+<p>One-line tripwires. The full rule for each lives in its CORE RULES HTML file — these are reminders for what Claude keeps drifting on.</p>
+<ul>
+<li>⚠️ <strong>Tour-first ALWAYS.</strong> Viator / GetYourGuide / TripAdvisor before skip-the-line, before venue site. Bar: 4.5+⭐ · ≥6 reviews. Full rule: <code>Tours - Extra Section.html</code>.</li>
+
+<li>⚠️ <strong>Zero money in shipped guides.</strong> No <code>$</code>, <code>€</code>, <code>£</code>, <code>¥</code>, no ISO codes — ever. USD is not an exception.</li>
+
+<li>⚠️ <strong>Tilde has one home — <code>⏰</code>.</strong> The tilde <code>~</code> is valid only as the <code>⏰</code> Avg Time Spent prefix (an estimate, e.g. <code>⏰ ~1 hr</code>). It is banned everywhere else — never on <code>⏳</code> Duration (exact: <code>⏳ 45 min</code>), never on walk/ride/start/travel-time values, never in descriptions or addresses. One carve-out, no others. Full rule: <code>Icon Order and Format.html</code>.</li>
+
+<li>⚠️ <strong>No placeholders.</strong> <code>{TBD}</code> / <code>{TODO}</code> / "fill in later" / "tour TBD" = fabrication.</li>
+
+<li>⚠️ <strong>No fabrication.</strong> Every fact live-verified this build. Confirmed sources are the venue's own site, Google Maps, or a verifiable third-party listing. "Probably" / "usually" / memory from past builds are NOT sources. A guess dressed as a fact is worse than a blank.</li>
+
+<li>⚠️ <strong>No hedging language in factual rows.</strong> Every factual row (🏛 hours, 🚶 walk time, 🚕 ride time, ⏰ duration, 📍 address, 🎟 booking link) must come from a confirmed source. Hedging language is the fingerprint of invented or unverified data. The following phrases are banned in factual rows — the validator hard-fails on them:<br>
+<code>"typically open"</code> · <code>"usually open"</code> · <code>"generally open"</code> · <code>"hours may vary"</code> · <code>"hours vary"</code> · <code>"subject to change"</code> · <code>"confirm hours"</code> · <code>"confirm times"</code> · <code>"check schedule"</code> · <code>"check the website for hours"</code> · <code>"see website for times"</code> · <code>"varies by season"</code> · <code>"seasonal hours"</code> · <code>"prices vary"</code> · <code>"cost varies"</code> · <code>"typically takes"</code> · <code>"usually takes"</code> · <code>"approximately N"</code> · <code>"around N"</code> · <code>"estimated N"</code> · <code>"may be"</code> / <code>"might be"</code> / <code>"could be"</code> (when N or the phrase appears in a factual data point).<br>
+When a value cannot be confirmed — look it up. When it can't be confirmed — omit the row. Hedges are invisible inventory: they look like data, but they're guesses.<br>
+<strong>Carve-out — <code>⏰~</code> only:</strong> the <code>⏰~</code> Avg time spent row is exempt from this hedging ban, because it is an inherent estimate already marked as such with the <code>~</code> prefix. The exemption applies to the <code>⏰~</code> row and nothing else — <code>⏳</code> and every other factual row (🏛 hours, 🚶 walk time, 🚕 ride time, 📍 address, 🎟 booking link) remain fully under the ban.</li>
+
+<li>⚠️ <strong>Every link live-verified — every time.</strong> Including every edit inside a session. A one-character URL change re-runs verification. Bot-blocked platforms (Viator, GetYourGuide, TheFork, Michelin, TripAdvisor) verify via <code>site:</code> search-result inspection, not direct fetch.</li>
+
+<li>⚠️ <strong>Photos in same pass as stop research.</strong> Never deferred to "cleanup later."</li>
+
+<li>⚠️ <strong>Wide wins over detail (stop photos).</strong> Facade &gt; interior. Wide &gt; close-up.</li>
+
+<li>⚠️ <strong>No full extra section cards in Trip Overview day-card area.</strong> The day-card grid is days-only — no Pickleball card, no Cappuccino card, no content-section card mirroring a day card's shape. Compact extras navigation pills (Trip Overview.html) are permitted and are navigation infrastructure, not extra section cards.</li>
+
+<li>⚠️ <strong>Don't read past guides.</strong> <code>Guides/</code> is output, not reference. Old guides are frozen — point-in-time builds, valid under the brain that existed the day they shipped. Don't retrofit, don't flag past-guide non-conformance, don't read for shape inspiration. This covers format lookups — reading a guide for HTML structure, row order, or section layout is the same violation. Only open a file under <code>Guides/{City}/</code> when explicitly named.</li>
+
+<li>⚠️ <strong>HTML format source = matching CORE RULES file. Never a guide.</strong> Any format question — how a section looks, what HTML structure it uses, what rows appear — goes to the matching <code>Brain/CORE RULES/</code> file. A guide cannot answer a format question correctly; it may reflect rules that have since changed.</li>
+
+<li>⚠️ <strong>CORE RULES folder is off-limits to Claude.</strong> No <code>mv</code> / <code>cp</code> / <code>rm</code> / rename / archive / create. Never touch the folder.</li>
+
+<li>⚠️ <strong>🚫 Deletion loop.</strong> The word is ARCHIVE. Move to <code>Travel/archive/</code>, done. No <code>rm</code> attempts, no explanation of why deletion is not possible.</li>
+
+<li>⚠️ <strong>🚫 Archive loop.</strong> Editing an existing file does not trigger archiving — just edit it. Archive only fires when a new versioned file is created to replace an old one (e.g. <code>paris_v8.html</code> replacing <code>paris_v7.html</code>). Toolbar.js, CSS files, CORE RULES HTML, scripts, Trips.html, the To Do List — all are edited in place, no archive step. Self-diagnostic: if the action about to happen is <code>mv … Travel/archive/</code> followed by editing a file with the same name — stop. Just edit the file.</li>
+
+<li>⚠️ <strong>No new files in <code>Brain/Reference/</code> without explicit permission.</strong> The set of files there is fixed. A new <code>.md</code> file requires explicit permission — not for a new rule topic, not for "convenience," not for anything. When something does not fit an existing file, surface it in chat.</li>
+
+<li>⚠️ <strong>"List fixes" ≠ audit.</strong> Audit fires only on the word "audit". A "list fixes" ask surfaces what is already known broken — not a 27-file crawl.</li>
+
+<li>⚠️ <strong>No top-10 thinking.</strong> Fame alone doesn't make something a must-include. "You can't miss this" doesn't apply. Top-10 lists are marketing, not selection. See <code>Stops Structure.html</code>.</li>
+
+<li>⚠️ <strong>Meaningful over full.</strong> A short day of two excellent stops beats a padded day of four with two filler picks. Every stop earns its place. See <code>Stops Structure.html</code>.</li>
+
+<li>⚠️ <strong>Skip-list first — read before adding any candidate.</strong> the Cities Skip List in <code>Brain/Reference/</code> at the <code>## {City}</code> heading. Cut listed venues before any other filtering. See <code>Stops Structure.html</code>.</li>
+
+<li>⚠️ <strong>Trusted sources only.</strong> Fodor's · Culture Trip · Rough Guides · Atlas Obscura · Rick Steves · National Geographic Travel · official tourism boards. No random blogs, no user-generated lists, no affiliate listicles, no AI-generated SEO content, no content farms — regardless of Google ranking. See <code>Stops Structure.html</code>.</li>
+
+<li>⚠️ <strong>Run <code>Ship Checklist.html</code> before "done."</strong> Every guide build ends with the checklist in <code>Ship Checklist.html</code> in <code>Brain/Reference/</code>. Any "no" blocks ship. Don't mark a guide done without running it.</li>
+
+<li>⚠️ <strong>After locking Day 1 — re-read Day Structure.</strong> Day 2 onward gets built against memory, which drifts. Re-read <code>Day Structure.html</code> + <code>Stops Structure.html</code> before starting Day 2 to refresh the shape rules.</li>
+
+<li>⚠️ <strong>Before each extra section — re-read its rule file.</strong> The matching <code>*Extra Section*.html</code> file gets re-opened at the start of every section, even if it was read earlier in the build. Each section's format and rules are different; one read per build isn't enough.</li>
+
+<li>⚠️ <strong>CORE RULES HTML files are READ-ONLY.</strong> Every file carries a red banner: "THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST." No file in <code>Brain/CORE RULES/</code> is edited without explicit per-session approval. Proposed changes go to <code>🔧 Rules for Update</code> in the To Do List first. HTML edit only after approval in that same conversation.</li>
+
+<li>⚠️ <strong>Dates never block a build. Never ask for dates.</strong> Dates from Trips.html are research context only — they never appear in a shipped guide (§ 7). If dates are absent or not firm, build immediately with Day 1 / Day 2 / Day N numbering. The only thing needed to start a build is a city name. Everything else comes from Trips.html or the hotel research playbook.</li>
+
+<li>⚠️ <strong>City name = start building. Day count in prompt = trip not in Trips.html.</strong> "Amsterdam" → look in Trips.html, use hotel + trip data there. "Amsterdam, 4 days" → skip Trips.html lookup, run hotel research, build 4-day guide. No other input ever needed. Never wait, never ask.</li>
+
+<li>⚠️ <strong>"Zero clarification" ≠ "zero reads." Phase reads ARE the template.</strong> Zero clarification means no user questions — not skipping the Phase 1–5 reads. The CORE RULES files define every format and structure in the guide. A guide built without reading them has no template and will be wrong. Self-diagnostic: if HTML was written before Phase 1 and Phase 2 reads completed, stop and restart from the reads.</li>
+
+<li>⚠️ <strong>Hotel for a guide = read Trips.html. Never ask.</strong> The hotel name and address come from <code>Travel-Website/Trip-Essentials/Trips.html</code> — the booked hotel for the destination. Read it in build step 1 and use what is there. Never ask which hotel to use, never ask for confirmation. If no hotel is listed yet for that destination, note it once inline and continue the build.</li>
+
+<li>⚠️ <strong>Change Cascade Map — read before any structural change.</strong> Before editing a CORE RULES file · adding or changing a validator check · renaming a section · adding or changing an icon · starting a new guide build · changing the CSS · <strong>wiring a new page, tab, or feature into the site or shared toolbar</strong> · or <strong>changing the navigation structure</strong> — read the Change Cascade Map in <code>Brain/Reference/</code> and work the matching cascade end-to-end. Each cascade is a complete checklist; a skipped step leaves the system inconsistent. The cascade fires from any of these entry points — not only when explicitly told to check it. <strong>This applies even when the website change was made directly (a tab or feature added outside a build): the moment you notice the live site has a page, tab, or nav element the reference docs don't describe, fire the "New page added to toolbar" / "Navigation structure changed" cascade and bring <code>Toolbar.html</code>, <code>Navigation.html</code>, <code>Guides-Index.html</code> (if a guide), and <code>Brain.md</code> Part 1 back into parity in the same pass.</strong></li>
+
+<li>⚠️ <strong>Absence of rule = don't ship.</strong> When no rule authorizes the format about to ship, that format does not ship. Building an argument for relaxing the rule "just this once" IS the stop sign.</li>
+
+<li>⚠️ <strong>Agent prompts are mini-rules.</strong> A research agent does not auto-inherit the brain. Every rule the agent's output must respect must be written into the prompt — photos in same pass, no fabrication, the rating bar. A missing line in the prompt means that rule silently does not apply.</li>
+
+<li>⚠️ <strong>🚕 ride time = mapping-service driving mode.</strong> Same method as 🚶 walk time — just switch to Driving instead of Walking. The source is Google Maps or Apple Maps driving mode; where neither provides driving coverage for a region, a mapping service local to that region is used, in its driving mode (Motion Rule.html). Uber APIs, ride-share price estimators, scripts, and external services are never used to compute ride times. The map's driving time is the number.</li>
+
+<li>⚠️ <strong>Wikimedia Commons is pre-authorized — fetch without asking.</strong> <code>commons.wikimedia.org</code> category pages, file pages, license checks, and <code>upload.wikimedia.org</code> image URLs are all pre-authorized. Same rule as Wikipedia. Never ask before fetching any Wikimedia URL. "Should I search Commons?" is the punt. <strong>Method:</strong> direct web_fetch does not work on <code>commons.wikimedia.org</code> in Cowork — use the <code>Photos Rules.html</code> path (<code>site:</code> WebSearch + <code>commons_photo.py</code>). Pre-authorization is about permission, not the tool.</li>
+
+<li>⚠️ <strong>Every URL on every domain is pre-authorized — no per-site ask, ever.</strong> The pre-authorization covers any URL on any domain without exception. Known bot-blocked platforms (⚡ or ❌ in <code>Platforms.md</code>) skip <code>web_fetch</code> — go straight to <code>site:</code> search. For all others: when <code>web_fetch</code> fails or returns bad content → Chrome MCP (<code>navigate</code> + <code>get_page_text</code>) immediately. Connectors handle connector platforms; everything else is <code>web_fetch</code> → Chrome MCP. The question <em>"may I access {domain}?"</em> is never asked.</li>
+
+<li>⚠️ <strong>Make the call — only CORE RULES fix/edit questions park.</strong> Any gap resolvable with Claude's tools — connector, search, fetch, live browser reads including script-based reads on pages that never settle, operator-published sources — is resolved in the same session. <code>❓ Open Questions</code> holds only questions concerning fixes or edits to <code>Brain/CORE RULES/</code> files. Full rule: Make the call, § 3.</li>
+
+<li>⚠️ <strong>Punt-detection — run the tool first. Never ask.</strong> <em>"I can't access Viator," "GetYourGuide is bot-blocked," "ratings need manual lookup," "can't verify train times"</em> — all wrong. <strong>Platforms marked ⚡ or ❌ in <code>Platforms.md</code> skip step 1 entirely — start at step 2.</strong> The cascade for unknown platforms or any site that 403s: (1) direct fetch → (2) <code>site:{domain}</code> WebSearch → (3) Chrome MCP (<code>navigate</code> + <code>get_page_text</code>). Chrome renders JavaScript and bypasses bot-blocks. Execute each step immediately — never ask permission to try the next step. Asking "should I use the browser?" IS the punt.</li>
+
+<li>⚠️ <strong>Rule docs state what IS — the validator enforces it.</strong> Positive rules only, no prohibition banners, no bad examples. Full rule: "CORE RULES docs state what IS."</li>
+
+<li>⚠️ <strong>Viator and TripAdvisor MCP connectors first for tour research.</strong> Use Viator MCP (<code>search_experiences</code> → <code>get_experience_details</code>) and TripAdvisor MCP for tours — both return live structured data (ratings, prices, cancellation flag, direct booking URL) faster and without bot-blocks. GYG has no MCP connector — <code>site:getyourguide.com</code> web search as usual. Connectors listed in the Connectors file in <code>Brain/Reference/</code>.</li>
+
+<li>⚠️ <strong>Icon format and row order — read the canonical file.</strong> the Icon Order and Format file in <code>Brain/CORE RULES/</code> is the only authority for which emoji to use, what order rows appear, and how each row is formatted. Never guess icon format from memory or past guides. Read the file.</li>
+
+<li>⚠️ <strong>CSS and HTML formatting rules do not belong here.</strong> This file governs Claude's behavior — not fonts, spacing, or document structure. Any CSS rule, HTML formatting convention, or visual style instruction belongs in the formatting rules in <code>Brain/Reference/</code>. When a CSS or HTML rule appears in this file, move it there.</li>
+
+<li>⚠️ <strong>Validate before ship — every time.</strong> After finishing a guide, run <code>validate</code> first, fix all ❌ failures to zero, append the validation entry with date and time to the audit log, then run <code>ship</code>. Skipping straight to <code>ship</code> is always wrong. The validator is the pre-flight; the ship-gate is the door.</li>
+
+<li>⚠️ <strong>"Before You Go" does not exist — never reference it.</strong> <code>Before-You-Go.html</code> was split into four standalone pages (Tap Water, Vaccines, Baggage, Cards &amp; ATM) in June 2026 and the page is gone. Never add a "Before You Go" pill to a guide's also-on-this-site block. Never link <code>Trip-Essentials/Before-You-Go.html</code> anywhere. If found in an existing guide, remove it.</li></ul>
+
+<h2>§ 7. What never appears in a guide</h2>
+<p>The consolidated index of content that does not ship in a guide. Each item below either states the primary rule or points at the source where the primary rule lives.</p>
+<ul>
+<li><strong>Money.</strong> See Zero money in shipped guides.</li>
+<li><strong>On-demand research output.</strong> Weather, flights, hotels research, rentals, and car rentals never auto-ship inside a guide. Output saves to <code>Trips.html</code>. See</li>
+<li><strong>Dates.</strong> See <code>Day Structure.html</code>.</li>
+<li><strong>Hotel details beyond name and address.</strong> Pricing, dates, times, room details, confirmation codes, amenities, loyalty status, phone, email, number of nights, conference venue, companion schedules, arrival/departure labels — all belong in research notes, not in the guide.</li>
+<li><strong>Past-trip data.</strong> The skip list flags already-visited venues for exclusion. The skip list itself is internal scaffolding. See <code>Stops Structure.html</code>.</li>
+<li><strong>Hedging language in factual rows.</strong> See No hedging language in factual rows.</li>
+<li><strong>AI-generated, affiliate, or SEO content as sources.</strong> Trusted sources only. See <code>Stops Structure.html</code>.</li>
+<li><strong>Personal info.</strong> Names of the traveller, specific personal details, or references to past trips never ship in guide prose. Rule prose stays name-neutral.</li>
+<li><strong>Past-guide content.</strong> See Don't read past guides.</li>
+<li><strong>Placeholders.</strong> See No placeholders and <code>Guide Structure.html</code>.</li></ul>
+
+<h2>§ 8. On-demand documents</h2>
+<p>These run only on demand. Output goes to <code>Trips.html</code> — never auto-ships in a guide.</p>
+<ul>
+<li>All files in <code>On Demand/</code></li></ul>
+
+<h2>§ 9. Audit</h2>
+<p>Triggered only by the word <em>"audit"</em> (alone or in a phrase). Workflow:</p>
+<ol>
+<li>Thorough review of files under <code>Travel/</code> to identify what is wrong, outdated, or broken.</li>
+
+<li>Identify what rule / validator / CSS would catch each finding — strengthen those, not the artifact.</li>
+
+<li>Append findings to the audit log in <code>Brain/Reference/</code>.</li></ol>
+<p>Audit is additive — fixes go in, removals get parked for permission. Run proactively when the last audit is more than 7 days old.</p>
+<p><strong>Polish vs. removal.</strong> Polish = clearer phrasing within a paragraph, tightening sentence-level. Consolidating or removing rules is NOT polish — those park for explicit permission. Past audits have stripped rules under the banner of "tightening" — that is the failure mode this rule catches.</p>
+<p><strong>"List fixes" without the word "audit"</strong> = surface what is already known broken. Not a 27-file crawl. The two processes have different costs and different outputs.</p>
+
+<h2>§ 10. Session close-out checklist</h2>
+<p>Before ending any non-trivial work session, run through these five items:</p>
+<ol>
+<li><strong>Brain-check.</strong> Run <code>python3 Brain/scripts/brain_check.py</code> — zero warnings = clean. Any flag = fix before leaving.</li>
+
+<li><strong>Audit log.</strong> Append a session entry to the audit log in <code>Brain/Reference/</code> — date, what was done, what was found, what was fixed.</li>
+
+<li><strong>Versioned files only.</strong> Any guide HTML that shipped a new version this session? Confirm the old version was moved to <code>Travel/archive/</code> before the new one was created. In-place edits (same filename) need no archive — Drive revision history covers them.</li>
+
+<li><strong>Decisions log (Brain.md Part 2).</strong> Any non-trivial judgment calls made this session that are not in the decisions log (Part 2 of <code>Brain/Reference/Brain.md</code>)? Append them now.</li>
+
+<li><strong>Developer files.</strong> Six files in <code>Brain/Reference/</code> must stay current — update them before the session ends. No asking permission. Stale = drift.
+<ul>
+<li>the Validator Index file (<code>Validator Index.html</code>) in <code>Brain/Reference/</code> — add every new check added to <code>validate_itinerary.py</code> or <code>brain_check.py</code> this session.</li>
+<li>the Guide Entry Counts file (<code>Guide Entry Counts.html</code>) in <code>Brain/Reference/</code> — update any count, minimum, or threshold that changed this session (section minimums, char caps, walk caps, etc.).</li>
+<li>the Rule Dependencies file (<code>Rule Dependencies.html</code>) in <code>Brain/Reference/</code> — update any icon, threshold, or shared concept that moved, was renamed, or changed scope this session.</li>
+<li>the Ship Checklist file (<code>Ship Checklist.html</code>) in <code>Brain/Reference/</code> — update it whenever a section is added or removed from the canonical extras order, and whenever a new validator script is added.</li>
+<li>the Emoji Library in <code>Brain/Reference/</code> — update whenever a new emoji is approved for use or an existing one is locked out or reclassified.</li>
+<li>the Connectors file in <code>Brain/Reference/</code> — update whenever a connector is added, removed, tested live for the first time, or its workflow changes.</li>
+</ul>
+These are maintained by Claude. If a session ends with new checks, new counts, or changed rules — and these files were not updated — that session left drift behind.</li></ol>
+<p>A session that ends without these five steps leaves invisible debt: Brain drift goes undetected, judgment calls evaporate, and the next session starts with stale context.</p>
+
+<h2>§ 11. Google Calendar management</h2>
+<h3>Hotel banners</h3>
+<p>Each hotel stay has one all-day banner event spanning check-in day through check-out day (inclusive). The Google Calendar API uses an exclusive end date for all-day events — the end date is set to check-out day + 1. Banner content: hotel name and address only.</p>
+<h3>Flight events</h3>
+<p>Flight events carry flight number, route, departure time, and arrival time only. No booking references, seat numbers, or other details.</p>
+<h3>Color coding</h3>
+<p>Events are color-coded by participant. Grape (color ID 3) = primary traveler's solo events. Sage (color ID 2) = companion's solo events. Banana (color ID 5) = events shared by both. Events involving only one traveler are created separately; shared events are one event.</p>
+<h3>Activity and tour events</h3>
+<p>Activity and tour event content: date, start time, meeting point, and cash required (if any). No other information.</p>
+
+<h2>§ 12. Format-exception files</h2>
+<p>Five CORE RULES files are Claude reference files, not guide-builder rule documents. They describe technical formats for Claude's own use — JSON structures, URL patterns, file paths, HTML snippets, illustrative bad patterns, or required-reads lists that use controlled vocabulary. Standard formatting rules do not apply to them in full.</p>
+<p>The five files are: <code>Links.html</code>, <code>Photos Rules.html</code>, <code>Rules for Claude.html</code>, <code>Guide Structure.html</code>, <code>Claude Inspiration - Extra Section.html</code>.</p>
+<p>What is different in these files: curly-brace notation (<code>{like this}</code>) is intentional technical notation, not a template placeholder. <code>&lt;em&gt;</code> tags mark illustrative phrases. Validator checks that would flag these patterns are skipped for these files. Each file carries a "Format exception" notice below its read-only banner stating what is intentional.</p>
+<p>The validator enforces this via the <code>FORMAT_EXCEPTION_FILES</code> constant in <code>doc_workshop_validator.py</code>. Any future check that does not apply to these files gates itself with <code>if path.name not in FORMAT_EXCEPTION_FILES</code>.</p>
+
+<hr class="rule-bottom">
+<p class="banner"><strong>ATTENTION: THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST</strong><br>
+Read the formatting rules first — Brain/Reference/.<br>
+CSS, HTML, and validator code are not permitted in rule text.<br>
+Rules are written like a legal document — active voice, generic phrasing, no specific examples. The rules state what is; the validator catches what isn't.</p>
+</body>
+</html>

@@ -60,10 +60,12 @@ jobs:
         env:
           GITHUB_EVENT_BEFORE: ${{ github.event.before }}
           GITHUB_SHA: ${{ github.sha }}
-          # The validator's CORE RULES integrity check guards against unauthorized
-          # LOCAL edits (compares against the gitignored core_rules_checksums.json).
-          # That file isn't published and the check is meaningless in CI, so skip it.
-          SKIP_CORE_RULES_INTEGRITY: "1"
+          # Published-only mode: skip the handful of validator checks that need
+          # unpublished local authoring artifacts (CORE RULES checksums, per-guide
+          # _build/ build-state + verification logs, photo-provenance module, and
+          # the cross-surface FINAL GATEs — those are covered by check_coverage.py).
+          # All guide-CONTENT checks still run. Default (unset) = full local validation.
+          VALIDATOR_PUBLISHED_ONLY: "1"
         run: python3 .github/scripts/quarantine_failing_guides.py --stage _site
 
       - name: Cross-guide surface coverage (advisory — never blocks deploy)

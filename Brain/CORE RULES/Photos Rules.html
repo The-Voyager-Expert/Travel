@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Photos Rules</title>
+<link rel="stylesheet" href="../Reference/Core Rules Style.css">
+</head>
+<body>
+<p class="banner"><strong>ATTENTION: THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST</strong><br>
+Read the formatting rules first — Brain/Reference/.<br>
+CSS, HTML, and validator code are not permitted in rule text.<br>
+Rules are written like a legal document — active voice, generic phrasing, no specific examples. The rules state what is; the validator catches what isn't.</p>
+<p class="banner"><strong>Format exception:</strong> Claude reference file — URLs, file paths, and HTML snippets use curly braces as technical notation. Do not convert to <code>[Placeholder]</code> format.</p>
+<hr class="rule-top">
+<p class="callout"><strong>⚡ Build pre-auth:</strong> Every action this file requires — Wikimedia Commons searches, image URL fetches, license checks — is pre-authorized. Execute immediately, no asking, no confirming. Full rule: <code>Rules for Claude.html</code>.</p>
+
+<h1>📸 Photos Rules</h1>
+<div class="meta">
+ <p><strong>Phase:</strong> 1 — Technical prerequisites (applies during Phase 4 per-stop build)</p>
+ <p><strong>Summary:</strong> Wikimedia Commons sourcing, license bar, harvest recipe, and placement for every stop photo. One photo per stop, real and live-verified.</p>
+</div>
+
+<h2>§ 1. Source</h2>
+<p>Every photo is a real photo of the stop's subject. No placeholders — no Picsum, no placehold.co, no Unsplash seed URLs. Wikimedia Commons is the default source.</p>
+
+<h2>§ 2. Acceptable licenses</h2>
+<ul>
+<li>Public Domain</li>
+<li>CC0</li>
+<li>CC-BY</li>
+<li>CC-BY-SA</li>
+</ul>
+<p>Non-commercial-only and unclear licenses are excluded.</p>
+
+<h2>§ 3. One photo per stop</h2>
+<p>Each stop gets one photo genuinely depicting the stop's subject — not a generic city shot. When multiple strong candidates exist, apply the criteria below by stop type.</p>
+
+<h2>§ 3a. Photo selection criteria by stop type</h2>
+<p>Three cases. Apply the first one that matches:</p>
+<ul>
+<li><strong>The structure is the attraction</strong> — the building's form or design is the explicit reason to visit. Exterior or facade shot is correct. Applies only when the stop exists because of what the building looks like — not because of what it contains or what happens inside. Examples: Eiffel Tower, Hallgrímskirkja, Harpa. A museum, gallery, or theater is never in this category even if the building is architecturally notable.</li>
+<li><strong>The interior is the attraction</strong> — museums, galleries, theaters, and any venue where the content inside is the draw. Interior shot showing exhibits, artwork, collections, or performance space is correct. A building exterior is a last resort, used only when no interior shot with acceptable license exists.</li>
+<li><strong>Everything else</strong> — show the subject itself. For nature: the natural feature (never a visitor centre, entrance sign, car park, or building). For squares and plazas: the space, not the buildings around it. For neighborhoods and districts: the defining scene. For viewpoints: the view. A building exterior never wins in this category.</li>
+</ul>
+
+<h2>§ 4. Harvest during research</h2>
+<p>Harvest each stop's photo in the same pass as researching the stop — not as a separate cleanup phase at the end of the build. Stop research and photo resolution belong on the same pull, so a stop never lands in the guide with the photo deferred to "later."</p>
+
+<h2>§ 5. Harvest recipe</h2>
+<p><strong>⚠️ web_fetch is blocked for commons.wikimedia.org in Cowork.</strong> Never use web_fetch to open a Commons URL directly — it returns "Web fetch was not allowed." Use WebSearch (<code>site:</code> searches) to find filenames, then <code>commons_photo.py</code> via bash to resolve the 800px URL. This is the only working path.</p>
+<p><strong>Wikipedia article images and Commons are separate sources.</strong> Wikipedia editors curate one main image per article; Commons hosts thousands of public-domain and CC-licensed photos that don't appear on the Wikipedia page. A Wikipedia article with no main image tells you nothing about what Commons has — always run the Commons search.</p>
+<p>Per stop:</p>
+<ol>
+<li><strong>Commons category search first</strong> — WebSearch for <code>site:commons.wikimedia.org/wiki/Category: {Subject}</code>. Inspect result snippets for filenames. Do not web_fetch the category URL.</li>
+<li><strong>Commons direct search</strong> as a secondary path: <code>site:commons.wikimedia.org {subject} {city}</code> via WebSearch.</li>
+<li><strong>Wikipedia article images</strong> as a tertiary check only — the article's main image often appears in Commons too, but Commons usually has stronger candidates.</li>
+<li>Pick one photo that clearly depicts the subject — apply § 3a stop-type criteria to decide between exterior, interior, or scene.</li>
+<li>Confirm subject match + license from the search snippet or the filename.</li>
+<li><strong>Resolve the 800px URL via bash:</strong> <code>python3 Brain/scripts/commons_photo.py "File:{Filename}.jpg"</code>. This calls the Commons API and returns the canonical thumbnail URL. Never construct the upload.wikimedia.org hash path manually.</li>
+<li><strong>Download — the only path (hotlinking is banned):</strong> always download the image to <code>Guides/{City}/_build/assets/</code> and ship it from there as a relative path. Run <code>python3 Brain/scripts/commons_photo.py --download "Guides/{City}/_build/assets/800px-{Filename}.jpg" "File:{Filename}.jpg"</code> — this fetches the original file and resizes it to 800px, working around the sandbox CDN restriction (direct thumbnail downloads from upload.wikimedia.org return HTTP 400, but <code>--download</code> pulls the original instead). Reference as <code>&lt;img src="_build/assets/800px-Foo.jpg" alt="…"&gt;</code>. Never ship an <code>&lt;img src&gt;</code> pointing at <code>upload.wikimedia.org</code> — the validator hard-fails every hotlinked Commons URL, and the old <code>&lt;!-- hotlink: … --&gt;</code> comment no longer authorises one. A genuine resolution failure is a "No pictures found" result, never a hotlink.</li>
+</ol>
+
+<h2>§ 6. Technical failures — rate limits, API errors</h2>
+<p>A rate limit or API error is NOT a "No pictures found" result. They are different things. When <code>commons_photo.py</code> or a WebSearch call fails with a rate limit or timeout:</p>
+<ol>
+<li>Wait 10–15 seconds and retry the same call once.</li>
+<li>If still failing, try the alternative path: if <code>commons_photo.py</code> failed, try <code>site:commons.wikimedia.org File:{filename}</code> WebSearch to get the URL from the snippet instead.</li>
+<li>If all paths fail, note the stop name and the filename already found in <code>Guides/{City}/_build/build_state.md</code>, keep building the rest of the guide, and retry the photo before the ship gate. Do not write "No pictures found" for a rate-limited stop.</li>
+</ol>
+<p>"No pictures found" is reserved for when the search genuinely finds no suitable licensed photo for the subject — not for technical failures.</p>
+
+<h2>§ 7. When none qualify</h2>
+<p>After the full Commons category + direct search comes up empty (no suitable licensed photo exists for the subject), ship a visible "No pictures found" line in place of the photo block:</p>
+<table class="entry">
+<tr><td>&lt;div class="stop-photos stop-photos-empty"&gt;&lt;em&gt;No pictures found.&lt;/em&gt;&lt;/div&gt;</td></tr>
+</table>
+<p><strong>Guide-level cap — at most 1 "No pictures found." stop per guide.</strong> A single genuinely empty stop is acceptable. Two or more signals the harvest was skipped or abandoned — a process violation. The validator hard-fails any guide with 2 or more empty photo wrappers regardless of whether each wrapper is individually valid.</p>
+<p><strong>Written reason required.</strong> The one permitted empty stop must be accompanied by a <code>&lt;!-- no-photo-reason: {reason} --&gt;</code> comment placed immediately before the <code>&lt;div class="stop-photos stop-photos-empty"&gt;</code> line (within 600 characters). The reason must confirm that Wikimedia Commons was fully searched (category search + direct search) and no suitable licensed photo exists for the subject. Minimum 10 characters. Example: <code>&lt;!-- no-photo-reason: no suitable licensed photo found on Commons for Puca Pucara --&gt;</code>. The validator hard-fails any empty wrapper missing this comment. If a second stop genuinely has no Commons photo and the reason comment is already committed to another stop, the second stop must be replaced with a different stop that has available photos — a guide may not carry two empty stops under any circumstance.</p>
+
+<h2>§ 8. Alt text</h2>
+<p>Short, plain. Just the subject name. No "photo of" prefix.</p>
+
+<h2>§ 9. Storage</h2>
+<p>Photos always download to <code>Guides/{City}/_build/assets/</code> and ship from there as relative paths — this is the only permitted storage path. Use <code>commons_photo.py --download</code> (§ 5 step 7), which fetches the original and resizes to 800px, bypassing the sandbox CDN restriction. Hotlinking to <code>upload.wikimedia.org</code> is banned: the validator hard-fails every Commons hotlink, and the retired <code>&lt;!-- hotlink: … --&gt;</code> comment no longer authorises one.</p>
+
+<h2>§ 10. Weak-filename patterns</h2>
+<p>Certain filename fragments reliably indicate a generic exterior shot rather than the most compelling depiction of the subject. These patterns are treated as a quality signal — not a subject-type rule: <code>Building</code>, <code>Main_Building</code>, <code>Exterior</code>, <code>Facade</code>, <code>Outside</code>, <code>Front_view</code>. A photo whose filename contains one of these patterns is presumed weak and must be overridden by a better candidate unless no better-licensed alternative exists.</p>
+<p>This applies even to architectural landmarks (§ 3a), where a facade shot is the correct subject choice. The filename flag means: look for a stronger, better-framed facade shot first. When the weak-filename photo is genuinely the best available option, use it and add the sign-off comment — the intent is intentional confirmation, not a block.</p>
+<p>When no alternative exists, a sign-off comment must precede the stop's photo block confirming the choice is intentional. The validator enforces this rule.</p>
+
+<h2>§ 11. Placement</h2>
+<p>Photos (or the "No pictures found" line) are always the last element inside the stop block, regardless of stop type. The photo block sits directly under the stop block — not nested inside a ticket box.</p>
+<p>Sign-off comment shape when a weak-filename photo is intentional (no better alternative exists):</p>
+<table class="entry">
+<tr><td>&lt;!-- photo-ok: no better-licensed alternative found for {stop name} --&gt;</td></tr>
+</table>
+<hr class="rule-bottom">
+<p class="banner"><strong>ATTENTION: THIS DOCUMENT IS READ-ONLY AND CAN ONLY BE EDITED BY REQUEST</strong><br>
+Read the formatting rules first — Brain/Reference/.<br>
+CSS, HTML, and validator code are not permitted in rule text.<br>
+Rules are written like a legal document — active voice, generic phrasing, no specific examples. The rules state what is; the validator catches what isn't.</p>
+</body>
+</html>
