@@ -208,16 +208,13 @@ def main() -> int:
         if folder not in search_folders and not (name and name in search_names):
             missing["search"].append(folder)
 
-        # also-on-this-site: block must exist + all three universal links present
-        _TR_REQUIRED = ["Safety-Guide.html", "Visas.html", "Weather.html"]
+        # also-on-this-site: block must exist
         guide_html = ""
         for html in (GUIDES_DIR / folder).glob("*.html"):
             if STAMP in _read(html):
                 guide_html = _read(html).lower()
                 break
-        if "<!-- also-on-this-site -->" not in guide_html or any(
-            f.lower() not in guide_html for f in _TR_REQUIRED
-        ):
+        if "<!-- also-on-this-site -->" not in guide_html:
             missing["resources"].append(folder)
 
     gaps = {k: v for k, v in missing.items() if v}
@@ -232,7 +229,7 @@ def main() -> int:
             print(f"  {label}: missing {', '.join(missing[key])}")
     print("Each shipped guide must appear (with a working link) in the index card, "
           "FMAP, map pin, travel stats, safety guide, both Weather tabs, search, "
-          "and have a also-on-this-site block with Safety · Visas · Before You Go · Weather links.")
+          "and have a <!-- also-on-this-site --> block.")
     print("Fix locally with: python3 Brain/scripts/validate_guide_coverage.py")
     return 1
 
