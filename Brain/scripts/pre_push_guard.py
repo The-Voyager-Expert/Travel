@@ -8,10 +8,13 @@ Policy enforced:
   • ALLOW every push by default — toolbar.js, guide-style.css, assets, index,
     Trip-Essentials data pages, etc. None carry a guide validation stamp, so
     none of them trip this guard.
-  • BLOCK only if a guide HTML that is NEW or MODIFIED IN THIS PUSH lacks
-    <!-- validation: passed -->. Guides already on the remote that haven't
-    changed in this push are NOT rechecked — they were validated when they
-    shipped. In-progress guides that sit quietly in the repo (tracked but
+  • BLOCK only if a guide HTML that is NEW or MODIFIED IN THIS PUSH lacks a
+    valid SIGNED validation stamp (see validation_stamp.py). A hand-typed or
+    bulk-written stamp carries no matching signature, and a guide edited after
+    it was validated no longer matches its signature — both are blocked, the
+    same as a guide with no stamp at all. Guides already on the remote that
+    haven't changed in this push are NOT rechecked — they were validated when
+    they shipped. In-progress guides that sit quietly in the repo (tracked but
     unchanged in the current push) never block anything.
 
 This means in-progress guides can be tracked without blocking other ships.
@@ -29,7 +32,25 @@ import subprocess
 import sys
 from pathlib import Path
 
-STAMP_OK = "<!-- validation: passed"
+# Verify the CONTENT-BOUND SIGNED stamp, not just the presence of a string.
+# A bulk hand-stamp ("<!-- validation: passed … -->" with no real signature, or
+# a guide edited after it was stamped) fails verification and is blocked here.
+try:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import validation_stamp as _vs
+except Exception:  # noqa: BLE001 — never let an import error brick a push
+    _vs = None
+
+STAMP_OK = "<!-- validation: passed"  # legacy substring, fallback only
+
+
+def _is_validated(html: str) -> bool:
+    """True iff the guide carries a valid signed validation stamp."""
+    if _vs is not None:
+        ok, _reason = _vs.verify(html)
+        return ok
+    # Fallback if the shared module is unavailable: legacy substring check.
+    return STAMP_OK in html
 
 
 def _git(*args: str) -> str:
@@ -116,7 +137,7 @@ def main() -> int:
         except FileNotFoundError:
             # File deleted — the deletion is being pushed; fine.
             continue
-        if STAMP_OK not in html:
+        if not _is_validated(html):
             offenders.append(rel)
 
     if not offenders:
@@ -127,13 +148,23 @@ def main() -> int:
         file=sys.stderr,
     )
     for rel in offenders:
-        print(f"      • {rel}", file=sys.stderr)
+        reason = ""
+        if _vs is not None:
+            try:
+                _ok, reason = _vs.verify((repo / rel).read_text(encoding="utf-8", errors="replace"))
+                reason = f"  ({reason})"
+            except Exception:  # noqa: BLE001
+                reason = ""
+        print(f"      • {rel}{reason}", file=sys.stderr)
     print(
-        "\n    This push introduces or modifies guide HTML that hasn't passed the ship gate.\n"
+        "\n    These guides lack a valid SIGNED validation stamp — the stamp is missing,\n"
+        "    hand-typed/bulk-written (no real signature), or the guide was edited after it\n"
+        "    was validated (so the signature no longer matches its content). A stamp can only\n"
+        "    be produced by a real validator pass; it cannot be typed by hand.\n"
         "    Other in-progress guides already in the repo are NOT affected — only the\n"
         "    files changed in THIS push trigger this block.\n"
         "\n    Fix: run  python3 Brain/scripts/guide_tools.py ship <path>  for each blocked guide.\n"
-        "    The ship gate stamps <!-- validation: passed --> and then auto-pushes.\n",
+        "    (Or just re-validate:  python3 Brain/scripts/guide_tools.py validate <path>.)\n",
         file=sys.stderr,
     )
     return 1

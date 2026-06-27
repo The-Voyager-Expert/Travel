@@ -25527,35 +25527,42 @@ if __name__ == "__main__":
         sys.exit(_halt.code)
 
     if ok:
-        # Write validation stamp into the guide so ship gate can verify it ran.
-        # Replaces <!-- validation: pending --> if present, else inserts after
-        # the opening <html> tag (or <!DOCTYPE html> line).
-        stamp = f"<!-- validation: passed {datetime.now().strftime('%Y-%m-%d %H:%M')} -->"
-        stamped = html
-        if "<!-- validation: pending -->" in stamped:
-            stamped = stamped.replace("<!-- validation: pending -->", stamp)
-        elif "<!-- validation: passed" in stamped:
-            # count=1: collapse to a single fresh stamp even if duplicates exist,
-            # rather than rewriting every occurrence. (Lane4-05 fix.)
-            stamped = re.sub(r"<!-- validation: passed [^>]+ -->", stamp, stamped, count=1)
-        else:
-            # No stamp present — insert after <!DOCTYPE html> or <html>; if neither
-            # marker exists (structureless file), prepend so a passing guide is
-            # never shipped unstamped. (Lane4-04 fix.)
-            _inserted = False
-            for marker in ("<!DOCTYPE html>", "<html"):
-                if marker.lower() in stamped.lower():
-                    idx = stamped.lower().index(marker.lower()) + len(marker)
-                    # advance to end of that line
-                    eol = stamped.find("\n", idx)
-                    insert_at = eol + 1 if eol != -1 else idx
-                    stamped = stamped[:insert_at] + stamp + "\n" + stamped[insert_at:]
-                    _inserted = True
-                    break
-            if not _inserted:
-                stamped = stamp + "\n" + stamped
-        if stamped != html:
-            Path(filepath).write_text(stamped, encoding="utf-8")
-            print(f"✅ Validation stamp written → {Path(filepath).name}")
+        # Write a CONTENT-BOUND SIGNED validation stamp into the guide so every
+        # downstream gate (ship / pre-push / deploy) can verify the validator
+        # actually ran on THIS exact content — a hand-typed or bulk-written stamp
+        # carries no matching signature and is rejected. The signing/insertion
+        # logic lives in the shared validation_stamp module so all gates agree.
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import validation_stamp as _vs
+            if _vs.write_stamp(filepath, html):
+                print(f"✅ Signed validation stamp written → {Path(filepath).name}")
+        except Exception as _stamp_err:  # noqa: BLE001
+            # Last-resort fallback so a passing guide is never left unstamped if
+            # the module can't be imported. This writes a LEGACY (unsigned) stamp,
+            # which downstream signature checks will treat as "needs re-signing".
+            print(f"⚠️  validation_stamp unavailable ({_stamp_err}); writing legacy stamp.",
+                  file=sys.stderr)
+            stamp = f"<!-- validation: passed {datetime.now().strftime('%Y-%m-%d %H:%M')} -->"
+            stamped = html
+            if "<!-- validation: pending -->" in stamped:
+                stamped = stamped.replace("<!-- validation: pending -->", stamp)
+            elif "<!-- validation: passed" in stamped:
+                stamped = re.sub(r"<!-- validation: passed [^>]+ -->", stamp, stamped, count=1)
+            else:
+                _inserted = False
+                for marker in ("<!DOCTYPE html>", "<html"):
+                    if marker.lower() in stamped.lower():
+                        idx = stamped.lower().index(marker.lower()) + len(marker)
+                        eol = stamped.find("\n", idx)
+                        insert_at = eol + 1 if eol != -1 else idx
+                        stamped = stamped[:insert_at] + stamp + "\n" + stamped[insert_at:]
+                        _inserted = True
+                        break
+                if not _inserted:
+                    stamped = stamp + "\n" + stamped
+            if stamped != html:
+                Path(filepath).write_text(stamped, encoding="utf-8")
+                print(f"✅ Validation stamp written → {Path(filepath).name}")
 
     sys.exit(0 if ok else 1)
