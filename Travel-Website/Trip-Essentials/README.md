@@ -15,6 +15,8 @@ All files live in `Travel/Trip Essentials/`. If one wanders out, the folder name
 
 *Retired 2026-05-18 (no longer in this folder; archived to `Travel/archive/` per the dated retirement entry there): `Specs.html`, `_style.css`, `trips_validator.py`, `trips_fixer.py`. The spec and validators have been consolidated into `Trips - Rules.md` and the regular guide validators.*
 
+> ⚠️ **`Before-You-Go.html` is a dead page.** This file exists in the folder but is not linked from the toolbar, not referenced from any guide's "Also on this site" block, and must never be added to either. Do not link to it. Do not add it to any validator, template, or also-on-this-site block.
+
 ## Three separate systems in this workspace
 
 This folder is the **third** of three independent systems:

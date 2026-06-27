@@ -20497,6 +20497,18 @@ def validate(html: str, filename: str):
                                 f'(Michelin §3b: ⭐ Name / Cuisine / 📍 Address / 🚶🚕 → hotel; '
                                 f'🏛/🚫 are §3a in-hotel only)'
                             )
+                    # J2 — review link banned in §3b heading.
+                    # §3b heading is plain "⭐ Name"; a review link (N.N⭐ · NNN+ reviews)
+                    # belongs only on §3a in-hotel headings.
+                    if _sub_before and (
+                        'review-link' in _sub_before.group(0)
+                        or re.search(r'\d+\.\d+⭐\s*·\s*\d[\d,]+\+\s*reviews',
+                                     _sub_before.group(0), re.IGNORECASE)
+                    ):
+                        mich_banned_rows.append(
+                            f'"{name_plain[:50]}" — §3b heading has a review link '
+                            f'(review links are §3a in-hotel only; §3b heading is ⭐ Name only)'
+                        )
 
                 # L — annotation leakage: build markers must be stripped before shipping.
                 _mich_annot_m = _MICH_ANNOT_RE.search(_mich_box_plain)
