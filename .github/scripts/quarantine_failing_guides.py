@@ -96,6 +96,29 @@ def changed_guide_files() -> list[Path]:
     return files
 
 
+def all_guide_files() -> list[Path]:
+    """Every guide on the site — the main (largest) HTML in each city folder.
+
+    Used by the forced full-fleet quality check (VALIDATE_ALL): every guide must
+    pass the real validator to be served; the rest are held back as placeholders.
+    """
+    files: list[Path] = []
+    base = REPO / GUIDES_REL
+    if not base.is_dir():
+        return files
+    for city_dir in sorted(base.iterdir()):
+        if not city_dir.is_dir():
+            continue
+        htmls = sorted(city_dir.glob("*.html"),
+                       key=lambda f: f.stat().st_size, reverse=True)
+        for h in htmls[:1]:                      # the served guide = largest html
+            rel = h.relative_to(REPO)
+            if rel.name == "Guides-Index.html":
+                continue
+            files.append(rel)
+    return files
+
+
 def _run_once(guide: Path) -> tuple[bool, list[str]]:
     proc = subprocess.run(
         [sys.executable, str(VALIDATOR), str(REPO / guide)],
@@ -148,10 +171,10 @@ def placeholder_html(city: str) -> str:
 <div class="container" style="text-align:center;padding:64px 24px;">
   <div class="title-city">{city}</div>
   <p style="margin-top:24px;font-size:15px;color:#6b6256;">
-    🛠️ This guide is being updated and will be back shortly.
+    🛠️ This guide is being re-reviewed and will be back shortly.
   </p>
   <p style="margin-top:8px;font-size:13px;color:#9a9082;">
-    It was held back from publishing because it didn't pass the quality checks.
+    It's held back until it passes a full quality check.
   </p>
 </div>
 </body>
@@ -183,24 +206,47 @@ def main() -> int:
             print(f"::warning::CANARY FAILED — validator does not trust this environment "
                   f"({ctop[:100]}). Falling back to report-only: nothing will be quarantined.")
 
-    changed = changed_guide_files()
-    print(f"Changed guide(s) in this push: {len(changed)}")
+    # ── FULL-FLEET RESET — mark every guide as held-back ─────────────────────
+    # QUARANTINE_ALL=1: every guide is held back as a placeholder right now,
+    # without validation — regardless of whether it currently passes. WHY: with
+    # ~175 guides, cribs ran only superficial validation and problems accumulated
+    # across the fleet (forged stamps, a hidden SEO <h1> injected into 163 guides,
+    # format drift). This forces every guide off the live site until it is genuinely
+    # re-checked. Flip QUARANTINE_ALL off (and use VALIDATE_ALL) to let guides return
+    # as they pass the real validator.
+    quarantine_all = os.environ.get("QUARANTINE_ALL") == "1"
 
-    failures: list[tuple[Path, int, str]] = []
-    passes = 0
-    for g in changed:
+    if quarantine_all or os.environ.get("VALIDATE_ALL") == "1":
+        targets = all_guide_files()
+    else:
+        targets = changed_guide_files()
+    print(f"Guides to process: {len(targets)}"
+          + ("  —  QUARANTINE_ALL: every guide held back" if quarantine_all else ""))
+
+    def _check(g: Path):
+        if quarantine_all:
+            # Held back unconditionally (no validation) — always applies.
+            return (g, False, 0, "held back — full-fleet reset (must re-pass to return)", True)
         try:
             ok, n, top = validate(g)
         except subprocess.TimeoutExpired:
             ok, n, top = False, -1, "validator timed out"
-        if ok:
-            passes += 1
-            print(f"  ✅ {g}")
-        else:
-            failures.append((g, n, top))
-            print(f"  ❌ {g} — {n} failure(s): {top}")
+        return (g, ok, n, top, False)
 
-    # Stage the artifact: full tree, then swap failing guides for placeholders.
+    # Parallel — the per-guide validator releases the GIL while its subprocess runs.
+    failures: list[tuple[Path, int, str, bool]] = []   # (guide, n, detail, accept_fail)
+    passes = 0
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        for g, ok, n, top, accept_fail in ex.map(_check, targets):
+            if ok:
+                passes += 1
+                print(f"  ✅ {g}")
+            else:
+                failures.append((g, n, top, accept_fail))
+                print(f"  {'⏸ ' if accept_fail else '❌'} {g} — {top}")
+
+    # Stage the artifact: full tree, then swap held-back guides for placeholders.
     site_dest = stage / "Travel-Website"
     if site_dest.exists():
         shutil.rmtree(site_dest)
@@ -211,32 +257,33 @@ def main() -> int:
     else:
         (stage / ".nojekyll").write_text("")
 
-    quarantined = failures if canary_ok else []
-    for g, n, _ in quarantined:
+    # Accept-list holdbacks ALWAYS apply (deliberate, not validation-based).
+    # Validation failures apply only when the canary trusts the environment.
+    quarantined = [f for f in failures if f[3] or canary_ok]
+    for g, n, _, _ in quarantined:
         folder = g.parts[2]                       # Guides/<folder>/file.html
         dest = stage / g
         dest.write_text(placeholder_html(city_from(folder)), encoding="utf-8")
-        print(f"  🔒 quarantined → placeholder: {g}")
-    if failures and not canary_ok:
-        print("  ⚠️  report-only (canary failed): failing guides published AS-IS, none quarantined.")
+        print(f"  🔒 held back → placeholder: {g}")
+    _val_skipped = [f for f in failures if not f[3] and not canary_ok]
+    if _val_skipped:
+        print(f"  ⚠️  report-only (canary failed): {len(_val_skipped)} validation-failed "
+              f"guide(s) published AS-IS (accept-list holdbacks still applied).")
 
     # Job summary (shown in the Actions run).
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
         with open(summary, "a", encoding="utf-8") as fh:
             fh.write("## Guide deploy gate\n\n")
+            if quarantine_all:
+                fh.write("> 🔒 **QUARANTINE_ALL — full-fleet reset.** Every guide held back as a "
+                         "placeholder until it is genuinely re-checked.\n\n")
             if not canary_ok:
-                fh.write("> ⚠️ **Canary failed — report-only mode.** The validator did not "
-                         "trust this runner, so nothing was quarantined; failing guides were "
-                         "published as-is. Investigate the runner before relying on the gate.\n\n")
-            fh.write(f"- Changed guides validated: **{len(changed)}**\n")
-            fh.write(f"- Published: **{passes}**\n")
-            fh.write(f"- Quarantined (placeholder, deploy still proceeded): **{len(quarantined)}**\n\n")
-            if failures:
-                fh.write("| Guide | Failures | Action | Sample |\n|---|---|---|---|\n")
-                for g, n, top in failures:
-                    act = "quarantined" if canary_ok else "published (canary off)"
-                    fh.write(f"| `{g}` | {n} | {act} | {top[:100]} |\n")
+                fh.write("> ⚠️ **Canary failed** — validation-based holdbacks fell back to report-only "
+                         "(accept-list holdbacks still applied). Investigate the runner.\n\n")
+            fh.write(f"- Guides checked: **{len(targets)}**\n")
+            fh.write(f"- Served (passing + accepted): **{passes}**\n")
+            fh.write(f"- Held back (placeholder): **{len(quarantined)}**\n\n")
 
     print(f"\nResult: {passes} published, {len(quarantined)} quarantined, deploy proceeds.")
     return 0
