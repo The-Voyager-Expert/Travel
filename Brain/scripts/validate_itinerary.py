@@ -4461,6 +4461,7 @@ def validate(html: str, filename: str):
     empty_has_img: list[int] = []           # I — .stop-photos-empty wrapper contains an <img>
     alt_annotation_hits: list[str] = []     # J — alt text contains build annotation
     src_missing_on_disk: list[str] = []     # P — _build/assets/ file referenced but not on disk
+    src_blank_on_disk: list[str] = []       # P2 — file exists but is a solid-colour placeholder
 
     # Annotation pattern reused from alt-text check (same set as stop-name / tour-box).
     _alt_annot_re = re.compile(
@@ -4617,6 +4618,19 @@ def validate(html: str, filename: str):
                     _disk_path = Path(filename).parent / src_val
                     if not _disk_path.exists():
                         src_missing_on_disk.append(src_val.rsplit('/', 1)[-1])
+                    else:
+                        # P2 — file exists but may be a solid-colour placeholder
+                        # (commons_photo.py download silently saved a blue/grey JPEG)
+                        try:
+                            from PIL import Image as _PILImage, ImageStat as _PILStat
+                            import statistics as _pstats
+                            _pimg = _PILImage.open(_disk_path)
+                            _pbands = _pimg.split()
+                            _psd = max(_pstats.stdev(list(_b.getdata())) for _b in _pbands)
+                            if _psd < 10:
+                                src_blank_on_disk.append(src_val.rsplit('/', 1)[-1])
+                        except Exception:
+                            pass  # PIL unavailable or unreadable — skip silently
                     # E — Commons thumbnails ship as 800px-{Filename}.
                     base = src_val.rsplit('/', 1)[-1]
                     if not base.startswith('800px-'):
@@ -4750,6 +4764,15 @@ def validate(html: str, filename: str):
         (f"{len(src_missing_on_disk)} photo file(s) missing from _build/assets/: "
          f"{src_missing_on_disk[:5]}")
         if src_missing_on_disk else "",
+    )
+    check(
+        'Photo files in _build/assets/ must not be solid-colour placeholders — '
+        'stddev < 10 = blank/blue placeholder saved instead of real photo '
+        '(commons_photo.py download failed silently; re-run --download with correct Commons filename)',
+        len(src_blank_on_disk) == 0,
+        (f"{len(src_blank_on_disk)} photo file(s) are solid-colour placeholders (blue boxes on site): "
+         f"{src_blank_on_disk[:5]}")
+        if src_blank_on_disk else "",
     )
 
     # ─── PHOTOS — I: NO <img> INSIDE .stop-photos-empty ─────────────────────
@@ -8826,6 +8849,7 @@ def validate(html: str, filename: str):
         r'⏰|🎟|📅|📒|⚠️|🏨|🆓|💵|📖|🚌|🚆|🚄|🛵|🚲|🛴|🚇|🗞️|🔗'
     )
 
+    _cap_hotel_order_ok = True
     if cap_section_m:
         cap_body_text = cap_section_m.group(1)
         cap_entries = re.findall(
