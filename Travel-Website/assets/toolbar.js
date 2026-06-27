@@ -674,4 +674,17 @@
     _wx.src = base + 'assets/weather.js?v=4';
     document.head.appendChild(_wx);
   }
+
+  /* ── "Add a day" selector — loaded on individual city guides ONLY ─────────
+     add_day.js lives in assets/ (permanent home). On a guide it adds the
+     ➕ Add a day control under the trip overview, turning one click into a
+     ready-to-run instruction (copy, or open as a prefilled GitHub issue that
+     the add-day workflow builds automatically). Gated to guide pages here by
+     path; add_day.js also self-checks for .day-block before rendering, so it
+     no-ops on any non-itinerary page. Bump ?v= when add_day.js changes. */
+  if (/\/Guides\//.test(location.pathname) && curr !== 'Guides-Index.html') {
+    var _ad = document.createElement('script');
+    _ad.src = base + 'assets/add_day.js?v=1';
+    document.head.appendChild(_ad);
+  }
 }());
