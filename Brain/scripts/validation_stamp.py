@@ -35,14 +35,13 @@ Resolved in order:
   1. ``$VOYAGER_VALIDATION_KEY`` env var       — used by CI (GitHub Actions secret)
   2. ``Brain/scripts/.validation_key`` file    — Drive-only, NOT tracked in git,
                                                   read by the cribs when signing
-  3. the built-in DEFAULT_KEY constant         — public fallback
 
-Even with only the public DEFAULT_KEY the stamp is *content-bound*: it defeats
-the real incident (bulk fixed-string stamps and post-validation edits both fail
-verification). Setting a secret key (Drive file + matching CI secret) adds
-forgery resistance on top. And regardless of the key, the CI deploy gate
-RE-RUNS the real validator on every changed guide — so the validator, not the
-stamp, is always the ultimate authority. The stamp is fast defense-in-depth.
+There is NO public fallback key. If neither source yields a key, load_key()
+raises RuntimeError. This means a stamp can ONLY be produced by code running in
+an environment that has the secret — a crib without the Drive mounted (or the CI
+secret set) cannot produce a verifiable signature. The ``--stamp`` CLI has been
+removed for the same reason: the only legitimate code path to write a stamp is
+validate_itinerary.py after a real validation pass.
 
 This module is import-only (no side effects) and stdlib-only, so it is safe to
 ship in the tracked repo and call from the GitHub Actions runner.
@@ -57,12 +56,6 @@ import os
 import re
 from pathlib import Path
 
-# Public fallback key. Provides content-binding out of the box; override with a
-# secret via $VOYAGER_VALIDATION_KEY (CI) or Brain/scripts/.validation_key (Drive)
-# for forgery resistance. Changing this value invalidates every existing stamp,
-# so treat it as fixed unless you intend a fleet-wide re-validation.
-DEFAULT_KEY = "voyager-validation-v2-2026"
-
 STAMP_VERSION = "v2"
 
 # Matches BOTH the new signed stamp and the legacy plain stamp, so callers can
@@ -74,7 +67,13 @@ _SIG_RE = re.compile(r"sig=([0-9a-f]{8,64})", re.IGNORECASE)
 
 
 def load_key() -> bytes:
-    """Resolve the signing key (env → Drive file → public default)."""
+    """Resolve the signing key (env → Drive file). Raises if neither is set.
+
+    There is no public fallback. Without the Drive .validation_key file or the
+    $VOYAGER_VALIDATION_KEY CI secret, no stamp can be produced or verified.
+    This means a stamp cannot be forged by code that doesn't have access to the
+    secret — the key is the only thing that makes the HMAC meaningful.
+    """
     env = os.environ.get("VOYAGER_VALIDATION_KEY")
     if env:
         return env.strip().encode("utf-8")
@@ -85,7 +84,11 @@ def load_key() -> bytes:
             return txt.encode("utf-8")
     except (FileNotFoundError, OSError):
         pass
-    return DEFAULT_KEY.encode("utf-8")
+    raise RuntimeError(
+        "No validation key found. Set $VOYAGER_VALIDATION_KEY or ensure "
+        "Brain/scripts/.validation_key exists (Drive-only, not tracked in git). "
+        "Without the key no stamp can be produced or verified — this is intentional."
+    )
 
 
 def canonical_content(html: str) -> bytes:
@@ -192,28 +195,39 @@ def write_stamp(filepath: str | Path, html: str | None = None, key: bytes | None
 
 
 if __name__ == "__main__":
-    # CLI: verify (default) or stamp a guide file.
-    #   python3 validation_stamp.py <file.html>            → verify, exit 0/1
-    #   python3 validation_stamp.py --stamp <file.html>    → write a signed stamp
+    # CLI: verify only.
+    #   python3 validation_stamp.py <file.html>   → verify stamp, exit 0/1
+    #
+    # The --stamp shortcut has been intentionally removed. Stamps are written
+    # exclusively by validate_itinerary.py after a real validation pass. Calling
+    # write_stamp() directly — without the validator — produces a valid signature
+    # but skips all content checks, which defeats the purpose of validation.
     import sys
 
     args = sys.argv[1:]
     if not args:
-        print("Usage: validation_stamp.py [--stamp] <file.html>", file=sys.stderr)
+        print("Usage: validation_stamp.py <file.html>", file=sys.stderr)
         sys.exit(2)
     if args[0] == "--stamp":
-        if len(args) < 2:
-            print("Usage: validation_stamp.py --stamp <file.html>", file=sys.stderr)
-            sys.exit(2)
-        changed = write_stamp(args[1])
-        print(("✅ signed stamp written → " if changed else "• stamp already current → ") + args[1])
-        sys.exit(0)
+        print(
+            "❌ --stamp has been removed. Stamps are written only by validate_itinerary.py\n"
+            "   after a real validation pass. Run:\n"
+            "     python3 Brain/scripts/guide_tools.py validate <City>\n"
+            "   or ship the guide via:\n"
+            "     python3 Brain/scripts/guide_tools.py ship <City>",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     target = args[0]
     try:
         content = Path(target).read_text(encoding="utf-8")
     except FileNotFoundError:
         print(f"❌ File not found: {target}", file=sys.stderr)
         sys.exit(1)
-    ok, reason = verify(content)
+    try:
+        ok, reason = verify(content)
+    except RuntimeError as e:
+        print(f"❌ {e}", file=sys.stderr)
+        sys.exit(2)
     print(("✅ " if ok else "❌ ") + f"{target} — {reason}")
     sys.exit(0 if ok else 1)
