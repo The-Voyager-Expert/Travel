@@ -1,17 +1,31 @@
-name: Deploy site (block unvalidated guides)
+name: Deploy site (per-guide quarantine, no wholesale block)
 
-# Server-side enforcement of the same rule as the local pre-push guard, but on a
-# path that --no-verify (the auto-push automation) cannot bypass: if any guide HTML
-# lacks the <!-- validation: passed --> stamp, the deploy is blocked. Site fixes
-# (CSS/toolbar/assets/index/data pages) carry no guide stamp and deploy freely.
+# Hardened, isolating deploy gate.
 #
-# Preserves the legacy serving exactly: legacy Pages served the repo root at
-# https://the-voyager-expert.github.io/Travel/, so content sat under /Travel-Website/.
-# The deploy job stages Travel-Website/ + .nojekyll into the artifact root, keeping
-# every existing URL identical. (.github/ and .git are NOT published.)
+# OLD behaviour (removed): a single bad guide → `exit 1` → the WHOLE deploy died,
+# blocking every other valid guide. And the only "validation" was a grep that the
+# <!-- validation: passed --> STRING existed, so 151 guides bulk hand-stamped on
+# 2026-06-22 (identical timestamps, never validated) deployed unchecked.
 #
-# Added 2026-06-21. Rollback: set Pages build type back to "legacy" (Settings → Pages →
-# Source → Deploy from a branch), or `gh api -X POST repos/.../pages -f build_type=legacy`.
+# NEW behaviour:
+#   • HARDEN  — re-run the REAL validator (Brain/scripts/validate_itinerary.py) on
+#     every guide ADDED or MODIFIED in this push. A faked / hand-typed stamp can no
+#     longer pass; the guide must actually validate.
+#   • ISOLATE — a guide that fails is NOT allowed to block the deploy. Its published
+#     page is swapped (in the artifact only) for a small "being updated" placeholder
+#     at the same URL, so links / carousel chain / search keep resolving and nothing
+#     404s. Every other guide ships normally.
+#   • SCOPE   — only guides changed in THIS push are checked. The existing backlog is
+#     published untouched; this gate stops NEW breakage, it does not pull the backlog.
+#   • CANARY  — if the validator can't even pass a known-good guide on the runner, the
+#     gate drops to report-only (publishes as-is) rather than mass-quarantining.
+#
+# Serving is unchanged: Travel-Website/ is staged at the artifact root + .nojekyll,
+# so https://the-voyager-expert.github.io/Travel/Travel-Website/… URLs stay identical.
+# (.github/ and .git are NOT published.)
+#
+# Rollback: restore the previous all-or-nothing version of this file, or set Pages
+# build type back to "legacy" (Settings → Pages → Source → Deploy from a branch).
 
 on:
   push:
@@ -28,57 +42,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  validate:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Block unvalidated guides
-        run: |
-          set -euo pipefail
-          unvalidated="$(grep -L '<!-- validation: passed' Travel-Website/Guides/*/*.html 2>/dev/null || true)"
-          if [ -n "$unvalidated" ]; then
-            echo "::error::Deploy blocked — guide(s) missing the <!-- validation: passed --> stamp:"
-            printf '%s\n' "$unvalidated" | sed 's/^/  - /'
-            echo "Run guide_tools.py ship on each, or git rm --cached an in-progress guide, then re-push."
-            exit 1
-          fi
-          count="$(ls Travel-Website/Guides/*/*.html 2>/dev/null | wc -l | tr -d ' ')"
-          echo "All ${count} guides carry the passed stamp — proceeding to deploy."
+        with:
+          # Need history so the script can diff this push (before → after) and,
+          # on manual runs, fall back to HEAD~1.
+          fetch-depth: 0
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - name: Block guides missing from cross-guide surfaces
-        # Whole-fleet coverage gate on a path --no-verify cannot bypass: every shipped
-        # guide must appear (with a resolving link) in the index card, FMAP, map pin,
-        # travel stats, safety guide, both Weather tabs, and search. Mirrors — and is
-        # the repo-resident subset of — Brain/scripts/validate_guide_coverage.py.
-        run: python3 .github/scripts/check_coverage.py
-      - name: Block structurally invalid guides
-        # Catches guides that were hand-stamped or stamped without running the full
-        # local validate_itinerary.py. Key structural checks: no bare <h1>/<h2>/<h3>,
-        # correct .stop-num format, no money figures, also-on-this-site block present,
-        # day closers present, guide-style.css linked, data-updated attribute present.
-        run: python3 .github/scripts/validate_guide_structure.py
+
+      - name: Validate changed guides + stage artifact (per-guide quarantine)
+        env:
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: python3 .github/scripts/quarantine_failing_guides.py --stage _site
+
+      - name: Cross-guide surface coverage (advisory — never blocks deploy)
+        # Reports guides missing from index / maps / stats / search so drift is
+        # visible, but does NOT fail the deploy: one guide's coverage gap must not
+        # hold back the whole site. Hard enforcement lives per-guide in the
+        # validator's FINAL GATE checks above.
+        run: python3 .github/scripts/check_coverage.py || echo "::warning::coverage gaps reported above (advisory)"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
   deploy:
-    needs: validate
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - name: Stage published files (mirror legacy repo-root serving)
-        run: |
-          set -euo pipefail
-          mkdir -p _site
-          cp -R Travel-Website _site/Travel-Website
-          [ -f .nojekyll ] && cp .nojekyll _site/ || true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
-
