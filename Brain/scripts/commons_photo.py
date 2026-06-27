@@ -213,6 +213,28 @@ def main() -> int:
                 return 1
             pathlib.Path(args.download).parent.mkdir(parents=True, exist_ok=True)
             img.save(args.download, quality=85)
+            # Record provenance so the ship gate can prove this photo was really
+            # downloaded from Wikimedia Commons (not a hand-placed placeholder).
+            # The validator hard-fails any served photo lacking a manifest entry
+            # whose source is a Wikimedia URL and whose sha256 matches the file.
+            try:
+                import os as _os
+                sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+                from photo_provenance import record_download as _record
+                _record(
+                    args.download,
+                    title=result["title"],
+                    source_url=src,
+                    page_url=result.get("page_url"),
+                    width=args.width,
+                    height=new_h,
+                )
+            except Exception as _pe:
+                print(
+                    f"WARNING: photo saved but provenance not recorded ({_pe}). "
+                    f"The ship gate may reject this photo.",
+                    file=sys.stderr,
+                )
             print(args.download)
             return 0
         except Exception as e:

@@ -15901,6 +15901,7 @@ def validate(html: str, filename: str):
                 f"_build/assets/{f.name}"
                 for f in _orphan_assets_dir.iterdir()
                 if f.is_file() and not f.name.startswith(".")
+                and f.name != "photo_provenance.json"  # provenance manifest, not a served asset
             }
             _orphaned_assets = sorted(_disk_assets - _html_src_refs)
             check(
