@@ -60,8 +60,11 @@ def reset_guide(path: Path, apply: bool) -> str:
     label = "signed" if is_signed else "unsigned"
 
     if apply:
-        new_html = _STAMP_RE.sub(PENDING, html, count=1)
-        path.write_text(new_html, encoding="utf-8")
+        # Remove ALL old stamps first (some guides had duplicates), then insert one pending marker.
+        cleaned = _STAMP_RE.sub("", html)
+        if PENDING not in cleaned:
+            cleaned = PENDING + "\n" + cleaned
+        path.write_text(cleaned, encoding="utf-8")
 
     return label
 
