@@ -55,7 +55,7 @@ COUNTRIES = [
  ("Hungary","Europe","Hungarian Forint","Ft","HUF","HUF","", ["Budapest"]),
  ("Iceland","Europe","Icelandic Króna","kr","ISK","ISK","", ["Reykjavik"]),
  ("Ireland","Europe","Euro","€","EUR","EUR","", ["Dublin"]),
- ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Pisa","Rome","Siena","Sorrento","Turin","Venice","Verona"]),
+ ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Rome","Siena","Sorrento","Turin","Venice","Verona"]),
  ("Luxembourg","Europe","Euro","€","EUR","EUR","", ["Luxembourg"]),
  ("Monaco","Europe","Euro","€","EUR","EUR","", ["Monaco"]),
  ("Netherlands","Europe","Euro","€","EUR","EUR","", ["Amsterdam"]),
@@ -69,6 +69,7 @@ COUNTRIES = [
  ("United Kingdom","Europe","Pound Sterling","£","GBP","GBP","", ["Cambridge","Edinburgh","Glasgow","London","Oxford"]),
 
  ("United Arab Emirates","Middle East","UAE Dirham","Dh","AED","AED","Pegged to the US dollar (~3.67).", ["Abu Dhabi","Dubai"]),
+ ("Jordan","Middle East","Jordanian Dinar","JD","JOD","JOD","Pegged to the US dollar (~0.71).", ["Petra"]),
 
  ("Egypt","Africa","Egyptian Pound","E£","EGP","EGP","", ["Cairo"]),
  ("Morocco","Africa","Moroccan Dirham","DH","MAD","MAD","", ["Marrakech"]),
@@ -85,7 +86,7 @@ COUNTRIES = [
  ("Australia","Oceania","Australian Dollar","A$","AUD","AUD","", ["Melbourne","Sydney"]),
  ("New Zealand","Oceania","New Zealand Dollar","NZ$","NZD","NZD","", ["Queenstown","Wellington"]),
 
- ("United States","North America","US Dollar","$","USD","USD","", ["Alaska","Atlanta","Austin","Bend","Big Island","Boston","Boulder","Carmel-by-the-Sea","Charlotte","Chicago","Columbia","Dallas","Denver","Florida Keys","Glacier National Park","Kauai","Key West","La Jolla","Lake Tahoe","Las Vegas","Los Angeles","Malibu","Maui","Miami","Napa","Naples Florida","Nashville","New Orleans","New York","Oahu","Orcas Island","Orlando","Palm Desert","Palo Alto","Pasadena","Pensacola","Philadelphia","Phoenix","Portland","San Diego","San Francisco","San Jose","San Juan Island","Santa Barbara","Santa Cruz","Santa Monica","Sarasota","Scottsdale","Seattle","Sedona","Virgin Islands","Washington DC","Yellowstone"]),
+ ("United States","North America","US Dollar","$","USD","USD","", ["Alaska","Atlanta","Austin","Bend","Big Island","Boston","Boulder","Carmel-by-the-Sea","Charlotte","Chicago","Columbia","Dallas","Denver","Florida Keys","Glacier National Park","Kauai","Key West","La Jolla","Lake Tahoe","Las Vegas","Los Angeles","Malibu","Maui","Miami","Napa","Naples","Nashville","New Orleans","New York","Oahu","Orcas Island","Orlando","Palm Desert","Palo Alto","Pasadena","Pensacola","Philadelphia","Phoenix","Portland","San Diego","San Francisco","San Jose","San Juan Island","Santa Barbara","Santa Cruz","Santa Monica","Sarasota","Scottsdale","Seattle","Sedona","Virgin Islands","Washington DC","Yellowstone"]),
  ("Canada","North America","Canadian Dollar","C$","CAD","CAD","", ["Montréal","Québec City","Toronto","Vancouver","Victoria","Whistler"]),
 
  ("Aruba","Caribbean","Aruban Florin","Afl.","AWG","AWG","Pegged to the US dollar; USD widely accepted.", ["Aruba"]),
