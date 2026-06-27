@@ -20817,17 +20817,13 @@ def validate(html: str, filename: str):
         #     • text on BOTH sides of the dash (venue name AND short title)
         #     • plain text — no <a> links
         #     • no duplicate heading across entries
-        #   Row 2 (note): [The surprise]
+        #   Row 2 (note): ↳ [The surprise]
         #     • non-empty
         #     • ≤150 chars
         #     • no emoji
         #     • no <a> links
-        #     • must NOT start with "Workaround:" (rows mixed up)
-        #   Row 3 (workaround): Workaround: [What To Do Instead]
-        #     • starts with exactly "Workaround:" (capital W)
-        #     • non-empty text after the colon
-        #     • no emoji (links allowed — workaround may reference a URL)
-        # Extra rows beyond these three are format drift.
+        # Extra rows beyond these two are format drift.
+        # "Workaround:" row is BANNED — it never ships (Heads Up §2).
         _cg_empty_section:    list[str] = []  # section present but no entries
         _cg_heading_fmt:      list[str] = []  # heading format violations
         _cg_heading_emoji:    list[str] = []  # extra emoji in heading after ❗️
@@ -20837,21 +20833,16 @@ def validate(html: str, filename: str):
         _cg_note_too_long:  list[str] = []  # note >150 chars
         _cg_note_linked:    list[str] = []  # <a> in note row
         _cg_note_mislabeled:list[str] = []  # note row starts with "Workaround:"
-        _cg_no_workaround:    list[str] = []  # missing Workaround: row entirely
+        _cg_workaround_banned: list[str] = []  # "Workaround:" row present (banned)
         _cg_note_no_arrow:    list[str] = []  # note row missing the ↳ prefix (§2)
-        _cg_workaround_case:  list[str] = []  # "workaround:" not capital-W
-        _cg_workaround_empty: list[str] = []  # Workaround: with no text after colon
-        _cg_extra_rows:       list[str] = []  # more than 2 body rows per entry
+        _cg_extra_rows:       list[str] = []  # more than 1 body row per entry
         _cg_heading_annot:    list[str] = []  # annotation leakage in heading row
         _cg_generic_venue:    list[str] = []  # venue part is a generic word
         _cg_bad_dash:         list[str] = []  # separator not em-dash U+2014
         _cg_venue_eq_title:   list[str] = []  # venue name == short title
         _cg_venue_len_bad:    list[str] = []  # venue name <2 or >60 chars
         _cg_note_too_short: list[str] = []  # note <5 chars
-        _cg_wa_too_short:     list[str] = []  # workaround body <10 chars
         _cg_note_nocap:     list[str] = []  # note doesn't start with capital
-        _cg_wa_nocap:         list[str] = []  # workaround body doesn't start with capital
-        _cg_wa_eq_note:     list[str] = []  # workaround body == note text
         # _CG_ICON_RE    — SMP + BMP emoji, excludes ❗️ (U+2757, used on headings)
         # _CG_ICON_ALL_RE — same range but includes ❗️, for scanning heading body
         _CG_ICON_RE     = re.compile(r'[\U0001F000-\U0001FAFF☀-❖❘-➿]')
@@ -21006,23 +20997,21 @@ def validate(html: str, filename: str):
                         if _gt2b and not _gt2b[0].isupper():
                             _cg_note_nocap.append(f'"{_label}" — note starts lowercase: "{_gt2b[:40]}"')
 
-                # ── Workaround extra checks ──────────────────────────────────
-                _wa_rows_xc = [r for r in _body_t if re.match(r'Workaround\s*:', r, re.IGNORECASE)]
-                if _wa_rows_xc:
-                    _wab = re.sub(r'^Workaround\s*:\s*', '', _wa_rows_xc[0], flags=re.IGNORECASE).strip()
-                    if _wab and len(_wab) < 10:
-                        _cg_wa_too_short.append(f'"{_label}" — workaround "{_wab[:30]}" ({len(_wab)} chars, min 10)')
-                    if _wab and not _wab[0].isupper():
-                        _cg_wa_nocap.append(f'"{_label}" — workaround starts lowercase: "{_wab[:40]}"')
-                    if _body_t and _wab:
-                        _gt_cmp = _body_t[0].strip().lower()
-                        if not re.match(r'Workaround\s*:', _body_t[0], re.IGNORECASE) and _wab.lower() == _gt_cmp:
-                            _cg_wa_eq_note.append(f'"{_label}" — workaround == note ("{_wab[:40]}")')
+                # ── "Workaround:" ban ─────────────────────────────────────
+                # "Workaround:" never ships in a Heads Up entry (§2 format is
+                # heading + note only). Hard-fail on any row matching "Workaround:".
+                for _wa_r in _body_t:
+                    if re.match(r'Workaround\s*:', _wa_r, re.IGNORECASE):
+                        _cg_workaround_banned.append(
+                            f'"{_label}" — "Workaround:" row is not part of the §2 format '
+                            f'(heading + ↳ note only); remove it'
+                        )
+                        break
 
-                # ── Extra rows beyond 2 body rows ────────────────────────
-                if len(_body_t) > 2:
+                # ── Extra rows beyond 1 body row ─────────────────────────
+                if len(_body_t) > 1:
                     _cg_extra_rows.append(
-                        f'"{_label}" — {len(_body_t)} body rows (expected 2: note + workaround)'
+                        f'"{_label}" — {len(_body_t)} body rows (expected 1: ↳ note only)'
                     )
 
                 # ── Row 2 (note) ───────────────────────────────────────
@@ -21054,28 +21043,6 @@ def validate(html: str, filename: str):
                 else:
                     _cg_note_empty.append(f'"{_label}" — no body rows at all (note missing)')
 
-                # ── Row 3 (workaround) ───────────────────────────────────
-                # Case-sensitive first to catch lowercase-W drift
-                _wa_rows_exact = [r for r in _body_t if r.startswith('Workaround:')]
-                _wa_rows_any   = [r for r in _body_t if re.match(r'workaround\s*:', r, re.IGNORECASE)]
-                if not _wa_rows_any:
-                    _cg_no_workaround.append(f'"{_label}"')
-                else:
-                    if not _wa_rows_exact:
-                        _cg_workaround_case.append(
-                            f'"{_label}" — "Workaround:" must use capital W '
-                            f'(found: "{_wa_rows_any[0][:40]}")'
-                        )
-                    _wa_src = _wa_rows_exact[0] if _wa_rows_exact else _wa_rows_any[0]
-                    _wa_text = re.sub(r'^Workaround\s*:\s*', '', _wa_src, flags=re.IGNORECASE).strip()
-                    if not _wa_text:
-                        _cg_workaround_empty.append(
-                            f'"{_label}" — "Workaround:" row has no text after the colon'
-                        )
-                    if _CG_ICON_RE.search(_wa_src):
-                        _cg_bad_icons.append(
-                            f'"{_label}" — emoji in workaround row: "{_wa_src[:60]}"'
-                        )
 
         check(
             'Heads Up — section present only when entries exist; '
@@ -21113,8 +21080,7 @@ def validate(html: str, filename: str):
             '; '.join(_cg_heading_dupes[:3]) if _cg_heading_dupes else '',
         )
         check(
-            'Heads Up — note row (row 2) non-empty, ≤150 chars, '
-            'no emoji, no links, does not start with "Workaround:" '
+            'Heads Up — note row (row 2) non-empty, ≤150 chars, no emoji, no links '
             '(Heads Up - Extra Section.html § 2)',
             not _cg_note_empty and not _cg_note_too_long
             and not _cg_bad_icons and not _cg_note_linked
@@ -21126,18 +21092,14 @@ def validate(html: str, filename: str):
             ) or '',
         )
         check(
-            'Heads Up — "Workaround:" row (row 3) present, capital W, '
-            'non-empty text after colon, no emoji '
+            'Heads Up — "Workaround:" row banned '
+            '(§2 format is heading + ↳ note only; remove any "Workaround:" row) '
             '(Heads Up - Extra Section.html § 2)',
-            not _cg_no_workaround and not _cg_workaround_case
-            and not _cg_workaround_empty,
-            '; '.join(
-                _cg_no_workaround[:2] + _cg_workaround_case[:2]
-                + _cg_workaround_empty[:2]
-            ) or '',
+            not _cg_workaround_banned,
+            '; '.join(_cg_workaround_banned[:3]) if _cg_workaround_banned else '',
         )
         check(
-            'Heads Up — no extra rows beyond the 3-row format '
+            'Heads Up — no extra rows beyond the 2-row format (heading + ↳ note) '
             '(Heads Up - Extra Section.html § 2)',
             not _cg_extra_rows,
             f'{len(_cg_extra_rows)} entry(ies) with drift rows: '
@@ -21187,7 +21149,7 @@ def validate(html: str, filename: str):
                         )
                         break
         check(
-            'Heads Up — no build annotations in note/workaround rows '
+            'Heads Up — no build annotations in note row '
             '([UPDATE]/[CHECK]/🔴/[TBD] etc. must be stripped before shipping) '
             '(Heads Up - Extra Section.html § 2)',
             not _cg_annot_hits,
@@ -21247,26 +21209,9 @@ def validate(html: str, filename: str):
             f'{len(_cg_note_too_short)} note(s) under 5 chars: ' + '; '.join(_cg_note_too_short[:3]) if _cg_note_too_short else '',
         )
         check(
-            'Heads Up — workaround text has ≥10 chars after the colon '
-            '(Heads Up - Extra Section.html § 2 "[What To Do Instead]" must be actionable)',
-            not _cg_wa_too_short,
-            f'{len(_cg_wa_too_short)} workaround(s) under 10 chars: ' + '; '.join(_cg_wa_too_short[:3]) if _cg_wa_too_short else '',
-        )
-        check(
             'Heads Up — note row starts with a capital letter (prose consistency)',
             not _cg_note_nocap,
             f'{len(_cg_note_nocap)} note(s) starting lowercase: ' + '; '.join(_cg_note_nocap[:3]) if _cg_note_nocap else '',
-        )
-        check(
-            'Heads Up — workaround text (after "Workaround: ") starts with capital letter',
-            not _cg_wa_nocap,
-            f'{len(_cg_wa_nocap)} workaround(s) starting lowercase: ' + '; '.join(_cg_wa_nocap[:3]) if _cg_wa_nocap else '',
-        )
-        check(
-            'Heads Up — workaround text must differ from note text '
-            '(identical = copy-paste drift; each row has distinct purpose)',
-            not _cg_wa_eq_note,
-            f'{len(_cg_wa_eq_note)} entry(ies) where workaround == note: ' + '; '.join(_cg_wa_eq_note[:3]) if _cg_wa_eq_note else '',
         )
         _cg_h_tags = re.findall(r'<h[2-6]', _cg_inner, re.IGNORECASE) if _cg_m else []
         check(
