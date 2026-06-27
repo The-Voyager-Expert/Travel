@@ -21,7 +21,10 @@ from pathlib import Path
 
 REPO_ROOT  = Path(__file__).resolve().parents[2]
 GUIDES_DIR = REPO_ROOT / "Travel-Website" / "Guides"
-STAMP      = "<!-- validation: passed"
+
+# Machine-written stamps look like: <!-- validation: passed 2026-06-27 11:44 -->
+# Hand-typed stamps omit the HH:MM time — this regex rejects them.
+STAMP_RE   = re.compile(r"<!-- validation: passed \d{4}-\d{2}-\d{2} \d{2}:\d{2} -->")
 
 FAIL = "❌"
 OK   = "✅"
@@ -40,7 +43,8 @@ def shipped_guides() -> list[tuple[str, Path]]:
         return out
     for folder in sorted(p for p in GUIDES_DIR.iterdir() if p.is_dir()):
         for html in folder.glob("*.html"):
-            if STAMP in _read(html):
+            content = _read(html)
+            if "<!-- validation: passed" in content:
                 out.append((folder.name, html))
                 break
     return out
@@ -49,6 +53,16 @@ def shipped_guides() -> list[tuple[str, Path]]:
 def check_guide(name: str, path: Path) -> list[str]:
     html = _read(path)
     failures: list[str] = []
+
+    # 0. Stamp must be machine-written: "<!-- validation: passed YYYY-MM-DD HH:MM -->"
+    #    Hand-typed stamps (missing HH:MM) are rejected — they bypass validate_itinerary.py
+    if not STAMP_RE.search(html):
+        failures.append(
+            'validation stamp is missing or hand-typed — must be '
+            '"<!-- validation: passed YYYY-MM-DD HH:MM -->" (written by guide_tools.py ship only)'
+        )
+        # If stamp itself is fake, remaining checks are not meaningful — bail early
+        return failures
 
     # 1. .stop-num must be "N." format, not "Stop N"
     if re.search(r'class="stop-num"[^>]*>\s*Stop\s+\d', html, re.IGNORECASE):
