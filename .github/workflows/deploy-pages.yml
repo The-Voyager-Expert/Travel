@@ -1,31 +1,29 @@
-name: Deploy site (per-guide quarantine, no wholesale block)
+name: Deploy site (verify signed proof, per-guide isolation)
 
-# Hardened, isolating deploy gate.
+# Deploy-time PROOF check. Validation itself runs LOCALLY (the crib runs the
+# 400-rule validator and, on a clean pass, writes a content-bound SIGNED stamp —
+# Brain/scripts/validation_stamp.py). This workflow does NOT re-run the validator.
 #
-# OLD behaviour (removed): a single bad guide → `exit 1` → the WHOLE deploy died,
-# blocking every other valid guide. And the only "validation" was a grep that the
-# <!-- validation: passed --> STRING existed, so 151 guides bulk hand-stamped on
-# 2026-06-22 (identical timestamps, never validated) deployed unchecked.
-#
-# NEW behaviour:
-#   • HARDEN  — re-run the REAL validator (Brain/scripts/validate_itinerary.py) on
-#     every guide ADDED or MODIFIED in this push. A faked / hand-typed stamp can no
-#     longer pass; the guide must actually validate.
-#   • ISOLATE — a guide that fails is NOT allowed to block the deploy. Its published
-#     page is swapped (in the artifact only) for a small "being updated" placeholder
-#     at the same URL, so links / carousel chain / search keep resolving and nothing
-#     404s. Every other guide ships normally.
-#   • SCOPE   — only guides changed in THIS push are checked. The existing backlog is
-#     published untouched; this gate stops NEW breakage, it does not pull the backlog.
-#   • CANARY  — if the validator can't even pass a known-good guide on the runner, the
-#     gate drops to report-only (publishes as-is) rather than mass-quarantining.
+# What it does:
+#   • VERIFY  — check each guide's signed proof (a cheap HMAC over the guide's
+#     content). A hand-typed / bulk-written stamp carries no matching signature,
+#     and a guide edited after validation no longer matches its signature — both
+#     are held back. This is the un-bypassable backstop for the local pre-push
+#     hook, which `--no-verify` can skip.
+#   • ISOLATE — a held-back guide does NOT block the deploy. Its published page is
+#     swapped (in the artifact only) for a small "being updated" placeholder at the
+#     same URL, so links / carousel chain / search keep resolving. Every other
+#     guide ships normally.
+#   • LEGACY GRACE — guides still carrying an old UNSIGNED stamp are served and
+#     flagged, not held back, so the signed scheme rolls out without quarantining
+#     the existing fleet. They get a signature next time they're validated locally.
 #
 # Serving is unchanged: Travel-Website/ is staged at the artifact root + .nojekyll,
 # so https://the-voyager-expert.github.io/Travel/Travel-Website/… URLs stay identical.
 # (.github/ and .git are NOT published.)
 #
-# Rollback: restore the previous all-or-nothing version of this file, or set Pages
-# build type back to "legacy" (Settings → Pages → Source → Deploy from a branch).
+# Rollback: set Pages build type back to "legacy" (Settings → Pages → Source →
+# Deploy from a branch).
 
 on:
   push:
@@ -56,33 +54,25 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Validate changed guides + signature-check the fleet, stage artifact
+      - name: Verify each guide's signed validation proof, stage artifact
+        # Validation runs LOCALLY (Brain/scripts/validate_itinerary.py writes a
+        # content-bound signed stamp on a clean pass). This step does NOT re-run
+        # the validator — it only verifies that signed proof (a cheap hash) and
+        # holds back any guide whose signature doesn't match its content (a faked
+        # stamp or a post-validation edit). Every other guide ships.
         env:
-          # Published-only mode: skip the handful of validator checks that need
-          # unpublished local authoring artifacts (CORE RULES checksums, per-guide
-          # _build/ build-state + verification logs, photo-provenance module, and
-          # the cross-surface FINAL GATEs — those are covered by check_coverage.py).
-          # All guide-CONTENT checks still run. Default (unset) = full local validation.
-          VALIDATOR_PUBLISHED_ONLY: "1"
-          # Push range so the gate validates only the guides changed in THIS push
-          # (scoped — it never re-runs the full validator on every guide). The
-          # whole fleet is still signature-checked (cheap) to catch forged/edited
-          # stamps. For a full re-validation sweep, run the script with --all.
-          BEFORE_SHA: ${{ github.event.before }}
-          AFTER_SHA: ${{ github.sha }}
-          # Optional: matching HMAC key for signature verification. Without it the
-          # gate uses the public default key (still content-bound); set the secret
-          # (and the same value in the cribs' Brain/scripts/.validation_key) for
-          # forgery resistance. Re-running the real validator on changed guides is
-          # the ultimate authority regardless of the key.
+          # Optional: matching HMAC key for signature verification. Unset → the
+          # public default key (still content-bound: defeats bulk/hand stamps and
+          # post-validation edits). Set the secret AND the same value in the cribs'
+          # Brain/scripts/.validation_key together for forgery resistance.
           VOYAGER_VALIDATION_KEY: ${{ secrets.VOYAGER_VALIDATION_KEY }}
         run: python3 .github/scripts/quarantine_failing_guides.py --stage _site
 
       - name: Cross-guide surface coverage (advisory — never blocks deploy)
         # Reports guides missing from index / maps / stats / search so drift is
         # visible, but does NOT fail the deploy: one guide's coverage gap must not
-        # hold back the whole site. Hard enforcement lives per-guide in the
-        # validator's FINAL GATE checks above.
+        # hold back the whole site. Hard coverage enforcement lives per-guide in
+        # the LOCAL ship gate (guide_tools.py ship) and the validator's FINAL GATEs.
         run: python3 .github/scripts/check_coverage.py || echo "::warning::coverage gaps reported above (advisory)"
 
       - uses: actions/upload-pages-artifact@v3

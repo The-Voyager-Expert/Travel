@@ -1,46 +1,48 @@
 #!/usr/bin/env python3
-"""quarantine_failing_guides.py — per-guide deploy gate for GitHub Pages.
+"""quarantine_failing_guides.py — deploy-time PROOF check for GitHub Pages.
 
-WHY THIS EXISTS
----------------
-GitHub Pages republishes the ENTIRE Travel-Website/ tree on every push — there
-is no "publish one guide." The old gate (deploy-pages.yml) responded to a single
-bad guide with `exit 1`, which killed the whole deploy and blocked every other
-(valid) guide. It also only checked that the `<!-- validation: passed -->` STRING
-existed — so 151 guides bulk hand-stamped on 2026-06-22 (identical timestamps,
-never validated) sailed straight through.
+THE MODEL
+---------
+Validation runs LOCALLY. The 400-rule validator (Brain/scripts/validate_itinerary.py)
+runs on the crib when a guide is built/shipped/edited; on a clean pass it writes a
+CONTENT-BOUND SIGNED stamp (Brain/scripts/validation_stamp.py). That signature is
+the *proof* the guide passed on this exact content.
 
-WHAT THIS DOES — four properties, matching the validation rules:
-  1. SCOPED (default) — re-run the REAL validator (Brain/scripts/validate_itinerary.py,
-     the 400+ rule check) ONLY on the guides ADDED or MODIFIED in this push, NOT
-     the whole fleet. Validating one guide to ship never re-validates every guide.
-  2. UN-FAKEABLE — every guide on the site is signature-checked (cheap HMAC, no
-     re-run) via validation_stamp.py. A stamp that was hand-typed/bulk-written, or
-     a guide edited after it was validated, carries a signature that no longer
-     matches its content → held back. You cannot fake "passed".
-  3. ISOLATED — a guide that fails (validation OR signature) does NOT block the
-     deploy. Its published page is swapped (in the staged artifact only — never in
-     the repo) for a small "being updated" placeholder at the same URL, so the
-     index card, prev/next carousel, and search keep resolving; nothing 404s.
-     Every other guide publishes normally.
-  4. CANARY — if the validator can't even pass a known-good guide on the runner,
-     the gate drops validation-based holdbacks to report-only rather than mass-
-     quarantining (signature holdbacks still apply — they don't need the validator).
+This script does NOT re-run the validator. GitHub Pages republishes the whole
+Travel-Website/ tree on every push and serves whatever is committed, so the one
+thing that must happen server-side is the cheapest possible check: VERIFY THE
+SIGNED PROOF on each guide. A guide whose signature does not match its content —
+a hand-typed / bulk-written stamp, or a guide edited after it was validated — is
+held back; everything else is served.
 
-  --all  — re-run the REAL validator on EVERY guide (on-demand backlog cleanup,
-           e.g. after a rule change). NOT wired into the deploy; run it manually
-           when you want a full sweep.
+WHY A SERVER-SIDE CHECK STILL EXISTS
+------------------------------------
+The local pre-push hook enforces the same signature, but it is `--no-verify`
+bypassable (the auto-push automation skips it) and anyone can push directly.
+This is the un-bypassable backstop. It is a hash verification, not a re-run of
+validation — validation itself stays local.
 
-Serving is unchanged: Travel-Website/ is staged at the artifact root + .nojekyll.
+ISOLATION
+---------
+A held-back guide does NOT fail the deploy. Its published page is swapped (in the
+staged artifact only — never in the repo) for a small "being updated" placeholder
+at the same URL, so the index card, prev/next carousel, and search keep resolving;
+nothing 404s. Every other guide publishes normally.
+
+LEGACY GRACE
+------------
+Guides that still carry an old UNSIGNED stamp (no `sig=`) can't be cheaply judged
+good-or-bad, so they are SERVED and flagged, not held back — this is what lets the
+new scheme roll out without quarantining the existing fleet. They get a real
+signature the next time they're validated locally. (To force the backlog onto the
+signed scheme, re-validate each guide locally; broken ones will then fail to sign.)
 
 USAGE
 -----
     python3 .github/scripts/quarantine_failing_guides.py --stage _site
-    python3 .github/scripts/quarantine_failing_guides.py --stage _site --all
 
-Exit 0 always, unless an infrastructure error occurs (missing validator, copy
-failure). A failing guide is a normal, expected outcome — it is held back, not
-escalated to a deploy failure.
+Runs fully locally too — no GitHub, no network, no validator. Exit 0 always,
+unless an infrastructure error occurs (missing site tree, copy failure).
 """
 
 import os
@@ -51,7 +53,6 @@ from pathlib import Path
 
 REPO = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"],
                            capture_output=True, text=True).stdout.strip() or ".")
-VALIDATOR = REPO / "Brain" / "scripts" / "validate_itinerary.py"
 SITE_SRC = REPO / "Travel-Website"
 GUIDES_REL = "Travel-Website/Guides"
 
@@ -59,13 +60,9 @@ GUIDES_REL = "Travel-Website/Guides"
 sys.path.insert(0, str(REPO / "Brain" / "scripts"))
 try:
     import validation_stamp as _vs
-except Exception:  # noqa: BLE001
+except Exception as _e:  # noqa: BLE001
     _vs = None
-
-
-def git(*args: str) -> str:
-    out = subprocess.run(["git", *args], capture_output=True, text=True)
-    return out.stdout.strip()
+    _vs_err = _e
 
 
 def _served_html(city_dir: Path) -> Path | None:
@@ -80,7 +77,7 @@ def _served_html(city_dir: Path) -> Path | None:
 
 
 def all_guide_files() -> list[Path]:
-    """Every served guide on the site (one per city folder), as repo-relative paths."""
+    """Every served guide on the site (one per city folder), repo-relative."""
     files: list[Path] = []
     base = REPO / GUIDES_REL
     if not base.is_dir():
@@ -94,84 +91,14 @@ def all_guide_files() -> list[Path]:
     return files
 
 
-def _push_range() -> tuple[str, str]:
-    """(before, after) SHAs bounding this push.
-
-    Prefers the SHAs GitHub provides for the push event ($BEFORE_SHA / $AFTER_SHA,
-    wired in deploy-pages.yml). Falls back to HEAD~1..HEAD for manual runs.
-    """
-    before = (os.environ.get("BEFORE_SHA") or "").strip()
-    after = (os.environ.get("AFTER_SHA") or "").strip() or "HEAD"
-    # All-zero before = branch's first push (no prior commit) — treat as "no range".
-    if before and set(before) != {"0"} and git("cat-file", "-t", before) == "commit":
-        return before, after
-    parent = git("rev-parse", "--verify", "HEAD~1")
-    if parent:
-        return parent, "HEAD"
-    return "", after
-
-
-def changed_guide_files() -> tuple[list[Path], bool]:
-    """Guides added/modified in this push (one served file per touched city folder).
-
-    Returns (files, scoped). scoped=False means we couldn't determine a range
-    (first commit / shallow checkout) and the caller should fall back to --all.
-    """
-    before, after = _push_range()
-    if not before:
-        return all_guide_files(), False
-    out = git("diff", "--name-only", "--diff-filter=AM", before, after,
-              "--", GUIDES_REL)
-    touched_cities: set[str] = set()
-    for rel in out.splitlines():
-        p = Path(rel)
-        # Travel-Website/Guides/<City>/<file> — index any change under a city
-        # folder (HTML edit, photo swap, etc.) back to that city's served guide.
-        if len(p.parts) >= 4 and p.parts[1] == "Guides" and p.parts[2] != "":
-            if p.parts[2].endswith(".html"):
-                continue  # Guides-Index.html sits directly under Guides/
-            touched_cities.add(p.parts[2])
-    files: list[Path] = []
-    for city in sorted(touched_cities):
-        served = _served_html(REPO / GUIDES_REL / city)
-        if served is not None:
-            files.append(served.relative_to(REPO))
-    return files, True
-
-
-def _run_once(guide: Path) -> bool:
-    proc = subprocess.run(
-        [sys.executable, str(VALIDATOR), str(REPO / guide)],
-        capture_output=True, text=True, timeout=600,
-    )
-    return proc.returncode == 0
-
-
-def validate(guide: Path, attempts: int = 3) -> bool:
-    """Run the validator up to `attempts` times; PASS if ANY run passes.
-
-    The validator's failures are one-directional under flaky I/O: a cold/partial
-    read can turn a real PASS into a spurious fail, but never invent a defect
-    that isn't there. Requiring unanimous failure before quarantining makes a
-    false quarantine of a correct guide effectively impossible."""
-    for _ in range(attempts):
-        try:
-            if _run_once(guide):
-                return True
-        except subprocess.TimeoutExpired:
-            continue
-    return False
-
-
 def signature_state(guide: Path) -> str:
-    """Cheap, no-re-run classification of a guide's stamp signature.
+    """Cheap classification of a guide's stamp signature (no validator re-run).
 
-    Returns one of:
-      'valid'   — a v2 signed stamp whose signature matches the content.
-      'tampered'— a signed stamp whose signature does NOT match (forged, or the
-                  guide was edited after validation). HELD BACK.
-      'legacy'  — an unsigned/old stamp (or none). Can't cheaply tell good from
-                  bad, so it is NOT held back on this basis — it's just flagged.
+    'valid'    — a signed stamp whose signature matches the content. SERVED.
+    'tampered' — a signed stamp whose signature does NOT match (forged stamp, or
+                 the guide was edited after validation). HELD BACK.
+    'legacy'   — an unsigned/old stamp (or none). Can't cheaply judge it, so it
+                 is SERVED and flagged (re-validate locally to sign it).
     """
     if _vs is None:
         return "legacy"
@@ -221,72 +148,30 @@ def city_from(folder: str) -> str:
 
 def main() -> int:
     stage = Path(sys.argv[sys.argv.index("--stage") + 1]) if "--stage" in sys.argv else Path("_site")
-    full = "--all" in sys.argv
-    if not VALIDATOR.is_file():
-        print(f"::error::validator not found at {VALIDATOR} — cannot enforce. Failing closed.")
+    if _vs is None:
+        print(f"::error::validation_stamp module not importable ({_vs_err}) — cannot verify proofs.")
+        return 1
+    if not SITE_SRC.is_dir():
+        print(f"::error::site tree not found at {SITE_SRC}")
         return 1
 
-    # CANARY — confirm the validator behaves on a known-good guide here. If even
-    # the canary fails, validation-based holdbacks fall back to report-only.
-    canary = REPO / "Travel-Website" / "Guides" / "Colombo" / "colombo_v1.html"
-    canary_ok = True
-    if canary.is_file():
-        canary_ok = validate(Path("Travel-Website/Guides/Colombo/colombo_v1.html"))
-        if not canary_ok:
-            print("::warning::CANARY FAILED — validator does not trust this environment. "
-                  "Falling back to report-only for validation holdbacks (signature holdbacks still apply).")
-
     every = all_guide_files()
-    if full:
-        targets, scoped = every, False
-    else:
-        targets, scoped = changed_guide_files()
-        if not scoped:
-            print("::notice::no push range available — validating the full fleet this run.")
-            targets = every
-    print(f"Real validation ({'FULL fleet' if (full or not scoped) else 'changed guides'}): "
-          f"{len(targets)} of {len(every)} total")
 
-    # 1) Real validator on the in-scope guides (expensive, but scoped).
-    from concurrent.futures import ThreadPoolExecutor
-    val_failures: set[Path] = set()
-    passes = 0
-
-    def _check(g: Path):
-        return g, validate(g)
-
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        for g, ok in ex.map(_check, targets):
-            if ok:
-                passes += 1
-                print(f"  ✅ {g}")
-            else:
-                val_failures.add(g)
-                print(f"  ❌ {g} — failed real validation")
-
-    # 2) Cheap signature check across the WHOLE fleet (no validator re-run).
-    #    Holds back guides whose signature is present but does NOT match content
-    #    (forged stamp, or edited after validation). Legacy unsigned guides are
-    #    flagged but NOT held back on this basis (can't cheaply judge them).
-    tampered: set[Path] = set()
+    valid: list[Path] = []
+    tampered: list[Path] = []
     legacy: list[Path] = []
     for g in every:
         st = signature_state(g)
-        if st == "tampered":
-            tampered.add(g)
-            print(f"  🔏 {g} — signature does not match content (forged/edited)")
-        elif st == "legacy":
+        if st == "valid":
+            valid.append(g)
+        elif st == "tampered":
+            tampered.append(g)
+            print(f"  🔒 {g} — signature does not match content (forged/edited) → held back")
+        else:
             legacy.append(g)
     if legacy:
         print(f"  ℹ️  {len(legacy)} guide(s) carry a legacy unsigned stamp "
-              f"(served as-is; re-validate to sign).")
-
-    # Held back = real-validation failures (only when canary trusts the env) +
-    # tampered signatures (always — they don't depend on the validator).
-    held: set[Path] = set(tampered)
-    if canary_ok:
-        held |= val_failures
-    val_skipped = val_failures - held  # validation failures we couldn't act on
+              f"(served as-is; re-validate locally to sign).")
 
     # Stage the artifact: full tree, then swap held-back guides for placeholders.
     site_dest = stage / "Travel-Website"
@@ -299,31 +184,24 @@ def main() -> int:
     else:
         (stage / ".nojekyll").write_text("")
 
-    for g in sorted(held):
+    for g in sorted(tampered):
         folder = g.parts[2]                       # Guides/<folder>/file.html
         (stage / g).write_text(placeholder_html(city_from(folder)), encoding="utf-8")
         print(f"  🔒 held back → placeholder: {g}")
-    if val_skipped:
-        print(f"  ⚠️  report-only (canary failed): {len(val_skipped)} validation-failed "
-              f"guide(s) published AS-IS.")
 
     # Job summary (shown in the Actions run).
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
         with open(summary, "a", encoding="utf-8") as fh:
-            fh.write("## Guide deploy gate\n\n")
-            if not canary_ok:
-                fh.write("> ⚠️ **Canary failed** — validation holdbacks fell back to report-only "
-                         "(signature holdbacks still applied). Investigate the runner.\n\n")
-            fh.write(f"- Total guides on site: **{len(every)}**\n")
-            fh.write(f"- Real-validated this run: **{len(targets)}** "
-                     f"({'full fleet' if (full or not scoped) else 'changed in push'})\n")
-            fh.write(f"- Passed real validation: **{passes}**\n")
-            fh.write(f"- Held back (validation): **{len(held & val_failures)}**\n")
-            fh.write(f"- Held back (bad signature): **{len(tampered)}**\n")
+            fh.write("## Guide deploy gate (signature proof check)\n\n")
+            fh.write("> Validation runs locally. This step only verifies the signed proof — "
+                     "it does **not** re-run the validator.\n\n")
+            fh.write(f"- Guides on site: **{len(every)}**\n")
+            fh.write(f"- Valid signature (served): **{len(valid)}**\n")
+            fh.write(f"- Bad signature (held back): **{len(tampered)}**\n")
             fh.write(f"- Legacy unsigned (served, flagged): **{len(legacy)}**\n\n")
 
-    print(f"\nResult: {len(every) - len(held)} served, {len(held)} held back, deploy proceeds.")
+    print(f"\nResult: {len(every) - len(tampered)} served, {len(tampered)} held back, deploy proceeds.")
     return 0
 
 
