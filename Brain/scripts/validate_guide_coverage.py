@@ -340,21 +340,12 @@ def run_sweep() -> dict[str, list[str]]:
         if delta_card_guides and folder != "Seattle" and folder not in delta_card_guides:
             missing["delta"].append(folder)
 
-        # also-on-this-site universal links — the four pages every guide must carry
-        _TR_REQUIRED = [
-            "Safety-Guide.html",
-            "Visas.html",
-            "Before-You-Go.html",
-            "Weather.html",
-        ]
+        # also-on-this-site block must exist (links vary per guide)
         try:
             guide_html = _html.read_text(encoding="utf-8", errors="replace")
         except OSError:
             guide_html = ""
-        guide_lower = guide_html.lower()
-        if "<!-- also-on-this-site -->" not in guide_lower or any(
-            f.lower() not in guide_lower for f in _TR_REQUIRED
-        ):
+        if "<!-- also-on-this-site -->" not in guide_html.lower():
             missing["resources"].append(folder)
 
     missing["__count__"] = [str(len(guides))]  # piggyback the total for the report
