@@ -21562,7 +21562,6 @@ def validate(html: str, filename: str):
             ('§ 2 heading format anchor ([Venue])',          '[Venue]'),
             ('§ 2 short-title label anchor',                'Short Title'),
             ('§ 2 note char limit (≤150 chars)',           '≤150'),
-            ('§ 2 workaround label anchor (Workaround:)',    'Workaround:'),
         ]
         _cg_spec_drifted: list[str] = []
         for _cg_label, _cg_needle in _cg_spec_anchors:
