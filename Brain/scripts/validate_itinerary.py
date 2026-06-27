@@ -16569,39 +16569,44 @@ def validate(html: str, filename: str):
     # be justified in the inline comment. The validator emits a passing check naming the
     # exception. Adding a guide here is a Claude judgment call; removing one is a no-op
     # (the guide must then ship a Train Day or fail).
+    # NOTE: Keyed by CITY FOLDER NAME (not filename) to be version-proof — works for any guide version.
     _TRAIN_DAY_QUOTA_EXEMPT = {
         # Bend — Amtrak Cascades doesn't serve Bend; closest station Klamath Falls
         #        is 3.5+ hours by car. No viable intercity rail from base.
-        'bend_v1.html': 'Bend has no Amtrak service (closest station Klamath Falls 3.5+ hr drive)',
-        'bend_v2.html': 'Bend has no Amtrak service (closest station Klamath Falls 3.5+ hr drive)',
+        'Bend': 'Bend has no Amtrak service (closest station Klamath Falls 3.5+ hr drive)',
         # Reykjavík — Iceland has zero passenger rail network. Coach / self-drive only.
-        'reykjavik_v1.html': 'Iceland has no passenger rail network at all',
-        'reykjavik_v2.html': 'Iceland has no passenger rail network at all',
+        'Reykjavik': 'Iceland has no passenger rail network at all',
         # Sintra/Porto/Cascais — inter-leg transit IS the rail content;
         #     a separate Train Day from each leg base would be redundant with that.
-        'sintra_porto_cascais_v1.html': 'inter-leg transit IS the rail content; per-leg Train Days would be redundant',
+        'Sintra': 'inter-leg transit IS the rail content; per-leg Train Days would be redundant',
         # Singapore — only rail exit is the KTM Shuttle to Johor Bahru (Malaysia), an
         #     international border crossing. Customs queues run 1-2 hr each way, making
         #     a structured round-trip day unreliable. No domestic rail day trips available.
-        'singapore_v1.html': 'only rail exit is KTM Shuttle to Malaysia — international border queues (1-2 hr each way) make round-trip timing unreliable; no domestic rail day trips',
-    'singapore_v2.html': 'only rail exit is KTM Shuttle to Malaysia — international border queues (1-2 hr each way) make round-trip timing unreliable; no domestic rail day trips',
-    'singapore_v3.html': 'only rail exit is KTM Shuttle to Malaysia — international border queues (1-2 hr each way) make round-trip timing unreliable; no domestic rail day trips',
+        'Singapore': 'only rail exit is KTM Shuttle to Malaysia — international border queues (1-2 hr each way) make round-trip timing unreliable; no domestic rail day trips',
         # Palo Alto — US no-trains travel rule (Dani standing preference + explicit
         #     task instruction): Uber or rental car only, no Caltrain/BART/Amtrak. All
         #     day trips (SF, Muir Woods, Monterey, Napa) are by car within ~1.5hr. A
         #     Train Day cannot be built without violating the no-trains rule, so the
         #     quota is inapplicable for this guide.
-        'palo_alto_v6.html': 'US no-trains rule (Uber / rental car only) — a Train Day cannot be built; all day trips are by car within ~1.5hr',
+        'Palo Alto': 'US no-trains rule (Uber / rental car only) — a Train Day cannot be built; all day trips are by car within ~1.5hr',
         # Pasadena — US no-trains rule (same as Palo Alto). All day trips are by
         #     rental car or Uber within the ~1.5hr limit (San Juan Capistrano, Malibu,
         #     etc.). Metrolink exists but Dani does not use trains in the US.
-        'pasadena_v5.html': 'US no-trains rule (Uber / rental car only) — all Pasadena day trips are by car; Metrolink not used per standing preference',
+        'Pasadena': 'US no-trains rule (Uber / rental car only) — all Pasadena day trips are by car; Metrolink not used per standing preference',
         # SF — US no-trains rule. All day trips by rental car / Uber.
-        'sf_v3.html': 'US no-trains rule (Uber / rental car only) — all SF-area day trips are by car within ~1.5hr',
+        'San Francisco': 'US no-trains rule (Uber / rental car only) — all SF-area day trips are by car within ~1.5hr',
     }
-    _quota_filename = Path(filename).name if filename else ''
-    if _quota_filename in _TRAIN_DAY_QUOTA_EXEMPT:
-        _exempt_reason = _TRAIN_DAY_QUOTA_EXEMPT[_quota_filename]
+    # Extract city folder name from file path (e.g., Guides/Bend/bend_v2.html → Bend)
+    _city_folder = ''
+    if filename:
+        _path_parts = Path(filename).parts
+        if 'Guides' in _path_parts:
+            guides_idx = _path_parts.index('Guides')
+            if guides_idx + 1 < len(_path_parts):
+                _city_folder = _path_parts[guides_idx + 1]
+
+    if _city_folder in _TRAIN_DAY_QUOTA_EXEMPT:
+        _exempt_reason = _TRAIN_DAY_QUOTA_EXEMPT[_city_folder]
         check(
             f'Train Day quota — exempted by validator (Claude decision; {_exempt_reason})',
             True,
