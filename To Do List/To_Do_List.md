@@ -227,19 +227,19 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 159. - [ ] Sintra
 
 **Bucket 14 — 13 guides (validate, fix, push):**
-160. - [ ] Sorrento
-161. - [ ] Split
-162. - [ ] Stockholm
-163. - [ ] Strasbourg
-164. - [ ] Stuttgart
-165. - [ ] Sydney
-166. - [ ] Taipei
-167. - [ ] Tallinn
-168. - [ ] Tokyo
-169. - [ ] Toledo
-170. - [ ] Toronto
-171. - [ ] Tromso
-172. - [ ] Turin
+160. - [x] Sorrento
+161. - [x] Split
+162. - [x] Stockholm
+163. - [x] Strasbourg
+164. - [x] Stuttgart
+165. - [x] Sydney
+166. - [x] Taipei
+167. - [x] Tallinn
+168. - [x] Tokyo
+169. - [x] Toledo
+170. - [x] Toronto
+171. - [x] Tromso
+172. - [x] Turin
 
 **Bucket 15 — 13 guides (validate, fix, push):**
 173. - [ ] Turks and Caicos
