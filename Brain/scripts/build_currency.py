@@ -102,7 +102,7 @@ COUNTRIES = [
  ("Turks and Caicos","Caribbean","US Dollar","$","USD","USD","British Overseas Territory; the US dollar is the official currency.", ["Turks and Caicos"]),
 
  ("Argentina","South America","Argentine Peso","AR$","ARS","ARS","", ["Buenos Aires"]),
- ("Brazil","South America","Brazilian Real","R$","BRL","BRL","", ["Aracaju","Florianópolis","Fortaleza","Foz do Iguaçu","João Pessoa","Maceió","Natal","Porto Alegre","Recife","Rio de Janeiro","Salvador","São Luís"]),
+ ("Brazil","South America","Brazilian Real","R$","BRL","BRL","", ["Aracaju","Florianópolis","Fortaleza","Foz do Iguaçu","João Pessoa","Maceió","Natal","Olinda","Porto Alegre","Recife","Rio de Janeiro","Salvador","São Luís"]),
  ("Chile","South America","Chilean Peso","CL$","CLP","CLP","", ["Santiago"]),
  ("Peru","South America","Peruvian Sol","S/","PEN","PEN","", ["Cusco","Lima","Machu Picchu"]),
  ("Uruguay","South America","Uruguayan Peso","$U","UYU","UYU","", ["Montevideo"]),
