@@ -95,7 +95,7 @@ COUNTRIES = [
  ("Bahamas","Caribbean","Bahamian Dollar","B$","BSD","BSD","Pegged 1:1 with the US dollar — USD accepted everywhere.", ["The Bahamas"]),
  ("Barbados","Caribbean","Barbadian Dollar","Bds$","BBD","BBD","Pegged 2:1 with the US dollar — USD widely accepted.", ["Barbados"]),
  ("Cayman Islands","Caribbean","Cayman Islands Dollar","CI$","KYD","KYD","Pegged to the US dollar; one of the few currencies worth more than USD.", ["Cayman Islands"]),
- ("Costa Rica","Caribbean","Costa Rican Colón","₡","CRC","CRC","One of the more expensive Central American destinations. Many establishments accept US dollars, especially in tourist areas.", ["Arenal"]),
+ ("Costa Rica","Caribbean","Costa Rican Colón","₡","CRC","CRC","One of the more expensive Central American destinations. Many establishments accept US dollars, especially in tourist areas.", ["Arenal", "Manuel Antonio", "San José"]),
  ("Curaçao","Caribbean","Caribbean Guilder","ƒ","XCG","XCG","Pegged to the US dollar; replaced the Netherlands Antillean guilder.", ["Curaçao"]),
  ("Sint Maarten","Caribbean","Caribbean Guilder","ƒ","XCG","XCG","Pegged to the US dollar; USD widely accepted.", ["Sint Maarten"]),
  ("Puerto Rico","Caribbean","US Dollar","$","USD","USD","US territory — uses the US dollar.", ["Puerto Rico"]),
