@@ -84,18 +84,18 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 36. - [x] Capri
 
 **Bucket 4 — 12 guides (validate, fix, push):**
-37. - [ ] Carmel-by-the-Sea
-38. - [ ] Cascais
-39. - [ ] Cayman Islands
-40. - [ ] Charlotte
-41. - [ ] Chiang Mai
-42. - [ ] Chicago
-43. - [ ] Chongqing
-44. - [ ] Cinque Terre
-45. - [ ] Colmar
-46. - [ ] Colombo
-47. - [ ] Columbia
-48. - [ ] Copenhagen
+37. - [x] Carmel-by-the-Sea
+38. - [x] Cascais
+39. - [x] Cayman Islands
+40. - [x] Charlotte
+41. - [x] Chiang Mai
+42. - [x] Chicago
+43. - [x] Chongqing
+44. - [x] Cinque Terre
+45. - [x] Colmar
+46. - [x] Colombo
+47. - [x] Columbia
+48. - [x] Copenhagen
 
 **Bucket 5 — 12 guides (validate, fix, push):**
 49. - [x] Corfu
@@ -265,18 +265,18 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 34. - [ ] Cannes
 35. - [ ] Cape Cod
 36. - [ ] Capri
-37. - [ ] Carmel-by-the-Sea
-38. - [ ] Cascais
-39. - [ ] Cayman Islands
-40. - [ ] Charlotte
-41. - [ ] Chiang Mai
-42. - [ ] Chicago
-43. - [ ] Chongqing
-44. - [ ] Cinque Terre
-45. - [ ] Colmar
-46. - [ ] Colombo
-47. - [ ] Columbia
-48. - [ ] Copenhagen
+37. - [x] Carmel-by-the-Sea
+38. - [x] Cascais
+39. - [x] Cayman Islands
+40. - [x] Charlotte
+41. - [x] Chiang Mai
+42. - [x] Chicago
+43. - [x] Chongqing
+44. - [x] Cinque Terre
+45. - [x] Colmar
+46. - [x] Colombo
+47. - [x] Columbia
+48. - [x] Copenhagen
 49. - [ ] Corfu
 50. - [ ] Curacao
 51. - [ ] Cusco
