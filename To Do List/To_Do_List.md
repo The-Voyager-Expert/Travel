@@ -182,19 +182,19 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 120. - [x] Petra
 
 **Bucket 11 — 13 guides (validate, fix, push):**
-121. - [ ] Philadelphia
-122. - [ ] Phoenix
-123. - [ ] Phuket
-124. - [ ] Pisa
-125. - [ ] Portland
-126. - [ ] Porto
-127. - [ ] Prague
-128. - [ ] Puerto Rico
-129. - [ ] Quebec City
-130. - [ ] Queenstown
-131. - [ ] Reykjavik
-132. - [ ] Rio de Janeiro
-133. - [ ] Rome
+121. - [x] Philadelphia
+122. - [x] Phoenix
+123. - [x] Phuket
+124. - [x] Pisa
+125. - [x] Portland
+126. - [x] Porto
+127. - [x] Prague
+128. - [x] Puerto Rico
+129. - [x] Quebec City
+130. - [x] Queenstown
+131. - [x] Reykjavik
+132. - [x] Rio de Janeiro
+133. - [x] Rome
 
 **Bucket 12 — 13 guides (validate, fix, push):**
 134. - [x] Salvador
