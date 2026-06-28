@@ -212,19 +212,19 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 146. - [ ] Santiago
 
 **Bucket 13 — 13 guides (validate, fix, push):**
-147. - [ ] Santorini
-148. - [ ] Sarasota
-149. - [ ] Scottsdale
-150. - [ ] Seattle
-151. - [ ] Sedona
-152. - [ ] Sedona --regenerate
-153. - [ ] Seoul
-154. - [ ] Seville
-155. - [ ] Shanghai
-156. - [ ] Siena
-157. - [ ] Singapore
-158. - [ ] Sint Maarten
-159. - [ ] Sintra
+147. - [x] Santorini
+148. - [x] Sarasota
+149. - [x] Scottsdale
+150. - [x] Seattle
+151. - [x] Sedona
+152. - [x] Sedona --regenerate
+153. - [x] Seoul
+154. - [x] Seville
+155. - [x] Shanghai
+156. - [x] Siena
+157. - [x] Singapore
+158. - [x] Sint Maarten
+159. - [x] Sintra
 
 **Bucket 14 — 13 guides (validate, fix, push):**
 160. - [x] Sorrento
@@ -375,19 +375,19 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 144. - [ ] Santa Cruz
 145. - [ ] Santa Monica
 146. - [ ] Santiago
-147. - [ ] Santorini
-148. - [ ] Sarasota
-149. - [ ] Scottsdale
-150. - [ ] Seattle
-151. - [ ] Sedona
-152. - [ ] Sedona --regenerate
-153. - [ ] Seoul
-154. - [ ] Seville
-155. - [ ] Shanghai
-156. - [ ] Siena
-157. - [ ] Singapore
-158. - [ ] Sint Maarten
-159. - [ ] Sintra
+147. - [x] Santorini
+148. - [x] Sarasota
+149. - [x] Scottsdale
+150. - [x] Seattle
+151. - [x] Sedona
+152. - [x] Sedona --regenerate
+153. - [x] Seoul
+154. - [x] Seville
+155. - [x] Shanghai
+156. - [x] Siena
+157. - [x] Singapore
+158. - [x] Sint Maarten
+159. - [x] Sintra
 160. - [ ] Sorrento
 161. - [ ] Split
 162. - [ ] Stockholm
