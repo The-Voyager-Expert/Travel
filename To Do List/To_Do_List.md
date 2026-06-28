@@ -197,19 +197,19 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 133. - [ ] Rome
 
 **Bucket 12 — 13 guides (validate, fix, push):**
-134. - [ ] Salvador
-135. - [ ] Salzburg
-136. - [ ] San Diego
-137. - [ ] San Francisco
-138. - [ ] San Jose
-139. - [ ] San Jose Costa Rica
-140. - [ ] San Juan Island
-141. - [ ] San Sebastian
-142. - [ ] San-Jose-Costa-Rica
-143. - [ ] Santa Barbara
-144. - [ ] Santa Cruz
-145. - [ ] Santa Monica
-146. - [ ] Santiago
+134. - [x] Salvador
+135. - [x] Salzburg
+136. - [x] San Diego
+137. - [x] San Francisco
+138. - [x] San Jose
+139. - [x] San Jose Costa Rica
+140. - [x] San Juan Island
+141. - [x] San Sebastian
+142. - [x] San-Jose-Costa-Rica
+143. - [x] Santa Barbara
+144. - [x] Santa Cruz
+145. - [x] Santa Monica
+146. - [x] Santiago
 
 **Bucket 13 — 13 guides (validate, fix, push):**
 147. - [x] Santorini
@@ -362,19 +362,19 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 131. - [ ] Reykjavik
 132. - [ ] Rio de Janeiro
 133. - [ ] Rome
-134. - [ ] Salvador
-135. - [ ] Salzburg
-136. - [ ] San Diego
-137. - [ ] San Francisco
-138. - [ ] San Jose
-139. - [ ] San Jose Costa Rica
-140. - [ ] San Juan Island
-141. - [ ] San Sebastian
-142. - [ ] San-Jose-Costa-Rica
-143. - [ ] Santa Barbara
-144. - [ ] Santa Cruz
-145. - [ ] Santa Monica
-146. - [ ] Santiago
+134. - [x] Salvador
+135. - [x] Salzburg
+136. - [x] San Diego
+137. - [x] San Francisco
+138. - [x] San Jose
+139. - [x] San Jose Costa Rica
+140. - [x] San Juan Island
+141. - [x] San Sebastian
+142. - [x] San-Jose-Costa-Rica
+143. - [x] Santa Barbara
+144. - [x] Santa Cruz
+145. - [x] Santa Monica
+146. - [x] Santiago
 147. - [x] Santorini
 148. - [x] Sarasota
 149. - [x] Scottsdale
