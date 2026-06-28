@@ -112,18 +112,18 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 60. - [x] Geneva
 
 **Bucket 6 — 12 guides (validate, fix, push):**
-61. - [ ] Glacier National Park
-62. - [ ] Glasgow
-63. - [ ] Gothenburg
-64. - [ ] Hamburg
-65. - [ ] Helsinki
-66. - [ ] Hong Kong
-67. - [ ] Istanbul
-68. - [ ] Kauai
-69. - [ ] KeyWest
-70. - [ ] Kyoto
-71. - [ ] La Jolla
-72. - [ ] Lagos
+61. - [x] Glacier National Park
+62. - [x] Glasgow
+63. - [x] Gothenburg
+64. - [x] Hamburg
+65. - [x] Helsinki
+66. - [x] Hong Kong
+67. - [x] Istanbul
+68. - [x] Kauai
+69. - [x] KeyWest
+70. - [x] Kyoto
+71. - [x] La Jolla
+72. - [x] Lagos
 
 **Bucket 7 — 12 guides (validate, fix, push):**
 73. - [x] Lake Como
@@ -154,32 +154,32 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 96. - [x] Milan
 
 **Bucket 9 — 12 guides (validate, fix, push):**
-97. - [ ] Monaco
-98. - [ ] Montevideo
-99. - [ ] Montreal
-100. - [ ] Munich
-101. - [ ] Mykonos
-102. - [ ] Napa
-103. - [ ] Naples
-104. - [ ] Naples Florida
-105. - [ ] Nashville
-106. - [ ] New Orleans
-107. - [ ] New York
-108. - [ ] Nice
+97. - [x] Monaco
+98. - [x] Montevideo
+99. - [x] Montreal
+100. - [x] Munich
+101. - [x] Mykonos
+102. - [x] Napa
+103. - [x] Naples
+104. - [x] Naples Florida
+105. - [x] Nashville
+106. - [x] New Orleans
+107. - [x] New York
+108. - [x] Nice
 
 **Bucket 10 — 12 guides (validate, fix, push):**
-109. - [ ] Oahu
-110. - [ ] Orcas Island
-111. - [ ] Orlando
-112. - [ ] Oslo
-113. - [ ] Oxford
-114. - [ ] Palawan
-115. - [ ] Palm Desert
-116. - [ ] Palo Alto
-117. - [ ] Paris
-118. - [ ] Pasadena
-119. - [ ] Pensacola
-120. - [ ] Petra
+109. - [x] Oahu
+110. - [x] Orcas Island
+111. - [x] Orlando
+112. - [x] Oslo
+113. - [x] Oxford
+114. - [x] Palawan
+115. - [x] Palm Desert
+116. - [x] Palo Alto
+117. - [x] Paris
+118. - [x] Pasadena
+119. - [x] Pensacola
+120. - [x] Petra
 
 **Bucket 11 — 13 guides (validate, fix, push):**
 121. - [ ] Philadelphia
@@ -337,18 +337,18 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 106. - [ ] New Orleans
 107. - [ ] New York
 108. - [ ] Nice
-109. - [ ] Oahu
-110. - [ ] Orcas Island
-111. - [ ] Orlando
-112. - [ ] Oslo
-113. - [ ] Oxford
-114. - [ ] Palawan
-115. - [ ] Palm Desert
-116. - [ ] Palo Alto
-117. - [ ] Paris
-118. - [ ] Pasadena
-119. - [ ] Pensacola
-120. - [ ] Petra
+109. - [x] Oahu
+110. - [x] Orcas Island
+111. - [x] Orlando
+112. - [x] Oslo
+113. - [x] Oxford
+114. - [x] Palawan
+115. - [x] Palm Desert
+116. - [x] Palo Alto
+117. - [x] Paris
+118. - [x] Pasadena
+119. - [x] Pensacola
+120. - [x] Petra
 121. - [ ] Philadelphia
 122. - [ ] Phoenix
 123. - [ ] Phuket
