@@ -2011,7 +2011,7 @@ def validate(html: str, filename: str):
     #   .title-city    → #3d3a32
     #   .title-hotel   → #3d3a32
     #   .title-country → #3d3a32
-    #   .title-address → #6a6660
+    #   .title-address → #3d3a32
     # If a local <style> block overrides any of these with a different value,
     # the guide will look wrong. Hard-fail.
     print("\n── TITLE PAGE: no local color override on title-city / title-hotel / title-address / title-country ──")
@@ -23545,7 +23545,7 @@ def validate(html: str, filename: str):
         "#tours .extras-sub a":            ("#2867c4", "tours extras-sub links use blue (--c-link restored 2026-06-01) — tours section uses var(--c-link) directly"),
         "#heads-up .transit-box a":  ("#a61c00", "heads-up tip links use --c-headsup-link (#a61c00 tours-border red) per guide-style.css — updated 2026-06-01 from #a36009"),
         ".index-banner-sub a":             ("#8a6c1a", "guides-index banner sub-links use gold accent (--c-purple = #8a6c1a) — index page only, not guide content"),
-        ".title-page .title-address a":    ("#6a6660", "muted warm-grey address link on title-card — title-page redesigned to light-bg/dark-text matching site header (2026-06-20): rgba(255,255,255,0.60) → #6a6660"),
+        ".title-page .title-address a":    ("#3d3a32", "address link matches hotel name color — unified to #3d3a32 (2026-06-28): #6a6660 was visually inconsistent"),
         # Guide-toolbar base colour — default toolbar accent before any theme override (--c-title-bg = #6b4422 warm chestnut)
         ".toolbar-nav a":                                     ("#6b4422", "toolbar accent — default (--c-title-bg)"),
         ".toolbar-essentials a":                              ("#6b4422", "toolbar accent — default (--c-title-bg)"),
