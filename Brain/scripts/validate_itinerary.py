@@ -24176,7 +24176,7 @@ def validate(html: str, filename: str):
             check("verification_log.json present and well-formed", True)
 
     # Per-URL entry check (only runs if log is loadable).
-    if _log_data is not None and isinstance(_log_data.get("entries"), dict):
+    if _log_data is not None and isinstance(_log_data, dict) and isinstance(_log_data.get("entries"), dict):
         _entries = _log_data["entries"]
 
         # ── NESTING GUARD — URL keys must not appear at top level ─────────
@@ -24267,7 +24267,7 @@ def validate(html: str, filename: str):
     # result: "PASS"), the ⚠️ is suppressed permanently — a logged PASS never
     # expires. TripAdvisor ⚠️ is still emitted when TA URLs exist
     # (TA is 403-blocked; opportunistic fetch only, never fully clearable).
-    _wiki_log_entries = (_log_data.get("entries") or {}) if _log_data else {}
+    _wiki_log_entries = (_log_data.get("entries") or {}) if (_log_data and isinstance(_log_data, dict)) else {}
     _wiki_uncovered = [
         u for u in _wiki_urls
         if not (
