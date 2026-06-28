@@ -18917,7 +18917,12 @@ def validate(html: str, filename: str):
 
     print("\n── DAY TRIPS — European-country MIN 5 entries ──")
     _dt_eu_city = (city_text or '').strip().lower()
-    _dt_is_european = _dt_eu_city in _EUROPEAN_GUIDE_CITIES
+    # Exempt non-European countries (e.g. "Naples" matches Italy set but Naples Florida is US)
+    _dt_eu_country = (_tc_text or '').strip()
+    _NON_EU_COUNTRIES = {'United States', 'Canada', 'Australia', 'New Zealand', 'Japan',
+                         'Mexico', 'Brazil', 'Argentina', 'Chile', 'Colombia', 'Peru',
+                         'South Africa', 'Thailand', 'Vietnam', 'India', 'China'}
+    _dt_is_european = _dt_eu_city in _EUROPEAN_GUIDE_CITIES and _dt_eu_country not in _NON_EU_COUNTRIES
     if _dt_is_european:
         _dt_eu_entry_count = 0
         if _dt_hdr:
