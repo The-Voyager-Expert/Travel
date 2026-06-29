@@ -25397,21 +25397,19 @@ def validate(html: str, filename: str):
         f"Guide not found in Guides-Index.html: {_fg_rel}" if not _fg_in_index else "",
     )
 
-    # FINAL GATE — card must have data-status="want" (blue dot)
-    # Every guide shipped to the index must start with "want to go" status,
-    # not "been" or missing. The card must explicitly carry data-status="want".
-    _fg_card_has_status_want = False
+    # FINAL GATE — card must have data-status="want" or data-status="been"
+    # Every guide shipped to the index must carry one of the two valid statuses.
+    # "been" is valid for destinations the user has visited.
+    _fg_card_has_valid_status = False
     if _fg_in_index and _fg_idx.is_file():
-        # Look for the href in a dest-card tag with data-status="want"
-        _fg_status_pattern = rf'<a\s+class="dest-card"[^>]*data-status="want"[^>]*href="[^"]*{re.escape(_fg_rel)}'
-        _fg_card_has_status_want = bool(re.search(_fg_status_pattern, _fg_idx_html, re.IGNORECASE))
+        _fg_status_pattern = rf'<a\s+class="dest-card"[^>]*data-status="(want|been)"[^>]*href="[^"]*{re.escape(_fg_rel)}'
+        _fg_card_has_valid_status = bool(re.search(_fg_status_pattern, _fg_idx_html, re.IGNORECASE))
     check(
-        "FINAL GATE — guide card has data-status=\"want\" (blue dot indicator) "
-        "(new guides must default to 'want to go')",
-        _fg_card_has_status_want if _fg_in_index else True,  # Skip if not in index (already failed above)
-        f"Guide card in Guides-Index.html is missing data-status=\"want\" attribute — "
-        f"add it to the dest-card element: <a class=\"dest-card\" data-status=\"want\" href=\"{_fg_rel}\" ...>"
-        if (_fg_in_index and not _fg_card_has_status_want) else "",
+        "FINAL GATE — guide card has data-status (want or been)",
+        _fg_card_has_valid_status if _fg_in_index else True,
+        f"Guide card in Guides-Index.html is missing data-status attribute — "
+        f"add data-status=\"want\" (or \"been\") to the dest-card element"
+        if (_fg_in_index and not _fg_card_has_valid_status) else "",
     )
 
     _fg_ess = _fg_guide.parent.parent.parent / "Trip-Essentials"
