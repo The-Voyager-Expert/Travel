@@ -55,6 +55,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-28", "STATUS DOTS + DELTA ROUTES FINAL GATE. Two new hard-fail checks added to the FINAL GATE (end of validation): (1) STATUS DOTS — city must appear on a bullet line in Brain/Reference/Status Dots — guides_index.md; absence means the guide shipped without ever being added to the status tracking doc and the index dot can't reflect reality. (2) DELTA ROUTES — city must have a card with data-guide=\"FolderName\" in Trip-Essentials/Delta-Routes-SEA.html; Seattle is exempt (origin city). Both run after the world-map-pin check, before Open Questions. Previously these were only enforced at guide_tools.py ship time; now the static validator also catches them (consistent with the index-listing / map-pin / also-on-this-site pattern)."),
     ("2026-06-28", "GUIDE CARD AND STATUS GATE (FINAL GATE). New hard-fail check: every guide listed in Guides-Index.html MUST have data-status=\"want\" attribute on its dest-card element (the blue dot indicator for 'want to go'). Detects missing or incorrect status before ship. Reason: 93 guides were shipped without the data-status attribute; new guides must default to 'want to go' with proper visual indicator. Runs at the end of validation (FINAL GATE) alongside index-listing and map-pin checks (line ~25400). Provides specific guidance to add attribute to dest-card. Companion fix (same session): all 201 guides in Guides-Index.html now have proper data-status values (195 want + 6 been)."),
     ("2026-06-28", "GUIDE HTML FILENAME PATTERN CHECK (ENHANCED). Hard-fail check: guide HTML files must follow the {city}_v*.html pattern where {city} is derived from the folder name (e.g., Azores/ → azores_v1.html, Cairo/ → cairo_v2.html). Detects non-compliant names: Cairo.html, Lake Tahoe.html, guide_v1.html, or any non-city-specific filename before they ship. The filename MUST start with the city slug (folder name converted to lowercase, spaces/hyphens → underscores). Reason: Azores shipped as guide_v1.html; Cairo and Lake Tahoe as Cairo.html/Lake Tahoe.html; this check enforces city-specific naming so all guides are discoverable and versioned consistently. Runs early in validate() (line ~383) before any content checks. Provides specific guidance on rename (e.g., 'Found: guide_v1.html in Azores/ — rename to azores_v1.html')."),
     ("2026-06-27", "TITLE-COUNTRY FULL NAME (Dani-approved). New hard-fail check: .title-country must be the country's full name — no abbreviation, no country code, no subdivision (state/province/territory/region). Detection: a comma or middle-dot in the value = subdivision; a short all-caps token (≤4 letters, dots optional) = abbreviation/code. Empty is left to the pre-existing presence check. Rule home: Hotel Banner.html §1 Entry. Companion: 9 live guides normalized (US/USA/US·Colorado/Florida,USA → United States earlier this session; UK → United Kingdom, NZ → New Zealand, UAE → United Arab Emirates in this pass). Validator Index.html + Cleanliness Checks.md updated."),
@@ -25438,6 +25439,49 @@ def validate(html: str, filename: str):
         f"{_fg_city} not found in World-Map.html PINS array — add "
         f"['{_fg_city}', lon, lat, '../../Guides/{_fg_city}/file.html'] to Maps/World-Map.html."
         if not _fg_pinned else "",
+    )
+
+    # ─── FINAL GATE — Status Dots entry ──────────────────────────────────────
+    # Every shipped guide must appear in Brain/Reference/Status Dots — guides_index.md.
+    # Added 2026-06-28.
+    _fg_status_dots = _fg_root.parent.parent / "Brain" / "Reference" / "Status Dots — guides_index.md"
+    _fg_in_status_dots = False
+    if _fg_status_dots.is_file():
+        _fg_sd_text = _fg_status_dots.read_text(encoding="utf-8", errors="ignore")
+        _fg_sd_pat = re.compile(
+            r'^\s*-\s+(?:\[.\]\s+)?' + re.escape(_fg_city) + r'\b',
+            re.MULTILINE | re.IGNORECASE,
+        )
+        _fg_in_status_dots = bool(_fg_sd_pat.search(_fg_sd_text))
+    check(
+        "FINAL GATE — city is listed in Status Dots — guides_index.md "
+        "(Brain/Reference/Status Dots — guides_index.md)",
+        _fg_in_status_dots if _fg_status_dots.is_file() else True,
+        (f"{_fg_city} has no entry in Status Dots — guides_index.md — "
+         f"add '- [ ] {_fg_city}' to the correct country section in "
+         f"Brain/Reference/Status Dots — guides_index.md")
+        if (_fg_status_dots.is_file() and not _fg_in_status_dots) else "",
+    )
+
+    # ─── FINAL GATE — Delta Routes card ──────────────────────────────────────
+    # Every shipped guide (except Seattle) must have a card with
+    # data-guide="FolderName" in Trip-Essentials/Delta-Routes-SEA.html.
+    # Added 2026-06-28.
+    _fg_delta_exempt = (_fg_city == "Seattle")
+    _fg_delta_path = _fg_root.parent / "Trip-Essentials" / "Delta-Routes-SEA.html"
+    _fg_in_delta = _fg_delta_exempt
+    if not _fg_delta_exempt and _fg_delta_path.is_file():
+        _fg_delta_html = _fg_delta_path.read_text(encoding="utf-8", errors="ignore")
+        _fg_in_delta = f'data-guide="{_fg_city}"' in _fg_delta_html
+    check(
+        "FINAL GATE — guide has a routing card in Delta-Routes-SEA.html "
+        f"(data-guide=\"{_fg_city}\"; Trip-Essentials/Delta-Routes-SEA.html)",
+        _fg_in_delta if (_fg_delta_exempt or _fg_delta_path.is_file()) else True,
+        (f"{_fg_city} has no card in Delta-Routes-SEA.html — research the Delta "
+         f"routing SEA → {_fg_city} on Google Flights / delta.com, then add "
+         f'<div class="dest-card" data-guide="{_fg_city}"> to the correct section '
+         f"of Travel-Website/Trip-Essentials/Delta-Routes-SEA.html")
+        if (not _fg_delta_exempt and _fg_delta_path.is_file() and not _fg_in_delta) else "",
     )
 
     # ─── FINAL GATE — ❓ OPEN QUESTIONS: ONLY CORE-RULES QUESTIONS MAY PARK ───
