@@ -31,8 +31,7 @@ the same definition the Pages deploy uses — so in-progress builds (untracked, 
 stamp) are never flagged.
 
 USAGE
-  python3 Brain/scripts/validate_guide_coverage.py            # full sweep, exit 1 on any gap
-  python3 Brain/scripts/validate_guide_coverage.py --warn     # report only, always exit 0 (session start)
+  python3 Brain/scripts/validate_guide_coverage.py            # full sweep, exit 1 on any gap (strict)
   python3 Brain/scripts/validate_guide_coverage.py --fails-only
 
 CI BACKSTOP
@@ -360,7 +359,6 @@ def run_sweep() -> dict[str, list[str]]:
 
 
 def main() -> int:
-    warn = "--warn" in sys.argv
     fails_only = "--fails-only" in sys.argv
 
     res = run_sweep()
@@ -416,7 +414,7 @@ def main() -> int:
     print(f"  {FAIL} Coverage gaps found — {len(by_guide)} guide(s) missing from one or more surfaces.")
     print("     Fix by completing the index/pin/stats/etc. entry for each, then re-run.")
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-    return 0 if warn else 1
+    return 1
 
 
 if __name__ == "__main__":
