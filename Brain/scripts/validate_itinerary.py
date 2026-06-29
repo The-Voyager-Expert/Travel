@@ -55,6 +55,8 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-06-28", "GUIDE CARD AND STATUS GATE (FINAL GATE). New hard-fail check: every guide listed in Guides-Index.html MUST have data-status=\"want\" attribute on its dest-card element (the blue dot indicator for 'want to go'). Detects missing or incorrect status before ship. Reason: 93 guides were shipped without the data-status attribute; new guides must default to 'want to go' with proper visual indicator. Runs at the end of validation (FINAL GATE) alongside index-listing and map-pin checks (line ~25400). Provides specific guidance to add attribute to dest-card. Companion fix (same session): all 201 guides in Guides-Index.html now have proper data-status values (195 want + 6 been)."),
+    ("2026-06-28", "GUIDE HTML FILENAME PATTERN CHECK (ENHANCED). Hard-fail check: guide HTML files must follow the {city}_v*.html pattern where {city} is derived from the folder name (e.g., Azores/ → azores_v1.html, Cairo/ → cairo_v2.html). Detects non-compliant names: Cairo.html, Lake Tahoe.html, guide_v1.html, or any non-city-specific filename before they ship. The filename MUST start with the city slug (folder name converted to lowercase, spaces/hyphens → underscores). Reason: Azores shipped as guide_v1.html; Cairo and Lake Tahoe as Cairo.html/Lake Tahoe.html; this check enforces city-specific naming so all guides are discoverable and versioned consistently. Runs early in validate() (line ~383) before any content checks. Provides specific guidance on rename (e.g., 'Found: guide_v1.html in Azores/ — rename to azores_v1.html')."),
     ("2026-06-27", "TITLE-COUNTRY FULL NAME (Dani-approved). New hard-fail check: .title-country must be the country's full name — no abbreviation, no country code, no subdivision (state/province/territory/region). Detection: a comma or middle-dot in the value = subdivision; a short all-caps token (≤4 letters, dots optional) = abbreviation/code. Empty is left to the pre-existing presence check. Rule home: Hotel Banner.html §1 Entry. Companion: 9 live guides normalized (US/USA/US·Colorado/Florida,USA → United States earlier this session; UK → United Kingdom, NZ → New Zealand, UAE → United Arab Emirates in this pass). Validator Index.html + Cleanliness Checks.md updated."),
     ("2026-06-27", "TR-6 added — required pills check. All 7 canonical 'Also on this site' pills must be present: Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats. European Train Guide exempt (EU only). Previously the validator only checked ORDER of pills that were present — absence of a pill was not caught. Victoria failure mode: missing Time Zones / Plug Adapter / Currency slipped through."),
     ("2026-06-26", "TRIP RESOURCES checks TR-3, TR-4, TR-5 added. TR-3: extras-title div in #also-on-this-site must be EMPTY — title 'Also on this site' is injected by CSS ::before; hardcoded text bypasses CSS. TR-4: pill order enforced — canonical sequence: Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats · European Train Guide (EU guides only, always last); out-of-order pairs hard-fail. TR-5: anchor correctness — #Eurozone is never valid (use per-country: #France / #Italy / etc.); multi-word country names must use underscores matching the target-page getElementById IDs (Czech_Republic, United_Kingdom, New_Zealand, Cayman_Islands, Sint_Maarten); dashes silently miss the scroll-to jump."),
@@ -373,6 +375,24 @@ def validate(html: str, filename: str):
     # (e.g. if the validator is ever imported and reused) starts clean instead
     # of accumulating the prior run's results and double-counting the tally.
     results.clear()
+
+    # ─── GUIDE HTML FILENAME PATTERN ───────────────────────────────────────
+    # Every guide HTML file must follow the {city}_v*.html pattern (e.g.,
+    # cairo_v2.html, lake_tahoe_v1.html) where {city} is derived from the
+    # folder name. The filename MUST start with the city slug, not generic
+    # names like "guide_v1.html" or arbitrary text.
+    _guide_filename = Path(filename).name
+    _guide_folder = Path(filename).parent.name  # e.g., "Cairo", "Lake Tahoe", "Azores"
+    # Convert folder name to lowercase slug: spaces/hyphens → underscores
+    _city_slug = re.sub(r'[\s-]+', '_', _guide_folder.lower())
+    # Filename must start with city slug, followed by _v and version number
+    _filename_pattern = rf'^{re.escape(_city_slug)}_v\d+\.html$'
+    _filename_valid = re.match(_filename_pattern, _guide_filename, re.IGNORECASE)
+    check(
+        f"Guide HTML filename follows pattern: {_city_slug}_v*.html (city-specific + version)",
+        _filename_valid is not None,
+        f"Found: {_guide_filename} in {_guide_folder}/ — rename to {_city_slug}_v1.html (or higher version number)"
+    )
 
     # ─── WARN-OK SENTINEL REGISTRY ─────────────────────────────────────────
     # Guide authors add <!-- warn-ok: TAG reason --> to acknowledge warnings.
@@ -25375,6 +25395,24 @@ def validate(html: str, filename: str):
         _fg_in_index,
         f"Guide not found in Guides-Index.html: {_fg_rel}" if not _fg_in_index else "",
     )
+
+    # FINAL GATE — card must have data-status="want" (blue dot)
+    # Every guide shipped to the index must start with "want to go" status,
+    # not "been" or missing. The card must explicitly carry data-status="want".
+    _fg_card_has_status_want = False
+    if _fg_in_index and _fg_idx.is_file():
+        # Look for the href in a dest-card tag with data-status="want"
+        _fg_status_pattern = rf'<a\s+class="dest-card"[^>]*data-status="want"[^>]*href="[^"]*{re.escape(_fg_rel)}'
+        _fg_card_has_status_want = bool(re.search(_fg_status_pattern, _fg_idx_html, re.IGNORECASE))
+    check(
+        "FINAL GATE — guide card has data-status=\"want\" (blue dot indicator) "
+        "(new guides must default to 'want to go')",
+        _fg_card_has_status_want if _fg_in_index else True,  # Skip if not in index (already failed above)
+        f"Guide card in Guides-Index.html is missing data-status=\"want\" attribute — "
+        f"add it to the dest-card element: <a class=\"dest-card\" data-status=\"want\" href=\"{_fg_rel}\" ...>"
+        if (_fg_in_index and not _fg_card_has_status_want) else "",
+    )
+
     _fg_ess = _fg_guide.parent.parent.parent / "Trip-Essentials"
     # One unified map now holds every pin (the 7 region maps were consolidated
     # into Maps/World-Map.html on 2026-06-20).
