@@ -423,6 +423,24 @@ def _run_start() -> int:
         )
         return rc3c
 
+    # Step 3d: flight-index integrity — validate_guide_coverage uses a loose
+    # folder-name substring match for FMAP, so it passes guides whose FMAP keys
+    # contain the folder name even when the filename is stale (e.g. Cairo/Cairo.html
+    # vs the live cairo_v2.html). validate_flight_index.py uses exact-path matching
+    # and also checks routing schema, colour consistency, and hub agreement with
+    # Delta Routes SEA. Running it here surfaces stale FMAP paths and missing entries
+    # that coverage's loose match silently passes. Strict: exits non-zero on any FAIL.
+    # (added 2026-06-28)
+    print("\n▶ Step 3d — flight-index integrity (FMAP paths, routing, colours)")
+    rc3d = _run("validate_flight_index.py", [])
+    if rc3d != 0:
+        print(
+            "\n🚫  Flight-index failures — fix FMAP entries / routing / colours before task work.\n"
+            "     Run: python3 Brain/scripts/validate_flight_index.py\n",
+            file=sys.stderr,
+        )
+        return rc3d
+
     # Step 4: open To Do items
     print("\n▶ Step 4/4 — open To Do items")
     todo_path = TRAVEL_ROOT / "To Do List" / "To_Do_List.md"
