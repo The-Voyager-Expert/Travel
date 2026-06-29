@@ -232,14 +232,14 @@ def run_sweep() -> dict[str, list[str]]:
     }
     # FMAP keys (loose, lowercased substring match — mirrors _check_guide_fmap).
     fmap = _json_block(index_html, "FMAP")
-    fmap_keys_lower = [k.lower() for k in fmap]
+    fmap_keys_lower = [unquote(k).lower() for k in fmap]
 
     # Home/origin city (flights are "from <home>") — build_travel_stats.py excludes
     # any FMAP entry whose routing is "home" from the destination stats, so it must
     # NOT be required on the stats page even though it's a full guide. Derive it from
     # the data (not hardcoded) so it follows a future origin change. (build_travel_stats.py:169,191)
     home_folders = {
-        k.split("/")[0] for k, fd in fmap.items()
+        unquote(k).split("/")[0] for k, fd in fmap.items()
         if isinstance(fd, dict) and fd.get("r") == "home"
     }
 
