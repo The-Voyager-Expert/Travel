@@ -140,9 +140,12 @@ def _find_guide_href(text: str, prefix: str, folder: str) -> str | None:
     """Find a guide href for `folder` under `prefix` in `text`, returning the raw
     href string (or None). Tolerant of folder names written with literal spaces OR
     percent-encoded (`%20`) — the index uses literal spaces, the data pages encode.
+    Also handles partial encoding where non-ASCII chars are literal but spaces are %20.
     """
-    for f in {re.escape(folder), re.escape(quote(folder))}:
-        m = re.search(rf'href="({re.escape(prefix)}{f}/[^"]+\.html)"', text)
+    space_encoded = re.sub(r' ', '%20', folder)  # João%20Pessoa — partial encoding
+    candidates = {folder, quote(folder), space_encoded}
+    for f in candidates:
+        m = re.search(rf'href="({re.escape(prefix)}{re.escape(f)}/[^"]+\.html)"', text)
         if m:
             return m.group(1)
     return None

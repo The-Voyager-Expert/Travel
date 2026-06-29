@@ -25402,8 +25402,14 @@ def validate(html: str, filename: str):
     # "been" is valid for destinations the user has visited.
     _fg_card_has_valid_status = False
     if _fg_in_index and _fg_idx.is_file():
-        _fg_status_pattern = rf'<a\s+class="dest-card"[^>]*data-status="(want|been)"[^>]*href="[^"]*{re.escape(_fg_rel)}'
-        _fg_card_has_valid_status = bool(re.search(_fg_status_pattern, _fg_idx_html, re.IGNORECASE))
+        # Match both literal-space and %20-encoded folder names in href
+        from urllib.parse import quote as _url_quote_local
+        _fg_rel_enc = _url_quote_local(_fg_guide.parent.name) + "/" + _fg_guide.name
+        for _fg_rel_variant in {_fg_rel, _fg_rel_enc, re.sub(r' ', '%20', _fg_rel)}:
+            _fg_status_pattern = rf'<a\s+class="dest-card"[^>]*data-status="(want|been)"[^>]*href="[^"]*{re.escape(_fg_rel_variant)}'
+            if re.search(_fg_status_pattern, _fg_idx_html, re.IGNORECASE):
+                _fg_card_has_valid_status = True
+                break
     check(
         "FINAL GATE — guide card has data-status (want or been)",
         _fg_card_has_valid_status if _fg_in_index else True,

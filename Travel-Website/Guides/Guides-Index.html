@@ -808,10 +808,10 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   <a class="dest-card" data-status="been" href="./Quebec%20City/quebec_city_v1.html" data-guide-num="6" data-guide-prev="./Puerto%20Rico/puerto_rico_v1.html" data-guide-next="./Queenstown/queenstown_v1.html" data-lang="fr en">
       <span class="dest-flag">🇨🇦</span><span class="dest-name">Québec City</span>
     </a>
-  <a class="dest-card" data-status="been" href="./Toronto/toronto_v1.html" data-guide-num="67" data-guide-prev="./Toledo/toledo_v1.html" data-guide-next="./Tromso/tromso_v1.html" data-lang="en fr">
+  <a class="dest-card" data-status="been" href="./Toronto/toronto_v1.html" data-guide-num="67" data-guide-prev="./Toledo/toledo_v1.html" data-guide-next="./Vancouver/vancouver_v1.html" data-lang="en fr">
       <span class="dest-flag">🇨🇦</span><span class="dest-name">Toronto</span>
     </a>
-  <a class="dest-card" data-status="been" href="./Vancouver/vancouver_v1.html" data-guide-next="./Verona/verona_v1.html"" data-lang="en">
+  <a class="dest-card" data-status="been" href="./Vancouver/vancouver_v1.html" data-guide-num="125" data-guide-prev="./Toronto/toronto_v1.html" data-guide-next="./Victoria/victoria_v1.html" data-lang="en">
       <span class="dest-flag">🇨🇦</span><span class="dest-name">Vancouver</span>
     </a>
   <a class="dest-card" data-status="been" href="./Victoria/victoria_v1.html" data-guide-num="190" data-guide-prev="./Vancouver/vancouver_v1.html" data-guide-next="./Vienna/vienna_v1.html" data-lang="en fr">
@@ -2790,6 +2790,41 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
   if(gpSearch){ gpSearch.addEventListener('input', function(){ gpTerm=gNorm(this.value.trim()); buildGuidePicker(); }); }
 
   buildGuidePicker();
+}());
+</script>
+
+<script>
+/* Stat row — populate #guide-count (places) and #country-count (countries).
+   Counts from dest-card data-status attributes; country set from country-label elements. */
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.dest-card'));
+  var been = cards.filter(function(c){ return c.dataset.status === 'been'; }).length;
+  var want = cards.filter(function(c){ return c.dataset.status === 'want'; }).length;
+  var total = cards.length;
+
+  var gc = document.getElementById('guide-count');
+  if(gc){
+    gc.innerHTML = '<b>' + total + '</b> guides | <b>' + been + '</b> visited | <b>' + want + '</b> on the list';
+  }
+}());
+
+(function(){
+  var countryBlocks = [].slice.call(document.querySelectorAll('.country-label'));
+  var total = countryBlocks.length;
+
+  /* Count countries where at least one guide is been */
+  var visitedCountries = 0;
+  countryBlocks.forEach(function(label){
+    var section = label.closest('.country-block') || label.parentElement;
+    if(section && section.querySelector('.dest-card[data-status="been"]')){
+      visitedCountries++;
+    }
+  });
+
+  var cc = document.getElementById('country-count');
+  if(cc){
+    cc.innerHTML = '<b>' + total + '</b> countries | <b>' + visitedCountries + '</b> visited';
+  }
 }());
 </script>
 </body>
