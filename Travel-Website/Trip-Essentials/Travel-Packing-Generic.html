@@ -183,6 +183,31 @@ html { scroll-behavior: smooth; }
 .summary .progress-track { margin: 0; }
 .action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .action-row .reset-btn, .action-row .print-btn { margin-top: 0; margin-left: 0; }
+.trip-setup {
+ display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px;
+ margin-top: 16px; padding: 14px 20px;
+ background: #fdf8ee; border: 1px solid #e8d8a0; border-radius: 8px;
+}
+.setup-label { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; color: #7a5c0e; }
+.day-stepper { display: flex; align-items: center; gap: 4px; }
+.day-stepper button {
+ width: 30px; height: 30px; font-size: 18px; line-height: 1; color: #7a5c0e;
+ background: #fff; border: 1px solid #d8c080; border-radius: 6px; cursor: pointer;
+ display: flex; align-items: center; justify-content: center; transition: background .15s, border-color .15s;
+}
+.day-stepper button:hover { background: #fdf0d0; border-color: #c8961a; }
+.day-stepper input {
+ width: 50px; height: 30px; text-align: center; font-size: 15px; font-weight: 700; color: #3d3a32;
+ border: 1px solid #d8c080; border-radius: 6px; background: #fff; -moz-appearance: textfield;
+}
+.day-stepper input::-webkit-outer-spin-button, .day-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.day-unit { font-size: 13px; color: #7a5c0e; font-weight: 600; }
+.setup-note { font-size: 12px; color: #a08a4a; flex: 1; min-width: 180px; }
+.qty {
+ display: inline-block; margin-left: 7px; font-size: 12px; font-weight: 700; color: #2a6a2a;
+ background: #e8f4e8; border: 1px solid #a0c8a0; border-radius: 20px; padding: 1px 9px; white-space: nowrap;
+}
+.item.checked .qty { color: #b0aaa2; background: #f0ede8; border-color: #d8d4cc; }
 .toggle-btn {
  font-size: 13px; letter-spacing: 0.1em; color: #6a6660; text-transform: uppercase;
  background: none; border: 1px solid #d8d4cc; border-radius: 3px; padding: 7px 16px;
@@ -231,6 +256,17 @@ document.addEventListener('DOMContentLoaded',()=>{
  <p>Customize this list for your trip. Add or remove items as needed, then print or check them off as you pack.</p>
  </div>
  <span class="updated-stamp">Updated June 2026</span>
+
+<div class="trip-setup">
+ <span class="setup-label">Trip length</span>
+ <div class="day-stepper">
+ <button type="button" onclick="changeDays(-1)" aria-label="Fewer days">−</button>
+ <input type="number" id="days-input" min="1" max="60" value="7" oninput="onDaysInput()" aria-label="Number of days">
+ <span class="day-unit">days</span>
+ <button type="button" onclick="changeDays(1)" aria-label="More days">+</button>
+ </div>
+ <span class="setup-note">Clothing quantities update automatically to match your trip.</span>
+</div>
 
 <div class="summary">
  <div class="ring" aria-hidden="true">
@@ -371,26 +407,26 @@ document.addEventListener('DOMContentLoaded',()=>{
  </div>
  <div class="card-body">
  <div class="sub-label">Undergarments</div>
- <div class="item"><input type="checkbox" id="cb-c1" onchange="toggle(this)"><label for="cb-c1">Socks (7+ pairs)</label></div>
- <div class="item"><input type="checkbox" id="cb-c2" onchange="toggle(this)"><label for="cb-c2">Underwear (7+ pairs)</label></div>
- <div class="item"><input type="checkbox" id="cb-c3" onchange="toggle(this)"><label for="cb-c3">Bras or undershirts</label></div>
+ <div class="item"><input type="checkbox" id="cb-c1" onchange="toggle(this)"><label for="cb-c1">Socks<span class="qty" id="qty-cb-c1"></span></label></div>
+ <div class="item"><input type="checkbox" id="cb-c2" onchange="toggle(this)"><label for="cb-c2">Underwear<span class="qty" id="qty-cb-c2"></span></label></div>
+ <div class="item"><input type="checkbox" id="cb-c3" onchange="toggle(this)"><label for="cb-c3">Bras or undershirts<span class="qty" id="qty-cb-c3"></span></label></div>
 
  <div class="sub-label">Tops</div>
- <div class="item"><input type="checkbox" id="cb-c4" onchange="toggle(this)"><label for="cb-c4">T-shirts or casual tops (5+)</label></div>
- <div class="item"><input type="checkbox" id="cb-c5" onchange="toggle(this)"><label for="cb-c5">Long-sleeve shirts (2+)</label></div>
- <div class="item"><input type="checkbox" id="cb-c6" onchange="toggle(this)"><label for="cb-c6">Sweater or cardigan</label></div>
+ <div class="item"><input type="checkbox" id="cb-c4" onchange="toggle(this)"><label for="cb-c4">T-shirts or casual tops<span class="qty" id="qty-cb-c4"></span></label></div>
+ <div class="item"><input type="checkbox" id="cb-c5" onchange="toggle(this)"><label for="cb-c5">Long-sleeve shirts<span class="qty" id="qty-cb-c5"></span></label></div>
+ <div class="item"><input type="checkbox" id="cb-c6" onchange="toggle(this)"><label for="cb-c6">Sweater or cardigan<span class="qty" id="qty-cb-c6"></span></label></div>
 
  <div class="sub-label">Bottoms</div>
- <div class="item"><input type="checkbox" id="cb-c7" onchange="toggle(this)"><label for="cb-c7">Jeans or casual pants</label></div>
- <div class="item"><input type="checkbox" id="cb-c8" onchange="toggle(this)"><label for="cb-c8">Shorts</label></div>
- <div class="item"><input type="checkbox" id="cb-c9" onchange="toggle(this)"><label for="cb-c9">Dressy pants</label></div>
- <div class="item"><input type="checkbox" id="cb-c10" onchange="toggle(this)"><label for="cb-c10">Leggings or comfortable casual pants</label></div>
+ <div class="item"><input type="checkbox" id="cb-c7" onchange="toggle(this)"><label for="cb-c7">Jeans or casual pants<span class="qty" id="qty-cb-c7"></span></label></div>
+ <div class="item"><input type="checkbox" id="cb-c8" onchange="toggle(this)"><label for="cb-c8">Shorts<span class="qty" id="qty-cb-c8"></span></label></div>
+ <div class="item"><input type="checkbox" id="cb-c9" onchange="toggle(this)"><label for="cb-c9">Dressy pants<span class="qty" id="qty-cb-c9"></span></label></div>
+ <div class="item"><input type="checkbox" id="cb-c10" onchange="toggle(this)"><label for="cb-c10">Leggings or comfortable casual pants<span class="qty" id="qty-cb-c10"></span></label></div>
 
  <div class="sub-label">Outerwear</div>
  <div class="item"><input type="checkbox" id="cb-c11" onchange="toggle(this)"><label for="cb-c11">Light jacket or windbreaker</label></div>
  <div class="item"><input type="checkbox" id="cb-c12" onchange="toggle(this)"><label for="cb-c12">Warm coat (if needed)</label></div>
  <div class="item"><input type="checkbox" id="cb-c13" onchange="toggle(this)"><label for="cb-c13">Scarf (if needed)</label></div>
- <div class="item"><input type="checkbox" id="cb-c14" onchange="toggle(this)"><label for="cb-c14">Pajamas</label></div>
+ <div class="item"><input type="checkbox" id="cb-c14" onchange="toggle(this)"><label for="cb-c14">Pajamas<span class="qty" id="qty-cb-c14"></span></label></div>
  </div>
  </div>
 
@@ -433,6 +469,66 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 <script>
  const STORAGE_KEY = 'packing_generic_v1';
+ const DAYS_KEY = 'packing_generic_days_v1';
+
+ // How clothing scales with trip length. ratio = items per day; min = floor;
+ // cap = max (assumes laundry on longer trips); unit = word shown after the number.
+ const QTY = {
+ 'cb-c1':  { ratio: 1,    min: 2, unit: 'pairs' },  // Socks
+ 'cb-c2':  { ratio: 1,    min: 2, unit: 'pairs' },  // Underwear
+ 'cb-c3':  { ratio: 0.5,  min: 1, cap: 7, unit: '' },     // Bras / undershirts
+ 'cb-c4':  { ratio: 0.75, min: 2, cap: 8, unit: '' },     // T-shirts / tops
+ 'cb-c5':  { ratio: 0.34, min: 1, cap: 5, unit: '' },     // Long-sleeve shirts
+ 'cb-c6':  { ratio: 0.2,  min: 1, cap: 2, unit: '' },     // Sweater / cardigan
+ 'cb-c7':  { ratio: 0.25, min: 1, cap: 3, unit: 'pairs' }, // Jeans / pants
+ 'cb-c8':  { ratio: 0.34, min: 1, cap: 3, unit: 'pairs' }, // Shorts
+ 'cb-c9':  { ratio: 0.2,  min: 1, cap: 2, unit: 'pairs' }, // Dressy pants
+ 'cb-c10': { ratio: 0.2,  min: 1, cap: 2, unit: 'pairs' }, // Leggings
+ 'cb-c14': { ratio: 0.34, min: 1, cap: 3, unit: '' },     // Pajamas
+ };
+
+ function getDays() {
+ var inp = document.getElementById('days-input');
+ var n = inp ? parseInt(inp.value, 10) : 7;
+ if (!n || n < 1) n = 1;
+ if (n > 60) n = 60;
+ return n;
+ }
+
+ function computeQty(cfg, days) {
+ var n = Math.max(cfg.min, Math.ceil(days * cfg.ratio));
+ if (cfg.cap) n = Math.min(n, cfg.cap);
+ return n;
+ }
+
+ function applyQuantities() {
+ var days = getDays();
+ for (var id in QTY) {
+  if (!QTY.hasOwnProperty(id)) continue;
+  var span = document.getElementById('qty-' + id);
+  if (!span) continue;
+  var n = computeQty(QTY[id], days);
+  span.textContent = QTY[id].unit ? (n + ' ' + QTY[id].unit) : ('×' + n);
+ }
+ try { localStorage.setItem(DAYS_KEY, String(days)); } catch (e) {}
+ }
+
+ function changeDays(delta) {
+ var inp = document.getElementById('days-input');
+ if (!inp) return;
+ inp.value = Math.min(60, Math.max(1, getDays() + delta));
+ applyQuantities();
+ }
+
+ function onDaysInput() { applyQuantities(); }
+
+ function loadDays() {
+ try {
+  var raw = localStorage.getItem(DAYS_KEY);
+  var inp = document.getElementById('days-input');
+  if (raw && inp) inp.value = Math.min(60, Math.max(1, parseInt(raw, 10) || 7));
+ } catch (e) {}
+ }
 
  const sections = {
  documents:   ['cb-d1','cb-d2','cb-d3','cb-d4','cb-d5','cb-d6'],
@@ -515,6 +611,8 @@ document.addEventListener('DOMContentLoaded',()=>{
  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
  }
 
+ loadDays();
+ applyQuantities();
  loadState();
  updateProgress(true);
 </script>
