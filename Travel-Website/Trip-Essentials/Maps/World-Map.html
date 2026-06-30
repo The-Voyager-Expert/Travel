@@ -437,6 +437,15 @@ map.on('zoomend', () => { toggleStateLabels(); toggleMinorLabels(); });
 let CITY_DATA = [];
 const cityIcon = L.divIcon({ className: 'city-anchor', iconSize: [0, 0] });
 const cityLayer = L.layerGroup().addTo(map);
+// Guide-pin name labels are permanent (always shown when the pin itself is
+// visible) and take priority over world-city names in the collision pass —
+// pinMarkers/labelPlacedRects declared here, before the initial fitBounds, for
+// the same TDZ reason as CITY_DATA above. labelPlacedRects is reset and re-
+// filled by renderPinLabels() first, then renderCities() builds on top of it
+// so a city name never lands on top of a guide pin's name.
+let pinMarkers = [];
+let labelPlacedRects = [];
+let pinCluster = null;
 // Admin-1 regions for continents too large to overlay eagerly (every continent
 // besides North America, which gets US states + Canada provinces above): each is
 // lazy-loaded the first time you zoom toward it, drawn as filled canvas polygons
@@ -455,7 +464,7 @@ const REGION_SOURCES = {
 };
 const regionState = {};
 Object.keys(REGION_SOURCES).forEach(k => { regionState[k] = { loaded: false, lines: null, regions: [] }; });
-map.on('moveend', () => { renderCities(); maybeLoadRegions(); toggleRegionLines(); renderRegions(); });
+map.on('moveend', () => { renderPinLabels(); renderCities(); maybeLoadRegions(); toggleRegionLines(); renderRegions(); });
 
 // Keep the framed region clear of the overlay controls: pad left for the
 // desktop panel, pad bottom for the mobile docked bar.
@@ -670,20 +679,22 @@ function renderCities() {
   const b = map.getBounds();
   const CAP = 260;
   let shown = 0;
-  const placed = [];   // screen rects of placed labels — skip any name that would overlap
+  // Seeded with guide-pin label rects (placed first, see renderPinLabels) so a
+  // city name never lands on top of a guide pin's permanent name.
+  const placed = labelPlacedRects;
   for (const c of CITY_DATA) {        // sorted by tier → biggest cities first
     if (c[3] > dt) break;             // past the dot tier: nothing smaller qualifies
     if (!b.contains([c[2], c[1]])) continue;
     const m = L.marker([c[2], c[1]], { icon: cityIcon, pane: 'cityDots', interactive: false, keyboard: false });
     if (nt >= 0 && c[3] <= nt) {       // big enough to also show its name at this zoom…
       const p = map.latLngToContainerPoint([c[2], c[1]]);
-      const w = c[0].length * 6.4 + 8, h = 15;          // est. label box, sits to the right of the dot
+      const w = c[0].length * 6.4 + 8, h = 19;          // est. label box (padded), sits to the right of the dot
       const r = { x: p.x + 4, y: p.y - h / 2, w, h };
       let clash = false;
       for (const q of placed) {
         if (r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y) { clash = true; break; }
       }
-      if (!clash) {                    // …and only if it doesn't collide with a bigger city's label
+      if (!clash) {                    // …and only if it doesn't collide with a guide pin's or bigger city's label
         m.bindTooltip(c[0], {
           permanent: true, direction: 'right', offset: [3, 0],
           className: 'city-name-tip', pane: 'cityLabels', interactive: false,
@@ -698,7 +709,7 @@ function renderCities() {
 
 /* ── Pins + clustering ── */
 function buildPins() {
-  const cluster = L.markerClusterGroup({
+  pinCluster = L.markerClusterGroup({
     maxClusterRadius: 32,
     spiderfyOnMaxZoom: true,
     showCoverageOnHover: false,
@@ -729,10 +740,42 @@ function buildPins() {
     });
     const href = p[3];
     m.on('click', () => { window.location.href = href; });
-    cluster.addLayer(m);
+    pinCluster.addLayer(m);
+    pinMarkers.push(m);
   });
 
-  map.addLayer(cluster);
+  map.addLayer(pinCluster);
+  // Re-run the label collision pass on every event that can change which pins
+  // sit at their own screen position (zoom/pan covered by 'moveend'; these two
+  // cover spiderfying a tight cluster, which doesn't move the map).
+  pinCluster.on('spiderfied unspiderfied animationend', renderPinLabels);
+  renderPinLabels();
+}
+
+/* ── Guide-pin name collision pass ── runs before renderCities() each moveend
+   so guide names always win the spot; a pin hidden inside a cluster bubble has
+   no individual marker on screen, so it's skipped (its tooltip stays closed —
+   Leaflet never opens a permanent tooltip for a layer that isn't added to the
+   map directly). ── */
+function renderPinLabels() {
+  labelPlacedRects = [];
+  if (!pinCluster) return;
+  const b = map.getBounds();
+  for (const m of pinMarkers) {
+    const visible = pinCluster.getVisibleParent(m) === m && b.contains(m.getLatLng());
+    if (!visible) { m.closeTooltip(); continue; }
+    const name = m.options.title;
+    const p = map.latLngToContainerPoint(m.getLatLng());
+    const w = name.length * 6.6 + 8, h = 19;   // est. label box (padded), centered above the pin
+    const r = { x: p.x - w / 2, y: p.y - 8 - h, w, h };
+    let clash = false;
+    for (const q of labelPlacedRects) {
+      if (r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y) { clash = true; break; }
+    }
+    if (clash) { m.closeTooltip(); continue; }
+    m.openTooltip();
+    labelPlacedRects.push(r);
+  }
 }
 
 /* ── Region fly-to buttons — switch region in place, no page reload ── */
