@@ -220,6 +220,12 @@ Date · Time · ORIGIN → DEST · FlightNumber · land HH:MM (if useful)
 - **No seat numbers anywhere.** Per owner 2026-05-18 (*"remove all that: Wifey 5A · Hubby 6A this is noise no need"*): seat assignments are noise. They live in the airline app at boarding time, not in this doc. Don't reintroduce them in `.flight-detail`, inline, or anywhere else.
 - Per owner 2026-05-18 (*"Flights should more close together, not skipping line"* → *"the flight shoud not have space like the train"* → *"put all the lights close together. no space"*): `.flight-row` uses `padding: 1px 0; line-height: 1.3`. **No `margin-top` between outbound and return groups.** Each flight is a single line (no sub-detail sub-row unless absolutely needed for ops info). They pack as tight as train rows. Don't loosen this.
 - `.flight-detail` is reserved for actual operational info that's still useful on the day — e.g. `KLM operated` for code-shares, `ref ZDIP3M` for booking refs at the airport. Anything else goes in the main row or doesn't go at all.
+- **No `+1` next-day shorthand on overnight flights.** Per owner 2026-06-30 (*"i dont like this Aug 14 arrive 8:25 AM +1. i get confused"*): when a flight lands the day after it departs, do NOT append `+1` to the arrival time in the row. Instead, drop a plain muted line directly below the `.ftable` row spelling out the arrival date: `Arrives [Month Day]`. Example:
+  ```html
+  <div class="ftable"><span class="fc">Aug 14</span><span class="fc">5:25 PM</span><span class="fc">ATL → MUC</span><span class="fc">DL130</span><span class="fc">arrive 8:25 AM</span></div>
+  <div style="font-size:12px;color:var(--muted);padding:0 0 4px;">Arrives Aug 15</div>
+  ```
+  Applies to any overnight leg, not just transatlantic. Same-day arrivals keep the plain `arrive HH:MM` / `land HH:MM` in the row with no sub-line.
 
 ---
 
