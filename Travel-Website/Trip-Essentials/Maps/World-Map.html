@@ -544,45 +544,52 @@ fetch('data/countries-50m.json')
    so overlay all 50 states + DC (lat/lon GeoJSON) on top of the US country so
    every state is visible — guide or not. Non-interactive, lands in the overlay
    pane (below the pins). No antimeridian clamp here: the country clamp pins
-   lon < -100° to the right edge, which would destroy the whole western US. ── */
+   lon < -100° to the right edge, which would destroy the whole western US.
+   Names feed the same renderRegions() collision pass as every other continent
+   (regionState.us, registered outside REGION_SOURCES since it's loaded eagerly,
+   not lazily) — found via mobile testing: Connecticut/Rhode Island and
+   Delaware/DC always overlapped because this used a permanent, unculled
+   tooltip with zero collision checking. ── */
+regionState.us = { loaded: true, lines: null, regions: [] };
 fetch('data/us-states.json')
   .then(r => r.json())
   .then(us => {
     L.geoJSON(us, {
       interactive: false,
       style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
-      onEachFeature: (f, lyr) => {
-        const nm = f.properties && f.properties.name;
-        if (!nm) return;
-        lyr.bindTooltip(nm, {
-          permanent: true, direction: 'center', className: 'state-label-tip',
-          pane: 'stateLabels', interactive: false,
-        });
-      },
     }).addTo(map);
-    toggleStateLabels();   // respect current zoom (hidden until zoomed into the US)
+    us.features.forEach(f => {
+      const nm = f.properties && f.properties.name;
+      if (!nm) return;
+      const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+      const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+      regionState.us.regions.push({ name: nm, lat: c.lat, lon: c.lng, sz });
+    });
+    regionState.us.regions.sort((a, b) => b.sz - a.sz);
+    toggleStateLabels(); renderRegions();   // respect current zoom (hidden until zoomed into the US)
   })
   .catch(() => {});
 
 /* ── Canada province/territory boundaries ── same treatment as US states: overlay
    all 13 provinces + territories on top of the single Canada polygon so every one
    is visible, with names revealed at the same zoom gate. ── */
+regionState.ca = { loaded: true, lines: null, regions: [] };
 fetch('data/canada-provinces.json')
   .then(r => r.json())
   .then(ca => {
     L.geoJSON(ca, {
       interactive: false,
       style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
-      onEachFeature: (f, lyr) => {
-        const nm = f.properties && f.properties.name;
-        if (!nm) return;
-        lyr.bindTooltip(nm, {
-          permanent: true, direction: 'center', className: 'state-label-tip',
-          pane: 'stateLabels', interactive: false,
-        });
-      },
     }).addTo(map);
-    toggleStateLabels();
+    ca.features.forEach(f => {
+      const nm = f.properties && f.properties.name;
+      if (!nm) return;
+      const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+      const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+      regionState.ca.regions.push({ name: nm, lat: c.lat, lon: c.lng, sz });
+    });
+    regionState.ca.regions.sort((a, b) => b.sz - a.sz);
+    toggleStateLabels(); renderRegions();
   })
   .catch(() => {});
 
@@ -633,7 +640,13 @@ function renderRegions() {
   if (map.getZoom() < 4.5) return;
   const all = Object.values(regionState).flatMap(st => st.regions);
   if (!all.length) return;
-  const b = map.getBounds(); const placed = []; let shown = 0;
+  const b = map.getBounds();
+  // Seeded with guide-pin + city label rects (placed earlier this moveend, see
+  // renderPinLabels/renderCities) so a region name never lands on a guide pin's
+  // name — found via mobile testing: "Foz do Iguaçu"/"Buenos Aires" pins were
+  // overlapping "Caaguazú"/"Colonia" province names at the zoom guides sit at.
+  const placed = labelPlacedRects;
+  let shown = 0;
   for (const r of all) {                         // biggest region first (within each set)
     if (!b.contains([r.lat, r.lon])) continue;
     const p = map.latLngToContainerPoint([r.lat, r.lon]);
