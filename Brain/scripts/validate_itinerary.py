@@ -37,6 +37,7 @@ import re
 import json
 import hashlib as _hashlib
 import time as _time
+import unicodedata as _unicodedata
 from datetime import date, datetime
 from pathlib import Path
 from html import unescape as _html_unescape
@@ -384,14 +385,25 @@ def validate(html: str, filename: str):
     # names like "guide_v1.html" or arbitrary text.
     _guide_filename = Path(filename).name
     _guide_folder = Path(filename).parent.name  # e.g., "Cairo", "Lake Tahoe", "Azores"
-    # Convert folder name to lowercase slug: spaces/hyphens → underscores
-    _city_slug = re.sub(r'[\s-]+', '_', _guide_folder.lower())
-    # Filename must start with city slug, followed by _v and version number
-    _filename_pattern = rf'^{re.escape(_city_slug)}_v\d+\.html$'
-    _filename_valid = re.match(_filename_pattern, _guide_filename, re.IGNORECASE)
+    # Convert folder name to lowercase slug: spaces/hyphens → underscores, diacritics
+    # stripped (folders may keep accents — São Luís, Maceió, São Paulo — but the file
+    # slug never does; matches brain_check.py's ASCII-only _GUIDE_FILENAME_RE).
+    _ascii_folder = _unicodedata.normalize('NFKD', _guide_folder).encode('ascii', 'ignore').decode()
+    _city_slug = re.sub(r'[\s-]+', '_', _ascii_folder.lower())
+    # Filename must start with the (possibly abbreviated) city slug, followed by
+    # _v and a version number. Slugs are legitimately abbreviated (San Francisco ->
+    # sf_v3, Carmel-by-the-Sea -> carmel_v1) so this only enforces shape, not an
+    # exact match against the folder-derived slug — except the literal "guide_v"
+    # placeholder, which is never valid regardless of shape (a build that skipped
+    # the Phase 0 read defaults the slug to the literal word "guide").
+    _filename_pattern = r'^[a-z0-9][a-z0-9_-]*_v\d+\.html$'
+    _filename_valid = (
+        re.match(_filename_pattern, _guide_filename, re.IGNORECASE) is not None
+        and not _guide_filename.lower().startswith("guide_v")
+    )
     check(
-        f"Guide HTML filename follows pattern: {_city_slug}_v*.html (city-specific + version)",
-        _filename_valid is not None,
+        f"Guide HTML filename follows pattern: {{city_slug}}_v*.html (city-specific + version)",
+        _filename_valid,
         f"Found: {_guide_filename} in {_guide_folder}/ — rename to {_city_slug}_v1.html (or higher version number)"
     )
 
