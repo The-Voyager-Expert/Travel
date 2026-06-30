@@ -439,13 +439,19 @@ map.on('zoomend', () => { toggleStateLabels(); toggleMinorLabels(); });
 let CITY_DATA = [];
 const cityIcon = L.divIcon({ className: 'city-dot-icon', iconSize: [5, 5], iconAnchor: [2.5, 2.5] });
 const cityLayer = L.layerGroup().addTo(map);
-// European admin-1 regions (lazy-loaded the first time you zoom into Europe): canvas
-// boundary lines + viewport-culled, collision-avoided names — same idea as the cities.
-let EU_REGIONS = [], euRegionLines = null, euLoaded = false;
+// Admin-1 regions for continents too large to overlay eagerly (Europe, South America):
+// lazy-loaded the first time you zoom toward that continent, canvas boundary lines +
+// viewport-culled, collision-avoided names — same idea as the cities.
 const euRegionLayer = L.layerGroup().addTo(map);
 const euCanvas = L.canvas({ padding: 0.4 });
 const blankIcon = L.divIcon({ className: 'eu-region-anchor', iconSize: [0, 0] });
-map.on('moveend', () => { renderCities(); maybeLoadEurope(); toggleEuLines(); renderRegions(); });
+const REGION_SOURCES = {
+  eu: { bbox: L.latLngBounds([34, -25], [72, 45]), file: 'data/europe-regions.json' },
+  sa: { bbox: L.latLngBounds([-56, -82], [13, -34]), file: 'data/south-america-regions.json' },
+};
+const regionState = {};
+Object.keys(REGION_SOURCES).forEach(k => { regionState[k] = { loaded: false, lines: null, regions: [] }; });
+map.on('moveend', () => { renderCities(); maybeLoadRegions(); toggleRegionLines(); renderRegions(); });
 
 // Keep the framed region clear of the overlay controls: pad left for the
 // desktop panel, pad bottom for the mobile docked bar.
@@ -553,43 +559,53 @@ fetch('data/canada-provinces.json')
   })
   .catch(() => {});
 
-/* ── European regions (admin-1) ── same idea as US states: subdivide every European
-   country with boundary lines + names. 1465 regions + 2MB, so it's lazy-loaded the
-   first time you zoom toward Europe, drawn on a canvas (lines), with names viewport-
-   culled + collision-avoided (biggest region first) like the cities. ── */
-const EU_BBOX = L.latLngBounds([34, -25], [72, 45]);
-function maybeLoadEurope() {
-  if (euLoaded || map.getZoom() < 4) return;
-  if (!map.getBounds().intersects(EU_BBOX)) return;
-  euLoaded = true;
-  fetch('data/europe-regions.json')
-    .then(r => r.json())
-    .then(geo => {
-      euRegionLines = L.geoJSON(geo, {
-        interactive: false, renderer: euCanvas,
-        style: { fillOpacity: 0, color: '#9c7b50', weight: 0.6 },
-      });
-      geo.features.forEach(f => {
-        const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
-        const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
-        EU_REGIONS.push({ name: f.properties.name, lat: c.lat, lon: c.lng, sz });
-      });
-      EU_REGIONS.sort((a, b) => b.sz - a.sz);   // biggest region first
-      toggleEuLines(); renderRegions();
-    })
-    .catch(() => { euLoaded = false; });
+/* ── Admin-1 regions (Europe + South America) ── same idea as US states: subdivide
+   every country in these continents with boundary lines + names. Each set is a
+   couple thousand regions / ~2MB, so each is lazy-loaded the first time you zoom
+   toward that continent, drawn on a canvas (lines), with names viewport-culled +
+   collision-avoided (biggest region first) like the cities.
+   (REGION_SOURCES / regionState declared earlier, before the initial fitBounds —
+   that call fires 'moveend' synchronously, which would otherwise hit these in
+   their temporal dead zone.) ── */
+function maybeLoadRegions() {
+  if (map.getZoom() < 4) return;
+  Object.entries(REGION_SOURCES).forEach(([key, src]) => {
+    const st = regionState[key];
+    if (st.loaded || !map.getBounds().intersects(src.bbox)) return;
+    st.loaded = true;
+    fetch(src.file)
+      .then(r => r.json())
+      .then(geo => {
+        st.lines = L.geoJSON(geo, {
+          interactive: false, renderer: euCanvas,
+          style: { fillOpacity: 0, color: '#9c7b50', weight: 0.6 },
+        });
+        geo.features.forEach(f => {
+          const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+          const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+          st.regions.push({ name: f.properties.name, lat: c.lat, lon: c.lng, sz });
+        });
+        st.regions.sort((a, b) => b.sz - a.sz);   // biggest region first
+        toggleRegionLines(); renderRegions();
+      })
+      .catch(() => { st.loaded = false; });
+  });
 }
-function toggleEuLines() {
-  if (!euRegionLines) return;
+function toggleRegionLines() {
   const on = map.getZoom() >= 4;
-  if (on && !map.hasLayer(euRegionLines)) euRegionLines.addTo(map);
-  else if (!on && map.hasLayer(euRegionLines)) map.removeLayer(euRegionLines);
+  Object.values(regionState).forEach(st => {
+    if (!st.lines) return;
+    if (on && !map.hasLayer(st.lines)) st.lines.addTo(map);
+    else if (!on && map.hasLayer(st.lines)) map.removeLayer(st.lines);
+  });
 }
 function renderRegions() {
   euRegionLayer.clearLayers();
-  if (!EU_REGIONS.length || map.getZoom() < 4.5) return;
+  if (map.getZoom() < 4.5) return;
+  const all = Object.values(regionState).flatMap(st => st.regions);
+  if (!all.length) return;
   const b = map.getBounds(); const placed = []; let shown = 0;
-  for (const r of EU_REGIONS) {                 // biggest region first
+  for (const r of all) {                         // biggest region first (within each set)
     if (!b.contains([r.lat, r.lon])) continue;
     const p = map.latLngToContainerPoint([r.lat, r.lon]);
     const w = r.name.length * 6 + 8, h = 14;
