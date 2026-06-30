@@ -377,6 +377,28 @@ def _run_start() -> int:
     _ensure_pre_push_hook()
     print()
 
+    # Step 0b: Travel-Tracker resync — Travel-Tracker.html is a one-way generated
+    # mirror of Guides-Index.html (sync_tracker.py normally fires at the end of
+    # update-index, after every ship). It silently drifts whenever Guides-Index.html
+    # is edited outside that pipeline (a direct structural fix, a status correction,
+    # a CSS tweak touching the file). MUST run before any step below that can
+    # `return` early on failure (brain-check, coverage, flight-index all do) — a
+    # sync step placed after them would simply never fire whenever one of them is
+    # red, which is exactly the scenario that let the tracker go stale repeatedly.
+    # Cheap, idempotent rewrite of a Drive-only file (not git-tracked); never blocks.
+    # (added 2026-06-30, moved ahead of brain-check same day after it was found
+    # silently skipped whenever brain-check failed)
+    print("▶ Step 0b — Travel-Tracker resync")
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location("sync_tracker", BRAIN_DIR / "scripts" / "sync_tracker.py")
+        _mod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_mod)
+        _mod.sync()
+    except Exception as _e:
+        print(f"  ⚠  Travel-Tracker sync failed: {_e}", file=sys.stderr)
+    print()
+
     # Step 1: brain-check
     print("▶ Step 1/4 — brain-check")
     rc1 = _run(SUBCOMMANDS["brain-check"], [])
@@ -440,24 +462,6 @@ def _run_start() -> int:
             file=sys.stderr,
         )
         return rc3d
-
-    # Step 3e: Travel-Tracker resync — Travel-Tracker.html is a one-way generated
-    # mirror of Guides-Index.html (sync_tracker.py normally fires at the end of
-    # update-index, after every ship). It silently drifts whenever Guides-Index.html
-    # is edited outside that pipeline (a direct structural fix, a status correction,
-    # a CSS tweak touching the file) — the 2026-06-30 session found it stale this
-    # way. Re-running sync here is a cheap, idempotent rewrite (Drive-only file, not
-    # git-tracked) so the tracker can never silently fall behind again. Never blocks.
-    # (added 2026-06-30)
-    print("\n▶ Step 3e — Travel-Tracker resync")
-    try:
-        import importlib.util as _ilu
-        _spec = _ilu.spec_from_file_location("sync_tracker", BRAIN_DIR / "scripts" / "sync_tracker.py")
-        _mod = _ilu.module_from_spec(_spec)
-        _spec.loader.exec_module(_mod)
-        _mod.sync()
-    except Exception as _e:
-        print(f"  ⚠  Travel-Tracker sync failed: {_e}", file=sys.stderr)
 
     # Step 4: open To Do items
     print("\n▶ Step 4/4 — open To Do items")
