@@ -391,6 +391,12 @@ const REGIONS = {
 };
 
 /* ── Map init ── */
+// zoomAnimation: false — maxBoundsViscosity fights Leaflet's CSS-transition zoom
+// animation hard enough that the transition never resolves: scroll-wheel zoom,
+// pinch-zoom, the +/- buttons, and any animated setView/fitBounds all silently
+// froze at the starting zoom (confirmed: a raw flyTo() call hung the renderer
+// for 45s+ and never completed). Instant (non-animated) zoom is unaffected,
+// which is why this stayed invisible through every {animate:false} test call.
 const map = L.map('map', {
   zoomControl: false,
   attributionControl: false,
@@ -398,6 +404,7 @@ const map = L.map('map', {
   maxZoom: 11,
   worldCopyJump: false,
   zoomSnap: 0.25,
+  zoomAnimation: false,
   maxBounds: [[-85, -200], [85, 200]],
   maxBoundsViscosity: 0.7,
 });
@@ -468,10 +475,17 @@ map.on('moveend', () => { renderPinLabels(); renderCities(); maybeLoadRegions();
 
 // Keep the framed region clear of the overlay controls: pad left for the
 // desktop panel, pad bottom for the mobile docked bar.
+// animate: false on every call — Leaflet's animated pan/zoom path (used whenever
+// the map already has a prior view, i.e. every region-button click) never
+// resolves against this map's maxBounds/maxBoundsViscosity: confirmed by testing
+// flyTo() directly — the view froze and the tab itself stopped responding. The
+// very first fitBounds() at page load is unaffected only because there's no
+// prior view to animate from, which is why this bug was invisible until a
+// button got clicked.
 function fitOpts() {
   return (window.innerWidth <= 640)
-    ? { paddingTopLeft: [12, 12], paddingBottomRight: [12, 86] }
-    : { paddingTopLeft: [150, 14], paddingBottomRight: [14, 14] };
+    ? { paddingTopLeft: [12, 12], paddingBottomRight: [12, 86], animate: false }
+    : { paddingTopLeft: [150, 14], paddingBottomRight: [14, 14], animate: false };
 }
 map.fitBounds(REGIONS.world, fitOpts());
 
@@ -778,13 +792,18 @@ function renderPinLabels() {
   }
 }
 
-/* ── Region fly-to buttons — switch region in place, no page reload ── */
+/* ── Region jump buttons — switch region in place, no page reload.
+   NOTE: map.flyToBounds()/flyTo() never resolve on this map — they hang against
+   maxBounds/maxBoundsViscosity (confirmed: zoom froze indefinitely, the tab itself
+   stopped responding) — so every region button silently did nothing. fitBounds()
+   is the same call the initial world view already uses successfully; it just
+   jumps instead of animating. ── */
 document.querySelectorAll('.rn').forEach(el => {
   el.addEventListener('click', e => {
     e.preventDefault();
     document.querySelectorAll('.rn').forEach(r => r.classList.remove('rn-on'));
     el.classList.add('rn-on');
-    map.flyToBounds(REGIONS[el.dataset.region], Object.assign({ duration: 0.6 }, fitOpts()));
+    map.fitBounds(REGIONS[el.dataset.region], fitOpts());
   });
 });
 </script>
