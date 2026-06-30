@@ -439,15 +439,21 @@ map.on('zoomend', () => { toggleStateLabels(); toggleMinorLabels(); });
 let CITY_DATA = [];
 const cityIcon = L.divIcon({ className: 'city-dot-icon', iconSize: [5, 5], iconAnchor: [2.5, 2.5] });
 const cityLayer = L.layerGroup().addTo(map);
-// Admin-1 regions for continents too large to overlay eagerly (Europe, South America):
-// lazy-loaded the first time you zoom toward that continent, canvas boundary lines +
-// viewport-culled, collision-avoided names — same idea as the cities.
+// Admin-1 regions for continents too large to overlay eagerly (every continent
+// besides North America, which gets US states + Canada provinces above): each is
+// lazy-loaded the first time you zoom toward it, drawn as filled canvas polygons
+// (same look as the US/Canada overlay) with viewport-culled, collision-avoided
+// names — same idea as the cities.
 const euRegionLayer = L.layerGroup().addTo(map);
 const euCanvas = L.canvas({ padding: 0.4 });
 const blankIcon = L.divIcon({ className: 'eu-region-anchor', iconSize: [0, 0] });
 const REGION_SOURCES = {
   eu: { bbox: L.latLngBounds([34, -25], [72, 45]), file: 'data/europe-regions.json' },
   sa: { bbox: L.latLngBounds([-56, -82], [13, -34]), file: 'data/south-america-regions.json' },
+  af: { bbox: L.latLngBounds([-36, -19], [38, 52]), file: 'data/africa-regions.json' },
+  as: { bbox: L.latLngBounds([-12, 48], [44, 146]), file: 'data/asia-regions.json' },
+  oc: { bbox: L.latLngBounds([-48, 140], [-31, 177]), file: 'data/oceania-regions.json' },
+  cb: { bbox: L.latLngBounds([11, -85], [27, -58]), file: 'data/caribbean-regions.json' },
 };
 const regionState = {};
 Object.keys(REGION_SOURCES).forEach(k => { regionState[k] = { loaded: false, lines: null, regions: [] }; });
@@ -559,11 +565,13 @@ fetch('data/canada-provinces.json')
   })
   .catch(() => {});
 
-/* ── Admin-1 regions (Europe + South America) ── same idea as US states: subdivide
-   every country in these continents with boundary lines + names. Each set is a
-   couple thousand regions / ~2MB, so each is lazy-loaded the first time you zoom
-   toward that continent, drawn on a canvas (lines), with names viewport-culled +
-   collision-avoided (biggest region first) like the cities.
+/* ── Admin-1 regions (Europe, South America, Africa, Asia, Oceania, Caribbean) ──
+   same idea as US states: subdivide every country in these continents with
+   filled polygons + names, same look as the US/Canada overlay. Each set is up to
+   ~1500 regions / under 1MB (mapshaper-simplified), so each is lazy-loaded the
+   first time you zoom toward that continent, drawn on a canvas (filled, not SVG,
+   to keep thousands of polygons cheap), with names viewport-culled + collision-
+   avoided (biggest region first) like the cities.
    (REGION_SOURCES / regionState declared earlier, before the initial fitBounds —
    that call fires 'moveend' synchronously, which would otherwise hit these in
    their temporal dead zone.) ── */
@@ -578,7 +586,7 @@ function maybeLoadRegions() {
       .then(geo => {
         st.lines = L.geoJSON(geo, {
           interactive: false, renderer: euCanvas,
-          style: { fillOpacity: 0, color: '#9c7b50', weight: 0.6 },
+          style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
         });
         geo.features.forEach(f => {
           const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
