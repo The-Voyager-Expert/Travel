@@ -400,6 +400,13 @@ Format:
 
 Place it after the Maps link (and after the phone number if one is present). The label should be the bare domain or a short readable name — not the full URL.
 
+### Venue blocks must always show the conference/event dates
+Per owner 2026-07-01 (*"add the floc dates. the conference dates should always be there"*): every venue block (`.hotel.hubby-block` or `.hotel` used for a conference/event, not a hotel) must show the actual conference/event date range in `.hotel-meta`, not just the city name. Look up the official dates from the event's own website (e.g. floc26.org) — don't fabricate or guess from the trip's flight/hotel dates, since the event can run longer or shorter than the traveler's personal stay. Format: `City <span class="hotel-sep">·</span> Date range · conference dates`. Example:
+```html
+<div class="hotel-meta">Lisbon <span class="hotel-sep">·</span> Jul 20–23 & 26–29 · conference dates</div>
+```
+This applies retroactively too — if an existing venue block is missing its dates, add them the next time that trip card is touched.
+
 ### One 🏨 icon per trip card
 The hotel emoji appears only on the section label. Don't use it again on individual hotel names inside the block — it gets too busy.
 
