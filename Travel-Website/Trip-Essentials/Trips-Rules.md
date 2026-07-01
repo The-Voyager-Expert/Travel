@@ -116,6 +116,8 @@ The mental model: **anything involving Hubby is green; Wifey alone is purple.**
 
 **Calendar parity rule:** the Hubby&Wifey Trips Google Calendar uses the same scheme — Grape (`colorId 3`) for Wifey-only events, Sage (`colorId 2`) for Hubby events and Together events. If owner recolors the calendar palette, flip the trips palette to match — and vice versa.
 
+**Live implementation note (found 2026-07-01):** the actual `Trips.html` on disk does not use `tag-solo`/`tag-hubby`/`tag-together` — it uses simpler `.who .hubby` / `.who .wifey` / `.who .both` spans with a colored `::before` dot, styled via `var(--hubby)` / `var(--wifey)`. Both variables were **undefined** (silent no-op — the dots rendered with no color at all) until fixed 2026-07-01, when owner asked for *"Wifey Hotel should have a pink dot and hubby only a green dot"*. Defined locally in a `:root` block inside `Trips.html`'s own `<style>` (not the shared `web-travel-style.css`, since these two vars are used only on this page): `--hubby: #2e7d32` (sage green — matches the table above), `--wifey: #d6336c` (pink — supersedes the "grape purple" in the table above for the section-label dot; the calendar's Grape `colorId 3` for Wifey-solo events is unaffected, per parity rule above, unless owner says otherwise).
+
 ### Tag placement — section only, pill leads
 
 Per owner 2026-05-18 (*"i like the lable but no need to repeat before and after"* + *"name first"*): the who-tag pill lives on the **section header** (`.sec`), not on the individual `.booking-name`, and the **pill leads the line** — pill first, then the section icon and label.
