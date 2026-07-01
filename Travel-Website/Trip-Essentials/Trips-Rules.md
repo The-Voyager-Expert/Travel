@@ -398,7 +398,7 @@ Format:
 <p>🌐 <a href="https://...">short-label.org</a></p>
 ```
 
-Place it after the Maps link (and after the phone number if one is present). The label should be the bare domain or a short readable name — not the full URL.
+Place it directly below the venue/conference name — before the address (per owner 2026-07-01: *"lets also makes sure that the website comes just below the conference name"*, superseding the earlier "after the Maps link" placement). The label should be the bare domain or a short readable name — not the full URL. Order: hotel-name (Maps link) → website `<p>` → address `.copy`.
 
 ### Venue blocks must always show the conference/event dates
 Per owner 2026-07-01 (*"add the floc dates. the conference dates should always be there"*): every venue block (`.hotel.hubby-block` or `.hotel` used for a conference/event, not a hotel) must show the actual conference/event date range in `.hotel-meta`, not just the city name. Look up the official dates from the event's own website (e.g. floc26.org) — don't fabricate or guess from the trip's flight/hotel dates, since the event can run longer or shorter than the traveler's personal stay.
