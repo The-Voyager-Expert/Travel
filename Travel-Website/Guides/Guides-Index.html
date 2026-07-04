@@ -392,26 +392,26 @@ body.mode-flights .fnote { display: block; }
 .stab:active { color: #fff; background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%); transform: scale(.97) translateY(1px); }
 .stab.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; font-weight: 600; }
 /* ══ Compare mode ══ */
-body.mode-compare .mosaic .dest-card { cursor: pointer; user-select: none; }
-body.mode-compare .mosaic .dest-card.cmp-sel {
+body.mode-compare .mosaic-wrap .dest-card { cursor: pointer; user-select: none; }
+body.mode-compare .mosaic-wrap .dest-card.cmp-sel {
   background: rgba(138,108,26,.13);
   border-left-color: var(--accent);
   box-shadow: 0 0 0 1.5px var(--accent);
 }
-body.mode-compare .mosaic .dest-card.cmp-sel .dest-name { color: var(--accent); }
-body.mode-compare .mosaic .dest-card.cmp-sel::after {
+body.mode-compare .mosaic-wrap .dest-card.cmp-sel .dest-name { color: var(--accent); }
+body.mode-compare .mosaic-wrap .dest-card.cmp-sel::after {
   content: "✓"; position: absolute; right: 8px; top: 50%;
   transform: translateY(-50%);
   font-size: 11px; font-weight: 700; color: var(--accent);
   width: auto; height: auto; border-radius: 0; background: none;
 }
-body.mode-compare .mosaic .dest-card[data-status="want"].cmp-sel::after {
+body.mode-compare .mosaic-wrap .dest-card[data-status="want"].cmp-sel::after {
   /* override the "want" blue dot with a checkmark */
   content: "✓"; width: auto; height: auto; background: none;
   border-radius: 0; font-size: 11px; color: var(--accent);
 }
 /* Dim non-selected cards once 3 are chosen */
-body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
+body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45; }
 /* Compare selection panel — sits in the same band as When-to-go / Browse-by */
 .cmp-sel-bar {
   margin: 16px 0 26px; padding: 14px 18px;
@@ -1711,7 +1711,7 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
 <!-- ══ The Best of — fixed sidebar column ══ -->
 <div class="mosaic-sidebar">
 <div class="country" data-country="specialized-trips">
-  <div class="country-label">🌎 The Best of · <span class="country-count">7 guides</span></div>
+  <div class="country-label">🌎 The Best of · <span class="country-count">9 guides</span></div>
   <div class="dest-grid">
     <a class="dest-card" data-special="1" href="../Trip-Essentials/Safari-Guide.html">
       <span class="dest-flag">🦁</span><span class="dest-name">Safari Guide</span>
@@ -1733,6 +1733,9 @@ body.mode-compare.cmp-full .mosaic .dest-card:not(.cmp-sel) { opacity: .45; }
     </a>
     <a class="dest-card" data-special="1" href="../Trip-Essentials/Best-Unique-Museums.html">
       <span class="dest-flag">🎭</span><span class="dest-name">Best Unique Museums</span>
+    </a>
+    <a class="dest-card" data-special="1" href="../Trip-Essentials/Best-Hot-Springs.html">
+      <span class="dest-flag">♨️</span><span class="dest-name">Best Hot Springs</span>
     </a>
   </div>
 </div>
@@ -1894,7 +1897,7 @@ window._giStatusFilter = 'all';
   /* ── Keyboard navigation: ↑/↓ move a highlight across visible cards,
      Enter opens it (or the first visible card if none highlighted). ── */
   function visibleCards() {
-    return [].slice.call(document.querySelectorAll('.mosaic .dest-card'))
+    return [].slice.call(document.querySelectorAll('.mosaic-wrap .dest-card'))
       .filter(function (c) { return c.style.display !== 'none' && c.offsetParent !== null; });
   }
   function clearKbd() {
@@ -2031,7 +2034,7 @@ window._giStatusFilter = 'all';
 
   var items = [];
 
-  document.querySelectorAll('.mosaic .dest-card').forEach(function (c) {
+  document.querySelectorAll('.mosaic-wrap .dest-card').forEach(function (c) {
     var key = c.getAttribute('href').replace(/^\.\//, '');
     var d = FMAP[key]; if (!d || d.r === 'home') return;
     var a = c.cloneNode(true);
@@ -2696,7 +2699,7 @@ window._giStatusFilter = 'all';
   }
 
   /* ── Card click handler ──────────────────────────────────────────── */
-  document.querySelectorAll('.mosaic .dest-card').forEach(function(card) {
+  document.querySelectorAll('.mosaic-wrap .dest-card').forEach(function(card) {
     card.addEventListener('click', function(e) {
       if (!document.body.classList.contains('mode-compare')) return;
       e.preventDefault();
@@ -3323,7 +3326,7 @@ window._giStatusFilter = 'all';
 /* ══ Language filter + view dropdown ══ */
 (function () {
   var activeLangs = [];
-  var allCards = [].slice.call(document.querySelectorAll('.mosaic .dest-card'));
+  var allCards = [].slice.call(document.querySelectorAll('.mosaic-wrap .dest-card'));
   var langChips = document.getElementById('lang-chips');
   var langBadge = document.getElementById('lang-badge');
   var langCount = document.getElementById('lang-count');
