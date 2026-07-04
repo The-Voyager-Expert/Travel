@@ -221,7 +221,7 @@ def run_sweep() -> dict[str, list[str]]:
             for g in sd.get("guides", []):
                 u = g.get("u", "")
                 if u:
-                    search_folders.add(u.split("/")[0])
+                    search_folders.add(unquote(u).split("/")[0])
                 if g.get("c"):
                     search_names.add(g["c"])
         except json.JSONDecodeError:

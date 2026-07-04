@@ -170,11 +170,15 @@ def write_stamp(filepath: str | Path, html: str | None = None, key: bytes | None
         html = path.read_text(encoding="utf-8")
     stamp = make_stamp(html, key)
 
-    if _PENDING_RE.search(html):
+    if _PENDING_RE.search(html) or _STAMP_RE.search(html):
         stamped = _PENDING_RE.sub(stamp, html, count=1)
-    elif _STAMP_RE.search(html):
-        # count=1: collapse to a single fresh stamp even if duplicates exist.
-        stamped = _STAMP_RE.sub(stamp, html, count=1)
+        stamped = _PENDING_RE.sub("", stamped)
+        if stamped == html:
+            stamped = _STAMP_RE.sub(stamp, html, count=1)
+        remaining = list(_STAMP_RE.finditer(stamped))
+        if len(remaining) > 1:
+            for m in reversed(remaining[1:]):
+                stamped = stamped[:m.start()] + stamped[m.end():]
     else:
         stamped = None
         for marker in ("<!DOCTYPE html>", "<html"):

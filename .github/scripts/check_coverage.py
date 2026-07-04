@@ -149,7 +149,7 @@ def main() -> int:
         try:
             for g in json.loads(_read(sj)).get("guides", []):
                 if g.get("u"):
-                    search_folders.add(g["u"].split("/")[0])
+                    search_folders.add(unquote(g["u"]).split("/")[0])
                 if g.get("c"):
                     search_names.add(g["c"])
         except json.JSONDecodeError:
@@ -158,7 +158,7 @@ def main() -> int:
     inline_blocks = {n: _json_block(index_html, n)
                      for n in ("CLIMATE_INLINE", "COST_DATA", "SAFETY_DATA")}
     fmap = _json_block(index_html, "FMAP")
-    fmap_keys_lower = [k.lower() for k in fmap]
+    fmap_keys_lower = [unquote(k).lower() for k in fmap]
     home_folders = {k.split("/")[0] for k, fd in fmap.items()
                     if isinstance(fd, dict) and fd.get("r") == "home"}
 

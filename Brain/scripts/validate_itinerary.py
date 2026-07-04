@@ -1802,8 +1802,8 @@ def validate(html: str, filename: str):
                     _expl = str(_e.get("notes", "") or _e.get("explanation", "")).strip()
                     if len(_expl) >= _WIKI_OMIT_MIN_EXPLANATION:
                         _wiki_omit_logged += 1
-    except Exception:
-        _wiki_omit_logged = 0
+    except Exception as _wiki_e:
+        print(f"  ⚠ verification_log parse error: {_wiki_e}")
     _n_missing = len(stop_blocks_no_wiki)
     if _n_missing >= 2:
         _wiki_ok = False
@@ -1940,7 +1940,7 @@ def validate(html: str, filename: str):
     # downstream ride check (closer, RNH, Michelin check-D, Stations, Tours…)
     # validates 🚤 with the identical format/time/order rules as 🚕.
     print("\n── 🚤 CAR-FREE CITY RIDE GLYPH ──")
-    CAR_FREE_CITIES = {'venice'}
+    CAR_FREE_CITIES = {'venice', 'maldives'}
     _city_lc = city_text.strip().lower()
     _car_free = _city_lc in CAR_FREE_CITIES
     # Getting Around may legitimately keep a 🚕 ride-app heading; exclude it.
@@ -4382,7 +4382,7 @@ def validate(html: str, filename: str):
         html,
     ))
     stop_blocks_raw = re.findall(
-        r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-block\b[^"]*"[^>]*>(.*?)(?=<div\b[^>]*class\s*=\s*"(?:stop-block|next|next-tram|train|day-header|day-block|extras-section)\b|<hr\b|</body>)',
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-block\b[^"]*"[^>]*>(.*?)(?=<div\b[^>]*class\s*=\s*"(?:stop-block|next|next-tram|train|day-header|day-block|extras-section)\b|<hr\b|</body>|\Z)',
         html,
         re.DOTALL,
     )
@@ -6035,7 +6035,7 @@ def validate(html: str, filename: str):
     # ─── 📍 ADDRESS = LAST ROW OF EVERY .tour-box / .ticket-box ────
     box_pin_not_last: list[str] = []
     box_re = re.compile(
-        r'<div\s+class\s*=\s*"(tour-box|ticket-box)"[^>]*>(.*?)</div>\s*'
+        r'<div\b[^>]*class\s*=\s*"(tour-box|ticket-box)"[^>]*>(.*?)</div>\s*'
         r'(?=<div\b[^>]*class\s*=\s*"(?:tour-box|ticket-box|stop-photos|stop-photos-empty|next|stop-block)\b|</div>\s*</div>)',
         re.DOTALL | re.IGNORECASE,
     )
@@ -7402,7 +7402,7 @@ def validate(html: str, filename: str):
     print("\n── → hotel ONLY IN VALID CLOSERS ──")
     # Any `→ hotel` outside a valid day-closer or train-day return div is an error.
     _valid_hotel_spans: list[tuple[int, int]] = []
-    for _m in re.finditer(r'<div\b([^>]*)>([^<]*→\s*hotel[^<]*)</div>', html, re.IGNORECASE):
+    for _m in re.finditer(r'<div\b([^>]*)>((?:(?!</div>).)*?→\s*hotel(?:(?!</div>).)*?)</div>', html, re.IGNORECASE | re.DOTALL):
         _attrs = _m.group(1)
         _txt   = _m.group(2).strip()
         if ('arrive-first' in _attrs.lower() and _CLOSER_TRAIN_RE.match(_txt)) \
@@ -10201,7 +10201,7 @@ def validate(html: str, filename: str):
                 )
             elif len(_dr_desc_content) > 80:
                 dr_shape_violations.append(
-                    f'"{heading_plain[:40]}" — description is {len(_dr_desc_line)} chars '
+                    f'"{heading_plain[:40]}" — description is {len(_dr_desc_content)} chars '
                     f'(max 80 per §5): "{_dr_desc_line[:40]}…"'
                 )
 
@@ -11272,8 +11272,8 @@ def validate(html: str, filename: str):
                 # Strip leading ↳ prefix (and any whitespace) before checks
                 _lt_dtxt2_check = re.sub(r'^↳\s*', '', _lt_dtxt2).strip()
                 if _lt_dtxt2:
-                    if len(_lt_dtxt2) < 10:
-                        _lt_desc_tooshort.append(f'"{_lt_label2}" — only {len(_lt_dtxt2)} chars')
+                    if len(_lt_dtxt2_check) < 10:
+                        _lt_desc_tooshort.append(f'"{_lt_label2}" — only {len(_lt_dtxt2_check)} chars')
                     if _lt_dtxt2_check and not _lt_dtxt2_check[0].isupper():
                         _lt_desc_nocap.append(f'"{_lt_label2}" — starts lowercase')
                     if not _lt_dtxt2.endswith('.'):
@@ -12316,7 +12316,7 @@ def validate(html: str, filename: str):
         eoi_sections_in_order.append((m.start(), m.group(1)))
 
     # Normalize legacy ids for backward compat (2026-05-26 rename day-trips → day-trips-by-train).
-    _legacy_id_map = {"day-trips-by-train": "day-trips-by-train", "more-train": "day-trips-by-train"}
+    _legacy_id_map = {"day-trips": "day-trips-by-train", "more-train": "day-trips-by-train"}
     eoi_sections_in_order = [
         (off, _legacy_id_map.get(sid, sid)) for off, sid in eoi_sections_in_order
     ]
@@ -14528,7 +14528,9 @@ def validate(html: str, filename: str):
             _after = _ga_html[_tram_ga_m.end():]
             _tb_neg = re.search(r'class="[^"]*transit-box[^"]*"', _after[:400], re.IGNORECASE)
             if _tb_neg:
-                _tb_text, _ = _walk_balanced_div(_after, _after.index('"transit-box') + 1)
+                _tb_start = _tb_neg.start()
+                _tb_tag_end = _after.find('>', _tb_start)
+                _tb_text, _ = _walk_balanced_div(_after, _tb_tag_end + 1 if _tb_tag_end != -1 else _tb_start)
                 _tb_plain = RE_STRIP_TAGS.sub('', _tb_text).strip()
                 _is_negative = bool(re.search(r'No tram|not available|no service', _tb_plain, re.IGNORECASE))
                 _tram_in_ga = not _is_negative
@@ -15899,11 +15901,14 @@ def validate(html: str, filename: str):
     # the document.  Getting Around uses id="getting-around" OR a wrapping
     # div/section with id="ride-apps" (both occur in practice).
     _ra_outside_html = html
-    for _ra_pattern in (
-        r'<[^>]+\bid\s*=\s*["\'"]getting-around["\'"][^>]*>.*?</(?:div|section)>',
-        r'<[^>]+\bid\s*=\s*["\'"]ride-apps["\'"][^>]*>.*?</(?:div|section)>',
-    ):
-        _ra_outside_html = re.sub(_ra_pattern, '', _ra_outside_html, flags=re.DOTALL | re.IGNORECASE)
+    for _ra_id in ('getting-around', 'ride-apps'):
+        _ra_m = re.search(
+            rf'<div\b[^>]*\bid\s*=\s*["\']?{_ra_id}["\']?[^>]*>',
+            _ra_outside_html, re.IGNORECASE,
+        )
+        if _ra_m:
+            _ra_inner, _ra_end = _walk_balanced_div(_ra_outside_html, _ra_m.end())
+            _ra_outside_html = _ra_outside_html[:_ra_m.start()] + _ra_outside_html[_ra_end:]
 
     # Now look for any remaining <div class="ride-apps"> outside that section.
     _ra_drift_hits = re.findall(
@@ -16582,11 +16587,11 @@ def validate(html: str, filename: str):
     ]
     booking_hits: list[str] = []
     _box_pattern = re.compile(
-        r'<div\s+class\s*=\s*"(?:ticket|tour)-box"[^>]*>(.*?)</div\s*>',
-        re.DOTALL | re.IGNORECASE,
+        r'<div\b[^>]*class\s*=\s*"(?:ticket|tour)-box"[^>]*>',
+        re.IGNORECASE,
     )
     for _box_m in _box_pattern.finditer(html):
-        _box_raw = _box_m.group(1)
+        _box_raw, _ = _walk_balanced_div(html, _box_m.end())
         # Strip tags to get plain text for phrase matching
         _box_text = RE_STRIP_TAGS.sub( ' ', _box_raw)
         _box_text = _box_text.replace('&nbsp;', ' ')
@@ -20011,7 +20016,7 @@ def validate(html: str, filename: str):
         _gd_map: dict[str, tuple[str, str | None]] = {}
         _first_href: str | None = None
         for _gm in re.finditer(
-            r'<a\b[^>]*class\s*=\s*"[^"]*\boverview-day\b[^"]*"([^>]*)>',
+            r'<a\b[^>]*class\s*=\s*"[^"]*\bdest-card\b[^"]*"([^>]*)>',
             _idx_html2, re.IGNORECASE,
         ):
             _attrs = _gm.group(1)
@@ -25192,10 +25197,10 @@ def validate(html: str, filename: str):
         _index_html = _index_path.read_text(encoding='utf-8')
         # Build relative href that would appear in the index: ./City/filename.html
         _guide_rel = './' + Path(filename).parent.name + '/' + Path(filename).name
-        # Find the overview-day block whose href matches this guide
+        # Find the dest-card whose href matches this guide
         _entry_re = re.compile(
             r'<a\b[^>]*href\s*=\s*"[^"]*' + re.escape(_guide_rel) + r'"[^>]*>'
-            r'.*?<div\b[^>]*class\s*=\s*"[^"]*overview-day-title[^"]*"[^>]*>([^<]+)</div>',
+            r'.*?<span\b[^>]*class\s*=\s*"[^"]*dest-name[^"]*"[^>]*>([^<]+)</span>',
             re.DOTALL | re.IGNORECASE,
         )
         _entry_m = _entry_re.search(_index_html)

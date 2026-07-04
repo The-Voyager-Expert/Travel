@@ -58,6 +58,7 @@ COUNTRIES = [
  ("Ireland","Europe","Euro","€","EUR","EUR","", ["Dublin"]),
  ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Rome","Sicily","Siena","Sorrento","Turin","Venice","Verona"]),
  ("Luxembourg","Europe","Euro","€","EUR","EUR","", ["Luxembourg"]),
+ ("Maldives","Asia","Maldivian Rufiyaa","Rf","MVR","MVR","", ["Maldives"]),
  ("Monaco","Europe","Euro","€","EUR","EUR","", ["Monaco"]),
  ("Netherlands","Europe","Euro","€","EUR","EUR","", ["Amsterdam"]),
  ("Norway","Europe","Norwegian Krone","kr","NOK","NOK","", ["Ålesund","Bergen","Oslo","Tromsø"]),
@@ -85,6 +86,7 @@ COUNTRIES = [
  ("Taiwan","Asia","New Taiwan Dollar","NT$","TWD","TWD","", ["Taipei"]),
  ("Philippines","Asia","Philippine Peso","₱","PHP","PHP","", ["Palawan"]),
  ("Thailand","Asia","Thai Baht","฿","THB","THB","", ["Bangkok","Chiang Mai","Phuket"]),
+ ("Vietnam","Asia","Vietnamese Dong","₫","VND","VND","", ["Hanoi"]),
 
  ("Australia","Oceania","Australian Dollar","A$","AUD","AUD","", ["Melbourne","Sydney"]),
  ("New Zealand","Oceania","New Zealand Dollar","NZ$","NZD","NZD","", ["Queenstown","Wellington"]),
