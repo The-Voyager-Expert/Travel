@@ -56,7 +56,7 @@ COUNTRIES = [
  ("Hungary","Europe","Hungarian Forint","Ft","HUF","HUF","", ["Budapest"]),
  ("Iceland","Europe","Icelandic Króna","kr","ISK","ISK","", ["Reykjavik"]),
  ("Ireland","Europe","Euro","€","EUR","EUR","", ["Dublin"]),
- ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Rome","Sicily","Siena","Sorrento","Turin","Venice","Verona"]),
+ ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Puglia","Rome","Sicily","Siena","Sorrento","Turin","Venice","Verona"]),
  ("Luxembourg","Europe","Euro","€","EUR","EUR","", ["Luxembourg"]),
  ("Maldives","Asia","Maldivian Rufiyaa","Rf","MVR","MVR","", ["Maldives"]),
  ("Monaco","Europe","Euro","€","EUR","EUR","", ["Monaco"]),
@@ -86,7 +86,7 @@ COUNTRIES = [
  ("Taiwan","Asia","New Taiwan Dollar","NT$","TWD","TWD","", ["Taipei"]),
  ("Philippines","Asia","Philippine Peso","₱","PHP","PHP","", ["Palawan"]),
  ("Thailand","Asia","Thai Baht","฿","THB","THB","", ["Bangkok","Chiang Mai","Phuket"]),
- ("Vietnam","Asia","Vietnamese Dong","₫","VND","VND","", ["Hanoi"]),
+ ("Vietnam","Asia","Vietnamese Dong","₫","VND","VND","", ["Hanoi","Hoi An"]),
 
  ("Australia","Oceania","Australian Dollar","A$","AUD","AUD","", ["Melbourne","Sydney"]),
  ("New Zealand","Oceania","New Zealand Dollar","NZ$","NZD","NZD","", ["Queenstown","Wellington"]),

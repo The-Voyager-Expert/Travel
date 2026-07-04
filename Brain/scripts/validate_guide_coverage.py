@@ -248,7 +248,7 @@ def run_sweep() -> dict[str, list[str]]:
     # folder -> display name (the JS fallback key for inline/search).
     folder_to_name: dict[str, str] = {}
     for href, name in re.findall(
-        r'<a class="dest-card"[^>]*href="([^"]+)"[^>]*>.*?<span class="dest-name">([^<]+)</span>',
+        r'<a class="dest-card"(?:(?!data-special)[^>])*href="([^"]+)"[^>]*>.*?<span class="dest-name">([^<]+)</span>',
         index_html, re.DOTALL,
     ):
         folder_to_name[unquote(href).lstrip("./").split("/")[0]] = name.strip()

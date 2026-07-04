@@ -820,10 +820,13 @@ def _check_guide_inline(guide_path: Path) -> int:
 
     # Resolve this card's display name (the JS fallback key) from its href folder.
     name = None
-    for href, dest_name in _re.findall(
+    for _m in _re.finditer(
         r'<a class="dest-card"[^>]*href="([^"]+)"[^>]*>.*?<span class="dest-name">([^<]+)</span>',
         html, _re.DOTALL,
     ):
+        if 'data-special' in _m.group(0):
+            continue
+        href, dest_name = _m.group(1), _m.group(2)
         if unquote(href).lstrip("./").split("/")[0] == city_folder:
             name = dest_name
             break
@@ -884,10 +887,13 @@ def _refresh_theme_tags(guide_path: Path) -> int:
         theme = _json.loads(m.group(1)) if m else {}
         city_folder = guide_path.parent.name
         name = None
-        for href, dest_name in _re.findall(
+        for _m in _re.finditer(
             r'<a class="dest-card"[^>]*href="([^"]+)"[^>]*>.*?<span class="dest-name">([^<]+)</span>',
             html, _re.DOTALL,
         ):
+            if 'data-special' in _m.group(0):
+                continue
+            href, dest_name = _m.group(1), _m.group(2)
             if unquote(href).lstrip("./").split("/")[0] == city_folder:
                 name = dest_name
                 break

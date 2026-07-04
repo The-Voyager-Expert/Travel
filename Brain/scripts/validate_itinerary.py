@@ -19986,6 +19986,8 @@ def validate(html: str, filename: str):
             r'<a\b[^>]*class\s*=\s*"[^"]*\bdest-card\b[^"]*"[^>]*href\s*=\s*"([^"]+)"',
             idx_html, re.IGNORECASE,
         ):
+            if 'data-special' in _m.group(0):
+                continue
             # Normalize: strip leading ./ and %20-decode
             hrefs.add(_url_unquote(_m.group(1)).lstrip('./'))
         return hrefs
@@ -20019,6 +20021,8 @@ def validate(html: str, filename: str):
             r'<a\b[^>]*class\s*=\s*"[^"]*\bdest-card\b[^"]*"([^>]*)>',
             _idx_html2, re.IGNORECASE,
         ):
+            if 'data-special' in _gm.group(0):
+                continue
             _attrs = _gm.group(1)
             _href_m = re.search(r'href\s*=\s*"([^"]+)"', _attrs, re.IGNORECASE)
             _next_m = re.search(r'data-guide-next\s*=\s*"([^"]+)"', _attrs, re.IGNORECASE)
@@ -25405,6 +25409,7 @@ def validate(html: str, filename: str):
             for _m in re.finditer(
                 r'<a\b[^>]*class\s*=\s*"[^"]*\bdest-card\b[^"]*"[^>]*href\s*=\s*"([^"]+)"',
                 _fg_idx_html, re.IGNORECASE)
+            if 'data-special' not in _m.group(0)
         }
         _fg_in_index = _fg_rel in _fg_hrefs
     check(
