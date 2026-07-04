@@ -35,7 +35,8 @@ RATES_CACHE = os.path.join(HERE, ".currency_rates_cache.json")
 
 # ── Region order (Europe first, matching the Plug Adapter Guide) ────────────
 REGION_ORDER = ["Europe", "Middle East", "Africa", "Asia",
-                "Oceania", "North America", "Caribbean", "South America"]
+                "Oceania", "North America", "Central America", "Caribbean",
+                "South America"]
 
 # ── Static map: country -> currency facts + the guide cities it covers ──────
 # rate_iso = which ISO code to read from the live USD-rate table.
@@ -55,7 +56,7 @@ COUNTRIES = [
  ("Hungary","Europe","Hungarian Forint","Ft","HUF","HUF","", ["Budapest"]),
  ("Iceland","Europe","Icelandic Króna","kr","ISK","ISK","", ["Reykjavik"]),
  ("Ireland","Europe","Euro","€","EUR","EUR","", ["Dublin"]),
- ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Rome","Siena","Sorrento","Turin","Venice","Verona"]),
+ ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Rome","Sicily","Siena","Sorrento","Turin","Venice","Verona"]),
  ("Luxembourg","Europe","Euro","€","EUR","EUR","", ["Luxembourg"]),
  ("Monaco","Europe","Euro","€","EUR","EUR","", ["Monaco"]),
  ("Netherlands","Europe","Euro","€","EUR","EUR","", ["Amsterdam"]),
@@ -77,7 +78,7 @@ COUNTRIES = [
  ("China","Asia","Chinese Yuan (Renminbi)","¥","CNY","CNY","", ["Beijing","Chongqing","Shanghai","Zhangjiajie"]),
  ("Hong Kong","Asia","Hong Kong Dollar","HK$","HKD","HKD","Pegged to the US dollar (~7.8).", ["Hong Kong"]),
  ("Indonesia","Asia","Indonesian Rupiah","Rp","IDR","IDR","", ["Bali"]),
- ("Japan","Asia","Japanese Yen","¥","JPY","JPY","", ["Kyoto","Tokyo"]),
+ ("Japan","Asia","Japanese Yen","¥","JPY","JPY","", ["Kyoto","Osaka","Tokyo"]),
  ("Singapore","Asia","Singapore Dollar","S$","SGD","SGD","", ["Singapore"]),
  ("Sri Lanka","Asia","Sri Lankan Rupee","Rs","LKR","LKR","", ["Colombo"]),
  ("South Korea","Asia","South Korean Won","₩","KRW","KRW","", ["Seoul"]),
@@ -95,7 +96,7 @@ COUNTRIES = [
  ("Bahamas","Caribbean","Bahamian Dollar","B$","BSD","BSD","Pegged 1:1 with the US dollar — USD accepted everywhere.", ["The Bahamas"]),
  ("Barbados","Caribbean","Barbadian Dollar","Bds$","BBD","BBD","Pegged 2:1 with the US dollar — USD widely accepted.", ["Barbados"]),
  ("Cayman Islands","Caribbean","Cayman Islands Dollar","CI$","KYD","KYD","Pegged to the US dollar; one of the few currencies worth more than USD.", ["Cayman Islands"]),
- ("Costa Rica","Caribbean","Costa Rican Colón","₡","CRC","CRC","One of the more expensive Central American destinations. Many establishments accept US dollars, especially in tourist areas.", ["Arenal", "Manuel Antonio", "San José"]),
+ ("Costa Rica","Central America","Costa Rican Colón","₡","CRC","CRC","Many establishments accept US dollars, especially in tourist areas.", ["Arenal", "Manuel Antonio", "San José"]),
  ("Curaçao","Caribbean","Caribbean Guilder","ƒ","XCG","XCG","Pegged to the US dollar; replaced the Netherlands Antillean guilder.", ["Curaçao"]),
  ("Sint Maarten","Caribbean","Caribbean Guilder","ƒ","XCG","XCG","Pegged to the US dollar; USD widely accepted.", ["Sint Maarten"]),
  ("Puerto Rico","Caribbean","US Dollar","$","USD","USD","US territory — uses the US dollar.", ["Puerto Rico"]),
@@ -169,16 +170,6 @@ def fmt_rate(r):
         return f"{r:,.2f}"
     return f"{r:.3f}"
 
-
-def reverse(rate, sym):
-    """Friendly reverse line: {sym}{base} ≈ US${val}, base chosen for readability."""
-    for base in (1, 10, 100, 1000, 10000, 100000):
-        val = base / rate
-        if val >= 0.5:
-            return f"{sym}{base:,} ≈ US${val:,.2f}"
-    # If no base yields val ≥ 0.5 (rate > 200,000), fall through to last-iteration fallback below.
-    # (base and val are still defined from the final loop iteration)
-    return f"{sym}{base:,} ≈ US${val:,.2f}"
 
 
 def _parse(stamp):
@@ -259,7 +250,7 @@ def build():
                   '<div class="conv">US$ '
                   '<input class="conv-in" type="number" min="0" step="1" value="1" '
                   'inputmode="decimal" aria-label="Amount in US dollars"> = '
-                  '<span class="conv-out"></span></div>')
+                  f'<span class="conv-out">{esc(sym)}{fmt_rate(rate)}</span></div>')
             peg_html = f'<div class="cur-note">{esc(peg)}</div>' if peg else ""
             blocks.append(
               f'<div class="country-block" id="{anchor(name)}" data-rate="{rate}" data-sym="{esc(sym)}">\n'
@@ -274,6 +265,7 @@ def build():
               f'    <span class="cur-cities">Guides: {cities_line}</span>\n'
               f'  </div>\n'
               f'  <div class="cur-block">\n'
+              f'    {rate_html}\n'
               f'    {conv_html}\n'
               f'    {peg_html}\n'
               f'  </div>\n'
@@ -393,6 +385,7 @@ html {{ scroll-behavior: smooth; }}
 
 <div class="content-wrap">
 {sections}
+<p style="text-align:center;font-size:var(--fs-sub,12px);color:var(--muted,#6a6660);margin:24px 0 12px;padding-top:12px;border-top:1px solid var(--border,#d8d4cc);">Rates as of {updated} · {n_countries} countries · Source: exchangerate-api.com</p>
 </div>
 
 <script>

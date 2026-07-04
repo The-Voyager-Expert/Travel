@@ -90,7 +90,7 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: #b85c2a; }
   <div class="site-header">
     <h1 class="site-title">Climate Finder</h1>
   </div>
-  <span class="updated-stamp">Updated June 2026</span>
+  <span class="updated-stamp" id="cf-updated"></span>
   <div style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
     <a href="Weather.html" class="sibling-pill">🌤 Weather by City</a>
   </div>
@@ -145,7 +145,7 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: #b85c2a; }
 
 <!-- weather.js sets window.TravelClimate (the shared baked climate normals),
      then no-ops because this is not the Guides index. -->
-<script src="../assets/weather.js?v=3"></script>
+<script src="../assets/weather.js?v=4"></script>
 <script>
 (function () {
   'use strict';
@@ -156,7 +156,14 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: #b85c2a; }
   function start() {
     var CLIM = window.TravelClimate || {};
     var resultsEl = document.getElementById('cf-results');
-    var keys = Object.keys(CLIM).filter(function (k) { return CLIM[k] && CLIM[k].hi; });
+    var keys = Object.keys(CLIM).filter(function (k) { return k !== '_generated' && CLIM[k] && CLIM[k].hi; });
+
+    if (CLIM._generated) {
+      var gd = new Date(CLIM._generated + 'T00:00:00');
+      var MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var uel = document.getElementById('cf-updated');
+      if (uel) uel.textContent = 'Updated ' + MN[gd.getMonth()] + ' ' + gd.getFullYear();
+    }
     if (!keys.length) {
       resultsEl.innerHTML = '<div class="cf-empty">Climate data didn’t load.<br>Open this page from the site (or alongside the assets folder).</div>';
       document.getElementById('cf-summary').textContent = '';
@@ -251,7 +258,6 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: #b85c2a; }
       "Bergen":               "../Guides/Bergen/bergen_v1.html",
       "Berlin":               "../Guides/Berlin/berlin_v1.html",
       "Hamburg":              "../Guides/Hamburg/hamburg_v1.html",
-      "Hamburg":              "../Guides/Hamburg/hamburg_v1.html",
       "Big Island":           "../Guides/Big%20Island/big_island_v1.html",
       "Bologna":              "../Guides/Bologna/bologna_v1.html",
       "Bordeaux":             "../Guides/Bordeaux/bordeaux_v1.html",
@@ -337,6 +343,7 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: #b85c2a; }
       "Oahu":                 "../Guides/Oahu/oahu_v1.html",
       "Orcas Island":         "../Guides/Orcas%20Island/orcas_island_v1.html",
       "Orlando":              "../Guides/Orlando/orlando_v1.html",
+      "Osaka":                "../Guides/Osaka/osaka_v1.html",
       "Oslo":                 "../Guides/Oslo/oslo_v1.html",
       "Oxford":               "../Guides/Oxford/oxford_v1.html",
       "Palm Desert":          "../Guides/Palm%20Desert/palm_desert_v1.html",
@@ -394,6 +401,7 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: #b85c2a; }
       "Seoul":                "../Guides/Seoul/seoul_v1.html",
       "Seville":              "../Guides/Seville/seville_v1.html",
       "Shanghai":             "../Guides/Shanghai/shanghai_v1.html",
+      "Sicily":               "../Guides/Sicily/sicily_v1.html",
       "Siena":                "../Guides/Siena/siena_v1.html",
       "Singapore":            "../Guides/Singapore/singapore_v3.html",
       "Sint Maarten":         "../Guides/Sint%20Maarten/sint_maarten_v1.html",
@@ -467,12 +475,21 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: #b85c2a; }
         var tag = href ? 'a' : 'div';
         var attrs = href ? ' class="cf-card" href="' + href + '"' : ' class="cf-card"';
         var arrow = href ? '<span class="cf-city-arrow">→</span>' : '';
+        var rainHtml = '';
+        if (rec.rain && rec.rd) {
+          var mm = rec.rain[month] || 0;
+          var rd = rec.rd[month] || 0;
+          rainHtml = '<div style="display:flex;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2,#e6e2da);">' +
+            '<div><span style="font-size:14px;font-weight:700;color:#4a7c9b;">' + mm + '</span><span style="font-size:11px;color:var(--muted,#6a6660);"> mm</span></div>' +
+            '<div><span style="font-size:14px;font-weight:700;color:#4a7c9b;">' + rd + '</span><span style="font-size:11px;color:var(--muted,#6a6660);"> rainy days</span></div>' +
+          '</div>';
+        }
         return '<' + tag + attrs + '>' +
           '<div class="cf-city"><span>' + (rec.city || k) + '</span>' + arrow + '</div>' +
           '<div class="cf-temps">' +
             '<div><div class="cf-hi">' + conv(rec.hi[month]) + '°</div><div class="cf-tlab">High</div></div>' +
             '<div><div class="cf-lo">' + conv(rec.lo[month]) + '°</div><div class="cf-tlab">Low</div></div>' +
-          '</div>' + strip(rec) +
+          '</div>' + rainHtml + strip(rec) +
         '</' + tag + '>';
       }).join('');
     }
