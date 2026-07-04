@@ -36,6 +36,10 @@
   font-family: inherit; background: #fff; color: #3d3a32; transition: background .12s,color .12s,border-color .12s; }
 .wx-mon:hover { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
 .wx-mon.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a; }
+.wx-rain { display: flex; justify-content: center; gap: 22px; margin-top: 14px;
+  padding: 10px 0 0; border-top: 1px solid #e6e2da; }
+.wx-rain .rlbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #4a7c9b; }
+.wx-rain .rval { font-size: 22px; font-weight: 700; color: #4a7c9b; line-height: 1.1; }
 .wx-note { color: #6b6860; font-size: 11px; margin-top: 14px; text-align: center; }
 .sibling-pill {
   display: inline-flex; align-items: center; gap: 4px;
@@ -57,7 +61,7 @@
   <div class="site-header wx-banner">
     <h1 class="site-title">Weather by City</h1>
   </div>
-  <span class="updated-stamp">Updated June 2026</span>
+  <span class="updated-stamp" id="wx-updated"></span>
   <div class="wx-panel" id="wx-panel"></div>
   <div style="display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px;">
     <a href="Climate-Finder.html" class="sibling-pill">🌡️ Climate Finder</a>
@@ -131,12 +135,23 @@
       return '<button class="wx-mon' + (k === selMonth ? ' on' : '') + '" data-mon="' + k + '">' + mo + '</button>';
     }).join('');
 
+    var rainRow = '';
+    if (rec.rain && rec.rd) {
+      var mm = rec.rain[selMonth] || 0;
+      var rd = rec.rd[selMonth] || 0;
+      rainRow = '<div class="wx-rain">' +
+        '<div style="text-align:center;"><div class="rlbl">Rain</div><div class="rval">' + mm + '<span style="font-size:13px;font-weight:400;"> mm</span></div></div>' +
+        '<div class="wx-divider"></div>' +
+        '<div style="text-align:center;"><div class="rlbl">Rainy days</div><div class="rval">' + rd + '</div></div>' +
+      '</div>';
+    }
+
     return '<div class="wx-month">' + MONTHS_LONG[selMonth] + '</div>' +
       '<div class="wx-bignums">' +
         '<div class="wx-hi" style="text-align:center;"><div class="lbl">High</div><div class="val">' + hi + '</div></div>' +
         '<div class="wx-divider"></div>' +
         '<div class="wx-lo" style="text-align:center;"><div class="lbl">Low</div><div class="val">' + lo + '</div></div>' +
-      '</div>' +
+      '</div>' + rainRow +
       '<div class="wx-chart">' + bars + '</div>' +
       '<div class="wx-hint">Tap a month · avg daily high/low</div>' +
       '<div class="wx-mongrid">' + grid + '</div>';
@@ -159,9 +174,16 @@
 
   var data = window.TravelClimate || {};
   Object.keys(data).forEach(function (k) {
-    if (k === '_meta' || !data[k] || !data[k].hi) return;
+    if (k === '_meta' || k === '_generated' || !data[k] || !data[k].hi) return;
     DB[k] = data[k];
   });
+
+  if (data._generated) {
+    var d = new Date(data._generated + 'T00:00:00');
+    var MON_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var el = document.getElementById('wx-updated');
+    if (el) el.textContent = 'Updated ' + MON_NAMES[d.getMonth()] + ' ' + d.getFullYear();
+  }
   cityKeys = Object.keys(DB).sort(function (a, b) { return (DB[a].city || a).localeCompare(DB[b].city || b); });
   if (cityKeys.length) {
     var hashKey = decodeURIComponent(location.hash.slice(1));
