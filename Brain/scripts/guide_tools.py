@@ -1212,17 +1212,22 @@ def _check_guide_in_climate(guide_path: Path) -> int:
     city_folder = guide_path.parent.name  # e.g. "Naples"
     climate_json = ASSETS_DIR / "climate.json"
     weather_js = ASSETS_DIR / "weather.js"
+    # Climate keys are display names (often with a space, e.g. "Santa Monica")
+    # while the guide folder may be hyphenated (e.g. "Santa-Monica") per the
+    # 2026-07-05 hyphen migration — accept either form, same as the Currency
+    # Guide check below.
     cf_lower = city_folder.lower()
+    cf_lower_display = cf_lower.replace("-", " ")
     missing = []
 
-    # climate.json — keys are guide folder names
+    # climate.json — keys are guide folder names or display names
     if not climate_json.exists():
         missing.append("assets/climate.json (file missing)")
     else:
         try:
             data = _json.loads(climate_json.read_text(encoding="utf-8", errors="replace"))
             keys = {k.lower() for k in data if k != "_meta"}
-            if cf_lower not in keys:
+            if cf_lower not in keys and cf_lower_display not in keys:
                 missing.append("assets/climate.json")
         except _json.JSONDecodeError:
             missing.append("assets/climate.json (unparseable)")
@@ -1240,12 +1245,16 @@ def _check_guide_in_climate(guide_path: Path) -> int:
         if m:
             try:
                 baked = _json.loads(m.group(1))
-                baked_ok = cf_lower in {k.lower() for k in baked}
+                baked_keys = {k.lower() for k in baked}
+                baked_ok = cf_lower in baked_keys or cf_lower_display in baked_keys
             except _json.JSONDecodeError:
                 baked_ok = False
         if not baked_ok:
             # fallback: a bare key search, in case the markers moved
-            baked_ok = _re.search(r'"' + _re.escape(city_folder) + r'"\s*:', wjs, _re.IGNORECASE) is not None
+            baked_ok = (
+                _re.search(r'"' + _re.escape(city_folder) + r'"\s*:', wjs, _re.IGNORECASE) is not None
+                or _re.search(r'"' + _re.escape(city_folder.replace("-", " ")) + r'"\s*:', wjs, _re.IGNORECASE) is not None
+            )
         if not baked_ok:
             missing.append("assets/weather.js (baked CLIMATE block)")
 
@@ -1263,7 +1272,7 @@ def _check_guide_in_climate(guide_path: Path) -> int:
         gm = _re.search(r"var GUIDE_LINKS\s*=\s*\{(.*?)\};", cf_text, _re.DOTALL)
         gl = dict(_re.findall(r'"([^"]+)"\s*:\s*"([^"]+)"', gm.group(1))) if gm else {}
         gl_lower = {k.lower(): v for k, v in gl.items()}
-        href = gl_lower.get(cf_lower)
+        href = gl_lower.get(cf_lower) or gl_lower.get(cf_lower_display)
         if not href:
             missing.append("Climate Finder GUIDE_LINKS (By Climate guide link)")
         else:
