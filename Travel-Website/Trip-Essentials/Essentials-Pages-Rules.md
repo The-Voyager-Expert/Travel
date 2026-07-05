@@ -126,5 +126,29 @@ Additionally, each guide HTML file itself must carry a silent `<!-- transit-card
 
 - **`.pkl-bar-fill` and `.pkl-state-bar-fill` must use a yellow gradient: `linear-gradient(90deg,#c8960c,#e8c020)`.** These are the stat bars (player growth, age demographics, state court counts, state bar chart). Yellow distinguishes them visually from the rust/terracotta accent used for text and pills — they must never revert to the rust-orange gradient (`#b85c2a`/`#d4874a`). Enforced by `brain_check` `check_pickleball_bar_color` (hard-fail). (added 2026-06-22)
 
+## Best-of pages — CSS standard (LOCKED)
+
+All `Best-*.html` pages share an identical inline `<style>` block. The CSS is locked — do not invent variants per page. `brain_check` `check_best_of_css_standard` hard-fails on any drift.
+
+**Section labels** (`.sf-section-label`) — the region/category headings (e.g. "Caribbean", "Beer & Brewing"):
+- 11px / 700 / `var(--muted)` / `letter-spacing: 0.18em` / `text-transform: uppercase`
+- `border-bottom: 1px solid var(--border)` — thin separator underneath
+- Mobile (≤600px): 10px
+
+**Card** (`.sf-card`):
+- `border-left: 3px solid var(--accent)` accent stripe
+- `padding: 14px 18px` / `border-radius: 6px`
+- `background: var(--surface)` / `border: 1px solid var(--border2)`
+
+**Card name** (`.sf-name`): 15px / 700 / `var(--text)`
+
+**Card location** (`.sf-tag`): 13px / `var(--muted)` — readable but visually subordinate to the name
+
+**Card meta stats** (`.sf-meta`): 12.5px / `var(--text)` — separated from tag by `border-top: 1px solid var(--border2)` with 8px gap
+
+**No hardcoded hex colors** — all colors use CSS variables (`var(--text)`, `var(--muted)`, `var(--accent)`, `var(--surface)`, `var(--border)`, `var(--border2)`).
+
+**No descriptions, no booking sections, no guide pills** — cards contain only `.sf-name`, `.sf-tag`, and `.sf-meta`.
+
 ---
 *Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22. `data-guide` attribute convention + guide HTML transit-card comment documented 2026-06-22.*
