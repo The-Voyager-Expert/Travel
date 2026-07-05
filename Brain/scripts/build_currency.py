@@ -56,7 +56,7 @@ COUNTRIES = [
  ("Hungary","Europe","Hungarian Forint","Ft","HUF","HUF","", ["Budapest"]),
  ("Iceland","Europe","Icelandic Króna","kr","ISK","ISK","", ["Reykjavik"]),
  ("Ireland","Europe","Euro","€","EUR","EUR","", ["Dublin"]),
- ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Milan","Naples","Pisa","Puglia","Rome","Sicily","Siena","Sorrento","Turin","Venice","Verona"]),
+ ("Italy","Europe","Euro","€","EUR","EUR","", ["Amalfi","Bologna","Capri","Cinque Terre","Florence","Lake Como","Lecce","Milan","Naples","Pisa","Rome","Sicily","Siena","Sorrento","Turin","Venice","Verona"]),
  ("Luxembourg","Europe","Euro","€","EUR","EUR","", ["Luxembourg"]),
  ("Maldives","Asia","Maldivian Rufiyaa","Rf","MVR","MVR","", ["Maldives"]),
  ("Monaco","Europe","Euro","€","EUR","EUR","", ["Monaco"]),
