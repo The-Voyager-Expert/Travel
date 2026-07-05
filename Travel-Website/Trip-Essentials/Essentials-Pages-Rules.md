@@ -133,9 +133,9 @@ All `Best-*.html` pages share an identical inline `<style>` block. The CSS is lo
 **Class prefix — `best-of-` (renamed from the legacy `sf-` prefix 2026-07-04).** A `sf-` prefixed class reappearing anywhere in a Best-of page is drift — it means an old template (icons, wrapper divs, booking sections) crept back in. The validator hard-fails on any `sf-` class.
 
 **Section labels** (`.best-of-section-label`) — the region/category headings (e.g. "Caribbean", "Beer & Brewing"):
-- 11px / 700 / `var(--muted)` / `letter-spacing: 0.18em` / `text-transform: uppercase`
+- 14px / 700 / `var(--muted)` / `letter-spacing: 0.18em` / `text-transform: uppercase`
 - `border-bottom: 1px solid var(--border)` — thin separator underneath
-- Mobile (≤600px): 10px
+- Mobile (≤600px): 13px
 
 **Card** (`.best-of-card`):
 - `border-left: 3px solid var(--accent)` accent stripe
