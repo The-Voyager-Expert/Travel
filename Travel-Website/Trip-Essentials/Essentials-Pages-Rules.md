@@ -130,25 +130,27 @@ Additionally, each guide HTML file itself must carry a silent `<!-- transit-card
 
 All `Best-*.html` pages share an identical inline `<style>` block. The CSS is locked — do not invent variants per page. `brain_check` `check_best_of_css_standard` hard-fails on any drift.
 
-**Section labels** (`.sf-section-label`) — the region/category headings (e.g. "Caribbean", "Beer & Brewing"):
+**Class prefix — `best-of-` (renamed from the legacy `sf-` prefix 2026-07-04).** A `sf-` prefixed class reappearing anywhere in a Best-of page is drift — it means an old template (icons, wrapper divs, booking sections) crept back in. The validator hard-fails on any `sf-` class.
+
+**Section labels** (`.best-of-section-label`) — the region/category headings (e.g. "Caribbean", "Beer & Brewing"):
 - 11px / 700 / `var(--muted)` / `letter-spacing: 0.18em` / `text-transform: uppercase`
 - `border-bottom: 1px solid var(--border)` — thin separator underneath
 - Mobile (≤600px): 10px
 
-**Card** (`.sf-card`):
+**Card** (`.best-of-card`):
 - `border-left: 3px solid var(--accent)` accent stripe
 - `padding: 14px 18px` / `border-radius: 6px`
 - `background: var(--surface)` / `border: 1px solid var(--border2)`
 
-**Card name** (`.sf-name`): 15px / 700 / `var(--text)`
+**Card name** (`.best-of-name`): 15px / 700 / `var(--text)`
 
-**Card location** (`.sf-tag`): 13px / `var(--muted)` — readable but visually subordinate to the name
+**Card location** (`.best-of-tag`): 13px / `var(--muted)` — readable but visually subordinate to the name
 
-**Card meta stats** (`.sf-meta`): 12.5px / `var(--text)` — separated from tag by `border-top: 1px solid var(--border2)` with 8px gap
+**Card meta stats** (`.best-of-meta`): 12.5px / `var(--text)` — separated from tag by `border-top: 1px solid var(--border2)` with 8px gap
 
 **No hardcoded hex colors** — all colors use CSS variables (`var(--text)`, `var(--muted)`, `var(--accent)`, `var(--surface)`, `var(--border)`, `var(--border2)`).
 
-**No descriptions, no booking sections, no guide pills** — cards contain only `.sf-name`, `.sf-tag`, and `.sf-meta`.
+**Cards are minimal by agreement — no exceptions.** A card contains ONLY `.best-of-name`, `.best-of-tag`, and `.best-of-meta` — directly inside `.best-of-card`, no wrapper div around name/tag. No descriptions, no emoji icon spans, no booking/resource link sections (Wikipedia/Viator/Surfline/etc per-card links), no guide pills, no top-of-page "resources" grids. This has regressed twice (2026-07-04) via parallel-crib edits that re-added per-card links and a `best-of-card-head` + icon wrapper — `check_best_of_css_standard` now also hard-fails if a card contains any class outside the three allowed ones.
 
 ---
-*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22. `data-guide` attribute convention + guide HTML transit-card comment documented 2026-06-22.*
+*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22. `data-guide` attribute convention + guide HTML transit-card comment documented 2026-06-22. Best-of pages renamed `sf-` → `best-of-` prefix and locked to minimal card content 2026-07-04.*
