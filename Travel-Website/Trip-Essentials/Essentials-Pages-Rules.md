@@ -143,6 +143,7 @@ All 29 pages in "The Best of" sidebar section are named `Best-*.html` and share 
 - `border-left: 3px solid var(--accent)` accent stripe
 - `padding: 14px 18px` / `border-radius: 6px`
 - `background: var(--surface)` / `border: 1px solid var(--border2)`
+- **Uniform size** — every card is the same width (grid `1fr` columns) and the same height (`min-height: 275px`, sized to the fullest card so nothing clips). Cards are a flex column; `.best-of-links` uses `margin-top: auto` so the pill row is pinned to the bottom edge and aligns across all cards. Mobile (≤600px): `min-height: 0` so the single-column stack uses natural heights.
 
 **Card name** (`.best-of-name`): 15px / 700 / `var(--text)`
 
