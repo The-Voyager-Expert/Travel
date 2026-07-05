@@ -1388,7 +1388,8 @@ def _check_guide_in_currency(guide_path: Path) -> int:
         print(f"  ⚠️  Currency check skipped (build_currency load failed: {_e}).")
         return 0
 
-    if city_folder in page_cities:
+    city_folder_display = city_folder.replace("-", " ")
+    if city_folder in page_cities or city_folder_display in page_cities:
         print(f"  ✅  Currency Guide — {city_folder}'s country is covered.")
         return 0
 
