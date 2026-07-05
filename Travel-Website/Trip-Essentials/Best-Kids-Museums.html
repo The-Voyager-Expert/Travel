@@ -25,8 +25,11 @@
     <a class="best-of-link" href="Best-Aquariums.html">Aquariums</a>
   </div>
   <span class="updated-stamp">Updated July 2026</span>
+<div style="text-align:center;margin:0 0 10px"><span style="background:var(--surface);color:var(--muted);font-size:12px;padding:3px 10px;border-radius:10px">30 entries</span></div>
 
 <div class="search-box"><input type="text" id="best-of-search" placeholder="Search..." autocomplete="off" style="width:100%;max-width:360px;margin:0 auto 18px;display:block"></div>
+
+<div id="region-filters" style="text-align:center;margin:0 0 14px;display:flex;flex-wrap:wrap;justify-content:center;gap:5px"></div>
 
 <div class="best-of-grid">
 
@@ -476,6 +479,9 @@
       var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
       c.style.display = match ? '' : 'none';
     });
+    // Reset region filter when searching
+    var rc = document.getElementById('region-filters');
+    if (rc) { var rchips = rc.children; for (var i=0;i<rchips.length;i++) rchips[i].style.cssText = (i===0) ? 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--accent);color:#fff;background:var(--accent);transition:all 0.2s' : 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text);background:var(--surface);transition:all 0.2s'; }
     labels.forEach(function(label){
       var next = label.nextElementSibling;
       var hasVisible = false;
@@ -490,6 +496,78 @@
     });
   });
 })();
+
+// Region filter chips
+(function() {
+  var container = document.getElementById('region-filters');
+  if (!container) return;
+  var labels = document.querySelectorAll('.best-of-section-label');
+  if (labels.length < 2) { container.style.display = 'none'; return; }
+  
+  var chipStyle = 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text);background:var(--surface);transition:all 0.2s';
+  var activeStyle = 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--accent);color:#fff;background:var(--accent);transition:all 0.2s';
+  
+  // Build "All" chip
+  var allChip = document.createElement('span');
+  allChip.textContent = 'All';
+  allChip.style.cssText = activeStyle;
+  allChip.onclick = function() { filterRegion(null); };
+  container.appendChild(allChip);
+  
+  // Build one chip per section label
+  var chips = [allChip];
+  labels.forEach(function(label) {
+    var chip = document.createElement('span');
+    chip.textContent = label.textContent;
+    chip.style.cssText = chipStyle;
+    chip.onclick = function() { filterRegion(label.textContent); };
+    container.appendChild(chip);
+    chips.push(chip);
+  });
+  
+  function filterRegion(region) {
+    var cards = document.querySelectorAll('.best-of-card');
+    var searchInput = document.getElementById('best-of-search');
+    if (searchInput) searchInput.value = '';
+    
+    // Update chip styles
+    chips.forEach(function(c, i) {
+      if ((!region && i === 0) || (region && c.textContent === region)) {
+        c.style.cssText = activeStyle;
+      } else {
+        c.style.cssText = chipStyle;
+      }
+    });
+    
+    if (!region) {
+      // Show all
+      labels.forEach(function(l) { l.style.display = ''; });
+      cards.forEach(function(c) { c.style.display = ''; });
+      return;
+    }
+    
+    // Find the target label and show only its cards
+    labels.forEach(function(l) {
+      l.style.display = (l.textContent === region) ? '' : 'none';
+    });
+    
+    var inRegion = false;
+    var currentLabel = null;
+    // Walk through all children of the grid
+    var grid = document.querySelector('.best-of-grid');
+    var children = grid.children;
+    for (var i = 0; i < children.length; i++) {
+      var el = children[i];
+      if (el.classList.contains('best-of-section-label')) {
+        currentLabel = el.textContent;
+        inRegion = (currentLabel === region);
+      } else if (el.classList.contains('best-of-card')) {
+        el.style.display = inRegion ? '' : 'none';
+      }
+    }
+  }
+})();
+
 </script>
 </body>
 </html>
