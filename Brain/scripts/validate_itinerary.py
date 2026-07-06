@@ -94,6 +94,8 @@ CHANGELOG = [
     ("2026-06-16", "HEADS UP — note row ↳-prefix HARD-FAIL RESTORED. Heads Up §2 specifies the note line as `↳ [Note]`; the 2026-06-10 entry claims ↳ enforcement was added for the Heads Up note, but the live check had no ↳ requirement (lost in a later edit) and 0 of 32 Heads-Up guides carry it. Re-added: the note row (first body row in the .transit-box, not the Workaround row) must start with ↳. Length/capitalisation checks strip the ↳ prefix before counting (↳ U+21B3 is outside _CG_ICON_RE, so the emoji check is unaffected). EXPECTED: all 32 Heads-Up guides fail until each note row gains its ↳."),
     ("2026-06-16", "INSIDE-BOX ICON ORDER check RESTORED (the 2026-06-16 element-order rewrite removed the '(C)/(D)/(E) intra-row order checks', so box rows could ship in any order). Per Icon Order and Format.html §2 the in-box order is fixed: 🎟=1 · 🏛/⏳=2 · 🚫=3 · 🕐/⏰=4 · 🆓/💵=5 · ⚠️=6 · 📍=7, and ranks must be non-decreasing down the box. ONLY glyphs §2 lists for inside the box are ranked; the `🎫 book at` row (Stops Structure §3c documents it for TRAIN DAYS only — its in-box position is undefined) and the guided-tour `📅` lead are left UNRANKED so the legitimate trailing-book-at pattern (Boston/Alaska/Cayman/Curacao) is not penalised. Genuine violations (e.g. a ⚠️ caveat placed above the 🏛 hours instead of at pos 6) are flagged."),
     ("2026-06-16", "YELLOW-BOX + BARE OPERATIONAL ROWS HARD-FAILS added (restores enforcement the 2026-06-16 element-order rewrite explicitly deferred — 'not enforced here yet, Istanbul/Palm Desert'). TWO checks: (1) every stop-block must carry an operational box (📍-led .tour-box for no-ticket stops, 🎟-led .ticket-box for ticketed) — a stop with NO box = 'yellow box missing'; (2) no logistics row sits OUTSIDE the box — the full inside-box glyph set 🏛/🏛️ hours · ⏳ duration · 🚫 closed · 🕐/⏰ time · 🆓/💵 cost · ⚠️ note · 📍 address must live INSIDE the box. Both strip box subtrees via _strip_balanced_div first; the glyph must LEAD its row (immediately after a <div> open) so emojis in ↳ prose never match. Caught visually by Dani 2026-06-16: Bali Tegallalang / Mount Batur / Uluwatu (bare 🏛/⏰/⚠️/📍, several with no box at all). The pre-existing 'guided stop has no stop-level 📍' check only covered guided stops; these cover self / ticket / no-box stops too. EXPECTED: Bali fails (6 no-box + 7 bare-row stops) until the rows are wrapped in a box."),
+    ("2026-07-05", "🏨 PICKUP ROW BANNED IN STOP-BLOCK TICKET BOXES. New hard-fail: 🏨 ↔ 🚐 / 🏨 → 🚐 / 🏨 ← 🚐 must never appear inside a stop-block ticket-box. These hotel-pickup rows belong ONLY in Tours section entries (under a 📅 heading, Icon Order and Format.html §2 Tours table). The §2 inside-box table (Pos 1–7) has no 🚐 row; a crib fabricated the row in Bora Bora's 'Shark & Ray Lagoon Snorkel Cruise' stop and it passed because the validator only checked order (🚐 is unranked). Companion fix: row removed from bora-bora_v1.html."),
+    ("2026-07-05", "📍 ROW CLASS HARD-FAIL added — every 📍 address row inside a stop block must carry class=\"stop-row\". A bare classless <div>📍 has no matching CSS rule and renders with browser-default block spacing (same defect as the ↳/📖 class gap caught 2026-06-16). The gap allowed Bora Bora to ship four bare <div>📍 rows that passed every other check. New check: any <div> with NO class attribute leading with 📍 is a hard-fail. Companion fix: all four bare 📍 rows in bora-bora_v1.html corrected to <div class=\"stop-row\">📍."),
     ("2026-06-16", "↳ / 📖 ROW CLASS HARD-FAIL added — the ↳ description row and 📖 Wikipedia row must carry class=\"stop-row\". Non-canonical classes (Aix-en-Provence shipped stop-desc / stop-wiki) have NO CSS rule, so the rows render with browser-default block margins and the gap before the operational box balloons (caught visually by Dani 2026-06-16, Aix Hôtel de Caumont). The validator previously had no class check on these rows, so the drift shipped silently. New check flags any <div class=\"…\">↳ or 📖 whose class tokens omit `stop-row`; bare class-less box-internal rows (Day Trips transit-box <div>↳) are not matched. EXPECTED: Aix fails until its 9 stop-desc + 7 stop-wiki rows are renamed to stop-row."),
     ("2026-06-16", "IN-CITY DAY-CARD SUFFIX CHECK — no longer false-positives on em-dashes that are part of a real stop name. The check flagged ANY em-dash `—` in a non-🎒/non-train overview day-title as a 'city suffix' — a rule written for the retired 🎒 format. Post-2026-06-16 in-city cards are `Day N – Stop1 · Stop2 · …`, and stop names legitimately contain em-dashes (Lima 'MATE — Museo Mario Testino', Lucerne 'Mount Pilatus — Golden Round Trip', Marrakech 'Mellah — Jewish Quarter', Porto 'Douro River — Six Bridges Cruise'). Now: strip the 'Day N –' prefix, split the stop list on ' · ', and flag an em-dash segment ONLY when it matches no day-block stop name (substring either direction, mirroring the name-sync check). A genuine stray ` — City` suffix (matching no stop) is still caught. No guide HTML touched."),
     ("2026-06-16", "DAY-HEADER + OVERVIEW TRAIN-DAY SYNC — two checks brought into line with the 2026-06-16 en-dash convention (both had hard-failed every correctly-built train/coach guide). (A) DAY-HEADER locked patterns: the Train Day / Guided Coach patterns required an em-dash `—` after 'Day N' (`^Day \\d+ — Train Day — …`), but all 24 shipped train/coach guides — and the overview-day-title convention adopted 2026-06-16 — use the en-dash `–` there. Patterns now accept `[–—]` after 'Day N' (Train-Day destination separator stays flexible too). (B) TRIP OVERVIEW stop-count sync: the inline-stops parser grabbed the text after the en-dash even for Train Day cards, turning the '🚆 Train Day — {Destination}' label into a phantom 1-entry stop list and reporting a count mismatch against the 2-stop day-block. Parser now leaves stops='' when the title contains 'Train Day' (documented intent: Train Day cards carry no inline stop list; the count/name sync skips them). Guided Coach overview cards DO list real stops and are unchanged. No guide HTML touched — the guides were correct; the checks were stale."),
@@ -3549,6 +3551,29 @@ def validate(html: str, filename: str):
         if _row_class_bad else "",
     )
 
+    # ─── 📍 ROW CLASS — bare <div>📍 must be <div class="stop-row">📍 ───────────
+    # Every 📍 address row inside a ticket-box or tour-box must carry
+    # class="stop-row" so CSS margin rules apply. A bare classless <div>📍
+    # has no matching CSS and renders with browser-default block spacing —
+    # the same visual defect that triggered the ↳/📖 class check above.
+    # Scope: any <div> with NO class attribute that leads with 📍. Rows
+    # inside transit-box / day-trips are allowed bare, but stop-level 📍
+    # rows must always have the class.
+    print("\n── 📍 ROW CLASS — must be .stop-row ──")
+    _pin_class_bad: list[str] = []
+    for _pcm in re.finditer(
+        r'<div(?![^>]*\bclass\s*=)[^>]*>\s*📍',
+        html,
+    ):
+        _pin_class_bad.append(f'bare 📍 row at offset {_pcm.start()}')
+    check(
+        '📍 address rows must use class="stop-row" (bare <div>📍 has no CSS → broken spacing)',
+        len(_pin_class_bad) == 0,
+        f"{len(_pin_class_bad)} bare 📍 row(s) missing stop-row class: "
+        + "; ".join(_pin_class_bad[:6])
+        if _pin_class_bad else "",
+    )
+
     # ─── ↳ ROW FORMAT — no embedded <a> links in stop description ──────────────
     print("\n── ↳ STOP ROW FORMAT — no embedded links ──")
     _summ_link_bad: list[str] = []
@@ -6571,6 +6596,32 @@ def validate(html: str, filename: str):
         (f"{len(_sb_iconorder_bad)} box(es) with rows out of icon order: "
          + "; ".join(_sb_iconorder_bad[:8]))
         if _sb_iconorder_bad else "",
+    )
+
+    # ─── 🏨 ↔/→/← 🚐 BANNED IN STOP-BLOCK TICKET BOXES ─────────────────────
+    # Icon Order and Format.html §2 inside-box table (Pos 1–7) has NO 🚐 row.
+    # The hotel-pickup variants (🏨 ↔ 🚐 / 🏨 → 🚐 / 🏨 ← 🚐) belong ONLY
+    # in Tours section entries (under a 📅 heading, per §2 Tours table). A stop
+    # block's ticket-box never contains a shuttle-pickup row — its schema is
+    # 🎟 → 🏛/⏳ → 🚫 → 🕐/⏰ → 🆓/💵 → ⚠️ → 📍, period.
+    print("\n── 🏨 PICKUP ROW BANNED IN STOP-BLOCK TICKET BOXES ──")
+    _pickup_re = re.compile(r'🏨\s*(?:↔|→|←)\s*🚐')
+    _sb_pickup_bad: list[str] = []
+    for _sbi, _sbs in enumerate(stop_starts):
+        _blk = html[_sbs:stop_ends[_sbi]]
+        _nm  = RE_STOP_NAME.search(_blk)
+        _lbl = _nm.group(1).strip()[:60] if _nm else f"(stop #{_sbi + 1})"
+        for _tbm in ticket_box_open.finditer(_blk):
+            _inner, _ = _walk_balanced_div(_blk, _tbm.end())
+            if _pickup_re.search(_inner):
+                _sb_pickup_bad.append(f'"{_lbl}": 🏨 ↔/→/← 🚐 inside a stop-block ticket-box')
+    check(
+        '🏨 ↔/→/← 🚐 (hotel pickup) must NEVER appear in a stop-block ticket-box — '
+        'it belongs only in Tours section entries (Icon Order and Format.html §2)',
+        len(_sb_pickup_bad) == 0,
+        f"{len(_sb_pickup_bad)} stop(s) with banned pickup row: "
+        + "; ".join(_sb_pickup_bad[:8])
+        if _sb_pickup_bad else "",
     )
 
     # ─── 🚫 CLOSED DAYS NEVER STACKED ───────────────────────────────────
