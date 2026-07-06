@@ -234,9 +234,10 @@ input[type="text"]::placeholder,
 
 /* ── Best-of pages (shared across all 29 Best-*.html "The Best of" pages) ──
    ONE uniform card on every page: .best-of-name (plain text) / .best-of-tag /
-   .best-of-meta / .best-of-links (a row of .best-of-link pills). No tiers, no
-   exceptions — all 29 are the same type of guide, all named Best-*.html.
-   .best-of-desc is retired (removed 2026-07-05).
+   .best-of-desc (a 2-line summary of the place) / .best-of-meta /
+   .best-of-links (a row of .best-of-link pills). No tiers, no exceptions —
+   all 29 are the same type of guide, all named Best-*.html.
+   .best-of-desc restored 2026-07-05 — every place card carries a short summary.
    Locked spec: Trip-Essentials/Essentials-Pages-Rules.md § Best-of pages.
    Enforced: Brain/scripts/brain_check.py check_best_of_css_standard. ── */
 .best-of-grid {
@@ -282,6 +283,13 @@ input[type="text"]::placeholder,
   color: var(--muted);
   margin-top: 2px;
 }
+.best-of-desc {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+  margin-top: auto;            /* pin the summary + links group to the bottom, so the summary sits just above the links */
+  padding-top: 10px;
+}
 .best-of-meta {
   margin-top: 8px;
   font-size: 12.5px;
@@ -298,7 +306,11 @@ input[type="text"]::placeholder,
   gap: 6px;
   flex-wrap: wrap;
 }
-/* Card links + See-also pills — disc-btn style (matches "Type"/"When to go" toolbar buttons) */
+/* When a summary precedes the links, the summary already carries the auto top-margin
+   that pins the group to the bottom — drop the links' auto margin so the free space
+   isn't split, keeping the summary hugging the links. */
+.best-of-desc + .best-of-links { margin-top: 0; }
+/* Card links + See-also pills — white pill, no hover color change */
 .best-of-links a,
 .best-of-related a {
   font-size: 11.5px;
@@ -310,13 +322,10 @@ input[type="text"]::placeholder,
   border-radius: 6px;
   background: var(--surface);
   white-space: nowrap;
-  transition: border-color .15s, color .15s;
   display: inline-block;
 }
 .best-of-links a:hover,
-.best-of-related a:hover { border-color: #b85c2a; color: #b85c2a; }
-.best-of-links a:active,
-.best-of-related a:active { border-color: #7a3b1e; color: #7a3b1e; }
+.best-of-related a:hover { text-decoration: none; }
 @media (max-width: 600px) {
   .best-of-grid { grid-template-columns: 1fr; gap: 8px; }
   .best-of-card { min-height: 0; }   /* single-column stack: natural heights, no forced whitespace */
@@ -379,7 +388,7 @@ input[type="text"]::placeholder,
   white-space: nowrap;
   transition: all .15s;
 }
-.disc-btn:hover { border-color: #b85c2a; color: var(--accent); }
+.disc-btn:hover { text-decoration: none; }
 .disc-btn .disc-caret { font-size: 10px; transition: transform .15s; }
 .disc-btn.has-active { position: relative; }
 .disc-btn.has-active::after {
