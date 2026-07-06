@@ -25,7 +25,7 @@
   <span class="updated-stamp">Updated July 2026</span>
 <div style="display:flex;align-items:center;justify-content:center;gap:8px;max-width:360px;margin:4px auto 14px"><input type="text" id="best-of-search" placeholder="Search..." autocomplete="off" style="flex:1;min-width:0"><span style="color:var(--muted);font-size:11px;white-space:nowrap">64 entries</span></div>
 
-<div id="region-filters" style="text-align:center;margin:0 0 14px;display:flex;flex-wrap:wrap;justify-content:center;gap:5px"></div>
+<div style="text-align:center;margin:0 0 14px"><div class="days-jump" id="regionJump"><button type="button" class="days-jump-toggle disc-btn" id="regionJumpToggle" aria-expanded="false" aria-controls="regionJumpList"><span id="regionJumpLabel">Filter by section</span><span class="disc-caret chev">▾</span></button><div class="days-jump-list" id="regionJumpList" role="menu"></div></div></div>
 
 <div class="best-of-grid">
 
@@ -766,8 +766,7 @@
       c.style.display = match ? '' : 'none';
     });
     // Reset region filter when searching
-    var rc = document.getElementById('region-filters');
-    if (rc) { var rchips = rc.children; for (var i=0;i<rchips.length;i++) rchips[i].style.cssText = (i===0) ? 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid #b85c2a;color:#fff;background:#b85c2a;transition:all 0.2s' : 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text);background:var(--surface);transition:all 0.2s'; }
+    if (window._regionJumpReset) window._regionJumpReset();
     labels.forEach(function(label){
       var next = label.nextElementSibling;
       var hasVisible = false;
@@ -783,76 +782,56 @@
   });
 })();
 
-// Region filter chips
+// Region filter dropdown
 (function() {
-  var container = document.getElementById('region-filters');
-  if (!container) return;
-  var labels = document.querySelectorAll('.best-of-section-label');
-  if (labels.length < 2) { container.style.display = 'none'; return; }
-  
-  var chipStyle = 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--text);background:var(--surface);transition:all 0.2s';
-  var activeStyle = 'display:inline-block;padding:4px 12px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid #b85c2a;color:#fff;background:#b85c2a;transition:all 0.2s';
-  
-  // Build "All" chip
-  var allChip = document.createElement('span');
-  allChip.textContent = 'All';
-  allChip.style.cssText = activeStyle;
-  allChip.onclick = function() { filterRegion(null); };
-  container.appendChild(allChip);
-  
-  // Build one chip per section label
-  var chips = [allChip];
-  labels.forEach(function(label) {
-    var chip = document.createElement('span');
-    chip.textContent = label.textContent;
-    chip.style.cssText = chipStyle;
-    chip.onclick = function() { filterRegion(label.textContent); };
-    container.appendChild(chip);
-    chips.push(chip);
+  var jump    = document.getElementById('regionJump');
+  var toggle  = document.getElementById('regionJumpToggle');
+  var label   = document.getElementById('regionJumpLabel');
+  var list    = document.getElementById('regionJumpList');
+  var labels  = document.querySelectorAll('.best-of-section-label');
+  if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
+
+  var active = null;
+
+  // Build option list from section labels
+  var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All sections</button>';
+  labels.forEach(function(l) {
+    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
   });
-  
-  function filterRegion(region) {
+  list.innerHTML = html;
+  var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
+
+  function applyFilter() {
+    items.forEach(function(it) {
+      it.classList.toggle('on', active === null ? it.dataset.region === 'all' : it.dataset.region === active);
+    });
+    label.textContent = active || 'Filter by section';
+    toggle.classList.toggle('has-active', active !== null);
     var cards = document.querySelectorAll('.best-of-card');
-    var searchInput = document.getElementById('best-of-search');
-    if (searchInput) searchInput.value = '';
-    
-    // Update chip styles
-    chips.forEach(function(c, i) {
-      if ((!region && i === 0) || (region && c.textContent === region)) {
-        c.style.cssText = activeStyle;
-      } else {
-        c.style.cssText = chipStyle;
-      }
+    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
+    cards.forEach(function(c) {
+      if (!active) { c.style.display = ''; return; }
+      // find preceding section label
+      var prev = c.previousElementSibling;
+      while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
+      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
     });
-    
-    if (!region) {
-      // Show all
-      labels.forEach(function(l) { l.style.display = ''; });
-      cards.forEach(function(c) { c.style.display = ''; });
-      return;
-    }
-    
-    // Find the target label and show only its cards
-    labels.forEach(function(l) {
-      l.style.display = (l.textContent === region) ? '' : 'none';
-    });
-    
-    var inRegion = false;
-    var currentLabel = null;
-    // Walk through all children of the grid
-    var grid = document.querySelector('.best-of-grid');
-    var children = grid.children;
-    for (var i = 0; i < children.length; i++) {
-      var el = children[i];
-      if (el.classList.contains('best-of-section-label')) {
-        currentLabel = el.textContent;
-        inRegion = (currentLabel === region);
-      } else if (el.classList.contains('best-of-card')) {
-        el.style.display = inRegion ? '' : 'none';
-      }
-    }
   }
-})();
+
+  window._regionJumpReset = function() { active = null; applyFilter(); };
+
+  function openMenu()  { jump.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
+  function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+
+  toggle.addEventListener('click', function() { jump.classList.contains('open') ? closeMenu() : openMenu(); });
+  items.forEach(function(it) {
+    it.addEventListener('click', function() {
+      active = it.dataset.region === 'all' ? null : it.dataset.region;
+      applyFilter(); closeMenu();
+    });
+  });
+  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); }, true);
+}());
 
 </script>
 </body>
