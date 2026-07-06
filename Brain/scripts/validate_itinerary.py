@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-06", "PICKLEBALL T5 — FIX SILENT PASS BUG (detected via verify). T5 was detecting US eligibility from .title-address state code (Patterns A/B/C), but hotel addresses use 'Street · Neighborhood' format (Hotel Banner.html) which never includes a state code — so trip_state was None for nearly all US guides and the gate silently skipped. Fixed: primary signal switched to .title-country == 'United States' (always present, required by Hotel Banner.html §1). State-code parser kept for informational hint in check messages only. Fleet impact: all 189 US guides missing pickleball now hard-fail T5 as intended. Non-US guides unchanged — title-country is never 'United States' for them."),
     ("2026-07-06", "PICKLEBALL EXPANDED TO ALL US STATES (Dani-approved). Previously CA/AZ/OR only. Now every US guide (all 50 states + DC, detected from .title-address state code) MUST carry a pickleball section or hard-fails. PICKLEBALL_ELIGIBLE_STATES updated from {CA,AZ,OR} to all 51 codes. Guides with no pickleball section will fail T5 until rebuilt. Non-US guides: unchanged — section silently omitted."),
     ("2026-07-06", "PICKLEBALL RULE CHANGE — 25 min walk → 25 min drive (Dani-approved rule change). Pickleball - Extra Section.html §2/§3/§4 updated. Validator updated to match: (1) 🚕 drive time is now REQUIRED (was: 🚶 required + 🚕 optional); (2) 🚶 walk time is now OPTIONAL (add when also walkable); (3) cap check changed from ≤28 min walk to ≤28 min drive (🚕); (4) ordering check uses drive times (🚕) instead of walk times (🚶); (5) row-order anchor changed from 🚶 to 🚕; (6) negative-finding regex updated: 'within 25 min walk' → 'within 25 min drive'. Fleet impact: guides with 🚕-only entries (no 🚶) now pass; entries with 🚶 but no 🚕 will hard-fail (must add drive time). Pickleball sections in CA/AZ/OR guides should be rebuilt with courts within 25 min drive."),
     ("2026-07-05", "VALIDATOR AUDIT — 11 enforcement gaps closed (rule-by-rule audit of every format spec). (1) TR-7 BANNED PILLS — the 'Also on this site' rail now hard-fails City Transit Cards / SIM Cards Abroad / Tipping Guide / Airport Lounges / Climate Finder (TR-4 deliberately tolerated unknown pills; validate_also_on_site_pills.py was never wired into ship; brain_check skips the unstamped shipping guide — so banned pills shipped, caught only next session). (2) TICKET ORDER — 🎟 lead row now hard-fails a booking domain/platform placed LEFT of the N.N⭐ rating (Tickets §2a/2b: Title · rating · [reviews ·] platform); keys on domain/platform-left-of-⭐, not segment index, so subtitle dots don't false-fail (only Kraków's 9 domain-first rows trip it). (3) TRAM SILENT NO-OP — the 3 tram checks anchored on the literal heading '🚎 Tram', so '🚎 T1 Tram' / '🚎 No tram found…' dodged them all; broadened anchor to 🚎[^<]* (any 🚎-led heading). (4) TRAM/METRO/FERRY MOTION FORMAT — 🚢/🚝 now get the full ≥60min→hours + no-0-min enforcement in _validate_motion_row (were 'has a digit' only); 🚎 excluded (line-number inline form, validated by the sub-line check). (5) METRO SUB-LINE — Motion Rule §1 defines a '🚝 metro' sub-line 'same inline pattern as tram', but the word-'metro' ban false-failed it and there was no home: added .next-metro (banner recognizer + metro-word exemption inside it + shape check mirroring tram + guide-style.css). (6) TRIP OVERVIEW EoI — .overview-day cards now hard-fail any EoI/foreign content (<img>/<p>/<ul>/<table>/<hN>/media); only two retired divs were banned before, so any new content class passed vacuously (days-only grid). (7) TOURS + RIDE-APP — added Tours §3 platform grouping ORDER (all Viator→all GetYourGuide→all TripAdvisor; 0 fleet interleaving) + ride-app negative-finding canonical wording 'No ride apps available in [City].' (tram had it, ride-apps didn't). (8) PICKLEBALL — every entry now requires a 🚶 walk time; a 🚕-only entry was accepted and was invisible to the ≤28-min cap + closest-first ordering (Pickleball §2/§3). (9) HEDGING — 'approximately N hours/minutes' now caught (regex only matched abbreviated units with a trailing \\b; spelled-out 'hours'/'minutes' evaded, unlike the correctly-built 'roughly'/'around'). (10) WEEKLY CLOSURES — Oxford day list 'Monday, Wednesday, & Friday' (the spec's own valid example) was rejected: separator now repeats so ', & ' is consumed as two separators. (11) HEADS UP — heading-format check LABEL said 'REQUIRED leading ❗️' while the code correctly BANS it (2026-06-24 rule); label + adjacent 'no emoji' label + _SECTION_ICON_ALLOWLISTS entry + stale comment corrected to match. Fleet impact: TR-7 / ride-app wording / tours order / metro / EoI = 0 current guides (preventive); ticket order = Kraków; pickleball 🚶 = 5 guides (Phoenix/Palm-Desert/San-Jose/Santa-Cruz/Malibu) — all genuine spec violations that were slipping through. No guide HTML edited in this pass."),
@@ -12647,80 +12648,75 @@ def validate(html: str, filename: str):
 
     # T5 — Pickleball ship-gate.
     # Per Guide Structure.html Section order — Pickleball (#12) ships for ALL
-    # US trips (expanded from CA/AZ/OR to all 50 states, 2026-07-06).
+    # US trips (expanded from CA/AZ/OR to all 50 states + DC, 2026-07-06).
     # Silently omitted for non-US guides (no section header, no negative-finding line).
     #
-    # Detection: extract the 2-letter US state code from .title-address
-    # text. Format per Hotel Banner.html + Links.html:
-    #   `Street · City ST` — for US, the state code follows the city name
-    #   (e.g., "800 Middle Ave · Menlo Park CA"; postal codes banned 2026-05-19)
-    #   or follows a comma (e.g., "Menlo Park, CA"). Both shapes are matched.
+    # Detection: primary signal is .title-country == "United States".
+    # The old .title-address state-code parser was unreliable — hotel addresses
+    # use "Street · Neighborhood" format (Hotel Banner.html), which never
+    # includes a state code — so it silently returned None for most US cities.
+    # .title-country is always present and required (Hotel Banner.html §1;
+    # title-country absence is a separate hard-fail). Fixed 2026-07-06.
     #
     # Gate branches:
-    #   - state is a known US state code → pickleball MUST be present
-    #   - state is None (non-US, or address didn't parse) → pickleball
-    #     MUST be absent. We can't prove US eligibility, so any pickleball
-    #     section in a guide with an unresolved state is treated as a
-    #     ship-violation.
-    PICKLEBALL_ELIGIBLE_STATES = {
-        "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-        "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-        "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-        "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-        "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
-        "DC",  # Washington DC
-    }
+    #   - .title-country == "United States" → pickleball MUST be present
+    #   - .title-country is anything else (non-US) → pickleball MUST be absent
+    #   - .title-country absent / unreadable → skip gate (separate check catches it)
+    trip_country = None
+    title_country_m = re.search(
+        r'<div\b[^>]*class\s*=\s*"[^"]*\btitle-country\b[^"]*"[^>]*>(.*?)</div>',
+        html, re.IGNORECASE | re.DOTALL,
+    )
+    if title_country_m:
+        trip_country = RE_STRIP_TAGS.sub('', title_country_m.group(1)).strip()
+
+    trip_is_us = (trip_country or '').lower() == 'united states'
+
+    # Also keep the state-code parser for the check message (informational only).
     trip_state = None
     title_addr_m = re.search(
         r'<div\b[^>]*class\s*=\s*"[^"]*\btitle-address\b[^"]*"[^>]*>(.*?)</div>',
         html, re.IGNORECASE | re.DOTALL,
     )
     if title_addr_m:
-        # Strip any nested HTML — we only want the visible address text.
-        addr_text = RE_STRIP_TAGS.sub( ' ', title_addr_m.group(1))
-        # Pattern A: state code immediately before US ZIP (5 digits).
-        sm = re.search(r'\b([A-Z]{2})\b\s+\d{5}\b', addr_text)
-        if sm:
-            trip_state = sm.group(1).upper()
-        else:
-            # Pattern B: state code after a comma (e.g., "Menlo Park, CA").
-            sm = re.search(r',\s*([A-Z]{2})\b(?!\w)', addr_text)
+        addr_text = RE_STRIP_TAGS.sub(' ', title_addr_m.group(1))
+        for pattern in (
+            r'\b([A-Z]{2})\b\s+\d{5}\b',          # Pattern A: state before ZIP
+            r',\s*([A-Z]{2})\b(?!\w)',              # Pattern B: after comma
+            r'\b([A-Z]{2})\s*$',                   # Pattern C: at end of line
+        ):
+            sm = re.search(pattern, addr_text.strip())
             if sm:
                 trip_state = sm.group(1).upper()
-        if trip_state is None:
-            # Pattern C: two-letter state code at end of address line (no ZIP present)
-            sm = re.search(r'\b([A-Z]{2})\s*$', addr_text.strip())
-            if sm:
-                trip_state = sm.group(1).upper()
+                break
 
     pickleball_present = "pickleball" in eoi_present_set
 
-    if has_any_day_block and trip_state in PICKLEBALL_ELIGIBLE_STATES:
+    if has_any_day_block and trip_is_us:
+        state_hint = f' (state: {trip_state})' if trip_state else ''
         check(
-            '🥒 Guide Structure — Pickleball section ships for all US trips '
-            f'(detected trip state: "{trip_state}") '
+            '🥒 Guide Structure — Pickleball section ships for all US trips'
+            f'{state_hint} '
             '(per Guide Structure.html Section order — #12 conditional)',
             pickleball_present,
             (
-                f'trip state is "{trip_state}" but no .extras-section '
-                'id="pickleball" found — section is required for all US trips'
+                f'.title-country is "United States"{state_hint} but no .extras-section '
+                'id="pickleball" found — section is required for all US trips '
+                '(ships a negative-finding line when no courts qualify)'
             ) if not pickleball_present else '',
         )
-    elif has_any_day_block and pickleball_present:
-        # State could not be parsed (non-US guide, or unusual address
-        # shape) BUT pickleball is present. Without proof of a US state,
-        # the section can't legitimately ship.
+    elif has_any_day_block and not trip_is_us and pickleball_present:
+        # Non-US guide has a pickleball section — must be silently omitted.
         check(
-            '🥒 Guide Structure — Pickleball section requires a US trip '
+            '🥒 Guide Structure — Pickleball section must be silently omitted '
+            'for non-US trips '
+            f'(detected country: "{trip_country}") '
             '(per Guide Structure.html Section order — #12 conditional)',
             False,
-            'pickleball section is present but trip state could not be '
-            'determined from .title-address — pickleball ships only for '
-            'US trips. Either fix the address shape so the state '
-            'parses (e.g., "Street · City NY") or remove the '
-            'pickleball section.',
+            f'.title-country is "{trip_country}" (not United States) but '
+            'id="pickleball" is present — remove the pickleball section.',
         )
-    # else: no pickleball, no parseable state (non-US guide) — nothing to enforce.
+    # else: no pickleball, non-US guide — nothing to enforce.
 
     # T6 — Heads Up ship-gate.
     # Per Guide Structure.html Section order — Heads Up (#14) ships
@@ -25793,6 +25789,29 @@ def validate(html: str, filename: str):
         # resource pages.  Absence of a pill means the traveller can't reach
         # key reference pages (time zones, plug adapters, currency) from the guide.
         # European-Train-Guide is exempt (EU guides only); all others are required.
+        # Stats pill is exempt for regions with no stats page (e.g. Pacific).
+        _TR6_REGIONS_WITH_STATS = {
+            'Europe', 'North America', 'Asia', 'Caribbean',
+            'South America', 'Central America',
+        }
+        # Determine if a stats page exists for this guide's region via FMAP.
+        _tr6_stats_required = True
+        if _city_folder:
+            try:
+                import json as _json
+                _fmap_m = re.search(r'var FMAP = (\{.*?\});', _idx_html, re.DOTALL)
+                if _fmap_m:
+                    _fmap_data = _json.loads(_fmap_m.group(1))
+                    _city_entry = next(
+                        (v for k, v in _fmap_data.items()
+                         if k.startswith(_city_folder + '/')),
+                        None,
+                    )
+                    if _city_entry:
+                        _tr6_stats_required = _city_entry.get('rg', '') in _TR6_REGIONS_WITH_STATS
+            except Exception:
+                pass  # parse failure → keep stats required (safe default)
+
         _TR_REQUIRED = [
             ('Weather',       'Weather.html'),
             ('Time Zones',    'Time-Zones.html'),
@@ -25800,14 +25819,15 @@ def validate(html: str, filename: str):
             ('Currency',      'Currency-Guide'),
             ('Safety Guide',  'Safety-Guide'),
             ('Visas',         'Visas.html'),
-            ('Stats',         'Stats'),   # Asia-Stats / Europe-Stats / Stats-Across-US etc.
         ]
+        if _tr6_stats_required:
+            _TR_REQUIRED.append(('Stats', 'Stats'))   # Asia-Stats / Europe-Stats / Stats-Across-US etc.
         _tr_pills_text = ' '.join(_pill_hrefs)
         _tr_missing = [label for label, key in _TR_REQUIRED if key not in _tr_pills_text]
         check(
             'TR-6 "Also on this site" required pills — all canonical resource pills must be present: '
             'Weather · Time Zones · Plug Adapter · Currency · Safety Guide · Visas · Stats '
-            '(European Train Guide exempt — EU guides only)',
+            '(European Train Guide exempt — EU guides only; Stats exempt for regions with no stats page)',
             not _tr_missing,
             'Missing pill(s): ' + ', '.join(_tr_missing),
         )
