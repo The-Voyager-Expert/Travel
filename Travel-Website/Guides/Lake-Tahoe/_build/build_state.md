@@ -40,6 +40,7 @@ Last updated: 2026-06-26
 - [x] Getting Around - Extra Section.html
 - [x] Train Stations Near Hotel - Extra Section.html
 - [x] Day Trips by Train - Extra Section.html
+- [x] Pickleball - Extra Section.html
 - [x] Michelin Restaurants - Extra Section.html
 - [x] Heads Up - Extra Section.html
 - [x] Claude Inspiration - Extra Section.html
