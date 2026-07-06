@@ -56,6 +56,8 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-05", "VALIDATOR AUDIT — 11 enforcement gaps closed (rule-by-rule audit of every format spec). (1) TR-7 BANNED PILLS — the 'Also on this site' rail now hard-fails City Transit Cards / SIM Cards Abroad / Tipping Guide / Airport Lounges / Climate Finder (TR-4 deliberately tolerated unknown pills; validate_also_on_site_pills.py was never wired into ship; brain_check skips the unstamped shipping guide — so banned pills shipped, caught only next session). (2) TICKET ORDER — 🎟 lead row now hard-fails a booking domain/platform placed LEFT of the N.N⭐ rating (Tickets §2a/2b: Title · rating · [reviews ·] platform); keys on domain/platform-left-of-⭐, not segment index, so subtitle dots don't false-fail (only Kraków's 9 domain-first rows trip it). (3) TRAM SILENT NO-OP — the 3 tram checks anchored on the literal heading '🚎 Tram', so '🚎 T1 Tram' / '🚎 No tram found…' dodged them all; broadened anchor to 🚎[^<]* (any 🚎-led heading). (4) TRAM/METRO/FERRY MOTION FORMAT — 🚢/🚝 now get the full ≥60min→hours + no-0-min enforcement in _validate_motion_row (were 'has a digit' only); 🚎 excluded (line-number inline form, validated by the sub-line check). (5) METRO SUB-LINE — Motion Rule §1 defines a '🚝 metro' sub-line 'same inline pattern as tram', but the word-'metro' ban false-failed it and there was no home: added .next-metro (banner recognizer + metro-word exemption inside it + shape check mirroring tram + guide-style.css). (6) TRIP OVERVIEW EoI — .overview-day cards now hard-fail any EoI/foreign content (<img>/<p>/<ul>/<table>/<hN>/media); only two retired divs were banned before, so any new content class passed vacuously (days-only grid). (7) TOURS + RIDE-APP — added Tours §3 platform grouping ORDER (all Viator→all GetYourGuide→all TripAdvisor; 0 fleet interleaving) + ride-app negative-finding canonical wording 'No ride apps available in [City].' (tram had it, ride-apps didn't). (8) PICKLEBALL — every entry now requires a 🚶 walk time; a 🚕-only entry was accepted and was invisible to the ≤28-min cap + closest-first ordering (Pickleball §2/§3). (9) HEDGING — 'approximately N hours/minutes' now caught (regex only matched abbreviated units with a trailing \\b; spelled-out 'hours'/'minutes' evaded, unlike the correctly-built 'roughly'/'around'). (10) WEEKLY CLOSURES — Oxford day list 'Monday, Wednesday, & Friday' (the spec's own valid example) was rejected: separator now repeats so ', & ' is consumed as two separators. (11) HEADS UP — heading-format check LABEL said 'REQUIRED leading ❗️' while the code correctly BANS it (2026-06-24 rule); label + adjacent 'no emoji' label + _SECTION_ICON_ALLOWLISTS entry + stale comment corrected to match. Fleet impact: TR-7 / ride-app wording / tours order / metro / EoI = 0 current guides (preventive); ticket order = Kraków; pickleball 🚶 = 5 guides (Phoenix/Palm-Desert/San-Jose/Santa-Cruz/Malibu) — all genuine spec violations that were slipping through. No guide HTML edited in this pass."),
+    ("2026-07-05", "GETTING AROUND §1b — ONE OPERATOR PER 🚕 ENTRY + NAMED HEADING (Dani 2026-07-05: 'why this is not failing?' — the '🚕 Ride Apps → Uber · Bolt' aggregate). The existing per-app link-only check (2026-05-24) only counted child <div>s + link presence, so two operators joined by '·' inside one div (1 div, contains an <a>) sailed through, as did a generic 'Ride Apps' placeholder heading. Two new checks in the GETTING AROUND block: (A) MULTI-OPERATOR BOX — each 🚕 extras-sub's transit-box must hold exactly one <a>; >1 hard-fails (each ride app is its own extras-sub + box, no '·'-joined row). (B) GENERIC HEADING — the 🚕 heading must name the operator (Uber/Bolt/Grab/…), not the category label 'Ride App(s)' / 'ride-hailing' / 'rideshare'. Rule authority: Getting Around - Extra Section.html §1b (singular '🚕 [Ride App]' + one '[Ride App Operator]'; all 149 conforming guides name the operator). Companion same pass: 57 drifted guides normalized to per-app format; Validator Index.html + Cleanliness Checks.md updated. Format fix only — data-updated NOT bumped."),
     ("2026-06-28", "STATUS DOTS + DELTA ROUTES FINAL GATE. Two new hard-fail checks added to the FINAL GATE (end of validation): (1) STATUS DOTS — city must appear on a bullet line in Brain/Reference/Status Dots — guides_index.md; absence means the guide shipped without ever being added to the status tracking doc and the index dot can't reflect reality. (2) DELTA ROUTES — city must have a card with data-guide=\"FolderName\" in Trip-Essentials/Delta-Routes-SEA.html; Seattle is exempt (origin city). Both run after the world-map-pin check, before Open Questions. Previously these were only enforced at guide_tools.py ship time; now the static validator also catches them (consistent with the index-listing / map-pin / also-on-this-site pattern)."),
     ("2026-06-28", "GUIDE CARD AND STATUS GATE (FINAL GATE). New hard-fail check: every guide listed in Guides-Index.html MUST have data-status=\"want\" attribute on its dest-card element (the blue dot indicator for 'want to go'). Detects missing or incorrect status before ship. Reason: 93 guides were shipped without the data-status attribute; new guides must default to 'want to go' with proper visual indicator. Runs at the end of validation (FINAL GATE) alongside index-listing and map-pin checks (line ~25400). Provides specific guidance to add attribute to dest-card. Companion fix (same session): all 201 guides in Guides-Index.html now have proper data-status values (195 want + 6 been)."),
     ("2026-06-28", "GUIDE HTML FILENAME PATTERN CHECK (ENHANCED). Hard-fail check: guide HTML files must follow the {city}_v*.html pattern where {city} is derived from the folder name (e.g., Azores/ → azores_v1.html, Cairo/ → cairo_v2.html). Detects non-compliant names: Cairo.html, Lake Tahoe.html, guide_v1.html, or any non-city-specific filename before they ship. The filename MUST start with the city slug (folder name converted to lowercase, spaces/hyphens → underscores). Reason: Azores shipped as guide_v1.html; Cairo and Lake Tahoe as Cairo.html/Lake Tahoe.html; this check enforces city-specific naming so all guides are discoverable and versioned consistently. Runs early in validate() (line ~383) before any content checks. Provides specific guidance on rename (e.g., 'Found: guide_v1.html in Azores/ — rename to azores_v1.html')."),
@@ -2538,10 +2540,27 @@ def validate(html: str, filename: str):
         overview_missing_title: list[str] = []
         overview_stale_stops_div: list[str] = []  # .overview-day-stops is retired (2026-05-26)
         overview_has_count: list[str] = []
+        overview_eoi_content: list[str] = []
+        # A day card is a title-only nav chip — a days-only grid, never a full
+        # "Explore-of-Interest" card. Banning the retired .overview-day-stops /
+        # -count divs is not enough: ANY EoI building block (image, paragraph,
+        # list, table, heading, media) dropped into a card would pass vacuously.
+        # This positively forbids those tags (Trip Overview.html — "No full EoI
+        # cards in Trip Overview day-card area. Days-only grid.").
+        _overview_eoi_re = re.compile(
+            r'<(img|p|ul|ol|li|table|h[1-6]|figure|picture|source|video|iframe)\b',
+            re.IGNORECASE,
+        )
 
         for i, gd in enumerate(overview_days, 1):
             attrs = gd.group(1)
             inner = gd.group(2)
+
+            # 5. No EoI card content — a day card holds only its title (+ optional
+            # day-number badge); it is never a full illustrated/priced EoI card.
+            _eoi_tags = _overview_eoi_re.findall(inner)
+            if _eoi_tags:
+                overview_eoi_content.append(f"card {i}: <{'>, <'.join(sorted(set(t.lower() for t in _eoi_tags)))}>")
 
             # 1. href="#..." must be present so the card actually navigates.
             # (Exact #day{N} format enforced by the TRIP OVERVIEW — STRICT FORMAT block.)
@@ -2603,6 +2622,14 @@ def validate(html: str, filename: str):
                 len(overview_has_count) == 0,
                 f"{len(overview_has_count)} card(s) contain forbidden .overview-day-count: "
                 f"{overview_has_count[:3]}" if overview_has_count else "",
+            )
+            check(
+                'Trip Overview — day cards are a days-only grid, no full EoI card '
+                'content (no <img>/<p>/<ul>/<table>/<hN>/media inside an .overview-day '
+                'card; Trip Overview.html)',
+                len(overview_eoi_content) == 0,
+                f"{len(overview_eoi_content)} card(s) contain EoI/foreign content: "
+                f"{overview_eoi_content[:3]}" if overview_eoi_content else "",
             )
 
     # ─── BANNER BODY FORMAT — strict, no parentheticals / prose ─
@@ -6750,7 +6777,14 @@ def validate(html: str, filename: str):
                 errs.append(
                     f'{label}: {emoji} has no numeric time — "{plain[:60]}"'
                 )
-            elif emoji in ('🚶', '🚕'):
+            elif emoji in ('🚶', '🚕', '🚢', '🚝'):
+                # 🚢 ferry / 🚝 metro carry the SAME [N min] / Xh Ymin shape as
+                # walk/ride (Icon Order and Format.html §2 8a–8e), so they get the
+                # full ≥60-min→hours + no-0-min enforcement — not just the "has a
+                # digit" check. 🚎 tram is deliberately EXCLUDED: its inline form is
+                # a line identifier ("🚎 2 tram to …", "🚎 T1 tram …"), validated by
+                # the dedicated .next-tram shape check, and its segment is stripped
+                # by the "→ dest" cut above.
                 _hm = _wr_hours_min_re.match(after)
                 _ho = _wr_hours_re.match(after)
                 _mo = _wr_min_re.match(after)
@@ -6798,9 +6832,9 @@ def validate(html: str, filename: str):
 
     _pattern_violations: list[str] = []
 
-    # All itinerary banner divs: .next, .next-tram, .hotel-first, .depart, .arrive-first
+    # All itinerary banner divs: .next, .next-tram, .next-metro, .hotel-first, .depart, .arrive-first
     _next_any_re = re.compile(
-        r'<div\b[^>]*class\s*=\s*"[^"]*\b(next(?:-tram)?|hotel-first|depart|arrive-first)\b[^"]*"[^>]*>(.*?)</div>',
+        r'<div\b[^>]*class\s*=\s*"[^"]*\b(next(?:-tram|-metro)?|hotel-first|depart|arrive-first)\b[^"]*"[^>]*>(.*?)</div>',
         re.IGNORECASE | re.DOTALL,
     )
     for _nm in _next_any_re.finditer(html):
@@ -7326,6 +7360,18 @@ def validate(html: str, filename: str):
         re.IGNORECASE,
     )
     _tkt_review_re = re.compile(r'\d[\d,]*\+\s*reviews', re.IGNORECASE)
+    # Tickets §2 element ORDER: the rating leads the metadata — Title · [N.N⭐] ·
+    # [reviews ·] Platform/domain. A booking platform NAME or a venue.domain that
+    # appears BEFORE the rating means the segments are out of order (e.g. Kraków
+    # shipped "Title · venue.domain · note · N.N⭐ · Platform"). Titles legitimately
+    # carry an internal " · " subtitle, so we cannot key on segment index — we key
+    # on "a domain/platform token sits left of the ⭐", which is unambiguous.
+    _tkt_platform_name_re = re.compile(
+        r'\b(?:viator|getyourguide|tripadvisor|klook|ticketmaster|stubhub|todaytix)\b',
+        re.IGNORECASE,
+    )
+    _tkt_domain_re = re.compile(r'\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b', re.IGNORECASE)
+    _tkt_order_violations: list[str] = []
     for _tbm in _tkt_box_open_re2.finditer(html):
         _tb_inner, _ = _walk_balanced_div(html, _tbm.end())
         # Find the lead 🎟 row (first div inside the box)
@@ -7338,8 +7384,19 @@ def validate(html: str, filename: str):
         if '·' not in _lead_text:
             continue
         # Star rating — required on all · forms.
-        if not _star_rating_re.search(_lead_text):
+        _rating_m = _star_rating_re.search(_lead_text)
+        if not _rating_m:
             _tkt_star_violations.append(_lead_text[:80])
+        else:
+            # ORDER (Tickets §2a/2b): the rating leads the metadata — no booking
+            # domain or platform name may sit to the LEFT of the ⭐. Titles carry
+            # a legitimate internal " · " subtitle, so we key on "domain/platform
+            # left of ⭐", never on segment index. (A rating is only checked for
+            # order when present; ratingless venue tickets are unaffected.)
+            _before_rating = _lead_text[:_rating_m.start()]
+            if (_tkt_platform_name_re.search(_before_rating)
+                    or _tkt_domain_re.search(_before_rating)):
+                _tkt_order_violations.append(_lead_text[:90])
         # Review count — required only when the link points to a platform.
         if _tkt_platform_re.search(_lead_raw) and not _tkt_review_re.search(_lead_text):
             _tkt_review_violations.append(_lead_text[:80])
@@ -7359,6 +7416,15 @@ def validate(html: str, filename: str):
         len(_tkt_review_violations) == 0,
         f"{len(_tkt_review_violations)} 🎟 platform ticket-box row(s) missing review count: "
         + "; ".join(f'"{v}"' for v in _tkt_review_violations[:5]),
+    )
+    check(
+        '🎟 ticket-box lead row element ORDER — the rating leads the metadata: '
+        '🎟 {Title} · {N.N⭐} · [{N}+ reviews ·] {Platform|venue.domain} '
+        '(Tickets.html §2 — no booking domain/platform, and no editorial note, '
+        'may sit to the LEFT of the ⭐)',
+        len(_tkt_order_violations) == 0,
+        f"{len(_tkt_order_violations)} 🎟 row(s) put a domain/platform before the rating: "
+        + "; ".join(f'"{v}"' for v in _tkt_order_violations[:5]),
     )
 
     # ─── NO <br> INSIDE ANY LOGISTICS BOX ───────────────────────────────────
@@ -8205,8 +8271,12 @@ def validate(html: str, filename: str):
     #   "Monday"  /  "Tuesday & Wednesday"  /  "Monday–Wednesday"
     #   "Monday, Wednesday, & Friday"  /  "Tuesday and Wednesday"
     _wc_day_unit = r'(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)s?'
-    # Separator: dash/en-dash (range), comma, ampersand, or "and" (list)
-    _wc_day_sep  = r'(?:\s*(?:[,&–\-]+|and)\s*)'
+    # Separator: dash/en-dash (range), comma, ampersand, or "and" (list). The
+    # whole group repeats (+) so an Oxford "list separator" like ", & " — a comma
+    # then a space then an ampersand — is consumed as two separators rather than
+    # failing on the space between "," and "&" (Weekly Closures §2 lists
+    # "Monday, Wednesday, & Friday" as a valid form).
+    _wc_day_sep  = r'(?:\s*(?:[,&–\-]|and)\s*)+'
     wc_valid_day_re = re.compile(
         rf'^{_wc_day_unit}(?:{_wc_day_sep}{_wc_day_unit})*$',
         re.IGNORECASE,
@@ -14636,6 +14706,101 @@ def validate(html: str, filename: str):
         if _ga_ra_link_only_bad else '',
     )
 
+    # ─── GETTING AROUND — ONE OPERATOR PER 🚕 ENTRY + NAMED HEADING ─────────
+    # Per Getting Around - Extra Section.html §1b, the ride-app format is
+    # per-app and singular:
+    #     🚕 [Ride App]        ← the heading names ONE specific operator
+    #     [Ride App Operator]  ← its single operator link
+    # Two drifts slipped past the link-only check above (it only counts child
+    # <div>s + link presence, not <a> count or heading text), so the aggregate
+    # "🚕 Ride Apps → Uber · Bolt" shipped fleet-wide:
+    #   (A) MULTI-OPERATOR BOX — two apps joined by "·" inside one div: the box
+    #       holds >1 <a>. Each operator must be its own 🚕 extras-sub + box.
+    #   (B) GENERIC PLACEHOLDER HEADING — the heading reads the category label
+    #       "Ride Apps" / "Ride App" instead of the operator's name (Uber, Bolt,
+    #       Grab, FreeNow, …). Every one of the 149 conforming guides names the
+    #       operator; "Ride App(s)" is an unfilled placeholder.
+    # Added 2026-07-05.
+    print("\n── GETTING AROUND — ONE OPERATOR PER 🚕 ENTRY + NAMED HEADING ──")
+    _ga_multi_op_bad: list[str] = []
+    _ga_generic_head_bad: list[str] = []
+    _GA_GENERIC_HEADINGS = {
+        'ride apps', 'ride app', 'ride-hailing', 'ride hailing',
+        'rideshare', 'ride share', 'ride-share', 'taxi apps',
+    }
+    if _ga_html_link:
+        for _op_es_m in re.finditer(
+            r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>(.*?)</div>',
+            _ga_html_link, re.DOTALL | re.IGNORECASE,
+        ):
+            _op_head = RE_STRIP_TAGS.sub('', _op_es_m.group(1)).strip()
+            if '🚕' not in _op_head:
+                continue
+            # (B) heading must name a specific operator, not the category label
+            _op_name = _op_head.replace('🚕', '').strip().rstrip('.').strip().lower()
+            if _op_name in _GA_GENERIC_HEADINGS:
+                _ga_generic_head_bad.append(
+                    f'"{_op_head[:50]}" — heading is the generic category label; '
+                    'name the specific operator (e.g. 🚕 Uber / 🚕 Bolt)'
+                )
+            # (A) the following transit-box must hold exactly one <a> operator link
+            _op_after = _ga_html_link[_op_es_m.end():]
+            _op_tb_m = re.search(
+                r'<div\b[^>]*class\s*=\s*"[^"]*\btransit-box\b[^"]*"[^>]*>',
+                _op_after, re.IGNORECASE,
+            )
+            if not _op_tb_m:
+                continue
+            _op_tb_inner, _ = _walk_balanced_div(_op_after, _op_tb_m.end())
+            _op_links = re.findall(r'<a\b', _op_tb_inner, re.IGNORECASE)
+            if len(_op_links) > 1:
+                _ga_multi_op_bad.append(
+                    f'"{_op_head[:50]}" — transit-box holds {len(_op_links)} operator '
+                    'links; each ride app is its own 🚕 extras-sub with a single '
+                    'operator link (no "·"-joined multi-app row)'
+                )
+    check(
+        '🚕 Getting Around — one operator per 🚕 entry: each ride-app transit-box '
+        'holds exactly one operator link, never several joined by "·" '
+        '(Getting Around - Extra Section.html §1b, added 2026-07-05)',
+        not _ga_multi_op_bad,
+        f'{len(_ga_multi_op_bad)} multi-operator box(es): '
+        + '; '.join(_ga_multi_op_bad[:3])
+        if _ga_multi_op_bad else '',
+    )
+    check(
+        '🚕 Getting Around — ride-app heading names the operator, not the generic '
+        '"Ride App(s)" category label (Getting Around - Extra Section.html §1b, added 2026-07-05)',
+        not _ga_generic_head_bad,
+        f'{len(_ga_generic_head_bad)} generic heading(s): '
+        + '; '.join(_ga_generic_head_bad[:3])
+        if _ga_generic_head_bad else '',
+    )
+
+    # ─── GETTING AROUND — RIDE-APP NEGATIVE-FINDING WORDING ──────────────────
+    # Per Getting Around - Extra Section.html §1b, when no ride app works the
+    # subsection ships EXACTLY: "No ride apps available in [City]." (the same
+    # fixed-wording discipline as the tram "No tram found in [City]." line — which
+    # WAS enforced while ride-apps was not, so free-form variants like "no ride
+    # apps; taxis and safari buses only." shipped). Any ride-app negative line that
+    # is not the canonical form hard-fails.
+    _ga_ride_neg_bad: list[str] = []
+    _ga_ride_neg_ok = re.compile(r'^No ride apps available in .+\.$')
+    for _rnm in re.finditer(
+        r'<div\b[^>]*>([^<]*\bno ride[- ]?apps?\b[^<]*)</div>', _ga_html, re.IGNORECASE
+    ):
+        _rn_text = RE_WS.sub(' ', RE_STRIP_TAGS.sub('', _rnm.group(1))).strip()
+        if not _ga_ride_neg_ok.match(_rn_text):
+            _ga_ride_neg_bad.append(_rn_text[:80])
+    check(
+        '🚕 Getting Around — ride-app negative-finding line is the fixed wording '
+        '"No ride apps available in [City]." (Getting Around - Extra Section.html §1b)',
+        not _ga_ride_neg_bad,
+        f'{len(_ga_ride_neg_bad)} non-canonical ride-app negative line(s): '
+        + '; '.join(f'"{v}"' for v in _ga_ride_neg_bad[:3])
+        if _ga_ride_neg_bad else '',
+    )
+
     # ─── GETTING AROUND — EXTRAS-SUB ICON ALLOWLIST ──────────────────────────
     # Getting Around - Extra Section.html defines four subsections:
     #   §1 🚕 Ride Apps   §2 🚎 Tram   §3 🚝 Metro (only when requested)
@@ -15315,7 +15480,7 @@ def validate(html: str, filename: str):
         'local-tastes':        (set(),  False),  # dish name — plain text
         'stations-near-hotel': ({'🚊', '🚄'},  True),   # 🚊/🚄 structural prefix required on each entry heading (entry format: 🚊 [Station Name] or 🚄 [Station Name]); 🚆 is section-title only (forbidden on headings, 2026-05-26)
         'pickleball':          (set(),  False),  # venue name — plain text
-        'heads-up':      ({'❗️', '❗'},  False),  # ❗️ leading prefix on each entry heading (restored 2026-06-17 per Dani, reversing 2026-05-19); the dedicated Heads Up heading-format check requires it. Bare ❗ caught by the global bare-❗ ban.
+        'heads-up':      (set(),  False),  # "Venue — Short Title" — plain text, NO icon (2026-06-24 per Dani: ❗️ belongs on the section title only, never on an entry heading; the dedicated heading-format check bans a leading ❗). Bare ❗ anywhere caught by the global bare-❗ ban.
         'weekly-closures':     (set(),  False),  # venue/day label — plain text
     }
     # Match one emoji code point + optional variation selector (U+FE00–FE0F) as a unit.
@@ -15391,6 +15556,7 @@ def validate(html: str, filename: str):
         _tours_fmt_bad: list[str] = []
         _tours_rating_bad: list[str] = []
         _tours_src = {'Viator': 0, 'GetYourGuide': 0, 'TripAdvisor': 0, 'Other': 0}
+        _tours_plat_seq: list[tuple[int, str]] = []  # (rank, label) in doc order — Tours §3 grouping
         _tours_present = bool(_tours_sec_m)
         _tours_empty = False
         _tours_inner: str = ""
@@ -15440,10 +15606,13 @@ def validate(html: str, filename: str):
                 _hl = _href.lower()
                 if 'viator.com' in _hl:
                     _tours_src['Viator'] += 1
+                    _tours_plat_seq.append((0, _label))
                 elif 'getyourguide.' in _hl:
                     _tours_src['GetYourGuide'] += 1
+                    _tours_plat_seq.append((1, _label))
                 elif 'tripadvisor.' in _hl:
                     _tours_src['TripAdvisor'] += 1
+                    _tours_plat_seq.append((2, _label))
                 else:
                     _tours_src['Other'] += 1
                 # body box (.entry-body) rows
@@ -15593,6 +15762,29 @@ def validate(html: str, filename: str):
         )
         # Per-platform minimums — § 3. Below the 5/5/5 minimum is a warning.
         # Document the reason in the <!-- low-count: [reason] --> comment after
+        # Tours §3 platform grouping ORDER — entries ship grouped by platform in
+        # the fixed sequence: all Viator, then all GetYourGuide, then all
+        # TripAdvisor. Interleaving (a Viator entry after a GetYourGuide one, etc.)
+        # hard-fails. Ranks: Viator=0, GetYourGuide=1, TripAdvisor=2.
+        _tours_order_bad: list[str] = []
+        for _pi in range(len(_tours_plat_seq) - 1):
+            if _tours_plat_seq[_pi][0] > _tours_plat_seq[_pi + 1][0]:
+                _nm = ['Viator', 'GetYourGuide', 'TripAdvisor']
+                _tours_order_bad.append(
+                    f'{_nm[_tours_plat_seq[_pi][0]]} entry "{_tours_plat_seq[_pi][1]}" '
+                    f'precedes {_nm[_tours_plat_seq[_pi + 1][0]]} '
+                    f'"{_tours_plat_seq[_pi + 1][1]}"'
+                )
+        if _tours_present and _tours_plat_seq:
+            check(
+                'Tours — entries grouped by platform in order: all Viator → all '
+                'GetYourGuide → all TripAdvisor (no interleaving; Tours - Extra '
+                'Section.html § 3)',
+                not _tours_order_bad,
+                f'{len(_tours_order_bad)} out-of-order boundary(ies): '
+                + '; '.join(_tours_order_bad[:3]),
+            )
+
         # the section header. No guide-level exemptions — every shortfall warns.
         _src_bad: list[str] = []
         if _tours_src['Viator'] < 5:
@@ -16591,7 +16783,7 @@ def validate(html: str, filename: str):
         (r'\bprices?\s+vary\b',                 '"prices vary" — price data banned from guide'),
         (r'\bcost\s+varies\b',                  '"cost varies" — price data banned from guide'),
         (r'\bestimated\s+\d',                   '"estimated N" — use confirmed value'),
-        (r'\bapproximately\s+\d+\s*(?:hour|hr|min)\b',
+        (r'\bapproximately\s+\d+\s*(?:h\b|hr\b|hours?\b|min(?:utes?)?\b)',
                                                 '"approximately N hours/min" — use ⏰ ~N hr format or confirmed data'),
         (r'\btypically\s+takes?\b',             '"typically takes" — use confirmed ⏰ duration'),
         (r'\busually\s+takes?\b',               '"usually takes" — use confirmed ⏰ duration'),
@@ -19331,6 +19523,18 @@ def validate(html: str, filename: str):
                     f'"{_pb_entry_name}" missing motion row (🚶 N min · 🚕 M min)'
                 )
             else:
+                # Every pickleball entry MUST carry a 🚶 walk time — the section is
+                # scoped to courts "within 25 min walk" and "ordered by walk time"
+                # (Pickleball - Extra Section.html §2/§3: 🚶 [N min] · 🚕 [M min]).
+                # A 🚕-only entry has no walk time, so it is both out-of-scope and
+                # invisible to the ≤28-min cap + closest-first ordering (which key
+                # on 🚶). Require the 🚶 row.
+                if '🚶' not in _pb_entry_body:
+                    _pb_shape_violations.append(
+                        f'"{_pb_entry_name}" — motion row has 🚕 but no 🚶 walk time; '
+                        f'every court is within 25 min walk and rows read '
+                        f'🚶 N min · 🚕 M min (Pickleball - Extra Section.html §2/§3)'
+                    )
                 # 🚶 and 🚕 must each carry a numeric time (Motion Rule).
                 if '🚕' in _pb_entry_body and not re.search(r'🚕\s*\d', _pb_entry_body):
                     _pb_shape_violations.append(
@@ -21365,16 +21569,18 @@ def validate(html: str, filename: str):
              + '; '.join(_cg_note_no_arrow[:6])) if _cg_note_no_arrow else '',
         )
         check(
-            'Heads Up — heading row: "❗️ Venue — Short Title" '
-            '(REQUIRED leading ❗️, em-dash, text on both sides, no links) '
-            '(Heads Up - Extra Section.html § 2)',
+            'Heads Up — heading row: "Venue — Short Title" '
+            '(NO leading ❗️ — the icon belongs on the section title only; em-dash, '
+            'text on both sides, no links) '
+            '(Heads Up - Extra Section.html § 2, per Dani 2026-06-24)',
             not _cg_heading_fmt,
             f'{len(_cg_heading_fmt)} violation(s): ' + '; '.join(_cg_heading_fmt[:3])
             if _cg_heading_fmt else '',
         )
         check(
-            'Heads Up — heading row contains no emoji beyond the leading ❗️ '
-            '(venue and short title are plain text) '
+            'Heads Up — heading row contains no emoji at all '
+            '(venue and short title are plain text; the ❗️ is on the section title, '
+            'never on an entry heading) '
             '(Heads Up - Extra Section.html § 2)',
             not _cg_heading_emoji,
             f'{len(_cg_heading_emoji)} heading(s) with extra emoji: '
@@ -23632,7 +23838,7 @@ def validate(html: str, filename: str):
         re.IGNORECASE,
     )
     banned_mode_line_re = re.compile(
-        r'<div\b[^>]*class\s*=\s*"[^"]*\b(hotel-first|depart|arrive-first|next(?:-tram)?)\b[^"]*"[^>]*>'
+        r'<div\b[^>]*class\s*=\s*"([^"]*\b(?:hotel-first|depart|arrive-first|next(?:-tram|-metro)?)\b[^"]*)"[^>]*>'
         r'(.*?)</div>',
         re.DOTALL,
     )
@@ -23645,6 +23851,11 @@ def validate(html: str, filename: str):
         text = re.sub(r'<a\b[^>]*>.*?</a>', '', raw, flags=re.DOTALL)
         text = RE_STRIP_TAGS.sub( '', text).strip()
         found = forbidden_modes_re.findall(text)
+        # The .next-metro sub-line legitimately says "metro" (Motion Rule §1:
+        # "🚝 [N] metro to [End]") — allow metro/metros there, but still ban
+        # subway/bus/underground/tube. Every other banner keeps the full ban.
+        if 'next-metro' in cls:
+            found = [f for f in found if f.lower() not in ('metro', 'metros')]
         if found:
             snip = RE_WS.sub(' ', text)[:100]
             banned_mode_hits.append(f'.{cls}: {sorted(set(found))} — "{snip}"')
@@ -23721,6 +23932,58 @@ def validate(html: str, filename: str):
         )
     elif next_tram_re.search(html):
         check("Tram sub-line(s) match Motion Rule.html", True)
+
+    # ─── METRO SUB-LINE SHAPE (when present) ───────────────────
+    # Motion Rule.html § 1: "🚝 Metro — only when metro is planned by request.
+    # Same inline pattern as tram: 🚶 X min → [Board] · 🚝 [N] metro to [End] →
+    # [Alight] · 🚶 T min → [Destination]". A metro sub-line rides on .next-metro
+    # (the tram analog); it carries exactly 2 🚶 (open + close walk) around 1 🚝
+    # ride, in that order, with 3 links (board · metro route · alight).
+    next_metro_re = re.compile(
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bnext-metro\b[^"]*"[^>]*>'
+        r'(.*?)</div>',
+        re.DOTALL,
+    )
+    metro_shape_issues = []
+    for m in next_metro_re.finditer(html):
+        raw = m.group(1)
+        text_only = RE_STRIP_TAGS.sub('', raw).strip()
+        link_count = len(re.findall(r'<a\b[^>]*href=', raw))
+        walk_count = text_only.count('🚶')
+        metro_count = text_only.count('🚝')
+        if walk_count != 2:
+            metro_shape_issues.append(
+                f"sub-line has {walk_count} 🚶 glyph(s), expected 2 "
+                f"(opening + closing walk): {text_only[:80]}"
+            )
+        if metro_count != 1:
+            metro_shape_issues.append(
+                f"sub-line has {metro_count} 🚝 glyph(s), expected 1 "
+                f"(the metro ride): {text_only[:80]}"
+            )
+        if walk_count == 2 and metro_count == 1:
+            first_walk = text_only.find('🚶')
+            metro_pos = text_only.find('🚝')
+            second_walk = text_only.find('🚶', first_walk + 1)
+            if not (first_walk < metro_pos < second_walk):
+                metro_shape_issues.append(
+                    f"sub-line segments out of order, expected 🚶 → 🚝 → 🚶: "
+                    f"{text_only[:80]}"
+                )
+        if link_count < 3:
+            metro_shape_issues.append(
+                f"sub-line has {link_count} link(s), expected 3 "
+                f"(board stop, metro route, alight stop): {text_only[:80]}"
+            )
+    if metro_shape_issues:
+        check(
+            "Metro sub-line matches Motion Rule.html "
+            "(🚶 → [board] · 🚝 [metro to end] → [alight] · 🚶 → dest, 3 links)",
+            False,
+            f"{len(metro_shape_issues)} issue(s): " + "; ".join(metro_shape_issues[:3]),
+        )
+    elif next_metro_re.search(html):
+        check("Metro sub-line(s) match Motion Rule.html", True)
 
     # ─── NO MEAL SUGGESTIONS IN ⏰ DURATION ROWS ──────────────────────
     _meal_in_duration: list[str] = []
@@ -24875,7 +25138,7 @@ def validate(html: str, filename: str):
     # is "Yes" or "No" (case-insensitive, with optional comma / em-dash).
     tram_lead_hits: list[str] = []
     _tram_sub = re.search(
-        r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>\s*🚎\s*Tram\s*</div>\s*'
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>\s*🚎[^<]*</div>\s*'
         r'<div\b[^>]*class\s*=\s*"[^"]*\btransit-box\b[^"]*"[^>]*>(.*?)</div>',
         html,
         re.DOTALL | re.IGNORECASE,
@@ -24902,7 +25165,7 @@ def validate(html: str, filename: str):
     print("\n── TRAM TEMPLATE ADHERENCE ──")
     tram_template_hits: list[str] = []
     _tram_sub2_m = re.search(
-        r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>\s*🚎\s*Tram\s*</div>\s*'
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>\s*🚎[^<]*</div>\s*'
         r'<div\b[^>]*class\s*=\s*"[^"]*\btransit-box\b[^"]*"[^>]*>',
         html,
         re.DOTALL | re.IGNORECASE,
@@ -24943,7 +25206,7 @@ def validate(html: str, filename: str):
     tram_operator_link_hits: list[str] = []
     tram_operator_link_extra: list[str] = []
     _tram_full = re.search(
-        r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>\s*🚎\s*Tram\s*</div>\s*'
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>\s*🚎[^<]*</div>\s*'
         r'(<div\b[^>]*class\s*=\s*"[^"]*\btransit-box\b[^"]*"[^>]*>)',
         html, re.DOTALL | re.IGNORECASE,
     )
@@ -25561,6 +25824,41 @@ def validate(html: str, filename: str):
             '(European Train Guide exempt — EU guides only)',
             not _tr_missing,
             'Missing pill(s): ' + ', '.join(_tr_missing),
+        )
+
+        # TR-7: banned pills — the "Also on this site" rail is a fixed set (the
+        # 7 base pills + EU Train). These pages are BANNED from the rail and
+        # hard-fail: City Transit Cards, SIM Cards Abroad, Tipping Guide, Airport
+        # Lounges, Climate Finder (full rule: CLAUDE.md "Also on this site" +
+        # Brain/Reference/Toolbar.html § 4; standalone backstop is
+        # validate_also_on_site_pills.py, which was never wired into the ship
+        # chain — this is the ship-gate enforcement). TR-4 deliberately TOLERATES
+        # unknown pills for ordering (ranks them last), so the ban has to be a
+        # separate positive check. Match on BOTH the visible label and the href
+        # filename so a mislabelled-but-linked pill can't slip through.
+        _TR_BANNED = [
+            ('City Transit Cards', 'City-Transit-Cards'),
+            ('SIM Cards',          'SIM-Cards'),
+            ('SIM Card',           'SIM-Card'),
+            ('Tipping',            'Tipping-Guide'),
+            ('Airport Lounges',    'Lounges'),
+            ('Climate Finder',     'Climate-Finder'),
+        ]
+        _tr_labels = re.findall(
+            r'also-on-this-site-pill"[^>]*>([^<]+)</a>', _tr_block, re.IGNORECASE)
+        _tr_label_text = ' '.join(_tr_labels)
+        _tr_banned_hits: list[str] = []
+        for _bname, _bhref in _TR_BANNED:
+            if _bname.lower() in _tr_label_text.lower() or _bhref.lower() in _tr_pills_text.lower():
+                if _bname not in _tr_banned_hits:
+                    _tr_banned_hits.append(_bname)
+        check(
+            'TR-7 "Also on this site" banned pills — City Transit Cards · SIM Cards '
+            'Abroad · Tipping Guide · Airport Lounges · Climate Finder must NEVER '
+            'appear on the rail (only the 7 base pills + EU Train are allowed)',
+            not _tr_banned_hits,
+            'Banned pill(s) present: ' + ', '.join(_tr_banned_hits)
+            + ' — remove from the also-on-this-site block.',
         )
 
     # STALE STAMP CHECK — REMOVED at Dani's request. The warning fired on every
