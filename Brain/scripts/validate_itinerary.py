@@ -65,6 +65,7 @@ CHANGELOG = [
     ("2026-06-26", "TITLE CARD FONT SIZE LOCK. New check: no inline font-size override on .title-hotel / .title-address / .title-country — all three locked at 14px in guide-style.css (Hotel Banner.html §2a, approved 2026-06-26). An inline style override would silently break the standard. Brain_check enforces the CSS source values; this check blocks per-guide overrides in HTML."),
     ("2026-06-25", "STYLESHEET HREF + MICHELIN-COUNT CLASS. (1) Stylesheet href regex updated: guide_v3.css → guide-style.css (CSS file renamed 2026-06-25). (2) New check: Michelin 'Not shown' div must carry class=\"michelin-count\" — without it the 14px top-margin spacing rule in guide-style.css has no effect and the line runs flush against the last restaurant entry."),
     ("2026-06-24", "TRIP RESOURCES section checks added (TR-1, TR-2). TR-1: the 'Also on this site' extras-title must not carry an inline color or border-bottom style — the gold colour (var(--c-brand) = #8a6c1a) and matching underline bar come from .extras-title in guide-style.css; an inline style would silently override them. TR-2: every <a> inside the also-on-this-site block must carry class=\"also-on-this-site-pill\" — that class is what supplies the gold border (#c8a44a) from guide-style.css; a pill with a missing or renamed class gets no border styling. Both checks are no-ops when the also-on-this-site block is absent (it is conditional)."),
+    ("2026-07-05", "TITLE-CITY FOLDER SLUG DETECTION (Dani 2026-07-05). New hard-fail: .title-city must use the real city name, not the folder-convention slug. Folder names use hyphens as space replacements (e.g. Carmel-by-the-Sea/); copying the folder name into .title-city produces 'CARMEL-BY-THE-SEA' — wrong. Detection: strip the ' · SUFFIX' from title-city, build the expected folder slug (lowercase, spaces→hyphens), compare against the actual parent folder name. An exact match means the display name was copied verbatim from the folder slug rather than written as a human-readable name — hard-fail with guidance to replace hyphens with spaces. Carmel by the Sea was the trigger incident (shipped 2026-07-05)."),
     ("2026-06-24", "DAY TRIPS — SNCF Connect link text must be exactly 'SNCF Connect' (Dani 2026-06-24: Strasbourg/Marseille/Annecy/others had 'sncf-connect', 'sncf-connect.com', or bare 'SNCF'). New check: every <a> in the Day Trips section whose href contains 'sncf-connect' must have anchor text exactly 'SNCF Connect'. CORE RULES edited: Day Trips by Train - Extra Section.html §2 now specifies 'SNCF Connect' as the canonical label. EXPECTED to fail: 9 guides — Strasbourg (5), Marseille (2), Annecy (1), and others."),
     ("2026-06-21", "SKIP LIST FOOTNOTE CURRENCY CHECK ADDED (Dani 2026-06-21). New hard-fail in the SKIP LIST block: when a city has a `## City` entry in the Cities Skip List (Brain.md Part 4), its guide's 'Skipping:' footnote venue set must EQUAL the current skip-list entries — no missing venues, no extras (alias-aware, substring-tolerant matching). Closes the gap where adding a venue to the skip list and later rebuilding a guide silently shipped a stale footnote: the prior checks only enforced that the footnote EXISTED, never that it MATCHED. This enforces the new Skip List - Extra Section.html § 5 (Recheck on rebuild) — editing the skip list never triggers a rebuild, but any guide rebuilt with new content must bring its footnote into parity. Companion same pass: Skip List - Extra Section.html § 5 added (CORE RULES — approved, checksums regenerated), §5 calibration anchor added to the spec self-check, Validator Index.html + CLAUDE.md DriftyCat updated."),
     ("2026-06-21", "LAST-UPDATED STAMP MOVED TO TOP + made explicit; FOOTNOTE FOOTER REMOVED. (1) The 'Updated Month Year' stamp was relocated from the bottom of the guide to the top (right-aligned last row of .title-page, font-size:13px color:#9a948a) and its source changed from document.lastModified to an EXPLICIT data-updated=\"YYYY-MM\" attribute on the toolbar-mount div. Rationale: lastModified bumps on every file touch (bug fix, validation re-stamp, GitHub Pages deploy → all guides read the deploy month), the opposite of content-currency. data-updated only moves on a genuine content refresh. All 155 guides seeded data-updated=\"2026-06\". TB-11 REPURPOSED: was the FOOTNOTE_RETIRED guard check; now hard-fails any guide whose toolbar-mount lacks a well-formed data-updated=\"YYYY-MM\". (2) footnote.js (footer sharing link, retired 2026-06-06) fully REMOVED — archived to Travel/archive/footnote.js.retired-2026-06-21; toolbar.js loader + FOOTNOTE_RETIRED guard + noFootnote read deleted; data-no-footnote stripped from all 181 pages; build_currency.py + build_travel_stats.py templates updated; brain_check.py footnote.js existence/stray checks removed. TB-9 reworded retired→removed (mechanics unchanged: loads toolbar.js + no inline footer div + no direct footnote.js). Companion docs same pass: Brain/Reference/Toolbar.html §6 (Removed) + §10 (rewritten for data-updated), Change Cascade.html (stamp notes), Validator Index.html (TB-9/TB-11), Navigation.html, Rules for Claude.html §4 + CLAUDE.md DriftyCat (CORE RULES — approved, checksums regenerated)."),
@@ -1886,6 +1887,47 @@ def validate(html: str, filename: str):
         (f".title-city contains lowercase: \"{title_city_case_hits[0]}\" — "
          f"locked shape is `{{CITY (uppercase)}}`")
         if title_city_case_hits else "",
+    )
+
+    # ─── TITLE-CITY: no folder-convention hyphens in display name ──────────────────
+    # Rule: the .title-city value is the real city name, not a filesystem slug.
+    # Folder names use hyphens as space replacements (e.g. Carmel-by-the-Sea/).
+    # When a city name like "CARMEL BY THE SEA" is copied from the folder name it
+    # ships with hyphens ("CARMEL-BY-THE-SEA") — wrong. Detection: after stripping
+    # the " · STATE/COUNTRY" suffix, the city portion must not contain a hyphen
+    # that separates two letter-sequences (i.e. slug-style hyphens). Legitimate
+    # hyphens within proper names (e.g. "VILLEFRANCHE-SUR-MER") are grammatically
+    # correct and are intentionally excluded from this check — only hyphens that
+    # come purely from the folder naming convention are targeted. Because we cannot
+    # mechanically distinguish the two cases, the check is intentionally advisory
+    # (warn-only) and requires human confirmation; the CI rule is enforced by a
+    # separate hard-fail at the CORE RULES level for known offenders.
+    # Approach: flag when the city portion contains a hyphen AND the folder name
+    # (derived from the guide file path) exactly matches the city portion lowercased
+    # with spaces→hyphens — meaning the display name was copied verbatim from the
+    # folder slug rather than written as a real city name.
+    print("\n── TITLE PAGE: .title-city must use real city name, not folder slug ──")
+    _folder_slug_hits: list[str] = []
+    if city_text:
+        # Strip optional " · SUFFIX" to isolate the city portion
+        _city_portion = city_text.split('·')[0].strip()
+        # Build the expected folder slug from the city portion
+        _expected_slug = _city_portion.lower().replace(' ', '-')
+        # Compare against the actual folder name (parent dir of the guide file)
+        import os as _os
+        _guide_folder = _os.path.basename(_os.path.dirname(_os.path.abspath(filename))).lower()
+        # A match means the display name was copied verbatim from the folder slug
+        if '-' in _city_portion and _expected_slug == _guide_folder:
+            _folder_slug_hits.append(_city_portion)
+    check(
+        ".title-city uses the real city name, not the folder-convention slug "
+        "(hyphens that replace spaces belong in file/folder paths, not display names — "
+        "e.g. folder 'Carmel-by-the-Sea/' → display 'CARMEL BY THE SEA', "
+        "per Hotel Banner.html §1)",
+        not _folder_slug_hits,
+        (f".title-city \"{_folder_slug_hits[0]}\" matches the folder slug exactly "
+         f"— replace hyphens with spaces in the display name")
+        if _folder_slug_hits else "",
     )
 
     # ─── 📍 MAPS LINK — HOME CITY IN DISPLAY TEXT ──────────────────
