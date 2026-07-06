@@ -101,7 +101,8 @@ def main():
         if n != 1:
             print("  ✗ could not find `var THEME_DATA = {...};` to replace")
             return 1
-        INDEX.write_text(new, encoding="utf-8")
+        import crib_safety as _cs  # atomic: readers never see a half-written page
+        _cs.atomic_write(INDEX, new)
         print("  ✓ THEME_DATA written to Guides-Index.html")
     return 0
 

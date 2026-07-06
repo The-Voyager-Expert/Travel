@@ -286,8 +286,8 @@ def build():
         n_countries=len(COUNTRIES),
     )
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, "w", encoding="utf-8") as f:
-        f.write(page)
+    import crib_safety as _cs  # atomic: readers never see a half-written page
+    _cs.atomic_write(OUT, page)
     print(f"✓ wrote {OUT}")
     print(f"  {len(COUNTRIES)} countries · rates as of {updated}")
 

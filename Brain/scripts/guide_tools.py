@@ -557,6 +557,22 @@ def _run_init(city: str) -> int:
     build_dir.mkdir(parents=True, exist_ok=True)
     tracker_path = build_dir / "build_state.md"
 
+    # Claim a build lease on this guide folder — while it's held, no other crib's
+    # auto-fixer / audit will touch this guide (crib_safety.owned_by_other). The
+    # lease is released at ship. Best-effort: a lease failure never blocks a build.
+    try:
+        sys.path.insert(0, str(HERE))
+        import crib_safety as _cs
+        _holder = _cs.claim(WEB_ROOT / "Guides" / city)
+        _me = _cs.crib_id()
+        if _holder == _me:
+            print(f"🔒 Claimed build lease on {city} ({_me}).")
+        else:
+            print(f"⚠  {city} is already leased by another crib ({_holder}). "
+                  f"It may be an in-progress build — coordinate before continuing.")
+    except Exception as _e:  # noqa: BLE001
+        print(f"  (lease skipped: {_e})")
+
     if tracker_path.exists():
         print(f"⚠  build_state.md already exists at {tracker_path}")
         print("   Delete or rename it before running init for a fresh build.")
@@ -2999,31 +3015,52 @@ def main() -> int:
             print(f"  ⚠️  signed-stamp verification skipped ({_e}).", file=sys.stderr)
         # ──────────────────────────────────────────────────────────────────────
 
-        # ── auto-push via queue (added 2026-06-26) ──────────────────────────────
-        # Ship completes all validations. Now push serially via push_queue.py to
-        # prevent concurrent crib race conditions. Get the city name from the guide
-        # path for a readable commit message.
+        # ── serialized publish (2026-07-05) ─────────────────────────────────────
+        # The guide passed every gate in ISOLATION (its own folder). Now hand it
+        # to the single serialized publisher: enqueue a job, then drain the queue
+        # under the push lock. The publisher does ALL shared-surface work —
+        # reverting root surfaces to HEAD (dropping any other crib's uncommitted
+        # leaks), merging, re-applying only the queued cities idempotently, running
+        # the derived builders, and pushing. No crib ever writes a shared file, so
+        # concurrent cribs can never race, leak, or undo each other. If the
+        # publisher can't run, fall back to the scoped push (guide still ships).
         try:
             _gpath = Path(tail[0]).resolve()
             _city = _gpath.parent.name  # Guides/CityName/guide.html → CityName
-            print(f"\n▶ Pushing via queue…")
-            rc_push = subprocess.run(
-                [
-                    "python3",
-                    "Brain/scripts/push_queue.py",
-                    "--push",
-                    f"Ship guide: {_city}",
-                ],
-                cwd=TRAVEL_ROOT,
-                capture_output=False,
+            print(f"\n▶ Enqueueing publish job for {_city}…")
+            subprocess.run(
+                ["python3", "Brain/scripts/publish_queue.py", "--enqueue", str(_gpath)],
+                cwd=TRAVEL_ROOT, capture_output=False,
             )
-            if rc_push.returncode != 0:
-                print(f"⚠️  Push queued but did not complete (lock held by another crib). "
-                      f"It will go through when the lock is released.", file=sys.stderr)
-                # Don't hard-fail — the guide is shipped on disk; it will push when queued
+            print(f"▶ Draining publish queue (serialized)…")
+            rc_pub = subprocess.run(
+                ["python3", "Brain/scripts/publish_queue.py", "--drain"],
+                cwd=TRAVEL_ROOT, capture_output=False,
+            )
+            if rc_pub.returncode != 0:
+                print("⚠️  Publish did not complete this pass (lock held or merge not clean). "
+                      "The job stays queued and the next ship/drain will publish it.",
+                      file=sys.stderr)
+            # Release our build lease now that the guide is published (best-effort).
+            try:
+                sys.path.insert(0, str(HERE))
+                import crib_safety as _cs
+                _cs.release(_gpath.parent)
+            except Exception:
+                pass
         except Exception as _e:
-            print(f"⚠️  Auto-push via queue failed ({_e}). "
-                  f"Manual push: git push origin main", file=sys.stderr)
+            # Fallback: scoped push so the guide still reaches origin.
+            print(f"⚠️  Publisher unavailable ({_e}); falling back to scoped push.", file=sys.stderr)
+            try:
+                _guide_dir = _gpath.parent.resolve().relative_to(TRAVEL_ROOT.resolve()).as_posix()
+                subprocess.run(
+                    ["python3", "Brain/scripts/push_queue.py", "--push",
+                     f"Ship guide: {_city}", "--guide-dir", _guide_dir],
+                    cwd=TRAVEL_ROOT, capture_output=False,
+                )
+            except Exception as _e2:
+                print(f"⚠️  Fallback push also failed ({_e2}). Manual: git push origin main",
+                      file=sys.stderr)
         # ──────────────────────────────────────────────────────────────────────
 
         return 0
