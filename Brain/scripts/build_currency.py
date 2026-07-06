@@ -63,6 +63,7 @@ COUNTRIES = [
  ("Monaco","Europe","Euro","€","EUR","EUR","", ["Monaco"]),
  ("Netherlands","Europe","Euro","€","EUR","EUR","", ["Amsterdam"]),
  ("Norway","Europe","Norwegian Krone","kr","NOK","NOK","", ["Ålesund","Bergen","Oslo","Tromsø"]),
+ ("Poland","Europe","Polish Złoty","zł","PLN","PLN","", ["Kraków"]),
  ("Portugal","Europe","Euro","€","EUR","EUR","", ["Azores","Cascais","Lagos","Lisbon","Madeira","Porto","Sintra"]),
  ("Slovenia","Europe","Euro","€","EUR","EUR","", ["Ljubljana"]),
  ("Spain","Europe","Euro","€","EUR","EUR","", ["Barcelona","Madrid","Málaga","San Sebastián","Seville","Toledo"]),
