@@ -207,7 +207,8 @@
       'padding:4px 8px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
-    '.tb-dd.tb-open>.tb-ddbtn,.tb-ddbtn.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
+    '.tb-ddbtn.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
+    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#fff!important;background:rgba(255,255,255,0.13)}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
