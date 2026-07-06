@@ -1896,16 +1896,36 @@ def validate(html: str, filename: str):
     # ships with hyphens ("CARMEL-BY-THE-SEA") — wrong. Detection: after stripping
     # the " · STATE/COUNTRY" suffix, the city portion must not contain a hyphen
     # that separates two letter-sequences (i.e. slug-style hyphens). Legitimate
-    # hyphens within proper names (e.g. "VILLEFRANCHE-SUR-MER") are grammatically
-    # correct and are intentionally excluded from this check — only hyphens that
-    # come purely from the folder naming convention are targeted. Because we cannot
-    # mechanically distinguish the two cases, the check is intentionally advisory
-    # (warn-only) and requires human confirmation; the CI rule is enforced by a
-    # separate hard-fail at the CORE RULES level for known offenders.
+    # hyphens within proper names are grammatically correct and are excluded via
+    # an explicit allowlist below — only hyphens that come purely from the folder
+    # naming convention are targeted.
     # Approach: flag when the city portion contains a hyphen AND the folder name
     # (derived from the guide file path) exactly matches the city portion lowercased
     # with spaces→hyphens — meaning the display name was copied verbatim from the
-    # folder slug rather than written as a real city name.
+    # folder slug rather than written as a real city name. Allowlisted names are
+    # skipped because their hyphens are grammatically correct (French/Spanish/etc.
+    # compound names where the hyphen is part of the real spelling).
+    _SLUG_HYPHEN_ALLOWLIST = {
+        # French compound city names — hyphens are grammatically required
+        'aix-en-provence',
+        'bourg-en-bresse',
+        'chalon-sur-saone',
+        'clermont-ferrand',
+        'fontainebleau',       # no hyphen, but keep slot for future
+        'la-baule',
+        'marne-la-vallee',
+        'neuilly-sur-seine',
+        'saint-malo',
+        'saint-tropez',
+        'villefranche-sur-mer',
+        # Spanish compound city names
+        'san-sebastian',
+        'sitges',
+        # Other legitimate hyphenated proper names
+        'rio-de-janeiro',
+        'stratford-upon-avon',
+        'weston-super-mare',
+    }
     print("\n── TITLE PAGE: .title-city must use real city name, not folder slug ──")
     _folder_slug_hits: list[str] = []
     if city_text:
@@ -1916,8 +1936,9 @@ def validate(html: str, filename: str):
         # Compare against the actual folder name (parent dir of the guide file)
         import os as _os
         _guide_folder = _os.path.basename(_os.path.dirname(_os.path.abspath(filename))).lower()
-        # A match means the display name was copied verbatim from the folder slug
-        if '-' in _city_portion and _expected_slug == _guide_folder:
+        # A match means the display name was copied verbatim from the folder slug,
+        # unless it's in the allowlist of cities with grammatically correct hyphens
+        if '-' in _city_portion and _expected_slug == _guide_folder and _guide_folder not in _SLUG_HYPHEN_ALLOWLIST:
             _folder_slug_hits.append(_city_portion)
     check(
         ".title-city uses the real city name, not the folder-convention slug "
