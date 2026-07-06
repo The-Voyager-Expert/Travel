@@ -94,6 +94,7 @@ CHANGELOG = [
     ("2026-06-16", "HEADS UP — note row ↳-prefix HARD-FAIL RESTORED. Heads Up §2 specifies the note line as `↳ [Note]`; the 2026-06-10 entry claims ↳ enforcement was added for the Heads Up note, but the live check had no ↳ requirement (lost in a later edit) and 0 of 32 Heads-Up guides carry it. Re-added: the note row (first body row in the .transit-box, not the Workaround row) must start with ↳. Length/capitalisation checks strip the ↳ prefix before counting (↳ U+21B3 is outside _CG_ICON_RE, so the emoji check is unaffected). EXPECTED: all 32 Heads-Up guides fail until each note row gains its ↳."),
     ("2026-06-16", "INSIDE-BOX ICON ORDER check RESTORED (the 2026-06-16 element-order rewrite removed the '(C)/(D)/(E) intra-row order checks', so box rows could ship in any order). Per Icon Order and Format.html §2 the in-box order is fixed: 🎟=1 · 🏛/⏳=2 · 🚫=3 · 🕐/⏰=4 · 🆓/💵=5 · ⚠️=6 · 📍=7, and ranks must be non-decreasing down the box. ONLY glyphs §2 lists for inside the box are ranked; the `🎫 book at` row (Stops Structure §3c documents it for TRAIN DAYS only — its in-box position is undefined) and the guided-tour `📅` lead are left UNRANKED so the legitimate trailing-book-at pattern (Boston/Alaska/Cayman/Curacao) is not penalised. Genuine violations (e.g. a ⚠️ caveat placed above the 🏛 hours instead of at pos 6) are flagged."),
     ("2026-06-16", "YELLOW-BOX + BARE OPERATIONAL ROWS HARD-FAILS added (restores enforcement the 2026-06-16 element-order rewrite explicitly deferred — 'not enforced here yet, Istanbul/Palm Desert'). TWO checks: (1) every stop-block must carry an operational box (📍-led .tour-box for no-ticket stops, 🎟-led .ticket-box for ticketed) — a stop with NO box = 'yellow box missing'; (2) no logistics row sits OUTSIDE the box — the full inside-box glyph set 🏛/🏛️ hours · ⏳ duration · 🚫 closed · 🕐/⏰ time · 🆓/💵 cost · ⚠️ note · 📍 address must live INSIDE the box. Both strip box subtrees via _strip_balanced_div first; the glyph must LEAD its row (immediately after a <div> open) so emojis in ↳ prose never match. Caught visually by Dani 2026-06-16: Bali Tegallalang / Mount Batur / Uluwatu (bare 🏛/⏰/⚠️/📍, several with no box at all). The pre-existing 'guided stop has no stop-level 📍' check only covered guided stops; these cover self / ticket / no-box stops too. EXPECTED: Bali fails (6 no-box + 7 bare-row stops) until the rows are wrapped in a box."),
+    ("2026-07-05", "MULTI-FILE CLI SUPPORT. validate_itinerary.py now accepts one or more file arguments (python3 validate_itinerary.py a.html b.html …). Each file is validated in sequence with a separator banner; exit code is 1 if ANY file fails. Previously only sys.argv[1] was processed — passing multiple files silently ignored everything after the first, causing bulk runs to miss failures in non-first guides (e.g. Bora Bora's 3 failures were invisible when passed as the 6th argument after Kraków)."),
     ("2026-07-05", "🏨 PICKUP ROW BANNED IN STOP-BLOCK TICKET BOXES. New hard-fail: 🏨 ↔ 🚐 / 🏨 → 🚐 / 🏨 ← 🚐 must never appear inside a stop-block ticket-box. These hotel-pickup rows belong ONLY in Tours section entries (under a 📅 heading, Icon Order and Format.html §2 Tours table). The §2 inside-box table (Pos 1–7) has no 🚐 row; a crib fabricated the row in Bora Bora's 'Shark & Ray Lagoon Snorkel Cruise' stop and it passed because the validator only checked order (🚐 is unranked). Companion fix: row removed from bora-bora_v1.html."),
     ("2026-07-05", "📍 ROW CLASS HARD-FAIL added — every 📍 address row inside a stop block must carry class=\"stop-row\". A bare classless <div>📍 has no matching CSS rule and renders with browser-default block spacing (same defect as the ↳/📖 class gap caught 2026-06-16). The gap allowed Bora Bora to ship four bare <div>📍 rows that passed every other check. New check: any <div> with NO class attribute leading with 📍 is a hard-fail. Companion fix: all four bare 📍 rows in bora-bora_v1.html corrected to <div class=\"stop-row\">📍."),
     ("2026-06-16", "↳ / 📖 ROW CLASS HARD-FAIL added — the ↳ description row and 📖 Wikipedia row must carry class=\"stop-row\". Non-canonical classes (Aix-en-Provence shipped stop-desc / stop-wiki) have NO CSS rule, so the rows render with browser-default block margins and the gap before the operational box balloons (caught visually by Dani 2026-06-16, Aix Hôtel de Caumont). The validator previously had no class check on these rows, so the drift shipped silently. New check flags any <div class=\"…\">↳ or 📖 whose class tokens omit `stop-row`; bare class-less box-internal rows (Day Trips transit-box <div>↳) are not matched. EXPECTED: Aix fails until its 9 stop-desc + 7 stop-wiki rows are renamed to stop-row."),
@@ -25734,62 +25735,75 @@ def validate(html: str, filename: str):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python3 validate_itinerary.py <itinerary.html>")
+        print("Usage: python3 validate_itinerary.py <itinerary.html> [<itinerary2.html> ...]")
         sys.exit(1)
 
-    filepath = sys.argv[1]
-    try:
-        html = Path(filepath).read_text(encoding="utf-8")
-    except FileNotFoundError:
-        print(f"❌ File not found: {filepath}")
-        sys.exit(1)
-    except UnicodeDecodeError as _e:
-        print(f"❌ File is not valid UTF-8: {filepath}\n     → {_e}")
-        sys.exit(1)
+    filepaths = sys.argv[1:]
+    all_ok = True
 
-    try:
-        ok = validate(html, filepath)
-    except BuildStateHalt as _halt:
-        # Build-state gate halted the run; banner already printed by validate().
-        sys.exit(_halt.code)
-
-    if ok:
-        # Write a CONTENT-BOUND SIGNED validation stamp into the guide so every
-        # downstream gate (ship / pre-push / deploy) can verify the validator
-        # actually ran on THIS exact content — a hand-typed or bulk-written stamp
-        # carries no matching signature and is rejected. The signing/insertion
-        # logic lives in the shared validation_stamp module so all gates agree.
+    for filepath in filepaths:
+        if len(filepaths) > 1:
+            print(f"\n{'═'*60}")
+            print(f"  Validating: {Path(filepath).parent.name}/{Path(filepath).name}")
+            print(f"{'═'*60}")
         try:
-            sys.path.insert(0, str(Path(__file__).resolve().parent))
-            import validation_stamp as _vs
-            if _vs.write_stamp(filepath, html):
-                print(f"✅ Signed validation stamp written → {Path(filepath).name}")
-        except Exception as _stamp_err:  # noqa: BLE001
-            # Last-resort fallback so a passing guide is never left unstamped if
-            # the module can't be imported. This writes a LEGACY (unsigned) stamp,
-            # which downstream signature checks will treat as "needs re-signing".
-            print(f"⚠️  validation_stamp unavailable ({_stamp_err}); writing legacy stamp.",
-                  file=sys.stderr)
-            stamp = f"<!-- validation: passed {datetime.now().strftime('%Y-%m-%d %H:%M')} -->"
-            stamped = html
-            if "<!-- validation: pending -->" in stamped:
-                stamped = stamped.replace("<!-- validation: pending -->", stamp)
-            elif "<!-- validation: passed" in stamped:
-                stamped = re.sub(r"<!-- validation: passed [^>]+ -->", stamp, stamped, count=1)
-            else:
-                _inserted = False
-                for marker in ("<!DOCTYPE html>", "<html"):
-                    if marker.lower() in stamped.lower():
-                        idx = stamped.lower().index(marker.lower()) + len(marker)
-                        eol = stamped.find("\n", idx)
-                        insert_at = eol + 1 if eol != -1 else idx
-                        stamped = stamped[:insert_at] + stamp + "\n" + stamped[insert_at:]
-                        _inserted = True
-                        break
-                if not _inserted:
-                    stamped = stamp + "\n" + stamped
-            if stamped != html:
-                Path(filepath).write_text(stamped, encoding="utf-8")
-                print(f"✅ Validation stamp written → {Path(filepath).name}")
+            html = Path(filepath).read_text(encoding="utf-8")
+        except FileNotFoundError:
+            print(f"❌ File not found: {filepath}")
+            all_ok = False
+            continue
+        except UnicodeDecodeError as _e:
+            print(f"❌ File is not valid UTF-8: {filepath}\n     → {_e}")
+            all_ok = False
+            continue
 
-    sys.exit(0 if ok else 1)
+        try:
+            ok = validate(html, filepath)
+        except BuildStateHalt as _halt:
+            # Build-state gate halted the run; banner already printed by validate().
+            all_ok = False
+            continue
+
+        if not ok:
+            all_ok = False
+
+        if ok:
+            # Write a CONTENT-BOUND SIGNED validation stamp into the guide so every
+            # downstream gate (ship / pre-push / deploy) can verify the validator
+            # actually ran on THIS exact content — a hand-typed or bulk-written stamp
+            # carries no matching signature and is rejected. The signing/insertion
+            # logic lives in the shared validation_stamp module so all gates agree.
+            try:
+                sys.path.insert(0, str(Path(__file__).resolve().parent))
+                import validation_stamp as _vs
+                if _vs.write_stamp(filepath, html):
+                    print(f"✅ Signed validation stamp written → {Path(filepath).name}")
+            except Exception as _stamp_err:  # noqa: BLE001
+                # Last-resort fallback so a passing guide is never left unstamped if
+                # the module can't be imported. This writes a LEGACY (unsigned) stamp,
+                # which downstream signature checks will treat as "needs re-signing".
+                print(f"⚠️  validation_stamp unavailable ({_stamp_err}); writing legacy stamp.",
+                      file=sys.stderr)
+                stamp = f"<!-- validation: passed {datetime.now().strftime('%Y-%m-%d %H:%M')} -->"
+                stamped = html
+                if "<!-- validation: pending -->" in stamped:
+                    stamped = stamped.replace("<!-- validation: pending -->", stamp)
+                elif "<!-- validation: passed" in stamped:
+                    stamped = re.sub(r"<!-- validation: passed [^>]+ -->", stamp, stamped, count=1)
+                else:
+                    _inserted = False
+                    for marker in ("<!DOCTYPE html>", "<html"):
+                        if marker.lower() in stamped.lower():
+                            idx = stamped.lower().index(marker.lower()) + len(marker)
+                            eol = stamped.find("\n", idx)
+                            insert_at = eol + 1 if eol != -1 else idx
+                            stamped = stamped[:insert_at] + stamp + "\n" + stamped[insert_at:]
+                            _inserted = True
+                            break
+                    if not _inserted:
+                        stamped = stamp + "\n" + stamped
+                if stamped != html:
+                    Path(filepath).write_text(stamped, encoding="utf-8")
+                    print(f"✅ Validation stamp written → {Path(filepath).name}")
+
+    sys.exit(0 if all_ok else 1)
