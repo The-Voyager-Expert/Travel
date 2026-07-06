@@ -39,7 +39,7 @@
      weather.js renders no UI off the Guides index (the guard just below). This
      runs before the guard so the data is set wherever weather.js is loaded. */
   /* CLIMATE_GENERATED_START */
-  var CLIMATE_GENERATED = '2026-07-05';
+  var CLIMATE_GENERATED = '2026-07-06';
   /* CLIMATE_GENERATED_END */
   try {
     CLIMATE._generated = CLIMATE_GENERATED;
