@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-06", "PICKLEBALL EXPANDED TO ALL US STATES (Dani-approved). Previously CA/AZ/OR only. Now every US guide (all 50 states + DC, detected from .title-address state code) MUST carry a pickleball section or hard-fails. PICKLEBALL_ELIGIBLE_STATES updated from {CA,AZ,OR} to all 51 codes. Guides with no pickleball section will fail T5 until rebuilt. Non-US guides: unchanged — section silently omitted."),
     ("2026-07-06", "PICKLEBALL RULE CHANGE — 25 min walk → 25 min drive (Dani-approved rule change). Pickleball - Extra Section.html §2/§3/§4 updated. Validator updated to match: (1) 🚕 drive time is now REQUIRED (was: 🚶 required + 🚕 optional); (2) 🚶 walk time is now OPTIONAL (add when also walkable); (3) cap check changed from ≤28 min walk to ≤28 min drive (🚕); (4) ordering check uses drive times (🚕) instead of walk times (🚶); (5) row-order anchor changed from 🚶 to 🚕; (6) negative-finding regex updated: 'within 25 min walk' → 'within 25 min drive'. Fleet impact: guides with 🚕-only entries (no 🚶) now pass; entries with 🚶 but no 🚕 will hard-fail (must add drive time). Pickleball sections in CA/AZ/OR guides should be rebuilt with courts within 25 min drive."),
     ("2026-07-05", "VALIDATOR AUDIT — 11 enforcement gaps closed (rule-by-rule audit of every format spec). (1) TR-7 BANNED PILLS — the 'Also on this site' rail now hard-fails City Transit Cards / SIM Cards Abroad / Tipping Guide / Airport Lounges / Climate Finder (TR-4 deliberately tolerated unknown pills; validate_also_on_site_pills.py was never wired into ship; brain_check skips the unstamped shipping guide — so banned pills shipped, caught only next session). (2) TICKET ORDER — 🎟 lead row now hard-fails a booking domain/platform placed LEFT of the N.N⭐ rating (Tickets §2a/2b: Title · rating · [reviews ·] platform); keys on domain/platform-left-of-⭐, not segment index, so subtitle dots don't false-fail (only Kraków's 9 domain-first rows trip it). (3) TRAM SILENT NO-OP — the 3 tram checks anchored on the literal heading '🚎 Tram', so '🚎 T1 Tram' / '🚎 No tram found…' dodged them all; broadened anchor to 🚎[^<]* (any 🚎-led heading). (4) TRAM/METRO/FERRY MOTION FORMAT — 🚢/🚝 now get the full ≥60min→hours + no-0-min enforcement in _validate_motion_row (were 'has a digit' only); 🚎 excluded (line-number inline form, validated by the sub-line check). (5) METRO SUB-LINE — Motion Rule §1 defines a '🚝 metro' sub-line 'same inline pattern as tram', but the word-'metro' ban false-failed it and there was no home: added .next-metro (banner recognizer + metro-word exemption inside it + shape check mirroring tram + guide-style.css). (6) TRIP OVERVIEW EoI — .overview-day cards now hard-fail any EoI/foreign content (<img>/<p>/<ul>/<table>/<hN>/media); only two retired divs were banned before, so any new content class passed vacuously (days-only grid). (7) TOURS + RIDE-APP — added Tours §3 platform grouping ORDER (all Viator→all GetYourGuide→all TripAdvisor; 0 fleet interleaving) + ride-app negative-finding canonical wording 'No ride apps available in [City].' (tram had it, ride-apps didn't). (8) PICKLEBALL — every entry now requires a 🚶 walk time; a 🚕-only entry was accepted and was invisible to the ≤28-min cap + closest-first ordering (Pickleball §2/§3). (9) HEDGING — 'approximately N hours/minutes' now caught (regex only matched abbreviated units with a trailing \\b; spelled-out 'hours'/'minutes' evaded, unlike the correctly-built 'roughly'/'around'). (10) WEEKLY CLOSURES — Oxford day list 'Monday, Wednesday, & Friday' (the spec's own valid example) was rejected: separator now repeats so ', & ' is consumed as two separators. (11) HEADS UP — heading-format check LABEL said 'REQUIRED leading ❗️' while the code correctly BANS it (2026-06-24 rule); label + adjacent 'no emoji' label + _SECTION_ICON_ALLOWLISTS entry + stale comment corrected to match. Fleet impact: TR-7 / ride-app wording / tours order / metro / EoI = 0 current guides (preventive); ticket order = Kraków; pickleball 🚶 = 5 guides (Phoenix/Palm-Desert/San-Jose/Santa-Cruz/Malibu) — all genuine spec violations that were slipping through. No guide HTML edited in this pass."),
     ("2026-07-05", "GETTING AROUND §1b — ONE OPERATOR PER 🚕 ENTRY + NAMED HEADING (Dani 2026-07-05: 'why this is not failing?' — the '🚕 Ride Apps → Uber · Bolt' aggregate). The existing per-app link-only check (2026-05-24) only counted child <div>s + link presence, so two operators joined by '·' inside one div (1 div, contains an <a>) sailed through, as did a generic 'Ride Apps' placeholder heading. Two new checks in the GETTING AROUND block: (A) MULTI-OPERATOR BOX — each 🚕 extras-sub's transit-box must hold exactly one <a>; >1 hard-fails (each ride app is its own extras-sub + box, no '·'-joined row). (B) GENERIC HEADING — the 🚕 heading must name the operator (Uber/Bolt/Grab/…), not the category label 'Ride App(s)' / 'ride-hailing' / 'rideshare'. Rule authority: Getting Around - Extra Section.html §1b (singular '🚕 [Ride App]' + one '[Ride App Operator]'; all 149 conforming guides name the operator). Companion same pass: 57 drifted guides normalized to per-app format; Validator Index.html + Cleanliness Checks.md updated. Format fix only — data-updated NOT bumped."),
@@ -12524,7 +12525,7 @@ def validate(html: str, filename: str):
         "getting-around",
         "stations-near-hotel",  # universal — ships in every guide (negative-finding line when no stations)
         "day-trips-by-train",
-        "pickleball",        # conditional — ships for CA + AZ + OR trips only
+        "pickleball",        # conditional — ships for all US trips only
         "michelin",
         "heads-up",    # conditional — ships only when entries exist
         "skip-list",         # conditional — footnote, very last; ships only when the city has a skip list
@@ -12645,9 +12646,9 @@ def validate(html: str, filename: str):
     )
 
     # T5 — Pickleball ship-gate.
-    # Per Guide Structure.html Section order — Pickleball (#12) ships ONLY
-    # for trips in CA + AZ + OR; silently omitted elsewhere (no section header,
-    # no negative-finding line).
+    # Per Guide Structure.html Section order — Pickleball (#12) ships for ALL
+    # US trips (expanded from CA/AZ/OR to all 50 states, 2026-07-06).
+    # Silently omitted for non-US guides (no section header, no negative-finding line).
     #
     # Detection: extract the 2-letter US state code from .title-address
     # text. Format per Hotel Banner.html + Links.html:
@@ -12655,15 +12656,20 @@ def validate(html: str, filename: str):
     #   (e.g., "800 Middle Ave · Menlo Park CA"; postal codes banned 2026-05-19)
     #   or follows a comma (e.g., "Menlo Park, CA"). Both shapes are matched.
     #
-    # If no state can be detected, the gate has three branches:
-    #   - state ∈ {CA, AZ, OR} → pickleball MUST be present
-    #   - state ∉ {CA, AZ, OR} (some other US state) → pickleball MUST be absent
+    # Gate branches:
+    #   - state is a known US state code → pickleball MUST be present
     #   - state is None (non-US, or address didn't parse) → pickleball
-    #     MUST be absent. We can't prove eligibility, so any pickleball
-    #     section in a guide we can't verify is CA/AZ/OR is treated as a
-    #     ship-violation. (T2 alone won't catch this since "pickleball"
-    #     is a valid canonical id — it's just conditional on state.)
-    PICKLEBALL_ELIGIBLE_STATES = {"CA", "AZ", "OR"}
+    #     MUST be absent. We can't prove US eligibility, so any pickleball
+    #     section in a guide with an unresolved state is treated as a
+    #     ship-violation.
+    PICKLEBALL_ELIGIBLE_STATES = {
+        "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+        "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+        "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+        "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+        "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
+        "DC",  # Washington DC
+    }
     trip_state = None
     title_addr_m = re.search(
         r'<div\b[^>]*class\s*=\s*"[^"]*\btitle-address\b[^"]*"[^>]*>(.*?)</div>',
@@ -12691,43 +12697,30 @@ def validate(html: str, filename: str):
 
     if has_any_day_block and trip_state in PICKLEBALL_ELIGIBLE_STATES:
         check(
-            '🥒 Guide Structure — Pickleball section ships for trips in '
-            f'CA + AZ + OR (detected trip state: "{trip_state}") '
+            '🥒 Guide Structure — Pickleball section ships for all US trips '
+            f'(detected trip state: "{trip_state}") '
             '(per Guide Structure.html Section order — #12 conditional)',
             pickleball_present,
             (
                 f'trip state is "{trip_state}" but no .extras-section '
-                'id="pickleball" found — section is required for CA + AZ + OR trips'
+                'id="pickleball" found — section is required for all US trips'
             ) if not pickleball_present else '',
-        )
-    elif has_any_day_block and trip_state is not None:
-        check(
-            '🥒 Guide Structure — Pickleball section silently omitted for '
-            'trips outside CA + AZ + OR '
-            f'(detected trip state: "{trip_state}") '
-            '(per Guide Structure.html Section order — silently omitted '
-            'elsewhere; no header, no negative-finding line)',
-            not pickleball_present,
-            (
-                f'trip state is "{trip_state}" (not CA/AZ/OR) but .extras-section '
-                'id="pickleball" is present — must be silently omitted'
-            ) if pickleball_present else '',
         )
     elif has_any_day_block and pickleball_present:
         # State could not be parsed (non-US guide, or unusual address
-        # shape) BUT pickleball is present. Without proof that the trip
-        # is CA/AZ/OR, the section can't legitimately ship.
+        # shape) BUT pickleball is present. Without proof of a US state,
+        # the section can't legitimately ship.
         check(
-            '🥒 Guide Structure — Pickleball section requires a CA/AZ/OR trip '
+            '🥒 Guide Structure — Pickleball section requires a US trip '
             '(per Guide Structure.html Section order — #12 conditional)',
             False,
             'pickleball section is present but trip state could not be '
             'determined from .title-address — pickleball ships only for '
-            'CA + AZ + OR trips. Either fix the address shape so the state '
-            'parses (e.g., "Street · City CA 9####") or remove the '
+            'US trips. Either fix the address shape so the state '
+            'parses (e.g., "Street · City NY") or remove the '
             'pickleball section.',
         )
-    # else: no pickleball, no parseable state — nothing to enforce.
+    # else: no pickleball, no parseable state (non-US guide) — nothing to enforce.
 
     # T6 — Heads Up ship-gate.
     # Per Guide Structure.html Section order — Heads Up (#14) ships
