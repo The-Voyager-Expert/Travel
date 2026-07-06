@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-06", "PICKLEBALL RULE CHANGE — 25 min walk → 25 min drive (Dani-approved rule change). Pickleball - Extra Section.html §2/§3/§4 updated. Validator updated to match: (1) 🚕 drive time is now REQUIRED (was: 🚶 required + 🚕 optional); (2) 🚶 walk time is now OPTIONAL (add when also walkable); (3) cap check changed from ≤28 min walk to ≤28 min drive (🚕); (4) ordering check uses drive times (🚕) instead of walk times (🚶); (5) row-order anchor changed from 🚶 to 🚕; (6) negative-finding regex updated: 'within 25 min walk' → 'within 25 min drive'. Fleet impact: guides with 🚕-only entries (no 🚶) now pass; entries with 🚶 but no 🚕 will hard-fail (must add drive time). Pickleball sections in CA/AZ/OR guides should be rebuilt with courts within 25 min drive."),
     ("2026-07-05", "VALIDATOR AUDIT — 11 enforcement gaps closed (rule-by-rule audit of every format spec). (1) TR-7 BANNED PILLS — the 'Also on this site' rail now hard-fails City Transit Cards / SIM Cards Abroad / Tipping Guide / Airport Lounges / Climate Finder (TR-4 deliberately tolerated unknown pills; validate_also_on_site_pills.py was never wired into ship; brain_check skips the unstamped shipping guide — so banned pills shipped, caught only next session). (2) TICKET ORDER — 🎟 lead row now hard-fails a booking domain/platform placed LEFT of the N.N⭐ rating (Tickets §2a/2b: Title · rating · [reviews ·] platform); keys on domain/platform-left-of-⭐, not segment index, so subtitle dots don't false-fail (only Kraków's 9 domain-first rows trip it). (3) TRAM SILENT NO-OP — the 3 tram checks anchored on the literal heading '🚎 Tram', so '🚎 T1 Tram' / '🚎 No tram found…' dodged them all; broadened anchor to 🚎[^<]* (any 🚎-led heading). (4) TRAM/METRO/FERRY MOTION FORMAT — 🚢/🚝 now get the full ≥60min→hours + no-0-min enforcement in _validate_motion_row (were 'has a digit' only); 🚎 excluded (line-number inline form, validated by the sub-line check). (5) METRO SUB-LINE — Motion Rule §1 defines a '🚝 metro' sub-line 'same inline pattern as tram', but the word-'metro' ban false-failed it and there was no home: added .next-metro (banner recognizer + metro-word exemption inside it + shape check mirroring tram + guide-style.css). (6) TRIP OVERVIEW EoI — .overview-day cards now hard-fail any EoI/foreign content (<img>/<p>/<ul>/<table>/<hN>/media); only two retired divs were banned before, so any new content class passed vacuously (days-only grid). (7) TOURS + RIDE-APP — added Tours §3 platform grouping ORDER (all Viator→all GetYourGuide→all TripAdvisor; 0 fleet interleaving) + ride-app negative-finding canonical wording 'No ride apps available in [City].' (tram had it, ride-apps didn't). (8) PICKLEBALL — every entry now requires a 🚶 walk time; a 🚕-only entry was accepted and was invisible to the ≤28-min cap + closest-first ordering (Pickleball §2/§3). (9) HEDGING — 'approximately N hours/minutes' now caught (regex only matched abbreviated units with a trailing \\b; spelled-out 'hours'/'minutes' evaded, unlike the correctly-built 'roughly'/'around'). (10) WEEKLY CLOSURES — Oxford day list 'Monday, Wednesday, & Friday' (the spec's own valid example) was rejected: separator now repeats so ', & ' is consumed as two separators. (11) HEADS UP — heading-format check LABEL said 'REQUIRED leading ❗️' while the code correctly BANS it (2026-06-24 rule); label + adjacent 'no emoji' label + _SECTION_ICON_ALLOWLISTS entry + stale comment corrected to match. Fleet impact: TR-7 / ride-app wording / tours order / metro / EoI = 0 current guides (preventive); ticket order = Kraków; pickleball 🚶 = 5 guides (Phoenix/Palm-Desert/San-Jose/Santa-Cruz/Malibu) — all genuine spec violations that were slipping through. No guide HTML edited in this pass."),
     ("2026-07-05", "GETTING AROUND §1b — ONE OPERATOR PER 🚕 ENTRY + NAMED HEADING (Dani 2026-07-05: 'why this is not failing?' — the '🚕 Ride Apps → Uber · Bolt' aggregate). The existing per-app link-only check (2026-05-24) only counted child <div>s + link presence, so two operators joined by '·' inside one div (1 div, contains an <a>) sailed through, as did a generic 'Ride Apps' placeholder heading. Two new checks in the GETTING AROUND block: (A) MULTI-OPERATOR BOX — each 🚕 extras-sub's transit-box must hold exactly one <a>; >1 hard-fails (each ride app is its own extras-sub + box, no '·'-joined row). (B) GENERIC HEADING — the 🚕 heading must name the operator (Uber/Bolt/Grab/…), not the category label 'Ride App(s)' / 'ride-hailing' / 'rideshare'. Rule authority: Getting Around - Extra Section.html §1b (singular '🚕 [Ride App]' + one '[Ride App Operator]'; all 149 conforming guides name the operator). Companion same pass: 57 drifted guides normalized to per-app format; Validator Index.html + Cleanliness Checks.md updated. Format fix only — data-updated NOT bumped."),
     ("2026-06-28", "STATUS DOTS + DELTA ROUTES FINAL GATE. Two new hard-fail checks added to the FINAL GATE (end of validation): (1) STATUS DOTS — city must appear on a bullet line in Brain/Reference/Status Dots — guides_index.md; absence means the guide shipped without ever being added to the status tracking doc and the index dot can't reflect reality. (2) DELTA ROUTES — city must have a card with data-guide=\"FolderName\" in Trip-Essentials/Delta-Routes-SEA.html; Seattle is exempt (origin city). Both run after the world-map-pin check, before Open Questions. Previously these were only enforced at guide_tools.py ship time; now the static validator also catches them (consistent with the index-listing / map-pin / also-on-this-site pattern)."),
@@ -19428,14 +19429,14 @@ def validate(html: str, filename: str):
     )
 
     # ─── PICKLEBALL — PER-ENTRY SHAPE: 🏛 + 📍 + motion row ─────────────────
-    print("\n── PICKLEBALL — per-entry shape (🏛 + 📍 + motion row, walk ≤25 min, ordered) ──")
+    print("\n── PICKLEBALL — per-entry shape (🏛 + 📍 + motion row, drive ≤25 min, ordered by drive time) ──")
     # Per Pickleball - Extra Section.html § 3:
     #   [Venue Name] · [Indoor or Outdoor]   ← .extras-sub heading (checked above)
     #   [Description] ≤80 chars              ← checked below in _pb_shape_violations
     #   🏛 [Hours]                           ← required
     #   📍 [Address] [Maps]                  ← required
-    #   🚶 N min · 🚕 M min                 ← required (motion row)
-    # Walk time ≤25 min · ordered closest first (§ 2)
+    #   🚕 M min                             ← required; add 🚶 N min · 🚕 M min when also walkable
+    # Drive time ≤25 min · ordered closest first by drive time (§ 2)
     _pb_shape_violations: list[str] = []
     _pb_too_far_hits: list[str] = []
     _pb_walk_times: list[int] = []
@@ -19518,24 +19519,15 @@ def validate(html: str, filename: str):
                         f'(§3: no country in address — city + state is enough; '
                         f'remove the country from the address line)'
                     )
-            if '🚶' not in _pb_entry_body and '🚕' not in _pb_entry_body:
+            if '🚕' not in _pb_entry_body:
                 _pb_shape_violations.append(
-                    f'"{_pb_entry_name}" missing motion row (🚶 N min · 🚕 M min)'
+                    f'"{_pb_entry_name}" missing motion row — 🚕 drive time is required '
+                    f'(Pickleball - Extra Section.html §3: 🚕 [M min]; add 🚶 [N min] · 🚕 [M min] '
+                    f'when also walkable)'
                 )
             else:
-                # Every pickleball entry MUST carry a 🚶 walk time — the section is
-                # scoped to courts "within 25 min walk" and "ordered by walk time"
-                # (Pickleball - Extra Section.html §2/§3: 🚶 [N min] · 🚕 [M min]).
-                # A 🚕-only entry has no walk time, so it is both out-of-scope and
-                # invisible to the ≤28-min cap + closest-first ordering (which key
-                # on 🚶). Require the 🚶 row.
-                if '🚶' not in _pb_entry_body:
-                    _pb_shape_violations.append(
-                        f'"{_pb_entry_name}" — motion row has 🚕 but no 🚶 walk time; '
-                        f'every court is within 25 min walk and rows read '
-                        f'🚶 N min · 🚕 M min (Pickleball - Extra Section.html §2/§3)'
-                    )
-                # 🚶 and 🚕 must each carry a numeric time (Motion Rule).
+                # 🚕 drive time is REQUIRED; 🚶 walk time is OPTIONAL (add when walkable).
+                # (Pickleball - Extra Section.html §2/§3 revised 2026-07-06 — 25 min drive rule.)
                 if '🚕' in _pb_entry_body and not re.search(r'🚕\s*\d', _pb_entry_body):
                     _pb_shape_violations.append(
                         f'"{_pb_entry_name}" — 🚕 has no numeric time '
@@ -19546,7 +19538,7 @@ def validate(html: str, filename: str):
                         f'"{_pb_entry_name}" — 🚶 has no numeric time '
                         f'(Motion Rule: every emoji needs a number)'
                     )
-                # Motion row order: 🚶 must come before 🚕 (format: 🚶 N min · 🚕 M min).
+                # When both are present: 🚶 must come before 🚕 (format: 🚶 N min · 🚕 M min).
                 _pb_walk_pos = _pb_entry_body.find('🚶')
                 _pb_uber_pos = _pb_entry_body.find('🚕')
                 if _pb_walk_pos != -1 and _pb_uber_pos != -1 and _pb_uber_pos < _pb_walk_pos:
@@ -19554,15 +19546,16 @@ def validate(html: str, filename: str):
                         f'"{_pb_entry_name}" — 🚕 before 🚶 on motion row; '
                         f'correct order: 🚶 N min · 🚕 M min (Motion Rule)'
                     )
-            # Row order: 🏛 hours → 📍 address → 🚶 walk (§3 layout order).
+            # Row order: 🏛 hours → 📍 address → 🚕 drive (§3 layout order).
+            # 🚶 is optional; use 🚕 (required) as the motion-row anchor.
             _pb_hours_pos = _pb_entry_body.find('🏛')
             _pb_pin_pos   = _pb_entry_body.find('📍')
-            _pb_walk_pos2 = _pb_entry_body.find('🚶')
-            if _pb_hours_pos != -1 and _pb_pin_pos != -1 and _pb_walk_pos2 != -1:
-                if not (_pb_hours_pos < _pb_pin_pos < _pb_walk_pos2):
+            _pb_ride_pos  = _pb_entry_body.find('🚕')
+            if _pb_hours_pos != -1 and _pb_pin_pos != -1 and _pb_ride_pos != -1:
+                if not (_pb_hours_pos < _pb_pin_pos < _pb_ride_pos):
                     _pb_shape_violations.append(
                         f'"{_pb_entry_name}" — wrong row order; '
-                        f'expected 🏛 then 📍 then 🚶 (Pickleball - Extra Section.html §3)'
+                        f'expected 🏛 then 📍 then 🚕 (Pickleball - Extra Section.html §3)'
                     )
             # Description: must exist and be ≤80 chars (§3: "[Description] ≤80 chars").
             _pb_desc_raw = RE_STRIP_TAGS.sub(' ', _pb_entry_body)
@@ -19583,16 +19576,16 @@ def validate(html: str, filename: str):
                     f'"{_pb_entry_name}" — description is {len(_pb_desc_line)} chars '
                     f'(max 80 per §3): "{_pb_desc_line[:40]}…"'
                 )
-            # Walk time: ≤25 min cap + collect for ordering check.
+            # Drive time: ≤25 min cap + collect for ordering check.
             # No ~? — tilde is globally banned (Motion Rule); strict match only.
-            _pb_walk_m = re.search(r'🚶\s*(\d+)\s*min', _pb_entry_body, re.IGNORECASE)
-            if _pb_walk_m:
-                _pb_wt = int(_pb_walk_m.group(1))
-                if _pb_wt > 28:  # target ≤25 min; rules allow a few minutes over — hard cap 28 min
-                    _pb_too_far_hits.append(f'"{_pb_entry_name}" ({_pb_wt} min)')
-                _pb_walk_times.append(_pb_wt)
+            _pb_ride_m = re.search(r'🚕\s*(\d+)\s*min', _pb_entry_body, re.IGNORECASE)
+            if _pb_ride_m:
+                _pb_rt = int(_pb_ride_m.group(1))
+                if _pb_rt > 28:  # target ≤25 min; allow a few minutes over — hard cap 28 min
+                    _pb_too_far_hits.append(f'"{_pb_entry_name}" ({_pb_rt} min drive)')
+                _pb_walk_times.append(_pb_rt)
     check(
-        '🏓 Pickleball — every entry has 🏛 hours row + 📍 address row + motion row (🚶/🚕) '
+        '🏓 Pickleball — every entry has 🏛 hours row + 📍 address row + 🚕 drive time '
         '(per Pickleball - Extra Section.html § 3)',
         not _pb_shape_violations,
         (f"{len(_pb_shape_violations)} entry-shape violation(s): "
@@ -19600,20 +19593,20 @@ def validate(html: str, filename: str):
         if _pb_shape_violations else "",
     )
     check(
-        '🏓 Pickleball — all entries within ≤28 min walk of the hotel '
+        '🏓 Pickleball — all entries within ≤28 min drive of the hotel '
         '(target ≤25 min; rules allow a few minutes over — hard cap 28 min; '
         'per Pickleball - Extra Section.html § 2)',
         not _pb_too_far_hits,
-        (f"{len(_pb_too_far_hits)} entry(ies) over 25 min walk: "
+        (f"{len(_pb_too_far_hits)} entry(ies) over 25 min drive: "
          + "; ".join(_pb_too_far_hits[:3]))
         if _pb_too_far_hits else "",
     )
     _pb_unsorted = (_pb_walk_times != sorted(_pb_walk_times)) if _pb_walk_times else False
     check(
-        '🏓 Pickleball — entries ordered by walk time, closest first '
+        '🏓 Pickleball — entries ordered by drive time, closest first '
         '(per Pickleball - Extra Section.html § 2)',
         not _pb_unsorted,
-        (f'walk times in document order: {_pb_walk_times} — expected ascending (closest first)')
+        (f'drive times in document order: {_pb_walk_times} — expected ascending (closest first)')
         if _pb_unsorted else "",
     )
 
@@ -19637,13 +19630,13 @@ def validate(html: str, filename: str):
         _pb_plain = RE_STRIP_TAGS.sub(' ', _pb_inner)
         _pb_plain = RE_WS.sub(' ', _pb_plain).strip()
         _pb_has_neg = bool(re.search(
-            r'No pickleball courts within 25 min walk of the hotel',
+            r'No pickleball courts within 25 min drive of the hotel',
             _pb_plain, re.IGNORECASE,
         ))
         if pb_entry_count == 0:
             check(
                 'Pickleball — zero entries: section must carry the negative-finding line '
-                '"No pickleball courts within 25 min walk of the hotel." '
+                '"No pickleball courts within 25 min drive of the hotel." '
                 '(per Pickleball - Extra Section.html §4)',
                 _pb_has_neg,
                 'Section has no entries but negative-finding line not found.',
