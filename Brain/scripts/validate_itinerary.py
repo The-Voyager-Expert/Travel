@@ -94,6 +94,7 @@ CHANGELOG = [
     ("2026-06-16", "HEADS UP — note row ↳-prefix HARD-FAIL RESTORED. Heads Up §2 specifies the note line as `↳ [Note]`; the 2026-06-10 entry claims ↳ enforcement was added for the Heads Up note, but the live check had no ↳ requirement (lost in a later edit) and 0 of 32 Heads-Up guides carry it. Re-added: the note row (first body row in the .transit-box, not the Workaround row) must start with ↳. Length/capitalisation checks strip the ↳ prefix before counting (↳ U+21B3 is outside _CG_ICON_RE, so the emoji check is unaffected). EXPECTED: all 32 Heads-Up guides fail until each note row gains its ↳."),
     ("2026-06-16", "INSIDE-BOX ICON ORDER check RESTORED (the 2026-06-16 element-order rewrite removed the '(C)/(D)/(E) intra-row order checks', so box rows could ship in any order). Per Icon Order and Format.html §2 the in-box order is fixed: 🎟=1 · 🏛/⏳=2 · 🚫=3 · 🕐/⏰=4 · 🆓/💵=5 · ⚠️=6 · 📍=7, and ranks must be non-decreasing down the box. ONLY glyphs §2 lists for inside the box are ranked; the `🎫 book at` row (Stops Structure §3c documents it for TRAIN DAYS only — its in-box position is undefined) and the guided-tour `📅` lead are left UNRANKED so the legitimate trailing-book-at pattern (Boston/Alaska/Cayman/Curacao) is not penalised. Genuine violations (e.g. a ⚠️ caveat placed above the 🏛 hours instead of at pos 6) are flagged."),
     ("2026-06-16", "YELLOW-BOX + BARE OPERATIONAL ROWS HARD-FAILS added (restores enforcement the 2026-06-16 element-order rewrite explicitly deferred — 'not enforced here yet, Istanbul/Palm Desert'). TWO checks: (1) every stop-block must carry an operational box (📍-led .tour-box for no-ticket stops, 🎟-led .ticket-box for ticketed) — a stop with NO box = 'yellow box missing'; (2) no logistics row sits OUTSIDE the box — the full inside-box glyph set 🏛/🏛️ hours · ⏳ duration · 🚫 closed · 🕐/⏰ time · 🆓/💵 cost · ⚠️ note · 📍 address must live INSIDE the box. Both strip box subtrees via _strip_balanced_div first; the glyph must LEAD its row (immediately after a <div> open) so emojis in ↳ prose never match. Caught visually by Dani 2026-06-16: Bali Tegallalang / Mount Batur / Uluwatu (bare 🏛/⏰/⚠️/📍, several with no box at all). The pre-existing 'guided stop has no stop-level 📍' check only covered guided stops; these cover self / ticket / no-box stops too. EXPECTED: Bali fails (6 no-box + 7 bare-row stops) until the rows are wrapped in a box."),
+    ("2026-07-05", "FINAL GATE — SAFETY GUIDE per-guide direct check. New hard-fail in the FINAL GATE: reads Safety-Guide.html directly and confirms a city-row href points to THIS guide's folder (class=\"city-row\" href=\"../Guides/{City}/\"). Fails ONLY the guide whose city is absent — the prior fleet-level validate_safety_guide.py subprocess would fail ALL guide validations whenever any city was missing, not just the offending guide's own validation. The direct check is faster, per-guide scoped, and gives a precise fix instruction (which section, which href). Skipped in published-only/CI mode where Safety-Guide.html may not be present."),
     ("2026-07-05", "MULTI-FILE CLI SUPPORT. validate_itinerary.py now accepts one or more file arguments (python3 validate_itinerary.py a.html b.html …). Each file is validated in sequence with a separator banner; exit code is 1 if ANY file fails. Previously only sys.argv[1] was processed — passing multiple files silently ignored everything after the first, causing bulk runs to miss failures in non-first guides (e.g. Bora Bora's 3 failures were invisible when passed as the 6th argument after Kraków)."),
     ("2026-07-05", "🏨 PICKUP ROW BANNED IN STOP-BLOCK TICKET BOXES. New hard-fail: 🏨 ↔ 🚐 / 🏨 → 🚐 / 🏨 ← 🚐 must never appear inside a stop-block ticket-box. These hotel-pickup rows belong ONLY in Tours section entries (under a 📅 heading, Icon Order and Format.html §2 Tours table). The §2 inside-box table (Pos 1–7) has no 🚐 row; a crib fabricated the row in Bora Bora's 'Shark & Ray Lagoon Snorkel Cruise' stop and it passed because the validator only checked order (🚐 is unranked). Companion fix: row removed from bora-bora_v1.html."),
     ("2026-07-05", "📍 ROW CLASS HARD-FAIL added — every 📍 address row inside a stop block must carry class=\"stop-row\". A bare classless <div>📍 has no matching CSS rule and renders with browser-default block spacing (same defect as the ↳/📖 class gap caught 2026-06-16). The gap allowed Bora Bora to ship four bare <div>📍 rows that passed every other check. New check: any <div> with NO class attribute leading with 📍 is a hard-fail. Companion fix: all four bare 📍 rows in bora-bora_v1.html corrected to <div class=\"stop-row\">📍."),
@@ -393,7 +394,7 @@ def validate(html: str, filename: str):
     # stripped (folders may keep accents — São Luís, Maceió, São Paulo — but the file
     # slug never does; matches brain_check.py's ASCII-only _GUIDE_FILENAME_RE).
     _ascii_folder = _unicodedata.normalize('NFKD', _guide_folder).encode('ascii', 'ignore').decode()
-    _city_slug = re.sub(r'[\s-]+', '_', _ascii_folder.lower())
+    _city_slug = re.sub(r'[\s]+', '-', _ascii_folder.lower())
     # Filename must start with the (possibly abbreviated) city slug, followed by
     # _v and a version number. Slugs are legitimately abbreviated (San Francisco ->
     # sf_v3, Carmel-by-the-Sea -> carmel_v1) so this only enforces shape, not an
@@ -408,7 +409,7 @@ def validate(html: str, filename: str):
     check(
         f"Guide HTML filename follows pattern: {{city_slug}}_v*.html (city-specific + version)",
         _filename_valid,
-        f"Found: {_guide_filename} in {_guide_folder}/ — rename to {_city_slug}_v1.html (or higher version number)"
+        f"Found: {_guide_filename} in {_guide_folder}/ — rename to {_city_slug}_{(_vm := re.search(r'_(v[0-9]+)[.]html$', _guide_filename)) and _vm.group(1) or 'v1'}.html"
     )
 
     # ─── WARN-OK SENTINEL REGISTRY ─────────────────────────────────────────
@@ -4146,10 +4147,29 @@ def validate(html: str, filename: str):
                 # 2026-06-16: .tour-box for operational rows retired; now
                 # individual .stop-row divs. Accept a .stop-row containing
                 # 📍 as a valid self-walk shape (replaces the old self-walk box).
+                # Strip ticket-box content first — a 📍 address row INSIDE a
+                # ticket-box is the stop's address, not a self-walk indicator.
+                # Only 📍 rows outside any box count toward shape_a.
+                # Strip ticket-box blocks inline (can't call _strip_balanced_div
+                # here — it's defined later in validate(); replicate the logic).
+                _tbox_re = re.compile(
+                    r'<div\b[^>]*class\s*=\s*"[^"]*\bticket-box\b[^"]*"[^>]*>'
+                )
+                _blk_no_tbox_parts: list[str] = []
+                _tb_i = 0
+                while _tb_i < len(blk):
+                    _tm = _tbox_re.search(blk, _tb_i)
+                    if not _tm:
+                        _blk_no_tbox_parts.append(blk[_tb_i:])
+                        break
+                    _blk_no_tbox_parts.append(blk[_tb_i:_tm.start()])
+                    _, _tb_end = _walk_balanced_div(blk, _tm.end())
+                    _tb_i = _tb_end
+                _blk_no_tbox = ''.join(_blk_no_tbox_parts)
                 stoprow_contains_pin = bool(
                     re.search(
                         r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-row\b[^"]*"[^>]*>[^<]*📍',
-                        blk,
+                        _blk_no_tbox,
                     )
                 )
                 shape_a = tb_contains_pin or stoprow_contains_pin
@@ -5990,6 +6010,34 @@ def validate(html: str, filename: str):
         len(_clock_combined_bad) == 0,
         f"{len(_clock_combined_bad)} 🕐 row(s) missing ⏳ / 👥 or wrong order: "
         + "; ".join(_clock_combined_bad[:5]),
+    )
+
+    # ─── ⏳ DURATION VALUE — exact number-led duration, in ANY row context ────
+    # Rule source: Icon Order and Format.html Pos 2b / 4a — ⏳ {duration} must be
+    # an exact time value ("45 min", "1 hr 30 min", "3 hr", "2–3 hr"). Vague prose
+    # ("Full day") is banned. The standalone ⏳ prose-tail check (Pos 4b) and the
+    # 🕐 combined-row check both require the emoji to LEAD its <div>; tour and
+    # guided-stop meta rows carry the whole line behind a leading ↳, so ⏳ sits
+    # mid-div and escaped every value check. This reads the ⏳ segment wherever it
+    # appears. Distinguisher: every valid duration begins with a digit (incl.
+    # ranges / hybrid h·m / "N days"); a vague value like "Full day" starts with a
+    # letter. HTML comments are stripped first (a low-count note may cite "⏳ /").
+    print("\n── ⏳ DURATION VALUE — number-led duration only (any row) ──")
+    _dur_html = re.sub(r'<!--.*?-->', '', html, flags=re.DOTALL)
+    _dur_val_bad: list[str] = []
+    for _dvm in re.finditer(r'⏳\s*([^·<]*)', _dur_html):
+        _val = RE_STRIP_TAGS.sub('', _dvm.group(1)).strip()
+        if not _val:
+            continue
+        if not _val[0].isdigit():
+            _dur_val_bad.append(f'"⏳ {_val[:60]}"')
+    check(
+        '⏳ duration value must be an exact number-led time ("45 min", '
+        '"1 hr 30 min", "3 hr") — no vague values like "Full day" '
+        '(per Icon Order and Format.html Pos 2b/4a)',
+        len(_dur_val_bad) == 0,
+        f"{len(_dur_val_bad)} ⏳ value(s) not a number-led duration: "
+        + "; ".join(_dur_val_bad[:5]) if _dur_val_bad else "",
     )
 
     check(
@@ -15461,6 +15509,22 @@ def validate(html: str, filename: str):
                     elif len(_sum_text) > 320:
                         _tours_fmt_bad.append(
                             f'"{_label}" — ↳ summary {len(_sum_text)} chars (>320)'
+                        )
+                    # ↳ summary is summary-ONLY (§ 6). The logistics icons —
+                    # 🕐/⏳/👥 (row 3), 📍 (row 4), and 🏨/🚐/🚶/🚕 (row 5) —
+                    # each live on their OWN row, never mashed onto the summary
+                    # line. A summary carrying any of them is a collapsed
+                    # multi-row entry (all rows crammed into one ↳ div). The
+                    # earlier "missing 🕐/⏳/👥" check only tests PRESENCE in the
+                    # box, so a mashed entry passed it; this tests placement.
+                    _mashed = [_g for _g in ('🕐', '⏳', '👥', '📍', '🏨', '🚐', '🚶', '🚕')
+                               if _g in _sum_text]
+                    if _mashed:
+                        _tours_fmt_bad.append(
+                            f'"{_label}" — ↳ summary row has logistics icon(s) '
+                            f'{" ".join(_mashed)} mashed in; the 🕐·⏳·👥 row, the '
+                            f'📍 meeting-point row, and the motion/🏨-pickup row '
+                            f'each belong on their own line (Tours - Extra Section.html §6)'
                         )
 
         check(
@@ -25623,6 +25687,34 @@ def validate(html: str, filename: str):
          f'<div class="dest-card" data-guide="{_fg_city}"> to the correct section '
          f"of Travel-Website/Trip-Essentials/Delta-Routes-SEA.html")
         if (not _fg_delta_exempt and _fg_delta_path.is_file() and not _fg_in_delta) else "",
+    )
+
+    # ─── FINAL GATE — SAFETY GUIDE: this city must have a row ──────────────────
+    # Direct per-guide check: reads Safety-Guide.html and confirms a city-row
+    # href points to this guide's folder. Faster and more targeted than the
+    # fleet-level validate_safety_guide.py subprocess (which fails ALL guides
+    # when ANY city is missing). This check fails ONLY the guide whose city is
+    # absent, so the error lands on the right build.
+    _fg_safety_path = _fg_root.parent / "Trip-Essentials" / "Safety-Guide.html"
+    _fg_in_safety = True  # default pass if file unreadable (CI/published-only)
+    if not _published_only and _fg_safety_path.is_file():
+        _fg_safety_html = _fg_safety_path.read_text(encoding="utf-8", errors="ignore")
+        # city-row links look like: href="../Guides/Wellington/wellington_v1.html"
+        # Match on folder name so a version bump doesn't break the check.
+        _fg_safety_pat = re.compile(
+            r'class="city-row"\s+href="\.\./Guides/' + re.escape(_fg_city) + r'/',
+            re.IGNORECASE,
+        )
+        _fg_in_safety = bool(_fg_safety_pat.search(_fg_safety_html))
+    check(
+        "FINAL GATE — Safety Guide has a row for this city "
+        "(Trip-Essentials/Safety-Guide.html — hardcoded, add manually)",
+        _fg_in_safety,
+        (f"{_fg_city} has no city-row in Safety-Guide.html — "
+         f"add a <a class=\"city-row\" href=\"../Guides/{_fg_city}/{_fg_guide.name}\"> "
+         f"row to the correct State Dept advisory level section "
+         f"(Travel-Website/Trip-Essentials/Safety-Guide.html)")
+        if not _fg_in_safety else "",
     )
 
     # ─── FINAL GATE — ❓ OPEN QUESTIONS: ONLY CORE-RULES QUESTIONS MAY PARK ───
