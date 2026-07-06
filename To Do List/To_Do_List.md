@@ -256,193 +256,6 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 184. - [ ] Zhangjiajie
 185. - [ ] Zurich
 
----
-
-**ARCHIVE — Old 3-bucket structure:**
-31. - [ ] Buenos Aires
-32. - [ ] Cairo
-33. - [ ] Cambridge
-34. - [ ] Cannes
-35. - [ ] Cape Cod
-36. - [ ] Capri
-37. - [x] Carmel-by-the-Sea
-38. - [x] Cascais
-39. - [x] Cayman Islands
-40. - [x] Charlotte
-41. - [x] Chiang Mai
-42. - [x] Chicago
-43. - [x] Chongqing
-44. - [x] Cinque Terre
-45. - [x] Colmar
-46. - [x] Colombo
-47. - [x] Columbia
-48. - [x] Copenhagen
-49. - [ ] Corfu
-50. - [ ] Curacao
-51. - [ ] Cusco
-52. - [ ] Dallas
-53. - [ ] Denver
-54. - [ ] Dubai
-55. - [ ] Dublin
-56. - [ ] Dubrovnik
-57. - [ ] Edinburgh
-58. - [ ] Florence
-59. - [ ] Florida Keys
-60. - [ ] Geneva
-61. - [ ] Glacier National Park
-62. - [ ] Glasgow
-63. - [ ] Gothenburg
-64. - [ ] Hamburg
-65. - [ ] Helsinki
-66. - [ ] Hong Kong
-67. - [ ] Istanbul
-68. - [ ] Kauai
-69. - [ ] KeyWest
-70. - [ ] Kyoto
-71. - [ ] La Jolla
-72. - [ ] Lagos
-73. - [ ] Lake Como
-74. - [ ] Lake Tahoe
-75. - [ ] Las Vegas
-76. - [ ] Lille
-77. - [ ] Lima
-78. - [ ] Lisbon
-79. - [ ] Ljubljana
-80. - [ ] London
-81. - [ ] Los Angeles
-82. - [ ] Lucerne
-83. - [ ] Luxembourg
-84. - [ ] Lyon
-85. - [ ] MachuPicchu
-86. - [ ] Madeira
-87. - [ ] Madrid
-88. - [ ] Malibu
-89. - [ ] Manuel Antonio
-90. - [ ] Marktoberdorf
-91. - [ ] Marrakech
-92. - [ ] Marseille
-93. - [ ] Maui
-94. - [ ] Melbourne
-95. - [ ] Miami
-96. - [ ] Milan
-97. - [ ] Monaco
-98. - [ ] Montevideo
-99. - [ ] Montreal
-100. - [ ] Munich
-101. - [ ] Mykonos
-102. - [ ] Napa
-103. - [ ] Naples
-104. - [ ] Naples Florida
-105. - [ ] Nashville
-106. - [ ] New Orleans
-107. - [ ] New York
-108. - [ ] Nice
-109. - [x] Oahu
-110. - [x] Orcas Island
-111. - [x] Orlando
-112. - [x] Oslo
-113. - [x] Oxford
-114. - [x] Palawan
-115. - [x] Palm Desert
-116. - [x] Palo Alto
-117. - [x] Paris
-118. - [x] Pasadena
-119. - [x] Pensacola
-120. - [x] Petra
-121. - [ ] Philadelphia
-122. - [ ] Phoenix
-123. - [ ] Phuket
-124. - [ ] Pisa
-125. - [ ] Portland
-126. - [ ] Porto
-127. - [ ] Prague
-128. - [ ] Puerto Rico
-129. - [ ] Quebec City
-130. - [ ] Queenstown
-131. - [ ] Reykjavik
-132. - [ ] Rio de Janeiro
-133. - [ ] Rome
-134. - [x] Salvador
-135. - [x] Salzburg
-136. - [x] San Diego
-137. - [x] San Francisco
-138. - [x] San Jose
-139. - [x] San Jose Costa Rica
-140. - [x] San Juan Island
-141. - [x] San Sebastian
-142. - [x] San-Jose-Costa-Rica
-143. - [x] Santa Barbara
-144. - [x] Santa Cruz
-145. - [x] Santa Monica
-146. - [x] Santiago
-147. - [x] Santorini
-148. - [x] Sarasota
-149. - [x] Scottsdale
-150. - [x] Seattle
-151. - [x] Sedona
-152. - [x] Sedona --regenerate
-153. - [x] Seoul
-154. - [x] Seville
-155. - [x] Shanghai
-156. - [x] Siena
-157. - [x] Singapore
-158. - [x] Sint Maarten
-159. - [x] Sintra
-160. - [ ] Sorrento
-161. - [ ] Split
-162. - [ ] Stockholm
-163. - [ ] Strasbourg
-164. - [ ] Stuttgart
-165. - [ ] Sydney
-166. - [ ] Taipei
-167. - [ ] Tallinn
-168. - [ ] Tokyo
-169. - [ ] Toledo
-170. - [ ] Toronto
-171. - [ ] Tromso
-172. - [ ] Turin
-173. - [ ] Turks and Caicos
-174. - [ ] Vancouver
-175. - [ ] Venice
-176. - [ ] Verona
-177. - [ ] Victoria
-178. - [ ] Vienna
-179. - [ ] Virgin Islands
-180. - [ ] Washington DC
-181. - [ ] Wellington
-182. - [ ] Whistler
-183. - [ ] Yellowstone
-184. - [ ] Zhangjiajie
-185. - [ ] Zurich
-
----
-
-## 🔧 Guide Fixes — Validator sweep (2026-07-05, 35 recently shipped guides)
-
-*Validator run on the last 36 shipped guides (Bora Bora already fixed this session). Three failure types found fleet-wide:*
-
-**1. `📍 bare <div>` missing `stop-row` class — 34 of 35 guides (all except Kraków)**
-All guides below need every `<div>📍` → `<div class="stop-row">📍`. Same defect fixed in Bora Bora — the validator check is new (2026-07-05).
-
-**2. Safety Guide missing city row — 12 guides**
-Maceió · Fortaleza · Wellington · Washington DC · Vienna · Manuel Antonio · Colombo · Chiang Mai · Carmel by the Sea · Copenhagen · Columbia · Cascais
-→ Add each city manually to `Trip-Essentials/Safety-Guide.html` at the correct State Dept level.
-
-**3. `<title>` doesn't match Guides-Index entry — 6 guides**
-Florianopolis · Vienna · Chiang Mai · Cascais · Orcas Island · Palawan
-→ Fix the `<title>` tag in each guide to exactly match the card name in Guides-Index.html.
-
-**4. Filename pattern wrong (`{city_slug}_v*.html`) — 3 guides**
-Foz do Iguaçu · São Luís · João Pessoa
-→ Rename HTML files to match the `{city_slug}_v*.html` convention (e.g. `foz-do-iguacu_v2.html`).
-
-- [ ] Fix all 34 guides: bare `📍` → `<div class="stop-row">📍`
-- [ ] Fix Safety Guide: add 12 missing city rows
-- [ ] Fix 6 guide `<title>` tags
-- [ ] Fix 3 guide filenames
-
----
-
 ## 🔧 Ride-app format — 5 guides deferred (2026-07-05)
 
 *New validator checks landed 2026-07-05 (Getting Around §1b: one operator per 🚕 entry + heading names the operator). 52 drifted guides were normalized to per-app format the same session. These 5 also carry an **unrelated pre-existing failure** that needs research/content work, so their ride-app fix was reverted (left at their shipped, validly-stamped state) to keep that fix out of scope. Each needs BOTH fixes in one pass:*
@@ -450,8 +263,52 @@ Foz do Iguaçu · São Luís · João Pessoa
 - [ ] **Kraków** — ride apps still `🚕 Ride Apps → Bolt · Uber` (split to `🚕 Bolt` / `🚕 Uber`) **+** 9 `🎟` ticket rows put domain/platform before the rating (reorder so `🎟 {Title} · {N.N⭐} · {Platform}`; no domain/note left of ⭐).
 - [ ] **Corfu** — ride apps `🚕 Ride Apps → Uber` → `🚕 Uber` **+** 3 tour `⏳ Full day` → exact number-led durations (research each Viator tour's real length).
 - [ ] **Prague** — ride apps `🚕 Ride Apps → Bolt · Uber` → split **+** 1 tour `⏳ Full day` → exact duration.
-- [ ] **Malibu** — ride apps `🚕 Ride Apps → uber.com · lyft.com` → `🚕 Uber` / `🚕 Lyft` **+** Pickleball (Malibu Bluffs Park, Reed Park) motion rows have `🚕` but no `🚶` walk time — add real walk time.
-- [ ] **San-Jose** — ride apps `🚕 Ride Apps → uber.com` → `🚕 Uber` **+** Pickleball entry missing `🚶` walk time — add real walk time.
+- [ ] **Malibu** — ride apps `🚕 Ride Apps → uber.com · lyft.com` → `🚕 Uber` / `🚕 Lyft` **+** Pickleball (Malibu Bluffs Park, Reed Park) entries have `🚕` drive time — confirm all entries have `🚕` and optionally `🚶` if walkable (rule changed 2026-07-06: drive is required, walk is optional).
+- [ ] **San-Jose** — ride apps `🚕 Ride Apps → uber.com` → `🚕 Uber` **+** Pickleball entries — confirm all have `🚕` drive time (rule changed 2026-07-06: drive required, walk optional).
+- [ ] **San-Jose-Costa-Rica** — 2 validator failures: (1) Days 4/5/6 have 3/2/3 stops (below the ≥4 floor) — add missing stops; (2) 5 stops have `.ticket-box` without leading `🎟️` (Mistico Hanging Bridges · La Fortuna Waterfall · Monteverde Cloud Forest · Selvatura Park · Lankester Botanical Garden) — add ticket/booking row or convert to tour-box.
+
+
+---
+
+## 🏓 Pickleball T5 — US guide rebuild (2026-07-06)
+
+*Rule expanded 2026-07-06 (Dani-approved): Pickleball section now required for ALL US guides (was CA/AZ/OR only). Rule also changed from 25 min walk to 25 min drive. Every US guide without a pickleball section now hard-fails T5. Each guide needs a full Pickleball section researched and built: courts within 25 min drive, `🚕` drive time required, `🚶` optional. Run `guide_tools.py validate <City>` after to confirm it passes before committing.*
+
+*From the 2026-07-06 full fleet scan — confirmed US guides failing T5 (alphabetical):*
+
+- [ ] Boulder
+- [ ] Cape Cod
+- [ ] Charlotte
+- [ ] Chicago
+- [ ] Columbia
+- [ ] Dallas
+- [ ] Denver
+- [ ] Florida Keys
+- [ ] Glacier National Park
+- [ ] Kauai
+- [ ] Key West
+- [ ] Lake Tahoe
+- [ ] Las Vegas
+- [ ] Maui
+- [ ] Miami
+- [ ] Naples Florida
+- [ ] Nashville
+- [ ] New Orleans
+- [ ] New York
+- [ ] Oahu
+- [ ] Orcas Island
+- [ ] Orlando
+- [ ] Pensacola
+- [ ] Philadelphia
+- [ ] San Juan Island
+- [ ] Sarasota
+- [ ] Seattle
+- [ ] Sedona
+- [ ] Virgin Islands
+- [ ] Washington DC
+- [ ] Yellowstone
+
+*(Run `python3 Brain/scripts/validate_itinerary.py <guide.html> 2>&1 | grep "Pickleball section ships"` on any US guide not listed above to check for others — Alaska/Atlanta/Austin/Bend/Big Island/Boston/Portland may already have pickleball sections from the CA/AZ/OR-era build.)*
 
 ---
 
