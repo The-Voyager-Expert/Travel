@@ -417,6 +417,44 @@ Every guide has to run the real validator (`validate_itinerary.py`) and pass to 
 
 ---
 
+## 🔧 Guide Fixes — Validator sweep (2026-07-05, 35 recently shipped guides)
+
+*Validator run on the last 36 shipped guides (Bora Bora already fixed this session). Three failure types found fleet-wide:*
+
+**1. `📍 bare <div>` missing `stop-row` class — 34 of 35 guides (all except Kraków)**
+All guides below need every `<div>📍` → `<div class="stop-row">📍`. Same defect fixed in Bora Bora — the validator check is new (2026-07-05).
+
+**2. Safety Guide missing city row — 12 guides**
+Maceió · Fortaleza · Wellington · Washington DC · Vienna · Manuel Antonio · Colombo · Chiang Mai · Carmel by the Sea · Copenhagen · Columbia · Cascais
+→ Add each city manually to `Trip-Essentials/Safety-Guide.html` at the correct State Dept level.
+
+**3. `<title>` doesn't match Guides-Index entry — 6 guides**
+Florianopolis · Vienna · Chiang Mai · Cascais · Orcas Island · Palawan
+→ Fix the `<title>` tag in each guide to exactly match the card name in Guides-Index.html.
+
+**4. Filename pattern wrong (`{city_slug}_v*.html`) — 3 guides**
+Foz do Iguaçu · São Luís · João Pessoa
+→ Rename HTML files to match the `{city_slug}_v*.html` convention (e.g. `foz-do-iguacu_v2.html`).
+
+- [ ] Fix all 34 guides: bare `📍` → `<div class="stop-row">📍`
+- [ ] Fix Safety Guide: add 12 missing city rows
+- [ ] Fix 6 guide `<title>` tags
+- [ ] Fix 3 guide filenames
+
+---
+
+## 🔧 Ride-app format — 5 guides deferred (2026-07-05)
+
+*New validator checks landed 2026-07-05 (Getting Around §1b: one operator per 🚕 entry + heading names the operator). 52 drifted guides were normalized to per-app format the same session. These 5 also carry an **unrelated pre-existing failure** that needs research/content work, so their ride-app fix was reverted (left at their shipped, validly-stamped state) to keep that fix out of scope. Each needs BOTH fixes in one pass:*
+
+- [ ] **Kraków** — ride apps still `🚕 Ride Apps → Bolt · Uber` (split to `🚕 Bolt` / `🚕 Uber`) **+** 9 `🎟` ticket rows put domain/platform before the rating (reorder so `🎟 {Title} · {N.N⭐} · {Platform}`; no domain/note left of ⭐).
+- [ ] **Corfu** — ride apps `🚕 Ride Apps → Uber` → `🚕 Uber` **+** 3 tour `⏳ Full day` → exact number-led durations (research each Viator tour's real length).
+- [ ] **Prague** — ride apps `🚕 Ride Apps → Bolt · Uber` → split **+** 1 tour `⏳ Full day` → exact duration.
+- [ ] **Malibu** — ride apps `🚕 Ride Apps → uber.com · lyft.com` → `🚕 Uber` / `🚕 Lyft` **+** Pickleball (Malibu Bluffs Park, Reed Park) motion rows have `🚕` but no `🚶` walk time — add real walk time.
+- [ ] **San-Jose** — ride apps `🚕 Ride Apps → uber.com` → `🚕 Uber` **+** Pickleball entry missing `🚶` walk time — add real walk time.
+
+---
+
 ## 🪧 Index Subtitle Proposals
 
 *Proposals to add a `dest-sub` line to an index card — the italic sub-line that surfaces a **non-obvious natural marquee** a guide covers (a major geological phenomenon, famous lake, or national/natural park reached as a day-trip that the city name doesn't telegraph — e.g. Ljubljana → "incl. Postojna Cave · Lake Bled"). Scope is natural features ONLY (caves, lakes, canyons, waterfalls, geysers, fjords, parks); never cathedrals, museums, palaces, or other obvious city sights. A crib never adds one on its own — it parks the proposal here, and adds the span only after owner approves. Flow: proposal here → approved → crib adds `dest-sub` → item deleted. Full rule: `Brain/Reference/Ship Checklist.html` § 11. (Subtitles added 2026-06-12 by owner direction: Ljubljana → "incl. Postojna Cave · Lake Bled" [first use]; Zhangjiajie → "incl. Avatar 'Hallelujah' Mountains".)*

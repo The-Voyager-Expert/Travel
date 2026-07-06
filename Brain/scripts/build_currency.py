@@ -73,6 +73,7 @@ COUNTRIES = [
  ("United Kingdom","Europe","Pound Sterling","£","GBP","GBP","", ["Cambridge","Edinburgh","Glasgow","London","Oxford"]),
 
  ("United Arab Emirates","Middle East","UAE Dirham","Dh","AED","AED","Pegged to the US dollar (~3.67).", ["Abu Dhabi","Dubai"]),
+ ("Qatar","Middle East","Qatari Riyal","QR","QAR","QAR","Pegged to the US dollar (~3.64).", ["Doha"]),
  ("Jordan","Middle East","Jordanian Dinar","JD","JOD","JOD","Pegged to the US dollar (~0.71).", ["Petra"]),
 
  ("Egypt","Africa","Egyptian Pound","E£","EGP","EGP","", ["Cairo"]),
