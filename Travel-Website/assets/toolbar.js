@@ -545,34 +545,41 @@
     }
   }
 
-  /* ── Arrows inside .page-header h1: [‹] · title · [›] — Best Of pages ──── */
+  /* ── Best Of pages: stamp above terracotta line, arrows below it ─────────── */
   var isBestOf = /\/Trip-Essentials\/Best-/.test(location.pathname) && (prevHref || nextHref);
   if (isBestOf) {
     function injectBestOfArrows() {
-      var h1 = document.querySelector('.page-header h1');
-      if (!h1) return;
-      var header = h1.parentElement;
+      var header = document.querySelector('.page-header');
+      if (!header) return;
 
-      var titleSpan = document.createElement('span');
-      titleSpan.style.cssText = 'flex:1;text-align:center;';
-      while (header.firstChild) titleSpan.appendChild(header.firstChild);
+      /* Move .updated-stamp inside .page-header so it sits right of the h1,
+         above the terracotta border-bottom line */
+      var stamp = document.querySelector('.updated-stamp');
+      if (stamp) {
+        stamp.style.cssText = 'font-size:11px;color:var(--muted);margin:0;' +
+          'flex-shrink:0;padding-left:16px;align-self:flex-end;letter-spacing:0.01em;';
+        header.appendChild(stamp);
+      }
 
-      header.style.cssText = 'display:flex;align-items:center;justify-content:center;';
+      /* Arrow row injected AFTER .page-header — visually below the terracotta line */
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:8px;margin:2px 0 10px;';
 
       var bPrev = document.createElement('a');
       bPrev.href = prevHref || '#';
       bPrev.textContent = '‹';
       bPrev.setAttribute('aria-label', 'Previous');
       bPrev.style.cssText = btnStyle + (prevHref ? '' : 'visibility:hidden;');
-      header.appendChild(bPrev);
-      header.appendChild(titleSpan);
 
       var bNext = document.createElement('a');
       bNext.href = nextHref || '#';
       bNext.textContent = '›';
       bNext.setAttribute('aria-label', 'Next');
       bNext.style.cssText = btnStyle + (nextHref ? '' : 'visibility:hidden;');
-      header.appendChild(bNext);
+
+      row.appendChild(bPrev);
+      row.appendChild(bNext);
+      header.parentNode.insertBefore(row, header.nextSibling);
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectBestOfArrows);
