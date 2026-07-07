@@ -1023,6 +1023,7 @@
     if (!q) {
       cards.forEach(function(c){ c.style.display = ''; });
       labels.forEach(function(l){ l.style.display = ''; });
+      document.querySelectorAll('.best-of-subsection-label').forEach(function(s){ s.style.display = ''; });
       return;
     }
     cards.forEach(function(c){
@@ -1031,8 +1032,8 @@
       var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
       c.style.display = match ? '' : 'none';
     });
-    // Reset region filter when searching
-    if (window._regionJumpReset) window._regionJumpReset();
+    // Reset region filter UI only (not card visibility)
+    if (window._regionJumpResetUI) window._regionJumpResetUI();
     labels.forEach(function(label){
       var next = label.nextElementSibling;
       var hasVisible = false;
@@ -1105,6 +1106,13 @@
   }
 
   window._regionJumpReset = function() { active = null; applyFilter(); };
+  // UI-only reset used by search handler (doesn't touch card visibility)
+  window._regionJumpResetUI = function() {
+    active = null;
+    items.forEach(function(it) { it.classList.toggle('on', it.dataset.region === 'all'); });
+    label.textContent = defaultLabel;
+    toggle.classList.remove('has-active');
+  };
 
   function openMenu()  { jump.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
   function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
