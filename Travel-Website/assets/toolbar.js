@@ -564,7 +564,7 @@
 
       /* Arrow row injected AFTER .page-header — visually below the terracotta line */
       var row = document.createElement('div');
-      row.style.cssText = 'display:flex;gap:8px;margin:2px 0 10px;';
+      row.style.cssText = 'display:flex;justify-content:space-between;margin:2px 0 10px;';
 
       var bPrev = document.createElement('a');
       bPrev.href = prevHref || '#';
