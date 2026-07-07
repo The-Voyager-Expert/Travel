@@ -131,6 +131,7 @@
     { group: '✈️ Flights', children: [
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
+        { href: base + 'Trip-Essentials/Baggage.html',           text: '🧳 Baggage' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },
@@ -161,7 +162,6 @@
         { href: base + 'Trip-Essentials/Tipping-Guide.html',           text: '🧾 Tipping' },
         { href: base + 'Trip-Essentials/Budget-Guide.html',            text: '💵 Budget' },
         { href: base + 'Trip-Essentials/Tap-Water.html',             text: '🚰 Tap Water' },
-        { href: base + 'Trip-Essentials/Baggage.html',               text: '🧳 Baggage' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',             text: '💳 Cards & ATM' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📱 SIM Cards' },
