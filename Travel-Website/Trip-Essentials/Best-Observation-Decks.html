@@ -790,16 +790,40 @@
 </div><!-- /wrap -->
 
 <script>
+// Returns the nearest preceding .best-of-section-label for any element
+function _nearestRegion(el) {
+  var prev = el.previousElementSibling;
+  while (prev) {
+    if (prev.classList.contains('best-of-section-label')) return prev;
+    prev = prev.previousElementSibling;
+  }
+  return null;
+}
+
+// Hide country labels that have no visible cards beneath them (before the next section/country label)
+function _syncCountryLabels() {
+  document.querySelectorAll('.best-of-country-label').forEach(function(cl) {
+    var next = cl.nextElementSibling;
+    var hasVisible = false;
+    while (next && !next.classList.contains('best-of-section-label') && !next.classList.contains('best-of-country-label')) {
+      if (next.classList.contains('best-of-card') && next.style.display !== 'none') { hasVisible = true; break; }
+      next = next.nextElementSibling;
+    }
+    cl.style.display = hasVisible ? '' : 'none';
+  });
+}
+
 (function(){
   var input = document.getElementById('best-of-search');
   if (!input) return;
   input.addEventListener('input', function(){
     var q = this.value.toLowerCase().trim();
     var cards = document.querySelectorAll('.best-of-card');
-    var labels = document.querySelectorAll('.best-of-section-label');
+    var regionLabels = document.querySelectorAll('.best-of-section-label');
     if (!q) {
       cards.forEach(function(c){ c.style.display = ''; });
-      labels.forEach(function(l){ l.style.display = ''; });
+      regionLabels.forEach(function(l){ l.style.display = ''; });
+      document.querySelectorAll('.best-of-country-label').forEach(function(l){ l.style.display = ''; });
       return;
     }
     cards.forEach(function(c){
@@ -810,18 +834,16 @@
     });
     // Reset region filter when searching
     if (window._regionJumpReset) window._regionJumpReset();
-    labels.forEach(function(label){
+    regionLabels.forEach(function(label){
       var next = label.nextElementSibling;
       var hasVisible = false;
       while (next && !next.classList.contains('best-of-section-label')) {
-        if (next.classList.contains('best-of-card') && next.style.display !== 'none') {
-          hasVisible = true;
-          break;
-        }
+        if (next.classList.contains('best-of-card') && next.style.display !== 'none') { hasVisible = true; break; }
         next = next.nextElementSibling;
       }
       label.style.display = hasVisible ? '' : 'none';
     });
+    _syncCountryLabels();
   });
 })();
 
@@ -830,7 +852,7 @@
   var jump    = document.getElementById('regionJump');
   var toggle  = document.getElementById('regionJumpToggle');
   var label   = document.getElementById('regionJumpLabel');
-        var defaultLabel = label.textContent;
+  var defaultLabel = label.textContent;
   var list    = document.getElementById('regionJumpList');
   var labels  = document.querySelectorAll('.best-of-section-label');
   if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
@@ -855,11 +877,10 @@
     labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
     cards.forEach(function(c) {
       if (!active) { c.style.display = ''; return; }
-      // find preceding section label
-      var prev = c.previousElementSibling;
-      while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
-      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
+      var region = _nearestRegion(c);
+      c.style.display = (region && region.textContent === active) ? '' : 'none';
     });
+    _syncCountryLabels();
   }
 
   window._regionJumpReset = function() { active = null; applyFilter(); };
