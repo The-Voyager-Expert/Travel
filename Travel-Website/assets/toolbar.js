@@ -545,6 +545,42 @@
     }
   }
 
+  /* ── Arrows inside .page-header h1: [‹] · title · [›] — Best Of pages ──── */
+  var isBestOf = /\/Trip-Essentials\/Best-/.test(location.pathname) && (prevHref || nextHref);
+  if (isBestOf) {
+    function injectBestOfArrows() {
+      var h1 = document.querySelector('.page-header h1');
+      if (!h1) return;
+      var header = h1.parentElement;
+
+      var titleSpan = document.createElement('span');
+      titleSpan.style.cssText = 'flex:1;text-align:center;';
+      while (header.firstChild) titleSpan.appendChild(header.firstChild);
+
+      header.style.cssText = 'display:flex;align-items:center;justify-content:center;';
+
+      var bPrev = document.createElement('a');
+      bPrev.href = prevHref || '#';
+      bPrev.textContent = '‹';
+      bPrev.setAttribute('aria-label', 'Previous');
+      bPrev.style.cssText = btnStyle + (prevHref ? '' : 'visibility:hidden;');
+      header.appendChild(bPrev);
+      header.appendChild(titleSpan);
+
+      var bNext = document.createElement('a');
+      bNext.href = nextHref || '#';
+      bNext.textContent = '›';
+      bNext.setAttribute('aria-label', 'Next');
+      bNext.style.cssText = btnStyle + (nextHref ? '' : 'visibility:hidden;');
+      header.appendChild(bNext);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectBestOfArrows);
+    } else {
+      injectBestOfArrows();
+    }
+  }
+
   /* ── Scroll up / down fixed buttons (right side, all pages) ─────────────── */
   var scrollWrap = document.createElement('div');
   scrollWrap.className = 'tb-scroll-wrap';
