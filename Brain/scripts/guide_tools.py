@@ -1232,8 +1232,15 @@ def _check_guide_in_climate(guide_path: Path) -> int:
     # while the guide folder may be hyphenated (e.g. "Santa-Monica") per the
     # 2026-07-05 hyphen migration — accept either form, same as the Currency
     # Guide check below.
+    import unicodedata as _ud
+
+    def _ascii(s: str) -> str:
+        return _ud.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii").lower()
+
     cf_lower = city_folder.lower()
     cf_lower_display = cf_lower.replace("-", " ")
+    cf_ascii = _ascii(city_folder)
+    cf_ascii_display = cf_ascii.replace("-", " ")
     missing = []
 
     # climate.json — keys are guide folder names or display names
@@ -1243,7 +1250,9 @@ def _check_guide_in_climate(guide_path: Path) -> int:
         try:
             data = _json.loads(climate_json.read_text(encoding="utf-8", errors="replace"))
             keys = {k.lower() for k in data if k != "_meta"}
-            if cf_lower not in keys and cf_lower_display not in keys:
+            ascii_keys = {_ascii(k) for k in data if k != "_meta"}
+            if (cf_lower not in keys and cf_lower_display not in keys
+                    and cf_ascii not in ascii_keys and cf_ascii_display not in ascii_keys):
                 missing.append("assets/climate.json")
         except _json.JSONDecodeError:
             missing.append("assets/climate.json (unparseable)")
@@ -1262,7 +1271,9 @@ def _check_guide_in_climate(guide_path: Path) -> int:
             try:
                 baked = _json.loads(m.group(1))
                 baked_keys = {k.lower() for k in baked}
-                baked_ok = cf_lower in baked_keys or cf_lower_display in baked_keys
+                baked_ascii_keys = {_ascii(k) for k in baked}
+                baked_ok = (cf_lower in baked_keys or cf_lower_display in baked_keys
+                            or cf_ascii in baked_ascii_keys or cf_ascii_display in baked_ascii_keys)
             except _json.JSONDecodeError:
                 baked_ok = False
         if not baked_ok:
@@ -1270,6 +1281,7 @@ def _check_guide_in_climate(guide_path: Path) -> int:
             baked_ok = (
                 _re.search(r'"' + _re.escape(city_folder) + r'"\s*:', wjs, _re.IGNORECASE) is not None
                 or _re.search(r'"' + _re.escape(city_folder.replace("-", " ")) + r'"\s*:', wjs, _re.IGNORECASE) is not None
+                or _re.search(r'"' + _re.escape(_ascii(city_folder)) + r'"\s*:', wjs, _re.IGNORECASE) is not None
             )
         if not baked_ok:
             missing.append("assets/weather.js (baked CLIMATE block)")
@@ -1288,7 +1300,9 @@ def _check_guide_in_climate(guide_path: Path) -> int:
         gm = _re.search(r"var GUIDE_LINKS\s*=\s*\{(.*?)\};", cf_text, _re.DOTALL)
         gl = dict(_re.findall(r'"([^"]+)"\s*:\s*"([^"]+)"', gm.group(1))) if gm else {}
         gl_lower = {k.lower(): v for k, v in gl.items()}
-        href = gl_lower.get(cf_lower) or gl_lower.get(cf_lower_display)
+        gl_ascii = {_ascii(k): v for k, v in gl.items()}
+        href = (gl_lower.get(cf_lower) or gl_lower.get(cf_lower_display)
+                or gl_ascii.get(cf_ascii) or gl_ascii.get(cf_ascii_display))
         if not href:
             missing.append("Climate Finder GUIDE_LINKS (By Climate guide link)")
         else:
@@ -1417,6 +1431,21 @@ def _check_guide_in_currency(guide_path: Path) -> int:
     if city_folder in page_cities or city_folder_display in page_cities:
         print(f"  ✅  Currency Guide — {city_folder}'s country is covered.")
         return 0
+
+    # Also check the guide's dest-name from guides_index (handles guides with country
+    # suffix in folder name, e.g. San-Jose-Costa-Rica → dest-name "San José")
+    import re as _re
+    index_path = HERE.parent.parent / "Travel-Website" / "Guides" / "Guides-Index.html"
+    if index_path.exists():
+        idx_html = index_path.read_text(encoding="utf-8")
+        # Find dest-name for guide cards whose href points to this city folder
+        pattern = rf'href="[^"]*/{_re.escape(city_folder)}/[^"]*"[^>]*>.*?dest-name">([^<]+)<'
+        m = _re.search(pattern, idx_html, _re.DOTALL)
+        if m:
+            dest_name = m.group(1).strip()
+            if dest_name in page_cities:
+                print(f"  ✅  Currency Guide — {city_folder} (dest-name '{dest_name}') country is covered.")
+                return 0
 
     print(
         f"\n🚫  SHIP BLOCKED — {city_folder} is not listed under any country in the Currency Guide.\n"
