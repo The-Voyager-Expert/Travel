@@ -148,6 +148,7 @@
     { group: '🛡️ Safety', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',   text: '🛡️ Safety Guide' },
         { href: base + 'Trip-Essentials/Vaccines.html',       text: '💉 Vaccines' },
+        { href: base + 'Trip-Essentials/Tap-Water.html',      text: '🚰 Tap Water' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Visas.html',                                  text: '🪪 Visas' },
@@ -161,7 +162,6 @@
         { href: base + 'Trip-Essentials/Travel-Packing-Generic.html',  text: '👕 Packing Checklist' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',           text: '🧾 Tipping' },
         { href: base + 'Trip-Essentials/Budget-Guide.html',            text: '💵 Budget' },
-        { href: base + 'Trip-Essentials/Tap-Water.html',             text: '🚰 Tap Water' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',             text: '💳 Cards & ATM' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📱 SIM Cards' },
