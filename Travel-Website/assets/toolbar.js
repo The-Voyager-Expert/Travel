@@ -165,7 +165,6 @@
         { href: base + 'Trip-Essentials/Cards-ATM.html',             text: '💳 Cards & ATM' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📱 SIM Cards' },
-        { href: base + 'Trip-Essentials/Pickleball.html',            text: '🏓 Pickleball' },
       ]},
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
