@@ -592,38 +592,79 @@
   var jump    = document.getElementById('regionJump');
   var toggle  = document.getElementById('regionJumpToggle');
   var label   = document.getElementById('regionJumpLabel');
-        var defaultLabel = label.textContent;
+  var defaultLabel = label.textContent;
   var list    = document.getElementById('regionJumpList');
-  var labels  = document.querySelectorAll('.best-of-section-label');
-  if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
+  var sectionLabels  = document.querySelectorAll('.best-of-section-label');
+  var subLabels      = document.querySelectorAll('.best-of-subsection-label');
+  if (!jump || !toggle || !label || !list || sectionLabels.length < 2) { if(jump) jump.style.display='none'; return; }
 
+  // active can be null (all), a country string, or a state string prefixed with "state:"
   var active = null;
 
-  // Build option list from section labels
+  // Build option list: countries + indented states under United States
   var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All sections</button>';
-  labels.forEach(function(l) {
-    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
+  sectionLabels.forEach(function(l) {
+    var country = l.textContent;
+    html += '<button class="days-jump-item" data-region="' + country.replace(/"/g,'&quot;') + '" role="menuitem">' + country + '</button>';
+    if (country === 'United States') {
+      subLabels.forEach(function(s) {
+        var state = s.textContent;
+        html += '<button class="days-jump-item days-jump-subitem" data-region="state:' + state.replace(/"/g,'&quot;') + '" role="menuitem" style="padding-left:20px;font-size:11px;opacity:0.85">' + state + '</button>';
+      });
+    }
   });
   list.innerHTML = html;
   var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
 
+  function getActiveLabel() {
+    if (active === null) return defaultLabel;
+    if (active.indexOf('state:') === 0) return active.slice(6);
+    return active;
+  }
+
   function applyFilter() {
+    var isState = active && active.indexOf('state:') === 0;
+    var stateName = isState ? active.slice(6) : null;
+
     items.forEach(function(it) {
       it.classList.toggle('on', active === null ? it.dataset.region === 'all' : it.dataset.region === active);
     });
-    label.textContent = active || defaultLabel;
+    label.textContent = getActiveLabel();
     toggle.classList.toggle('has-active', active !== null);
+
     var cards = document.querySelectorAll('.best-of-card');
-    var sublabels = document.querySelectorAll('.best-of-subsection-label');
-    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
-    // subsection labels (states) only visible under United States
-    sublabels.forEach(function(l) { l.style.display = (!active || active === 'United States') ? '' : 'none'; });
+
+    // Country labels: show all when no filter; show only United States when a state is selected
+    sectionLabels.forEach(function(l) {
+      if (!active) { l.style.display = ''; }
+      else if (isState) { l.style.display = l.textContent === 'United States' ? '' : 'none'; }
+      else { l.style.display = l.textContent === active ? '' : 'none'; }
+    });
+
+    // Subsection labels (states): show under United States filter or all/state filter
+    subLabels.forEach(function(l) {
+      if (!active) { l.style.display = ''; }
+      else if (isState) { l.style.display = l.textContent === stateName ? '' : 'none'; }
+      else if (active === 'United States') { l.style.display = ''; }
+      else { l.style.display = 'none'; }
+    });
+
+    // Cards
     cards.forEach(function(c) {
       if (!active) { c.style.display = ''; return; }
-      // find preceding section label (country)
+      // Find preceding country label
       var prev = c.previousElementSibling;
       while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
-      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
+      var country = prev ? prev.textContent : '';
+      if (isState) {
+        if (country !== 'United States') { c.style.display = 'none'; return; }
+        // Find preceding state label
+        var sprev = c.previousElementSibling;
+        while (sprev && !sprev.classList.contains('best-of-subsection-label') && !sprev.classList.contains('best-of-section-label')) sprev = sprev.previousElementSibling;
+        c.style.display = (sprev && sprev.classList.contains('best-of-subsection-label') && sprev.textContent === stateName) ? '' : 'none';
+      } else {
+        c.style.display = country === active ? '' : 'none';
+      }
     });
   }
 
