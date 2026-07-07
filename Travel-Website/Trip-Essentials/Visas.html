@@ -177,6 +177,89 @@ html { scroll-behavior: smooth; }
   .etype-title { font-size: 14px; }
   .etype-type { margin-left: 0; }
   .etype-head { gap: 5px; }
+}
+/* ── Apply link ── */
+a.apply-link {
+  font-size: 11px; color: var(--accent); text-decoration: none;
+  border: 1px solid rgba(138,108,26,.28); border-radius: 4px;
+  padding: 2px 7px; margin-left: auto; white-space: nowrap; flex-shrink: 0;
+  transition: background .12s, color .12s, border-color .12s; line-height: 1;
+}
+a.apply-link:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+/* ── Been badge ── */
+.been-badge {
+  font-size: 10px; font-weight: 700; color: #16a34a;
+  background: rgba(22,163,74,.1); border: 1px solid rgba(22,163,74,.22);
+  border-radius: 4px; padding: 1px 6px; margin-left: 6px;
+  letter-spacing: 0.03em; vertical-align: middle; display: inline-block;
+}
+/* ── ETIAS banner ── */
+.etias-banner {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b;
+  border-radius: 8px; padding: 11px 13px; margin-bottom: 14px;
+  font-size: 13px; color: #78350f; line-height: 1.5;
+}
+.etias-banner b { color: #92400e; }
+.etias-days { font-weight: 700; }
+.etias-dismiss {
+  margin-left: auto; cursor: pointer; color: #a16207; font-size: 16px;
+  line-height: 1; padding: 0 2px; flex-shrink: 0;
+  background: none; border: none; font-family: inherit;
+}
+.etias-dismiss:hover { color: #78350f; }
+/* ── Schengen calculator ── */
+.calc-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--accent); border: 1px solid rgba(138,108,26,.22);
+  border-radius: 6px; padding: 4px 10px; background: rgba(138,108,26,.04);
+  cursor: pointer; margin-bottom: 12px; transition: background .12s;
+  user-select: none; font-family: inherit;
+}
+.calc-toggle:hover { background: rgba(138,108,26,.09); }
+.calc-box {
+  background: #faf8f4; border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 15px; margin-bottom: 14px; display: none;
+}
+.calc-box.open { display: block; }
+.calc-head { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+.calc-asof { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; color: var(--muted); }
+.calc-asof input[type=date], .calc-trip-row input[type=date] {
+  font-size: 12px; padding: 4px 8px; border: 1px solid var(--border2);
+  border-radius: 5px; background: #fff; color: var(--text); font-family: inherit;
+}
+.calc-trips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; min-height: 0; }
+.calc-trip-row { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.calc-trip-row input[type=date] { flex: 1; min-width: 0; }
+.trip-sep { color: var(--muted); flex-shrink: 0; }
+.rm-trip { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 3px; flex-shrink: 0; font-family: inherit; }
+.rm-trip:hover { color: #ef4444; }
+.calc-add { font-size: 12px; color: var(--accent); background: none; border: none; cursor: pointer; padding: 0; font-family: inherit; }
+.calc-add:hover { text-decoration: underline; }
+.calc-result {
+  margin-top: 11px; padding: 10px 13px; background: #fff;
+  border: 1px solid var(--border2); border-radius: 7px;
+  display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+}
+.calc-stat { text-align: center; }
+.calc-stat .cs-num { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1; }
+.calc-stat .cs-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.cs-div { width: 1px; height: 38px; background: var(--border2); flex-shrink: 0; }
+.calc-stat.good .cs-num { color: #16a34a; }
+.calc-stat.warn .cs-num { color: #d97706; }
+.calc-stat.bad .cs-num { color: #dc2626; }
+.calc-note { font-size: 11px; color: var(--muted); line-height: 1.45; flex: 1 1 100%; margin-top: 2px; }
+/* ── Mobile Schengen collapse ── */
+.schengen-more-btn {
+  display: none; width: 100%; margin-top: 8px; background: none;
+  border: 1px solid var(--border2); border-radius: 6px; padding: 8px;
+  font-size: 13px; color: var(--muted); cursor: pointer; font-family: inherit;
+}
+.schengen-more-btn:hover { color: var(--text); border-color: var(--border); }
+@media (max-width: 600px) {
+  .schengen-more-btn { display: block; }
+  .row.s-hidden { display: none; }
+  .schengen-expanded .row.s-hidden { display: flex; }
 }</style>
 <link rel="stylesheet" href="../assets/mobile.css?v=50">
 </head>
@@ -207,6 +290,11 @@ html { scroll-behavior: smooth; }
     </div>
     <p id="visa-noresult">No countries match your search.</p>
 
+    <div class="etias-banner" id="etias-banner">
+      <span>⏳ <b>ETIAS coming Q4 2026</b> — the EU's new pre-travel authorization (like the US ESTA, ~€7) will be required for all Schengen visits. <b>Not required yet.</b> Estimated <span class="etias-days"></span> away.</span>
+      <button class="etias-dismiss" type="button" title="Dismiss">✕</button>
+    </div>
+
     <div class="etype vf" id="section-vf">
       <div class="etype-head">
         <span class="etype-title">Europe — Schengen Area</span>
@@ -214,7 +302,20 @@ html { scroll-behavior: smooth; }
         <span class="etype-count">22 countries</span>
       </div>
       <div class="etype-desc">No visa. Stay up to <b>90 days within any 180-day</b> period — and that 90 days is a <b>shared pool across all Schengen countries combined</b>, not per country.</div>
-      <div class="rows three-col">
+      <button class="calc-toggle" id="calc-toggle" type="button">📅 Schengen day calculator <span class="calc-arrow">▼</span></button>
+      <div class="calc-box" id="calc-box">
+        <div class="calc-head">How many Schengen days do I have?</div>
+        <div class="calc-asof">As of <input type="date" id="calc-asof"></div>
+        <div class="calc-trips" id="calc-trips"></div>
+        <button class="calc-add" id="calc-add" type="button">+ Add a Europe trip</button>
+        <div class="calc-result">
+          <div class="calc-stat" id="calc-stat-used"><div class="cs-num" id="calc-used-num">0</div><div class="cs-label">days used</div></div>
+          <div class="cs-div"></div>
+          <div class="calc-stat good" id="calc-stat-rem"><div class="cs-num" id="calc-rem-num">90</div><div class="cs-label">days remaining</div></div>
+          <div class="calc-note">Rolling 180-day window · 90-day maximum · shared across all Schengen countries</div>
+        </div>
+      </div>
+      <div class="rows three-col" id="schengen-grid">
         <div class="row"><span class="cty">🇦🇹 Austria</span><span class="cty-guides" style="font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;"><a href="../Guides/Salzburg/salzburg_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Salzburg</a> · <a href="../Guides/Vienna/vienna_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Vienna</a></span></div>
         <div class="row"><span class="cty">🇧🇪 Belgium</span><span class="cty-guides" style="font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;"><a href="../Guides/Bruges/bruges_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Bruges</a> · <a href="../Guides/Brussels/brussels_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Brussels</a></span></div>
         <div class="row"><span class="cty">🇭🇷 Croatia</span><span class="cty-guides" style="font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;"><a href="../Guides/Dubrovnik/dubrovnik_v2.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Dubrovnik</a> · <a href="../Guides/Split/split_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Split</a></span></div>
@@ -239,6 +340,7 @@ html { scroll-behavior: smooth; }
         <div class="row"><span class="cty">🇸🇪 Sweden</span><span class="cty-guides" style="font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;"><a href="../Guides/Gothenburg/gothenburg_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Gothenburg</a> · <a href="../Guides/Stockholm/stockholm_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Stockholm</a></span></div>
         <div class="row"><span class="cty">🇨🇭 Switzerland</span><span class="cty-guides" style="font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;"><a href="../Guides/Geneva/geneva_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Geneva</a> · <a href="../Guides/Lucerne/lucerne_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Lucerne</a> · <a href="../Guides/Zurich/zurich_v1.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Zurich</a></span></div>
       </div>
+      <button class="schengen-more-btn" id="schengen-more-btn" type="button">Show all 22 countries ▼</button>
       <div class="enote"><b>Heads-up — ETIAS, late 2026:</b> the EU's ETIAS travel authorization (a quick paid online form, ~€7, like the US ESTA) is expected to launch in the <b>last quarter of 2026</b>. It is <b>not required yet</b> — for now you travel passport-only. Once live, you'll file it before each trip.</div>
     </div>
 
@@ -355,7 +457,7 @@ html { scroll-behavior: smooth; }
       <div class="etype-head">
         <span class="etype-title">Visa on arrival — issued at the airport</span>
         <span class="etype-type">Visa on arrival</span>
-        <span class="etype-count">4 destinations</span>
+        <span class="etype-count">5 destinations</span>
       </div>
       <div class="etype-desc">Visa issued at the airport on arrival — no advance application needed.</div>
       <div class="rows">
@@ -414,25 +516,190 @@ html { scroll-behavior: smooth; }
 
 <script>
 (function () {
-  var input = document.getElementById('visa-search');
+
+  // ── Search ────────────────────────────────────────────────────────────────
+  var searchInput = document.getElementById('visa-search');
   var noresult = document.getElementById('visa-noresult');
-  if (!input) return;
-  input.addEventListener('input', function () {
-    var q = input.value.trim().toLowerCase();
-    var visible = 0;
-    document.querySelectorAll('.etype').forEach(function (sec) {
-      var secVisible = 0;
-      sec.querySelectorAll('.row').forEach(function (row) {
-        var text = row.textContent.toLowerCase();
-        var show = !q || text.indexOf(q) > -1;
-        row.style.display = show ? '' : 'none';
-        if (show) { secVisible++; visible++; }
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      var q = searchInput.value.trim().toLowerCase();
+      var visible = 0;
+      document.querySelectorAll('.etype').forEach(function (sec) {
+        var secVisible = 0;
+        sec.querySelectorAll('.row').forEach(function (row) {
+          var text = row.textContent.toLowerCase();
+          var show = !q || text.indexOf(q) > -1;
+          row.style.display = show ? '' : 'none';
+          if (show) { secVisible++; visible++; }
+        });
+        sec.style.display = (q && secVisible === 0) ? 'none' : '';
       });
-      /* hide a whole type-section (header, description, note) when it has no match */
-      sec.style.display = (q && secVisible === 0) ? 'none' : '';
+      noresult.style.display = (q && visible === 0) ? '' : 'none';
     });
-    noresult.style.display = (q && visible === 0) ? '' : 'none';
+  }
+
+  // ── ETIAS countdown ───────────────────────────────────────────────────────
+  var etiasEl = document.getElementById('etias-banner');
+  if (etiasEl) {
+    if (localStorage.getItem('etias-dismissed') === '1') {
+      etiasEl.style.display = 'none';
+    } else {
+      var target = new Date('2026-10-01T00:00:00');
+      var now = new Date(); now.setHours(0,0,0,0);
+      var daysLeft = Math.ceil((target - now) / 86400000);
+      var daysEl = etiasEl.querySelector('.etias-days');
+      if (daysEl) daysEl.textContent = daysLeft > 0 ? 'about ' + daysLeft + ' days' : 'any day now';
+      etiasEl.querySelector('.etias-dismiss').addEventListener('click', function () {
+        etiasEl.style.display = 'none';
+        try { localStorage.setItem('etias-dismissed', '1'); } catch(e) {}
+      });
+    }
+  }
+
+  // ── Schengen calculator ───────────────────────────────────────────────────
+  var calcToggle = document.getElementById('calc-toggle');
+  var calcBox    = document.getElementById('calc-box');
+  var calcTrips  = document.getElementById('calc-trips');
+  var calcAdd    = document.getElementById('calc-add');
+  var calcAsof   = document.getElementById('calc-asof');
+
+  function todayStr() {
+    var d = new Date(); return d.toISOString().slice(0, 10);
+  }
+  if (calcAsof) calcAsof.value = todayStr();
+
+  function recalc() {
+    var refStr = (calcAsof && calcAsof.value) ? calcAsof.value : todayStr();
+    var ref = new Date(refStr + 'T00:00:00');
+    var winStart = new Date(ref); winStart.setDate(winStart.getDate() - 179);
+    var used = 0;
+    if (calcTrips) {
+      calcTrips.querySelectorAll('.calc-trip-row').forEach(function (row) {
+        var ins = row.querySelectorAll('input[type=date]');
+        if (ins.length < 2 || !ins[0].value || !ins[1].value) return;
+        var from = new Date(ins[0].value + 'T00:00:00');
+        var to   = new Date(ins[1].value + 'T00:00:00');
+        if (from > to) return;
+        var ef = from < winStart ? winStart : from;
+        var et = to   > ref      ? ref      : to;
+        if (ef > et) return;
+        used += Math.round((et - ef) / 86400000) + 1;
+      });
+    }
+    var rem = Math.max(0, 90 - used);
+    var numU = document.getElementById('calc-used-num');
+    var numR = document.getElementById('calc-rem-num');
+    var statU = document.getElementById('calc-stat-used');
+    var statR = document.getElementById('calc-stat-rem');
+    if (numU) numU.textContent = used;
+    if (numR) numR.textContent = rem;
+    if (statU) statU.className = 'calc-stat' + (used > 90 ? ' bad' : used > 60 ? ' warn' : '');
+    if (statR) statR.className = 'calc-stat' + (rem >= 30 ? ' good' : rem >= 10 ? ' warn' : ' bad');
+  }
+
+  function addTrip() {
+    var row = document.createElement('div');
+    row.className = 'calc-trip-row';
+    var f = document.createElement('input'); f.type = 'date';
+    var sep = document.createElement('span'); sep.className = 'trip-sep'; sep.textContent = '→';
+    var t = document.createElement('input'); t.type = 'date';
+    var rm = document.createElement('button'); rm.className = 'rm-trip'; rm.type = 'button'; rm.textContent = '✕';
+    rm.addEventListener('click', function () { row.remove(); recalc(); });
+    f.addEventListener('change', recalc);
+    t.addEventListener('change', recalc);
+    row.appendChild(f); row.appendChild(sep); row.appendChild(t); row.appendChild(rm);
+    if (calcTrips) calcTrips.appendChild(row);
+    recalc();
+  }
+
+  if (calcToggle && calcBox) {
+    calcToggle.addEventListener('click', function () {
+      var open = calcBox.classList.toggle('open');
+      var arrow = calcToggle.querySelector('.calc-arrow');
+      if (arrow) arrow.textContent = open ? '▲' : '▼';
+      if (open && calcTrips && calcTrips.children.length === 0) addTrip();
+    });
+  }
+  if (calcAdd)  calcAdd.addEventListener('click', addTrip);
+  if (calcAsof) calcAsof.addEventListener('change', recalc);
+
+  // ── Apply links (JS-injected so HTML rows stay clean) ─────────────────────
+  var APPLY = {
+    'Thailand':        'https://tdac.immigration.go.th',
+    'Singapore':       'https://eservices.ica.gov.sg/sgarrivalcard/',
+    'Sri Lanka':       'https://eta.gov.lk',
+    'South Korea':     'https://e-arrivalcard.immigration.go.kr',
+    'United Kingdom':  'https://www.gov.uk/apply-uk-eta',
+    'Australia':       'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601',
+    'New Zealand':     'https://www.immigration.govt.nz/new-zealand-visas/apply-for-a-visa/about-visa/nzeta',
+    'Brazil':          'https://brazil.vfsevisa.com',
+    'Turkey':          'https://www.evisa.gov.tr',
+    'Vietnam':         'https://evisa.xuatnhapcanh.gov.vn',
+    'China':           'https://visaforchina.cn',
+    'Egypt':           'https://visa2egypt.gov.eg',
+  };
+  document.querySelectorAll('.etype .row').forEach(function (row) {
+    var ctyEl = row.querySelector('.cty');
+    if (!ctyEl) return;
+    var ctyText = ctyEl.textContent.replace(/^[^A-Za-z]+/, '').trim();
+    for (var country in APPLY) {
+      if (ctyText.indexOf(country) === 0) {
+        var link = document.createElement('a');
+        link.className = 'apply-link';
+        link.href = APPLY[country];
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = '↗ Apply';
+        var lim = row.querySelector('.lim');
+        (lim || ctyEl).insertAdjacentElement('afterend', link);
+        break;
+      }
+    }
   });
+
+  // ── My trips — highlight visited countries ────────────────────────────────
+  fetch('../Guides/Guides-Index.html').then(function (r) { return r.text(); }).then(function (html) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var beenSet = new Set();
+    doc.querySelectorAll('a.dest-card[data-status="been"]').forEach(function (card) {
+      var href = card.getAttribute('href') || '';
+      var m = href.match(/\.\/(.+)/);
+      if (m) beenSet.add(m[1]);
+    });
+    document.querySelectorAll('.etype .row').forEach(function (row) {
+      var visited = false;
+      row.querySelectorAll('.cty-guides a').forEach(function (a) {
+        var h = a.getAttribute('href') || '';
+        var m = h.match(/Guides\/(.+)/);
+        if (m && beenSet.has(m[1])) visited = true;
+      });
+      if (visited) {
+        var cty = row.querySelector('.cty');
+        if (cty && !cty.querySelector('.been-badge')) {
+          var badge = document.createElement('span');
+          badge.className = 'been-badge';
+          badge.textContent = '✓ been';
+          cty.appendChild(badge);
+        }
+      }
+    });
+  }).catch(function () {});
+
+  // ── Mobile Schengen collapse ──────────────────────────────────────────────
+  var grid    = document.getElementById('schengen-grid');
+  var moreBtn = document.getElementById('schengen-more-btn');
+  if (grid && moreBtn) {
+    var rows = grid.querySelectorAll('.row');
+    var SHOW = 6;
+    for (var i = SHOW; i < rows.length; i++) rows[i].classList.add('s-hidden');
+    moreBtn.addEventListener('click', function () {
+      var expanded = grid.classList.toggle('schengen-expanded');
+      moreBtn.textContent = expanded
+        ? 'Show less ▲'
+        : 'Show all ' + rows.length + ' countries ▼';
+    });
+  }
+
 })();
 </script>
 </body>
