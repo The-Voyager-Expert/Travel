@@ -209,9 +209,8 @@
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb-ddbtn.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
     '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#fff!important;background:rgba(255,255,255,0.13)}' +
-    '.tb-links.tb-dd-open a.tb-active{background:transparent!important;font-weight:inherit}' +
-    '.tb-links.tb-dd-open .tb-ddbtn.tb-active:not(.tb-dd-open-btn){background:transparent!important;font-weight:inherit}' +
-    '.tb a.tb-was-active{font-weight:600}' +
+    '.tb-links.tb-dd-open a.tb-active{opacity:0.4}' +
+    '.tb-links.tb-dd-open .tb-ddbtn.tb-active:not(.tb-dd-open-btn){opacity:0.4}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
@@ -345,15 +344,11 @@
         }
         menu.classList.add('tb-menu-open'); dd.classList.add('tb-open'); btn.setAttribute('aria-expanded', 'true');
         inner.classList.add('tb-dd-open'); btn.classList.add('tb-dd-open-btn');
-        /* Dim any other active tab so only the open dropdown reads as selected */
-        inner.querySelectorAll('a.tb-active').forEach(function(el) { el.classList.remove('tb-active'); el.classList.add('tb-was-active'); });
         positionMenu();
       }
       function closeMenu() {
         menu.classList.remove('tb-menu-open'); dd.classList.remove('tb-open'); btn.setAttribute('aria-expanded', 'false');
         inner.classList.remove('tb-dd-open'); btn.classList.remove('tb-dd-open-btn');
-        /* Restore active tab highlight */
-        inner.querySelectorAll('a.tb-was-active').forEach(function(el) { el.classList.add('tb-active'); el.classList.remove('tb-was-active'); });
       }
 
       btn.addEventListener('click', function (e) {
@@ -390,7 +385,6 @@
       if (b) { b.setAttribute('aria-expanded', 'false'); b.classList.remove('tb-dd-open-btn'); }
     }
     inner.classList.remove('tb-dd-open');
-    inner.querySelectorAll('a.tb-was-active').forEach(function(el) { el.classList.add('tb-active'); el.classList.remove('tb-was-active'); });
   });
 
   scroller.appendChild(inner);
