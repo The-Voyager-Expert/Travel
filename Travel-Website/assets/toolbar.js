@@ -574,14 +574,14 @@
       bPrev.setAttribute('aria-label', 'Previous Best Of');
       bPrev.style.cssText = btnStyle + 'flex-shrink:0;' + (prevHref ? '' : 'visibility:hidden;');
 
-      /* Centre slot — move the existing .best-of-related div here */
+      /* Centre slot — reparent .best-of-related intact so .best-of-related a
+         CSS selector keeps its pill styling */
       var centre = document.createElement('div');
-      centre.style.cssText = 'flex:1;display:flex;align-items:center;flex-wrap:wrap;gap:6px;';
+      centre.style.cssText = 'flex:1;padding-left:16px;';
       var related = document.querySelector('.best-of-related');
       if (related) {
-        /* Flatten its contents (strip the wrapper div, keep children) */
-        while (related.firstChild) centre.appendChild(related.firstChild);
-        related.parentNode.removeChild(related);
+        related.style.margin = '0';
+        centre.appendChild(related);
       }
 
       var bNext = document.createElement('a');
