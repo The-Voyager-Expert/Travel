@@ -2593,6 +2593,41 @@
   if(searchEl){searchEl.addEventListener('input',applyFilters);searchEl.addEventListener('search',applyFilters);}
 
   // Global — called by the inline filter-button onclick handlers
+  // ---- City guide links inside route-item text nodes ----
+  (function(){
+    var GUIDES={"abu-dhabi":"../Guides/Abu-Dhabi/abu-dhabi_v1.html","aix-en-provence":"../Guides/Aix-en-Provence/aix-en-provence_v1.html","alaska":"../Guides/Alaska/alaska_v1.html","alesund":"../Guides/Alesund/alesund_v1.html","amalfi":"../Guides/Amalfi/amalfi_v1.html","amsterdam":"../Guides/Amsterdam/amsterdam_v1.html","annecy":"../Guides/Annecy/annecy_v1.html","athens":"../Guides/Athens/athens_v1.html","barcelona":"../Guides/Barcelona/barcelona_v1.html","bergen":"../Guides/Bergen/bergen_v1.html","berlin":"../Guides/Berlin/berlin_v1.html","bologna":"../Guides/Bologna/bologna_v1.html","bordeaux":"../Guides/Bordeaux/bordeaux_v1.html","brussels":"../Guides/Brussels/brussels_v1.html","budapest":"../Guides/Budapest/budapest_v1.html","cannes":"../Guides/Cannes/cannes_v1.html","colmar":"../Guides/Colmar/colmar_v1.html","copenhagen":"../Guides/Copenhagen/copenhagen_v1.html","dubrovnik":"../Guides/Dubrovnik/dubrovnik_v2.html","edinburgh":"../Guides/Edinburgh/edinburgh_v1.html","florence":"../Guides/Florence/florence_v1.html","frankfurt":"../Guides/Frankfurt/frankfurt_v1.html","geneva":"../Guides/Geneva/geneva_v1.html","gothenburg":"../Guides/Gothenburg/gothenburg_v1.html","hamburg":"../Guides/Hamburg/hamburg_v1.html","helsinki":"../Guides/Helsinki/helsinki_v1.html","istanbul":"../Guides/Istanbul/istanbul_v1.html","krakow":"../Guides/Kraków/krakow_v1.html","lille":"../Guides/Lille/lille_v1.html","lisbon":"../Guides/Lisbon/lisbon_v4.html","ljubljana":"../Guides/Ljubljana/ljubljana_v1.html","london":"../Guides/London/london_v5.html","lucerne":"../Guides/Lucerne/lucerne_v1.html","luxembourg":"../Guides/Luxembourg/luxembourg_v1.html","lyon":"../Guides/Lyon/lyon_v1.html","malaga":"../Guides/Malaga/malaga_v1.html","marseille":"../Guides/Marseille/marseille_v1.html","milan":"../Guides/Milan/milan_v1.html","monaco":"../Guides/Monaco/monaco_v1.html","munich":"../Guides/Munich/munich_v2.html","naples":"../Guides/Naples/naples_v1.html","nice":"../Guides/Nice/nice_v1.html","oslo":"../Guides/Oslo/oslo_v1.html","paris":"../Guides/Paris/paris_v7.html","porto":"../Guides/Porto/porto_v2.html","prague":"../Guides/Prague/prague_v1.html","rome":"../Guides/Rome/rome_v1.html","salzburg":"../Guides/Salzburg/salzburg_v1.html","san-sebastian":"../Guides/San-Sebastian/san-sebastian_v1.html","seville":"../Guides/Seville/seville_v1.html","siena":"../Guides/Siena/siena_v1.html","split":"../Guides/Split/split_v1.html","stockholm":"../Guides/Stockholm/stockholm_v1.html","strasbourg":"../Guides/Strasbourg/strasbourg_v1.html","stuttgart":"../Guides/Stuttgart/stuttgart_v1.html","tallinn":"../Guides/Tallinn/tallinn_v1.html","tokyo":"../Guides/Tokyo/tokyo_v1.html","toronto":"../Guides/Toronto/toronto_v1.html","tromso":"../Guides/Tromso/tromso_v1.html","turin":"../Guides/Turin/turin_v14.html","venice":"../Guides/Venice/venice_v1.html","verona":"../Guides/Verona/verona_v1.html","vienna":"../Guides/Vienna/vienna_v1.html","zurich":"../Guides/Zurich/zurich_v1.html"};
+    // display name → URL (slug to title-case, plus hardcoded overrides)
+    var nameMap={};
+    Object.keys(GUIDES).forEach(function(slug){
+      var display=slug.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+      nameMap[display]=GUIDES[slug];
+    });
+    // sort longest-first so multi-word names beat single-word substrings
+    var names=Object.keys(nameMap).sort(function(a,b){return b.length-a.length;});
+    var escaped=names.map(function(n){return n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');});
+    var re=new RegExp('\\b('+escaped.join('|')+')\\b','g');
+    // inject subtle link style once
+    var s=document.createElement('style');
+    s.textContent='.route-item a.city-link{color:inherit;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;}';
+    document.head.appendChild(s);
+    document.querySelectorAll('.route-item').forEach(function(el){
+      // walk text nodes only to avoid touching existing markup
+      var walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
+      var nodes=[];
+      var n;
+      while((n=walker.nextNode()))nodes.push(n);
+      nodes.forEach(function(tn){
+        if(!re.test(tn.textContent))return;
+        re.lastIndex=0;
+        var span=document.createElement('span');
+        span.innerHTML=tn.textContent.replace(re,function(m){
+          return '<a href="'+nameMap[m]+'" class="city-link">'+m+'</a>';
+        });
+        tn.parentNode.replaceChild(span,tn);
+      });
+    });
+  })();
+
   window.filterCards=function(type,btn){
     activeType=type;
     document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');b.setAttribute('aria-pressed','false');});
