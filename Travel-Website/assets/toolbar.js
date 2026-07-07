@@ -209,7 +209,7 @@
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb-ddbtn.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
     '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#fff!important;background:rgba(255,255,255,0.13)}' +
-    '.tb-links.tb-dd-open .tb a.tb-active{background:transparent!important;font-weight:inherit}' +
+    '.tb-links.tb-dd-open a.tb-active{background:transparent!important;font-weight:inherit}' +
     '.tb-links.tb-dd-open .tb-ddbtn.tb-active:not(.tb-dd-open-btn){background:transparent!important;font-weight:inherit}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
