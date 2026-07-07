@@ -9,6 +9,9 @@ present — with a link that resolves to a real file — in every cross-guide su
   index card     Guides/Guides-Index.html              (./<folder>/ dest-card href + link)
   index inline   Guides/Guides-Index.html              (CLIMATE_INLINE / COST_DATA / SAFETY_DATA)
   FMAP           Guides/Guides-Index.html              (flight-time view entry)
+  theme          Guides/Guides-Index.html              (THEME_DATA — Type ▾ filter)
+  days           Guides/Guides-Index.html              (DAYS_DATA — Trip Length ▾ filter)
+  lang           Guides/Guides-Index.html              (data-lang on dest-card — Language ▾ filter)
   map pin        Trip-Essentials/Maps/World-Map.html   (PINS array + link)
   travel stats   Trip-Essentials/Travel-Stats.html     (guide link)
   safety         Trip-Essentials/Safety-Guide.html     (one row + link)
@@ -158,6 +161,9 @@ SURFACES = {
     "card":      "index card",
     "inline":    "index inline data",
     "fmap":      "FMAP (flight view)",
+    "theme":     "THEME_DATA (Type filter)",
+    "days":      "DAYS_DATA (Trip Length filter)",
+    "lang":      "data-lang (Language filter)",
     "pin":       "map pin",
     "stats":     "travel stats",
     "safety":    "safety guide",
@@ -232,6 +238,22 @@ def run_sweep() -> dict[str, list[str]]:
         name: _json_block(index_html, name)
         for name in ("CLIMATE_INLINE", "COST_DATA", "SAFETY_DATA")
     }
+
+    # THEME_DATA (Type ▾ filter) — keys are display names.
+    theme_data = _json_block(index_html, "THEME_DATA")
+    theme_keys_norm = {_norm(k) for k in theme_data}
+
+    # DAYS_DATA (Trip Length ▾ filter) — keys are display names.
+    days_data = _json_block(index_html, "DAYS_DATA")
+    days_keys_norm = {_norm(k) for k in days_data}
+
+    # data-lang on dest-cards — extract folder → lang string from index HTML.
+    card_langs: dict[str, str] = {}
+    for m in re.finditer(
+        r'<a class="dest-card"[^>]*href="\./([^/]+)/[^"]+\.html"[^>]*data-lang="([^"]*)"',
+        index_html,
+    ):
+        card_langs[unquote(m.group(1))] = m.group(2).strip()
     # FMAP keys (loose, lowercased substring match — mirrors _check_guide_fmap).
     fmap = _json_block(index_html, "FMAP")
     fmap_keys_lower = [unquote(k).lower() for k in fmap]
@@ -298,6 +320,18 @@ def run_sweep() -> dict[str, list[str]]:
         # FMAP (loose substring)
         if not any(folder.lower() in k for k in fmap_keys_lower):
             missing["fmap"].append(folder)
+
+        # THEME_DATA (Type ▾ filter) — keyed by display name
+        if theme_data and not (cand & theme_keys_norm):
+            missing["theme"].append(folder)
+
+        # DAYS_DATA (Trip Length ▾ filter) — keyed by display name
+        if days_data and not (cand & days_keys_norm):
+            missing["days"].append(folder)
+
+        # data-lang on dest-card (Language ▾ filter)
+        if not card_langs.get(folder):
+            missing["lang"].append(folder)
 
         # map pin (PINS-array href) + link resolution
         pin_href = None
