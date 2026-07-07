@@ -1458,6 +1458,56 @@ def _check_guide_in_currency(guide_path: Path) -> int:
     return 1
 
 
+def _check_guide_in_safety(guide_path: Path) -> int:
+    """Ship gate: the guide's city folder must have an entry in safety_levels.json.
+
+    The Safety Guide is auto-generated from safety_levels.json by build_safety_guide.py.
+    A city absent from the json is silently dropped from the Safety Guide — this gate
+    catches that at ship time so it can't slip through unnoticed.
+
+    Fix a miss: add the city folder name as a key to Brain/scripts/safety_levels.json
+    with level (L1–L4), file, data_city, display, country, and verified fields, then
+    rerun `python3 Brain/scripts/build_safety_guide.py`.
+
+    Added 2026-07-06.
+    """
+    import json as _json
+
+    city_folder = guide_path.parent.name
+    json_path = HERE / "safety_levels.json"
+    if not json_path.exists():
+        print("  ⚠️  Safety check skipped (safety_levels.json missing).")
+        return 0
+
+    try:
+        safety_data = _json.loads(json_path.read_text(encoding="utf-8"))
+    except Exception as _e:  # noqa: BLE001
+        print(f"  ⚠️  Safety check skipped (safety_levels.json load failed: {_e}).")
+        return 0
+
+    if city_folder in safety_data:
+        level = safety_data[city_folder].get("level", "?")
+        print(f"  ✅  Safety Guide — {city_folder} present ({level}).")
+        return 0
+
+    print(
+        f"\n🚫  SHIP BLOCKED — {city_folder} is not in Brain/scripts/safety_levels.json.\n"
+        f"    Every guide needs a State Dept travel advisory level in the Safety Guide.\n"
+        f"    Add an entry with the city's folder name as key:\n"
+        f'      "{city_folder}": {{\n'
+        f'        "level": "L1",   # L1–L4 from travel.state.gov\n'
+        f'        "file": "{city_folder.lower()}_v1.html",\n'
+        f'        "data_city": "{city_folder.lower().replace("-", " ")}",\n'
+        f'        "display": "{city_folder.replace("-", " ")}",\n'
+        f'        "country": "🇺🇸 USA",\n'
+        f'        "verified": "2026-07"\n'
+        f"      }}\n"
+        f"    Then rebuild: python3 Brain/scripts/build_safety_guide.py\n",
+        file=sys.stderr,
+    )
+    return 1
+
+
 def _check_guide_in_us_stats(guide_path: Path) -> int:
     """Ship gate (US guides only): the city must appear in every stat category in
     Stats-Across-US.html — either as a ranked table row (class="city-link") or
@@ -2806,11 +2856,15 @@ def main() -> int:
             return rc_clim
         # ──────────────────────────────────────────────────────────────────────
 
-        # ── Safety Guide — rebuild only, scoped check below ──────────────────
-        # Rebuild Safety-Guide.html so this city is included. The WHOLE-INDEX
-        # validate_safety_guide.py is NOT run here — other guides' safety gaps
-        # are not this crib's problem. The scoped _check_guide_in_safety() call
-        # further below verifies that THIS city specifically is covered.
+        # ── Safety Guide — scoped hard gate + rebuild ────────────────────────
+        # Hard-fail if this city is absent from safety_levels.json — the rebuild
+        # silently drops it and the Safety Guide would ship without the entry.
+        # Whole-index validate_safety_guide.py is NOT run — other guides' gaps
+        # are not this crib's problem.
+        rc_safe = _check_guide_in_safety(Path(tail[0]).resolve())
+        if rc_safe != 0:
+            _write_ship_log(Path(tail[0]).resolve(), "FAIL")
+            return rc_safe
         print("\n▶ Rebuilding Safety Guide…")
         _run("build_safety_guide.py", [])
         # ──────────────────────────────────────────────────────────────────────
