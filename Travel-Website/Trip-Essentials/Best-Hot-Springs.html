@@ -934,10 +934,16 @@
 
   var active = null;
 
-  // Build option list from section labels
+  // Build option list from section labels, grouping "Country — State" under "Country"
+  var seen = {};
   var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All countries</button>';
   labels.forEach(function(l) {
-    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
+    var txt = l.textContent;
+    var country = txt.indexOf(' — ') !== -1 ? txt.split(' — ')[0] : txt;
+    if (!seen[country]) {
+      seen[country] = true;
+      html += '<button class="days-jump-item" data-region="' + country.replace(/"/g,'&quot;') + '" role="menuitem">' + country + '</button>';
+    }
   });
   list.innerHTML = html;
   var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
@@ -949,13 +955,18 @@
     label.textContent = active || defaultLabel;
     toggle.classList.toggle('has-active', active !== null);
     var cards = document.querySelectorAll('.best-of-card');
-    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
+    labels.forEach(function(l) {
+      var lTxt = l.textContent;
+      var matches = !active || lTxt === active || lTxt.indexOf(active + ' — ') === 0;
+      l.style.display = matches ? '' : 'none';
+    });
     cards.forEach(function(c) {
       if (!active) { c.style.display = ''; return; }
-      // find preceding section label
       var prev = c.previousElementSibling;
       while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
-      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
+      var lTxt = prev ? prev.textContent : '';
+      var matches = lTxt === active || lTxt.indexOf(active + ' — ') === 0;
+      c.style.display = matches ? '' : 'none';
     });
   }
 
