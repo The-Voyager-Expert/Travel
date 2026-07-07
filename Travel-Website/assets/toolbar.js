@@ -562,23 +562,36 @@
         header.appendChild(stamp);
       }
 
-      /* Arrow row injected AFTER .page-header — visually below the terracotta line */
+      /* Arrow row injected AFTER .page-header — visually below the terracotta line.
+         Pulls .best-of-related (See also pills) into the centre of the same line. */
       var row = document.createElement('div');
-      row.style.cssText = 'display:flex;justify-content:space-between;margin:2px 0 10px;';
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;' +
+        'gap:12px;margin:6px 0 4px;';
 
       var bPrev = document.createElement('a');
       bPrev.href = prevHref || '#';
       bPrev.textContent = '‹';
-      bPrev.setAttribute('aria-label', 'Previous');
-      bPrev.style.cssText = btnStyle + (prevHref ? '' : 'visibility:hidden;');
+      bPrev.setAttribute('aria-label', 'Previous Best Of');
+      bPrev.style.cssText = btnStyle + 'flex-shrink:0;' + (prevHref ? '' : 'visibility:hidden;');
+
+      /* Centre slot — move the existing .best-of-related div here */
+      var centre = document.createElement('div');
+      centre.style.cssText = 'flex:1;display:flex;align-items:center;flex-wrap:wrap;gap:6px;';
+      var related = document.querySelector('.best-of-related');
+      if (related) {
+        /* Flatten its contents (strip the wrapper div, keep children) */
+        while (related.firstChild) centre.appendChild(related.firstChild);
+        related.parentNode.removeChild(related);
+      }
 
       var bNext = document.createElement('a');
       bNext.href = nextHref || '#';
       bNext.textContent = '›';
-      bNext.setAttribute('aria-label', 'Next');
-      bNext.style.cssText = btnStyle + (nextHref ? '' : 'visibility:hidden;');
+      bNext.setAttribute('aria-label', 'Next Best Of');
+      bNext.style.cssText = btnStyle + 'flex-shrink:0;' + (nextHref ? '' : 'visibility:hidden;');
 
       row.appendChild(bPrev);
+      row.appendChild(centre);
       row.appendChild(bNext);
       header.parentNode.insertBefore(row, header.nextSibling);
     }
