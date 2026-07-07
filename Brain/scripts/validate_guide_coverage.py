@@ -12,6 +12,7 @@ present — with a link that resolves to a real file — in every cross-guide su
   theme          Guides/Guides-Index.html              (THEME_DATA — Type ▾ filter)
   days           Guides/Guides-Index.html              (DAYS_DATA — Trip Length ▾ filter)
   lang           Guides/Guides-Index.html              (data-lang on dest-card — Language ▾ filter)
+  best-of        Trip-Essentials/Best-*.html           (<!-- best-of: ... --> declared + link present)
   map pin        Trip-Essentials/Maps/World-Map.html   (PINS array + link)
   travel stats   Trip-Essentials/Travel-Stats.html     (guide link)
   safety         Trip-Essentials/Safety-Guide.html     (one row + link)
@@ -19,6 +20,7 @@ present — with a link that resolves to a real file — in every cross-guide su
   search index   assets/search_index.json              (guides list)
   status dots    Brain/Reference/Status Dots — guides_index.md   (Brain-only tracker)
   currency       build_currency.py COUNTRIES                     (Brain-only, per-country)
+  time zones     Trip-Essentials/Time-Zones.html               (CITIES entry + url link)
 
 WHY THIS EXISTS
 The per-guide ship gates in guide_tools.py already enforce each surface AT SHIP TIME
@@ -164,6 +166,7 @@ SURFACES = {
     "theme":     "THEME_DATA (Type filter)",
     "days":      "DAYS_DATA (Trip Length filter)",
     "lang":      "data-lang (Language filter)",
+    "best-of":   "Best-of declaration + membership",
     "pin":       "map pin",
     "stats":     "travel stats",
     "safety":    "safety guide",
@@ -173,6 +176,7 @@ SURFACES = {
     "currency":  "currency guide",
     "resources": "also-on-this-site links",
     "delta":     "Delta Routes card (Step 10)",
+    "timezones": "Time-Zones.html (Step 9)",
 }
 
 
@@ -185,6 +189,7 @@ def run_sweep() -> dict[str, list[str]]:
     stats_html = _read(ESSENTIALS / "Travel-Stats.html")
     safety_html = _read(ESSENTIALS / "Safety-Guide.html")
     delta_html = _read(ESSENTIALS / "Delta-Routes-SEA.html")
+    tz_html    = _read(ESSENTIALS / "Time-Zones.html")
     status_md  = _read(REFERENCE / "Status Dots — guides_index.md")
 
     climate_keys: set[str] = set()
@@ -282,6 +287,16 @@ def run_sweep() -> dict[str, list[str]]:
     import re as _re
     delta_card_guides = set(_re.findall(r'data-guide="([^"]+)"', delta_html))
 
+    # Time-Zones Step 9: every shipped guide must have a CITIES entry that
+    # carries a url: field pointing back to the guide HTML.
+    # Build two lookups from the CITIES array:
+    #   tz_guide_folders — set of folder names extracted from url: paths
+    #   tz_has_url       — same set (an entry without url: never appears here)
+    tz_guide_folders: set[str] = set()
+    if tz_html:
+        for m in re.finditer(r"url\s*:\s*['\"](\.\./Guides/([^/'\"]+)/[^'\"]+\.html)['\"]", tz_html):
+            tz_guide_folders.add(unquote(m.group(2)))
+
     # Currency cities (Brain-only; load build_currency.COUNTRIES if reachable).
     currency_cities: set[str] | None = None
     bc_path = HERE / "build_currency.py"
@@ -294,6 +309,49 @@ def run_sweep() -> dict[str, list[str]]:
             currency_cities = {_norm(c) for row in bc.COUNTRIES for c in row[7]}
         except Exception:  # noqa: BLE001 — advisory; treat as unavailable
             currency_cities = None
+
+    # Best-of pages — load each Best-*.html so we can check guide link presence.
+    # Keyed by filename (e.g. "Best-Beaches.html") → html content.
+    best_of_pages: dict[str, str] = {}
+    for bp in sorted((ESSENTIALS).glob("Best-*.html")):
+        if bp.name != "Best-Of-Index.html":
+            try:
+                best_of_pages[bp.name] = bp.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                pass
+
+    # Canonical topic → filename map (mirrors _BEST_OF_PAGES in guide_tools.py).
+    BEST_OF_MAP = {
+        "Amusement Parks": "Best-Amusement-Parks.html",
+        "Aquariums": "Best-Aquariums.html",
+        "Architecture": "Best-Architecture.html",
+        "Art Museums": "Best-Art-Museums.html",
+        "Beaches": "Best-Beaches.html",
+        "Castles": "Best-Castles.html",
+        "Cathedrals": "Best-Cathedrals.html",
+        "Caves": "Best-Caves.html",
+        "Gardens": "Best-Gardens.html",
+        "Hot Springs": "Best-Hot-Springs.html",
+        "Islands": "Best-Islands.html",
+        "Kid-Friendly Places": "Best-Kids-Friendly-Places.html",
+        "Kids' Museums": "Best-Kids-Museums.html",
+        "Lakes": "Best-Lakes.html",
+        "Mountains & Rock Formations": "Best-Mountains-and-Rock-Formations.html",
+        "Museums": "Best-Museums.html",
+        "National Parks by Country": "Best-National-Parks-by-Country.html",
+        "Observation Decks": "Best-Observation-Decks.html",
+        "Resorts": "Best-Resorts.html",
+        "Safari": "Best-Safari.html",
+        "Scuba Diving": "Best-Scuba-Diving.html",
+        "Ski Resorts": "Best-Ski-Resorts.html",
+        "Surfing": "Best-Surfing.html",
+        "UNESCO Sites": "Best-UNESCO-Sites.html",
+        "Unique Museums": "Best-Unique-Museums.html",
+        "US National Parks": "Best-US-National-Parks.html",
+        "Volcanoes": "Best-Volcanoes.html",
+        "Wine Regions": "Best-Wine-Regions.html",
+        "Wonders of the World": "Best-Wonders-of-the-World.html",
+    }
 
     missing: dict[str, list[str]] = {k: [] for k in SURFACES}
 
@@ -332,6 +390,33 @@ def run_sweep() -> dict[str, list[str]]:
         # data-lang on dest-card (Language ▾ filter)
         if not card_langs.get(folder):
             missing["lang"].append(folder)
+
+        # Read guide HTML once — used for best-of and also-on-this-site checks.
+        try:
+            guide_html = _html.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            guide_html = ""
+
+        # Best-of declaration + membership.
+        # Only hard-fail when a declaration IS present but the guide link is
+        # missing from the named page (real gap). Missing declaration on legacy
+        # guides is tracked separately (advisory — not a hard sweep failure).
+        bom = re.search(r'<!--\s*best-of\s*:\s*([^-][^>]*?)-->', guide_html, re.IGNORECASE)
+        if not bom:
+            # No declaration yet — advisory only (not added to missing["best-of"])
+            pass
+        else:
+            raw_topics = bom.group(1).strip()
+            if raw_topics.lower() != "none":
+                for topic in (t.strip() for t in raw_topics.split(",") if t.strip()):
+                    page_name = BEST_OF_MAP.get(topic)
+                    if not page_name:
+                        missing["best-of"].append(folder)  # unknown topic
+                        break
+                    page_html_bo = best_of_pages.get(page_name, "")
+                    if f"../Guides/{folder}/" not in page_html_bo:
+                        missing["best-of"].append(folder)  # declared but not linked
+                        break
 
         # map pin (PINS-array href) + link resolution
         pin_href = None
@@ -377,13 +462,13 @@ def run_sweep() -> dict[str, list[str]]:
             missing["delta"].append(folder)
 
         # also-on-this-site block must exist (links vary per guide)
-        try:
-            guide_html = _html.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            guide_html = ""
         if ("<!-- also-on-this-site -->" not in guide_html.lower()
                 or "<!-- /also-on-this-site -->" not in guide_html.lower()):
             missing["resources"].append(folder)
+
+        # Time-Zones Step 9 — entry with url: pointing to this guide's folder
+        if tz_html and folder not in tz_guide_folders:
+            missing["timezones"].append(folder)
 
     missing["__count__"] = [str(len(guides))]  # piggyback the total for the report
     if currency_cities is None:
@@ -392,6 +477,8 @@ def run_sweep() -> dict[str, list[str]]:
         missing["__skip_status__"] = ["1"]
     if not delta_html:
         missing["__skip_delta__"] = ["1"]
+    if not tz_html:
+        missing["__skip_timezones__"] = ["1"]
     return missing
 
 
@@ -403,6 +490,7 @@ def main() -> int:
     skip_currency = res.pop("__skip_currency__", None) is not None
     skip_status = res.pop("__skip_status__", None) is not None
     skip_delta = res.pop("__skip_delta__", None) is not None
+    skip_timezones = res.pop("__skip_timezones__", None) is not None
 
     print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
     print(f"  🗺  Guide coverage sweep — {total} shipped guides")
@@ -423,6 +511,9 @@ def main() -> int:
             continue
         if key == "delta" and skip_delta:
             print(f"  {WARN} {label:<24} skipped (Delta-Routes-SEA.html not reachable)")
+            continue
+        if key == "timezones" and skip_timezones:
+            print(f"  {WARN} {label:<24} skipped (Time-Zones.html not reachable)")
             continue
         miss = res.get(key, [])
         if miss:
