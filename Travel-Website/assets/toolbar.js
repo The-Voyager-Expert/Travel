@@ -209,6 +209,8 @@
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb-ddbtn.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
     '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#fff!important;background:rgba(255,255,255,0.13)}' +
+    '.tb-links.tb-dd-open .tb a.tb-active{background:transparent!important;font-weight:inherit}' +
+    '.tb-links.tb-dd-open .tb-ddbtn.tb-active:not(.tb-dd-open-btn){background:transparent!important;font-weight:inherit}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
@@ -338,11 +340,13 @@
         for (var j = 0; j < openDds.length; j++) {
           openDds[j].classList.remove('tb-open');
           var ob = openDds[j].querySelector('.tb-ddbtn');
-          if (ob) ob.setAttribute('aria-expanded', 'false');
+          if (ob) { ob.setAttribute('aria-expanded', 'false'); ob.classList.remove('tb-dd-open-btn'); }
         }
-        menu.classList.add('tb-menu-open'); dd.classList.add('tb-open'); btn.setAttribute('aria-expanded', 'true'); positionMenu();
+        menu.classList.add('tb-menu-open'); dd.classList.add('tb-open'); btn.setAttribute('aria-expanded', 'true');
+        inner.classList.add('tb-dd-open'); btn.classList.add('tb-dd-open-btn');
+        positionMenu();
       }
-      function closeMenu() { menu.classList.remove('tb-menu-open'); dd.classList.remove('tb-open'); btn.setAttribute('aria-expanded', 'false'); }
+      function closeMenu() { menu.classList.remove('tb-menu-open'); dd.classList.remove('tb-open'); btn.setAttribute('aria-expanded', 'false'); inner.classList.remove('tb-dd-open'); btn.classList.remove('tb-dd-open-btn'); }
 
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -375,8 +379,9 @@
     for (var j = 0; j < open.length; j++) {
       open[j].classList.remove('tb-open');
       var b = open[j].querySelector('.tb-ddbtn');
-      if (b) b.setAttribute('aria-expanded', 'false');
+      if (b) { b.setAttribute('aria-expanded', 'false'); b.classList.remove('tb-dd-open-btn'); }
     }
+    inner.classList.remove('tb-dd-open');
   });
 
   scroller.appendChild(inner);
