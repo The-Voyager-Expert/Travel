@@ -132,6 +132,7 @@
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🧳 Baggage' },
+        { href: base + 'Trip-Essentials/Trusted-Traveler.html', text: '🛂 Global Entry & CLEAR' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },

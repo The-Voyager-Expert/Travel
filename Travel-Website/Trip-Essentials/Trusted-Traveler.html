@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=50">
+<title>Trusted Traveler Programs</title>
+<style>
+/* ── Program explainer cards ── */
+.programs-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+}
+@media (max-width: 600px) { .programs-grid { grid-template-columns: 1fr; } }
+.program-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden;
+}
+.program-card-head {
+  padding: 13px 18px 11px; border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; gap: 10px;
+}
+.program-icon { font-size: 22px; line-height: 1; }
+.program-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.program-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 3px; margin-left: auto;
+}
+.program-tag.ge  { background: #e8f0fb; color: #1a3a8b; border: 1px solid #c5d5ee; }
+.program-tag.clr { background: #fdf0e8; color: #7a3a1a; border: 1px solid #e8c0a0; }
+.program-body { padding: 13px 18px; display: flex; flex-direction: column; gap: 8px; }
+.program-row { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text); line-height: 1.5; }
+.program-row-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); flex-shrink: 0; padding-top: 2px; min-width: 60px;
+}
+.program-row-val { color: var(--text); }
+.program-link {
+  display: inline-block; margin-top: 4px; font-size: 12px; font-weight: 600;
+  color: var(--accent); text-decoration: none; border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 10px; background: var(--surface);
+  transition: border-color .15s, background .15s;
+}
+.program-link:hover { border-color: #b85c2a; background: #fff; text-decoration: none; }
+
+/* ── Controls ── */
+.controls-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  justify-content: center; margin-bottom: 16px;
+}
+#tt-search {
+  width: 360px; padding: 11px 18px;
+  border: 1.5px solid #e6e2da; border-radius: 6px;
+  background: #fff; font-family: inherit; font-size: 15px; color: #1a1917;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+#tt-search::placeholder { color: #A8895A; }
+#tt-search:focus { border-color: #b8860b; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-bottom: 18px; }
+.fpill {
+  padding: 6px 14px; border-radius: 6px; border: 1.5px solid var(--border2);
+  background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.fpill:hover { border-color: #b85c2a; }
+.fpill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: #b85c2a; color: #fff; }
+
+/* ── Airport list ── */
+.state-block { margin-bottom: 4px; }
+.state-header {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); padding: 10px 4px 5px; border-bottom: 1px solid var(--border2);
+  margin-bottom: 0;
+}
+.state-block.hidden { display: none; }
+
+.apt-list { display: flex; flex-direction: column; }
+.apt-row {
+  display: flex; align-items: center; gap: 10px; padding: 9px 6px;
+  border-bottom: 1px solid var(--border2); transition: background .12s;
+}
+.apt-row:last-child { border-bottom: none; }
+.apt-row:hover { background: #fff; }
+.apt-row.hidden { display: none; }
+.apt-code { font-size: 14px; font-weight: 700; color: var(--accent); width: 40px; flex-shrink: 0; }
+.apt-info { flex: 1; min-width: 0; }
+.apt-city { font-size: 13px; color: var(--text); font-weight: 600; }
+.apt-name { font-size: 11px; color: var(--muted); line-height: 1.3; margin-top: 1px; }
+.badge-wrap { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+.badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  padding: 2px 7px; border-radius: 3px; white-space: nowrap;
+}
+.badge-ge   { background: #e8f0fb; color: #1a3a8b; border: 1px solid #c5d5ee; }
+.badge-eoa  { background: #e8f5e8; color: #1a5a1a; border: 1px solid #9ad09a; }
+.badge-clear { background: #fdf0e8; color: #7a3a1a; border: 1px solid #e8c0a0; }
+.badge-pre  { background: #f0ece3; color: var(--muted); border: 1px solid var(--border); }
+
+/* ── International section ── */
+.section-divider {
+  margin: 28px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  font-size: 14px; font-weight: 700; color: var(--text);
+}
+.intl-note {
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+  padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 6px; margin-bottom: 14px;
+}
+.country-block { margin-bottom: 2px; }
+.country-header {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); padding: 10px 4px 5px; border-bottom: 1px solid var(--border2);
+}
+
+/* ── No results ── */
+#no-results { display: none; text-align: center; color: var(--muted); font-size: 13px; padding: 28px 0; }
+
+/* ── Count chip ── */
+.count-chip {
+  font-size: 11px; color: var(--muted); text-align: center;
+  margin-bottom: 10px; letter-spacing: 0.02em;
+}
+.count-chip span { font-weight: 700; color: var(--text); }
+
+@media (max-width: 600px) {
+  #tt-search { width: 100%; }
+  .controls-row { flex-direction: column; align-items: stretch; }
+  .apt-name { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760"></div>
+
+  <div class="page-header"><h1>Trusted Traveler Programs</h1></div>
+
+  <!-- Program explainer cards -->
+  <div class="programs-grid">
+
+    <div class="program-card">
+      <div class="program-card-head">
+        <span class="program-icon">🛂</span>
+        <span class="program-name">Global Entry</span>
+        <span class="program-tag ge">CBP</span>
+      </div>
+      <div class="program-body">
+        <div class="program-row">
+          <span class="program-row-label">What</span>
+          <span class="program-row-val">Expedited US Customs clearance for pre-approved travelers returning from international trips. Includes TSA PreCheck.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Airport</span>
+          <span class="program-row-val">At international arrivals — look for Global Entry kiosks in the federal inspection area. Scan your passport and fingerprints, skip the agent line.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Enroll</span>
+          <span class="program-row-val">Apply online, then interview at a CBP enrollment center or use Enrollment on Arrival at select airports after clearing customs.</span>
+        </div>
+        <a class="program-link" href="https://www.cbp.gov/travel/trusted-traveler-programs/global-entry" target="_blank" rel="noopener">cbp.gov/global-entry ↗</a>
+      </div>
+    </div>
+
+    <div class="program-card">
+      <div class="program-card-head">
+        <span class="program-icon">🔵</span>
+        <span class="program-name">CLEAR</span>
+        <span class="program-tag clr">PRIVATE</span>
+      </div>
+      <div class="program-body">
+        <div class="program-row">
+          <span class="program-row-label">What</span>
+          <span class="program-row-val">Biometric identity verification (eyes + fingerprints) at TSA security checkpoints. Replaces showing your ID — doesn't skip the X-ray.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Airport</span>
+          <span class="program-row-val">Look for the blue CLEAR kiosks at security. A CLEAR ambassador scans your biometrics and escorts you to the front of the PreCheck or standard lane.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Enroll</span>
+          <span class="program-row-val">Sign up online or in person at any CLEAR location. Biometrics are captured on-site in under 5 minutes.</span>
+        </div>
+        <a class="program-link" href="https://www.clearme.com/" target="_blank" rel="noopener">clearme.com ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Filters -->
+  <div class="pill-row">
+    <button class="fpill active" data-filter="all">All Airports</button>
+    <button class="fpill" data-filter="both">Both GE + CLEAR</button>
+    <button class="fpill" data-filter="ge">Global Entry</button>
+    <button class="fpill" data-filter="clear">CLEAR</button>
+    <button class="fpill" data-filter="eoa">Enrollment on Arrival</button>
+  </div>
+
+  <div class="controls-row">
+    <input type="text" id="tt-search" placeholder="🔍  Search airport code or city" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div class="count-chip" id="count-chip"><span id="count-num">83</span> airports</div>
+
+  <div id="airport-list">
+
+    <!-- Alabama -->
+    <div class="state-block" data-state="AL">
+      <div class="state-header">Alabama</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="bhm birmingham alabama">
+          <span class="apt-code">BHM</span>
+          <span class="apt-info"><span class="apt-city">Birmingham, AL</span><span class="apt-name">Birmingham-Shuttlesworth International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alaska -->
+    <div class="state-block" data-state="AK">
+      <div class="state-header">Alaska</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="anc anchorage alaska">
+          <span class="apt-code">ANC</span>
+          <span class="apt-info"><span class="apt-city">Anchorage, AK</span><span class="apt-name">Ted Stevens Anchorage International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="fai fairbanks alaska">
+          <span class="apt-code">FAI</span>
+          <span class="apt-info"><span class="apt-city">Fairbanks, AK</span><span class="apt-name">Fairbanks International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arizona -->
+    <div class="state-block" data-state="AZ">
+      <div class="state-header">Arizona</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="phx phoenix arizona">
+          <span class="apt-code">PHX</span>
+          <span class="apt-info"><span class="apt-city">Phoenix, AZ</span><span class="apt-name">Phoenix Sky Harbor International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- California -->
+    <div class="state-block" data-state="CA">
+      <div class="state-header">California</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="lax los angeles california">
+          <span class="apt-code">LAX</span>
+          <span class="apt-info"><span class="apt-city">Los Angeles, CA</span><span class="apt-name">Los Angeles International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="lgb long beach california">
+          <span class="apt-code">LGB</span>
+          <span class="apt-info"><span class="apt-city">Long Beach, CA</span><span class="apt-name">Long Beach Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="oak oakland california">
+          <span class="apt-code">OAK</span>
+          <span class="apt-info"><span class="apt-city">Oakland, CA</span><span class="apt-name">Oakland International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="ont ontario california">
+          <span class="apt-code">ONT</span>
+          <span class="apt-info"><span class="apt-city">Ontario, CA</span><span class="apt-name">Ontario International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="psp palm springs california">
+          <span class="apt-code">PSP</span>
+          <span class="apt-info"><span class="apt-city">Palm Springs, CA</span><span class="apt-name">Palm Springs International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="smf sacramento california">
+          <span class="apt-code">SMF</span>
+          <span class="apt-info"><span class="apt-city">Sacramento, CA</span><span class="apt-name">Sacramento International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="san san diego california">
+          <span class="apt-code">SAN</span>
+          <span class="apt-info"><span class="apt-city">San Diego, CA</span><span class="apt-name">San Diego International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sfo san francisco california">
+          <span class="apt-code">SFO</span>
+          <span class="apt-info"><span class="apt-city">San Francisco, CA</span><span class="apt-name">San Francisco International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sjc san jose california">
+          <span class="apt-code">SJC</span>
+          <span class="apt-info"><span class="apt-city">San Jose, CA</span><span class="apt-name">Norman Y. Mineta San Jose International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="sna santa ana orange county california">
+          <span class="apt-code">SNA</span>
+          <span class="apt-info"><span class="apt-city">Santa Ana, CA</span><span class="apt-name">John Wayne Airport — Orange County</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colorado -->
+    <div class="state-block" data-state="CO">
+      <div class="state-header">Colorado</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="den denver colorado">
+          <span class="apt-code">DEN</span>
+          <span class="apt-info"><span class="apt-city">Denver, CO</span><span class="apt-name">Denver International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connecticut -->
+    <div class="state-block" data-state="CT">
+      <div class="state-header">Connecticut</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="bdl hartford connecticut">
+          <span class="apt-code">BDL</span>
+          <span class="apt-info"><span class="apt-city">Hartford, CT</span><span class="apt-name">Bradley International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DC -->
+    <div class="state-block" data-state="DC">
+      <div class="state-header">DC / Washington Area</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="dca reagan washington dc virginia">
+          <span class="apt-code">DCA</span>
+          <span class="apt-info"><span class="apt-city">Washington, DC</span><span class="apt-name">Ronald Reagan Washington National</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="iad dulles washington dc virginia">
+          <span class="apt-code">IAD</span>
+          <span class="apt-info"><span class="apt-city">Washington, DC</span><span class="apt-name">Washington Dulles International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Florida -->
+    <div class="state-block" data-state="FL">
+      <div class="state-header">Florida</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="fll fort lauderdale florida">
+          <span class="apt-code">FLL</span>
+          <span class="apt-info"><span class="apt-city">Fort Lauderdale, FL</span><span class="apt-name">Fort Lauderdale-Hollywood International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="rsw fort myers florida">
+          <span class="apt-code">RSW</span>
+          <span class="apt-info"><span class="apt-city">Fort Myers, FL</span><span class="apt-name">Southwest Florida International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="pie clearwater st pete florida">
+          <span class="apt-code">PIE</span>
+          <span class="apt-info"><span class="apt-city">St. Pete-Clearwater, FL</span><span class="apt-name">St. Pete-Clearwater International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="mlb melbourne florida">
+          <span class="apt-code">MLB</span>
+          <span class="apt-info"><span class="apt-city">Melbourne, FL</span><span class="apt-name">Melbourne Orlando International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="mia miami florida">
+          <span class="apt-code">MIA</span>
+          <span class="apt-info"><span class="apt-city">Miami, FL</span><span class="apt-name">Miami International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="mco orlando florida">
+          <span class="apt-code">MCO</span>
+          <span class="apt-info"><span class="apt-city">Orlando, FL</span><span class="apt-name">Orlando International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="sfb sanford orlando florida">
+          <span class="apt-code">SFB</span>
+          <span class="apt-info"><span class="apt-city">Sanford, FL</span><span class="apt-name">Orlando Sanford International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="srq sarasota florida">
+          <span class="apt-code">SRQ</span>
+          <span class="apt-info"><span class="apt-city">Sarasota, FL</span><span class="apt-name">Sarasota Bradenton International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="tpa tampa florida">
+          <span class="apt-code">TPA</span>
+          <span class="apt-info"><span class="apt-city">Tampa, FL</span><span class="apt-name">Tampa International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="pbi west palm beach florida">
+          <span class="apt-code">PBI</span>
+          <span class="apt-info"><span class="apt-city">West Palm Beach, FL</span><span class="apt-name">Palm Beach International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Georgia -->
+    <div class="state-block" data-state="GA">
+      <div class="state-header">Georgia</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="atl atlanta georgia">
+          <span class="apt-code">ATL</span>
+          <span class="apt-info"><span class="apt-city">Atlanta, GA</span><span class="apt-name">Hartsfield-Jackson Atlanta International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="sav savannah georgia">
+          <span class="apt-code">SAV</span>
+          <span class="apt-info"><span class="apt-city">Savannah, GA</span><span class="apt-name">Savannah/Hilton Head International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guam -->
+    <div class="state-block" data-state="GU">
+      <div class="state-header">Guam</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="gum guam">
+          <span class="apt-code">GUM</span>
+          <span class="apt-info"><span class="apt-city">Hagatna, GU</span><span class="apt-name">A.B. Won Pat International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hawaii -->
+    <div class="state-block" data-state="HI">
+      <div class="state-header">Hawaii</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="hnl honolulu hawaii">
+          <span class="apt-code">HNL</span>
+          <span class="apt-info"><span class="apt-city">Honolulu, HI</span><span class="apt-name">Daniel K. Inouye International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="ogg kahului maui hawaii">
+          <span class="apt-code">OGG</span>
+          <span class="apt-info"><span class="apt-city">Kahului (Maui), HI</span><span class="apt-name">Kahului Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idaho -->
+    <div class="state-block" data-state="ID">
+      <div class="state-header">Idaho</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="boi boise idaho">
+          <span class="apt-code">BOI</span>
+          <span class="apt-info"><span class="apt-city">Boise, ID</span><span class="apt-name">Boise Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Illinois -->
+    <div class="state-block" data-state="IL">
+      <div class="state-header">Illinois</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="mdw chicago midway illinois">
+          <span class="apt-code">MDW</span>
+          <span class="apt-info"><span class="apt-city">Chicago, IL</span><span class="apt-name">Chicago Midway International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="ord chicago ohare illinois">
+          <span class="apt-code">ORD</span>
+          <span class="apt-info"><span class="apt-city">Chicago, IL</span><span class="apt-name">Chicago O'Hare International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indiana -->
+    <div class="state-block" data-state="IN">
+      <div class="state-header">Indiana</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="ind indianapolis indiana">
+          <span class="apt-code">IND</span>
+          <span class="apt-info"><span class="apt-city">Indianapolis, IN</span><span class="apt-name">Indianapolis International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="sbn south bend indiana">
+          <span class="apt-code">SBN</span>
+          <span class="apt-info"><span class="apt-city">South Bend, IN</span><span class="apt-name">South Bend International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kentucky -->
+    <div class="state-block" data-state="KY">
+      <div class="state-header">Kentucky</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="sdf louisville kentucky">
+          <span class="apt-code">SDF</span>
+          <span class="apt-info"><span class="apt-city">Louisville, KY</span><span class="apt-name">Louisville Muhammad Ali International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Louisiana -->
+    <div class="state-block" data-state="LA">
+      <div class="state-header">Louisiana</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="msy new orleans louisiana">
+          <span class="apt-code">MSY</span>
+          <span class="apt-info"><span class="apt-city">New Orleans, LA</span><span class="apt-name">Louis Armstrong New Orleans International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maryland -->
+    <div class="state-block" data-state="MD">
+      <div class="state-header">Maryland</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="bwi baltimore maryland">
+          <span class="apt-code">BWI</span>
+          <span class="apt-info"><span class="apt-city">Baltimore, MD</span><span class="apt-name">Baltimore/Washington International Thurgood Marshall</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Massachusetts -->
+    <div class="state-block" data-state="MA">
+      <div class="state-header">Massachusetts</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="bos boston massachusetts">
+          <span class="apt-code">BOS</span>
+          <span class="apt-info"><span class="apt-city">Boston, MA</span><span class="apt-name">Boston Logan International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Michigan -->
+    <div class="state-block" data-state="MI">
+      <div class="state-header">Michigan</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="dtw detroit michigan">
+          <span class="apt-code">DTW</span>
+          <span class="apt-info"><span class="apt-city">Detroit, MI</span><span class="apt-name">Detroit Metropolitan Wayne County</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="grr grand rapids michigan">
+          <span class="apt-code">GRR</span>
+          <span class="apt-info"><span class="apt-city">Grand Rapids, MI</span><span class="apt-name">Gerald R. Ford International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Minnesota -->
+    <div class="state-block" data-state="MN">
+      <div class="state-header">Minnesota</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="msp minneapolis minnesota">
+          <span class="apt-code">MSP</span>
+          <span class="apt-info"><span class="apt-city">Minneapolis, MN</span><span class="apt-name">Minneapolis-Saint Paul International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Missouri -->
+    <div class="state-block" data-state="MO">
+      <div class="state-header">Missouri</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="mci kansas city missouri">
+          <span class="apt-code">MCI</span>
+          <span class="apt-info"><span class="apt-city">Kansas City, MO</span><span class="apt-name">Kansas City International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="stl st louis missouri">
+          <span class="apt-code">STL</span>
+          <span class="apt-info"><span class="apt-city">St. Louis, MO</span><span class="apt-name">St. Louis Lambert International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nevada -->
+    <div class="state-block" data-state="NV">
+      <div class="state-header">Nevada</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="las las vegas nevada">
+          <span class="apt-code">LAS</span>
+          <span class="apt-info"><span class="apt-city">Las Vegas, NV</span><span class="apt-name">Harry Reid International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Jersey -->
+    <div class="state-block" data-state="NJ">
+      <div class="state-header">New Jersey</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="ewr newark new jersey">
+          <span class="apt-code">EWR</span>
+          <span class="apt-info"><span class="apt-city">Newark, NJ</span><span class="apt-name">Newark Liberty International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- New York -->
+    <div class="state-block" data-state="NY">
+      <div class="state-header">New York</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="jfk new york new york">
+          <span class="apt-code">JFK</span>
+          <span class="apt-info"><span class="apt-city">New York, NY</span><span class="apt-name">John F. Kennedy International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="lga laguardia new york">
+          <span class="apt-code">LGA</span>
+          <span class="apt-info"><span class="apt-city">New York, NY</span><span class="apt-name">LaGuardia</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="swf newburgh stewart new york">
+          <span class="apt-code">SWF</span>
+          <span class="apt-info"><span class="apt-city">Newburgh, NY</span><span class="apt-name">New York Stewart International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="hpn white plains westchester new york">
+          <span class="apt-code">HPN</span>
+          <span class="apt-info"><span class="apt-city">White Plains, NY</span><span class="apt-name">Westchester County Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- North Carolina -->
+    <div class="state-block" data-state="NC">
+      <div class="state-header">North Carolina</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="clt charlotte north carolina">
+          <span class="apt-code">CLT</span>
+          <span class="apt-info"><span class="apt-city">Charlotte, NC</span><span class="apt-name">Charlotte Douglas International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="rdu raleigh durham north carolina">
+          <span class="apt-code">RDU</span>
+          <span class="apt-info"><span class="apt-city">Raleigh-Durham, NC</span><span class="apt-name">Raleigh-Durham International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ohio -->
+    <div class="state-block" data-state="OH">
+      <div class="state-header">Ohio</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="cle cleveland ohio">
+          <span class="apt-code">CLE</span>
+          <span class="apt-info"><span class="apt-city">Cleveland, OH</span><span class="apt-name">Cleveland Hopkins International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="cmh columbus ohio">
+          <span class="apt-code">CMH</span>
+          <span class="apt-info"><span class="apt-city">Columbus, OH</span><span class="apt-name">John Glenn Columbus International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="cvg cincinnati ohio">
+          <span class="apt-code">CVG</span>
+          <span class="apt-info"><span class="apt-city">Cincinnati, OH</span><span class="apt-name">Cincinnati/Northern Kentucky International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="tol toledo ohio">
+          <span class="apt-code">TOL</span>
+          <span class="apt-info"><span class="apt-city">Toledo, OH</span><span class="apt-name">Toledo Express</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Oklahoma -->
+    <div class="state-block" data-state="OK">
+      <div class="state-header">Oklahoma</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="okc oklahoma city oklahoma">
+          <span class="apt-code">OKC</span>
+          <span class="apt-info"><span class="apt-city">Oklahoma City, OK</span><span class="apt-name">Will Rogers World</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="tul tulsa oklahoma">
+          <span class="apt-code">TUL</span>
+          <span class="apt-info"><span class="apt-city">Tulsa, OK</span><span class="apt-name">Tulsa International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Oregon -->
+    <div class="state-block" data-state="OR">
+      <div class="state-header">Oregon</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="pdx portland oregon">
+          <span class="apt-code">PDX</span>
+          <span class="apt-info"><span class="apt-city">Portland, OR</span><span class="apt-name">Portland International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pennsylvania -->
+    <div class="state-block" data-state="PA">
+      <div class="state-header">Pennsylvania</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="1" data-text="phl philadelphia pennsylvania">
+          <span class="apt-code">PHL</span>
+          <span class="apt-info"><span class="apt-city">Philadelphia, PA</span><span class="apt-name">Philadelphia International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="pit pittsburgh pennsylvania">
+          <span class="apt-code">PIT</span>
+          <span class="apt-info"><span class="apt-city">Pittsburgh, PA</span><span class="apt-name">Pittsburgh International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Puerto Rico -->
+    <div class="state-block" data-state="PR">
+      <div class="state-header">Puerto Rico</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="sju san juan puerto rico">
+          <span class="apt-code">SJU</span>
+          <span class="apt-info"><span class="apt-city">San Juan, PR</span><span class="apt-name">Luis Muñoz Marín International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rhode Island -->
+    <div class="state-block" data-state="RI">
+      <div class="state-header">Rhode Island</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="pvd providence rhode island">
+          <span class="apt-code">PVD</span>
+          <span class="apt-info"><span class="apt-city">Providence, RI</span><span class="apt-name">Rhode Island T.F. Green International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- South Carolina -->
+    <div class="state-block" data-state="SC">
+      <div class="state-header">South Carolina</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="chs charleston south carolina">
+          <span class="apt-code">CHS</span>
+          <span class="apt-info"><span class="apt-city">Charleston, SC</span><span class="apt-name">Charleston International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="gsp greenville spartanburg south carolina">
+          <span class="apt-code">GSP</span>
+          <span class="apt-info"><span class="apt-city">Greenville-Spartanburg, SC</span><span class="apt-name">Greenville-Spartanburg International</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tennessee -->
+    <div class="state-block" data-state="TN">
+      <div class="state-header">Tennessee</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="bna nashville tennessee">
+          <span class="apt-code">BNA</span>
+          <span class="apt-info"><span class="apt-city">Nashville, TN</span><span class="apt-name">Nashville International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Texas -->
+    <div class="state-block" data-state="TX">
+      <div class="state-header">Texas</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="aus austin texas">
+          <span class="apt-code">AUS</span>
+          <span class="apt-info"><span class="apt-city">Austin, TX</span><span class="apt-name">Austin-Bergstrom International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="dal dallas love field texas">
+          <span class="apt-code">DAL</span>
+          <span class="apt-info"><span class="apt-city">Dallas, TX</span><span class="apt-name">Dallas Love Field</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="dfw dallas fort worth texas">
+          <span class="apt-code">DFW</span>
+          <span class="apt-info"><span class="apt-city">Dallas/Fort Worth, TX</span><span class="apt-name">Dallas/Fort Worth International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="hou houston hobby texas">
+          <span class="apt-code">HOU</span>
+          <span class="apt-info"><span class="apt-city">Houston, TX</span><span class="apt-name">William P. Hobby</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="iah houston intercontinental texas">
+          <span class="apt-code">IAH</span>
+          <span class="apt-info"><span class="apt-city">Houston, TX</span><span class="apt-name">George Bush Intercontinental</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="sat san antonio texas">
+          <span class="apt-code">SAT</span>
+          <span class="apt-info"><span class="apt-city">San Antonio, TX</span><span class="apt-name">San Antonio International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Utah -->
+    <div class="state-block" data-state="UT">
+      <div class="state-header">Utah</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="slc salt lake city utah">
+          <span class="apt-code">SLC</span>
+          <span class="apt-info"><span class="apt-city">Salt Lake City, UT</span><span class="apt-name">Salt Lake City International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vermont -->
+    <div class="state-block" data-state="VT">
+      <div class="state-header">Vermont</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="btv burlington vermont">
+          <span class="apt-code">BTV</span>
+          <span class="apt-info"><span class="apt-city">Burlington, VT</span><span class="apt-name">Burlington International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Washington -->
+    <div class="state-block" data-state="WA">
+      <div class="state-header">Washington</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sea seattle washington">
+          <span class="apt-code">SEA</span>
+          <span class="apt-info"><span class="apt-city">Seattle, WA</span><span class="apt-name">Seattle-Tacoma International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wisconsin -->
+    <div class="state-block" data-state="WI">
+      <div class="state-header">Wisconsin</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="mke milwaukee wisconsin">
+          <span class="apt-code">MKE</span>
+          <span class="apt-info"><span class="apt-city">Milwaukee, WI</span><span class="apt-name">Milwaukee Mitchell International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Northern Mariana Islands -->
+    <div class="state-block" data-state="MP">
+      <div class="state-header">Northern Mariana Islands</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="spn saipan northern mariana islands">
+          <span class="apt-code">SPN</span>
+          <span class="apt-info"><span class="apt-city">Saipan, MP</span><span class="apt-name">Saipan International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /airport-list -->
+
+  <div id="no-results">No airports match your search.</div>
+
+  <!-- International Preclearance -->
+  <div id="intl-section">
+    <div class="section-divider">🌐 International Preclearance — Global Entry Kiosks</div>
+    <div class="intl-note">
+      These airports have US Customs preclearance facilities where travelers clear US customs before departure.
+      Global Entry kiosks are available at the preclearance area — use them the same way as in the US.
+      Enrollment on Arrival is available at Toronto Pearson (YYZ) and Vancouver (YVR).
+    </div>
+
+    <div class="country-block">
+      <div class="country-header">Aruba</div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">AUA</span>
+          <span class="apt-info"><span class="apt-city">Oranjestad</span><span class="apt-name">Queen Beatrix International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header">Bahamas</div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">NAS</span>
+          <span class="apt-info"><span class="apt-city">Nassau</span><span class="apt-name">Lynden Pindling International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header">Bermuda</div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">BDA</span>
+          <span class="apt-info"><span class="apt-city">Hamilton</span><span class="apt-name">L.F. Wade International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header">Canada</div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">YYC</span>
+          <span class="apt-info"><span class="apt-city">Calgary, AB</span><span class="apt-name">Calgary International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YEG</span>
+          <span class="apt-info"><span class="apt-city">Edmonton, AB</span><span class="apt-name">Edmonton International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YHZ</span>
+          <span class="apt-info"><span class="apt-city">Halifax, NS</span><span class="apt-name">Halifax Stanfield International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YUL</span>
+          <span class="apt-info"><span class="apt-city">Montreal, QC</span><span class="apt-name">Montréal-Trudeau International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YOW</span>
+          <span class="apt-info"><span class="apt-city">Ottawa, ON</span><span class="apt-name">Ottawa Macdonald-Cartier International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YYZ</span>
+          <span class="apt-info"><span class="apt-city">Toronto, ON</span><span class="apt-name">Toronto Pearson International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YVR</span>
+          <span class="apt-info"><span class="apt-city">Vancouver, BC</span><span class="apt-name">Vancouver International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enroll on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YWG</span>
+          <span class="apt-info"><span class="apt-city">Winnipeg, MB</span><span class="apt-name">Winnipeg Richardson International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header">Ireland</div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">DUB</span>
+          <span class="apt-info"><span class="apt-city">Dublin</span><span class="apt-name">Dublin Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">SNN</span>
+          <span class="apt-info"><span class="apt-city">Shannon</span><span class="apt-name">Shannon Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header">United Arab Emirates</div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">AUH</span>
+          <span class="apt-info"><span class="apt-city">Abu Dhabi</span><span class="apt-name">Zayed International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /intl-section -->
+
+</div><!-- /wrap -->
+
+<script>
+(function () {
+  var pills   = document.querySelectorAll('.fpill');
+  var rows    = document.querySelectorAll('#airport-list .apt-row');
+  var blocks  = document.querySelectorAll('#airport-list .state-block');
+  var search  = document.getElementById('tt-search');
+  var noRes   = document.getElementById('no-results');
+  var countEl = document.getElementById('count-num');
+  var active  = 'all';
+
+  function applyFilters() {
+    var q = search.value.trim().toLowerCase();
+    var visible = 0;
+
+    rows.forEach(function (r) {
+      var ge   = r.dataset.ge  === '1';
+      var clr  = r.dataset.clear === '1';
+      var eoa  = r.dataset.eoa === '1';
+      var txt  = r.dataset.text || '';
+
+      var matchFilter =
+        active === 'all'  ||
+        (active === 'ge'   && ge)   ||
+        (active === 'clear' && clr) ||
+        (active === 'both' && ge && clr) ||
+        (active === 'eoa'  && eoa);
+
+      var matchSearch = !q || txt.indexOf(q) !== -1 ||
+        r.textContent.toLowerCase().indexOf(q) !== -1;
+
+      var show = matchFilter && matchSearch;
+      r.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+
+    /* hide state headers when all their rows are hidden */
+    blocks.forEach(function (b) {
+      var anyVisible = false;
+      b.querySelectorAll('.apt-row').forEach(function (r) {
+        if (!r.classList.contains('hidden')) anyVisible = true;
+      });
+      b.classList.toggle('hidden', !anyVisible);
+    });
+
+    noRes.style.display = visible === 0 ? '' : 'none';
+    countEl.textContent = visible;
+  }
+
+  pills.forEach(function (p) {
+    p.addEventListener('click', function () {
+      pills.forEach(function (x) { x.classList.remove('active'); });
+      p.classList.add('active');
+      active = p.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  search.addEventListener('input', applyFilters);
+})();
+</script>
+
+<script src="../assets/toolbar.js?v=99"></script>
+</body>
+</html>
