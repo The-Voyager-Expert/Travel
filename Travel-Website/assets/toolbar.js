@@ -345,14 +345,14 @@
         menu.classList.add('tb-menu-open'); dd.classList.add('tb-open'); btn.setAttribute('aria-expanded', 'true');
         inner.classList.add('tb-dd-open'); btn.classList.add('tb-dd-open-btn');
         /* Dim any other active tab so only the open dropdown reads as selected */
-        inner.querySelectorAll('a.tb-active').forEach(function(el) { el.style.background = 'transparent'; el.style.fontWeight = ''; });
+        inner.querySelectorAll('a.tb-active').forEach(function(el) { el.classList.remove('tb-active'); el.classList.add('tb-was-active'); });
         positionMenu();
       }
       function closeMenu() {
         menu.classList.remove('tb-menu-open'); dd.classList.remove('tb-open'); btn.setAttribute('aria-expanded', 'false');
         inner.classList.remove('tb-dd-open'); btn.classList.remove('tb-dd-open-btn');
         /* Restore active tab highlight */
-        inner.querySelectorAll('a.tb-active').forEach(function(el) { el.style.background = ''; el.style.fontWeight = ''; });
+        inner.querySelectorAll('a.tb-was-active').forEach(function(el) { el.classList.add('tb-active'); el.classList.remove('tb-was-active'); });
       }
 
       btn.addEventListener('click', function (e) {
@@ -389,7 +389,7 @@
       if (b) { b.setAttribute('aria-expanded', 'false'); b.classList.remove('tb-dd-open-btn'); }
     }
     inner.classList.remove('tb-dd-open');
-    inner.querySelectorAll('a.tb-active').forEach(function(el) { el.style.background = ''; el.style.fontWeight = ''; });
+    inner.querySelectorAll('a.tb-was-active').forEach(function(el) { el.classList.add('tb-active'); el.classList.remove('tb-was-active'); });
   });
 
   scroller.appendChild(inner);
