@@ -1765,11 +1765,13 @@ def _check_guide_in_visas(guide_path: Path) -> int:
         r'<div class="country-block"[^>]*id="([^"]+)"[^>]*>.*?<span class="cur-cities">Guides: (.*?)</span>',
         cur_html, _re.DOTALL,
     )
+    city_display = city.replace("-", " ")  # "Hong-Kong" → "Hong Kong"
     country_id: str | None = None
     for cid, cities_html in blocks:
         cities_linked = _re.findall(r'>([^<]+)</a>', cities_html)
         cities_plain = [c.strip() for c in _re.sub(r'<[^>]+>', '', cities_html).split('·') if c.strip()]
-        if city in set(cities_linked) | set(cities_plain):
+        if city in set(cities_linked) | set(cities_plain) or \
+                city_display in set(cities_linked) | set(cities_plain):
             country_id = cid
             break
 
@@ -1915,6 +1917,132 @@ def _check_guide_in_tipping(guide_path: Path) -> int:
         file=sys.stderr,
     )
     return 1
+
+
+# Canonical mapping: topic name (as written in <!-- best-of: ... --> comments)
+# → Best-of filename in Trip-Essentials/.  Covers all 29 current pages.
+_BEST_OF_PAGES: dict[str, str] = {
+    "Amusement Parks":              "Best-Amusement-Parks.html",
+    "Aquariums":                    "Best-Aquariums.html",
+    "Architecture":                 "Best-Architecture.html",
+    "Art Museums":                  "Best-Art-Museums.html",
+    "Beaches":                      "Best-Beaches.html",
+    "Castles":                      "Best-Castles.html",
+    "Cathedrals":                   "Best-Cathedrals.html",
+    "Caves":                        "Best-Caves.html",
+    "Gardens":                      "Best-Gardens.html",
+    "Hot Springs":                  "Best-Hot-Springs.html",
+    "Islands":                      "Best-Islands.html",
+    "Kid-Friendly Places":          "Best-Kids-Friendly-Places.html",
+    "Kids' Museums":                "Best-Kids-Museums.html",
+    "Lakes":                        "Best-Lakes.html",
+    "Mountains & Rock Formations":  "Best-Mountains-and-Rock-Formations.html",
+    "Museums":                      "Best-Museums.html",
+    "National Parks by Country":    "Best-National-Parks-by-Country.html",
+    "Observation Decks":            "Best-Observation-Decks.html",
+    "Resorts":                      "Best-Resorts.html",
+    "Safari":                       "Best-Safari.html",
+    "Scuba Diving":                 "Best-Scuba-Diving.html",
+    "Ski Resorts":                  "Best-Ski-Resorts.html",
+    "Surfing":                      "Best-Surfing.html",
+    "UNESCO Sites":                 "Best-UNESCO-Sites.html",
+    "Unique Museums":               "Best-Unique-Museums.html",
+    "US National Parks":            "Best-US-National-Parks.html",
+    "Volcanoes":                    "Best-Volcanoes.html",
+    "Wine Regions":                 "Best-Wine-Regions.html",
+    "Wonders of the World":         "Best-Wonders-of-the-World.html",
+}
+
+
+def _check_guide_in_best_of(guide_path: Path) -> int:
+    """Ship gate: enforce the <!-- best-of: ... --> declaration and membership.
+
+    Every shipped guide HTML must carry one of:
+      <!-- best-of: Topic1, Topic2 -->    (one or more topics from _BEST_OF_PAGES)
+      <!-- best-of: none -->              (explicitly not featured on any page)
+
+    If the comment is absent the crib forgot to declare → FAIL (blocks ship).
+    If topics are listed, each corresponding Best-*.html must contain a link to
+    this guide (href="../Guides/<folder>/...") → FAIL if any link is missing.
+
+    Added 2026-07-06.
+    """
+    html_path = guide_path if guide_path.is_file() else next(guide_path.glob("*.html"), None)
+    if not html_path:
+        print(f"\n🚫  _check_guide_in_best_of: no HTML found in {guide_path}", file=sys.stderr)
+        return 1
+
+    try:
+        html = html_path.read_text(encoding="utf-8", errors="replace")
+    except OSError as exc:
+        print(f"\n🚫  _check_guide_in_best_of: cannot read {html_path}: {exc}", file=sys.stderr)
+        return 1
+
+    folder = html_path.parent.name
+    essentials = WEB_ROOT / "Trip-Essentials"
+
+    # ── 1. Find the declaration ───────────────────────────────────────────────
+    m = _re.search(r'<!--\s*best-of\s*:\s*([^-][^>]*?)-->', html, _re.IGNORECASE)
+    if not m:
+        print(
+            f"\n🚫  SHIP BLOCKED — {folder}: missing <!-- best-of: ... --> declaration.\n"
+            f"    Every guide must declare its Best-of membership before shipping.\n"
+            f"    Add ONE of the following to the guide HTML (near the top, after the toolbar):\n"
+            f"      <!-- best-of: none -->                       (not on any Best-of page)\n"
+            f"      <!-- best-of: Beaches, Wine Regions -->      (one or more topics)\n"
+            f"    Valid topics: {', '.join(sorted(_BEST_OF_PAGES))}\n",
+            file=sys.stderr,
+        )
+        return 1
+
+    raw = m.group(1).strip()
+
+    # ── 2. none → no further checks ──────────────────────────────────────────
+    if raw.lower() == "none":
+        print(f"  ✅  Best-of — {folder}: declared none (not featured on any Best-of page).")
+        return 0
+
+    # ── 3. Parse and validate topics ─────────────────────────────────────────
+    topics = [t.strip() for t in raw.split(",") if t.strip()]
+    unknown = [t for t in topics if t not in _BEST_OF_PAGES]
+    if unknown:
+        print(
+            f"\n🚫  SHIP BLOCKED — {folder}: unknown Best-of topic(s): {unknown}.\n"
+            f"    Valid topics: {', '.join(sorted(_BEST_OF_PAGES))}\n",
+            file=sys.stderr,
+        )
+        return 1
+
+    # ── 4. Verify the guide link appears in each claimed page ─────────────────
+    fails: list[str] = []
+    for topic in topics:
+        page_name = _BEST_OF_PAGES[topic]
+        page_path = essentials / page_name
+        if not page_path.exists():
+            fails.append(f"  • {topic}: {page_name} not found on disk")
+            continue
+        try:
+            page_html = page_path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            fails.append(f"  • {topic}: cannot read {page_name}")
+            continue
+        # Check for a link pattern ../Guides/<folder>/ in the page
+        if f"../Guides/{folder}/" not in page_html:
+            fails.append(
+                f"  • {topic}: no link to {folder} found in {page_name}\n"
+                f"    Add a '🌐 {folder} Guide' pill inside a .best-of-card .best-of-links block."
+            )
+
+    if fails:
+        print(
+            f"\n🚫  SHIP BLOCKED — {folder}: Best-of membership gap(s):\n"
+            + "\n".join(fails) + "\n",
+            file=sys.stderr,
+        )
+        return 1
+
+    print(f"  ✅  Best-of — {folder}: declared {', '.join(topics)} — link(s) verified in page(s).")
+    return 0
 
 
 def _check_guide_in_time_zones(guide_path: Path) -> int:
@@ -2958,6 +3086,16 @@ def main() -> int:
         # 🗣 Language (data-lang) — curated in build_lang_tags.py
         if _refresh_lang_tags(guide_p) != 0:
             _filter_fails.append("data-lang (language filter) — add to build_lang_tags.py → --apply")
+
+        # 🏆 Best-of (<!-- best-of: ... --> declaration + membership in Best-*.html)
+        # Hard gate: every guide must declare its Best-of status and, if listed,
+        # the guide link must appear in the corresponding page(s).
+        if _check_guide_in_best_of(guide_p) != 0:
+            _filter_fails.append(
+                "Best-of declaration missing or membership gap — "
+                "add <!-- best-of: none --> or <!-- best-of: Topic1, Topic2 --> to guide HTML, "
+                "then add the 🌐 guide link to the corresponding Best-*.html page(s)"
+            )
 
         if _filter_fails:
             print("\n🚫  SHIP BLOCKED — index filter(s) incomplete:")
