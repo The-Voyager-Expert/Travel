@@ -25595,6 +25595,80 @@ def validate(html: str, filename: str):
             + ' — remove: links must display as written in source.'
             if _css_a_transform_hits else '',
         )
+    # ─── CSS COMPANION FILE — PILL HOVER BEHAVIOR ───────────────
+    # Two approved interactive behaviors only (added 2026-07-07):
+    #   1. White bg + terracotta border (#b85c2a) on :hover
+    #   2. Terracotta gradient fill on .active/.on/.selected states
+    # Any other fill (beige, blue, green, gold, undefined vars) or
+    # non-terracotta border on an interactive state is a hard-fail.
+    # This check scans both the guide's inline <style> block (if any)
+    # and the shared guide-style.css companion file.
+    _pill_hover_fails: list[str] = []
+    _PILL_ACTIVE_SEL = re.compile(r'\.(active|on|selected|copied|set)\b|:hover', re.I)
+    _PILL_BANNED_BG = re.compile(
+        r'background(?:-color)?\s*:\s*(?:'
+        r'#f0ec[a-f0-9]{2}|#faf0dd|#fafaf8|#efe9e0|#faefd8|#fdf0d0'
+        r'|var\(--surface2\)'
+        r'|rgba\(184,\s*134,\s*11,\s*0\.(?:1[5-9]|[2-9]\d?)\)'
+        r'|rgba\(37,\s*99,\s*235'
+        r'|#2563eb|#1d4ed8'
+        r'|#2a6a2a|#1a5c1a'
+        r'|var\(--rust\)|var\(--copper\)|var\(--track\)|var\(--hover\)'
+        r')',
+        re.I,
+    )
+    _PILL_BANNED_BORDER = re.compile(
+        r'border(?:-color)?\s*:\s*(?:#c8b480|#d4b896|#c4bfb6|#c8961a)',
+        re.I,
+    )
+    _PILL_EXEMPT_SEL = re.compile(
+        r'\.(amex|nu-dot|fdot|leaflet-bar|nav-link|toolbar|also-on-this-site-pill'
+        r'|fchip|banner-gradient|pkl-bar)\b|#toolbar|\.toolbar',
+        re.I,
+    )
+
+    def _scan_css_pill(css_text: str, label: str) -> None:
+        _stripped = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
+        for _rule in re.finditer(r'([^{}]+)\{([^{}]*)\}', _stripped):
+            _sel = _rule.group(1).strip()
+            _body = _rule.group(2)
+            if _PILL_EXEMPT_SEL.search(_sel):
+                continue
+            if not _PILL_ACTIVE_SEL.search(_sel):
+                continue
+            _bg = _PILL_BANNED_BG.search(_body)
+            if _bg:
+                _pill_hover_fails.append(
+                    f'{label}: `{_sel[:60]}` — banned background fill '
+                    f'`{_bg.group(0).strip()[:60]}` on interactive state. '
+                    f'Use white (#fff/var(--surface)) or the terracotta gradient.'
+                )
+            _br = _PILL_BANNED_BORDER.search(_body)
+            if _br:
+                _pill_hover_fails.append(
+                    f'{label}: `{_sel[:60]}` — non-terracotta border '
+                    f'`{_br.group(0).strip()[:60]}` on interactive state. '
+                    f'Use border-color: #b85c2a.'
+                )
+
+    # Scan inline <style> blocks in the guide HTML
+    for _sm in re.finditer(r'<style[^>]*>(.*?)</style>', html, re.S | re.I):
+        _scan_css_pill(_sm.group(1), 'inline <style>')
+    # Scan shared guide-style.css
+    if _css_path.exists():
+        _scan_css_pill(_css_path.read_text(encoding='utf-8'), 'guide-style.css')
+
+    print('\n── PILL HOVER BEHAVIOR ──')
+    check(
+        'Pill/button interactive states use only the two approved behaviors '
+        '(white+terracotta border on hover; terracotta gradient on active/selected) '
+        '— added 2026-07-07',
+        not _pill_hover_fails,
+        'Non-approved interactive state(s) found: '
+        + '; '.join(_pill_hover_fails[:3])
+        + (' …' if len(_pill_hover_fails) > 3 else ''),
+    )
+
     # ─── TITLE DRIFT CHECKS ────────────────────────────────────
     # Rule 1: <title> must be a plain place name — no date, year, month,
     # season, duration, or "Travel Guide" suffix. The title is the canonical
