@@ -60,7 +60,7 @@ input.search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,1
 .card-city   { font-size: 13px; font-weight: 500; color: var(--text); }
 .card-country{ font-size: 11px; color: var(--muted); }
 .card-clock  { display: flex; align-items: baseline; gap: 5px; }
-.card-time   { font-size: 22px; font-weight: 600; color: #b85c2a; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; }
+.card-time   { font-size: 22px; font-weight: 600; color: #b85c2a; font-variant-numeric: tabular-nums; letter-spacing: -.01em; line-height: 1; cursor: copy; }
 .card-day    { font-size: 11px; color: var(--muted); font-weight: 400; }
 .card-meta   { display: flex; align-items: center; justify-content: space-between; }
 .utc-offset  { font-size: 11px; color: var(--muted); }
@@ -69,6 +69,9 @@ input.search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,1
 .vs-sea.behind { color: #9b2020; background: #fdecea; }
 .vs-sea.same   { color: var(--muted); background: transparent; }
 .empty { grid-column: 1 / -1; text-align: center; padding: 48px 0; color: var(--muted); font-size: 13px; }
+/* ── Sleep indicator ── */
+.card.sleeping { background: #f0f1f4; }
+.sleep-icon { font-size: 11px; margin-left: 4px; opacity: .7; }
 /* ── Mobile overrides ── */
 @media (max-width: 600px) {
   /* Controls: search full-width on top, pills below */
@@ -129,6 +132,10 @@ input.search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,1
       <button class="pill" data-region="asiapac">Asia · Pacific</button>
       <button class="pill" data-region="other">M.E. &amp; Africa</button>
     </div>
+    <div class="pills" id="sort-pills">
+      <button class="pill sort-pill active" data-sort="alpha">A–Z</button>
+      <button class="pill sort-pill" data-sort="time">Closest to Seattle</button>
+    </div>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -137,8 +144,6 @@ input.search:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,1
 
 <script>
 var CITIES = [
-  {name:'Osaka', country:'Japan', tz:'Asia/Tokyo', region:'asiapac', flag:'🇯🇵', url:'../Guides/Osaka/osaka_v1.html'},
-  {name:'Doha', country:'Qatar', tz:'Asia/Qatar', region:'other', flag:'🇶🇦', url:'../Guides/Doha/doha_v1.html'},
   // Americas
   {name:'Alaska',          country:'USA',                  tz:'America/Anchorage',              region:'americas',  flag:'🇺🇸', url:'../Guides/Alaska/alaska_v1.html'},
   {name:'Aracaju',         country:'Brazil',               tz:'America/Maceio',                 region:'americas',  flag:'🇧🇷', url:'../Guides/Aracaju/aracaju_v1.html'},
@@ -329,6 +334,7 @@ var CITIES = [
   {name:'Hoi An', country:'Vietnam', tz:'Asia/Ho_Chi_Minh', region:'asiapac', flag:'🇻🇳', url:'../Guides/Hoi-An/hoi-an_v1.html'},
   {name:'Hong Kong',       country:'Hong Kong SAR',        tz:'Asia/Hong_Kong',                 region:'asiapac',   flag:'🇭🇰', url:'../Guides/Hong-Kong/hong-kong_v1.html'},
   {name:'Kyoto',           country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵', url:'../Guides/Kyoto/kyoto_v1.html'},
+  {name:'Osaka',           country:'Japan',                tz:'Asia/Tokyo',                     region:'asiapac',   flag:'🇯🇵', url:'../Guides/Osaka/osaka_v1.html'},
   {name:'Maldives',        country:'Maldives',             tz:'Indian/Maldives',                region:'asiapac',   flag:'🇲🇻', url:'../Guides/Maldives/maldives_v1.html'},
   {name:'Melbourne',       country:'Australia',            tz:'Australia/Melbourne',            region:'asiapac',   flag:'🇦🇺', url:'../Guides/Melbourne/melbourne_v1.html'},
   {name:'Palawan',         country:'Philippines',          tz:'Asia/Manila',                    region:'asiapac',   flag:'🇵🇭', url:'../Guides/Palawan/palawan_v1.html'},
@@ -345,6 +351,7 @@ var CITIES = [
   // Middle East & Africa
   {name:'Abu Dhabi',       country:'UAE',                  tz:'Asia/Dubai',                     region:'other',     flag:'🇦🇪', url:'../Guides/Abu-Dhabi/abu-dhabi_v1.html'},
   {name:'Cairo',           country:'Egypt',                tz:'Africa/Cairo',                   region:'other',     flag:'🇪🇬', url:'../Guides/Cairo/cairo_v2.html'},
+  {name:'Doha',            country:'Qatar',                tz:'Asia/Qatar',                     region:'other',     flag:'🇶🇦', url:'../Guides/Doha/doha_v1.html'},
   {name:'Dubai',           country:'UAE',                  tz:'Asia/Dubai',                     region:'other',     flag:'🇦🇪', url:'../Guides/Dubai/dubai_v1.html'},
   {name:'Petra',           country:'Jordan',               tz:'Asia/Amman',                     region:'other',     flag:'🇯🇴', url:'../Guides/Petra/petra_v1.html'},
   {name:'Lagos',           country:'Nigeria',              tz:'Africa/Lagos',                   region:'other',     flag:'🇳🇬', url:'../Guides/Lagos/lagos_v1.html'},
@@ -378,6 +385,22 @@ function formatShortDay(tz, date) {
   }).format(date);
 }
 
+function relativeDay(tz, date) {
+  function ymd(d, zone) {
+    var f = new Intl.DateTimeFormat('en-CA', {timeZone: zone, year:'numeric', month:'2-digit', day:'2-digit'});
+    return f.format(d);
+  }
+  var cityDay = ymd(date, tz);
+  var seaDay  = ymd(date, SEA_TZ);
+  if (cityDay === seaDay)   return 'today';
+  var seaDate = new Date(seaDay + 'T12:00:00Z');
+  var cityDate= new Date(cityDay + 'T12:00:00Z');
+  var diff = Math.round((cityDate - seaDate) / 86400000);
+  if (diff === 1)  return 'tomorrow';
+  if (diff === -1) return 'yesterday';
+  return formatShortDay(tz, date);
+}
+
 function formatUTCOffset(tz, date) {
   var mins = getOffsetMinutes(tz, date);
   var h = Math.floor(Math.abs(mins) / 60);
@@ -399,6 +422,7 @@ function vsSeattle(tz, date) {
 
 var activeRegion = 'all';
 var searchVal    = '';
+var activeSort   = 'alpha';
 
 function render() {
   var now  = new Date();
@@ -417,7 +441,16 @@ function render() {
     return true;
   });
 
-  filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+  var seaMins = getOffsetMinutes(SEA_TZ, now);
+  if (activeSort === 'time') {
+    filtered.sort(function(a, b) {
+      var da = Math.abs(getOffsetMinutes(a.tz, now) - seaMins);
+      var db = Math.abs(getOffsetMinutes(b.tz, now) - seaMins);
+      return da !== db ? da - db : a.name.localeCompare(b.name);
+    });
+  } else {
+    filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+  }
 
   if (filtered.length === 0) {
     grid.innerHTML = '<div class="empty">No cities match “' + searchVal + '”</div>';
@@ -426,13 +459,17 @@ function render() {
 
   grid.innerHTML = filtered.map(function(c) {
     var time = formatTime(c.tz, now);
-    var day  = formatShortDay(c.tz, now);
+    var day  = relativeDay(c.tz, now);
     var utc  = formatUTCOffset(c.tz, now);
     var vs   = vsSeattle(c.tz, now);
+    var hour = parseInt(time.split(':')[0], 10);
+    var sleeping = hour >= 22 || hour < 7;
+    var sleepMark = sleeping ? '<span class="sleep-icon">🌙</span>' : '';
+    var cardCls = 'card' + (sleeping ? ' sleeping' : '');
     var inner =
       '<div class="card-top">' +
         '<span class="card-flag">' + c.flag + '</span>' +
-        '<div><div class="card-city">' + c.name + '</div>' +
+        '<div><div class="card-city">' + c.name + sleepMark + '</div>' +
         '<div class="card-country">' + c.country + '</div></div>' +
       '</div>' +
       '<div class="card-clock">' +
@@ -444,8 +481,8 @@ function render() {
         '<span class="vs-sea ' + vs.cls + '">' + vs.label + '</span>' +
       '</div>';
     return c.url
-      ? '<a class="card card-link" href="' + c.url + '">' + inner + '</a>'
-      : '<div class="card">' + inner + '</div>';
+      ? '<a class="' + cardCls + ' card-link" href="' + c.url + '">' + inner + '</a>'
+      : '<div class="' + cardCls + '">' + inner + '</div>';
   }).join('');
 }
 
@@ -461,6 +498,33 @@ document.getElementById('region-pills').addEventListener('click', function(e) {
 document.getElementById('search').addEventListener('input', function(e) {
   searchVal = e.target.value.toLowerCase().trim();
   render();
+});
+
+document.getElementById('sort-pills').addEventListener('click', function(e) {
+  var btn = e.target.closest('.sort-pill');
+  if (!btn) return;
+  activeSort = btn.dataset.sort;
+  document.querySelectorAll('.sort-pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+});
+
+// Click-to-copy: clicking the time on a card copies "City · HH:MM · Day"
+document.getElementById('grid').addEventListener('click', function(e) {
+  var timeEl = e.target.closest('.card-time');
+  if (!timeEl) return;
+  var card = e.target.closest('.card');
+  if (!card) return;
+  var city = card.querySelector('.card-city');
+  var day  = card.querySelector('.card-day');
+  if (!city) return;
+  var cityText = city.textContent.replace('🌙', '').trim();
+  var text = cityText + ' · ' + timeEl.textContent + (day ? ' · ' + day.textContent : '');
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = timeEl.textContent;
+    timeEl.textContent = 'Copied!';
+    setTimeout(function() { timeEl.textContent = orig; }, 1200);
+  }).catch(function() {});
 });
 
 // Hash-based deep link: Time-Zones.html#Barcelona pre-selects that city
