@@ -44,28 +44,27 @@
 .program-link:hover { border-color: #b85c2a; background: #fff; text-decoration: none; }
 
 /* ── Controls ── */
-.controls-row {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  justify-content: center; margin-bottom: 16px;
+.controls {
+  display: flex; flex-direction: column; gap: 10px; align-items: center; margin-bottom: 14px;
 }
 #tt-search {
-  width: 360px; padding: 11px 18px;
+  width: 360px; max-width: 100%; padding: 11px 18px;
   border: 1.5px solid #e6e2da; border-radius: 6px;
   background: #fff; font-family: inherit; font-size: 15px; color: #1a1917;
   outline: none; transition: border-color .15s, box-shadow .15s;
 }
 #tt-search::placeholder { color: #A8895A; }
 #tt-search:focus { border-color: #b8860b; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
-
-.pill-row { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-bottom: 18px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
 .fpill {
-  padding: 6px 14px; border-radius: 6px; border: 1.5px solid var(--border2);
-  background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600;
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2);
+  background: var(--warm); color: var(--muted); font-size: 12px;
   cursor: pointer; white-space: nowrap; font-family: inherit;
   transition: background .12s, border-color .12s, color .12s;
 }
-.fpill:hover { border-color: #b85c2a; }
+.fpill:hover { background: var(--surface); border-color: #b85c2a; }
 .fpill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: #b85c2a; color: #fff; }
+.tt-result { text-align: center; font-size: 12px; color: var(--muted); margin: 4px 0 12px; min-height: 15px; }
 
 /* ── Airport list ── */
 .state-block {
@@ -129,16 +128,8 @@
 /* ── No results ── */
 #no-results { display: none; text-align: center; color: var(--muted); font-size: 13px; padding: 28px 0; }
 
-/* ── Count chip ── */
-.count-chip {
-  font-size: 11px; color: var(--muted); text-align: center;
-  margin-bottom: 10px; letter-spacing: 0.02em;
-}
-.count-chip span { font-weight: 700; color: var(--text); }
-
 @media (max-width: 600px) {
   #tt-search { width: 100%; }
-  .controls-row { flex-direction: column; align-items: stretch; }
   .apt-row { padding: 10px 14px; gap: 10px; }
   .state-header, .country-header { padding: 11px 14px 9px; }
 }
@@ -151,20 +142,18 @@
 
   <div class="page-header"><h1>Trusted Traveler Programs</h1></div>
 
-  <!-- Filters -->
-  <div class="pill-row">
-    <button class="fpill active" data-filter="all">All Airports</button>
-    <button class="fpill" data-filter="both">Both GE + CLEAR</button>
-    <button class="fpill" data-filter="ge">Global Entry</button>
-    <button class="fpill" data-filter="clear">CLEAR</button>
-    <button class="fpill" data-filter="eoa">Enrollment on Arrival</button>
+  <div class="controls">
+    <input type="text" id="tt-search" placeholder="Search airport code or city" autocomplete="off" spellcheck="false">
+    <div class="pill-row">
+      <button class="fpill active" data-filter="all">All Airports</button>
+      <button class="fpill" data-filter="both">Both GE + CLEAR</button>
+      <button class="fpill" data-filter="ge">Global Entry only</button>
+      <button class="fpill" data-filter="clear">CLEAR only</button>
+      <button class="fpill" data-filter="eoa">Enrollment on Arrival</button>
+    </div>
   </div>
 
-  <div class="controls-row">
-    <input type="text" id="tt-search" placeholder="🔍  Search airport code or city" autocomplete="off" spellcheck="false">
-  </div>
-
-  <div class="count-chip" id="count-chip"><span id="count-num">83</span> airports</div>
+  <p class="tt-result" id="tt-result"><span id="count-num">83</span> airports</p>
 
   <div id="airport-list">
 
@@ -1022,6 +1011,7 @@
   var search  = document.getElementById('tt-search');
   var noRes   = document.getElementById('no-results');
   var countEl = document.getElementById('count-num');
+  var result  = document.getElementById('tt-result');
   var active  = 'all';
 
   function applyFilters() {
@@ -1060,6 +1050,7 @@
 
     noRes.style.display = visible === 0 ? '' : 'none';
     countEl.textContent = visible;
+    if (result) result.innerHTML = '<span id="count-num">' + visible + '</span> airports';
   }
 
   pills.forEach(function (p) {
