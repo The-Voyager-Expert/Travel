@@ -346,6 +346,12 @@ BOT_BLOCKED_HOSTS = {
     "lyricopera.org", "www.lyricopera.org",
     # Shedd Aquarium Chicago — 403 to automated UAs (bot wall); confirmed live via Chrome MCP, loads "Ticket Prices | Shedd Aquarium" (added 2026-07-06, Chicago build)
     "sheddaquarium.org", "www.sheddaquarium.org",
+    # Palazzo Maffei Verona — 403/timeout to automated UAs (bot wall); confirmed live via site: search, returns correct tickets page (added 2026-07-08, Verona build)
+    "palazzomaffeiverona.com", "www.palazzomaffeiverona.com",
+    # PedidosYa Chile — 403 to automated UAs (bot wall); confirmed live via site: search (added 2026-07-08, Santiago build)
+    "pedidosya.cl", "www.pedidosya.cl",
+    # Parquemet Chile — timeout/ERR to automated UAs (geo-block or bot wall); confirmed live via site: search — parquemet.cl is the official Parque Metropolitano site (added 2026-07-08, Santiago build)
+    "parquemet.cl", "www.parquemet.cl",
 }
 
 # Redirect targets that are expected and benign — they just mean the user

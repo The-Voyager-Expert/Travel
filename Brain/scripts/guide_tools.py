@@ -1967,6 +1967,7 @@ def _check_guide_in_best_of(guide_path: Path) -> int:
 
     Added 2026-07-06.
     """
+    import re as _re
     html_path = guide_path if guide_path.is_file() else next(guide_path.glob("*.html"), None)
     if not html_path:
         print(f"\n🚫  _check_guide_in_best_of: no HTML found in {guide_path}", file=sys.stderr)
