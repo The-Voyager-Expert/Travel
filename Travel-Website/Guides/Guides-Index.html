@@ -499,11 +499,6 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
 .cmp-city-head { display: flex; align-items: center; justify-content: center; gap: 6px; }
 .cmp-city-flag { font-size: 17px; line-height: 1; flex-shrink: 0; }
 .cmp-city-name { font-size: 16px; font-weight: 700; color: var(--text, #1a1917); }
-.cmp-city-status {
-  font-size: 11px; color: var(--muted); display: block;
-  margin-top: 10px; padding-top: 8px;
-  border-top: 1px solid var(--border2, #e6e2da);
-}
 .cmp-remove-btn {
   font-family: inherit; font-size: 10px; color: var(--muted);
   background: none; border: 1px solid var(--border2, #e6e2da);
@@ -2711,9 +2706,15 @@ window._giStatusFilter = 'all';
       out += '<td class="cmp-col cmp-city-cell">' +
         '<div class="cmp-city-head"><span class="cmp-city-flag">' + c.flag + '</span>' +
         '<span class="cmp-city-name">' + esc(c.name) + '</span></div>' +
-        '<span class="cmp-city-status">' + (c.status === 'want' ? '⭕ Want to go' : '✅ Been') + '</span>' +
         '<button class="cmp-remove-btn" data-href="' + esc(c.href) + '">✕ Remove</button>' +
         '</td>';
+    });
+    out += '</tr>';
+
+    /* Status row — own row, styled like Country/Local Time, not bolted onto the header cell */
+    out += '<tr><td class="cmp-row-label"></td>';
+    sel.forEach(function(c) {
+      out += '<td class="cmp-col" style="font-size:14px;font-weight:700;color:var(--text, #1a1917)">' + (c.status === 'want' ? '⭕ Want to go' : '✅ Been') + '</td>';
     });
     out += '</tr>';
 
@@ -2742,31 +2743,15 @@ window._giStatusFilter = 'all';
     });
     out += '</tr>';
 
-    /* Flight row — badge the shortest */
-    function fltMins(f) {
-      var m = /(\d+)h\s*(\d+)m/.exec(f.t || '');
-      return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
-    }
-    var minFlt = null, fltVals = {};
-    sel.forEach(function(c) {
-      var f = FMAP[c.href.replace(/^\.\//, '')];
-      if (f && f.r !== 'home') {
-        var v = fltMins(f);
-        fltVals[c.href] = v;
-        if (v !== null && (minFlt === null || v < minFlt)) minFlt = v;
-      }
-    });
-    var fltTies = Object.keys(fltVals).filter(function(k){ return fltVals[k] === minFlt; });
+    /* Flight row */
     out += '<tr><td class="cmp-row-label">✈️ Flight<br>from SEA</td>';
     sel.forEach(function(c) {
       var key = c.href.replace(/^\.\//, '');
       var f = FMAP[key];
       if (f && f.r !== 'home') {
-        var best = sel.length > 1 && minFlt !== null && fltVals[c.href] === minFlt && fltTies.length < sel.length;
         out += '<td class="cmp-col"><span style="font-size:14px;font-weight:700;color:var(--text, #1a1917)">' + f.t + '</span>' +
           '<br><span style="font-size:10px;color:' + (fltColors[f.r]||'#888') + '">' + (fltLabels[f.r]||f.r) + '</span>' +
           (f.o ? '<br><span style="font-size:11px;color:var(--muted);line-height:1.4;display:inline-block;margin-top:2px">' + esc(f.o) + '</span>' : '') +
-          (best ? '<br><span class="cmp-badge">Shortest ✓</span>' : '') +
           '</td>';
       } else {
         out += '<td class="cmp-col"><span style="font-size:11px;color:var(--muted)">—</span></td>';
