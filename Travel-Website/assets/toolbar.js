@@ -154,19 +154,7 @@
     null,
     { href: base + 'Trip-Essentials/Visas.html',                                  text: '🪪 Visas' },
     null,
-    { group: '⚙️ Resources', children: [
-        { href: base + 'Trip-Essentials/Tours-Tickets.html',         text: '🎟️ Tours & Tickets' },
-        { href: base + 'Trip-Essentials/Restaurants.html',           text: '🍽️ Restaurants' },
-        { href: base + 'Trip-Essentials/Travel-Guides.html',         text: '📖 Travel Guides' },
-        { href: base + 'Trip-Essentials/Hotels-Stays.html',          text: '🏨 Hotels & Stays' },
-        { href: base + 'Trip-Essentials/Rental-Cars.html',           text: '🚙 Car Rental & Private' },
-        { href: base + 'Trip-Essentials/Travel-Packing-Generic.html',  text: '👕 Packing Checklist' },
-        { href: base + 'Trip-Essentials/Tipping-Guide.html',           text: '🧾 Tipping' },
-        { href: base + 'Trip-Essentials/Budget-Guide.html',            text: '💵 Budget' },
-        { href: base + 'Trip-Essentials/Cards-ATM.html',             text: '💳 Cards & ATM' },
-        { href: base + 'Trip-Essentials/City-Transit-Cards.html',    text: '🚇 City Transit Cards' },
-        { href: base + 'Trip-Essentials/SIM-Cards.html',             text: '📱 SIM Cards' },
-      ]},
+    { href: base + 'Trip-Essentials/Travel-Packing-Generic.html', text: '👕 Packing', full: '👕 Packing Checklist' },
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
