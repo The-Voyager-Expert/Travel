@@ -531,6 +531,11 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
   border-color: #b85c2a; color: #fff; text-decoration: none;
 }
+.cmp-legend-footnote {
+  margin: 14px 0 0; padding-top: 12px;
+  border-top: 1px solid var(--border2, #e6e2da);
+  display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center;
+}
 @media (max-width: 600px) {
   .cmp-sel-bar { padding: 8px 12px; gap: 7px; }
   .cmp-table td { padding: 8px 10px; }
@@ -2808,7 +2813,7 @@ window._giStatusFilter = 'all';
 
     /* Vibe / trip-type row */
     var THEMES = window._THEME_DATA || {};
-    out += '<tr><td class="cmp-row-label">🌆 Vibe</td>';
+    out += '<tr><td class="cmp-row-label">🌆 Type</td>';
     sel.forEach(function(c) {
       var tags = THEMES[c.name] || [];
       if (tags.length) {
@@ -2873,49 +2878,36 @@ window._giStatusFilter = 'all';
       {lvl:4,label:'Caution',   col:'#c06000'},
       {lvl:5,label:'High Risk', col:'#b00000'}
     ];
-    var legendHtml = '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center">'
+    var legendFootnote = '<div class="cmp-legend-footnote">'
       + SAFE_LEGEND.map(function(s){
           return '<span style="font-size:10px;color:var(--muted)"><span style="font-weight:700;color:' + s.col + '">Level ' + s.lvl + '</span> = ' + s.label + '</span>';
         }).join('')
       + '</div>';
-    var minSafe = null, safeVals = {};
-    sel.forEach(function(c) {
-      var si = SAFETY_DATA[c.climateKey] || SAFETY_DATA[c.name] || null;
-      if (si && SAFE_LEVELS[si.level]) {
-        safeVals[c.href] = SAFE_LEVELS[si.level];
-        if (minSafe === null || SAFE_LEVELS[si.level] < minSafe) minSafe = SAFE_LEVELS[si.level];
-      }
-    });
-    var safeTies = Object.keys(safeVals).filter(function(k){ return safeVals[k] === minSafe; });
     out += '<tr><td class="cmp-row-label">🛡️ Safety</td>';
     sel.forEach(function(c) {
       var si = SAFETY_DATA[c.climateKey] || SAFETY_DATA[c.name] || null;
       if (si) {
         var lvl = SAFE_LEVELS[si.level] || 3;
         var col = SAFE_COLORS[si.level] || '#8a6c1a';
-        var bestS = sel.length > 1 && minSafe !== null && safeVals[c.href] === minSafe && safeTies.length < sel.length;
         out += '<td class="cmp-col">'
           + '<span style="font-size:13px;font-weight:700;color:' + col + '">' + si.level + '</span>'
           + '<br><span style="font-size:10px;color:var(--muted)">Level ' + lvl + '</span>'
           + (si.note ? '<br><span style="font-size:10px;color:var(--muted);line-height:1.4;display:inline-block;margin-top:2px">' + esc(si.note) + '</span>' : '')
-          + (bestS ? '<br><span class="cmp-badge">Safest ✓</span>' : '')
           + '</td>';
       } else {
         out += '<td class="cmp-col"><span style="font-size:12px;color:var(--muted)">—</span></td>';
       }
     });
     out += '</tr>';
-    /* Legend row spanning all columns */
-    out += '<tr><td colspan="' + (sel.length + 1) + '" style="padding:2px 8px 10px;text-align:center">' + legendHtml + '</td></tr>';
 
     /* Guide link row */
     out += '<tr><td class="cmp-row-label"></td>';
     sel.forEach(function(c) {
-      out += '<td class="cmp-col" style="padding-bottom:16px"><a class="cmp-guide-link" href="' + c.href + '">Open guide →</a></td>';
+      out += '<td class="cmp-col" style="padding-bottom:16px"><a class="cmp-guide-link" href="' + c.href + '">Open guide</a></td>';
     });
     out += '</tr>';
 
-    out += '</tbody></table></div>';
+    out += '</tbody></table></div>' + legendFootnote;
     return out;
   }
 
