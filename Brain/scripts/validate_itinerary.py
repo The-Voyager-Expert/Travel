@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-08", "TOURS AUDIT — 4 enforcement gaps closed (fleet-wide manual audit of every Tours §1-§8 rule against all 207 shipped guides found 28 guides with real deviations that were passing validation). (1) MISSING PLATFORM HEADING (§5) — the existing 'platform group never empty' check only inspects .tours-group headings that already exist in the markup; a crib dropping a whole platform sometimes omits its heading ENTIRELY (no heading, no negative line) instead of shipping it empty — invisible to that check. New check 'all three platform headings present' asserts Viator/GetYourGuide/TripAdvisor headings all exist whenever the section isn't the whole-section-negative case. Fleet: 19 guides / 25 platform slots (Aruba, Big-Island, Cayman-Islands, Chongqing, Curacao, Kauai, La-Jolla, Milan, Oahu, Pensacola, Portland, Sedona, Sint-Maarten, Taipei, Yellowstone, + Fortaleza/Glacier-National-Park with all 3 missing). (2) MANGLED REVIEW COUNT (§6) — a thousands-separator comma corrupted into a stray middle-dot (e.g. '4.7⭐ · 1 ·176+ reviews' instead of '4.7⭐ · 1,176+ reviews') was invisible because the existing reviews-count regex greedily matches only the LAST digit group before 'reviews', so '176' alone cleared the ≥6 bar and passed silently. New _TOURS_MANGLED_REVIEWS_RE detects the two-digit-groups-split-by-· shape directly. Fleet: Annecy, Cannes, Turin, Pasadena (7 entries). (3) BARE CYCLING/BIKING (§2 excluded types) — banned_tour_types only listed 2-word phrases ('cycling tour(s)', 'bicycle tour(s)'); titles with the word alone in a different position ('Ubud: Downhill Cycling with Volcano and Rice Terraces', 'Napa Valley Cycling Wine Tour') didn't match any phrase and shipped. Added bare 'cycling' + 'biking' tokens (word-boundary gated, same list already scanned against Tours .extras-sub <strong> titles). Fleet: Bali, Napa. (4) NON-CANONICAL NEGATIVE-FINDING WORDING (§8) — the canonical-wording regex used a greedy '.+' for the [City] placeholder, so embellished text ('No qualifying tours in Columbia on Viator, GetYourGuide, or TripAdvisor meeting the 4.5★ · 6+ review bar.') still matched the 'in .+\\.' shape and passed. Added a second pass that rejects platform names / review / rating / star / meeting / platform language leaking into the captured city text. Also discovered and fixed a second, larger hole in the same check: it only ever scanned .entry-body divs, so the WHOLE-SECTION-negative case (wrapped in .extras-empty, per Guide Structure) was never wording-checked at all — Fortaleza ('No tours found qualifying at 4.5★ and 6+ reviews for Fortaleza at time of build.') and Glacier-National-Park ('No tour operators meet the minimum ratings threshold for Glacier National Park tours.') were shipping completely free-form sentences, invisible until this pass. Fleet: Columbia, Maceió, Fortaleza, Glacier-National-Park. No guide HTML edited in this pass — validator-only; the 28 flagged guides still need per-guide fixes + re-validation."),
     ("2026-07-06", "PICKLEBALL T5 — FIX SILENT PASS BUG (detected via verify). T5 was detecting US eligibility from .title-address state code (Patterns A/B/C), but hotel addresses use 'Street · Neighborhood' format (Hotel Banner.html) which never includes a state code — so trip_state was None for nearly all US guides and the gate silently skipped. Fixed: primary signal switched to .title-country == 'United States' (always present, required by Hotel Banner.html §1). State-code parser kept for informational hint in check messages only. Fleet impact: all 189 US guides missing pickleball now hard-fail T5 as intended. Non-US guides unchanged — title-country is never 'United States' for them."),
     ("2026-07-06", "PICKLEBALL EXPANDED TO ALL US STATES (Dani-approved). Previously CA/AZ/OR only. Now every US guide (all 50 states + DC, detected from .title-address state code) MUST carry a pickleball section or hard-fails. PICKLEBALL_ELIGIBLE_STATES updated from {CA,AZ,OR} to all 51 codes. Guides with no pickleball section will fail T5 until rebuilt. Non-US guides: unchanged — section silently omitted."),
     ("2026-07-06", "PICKLEBALL RULE CHANGE — 25 min walk → 25 min drive (Dani-approved rule change). Pickleball - Extra Section.html §2/§3/§4 updated. Validator updated to match: (1) 🚕 drive time is now REQUIRED (was: 🚶 required + 🚕 optional); (2) 🚶 walk time is now OPTIONAL (add when also walkable); (3) cap check changed from ≤28 min walk to ≤28 min drive (🚕); (4) ordering check uses drive times (🚕) instead of walk times (🚶); (5) row-order anchor changed from 🚶 to 🚕; (6) negative-finding regex updated: 'within 25 min walk' → 'within 25 min drive'. Fleet impact: guides with 🚕-only entries (no 🚶) now pass; entries with 🚶 but no 🚕 will hard-fail (must add drive time). Pickleball sections in CA/AZ/OR guides should be rebuilt with courts within 25 min drive."),
@@ -12156,6 +12157,8 @@ def validate(html: str, filename: str):
         "e bike",
         "electric bike",
         "bicycle",
+        "cycling",
+        "biking",
         "bike tour",
         "bike tours",
         "e-bike tour",
@@ -15545,6 +15548,9 @@ def validate(html: str, filename: str):
         )
         _tours_fmt_bad: list[str] = []
         _tours_rating_bad: list[str] = []
+        _TOURS_MANGLED_REVIEWS_RE = re.compile(
+            r'⭐\s*·\s*\d[\d,]*\s*·\s*\d[\d,]*\+?\s*reviews', re.IGNORECASE
+        )
         _tours_src = {'Viator': 0, 'GetYourGuide': 0, 'TripAdvisor': 0, 'Other': 0}
         _tours_plat_seq: list[tuple[int, str]] = []  # (rank, label) in doc order — Tours §3 grouping
         _tours_present = bool(_tours_sec_m)
@@ -15591,6 +15597,20 @@ def validate(html: str, filename: str):
                 elif int(_rv.group(1).replace(',', '')) < 6:
                     _tours_rating_bad.append(
                         f'"{_label}" — only {_rv.group(1)} reviews (<6)'
+                    )
+                # Mangled review count — a thousands-separator comma that got
+                # corrupted into a stray middle-dot, so the true count (e.g.
+                # "1,176+") renders as two digit groups split by "·" (e.g.
+                # "1 ·176+ reviews"). The review-count regex above only reads
+                # the LAST digit group before "reviews", so this silently
+                # under-counts (176 still clears the ≥6 bar) instead of
+                # failing — this check catches the corruption directly.
+                if _TOURS_MANGLED_REVIEWS_RE.search(_h_text):
+                    _tours_fmt_bad.append(
+                        f'"{_label}" — review count corrupted by a stray '
+                        f'middle-dot in the thousands separator (should read '
+                        f'like "1,176+ reviews", not split across two '
+                        f'"·"-separated digit groups)'
                     )
                 # source tally by link domain
                 _hl = _href.lower()
@@ -15729,18 +15749,43 @@ def validate(html: str, filename: str):
         #   single platform empty → "No qualifying tours on [Platform] in [City]."
         # Any free-form variant (e.g. "No qualifying open-group tours on
         # TripAdvisor Experiences for Lille during this build.") hard-fails.
+        # The wording never changes with the platform or the reason (§8) — the
+        # [City] placeholder is a bare place name, never an embellished clause
+        # that lists platforms or cites the rating bar (e.g. "…in Columbia on
+        # Viator, GetYourGuide, or TripAdvisor meeting the 4.5★ · 6+ review
+        # bar." — the base regex's greedy ".+" accepted this because it only
+        # anchors on the "in "/"on … in " prefix and the trailing period; a
+        # second pass below rejects any embellishment words leaking into the
+        # captured [City] text).
         _tours_neg_bad: list[str] = []
         _tours_neg_re = re.compile(
-            r'^No qualifying tours (?:in .+|on (?:Viator|GetYourGuide|TripAdvisor) in .+)\.$'
+            r'^No qualifying tours (?:in (?P<city_only>.+)'
+            r'|on (?P<plat>Viator|GetYourGuide|TripAdvisor) in (?P<city_plat>.+))\.$'
         )
-        for _eb in re.finditer(r'<div\b[^>]*\bentry-body\b[^>]*>', _tours_inner):
+        _tours_neg_embellish_re = re.compile(
+            r'\b(viator|getyourguide|tripadvisor|review|rating|star|meeting|platform)\b'
+            r'|⭐|★',
+            re.IGNORECASE,
+        )
+        for _eb in re.finditer(
+            r'<div\b[^>]*\b(?:entry-body|extras-empty)\b[^>]*>', _tours_inner,
+        ):
             _eb_inner, _ = _walk_balanced_div(_tours_inner, _eb.end())
             # A real tour body carries ↳ / 🕐 / 📍 rows — skip it. A negative
-            # group's .entry-body has none of those, just a plain sentence.
+            # group's .entry-body/.extras-empty has none of those, just a
+            # plain sentence (whole-section-empty uses .extras-empty; a
+            # single dropped platform uses .entry-body — § 5 + § 8).
             if '↳' in _eb_inner or '🕐' in _eb_inner or '📍' in _eb_inner or '📅' in _eb_inner:
                 continue
             _eb_text = RE_WS.sub(' ', RE_STRIP_TAGS.sub('', _eb_inner)).strip()
-            if _eb_text and not _tours_neg_re.match(_eb_text):
+            if not _eb_text:
+                continue
+            _neg_m = _tours_neg_re.match(_eb_text)
+            if not _neg_m:
+                _tours_neg_bad.append(_eb_text[:80])
+                continue
+            _neg_city = _neg_m.group('city_only') or _neg_m.group('city_plat') or ''
+            if _tours_neg_embellish_re.search(_neg_city):
                 _tours_neg_bad.append(_eb_text[:80])
         check(
             'Tours — negative-finding line is the fixed wording "No qualifying tours '
@@ -15914,6 +15959,36 @@ def validate(html: str, filename: str):
         (f'{len(_tg_empty)} empty platform group(s): '
          + '; '.join(f'"{g}"' for g in _tg_empty[:5]))
         if _tg_empty else '',
+    )
+
+    # ─── TOURS — all three platform headings always present (§ 5) ───────────
+    # § 5: when a platform has no qualifying tours but others do, "that
+    # platform's group still ships the platform heading followed by one fixed
+    # negative-finding line" — the heading is required even for a dropped
+    # platform. The "platform group never empty" check above only inspects
+    # headings that exist in the markup; a crib that drops a whole platform
+    # sometimes omits its .tours-group heading ENTIRELY instead of shipping it
+    # empty with the negative line, which is invisible to that check. This
+    # asserts all three canonical headings are present whenever the section
+    # isn't the whole-section negative-finding case (§8 — a fully-empty
+    # section correctly ships no per-platform headings at all).
+    print("\n── TOURS — all three platform headings present ──")
+    _tg_missing: list[str] = []
+    if _tours_sec_sup_m and not _tours_empty:
+        _tg_present = {
+            RE_WS.sub(' ', RE_STRIP_TAGS.sub('', m.group(1))).strip()
+            for m in _tg_re.finditer(_tours_inner_sup)
+        }
+        _tg_missing = [p for p in ('Viator', 'GetYourGuide', 'TripAdvisor') if p not in _tg_present]
+    check(
+        'Tours — all three platform headings (Viator / GetYourGuide / TripAdvisor) '
+        'ship even when a platform has zero qualifying tours — a dropped platform '
+        'must still carry its heading + negative-finding line, never be omitted '
+        'entirely (per Tours - Extra Section.html § 5 + § 8)',
+        not _tg_missing,
+        (f'{len(_tg_missing)} platform heading(s) missing entirely: '
+         + ', '.join(_tg_missing))
+        if _tg_missing else '',
     )
 
     # ─── TOURS — motion banner vs pickup type (§ 6) ──────────────────────────
