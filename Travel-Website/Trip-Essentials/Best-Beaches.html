@@ -29,6 +29,301 @@
 <div class="best-of-grid">
 
     <!-- ══ CARIBBEAN ══ -->
+    <div class="best-of-section-label">Africa</div>
+
+    <div class="best-of-subsection-label">Kenya</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Diani Beach</div>
+          <div class="best-of-tag">Kwale County, Kenya</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 25–28 °C water</span><span>📏 17 km</span></div>
+      <div class="best-of-desc">A long white-coral-sand beach south of Mombasa on Kenya's Indian Ocean coast, backed by coastal woodland and fronted by a reef lagoon that keeps the water warm and calm for swimming.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Diani_Beach" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Diani+Beach+Kenya" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.magicalkenya.com" target="_blank" rel="noopener">Kenya Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Diani+Beach+Kwale+Kenya" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">South Africa</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Boulders Beach</div>
+          <div class="best-of-tag">Simon's Town, Cape Town, South Africa</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 14–20 °C water</span><span>📏 0.3 km</span></div>
+      <div class="best-of-desc">A sheltered beach of large granite boulders and small sandy coves near Simon's Town, home to a resident colony of African penguins on the shore.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Boulders_Beach" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.southafrica.net" target="_blank" rel="noopener">South Africa Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Boulders+Beach+Simons+Town+Cape+Town" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Camps Bay</div>
+          <div class="best-of-tag">Cape Town, South Africa</div>
+      <div class="best-of-meta"><span>☀️ Nov–Mar</span><span>🌡️ 14–19 °C water</span><span>📏 1.5 km</span></div>
+      <div class="best-of-desc">A white-sand beach beneath the Twelve Apostles mountain range in Cape Town, backed by a palm-lined promenade; the Atlantic water here stays notably cold.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Camps_Bay" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Camps+Bay+Cape+Town" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.capetown.travel" target="_blank" rel="noopener">Cape Town Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Camps+Bay+Cape+Town+South+Africa" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+  var input = document.getElementById('best-of-search');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    var cards = document.querySelectorAll('.best-of-card');
+    var labels = document.querySelectorAll('.best-of-section-label');
+    if (!q) {
+      cards.forEach(function(c){ c.style.display = ''; });
+      labels.forEach(function(l){ l.style.display = ''; });
+      document.querySelectorAll('.best-of-subsection-label').forEach(function(s){ s.style.display = ''; });
+      return;
+    }
+    cards.forEach(function(c){
+      var name = (c.querySelector('.best-of-name') || {}).textContent || '';
+      var tag = (c.querySelector('.best-of-tag') || {}).textContent || '';
+      var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
+      c.style.display = match ? '' : 'none';
+    });
+    // Reset region filter UI only (not card visibility)
+    if (window._regionJumpResetUI) window._regionJumpResetUI();
+    labels.forEach(function(label){
+      var next = label.nextElementSibling;
+      var hasVisible = false;
+      while (next && !next.classList.contains('best-of-section-label')) {
+        if (next.classList.contains('best-of-card') && next.style.display !== 'none') {
+          hasVisible = true;
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      label.style.display = hasVisible ? '' : 'none';
+    });
+    document.querySelectorAll('.best-of-subsection-label').forEach(function(sub){
+      var next = sub.nextElementSibling;
+      var hasVisible = false;
+      while (next && !next.classList.contains('best-of-section-label') && !next.classList.contains('best-of-subsection-label')) {
+        if (next.classList.contains('best-of-card') && next.style.display !== 'none') { hasVisible = true; break; }
+        next = next.nextElementSibling;
+      }
+      sub.style.display = hasVisible ? '' : 'none';
+    });
+  });
+})();
+
+// Region filter dropdown
+(function() {
+  var jump    = document.getElementById('regionJump');
+  var toggle  = document.getElementById('regionJumpToggle');
+  var label   = document.getElementById('regionJumpLabel');
+        var defaultLabel = label.textContent;
+  var list    = document.getElementById('regionJumpList');
+  var labels  = document.querySelectorAll('.best-of-section-label');
+  if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
+
+  var active = null;
+
+  // Build option list from section labels
+  var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All sections</button>';
+  labels.forEach(function(l) {
+    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
+  });
+  list.innerHTML = html;
+  var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
+
+  function applyFilter() {
+    items.forEach(function(it) {
+      it.classList.toggle('on', active === null ? it.dataset.region === 'all' : it.dataset.region === active);
+    });
+    label.textContent = active || defaultLabel;
+    toggle.classList.toggle('has-active', active !== null);
+    var cards = document.querySelectorAll('.best-of-card');
+    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
+    cards.forEach(function(c) {
+      if (!active) { c.style.display = ''; return; }
+      // find preceding section label
+      var prev = c.previousElementSibling;
+      while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
+      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
+    });
+    // show/hide subsection labels based on whether their cards are visible
+    document.querySelectorAll('.best-of-subsection-label').forEach(function(sub) {
+      var next = sub.nextElementSibling;
+      var hasVisible = false;
+      while (next && !next.classList.contains('best-of-section-label') && !next.classList.contains('best-of-subsection-label')) {
+        if (next.classList.contains('best-of-card') && next.style.display !== 'none') { hasVisible = true; break; }
+        next = next.nextElementSibling;
+      }
+      sub.style.display = hasVisible ? '' : 'none';
+    });
+  }
+
+  window._regionJumpReset = function() { active = null; applyFilter(); };
+  // UI-only reset used by search handler (doesn't touch card visibility)
+  window._regionJumpResetUI = function() {
+    active = null;
+    items.forEach(function(it) { it.classList.toggle('on', it.dataset.region === 'all'); });
+    label.textContent = defaultLabel;
+    toggle.classList.remove('has-active');
+  };
+
+  function openMenu()  { jump.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
+  function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+
+  toggle.addEventListener('click', function() { jump.classList.contains('open') ? closeMenu() : openMenu(); });
+  items.forEach(function(it) {
+    it.addEventListener('click', function() {
+      active = it.dataset.region === 'all' ? null : it.dataset.region;
+      applyFilter(); closeMenu();
+    });
+  });
+  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); }, true);
+}());
+
+</script>
+</body>
+</html>
+<div class="best-of-section-label">Australia</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Whitehaven Beach</div>
+          <div class="best-of-tag">Whitsunday Islands, Queensland</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 23–29 °C water</span><span>📏 7.0 km</span></div>
+      <div class="best-of-desc">A beach on an uninhabited Whitsunday island known for exceptionally fine, bright silica sand and, at its northern end, the swirling sand-and-water patterns of Hill Inlet.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Whitehaven_Beach" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.getyourguide.com/whitsunday-islands-l2529/whitehaven-beach-tour-t175218/" target="_blank" rel="noopener">Book Tour</a>
+        <a class="best-of-link" href="https://www.queensland.com/au/en/places-to-see/destinations/whitsundays/whitehaven-beach" target="_blank" rel="noopener">Queensland Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Whitehaven+Beach+Whitsunday+Islands+Queensland" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Turquoise Bay</div>
+          <div class="best-of-tag">Ningaloo Reef, Western Australia</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–28 °C water</span><span>📏 0.4 km</span></div>
+      <div class="best-of-desc">A beach in Cape Range National Park on the Ningaloo Coast, where a fringing coral reef sits just offshore and can be reached by snorkelers straight from the sand.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ningaloo_Coast" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.westernaustralia.com/au/attraction/turquoise-bay" target="_blank" rel="noopener">WA Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Turquoise+Bay+Ningaloo+Reef+Western+Australia" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Bondi Beach</div>
+          <div class="best-of-tag">Sydney, New South Wales</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 18–24 °C water</span><span>📏 1.0 km</span></div>
+      <div class="best-of-desc">Sydney's best-known ocean beach, a wide sweep of sand in the eastern suburbs backed by a promenade and the start of the coastal walk to Coogee.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="../Guides/Sydney/sydney_v2.html">🌐 Sydney Guide</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Bondi_Beach" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.sydney.com/destinations/sydney/sydney-east/bondi/attractions/bondi-beach" target="_blank" rel="noopener">Sydney Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Bondi+Beach+Sydney+New+South+Wales" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Hyams Beach</div>
+          <div class="best-of-tag">Jervis Bay, New South Wales</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 17–23 °C water</span><span>📏 0.3 km</span></div>
+      <div class="best-of-desc">A small beach on the sheltered shore of Jervis Bay, noted for very fine, bright white sand and calm, clear water backed by bushland.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Hyams_Beach,_New_South_Wales" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.shoalhaven.com/jervis-bay" target="_blank" rel="noopener">Shoalhaven Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Hyams+Beach+Jervis+Bay+New+South+Wales" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Cable Beach</div>
+          <div class="best-of-tag">Broome, Western Australia</div>
+      <div class="best-of-meta"><span>☀️ Apr–Oct (dry season)</span><span>🌡️ 25–30 °C water</span><span>📏 22 km</span></div>
+      <div class="best-of-desc">A very long white and red-tinged sand beach on Broome's Indian Ocean coast, famous for camel rides at sunset and dramatic tidal flats that expose broad mudflats at low water.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Cable_Beach,_Western_Australia" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.westernaustralia.com/en/attraction/cable-beach" target="_blank" rel="noopener">WA Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Cable+Beach+Broome+Western+Australia" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Wineglass Bay</div>
+          <div class="best-of-tag">Freycinet National Park, Tasmania</div>
+      <div class="best-of-meta"><span>☀️ Nov–Mar (austral summer)</span><span>🌡️ 16–20 °C water</span><span>📏 1.0 km</span></div>
+      <div class="best-of-desc">A curved white-sand beach in Freycinet National Park on Tasmania's east coast, reached by a 30-minute climb over a pink granite saddle, with clear water in a sheltered bay.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Wineglass_Bay" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.discovertasmania.com.au/places/freycinet-national-park/wineglass-bay" target="_blank" rel="noopener">Discover Tasmania</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Wineglass+Bay+Freycinet+Tasmania" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <!-- ══ SOUTH PACIFIC ══ -->
+    <div class="best-of-section-label">Brazil</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Baía do Sancho</div>
+          <div class="best-of-tag">Fernando de Noronha</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–28 °C water</span><span>📏 0.2 km</span></div>
+      <div class="best-of-desc">A cliff-enclosed bay on the volcanic Fernando de Noronha archipelago, reached by ladders set into a rock crevice, with clear water and abundant marine life.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Fernando_de_Noronha" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.noronha.pe.gov.br" target="_blank" rel="noopener">Official Site</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Baía+do+Sancho+Fernando+de+Noronha" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Baía dos Porcos</div>
+          <div class="best-of-tag">Fernando de Noronha</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–28 °C water</span><span>📏 0.1 km</span></div>
+      <div class="best-of-desc">A tiny rock-pool beach on Fernando de Noronha, framed by dark volcanic rock and looking out to the archipelago's twin Dois Irmãos sea stacks.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Fernando_de_Noronha" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.noronha.pe.gov.br" target="_blank" rel="noopener">Official Site</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Baía+dos+Porcos+Fernando+de+Noronha" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Lopes Mendes</div>
+          <div class="best-of-tag">Ilha Grande, Rio de Janeiro</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–27 °C water</span><span>📏 3.0 km</span></div>
+      <div class="best-of-desc">A long white-sand beach on the car-free island of Ilha Grande, backed by Atlantic rainforest and reached only by boat or a forest hiking trail.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ilha_Grande,_Angra_dos_Reis" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitbrasil.com" target="_blank" rel="noopener">Visit Brasil</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Lopes+Mendes+Ilha+Grande+Rio+de+Janeiro" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Ipanema Beach</div>
+          <div class="best-of-tag">Rio de Janeiro</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–27 °C water</span><span>📏 2.5 km</span></div>
+      <div class="best-of-desc">A wide golden-sand Atlantic beach in Rio's Zona Sul, divided informally into social zones and framed by the rocky headlands of Arpoador and Dois Irmãos at each end.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🌐 Rio de Janeiro Guide</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ipanema" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitbrasil.com" target="_blank" rel="noopener">Visit Brasil</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Ipanema+Beach+Rio+de+Janeiro" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <!-- ══ MEXICO & CENTRAL AMERICA ══ -->
     <div class="best-of-section-label">Caribbean</div>
 
     <div class="best-of-subsection-label">Antigua</div>
@@ -207,492 +502,6 @@
     </div>
 
     <!-- ══ MEDITERRANEAN ══ -->
-    <div class="best-of-section-label">Mediterranean &amp; Atlantic Europe</div>
-
-    <div class="best-of-subsection-label">Croatia</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Zlatni Rat (Golden Horn)</div>
-          <div class="best-of-tag">Brač, Croatia</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 20–25 °C water</span><span>📏 0.5 km spit</span></div>
-      <div class="best-of-desc">A distinctive white-pebble spit projecting from the island of Brač into the Adriatic, its tapering tip shifting shape with the prevailing winds and currents.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Zlatni_Rat" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.croatia.hr/en-gb" target="_blank" rel="noopener">Croatia Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Zlatni+Rat+(Golden+Horn)+Brač+Croatia" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Greece</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Navagio Beach (Shipwreck Beach)</div>
-          <div class="best-of-tag">Zakynthos, Greece</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 22–26 °C water</span><span>📏 0.2 km</span></div>
-      <div class="best-of-desc">An isolated cove accessible only by boat, enclosed by tall limestone cliffs and named for the rusting hull of a smuggling ship beached on its white sand.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Navagio" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitgreece.gr/islands/ionian-islands/zakynthos/" target="_blank" rel="noopener">Visit Greece</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Navagio+Beach+(Shipwreck+Beach)+Zakynthos+Greece" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Fteri Beach</div>
-          <div class="best-of-tag">Kefalonia, Greece</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–25 °C water</span><span>📏 0.15 km</span></div>
-      <div class="best-of-desc">A remote pebble-and-sand beach on Kefalonia's northwest coast, reached by a steep footpath or by boat, set against white cliffs and vivid blue-green water.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Kefalonia" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitgreece.gr/islands/ionian-islands/kefalonia/" target="_blank" rel="noopener">Visit Greece</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Fteri+Beach+Kefalonia+Greece" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Elafonissi Beach</div>
-          <div class="best-of-tag">Crete, Greece</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–25 °C water</span><span>📏 1.0 km</span></div>
-      <div class="best-of-desc">A shallow lagoon beach on Crete's southwestern corner, where pale pink-tinged sand and a small islet are separated by wadeable, warm turquoise water.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Elafonisi" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitgreece.gr/islands/crete/" target="_blank" rel="noopener">Visit Greece</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Elafonissi+Beach+Crete+Greece" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Italy</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Rabbit Beach (Spiaggia dei Conigli)</div>
-          <div class="best-of-tag">Lampedusa, Italy</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 20–26 °C water</span><span>📏 0.3 km</span></div>
-      <div class="best-of-desc">A protected beach on the island of Lampedusa reached by a downhill path, facing a small offshore islet and a loggerhead sea turtle nesting site.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Isola_dei_Conigli_(Lampedusa)" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.italia.it/en/sicily/lampedusa" target="_blank" rel="noopener">Italia.it</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Rabbit+Beach+(Spiaggia+dei+Conigli)+Lampedusa+Italy" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Cala Brandinchi</div>
-          <div class="best-of-tag">Sardinia, Italy</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 20–25 °C water</span><span>📏 0.7 km</span></div>
-      <div class="best-of-desc">A shallow white-sand bay on Sardinia's northeastern coast, backed by pine woods, with gently shelving turquoise water often compared to Caribbean shallows.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Sardinia" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.sardegnaturismo.it" target="_blank" rel="noopener">Sardinia Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Cala+Brandinchi+Sardinia+Italy" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Portugal</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Benagil Sea Cave Beach</div>
-          <div class="best-of-tag">Algarve, Portugal</div>
-      <div class="best-of-meta"><span>☀️ Apr–Oct</span><span>🌡️ 17–22 °C water</span><span>📏 Cave interior</span></div>
-      <div class="best-of-desc">A small sand floor inside a sea cave on the Algarve coast, lit through a circular opening in the rock ceiling and reachable only by boat, kayak, or swimming.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Benagil" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.getyourguide.com/algarve-l200/benagil-cave-tour-t403573/" target="_blank" rel="noopener">Book Tour</a>
-        <a class="best-of-link" href="https://www.visitportugal.com/en/destinos/algarve" target="_blank" rel="noopener">Visit Portugal</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Benagil+Sea+Cave+Beach+Algarve+Portugal" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Praia da Marinha</div>
-          <div class="best-of-tag">Algarve, Portugal</div>
-      <div class="best-of-meta"><span>☀️ Apr–Oct</span><span>🌡️ 17–22 °C water</span><span>📏 0.5 km</span></div>
-      <div class="best-of-desc">A cliff-backed Algarve beach framed by ochre limestone rock formations and sea arches, reached by a stairway down from the clifftop and a coastal trail.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Praia_da_Marinha" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitportugal.com/en/destinos/algarve" target="_blank" rel="noopener">Visit Portugal</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Praia+da+Marinha+Algarve+Portugal" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Spain</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Cala Pregonda</div>
-          <div class="best-of-tag">Menorca, Spain</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–26 °C water</span><span>📏 0.15 km</span></div>
-      <div class="best-of-desc">A reddish-gold sand cove on Menorca's rugged north coast, reached on foot, framed by iron-rich rock formations and a jagged offshore islet.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Menorca" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.spain.info/en/destination/menorca/" target="_blank" rel="noopener">Spain Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Cala+Pregonda+Menorca+Spain" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Ses Illetes</div>
-          <div class="best-of-tag">Formentera, Spain</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–27 °C water</span><span>📏 0.45 km</span></div>
-      <div class="best-of-desc">A fine white-sand beach on a narrow spit at the north of Formentera, backed by dunes and pine, with shallow, exceptionally clear Mediterranean water.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Formentera" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.formentera.es" target="_blank" rel="noopener">Formentera Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Ses+Illetes+Formentera+Spain" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Es Trenc</div>
-          <div class="best-of-tag">Mallorca, Spain</div>
-      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–26 °C water</span><span>📏 5.0 km</span></div>
-      <div class="best-of-desc">A long, largely undeveloped beach on Mallorca's south coast backed by dunes and scrub pine, one of the few stretches of the island untouched by resort construction.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Es_Trenc" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.spain.info/en/destination/mallorca/" target="_blank" rel="noopener">Spain Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Es+Trenc+Mallorca+Spain" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Turkey</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Ölüdeniz (Blue Lagoon)</div>
-          <div class="best-of-tag">Fethiye, Turkey</div>
-      <div class="best-of-meta"><span>☀️ Apr–Nov</span><span>🌡️ 20–27 °C water</span><span>📏 1.0 km</span></div>
-      <div class="best-of-desc">A sheltered lagoon on Turkey's southwestern Turquoise Coast, where a sandbar encloses still, vivid blue-green water beneath pine-covered mountains and paragliding launch sites.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/%C3%96l%C3%BCdeniz" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.goturkiye.com/oludeniz" target="_blank" rel="noopener">Go Türkiye</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Ölüdeniz+(Blue+Lagoon)+Fethiye+Turkey" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">United Kingdom</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Kynance Cove</div>
-          <div class="best-of-tag">Lizard Peninsula, Cornwall, United Kingdom</div>
-      <div class="best-of-meta"><span>☀️ May–Sep</span><span>🌡️ 14–18 °C water</span><span>📏 0.3 km</span></div>
-      <div class="best-of-desc">A small cove on Cornwall's Lizard Peninsula exposing dramatic serpentine rock stacks at low tide, with unusually clear turquoise water for the British Atlantic coast.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Kynance_Cove" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitcornwall.com/beaches/kynance-cove" target="_blank" rel="noopener">Visit Cornwall</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Kynance+Cove+Cornwall+United+Kingdom" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <!-- ══ INDIAN OCEAN ══ -->
-    <div class="best-of-section-label">Indian Ocean</div>
-
-    <div class="best-of-subsection-label">Madagascar</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Nosy Iranja</div>
-          <div class="best-of-tag">Madagascar</div>
-      <div class="best-of-meta"><span>☀️ Apr–Nov</span><span>🌡️ 25–29 °C water</span><span>📏 2.0 km sandbar</span></div>
-      <div class="best-of-desc">Two small islets off northwestern Madagascar joined at low tide by a wide white sandbar, surrounded by shallow, clear water and reached by boat.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Nosy_Iranja" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.madagascar-tourisme.com" target="_blank" rel="noopener">Madagascar Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Nosy+Iranja+Madagascar" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Maldives</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Fulhadhoo Beach</div>
-          <div class="best-of-tag">Baa Atoll, Maldives</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 28–30 °C water</span><span>📏 1.2 km</span></div>
-      <div class="best-of-desc">A quiet white-sand beach on a small local island in the Maldives' Baa Atoll, a UNESCO Biosphere Reserve, fronting a shallow reef lagoon.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="../Guides/Maldives/maldives_v1.html">🌐 Maldives Guide</a>
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Fulhadhoo_(Baa_Atoll)" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitmaldives.com" target="_blank" rel="noopener">Visit Maldives</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Fulhadhoo+Beach+Baa+Atoll+Maldives" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Mauritius</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Trou aux Biches</div>
-          <div class="best-of-tag">Mauritius</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 23–28 °C water</span><span>📏 2.0 km</span></div>
-      <div class="best-of-desc">A long white-sand beach on the northwest coast of Mauritius, lined with casuarina trees and fronting a calm reef-protected lagoon good for snorkeling.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Trou_aux_Biches" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Trou+aux+Biches+Mauritius" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.tourism-mauritius.mu" target="_blank" rel="noopener">Mauritius Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Trou+aux+Biches+Mauritius" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Seychelles</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Anse Source d'Argent</div>
-          <div class="best-of-tag">La Digue, Seychelles</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 27–29 °C water</span><span>📏 1.0 km</span></div>
-      <div class="best-of-desc">A shallow beach on the island of La Digue famous for its sculpted pink granite boulders, which frame stretches of soft white sand and clear, calm water.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Anse_Source_d%27Argent" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=La+Digue+Seychelles" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.seychelles.com" target="_blank" rel="noopener">Seychelles Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Anse+Source+dArgent+La+Digue+Seychelles" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Anse Lazio</div>
-          <div class="best-of-tag">Praslin, Seychelles</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 27–29 °C water</span><span>📏 0.5 km</span></div>
-      <div class="best-of-desc">A curved white-sand bay on the island of Praslin, bracketed by granite headlands and forested hills, with clear water for swimming and snorkeling.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Anse_Lazio" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.seychelles.com" target="_blank" rel="noopener">Seychelles Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Anse+Lazio+Praslin+Seychelles" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Sri Lanka</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Unawatuna Beach</div>
-          <div class="best-of-tag">Galle, Sri Lanka</div>
-      <div class="best-of-meta"><span>☀️ Dec–Apr</span><span>🌡️ 27–29 °C water</span><span>📏 0.8 km</span></div>
-      <div class="best-of-desc">A curved bay on Sri Lanka's south coast near Galle, partly sheltered by a reef and headland, backed by palms and a cluster of beachfront guesthouses.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Unawatuna" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.srilanka.travel" target="_blank" rel="noopener">Sri Lanka Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Unawatuna+Beach+Galle+Sri+Lanka" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Tanzania</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Nungwi Beach</div>
-          <div class="best-of-tag">Zanzibar, Tanzania</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 25–29 °C water</span><span>📏 2.5 km</span></div>
-      <div class="best-of-desc">A beach at Zanzibar's northern tip where, unlike much of the island, the tidal range is small enough for swimming through the day; a hub for dhow sailing and diving.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Nungwi" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Nungwi+Zanzibar" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.zanzibartourism.go.tz" target="_blank" rel="noopener">Zanzibar Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Nungwi+Beach+Zanzibar+Tanzania" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <!-- ══ SOUTHEAST ASIA ══ -->
-    <div class="best-of-section-label">Southeast Asia</div>
-
-    <div class="best-of-subsection-label">Cambodia</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Koh Rong (Long Beach)</div>
-          <div class="best-of-tag">Sihanoukville, Cambodia</div>
-      <div class="best-of-meta"><span>☀️ Nov–May</span><span>🌡️ 28–30 °C water</span><span>📏 7.0 km</span></div>
-      <div class="best-of-desc">A long white-sand beach on Cambodia's largest island in the Gulf of Thailand, backed by jungle and known for calm water and bioluminescent plankton at night.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Koh_Rong" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.tourismcambodia.com" target="_blank" rel="noopener">Cambodia Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Koh+Rong+(Long+Beach)+Sihanoukville+Cambodia" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Indonesia</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Nusa Penida (Kelingking Beach)</div>
-          <div class="best-of-tag">Bali, Indonesia</div>
-      <div class="best-of-meta"><span>☀️ Apr–Oct</span><span>🌡️ 26–29 °C water</span><span>📏 0.2 km</span></div>
-      <div class="best-of-desc">A remote cove on the island of Nusa Penida below a T-shaped limestone headland resembling a dinosaur, reached by a steep, exposed cliffside descent.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="../Guides/Bali/bali_v1.html">🌐 Bali Guide</a>
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Nusa_Penida" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.indonesia.travel" target="_blank" rel="noopener">Indonesia Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Nusa+Penida+(Kelingking+Beach)+Bali+Indonesia" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Philippines</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Entalula Beach</div>
-          <div class="best-of-tag">Palawan, Philippines</div>
-      <div class="best-of-meta"><span>☀️ Nov–May</span><span>🌡️ 27–30 °C water</span><span>📏 0.3 km</span></div>
-      <div class="best-of-desc">A small white-sand beach on an island in the Bacuit Archipelago near El Nido, ringed by dramatic limestone karst cliffs and reached by boat.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/El_Nido,_Palawan" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.tourism.gov.ph" target="_blank" rel="noopener">Philippines Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Entalula+Beach+Palawan+Philippines" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Thailand</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Railay Beach</div>
-          <div class="best-of-tag">Krabi, Thailand</div>
-      <div class="best-of-meta"><span>☀️ Nov–Apr</span><span>🌡️ 28–30 °C water</span><span>📏 0.8 km</span></div>
-      <div class="best-of-desc">A peninsula in Krabi accessible only by boat, cut off from the mainland by towering limestone cliffs that draw rock climbers to its sandy, palm-backed shore.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Railay_Beach" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Railay+Beach+Krabi" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.tourismthailand.org/Attraction/railay-beach" target="_blank" rel="noopener">TAT Thailand</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Railay+Beach+Krabi+Thailand" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Koh Lipe (Sunrise Beach)</div>
-          <div class="best-of-tag">Satun, Thailand</div>
-      <div class="best-of-meta"><span>☀️ Nov–Apr</span><span>🌡️ 28–30 °C water</span><span>📏 2.0 km</span></div>
-      <div class="best-of-desc">The eastern beach of a small island in the Andaman Sea near the Malaysian border, with fine white sand, clear water, and coral reefs offshore.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ko_Lipe" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.tourismthailand.org/Attraction/koh-lipe" target="_blank" rel="noopener">TAT Thailand</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Koh+Lipe+(Sunrise+Beach)+Satun+Thailand" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Maya Bay</div>
-          <div class="best-of-tag">Phi Phi Islands, Thailand</div>
-      <div class="best-of-meta"><span>☀️ Nov–Apr</span><span>🌡️ 28–30 °C water</span><span>📏 0.2 km</span></div>
-      <div class="best-of-desc">A sheltered cove on the island of Phi Phi Leh, enclosed by steep limestone cliffs and made famous by a film; access is managed to protect its recovering reef.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Maya_Bay" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.getyourguide.com/phuket-l169/phi-phi-maya-bay-t174835/" target="_blank" rel="noopener">Book Tour</a>
-        <a class="best-of-link" href="https://www.tourismthailand.org" target="_blank" rel="noopener">TAT Thailand</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Maya+Bay+Phi+Phi+Islands+Thailand" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <!-- ══ AUSTRALIA ══ -->
-    <div class="best-of-section-label">Australia</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Whitehaven Beach</div>
-          <div class="best-of-tag">Whitsunday Islands, Queensland</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 23–29 °C water</span><span>📏 7.0 km</span></div>
-      <div class="best-of-desc">A beach on an uninhabited Whitsunday island known for exceptionally fine, bright silica sand and, at its northern end, the swirling sand-and-water patterns of Hill Inlet.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Whitehaven_Beach" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.getyourguide.com/whitsunday-islands-l2529/whitehaven-beach-tour-t175218/" target="_blank" rel="noopener">Book Tour</a>
-        <a class="best-of-link" href="https://www.queensland.com/au/en/places-to-see/destinations/whitsundays/whitehaven-beach" target="_blank" rel="noopener">Queensland Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Whitehaven+Beach+Whitsunday+Islands+Queensland" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Turquoise Bay</div>
-          <div class="best-of-tag">Ningaloo Reef, Western Australia</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–28 °C water</span><span>📏 0.4 km</span></div>
-      <div class="best-of-desc">A beach in Cape Range National Park on the Ningaloo Coast, where a fringing coral reef sits just offshore and can be reached by snorkelers straight from the sand.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ningaloo_Coast" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.westernaustralia.com/au/attraction/turquoise-bay" target="_blank" rel="noopener">WA Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Turquoise+Bay+Ningaloo+Reef+Western+Australia" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Bondi Beach</div>
-          <div class="best-of-tag">Sydney, New South Wales</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 18–24 °C water</span><span>📏 1.0 km</span></div>
-      <div class="best-of-desc">Sydney's best-known ocean beach, a wide sweep of sand in the eastern suburbs backed by a promenade and the start of the coastal walk to Coogee.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="../Guides/Sydney/sydney_v2.html">🌐 Sydney Guide</a>
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Bondi_Beach" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.sydney.com/destinations/sydney/sydney-east/bondi/attractions/bondi-beach" target="_blank" rel="noopener">Sydney Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Bondi+Beach+Sydney+New+South+Wales" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Hyams Beach</div>
-          <div class="best-of-tag">Jervis Bay, New South Wales</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 17–23 °C water</span><span>📏 0.3 km</span></div>
-      <div class="best-of-desc">A small beach on the sheltered shore of Jervis Bay, noted for very fine, bright white sand and calm, clear water backed by bushland.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Hyams_Beach,_New_South_Wales" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.shoalhaven.com/jervis-bay" target="_blank" rel="noopener">Shoalhaven Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Hyams+Beach+Jervis+Bay+New+South+Wales" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Cable Beach</div>
-          <div class="best-of-tag">Broome, Western Australia</div>
-      <div class="best-of-meta"><span>☀️ Apr–Oct (dry season)</span><span>🌡️ 25–30 °C water</span><span>📏 22 km</span></div>
-      <div class="best-of-desc">A very long white and red-tinged sand beach on Broome's Indian Ocean coast, famous for camel rides at sunset and dramatic tidal flats that expose broad mudflats at low water.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Cable_Beach,_Western_Australia" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.westernaustralia.com/en/attraction/cable-beach" target="_blank" rel="noopener">WA Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Cable+Beach+Broome+Western+Australia" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Wineglass Bay</div>
-          <div class="best-of-tag">Freycinet National Park, Tasmania</div>
-      <div class="best-of-meta"><span>☀️ Nov–Mar (austral summer)</span><span>🌡️ 16–20 °C water</span><span>📏 1.0 km</span></div>
-      <div class="best-of-desc">A curved white-sand beach in Freycinet National Park on Tasmania's east coast, reached by a 30-minute climb over a pink granite saddle, with clear water in a sheltered bay.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Wineglass_Bay" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.discovertasmania.com.au/places/freycinet-national-park/wineglass-bay" target="_blank" rel="noopener">Discover Tasmania</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Wineglass+Bay+Freycinet+Tasmania" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <!-- ══ SOUTH PACIFIC ══ -->
-    <div class="best-of-section-label">South Pacific</div>
-
-    <div class="best-of-subsection-label">Cook Islands</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Aitutaki Lagoon</div>
-          <div class="best-of-tag">Cook Islands</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 25–28 °C water</span><span>📏 Multiple motus</span></div>
-      <div class="best-of-desc">A large triangular lagoon in the Cook Islands, dotted with small uninhabited islets (motus) and sandbars ringed by shallow, vividly coloured water.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Aitutaki" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.cookislands.travel" target="_blank" rel="noopener">Cook Islands Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Aitutaki+Lagoon+Cook+Islands" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">Fiji</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">East Beach, Vomo Island</div>
-          <div class="best-of-tag">Mamanuca Islands, Fiji</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–29 °C water</span><span>📏 0.5 km</span></div>
-      <div class="best-of-desc">A soft white-sand beach on a small private island in Fiji's Mamanuca group, fronting a shallow coral lagoon with snorkeling directly off the shore.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Vomo_(island)" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.fiji.travel" target="_blank" rel="noopener">Fiji Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/East+Beach,+Vomo+Island+Mamanuca+Islands+Fiji" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-subsection-label">French Polynesia</div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Matira Beach</div>
-          <div class="best-of-tag">Bora Bora, French Polynesia</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–29 °C water</span><span>📏 1.5 km</span></div>
-      <div class="best-of-desc">The main public beach on Bora Bora's southern tip, with soft sand, shallow water shelving gently into the lagoon, and a view of Mount Otemanu.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Bora_Bora" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Bora+Bora" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.tahititourisme.com" target="_blank" rel="noopener">Tahiti Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Matira+Beach+Bora+Bora+French+Polynesia" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <!-- ══ HAWAII ══ -->
     <div class="best-of-section-label">Hawaii</div>
 
     <div class="best-of-card">
@@ -889,125 +698,283 @@
     </div>
 
     <!-- ══ UNITED STATES (MAINLAND) ══ -->
-    <div class="best-of-section-label">United States (Mainland)</div>
+    <div class="best-of-section-label">Indian Ocean</div>
+
+    <div class="best-of-subsection-label">Madagascar</div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Siesta Key Beach</div>
-          <div class="best-of-tag">Sarasota, Florida</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–30 °C water</span><span>📏 3.2 km</span></div>
-      <div class="best-of-desc">A wide Gulf of Mexico beach on a barrier island near Sarasota, known for its cool, powdery quartz sand that stays soft underfoot and calm, gently sloping water.</div>
+                <div class="best-of-name">Nosy Iranja</div>
+          <div class="best-of-tag">Madagascar</div>
+      <div class="best-of-meta"><span>☀️ Apr–Nov</span><span>🌡️ 25–29 °C water</span><span>📏 2.0 km sandbar</span></div>
+      <div class="best-of-desc">Two small islets off northwestern Madagascar joined at low tide by a wide white sandbar, surrounded by shallow, clear water and reached by boat.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="../Guides/Sarasota/sarasota_v1.html">🌐 Sarasota Guide</a>
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Siesta_Key,_Florida" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitsarasota.com/siesta-key" target="_blank" rel="noopener">Visit Sarasota</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Siesta+Key+Beach+Sarasota+Florida" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Nosy_Iranja" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.madagascar-tourisme.com" target="_blank" rel="noopener">Madagascar Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Nosy+Iranja+Madagascar" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Maldives</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Fulhadhoo Beach</div>
+          <div class="best-of-tag">Baa Atoll, Maldives</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 28–30 °C water</span><span>📏 1.2 km</span></div>
+      <div class="best-of-desc">A quiet white-sand beach on a small local island in the Maldives' Baa Atoll, a UNESCO Biosphere Reserve, fronting a shallow reef lagoon.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="../Guides/Maldives/maldives_v1.html">🌐 Maldives Guide</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Fulhadhoo_(Baa_Atoll)" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitmaldives.com" target="_blank" rel="noopener">Visit Maldives</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Fulhadhoo+Beach+Baa+Atoll+Maldives" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Mauritius</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Trou aux Biches</div>
+          <div class="best-of-tag">Mauritius</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 23–28 °C water</span><span>📏 2.0 km</span></div>
+      <div class="best-of-desc">A long white-sand beach on the northwest coast of Mauritius, lined with casuarina trees and fronting a calm reef-protected lagoon good for snorkeling.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Trou_aux_Biches" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Trou+aux+Biches+Mauritius" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.tourism-mauritius.mu" target="_blank" rel="noopener">Mauritius Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Trou+aux+Biches+Mauritius" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Seychelles</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Anse Source d'Argent</div>
+          <div class="best-of-tag">La Digue, Seychelles</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 27–29 °C water</span><span>📏 1.0 km</span></div>
+      <div class="best-of-desc">A shallow beach on the island of La Digue famous for its sculpted pink granite boulders, which frame stretches of soft white sand and clear, calm water.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Anse_Source_d%27Argent" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=La+Digue+Seychelles" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.seychelles.com" target="_blank" rel="noopener">Seychelles Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Anse+Source+dArgent+La+Digue+Seychelles" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Clearwater Beach</div>
-          <div class="best-of-tag">Tampa Bay, Florida</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–30 °C water</span><span>📏 4.0 km</span></div>
-      <div class="best-of-desc">A lively Gulf-coast barrier-island beach west of Tampa, with wide white sand, a pedestrian promenade, and a marina district at its northern end.</div>
+                <div class="best-of-name">Anse Lazio</div>
+          <div class="best-of-tag">Praslin, Seychelles</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 27–29 °C water</span><span>📏 0.5 km</span></div>
+      <div class="best-of-desc">A curved white-sand bay on the island of Praslin, bracketed by granite headlands and forested hills, with clear water for swimming and snorkeling.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Clearwater_Beach" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Clearwater+Beach+Florida" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.visitclearwaterflorida.com" target="_blank" rel="noopener">Visit Clearwater</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Clearwater+Beach+Tampa+Bay+Florida" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Anse_Lazio" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.seychelles.com" target="_blank" rel="noopener">Seychelles Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Anse+Lazio+Praslin+Seychelles" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Sri Lanka</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Unawatuna Beach</div>
+          <div class="best-of-tag">Galle, Sri Lanka</div>
+      <div class="best-of-meta"><span>☀️ Dec–Apr</span><span>🌡️ 27–29 °C water</span><span>📏 0.8 km</span></div>
+      <div class="best-of-desc">A curved bay on Sri Lanka's south coast near Galle, partly sheltered by a reef and headland, backed by palms and a cluster of beachfront guesthouses.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Unawatuna" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.srilanka.travel" target="_blank" rel="noopener">Sri Lanka Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Unawatuna+Beach+Galle+Sri+Lanka" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Tanzania</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Nungwi Beach</div>
+          <div class="best-of-tag">Zanzibar, Tanzania</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 25–29 °C water</span><span>📏 2.5 km</span></div>
+      <div class="best-of-desc">A beach at Zanzibar's northern tip where, unlike much of the island, the tidal range is small enough for swimming through the day; a hub for dhow sailing and diving.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Nungwi" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Nungwi+Zanzibar" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.zanzibartourism.go.tz" target="_blank" rel="noopener">Zanzibar Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Nungwi+Beach+Zanzibar+Tanzania" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <!-- ══ SOUTHEAST ASIA ══ -->
+    <div class="best-of-section-label">Mediterranean &amp; Atlantic Europe</div>
+
+    <div class="best-of-subsection-label">Croatia</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Zlatni Rat (Golden Horn)</div>
+          <div class="best-of-tag">Brač, Croatia</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 20–25 °C water</span><span>📏 0.5 km spit</span></div>
+      <div class="best-of-desc">A distinctive white-pebble spit projecting from the island of Brač into the Adriatic, its tapering tip shifting shape with the prevailing winds and currents.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Zlatni_Rat" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.croatia.hr/en-gb" target="_blank" rel="noopener">Croatia Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Zlatni+Rat+(Golden+Horn)+Brač+Croatia" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Greece</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Navagio Beach (Shipwreck Beach)</div>
+          <div class="best-of-tag">Zakynthos, Greece</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 22–26 °C water</span><span>📏 0.2 km</span></div>
+      <div class="best-of-desc">An isolated cove accessible only by boat, enclosed by tall limestone cliffs and named for the rusting hull of a smuggling ship beached on its white sand.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Navagio" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitgreece.gr/islands/ionian-islands/zakynthos/" target="_blank" rel="noopener">Visit Greece</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Navagio+Beach+(Shipwreck+Beach)+Zakynthos+Greece" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
     <div class="best-of-card">
-                <div class="best-of-name">La Jolla Cove</div>
-          <div class="best-of-tag">San Diego, California</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 16–21 °C water</span><span>📏 0.1 km</span></div>
-      <div class="best-of-desc">A small protected cove framed by sandstone bluffs in La Jolla, part of an ecological reserve, with clear water popular for swimming and snorkeling among sea life.</div>
+                <div class="best-of-name">Fteri Beach</div>
+          <div class="best-of-tag">Kefalonia, Greece</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–25 °C water</span><span>📏 0.15 km</span></div>
+      <div class="best-of-desc">A remote pebble-and-sand beach on Kefalonia's northwest coast, reached by a steep footpath or by boat, set against white cliffs and vivid blue-green water.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="../Guides/San-Diego/san-diego_v1.html">🌐 San Diego Guide</a>
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/La_Jolla_Cove" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.sandiego.org/explore/things-to-do/beaches-bays/la-jolla.aspx" target="_blank" rel="noopener">San Diego Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/La+Jolla+Cove+San+Diego+California" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Kefalonia" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitgreece.gr/islands/ionian-islands/kefalonia/" target="_blank" rel="noopener">Visit Greece</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Fteri+Beach+Kefalonia+Greece" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
     <div class="best-of-card">
-                <div class="best-of-name">El Matador Beach</div>
-          <div class="best-of-tag">Malibu, California</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 15–20 °C water</span><span>📏 0.3 km</span></div>
-      <div class="best-of-desc">A Malibu state beach reached by a stairway down the bluff, known for its sea caves, rock arches, and weathered sandstone sea stacks rising from the sand.</div>
+                <div class="best-of-name">Elafonissi Beach</div>
+          <div class="best-of-tag">Crete, Greece</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–25 °C water</span><span>📏 1.0 km</span></div>
+      <div class="best-of-desc">A shallow lagoon beach on Crete's southwestern corner, where pale pink-tinged sand and a small islet are separated by wadeable, warm turquoise water.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="../Guides/Malibu/malibu_v1.html">🌐 Malibu Guide</a>
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/El_Matador_State_Beach" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.parks.ca.gov/?page_id=2681" target="_blank" rel="noopener">CA State Parks</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/El+Matador+Beach+Malibu+California" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Elafonisi" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitgreece.gr/islands/crete/" target="_blank" rel="noopener">Visit Greece</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Elafonissi+Beach+Crete+Greece" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Italy</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Rabbit Beach (Spiaggia dei Conigli)</div>
+          <div class="best-of-tag">Lampedusa, Italy</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 20–26 °C water</span><span>📏 0.3 km</span></div>
+      <div class="best-of-desc">A protected beach on the island of Lampedusa reached by a downhill path, facing a small offshore islet and a loggerhead sea turtle nesting site.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Isola_dei_Conigli_(Lampedusa)" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.italia.it/en/sicily/lampedusa" target="_blank" rel="noopener">Italia.it</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Rabbit+Beach+(Spiaggia+dei+Conigli)+Lampedusa+Italy" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Pfeiffer Beach</div>
-          <div class="best-of-tag">Big Sur, California</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 12–16 °C water</span><span>📏 0.4 km</span></div>
-      <div class="best-of-desc">A Big Sur beach reached by an unmarked side road, known for purple-tinged manganese-garnet sand and a rock arch through which surf and light break at sunset.</div>
+                <div class="best-of-name">Cala Brandinchi</div>
+          <div class="best-of-tag">Sardinia, Italy</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 20–25 °C water</span><span>📏 0.7 km</span></div>
+      <div class="best-of-desc">A shallow white-sand bay on Sardinia's northeastern coast, backed by pine woods, with gently shelving turquoise water often compared to Caribbean shallows.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Pfeiffer_Big_Sur_State_Park" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.parks.ca.gov/?page_id=2666" target="_blank" rel="noopener">CA State Parks</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Pfeiffer+Beach+Big+Sur+California" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Sardinia" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.sardegnaturismo.it" target="_blank" rel="noopener">Sardinia Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Cala+Brandinchi+Sardinia+Italy" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
-    <!-- ══ BRAZIL ══ -->
-    <div class="best-of-section-label">Brazil</div>
+    <div class="best-of-subsection-label">Portugal</div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Baía do Sancho</div>
-          <div class="best-of-tag">Fernando de Noronha</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–28 °C water</span><span>📏 0.2 km</span></div>
-      <div class="best-of-desc">A cliff-enclosed bay on the volcanic Fernando de Noronha archipelago, reached by ladders set into a rock crevice, with clear water and abundant marine life.</div>
+                <div class="best-of-name">Benagil Sea Cave Beach</div>
+          <div class="best-of-tag">Algarve, Portugal</div>
+      <div class="best-of-meta"><span>☀️ Apr–Oct</span><span>🌡️ 17–22 °C water</span><span>📏 Cave interior</span></div>
+      <div class="best-of-desc">A small sand floor inside a sea cave on the Algarve coast, lit through a circular opening in the rock ceiling and reachable only by boat, kayak, or swimming.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Fernando_de_Noronha" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.noronha.pe.gov.br" target="_blank" rel="noopener">Official Site</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Baía+do+Sancho+Fernando+de+Noronha" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-                <div class="best-of-name">Baía dos Porcos</div>
-          <div class="best-of-tag">Fernando de Noronha</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–28 °C water</span><span>📏 0.1 km</span></div>
-      <div class="best-of-desc">A tiny rock-pool beach on Fernando de Noronha, framed by dark volcanic rock and looking out to the archipelago's twin Dois Irmãos sea stacks.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Fernando_de_Noronha" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.noronha.pe.gov.br" target="_blank" rel="noopener">Official Site</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Baía+dos+Porcos+Fernando+de+Noronha" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Benagil" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.getyourguide.com/algarve-l200/benagil-cave-tour-t403573/" target="_blank" rel="noopener">Book Tour</a>
+        <a class="best-of-link" href="https://www.visitportugal.com/en/destinos/algarve" target="_blank" rel="noopener">Visit Portugal</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Benagil+Sea+Cave+Beach+Algarve+Portugal" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Lopes Mendes</div>
-          <div class="best-of-tag">Ilha Grande, Rio de Janeiro</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–27 °C water</span><span>📏 3.0 km</span></div>
-      <div class="best-of-desc">A long white-sand beach on the car-free island of Ilha Grande, backed by Atlantic rainforest and reached only by boat or a forest hiking trail.</div>
+                <div class="best-of-name">Praia da Marinha</div>
+          <div class="best-of-tag">Algarve, Portugal</div>
+      <div class="best-of-meta"><span>☀️ Apr–Oct</span><span>🌡️ 17–22 °C water</span><span>📏 0.5 km</span></div>
+      <div class="best-of-desc">A cliff-backed Algarve beach framed by ochre limestone rock formations and sea arches, reached by a stairway down from the clifftop and a coastal trail.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ilha_Grande,_Angra_dos_Reis" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitbrasil.com" target="_blank" rel="noopener">Visit Brasil</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Lopes+Mendes+Ilha+Grande+Rio+de+Janeiro" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Praia_da_Marinha" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitportugal.com/en/destinos/algarve" target="_blank" rel="noopener">Visit Portugal</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Praia+da+Marinha+Algarve+Portugal" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Spain</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Cala Pregonda</div>
+          <div class="best-of-tag">Menorca, Spain</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–26 °C water</span><span>📏 0.15 km</span></div>
+      <div class="best-of-desc">A reddish-gold sand cove on Menorca's rugged north coast, reached on foot, framed by iron-rich rock formations and a jagged offshore islet.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Menorca" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.spain.info/en/destination/menorca/" target="_blank" rel="noopener">Spain Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Cala+Pregonda+Menorca+Spain" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Ipanema Beach</div>
-          <div class="best-of-tag">Rio de Janeiro</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–27 °C water</span><span>📏 2.5 km</span></div>
-      <div class="best-of-desc">A wide golden-sand Atlantic beach in Rio's Zona Sul, divided informally into social zones and framed by the rocky headlands of Arpoador and Dois Irmãos at each end.</div>
+                <div class="best-of-name">Ses Illetes</div>
+          <div class="best-of-tag">Formentera, Spain</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–27 °C water</span><span>📏 0.45 km</span></div>
+      <div class="best-of-desc">A fine white-sand beach on a narrow spit at the north of Formentera, backed by dunes and pine, with shallow, exceptionally clear Mediterranean water.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🌐 Rio de Janeiro Guide</a>
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ipanema" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.visitbrasil.com" target="_blank" rel="noopener">Visit Brasil</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Ipanema+Beach+Rio+de+Janeiro" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Formentera" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.formentera.es" target="_blank" rel="noopener">Formentera Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Ses+Illetes+Formentera+Spain" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
-    <!-- ══ MEXICO & CENTRAL AMERICA ══ -->
+    <div class="best-of-card">
+                <div class="best-of-name">Es Trenc</div>
+          <div class="best-of-tag">Mallorca, Spain</div>
+      <div class="best-of-meta"><span>☀️ May–Oct</span><span>🌡️ 21–26 °C water</span><span>📏 5.0 km</span></div>
+      <div class="best-of-desc">A long, largely undeveloped beach on Mallorca's south coast backed by dunes and scrub pine, one of the few stretches of the island untouched by resort construction.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Es_Trenc" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.spain.info/en/destination/mallorca/" target="_blank" rel="noopener">Spain Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Es+Trenc+Mallorca+Spain" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Turkey</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Ölüdeniz (Blue Lagoon)</div>
+          <div class="best-of-tag">Fethiye, Turkey</div>
+      <div class="best-of-meta"><span>☀️ Apr–Nov</span><span>🌡️ 20–27 °C water</span><span>📏 1.0 km</span></div>
+      <div class="best-of-desc">A sheltered lagoon on Turkey's southwestern Turquoise Coast, where a sandbar encloses still, vivid blue-green water beneath pine-covered mountains and paragliding launch sites.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/%C3%96l%C3%BCdeniz" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.goturkiye.com/oludeniz" target="_blank" rel="noopener">Go Türkiye</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Ölüdeniz+(Blue+Lagoon)+Fethiye+Turkey" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">United Kingdom</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Kynance Cove</div>
+          <div class="best-of-tag">Lizard Peninsula, Cornwall, United Kingdom</div>
+      <div class="best-of-meta"><span>☀️ May–Sep</span><span>🌡️ 14–18 °C water</span><span>📏 0.3 km</span></div>
+      <div class="best-of-desc">A small cove on Cornwall's Lizard Peninsula exposing dramatic serpentine rock stacks at low tide, with unusually clear turquoise water for the British Atlantic coast.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Kynance_Cove" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitcornwall.com/beaches/kynance-cove" target="_blank" rel="noopener">Visit Cornwall</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Kynance+Cove+Cornwall+United+Kingdom" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <!-- ══ INDIAN OCEAN ══ -->
     <div class="best-of-section-label">Mexico &amp; Central America</div>
 
     <div class="best-of-subsection-label">Costa Rica</div>
@@ -1093,169 +1060,203 @@
     </div>
 
     <!-- ══ AFRICA ══ -->
-    <div class="best-of-section-label">Africa</div>
+    <div class="best-of-section-label">South Pacific</div>
 
-    <div class="best-of-subsection-label">Kenya</div>
+    <div class="best-of-subsection-label">Cook Islands</div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Diani Beach</div>
-          <div class="best-of-tag">Kwale County, Kenya</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 25–28 °C water</span><span>📏 17 km</span></div>
-      <div class="best-of-desc">A long white-coral-sand beach south of Mombasa on Kenya's Indian Ocean coast, backed by coastal woodland and fronted by a reef lagoon that keeps the water warm and calm for swimming.</div>
+                <div class="best-of-name">Aitutaki Lagoon</div>
+          <div class="best-of-tag">Cook Islands</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 25–28 °C water</span><span>📏 Multiple motus</span></div>
+      <div class="best-of-desc">A large triangular lagoon in the Cook Islands, dotted with small uninhabited islets (motus) and sandbars ringed by shallow, vividly coloured water.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Diani_Beach" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Diani+Beach+Kenya" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.magicalkenya.com" target="_blank" rel="noopener">Kenya Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Diani+Beach+Kwale+Kenya" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Aitutaki" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.cookislands.travel" target="_blank" rel="noopener">Cook Islands Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Aitutaki+Lagoon+Cook+Islands" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
-    <div class="best-of-subsection-label">South Africa</div>
+    <div class="best-of-subsection-label">Fiji</div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Boulders Beach</div>
-          <div class="best-of-tag">Simon's Town, Cape Town, South Africa</div>
-      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 14–20 °C water</span><span>📏 0.3 km</span></div>
-      <div class="best-of-desc">A sheltered beach of large granite boulders and small sandy coves near Simon's Town, home to a resident colony of African penguins on the shore.</div>
+                <div class="best-of-name">East Beach, Vomo Island</div>
+          <div class="best-of-tag">Mamanuca Islands, Fiji</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–29 °C water</span><span>📏 0.5 km</span></div>
+      <div class="best-of-desc">A soft white-sand beach on a small private island in Fiji's Mamanuca group, fronting a shallow coral lagoon with snorkeling directly off the shore.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Boulders_Beach" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.southafrica.net" target="_blank" rel="noopener">South Africa Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Boulders+Beach+Simons+Town+Cape+Town" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Vomo_(island)" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.fiji.travel" target="_blank" rel="noopener">Fiji Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/East+Beach,+Vomo+Island+Mamanuca+Islands+Fiji" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">French Polynesia</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Matira Beach</div>
+          <div class="best-of-tag">Bora Bora, French Polynesia</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 26–29 °C water</span><span>📏 1.5 km</span></div>
+      <div class="best-of-desc">The main public beach on Bora Bora's southern tip, with soft sand, shallow water shelving gently into the lagoon, and a view of Mount Otemanu.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Bora_Bora" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Bora+Bora" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.tahititourisme.com" target="_blank" rel="noopener">Tahiti Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Matira+Beach+Bora+Bora+French+Polynesia" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <!-- ══ HAWAII ══ -->
+    <div class="best-of-section-label">Southeast Asia</div>
+
+    <div class="best-of-subsection-label">Cambodia</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Koh Rong (Long Beach)</div>
+          <div class="best-of-tag">Sihanoukville, Cambodia</div>
+      <div class="best-of-meta"><span>☀️ Nov–May</span><span>🌡️ 28–30 °C water</span><span>📏 7.0 km</span></div>
+      <div class="best-of-desc">A long white-sand beach on Cambodia's largest island in the Gulf of Thailand, backed by jungle and known for calm water and bioluminescent plankton at night.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Koh_Rong" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.tourismcambodia.com" target="_blank" rel="noopener">Cambodia Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Koh+Rong+(Long+Beach)+Sihanoukville+Cambodia" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Indonesia</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Nusa Penida (Kelingking Beach)</div>
+          <div class="best-of-tag">Bali, Indonesia</div>
+      <div class="best-of-meta"><span>☀️ Apr–Oct</span><span>🌡️ 26–29 °C water</span><span>📏 0.2 km</span></div>
+      <div class="best-of-desc">A remote cove on the island of Nusa Penida below a T-shaped limestone headland resembling a dinosaur, reached by a steep, exposed cliffside descent.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="../Guides/Bali/bali_v1.html">🌐 Bali Guide</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Nusa_Penida" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.indonesia.travel" target="_blank" rel="noopener">Indonesia Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Nusa+Penida+(Kelingking+Beach)+Bali+Indonesia" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Philippines</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Entalula Beach</div>
+          <div class="best-of-tag">Palawan, Philippines</div>
+      <div class="best-of-meta"><span>☀️ Nov–May</span><span>🌡️ 27–30 °C water</span><span>📏 0.3 km</span></div>
+      <div class="best-of-desc">A small white-sand beach on an island in the Bacuit Archipelago near El Nido, ringed by dramatic limestone karst cliffs and reached by boat.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/El_Nido,_Palawan" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.tourism.gov.ph" target="_blank" rel="noopener">Philippines Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Entalula+Beach+Palawan+Philippines" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <div class="best-of-subsection-label">Thailand</div>
+
+    <div class="best-of-card">
+                <div class="best-of-name">Railay Beach</div>
+          <div class="best-of-tag">Krabi, Thailand</div>
+      <div class="best-of-meta"><span>☀️ Nov–Apr</span><span>🌡️ 28–30 °C water</span><span>📏 0.8 km</span></div>
+      <div class="best-of-desc">A peninsula in Krabi accessible only by boat, cut off from the mainland by towering limestone cliffs that draw rock climbers to its sandy, palm-backed shore.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Railay_Beach" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Railay+Beach+Krabi" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.tourismthailand.org/Attraction/railay-beach" target="_blank" rel="noopener">TAT Thailand</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Railay+Beach+Krabi+Thailand" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
     <div class="best-of-card">
-                <div class="best-of-name">Camps Bay</div>
-          <div class="best-of-tag">Cape Town, South Africa</div>
-      <div class="best-of-meta"><span>☀️ Nov–Mar</span><span>🌡️ 14–19 °C water</span><span>📏 1.5 km</span></div>
-      <div class="best-of-desc">A white-sand beach beneath the Twelve Apostles mountain range in Cape Town, backed by a palm-lined promenade; the Atlantic water here stays notably cold.</div>
+                <div class="best-of-name">Koh Lipe (Sunrise Beach)</div>
+          <div class="best-of-tag">Satun, Thailand</div>
+      <div class="best-of-meta"><span>☀️ Nov–Apr</span><span>🌡️ 28–30 °C water</span><span>📏 2.0 km</span></div>
+      <div class="best-of-desc">The eastern beach of a small island in the Andaman Sea near the Malaysian border, with fine white sand, clear water, and coral reefs offshore.</div>
       <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Camps_Bay" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Camps+Bay+Cape+Town" target="_blank" rel="noopener">Hotels</a>
-        <a class="best-of-link" href="https://www.capetown.travel" target="_blank" rel="noopener">Cape Town Tourism</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Camps+Bay+Cape+Town+South+Africa" target="_blank" rel="noopener">Map</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Ko_Lipe" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.tourismthailand.org/Attraction/koh-lipe" target="_blank" rel="noopener">TAT Thailand</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Koh+Lipe+(Sunrise+Beach)+Satun+Thailand" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
 
-  </div>
+    <div class="best-of-card">
+                <div class="best-of-name">Maya Bay</div>
+          <div class="best-of-tag">Phi Phi Islands, Thailand</div>
+      <div class="best-of-meta"><span>☀️ Nov–Apr</span><span>🌡️ 28–30 °C water</span><span>📏 0.2 km</span></div>
+      <div class="best-of-desc">A sheltered cove on the island of Phi Phi Leh, enclosed by steep limestone cliffs and made famous by a film; access is managed to protect its recovering reef.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Maya_Bay" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.getyourguide.com/phuket-l169/phi-phi-maya-bay-t174835/" target="_blank" rel="noopener">Book Tour</a>
+        <a class="best-of-link" href="https://www.tourismthailand.org" target="_blank" rel="noopener">TAT Thailand</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Maya+Bay+Phi+Phi+Islands+Thailand" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
 
-</div><!-- /wrap -->
+    <!-- ══ AUSTRALIA ══ -->
+    <div class="best-of-section-label">United States (Mainland)</div>
 
-<script>
-(function(){
-  var input = document.getElementById('best-of-search');
-  if (!input) return;
-  input.addEventListener('input', function(){
-    var q = this.value.toLowerCase().trim();
-    var cards = document.querySelectorAll('.best-of-card');
-    var labels = document.querySelectorAll('.best-of-section-label');
-    if (!q) {
-      cards.forEach(function(c){ c.style.display = ''; });
-      labels.forEach(function(l){ l.style.display = ''; });
-      document.querySelectorAll('.best-of-subsection-label').forEach(function(s){ s.style.display = ''; });
-      return;
-    }
-    cards.forEach(function(c){
-      var name = (c.querySelector('.best-of-name') || {}).textContent || '';
-      var tag = (c.querySelector('.best-of-tag') || {}).textContent || '';
-      var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
-      c.style.display = match ? '' : 'none';
-    });
-    // Reset region filter UI only (not card visibility)
-    if (window._regionJumpResetUI) window._regionJumpResetUI();
-    labels.forEach(function(label){
-      var next = label.nextElementSibling;
-      var hasVisible = false;
-      while (next && !next.classList.contains('best-of-section-label')) {
-        if (next.classList.contains('best-of-card') && next.style.display !== 'none') {
-          hasVisible = true;
-          break;
-        }
-        next = next.nextElementSibling;
-      }
-      label.style.display = hasVisible ? '' : 'none';
-    });
-    document.querySelectorAll('.best-of-subsection-label').forEach(function(sub){
-      var next = sub.nextElementSibling;
-      var hasVisible = false;
-      while (next && !next.classList.contains('best-of-section-label') && !next.classList.contains('best-of-subsection-label')) {
-        if (next.classList.contains('best-of-card') && next.style.display !== 'none') { hasVisible = true; break; }
-        next = next.nextElementSibling;
-      }
-      sub.style.display = hasVisible ? '' : 'none';
-    });
-  });
-})();
+    <div class="best-of-card">
+                <div class="best-of-name">Siesta Key Beach</div>
+          <div class="best-of-tag">Sarasota, Florida</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–30 °C water</span><span>📏 3.2 km</span></div>
+      <div class="best-of-desc">A wide Gulf of Mexico beach on a barrier island near Sarasota, known for its cool, powdery quartz sand that stays soft underfoot and calm, gently sloping water.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="../Guides/Sarasota/sarasota_v1.html">🌐 Sarasota Guide</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Siesta_Key,_Florida" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.visitsarasota.com/siesta-key" target="_blank" rel="noopener">Visit Sarasota</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Siesta+Key+Beach+Sarasota+Florida" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
 
-// Region filter dropdown
-(function() {
-  var jump    = document.getElementById('regionJump');
-  var toggle  = document.getElementById('regionJumpToggle');
-  var label   = document.getElementById('regionJumpLabel');
-        var defaultLabel = label.textContent;
-  var list    = document.getElementById('regionJumpList');
-  var labels  = document.querySelectorAll('.best-of-section-label');
-  if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
+    <div class="best-of-card">
+                <div class="best-of-name">Clearwater Beach</div>
+          <div class="best-of-tag">Tampa Bay, Florida</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 22–30 °C water</span><span>📏 4.0 km</span></div>
+      <div class="best-of-desc">A lively Gulf-coast barrier-island beach west of Tampa, with wide white sand, a pedestrian promenade, and a marina district at its northern end.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Clearwater_Beach" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.booking.com/searchresults.html?ss=Clearwater+Beach+Florida" target="_blank" rel="noopener">Hotels</a>
+        <a class="best-of-link" href="https://www.visitclearwaterflorida.com" target="_blank" rel="noopener">Visit Clearwater</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Clearwater+Beach+Tampa+Bay+Florida" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
 
-  var active = null;
+    <div class="best-of-card">
+                <div class="best-of-name">La Jolla Cove</div>
+          <div class="best-of-tag">San Diego, California</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 16–21 °C water</span><span>📏 0.1 km</span></div>
+      <div class="best-of-desc">A small protected cove framed by sandstone bluffs in La Jolla, part of an ecological reserve, with clear water popular for swimming and snorkeling among sea life.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="../Guides/San-Diego/san-diego_v1.html">🌐 San Diego Guide</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/La_Jolla_Cove" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.sandiego.org/explore/things-to-do/beaches-bays/la-jolla.aspx" target="_blank" rel="noopener">San Diego Tourism</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/La+Jolla+Cove+San+Diego+California" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
 
-  // Build option list from section labels
-  var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All sections</button>';
-  labels.forEach(function(l) {
-    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
-  });
-  list.innerHTML = html;
-  var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
+    <div class="best-of-card">
+                <div class="best-of-name">El Matador Beach</div>
+          <div class="best-of-tag">Malibu, California</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 15–20 °C water</span><span>📏 0.3 km</span></div>
+      <div class="best-of-desc">A Malibu state beach reached by a stairway down the bluff, known for its sea caves, rock arches, and weathered sandstone sea stacks rising from the sand.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="../Guides/Malibu/malibu_v1.html">🌐 Malibu Guide</a>
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/El_Matador_State_Beach" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.parks.ca.gov/?page_id=2681" target="_blank" rel="noopener">CA State Parks</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/El+Matador+Beach+Malibu+California" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
 
-  function applyFilter() {
-    items.forEach(function(it) {
-      it.classList.toggle('on', active === null ? it.dataset.region === 'all' : it.dataset.region === active);
-    });
-    label.textContent = active || defaultLabel;
-    toggle.classList.toggle('has-active', active !== null);
-    var cards = document.querySelectorAll('.best-of-card');
-    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
-    cards.forEach(function(c) {
-      if (!active) { c.style.display = ''; return; }
-      // find preceding section label
-      var prev = c.previousElementSibling;
-      while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
-      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
-    });
-    // show/hide subsection labels based on whether their cards are visible
-    document.querySelectorAll('.best-of-subsection-label').forEach(function(sub) {
-      var next = sub.nextElementSibling;
-      var hasVisible = false;
-      while (next && !next.classList.contains('best-of-section-label') && !next.classList.contains('best-of-subsection-label')) {
-        if (next.classList.contains('best-of-card') && next.style.display !== 'none') { hasVisible = true; break; }
-        next = next.nextElementSibling;
-      }
-      sub.style.display = hasVisible ? '' : 'none';
-    });
-  }
+    <div class="best-of-card">
+                <div class="best-of-name">Pfeiffer Beach</div>
+          <div class="best-of-tag">Big Sur, California</div>
+      <div class="best-of-meta"><span>☀️ Year-round</span><span>🌡️ 12–16 °C water</span><span>📏 0.4 km</span></div>
+      <div class="best-of-desc">A Big Sur beach reached by an unmarked side road, known for purple-tinged manganese-garnet sand and a rock arch through which surf and light break at sunset.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Pfeiffer_Big_Sur_State_Park" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.parks.ca.gov/?page_id=2666" target="_blank" rel="noopener">CA State Parks</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Pfeiffer+Beach+Big+Sur+California" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
 
-  window._regionJumpReset = function() { active = null; applyFilter(); };
-  // UI-only reset used by search handler (doesn't touch card visibility)
-  window._regionJumpResetUI = function() {
-    active = null;
-    items.forEach(function(it) { it.classList.toggle('on', it.dataset.region === 'all'); });
-    label.textContent = defaultLabel;
-    toggle.classList.remove('has-active');
-  };
-
-  function openMenu()  { jump.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
-  function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
-
-  toggle.addEventListener('click', function() { jump.classList.contains('open') ? closeMenu() : openMenu(); });
-  items.forEach(function(it) {
-    it.addEventListener('click', function() {
-      active = it.dataset.region === 'all' ? null : it.dataset.region;
-      applyFilter(); closeMenu();
-    });
-  });
-  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); }, true);
-}());
-
-</script>
-</body>
-</html>
+    <!-- ══ BRAZIL ══ -->
+    
