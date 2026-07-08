@@ -517,9 +517,12 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   display: inline-block; font-size: 12px; font-weight: 600;
   color: var(--accent); text-decoration: none;
   padding: 6px 14px; border: 1px solid var(--accent); border-radius: 14px;
-  transition: background .12s, color .12s;
+  transition: background .12s, color .12s, border-color .12s;
 }
-.cmp-guide-link:hover { background: var(--accent); color: #fff; }
+.cmp-guide-link:hover {
+  background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+  border-color: #b85c2a; color: #fff; text-decoration: none;
+}
 @media (max-width: 600px) {
   .cmp-sel-bar { padding: 8px 12px; gap: 7px; }
   .cmp-table td { padding: 8px 10px; }
@@ -2669,9 +2672,8 @@ window._giStatusFilter = 'all';
     sel.forEach(function(c) {
       var tags = THEMES[c.name] || [];
       if (tags.length) {
-        out += '<td class="cmp-col"><div class="cmp-tags">' + tags.map(function(t){
-          return '<span class="cmp-tag">' + (CMP_TAGS[t] || esc(t)) + '</span>';
-        }).join('') + '</div></td>';
+        var labels = tags.map(function(t){ return CMP_TAGS[t] || esc(t); });
+        out += '<td class="cmp-col" style="font-size:11.5px;color:var(--text, #1a1917);line-height:1.6">' + labels.join(' · ') + '</td>';
       } else {
         out += '<td class="cmp-col"><span style="font-size:12px;color:var(--muted)">—</span></td>';
       }
@@ -2690,15 +2692,11 @@ window._giStatusFilter = 'all';
     });
     out += '</tr>';
 
-    /* Currency / cost row */
-    var USD_RATES = {
-      'EUR':0.92,'GBP':0.79,'CHF':0.89,'NOK':10.5,'SEK':10.3,'DKK':6.9,'ISK':138,
-      'THB':35,'JPY':148,'KRW':1320,'CNY':7.2,'HKD':7.8,'SGD':1.35,'TWD':32,
-      'AUD':1.55,'NZD':1.68,'CAD':1.36,'AED':3.67,'MAD':10.1,'CZK':23,
-      'PEN':3.75,'ARS':900,'BRL':5.0,'CLP':950,'KYD':0.82,'AWG':1.79,
-      'BBD':2.0,'BSD':1.0,'ANG':1.79,'USD':1.0
-    };
-    var TIER_RANK = { 'Budget':1, 'Moderate':2, 'Expensive':3, 'Premium':4 };
+    /* Currency / cost row — the tier is the meaningful signal; a raw FX rate
+       colored by tier was misleading (Eurozone cities all show the same rate
+       yet were tinted differently by cost tier, which has no relation to it). */
+    var TIER_RANK  = { 'Budget':1, 'Moderate':2, 'Expensive':3, 'Premium':4 };
+    var TIER_COLOR = { 'Budget':'#2a7a2a', 'Moderate':'#8a6c1a', 'Expensive':'#c06000', 'Premium':'#b00000' };
     var minTier = null, tierVals = {};
     sel.forEach(function(c) {
       var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
@@ -2708,18 +2706,15 @@ window._giStatusFilter = 'all';
       }
     });
     var tierTies = Object.keys(tierVals).filter(function(k){ return tierVals[k] === minTier; });
-    out += '<tr><td class="cmp-row-label">💵 Currency<br><span style="font-weight:400;font-size:10px">1 USD =</span></td>';
+    out += '<tr><td class="cmp-row-label">💵 Cost</td>';
     sel.forEach(function(c) {
       var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
       if (ci) {
-        var code = ci.currency.split('/')[0].split(' ')[0].trim();  // "EUR (euro)" → "EUR", "USD/ANG" → "USD"
-        var rate = USD_RATES[code] || null;
-        var rateStr = rate ? (rate >= 100 ? Math.round(rate) : rate % 1 === 0 ? rate : rate.toFixed(2)) + ' ' + code : ci.currency;
-        var dotColor = ci.tier === 'Budget' ? '#2a7a2a' : ci.tier === 'Moderate' ? '#8a6c1a' : ci.tier === 'Expensive' ? '#c06000' : '#b00000';
+        var col = TIER_COLOR[ci.tier] || '#8a6c1a';
         var bestC = sel.length > 1 && minTier !== null && tierVals[c.href] === minTier && tierTies.length < sel.length;
         out += '<td class="cmp-col">'
-          + '<span style="font-size:13px;font-weight:700;color:' + dotColor + '">' + rateStr + '</span>'
-          + '<br><span style="font-size:10px;color:var(--muted)">' + ci.tier + ' destination</span>'
+          + '<span style="font-size:13px;font-weight:700;color:' + col + '">' + ci.tier + '</span>'
+          + '<br><span style="font-size:10px;color:var(--muted)">' + esc(ci.currency) + '</span>'
           + (bestC ? '<br><span class="cmp-badge">Most affordable ✓</span>' : '')
           + '</td>';
       } else {
