@@ -427,7 +427,7 @@ body.mode-compare .mosaic-wrap .dest-card[data-status="want"].cmp-sel::after {
 body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45; }
 /* Compare selection panel — sits in the same band as the When-to-go panel */
 .cmp-sel-bar {
-  margin: 16px 0 6px; padding: 14px 18px;
+  margin: 16px 0 10px; padding: 14px 18px;
   background: var(--warm); border: 1px solid var(--border); border-radius: 12px;
   box-shadow: 0 4px 16px rgba(122,59,30,.08);
   display: none; align-items: center; gap: 10px; flex-wrap: wrap;
@@ -463,12 +463,6 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
 .cmp-exit-btn:hover { border-color: #b85c2a; color: var(--accent); }
 /* Compare panel */
 #compare-view { padding-bottom: 100px; }
-.cmp-back {
-  font-family: inherit; font-size: 12px; padding: 5px 12px; border-radius: 16px;
-  background: var(--warm); border: 1px solid var(--border2, #e6e2da); color: var(--muted);
-  cursor: pointer; margin-bottom: 4px; display: inline-flex; align-items: center; gap: 5px;
-}
-.cmp-back:hover { border-color: #b85c2a; color: var(--accent); }
 .cmp-table-wrap { overflow-x: auto; }
 .cmp-table { border-collapse: separate; border-spacing: 0; min-width: 420px; }
 .cmp-table td { padding: 9px 14px; border-bottom: 1px solid var(--border2, #e6e2da); font-size: 13px; vertical-align: middle; }
@@ -538,8 +532,8 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   border-color: #b85c2a; color: #fff; text-decoration: none;
 }
 .cmp-legend-footnote {
-  margin: 6px 0 0;
-  display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center;
+  margin: 6px 0 0; padding-left: 128px;
+  display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: flex-start;
 }
 @media (max-width: 600px) {
   .cmp-sel-bar { padding: 8px 12px; gap: 7px; }
@@ -2845,27 +2839,15 @@ window._giStatusFilter = 'all';
     /* Currency / cost row — the tier is the meaningful signal; a raw FX rate
        colored by tier was misleading (Eurozone cities all show the same rate
        yet were tinted differently by cost tier, which has no relation to it). */
-    var TIER_RANK  = { 'Budget':1, 'Moderate':2, 'Expensive':3, 'Premium':4 };
     var TIER_COLOR = { 'Budget':'#2a7a2a', 'Moderate':'#8a6c1a', 'Expensive':'#c06000', 'Premium':'#b00000' };
-    var minTier = null, tierVals = {};
-    sel.forEach(function(c) {
-      var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
-      if (ci && TIER_RANK[ci.tier]) {
-        tierVals[c.href] = TIER_RANK[ci.tier];
-        if (minTier === null || TIER_RANK[ci.tier] < minTier) minTier = TIER_RANK[ci.tier];
-      }
-    });
-    var tierTies = Object.keys(tierVals).filter(function(k){ return tierVals[k] === minTier; });
     out += '<tr><td class="cmp-row-label">💵 Cost</td>';
     sel.forEach(function(c) {
       var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
       if (ci) {
         var col = TIER_COLOR[ci.tier] || '#8a6c1a';
-        var bestC = sel.length > 1 && minTier !== null && tierVals[c.href] === minTier && tierTies.length < sel.length;
         out += '<td class="cmp-col">'
           + '<span style="font-size:14px;font-weight:700;color:' + col + '">' + ci.tier + '</span>'
           + '<br><span style="font-size:11px;color:var(--muted)">' + esc(ci.currency) + '</span>'
-          + (bestC ? '<br><span class="cmp-badge">Most affordable ✓</span>' : '')
           + '</td>';
       } else {
         out += '<td class="cmp-col"><span style="font-size:11px;color:var(--muted)">—</span></td>';
@@ -2927,19 +2909,13 @@ window._giStatusFilter = 'all';
     if (!compareView || sel.length < 2) return;
     loadClimate(function() {
       compareView.hidden = false;
-      compareView.innerHTML =
-        '<button class="cmp-back" id="cmp-back">← Back to cities</button>' +
-        buildTable();
+      compareView.innerHTML = buildTable();
       document.querySelector('.mosaic-wrap').style.display = 'none';
       var fv = document.getElementById('flight-view');
       if (fv) fv.style.display = 'none';
       /* wire remove buttons */
       compareView.querySelectorAll('.cmp-remove-btn').forEach(function(b) {
         b.addEventListener('click', function(){ deselect(b.dataset.href); });
-      });
-      document.getElementById('cmp-back').addEventListener('click', function() {
-        compareView.hidden = true; compareView.innerHTML = '';
-        document.querySelector('.mosaic-wrap').style.display = '';
       });
     });
   }
