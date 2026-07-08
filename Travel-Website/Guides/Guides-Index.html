@@ -194,8 +194,15 @@
 .utab.on { background:var(--banner-gradient); color:#fdf8f0; }
 /* ── Region grouping ── */
 #btn-region-group.active { background:var(--warm); border-color:#b85c2a; color:#7a3b1e; }
-.region-header { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 2px 4px; margin-top:6px; border-top:1px solid var(--border); break-inside:avoid; }
-.region-header:first-child { border-top:none; margin-top:0; }
+.region-header { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 2px 6px; }
+/* In region mode the mosaic switches to block layout; each region-group
+   has its own multi-column grid so countries never bleed across groups. */
+.mosaic.mode-region { columns: unset !important; }
+.region-group { margin-bottom: 28px; }
+.region-group:first-child .region-header { padding-top: 0; }
+.region-countries { columns: 3; column-gap: 16px; }
+@media (max-width: 1100px) { .region-countries { columns: 2; } }
+@media (max-width: 640px)  { .region-countries { columns: 1; } }
 /* ── Responsive — fewer mosaic columns on narrow screens ── */
 @media (max-width: 1100px) {
   .mosaic { columns: 2; }
@@ -2622,10 +2629,62 @@ window._giStatusFilter = 'all';
       else { ranges.push([s, p]); s = good[j]; p = good[j]; }
     }
     ranges.push([s, p]);
+    /* A warm stretch that crosses the Dec→Jan boundary (e.g. Southern
+       Hemisphere / tropical cities) was splitting into two disconnected
+       ranges like "Jan–May, Aug–Dec" instead of one continuous run. Merge
+       a Dec-ending range with a Jan-starting range into a single wrap. */
+    if (ranges.length > 1 && ranges[0][0] === 0 && ranges[ranges.length - 1][1] === 11) {
+      var first = ranges.shift();
+      var last = ranges.pop();
+      ranges.push([last[0], first[1]]);
+    }
     return ranges.map(function(r){
+      if (r[0] > r[1]) return MNAMES[r[0]] + '–' + MNAMES[r[1]]; /* wraps year-end */
       return r[0] === r[1] ? MNAMES[r[0]] : MNAMES[r[0]] + '–' + MNAMES[r[1]];
     }).join(', ');
   }
+
+  /* ── Time zone data (sourced from Trip-Essentials/Time-Zones.html CITIES) ── */
+  var TZ_DATA = {"Alaska":"America/Anchorage","Aracaju":"America/Maceio","Arenal":"America/Costa_Rica","Atlanta":"America/New_York","Austin":"America/Chicago","Bend":"America/Los_Angeles","Big Island":"Pacific/Honolulu","Boston":"America/New_York","Boulder":"America/Denver","Buenos Aires":"America/Argentina/Buenos_Aires","Cape Cod":"America/New_York","Carmel-by-the-Sea":"America/Los_Angeles","Charlotte":"America/New_York","Chicago":"America/Chicago","Columbia":"America/New_York","Cusco":"America/Lima","Dallas":"America/Chicago","Denver":"America/Denver","Glacier National Park":"America/Denver","Florida Keys":"America/New_York","Kauai":"Pacific/Honolulu","Key West":"America/New_York","La Jolla":"America/Los_Angeles","Lake Tahoe":"America/Los_Angeles","Las Vegas":"America/Los_Angeles","Lima":"America/Lima","Los Angeles":"America/Los_Angeles","Machu Picchu":"America/Lima","Malibu":"America/Los_Angeles","Maui":"Pacific/Honolulu","Miami":"America/New_York","Manuel Antonio":"America/Costa_Rica","Montevideo":"America/Montevideo","Montreal":"America/Toronto","Napa":"America/Los_Angeles","Naples":"Europe/Rome","Nashville":"America/Chicago","New Orleans":"America/Chicago","New York":"America/New_York","Oahu":"Pacific/Honolulu","Orlando":"America/New_York","Palm Desert":"America/Los_Angeles","Palo Alto":"America/Los_Angeles","Pensacola":"America/Chicago","Pasadena":"America/Los_Angeles","Philadelphia":"America/New_York","Phoenix":"America/Phoenix","Portland":"America/Los_Angeles","Quebec City":"America/Toronto","Rio de Janeiro":"America/Sao_Paulo","Curitiba":"America/Sao_Paulo","Florianópolis":"America/Sao_Paulo","Fortaleza":"America/Fortaleza","Foz do Iguaçu":"America/Sao_Paulo","João Pessoa":"America/Recife","Maceió":"America/Maceio","Natal":"America/Fortaleza","Olinda":"America/Recife","Porto Alegre":"America/Sao_Paulo","Recife":"America/Recife","Salvador":"America/Bahia","São Luís":"America/Fortaleza","São Paulo":"America/Sao_Paulo","San Diego":"America/Los_Angeles","San Francisco":"America/Los_Angeles","San Jose":"America/Los_Angeles","San Jose Costa Rica":"America/Costa_Rica","Orcas Island":"America/Los_Angeles","San Juan Island":"America/Los_Angeles","Santa Barbara":"America/Los_Angeles","Santa Cruz":"America/Los_Angeles","Santa Monica":"America/Los_Angeles","Santiago":"America/Santiago","Sarasota":"America/New_York","Scottsdale":"America/Phoenix","Sedona":"America/Phoenix","Seattle":"America/Los_Angeles","Toronto":"America/Toronto","Vancouver":"America/Vancouver","Victoria":"America/Vancouver","Whistler":"America/Vancouver","Washington DC":"America/New_York","Yellowstone":"America/Denver","Aruba":"America/Aruba","Bahamas":"America/Nassau","Barbados":"America/Barbados","Cayman Islands":"America/Cayman","Curacao":"America/Curacao","Puerto Rico":"America/Puerto_Rico","Sint Maarten":"America/Lower_Princes","Turks and Caicos":"America/Grand_Turk","Virgin Islands":"America/St_Thomas","Kraków":"Europe/Warsaw","Aix-en-Provence":"Europe/Paris","Alesund":"Europe/Oslo","Amalfi":"Europe/Rome","Amsterdam":"Europe/Amsterdam","Annecy":"Europe/Paris","Bora Bora":"Pacific/Tahiti","Athens":"Europe/Athens","Azores":"Atlantic/Azores","Barcelona":"Europe/Madrid","Bergen":"Europe/Oslo","Berlin":"Europe/Berlin","Bologna":"Europe/Rome","Bordeaux":"Europe/Paris","Bruges":"Europe/Brussels","Brussels":"Europe/Brussels","Budapest":"Europe/Budapest","Cambridge":"Europe/London","Cannes":"Europe/Paris","Capri":"Europe/Rome","Cascais":"Europe/Lisbon","Cinque Terre":"Europe/Rome","Colmar":"Europe/Paris","Copenhagen":"Europe/Copenhagen","Corfu":"Europe/Athens","Dublin":"Europe/Dublin","Dubrovnik":"Europe/Zagreb","Edinburgh":"Europe/London","Florence":"Europe/Rome","Geneva":"Europe/Zurich","Glasgow":"Europe/London","Gothenburg":"Europe/Stockholm","Hamburg":"Europe/Berlin","Helsinki":"Europe/Helsinki","Istanbul":"Europe/Istanbul","Lake Como":"Europe/Rome","Lille":"Europe/Paris","Lisbon":"Europe/Lisbon","Ljubljana":"Europe/Ljubljana","London":"Europe/London","Lucerne":"Europe/Zurich","Luxembourg":"Europe/Luxembourg","Lyon":"Europe/Paris","Madeira":"Atlantic/Madeira","Madrid":"Europe/Madrid","Malaga":"Europe/Madrid","Marktoberdorf":"Europe/Berlin","Marseille":"Europe/Paris","Milan":"Europe/Rome","Monaco":"Europe/Monaco","Munich":"Europe/Berlin","Mykonos":"Europe/Athens","Nice":"Europe/Paris","Oslo":"Europe/Oslo","Oxford":"Europe/London","Paris":"Europe/Paris","Pisa":"Europe/Rome","Porto":"Europe/Lisbon","Prague":"Europe/Prague","Lecce":"Europe/Rome","Reykjavik":"Atlantic/Reykjavik","Rome":"Europe/Rome","Sardinia":"Europe/Rome","Salzburg":"Europe/Vienna","San Sebastian":"Europe/Madrid","Santorini":"Europe/Athens","Seville":"Europe/Madrid","Sicily":"Europe/Rome","Siena":"Europe/Rome","Sintra":"Europe/Lisbon","Sorrento":"Europe/Rome","Split":"Europe/Zagreb","Stockholm":"Europe/Stockholm","Strasbourg":"Europe/Paris","Stuttgart":"Europe/Berlin","Tallinn":"Europe/Tallinn","Toledo":"Europe/Madrid","Tromsø":"Europe/Oslo","Turin":"Europe/Rome","Venice":"Europe/Rome","Verona":"Europe/Rome","Vienna":"Europe/Vienna","Zurich":"Europe/Zurich","Bali":"Asia/Makassar","Bangkok":"Asia/Bangkok","Chiang Mai":"Asia/Bangkok","Beijing":"Asia/Shanghai","Chongqing":"Asia/Shanghai","Colombo":"Asia/Colombo","Hanoi":"Asia/Ho_Chi_Minh","Hoi An":"Asia/Ho_Chi_Minh","Hong Kong":"Asia/Hong_Kong","Kyoto":"Asia/Tokyo","Osaka":"Asia/Tokyo","Maldives":"Indian/Maldives","Melbourne":"Australia/Melbourne","Palawan":"Asia/Manila","Phuket":"Asia/Bangkok","Queenstown":"Pacific/Auckland","Seoul":"Asia/Seoul","Shanghai":"Asia/Shanghai","Singapore":"Asia/Singapore","Sydney":"Australia/Sydney","Taipei":"Asia/Taipei","Tokyo":"Asia/Tokyo","Wellington":"Pacific/Auckland","Zhangjiajie":"Asia/Shanghai","Abu Dhabi":"Asia/Dubai","Cairo":"Africa/Cairo","Doha":"Asia/Qatar","Dubai":"Asia/Dubai","Petra":"Asia/Amman","Lagos":"Africa/Lagos","Marrakech":"Africa/Casablanca"};
+  var SEA_TZ = 'America/Los_Angeles';
+  function stripAccents(s) { return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  var TZ_NORM = {};
+  Object.keys(TZ_DATA).forEach(function (k) { TZ_NORM[stripAccents(k).toLowerCase()] = TZ_DATA[k]; });
+  function tzLookup(name) { return TZ_DATA[name] || TZ_NORM[stripAccents(name).toLowerCase()] || null; }
+  function tzOffsetMinutes(tz, date) {
+    var d = new Date(date.toLocaleString('en-US', { timeZone: tz }));
+    var utc = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+    return (d - utc) / 60000;
+  }
+  function tzFormatOffset(tz, date) {
+    var mins = tzOffsetMinutes(tz, date);
+    var h = Math.floor(Math.abs(mins) / 60), m = Math.abs(mins) % 60;
+    return 'UTC' + (mins >= 0 ? '+' : '−') + h + (m ? ':' + String(m).padStart(2, '0') : '');
+  }
+  function tzFormatTime(tz, date) {
+    return new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true }).format(date);
+  }
+
+  /* ── Needs-visa data, US citizen (sourced from Trip-Essentials/Visas.html) ──
+     Keyed by country label text as it appears in this page's .country-label
+     blocks, matching the c.country field captured on card selection. */
+  var VISA_DOMESTIC = { 'United States': 1, 'Puerto Rico': 1, 'Virgin Islands': 1 }; /* US soil — no visa, not even the Caribbean bucket they're grouped under */
+  var VISA_DATA = {
+    /* Schengen — visa-free, 90 days in any 180 */
+    'Austria':{needed:'no',label:'Visa-free · 90 days'},'Belgium':{needed:'no',label:'Visa-free · 90 days'},'Croatia':{needed:'no',label:'Visa-free · 90 days'},'Czechia':{needed:'no',label:'Visa-free · 90 days'},'Denmark':{needed:'no',label:'Visa-free · 90 days'},'Estonia':{needed:'no',label:'Visa-free · 90 days'},'Finland':{needed:'no',label:'Visa-free · 90 days'},'France':{needed:'no',label:'Visa-free · 90 days'},'Germany':{needed:'no',label:'Visa-free · 90 days'},'Greece':{needed:'no',label:'Visa-free · 90 days'},'Hungary':{needed:'no',label:'Visa-free · 90 days'},'Iceland':{needed:'no',label:'Visa-free · 90 days'},'Italy':{needed:'no',label:'Visa-free · 90 days'},'Luxembourg':{needed:'no',label:'Visa-free · 90 days'},'Monaco':{needed:'no',label:'Visa-free · 90 days'},'Netherlands':{needed:'no',label:'Visa-free · 90 days'},'Norway':{needed:'no',label:'Visa-free · 90 days'},'Poland':{needed:'no',label:'Visa-free · 90 days'},'Portugal':{needed:'no',label:'Visa-free · 90 days'},'Slovenia':{needed:'no',label:'Visa-free · 90 days'},'Spain':{needed:'no',label:'Visa-free · 90 days'},'Sweden':{needed:'no',label:'Visa-free · 90 days'},'Switzerland':{needed:'no',label:'Visa-free · 90 days'},
+    /* Rest of world — visa-free, own limits */
+    'Ireland':{needed:'no',label:'Visa-free · 90 days'},'Canada':{needed:'no',label:'Visa-free · 180 days'},'Japan':{needed:'no',label:'Visa-free · 90 days'},'Philippines':{needed:'no',label:'Visa-free · 30 days'},'Taiwan':{needed:'no',label:'Visa-free · 90 days'},'French Polynesia':{needed:'no',label:'Visa-free · 90 days'},'Morocco':{needed:'no',label:'Visa-free · 90 days'},'Argentina':{needed:'no',label:'Visa-free · 90 days'},'Chile':{needed:'no',label:'Visa-free · 90 days'},'Peru':{needed:'no',label:'Visa-free · 183 days'},'Uruguay':{needed:'no',label:'Visa-free · 90 days'},'Costa Rica':{needed:'no',label:'Visa-free · 90 days'},'Caribbean Islands':{needed:'no',label:'Visa-free · ~90 days'},
+    /* Free arrival card — file online, not a visa */
+    'Thailand':{needed:'no',label:'Free arrival card · 60 days'},'Singapore':{needed:'no',label:'Free arrival card · 90 days'},'Sri Lanka':{needed:'no',label:'Free arrival card · 30 days'},'South Korea':{needed:'no',label:'Free arrival card · 90 days'},
+    /* Travel authorization (ETA) — apply online, not a traditional visa */
+    'United Kingdom':{needed:'no',label:'UK ETA required'},'Australia':{needed:'no',label:'ETA (601) required'},'New Zealand':{needed:'no',label:'NZeTA required'},
+    /* eVisa required */
+    'Brazil':{needed:'yes',label:'eVisa required'},'Turkey':{needed:'yes',label:'eVisa required'},'Vietnam':{needed:'yes',label:'eVisa required'},
+    /* Visa on arrival */
+    'United Arab Emirates':{needed:'yes',label:'Visa on arrival (free)'},'Qatar':{needed:'yes',label:'Visa on arrival (free)'},'Indonesia':{needed:'yes',label:'Visa on arrival'},'Maldives':{needed:'yes',label:'Visa on arrival · 30 days free'},'Jordan':{needed:'yes',label:'Visa on arrival'},
+    /* Visa required, arrange in advance */
+    'China':{needed:'yes',label:'Visa required'},'Egypt':{needed:'yes',label:'Visa required'}
+  };
 
   /* ── Cost & Safety data (static, approximate — good for trip planning) ── */
   // tier: Budget = USD goes far, Moderate = average, Expensive = pricey, Premium = very expensive
@@ -2663,6 +2722,24 @@ window._giStatusFilter = 'all';
     });
     out += '</tr>';
 
+    /* Time zone row */
+    var TZ_NOW = new Date();
+    out += '<tr><td class="cmp-row-label">🕐 Local Time</td>';
+    sel.forEach(function(c) {
+      var tz = tzLookup(c.name);
+      if (tz) {
+        var diffH = Math.round((tzOffsetMinutes(tz, TZ_NOW) - tzOffsetMinutes(SEA_TZ, TZ_NOW)) / 60);
+        var diffStr = diffH === 0 ? 'same as Seattle' : (diffH > 0 ? '+' : '−') + Math.abs(diffH) + (Math.abs(diffH) === 1 ? ' hr' : ' hrs') + ' vs Seattle';
+        out += '<td class="cmp-col">'
+          + '<span style="font-size:13px;font-weight:700;color:var(--text, #1a1917)">' + tzFormatTime(tz, TZ_NOW) + '</span>'
+          + '<br><span style="font-size:10px;color:var(--muted)">' + tzFormatOffset(tz, TZ_NOW) + ' · ' + diffStr + '</span>'
+          + '</td>';
+      } else {
+        out += '<td class="cmp-col"><span style="font-size:12px;color:var(--muted)">—</span></td>';
+      }
+    });
+    out += '</tr>';
+
     /* Flight row — badge the shortest */
     function fltMins(f) {
       var m = /(\d+)h\s*(\d+)m/.exec(f.t || '');
@@ -2695,6 +2772,27 @@ window._giStatusFilter = 'all';
     });
     out += '</tr>';
 
+    /* Needs-visa row (US citizen) */
+    out += '<tr><td class="cmp-row-label">🪪 Needs Visa<br><span style="font-weight:400;font-size:10px">US citizen</span></td>';
+    sel.forEach(function(c) {
+      if (VISA_DOMESTIC[c.name] || c.country === 'United States') {
+        out += '<td class="cmp-col"><span style="font-size:13px;font-weight:700;color:#2a7a2a">No</span>'
+          + '<br><span style="font-size:10px;color:var(--muted)">U.S. — domestic travel</span></td>';
+        return;
+      }
+      var vi = c.country ? VISA_DATA[c.country] : null;
+      if (vi) {
+        var vcol = vi.needed === 'no' ? '#2a7a2a' : '#c06000';
+        out += '<td class="cmp-col">'
+          + '<span style="font-size:13px;font-weight:700;color:' + vcol + '">' + (vi.needed === 'no' ? 'No' : 'Yes') + '</span>'
+          + '<br><span style="font-size:10px;color:var(--muted)">' + esc(vi.label) + '</span>'
+          + '</td>';
+      } else {
+        out += '<td class="cmp-col"><span style="font-size:12px;color:var(--muted)">—</span></td>';
+      }
+    });
+    out += '</tr>';
+
     /* Climate bars row */
     out += '<tr><td class="cmp-row-label">🌡️ Climate<br><span style="font-weight:400;font-size:10px">tap a month</span></td>';
     sel.forEach(function(c) {
@@ -2703,7 +2801,7 @@ window._giStatusFilter = 'all';
     out += '</tr>';
 
     /* Best season row */
-    out += '<tr><td class="cmp-row-label">Best<br>season</td>';
+    out += '<tr><td class="cmp-row-label">Best<br>season<br><span style="font-weight:400;font-size:10px">mild weather</span></td>';
     sel.forEach(function(c) {
       out += '<td class="cmp-col" style="font-size:13px;font-weight:700;color:var(--text, #1a1917)">' + bestSeason(c.climateKey) + '</td>';
     });
@@ -3379,11 +3477,11 @@ window._giStatusFilter = 'all';
   var origCountries = [].slice.call(mosaic.querySelectorAll('.country'));
   var injectedHeaders = [];
 
+  var injectedGroups = [];
+
   function enterRegionMode() {
-    /* Group country divs by region */
     var groups = {};
     REGION_ORDER.forEach(function (r) { groups[r] = []; });
-
     origCountries.forEach(function (el) {
       var slug = el.getAttribute('data-country');
       var r = REGION[slug] || 'Other';
@@ -3391,32 +3489,40 @@ window._giStatusFilter = 'all';
       groups[r].push(el);
     });
 
-    /* Detach all country divs silently */
     origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    /* Clear any old injected headers */
-    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
-    injectedHeaders = [];
+    injectedGroups.forEach(function (g) { g.parentNode && g.parentNode.removeChild(g); });
+    injectedGroups = [];
 
-    /* Re-insert in region order */
+    mosaic.classList.add('mode-region');
+
     REGION_ORDER.forEach(function (r) {
       var els = groups[r];
       if (!els || !els.length) return;
+
+      var group = document.createElement('div');
+      group.className = 'region-group';
+
       var hdr = document.createElement('div');
       hdr.className = 'region-header';
       hdr.textContent = (REGION_ICON[r] || '') + ' ' + r;
-      mosaic.appendChild(hdr);
-      injectedHeaders.push(hdr);
-      els.forEach(function (el) { mosaic.appendChild(el); });
+      group.appendChild(hdr);
+
+      var inner = document.createElement('div');
+      inner.className = 'region-countries';
+      els.forEach(function (el) { inner.appendChild(el); });
+      group.appendChild(inner);
+
+      mosaic.appendChild(group);
+      injectedGroups.push(group);
     });
   }
 
   function exitRegionMode() {
-    /* Remove injected headers */
-    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
-    injectedHeaders = [];
-    /* Detach country divs */
+    mosaic.classList.remove('mode-region');
+    /* Pull country divs back out of inner containers before removing groups */
     origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    /* Re-insert in original order */
+    injectedGroups.forEach(function (g) { g.parentNode && g.parentNode.removeChild(g); });
+    injectedGroups = [];
     origCountries.forEach(function (el) { mosaic.appendChild(el); });
   }
 
