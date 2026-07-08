@@ -25,120 +25,9 @@
 
 <div style="text-align:center;margin:10px 0 14px"><div class="days-jump" id="regionJump"><button type="button" class="days-jump-toggle disc-btn" id="regionJumpToggle" aria-expanded="false" aria-controls="regionJumpList"><span id="regionJumpLabel">Filter by country</span><span class="disc-caret chev">▾</span></button><div class="days-jump-list" id="regionJumpList" role="menu"></div></div></div>
 
-<div class="best-of-grid">
-
-    <!-- ══ KENYA ══ -->
-    <div class="best-of-section-label">Borneo (Malaysia)</div>
-
-    <div class="best-of-card">
-      <div class="best-of-name">Kinabatangan River &amp; Danum Valley</div>
-      <div class="best-of-tag">Wild orangutans, pygmy elephants, proboscis monkeys in pristine rainforest</div>
-      <div class="best-of-meta"><span>📅 Mar–Oct</span><span>🐾 Orangutans, pygmy elephants</span></div>
-      <div class="best-of-desc">A river corridor and ancient lowland rainforest in Malaysian Borneo's Sabah state. Boat trips reveal wild orangutans, endemic Bornean pygmy elephants, and proboscis monkeys along the forested banks.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Kinabatangan_River" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.viator.com/Kinabatangan-River/d25441" target="_blank" rel="noopener">Viator</a>
-        <a class="best-of-link" href="https://www.intrepidtravel.com/adventures/borneo" target="_blank" rel="noopener">Intrepid</a>
-        <a class="best-of-link" href="https://www.gadventures.com/travel-style/wildlife/asia/" target="_blank" rel="noopener">G Adventures</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Kinabatangan+River+&+Danum+Valley+Wild+orangutans+pygmy+elephants" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-  </div>
-
 </div><!-- /wrap -->
 
-<script>
-(function(){
-  var input = document.getElementById('best-of-search');
-  if (!input) return;
-  input.addEventListener('input', function(){
-    var q = this.value.toLowerCase().trim();
-    var cards = document.querySelectorAll('.best-of-card');
-    var labels = document.querySelectorAll('.best-of-section-label');
-    if (!q) {
-      cards.forEach(function(c){ c.style.display = ''; });
-      labels.forEach(function(l){ l.style.display = ''; });
-      return;
-    }
-    cards.forEach(function(c){
-      var name = (c.querySelector('.best-of-name') || {}).textContent || '';
-      var tag = (c.querySelector('.best-of-tag') || {}).textContent || '';
-      var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
-      c.style.display = match ? '' : 'none';
-    });
-    // Reset region filter when searching
-    if (window._regionJumpReset) window._regionJumpReset();
-    labels.forEach(function(label){
-      var next = label.nextElementSibling;
-      var hasVisible = false;
-      while (next && !next.classList.contains('best-of-section-label')) {
-        if (next.classList.contains('best-of-card') && next.style.display !== 'none') {
-          hasVisible = true;
-          break;
-        }
-        next = next.nextElementSibling;
-      }
-      label.style.display = hasVisible ? '' : 'none';
-    });
-  });
-})();
-
-// Region filter dropdown
-(function() {
-  var jump    = document.getElementById('regionJump');
-  var toggle  = document.getElementById('regionJumpToggle');
-  var label   = document.getElementById('regionJumpLabel');
-        var defaultLabel = label.textContent;
-  var list    = document.getElementById('regionJumpList');
-  var labels  = document.querySelectorAll('.best-of-section-label');
-  if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
-
-  var active = null;
-
-  // Build option list from section labels
-  var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All sections</button>';
-  labels.forEach(function(l) {
-    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
-  });
-  list.innerHTML = html;
-  var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
-
-  function applyFilter() {
-    items.forEach(function(it) {
-      it.classList.toggle('on', active === null ? it.dataset.region === 'all' : it.dataset.region === active);
-    });
-    label.textContent = active || defaultLabel;
-    toggle.classList.toggle('has-active', active !== null);
-    var cards = document.querySelectorAll('.best-of-card');
-    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
-    cards.forEach(function(c) {
-      if (!active) { c.style.display = ''; return; }
-      // find preceding section label
-      var prev = c.previousElementSibling;
-      while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
-      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
-    });
-  }
-
-  window._regionJumpReset = function() { active = null; applyFilter(); };
-
-  function openMenu()  { jump.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
-  function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
-
-  toggle.addEventListener('click', function() { jump.classList.contains('open') ? closeMenu() : openMenu(); });
-  items.forEach(function(it) {
-    it.addEventListener('click', function() {
-      active = it.dataset.region === 'all' ? null : it.dataset.region;
-      applyFilter(); closeMenu();
-    });
-  });
-  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); }, true);
-}());
-
-</script>
-</body>
-</html>
+<div class="best-of-grid">
 <div class="best-of-section-label">Botswana</div>
 
     <div class="best-of-card">
@@ -336,7 +225,52 @@
     </div>
 
     <!-- ══ TANZANIA ══ -->
-    <div class="best-of-section-label">Mozambique</div>
+    <div class="best-of-section-label">Madagascar</div>
+
+    <div class="best-of-card">
+      <div class="best-of-name">Andasibe-Mantadia National Park</div>
+      <div class="best-of-tag">Madagascar · Indri and 11 other lemur species, unique biodiversity found nowhere else</div>
+      <div class="best-of-meta"><span>📅 Apr–Nov</span><span>🐾 Lemurs, endemic species</span></div>
+      <div class="best-of-desc">A montane rainforest park in eastern Madagascar, home to the indri, the largest living lemur, along with many other lemur species. It protects the island's highly endemic flora and fauna.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Andasibe-Mantadia_National_Park" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.viator.com/Andasibe-Mantadia-National-Park/d25437" target="_blank" rel="noopener">Viator</a>
+        <a class="best-of-link" href="https://www.intrepidtravel.com/adventures/madagascar" target="_blank" rel="noopener">Intrepid</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Andasibe-Mantadia+National+Park+Madagascar" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+    <div class="best-of-section-label">Malawi</div>
+
+    <div class="best-of-card">
+      <div class="best-of-name">Liwonde National Park</div>
+      <div class="best-of-tag">Malawi · Boat safaris on the Shire River, reintroduced rhinos and cheetahs</div>
+      <div class="best-of-meta"><span>📅 May–Oct</span><span>🐾 Boat safari, reintroduction</span></div>
+      <div class="best-of-desc">A restored reserve along the Shire River in southern Malawi, now managed under a conservation partnership. Riverine habitat draws elephants and hippos, with rhino, cheetah, and lion reintroduced.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Liwonde_National_Park" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.safaribookings.com/liwonde" target="_blank" rel="noopener">SafariBookings</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Liwonde+National+Park+Malawi" target="_blank" rel="noopener">Map</a>
+      </div>
+    </div>
+
+    <!-- ══ INDIA ══ -->
+    
+    <div class="best-of-section-label">Malaysia</div>
+
+    <div class="best-of-card">
+      <div class="best-of-name">Kinabatangan River &amp; Danum Valley</div>
+      <div class="best-of-tag">Wild orangutans, pygmy elephants, proboscis monkeys in pristine rainforest</div>
+      <div class="best-of-meta"><span>📅 Mar–Oct</span><span>🐾 Orangutans, pygmy elephants</span></div>
+      <div class="best-of-desc">A river corridor and ancient lowland rainforest in Malaysian Borneo's Sabah state. Boat trips reveal wild orangutans, endemic Bornean pygmy elephants, and proboscis monkeys along the forested banks.</div>
+      <div class="best-of-links">
+        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Kinabatangan_River" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="best-of-link" href="https://www.viator.com/Kinabatangan-River/d25441" target="_blank" rel="noopener">Viator</a>
+        <a class="best-of-link" href="https://www.intrepidtravel.com/adventures/borneo" target="_blank" rel="noopener">Intrepid</a>
+        <a class="best-of-link" href="https://www.gadventures.com/travel-style/wildlife/asia/" target="_blank" rel="noopener">G Adventures</a>
+        <a class="best-of-link" href="https://www.google.com/maps/search/Kinabatangan+River+&+Danum+Valley+Wild+orangutans+pygmy+elephants" target="_blank" rel="noopener">Map</a>
+      </div>
+
+<div class="best-of-section-label">Mozambique</div>
 
     <div class="best-of-card">
       <div class="best-of-name">Gorongosa National Park</div>
@@ -381,34 +315,6 @@
     </div>
 
     <!-- ══ MOZAMBIQUE ══ -->
-    <div class="best-of-section-label">Other Africa</div>
-
-    <div class="best-of-card">
-      <div class="best-of-name">Liwonde National Park</div>
-      <div class="best-of-tag">Malawi · Boat safaris on the Shire River, reintroduced rhinos and cheetahs</div>
-      <div class="best-of-meta"><span>📅 May–Oct</span><span>🐾 Boat safari, reintroduction</span></div>
-      <div class="best-of-desc">A restored reserve along the Shire River in southern Malawi, now managed under a conservation partnership. Riverine habitat draws elephants and hippos, with rhino, cheetah, and lion reintroduced.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Liwonde_National_Park" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.safaribookings.com/liwonde" target="_blank" rel="noopener">SafariBookings</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Liwonde+National+Park+Malawi" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <div class="best-of-card">
-      <div class="best-of-name">Andasibe-Mantadia National Park</div>
-      <div class="best-of-tag">Madagascar · Indri and 11 other lemur species, unique biodiversity found nowhere else</div>
-      <div class="best-of-meta"><span>📅 Apr–Nov</span><span>🐾 Lemurs, endemic species</span></div>
-      <div class="best-of-desc">A montane rainforest park in eastern Madagascar, home to the indri, the largest living lemur, along with many other lemur species. It protects the island's highly endemic flora and fauna.</div>
-      <div class="best-of-links">
-        <a class="best-of-link" href="https://en.wikipedia.org/wiki/Andasibe-Mantadia_National_Park" target="_blank" rel="noopener">Wikipedia</a>
-        <a class="best-of-link" href="https://www.viator.com/Andasibe-Mantadia-National-Park/d25437" target="_blank" rel="noopener">Viator</a>
-        <a class="best-of-link" href="https://www.intrepidtravel.com/adventures/madagascar" target="_blank" rel="noopener">Intrepid</a>
-        <a class="best-of-link" href="https://www.google.com/maps/search/Andasibe-Mantadia+National+Park+Madagascar" target="_blank" rel="noopener">Map</a>
-      </div>
-    </div>
-
-    <!-- ══ INDIA ══ -->
     <div class="best-of-section-label">Rwanda</div>
 
     <div class="best-of-card">
@@ -656,3 +562,98 @@
 
     <!-- ══ ZAMBIA ══ -->
     
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+  var input = document.getElementById('best-of-search');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    var cards = document.querySelectorAll('.best-of-card');
+    var labels = document.querySelectorAll('.best-of-section-label');
+    if (!q) {
+      cards.forEach(function(c){ c.style.display = ''; });
+      labels.forEach(function(l){ l.style.display = ''; });
+      return;
+    }
+    cards.forEach(function(c){
+      var name = (c.querySelector('.best-of-name') || {}).textContent || '';
+      var tag = (c.querySelector('.best-of-tag') || {}).textContent || '';
+      var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
+      c.style.display = match ? '' : 'none';
+    });
+    // Reset region filter when searching
+    if (window._regionJumpReset) window._regionJumpReset();
+    labels.forEach(function(label){
+      var next = label.nextElementSibling;
+      var hasVisible = false;
+      while (next && !next.classList.contains('best-of-section-label')) {
+        if (next.classList.contains('best-of-card') && next.style.display !== 'none') {
+          hasVisible = true;
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      label.style.display = hasVisible ? '' : 'none';
+    });
+  });
+})();
+
+// Country filter dropdown
+(function() {
+  var jump    = document.getElementById('regionJump');
+  var toggle  = document.getElementById('regionJumpToggle');
+  var label   = document.getElementById('regionJumpLabel');
+        var defaultLabel = label.textContent;
+  var list    = document.getElementById('regionJumpList');
+  var labels  = document.querySelectorAll('.best-of-section-label');
+  if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
+
+  var active = null;
+
+  // Build option list from section labels
+  var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All countries</button>';
+  labels.forEach(function(l) {
+    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
+  });
+  list.innerHTML = html;
+  var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
+
+  function applyFilter() {
+    items.forEach(function(it) {
+      it.classList.toggle('on', active === null ? it.dataset.region === 'all' : it.dataset.region === active);
+    });
+    label.textContent = active || defaultLabel;
+    toggle.classList.toggle('has-active', active !== null);
+    var cards = document.querySelectorAll('.best-of-card');
+    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
+    cards.forEach(function(c) {
+      if (!active) { c.style.display = ''; return; }
+      // find preceding section label
+      var prev = c.previousElementSibling;
+      while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
+      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
+    });
+  }
+
+  window._regionJumpReset = function() { active = null; applyFilter(); };
+
+  function openMenu()  { jump.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
+  function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+
+  toggle.addEventListener('click', function() { jump.classList.contains('open') ? closeMenu() : openMenu(); });
+  items.forEach(function(it) {
+    it.addEventListener('click', function() {
+      active = it.dataset.region === 'all' ? null : it.dataset.region;
+      applyFilter(); closeMenu();
+    });
+  });
+  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); }, true);
+}());
+
+</script>
+</body>
+</html>

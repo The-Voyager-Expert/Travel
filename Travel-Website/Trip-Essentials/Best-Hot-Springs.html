@@ -786,7 +786,9 @@
     </div>
 
     <!-- UNITED STATES -->
-    <div class="best-of-section-label">United States — Alaska</div>
+    <div class="best-of-section-label">United States</div>
+
+    <div class="best-of-subsection-label">Alaska</div>
 
     <div class="best-of-card">
       <div class="best-of-name">Chena Hot Springs</div>
@@ -801,7 +803,7 @@
       </div>
     </div>
 
-    <div class="best-of-section-label">United States — Arkansas</div>
+    <div class="best-of-subsection-label">Arkansas</div>
 
     <div class="best-of-card">
       <div class="best-of-name">Hot Springs National Park</div>
@@ -815,7 +817,7 @@
       </div>
     </div>
 
-    <div class="best-of-section-label">United States — Colorado</div>
+    <div class="best-of-subsection-label">Colorado</div>
 
     <div class="best-of-card">
       <div class="best-of-name">Glenwood Hot Springs</div>
@@ -841,7 +843,7 @@
       </div>
     </div>
 
-    <div class="best-of-section-label">United States — New Mexico</div>
+    <div class="best-of-subsection-label">New Mexico</div>
 
     <div class="best-of-card">
       <div class="best-of-name">Ojo Caliente</div>
@@ -855,7 +857,7 @@
       </div>
     </div>
 
-    <div class="best-of-section-label">United States — Wyoming</div>
+    <div class="best-of-subsection-label">Wyoming</div>
 
     <div class="best-of-card">
       <div class="best-of-name">Boiling River</div>
@@ -897,6 +899,7 @@
     if (!q) {
       cards.forEach(function(c){ c.style.display = ''; });
       labels.forEach(function(l){ l.style.display = ''; });
+      if (window._regionJumpReset) window._regionJumpReset();
       return;
     }
     cards.forEach(function(c){
@@ -905,7 +908,6 @@
       var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
       c.style.display = match ? '' : 'none';
     });
-    // Reset region filter when searching
     if (window._regionJumpReset) window._regionJumpReset();
     labels.forEach(function(label){
       var next = label.nextElementSibling;
@@ -919,31 +921,34 @@
       }
       label.style.display = hasVisible ? '' : 'none';
     });
+    // Hide/show state sub-labels
+    document.querySelectorAll('.best-of-subsection-label').forEach(function(sl){
+      var next = sl.nextElementSibling;
+      var hasVisible = false;
+      while (next && !next.classList.contains('best-of-section-label') && !next.classList.contains('best-of-subsection-label')) {
+        if (next.classList.contains('best-of-card') && next.style.display !== 'none') { hasVisible = true; break; }
+        next = next.nextElementSibling;
+      }
+      sl.style.display = hasVisible ? '' : 'none';
+    });
   });
 })();
 
-// Region filter dropdown
+// Country filter dropdown
 (function() {
   var jump    = document.getElementById('regionJump');
   var toggle  = document.getElementById('regionJumpToggle');
   var label   = document.getElementById('regionJumpLabel');
-        var defaultLabel = label.textContent;
+  var defaultLabel = label.textContent;
   var list    = document.getElementById('regionJumpList');
   var labels  = document.querySelectorAll('.best-of-section-label');
   if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
 
   var active = null;
 
-  // Build option list from section labels, grouping "Country — State" under "Country"
-  var seen = {};
   var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All countries</button>';
   labels.forEach(function(l) {
-    var txt = l.textContent;
-    var country = txt.indexOf(' — ') !== -1 ? txt.split(' — ')[0] : txt;
-    if (!seen[country]) {
-      seen[country] = true;
-      html += '<button class="days-jump-item" data-region="' + country.replace(/"/g,'&quot;') + '" role="menuitem">' + country + '</button>';
-    }
+    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
   });
   list.innerHTML = html;
   var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
@@ -955,18 +960,19 @@
     label.textContent = active || defaultLabel;
     toggle.classList.toggle('has-active', active !== null);
     var cards = document.querySelectorAll('.best-of-card');
-    labels.forEach(function(l) {
-      var lTxt = l.textContent;
-      var matches = !active || lTxt === active || lTxt.indexOf(active + ' — ') === 0;
-      l.style.display = matches ? '' : 'none';
+    labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
+    // Show/hide state sub-labels based on active country
+    document.querySelectorAll('.best-of-subsection-label').forEach(function(sl) {
+      if (!active) { sl.style.display = ''; return; }
+      var prev = sl.previousElementSibling;
+      while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
+      sl.style.display = (prev && prev.textContent === active) ? '' : 'none';
     });
     cards.forEach(function(c) {
       if (!active) { c.style.display = ''; return; }
       var prev = c.previousElementSibling;
       while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
-      var lTxt = prev ? prev.textContent : '';
-      var matches = lTxt === active || lTxt.indexOf(active + ' — ') === 0;
-      c.style.display = matches ? '' : 'none';
+      c.style.display = (prev && prev.textContent === active) ? '' : 'none';
     });
   }
 
@@ -979,11 +985,12 @@
   items.forEach(function(it) {
     it.addEventListener('click', function() {
       active = it.dataset.region === 'all' ? null : it.dataset.region;
-      applyFilter(); closeMenu();
+      applyFilter();
+      closeMenu();
     });
   });
-  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); }, true);
-}());
+  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); });
+})();
 
 </script>
 </body>

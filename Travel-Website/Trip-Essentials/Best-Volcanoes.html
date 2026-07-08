@@ -25,31 +25,12 @@
     <a class="best-of-link" href="Best-Caves.html">Caves</a></div>
 <div style="display:flex;align-items:center;justify-content:center;gap:8px;max-width:360px;margin:14px auto 14px"><input type="text" id="best-of-search" placeholder="Search..." autocomplete="off" style="flex:1;min-width:0"><span style="color:var(--muted);font-size:11px;white-space:nowrap">40 entries</span></div>
 
-<div style="text-align:center;margin:10px 0 14px"><div class="days-jump" id="regionJump"><button type="button" class="days-jump-toggle disc-btn" id="regionJumpToggle" aria-expanded="false" aria-controls="regionJumpList"><span id="regionJumpLabel">Filter by country</span><span class="disc-caret chev">▾</span></button><div class="days-jump-list" id="regionJumpList" role="menu"></div></div></div>
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px 0 14px">
+  <div class="days-jump" id="regionJump"><button type="button" class="days-jump-toggle disc-btn" id="regionJumpToggle" aria-expanded="false" aria-controls="regionJumpList"><span id="regionJumpLabel">Filter by country</span><span class="disc-caret chev">▾</span></button><div class="days-jump-list" id="regionJumpList" role="menu"></div></div>
+</div>
 
 <div class="best-of-grid">
 
-    <!-- ══ ICELAND ══ -->
-    <!-- ══ ITALY ══ -->
-    <!-- ══ HAWAII ══ -->
-    <!-- ══ MEXICO ══ -->
-    <!-- ══ COSTA RICA ══ -->
-    <!-- ══ NICARAGUA ══ -->
-    <!-- ══ GUATEMALA ══ -->
-    <!-- ══ ECUADOR ══ -->
-    <!-- ══ CHILE ══ -->
-    <!-- ══ INDONESIA ══ -->
-    <!-- ══ JAPAN ══ -->
-    <!-- ══ PHILIPPINES ══ -->
-    <!-- ══ NEW ZEALAND ══ -->
-    <!-- ══ DEMOCRATIC REPUBLIC OF CONGO ══ -->
-    <!-- ══ TANZANIA ══ -->
-    <!-- ══ PACIFIC NORTHWEST ══ -->
-    <!-- ══ CANARY ISLANDS ══ -->
-    <!-- ══ DEMOCRATIC REPUBLIC OF CONGO & ETHIOPIA ══ -->
-    <!-- ══ CARIBBEAN ══ -->
-    <!-- ══ FRANCE ══ -->
-    <!-- ══ ANTARCTICA ══ -->
     <div class="best-of-section-label">Antarctica</div>
 
     <div class="best-of-card">
@@ -62,8 +43,6 @@
         <a class="best-of-link" href="https://www.google.com/maps/search/Mount+Erebus+Ross+Island+Antarctica" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
-
-  </div>
 
     <div class="best-of-section-label">Chile</div>
 
@@ -182,8 +161,6 @@
         <a class="best-of-link" href="https://www.google.com/maps/search/La+Soufrière+Guadeloupe+French+West+Indies" target="_blank" rel="noopener">Map</a>
       </div>
     </div>
-
-    <div class="best-of-section-label">France</div>
 
     <div class="best-of-card">
       <div class="best-of-name">Piton de la Fournaise</div>
@@ -587,8 +564,6 @@
       </div>
     </div>
 
-    <div class="best-of-section-label">United States</div>
-
     <div class="best-of-card">
       <div class="best-of-name">Mount St. Helens</div>
       <div class="best-of-tag">Washington, United States</div>
@@ -633,6 +608,8 @@
       </div>
     </div>
 
+</div><!-- /best-of-grid -->
+
 </div><!-- /wrap -->
 
 <script>
@@ -646,6 +623,7 @@
     if (!q) {
       cards.forEach(function(c){ c.style.display = ''; });
       labels.forEach(function(l){ l.style.display = ''; });
+      if (window._regionJumpReset) window._regionJumpReset();
       return;
     }
     cards.forEach(function(c){
@@ -654,7 +632,6 @@
       var match = name.toLowerCase().indexOf(q) !== -1 || tag.toLowerCase().indexOf(q) !== -1;
       c.style.display = match ? '' : 'none';
     });
-    // Reset region filter when searching
     if (window._regionJumpReset) window._regionJumpReset();
     labels.forEach(function(label){
       var next = label.nextElementSibling;
@@ -671,26 +648,21 @@
   });
 })();
 
-// Region filter dropdown
+// Country filter dropdown
 (function() {
   var jump    = document.getElementById('regionJump');
   var toggle  = document.getElementById('regionJumpToggle');
   var label   = document.getElementById('regionJumpLabel');
-        var defaultLabel = label.textContent;
+  var defaultLabel = label.textContent;
   var list    = document.getElementById('regionJumpList');
   var labels  = document.querySelectorAll('.best-of-section-label');
   if (!jump || !toggle || !label || !list || labels.length < 2) { if(jump) jump.style.display='none'; return; }
 
   var active = null;
 
-  // Build option list from section labels (deduplicated)
-  var seen = {};
-  var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All sections</button>';
+  var html = '<button class="days-jump-item on" data-region="all" role="menuitem">All countries</button>';
   labels.forEach(function(l) {
-    var t = l.textContent;
-    if (seen[t]) return;
-    seen[t] = true;
-    html += '<button class="days-jump-item" data-region="' + t.replace(/"/g,'&quot;') + '" role="menuitem">' + t + '</button>';
+    html += '<button class="days-jump-item" data-region="' + l.textContent.replace(/"/g,'&quot;') + '" role="menuitem">' + l.textContent + '</button>';
   });
   list.innerHTML = html;
   var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
@@ -705,7 +677,6 @@
     labels.forEach(function(l) { l.style.display = (!active || l.textContent === active) ? '' : 'none'; });
     cards.forEach(function(c) {
       if (!active) { c.style.display = ''; return; }
-      // find preceding section label
       var prev = c.previousElementSibling;
       while (prev && !prev.classList.contains('best-of-section-label')) prev = prev.previousElementSibling;
       c.style.display = (prev && prev.textContent === active) ? '' : 'none';
@@ -721,11 +692,12 @@
   items.forEach(function(it) {
     it.addEventListener('click', function() {
       active = it.dataset.region === 'all' ? null : it.dataset.region;
-      applyFilter(); closeMenu();
+      applyFilter();
+      closeMenu();
     });
   });
-  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); }, true);
-}());
+  document.addEventListener('click', function(e) { if (!jump.contains(e.target)) closeMenu(); });
+})();
 
 </script>
 </body>
