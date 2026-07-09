@@ -3167,18 +3167,20 @@ window._giStatusFilter = 'all';
   var badge  = document.getElementById('theme-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
 
-  /* Checkbox tree:  Outdoor > Nature > Beach > Islands , and  Outdoor > Ski.
+  /* Checkbox tree:  Outdoor is the parent of four INDEPENDENT leaves —
+     Nature, Beach, Islands, Snow/Ski (exactly as the panel shows them).
      `selected` = the nodes the user actually chose. Clicking a chip that is OFF
      selects it + all its descendants; clicking one that is ON (lit) deselects it
      + its descendants. A chip is LIT when it OR any descendant is selected, so:
-       - checking Beach lights Nature + Outdoor (upward); Outdoor stays lit while
-         anything under it is checked;
-       - unchecking a child removes only it (+ its descendants) — ancestors stay,
-         so you can uncheck just Ski.
+       - checking any single leaf lights only that leaf + Outdoor (upward);
+         Outdoor stays lit while any leaf under it is checked;
+       - checking Outdoor selects all four leaves at once;
+       - unchecking a leaf removes only that leaf — the siblings and Outdoor
+         stay, so you can uncheck just Snow/Ski.
      The RESULT is the union of the selected leaves' tags ('outdoor' excluded —
-     every natural city already carries a leaf tag); ancestors that are merely
-     lit-by-a-descendant never widen the result. */
-  var CHILDREN = { outdoor: ['nature'], nature: ['beach', 'snow'], beach: ['islands'] };
+     every natural city already carries a leaf tag); Outdoor merely
+     lit-by-a-descendant never widens the result. */
+  var CHILDREN = { outdoor: ['nature', 'beach', 'islands', 'snow'] };
   function descendants(t) {
     var out = [];
     (CHILDREN[t] || []).forEach(function (c) { out.push(c); out = out.concat(descendants(c)); });
