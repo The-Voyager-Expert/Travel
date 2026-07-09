@@ -152,7 +152,11 @@
         { href: base + 'Trip-Essentials/Tap-Water.html',      text: '🚰 Tap Water' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Visas.html',                                  text: '🪪 Visas' },
+    { group: '🪪 Entry', children: [
+
+        { href: base + 'Trip-Essentials/Visas.html',                                    text: '🪪 Visas' },
+        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '📋 Entry Requirements' },
+      ] },
     null,
     { href: base + 'Trip-Essentials/Travel-Packing-Generic.html', text: '👕 Packing', full: '👕 Packing Checklist' },
   ];
@@ -384,7 +388,7 @@
 
   var siteTitle = document.createElement('a');
   siteTitle.className = 'tb-site-title';
-  siteTitle.href = base + 'index.html';            // brand → landing page (site root)
+  siteTitle.href = base + 'Guides/guides_index.html';  // brand → guides index
   siteTitle.textContent = 'The Voyager Expert';
   bar.appendChild(siteTitle);
 
