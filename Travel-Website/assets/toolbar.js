@@ -118,6 +118,7 @@
         { href: base + 'Trip-Essentials/South-America-Stats.html',        text: '📊 Stats Across South America' },
         { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: '📊 Stats Across the Caribbean' },
         { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',        text: '📊 Guide Days Coverage' },
+        { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
       ]},
     null,
     { group: '💻 Lounges', children: [

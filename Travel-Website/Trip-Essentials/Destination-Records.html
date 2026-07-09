@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css">
+<title>Destination Records</title>
+<style>
+.page-wrap { padding: 0 32px; padding-bottom: 80px; }
+
+/* jump nav */
+.jump-nav { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 20px; }
+.jump-pill { display: inline-block; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-size: 12px; font-weight: 600; color: var(--muted); text-decoration: none; white-space: nowrap; cursor: pointer; transition: background .12s, color .12s, border-color .12s; }
+.jump-pill:hover, .jump-pill.active { background: #b85c2a; color: #fff; border-color: #b85c2a; }
+
+/* section */
+.rec-section { margin-bottom: 40px; }
+.rec-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border2); }
+
+/* two-col grid for rankings */
+.rank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rank-block { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
+.rank-block-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.rank-block-title .icon { font-size: 14px; }
+
+/* individual rank row */
+.rank-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border2); }
+.rank-row:last-child { border-bottom: none; }
+.rank-num { font-size: 11px; font-weight: 700; color: var(--muted); min-width: 18px; text-align: right; }
+.rank-num.gold { color: #9a7520; }
+.rank-num.silver { color: #7a7a7a; }
+.rank-num.bronze { color: #a0623a; }
+.rank-city { font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-city:hover { color: #b85c2a; }
+.rank-rg { font-size: 9.5px; letter-spacing: 0.08em; color: var(--muted); white-space: nowrap; }
+.rank-val { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; min-width: 55px; text-align: right; }
+
+/* cost tier badge */
+.tier-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; }
+.tier-badge.Budget { background: #e8f5e9; color: #2e7d32; }
+.tier-badge.Moderate { background: #e3f2fd; color: #1565c0; }
+.tier-badge.Expensive { background: #fff3e0; color: #e65100; }
+.tier-badge.Premium { background: #fce4ec; color: #c62828; }
+.tier-badge.Luxury { background: #f3e5f5; color: #6a1b9a; }
+
+/* safety badge */
+.safe-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; }
+.safe-badge.very-safe { background: #e8f5e9; color: #2e7d32; }
+.safe-badge.safe { background: #e8f5e9; color: #2e7d32; opacity: .75; }
+
+/* region comparison bars */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.compare-block { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; }
+.compare-block-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text); margin-bottom: 12px; }
+.cmp-row { margin-bottom: 8px; }
+.cmp-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text); margin-bottom: 3px; }
+.cmp-label-name { font-weight: 600; }
+.cmp-label-val { color: var(--muted); }
+.cmp-track { height: 8px; background: var(--track, #ece6dd); border-radius: 4px; overflow: hidden; display: flex; }
+.cmp-seg { height: 100%; }
+.cmp-seg.budget   { background: #66bb6a; }
+.cmp-seg.moderate { background: #42a5f5; }
+.cmp-seg.expensive{ background: #ffa726; }
+.cmp-seg.premium  { background: #ef5350; }
+.cmp-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.cmp-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); }
+.cmp-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* temp bars */
+.temp-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.temp-bar-label { font-size: 11px; font-weight: 600; min-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.temp-bar-track { flex: 1; height: 8px; background: var(--track,#ece6dd); border-radius: 4px; overflow: hidden; }
+.temp-bar-fill { height: 100%; border-radius: 4px; }
+.temp-bar-val { font-size: 11px; color: var(--muted); min-width: 36px; text-align: right; }
+
+/* flight route badge */
+.route-badge { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 9.5px; font-weight: 700; background: var(--surface2, #f6f2ec); color: var(--muted); }
+
+/* region filter */
+.region-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.rfpill { display: inline-block; padding: 4px 11px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; transition: background .12s, color .12s, border-color .12s; }
+.rfpill:hover, .rfpill.active { background: #b85c2a; color: #fff; border-color: #b85c2a; }
+
+@media (max-width: 640px) {
+  .rank-grid, .compare-grid { grid-template-columns: 1fr; }
+  .page-wrap { padding: 0 14px 60px; }
+}
+</style>
+</head>
+<body>
+<div id="toolbar-mount" data-page="Destination-Records" data-updated="2026-07"></div>
+<div class="page-wrap">
+<div class="page-header"><h1>Destination Records</h1></div>
+
+<div class="jump-nav">
+  <a class="jump-pill" href="#flight">✈️ Flight Records</a>
+  <a class="jump-pill" href="#summer">🌡️ Summer Heat</a>
+  <a class="jump-pill" href="#winter">☀️ Winter Escapes</a>
+  <a class="jump-pill" href="#value">💰 Best Value</a>
+  <a class="jump-pill" href="#safety">🛡️ Safest Picks</a>
+  <a class="jump-pill" href="#combos">🏆 Best Combos</a>
+  <a class="jump-pill" href="#guides">📅 Guide Length</a>
+  <a class="jump-pill" href="#byregion">🌍 By Region</a>
+</div>
+
+<!-- Flight Records -->
+<div class="rec-section" id="flight">
+  <div class="rec-section-title">✈️ Flight Records — from Seattle (SEA)</div>
+  <div class="rank-grid" id="flight-grid"></div>
+</div>
+
+<!-- Summer Heat -->
+<div class="rec-section" id="summer">
+  <div class="rec-section-title">🌡️ Summer Heat — July Average High</div>
+  <div class="rank-grid" id="summer-grid"></div>
+</div>
+
+<!-- Winter Escapes -->
+<div class="rec-section" id="winter">
+  <div class="rec-section-title">☀️ Winter Escapes — January Average High</div>
+  <div class="rank-grid" id="winter-grid"></div>
+</div>
+
+<!-- Best Value -->
+<div class="rec-section" id="value">
+  <div class="rec-section-title">💰 Best Value — Budget Destinations</div>
+  <div class="rank-grid" id="value-grid"></div>
+</div>
+
+<!-- Safety -->
+<div class="rec-section" id="safety">
+  <div class="rec-section-title">🛡️ Safest Destinations</div>
+  <div class="rank-grid" id="safety-grid"></div>
+</div>
+
+<!-- Best Combos -->
+<div class="rec-section" id="combos">
+  <div class="rec-section-title">🏆 Best Combos</div>
+  <div class="rank-grid" id="combos-grid"></div>
+</div>
+
+<!-- Guide Length -->
+<div class="rec-section" id="guides">
+  <div class="rec-section-title">📅 Guide Length — Days Covered</div>
+  <div class="rank-grid" id="guides-grid"></div>
+</div>
+
+<!-- By Region -->
+<div class="rec-section" id="byregion">
+  <div class="rec-section-title">🌍 By Region — Cost &amp; Safety Breakdown</div>
+  <div class="compare-grid" id="region-compare-grid"></div>
+</div>
+
+</div><!-- .page-wrap -->
+
+<script src="../assets/toolbar.js"></script>
+<script>
+var DATA = {"Abu-Dhabi":{"n":"Abu Dhabi","rg":"Middle East","fm":980,"ft":"17h 50m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[23.6,24.9,28.5,32.6,36.0,38.6,40.0,40.4,38.6,34.9,30.2,26.1],"lo":[17.5,18.0,20.5,23.7,27.0,30.2,32.0,31.8,30.0,27.2,23.6,20.0],"days":4,"p":"Abu-Dhabi/abu-dhabi_v1.html"},"Aix-en-Provence":{"n":"Aix en Provence","rg":"Europe","fm":665,"ft":"12h 35m","fr":"2stop","cost":"Expensive","safe":"Safe","hi":[10.1,13.3,15.6,18.2,22.2,28.2,31.6,30.7,25.8,21.0,14.5,11.4],"lo":[1.0,3.2,4.7,7.2,11.3,16.5,18.9,18.2,14.9,11.2,6.1,3.3],"days":0,"p":"Aix-en-Provence/aix-en-provence_v1.html"},"Alaska":{"n":"Alaska","rg":"North America","fm":209,"ft":"3h 29m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[-16.6,-13.1,-5.0,2.3,13.5,18.9,20.0,16.7,10.2,1.1,-9.4,-14.3],"lo":[-22.4,-20.5,-13.5,-8.0,3.2,10.0,11.8,9.4,3.2,-4.3,-15.2,-21.0],"days":5,"p":"Alaska/alaska_v1.html"},"Alesund":{"n":"Alesund","rg":"Europe","fm":745,"ft":"15h 25m","fr":"2stop","cost":"Premium","safe":"Very Safe","hi":[3.6,4.3,5.7,8.9,11.1,16.6,16.7,17.1,14.5,10.1,5.8,2.8],"lo":[-0.2,-0.0,0.4,2.1,5.3,10.6,11.4,11.5,9.2,5.2,1.8,-0.8],"days":0,"p":"Alesund/alesund_v1.html"},"Amalfi":{"n":"Amalfi","rg":"Europe","fm":849,"ft":"15h 39m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[12.5,14.2,15.4,17.7,21.7,27.8,30.8,30.8,27.4,22.7,18.0,14.9],"lo":[5.1,5.8,6.9,9.6,13.9,18.6,21.5,21.7,18.8,14.6,11.7,8.4],"days":2,"p":"Amalfi/amalfi_v1.html"},"Amsterdam":{"n":"Amsterdam","rg":"Europe","fm":585,"ft":"9h 45m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[7.1,8.9,10.3,13.0,16.1,21.4,21.2,22.1,19.7,15.2,10.5,7.5],"lo":[2.7,3.1,3.4,4.7,8.0,13.0,13.9,14.7,12.0,9.7,5.4,3.0],"days":6,"p":"Amsterdam/amsterdam_v1.html"},"Annecy":{"n":"Annecy","rg":"Europe","fm":789,"ft":"14h 39m","fr":"1stop","cost":"Expensive","safe":"Very Safe","hi":[6.1,10.3,12.2,15.0,18.4,24.1,26.4,26.1,22.1,17.4,10.4,7.6],"lo":[-0.2,1.1,2.6,4.9,8.9,14.4,16.3,16.1,13.4,9.4,4.4,1.8],"days":3,"p":"Annecy/annecy_v1.html"},"Aracaju":{"n":"Aracaju","rg":"South America","fm":992,"ft":"19h 32m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[29.7,30.5,30.0,29.3,28.1,26.7,26.1,26.2,27.1,28.6,29.3,29.6],"lo":[24.7,25.2,24.7,24.5,23.9,23.0,22.4,22.3,22.8,23.7,24.3,24.5],"days":6,"p":"Aracaju/aracaju_v1.html"},"Arenal":{"n":"Arenal","rg":"Central America","fm":562,"ft":"10h 52m","fr":"1stop","cost":"budget","safe":"Low","hi":[20.8,21.4,22.0,23.2,23.6,23.1,22.6,23.1,23.8,23.3,21.8,20.9],"lo":[16.8,16.6,16.9,17.8,18.8,18.9,18.7,18.7,18.7,18.6,18.3,17.6],"days":3,"p":"Arenal/arenal_v1.html"},"Aruba":{"n":"Aruba","rg":"Caribbean","fm":540,"ft":"10h 30m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[28.5,28.5,28.8,29.5,30.2,30.5,30.4,31.1,31.8,30.8,29.5,29.2],"lo":[24.9,24.8,24.9,25.5,26.2,26.5,26.5,27.0,27.4,26.8,26.1,25.8],"days":3,"p":"Aruba/aruba_v1.html"},"Athens":{"n":"Athens","rg":"Europe","fm":932,"ft":"17h 02m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[12.2,13.2,15.0,18.7,24.6,29.3,33.6,33.1,28.5,23.8,19.0,14.9],"lo":[5.4,5.9,7.2,10.3,15.6,19.9,23.2,23.0,19.5,15.3,11.8,8.5],"days":3,"p":"Athens/athens_v1.html"},"Atlanta":{"n":"Atlanta","rg":"North America","fm":292,"ft":"4h 52m","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[12.0,14.9,18.3,21.6,26.3,29.1,30.8,30.5,28.0,22.8,16.8,13.6],"lo":[2.8,5.0,7.8,10.0,15.5,19.4,21.6,21.4,18.1,12.8,6.5,4.4],"days":4,"p":"Atlanta/atlanta_v1.html"},"Austin":{"n":"Austin","rg":"North America","fm":246,"ft":"4h 06m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[16.9,17.0,23.0,26.2,29.5,33.5,35.3,36.3,33.1,27.5,20.8,18.9],"lo":[6.4,5.8,12.0,15.1,19.7,23.2,25.0,25.6,22.9,16.6,10.7,8.3],"days":5,"p":"Austin/austin_v1.html"},"Azores":{"n":"Azores","rg":"Europe","fm":628,"ft":"11h 58m","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[16.8,16.5,17.0,17.6,19.2,20.9,23.4,24.9,23.6,21.8,19.5,17.5],"lo":[13.7,12.6,13.3,13.9,15.1,16.9,18.9,20.5,19.6,18.2,16.1,14.3],"days":4,"p":"Azores/azores_v1.html"},"Bahamas":{"n":"Bahamas","rg":"Caribbean","fm":419,"ft":"8h 29m","fr":"1stop","cost":"Expensive","safe":"Moderate","hi":[24.9,25.9,26.4,27.4,28.1,29.4,30.8,31.0,30.4,29.1,27.2,25.6],"lo":[21.0,22.0,22.1,23.2,24.2,25.7,27.0,27.2,26.7,25.5,24.0,22.1],"days":0,"p":"Bahamas/bahamas_v1.html"},"Bali":{"n":"Bali","rg":"Asia","fm":1105,"ft":"19h 55m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[29.6,29.8,30.1,30.0,29.5,28.8,28.7,28.9,29.1,29.2,29.3,29.4],"lo":[21.4,21.4,21.5,21.7,21.8,21.2,21.0,21.2,21.3,21.4,21.4,21.4],"days":3,"p":"Bali/bali_v1.html"},"Bangkok":{"n":"Bangkok","rg":"Asia","fm":1030,"ft":"18h 40m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[31.6,32.3,33.4,33.8,33.7,32.7,32.0,31.3,30.8,30.6,31.3,31.0],"lo":[22.1,23.7,25.8,26.7,26.6,26.2,25.7,25.4,25.0,24.2,23.7,21.9],"days":6,"p":"Bangkok/bangkok_v1.html"},"Barbados":{"n":"Barbados","rg":"Caribbean","fm":611,"ft":"11h 41m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[26.4,26.5,26.9,27.5,28.2,28.2,27.8,28.2,29.1,28.2,27.5,27.0],"lo":[22.0,21.8,22.0,22.5,23.5,23.7,23.6,23.7,24.0,23.9,23.3,22.8],"days":3,"p":"Barbados/barbados_v1.html"},"Barcelona":{"n":"Barcelona","rg":"Europe","fm":635,"ft":"10h 35m","fr":"seasonal","cost":"Moderate","safe":"Moderate","hi":[13.2,15.2,16.3,17.7,21.4,25.9,28.7,28.9,25.8,22.3,17.8,15.4],"lo":[4.0,6.1,8.0,9.9,13.7,18.6,21.6,21.7,18.5,14.8,9.6,6.4],"days":6,"p":"Barcelona/barcelona_v1.html"},"Beijing":{"n":"Beijing","rg":"Asia","fm":820,"ft":"15h 10m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[2.8,6.2,15.2,21.3,27.7,32.6,31.7,29.7,27.2,18.9,10.0,2.4],"lo":[-6.8,-4.7,1.2,7.9,14.2,20.3,22.3,21.1,16.6,7.9,0.3,-6.5],"days":4,"p":"Beijing/beijing_v1.html"},"Bend":{"n":"Bend","rg":"North America","fm":71,"ft":"1h 11m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[6.1,5.2,7.3,12.6,17.3,22.8,28.7,28.3,23.1,16.1,9.0,5.3],"lo":[-1.7,-3.8,-2.8,0.8,4.7,8.9,12.4,13.1,8.9,4.0,0.1,-2.1],"days":3,"p":"Bend/bend_v2.html"},"Bergen":{"n":"Bergen","rg":"Europe","fm":685,"ft":"12h 55m","fr":"2stop","cost":"Premium","safe":"Very Safe","hi":[3.3,4.2,5.9,10.0,11.8,17.8,17.2,17.8,14.8,10.1,6.2,3.0],"lo":[-1.0,-1.0,0.0,1.3,4.7,9.8,10.6,11.1,8.8,5.1,1.6,-1.7],"days":6,"p":"Bergen/bergen_v1.html"},"Berlin":{"n":"Berlin","rg":"Europe","fm":660,"ft":"12h 30m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[4.8,7.1,9.7,13.6,18.0,25.7,24.5,25.1,20.6,15.3,8.7,4.9],"lo":[0.4,0.3,1.3,3.7,8.2,14.7,15.1,15.8,11.5,8.4,3.5,0.5],"days":7,"p":"Berlin/berlin_v1.html"},"Big-Island":{"n":"Big Island","rg":"North America","fm":350,"ft":"5h 50m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[14.2,12.7,13.9,14.2,15.7,17.0,17.8,17.7,17.6,17.5,15.8,14.5],"lo":[4.9,4.2,5.5,6.0,7.1,7.8,8.4,8.3,8.3,8.1,7.1,6.4],"days":3,"p":"Big-Island/big-island_v1.html"},"Bologna":{"n":"Bologna","rg":"Europe","fm":690,"ft":"13h","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[8.0,12.1,14.8,17.7,21.8,29.0,31.5,31.0,25.8,20.7,13.3,8.8],"lo":[0.6,2.9,4.6,7.5,12.7,18.1,20.3,20.0,16.0,12.0,6.7,2.6],"days":3,"p":"Bologna/bologna_v1.html"},"Bora-Bora":{"n":"Bora Bora","rg":"Pacific","fm":630,"ft":"12h","fr":"2stop","cost":"Premium","safe":"Very Safe","hi":[30.0,30.0,30.0,29.5,29.0,28.0,27.5,28.0,28.5,29.0,29.5,30.0],"lo":[26.0,26.0,25.5,25.0,24.5,23.5,23.0,23.0,23.5,24.0,24.5,25.5],"days":3,"p":"Bora-Bora/bora-bora_v1.html"},"Bordeaux":{"n":"Bordeaux","rg":"Europe","fm":660,"ft":"12h 30m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[9.7,13.7,15.4,17.9,21.3,25.0,27.5,27.6,25.3,20.5,14.0,11.7],"lo":[3.2,4.8,6.3,8.4,11.5,15.5,16.9,17.1,15.0,12.0,7.3,5.5],"days":3,"p":"Bordeaux/bordeaux_v1.html"},"Boston":{"n":"Boston","rg":"North America","fm":328,"ft":"5h 28m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[3.4,4.5,8.8,13.2,19.5,25.0,28.6,27.7,23.2,17.5,10.9,6.2],"lo":[-4.7,-5.1,-1.5,4.0,9.3,15.2,19.2,18.6,14.5,9.3,2.0,-1.9],"days":5,"p":"Boston/boston_v1.html"},"Boulder":{"n":"Boulder","rg":"North America","fm":160,"ft":"2h 40m","fr":"nonstop","cost":"Mid-range","safe":"Safe","hi":[6.3,8.1,11.5,16.8,21.7,27.3,31.4,29.8,25.0,17.9,10.4,6.2],"lo":[-7.9,-6.5,-2.5,2.8,8.1,13.3,17.8,16.7,11.1,3.9,-3.0,-7.2],"days":3,"p":"Boulder/boulder_v1.html"},"Bruges":{"n":"Bruges","rg":"Europe","fm":625,"ft":"11h 55m","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[7.2,9.6,11.2,13.6,16.6,21.6,21.9,22.7,20.5,16.0,10.8,8.1],"lo":[2.6,3.2,3.9,4.9,8.3,12.8,13.9,14.7,12.6,9.9,5.7,3.6],"days":2,"p":"Bruges/bruges_v1.html"},"Brussels":{"n":"Brussels","rg":"Europe","fm":625,"ft":"11h 55m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[6.4,9.3,11.1,14.0,17.5,22.8,22.6,23.5,20.7,15.8,10.2,7.5],"lo":[1.8,2.8,3.5,4.7,8.1,13.3,13.9,14.8,12.3,9.7,5.2,3.2],"days":3,"p":"Brussels/brussels_v1.html"},"Budapest":{"n":"Budapest","rg":"Europe","fm":700,"ft":"13h 10m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[5.0,7.0,11.0,16.0,21.0,26.0,28.0,27.0,23.0,17.0,10.0,5.0],"lo":[-1.0,0.0,3.0,7.0,12.0,17.0,19.0,18.0,14.0,9.0,4.0,0.0],"days":3,"p":"Budapest/budapest_v1.html"},"Buenos-Aires":{"n":"Buenos Aires","rg":"South America","fm":964,"ft":"17h 34m","fr":"1stop","cost":"Budget","safe":"Moderate","hi":[28.2,27.1,25.1,21.3,17.6,14.7,14.1,15.7,17.6,20.9,24.9,27.1],"lo":[20.8,19.2,18.7,14.8,10.8,8.5,7.6,8.4,10.4,12.8,16.9,19.0],"days":4,"p":"Buenos-Aires/buenos-aires_v1.html"},"Cairo":{"n":"Cairo","rg":"Africa","fm":900,"ft":"15h","fr":"nonstop","cost":"Budget","safe":"Moderate","hi":[],"lo":[],"days":5,"p":"Cairo/cairo_v2.html"},"Cambridge":{"n":"Cambridge","rg":"Europe","fm":590,"ft":"9h 50m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[7.4,9.9,11.0,13.5,16.7,20.7,22.4,22.8,20.5,15.5,10.8,8.3],"lo":[1.8,3.2,3.9,4.1,7.7,11.8,13.8,14.0,11.9,9.0,5.2,3.4],"days":3,"p":"Cambridge/cambridge_v1.html"},"Cannes":{"n":"Cannes","rg":"Europe","fm":675,"ft":"12h 45m","fr":"1stop","cost":"Premium","safe":"Safe","hi":[12.5,14.3,15.8,17.4,21.4,26.3,29.4,29.7,26.2,21.7,17.0,13.9],"lo":[5.0,6.5,7.9,10.1,14.1,18.9,21.7,21.6,18.4,14.5,9.8,6.9],"days":2,"p":"Cannes/cannes_v1.html"},"Cape-Cod":{"n":"Cape Cod","rg":"North America","fm":328,"ft":"5h 28m","fr":"nonstop","cost":"Mid-range","safe":"Safe","hi":[],"lo":[],"days":3,"p":"Cape-Cod/cape-cod_v1.html"},"Capri":{"n":"Capri","rg":"Europe","fm":849,"ft":"15h 39m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[12.8,13.0,13.3,14.8,18.3,23.2,26.3,26.5,24.6,21.1,18.3,15.2],"lo":[10.3,10.7,11.2,12.7,16.3,21.0,24.3,24.6,22.3,18.9,15.7,13.1],"days":2,"p":"Capri/capri_v1.html"},"Carmel-by-the-Sea":{"n":"Carmel by the Sea","rg":"North America","fm":122,"ft":"2h 02m","fr":"nonstop","cost":"Expensive","safe":"Very Safe","hi":[13.3,14.4,15.0,16.1,16.7,17.2,18.3,18.9,20.0,18.3,15.6,13.3],"lo":[5.6,6.1,6.7,7.8,9.4,11.1,12.2,12.8,11.7,9.4,6.7,5.0],"days":3,"p":"Carmel-by-the-Sea/carmel-by-the-sea_v1.html"},"Cascais":{"n":"Cascais","rg":"Europe","fm":749,"ft":"13h 59m","fr":"1stop","cost":"Moderate","safe":"Very Safe","hi":[14.6,16.1,17.0,17.4,20.1,20.5,22.5,22.4,22.7,20.8,17.6,16.1],"lo":[9.8,10.9,11.7,13.0,15.3,16.4,17.6,17.8,17.9,16.3,13.5,12.2],"days":3,"p":"Cascais/cascais_v2.html"},"Cayman-Islands":{"n":"Cayman Islands","rg":"Caribbean","fm":451,"ft":"9h 01m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[27.6,28.0,28.3,29.3,29.9,30.4,31.3,31.3,31.0,30.0,28.9,28.1],"lo":[24.4,24.6,24.5,25.2,25.8,26.6,27.1,26.9,26.9,26.4,25.9,25.1],"days":3,"p":"Cayman-Islands/cayman-islands_v1.html"},"Charlotte":{"n":"Charlotte","rg":"North America","fm":315,"ft":"5h 15m","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[12.0,14.0,18.0,22.0,27.0,31.0,33.0,32.0,28.0,23.0,17.0,13.0],"lo":[1.0,3.0,7.0,11.0,16.0,20.0,23.0,22.0,18.0,12.0,6.0,3.0],"days":3,"p":"Charlotte/charlotte_v1.html"},"Chiang-Mai":{"n":"Chiang Mai","rg":"Asia","fm":1100,"ft":"21h 20m","fr":"2stop","cost":"Budget","safe":"Very Safe","hi":[27.5,30.1,34.3,35.0,34.0,31.9,30.5,29.4,29.4,29.1,29.1,27.3],"lo":[16.5,17.7,20.9,23.1,24.6,24.1,23.9,23.5,23.1,22.1,20.3,17.1],"days":6,"p":"Chiang-Mai/chiang-mai_v1.html"},"Chicago":{"n":"Chicago","rg":"North America","fm":240,"ft":"4h","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[0.3,1.2,7.8,13.2,18.7,25.1,27.3,26.7,23.7,16.1,9.0,4.9],"lo":[-6.4,-7.3,-0.7,4.0,9.7,16.1,19.3,19.0,15.9,8.5,1.1,-2.1],"days":5,"p":"Chicago/chicago_v2.html"},"Chongqing":{"n":"Chongqing","rg":"Asia","fm":910,"ft":"16h 40m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[11.1,14.3,19.4,23.0,25.9,28.9,31.5,33.7,28.1,22.1,17.7,12.0],"lo":[5.2,7.3,11.4,14.8,18.5,21.9,24.5,25.7,21.2,16.4,11.6,6.6],"days":3,"p":"Chongqing/chongqing_v1.html"},"Cinque-Terre":{"n":"Cinque Terre","rg":"Europe","fm":700,"ft":"13h 10m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[11.7,13.3,14.7,16.9,20.5,25.6,28.5,28.7,25.3,20.8,16.3,13.3],"lo":[6.3,7.3,8.3,10.4,14.7,19.4,22.0,22.1,18.9,15.4,11.0,8.2],"days":2,"p":"Cinque-Terre/cinque-terre_v1.html"},"Colmar":{"n":"Colmar","rg":"Europe","fm":660,"ft":"12h 30m","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[5.6,9.9,12.0,15.0,18.5,24.7,25.9,25.4,21.9,16.9,9.8,7.0],"lo":[0.0,1.5,2.9,5.5,9.2,14.9,15.5,15.6,12.4,8.8,3.9,1.8],"days":3,"p":"Colmar/colmar_v1.html"},"Colombo":{"n":"Colombo","rg":"Asia","fm":1235,"ft":"23h 35m","fr":"2stop","cost":"Budget","safe":"Very Safe","hi":[30.2,30.9,30.9,30.7,29.6,29.0,28.7,28.4,28.2,28.3,28.7,29.3],"lo":[22.6,23.2,23.9,24.6,25.5,25.4,25.3,25.1,24.6,24.0,23.3,23.0],"days":3,"p":"Colombo/colombo_v1.html"},"Columbia":{"n":"Columbia","rg":"North America","fm":342,"ft":"7h 12m","fr":"1stop","cost":"Budget","safe":"Moderate","hi":[12.0,14.0,19.0,24.0,29.0,33.0,35.0,34.0,30.0,24.0,18.0,13.0],"lo":[1.0,3.0,7.0,12.0,16.0,21.0,23.0,22.0,19.0,12.0,6.0,2.0],"days":3,"p":"Columbia/columbia_v1.html"},"Copenhagen":{"n":"Copenhagen","rg":"Europe","fm":784,"ft":"14h 34m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[4.8,5.5,7.1,10.4,14.1,20.0,20.3,20.7,17.7,13.2,8.5,4.9],"lo":[1.5,1.4,1.8,3.7,7.9,13.4,14.7,15.1,12.9,9.4,5.9,2.1],"days":6,"p":"Copenhagen/copenhagen_v1.html"},"Corfu":{"n":"Corfu","rg":"Europe","fm":755,"ft":"14h 05m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[12.9,14.2,15.2,17.6,22.2,27.8,32.0,31.6,27.4,22.9,18.9,15.3],"lo":[8.6,9.0,9.9,12.0,16.0,20.7,23.8,24.2,21.5,17.8,14.7,11.5],"days":2,"p":"Corfu/corfu_v1.html"},"Curacao":{"n":"Curacao","rg":"Caribbean","fm":611,"ft":"11h 41m","fr":"1stop","cost":"Expensive","safe":"Moderate","hi":[28.8,29.0,29.3,30.1,30.7,30.8,30.7,31.5,32.2,31.1,29.6,29.4],"lo":[24.8,24.8,24.9,25.5,26.3,26.4,26.4,26.9,27.3,26.6,25.7,25.5],"days":0,"p":"Curacao/curacao_v1.html"},"Curitiba":{"n":"Curitiba","rg":"South America","fm":912,"ft":"18h 12m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[27.1,27.0,26.2,23.7,20.8,18.7,18.5,20.3,21.4,23.5,25.0,26.5],"lo":[17.0,17.2,16.2,13.4,10.5,8.4,7.9,9.2,11.5,13.8,15.3,16.6],"days":6,"p":"Curitiba/curitiba_v1.html"},"Cusco":{"n":"Cusco","rg":"South America","fm":777,"ft":"15h 57m","fr":"2stop","cost":"Budget","safe":"Moderate","hi":[16.2,16.0,15.9,16.4,16.6,17.1,18.0,18.5,18.4,18.6,18.3,17.0],"lo":[7.5,8.1,7.4,6.6,5.5,4.5,4.4,5.0,6.1,7.2,7.9,8.2],"days":6,"p":"Cusco/cusco_v1.html"},"Dallas":{"n":"Dallas","rg":"North America","fm":220,"ft":"3h 40m","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[14.1,14.3,20.4,23.8,27.9,32.3,35.1,35.6,32.4,25.6,19.0,16.5],"lo":[4.0,3.6,9.7,13.1,18.3,22.6,25.3,25.7,22.2,15.0,8.8,6.4],"days":3,"p":"Dallas/dallas_v1.html"},"Denver":{"n":"Denver","rg":"North America","fm":160,"ft":"2h 40m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[],"lo":[],"days":1,"p":"Denver/denver_v1.html"},"Doha":{"n":"Doha","rg":"Middle East","fm":1000,"ft":"18h 10m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[22.0,24.0,28.0,33.0,38.0,41.0,42.0,42.0,39.0,34.0,29.0,24.0],"lo":[14.0,15.0,18.0,23.0,27.0,30.0,32.0,32.0,29.0,25.0,20.0,16.0],"days":6,"p":"Doha/doha_v1.html"},"Dubai":{"n":"Dubai","rg":"Middle East","fm":980,"ft":"17h 50m","fr":"1stop","cost":"Expensive","safe":"Very Safe","hi":[23.8,25.1,28.5,32.3,35.9,39.4,40.4,40.6,38.9,35.1,30.5,26.4],"lo":[15.2,16.3,19.0,21.9,25.0,28.4,31.1,30.4,27.9,24.5,21.0,17.5],"days":4,"p":"Dubai/dubai_v1.html"},"Dublin":{"n":"Dublin","rg":"Europe","fm":714,"ft":"13h 24m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[7.6,9.3,10.2,11.8,15.0,17.6,19.3,18.8,17.2,13.6,10.1,8.0],"lo":[3.0,3.9,3.8,4.7,7.6,10.5,12.5,12.3,10.7,8.3,5.5,3.7],"days":8,"p":"Dublin/dublin_v1.html"},"Dubrovnik":{"n":"Dubrovnik","rg":"Europe","fm":725,"ft":"13h 35m","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[11.0,12.7,14.2,16.7,21.4,26.8,30.1,30.0,26.1,21.7,17.2,13.5],"lo":[3.4,4.5,6.1,8.9,13.9,18.8,21.3,21.5,17.9,13.4,10.5,7.0],"days":6,"p":"Dubrovnik/dubrovnik_v2.html"},"Edinburgh":{"n":"Edinburgh","rg":"Europe","fm":728,"ft":"13h 38m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[6.5,7.9,8.9,10.7,13.6,16.8,18.4,17.9,16.4,12.4,9.1,6.7],"lo":[2.5,3.1,3.2,3.8,6.9,10.3,12.2,12.1,10.5,7.8,4.8,2.8],"days":5,"p":"Edinburgh/edinburgh_v1.html"},"Florence":{"n":"Florence","rg":"Europe","fm":685,"ft":"12h 55m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[10.4,13.5,15.5,18.4,22.4,29.2,32.5,32.1,27.4,22.0,15.8,12.4],"lo":[2.0,3.3,4.5,6.8,11.8,16.4,19.0,19.3,15.6,11.9,8.0,4.6],"days":4,"p":"Florence/florence_v1.html"},"Florianopolis":{"n":"Florianopolis","rg":"South America","fm":927,"ft":"18h 27m","fr":"1stop","cost":"","safe":"","hi":[],"lo":[],"days":0,"p":"Florianopolis/florianopolis_v1.html"},"Florida-Keys":{"n":"Florida Keys","rg":"North America","fm":414,"ft":"8h 24m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[22.9,24.0,24.7,26.1,27.2,28.8,29.8,30.0,29.4,28.0,26.1,24.1],"lo":[20.5,22.1,23.0,24.3,25.3,26.5,27.5,27.7,27.1,26.1,24.1,22.0],"days":3,"p":"Florida-Keys/florida-keys_v1.html"},"Fortaleza":{"n":"Fortaleza","rg":"South America","fm":792,"ft":"14h 42m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[29.4,29.4,28.9,29.2,29.5,29.5,29.8,30.5,30.5,30.7,30.8,30.7],"lo":[24.8,24.7,24.1,24.1,24.2,23.8,23.8,24.3,25.0,25.5,25.8,25.9],"days":6,"p":"Fortaleza/fortaleza_v1.html"},"Foz-do-Igua\u00e7u":{"n":"Foz do Igua\u00e7u","rg":"South America","fm":962,"ft":"19h 02m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[32.0,31.7,30.5,28.0,25.2,23.4,23.8,25.4,26.8,28.7,30.2,31.5],"lo":[21.8,21.5,20.4,17.8,15.0,13.2,13.1,14.2,16.1,18.5,20.1,21.2],"days":2,"p":"Foz-do-Igua\u00e7u/foz-do-iguacu_v2.html"},"Geneva":{"n":"Geneva","rg":"Europe","fm":789,"ft":"14h 39m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[5.2,9.1,11.5,14.8,18.3,24.4,26.8,26.3,22.2,16.6,9.6,6.7],"lo":[-0.4,1.0,2.8,5.4,9.5,15.0,16.9,16.6,13.7,9.2,4.0,1.1],"days":3,"p":"Geneva/geneva_v1.html"},"Glacier-National-Park":{"n":"Glacier National Park","rg":"North America","fm":225,"ft":"5h 15m","fr":"1stop","cost":"mid","safe":"Safe","hi":[0.6,-1.7,5.0,10.0,16.7,21.7,27.2,26.1,20.6,11.7,4.4,0.6],"lo":[-7.2,-11.1,-6.7,-2.2,3.3,7.8,11.1,11.7,8.3,1.7,-2.8,-6.1],"days":2,"p":"Glacier-National-Park/glacier-national-park_v2.html"},"Glasgow":{"n":"Glasgow","rg":"Europe","fm":680,"ft":"12h 50m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[6.4,7.8,9.2,11.9,14.4,17.9,18.6,18.4,16.6,12.3,9.0,6.4],"lo":[1.5,2.5,2.5,3.3,6.4,10.2,11.7,11.5,9.8,7.0,3.9,1.9],"days":3,"p":"Glasgow/glasgow_v1.html"},"Gothenburg":{"n":"Gothenburg","rg":"Europe","fm":675,"ft":"12h 45m","fr":"2stop","cost":"Premium","safe":"Very Safe","hi":[3.6,4.0,6.2,11.0,14.1,20.2,19.6,19.8,16.7,11.5,6.8,2.9],"lo":[-0.5,-1.0,-0.4,1.8,6.3,12.1,13.5,13.4,10.8,7.2,3.2,-1.0],"days":3,"p":"Gothenburg/gothenburg_v1.html"},"Hamburg":{"n":"Hamburg","rg":"Europe","fm":665,"ft":"12h 35m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[5.7,7.6,9.6,13.0,16.7,23.6,22.4,23.6,19.6,14.9,8.9,5.4],"lo":[1.5,1.4,1.9,3.4,7.5,13.2,14.0,14.7,11.5,8.8,4.4,1.6],"days":3,"p":"Hamburg/hamburg_v1.html"},"Hanoi":{"n":"Hanoi","rg":"Asia","fm":960,"ft":"17h 30m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[20.0,21.0,24.0,27.0,32.0,33.0,33.0,32.0,31.0,28.0,25.0,22.0],"lo":[14.0,15.0,18.0,21.0,24.0,26.0,26.0,26.0,25.0,22.0,18.0,15.0],"days":3,"p":"Hanoi/hanoi_v1.html"},"Helsinki":{"n":"Helsinki","rg":"Europe","fm":725,"ft":"13h 35m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[0.0,0.3,2.2,7.8,12.8,20.1,20.8,19.9,14.9,9.5,4.5,0.3],"lo":[-4.6,-4.8,-3.5,0.3,5.2,12.5,13.9,13.8,9.6,5.2,1.0,-3.6],"days":5,"p":"Helsinki/helsinki_v1.html"},"Hoi-An":{"n":"Hoi An","rg":"Asia","fm":1010,"ft":"18h 20m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[24.0,25.0,28.0,31.0,34.0,35.0,35.0,34.0,32.0,29.0,27.0,24.0],"lo":[18.0,19.0,21.0,23.0,24.0,25.0,25.0,25.0,24.0,23.0,21.0,19.0],"days":3,"p":"Hoi-An/hoi-an_v1.html"},"Hong-Kong":{"n":"Hong Kong","rg":"Asia","fm":1029,"ft":"18h 39m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[18.7,19.7,22.4,24.1,26.7,28.6,29.7,29.2,29.1,26.6,24.3,19.8],"lo":[13.1,14.4,17.9,20.1,23.5,25.6,26.4,25.6,24.9,21.9,18.7,13.2],"days":3,"p":"Hong-Kong/hong-kong_v1.html"},"Istanbul":{"n":"Istanbul","rg":"Europe","fm":795,"ft":"14h 45m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[9.1,9.5,11.8,16.2,20.9,25.5,28.0,28.0,24.4,19.5,14.5,10.6],"lo":[3.4,3.6,5.5,9.4,13.7,18.3,21.0,21.0,17.4,13.0,8.9,5.3],"days":3,"p":"Istanbul/istanbul_v1.html"},"Jo\u00e3o-Pessoa":{"n":"Jo\u00e3o Pessoa","rg":"South America","fm":1047,"ft":"20h 27m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[29.5,29.5,29.0,28.5,27.5,26.5,26.5,27.0,28.0,29.0,30.0,30.0],"lo":[24.5,24.5,24.5,24.0,23.5,22.5,22.5,22.5,23.0,24.0,24.5,24.5],"days":6,"p":"Jo\u00e3o-Pessoa/joao-pessoa_v1.html"},"Kauai":{"n":"Kauai","rg":"North America","fm":352,"ft":"5h 52m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[18.0,17.1,17.6,18.5,19.4,20.5,20.8,21.5,21.4,20.8,19.4,18.0],"lo":[10.2,10.1,10.7,11.3,12.3,13.5,14.3,14.2,14.3,13.6,12.8,11.8],"days":2,"p":"Kauai/kauai_v1.html"},"KeyWest":{"n":"KeyWest","rg":"North America","fm":360,"ft":"6h","fr":"nonstop","cost":"","safe":"","hi":[],"lo":[],"days":3,"p":"KeyWest/keywest_v1.html"},"Krak\u00f3w":{"n":"Krak\u00f3w","rg":"Europe","fm":690,"ft":"13h","fr":"2stop","cost":"Budget","safe":"Safe","hi":[1.5,4.0,10.0,16.2,21.4,24.2,26.2,26.0,21.7,15.2,7.1,2.3],"lo":[-4.2,-3.2,-0.2,4.1,8.9,12.6,14.3,13.8,10.0,5.2,1.4,-2.8],"days":6,"p":"Krak\u00f3w/krakow_v1.html"},"Kyoto":{"n":"Kyoto","rg":"Asia","fm":625,"ft":"10h 25m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[8.3,9.4,14.5,18.1,23.2,26.8,29.7,31.9,28.4,21.8,16.8,10.7],"lo":[-0.8,-0.0,3.5,7.3,12.7,17.8,22.3,23.9,20.6,12.7,6.8,1.2],"days":6,"p":"Kyoto/kyoto_v1.html"},"La-Jolla":{"n":"La Jolla","rg":"North America","fm":164,"ft":"2h 44m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[17.3,17.4,17.2,19.2,19.9,21.9,23.9,25.3,25.4,23.9,21.0,17.6],"lo":[8.3,7.9,9.8,12.4,14.1,15.9,18.0,18.9,18.3,14.9,11.0,8.9],"days":1,"p":"La-Jolla/la-jolla_v1.html"},"Lagos":{"n":"Lagos","rg":"Europe","fm":765,"ft":"14h 15m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[16.1,17.6,19.0,20.5,24.7,26.1,29.4,29.7,26.8,24.3,19.7,17.5],"lo":[9.2,10.6,11.3,12.7,15.5,16.9,18.8,19.1,18.3,16.4,13.0,11.5],"days":2,"p":"Lagos/lagos_v1.html"},"Lake-Como":{"n":"Lake Como","rg":"Europe","fm":794,"ft":"14h 44m","fr":"1stop","cost":"Expensive","safe":"Very Safe","hi":[9.0,12.0,14.0,16.7,20.6,26.3,28.4,27.7,23.3,18.7,12.8,9.3],"lo":[1.5,2.9,4.6,7.6,12.4,17.5,20.0,19.9,16.3,12.2,6.6,3.2],"days":3,"p":"Lake-Como/lake-como_v1.html"},"Lake-Tahoe":{"n":"Lake Tahoe","rg":"North America","fm":75,"ft":"1h 15m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[5.0,7.2,9.4,12.8,18.3,23.9,27.8,27.2,23.3,17.2,9.4,5.6],"lo":[-4.4,-3.3,-1.7,1.7,6.1,10.6,13.3,13.1,10.0,5.0,-0.6,-3.9],"days":3,"p":"Lake-Tahoe/lake-tahoe_v1.html"},"Las-Vegas":{"n":"Las Vegas","rg":"North America","fm":160,"ft":"2h 40m","fr":"nonstop","cost":"mid","safe":1,"hi":[],"lo":[],"days":5,"p":"Las-Vegas/las-vegas_v1.html"},"Lecce":{"n":"Lecce","rg":"Europe","fm":745,"ft":"13h 55m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[12.1,13.2,15.6,18.9,23.5,28.4,31.2,31.0,27.2,22.4,17.2,13.6],"lo":[4.8,5.2,6.8,9.4,13.6,17.8,20.4,20.6,17.4,13.4,9.2,6.2],"days":3,"p":"Lecce/lecce_v1.html"},"Lille":{"n":"Lille","rg":"Europe","fm":580,"ft":"9h 40m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[6.9,9.7,11.5,14.3,17.6,22.5,22.9,23.5,21.1,16.2,10.8,8.0],"lo":[1.9,3.0,3.8,4.6,8.2,13.0,13.9,14.7,12.5,9.7,5.5,3.4],"days":3,"p":"Lille/lille_v1.html"},"Lima":{"n":"Lima","rg":"South America","fm":697,"ft":"13h 07m","fr":"1stop","cost":"Budget","safe":"Moderate","hi":[23.9,24.9,24.8,23.3,21.0,19.5,18.8,18.3,18.5,19.0,20.3,22.1],"lo":[19.7,20.6,20.4,18.9,16.6,15.1,14.2,13.9,14.1,14.7,15.9,18.0],"days":6,"p":"Lima/lima_v1.html"},"Lisbon":{"n":"Lisbon","rg":"Europe","fm":749,"ft":"13h 59m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[14.4,16.7,18.2,19.4,23.8,24.6,28.4,28.1,26.0,23.2,18.0,16.1],"lo":[8.4,9.3,10.5,11.9,14.8,16.0,18.1,18.3,17.7,15.5,12.1,10.7],"days":8,"p":"Lisbon/lisbon_v4.html"},"Ljubljana":{"n":"Ljubljana","rg":"Europe","fm":690,"ft":"13h","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[5.3,9.6,12.2,15.2,18.8,26.1,27.9,26.6,22.2,17.5,10.3,5.9],"lo":[-3.1,-1.7,-0.2,3.3,8.6,14.3,15.7,15.5,11.2,7.5,2.8,-0.7],"days":6,"p":"Ljubljana/ljubljana_v1.html"},"London":{"n":"London","rg":"Europe","fm":590,"ft":"9h 50m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[7.7,10.0,11.4,14.0,17.2,21.1,22.7,22.8,20.6,15.7,11.2,8.8],"lo":[1.6,3.0,3.9,4.3,7.9,11.8,13.9,14.0,12.0,9.0,5.2,3.5],"days":6,"p":"London/london_v5.html"},"Los-Angeles":{"n":"Los Angeles","rg":"North America","fm":154,"ft":"2h 34m","fr":"nonstop","cost":"Expensive","safe":"Moderate","hi":[18.6,19.8,19.9,23.9,24.5,27.7,30.8,31.7,30.9,28.2,23.8,18.7],"lo":[7.6,7.4,9.0,11.6,13.2,15.3,17.0,17.9,17.7,14.9,10.6,8.4],"days":3,"p":"Los-Angeles/los-angeles_v1.html"},"Lucerne":{"n":"Lucerne","rg":"Europe","fm":794,"ft":"14h 44m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[4.9,9.0,11.1,14.1,17.4,23.8,24.7,23.9,20.7,16.2,9.1,6.2],"lo":[-0.5,0.3,1.5,4.3,8.5,14.1,16.3,16.0,13.1,9.2,4.1,0.9],"days":3,"p":"Lucerne/lucerne_v1.html"},"Luxembourg":{"n":"Luxembourg","rg":"Europe","fm":640,"ft":"12h 10m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[4.5,7.9,10.0,13.3,16.8,22.8,23.3,23.6,20.1,14.8,8.5,5.8],"lo":[0.1,1.1,2.0,3.7,7.6,13.0,13.5,14.4,11.0,8.2,3.5,1.9],"days":3,"p":"Luxembourg/luxembourg_v1.html"},"Lyon":{"n":"Lyon","rg":"Europe","fm":650,"ft":"12h 20m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[6.2,11.0,13.6,16.8,20.6,26.5,28.6,28.0,24.2,18.4,11.1,8.2],"lo":[0.4,1.7,3.7,6.3,10.6,15.6,17.3,16.8,13.8,10.2,4.8,2.5],"days":4,"p":"Lyon/lyon_v1.html"},"Macei\u00f3":{"n":"Macei\u00f3","rg":"South America","fm":1032,"ft":"20h 12m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[28.5,29.1,28.7,28.4,27.6,26.5,26.0,26.0,26.6,27.9,28.8,28.8],"lo":[24.7,25.1,25.0,24.8,24.4,23.5,22.8,22.7,23.1,23.7,24.3,24.4],"days":6,"p":"Macei\u00f3/maceio_v1.html"},"MachuPicchu":{"n":"MachuPicchu","rg":"South America","fm":777,"ft":"15h 57m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[17.9,18.0,18.2,18.2,18.1,17.8,18.5,18.7,19.0,19.0,18.7,18.3],"lo":[11.6,11.8,11.4,11.1,10.0,9.0,9.2,9.2,10.3,11.1,11.6,11.7],"days":0,"p":"MachuPicchu/machupicchu_v1.html"},"Madeira":{"n":"Madeira","rg":"Europe","fm":859,"ft":"17h 19m","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[15.9,16.5,17.0,17.7,19.9,20.8,23.2,24.9,23.0,22.3,19.3,17.5],"lo":[11.2,11.1,11.5,12.0,14.0,15.3,16.9,18.2,17.2,16.5,13.9,12.7],"days":3,"p":"Madeira/madeira_v1.html"},"Madrid":{"n":"Madrid","rg":"Europe","fm":744,"ft":"13h 54m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[10.1,14.9,16.9,18.9,25.1,29.5,34.8,33.5,26.2,21.8,14.2,11.5],"lo":[0.6,2.9,5.3,7.6,12.0,16.3,20.4,19.6,14.8,10.7,6.1,3.7],"days":5,"p":"Madrid/madrid_v1.html"},"Malaga":{"n":"Malaga","rg":"Europe","fm":755,"ft":"14h 05m","fr":"1stop","cost":"","safe":"","hi":[],"lo":[],"days":0,"p":"Malaga/malaga_v1.html"},"Maldives":{"n":"Maldives","rg":"Asia","fm":1220,"ft":"23h 20m","fr":"2stop","cost":"Premium","safe":"Safe","hi":[30.3,30.7,31.4,31.6,31.2,30.6,30.5,30.2,30.1,30.0,30.1,30.2],"lo":[25.7,25.8,26.1,26.4,26.3,25.9,25.7,25.5,25.3,25.2,25.4,25.6],"days":3,"p":"Maldives/maldives_v1.html"},"Malibu":{"n":"Malibu","rg":"North America","fm":154,"ft":"2h 34m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[18.3,18.9,19.4,21.1,22.2,23.3,27.8,28.3,28.3,25.0,21.1,18.3],"lo":[7.8,8.3,8.9,10.6,12.8,15.0,17.8,18.3,17.2,14.4,10.0,7.8],"days":3,"p":"Malibu/malibu_v1.html"},"Manuel-Antonio":{"n":"Manuel Antonio","rg":"Central America","fm":562,"ft":"10h 52m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[29.0,30.3,31.0,29.8,29.0,28.2,27.9,28.0,28.2,27.8,27.3,27.9],"lo":[23.9,24.6,25.0,24.7,24.4,23.9,23.8,23.7,23.7,23.4,23.4,23.6],"days":3,"p":"Manuel-Antonio/manuel-antonio_v1.html"},"Marktoberdorf":{"n":"Marktoberdorf","rg":"Europe","fm":832,"ft":"15h 22m","fr":"1stop","cost":"Moderate","safe":"Very Safe","hi":[3.0,7.3,8.8,11.7,14.9,21.7,22.2,21.6,18.3,14.6,7.6,4.8],"lo":[-4.1,-2.3,-0.9,1.6,5.9,11.5,12.8,12.4,9.1,5.5,0.3,-2.3],"days":7,"p":"Marktoberdorf/marktoberdorf_v1.html"},"Marrakech":{"n":"Marrakech","rg":"Africa","fm":785,"ft":"14h 35m","fr":"1stop","cost":"Budget","safe":"Moderate","hi":[19.7,22.8,23.7,25.9,31.8,33.2,39.1,38.4,33.4,30.5,24.5,21.3],"lo":[5.4,7.8,9.5,11.8,15.7,17.8,21.6,21.5,18.6,15.3,10.3,7.4],"days":10,"p":"Marrakech/marrakech_v1.html"},"Marseille":{"n":"Marseille","rg":"Europe","fm":665,"ft":"12h 35m","fr":"2stop","cost":"Moderate","safe":"Moderate","hi":[11.0,13.1,14.6,16.6,20.3,25.3,28.4,27.9,24.7,20.5,15.3,12.7],"lo":[5.0,6.4,7.5,9.4,13.4,18.3,20.7,20.1,17.7,14.2,9.7,7.1],"days":5,"p":"Marseille/marseille_v1.html"},"Maui":{"n":"Maui","rg":"North America","fm":345,"ft":"5h 45m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[22.1,21.3,22.2,22.8,23.9,25.4,26.7,26.6,26.6,25.7,24.6,23.1],"lo":[15.6,15.2,15.7,16.3,17.2,18.2,19.3,19.3,19.2,18.7,18.0,16.8],"days":3,"p":"Maui/maui_v1.html"},"Melbourne":{"n":"Melbourne","rg":"Oceania","fm":1109,"ft":"19h 59m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[27.0,25.0,23.4,20.2,16.0,13.9,13.4,14.3,17.1,18.8,21.0,23.5],"lo":[15.2,14.2,13.5,10.5,8.3,6.8,6.4,6.9,7.8,8.9,10.9,12.3],"days":4,"p":"Melbourne/melbourne_v1.html"},"Miami":{"n":"Miami","rg":"North America","fm":354,"ft":"5h 54m","fr":"nonstop","cost":"Expensive","safe":"Moderate","hi":[24.2,25.5,26.6,28.0,28.8,29.7,30.9,31.1,30.2,28.8,26.7,24.9],"lo":[17.1,19.8,20.4,21.8,23.0,24.5,25.5,25.7,24.7,23.8,21.2,18.7],"days":3,"p":"Miami/miami_v1.html"},"Milan":{"n":"Milan","rg":"Europe","fm":794,"ft":"14h 44m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[7.8,12.0,15.0,18.2,22.2,28.5,30.4,29.7,24.9,19.4,12.5,7.7],"lo":[-0.5,1.9,4.2,7.8,12.8,18.1,20.3,19.9,16.0,11.5,5.5,1.7],"days":3,"p":"Milan/milan_v1.html"},"Monaco":{"n":"Monaco","rg":"Europe","fm":675,"ft":"12h 45m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[11.3,12.9,14.6,16.3,20.1,25.2,27.7,27.8,24.7,20.3,15.7,12.5],"lo":[3.8,5.3,6.6,8.8,13.0,18.1,20.8,20.6,17.3,13.3,8.5,5.7],"days":3,"p":"Monaco/monaco_v1.html"},"Montevideo":{"n":"Montevideo","rg":"South America","fm":1017,"ft":"19h 57m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[27.8,27.1,25.4,21.8,18.0,15.1,14.6,15.8,17.5,20.5,23.8,26.5],"lo":[19.2,18.7,17.5,13.9,10.5,8.1,7.4,8.1,9.8,12.6,15.5,18.0],"days":5,"p":"Montevideo/montevideo_v1.html"},"Montreal":{"n":"Montreal","rg":"North America","fm":449,"ft":"8h 59m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[-4.9,-3.3,3.5,11.2,18.8,24.2,26.9,25.3,20.8,14.7,6.0,0.8],"lo":[-13.2,-12.7,-5.7,1.0,7.9,14.5,18.3,17.0,12.6,7.2,-0.9,-5.9],"days":0,"p":"Montreal/montreal_v1.html"},"Munich":{"n":"Munich","rg":"Europe","fm":832,"ft":"15h 22m","fr":"1stop","cost":"Expensive","safe":"Very Safe","hi":[4.1,8.1,10.2,13.5,16.7,23.4,24.4,23.6,19.8,15.9,8.4,5.5],"lo":[-2.3,-0.9,0.4,3.1,7.4,13.0,14.3,14.2,10.4,6.9,1.6,-1.0],"days":7,"p":"Munich/munich_v2.html"},"Mykonos":{"n":"Mykonos","rg":"Europe","fm":967,"ft":"19h 07m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[16.1,16.1,17.8,21.1,25.0,30.0,32.8,32.8,28.9,25.0,21.1,17.2],"lo":[11.1,11.1,12.2,15.0,17.8,22.2,23.9,23.9,22.2,17.8,15.0,12.2],"days":3,"p":"Mykonos/mykonos_v1.html"},"Napa":{"n":"Napa","rg":"North America","fm":122,"ft":"2h 02m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[13.3,16.1,18.3,21.1,24.4,28.3,33.3,32.8,30.6,25.0,17.2,12.8],"lo":[3.3,4.4,6.1,7.8,10.0,12.8,14.4,13.9,11.7,8.3,4.4,2.8],"days":3,"p":"Napa/napa_v1.html"},"Naples-Florida":{"n":"Naples Florida","rg":"North America","fm":370,"ft":"6h 10m","fr":"nonstop","cost":"Expensive","safe":"Very Safe","hi":[],"lo":[],"days":0,"p":"Naples-Florida/naples-florida_v1.html"},"Naples":{"n":"Naples","rg":"Europe","fm":849,"ft":"15h 39m","fr":"1stop","cost":"Moderate","safe":"Moderate","hi":[12.3,13.9,15.1,17.3,21.4,27.2,30.4,30.5,27.3,22.5,18.0,14.8],"lo":[4.6,5.5,6.7,9.1,13.3,17.9,21.1,21.3,18.6,14.0,11.4,7.9],"days":3,"p":"Naples/naples_v1.html"},"Nashville":{"n":"Nashville","rg":"North America","fm":270,"ft":"4h 30m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[8.0,11.0,16.0,20.0,25.0,29.0,32.0,31.0,27.0,22.0,14.0,9.0],"lo":[0.0,2.0,6.0,10.0,15.0,19.0,21.0,21.0,17.0,10.0,5.0,1.0],"days":3,"p":"Nashville/nashville_v1.html"},"Natal":{"n":"Natal","rg":"South America","fm":772,"ft":"14h 22m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[29.9,30.1,29.5,29.2,28.7,28.0,27.5,27.8,28.5,29.6,30.0,30.1],"lo":[24.5,24.8,24.1,24.0,23.7,22.8,22.3,22.1,22.9,23.8,24.6,24.8],"days":6,"p":"Natal/natal_v1.html"},"New-Orleans":{"n":"New Orleans","rg":"North America","fm":278,"ft":"4h 38m","fr":"nonstop","cost":"mid","safe":1,"hi":[],"lo":[],"days":4,"p":"New-Orleans/new-orleans_v1.html"},"New-York":{"n":"New York","rg":"North America","fm":319,"ft":"5h 19m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[5.2,6.2,10.5,15.6,20.6,26.1,29.9,28.4,24.6,18.8,12.1,7.4],"lo":[-2.6,-2.4,0.9,6.1,11.0,16.8,21.0,20.2,16.2,10.9,3.5,-0.0],"days":5,"p":"New-York/new-york_v1.html"},"Nice":{"n":"Nice","rg":"Europe","fm":675,"ft":"12h 45m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[12.6,14.0,15.7,17.4,21.1,25.8,28.5,28.8,25.7,21.3,16.9,13.8],"lo":[4.9,6.1,7.9,10.1,14.2,18.8,21.5,21.4,18.5,14.2,9.7,6.6],"days":4,"p":"Nice/nice_v1.html"},"Oahu":{"n":"Oahu","rg":"North America","fm":349,"ft":"5h 49m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[26.0,25.3,25.6,26.6,27.6,29.0,29.4,30.1,30.0,29.2,28.0,26.4],"lo":[20.9,20.4,20.9,21.6,22.5,23.6,24.0,24.3,24.3,23.6,22.9,21.6],"days":3,"p":"Oahu/oahu_v1.html"},"Olinda":{"n":"Olinda","rg":"South America","fm":762,"ft":"14h 12m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[29.1,29.4,29.2,28.8,28.1,27.2,26.6,26.6,27.2,28.2,29.2,29.2],"lo":[24.6,24.9,24.6,24.4,24.0,23.0,22.6,22.5,23.0,23.7,24.5,24.6],"days":3,"p":"Olinda/olinda_v1.html"},"Orcas-Island":{"n":"Orcas Island","rg":"North America","fm":45,"ft":"0h 45m","fr":"seasonal","cost":"Moderate","safe":"Very Safe","hi":[6.7,8.3,10.6,13.9,17.2,20.0,23.3,23.9,20.0,13.9,8.9,6.7],"lo":[1.7,2.2,3.3,5.6,8.3,11.1,13.3,13.3,11.1,7.8,3.9,1.7],"days":3,"p":"Orcas-Island/orcas-island_v1.html"},"Orlando":{"n":"Orlando","rg":"North America","fm":335,"ft":"5h 35m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[21.1,24.6,27.1,28.2,30.6,31.3,31.4,31.6,30.0,28.0,24.2,22.1],"lo":[11.1,14.0,15.6,17.6,20.0,22.8,23.8,24.2,22.8,20.1,16.2,13.0],"days":3,"p":"Orlando/orlando_v1.html"},"Osaka":{"n":"Osaka","rg":"Asia","fm":700,"ft":"13h 10m","fr":"1stop","cost":"Moderate","safe":"Very Safe","hi":[9.5,10.2,14.2,19.8,24.5,27.8,31.6,33.3,29.2,23.4,17.6,11.8],"lo":[2.8,3.0,5.8,10.8,16.0,20.8,25.0,25.8,22.0,15.8,9.8,4.8],"days":6,"p":"Osaka/osaka_v1.html"},"Oslo":{"n":"Oslo","rg":"Europe","fm":690,"ft":"13h","fr":"2stop","cost":"Premium","safe":"Very Safe","hi":[1.1,2.9,5.8,11.4,15.4,22.1,21.3,20.9,16.7,10.1,4.7,0.1],"lo":[-3.7,-3.0,-2.2,1.8,6.2,12.8,13.5,13.3,10.0,5.3,1.1,-3.9],"days":6,"p":"Oslo/oslo_v1.html"},"Oxford":{"n":"Oxford","rg":"Europe","fm":590,"ft":"9h 50m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[7.3,9.6,10.8,13.5,16.5,20.3,21.8,21.9,19.8,15.0,10.6,8.2],"lo":[1.7,3.0,3.7,4.0,7.6,11.3,13.3,13.5,11.4,8.7,5.1,3.4],"days":3,"p":"Oxford/oxford_v1.html"},"Palawan":{"n":"Palawan","rg":"Asia","fm":970,"ft":"19h 10m","fr":"2stop","cost":"Budget","safe":"Very Safe","hi":[28.0,28.0,28.7,29.7,29.9,29.5,29.3,29.6,29.5,29.0,28.9,28.6],"lo":[24.6,24.1,24.2,24.8,25.5,25.3,25.0,25.0,24.8,24.8,24.9,24.8],"days":6,"p":"Palawan/palawan_v1.html"},"Palm-Desert":{"n":"Palm Desert","rg":"North America","fm":157,"ft":"2h 37m","fr":"seasonal","cost":"Moderate","safe":"Very Safe","hi":[19.1,20.5,23.1,30.3,33.5,38.8,42.2,41.3,37.6,31.4,24.6,18.9],"lo":[10.6,10.4,12.3,17.2,20.1,24.9,29.2,28.9,25.1,19.3,14.3,10.8],"days":7,"p":"Palm-Desert/palm-desert_v1.html"},"Palo-Alto":{"n":"Palo Alto","rg":"North America","fm":122,"ft":"2h 02m","fr":"nonstop","cost":"Expensive","safe":"Very Safe","hi":[14.6,15.3,16.4,19.9,22.7,26.5,27.4,28.6,27.0,24.0,17.8,14.2],"lo":[6.8,6.4,7.4,9.1,11.1,13.7,14.2,15.5,14.7,12.5,8.7,7.2],"days":7,"p":"Palo-Alto/palo-alto_v6.html"},"Paris":{"n":"Paris","rg":"Europe","fm":580,"ft":"9h 40m","fr":"nonstop","cost":"Expensive","safe":"Moderate","hi":[7.2,10.5,12.5,15.6,18.8,24.0,25.5,25.1,22.6,17.2,11.2,8.5],"lo":[2.2,3.2,4.2,5.6,9.3,14.0,15.1,15.4,13.1,10.0,5.7,3.9],"days":6,"p":"Paris/paris_v7.html"},"Pasadena":{"n":"Pasadena","rg":"North America","fm":154,"ft":"2h 34m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[17.6,18.6,18.8,23.0,24.2,27.9,31.5,32.4,31.0,27.5,22.8,17.8],"lo":[7.4,6.7,7.8,10.5,11.8,14.5,17.0,18.2,17.7,14.5,10.7,8.1],"days":7,"p":"Pasadena/pasadena_v5.html"},"Pensacola":{"n":"Pensacola","rg":"North America","fm":362,"ft":"7h 32m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[14.3,15.9,18.6,23.2,28.0,31.0,32.0,31.9,30.3,24.9,19.0,15.2],"lo":[4.7,6.1,9.2,13.8,18.9,23.4,24.8,24.7,22.8,16.8,11.1,6.7],"days":3,"p":"Pensacola/pensacola_v1.html"},"Petra":{"n":"Petra","rg":"Middle East","fm":855,"ft":"15h 45m","fr":"1stop","cost":"Moderate","safe":"Very Safe","hi":[12.0,14.0,18.0,23.0,27.5,31.5,33.5,33.5,30.0,24.5,17.5,13.0],"lo":[3.0,4.0,7.0,11.0,15.0,18.5,21.0,21.0,17.5,12.5,7.5,4.0],"days":3,"p":"Petra/petra_v1.html"},"Philadelphia":{"n":"Philadelphia","rg":"North America","fm":336,"ft":"7h 06m","fr":"1stop","cost":"Moderate","safe":"Moderate","hi":[6.2,7.7,12.3,17.7,22.5,28.0,31.2,29.8,26.2,20.0,12.9,8.2],"lo":[-2.2,-1.7,1.7,6.9,11.8,17.3,21.4,20.5,16.5,10.9,3.4,0.1],"days":4,"p":"Philadelphia/philadelphia_v1.html"},"Phoenix":{"n":"Phoenix","rg":"North America","fm":155,"ft":"2h 35m","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[18.3,19.7,23.5,30.8,34.5,39.9,41.4,40.2,37.5,31.6,25.0,18.5],"lo":[5.5,6.2,9.8,15.3,20.0,25.4,29.3,28.3,24.7,17.0,11.0,6.5],"days":1,"p":"Phoenix/phoenix_v1.html"},"Phuket":{"n":"Phuket","rg":"Asia","fm":1065,"ft":"19h 15m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[30.0,31.5,32.4,31.7,30.3,29.7,29.6,29.5,29.1,28.9,28.7,29.0],"lo":[24.3,24.7,25.2,25.6,25.6,25.2,25.2,25.1,24.6,24.2,24.2,24.2],"days":6,"p":"Phuket/phuket_v1.html"},"Pisa":{"n":"Pisa","rg":"Europe","fm":700,"ft":"13h 10m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[11.0,13.8,15.7,18.4,22.2,28.1,30.9,31.3,27.2,22.0,16.1,12.5],"lo":[2.1,3.6,4.8,7.2,12.3,16.9,19.7,19.7,16.2,12.6,8.4,4.8],"days":3,"p":"Pisa/pisa_v1.html"},"Portland":{"n":"Portland","rg":"North America","fm":45,"ft":"0h 45m","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[9.0,12.0,14.5,17.5,21.5,25.5,29.0,29.0,25.5,17.5,12.0,8.0],"lo":[3.0,3.5,5.5,8.0,11.5,14.5,17.5,18.0,14.0,9.0,5.5,3.0],"days":3,"p":"Portland/portland_v1.html"},"Porto-Alegre":{"n":"Porto Alegre","rg":"South America","fm":962,"ft":"19h 02m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[30.2,30.0,28.3,24.7,20.4,17.8,17.6,19.1,21.0,24.2,27.0,29.4],"lo":[21.0,20.8,19.1,15.8,12.5,10.2,9.8,10.7,12.6,15.3,18.0,20.0],"days":6,"p":"Porto-Alegre/porto-alegre_v1.html"},"Porto":{"n":"Porto","rg":"Europe","fm":744,"ft":"13h 54m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[13.3,15.6,16.5,17.3,20.6,21.0,24.1,23.7,23.4,20.3,16.3,14.4],"lo":[6.9,8.2,9.1,10.5,13.2,14.5,16.4,16.2,16.1,13.9,10.8,9.2],"days":3,"p":"Porto/porto_v2.html"},"Prague":{"n":"Prague","rg":"Europe","fm":670,"ft":"12h 40m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[4.2,6.9,10.3,14.2,18.5,25.3,25.8,24.9,21.1,16.0,8.5,5.1],"lo":[-1.1,-0.7,1.0,3.5,8.3,14.5,15.4,15.4,11.2,7.3,2.5,-0.2],"days":5,"p":"Prague/prague_v1.html"},"Puerto-Rico":{"n":"Puerto Rico","rg":"Caribbean","fm":510,"ft":"10h","fr":"1stop","cost":"Moderate","safe":"Moderate","hi":[28.2,28.2,28.9,29.9,31.5,31.9,31.1,31.3,31.0,30.5,29.5,28.4],"lo":[21.6,21.9,21.8,22.4,23.7,24.6,25.2,25.2,24.9,24.3,23.7,22.8],"days":4,"p":"Puerto-Rico/puerto-rico_v1.html"},"Quebec-City":{"n":"Quebec City","rg":"North America","fm":499,"ft":"11h 19m","fr":"1stop","cost":"Moderate","safe":"Very Safe","hi":[-6.2,-5.0,1.5,8.4,17.5,22.4,25.3,23.9,19.5,13.4,3.9,-0.9],"lo":[-14.3,-14.0,-7.5,-0.9,6.1,12.5,16.1,15.2,10.6,5.3,-3.4,-8.8],"days":0,"p":"Quebec-City/quebec-city_v1.html"},"Queenstown":{"n":"Queenstown","rg":"Oceania","fm":1239,"ft":"23h 39m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[21.5,20.9,19.1,15.2,12.4,7.7,7.1,8.3,11.3,14.0,17.5,19.0],"lo":[12.5,12.3,11.0,7.8,6.2,2.9,1.9,2.4,3.8,5.5,8.6,10.5],"days":6,"p":"Queenstown/queenstown_v1.html"},"Recife":{"n":"Recife","rg":"South America","fm":762,"ft":"14h 12m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[29.1,29.4,29.2,28.8,28.1,27.2,26.6,26.6,27.2,28.2,29.2,29.2],"lo":[24.6,24.9,24.6,24.4,24.0,23.0,22.6,22.5,23.0,23.7,24.5,24.6],"days":6,"p":"Recife/recife_v1.html"},"Reykjavik":{"n":"Reykjavik","rg":"Europe","fm":565,"ft":"10h 55m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[1.7,2.3,2.8,6.6,8.7,11.3,13.3,13.2,10.4,6.7,4.3,1.0],"lo":[-2.9,-1.8,-1.6,1.7,3.7,6.6,8.7,8.6,6.0,2.7,0.5,-3.0],"days":8,"p":"Reykjavik/reykjavik_v2.html"},"Rio-de-Janeiro":{"n":"Rio de Janeiro","rg":"South America","fm":867,"ft":"15h 57m","fr":"1stop","cost":"Budget","safe":"Caution","hi":[29.8,29.0,29.0,26.7,25.4,25.0,24.8,24.8,26.0,26.4,26.4,27.9],"lo":[23.7,23.6,23.2,21.5,19.7,18.9,18.1,18.2,19.6,20.8,20.9,22.4],"days":6,"p":"Rio-de-Janeiro/rio-de-janeiro_v1.html"},"Rome":{"n":"Rome","rg":"Europe","fm":690,"ft":"11h 30m","fr":"seasonal","cost":"Moderate","safe":"Moderate","hi":[12.0,14.8,16.6,18.8,23.3,29.8,33.4,32.6,28.2,23.1,17.7,14.2],"lo":[3.3,4.7,6.0,8.2,13.1,17.8,21.0,21.1,17.5,13.5,10.0,6.4],"days":5,"p":"Rome/rome_v1.html"},"Salvador":{"n":"Salvador","rg":"South America","fm":802,"ft":"14h 52m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[28.5,29.0,28.4,27.9,26.7,25.8,25.3,25.1,26.2,27.8,28.1,28.5],"lo":[24.4,24.8,24.5,24.3,23.7,22.9,22.1,21.9,22.4,23.5,23.8,24.2],"days":6,"p":"Salvador/salvador_v1.html"},"Salzburg":{"n":"Salzburg","rg":"Europe","fm":680,"ft":"12h 50m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[5.0,9.1,11.3,14.2,17.2,24.2,24.7,23.9,20.3,17.0,10.0,6.5],"lo":[-2.7,-1.2,0.4,3.2,7.7,13.4,14.7,14.5,10.9,7.2,1.7,-1.4],"days":9,"p":"Salzburg/salzburg_v1.html"},"San-Diego":{"n":"San Diego","rg":"North America","fm":164,"ft":"2h 44m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[17.3,17.4,17.2,19.2,19.9,21.9,23.9,25.3,25.4,23.9,21.0,17.6],"lo":[8.3,7.9,9.8,12.4,14.1,15.9,18.0,18.9,18.3,14.9,11.0,8.9],"days":6,"p":"San-Diego/san-diego_v1.html"},"San-Francisco":{"n":"San Francisco","rg":"North America","fm":122,"ft":"2h 02m","fr":"nonstop","cost":"Premium","safe":"Moderate","hi":[13.4,14.0,13.8,15.2,16.5,18.3,18.1,19.7,20.5,20.0,16.3,13.2],"lo":[7.9,7.5,8.6,10.0,11.4,13.0,13.2,14.6,14.7,12.8,9.7,8.2],"days":5,"p":"San-Francisco/san-francisco_v3.html"},"San-Jose-Costa-Rica":{"n":"San Jose Costa Rica","rg":"Central America","fm":562,"ft":"10h 52m","fr":"1stop","cost":"Moderate","safe":"Moderate","hi":[27.0,27.5,28.5,29.0,28.5,27.0,26.5,26.5,26.5,27.0,27.5,27.0],"lo":[18.0,18.5,19.0,19.5,19.0,18.5,18.0,18.0,18.0,18.0,18.5,18.5],"days":0,"p":"San-Jose-Costa-Rica/san-jose-costa-rica_v1.html"},"San-Jose":{"n":"San Jose","rg":"North America","fm":135,"ft":"2h 15m","fr":"nonstop","cost":"Mid-range","safe":"Moderate","hi":[13.9,16.7,18.9,21.7,25.0,28.9,32.2,31.7,29.4,23.3,18.3,13.9],"lo":[5.0,6.1,7.2,8.9,11.1,13.3,14.4,14.4,13.3,10.6,6.7,5.0],"days":1,"p":"San-Jose/san-jose_v1.html"},"San-Juan-Island":{"n":"San Juan Island","rg":"North America","fm":30,"ft":"0h 30m","fr":"seasonal","cost":"Expensive","safe":"Low","hi":[7.3,6.0,8.8,11.3,15.2,17.7,19.9,20.5,17.6,12.8,8.8,6.7],"lo":[3.6,2.1,3.6,5.7,9.0,11.3,13.0,13.7,12.0,8.3,5.3,3.4],"days":2,"p":"San-Juan-Island/san-juan-island_v1.html"},"San-Sebastian":{"n":"San Sebastian","rg":"Europe","fm":680,"ft":"12h 50m","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[11.3,15.0,15.7,16.8,19.3,22.4,23.8,24.6,23.8,21.3,15.6,14.2],"lo":[5.6,7.4,8.2,9.4,11.8,15.3,17.1,17.4,16.2,13.9,9.8,8.4],"days":0,"p":"San-Sebastian/san-sebastian_v1.html"},"Santa-Barbara":{"n":"Santa Barbara","rg":"North America","fm":154,"ft":"2h 34m","fr":"nonstop","cost":"Premium","safe":"Very Safe","hi":[18.3,18.9,19.4,20.6,21.1,23.3,25.6,26.1,25.6,23.3,20.6,18.3],"lo":[6.7,7.2,8.3,9.4,11.7,13.9,16.1,16.7,15.6,12.8,8.9,6.7],"days":3,"p":"Santa-Barbara/santa-barbara_v1.html"},"Santa-Cruz":{"n":"Santa Cruz","rg":"North America","fm":122,"ft":"2h 02m","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[13.9,14.4,14.4,15.0,15.6,16.7,17.2,17.8,18.3,17.8,15.6,13.9],"lo":[5.6,6.1,7.2,8.3,9.4,11.1,12.2,12.8,12.2,10.6,7.8,5.6],"days":5,"p":"Santa-Cruz/santa-cruz_v1.html"},"Santa-Monica":{"n":"Santa Monica","rg":"North America","fm":154,"ft":"2h 34m","fr":"nonstop","cost":"Expensive","safe":"Safe","hi":[18.6,19.8,19.9,23.9,24.5,27.7,30.8,31.7,30.9,28.2,23.8,18.7],"lo":[7.6,7.4,9.0,11.6,13.2,15.3,17.0,17.9,17.7,14.9,10.6,8.4],"days":3,"p":"Santa-Monica/santa-monica_v1.html"},"Santiago":{"n":"Santiago","rg":"South America","fm":842,"ft":"15h 32m","fr":"1stop","cost":"Budget","safe":"Moderate","hi":[29.7,29.6,28.1,23.8,19.5,15.4,15.0,16.8,18.5,22.6,26.4,29.5],"lo":[15.0,15.3,14.0,11.9,9.7,7.3,6.6,7.6,8.4,10.0,11.9,14.1],"days":5,"p":"Santiago/santiago_v1.html"},"Santorini":{"n":"Santorini","rg":"Europe","fm":977,"ft":"19h 17m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[16.1,16.1,17.8,21.1,25.0,30.0,32.8,32.8,28.9,25.0,21.1,17.2],"lo":[11.1,11.1,12.2,15.0,17.8,22.2,23.9,23.9,22.2,17.8,15.0,12.2],"days":3,"p":"Santorini/santorini_v1.html"},"Sarasota":{"n":"Sarasota","rg":"North America","fm":345,"ft":"5h 45m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[21.1,22.2,24.4,27.2,30.0,32.2,33.3,33.3,31.7,28.3,24.4,22.2],"lo":[10.0,10.6,13.3,16.1,19.4,23.3,24.4,24.4,23.3,19.4,15.0,11.1],"days":3,"p":"Sarasota/sarasota_v1.html"},"Sardinia":{"n":"Sardinia","rg":"Europe","fm":900,"ft":"16h 30m","fr":"1stop","cost":"Luxury","safe":"Low","hi":[9.6,12.6,13.8,16.4,20.8,28.0,32.1,31.1,26.3,21.1,14.8,12.1],"lo":[2.7,3.8,4.4,6.6,10.6,16.0,19.4,18.9,15.7,11.9,7.9,5.5],"days":4,"p":"Sardinia/sardinia_v1.html"},"Scottsdale":{"n":"Scottsdale","rg":"North America","fm":171,"ft":"2h 51m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[18.3,19.6,23.3,30.7,34.4,39.8,41.3,40.1,37.5,31.4,25.1,18.5],"lo":[6.3,7.0,10.3,15.7,20.3,25.6,29.5,28.4,25.1,17.6,12.0,7.5],"days":3,"p":"Scottsdale/scottsdale_v1.html"},"Seattle":{"n":"Seattle","rg":"North America","fm":0,"ft":"Home","fr":"home","cost":"Expensive","safe":"Moderate","hi":[8.4,7.4,10.5,13.4,17.7,21.0,24.3,24.8,20.9,14.9,10.0,7.7],"lo":[3.2,1.9,3.1,5.5,9.4,12.3,14.6,15.3,13.2,8.8,4.8,3.3],"days":3,"p":"Seattle/seattle_v1.html"},"Sedona":{"n":"Sedona","rg":"North America","fm":155,"ft":"2h 35m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[14.4,15.0,18.3,23.3,28.9,35.0,37.2,36.7,32.2,25.0,18.3,13.9],"lo":[3.3,3.9,6.1,10.6,15.6,21.7,24.4,23.9,19.4,12.2,6.1,2.8],"days":3,"p":"Sedona/sedona_v1.html"},"Seoul":{"n":"Seoul","rg":"Asia","fm":680,"ft":"11h 20m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[2.4,5.3,12.1,17.0,22.5,26.2,28.8,28.5,25.0,18.4,11.4,3.0],"lo":[-6.6,-4.8,0.4,5.9,11.7,17.6,21.8,22.1,17.2,9.0,1.7,-5.7],"days":4,"p":"Seoul/seoul_v1.html"},"Seville":{"n":"Seville","rg":"Europe","fm":760,"ft":"14h 10m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[15.6,19.6,21.3,23.3,29.5,32.4,37.7,37.0,31.1,27.3,20.1,17.0],"lo":[6.3,8.6,10.1,12.2,16.1,18.7,22.1,22.0,19.1,15.8,11.1,8.8],"days":3,"p":"Seville/seville_v1.html"},"Shanghai":{"n":"Shanghai","rg":"Asia","fm":740,"ft":"12h 20m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[9.6,11.0,16.1,20.4,25.3,28.4,31.4,32.4,27.7,22.8,18.4,10.9],"lo":[1.9,3.4,7.2,11.1,16.1,21.0,24.9,25.4,21.2,15.6,10.3,2.7],"days":4,"p":"Shanghai/shanghai_v1.html"},"Sicily":{"n":"Sicily","rg":"Europe","fm":750,"ft":"14h","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[14.5,15.0,16.5,19.0,23.5,27.5,30.5,31.0,27.5,23.0,18.5,15.5],"lo":[8.0,8.0,9.5,11.5,15.5,19.5,22.5,23.0,20.5,17.0,12.5,9.5],"days":4,"p":"Sicily/sicily_v1.html"},"Siena":{"n":"Siena","rg":"Europe","fm":685,"ft":"12h 55m","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[9.6,12.7,14.6,17.5,22.0,29.1,32.3,31.9,26.7,21.1,14.9,11.4],"lo":[1.5,2.8,3.8,6.3,11.0,16.3,18.9,18.8,15.2,11.3,7.2,4.0],"days":3,"p":"Siena/siena_v1.html"},"Singapore":{"n":"Singapore","rg":"Asia","fm":1080,"ft":"19h 30m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[29.1,30.1,30.6,30.2,30.0,29.2,29.3,29.3,29.6,29.7,29.4,29.1],"lo":[23.5,23.6,24.0,24.5,25.3,25.0,24.8,24.8,24.6,24.2,23.9,23.6],"days":8,"p":"Singapore/singapore_v3.html"},"Sint-Maarten":{"n":"Sint Maarten","rg":"Caribbean","fm":535,"ft":"10h 25m","fr":"1stop","cost":"Expensive","safe":"Moderate","hi":[25.8,25.6,25.6,26.0,27.0,27.8,28.2,28.5,28.7,28.5,27.6,26.7],"lo":[24.3,24.0,24.1,24.6,25.6,26.3,26.5,26.8,26.9,26.6,26.0,25.2],"days":2,"p":"Sint-Maarten/sint-maarten_v1.html"},"Sintra":{"n":"Sintra","rg":"Europe","fm":749,"ft":"13h 59m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[14.0,15.8,16.6,17.1,20.0,20.5,22.6,22.8,22.9,20.8,17.1,15.6],"lo":[8.5,9.8,10.5,12.0,14.3,15.8,17.0,17.3,17.2,15.5,12.5,11.1],"days":2,"p":"Sintra/sintra_v2.html"},"Sorrento":{"n":"Sorrento","rg":"Europe","fm":849,"ft":"15h 39m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[12.3,13.7,14.7,17.0,21.0,26.9,29.9,29.9,26.6,22.1,17.8,14.7],"lo":[6.2,7.0,7.8,10.1,14.2,19.2,22.3,22.4,19.6,15.7,12.5,9.3],"days":2,"p":"Sorrento/sorrento_v1.html"},"Split":{"n":"Split","rg":"Europe","fm":715,"ft":"13h 25m","fr":"1stop","cost":"Moderate","safe":"Very Safe","hi":[10.8,12.9,14.6,17.2,21.9,28.0,31.4,31.0,26.6,21.7,16.8,13.2],"lo":[3.8,4.7,6.3,9.3,14.3,19.4,22.0,22.3,18.2,13.7,10.6,7.2],"days":6,"p":"Split/split_v1.html"},"Stockholm":{"n":"Stockholm","rg":"Europe","fm":700,"ft":"13h 10m","fr":"1stop","cost":"Premium","safe":"Safe","hi":[2.0,2.8,5.8,10.0,14.8,22.3,21.7,21.3,16.4,10.7,5.5,1.4],"lo":[-2.6,-3.2,-2.1,0.0,4.7,11.7,12.8,12.9,9.3,5.2,1.5,-2.8],"days":4,"p":"Stockholm/stockholm_v1.html"},"Strasbourg":{"n":"Strasbourg","rg":"Europe","fm":655,"ft":"12h 25m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[5.6,9.6,12.3,15.7,19.5,25.8,26.5,25.9,22.5,16.8,9.6,6.7],"lo":[0.3,1.5,2.7,5.2,9.5,15.1,15.8,16.2,12.5,9.0,4.0,1.7],"days":4,"p":"Strasbourg/strasbourg_v1.html"},"Stuttgart":{"n":"Stuttgart","rg":"Europe","fm":660,"ft":"12h 30m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[5.1,9.1,11.2,14.1,17.6,24.1,24.9,24.5,21.1,16.5,9.3,6.5],"lo":[-0.4,1.0,1.8,4.0,8.2,13.9,14.8,15.1,11.6,8.5,3.2,1.2],"days":3,"p":"Stuttgart/stuttgart_v1.html"},"Sydney":{"n":"Sydney","rg":"Oceania","fm":1054,"ft":"19h 04m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[26.5,25.7,24.5,22.4,19.4,17.0,17.1,18.3,20.7,22.6,23.3,25.1],"lo":[19.3,18.7,17.6,13.8,10.6,8.5,8.2,8.3,10.4,12.7,14.7,16.8],"days":8,"p":"Sydney/sydney_v2.html"},"S\u00e3o-Lu\u00eds":{"n":"S\u00e3o Lu\u00eds","rg":"South America","fm":1062,"ft":"20h 42m","fr":"1stop","cost":"Budget","safe":"Safe","hi":[29,29,28,28,28,28,28,29,30,31,31,30],"lo":[25,25,25,25,25,24,24,24,25,26,26,26],"days":4,"p":"S\u00e3o-Lu\u00eds/sao-luis_v1.html"},"S\u00e3o-Paulo":{"n":"S\u00e3o Paulo","rg":"South America","fm":930,"ft":"17h","fr":"1stop","cost":"Moderate","safe":"3","hi":[28,28,27,25,23,22,21,23,24,25,26,27],"lo":[19,19,18,16,13,12,11,12,14,16,17,18],"days":6,"p":"S\u00e3o-Paulo/sao-paulo_v1.html"},"Taipei":{"n":"Taipei","rg":"Asia","fm":750,"ft":"12h 30m","fr":"nonstop","cost":"Budget","safe":"Very Safe","hi":[19.4,20.7,23.3,25.3,28.7,31.4,33.6,32.7,30.5,27.0,24.9,20.1],"lo":[14.0,14.6,16.1,18.3,22.0,24.5,25.8,25.7,24.1,22.0,19.4,15.4],"days":3,"p":"Taipei/taipei_v1.html"},"Tallinn":{"n":"Tallinn","rg":"Europe","fm":725,"ft":"13h 35m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[0.3,0.7,3.7,8.7,14.0,21.5,21.3,20.9,15.6,10.1,4.5,0.1],"lo":[-3.7,-3.5,-2.5,0.8,5.2,12.2,13.7,13.7,9.5,5.6,1.0,-3.7],"days":7,"p":"Tallinn/tallinn_v1.html"},"Tokyo":{"n":"Tokyo","rg":"Asia","fm":625,"ft":"10h 25m","fr":"nonstop","cost":"Moderate","safe":"Very Safe","hi":[9.0,10.8,15.3,18.2,22.9,26.2,29.6,32.0,27.8,21.5,17.5,11.6],"lo":[-0.1,0.9,5.5,8.8,14.2,18.6,22.7,24.4,20.9,13.9,8.3,2.3],"days":6,"p":"Tokyo/tokyo_v1.html"},"Toledo":{"n":"Toledo","rg":"Europe","fm":744,"ft":"13h 54m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[10.3,15.0,17.1,19.2,25.5,29.8,35.2,33.9,26.8,22.5,14.7,12.3],"lo":[2.0,4.5,6.4,8.5,12.8,17.0,21.3,20.7,15.9,12.2,7.2,5.1],"days":2,"p":"Toledo/toledo_v1.html"},"Toronto":{"n":"Toronto","rg":"North America","fm":432,"ft":"8h 42m","fr":"1stop","cost":"Moderate","safe":"Safe","hi":[-0.1,0.6,5.4,10.8,17.1,23.4,26.5,25.8,21.8,15.1,7.8,3.6],"lo":[-7.0,-7.9,-3.2,2.0,7.6,14.3,17.7,17.3,13.8,8.2,0.8,-2.2],"days":4,"p":"Toronto/toronto_v1.html"},"Tromso":{"n":"Tromso","rg":"Europe","fm":805,"ft":"16h 25m","fr":"2stop","cost":"Premium","safe":"Very Safe","hi":[-2.6,-1.9,-0.7,2.8,7.0,13.8,16.7,15.5,10.5,4.1,-0.3,-2.6],"lo":[-6.8,-6.2,-5.3,-1.8,1.3,7.5,10.3,9.7,5.9,-0.3,-4.4,-7.2],"days":0,"p":"Tromso/tromso_v1.html"},"Turin":{"n":"Turin","rg":"Europe","fm":665,"ft":"12h 35m","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[7.9,11.7,14.8,18.2,21.8,27.9,30.7,29.5,24.7,19.0,12.0,7.3],"lo":[-2.4,-0.0,2.8,6.6,11.4,16.8,19.3,18.5,14.6,10.0,3.4,-0.9],"days":5,"p":"Turin/turin_v14.html"},"Turks-and-Caicos":{"n":"Turks and Caicos","rg":"Caribbean","fm":502,"ft":"9h 55m","fr":"1stop","cost":"Premium","safe":"Safe","hi":[25.5,25.4,25.4,26.1,27.3,28.4,28.8,29.1,29.2,28.9,27.6,26.4],"lo":[24.1,24.2,24.0,24.7,25.7,26.9,27.3,27.6,27.3,27.0,25.9,24.9],"days":3,"p":"Turks-and-Caicos/turks-and-caicos_v1.html"},"Vancouver":{"n":"Vancouver","rg":"North America","fm":59,"ft":"0h 59m","fr":"seasonal","cost":"Expensive","safe":"Safe","hi":[6.5,5.3,8.7,11.3,15.8,18.9,21.9,22.2,18.6,12.9,8.2,5.6],"lo":[2.0,0.4,2.5,4.8,9.3,12.4,14.7,15.3,12.7,8.0,3.5,1.4],"days":5,"p":"Vancouver/vancouver_v1.html"},"Venice":{"n":"Venice","rg":"Europe","fm":824,"ft":"15h 14m","fr":"1stop","cost":"Expensive","safe":"Safe","hi":[7.6,10.1,12.8,15.7,20.2,26.1,28.4,28.3,24.3,19.3,13.3,8.9],"lo":[0.7,2.5,4.8,8.4,13.5,19.0,20.7,20.6,16.8,12.3,6.9,3.0],"days":3,"p":"Venice/venice_v1.html"},"Verona":{"n":"Verona","rg":"Europe","fm":690,"ft":"13h","fr":"2stop","cost":"Moderate","safe":"Safe","hi":[7.7,11.6,14.7,17.9,21.9,28.3,30.6,29.7,25.3,19.9,13.0,8.6],"lo":[-0.0,2.4,4.5,8.1,13.1,18.3,20.4,20.0,15.8,11.4,5.7,2.4],"days":4,"p":"Verona/verona_v1.html"},"Victoria":{"n":"Victoria","rg":"North America","fm":59,"ft":"0h 59m","fr":"seasonal","cost":"Moderate","safe":"Safe","hi":[7.4,6.4,9.4,12.2,17.1,20.4,23.6,23.8,19.5,13.6,9.1,6.7],"lo":[3.1,1.6,3.2,5.8,9.6,12.1,14.6,15.4,12.9,8.3,4.7,2.8],"days":3,"p":"Victoria/victoria_v1.html"},"Vienna":{"n":"Vienna","rg":"Europe","fm":690,"ft":"13h","fr":"2stop","cost":"Moderate","safe":"Very Safe","hi":[4.4,8.4,11.5,14.9,18.7,25.6,27.3,26.2,21.9,16.5,9.5,5.4],"lo":[-1.1,0.7,2.0,5.2,9.8,15.7,17.1,17.0,12.7,8.3,3.4,0.1],"days":6,"p":"Vienna/vienna_v1.html"},"Virgin-Islands":{"n":"Virgin Islands","rg":"Caribbean","fm":521,"ft":"10h 11m","fr":"1stop","cost":"Moderate","safe":"Moderate","hi":[25.5,25.2,25.1,25.6,26.6,27.4,27.8,28.1,28.3,28.1,27.3,26.4],"lo":[23.9,23.7,23.7,24.2,25.2,25.9,26.2,26.4,26.5,26.2,25.6,24.8],"days":2,"p":"Virgin-Islands/virgin-islands_v1.html"},"Washington-DC":{"n":"Washington DC","rg":"North America","fm":315,"ft":"5h 15m","fr":"nonstop","cost":"Moderate","safe":"Moderate","hi":[7,8,13,18,24,28,31,30,26,20,13,8],"lo":[-3,-2,2,7,12,17,20,20,16,10,4,-1],"days":4,"p":"Washington-DC/washington-dc_v1.html"},"Wellington":{"n":"Wellington","rg":"Oceania","fm":994,"ft":"19h 34m","fr":"2stop","cost":"Expensive","safe":"Very Safe","hi":[19.9,19.7,18.5,16.7,15.5,13.5,12.6,12.4,13.4,14.6,16.7,18.2],"lo":[15.2,15.2,14.1,12.7,11.8,9.9,8.6,8.6,9.4,10.4,12.5,13.8],"days":6,"p":"Wellington/wellington_v1.html"},"Whistler":{"n":"Whistler","rg":"North America","fm":59,"ft":"0h 59m","fr":"seasonal","cost":"Premium","safe":"Very Safe","hi":[1.2,3.4,7.2,12.1,17.3,21.4,24.1,23.5,18.2,11.4,4.1,1.0],"lo":[-5.2,-4.1,-1.8,2.3,6.4,10.2,12.3,11.8,7.6,3.1,-1.3,-4.8],"days":3,"p":"Whistler/whistler_v1.html"},"Yellowstone":{"n":"Yellowstone","rg":"North America","fm":160,"ft":"2h 40m","fr":"nonstop","cost":"Moderate","safe":"Safe","hi":[-4,-2,1,7,13,19,24,23,18,10,2,-3],"lo":[-12,-10,-7,-2,3,8,11,10,6,0,-6,-11],"days":2,"p":"Yellowstone/yellowstone_v1.html"},"Zhangjiajie":{"n":"Zhangjiajie","rg":"Asia","fm":970,"ft":"19h 10m","fr":"2stop","cost":"Budget","safe":"Safe","hi":[8.5,10.6,16.6,20.1,24.1,28.1,30.0,30.8,27.3,20.6,16.5,10.2],"lo":[2.4,3.8,9.2,12.7,17.2,21.6,23.8,24.3,20.6,14.5,9.9,3.5],"days":2,"p":"Zhangjiajie/zhangjiajie_v1.html"},"Zurich":{"n":"Zurich","rg":"Europe","fm":794,"ft":"14h 44m","fr":"1stop","cost":"Premium","safe":"Very Safe","hi":[4.2,8.4,10.8,14.2,17.5,23.9,24.8,24.1,20.7,15.7,8.5,5.3],"lo":[-1.5,-0.3,1.0,3.8,8.0,13.7,15.3,15.1,11.9,7.9,2.9,-0.2],"days":10,"p":"Zurich/zurich_v1.html"}}
+;
+
+var BASE = '../../Guides/';
+
+function cityLink(slug, name) {
+  var d = DATA[slug];
+  if (!d || !d.p) return '<span class="rank-city">' + name + '</span>';
+  return '<a class="rank-city" href="' + BASE + d.p + '">' + name + '</a>';
+}
+
+function regionTag(rg) {
+  return '<span class="rank-rg">' + rg + '</span>';
+}
+
+function tierBadge(tier) {
+  var key = tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase();
+  return '<span class="tier-badge ' + key + '">' + tier + '</span>';
+}
+
+function safeBadge(level) {
+  var cls = level === 'Very Safe' ? 'very-safe' : 'safe';
+  return '<span class="safe-badge ' + cls + '">' + level + '</span>';
+}
+
+function routeBadge(fr) {
+  var map = {'nonstop':'✈ Nonstop','1stop':'1 stop','2stop':'2 stops'};
+  return '<span class="route-badge">' + (map[fr] || fr) + '</span>';
+}
+
+function rankRows(items, valFn) {
+  return items.map(function(item, i) {
+    var num = i + 1;
+    var cls = num === 1 ? 'gold' : num === 2 ? 'silver' : num === 3 ? 'bronze' : '';
+    var val = valFn(item);
+    return '<div class="rank-row">' +
+      '<span class="rank-num ' + cls + '">' + num + '</span>' +
+      cityLink(item.slug, item.name) +
+      '<span class="rank-rg">' + item.rg + '</span>' +
+      val +
+      '</div>';
+  }).join('');
+}
+
+function rankBlock(icon, title, rows) {
+  return '<div class="rank-block"><div class="rank-block-title"><span class="icon">' + icon + '</span>' + title + '</div>' + rows + '</div>';
+}
+
+// ---- Build all data arrays ----
+var entries = Object.keys(DATA).map(function(slug) {
+  var d = DATA[slug];
+  return Object.assign({slug: slug, name: d.n}, d);
+}).filter(function(d) { return d.fm > 0; }); // exclude home (Seattle)
+
+// FLIGHT RECORDS
+(function() {
+  var sorted = entries.slice().sort(function(a,b){ return a.fm - b.fm; });
+  var closest = sorted.slice(0,10);
+  var furthest = sorted.slice(-10).reverse();
+
+  var closestRows = rankRows(closest, function(d){
+    return '<span class="rank-val">' + d.ft + '</span>';
+  });
+  var furthestRows = rankRows(furthest, function(d){
+    return '<span class="rank-val">' + d.ft + '</span>';
+  });
+
+  // Nonstop count
+  var nonstop = entries.filter(function(d){ return d.fr === 'nonstop'; });
+  var oneStop = entries.filter(function(d){ return d.fr === '1stop'; });
+  var twoStop = entries.filter(function(d){ return d.fr === '2stop'; });
+
+  var routeRows = [
+    {label:'✈ Nonstop', count: nonstop.length, cities: nonstop.slice(0,5).map(function(d){return d.name;}).join(', ') + '…'},
+    {label:'🔁 1 stop', count: oneStop.length, cities: oneStop.slice(0,5).map(function(d){return d.name;}).join(', ') + '…'},
+    {label:'🔁 2 stops', count: twoStop.length, cities: twoStop.slice(0,5).map(function(d){return d.name;}).join(', ') + '…'},
+  ];
+  var routeHtml = routeRows.map(function(r){
+    return '<div class="rank-row"><span class="rank-city" style="font-weight:600">' + r.label + '</span><span class="rank-rg" style="font-size:10px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + r.cities + '</span><span class="rank-val">' + r.count + ' cities</span></div>';
+  }).join('');
+
+  document.getElementById('flight-grid').innerHTML =
+    rankBlock('🟢', 'Closest to Seattle', closestRows) +
+    rankBlock('🔴', 'Furthest from Seattle', furthestRows);
+})();
+
+// SUMMER HEAT (July = index 6)
+(function() {
+  var withClimate = entries.filter(function(d){ return d.hi && d.hi.length > 6; });
+
+  var hottest = withClimate.slice().sort(function(a,b){ return b.hi[6]-a.hi[6]; }).slice(0,10);
+  var mildest = withClimate.slice().sort(function(a,b){ return a.hi[6]-b.hi[6]; }).slice(0,10);
+
+  // Sweet spot: 20-26°C in July
+  var sweetSpot = withClimate.filter(function(d){ return d.hi[6] >= 20 && d.hi[6] <= 26; })
+    .sort(function(a,b){ return b.hi[6]-a.hi[6]; }).slice(0,10);
+
+  var hottestRows = rankRows(hottest, function(d){
+    return '<span class="rank-val">' + d.hi[6].toFixed(1) + '°C</span>';
+  });
+  var sweetRows = rankRows(sweetSpot, function(d){
+    return '<span class="rank-val">' + d.hi[6].toFixed(1) + '°C</span>';
+  });
+
+  document.getElementById('summer-grid').innerHTML =
+    rankBlock('🔥', 'Hottest July High', hottestRows) +
+    rankBlock('🌤', 'Mild Summer Sweet Spot (20–26°C)', sweetRows);
+})();
+
+// WINTER ESCAPES (January = index 0)
+(function() {
+  var withClimate = entries.filter(function(d){ return d.hi && d.hi.length > 0 && d.fm > 500; }); // exclude nearby
+
+  var warmest = withClimate.slice().sort(function(a,b){ return b.hi[0]-a.hi[0]; }).slice(0,10);
+  var coolest = withClimate.slice().sort(function(a,b){ return a.hi[0]-b.hi[0]; }).slice(0,10);
+
+  var warmestRows = rankRows(warmest, function(d){
+    return '<span class="rank-val">' + d.hi[0].toFixed(1) + '°C</span>';
+  });
+  var coolestRows = rankRows(coolest, function(d){
+    return '<span class="rank-val">' + d.hi[0].toFixed(1) + '°C</span>';
+  });
+
+  document.getElementById('winter-grid').innerHTML =
+    rankBlock('☀️', 'Warmest January (Best Winter Escape)', warmestRows) +
+    rankBlock('❄️', 'Coolest January (True Winter Atmosphere)', coolestRows);
+})();
+
+// BEST VALUE
+(function() {
+  var COST_ORDER = {Budget:0,'budget':0,Moderate:1,'moderate':1,'Mid-range':1,'mid':1,Expensive:2,'expensive':2,Premium:3,'premium':3,Luxury:4};
+  var byRegion = {};
+  entries.forEach(function(d) {
+    if (!d.cost) return;
+    var rg = d.rg;
+    if (!byRegion[rg]) byRegion[rg] = [];
+    byRegion[rg].push(d);
+  });
+
+  var budgetAll = entries.filter(function(d){ return (d.cost||'').toLowerCase()==='budget'; })
+    .sort(function(a,b){ return a.fm-b.fm; });
+
+  var budgetRows = rankRows(budgetAll.slice(0,10), function(d){
+    return '<span class="rank-val">' + d.ft + '</span>';
+  });
+
+  // Best value Europe
+  var budgetEU = entries.filter(function(d){ return d.rg==='Europe' && (d.cost||'').toLowerCase()==='budget'; });
+  var modEU = entries.filter(function(d){ return d.rg==='Europe' && (d.cost||'').toLowerCase()==='moderate'; });
+  var euValue = budgetEU.concat(modEU).sort(function(a,b){ return a.fm-b.fm; }).slice(0,10);
+  var euRows = rankRows(euValue, function(d){
+    return tierBadge(d.cost);
+  });
+
+  document.getElementById('value-grid').innerHTML =
+    rankBlock('💚', 'Budget Destinations (All Regions)', budgetRows) +
+    rankBlock('🇪🇺', 'Best Value in Europe', euRows);
+})();
+
+// SAFETY
+(function() {
+  var vsSafe = entries.filter(function(d){ return d.safe==='Very Safe'; }).sort(function(a,b){ return a.fm-b.fm; });
+  var safe = entries.filter(function(d){ return d.safe==='Safe'; }).sort(function(a,b){ return a.fm-b.fm; });
+
+  var vsRows = rankRows(vsSafe.slice(0,10), function(d){
+    return '<span class="rank-val" style="font-size:10px;color:#2e7d32">Very Safe</span>';
+  });
+  var safeRows = rankRows(safe.slice(0,10), function(d){
+    return '<span class="rank-val" style="font-size:10px;color:#388e3c">Safe</span>';
+  });
+
+  document.getElementById('safety-grid').innerHTML =
+    rankBlock('🟢', 'Very Safe — Top Picks', vsRows) +
+    rankBlock('✅', 'Safe — Closest from Seattle', safeRows);
+})();
+
+// BEST COMBOS
+(function() {
+  // Budget + Safe/Very Safe
+  var budgetSafe = entries.filter(function(d){
+    return (d.cost||'').toLowerCase()==='budget' && (d.safe==='Safe' || d.safe==='Very Safe');
+  }).sort(function(a,b){ return a.fm-b.fm; });
+
+  // Mild summer (20-26°C July) + Very Safe
+  var mildSafe = entries.filter(function(d){
+    return d.hi && d.hi.length > 6 && d.hi[6] >= 20 && d.hi[6] <= 26 && (d.safe==='Very Safe' || d.safe==='Safe');
+  }).sort(function(a,b){ return b.hi[6]-a.hi[6]; });
+
+  // Warm winter escape (Jan hi > 25°C) + Budget/Moderate
+  var warmValue = entries.filter(function(d){
+    return d.hi && d.hi.length > 0 && d.hi[0] >= 25 && 
+      ['budget','moderate'].includes((d.cost||'').toLowerCase());
+  }).sort(function(a,b){ return b.hi[0]-a.hi[0]; });
+
+  var bsRows = rankRows(budgetSafe.slice(0,10), function(d){
+    return tierBadge(d.cost);
+  });
+  var msRows = rankRows(mildSafe.slice(0,10), function(d){
+    return '<span class="rank-val">' + d.hi[6].toFixed(1) + '°C Jul</span>';
+  });
+
+  document.getElementById('combos-grid').innerHTML =
+    rankBlock('💚', 'Budget + Safe (closest first)', bsRows) +
+    rankBlock('🌤', 'Mild Summer + Safe (20–26°C)', msRows);
+})();
+
+// GUIDE LENGTH
+(function() {
+  var withDays = entries.filter(function(d){ return d.days > 0; });
+  var longest = withDays.slice().sort(function(a,b){ return b.days-a.days; }).slice(0,10);
+  var shortest = withDays.slice().sort(function(a,b){ return a.days-b.days; }).slice(0,10);
+
+  var longRows = rankRows(longest, function(d){
+    return '<span class="rank-val">' + d.days + ' days</span>';
+  });
+  var shortRows = rankRows(shortest, function(d){
+    return '<span class="rank-val">' + d.days + ' days</span>';
+  });
+
+  document.getElementById('guides-grid').innerHTML =
+    rankBlock('📖', 'Longest Guides (Most Days Planned)', longRows) +
+    rankBlock('⚡', 'Shortest Guides (Quick Getaways)', shortRows);
+})();
+
+// BY REGION comparison
+(function() {
+  var REGIONS = ['Europe','North America','Asia','South America','Caribbean','Middle East','Oceania','Africa','Central America'];
+  var COST_ORDER = ['Budget','Moderate','Expensive','Premium','Luxury','mid','Mid-range','budget','moderate'];
+  var COST_NORM = {Budget:'Budget',budget:'Budget',Moderate:'Moderate',moderate:'Moderate','Mid-range':'Moderate',mid:'Moderate',Expensive:'Expensive',expensive:'Expensive',Premium:'Premium',premium:'Premium',Luxury:'Luxury'};
+  var COST_TIERS = ['Budget','Moderate','Expensive','Premium'];
+  var COLORS = {Budget:'#66bb6a',Moderate:'#42a5f5',Expensive:'#ffa726',Premium:'#ef5350'};
+
+  // Cost by region
+  var costByRegion = {};
+  entries.forEach(function(d) {
+    if (!REGIONS.includes(d.rg)) return;
+    var tier = COST_NORM[d.cost] || 'Moderate';
+    if (!costByRegion[d.rg]) costByRegion[d.rg] = {};
+    costByRegion[d.rg][tier] = (costByRegion[d.rg][tier] || 0) + 1;
+  });
+
+  var costHtml = REGIONS.filter(function(rg){ return costByRegion[rg]; }).map(function(rg) {
+    var counts = costByRegion[rg];
+    var total = Object.values(counts).reduce(function(a,b){return a+b;},0);
+    var cheapPct = Math.round(100 * ((counts.Budget||0) + (counts.Moderate||0)) / total);
+    var segs = COST_TIERS.map(function(t) {
+      var pct = ((counts[t]||0) / total * 100).toFixed(1);
+      return pct > 0 ? '<div class="cmp-seg ' + t.toLowerCase() + '" style="width:' + pct + '%"></div>' : '';
+    }).join('');
+    return '<div class="cmp-row"><div class="cmp-label"><span class="cmp-label-name">' + rg + '</span><span class="cmp-label-val">' + cheapPct + '% affordable</span></div><div class="cmp-track">' + segs + '</div></div>';
+  }).join('');
+
+  // Safety by region
+  var safeByRegion = {};
+  entries.forEach(function(d) {
+    if (!REGIONS.includes(d.rg)) return;
+    if (!safeByRegion[d.rg]) safeByRegion[d.rg] = {vs:0,s:0,m:0,o:0};
+    if (d.safe==='Very Safe') safeByRegion[d.rg].vs++;
+    else if (d.safe==='Safe') safeByRegion[d.rg].s++;
+    else if (d.safe==='Moderate') safeByRegion[d.rg].m++;
+    else safeByRegion[d.rg].o++;
+  });
+
+  var safeHtml = REGIONS.filter(function(rg){ return safeByRegion[rg]; }).map(function(rg) {
+    var c = safeByRegion[rg];
+    var total = c.vs + c.s + c.m + c.o;
+    var safePct = Math.round(100*(c.vs+c.s)/total);
+    var vsPct = (c.vs/total*100).toFixed(1);
+    var sPct = (c.s/total*100).toFixed(1);
+    var mPct = (c.m/total*100).toFixed(1);
+    var segs = 
+      '<div class="cmp-seg" style="width:' + vsPct + '%;background:#4caf50"></div>' +
+      '<div class="cmp-seg" style="width:' + sPct + '%;background:#a5d6a7"></div>' +
+      '<div class="cmp-seg" style="width:' + mPct + '%;background:#ffcc80"></div>';
+    return '<div class="cmp-row"><div class="cmp-label"><span class="cmp-label-name">' + rg + '</span><span class="cmp-label-val">' + safePct + '% safe</span></div><div class="cmp-track">' + segs + '</div></div>';
+  }).join('');
+
+  var legendCost = '<div class="cmp-legend">' +
+    '<div class="cmp-legend-item"><div class="cmp-legend-dot" style="background:#66bb6a"></div>Budget</div>' +
+    '<div class="cmp-legend-item"><div class="cmp-legend-dot" style="background:#42a5f5"></div>Moderate</div>' +
+    '<div class="cmp-legend-item"><div class="cmp-legend-dot" style="background:#ffa726"></div>Expensive</div>' +
+    '<div class="cmp-legend-item"><div class="cmp-legend-dot" style="background:#ef5350"></div>Premium</div>' +
+    '</div>';
+
+  var legendSafe = '<div class="cmp-legend">' +
+    '<div class="cmp-legend-item"><div class="cmp-legend-dot" style="background:#4caf50"></div>Very Safe</div>' +
+    '<div class="cmp-legend-item"><div class="cmp-legend-dot" style="background:#a5d6a7"></div>Safe</div>' +
+    '<div class="cmp-legend-item"><div class="cmp-legend-dot" style="background:#ffcc80"></div>Moderate</div>' +
+    '</div>';
+
+  document.getElementById('region-compare-grid').innerHTML =
+    '<div class="compare-block"><div class="compare-block-title">💰 Cost Distribution by Region</div>' + costHtml + legendCost + '</div>' +
+    '<div class="compare-block"><div class="compare-block-title">🛡️ Safety Distribution by Region</div>' + safeHtml + legendSafe + '</div>';
+})();
+</script>
+</body>
+</html>
