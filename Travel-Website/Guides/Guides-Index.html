@@ -2734,18 +2734,14 @@ window._giStatusFilter = 'all';
     });
     out += '</tr>';
 
-    /* Flight row — badge shortest */
-    var fltMins = sel.map(function(c){ var f=FMAP[c.href.replace(/^\.\//,'')]; return (f&&f.r!=='home'&&f.m)?f.m:Infinity; });
-    var minFlt = Math.min.apply(null,fltMins);
+    /* Flight row */
     out += '<tr><td class="cmp-row-label">Flight<br>from SEA</td>';
-    sel.forEach(function(c,i) {
+    sel.forEach(function(c) {
       var key = c.href.replace(/^\.\//, '');
       var f = FMAP[key];
       if (f && f.r !== 'home') {
-        var badge = (fltMins[i]===minFlt && minFlt!==Infinity && fltMins.filter(function(x){return x===minFlt;}).length<fltMins.length) ? '<span class="cmp-badge">Shortest</span>' : '';
         out += '<td class="cmp-col"><span class="cmp-v">' + f.t + '</span>' +
           '<span class="cmp-sub">' + (fltLabels[f.r]||f.r) + (f.o ? ' · ' + esc(stripIcons(f.o)) : '') + '</span>' +
-          (badge ? '<div>' + badge + '</div>' : '') +
           '</td>';
       } else {
         out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
@@ -2818,17 +2814,12 @@ window._giStatusFilter = 'all';
        colored by tier was misleading (Eurozone cities all show the same rate
        yet were tinted differently by cost tier, which has no relation to it). */
     var TIER_CLASS = { 'Budget':'cmp-good', 'Moderate':'cmp-mid', 'Expensive':'cmp-warn', 'Premium':'cmp-bad' };
-    var TIER_RANK  = { 'Budget':1, 'Moderate':2, 'Expensive':3, 'Premium':4 };
-    var costTiers  = sel.map(function(c){ var ci=COST_DATA[c.climateKey]||COST_DATA[c.name]; return ci?TIER_RANK[ci.tier]||99:99; });
-    var minTier    = Math.min.apply(null, costTiers);
     out += '<tr class="cmp-group-start"><td class="cmp-row-label">Cost</td>';
-    sel.forEach(function(c,i) {
+    sel.forEach(function(c) {
       var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
       if (ci) {
-        var badge = (costTiers[i]===minTier && minTier!==99 && costTiers.filter(function(x){return x===minTier;}).length<costTiers.length) ? '<div><span class="cmp-badge">Most affordable</span></div>' : '';
         out += '<td class="cmp-col">'
           + '<span class="cmp-v ' + (TIER_CLASS[ci.tier] || 'cmp-mid') + '">' + ci.tier + '</span>'
-          + badge
           + '</td>';
       } else {
         out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
