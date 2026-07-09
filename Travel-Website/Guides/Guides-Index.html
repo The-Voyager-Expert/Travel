@@ -2591,7 +2591,7 @@ window._giStatusFilter = 'all';
     var selGood = inRange(chi, clo);
     out += '<div class="cmp-temp-now" data-key="' + key + '" style="' + (selGood ? 'color:#2a7a2a;font-weight:600' : '') + '">'
       + MNAMES[pickedMonth] + ': <strong>' + Math.round(chi) + '°</strong> hi / ' + Math.round(clo) + '° lo'
-      + (selGood ? ' ✓' : '') + '</div>';
+      + '</div>';
     return out;
   }
 
@@ -2633,7 +2633,7 @@ window._giStatusFilter = 'all';
         var selGood2 = inRange(chi, clo);
         readout.style.color = selGood2 ? '#2a7a2a' : '';
         readout.style.fontWeight = selGood2 ? '600' : '';
-        readout.innerHTML = MNAMES[pickedMonth] + ': <strong>' + Math.round(chi) + '°</strong> hi / ' + Math.round(clo) + '° lo' + (selGood2 ? ' ✓' : '');
+        readout.innerHTML = MNAMES[pickedMonth] + ': <strong>' + Math.round(chi) + '°</strong> hi / ' + Math.round(clo) + '° lo';
       }
     });
   }
@@ -2727,7 +2727,7 @@ window._giStatusFilter = 'all';
   function buildTable() {
     var FMAP = window._FMAP || {};
     var fltColors = { nonstop:'#2a7a2a', seasonal:'#2a7a2a', '1stop':'#8a6c1a', '2stop':'#c06000' };
-    var fltLabels = { nonstop:'Nonstop ✈', seasonal:'Nonstop (seasonal)', '1stop':'1 connection', '2stop':'2 connections' };
+    var fltLabels = { nonstop:'Nonstop', seasonal:'Nonstop (seasonal)', '1stop':'1 connection', '2stop':'2 connections' };
 
     var out = '<div class="cmp-table-wrap"><table class="cmp-table"><tbody>';
 
@@ -2781,7 +2781,7 @@ window._giStatusFilter = 'all';
       var f = FMAP[key];
       if (f && f.r !== 'home') {
         out += '<td class="cmp-col"><span class="cmp-v">' + f.t + '</span>' +
-          '<span class="cmp-sub">' + (fltLabels[f.r]||f.r) + (f.o ? ' · ' + esc(f.o) : '') + '</span>' +
+          '<span class="cmp-sub">' + (fltLabels[f.r]||f.r) + (f.o ? ' · ' + esc(stripIcons(f.o)) : '') + '</span>' +
           '</td>';
       } else {
         out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
@@ -2890,7 +2890,7 @@ window._giStatusFilter = 'all';
       if (si) {
         out += '<td class="cmp-col">'
           + '<span class="cmp-v ' + (SAFE_CLASS[si.level] || 'cmp-mid') + '">' + si.level + '</span>'
-          + (si.note ? '<span class="cmp-sub">' + esc(si.note) + '</span>' : '')
+          + (si.note ? '<span class="cmp-sub">' + esc(stripIcons(si.note)) + '</span>' : '')
           + '</td>';
       } else {
         out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
@@ -2958,6 +2958,14 @@ window._giStatusFilter = 'all';
     return String(s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
+  }
+  /* strip decorative emoji/pictographs from data-driven text (icons must not ship) */
+  function stripIcons(s) {
+    return String(s)
+      .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, '')
+      .replace(/\s{2,}/g, ' ')
+      .replace(/^[\s·|-]+|[\s·|-]+$/g, '')
+      .trim();
   }
 
   /* ── Show compare panel ───────────────────────────────────────────── */
