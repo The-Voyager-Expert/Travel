@@ -567,6 +567,7 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   </div>
   <div class="view-toggle" style="margin:0">
     <button id="view-compare">📶 Compare cities</button>
+    <div id="cmp-hint" style="display:none;font-size:11px;color:var(--muted);margin-top:5px;text-align:center;white-space:nowrap">Tap cities to select, then compare</div>
   </div>
   <div class="pill-row">
   <button id="btn-theme-toggle" class="disc-btn" aria-expanded="false" aria-controls="theme-panel">🌆 Type <span class="disc-caret">▾</span></button>
@@ -2700,7 +2701,7 @@ window._giStatusFilter = 'all';
     sel.forEach(function(c) {
       out += '<td class="cmp-col cmp-city-cell">' +
         '<span class="cmp-chip" style="font-size:13px;font-weight:600;padding:4px 8px 4px 12px">' +
-        esc(c.name) +
+        (c.flag ? c.flag + ' ' : '') + esc(c.name) +
         ' <button class="cmp-chip-x cmp-remove-btn" data-href="' + esc(c.href) + '" title="Remove">×</button>' +
         '</span>' +
         '</td>';
@@ -2922,13 +2923,15 @@ window._giStatusFilter = 'all';
       compareView.querySelectorAll('.cmp-remove-btn').forEach(function(b) {
         b.addEventListener('click', function(){ deselect(b.dataset.href); });
       });
+      /* scroll table into view */
+      compareView.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 
   /* ── Selection bar update ────────────────────────────────────────── */
   function updateBar() {
     var chips = sel.map(function(c){
-      return '<span class="cmp-chip">' + esc(c.name) +
+      return '<span class="cmp-chip">' + (c.flag ? c.flag + ' ' : '') + esc(c.name) +
         ' <button class="cmp-chip-x" data-href="' + esc(c.href) + '" title="Remove">×</button></span>';
     }).join('');
     selBar.querySelector('.cmp-sel-chips').innerHTML = chips;
@@ -2937,6 +2940,10 @@ window._giStatusFilter = 'all';
     if (countEl) countEl.textContent = sel.length ? sel.length + ' of ' + MAX : '';
     selBar.classList.toggle('cmp-visible', document.body.classList.contains('mode-compare'));
     document.body.classList.toggle('cmp-full', sel.length >= MAX);
+    /* update tab label with count */
+    if (btnCompare) btnCompare.innerHTML = sel.length && document.body.classList.contains('mode-compare')
+      ? '📶 ' + sel.length + ' selected'
+      : '📶 Compare cities';
     /* wire chip remove buttons */
     selBar.querySelectorAll('.cmp-chip-x').forEach(function(b){
       b.addEventListener('click', function(e){ e.stopPropagation(); deselect(b.dataset.href); });
@@ -2954,6 +2961,8 @@ window._giStatusFilter = 'all';
   }
 
   /* ── Enter / exit compare mode ──────────────────────────────────── */
+  var cmpHint = document.getElementById('cmp-hint');
+
   function enterCompare() {
     document.body.classList.add('mode-compare');
     /* close the facet panels and reset the view pills to Country grouping */
@@ -2963,7 +2972,8 @@ window._giStatusFilter = 'all';
     var fv = document.getElementById('flight-view');
     if (fv) fv.style.display = 'none';
     document.querySelector('.mosaic-wrap').style.display = '';
-    if (btnCompare) { btnCompare.classList.add('on'); btnCompare.innerHTML = '📶 Compare cities'; }
+    if (btnCompare) { btnCompare.classList.add('on'); }
+    if (cmpHint) cmpHint.style.display = 'block';
     updateBar();
   }
 
@@ -2978,6 +2988,7 @@ window._giStatusFilter = 'all';
     var fv = document.getElementById('flight-view');
     if (fv) fv.style.display = '';
     if (btnCompare) { btnCompare.classList.remove('on'); btnCompare.innerHTML = '📶 Compare cities'; }
+    if (cmpHint) cmpHint.style.display = 'none';
   }
 
   /* Expose so the facet panels and view pills can exit compare mode */
