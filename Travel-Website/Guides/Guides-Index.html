@@ -425,11 +425,11 @@ body.mode-compare .mosaic-wrap .dest-card[data-status="want"].cmp-sel::after {
 body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45; }
 /* Compare selection panel — sits in the same band as the When-to-go panel */
 .cmp-sel-bar {
-  margin: 16px 0 10px; padding: 12px 16px;
+  margin: 16px 0 10px 124px; padding: 12px 16px;
   background: var(--surface, #ffffff); border: 1px solid var(--border); border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
   display: none; align-items: center; gap: 10px; flex-wrap: wrap;
-  width: fit-content; max-width: 100%;
+  width: fit-content; max-width: calc(100% - 124px);
 }
 .cmp-sel-bar.cmp-visible { display: flex; }
 .cmp-sel-chips { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; align-items: center; }
@@ -524,8 +524,8 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
 .cmp-temp-now { font-size: 11px; color: var(--muted); margin-top: 1px; }
 /* Guide link */
 .cmp-guide-link {
-  display: inline-block; font-size: 13px; font-weight: 600;
-  color: var(--text, #1a1917); text-decoration: none; background: var(--surface, #ffffff);
+  display: inline-block; font-size: 13px; font-weight: 500;
+  color: #8a6c1a; text-decoration: none; background: var(--surface, #ffffff);
   padding: 7px 14px; border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px;
   transition: color .12s, border-color .12s;
 }
@@ -537,7 +537,7 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: flex-start;
 }
 @media (max-width: 600px) {
-  .cmp-sel-bar { padding: 8px 12px; gap: 7px; width: auto; }
+  .cmp-sel-bar { padding: 8px 12px; gap: 7px; width: auto; margin-left: 0; max-width: 100%; }
   .cmp-table td { padding: 8px 10px; }
   .cmp-col { min-width: 110px; }
   .cmp-bar { width: 7px; }
@@ -2864,15 +2864,8 @@ window._giStatusFilter = 'all';
     });
     out += '</tr>';
 
-    /* Guide link row */
-    out += '<tr><td class="cmp-row-label"></td>';
-    sel.forEach(function(c) {
-      out += '<td class="cmp-col"><a class="cmp-guide-link" href="' + c.href + '">Guide</a></td>';
-    });
-    out += '</tr>';
-
-    /* Exchange-rate row — currency → US dollar, per city (below the Guide row) */
-    out += '<tr><td class="cmp-row-label">Exchange rate<br><span style="font-weight:400;letter-spacing:0;text-transform:none">' + FX_AS_OF + '</span></td>';
+    /* Currency row — currency → US dollar, per city (above the Guide row) */
+    out += '<tr><td class="cmp-row-label">Currency<br><span style="font-weight:400;letter-spacing:0;text-transform:none">' + FX_AS_OF + '</span></td>';
     sel.forEach(function(c) {
       var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
       var m = ci && ci.currency ? String(ci.currency).match(/[A-Z]{3}/) : null;
@@ -2888,6 +2881,13 @@ window._giStatusFilter = 'all';
       } else {
         out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
       }
+    });
+    out += '</tr>';
+
+    /* Guide link row */
+    out += '<tr><td class="cmp-row-label"></td>';
+    sel.forEach(function(c) {
+      out += '<td class="cmp-col"><a class="cmp-guide-link" href="' + c.href + '">Guide</a></td>';
     });
     out += '</tr>';
 
