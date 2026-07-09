@@ -37,16 +37,15 @@ CURATED = {
     "amusement": "Orlando,Los Angeles,Tokyo,Paris,Copenhagen,Abu Dhabi,Dubai,San Diego,Singapore,Hong Kong,Shanghai,Beijing,Gothenburg",
     "kids": "Orlando,San Diego,Los Angeles,Singapore,Tokyo,Copenhagen,Paris,Abu Dhabi,Dubai,Gothenburg,Hong Kong,Barcelona,London,Boston,Chicago,Atlanta,Washington DC,Vancouver,Sydney,Seattle,Santa Monica,Santa Cruz",
 }
-ORDER = ["outdoor", "nature", "beach", "islands", "snow", "foodie", "history", "art", "nightlife", "wine", "amusement", "kids"]
+ORDER = ["nature", "beach", "islands", "snow", "foodie", "history", "art", "nightlife", "wine", "amusement", "kids"]
 
-# Containment hierarchy (additive): a city tagged with a child theme also carries
-# its parents, so parents act as umbrellas in the filter.
-#   🏞 outdoor  ⊃  nature(inland) · beach(⊃ islands) · snow
-# CURATED holds only PRIMARY leaf membership (nature/beach/islands/snow/foodie/
-# history/art); _propagate derives the `outdoor` umbrella + lifts islands→beach.
-# Selecting Outdoor shows every natural-scenery city; Beach shows beaches+islands;
-# Islands is most specific; foodie/history/art are independent.
-PARENTS = {"islands": ["beach"], "beach": ["outdoor"], "nature": ["outdoor"], "snow": ["outdoor"]}
+# Flat taxonomy — every chip is an independent leaf, with ONE dependency:
+# every island is also a beach, so a city tagged `islands` also carries `beach`
+# (not the reverse; Beach shows beaches+islands, Islands is the strict subset).
+# Nothing else cascades — nature (forests), snow, foodie, history, art … are all
+# independent. CURATED holds primary membership; _propagate lifts islands→beach.
+# (`nature` surfaces in the UI as the "Forests" chip; the tag key stays `nature`.)
+PARENTS = {"islands": ["beach"]}
 
 
 def card_names(html: str) -> set:

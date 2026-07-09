@@ -921,7 +921,7 @@ def _refresh_theme_tags(guide_path: Path) -> int:
             f"\n🚫  SHIP BLOCKED — {key} has no Trip-type theme tag.\n"
             f"    Every guide must carry at least one tag so it appears in the 🎯 Trip type filter.\n"
             f"    Add {key} to one or more lists in Brain/scripts/build_theme_tags.py:\n"
-            f"      beach · islands · snow · nature · outdoor · foodie · history · art\n"
+            f"      nature · beach · islands · snow · foodie · history · art\n"
             f"      nightlife · wine · amusement · kids\n"
             f"    Then re-run: python3 Brain/scripts/build_theme_tags.py --apply\n",
             file=sys.stderr,
