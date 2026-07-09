@@ -173,11 +173,6 @@
 #theme-panel .sfl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
 #theme-badge { cursor:pointer; font-size:12px; color:#A8895A; padding:4px 8px; white-space:nowrap; }
 #theme-badge:hover { color:var(--accent); }
-.theme-tree { display:inline-flex; flex-direction:column; align-items:flex-start; gap:6px; padding:6px 10px; background:rgba(122,59,30,.06); border:1px solid rgba(184,92,42,.2); border-radius:8px; }
-.theme-tree-kids { display:flex; align-items:center; gap:6px; padding-left:18px; position:relative; }
-.theme-tree-kids::before { content:"└"; color:#b85c2a; font-size:14px; font-weight:700; position:absolute; left:2px; top:50%; transform:translateY(-50%); line-height:1; }
-.tchip.tchild { font-size:12px; padding:5px 10px; opacity:.85; }
-.tchip.tchild.on { opacity:1; }
 .theme-divider { width:1px; height:22px; background:var(--border2,#e6e2da); margin:0 2px; flex-shrink:0; }
 .tdiv { width:1px; height:22px; background:var(--border2,#e6e2da); margin:0 2px; align-self:center; }
 #season-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; }
@@ -712,16 +707,11 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
 </div><!-- /filters-panel -->
 
 <div id="theme-panel" hidden>
-  <span class="theme-tree">
-    <button class="tchip" data-theme="outdoor">🏞️ Outdoor</button>
-    <span class="theme-tree-kids">
-      <button class="tchip tchild" data-theme="nature">🌲 Nature</button>
-      <button class="tchip tchild" data-theme="beach">🏖 Beach</button>
-      <button class="tchip tchild" data-theme="islands">🏝 Islands</button>
-      <button class="tchip tchild" data-theme="snow">🎿 Snow / Ski</button>
-    </span>
-  </span>
   <span class="theme-standalone">
+    <button class="tchip" data-theme="nature">🌲 Nature</button>
+    <button class="tchip" data-theme="beach">🏖 Beach</button>
+    <button class="tchip" data-theme="islands">🏝 Islands</button>
+    <button class="tchip" data-theme="snow">🎿 Snow / Ski</button>
     <button class="tchip" data-theme="foodie">🍽 Foodie</button>
     <button class="tchip" data-theme="history">🏛 History</button>
     <button class="tchip" data-theme="art">🎨 Art &amp; Museums</button>
@@ -3211,32 +3201,11 @@ window._giStatusFilter = 'all';
   var badge  = document.getElementById('theme-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
 
-  /* Nested taxonomy — implication runs UPWARD only:
-       Outdoor > Nature > Snow/Ski   and   Outdoor > Beach > Islands
-     (every island is a beach, every snow spot is nature; not the reverse).
-     `selected` = the nodes the user actually clicked. A click toggles ONLY that
-     node — it never cascades to children, so selecting Beach does NOT select
-     Islands, and selecting Nature does NOT select Snow/Ski. A chip is LIT when
-     it OR any descendant is selected, so lighting propagates upward:
-       - selecting Snow/Ski lights Nature + Outdoor (not Beach);
-       - selecting Islands lights Beach + Outdoor (not Nature);
-       - selecting a broad node (Beach, Nature, Outdoor) lights only itself +
-         Outdoor — its narrower children stay unlit.
-     The RESULT is the union of every selected node's tag matched against each
-     city's tags: Beach returns every beach city (islands included, since they
-     carry the beach tag) while Islands returns only islands; Outdoor returns
-     all outdoor cities via the 'outdoor' tag every such city carries. */
-  var CHILDREN = { outdoor: ['nature', 'beach'], nature: ['snow'], beach: ['islands'] };
-  function descendants(t) {
-    var out = [];
-    (CHILDREN[t] || []).forEach(function (c) { out.push(c); out = out.concat(descendants(c)); });
-    return out;
-  }
-  function isLit(t) {
-    if (selected[t]) return true;
-    return descendants(t).some(function (d) { return selected[d]; });
-  }
+  /* Flat taxonomy — every chip is an independent tag. A click toggles only that
+     chip; the result is the union of every selected tag matched against each
+     city's tags. No parent/child cascade. */
   var selected = {};
+  function isLit(t) { return !!selected[t]; }
 
   function cityName(card) {
     return ((card.querySelector('.dest-name') || {}).textContent || '').trim();
