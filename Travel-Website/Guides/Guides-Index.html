@@ -469,7 +469,7 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   text-align: left; padding-right: 14px; min-width: 92px;
 }
 /* Unified value type scale — one primary size, one sub size, one muted-sub */
-.cmp-v    { font-size: 14px; font-weight: 700; color: var(--text, #1a1917); }
+.cmp-v    { font-size: 14px; font-weight: 400; color: var(--text, #1a1917); }
 .cmp-sub  { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; line-height: 1.4; }
 .cmp-list { display: inline-block; max-width: 170px; font-size: 13px; color: var(--text, #1a1917); line-height: 1.6; }
 .cmp-good { color: #2a7a2a; }
@@ -708,7 +708,7 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
 
 <div id="theme-panel" hidden>
   <span class="theme-standalone">
-    <button class="tchip" data-theme="nature">🌲 Nature</button>
+    <button class="tchip" data-theme="nature">🌲 Forests</button>
     <button class="tchip" data-theme="beach">🏖 Beach</button>
     <button class="tchip" data-theme="islands">🏝 Islands</button>
     <button class="tchip" data-theme="snow">🎿 Snow / Ski</button>
@@ -2714,13 +2714,6 @@ window._giStatusFilter = 'all';
     });
     out += '</tr>';
 
-    /* Status row — own row, styled like Country/Local Time, not bolted onto the header cell */
-    out += '<tr><td class="cmp-row-label"></td>';
-    sel.forEach(function(c) {
-      out += '<td class="cmp-col"><span class="cmp-v">' + (c.status === 'want' ? 'Want to go' : 'Been') + '</span></td>';
-    });
-    out += '</tr>';
-
     /* Country row */
     out += '<tr><td class="cmp-row-label">Country</td>';
     sel.forEach(function(c) {
@@ -2832,7 +2825,6 @@ window._giStatusFilter = 'all';
       if (ci) {
         out += '<td class="cmp-col">'
           + '<span class="cmp-v ' + (TIER_CLASS[ci.tier] || 'cmp-mid') + '">' + ci.tier + '</span>'
-          + '<span class="cmp-sub">' + esc(ci.currency) + '</span>'
           + '</td>';
       } else {
         out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
@@ -2852,7 +2844,7 @@ window._giStatusFilter = 'all';
     ];
     var legendFootnote = '<div class="cmp-legend-footnote">'
       + SAFE_LEGEND.map(function(s){
-          return '<span style="font-size:11px;font-weight:700;color:' + s.col + '">' + s.label + '</span>';
+          return '<span style="font-size:11px;color:' + s.col + '">' + s.label + '</span>';
         }).join('')
       + '</div>';
     var SAFE_CLASS = {'Very Safe':'cmp-good','Safe':'cmp-good','Moderate':'cmp-mid','Caution':'cmp-warn','High Risk':'cmp-bad'};
@@ -3201,9 +3193,11 @@ window._giStatusFilter = 'all';
   var badge  = document.getElementById('theme-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
 
-  /* Flat taxonomy — every chip is an independent tag. A click toggles only that
-     chip; the result is the union of every selected tag matched against each
-     city's tags. No parent/child cascade. */
+  /* Flat taxonomy — every chip is an independent tag, with ONE dependency:
+     Islands implies Beach (every island is a beach; not the reverse). So
+     selecting Islands also selects Beach, and deselecting Beach clears Islands.
+     Nothing else cascades. The result is the union of every selected tag matched
+     against each city's tags. */
   var selected = {};
   function isLit(t) { return !!selected[t]; }
 
@@ -3214,9 +3208,6 @@ window._giStatusFilter = 'all';
     chips.forEach(function (chip) {
       chip.classList.toggle('on', isLit(chip.getAttribute('data-theme')));
     });
-    /* Every selected node contributes its tag (including 'outdoor', which every
-       outdoor city carries — so clicking Outdoor filters to all outdoor cities
-       rather than clearing the filter). */
     var sel = Object.keys(selected);
     if (sel.length === 0) {
       cards.forEach(function (c) { c.classList.remove('theme-hide'); });
@@ -3239,10 +3230,15 @@ window._giStatusFilter = 'all';
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () {
       var t = chip.getAttribute('data-theme');
-      /* Toggle ONLY this node — never cascade to children. Ancestors light up
-         on their own via isLit()'s descendant check. */
-      if (selected[t]) { delete selected[t]; }
-      else { selected[t] = true; }
+      if (selected[t]) {
+        delete selected[t];
+        /* Beach can't be on without its Islands subset making sense — clear it. */
+        if (t === 'beach') delete selected.islands;
+      } else {
+        selected[t] = true;
+        /* Islands implies Beach. */
+        if (t === 'islands') selected.beach = true;
+      }
       applyThemeFilter();
     });
   });
