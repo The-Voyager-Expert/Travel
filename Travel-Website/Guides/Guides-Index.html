@@ -353,7 +353,8 @@ body.mode-flights .fnote { display: block; }
 .ll-lbl { padding-top:7px; min-width:64px; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
 .ll-chips { display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
 .ll-div { width:1px; align-self:stretch; min-height:20px; background:var(--border2, #e6e2da); margin:0 2px; }
-.ll-foot { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:10px; padding-top:9px; border-top:1px solid var(--border2, #e6e2da); }
+.ll-foot { display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:4px; }
+.ll-foot:has(#lang-badge:not(.visible)) { display:none; }
 .ll-count { font-size:12px; color:var(--muted); }
 .ll-count strong { color:#7a3b1e; font-weight:700; }
 #lang-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:3px 10px; cursor:pointer; font-family:inherit; }
@@ -364,7 +365,7 @@ body.mode-flights .fnote { display: block; }
 .lang-menu-item:last-child { border-bottom:none; }
 .lang-menu-item:hover:not(.on) { background:var(--warm); }
 .lang-menu-item.on { background:none; color:#7a3b1e; font-weight:700; }
-#lang-pane-lang { margin-top:14px; }
+#lang-pane-lang { margin-top:0; }
 #lang-pane-guide { display:block; }
 #lang-pane-guide[hidden] { display:none; }
 #lang-pane-guide.has-pick { display:grid; grid-template-columns:300px 1fr; gap:16px; align-items:stretch; }
@@ -750,7 +751,6 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
 <div id="lang-content">
   <div id="lang-pane-lang" hidden>
     <div class="ll-head">
-      <span class="ll-lbl">🗣 Spoken</span>
       <div id="lang-chips" class="ll-chips">
       <button class="lchip on" data-l="all">All</button>
       <span class="ll-div" aria-hidden="true"></span>
@@ -774,7 +774,6 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
       </div>
     </div>
     <div class="ll-foot">
-      <span id="lang-count" class="ll-count"></span>
       <span id="lang-badge">✕ clear</span>
     </div>
   </div>
@@ -3232,20 +3231,22 @@ window._giStatusFilter = 'all';
   var badge  = document.getElementById('theme-badge');
   var cards  = [].slice.call(document.querySelectorAll('.dest-card'));
 
-  /* Checkbox tree:  Outdoor is the parent of four INDEPENDENT leaves —
-     Nature, Beach, Islands, Snow/Ski (exactly as the panel shows them).
-     `selected` = the nodes the user actually chose. Clicking a chip that is OFF
-     selects it + all its descendants; clicking one that is ON (lit) deselects it
-     + its descendants. A chip is LIT when it OR any descendant is selected, so:
-       - checking any single leaf lights only that leaf + Outdoor (upward);
-         Outdoor stays lit while any leaf under it is checked;
-       - checking Outdoor selects all four leaves at once;
-       - unchecking a leaf removes only that leaf — the siblings and Outdoor
-         stay, so you can uncheck just Snow/Ski.
-     The RESULT is the union of the selected leaves' tags ('outdoor' excluded —
-     every natural city already carries a leaf tag); Outdoor merely
-     lit-by-a-descendant never widens the result. */
-  var CHILDREN = { outdoor: ['nature', 'beach', 'islands', 'snow'] };
+  /* Nested taxonomy — implication runs UPWARD only:
+       Outdoor > Nature > Snow/Ski   and   Outdoor > Beach > Islands
+     (every island is a beach, every snow spot is nature; not the reverse).
+     `selected` = the nodes the user actually clicked. A click toggles ONLY that
+     node — it never cascades to children, so selecting Beach does NOT select
+     Islands, and selecting Nature does NOT select Snow/Ski. A chip is LIT when
+     it OR any descendant is selected, so lighting propagates upward:
+       - selecting Snow/Ski lights Nature + Outdoor (not Beach);
+       - selecting Islands lights Beach + Outdoor (not Nature);
+       - selecting a broad node (Beach, Nature, Outdoor) lights only itself +
+         Outdoor — its narrower children stay unlit.
+     The RESULT is the union of every selected node's tag matched against each
+     city's tags: Beach returns every beach city (islands included, since they
+     carry the beach tag) while Islands returns only islands; Outdoor returns
+     all outdoor cities via the 'outdoor' tag every such city carries. */
+  var CHILDREN = { outdoor: ['nature', 'beach'], nature: ['snow'], beach: ['islands'] };
   function descendants(t) {
     var out = [];
     (CHILDREN[t] || []).forEach(function (c) { out.push(c); out = out.concat(descendants(c)); });
@@ -3264,10 +3265,13 @@ window._giStatusFilter = 'all';
     chips.forEach(function (chip) {
       chip.classList.toggle('on', isLit(chip.getAttribute('data-theme')));
     });
-    var sel = Object.keys(selected).filter(function (t) { return t !== 'outdoor'; });
+    /* Every selected node contributes its tag (including 'outdoor', which every
+       outdoor city carries — so clicking Outdoor filters to all outdoor cities
+       rather than clearing the filter). */
+    var sel = Object.keys(selected);
     if (sel.length === 0) {
       cards.forEach(function (c) { c.classList.remove('theme-hide'); });
-      if (badge) badge.hidden = (Object.keys(selected).length === 0);
+      if (badge) badge.hidden = true;
     } else {
       cards.forEach(function (c) {
         var tags = THEME_DATA[cityName(c)] || [];
