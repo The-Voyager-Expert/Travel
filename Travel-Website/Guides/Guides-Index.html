@@ -132,7 +132,7 @@
 .dest-flag { font-size: 15px; line-height: 1; flex-shrink: 0; }
 .dest-name { font-size: var(--fs-card-name); font-weight: 600; color: var(--text, #1a1917); }
 /* ── Search ── */
-#guide-search{width:360px;box-sizing:border-box;padding:11px 18px;margin:0;font-size:15px;border:1.5px solid var(--border2, #e6e2da);border-radius:6px;background:var(--surface, #ffffff);color:var(--text, #1a1917);outline:none;transition:border-color .15s,box-shadow .15s;}
+#guide-search{width:360px;box-sizing:border-box;padding:11px 18px 11px 36px;margin:0;font-size:15px;border:1.5px solid var(--border2, #e6e2da);border-radius:6px;background:var(--surface, #ffffff);color:var(--text, #1a1917);outline:none;transition:border-color .15s,box-shadow .15s;}
 #guide-search:focus{border-color:#B8860B;box-shadow:0 0 0 3px rgba(184,134,11,.12);}
 #guide-search::placeholder{color:#A8895A;}
 /* Smart-input: keyboard-active card (↑/↓ nav) + alias/fuzzy hit ring */
@@ -231,7 +231,8 @@
   #guide-search { width: 100% !important; min-width: 0 !important; }
   /* Compact button heights — match search bar */
   .stab, .disc-btn { height: 40px !important; font-size: 13px !important; padding: 0 12px !important; min-height: auto !important; }
-  #guide-search { height: 48px !important; min-height: 48px !important; font-size: 13px !important; padding: 0 12px !important; }
+  #guide-search { height: 48px !important; min-height: 48px !important; font-size: 13px !important; padding: 0 12px 0 36px !important; }
+  #main-search-icon { left: 14px !important; }
   /* Hide Compare and Search-inside-guides — too heavy for phone topbar */
   #btn-search-guides, #view-compare { display: none !important; }
   /* Filter pills in a tidy multi-row block: left-aligned with full labels.
@@ -366,11 +367,11 @@ body.mode-flights .fnote { display: block; }
 #lang-pane-guide.has-pick .gp-left { max-width:none; }
 .gp-search-wrap { position:relative; margin-bottom:5px; }
 .gp-search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); line-height:0; opacity:.55; pointer-events:none; }
-#guide-pick-search { width:100%; box-sizing:border-box; font-family:inherit; font-size:13px; padding:9px 12px 9px 32px; border:1px solid #b8b3a8; border-radius:6px; background:var(--surface, #ffffff); color:#3d3a32; outline:none; }
+#guide-pick-search { width:100%; box-sizing:border-box; font-family:inherit; font-size:12px; padding:7px 10px 7px 28px; border:1px solid #b8b3a8; border-radius:6px; background:var(--surface, #ffffff); color:#3d3a32; outline:none; }
 #guide-pick-search:focus { border-color:#b85c2a; }
 #guide-pick-search::placeholder { color:#A8895A; }
-#guide-pick-list { max-height:132px; overflow-y:auto; overflow-x:hidden; border:1px solid var(--border); border-radius:6px; background:var(--surface, #ffffff); }
-.gp-row { display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; font-family:inherit; font-size:13px; text-align:left; padding:11px 14px; border:0; border-bottom:1px solid var(--border2, #e6e2da); background:none; color:#3d3a32; cursor:pointer; }
+#guide-pick-list { max-height:120px; overflow-y:auto; overflow-x:hidden; border:1px solid var(--border); border-radius:6px; background:var(--surface, #ffffff); }
+.gp-row { display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; font-family:inherit; font-size:12px; text-align:left; padding:8px 12px; border:0; border-bottom:1px solid var(--border2, #e6e2da); background:none; color:#3d3a32; cursor:pointer; }
 .gp-row:last-child { border-bottom:none; }
 .gp-row.hide { display:none; }
 .gp-row .gp-name { flex:1; }
@@ -563,7 +564,8 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
       <button class="stab" data-s="been">Been</button>
       <button class="stab" data-s="want">Want</button>
     </div>
-    <input type="text" id="guide-search" placeholder="🔍  City or destination" aria-label="Search guides" autocomplete="off">
+    <span id="main-search-icon" style="position:absolute;left:calc(50% - 180px + 14px);top:50%;transform:translateY(-50%);line-height:0;opacity:.45;pointer-events:none;z-index:1"><svg style="display:block" width="15" height="15" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5.5" cy="5.5" r="4.5" stroke="#3d3a32" stroke-width="1.5"/><line x1="9.35" y1="9.35" x2="12" y2="12" stroke="#3d3a32" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <input type="text" id="guide-search" placeholder="City or destination" aria-label="Search guides" autocomplete="off">
   </div>
   <div class="view-toggle" style="margin:0">
     <button id="view-compare">📶 Compare cities</button>
@@ -2290,7 +2292,7 @@ window._giStatusFilter = 'all';
 
   function setMode(flights) {
     document.body.classList.toggle('mode-flights', flights);
-    if (search) search.placeholder = flights ? '🔍  City or route' : '🔍  City or destination';
+    if (search) search.placeholder = flights ? 'City or route' : 'City or destination';
     if (flights) { parseQuery(search ? search.value : ''); apply(); }
     else if (search) { search.dispatchEvent(new Event('input')); }
   }
@@ -2464,11 +2466,11 @@ window._giStatusFilter = 'all';
     btnSG.addEventListener('click', function () {
       var active = btnSG.classList.toggle('active');
       if (active) {
-        input.placeholder = '🔍  Search inside guides';
+        input.placeholder = 'Search inside guides';
         input.focus();
         if (input.value.trim().length >= 2) run();
       } else {
-        input.placeholder = '🔍  Search inside guides';
+        input.placeholder = 'Search inside guides';
         panel.hidden = true; panel.innerHTML = '';
       }
     });
