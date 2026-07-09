@@ -539,23 +539,6 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   margin: 6px 0 0; padding-left: 229px;
   display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: flex-start;
 }
-/* Currency → US dollar conversion table (below the Guide row) */
-.cmp-fx { margin: 22px 0 0; }
-.cmp-fx-title {
-  font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--muted); font-weight: 600; margin-bottom: 8px;
-}
-.cmp-fx-table { border-collapse: separate; border-spacing: 0; }
-.cmp-fx-table th {
-  font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
-  color: var(--muted); font-weight: 600; text-align: left;
-  padding: 4px 18px 6px 0; border-bottom: 1px solid var(--border2, #e6e2da);
-}
-.cmp-fx-table th:not(:first-child) { text-align: right; }
-.cmp-fx-table td { font-size: 13px; padding: 7px 18px 7px 0; border-bottom: 1px solid var(--border2, #e6e2da); }
-.cmp-fx-cur { color: var(--text, #1a1917); font-weight: 600; white-space: nowrap; }
-.cmp-fx-val { color: var(--text, #1a1917); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.cmp-fx-note { font-size: 11px; color: var(--muted); margin-top: 8px; }
 @media (max-width: 600px) {
   .cmp-sel-bar { padding: 8px 12px; gap: 7px; width: auto; }
   .cmp-table td { padding: 8px 10px; }
@@ -564,7 +547,6 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   .cmp-bar-lbl { font-size: 8px; }
   /* Safety legend — drop the desktop first-column indent so it aligns left */
   .cmp-legend-footnote { padding-left: 0; }
-  .cmp-fx-table th, .cmp-fx-table td { padding-right: 12px; }
   /* Status toggle (All/Been/Want) — full width on mobile */
   .status-toggle { display: flex !important; width: 100% !important; }
   .stab { flex: 1 !important; justify-content: center !important; height: 40px !important; font-size: 13px !important; }
@@ -2901,18 +2883,37 @@ window._giStatusFilter = 'all';
     /* Guide link row */
     out += '<tr><td class="cmp-row-label"></td>';
     sel.forEach(function(c) {
-      out += '<td class="cmp-col" style="padding-bottom:16px"><a class="cmp-guide-link" href="' + c.href + '">Guide</a></td>';
+      out += '<td class="cmp-col"><a class="cmp-guide-link" href="' + c.href + '">Guide</a></td>';
     });
     out += '</tr>';
 
-    out += '</tbody></table></div>' + legendFootnote + fxTable();
+    /* Exchange-rate row — currency → US dollar, per city (below the Guide row) */
+    out += '<tr><td class="cmp-row-label">Exchange rate<br><span style="font-weight:400;letter-spacing:0;text-transform:none">' + FX_AS_OF + '</span></td>';
+    sel.forEach(function(c) {
+      var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
+      var m = ci && ci.currency ? String(ci.currency).match(/[A-Z]{3}/) : null;
+      var iso = m ? m[0] : null;
+      if (iso === 'USD') {
+        out += '<td class="cmp-col"><span class="cmp-v">US dollar</span><span class="cmp-sub">home currency</span></td>';
+      } else if (iso && (iso in CUR_RATES)) {
+        var r = CUR_RATES[iso];
+        out += '<td class="cmp-col">'
+          + '<span class="cmp-v">1 ' + iso + ' = ' + fmtUsd(1 / r) + '</span>'
+          + '<span class="cmp-sub">$1 = ' + fmtLocal(r) + ' ' + iso + '</span>'
+          + '</td>';
+      } else {
+        out += '<td class="cmp-col"><span class="cmp-sub">—</span></td>';
+      }
+    });
+    out += '</tr>';
+
+    out += '</tbody></table></div>' + legendFootnote;
     return out;
   }
 
-  /* ── Currency → US dollar conversion table (below the Guide row) ──────── */
+  /* ── Currency conversion helpers (used by the exchange-rate row) ──────── */
   function fmtUsd(v) {
-    if (v >= 1)   return '$' + v.toFixed(2);
-    if (v >= 0.1) return '$' + v.toFixed(2);
+    if (v >= 0.1)  return '$' + v.toFixed(2);
     if (v >= 0.01) return '$' + v.toFixed(3);
     return '$' + v.toFixed(4);
   }
@@ -2920,38 +2921,6 @@ window._giStatusFilter = 'all';
     if (rate >= 100) return Math.round(rate).toLocaleString();
     if (rate >= 10)  return rate.toFixed(1);
     return rate.toFixed(2);
-  }
-  function fxTable() {
-    /* distinct non-USD currencies among the selected cities, in selection order */
-    var seen = {}, rows = [];
-    sel.forEach(function(c) {
-      var ci = COST_DATA[c.climateKey] || COST_DATA[c.name] || null;
-      if (!ci || !ci.currency) return;
-      var m = String(ci.currency).match(/[A-Z]{3}/);
-      if (!m) return;
-      var iso = m[0];
-      if (iso === 'USD' || seen[iso] || !(iso in CUR_RATES)) return;
-      seen[iso] = 1;
-      rows.push({ iso: iso, label: ci.currency, rate: CUR_RATES[iso] });
-    });
-    if (!rows.length) {
-      return '<div class="cmp-fx"><div class="cmp-fx-note">All selected cities use the US dollar ($).</div></div>';
-    }
-    var body = rows.map(function(r) {
-      return '<tr>'
-        + '<td class="cmp-fx-cur">' + esc(r.label) + '</td>'
-        + '<td class="cmp-fx-val">' + fmtUsd(1 / r.rate) + '</td>'
-        + '<td class="cmp-fx-val">' + fmtLocal(r.rate) + ' ' + r.iso + '</td>'
-        + '</tr>';
-    }).join('');
-    return '<div class="cmp-fx">'
-      + '<div class="cmp-fx-title">Currency → US dollar</div>'
-      + '<table class="cmp-fx-table"><tbody>'
-      + '<tr><th>Currency</th><th>1 unit</th><th>$1 USD</th></tr>'
-      + body
-      + '</tbody></table>'
-      + '<div class="cmp-fx-note">Indicative rates · as of ' + FX_AS_OF + '</div>'
-      + '</div>';
   }
 
   function esc(s) {
