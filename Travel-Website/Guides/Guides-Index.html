@@ -3290,9 +3290,10 @@ window._giStatusFilter = 'all';
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () {
       var t = chip.getAttribute('data-theme');
-      var group = [t].concat(descendants(t));
-      if (isLit(t)) { group.forEach(function (g) { delete selected[g]; }); }
-      else { group.forEach(function (g) { selected[g] = true; }); }
+      /* Toggle ONLY this node — never cascade to children. Ancestors light up
+         on their own via isLit()'s descendant check. */
+      if (selected[t]) { delete selected[t]; }
+      else { selected[t] = true; }
       applyThemeFilter();
     });
   });
@@ -3857,7 +3858,7 @@ window._giStatusFilter = 'all';
 
   function buildGuidePicker(){
     if(!gpList) return;
-    gpCards = allCards.slice().sort(function(a,b){ return gName(a).localeCompare(gName(b)); });
+    gpCards = allCards.filter(function(c){ return !c.hasAttribute('data-special'); }).sort(function(a,b){ return gName(a).localeCompare(gName(b)); });
     var html='';
     gpCards.forEach(function(c,i){
       html += '<button class="gp-row'+(gpActive===c?' on':'')+(gMatch(c)?'':' hide')+'" data-gi="'+i+'" role="option">'+
