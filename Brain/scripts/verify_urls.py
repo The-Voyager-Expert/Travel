@@ -121,6 +121,8 @@ BOT_BLOCKED_HOSTS = {
     "rohmuscat.org.om", "www.rohmuscat.org.om",
     # Transport Malta (government ferry info) — 403 to crawler, live in browser (added 2026-07-10, Valletta build — ferry service page confirmed live via Chrome MCP; government agency behind bot-block)
     "transport.gov.mt", "www.transport.gov.mt",
+    # NMBS/SNCB Belgian national rail operator — 403 to crawler, live in browser (added 2026-07-10, Bruges build — official Belgian rail ticket site; confirmed live via web search)
+    "nmbs.be", "www.nmbs.be",
     # Review / travel platforms
     "tripadvisor.com", "www.tripadvisor.com", "www.tripadvisor.it",
     "atlasobscura.com", "www.atlasobscura.com",

@@ -85,6 +85,7 @@ COUNTRIES = [
  ("Seychelles","Africa","Seychellois Rupee","SCR","SCR","SCR","", ["Seychelles"]),
 
  ("China","Asia","Chinese Yuan (Renminbi)","¥","CNY","CNY","", ["Beijing","Chongqing","Shanghai","Zhangjiajie"]),
+ ("Bhutan","Asia","Bhutanese Ngultrum","Nu","BTN","BTN","Pegged 1:1 to the Indian Rupee; INR also accepted.", ["Paro"]),
  ("Hong Kong","Asia","Hong Kong Dollar","HK$","HKD","HKD","Pegged to the US dollar (~7.8).", ["Hong Kong"]),
  ("Indonesia","Asia","Indonesian Rupiah","Rp","IDR","IDR","", ["Bali"]),
  ("Japan","Asia","Japanese Yen","¥","JPY","JPY","", ["Kyoto","Osaka","Tokyo"]),
@@ -103,7 +104,7 @@ COUNTRIES = [
 
  ("United States","North America","US Dollar","$","USD","USD","", ["Alaska","Atlanta","Austin","Bend","Big Island","Boston","Boulder","Cape Cod","Carmel by the Sea","Charlotte","Chicago","Columbia","Dallas","Denver","Florida Keys","Glacier National Park","Kauai","Key West","La Jolla","Lake Tahoe","Las Vegas","Los Angeles","Malibu","Maui","Miami","Napa","Naples","Nashville","New Orleans","New York","Oahu","Orcas Island","Orlando","Palm Desert","Palo Alto","Pasadena","Pensacola","Philadelphia","Phoenix","Portland","San Diego","San Francisco","San Jose","San Juan Island","Santa Barbara","Santa Cruz","Santa Monica","Sarasota","Scottsdale","Seattle","Sedona","Virgin Islands","Washington DC","Yellowstone"]),
  ("Canada","North America","Canadian Dollar","C$","CAD","CAD","", ["Montréal","Québec City","Toronto","Vancouver","Victoria","Whistler"]),
- ("Mexico","North America","Mexican Peso","$","MXN","MXN","", ["Cancún","Oaxaca","Puerto Vallarta"]),
+ ("Mexico","North America","Mexican Peso","$","MXN","MXN","", ["Cancún","Los Cabos","Oaxaca","Puerto Vallarta"]),
 
  ("Aruba","Caribbean","Aruban Florin","Afl.","AWG","AWG","Pegged to the US dollar; USD widely accepted.", ["Aruba"]),
  ("Bahamas","Caribbean","Bahamian Dollar","B$","BSD","BSD","Pegged 1:1 with the US dollar — USD accepted everywhere.", ["The Bahamas"]),

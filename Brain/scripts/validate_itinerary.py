@@ -9366,9 +9366,12 @@ def validate(html: str, filename: str):
 
             # C — no extra row icons beyond §3 allowed set (🏛 🚫 📍 🚶 🚕 🚎)
             # Extra icons indicate drift from another section's format.
+            # In-hotel entries (§3a) use 🏨 which is not in the standard set — skip them.
             # (_CAP_EXTRA_ICON_RE compiled once before the entries loop)
             _cap_body_plain = RE_STRIP_TAGS.sub('', entry_body)
             _cap_banned_found = list(dict.fromkeys(_CAP_EXTRA_ICON_RE.findall(_cap_body_plain)))
+            if _cap_is_hotel:
+                _cap_banned_found = [i for i in _cap_banned_found if i != '🏨']
             if _cap_banned_found:
                 cap_shape_violations.append(
                     f'"{heading_plain[:50]}" — extra row icon(s) not in §3 allowed set: '

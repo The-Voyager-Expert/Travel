@@ -50,6 +50,10 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [x] Bruges
 - [x] Brussels
 
+### 🇧🇹 Bhutan
+- [ ] Bhutan
+- [ ] Paro
+
 ### 🇧🇷 Brazil
 - [ ] Aracaju
 - [ ] Curitiba
@@ -205,6 +209,7 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [x] Valletta
 
 ### 🇲🇽 Mexico
+- [x] Los-Cabos
 - [x] Oaxaca
 - [ ] Puerto-Vallarta
 
