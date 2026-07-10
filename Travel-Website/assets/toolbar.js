@@ -710,8 +710,8 @@
       el.className = 'title-updated';
       el.textContent = 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
       var tp = document.querySelector('.title-page');
-      if (tp) tp.appendChild(el);
-      else document.body.appendChild(el);
+      if (!tp) return;
+      tp.appendChild(el);
 
     }
     if (document.readyState === 'loading') {
