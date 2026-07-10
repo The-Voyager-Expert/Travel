@@ -101,6 +101,7 @@
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     { href: base + 'Trip-Essentials/Trips.html', text: '📆 Trips' },
+    { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing', full: '👕 Packing Checklist' },
     null,
     { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
     null,
@@ -155,8 +156,6 @@
         { href: base + 'Trip-Essentials/Visas.html',                                    text: '🪪 Visas' },
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '📋 Entry Requirements' },
       ] },
-    null,
-    { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing', full: '👕 Packing Checklist' },
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
