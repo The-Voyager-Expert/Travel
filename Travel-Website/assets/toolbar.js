@@ -159,8 +159,6 @@
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '📋 Entry Requirements' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Travel-Apps.html',            text: '📱 Travel Apps' },
-    null,
     { href: base + 'Trip-Essentials/Travel-Packing-Generic.html', text: '👕 Packing', full: '👕 Packing Checklist' },
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
