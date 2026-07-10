@@ -76,10 +76,12 @@ COUNTRIES = [
 
  ("United Arab Emirates","Middle East","UAE Dirham","Dh","AED","AED","Pegged to the US dollar (~3.67).", ["Abu Dhabi","Dubai"]),
  ("Qatar","Middle East","Qatari Riyal","QR","QAR","QAR","Pegged to the US dollar (~3.64).", ["Doha"]),
+ ("Oman","Middle East","Omani Rial","RO","OMR","OMR","Pegged to the US dollar (~0.38).", ["Muscat"]),
  ("Jordan","Middle East","Jordanian Dinar","JD","JOD","JOD","Pegged to the US dollar (~0.71).", ["Petra"]),
 
  ("Egypt","Africa","Egyptian Pound","E£","EGP","EGP","", ["Cairo"]),
  ("Morocco","Africa","Moroccan Dirham","DH","MAD","MAD","", ["Marrakech"]),
+ ("Seychelles","Africa","Seychellois Rupee","SCR","SCR","SCR","", ["Seychelles"]),
 
  ("China","Asia","Chinese Yuan (Renminbi)","¥","CNY","CNY","", ["Beijing","Chongqing","Shanghai","Zhangjiajie"]),
  ("Hong Kong","Asia","Hong Kong Dollar","HK$","HKD","HKD","Pegged to the US dollar (~7.8).", ["Hong Kong"]),
