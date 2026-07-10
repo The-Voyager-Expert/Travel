@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=50">
+<title>Travel Insurance</title>
+<style>
+/* All colors via CSS variables — no hardcoded hex */
+
+.page-desc { font-size: 12px; color: var(--muted); margin: 4px 0 20px; line-height: 1.5; }
+
+/* Section headers */
+.section-head {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin: 30px 0 14px; padding-bottom: 7px;
+  border-bottom: 2px solid var(--border2);
+}
+
+/* Coverage type cards */
+.coverage-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px; margin-bottom: 6px;
+}
+.cov-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 16px 18px;
+}
+.cov-icon { font-size: 20px; margin-bottom: 8px; line-height: 1; }
+.cov-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.cov-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.cov-limit {
+  margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border2);
+  font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 3px;
+}
+.cov-limit-row { display: flex; gap: 6px; }
+.cov-limit-label { font-weight: 600; color: var(--text); min-width: 80px; flex-shrink: 0; }
+
+/* Decision table */
+.decision-wrap {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin-bottom: 24px;
+}
+.decision-table { width: 100%; border-collapse: collapse; }
+.decision-table th {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 10px 14px 8px; text-align: left;
+  border-bottom: 1px solid var(--border2);
+}
+.decision-table td {
+  font-size: 13px; padding: 11px 14px;
+  border-top: 1px solid var(--border2);
+  vertical-align: top; line-height: 1.45; color: var(--text);
+}
+.decision-table tr:first-child td { border-top: none; }
+.situation { font-weight: 600; }
+.rec { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.dot-yes  { color: #2a6a2a; font-weight: 700; }
+.dot-card { color: #7a5800; font-weight: 700; }
+.dot-no   { color: var(--muted); }
+
+/* Credit card table */
+.cc-wrap {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin-bottom: 24px;
+  overflow-x: auto;
+}
+.cc-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.cc-table th {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 10px 14px 8px; text-align: left;
+  border-bottom: 1px solid var(--border2); white-space: nowrap;
+}
+.cc-table td {
+  font-size: 12px; padding: 10px 14px;
+  border-top: 1px solid var(--border2);
+  vertical-align: top; line-height: 1.45; color: var(--text);
+}
+.cc-table tr:first-child td { border-top: none; }
+.cc-name { font-weight: 700; font-size: 13px; }
+.cc-caveat { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.tag-strong { background: #e8f5e8; color: #2a6a2a; border: 1px solid #a0d8a0; }
+.tag-ok     { background: #fff8e0; color: #7a5800; border: 1px solid #e8c870; }
+.tag-weak   { background: var(--warm); color: var(--muted); border: 1px solid var(--border2); }
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+}
+
+/* Provider list */
+.provider-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.provider-row {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 16px; display: grid; grid-template-columns: 180px 1fr auto;
+  gap: 0 16px; align-items: start;
+}
+.prov-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.prov-tag  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.prov-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.prov-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--accent); text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  transition: border-color .15s, background .15s;
+}
+.prov-link:hover { border-color: #b85c2a; background: var(--warm); text-decoration: none; }
+
+/* Tips */
+.tips-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px; margin-bottom: 28px;
+}
+.tip-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 15px; display: flex; gap: 11px; align-items: flex-start;
+}
+.tip-icon { font-size: 17px; line-height: 1.3; flex-shrink: 0; }
+.tip-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.tip-text strong { color: var(--text); font-weight: 700; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .coverage-grid { grid-template-columns: 1fr; }
+  .provider-row { grid-template-columns: 1fr; gap: 6px; }
+  .prov-link { width: fit-content; }
+  .tips-grid { grid-template-columns: 1fr; }
+  .decision-table th:nth-child(3), .decision-table td:nth-child(3) { display: none; }
+}
+</style>
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="760"></div>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>Travel Insurance</h1>
+  </div>
+  <p class="page-desc">What's covered, what isn't, and when your credit card is enough — for US travelers.</p>
+
+  <!-- ── Coverage Types ──────────────────────────────────── -->
+  <div class="section-head">Three Types of Coverage</div>
+
+  <div class="coverage-grid">
+    <div class="cov-card">
+      <div class="cov-icon">✈️</div>
+      <div class="cov-name">Trip Cancellation &amp; Interruption</div>
+      <div class="cov-desc">Reimburses non-refundable prepaid costs if you have to cancel or cut a trip short for a covered reason — illness, death of a family member, natural disaster, jury duty.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Typical cost</span>4–10% of trip value</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">CFAR upgrade</span>+50% of premium · reimburses 50–75%</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Buy by</span>Within 14–21 days of first deposit</div>
+      </div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-icon">🏥</div>
+      <div class="cov-name">Emergency Medical</div>
+      <div class="cov-desc">Covers hospital stays, ER visits, prescriptions, and imaging abroad. Critical because US health insurance (including Medicare) typically doesn't cover international care.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Recommended</span>At least $100,000</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Credit cards</span>$0–$2,500 (not enough)</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Real cost</span>A hospitalization abroad: $10,000–$50,000+</div>
+      </div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-icon">🚁</div>
+      <div class="cov-name">Medical Evacuation</div>
+      <div class="cov-desc">Pays for emergency transport from a remote area or inadequate facility to a proper hospital — or home. The most expensive travel emergency by far if uninsured.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Recommended</span>$250,000–$500,000</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Real cost</span>$100,000–$200,000+ uninsured</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Best card</span>CSR: $100,000 · Amex: uncapped</div>
+      </div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-icon">🧳</div>
+      <div class="cov-name">Baggage &amp; Delay</div>
+      <div class="cov-desc">Covers lost, stolen, or damaged luggage and reimbursement for essentials if bags are delayed. Trip delay coverage pays for hotel and meals when a flight delay strands you overnight.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Baggage</span>$500–$3,000 per person</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Trip delay</span>Kicks in after 6–12 hrs · $150–$500/day</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Cards</span>Most premium cards cover this well</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Credit Card Coverage ────────────────────────────── -->
+  <div class="section-head">What Your Credit Card Covers</div>
+
+  <div class="cc-wrap">
+    <table class="cc-table">
+      <thead>
+        <tr>
+          <th>Card</th>
+          <th>Trip Cancel</th>
+          <th>Emergency Medical</th>
+          <th>Evacuation</th>
+          <th>Trip Delay</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="cc-name">Chase Sapphire Reserve</div>
+            <div class="cc-caveat">Must pay with card · $550/yr fee</div>
+          </td>
+          <td><span class="tag tag-strong">$10K / person</span></td>
+          <td><span class="tag tag-weak">$2,500</span></td>
+          <td><span class="tag tag-ok">$100,000</span></td>
+          <td><span class="tag tag-strong">$500 after 6 hrs</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="cc-name">Amex Platinum</div>
+            <div class="cc-caveat">Round-trip ticket required · $695/yr fee</div>
+          </td>
+          <td><span class="tag tag-ok">$10K / person</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-strong">Uncapped</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="cc-name">Chase Sapphire Preferred</div>
+            <div class="cc-caveat">Must pay with card · $95/yr fee</div>
+          </td>
+          <td><span class="tag tag-strong">$10K / person</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-ok">$500 after 12 hrs</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="cc-name">Capital One Venture X</div>
+            <div class="cc-caveat">Flights only — hotels/tours excluded · $395/yr fee</div>
+          </td>
+          <td><span class="tag tag-ok">$2K / person</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-ok">$500 after 6 hrs</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── When to Buy Standalone ──────────────────────────── -->
+  <div class="section-head">When to Buy Standalone vs. Use Your Card</div>
+
+  <div class="decision-wrap">
+    <table class="decision-table">
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Recommendation</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="situation">International trip, any length</div>
+          </td>
+          <td><span class="dot-yes">Buy standalone</span></td>
+          <td class="rec">Credit cards cap emergency medical at $0–$2,500. A hospitalization abroad easily runs $20,000+. Medicare doesn't cover outside the US.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Pre-existing medical condition</div>
+          </td>
+          <td><span class="dot-yes">Buy standalone</span></td>
+          <td class="rec">Buy within 14–21 days of first deposit to qualify for a pre-existing condition waiver. Cards rarely cover pre-existing conditions at all.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Trip over $5,000 non-refundable</div>
+          </td>
+          <td><span class="dot-yes">Buy standalone</span></td>
+          <td class="rec">Cards cap at $10,000/person but that excludes hotels booked direct, tour packages, and cruises on some cards. A policy covers the full trip cost.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Adventure / remote destination</div>
+          </td>
+          <td><span class="dot-yes">Buy standalone</span></td>
+          <td class="rec">Skiing, diving, trekking — many cards exclude "hazardous activities." Evacuation from a remote location can top $150,000.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Cruise</div>
+          </td>
+          <td><span class="dot-yes">Buy standalone</span></td>
+          <td class="rec">Medical care on a ship is expensive; medevac to a port hospital is even more so. Cruise line insurance is often overpriced — compare independently.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Domestic US trip, flexible bookings</div>
+          </td>
+          <td><span class="dot-card">Card coverage likely enough</span></td>
+          <td class="rec">Your US health insurance works domestically. If flights and hotels are refundable, trip cancellation risk is low. A premium card handles delay and bags.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Short domestic, under $1,500 total</div>
+          </td>
+          <td><span class="dot-no">Skip or card only</span></td>
+          <td class="rec">Insurance at 4–10% of trip cost isn't worth it for a cheap, mostly-refundable trip where your own health insurance is valid.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Standalone Providers ────────────────────────────── -->
+  <div class="section-head">Standalone Providers</div>
+
+  <div class="provider-list">
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Allianz Travel</div>
+        <div class="prov-tag">Best for annual / multi-trip plans</div>
+      </div>
+      <div class="prov-desc">10 plan tiers from basic cancellation to comprehensive. AllTrips annual plans worth it if you take 3+ trips per year. 24-hr multilingual assistance and TravelSmart app.</div>
+      <a class="prov-link" href="https://www.allianztravelinsurance.com/" target="_blank" rel="noopener">allianztravelinsurance.com ↗</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Travel Guard (AIG)</div>
+        <div class="prov-tag">Best CFAR option · generous free-look period</div>
+      </div>
+      <div class="prov-desc">Strong Cancel For Any Reason upgrade. Transparent pricing and a free-look cancellation period if you change your mind after purchase. Good for expensive custom trips.</div>
+      <a class="prov-link" href="https://www.travelguard.com/" target="_blank" rel="noopener">travelguard.com ↗</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">World Nomads</div>
+        <div class="prov-tag">Best for adventure travel</div>
+      </div>
+      <div class="prov-desc">Covers 200+ adventure activities (skiing, scuba, trekking, motorbike) that most plans exclude. Buy or extend while already traveling. Popular with independent travelers.</div>
+      <a class="prov-link" href="https://www.worldnomads.com/" target="_blank" rel="noopener">worldnomads.com ↗</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">GeoBlue</div>
+        <div class="prov-tag">Best medical-only coverage</div>
+      </div>
+      <div class="prov-desc">Medical-focused plans with a global network of vetted providers — often zero out-of-pocket with in-network care. Good choice if your card handles trip cancellation but not medical.</div>
+      <a class="prov-link" href="https://www.geo-blue.com/" target="_blank" rel="noopener">geo-blue.com ↗</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Travelex</div>
+        <div class="prov-tag">Best for families — kids included free</div>
+      </div>
+      <div class="prov-desc">Children 17 and under covered free on most plans when traveling with an adult. Simple plan structure. Good baseline comprehensive coverage without complexity.</div>
+      <a class="prov-link" href="https://www.travelexinsurance.com/" target="_blank" rel="noopener">travelexinsurance.com ↗</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Seven Corners</div>
+        <div class="prov-tag">Best for groups and mid-trip protection</div>
+      </div>
+      <div class="prov-desc">Covers groups of 10+. Strong mid-trip interruption protection. Good medical limits and evacuation coverage. Works well for organized tours and group travel.</div>
+      <a class="prov-link" href="https://www.sevencorners.com/" target="_blank" rel="noopener">sevencorners.com ↗</a>
+    </div>
+  </div>
+
+  <!-- ── Compare Tools ───────────────────────────────────── -->
+  <div class="section-head">Compare Policies Before Buying</div>
+  <p style="font-size:13px; color:var(--muted); margin: 0 0 14px; line-height:1.55;">Both sites let you enter your trip details and compare plans side by side by price, coverage limits, and customer ratings.</p>
+  <div class="coverage-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-bottom: 24px;">
+    <div class="cov-card">
+      <div class="cov-name">InsureMyTrip</div>
+      <div class="cov-desc">Side-by-side comparison of 20+ providers. Filter by coverage type, price, and customer reviews. Unbiased marketplace.</div>
+      <div style="margin-top:12px;"><a class="prov-link" href="https://www.insuremytrip.com/" target="_blank" rel="noopener">insuremytrip.com ↗</a></div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-name">Squaremouth</div>
+      <div class="cov-desc">Search by the coverage amounts you need, not the plan name. Good for finding specific limits (evacuation, CFAR, pre-existing condition waiver).</div>
+      <div style="margin-top:12px;"><a class="prov-link" href="https://www.squaremouth.com/" target="_blank" rel="noopener">squaremouth.com ↗</a></div>
+    </div>
+  </div>
+
+  <!-- ── Tips ───────────────────────────────────────────── -->
+  <div class="section-head">Key Things to Know</div>
+
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-icon">⏱️</div>
+      <div class="tip-text"><strong>Buy within 14–21 days of first deposit</strong> to qualify for a pre-existing condition waiver and the widest CFAR eligibility window. The clock starts on the day you pay your first deposit, not when you book flights.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🔍</div>
+      <div class="tip-text"><strong>Read what "covered reason" means.</strong> Basic trip cancellation covers a specific list: illness, death, jury duty, severe weather. It does not cover changing your mind, work conflicts, or fear of flying. CFAR covers anything — at a higher premium.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">💳</div>
+      <div class="tip-text"><strong>You must pay with the card to activate card coverage.</strong> Charge at least the flights (or the full trip cost) to your premium card. Paying with points or a different card voids the protection.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🏥</div>
+      <div class="tip-text"><strong>Medicare and most US health plans stop at the border.</strong> If you're on Medicare, you have effectively zero international medical coverage. A standalone travel medical policy ($30–$60 for a short trip) fills that gap entirely.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🎿</div>
+      <div class="tip-text"><strong>Check the activity exclusions list.</strong> Skiing, diving, motorcycling, and trekking above certain altitudes are excluded from most standard plans. World Nomads covers these; most others don't without a rider.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🚢</div>
+      <div class="tip-text"><strong>Don't buy the cruise line's insurance.</strong> It's almost always more expensive and covers less than a comparable third-party plan. The one exception: cruise credit (vs. cash back) — some cruise line policies let you cancel for credit rather than cash.</div>
+    </div>
+  </div>
+
+</div><!-- /.wrap -->
+
+<script src="../assets/toolbar.js"></script>
+</body>
+</html>

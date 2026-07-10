@@ -147,9 +147,10 @@
       ] },
     null,
     { group: '🛡️ Safety', children: [
-        { href: base + 'Trip-Essentials/Safety-Guide.html',   text: '🛡️ Safety Guide' },
-        { href: base + 'Trip-Essentials/Vaccines.html',       text: '💉 Vaccines' },
-        { href: base + 'Trip-Essentials/Tap-Water.html',      text: '🚰 Tap Water' },
+        { href: base + 'Trip-Essentials/Safety-Guide.html',      text: '🛡️ Safety Guide' },
+        { href: base + 'Trip-Essentials/Vaccines.html',          text: '💉 Vaccines' },
+        { href: base + 'Trip-Essentials/Tap-Water.html',         text: '🚰 Tap Water' },
+        { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: '🛟 Travel Insurance' },
       ] },
     null,
     { group: '🪪 Entry', children: [
