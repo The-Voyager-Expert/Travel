@@ -177,7 +177,15 @@ SURFACES = {
     "resources": "also-on-this-site links",
     "delta":     "Delta Routes card (Step 10)",
     "timezones": "Time-Zones.html (Step 9)",
+    "story":     "Read About story page",
 }
+
+# Surfaces reported but not counted toward the exit code, while a backfill runs.
+# Story pages became mandatory on 2026-07-10; guides that shipped before that
+# acquire one the next time they are validated (validate_itinerary.py hard-fails
+# without it, so a re-stamp is impossible until the page exists). Once the
+# backfill queue is empty, delete this set — the row becomes a hard surface.
+BACKFILL_SURFACES = {"story"}
 
 
 def run_sweep() -> dict[str, list[str]]:
@@ -470,6 +478,14 @@ def run_sweep() -> dict[str, list[str]]:
         if tz_html and folder not in tz_guide_folders:
             missing["timezones"].append(folder)
 
+        # Read About story page — {slug}-story.html beside the guide, linked both ways
+        slug = re.sub(r"_v\d+\.html$", "", _html.name)
+        story_path = _html.parent / f"{slug}-story.html"
+        if (not story_path.is_file()
+                or f"{slug}-story.html" not in guide_html
+                or _html.name not in _read(story_path)):
+            missing["story"].append(folder)
+
     missing["__count__"] = [str(len(guides))]  # piggyback the total for the report
     if currency_cities is None:
         missing["__skip_currency__"] = ["1"]
@@ -516,7 +532,10 @@ def main() -> int:
             print(f"  {WARN} {label:<24} skipped (Time-Zones.html not reachable)")
             continue
         miss = res.get(key, [])
-        if miss:
+        if miss and key in BACKFILL_SURFACES:
+            print(f"  {WARN} {label:<24} {len(miss)} of {total} awaiting backfill "
+                  f"(mandatory for new guides; blocks re-validation of old ones)")
+        elif miss:
             any_gap = True
             print(f"  {FAIL} {label:<24} {len(miss)} missing: {', '.join(miss[:12])}"
                   + (f" …+{len(miss) - 12}" if len(miss) > 12 else ""))
@@ -526,6 +545,8 @@ def main() -> int:
     # Per-guide rollup of which surfaces each affected guide misses.
     by_guide: dict[str, list[str]] = {}
     for key, label in SURFACES.items():
+        if key in BACKFILL_SURFACES:
+            continue
         for folder in res.get(key, []):
             by_guide.setdefault(folder, []).append(label)
     if by_guide:

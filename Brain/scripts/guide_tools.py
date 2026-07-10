@@ -623,11 +623,13 @@ Last updated: {today}
 - [ ] Michelin Restaurants - Extra Section.html
 - [ ] Heads Up - Extra Section.html
 - [ ] Claude Inspiration - Extra Section.html
+- [ ] Brain/Reference/Story-Pages.html
 
 ## Phase 6 — Ship gate
 - [ ] Brain/Reference/Ship Checklist.html
 - [ ] validate_itinerary.py passes
 - [ ] every extra populated or carries negative-finding line
+- [ ] Read About story page built, linked both ways
 """
     tracker_path.write_text(content, encoding="utf-8")
     print(f"✅  Build-state tracker created: {tracker_path}")
@@ -2303,6 +2305,62 @@ def _check_guide_in_regional_stats(guide_path: Path) -> int:
     return 1
 
 
+def _guide_slug(guide_path: Path) -> str:
+    """`Guides/Lisbon/lisbon_v4.html` -> `lisbon`. Guide files are always {slug}_vN.html."""
+    import re as _re
+    return _re.sub(r"_v\d+\.html$", "", guide_path.name)
+
+
+def _check_guide_story_page(guide_path: Path) -> int:
+    """Ship gate: every guide ships with its companion Read About story page.
+
+    Three invariants (spec: Brain/Reference/Story-Pages.html):
+      1. `{slug}-story.html` exists beside the guide.
+      2. The guide injects the READ ABOUT {CITY} link pointing at that file.
+      3. The story page's back link names the guide's *current* filename —
+         a version bump that leaves the back link on `_v3` orphans the reader.
+
+    Added 2026-07-10.
+    """
+    city = guide_path.parent.name
+    slug = _guide_slug(guide_path)
+    story_path = guide_path.parent / f"{slug}-story.html"
+
+    if not story_path.exists():
+        print(
+            f"\n🚫  SHIP BLOCKED — {city} has no Read About story page.\n"
+            f"    Every guide ships with a companion editorial page.\n"
+            f"    Create: Travel-Website/Guides/{city}/{slug}-story.html\n"
+            f"    Spec:   Brain/Reference/Story-Pages.html\n"
+            f"    Model:  Travel-Website/Guides/Lisbon/lisbon-story.html\n",
+            file=sys.stderr,
+        )
+        return 1
+
+    guide_html = guide_path.read_text(encoding="utf-8", errors="replace")
+    if f"{slug}-story.html" not in guide_html or "READ ABOUT" not in guide_html.upper():
+        print(
+            f"\n🚫  SHIP BLOCKED — {city} story page exists but the guide does not link to it.\n"
+            f"    Inject the READ ABOUT {city.upper()} link into the Trip Overview title bar.\n"
+            f"    Spec: Brain/Reference/Story-Pages.html § 2\n",
+            file=sys.stderr,
+        )
+        return 1
+
+    story_html = story_path.read_text(encoding="utf-8", errors="replace")
+    if guide_path.name not in story_html:
+        print(
+            f"\n🚫  SHIP BLOCKED — {slug}-story.html does not link back to {guide_path.name}.\n"
+            f"    The .story-back and .story-footer-back links must name the current guide file.\n"
+            f"    (A version bump orphans a back link left on the old _vN filename.)\n",
+            file=sys.stderr,
+        )
+        return 1
+
+    print(f"  ✅  Story page — {slug}-story.html present, linked both ways.")
+    return 0
+
+
 def _write_ship_log(guide_path: Path, result: str, check_count: int = 0) -> None:
     """Append a timestamped PASS/FAIL line to the guide's own ship_log.md (Rule 125).
 
@@ -2680,6 +2738,13 @@ def _run_update_index(city: str) -> int:
     rc13 = _check_guide_in_tipping(guide_path)
     if rc13 != 0:
         fails.append("Step 13: country missing from Tipping-Guide.html")
+    print()
+
+    # ── Step 14: Read About story page ────────────────────────────────────────
+    print("Step 14 — Read About story page")
+    rc14 = _check_guide_story_page(guide_path)
+    if rc14 != 0:
+        fails.append("Step 14: {slug}-story.html missing, or not linked both ways")
     print()
 
     # ── Summary ────────────────────────────────────────────────────────────────
@@ -3125,6 +3190,8 @@ def main() -> int:
             _cov_fails.append("Visas.html — country row missing")
         if _check_guide_in_tipping(guide_p) != 0:
             _cov_fails.append("Tipping-Guide.html — country entry missing")
+        if _check_guide_story_page(guide_p) != 0:
+            _cov_fails.append("Read About story page — {slug}-story.html missing or not linked")
         if _cov_fails:
             print("\n🚫  SHIP BLOCKED — coverage gap(s):")
             for _f in _cov_fails:

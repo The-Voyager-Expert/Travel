@@ -295,6 +295,10 @@ BOT_BLOCKED_HOSTS = {
     "foodpanda.co.th", "www.foodpanda.co.th",
     "foodpanda.ph", "www.foodpanda.ph",  # added 2026-06-27, Palawan build — 403 from automated client (bot wall); foodpanda.ph is the Philippines' major food delivery platform, confirmed live via site: search
     "foodpanda.la", "www.foodpanda.la",  # added 2026-07-10, Luang Prabang build — 403 from automated client (bot wall); foodpanda.la is the Laos food delivery platform, same pattern as .ph/.co.th
+    "foodpanda.hu", "www.foodpanda.hu",  # added 2026-07-10, Budapest build — 403 from automated client (bot wall); Hungary's major food delivery platform, same pattern as other .foodpanda TLDs
+    "www.mng.hu", "mng.hu",  # added 2026-07-10, Budapest build — 451 (legal/geo-block) from Hungarian National Gallery; confirmed live via browser
+    "dohany-zsinagoga.hu", "www.dohany-zsinagoga.hu",  # added 2026-07-10, Budapest build — Great Synagogue Budapest; en/ subpages inconsistent, root returns 200; confirmed live via browser
+    "matyas-templom.hu", "www.matyas-templom.hu",  # added 2026-07-10, Budapest build — Matthias Church ticket site (WooCommerce); subpages return 404 in crawler but site is live; confirmed via browser
     # San Sebastián — Spanish ride-app, food-delivery, train, and venue sites:
     # 403 / timeout / connection-drop to the US sandbox crawler, all confirmed
     # live in browser via Chrome MCP (added 2026-06-12, San Sebastián build).
@@ -522,7 +526,7 @@ def fetch(url: str, is_image: bool = False) -> dict:
             # 403/406/410/429 from a known bot-blocker is a WARN, not a FAIL
             # 410 ("Gone") is also used by some platforms (e.g. ubereats.com) as a
             # bot-detection measure — real browsers see the page fine.
-            if r.status_code in (403, 404, 405, 406, 410, 429, 500) and host_of(url) in BOT_BLOCKED_HOSTS:
+            if r.status_code in (403, 404, 405, 406, 410, 429, 451, 500) and host_of(url) in BOT_BLOCKED_HOSTS:
                 result["bot_blocked"] = True
                 result["warnings"].append(
                     f"{r.status_code} from a known bot-blocking platform — URL may be valid. "
@@ -662,7 +666,7 @@ def classify(result: dict) -> str:
     if status is None:
         return "fail"
     # Known bot-blocker 403/404/405/406/410/429/500 → warn (visual verification needed)
-    if status in (403, 404, 405, 406, 410, 429, 500) and result["bot_blocked"]:
+    if status in (403, 404, 405, 406, 410, 429, 451, 500) and result["bot_blocked"]:
         return "warn"
     # Unknown host 429 → warn + nudge (not a hard fail — may just be rate-limiting)
     if status == 429 and result["possible_bot_block"]:

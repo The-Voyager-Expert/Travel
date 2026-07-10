@@ -294,8 +294,12 @@ CITY_COUNTRY_MAP = {
     "Doha": "qatar",
     # Maldives
     "Maldives": "maldives",
+    # Oman
+    "Muscat": "oman",
     # Poland
     "Kraków": "poland",
+    # Seychelles
+    "Seychelles": "seychelles",
 }
 
 # Country code to flag mapping (for validation)
@@ -346,6 +350,8 @@ COUNTRY_FLAGS = {
     "uruguay": "🇺🇾",
     "united-arab-emirates": "🇦🇪",
     "ireland": "🇮🇪",
+    "oman": "🇴🇲",
+    "seychelles": "🇸🇨",
     "singapore": "🇸🇬",
     "slovenia": "🇸🇮",
     "sri-lanka": "🇱🇰",

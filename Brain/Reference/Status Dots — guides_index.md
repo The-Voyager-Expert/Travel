@@ -212,7 +212,7 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [x] Monaco
 
 ### 🇲🇪 Montenegro
-- [ ] Kotor
+- [x] Kotor
 
 ### 🇲🇦 Morocco
 - [ ] Marrakech
@@ -232,6 +232,9 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [ ] Bergen
 - [ ] Oslo
 - [ ] Tromsø
+
+### 🇴🇲 Oman
+- [ ] Muscat
 
 ### 🇵🇱 Poland
 - [ ] Kraków

@@ -140,6 +140,10 @@ def main() -> int:
             continue
         if p.name == "Guides-Index.html":
             continue
+        # Companion pages (story.html, etc.) live in a guide folder but are not
+        # versioned guides — they have no validation stamp and don't need one.
+        if __import__("re").match(r'^.+-story\.html$', p.name):
+            continue
         # Guide HTML lives at Travel-Website/Guides/<City>/<file>.html (depth 4).
         # Skip anything deeper (e.g. _build/ helpers) — only the guide page matters.
         if len(p.parts) != 4:

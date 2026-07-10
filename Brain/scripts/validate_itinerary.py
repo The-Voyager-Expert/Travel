@@ -1123,7 +1123,7 @@ def validate(html: str, filename: str):
             # Back-link: prev file's data-next must point back here
             _prev_href_raw = _tb_prev_m.group(1)
             _prev_path     = _resolve_href(_guide_dir, _prev_href_raw)
-            if _prev_path.exists():
+            if _prev_href_raw and _prev_path.exists() and _prev_path.is_file():
                 _prev_html    = _prev_path.read_text(encoding='utf-8')
                 _prev_mount_m = re.search(r'<div\b[^>]*\bid\s*=\s*"toolbar-mount"[^>]*>', _prev_html, re.DOTALL)
                 if _prev_mount_m:
@@ -1149,7 +1149,7 @@ def validate(html: str, filename: str):
             # Forward-link: next file's data-prev must point back here
             _next_href_raw = _tb_next_m.group(1)
             _next_path     = _resolve_href(_guide_dir, _next_href_raw)
-            if _next_path.exists():
+            if _next_href_raw and _next_path.exists() and _next_path.is_file():
                 _next_html    = _next_path.read_text(encoding='utf-8')
                 _next_mount_m = re.search(r'<div\b[^>]*\bid\s*=\s*"toolbar-mount"[^>]*>', _next_html, re.DOTALL)
                 if _next_mount_m:
@@ -16403,8 +16403,10 @@ def validate(html: str, filename: str):
     # ─── GUIDE DIRECTORY: STALE HTML FILES ──────────────────────────────────────
     if filename:
         _guide_dir_html = Path(filename).resolve().parent
+        _COMPANION_RE = __import__("re").compile(r'^.+-story\.html$')
         _html_files_in_dir = sorted(
-            f.name for f in _guide_dir_html.glob("*.html") if f.is_file()
+            f.name for f in _guide_dir_html.glob("*.html")
+            if f.is_file() and not _COMPANION_RE.match(f.name)
         )
         check(
             'Only one .html file in guide directory (archive old versions to Travel/archive/ before shipping)',
@@ -16413,6 +16415,44 @@ def validate(html: str, filename: str):
              f"archive old version(s) to Travel/archive/ first: {_html_files_in_dir}")
             if len(_html_files_in_dir) > 1 else "",
         )
+
+    # ─── READ ABOUT STORY PAGE (mandatory companion) ─────────────────────────
+    # Rule source: Brain/Reference/Story-Pages.html. Every guide ships with a
+    # companion editorial page linked both ways. (added 2026-07-10)
+    if filename:
+        _sp_guide = Path(filename).resolve()
+        _sp_slug = re.sub(r'_v\d+\.html$', '', _sp_guide.name)
+        _sp_path = _sp_guide.parent / f"{_sp_slug}-story.html"
+        _sp_exists = _sp_path.is_file()
+
+        check(
+            f'Read About story page exists ({_sp_slug}-story.html beside the guide)',
+            _sp_exists,
+            (f"no {_sp_slug}-story.html in the guide folder — every guide ships with a "
+             f"companion editorial page. Spec: Brain/Reference/Story-Pages.html. "
+             f"Model: Travel-Website/Guides/Lisbon/lisbon-story.html")
+            if not _sp_exists else "",
+        )
+
+        _sp_linked = f"{_sp_slug}-story.html" in html and "READ ABOUT" in html.upper()
+        check(
+            'Guide injects the READ ABOUT {CITY} link to its story page',
+            _sp_linked,
+            ("guide does not link to its story page — inject the READ ABOUT link into the "
+             "Trip Overview title bar. Spec: Brain/Reference/Story-Pages.html § 2")
+            if not _sp_linked else "",
+        )
+
+        if _sp_exists:
+            _sp_html = _sp_path.read_text(encoding="utf-8", errors="ignore")
+            _sp_back = _sp_guide.name in _sp_html
+            check(
+                'Story page back-links to the current guide filename',
+                _sp_back,
+                (f"{_sp_slug}-story.html does not name {_sp_guide.name} — the .story-back "
+                 f"and .story-footer-back links still point at an old _vN file")
+                if not _sp_back else "",
+            )
 
     # ─── ORPHANED ASSETS (archive rule enforcement) ───────────────────────────
     if filename:
@@ -18404,7 +18444,7 @@ def validate(html: str, filename: str):
     print("\n── DAY TRIPS — entries ordered ascending by travel time ──")
     _dt_order_hits: list[str] = []
     if _dt_hdr:
-        def _parse_duration_minutes(text: str) -> int | None:
+        def _parse_duration_minutes(text: str):
             """Return minutes from a duration string like '1h 20 min', '40 min', '~2h', '1h30', '1.5h'."""
             txt = text.lower().replace('~', '').strip()
             # Pattern: decimal hours e.g. "1.5h", "2.5h" — must check BEFORE integer-hour pattern

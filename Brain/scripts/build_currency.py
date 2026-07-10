@@ -46,6 +46,7 @@ COUNTRIES = [
  ("Austria","Europe","Euro","€","EUR","EUR","", ["Salzburg","Vienna"]),
  ("Belgium","Europe","Euro","€","EUR","EUR","", ["Bruges","Brussels"]),
  ("Croatia","Europe","Euro","€","EUR","EUR","Adopted the euro in 2023.", ["Dubrovnik","Split"]),
+ ("Montenegro","Europe","Euro","€","EUR","EUR","Uses the euro without EU membership.", ["Kotor"]),
  ("Czech Republic","Europe","Czech Koruna","Kč","CZK","CZK","", ["Prague"]),
  ("Denmark","Europe","Danish Krone","kr","DKK","DKK","", ["Copenhagen"]),
  ("Estonia","Europe","Euro","€","EUR","EUR","", ["Tallinn"]),
