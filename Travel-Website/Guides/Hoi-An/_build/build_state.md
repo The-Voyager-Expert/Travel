@@ -45,6 +45,6 @@ Last updated: 2026-07-04
 - [x] Claude Inspiration - Extra Section.html
 
 ## Phase 6 — Ship gate
-- [ ] Brain/Reference/Ship Checklist.html
-- [ ] validate_itinerary.py passes
-- [ ] every extra populated or carries negative-finding line
+- [x] Brain/Reference/Ship Checklist.html
+- [x] validate_itinerary.py passes (0 failures — stamped, confirmed 2026-07-10)
+- [x] every extra populated or carries negative-finding line
