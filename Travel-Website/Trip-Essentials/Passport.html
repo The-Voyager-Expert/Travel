@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=50">
+<title>Passport</title>
+<style>
+/* All colors via CSS variables — no hardcoded hex */
+
+.page-desc { font-size: 12px; color: var(--muted); margin: 4px 0 20px; line-height: 1.5; }
+
+/* Section headers */
+.section-head {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin: 30px 0 14px; padding-bottom: 7px;
+  border-bottom: 2px solid var(--border2);
+}
+
+/* Stat bar */
+.stat-bar {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px; margin-bottom: 24px;
+}
+.stat-tile {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 16px;
+}
+.stat-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.stat-val   { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.stat-note  { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* Alert banner */
+.alert {
+  background: var(--warm); border: 1px solid var(--border2);
+  border-left: 4px solid var(--accent); border-radius: 8px;
+  padding: 12px 16px; font-size: 13px; color: var(--text);
+  line-height: 1.55; margin-bottom: 20px;
+}
+.alert strong { font-weight: 700; }
+
+/* Cost / time table */
+.table-wrap {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin-bottom: 24px;
+}
+.info-table { width: 100%; border-collapse: collapse; }
+.info-table th {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 10px 14px 8px; text-align: left;
+  border-bottom: 1px solid var(--border2);
+}
+.info-table td {
+  font-size: 13px; padding: 11px 14px;
+  border-top: 1px solid var(--border2);
+  vertical-align: top; line-height: 1.4; color: var(--text);
+}
+.info-table tr:first-child td { border-top: none; }
+.row-label { font-weight: 600; }
+.row-note  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Step cards */
+.steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.step-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 16px; display: grid; grid-template-columns: 32px 1fr; gap: 0 14px; align-items: start;
+}
+.step-num {
+  font-size: 13px; font-weight: 700; color: var(--accent);
+  background: var(--warm); border: 1px solid var(--border2);
+  border-radius: 6px; width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.step-desc  { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.step-desc a { color: var(--accent); text-decoration: none; }
+.step-desc a:hover { text-decoration: underline; }
+
+/* Method cards */
+.method-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px; margin-bottom: 24px;
+}
+.method-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 15px 17px;
+}
+.method-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.method-tag  { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.method-rows { display: flex; flex-direction: column; gap: 4px; }
+.mrow { font-size: 12px; display: flex; gap: 6px; line-height: 1.4; }
+.mrow-label { color: var(--muted); min-width: 64px; flex-shrink: 0; font-weight: 600; }
+
+/* Tips */
+.tips { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 28px; }
+.tip {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 15px; display: flex; gap: 10px; align-items: flex-start;
+}
+.tip-icon { font-size: 16px; line-height: 1.4; flex-shrink: 0; }
+.tip-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.tip-text strong { font-weight: 700; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .stat-bar  { grid-template-columns: 1fr 1fr; }
+  .method-grid { grid-template-columns: 1fr; }
+  .tips { grid-template-columns: 1fr; }
+  .step-card { grid-template-columns: 28px 1fr; gap: 0 10px; }
+  .info-table th:last-child, .info-table td:last-child { display: none; }
+}
+</style>
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="760"></div>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>Passport</h1>
+  </div>
+  <p class="page-desc">Renewal timelines, costs, emergency appointments, and what to know about the 6-month validity rule — for US citizens.</p>
+
+  <!-- ── Quick Facts ───────────────────────────────────────── -->
+  <div class="stat-bar">
+    <div class="stat-tile">
+      <div class="stat-label">Adult book valid</div>
+      <div class="stat-val">10 years</div>
+      <div class="stat-note">Issued at age 16+</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Child book valid</div>
+      <div class="stat-val">5 years</div>
+      <div class="stat-note">Under age 16</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Passport card</div>
+      <div class="stat-val">10 / 5 yrs</div>
+      <div class="stat-note">Land/sea only — no air travel</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Renew when</div>
+      <div class="stat-val">9–12 mo left</div>
+      <div class="stat-note">Earlier is safer</div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <strong>The 6-month validity rule.</strong> Many countries — including most of Europe, all of Southeast Asia, and large parts of the Middle East — require your passport to be valid for at least 6 months beyond your entry date. Airlines enforce this before you board. If your passport has less than 6 months remaining, renew before you travel internationally — regardless of how long your trip actually is.
+  </div>
+
+  <!-- ── Costs ─────────────────────────────────────────────── -->
+  <div class="section-head">Costs</div>
+  <div class="table-wrap">
+    <table class="info-table">
+      <thead>
+        <tr><th>Item</th><th>Fee</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="row-label">Passport book (adult)</div></td>
+          <td>$130</td>
+          <td>10-year validity · includes application fee</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Passport card (adult)</div></td>
+          <td>$30</td>
+          <td>Land &amp; sea border crossings only · not valid for air travel</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Book + card together</div></td>
+          <td>$160</td>
+          <td>Save $30 vs. buying separately</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Expedited service</div></td>
+          <td>+$60</td>
+          <td>Cuts agency time to 2–3 weeks · added on top of book/card fee</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">1–2 day return shipping</div></td>
+          <td>+$22</td>
+          <td>Optional — speeds up final delivery after processing</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Passport photo</div></td>
+          <td>$10–$20</td>
+          <td>CVS, Walgreens, UPS Store, or print at home from the app</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Processing Times ──────────────────────────────────── -->
+  <div class="section-head">Processing Times</div>
+  <div class="table-wrap">
+    <table class="info-table">
+      <thead>
+        <tr><th>Service level</th><th>Agency time</th><th>Total door-to-door</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="row-label">Routine</div>
+            <div class="row-note">Mail-in or online renewal · no add-on fee</div>
+          </td>
+          <td>4–6 weeks</td>
+          <td>8–10 weeks (add ~2 weeks mailing each way)</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="row-label">Expedited</div>
+            <div class="row-note">Mail-in with +$60 fee · or in-person at passport agency</div>
+          </td>
+          <td>2–3 weeks</td>
+          <td>6–7 weeks with mailing</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="row-label">Urgent (travel within 14 days)</div>
+            <div class="row-note">In-person appointment at passport agency required</div>
+          </td>
+          <td>1–5 days</td>
+          <td>Same day to 5 days · appointment required</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="row-label">Life-or-death emergency</div>
+            <div class="row-note">Death or life-threatening illness of immediate family member abroad</div>
+          </td>
+          <td>2–3 days</td>
+          <td>Call 877-487-2778 to qualify — not available for vacations</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── How to Apply ──────────────────────────────────────── -->
+  <div class="section-head">How to Apply / Renew</div>
+  <div class="method-grid">
+    <div class="method-card">
+      <div class="method-name">Online Renewal</div>
+      <div class="method-tag">Fastest and easiest — no post office visit</div>
+      <div class="method-rows">
+        <div class="mrow"><span class="mrow-label">Who</span>Adults with a 10-year book, expiring within 1 yr or expired &lt;5 yrs ago</div>
+        <div class="mrow"><span class="mrow-label">Service</span>Routine only (no expedited option online yet)</div>
+        <div class="mrow"><span class="mrow-label">Apply at</span>travel.state.gov → Online Passport Renewal</div>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-name">Mail-In Renewal</div>
+      <div class="method-tag">Most common renewal method</div>
+      <div class="method-rows">
+        <div class="mrow"><span class="mrow-label">Who</span>Adults whose last passport was issued at 16+ and issued within 15 yrs</div>
+        <div class="mrow"><span class="mrow-label">Forms</span>DS-82 · mail with old passport, photo, and check/MO</div>
+        <div class="mrow"><span class="mrow-label">Apply at</span>travel.state.gov → Renew by Mail</div>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-name">In-Person (New / First-Time)</div>
+      <div class="method-tag">Required for first passports and children</div>
+      <div class="method-rows">
+        <div class="mrow"><span class="mrow-label">Who</span>First-time applicants; children under 16 (both parents required)</div>
+        <div class="mrow"><span class="mrow-label">Where</span>Post office, library, or clerk of court accepting passport applications</div>
+        <div class="mrow"><span class="mrow-label">Forms</span>DS-11 · photo ID · proof of citizenship · photo</div>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-name">Passport Agency (Urgent)</div>
+      <div class="method-tag">Travel within 14 days or visa needed within 28 days</div>
+      <div class="method-rows">
+        <div class="mrow"><span class="mrow-label">Appt</span>Call 877-487-2778 or book at travel.state.gov — by appointment only</div>
+        <div class="mrow"><span class="mrow-label">Bring</span>Proof of travel (flight itinerary), complete DS-82 or DS-11, all fees</div>
+        <div class="mrow"><span class="mrow-label">Hours</span>M–F 8am–10pm ET · Sat–Sun 10am–3pm ET for calls</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tips ─────────────────────────────────────────────── -->
+  <div class="section-head">Key Things to Know</div>
+  <div class="tips">
+    <div class="tip">
+      <div class="tip-icon">📅</div>
+      <div class="tip-text"><strong>Apply 9–12 months before your next international trip.</strong> Routine processing runs 8–10 weeks door-to-door. Don't wait until 6 months out — if demand spikes, you may not make it in time without paying expedited fees.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">✈️</div>
+      <div class="tip-text"><strong>The 6-month rule catches people off guard.</strong> Your passport may technically be valid, but if it has less than 6 months remaining after your return date, many countries will turn you away at the border — and airlines will deny boarding.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">👧</div>
+      <div class="tip-text"><strong>Child passports expire in 5 years.</strong> Both parents (or legal guardians) must appear in person to apply. If one parent can't attend, they must provide a notarized Form DS-3053 Statement of Consent.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">📄</div>
+      <div class="tip-text"><strong>Count your blank pages before every trip.</strong> Many countries require at least 2–4 blank pages. If you're running low and don't want a new passport, you can't add pages anymore — that program was discontinued. Renew instead.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🌍</div>
+      <div class="tip-text"><strong>Some visas require a full blank page.</strong> Countries like India, Brazil, and South Africa require a full blank page just for their visa stamp. Factor this in before trips that need visas stamped in-person.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🔒</div>
+      <div class="tip-text"><strong>Make a copy before every trip.</strong> Store a photo of your passport data page in your email or cloud storage. If your passport is stolen abroad, having the number and issue date speeds up emergency replacement at the nearest US embassy.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🏥</div>
+      <div class="tip-text"><strong>Register with STEP before every international trip.</strong> The Smart Traveler Enrollment Program at step.state.gov lets the US Embassy contact you in an emergency and notifies family if something happens abroad. Free and takes 2 minutes.</div>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">⚠️</div>
+      <div class="tip-text"><strong>Third-party appointment services are not the State Dept.</strong> Any site charging a fee to "book your passport appointment" is a third party. Appointments are free at travel.state.gov and by calling 877-487-2778 directly.</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px; color:var(--muted); margin:0 0 32px; line-height:1.6;">
+    Official source: <a href="https://travel.state.gov/content/travel/en/passports.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">travel.state.gov/passports</a> · Check current processing times before applying — they vary by season and demand.
+  </p>
+
+</div><!-- /.wrap -->
+
+<script src="../assets/toolbar.js"></script>
+</body>
+</html>

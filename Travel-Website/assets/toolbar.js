@@ -132,7 +132,8 @@
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🧳 Baggage' },
-        { href: base + 'Trip-Essentials/Trusted-Traveler.html', text: '🛂 Global Entry & CLEAR' },
+        { href: base + 'Trip-Essentials/Trusted-Traveler.html',  text: '🛂 Global Entry & CLEAR' },
+        { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },
@@ -157,6 +158,8 @@
         { href: base + 'Trip-Essentials/Visas.html',                                    text: '🪪 Visas' },
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '📋 Entry Requirements' },
       ] },
+    null,
+    { href: base + 'Trip-Essentials/Travel-Apps.html',            text: '📱 Travel Apps' },
     null,
     { href: base + 'Trip-Essentials/Travel-Packing-Generic.html', text: '👕 Packing', full: '👕 Packing Checklist' },
   ];
