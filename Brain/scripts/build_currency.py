@@ -91,7 +91,7 @@ COUNTRIES = [
  ("South Korea","Asia","South Korean Won","₩","KRW","KRW","", ["Seoul"]),
  ("Taiwan","Asia","New Taiwan Dollar","NT$","TWD","TWD","", ["Taipei"]),
  ("Philippines","Asia","Philippine Peso","₱","PHP","PHP","", ["Palawan"]),
- ("Laos","Asia","Lao Kip","₭","LAK","LAK","", ["Luang Prabang"]),
+ ("Laos","Asia","Lao Kip","₭","LAK","LAK","", []),
  ("Thailand","Asia","Thai Baht","฿","THB","THB","", ["Bangkok","Chiang Mai","Phuket"]),
  ("Vietnam","Asia","Vietnamese Dong","₫","VND","VND","", ["Hanoi","Hoi An"]),
 
