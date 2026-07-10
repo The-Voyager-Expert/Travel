@@ -100,10 +100,7 @@
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
-    { group: '📆 Trips', children: [
-        { href: base + 'Trip-Essentials/Trips.html',          text: '📆 Trips' },
-        { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing' },
-      ] },
+    { href: base + 'Trip-Essentials/Trips.html', text: '📆 Trips' },
     null,
     { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
     null,
