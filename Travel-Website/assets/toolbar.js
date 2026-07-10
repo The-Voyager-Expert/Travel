@@ -156,7 +156,7 @@
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '📋 Entry Requirements' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Travel-Packing-Generic.html', text: '👕 Packing', full: '👕 Packing Checklist' },
+    { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing', full: '👕 Packing Checklist' },
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
