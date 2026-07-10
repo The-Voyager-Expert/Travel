@@ -117,6 +117,10 @@ BOT_BLOCKED_HOSTS = {
     "reservecalifornia.com", "www.reservecalifornia.com",
     # Tock restaurant & winery reservation platform — 403 to the crawler, live in browser (added 2026-06-21, Napa build — official winery booking platform used by Domaine Carneros, Beringer, and others; confirmed live via web search)
     "exploretock.com", "www.exploretock.com",
+    # Royal Opera House Muscat — heavy JS SPA, never reaches document_idle; redirects /en/HouseTours to homepage (added 2026-07-10, Muscat build — confirmed live via Chrome MCP navigation)
+    "rohmuscat.org.om", "www.rohmuscat.org.om",
+    # Transport Malta (government ferry info) — 403 to crawler, live in browser (added 2026-07-10, Valletta build — ferry service page confirmed live via Chrome MCP; government agency behind bot-block)
+    "transport.gov.mt", "www.transport.gov.mt",
     # Review / travel platforms
     "tripadvisor.com", "www.tripadvisor.com", "www.tripadvisor.it",
     "atlasobscura.com", "www.atlasobscura.com",
@@ -290,6 +294,7 @@ BOT_BLOCKED_HOSTS = {
     # Bangkok — food delivery; redirect to app store / 403 from sandbox; live in browser (added 2026-06-10, Bangkok build)
     "foodpanda.co.th", "www.foodpanda.co.th",
     "foodpanda.ph", "www.foodpanda.ph",  # added 2026-06-27, Palawan build — 403 from automated client (bot wall); foodpanda.ph is the Philippines' major food delivery platform, confirmed live via site: search
+    "foodpanda.la", "www.foodpanda.la",  # added 2026-07-10, Luang Prabang build — 403 from automated client (bot wall); foodpanda.la is the Laos food delivery platform, same pattern as .ph/.co.th
     # San Sebastián — Spanish ride-app, food-delivery, train, and venue sites:
     # 403 / timeout / connection-drop to the US sandbox crawler, all confirmed
     # live in browser via Chrome MCP (added 2026-06-12, San Sebastián build).
@@ -339,7 +344,7 @@ BOT_BLOCKED_HOSTS = {
     # PedidosYa — Latin American food delivery platform; 403 to automated UAs (bot wall); confirmed live via web search, active in Peru (added 2026-07-06, Cusco build)
     "pedidosya.com.pe", "www.pedidosya.com.pe", "pedidosya.com", "www.pedidosya.com",
     # Rappi — Latin American food delivery platform; 403 to automated UAs; confirmed live via web search (added 2026-07-06, Cusco build)
-    "rappi.com.pe", "www.rappi.com.pe", "rappi.com", "www.rappi.com",
+    "rappi.com.pe", "www.rappi.com.pe", "rappi.com", "www.rappi.com", "rappi.mx", "www.rappi.mx",
     # Harley-Davidson Museum web store — 403 to automated UAs (bot wall); confirmed live via Chrome MCP, loads "Harley-Davidson Museum Web Store: Product Selection :: General Admission" (added 2026-07-06, Chicago build)
     "purchase.h-dmuseum.com",
     # Lyric Opera of Chicago — 403 to automated UAs (bot wall); confirmed live via Chrome MCP, loads "Buy Tickets | Lyric Opera of Chicago" (added 2026-07-06, Chicago build)
@@ -352,6 +357,10 @@ BOT_BLOCKED_HOSTS = {
     "pedidosya.cl", "www.pedidosya.cl",
     # Parquemet Chile — timeout/ERR to automated UAs (geo-block or bot wall); confirmed live via site: search — parquemet.cl is the official Parque Metropolitano site (added 2026-07-08, Santiago build)
     "parquemet.cl", "www.parquemet.cl",
+    # INAH Mexico (Instituto Nacional de Antropología e Historia) — 403 to automated UAs (bot wall); zone and museum pages confirmed live via Chrome MCP navigation (added 2026-07-10, Cancun/Oaxaca builds)
+    "inah.gob.mx", "www.inah.gob.mx",
+    # Garrafón Natural Reef Park — SSL/connection error to automated clients; site confirmed live via Chrome MCP navigation at www.garrafon.com (added 2026-07-10, Cancun build)
+    "garrafon.com", "www.garrafon.com",
 }
 
 # Redirect targets that are expected and benign — they just mean the user
