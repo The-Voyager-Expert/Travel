@@ -56,6 +56,8 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-10", "TWO VALIDATOR BUGS FIXED — both surfaced fixing Cannes's 2 remaining failures, both turned out to be fleet-wide false-fails, not guide-content bugs. (1) FERRY-ONLY LEGS WRONGLY REQUIRED 🚕 — the 'every transit line shows 🚕 Uber time' hard-fail (2026-04-30) never accounted for a standalone or line-opening 🚢 ferry leg, even though Motion Rule.html § 1 explicitly documents '🚢 [N min] → [Destination]' as complete on its own (same principle as the 🚤 car-free-city rule — where no road exists, the water crossing IS the ride leg). Cannes's two Lérins-Islands ferry legs (no road access, genuinely no Uber possible) were failing; found ~15 other fleet guides shipping the identical bare-🚢 pattern already (Seychelles, Sardinia, Toronto, Capri, Turks and Caicos, etc.), confirming this was never a Cannes-specific issue. Added has_ferry exemption: a transit line whose head segment (before the first →) contains 🚢 no longer requires 🚕. (2) READ ABOUT LINK CHECK COULD NEVER PASS — Story-Pages.html § 2 mandates the READ ABOUT {CITY} link be INJECTED VIA JAVASCRIPT (documented example: document.createElement('a'); a.href='{slug}-story.html'; a.textContent='READ ABOUT {CITY}'), but the check added same-day (this file's own 2026-07-10 READ ABOUT entry) only regex-matched a literal static <a href> tag in raw HTML — which can never see JS-injected content. Verified this was failing on EVERY guide with the JS pattern, including Lisbon, the guide the check's own error message cites as the reference model ('Model: Travel-Website/Guides/Lisbon/lisbon-story.html'). Added JS-pattern detection (separate .href and .textContent regex matches) alongside the existing static-tag check — either satisfies it now. No guide HTML edited for either fix — validator-only; guides with the correct, spec-compliant content (Cannes, Lisbon, and the fleet generally) now validate clean without any content change."),
+    ("2026-07-10", "VALIDATOR DEEP AUDIT — 19 bugs fixed across the full 26k-line file. HIGH IMPACT (checks silently skipping): (1) Overview card icon↔stop-modifier sync regex used '·' separator only — never matched non-Train day cards using '–' (2026-06-16 format); fixed to accept [·–]. (2) Same check still required retired 🎒 icon for .self stops; replaced with pass-through. (3) EXTRAS_ORDER Train Stations regex 'Stations Near the Hotel' never matched canonical 'Train Stations Near Hotel'; fixed. (4) EXTRAS_ORDER RNH/Downtown had dead 'Near the Hotel'/'bare Downtown' alternatives; cleaned to match current canonical titles. (5) _QUOTE_CHARS had straight double-quote 3x, missing curly U+201C/U+201D; fixed. (6) 'Missing Uber' check gated on walk presence — tram-only lines without 🚕 slipped through; removed gate. (7) Michelin 'Not shown' class check required zero whitespace after >; added \\s*. (8) box_re used exact class='tour-box' match — extra classes on div silently skipped the 📍-last-row check; fixed to fuzzy \\b match. (9) train_block_re used non-greedy .*?</div> — wrong nesting depth; replaced with _walk_balanced_div. (10) Ticket-box lead-row regex was greedy, captured entire box body instead of first row; fixed to non-greedy. (11) Day Trips Omio check did unbounded search past next extras-sub — could check wrong city's box; bounded to entry region. (12) Duplicate-scope detector only recognized H:MM times — Npm/am formats missed; added alternation. (13) Guides-Index banner check \\bheader\\b false-matched 'section-header' etc.; tightened to exact class. MEDIUM IMPACT: (14) TB-6 used html.find('<script') instead of _tb_script_m.start() — could find wrong script tag; fixed. (15) NhMM clock-notation check used 200-char comment window (false skip/fire); replaced with full RE_HTML_COMMENT.sub on html. (16) Dead variable _pre removed. (17) _pb_walk_times renamed to _pb_drive_times (held drive times, not walk). (18) RNH duplicate-name tracker appended empty keys; guarded. (19) Comment/code mismatch in filename slug (said underscores, code uses hyphens); fixed comment. No guide HTML edited — validator-only."),
     ("2026-07-10", "TOURS — banned nonstandard `.tours-group-label` wrapper class (closes the one real remaining gap from the 2026-07-08 Tours audit's Cluster E 'format misses'). Re-investigation found the other 2 audit-listed format-miss instances were false alarms against the CURRENT validator: Atlanta's missing 🕐 and Maldives' missing 🚶/🚕 hotel row are both already hard-failed by the pre-existing entry-format check (🕐/⏳/👥 presence + unconditional 🚕 requirement, both dating to the original 2026-05-20 Tours checks, well before the audit) — live-tested against atlanta_v1.html and maldives_v1.html today, 0 failures on both, confirming the underlying content was already fixed by other work on this shared workspace before this session touched it. The one genuine, never-checked gap was Bora-Bora's nested `tours-group-label` wrapper (an unstyled class, absent from guide-style.css, that let default heading styles bleed onto entries) — also already fixed in the guide itself (now plain flat `.tours-group` divs), but nothing banned the class from reappearing. New check hard-fails any `tours-group-label` class inside #tours. No guide HTML edited in this pass — validator-only."),
     ("2026-07-08", "TOURS AUDIT — 4 enforcement gaps closed (fleet-wide manual audit of every Tours §1-§8 rule against all 207 shipped guides found 28 guides with real deviations that were passing validation). (1) MISSING PLATFORM HEADING (§5) — the existing 'platform group never empty' check only inspects .tours-group headings that already exist in the markup; a crib dropping a whole platform sometimes omits its heading ENTIRELY (no heading, no negative line) instead of shipping it empty — invisible to that check. New check 'all three platform headings present' asserts Viator/GetYourGuide/TripAdvisor headings all exist whenever the section isn't the whole-section-negative case. Fleet: 19 guides / 25 platform slots (Aruba, Big-Island, Cayman-Islands, Chongqing, Curacao, Kauai, La-Jolla, Milan, Oahu, Pensacola, Portland, Sedona, Sint-Maarten, Taipei, Yellowstone, + Fortaleza/Glacier-National-Park with all 3 missing). (2) MANGLED REVIEW COUNT (§6) — a thousands-separator comma corrupted into a stray middle-dot (e.g. '4.7⭐ · 1 ·176+ reviews' instead of '4.7⭐ · 1,176+ reviews') was invisible because the existing reviews-count regex greedily matches only the LAST digit group before 'reviews', so '176' alone cleared the ≥6 bar and passed silently. New _TOURS_MANGLED_REVIEWS_RE detects the two-digit-groups-split-by-· shape directly. Fleet: Annecy, Cannes, Turin, Pasadena (7 entries). (3) BARE CYCLING/BIKING (§2 excluded types) — banned_tour_types only listed 2-word phrases ('cycling tour(s)', 'bicycle tour(s)'); titles with the word alone in a different position ('Ubud: Downhill Cycling with Volcano and Rice Terraces', 'Napa Valley Cycling Wine Tour') didn't match any phrase and shipped. Added bare 'cycling' + 'biking' tokens (word-boundary gated, same list already scanned against Tours .extras-sub <strong> titles). Fleet: Bali, Napa. (4) NON-CANONICAL NEGATIVE-FINDING WORDING (§8) — the canonical-wording regex used a greedy '.+' for the [City] placeholder, so embellished text ('No qualifying tours in Columbia on Viator, GetYourGuide, or TripAdvisor meeting the 4.5★ · 6+ review bar.') still matched the 'in .+\\.' shape and passed. Added a second pass that rejects platform names / review / rating / star / meeting / platform language leaking into the captured city text. Also discovered and fixed a second, larger hole in the same check: it only ever scanned .entry-body divs, so the WHOLE-SECTION-negative case (wrapped in .extras-empty, per Guide Structure) was never wording-checked at all — Fortaleza ('No tours found qualifying at 4.5★ and 6+ reviews for Fortaleza at time of build.') and Glacier-National-Park ('No tour operators meet the minimum ratings threshold for Glacier National Park tours.') were shipping completely free-form sentences, invisible until this pass. Fleet: Columbia, Maceió, Fortaleza, Glacier-National-Park. No guide HTML edited in this pass — validator-only; the 28 flagged guides still need per-guide fixes + re-validation."),
     ("2026-07-06", "PICKLEBALL T5 — FIX SILENT PASS BUG (detected via verify). T5 was detecting US eligibility from .title-address state code (Patterns A/B/C), but hotel addresses use 'Street · Neighborhood' format (Hotel Banner.html) which never includes a state code — so trip_state was None for nearly all US guides and the gate silently skipped. Fixed: primary signal switched to .title-country == 'United States' (always present, required by Hotel Banner.html §1). State-code parser kept for informational hint in check messages only. Fleet impact: all 189 US guides missing pickleball now hard-fail T5 as intended. Non-US guides unchanged — title-country is never 'United States' for them."),
@@ -626,7 +628,6 @@ def validate(html: str, filename: str):
     _cr_banned_hits: list[str] = []
     _cr_note_banned_hits: list[str] = []
     if _cr_integrity_ok and _cr_rules_dir.is_dir():
-        _BANNER_TEXT = "ATTENTION: THIS DOCUMENT IS READ-ONLY"
         for _rel in sorted(_cr_stored.keys()):
             _cr_file = _cr_rules_dir / _rel
             if not _cr_file.is_file():
@@ -645,11 +646,11 @@ def validate(html: str, filename: str):
                 if _phrase.lower() in _cr_plain.lower():
                     _cr_banned_hits.append(f'{_rel}: "{_phrase}"')
                     break  # one hit per file is enough
-            # Check .note spans for drift words
+            # Check .note spans for drift words (word-boundary matching)
             for _note_m in _CR_NOTE_SPAN_RE.finditer(_cr_body):
                 _note_text = RE_STRIP_TAGS.sub('', _note_m.group(1)).lower()
                 for _word in _CR_NOTE_BANNED_WORDS:
-                    if _word in _note_text:
+                    if re.search(r'\b' + re.escape(_word) + r'\b', _note_text):
                         _cr_note_banned_hits.append(f'{_rel}: "{_word}" in note span')
                         break
     check(
@@ -983,8 +984,9 @@ def validate(html: str, filename: str):
     # TB-5: toolbar-mount is the first element inside .container, before .title-page
     # All guides place the toolbar as the first item inside .container (not outside it).
     # Check: toolbar-mount appears before .title-page in source order.
-    _tb_title_page_pos = html.find('class="title-page"')
-    _tb_mount_pos      = html.find('id="toolbar-mount"')
+    _tb5_title_m = re.search(r'class\s*=\s*"[^"]*\btitle-page\b[^"]*"', html, re.IGNORECASE)
+    _tb_title_page_pos = _tb5_title_m.start() if _tb5_title_m else -1
+    _tb_mount_pos      = _tb_mount_m.start() if _tb_mount_m else -1
     _tb_before_title = (
         _tb_mount_pos != -1
         and _tb_title_page_pos != -1
@@ -1196,7 +1198,7 @@ def validate(html: str, filename: str):
     # changes, validation re-stamps, or deploys. Rule source: Brain/Reference/
     # Toolbar.html §10. (Replaced the retired-footnote guard check 2026-06-21;
     # the old document.lastModified auto-stamp was removed the same day.)
-    _tb11_mount = re.search(r'<div\s+id="toolbar-mount"[^>]*>', html, re.IGNORECASE)
+    _tb11_mount = _tb_mount_m
     _tb11_val = ''
     if _tb11_mount:
         _tb11_m = re.search(r'data-updated="([^"]*)"', _tb11_mount.group(0))
@@ -1345,14 +1347,16 @@ def validate(html: str, filename: str):
         before = html[:pos]
         return before.rfind('<') > before.rfind('>')
 
+    _DIV_OPEN_RE = re.compile(r'<div(?=[\s>/])', re.IGNORECASE)
+
     def _walk_balanced_div(text, start):
         """Return (inner, end_index) for the <div> opening at `start`.
         Handles nested <div>s by tracking depth."""
         depth = 1
-        # `start` points at the char after the opening tag's '>'
         j = start
         while j < len(text) and depth > 0:
-            nxt_open = text.find('<div', j)
+            nxt_open_m = _DIV_OPEN_RE.search(text, j)
+            nxt_open = nxt_open_m.start() if nxt_open_m else -1
             nxt_close = text.find('</div>', j)
             if nxt_close == -1:
                 return text[start:], len(text)
@@ -1815,7 +1819,7 @@ def validate(html: str, filename: str):
                     if len(_expl) >= _WIKI_OMIT_MIN_EXPLANATION:
                         _wiki_omit_logged += 1
     except Exception as _wiki_e:
-        print(f"  ⚠ verification_log parse error: {_wiki_e}")
+        warn(f"verification_log parse error: {_wiki_e}", "")
     _n_missing = len(stop_blocks_no_wiki)
     if _n_missing >= 2:
         _wiki_ok = False
@@ -2014,12 +2018,12 @@ def validate(html: str, filename: str):
     # downstream ride check (closer, RNH, Michelin check-D, Stations, Tours…)
     # validates 🚤 with the identical format/time/order rules as 🚕.
     print("\n── 🚤 CAR-FREE CITY RIDE GLYPH ──")
-    CAR_FREE_CITIES = {'venice', 'maldives'}
+    CAR_FREE_CITIES = {'venice', 'maldives', 'hydra', 'zermatt'}
     _city_lc = city_text.strip().lower()
     _car_free = _city_lc in CAR_FREE_CITIES
     # Getting Around may legitimately keep a 🚕 ride-app heading; exclude it.
     _ga_m = re.search(
-        r'id\s*=\s*"getting-around".*?(?=id\s*=\s*")',
+        r'id\s*=\s*"getting-around".*?(?=id\s*=\s*"|</body>)',
         html, re.IGNORECASE | re.DOTALL,
     )
     _html_ex_ga = (html[:_ga_m.start()] + html[_ga_m.end():]) if _ga_m else html
@@ -2173,7 +2177,6 @@ def validate(html: str, filename: str):
     # ─── TITLE CARD: every .title-address Maps link + address format ──
     print("\n── TITLE CARD: .title-address Maps links + format ──")
     _ta_maps_fails: list[str] = []
-    _ta_format_fails: list[str] = []
     for _tam in re.finditer(
         r'<div\b[^>]*\bclass\s*=\s*"title-address"[^>]*>(.*?)</div>',
         html, re.IGNORECASE | re.DOTALL,
@@ -2951,17 +2954,9 @@ def validate(html: str, filename: str):
             if _has_wc_pill and not _wc_sep_re.search(_ge_inner_order) else '',
         )
     else:
-        check(
-            'Overview extras pills appear in canonical section order '
-            '(Guide Structure.html / Trip Overview.html § 3)',
-            True,   # no .overview-extras div → nothing to check here
-            '',
-        )
-        check(
-            'Overview extras pill label text matches canonical name for every pill '
-            '(owner-defined labels — locked 2026-05-25)',
-            True,   # no .overview-extras div → nothing to check here
-            '',
+        warn(
+            'Overview extras pills — .overview-extras div not found; '
+            'pill order and label checks skipped',
         )
 
     # Backpack emoji hard-fail — 🎒 (U+1F392) retired from guide HTML 2026-06-16.
@@ -5294,32 +5289,6 @@ def validate(html: str, filename: str):
             i = end
         return ''.join(out)
 
-    def _strip_guided_tour_boxes(text):
-        """Strip only <div class="tour-box"> blocks whose first content glyph
-        is 📅 (i.e. Viator/GYG guided-tour boxes). Keep .tour-box blocks that
-        lead with 📍 — those are the stop-logistics wrappers introduced by
-        stop-logistics wrappers (📍-led .tour-box), whose inner 🏛️ / ⏰ rows count
-        as stop-level content."""
-        out = []
-        i = 0
-        start_re = re.compile(r'<div\b[^>]*class\s*=\s*"[^"]*\btour-box\b[^"]*"[^>]*>')
-        while i < len(text):
-            m = start_re.search(text, i)
-            if not m:
-                out.append(text[i:])
-                break
-            out.append(text[i:m.start()])
-            inner, end = _walk_balanced_div(text, m.end())
-            head = RE_STRIP_TAGS.sub( '', inner[:300]).strip()[:50]
-            if head.startswith('📅'):
-                # Guided-tour box — drop.
-                i = end
-            else:
-                # Stop-logistics wrapper (📍-led) or other — keep.
-                out.append(text[m.start():end])
-                i = end
-        return ''.join(out)
-
     stop_block_open = re.compile(r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-block\b[^"]*"[^>]*>')
     tour_box_open = re.compile(r'<div\b[^>]*class\s*=\s*"[^"]*\btour-box\b[^"]*"[^>]*>')
     # ticket-box (any ticket: skip-the-line / timed-entry / hosted-entry /
@@ -5583,10 +5552,7 @@ def validate(html: str, filename: str):
         block = html[s:end]
         _nm = RE_STOP_NAME.search(block)
         label = _nm.group(1).strip()[:70] if _nm else "(unnamed stop)"
-        for tb in re.finditer(
-            r'<div\b[^>]*class\s*=\s*"[^"]*\bticket-box\b[^"]*"[^>]*>',
-            block,
-        ):
+        for tb in ticket_box_open.finditer(block):
             inner, _ = _walk_balanced_div(block, tb.end())
             first = RE_STRIP_TAGS.sub( '', inner[:300]).strip()
             if '🎟️' not in first[:50]:
@@ -5913,7 +5879,7 @@ def validate(html: str, filename: str):
                 if _tlt_m:
                     _tlt = RE_STRIP_TAGS.sub('', _tlt_m.group(1)).strip()
                     _tlt_ok = bool(
-                        re.search(r'·\s+\d+\.\d⭐\s+·\s+\d[\d,]*\+\s*reviews\s*$', _tlt, re.IGNORECASE)
+                        re.search(r'·\s+\d+\.\d[★⭐]\s+·\s+\d[\d,]*\+\s*reviews\s*$', _tlt, re.IGNORECASE)
                         and _tlt.count('·') >= 2
                     )
                     if not _tlt_ok:
@@ -6445,7 +6411,7 @@ def validate(html: str, filename: str):
         # Logic: every day of the week must appear on exactly one side of the ledger.
         _open_days:   set = set()
         _closed_days: set = set()
-        for _hm in re.finditer(r'<div[^>]*>\s*(?:🏛|🏛️|⏳)(.*?)</div>', _body, re.DOTALL):
+        for _hm in re.finditer(r'<div[^>]*>\s*(?:🏛️|🏛|⏳)(.*?)</div>', _body, re.DOTALL):
             _open_days |= _days_from_text(_hm.group(1))
         for _cm in re.finditer(r'<div[^>]*>\s*🚫(.*?)</div>', _body, re.DOTALL):
             _closed_days |= _days_from_text(_cm.group(1))
@@ -7050,7 +7016,6 @@ def validate(html: str, filename: str):
         r'(?:\s*(?:[–\-]|&amp;|&|,)\s*(?:' + _CLOSED_FULL_DAY + r'))*' # range / combo
         r')'
         r'\s*$',
-        re.IGNORECASE,
     )
     _closed_fmt_violations: list[str] = []
     for _div in re.finditer(r'<div[^>]*>(🚫[^<]*)</div>', html, re.IGNORECASE):
@@ -7068,7 +7033,7 @@ def validate(html: str, filename: str):
 
     # ─── 🆓 ROW FORMAT ───────────────────────────────────────────────────────
     print("\n── 🆓 ROW FORMAT ──")
-    _free_valid_re = re.compile(r'^🆓\s*Free\s*$', re.IGNORECASE)
+    _free_valid_re = re.compile(r'^🆓\s*Free\s*$')
     _free_fmt_violations: list[str] = []
     for _div in re.finditer(r'<div[^>]*>(🆓[^<]*)</div>', html, re.IGNORECASE):
         _row = _div.group(1).strip()
@@ -9469,7 +9434,7 @@ def validate(html: str, filename: str):
             f'(expected ascending — closest first)'
         )
 
-    # T1 — within ≤15 min walk
+    # T1 — within ≤25 min walk
     check(
         '☕ Cappuccino — all entries within ≤25 min walk '
         '(per Cappuccino - Extra Section.html )',
@@ -9767,14 +9732,13 @@ def validate(html: str, filename: str):
                 )
                 _rnh_pre_plain = RE_WS.sub(' ', RE_STRIP_TAGS.sub(' ', _rnh_pre_plain)).strip()
                 _rnh_preamble_bad = bool(_rnh_pre_plain)
-        # Inverse negative-finding: when entries are present, literal phrase must NOT appear.
+        # Inverse negative-finding: deferred until rnh_entry_count is computed (below).
         _rnh_body_flat = RE_WS.sub(' ', RE_STRIP_TAGS.sub(' ', body_text)).strip()
-        if entries and re.search(
+        _rnh_has_neg_phrase = bool(re.search(
             r'No\s+restaurants\s+within\s+25\s+min\s+walk\s+of\s+the\s+hotel|'
             r'No\s+qualifying\s+restaurants\s+within\s+25\s+min\s+walk\s+of\s+the\s+hotel',
             _rnh_body_flat, re.IGNORECASE,
-        ):
-            _rnh_inv_neg_bad = True
+        ))
         # Hotel-restaurant ordering: §5a says it "comes first in the entry".
         # Track whether any regular venue entry appears before the 🏨 entry.
         _rnh_hotel_rest_idx: int | None = None
@@ -10136,6 +10100,10 @@ def validate(html: str, filename: str):
         if not _rnh_hotel_order_ok else '',
     )
 
+    # ─── RNH — INVERSE NEGATIVE FINDING (deferred from above) ─────────────
+    if rnh_entry_count > 0 and _rnh_has_neg_phrase:
+        _rnh_inv_neg_bad = True
+
     # ─── RNH — ≥5 ENTRIES MINIMUM ──────────────────────────────────────────
     # Per Restaurants Near Hotel - Extra Section.html § 3 (changed from cap-of-4 on 2026-05-23):
     # "Minimum 5 restaurants within 25 min walk of the hotel."
@@ -10215,7 +10183,7 @@ def validate(html: str, filename: str):
                 if not _mxc_r1:
                     continue
                 _mxc_text = RE_STRIP_TAGS.sub('', _mxc_r1.group(1)).strip()
-                _mxc_text = re.sub(r'^⭐[\u2b50\s]+', '', _mxc_text).strip()
+                _mxc_text = re.sub(r'^[⭐\s]+', '', _mxc_text).strip()
                 _mxc_text = re.sub(r'\s*·.*$', '', _mxc_text).strip()
                 if _mxc_text:
                     michelin_names.add(_mxc_text.lower())
@@ -10226,7 +10194,7 @@ def validate(html: str, filename: str):
                     _mxc_inner, re.IGNORECASE | re.DOTALL,
                 ):
                     _mxc_n = RE_STRIP_TAGS.sub('', _mxc_sub.group(1))
-                    _mxc_n = re.sub(r'^⭐[\u2b50\s]+', '', _mxc_n).strip()
+                    _mxc_n = re.sub(r'^[⭐\s]+', '', _mxc_n).strip()
                     if _mxc_n:
                         michelin_names.add(_mxc_n.lower())
     if restaurants_section_m:
@@ -11267,7 +11235,7 @@ def validate(html: str, filename: str):
                 # Convention across all guides: 📍 <a href="maps">Venue Name</a>
                 # Fail if any Maps link has empty or bare "Maps"/"maps" link text.
                 for _a_m in re.finditer(
-                    r'<a\b[^>]*href\s*=\s*"[^"]*google\.com/maps[^"]*"[^>]*>(.*?)</a>',
+                    r'<a\b[^>]*href\s*=\s*"[^"]*(?:google\.com/maps|maps\.google\.com|goo\.gl/maps)[^"]*"[^>]*>(.*?)</a>',
                     _pin_content, re.DOTALL | re.IGNORECASE,
                 ):
                     _link_text = RE_STRIP_TAGS.sub('', _a_m.group(1)).strip()
@@ -12053,7 +12021,7 @@ def validate(html: str, filename: str):
     # child div (URL link only); scan the full transit-box body for leakage.
     print("\n── FOOD DELIVERY — annotation leakage in transit-box ──")
     _fd_annot_hits: list[str] = []
-    _FD_ANNOT_RE = re.compile(r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]', re.IGNORECASE)
+    _FD_ANNOT_RE = re.compile(r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]')
     if _fd_hdr:
         for _fdtb_m2 in re.finditer(
             r'<div\b[^>]*class\s*=\s*"[^"]*\btransit-box\b[^"]*"[^>]*>',
@@ -12705,7 +12673,7 @@ def validate(html: str, filename: str):
                 '(ships a negative-finding line when no courts qualify)'
             ) if not pickleball_present else '',
         )
-    elif has_any_day_block and not trip_is_us and pickleball_present:
+    elif has_any_day_block and trip_country is not None and not trip_is_us and pickleball_present:
         # Non-US guide has a pickleball section — must be silently omitted.
         check(
             '🥒 Guide Structure — Pickleball section must be silently omitted '
@@ -14160,6 +14128,7 @@ def validate(html: str, filename: str):
         ('Restaurants Near Hotel',          _ETITLE + r'🫕\s*Restaurants\s+Near\s+Hotel'),
         ('Downtown',                _ETITLE + r'🍽️\s*Downtown\s+Restaurants'),
         ('Local Tastes',            _ETITLE + r'🍮\s*Local\s+Tastes'),
+        ('Food Delivery',           _ETITLE + r'🚗\s*Food\s+Delivery'),
         ('Shows',                   _ETITLE + r'🎭\s*Shows'),
         # Icon is 🚌. Past drift: 🚏, 🗺️, 🚐 — all retired.
         ('Getting Around',          _ETITLE + r'🚌\s*Getting\s+Around'),
@@ -15659,7 +15628,6 @@ def validate(html: str, filename: str):
                     # 🚕-only accepted when meeting point is >40 min walk from hotel
                     # (e.g. Lisbon-departing tours from Sintra hotel ~28 km away).
                     _has_ride_t = '🚕' in _box_inner
-                    _has_walk_t = '🚶' in _box_inner
                     if not _has_ride_t:
                         _tours_fmt_bad.append(
                             f'"{_label}" — missing 🚕 motion row '
@@ -15925,7 +15893,7 @@ def validate(html: str, filename: str):
             re.DOTALL | re.IGNORECASE,
         )
         _tours_first_sub_re = re.compile(
-            r'<div\b[^>]*class\s*=\s*"[^"]*(?:extras-sub|extras-empty|tours-group)\b[^"]*"[^>]*>',
+            r'<div\b[^>]*class\s*=\s*"[^"]*(?:extras-sub|extras-empty|tours-group(?!-label))\b[^"]*"[^>]*>',
             re.IGNORECASE,
         )
         _tours_title_m = _tours_title_end_re.search(_tours_inner_sup)
@@ -15956,7 +15924,7 @@ def validate(html: str, filename: str):
     _tg_empty: list[str] = []
     if _tours_sec_sup_m:
         _tg_re = re.compile(
-            r'<div\b[^>]*class\s*=\s*"[^"]*\btours-group\b[^"]*"[^>]*>(.*?)</div>',
+            r'<div\b[^>]*class\s*=\s*"[^"]*\btours-group(?!-label)\b[^"]*"[^>]*>(.*?)</div>',
             re.IGNORECASE | re.DOTALL,
         )
         _tg_matches = list(_tg_re.finditer(_tours_inner_sup))
@@ -16055,7 +16023,7 @@ def validate(html: str, filename: str):
         _DOMAIN = {'viator.com': 'Viator', 'getyourguide.': 'GetYourGuide',
                    'tripadvisor.': 'TripAdvisor'}
         _tok_re = re.compile(
-            r'<div\b[^>]*class\s*=\s*"[^"]*\b(tours-group|extras-sub)\b[^"]*"[^>]*>(.*?)</div>',
+            r'<div\b[^>]*class\s*=\s*"[^"]*\b(tours-group(?!-label)|extras-sub)\b[^"]*"[^>]*>(.*?)</div>',
             re.DOTALL | re.IGNORECASE,
         )
         _headers_seen: list[str] = []
@@ -16141,7 +16109,7 @@ def validate(html: str, filename: str):
     print("\n── TOURS — annotation leakage in ↳ summary ──")
     _tours_annot_hits: list[str] = []
     _TOURS_ANNOT_RE = re.compile(
-        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]', re.IGNORECASE,
+        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]',
     )
     if _tours_sec_sup_m:
         for _tann_m in re.finditer(
@@ -16453,9 +16421,29 @@ def validate(html: str, filename: str):
             if not _sp_exists else "",
         )
 
-        _sp_linked = f"{_sp_slug}-story.html" in html and "READ ABOUT" in html.upper()
+        # Story-Pages.html § 2 mandates the link be INJECTED VIA JAVASCRIPT
+        # (document.createElement('a'); a.href = '{slug}-story.html'; a.textContent
+        # = 'READ ABOUT {CITY}') — a static <a href> tag is checked too as a
+        # fallback, but the JS pattern is the canonical, spec-example format
+        # every guide (including the reference model, Lisbon) actually ships.
+        # A raw-HTML-only regex can never see JS-injected content, so this was
+        # a false-fail on every spec-compliant guide until fixed (2026-07-10).
+        _sp_static_linked = bool(re.search(
+            r'<a\b[^>]*href\s*=\s*"[^"]*' + re.escape(f"{_sp_slug}-story.html") + r'"[^>]*>[^<]*READ\s+ABOUT\b',
+            html, re.IGNORECASE,
+        ))
+        _sp_js_href = bool(re.search(
+            r'\.href\s*=\s*[\'"]' + re.escape(f"{_sp_slug}-story.html") + r'[\'"]',
+            html, re.IGNORECASE,
+        ))
+        _sp_js_text = bool(re.search(
+            r'\.textContent\s*=\s*[\'"][^\'"]*READ\s+ABOUT\b',
+            html, re.IGNORECASE,
+        ))
+        _sp_linked = _sp_static_linked or (_sp_js_href and _sp_js_text)
         check(
-            'Guide injects the READ ABOUT {CITY} link to its story page',
+            'Guide injects the READ ABOUT {CITY} link to its story page '
+            '(static <a> tag or JS-injected — Story-Pages.html § 2)',
             _sp_linked,
             ("guide does not link to its story page — inject the READ ABOUT link into the "
              "Trip Overview title bar. Spec: Brain/Reference/Story-Pages.html § 2")
@@ -17783,7 +17771,7 @@ def validate(html: str, filename: str):
     print("\n── STATIONS NEAR THE HOTEL — annotation leakage in description ──")
     _snh_annot_hits: list[str] = []
     _SNH_ANNOT_RE = re.compile(
-        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]', re.IGNORECASE,
+        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]',
     )
     if _snh_m:
         _snh_sub_list_ann = list(re.finditer(
@@ -18335,7 +18323,10 @@ def validate(html: str, filename: str):
                 _url_m = re.search(r'href\s*=\s*["\']([^"\']+)["\']', _tkm.group(0), re.IGNORECASE)
                 if _url_m:
                     _url = _url_m.group(1).lower()
-                    if not any(h in _url for h in _TRAIN_TICKET_HOSTS):
+                    if not any(
+                        _url == h or _url.endswith('.' + h) or ('/' + h) in _url or ('//' + h) in _url
+                        for h in _TRAIN_TICKET_HOSTS
+                    ):
                         _dt_bad_operator.append(f'"{_tk_txt[:80]}"')
                 else:
                     # No href — still check plain text for domain
@@ -19243,7 +19234,7 @@ def validate(html: str, filename: str):
     print("\n── DAY TRIPS — annotation leakage in ↳ description ──")
     _dt_annot_hits: list[str] = []
     _DT_ANNOT_RE = re.compile(
-        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]', re.IGNORECASE,
+        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]',
     )
     if _dt_hdr:
         for _dtann_m in re.finditer(
@@ -19453,10 +19444,10 @@ def validate(html: str, filename: str):
     print("\n── DAY TRIPS — European-country MIN 5 entries ──")
     _dt_eu_city = (city_text or '').strip().lower()
     # Exempt non-European countries (e.g. "Naples" matches Italy set but Naples Florida is US)
-    _dt_eu_country = (_tc_text or '').strip()
-    _NON_EU_COUNTRIES = {'United States', 'Canada', 'Australia', 'New Zealand', 'Japan',
-                         'Mexico', 'Brazil', 'Argentina', 'Chile', 'Colombia', 'Peru',
-                         'South Africa', 'Thailand', 'Vietnam', 'India', 'China'}
+    _dt_eu_country = (_tc_text or '').strip().lower()
+    _NON_EU_COUNTRIES = {'united states', 'canada', 'australia', 'new zealand', 'japan',
+                         'mexico', 'brazil', 'argentina', 'chile', 'colombia', 'peru',
+                         'south africa', 'thailand', 'vietnam', 'india', 'china'}
     _dt_is_european = _dt_eu_city in _EUROPEAN_GUIDE_CITIES and _dt_eu_country not in _NON_EU_COUNTRIES
     if _dt_is_european:
         _dt_eu_entry_count = 0
@@ -19543,7 +19534,7 @@ def validate(html: str, filename: str):
             _pb_inner,
         ):
             heading_clean = RE_STRIP_TAGS.sub( '', sub_m.group(1)).strip()
-            if not re.search(r'·\s*(?:Indoor|Outdoor)\b', heading_clean, re.IGNORECASE):
+            if not re.search(r'·\s*(?:Indoor|Outdoor)\b', heading_clean):
                 pb_suffix_missing.append(f'"{heading_clean[:60]}"'  )
     check(
         'Pickleball entries must end with "· Indoor" or "· Outdoor" in the heading ',
@@ -19867,7 +19858,7 @@ def validate(html: str, filename: str):
     print("\n── PICKLEBALL — annotation leakage in description ──")
     _pb_annot_hits: list[str] = []
     _PB_ANNOT_RE = re.compile(
-        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]', re.IGNORECASE,
+        r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]',
     )
     if _pb_hdr:
         _pb_sub_list_ann = list(re.finditer(
@@ -19926,10 +19917,6 @@ def validate(html: str, filename: str):
         # .entry-body body holding the cuisine description and the 📍 address.
         # Old "all rows inside .entry-body" shape is retired. Migration log
         # in Brain/Reference/audit_log.md (2026-05-19).
-        _box_open_re = re.compile(
-            r'<div\b[^>]*class\s*=\s*"[^"]*\bentry-body\b[^"]*"[^>]*>',
-            re.IGNORECASE,
-        )
         if not re.search(r'extras-empty', section_inner, re.IGNORECASE):
             # Per-entry: walk every .extras-sub heading + immediately-following
             # .entry-body pair inside the Michelin section.
@@ -20116,7 +20103,7 @@ def validate(html: str, filename: str):
         # Check 2 — "not shown" line must match canonical format
         # Canonical: "Not shown: N ⭐⭐⭐ · M ⭐⭐ · K ⭐ more in {City}"
         notshown_re = re.compile(
-            r'not\s+shown|more.{0,30}not\s+shown|\d+\s+more',
+            r'not\s+shown|more.{0,30}not\s+shown|\d+\s+⭐.*?more\s+in\b',
             re.IGNORECASE,
         )
         canonical_re = re.compile(
@@ -20259,7 +20246,7 @@ def validate(html: str, filename: str):
         r'(?=[^>]*\bid\s*=\s*"(?:day-trips|getting-around)")[^>]*>',
         html, re.IGNORECASE,
     ):
-        _dt_inner, _dt_end = _walk_balanced_div(html, _dt_sec_m.end())
+        _dt_range_inner, _dt_end = _walk_balanced_div(html, _dt_sec_m.end())
         _dt_ranges.append((_dt_sec_m.start(), _dt_end))
 
     def _in_day_trips(pos: int) -> bool:
@@ -20479,19 +20466,7 @@ def validate(html: str, filename: str):
     _guides_root = Path(filename).resolve().parent.parent  # Guides/
     _idx_path2 = _guides_root / 'Guides-Index.html'
 
-    def _idx_hrefs(idx_html):
-        """Return set of normalized href paths from Guides-Index.html overview-day links."""
-        import unicodedata as _ud2
-        hrefs = set()
-        for _m in re.finditer(
-            r'<a\b[^>]*class\s*=\s*"[^"]*\bdest-card\b[^"]*"[^>]*href\s*=\s*"([^"]+)"',
-            idx_html, re.IGNORECASE,
-        ):
-            if 'data-special' in _m.group(0):
-                continue
-            # Normalize: strip leading ./ and %20-decode
-            hrefs.add(_url_unquote(_m.group(1)).lstrip('./'))
-        return hrefs
+    # (_idx_hrefs helper removed — dead code since 2026-06-05 relocation.)
 
     # Check A (index membership) and MAP PIN were RELOCATED 2026-06-05 to the
     # FINAL GATE at the very end of validation (Dani: a guide fails for missing
@@ -21153,7 +21128,7 @@ def validate(html: str, filename: str):
                 # now OMITTED entirely (per Michelin Restaurants - Extra Section.html
                 # Seafood exclusion paragraph). 🐟 in a heading = drift.
                 disallowed_emoji = re.findall(
-                    r'[🌀-🛿🤀-🧿✀-➿]',
+                    r'[☀-⛿🌀-🛿🤀-🧿✀-➿]',
                     _star_row_text,
                 )
                 if disallowed_emoji:
@@ -22516,7 +22491,7 @@ def validate(html: str, filename: str):
         # T_NEW2 — no annotation leakage in <p> prose blocks
         print("\n── CLAUDE INSPIRATION — annotation leakage in prose ──")
         _CI_ANNOT_RE = re.compile(
-            r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]', re.IGNORECASE,
+            r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]',
         )
         ci_annot_hits: list[str] = []
         for _ci_p_m in re.finditer(
@@ -22939,7 +22914,7 @@ def validate(html: str, filename: str):
     eoi_row_order_violations: list[str] = []
     eoi_box_re = re.compile(
         r'<div\b[^>]*class\s*=\s*"[^"]*\b(?:entry-body|shows-box)\b[^"]*"[^>]*>([\s\S]*?)</div>\s*'
-        r'(?=<div\b[^>]*class\s*=\s*"(?:entry-body|shows-box|extras-sub|extras-section|local-tastes|extras-empty|ride-apps|transit-box)"|<!--|</div>)',
+        r'(?=<div\b[^>]*class\s*=\s*"[^"]*\b(?:entry-body|shows-box|extras-sub|extras-section|local-tastes|extras-empty|ride-apps|transit-box)\b[^"]*"[^>]*>|<!--|</div>)',
         re.IGNORECASE,
     )
     for box_m in eoi_box_re.finditer(html):
@@ -23019,13 +22994,13 @@ def validate(html: str, filename: str):
         'park', 'street', 'library', 'square', 'plaza', 'court', 'shopping mall',
         'university', 'college', 'campus',
         # French
-        'parc', 'rue', 'bibliothèque', 'place ', 'jardin', 'jardins',
+        'parc', 'rue', 'bibliothèque', 'place', 'jardin', 'jardins',
         # Italian
-        'parco', 'via ', 'viale', 'piazza', 'giardino', 'giardini', 'biblioteca',
+        'parco', 'via', 'viale', 'piazza', 'giardino', 'giardini', 'biblioteca',
         # Spanish / Portuguese
         'parque', 'calle', 'avenida', 'jardim', 'jardín',
         # German / Dutch
-        'park ', 'straße', 'strasse', 'straat', 'garten', 'platz',
+        'straße', 'strasse', 'straat', 'garten', 'platz',
         # Japanese / other romanised forms caught by the English 'park' already
     )
     free_misuse: list[str] = []
@@ -23041,7 +23016,7 @@ def validate(html: str, filename: str):
             continue
         name_lower = name.lower()
         for term in obvious_free_terms:
-            if term in name_lower:
+            if re.search(r'\b' + re.escape(term.strip()) + r'\b', name_lower):
                 free_misuse.append(
                     f'"{name[:50]}" has 🆓 flag but the name suggests '
                     f'a street / park / library ({term}) — drop the flag '
@@ -23693,7 +23668,7 @@ def validate(html: str, filename: str):
         re.IGNORECASE | re.DOTALL,
     )
     ticket_link_re = re.compile(
-        r'🎟️\s*<a\s+[^>]*?href\s*=\s*"(https?://([^/"]+)/?[^"]*)"[^>]*>(.*?)</a>',
+        r'🎟[️]?\s*<a\s+[^>]*?href\s*=\s*"(https?://([^/"]+)/?[^"]*)"[^>]*>(.*?)</a>',
         re.IGNORECASE | re.DOTALL,
     )
     for tb in ticket_box_re.finditer(html):
@@ -23838,12 +23813,20 @@ def validate(html: str, filename: str):
         has_uber = '🚕' in head
         has_tram = '🚎' in head
         has_walk = '🚶' in head
+        # A ferry leg (🚢) is its own ride-equivalent when it opens a transit
+        # line — Motion Rule.html § 1 documents a standalone "🚢 [N min] →
+        # [Destination]" segment as complete on its own, no 🚕 required (same
+        # principle as the 🚤 car-free-city rule: where no road exists, the
+        # water crossing IS the ride leg). Confirmed 2026-07-10 against ~15
+        # fleet guides (Cannes, Seychelles, Sardinia, Toronto, Capri, etc.)
+        # already shipping this exact bare-🚢 pattern.
+        has_ferry = '🚢' in head
         if (has_uber or has_tram) and not has_walk:
             # Suppress if a walk-over-40 sentinel immediately precedes the div.
             preceding = html[max(0, m.start() - 300):m.start()]
             if '<!-- walk-over-40:' not in preceding:
                 missing_walk.append(inner[:100])
-        if not has_uber:
+        if not (has_uber or has_ferry):
             missing_uber.append(inner[:100])
     check(
         'Every transit line with 🚕/🚎 but no 🚶 carries a <!-- walk-over-40: reason --> sentinel',
@@ -23858,13 +23841,16 @@ def validate(html: str, filename: str):
     # Per Day Structure.html Motion Rule: "Uber is **always** shown — no opt-out."
     # Walk is optional when > 40 min; Uber has no exception. A transit
     # line with 🚶 but no 🚕 is a required planning element left blank.
+    # EXCEPT a ferry-only leg (🚢 opening the line) — see has_ferry above.
     check(
-        "Every transit line shows 🚕 Uber time "
-        "(Motion Rule — Uber always shown, walk is optional)",
+        "Every transit line shows 🚕 Uber time, or opens with 🚢 where no road "
+        "exists (Motion Rule — Uber always shown, walk is optional, ferry-only "
+        "legs are their own ride equivalent)",
         len(missing_uber) == 0,
         (f"{len(missing_uber)} transit line(s) missing 🚕 Uber time: "
          + "; ".join(f'"{l}"' for l in missing_uber[:3])
-         + " — add 🚕 N min. Walk drops when > 40 min; Uber never drops.")
+         + " — add 🚕 N min. Walk drops when > 40 min; Uber never drops "
+           "(unless the line opens with 🚢, a genuine no-road ferry crossing).")
         if missing_uber else "",
     )
 
@@ -23900,13 +23886,17 @@ def validate(html: str, filename: str):
     )
     html_no_cmt = RE_HTML_COMMENT.sub('', html)
     html_text_all = RE_STRIP_TAGS.sub(' ', html_no_cmt)
+    _walk40_seen_snippets: set[str] = set()
     for wm2 in _walk_all_re.finditer(html_text_all):
         if wm2.group(1) is not None:
             mins2 = int(wm2.group(1)) * 60 + int(wm2.group(2))
         else:
             mins2 = int(wm2.group(3)) * 60
         snippet2 = html_text_all[max(0, wm2.start()-10):wm2.end()+30].strip()
-        walk_over_40.append(f'{mins2} min — "{snippet2[:80]}"')
+        _w40_key = f'{mins2}|{snippet2[:40]}'
+        if _w40_key not in _walk40_seen_snippets:
+            _walk40_seen_snippets.add(_w40_key)
+            walk_over_40.append(f'{mins2} min — "{snippet2[:80]}"')
 
     if walk_over_40:
         check(
@@ -24554,15 +24544,19 @@ def validate(html: str, filename: str):
         #   extras-sub     — parking-lot / More-Train-Day-Trips entry heading
         #   depart / arrive-first / next / next-tram — transit banners that
         #                    name the destination at the end of the arrow
-        target_classes = (
-            "stop-name", "stop-type", "day-name",
+        div_target_classes = (
             "train-header", "extras-sub",
             "depart", "arrive-first", "next", "next-tram",
+            "day-header", "hotel-first",
         )
         class_pat = re.compile(
             r'<div\b[^>]*\bclass\s*=\s*"[^"]*\b(?:' +
-            '|'.join(re.escape(c) for c in target_classes) +
+            '|'.join(re.escape(c) for c in div_target_classes) +
             r')\b[^"]*"[^>]*>(.*?)</div>',
+            re.DOTALL | re.IGNORECASE,
+        )
+        span_stop_name_pat = re.compile(
+            r'<span\b[^>]*\bclass\s*=\s*"[^"]*\bstop-name\b[^"]*"[^>]*>(.*?)</span>',
             re.DOTALL | re.IGNORECASE,
         )
         # Strip HTML comments from source before extracting (so build-
@@ -24583,6 +24577,9 @@ def validate(html: str, filename: str):
             )
         target_text_parts: list[str] = []
         for m in class_pat.finditer(html_no_comments):
+            inner = RE_STRIP_TAGS.sub( ' ', m.group(1))
+            target_text_parts.append(RE_WS.sub(' ', inner).strip())
+        for m in span_stop_name_pat.finditer(html_no_comments):
             inner = RE_STRIP_TAGS.sub( ' ', m.group(1))
             target_text_parts.append(RE_WS.sub(' ', inner).strip())
         target_text = ' '.join(target_text_parts)
@@ -24732,7 +24729,7 @@ def validate(html: str, filename: str):
     if _log_path.exists():
         try:
             _log_data = json.loads(_log_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as _e:
+        except (json.JSONDecodeError, OSError, UnicodeDecodeError) as _e:
             _log_parse_err = str(_e)
 
     # If the guide ships any bot-blocked URL, the log file MUST exist.
@@ -24869,19 +24866,8 @@ def validate(html: str, filename: str):
     # result: "PASS"), the ⚠️ is suppressed permanently — a logged PASS never
     # expires. TripAdvisor ⚠️ is still emitted when TA URLs exist
     # (TA is 403-blocked; opportunistic fetch only, never fully clearable).
-    _wiki_log_entries = (_log_data.get("entries") or {}) if (_log_data and isinstance(_log_data, dict)) else {}
-    _wiki_uncovered = [
-        u for u in _wiki_urls
-        if not (
-            isinstance(_wiki_log_entries.get(u), dict)
-            and _wiki_log_entries[u].get("result") == "PASS"
-            and _wiki_log_entries[u].get("platform") == "wikipedia"
-        )
-    ]
-    # Wikipedia/TripAdvisor h1-match runs live at every build via
-    # verify_booking_links.py (wired into audit_all_guides.py 2026-05-26).
-    # No warning needed here — if h1-match fails it will surface as a ❌
-    # in verify_booking_links.py output. Removed 2026-05-26.
+    # (Wikipedia/TripAdvisor h1-match runs live via verify_booking_links.py.
+    # Dead _wiki_uncovered comprehension removed 2026-07-10.)
 
     # ─── 🎟️ TICKET-BOX LEAD ROW — NO GENERIC DESCRIPTORS ─────────────
     print("\n── TICKET-BOX LEAD — NO GENERIC DESCRIPTORS ──")
@@ -25893,7 +25879,6 @@ def validate(html: str, filename: str):
         # TR-2: every pill link must use class="also-on-this-site-pill" — this is
         # what supplies the gold border (#c8a44a) from guide-style.css.  A pill
         # with a missing or renamed class gets no border styling.
-        _pill_links = re.findall(r'<a\b[^>]*class\s*=\s*"([^"]*)"[^>]*>', _tr_block, re.IGNORECASE)
         _all_anchors = re.findall(r'<a\b[^>]*>', _tr_block, re.IGNORECASE)
         _bad_pills: list[str] = []
         for _atag in _all_anchors:
@@ -25939,7 +25924,7 @@ def validate(html: str, filename: str):
             'Currency-Guide',        # rank 3
             'Safety-Guide.html',     # rank 4
             'Visas.html',            # rank 5
-            'Stats.html',            # rank 6  (Europe-Stats / Asia-Stats / etc.)
+            'Stats',                 # rank 6  (Europe-Stats / Asia-Stats / Stats-Across-US / etc.)
             'European-Train-Guide',  # rank 7 — always last
         ]
         def _tr_rank(href: str) -> int:
@@ -26286,16 +26271,22 @@ def validate(html: str, filename: str):
     # depend on sibling validator scripts + data pages and are enforced separately
     # by .github/scripts/check_coverage.py (the advisory coverage step).
     for _esc_script, _esc_label in ([] if _published_only else _essentials_checks):
-        _esc_result = _sp.run(
-            [_sys.executable, str(_scripts_dir / _esc_script)],
-            capture_output=True, text=True
-        )
-        _esc_ok = _esc_result.returncode == 0
-        _esc_detail = (_esc_result.stdout + _esc_result.stderr).strip()
-        # Hard fail: any non-zero exit blocks the gate, full output surfaced
-        _esc_summary = " | ".join(
-            l for l in _esc_detail.splitlines() if l.strip() and not l.startswith("validate_")
-        )
+        try:
+            _esc_result = _sp.run(
+                [_sys.executable, str(_scripts_dir / _esc_script)],
+                capture_output=True, text=True, timeout=120,
+            )
+            _esc_ok = _esc_result.returncode == 0
+            _esc_detail = (_esc_result.stdout + _esc_result.stderr).strip()
+            _esc_summary = " | ".join(
+                l for l in _esc_detail.splitlines() if l.strip() and not l.startswith("validate_")
+            )
+        except _sp.TimeoutExpired:
+            _esc_ok = False
+            _esc_summary = f"{_esc_script} timed out after 120s"
+        except OSError as _esc_e:
+            _esc_ok = False
+            _esc_summary = f"{_esc_script} could not run: {_esc_e}"
         check(
             _esc_label + f" (run Brain/scripts/{_esc_script} to fix)",
             _esc_ok,
@@ -26354,12 +26345,8 @@ if __name__ == "__main__":
             print(f"{'═'*60}")
         try:
             html = Path(filepath).read_text(encoding="utf-8")
-        except FileNotFoundError:
-            print(f"❌ File not found: {filepath}")
-            all_ok = False
-            continue
-        except UnicodeDecodeError as _e:
-            print(f"❌ File is not valid UTF-8: {filepath}\n     → {_e}")
+        except (OSError, UnicodeDecodeError) as _e:
+            print(f"❌ Cannot read file: {filepath}\n     → {_e}")
             all_ok = False
             continue
 
