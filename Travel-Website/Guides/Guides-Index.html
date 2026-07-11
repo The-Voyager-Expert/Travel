@@ -26,7 +26,7 @@
 <div class="topbar">
   <div id="search-wrap" style="position:relative;display:flex;align-items:center;justify-content:center">
     <div id="status-toggle" class="status-toggle" style="position:absolute;right:calc(50% + 300px)">
-      <button class="stab on" data-s="all">All</button>
+      <button class="stab" data-s="all">All</button>
       <button class="stab" data-s="been">Been</button>
       <button class="stab" data-s="want">Want</button>
     </div>
@@ -1575,9 +1575,15 @@ window._giStatusFilter = 'all';
   /* Status toggle */
   stabs.forEach(function (b) {
     b.addEventListener('click', function () {
+      var wasOn = b.classList.contains('on');
       stabs.forEach(function (x) { x.classList.remove('on'); });
-      b.classList.add('on');
-      window._giStatusFilter = b.dataset.s;
+      if (wasOn) {
+        /* re-tapping the active pill clears it — back to the cleared "all" state */
+        window._giStatusFilter = 'all';
+      } else {
+        b.classList.add('on');
+        window._giStatusFilter = b.dataset.s;
+      }
       applyMosaicFilter();
       document.dispatchEvent(new Event('gi:status'));
     });
