@@ -39,6 +39,18 @@
   } catch (e) {}
 })();
 
+/* ── Font preload — inject Google Fonts <link> so CSS @import doesn't block render */
+(function () {
+  try {
+    var head = document.head || document.getElementsByTagName('head')[0];
+    if (!head || document.querySelector('link[href*="fonts.googleapis.com/css2"]')) return;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
+    head.appendChild(link);
+  } catch (e) {}
+})();
+
 /* ── PWA wiring — inject the web-app manifest + Apple home-screen tags and
    register the offline service worker. One edit wires the whole site; paths use
    the page's data-depth (same base the nav uses). No-ops on file:// and never
@@ -143,6 +155,7 @@
     { group: '🌤️ Weather', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ Browse by Climate' },
         { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ Browse by City' },
+        { href: base + 'Trip-Essentials/When-to-Go.html',       text: '📅 When to Go' },
       ] },
     null,
     { group: '🛡️ Safety', children: [
