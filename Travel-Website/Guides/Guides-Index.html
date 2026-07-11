@@ -51,8 +51,6 @@
 </div><!-- /lang-panel -->
   </div>
   <div id="browse-seg" class="seg-toggle" role="group" aria-label="Group destinations by">
-    <button class="disc-btn seg-btn" id="view-country" data-view="country">🗾 Country</button>
-    <button class="disc-btn seg-btn" id="btn-region-group" data-view="region">🌍 Region</button>
     <button class="disc-btn seg-btn" id="btn-continent-group" data-view="continent">🌐 Continent</button>
     <button class="disc-btn seg-btn" id="view-flights" data-view="flights">🛫 Flight time</button>
   </div>
@@ -2980,99 +2978,6 @@ window._giStatusFilter = 'all';
 </script>
 
 <script>
-/* ══ Region grouping toggle ══ */
-(function () {
-  var btn    = document.getElementById('btn-region-group');
-  var mosaic = document.querySelector('.mosaic');
-  if (!btn || !mosaic) return;
-
-  /* Map country slug → region */
-  var REGION = {
-    'canada':'North America','united-states':'North America',
-    'argentina':'South America','brazil':'South America','chile':'South America',
-    'peru':'South America','uruguay':'South America',
-    'caribbean-islands':'Caribbean',
-    'austria':'Europe','belgium':'Europe','croatia':'Europe',
-    'czechia':'Europe','denmark':'Europe','estonia':'Europe',
-    'finland':'Europe','france':'Europe','germany':'Europe',
-    'greece':'Europe','hungary':'Europe','iceland':'Europe','ireland':'Europe',
-    'italy':'Europe','luxembourg':'Europe','monaco':'Europe',
-    'netherlands':'Europe','norway':'Europe','portugal':'Europe',
-    'slovenia':'Europe','spain':'Europe','sweden':'Europe',
-    'switzerland':'Europe','turkey':'Europe','united-kingdom':'Europe',
-    'china':'Asia','indonesia':'Asia','japan':'Asia','singapore':'Asia',
-    'south-korea':'Asia','taiwan':'Asia','thailand':'Asia',
-    'australia':'Oceania','new-zealand':'Oceania',
-    'united-arab-emirates':'Middle East',
-    'morocco':'Africa',
-  };
-
-  var REGION_ORDER = ['Europe','North America','South America','Asia','Oceania','Caribbean','Middle East','Africa'];
-  var REGION_ICON  = {
-    'Europe':'🌍','North America':'🌎','South America':'🌎','Asia':'🌏',
-    'Oceania':'🌏','Caribbean':'🏝️','Middle East':'🕌','Africa':'🌍'
-  };
-
-  var active = false;
-  /* stash original order of country divs */
-  var origCountries = [].slice.call(mosaic.querySelectorAll('.country'));
-  var injectedGroups = [];
-
-  function enterRegionMode() {
-    var groups = {};
-    REGION_ORDER.forEach(function (r) { groups[r] = []; });
-    origCountries.forEach(function (el) {
-      var slug = el.getAttribute('data-country');
-      var r = REGION[slug] || 'Other';
-      if (!groups[r]) groups[r] = [];
-      groups[r].push(el);
-    });
-
-    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    injectedGroups.forEach(function (g) { g.parentNode && g.parentNode.removeChild(g); });
-    injectedGroups = [];
-
-    mosaic.classList.add('mode-region');
-
-    REGION_ORDER.forEach(function (r) {
-      var els = groups[r];
-      if (!els || !els.length) return;
-
-      var group = document.createElement('div');
-      group.className = 'region-group';
-
-      var hdr = document.createElement('div');
-      hdr.className = 'region-header';
-      hdr.textContent = (REGION_ICON[r] || '') + ' ' + r;
-      group.appendChild(hdr);
-
-      var inner = document.createElement('div');
-      inner.className = 'region-countries';
-      els.forEach(function (el) { inner.appendChild(el); });
-      group.appendChild(inner);
-
-      mosaic.appendChild(group);
-      injectedGroups.push(group);
-    });
-  }
-
-  function exitRegionMode() {
-    mosaic.classList.remove('mode-region');
-    /* Pull country divs back out of inner containers before removing groups */
-    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    injectedGroups.forEach(function (g) { g.parentNode && g.parentNode.removeChild(g); });
-    injectedGroups = [];
-    origCountries.forEach(function (el) { mosaic.appendChild(el); });
-  }
-
-  /* Driven by the Browse-by segmented control */
-  window._regionMode = function (on) {
-    if (on === active) return;
-    active = on;
-    if (active) enterRegionMode(); else exitRegionMode();
-  };
-}());
-
 /* ══ Continent grouping toggle ══ */
 (function () {
   var mosaic = document.querySelector('.mosaic');
@@ -3154,25 +3059,18 @@ window._giStatusFilter = 'all';
     btns.forEach(function (b) { b.classList.toggle('on', b.dataset.view === view); });
   }
   window._setBrowseView = function (view) {
-    if (view === 'region') {
+    if (view === 'continent') {
       if (window._flightsMode) window._flightsMode(false);
-      if (window._continentMode) window._continentMode(false);
-      if (window._regionMode) window._regionMode(true);
-    } else if (view === 'continent') {
-      if (window._flightsMode) window._flightsMode(false);
-      if (window._regionMode) window._regionMode(false);
       if (window._continentMode) window._continentMode(true);
     } else if (view === 'flights') {
-      if (window._regionMode) window._regionMode(false);
       if (window._continentMode) window._continentMode(false);
       if (window._flightsMode) window._flightsMode(true);
     } else {
-      if (window._regionMode) window._regionMode(false);
       if (window._continentMode) window._continentMode(false);
       if (window._flightsMode) window._flightsMode(false);
     }
     /* Country is the default/normal state — no pill lit. Only alternate views
-       (region / continent / flights) show as actively selected. */
+       (continent / flights) show as actively selected. */
     setActive(view === 'country' ? '' : view);
   };
   btns.forEach(function (b) {
@@ -3184,7 +3082,10 @@ window._giStatusFilter = 'all';
       if (window._closeDaysMenu) window._closeDaysMenu();
       if (window._closeCountryMenu) window._closeCountryMenu();
       if (window._closeBestofMenu) window._closeBestofMenu();
-      window._setBrowseView(b.dataset.view);
+      /* Toggle: clicking the already-active view returns to the default
+         country order (the normal, always-ordered layout). */
+      var next = b.classList.contains('on') ? 'country' : b.dataset.view;
+      window._setBrowseView(next);
     });
   });
 }());
