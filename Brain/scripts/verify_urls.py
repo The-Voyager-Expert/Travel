@@ -98,6 +98,7 @@ BOT_BLOCKED_HOSTS = {
     "menulog.com.au", "www.menulog.com.au",  # added 2026-06-12, Melbourne build — Cloudflare bot challenge ("Just a moment…"); site live, Australia's major food-delivery platform (verified live via Chrome MCP)
     "gofood.co.id", "www.gofood.co.id",  # added 2026-06-16, Bali build — 403 to the automated client (bot wall); GoFood is Gojek's food delivery arm, Indonesia's dominant platform, confirmed live via web search
     "foodpanda.com.tw", "www.foodpanda.com.tw",  # added 2026-07-10, Taipei build — 403 to the automated client (bot wall); site live, Taiwan's major food-delivery platform (800+ Taipei restaurants, confirmed live via web search)
+    "coupangeats.com", "www.coupangeats.com",  # added 2026-07-11, Seoul build — 403 to the automated client (bot wall); site live, one of South Korea's two dominant delivery platforms (Coupang Eats, 20M+ downloads, confirmed live via web search)
     # Restaurant reservation platforms
     "opentable.com", "www.opentable.com",
     "thefork.com", "www.thefork.com",
@@ -370,6 +371,8 @@ BOT_BLOCKED_HOSTS = {
     "inah.gob.mx", "www.inah.gob.mx",
     # Garrafón Natural Reef Park — SSL/connection error to automated clients; site confirmed live via Chrome MCP navigation at www.garrafon.com (added 2026-07-10, Cancun build)
     "garrafon.com", "www.garrafon.com",
+    # Tamsui Historical Museum (New Taipei City Gov) — SSL cert missing Subject Key Identifier causes automated SSLError; site confirmed live via WebFetch returning full admission content (added 2026-07-11, Taipei build)
+    "en.tshs.ntpc.gov.tw",
 }
 
 # Redirect targets that are expected and benign — they just mean the user

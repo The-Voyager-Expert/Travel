@@ -57,6 +57,7 @@ WARN = "⚠️ "
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
     ("2026-07-10", "MOTION-BANNER DESTINATION MUST INHERIT THE BANNER FONT (BARE TEXT) — new hard-fail. The name after → in a .hotel-first / .arrive-first / plain .next banner is bare text across the whole compliant fleet (Lisbon/Porto: '🏨 From Hotel: 🚕 15 min → Cathedral'). Static text carries no styling of its own, so it inherits the SAME font family/size/style/colour as the rest of its banner — matching the '🚶 N · 🚕 M →' it follows. That differs by banner type (a .next row is Roboto 14px ITALIC #555 muted grey; a .hotel-first row is upright #1a1a1a) and the check does not need to know it. ANY markup on the destination breaks the inheritance — an <a href=…google.com/maps…> recolours it to a{color:#2867c4} blue, a <span>/<font>/inline-style element changes font or colour directly. So the check is structural: the destination segment (everything after the final →) must contain NO OPENING tag (<[a-zA-Z]) — a trailing closing tag like </p> from a benign whole-row <p> wrapper (Bora-Bora) does not recolour and is ignored. Dani caught the blue on Aracaju (From Hotel → Cathedral) then the muted-grey→blue drift on a .next row (→ Palácio). INVISIBLE UNTIL NOW: every motion/opener check strips tags before validating, so the markup slipped through all of them. Scoped to .hotel-first / .arrive-first / EXACT class=\"next\" — .next-tram / .next-metro excluded (they legitimately carry bracketed board/route/alight anchors per Getting Around.html). Rule home: Motion Rule §3 + Links.html. Caught + fixed the same day: 4 Brazilian guides from one crib batch had wrapped every banner destination in a Maps link — Aracaju (21), Olinda (12), João-Pessoa (11), Porto-Alegre (9) — all unwrapped to bare text and re-validated to 0 failures."),
+    ("2026-07-11", "STRUCTURE — EXTRAS-SUB MUST BE FOLLOWED BY CORRECT BODY CONTAINER (new hard-fail). Every .extras-sub heading in every extras section must be immediately followed by the section's designated body container div — .entry-body for tours/cappuccino/restaurants/downtown/local-tastes/michelin/pickleball; .shows-box for shows; .transit-box for getting-around/day-trips/day-trips-by-train/food-delivery/heads-up; .station-box for stations-near-hotel. When .stop-row divs are used directly after .extras-sub instead, the beige card background (set by the shared token on both .extras-sub + body-box together) only covers the heading line — all body rows render unstyled with no background. The Aracaju guide (entire cappuccino, restaurants, and downtown sections — 13 entries) exposed this: the guide looked broken in the browser but passed every validator check because no check verified the sibling container class. New check: for each section, walks every .extras-sub via _walk_balanced_div, finds the next sibling div opening, and hard-fails if its class is not the expected body container. Weekly-closures and skip-list excluded (no .extras-sub entries). Rule home: guide-style.css § STYLE A canonical block spec (locked 2026-05-19). Caught by: Aracaju guide visual review."),
     ("2026-07-11", "DAY TRIPS — 3 VALIDATOR GAPS CLOSED (fleet audit 2026-07-11). (1) EMPTY SECTION NOW HARD-FAILS — a Day Trips section present with NO body content (no extras-sub entries, no extras-empty negative line) previously downgraded to a warn; now hard-fails. Rule: if the section exists it must have entries or the canonical 'No day trips from {City}.' negative line. Caught: Alaska (empty body), Dubrovnik (dev comment only, no reader-facing line). (2) INVERSE OMIO CHECK — mainland-China guides (in _OMIO_EXEMPT_CITIES) must NOT include omio.com links; previously the exemption only removed the 'must include Omio' requirement but never banned it. New check hard-fails any 🎫 row in a China guide that links to omio.com. Caught: Beijing, Shanghai, Chongqing (all listing Omio). (3) EUROPEAN MIN-5 SET COMPLETED — _EUROPEAN_GUIDE_CITIES was missing whole countries and several cities: added Hamburg (Germany), Lecce (Italy), Málaga/malaga (Spain), zürich (Switzerland — diacritic alias for existing zurich), Oxford (United Kingdom), Oslo (Norway), Kraków/krakow (Poland — whole country missing), Budapest (Hungary — whole country missing), Istanbul (Turkey — whole country missing), Tbilisi (Georgia — whole country missing). Removed Ålesund and Tromsø from the set (no train station — correctly exempt from ≥5 floor). Added Santorini and Mykonos to _ISLAND_CITIES (Greek islands, no rail). No guide HTML edited — validator-only; flagged guides (Oxford 2/5, Kraków 4/5, Beijing/Shanghai/Chongqing Omio, Alaska/Dubrovnik empty) need content fixes and re-validation."),
     ("2026-07-10", "CORE RULES AUDIT — 3 NEW CHECKS + 2 PARTIAL GAPS CLOSED. NEW: (1) CAPPUCCINO CHAIN EXCLUSION — new _CAP_CHAIN_NAMES list (Starbucks, Dunkin', Peet's, Costa, Tim Hortons, etc.) mirrors the Downtown Restaurants _DR_CHAIN_NAMES pattern; hard-fails any cappuccino entry heading matching a global coffee chain. Rule home: Cappuccino - Extra Section.html §3. (2) PHOTO LICENSE VALIDATION — commons_photo.py now fetches extmetadata (license) from the Wikimedia API and records it in photo_provenance.json; photo_provenance.py verify_guide_photos() hard-fails any photo whose license is not CC-BY, CC-BY-SA, Public Domain, or CC0. Rule home: Photos Rules.html §2. (3) TICKET REGION-SPECIFIC PLATFORM — Ticketmaster/StubHub/TodayTix are US-only; non-US guides using them hard-fail. Detection: cross-references .title-country with ticket-box link domains. Rule home: Tickets.html §1. PARTIAL GAPS CLOSED: (4) SHOWS RIDE-ONLY JUSTIFICATION — ride-only entries (🚕 without 🚶) now warn when missing a <!-- ride-only: walk NN min --> sentinel documenting that the walk exceeds 40 min. Warn-only (sentinel is a new convention, not yet in CORE RULES). (5) HOTEL BANNER SUBDIVISION — spelled-out US state names (Florida, California, etc.), Canadian provinces, and European regions now detected as subdivisions in .title-country (previously only abbreviations and comma/dot separators were caught). Gap 6 (ticket-box tour types) confirmed already enforced — wgiag_subject_strings includes ticket-box <a> text since 2026-05-19. No guide HTML edited — validator + pipeline only."),
     ("2026-07-10", "DAY TRIPS OPERATOR CHECK — www. SUBDOMAIN PREFIX FALSE-FAIL FIXED. Toronto's GO Transit booking link (https://www.gotransit.com/...) was hard-failing as a 'non-operator' link despite gotransit.com being whitelisted in _TRAIN_TICKET_HOSTS since 2026-06-07. Root cause: the match only checked url==host, url.endswith('.'+host), ('/'+host) in url, and ('//'+ host) in url — none of which match 'https://www.gotransit.com/...' because the 'www.' subdomain sits between '//' and the bare domain, so '//gotransit.com' is never a literal substring. Any operator URL fleet-wide that happens to include a www. prefix was silently false-failing the same way. Fixed by also checking the URL with a leading 'www.' stripped from right after '//'. No guide HTML edited — validator-only; Toronto's existing GO Transit link is correct as-is and now validates clean."),
@@ -13687,6 +13688,77 @@ def validate(html: str, filename: str):
         '(missing </div> causes downstream sections to nest inside and break mobile layout)',
         len(_unclosed_sections) == 0,
         f'unclosed extras-section(s): {", ".join(_unclosed_sections)}' if _unclosed_sections else '',
+    )
+
+    # STRUCTURE — every .extras-sub must be followed by the correct body container
+    # (not bare .stop-row divs). When rows sit directly after .extras-sub without
+    # a body wrapper the beige card background is missing from the body rows —
+    # only the heading line gets the background and the rows below render unstyled.
+    # Each section type has a designated body class:
+    #   entry-body  : tours, cappuccino, restaurants, downtown, local-tastes, michelin, pickleball
+    #   shows-box   : shows
+    #   transit-box : getting-around, day-trips, day-trips-by-train, food-delivery, heads-up
+    #   station-box : stations-near-hotel
+    # weekly-closures and skip-list have no .extras-sub entries so are excluded.
+    print("\n── STRUCTURE — extras-sub must be followed by body container, not bare stop-row ──")
+    _SECTION_BODY_CLASS: dict[str, str] = {
+        'tours':              'entry-body',
+        'cappuccino':         'entry-body',
+        'restaurants':        'entry-body',
+        'downtown':           'entry-body',
+        'local-tastes':       'entry-body',
+        'michelin':           'entry-body',
+        'pickleball':         'entry-body',
+        'shows':              'shows-box',
+        'getting-around':     'transit-box',
+        'day-trips':          'transit-box',
+        'day-trips-by-train': 'transit-box',
+        'food-delivery':      'transit-box',
+        'heads-up':           'transit-box',
+        'stations-near-hotel':'station-box',
+    }
+    _bare_body_hits: list[str] = []
+    # Regex that matches the opening tag of ANY div (captures its class attribute)
+    _any_div_open = re.compile(r'<div\b([^>]*)>', re.IGNORECASE)
+    _extras_sub_open = re.compile(
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>', re.IGNORECASE
+    )
+    for _sid, _expected_class in _SECTION_BODY_CLASS.items():
+        _sec_m = re.search(
+            r'<div\b(?=[^>]*\bextras-section\b)(?=[^>]*\bid\s*=\s*"' + re.escape(_sid) + r'")[^>]*>',
+            html, re.IGNORECASE,
+        )
+        if not _sec_m:
+            continue
+        _sec_inner, _ = _walk_balanced_div(html, _sec_m.end())
+        # Find every .extras-sub inside this section
+        for _esm in _extras_sub_open.finditer(_sec_inner):
+            # Skip past the .extras-sub closing tag to find the next sibling div
+            _, _es_end = _walk_balanced_div(_sec_inner, _esm.end())
+            _after = _sec_inner[_es_end:].lstrip()
+            _next_div = _any_div_open.match(_after)
+            if not _next_div:
+                continue  # nothing after this extras-sub (end of section) — ok
+            _next_attrs = _next_div.group(1)
+            _next_class_m = re.search(r'class\s*=\s*"([^"]*)"', _next_attrs, re.IGNORECASE)
+            _next_classes = _next_class_m.group(1).split() if _next_class_m else []
+            if _expected_class not in _next_classes:
+                # Extract entry name from extras-sub for a useful error label
+                _es_text = re.sub(r'<[^>]+>', '', _sec_inner[_esm.start():_es_end]).strip()[:60]
+                _next_cls_str = ' '.join(_next_classes) if _next_classes else '(no class)'
+                _bare_body_hits.append(
+                    f'#{_sid} "{_es_text}" — next sibling is .{_next_cls_str}, '
+                    f'expected .{_expected_class}'
+                )
+    check(
+        'STRUCTURE — every .extras-sub must be followed immediately by the correct body '
+        'container div (.entry-body / .shows-box / .transit-box / .station-box per section). '
+        'Bare .stop-row divs after .extras-sub mean the beige card background is missing '
+        'from the body rows — only the heading gets the background color '
+        '(Style A canonical block spec, guide-style.css § STYLE A locked 2026-05-19)',
+        len(_bare_body_hits) == 0,
+        f'{len(_bare_body_hits)} extras-sub(s) with wrong body container:\n  '
+        + '\n  '.join(_bare_body_hits) if _bare_body_hits else '',
     )
 
     print("\n── SHOWS — icon allowlist inside .shows-box ──")

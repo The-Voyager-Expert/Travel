@@ -4,3 +4,4 @@
 > Format: YYYY-MM-DD HH:MM — guide.html — PASS|FAIL — N checks
 
 2026-07-06 18:42 — berlin_v1.html — PASS — 0 checks
+2026-07-11 12:10 — berlin_v1.html — FAIL — 0 checks

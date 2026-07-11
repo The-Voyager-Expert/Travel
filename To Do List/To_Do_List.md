@@ -37,9 +37,7 @@
 <!-- Resolved 2026-06-13: "CORE RULES checksum drift — 4 files unstamped (flagged 2026-06-12)" — Cappuccino / Michelin Restaurants / Motion Rule / Restaurants Near Hotel now match core_rules_checksums.json (validator: SHA-256 matches for all 27 CORE RULES files). Closed by owner. -->
 <!-- Resolved 2026-06-15: "Hotel Banner §1 mandates a street number — but some hotels have none (UAE guide)." Decision by owner: §1 updated to allow street name · neighborhood when no street number is published. validate_itinerary.py updated: passes if digit present OR · present; fails only on bare street name alone. format_version.json bumped → fp e59f9c9f0bcc68c5. UAE guide (Address Downtown) can now re-ship. -->
 
-**Q (2026-07-10) — Add the Read About story page to the Phase 5 list in `Brain/CORE RULES/Guide Structure.html`?**
-The story page became mandatory on 2026-07-10 and is now hard-gated in `validate_itinerary.py`, `guide_tools.py ship`, and `update-index` Step 14. It is already wired into every surface I may edit without approval: `CLAUDE.md` § Guide build phases, the `build_state.md` template (Phase 5 read + Phase 6 checkbox), `Brain/Reference/Story-Pages.html` § 9, `Ship Checklist.html` § 9b, `Cleanliness Checks.md` rule 453, `Validator Index.html`, and `Brain.md` Part 1.
-The one remaining surface is CORE RULES — `Guide Structure.html` § Phase 5 still lists only the Extra Section files. **Approve and I add one line there**, then regenerate `core_rules_checksums.json` and run `doc_workshop_validator.py` per the Change Cascade. Until then the gates are fully enforcing; only the CORE RULES phase list is silent about it.
+<!-- Resolved 2026-07-11: "Add Read About story page to Phase 5 list in Guide Structure.html" — already present at lines 68 + 117; no edit needed. Closed. -->
 
 ---
 
