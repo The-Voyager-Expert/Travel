@@ -2689,8 +2689,21 @@ window._giStatusFilter = 'all';
 
   unitC.addEventListener('click', function () { if (useFahr) { setUnit(false); applySeasonFilter(); } });
   unitF.addEventListener('click', function () { if (!useFahr) { setUnit(true); applySeasonFilter(); } });
-  sliderHi.addEventListener('input', function () { updateLabels(); applySeasonFilter(); });
-  sliderLo.addEventListener('input', function () { updateLabels(); applySeasonFilter(); });
+  /* On phones, re-filtering the (long) card list on every 'input' tick reflows
+     the page mid-drag — hiding hundreds of cards collapses the document height by
+     thousands of px, and iOS Safari snaps the scroll to a different spot. So on
+     mobile update the temperature label live during the drag, but only re-filter
+     the cards on release ('change'). Desktop keeps live filtering (no jump there). */
+  var _sliderNarrow = window.matchMedia && window.matchMedia('(max-width: 600px)').matches;
+  if (_sliderNarrow) {
+    sliderHi.addEventListener('input', updateLabels);
+    sliderLo.addEventListener('input', updateLabels);
+    sliderHi.addEventListener('change', function () { updateLabels(); applySeasonFilter(); });
+    sliderLo.addEventListener('change', function () { updateLabels(); applySeasonFilter(); });
+  } else {
+    sliderHi.addEventListener('input', function () { updateLabels(); applySeasonFilter(); });
+    sliderLo.addEventListener('input', function () { updateLabels(); applySeasonFilter(); });
+  }
 
   /* Extract city folder name from card href — same logic as compare mode */
   function climateKey(card) {
