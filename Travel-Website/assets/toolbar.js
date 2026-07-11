@@ -542,6 +542,24 @@
       }
     }
 
+    /* On mobile, lift the READ ABOUT link out of the title (guides inject it
+       either inside .overview-title or as a sibling — normalise both) to the
+       bottom of the overview, where guide-style.css styles it as a full-width
+       button. Deferred to window.load: the guide's own read-about injection
+       runs AFTER these arrows, so we relocate once everything has settled.
+       Desktop keeps it in the title bar. */
+    function repositionReadAbout() {
+      if (!(window.matchMedia && window.matchMedia('(max-width: 600px)').matches)) return;
+      var ovSec = document.querySelector('.overview-section');
+      if (!ovSec) return;
+      var raLink = [].slice.call(ovSec.querySelectorAll('.overview-extra-link')).filter(function (a) {
+        return /read about/i.test(a.textContent || '') && !a.closest('.overview-extras');
+      })[0];
+      if (raLink) ovSec.appendChild(raLink);
+    }
+    if (document.readyState === 'complete') repositionReadAbout();
+    else window.addEventListener('load', repositionReadAbout);
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectOverviewArrows);
     } else {
