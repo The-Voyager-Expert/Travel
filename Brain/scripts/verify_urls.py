@@ -97,6 +97,7 @@ BOT_BLOCKED_HOSTS = {
     "demae-can.com", "www.demae-can.com",  # added 2026-06-12, Kyoto build — read-times-out to the automated client (Japan geo/bot wall); site live, serves Kyoto (10,000+ stores across all 47 prefectures, confirmed via web search)
     "menulog.com.au", "www.menulog.com.au",  # added 2026-06-12, Melbourne build — Cloudflare bot challenge ("Just a moment…"); site live, Australia's major food-delivery platform (verified live via Chrome MCP)
     "gofood.co.id", "www.gofood.co.id",  # added 2026-06-16, Bali build — 403 to the automated client (bot wall); GoFood is Gojek's food delivery arm, Indonesia's dominant platform, confirmed live via web search
+    "foodpanda.com.tw", "www.foodpanda.com.tw",  # added 2026-07-10, Taipei build — 403 to the automated client (bot wall); site live, Taiwan's major food-delivery platform (800+ Taipei restaurants, confirmed live via web search)
     # Restaurant reservation platforms
     "opentable.com", "www.opentable.com",
     "thefork.com", "www.thefork.com",
