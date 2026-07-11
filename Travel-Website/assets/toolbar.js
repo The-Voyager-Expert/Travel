@@ -263,6 +263,7 @@
       '.tb-ham-menu a.tb-active{color:' + accent + '!important;font-weight:600}' +
       '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 18px}' +
+      '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 18px 2px}' +
     '}'
     ;
   document.head.appendChild(styleEl);
@@ -444,35 +445,39 @@
   bar.style.position = 'relative';
 
   /* Build flat link list from ITEMS */
-  var prevWasGroup = false;
+  var firstItem = true;
   ITEMS.forEach(function (item) {
     if (item === null) return; /* skip separators */
     if (item.children) {
-      if (prevWasGroup) {
+      if (!firstItem) {
         var sep = document.createElement('div');
         sep.className = 'tb-ham-sep';
         hamMenu.appendChild(sep);
       }
+      var hdr = document.createElement('div');
+      hdr.className = 'tb-ham-hdr';
+      hdr.textContent = item.group;
+      hamMenu.appendChild(hdr);
       item.children.forEach(function (ch) {
         var a = document.createElement('a');
         a.href = ch.href;
-        a.textContent = ch.full || ch.text;   /* full name on mobile (there's room) */
+        a.textContent = ch.full || ch.text;
         if (ch.href.split('/').pop() === curr) a.className = 'tb-active';
         hamMenu.appendChild(a);
       });
-      prevWasGroup = true;
+      firstItem = false;
     } else {
-      if (prevWasGroup) {
+      if (!firstItem) {
         var sep2 = document.createElement('div');
         sep2.className = 'tb-ham-sep';
         hamMenu.appendChild(sep2);
       }
       var a2 = document.createElement('a');
       a2.href = item.href;
-      a2.textContent = item.full || item.text;   /* full name on mobile (there's room) */
+      a2.textContent = item.full || item.text;
       if (item.href.split('/').pop() === curr) a2.className = 'tb-active';
       hamMenu.appendChild(a2);
-      prevWasGroup = false;
+      firstItem = false;
     }
   });
   bar.appendChild(hamMenu);
