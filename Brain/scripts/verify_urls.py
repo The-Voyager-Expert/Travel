@@ -129,6 +129,8 @@ BOT_BLOCKED_HOSTS = {
     "atlasobscura.com", "www.atlasobscura.com",
     "theculturetrip.com", "www.theculturetrip.com",
     "yelp.com", "www.yelp.com",
+    # Denver Museum of Nature & Science — 403 to automated UAs, live in browser (added 2026-07-11, Denver build — official museum site; homepage returns 200 via curl, purchase/tickets booking page confirmed live via web search)
+    "dmns.org", "www.dmns.org",
     # Seattle venue + ticket-store sites (403 to crawlers; confirmed live in browser 2026-06-07, Seattle build)
     "seattlesymphony.org", "www.seattlesymphony.org",
     "tickets.minerslanding.com",
