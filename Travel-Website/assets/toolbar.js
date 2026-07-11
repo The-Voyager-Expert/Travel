@@ -557,8 +557,17 @@
       })[0];
       if (raLink) ovSec.appendChild(raLink);
     }
-    if (document.readyState === 'complete') repositionReadAbout();
-    else window.addEventListener('load', repositionReadAbout);
+    /* On mobile, move the "Updated {Month}" stamp out of the top hotel banner to
+       the bottom-right of the "Also on this site" card. Desktop keeps it up top. */
+    function repositionUpdatedStamp() {
+      if (!(window.matchMedia && window.matchMedia('(max-width: 600px)').matches)) return;
+      var upd = document.querySelector('.title-page .title-updated') || document.querySelector('.title-updated');
+      var also = document.getElementById('also-on-this-site');
+      if (upd && also) also.appendChild(upd);
+    }
+    function repositionMobileBits() { repositionReadAbout(); repositionUpdatedStamp(); }
+    if (document.readyState === 'complete') repositionMobileBits();
+    else window.addEventListener('load', repositionMobileBits);
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectOverviewArrows);
