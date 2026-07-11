@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../../assets/web-travel-style.css">
 <title>World Map</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="vendor/leaflet.min.css">
+<link rel="stylesheet" href="vendor/MarkerCluster.min.css">
 <style>
   .tb { margin-bottom: 0 !important; }   /* maps are full-bleed — toolbar sits flush */
   html, body.map-page { height: 100vh; height: 100dvh; }
@@ -137,10 +137,24 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="vendor/leaflet.min.js"></script>
+<script src="vendor/markercluster.min.js"></script>
+<script src="vendor/topojson.min.js"></script>
 <script>
+/* ── Resilient JSON loader: retry a stumbled request instead of giving up.
+   A single slow/failed fetch used to paint the "could not load map data"
+   banner permanently (no retry); now each request self-heals with a short
+   backoff before the catch is ever reached. ── */
+function getJSON(url, tries = 3) {
+  return fetch(url)
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .catch(err => {
+      if (tries <= 1) throw err;
+      return new Promise(res => setTimeout(res, 400 * (4 - tries)))
+        .then(() => getJSON(url, tries - 1));
+    });
+}
+
 /* ── Country labels: curated major countries only, for geographic anchoring.
    id = numeric ISO 3166-1 (matches world-atlas TopoJSON feature id). ── */
 const LABEL = {
@@ -505,8 +519,7 @@ function fitOpts(animated) {
 map.fitBounds(REGIONS.world, fitOpts(false));
 
 /* ── Country polygons from world-atlas TopoJSON (GeoJSON-only, no tiles) ── */
-fetch('data/countries-50m.json')
-  .then(r => r.json())
+getJSON('data/countries-50m.json')
   .then(world => {
     const fc = topojson.feature(world, world.objects.countries);
     // Antimeridian guard: Russia and Fiji have rings that wrap past ±180°
@@ -552,7 +565,7 @@ fetch('data/countries-50m.json')
   })
   .catch(() => {
     document.getElementById('map').insertAdjacentHTML('beforeend',
-      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6b4422;font-size:15px;text-align:center;padding:20px;">Could not load map data — please check your internet connection.</div>');
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;color:#6b4422;font-size:15px;text-align:center;padding:20px;">Could not load map data.<button onclick="location.reload()" style="padding:8px 18px;background:#b85c2a;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;">Retry</button></div>');
   });
 
 /* ── US state boundaries ── world-atlas is country-level (the US is one polygon),
@@ -566,8 +579,7 @@ fetch('data/countries-50m.json')
    Delaware/DC always overlapped because this used a permanent, unculled
    tooltip with zero collision checking. ── */
 regionState.us = { loaded: true, lines: null, regions: [] };
-fetch('data/us-states.json')
-  .then(r => r.json())
+getJSON('data/us-states.json')
   .then(us => {
     L.geoJSON(us, {
       interactive: false,
@@ -589,8 +601,7 @@ fetch('data/us-states.json')
    all 13 provinces + territories on top of the single Canada polygon so every one
    is visible, with names revealed at the same zoom gate. ── */
 regionState.ca = { loaded: true, lines: null, regions: [] };
-fetch('data/canada-provinces.json')
-  .then(r => r.json())
+getJSON('data/canada-provinces.json')
   .then(ca => {
     L.geoJSON(ca, {
       interactive: false,
@@ -624,8 +635,7 @@ function maybeLoadRegions() {
     const st = regionState[key];
     if (st.loaded || !map.getBounds().intersects(src.bbox)) return;
     st.loaded = true;
-    fetch(src.file)
-      .then(r => r.json())
+    getJSON(src.file)
       .then(geo => {
         st.lines = L.geoJSON(geo, {
           interactive: false, renderer: euCanvas,
@@ -685,8 +695,7 @@ function renderRegions() {
    view, biggest-first, capped — re-running on every pan/zoom. Guide cities already
    have their own orange pins, so they're filtered out to avoid doubles.
    (CITY_DATA / cityLayer / cityIcon are declared up by the move handler.) */
-fetch('data/world-cities.json')
-  .then(r => r.json())
+getJSON('data/world-cities.json')
   .then(cities => {
     const guideNames = new Set(PINS.map(p => p[0].toLowerCase()));
     CITY_DATA = cities.filter(c => !guideNames.has(c[0].toLowerCase()));  // pre-sorted by tier (biggest first)
