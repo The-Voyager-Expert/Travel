@@ -569,6 +569,18 @@
     if (document.readyState === 'complete') repositionMobileBits();
     else window.addEventListener('load', repositionMobileBits);
 
+    /* Display the "European Train Guide" resource pill as just "European Train".
+       The HTML keeps the full canonical label (so the also-on-site validators
+       still pass); this only shortens what the reader sees, so the pill fits a
+       50% grid cell without wrapping. Runs on all viewports. */
+    function shortenTrainPill() {
+      [].slice.call(document.querySelectorAll('.also-on-this-site-pill[href*="European-Train-Guide"]')).forEach(function (a) {
+        if (/European Train Guide/.test(a.textContent || '')) a.textContent = (a.textContent || '').replace(/European Train Guide/, 'European Train');
+      });
+    }
+    if (document.readyState !== 'loading') shortenTrainPill();
+    else document.addEventListener('DOMContentLoaded', shortenTrainPill);
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectOverviewArrows);
     } else {
