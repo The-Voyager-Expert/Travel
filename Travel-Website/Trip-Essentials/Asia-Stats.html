@@ -64,6 +64,9 @@
 .footnotes ul.src-list a:hover { text-decoration: underline; }
 .footnotes .fn-tail { margin-top: 10px; }
 .country-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 0 0 16px; }
+/* Country picker becomes a dropdown on mobile (chips on desktop) */
+.country-select-wrap { display: none; margin: 0 0 16px; }
+#country-select { width: 100%; box-sizing: border-box; font-family: inherit; font-size: 15px; color: #3d3a32; background: var(--surface, #ffffff); border: 1px solid #b8b3a8; border-radius: 6px; padding: 11px 14px; cursor: pointer; }
 .country-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 5px 11px; font-size: 12px; color: var(--text); cursor: pointer; white-space: nowrap; transition: border-color .15s, background .15s, color .15s; }
 .country-chip:hover, .country-chip.active { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
 @media (max-width: 700px) {
@@ -75,11 +78,13 @@
 }
 @media (max-width: 600px) {
   nav.stats-nav { justify-content: flex-start !important; }
+  .country-chips { display: none !important; }
+  .country-select-wrap { display: block !important; }
 }</style>
 </head>
 <body>
 <div id="toolbar-mount" data-depth="1" data-maxwidth="980"></div>
-<script src="../assets/toolbar.js?v=99"></script>
+<script src="../assets/toolbar.js?v=102"></script>
 <div class="wrap">
 
 <div class="page-header"><h1>Stats Across Asia</h1></div>
@@ -110,6 +115,11 @@
 <div class="search-row">
   <input type="search" id="country-search" class="search-box" placeholder="Search a country…" autocomplete="off" spellcheck="false">
   <div id="search-hint" class="search-hint"></div>
+</div>
+<div class="country-select-wrap">
+  <select id="country-select" aria-label="Choose country">
+    <option value="">🌍 Choose country</option>
+  </select>
 </div>
 <div class="country-chips" id="country-chips">
   <button class="country-chip" data-q="china">🇨🇳 China</button>
@@ -781,6 +791,23 @@
       box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
   });
+  /* Mobile country picker — a <select> populated from the chips; same action. */
+  var sel = document.getElementById('country-select');
+  if (sel) {
+    document.querySelectorAll('.country-chip').forEach(function(chip) {
+      var o = document.createElement('option');
+      o.value = chip.dataset.q;
+      o.textContent = chip.textContent.trim();
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change', function() {
+      document.querySelectorAll('.country-chip').forEach(function(c) { c.classList.remove('active'); });
+      if (!sel.value) return;
+      input.value = sel.value;
+      run();
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
 })();
 </script>
 </body>
