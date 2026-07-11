@@ -353,6 +353,7 @@ BOT_BLOCKED_HOSTS = {
     "guia.curitiba.pr.gov.br",
     # PedidosYa — Latin American food delivery platform; 403 to automated UAs (bot wall); confirmed live via web search, active in Peru (added 2026-07-06, Cusco build)
     "pedidosya.com.pe", "www.pedidosya.com.pe", "pedidosya.com", "www.pedidosya.com",
+    "pedidosya.com.ar", "www.pedidosya.com.ar",
     # Rappi — Latin American food delivery platform; 403 to automated UAs; confirmed live via web search (added 2026-07-06, Cusco build)
     "rappi.com.pe", "www.rappi.com.pe", "rappi.com", "www.rappi.com", "rappi.mx", "www.rappi.mx",
     # Harley-Davidson Museum web store — 403 to automated UAs (bot wall); confirmed live via Chrome MCP, loads "Harley-Davidson Museum Web Store: Product Selection :: General Admission" (added 2026-07-06, Chicago build)
