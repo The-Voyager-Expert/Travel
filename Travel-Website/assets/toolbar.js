@@ -435,6 +435,7 @@
   hamBtn.className = 'tb-ham';
   hamBtn.setAttribute('role', 'button');
   hamBtn.setAttribute('aria-label', 'Menu');
+  hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
   hamBtn.style.cssText = 'background:none;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:4px 14px 4px 8px;margin:0;min-height:auto;cursor:pointer;user-select:none;';
   hamBtn.innerHTML = '☰ <span style="font-size:14px;letter-spacing:.04em;font-weight:600">MENU</span>';
@@ -482,11 +483,16 @@
   });
   bar.appendChild(hamMenu);
 
-  hamBtn.addEventListener('click', function (e) {
+  function toggleHamMenu(e) {
     e.stopPropagation();
     hamMenu.classList.toggle('tb-ham-open');
     var open = hamMenu.classList.contains('tb-ham-open');
+    hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamBtn.innerHTML = (open ? '✕' : '☰') + ' <span style="font-size:13px;letter-spacing:.04em;font-weight:600">' + (open ? 'CLOSE' : 'MENU') + '</span>';
+  }
+  hamBtn.addEventListener('click', toggleHamMenu);
+  hamBtn.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleHamMenu(e); }
   });
   document.addEventListener('click', function () {
     hamMenu.classList.remove('tb-ham-open');
