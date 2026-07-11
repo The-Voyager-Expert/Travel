@@ -56,10 +56,12 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-10", "MOTION-BANNER DESTINATION MUST INHERIT THE BANNER FONT (BARE TEXT) — new hard-fail. The name after → in a .hotel-first / .arrive-first / plain .next banner is bare text across the whole compliant fleet (Lisbon/Porto: '🏨 From Hotel: 🚕 15 min → Cathedral'). Static text carries no styling of its own, so it inherits the SAME font family/size/style/colour as the rest of its banner — matching the '🚶 N · 🚕 M →' it follows. That differs by banner type (a .next row is Roboto 14px ITALIC #555 muted grey; a .hotel-first row is upright #1a1a1a) and the check does not need to know it. ANY markup on the destination breaks the inheritance — an <a href=…google.com/maps…> recolours it to a{color:#2867c4} blue, a <span>/<font>/inline-style element changes font or colour directly. So the check is structural: the destination segment (everything after the final →) must contain NO OPENING tag (<[a-zA-Z]) — a trailing closing tag like </p> from a benign whole-row <p> wrapper (Bora-Bora) does not recolour and is ignored. Dani caught the blue on Aracaju (From Hotel → Cathedral) then the muted-grey→blue drift on a .next row (→ Palácio). INVISIBLE UNTIL NOW: every motion/opener check strips tags before validating, so the markup slipped through all of them. Scoped to .hotel-first / .arrive-first / EXACT class=\"next\" — .next-tram / .next-metro excluded (they legitimately carry bracketed board/route/alight anchors per Getting Around.html). Rule home: Motion Rule §3 + Links.html. Caught + fixed the same day: 4 Brazilian guides from one crib batch had wrapped every banner destination in a Maps link — Aracaju (21), Olinda (12), João-Pessoa (11), Porto-Alegre (9) — all unwrapped to bare text and re-validated to 0 failures."),
+    ("2026-07-10", "CORE RULES AUDIT — 3 NEW CHECKS + 2 PARTIAL GAPS CLOSED. NEW: (1) CAPPUCCINO CHAIN EXCLUSION — new _CAP_CHAIN_NAMES list (Starbucks, Dunkin', Peet's, Costa, Tim Hortons, etc.) mirrors the Downtown Restaurants _DR_CHAIN_NAMES pattern; hard-fails any cappuccino entry heading matching a global coffee chain. Rule home: Cappuccino - Extra Section.html §3. (2) PHOTO LICENSE VALIDATION — commons_photo.py now fetches extmetadata (license) from the Wikimedia API and records it in photo_provenance.json; photo_provenance.py verify_guide_photos() hard-fails any photo whose license is not CC-BY, CC-BY-SA, Public Domain, or CC0. Rule home: Photos Rules.html §2. (3) TICKET REGION-SPECIFIC PLATFORM — Ticketmaster/StubHub/TodayTix are US-only; non-US guides using them hard-fail. Detection: cross-references .title-country with ticket-box link domains. Rule home: Tickets.html §1. PARTIAL GAPS CLOSED: (4) SHOWS RIDE-ONLY JUSTIFICATION — ride-only entries (🚕 without 🚶) now warn when missing a <!-- ride-only: walk NN min --> sentinel documenting that the walk exceeds 40 min. Warn-only (sentinel is a new convention, not yet in CORE RULES). (5) HOTEL BANNER SUBDIVISION — spelled-out US state names (Florida, California, etc.), Canadian provinces, and European regions now detected as subdivisions in .title-country (previously only abbreviations and comma/dot separators were caught). Gap 6 (ticket-box tour types) confirmed already enforced — wgiag_subject_strings includes ticket-box <a> text since 2026-05-19. No guide HTML edited — validator + pipeline only."),
     ("2026-07-10", "DAY TRIPS OPERATOR CHECK — www. SUBDOMAIN PREFIX FALSE-FAIL FIXED. Toronto's GO Transit booking link (https://www.gotransit.com/...) was hard-failing as a 'non-operator' link despite gotransit.com being whitelisted in _TRAIN_TICKET_HOSTS since 2026-06-07. Root cause: the match only checked url==host, url.endswith('.'+host), ('/'+host) in url, and ('//'+ host) in url — none of which match 'https://www.gotransit.com/...' because the 'www.' subdomain sits between '//' and the bare domain, so '//gotransit.com' is never a literal substring. Any operator URL fleet-wide that happens to include a www. prefix was silently false-failing the same way. Fixed by also checking the URL with a leading 'www.' stripped from right after '//'. No guide HTML edited — validator-only; Toronto's existing GO Transit link is correct as-is and now validates clean."),
     ("2026-07-10", "VALIDATOR DEEP AUDIT WAVE 2 — 40 bugs fixed (fixes 61-100). Categories: (A) DEAD CODE — removed dead _pill_links variable, duplicate re.compile calls (_day_block_open_re, _RE_WALK_GLOBAL/_RE_WALK_MIN, _uro_cal_row_re/cal_row_re, _FOOD_RATING_TEXT_RE/_food_review_ok, _CG_ANNOT_RE, _mxc_box_re), duplicate import unicodedata, duplicate guide-style.css check. (B) VARIABLE SHADOWING — renamed _motion_banner_re→_tram_motion_re, ticket_link_re→_ticket_link_re2, canonical_re→_notshown_canonical_re (all shadowed earlier definitions with different patterns). (C) REGEX BUGS — Getting Around exclusion regex failed when GA is last section (added |</body> to lookahead); obvious_free_terms had trailing spaces and duplicate entries; _TRAIN_TICKET_HOSTS used short-substring match (cd.cz/sz.si false-positives) → proper domain-boundary check; 6 annotation detection regexes had re.IGNORECASE+[A-Z] matching any lowercase text; VS16 bug in hours-row empty check (🏛️? tolerance); cappuccino extra-icon regex missing VS16 variants; 3+ consecutive 🏛️ rows boundary missed entry-body break; Train Day card suffix regex made destination optional (contradicting the required-suffix enforcement); hotel-naming banner regex missing arrive-first class. (D) TOCTOU RACE CONDITIONS — 10+ sites converted from is_file()+read_text() to _safe_read() helper (Final Gate paths, CORE RULES reader, carousel chain, build state, index reader). (E) SYSTEMATIC next-metro GAP — next-metro (added 2026-07-05) was missing from 12 boundary/banner regexes across the file: stop-block boundaries (8 sites), bus-ban motion check, hotel-naming protocol, taxi-spacing check. Without it, a .next-metro div was consumed into preceding stop blocks. (F) OTHER — verification log parse error printed instead of warn(); CAR_FREE_CITIES expanded (hydra/zermatt); stale class names in Guides-Index alphabetical check (overview-section→country, overview-title→country-label, idx-city→dest-name); Day Trips zip length mismatch warning; added missing national rail operators to _TRAIN_TICKET_HOSTS; eliminated duplicate re.search for booking banned patterns; added arrive-first to taxi-spacing check. No guide HTML edited — validator-only."),
     ("2026-07-10", "MICHELIN 'NOT SHOWN' FALSE-FAIL FIXED — a correct line like 'Not shown: 3 ⭐ more in Atlanta' was hard-failing on guides that had the format exactly right. Root cause: notshown_re has 3 alternatives; alternative 1 ('not\\s+shown') matches 'Not shown' first, then finditer keeps scanning and alternative 3 ('\\d+\\s+⭐.*?more\\s+in\\b') independently re-matches the '3 ⭐ more in' tail of the SAME line as a spurious second match. That second match's context window (only 10 chars back from the digit) is exactly one character short of reaching the line's leading 'N', so the error message read 'ot shown: 3 ⭐...' and always failed the canonical-format check — even on fully correct lines. Found on Atlanta and Toronto (both had 'ot shown:' in their validator output despite correct guide HTML — confirmed via direct grep of the raw HTML, which reads 'Not shown: 3 ⭐ more in Atlanta' with no truncation). Fixed: track each match's context window end and skip any later match whose start falls inside it — the tail of a line already validated, not a new occurrence. No guide HTML edited — validator-only; any guide with a correct Not-shown line now validates clean without content changes."),
-    ("2026-07-10", "TWO VALIDATOR BUGS FIXED — both surfaced fixing Cannes's 2 remaining failures, both turned out to be fleet-wide false-fails, not guide-content bugs. (1) FERRY-ONLY LEGS WRONGLY REQUIRED 🚕 — the 'every transit line shows 🚕 Uber time' hard-fail (2026-04-30) never accounted for a standalone or line-opening 🚢 ferry leg, even though Motion Rule.html § 1 explicitly documents '🚢 [N min] → [Destination]' as complete on its own (same principle as the 🚤 car-free-city rule — where no road exists, the water crossing IS the ride leg). Cannes's two Lérins-Islands ferry legs (no road access, genuinely no Uber possible) were failing; found ~15 other fleet guides shipping the identical bare-🚢 pattern already (Seychelles, Sardinia, Toronto, Capri, Turks and Caicos, etc.), confirming this was never a Cannes-specific issue. Added has_ferry exemption: a transit line whose head segment (before the first →) contains 🚢 no longer requires 🚕. (2) READ ABOUT LINK CHECK COULD NEVER PASS — Story-Pages.html § 2 mandates the READ ABOUT {CITY} link be INJECTED VIA JAVASCRIPT (documented example: document.createElement('a'); a.href='{slug}-read-about.html'; a.textContent='READ ABOUT {CITY}'), but the check added same-day (this file's own 2026-07-10 READ ABOUT entry) only regex-matched a literal static <a href> tag in raw HTML — which can never see JS-injected content. Verified this was failing on EVERY guide with the JS pattern, including Lisbon, the guide the check's own error message cites as the reference model ('Model: Travel-Website/Guides/Lisbon/lisbon-read-about.html'). Added JS-pattern detection (separate .href and .textContent regex matches) alongside the existing static-tag check — either satisfies it now. No guide HTML edited for either fix — validator-only; guides with the correct, spec-compliant content (Cannes, Lisbon, and the fleet generally) now validate clean without any content change."),
+    ("2026-07-10", "TWO VALIDATOR BUGS FIXED — both surfaced fixing Cannes's 2 remaining failures, both turned out to be fleet-wide false-fails, not guide-content bugs. (1) FERRY-ONLY LEGS WRONGLY REQUIRED 🚕 — the 'every transit line shows 🚕 Uber time' hard-fail (2026-04-30) never accounted for a standalone or line-opening 🚢 ferry leg, even though Motion Rule.html § 1 explicitly documents '🚢 [N min] → [Destination]' as complete on its own (same principle as the 🚤 car-free-city rule — where no road exists, the water crossing IS the ride leg). Cannes's two Lérins-Islands ferry legs (no road access, genuinely no Uber possible) were failing; found ~15 other fleet guides shipping the identical bare-🚢 pattern already (Seychelles, Sardinia, Toronto, Capri, Turks and Caicos, etc.), confirming this was never a Cannes-specific issue. Added has_ferry exemption: a transit line whose head segment (before the first →) contains 🚢 no longer requires 🚕. (2) READ ABOUT LINK CHECK COULD NEVER PASS — Read-About-Pages.html § 2 mandates the READ ABOUT {CITY} link be INJECTED VIA JAVASCRIPT (documented example: document.createElement('a'); a.href='{slug}-read-about.html'; a.textContent='READ ABOUT {CITY}'), but the check added same-day (this file's own 2026-07-10 READ ABOUT entry) only regex-matched a literal static <a href> tag in raw HTML — which can never see JS-injected content. Verified this was failing on EVERY guide with the JS pattern, including Lisbon, the guide the check's own error message cites as the reference model ('Model: Travel-Website/Guides/Lisbon/lisbon-read-about.html'). Added JS-pattern detection (separate .href and .textContent regex matches) alongside the existing static-tag check — either satisfies it now. No guide HTML edited for either fix — validator-only; guides with the correct, spec-compliant content (Cannes, Lisbon, and the fleet generally) now validate clean without any content change."),
     ("2026-07-10", "VALIDATOR DEEP AUDIT — 19 bugs fixed across the full 26k-line file. HIGH IMPACT (checks silently skipping): (1) Overview card icon↔stop-modifier sync regex used '·' separator only — never matched non-Train day cards using '–' (2026-06-16 format); fixed to accept [·–]. (2) Same check still required retired 🎒 icon for .self stops; replaced with pass-through. (3) EXTRAS_ORDER Train Stations regex 'Stations Near the Hotel' never matched canonical 'Train Stations Near Hotel'; fixed. (4) EXTRAS_ORDER RNH/Downtown had dead 'Near the Hotel'/'bare Downtown' alternatives; cleaned to match current canonical titles. (5) _QUOTE_CHARS had straight double-quote 3x, missing curly U+201C/U+201D; fixed. (6) 'Missing Uber' check gated on walk presence — tram-only lines without 🚕 slipped through; removed gate. (7) Michelin 'Not shown' class check required zero whitespace after >; added \\s*. (8) box_re used exact class='tour-box' match — extra classes on div silently skipped the 📍-last-row check; fixed to fuzzy \\b match. (9) train_block_re used non-greedy .*?</div> — wrong nesting depth; replaced with _walk_balanced_div. (10) Ticket-box lead-row regex was greedy, captured entire box body instead of first row; fixed to non-greedy. (11) Day Trips Omio check did unbounded search past next extras-sub — could check wrong city's box; bounded to entry region. (12) Duplicate-scope detector only recognized H:MM times — Npm/am formats missed; added alternation. (13) Guides-Index banner check \\bheader\\b false-matched 'section-header' etc.; tightened to exact class. MEDIUM IMPACT: (14) TB-6 used html.find('<script') instead of _tb_script_m.start() — could find wrong script tag; fixed. (15) NhMM clock-notation check used 200-char comment window (false skip/fire); replaced with full RE_HTML_COMMENT.sub on html. (16) Dead variable _pre removed. (17) _pb_walk_times renamed to _pb_drive_times (held drive times, not walk). (18) RNH duplicate-name tracker appended empty keys; guarded. (19) Comment/code mismatch in filename slug (said underscores, code uses hyphens); fixed comment. No guide HTML edited — validator-only."),
     ("2026-07-10", "TOURS — banned nonstandard `.tours-group-label` wrapper class (closes the one real remaining gap from the 2026-07-08 Tours audit's Cluster E 'format misses'). Re-investigation found the other 2 audit-listed format-miss instances were false alarms against the CURRENT validator: Atlanta's missing 🕐 and Maldives' missing 🚶/🚕 hotel row are both already hard-failed by the pre-existing entry-format check (🕐/⏳/👥 presence + unconditional 🚕 requirement, both dating to the original 2026-05-20 Tours checks, well before the audit) — live-tested against atlanta_v1.html and maldives_v1.html today, 0 failures on both, confirming the underlying content was already fixed by other work on this shared workspace before this session touched it. The one genuine, never-checked gap was Bora-Bora's nested `tours-group-label` wrapper (an unstyled class, absent from guide-style.css, that let default heading styles bleed onto entries) — also already fixed in the guide itself (now plain flat `.tours-group` divs), but nothing banned the class from reappearing. New check hard-fails any `tours-group-label` class inside #tours. No guide HTML edited in this pass — validator-only."),
     ("2026-07-08", "TOURS AUDIT — 4 enforcement gaps closed (fleet-wide manual audit of every Tours §1-§8 rule against all 207 shipped guides found 28 guides with real deviations that were passing validation). (1) MISSING PLATFORM HEADING (§5) — the existing 'platform group never empty' check only inspects .tours-group headings that already exist in the markup; a crib dropping a whole platform sometimes omits its heading ENTIRELY (no heading, no negative line) instead of shipping it empty — invisible to that check. New check 'all three platform headings present' asserts Viator/GetYourGuide/TripAdvisor headings all exist whenever the section isn't the whole-section-negative case. Fleet: 19 guides / 25 platform slots (Aruba, Big-Island, Cayman-Islands, Chongqing, Curacao, Kauai, La-Jolla, Milan, Oahu, Pensacola, Portland, Sedona, Sint-Maarten, Taipei, Yellowstone, + Fortaleza/Glacier-National-Park with all 3 missing). (2) MANGLED REVIEW COUNT (§6) — a thousands-separator comma corrupted into a stray middle-dot (e.g. '4.7⭐ · 1 ·176+ reviews' instead of '4.7⭐ · 1,176+ reviews') was invisible because the existing reviews-count regex greedily matches only the LAST digit group before 'reviews', so '176' alone cleared the ≥6 bar and passed silently. New _TOURS_MANGLED_REVIEWS_RE detects the two-digit-groups-split-by-· shape directly. Fleet: Annecy, Cannes, Turin, Pasadena (7 entries). (3) BARE CYCLING/BIKING (§2 excluded types) — banned_tour_types only listed 2-word phrases ('cycling tour(s)', 'bicycle tour(s)'); titles with the word alone in a different position ('Ubud: Downhill Cycling with Volcano and Rice Terraces', 'Napa Valley Cycling Wine Tour') didn't match any phrase and shipped. Added bare 'cycling' + 'biking' tokens (word-boundary gated, same list already scanned against Tours .extras-sub <strong> titles). Fleet: Bali, Napa. (4) NON-CANONICAL NEGATIVE-FINDING WORDING (§8) — the canonical-wording regex used a greedy '.+' for the [City] placeholder, so embellished text ('No qualifying tours in Columbia on Viator, GetYourGuide, or TripAdvisor meeting the 4.5★ · 6+ review bar.') still matched the 'in .+\\.' shape and passed. Added a second pass that rejects platform names / review / rating / star / meeting / platform language leaking into the captured city text. Also discovered and fixed a second, larger hole in the same check: it only ever scanned .entry-body divs, so the WHOLE-SECTION-negative case (wrapped in .extras-empty, per Guide Structure) was never wording-checked at all — Fortaleza ('No tours found qualifying at 4.5★ and 6+ reviews for Fortaleza at time of build.') and Glacier-National-Park ('No tour operators meet the minimum ratings threshold for Glacier National Park tours.') were shipping completely free-form sentences, invisible until this pass. Fleet: Columbia, Maceió, Fortaleza, Glacier-National-Park. No guide HTML edited in this pass — validator-only; the 28 flagged guides still need per-guide fixes + re-validation."),
@@ -2116,13 +2118,42 @@ def validate(html: str, filename: str):
     _tc_norm = _tc_text.replace('.', '').replace(' ', '')
     _tc_has_subdivision = (',' in _tc_text) or ('·' in _tc_text)
     _tc_is_abbreviation = bool(_tc_norm) and _tc_norm.isalpha() and _tc_norm.isupper() and len(_tc_norm) <= 4
-    _tc_bad = _tc_has_subdivision or _tc_is_abbreviation
+    # Spelled-out subdivision detection: US states, Canadian provinces, and
+    # other common subdivisions that are NOT sovereign country names.
+    _SUBDIVISION_NAMES = {
+        # US states (all 50 + DC)
+        "alabama", "alaska", "arizona", "arkansas", "california", "colorado",
+        "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho",
+        "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana",
+        "maine", "maryland", "massachusetts", "michigan", "minnesota",
+        "mississippi", "missouri", "montana", "nebraska", "nevada",
+        "new hampshire", "new jersey", "new mexico", "new york",
+        "north carolina", "north dakota", "ohio", "oklahoma", "oregon",
+        "pennsylvania", "rhode island", "south carolina", "south dakota",
+        "tennessee", "texas", "utah", "vermont", "virginia",
+        "washington", "west virginia", "wisconsin", "wyoming",
+        "district of columbia",
+        # Canadian provinces
+        "ontario", "quebec", "british columbia", "alberta", "manitoba",
+        "saskatchewan", "nova scotia", "new brunswick",
+        "prince edward island", "newfoundland and labrador",
+        # Other common subdivisions
+        "bavaria", "catalonia", "andalusia", "tuscany", "lombardy",
+        "provence", "normandy", "brittany", "scotland", "wales",
+        "northern ireland", "england",
+    }
+    # Georgia is both a US state and a country — exclude from subdivision list.
+    # "Washington" = also a common city name used alone; only flag it if the full
+    # value is exactly "Washington" (not "Washington, D.C." which is caught by comma).
+    _tc_is_subdivision = _tc_text.lower().strip() in _SUBDIVISION_NAMES
+    _tc_bad = _tc_has_subdivision or _tc_is_abbreviation or _tc_is_subdivision
     check(
         ".title-country must be the country's full name — no abbreviation, country code, "
         "or subdivision (state/province/region) (Hotel Banner.html §1 Entry — added 2026-06-27)",
         (not _tc_text) or (not _tc_bad),
         (f'.title-country "{_tc_text}" is not a full country name — '
-         "write the country's full name with no abbreviation and no state/province/region")
+         "write the country's full name with no abbreviation and no state/province/region"
+         + (f' ("{_tc_text}" is a subdivision, not a country)' if _tc_is_subdivision else ''))
         if _tc_bad else "",
     )
 
@@ -7395,6 +7426,38 @@ def validate(html: str, filename: str):
         + "; ".join(f'"{v}"' for v in _tkt_order_violations[:5]),
     )
 
+    # ─── TICKET REGION-SPECIFIC PLATFORM ENFORCEMENT ─────────────────────────
+    # Tickets.html §1: Ticketmaster / StubHub / TodayTix are US-only platforms.
+    # Non-US guides must not use them (International = Viator/GYG/TripAdvisor/local).
+    _US_ONLY_TICKET_PLATFORMS_RE = re.compile(
+        r'ticketmaster\.com|stubhub\.com|todaytix\.com',
+        re.IGNORECASE,
+    )
+    _tkt_region_violations: list[str] = []
+    _is_us_guide = (_tc_text.lower().strip() == 'united states') if _tc_text else False
+    if not _is_us_guide:
+        for _tbm2 in _tkt_box_open_re2.finditer(html):
+            _tb_inner2, _ = _walk_balanced_div(html, _tbm2.end())
+            _lead2 = re.search(r'<div[^>]*>\s*(?:🎟️|🎟)(.*?)</div>', _tb_inner2, re.DOTALL)
+            if not _lead2:
+                continue
+            _lead_raw2 = _lead2.group(1)
+            _us_plat_m = _US_ONLY_TICKET_PLATFORMS_RE.search(_lead_raw2)
+            if _us_plat_m:
+                _lead_text2 = RE_STRIP_TAGS.sub('', _lead_raw2).strip()
+                _tkt_region_violations.append(
+                    f'"{_lead_text2[:80]}" — uses US-only platform "{_us_plat_m.group()}"'
+                )
+    check(
+        '🎟 ticket-box region-specific platform enforcement — '
+        'Ticketmaster / StubHub / TodayTix are US-only; non-US guides must use '
+        'Viator / GetYourGuide / TripAdvisor / local platforms '
+        '(per Tickets.html §1)',
+        not _tkt_region_violations,
+        f'{len(_tkt_region_violations)} non-US ticket-box(es) using US-only platform(s): '
+        + '; '.join(_tkt_region_violations[:5]) if _tkt_region_violations else '',
+    )
+
     # ─── NO <br> INSIDE ANY LOGISTICS BOX ───────────────────────────────────
     _br_box_open_re = re.compile(
         r'<div\b[^>]*class\s*=\s*"[^"]*\b(?:tour-box|ticket-box|shows-box|entry-body|transit-box|ride-apps)\b[^"]*"[^>]*>',
@@ -7536,6 +7599,57 @@ def validate(html: str, filename: str):
         (f'{len(_opener_no_dest)} opener(s) missing "→ destination": '
          + '; '.join(f'"{o}"' for o in _opener_no_dest[:5]))
         if _opener_no_dest else '',
+    )
+
+    # ─── MOTION-BANNER DESTINATION — bare text, inherits the banner's own font ─
+    # The destination after → in a .hotel-first / .arrive-first / plain .next
+    # banner is BARE TEXT across the whole compliant fleet (Lisbon, Porto, …):
+    # "🏨 From Hotel: 🚕 15 min → Cathedral". Static text carries no styling of
+    # its own, so it inherits the SAME font family / size / style / colour as the
+    # rest of its banner — exactly matching the "🚶 N · 🚕 M →" it follows. That
+    # differs by banner type and the check does NOT need to know it: .hotel-first
+    # is upright #1a1a1a (near-black); a .next row is Roboto 14px ITALIC #555
+    # (muted grey). ANY markup on the destination breaks that inheritance — an
+    # <a href="…google.com/maps…"> recolours it to a{color:#2867c4} blue, a
+    # <span>/<font>/inline-style element changes font or colour directly, and any
+    # of them makes it look unlike the rest of the row. So the rule is structural:
+    # the destination segment (everything after the final →) must contain NO
+    # opening tag. Every motion check strips tags before validating, so this was
+    # invisible and slipped through until now. Scope: .hotel-first, .arrive-first,
+    # and PLAIN .next only — .next-tram / .next-metro legitimately carry bracketed
+    # board/route/alight anchors (Getting Around.html tram sub-line), so excluded.
+    print("\n── MOTION BANNER — destination inherits the banner font (bare text) ──")
+    _banner_dest_styled: list[str] = []
+    _banner_dest_re = re.compile(
+        r'<div\b[^>]*class\s*=\s*"\s*(hotel-first|arrive-first|next)\s*"[^>]*>(.*?)</div>',
+        re.IGNORECASE | re.DOTALL,
+    )
+    for _bm in _banner_dest_re.finditer(html):
+        _bcls, _binner = _bm.group(1), _bm.group(2)
+        # Only the segment after the final → is the destination.
+        _arrow = _binner.rfind('→')
+        _dest_seg = _binner[_arrow:] if _arrow != -1 else _binner
+        # An OPENING tag around the destination (<a>, <span>, <font>, any inline-
+        # styled element) recolours the text away from the inherited black. Only
+        # opening tags matter — a trailing closing tag like </p> from a benign
+        # wrapper around the whole banner (Bora-Bora wraps its rows in <p>) does
+        # not recolour, so match `<letter`, never `</letter`. Bare place names
+        # never contain '<'.
+        if re.search(r'<[a-zA-Z]', _dest_seg):
+            _plain = RE_WS.sub(' ', RE_STRIP_TAGS.sub('', _binner)).strip()
+            _banner_dest_styled.append(f'.{_bcls}: "{_plain[:70]}"')
+    check(
+        'Motion-banner destination inherits the banner font — the name after → in '
+        'a .hotel-first / .arrive-first / .next banner must be bare text (no <a> '
+        'link, no <span>/<font>, no inline style) so its font family, size, style '
+        'and colour match the rest of that banner (e.g. a .next row is italic #555; '
+        'a .hotel-first row is #1a1a1a). Any markup breaks that — a Maps-link '
+        'wrapper renders it blue. Motion Rule §3 + Links.html. '
+        '(.next-tram / .next-metro excluded — their bracketed anchors ARE links.)',
+        not _banner_dest_styled,
+        (f'{len(_banner_dest_styled)} banner destination(s) carry font/colour '
+         f'markup: ' + '; '.join(_banner_dest_styled[:6]))
+        if _banner_dest_styled else '',
     )
     check(
         "Every .day-block ends with `→ hotel` closer banner "
@@ -9670,6 +9784,36 @@ def validate(html: str, filename: str):
         not _cap_dupe_names,
         f'{len(_cap_dupe_names)} duplicate café name(s): '
         + '; '.join(f'"{n}"' for n in _cap_dupe_names[:3]) if _cap_dupe_names else '',
+    )
+
+    # H — §3 chain/tourist-trap exclusion: flag well-known global coffee chain
+    # names in entry headings. Mirrors Downtown Restaurants _DR_CHAIN_NAMES but
+    # for coffee chains. Local specialty cafés are fine; global chains are excluded
+    # per Cappuccino - Extra Section.html §3.
+    _CAP_CHAIN_NAMES = [
+        "starbucks", "dunkin", "peet's", "peets", "costa coffee",
+        "tim horton", "caribou coffee", "mccafé", "mccafe",
+        "pret a manger", "coffee bean & tea leaf", "coffee bean and tea leaf",
+        "lavazza", "illy", "nero", "caffè nero",
+        "dutch bros", "panera", "au bon pain",
+    ]
+    _cap_chain_hits: list[str] = []
+    if cap_section_m:
+        for _heading_html, _ in cap_entries:
+            _heading_plain_lower = RE_STRIP_TAGS.sub('', _heading_html).strip().lower()
+            for _chain in _CAP_CHAIN_NAMES:
+                if _chain in _heading_plain_lower:
+                    _cap_chain_hits.append(
+                        f'"{_heading_plain_lower[:60]}" — matches chain "{_chain}"'
+                    )
+                    break
+    check(
+        '☕ Cappuccino — no chain or global-franchise cafés '
+        '(per Cappuccino - Extra Section.html §3 — '
+        '"Chains and global franchises are excluded; only local/specialty cafés qualify")',
+        not _cap_chain_hits,
+        f'{len(_cap_chain_hits)} chain/franchise hit(s): '
+        + '; '.join(_cap_chain_hits[:3]) if _cap_chain_hits else '',
     )
 
     # T8 retired 2026-05-15 — Cappuccino-specific delivery row check removed.
@@ -13005,6 +13149,7 @@ def validate(html: str, filename: str):
     shows_dupe_headings:   list[str] = []  # J — duplicate heading text
     shows_all_headings:    list[str] = []  # J — accumulator
     shows_missing_ride:    list[str] = []  # K — 🚕 always required (Motion Rule)
+    shows_ride_only_no_sentinel: list[str] = []  # Ka — ride-only without justification sentinel
     shows_order_hits:      list[str] = []  # L — row order ↳→🎟→📍→motion
     shows_pin_not_maps:    list[str] = []  # M — 📍 must be Google Maps link
     shows_split_motion:    list[str] = []  # N — 🚶 and 🚕 must be on same <div>
@@ -13089,6 +13234,21 @@ def validate(html: str, filename: str):
             # Tram (🚎) does not replace 🚕; it's a supplemental row per §3.
             if '🚕' not in entry_html:
                 shows_missing_ride.append(heading[:60])
+
+            # Ka — ride-only justification: 🚕 present but no 🚶 means walk >40 min.
+            # Per Shows §3: "🚕-only allowed when walk >40 min". The walk time is
+            # omitted from HTML in ride-only entries, so we can't verify the actual
+            # distance — but we can require the <!-- ride-only: walk NN min --> sentinel
+            # documenting the justification (same pattern as no-photo sentinels).
+            if '🚕' in entry_html and '🚶' not in entry_html:
+                _ride_only_sentinel = re.search(
+                    r'<!--\s*ride-only\s*:', entry_html, re.IGNORECASE,
+                )
+                if not _ride_only_sentinel:
+                    shows_ride_only_no_sentinel.append(
+                        f'"{heading[:50]}" — ride-only (🚕 without 🚶) but '
+                        f'missing <!-- ride-only: walk NN min --> justification'
+                    )
 
             # L — row order: ↳ → 🎟 → 📍 → motion (🚶/🚕)
             _sp_desc   = entry_html.find('↳')
@@ -13345,6 +13505,16 @@ def validate(html: str, filename: str):
          + "; ".join(f'"{h}"' for h in shows_missing_ride[:3]))
         if shows_missing_ride else "",
     )
+
+    # Ka — ride-only justification sentinel (WARN — sentinel is a new convention,
+    # not yet in CORE RULES; surfacing for awareness, not blocking)
+    if shows_ride_only_no_sentinel:
+        results.append((None,
+            f"{WARN}🎭 Shows — {len(shows_ride_only_no_sentinel)} ride-only entry(ies) "
+            "(🚕 without 🚶) have no <!-- ride-only: walk NN min --> justification sentinel "
+            "(per Shows §3: '🚕-only allowed when walk >40 min' — "
+            "document the walk time so a future validator can verify)\n"
+            "     → " + "; ".join(shows_ride_only_no_sentinel[:3])))
 
     # L — row order: ↳ → 🎟 → 📍 → motion
     check(
@@ -16401,7 +16571,7 @@ def validate(html: str, filename: str):
         )
 
     # ─── READ ABOUT STORY PAGE (mandatory companion) ─────────────────────────
-    # Rule source: Brain/Reference/Story-Pages.html. Every guide ships with a
+    # Rule source: Brain/Reference/Read-About-Pages.html. Every guide ships with a
     # companion editorial page linked both ways. (added 2026-07-10)
     if filename:
         _sp_guide = Path(filename).resolve()
@@ -16410,15 +16580,15 @@ def validate(html: str, filename: str):
         _sp_exists = _sp_path.is_file()
 
         check(
-            f'Read About story page exists ({_sp_slug}-read-about.html beside the guide)',
+            f'Read About page exists ({_sp_slug}-read-about.html beside the guide)',
             _sp_exists,
             (f"no {_sp_slug}-read-about.html in the guide folder — every guide ships with a "
-             f"companion editorial page. Spec: Brain/Reference/Story-Pages.html. "
+             f"companion editorial page. Spec: Brain/Reference/Read-About-Pages.html. "
              f"Model: Travel-Website/Guides/Lisbon/lisbon-read-about.html")
             if not _sp_exists else "",
         )
 
-        # Story-Pages.html § 2 mandates the link be INJECTED VIA JAVASCRIPT
+        # Read-About-Pages.html § 2 mandates the link be INJECTED VIA JAVASCRIPT
         # (document.createElement('a'); a.href = '{slug}-read-about.html'; a.textContent
         # = 'READ ABOUT {CITY}') — a static <a href> tag is checked too as a
         # fallback, but the JS pattern is the canonical, spec-example format
@@ -16439,11 +16609,11 @@ def validate(html: str, filename: str):
         ))
         _sp_linked = _sp_static_linked or (_sp_js_href and _sp_js_text)
         check(
-            'Guide injects the READ ABOUT {CITY} link to its story page '
-            '(static <a> tag or JS-injected — Story-Pages.html § 2)',
+            'Guide injects the READ ABOUT {CITY} link to its Read About page '
+            '(static <a> tag or JS-injected — Read-About-Pages.html § 2)',
             _sp_linked,
-            ("guide does not link to its story page — inject the READ ABOUT link into the "
-             "Trip Overview title bar. Spec: Brain/Reference/Story-Pages.html § 2")
+            ("guide does not link to its Read About page — inject the READ ABOUT link into the "
+             "Trip Overview title bar. Spec: Brain/Reference/Read-About-Pages.html § 2")
             if not _sp_linked else "",
         )
 
@@ -16451,7 +16621,7 @@ def validate(html: str, filename: str):
             _sp_html = _sp_path.read_text(encoding="utf-8", errors="ignore")
             _sp_back = _sp_guide.name in _sp_html
             check(
-                'Story page back-links to the current guide filename',
+                'Read About page back-links to the current guide filename',
                 _sp_back,
                 (f"{_sp_slug}-read-about.html does not name {_sp_guide.name} — the .story-back "
                  f"and .story-footer-back links still point at an old _vN file")
