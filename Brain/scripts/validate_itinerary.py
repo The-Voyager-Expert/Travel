@@ -2123,7 +2123,7 @@ def validate(html: str, filename: str):
     _SUBDIVISION_NAMES = {
         # US states (all 50 + DC)
         "alabama", "alaska", "arizona", "arkansas", "california", "colorado",
-        "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho",
+        "connecticut", "delaware", "florida", "hawaii", "idaho",
         "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana",
         "maine", "maryland", "massachusetts", "michigan", "minnesota",
         "mississippi", "missouri", "montana", "nebraska", "nevada",

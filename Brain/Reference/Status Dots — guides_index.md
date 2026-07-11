@@ -1,7 +1,15 @@
 # Status Dots — guides_index
 
-Source-of-truth for the been / want-to-go markers on `Guides-Index.html`.
-Edit the checklist below, and Claude syncs the dots into the index from it.
+**GENERATED FILE — do not hand-edit the master list below.** The single source of
+truth for every been / want-to-go marker is the `data-status` attribute on each
+dest-card in `Guides-Index.html`. This checklist is regenerated *from* the index by
+`Brain/scripts/build_status_dots.py` — which runs automatically at every session
+start (`guide_tools.py start`, Step 0b) and on every ship (`update-index`), right
+alongside `sync_tracker.py` (which regenerates `Travel-Tracker.html` the same way).
+
+To change a status: flip `data-status` on the card in `Guides-Index.html` (or toggle
+it in the Travel Tracker and paste the change back), then let the builders regenerate
+this file — never edit the checklist directly, or the next resync silently reverts it.
 
 ## What the dots mean
 
@@ -24,19 +32,14 @@ Remove the attribute to turn it back to "been." That's the only change — the C
 
 ## Master list
 
-Tick `[x]` for places you've **been**. Leave `[ ]` for **want to go** (gets the blue dot).
-Give Claude your "been" list and it will tick these and sync the index in one pass.
+`[x]` = **been**, `[ ]` = **want to go** (gets the blue dot). Regenerated from the
+index by `build_status_dots.py` — do not hand-edit; flip `data-status` on the card
+in `Guides-Index.html` instead.
 
-*(Grouped by country, A→Z — matching the index's country split, 2026-06-07.)*
+*(Auto-generated, grouped by country A→Z to match the index's country split.)*
 
 ### 🇦🇷 Argentina
 - [ ] Buenos-Aires
-
-### 🇦🇼 Aruba
-- [x] Aruba
-
-### 🇪🇬 Egypt
-- [ ] Cairo
 
 ### 🇦🇺 Australia
 - [ ] Melbourne
@@ -52,12 +55,10 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 
 ### 🇧🇹 Bhutan
 - [ ] Bhutan
-- [ ] Paro
 
 ### 🇧🇷 Brazil
 - [ ] Aracaju
 - [ ] Curitiba
-- [x] Rio-de-Janeiro
 - [ ] Florianopolis
 - [ ] Fortaleza
 - [ ] Foz-do-Iguaçu
@@ -67,24 +68,25 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [ ] Olinda
 - [ ] Porto-Alegre
 - [ ] Recife
+- [x] Rio-de-Janeiro
 - [ ] Salvador
 - [ ] São-Luís
 - [ ] São-Paulo
 
 ### 🇨🇦 Canada
-- [ ] Montréal
-- [ ] Québec City
+- [ ] Montreal
+- [ ] Quebec-City
 - [x] Toronto
 - [x] Vancouver
 - [x] Victoria
 - [x] Whistler
 
 ### 🏝️ Caribbean Islands
+- [x] Aruba
 - [x] Bahamas
 - [ ] Barbados
-- [x] Cancun
 - [ ] Cayman-Islands
-- [x] Curaçao
+- [x] Curacao
 - [ ] Puerto-Rico
 - [x] Sint-Maarten
 - [ ] Turks-and-Caicos
@@ -96,8 +98,14 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 ### 🇨🇳 China
 - [x] Beijing
 - [x] Chongqing
+- [ ] Hong-Kong
 - [x] Shanghai
 - [x] Zhangjiajie
+
+### 🇨🇷 Costa Rica
+- [ ] Arenal
+- [ ] Manuel-Antonio
+- [ ] San-Jose-Costa-Rica
 
 ### 🇭🇷 Croatia
 - [ ] Dubrovnik
@@ -109,11 +117,11 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 ### 🇩🇰 Denmark
 - [x] Copenhagen
 
+### 🇪🇬 Egypt
+- [ ] Cairo
+
 ### 🇪🇪 Estonia
 - [ ] Tallinn
-
-### 🇬🇪 Georgia
-- [x] Tbilisi
 
 ### 🇫🇮 Finland
 - [ ] Helsinki
@@ -134,10 +142,13 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 ### 🇵🇫 French Polynesia
 - [ ] Bora-Bora
 
+### 🇬🇪 Georgia
+- [ ] Tbilisi
+
 ### 🇩🇪 Germany
 - [ ] Berlin
-- [ ] Hamburg
-- [ ] Marktoberdorf
+- [x] Hamburg
+- [x] Marktoberdorf
 - [x] Munich
 - [x] Stuttgart
 
@@ -145,48 +156,39 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [x] Athens
 - [x] Corfu
 - [ ] Mykonos
-- [x] Santorini
-
-### 🌺 Hawaii
-- [x] Big-Island
-- [x] Kauai
-- [x] Maui
-- [x] Oahu
+- [ ] Santorini
 
 ### 🇭🇺 Hungary
 - [ ] Budapest
 
-### 🇭🇰 Hong Kong
-- [x] Hong-Kong
+### 🇮🇸 Iceland
+- [ ] Reykjavik
 
 ### 🇮🇩 Indonesia
 - [ ] Bali
-
-### 🇮🇸 Iceland (Reykjavik)
-- [ ] Reykjavik
 
 ### 🇮🇪 Ireland
 - [ ] Dublin
 
 ### 🇮🇹 Italy
-- [ ] Amalfi
-- [ ] Bologna
+- [x] Amalfi
+- [x] Bologna
 - [x] Capri
 - [x] Cinque-Terre
 - [x] Florence
 - [ ] Lake-Como
+- [ ] Lecce
 - [ ] Milan
 - [ ] Naples
 - [x] Pisa
-- [ ] Lecce
 - [x] Rome
 - [ ] Sardinia
 - [ ] Sicily
 - [ ] Siena
-- [ ] Sorrento
+- [x] Sorrento
 - [x] Turin
 - [x] Venice
-- [x] Verona
+- [ ] Verona
 
 ### 🇯🇵 Japan
 - [x] Kyoto
@@ -206,18 +208,19 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [ ] Maldives
 
 ### 🇲🇹 Malta
-- [x] Valletta
+- [ ] Valletta
 
 ### 🇲🇽 Mexico
+- [x] Cancun
 - [x] Los-Cabos
-- [x] Oaxaca
-- [ ] Puerto-Vallarta
+- [ ] Oaxaca
+- [x] Puerto-Vallarta
 
 ### 🇲🇨 Monaco
 - [x] Monaco
 
 ### 🇲🇪 Montenegro
-- [x] Kotor
+- [ ] Kotor
 
 ### 🇲🇦 Morocco
 - [ ] Marrakech
@@ -233,30 +236,36 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [ ] Wellington
 
 ### 🇳🇴 Norway
-- [ ] Ålesund
+- [ ] Alesund
 - [ ] Bergen
 - [ ] Oslo
-- [ ] Tromsø
+- [ ] Tromso
 
 ### 🇴🇲 Oman
 - [ ] Muscat
 
-### 🇵🇱 Poland
-- [ ] Kraków
-
 ### 🇵🇪 Peru
 - [ ] Cusco
 - [ ] Lima
-- [ ] Machu Picchu
+- [ ] MachuPicchu
+
+### 🇵🇭 Philippines
+- [ ] Palawan
+
+### 🇵🇱 Poland
+- [ ] Kraków
 
 ### 🇵🇹 Portugal
 - [ ] Azores
 - [x] Cascais
 - [x] Lagos
-- [x] Lisbon
+- [ ] Lisbon
 - [ ] Madeira
 - [x] Porto
 - [x] Sintra
+
+### 🇶🇦 Qatar
+- [ ] Doha
 
 ### 🇸🇨 Seychelles
 - [ ] Seychelles
@@ -274,9 +283,12 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [ ] Barcelona
 - [x] Madrid
 - [ ] Malaga
-- [x] San Sebastián
+- [x] San-Sebastian
 - [ ] Seville
 - [x] Toledo
+
+### 🇱🇰 Sri Lanka
+- [ ] Colombo
 
 ### 🇸🇪 Sweden
 - [x] Gothenburg
@@ -285,55 +297,62 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 ### 🇨🇭 Switzerland
 - [x] Geneva
 - [ ] Lucerne
-- [ ] Zürich
+- [ ] Zurich
 
 ### 🇹🇼 Taiwan
 - [x] Taipei
 
 ### 🇹🇭 Thailand
 - [ ] Bangkok
+- [ ] Chiang-Mai
 - [ ] Phuket
 
 ### 🇹🇷 Turkey
 - [ ] Istanbul
-
-### 🇶🇦 Qatar
-- [ ] Doha
 
 ### 🇦🇪 United Arab Emirates
 - [ ] Abu-Dhabi
 - [ ] Dubai
 
 ### 🇬🇧 United Kingdom
-- [ ] Cambridge
+- [x] Cambridge
 - [x] Edinburgh
 - [ ] Glasgow
 - [x] London
-- [ ] Oxford
+- [x] Oxford
 
 ### 🇺🇸 United States
 - [ ] Alaska
 - [x] Atlanta
 - [x] Austin
 - [ ] Bend
+- [x] Big-Island
 - [ ] Boston
 - [ ] Boulder
+- [ ] Cape-Cod
+- [ ] Carmel-by-the-Sea
 - [ ] Charlotte
 - [x] Chicago
 - [ ] Columbia
 - [ ] Dallas
 - [ ] Denver
-- [ ] Glacier-National-Park
 - [ ] Florida-Keys
-- [ ] Key West
+- [ ] Glacier-National-Park
+- [x] Kauai
+- [ ] KeyWest
+- [x] La-Jolla
 - [ ] Lake-Tahoe
-- [ ] La-Jolla
-- [ ] Las-Vegas
-- [x] Los-Angeles
+- [x] Las-Vegas
+- [ ] Los-Angeles
+- [ ] Malibu
+- [x] Maui
 - [x] Miami
-- [ ] Nashville
+- [ ] Napa
+- [ ] Naples-Florida
+- [x] Nashville
 - [ ] New-Orleans
 - [x] New-York
+- [x] Oahu
 - [ ] Orcas-Island
 - [x] Orlando
 - [ ] Palm-Desert
@@ -344,42 +363,18 @@ Give Claude your "been" list and it will tick these and sync the index in one pa
 - [ ] Phoenix
 - [ ] Portland
 - [x] San-Diego
-- [ ] San-Jose
-- [ ] San-Juan-Island
 - [x] San-Francisco
-- [x] Carmel-by-the-Sea
-- [x] Malibu
-- [x] Napa
-- [ ] Sedona
-- [ ] Sarasota
+- [ ] San-Jose
+- [x] San-Juan-Island
 - [ ] Santa-Barbara
 - [ ] Santa-Cruz
 - [ ] Santa-Monica
+- [ ] Sarasota
 - [x] Scottsdale
 - [x] Seattle
+- [x] Sedona
 - [ ] Washington-DC
 - [ ] Yellowstone
-
-### 🌍 Other cities (to be organized)
-- [ ] Alesund
-- [ ] Arenal
-- [ ] Cape-Cod
-- [ ] Chiang-Mai
-- [ ] Colombo
-- [ ] Curacao
-- [ ] KeyWest
-- [ ] MachuPicchu
-- [ ] Manuel-Antonio
-- [ ] Montreal
-- [ ] Naples-Florida
-- [ ] Palawan
-- [ ] Quebec-City
-- [ ] Salvador
-- [ ] San-Jose-Costa-Rica
-- [ ] San-Sebastian
-- [ ] Tromso
-- [ ] Zurich
-- [ ] Sedona *(needs rebuild)*
 
 ### 🇺🇾 Uruguay
 - [ ] Montevideo

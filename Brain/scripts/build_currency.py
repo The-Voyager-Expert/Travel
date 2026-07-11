@@ -315,9 +315,6 @@ TEMPLATE = r"""<!DOCTYPE html>
    --font, --fs-body(14) --fs-title(14) --fs-sub(12) --fs-label(11).
    The page banner (.site-header) and search input are styled site-wide there —
    not overridden here. */
-* {{ box-sizing: border-box; margin: 0; padding: 0; }}
-body {{ font-family: var(--font); background: var(--bg,#f5f4f0); color: var(--text,#1a1917);
-  font-size: var(--fs-body,14px); line-height: 1.5; }}
 .index-section {{ max-width: none; margin: 8px auto 0; padding: 0 32px; }}
 /* last-update stamp uses shared .updated-stamp from web-travel-style.css */
 .index-table thead th {{

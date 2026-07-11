@@ -377,9 +377,14 @@ def _run_start() -> int:
     _ensure_pre_push_hook()
     print()
 
-    # Step 0b: Travel-Tracker resync — Travel-Tracker.html is a one-way generated
-    # mirror of Guides-Index.html (sync_tracker.py normally fires at the end of
-    # update-index, after every ship). It silently drifts whenever Guides-Index.html
+    # Step 0b: status-tracker resync — BOTH Brain-side been/want trackers
+    # (Travel-Tracker.html via sync_tracker.py, and Status Dots — guides_index.md
+    # via build_status_dots.py) are one-way generated mirrors of Guides-Index.html's
+    # data-status (the single source of truth). Regenerating both here means a
+    # newly-shipped guide (always data-status="want") always lands in both as want,
+    # and neither can hand-drift. (sync_tracker fires at the end of update-index too;
+    # build_status_dots added alongside it 2026-07-10 after the checklist had drifted
+    # 28 statuses out of sync.) They silently drift whenever Guides-Index.html
     # is edited outside that pipeline (a direct structural fix, a status correction,
     # a CSS tweak touching the file). MUST run before any step below that can
     # `return` early on failure (brain-check, coverage, flight-index all do) — a
@@ -388,15 +393,16 @@ def _run_start() -> int:
     # Cheap, idempotent rewrite of a Drive-only file (not git-tracked); never blocks.
     # (added 2026-06-30, moved ahead of brain-check same day after it was found
     # silently skipped whenever brain-check failed)
-    print("▶ Step 0b — Travel-Tracker resync")
-    try:
-        import importlib.util as _ilu
-        _spec = _ilu.spec_from_file_location("sync_tracker", BRAIN_DIR / "scripts" / "sync_tracker.py")
-        _mod = _ilu.module_from_spec(_spec)
-        _spec.loader.exec_module(_mod)
-        _mod.sync()
-    except Exception as _e:
-        print(f"  ⚠  Travel-Tracker sync failed: {_e}", file=sys.stderr)
+    print("▶ Step 0b — status-tracker resync")
+    for _script, _fn in (("sync_tracker.py", "sync"), ("build_status_dots.py", "build")):
+        try:
+            import importlib.util as _ilu
+            _spec = _ilu.spec_from_file_location(_script[:-3], BRAIN_DIR / "scripts" / _script)
+            _mod = _ilu.module_from_spec(_spec)
+            _spec.loader.exec_module(_mod)
+            getattr(_mod, _fn)()
+        except Exception as _e:
+            print(f"  ⚠  {_script} failed: {_e}", file=sys.stderr)
     print()
 
     # Step 1: brain-check
@@ -623,13 +629,13 @@ Last updated: {today}
 - [ ] Michelin Restaurants - Extra Section.html
 - [ ] Heads Up - Extra Section.html
 - [ ] Claude Inspiration - Extra Section.html
-- [ ] Brain/Reference/Story-Pages.html
+- [ ] Brain/Reference/Read-About-Pages.html
 
 ## Phase 6 — Ship gate
 - [ ] Brain/Reference/Ship Checklist.html
 - [ ] validate_itinerary.py passes
 - [ ] every extra populated or carries negative-finding line
-- [ ] Read About story page built, linked both ways
+- [ ] Read About page built, linked both ways
 """
     tracker_path.write_text(content, encoding="utf-8")
     print(f"✅  Build-state tracker created: {tracker_path}")
@@ -2312,37 +2318,37 @@ def _guide_slug(guide_path: Path) -> str:
 
 
 def _check_guide_story_page(guide_path: Path) -> int:
-    """Ship gate: every guide ships with its companion Read About story page.
+    """Ship gate: every guide ships with its companion Read About page.
 
-    Three invariants (spec: Brain/Reference/Story-Pages.html):
-      1. `{slug}-story.html` exists beside the guide.
+    Three invariants (spec: Brain/Reference/Read-About-Pages.html):
+      1. `{slug}-read-about.html` exists beside the guide.
       2. The guide injects the READ ABOUT {CITY} link pointing at that file.
-      3. The story page's back link names the guide's *current* filename —
+      3. The Read About page's back link names the guide's *current* filename —
          a version bump that leaves the back link on `_v3` orphans the reader.
 
     Added 2026-07-10.
     """
     city = guide_path.parent.name
     slug = _guide_slug(guide_path)
-    story_path = guide_path.parent / f"{slug}-story.html"
+    story_path = guide_path.parent / f"{slug}-read-about.html"
 
     if not story_path.exists():
         print(
-            f"\n🚫  SHIP BLOCKED — {city} has no Read About story page.\n"
+            f"\n🚫  SHIP BLOCKED — {city} has no Read About page.\n"
             f"    Every guide ships with a companion editorial page.\n"
-            f"    Create: Travel-Website/Guides/{city}/{slug}-story.html\n"
-            f"    Spec:   Brain/Reference/Story-Pages.html\n"
-            f"    Model:  Travel-Website/Guides/Lisbon/lisbon-story.html\n",
+            f"    Create: Travel-Website/Guides/{city}/{slug}-read-about.html\n"
+            f"    Spec:   Brain/Reference/Read-About-Pages.html\n"
+            f"    Model:  Travel-Website/Guides/Lisbon/lisbon-read-about.html\n",
             file=sys.stderr,
         )
         return 1
 
     guide_html = guide_path.read_text(encoding="utf-8", errors="replace")
-    if f"{slug}-story.html" not in guide_html or "READ ABOUT" not in guide_html.upper():
+    if f"{slug}-read-about.html" not in guide_html or "READ ABOUT" not in guide_html.upper():
         print(
-            f"\n🚫  SHIP BLOCKED — {city} story page exists but the guide does not link to it.\n"
+            f"\n🚫  SHIP BLOCKED — {city} Read About page exists but the guide does not link to it.\n"
             f"    Inject the READ ABOUT {city.upper()} link into the Trip Overview title bar.\n"
-            f"    Spec: Brain/Reference/Story-Pages.html § 2\n",
+            f"    Spec: Brain/Reference/Read-About-Pages.html § 2\n",
             file=sys.stderr,
         )
         return 1
@@ -2350,14 +2356,14 @@ def _check_guide_story_page(guide_path: Path) -> int:
     story_html = story_path.read_text(encoding="utf-8", errors="replace")
     if guide_path.name not in story_html:
         print(
-            f"\n🚫  SHIP BLOCKED — {slug}-story.html does not link back to {guide_path.name}.\n"
+            f"\n🚫  SHIP BLOCKED — {slug}-read-about.html does not link back to {guide_path.name}.\n"
             f"    The .story-back and .story-footer-back links must name the current guide file.\n"
             f"    (A version bump orphans a back link left on the old _vN filename.)\n",
             file=sys.stderr,
         )
         return 1
 
-    print(f"  ✅  Story page — {slug}-story.html present, linked both ways.")
+    print(f"  ✅  Read About page — {slug}-read-about.html present, linked both ways.")
     return 0
 
 
@@ -2740,11 +2746,11 @@ def _run_update_index(city: str) -> int:
         fails.append("Step 13: country missing from Tipping-Guide.html")
     print()
 
-    # ── Step 14: Read About story page ────────────────────────────────────────
-    print("Step 14 — Read About story page")
+    # ── Step 14: Read About page ────────────────────────────────────────
+    print("Step 14 — Read About page")
     rc14 = _check_guide_story_page(guide_path)
     if rc14 != 0:
-        fails.append("Step 14: {slug}-story.html missing, or not linked both ways")
+        fails.append("Step 14: {slug}-read-about.html missing, or not linked both ways")
     print()
 
     # ── Summary ────────────────────────────────────────────────────────────────
@@ -2760,16 +2766,20 @@ def _run_update_index(city: str) -> int:
     print(f"✅  UPDATE-INDEX — all 13 steps complete for {city}.")
     print(f"    Guide is ready to ship.\n")
 
-    # ── Sync Travel Tracker ─────────────────────────────────────────────────────
-    print("Syncing Travel-Tracker.html…")
-    try:
-        import importlib.util as _ilu
-        _spec = _ilu.spec_from_file_location("sync_tracker", BRAIN_DIR / "scripts" / "sync_tracker.py")
-        _mod  = _ilu.module_from_spec(_spec)
-        _spec.loader.exec_module(_mod)
-        _mod.sync()
-    except Exception as _e:
-        print(f"  ⚠  Travel-Tracker sync failed: {_e}", file=sys.stderr)
+    # ── Sync the two Brain-side status trackers from the index ──────────────────
+    # Both are GENERATED from Guides-Index.html's data-status — the single source
+    # of truth — so a newly-shipped guide (always data-status="want") lands in both
+    # as want automatically and neither can drift. Best-effort: never blocks ship.
+    print("Syncing status trackers (Travel-Tracker.html + Status Dots)…")
+    for _script, _fn in (("sync_tracker.py", "sync"), ("build_status_dots.py", "build")):
+        try:
+            import importlib.util as _ilu
+            _spec = _ilu.spec_from_file_location(_script[:-3], BRAIN_DIR / "scripts" / _script)
+            _mod  = _ilu.module_from_spec(_spec)
+            _spec.loader.exec_module(_mod)
+            getattr(_mod, _fn)()
+        except Exception as _e:
+            print(f"  ⚠  {_script} failed: {_e}", file=sys.stderr)
 
     return 0
 
@@ -3191,7 +3201,7 @@ def main() -> int:
         if _check_guide_in_tipping(guide_p) != 0:
             _cov_fails.append("Tipping-Guide.html — country entry missing")
         if _check_guide_story_page(guide_p) != 0:
-            _cov_fails.append("Read About story page — {slug}-story.html missing or not linked")
+            _cov_fails.append("Read About page — {slug}-read-about.html missing or not linked")
         if _cov_fails:
             print("\n🚫  SHIP BLOCKED — coverage gap(s):")
             for _f in _cov_fails:
@@ -3239,18 +3249,9 @@ def main() -> int:
                   file=sys.stderr)
         # ──────────────────────────────────────────────────────────────────────
 
-        # ── home page hero stats (added 2026-06-22) ───────────────────────────
-        # Refresh the four stat tiles on Travel-Website/index.html (Cities /
-        # Places mapped / Countries / Continents) + the City Guides "N destinations"
-        # sub-line from the just-rebuilt search index + guides_index, so the landing
-        # page tracks the guide set automatically. Runs AFTER build_search_index so
-        # Places (sum of stops) includes the new guide. Best-effort — never blocks.
-        try:
-            print("\n▶ Refreshing home page hero stats…")
-            _run("build_home_stats.py", [])
-        except Exception as _e:  # noqa: BLE001 — never let home stats break a ship
-            print(f"  ⚠️  home stats refresh skipped ({_e}). "
-                  f"Run: python3 Brain/scripts/build_home_stats.py", file=sys.stderr)
+        # ── build_home_stats RETIRED 2026-07-10 ─────────────────────────────
+        # index.html is now a redirect stub → Guides-Index.html; the old stat
+        # tiles no longer exist. build_home_stats.py is no longer called.
         # ──────────────────────────────────────────────────────────────────────
 
         # ── whole-index coverage audits (wired 2026-06-21) ────────────────────

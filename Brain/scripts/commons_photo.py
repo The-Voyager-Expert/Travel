@@ -91,7 +91,7 @@ def resolve(filename: str, width: int = 800) -> dict:
         "format": "json",
         "titles": title,
         "prop": "imageinfo",
-        "iiprop": "url|size|mime",
+        "iiprop": "url|size|mime|extmetadata",
         "iiurlwidth": str(width),
     }
     try:
@@ -124,6 +124,9 @@ def resolve(filename: str, width: int = 800) -> dict:
     info = info_list[0]
 
     raw_thumb = info.get("thumburl")
+    ext = info.get("extmetadata", {})
+    license_short = ext.get("LicenseShortName", {}).get("value", "")
+    license_url = ext.get("LicenseUrl", {}).get("value", "")
     return {
         "ok": True,
         "title": page.get("title", title),
@@ -136,6 +139,8 @@ def resolve(filename: str, width: int = 800) -> dict:
         "orig_width": info.get("width"),
         "orig_height": info.get("height"),
         "mime": info.get("mime"),
+        "license": license_short,
+        "license_url": license_url,
         "error": None,
     }
 
@@ -228,6 +233,8 @@ def main() -> int:
                     page_url=result.get("page_url"),
                     width=args.width,
                     height=new_h,
+                    license=result.get("license", ""),
+                    license_url=result.get("license_url", ""),
                 )
             except Exception as _pe:
                 print(

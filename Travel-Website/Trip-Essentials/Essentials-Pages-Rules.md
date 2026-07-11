@@ -6,20 +6,40 @@ How the Trip Essentials pages behave. Covers the in-page search and the no-resul
 
 ## Pages with a search box
 
-Seven pages carry an in-page search box:
+Twenty-seven standalone pages carry an in-page search box, plus all 33 Best-of pages share one:
 
 | Page | Searches over | Section/grouping it collapses |
 |------|---------------|-------------------------------|
-| `Trips.html` | trip cards | month dividers |
-| `Plug Adapter/Plug Adapter Guide.html` | index rows + country blocks | region sections + the index table |
+| `Plug Adapter/Plug-Adapter-Guide.html` | index rows + country blocks | region sections + the index table |
 | `Currency-Guide.html` | index rows + country blocks | region sections + the index table |
-| `Lounges US.html` | airport cards | group headers |
-| `Lounges Europe.html` | airport cards inside country blocks | country blocks |
-| `Delta Routes SEA.html` | destination cards | sections (also has tier-pill filters) |
-| `Delta Routes Full.html` | destination cards | hub sections + the cross-hub table |
+| `Lounges-US.html` | airport cards | group headers |
+| `Lounges-Europe.html` | airport cards inside country blocks | country blocks |
+| `Delta-Routes-SEA.html` | destination cards | sections (also has tier-pill filters) |
+| `Delta-Routes-Full.html` | destination cards | hub sections + the cross-hub table |
 | `Guide-Days-Coverage.html` | city pills (by name) | tier sections (collapses non-matching tiers) |
+| `Asia-Stats.html` | country rows | stat sections |
+| `Baggage.html` | airline rows | carrier groups |
+| `Budget-Guide.html` | city entries | budget tiers |
+| `Cards-ATM.html` | card/country/topic entries | topic sections |
+| `Caribbean-Stats.html` | island rows | stat sections |
+| `City-Transit-Cards.html` | transit card rows | city groups |
+| `European-Train-Guide.html` | operator/country/route entries | operator sections |
+| `Europe-Stats.html` | country rows | stat sections |
+| `Pickleball.html` | city entries | state/region sections |
+| `Safety-Guide.html` | city rows | safety-level sections |
+| `SIM-Cards.html` | provider/country entries | region sections |
+| `South-America-Stats.html` | country rows | stat sections |
+| `Stats-Across-Canada.html` | city rows | stat sections |
+| `Stats-Across-US.html` | state/city rows | stat sections |
+| `Tap-Water.html` | region/country entries | region sections |
+| `Time-Zones.html` | city/country entries | timezone groups |
+| `Tipping-Guide.html` | country/city entries | region sections |
+| `Trusted-Traveler.html` | airport rows | program sections |
+| `Vaccines.html` | vaccine/destination entries | vaccine sections |
+| `Visas.html` | country rows | region sections |
+| All 33 `Best-*.html` pages | place cards (by name/tag/location) | section labels |
 
-`Travel Packing.html` has no search box.
+`Trips.html` and `Travel Packing.html` have no search box.
 
 ## Search behaviour
 
@@ -128,11 +148,11 @@ Additionally, each guide HTML file itself must carry a silent `<!-- transit-card
 
 ## Best-of pages — CSS standard (LOCKED)
 
-All 29 pages in "The Best of" sidebar section are named `Best-*.html` and share ONE CSS block, living once in `Travel-Website/assets/web-travel-style.css` (consolidated out of 29 duplicated inline `<style>` blocks 2026-07-05, per the SHARED CSS ONLY rule — see § Active/selected pill colour below). No page has its own inline `<style>` block for these classes — `check_best_of_css_standard` hard-fails if one reappears. The 4 that once carried non-`Best-*` filenames (Safari, Wonders of the World, US National Parks, National Parks by Country) were renamed to `Best-*.html` 2026-07-05 — there is now zero distinction between any of the 29 guides.
+All 33 pages in "The Best of" sidebar section are named `Best-*.html` and share ONE CSS block, living once in `Travel-Website/assets/web-travel-style.css` (consolidated out of 29 duplicated inline `<style>` blocks 2026-07-05, per the SHARED CSS ONLY rule — see § Active/selected pill colour below). No page has its own inline `<style>` block for these classes — `check_best_of_css_standard` hard-fails if one reappears. The 4 that once carried non-`Best-*` filenames (Safari, Wonders of the World, US National Parks, National Parks by Country) were renamed to `Best-*.html` 2026-07-05 — there is now zero distinction between any of the 29 guides.
 
-**Class prefix — `best-of-` (renamed from the legacy `sf-`/`np-` prefixes 2026-07-04/05).** A `sf-` or `np-` prefixed class reappearing anywhere in one of these 29 pages is drift — it means an old template (icons, wrapper divs, booking sections) crept back in. The validator hard-fails on either legacy prefix.
+**Class prefix — `best-of-` (renamed from the legacy `sf-`/`np-` prefixes 2026-07-04/05).** A `sf-` or `np-` prefixed class reappearing anywhere in one of these 33 pages is drift — it means an old template (icons, wrapper divs, booking sections) crept back in. The validator hard-fails on either legacy prefix.
 
-**One uniform card format on all 29 pages — no exceptions, no tiers.** Every place card on every page is exactly `.best-of-name` (plain text) / `.best-of-tag` / `.best-of-meta` / `.best-of-desc` (a short 2-line summary of the place) / `.best-of-links` (a row of `.best-of-link` pills — Guide + Wikipedia + official/booking resources as available). All 29 are the same type and level of guide, all named `Best-*.html`. No name-anchor wrappers, no inline `style=`. All 29 pages share identical `.best-of-section-label`, `.best-of-card`, `.best-of-name`, `.best-of-tag`, `.best-of-meta`, `.best-of-desc`, `.best-of-links`, `.best-of-link`.
+**One uniform card format on all 33 pages — no exceptions, no tiers.** Every place card on every page is exactly `.best-of-name` (plain text) / `.best-of-tag` / `.best-of-meta` / `.best-of-desc` (a short 2-line summary of the place) / `.best-of-links` (a row of `.best-of-link` pills — Guide + Wikipedia + official/booking resources as available). All 29 are the same type and level of guide, all named `Best-*.html`. No name-anchor wrappers, no inline `style=`. All 33 pages share identical `.best-of-section-label`, `.best-of-card`, `.best-of-name`, `.best-of-tag`, `.best-of-meta`, `.best-of-desc`, `.best-of-links`, `.best-of-link`.
 
 **⚠️ `.best-of-desc` is MANDATORY on every place card — never strip it (LOCKED 2026-07-06).** Every card on a place page carries a summary; removing summaries to go "minimal" is drift, not a cleanup. `check_best_of_css_standard` **hard-fails** any place page whose `.best-of-desc` count is below its `.best-of-card` count. The ONLY exemption is `Best-Of-Index.html`, whose category cards link to other pages rather than a place and carry no summary. This reverses the short-lived "no descriptions" lock of 2026-07-05, which was a miscommunication — do not reintroduce it.
 
@@ -157,7 +177,7 @@ All 29 pages in "The Best of" sidebar section are named `Best-*.html` and share 
 
 **Card summary** (`.best-of-desc`) — **MANDATORY, one per place card, never removed:** 13px / `var(--text)` / `line-height: 1.5` — a factual couple of lines saying what the place is and why it's notable. Plain prose: no emoji, no money symbols, no invented figures. Sits **between `.best-of-meta` and `.best-of-links`** — it carries `margin-top: auto` **and `margin-bottom: auto`** (with `.best-of-desc + .best-of-links { margin-top: 0 }`), so the free space splits evenly above and below it: the summary is **vertically centered** between the meta stats and the bottom-pinned link row. When a new place card is added to any Best-of page, it MUST include a summary — a card without one hard-fails `check_best_of_css_standard`.
 
-**Allowed card classes — identical on all 29 pages.** A place card contains ONLY `.best-of-name`, `.best-of-tag`, `.best-of-desc`, `.best-of-meta`, and a `.best-of-links` block of `.best-of-link` pills — directly inside `.best-of-card`. The `.best-of-desc` summary is required on every place card (see above). The **name is plain text** (never wraps an `<a>`); the guide link is a pill inside `.best-of-links`, not the name. No inline `style=`, no emoji icon spans, no `best-of-card-head` wrapper, no top-of-page "resources" grids. `check_best_of_css_standard` hard-fails on any stray class, a name-anchor, an inline `style=`, or a place card missing its `.best-of-desc` summary. Guide pills must point at a guide file that exists (version-drifted links like `rome_v2.html` when only `rome_v1.html` exists are dropped/repointed on restore).
+**Allowed card classes — identical on all 33 pages.** A place card contains ONLY `.best-of-name`, `.best-of-tag`, `.best-of-desc`, `.best-of-meta`, and a `.best-of-links` block of `.best-of-link` pills — directly inside `.best-of-card`. The `.best-of-desc` summary is required on every place card (see above). The **name is plain text** (never wraps an `<a>`); the guide link is a pill inside `.best-of-links`, not the name. No inline `style=`, no emoji icon spans, no `best-of-card-head` wrapper, no top-of-page "resources" grids. `check_best_of_css_standard` hard-fails on any stray class, a name-anchor, an inline `style=`, or a place card missing its `.best-of-desc` summary. Guide pills must point at a guide file that exists (version-drifted links like `rome_v2.html` when only `rome_v1.html` exists are dropped/repointed on restore).
 
 ---
-*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22. `data-guide` attribute convention + guide HTML transit-card comment documented 2026-06-22. Best-of pages renamed `sf-` → `best-of-` prefix and locked to minimal card content 2026-07-04. Extended to 4 more sidebar pages (Safari Guide, Wonders of the World, US National Parks, National Parks by Country) 2026-07-05 — same visual standard, descriptions/links kept, icons removed. CSS consolidated from 29 duplicated inline blocks into one shared block in `web-travel-style.css` 2026-07-05. Per-card links (`.best-of-links`/`.best-of-link`) restored across all 25 `Best-*.html` pages 2026-07-05 — the prior "minimal, name/tag/meta only" lock was a miscommunication. Format then unified across all 29 pages 2026-07-05: descriptions removed from the 4 extended pages, name-anchors flattened to plain text with the guide link moved into `.best-of-links`, inline `style=` removed — one identical card format everywhere, no exceptions. The 4 legacy non-`Best-*` filenames (Safari-Guide, Wonders-of-the-World, US-National-Parks, National-Parks-World) were renamed to `Best-Safari.html`, `Best-Wonders-of-the-World.html`, `Best-US-National-Parks.html`, `Best-National-Parks-by-Country.html` 2026-07-05 — zero distinction across all 29 guides; the validator now globs `Best-*.html` with no special-cased list. Separator lines removed 2026-07-05: section-label bottom border and the meta/links top borders inside cards — the validator now hard-fails if any of them reappear (only the card box outline + gold left-stripe remain). Per-card `.best-of-desc` summaries restored 2026-07-05 — every place card carries a factual couple-of-lines summary (13px/`var(--text)`/1.5), placed between `.best-of-meta` and `.best-of-links` and pinned directly above the link row. Made **mandatory + hard-enforced 2026-07-06**: `check_best_of_css_standard` fails any place page whose `.best-of-desc` count is below its `.best-of-card` count, so summaries can never be stripped again (only `Best-Of-Index.html` is exempt).*
+*Added 2026-05-29. Currency Guide section added 2026-06-14. Banner + pill colour rules added 2026-06-19. Title-banner LOCKED spec, margins, filenames + new-page checklist added 2026-06-21 (banner h1 size/colour/weight, emoji, body/`.wrap` gutter, and filename-space checks now enforced by `brain_check`). Pickleball bar color locked yellow 2026-06-22. `data-guide` attribute convention + guide HTML transit-card comment documented 2026-06-22. Best-of pages renamed `sf-` → `best-of-` prefix and locked to minimal card content 2026-07-04. Extended to 4 more sidebar pages (Safari Guide, Wonders of the World, US National Parks, National Parks by Country) 2026-07-05 — same visual standard, descriptions/links kept, icons removed. CSS consolidated from 29 duplicated inline blocks into one shared block in `web-travel-style.css` 2026-07-05. Per-card links (`.best-of-links`/`.best-of-link`) restored across all 25 `Best-*.html` pages 2026-07-05 — the prior "minimal, name/tag/meta only" lock was a miscommunication. Format then unified across all 33 pages 2026-07-05: descriptions removed from the 4 extended pages, name-anchors flattened to plain text with the guide link moved into `.best-of-links`, inline `style=` removed — one identical card format everywhere, no exceptions. The 4 legacy non-`Best-*` filenames (Safari-Guide, Wonders-of-the-World, US-National-Parks, National-Parks-World) were renamed to `Best-Safari.html`, `Best-Wonders-of-the-World.html`, `Best-US-National-Parks.html`, `Best-National-Parks-by-Country.html` 2026-07-05 — zero distinction across all 29 guides; the validator now globs `Best-*.html` with no special-cased list. Separator lines removed 2026-07-05: section-label bottom border and the meta/links top borders inside cards — the validator now hard-fails if any of them reappear (only the card box outline + gold left-stripe remain). Per-card `.best-of-desc` summaries restored 2026-07-05 — every place card carries a factual couple-of-lines summary (13px/`var(--text)`/1.5), placed between `.best-of-meta` and `.best-of-links` and pinned directly above the link row. Made **mandatory + hard-enforced 2026-07-06**: `check_best_of_css_standard` fails any place page whose `.best-of-desc` count is below its `.best-of-card` count, so summaries can never be stripped again (only `Best-Of-Index.html` is exempt).*

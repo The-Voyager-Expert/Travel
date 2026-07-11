@@ -177,11 +177,11 @@ SURFACES = {
     "resources": "also-on-this-site links",
     "delta":     "Delta Routes card (Step 10)",
     "timezones": "Time-Zones.html (Step 9)",
-    "story":     "Read About story page",
+    "story":     "Read About page",
 }
 
 # Surfaces reported but not counted toward the exit code, while a backfill runs.
-# Story pages became mandatory on 2026-07-10; guides that shipped before that
+# Read About pages became mandatory on 2026-07-10; guides that shipped before that
 # acquire one the next time they are validated (validate_itinerary.py hard-fails
 # without it, so a re-stamp is impossible until the page exists). Once the
 # backfill queue is empty, delete this set — the row becomes a hard surface.
@@ -478,11 +478,11 @@ def run_sweep() -> dict[str, list[str]]:
         if tz_html and folder not in tz_guide_folders:
             missing["timezones"].append(folder)
 
-        # Read About story page — {slug}-story.html beside the guide, linked both ways
+        # Read About page — {slug}-read-about.html beside the guide, linked both ways
         slug = re.sub(r"_v\d+\.html$", "", _html.name)
-        story_path = _html.parent / f"{slug}-story.html"
+        story_path = _html.parent / f"{slug}-read-about.html"
         if (not story_path.is_file()
-                or f"{slug}-story.html" not in guide_html
+                or f"{slug}-read-about.html" not in guide_html
                 or _html.name not in _read(story_path)):
             missing["story"].append(folder)
 
