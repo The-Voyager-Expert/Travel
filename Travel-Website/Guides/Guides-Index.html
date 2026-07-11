@@ -51,8 +51,15 @@
 </div><!-- /lang-panel -->
   </div>
   <div id="browse-seg" class="seg-toggle" role="group" aria-label="Group destinations by">
-    <button class="disc-btn seg-btn" id="btn-continent-group" data-view="continent">🌐 Continent</button>
     <button class="disc-btn seg-btn" id="view-flights" data-view="flights">🛫 Flight time</button>
+  </div>
+  <div class="days-jump" id="continentJump">
+    <button type="button" class="days-jump-toggle disc-btn" id="continentJumpToggle" aria-expanded="false" aria-controls="continentJumpList">
+      <span id="continentJumpLabel">🌐 Continent</span><span class="disc-caret chev">▾</span>
+    </button>
+    <div class="days-jump-list" id="continentJumpList" role="menu">
+      <!-- options injected from the .country sections via slug→continent map -->
+    </div>
   </div>
   <div class="days-jump" id="daysJump">
     <button type="button" class="days-jump-toggle disc-btn" id="daysJumpToggle" aria-expanded="false" aria-controls="daysJumpList">
@@ -1593,7 +1600,7 @@ window._giStatusFilter = 'all';
           c.classList.toggle('match-alias', match && q !== '' && !textMatch && (aliasMatch || fuzzyMatch));
           /* a card only counts toward its section + the result tally if it also
              survives the season + theme filters (which hide via !important class) */
-          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('country-hide');
+          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('country-hide') && !c.classList.contains('continent-hide');
           if (visible) { any = true; shown++; }
         });
         r.style.display = any ? '' : 'none';
@@ -2847,7 +2854,7 @@ window._giStatusFilter = 'all';
   }
   window._applyDaysFilter = applyDaysFilter;
 
-  function openMenu()  { if (window._setBrowseView) window._setBrowseView('country'); if (window._collapseFacetPanels) window._collapseFacetPanels(); if (window._closeCountryMenu) window._closeCountryMenu(); if (window._closeBestofMenu) window._closeBestofMenu(); jump.classList.add('open');  toggle.setAttribute('aria-expanded', 'true');  }
+  function openMenu()  { if (window._setBrowseView) window._setBrowseView('country'); if (window._collapseFacetPanels) window._collapseFacetPanels(); if (window._closeCountryMenu) window._closeCountryMenu(); if (window._closeBestofMenu) window._closeBestofMenu(); if (window._closeContinentMenu) window._closeContinentMenu(); jump.classList.add('open');  toggle.setAttribute('aria-expanded', 'true');  }
   function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
   window._closeDaysMenu = closeMenu;
   toggle.addEventListener('click', function () {
@@ -2921,7 +2928,7 @@ window._giStatusFilter = 'all';
   }
   window._applyCountryFilter = applyCountryFilter;
 
-  function openMenu()  { if (window._setBrowseView) window._setBrowseView('country'); if (window._collapseFacetPanels) window._collapseFacetPanels(); if (window._closeDaysMenu) window._closeDaysMenu(); if (window._closeBestofMenu) window._closeBestofMenu(); jump.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); }
+  function openMenu()  { if (window._setBrowseView) window._setBrowseView('country'); if (window._collapseFacetPanels) window._collapseFacetPanels(); if (window._closeDaysMenu) window._closeDaysMenu(); if (window._closeBestofMenu) window._closeBestofMenu(); if (window._closeContinentMenu) window._closeContinentMenu(); jump.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); }
   function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
   window._closeCountryMenu = closeMenu;
   toggle.addEventListener('click', function () {
@@ -2965,6 +2972,7 @@ window._giStatusFilter = 'all';
     if (window._collapseFacetPanels) window._collapseFacetPanels();
     if (window._closeDaysMenu) window._closeDaysMenu();
     if (window._closeCountryMenu) window._closeCountryMenu();
+    if (window._closeContinentMenu) window._closeContinentMenu();
     jump.classList.add('open');
     toggle.setAttribute('aria-expanded', 'true');
   }
@@ -2978,10 +2986,18 @@ window._giStatusFilter = 'all';
 </script>
 
 <script>
-/* ══ Continent grouping toggle ══ */
+/* ══ Continent — filter dropdown ══
+   Picks a continent and shows only its guides. It FILTERS (hides the rest) —
+   it does NOT regroup or reorder; the list stays in its normal country order.
+   Options are built from the .country sections via a slug→continent map, so a
+   new guide's country appears automatically. Single-select or clear. ══ */
 (function () {
-  var mosaic = document.querySelector('.mosaic');
-  if (!mosaic) return;
+  var jump   = document.getElementById('continentJump');
+  var toggle  = document.getElementById('continentJumpToggle');
+  var label   = document.getElementById('continentJumpLabel');
+  var list    = document.getElementById('continentJumpList');
+  var cards   = [].slice.call(document.querySelectorAll('.dest-card'));
+  if (!(jump && toggle && label && list)) return;
 
   var CONTINENT = {
     'canada':'North America','united-states':'North America',
@@ -3002,55 +3018,74 @@ window._giStatusFilter = 'all';
     'australia':'Oceania','new-zealand':'Oceania',
     'morocco':'Africa',
   };
-
   var CONTINENT_ORDER = ['Europe','Asia','North America','South America','Oceania','Africa'];
   var CONTINENT_ICON  = {
     'Europe':'🌍','Asia':'🌏','North America':'🌎','South America':'🌎','Oceania':'🌏','Africa':'🌍'
   };
 
-  var active = false;
-  var origCountries = [].slice.call(mosaic.querySelectorAll('.country'));
-  var injectedHeaders = [];
+  var active = null; /* continent name — or null for no filter */
 
-  function enterContinentMode() {
-    var groups = {};
-    CONTINENT_ORDER.forEach(function (c) { groups[c] = []; });
-    origCountries.forEach(function (el) {
-      var slug = el.getAttribute('data-country');
-      var c = CONTINENT[slug] || 'Other';
-      if (!groups[c]) groups[c] = [];
-      groups[c].push(el);
-    });
-    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
-    injectedHeaders = [];
-    CONTINENT_ORDER.forEach(function (c) {
-      var els = groups[c];
-      if (!els || !els.length) return;
-      var hdr = document.createElement('div');
-      hdr.className = 'region-header';
-      hdr.textContent = (CONTINENT_ICON[c] || '') + ' ' + c;
-      mosaic.appendChild(hdr);
-      injectedHeaders.push(hdr);
-      els.forEach(function (el) { mosaic.appendChild(el); });
-    });
+  /* Only list continents actually present among the guides on the page */
+  var present = {};
+  [].slice.call(document.querySelectorAll('.mosaic-wrap .country')).forEach(function (c) {
+    var cont = CONTINENT[c.getAttribute('data-country') || ''];
+    if (cont) present[cont] = true;
+  });
+
+  var html = '<button class="days-jump-item on" data-cont="all" role="menuitem">All continents</button>';
+  CONTINENT_ORDER.forEach(function (cont) {
+    if (!present[cont]) return;
+    html += '<button class="days-jump-item" data-cont="' + cont +
+            '" role="menuitem">' + (CONTINENT_ICON[cont] || '') + ' ' + cont + '</button>';
+  });
+  list.innerHTML = html;
+  var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
+
+  function cardContinent(card) {
+    var p = card.closest ? card.closest('.country') : null;
+    var slug = p ? (p.getAttribute('data-country') || '') : '';
+    return CONTINENT[slug] || '';
   }
-
-  function exitContinentMode() {
-    injectedHeaders.forEach(function (h) { h.parentNode && h.parentNode.removeChild(h); });
-    injectedHeaders = [];
-    origCountries.forEach(function (el) { el.parentNode && el.parentNode.removeChild(el); });
-    origCountries.forEach(function (el) { mosaic.appendChild(el); });
+  function applyContinentFilter() {
+    items.forEach(function (it) {
+      var v = it.dataset.cont;
+      it.classList.toggle('on', active === null ? v === 'all' : v === active);
+    });
+    label.textContent = active ? ((CONTINENT_ICON[active] || '') + ' ' + active) : '🌐 Continent';
+    cards.forEach(function (c) {
+      if (active === null) { c.classList.remove('continent-hide'); return; }
+      c.classList.toggle('continent-hide', cardContinent(c) !== active);
+    });
+    /* Recompute panel/section visibility through the shared search pass */
+    var inp = document.getElementById('guide-search');
+    if (inp) { var e = document.createEvent('Event'); e.initEvent('input', true, true); inp.dispatchEvent(e); }
   }
+  window._applyContinentFilter = applyContinentFilter;
 
-  window._continentMode = function (on) {
-    if (on === active) return;
-    active = on;
-    if (active) enterContinentMode(); else exitContinentMode();
-  };
+  function openMenu()  {
+    if (window._setBrowseView) window._setBrowseView('country'); /* leave flight-time view */
+    if (window._collapseFacetPanels) window._collapseFacetPanels();
+    if (window._closeDaysMenu) window._closeDaysMenu();
+    if (window._closeCountryMenu) window._closeCountryMenu();
+    if (window._closeBestofMenu) window._closeBestofMenu(); if (window._closeContinentMenu) window._closeContinentMenu();
+    jump.classList.add('open'); toggle.setAttribute('aria-expanded', 'true');
+  }
+  function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+  window._closeContinentMenu = closeMenu;
+  toggle.addEventListener('click', function () {
+    jump.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  items.forEach(function (it) {
+    it.addEventListener('click', function () {
+      active = (it.dataset.cont === 'all') ? null : it.dataset.cont;
+      applyContinentFilter();
+      closeMenu();
+    });
+  });
+  document.addEventListener('click', function (e) { if (!jump.contains(e.target)) closeMenu(); }, true);
 }());
 
-/* ══ Browse-by view pills — single-select: Country / Region / Continent / Flight time ══ */
+/* ══ Browse-by view pills — single-select: Flight time (Country is default) ══ */
 (function () {
   var seg = document.getElementById('browse-seg');
   if (!seg) return;
@@ -3059,18 +3094,13 @@ window._giStatusFilter = 'all';
     btns.forEach(function (b) { b.classList.toggle('on', b.dataset.view === view); });
   }
   window._setBrowseView = function (view) {
-    if (view === 'continent') {
-      if (window._flightsMode) window._flightsMode(false);
-      if (window._continentMode) window._continentMode(true);
-    } else if (view === 'flights') {
-      if (window._continentMode) window._continentMode(false);
+    if (view === 'flights') {
       if (window._flightsMode) window._flightsMode(true);
     } else {
-      if (window._continentMode) window._continentMode(false);
       if (window._flightsMode) window._flightsMode(false);
     }
-    /* Country is the default/normal state — no pill lit. Only alternate views
-       (continent / flights) show as actively selected. */
+    /* Country is the default/normal state — no pill lit. Only the flight-time
+       view shows as actively selected. */
     setActive(view === 'country' ? '' : view);
   };
   btns.forEach(function (b) {
@@ -3081,7 +3111,7 @@ window._giStatusFilter = 'all';
       if (window._collapseFacetPanels) window._collapseFacetPanels();
       if (window._closeDaysMenu) window._closeDaysMenu();
       if (window._closeCountryMenu) window._closeCountryMenu();
-      if (window._closeBestofMenu) window._closeBestofMenu();
+      if (window._closeBestofMenu) window._closeBestofMenu(); if (window._closeContinentMenu) window._closeContinentMenu();
       /* Toggle: clicking the already-active view returns to the default
          country order (the normal, always-ordered layout). */
       var next = b.classList.contains('on') ? 'country' : b.dataset.view;
@@ -3127,7 +3157,7 @@ window._giStatusFilter = 'all';
     closeAll();
     if (window._closeDaysMenu) window._closeDaysMenu();
     if (window._closeCountryMenu) window._closeCountryMenu();
-    if (window._closeBestofMenu) window._closeBestofMenu();
+    if (window._closeBestofMenu) window._closeBestofMenu(); if (window._closeContinentMenu) window._closeContinentMenu();
     if (opening) {
       if (window._exitCompareMode) window._exitCompareMode();
       if (target.reset && window._setBrowseView) window._setBrowseView('country');
