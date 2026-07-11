@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Before You Go</title>
+<style>
+.byg-wrap { max-width: 520px; margin: 10px auto 0; padding: 0 14px; }
+.byg-pick { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 12px; padding: 16px 18px; box-shadow: 0 2px 12px rgba(92,61,17,0.07);
+  margin-bottom: 18px; }
+.byg-label { font-size: var(--fs-label,11px); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted,#6a6660); margin-bottom: 7px; }
+.byg-select { width: 100%; font-family: var(--font); font-size: 15px; font-weight: 600;
+  color: var(--text,#1a1917); padding: 8px 10px; border: 1px solid var(--border2,#e6e2da);
+  border-radius: 6px; background: #fff; cursor: pointer; }
+.byg-month-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.byg-month-select { flex: 1; font-family: var(--font); font-size: 14px; color: var(--text,#1a1917);
+  padding: 7px 10px; border: 1px solid var(--border2,#e6e2da); border-radius: 6px;
+  background: #fff; cursor: pointer; }
+.byg-unit { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; }
+.byg-unit button { border: none; cursor: pointer; padding: 7px 11px; font-size: 12px; font-weight: 600;
+  font-family: var(--font); background: transparent; color: var(--muted,#6a6660); }
+.byg-unit button.on { background: #b85c2a; color: #fff; }
+.byg-empty { text-align: center; color: var(--muted,#6a6660); font-size: var(--fs-body,14px);
+  padding: 40px 10px; line-height: 1.6; }
+.byg-cards { display: flex; flex-direction: column; gap: 12px; }
+.byg-card { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 11px; padding: 14px 16px; box-shadow: 0 1px 6px rgba(92,61,17,0.05); }
+.byg-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.byg-card-icon { font-size: 18px; }
+.byg-card-title { font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text,#1a1917); }
+.byg-row { display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0; border-bottom: 1px solid var(--border2,#e6e2da); }
+.byg-row:last-child { border-bottom: none; }
+.byg-row-label { font-size: 12px; color: var(--muted,#6a6660); }
+.byg-row-value { font-size: 14px; font-weight: 600; color: var(--text,#1a1917); text-align: right; }
+.byg-temps { display: flex; gap: 16px; }
+.byg-hi { color: #a61c00; font-size: 22px; font-weight: 700; }
+.byg-lo { color: #3d5282; font-size: 22px; font-weight: 700; }
+.byg-rain-row { display: flex; gap: 14px; margin-top: 4px; }
+.byg-rain-val { font-size: 14px; font-weight: 700; color: #4a7c9b; }
+.byg-rain-lbl { font-size: 11px; color: var(--muted,#6a6660); }
+.byg-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px;
+  color: #3d3a32; padding: 6px 12px; border: 1px solid var(--border2,#e6e2da);
+  border-radius: 6px; background: #fff; text-decoration: none;
+  transition: border-color .15s, box-shadow .15s, transform .08s; margin-top: 8px; }
+.byg-link:hover { border-color: #b85c2a; box-shadow: 0 3px 10px rgba(184,92,42,.12); transform: translateY(-1px); }
+.byg-links-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.byg-safety-badge { display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.byg-safety-verylow { background: #e8f5e9; color: #2a6a2a; }
+.byg-safety-low { background: #e8f5e9; color: #2a6a2a; }
+.byg-safety-safe { background: #e8f5e9; color: #2a6a2a; }
+.byg-safety-verysafe { background: #c8e6c9; color: #1b5e20; }
+.byg-safety-moderate { background: #fff3e0; color: #e65100; }
+.byg-safety-caution { background: #fbe9e7; color: #bf360c; }
+.byg-cost-badge { display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-size: 12px; font-weight: 700; }
+.byg-cost-budget { background: #e8f5e9; color: #2a6a2a; }
+.byg-cost-moderate, .byg-cost-mid-range { background: #e3f2fd; color: #1565c0; }
+.byg-cost-expensive { background: #fff3e0; color: #e65100; }
+.byg-cost-premium, .byg-cost-luxury { background: #fce4ec; color: #ad1457; }
+.byg-strip { display: flex; align-items: flex-end; gap: 2px; height: 40px; margin-top: 8px; }
+.byg-bar { flex: 1; position: relative; height: 40px; }
+.byg-bar > span { position: absolute; left: 50%; transform: translateX(-50%); width: 5px; border-radius: 3px; }
+.byg-bar-label { font-size: 9px; color: var(--muted); text-align: center; margin-top: 2px; }
+.byg-chart-wrap { margin-top: 4px; }
+.byg-guide-link { display: block; text-align: center; margin-top: 14px; }
+.byg-guide-link a { display: inline-flex; align-items: center; gap: 6px; font-size: 14px;
+  font-weight: 600; color: #b85c2a; text-decoration: none; padding: 8px 18px;
+  border: 1.5px solid #b85c2a; border-radius: 8px;
+  transition: background .15s, color .15s; }
+.byg-guide-link a:hover { background: #b85c2a; color: #fff; }
+@media (max-width: 600px) {
+  .byg-wrap { padding: 0 10px; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=50">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="520"></div>
+<script src="../assets/toolbar.js?v=99"></script>
+<script src="../assets/weather.js?v=4"></script>
+
+<div class="byg-wrap">
+  <div class="site-header">
+    <h1 class="site-title">Before You Go</h1>
+  </div>
+
+  <div class="byg-pick">
+    <div class="byg-label">Where are you going?</div>
+    <select class="byg-select" id="byg-city"></select>
+    <div class="byg-month-row">
+      <div style="flex:1;">
+        <div class="byg-label">When?</div>
+        <select class="byg-month-select" id="byg-month"></select>
+      </div>
+      <div>
+        <div class="byg-label">Units</div>
+        <div class="byg-unit" id="byg-unit">
+          <button type="button" data-u="C">°C</button>
+          <button type="button" data-u="F">°F</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="byg-results"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var MONTHS = ['January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
+
+  function start() {
+    var CLIM = window.TravelClimate || {};
+    var keys = Object.keys(CLIM).filter(function (k) { return k !== '_generated' && k !== '_meta' && CLIM[k] && CLIM[k].hi; });
+    keys.sort(function (a, b) { return (CLIM[a].city || a).localeCompare(CLIM[b].city || b); });
+
+    var cityEl = document.getElementById('byg-city');
+    var monthEl = document.getElementById('byg-month');
+    var unitEl = document.getElementById('byg-unit');
+    var resultsEl = document.getElementById('byg-results');
+
+    function unit() { try { return localStorage.getItem('guideTempUnit') === 'F' ? 'F' : 'C'; } catch (e) { return 'C'; } }
+    function setUnit(u) { try { localStorage.setItem('guideTempUnit', u); } catch (e) {} }
+    function conv(c) { return unit() === 'F' ? Math.round(c * 9 / 5 + 32) : Math.round(c); }
+
+    var GUIDE_LINKS = {"Abu Dhabi":"../Guides/Abu-Dhabi/abu-dhabi_v1.html","Doha":"../Guides/Doha/doha_v1.html","Aix-en-Provence":"../Guides/Aix-en-Provence/aix-en-provence_v1.html","Alaska":"../Guides/Alaska/alaska_v1.html","Alesund":"../Guides/Alesund/alesund_v1.html","Amalfi":"../Guides/Amalfi/amalfi_v1.html","Amsterdam":"../Guides/Amsterdam/amsterdam_v1.html","Annecy":"../Guides/Annecy/annecy_v1.html","Arenal":"../Guides/Arenal/arenal_v1.html","Aruba":"../Guides/Aruba/aruba_v1.html","Manuel Antonio":"../Guides/Manuel-Antonio/manuel-antonio_v1.html","Athens":"../Guides/Athens/athens_v1.html","Atlanta":"../Guides/Atlanta/atlanta_v1.html","Austin":"../Guides/Austin/austin_v1.html","Azores":"../Guides/Azores/azores_v1.html","Bali":"../Guides/Bali/bali_v1.html","Bora-Bora":"../Guides/Bora-Bora/bora-bora_v1.html","The Bahamas":"../Guides/Bahamas/bahamas_v1.html","Bangkok":"../Guides/Bangkok/bangkok_v1.html","Barbados":"../Guides/Barbados/barbados_v1.html","Barcelona":"../Guides/Barcelona/barcelona_v1.html","Beijing":"../Guides/Beijing/beijing_v1.html","Bend":"../Guides/Bend/bend_v2.html","Bergen":"../Guides/Bergen/bergen_v1.html","Berlin":"../Guides/Berlin/berlin_v1.html","Hamburg":"../Guides/Hamburg/hamburg_v1.html","Hanoi":"../Guides/Hanoi/hanoi_v1.html","Hoi An":"../Guides/Hoi-An/hoi-an_v1.html","Big Island":"../Guides/Big-Island/big-island_v1.html","Bologna":"../Guides/Bologna/bologna_v1.html","Bordeaux":"../Guides/Bordeaux/bordeaux_v1.html","Boston":"../Guides/Boston/boston_v1.html","Boulder":"../Guides/Boulder/boulder_v1.html","Cape Cod":"../Guides/Cape-Cod/cape-cod_v1.html","Bruges":"../Guides/Bruges/bruges_v1.html","Brussels":"../Guides/Brussels/brussels_v1.html","Buenos Aires":"../Guides/Buenos-Aires/buenos-aires_v1.html","Cambridge":"../Guides/Cambridge/cambridge_v1.html","Cannes":"../Guides/Cannes/cannes_v1.html","Capri":"../Guides/Capri/capri_v1.html","Cascais":"../Guides/Cascais/cascais_v2.html","Cayman Islands":"../Guides/Cayman-Islands/cayman-islands_v1.html","Charlotte":"../Guides/Charlotte/charlotte_v1.html","Chicago":"../Guides/Chicago/chicago_v2.html","Columbia":"../Guides/Columbia/columbia_v1.html","Chongqing":"../Guides/Chongqing/chongqing_v1.html","Cinque Terre":"../Guides/Cinque-Terre/cinque-terre_v1.html","Colmar":"../Guides/Colmar/colmar_v1.html","San Jose Costa Rica":"../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html","Colombo":"../Guides/Colombo/colombo_v1.html","Copenhagen":"../Guides/Copenhagen/copenhagen_v1.html","Corfu":"../Guides/Corfu/corfu_v1.html","Curaçao":"../Guides/Curacao/curacao_v1.html","Curitiba":"../Guides/Curitiba/curitiba_v1.html","Cusco":"../Guides/Cusco/cusco_v1.html","Dallas":"../Guides/Dallas/dallas_v1.html","Denver":"../Guides/Denver/denver_v1.html","Dubai":"../Guides/Dubai/dubai_v1.html","Dublin":"../Guides/Dublin/dublin_v1.html","Dubrovnik":"../Guides/Dubrovnik/dubrovnik_v2.html","Edinburgh":"../Guides/Edinburgh/edinburgh_v1.html","Florence":"../Guides/Florence/florence_v1.html","Geneva":"../Guides/Geneva/geneva_v1.html","Glacier National Park":"../Guides/Glacier-National-Park/glacier-national-park_v2.html","Glasgow":"../Guides/Glasgow/glasgow_v1.html","Gothenburg":"../Guides/Gothenburg/gothenburg_v1.html","Helsinki":"../Guides/Helsinki/helsinki_v1.html","Hong Kong":"../Guides/Hong-Kong/hong-kong_v1.html","Budapest":"../Guides/Budapest/budapest_v1.html","Reykjavik":"../Guides/Reykjavik/reykjavik_v2.html","Istanbul":"../Guides/Istanbul/istanbul_v1.html","Florida Keys":"../Guides/Florida-Keys/florida-keys_v1.html","Kauai":"../Guides/Kauai/kauai_v1.html","Key West":"../Guides/KeyWest/keywest_v1.html","Kyoto":"../Guides/Kyoto/kyoto_v1.html","Lagos":"../Guides/Lagos/lagos_v1.html","Lake Como":"../Guides/Lake-Como/lake-como_v1.html","Lake Tahoe":"../Guides/Lake-Tahoe/lake-tahoe_v1.html","Lille":"../Guides/Lille/lille_v1.html","Lima":"../Guides/Lima/lima_v1.html","Lisbon":"../Guides/Lisbon/lisbon_v4.html","Ljubljana":"../Guides/Ljubljana/ljubljana_v1.html","London":"../Guides/London/london_v5.html","La Jolla":"../Guides/La-Jolla/la-jolla_v1.html","Los Angeles":"../Guides/Los-Angeles/los-angeles_v1.html","Los Cabos":"../Guides/Los-Cabos/los-cabos_v1.html","Lucerne":"../Guides/Lucerne/lucerne_v1.html","Luxembourg":"../Guides/Luxembourg/luxembourg_v1.html","Lyon":"../Guides/Lyon/lyon_v1.html","MachuPicchu":"../Guides/MachuPicchu/machupicchu_v1.html","Madeira":"../Guides/Madeira/madeira_v1.html","Madrid":"../Guides/Madrid/madrid_v1.html","Maldives":"../Guides/Maldives/maldives_v1.html","Malaga":"../Guides/Malaga/malaga_v1.html","Marktoberdorf":"../Guides/Marktoberdorf/marktoberdorf_v1.html","Marrakech":"../Guides/Marrakech/marrakech_v1.html","Marseille":"../Guides/Marseille/marseille_v1.html","Maui":"../Guides/Maui/maui_v1.html","Melbourne":"../Guides/Melbourne/melbourne_v1.html","Miami":"../Guides/Miami/miami_v1.html","Montevideo":"../Guides/Montevideo/montevideo_v1.html","Milan":"../Guides/Milan/milan_v1.html","Monaco":"../Guides/Monaco/monaco_v1.html","Montreal":"../Guides/Montreal/montreal_v1.html","Munich":"../Guides/Munich/munich_v2.html","Mykonos":"../Guides/Mykonos/mykonos_v1.html","Naples":"../Guides/Naples/naples_v1.html","Las Vegas":"../Guides/Las-Vegas/las-vegas_v1.html","Naples Florida":"../Guides/Naples-Florida/naples-florida_v1.html","Nashville":"../Guides/Nashville/nashville_v1.html","New Orleans":"../Guides/New-Orleans/new-orleans_v1.html","New York":"../Guides/New-York/new-york_v1.html","Nice":"../Guides/Nice/nice_v1.html","Oahu":"../Guides/Oahu/oahu_v1.html","Orcas Island":"../Guides/Orcas-Island/orcas-island_v1.html","Orlando":"../Guides/Orlando/orlando_v1.html","Osaka":"../Guides/Osaka/osaka_v1.html","Oslo":"../Guides/Oslo/oslo_v1.html","Oxford":"../Guides/Oxford/oxford_v1.html","Palm Desert":"../Guides/Palm-Desert/palm-desert_v1.html","Palo Alto":"../Guides/Palo-Alto/palo-alto_v6.html","Chiang Mai":"../Guides/Chiang-Mai/chiang-mai_v1.html","Palawan":"../Guides/Palawan/palawan_v1.html","Paris":"../Guides/Paris/paris_v7.html","Pasadena":"../Guides/Pasadena/pasadena_v5.html","Pensacola":"../Guides/Pensacola/pensacola_v1.html","Philadelphia":"../Guides/Philadelphia/philadelphia_v1.html","Phoenix":"../Guides/Phoenix/phoenix_v1.html","Phuket":"../Guides/Phuket/phuket_v1.html","Pisa":"../Guides/Pisa/pisa_v1.html","Portland":"../Guides/Portland/portland_v1.html","Petra":"../Guides/Petra/petra_v1.html","Porto":"../Guides/Porto/porto_v2.html","Lecce":"../Guides/Lecce/lecce_v1.html","Prague":"../Guides/Prague/prague_v1.html","Puerto Rico":"../Guides/Puerto-Rico/puerto-rico_v1.html","Quebec City":"../Guides/Quebec-City/quebec-city_v1.html","Queenstown":"../Guides/Queenstown/queenstown_v1.html","Aracaju":"../Guides/Aracaju/aracaju_v1.html","Rio de Janeiro":"../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html","Fortaleza":"../Guides/Fortaleza/fortaleza_v1.html","Natal":"../Guides/Natal/natal_v1.html","Olinda":"../Guides/Olinda/olinda_v1.html","Recife":"../Guides/Recife/recife_v1.html","Porto Alegre":"../Guides/Porto-Alegre/porto-alegre_v1.html","Salvador":"../Guides/Salvador/salvador_v1.html","Rome":"../Guides/Rome/rome_v1.html","Sardinia":"../Guides/Sardinia/sardinia_v1.html","Salzburg":"../Guides/Salzburg/salzburg_v1.html","San Diego":"../Guides/San-Diego/san-diego_v1.html","Sedona":"../Guides/Sedona/sedona_v1.html","San Francisco":"../Guides/San-Francisco/san-francisco_v3.html","San Jose":"../Guides/San-Jose/san-jose_v1.html","San Juan Island":"../Guides/San-Juan-Island/san-juan-island_v1.html","Santa Barbara":"../Guides/Santa-Barbara/santa-barbara_v1.html","Cairo":"../Guides/Cairo/cairo_v2.html","Carmel-by-the-Sea":"../Guides/Carmel-by-the-Sea/carmel-by-the-sea_v1.html","Malibu":"../Guides/Malibu/malibu_v1.html","Napa":"../Guides/Napa/napa_v1.html","Santa Cruz":"../Guides/Santa-Cruz/santa-cruz_v1.html","Santa Monica":"../Guides/Santa-Monica/santa-monica_v1.html","San Sebastian":"../Guides/San-Sebastian/san-sebastian_v1.html","Santiago":"../Guides/Santiago/santiago_v1.html","Santorini":"../Guides/Santorini/santorini_v1.html","Scottsdale":"../Guides/Scottsdale/scottsdale_v1.html","Sarasota":"../Guides/Sarasota/sarasota_v1.html","Seattle":"../Guides/Seattle/seattle_v1.html","Seoul":"../Guides/Seoul/seoul_v1.html","Seville":"../Guides/Seville/seville_v1.html","Shanghai":"../Guides/Shanghai/shanghai_v1.html","Sicily":"../Guides/Sicily/sicily_v1.html","Siena":"../Guides/Siena/siena_v1.html","Singapore":"../Guides/Singapore/singapore_v3.html","Sint Maarten":"../Guides/Sint-Maarten/sint-maarten_v1.html","Sintra":"../Guides/Sintra/sintra_v2.html","Sorrento":"../Guides/Sorrento/sorrento_v1.html","Split":"../Guides/Split/split_v1.html","Stockholm":"../Guides/Stockholm/stockholm_v1.html","Strasbourg":"../Guides/Strasbourg/strasbourg_v1.html","Stuttgart":"../Guides/Stuttgart/stuttgart_v1.html","Sydney":"../Guides/Sydney/sydney_v2.html","Taipei":"../Guides/Taipei/taipei_v1.html","Tallinn":"../Guides/Tallinn/tallinn_v1.html","Tokyo":"../Guides/Tokyo/tokyo_v1.html","Toledo":"../Guides/Toledo/toledo_v1.html","Toronto":"../Guides/Toronto/toronto_v1.html","Tromso":"../Guides/Tromso/tromso_v1.html","Turks and Caicos":"../Guides/Turks-and-Caicos/turks-and-caicos_v1.html","Turin":"../Guides/Turin/turin_v14.html","Vancouver":"../Guides/Vancouver/vancouver_v1.html","Victoria":"../Guides/Victoria/victoria_v1.html","Venice":"../Guides/Venice/venice_v1.html","Verona":"../Guides/Verona/verona_v1.html","Vienna":"../Guides/Vienna/vienna_v1.html","Virgin Islands":"../Guides/Virgin-Islands/virgin-islands_v1.html","Washington DC":"../Guides/Washington-DC/washington-dc_v1.html","Wellington":"../Guides/Wellington/wellington_v1.html","Whistler":"../Guides/Whistler/whistler_v1.html","Yellowstone":"../Guides/Yellowstone/yellowstone_v1.html","Zhangjiajie":"../Guides/Zhangjiajie/zhangjiajie_v1.html","Zurich":"../Guides/Zurich/zurich_v1.html","Florianópolis":"../Guides/Florianopolis/florianopolis_v1.html","Foz do Iguaçu":"../Guides/Foz-do-Igua%C3%A7u/foz-do-iguacu_v2.html","Paro":"../Guides/Bhutan/bhutan_v1.html","Pokhara":"../Guides/Pokhara/pokhara_v1.html","João Pessoa":"../Guides/Jo%C3%A3o-Pessoa/joao-pessoa_v1.html","Kraków":"../Guides/Krak%C3%B3w/krakow_v1.html","Maceió":"../Guides/Macei%C3%B3/maceio_v1.html","São Luís":"../Guides/S%C3%A3o-Lu%C3%ADs/sao-luis_v1.html","São Paulo":"../Guides/S%C3%A3o-Paulo/sao-paulo_v1.html","Puerto Vallarta":"../Guides/Puerto-Vallarta/puerto-vallarta_v1.html","Cancun":"../Guides/Cancun/cancun_v1.html","Oaxaca":"../Guides/Oaxaca/oaxaca_v1.html","Tbilisi":"../Guides/Tbilisi/tbilisi_v1.html","Valletta":"../Guides/Valletta/valletta_v1.html","Kotor":"../Guides/Kotor/kotor_v1.html","Luang Prabang":"../Guides/Luang-Prabang/luang-prabang_v1.html","Seychelles":"../Guides/Seychelles/seychelles_v1.html","Muscat":"../Guides/Muscat/muscat_v1.html","Los Cabos":"../Guides/Los-Cabos/los-cabos_v1.html"};
+
+    var CITY_COUNTRIES = {"Abu Dhabi":"United Arab Emirates","Aix-en-Provence":"France","Alaska":"United States","Alesund":"Norway","Amalfi":"Italy","Amsterdam":"Netherlands","Annecy":"France","Aracaju":"Brazil","Arenal":"Costa Rica","Aruba":"Aruba","Athens":"Greece","Atlanta":"United States","Austin":"United States","Azores":"Portugal","Bali":"Indonesia","Bangkok":"Thailand","Barbados":"Barbados","Barcelona":"Spain","Beijing":"China","Bend":"United States","Bergen":"Norway","Berlin":"Germany","Big Island":"United States","Bologna":"Italy","Bora-Bora":"French Polynesia","Bordeaux":"France","Boston":"United States","Boulder":"United States","Bruges":"Belgium","Brussels":"Belgium","Budapest":"Hungary","Buenos Aires":"Argentina","Cairo":"Egypt","Cambridge":"United Kingdom","Cannes":"France","Cape Cod":"United States","Capri":"Italy","Carmel-by-the-Sea":"United States","Cascais":"Portugal","Cayman Islands":"Cayman Islands","Charlotte":"United States","Chiang Mai":"Thailand","Chicago":"United States","Chongqing":"China","Cinque Terre":"Italy","Colmar":"France","Colombo":"Sri Lanka","Columbia":"United States","Copenhagen":"Denmark","Corfu":"Greece","Curaçao":"Curaçao","Curitiba":"Brazil","Cusco":"Peru","Dallas":"United States","Denver":"United States","Doha":"Qatar","Dubai":"United Arab Emirates","Dublin":"Ireland","Dubrovnik":"Croatia","Edinburgh":"United Kingdom","Florence":"Italy","Florida Keys":"United States","Florianópolis":"Brazil","Fortaleza":"Brazil","Foz do Iguaçu":"Brazil","Geneva":"Switzerland","Glacier National Park":"United States","Glasgow":"United Kingdom","Gothenburg":"Sweden","Hamburg":"Germany","Hanoi":"Vietnam","Helsinki":"Finland","Hoi An":"Vietnam","Hong Kong":"China","Istanbul":"Turkey","João Pessoa":"Brazil","Kauai":"United States","Key West":"United States","Kraków":"Poland","Kyoto":"Japan","La Jolla":"United States","Lagos":"Portugal","Lake Como":"Italy","Lake Tahoe":"United States","Las Vegas":"United States","Lecce":"Italy","Lille":"France","Lima":"Peru","Lisbon":"Portugal","Ljubljana":"Slovenia","London":"United Kingdom","Los Angeles":"United States","Los Cabos":"Mexico","Lucerne":"Switzerland","Luxembourg":"Luxembourg","Lyon":"France","MachuPicchu":"Peru","Maceió":"Brazil","Madeira":"Portugal","Madrid":"Spain","Malaga":"Spain","Maldives":"Maldives","Malibu":"United States","Manuel Antonio":"Costa Rica","Marktoberdorf":"Germany","Marrakech":"Morocco","Marseille":"France","Maui":"United States","Melbourne":"Australia","Miami":"United States","Milan":"Italy","Monaco":"Monaco","Montevideo":"Uruguay","Montreal":"Canada","Munich":"Germany","Muscat":"Oman","Mykonos":"Greece","Napa":"United States","Naples":"Italy","Naples Florida":"United States","Nashville":"United States","Natal":"Brazil","New Orleans":"United States","New York":"United States","Nice":"France","Oahu":"United States","Oaxaca":"Mexico","Olinda":"Brazil","Orcas Island":"United States","Orlando":"United States","Osaka":"Japan","Oslo":"Norway","Oxford":"United Kingdom","Palawan":"Philippines","Palm Desert":"United States","Palo Alto":"United States","Paris":"France","Paro":"Bhutan","Pasadena":"United States","Pensacola":"United States","Petra":"Jordan","Philadelphia":"United States","Phoenix":"United States","Phuket":"Thailand","Pokhara":"Nepal","Porto":"Portugal","Porto Alegre":"Brazil","Portland":"United States","Prague":"Czech Republic","Puerto Rico":"United States","Puerto Vallarta":"Mexico","Quebec City":"Canada","Queenstown":"New Zealand","Recife":"Brazil","Reykjavik":"Iceland","Rio de Janeiro":"Brazil","Rome":"Italy","Salvador":"Brazil","Salzburg":"Austria","San Diego":"United States","San Francisco":"United States","San Jose":"United States","San Jose Costa Rica":"Costa Rica","San Juan Island":"United States","San Sebastian":"Spain","Santa Barbara":"United States","Santa Cruz":"United States","Santa Monica":"United States","Santiago":"Chile","Santorini":"Greece","São Luís":"Brazil","São Paulo":"Brazil","Sarasota":"United States","Sardinia":"Italy","Scottsdale":"United States","Seattle":"United States","Sedona":"United States","Seoul":"South Korea","Seville":"Spain","Seychelles":"Seychelles","Shanghai":"China","Sicily":"Italy","Siena":"Italy","Singapore":"Singapore","Sint Maarten":"Sint Maarten","Sintra":"Portugal","Sorrento":"Italy","Split":"Croatia","Stockholm":"Sweden","Strasbourg":"France","Stuttgart":"Germany","Sydney":"Australia","Taipei":"Taiwan","Tallinn":"Estonia","Tbilisi":"Georgia","The Bahamas":"Bahamas","Tokyo":"Japan","Toledo":"Spain","Toronto":"Canada","Tromso":"Norway","Turin":"Italy","Turks and Caicos":"Turks & Caicos","Vancouver":"Canada","Valletta":"Malta","Venice":"Italy","Verona":"Italy","Victoria":"Canada","Vienna":"Austria","Virgin Islands":"United States","Washington DC":"United States","Wellington":"New Zealand","Whistler":"Canada","Yellowstone":"United States","Zhangjiajie":"China","Zurich":"Switzerland","Cancun":"Mexico","Kotor":"Montenegro","Luang Prabang":"Laos"};
+
+    var SAFETY = {"Abu Dhabi":{"level":"Very Safe","note":"Low crime, strict laws"},"Amsterdam":{"level":"Safe","note":"Bike theft common"},"Athens":{"level":"Safe","note":"Pickpockets in tourist areas"},"Bali":{"level":"Safe","note":"Mind drink spiking and motorbike theft"},"Bangkok":{"level":"Safe","note":"Scams common near attractions"},"Barcelona":{"level":"Moderate","note":"High pickpocket risk"},"Berlin":{"level":"Safe","note":""},"Buenos Aires":{"level":"Moderate","note":"Petty theft common"},"Cairo":{"level":"Moderate","note":"Exercise usual caution in crowded areas"},"Cusco":{"level":"Moderate","note":"Altitude + petty theft"},"Dubai":{"level":"Very Safe","note":"Very low crime"},"Dublin":{"level":"Safe","note":""},"Florence":{"level":"Safe","note":"Pickpockets near Duomo"},"Hong Kong":{"level":"Safe","note":"Very low violent crime"},"Istanbul":{"level":"Safe","note":"Pickpockets in tourist areas"},"Lisbon":{"level":"Safe","note":"Pickpockets in Alfama"},"London":{"level":"Safe","note":"Pickpockets on tube"},"Marrakech":{"level":"Moderate","note":"Persistent touts in medina"},"Miami":{"level":"Moderate","note":"Varies by area"},"Naples":{"level":"Moderate","note":"Scooter theft, stay aware"},"New York":{"level":"Safe","note":"Stay aware in crowds"},"Paris":{"level":"Moderate","note":"High pickpocket risk"},"Prague":{"level":"Safe","note":"Tourist scams in center"},"Rio de Janeiro":{"level":"Caution","note":"Petty crime, avoid favelas"},"Rome":{"level":"Moderate","note":"High pickpocket risk"},"Singapore":{"level":"Very Safe","note":"Very strict laws"},"Tokyo":{"level":"Very Safe","note":"Extremely safe"}};
+
+    var COST = {"Abu-Dhabi":{"currency":"AED (dirham)","tier":"Expensive"},"Aix-en-Provence":{"currency":"EUR (euro)","tier":"Expensive"},"Alaska":{"currency":"USD (dollar)","tier":"Expensive"},"Alesund":{"currency":"NOK (krone)","tier":"Premium"},"Amalfi":{"currency":"EUR (euro)","tier":"Expensive"},"Amsterdam":{"currency":"EUR (euro)","tier":"Expensive"},"Annecy":{"currency":"EUR (euro)","tier":"Expensive"},"Aracaju":{"currency":"BRL (real)","tier":"Budget"},"Arenal":{"currency":"CRC","tier":"budget"},"Aruba":{"currency":"AWG (florin)","tier":"Expensive"},"Athens":{"currency":"EUR (euro)","tier":"Moderate"},"Atlanta":{"currency":"USD (dollar)","tier":"Moderate"},"Austin":{"currency":"USD (dollar)","tier":"Moderate"},"Azores":{"currency":"EUR (euro)","tier":"Moderate"},"Bahamas":{"currency":"BSD (dollar)","tier":"Expensive"},"Bali":{"currency":"IDR (rupiah)","tier":"Budget"},"Bangkok":{"currency":"THB (baht)","tier":"Budget"},"Barbados":{"currency":"BBD (dollar)","tier":"Expensive"},"Barcelona":{"currency":"EUR (euro)","tier":"Moderate"},"Beijing":{"currency":"CNY (yuan)","tier":"Moderate"},"Bend":{"currency":"USD (dollar)","tier":"Moderate"},"Bergen":{"currency":"NOK (krone)","tier":"Premium"},"Berlin":{"currency":"EUR (euro)","tier":"Moderate"},"Big-Island":{"currency":"USD (dollar)","tier":"Moderate"},"Bologna":{"currency":"EUR (euro)","tier":"Moderate"},"Bora-Bora":{"currency":"XPF (franc)","tier":"Premium"},"Bordeaux":{"currency":"EUR (euro)","tier":"Moderate"},"Boston":{"currency":"USD (dollar)","tier":"Expensive"},"Boulder":{"currency":"USD (dollar)","tier":"Mid-range"},"Bruges":{"currency":"EUR (euro)","tier":"Moderate"},"Brussels":{"currency":"EUR (euro)","tier":"Moderate"},"Paro":{"currency":"BTN (ngultrum)","tier":"Expensive"},"Budapest":{"currency":"HUF (forint)","tier":"Budget"},"Buenos-Aires":{"currency":"ARS (peso)","tier":"Budget"},"Cairo":{"currency":"EGP (pound)","tier":"Budget"},"Cambridge":{"currency":"GBP (pound)","tier":"Expensive"},"Cancun":{"currency":"MXN (peso)","tier":"Moderate"},"Cannes":{"currency":"EUR (euro)","tier":"Premium"},"Cape-Cod":{"currency":"USD (dollar)","tier":"Mid-range"},"Capri":{"currency":"EUR (euro)","tier":"Premium"},"Carmel-by-the-Sea":{"currency":"USD (dollar)","tier":"Expensive"},"Cascais":{"currency":"EUR (euro)","tier":"Moderate"},"Cayman-Islands":{"currency":"KYD (dollar)","tier":"Premium"},"Charlotte":{"currency":"USD (dollar)","tier":"Moderate"},"Chiang-Mai":{"currency":"THB (baht)","tier":"Budget"},"Chicago":{"currency":"USD (dollar)","tier":"Moderate"},"Chongqing":{"currency":"CNY (yuan)","tier":"Budget"},"Cinque-Terre":{"currency":"EUR (euro)","tier":"Moderate"},"Colmar":{"currency":"EUR (euro)","tier":"Moderate"},"Colombo":{"currency":"LKR (rupee)","tier":"Budget"},"Columbia":{"currency":"USD (dollar)","tier":"Budget"},"Copenhagen":{"currency":"DKK (krone)","tier":"Premium"},"Corfu":{"currency":"EUR (euro)","tier":"Moderate"},"Curacao":{"currency":"ANG (guilder)","tier":"Expensive"},"Curitiba":{"currency":"BRL (real)","tier":"Budget"},"Cusco":{"currency":"PEN (sol)","tier":"Budget"},"Dallas":{"currency":"USD (dollar)","tier":"Moderate"},"Denver":{"currency":"USD (dollar)","tier":"Moderate"},"Doha":{"currency":"QAR (riyal)","tier":"Expensive"},"Dubai":{"currency":"AED (dirham)","tier":"Expensive"},"Dublin":{"currency":"EUR (euro)","tier":"Expensive"},"Dubrovnik":{"currency":"EUR (euro)","tier":"Moderate"},"Edinburgh":{"currency":"GBP (pound)","tier":"Moderate"},"Florence":{"currency":"EUR (euro)","tier":"Moderate"},"Florianópolis":{"currency":"BRL (real)","tier":"Budget"},"Florida-Keys":{"currency":"USD (dollar)","tier":"Expensive"},"Fortaleza":{"currency":"BRL (real)","tier":"Budget"},"Foz-do-Iguaçu":{"currency":"BRL (real)","tier":"Budget"},"Geneva":{"currency":"CHF (franc)","tier":"Premium"},"Glacier-National-Park":{"currency":"USD","tier":"mid"},"Glasgow":{"currency":"GBP (pound)","tier":"Moderate"},"Gothenburg":{"currency":"SEK (krona)","tier":"Premium"},"Hamburg":{"currency":"EUR (euro)","tier":"Moderate"},"Hanoi":{"currency":"VND (dong)","tier":"Budget"},"Helsinki":{"currency":"EUR (euro)","tier":"Expensive"},"Hoi-An":{"currency":"VND (dong)","tier":"Budget"},"Hong-Kong":{"currency":"HKD (dollar)","tier":"Expensive"},"Istanbul":{"currency":"TRY (lira)","tier":"Moderate"},"João-Pessoa":{"currency":"BRL (real)","tier":"Budget"},"Kauai":{"currency":"USD (dollar)","tier":"Expensive"},"Key West":{"currency":"USD (dollar)","tier":"Moderate"},"Kotor":{"currency":"EUR (euro)","tier":"Budget"},"Kraków":{"currency":"PLN (złoty)","tier":"Budget"},"Kyoto":{"currency":"JPY (yen)","tier":"Moderate"},"La-Jolla":{"currency":"USD (dollar)","tier":"Expensive"},"Lagos":{"currency":"EUR (euro)","tier":"Budget"},"Lake-Como":{"currency":"EUR (euro)","tier":"Expensive"},"Lake-Tahoe":{"currency":"USD (dollar)","tier":"Moderate"},"Las-Vegas":{"currency":"USD","tier":"mid"},"Lecce":{"currency":"EUR (euro)","tier":"Budget"},"Lille":{"currency":"EUR (euro)","tier":"Moderate"},"Lima":{"currency":"PEN (sol)","tier":"Budget"},"Los Cabos":{"currency":"MXN (peso)","tier":"Moderate"},"Lisbon":{"currency":"EUR (euro)","tier":"Moderate"},"Ljubljana":{"currency":"EUR (euro)","tier":"Moderate"},"London":{"currency":"GBP (pound)","tier":"Expensive"},"Los-Angeles":{"currency":"USD (dollar)","tier":"Expensive"},"Luang Prabang":{"currency":"LAK (kip)","tier":"Budget"},"Luang-Prabang":{"currency":"LAK (kip)","tier":"Budget"},"Lucerne":{"currency":"CHF (franc)","tier":"Premium"},"Luxembourg":{"currency":"EUR (euro)","tier":"Expensive"},"Lyon":{"currency":"EUR (euro)","tier":"Moderate"},"Maceió":{"currency":"BRL (real)","tier":"Budget"},"MachuPicchu":{"currency":"PEN (sol)","tier":"Budget"},"Madeira":{"currency":"EUR (euro)","tier":"Moderate"},"Madrid":{"currency":"EUR (euro)","tier":"Moderate"},"Maldives":{"currency":"MVR (rufiyaa)","tier":"Premium"},"Malibu":{"currency":"USD (dollar)","tier":"Expensive"},"Manuel-Antonio":{"currency":"CRC (colón)","tier":"Moderate"},"Marktoberdorf":{"currency":"EUR (euro)","tier":"Moderate"},"Marrakech":{"currency":"MAD (dirham)","tier":"Budget"},"Marseille":{"currency":"EUR (euro)","tier":"Moderate"},"Maui":{"currency":"USD (dollar)","tier":"Expensive"},"Melbourne":{"currency":"AUD (dollar)","tier":"Moderate"},"Miami":{"currency":"USD (dollar)","tier":"Expensive"},"Milan":{"currency":"EUR (euro)","tier":"Expensive"},"Monaco":{"currency":"EUR (euro)","tier":"Premium"},"Montevideo":{"currency":"UYU (peso)","tier":"Moderate"},"Montreal":{"currency":"CAD (dollar)","tier":"Moderate"},"Munich":{"currency":"EUR (euro)","tier":"Expensive"},"Muscat":{"currency":"OMR (rial)","tier":"Moderate"},"Mykonos":{"currency":"EUR (euro)","tier":"Expensive"},"Málaga":{"currency":"EUR (euro)","tier":"Moderate"},"Napa":{"currency":"USD (dollar)","tier":"Expensive"},"Naples":{"currency":"EUR (euro)","tier":"Moderate"},"Naples, Florida":{"currency":"USD (dollar)","tier":"Expensive"},"Naples-Florida":{"currency":"USD (dollar)","tier":"Expensive"},"Nashville":{"currency":"USD (dollar)","tier":"Moderate"},"Natal":{"currency":"BRL (real)","tier":"Budget"},"New-Orleans":{"currency":"USD","tier":"mid"},"New-York":{"currency":"USD (dollar)","tier":"Expensive"},"Nice":{"currency":"EUR (euro)","tier":"Expensive"},"Oahu":{"currency":"USD (dollar)","tier":"Expensive"},"Oaxaca":{"currency":"MXN (peso)","tier":"Budget"},"Olinda":{"currency":"BRL (real)","tier":"Budget"},"Orcas-Island":{"currency":"USD (dollar)","tier":"Moderate"},"Orlando":{"currency":"USD (dollar)","tier":"Moderate"},"Osaka":{"currency":"JPY (yen)","tier":"Moderate"},"Oslo":{"currency":"NOK (krone)","tier":"Premium"},"Oxford":{"currency":"GBP (pound)","tier":"Expensive"},"Palawan":{"currency":"PHP (peso)","tier":"Budget"},"Palm-Desert":{"currency":"USD (dollar)","tier":"Moderate"},"Palo-Alto":{"currency":"USD (dollar)","tier":"Expensive"},"Paris":{"currency":"EUR (euro)","tier":"Expensive"},"Pasadena":{"currency":"USD (dollar)","tier":"Moderate"},"Pensacola":{"currency":"USD (dollar)","tier":"Moderate"},"Petra":{"currency":"JOD (dinar)","tier":"Moderate"},"Philadelphia":{"currency":"USD (dollar)","tier":"Moderate"},"Phoenix":{"currency":"USD (dollar)","tier":"Moderate"},"Phuket":{"currency":"THB (baht)","tier":"Budget"},"Pisa":{"currency":"EUR (euro)","tier":"Moderate"},"Pokhara":{"currency":"NPR (rupee)","tier":"Budget"},"Portland":{"currency":"USD (dollar)","tier":"Moderate"},"Porto":{"currency":"EUR (euro)","tier":"Moderate"},"Porto-Alegre":{"currency":"BRL (real)","tier":"Budget"},"Prague":{"currency":"CZK (koruna)","tier":"Moderate"},"Puerto Vallarta":{"currency":"MXN (peso)","tier":"$"},"Puerto-Rico":{"currency":"USD (dollar)","tier":"Moderate"},"Quebec-City":{"currency":"CAD (dollar)","tier":"Moderate"},"Queenstown":{"currency":"NZD (dollar)","tier":"Expensive"},"Recife":{"currency":"BRL (real)","tier":"Budget"},"Reykjavik":{"currency":"ISK (krona)","tier":"Premium"},"Rio-de-Janeiro":{"currency":"BRL (real)","tier":"Budget"},"Rome":{"currency":"EUR (euro)","tier":"Moderate"},"Salvador":{"currency":"BRL (real)","tier":"Budget"},"Salzburg":{"currency":"EUR (euro)","tier":"Expensive"},"San-Diego":{"currency":"USD (dollar)","tier":"Expensive"},"San-Francisco":{"currency":"USD (dollar)","tier":"Premium"},"San-Jose":{"currency":"USD (dollar)","tier":"Mid-range"},"San-Jose-Costa-Rica":{"currency":"CRC (colón)","tier":"Moderate"},"San-Juan-Island":{"currency":"USD (dollar)","tier":"Expensive"},"San-Sebastian":{"currency":"EUR (euro)","tier":"Moderate"},"Santa-Barbara":{"currency":"USD (dollar)","tier":"Premium"},"Santa-Cruz":{"currency":"USD (dollar)","tier":"Moderate"},"Santa-Monica":{"currency":"USD (dollar)","tier":"Expensive"},"Santiago":{"currency":"CLP (peso)","tier":"Budget"},"Santorini":{"currency":"EUR (euro)","tier":"Expensive"},"Sarasota":{"currency":"USD (dollar)","tier":"Moderate"},"Sardinia":{"currency":"EUR (euro)","tier":"Luxury"},"Scottsdale":{"currency":"USD (dollar)","tier":"Moderate"},"Seattle":{"currency":"USD (dollar)","tier":"Expensive"},"Sedona":{"currency":"USD (dollar)","tier":"Moderate"},"Seoul":{"currency":"KRW (won)","tier":"Moderate"},"Seville":{"currency":"EUR (euro)","tier":"Moderate"},"Seychelles":{"currency":"SCR (rupee)","tier":"Luxury"},"Shanghai":{"currency":"CNY (yuan)","tier":"Moderate"},"Sicily":{"currency":"EUR (euro)","tier":"Moderate"},"Siena":{"currency":"EUR (euro)","tier":"Moderate"},"Singapore":{"currency":"SGD (dollar)","tier":"Expensive"},"Sint-Maarten":{"currency":"USD/ANG","tier":"Expensive"},"Sintra":{"currency":"EUR (euro)","tier":"Moderate"},"Sorrento":{"currency":"EUR (euro)","tier":"Expensive"},"Split":{"currency":"EUR (euro)","tier":"Moderate"},"Stockholm":{"currency":"SEK (krona)","tier":"Premium"},"Strasbourg":{"currency":"EUR (euro)","tier":"Moderate"},"Stuttgart":{"currency":"EUR (euro)","tier":"Moderate"},"Sydney":{"currency":"AUD (dollar)","tier":"Expensive"},"São-Luís":{"currency":"BRL (real)","tier":"Budget"},"São-Paulo":{"currency":"BRL (real)","tier":"Moderate"},"Taipei":{"currency":"TWD (dollar)","tier":"Budget"},"Tallinn":{"currency":"EUR (euro)","tier":"Moderate"},"Tbilisi":{"currency":"GEL (lari)","tier":"Budget"},"Tokyo":{"currency":"JPY (yen)","tier":"Moderate"},"Toledo":{"currency":"EUR (euro)","tier":"Moderate"},"Toronto":{"currency":"CAD (dollar)","tier":"Moderate"},"Tromso":{"currency":"NOK (krone)","tier":"Premium"},"Turin":{"currency":"EUR (euro)","tier":"Moderate"},"Turks-and-Caicos":{"currency":"USD (dollar)","tier":"Premium"},"Valletta":{"currency":"EUR (euro)","tier":"Moderate"},"Vancouver":{"currency":"CAD (dollar)","tier":"Expensive"},"Venice":{"currency":"EUR (euro)","tier":"Expensive"},"Verona":{"currency":"EUR (euro)","tier":"Moderate"},"Victoria":{"currency":"CAD (dollar)","tier":"Moderate"},"Vienna":{"currency":"EUR (euro)","tier":"Moderate"},"Virgin-Islands":{"currency":"USD (dollar)","tier":"Moderate"},"Washington-DC":{"currency":"USD (dollar)","tier":"Moderate"},"Wellington":{"currency":"NZD (dollar)","tier":"Expensive"},"Whistler":{"currency":"CAD (dollar)","tier":"Premium"},"Yellowstone":{"currency":"USD (dollar)","tier":"Moderate"},"Zhangjiajie":{"currency":"CNY (yuan)","tier":"Budget"},"Zurich":{"currency":"CHF (franc)","tier":"Premium"}};
+    var SAFETY_FULL = {"Abu-Dhabi":{"level":"Very Safe","note":"Low crime, strict laws"},"Aix-en-Provence":{"level":"Safe","note":""},"Alaska":{"level":"Safe","note":"Wildlife awareness needed"},"Alesund":{"level":"Very Safe","note":""},"Amalfi":{"level":"Safe","note":"Watch for pickpockets"},"Amsterdam":{"level":"Safe","note":"Bike theft common"},"Annecy":{"level":"Very Safe","note":""},"Aracaju":{"level":"Safe","note":"Petty crime; take precautions"},"Arenal":{"level":"Low","note":"Generally safe; exercise normal precautions"},"Aruba":{"level":"Safe","note":"Outside resort areas, take care"},"Athens":{"level":"Safe","note":"Pickpockets in tourist areas"},"Atlanta":{"level":"Moderate","note":"Varies by neighborhood"},"Austin":{"level":"Safe","note":""},"Azores":{"level":"Very Safe","note":""},"Bahamas":{"level":"Moderate","note":"Stick to tourist areas"},"Bali":{"level":"Safe","note":"Mind drink spiking and motorbike theft"},"Bangkok":{"level":"Safe","note":"Scams common near attractions"},"Barbados":{"level":"Safe","note":"Petty theft on beaches"},"Barcelona":{"level":"Moderate","note":"High pickpocket risk"},"Beijing":{"level":"Safe","note":"Low crime for tourists"},"Bend":{"level":"Very Safe","note":""},"Bergen":{"level":"Very Safe","note":""},"Berlin":{"level":"Safe","note":""},"Big-Island":{"level":"Safe","note":"Lava zone awareness needed"},"Bologna":{"level":"Safe","note":""},"Bora-Bora":{"level":"Very Safe","note":"Remote island; very low crime"},"Bordeaux":{"level":"Safe","note":""},"Boston":{"level":"Safe","note":""},"Boulder":{"level":"Safe","note":""},"Bruges":{"level":"Very Safe","note":""},"Brussels":{"level":"Safe","note":"Stay alert in some areas"},"Paro":{"level":"Safe","note":"Very low crime; daily SDF applies"},"Budapest":{"level":"Safe","note":"Pickpockets in tourist areas"},"Buenos-Aires":{"level":"Moderate","note":"Petty theft common"},"Cairo":{"level":"Moderate","note":"Exercise usual caution in crowded areas"},"Cambridge":{"level":"Safe","note":""},"Cancun":{"level":"Moderate","note":"Hotel zone is safe; avoid traveling outside tourist areas at night"},"Cannes":{"level":"Safe","note":"Watch valuables"},"Cape-Cod":{"level":"Safe","note":""},"Capri":{"level":"Very Safe","note":""},"Carmel-by-the-Sea":{"level":"Very Safe","note":""},"Cascais":{"level":"Very Safe","note":""},"Cayman-Islands":{"level":"Very Safe","note":""},"Charlotte":{"level":"Moderate","note":"Uptown and South End are safe; avoid isolated areas at night"},"Chiang-Mai":{"level":"Very Safe","note":""},"Chicago":{"level":"Moderate","note":"Varies by neighborhood"},"Chongqing":{"level":"Safe","note":""},"Cinque-Terre":{"level":"Safe","note":""},"Colmar":{"level":"Very Safe","note":""},"Colombo":{"level":"Very Safe","note":""},"Columbia":{"level":"Moderate","note":"Downtown and Five Points are safe; exercise usual urban caution at night"},"Copenhagen":{"level":"Very Safe","note":""},"Corfu":{"level":"Safe","note":""},"Curacao":{"level":"Moderate","note":"Petty crime in some areas"},"Curitiba":{"level":"Safe","note":""},"Cusco":{"level":"Moderate","note":"Altitude + petty theft"},"Dallas":{"level":"Moderate","note":"Watch Downtown at night"},"Denver":{"level":"Safe","note":""},"Doha":{"level":"Very Safe","note":"Very low crime, strict laws"},"Dubai":{"level":"Very Safe","note":"Very low crime"},"Dublin":{"level":"Safe","note":""},"Dubrovnik":{"level":"Very Safe","note":""},"Edinburgh":{"level":"Safe","note":""},"Florence":{"level":"Safe","note":"Pickpockets near Duomo"},"Florianópolis":{"level":"Safe","note":""},"Florida-Keys":{"level":"Safe","note":""},"Fortaleza":{"level":"Safe","note":"Petty crime; take precautions"},"Foz-do-Iguaçu":{"level":"Safe","note":""},"Geneva":{"level":"Very Safe","note":""},"Glacier-National-Park":{"level":"Safe","note":""},"Glasgow":{"level":"Safe","note":""},"Gothenburg":{"level":"Very Safe","note":""},"Hamburg":{"level":"Safe","note":""},"Hanoi":{"level":"Safe","note":"Watch for traffic and petty theft"},"Helsinki":{"level":"Very Safe","note":""},"Hoi-An":{"level":"Safe","note":"Very safe; watch for motorbike traffic"},"Hong-Kong":{"level":"Safe","note":"Very low violent crime"},"Istanbul":{"level":"Safe","note":"Pickpockets in tourist areas"},"João-Pessoa":{"level":"Safe","note":""},"Kauai":{"level":"Safe","note":"Ocean safety awareness"},"Key West":{"level":"Very Safe","note":""},"Kotor":{"level":"Very Safe","note":""},"Kraków":{"level":"Safe","note":""},"Kyoto":{"level":"Very Safe","note":""},"La-Jolla":{"level":"Safe","note":""},"Lagos":{"level":"Safe","note":"Portugal — low crime"},"Lake-Como":{"level":"Very Safe","note":""},"Lake-Tahoe":{"level":"Very Safe","note":""},"Las-Vegas":{"level":1,"note":"Normal precautions"},"Lecce":{"level":"Safe","note":"Low crime in Lecce"},"Lille":{"level":"Safe","note":""},"Lima":{"level":"Moderate","note":"Petty theft, avoid at night"},"Los Cabos":{"level":"Moderate","note":"Stay in resort areas; exercise increased caution per State Dept"},"Lisbon":{"level":"Safe","note":"Pickpockets in Alfama"},"Ljubljana":{"level":"Very Safe","note":""},"London":{"level":"Safe","note":"Pickpockets on tube"},"Los-Angeles":{"level":"Moderate","note":"Varies by neighborhood"},"Luang Prabang":{"level":"Safe","note":"Level 1 — Exercise Normal Precautions"},"Luang-Prabang":{"level":"Safe","note":"Low crime; exercise increased caution per State Dept Level 2"},"Lucerne":{"level":"Very Safe","note":""},"Luxembourg":{"level":"Very Safe","note":""},"Lyon":{"level":"Safe","note":""},"Maceió":{"level":"Safe","note":"Petty crime; take precautions"},"MachuPicchu":{"level":"Safe","note":""},"Madeira":{"level":"Very Safe","note":""},"Madrid":{"level":"Safe","note":"Pickpockets on metro"},"Maldives":{"level":"Safe","note":""},"Malibu":{"level":"Safe","note":""},"Manuel-Antonio":{"level":"Safe","note":""},"Marktoberdorf":{"level":"Very Safe","note":""},"Marrakech":{"level":"Moderate","note":"Persistent touts in medina"},"Marseille":{"level":"Moderate","note":"Avoid certain suburbs"},"Maui":{"level":"Safe","note":"Ocean safety awareness"},"Melbourne":{"level":"Safe","note":""},"Miami":{"level":"Moderate","note":"Varies by area"},"Milan":{"level":"Safe","note":"Pickpockets on trams"},"Monaco":{"level":"Very Safe","note":""},"Montevideo":{"level":"Safe","note":"Petty theft in Old City; avoid outskirts at night"},"Montreal":{"level":"Safe","note":""},"Munich":{"level":"Very Safe","note":""},"Muscat":{"level":"Very Safe","note":"Very low crime, strict laws"},"Mykonos":{"level":"Very Safe","note":""},"Málaga":{"level":"Safe","note":""},"Napa":{"level":"Safe","note":""},"Naples":{"level":"Moderate","note":"Scooter theft, stay aware"},"Naples, Florida":{"level":"Very Safe","note":"Affluent, low-crime area"},"Naples-Florida":{"level":"Very Safe","note":"Affluent, low-crime area"},"Nashville":{"level":"Safe","note":"Downtown and East Nashville safe; exercise usual caution at night"},"Natal":{"level":"Safe","note":""},"New-Orleans":{"level":1,"note":"Normal precautions"},"New-York":{"level":"Safe","note":"Stay aware in crowds"},"Nice":{"level":"Safe","note":""},"Oahu":{"level":"Safe","note":"Car break-ins at beaches"},"Oaxaca":{"level":"Moderate","note":"Historic center is safe; exercise increased caution outside tourist areas"},"Olinda":{"level":"Safe","note":""},"Orcas-Island":{"level":"Very Safe","note":""},"Orlando":{"level":"Safe","note":"Tourist areas well-patrolled"},"Osaka":{"level":"Very Safe","note":""},"Oslo":{"level":"Very Safe","note":""},"Oxford":{"level":"Safe","note":""},"Palawan":{"level":"Very Safe","note":""},"Palm-Desert":{"level":"Very Safe","note":""},"Palo-Alto":{"level":"Very Safe","note":""},"Paris":{"level":"Moderate","note":"High pickpocket risk"},"Pasadena":{"level":"Safe","note":""},"Pensacola":{"level":"Safe","note":""},"Petra":{"level":"Very Safe","note":"Jordan is one of the safest countries in the region"},"Philadelphia":{"level":"Moderate","note":"Center City and tourist areas are safe; avoid North Philly at night"},"Phoenix":{"level":"Moderate","note":"Downtown and tourist areas are safe; exercise caution after dark in West Phoenix"},"Phuket":{"level":"Safe","note":"Beach scams common"},"Pisa":{"level":"Safe","note":"Pickpockets near Tower"},"Pokhara":{"level":"Caution","note":"Trekking hazards; altitude risk on routes"},"Portland":{"level":"Moderate","note":"Downtown tourist areas safe; avoid Old Town at night"},"Porto":{"level":"Safe","note":""},"Porto-Alegre":{"level":"Safe","note":"Petty crime; take precautions"},"Prague":{"level":"Safe","note":"Tourist scams in center"},"Puerto Vallarta":{"level":"2","note":"Exercise increased caution."},"Puerto-Rico":{"level":"Moderate","note":"Stay in tourist zones"},"Quebec-City":{"level":"Very Safe","note":""},"Queenstown":{"level":"Very Safe","note":"Outdoor adventure risks"},"Recife":{"level":"Safe","note":"Petty crime; take precautions"},"Reykjavik":{"level":"Very Safe","note":"Weather risks outdoors"},"Rio-de-Janeiro":{"level":"Caution","note":"Petty crime, avoid favelas"},"Rome":{"level":"Moderate","note":"High pickpocket risk"},"Salvador":{"level":"Safe","note":"Petty crime; take precautions"},"Salzburg":{"level":"Very Safe","note":""},"San-Diego":{"level":"Safe","note":""},"San-Francisco":{"level":"Moderate","note":"Property crime high"},"San-Jose":{"level":"Moderate","note":"Property crime in some areas"},"San-Jose-Costa-Rica":{"level":"Moderate","note":"Petty theft in urban areas"},"San-Juan-Island":{"level":"Low","note":"Quiet island community; very low crime"},"San-Sebastian":{"level":"Very Safe","note":""},"Santa-Barbara":{"level":"Very Safe","note":""},"Santa-Cruz":{"level":"Moderate","note":"Downtown can be rough after dark"},"Santa-Monica":{"level":"Safe","note":""},"Santiago":{"level":"Moderate","note":"Petty theft improving"},"Santorini":{"level":"Very Safe","note":""},"Sarasota":{"level":"Safe","note":""},"Sardinia":{"level":"Low","note":"Exercise normal precautions"},"Scottsdale":{"level":"Very Safe","note":""},"Seattle":{"level":"Moderate","note":"Property crime common"},"Sedona":{"level":"Very Safe","note":""},"Seoul":{"level":"Very Safe","note":""},"Seville":{"level":"Safe","note":""},"Seychelles":{"level":"Low","note":"Exercise normal precautions"},"Shanghai":{"level":"Very Safe","note":"Very low crime"},"Sicily":{"level":"Safe","note":"Petty theft in tourist areas"},"Siena":{"level":"Very Safe","note":""},"Singapore":{"level":"Very Safe","note":"Very strict laws"},"Sint-Maarten":{"level":"Moderate","note":"Hurricane recovery ongoing"},"Sintra":{"level":"Safe","note":""},"Sorrento":{"level":"Safe","note":""},"Split":{"level":"Very Safe","note":""},"Stockholm":{"level":"Safe","note":""},"Strasbourg":{"level":"Safe","note":""},"Stuttgart":{"level":"Safe","note":""},"Sydney":{"level":"Safe","note":""},"São-Luís":{"level":"Safe","note":""},"São-Paulo":{"level":"3","note":"Exercise increased caution; petty crime and theft common"},"Taipei":{"level":"Very Safe","note":""},"Tallinn":{"level":"Safe","note":""},"Tbilisi":{"level":"Safe","note":"Low crime; exercise normal caution"},"Tokyo":{"level":"Very Safe","note":"Extremely safe"},"Toledo":{"level":"Safe","note":""},"Toronto":{"level":"Safe","note":""},"Tromso":{"level":"Very Safe","note":"Arctic weather risks"},"Turin":{"level":"Safe","note":""},"Turks-and-Caicos":{"level":"Safe","note":""},"Valletta":{"level":"Very Safe","note":""},"Vancouver":{"level":"Safe","note":"Downtown East Side area"},"Venice":{"level":"Safe","note":"Pickpockets on waterbuses"},"Verona":{"level":"Safe","note":""},"Victoria":{"level":"Safe","note":""},"Vienna":{"level":"Very Safe","note":""},"Virgin-Islands":{"level":"Moderate","note":"Petty crime, check advisories"},"Washington-DC":{"level":"Moderate","note":"Exercise caution near transit hubs at night"},"Wellington":{"level":"Very Safe","note":""},"Whistler":{"level":"Very Safe","note":""},"Yellowstone":{"level":"Safe","note":""},"Zhangjiajie":{"level":"Safe","note":""},"Zurich":{"level":"Very Safe","note":""}};
+
+    cityEl.innerHTML = '<option value="">Select a destination</option>' +
+      keys.map(function (k) {
+        return '<option value="' + k + '">' + (CLIM[k].city || k) + '</option>';
+      }).join('');
+
+    monthEl.innerHTML = MONTHS.map(function (m, i) {
+      return '<option value="' + i + '"' + (i === new Date().getMonth() ? ' selected' : '') + '>' + m + '</option>';
+    }).join('');
+
+    function paintUnit() {
+      [].forEach.call(unitEl.children, function (b) { b.classList.toggle('on', b.dataset.u === unit()); });
+    }
+    unitEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      setUnit(b.dataset.u); paintUnit(); render();
+    });
+    cityEl.addEventListener('change', render);
+    monthEl.addEventListener('change', render);
+
+    function safetyClass(level) {
+      var l = (level + '').toLowerCase().replace(/\s+/g, '');
+      if (l === 'verysafe') return 'byg-safety-verysafe';
+      if (l === 'safe' || l === 'low') return 'byg-safety-safe';
+      if (l === 'moderate' || l === '1' || l === '2') return 'byg-safety-moderate';
+      return 'byg-safety-caution';
+    }
+    function costClass(tier) {
+      var t = (tier + '').toLowerCase().replace(/[\s-]+/g, '');
+      if (t === 'budget') return 'byg-cost-budget';
+      if (t === 'moderate' || t === 'midrange' || t === 'mid') return 'byg-cost-moderate';
+      if (t === 'expensive') return 'byg-cost-expensive';
+      return 'byg-cost-premium';
+    }
+
+    function strip(rec, m) {
+      var vals = rec.hi.concat(rec.lo);
+      var lo0 = Math.min.apply(null, vals), hi0 = Math.max.apply(null, vals);
+      var span = (hi0 - lo0) || 1, H = 40, out = '', labels = '';
+      var ML = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+      for (var j = 0; j < 12; j++) {
+        var top = (1 - (rec.hi[j] - lo0) / span) * H;
+        var bot = (1 - (rec.lo[j] - lo0) / span) * H;
+        var bh = Math.max(2, bot - top);
+        out += '<div class="byg-bar"><span style="top:' + top + 'px;height:' + bh + 'px;background:' +
+          (j === m ? '#b85c2a' : 'rgba(184,92,42,.28)') + ';"></span></div>';
+      }
+      return '<div class="byg-strip">' + out + '</div>';
+    }
+
+    function render() {
+      var k = cityEl.value;
+      if (!k) { resultsEl.innerHTML = '<div class="byg-empty">Pick a destination to see your pre-trip checklist.</div>'; return; }
+      var rec = CLIM[k];
+      var m = parseInt(monthEl.value, 10);
+      var country = CITY_COUNTRIES[k] || '';
+      var isUS = country === 'United States';
+      var climateKey = k.replace(/ /g, '-');
+
+      var safetyData = SAFETY_FULL[climateKey] || SAFETY_FULL[k] || null;
+      var costData = COST[climateKey] || COST[k] || null;
+
+      var html = '<div class="byg-cards">';
+
+      html += '<div class="byg-card">' +
+        '<div class="byg-card-head"><span class="byg-card-icon">🌤️</span><span class="byg-card-title">Weather in ' + MONTHS[m] + '</span></div>' +
+        '<div class="byg-temps">' +
+          '<div><span class="byg-hi">' + conv(rec.hi[m]) + '°</span> <span style="font-size:11px;color:var(--muted);">HIGH</span></div>' +
+          '<div><span class="byg-lo">' + conv(rec.lo[m]) + '°</span> <span style="font-size:11px;color:var(--muted);">LOW</span></div>' +
+        '</div>';
+      if (rec.rain && rec.rd) {
+        html += '<div class="byg-rain-row">' +
+          '<div><span class="byg-rain-val">' + (rec.rain[m] || 0) + '</span><span class="byg-rain-lbl"> mm rain</span></div>' +
+          '<div><span class="byg-rain-val">' + (rec.rd[m] || 0) + '</span><span class="byg-rain-lbl"> rainy days</span></div>' +
+        '</div>';
+      }
+      html += '<div class="byg-chart-wrap">' + strip(rec, m) + '</div>';
+      html += '<div class="byg-links-row">' +
+        '<a href="Weather.html#' + encodeURIComponent(k) + '" class="byg-link">Full forecast →</a>' +
+      '</div></div>';
+
+      if (safetyData) {
+        var lvl = typeof safetyData.level === 'number' ? ['','Safe','Moderate','Caution'][safetyData.level] || safetyData.level : safetyData.level;
+        html += '<div class="byg-card">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">🛡️</span><span class="byg-card-title">Safety</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Level</span><span class="byg-safety-badge ' + safetyClass(lvl) + '">' + lvl + '</span></div>';
+        if (safetyData.note) {
+          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
+        }
+        html += '<div class="byg-links-row"><a href="Safety-Guide.html" class="byg-link">Full safety guide →</a></div></div>';
+      }
+
+      if (costData) {
+        html += '<div class="byg-card">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">💰</span><span class="byg-card-title">Cost &amp; Currency</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Cost level</span><span class="byg-cost-badge ' + costClass(costData.tier) + '">' + costData.tier + '</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Currency</span><span class="byg-row-value">' + costData.currency + '</span></div>' +
+          '<div class="byg-links-row"><a href="Currency-Guide.html" class="byg-link">Exchange rates →</a></div></div>';
+      }
+
+      html += '<div class="byg-card">' +
+        '<div class="byg-card-head"><span class="byg-card-icon">📋</span><span class="byg-card-title">Travel Prep</span></div>' +
+        '<div class="byg-links-row">';
+      if (!isUS) {
+        html += '<a href="Visas.html" class="byg-link">🪪 Visa requirements</a>' +
+          '<a href="Entry-Requirements.html" class="byg-link">📋 Entry requirements</a>';
+      }
+      html += '<a href="Plug-Adapter/Plug-Adapter-Guide.html" class="byg-link">🔌 Plug adapter</a>' +
+        '<a href="Time-Zones.html" class="byg-link">🕐 Time zone</a>' +
+        '<a href="City-Transit-Cards.html" class="byg-link">🚇 Transit card</a>' +
+        '<a href="Travel-Packing.html" class="byg-link">👕 Packing checklist</a>';
+      if (!isUS) {
+        html += '<a href="Tipping-Guide.html" class="byg-link">🧾 Tipping guide</a>';
+      }
+      html += '</div></div>';
+
+      var guideLink = GUIDE_LINKS[k];
+      if (guideLink) {
+        html += '<div class="byg-guide-link"><a href="' + guideLink + '">🌐 Open ' + (rec.city || k) + ' Guide →</a></div>';
+      }
+
+      html += '</div>';
+      resultsEl.innerHTML = html;
+    }
+
+    paintUnit(); render();
+
+    var hash = decodeURIComponent(location.hash.slice(1));
+    if (hash && keys.indexOf(hash) >= 0) {
+      cityEl.value = hash;
+      render();
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+}());
+</script>
+</body>
+</html>

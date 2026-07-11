@@ -112,10 +112,11 @@
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
-    { href: base + 'Trip-Essentials/Trips.html', text: '📆 Trips' },
+    { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
+    null,
     { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing', full: '👕 Packing Checklist' },
     null,
-    { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
+    { href: base + 'Trip-Essentials/Before-You-Go.html', text: '🧳 Before You Go' },
     null,
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
     null,
@@ -187,8 +188,8 @@
       'display:flex;align-items:center}' +
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
-    '.tb-site-title{flex-shrink:0;font-size:13px;font-weight:700;color:#fff;' +
-      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;}' +
+    '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:13px;font-weight:700;color:#fff!important;' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
@@ -395,9 +396,11 @@
   var bar = document.createElement('div');
   bar.className = 'tb';
 
-  var siteTitle = document.createElement('span');
+  var siteTitle = document.createElement('a');
   siteTitle.className = 'tb-site-title';
   siteTitle.textContent = 'The Voyager Expert';
+  siteTitle.href = base + 'Trip-Essentials/Trips.html';
+  siteTitle.style.textDecoration = 'none';
   bar.appendChild(siteTitle);
 
   bar.appendChild(scroller);

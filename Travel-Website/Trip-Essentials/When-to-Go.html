@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>When to Go</title>
+<style>
+.wtg-wrap { max-width: none; margin: 8px auto 0; padding: 0 32px; }
+.wtg-controls { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 12px; padding: 16px 18px; box-shadow: 0 2px 12px rgba(92,61,17,0.07);
+  margin-bottom: 18px; }
+.wtg-label { font-size: var(--fs-label,11px); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted,#6a6660); margin-bottom: 7px; }
+.wtg-months { display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; }
+.wtg-mon { border: 1px solid var(--border2,#e6e2da); border-radius: 6px; cursor: pointer;
+  padding: 10px 0; font-family: var(--font); font-size: 13px; color: var(--text,#1a1917);
+  background: #fff; transition: background .12s,color .12s,border-color .12s; }
+.wtg-mon:hover { border-color: #b85c2a; color: #fff;
+  background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
+.wtg-mon.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+  color: #fff; border-color: #b85c2a; }
+.wtg-opts { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.wtg-seg { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; }
+.wtg-seg button { border: none; cursor: pointer; padding: 8px 13px; font-family: var(--font);
+  font-size: var(--fs-sub,12px); font-weight: 600; background: #fff; color: var(--muted,#6a6660); }
+.wtg-seg button.on { background: #b85c2a; color: #fff; }
+.wtg-sort { padding: 8px 10px; border: 1px solid var(--border2,#e6e2da); border-radius: 6px;
+  font-family: var(--font); font-size: var(--fs-sub,12px); color: var(--text,#1a1917); background: #fff; cursor: pointer; }
+.wtg-spacer { flex: 1; }
+.wtg-summary { font-size: var(--fs-sub,12px); color: var(--muted,#6a6660); margin: 4px 2px 0;
+  text-transform: uppercase; letter-spacing: .05em; }
+.wtg-summary b { color: #b85c2a; font-weight: 700; }
+.wtg-tier { margin: 20px 0 0; }
+.wtg-tier-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.wtg-tier-icon { font-size: 18px; line-height: 1; }
+.wtg-tier-label { font-size: 13px; font-weight: 700; color: var(--text,#1a1917); text-transform: uppercase;
+  letter-spacing: .05em; }
+.wtg-tier-count { font-size: 11px; color: var(--muted,#6a6660); }
+.wtg-tier-band { font-size: 11px; color: var(--muted,#6a6660); margin-left: auto; }
+.wtg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.wtg-card { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da); border-radius: 11px;
+  padding: 14px 15px; box-shadow: 0 1px 6px rgba(92,61,17,0.05); }
+a.wtg-card { display: block; text-decoration: none; color: inherit; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s; }
+a.wtg-card:hover { border-color: #b85c2a; box-shadow: 0 3px 10px rgba(184,92,42,.12); }
+.wtg-city { font-size: var(--fs-body,14px); font-weight: 700; color: #1a1917;
+  display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.wtg-city-arrow { font-size: 11px; color: var(--muted,#6a6660); opacity: 0.55; flex-shrink: 0; }
+a.wtg-card:hover .wtg-city-arrow { opacity: 1; color: #b85c2a; }
+.wtg-country { font-size: 9.5px; color: var(--muted,#6a6660); letter-spacing: .02em; text-align: right; line-height: 1.2; }
+.wtg-temps { display: flex; align-items: baseline; gap: 14px; margin-top: 8px; }
+.wtg-hi { font-size: 26px; font-weight: 700; color: #a61c00; line-height: 1; }
+.wtg-lo { font-size: 26px; font-weight: 700; color: #3d5282; line-height: 1; }
+.wtg-tlab { font-size: var(--fs-label,11px); text-transform: uppercase; letter-spacing: .05em; color: var(--muted,#6a6660); }
+.wtg-rain { display: flex; gap: 10px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border2,#e6e2da); }
+.wtg-rain-val { font-size: 14px; font-weight: 700; color: #4a7c9b; }
+.wtg-rain-lbl { font-size: 11px; color: var(--muted,#6a6660); }
+.wtg-strip { display: flex; align-items: flex-end; gap: 2px; height: 34px; margin-top: 12px; }
+.wtg-bar { flex: 1; position: relative; height: 34px; }
+.wtg-bar > span { position: absolute; left: 50%; transform: translateX(-50%); width: 4px; border-radius: 2px; }
+.wtg-empty { text-align: center; color: var(--muted,#6a6660); font-size: var(--fs-body,14px);
+  padding: 40px 10px; line-height: 1.6; }
+.sibling-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; color: #3d3a32; padding: 6px 12px;
+  border: 1px solid #d8d4cc; border-radius: 6px; background: #fff;
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s, transform .08s;
+}
+.sibling-pill:hover { border-color: #b85c2a; box-shadow: 0 3px 10px rgba(184,92,42,.12); transform: translateY(-1px); }
+.sibling-pill:active { transform: scale(.97) translateY(1px); box-shadow: 0 1px 3px rgba(184,92,42,.10); }
+@media (max-width: 600px) {
+  .wtg-wrap { padding: 0 12px; }
+  .wtg-months { grid-template-columns: repeat(6, 1fr); }
+  .wtg-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=50">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="1040"></div>
+<script src="../assets/toolbar.js?v=99"></script>
+<script src="../assets/weather.js?v=4"></script>
+
+<div class="wtg-wrap">
+  <div class="site-header">
+    <h1 class="site-title">When to Go</h1>
+  </div>
+  <span class="updated-stamp" id="wtg-updated"></span>
+  <div style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
+    <a href="Climate-Finder.html" class="sibling-pill">🌡️ Climate Finder</a>
+    <a href="Weather.html" class="sibling-pill">🌤 Weather by City</a>
+  </div>
+
+  <div class="wtg-controls">
+    <div>
+      <div class="wtg-label">When are you traveling?</div>
+      <div id="wtg-months" class="wtg-months"></div>
+    </div>
+    <div class="wtg-opts">
+      <div>
+        <div class="wtg-label">Units</div>
+        <div id="wtg-unit" class="wtg-seg">
+          <button type="button" data-u="C">°C</button>
+          <button type="button" data-u="F">°F</button>
+        </div>
+      </div>
+      <div>
+        <div class="wtg-label">Sort</div>
+        <select id="wtg-sort" class="wtg-sort">
+          <option value="tier">By comfort tier</option>
+          <option value="warm">Warmest first</option>
+          <option value="cool">Coolest first</option>
+          <option value="dry">Driest first</option>
+          <option value="az">A–Z</option>
+        </select>
+      </div>
+      <div class="wtg-spacer"></div>
+    </div>
+  </div>
+
+  <div id="wtg-summary" class="wtg-summary"></div>
+  <div id="wtg-results"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MONTHS_LONG = ['January','February','March','April','May','June','July',
+                     'August','September','October','November','December'];
+
+  var TIERS = [
+    { key: 'mild',  icon: '☀️', label: 'Mild & Pleasant', lo: 18, hi: 27,
+      desc: 'Comfortable daytime highs — ideal for walking and sightseeing' },
+    { key: 'warm',  icon: '🌤️', label: 'Warm',            lo: 27, hi: 33,
+      desc: 'Warm days — great for beaches and outdoor dining' },
+    { key: 'hot',   icon: '🔥', label: 'Hot',             lo: 33, hi: 99,
+      desc: 'Very hot — plan for shade, hydration, and midday breaks' },
+    { key: 'cool',  icon: '🧥', label: 'Cool',            lo: 10, hi: 18,
+      desc: 'Crisp and cool — layer up for comfortable exploring' },
+    { key: 'cold',  icon: '❄️', label: 'Cold',            lo: -40, hi: 10,
+      desc: 'Cold weather — pack heavy layers and winter gear' }
+  ];
+
+  function start() {
+    var CLIM = window.TravelClimate || {};
+    var resultsEl = document.getElementById('wtg-results');
+    var keys = Object.keys(CLIM).filter(function (k) { return k !== '_generated' && k !== '_meta' && CLIM[k] && CLIM[k].hi; });
+
+    if (CLIM._generated) {
+      var gd = new Date(CLIM._generated + 'T00:00:00');
+      var uel = document.getElementById('wtg-updated');
+      if (uel) uel.textContent = 'Updated ' + MONTHS_LONG[gd.getMonth()] + ' ' + gd.getFullYear();
+    }
+    if (!keys.length) {
+      resultsEl.innerHTML = '<div class="wtg-empty">Climate data didn\'t load.</div>';
+      return;
+    }
+
+    function unit() { try { return localStorage.getItem('guideTempUnit') === 'F' ? 'F' : 'C'; } catch (e) { return 'C'; } }
+    function setUnit(u) { try { localStorage.setItem('guideTempUnit', u); } catch (e) {} }
+    function conv(c) { return unit() === 'F' ? Math.round(c * 9 / 5 + 32) : Math.round(c); }
+
+    var GUIDE_LINKS = {"Abu Dhabi":"../Guides/Abu-Dhabi/abu-dhabi_v1.html","Doha":"../Guides/Doha/doha_v1.html","Aix-en-Provence":"../Guides/Aix-en-Provence/aix-en-provence_v1.html","Alaska":"../Guides/Alaska/alaska_v1.html","Alesund":"../Guides/Alesund/alesund_v1.html","Amalfi":"../Guides/Amalfi/amalfi_v1.html","Amsterdam":"../Guides/Amsterdam/amsterdam_v1.html","Annecy":"../Guides/Annecy/annecy_v1.html","Arenal":"../Guides/Arenal/arenal_v1.html","Aruba":"../Guides/Aruba/aruba_v1.html","Manuel Antonio":"../Guides/Manuel-Antonio/manuel-antonio_v1.html","Athens":"../Guides/Athens/athens_v1.html","Atlanta":"../Guides/Atlanta/atlanta_v1.html","Austin":"../Guides/Austin/austin_v1.html","Azores":"../Guides/Azores/azores_v1.html","Bali":"../Guides/Bali/bali_v1.html","Bora-Bora":"../Guides/Bora-Bora/bora-bora_v1.html","The Bahamas":"../Guides/Bahamas/bahamas_v1.html","Bangkok":"../Guides/Bangkok/bangkok_v1.html","Barbados":"../Guides/Barbados/barbados_v1.html","Barcelona":"../Guides/Barcelona/barcelona_v1.html","Beijing":"../Guides/Beijing/beijing_v1.html","Bend":"../Guides/Bend/bend_v2.html","Bergen":"../Guides/Bergen/bergen_v1.html","Berlin":"../Guides/Berlin/berlin_v1.html","Hamburg":"../Guides/Hamburg/hamburg_v1.html","Hanoi":"../Guides/Hanoi/hanoi_v1.html","Hoi An":"../Guides/Hoi-An/hoi-an_v1.html","Big Island":"../Guides/Big-Island/big-island_v1.html","Bologna":"../Guides/Bologna/bologna_v1.html","Bordeaux":"../Guides/Bordeaux/bordeaux_v1.html","Boston":"../Guides/Boston/boston_v1.html","Boulder":"../Guides/Boulder/boulder_v1.html","Cape Cod":"../Guides/Cape-Cod/cape-cod_v1.html","Bruges":"../Guides/Bruges/bruges_v1.html","Brussels":"../Guides/Brussels/brussels_v1.html","Buenos Aires":"../Guides/Buenos-Aires/buenos-aires_v1.html","Cambridge":"../Guides/Cambridge/cambridge_v1.html","Cannes":"../Guides/Cannes/cannes_v1.html","Capri":"../Guides/Capri/capri_v1.html","Cascais":"../Guides/Cascais/cascais_v2.html","Cayman Islands":"../Guides/Cayman-Islands/cayman-islands_v1.html","Charlotte":"../Guides/Charlotte/charlotte_v1.html","Chicago":"../Guides/Chicago/chicago_v2.html","Columbia":"../Guides/Columbia/columbia_v1.html","Chongqing":"../Guides/Chongqing/chongqing_v1.html","Cinque Terre":"../Guides/Cinque-Terre/cinque-terre_v1.html","Colmar":"../Guides/Colmar/colmar_v1.html","San Jose Costa Rica":"../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html","Colombo":"../Guides/Colombo/colombo_v1.html","Copenhagen":"../Guides/Copenhagen/copenhagen_v1.html","Corfu":"../Guides/Corfu/corfu_v1.html","Curaçao":"../Guides/Curacao/curacao_v1.html","Curitiba":"../Guides/Curitiba/curitiba_v1.html","Cusco":"../Guides/Cusco/cusco_v1.html","Dallas":"../Guides/Dallas/dallas_v1.html","Denver":"../Guides/Denver/denver_v1.html","Dubai":"../Guides/Dubai/dubai_v1.html","Dublin":"../Guides/Dublin/dublin_v1.html","Dubrovnik":"../Guides/Dubrovnik/dubrovnik_v2.html","Edinburgh":"../Guides/Edinburgh/edinburgh_v1.html","Florence":"../Guides/Florence/florence_v1.html","Geneva":"../Guides/Geneva/geneva_v1.html","Glacier National Park":"../Guides/Glacier-National-Park/glacier-national-park_v2.html","Glasgow":"../Guides/Glasgow/glasgow_v1.html","Gothenburg":"../Guides/Gothenburg/gothenburg_v1.html","Helsinki":"../Guides/Helsinki/helsinki_v1.html","Hong Kong":"../Guides/Hong-Kong/hong-kong_v1.html","Budapest":"../Guides/Budapest/budapest_v1.html","Reykjavik":"../Guides/Reykjavik/reykjavik_v2.html","Istanbul":"../Guides/Istanbul/istanbul_v1.html","Florida Keys":"../Guides/Florida-Keys/florida-keys_v1.html","Kauai":"../Guides/Kauai/kauai_v1.html","Key West":"../Guides/KeyWest/keywest_v1.html","Kyoto":"../Guides/Kyoto/kyoto_v1.html","Lagos":"../Guides/Lagos/lagos_v1.html","Lake Como":"../Guides/Lake-Como/lake-como_v1.html","Lake Tahoe":"../Guides/Lake-Tahoe/lake-tahoe_v1.html","Lille":"../Guides/Lille/lille_v1.html","Lima":"../Guides/Lima/lima_v1.html","Lisbon":"../Guides/Lisbon/lisbon_v4.html","Ljubljana":"../Guides/Ljubljana/ljubljana_v1.html","London":"../Guides/London/london_v5.html","La Jolla":"../Guides/La-Jolla/la-jolla_v1.html","Los Angeles":"../Guides/Los-Angeles/los-angeles_v1.html","Los Cabos":"../Guides/Los-Cabos/los-cabos_v1.html","Lucerne":"../Guides/Lucerne/lucerne_v1.html","Luxembourg":"../Guides/Luxembourg/luxembourg_v1.html","Lyon":"../Guides/Lyon/lyon_v1.html","MachuPicchu":"../Guides/MachuPicchu/machupicchu_v1.html","Madeira":"../Guides/Madeira/madeira_v1.html","Madrid":"../Guides/Madrid/madrid_v1.html","Maldives":"../Guides/Maldives/maldives_v1.html","Malaga":"../Guides/Malaga/malaga_v1.html","Marktoberdorf":"../Guides/Marktoberdorf/marktoberdorf_v1.html","Marrakech":"../Guides/Marrakech/marrakech_v1.html","Marseille":"../Guides/Marseille/marseille_v1.html","Maui":"../Guides/Maui/maui_v1.html","Melbourne":"../Guides/Melbourne/melbourne_v1.html","Miami":"../Guides/Miami/miami_v1.html","Montevideo":"../Guides/Montevideo/montevideo_v1.html","Milan":"../Guides/Milan/milan_v1.html","Monaco":"../Guides/Monaco/monaco_v1.html","Montreal":"../Guides/Montreal/montreal_v1.html","Munich":"../Guides/Munich/munich_v2.html","Mykonos":"../Guides/Mykonos/mykonos_v1.html","Naples":"../Guides/Naples/naples_v1.html","Las Vegas":"../Guides/Las-Vegas/las-vegas_v1.html","Naples Florida":"../Guides/Naples-Florida/naples-florida_v1.html","Nashville":"../Guides/Nashville/nashville_v1.html","New Orleans":"../Guides/New-Orleans/new-orleans_v1.html","New York":"../Guides/New-York/new-york_v1.html","Nice":"../Guides/Nice/nice_v1.html","Oahu":"../Guides/Oahu/oahu_v1.html","Orcas Island":"../Guides/Orcas-Island/orcas-island_v1.html","Orlando":"../Guides/Orlando/orlando_v1.html","Osaka":"../Guides/Osaka/osaka_v1.html","Oslo":"../Guides/Oslo/oslo_v1.html","Oxford":"../Guides/Oxford/oxford_v1.html","Palm Desert":"../Guides/Palm-Desert/palm-desert_v1.html","Palo Alto":"../Guides/Palo-Alto/palo-alto_v6.html","Chiang Mai":"../Guides/Chiang-Mai/chiang-mai_v1.html","Palawan":"../Guides/Palawan/palawan_v1.html","Paris":"../Guides/Paris/paris_v7.html","Pasadena":"../Guides/Pasadena/pasadena_v5.html","Pensacola":"../Guides/Pensacola/pensacola_v1.html","Philadelphia":"../Guides/Philadelphia/philadelphia_v1.html","Phoenix":"../Guides/Phoenix/phoenix_v1.html","Phuket":"../Guides/Phuket/phuket_v1.html","Pisa":"../Guides/Pisa/pisa_v1.html","Portland":"../Guides/Portland/portland_v1.html","Petra":"../Guides/Petra/petra_v1.html","Porto":"../Guides/Porto/porto_v2.html","Lecce":"../Guides/Lecce/lecce_v1.html","Prague":"../Guides/Prague/prague_v1.html","Puerto Rico":"../Guides/Puerto-Rico/puerto-rico_v1.html","Quebec City":"../Guides/Quebec-City/quebec-city_v1.html","Queenstown":"../Guides/Queenstown/queenstown_v1.html","Aracaju":"../Guides/Aracaju/aracaju_v1.html","Rio de Janeiro":"../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html","Fortaleza":"../Guides/Fortaleza/fortaleza_v1.html","Natal":"../Guides/Natal/natal_v1.html","Olinda":"../Guides/Olinda/olinda_v1.html","Recife":"../Guides/Recife/recife_v1.html","Porto Alegre":"../Guides/Porto-Alegre/porto-alegre_v1.html","Salvador":"../Guides/Salvador/salvador_v1.html","Rome":"../Guides/Rome/rome_v1.html","Sardinia":"../Guides/Sardinia/sardinia_v1.html","Salzburg":"../Guides/Salzburg/salzburg_v1.html","San Diego":"../Guides/San-Diego/san-diego_v1.html","Sedona":"../Guides/Sedona/sedona_v1.html","San Francisco":"../Guides/San-Francisco/san-francisco_v3.html","San Jose":"../Guides/San-Jose/san-jose_v1.html","San Juan Island":"../Guides/San-Juan-Island/san-juan-island_v1.html","Santa Barbara":"../Guides/Santa-Barbara/santa-barbara_v1.html","Cairo":"../Guides/Cairo/cairo_v2.html","Carmel-by-the-Sea":"../Guides/Carmel-by-the-Sea/carmel-by-the-sea_v1.html","Malibu":"../Guides/Malibu/malibu_v1.html","Napa":"../Guides/Napa/napa_v1.html","Santa Cruz":"../Guides/Santa-Cruz/santa-cruz_v1.html","Santa Monica":"../Guides/Santa-Monica/santa-monica_v1.html","San Sebastian":"../Guides/San-Sebastian/san-sebastian_v1.html","Santiago":"../Guides/Santiago/santiago_v1.html","Santorini":"../Guides/Santorini/santorini_v1.html","Scottsdale":"../Guides/Scottsdale/scottsdale_v1.html","Sarasota":"../Guides/Sarasota/sarasota_v1.html","Seattle":"../Guides/Seattle/seattle_v1.html","Seoul":"../Guides/Seoul/seoul_v1.html","Seville":"../Guides/Seville/seville_v1.html","Shanghai":"../Guides/Shanghai/shanghai_v1.html","Sicily":"../Guides/Sicily/sicily_v1.html","Siena":"../Guides/Siena/siena_v1.html","Singapore":"../Guides/Singapore/singapore_v3.html","Sint Maarten":"../Guides/Sint-Maarten/sint-maarten_v1.html","Sintra":"../Guides/Sintra/sintra_v2.html","Sorrento":"../Guides/Sorrento/sorrento_v1.html","Split":"../Guides/Split/split_v1.html","Stockholm":"../Guides/Stockholm/stockholm_v1.html","Strasbourg":"../Guides/Strasbourg/strasbourg_v1.html","Stuttgart":"../Guides/Stuttgart/stuttgart_v1.html","Sydney":"../Guides/Sydney/sydney_v2.html","Taipei":"../Guides/Taipei/taipei_v1.html","Tallinn":"../Guides/Tallinn/tallinn_v1.html","Tokyo":"../Guides/Tokyo/tokyo_v1.html","Toledo":"../Guides/Toledo/toledo_v1.html","Toronto":"../Guides/Toronto/toronto_v1.html","Tromso":"../Guides/Tromso/tromso_v1.html","Turks and Caicos":"../Guides/Turks-and-Caicos/turks-and-caicos_v1.html","Turin":"../Guides/Turin/turin_v14.html","Vancouver":"../Guides/Vancouver/vancouver_v1.html","Victoria":"../Guides/Victoria/victoria_v1.html","Venice":"../Guides/Venice/venice_v1.html","Verona":"../Guides/Verona/verona_v1.html","Vienna":"../Guides/Vienna/vienna_v1.html","Virgin Islands":"../Guides/Virgin-Islands/virgin-islands_v1.html","Washington DC":"../Guides/Washington-DC/washington-dc_v1.html","Wellington":"../Guides/Wellington/wellington_v1.html","Whistler":"../Guides/Whistler/whistler_v1.html","Yellowstone":"../Guides/Yellowstone/yellowstone_v1.html","Zhangjiajie":"../Guides/Zhangjiajie/zhangjiajie_v1.html","Zurich":"../Guides/Zurich/zurich_v1.html","Florianópolis":"../Guides/Florianopolis/florianopolis_v1.html","Foz do Iguaçu":"../Guides/Foz-do-Igua%C3%A7u/foz-do-iguacu_v2.html","Paro":"../Guides/Bhutan/bhutan_v1.html","Pokhara":"../Guides/Pokhara/pokhara_v1.html","João Pessoa":"../Guides/Jo%C3%A3o-Pessoa/joao-pessoa_v1.html","Kraków":"../Guides/Krak%C3%B3w/krakow_v1.html","Maceió":"../Guides/Macei%C3%B3/maceio_v1.html","São Luís":"../Guides/S%C3%A3o-Lu%C3%ADs/sao-luis_v1.html","São Paulo":"../Guides/S%C3%A3o-Paulo/sao-paulo_v1.html","Puerto Vallarta":"../Guides/Puerto-Vallarta/puerto-vallarta_v1.html","Cancun":"../Guides/Cancun/cancun_v1.html","Oaxaca":"../Guides/Oaxaca/oaxaca_v1.html","Tbilisi":"../Guides/Tbilisi/tbilisi_v1.html","Valletta":"../Guides/Valletta/valletta_v1.html","Kotor":"../Guides/Kotor/kotor_v1.html","Luang Prabang":"../Guides/Luang-Prabang/luang-prabang_v1.html","Seychelles":"../Guides/Seychelles/seychelles_v1.html","Muscat":"../Guides/Muscat/muscat_v1.html","Los Cabos":"../Guides/Los-Cabos/los-cabos_v1.html"};
+
+    var CITY_COUNTRIES = {"Abu Dhabi":"United Arab Emirates","Aix-en-Provence":"France","Alaska":"United States","Alesund":"Norway","Amalfi":"Italy","Amsterdam":"Netherlands","Annecy":"France","Aracaju":"Brazil","Arenal":"Costa Rica","Aruba":"Aruba","Athens":"Greece","Atlanta":"United States","Austin":"United States","Azores":"Portugal","Bali":"Indonesia","Bangkok":"Thailand","Barbados":"Barbados","Barcelona":"Spain","Beijing":"China","Bend":"United States","Bergen":"Norway","Berlin":"Germany","Big Island":"United States","Bologna":"Italy","Bora-Bora":"French Polynesia","Bordeaux":"France","Boston":"United States","Boulder":"United States","Bruges":"Belgium","Brussels":"Belgium","Budapest":"Hungary","Buenos Aires":"Argentina","Cairo":"Egypt","Cambridge":"United Kingdom","Cannes":"France","Cape Cod":"United States","Capri":"Italy","Carmel-by-the-Sea":"United States","Cascais":"Portugal","Cayman Islands":"Cayman Islands","Charlotte":"United States","Chiang Mai":"Thailand","Chicago":"United States","Chongqing":"China","Cinque Terre":"Italy","Colmar":"France","Colombo":"Sri Lanka","Columbia":"United States","Copenhagen":"Denmark","Corfu":"Greece","Curaçao":"Curaçao","Curitiba":"Brazil","Cusco":"Peru","Dallas":"United States","Denver":"United States","Doha":"Qatar","Dubai":"United Arab Emirates","Dublin":"Ireland","Dubrovnik":"Croatia","Edinburgh":"United Kingdom","Florence":"Italy","Florida Keys":"United States","Florianópolis":"Brazil","Fortaleza":"Brazil","Foz do Iguaçu":"Brazil","Geneva":"Switzerland","Glacier National Park":"United States","Glasgow":"United Kingdom","Gothenburg":"Sweden","Hamburg":"Germany","Hanoi":"Vietnam","Helsinki":"Finland","Hoi An":"Vietnam","Hong Kong":"China","Istanbul":"Turkey","João Pessoa":"Brazil","Kauai":"United States","Key West":"United States","Kraków":"Poland","Kyoto":"Japan","La Jolla":"United States","Lagos":"Portugal","Lake Como":"Italy","Lake Tahoe":"United States","Las Vegas":"United States","Lecce":"Italy","Lille":"France","Lima":"Peru","Lisbon":"Portugal","Ljubljana":"Slovenia","London":"United Kingdom","Los Angeles":"United States","Los Cabos":"Mexico","Lucerne":"Switzerland","Luxembourg":"Luxembourg","Lyon":"France","MachuPicchu":"Peru","Maceió":"Brazil","Madeira":"Portugal","Madrid":"Spain","Malaga":"Spain","Maldives":"Maldives","Malibu":"United States","Manuel Antonio":"Costa Rica","Marktoberdorf":"Germany","Marrakech":"Morocco","Marseille":"France","Maui":"United States","Melbourne":"Australia","Miami":"United States","Milan":"Italy","Monaco":"Monaco","Montevideo":"Uruguay","Montreal":"Canada","Munich":"Germany","Mykonos":"Greece","Napa":"United States","Naples":"Italy","Naples Florida":"United States","Nashville":"United States","Natal":"Brazil","New Orleans":"United States","New York":"United States","Nice":"France","Oahu":"United States","Olinda":"Brazil","Orcas Island":"United States","Orlando":"United States","Osaka":"Japan","Oslo":"Norway","Oxford":"United Kingdom","Palawan":"Philippines","Palm Desert":"United States","Palo Alto":"United States","Paris":"France","Paro":"Bhutan","Pasadena":"United States","Pensacola":"United States","Petra":"Jordan","Philadelphia":"United States","Phoenix":"United States","Phuket":"Thailand","Pisa":"Italy","Pokhara":"Nepal","Porto":"Portugal","Porto Alegre":"Brazil","Portland":"United States","Prague":"Czech Republic","Puerto Rico":"United States","Puerto Vallarta":"Mexico","Quebec City":"Canada","Queenstown":"New Zealand","Recife":"Brazil","Reykjavik":"Iceland","Rio de Janeiro":"Brazil","Rome":"Italy","Salvador":"Brazil","Salzburg":"Austria","San Diego":"United States","San Francisco":"United States","San Jose":"United States","San Jose Costa Rica":"Costa Rica","San Juan Island":"United States","San Sebastian":"Spain","Santa Barbara":"United States","Santa Cruz":"United States","Santa Monica":"United States","Santiago":"Chile","Santorini":"Greece","São Luís":"Brazil","São Paulo":"Brazil","Sarasota":"United States","Sardinia":"Italy","Scottsdale":"United States","Seattle":"United States","Sedona":"United States","Seoul":"South Korea","Seville":"Spain","Shanghai":"China","Sicily":"Italy","Siena":"Italy","Singapore":"Singapore","Sint Maarten":"Sint Maarten","Sintra":"Portugal","Sorrento":"Italy","Split":"Croatia","Stockholm":"Sweden","Strasbourg":"France","Stuttgart":"Germany","Sydney":"Australia","Taipei":"Taiwan","Tallinn":"Estonia","The Bahamas":"Bahamas","Tbilisi":"Georgia","Tokyo":"Japan","Toledo":"Spain","Toronto":"Canada","Tromso":"Norway","Turin":"Italy","Turks and Caicos":"Turks & Caicos","Vancouver":"Canada","Venice":"Italy","Verona":"Italy","Victoria":"Canada","Vienna":"Austria","Virgin Islands":"United States","Valletta":"Malta","Washington DC":"United States","Wellington":"New Zealand","Whistler":"Canada","Yellowstone":"United States","Zhangjiajie":"China","Zurich":"Switzerland","Cancun":"Mexico","Oaxaca":"Mexico","Kotor":"Montenegro","Luang Prabang":"Laos","Seychelles":"Seychelles","Muscat":"Oman"};
+
+    var month = new Date().getMonth();
+    var sort = 'tier';
+
+    var monthsEl = document.getElementById('wtg-months');
+    monthsEl.innerHTML = MONTHS.map(function (m, i) {
+      return '<button type="button" class="wtg-mon" data-m="' + i + '">' + m + '</button>';
+    }).join('');
+
+    function paintMonths() {
+      [].forEach.call(monthsEl.children, function (b, i) { b.classList.toggle('on', i === month); });
+    }
+    monthsEl.addEventListener('click', function (e) {
+      var b = e.target.closest('.wtg-mon'); if (!b) return;
+      month = parseInt(b.dataset.m, 10); paintMonths(); render();
+    });
+
+    var unitEl = document.getElementById('wtg-unit');
+    function paintUnit() {
+      [].forEach.call(unitEl.children, function (b) { b.classList.toggle('on', b.dataset.u === unit()); });
+    }
+    unitEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      setUnit(b.dataset.u); paintUnit(); render();
+    });
+
+    var sortEl = document.getElementById('wtg-sort');
+    sortEl.addEventListener('change', function () { sort = sortEl.value; render(); });
+
+    function strip(rec) {
+      var vals = rec.hi.concat(rec.lo);
+      var lo0 = Math.min.apply(null, vals), hi0 = Math.max.apply(null, vals);
+      var span = (hi0 - lo0) || 1, H = 34, out = '';
+      for (var j = 0; j < 12; j++) {
+        var top = (1 - (rec.hi[j] - lo0) / span) * H;
+        var bot = (1 - (rec.lo[j] - lo0) / span) * H;
+        var bh = Math.max(2, bot - top);
+        out += '<div class="wtg-bar"><span style="top:' + top + 'px;height:' + bh + 'px;background:' +
+          (j === month ? '#b85c2a' : 'rgba(184,92,42,.28)') + ';"></span></div>';
+      }
+      return '<div class="wtg-strip">' + out + '</div>';
+    }
+
+    function card(k) {
+      var rec = CLIM[k];
+      var href = GUIDE_LINKS[k];
+      var tag = href ? 'a' : 'div';
+      var attrs = href ? ' class="wtg-card" href="' + href + '"' : ' class="wtg-card"';
+      var arrow = href ? '<span class="wtg-city-arrow">→</span>' : '';
+      var countryLine = CITY_COUNTRIES[k] ? '<div class="wtg-country">' + CITY_COUNTRIES[k] + '</div>' : '';
+      var rightSlot = '<span style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;">' +
+        countryLine + (arrow ? '<span class="wtg-city-arrow" style="align-self:flex-end;">→</span>' : '') + '</span>';
+      var rainHtml = '';
+      if (rec.rain && rec.rd) {
+        rainHtml = '<div class="wtg-rain">' +
+          '<div><span class="wtg-rain-val">' + (rec.rain[month] || 0) + '</span><span class="wtg-rain-lbl"> mm</span></div>' +
+          '<div><span class="wtg-rain-val">' + (rec.rd[month] || 0) + '</span><span class="wtg-rain-lbl"> rainy days</span></div>' +
+        '</div>';
+      }
+      return '<' + tag + attrs + '>' +
+        '<div class="wtg-city"><span>' + (rec.city || k) + '</span>' + rightSlot + '</div>' +
+        '<div class="wtg-temps">' +
+          '<div><div class="wtg-hi">' + conv(rec.hi[month]) + '°</div><div class="wtg-tlab">High</div></div>' +
+          '<div><div class="wtg-lo">' + conv(rec.lo[month]) + '°</div><div class="wtg-tlab">Low</div></div>' +
+        '</div>' + rainHtml + strip(rec) +
+      '</' + tag + '>';
+    }
+
+    function tierFor(hiC) {
+      for (var i = 0; i < TIERS.length; i++) {
+        if (hiC >= TIERS[i].lo && hiC < TIERS[i].hi) return TIERS[i];
+      }
+      return TIERS[TIERS.length - 1];
+    }
+
+    function sortFn(a, b) {
+      var ra = CLIM[a], rb = CLIM[b];
+      if (sort === 'warm') return rb.hi[month] - ra.hi[month];
+      if (sort === 'cool') return ra.hi[month] - rb.hi[month];
+      if (sort === 'dry') {
+        var da = (ra.rain ? ra.rain[month] : 999), db = (rb.rain ? rb.rain[month] : 999);
+        return da - db;
+      }
+      if (sort === 'az') return (ra.city || a).localeCompare(rb.city || b);
+      return ra.hi[month] - rb.hi[month];
+    }
+
+    function render() {
+      var summaryEl = document.getElementById('wtg-summary');
+      summaryEl.innerHTML = '<b>' + keys.length + '</b> destinations in ' + MONTHS_LONG[month];
+
+      if (sort === 'tier') {
+        var buckets = {};
+        TIERS.forEach(function (t) { buckets[t.key] = []; });
+        keys.forEach(function (k) {
+          var t = tierFor(CLIM[k].hi[month]);
+          buckets[t.key].push(k);
+        });
+
+        var html = '';
+        TIERS.forEach(function (t) {
+          var items = buckets[t.key];
+          if (!items.length) return;
+          items.sort(function (a, b) { return CLIM[a].hi[month] - CLIM[b].hi[month]; });
+          var loShow = conv(t.lo), hiShow = t.hi >= 50 ? conv(45) + '+' : conv(t.hi);
+          var band = loShow + '°–' + hiShow + '°' + unit();
+          html += '<div class="wtg-tier">' +
+            '<div class="wtg-tier-head">' +
+              '<span class="wtg-tier-icon">' + t.icon + '</span>' +
+              '<span class="wtg-tier-label">' + t.label + '</span>' +
+              '<span class="wtg-tier-count">' + items.length + '</span>' +
+              '<span class="wtg-tier-band">' + band + '</span>' +
+            '</div>' +
+            '<div class="wtg-grid">' + items.map(card).join('') + '</div>' +
+          '</div>';
+        });
+        resultsEl.innerHTML = html;
+      } else {
+        var sorted = keys.slice().sort(sortFn);
+        resultsEl.innerHTML = '<div class="wtg-grid" style="margin-top:14px;">' + sorted.map(card).join('') + '</div>';
+      }
+    }
+
+    paintMonths(); paintUnit(); render();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+}());
+</script>
+</body>
+</html>
