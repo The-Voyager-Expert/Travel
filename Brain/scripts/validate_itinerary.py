@@ -57,6 +57,7 @@ WARN = "⚠️ "
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
     ("2026-07-10", "MOTION-BANNER DESTINATION MUST INHERIT THE BANNER FONT (BARE TEXT) — new hard-fail. The name after → in a .hotel-first / .arrive-first / plain .next banner is bare text across the whole compliant fleet (Lisbon/Porto: '🏨 From Hotel: 🚕 15 min → Cathedral'). Static text carries no styling of its own, so it inherits the SAME font family/size/style/colour as the rest of its banner — matching the '🚶 N · 🚕 M →' it follows. That differs by banner type (a .next row is Roboto 14px ITALIC #555 muted grey; a .hotel-first row is upright #1a1a1a) and the check does not need to know it. ANY markup on the destination breaks the inheritance — an <a href=…google.com/maps…> recolours it to a{color:#2867c4} blue, a <span>/<font>/inline-style element changes font or colour directly. So the check is structural: the destination segment (everything after the final →) must contain NO OPENING tag (<[a-zA-Z]) — a trailing closing tag like </p> from a benign whole-row <p> wrapper (Bora-Bora) does not recolour and is ignored. Dani caught the blue on Aracaju (From Hotel → Cathedral) then the muted-grey→blue drift on a .next row (→ Palácio). INVISIBLE UNTIL NOW: every motion/opener check strips tags before validating, so the markup slipped through all of them. Scoped to .hotel-first / .arrive-first / EXACT class=\"next\" — .next-tram / .next-metro excluded (they legitimately carry bracketed board/route/alight anchors per Getting Around.html). Rule home: Motion Rule §3 + Links.html. Caught + fixed the same day: 4 Brazilian guides from one crib batch had wrapped every banner destination in a Maps link — Aracaju (21), Olinda (12), João-Pessoa (11), Porto-Alegre (9) — all unwrapped to bare text and re-validated to 0 failures."),
+    ("2026-07-11", "DAY TRIPS — 3 VALIDATOR GAPS CLOSED (fleet audit 2026-07-11). (1) EMPTY SECTION NOW HARD-FAILS — a Day Trips section present with NO body content (no extras-sub entries, no extras-empty negative line) previously downgraded to a warn; now hard-fails. Rule: if the section exists it must have entries or the canonical 'No day trips from {City}.' negative line. Caught: Alaska (empty body), Dubrovnik (dev comment only, no reader-facing line). (2) INVERSE OMIO CHECK — mainland-China guides (in _OMIO_EXEMPT_CITIES) must NOT include omio.com links; previously the exemption only removed the 'must include Omio' requirement but never banned it. New check hard-fails any 🎫 row in a China guide that links to omio.com. Caught: Beijing, Shanghai, Chongqing (all listing Omio). (3) EUROPEAN MIN-5 SET COMPLETED — _EUROPEAN_GUIDE_CITIES was missing whole countries and several cities: added Hamburg (Germany), Lecce (Italy), Málaga/malaga (Spain), zürich (Switzerland — diacritic alias for existing zurich), Oxford (United Kingdom), Oslo (Norway), Kraków/krakow (Poland — whole country missing), Budapest (Hungary — whole country missing), Istanbul (Turkey — whole country missing), Tbilisi (Georgia — whole country missing). Removed Ålesund and Tromsø from the set (no train station — correctly exempt from ≥5 floor). Added Santorini and Mykonos to _ISLAND_CITIES (Greek islands, no rail). No guide HTML edited — validator-only; flagged guides (Oxford 2/5, Kraków 4/5, Beijing/Shanghai/Chongqing Omio, Alaska/Dubrovnik empty) need content fixes and re-validation."),
     ("2026-07-10", "CORE RULES AUDIT — 3 NEW CHECKS + 2 PARTIAL GAPS CLOSED. NEW: (1) CAPPUCCINO CHAIN EXCLUSION — new _CAP_CHAIN_NAMES list (Starbucks, Dunkin', Peet's, Costa, Tim Hortons, etc.) mirrors the Downtown Restaurants _DR_CHAIN_NAMES pattern; hard-fails any cappuccino entry heading matching a global coffee chain. Rule home: Cappuccino - Extra Section.html §3. (2) PHOTO LICENSE VALIDATION — commons_photo.py now fetches extmetadata (license) from the Wikimedia API and records it in photo_provenance.json; photo_provenance.py verify_guide_photos() hard-fails any photo whose license is not CC-BY, CC-BY-SA, Public Domain, or CC0. Rule home: Photos Rules.html §2. (3) TICKET REGION-SPECIFIC PLATFORM — Ticketmaster/StubHub/TodayTix are US-only; non-US guides using them hard-fail. Detection: cross-references .title-country with ticket-box link domains. Rule home: Tickets.html §1. PARTIAL GAPS CLOSED: (4) SHOWS RIDE-ONLY JUSTIFICATION — ride-only entries (🚕 without 🚶) now warn when missing a <!-- ride-only: walk NN min --> sentinel documenting that the walk exceeds 40 min. Warn-only (sentinel is a new convention, not yet in CORE RULES). (5) HOTEL BANNER SUBDIVISION — spelled-out US state names (Florida, California, etc.), Canadian provinces, and European regions now detected as subdivisions in .title-country (previously only abbreviations and comma/dot separators were caught). Gap 6 (ticket-box tour types) confirmed already enforced — wgiag_subject_strings includes ticket-box <a> text since 2026-05-19. No guide HTML edited — validator + pipeline only."),
     ("2026-07-10", "DAY TRIPS OPERATOR CHECK — www. SUBDOMAIN PREFIX FALSE-FAIL FIXED. Toronto's GO Transit booking link (https://www.gotransit.com/...) was hard-failing as a 'non-operator' link despite gotransit.com being whitelisted in _TRAIN_TICKET_HOSTS since 2026-06-07. Root cause: the match only checked url==host, url.endswith('.'+host), ('/'+host) in url, and ('//'+ host) in url — none of which match 'https://www.gotransit.com/...' because the 'www.' subdomain sits between '//' and the bare domain, so '//gotransit.com' is never a literal substring. Any operator URL fleet-wide that happens to include a www. prefix was silently false-failing the same way. Fixed by also checking the URL with a leading 'www.' stripped from right after '//'. No guide HTML edited — validator-only; Toronto's existing GO Transit link is correct as-is and now validates clean."),
     ("2026-07-10", "VALIDATOR DEEP AUDIT WAVE 2 — 40 bugs fixed (fixes 61-100). Categories: (A) DEAD CODE — removed dead _pill_links variable, duplicate re.compile calls (_day_block_open_re, _RE_WALK_GLOBAL/_RE_WALK_MIN, _uro_cal_row_re/cal_row_re, _FOOD_RATING_TEXT_RE/_food_review_ok, _CG_ANNOT_RE, _mxc_box_re), duplicate import unicodedata, duplicate guide-style.css check. (B) VARIABLE SHADOWING — renamed _motion_banner_re→_tram_motion_re, ticket_link_re→_ticket_link_re2, canonical_re→_notshown_canonical_re (all shadowed earlier definitions with different patterns). (C) REGEX BUGS — Getting Around exclusion regex failed when GA is last section (added |</body> to lookahead); obvious_free_terms had trailing spaces and duplicate entries; _TRAIN_TICKET_HOSTS used short-substring match (cd.cz/sz.si false-positives) → proper domain-boundary check; 6 annotation detection regexes had re.IGNORECASE+[A-Z] matching any lowercase text; VS16 bug in hours-row empty check (🏛️? tolerance); cappuccino extra-icon regex missing VS16 variants; 3+ consecutive 🏛️ rows boundary missed entry-body break; Train Day card suffix regex made destination optional (contradicting the required-suffix enforcement); hotel-naming banner regex missing arrive-first class. (D) TOCTOU RACE CONDITIONS — 10+ sites converted from is_file()+read_text() to _safe_read() helper (Final Gate paths, CORE RULES reader, carousel chain, build state, index reader). (E) SYSTEMATIC next-metro GAP — next-metro (added 2026-07-05) was missing from 12 boundary/banner regexes across the file: stop-block boundaries (8 sites), bus-ban motion check, hotel-naming protocol, taxi-spacing check. Without it, a .next-metro div was consumed into preceding stop blocks. (F) OTHER — verification log parse error printed instead of warn(); CAR_FREE_CITIES expanded (hydra/zermatt); stale class names in Guides-Index alphabetical check (overview-section→country, overview-title→country-label, idx-city→dest-name); Day Trips zip length mismatch warning; added missing national rail operators to _TRAIN_TICKET_HOSTS; eliminated duplicate re.search for booking banned patterns; added arrive-first to taxi-spacing check. No guide HTML edited — validator-only."),
@@ -14178,13 +14179,20 @@ def validate(html: str, filename: str):
                 continue  # present div but header missing/wrong — never a failure
             body = section_html[hdr_m.end():]
             if not re.search(body_re, body, re.IGNORECASE):
-                warn(
-                    'Day Trips section present but empty — neither a missing '
-                    'nor an empty Day Trips section blocks a guide; document '
-                    'the reason it ships empty',
-                    'Day Trips .extras-section is present but has no '
-                    'extras-sub/ride-apps/extras-empty body content',
-                    tag='day-trips-empty',
+                # Per 2026-07-11 audit: a present section with NO body content
+                # (no extras-sub entries, no extras-empty negative line) is a
+                # hard fail — shipping an empty shell is worse than omitting the
+                # section entirely. Guides that have no valid day trips must
+                # ship the canonical "No day trips from {City}." negative line
+                # inside an extras-empty div.
+                check(
+                    'Day Trips section present but has no entries and no '
+                    '"No day trips from {City}." negative-finding line — '
+                    'either add day trips or ship the canonical negative line '
+                    '(Day Trips by Train - Extra Section.html §5)',
+                    False,
+                    'Day Trips .extras-section has no extras-sub/extras-empty '
+                    'body content — add entries or the canonical negative line',
                 )
             continue
         # ── B17 parent-div scope fix ────────────────────────────────────────
@@ -19283,6 +19291,32 @@ def validate(html: str, filename: str):
         if _dt_omio_missing else "",
     )
 
+    # ─── DAY TRIPS — Omio MUST NOT appear in exempt (mainland China) guides ──
+    # Day Trips by Train - Extra Section.html §4 inverse rule (2026-07-11):
+    # Omio has no mainland-China service, so China guides must use 12306.cn
+    # (China Railway) only — listing Omio is actively wrong. Hard-fail if any
+    # 🎫 row in a China guide links to omio.com.
+    print("\n── DAY TRIPS — China guides: Omio must NOT appear ──")
+    _dt_omio_inverse_hits: list[str] = []
+    if _dt_hdr and not _omio_check_applies:  # i.e. city IS in _OMIO_EXEMPT_CITIES
+        for _a in re.finditer(
+            r'<a\b[^>]*href\s*=\s*"[^"]*omio[^"]*"[^>]*>',
+            _dt_inner, re.IGNORECASE,
+        ):
+            _dt_omio_inverse_hits.append(
+                f'Omio link found in mainland-China guide ({city_text}): '
+                + _a.group(0)[:80]
+            )
+    check(
+        'Day Trips — mainland-China guides must NOT include Omio links '
+        '(Omio has no China service; use 12306.cn / China Railway only — '
+        'Day Trips by Train - Extra Section.html §4)',
+        len(_dt_omio_inverse_hits) == 0,
+        (f'{len(_dt_omio_inverse_hits)} Omio link(s) found in China guide: '
+         + '; '.join(_dt_omio_inverse_hits[:3]))
+        if _dt_omio_inverse_hits else '',
+    )
+
     # ─── DAY TRIPS — Omio link text capitalisation ───────────────────────────
     # Day Trips by Train - Extra Section.html §2 (updated 2026-06-16, Dani): the
     # second 🎫 book-at link is labelled exactly "Omio" (capitalised) — never
@@ -19526,23 +19560,25 @@ def validate(html: str, filename: str):
         # Italy
         # amalfi — no train station (nearest railhead: Salerno); exempt 2026-06-15
         # capri — island, no rail service; exempt 2026-06-15
+        # sardinia — island (Tyrrhenian Sea); no train connection to mainland; exempt 2026-07-11
+        # sicily — island (train ferry exists but unreliable for day trips); exempt 2026-07-11
         'bologna', 'cinque terre', 'florence',
-        'lake como', 'milan', 'naples', 'pisa', 'rome', 'siena',
+        'lake como', 'lecce', 'milan', 'naples', 'pisa', 'rome', 'siena',
         'sorrento', 'turin', 'venice', 'verona',
         # Spain
-        'barcelona', 'madrid', 'san sebastian', 'seville', 'toledo',
+        'barcelona', 'madrid', 'málaga', 'malaga', 'san sebastian', 'seville', 'toledo',
         # Portugal  (Lagos here = Algarve, Portugal — the European Lagos)
         # azores — island archipelago, no rail service; see _ISLAND_CITIES 2026-06-15
         # madeira — island, no rail service; see _ISLAND_CITIES 2026-06-15
         'cascais', 'lagos', 'lisbon', 'porto', 'sintra',
         # Germany
-        'berlin', 'marktoberdorf', 'munich', 'stuttgart',
+        'berlin', 'hamburg', 'marktoberdorf', 'munich', 'stuttgart',
         # Austria
         'salzburg', 'vienna',
         # Switzerland
-        'geneva', 'lucerne', 'zurich',
+        'geneva', 'lucerne', 'zurich', 'zürich',
         # United Kingdom
-        'cambridge', 'edinburgh', 'glasgow', 'london',
+        'cambridge', 'edinburgh', 'glasgow', 'london', 'oxford',
         # Ireland
         'dublin',
         # Netherlands
@@ -19570,10 +19606,21 @@ def validate(html: str, filename: str):
         # Sweden
         'gothenburg', 'stockholm',
         # Norway
-        'alesund', 'bergen', 'tromso',
+        # alesund / ålesund — no train station; NOT in this set (exempt from ≥5 floor)
+        # tromso / tromsø — no direct train station; NOT in this set (exempt from ≥5 floor)
+        'bergen', 'oslo',
         # Finland
         'helsinki',
         # iceland — island country, no passenger rail; see _ISLAND_CITIES 2026-06-15
+        # ── Added 2026-07-11 (audit: missing countries) ──────────────────────
+        # Poland
+        'kraków', 'krakow',
+        # Hungary
+        'budapest',
+        # Turkey (transcontinental; Istanbul straddles Europe/Asia — European floor applies)
+        'istanbul',
+        # Georgia (Caucasus; Tbilisi has rail network connecting to EU rail corridor)
+        'tbilisi',
     }
     # ─── DAY TRIPS — Island cities: MUST ship zero entries (HARD FAIL) ──────────
     # Per Day Trips by Train - Extra Section.html § 2.2 (2026-06-15):
@@ -19590,6 +19637,8 @@ def validate(html: str, filename: str):
         # Europe — matched against .title-city (normalised lowercase)
         'capri',                    # Italy — island, no rail service
         'corfu',                    # Greece — island, no rail service
+        'mykonos',                  # Greece — island, no rail service
+        'santorini',                # Greece — island, no rail service
         'são miguel · azores',      # Portugal/Azores — .title-city value
         'funchal',                  # Portugal/Madeira — .title-city value
         'reykjavík',                # Iceland — no passenger rail
