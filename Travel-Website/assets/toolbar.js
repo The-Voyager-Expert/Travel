@@ -152,7 +152,7 @@
         { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: '🛟 Travel Insurance' },
       ] },
     null,
-    { group: '🪪 Entry', children: [
+    { group: '🪪 Visa', children: [
         { href: base + 'Trip-Essentials/Visas.html',                                    text: '🪪 Visas' },
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '📋 Entry Requirements' },
       ] },
