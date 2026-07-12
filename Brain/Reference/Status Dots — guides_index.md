@@ -13,12 +13,12 @@ this file — never edit the checklist directly, or the next resync silently rev
 
 ## What the dots mean
 
-- 🔵 **Blue dot** (bottom-right of a card) = **Want to go** — haven't been yet.
+- 🟡 **Gold dot** (bottom-right of a card) = **Want to go** — haven't been yet.
 - ⚪ **No dot** = **Been there.**
 
-Default is **"want to go."** Every new guide ships with `data-status="want"` (blue dot) until you've been there and tick it `[x]`. This means the blue dot is the starting state, not the exception.
+Default is **"want to go."** Every new guide ships with `data-status="want"` (gold dot) until you've been there and tick it `[x]`. This means the gold dot is the starting state, not the exception.
 
-Color: dusty blue `#6a7fa3`, 6px, 0.85 opacity, pinned bottom-right.
+Color: gold `var(--gold)` (`#c8961a`), 7px, 0.95 opacity, pinned bottom-right.
 
 ## How it works in the HTML
 
@@ -32,7 +32,7 @@ Remove the attribute to turn it back to "been." That's the only change — the C
 
 ## Master list
 
-`[x]` = **been**, `[ ]` = **want to go** (gets the blue dot). Regenerated from the
+`[x]` = **been**, `[ ]` = **want to go** (gets the gold dot). Regenerated from the
 index by `build_status_dots.py` — do not hand-edit; flip `data-status` on the card
 in `Guides-Index.html` instead.
 
@@ -385,7 +385,7 @@ in `Guides-Index.html` instead.
 
 ## Pending builds (not on the index yet)
 
-Unshipped — `_build/` scaffolding only, no guide HTML, no index card. Add to the master list when they ship as `[ ]` (blue dot, want to go) by default, unless owner confirms they've already been — in that case enter as `[x]`. (Brussels shipped 2026-06-06 and moved to the Europe list as been.)
+Unshipped — `_build/` scaffolding only, no guide HTML, no index card. Add to the master list when they ship as `[ ]` (gold dot, want to go) by default, unless owner confirms they've already been — in that case enter as `[x]`. (Brussels shipped 2026-06-06 and moved to the Europe list as been.)
 
 Current stalled builds (as of 2026-06-15 audit — no HTML yet, Phase 6 unchecked or no scaffolding):
 _(none — all known stalled builds have shipped HTML as of 2026-06-15)_
@@ -398,4 +398,4 @@ It's computed by a small script at the bottom of `Guides-Index.html` — it coun
 
 ## Keeping it in sync
 
-When a new guide ships, add the city here as `[ ]` (blue dot) by default — the assumption is you haven't been yet. When you visit a want-to-go place, tick it `[x]` and Claude removes its blue dot. This file and the index should always agree. The guide-count line needs no maintenance — it counts itself.
+When a new guide ships, add the city here as `[ ]` (gold dot) by default — the assumption is you haven't been yet. When you visit a want-to-go place, tick it `[x]` and Claude removes its gold dot. This file and the index should always agree. The guide-count line needs no maintenance — it counts itself.
