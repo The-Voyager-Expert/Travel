@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-12", "THREE NEW HARD-FAILS FROM SCREENSHOT REVIEW (Dani), re-applied after concurrent-edit collisions on this shared file. (1) TITLE-HOTEL LINK COLOR-DRIFT GUARD — .title-hotel must not contain an <a>; only .title-address is the Maps link (Hotel Banner.html §1). guide-style.css has a color rule for \".title-page .title-address a\" but none for \".title-hotel a\", so a linked hotel name falls through to the global canonical link blue instead of matching the address. Caught: Bhutan's \"COMO Uma Paro\" rendered blue (1/220 guides, now fixed). (2) TRIP OVERVIEW DAY-LABEL REPEAT GUARD — each .overview-day card's \"Day N\" label must appear exactly once; an undocumented .overview-day-num div duplicated it above .overview-day-title's own \"Day N – …\" prefix. Caught: Aracaju + Olinda (2/219 guides, now fixed). (3) TOURS NEGATIVE-FINDING BOX PADDING CSS PRESENCE — \"No qualifying tours on [Platform] in [City].\" sits .entry-body directly under .tours-group, which carries no padding of its own (unlike .extras-sub); without an override the box rendered 0px top / 8px bottom padding (confirmed via Playwright computed style, 37/219 guides affected — a shared-CSS gap, not per-guide content). Fixed by adding \"#tours .tours-group + .entry-body { padding-top: 8px; border-radius: 4px; }\" to guide-style.css; this check hard-fails if that override is ever removed, rather than re-scanning guide HTML (the .tours-group + .entry-body adjacency is legitimate once the CSS override exists)."),
     ("2026-07-11", "EXTRA SECTION UNIQUENESS — no extra section written twice (new hard-fail). Each extra section (Cappuccino, Tours, Claude Inspiration, Michelin, …) ships exactly once; multiple entries belong INSIDE a single section container, not in a second duplicate container. Claude Inspiration is one <div class=\"claude-inspiration\"> with several <p> blocks (Claude Inspiration - Extra Section.html §1/§4), never two separate section containers each repeating the ✨ Claude Inspiration title; every other section is unique by Guide Structure.html section order. New check enumerates every extra-section container (extras-section OR claude-inspiration) in document order, extracts each one's .extras-title text (empty titles — the CSS-injected 'Also on this site' block — excluded), and hard-fails on any title appearing more than once. INVISIBLE UNTIL NOW: a duplicated section renders as two identical headers stacked on the page but passed every prior check (section-order, overview-sync, and closing-div checks all tolerate a repeat). Caught: Montevideo shipped two ✨ Claude Inspiration containers (theme-teal + theme-coral, the 2nd also missing its id='claude-inspiration') instead of one section with two <p> entries. Fleet scan: 1/219 guides affected (Montevideo only). Rule home: Claude Inspiration - Extra Section.html §4 + Guide Structure.html section order."),
     ("2026-07-11", "CORE RULES vs VALIDATOR 2ND-PASS RE-AUDIT — 11 enforcement gaps closed (3 confirmed-missing + 8 candidate, source: 2nd-pass audit 11 July 2026 PM). NEW HARD-FAILS: (1) PHONE/EMAIL BAN (Gap 1) — RE_EMAIL_PATTERN/RE_PHONE_PATTERN scan the title card and the whole visible body for a phone number or email address; tel:/mailto: hrefs were previously exempt from the target=\"_blank\" check, making them invisible everywhere else (Rules for Claude.html §7). (2) TOURS 🏨 → 🚐 MOTION ROW (Gap 2) — only 🏨 ↔ 🚐 / 🏨 ← 🚐 (tour ends at hotel) are exempt from the 🚶/🚕 return motion row; → (pickup-only, tour ends elsewhere) previously dropped it too (Tours - Extra Section.html §6/§7). (3) HARDCODED .title-updated (Gap 3) — the JS-injected \"Updated\" stamp must never appear literally in guide HTML body; only the CSS rule's existence was checked before (Hotel Banner.html §2a). (4) 📍 ADDRESS OWN-COUNTRY LEAK (Gap 4) — a stop address may never contain the guide's own .title-country value, closing a hole the generic any-country comma-split check missed (Links.html §6). (5) TITLE BANNER EXACTLY 4 LINES (Gap 5) — .title-page may hold no content beyond the canonical city/hotel/address/country divs; the prior children-list check only caught an extra <div class=\"...\">, not a bare text node (Hotel Banner.html §2). (6) MICHELIN §3A RATING REQUIRED (Gap 7) — an in-hotel heading must carry N.N⭐ · N+ reviews as a class=\"review-link\" anchor; the inverse (§3b bans it) was already enforced but the affirmative requirement wasn't — restructured the entry loop so §3a/§3b heading-shape checks no longer contradict each other (Michelin Restaurants - Extra Section.html §3a; will newly fail Cannes/Rio de Janeiro/Sorrento/Valletta until their §3a headings are backfilled with a real rating). (7) FOOD DELIVERY INVERSE CHECK (Gap 11) — negative-finding line and real platform entries may never co-exist, mirroring the guard already on Cappuccino/Local Tastes/Pickleball/Downtown (Food Delivery - Extra Section.html §2/§3). (8) CLAUDE INSPIRATION RESERVED-EMOJI (Gap 8, T_NEW8) — extended beyond section-header icons to also forbid the motion glyphs (🚶/🚕/🚤) and 📍. NEW WARN-TIER (fuzzy / no numeric threshold defined in CORE RULES, so surfaced for review rather than blocking): (9) alt text reading like a full sentence rather than \"just the subject name\" (Gap 9, Photos Rules.html §8); (10) a Weekly Closures entry that reads as a singular proper venue rather than a category (Gap 10, Weekly Closures - Extra Section.html §1); (11) a Train Day outbound/return departure outside the morning/evening window (Gap 6, Day Structure.html §7). No guide HTML edited — validator + Validator Index.html only; the flagged Michelin guides need a content backfill in a later pass."),
     ("2026-07-10", "MOTION-BANNER DESTINATION MUST INHERIT THE BANNER FONT (BARE TEXT) — new hard-fail. The name after → in a .hotel-first / .arrive-first / plain .next banner is bare text across the whole compliant fleet (Lisbon/Porto: '🏨 From Hotel: 🚕 15 min → Cathedral'). Static text carries no styling of its own, so it inherits the SAME font family/size/style/colour as the rest of its banner — matching the '🚶 N · 🚕 M →' it follows. That differs by banner type (a .next row is Roboto 14px ITALIC #555 muted grey; a .hotel-first row is upright #1a1a1a) and the check does not need to know it. ANY markup on the destination breaks the inheritance — an <a href=…google.com/maps…> recolours it to a{color:#2867c4} blue, a <span>/<font>/inline-style element changes font or colour directly. So the check is structural: the destination segment (everything after the final →) must contain NO OPENING tag (<[a-zA-Z]) — a trailing closing tag like </p> from a benign whole-row <p> wrapper (Bora-Bora) does not recolour and is ignored. Dani caught the blue on Aracaju (From Hotel → Cathedral) then the muted-grey→blue drift on a .next row (→ Palácio). INVISIBLE UNTIL NOW: every motion/opener check strips tags before validating, so the markup slipped through all of them. Scoped to .hotel-first / .arrive-first / EXACT class=\"next\" — .next-tram / .next-metro excluded (they legitimately carry bracketed board/route/alight anchors per Getting Around.html). Rule home: Motion Rule §3 + Links.html. Caught + fixed the same day: 4 Brazilian guides from one crib batch had wrapped every banner destination in a Maps link — Aracaju (21), Olinda (12), João-Pessoa (11), Porto-Alegre (9) — all unwrapped to bare text and re-validated to 0 failures."),
@@ -2488,6 +2489,35 @@ def validate(html: str, filename: str):
         _th_unbold_fails[0] if _th_unbold_fails else "",
     )
 
+    # (c) .title-hotel must not contain a link — color-drift guard.
+    # Hotel Banner.html §1 — only .title-address is the Google Maps link; the
+    # hotel/rental name is plain text. guide-style.css has no color rule for
+    # ".title-hotel a", so wrapping the hotel name in a link falls through to
+    # the global canonical link blue instead of matching .title-address.
+    # Caught 2026-07-12: Bhutan's "COMO Uma Paro" rendered blue against a dark
+    # "Paro Valley · Bhutan" — the only guide (1/220) with this wrapper.
+    _th_link_fails: list[str] = []
+    for _thl in re.finditer(
+        r'<div\b[^>]*\bclass\s*=\s*"title-hotel"[^>]*>(.*?)</div>',
+        html, re.IGNORECASE | re.DOTALL,
+    ):
+        _th_inner = _thl.group(1)
+        if re.search(r'<a\b', _th_inner, re.IGNORECASE):
+            _th_link_fails.append(
+                f'"{RE_STRIP_TAGS.sub("", _th_inner).strip()[:60]}" '
+                f'— .title-hotel wraps an <a>, which has no dedicated CSS color '
+                f'rule and falls through to the global link blue instead of '
+                f'matching .title-address (Hotel Banner.html §1)'
+            )
+    check(
+        ".title-hotel must not contain a link — hotel name is plain text; "
+        "only .title-address is the Maps link. An unstyled <a> falls through "
+        "to the global link blue, rendering a different color than the "
+        "address beside it (Hotel Banner.html §1)",
+        not _th_link_fails,
+        _th_link_fails[0] if _th_link_fails else "",
+    )
+
     # ─── TITLE CARD SCOPE — hotel is name + address only ──────
     # tp_inner_for_children holds the balanced .title-page content from _walk_balanced_div
     # above — use it directly instead of a fragile lookahead regex.
@@ -2735,6 +2765,7 @@ def validate(html: str, filename: str):
         overview_stale_stops_div: list[str] = []  # .overview-day-stops is retired (2026-05-26)
         overview_has_count: list[str] = []
         overview_eoi_content: list[str] = []
+        overview_day_label_repeated: list[str] = []
         # A day card is a title-only nav chip — a days-only grid, never a full
         # "Explore-of-Interest" card. Banning the retired .overview-day-stops /
         # -count divs is not enough: ANY EoI building block (image, paragraph,
@@ -2788,6 +2819,21 @@ def validate(html: str, filename: str):
             ):
                 overview_has_count.append(f"card {i}")
 
+            # 6. Day-number label "Day N" must not repeat inside a single card.
+            # One nav chip = one "Day N" label, carried once by the
+            # .overview-day-title text ("Day N – Stop1 · Stop2"). A duplicate —
+            # e.g. a stray .overview-day-num badge sitting above the title —
+            # shows the number twice in the same card. Caught via screenshot:
+            # Aracaju/Olinda (same crib batch as the 2026-07-10 motion-banner
+            # blue-link bug) carry an undocumented .overview-day-num div ("Day
+            # 1") immediately followed by .overview-day-title ("Day 1 – …").
+            _card_plain = RE_STRIP_TAGS.sub(' ', inner)
+            _day_label_hits = re.findall(r'\bDay\s+' + str(i) + r'\b', _card_plain)
+            if len(_day_label_hits) > 1:
+                overview_day_label_repeated.append(
+                    f'card {i}: "Day {i}" appears {len(_day_label_hits)} times in the card'
+                )
+
         if overview_days:
             check(
                 'Trip Overview — each .overview-day links to a day anchor (href="#…")',
@@ -2824,6 +2870,15 @@ def validate(html: str, filename: str):
                 len(overview_eoi_content) == 0,
                 f"{len(overview_eoi_content)} card(s) contain EoI/foreign content: "
                 f"{overview_eoi_content[:3]}" if overview_eoi_content else "",
+            )
+            check(
+                'Trip Overview — day-number label "Day N" appears exactly once per card '
+                '(one nav chip = one label, carried by .overview-day-title; a repeated '
+                'label — e.g. a stray .overview-day-num badge above the title — shows '
+                'the same "Day N" twice in one card)',
+                len(overview_day_label_repeated) == 0,
+                f"{len(overview_day_label_repeated)} card(s) repeat their day label: "
+                f"{overview_day_label_repeated[:3]}" if overview_day_label_repeated else "",
             )
 
     # ─── BANNER BODY FORMAT — strict, no parentheticals / prose ─
@@ -26619,6 +26674,38 @@ def validate(html: str, filename: str):
             + '; '.join(_css_a_transform_hits[:3])
             + ' — remove: links must display as written in source.'
             if _css_a_transform_hits else '',
+        )
+        # ─── TOURS — negative-finding box padding override present ─────
+        # "No qualifying tours on [Platform] in [City]." sits .entry-body
+        # directly under .tours-group — a bare colored label with no padding
+        # of its own, unlike .extras-sub (which supplies its own 10px
+        # padding-top as the "roof" of the usual two-piece card). Without an
+        # override, .entry-body's base STYLE A padding-top:0 leaves the box
+        # with 0px top / 8px bottom padding — confirmed via Playwright
+        # computed style on Aracaju. Fixed 2026-07-12 by adding
+        # "#tours .tours-group + .entry-body { padding-top: 8px; border-radius: 4px; }"
+        # to guide-style.css. This check hard-fails if that rule is ever
+        # removed or regressed — it does not re-inspect guide HTML (every
+        # guide with an empty platform legitimately has the .tours-group +
+        # .entry-body adjacency; the fix lives entirely in the shared CSS).
+        _tours_pad_css_m = re.search(
+            r'#tours\s+\.tours-group\s*\+\s*\.entry-body\s*\{([^}]*)\}',
+            _css_stripped,
+        )
+        _tours_pad_css_ok = bool(
+            _tours_pad_css_m
+            and re.search(r'padding-top\s*:\s*[1-9]', _tours_pad_css_m.group(1))
+        )
+        check(
+            'guide-style.css — "#tours .tours-group + .entry-body" padding-top '
+            'override is present (fixes the single-platform negative-finding box '
+            'rendering with 0px top padding; added 2026-07-12)',
+            _tours_pad_css_ok,
+            'guide-style.css is missing (or has lost) the '
+            '"#tours .tours-group + .entry-body" padding-top override — the '
+            'per-platform "No qualifying tours on [Platform] in [City]." box '
+            'will render with 0px top padding again'
+            if not _tours_pad_css_ok else '',
         )
     # ─── CSS COMPANION FILE — PILL HOVER BEHAVIOR ───────────────
     # Two approved interactive behaviors only (added 2026-07-07):
