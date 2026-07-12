@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-11", "EXTRA SECTION UNIQUENESS — no extra section written twice (new hard-fail). Each extra section (Cappuccino, Tours, Claude Inspiration, Michelin, …) ships exactly once; multiple entries belong INSIDE a single section container, not in a second duplicate container. Claude Inspiration is one <div class=\"claude-inspiration\"> with several <p> blocks (Claude Inspiration - Extra Section.html §1/§4), never two separate section containers each repeating the ✨ Claude Inspiration title; every other section is unique by Guide Structure.html section order. New check enumerates every extra-section container (extras-section OR claude-inspiration) in document order, extracts each one's .extras-title text (empty titles — the CSS-injected 'Also on this site' block — excluded), and hard-fails on any title appearing more than once. INVISIBLE UNTIL NOW: a duplicated section renders as two identical headers stacked on the page but passed every prior check (section-order, overview-sync, and closing-div checks all tolerate a repeat). Caught: Montevideo shipped two ✨ Claude Inspiration containers (theme-teal + theme-coral, the 2nd also missing its id='claude-inspiration') instead of one section with two <p> entries. Fleet scan: 1/219 guides affected (Montevideo only). Rule home: Claude Inspiration - Extra Section.html §4 + Guide Structure.html section order."),
     ("2026-07-11", "CORE RULES vs VALIDATOR 2ND-PASS RE-AUDIT — 11 enforcement gaps closed (3 confirmed-missing + 8 candidate, source: 2nd-pass audit 11 July 2026 PM). NEW HARD-FAILS: (1) PHONE/EMAIL BAN (Gap 1) — RE_EMAIL_PATTERN/RE_PHONE_PATTERN scan the title card and the whole visible body for a phone number or email address; tel:/mailto: hrefs were previously exempt from the target=\"_blank\" check, making them invisible everywhere else (Rules for Claude.html §7). (2) TOURS 🏨 → 🚐 MOTION ROW (Gap 2) — only 🏨 ↔ 🚐 / 🏨 ← 🚐 (tour ends at hotel) are exempt from the 🚶/🚕 return motion row; → (pickup-only, tour ends elsewhere) previously dropped it too (Tours - Extra Section.html §6/§7). (3) HARDCODED .title-updated (Gap 3) — the JS-injected \"Updated\" stamp must never appear literally in guide HTML body; only the CSS rule's existence was checked before (Hotel Banner.html §2a). (4) 📍 ADDRESS OWN-COUNTRY LEAK (Gap 4) — a stop address may never contain the guide's own .title-country value, closing a hole the generic any-country comma-split check missed (Links.html §6). (5) TITLE BANNER EXACTLY 4 LINES (Gap 5) — .title-page may hold no content beyond the canonical city/hotel/address/country divs; the prior children-list check only caught an extra <div class=\"...\">, not a bare text node (Hotel Banner.html §2). (6) MICHELIN §3A RATING REQUIRED (Gap 7) — an in-hotel heading must carry N.N⭐ · N+ reviews as a class=\"review-link\" anchor; the inverse (§3b bans it) was already enforced but the affirmative requirement wasn't — restructured the entry loop so §3a/§3b heading-shape checks no longer contradict each other (Michelin Restaurants - Extra Section.html §3a; will newly fail Cannes/Rio de Janeiro/Sorrento/Valletta until their §3a headings are backfilled with a real rating). (7) FOOD DELIVERY INVERSE CHECK (Gap 11) — negative-finding line and real platform entries may never co-exist, mirroring the guard already on Cappuccino/Local Tastes/Pickleball/Downtown (Food Delivery - Extra Section.html §2/§3). (8) CLAUDE INSPIRATION RESERVED-EMOJI (Gap 8, T_NEW8) — extended beyond section-header icons to also forbid the motion glyphs (🚶/🚕/🚤) and 📍. NEW WARN-TIER (fuzzy / no numeric threshold defined in CORE RULES, so surfaced for review rather than blocking): (9) alt text reading like a full sentence rather than \"just the subject name\" (Gap 9, Photos Rules.html §8); (10) a Weekly Closures entry that reads as a singular proper venue rather than a category (Gap 10, Weekly Closures - Extra Section.html §1); (11) a Train Day outbound/return departure outside the morning/evening window (Gap 6, Day Structure.html §7). No guide HTML edited — validator + Validator Index.html only; the flagged Michelin guides need a content backfill in a later pass."),
     ("2026-07-10", "MOTION-BANNER DESTINATION MUST INHERIT THE BANNER FONT (BARE TEXT) — new hard-fail. The name after → in a .hotel-first / .arrive-first / plain .next banner is bare text across the whole compliant fleet (Lisbon/Porto: '🏨 From Hotel: 🚕 15 min → Cathedral'). Static text carries no styling of its own, so it inherits the SAME font family/size/style/colour as the rest of its banner — matching the '🚶 N · 🚕 M →' it follows. That differs by banner type (a .next row is Roboto 14px ITALIC #555 muted grey; a .hotel-first row is upright #1a1a1a) and the check does not need to know it. ANY markup on the destination breaks the inheritance — an <a href=…google.com/maps…> recolours it to a{color:#2867c4} blue, a <span>/<font>/inline-style element changes font or colour directly. So the check is structural: the destination segment (everything after the final →) must contain NO OPENING tag (<[a-zA-Z]) — a trailing closing tag like </p> from a benign whole-row <p> wrapper (Bora-Bora) does not recolour and is ignored. Dani caught the blue on Aracaju (From Hotel → Cathedral) then the muted-grey→blue drift on a .next row (→ Palácio). INVISIBLE UNTIL NOW: every motion/opener check strips tags before validating, so the markup slipped through all of them. Scoped to .hotel-first / .arrive-first / EXACT class=\"next\" — .next-tram / .next-metro excluded (they legitimately carry bracketed board/route/alight anchors per Getting Around.html). Rule home: Motion Rule §3 + Links.html. Caught + fixed the same day: 4 Brazilian guides from one crib batch had wrapped every banner destination in a Maps link — Aracaju (21), Olinda (12), João-Pessoa (11), Porto-Alegre (9) — all unwrapped to bare text and re-validated to 0 failures."),
     ("2026-07-11", "STRUCTURE — EXTRAS-SUB MUST BE FOLLOWED BY CORRECT BODY CONTAINER (new hard-fail). Every .extras-sub heading in every extras section must be immediately followed by the section's designated body container div — .entry-body for tours/cappuccino/restaurants/downtown/local-tastes/michelin/pickleball; .shows-box for shows; .transit-box for getting-around/day-trips/day-trips-by-train/food-delivery/heads-up; .station-box for stations-near-hotel. When .stop-row divs are used directly after .extras-sub instead, the beige card background (set by the shared token on both .extras-sub + body-box together) only covers the heading line — all body rows render unstyled with no background. The Aracaju guide (entire cappuccino, restaurants, and downtown sections — 13 entries) exposed this: the guide looked broken in the browser but passed every validator check because no check verified the sibling container class. New check: for each section, walks every .extras-sub via _walk_balanced_div, finds the next sibling div opening, and hard-fails if its class is not the expected body container. Weekly-closures and skip-list excluded (no .extras-sub entries). Rule home: guide-style.css § STYLE A canonical block spec (locked 2026-05-19). Caught by: Aracaju guide visual review."),
@@ -3000,6 +3001,51 @@ def validate(html: str, filename: str):
         f"{len(_links_no_section)} orphan link(s) with no matching section: "
         + ', '.join(f'#{x}' for x in _links_no_section)
         if _links_no_section else '',
+    )
+
+    # ─── EXTRA SECTION UNIQUENESS — no section written twice ───────────────────
+    # Each extra section (Cappuccino, Tours, Claude Inspiration, Michelin, …)
+    # ships exactly once. Multiple entries belong INSIDE a single section
+    # container — Claude Inspiration is one <div class="claude-inspiration"> with
+    # several <p> blocks (Claude Inspiration - Extra Section.html §1/§4), never two
+    # separate section containers each repeating the ✨ Claude Inspiration title;
+    # every other section is unique by Guide Structure.html section order. A
+    # repeated section title = a whole section block was duplicated instead of
+    # adding entries to the existing one (renders as two identical headers stacked
+    # on the page). Identity = the .extras-title text of each section container
+    # (extras-section OR claude-inspiration); empty titles (the CSS-injected
+    # 'Also on this site' block) are excluded.
+    print("\n── EXTRA SECTION UNIQUENESS ──")
+    _sec_open_re = re.compile(
+        r'<div\b[^>]*\bclass\s*=\s*"[^"]*\b(?:extras-section|claude-inspiration)\b[^"]*"[^>]*>',
+        re.IGNORECASE,
+    )
+    _sec_title_re = re.compile(
+        r'<div\b[^>]*\bclass\s*=\s*"[^"]*\bextras-title\b[^"]*"[^>]*>(.*?)</div>',
+        re.IGNORECASE | re.DOTALL,
+    )
+    _sec_starts = [m.start() for m in _sec_open_re.finditer(html)]
+    _sec_title_counts: dict[str, int] = {}
+    for _i, _p in enumerate(_sec_starts):
+        _seg_end = _sec_starts[_i + 1] if _i + 1 < len(_sec_starts) else len(html)
+        _tm = _sec_title_re.search(html, _p, _seg_end)
+        if not _tm:
+            continue
+        _t = re.sub(r'<[^>]+>', '', _tm.group(1))
+        _t = re.sub(r'\s+', ' ', _t).strip()
+        if _t:
+            _sec_title_counts[_t] = _sec_title_counts.get(_t, 0) + 1
+    _dup_sections = sorted(t for t, c in _sec_title_counts.items() if c > 1)
+    check(
+        'Extra section uniqueness — no extra section is written twice; each section '
+        '(Cappuccino, Tours, Claude Inspiration, Michelin, …) ships once with all its '
+        'entries inside a single container (per Claude Inspiration - Extra Section.html '
+        '§4 and Guide Structure.html section order). A repeated section title = a whole '
+        'section block duplicated instead of adding entries to the existing one',
+        len(_dup_sections) == 0,
+        'section(s) written more than once: '
+        + ', '.join(f'{t!r} ×{_sec_title_counts[t]}' for t in _dup_sections)
+        if _dup_sections else '',
     )
 
     # ─── OVERVIEW EXTRAS — no · dots as text separators ────────────────────────
