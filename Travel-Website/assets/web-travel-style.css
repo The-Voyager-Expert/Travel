@@ -364,36 +364,48 @@ input[type="text"]::placeholder,
 
 /* ── Best-of "showcase" variant — Best-Ultra-Luxurious-Hotels.html only.
    Scoped via body.luxe-showcase so it never touches the locked shared
-   .best-of-* rules the other 32 Best-*.html pages depend on: bigger, airier
-   tiles (fewer per row) with a hairline divider instead of a boxed card,
-   and a stat chip (.best-of-meta span) so room/villa counts read at a
-   glance instead of being buried in the summary sentence. Added 2026-07-12
-   at Dani's request — the boxed catalog-grid format reads too dense for a
-   short, hand-curated list of a couple dozen hotels. ── */
+   .best-of-* rules the other 32 Best-*.html pages depend on. Full-width
+   split rows (name/tag/stat on the left, summary+links on the right)
+   instead of a tiled card grid — a tile grid leaves an awkward empty gap
+   whenever a country has only one entry (most of them do on this short,
+   hand-curated list), and a single consistent row width reads calmer.
+   Added 2026-07-12, revised same day after the first tile-grid pass still
+   read too "catalog." ── */
 body.luxe-showcase .best-of-grid {
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 6px 40px;
+  grid-template-columns: 1fr;
+  gap: 0;
 }
 body.luxe-showcase .best-of-card {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-areas:
+    "name desc"
+    "tag  desc"
+    "meta desc"
+    "meta links";
+  column-gap: 36px;
+  row-gap: 4px;
+  align-items: start;
   background: transparent;
   border: none;
   border-left: none;
   border-bottom: 1px solid var(--border2);
   border-radius: 0;
-  padding: 22px 0;
+  padding: 24px 0;
 }
 body.luxe-showcase .best-of-card:hover {
   box-shadow: none;
   border-color: var(--border2);
   border-bottom-color: var(--accent);
 }
-body.luxe-showcase .best-of-name { font-size: 19px; }
+body.luxe-showcase .best-of-name { grid-area: name; font-size: 18px; }
 body.luxe-showcase .best-of-tag {
+  grid-area: tag;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 11px;
 }
-body.luxe-showcase .best-of-meta { margin-top: 10px; }
+body.luxe-showcase .best-of-meta { grid-area: meta; margin-top: 10px; }
 body.luxe-showcase .best-of-meta span {
   background: var(--hover);
   border: 1px solid var(--border2);
@@ -405,15 +417,18 @@ body.luxe-showcase .best-of-meta span {
   white-space: nowrap;
 }
 body.luxe-showcase .best-of-desc {
+  grid-area: desc;
   font-size: 14px;
   line-height: 1.65;
-  margin-top: 12px;
-  max-width: 46ch;
+  margin-top: 0;
 }
-body.luxe-showcase .best-of-links { margin-top: 14px; }
-@media (max-width: 600px) {
-  body.luxe-showcase .best-of-grid { grid-template-columns: 1fr; gap: 0; }
-  body.luxe-showcase .best-of-card { padding: 18px 0; }
+body.luxe-showcase .best-of-links { grid-area: links; margin-top: 14px; }
+@media (max-width: 640px) {
+  body.luxe-showcase .best-of-card {
+    grid-template-columns: 1fr;
+    grid-template-areas: "name" "tag" "meta" "desc" "links";
+    padding: 18px 0;
+  }
 }
 
 /* ── Disclosure dropdown (disc-btn + days-jump pattern)
