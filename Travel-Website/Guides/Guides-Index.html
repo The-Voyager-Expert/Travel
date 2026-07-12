@@ -1680,6 +1680,10 @@ window._giStatusFilter = 'all';
       if (sb) sb.click();
       var tb = document.querySelector('#theme-panel .tchip.on');
       if (tb) tb.click();
+      if (window._clearLangFilter) window._clearLangFilter();
+      if (window._clearCountryFilter) window._clearCountryFilter();
+      if (window._clearContinentFilter) window._clearContinentFilter();
+      if (window._exitCompareMode) window._exitCompareMode();
       applyMosaicFilter();
     });
   }
@@ -2991,6 +2995,7 @@ window._giStatusFilter = 'all';
     if (inp) { var e = document.createEvent('Event'); e.initEvent('input', true, true); inp.dispatchEvent(e); }
   }
   window._applyCountryFilter = applyCountryFilter;
+  window._clearCountryFilter = function () { if (active !== null) { active = null; applyCountryFilter(); } };
 
   function openMenu()  { if (window._setBrowseView) window._setBrowseView('country'); if (window._collapseFacetPanels) window._collapseFacetPanels(); if (window._closeDaysMenu) window._closeDaysMenu(); if (window._closeBestofMenu) window._closeBestofMenu(); if (window._closeContinentMenu) window._closeContinentMenu(); jump.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); }
   function closeMenu() { jump.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
@@ -3125,6 +3130,7 @@ window._giStatusFilter = 'all';
     if (inp) { var e = document.createEvent('Event'); e.initEvent('input', true, true); inp.dispatchEvent(e); }
   }
   window._applyContinentFilter = applyContinentFilter;
+  window._clearContinentFilter = function () { if (active !== null) { active = null; applyContinentFilter(); } };
 
   function openMenu()  {
     if (window._setBrowseView) window._setBrowseView('country'); /* leave flight-time view */
@@ -3328,6 +3334,15 @@ window._giStatusFilter = 'all';
       applyLangFilter();
     });
   }
+
+  window._clearLangFilter = function () {
+    if (!activeLangs.length) return;
+    activeLangs = [];
+    var allBtn = langChips && langChips.querySelector('[data-l="all"]');
+    if (langChips) [].slice.call(langChips.querySelectorAll('.lchip')).forEach(function (c) { c.classList.remove('on'); });
+    if (allBtn) allBtn.classList.add('on');
+    applyLangFilter();
+  };
 
   /* ── View menu: By Language / By Guide ── */
   var langMenu = document.getElementById('langMenu');
