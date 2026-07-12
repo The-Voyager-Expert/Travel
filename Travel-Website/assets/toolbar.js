@@ -458,10 +458,6 @@
         sep.className = 'tb-ham-sep';
         hamMenu.appendChild(sep);
       }
-      var hdr = document.createElement('div');
-      hdr.className = 'tb-ham-hdr';
-      hdr.textContent = item.group;
-      hamMenu.appendChild(hdr);
       item.children.forEach(function (ch) {
         var a = document.createElement('a');
         a.href = ch.href;
@@ -646,8 +642,7 @@
         header.appendChild(stamp);
       }
 
-      /* Arrow row injected AFTER .page-header — visually below the terracotta line.
-         Pulls .best-of-related (See also pills) into the centre of the same line. */
+      /* Arrow row injected AFTER .page-header — visually below the terracotta line. */
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;' +
         'gap:12px;margin:6px 0 4px;';
@@ -658,15 +653,9 @@
       bPrev.setAttribute('aria-label', 'Previous Best Of');
       bPrev.style.cssText = btnStyle + 'flex-shrink:0;' + (prevHref ? '' : 'visibility:hidden;');
 
-      /* Centre slot — reparent .best-of-related intact so .best-of-related a
-         CSS selector keeps its pill styling */
+      /* Centre spacer — keeps prev/next pinned to opposite edges */
       var centre = document.createElement('div');
       centre.style.cssText = 'flex:1;padding-left:16px;';
-      var related = document.querySelector('.best-of-related');
-      if (related) {
-        related.style.margin = '0';
-        centre.appendChild(related);
-      }
 
       var bNext = document.createElement('a');
       bNext.href = nextHref || '#';
