@@ -293,22 +293,35 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
   display: block;
   background: var(--c-brand-pale);
   border: 1px solid rgba(138, 108, 26, 0.2);
-  border-left: 3px solid var(--c-brand);
+  border-left: 3px solid rgba(138, 108, 26, 0.5);
   border-radius: 8px;
   padding: 10px 16px;
   margin-bottom: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   text-decoration: none;
   color: inherit;
-  transition: border-left-color .15s ease;
+  transition: border-left-color .15s ease, transform .08s ease, box-shadow .08s ease;
 }
 .overview-day:last-child  { margin-bottom: 0; }
+/* Press feedback — same scale(.97) translateY(1px) + flattened shadow the
+   extras pills use below (:active fires correctly on a real tap-and-release,
+   unlike :hover, so this needs no hover:hover guard). */
+.overview-day:active {
+  border-left-color: #b85c2a;
+  box-shadow: none;
+  transform: scale(.97) translateY(1px);
+}
 /* Gold left bar at rest (always visible — matters on mobile, which has no
    hover state to reveal anything) shifts to terracotta on hover, since
    interactive states are terracotta-only per Colors and Font Size.html § 11
    while gold is text/borders only. Border-only cue either way: background
-   never changes, so stop-list text never has to fight a contrast shift. */
-.overview-day:hover       { border-left-color: #b85c2a; }
+   never changes, so stop-list text never has to fight a contrast shift.
+   `hover: hover` scoping (same pattern as .overview-extras below) keeps
+   this off touch devices — without it, iOS Safari "sticks" :hover on
+   whichever row was last tapped, since a touch never fires mouseleave. */
+@media (hover: hover) {
+  .overview-day:hover { border-left-color: #b85c2a; }
+}
 .overview-day-title      { color: var(--c-text-primary); font-weight: normal; font-size: var(--fs-overview-day-title); margin-bottom: 3px; }
 .overview-day-num        { color: var(--c-brand); font-weight: 700; }
 .overview-day-stops      { color: var(--c-text-primary); font-size: var(--fs-overview-stops); line-height: 1.5; }
