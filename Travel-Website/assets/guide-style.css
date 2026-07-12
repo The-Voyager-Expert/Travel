@@ -1637,15 +1637,24 @@ div.train .train-time .arr { color: var(--c-title-bg); }
      European Train) span 3 columns (2 per row → 1 row). All pills stay single-
      line at the slightly smaller 12px. */
   .also-on-this-site-pills { display: grid !important; grid-template-columns: repeat(6, 1fr) !important; gap: 6px !important; }
+  /* The "Also on this site" heading (.extras-title) is a direct child of this
+     same grid container. Without an explicit span it took one implicit column
+     next to the first two pills, which broke the 3-per-row packing entirely —
+     force it onto its own full-width row so pills start clean at row 2. */
+  .also-on-this-site-pills .extras-title { grid-column: 1 / -1 !important; }
   .also-on-this-site-pills .also-on-this-site-pill { display: flex !important; width: auto !important; justify-content: center; text-align: center; grid-column: span 2 !important; font-size: 12px !important; padding-left: 5px !important; padding-right: 5px !important; }
   .also-on-this-site-pills .also-on-this-site-pill[href*="Stats"],
   .also-on-this-site-pills .also-on-this-site-pill[href*="European-Train-Guide"] { grid-column: span 3 !important; }
   /* On 7-pill non-EU guides Stats is the only long pill AND the last one — give
-     it the full width so it isn't a lonely half-row. */
-  .also-on-this-site-pills .also-on-this-site-pill[href*="Stats"]:last-child { grid-column: 1 / -1 !important; }
+     it the full width so it isn't a lonely half-row. :last-of-type (not
+     :last-child) because toolbar.js's repositionUpdatedStamp() appends a
+     .title-updated <div> after the pills on mobile, so the Stats <a> is no
+     longer the literal last child — but it's still the last <a>. */
+  .also-on-this-site-pills .also-on-this-site-pill[href*="Stats"]:last-of-type { grid-column: 1 / -1 !important; }
   /* The "Updated {Month}" stamp is moved here (bottom of the "Also on this site"
-     card) by toolbar.js on mobile — sit it bottom-right. */
-  #also-on-this-site .title-updated { display: block !important; width: 100% !important; text-align: right !important; margin: 10px 0 0 !important; font-size: 11px !important; color: #9a948a !important; }
+     card) by toolbar.js on mobile — sit it bottom-right on its own full-width
+     row (grid-column, not just width:100%, since it's a grid item here). */
+  #also-on-this-site .title-updated { display: block !important; grid-column: 1 / -1 !important; width: 100% !important; text-align: right !important; margin: 10px 0 0 !important; font-size: 11px !important; color: #9a948a !important; }
 }
 
 
