@@ -482,6 +482,10 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
 .next a:hover,
 .next-tram a:hover,
 .next-metro a:hover { text-decoration: underline; }
+/* End-of-day return-to-hotel banner — last .next inside its .day-block —
+   gets a larger margin-bottom than a same-day between-stop transition
+   (8px), to read as a heavier break before the next day starts. (2026-07-12) */
+.day-block > .next:last-child { margin-bottom: 12px; }
 
 
 /* ─── STOP BLOCK ───────────────────────────────────────────────────────────── */
@@ -505,8 +509,13 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
      1× .stop-num                    — `{N}.` (digit + period)
      1× .stop-name                   — with EXACTLY ONE type modifier
                                         (.guided / .self / .train) */
-.stop-block            { margin-bottom: 12px; scroll-margin-top: 20px; }
+.stop-block            { margin-bottom: 8px; scroll-margin-top: 20px; }
 .stop-block:last-child { margin-bottom: 0; }
+/* ↳ prose summary row — 2nd child of every .stop-block per the documented
+   contract above. Targeted by POSITION, not the .stop-row class, because
+   a large share of shipped guides never applied that class to this exact
+   row — a class-based fix would silently miss those. (2026-07-12) */
+.stop-block > :nth-child(2) { margin-top: 6px; }
 .stop-num,
 .stop-name             { font-weight: bold; font-size: var(--fs-base); color: var(--c-text-primary); }
 /* .stop-row matches body weight (17px desktop / 21px mobile) — the ↳ prose
@@ -517,14 +526,17 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
 .stop-row              { margin: 4px 0; font-size: var(--fs-stop-row); color: var(--c-text-primary); }
 .stop-subtitle         { font-size: 0.88em; color: #666; margin-bottom: 8px; }
 
-/* 📖 Wikipedia reading row — extra breathing room above and below.
-   Default .stop-row margin (6px) glues the 📖 line to ↳ prose above and
-   tour boxes below; bumped to 14px for a clearer visual break. Scoped via
-   :has() to the exact en.wikipedia.org anchor so the rule only fires on the
-   📖 row and never catches ↳ prose with a stray Wikipedia mention.
-   Browser support: Chromium 105+ (covers headless render via render_pdf.py). */
+/* 📖 Wikipedia reading row. Asymmetric on purpose (2026-07-12): the row
+   above (↳ prose) is plain text, so its line-height leading already adds
+   visual space on top of the margin; the row below (booking box) is a
+   hard-edged colored box with no leading, so it needs the full margin to
+   read as equal space. 4px top / 8px bottom is what reads as even.
+   Scoped via :has() to the exact en.wikipedia.org anchor so the rule only
+   fires on the 📖 row and never catches ↳ prose with a stray Wikipedia
+   mention. Browser support: Chromium 105+ (covers headless render via
+   render_pdf.py). */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) {
-  margin-top: 8px;
+  margin-top: 4px;
   margin-bottom: 8px;
 }
 
@@ -614,6 +626,15 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
   border-radius: 4px;
   margin: 4px 0;
 }
+/* Row-to-row rhythm inside the box — was inconsistent (only the trailing
+   .stop-row-classed row carried a margin, every other row was a bare div
+   sitting flush against its neighbor). Targets every direct-child row by
+   POSITION so it's uniform regardless of which rows happen to carry
+   .stop-row. Shared with .ticket-box below. (2026-07-12) */
+.tour-box > div,
+.ticket-box > div { margin-top: 6px; }
+.tour-box > div:first-child,
+.ticket-box > div:first-child { margin-top: 0; }
 .tour-box a { font-weight: normal; }
 .tour-box a strong { font-weight: normal !important; }
 #tours .entry-body a strong,
@@ -719,7 +740,7 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
 .stop-photos {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 .stop-photos img {
@@ -1193,6 +1214,25 @@ div.train .train-time .arr { color: var(--c-title-bg); }
 .station-box:has(+ .extras-sub) {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+/* ── Tours — single-platform negative-finding box padding fix (added
+   2026-07-12). "No qualifying tours on [Platform] in [City]." sits
+   .entry-body directly under .tours-group instead of under .extras-sub —
+   but .tours-group is a bare colored label (font-weight/color/margin only,
+   no padding or background of its own), unlike .extras-sub, which supplies
+   its own 10px padding-top as the "roof" of the usual two-piece card. Without
+   this override the box inherits the base STYLE A padding-top:0 (meant for
+   a body glued under a padded heading), so the text sits flush against the
+   top edge — 0px top / 8px bottom, confirmed via computed style. This
+   restores full self-contained padding + corner-rounding, matching how
+   .extras-empty (the negative-finding class used everywhere else) already
+   looks. Scoped to #tours only — .tours-group is Tours-exclusive, and a real
+   tour entry always has .extras-sub between .tours-group and .entry-body,
+   so this selector only ever matches the negative-finding case. ── */
+#tours .tours-group + .entry-body {
+  padding-top: 8px;
+  border-radius: 4px;
 }
 
 /* Retired 2026-05-19 — the intermediate description div between .extras-sub
