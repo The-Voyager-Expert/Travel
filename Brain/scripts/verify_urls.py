@@ -166,6 +166,7 @@ BOT_BLOCKED_HOSTS = {
     "ihg.com", "www.ihg.com",
     "hyatt.com", "www.hyatt.com",
     "booking.com", "www.booking.com",
+    "tajhotels.com", "www.tajhotels.com",  # added 2026-07-11, Best-Safari.html rebuild — 403 to the automated client (bot wall); site live, confirmed via web search (Mahua Kothi, A Taj Safari page)
     # Luxury independent hotel groups (restaurant pages often live on hotel domains)
     "oetkercollection.com", "www.oetkercollection.com",
     "oetkerhotels.com", "www.oetkerhotels.com",
