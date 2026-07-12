@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-12", "WEEKLY CLOSURES — BOLD BANNED (Dani-requested format change), re-applied after a concurrent-edit collision wiped this change from disk (2nd write). Weekly Closures - Extra Section.html § 2 changed: entries are now plain text — the <strong> wrap on the category name is retired; no word in an entry (category or weekday) may be bold. Check B (entry format) no longer requires a <strong> wrap on the category. Check C — formerly 'exactly one <strong>, wrapping the category only' — is now a hard-fail on ANY <strong>/<b> tag inside a .stop-row entry. Five downstream category-text extractors that previously parsed <strong> and `continue`d (skipped) an entry when it found none — duplicate-venue check, generic-category-vs-venue check, the possible-venue warn, WC-X4 title-case, WC-X5 trailing-punctuation — switched to splitting the plain text on ' · Closed' instead. Check-only per Dani's explicit instruction for the rule/validator change; the 168 already-bold guides were separately fixed in place (mechanical, no re-validation run at the time). WC-X19 companion check added same pass: negative-finding line ('.extras-empty') must also not be bold — fleet scan found 0/51 negative-finding-only guides currently bold there, so no guide fix was needed for that half."),
     ("2026-07-12", "THREE NEW HARD-FAILS FROM SCREENSHOT REVIEW (Dani), re-applied after concurrent-edit collisions on this shared file. (1) TITLE-HOTEL LINK COLOR-DRIFT GUARD — .title-hotel must not contain an <a>; only .title-address is the Maps link (Hotel Banner.html §1). guide-style.css has a color rule for \".title-page .title-address a\" but none for \".title-hotel a\", so a linked hotel name falls through to the global canonical link blue instead of matching the address. Caught: Bhutan's \"COMO Uma Paro\" rendered blue (1/220 guides, now fixed). (2) TRIP OVERVIEW DAY-LABEL REPEAT GUARD — each .overview-day card's \"Day N\" label must appear exactly once; an undocumented .overview-day-num div duplicated it above .overview-day-title's own \"Day N – …\" prefix. Caught: Aracaju + Olinda (2/219 guides, now fixed). (3) TOURS NEGATIVE-FINDING BOX PADDING CSS PRESENCE — \"No qualifying tours on [Platform] in [City].\" sits .entry-body directly under .tours-group, which carries no padding of its own (unlike .extras-sub); without an override the box rendered 0px top / 8px bottom padding (confirmed via Playwright computed style, 37/219 guides affected — a shared-CSS gap, not per-guide content). Fixed by adding \"#tours .tours-group + .entry-body { padding-top: 8px; border-radius: 4px; }\" to guide-style.css; this check hard-fails if that override is ever removed, rather than re-scanning guide HTML (the .tours-group + .entry-body adjacency is legitimate once the CSS override exists)."),
     ("2026-07-11", "EXTRA SECTION UNIQUENESS — no extra section written twice (new hard-fail). Each extra section (Cappuccino, Tours, Claude Inspiration, Michelin, …) ships exactly once; multiple entries belong INSIDE a single section container, not in a second duplicate container. Claude Inspiration is one <div class=\"claude-inspiration\"> with several <p> blocks (Claude Inspiration - Extra Section.html §1/§4), never two separate section containers each repeating the ✨ Claude Inspiration title; every other section is unique by Guide Structure.html section order. New check enumerates every extra-section container (extras-section OR claude-inspiration) in document order, extracts each one's .extras-title text (empty titles — the CSS-injected 'Also on this site' block — excluded), and hard-fails on any title appearing more than once. INVISIBLE UNTIL NOW: a duplicated section renders as two identical headers stacked on the page but passed every prior check (section-order, overview-sync, and closing-div checks all tolerate a repeat). Caught: Montevideo shipped two ✨ Claude Inspiration containers (theme-teal + theme-coral, the 2nd also missing its id='claude-inspiration') instead of one section with two <p> entries. Fleet scan: 1/219 guides affected (Montevideo only). Rule home: Claude Inspiration - Extra Section.html §4 + Guide Structure.html section order."),
     ("2026-07-11", "CORE RULES vs VALIDATOR 2ND-PASS RE-AUDIT — 11 enforcement gaps closed (3 confirmed-missing + 8 candidate, source: 2nd-pass audit 11 July 2026 PM). NEW HARD-FAILS: (1) PHONE/EMAIL BAN (Gap 1) — RE_EMAIL_PATTERN/RE_PHONE_PATTERN scan the title card and the whole visible body for a phone number or email address; tel:/mailto: hrefs were previously exempt from the target=\"_blank\" check, making them invisible everywhere else (Rules for Claude.html §7). (2) TOURS 🏨 → 🚐 MOTION ROW (Gap 2) — only 🏨 ↔ 🚐 / 🏨 ← 🚐 (tour ends at hotel) are exempt from the 🚶/🚕 return motion row; → (pickup-only, tour ends elsewhere) previously dropped it too (Tours - Extra Section.html §6/§7). (3) HARDCODED .title-updated (Gap 3) — the JS-injected \"Updated\" stamp must never appear literally in guide HTML body; only the CSS rule's existence was checked before (Hotel Banner.html §2a). (4) 📍 ADDRESS OWN-COUNTRY LEAK (Gap 4) — a stop address may never contain the guide's own .title-country value, closing a hole the generic any-country comma-split check missed (Links.html §6). (5) TITLE BANNER EXACTLY 4 LINES (Gap 5) — .title-page may hold no content beyond the canonical city/hotel/address/country divs; the prior children-list check only caught an extra <div class=\"...\">, not a bare text node (Hotel Banner.html §2). (6) MICHELIN §3A RATING REQUIRED (Gap 7) — an in-hotel heading must carry N.N⭐ · N+ reviews as a class=\"review-link\" anchor; the inverse (§3b bans it) was already enforced but the affirmative requirement wasn't — restructured the entry loop so §3a/§3b heading-shape checks no longer contradict each other (Michelin Restaurants - Extra Section.html §3a; will newly fail Cannes/Rio de Janeiro/Sorrento/Valletta until their §3a headings are backfilled with a real rating). (7) FOOD DELIVERY INVERSE CHECK (Gap 11) — negative-finding line and real platform entries may never co-exist, mirroring the guard already on Cappuccino/Local Tastes/Pickleball/Downtown (Food Delivery - Extra Section.html §2/§3). (8) CLAUDE INSPIRATION RESERVED-EMOJI (Gap 8, T_NEW8) — extended beyond section-header icons to also forbid the motion glyphs (🚶/🚕/🚤) and 📍. NEW WARN-TIER (fuzzy / no numeric threshold defined in CORE RULES, so surfaced for review rather than blocking): (9) alt text reading like a full sentence rather than \"just the subject name\" (Gap 9, Photos Rules.html §8); (10) a Weekly Closures entry that reads as a singular proper venue rather than a category (Gap 10, Weekly Closures - Extra Section.html §1); (11) a Train Day outbound/return departure outside the morning/evening window (Gap 6, Day Structure.html §7). No guide HTML edited — validator + Validator Index.html only; the flagged Michelin guides need a content backfill in a later pass."),
@@ -8706,7 +8707,7 @@ def validate(html: str, filename: str):
         for entry_html in wc_entries:
             entry_plain = RE_STRIP_TAGS.sub( '', entry_html).strip()
 
-            # B — format match: <strong>Category</strong> · Closed Day
+            # B — format match: Category · Closed Day (plain text — no bold).
             # Separator is a middle dot (·), not an em-dash or period.
             # "Closed" must be capitalised (capital C).
             # Day expression may be multi-word: "Tuesday & Wednesday",
@@ -8724,31 +8725,18 @@ def validate(html: str, filename: str):
                 continue
             category_text, day_text = fmt_m.group(1).strip(), fmt_m.group(2).strip()
 
-            # B — must contain a <strong> for the category.
-            strong_matches = re.findall(
-                r'<strong\b[^>]*>(.*?)</strong>',
-                entry_html, re.IGNORECASE | re.DOTALL,
+            # C — no bold anywhere in the entry. Weekly Closures - Extra
+            # Section.html § 2 (changed 2026-07-12): entries are plain text —
+            # no <strong>/<b> on the category, the day, or anything else.
+            bold_tags = re.findall(
+                r'<(strong|b)\b[^>]*>',
+                entry_html, re.IGNORECASE,
             )
-            if not strong_matches:
-                wc_format_violations.append(
-                    f'"{entry_plain[:60]}" — no <strong> wrap on category'
-                )
-                continue
-
-            # C — exactly ONE <strong>, wrapping the category.
-            if len(strong_matches) > 1:
+            if bold_tags:
                 wc_bold_violations.append(
-                    f'"{entry_plain[:60]}" — {len(strong_matches)} '
-                    f'<strong> tags (expected 1, only the category)'
+                    f'"{entry_plain[:60]}" — {len(bold_tags)} bold tag(s) '
+                    f'(<strong>/<b>); entries must be plain text, no bold'
                 )
-            else:
-                strong_inner_plain = RE_STRIP_TAGS.sub( '', strong_matches[0]).strip()
-                if strong_inner_plain != category_text:
-                    wc_bold_violations.append(
-                        f'"{entry_plain[:60]}" — <strong> wraps '
-                        f'"{strong_inner_plain[:30]}" but category is '
-                        f'"{category_text[:30]}" (drift?)'
-                    )
 
             # E — day at end is a valid weekday (singular or plural).
             if not wc_valid_day_re.match(day_text):
@@ -8786,12 +8774,12 @@ def validate(html: str, filename: str):
         if wc_format_violations else "",
     )
 
-    # C — bold scope
+    # C — no bold
     check(
-        '🗓️ Weekly Closures — bold only the category name (per Weekly Closures - Extra Section.html — '
-        '"Don\'t bold the day or anything else on the line")',
+        '🗓️ Weekly Closures — no bold text in entries (per Weekly Closures - Extra Section.html § 2 — '
+        '"No word in an entry — category or weekday — is bold")',
         not wc_bold_violations,
-        (f"{len(wc_bold_violations)} bold-scope violation(s): "
+        (f"{len(wc_bold_violations)} bold violation(s): "
          + "; ".join(wc_bold_violations[:3]))
         if wc_bold_violations else "",
     )
@@ -8830,17 +8818,14 @@ def validate(html: str, filename: str):
             r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-row\b[^"]*"[^>]*>(.*?)</div>',
             wc_body_for_dup, re.IGNORECASE | re.DOTALL,
         )
-        # Extract category text from each entry (inside <strong>, normalised to lower).
+        # Extract category text from each entry — everything before " · Closed"
+        # (entries are plain text, no <strong> wrap — Weekly Closures - Extra
+        # Section.html § 2, changed 2026-07-12).
         wc_category_counts: dict[str, int] = {}
         for entry_html in wc_entries_for_dup:
-            strong_m = re.search(r'<strong\b[^>]*>(.*?)</strong>', entry_html, re.IGNORECASE | re.DOTALL)
-            if strong_m:
-                cat = RE_STRIP_TAGS.sub( '', strong_m.group(1)).strip().lower()
-            else:
-                # Fall back to everything before " · Closed"
-                plain = RE_STRIP_TAGS.sub( '', entry_html).strip()
-                cat_m = re.match(r'^(.+?)\s+·\s+Closed\b', plain)
-                cat = cat_m.group(1).strip().lower() if cat_m else plain[:40].lower()
+            plain = RE_STRIP_TAGS.sub( '', entry_html).strip()
+            cat_m = re.match(r'^(.+?)\s+·\s+Closed\b', plain)
+            cat = cat_m.group(1).strip().lower() if cat_m else plain[:40].lower()
             wc_category_counts[cat] = wc_category_counts.get(cat, 0) + 1
         for cat, count in wc_category_counts.items():
             if count > 1:
@@ -9015,10 +9000,11 @@ def validate(html: str, filename: str):
             r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-row\b[^"]*"[^>]*>(.*?)</div>',
             wc_section_m.group(1), re.IGNORECASE | re.DOTALL,
         ):
-            _strong_m = re.search(r'<strong\b[^>]*>(.*?)</strong>', _wce_html, re.IGNORECASE)
-            if not _strong_m:
+            _wce_plain_cat = RE_STRIP_TAGS.sub('', _wce_html).strip()
+            _cat_m3 = re.match(r'^(.+?)\s+·\s+Closed\b', _wce_plain_cat)
+            if not _cat_m3:
                 continue
-            _cat_text = RE_STRIP_TAGS.sub( '', _strong_m.group(1)).strip()
+            _cat_text = _cat_m3.group(1).strip()
             # Strip parenthetical examples "(Louvre · Pompidou)" before matching
             _cat_core = re.sub(r'\s*\([^)]+\)', '', _cat_text).strip()
             _cat_norm = _cat_core.lower()
@@ -9061,10 +9047,11 @@ def validate(html: str, filename: str):
             r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-row\b[^"]*"[^>]*>(.*?)</div>',
             wc_section_m.group(1), re.IGNORECASE | re.DOTALL,
         ):
-            _strong_m2 = re.search(r'<strong\b[^>]*>(.*?)</strong>', _wce_html2, re.IGNORECASE)
-            if not _strong_m2:
+            _wce_plain_cat2 = RE_STRIP_TAGS.sub('', _wce_html2).strip()
+            _cat_m4 = re.match(r'^(.+?)\s+·\s+Closed\b', _wce_plain_cat2)
+            if not _cat_m4:
                 continue
-            _cat_text2 = RE_STRIP_TAGS.sub('', _strong_m2.group(1)).strip()
+            _cat_text2 = _cat_m4.group(1).strip()
             if f'"{_cat_text2}"' in wc_venue_entries:
                 continue  # already hard-failed above by Signal A/B
             _cat_core2 = re.sub(r'\s*\([^)]+\)', '', _cat_text2).strip()
@@ -9191,7 +9178,7 @@ def validate(html: str, filename: str):
     )
 
     # WC-X3: No <a> links inside .stop-row entries
-    # Stop-row content is plain text + <strong> only. An <a> tag is format drift
+    # Stop-row content is plain text only. An <a> tag is format drift
     # (links belong on stop blocks, not in the Weekly Closures category list).
     _wc_linked_entries: list[str] = []
     if wc_section_m:
@@ -9204,7 +9191,7 @@ def validate(html: str, filename: str):
                 _wc_linked_entries.append(f'"{_wce_text[:60]}"')
     check(
         '🗓️ Weekly Closures — no <a> links inside .stop-row entries '
-        '(entries are plain text + <strong> only; links are format drift) '
+        '(entries are plain text only; links are format drift) '
         '(Weekly Closures - Extra Section.html § 2)',
         not _wc_linked_entries,
         f'{len(_wc_linked_entries)} entry(ies) containing links: '
@@ -9222,10 +9209,11 @@ def validate(html: str, filename: str):
             r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-row\b[^"]*"[^>]*>(.*?)</div>',
             wc_section_m.group(1), re.IGNORECASE | re.DOTALL,
         ):
-            _strong_m = re.search(r'<strong\b[^>]*>(.*?)</strong>', _wce_html, re.IGNORECASE)
-            if not _strong_m:
+            _wce_plain_cat3 = RE_STRIP_TAGS.sub('', _wce_html).strip()
+            _cat_m5 = re.match(r'^(.+?)\s+·\s+Closed\b', _wce_plain_cat3)
+            if not _cat_m5:
                 continue
-            _cat = RE_STRIP_TAGS.sub('', _strong_m.group(1)).strip()
+            _cat = _cat_m5.group(1).strip()
             # Split on spaces and commas, check each token
             _bad_words = []
             for _tok in re.split(r'[\s,]+', _cat):
@@ -9256,10 +9244,11 @@ def validate(html: str, filename: str):
             r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-row\b[^"]*"[^>]*>(.*?)</div>',
             wc_section_m.group(1), re.IGNORECASE | re.DOTALL,
         ):
-            _strong_m = re.search(r'<strong\b[^>]*>(.*?)</strong>', _wce_html, re.IGNORECASE)
-            if not _strong_m:
+            _wce_plain_cat4 = RE_STRIP_TAGS.sub('', _wce_html).strip()
+            _cat_m6 = re.match(r'^(.+?)\s+·\s+Closed\b', _wce_plain_cat4)
+            if not _cat_m6:
                 continue
-            _cat = RE_STRIP_TAGS.sub('', _strong_m.group(1)).strip()
+            _cat = _cat_m6.group(1).strip()
             if _cat and _cat[-1] in ('.', ',', ';', ':'):
                 _wc_cat_trailing_punct.append(
                     f'"{_cat[:50]}" — ends with "{_cat[-1]}"'
@@ -9378,6 +9367,28 @@ def validate(html: str, filename: str):
         not _wc_empty_no_period,
         'Negative-finding line is missing its closing period'
         if _wc_empty_no_period else '',
+    )
+
+    # WC-X19: Negative-finding line must not be bold
+    # Mirrors Check C (no bold anywhere in a .stop-row entry) but scoped to the
+    # .extras-empty negative-finding line — the whole section is plain text,
+    # not just the entries (Weekly Closures - Extra Section.html § 3, added 2026-07-12).
+    _wc_empty_bold = False
+    if wc_section_m and wc_entry_count == 0:
+        _wc_empty_div_m = re.search(
+            r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-empty\b[^"]*"[^>]*>(.*?)</div>',
+            wc_section_m.group(1), re.IGNORECASE | re.DOTALL,
+        )
+        if _wc_empty_div_m and re.search(
+            r'<(strong|b)\b', _wc_empty_div_m.group(1), re.IGNORECASE,
+        ):
+            _wc_empty_bold = True
+    check(
+        '🗓️ Weekly Closures — negative-finding line must not be bold '
+        '(Weekly Closures - Extra Section.html § 3 — plain text, not bold)',
+        not _wc_empty_bold,
+        'Negative-finding line contains a <strong>/<b> tag — must be plain text'
+        if _wc_empty_bold else '',
     )
 
 
