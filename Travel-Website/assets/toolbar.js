@@ -252,7 +252,10 @@
         '-webkit-tap-highlight-color:transparent;' +
         'padding:10px 14px 10px 8px;font-size:13px;color:#fff;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
       '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{background:none !important;box-shadow:none !important;outline:none !important}' +
-      '.tb-ham-label{display:block;font-size:15px;font-weight:700;color:#fff;padding-left:14px;letter-spacing:.06em;text-transform:uppercase}' +
+      /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
+         became an <a> (was a <span>) when it was wired to link to Trips.html, and the
+         inflated block-level box pushed the text off the bar's vertical center. */
+      '.tb-ham-label{display:block;min-height:0!important;font-size:15px;font-weight:700;color:#fff;padding-left:14px;letter-spacing:.06em;text-transform:uppercase}' +
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
         'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
         'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:999;padding:4px 0 8px;' +
