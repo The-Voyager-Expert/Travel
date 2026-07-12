@@ -1081,6 +1081,7 @@ div.train .train-time .arr { color: var(--c-title-bg); }
 #michelin            .extras-empty { background: var(--c-michelin-bg);       border-left: 3px solid var(--c-michelin-border); }
 #food-delivery       .extras-empty { background: var(--c-delivery-bg);       border-left: 3px solid var(--c-delivery-border); }
 #heads-up      .extras-empty { background: var(--c-headsup-bg);         border-left: 3px solid var(--c-headsup-border); }
+#tours               .extras-empty { background: var(--c-tours-bg);          border-left: 3px solid var(--c-tours-border); }
 
 /* Lavender extras-box — Michelin and Shows both use this palette (matches
    .overview-day / Trip Overview). One box per entry; sits directly below
@@ -1199,41 +1200,65 @@ div.train .train-time .arr { color: var(--c-title-bg); }
    A .tours-group (provider) label or a new .extras-title breaks the
    adjacency chain on its own — no extra rule needed to preserve those
    breaks. CSS-only: applies to every guide via the shared stylesheet,
-   no per-guide HTML edits required. ── */
-.entry-body + .extras-sub,
-.shows-box + .extras-sub,
-.transit-box + .extras-sub,
-.station-box + .extras-sub {
+   no per-guide HTML edits required.
+   MUST be ID-scoped per section (#tours, #cappuccino, …) to match — the
+   base Style A block above is scoped `#tours .extras-sub` (1 ID + 1
+   class = higher specificity than a bare `.entry-body + .extras-sub`,
+   which would silently lose the cascade to the base rule regardless of
+   source order). Scoping this override the same way keeps it winning
+   deterministically. (Caught 2026-07-12: an unscoped first pass shipped
+   with zero effect fleet-wide — 5485/5485 joins still gapped — before
+   this was rescoped; then LOST BACK to the unscoped form once, 2026-07-12,
+   by a concurrent write from another crib editing this same file — if
+   you find the unscoped form again, that's the regression, not a style
+   choice.) ── */
+#tours .entry-body + .extras-sub,
+#cappuccino .entry-body + .extras-sub,
+#restaurants .entry-body + .extras-sub,
+#downtown .entry-body + .extras-sub,
+#local-tastes .entry-body + .extras-sub,
+#michelin .entry-body + .extras-sub,
+#pickleball .entry-body + .extras-sub,
+#shows .shows-box + .extras-sub,
+#getting-around .transit-box + .extras-sub,
+#day-trips .transit-box + .extras-sub,
+#day-trips-by-train .transit-box + .extras-sub,
+#food-delivery .transit-box + .extras-sub,
+#heads-up .transit-box + .extras-sub,
+#stations-near-hotel .station-box + .extras-sub {
   margin-top: 0;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-.entry-body:has(+ .extras-sub),
-.shows-box:has(+ .extras-sub),
-.transit-box:has(+ .extras-sub),
-.station-box:has(+ .extras-sub) {
+#tours .entry-body:has(+ .extras-sub),
+#cappuccino .entry-body:has(+ .extras-sub),
+#restaurants .entry-body:has(+ .extras-sub),
+#downtown .entry-body:has(+ .extras-sub),
+#local-tastes .entry-body:has(+ .extras-sub),
+#michelin .entry-body:has(+ .extras-sub),
+#pickleball .entry-body:has(+ .extras-sub),
+#shows .shows-box:has(+ .extras-sub),
+#getting-around .transit-box:has(+ .extras-sub),
+#day-trips .transit-box:has(+ .extras-sub),
+#day-trips-by-train .transit-box:has(+ .extras-sub),
+#food-delivery .transit-box:has(+ .extras-sub),
+#heads-up .transit-box:has(+ .extras-sub),
+#stations-near-hotel .station-box:has(+ .extras-sub) {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-/* ── Tours — single-platform negative-finding box padding fix (added
-   2026-07-12). "No qualifying tours on [Platform] in [City]." sits
-   .entry-body directly under .tours-group instead of under .extras-sub —
-   but .tours-group is a bare colored label (font-weight/color/margin only,
-   no padding or background of its own), unlike .extras-sub, which supplies
-   its own 10px padding-top as the "roof" of the usual two-piece card. Without
-   this override the box inherits the base STYLE A padding-top:0 (meant for
-   a body glued under a padded heading), so the text sits flush against the
-   top edge — 0px top / 8px bottom, confirmed via computed style. This
-   restores full self-contained padding + corner-rounding, matching how
-   .extras-empty (the negative-finding class used everywhere else) already
-   looks. Scoped to #tours only — .tours-group is Tours-exclusive, and a real
-   tour entry always has .extras-sub between .tours-group and .entry-body,
-   so this selector only ever matches the negative-finding case. ── */
-#tours .tours-group + .entry-body {
-  padding-top: 8px;
-  border-radius: 4px;
-}
+/* Retired 2026-07-12 — the CSS-only "#tours .tours-group + .entry-body"
+   padding patch fixed the RENDERED result but not the underlying markup:
+   the validator's structural check flags .entry-body sitting directly under
+   .tours-group at all (that combination only ever occurs for a single-
+   platform negative-finding line — a real tour entry always has .extras-sub
+   between them). Superseded by the correct fix: every guide's negative-
+   finding box under .tours-group now uses class="extras-empty" (the same
+   self-contained negative-finding class used everywhere else in a guide —
+   #tours .extras-empty below supplies the matching background/border-left).
+   No .entry-body ever sits directly under .tours-group anymore, so this
+   patch has nothing left to match. */
 
 /* Retired 2026-05-19 — the intermediate description div between .extras-sub
    and .transit-box in #day-trips and #getting-around was the pre-2-row Day

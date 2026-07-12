@@ -66,6 +66,21 @@ CHANGELOG = [
      "rather than hardcoding an assumption, so the check tracks whatever the shared stylesheet "
      "currently says. Confirmed passing again on Travel-Website/Guides/Bruges/bruges_v1.html "
      "after re-apply."),
+    ("2026-07-12", "STYLE A CONTINUOUS-RUN + TOURS NEGATIVE-BOX FIXES RE-APPLIED (2nd write) "
+     "after a concurrent-edit collision on this shared file (and guide-style.css, and 37 guide "
+     "HTML files) wiped both fixes back to a stale mid-session snapshot. Re-applied: (1) the "
+     "ID-scoped Style A continuous-run check (28 anchors — see the block below, immediately "
+     "after 'Style A canonical block in shipped CSS'); (2) reconciled a genuine conflict "
+     "discovered during the re-apply — a check added by another crib's own re-apply pass "
+     "('guide-style.css — #tours .tours-group + .entry-body padding-top override is present') "
+     "REQUIRED the old CSS-only padding patch that this session's fix deliberately retired in "
+     "favor of renaming the 51 negative-finding boxes to class=\"extras-empty\" across 37 "
+     "guides — the two checks were mutually exclusive, no guide could pass both. Replaced that "
+     "check with one that verifies '#tours .extras-empty' is actually color-styled in the "
+     "shared CSS instead of requiring the retired padding patch. Both fixes re-verified clean "
+     "on the affected guides after re-applying. If either fix (or this check) goes missing "
+     "again, treat it as the same class of regression — see the inline comments at each site "
+     "for the full incident notes."),
     ("2026-07-12", "WEEKLY CLOSURES — BOLD BANNED (Dani-requested format change), re-applied after a concurrent-edit collision wiped this change from disk (2nd write). Weekly Closures - Extra Section.html § 2 changed: entries are now plain text — the <strong> wrap on the category name is retired; no word in an entry (category or weekday) may be bold. Check B (entry format) no longer requires a <strong> wrap on the category. Check C — formerly 'exactly one <strong>, wrapping the category only' — is now a hard-fail on ANY <strong>/<b> tag inside a .stop-row entry. Five downstream category-text extractors that previously parsed <strong> and `continue`d (skipped) an entry when it found none — duplicate-venue check, generic-category-vs-venue check, the possible-venue warn, WC-X4 title-case, WC-X5 trailing-punctuation — switched to splitting the plain text on ' · Closed' instead. Check-only per Dani's explicit instruction for the rule/validator change; the 168 already-bold guides were separately fixed in place (mechanical, no re-validation run at the time). WC-X19 companion check added same pass: negative-finding line ('.extras-empty') must also not be bold — fleet scan found 0/51 negative-finding-only guides currently bold there, so no guide fix was needed for that half."),
     ("2026-07-12", "THREE NEW HARD-FAILS FROM SCREENSHOT REVIEW (Dani), re-applied after concurrent-edit collisions on this shared file. (1) TITLE-HOTEL LINK COLOR-DRIFT GUARD — .title-hotel must not contain an <a>; only .title-address is the Maps link (Hotel Banner.html §1). guide-style.css has a color rule for \".title-page .title-address a\" but none for \".title-hotel a\", so a linked hotel name falls through to the global canonical link blue instead of matching the address. Caught: Bhutan's \"COMO Uma Paro\" rendered blue (1/220 guides, now fixed). (2) TRIP OVERVIEW DAY-LABEL REPEAT GUARD — each .overview-day card's \"Day N\" label must appear exactly once; an undocumented .overview-day-num div duplicated it above .overview-day-title's own \"Day N – …\" prefix. Caught: Aracaju + Olinda (2/219 guides, now fixed). (3) TOURS NEGATIVE-FINDING BOX PADDING CSS PRESENCE — \"No qualifying tours on [Platform] in [City].\" sits .entry-body directly under .tours-group, which carries no padding of its own (unlike .extras-sub); without an override the box rendered 0px top / 8px bottom padding (confirmed via Playwright computed style, 37/219 guides affected — a shared-CSS gap, not per-guide content). Fixed by adding \"#tours .tours-group + .entry-body { padding-top: 8px; border-radius: 4px; }\" to guide-style.css; this check hard-fails if that override is ever removed, rather than re-scanning guide HTML (the .tours-group + .entry-body adjacency is legitimate once the CSS override exists)."),
     ("2026-07-11", "EXTRA SECTION UNIQUENESS — no extra section written twice (new hard-fail). Each extra section (Cappuccino, Tours, Claude Inspiration, Michelin, …) ships exactly once; multiple entries belong INSIDE a single section container, not in a second duplicate container. Claude Inspiration is one <div class=\"claude-inspiration\"> with several <p> blocks (Claude Inspiration - Extra Section.html §1/§4), never two separate section containers each repeating the ✨ Claude Inspiration title; every other section is unique by Guide Structure.html section order. New check enumerates every extra-section container (extras-section OR claude-inspiration) in document order, extracts each one's .extras-title text (empty titles — the CSS-injected 'Also on this site' block — excluded), and hard-fails on any title appearing more than once. INVISIBLE UNTIL NOW: a duplicated section renders as two identical headers stacked on the page but passed every prior check (section-order, overview-sync, and closing-div checks all tolerate a repeat). Caught: Montevideo shipped two ✨ Claude Inspiration containers (theme-teal + theme-coral, the 2nd also missing its id='claude-inspiration') instead of one section with two <p> entries. Fleet scan: 1/219 guides affected (Montevideo only). Rule home: Claude Inspiration - Extra Section.html §4 + Guide Structure.html section order."),
@@ -14528,6 +14543,15 @@ def validate(html: str, filename: str):
     )
 
     # ─── EXTRAS-EMPTY POLLUTION — no additional content alongside extras-empty ──
+    # #tours is exempt (added 2026-07-12): Tours ships grouped by platform
+    # (Viator / GetYourGuide / TripAdvisor) under separate .tours-group labels
+    # within ONE #tours section — a single platform can legitimately have zero
+    # qualifying tours (rendered as .extras-empty) while a SIBLING platform in
+    # the same section has real .extras-sub/.entry-body entries. That mix is
+    # the intended shape, not pollution — every other section (Michelin, Local
+    # Tastes, Weekly Closures, …) has no sub-grouping, so extras-empty there
+    # really does mean "nothing else in this section" and the check still
+    # applies to them.
     print("\n── EXTRAS-EMPTY POLLUTION — no content alongside extras-empty ──")
     _EXTRAS_POLLUTION_CLASSES = (
         'ride-apps', 'shows-box', 'transit-box', 'entry-body',
@@ -14539,6 +14563,8 @@ def validate(html: str, filename: str):
         html, re.IGNORECASE,
     ):
         _sec_id = _ep_m.group(1)
+        if _sec_id.lower() == 'tours':
+            continue  # per-platform grouping legitimately mixes extras-empty + real entries
         _sec_inner, _ = _walk_balanced_div(html, _ep_m.end())
         if not re.search(r'class\s*=\s*"[^"]*\bextras-empty\b', _sec_inner, re.IGNORECASE):
             continue  # section is not empty — nothing to check
@@ -21596,6 +21622,76 @@ def validate(html: str, filename: str):
         if _styleA_missing else '',
     )
 
+    # ─── STYLE A — CONTINUOUS RUN (no gap between consecutive entries) ────
+    # Per Dani 2026-07-12: "it has to be continuous always in all the places!
+    # these are a one banner and needs to fail." A section holding 2+
+    # consecutive .extras-sub/.entry-body (or .shows-box/.transit-box/
+    # .station-box) pairs — same run, no .tours-group / .extras-title
+    # between them — must render as ONE seamless beige card, not stacked
+    # cards with a visible gap. The 2026-05-19 Style A spec put a 14px
+    # margin-top + top-rounding on EVERY .extras-sub, which breaks a
+    # multi-entry section (e.g. two Viator tours) into separate floating
+    # cards with a strip of page background between them — caught via
+    # screenshot on Aracaju's 2nd Viator tour. Fix lives in guide-style.css
+    # (CSS-only, shared stylesheet — applies to every guide automatically,
+    # no per-guide HTML edit needed): a continuation entry (.extras-sub
+    # directly preceded by another entry's body box) gets margin-top:0 +
+    # squared top corners, and that preceding body box gets squared bottom
+    # corners, so the two glue flush with zero gap.
+    #
+    # SPECIFICITY GOTCHA (found 2026-07-12 by a fleet-wide Playwright sweep —
+    # the first version of this fix shipped with ZERO effect, 5485/5485
+    # consecutive-entry joins still gapped, because the base Style A block
+    # is ID-scoped (`#tours .extras-sub` = 1 ID + 1 class) and always beats
+    # an unscoped override (`.entry-body + .extras-sub` = 0 ID + 2 classes)
+    # regardless of source order — CSS specificity compares ID count first.
+    # The anchors below therefore require the fully ID-scoped selector text
+    # per section (e.g. `#tours .entry-body + .extras-sub`), not the bare
+    # class-only selector — a bare/unscoped anchor would also match text
+    # inside the correctly-scoped selector as a substring, so checking for
+    # the SCOPED string is what actually guards against the regression.
+    #
+    # LOST-UPDATE GOTCHA (also 2026-07-12): this whole check, plus the CSS
+    # fix it guards, was wiped from BOTH this file and guide-style.css once
+    # already — a concurrent write from another crib editing these same
+    # shared files landed on top of an in-progress edit and reverted them
+    # to a stale snapshot mid-session. Re-added here; if you find this
+    # check (or the CSS selectors it anchors on) missing again, that is
+    # the same class of regression, not an intentional removal.
+    print("\n── STYLE A — continuous run (no gap between entries) ──")
+    _styleA_cont_missing: list[str] = []
+    _styleA_cont_body_ids = [
+        ('tours', 'entry-body'), ('cappuccino', 'entry-body'),
+        ('restaurants', 'entry-body'), ('downtown', 'entry-body'),
+        ('local-tastes', 'entry-body'), ('michelin', 'entry-body'),
+        ('pickleball', 'entry-body'), ('shows', 'shows-box'),
+        ('getting-around', 'transit-box'), ('day-trips', 'transit-box'),
+        ('day-trips-by-train', 'transit-box'), ('food-delivery', 'transit-box'),
+        ('heads-up', 'transit-box'), ('stations-near-hotel', 'station-box'),
+    ]
+    if _styleA_spec_path.is_file():
+        _styleA_cont_anchors = [
+            f'#{_sid} .{_cls} + .extras-sub' for _sid, _cls in _styleA_cont_body_ids
+        ] + [
+            f'#{_sid} .{_cls}:has(+ .extras-sub)' for _sid, _cls in _styleA_cont_body_ids
+        ]
+        for _anchor in _styleA_cont_anchors:
+            if _anchor not in _styleA_css:
+                _styleA_cont_missing.append(_anchor)
+    else:
+        _styleA_cont_missing.append(f'CSS file not found at {_styleA_spec_path}')
+    check(
+        'Style A continuous-run rule in shipped CSS — ID-scoped anchors present '
+        '(per Dani 2026-07-12 lock: consecutive entries in the same run must glue into '
+        'one seamless card with no gap — "these are a one banner"; anchors must be '
+        'ID-scoped per section or an unscoped override silently loses to the base '
+        '#section .extras-sub rule on specificity — the 2026-07-12 regression)',
+        not _styleA_cont_missing,
+        f'{len(_styleA_cont_missing)} continuity anchor(s) missing from assets/guide-style.css: '
+        + '; '.join(_styleA_cont_missing[:4])
+        if _styleA_cont_missing else '',
+    )
+
     # ─── DRIFT SENTINELS — retired patterns must never reappear ──────────
     # Per Dani 2026-05-19: every time we lock a Style-A decision, a
     # sentinel check guards it so the next build can't quietly undo the
@@ -26757,37 +26853,37 @@ def validate(html: str, filename: str):
             + ' — remove: links must display as written in source.'
             if _css_a_transform_hits else '',
         )
-        # ─── TOURS — negative-finding box padding override present ─────
-        # "No qualifying tours on [Platform] in [City]." sits .entry-body
-        # directly under .tours-group — a bare colored label with no padding
-        # of its own, unlike .extras-sub (which supplies its own 10px
-        # padding-top as the "roof" of the usual two-piece card). Without an
-        # override, .entry-body's base STYLE A padding-top:0 leaves the box
-        # with 0px top / 8px bottom padding — confirmed via Playwright
-        # computed style on Aracaju. Fixed 2026-07-12 by adding
-        # "#tours .tours-group + .entry-body { padding-top: 8px; border-radius: 4px; }"
-        # to guide-style.css. This check hard-fails if that rule is ever
-        # removed or regressed — it does not re-inspect guide HTML (every
-        # guide with an empty platform legitimately has the .tours-group +
-        # .entry-body adjacency; the fix lives entirely in the shared CSS).
-        _tours_pad_css_m = re.search(
-            r'#tours\s+\.tours-group\s*\+\s*\.entry-body\s*\{([^}]*)\}',
+        # ─── TOURS — negative-finding box uses .extras-empty, styled ────
+        # SUPERSEDES the 2026-07-12 "#tours .tours-group + .entry-body
+        # padding-top override" check (retired same day). That earlier fix
+        # patched the RENDERED padding but not the underlying markup —
+        # .entry-body sitting directly under .tours-group at all is exactly
+        # what the OTHER "single-platform negative-finding box must not sit
+        # .entry-body directly under .tours-group" structural check (above,
+        # in the Tours block) hard-fails on. The two checks were mutually
+        # exclusive: no guide could pass both simultaneously. Correct fix:
+        # every "No qualifying tours on [Platform] in [City]." box now uses
+        # class="extras-empty" (the same self-contained negative-finding
+        # class used everywhere else in a guide — Michelin, Local Tastes,
+        # Weekly Closures, …), which is fully padded on all sides without
+        # depending on a preceding .extras-sub. That only works if the
+        # shared CSS actually styles #tours .extras-empty (background +
+        # border-left) — the generic .extras-empty rule alone has no color.
+        # This check hard-fails if that per-section color rule goes missing.
+        _tours_empty_css_ok = bool(re.search(
+            r'#tours\s+\.extras-empty\s*\{[^}]*background\s*:',
             _css_stripped,
-        )
-        _tours_pad_css_ok = bool(
-            _tours_pad_css_m
-            and re.search(r'padding-top\s*:\s*[1-9]', _tours_pad_css_m.group(1))
-        )
+        ))
         check(
-            'guide-style.css — "#tours .tours-group + .entry-body" padding-top '
-            'override is present (fixes the single-platform negative-finding box '
-            'rendering with 0px top padding; added 2026-07-12)',
-            _tours_pad_css_ok,
-            'guide-style.css is missing (or has lost) the '
-            '"#tours .tours-group + .entry-body" padding-top override — the '
-            'per-platform "No qualifying tours on [Platform] in [City]." box '
-            'will render with 0px top padding again'
-            if not _tours_pad_css_ok else '',
+            'guide-style.css — "#tours .extras-empty" color rule is present '
+            '(negative-finding Tours boxes use .extras-empty, same as every other '
+            'section\'s negative-finding line; without this rule they render with '
+            'no background/border-left — added 2026-07-12)',
+            _tours_empty_css_ok,
+            'guide-style.css is missing the "#tours .extras-empty" background/'
+            'border-left rule — the per-platform "No qualifying tours on '
+            '[Platform] in [City]." box will render unstyled (no color)'
+            if not _tours_empty_css_ok else '',
         )
     # ─── CSS COMPANION FILE — PILL HOVER BEHAVIOR ───────────────
     # Two approved interactive behaviors only (added 2026-07-07):
