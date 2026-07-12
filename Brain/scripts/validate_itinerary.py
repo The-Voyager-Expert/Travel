@@ -82,6 +82,8 @@ CHANGELOG = [
      "again, treat it as the same class of regression — see the inline comments at each site "
      "for the full incident notes."),
     ("2026-07-12", "WEEKLY CLOSURES — BOLD BANNED (Dani-requested format change), re-applied after a concurrent-edit collision wiped this change from disk (2nd write). Weekly Closures - Extra Section.html § 2 changed: entries are now plain text — the <strong> wrap on the category name is retired; no word in an entry (category or weekday) may be bold. Check B (entry format) no longer requires a <strong> wrap on the category. Check C — formerly 'exactly one <strong>, wrapping the category only' — is now a hard-fail on ANY <strong>/<b> tag inside a .stop-row entry. Five downstream category-text extractors that previously parsed <strong> and `continue`d (skipped) an entry when it found none — duplicate-venue check, generic-category-vs-venue check, the possible-venue warn, WC-X4 title-case, WC-X5 trailing-punctuation — switched to splitting the plain text on ' · Closed' instead. Check-only per Dani's explicit instruction for the rule/validator change; the 168 already-bold guides were separately fixed in place (mechanical, no re-validation run at the time). WC-X19 companion check added same pass: negative-finding line ('.extras-empty') must also not be bold — fleet scan found 0/51 negative-finding-only guides currently bold there, so no guide fix was needed for that half."),
+    ("2026-07-12", "CLAUDE INSPIRATION — colored theme class FORBIDDEN (new hard-fail). The Claude Inspiration section must render with a plain white background. The CSS default (--c-card-bg: #fff) already provides white when no theme modifier is present. Any theme-{color} class (theme-teal, theme-coral, theme-sage, etc.) overrides --ci-bg with a tinted color, which is not permitted. The T_NEW5 check (formerly 'valid color token') now hard-fails when any theme-{color} class is present on the outer div. Correct format: class=\"claude-inspiration\" with no theme modifier. Rule authority: Claude Inspiration - Extra Section.html §2."),
+    ("2026-07-12", "GETTING AROUND — RIDE-APP LINK TEXT MUST BE A DOMAIN (new hard-fail, added 2026-07-12). The Getting Around - Extra Section.html §1b format '[Ride App Operator]' means the visible link text is the operator's domain (uber.com, bolt.eu, lyft.com, etc.), not the app name ('Uber', 'Bolt', 'Lyft'). The prior per-app link-only check (2026-05-24) verified <a href> presence and child-div count but never checked what the <a> text read. This check scans every 🚕 extras-sub → transit-box → <a> in the Getting Around section and hard-fails any <a> whose visible text contains no dot. Fleet impact at introduction: 47 guides affected (amsterdam, arenal, beijing, bergen, berlin, bologna, bordeaux, boston, boulder, buenos-aires, cayman-islands, chongqing, cinque-terre, dubai, florence, geneva, gothenburg, kyoto, lagos, lake-como, lake-tahoe, ljubljana, los-angeles, luxembourg, lyon, madeira, maui, monaco, naples, orlando, oxford, queenstown, rome, salzburg, scottsdale, seoul, sicily, siena, stockholm, taipei, tallinn, toronto, verona, victoria, zhangjiajie + abu-dhabi). Rule authority: Getting Around - Extra Section.html §1b."),
     ("2026-07-12", "THREE NEW HARD-FAILS FROM SCREENSHOT REVIEW (Dani), re-applied after concurrent-edit collisions on this shared file. (1) TITLE-HOTEL LINK COLOR-DRIFT GUARD — .title-hotel must not contain an <a>; only .title-address is the Maps link (Hotel Banner.html §1). guide-style.css has a color rule for \".title-page .title-address a\" but none for \".title-hotel a\", so a linked hotel name falls through to the global canonical link blue instead of matching the address. Caught: Bhutan's \"COMO Uma Paro\" rendered blue (1/220 guides, now fixed). (2) TRIP OVERVIEW DAY-LABEL REPEAT GUARD — each .overview-day card's \"Day N\" label must appear exactly once; an undocumented .overview-day-num div duplicated it above .overview-day-title's own \"Day N – …\" prefix. Caught: Aracaju + Olinda (2/219 guides, now fixed). (3) TOURS NEGATIVE-FINDING BOX PADDING CSS PRESENCE — \"No qualifying tours on [Platform] in [City].\" sits .entry-body directly under .tours-group, which carries no padding of its own (unlike .extras-sub); without an override the box rendered 0px top / 8px bottom padding (confirmed via Playwright computed style, 37/219 guides affected — a shared-CSS gap, not per-guide content). Fixed by adding \"#tours .tours-group + .entry-body { padding-top: 8px; border-radius: 4px; }\" to guide-style.css; this check hard-fails if that override is ever removed, rather than re-scanning guide HTML (the .tours-group + .entry-body adjacency is legitimate once the CSS override exists)."),
     ("2026-07-11", "EXTRA SECTION UNIQUENESS — no extra section written twice (new hard-fail). Each extra section (Cappuccino, Tours, Claude Inspiration, Michelin, …) ships exactly once; multiple entries belong INSIDE a single section container, not in a second duplicate container. Claude Inspiration is one <div class=\"claude-inspiration\"> with several <p> blocks (Claude Inspiration - Extra Section.html §1/§4), never two separate section containers each repeating the ✨ Claude Inspiration title; every other section is unique by Guide Structure.html section order. New check enumerates every extra-section container (extras-section OR claude-inspiration) in document order, extracts each one's .extras-title text (empty titles — the CSS-injected 'Also on this site' block — excluded), and hard-fails on any title appearing more than once. INVISIBLE UNTIL NOW: a duplicated section renders as two identical headers stacked on the page but passed every prior check (section-order, overview-sync, and closing-div checks all tolerate a repeat). Caught: Montevideo shipped two ✨ Claude Inspiration containers (theme-teal + theme-coral, the 2nd also missing its id='claude-inspiration') instead of one section with two <p> entries. Fleet scan: 1/219 guides affected (Montevideo only). Rule home: Claude Inspiration - Extra Section.html §4 + Guide Structure.html section order."),
     ("2026-07-11", "CORE RULES vs VALIDATOR 2ND-PASS RE-AUDIT — 11 enforcement gaps closed (3 confirmed-missing + 8 candidate, source: 2nd-pass audit 11 July 2026 PM). NEW HARD-FAILS: (1) PHONE/EMAIL BAN (Gap 1) — RE_EMAIL_PATTERN/RE_PHONE_PATTERN scan the title card and the whole visible body for a phone number or email address; tel:/mailto: hrefs were previously exempt from the target=\"_blank\" check, making them invisible everywhere else (Rules for Claude.html §7). (2) TOURS 🏨 → 🚐 MOTION ROW (Gap 2) — only 🏨 ↔ 🚐 / 🏨 ← 🚐 (tour ends at hotel) are exempt from the 🚶/🚕 return motion row; → (pickup-only, tour ends elsewhere) previously dropped it too (Tours - Extra Section.html §6/§7). (3) HARDCODED .title-updated (Gap 3) — the JS-injected \"Updated\" stamp must never appear literally in guide HTML body; only the CSS rule's existence was checked before (Hotel Banner.html §2a). (4) 📍 ADDRESS OWN-COUNTRY LEAK (Gap 4) — a stop address may never contain the guide's own .title-country value, closing a hole the generic any-country comma-split check missed (Links.html §6). (5) TITLE BANNER EXACTLY 4 LINES (Gap 5) — .title-page may hold no content beyond the canonical city/hotel/address/country divs; the prior children-list check only caught an extra <div class=\"...\">, not a bare text node (Hotel Banner.html §2). (6) MICHELIN §3A RATING REQUIRED (Gap 7) — an in-hotel heading must carry N.N⭐ · N+ reviews as a class=\"review-link\" anchor; the inverse (§3b bans it) was already enforced but the affirmative requirement wasn't — restructured the entry loop so §3a/§3b heading-shape checks no longer contradict each other (Michelin Restaurants - Extra Section.html §3a; will newly fail Cannes/Rio de Janeiro/Sorrento/Valletta until their §3a headings are backfilled with a real rating). (7) FOOD DELIVERY INVERSE CHECK (Gap 11) — negative-finding line and real platform entries may never co-exist, mirroring the guard already on Cappuccino/Local Tastes/Pickleball/Downtown (Food Delivery - Extra Section.html §2/§3). (8) CLAUDE INSPIRATION RESERVED-EMOJI (Gap 8, T_NEW8) — extended beyond section-header icons to also forbid the motion glyphs (🚶/🚕/🚤) and 📍. NEW WARN-TIER (fuzzy / no numeric threshold defined in CORE RULES, so surfaced for review rather than blocking): (9) alt text reading like a full sentence rather than \"just the subject name\" (Gap 9, Photos Rules.html §8); (10) a Weekly Closures entry that reads as a singular proper venue rather than a category (Gap 10, Weekly Closures - Extra Section.html §1); (11) a Train Day outbound/return departure outside the morning/evening window (Gap 6, Day Structure.html §7). No guide HTML edited — validator + Validator Index.html only; the flagged Michelin guides need a content backfill in a later pass."),
@@ -12275,17 +12277,19 @@ def validate(html: str, filename: str):
     # dotted TLD; an optional path is allowed.
     _fd_linktext_bad: list[str] = []
     if _fd_hdr and not _fd_is_negative:
-        _fd_domain_re = re.compile(r'^[A-Za-z0-9][A-Za-z0-9.\-]*\.[A-Za-z]{2,}(?:/\S*)?$')
+        # Domain pattern: must be all-lowercase, no spaces, dotted TLD
+        # "ubereats.com" ✅  "UberEats.com" ❌  "Uber Eats" ❌
+        _fd_domain_re = re.compile(r'^[a-z0-9][a-z0-9.\-]*\.[a-z]{2,}(?:/\S*)?$')
         for _fa in re.finditer(r'<a\b[^>]*>([^<]+)</a>', _fd_inner):
             _lt = _html_unescape(_fa.group(1)).strip()
             if not _fd_domain_re.match(_lt):
                 _fd_linktext_bad.append(_lt[:40])
     check(
-        '🚗 Food Delivery — each platform link shows the bare domain as its text '
-        '(e.g. "ubereats.com"), not the platform name — the name is the .extras-sub '
-        'heading (Food Delivery - Extra Section.html § 2)',
+        '🚗 Food Delivery — each platform link shows the bare lowercase domain as its text '
+        '(e.g. "ubereats.com", "doordash.com") — no caps, no platform name — the name is '
+        'the .extras-sub heading (Food Delivery - Extra Section.html § 2, lowercase enforced 2026-07-12)',
         len(_fd_linktext_bad) == 0,
-        (f'{len(_fd_linktext_bad)} link(s) with non-domain text (use the domain): '
+        (f'{len(_fd_linktext_bad)} link(s) with non-domain or uppercase text (must be lowercase domain): '
          + '; '.join(f'"{t}"' for t in _fd_linktext_bad[:6])) if _fd_linktext_bad else '',
     )
 
@@ -15426,6 +15430,50 @@ def validate(html: str, filename: str):
         f'{len(_ga_generic_head_bad)} generic heading(s): '
         + '; '.join(_ga_generic_head_bad[:3])
         if _ga_generic_head_bad else '',
+    )
+
+    # ─── GETTING AROUND — RIDE-APP LINK TEXT MUST BE A DOMAIN ───────────────
+    # Per Getting Around - Extra Section.html §1b format: "[Ride App Operator]"
+    # means the visible link text is the operator's domain (uber.com, bolt.eu,
+    # lyft.com, etc.) — not the app name ("Uber", "Bolt", "Lyft").
+    # The link-only check above verifies <a href> presence; this check verifies
+    # the visible link text contains a dot (i.e. reads as a domain).
+    # Added 2026-07-12 (Dani: "all these links needs to be uber.com").
+    print("\n── GETTING AROUND — RIDE-APP LINK TEXT IS A DOMAIN ──")
+    _ga_link_domain_bad: list[str] = []
+    if _ga_html_link:
+        for _ld_es_m in re.finditer(
+            r'<div\b[^>]*class\s*=\s*"[^"]*\bextras-sub\b[^"]*"[^>]*>(.*?)</div>',
+            _ga_html_link, re.DOTALL | re.IGNORECASE,
+        ):
+            _ld_head = RE_STRIP_TAGS.sub('', _ld_es_m.group(1)).strip()
+            if '🚕' not in _ld_head:
+                continue
+            _ld_after = _ga_html_link[_ld_es_m.end():]
+            _ld_tb_m = re.search(
+                r'<div\b[^>]*class\s*=\s*"[^"]*\btransit-box\b[^"]*"[^>]*>',
+                _ld_after, re.IGNORECASE,
+            )
+            if not _ld_tb_m:
+                continue
+            _ld_tb_inner, _ = _walk_balanced_div(_ld_after, _ld_tb_m.end())
+            _ld_domain_re = re.compile(r'^[a-z0-9][a-z0-9.\-]*\.[a-z]{2,}(?:/\S*)?$')
+            for _ld_link_m in re.finditer(r'<a\b[^>]*>(.*?)</a>', _ld_tb_inner, re.DOTALL | re.IGNORECASE):
+                _ld_text = RE_STRIP_TAGS.sub('', _ld_link_m.group(1)).strip()
+                if _ld_text and not _ld_domain_re.match(_ld_text):
+                    _ga_link_domain_bad.append(
+                        f'"{_ld_head[:40]}" — link text "{_ld_text}" must be a lowercase domain '
+                        f'("uber.com", "bolt.eu" — no caps, no app name)'
+                    )
+    check(
+        '🚕 Getting Around — ride-app link text must be the lowercase operator domain '
+        '("uber.com", "bolt.eu", "lyft.com" …) — no caps, no app name '
+        '(Getting Around - Extra Section.html §1b "[Ride App Operator]" = domain, '
+        'lowercase enforced 2026-07-12)',
+        not _ga_link_domain_bad,
+        f'{len(_ga_link_domain_bad)} ride-app link(s) with non-domain or uppercase text: '
+        + '; '.join(_ga_link_domain_bad[:3])
+        if _ga_link_domain_bad else '',
     )
 
     # ─── GETTING AROUND — RIDE-APP NEGATIVE-FINDING WORDING ──────────────────
@@ -23622,23 +23670,22 @@ def validate(html: str, filename: str):
             if ci_br_count else '',
         )
 
-        # T_NEW5 — theme-{color} must be a syntactically valid color token.
-        # § 2 was rewritten to "No fixed palette — choose freely", so the color is
-        # no longer constrained to a fixed list. The old closed 9-color set
-        # contradicted the rule and could false-fail a legitimate free choice
-        # (e.g. theme-rose). T_NEW1 already confirmed a theme-* class exists; this
-        # now only confirms the value is a plain lowercase color token. (Lane2-03.)
-        print("\n── CLAUDE INSPIRATION — valid theme color ──")
+        # T_NEW5 — no theme-{color} class permitted on the Claude Inspiration section.
+        # The section must render with a plain white background (the CSS default via
+        # --c-card-bg: #fff). Any theme-{color} class overrides --ci-bg with a tinted
+        # color, which is forbidden. The outer div must be:
+        #   class="claude-inspiration" — no theme modifier.
+        print("\n── CLAUDE INSPIRATION — no colored theme class ──")
         _ci_theme_m = re.search(r'\btheme-([a-z]+)\b', ci_outer_tag2, re.IGNORECASE)
         _ci_theme_used = f'theme-{_ci_theme_m.group(1).lower()}' if _ci_theme_m else None
-        _ci_theme_valid = bool(_ci_theme_used)
+        _ci_theme_valid = _ci_theme_used is None
         check(
-            '💡 Claude Inspiration — theme-{color} class is a valid color token '
-            '(§ 2: "No fixed palette — choose freely" — any lowercase color name)',
+            '💡 Claude Inspiration — outer div must NOT have a theme-{color} class '
+            '(section background must be white; the CSS default is #fff — no theme modifier needed)',
             _ci_theme_valid,
-            'theme-{color} class missing or not a plain lowercase color token '
-            '(expected theme-<name>)'
-            if not _ci_theme_valid else '',
+            f'Remove "{_ci_theme_used}" from the outer div — '
+            f'Claude Inspiration must use a plain white background (no theme class)'
+            if _ci_theme_used else '',
         )
 
         # T_NEW6 — .extras-title must have text content AFTER the icon.
