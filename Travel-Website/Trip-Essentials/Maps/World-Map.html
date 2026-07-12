@@ -846,6 +846,22 @@ document.querySelectorAll('.rn').forEach(el => {
     map.flyToBounds(REGIONS[el.dataset.region], { ...fitOpts(true), duration: 1.2 });
   });
 });
+
+/* Hash-based region activation — World-Map.html#eu flies to Europe, etc. */
+(function () {
+  var hashRegion = (location.hash || '').replace('#', '').toLowerCase();
+  if (hashRegion && REGIONS[hashRegion]) {
+    var btn = document.querySelector('.rn[data-region="' + hashRegion + '"]');
+    if (btn) {
+      document.querySelectorAll('.rn').forEach(function (r) { r.classList.remove('rn-on'); });
+      btn.classList.add('rn-on');
+      map.once('moveend', function () {});
+      setTimeout(function () {
+        map.flyToBounds(REGIONS[hashRegion], { ...fitOpts(true), duration: 1.2 });
+      }, 300);
+    }
+  }
+}());
 </script>
 </body>
 </html>
