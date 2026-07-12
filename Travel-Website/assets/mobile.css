@@ -23,6 +23,9 @@
      here; every page that links it updates at once. (created 2026-06-12)
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── 0. Text-size-adjust — prevent iOS/Android landscape auto-inflation. ── */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
 /* ── 1. Universal box model — width includes padding/border everywhere.
       The #1 cause of "my padding pushes the box past the screen edge". ── */
 *, *::before, *::after { box-sizing: border-box; }
@@ -318,6 +321,10 @@ pre { white-space: pre-wrap; }
     box-shadow: none !important;
     outline: none !important;
   }
+  .tb-ham:focus-visible, .tb a:focus-visible {
+    outline: 2px solid rgba(184,92,42,.6) !important;
+    outline-offset: 2px !important;
+  }
 
 }
 
@@ -355,4 +362,35 @@ pre { white-space: pre-wrap; }
      they remain in the DOM, so this only fires on genuinely one-city tiers.) */
   .city-grid:has(> .city-pill:only-child) { justify-content: center !important; }
   .city-grid .city-pill:only-child { flex: 0 0 auto !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION — users who opted out of animations.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LANDSCAPE — adjusted gutters and tile sizing for the rotated phone viewport.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (orientation: landscape) and (max-height: 500px) {
+  body { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+  .wrap, .container, .content, .page, .main { padding-left: 24px; padding-right: 24px; }
+  .stats-nav a, .jump-pill, .jump-btn { height: 38px; }
+  .fchip, .tchip, .lchip { height: 38px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SAFE AREA — notch / Dynamic Island insets for edge-to-edge displays.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@supports (padding: env(safe-area-inset-top)) {
+  .tb { padding-top: env(safe-area-inset-top); }
+  body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 }
