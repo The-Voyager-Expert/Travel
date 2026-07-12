@@ -20,12 +20,25 @@ Policy enforced:
     active-state terracotta, inline-style prohibition, toolbar standard,
     also-on-site pill labels, and more. Guides AND Trip-Essentials / Best-of /
     site root pages are all covered. One brain_check run per push.
+  • BLOCK if any NON-GUIDE HTML changed in this push, OR either shared mobile
+    CSS asset (assets/mobile.css, assets/web-travel-style.css) changed, and
+    validate_mobile_render.py exits non-zero. brain_check is STATIC and never
+    renders a page — a pill with the right height/font/radius but text pinned
+    to the top of an oversized box (mobile.css's global `a,button{min-height:
+    40px}` tap-target rule stretches any styled pill that isn't self-centering
+    and isn't exempted) sailed through brain_check + mobile_check on 10 pages
+    before this gate existed (found 2026-07-12 from a user screenshot of
+    Best-Safari.html). Guides get their own scoped hard block inside
+    `guide_tools.py ship`; this gate covers the surfaces ship doesn't touch —
+    Trip-Essentials / Best-of / site root — and reruns whenever the shared
+    mobile CSS itself changes, since a regression there breaks every page at
+    once without any single HTML file showing up in the diff.
 
 Guides already on the remote that haven't changed in this push are NOT
 rechecked. In-progress guides that sit quietly in the repo (tracked but
 unchanged) never block anything. The non-guide brain_check runs once per push
 when any non-guide HTML is in the diff — it scans the whole site, not just
-the changed file.
+the changed file. Same for the mobile-render gate.
 
 Invoked by Brain/scripts/git-hooks/pre-push (installed via core.hooksPath).
 Run standalone anytime:  python3 Brain/scripts/pre_push_guard.py
@@ -34,6 +47,8 @@ Exit 0 = safe to push.  Exit 1 = push blocked.
 
 Added 2026-06-21. Revised 2026-06-27: check push diff only, not full tree.
 Revised 2026-07-07: extend to non-guide pages via brain_check gate.
+Revised 2026-07-12: extend to non-guide pages via validate_mobile_render.py
+(pill/button centering — see DriftyCat + memory project-mobile-render-validator).
 """
 
 import subprocess
@@ -193,8 +208,50 @@ def main() -> int:
             )
             _brain_check_output = ""
 
+    # ── 3. Non-guide HTML / shared mobile CSS: must pass validate_mobile_render.py ─
+    # STATIC checks (brain_check, mobile_check) never render the page, so a pill
+    # with the right height/font/radius but text pinned to the top of an
+    # oversized box (see module docstring) is invisible to them. Re-run whenever
+    # (a) any non-guide HTML changed, since that's the check's own scope, or
+    # (b) either shared mobile CSS file changed, since a regression there breaks
+    # every page at once without any single HTML file appearing in the diff.
+    non_guide_html_changed = any(
+        Path(rel).suffix.lower() == ".html" and str(rel).startswith(_NON_GUIDE_HTML_PREFIXES)
+        for rel in (all_html_diff.splitlines() if all_html_diff else [])
+    )
+    css_diff = _git("diff", "--name-only", "--diff-filter=AM", remote_head, "HEAD",
+                     "--", "Travel-Website/assets/mobile.css", "Travel-Website/assets/web-travel-style.css")
+    shared_mobile_css_changed = bool(css_diff.strip())
+
+    mobile_render_failed = False
+    _mobile_render_output = ""
+    if non_guide_html_changed or shared_mobile_css_changed:
+        mobile_render_script = Path(__file__).resolve().parent / "validate_mobile_render.py"
+        try:
+            result = subprocess.run(
+                [sys.executable, str(mobile_render_script)],
+                capture_output=True, text=True, cwd=str(repo), timeout=180,
+            )
+            if result.returncode != 0:
+                mobile_render_failed = True
+                _mobile_render_output = (result.stdout + result.stderr).strip()
+        except subprocess.TimeoutExpired:
+            print(
+                "\n⚠️  pre_push_guard: validate_mobile_render.py timed out after 180s.\n"
+                "    Proceeding without the mobile-render check.\n",
+                file=sys.stderr,
+            )
+        except Exception as exc:  # noqa: BLE001
+            # If it can't run at all (e.g. playwright not installed), warn but
+            # don't hard-block — a missing optional dep shouldn't brick pushes.
+            print(
+                f"\n⚠️  pre_push_guard: validate_mobile_render.py could not be executed ({exc}).\n"
+                "    Proceeding without the mobile-render check.\n",
+                file=sys.stderr,
+            )
+
     # ── Report and block ─────────────────────────────────────────────────────────
-    if not guide_offenders and not brain_check_failed:
+    if not guide_offenders and not brain_check_failed and not mobile_render_failed:
         return 0
 
     exit_code = 1
@@ -239,6 +296,27 @@ def main() -> int:
             "    inline-style prohibition, toolbar standard, also-on-site pill labels.\n"
             "    These rules apply to guides AND all Trip-Essentials / Best-of / site pages.\n"
             "\n    Fix: run  python3 Brain/scripts/brain_check.py  and address all FAIL lines.\n"
+            "    Then re-commit the corrected file(s) and push again.\n",
+            file=sys.stderr,
+        )
+
+    if mobile_render_failed:
+        print(
+            "\n🚫  PUSH BLOCKED — mobile render check failed (off-standard pill sizing/wrap,\n"
+            "    off-center pill/button text, or horizontal overflow at 393px):\n",
+            file=sys.stderr,
+        )
+        if _mobile_render_output:
+            for line in _mobile_render_output.splitlines():
+                print(f"    {line}", file=sys.stderr)
+        print(
+            "\n    brain_check is STATIC and never renders a page, so an off-standard or\n"
+            "    off-center pill sails through it. This gate actually renders every\n"
+            "    non-guide page at 393px and measures the result.\n"
+            "\n    Fix: run  python3 Brain/scripts/validate_mobile_render.py  and address\n"
+            "    every issue (fix: add `display:inline-flex; align-items:center;\n"
+            "    justify-content:center;` to the offending class, or add it to the\n"
+            "    mobile.css 40px tap-target exemption list at line ~161).\n"
             "    Then re-commit the corrected file(s) and push again.\n",
             file=sys.stderr,
         )
