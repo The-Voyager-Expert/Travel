@@ -57,7 +57,7 @@ def main() -> int:
     errors = []
 
     # Exclude non-country structural blocks (sidebar, special collections)
-    NON_COUNTRY_BLOCKS = {"specialized-trips", "caribbean-islands"}
+    NON_COUNTRY_BLOCKS = {"specialized-trips", "caribbean-islands", "also-on-site"}
     sortable_countries = [c for c in countries_in_order if c not in NON_COUNTRY_BLOCKS]
 
     sorted_countries = sorted(sortable_countries, key=_sort_key)

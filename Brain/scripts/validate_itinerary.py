@@ -21493,7 +21493,6 @@ def validate(html: str, filename: str):
 
         # Parse all overview-day entries: href → (city_name, next_href)
         _gd_map: dict[str, tuple[str, str | None]] = {}
-        _first_href: str | None = None
         for _gm in re.finditer(
             r'<a\b[^>]*class\s*=\s*"[^"]*\bdest-card\b[^"]*"([^>]*)>',
             _idx_html2, re.IGNORECASE,
@@ -21503,7 +21502,6 @@ def validate(html: str, filename: str):
             _attrs = _gm.group(1)
             _href_m = re.search(r'href\s*=\s*"([^"]+)"', _attrs, re.IGNORECASE)
             _next_m = re.search(r'data-guide-next\s*=\s*"([^"]+)"', _attrs, re.IGNORECASE)
-            _prev_m = re.search(r'data-guide-prev\s*=\s*"([^"]+)"', _attrs, re.IGNORECASE)
             if not _href_m:
                 continue
             _href = _url_unquote(_href_m.group(1)).lstrip('./')
@@ -21512,19 +21510,22 @@ def validate(html: str, filename: str):
             _entry_end = _idx_html2.find('</a>', _gm.end())
             _entry_inner = _idx_html2[_gm.end():_entry_end] if _entry_end != -1 else ''
             _city_m = re.search(
-                r'<span\b[^>]*class\s*=\s*"[^"]*\bidx-city\b[^"]*"[^>]*>(.*?)</span>',
+                r'<span\b[^>]*class\s*=\s*"[^"]*\bdest-name\b[^"]*"[^>]*>(.*?)</span>',
                 _entry_inner, re.DOTALL | re.IGNORECASE,
             )
             _city = re.sub(r'<[^>]+>', '', _city_m.group(1)).strip() if _city_m else _href
             _gd_map[_href] = (_city, _next)
-            if not _prev_m:
-                _first_href = _href  # no prev → start of chain
 
-        # Walk the chain and collect city names in carousel order
+        # Walk the chain and collect city names in carousel order. The chain is
+        # a CLOSED LOOP — TB-10 requires both data-guide-prev AND data-guide-next
+        # on every card, so no entry ever lacks a prev. The old "no prev = start"
+        # heuristic therefore never found a starting point, _first_href stayed
+        # None, the walk never ran, and this check trivially passed 100% of the
+        # time regardless of actual order. Start from any href instead.
         _carousel_cities: list[str] = []
         _seen: set[str] = set()
-        _cur = _first_href
-        _walk_limit = len(_gd_map) + 5
+        _cur = next(iter(_gd_map), None)
+        _walk_limit = len(_gd_map) + 1
         while _cur and _cur not in _seen and _walk_limit > 0:
             _walk_limit -= 1
             _seen.add(_cur)
@@ -21533,18 +21534,33 @@ def validate(html: str, filename: str):
                 _carousel_cities.append(_city_name)
             _cur = _nxt
 
-        # Check A→Z order
-        if len(_carousel_cities) >= 2:
-            _sorted_cities = sorted(_carousel_cities, key=_norm_city)
-            for _ci, (_actual_c, _expected_c) in enumerate(
-                zip(_carousel_cities, _sorted_cities)
-            ):
-                if _norm_city(_actual_c) != _norm_city(_expected_c):
+        if _cur and _cur not in _gd_map:
+            _carousel_violations.append(
+                f'chain broken — data-guide-next points to "{_cur}", which has no matching dest-card'
+            )
+        elif len(_carousel_cities) < len(_gd_map):
+            _carousel_violations.append(
+                f'chain does not form one closed loop — only {len(_carousel_cities)} of '
+                f'{len(_gd_map)} guides reachable by walking data-guide-next'
+            )
+
+        # A correctly-ordered CIRCULAR A→Z chain has exactly one wrap point
+        # (max city name → min city name); walking can start anywhere in the
+        # loop, so compare each entry only to its immediate successor rather
+        # than to a flat sorted() list. Any decrease other than the single
+        # wrap point is a genuine ordering violation.
+        if not _carousel_violations and len(_carousel_cities) >= 2:
+            _n = len(_carousel_cities)
+            _drops = [
+                _ci for _ci in range(_n)
+                if _norm_city(_carousel_cities[_ci]) > _norm_city(_carousel_cities[(_ci + 1) % _n])
+            ]
+            if len(_drops) != 1:
+                for _ci in _drops[:5]:
                     _carousel_violations.append(
-                        f'position {_ci + 1}: got "{_actual_c}", '
-                        f'expected "{_expected_c}" in global A→Z order'
+                        f'"{_carousel_cities[_ci]}" is followed by '
+                        f'"{_carousel_cities[(_ci + 1) % _n]}" — not in global A→Z order'
                     )
-                    break  # report first violation only
 
     check(
         'CAROUSEL — globally alphabetical A→Z order across all guides '

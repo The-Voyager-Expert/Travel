@@ -3166,12 +3166,24 @@ def main() -> int:
                   file=sys.stderr)
         # ──────────────────────────────────────────────────────────────────────
 
-        # ── Alphabetical ordering — advisory only ─────────────────────────────
-        # Verify ordering is clean after adding this guide's card. Advisory: a
-        # pre-existing misplaced card from another crib must not block this ship.
-        if _run("validate_guides_index_alphabetical.py", []) != 0:
-            print("  ⚠️  validate_guides_index_alphabetical reports ordering drift (advisory — ship not blocked).",
-                  file=sys.stderr)
+        # ── Alphabetical ordering — hard gate ─────────────────────────────────
+        # Guides-Index.html must list countries (and guides within each country)
+        # alphabetically — CLAUDE.md documents this as a "hard ship-gate, no
+        # exceptions." Was silently advisory-only in code until 2026-07-12,
+        # which let a Laos/Montenegro/Nepal block ship wedged between Canada and
+        # Caribbean Islands/Chile without ever failing a ship. Any ordering
+        # violation anywhere in the file — not just around the shipping guide —
+        # now blocks.
+        rc_alpha = _run("validate_guides_index_alphabetical.py", [])
+        if rc_alpha != 0:
+            print(
+                "\n🚫  SHIP BLOCKED — Guides-Index.html countries/guides are not in "
+                "alphabetical order.\n"
+                "    Fix the ordering in Travel-Website/Guides/Guides-Index.html, then re-run ship.\n",
+                file=sys.stderr,
+            )
+            _write_ship_log(Path(tail[0]).resolve(), "FAIL")
+            return rc_alpha
         # ──────────────────────────────────────────────────────────────────────
 
         # ── Country assignment — advisory only ───────────────────────────────
