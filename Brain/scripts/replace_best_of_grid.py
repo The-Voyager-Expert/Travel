@@ -39,15 +39,25 @@ def main():
     text = open(page_path, encoding="utf-8").read()
     fragment = open(fragment_path, encoding="utf-8").read().rstrip("\n")
 
-    open_tag_re = re.compile(r'<div class="best-of-grid">')
-    if len(open_tag_re.findall(text)) != 1:
-        print(f"ERROR: expected exactly one <div class=\"best-of-grid\"> in {page_path}, "
-              f"found {len(open_tag_re.findall(text))}", file=sys.stderr)
+    # Try legacy best-of-grid first; fall back to showcase-grid for a page
+    # that's already been converted once and is being re-spliced (e.g. to
+    # fix entry order after a top-up merge).
+    for class_name in ("best-of-grid", "showcase-grid"):
+        open_tag_re = re.compile(r'<div class="' + class_name + r'">')
+        matches = open_tag_re.findall(text)
+        if len(matches) == 1:
+            break
+        if len(matches) > 1:
+            print(f"ERROR: expected exactly one <div class=\"{class_name}\"> in {page_path}, "
+                  f"found {len(matches)}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        print(f"ERROR: no best-of-grid or showcase-grid found in {page_path}", file=sys.stderr)
         sys.exit(1)
 
     span = find_balanced_span(text, open_tag_re)
     if span is None:
-        print(f"ERROR: could not find a balanced closing </div> for the best-of-grid in {page_path}", file=sys.stderr)
+        print(f"ERROR: could not find a balanced closing </div> for the grid in {page_path}", file=sys.stderr)
         sys.exit(1)
 
     start, end = span
