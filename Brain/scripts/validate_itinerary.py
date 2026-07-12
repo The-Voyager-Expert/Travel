@@ -56,6 +56,7 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-11", "CORE RULES vs VALIDATOR 2ND-PASS RE-AUDIT — 11 enforcement gaps closed (3 confirmed-missing + 8 candidate, source: 2nd-pass audit 11 July 2026 PM). NEW HARD-FAILS: (1) PHONE/EMAIL BAN (Gap 1) — RE_EMAIL_PATTERN/RE_PHONE_PATTERN scan the title card and the whole visible body for a phone number or email address; tel:/mailto: hrefs were previously exempt from the target=\"_blank\" check, making them invisible everywhere else (Rules for Claude.html §7). (2) TOURS 🏨 → 🚐 MOTION ROW (Gap 2) — only 🏨 ↔ 🚐 / 🏨 ← 🚐 (tour ends at hotel) are exempt from the 🚶/🚕 return motion row; → (pickup-only, tour ends elsewhere) previously dropped it too (Tours - Extra Section.html §6/§7). (3) HARDCODED .title-updated (Gap 3) — the JS-injected \"Updated\" stamp must never appear literally in guide HTML body; only the CSS rule's existence was checked before (Hotel Banner.html §2a). (4) 📍 ADDRESS OWN-COUNTRY LEAK (Gap 4) — a stop address may never contain the guide's own .title-country value, closing a hole the generic any-country comma-split check missed (Links.html §6). (5) TITLE BANNER EXACTLY 4 LINES (Gap 5) — .title-page may hold no content beyond the canonical city/hotel/address/country divs; the prior children-list check only caught an extra <div class=\"...\">, not a bare text node (Hotel Banner.html §2). (6) MICHELIN §3A RATING REQUIRED (Gap 7) — an in-hotel heading must carry N.N⭐ · N+ reviews as a class=\"review-link\" anchor; the inverse (§3b bans it) was already enforced but the affirmative requirement wasn't — restructured the entry loop so §3a/§3b heading-shape checks no longer contradict each other (Michelin Restaurants - Extra Section.html §3a; will newly fail Cannes/Rio de Janeiro/Sorrento/Valletta until their §3a headings are backfilled with a real rating). (7) FOOD DELIVERY INVERSE CHECK (Gap 11) — negative-finding line and real platform entries may never co-exist, mirroring the guard already on Cappuccino/Local Tastes/Pickleball/Downtown (Food Delivery - Extra Section.html §2/§3). (8) CLAUDE INSPIRATION RESERVED-EMOJI (Gap 8, T_NEW8) — extended beyond section-header icons to also forbid the motion glyphs (🚶/🚕/🚤) and 📍. NEW WARN-TIER (fuzzy / no numeric threshold defined in CORE RULES, so surfaced for review rather than blocking): (9) alt text reading like a full sentence rather than \"just the subject name\" (Gap 9, Photos Rules.html §8); (10) a Weekly Closures entry that reads as a singular proper venue rather than a category (Gap 10, Weekly Closures - Extra Section.html §1); (11) a Train Day outbound/return departure outside the morning/evening window (Gap 6, Day Structure.html §7). No guide HTML edited — validator + Validator Index.html only; the flagged Michelin guides need a content backfill in a later pass."),
     ("2026-07-10", "MOTION-BANNER DESTINATION MUST INHERIT THE BANNER FONT (BARE TEXT) — new hard-fail. The name after → in a .hotel-first / .arrive-first / plain .next banner is bare text across the whole compliant fleet (Lisbon/Porto: '🏨 From Hotel: 🚕 15 min → Cathedral'). Static text carries no styling of its own, so it inherits the SAME font family/size/style/colour as the rest of its banner — matching the '🚶 N · 🚕 M →' it follows. That differs by banner type (a .next row is Roboto 14px ITALIC #555 muted grey; a .hotel-first row is upright #1a1a1a) and the check does not need to know it. ANY markup on the destination breaks the inheritance — an <a href=…google.com/maps…> recolours it to a{color:#2867c4} blue, a <span>/<font>/inline-style element changes font or colour directly. So the check is structural: the destination segment (everything after the final →) must contain NO OPENING tag (<[a-zA-Z]) — a trailing closing tag like </p> from a benign whole-row <p> wrapper (Bora-Bora) does not recolour and is ignored. Dani caught the blue on Aracaju (From Hotel → Cathedral) then the muted-grey→blue drift on a .next row (→ Palácio). INVISIBLE UNTIL NOW: every motion/opener check strips tags before validating, so the markup slipped through all of them. Scoped to .hotel-first / .arrive-first / EXACT class=\"next\" — .next-tram / .next-metro excluded (they legitimately carry bracketed board/route/alight anchors per Getting Around.html). Rule home: Motion Rule §3 + Links.html. Caught + fixed the same day: 4 Brazilian guides from one crib batch had wrapped every banner destination in a Maps link — Aracaju (21), Olinda (12), João-Pessoa (11), Porto-Alegre (9) — all unwrapped to bare text and re-validated to 0 failures."),
     ("2026-07-11", "STRUCTURE — EXTRAS-SUB MUST BE FOLLOWED BY CORRECT BODY CONTAINER (new hard-fail). Every .extras-sub heading in every extras section must be immediately followed by the section's designated body container div — .entry-body for tours/cappuccino/restaurants/downtown/local-tastes/michelin/pickleball; .shows-box for shows; .transit-box for getting-around/day-trips/day-trips-by-train/food-delivery/heads-up; .station-box for stations-near-hotel. When .stop-row divs are used directly after .extras-sub instead, the beige card background (set by the shared token on both .extras-sub + body-box together) only covers the heading line — all body rows render unstyled with no background. The Aracaju guide (entire cappuccino, restaurants, and downtown sections — 13 entries) exposed this: the guide looked broken in the browser but passed every validator check because no check verified the sibling container class. New check: for each section, walks every .extras-sub via _walk_balanced_div, finds the next sibling div opening, and hard-fails if its class is not the expected body container. Weekly-closures and skip-list excluded (no .extras-sub entries). Rule home: guide-style.css § STYLE A canonical block spec (locked 2026-05-19). Caught by: Aracaju guide visual review."),
     ("2026-07-11", "DAY TRIPS — 3 VALIDATOR GAPS CLOSED (fleet audit 2026-07-11). (1) EMPTY SECTION NOW HARD-FAILS — a Day Trips section present with NO body content (no extras-sub entries, no extras-empty negative line) previously downgraded to a warn; now hard-fails. Rule: if the section exists it must have entries or the canonical 'No day trips from {City}.' negative line. Caught: Alaska (empty body), Dubrovnik (dev comment only, no reader-facing line). (2) INVERSE OMIO CHECK — mainland-China guides (in _OMIO_EXEMPT_CITIES) must NOT include omio.com links; previously the exemption only removed the 'must include Omio' requirement but never banned it. New check hard-fails any 🎫 row in a China guide that links to omio.com. Caught: Beijing, Shanghai, Chongqing (all listing Omio). (3) EUROPEAN MIN-5 SET COMPLETED — _EUROPEAN_GUIDE_CITIES was missing whole countries and several cities: added Hamburg (Germany), Lecce (Italy), Málaga/malaga (Spain), zürich (Switzerland — diacritic alias for existing zurich), Oxford (United Kingdom), Oslo (Norway), Kraków/krakow (Poland — whole country missing), Budapest (Hungary — whole country missing), Istanbul (Turkey — whole country missing), Tbilisi (Georgia — whole country missing). Removed Ålesund and Tromsø from the set (no train station — correctly exempt from ≥5 floor). Added Santorini and Mykonos to _ISLAND_CITIES (Greek islands, no rail). No guide HTML edited — validator-only; flagged guides (Oxford 2/5, Kraków 4/5, Beijing/Shanghai/Chongqing Omio, Alaska/Dubrovnik empty) need content fixes and re-validation."),
@@ -347,6 +348,14 @@ RE_HTML_COMMENT      = re.compile(r'<!--.*?-->', re.DOTALL)    # strip HTML comm
 RE_IMG_TAG           = re.compile(r'<img\b[^>]*>')             # img elements (4 uses)
 RE_STOP_PHOTOS_EMPTY = re.compile(r'\bstop-photos-empty\b')  # empty photo wrapper class (4 uses)
 RE_STOP_NAME         = re.compile(r'stop-name[^>]*>([^<]+)<') # stop name text (4 uses)
+# Phone/email ban (Rules for Claude.html §7 — added 2026-07-11, audit Gap 1).
+# Phone: requires 3 digit-groups (or +country/parenthesised area code + 2 groups)
+# joined by space/dash/dot only — deliberately excludes ':' so clock times
+# (9:00, 09:00–17:00) and ISO dates (2026-07-11, single separator) never match.
+RE_EMAIL_PATTERN = re.compile(r'\b[\w.+-]+@[\w-]+\.[\w.-]+\b')
+RE_PHONE_PATTERN = re.compile(
+    r'(?:(?:\+|00)\d{1,3}[-.\s])?(?:\(\d{2,4}\)[-.\s]?)?\d{2,4}[-.\s]\d{3,4}[-.\s]\d{3,4}\b'
+)
 
 results = []
 _warn_ok_tags: list[str] = []  # populated by validate() from guide HTML
@@ -1333,6 +1342,31 @@ def validate(html: str, filename: str):
         if links_no_blank else ""
     )
 
+    # ─── PHONE / EMAIL BAN ──────────────────────────────────────────────────
+    # Rules for Claude.html §7: "phone, email … belong in research notes,
+    # not in the guide." tel:/mailto: hrefs are deliberately skipped by the
+    # target="_blank" check above (dialer/mail client, not a new tab) — that
+    # made them invisible to every validator. Catch them here, plus any raw
+    # email/phone string in the guide's visible text (added 2026-07-11, audit Gap 1).
+    print("\n── PHONE / EMAIL BAN ──")
+    _pe_tel_mailto_hrefs = re.findall(r'href\s*=\s*"\s*((?:tel|mailto):[^"]*)"', html, re.IGNORECASE)
+    _pe_no_script = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    _pe_no_href = re.sub(r'href\s*=\s*"[^"]*"', '', _pe_no_script, flags=re.IGNORECASE)
+    _pe_visible = RE_STRIP_TAGS.sub(' ', _pe_no_href)
+    _pe_emails = re.findall(RE_EMAIL_PATTERN, _pe_visible)
+    _pe_phones = re.findall(RE_PHONE_PATTERN, _pe_visible)
+    _pe_violations = (
+        [f'tel:/mailto: href: {h[:40]}' for h in _pe_tel_mailto_hrefs]
+        + [f'email in body text: {e}' for e in _pe_emails]
+        + [f'phone number in body text: {p.strip()}' for p in _pe_phones]
+    )
+    check(
+        'No phone number or email address anywhere in guide content '
+        '(Rules for Claude.html §7 — research-notes-only info)',
+        len(_pe_violations) == 0,
+        f'{len(_pe_violations)} violation(s): {_pe_violations[:5]}' if _pe_violations else ""
+    )
+
     # ─── MALFORMED HTML ENTITIES ────────────────────────────────────────────
     print("\n── MALFORMED HTML ENTITIES ──")
     _entity_text = RE_STRIP_TAGS.sub( ' ', html)   # strip all tags/attributes
@@ -1560,15 +1594,25 @@ def validate(html: str, filename: str):
     )
     for m in maps_anchor_re.finditer(html):
         text = m.group(1).strip()
-        # (1) Country leak — last comma-separated segment is a country
-        parts = text.split(',')
-        if len(parts) >= 2:
-            last_seg = parts[-1].strip().lower()
-            if last_seg in COUNTRY_NAMES:
-                addr_country_hits.append(text[:80])
-        # (2) Wrong separator — postal-code present + comma present + no middle-dot
-        has_postal = bool(re.search(r'\b\d{4,5}\b', text))
-        if has_postal and ',' in text and '·' not in text:
+        # (1) Country leak — last comma- OR middle-dot-separated segment is a
+        # country. Previously only comma-split was tested, so a country
+        # appended after the canonical middle-dot (`Street · Neighborhood ·
+        # Country`) slipped through untested — closed 2026-07-11
+        # (enforcement-gap sweep; 0 guides affected fleet-wide).
+        _leak = False
+        for _sep in (',', '·'):
+            _parts = text.split(_sep)
+            if len(_parts) >= 2 and _parts[-1].strip().lower() in COUNTRY_NAMES:
+                _leak = True
+                break
+        if _leak:
+            addr_country_hits.append(text[:80])
+        # (2) Wrong separator — any comma-shaped address must use the
+        # canonical ` · ` separator, with or without a postal code. Previously
+        # gated on `has_postal`, so a plain comma address with no postal code
+        # (`123 Main St, Downtown`) passed silently — closed 2026-07-11
+        # (enforcement-gap sweep; 0 guides affected fleet-wide).
+        if ',' in text and '·' not in text:
             addr_separator_hits.append(text[:80])
     check(
         "Address anchors don't leak country "
@@ -1586,6 +1630,19 @@ def validate(html: str, filename: str):
          f"as the separator: " + "; ".join(f'"{t}"' for t in addr_separator_hits[:3]))
         if addr_separator_hits else "",
     )
+
+    # NOTE (2026-07-11, enforcement-gap sweep): the July 2026 audit listed a
+    # "stop-address city-name ban" as NOT ENFORCED, citing the removed-2026-05-15
+    # check above. That's stale — a working equivalent already exists further
+    # down this function ("📍 MAPS LINK — HOME CITY IN DISPLAY TEXT", search
+    # _maps_city_hits): it hard-fails a 📍 Maps link whose display text repeats
+    # city_text, scoped to links within 400 chars of a 📍 emoji (excludes the
+    # title-hotel/title-address banner, which legitimately names the city) and
+    # carves out real street names that happen to start with the city token.
+    # The audit's author grepped only this ADDRESS ANCHOR FORMAT block and
+    # missed the other implementation living in the TITLE PAGE block. No new
+    # check added here — would have duplicated it (and, tested against Azores/
+    # Bhutan, over-fired on the title-hotel/title-address banner besides).
 
     # ─── GLOBAL NO-POSTAL-CODE BAN (all address anchors) ─────────────────────
     # Rule: postal/ZIP codes are banned from every guide address (Links.html 📍;
@@ -2093,6 +2150,45 @@ def validate(html: str, filename: str):
         title_page_children_hits[0] if title_page_children_hits else "",
     )
 
+    # The check above only catches an EXTRA <div class="..."> sibling — a bare
+    # text node, <p>, <span>, or an unclassed <div> inserted into .title-page
+    # slips through undetected. Strip the 4 canonical divs out of the balanced
+    # .title-page content and assert nothing but whitespace remains (Hotel
+    # Banner.html §2 — "no additional lines appear in the banner").
+    # Added 2026-07-11, audit Gap 5.
+    if tp_open_m and is_single_city:
+        _tp_stripped = re.sub(
+            r'<div\b[^>]*class\s*=\s*"[^"]*\btitle-(?:city|hotel|address|country)\b[^"]*"[^>]*>.*?</div>',
+            '', tp_inner_for_children, flags=re.IGNORECASE | re.DOTALL,
+        )
+        _tp_leftover = RE_STRIP_TAGS.sub('', _tp_stripped).strip()
+        check(
+            "Title banner holds only the 4 canonical lines — no extra tagline/element "
+            "(Hotel Banner.html §2: city, hotel/rental name, address; no additional lines appear)",
+            not _tp_leftover,
+            f'unexpected content inside .title-page beyond city/hotel/address/country: "{_tp_leftover[:80]}"'
+            if _tp_leftover else "",
+        )
+
+    # ─── TITLE-UPDATED STAMP: never hardcoded in guide HTML ─────────────────
+    # The "Updated Month Year" stamp is injected client-side by toolbar.js
+    # (el.className = 'title-updated', reading data-updated="YYYY-MM" off the
+    # toolbar-mount div) — it must never exist in the guide's static HTML
+    # source. A hand-typed stamp is exactly what the JS-injection rule exists
+    # to prevent, and previously nothing scanned the guide body for it (only
+    # brain_check verified the CSS rule's existence). Hotel Banner.html §2a.
+    # Added 2026-07-11, audit Gap 3.
+    print("\n── TITLE-UPDATED: never hardcoded in guide body ──")
+    _tu_hardcoded = bool(re.search(r'class\s*=\s*"[^"]*\btitle-updated\b[^"]*"', html, re.IGNORECASE))
+    check(
+        'The "Updated" stamp is JS-injected only — .title-updated must never appear '
+        'hardcoded in guide HTML (Hotel Banner.html §2a)',
+        not _tu_hardcoded,
+        'Found a hardcoded class="…title-updated…" element in the guide body — remove it; '
+        'the stamp is injected by toolbar.js from data-updated="YYYY-MM" on the toolbar-mount div'
+        if _tu_hardcoded else "",
+    )
+
     # ─── TITLE COUNTRY: must be present and non-empty ──────────────────
     # Hotel Banner.html §1 — .title-country (country name, right-aligned)
     # is required on every guide. Hard-fail if absent or blank.
@@ -2157,6 +2253,33 @@ def validate(html: str, filename: str):
          "write the country's full name with no abbreviation and no state/province/region"
          + (f' ("{_tc_text}" is a subdivision, not a country)' if _tc_is_subdivision else ''))
         if _tc_bad else "",
+    )
+
+    # ─── 📍 ADDRESS: destination's own country never appears in address text ──
+    # Links.html §6: country included in a 📍 address ONLY when the address is
+    # in a different country from the destination. The existing "address anchors
+    # don't leak country" check above only reads the LAST comma-separated segment
+    # (COUNTRY_NAMES, any country) — a country name reachable via the locked
+    # ` · ` separator, or embedded without a trailing-segment shape, slipped
+    # through. This check is guide-specific: does THIS guide's own .title-country
+    # value appear anywhere in a 📍 address's visible text? Reuses _pin_addr_re
+    # (compiled above for the postal-code scan). Added 2026-07-11, audit Gap 4.
+    print("\n── 📍 ADDRESS: destination's own country not in address text ──")
+    _addr_own_country_hits: list[str] = []
+    if _tc_text and not _tc_bad:
+        _own_country_re = re.compile(r'\b' + re.escape(_tc_text) + r'\b', re.IGNORECASE)
+        for _m in _pin_addr_re.finditer(html):
+            _addr_text = _m.group(1).strip()
+            if _own_country_re.search(_addr_text):
+                _addr_own_country_hits.append(_addr_text[:80])
+    check(
+        f'📍 address text never contains the destination\'s own country '
+        f'(per Links.html §6 — country shown only when the address is in a '
+        f'different country from the destination)',
+        not _addr_own_country_hits,
+        (f'{len(_addr_own_country_hits)} address(es) containing the guide\'s own '
+         f'country "{_tc_text}": ' + '; '.join(f'"{t}"' for t in _addr_own_country_hits[:5]))
+        if _addr_own_country_hits else "",
     )
 
     # ─── TITLE PAGE COLOR DRIFT: no local style override allowed ───────────
@@ -2393,6 +2516,11 @@ def validate(html: str, filename: str):
             tp_violations.append("room-type / bed-config word")
         if re.search(r'\b(breakfast|wi-?fi|parking|amenit)\b', tp_scan, re.IGNORECASE):
             tp_violations.append("amenity word (breakfast / wifi / parking / amenity)")
+        # Phone / email — research-notes-only info (Rules for Claude.html §7).
+        if re.search(RE_EMAIL_PATTERN, tp_scan):
+            tp_violations.append("email address")
+        if re.search(RE_PHONE_PATTERN, tp_scan):
+            tp_violations.append("phone number")
 
         check(
             "Title card scope — hotel is name + address only (§Hotel Naming → Out of scope)",
@@ -4718,6 +4846,7 @@ def validate(html: str, filename: str):
     alt_annotation_hits: list[str] = []     # J — alt text contains build annotation
     src_missing_on_disk: list[str] = []     # P — _build/assets/ file referenced but not on disk
     src_blank_on_disk: list[str] = []       # P2 — file exists but is a solid-colour placeholder
+    alt_too_long: list[str] = []            # Q — WARN: alt reads like a sentence, not a subject name
 
     # Annotation pattern reused from alt-text check (same set as stop-name / tour-box).
     _alt_annot_re = re.compile(
@@ -4856,6 +4985,16 @@ def validate(html: str, filename: str):
             # J — alt text must not contain build annotations.
             if _alt_annot_re.search(alt_val):
                 alt_annotation_hits.append(alt_val[:60])
+            # Q — WARN: alt reads like a full descriptive sentence rather than
+            # "just the subject name" (Photos Rules.html §8 — "short" has no
+            # numeric threshold defined, so this is a warn, not a hard-fail).
+            # Added 2026-07-11, audit Gap 9.
+            if alt_val.strip() and (
+                len(alt_val.strip().split()) > 6
+                or len(alt_val) > 40
+                or re.search(r'[.!?]', alt_val)
+            ):
+                alt_too_long.append(alt_val[:60])
 
             sm = re.search(r'\bsrc\s*=\s*"([^"]*)"', img)
             src_val = sm.group(1) if sm else ""
@@ -4968,6 +5107,14 @@ def validate(html: str, filename: str):
          f"{alt_photo_of_prefix[:3]}")
         if alt_photo_of_prefix else "",
     )
+    if alt_too_long:
+        warn(
+            f'{len(alt_too_long)} <img alt> inside .stop-photos reads like a full '
+            f'sentence rather than just the subject name '
+            f'(Photos Rules.html Alt text — "short, plain, just the subject name")',
+            detail=f"{alt_too_long[:3]}",
+            tag='alt-text-too-long',
+        )
     check(
         '<img src> filename starts with "800px-" (Photos Rules.html Harvest recipe step 6 — preserve the 800px-{Filename} thumb)',
         len(src_not_800px) == 0,
@@ -6074,6 +6221,35 @@ def validate(html: str, filename: str):
         f"{len(_dur_val_bad)} ⏳ value(s) not a number-led duration: "
         + "; ".join(_dur_val_bad[:5]) if _dur_val_bad else "",
     )
+
+    # ─── ⏳ DURATION VALUE — canonical unit vocabulary (warn) ────────────────
+    # The number-led check above only verifies the value STARTS with a digit;
+    # unit spelling itself was never checked, so "90 minutes", "45m", "1.5h"
+    # all pass. Icon Order and Format.html Pos 2b/4a gives exactly two
+    # canonical examples: "45 min" and "1 hr 30 min" — i.e. unit spelling
+    # "min" / "hr", not "mins"/"minutes"/"m", "hrs"/"hours"/"h", decimal
+    # hours ("1.5 hr"), en-dash/hyphen ranges, or a bare day-count. WARN, not
+    # a hard-fail: a fleet scan (2026-07-11, enforcement-gap sweep) found 187
+    # distinct ⏳ value strings across the 219-guide fleet, the majority using
+    # a non-canonical unit spelling — hard-failing today would break most of
+    # the shipped fleet at once. Tracked as known debt (like css-duplication)
+    # until a dedicated content pass normalizes the vocabulary.
+    print("\n── ⏳ DURATION VALUE — canonical unit vocabulary (warn) ──")
+    _dur_unit_re = re.compile(r'^\d+\s*min$|^\d+\s*hr(\s+\d+\s*min)?$', re.IGNORECASE)
+    _dur_unit_bad: list[str] = []
+    for _dvm in re.finditer(r'⏳\s*([^·<]*)', _dur_html):
+        _val = RE_STRIP_TAGS.sub('', _dvm.group(1)).strip()
+        if not _val or not _val[0].isdigit():
+            continue   # covered by the hard-fail check above
+        if not _dur_unit_re.match(_val):
+            _dur_unit_bad.append(f'"⏳ {_val[:60]}"')
+    if _dur_unit_bad:
+        warn(
+            'Non-canonical ⏳ duration unit spelling — canonical forms are "N min" and '
+            '"N hr" / "N hr M min" only (per Icon Order and Format.html Pos 2b/4a examples)',
+            f"{len(_dur_unit_bad)} value(s): " + "; ".join(_dur_unit_bad[:6]),
+            tag='duration-unit-vocabulary',
+        )
 
     check(
         'Every 📅 tour-box carries ⏳ duration',
@@ -8756,6 +8932,37 @@ def validate(html: str, filename: str):
         f"{len(wc_venue_entries)} entry(ies) are venue names, not categories: "
         + "; ".join(wc_venue_entries[:6]),
     )
+
+    # Signal C (WARN — audit Gap 10, added 2026-07-11): Signal A only catches a
+    # venue name that's ALSO a stop elsewhere in this guide; Signal B only
+    # catches 5+-word names. A short proper venue ("British Museum") that
+    # isn't a stop in this guide slips both. Category-vs-venue is largely
+    # research judgment (a plural "Museums"/"State Palaces" is a legitimate
+    # category; a singular hit doesn't always mean a proper noun), so this is
+    # a warn, not a hard-fail — surfaced for human review.
+    wc_possible_venue_entries: list[str] = []
+    if wc_section_m:
+        for _wce_html2 in re.findall(
+            r'<div\b[^>]*class\s*=\s*"[^"]*\bstop-row\b[^"]*"[^>]*>(.*?)</div>',
+            wc_section_m.group(1), re.IGNORECASE | re.DOTALL,
+        ):
+            _strong_m2 = re.search(r'<strong\b[^>]*>(.*?)</strong>', _wce_html2, re.IGNORECASE)
+            if not _strong_m2:
+                continue
+            _cat_text2 = RE_STRIP_TAGS.sub('', _strong_m2.group(1)).strip()
+            if f'"{_cat_text2}"' in wc_venue_entries:
+                continue  # already hard-failed above by Signal A/B
+            _cat_core2 = re.sub(r'\s*\([^)]+\)', '', _cat_text2).strip()
+            if re.search(r'\b(Museum|Palace|Cathedral|Gallery)\b', _cat_core2):
+                wc_possible_venue_entries.append(f'"{_cat_text2}"')
+    if wc_possible_venue_entries:
+        warn(
+            f'🗓️ Weekly Closures — {len(wc_possible_venue_entries)} entry(ies) may read as a '
+            f'singular proper venue name rather than a city-wide category '
+            f'(Weekly Closures - Extra Section.html §1 — each entry is a category, not a single venue)',
+            detail='; '.join(wc_possible_venue_entries[:5]),
+            tag='weekly-closures-possible-venue',
+        )
 
     # ─── WEEKLY CLOSURES — COMPLETENESS (every closure day covered) ────────────
     print("\n── WEEKLY CLOSURES — COMPLETENESS (every 🚫 stop listed) ──")
@@ -12214,6 +12421,20 @@ def validate(html: str, filename: str):
             'section has no platform entries and no negative-finding line — '
             'ship "No delivery services available in [City]." or add platform entries'
             if not _fd_has_platform_entries and not _fd_is_negative else '',
+        )
+        # Inverse: the negative-finding line and real platform entries must
+        # never co-exist — "No delivery services available" while platforms
+        # are also listed is a contradiction. _fd_is_negative previously only
+        # SUPPRESSED entry-format checks rather than flagging this; mirrors
+        # the co-existence guard already in place for Cappuccino / Local
+        # Tastes / Pickleball / Downtown Restaurants. Added 2026-07-11, audit Gap 11.
+        check(
+            '🚗 Food Delivery — negative-finding line and real platform entries '
+            'never co-exist (Food Delivery - Extra Section.html §2/§3)',
+            not (_fd_has_platform_entries and _fd_is_negative),
+            '#food-delivery has both platform entries AND the negative-finding '
+            'line "No delivery services available…" — remove one; they contradict each other'
+            if (_fd_has_platform_entries and _fd_is_negative) else '',
         )
 
     # ─── STOPS STRUCTURE ───────────────────────────────────────
@@ -15742,6 +15963,41 @@ def validate(html: str, filename: str):
             + '; '.join(_sec_icon_bad[:3]) if _sec_icon_bad else '',
         )
 
+    # ─── MOTION RULE §2 "NO MOTION ROWS" SECTIONS — FULL-BODY GLYPH BAN ──────
+    # Motion Rule.html §2 splits extra sections into "With motion rows" (Tours,
+    # Cappuccino, RNH, Stations, Pickleball, Shows, Michelin) and "No motion
+    # rows" (🍽️ Downtown · 🍮 Local Tastes · ❗️ Heads Up) — the latter three
+    # never carry a walk/ride/tram/metro/ferry glyph anywhere. The allowlist
+    # scan above only inspects the .extras-sub HEADING text of every section;
+    # a stray 🚶/🚕/🚢 pasted into a body row (description, note, ↳ prose) of
+    # one of these 3 no-motion sections was never checked. Closed 2026-07-11
+    # (enforcement-gap sweep; 0 guides affected fleet-wide).
+    print("\n── MOTION RULE §2 — no motion glyph anywhere in Downtown/Local Tastes/Heads Up ──")
+    _NO_MOTION_SECTIONS = ('downtown', 'local-tastes', 'heads-up')
+    _MOTION_GLYPH_RE = re.compile(r'[🚶🚕🚎🚝🚢]')
+    _no_motion_bad: list[str] = []
+    for _nms_id in _NO_MOTION_SECTIONS:
+        _nms_m = re.search(
+            r'<div\b(?=[^>]*\bclass\s*=\s*"[^"]*\bextras-section\b[^"]*")(?=[^>]*\bid\s*=\s*"'
+            + _nms_id + r'")[^>]*>',
+            html, re.IGNORECASE,
+        )
+        if not _nms_m:
+            continue
+        _nms_inner, _ = _walk_balanced_div(html, _nms_m.end())
+        _nms_inner_nc = re.sub(r'<!--.*?-->', '', _nms_inner, flags=re.DOTALL)
+        _nms_hits = _MOTION_GLYPH_RE.findall(_nms_inner_nc)
+        if _nms_hits:
+            _no_motion_bad.append(f'#{_nms_id}: {sorted(set(_nms_hits))}')
+    check(
+        'No 🚶/🚕/🚎/🚝/🚢 motion glyph anywhere in Downtown / Local Tastes / Heads Up '
+        '(per Motion Rule.html §2 — these 3 sections carry no motion rows at all, '
+        'not even in a body row)',
+        not _no_motion_bad,
+        f'{len(_no_motion_bad)} section(s) with a motion glyph: ' + '; '.join(_no_motion_bad)
+        if _no_motion_bad else '',
+    )
+
     # ─── TOURS — ENTRY FORMAT · RATING BAR · PER-PLATFORM MINIMUMS ─────────────
     # Per Tours - Extra Section.html. Rating-bar, entry-format AND per-source
     # minimums are all hard fails for every guide.
@@ -15852,16 +16108,39 @@ def validate(html: str, filename: str):
                 _box_inner, _ = _walk_balanced_div(_e_chunk, _box_open.end())
                 if not ('🕐' in _box_inner and '⏳' in _box_inner and '👥' in _box_inner):
                     _tours_fmt_bad.append(f'"{_label}" — missing 🕐/⏳/👥 row')
-                # Hotel-pickup tours (🏨 → 🚐 / 🏨 ↔ 🚐 / 🏨 ← 🚐) substitute
-                # for both the 📍 meeting point and the 🚶/🚕 motion row
-                # (per Tours - Extra Section.html §7). All other tours require both.
+                # Hotel-pickup tours substitute for the 📍 meeting point in all
+                # three arrow variants (🏨 → 🚐 / 🏨 ↔ 🚐 / 🏨 ← 🚐) — pickup is
+                # at the hotel, so there's no separate meeting-point address.
+                # The 🚶/🚕 motion row is a DIFFERENT story: 🏨 ↔ 🚐 and 🏨 ← 🚐
+                # end the tour back at the hotel (no motion banner needed), but
+                # 🏨 → 🚐 is pickup-only — the tour ends elsewhere, so the
+                # walk/ride row back to hotel is still required
+                # (Tours - Extra Section.html §6/§7 — fixed 2026-07-11, audit Gap 2:
+                # previously all three arrows were treated identically and →
+                # wrongly dropped the motion row too).
                 _has_hotel_pickup = '🏨' in _box_inner
+                _pickup_arrow_m = re.search(r'🏨\s*([↔→←])\s*🚐', _box_inner) if _has_hotel_pickup else None
                 if _has_hotel_pickup:
-                    if not re.search(r'🏨\s*[↔→←]\s*🚐', _box_inner):
+                    if not _pickup_arrow_m:
                         _tours_fmt_bad.append(
                             f'"{_label}" — 🏨 present but not in valid pickup format '
                             f'(must be 🏨 ↔ 🚐, 🏨 → 🚐, or 🏨 ← 🚐)'
                         )
+                    elif _pickup_arrow_m.group(1) == '→':
+                        # Pickup-only: tour ends elsewhere — motion banner stays.
+                        _has_ride_t = '🚕' in _box_inner
+                        if not _has_ride_t:
+                            _tours_fmt_bad.append(
+                                f'"{_label}" — 🏨 → 🚐 is pickup-only (tour ends elsewhere); '
+                                f'missing 🚕 motion row for the walk/ride back to hotel '
+                                f'(Tours - Extra Section.html §6/§7)'
+                            )
+                        if re.search(r'→\s*from\s+hotel', _box_inner, re.IGNORECASE):
+                            _tours_fmt_bad.append(
+                                f'"{_label}" — motion row ends with banned suffix "→ from hotel"; '
+                                f'format is 🚶 N min · 🚕 N min only, no directional label '
+                                f'(Motion Rule — Tours - Extra Section.html §4)'
+                            )
                 else:
                     _pin = re.search(
                         r'📍.*?<a\b[^>]*href\s*=\s*"([^"]+)"',
@@ -17484,13 +17763,40 @@ def validate(html: str, filename: str):
                 '',
             )
         else:
-            warn(
-                'Train Day quota — shipped without a Train Day '
-                '(per Day Structure.html §6 — required for 5+ day guides)',
-                'No Train Day card found in Trip Overview — add one, '
-                'or acknowledge with <!-- warn-ok: train-day-quota WHY -->',
-                tag='train-day-quota',
+            # BARE-TAG CLOSE 2026-07-11 (enforcement-gap sweep): warn()'s generic
+            # ack mechanism only checks that the slug is a substring of whatever
+            # follows "warn-ok:" — a bare `<!-- warn-ok: train-day-quota -->`
+            # with NO reason at all already satisfies that and silently
+            # suppresses the warning, so a 6-day guide could ship zero Train
+            # Days unexplained. This does not touch the shared warn() mechanism
+            # (other warn-ok usages fleet-wide are unaffected) — it only adds a
+            # requirement in front of THIS call site: the acknowledgment must
+            # carry real text after the tag, or it hard-fails instead of
+            # silently suppressing. Fleet scan: all 6 current usages already
+            # carry a real reason (Istanbul, Marrakech, Montevideo, Phuket,
+            # Porto, Tromsø) — 0 guides affected.
+            _tdq_ack_m = re.search(
+                r'<!--\s*warn-ok:\s*train-day-quota\S*\s+(\S.{9,}?)\s*-->',
+                html, re.IGNORECASE,
             )
+            _tdq_bare_ack = bool(re.search(r'<!--\s*warn-ok:\s*train-day-quota\S*\s*-->', html, re.IGNORECASE)) and not _tdq_ack_m
+            if _tdq_bare_ack:
+                check(
+                    'Train Day quota — <!-- warn-ok: train-day-quota --> acknowledgment must carry '
+                    'a real reason, not just the bare tag (per Day Structure.html §6)',
+                    False,
+                    'Found a bare `<!-- warn-ok: train-day-quota -->` comment with no reason after '
+                    'the tag — add a WHY (e.g. "no viable rail route from base") or add the missing '
+                    'Train Day',
+                )
+            else:
+                warn(
+                    'Train Day quota — shipped without a Train Day '
+                    '(per Day Structure.html §6 — required for 5+ day guides)',
+                    'No Train Day card found in Trip Overview — add one, '
+                    'or acknowledge with <!-- warn-ok: train-day-quota WHY -->',
+                    tag='train-day-quota',
+                )
 
     # ─── TRAIN DAY DESTINATION ≠ GUIDE CITY ──────────────────────────────────
     # A Train Day is a full-day round-trip to ANOTHER city (Stops Structure.html
@@ -18951,6 +19257,8 @@ def validate(html: str, filename: str):
     _train_day_missing_return: list[str] = []
     _train_day_missing_close: list[str] = []
     _train_day_missing_book_at: list[str] = []
+    _train_day_outbound_not_am: list[str] = []
+    _train_day_return_not_pm: list[str] = []
     _day_block_re = re.compile(
         r'<div\b[^>]*class\s*=\s*"[^"]*\bday-block\b[^"]*"[^>]*>',
         re.IGNORECASE,
@@ -18965,15 +19273,68 @@ def validate(html: str, filename: str):
                      if _hdr_m else '')
         if 'Train Day' not in _hdr_text:
             continue
-        # Outbound + return = 2 .train blocks minimum
+        # Outbound + return = 2 .train blocks minimum.
+        # BUG FIX 2026-07-11 (enforcement-gap sweep): \btrain\b matches the
+        # word "train" wherever it appears at a word boundary — which
+        # includes class="train-header" (the hyphen after "train" is a
+        # non-word char, satisfying \b), plus train-arrive / train-book /
+        # train-row / train-time. Every Train Day carries several of those
+        # alongside the real class="train" divs, so the loose count was
+        # always inflated well past 2 — this hard-fail could never actually
+        # fire on a genuinely-missing return block. Tightened to the exact
+        # class value (0 guides affected fleet-wide; every existing Train Day
+        # already has ≥2 real .train divs).
         _n_train_blocks = len(re.findall(
-            r'<div\b[^>]*class\s*=\s*"[^"]*\btrain\b[^"]*"[^>]*>',
+            r'<div\b[^>]*class\s*=\s*"train"[^>]*>',
             _body, re.IGNORECASE,
         ))
         if _n_train_blocks < 2:
             _train_day_missing_return.append(
                 f"{_hdr_text[:60]} — only {_n_train_blocks} .train block(s)"
             )
+        # ─── OUTBOUND/RETURN TIME WINDOW — Day Structure.html §7 "Train block
+        # rule": Windows: morning for outbound · evening for return. No exact
+        # hour boundary is given, so this enforces only the unambiguous floor:
+        # outbound departs before noon, return departs after noon. A fleet
+        # scan (2026-07-11, enforcement-gap sweep) found every existing
+        # compliant Train Day already clears this floor — a tighter "must be
+        # after 5pm" reading of "evening" would false-fail legitimate
+        # mid-afternoon returns (Dublin/Kilkenny 2:44pm, Tokyo/Nikko 2:47pm),
+        # so those are left to judgment beyond this floor, matching the
+        # audit's own "route geography" / "ride-time provenance" carve-outs.
+        if _n_train_blocks >= 2:
+            _train_blocks_raw: list[str] = []
+            for _tbm in re.finditer(
+                r'<div\b[^>]*class\s*=\s*"train"[^>]*>',
+                _body, re.IGNORECASE,
+            ):
+                _tb_inner, _ = _walk_balanced_div(_body, _tbm.end())
+                _train_blocks_raw.append(_tb_inner)
+            _dep_time_re = re.compile(
+                r'<span\b[^>]*class\s*=\s*"[^"]*\bdep\b[^"]*"[^>]*>\s*(\d{1,2}:\d{2}\s*[ap]m)',
+                re.IGNORECASE,
+            )
+            def _dep_hour24(_block):
+                _dm = _dep_time_re.search(_block)
+                if not _dm:
+                    return None
+                _tm = re.match(r'(\d{1,2}):(\d{2})\s*([ap]m)', _dm.group(1).strip(), re.IGNORECASE)
+                if not _tm:
+                    return None
+                _hh = int(_tm.group(1)) % 12
+                if _tm.group(3).lower() == 'pm':
+                    _hh += 12
+                return _hh
+            _out_hour = _dep_hour24(_train_blocks_raw[0])
+            _ret_hour = _dep_hour24(_train_blocks_raw[-1])
+            if _out_hour is not None and _out_hour >= 12:
+                _train_day_outbound_not_am.append(
+                    f"{_hdr_text[:60]} — outbound train departs in the PM (per Day Structure.html §7)"
+                )
+            if _ret_hour is not None and _ret_hour < 12:
+                _train_day_return_not_pm.append(
+                    f"{_hdr_text[:60]} — return train departs in the AM (per Day Structure.html §7)"
+                )
         # Closing return-to-hotel hop: `🚉 ARRIVE {home station}: … → hotel`
         if not re.search(r'🚉\s*ARRIVE\b[^<]*→\s*hotel\b', _body, re.IGNORECASE):
             _train_day_missing_close.append(_hdr_text[:60])
@@ -19006,6 +19367,20 @@ def validate(html: str, filename: str):
         not _train_day_missing_book_at,
         "; ".join(_train_day_missing_book_at[:3])
         if _train_day_missing_book_at else "",
+    )
+    check(
+        'Train Day outbound train departs in the morning (before noon) '
+        '(per Day Structure.html §7 "Windows: morning for outbound · evening for return")',
+        not _train_day_outbound_not_am,
+        "; ".join(_train_day_outbound_not_am[:3])
+        if _train_day_outbound_not_am else "",
+    )
+    check(
+        'Train Day return train departs in the afternoon/evening (after noon) '
+        '(per Day Structure.html §7 "Windows: morning for outbound · evening for return")',
+        not _train_day_return_not_pm,
+        "; ".join(_train_day_return_not_pm[:3])
+        if _train_day_return_not_pm else "",
     )
 
     # ─── TRAIN DAY — train-header must be OUTSIDE .train div; 🎫 before timetable ─
@@ -19072,6 +19447,58 @@ def validate(html: str, filename: str):
         len(_train_book_position) == 0,
         "; ".join(_train_book_position[:3]) if _train_book_position else "",
     )
+
+    # ─── TRAIN DAY — OUTBOUND MORNING / RETURN EVENING WINDOW (WARN) ───────────
+    # Day Structure.html §7: "Windows: morning for outbound · evening for
+    # return." No numeric cutoff is defined in CORE RULES, and a legitimate
+    # early return could trip a naive AM/PM boundary — so this is a warn, not
+    # a hard-fail. Reuses the .train box positions from the check above: box 0
+    # is outbound, the last box is return; reads the first <span class="dep">
+    # time in each. Added 2026-07-11, audit Gap 6.
+    _train_window_warnings: list[str] = []
+    _dep_time_re = re.compile(
+        r'<span\b[^>]*class\s*=\s*"[^"]*\bdep\b[^"]*"[^>]*>\s*(\d{1,2}):(\d{2})\s*(am|pm)\s*</span>',
+        re.IGNORECASE,
+    )
+    for _dbm3 in _day_block_re.finditer(html):
+        _body3, _ = _walk_balanced_div(html, _dbm3.end())
+        _hdr_m3 = re.search(
+            r'<div\b[^>]*class\s*=\s*"[^"]*\bday-header\b[^"]*"[^>]*>(.*?)</div>',
+            _body3, re.IGNORECASE | re.DOTALL,
+        )
+        _day_label3 = (RE_STRIP_TAGS.sub('', _hdr_m3.group(1)).strip() if _hdr_m3 else '')
+        if 'Train Day' not in _day_label3:
+            continue
+        _train_boxes3 = list(_train_box_re2.finditer(_body3))
+        if len(_train_boxes3) < 2:
+            continue
+        _first_dep = _last_dep = None
+        for _idx3, _tbm3 in enumerate(_train_boxes3):
+            _tb_inner3, _ = _walk_balanced_div(_body3, _tbm3.end())
+            _dm3 = _dep_time_re.search(_tb_inner3)
+            if not _dm3:
+                continue
+            if _idx3 == 0:
+                _first_dep = (_dm3.group(1), _dm3.group(3).lower())
+            if _idx3 == len(_train_boxes3) - 1:
+                _last_dep = (_dm3.group(1), _dm3.group(3).lower())
+        if _first_dep and _first_dep[1] == 'pm':
+            _train_window_warnings.append(
+                f'{_day_label3[:60]}: outbound departs {_first_dep[0]}:.. pm — '
+                f'expected morning (Day Structure.html §7)'
+            )
+        if _last_dep and _last_dep[1] == 'am':
+            _train_window_warnings.append(
+                f'{_day_label3[:60]}: return departs {_last_dep[0]}:.. am — '
+                f'expected evening (Day Structure.html §7)'
+            )
+    if _train_window_warnings:
+        warn(
+            f'{len(_train_window_warnings)} Train Day outbound/return departure(s) fall outside the '
+            f'expected window — "morning for outbound · evening for return" (Day Structure.html §7)',
+            detail='; '.join(_train_window_warnings[:5]),
+            tag='train-day-am-pm-window',
+        )
 
     # ─── DAY TRIPS SECTION — entry boxes use .transit-box, not .entry-body ─
     daytrips_box_violations: list[str] = []
@@ -20243,18 +20670,11 @@ def validate(html: str, filename: str):
                         f'must start with ⭐/⭐⭐/⭐⭐⭐ Restaurant Name '
                         f'(Michelin Restaurants - Extra Section.html § 3)'
                     )
-                # No neighborhood suffix
-                if ' · ' in _star_row_text:
-                    michelin_bad.append(
-                        f'"{_star_row_text[:60]}" — heading contains "·" separator; '
-                        f'format is [Stars] [Restaurant Name] only, no neighborhood suffix'
-                    )
-                # Heading must be plain text — no <a> links
-                if re.search(r'<a\b', _esm.group(1), re.IGNORECASE):
-                    michelin_bad.append(
-                        f'"{_star_row_text[:60]}" — heading must be plain text, no <a> links'
-                    )
-                # The next sibling element must be a .entry-body
+                # The next sibling element must be a .entry-body — extracted here
+                # (moved ahead of the heading-shape checks below) so §3a in-hotel
+                # status is known before those checks run; §3a's own heading
+                # format legitimately carries the " · N.N⭐ · N+ reviews" link
+                # that §3b's heading-shape checks forbid.
                 _after_sub = section_inner[_esm.end():]
                 _next_box_m = re.match(
                     r'\s*<div\b[^>]*class\s*=\s*"[^"]*\bentry-body\b[^"]*"[^>]*>',
@@ -20270,6 +20690,46 @@ def validate(html: str, filename: str):
                 _box_body, _ = _walk_balanced_div(
                     _after_sub, _next_box_m.end()
                 )
+                # Detect in-hotel entry (§3a) vs standard entry (§3b)
+                _is_mich_hotel = bool(
+                    '🏨' in _box_body
+                    and re.search(r'🏨\s*In\s+the\s+hotel', _box_body, re.IGNORECASE)
+                )
+                if not _is_mich_hotel:
+                    # No neighborhood suffix (§3b only — §3a's " · N.N⭐ · N+ reviews"
+                    # rating is exempt, checked separately below)
+                    if ' · ' in _star_row_text:
+                        michelin_bad.append(
+                            f'"{_star_row_text[:60]}" — heading contains "·" separator; '
+                            f'format is [Stars] [Restaurant Name] only, no neighborhood suffix'
+                        )
+                    # Heading must be plain text — no <a> links (§3b only — §3a's
+                    # rating is required to be a class="review-link" anchor)
+                    if re.search(r'<a\b', _esm.group(1), re.IGNORECASE):
+                        michelin_bad.append(
+                            f'"{_star_row_text[:60]}" — heading must be plain text, no <a> links'
+                        )
+                else:
+                    # §3a in-hotel heading must carry the rating string
+                    # "N.N⭐ · N+ reviews" as a class="review-link" anchor
+                    # (Michelin Restaurants - Extra Section.html §3a — the inverse,
+                    # §3b headings banned from carrying it, was already enforced;
+                    # this affirmative requirement was not. Added 2026-07-11, audit Gap 7).
+                    if not re.search(r'·\s*\d\.\d⭐\s*·\s*\d[\d,]*\+\s*reviews', _star_row_text, re.IGNORECASE):
+                        michelin_bad.append(
+                            f'"{_star_row_text[:60]}" — in-hotel (§3a) heading missing required rating '
+                            f'"N.N⭐ · N+ reviews" (format: [Stars] [Restaurant Name] · N.N⭐ · N+ reviews, '
+                            f'Michelin Restaurants - Extra Section.html §3a)'
+                        )
+                    elif not re.search(
+                        r'<a\b[^>]*class\s*=\s*"[^"]*\breview-link\b[^"]*"[^>]*>',
+                        _esm.group(1), re.IGNORECASE,
+                    ):
+                        michelin_bad.append(
+                            f'"{_star_row_text[:60]}" — in-hotel (§3a) rating must be a '
+                            f'class="review-link" anchor to the restaurant\'s Yelp, Google Reviews, '
+                            f'or Local Guide page'
+                        )
                 # .entry-body must NOT contain ⭐ stars (heading only)
                 if '⭐' in _box_body:
                     michelin_bad.append(
@@ -20277,11 +20737,6 @@ def validate(html: str, filename: str):
                         f'stars belong on the .extras-sub heading only '
                         f'(Style A shape, locked 2026-05-19)'
                     )
-                # Detect in-hotel entry (§3a) vs standard entry (§3b)
-                _is_mich_hotel = bool(
-                    '🏨' in _box_body
-                    and re.search(r'🏨\s*In\s+the\s+hotel', _box_body, re.IGNORECASE)
-                )
                 if _is_mich_hotel:
                     # ── §3a in-hotel entry ─────────────────────────────────────
                     # Must NOT have 📍 address row
@@ -22910,6 +23365,11 @@ def validate(html: str, filename: str):
                 ic.replace('️', '')
                 for _s, _ics, _l in _SECTION_ICON_MAP for ic in _ics
             }
+            # Extended 2026-07-11 (audit Gap 8): the section-header set alone
+            # missed the other reserved icon families — motion glyphs (walk/
+            # ride/ferry) and the stop marker — which are equally "already in
+            # use by another guide section" per § 2.
+            _ci_reserved |= {'🚶', '🚕', '🚤', '📍'}
             _ci_reserved_hit = next(
                 (ic for ic in _ci_reserved if ic and ic in _ci_lead_norm), None
             )
@@ -24411,6 +24871,76 @@ def validate(html: str, filename: str):
     elif next_metro_re.search(html):
         check("Metro sub-line(s) match Motion Rule.html", True)
 
+    # ─── FERRY (🚢) INLINE SHAPE — every segment resolves to a destination ────
+    # Unlike tram/metro, a 🚢 leg never gets its own .next-tram/.next-metro
+    # sub-line div — Motion Rule.html §1 chains it inline in the SAME
+    # .next/.hotel-first/.arrive-first banner as the walk/ride segments
+    # ("🚶 X min → [Pier] · 🚢 [N min] → [Destination Pier] · 🚶 T min →
+    # [Destination]"), so the tram/metro div-shape check pattern doesn't
+    # apply. Real fleet usage (Marseille, Helsinki, Seychelles) is far more
+    # varied than the doc's one literal example — multi-leg island-hopping
+    # chains a 🚕 leg into the pier, or chains a further 🚕 after landing —
+    # so this does not impose the tram/metro's rigid glyph-count/link-count
+    # shape (that would false-fail every real multi-leg ferry guide). It
+    # checks the one invariant every variant honors: a 🚢 segment always
+    # resolves to a destination via →. A previous version of this check that
+    # scanned the whole document (not just motion banners) false-fired on the
+    # Getting Around section's "🚢 Ferry" heading, which is not a motion row
+    # and carries no destination — scoped to motion-banner divs only, 0
+    # guides affected fleet-wide.
+    print("\n── FERRY (🚢) INLINE SHAPE — segment resolves to a destination ──")
+    _ferry_banner_re = re.compile(
+        r'<div\b[^>]*class\s*=\s*"(?:next|hotel-first|arrive-first)"[^>]*>((?:(?!</div>).)*)</div>',
+        re.DOTALL,
+    )
+    _ferry_seg_re = re.compile(r'🚢([^·<]*)')
+    _ferry_shape_issues: list[str] = []
+    for _fbm in _ferry_banner_re.finditer(html):
+        _raw = _fbm.group(1)
+        if '🚢' not in _raw:
+            continue
+        _text = RE_STRIP_TAGS.sub('', _raw).strip()
+        for _fsm in _ferry_seg_re.finditer(_text):
+            if '→' not in _fsm.group(1):
+                _ferry_shape_issues.append(_text[:100])
+    check(
+        '🚢 ferry segment inside a motion banner always resolves to a destination '
+        '("🚢 [N min] → [Destination]", per Motion Rule.html §1) — never a bare time '
+        'with no arrow',
+        not _ferry_shape_issues,
+        f"{len(_ferry_shape_issues)} banner(s) with a dangling 🚢 segment: "
+        + "; ".join(_ferry_shape_issues[:3]) if _ferry_shape_issues else "",
+    )
+
+    # ─── TRAM/METRO SUB-LINE — MUST DIRECTLY FOLLOW A MOTION BANNER ──────────
+    # The div-shape checks above validate a .next-tram/.next-metro div's
+    # internals (glyph count/order, link count) but never that it actually
+    # sits directly below a motion banner. Motion Rule.html §1 describes the
+    # sub-line as living "directly below" a .next/.hotel-first/.arrive-first
+    # banner — a floating sub-line with nothing establishing the lead-in
+    # walk/ride time above it is a structural error a content edit could
+    # introduce (e.g. a banner accidentally deleted, leaving the tram/metro
+    # row orphaned). Closed 2026-07-11 (enforcement-gap sweep; 0 guides
+    # affected fleet-wide — every existing tram/metro sub-line already sits
+    # directly below a banner).
+    print("\n── TRAM/METRO SUB-LINE — must directly follow a motion banner ──")
+    _all_tram_metro = len(next_tram_re.findall(html)) + len(next_metro_re.findall(html))
+    _preceded_tram_metro_re = re.compile(
+        r'<div\b[^>]*class\s*=\s*"(?:next|hotel-first|arrive-first)"[^>]*>.*?</div>\s*'
+        r'<div\b[^>]*class\s*=\s*"[^"]*\bnext-(?:tram|metro)\b[^"]*"',
+        re.DOTALL,
+    )
+    _preceded_count = len(_preceded_tram_metro_re.findall(html))
+    check(
+        'Every 🚎/🚝 sub-line (.next-tram / .next-metro) directly follows a motion banner '
+        '(.next / .hotel-first / .arrive-first) — a sub-line with nothing establishing the '
+        'walk/ride leg above it is a floating fragment (per Motion Rule.html §1)',
+        _all_tram_metro == 0 or _preceded_count == _all_tram_metro,
+        f"{_all_tram_metro - _preceded_count} of {_all_tram_metro} tram/metro sub-line(s) "
+        "not immediately preceded by a motion banner"
+        if (_all_tram_metro and _preceded_count != _all_tram_metro) else "",
+    )
+
     # ─── NO MEAL SUGGESTIONS IN ⏰ DURATION ROWS ──────────────────────
     _meal_in_duration: list[str] = []
     _meal_re = re.compile(r'⏰[^<\n]{0,80}', re.IGNORECASE)
@@ -25273,6 +25803,7 @@ def validate(html: str, filename: str):
         if _subdomain and _subdomain.group(1).lower() in {
             'billetterie', 'tickets', 'ticket', 'book', 'booking',
             'reservations', 'reserve', 'shop', 'boutique', 'purchase',
+            'entradas',  # Spanish for "tickets"
         }:
             continue
         # Extract path after the domain
@@ -25280,7 +25811,7 @@ def validate(html: str, filename: str):
         # Recognised booking path keywords → always a specific page, not a homepage
         _path_root = path_part.split('/')[0].lower()
         if _path_root in {
-            'tickets', 'ticket', 'biglietti', 'billetterie',
+            'tickets', 'ticket', 'biglietti', 'billetterie', 'entradas',
             'buy', 'purchase', 'booking', 'reservations', 'reserve',
             'shop', 'boutique', 'admission', 'plan-your-visit',
             'tour-reservations', 'organise-your-visit', 'tours',
