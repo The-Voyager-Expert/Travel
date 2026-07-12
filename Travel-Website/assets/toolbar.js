@@ -601,6 +601,32 @@
     }
   }
 
+  /* ── Trip Overview: colour the leading "Day N" label ──────────────────────
+     .overview-day-title is plain text: "Day {N}" then a separator (– or ·)
+     then the stop list. Wraps just the leading "Day N" token in a span so
+     guide-style.css can colour/weight it, without touching any guide's static
+     HTML. Runs on all viewports; a title that doesn't start with "Day N" is
+     left untouched (safe no-op, e.g. on Guides-Index.html's reused markup). */
+  if (isRealGuide) {
+    function styleOverviewDayNumbers() {
+      [].slice.call(document.querySelectorAll('.overview-day-title')).forEach(function (el) {
+        if (el.querySelector('.overview-day-num')) return;
+        var text = el.textContent || '';
+        var m = /^Day\s+\d+/.exec(text);
+        if (!m) return;
+        var rest = text.slice(m[0].length);
+        var num = document.createElement('span');
+        num.className = 'overview-day-num';
+        num.textContent = m[0];
+        el.textContent = '';
+        el.appendChild(num);
+        el.appendChild(document.createTextNode(rest));
+      });
+    }
+    if (document.readyState !== 'loading') styleOverviewDayNumbers();
+    else document.addEventListener('DOMContentLoaded', styleOverviewDayNumbers);
+  }
+
   /* ── Best Of pages: stamp above terracotta line, arrows below it ─────────── */
   var isBestOf = /\/Trip-Essentials\/Best-/.test(location.pathname) && (prevHref || nextHref);
   if (isBestOf) {
