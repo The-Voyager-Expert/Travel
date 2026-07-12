@@ -107,6 +107,7 @@ Usage:
   python3 guide_tools.py sync-css                       # copy Brain/Reference/Guide Style.css → assets/guide-style.css
   python3 guide_tools.py audit                         # open audit workflow
   python3 guide_tools.py staleness      [--backfill]    # list guides built under an older format version (drift report)
+  python3 guide_tools.py revalidate     <City>          # re-run validate on a shipped guide; on 0 fails stamp last_validated (never touches fingerprint)
   python3 guide_tools.py test                           # run Brain/tests/ fixture suite (Rule 56)
 
 Exit code matches the underlying script; `ship` fails fast on the first
@@ -2818,8 +2819,11 @@ def _load_ledger() -> dict:
 
 
 def _save_ledger(data: dict) -> None:
-    LEDGER_F.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n",
-                        encoding="utf-8")
+    # Atomic write (crib_safety): a concurrent reader — pre_push_guard, the
+    # staleness dashboard export, a parallel crib — never observes a half-written
+    # ledger. Same pattern the publisher/builders use for shared-surface files.
+    import crib_safety as _cs
+    _cs.atomic_write(LEDGER_F, json.dumps(data, indent=2, sort_keys=True) + "\n")
 
 
 def _iter_guide_dirs():
@@ -2849,11 +2853,16 @@ def _update_staleness_ledger(guide_path: Path) -> None:
     except Exception:
         city = guide_path.parent.name
     ledger = _load_ledger()
+    today = _dt.date.today().isoformat()
     ledger[city] = {
         "fingerprint": fv.get("fingerprint", ""),
         "format_date": fv.get("date", ""),
         "guide": guide_path.name,
-        "shipped": _dt.date.today().isoformat(),
+        "shipped": today,
+        # A full ship implies a clean validate ran in the gate chain, so the
+        # guide is validated-as-of-today too. `revalidate` refreshes this field
+        # alone (without touching fingerprint) on a bare re-validation.
+        "last_validated": today,
     }
     _save_ledger(ledger)
     print(f"  🗂  staleness ledger: {city} stamped @ format {fv.get('date','?')} "
@@ -2911,6 +2920,69 @@ def _run_staleness(backfill: bool = False) -> int:
               "    deliberately from CORE RULES — never by copying another guide.\n"
               "    A guide re-enrolls as current the next time it ships.")
     print()
+    return 0
+
+
+def _run_revalidate(city: str) -> int:
+    """Re-run `validate` on an already-shipped guide and, on 0 failures, stamp
+    `last_validated = today` into its staleness-ledger entry.
+
+    Deliberately does NOT touch `fingerprint` / `format_date`. validate_itinerary.py
+    enforces only a SUBSET of the CORE-RULES format, so a clean validate does not
+    prove full current-format conformance — only a real `ship` legitimately sets the
+    fingerprint to current. This records *when the guide last passed validation*,
+    which is what fixes the "I fixed + revalidated a guide but it still shows stale"
+    trap, without ever claiming format currency it can't prove.
+
+    Note: the ledger write happens HERE, not inside validate_itinerary.py, which
+    stays strictly read-only (pre_push_guard runs it on every push and must not
+    incur side effects).
+    """
+    # Resolve the city folder (accept spaced or hyphenated input).
+    folder = GUIDES_DIR / city
+    if not folder.is_dir():
+        alt = GUIDES_DIR / city.replace(" ", "-")
+        if alt.is_dir():
+            folder = alt
+    if not folder.is_dir():
+        print(f"❌ No guide folder for {city!r} under {GUIDES_DIR}", file=sys.stderr)
+        return 2
+
+    ledger = _load_ledger()
+    entry = ledger.get(folder.name)
+
+    # Validate the guide file the ledger already records; else newest on disk.
+    guide = None
+    if entry and entry.get("guide"):
+        cand = folder / entry["guide"]
+        if cand.exists():
+            guide = cand
+    if guide is None:
+        guide = _latest_guide_html(folder)
+    if guide is None:
+        print(f"❌ No guide HTML found in {folder}", file=sys.stderr)
+        return 2
+
+    # Read-only static validation (no ledger side effects in the validator itself).
+    rc = _run(SUBCOMMANDS["validate"], [str(guide)])
+    if rc != 0:
+        print(f"  🗂  revalidate: {folder.name} FAILED validation (rc={rc}) — "
+              f"last_validated NOT updated.", file=sys.stderr)
+        return rc
+
+    if entry is None:
+        print(f"  ⚠  revalidate: {folder.name} passed validation but is not enrolled "
+              f"in the staleness ledger — run `ship` or `staleness --backfill` first; "
+              f"last_validated not recorded (won't invent a fingerprint).")
+        return 0
+
+    today = _dt.date.today().isoformat()
+    entry["last_validated"] = today
+    ledger[folder.name] = entry
+    _save_ledger(ledger)  # atomic (crib_safety)
+    print(f"  🗂  revalidate: {folder.name} passed — last_validated = {today} "
+          f"(fingerprint unchanged @ {str(entry.get('fingerprint','?'))[:8]}; "
+          f"a bare validate can't prove current-format, only ship can).")
     return 0
 
 
@@ -3381,6 +3453,12 @@ def main() -> int:
 
     if cmd == "staleness":
         return _run_staleness(backfill=("--backfill" in tail))
+
+    if cmd == "revalidate":
+        if not tail:
+            print("Usage: guide_tools.py revalidate <City>", file=sys.stderr)
+            return 2
+        return _run_revalidate(" ".join(tail))
 
     if cmd == "test":
         return _run_tests()
