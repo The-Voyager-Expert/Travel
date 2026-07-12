@@ -3199,6 +3199,32 @@ def main() -> int:
             return rc_mob
         # ──────────────────────────────────────────────────────────────────────
 
+        # ── mobile RENDER gate, guide-scoped (added 2026-07-12) ───────────────
+        # The check above is STATIC (viewport tag + mobile.css present) and was
+        # documented as "guides are covered by guide-style.css and out of this
+        # check's scope" — i.e. guide-style.css was trusted correct by
+        # construction, never rendered and measured. It wasn't: the "Also on
+        # this site" mobile grid broke (a title heading eating a grid column
+        # without a span, plus toolbar.js's Updated-stamp injection breaking a
+        # :last-child selector) and shipped through mobile-check + brain_check +
+        # validate_itinerary + pre_push_guard without any of them firing, since
+        # none of them render the page — a bug with the right height/font/radius
+        # numbers but the wrong width and wrap is invisible to a static check.
+        # Scope this to just the shipping guide (rendering the whole fleet every
+        # ship is too slow) — hard block, not --warn.
+        rc_render = _run("validate_mobile_render.py", tail)
+        if rc_render != 0:
+            print(
+                "\n🚫  SHIP BLOCKED — guide fails the mobile render check "
+                "(off-standard pill sizing/wrap or horizontal overflow at 393px).\n"
+                "    Run:  python3 Brain/scripts/validate_mobile_render.py %s\n"
+                "    Then re-run ship.\n" % tail[0],
+                file=sys.stderr,
+            )
+            _write_ship_log(Path(tail[0]).resolve(), "FAIL")
+            return rc_render
+        # ──────────────────────────────────────────────────────────────────────
+
         # ── oversized-photo auto-heal (added 2026-06-20) ──────────────────────
         # Guides serve photos straight from _build/assets/; Wikimedia originals are
         # often full-resolution (multi-MB) despite "800px-" filenames — heavy mobile
