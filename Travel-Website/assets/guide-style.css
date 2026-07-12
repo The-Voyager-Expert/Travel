@@ -305,14 +305,22 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
 .overview-day:hover       { background: var(--c-brand-hover); }
 .overview-day-title      { color: var(--c-text-primary); font-weight: normal; font-size: var(--fs-overview-day-title); margin-bottom: 3px; }
 .overview-day-stops      { color: var(--c-text-primary); font-size: var(--fs-overview-stops); line-height: 1.5; }
-/* § 6 extras navigation pills — Trip Overview.html § 6 */
+/* § 6 extras navigation pills — Trip Overview.html § 6, Colors and Font Size.html § 17.
+   Desktop renders these as rounded chips, reusing the exact visual language of
+   .also-on-this-site-pill (§ "Trip resources pills" below) — locked 2026-07-12.
+   The bare .overview-extra-link rule stays a plain underline-on-hover link: it
+   is reused by the injected READ ABOUT {CITY} link in .overview-title, which
+   must NOT become a chip. The chip look is scoped to .overview-extras
+   .overview-extra-link only. Mobile overrides both to the glued-grid tile at
+   @media (max-width:600px) below — untouched by this change, do not remove it. */
 .overview-extras {
   display: flex;
   flex-wrap: wrap;
-  gap: 0;
+  gap: 7px;
   margin-top: 12px;
   padding-top: 0;
 }
+.overview-extras > span { display: none; } /* legacy leading "|" markup — chips need no separator */
 .overview-extra-link {
   display: inline-block;
   color: var(--c-brand);
@@ -330,12 +338,34 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
 .overview-extra-link:active  { color: var(--c-brand); }
 .overview-extra-link:focus   { outline: none; }
 .overview-extra-link:hover   { text-decoration: underline; }
-.overview-extra-link + .overview-extra-link::before {
-  content: '|';
-  color: #d4b896;
-  font-weight: normal;
-  pointer-events: none;
-  padding: 0 6px;
+.overview-extras .overview-extra-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--c-text-primary);
+  background: var(--c-card-bg);
+  border: 0.5px solid #c8a44a;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
+}
+.overview-extras .overview-extra-link:visited { color: var(--c-text-primary); }
+.overview-extras .overview-extra-link:hover   { text-decoration: none; }
+@media (hover: hover) {
+  .overview-extras .overview-extra-link:hover {
+    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+    color: #fff;
+    border-color: #b85c2a;
+    box-shadow: 0 3px 10px rgba(184,92,42,.18);
+  }
+}
+.overview-extras .overview-extra-link:active {
+  background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);
+  color: #fff;
+  border-color: #b85c2a;
+  box-shadow: 0 1px 3px rgba(184,92,42,.12);
+  transform: scale(.97) translateY(1px);
 }
 .overview-sep {
   color: #d4b896;
@@ -1027,13 +1057,17 @@ div.train .train-time .arr { color: var(--c-title-bg); }
   border-radius: 4px;
   margin: 8px 0 16px;
 }
-.entry-body a,
-.shows-box a { font-weight: bold; }
-/* Maps links inside these boxes must NOT be bold — same rule as tour-box/ticket-box.
+.entry-body a { font-weight: bold; }
+/* Maps links inside .entry-body must NOT be bold — same rule as tour-box/ticket-box.
    The bold rule above makes booking/website links bold (correct), but 📍 address
    links should always render normal weight. (2026-05-07) */
-.entry-body a[href*="google.com/maps"],
-.shows-box a[href*="google.com/maps"] { font-weight: normal; }
+.entry-body a[href*="google.com/maps"] { font-weight: normal; }
+/* .shows-box links stay plain weight — no name text rides inside the 🎟 link to
+   justify bolding it (unlike .entry-body's Tours/Michelin rows), so a blanket bold
+   just made every venue's booking/website link (and, before the 2026-05-07 maps
+   exemption, the 📍 address too) render bold. Locked 2026-07-12 — see validate_itinerary.py
+   Check X + Colors and Font Size.html § 3 (Body links, #2867c4, normal weight). */
+.shows-box a { font-weight: normal; }
 /* Retired 2026-05-19 — the `#michelin .entry-body > div:first-child`
    rule was bolding + amber-tinting the first row of the entry-body. Pre
    Style-A that row was the restaurant name; post Style-A (2026-05-19) the
@@ -1105,6 +1139,34 @@ div.train .train-time .arr { color: var(--c-title-bg); }
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
   margin: 0;
+}
+
+/* ── STYLE A — CONTINUOUS RUN (locked 2026-07-12, Dani: "it has to be
+   continuous always in all the places! these are a one banner").
+   Consecutive entries in the same run (no .tours-group / .extras-title
+   between them) merge into ONE seamless card — no gap, no rounded seam
+   at the join. Only the FIRST heading in a run keeps top-rounding + the
+   14px top margin (via the .extras-title + .extras-sub reset above for
+   the very first entry — every later entry in the run is squared off and
+   glued flush here); only the LAST body in a run keeps bottom-rounding.
+   A .tours-group (provider) label or a new .extras-title breaks the
+   adjacency chain on its own — no extra rule needed to preserve those
+   breaks. CSS-only: applies to every guide via the shared stylesheet,
+   no per-guide HTML edits required. ── */
+.entry-body + .extras-sub,
+.shows-box + .extras-sub,
+.transit-box + .extras-sub,
+.station-box + .extras-sub {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.entry-body:has(+ .extras-sub),
+.shows-box:has(+ .extras-sub),
+.transit-box:has(+ .extras-sub),
+.station-box:has(+ .extras-sub) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 /* Retired 2026-05-19 — the intermediate description div between .extras-sub
@@ -1450,6 +1512,7 @@ div.train .train-time .arr { color: var(--c-title-bg); }
   .stop-num, .stop-name { color: var(--c-text-primary); }
   .stop-subtitle { color: #999; }
   .also-on-this-site-pill { background: var(--c-card-bg); color: var(--c-text-primary) !important; border-color: #8a7a40; }
+  .overview-extras .overview-extra-link { border-color: #8a7a40; }
   .guide-nav a { color: var(--c-title-bg); }
   .toolbar-nav a,
   .toolbar-essentials a { background-color: transparent; color: var(--c-title-bg); }
@@ -1623,8 +1686,10 @@ div.train .train-time .arr { color: var(--c-title-bg); }
     background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important;
     border-color: #b85c2a !important; color: #fff !important; text-decoration: none !important;
   }
-  .overview-extra-link + .overview-extra-link::before { display: none !important; }
-  .overview-extras > span { display: none !important; }
+  /* Pipe separator (::before content:'|') and the leading <span>|</span> markup
+     were retired site-wide (desktop chips need no separator) — the base rule
+     above (line ~309) now hides/omits both unconditionally, so no mobile
+     override is needed here. */
   /* READ ABOUT link is a standalone .overview-extra-link crammed under the
      title; on mobile flex the overview section and push it to the bottom as a
      full-width button, out of the title area. */
