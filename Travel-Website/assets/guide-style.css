@@ -300,28 +300,35 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   text-decoration: none;
   color: inherit;
-  transition: border-left-color .15s ease, transform .08s ease, box-shadow .08s ease;
+  transition: background .15s, border-color .15s, box-shadow .15s, transform .08s;
 }
 .overview-day:last-child  { margin-bottom: 0; }
-/* Press feedback — same scale(.97) translateY(1px) + flattened shadow the
-   extras pills use below (:active fires correctly on a real tap-and-release,
-   unlike :hover, so this needs no hover:hover guard). */
+/* Hover/active mimic .overview-extras .overview-extra-link exactly below
+   (same gradient, same shadow, same scale.97 press) — full terracotta fill,
+   not just a left-bar cue, so a day row "selects" the same way the extras
+   pills under it do. .overview-day-title/-num set their own colour and
+   don't inherit .overview-day's `color`, so they need explicit white
+   overrides here. `hover: hover` scoping keeps the fill off touch devices —
+   without it, iOS Safari "sticks" :hover on whichever row was last tapped,
+   since a touch never fires mouseleave; :active has no such guard because
+   it's a real momentary state tied to tap-down/tap-up. */
+@media (hover: hover) {
+  .overview-day:hover {
+    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+    border-color: #b85c2a;
+    box-shadow: 0 3px 10px rgba(184,92,42,.18);
+  }
+  .overview-day:hover .overview-day-title,
+  .overview-day:hover .overview-day-num { color: #fff; }
+}
 .overview-day:active {
-  border-left-color: #b85c2a;
-  box-shadow: none;
+  background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);
+  border-color: #b85c2a;
+  box-shadow: 0 1px 3px rgba(184,92,42,.12);
   transform: scale(.97) translateY(1px);
 }
-/* Gold left bar at rest (always visible — matters on mobile, which has no
-   hover state to reveal anything) shifts to terracotta on hover, since
-   interactive states are terracotta-only per Colors and Font Size.html § 11
-   while gold is text/borders only. Border-only cue either way: background
-   never changes, so stop-list text never has to fight a contrast shift.
-   `hover: hover` scoping (same pattern as .overview-extras below) keeps
-   this off touch devices — without it, iOS Safari "sticks" :hover on
-   whichever row was last tapped, since a touch never fires mouseleave. */
-@media (hover: hover) {
-  .overview-day:hover { border-left-color: #b85c2a; }
-}
+.overview-day:active .overview-day-title,
+.overview-day:active .overview-day-num { color: #fff; }
 .overview-day-title      { color: var(--c-text-primary); font-weight: normal; font-size: var(--fs-overview-day-title); margin-bottom: 3px; }
 .overview-day-num        { color: var(--c-brand); font-weight: 700; }
 .overview-day-stops      { color: var(--c-text-primary); font-size: var(--fs-overview-stops); line-height: 1.5; }
