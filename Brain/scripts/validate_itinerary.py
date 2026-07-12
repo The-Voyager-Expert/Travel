@@ -56,6 +56,16 @@ WARN = "⚠️ "
 # ║  This prints at the end of every run. There is no excuse to forget.     ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 CHANGELOG = [
+    ("2026-07-12", "SHOWS BOLD-LINK CHECK RE-APPLIED (2nd write) — a concurrent-edit collision "
+     "on this shared file wiped the entire Check X addition (accumulator, the guide-style.css "
+     "resolution setup, the per-entry detection loop, and the check() call) between the first "
+     "commit and this session's next read; guide-style.css's half of the fix (`.shows-box a { "
+     "font-weight: normal; }`) survived untouched, so only the validator side needed re-applying. "
+     "Same fix as before: no <a> inside .shows-box may render bold — reads the LIVE resolved "
+     "font-weight from guide-style.css's `.shows-box a` rule (+ any attribute-selector override) "
+     "rather than hardcoding an assumption, so the check tracks whatever the shared stylesheet "
+     "currently says. Confirmed passing again on Travel-Website/Guides/Bruges/bruges_v1.html "
+     "after re-apply."),
     ("2026-07-12", "WEEKLY CLOSURES — BOLD BANNED (Dani-requested format change), re-applied after a concurrent-edit collision wiped this change from disk (2nd write). Weekly Closures - Extra Section.html § 2 changed: entries are now plain text — the <strong> wrap on the category name is retired; no word in an entry (category or weekday) may be bold. Check B (entry format) no longer requires a <strong> wrap on the category. Check C — formerly 'exactly one <strong>, wrapping the category only' — is now a hard-fail on ANY <strong>/<b> tag inside a .stop-row entry. Five downstream category-text extractors that previously parsed <strong> and `continue`d (skipped) an entry when it found none — duplicate-venue check, generic-category-vs-venue check, the possible-venue warn, WC-X4 title-case, WC-X5 trailing-punctuation — switched to splitting the plain text on ' · Closed' instead. Check-only per Dani's explicit instruction for the rule/validator change; the 168 already-bold guides were separately fixed in place (mechanical, no re-validation run at the time). WC-X19 companion check added same pass: negative-finding line ('.extras-empty') must also not be bold — fleet scan found 0/51 negative-finding-only guides currently bold there, so no guide fix was needed for that half."),
     ("2026-07-12", "THREE NEW HARD-FAILS FROM SCREENSHOT REVIEW (Dani), re-applied after concurrent-edit collisions on this shared file. (1) TITLE-HOTEL LINK COLOR-DRIFT GUARD — .title-hotel must not contain an <a>; only .title-address is the Maps link (Hotel Banner.html §1). guide-style.css has a color rule for \".title-page .title-address a\" but none for \".title-hotel a\", so a linked hotel name falls through to the global canonical link blue instead of matching the address. Caught: Bhutan's \"COMO Uma Paro\" rendered blue (1/220 guides, now fixed). (2) TRIP OVERVIEW DAY-LABEL REPEAT GUARD — each .overview-day card's \"Day N\" label must appear exactly once; an undocumented .overview-day-num div duplicated it above .overview-day-title's own \"Day N – …\" prefix. Caught: Aracaju + Olinda (2/219 guides, now fixed). (3) TOURS NEGATIVE-FINDING BOX PADDING CSS PRESENCE — \"No qualifying tours on [Platform] in [City].\" sits .entry-body directly under .tours-group, which carries no padding of its own (unlike .extras-sub); without an override the box rendered 0px top / 8px bottom padding (confirmed via Playwright computed style, 37/219 guides affected — a shared-CSS gap, not per-guide content). Fixed by adding \"#tours .tours-group + .entry-body { padding-top: 8px; border-radius: 4px; }\" to guide-style.css; this check hard-fails if that override is ever removed, rather than re-scanning guide HTML (the .tours-group + .entry-body adjacency is legitimate once the CSS override exists)."),
     ("2026-07-11", "EXTRA SECTION UNIQUENESS — no extra section written twice (new hard-fail). Each extra section (Cappuccino, Tours, Claude Inspiration, Michelin, …) ships exactly once; multiple entries belong INSIDE a single section container, not in a second duplicate container. Claude Inspiration is one <div class=\"claude-inspiration\"> with several <p> blocks (Claude Inspiration - Extra Section.html §1/§4), never two separate section containers each repeating the ✨ Claude Inspiration title; every other section is unique by Guide Structure.html section order. New check enumerates every extra-section container (extras-section OR claude-inspiration) in document order, extracts each one's .extras-title text (empty titles — the CSS-injected 'Also on this site' block — excluded), and hard-fails on any title appearing more than once. INVISIBLE UNTIL NOW: a duplicated section renders as two identical headers stacked on the page but passed every prior check (section-order, overview-sync, and closing-div checks all tolerate a repeat). Caught: Montevideo shipped two ✨ Claude Inspiration containers (theme-teal + theme-coral, the 2nd also missing its id='claude-inspiration') instead of one section with two <p> entries. Fleet scan: 1/219 guides affected (Montevideo only). Rule home: Claude Inspiration - Extra Section.html §4 + Guide Structure.html section order."),
@@ -13511,6 +13521,34 @@ def validate(html: str, filename: str):
     shows_motion_no_dot:   list[str] = []  # U — combined motion row must use · separator
     shows_walk_not_int:    list[str] = []  # V — 🚶 walk time must be a parseable integer
     shows_inv_neg_bad:     bool       = False  # W — entries present → neg-finding must NOT appear
+    shows_link_bold:       list[str] = []  # X — no <a> inside .shows-box may render bold
+
+    # X (setup) — resolve the ACTUAL current font-weight for `.shows-box a` from the
+    # live shared stylesheet, rather than hardcoding "always bold". Reads
+    # `.shows-box a { font-weight: ... }` plus any `.shows-box a[href*="..."]`
+    # attribute-selector override (higher specificity always wins, regardless of
+    # source order) so the check tracks whatever guide-style.css currently says —
+    # correctly PASSING once the CSS is fixed, instead of a permanent false-fail.
+    _sbx_general_bold = False
+    _sbx_normal_href_substrings: list[str] = []
+    _sbx_css_path = Path(filename).resolve().parent.parent.parent / "assets" / "guide-style.css"
+    _sbx_css_text = _safe_read(_sbx_css_path)
+    if _sbx_css_text:
+        _sbx_css_stripped = re.sub(r'/\*.*?\*/', '', _sbx_css_text, flags=re.DOTALL)
+        for _sbx_sel_group, _sbx_decl in re.findall(r'([^{}]+)\{([^{}]*)\}', _sbx_css_stripped):
+            for _sbx_one_sel in _sbx_sel_group.split(','):
+                _sbx_one_sel = _sbx_one_sel.strip()
+                _sbx_attr_m = re.match(r'^\.shows-box\s+a\[href\*="([^"]+)"\]$', _sbx_one_sel)
+                _sbx_plain_m = re.match(r'^\.shows-box\s+a$', _sbx_one_sel)
+                if _sbx_attr_m:
+                    _sbx_fw_m = re.search(r'font-weight\s*:\s*(normal|bold|[1-9]00)', _sbx_decl, re.IGNORECASE)
+                    if _sbx_fw_m and _sbx_fw_m.group(1).lower() not in ('bold',) and not _sbx_fw_m.group(1).startswith(('5', '6', '7', '8', '9')):
+                        _sbx_normal_href_substrings.append(_sbx_attr_m.group(1))
+                elif _sbx_plain_m:
+                    _sbx_fw_m = re.search(r'font-weight\s*:\s*(normal|bold|[1-9]00)', _sbx_decl, re.IGNORECASE)
+                    if _sbx_fw_m:
+                        _sbx_val = _sbx_fw_m.group(1).lower()
+                        _sbx_general_bold = _sbx_val == 'bold' or _sbx_val.startswith(('5', '6', '7', '8', '9'))
 
     _SHOWS_ANNOT_RE = re.compile(
         r'\[[A-Z][A-Z\s\-]{1,30}\]|🔴|🟡|🟢|\[TBD\]|\[TODO\]|\[FIXME\]',
@@ -13712,6 +13750,25 @@ def validate(html: str, filename: str):
                     )
                     if _ticket_inner_m and not RE_STRIP_TAGS.sub('', _ticket_inner_m.group(1)).strip():
                         shows_ticket_no_text.append(heading[:60])
+
+            # X — no <a> inside .shows-box may render bold. Uses the `_sbx_general_bold`
+            # / `_sbx_normal_href_substrings` resolved above from the LIVE guide-style.css
+            # `.shows-box a` rule (+ any attribute-selector override) — this tracks
+            # whatever the shared stylesheet currently says, so the check correctly
+            # passes once the CSS sets plain weight instead of permanently hard-failing.
+            if _sbx_general_bold:
+                for _xbold_m in re.finditer(
+                    r'<a\b[^>]*\bhref\s*=\s*"([^"]+)"[^>]*>(.*?)</a>',
+                    entry_html, re.IGNORECASE | re.DOTALL,
+                ):
+                    _xbold_href = _xbold_m.group(1)
+                    if any(_s.lower() in _xbold_href.lower() for _s in _sbx_normal_href_substrings):
+                        continue
+                    _xbold_text = RE_STRIP_TAGS.sub('', _xbold_m.group(2)).strip()
+                    shows_link_bold.append(
+                        f'"{heading[:50]}" — link "{_xbold_text[:40]}" ({_xbold_href[:50]}) '
+                        f'renders bold'
+                    )
 
         # J — duplicate heading detection (same venue listed twice)
         _sh_seen: set[str] = set()
@@ -13981,6 +14038,20 @@ def validate(html: str, filename: str):
         ('Entries are present but "No exceptional shows..." also appears — '
          'remove it (§4 applies only when nothing qualifies)')
         if shows_inv_neg_bad else '',
+    )
+
+    # X — no <a> inside .shows-box may render bold. Reads the CURRENT resolved
+    # font-weight from the live guide-style.css `.shows-box a` rule (± attribute
+    # override) — hard-fails whenever that rule is bold for a non-exempt href.
+    check(
+        '🎭 Shows — no link inside .shows-box may render bold '
+        '(guide-style.css `.shows-box a` must stay font-weight:normal, matching '
+        'the `.entry-body a[href*="google.com/maps"]` Maps exemption convention — '
+        'links are plain weight, not the venue heading)',
+        not shows_link_bold,
+        (f'{len(shows_link_bold)} link(s) render bold inside .shows-box: '
+         + '; '.join(shows_link_bold[:5]))
+        if shows_link_bold else '',
     )
 
     # ─── SHOWS — icon allowlist inside .shows-box ─────────────────────────────
