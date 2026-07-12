@@ -2260,17 +2260,31 @@ def validate(html: str, filename: str):
     # in a different country from the destination. The existing "address anchors
     # don't leak country" check above only reads the LAST comma-separated segment
     # (COUNTRY_NAMES, any country) — a country name reachable via the locked
-    # ` · ` separator, or embedded without a trailing-segment shape, slipped
-    # through. This check is guide-specific: does THIS guide's own .title-country
-    # value appear anywhere in a 📍 address's visible text? Reuses _pin_addr_re
-    # (compiled above for the postal-code scan). Added 2026-07-11, audit Gap 4.
+    # ` · ` separator slipped through. This check is guide-specific: does THIS
+    # guide's own .title-country value appear as the LAST ` · `-separated
+    # segment (a trailing country descriptor, matching the shape the sibling
+    # comma-based check above already looks for)? Reuses _pin_addr_re (compiled
+    # above for the postal-code scan). Added 2026-07-11, audit Gap 4.
+    #
+    # BUG FIX 2026-07-11 (same day, caught by fleet-wide regression run): the
+    # first version substring-matched the country name ANYWHERE in the address,
+    # which false-fired on venue/street names that legitimately contain the
+    # country word — "Bank of China" (Beijing), "Qatar Foundation" (Doha),
+    # "Canada Place" (Vancouver, a real landmark named after the country),
+    # "rue de France" (Nice, a real street name), "Petite France" (Strasbourg,
+    # a real historic district name), "Estonia pst" (Tallinn, "Estonia Avenue").
+    # Tightened to an exact match on the final middle-dot segment only — this
+    # still catches the genuine violation shape (Pokhara: "Rupa Lake · Kaski
+    # District · Nepal", a real trailing country leak) while dropping all 8
+    # false positives found across the fleet.
     print("\n── 📍 ADDRESS: destination's own country not in address text ──")
     _addr_own_country_hits: list[str] = []
     if _tc_text and not _tc_bad:
-        _own_country_re = re.compile(r'\b' + re.escape(_tc_text) + r'\b', re.IGNORECASE)
+        _own_country_re = re.compile(r'^\s*' + re.escape(_tc_text) + r'\s*$', re.IGNORECASE)
         for _m in _pin_addr_re.finditer(html):
             _addr_text = _m.group(1).strip()
-            if _own_country_re.search(_addr_text):
+            _last_seg = _addr_text.split('·')[-1]
+            if _own_country_re.match(_last_seg):
                 _addr_own_country_hits.append(_addr_text[:80])
     check(
         f'📍 address text never contains the destination\'s own country '
