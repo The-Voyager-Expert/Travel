@@ -143,6 +143,7 @@ SUBCOMMANDS = {
     "brain-check":    "brain_check.py",
     "sweep-stray":    "sweep_stray_travel.py",   # added 2026-04-30: enforces HARD RULE (all travel work under Travel/)
     "mobile-check":   "mobile_check.py",          # added 2026-06-12: viewport + mobile.css baseline across shareable pages
+    "continuity-render": "validate_continuity_render.py", # added 2026-07-12: renders each guide and measures actual gaps in Extras-section/stop-block continuous-card joins — the static Style A anchor check only confirms CSS text is present, not that the browser applies it with zero gap
     "validate-safety": "validate_safety_guide.py", # added 2026-06-19: Safety Guide coverage — every guides_index city has exactly one row
     "pdf":            "render_pdf.py",
     "validate-pdf":   "validate_pdf.py",
@@ -433,6 +434,17 @@ def _run_start() -> int:
     # Warn-only, skips gracefully if playwright is absent — never blocks. (added 2026-06-20)
     print("\n▶ Step 3b — mobile-render audit (pills + overflow @ 393px)")
     _run("validate_mobile_render.py", ["--warn"])
+
+    # Step 3b-2: continuity-RENDER audit (best-effort) — renders every guide and measures
+    # actual gaps in Extras-section entry runs and stop-block tour-box/ticket-box runs.
+    # The static "Style A continuous-run" check in validate_itinerary.py only confirms the
+    # required CSS selector TEXT is present in guide-style.css — it shipped clean twice in
+    # one session (2026-07-12) while the fix was actually broken (once a CSS specificity
+    # miss, once a margin-shorthand-sets-both-sides miss), because neither bug removed any
+    # anchor text. Only rendering and measuring catches this class of regression.
+    # Warn-only, skips gracefully if playwright is absent — never blocks. (added 2026-07-12)
+    print("\n▶ Step 3b-2 — continuity-render audit (Extras/stop card gaps)")
+    _run("validate_continuity_render.py", ["--warn"])
 
     # Step 3c: whole-fleet guide-coverage sweep — re-checks EVERY shipped guide
     # against EVERY cross-guide surface (index card + inline + FMAP, map pin, travel
@@ -3233,6 +3245,28 @@ def main() -> int:
             )
             _write_ship_log(Path(tail[0]).resolve(), "FAIL")
             return rc_render
+        # ──────────────────────────────────────────────────────────────────────
+
+        # ── continuity RENDER gate, guide-scoped (added 2026-07-12) ───────────
+        # Same gap-class as the mobile render gate above, different bug: the static
+        # "Style A continuous-run" check in validate_itinerary.py only confirms the
+        # required CSS selector text is present in guide-style.css, not that the
+        # browser actually applies it with zero gap. It shipped clean twice in one
+        # session while the underlying fix was broken (a CSS specificity miss, then
+        # a margin-shorthand-sets-both-sides miss) — neither bug removed any anchor
+        # text, so the static check never caught it; only rendering and measuring
+        # the actual join gap does. Scope to just the shipping guide — hard block.
+        rc_cont = _run("validate_continuity_render.py", tail)
+        if rc_cont != 0:
+            print(
+                "\n🚫  SHIP BLOCKED — guide has a gapped Extras-section or stop-block "
+                "card join (should render as one seamless card, not stacked with a gap).\n"
+                "    Run:  python3 Brain/scripts/validate_continuity_render.py %s\n"
+                "    Then re-run ship.\n" % tail[0],
+                file=sys.stderr,
+            )
+            _write_ship_log(Path(tail[0]).resolve(), "FAIL")
+            return rc_cont
         # ──────────────────────────────────────────────────────────────────────
 
         # ── oversized-photo auto-heal (added 2026-06-20) ──────────────────────

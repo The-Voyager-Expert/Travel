@@ -626,6 +626,34 @@ a, a:visited { color: var(--c-link); text-decoration: none; }
   border-radius: 4px;
   margin: 4px 0;
 }
+/* ── STOPS — CONTINUOUS RUN (added 2026-07-12, same defect class as the
+   Extras-section Style A continuity fix: a stop that carries multiple
+   .tour-box siblings, or a .tour-box + .ticket-box pair (per Guide
+   Structure Type 3 alternation), rendered as separate floating cards
+   with a 4px gap between them — "Multiple .tour-box siblings live
+   inside the same .stop-block" is explicitly documented above as a
+   normal, expected shape, not an edge case. A consecutive box glues
+   flush to the one before it — zero gap, no rounded seam at the join.
+   Both classes share the identical blue palette (unified 2026-04-23),
+   so any combination merges the same way. Unscoped — beats nothing else
+   targets .tour-box/.ticket-box margin or border-radius, so this wins
+   on specificity alone (2 classes > 1) without needing ID-scoping. ── */
+.tour-box + .tour-box,
+.tour-box + .ticket-box,
+.ticket-box + .tour-box,
+.ticket-box + .ticket-box {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.tour-box:has(+ .tour-box),
+.tour-box:has(+ .ticket-box),
+.ticket-box:has(+ .tour-box),
+.ticket-box:has(+ .ticket-box) {
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
 /* Row-to-row rhythm inside the box — was inconsistent (only the trailing
    .stop-row-classed row carried a margin, every other row was a bare div
    sitting flush against its neighbor). Targets every direct-child row by
