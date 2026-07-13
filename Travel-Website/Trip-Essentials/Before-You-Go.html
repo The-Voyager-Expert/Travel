@@ -402,20 +402,26 @@
           '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">All currencies →</a></div>' +
           '</div>';
       }
-      if (safetyData) {
-        var lvl = typeof safetyData.level === 'number' ? ['','Safe','Moderate','Caution'][safetyData.level] || safetyData.level : safetyData.level;
-        html += '<div class="byg-card">' +
-          '<div class="byg-card-head"><span class="byg-card-icon">🛡️</span><span class="byg-card-title">Safety</span></div>' +
-          '<div class="byg-row"><span class="byg-row-label">Level</span><span class="byg-safety-badge ' + safetyClass(lvl) + '">' + lvl + '</span></div>';
-        if (safetyData.note) {
-          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
+      // Visa & Entry card (col 2, below Cost & Currency)
+      var visaInfo = country ? VISA_DATA[country] : null;
+      if (visaInfo) {
+        var visaTypeLabels = {"domestic":"Domestic","visa-free":"Visa-free","arrival-card":"Arrival Card","eta":"ETA Required","evisa":"eVisa Required","voa":"Visa on Arrival","visa-required":"Visa Required"};
+        var visaTypeCss = {"domestic":"byg-visa-domestic","visa-free":"byg-visa-free","arrival-card":"byg-visa-card","eta":"byg-visa-eta","evisa":"byg-visa-evisa","voa":"byg-visa-voa","visa-required":"byg-visa-required"};
+        var vLabel = visaTypeLabels[visaInfo.type] || visaInfo.type;
+        var vCss = visaTypeCss[visaInfo.type] || 'byg-visa-domestic';
+        html += '<div class="byg-card">';
+        html += '<div class="byg-card-head"><span class="byg-card-icon">🛂</span><span class="byg-card-title">Visa &amp; Entry</span></div>';
+        html += '<span class="byg-visa-badge ' + vCss + '">' + vLabel + '</span>';
+        if (visaInfo.days) {
+          html += '<div class="byg-visa-days">' + visaInfo.days + '</div>';
         }
-        html += '<div class="byg-links-row">' +
-          '<a href="Safety-Guide.html" class="byg-link">🛡️ Safety guide</a>' +
-          '<a href="Vaccines.html" class="byg-link">💉 Vaccines</a>' +
-          '<a href="Tap-Water.html" class="byg-link">🚰 Tap water</a>' +
-          '<a href="Travel-Insurance.html" class="byg-link">🛟 Travel insurance</a>' +
-          '</div></div>';
+        if (visaInfo.note) {
+          html += '<div class="byg-visa-note">' + visaInfo.note + '</div>';
+        }
+        if (!isUS) {
+          html += '<div class="byg-links-row"><a href="Visas.html" class="byg-link">Visas →</a><a href="Entry-Requirements.html" class="byg-link">Entry requirements →</a></div>';
+        }
+        html += '</div>';
       }
       html += '</div>'; // end col 2 stack
 
@@ -463,26 +469,21 @@
       if (isEurope) { html += prepTile('🚆', 'EU Trains', 'European-Train-Guide.html'); }
       html += '</div></div>';
 
-      // Visa & Entry card
-      var visaInfo = country ? VISA_DATA[country] : null;
-      if (visaInfo) {
-        var visaTypeLabels = {"domestic":"Domestic","visa-free":"Visa-free","arrival-card":"Arrival Card","eta":"ETA Required","evisa":"eVisa Required","voa":"Visa on Arrival","visa-required":"Visa Required"};
-        var visaTypeCss = {"domestic":"byg-visa-domestic","visa-free":"byg-visa-free","arrival-card":"byg-visa-card","eta":"byg-visa-eta","evisa":"byg-visa-evisa","voa":"byg-visa-voa","visa-required":"byg-visa-required"};
-        var vLabel = visaTypeLabels[visaInfo.type] || visaInfo.type;
-        var vCss = visaTypeCss[visaInfo.type] || 'byg-visa-domestic';
-        html += '<div class="byg-card">';
-        html += '<div class="byg-card-head"><span class="byg-card-icon">🛂</span><span class="byg-card-title">Visa &amp; Entry</span></div>';
-        html += '<span class="byg-visa-badge ' + vCss + '">' + vLabel + '</span>';
-        if (visaInfo.days) {
-          html += '<div class="byg-visa-days">' + visaInfo.days + '</div>';
+      // Safety card (col 4, below Essentials)
+      if (safetyData) {
+        var lvl = typeof safetyData.level === 'number' ? ['','Safe','Moderate','Caution'][safetyData.level] || safetyData.level : safetyData.level;
+        html += '<div class="byg-card">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">🛡️</span><span class="byg-card-title">Safety</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Level</span><span class="byg-safety-badge ' + safetyClass(lvl) + '">' + lvl + '</span></div>';
+        if (safetyData.note) {
+          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
         }
-        if (visaInfo.note) {
-          html += '<div class="byg-visa-note">' + visaInfo.note + '</div>';
-        }
-        if (!isUS) {
-          html += '<div class="byg-links-row"><a href="Visas.html" class="byg-link">Visas →</a><a href="Entry-Requirements.html" class="byg-link">Entry requirements →</a></div>';
-        }
-        html += '</div>';
+        html += '<div class="byg-links-row">' +
+          '<a href="Safety-Guide.html" class="byg-link">🛡️ Safety guide</a>' +
+          '<a href="Vaccines.html" class="byg-link">💉 Vaccines</a>' +
+          '<a href="Tap-Water.html" class="byg-link">🚰 Tap water</a>' +
+          '<a href="Travel-Insurance.html" class="byg-link">🛟 Travel insurance</a>' +
+          '</div></div>';
       }
       html += '</div>'; // end col 4 stack
 
