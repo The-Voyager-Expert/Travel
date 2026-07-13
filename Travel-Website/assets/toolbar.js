@@ -205,7 +205,7 @@
     /* Flex row — centered, width:max-content so it never left-packs */
     '.tb-links{display:flex;flex-wrap:nowrap;' +
       'gap:0;align-items:center;padding:0 12px;' +
-      'width:-webkit-max-content;width:max-content;margin:0 auto}' +
+      'width:-webkit-max-content;width:max-content;margin:0}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
@@ -434,9 +434,11 @@
     'padding:0;text-decoration:none;flex-shrink:0;';
 
   /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
-  var hamLabel = document.createElement('span');
+  var hamLabel = document.createElement('a');
   hamLabel.className = 'tb-ham-label';
   hamLabel.textContent = 'THE VOYAGER EXPERT';
+  hamLabel.href = base + 'Trip-Essentials/Trips.html';
+  hamLabel.style.cssText = 'text-decoration:none;color:#fff;';
   bar.appendChild(hamLabel);
 
   var hamBtn = document.createElement('div');
