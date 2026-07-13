@@ -198,13 +198,13 @@
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
     '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:13px;font-weight:700;color:#fff!important;' +
-      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:18px;background:transparent!important;text-decoration:none!important}' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
     /* Flex row — centered, width:max-content so it never left-packs */
     '.tb-links{display:flex;flex-wrap:nowrap;' +
-      'gap:1px;align-items:center;padding:0 12px;' +
+      'gap:1px;align-items:center;padding:0 24px;' +
       'width:-webkit-max-content;width:max-content;margin:0 auto}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
@@ -759,7 +759,7 @@
   /* ── Scroll active item into view BEFORE reveal — no visible slide ─────── */
   var activeLink = inner.querySelector('.tb-active');
   if (activeLink) {
-    var offset = activeLink.offsetLeft - (scroller.offsetWidth - activeLink.offsetWidth) / 2;
+    var offset = activeLink.offsetLeft - (scroller.offsetWidth - activeLink.offsetWidth) / 3;
     scroller.scrollLeft = Math.max(0, offset);
   }
 
