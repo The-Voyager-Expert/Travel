@@ -198,24 +198,26 @@
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
     '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:13px;font-weight:700;color:#fff!important;' +
-      'letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;white-space:nowrap;margin-left:16px;background:transparent!important;text-decoration:none!important}' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
-    '.tb-inner{overflow:hidden;flex:1}' +
+    '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
+    '.tb-inner::-webkit-scrollbar{display:none}' +
+    /* Flex row — centered, width:max-content so it never left-packs */
     '.tb-links{display:flex;flex-wrap:nowrap;' +
-      'gap:0;align-items:center;padding:0 12px;' +
-      'justify-content:center}' +
+      'gap:1px;align-items:center;padding:0 24px;' +
+      'width:-webkit-max-content;width:max-content;margin:0 auto}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:13px;color:rgba(255,255,255,0.9)!important;text-decoration:none;padding:4px 6px;' +
-      'border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
+    '.tb a,.tb a:visited{font-size:13px;color:rgba(255,255,255,0.9)!important;text-decoration:none;padding:4px 8px;' +
+      'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb a.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
-    '.tb-dd{position:relative;display:inline-flex}' +
+    '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
     '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:rgba(255,255,255,0.9)!important;' +
-      'padding:4px 6px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
+      'padding:4px 8px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb-ddbtn.tb-active{color:#fff!important;background:rgba(255,255,255,0.25);font-weight:600}' +
@@ -353,13 +355,15 @@
         for (var j = 0; j < openDds.length; j++) {
           openDds[j].classList.remove('tb-open');
           var ob = openDds[j].querySelector('.tb-ddbtn');
-          if (ob) { ob.setAttribute('aria-expanded', 'false'); }
+          if (ob) { ob.setAttribute('aria-expanded', 'false'); ob.classList.remove('tb-dd-open-btn'); }
         }
         menu.classList.add('tb-menu-open'); dd.classList.add('tb-open'); btn.setAttribute('aria-expanded', 'true');
+        inner.classList.add('tb-dd-open'); btn.classList.add('tb-dd-open-btn');
         positionMenu();
       }
       function closeMenu() {
         menu.classList.remove('tb-menu-open'); dd.classList.remove('tb-open'); btn.setAttribute('aria-expanded', 'false');
+        inner.classList.remove('tb-dd-open'); btn.classList.remove('tb-dd-open-btn');
       }
 
       btn.addEventListener('click', function (e) {
@@ -393,8 +397,9 @@
     for (var j = 0; j < open.length; j++) {
       open[j].classList.remove('tb-open');
       var b = open[j].querySelector('.tb-ddbtn');
-      if (b) { b.setAttribute('aria-expanded', 'false'); }
+      if (b) { b.setAttribute('aria-expanded', 'false'); b.classList.remove('tb-dd-open-btn'); }
     }
+    inner.classList.remove('tb-dd-open');
   });
 
   scroller.appendChild(inner);
