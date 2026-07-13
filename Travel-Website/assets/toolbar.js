@@ -694,7 +694,7 @@
   var scrollBtnBase /* locked 2026-06-16: width:30px height:30px */ =
     'display:flex;align-items:center;justify-content:center;' +
     'width:30px;height:30px;border-radius:6px;border:1.5px solid #c4b896;' +
-    'background:#fdf8f0;cursor:pointer;padding:0;' +
+    'background:#ffffff;cursor:pointer;padding:0;' +
     'box-shadow:0 1px 4px rgba(0,0,0,.10);' +
     'transition:background .15s,border-color .15s;';
 
@@ -725,7 +725,7 @@
       poly.setAttribute('stroke', accent);
     });
     btn.addEventListener('mouseleave', function () {
-      btn.style.background = '#fdf8f0';
+      btn.style.background = '#ffffff';
       btn.style.borderColor = '#c4b896';
       poly.setAttribute('stroke', '#6b6860');
     });
