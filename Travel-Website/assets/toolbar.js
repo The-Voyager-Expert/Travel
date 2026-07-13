@@ -204,7 +204,7 @@
     '.tb-inner::-webkit-scrollbar{display:none}' +
     /* Flex row — centered, width:max-content so it never left-packs */
     '.tb-links{display:flex;flex-wrap:nowrap;' +
-      'gap:1px;align-items:center;padding:0 24px;' +
+      'gap:1px;align-items:center;padding:0 14px;' +
       'width:-webkit-max-content;width:max-content;margin:0 auto}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
