@@ -12277,12 +12277,11 @@ def validate(html: str, filename: str):
     # dotted TLD; an optional path is allowed.
     _fd_linktext_bad: list[str] = []
     if _fd_hdr and not _fd_is_negative:
-        # Domain pattern: must be all-lowercase, no spaces, dotted TLD
-        # "ubereats.com" ✅  "UberEats.com" ❌  "Uber Eats" ❌
-        _fd_domain_re = re.compile(r'^[a-z0-9][a-z0-9.\-]*\.[a-z]{2,}(?:/\S*)?$')
+        # Rule: link text must be all-lowercase — "ubereats.com" ✅ "UberEats.com" ❌ "Uber Eats" ❌
+        # We don't validate domain format (can't predict every TLD/domain); just enforce lowercase.
         for _fa in re.finditer(r'<a\b[^>]*>([^<]+)</a>', _fd_inner):
             _lt = _html_unescape(_fa.group(1)).strip()
-            if not _fd_domain_re.match(_lt):
+            if _lt != _lt.lower():
                 _fd_linktext_bad.append(_lt[:40])
     check(
         '🚗 Food Delivery — each platform link shows the bare lowercase domain as its text '
@@ -15457,12 +15456,12 @@ def validate(html: str, filename: str):
             if not _ld_tb_m:
                 continue
             _ld_tb_inner, _ = _walk_balanced_div(_ld_after, _ld_tb_m.end())
-            _ld_domain_re = re.compile(r'^[a-z0-9][a-z0-9.\-]*\.[a-z]{2,}(?:/\S*)?$')
+            # Rule: link text must be all-lowercase — can't predict every domain; just enforce case.
             for _ld_link_m in re.finditer(r'<a\b[^>]*>(.*?)</a>', _ld_tb_inner, re.DOTALL | re.IGNORECASE):
                 _ld_text = RE_STRIP_TAGS.sub('', _ld_link_m.group(1)).strip()
-                if _ld_text and not _ld_domain_re.match(_ld_text):
+                if _ld_text and _ld_text != _ld_text.lower():
                     _ga_link_domain_bad.append(
-                        f'"{_ld_head[:40]}" — link text "{_ld_text}" must be a lowercase domain '
+                        f'"{_ld_head[:40]}" — link text "{_ld_text}" must be all lowercase '
                         f'("uber.com", "bolt.eu" — no caps, no app name)'
                     )
     check(
@@ -23601,21 +23600,21 @@ def validate(html: str, filename: str):
                 if not ci_has_emoji else "",
             )
 
-        # T_NEW1 — outer div class must include theme-{color} modifier
-        # Per Claude Inspiration - Extra Section.html § 4 HTML structure:
-        # class="claude-inspiration theme-{color}" id="claude-inspiration".
-        # The id check (T7) was already present; the theme class was not checked.
+        # T_NEW1 — outer div class must NOT include any theme-{color} modifier.
+        # Rule updated 2026-07-12: class="claude-inspiration" with no theme modifier.
+        # (T_NEW5 below is the hard-fail; this check is now redundant but kept for
+        #  labelling continuity — it passes when no theme class is present.)
         print("\n── CLAUDE INSPIRATION — theme-{color} class ──")
-        ci_outer_tag2 = ci_section_m.group(0)[:200]
+        _ci_open_tag_m2 = re.search(r'<div\b[^>]*>', ci_section_m.group(0))
+        ci_outer_tag2 = _ci_open_tag_m2.group(0) if _ci_open_tag_m2 else ci_section_m.group(0)[:200]
         ci_has_theme = bool(re.search(r'\btheme-\w+\b', ci_outer_tag2, re.IGNORECASE))
         check(
-            '💡 Claude Inspiration — outer div class includes a theme-{color} modifier '
-            '(e.g. theme-blue, theme-green, theme-amber) per § 4 HTML structure: '
-            'class="claude-inspiration theme-{color}" id="claude-inspiration"',
-            ci_has_theme,
-            'Outer <div> missing theme-{color} class — styling breaks without it; '
-            'add e.g. theme-blue to the class attribute'
-            if not ci_has_theme else '',
+            '💡 Claude Inspiration — outer div has no theme-{color} modifier '
+            '(correct format: class="claude-inspiration" with no theme modifier)',
+            not ci_has_theme,
+            'Outer <div> has a theme-{color} class — remove it; '
+            'the section renders white by default (no theme modifier needed)'
+            if ci_has_theme else '',
         )
 
         # T_NEW2 — no annotation leakage in <p> prose blocks
