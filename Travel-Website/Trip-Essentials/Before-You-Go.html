@@ -25,7 +25,7 @@
 .byg-unit button.on { background: #b85c2a; color: #fff; }
 .byg-empty { text-align: center; color: var(--muted,#6a6660); font-size: var(--fs-body,14px);
   padding: 40px 10px; line-height: 1.6; }
-.byg-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: start; }
+.byg-cards { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; align-items: start; }
 .byg-col-stack { display: flex; flex-direction: column; gap: 12px; }
 .byg-prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
 .byg-prep-tile { display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -306,7 +306,8 @@
           '<div class="byg-row"><span class="byg-row-label">Cost level</span><span class="byg-cost-badge ' + costClass(costData.tier) + '">' + costData.tier + '</span></div>' +
           '<div class="byg-row"><span class="byg-row-label">Currency</span><span class="byg-row-value">' + costData.currency + '</span></div>' +
           rateHtml +
-          '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">Exchange rates →</a></div></div>';
+          (rateHtml ? '' : '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">Exchange rates →</a></div>') +
+          '</div>';
       }
       if (tz) {
         var nowForClock = new Date();
@@ -322,17 +323,42 @@
       }
       html += '</div>'; // end col 2 stack
 
+      var COUNTRY_PLUG = {'United States':'USA','United Arab Emirates':'UAE','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Trinidad','Turks & Caicos':'USA','Cayman Islands':'Jamaica','French Polynesia':'France'};
+      var plugAnchor = country ? (COUNTRY_PLUG[country] || country.replace(/ /g,'_')) : '';
+      var plugHref = 'Plug-Adapter/Plug-Adapter-Guide.html' + (plugAnchor ? '#' + plugAnchor : '');
+
+      // Col 3: Plug Adapter
+      var plugInfo = plugAnchor ? PLUG_DATA[plugAnchor] : null;
+      if (plugInfo) {
+        html += '<div class="byg-card">';
+        html += '<div class="byg-card-head"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></div>';
+        html += '<div class="byg-voltage">' + plugInfo.v + '</div>';
+        for (var pi = 0; pi < plugInfo.types.length; pi++) {
+          var pt = plugInfo.types[pi];
+          if (pi > 0) html += '<hr class="byg-plug-divider">';
+          html += '<div class="byg-plug-row"><div class="byg-plug-type">';
+          html += '<div class="byg-plug-type-name">' + pt.t + '</div>';
+          html += '<div class="byg-plug-type-desc">' + pt.desc + '</div>';
+          html += '<div class="byg-plug-imgs">';
+          html += '<div><img src="Plug-Adapter/' + pt.s + '" alt="' + pt.t + ' socket" loading="lazy"><div class="byg-plug-img-lbl">Socket</div></div>';
+          html += '<div><img src="Plug-Adapter/' + pt.p + '" alt="' + pt.t + ' plug" loading="lazy"><div class="byg-plug-img-lbl">Plug</div></div>';
+          html += '</div></div></div>';
+        }
+        html += '<div class="byg-links-row"><a href="' + plugHref + '" class="byg-link">Full guide →</a></div>';
+        html += '</div>';
+      } else {
+        html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></div>';
+        html += '<div class="byg-links-row"><a href="' + plugHref + '" class="byg-link">View plug guide →</a></div></div>';
+      }
+
+      // Col 4: Essentials
       function prepTile(icon, label, href) {
         return '<a href="' + href + '" class="byg-prep-tile">' +
           '<span class="byg-prep-tile-icon">' + icon + '</span>' +
           '<span class="byg-prep-tile-label">' + label + '</span></a>';
       }
-      html += '<div class="byg-col-stack">';
       html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">📋</span><span class="byg-card-title">Essentials</span></div>' +
         '<div class="byg-prep-grid">';
-      var COUNTRY_PLUG = {'United States':'USA','United Arab Emirates':'UAE','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Trinidad','Turks & Caicos':'USA','Cayman Islands':'Jamaica','French Polynesia':'France'};
-      var plugAnchor = country ? (COUNTRY_PLUG[country] || country.replace(/ /g,'_')) : '';
-      var plugHref = 'Plug-Adapter/Plug-Adapter-Guide.html' + (plugAnchor ? '#' + plugAnchor : '');
       html += prepTile('👕', 'Packing', 'Travel-Packing.html');
       if (!isUS) {
         html += prepTile('🪪', 'Visas', 'Visas.html');
@@ -343,34 +369,6 @@
       if (isEurope) { html += prepTile('🚆', 'EU Trains', 'European-Train-Guide.html'); }
       html += '</div></div>';
 
-      // Plug adapter inline card
-      var plugInfo = plugAnchor ? PLUG_DATA[plugAnchor] : null;
-      if (plugInfo) {
-        html += '<div class="byg-card">';
-        html += '<div class="byg-card-head"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></div>';
-        html += '<div class="byg-voltage">' + plugInfo.v + '</div>';
-        for (var pi = 0; pi < plugInfo.types.length; pi++) {
-          var pt = plugInfo.types[pi];
-          if (pi > 0) html += '<hr class="byg-plug-divider">';
-          html += '<div class="byg-plug-row">';
-          html += '<div class="byg-plug-type">';
-          html += '<div class="byg-plug-type-name">' + pt.t + '</div>';
-          html += '<div class="byg-plug-type-desc">' + pt.desc + '</div>';
-          html += '<div class="byg-plug-imgs">';
-          html += '<div><img src="Plug-Adapter/' + pt.s + '" alt="' + pt.t + ' socket" loading="lazy"><div class="byg-plug-img-lbl">Socket</div></div>';
-          html += '<div><img src="Plug-Adapter/' + pt.p + '" alt="' + pt.t + ' plug" loading="lazy"><div class="byg-plug-img-lbl">Plug</div></div>';
-          html += '</div>';
-          html += '</div>';
-          html += '</div>';
-        }
-        html += '<div class="byg-links-row"><a href="' + plugHref + '" class="byg-link">Full guide →</a></div>';
-        html += '</div>';
-      } else {
-        html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></div>';
-        html += '<div class="byg-links-row"><a href="' + plugHref + '" class="byg-link">View plug guide →</a></div></div>';
-      }
-
-      html += '</div>'; // end col 3 stack
       html += '</div>';
       resultsEl.innerHTML = html;
 
