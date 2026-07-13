@@ -756,6 +756,13 @@
   window.addEventListener('resize', updateScrollBtns, { passive: true });
   requestAnimationFrame(function () { requestAnimationFrame(updateScrollBtns); });
 
+  /* ── Scroll active item into view BEFORE reveal — no visible slide ─────── */
+  var activeLink = inner.querySelector('.tb-active');
+  if (activeLink) {
+    var offset = activeLink.offsetLeft - (scroller.offsetWidth - activeLink.offsetWidth) / 2;
+    scroller.scrollLeft = Math.max(0, offset);
+  }
+
   /* ── Reveal page — toolbar is now in the DOM, no layout shift visible ───── */
   requestAnimationFrame(function () {
     var hide = document.getElementById('_tbhide');
@@ -763,8 +770,6 @@
     document.body.style.transition = 'opacity .12s';
     document.body.style.opacity    = '1';
   });
-
-  /* scroll-to-active removed — toolbar should never auto-slide */
 
   /* ── Last-updated stamp — guide pages only ────────────────────────────────
      Renders "Updated Month Year" as a small muted line at the TOP of the
