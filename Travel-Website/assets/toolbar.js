@@ -165,7 +165,7 @@
     { group: '🌤️ Weather', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ Browse by Climate' },
         { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ Browse by City' },
-        { href: base + 'Trip-Essentials/When-to-Go.html',       text: '📅 When to Go' },
+        { href: base + 'Trip-Essentials/When-to-Go.html',       text: '🌤️ When to Go' },
       ] },
     null,
     { group: '🛡️ Safety', children: [
@@ -177,7 +177,7 @@
     null,
     { group: '🪪 Visa', children: [
         { href: base + 'Trip-Essentials/Visas.html',                                    text: '🪪 Visas' },
-        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '📋 Entry Requirements' },
+        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '🪪 Entry Requirements' },
       ] },
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
