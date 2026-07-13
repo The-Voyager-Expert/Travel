@@ -385,6 +385,17 @@
     if (item.guides) cls.push('tb-guides');
     if (item.href.split('/').pop() === curr) cls.push('tb-active');
     if (cls.length) a.className = cls.join(' ');
+    a.addEventListener('click', function () {
+      var menus = document.querySelectorAll('.tb-menu.tb-menu-open');
+      for (var i = 0; i < menus.length; i++) menus[i].classList.remove('tb-menu-open');
+      var open = document.querySelectorAll('.tb-dd.tb-open');
+      for (var j = 0; j < open.length; j++) {
+        open[j].classList.remove('tb-open');
+        var b = open[j].querySelector('.tb-ddbtn');
+        if (b) { b.setAttribute('aria-expanded', 'false'); b.classList.remove('tb-dd-open-btn'); }
+      }
+      inner.classList.remove('tb-dd-open');
+    });
     inner.appendChild(a);
   });
 
