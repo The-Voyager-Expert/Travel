@@ -432,7 +432,7 @@
   /* ── Prev / Next — arrows flanking the .overview-title ───────────────────── */
   var btnStyle = 'display:inline-flex;align-items:center;justify-content:center;' +
     'width:30px;height:30px;border-radius:6px;border:1.5px solid #c4b896;' +
-    'background:#fdf8f0;color:#6b6860;font-size:18px;line-height:1;' +
+    'background:#ffffff;color:#6b6860;font-size:18px;line-height:1;' +
     'padding:0;text-decoration:none;flex-shrink:0;';
 
   /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
