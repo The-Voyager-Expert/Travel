@@ -4517,9 +4517,14 @@ def check_pill_rest_state(report: "Report") -> None:
     # (var(--c0bg)/--c1bg/--c2bg) — a data badge, not a filter pill, and its shape
     # (4px radius, 5px 12px padding) is deliberately distinct in both usages. Same
     # reasoning as the .stab/.seg-btn control-button exclusion above.
+    # .fchip EXCLUDED 2026-07-12: the flight-view filter bar is Form B (the
+    # full-width glued-grid tile, border-radius 0) on EVERY viewport now, not
+    # just mobile — .fchip is used only by that bar, so its desktop base rule is
+    # deliberately Form B and must not be judged against the rounded-6px desktop
+    # pill shape (same reasoning as the .stab/.tier-pill control/badge exclusions).
     PILL_SELS = (
         r'\.pill\b', r'\.filter-btn\b', r'\.filter-pill\b',
-        r'\.fchip\b', r'\.mchip\b', r'\.tchip\b', r'\.lchip\b',
+        r'\.mchip\b', r'\.tchip\b', r'\.lchip\b',
     )
     PILL_SEL_RE = _re.compile('|'.join(PILL_SELS), _re.I)
 
