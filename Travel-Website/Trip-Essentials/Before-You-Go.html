@@ -366,25 +366,22 @@
         '<a href="Weather.html#' + encodeURIComponent(k) + '" class="byg-link">Full forecast →</a>' +
       '</div></div>';
 
-      if (safetyData) {
-        var lvl = typeof safetyData.level === 'number' ? ['','Safe','Moderate','Caution'][safetyData.level] || safetyData.level : safetyData.level;
+      var tz = CITY_TZ[k] || null;
+      if (tz) {
+        var nowForClock = new Date();
+        var initTime = nowForClock.toLocaleTimeString('en-US', {timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true});
+        var initTzLabel = nowForClock.toLocaleDateString('en-US', {timeZone: tz, weekday: 'long'}) + ' · ' +
+          nowForClock.toLocaleTimeString('en-US', {timeZone: tz, timeZoneName: 'short'}).split(' ').pop();
         html += '<div class="byg-card">' +
-          '<div class="byg-card-head"><span class="byg-card-icon">🛡️</span><span class="byg-card-title">Safety</span></div>' +
-          '<div class="byg-row"><span class="byg-row-label">Level</span><span class="byg-safety-badge ' + safetyClass(lvl) + '">' + lvl + '</span></div>';
-        if (safetyData.note) {
-          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
-        }
-        html += '<div class="byg-links-row">' +
-          '<a href="Safety-Guide.html" class="byg-link">🛡️ Safety guide</a>' +
-          '<a href="Vaccines.html" class="byg-link">💉 Vaccines</a>' +
-          '<a href="Tap-Water.html" class="byg-link">🚰 Tap water</a>' +
-          '<a href="Travel-Insurance.html" class="byg-link">🛟 Travel insurance</a>' +
-          '</div></div>';
+          '<div class="byg-card-head"><span class="byg-card-icon">🕐</span><span class="byg-card-title">Local Time</span></div>' +
+          '<div id="byg-clock" style="font-size:32px;font-weight:700;color:var(--text,#1a1917);letter-spacing:-.01em;margin:6px 0 2px;">' + initTime + '</div>' +
+          '<div id="byg-clock-tz" style="font-size:11px;color:var(--muted,#6a6660);text-transform:uppercase;letter-spacing:.05em;">' + initTzLabel + '</div>' +
+          '<div class="byg-links-row"><a href="Time-Zones.html" class="byg-link">All time zones →</a></div>' +
+          '</div>';
       }
       html += '</div>'; // end col 1 stack
 
-      // Col 2: Cost & Currency + Time Zone stacked
-      var tz = CITY_TZ[k] || null;
+      // Col 2: Cost & Currency + Safety stacked
       html += '<div class="byg-col-stack">';
       if (costData) {
         var COUNTRY_CURRENCY = {'United States':'United_States','United Arab Emirates':'United_Arab_Emirates','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Sint_Maarten','Turks & Caicos':'Turks_and_Caicos','Cayman Islands':'Cayman_Islands','French Polynesia':'French_Polynesia'};
@@ -405,17 +402,20 @@
           '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">All currencies →</a></div>' +
           '</div>';
       }
-      if (tz) {
-        var nowForClock = new Date();
-        var initTime = nowForClock.toLocaleTimeString('en-US', {timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true});
-        var initTzLabel = nowForClock.toLocaleDateString('en-US', {timeZone: tz, weekday: 'long'}) + ' · ' +
-          nowForClock.toLocaleTimeString('en-US', {timeZone: tz, timeZoneName: 'short'}).split(' ').pop();
+      if (safetyData) {
+        var lvl = typeof safetyData.level === 'number' ? ['','Safe','Moderate','Caution'][safetyData.level] || safetyData.level : safetyData.level;
         html += '<div class="byg-card">' +
-          '<div class="byg-card-head"><span class="byg-card-icon">🕐</span><span class="byg-card-title">Local Time</span></div>' +
-          '<div id="byg-clock" style="font-size:32px;font-weight:700;color:var(--text,#1a1917);letter-spacing:-.01em;margin:6px 0 2px;">' + initTime + '</div>' +
-          '<div id="byg-clock-tz" style="font-size:11px;color:var(--muted,#6a6660);text-transform:uppercase;letter-spacing:.05em;">' + initTzLabel + '</div>' +
-          '<div class="byg-links-row"><a href="Time-Zones.html" class="byg-link">All time zones →</a></div>' +
-          '</div>';
+          '<div class="byg-card-head"><span class="byg-card-icon">🛡️</span><span class="byg-card-title">Safety</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Level</span><span class="byg-safety-badge ' + safetyClass(lvl) + '">' + lvl + '</span></div>';
+        if (safetyData.note) {
+          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
+        }
+        html += '<div class="byg-links-row">' +
+          '<a href="Safety-Guide.html" class="byg-link">🛡️ Safety guide</a>' +
+          '<a href="Vaccines.html" class="byg-link">💉 Vaccines</a>' +
+          '<a href="Tap-Water.html" class="byg-link">🚰 Tap water</a>' +
+          '<a href="Travel-Insurance.html" class="byg-link">🛟 Travel insurance</a>' +
+          '</div></div>';
       }
       html += '</div>'; // end col 2 stack
 
