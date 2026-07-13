@@ -205,7 +205,7 @@
     /* Flex row — centered, width:max-content so it never left-packs */
     '.tb-links{display:flex;flex-wrap:nowrap;' +
       'gap:0;align-items:center;padding:0 12px;' +
-      'width:-webkit-max-content;width:max-content;margin:0}' +
+      'width:-webkit-max-content;width:max-content;margin:0 auto}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
