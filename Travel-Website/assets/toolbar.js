@@ -200,8 +200,8 @@
     '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:13px;font-weight:700;color:#fff!important;' +
       'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
-    '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
-    '.tb-inner::-webkit-scrollbar{display:none}' +
+    '.tb-inner{overflow:visible;flex:1}' +
+    '' +
     /* Flex row — centered, width:max-content so it never left-packs */
     '.tb-links{display:flex;flex-wrap:nowrap;' +
       'gap:1px;align-items:center;padding:0 24px;' +
@@ -768,14 +768,7 @@
     document.body.style.opacity    = '1';
   });
 
-  /* ── Scroll active item into view — horizontal only, no window scroll ───── */
-  var activeLink = inner.querySelector('.tb-active');
-  if (activeLink) {
-    setTimeout(function () {
-      var offset = activeLink.offsetLeft - (scroller.offsetWidth - activeLink.offsetWidth) / 2;
-      scroller.scrollLeft = Math.max(0, offset);
-    }, 50);
-  }
+  /* scroll-to-active removed — toolbar should never auto-slide */
 
   /* ── Last-updated stamp — guide pages only ────────────────────────────────
      Renders "Updated Month Year" as a small muted line at the TOP of the
