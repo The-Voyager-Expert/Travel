@@ -188,13 +188,6 @@ a.apply-link {
   transition: background .12s, color .12s, border-color .12s; line-height: 1;
 }
 a.apply-link:hover { background: #b85c2a; color: #fff; border-color: #b85c2a; }
-/* ── Been badge ── */
-.been-badge {
-  font-size: 10px; font-weight: 700; color: #16a34a;
-  background: rgba(22,163,74,.1); border: 1px solid rgba(22,163,74,.22);
-  border-radius: 4px; padding: 1px 6px; margin-left: 6px;
-  letter-spacing: 0.03em; vertical-align: middle; display: inline-block;
-}
 /* ── ETIAS banner ── */
 .etias-banner {
   display: flex; align-items: flex-start; gap: 10px;
@@ -267,7 +260,7 @@ a.apply-link:hover { background: #b85c2a; color: #fff; border-color: #b85c2a; }
 </head>
 <body>
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
-<script src="../assets/toolbar.js?v=102"></script>
+<script src="../assets/toolbar.js?v=103"></script>
 
 <div class="wrap">
 
@@ -683,34 +676,6 @@ a.apply-link:hover { background: #b85c2a; color: #fff; border-color: #b85c2a; }
       }
     }
   });
-
-  // ── My trips — highlight visited countries ────────────────────────────────
-  fetch('../Guides/Guides-Index.html').then(function (r) { return r.text(); }).then(function (html) {
-    var doc = new DOMParser().parseFromString(html, 'text/html');
-    var beenSet = new Set();
-    doc.querySelectorAll('a.dest-card[data-status="been"]').forEach(function (card) {
-      var href = card.getAttribute('href') || '';
-      var m = href.match(/\.\/(.+)/);
-      if (m) beenSet.add(m[1]);
-    });
-    document.querySelectorAll('.etype .row').forEach(function (row) {
-      var visited = false;
-      row.querySelectorAll('.cty-guides a').forEach(function (a) {
-        var h = a.getAttribute('href') || '';
-        var m = h.match(/Guides\/(.+)/);
-        if (m && beenSet.has(m[1])) visited = true;
-      });
-      if (visited) {
-        var cty = row.querySelector('.cty');
-        if (cty && !cty.querySelector('.been-badge')) {
-          var badge = document.createElement('span');
-          badge.className = 'been-badge';
-          badge.textContent = '✓ been';
-          cty.appendChild(badge);
-        }
-      }
-    });
-  }).catch(function () {});
 
   // ── Mobile Schengen collapse ──────────────────────────────────────────────
   var grid    = document.getElementById('schengen-grid');
