@@ -178,6 +178,10 @@
     cityEl.addEventListener('change', render);
     monthEl.addEventListener('change', render);
 
+    var clockInterval = null;
+
+    var CITY_TZ = {"Abu Dhabi":"Asia/Dubai","Aix-en-Provence":"Europe/Paris","Alaska":"America/Anchorage","Alesund":"Europe/Oslo","Amalfi":"Europe/Rome","Amsterdam":"Europe/Amsterdam","Annecy":"Europe/Paris","Aracaju":"America/Fortaleza","Arenal":"America/Costa_Rica","Aruba":"America/Aruba","Athens":"Europe/Athens","Atlanta":"America/New_York","Austin":"America/Chicago","Azores":"Atlantic/Azores","Bali":"Asia/Makassar","Bangkok":"Asia/Bangkok","Barbados":"America/Barbados","Barcelona":"Europe/Madrid","Beijing":"Asia/Shanghai","Bend":"America/Los_Angeles","Bergen":"Europe/Oslo","Berlin":"Europe/Berlin","Big Island":"Pacific/Honolulu","Bologna":"Europe/Rome","Bora-Bora":"Pacific/Tahiti","Bordeaux":"Europe/Paris","Boston":"America/New_York","Boulder":"America/Denver","Bruges":"Europe/Brussels","Brussels":"Europe/Brussels","Budapest":"Europe/Budapest","Buenos Aires":"America/Argentina/Buenos_Aires","Cairo":"Africa/Cairo","Cambridge":"Europe/London","Cannes":"Europe/Paris","Cape Cod":"America/New_York","Capri":"Europe/Rome","Carmel-by-the-Sea":"America/Los_Angeles","Cascais":"Europe/Lisbon","Cayman Islands":"America/Cayman","Charlotte":"America/New_York","Chiang Mai":"Asia/Bangkok","Chicago":"America/Chicago","Chongqing":"Asia/Shanghai","Cinque Terre":"Europe/Rome","Colmar":"Europe/Paris","Colombo":"Asia/Colombo","Columbia":"America/New_York","Copenhagen":"Europe/Copenhagen","Corfu":"Europe/Athens","Curaçao":"America/Curacao","Curitiba":"America/Sao_Paulo","Cusco":"America/Lima","Dallas":"America/Chicago","Denver":"America/Denver","Doha":"Asia/Qatar","Dubai":"Asia/Dubai","Dublin":"Europe/Dublin","Dubrovnik":"Europe/Zagreb","Edinburgh":"Europe/London","Florence":"Europe/Rome","Florida Keys":"America/New_York","Florianópolis":"America/Sao_Paulo","Fortaleza":"America/Fortaleza","Foz do Iguaçu":"America/Sao_Paulo","Geneva":"Europe/Zurich","Glacier National Park":"America/Denver","Glasgow":"Europe/London","Gothenburg":"Europe/Stockholm","Hamburg":"Europe/Berlin","Hanoi":"Asia/Ho_Chi_Minh","Helsinki":"Europe/Helsinki","Hoi An":"Asia/Ho_Chi_Minh","Hong Kong":"Asia/Hong_Kong","Istanbul":"Europe/Istanbul","João Pessoa":"America/Fortaleza","Kauai":"Pacific/Honolulu","Key West":"America/New_York","Kotor":"Europe/Podgorica","Kraków":"Europe/Warsaw","Kyoto":"Asia/Tokyo","La Jolla":"America/Los_Angeles","Lagos":"Europe/Lisbon","Lake Como":"Europe/Rome","Lake Tahoe":"America/Los_Angeles","Las Vegas":"America/Los_Angeles","Lecce":"Europe/Rome","Lille":"Europe/Paris","Lima":"America/Lima","Lisbon":"Europe/Lisbon","Ljubljana":"Europe/Ljubljana","London":"Europe/London","Los Angeles":"America/Los_Angeles","Los Cabos":"America/Mazatlan","Luang Prabang":"Asia/Vientiane","Lucerne":"Europe/Zurich","Luxembourg":"Europe/Luxembourg","Lyon":"Europe/Paris","MachuPicchu":"America/Lima","Maceió":"America/Fortaleza","Madeira":"Atlantic/Madeira","Madrid":"Europe/Madrid","Maldives":"Indian/Maldives","Malibu":"America/Los_Angeles","Manuel Antonio":"America/Costa_Rica","Marktoberdorf":"Europe/Berlin","Marrakech":"Africa/Casablanca","Marseille":"Europe/Paris","Maui":"Pacific/Honolulu","Melbourne":"Australia/Melbourne","Miami":"America/New_York","Milan":"Europe/Rome","Monaco":"Europe/Monaco","Montevideo":"America/Montevideo","Montreal":"America/Toronto","Munich":"Europe/Berlin","Muscat":"Asia/Muscat","Mykonos":"Europe/Athens","Napa":"America/Los_Angeles","Naples":"Europe/Rome","Naples Florida":"America/New_York","Nashville":"America/Chicago","Natal":"America/Fortaleza","New Orleans":"America/Chicago","New York":"America/New_York","Nice":"Europe/Paris","Oahu":"Pacific/Honolulu","Oaxaca":"America/Mexico_City","Olinda":"America/Fortaleza","Orcas Island":"America/Los_Angeles","Orlando":"America/New_York","Osaka":"Asia/Tokyo","Oslo":"Europe/Oslo","Oxford":"Europe/London","Palawan":"Asia/Manila","Palm Desert":"America/Los_Angeles","Palo Alto":"America/Los_Angeles","Paris":"Europe/Paris","Paro":"Asia/Thimphu","Pasadena":"America/Los_Angeles","Pensacola":"America/Chicago","Petra":"Asia/Amman","Philadelphia":"America/New_York","Phoenix":"America/Phoenix","Phuket":"Asia/Bangkok","Pokhara":"Asia/Kathmandu","Porto":"Europe/Lisbon","Porto Alegre":"America/Sao_Paulo","Portland":"America/Los_Angeles","Prague":"Europe/Prague","Puerto Rico":"America/Puerto_Rico","Puerto Vallarta":"America/Mexico_City","Quebec City":"America/Toronto","Queenstown":"Pacific/Auckland","Recife":"America/Fortaleza","Reykjavik":"Atlantic/Reykjavik","Rio de Janeiro":"America/Sao_Paulo","Rome":"Europe/Rome","Salvador":"America/Fortaleza","Salzburg":"Europe/Vienna","San Diego":"America/Los_Angeles","San Francisco":"America/Los_Angeles","San Jose":"America/Los_Angeles","San Jose Costa Rica":"America/Costa_Rica","San Juan Island":"America/Los_Angeles","San Sebastian":"Europe/Madrid","Santa Barbara":"America/Los_Angeles","Santa Cruz":"America/Los_Angeles","Santa Monica":"America/Los_Angeles","Santiago":"America/Santiago","Santorini":"Europe/Athens","Sarasota":"America/New_York","Sardinia":"Europe/Rome","Scottsdale":"America/Phoenix","Seattle":"America/Los_Angeles","Sedona":"America/Phoenix","Seoul":"Asia/Seoul","Seville":"Europe/Madrid","Seychelles":"Indian/Mahe","Shanghai":"Asia/Shanghai","Sicily":"Europe/Rome","Siena":"Europe/Rome","Singapore":"Asia/Singapore","Sint Maarten":"America/Lower_Princes","Sintra":"Europe/Lisbon","Sorrento":"Europe/Rome","Split":"Europe/Zagreb","Stockholm":"Europe/Stockholm","Strasbourg":"Europe/Paris","Stuttgart":"Europe/Berlin","Sydney":"Australia/Sydney","Taipei":"Asia/Taipei","Tallinn":"Europe/Tallinn","Tbilisi":"Asia/Tbilisi","The Bahamas":"America/Nassau","Tokyo":"Asia/Tokyo","Toledo":"Europe/Madrid","Toronto":"America/Toronto","Tromso":"Europe/Oslo","Turin":"Europe/Rome","Turks and Caicos":"America/Grand_Turk","Valletta":"Europe/Malta","Vancouver":"America/Vancouver","Venice":"Europe/Rome","Verona":"Europe/Rome","Victoria":"America/Vancouver","Vienna":"Europe/Vienna","Virgin Islands":"America/St_Thomas","Washington DC":"America/New_York","Wellington":"Pacific/Auckland","Whistler":"America/Vancouver","Yellowstone":"America/Denver","Zhangjiajie":"Asia/Shanghai","Zurich":"Europe/Zurich","Cancun":"America/Cancun","Florianópolis":"America/Sao_Paulo","São Luís":"America/Fortaleza","São Paulo":"America/Sao_Paulo"};
+
     function safetyClass(level) {
       var l = (level + '').toLowerCase().replace(/\s+/g, '');
       if (l === 'verysafe') return 'byg-safety-verysafe';
@@ -272,16 +276,25 @@
       }
       html += '</div>'; // end col 1 stack
 
-      // Col 2: Cost & Currency
+      // Col 2: Cost & Currency + Time Zone stacked
+      var tz = CITY_TZ[k] || null;
+      html += '<div class="byg-col-stack">';
       if (costData) {
         html += '<div class="byg-card">' +
           '<div class="byg-card-head"><span class="byg-card-icon">💰</span><span class="byg-card-title">Cost &amp; Currency</span></div>' +
           '<div class="byg-row"><span class="byg-row-label">Cost level</span><span class="byg-cost-badge ' + costClass(costData.tier) + '">' + costData.tier + '</span></div>' +
           '<div class="byg-row"><span class="byg-row-label">Currency</span><span class="byg-row-value">' + costData.currency + '</span></div>' +
           '<div class="byg-links-row"><a href="Currency-Guide.html" class="byg-link">Exchange rates →</a></div></div>';
-      } else {
-        html += '<div></div>';
       }
+      if (tz) {
+        html += '<div class="byg-card">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">🕐</span><span class="byg-card-title">Local Time</span></div>' +
+          '<div id="byg-clock" style="font-size:32px;font-weight:700;color:var(--text,#1a1917);letter-spacing:-.01em;margin:6px 0 2px;"></div>' +
+          '<div id="byg-clock-tz" style="font-size:11px;color:var(--muted,#6a6660);text-transform:uppercase;letter-spacing:.05em;"></div>' +
+          '<div class="byg-links-row"><a href="Time-Zones.html" class="byg-link">All time zones →</a></div>' +
+          '</div>';
+      }
+      html += '</div>'; // end col 2 stack
 
       function prepTile(icon, label, href) {
         return '<a href="' + href + '" class="byg-prep-tile">' +
@@ -292,7 +305,6 @@
         '<div class="byg-prep-grid">';
       html += prepTile('👕', 'Packing', 'Travel-Packing.html');
       html += prepTile('🔌', 'Plug Adapter', 'Plug-Adapter/Plug-Adapter-Guide.html');
-      html += prepTile('🕐', 'Time Zone', 'Time-Zones.html');
       if (!isUS) {
         html += prepTile('🪪', 'Visas', 'Visas.html');
         html += prepTile('🪪', 'Entry Req.', 'Entry-Requirements.html');
@@ -304,6 +316,25 @@
 
       html += '</div>';
       resultsEl.innerHTML = html;
+
+      // Live clock
+      if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
+      var tz2 = CITY_TZ[k];
+      if (tz2) {
+        function tickClock() {
+          var el = document.getElementById('byg-clock');
+          var elTz = document.getElementById('byg-clock-tz');
+          if (!el) { clearInterval(clockInterval); clockInterval = null; return; }
+          var now = new Date();
+          var time = now.toLocaleTimeString('en-US', {timeZone: tz2, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true});
+          var tzName = now.toLocaleDateString('en-US', {timeZone: tz2, weekday: 'long'}) + ' · ' +
+            now.toLocaleTimeString('en-US', {timeZone: tz2, timeZoneName: 'short'}).split(' ').pop();
+          el.textContent = time;
+          if (elTz) elTz.textContent = tzName;
+        }
+        tickClock();
+        clockInterval = setInterval(tickClock, 1000);
+      }
 
       var guideSlot = document.getElementById('byg-guide-slot');
       if (guideSlot) {
