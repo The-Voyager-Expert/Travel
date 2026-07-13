@@ -25,8 +25,17 @@
 .byg-unit button.on { background: #b85c2a; color: #fff; }
 .byg-empty { text-align: center; color: var(--muted,#6a6660); font-size: var(--fs-body,14px);
   padding: 40px 10px; line-height: 1.6; }
-.byg-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.byg-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: start; }
 .byg-col-stack { display: flex; flex-direction: column; gap: 12px; }
+.byg-prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.byg-prep-tile { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; padding: 12px 8px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px;
+  background: var(--bg,#f5f3ef); text-decoration: none; text-align: center;
+  transition: border-color .15s, background .15s; }
+.byg-prep-tile:hover { border-color: #b85c2a; background: #fff; }
+.byg-prep-tile-icon { font-size: 20px; }
+.byg-prep-tile-label { font-size: 11px; font-weight: 600; color: var(--text,#1a1917);
+  text-transform: uppercase; letter-spacing: .04em; line-height: 1.3; }
 .byg-card { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
   border-radius: 11px; padding: 14px 16px; box-shadow: 0 1px 6px rgba(92,61,17,0.05); }
 .byg-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -267,20 +276,24 @@
           '<div class="byg-links-row"><a href="Currency-Guide.html" class="byg-link">Exchange rates →</a></div></div>';
       }
 
-      function prepCard(icon, title, href) {
-        return '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">' + icon + '</span><span class="byg-card-title">' + title + '</span></div>' +
-          '<div class="byg-links-row"><a href="' + href + '" class="byg-link">Open →</a></div></div>';
+      function prepTile(icon, label, href) {
+        return '<a href="' + href + '" class="byg-prep-tile">' +
+          '<span class="byg-prep-tile-icon">' + icon + '</span>' +
+          '<span class="byg-prep-tile-label">' + label + '</span></a>';
       }
-      html += prepCard('👕', 'Packing Checklist', 'Travel-Packing.html');
-      html += prepCard('🔌', 'Plug Adapter', 'Plug-Adapter/Plug-Adapter-Guide.html');
+      html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">📋</span><span class="byg-card-title">Essentials</span></div>' +
+        '<div class="byg-prep-grid">';
+      html += prepTile('👕', 'Packing', 'Travel-Packing.html');
+      html += prepTile('🔌', 'Plug Adapter', 'Plug-Adapter/Plug-Adapter-Guide.html');
+      html += prepTile('🕐', 'Time Zone', 'Time-Zones.html');
       if (!isUS) {
-        html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">🪪</span><span class="byg-card-title">Visa &amp; Entry</span></div>' +
-          '<div class="byg-links-row"><a href="Visas.html" class="byg-link">Visa requirements →</a><a href="Entry-Requirements.html" class="byg-link">Entry requirements →</a></div></div>';
+        html += prepTile('🪪', 'Visas', 'Visas.html');
+        html += prepTile('🪪', 'Entry Req.', 'Entry-Requirements.html');
       }
-      html += prepCard('🕐', 'Time Zone', 'Time-Zones.html');
-      if (statsLink) { html += prepCard('📊', 'Destination Stats', statsLink); }
-      if (loungeLink) { html += prepCard('💻', 'Airport Lounges', loungeLink); }
-      if (isEurope) { html += prepCard('🚆', 'European Trains', 'European-Train-Guide.html'); }
+      if (statsLink) { html += prepTile('📊', 'Stats', statsLink); }
+      if (loungeLink) { html += prepTile('💻', 'Lounges', loungeLink); }
+      if (isEurope) { html += prepTile('🚆', 'EU Trains', 'European-Train-Guide.html'); }
+      html += '</div></div>';
 
       var guideLink = GUIDE_LINKS[k];
       if (guideLink) {
