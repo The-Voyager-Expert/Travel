@@ -1640,7 +1640,14 @@ window._giStatusFilter = 'all';
 
     var shown = pass(false);
     if (shown === 0 && q.length >= 4) shown = pass(true);  // typo fallback
-    noRes.style.display = (shown === 0 && (q !== '' || sf !== 'all')) ? 'block' : 'none';
+    var anyFilter = q !== '' || sf !== 'all' ||
+      document.querySelector('.mchip.on[data-m]') ||
+      document.querySelector('.tchip.on') ||
+      document.querySelector('#continentJumpList .days-jump-item.on:not([data-cont="all"])') ||
+      document.querySelector('#countryJumpList .days-jump-item.on:not([data-country="all"])') ||
+      document.querySelector('#daysJumpList .days-jump-item.on:not([data-days="all"])') ||
+      ([].some.call(document.querySelectorAll('.lchip.on'), function(c) { return c.dataset.l && c.dataset.l !== 'all'; }));
+    noRes.style.display = (shown === 0 && anyFilter) ? 'block' : 'none';
     clearKbd();
   }
 
