@@ -80,12 +80,11 @@
 .byg-chart-wrap { margin-top: 4px; }
 .byg-card-compact { padding: 10px 14px; }
 .byg-card-compact .byg-row { padding: 4px 0; }
-.byg-guide-link { display: block; text-align: center; margin-top: 14px; }
-.byg-guide-link a { display: inline-flex; align-items: center; gap: 6px; font-size: 14px;
-  font-weight: 600; color: #b85c2a; text-decoration: none; padding: 8px 18px;
-  border: 1.5px solid #b85c2a; border-radius: 8px;
-  transition: background .15s, color .15s; }
-.byg-guide-link a:hover { background: #b85c2a; color: #fff; }
+.byg-guide-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+  font-weight: 600; color: #b85c2a; text-decoration: none; padding: 7px 14px;
+  border: 1.5px solid #b85c2a; border-radius: 6px;
+  transition: background .15s, color .15s; white-space: nowrap; }
+.byg-guide-pill:hover { background: #b85c2a; color: #fff; }
 @media (max-width: 700px) {
   .byg-wrap { padding: 0 14px; }
   .byg-cards { grid-template-columns: 1fr; }
@@ -123,6 +122,10 @@
           <button type="button" data-u="C">°C</button>
           <button type="button" data-u="F">°F</button>
         </div>
+      </div>
+      <div style="flex-shrink:0; margin-left:auto;">
+        <div class="byg-label">&nbsp;</div>
+        <div id="byg-guide-slot"></div>
       </div>
     </div>
   </div>
@@ -210,7 +213,11 @@
 
     function render() {
       var k = cityEl.value;
-      if (!k) { resultsEl.innerHTML = ''; return; }
+      if (!k) {
+        resultsEl.innerHTML = '';
+        var s = document.getElementById('byg-guide-slot'); if (s) s.innerHTML = '';
+        return;
+      }
       var rec = CLIM[k];
       var m = parseInt(monthEl.value, 10);
       var country = CITY_COUNTRIES[k] || '';
@@ -295,13 +302,16 @@
       if (isEurope) { html += prepTile('🚆', 'EU Trains', 'European-Train-Guide.html'); }
       html += '</div></div>';
 
-      var guideLink = GUIDE_LINKS[k];
-      if (guideLink) {
-        html += '<div class="byg-guide-link"><a href="' + guideLink + '">🌐 Open ' + (rec.city || k) + ' Guide →</a></div>';
-      }
-
       html += '</div>';
       resultsEl.innerHTML = html;
+
+      var guideSlot = document.getElementById('byg-guide-slot');
+      if (guideSlot) {
+        var guideLink = GUIDE_LINKS[k];
+        guideSlot.innerHTML = guideLink
+          ? '<a href="' + guideLink + '" class="byg-guide-pill">🌐 Open Guide →</a>'
+          : '';
+      }
     }
 
     paintUnit(); render();
