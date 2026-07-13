@@ -436,11 +436,9 @@
     'padding:0;text-decoration:none;flex-shrink:0;';
 
   /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
-  var hamLabel = document.createElement('a');
+  var hamLabel = document.createElement('span');
   hamLabel.className = 'tb-ham-label';
   hamLabel.textContent = 'THE VOYAGER EXPERT';
-  hamLabel.href = base + 'Trip-Essentials/Trips.html';
-  hamLabel.style.cssText = 'text-decoration:none;color:#fff;';
   bar.appendChild(hamLabel);
 
   var hamBtn = document.createElement('div');
