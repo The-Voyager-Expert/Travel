@@ -3247,7 +3247,7 @@ def main() -> int:
             return rc_render
         # ──────────────────────────────────────────────────────────────────────
 
-        # ── continuity RENDER gate, guide-scoped (added 2026-07-12) ───────────
+        # ── continuity RENDER gate, FLEET-SCOPED (added 2026-07-12, widened same day) ─
         # Same gap-class as the mobile render gate above, different bug: the static
         # "Style A continuous-run" check in validate_itinerary.py only confirms the
         # required CSS selector text is present in guide-style.css, not that the
@@ -3255,14 +3255,26 @@ def main() -> int:
         # session while the underlying fix was broken (a CSS specificity miss, then
         # a margin-shorthand-sets-both-sides miss) — neither bug removed any anchor
         # text, so the static check never caught it; only rendering and measuring
-        # the actual join gap does. Scope to just the shipping guide — hard block.
-        rc_cont = _run("validate_continuity_render.py", tail)
+        # the actual join gap does.
+        # Deliberately NOT scoped to the shipping guide (unlike the mobile-render gate
+        # above): the continuity rules live in the ONE shared guide-style.css, so a
+        # regression there breaks EVERY guide's continuity, not just the one shipping.
+        # This happened for real within an hour of the gate first landing — a second
+        # crib's commit deleted the #shows continuity lines while shipping an unrelated
+        # guide that has no Shows section, so a guide-scoped gate would have passed it
+        # clean while every OTHER guide's Shows section silently regressed. Fleet scan
+        # takes ~1-2 min; that cost is the point — it is the only way to actually catch
+        # a shared-file regression before it reaches origin.
+        rc_cont = _run("validate_continuity_render.py", [])
         if rc_cont != 0:
             print(
-                "\n🚫  SHIP BLOCKED — guide has a gapped Extras-section or stop-block "
-                "card join (should render as one seamless card, not stacked with a gap).\n"
-                "    Run:  python3 Brain/scripts/validate_continuity_render.py %s\n"
-                "    Then re-run ship.\n" % tail[0],
+                "\n🚫  SHIP BLOCKED — a gapped Extras-section or stop-block card join "
+                "was found somewhere in the fleet (should render as one seamless card, "
+                "not stacked with a gap). This gate runs fleet-wide, not just against "
+                "the guide you're shipping, because the continuity rules live in the "
+                "one shared guide-style.css — a regression there breaks every guide.\n"
+                "    Run:  python3 Brain/scripts/validate_continuity_render.py\n"
+                "    Then re-run ship.\n",
                 file=sys.stderr,
             )
             _write_ship_log(Path(tail[0]).resolve(), "FAIL")
