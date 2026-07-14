@@ -5,161 +5,264 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../assets/web-travel-style.css">
 <title>Before You Go</title>
-<style>
-/* This page's grid is compact — trim the global 80px trailing padding to a snug gap so it
+<style>/* This page's grid is compact — trim the global 80px trailing padding to a snug gap so it
    doesn't leave a big empty band under the cards. !important beats the shared safe-area
    @supports rule (mobile.css) that otherwise forces the padding back to the 80px base. */
 body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important; }
+
 .byg-wrap { width: 100%; box-sizing: border-box; padding: 0 32px; position: relative; }
+
 /* Search stays centered on the page (middle column); month sits in the right column beside it */
 .byg-pick { margin: 35px 0 16px; display: grid; grid-template-columns: 1fr 360px 1fr; align-items: center; column-gap: 10px; }
+
 .byg-find-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
   line-height: 0; opacity: .45; pointer-events: none; z-index: 1; }
+
 .byg-select { width: 100%; min-width: 0; height: 36px; box-sizing: border-box; font-family: var(--font); font-size: 14px; font-weight: 600;
   color: var(--text,#1a1917); padding: 0 12px; border: 1px solid var(--border2,#e6e2da);
   border-radius: 6px; background: #fff; cursor: pointer; outline: none; }
+
 .byg-month-row { grid-column: 3; justify-self: start; display: flex; align-items: center; gap: 8px; margin: 0; }
+
 .byg-month-select { flex: 0 0 auto; width: 118px; height: 40px; box-sizing: border-box; font-family: var(--font); font-size: 13px; font-weight: 500; color: #8a6c1a;
   padding: 0 14px; border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px;
   background: #fff; cursor: pointer; outline: none; }
+
 .byg-month-select:hover { border-color: #b85c2a; }
+
 /* Kill the loud gold keyboard-focus ring the shared sheet puts on selects — keep a subtle border cue */
 .byg-select:focus, .byg-select:focus-visible,
 .byg-month-select:focus, .byg-month-select:focus-visible { outline: none !important; border-color: #c8b99a; box-shadow: none; }
+
 .byg-unit { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; }
+
 .byg-unit button { border: none; cursor: pointer; padding: 7px 11px; font-size: 12px; font-weight: 600;
   font-family: var(--font); background: transparent; color: var(--muted,#6a6660); }
+
 .byg-unit button.on { background: #b85c2a; color: #fff; }
+
 .byg-empty { text-align: center; color: var(--muted,#6a6660); font-size: var(--fs-body,14px);
   padding: 40px 10px; line-height: 1.6; }
+
 /* Search input (replaces the city dropdown) */
 #byg-find { width: 100%; min-width: 0; height: 40px; box-sizing: border-box; margin: 0; font-family: var(--font);
   font-size: 15px; color: var(--text,#1a1917); padding: 0 18px 0 36px;
   border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px; background: #fff var(--search-icon) no-repeat 13px center; outline: none; }
+
 #byg-find::placeholder { color: #A8895A; }
+
 /* Gold clear (✕) button instead of the browser's default blue one */
 #byg-find::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none;
   width: 13px; height: 13px; cursor: pointer; background-color: #8a6c1a;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 3l8 8M11 3l-8 8' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 3l8 8M11 3l-8 8' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain; }
+
 #byg-find:focus, #byg-find:focus-visible { outline: none !important; border-color: #c8b99a; box-shadow: none; }
+
 /* Autocomplete dropdown — floats under the search box, "City · Country" rows */
 .byg-find-wrap { position: relative; grid-column: 2; }
+
 #byg-suggest { position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 40;
   background: #fff; border: 1px solid var(--border2,#e6e2da); border-radius: 8px;
   box-shadow: 0 8px 24px rgba(92,61,17,.16); max-height: 340px; overflow-y: auto; padding: 4px; }
+
 #byg-suggest[hidden] { display: none; }
+
 .byg-sug-row { display: block; width: 100%; text-align: left; box-sizing: border-box;
   padding: 9px 14px; border: none; background: transparent; border-radius: 6px; cursor: pointer;
   font-family: var(--font); font-size: 14px; font-weight: 600; color: var(--text,#1a1917); }
+
 .byg-sug-row .byg-sug-country { font-weight: 400; color: var(--muted,#6a6660); }
+
 .byg-sug-row:hover, .byg-sug-row.active { background: var(--bg,#f5f3ef); }
+
 .byg-sug-empty { padding: 12px; font-size: 13px; color: var(--muted,#6a6660); text-align: center; }
+
 .byg-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: start; max-width: 1120px; }
+
 /* Plug Adapter is a full-width strip above the grid — socket types laid out horizontally */
 .byg-plug-card { max-width: 1120px; margin-bottom: 14px; }
+
 .byg-plug-card .byg-plug-row { display: flex; gap: 20px; margin-top: 8px; flex-wrap: wrap; }
+
 .byg-plug-card .byg-plug-type { flex: 1; min-width: 180px; padding: 10px 14px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px; background: var(--bg,#f5f3ef); }
+
 .byg-plug-card .byg-plug-imgs { grid-template-columns: 1fr 1fr; gap: 12px; max-width: 230px; }
+
 .byg-plug-card .byg-plug-imgs img { width: 100%; max-width: 104px; height: auto; aspect-ratio: 1; object-fit: contain; background: #fff; padding: 8px; }
+
 .byg-plug-card .byg-plug-type-desc { font-size: 10px; }
+
 .byg-col-stack { display: flex; flex-direction: column; gap: 14px; }
+
 /* The four top info cards size to their content so each has the same bottom padding
    (no card is forced tall with a big empty band). Safety note clamped so it stays tidy. */
 .byg-card-fixed, .byg-card-fixed-sm { height: auto; }
+
 .byg-safety-note { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
 .byg-prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+
 .byg-prep-tile { display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 4px; padding: 10px 6px; height: 70px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px;
   background: var(--bg,#f5f3ef); text-decoration: none; text-align: center;
   transition: border-color .15s, background .15s; }
+
 .byg-prep-tile:hover { border-color: #b85c2a; background: #fff; }
+
 .byg-prep-tile-icon { font-size: 18px; }
+
 .byg-prep-tile-label { font-size: 11px; font-weight: 600; color: var(--text,#1a1917);
   text-transform: uppercase; letter-spacing: .04em; line-height: 1.3; }
+
 .byg-card { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
   border-radius: 11px; padding: 16px 18px 20px; box-shadow: 0 1px 6px rgba(92,61,17,0.05); }
+
 .byg-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
 .byg-card-icon { font-size: 18px; }
+
 .byg-card-title { font-size: 13px; font-weight: 700; text-transform: uppercase;
   letter-spacing: .05em; color: var(--text,#1a1917); }
+
 .byg-row { display: flex; justify-content: space-between; align-items: baseline;
   padding: 6px 0; border-bottom: 1px solid var(--border2,#e6e2da); }
+
 .byg-row:last-child { border-bottom: none; }
+
 .byg-row-label { font-size: 12px; color: var(--muted,#6a6660); }
+
 .byg-row-value { font-size: 14px; font-weight: 600; color: var(--text,#1a1917); text-align: right; }
+
 .byg-unit-inline { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+
 .byg-unit-inline button { border: none; cursor: pointer; padding: 5px 9px; font-size: 11px; font-weight: 600; background: var(--surface,#fff); color: var(--text,#1a1917); }
+
 .byg-unit-inline button.on { background: #b85c2a; color: #fff; }
+
 .byg-temps { display: flex; gap: 20px; margin: 8px 0 6px; }
+
 .byg-hi { color: #a61c00; font-size: 32px; font-weight: 700; }
+
 .byg-lo { color: #3d5282; font-size: 32px; font-weight: 700; }
+
 .byg-rain-row { display: flex; gap: 14px; margin-top: 4px; }
+
 .byg-rain-val { font-size: 14px; font-weight: 700; color: #4a7c9b; }
+
 .byg-rain-lbl { font-size: 11px; color: var(--muted,#6a6660); }
+
 .byg-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px;
   color: #3d3a32; padding: 6px 12px; border: 1px solid var(--border2,#e6e2da);
   border-radius: 6px; background: #fff; text-decoration: none;
   transition: border-color .15s, box-shadow .15s, transform .08s; margin-top: 8px; }
+
 .byg-link:hover { border-color: #b85c2a; box-shadow: 0 3px 10px rgba(184,92,42,.12); transform: translateY(-1px); text-decoration: none; }
+
 .byg-links-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
 .byg-safety-badge { display: inline-block; padding: 3px 10px; border-radius: 4px;
   font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+
 .byg-safety-verylow { background: #e8f5e9; color: #2a6a2a; }
+
 .byg-safety-low { background: #e8f5e9; color: #2a6a2a; }
+
 .byg-safety-safe { background: #e8f5e9; color: #2a6a2a; }
+
 .byg-safety-verysafe { background: #c8e6c9; color: #1b5e20; }
+
 .byg-safety-moderate { background: #fff3e0; color: #e65100; }
+
 .byg-safety-caution { background: #fbe9e7; color: #bf360c; }
+
 .byg-cost-badge { display: inline-block; padding: 3px 10px; border-radius: 4px;
   font-size: 12px; font-weight: 700; }
+
 .byg-cost-budget { background: #e8f5e9; color: #2a6a2a; }
+
 .byg-cost-moderate, .byg-cost-mid-range { background: #e3f2fd; color: #1565c0; }
+
 .byg-cost-expensive { background: #fff3e0; color: #e65100; }
+
 .byg-cost-premium, .byg-cost-luxury { background: #fce4ec; color: #ad1457; }
+
 .byg-strip { display: flex; align-items: flex-end; gap: 2px; height: 40px; margin-top: 8px; }
+
 .byg-bar { flex: 1; position: relative; height: 40px; }
+
 .byg-bar > span { position: absolute; left: 50%; transform: translateX(-50%); width: 5px; border-radius: 3px; }
+
 .byg-bar-label { font-size: 9px; color: var(--muted); text-align: center; margin-top: 2px; }
+
 .byg-chart-wrap { margin-top: 4px; }
+
 .byg-card-compact { padding: 10px 14px; }
+
 .byg-card-compact .byg-row { padding: 4px 0; }
+
 .byg-plug-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+
 .byg-plug-type { flex: 1; min-width: 0; }
+
 .byg-plug-type-name { font-size: 11px; font-weight: 700; color: var(--text,#1a1917); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+
 .byg-plug-type-desc { font-size: 10px; color: var(--muted,#6a6660); margin-bottom: 6px; line-height: 1.3; }
+
 .byg-plug-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
 .byg-plug-imgs img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--border2,#e6e2da); }
+
 .byg-plug-img-lbl { font-size: 9px; color: var(--muted,#6a6660); text-align: center; margin-top: 3px; }
+
 .byg-plug-divider { border: none; border-top: 1px solid var(--border2,#e6e2da); margin: 10px 0 0; }
+
 .byg-voltage { font-size: 11px; color: var(--muted,#6a6660); margin-bottom: 8px; }
+
 .byg-visa-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; color: #fff; letter-spacing: .03em; }
+
 .byg-visa-domestic { background: #888; }
+
 .byg-visa-free { background: #1a7f4b; }
+
 .byg-visa-card { background: #3b6fa0; }
+
 .byg-visa-eta { background: #6747c7; }
+
 .byg-visa-evisa { background: #c77a1b; }
+
 .byg-visa-voa { background: #1a8080; }
+
 .byg-visa-required { background: #c62828; }
+
 .byg-visa-days { font-size: 22px; font-weight: 700; color: var(--text,#1a1917); margin: 8px 0 2px; }
+
 .byg-visa-note { font-size: 11px; color: var(--muted,#6a6660); line-height: 1.4; margin-bottom: 6px; }
+
 .byg-guide-pill { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px;
   font-weight: 600; color: #b85c2a; text-decoration: none; padding: 0 16px; height: 40px; box-sizing: border-box;
   border: 1.5px solid #b85c2a; border-radius: 6px;
   transition: background .15s, color .15s; white-space: nowrap; }
+
 .byg-guide-pill:hover { background: #b85c2a; color: #fff; }
+
 @media (max-width: 700px) {
   .byg-wrap { padding: 0 14px; }
+
   .byg-plug-card .byg-plug-type { min-width: 0; flex: 1 1 100%; }
+
   .byg-cards { grid-template-columns: 1fr; }
+
   .byg-col-stack { gap: 12px; }
+
   .byg-pick { grid-template-columns: 1fr; row-gap: 8px; margin-top: 16px; }
+
   .byg-find-wrap { grid-column: 1; }
+
   .byg-month-row { grid-column: 1; justify-self: center; }
+
   /* Open Guide back in normal flow on mobile so it can't overlap the full-width search */
-  #byg-guide-slot { position: static !important; top: auto !important; right: auto !important; text-align: center; margin-bottom: 8px; }
-}
-</style>
+  #byg-guide-slot { position: static !important; top: auto !important; right: auto !important; text-align: center; margin-bottom: 8px;}</style>
 <link rel="stylesheet" href="../assets/mobile.css?v=50">
 </head>
 <body>

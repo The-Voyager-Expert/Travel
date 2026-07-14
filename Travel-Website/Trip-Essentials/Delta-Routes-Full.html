@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../assets/web-travel-style.css">
 <title>Delta Full Network · All Hubs</title>
-<style>
-  /* Routing tier colours (nonstop=green / 1-connection=blue / 2-connection=amber).
+<style>/* Routing tier colours (nonstop=green / 1-connection=blue / 2-connection=amber).
      These vars are referenced throughout (tier pills, card borders, tags, badges)
      but were never defined — so the colour coding rendered blank. */
   :root {
@@ -14,108 +13,166 @@
     --c1:#1a3a8b; --c1bg:#e8f0fb; --c1bd:#a0b8e8;
     --c2:#8a5a10; --c2bg:#fdf3e0; --c2bd:#e8c870;
   }
-  .nav { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 0; }
-  .nav-inner { max-width: none; margin: 0 auto; padding: 10px 32px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-start; }
-  .nav-logo { font-size: var(--fs-sub,12px); font-weight: 700; color: var(--accent); letter-spacing: 0.06em; margin-right: 6px; white-space: nowrap; text-transform: uppercase; }
-  .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
-  .nav-link { font-size: 13px; line-height: 1; color: #3d3a32; text-decoration: none; padding: 6px 12px; border: 1px solid #e6e2da; border-radius: 6px; background: #fff; white-space: nowrap; transition: color .15s, border-color .15s, background .15s; cursor: pointer; }
-  .nav-link:hover { color: #fff; border-color: #b85c2a; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
-  /* .wrap — fluid width from web-travel-style.css */
+
+.nav { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 0; }
+
+.nav-inner { max-width: none; margin: 0 auto; padding: 10px 32px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-start; }
+
+.nav-link { font-size: 13px; line-height: 1; color: #3d3a32; text-decoration: none; padding: 6px 12px; border: 1px solid #e6e2da; border-radius: 6px; background: #fff; white-space: nowrap; transition: color .15s, border-color .15s, background .15s; cursor: pointer; }
+
+.nav-link:hover { color: #fff; border-color: #b85c2a; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+
+/* .wrap — fluid width from web-travel-style.css */
   .header { padding: 20px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 0; }
-  .header-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
-  .header h1 { font-size: var(--fs-title,14px); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #3d3a32; line-height: 1.2; margin-bottom: 10px; }
-  .header p { font-size: var(--fs-sub,12px); color: var(--muted); line-height: 1.7; max-width: 600px; margin-top: 0; }
-  .tier-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; margin-bottom: 10px; }
-  .tier-pill { padding: 5px 12px; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; }
-  .tier-pill.t0 { background: var(--c0bg); color: var(--c0); border: 1px solid var(--c0bd); }
-  .tier-pill.t1 { background: var(--c1bg); color: var(--c1); border: 1px solid var(--c1bd); }
-  .tier-pill.t2 { background: var(--c2bg); color: var(--c2); border: 1px solid var(--c2bd); }
-  .hub-section { margin-bottom: 24px; scroll-margin-top: 100px; }
-  .hub-header { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--delta); }
-  .hub-code { font-size: 16px; font-weight: 700; color: var(--accent); line-height: 1; }
-  .hub-info { flex: 1; }
-  .hub-city { font-size: var(--fs-body,14px); font-weight: 400; }
-  .hub-name { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-body,14px); color: var(--muted); margin-top: 2px; }
-  .hub-stats { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-body,14px); color: var(--muted); text-align: right; line-height: 1.6; }
-  .hub-strength { font-size: var(--fs-body,14px); color: var(--muted); margin-bottom: 8px; padding: 8px 14px; background: var(--surface, #ffffff); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 3px; line-height: 1.6; }
-  .region-block { margin-bottom: 20px; }
-  .region-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .region-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
-  .region-line { flex: 1; height: 1px; background: #e8e5de; }
-  .dest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 10px; }
-  .dest-card { background: var(--surface, #ffffff); border: 1px solid var(--border); border-left: 3px solid; border-radius: 4px; padding: 9px 11px; }
-  .tag { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); padding: 1px 6px; border-radius: 2px; }
-  .tag.new { background: var(--c0bg); color: var(--c0); }
-  .tag.d1 { background: #f8e8e8; color: #7a1010; }
-  .tag.yr { background: #f0f0ee; color: var(--muted); }
-  .tier-badge { display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; letter-spacing: 0.1em; padding: 2px 10px; border-radius: 2px; margin-bottom: 8px; }
-  .tier-badge.t0 { background: var(--c0bg); color: var(--c0); border: 1px solid var(--c0bd); }
-  .tier-badge.t1 { background: var(--c1bg); color: var(--c1); border: 1px solid var(--c1bd); }
-  .tier-badge.t2 { background: var(--c2bg); color: var(--c2); border: 1px solid var(--c2bd); }
-  .note { background: var(--surface, #ffffff); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 3px; padding: 9px 13px; margin: 0 0 8px; font-size: var(--fs-body,14px); color: var(--muted); line-height: 1.6; }
-  .cross-hub { margin: 16px 0 24px; }
-  .cross-hub h2 { font-size: 15px; font-weight: 400; color: var(--accent); margin-bottom: 8px; }
-  .cross-table { width: 100%; border-collapse: collapse; font-size: var(--fs-body,14px); background: var(--surface, #ffffff); border: 1px solid var(--border); }
-  .cross-table th { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 7px 11px; text-align: left; background: var(--surface2); border-bottom: 1px solid var(--border); font-weight: 400; }
-  .cross-table td { padding: 8px 11px; border-bottom: 1px solid #e8e5de; vertical-align: top; }
-  .cross-table tr:last-child td { border-bottom: none; }
-  .hub-pill { display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; color: var(--accent); background: #f8ece8; border: 1px solid #e8c0b0; border-radius: 3px; padding: 1px 7px; margin-right: 3px; }
-  .filter-bar { margin-bottom: 4px; }
+
+.header-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+
+.header h1 { font-size: var(--fs-title,14px); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #3d3a32; line-height: 1.2; margin-bottom: 10px; }
+
+.header p { font-size: var(--fs-sub,12px); color: var(--muted); line-height: 1.7; max-width: 600px; margin-top: 0; }
+
+.tier-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; margin-bottom: 10px; }
+
+.tier-pill { padding: 5px 12px; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; }
+
+.tier-pill.t0 { background: var(--c0bg); color: var(--c0); border: 1px solid var(--c0bd); }
+
+.tier-pill.t1 { background: var(--c1bg); color: var(--c1); border: 1px solid var(--c1bd); }
+
+.tier-pill.t2 { background: var(--c2bg); color: var(--c2); border: 1px solid var(--c2bd); }
+
+.hub-section { margin-bottom: 24px; scroll-margin-top: 100px; }
+
+.hub-header { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--delta); }
+
+.hub-info { flex: 1; }
+
+.hub-city { font-size: var(--fs-body,14px); font-weight: 400; }
+
+.hub-name { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-body,14px); color: var(--muted); margin-top: 2px; }
+
+.hub-stats { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-body,14px); color: var(--muted); text-align: right; line-height: 1.6; }
+
+.hub-strength { font-size: var(--fs-body,14px); color: var(--muted); margin-bottom: 8px; padding: 8px 14px; background: var(--surface, #ffffff); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 3px; line-height: 1.6; }
+
+.region-block { margin-bottom: 20px; }
+
+.region-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+
+.region-line { flex: 1; height: 1px; background: #e8e5de; }
+
+.dest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 10px; }
+
+.dest-card { background: var(--surface, #ffffff); border: 1px solid var(--border); border-left: 3px solid; border-radius: 4px; padding: 9px 11px; }
+
+.tag { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); padding: 1px 6px; border-radius: 2px; }
+
+.tag.new { background: var(--c0bg); color: var(--c0); }
+
+.tag.d1 { background: #f8e8e8; color: #7a1010; }
+
+.tag.yr { background: #f0f0ee; color: var(--muted); }
+
+.tier-badge.t0 { background: var(--c0bg); color: var(--c0); border: 1px solid var(--c0bd); }
+
+.tier-badge.t1 { background: var(--c1bg); color: var(--c1); border: 1px solid var(--c1bd); }
+
+.tier-badge.t2 { background: var(--c2bg); color: var(--c2); border: 1px solid var(--c2bd); }
+
+.cross-hub { margin: 16px 0 24px; }
+
+.cross-hub h2 { font-size: 15px; font-weight: 400; color: var(--accent); margin-bottom: 8px; }
+
+.cross-table { width: 100%; border-collapse: collapse; font-size: var(--fs-body,14px); background: var(--surface, #ffffff); border: 1px solid var(--border); }
+
+.cross-table th { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 7px 11px; text-align: left; background: var(--surface2); border-bottom: 1px solid var(--border); font-weight: 400; }
+
+.cross-table td { padding: 8px 11px; border-bottom: 1px solid #e8e5de; vertical-align: top; }
+
+.cross-table tr:last-child td { border-bottom: none; }
+
+.hub-pill { display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-sub,12px); font-weight: 500; color: var(--accent); background: #f8ece8; border: 1px solid #e8c0b0; border-radius: 3px; padding: 1px 7px; margin-right: 3px; }
+
+.filter-bar { margin-bottom: 4px; }
+
 /* unified filter search */
 .filter-bar{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:18px;}
+
 .filter-input{width:360px;box-sizing:border-box;padding:11px 18px;font-size:15px;border:1.5px solid var(--border2, #e6e2da);border-radius:6px;background:var(--surface, #ffffff);color:var(--text, #1a1917);outline:none;transition:border-color .15s,box-shadow .15s;}
+
 .filter-input:focus{border-color: #c8b99a; box-shadow: none;}
+
 .filter-input::placeholder{color:#A8895A;}
+
 /* uniform comfortable page gutter */
 /* hide no-results until an empty search */
 .no-results{display:none;padding:14px 4px;font-size: var(--fs-body,14px);color:#7A5C2E;}
+
 /* hide chrome when search is active */
 body.is-searching #route-nav .nav-links,
 body.is-searching .tier-legend,
 body.is-searching .hub-strength,
 body.is-searching .hub-header,
 body.is-searching .region-header { display:none !important; }
+
 /* Shared CSS hides the whole #route-nav during search, but the search box (and
    its autocomplete dropdown) live inside it — keep the bar itself visible and
    let only the jump links above hide. */
 body.is-searching #route-nav.filter-bar { display:flex !important; }
+
 /* footnote: drop final block margin so gap is uniform */
 .hub-section:last-child, .hub-section:last-child *:last-child{margin-bottom:0 !important}
+
 /* clickable tier pills */
-.tier-pill{cursor:pointer;transition:box-shadow .12s,transform .12s;}@media (max-width:600px) {
+.tier-pill{cursor:pointer;transition:box-shadow .12s,transform .12s;}
+
+@media (max-width:600px) {
   .filter-input { width: 100%; }
+
   .wrap{padding:0 14px;}
+
   .tier-legend{flex-wrap:wrap !important;gap:5px;margin-top:8px;margin-bottom:6px;justify-content:flex-start !important;}
+
   .tier-legend .tier-pill{font-size:13px !important;padding:8px 14px !important;gap:5px !important;border-radius:6px !important;min-height:auto !important;}
+
   .nav-inner{padding:8px 14px;}
-  .nav-links{flex-wrap:wrap !important;justify-content:flex-start !important;}
+
   .nav-link{flex-shrink:0;}
-}
+
 .tier-pill:hover{transform:translateY(-1px);}
+
 .tier-pill.active{font-weight:700;box-shadow:0 0 0 2px rgba(0,0,0,.30);}
+
 /* secondary nav: solid page-bg so content doesn't bleed through on scroll */
 .nav{background:var(--bg)!important;border-bottom:none!important;}
+
 /* ===== Mobile jump-to menu — replaces the horizontal code row on phones ===== */
 .hub-jump{display:none;}
+
 .hub-jump-list{display:none;margin-top:8px;background:var(--surface, #ffffff);
   border:1px solid var(--border);border-radius:10px;overflow-y:auto;max-height:62vh;
   box-shadow:0 8px 24px rgba(60,50,30,.14);}
+
 .hub-jump-item{display:block;width:100%;text-align:left;background:none;border:0;
   border-bottom:1px solid #eceae4;padding:11px 14px;font-size:13px;color:#3d3a32;cursor:pointer;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple Color Emoji','Segoe UI Emoji',Arial,sans-serif;}
-.hub-jump-item:active{background:rgba(138,108,26,.08);}@media(max-width:600px) {
+
+.hub-jump-item:active{background:rgba(138,108,26,.08);}
+
+@media(max-width:600px) {
   #route-nav .nav-links{display:none!important;}
+
   .hub-jump{display:block;position:sticky;top:0;z-index:60;background:var(--bg);padding:8px 0 10px;}
-}@media(max-width:600px) {
+
+@media(max-width:600px) {
   .hub-top.show{position:fixed;right:14px;bottom:16px;width:46px;height:46px;border-radius:50%;
     background:var(--warm, #fdf8f0);border:1px solid #c4b896;color:#6b6860;display:flex;align-items:center;justify-content:center;
-    cursor:pointer;z-index:70;font-size:20px;line-height:1;box-shadow:0 6px 18px rgba(60,50,30,.20);}
-}</style>
+    cursor:pointer;z-index:70;font-size:20px;line-height:1;box-shadow:0 6px 18px rgba(60,50,30,.20);}</style>
 <link rel="stylesheet" href="../assets/mobile.css?v=50">
 </head>
 <body>
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
-<script src="../assets/toolbar.js?v=102"></script>
+<script src="../assets/toolbar.js?v=103"></script>
 <div class="wrap">
   <div class="header">
     <h1>Delta Full Network</h1>
