@@ -5005,6 +5005,118 @@ def check_active_pill_color(report: "Report") -> None:
         report.ok("Active pill color: no gold (#8a6c1a / --accent) backgrounds on active/hover states")
 
 
+def check_no_beige_pill_button(report: "Report") -> None:
+    """HARD-FAIL if any pill or button uses a beige/cream background.
+
+    The canonical pill / button (documented in Colors and Font Size.html § 17 +
+    Pill-Standard.md, rendered by `.also-on-this-site-pill`) is WHITE `#ffffff`
+    (or `var(--surface)`) with a gold `#c8a44a` border. Cribs keep drifting boxed
+    links and buttons to a warm cream fill (`#fdf3e0`) — the exact regression the
+    European-Train footer buttons showed. This gate ends that recurrence.
+
+    Two rules:
+      A. The cream-DRIFT palette (`#fdf3e0` and its siblings) may NEVER be a direct
+         `background`/`background-color` value anywhere — these creams have no
+         legitimate surface use. (The Delta flight-tier swatch `--c2bg:#fdf3e0` is a
+         CSS *variable assignment*, not a `background:` property, so it is untouched;
+         so is the tier chip that reads `background:var(--c2bg)`.)
+      B. The legitimate shared warm-card token `#fdf8f0` (`--c-warm-bg` / `--warm` —
+         "single shared background for all section cards, boxes, banners") is fine on
+         cards/panels/banners, but must NOT appear as a pill/button background. It is
+         failed ONLY on a pill/button context: an inline-styled `<a>`/`<button>`, or a
+         CSS selector naming pill / btn / button / chip / cta.
+
+    Pills are white. Cards are warm. Never the reverse.
+
+    Added 2026-07-13 after the European-Train "Browse All / Stats Across Europe"
+    footer buttons shipped a `#fdf3e0` fill instead of the white pill standard.
+    """
+    import re
+
+    site_root = TRAVEL_ROOT / "Travel-Website"
+    html_pages = (
+        list(site_root.glob("*.html"))
+        + list((site_root / "Trip-Essentials").glob("*.html"))
+        + list((site_root / "Trip-Essentials" / "Maps").glob("*.html"))
+        + list(site_root.glob("Guides/*/*.html"))
+    )
+    css_files = [
+        site_root / "assets" / "web-travel-style.css",
+        site_root / "assets" / "guide-style.css",
+        site_root / "assets" / "mobile.css",
+        site_root / "assets" / "guides-index-style.css",
+    ]
+
+    # Cream DRIFT palette — never a direct background (Rule A). Excludes #fdf8f0
+    # (the legit --c-warm-bg / --warm card token, governed by Rule B).
+    CREAM_DRIFT = r"#(?:fdf3e0|fdf6ec|fef3e0|fdf4e3|faf5ec|fbf3e6|fff8ec|fdf0d5|fdf1dd|fdf7ee|fcefd8)"
+    DRIFT_BG = re.compile(r"background(?:-color)?\s*:\s*" + CREAM_DRIFT, re.I)
+    # Warm token as a background (Rule B applies only on pill/button contexts).
+    WARM_BG = re.compile(r"background(?:-color)?\s*:\s*#fdf8f0", re.I)
+    # Inline pill/button element carrying a warm-token background.
+    INLINE_WARM_ELEM = re.compile(
+        r"<(?:a|button)\b[^>]*style=\"[^\"]*background(?:-color)?\s*:\s*#fdf8f0", re.I
+    )
+    PILL_SEL = re.compile(r"pill|btn|button|chip|cta", re.I)
+    STYLE_BLOCK = re.compile(r"<style[^>]*>(.*?)</style>", re.S | re.I)
+    CSS_RULE = re.compile(r"([^{}]+)\{([^{}]*)\}", re.S)
+
+    fails = []
+
+    def scan_css(css_text: str, label: str):
+        # Rule A: any cream-drift background is a hard fail regardless of selector.
+        if DRIFT_BG.search(css_text):
+            for m in DRIFT_BG.finditer(css_text):
+                fails.append(
+                    f"{label} — cream-drift background '{m.group(0)}'. "
+                    f"Pills/buttons are white #ffffff (var(--surface)); this cream is drift."
+                )
+        # Rule B: warm token on a pill/button selector.
+        for rule in CSS_RULE.finditer(css_text):
+            selector, body = rule.group(1).strip(), rule.group(2)
+            if WARM_BG.search(body) and PILL_SEL.search(selector):
+                fails.append(
+                    f"{label} — selector '{selector}' fills a pill/button with the warm "
+                    f"card token #fdf8f0. Pills/buttons are white #ffffff — #fdf8f0 is for cards only."
+                )
+
+    for html_path in sorted(html_pages):
+        if not html_path.exists():
+            continue
+        text = html_path.read_text(encoding="utf-8", errors="replace")
+        rel = html_path.relative_to(site_root)
+        # Rule A: cream drift as a background anywhere in the page (inline or <style>).
+        for m in DRIFT_BG.finditer(text):
+            fails.append(
+                f"{rel} — cream-drift background '{m.group(0)}' on a pill/button. "
+                f"Use white #ffffff (var(--surface)) with a gold #c8a44a border."
+            )
+        # Rule B: warm token on an inline <a>/<button>.
+        if INLINE_WARM_ELEM.search(text):
+            fails.append(
+                f"{rel} — an inline <a>/<button> fills with the warm card token #fdf8f0. "
+                f"Pills/buttons are white #ffffff — #fdf8f0 is for cards only."
+            )
+        # Rule B: warm token on a pill/button selector inside <style> blocks.
+        for style_match in STYLE_BLOCK.finditer(text):
+            for rule in CSS_RULE.finditer(style_match.group(1)):
+                selector, body = rule.group(1).strip(), rule.group(2)
+                if WARM_BG.search(body) and PILL_SEL.search(selector):
+                    fails.append(
+                        f"{rel} — selector '{selector}' fills a pill/button with the warm "
+                        f"card token #fdf8f0. Pills/buttons are white — #fdf8f0 is for cards only."
+                    )
+
+    for css_path in css_files:
+        if css_path.exists():
+            scan_css(css_path.read_text(encoding="utf-8", errors="replace"), f"assets/{css_path.name}")
+
+    for f in fails:
+        report.fail(f"check_no_beige_pill_button: {f}")
+    if not fails:
+        report.ok("Beige pill/button: no cream backgrounds on pills/buttons (white #ffffff standard holds)")
+
+
 def check_pill_link_underline(report: "Report") -> None:
     """HARD-FAIL if any boxed pill / button-style link can render a text underline.
 
@@ -5610,6 +5722,7 @@ def main(argv: list[str]) -> int:
     check_mobile_design_system(report)                  # HARD-FAILS if the shared mobile CSS design system (mobile.css + guides-index-style.css) loses a locked invariant — no-overflow guards, banner 14px, Form A pill, Form B glued tiles, 48px search (added 2026-07-11)
     check_stop_row_rhythm(report)                       # HARD-FAILS if guide-style.css loses the stop-block vertical rhythm — ↳ row 6px, wiki row 4px/8px, box rows 6px, box→photo 8px, end-of-day banner 12px (added 2026-07-12)
     check_active_pill_color(report)                     # fails if any page uses gold (#8a6c1a / --accent) as background on active/hover/on/selected states — terracotta only (added 2026-07-07)
+    check_no_beige_pill_button(report)                  # HARD-FAILS if any pill/button uses a beige/cream background — pills are white #ffffff, #fdf8f0 warm token is for cards only (added 2026-07-13)
     check_pill_hover_behavior(report)                   # fails if any pill/button :hover or .active/.on/.selected state uses a non-approved background or border (added 2026-07-07)
     check_pill_link_underline(report)                   # fails if any boxed pill/button link can render a text underline (shared neutralizer intact; no boxed-link class sets underline) (added 2026-07-10)
     check_trusted_traveler_integrity(report)            # fails if Trusted-Traveler.html is missing required filter pills, apt-row data attributes, program cards, or intl section (added 2026-07-07)
