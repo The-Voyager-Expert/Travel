@@ -59,3 +59,13 @@
 *No other change: UAE (Abu Dhabi, Dubai) confirmed still Level 3. No other guide country appears in the current State Dept L3/L4 lists. 17 L2 guide countries spot-checked and accurate.*
 
 ---
+
+## 💉 Vaccines Audit — July 2026
+
+*Auto-audit run 2026-07-14. Checked `Vaccines.html` against CDC Yellow Book 2026 + current WHO/CDC entry-requirement guidance. One change found and **applied + pushed live** same run (already in `origin/main`):*
+
+<!-- Resolved 2026-07-14: "Yellow Fever — East Africa card overstated blanket entry requirements." Card said YF is "Required for entry to Uganda, Rwanda, Tanzania, and Ethiopia." Per current WHO/CDC only Uganda requires it from ALL travelers (age 9mo+, any origin); Rwanda, Tanzania, Ethiopia & Kenya require it only from travelers arriving from / transiting 12+ hrs through a YF-endemic country. Card rewritten to that effect; old text gone from the live page. Sources: https://www.cdc.gov/yellow-book/hcp/preparing-international-travelers/yellow-fever-vaccine-and-malaria-prevention-information-by-country.html · https://cdn.who.int/media/docs/default-source/travel-and-health/countries-with-risk-of-yellow-fever-transmission.pdf -->
+
+*No other change: YF life-validity / single-dose / certified-clinic-only, Japanese Encephalitis (IXIARO 2-dose, rural + 1mo+), Dengue Qdenga (2023, ages 4–60, all 4 serotypes), and malaria (prescription antimalarials, no traveler vaccine) all confirmed accurate. No page destination newly declared malaria-free. CDC tool `wwwnc.cdc.gov/travel` resolves correctly.*
+
+---
