@@ -2465,6 +2465,134 @@ def check_no_hardcoded_hex_colors(report: "Report") -> None:
         report.ok("hardcoded-hex — no page hardcodes a hex color matching a shared CSS variable.")
 
 
+def check_no_ellipsis_placeholders(report: "Report") -> None:
+    """FAIL when any input placeholder ends with an ellipsis (… U+2026 or three
+    ASCII dots '...'). The site standard is a plain descriptive placeholder with
+    NO trailing ellipsis — set 2026-07-14 after the fleet cleanup that removed
+    'State or city…', 'Country…', 'Guides…', 'Cities…' and the earlier
+    '(optional)…'. Cribs keep pasting '…' onto new search boxes; this pins it.
+    Scans both HTML placeholder="…"/'…' attributes AND JS `.placeholder = "…"`
+    assignments across every shareable page. Claude-maintained — no approval
+    needed (added 2026-07-14)."""
+    hits: list[str] = []
+    ph_attr = re.compile(r'''placeholder\s*=\s*(["'])(.*?)\1''', re.I | re.S)
+    ph_js   = re.compile(r'''\.placeholder\s*=\s*(["'])(.*?)\1''', re.S)
+    for page in _shareable_pages():
+        try:
+            text = page.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        rel = page.relative_to(WEB_ROOT)
+        for rx in (ph_attr, ph_js):
+            for m in rx.finditer(text):
+                val = m.group(2).rstrip()
+                if val.endswith("…") or val.endswith("..."):
+                    hits.append(f"{rel}: placeholder \"{m.group(2)}\" ends with an ellipsis — drop it")
+    if hits:
+        for h in hits:
+            report.fail(f"[no-ellipsis-placeholder] {h}")
+    else:
+        report.ok("no-ellipsis-placeholder — every input placeholder is plain (no trailing '…').")
+
+
+def check_search_icon_not_overridden(report: "Report") -> None:
+    """FAIL when a search box's own CSS paints an OPAQUE background without
+    re-including the shared magnifier (var(--search-icon)) — the exact drift that
+    stripped the search icon off 9 Trip-Essentials pages (fixed 2026-07-13,
+    consolidated to the shared --search-icon variable in web-travel-style.css).
+    The icon now ships from the shared input[type=search]/input[type=text] rule;
+    a page must not paint over it.
+
+    SPECIFICITY-AWARE: only selectors that actually WIN over the shared
+    attribute rule can hide the icon, so only those are checked — #…search IDs
+    (specificity beats the shared rule), `.cmp-input` (its inputs carry no
+    `type` attribute, so the shared `input[type=…]` rule never matches them),
+    `input.search`, and `.pkl-search-box input` (both tie the shared rule and
+    win on source order). A bare `.search-input`/`.search-box` class is NOT
+    checked: the shared `input[type=search]` rule out-specifies it, so its
+    background never hides the icon (proven on Guide-Days-Coverage). Exempt: a
+    background of none/transparent/inherit, or one that itself carries
+    var(--search-icon) or a url() icon. Claude-maintained (added 2026-07-14)."""
+    sel = r'(?:#[a-z-]*search[a-z-]*|\.cmp-input|input\.search|\.pkl-search-box\s+input)'
+    # Base rule only (selector immediately before `{`) — a pseudo like
+    # ::-webkit-search-cancel-button or ::placeholder puts `::` before the brace,
+    # so it never matches here (the ✕ button is a different element, checked by
+    # check_search_clear_button_gold).
+    block_re = re.compile(sel + r'\s*\{([^}]*)\}', re.I | re.S)
+    bg_re = re.compile(r'(?<![a-z-])background(?:-color)?\s*:\s*([^;]+)', re.I)
+    hits: list[str] = []
+    for page in _shareable_pages():
+        try:
+            text = page.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        rel = page.relative_to(WEB_ROOT)
+        for sb in re.findall(r'<style[^>]*>(.*?)</style>', text, re.S | re.I):
+            for bm in block_re.finditer(sb):
+                for m in bg_re.finditer(bm.group(1)):
+                    val = m.group(1).strip().lower()
+                    if "search-icon" in val or "url(" in val:
+                        continue  # background carries an icon — fine
+                    if val.startswith(("none", "transparent", "inherit", "initial", "unset")):
+                        continue
+                    hits.append(
+                        f"{rel}: search box sets background:{m.group(1).strip()} "
+                        "without var(--search-icon) — hides the shared magnifier "
+                        "(drop the background, or include var(--search-icon))"
+                    )
+    if hits:
+        for h in hits:
+            report.fail(f"[search-icon-override] {h}")
+    else:
+        report.ok("search-icon-override — no search box paints over the shared magnifier icon.")
+
+
+def check_search_clear_button_gold(report: "Report") -> None:
+    """FAIL when a search box's clear ✕ (::-webkit-search-cancel-button) is
+    recolored to anything but gold. The site standard is a gold ✕
+    (background-color: var(--accent) / #8a6c1a), shipped site-wide from the
+    shared rule in web-travel-style.css (added 2026-07-14) that overrides the
+    browser's default blue macOS cancel button. A page that re-styles the
+    cancel button must keep it gold. Scans shareable pages AND the shared
+    stylesheet. Claude-maintained (added 2026-07-14)."""
+    rule_re = re.compile(
+        r'::-webkit-search-cancel-button\s*\{([^}]*)\}', re.I | re.S
+    )
+    bgc_re = re.compile(r'(?<![a-z-])background(?:-color)?\s*:\s*([^;]+)', re.I)
+    GOLD_OK = ("var(--accent)", "#8a6c1a")
+    targets = list(_shareable_pages())
+    shared_css = WEB_ROOT / "assets" / "web-travel-style.css"
+    if shared_css.exists():
+        targets.append(shared_css)
+    hits: list[str] = []
+    for page in targets:
+        try:
+            text = page.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        rel = page.relative_to(WEB_ROOT)
+        blocks = (re.findall(r'<style[^>]*>(.*?)</style>', text, re.S | re.I)
+                  if page.suffix.lower() == ".html" else [text])
+        for sb in blocks:
+            for rm in rule_re.finditer(sb):
+                body = rm.group(1)
+                bgm = bgc_re.search(body)
+                if not bgm:
+                    continue  # no explicit color set — inherits the shared gold
+                val = bgm.group(1).strip().lower()
+                # strip mask/no-repeat noise; we only care about the paint color
+                if not any(g in val for g in GOLD_OK):
+                    hits.append(
+                        f"{rel}: search clear ✕ background is '{bgm.group(1).strip()}' "
+                        "— must be gold var(--accent)"
+                    )
+    if hits:
+        for h in hits:
+            report.fail(f"[search-clear-gold] {h}")
+    else:
+        report.ok("search-clear-gold — every search clear ✕ override is gold var(--accent).")
+
+
 def check_page_filename_spaces(report: "Report") -> None:
     """FAIL on any published page filename containing a space. Pages are named
     with hyphens (Currency-Guide.html); a space-named twin (`Currency Guide.html`)
@@ -5730,6 +5858,9 @@ def main(argv: list[str]) -> int:
     check_story_pages(report)                           # fails if any {city}-read-about.html companion page is missing required structure or uses wrong stylesheet (added 2026-07-09)
     check_css_duplication_summary(report)               # warns if check_css_duplication.py finds >10 duplicated selectors — SHARED CSS ONLY rule (added 2026-07-10)
     check_no_hardcoded_hex_colors(report)               # warns if a shareable page hardcodes a hex color matching a shared CSS variable (added 2026-07-11)
+    check_no_ellipsis_placeholders(report)              # HARD-FAILS if any input placeholder ends with an ellipsis (… / ...) — placeholders are plain descriptive text (added 2026-07-14)
+    check_search_icon_not_overridden(report)            # HARD-FAILS if a search box paints an opaque background without var(--search-icon), hiding the shared magnifier (added 2026-07-14)
+    check_search_clear_button_gold(report)              # HARD-FAILS if a search clear ✕ (::-webkit-search-cancel-button) is recolored to anything but gold var(--accent) (added 2026-07-14)
 
     # Render output.
 
