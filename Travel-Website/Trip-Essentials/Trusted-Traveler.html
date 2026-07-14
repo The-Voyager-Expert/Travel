@@ -1062,6 +1062,26 @@
       b.classList.toggle('hidden', !anyVisible);
     });
 
+    /* International preclearance section: the GE/CLEAR/EoA pills are US-airport
+       programs and don't apply to preclearance, so pills leave it alone — but the
+       SEARCH filters it too (by row text; these rows carry no data-text). */
+    var intl = document.getElementById('intl-section');
+    if (intl) {
+      var intlVisible = 0;
+      intl.querySelectorAll('.apt-row').forEach(function (r) {
+        var show = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+        r.classList.toggle('hidden', !show);
+        if (show) intlVisible++;
+      });
+      intl.querySelectorAll('.country-block').forEach(function (cb) {
+        var any = false;
+        cb.querySelectorAll('.apt-row').forEach(function (r) { if (!r.classList.contains('hidden')) any = true; });
+        cb.style.display = any ? '' : 'none';
+      });
+      intl.style.display = (q && intlVisible === 0) ? 'none' : '';
+      visible += intlVisible;
+    }
+
     noRes.style.display = visible === 0 ? '' : 'none';
   }
 
