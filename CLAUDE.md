@@ -349,3 +349,22 @@ Two environments, same Drive workspace:
 | `push_queue.py` | Serializes a single scoped `git push` via a lock file — the fallback path when `publish_queue.py`'s drain can't complete this pass |
 | `guide_surfaces.py` | Insert-if-absent appliers used by `publish_queue.py` to re-apply each queued city's card/pin/data entries onto the shared root surfaces without clobbering a neighbouring crib's concurrent additions |
 | `crib_safety.py` | Per-guide build lease (`init` claims `Guides/<City>/_build/.lease`, `ship` releases) + `atomic_write` (used by the publisher and all builders so no reader ever sees a half-written page). Check `python3 Brain/scripts/crib_safety.py owned-by-other <Guides/City>` before touching a guide you did not build |
+| `guide_read_gate.py` | PreToolUse hook — blocks the first write to any `Guides/<City>/*.html` until this session's tool history proves the Phase 0–2 `Read` calls happened (makes the reads un-skippable). Wired in `Travel/.claude/settings.json` |
+| `validate_also_on_site_pills.py` | Standalone backstop for the "Also on this site" block — asserts pill labels + icons match the canonical set/order across all guides (complements `brain_check` + `validate_itinerary` TR-2/4/6) |
+| `validate_pill_standard.py` | Pill/chip/button CSS **sizing** consistency across the whole site (height/padding/radius envelope per pill class) |
+| `validate_toolbar_consistency.py` | Toolbar width/height consistency across all pages — flags a page whose toolbar mount drifts from the shared standard |
+| `validate_climate_countries.py` | Climate-Finder country labels — coverage, CSS spec, and DOM placement of the country chips |
+| `validate_continuity_render.py` | RENDER-level continuity audit — loads pages headless to catch layout/continuity breaks static checks miss |
+| `check_css_duplication.py` | Shared-CSS-only gate — flags CSS duplicated across pages (colors + components that belong in shared CSS). Exit 0 = clean; ship soft-warn. See DriftyCat § SHARED CSS ONLY |
+| `check_no_hardcoded_styles.py` | Enforces shared-CSS rules inside guide HTML — no hardcoded hex colors, no `body{}`/`*{}`/`:root{}` base-style blocks in a page |
+| `batch_validate.py` | Fast static validator sweep across all (or selected) guides — quicker whole-fleet pass than looping `validate_itinerary` by hand |
+| `_run_all_validators.py` | Runs `validate_itinerary.py` on every guide, 10 at a time, with batched progress output |
+| `audit_mobile.py` | On-demand mobile audit across the whole site (static + layout heuristics) |
+| `audit_photos.py` | Fleet-wide photo-authenticity audit — tiered summary of guide photos against the provenance rules |
+| `daily_audit.py` | Rolling guide-audit queue — runs the day's batch of guides through the audit checks |
+| `photo_provenance.py` | Shared photo-authenticity helpers / provenance manifest used by guide builds |
+| `mobile_shot.py` | True mobile-viewport screenshot + horizontal-overflow report (Playwright emulation; `--window-size` alone lies) |
+| `build_status_dots.py` | Regenerates the Status Dots checklist master list (`Brain/Reference/Status Dots — guides_index.md`) from `Guides-Index.html` |
+| `build_showcase_cards.py` | Deterministic HTML generator for the Best-of SHOWCASE cards from a JSON entry file (each entry carries name/tag/desc/links) |
+| `build_visualizer_manifest.py` | Regenerates the guide/page list embedded in the visualizer manifest |
+| `build_day_tool.py` | Regenerates the "Guide Day Building Tool" artifact HTML |
