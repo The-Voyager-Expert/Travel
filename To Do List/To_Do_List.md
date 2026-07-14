@@ -69,3 +69,14 @@
 *No other change: YF life-validity / single-dose / certified-clinic-only, Japanese Encephalitis (IXIARO 2-dose, rural + 1mo+), Dengue Qdenga (2023, ages 4–60, all 4 serotypes), and malaria (prescription antimalarials, no traveler vaccine) all confirmed accurate. No page destination newly declared malaria-free. CDC tool `wwwnc.cdc.gov/travel` resolves correctly.*
 
 ---
+
+## ✈️ Delta Routes Audit — July 2026
+
+*Auto-audit run 2026-07-06. All SEA nonstop routes on `Delta-Routes-SEA.html` confirmed accurate against current Delta / Port of Seattle sources — no corrections needed, nothing pushed. Both pages' "Updated June 2026" stamp remains valid.*
+
+- ✅ **Verified accurate — SEA–BCN & SEA–FCO (New May 2026 · Seasonal):** FCO 4x weekly (May 6–Oct 23, 2026), BCN 3x weekly (May 7–Oct 22, 2026), both A330-900neo. Currently in-season; the "Seasonal (May–Oct 2026)" note is correct. Sources: https://www.portseattle.org/news/lets-add-two-sea-welcomes-new-delta-air-lines-international-services-rome-italy-and-barcelona · https://onemileatatime.com/news/delta-seattle-barcelona-rome-flights/
+- ✅ **Verified accurate — SEA–Asia nonstops (ICN · PVG · TPE · HND) + SEA–AMS · LHR · CDG:** all still operating as listed. No new SEA nonstop international routes announced for 2027. Source: https://www.delta.com/us/en/flight-deals/asia-flights
+- ℹ️ **Next-audit heads-up — revisit seasonal tags after Oct 2026:** SEA–BCN and SEA–FCO end their 2026 season Oct 22–23. Next run, check whether Delta re-filed them for summer 2027 (keep the tag) or dropped them (remove).
+- ℹ️ **Not a page issue — SEA Mexico/Caribbean leisure suspensions:** Delta suspended SEA–CUN (Jun 2–Nov 8, 2026) and SEA–SJD / SEA–PVR (Oct 6–Nov 8, 2026) on high fuel costs. The SEA page lists no SEA→Latin America nonstop (routes all via ATL/JFK/SLC), so no correction required. Source: https://simpleflying.com/delta-air-lines-suspends-5-summer-seasonal-routes-high-oil-prices/
+
+---
