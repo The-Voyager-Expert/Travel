@@ -128,6 +128,10 @@
   <div class="page-header">
     <h1>Entry Requirements</h1>
   </div>
+  <div style="display:flex;justify-content:center;margin:35px 0 18px;">
+    <input type="search" id="er-search" placeholder="Country or system" aria-label="Search entry requirements by country or system" autocomplete="off" spellcheck="false">
+  </div>
+  <div id="er-noresult" style="display:none;text-align:center;color:var(--muted);font-size:14px;padding:10px 0;">No entry requirements match your search.</div>
   <p class="page-desc">Pre-entry authorizations and e-visas for US passport holders. Countries requiring a full visa application are on the <a href="Visas.html">Visas</a> page.</p>
 
   <div class="alert-banner">
@@ -386,6 +390,37 @@
 
 </div><!-- /.wrap -->
 
+<script>
+(function () {
+  var inp = document.getElementById('er-search');
+  var noRes = document.getElementById('er-noresult');
+  if (!inp) return;
+  var cards = [].slice.call(document.querySelectorAll('.system-card, .vf-card'));
+  // Group each section-head with the cards that follow it (DOM order), to hide empty sections.
+  var groups = [], cur = null;
+  [].slice.call(document.querySelectorAll('.section-head, .system-card, .vf-card')).forEach(function (el) {
+    if (el.classList.contains('section-head')) { cur = { head: el, cards: [] }; groups.push(cur); }
+    else if (cur) { cur.cards.push(el); }
+  });
+  function expand(s) {
+    return s.replace(/\buk\b/g, 'uk united kingdom').replace(/\busa\b/g, 'usa united states').replace(/\buae\b/g, 'uae united arab emirates');
+  }
+  inp.addEventListener('input', function () {
+    var q = inp.value.trim().toLowerCase();
+    var anyVisible = 0;
+    cards.forEach(function (c) {
+      var show = !q || expand(c.textContent.toLowerCase()).indexOf(q) >= 0;
+      c.style.display = show ? '' : 'none';
+      if (show && q) anyVisible++;
+    });
+    groups.forEach(function (g) {
+      var vis = g.cards.some(function (c) { return c.style.display !== 'none'; });
+      g.head.style.display = (q && !vis) ? 'none' : '';
+    });
+    if (noRes) noRes.style.display = (q && anyVisible === 0) ? '' : 'none';
+  });
+})();
+</script>
 <script src="../assets/toolbar.js?v=102"></script>
 </body>
 </html>
