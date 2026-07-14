@@ -503,27 +503,21 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
           '<a href="Travel-Insurance.html" class="byg-link">🛟 Travel insurance</a>' +
           '</div></div>';
       }
-      // Cost & Currency card (col 2, below Safety)
-      if (costData) {
-        var COUNTRY_CURRENCY = {'United States':'United_States','United Arab Emirates':'United_Arab_Emirates','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Sint_Maarten','Turks & Caicos':'Turks_and_Caicos','Cayman Islands':'Cayman_Islands','French Polynesia':'French_Polynesia'};
-        var currAnchor = country ? (COUNTRY_CURRENCY[country] || country.replace(/ /g,'_')) : '';
-        var currHref = 'Currency-Guide.html' + (currAnchor ? '#' + currAnchor : '');
-        var rateInfo = currAnchor ? CURRENCY_RATES[currAnchor] : null;
-        var rateHtml = '';
-        if (rateInfo && rateInfo.r !== 1) {
-          var r = rateInfo.r, sym = rateInfo.s;
-          var fmtRate = r >= 100 ? Math.round(r).toLocaleString() : r >= 10 ? r.toFixed(1) : r >= 1 ? r.toFixed(2) : r.toFixed(3);
-          rateHtml = '<div class="byg-row"><span class="byg-row-label">1 USD =</span><span class="byg-row-value" style="font-weight:700;">' + fmtRate + ' ' + sym + '</span></div>';
-        }
-        html += '<div class="byg-card byg-card-fixed-sm">' +
-          '<div class="byg-card-head"><span class="byg-card-icon">💰</span><span class="byg-card-title">Cost &amp; Currency</span></div>' +
-          '<div class="byg-row"><span class="byg-row-label">Cost level</span><span class="byg-cost-badge ' + costClass(costData.tier) + '">' + costData.tier + '</span></div>' +
-          '<div class="byg-row"><span class="byg-row-label">Currency</span><span class="byg-row-value">' + costData.currency + '</span></div>' +
-          rateHtml +
-          '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">All currencies →</a></div>' +
-          '</div>';
+      // Essentials card (col 2, below Safety)
+      function prepTile(icon, label, href) {
+        return '<a href="' + href + '" class="byg-prep-tile">' +
+          '<span class="byg-prep-tile-icon">' + icon + '</span>' +
+          '<span class="byg-prep-tile-label">' + label + '</span></a>';
       }
-      // Visa & Entry card (col 2, below Cost & Currency)
+      html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">📋</span><span class="byg-card-title">Essentials</span></div>' +
+        '<div class="byg-prep-grid">';
+      html += prepTile('👕', 'Packing', 'Travel-Packing.html');
+      if (statsLink) { html += prepTile('📊', 'Stats', statsLink); }
+      if (loungeLink) { html += prepTile('💻', 'Lounges', loungeLink); }
+      if (isEurope) { html += prepTile('🚆', 'EU Trains', 'European-Train-Guide.html'); }
+      html += '</div></div>';
+
+      // Visa & Entry card (col 2, below Essentials)
       var visaInfo = country ? VISA_DATA[country] : null;
       html += '</div>'; // end col 2 stack
 
@@ -560,23 +554,31 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
           '<a href="' + plugHref + '" class="byg-link" style="margin-top:0;">View plug guide →</a></div></div>';
       }
 
-      // Col 3: Essentials + Visa & Entry stacked
-      function prepTile(icon, label, href) {
-        return '<a href="' + href + '" class="byg-prep-tile">' +
-          '<span class="byg-prep-tile-icon">' + icon + '</span>' +
-          '<span class="byg-prep-tile-label">' + label + '</span></a>';
-      }
+      // Col 3: Cost & Currency + Visa & Entry stacked
       html += '<div class="byg-col-stack">';
-      html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">📋</span><span class="byg-card-title">Essentials</span></div>' +
-        '<div class="byg-prep-grid">';
-      html += prepTile('👕', 'Packing', 'Travel-Packing.html');
 
-      if (statsLink) { html += prepTile('📊', 'Stats', statsLink); }
-      if (loungeLink) { html += prepTile('💻', 'Lounges', loungeLink); }
-      if (isEurope) { html += prepTile('🚆', 'EU Trains', 'European-Train-Guide.html'); }
-      html += '</div></div>';
+      // Cost & Currency card (col 3, top)
+      if (costData) {
+        var COUNTRY_CURRENCY = {'United States':'United_States','United Arab Emirates':'United_Arab_Emirates','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Sint_Maarten','Turks & Caicos':'Turks_and_Caicos','Cayman Islands':'Cayman_Islands','French Polynesia':'French_Polynesia'};
+        var currAnchor = country ? (COUNTRY_CURRENCY[country] || country.replace(/ /g,'_')) : '';
+        var currHref = 'Currency-Guide.html' + (currAnchor ? '#' + currAnchor : '');
+        var rateInfo = currAnchor ? CURRENCY_RATES[currAnchor] : null;
+        var rateHtml = '';
+        if (rateInfo && rateInfo.r !== 1) {
+          var r = rateInfo.r, sym = rateInfo.s;
+          var fmtRate = r >= 100 ? Math.round(r).toLocaleString() : r >= 10 ? r.toFixed(1) : r >= 1 ? r.toFixed(2) : r.toFixed(3);
+          rateHtml = '<div class="byg-row"><span class="byg-row-label">1 USD =</span><span class="byg-row-value" style="font-weight:700;">' + fmtRate + ' ' + sym + '</span></div>';
+        }
+        html += '<div class="byg-card byg-card-fixed-sm">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">💰</span><span class="byg-card-title">Cost &amp; Currency</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Cost level</span><span class="byg-cost-badge ' + costClass(costData.tier) + '">' + costData.tier + '</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Currency</span><span class="byg-row-value">' + costData.currency + '</span></div>' +
+          rateHtml +
+          '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">All currencies →</a></div>' +
+          '</div>';
+      }
 
-      // Visa & Entry card (col 3, below Essentials)
+      // Visa & Entry card (col 3, below Cost & Currency)
       if (visaInfo) {
         var visaTypeLabels = {"domestic":"Domestic","visa-free":"Visa-free","arrival-card":"Arrival Card","eta":"ETA Required","evisa":"eVisa Required","voa":"Visa on Arrival","visa-required":"Visa Required"};
         var visaTypeCss = {"domestic":"byg-visa-domestic","visa-free":"byg-visa-free","arrival-card":"byg-visa-card","eta":"byg-visa-eta","evisa":"byg-visa-evisa","voa":"byg-visa-voa","visa-required":"byg-visa-required"};
