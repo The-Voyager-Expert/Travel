@@ -34,14 +34,23 @@
     var items = (opts.items || []).slice();
     var minChars = opts.minChars || 1;
     var limit = opts.limit || 60;
-    var onPick = opts.onPick || function (it) { if (it && it.href) window.location.href = it.href; };
+    // Default pick behavior: guides navigate (item.href); filter pages (no href)
+    // set the input value + fire a native 'input' event so the page's own filter
+    // runs — one line to wire a "type → dropdown → pick → filter" search.
+    var onPick = opts.onPick || function (it) {
+      if (it && it.href) { window.location.href = it.href; return; }
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    // Match on name OR sub OR an optional free-text field `text` (e.g. an airport
+    // code + city + state string) so a search can match more than what it shows.
     var match = opts.match || function (it, q) {
-      return it._n.indexOf(q) >= 0 || (it._s && it._s.indexOf(q) >= 0);
+      return it._n.indexOf(q) >= 0 || (it._s && it._s.indexOf(q) >= 0) || (it._t && it._t.indexOf(q) >= 0);
     };
 
     items.forEach(function (it) {
       it._n = String(it.name || '').toLowerCase();
       it._s = String(it.sub || '').toLowerCase();
+      it._t = String(it.text || '').toLowerCase();
     });
 
     // Dropdown floats inside the input's wrapper (needs positioning context).
@@ -52,11 +61,13 @@
     dd.hidden = true;
     (wrap || document.body).appendChild(dd);
 
-    var active = -1, cur = [];
+    var active = -1, cur = [], justPicked = false;
 
     function hide() { dd.hidden = true; dd.innerHTML = ''; active = -1; }
 
     function render() {
+      // A pick fires a native 'input' (to run the page filter); don't re-open on it.
+      if (justPicked) { justPicked = false; hide(); return; }
       var q = (input.value || '').trim().toLowerCase();
       if (q.length < minChars) { hide(); return; }
       cur = items.filter(function (it) { return match(it, q); })
@@ -86,6 +97,7 @@
     function pick(i) {
       var it = cur[i];
       if (!it) return;
+      justPicked = true;
       input.value = it.name;
       hide();
       onPick(it);
@@ -112,7 +124,7 @@
 
     return { render: render, hide: hide, setItems: function (list) {
       items = (list || []).slice();
-      items.forEach(function (it) { it._n = String(it.name || '').toLowerCase(); it._s = String(it.sub || '').toLowerCase(); });
+      items.forEach(function (it) { it._n = String(it.name || '').toLowerCase(); it._s = String(it.sub || '').toLowerCase(); it._t = String(it.text || '').toLowerCase(); });
     } };
   }
 
