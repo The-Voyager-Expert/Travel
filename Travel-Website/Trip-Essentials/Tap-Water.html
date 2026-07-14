@@ -321,6 +321,29 @@ function filterStatus(btn, status) {
   countRows();
 })();
 </script>
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('tw-search'); if(!input) return;
+  var items=[], seen={};
+  function add(nm,sub){ nm=(nm||'').replace(/\s+/g,' ').trim(); if(!nm) return; var k=nm.toLowerCase(); if(seen[k]) return; seen[k]=1; items.push({name:nm,sub:sub}); }
+  document.querySelectorAll('.water-row').forEach(function(row){
+    var region=row.querySelector('.wr-region');
+    var status=row.querySelector('.water-status');
+    var rlabel=region?region.textContent.trim():'';
+    var slabel=status?status.textContent.trim():'';
+    if(rlabel) add(rlabel, slabel);
+    var cc=row.querySelector('.wr-countries');
+    if(cc){
+      cc.textContent.replace(/&amp;/g,'&').split('·').forEach(function(part){
+        var nm=part.trim();
+        if(!nm||/major cities/i.test(nm)) return;
+        add(nm, rlabel);
+      });
+    }
+  });
+  TVESearch.attach(input,{items:items});
+}());</script>
 <script src="../assets/toolbar.js?v=102"></script>
 </body>
 </html>

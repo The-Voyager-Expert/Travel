@@ -49,7 +49,7 @@ html { scroll-behavior: smooth; }
     <h1 class="site-title">Budget Guide</h1>
   </div>
   <span class="updated-stamp">Updated June 2026</span>
-  <input id="budget-search" type="search" placeholder="City or country" aria-label="Search by city" autocomplete="off" spellcheck="false">
+  <div class="sa-wrap" style="position:relative;max-width:360px;margin:0 auto;"><input id="budget-search" type="search" placeholder="City or country" aria-label="Search by city" autocomplete="off" spellcheck="false" style="width:100%;box-sizing:border-box;"></div>
   <div id="budget-noresult">No city matches that search.</div>
   <div class="sort-controls">
     <button class="sort-btn" id="sort-asc" title="Sort by total cost: cheapest first">💰 Cheapest First</button>
@@ -345,5 +345,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initSorting();
 });
 </script>
+
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>document.addEventListener('DOMContentLoaded', function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('budget-search');
+  if(!input) return;
+  var items=[].slice.call(document.querySelectorAll('#budget-tbody tr')).map(function(tr){
+    var cell=tr.querySelector('td');
+    return { name:(cell?cell.textContent:'').trim() };
+  }).filter(function(it){ return it.name; });
+  TVESearch.attach(input,{items:items});
+});</script>
 </body>
 </html>

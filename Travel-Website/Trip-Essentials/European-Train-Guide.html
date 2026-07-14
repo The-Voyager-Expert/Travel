@@ -2663,5 +2663,23 @@
   }
 })();
 </script>
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('train-search'); if(!input) return;
+  var items=[];
+  document.querySelectorAll('.train-card').forEach(function(card){
+    var nm=card.querySelector('.train-name');
+    if(!nm) return;
+    var name=nm.textContent.replace(/^[^A-Za-z0-9]+/,'').trim();
+    var op=card.querySelector('.train-operator');
+    var tokens=[op?op.textContent.trim():'', (card.dataset.type||'')];
+    card.querySelectorAll('.ctag').forEach(function(t){ tokens.push(t.textContent.trim()); });
+    var routes=card.querySelector('.routes-list');
+    if(routes) tokens.push(routes.textContent.trim());
+    if(name) items.push({name:name, text:tokens.join(' ')});
+  });
+  TVESearch.attach(input,{items:items});
+}());</script>
 </body>
 </html>

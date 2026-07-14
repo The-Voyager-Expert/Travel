@@ -924,5 +924,26 @@ document.addEventListener('DOMContentLoaded',()=>{
   Object.keys(map).forEach(function(id){var s=document.getElementById(id);if(s)obs.observe(s);});
 })();
 </script>
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>
+(function () {
+  if (!window.TVESearch) return;
+  var input = document.getElementById('lounge-search');
+  if (!input) return;
+  var items = [];
+  document.querySelectorAll('.airport-card').forEach(function (card) {
+    var nameEl = card.querySelector('.airport-name') || card.querySelector('.airport-city');
+    if (!nameEl) return;
+    var codeEl = card.querySelector('.airport-code');
+    var code = codeEl ? codeEl.textContent.trim() : '';
+    var extra = [code];
+    var fullEl = card.querySelector('.airport-full'); if (fullEl) extra.push(fullEl.textContent.trim());
+    var cb = card.closest('.country-block'); if (cb) { var cn = cb.querySelector('.country-name'); if (cn) extra.push(cn.textContent.trim()); }
+    card.querySelectorAll('.lounge-name').forEach(function (l) { extra.push(l.textContent.trim()); });
+    items.push({ name: nameEl.textContent.trim(), sub: code, text: extra.join(' ') });
+  });
+  TVESearch.attach(input, { items: items });
+}());
+</script>
 </body>
 </html>

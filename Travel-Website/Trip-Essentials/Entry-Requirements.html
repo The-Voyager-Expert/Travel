@@ -421,6 +421,42 @@
   });
 })();
 </script>
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('er-search'); if(!input) return;
+  var items=[], seen={};
+  function add(o){ var k=o.name.toLowerCase(); if(!o.name||seen[k]) return; seen[k]=1; items.push(o); }
+  document.querySelectorAll('.system-card').forEach(function(card){
+    var nm=card.querySelector('.system-name'); if(!nm) return;
+    var cs=card.querySelector('.system-countries');
+    add({name:nm.textContent.trim(), sub:'Pre-entry system', text:cs?cs.textContent:'', el:card});
+  });
+  document.querySelectorAll('.evisa-table tbody tr').forEach(function(tr){
+    var dn=tr.querySelector('.dest-name'); if(!dn) return;
+    add({name:dn.textContent.trim(), sub:'e-Visa', el:tr});
+  });
+  document.querySelectorAll('.vf-card').forEach(function(card){
+    var region=card.querySelector('.vf-region');
+    var cities=card.querySelector('.vf-cities'); if(!cities) return;
+    var rlabel=region?region.textContent.trim():'Visa-free';
+    cities.textContent.replace(/\([^)]*\)/g,'').split('·').forEach(function(part){
+      var nm=part.trim(); if(!nm) return;
+      add({name:nm, sub:rlabel, el:card});
+    });
+  });
+  TVESearch.attach(input,{items:items, onPick:function(it){
+    input.value=it.name;
+    if(it.el && it.el.closest && it.el.closest('.evisa-wrap')){
+      input.value=''; input.dispatchEvent(new Event('input',{bubbles:true}));
+      it.el.scrollIntoView({block:'center'});
+      input.value=it.name;
+    } else {
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+      if(it.el) it.el.scrollIntoView({block:'center'});
+    }
+  }});
+}());</script>
 <script src="../assets/toolbar.js?v=102"></script>
 </body>
 </html>

@@ -439,6 +439,26 @@ searchInput.addEventListener('input', function() {
   }).join('');
 });
 </script>
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('vc-search'); if(!input) return;
+  var all=window.ALL_SEARCH||[];
+  var blob=all.map(function(r){return (r.name+' '+r.dest+' '+r.note);}).join(' ').toLowerCase();
+  var items=[], seen={};
+  function add(nm,sub){ nm=(nm||'').trim(); if(!nm) return; var k=nm.toLowerCase(); if(seen[k]) return; seen[k]=1; items.push({name:nm,sub:sub}); }
+  all.forEach(function(r){ add(r.name, r.dest); });
+  var regs=window.REGIONS||{};
+  Object.keys(regs).forEach(function(k){
+    var r=regs[k];
+    if(r.label && blob.indexOf(r.label.toLowerCase())>=0) add(r.label,'Destination');
+    (r.countries||'').split(/[,·]/).forEach(function(part){
+      var nm=part.replace(/\([^)]*\)/g,'').replace(/\band\b.*/i,'').trim();
+      if(nm && nm.length>2 && blob.indexOf(nm.toLowerCase())>=0) add(nm,'Destination');
+    });
+  });
+  TVESearch.attach(input,{items:items});
+}());</script>
 <script src="../assets/toolbar.js?v=102"></script>
 </body>
 </html>

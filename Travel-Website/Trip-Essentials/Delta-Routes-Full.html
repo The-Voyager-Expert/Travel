@@ -70,11 +70,15 @@
 /* hide no-results until an empty search */
 .no-results{display:none;padding:14px 4px;font-size: var(--fs-body,14px);color:#7A5C2E;}
 /* hide chrome when search is active */
-body.is-searching #route-nav,
+body.is-searching #route-nav .nav-links,
 body.is-searching .tier-legend,
 body.is-searching .hub-strength,
 body.is-searching .hub-header,
 body.is-searching .region-header { display:none !important; }
+/* Shared CSS hides the whole #route-nav during search, but the search box (and
+   its autocomplete dropdown) live inside it — keep the bar itself visible and
+   let only the jump links above hide. */
+body.is-searching #route-nav.filter-bar { display:flex !important; }
 /* footnote: drop final block margin so gap is uniform */
 .hub-section:last-child, .hub-section:last-child *:last-child{margin-bottom:0 !important}
 /* clickable tier pills */
@@ -590,7 +594,7 @@ body.is-searching .region-header { display:none !important; }
   var activeTier='';
   function norm(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
   function runFilter(){
-    var q=filterInput?filterInput.value.trim():'',shown=0,active=q||activeTier;
+    var q=norm(filterInput?filterInput.value.trim():''),shown=0,active=q||activeTier;
     document.querySelectorAll('.dest-card').forEach(function(c){
       var match=(!q||norm(c.textContent).indexOf(q)>-1)&&(!activeTier||c.classList.contains(activeTier));
       c.style.display=match?'':'none';
@@ -600,7 +604,7 @@ body.is-searching .region-header { display:none !important; }
     if(noResults)noResults.style.display=noHits?'block':'none';
     var ss=document.getElementById('_search_hide');
     if(!ss){ss=document.createElement('style');ss.id='_search_hide';document.head.appendChild(ss);}
-    ss.textContent=q?'#route-nav,#route-nav *,.tier-legend,.hub-strength,.hub-header,.region-header{display:none!important;visibility:hidden!important}':'';
+    ss.textContent=q?'#route-nav .nav-links,#route-nav .nav-links *,.tier-legend,.hub-strength,.hub-header,.region-header{display:none!important;visibility:hidden!important}':'';
     document.body.classList.toggle('is-searching',!!q);
     var foot=document.querySelector('.tb-footnote');if(foot)foot.style.display=q?'none':'';
     document.querySelectorAll('.dest-grid').forEach(function(g){
@@ -659,5 +663,26 @@ body.is-searching .region-header { display:none !important; }
 })();
 </script>
 
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>
+(function () {
+  if (!window.TVESearch) return;
+  var input = document.getElementById('destFilter');
+  if (!input) return;
+  var items = [], seen = {};
+  document.querySelectorAll('.dest-card,.us-card').forEach(function (c) {
+    var cityEl = c.querySelector('.dest-city,.us-city');
+    if (!cityEl) return;
+    var codeEl = c.querySelector('.dest-code,.us-code');
+    var name = cityEl.textContent.trim();
+    var sub = codeEl ? codeEl.textContent.trim() : '';
+    var key = (name + '|' + sub).toLowerCase();
+    if (seen[key]) return;
+    seen[key] = 1;
+    items.push({ name: name, sub: sub });
+  });
+  TVESearch.attach(input, { items: items });
+}());
+</script>
 </body>
 </html>

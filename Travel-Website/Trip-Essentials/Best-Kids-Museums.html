@@ -1138,5 +1138,50 @@
 }());
 
 </script>
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('best-of-search'); if(!input) return;
+  var items=[];
+  document.querySelectorAll('.showcase-card').forEach(function(c){
+    var n=c.querySelector('.showcase-name'), t=c.querySelector('.showcase-tag');
+    if(n&&n.textContent.trim()) items.push({name:n.textContent.trim(), sub:t?t.textContent.trim():''});
+  });
+  if(!items.length){
+    document.querySelectorAll('.best-of-card').forEach(function(c){
+      var n=c.querySelector('.best-of-name'), t=c.querySelector('.best-of-tag'), a=c.querySelector('a[href]');
+      if(n&&n.textContent.trim()) items.push({name:n.textContent.trim(), sub:t?t.textContent.trim():'', href:a?a.getAttribute('href'):''});
+    });
+  }
+  function filterTo(q){
+    q=(q||'').toLowerCase();
+    document.querySelectorAll('.showcase-card').forEach(function(c){
+      var nm=((c.querySelector('.showcase-name')||{}).textContent||'').toLowerCase();
+      var tg=((c.querySelector('.showcase-tag')||{}).textContent||'').toLowerCase();
+      c.style.display=(!q||nm.indexOf(q)!==-1||tg.indexOf(q)!==-1)?'':'none';
+    });
+    document.querySelectorAll('.best-of-section-label').forEach(function(l){
+      var nx=l.nextElementSibling, has=false;
+      while(nx && !nx.classList.contains('best-of-section-label')){
+        if(nx.classList.contains('showcase-card') && nx.style.display!=='none'){has=true;break;}
+        nx=nx.nextElementSibling;
+      }
+      l.style.display=has?'':'none';
+    });
+    document.querySelectorAll('.best-of-subsection-label').forEach(function(sl){
+      var nx=sl.nextElementSibling, has=false;
+      while(nx && !nx.classList.contains('best-of-section-label') && !nx.classList.contains('best-of-subsection-label')){
+        if(nx.classList.contains('showcase-card') && nx.style.display!=='none'){has=true;break;}
+        nx=nx.nextElementSibling;
+      }
+      sl.style.display=has?'':'none';
+    });
+  }
+  TVESearch.attach(input,{items:items, onPick:function(it){
+    if(it.href){ window.location.href=it.href; return; }
+    input.value=it.name;
+    filterTo(it.name);
+  }});
+}());</script>
 </body>
 </html>
