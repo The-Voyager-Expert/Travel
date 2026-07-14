@@ -49,3 +49,13 @@
 - ℹ️ **ATL — Delta One Lounge "in the works":** A Delta One Lounge is planned for ATL but not yet open. Watch for an opening date. Source: https://www.cnn.com/cnn-underscored/travel/delta-sky-club-lounges
 
 ---
+
+## 🛡️ Safety Guide Audit — July 2026
+
+*Auto-audit run 2026-07-06. State Dept advisory levels re-checked for all guide countries (L3/L4 priority + full main-list scan). One change found and **applied** same run:*
+
+<!-- Resolved 2026-07-14: "Qatar — level changed L1 → L3." travel.state.gov shows Qatar at Level 3 "Reconsider Travel" (updated 2026-03-02, drone/missile threat after US–Iran hostilities). Applied: safety_levels.json Doha L1→L3; build_safety_guide.py banner extended to cover UAE & Qatar; Safety-Guide.html rebuilt (L3 now ×3: Abu Dhabi, Dubai, Doha); validate_safety_guide.py OK; brain_check 111/111. Guides-Index card safety (crime-risk scale, separate metric) correctly unchanged. Source: https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/qatar-travel-advisory.html -->
+
+*No other change: UAE (Abu Dhabi, Dubai) confirmed still Level 3. No other guide country appears in the current State Dept L3/L4 lists. 17 L2 guide countries spot-checked and accurate.*
+
+---

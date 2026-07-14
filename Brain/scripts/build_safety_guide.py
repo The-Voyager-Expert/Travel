@@ -269,7 +269,7 @@ a.city-row.hidden { display: none; }
   </div>
 
   <div class="note">
-    <strong>⚠️ UAE — Level 3 as of July 2026.</strong> The State Dept issued a Level 3 "Reconsider Travel" advisory for the UAE citing the threat of drone and missile attacks and ordered non-emergency US government personnel to leave. Monitor <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/united-arab-emirates-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">the advisory</a> closely before any travel to Abu Dhabi or Dubai.
+    <strong>⚠️ UAE &amp; Qatar — Level 3 as of July 2026.</strong> The State Dept issued Level 3 "Reconsider Travel" advisories for both the UAE and Qatar citing the threat of drone and missile attacks following US–Iran hostilities, and ordered non-emergency US government personnel to leave. Monitor the advisories for <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/united-arab-emirates-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">the UAE</a> and <a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/qatar-travel-advisory.html" target="_blank" rel="noopener" style="color:#9b2020">Qatar</a> closely before any travel to Abu Dhabi, Dubai, or Doha.
   </div>
   <p id="no-results">No cities match your search.</p>
 
