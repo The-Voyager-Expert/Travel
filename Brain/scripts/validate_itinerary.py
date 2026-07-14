@@ -4,7 +4,8 @@ Itinerary HTML Validator (static checks — no network).
 
 Enforces hygiene and format rules from `Travel/CLAUDE.md` (the operational
 spine) plus the locked content rules in `Brain/CORE RULES/*.html`. Structural
-contract for the HTML lives in comments in `Brain/Reference/Guide Style.css`.
+contract for the HTML lives in `Brain/CORE RULES/Guide Structure.html`;
+shared CSS is `Travel-Website/assets/guide-style.css`.
 
 ⚠️  STANDING ORDER — VALIDATOR CHECK BEFORE GUIDE FIX (2026-05-08, Dani)
     When ANY violation is found in a guide:
@@ -81,6 +82,7 @@ CHANGELOG = [
      "on the affected guides after re-applying. If either fix (or this check) goes missing "
      "again, treat it as the same class of regression — see the inline comments at each site "
      "for the full incident notes."),
+    ("2026-07-14", "DEEP AUDIT + 2 ENFORCEMENT GAPS CLOSED. (1) CLAUDE INSPIRATION SECTION PRESENCE NOW HARD-GATED — the 2026-07-12 rule making the Claude Inspiration section mandatory on every guide was documented in CLAUDE.md but the validator code was never updated: all CI checks were inside `if ci_section_m:` so absence caused a silent pass. Added an unconditional check() call BEFORE `if ci_section_m:` that hard-fails when no <div class=\"claude-inspiration\"> is found. Rule authority: Claude Inspiration - Extra Section.html §1 (mandatory 2026-07-12). (2) ✨ CLAUDE INSPIRATION OVERVIEW PILL NOW REQUIRED WHEN SECTION EXISTS — the accompanying Trip Overview pill was previously documented as 'Pill remains OPTIONAL'. Replaced the stale comment block with a conditional enforcement: when a CI section exists, its id must appear in the gel row (the same set the unconditional TR-5 orphan-link check uses). Hard-fails if the pill is absent. Rule authority: Trip Overview.html §3. (3) DOCSTRING CORRECTED — 'contract for the HTML lives in comments in Brain/Reference/Guide Style.css' replaced with 'contract for the HTML lives in Brain/CORE RULES/Guide Structure.html; shared CSS is Travel-Website/assets/guide-style.css' (Guide Style.css was retired 2026-06-21; the style source-of-truth is now guide-style.css in Travel-Website/assets/). Validator-only changes; no guide HTML edited."),
     ("2026-07-12", "WEEKLY CLOSURES — BOLD BANNED (Dani-requested format change), re-applied after a concurrent-edit collision wiped this change from disk (2nd write). Weekly Closures - Extra Section.html § 2 changed: entries are now plain text — the <strong> wrap on the category name is retired; no word in an entry (category or weekday) may be bold. Check B (entry format) no longer requires a <strong> wrap on the category. Check C — formerly 'exactly one <strong>, wrapping the category only' — is now a hard-fail on ANY <strong>/<b> tag inside a .stop-row entry. Five downstream category-text extractors that previously parsed <strong> and `continue`d (skipped) an entry when it found none — duplicate-venue check, generic-category-vs-venue check, the possible-venue warn, WC-X4 title-case, WC-X5 trailing-punctuation — switched to splitting the plain text on ' · Closed' instead. Check-only per Dani's explicit instruction for the rule/validator change; the 168 already-bold guides were separately fixed in place (mechanical, no re-validation run at the time). WC-X19 companion check added same pass: negative-finding line ('.extras-empty') must also not be bold — fleet scan found 0/51 negative-finding-only guides currently bold there, so no guide fix was needed for that half."),
     ("2026-07-12", "CLAUDE INSPIRATION — colored theme class FORBIDDEN (new hard-fail). The Claude Inspiration section must render with a plain white background. The CSS default (--c-card-bg: #fff) already provides white when no theme modifier is present. Any theme-{color} class (theme-teal, theme-coral, theme-sage, etc.) overrides --ci-bg with a tinted color, which is not permitted. The T_NEW5 check (formerly 'valid color token') now hard-fails when any theme-{color} class is present on the outer div. Correct format: class=\"claude-inspiration\" with no theme modifier. Rule authority: Claude Inspiration - Extra Section.html §2."),
     ("2026-07-12", "GETTING AROUND — RIDE-APP LINK TEXT MUST BE A DOMAIN (new hard-fail, added 2026-07-12). The Getting Around - Extra Section.html §1b format '[Ride App Operator]' means the visible link text is the operator's domain (uber.com, bolt.eu, lyft.com, etc.), not the app name ('Uber', 'Bolt', 'Lyft'). The prior per-app link-only check (2026-05-24) verified <a href> presence and child-div count but never checked what the <a> text read. This check scans every 🚕 extras-sub → transit-box → <a> in the Getting Around section and hard-fails any <a> whose visible text contains no dot. Fleet impact at introduction: 47 guides affected (amsterdam, arenal, beijing, bergen, berlin, bologna, bordeaux, boston, boulder, buenos-aires, cayman-islands, chongqing, cinque-terre, dubai, florence, geneva, gothenburg, kyoto, lagos, lake-como, lake-tahoe, ljubljana, los-angeles, luxembourg, lyon, madeira, maui, monaco, naples, orlando, oxford, queenstown, rome, salzburg, scottsdale, seoul, sicily, siena, stockholm, taipei, tallinn, toronto, verona, victoria, zhangjiajie + abu-dhabi). Rule authority: Getting Around - Extra Section.html §1b."),
@@ -3068,10 +3070,22 @@ def validate(html: str, filename: str):
     # B — overview link pointing to a non-existent extras section (link → section).
     # Claude Inspiration carries its own class (not extras-section) per
     # Claude Inspiration - Extra Section.html §4, yet Trip Overview.html §3
-    # defines a canonical ✨ pill for it. When the claude-inspiration div
-    # exists, its id is a valid pill target — the jump works, so the pill is
-    # not an orphan. Pill remains OPTIONAL (check A above is untouched, so
-    # guides without the pill keep passing). Aligned 2026-06-06.
+    # defines a canonical ✨ pill for it. The ✨ CI pill is REQUIRED (mandatory
+    # 2026-07-12 — same DriftyCat rule that made the section itself required).
+    # When ci_section_m is set, the guide has the div, so we require the pill.
+    if ci_section_m:
+        _ci_ids_present: set[str] = set(re.findall(
+            r'<div\b[^>]*\bclass\s*=\s*"[^"]*\bclaude-inspiration\b[^"]*"[^>]*\bid\s*=\s*"([^"]+)"',
+            html, re.IGNORECASE,
+        ))
+        _ci_pill_present = bool(_ci_ids_present & _gel_ids)
+        check(
+            'Overview extras bar — ✨ Claude Inspiration pill is REQUIRED '
+            '(mandatory 2026-07-12; Trip Overview.html §3)',
+            _ci_pill_present,
+            'No ✨ Claude Inspiration pill found in overview-extra-link row — '
+            'add the pill linking to the claude-inspiration section',
+        )
     _ci_ids: set[str] = set(re.findall(
         r'<div\b[^>]*\bclass\s*=\s*"[^"]*\bclaude-inspiration\b[^"]*"[^>]*\bid\s*=\s*"([^"]+)"',
         html, re.IGNORECASE,
@@ -23433,6 +23447,14 @@ def validate(html: str, filename: str):
     ci_section_m = re.search(
         r'<div\b[^>]*class\s*=\s*"[^"]*\bclaude-inspiration\b[^"]*"[^>]*>(.*?)(?=<div\b[^>]*\bclaude-inspiration\b|<div\b[^>]*\bextras-section\b|</body>)',
         html, re.IGNORECASE | re.DOTALL,
+    )
+
+    check(
+        '💡 Claude Inspiration — section is REQUIRED on every guide '
+        '(mandatory 2026-07-12; Claude Inspiration - Extra Section.html §1)',
+        ci_section_m is not None,
+        'No <div class="claude-inspiration"> found — every guide must ship a '
+        'Claude Inspiration section (no negative-finding line accepted)',
     )
 
     if ci_section_m:

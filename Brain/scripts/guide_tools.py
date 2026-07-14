@@ -2764,6 +2764,13 @@ def _run_update_index(city: str) -> int:
         fails.append("Step 14: {slug}-read-about.html missing, or not linked both ways")
     print()
 
+    # ── Step 15: Best-of page declaration ──────────────────────────────
+    print("Step 15 — Best-of declaration")
+    rc15 = _check_guide_in_best_of(guide_path)
+    if rc15 != 0:
+        fails.append("Step 15: <!-- best-of: ... --> comment missing or Best-of link broken")
+    print()
+
     # ── Summary ────────────────────────────────────────────────────────────────
     if fails:
         print("─" * 60)
@@ -2774,7 +2781,7 @@ def _run_update_index(city: str) -> int:
         return 1
 
     print("─" * 60)
-    print(f"✅  UPDATE-INDEX — all 13 steps complete for {city}.")
+    print(f"✅  UPDATE-INDEX — all 15 steps complete for {city}.")
     print(f"    Guide is ready to ship.\n")
 
     # ── Sync the two Brain-side status trackers from the index ──────────────────

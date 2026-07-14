@@ -60,7 +60,8 @@ TODO_DIR = TRAVEL_ROOT / "To Do List"            # Travel/To Do List/  (moved fr
 CLAUDE_MD = TRAVEL_ROOT / "CLAUDE.md"
 TOOLBAR_JS = ASSETS_DIR / "toolbar.js"   # shared nav bar rendered on every page; PERMANENT home = Travel-Website/assets/ (moved out of Guides/ 2026-06-13); centering invariant checked below (added 2026-06-05)
 WATERMARK_PATH = BRAIN_DIR / "Reference" / "profile_watermark.json"
-GUIDE_STYLE_CSS = BRAIN_DIR / "Reference" / "Guide Style.css"
+# Note: Brain/Reference/Guide Style.css was retired and archived (2026-06-13).
+# The live CSS source is Travel-Website/assets/guide-style.css.
 PDF_RENDER_NOTES = BRAIN_DIR / "Reference" / "PDF Render Notes.md"
  # footer sharing bar, auto-loaded by toolbar.js; PERMANENT home = Travel-Website/assets/, lives next to toolbar.js
 # PROFILE: the session entry-point file checked for required sections + ghost refs.
@@ -2483,8 +2484,11 @@ def check_no_ellipsis_placeholders(report: "Report") -> None:
         except Exception:
             continue
         rel = page.relative_to(WEB_ROOT)
+        # Strip HTML comments before scanning — a commented-out input element
+        # with a trailing ellipsis would otherwise false-fire.
+        text_clean = re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)
         for rx in (ph_attr, ph_js):
-            for m in rx.finditer(text):
+            for m in rx.finditer(text_clean):
                 val = m.group(2).rstrip()
                 if val.endswith("…") or val.endswith("..."):
                     hits.append(f"{rel}: placeholder \"{m.group(2)}\" ends with an ellipsis — drop it")
@@ -2530,6 +2534,11 @@ def check_search_icon_not_overridden(report: "Report") -> None:
         for sb in re.findall(r'<style[^>]*>(.*?)</style>', text, re.S | re.I):
             for bm in block_re.finditer(sb):
                 for m in bg_re.finditer(bm.group(1)):
+                    # background-color: (specific sub-property) cannot clear
+                    # background-image, so it cannot hide the shared magnifier.
+                    # Only the background: shorthand resets all sub-properties.
+                    if m.group(0).lstrip().lower().startswith("background-color"):
+                        continue
                     val = m.group(1).strip().lower()
                     if "search-icon" in val or "url(" in val:
                         continue  # background carries an icon — fine
@@ -5061,7 +5070,7 @@ def check_active_pill_color(report: "Report") -> None:
     CSS_RULE = re.compile(r"([^{}]+)\{([^{}]*)\}", re.S)
     ACTIVE_SEL = re.compile(r"\.(active|on|selected|copied|set)\b|:hover", re.I)
     GOLD_BG = re.compile(
-        r"background\s*:[^;]*(?:#8a6c1a|var\(--accent\))", re.I
+        r"background(?:-color)?\s*:[^;]*(?:#8a6c1a|var\(--accent\))", re.I
     )
     # Exempt very-faint rgba gold tints (opacity < 0.15 — hover hint, not a real fill)
     FAINT_RGBA = re.compile(r"rgba\(138,\s*108,\s*26,\s*0\.(0\d|1[0-4])\)", re.I)
@@ -5192,15 +5201,16 @@ def check_no_beige_pill_button(report: "Report") -> None:
     fails = []
 
     def scan_css(css_text: str, label: str):
+        # Strip CSS comments before scanning so /* background: #fdf3e0 */ doesn't fire.
+        clean = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
         # Rule A: any cream-drift background is a hard fail regardless of selector.
-        if DRIFT_BG.search(css_text):
-            for m in DRIFT_BG.finditer(css_text):
-                fails.append(
-                    f"{label} — cream-drift background '{m.group(0)}'. "
-                    f"Pills/buttons are white #ffffff (var(--surface)); this cream is drift."
-                )
+        for m in DRIFT_BG.finditer(clean):
+            fails.append(
+                f"{label} — cream-drift background '{m.group(0)}'. "
+                f"Pills/buttons are white #ffffff (var(--surface)); this cream is drift."
+            )
         # Rule B: warm token on a pill/button selector.
-        for rule in CSS_RULE.finditer(css_text):
+        for rule in CSS_RULE.finditer(clean):
             selector, body = rule.group(1).strip(), rule.group(2)
             if WARM_BG.search(body) and PILL_SEL.search(selector):
                 fails.append(
@@ -5213,12 +5223,20 @@ def check_no_beige_pill_button(report: "Report") -> None:
             continue
         text = html_path.read_text(encoding="utf-8", errors="replace")
         rel = html_path.relative_to(site_root)
-        # Rule A: cream drift as a background anywhere in the page (inline or <style>).
-        for m in DRIFT_BG.finditer(text):
-            fails.append(
-                f"{rel} — cream-drift background '{m.group(0)}' on a pill/button. "
-                f"Use white #ffffff (var(--surface)) with a gold #c8a44a border."
-            )
+        # Rule A: cream drift — scan ONLY <style> blocks and inline style= attributes,
+        # NOT raw HTML/JS/comments (a JS comment or template literal documenting a
+        # removed color would false-fire on the full text).
+        for sb in STYLE_BLOCK.finditer(text):
+            scan_css(sb.group(1), str(rel))
+        # Also scan inline style= attributes for cream-drift.
+        for m in re.finditer(r'style="([^"]*)"', text, re.I):
+            attr_val = m.group(1)
+            if DRIFT_BG.search(attr_val):
+                for dm in DRIFT_BG.finditer(attr_val):
+                    fails.append(
+                        f"{rel} — inline style cream-drift background '{dm.group(0)}'. "
+                        f"Use white #ffffff (var(--surface)) with a gold #c8a44a border."
+                    )
         # Rule B: warm token on an inline <a>/<button>.
         if INLINE_WARM_ELEM.search(text):
             fails.append(
@@ -5822,10 +5840,10 @@ def main(argv: list[str]) -> int:
     check_stats_page_css_var_scoping(report)        # fails if a stats page defines --rust/--navy/--track etc. under :root instead of body.stats-page (Stats-Pages-Format.html §5/§8; added 2026-07-11)
     check_toolbar_version_parity(report)            # warns on stale or missing toolbar.js ?v= cache-bust version — all pages should load the same version (added 2026-07-10)
     check_page_filename_spaces(report)              # fails on a space in a Trip-Essentials page filename — the recurring stray-duplicate signature; archive it (added 2026-06-21)
-    check_internal_link_space_encoding(report)      # HARD-fails any internal guide/page link with a raw space in the path — folders may have spaces, links must %20-encode (added 2026-06-27)
+    check_internal_link_space_encoding(report)      # HARD-fails any internal local link path carrying a raw space or %20 — rename the folder/file to hyphens (hyphen rule 2026-07-05, supersedes %20-encode rule 2026-06-27)
     check_section_citation_targets(report)          # warns on `{File}.html § N` citations whose target heading no longer exists (added 2026-06-06)
     check_profile_watermark(report)                     # warns on unexplained CLAUDE.md line/section drops (Rule 49; added 2026-06-11)
-    check_pdf_gradient_sync(report)                     # warns if Guide Style.css title-page gradient diverges from PDF Render Notes.md (added 2026-06-11)
+    check_pdf_gradient_sync(report)                     # warns if guide-style.css .title-page gradient diverges from PDF Render Notes.md (added 2026-06-11)
     check_guides_index_banner_subtitle(report)          # fails if Guides-Index.html banner has a subtitle element (added 2026-06-12)
     check_search_bar_standard(report)                   # fails if any search input has placeholder words, pill shape, fixed width, or width animation (added 2026-06-13)
     check_index_stat_row(report)                        # fails if guides_index stat row drifts from § 15 — places left, countries right, small grey text (added 2026-06-14)
