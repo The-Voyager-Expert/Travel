@@ -608,6 +608,21 @@ a.city-pill.hidden { display: none; }
     }
   });
 </script>
+<!-- Shared search autocomplete — city typeahead → open the guide -->
+<script src="../assets/search-autocomplete.js?v=2"></script>
+<script>
+(function () {
+  if (!window.TVESearch) return;
+  var input = document.getElementById('citySearch');
+  if (!input) return;
+  var seen = {}, items = [];
+  document.querySelectorAll('a.city-pill').forEach(function (pill) {
+    var name = pill.textContent.trim(), href = pill.getAttribute('href');
+    if (name && href && !seen[name]) { seen[name] = 1; items.push({ name: name, href: href }); }
+  });
+  TVESearch.attach(input, { items: items }); // default onPick: navigate to the guide
+}());
+</script>
 
 </body>
 </html>
