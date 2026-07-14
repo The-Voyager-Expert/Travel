@@ -1135,6 +1135,11 @@ When this file drifts from Brain/CORE RULES/, fix it in the same pass. CORE RULE
   <li class="yes"><code>validate_us_stats.py</code> — every shipped US guide's city is present in every stat category on <code>Stats-Across-US.html</code>. Scoped hard gate on ship (Step 7).</li>
   <li class="yes"><code>validate_delta_routes_guides.py</code> — <code>Delta-Routes-SEA.html</code> GUIDES map stays in sync with shipped guides on disk. Scoped hard gate on ship (Step 10).</li>
   <li class="yes"><code>validate_guide_days_coverage.py</code> — <code>Guide-Days-Coverage.html</code> in sync — every shipped guide appears in a tier-card city-pill, no pill points to a stale guide filename. Scoped hard gate on ship.</li>
+  <li class="yes"><code>validate_climate_countries.py</code> — Climate-Finder country labels: coverage, CSS spec, and DOM placement of the country chips. Manual / audit.</li>
+  <li class="yes"><code>validate_continuity_render.py</code> — RENDER-level continuity audit — loads pages headless to catch layout/continuity regressions that static checks miss. Manual / audit.</li>
+  <li class="yes"><code>validate_pill_standard.py</code> — pill/chip/button CSS <strong>sizing</strong> consistency across the whole site (height/padding/radius envelope per pill class). Manual / audit.</li>
+  <li class="yes"><code>validate_toolbar_consistency.py</code> — toolbar width/height consistency across all pages — flags a page whose toolbar mount drifts from the shared standard. Manual / audit.</li>
+  <li class="yes"><code>validate_pdf.py</code> — PDF integrity check (on-demand only, paired with <code>render_pdf.py</code>).</li>
 </ul>
 
 <h2>🏗 BUILDERS (AUTO-RUN ON SHIP / UPDATE-INDEX)</h2>
@@ -1148,6 +1153,10 @@ When this file drifts from Brain/CORE RULES/, fix it in the same pass. CORE RULE
   <li class="yes"><code>build_safety_guide.py</code> — regenerates <code>Safety-Guide.html</code> from <code>Brain/scripts/safety_levels.json</code>. Auto-runs on every ship; <code>_check_guide_in_safety</code> blocks first if the shipping city is missing from the JSON.</li>
   <li class="yes"><code>build_search_index.py</code> — builds <code>assets/search_index.json</code> from all shipped guides (stops, venues, tours, sections) + non-guide toolbar pages. Auto-runs as last step of every ship.</li>
   <li class="yes"><code>build_theme_tags.py</code> — maintains <code>THEME_DATA</code> in <code>Guides-Index.html</code> powering the Trip type filter (beach/wine/ski…). Curated per-guide tag lists. Auto-runs advisory on ship.</li>
+  <li class="yes"><code>build_status_dots.py</code> — regenerates the Status Dots checklist master list (<code>Brain/Reference/Status Dots — guides_index.md</code>) from <code>Guides-Index.html</code>. Manual / on demand.</li>
+  <li class="yes"><code>build_showcase_cards.py</code> — deterministic HTML generator for the Best-of SHOWCASE cards from a JSON entry file (each entry carries name/tag/desc/links). Manual.</li>
+  <li class="yes"><code>build_visualizer_manifest.py</code> — regenerates the guide/page list embedded in the visualizer manifest. Manual.</li>
+  <li class="yes"><code>build_day_tool.py</code> — regenerates the "Guide Day Building Tool" artifact HTML. Manual.</li>
 </ul>
 
 <h2>🔧 INFRASTRUCTURE &amp; TOOLING</h2>
@@ -1161,6 +1170,23 @@ When this file drifts from Brain/CORE RULES/, fix it in the same pass. CORE RULE
   <li class="yes"><code>check_css_duplication.py</code> — CSS duplication enforcer. Exit 0 = no duplication. Exit 1 = violations (move to shared CSS). Ship gate (soft-warn, not hard-block).</li>
   <li class="yes"><code>audit_photos.py</code> — fleet-wide photo audit. Runs <code>verify_guide_photos()</code> on every guide, tiered report (A1 fakes/missing, A2 no-pics, B unprovenanced). <code>--full</code> / <code>--names</code>. Exit 1 if any fail.</li>
   <li class="yes"><code>encode_link_spaces.py</code> — internal link-space detector. Flags relative links to local <code>.html</code>/<code>.pdf</code> files whose path carries a space (plain or <code>%20</code>). Under the hyphen rule (Links.html § 9) the fix is renaming the folder. Hard gate via <code>brain_check check_internal_link_space_encoding</code>.</li>
+  <li class="yes"><code>check_no_hardcoded_styles.py</code> — enforces shared-CSS rules in guide HTML files (no hardcoded hex/base-reset). Companion to <code>check_css_duplication.py</code>.</li>
+  <li class="yes"><code>verify_urls.py</code> — link health — every URL in a guide returns 200 + editorial prose. Ship gate.</li>
+  <li class="yes"><code>verify_booking_links.py</code> — subject-drift check — h1 match for accessible links · verification-log coverage for bot-blocked platforms (Viator / GYG / Michelin). Ship gate.</li>
+  <li class="yes"><code>autofix_itinerary.py</code> — guide auto-repair — rewrites mis-filed booking boxes. On demand.</li>
+  <li class="yes"><code>sweep_stray_travel.py</code> — stray-file enforcement — surfaces/relocates files that drifted outside their canonical home. Session ritual (<code>--apply</code>).</li>
+  <li class="yes"><code>doc_workshop_validator.py</code> / <code>doc_workshop_fixer.py</code> — CORE RULES doc integrity check + auto-repair. Run after any CORE RULES change.</li>
+  <li class="yes"><code>update_core_rules_checksums.py</code> — regenerates CORE RULES checksums after an approved edit.</li>
+  <li class="yes"><code>audit_all_guides.py</code> — full static audit across every shipped guide. Manual / audit.</li>
+  <li class="yes"><code>audit_mobile.py</code> — on-demand mobile audit across the whole site.</li>
+  <li class="yes"><code>daily_audit.py</code> — rolling guide-audit queue (picks the next guides due for re-audit).</li>
+  <li class="yes"><code>mobile_shot.py</code> — true mobile-viewport screenshot + horizontal-overflow report (Playwright emulation; <code>--window-size</code> alone lies).</li>
+  <li class="yes"><code>batch_validate.py</code> — fast static validator sweep across all (or selected) guides.</li>
+  <li class="yes"><code>_run_all_validators.py</code> — runs <code>validate_itinerary.py</code> on every guide, 10 at a time, with batched progress.</li>
+  <li class="yes"><code>add_us_stats_city.py</code> — inserts a new US guide city into every category of <code>Stats-Across-US.html</code> (Step 7 helper).</li>
+  <li class="yes"><code>sync_guides_index.py</code> — recovery utility — detects shipped guides on disk missing from <code>Guides-Index.html</code> and reports/adds them.</li>
+  <li class="yes"><code>reset_stamps_to_pending.py</code> — maintenance utility — strips every guide's signed validation stamp and replaces it with <code>pending</code> (forces fleet-wide re-validation).</li>
+  <li class="yes"><code>render_pdf.py</code> — headless-Chromium PDF render (on-demand only).</li>
 </ul>
 
 <hr>

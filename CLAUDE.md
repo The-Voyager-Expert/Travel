@@ -368,3 +368,6 @@ Two environments, same Drive workspace:
 | `build_showcase_cards.py` | Deterministic HTML generator for the Best-of SHOWCASE cards from a JSON entry file (each entry carries name/tag/desc/links) |
 | `build_visualizer_manifest.py` | Regenerates the guide/page list embedded in the visualizer manifest |
 | `build_day_tool.py` | Regenerates the "Guide Day Building Tool" artifact HTML |
+| `add_us_stats_city.py` | Inserts a new US guide city into every stat category of `Stats-Across-US.html` (Step 7 coverage helper — run when a US guide ships) |
+| `sync_guides_index.py` | One-shot sync utility — detects shipped guides on disk missing from `Guides-Index.html` and reports/adds them (recovery tool when a card was dropped) |
+| `reset_stamps_to_pending.py` | Maintenance utility — strips every guide's signed validation stamp and replaces it with a `pending` marker (forces a full re-validation across the fleet) |
