@@ -11,14 +11,16 @@
 .byg-pick { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
   border-radius: 8px; padding: 6px 12px; box-shadow: 0 2px 8px rgba(92,61,17,0.08);
   margin-bottom: 14px; max-width: 1120px; }
-.byg-select { width: 100%; font-family: var(--font); font-size: 13px; font-weight: 600;
-  color: var(--text,#1a1917); padding: 4px 8px; border: 1px solid var(--border2,#e6e2da);
-  border-radius: 5px; background: #fff; cursor: pointer; outline: none; }
-.byg-month-select { outline: none; }
+.byg-select { width: 100%; height: 40px; box-sizing: border-box; font-family: var(--font); font-size: 14px; font-weight: 600;
+  color: var(--text,#1a1917); padding: 0 12px; border: 1px solid var(--border2,#e6e2da);
+  border-radius: 6px; background: #fff; cursor: pointer; outline: none; }
 .byg-month-row { display: flex; align-items: center; gap: 8px; margin-top: 0; }
-.byg-month-select { flex: 1; font-family: var(--font); font-size: 14px; color: var(--text,#1a1917);
-  padding: 7px 10px; border: 1px solid var(--border2,#e6e2da); border-radius: 6px;
-  background: #fff; cursor: pointer; }
+.byg-month-select { flex: 0 0 130px; height: 40px; box-sizing: border-box; font-family: var(--font); font-size: 14px; color: var(--text,#1a1917);
+  padding: 0 12px; border: 1px solid var(--border2,#e6e2da); border-radius: 6px;
+  background: #fff; cursor: pointer; outline: none; }
+/* Kill the loud gold keyboard-focus ring the shared sheet puts on selects — keep a subtle border cue */
+.byg-select:focus, .byg-select:focus-visible,
+.byg-month-select:focus, .byg-month-select:focus-visible { outline: none !important; border-color: #c8b99a; box-shadow: none; }
 .byg-unit { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; }
 .byg-unit button { border: none; cursor: pointer; padding: 7px 11px; font-size: 12px; font-weight: 600;
   font-family: var(--font); background: transparent; color: var(--muted,#6a6660); }
@@ -30,12 +32,13 @@
 .byg-plug-card { max-width: 1120px; margin-bottom: 14px; }
 .byg-plug-card .byg-plug-row { display: flex; gap: 20px; margin-top: 8px; flex-wrap: wrap; }
 .byg-plug-card .byg-plug-type { flex: 1; min-width: 180px; padding: 10px 14px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px; background: var(--bg,#f5f3ef); }
-.byg-plug-card .byg-plug-imgs { grid-template-columns: 1fr 1fr; gap: 10px; max-width: 220px; }
-.byg-plug-card .byg-plug-imgs img { width: 100%; max-width: 96px; height: auto; aspect-ratio: 1; object-fit: cover; }
+.byg-plug-card .byg-plug-imgs { grid-template-columns: 1fr 1fr; gap: 12px; max-width: 230px; }
+.byg-plug-card .byg-plug-imgs img { width: 100%; max-width: 104px; height: auto; aspect-ratio: 1; object-fit: contain; background: #fff; padding: 8px; }
 .byg-plug-card .byg-plug-type-desc { font-size: 10px; }
-.byg-col-stack { display: flex; flex-direction: column; gap: 12px; }
-.byg-card-fixed { height: 220px; overflow: hidden; }
-.byg-card-fixed-sm { height: 160px; overflow: hidden; }
+.byg-col-stack { display: flex; flex-direction: column; gap: 14px; }
+/* The four top info cards are all the same size; safety note is clamped so a long note can't overrun */
+.byg-card-fixed, .byg-card-fixed-sm { height: 270px; overflow: hidden; }
+.byg-safety-note { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .byg-prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
 .byg-prep-tile { display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 4px; padding: 10px 6px; height: 70px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px;
@@ -111,8 +114,8 @@
 .byg-visa-required { background: #c62828; }
 .byg-visa-days { font-size: 22px; font-weight: 700; color: var(--text,#1a1917); margin: 8px 0 2px; }
 .byg-visa-note { font-size: 11px; color: var(--muted,#6a6660); line-height: 1.4; margin-bottom: 6px; }
-.byg-guide-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
-  font-weight: 600; color: #b85c2a; text-decoration: none; padding: 7px 14px;
+.byg-guide-pill { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px;
+  font-weight: 600; color: #b85c2a; text-decoration: none; padding: 0 16px; height: 40px; box-sizing: border-box;
   border: 1.5px solid #b85c2a; border-radius: 6px;
   transition: background .15s, color .15s; white-space: nowrap; }
 .byg-guide-pill:hover { background: #b85c2a; color: #fff; }
@@ -394,7 +397,7 @@
           '<div class="byg-card-head"><span class="byg-card-icon">🛡️</span><span class="byg-card-title">Safety</span></div>' +
           '<div class="byg-row"><span class="byg-row-label">Level</span><span class="byg-safety-badge ' + safetyClass(lvl) + '">' + lvl + '</span></div>';
         if (safetyData.note) {
-          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
+          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value byg-safety-note" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
         }
         html += '<div class="byg-links-row">' +
           '<a href="Safety-Guide.html" class="byg-link">🛡️ Safety guide</a>' +
