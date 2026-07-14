@@ -80,3 +80,18 @@
 - ℹ️ **Not a page issue — SEA Mexico/Caribbean leisure suspensions:** Delta suspended SEA–CUN (Jun 2–Nov 8, 2026) and SEA–SJD / SEA–PVR (Oct 6–Nov 8, 2026) on high fuel costs. The SEA page lists no SEA→Latin America nonstop (routes all via ATL/JFK/SLC), so no correction required. Source: https://simpleflying.com/delta-air-lines-suspends-5-summer-seasonal-routes-high-oil-prices/
 
 ---
+
+## 🚨 Verification-Log Strip Incident — 2026-07-14 (OPEN — needs remediation)
+
+*Surfaced by the daily guide audit (2026-07-14). Two defects found; one fixed + pushed, one fleet-wide and open.*
+
+**1. Validator crash — FIXED + PUSHED (commit 46edce0ed).** Commit `46875b7fe` ("Deep audit") shipped an `UnboundLocalError`: the ✨ Claude Inspiration overview-pill check at `validate_itinerary.py:3075` referenced `ci_section_m`, which isn't assigned until `:23446`. Every guide crashed the validator → all guide validation (daily audit, `guide_tools ship`, manual runs) was broken fleet-wide. Fixed by detecting the `claude-inspiration` div locally at the check site.
+
+**2. Fleet-wide verification-log strip — OPEN.** All **219** guide `_build/verification_log.json` files were modified 2026-07-14 09:28–09:32, and every Viator / GetYourGuide / TripAdvisor **booking-URL entry was deleted** (only `wikipedia-omit` entries are protected). Root cause: `verify_booking_links.py`'s auto-prune (lines 690–698) deletes any log entry whose URL is not in the guide's parsed URL set; something during the deep-audit run made that set not match the log keys fleet-wide, so all booking entries were pruned. **Live site UNAFFECTED** — signed stamps are intact, pushes are unblocked; this is a local build-artifact integrity problem that only surfaces on a full re-validation.
+- **Recovered 11/20 audit-batch guides** by merging the last git-tracked log version (`b574f5165^`, before `_build/` was untracked 2026-06-20) back into the damaged logs — real data, not fabrication. Those 11 now pass.
+- **8 audit-batch guides still fail** (built/edited after 2026-06-20, so no git version): Bergen (1 URL), Big-Island (11), Bora-Bora (8), Boulder (3), Buenos-Aires (8), Cairo (5), Cape-Cod (1), Cancun (2). These need live re-verification of their booking URLs (deferred: Viator MCP was unavailable this session, and this is a fleet incident, not a per-guide drift — fabricating entries would violate the no-fabrication rule).
+- **~199 other guides across the fleet are identically damaged** and were out of the audit's 20-guide scope.
+
+**Recommended remediation (dedicated run):** (a) fleet-wide git-recover every pre-2026-06-20 log the same way (`b574f5165^`); (b) re-verify booking URLs for all post-2026-06-20 guides with Viator MCP connected; (c) **harden `verify_booking_links.py`'s auto-prune** so it never deletes a `result:"PASS"` booking entry when the parsed guide-URL set is empty or suspiciously mismatched (guard against a repeat). Full record: `Brain/Reference/audit_logs/audit_2026-07-14.json` (`incident_note`).
+
+---
