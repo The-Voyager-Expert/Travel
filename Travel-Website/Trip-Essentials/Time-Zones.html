@@ -450,8 +450,12 @@ function render() {
     if (activeRegion !== 'all' && c.region !== activeRegion) return false;
     if (searchVal) {
       var q = searchVal;
-      if (c.name.toLowerCase().indexOf(q) === -1 &&
-          c.country.toLowerCase().indexOf(q) === -1) return false;
+      // Expand abbreviated countries so a full-name search matches (UK -> United Kingdom, etc.)
+      var cc = c.country.toLowerCase()
+        .replace(/\buk\b/g, 'uk united kingdom')
+        .replace(/\buae\b/g, 'uae united arab emirates')
+        .replace(/\busa?\b/g, 'us usa united states');
+      if (c.name.toLowerCase().indexOf(q) === -1 && cc.indexOf(q) === -1) return false;
     }
     return true;
   });
