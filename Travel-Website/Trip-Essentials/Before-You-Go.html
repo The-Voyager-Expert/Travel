@@ -8,20 +8,9 @@
 <style>
 .tb a.tb-active, .tb-ddbtn.tb-active { background: transparent !important; }
 .byg-wrap { width: 100%; box-sizing: border-box; padding: 0 32px; }
-.byg-top-row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
-.byg-top-row .byg-pick { flex: 1; margin-bottom: 0; }
-#byg-plug-top { width: 220px; flex-shrink: 0; overflow: hidden; }
-#byg-plug-top .byg-card { padding: 8px 12px; overflow: hidden; }
-#byg-plug-top .byg-plug-imgs { grid-template-columns: 1fr 1fr; gap: 6px; }
-#byg-plug-top .byg-plug-imgs img { width: 70px; height: 70px; object-fit: cover; }
-#byg-plug-top .byg-card-title { font-size: 11px; }
-#byg-plug-top .byg-voltage { font-size: 10px; margin-bottom: 4px; }
-#byg-plug-top .byg-plug-type-name { font-size: 10px; }
-#byg-plug-top .byg-plug-type-desc { display: none; }
-#byg-plug-top .byg-links-row { margin-top: 6px; }
 .byg-pick { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
   border-radius: 8px; padding: 6px 12px; box-shadow: 0 2px 8px rgba(92,61,17,0.08);
-  margin-bottom: 14px; max-width: 900px; }
+  margin-bottom: 14px; max-width: 1120px; }
 .byg-select { width: 100%; font-family: var(--font); font-size: 13px; font-weight: 600;
   color: var(--text,#1a1917); padding: 4px 8px; border: 1px solid var(--border2,#e6e2da);
   border-radius: 5px; background: #fff; cursor: pointer; outline: none; }
@@ -36,7 +25,14 @@
 .byg-unit button.on { background: #b85c2a; color: #fff; }
 .byg-empty { text-align: center; color: var(--muted,#6a6660); font-size: var(--fs-body,14px);
   padding: 40px 10px; line-height: 1.6; }
-.byg-cards { display: grid; grid-template-columns: 280px 220px 1fr; gap: 12px; align-items: start; }
+.byg-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: start; max-width: 1120px; }
+/* Plug Adapter is a full-width strip above the grid — socket types laid out horizontally */
+.byg-plug-card { max-width: 1120px; margin-bottom: 14px; }
+.byg-plug-card .byg-plug-row { display: flex; gap: 20px; margin-top: 8px; flex-wrap: wrap; }
+.byg-plug-card .byg-plug-type { flex: 1; min-width: 180px; padding: 10px 14px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px; background: var(--bg,#f5f3ef); }
+.byg-plug-card .byg-plug-imgs { grid-template-columns: 1fr 1fr; gap: 10px; max-width: 220px; }
+.byg-plug-card .byg-plug-imgs img { width: 100%; max-width: 96px; height: auto; aspect-ratio: 1; object-fit: cover; }
+.byg-plug-card .byg-plug-type-desc { font-size: 10px; }
 .byg-col-stack { display: flex; flex-direction: column; gap: 12px; }
 .byg-card-fixed { height: 220px; overflow: hidden; }
 .byg-card-fixed-sm { height: 160px; overflow: hidden; }
@@ -122,10 +118,7 @@
 .byg-guide-pill:hover { background: #b85c2a; color: #fff; }
 @media (max-width: 700px) {
   .byg-wrap { padding: 0 14px; }
-  .byg-top-row { flex-direction: column; }
-  .byg-wrap > div:first-child { flex-direction: column; }
-  #byg-plug-top { flex: none; width: 100%; max-width: 100%; overflow: hidden; box-sizing: border-box; }
-  #byg-plug-top .byg-plug-imgs img { width: 100%; height: auto; max-width: 120px; }
+  .byg-plug-card .byg-plug-type { min-width: 0; flex: 1 1 100%; }
   .byg-cards { grid-template-columns: 1fr; }
   .byg-col-stack { gap: 12px; }
   .byg-pick .byg-month-row { flex-wrap: wrap; }
@@ -145,19 +138,16 @@
 </div>
 
 <div class="byg-wrap">
-  <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;">
-    <div class="byg-pick" style="margin-bottom:0;flex:1;">
-      <div class="byg-month-row">
-        <select class="byg-select" id="byg-city" style="flex:2;"></select>
-        <select class="byg-month-select" id="byg-month" style="flex:0 0 120px;"></select>
-        <div id="byg-unit" style="display:none;">
-          <button type="button" data-u="C">°C</button>
-          <button type="button" data-u="F">°F</button>
-        </div>
-        <div id="byg-guide-slot" style="flex-shrink:0;"></div>
+  <div class="byg-pick" style="margin-bottom:14px;">
+    <div class="byg-month-row">
+      <select class="byg-select" id="byg-city" style="flex:2;"></select>
+      <select class="byg-month-select" id="byg-month" style="flex:0 0 120px;"></select>
+      <div id="byg-unit" style="display:none;">
+        <button type="button" data-u="C">°C</button>
+        <button type="button" data-u="F">°F</button>
       </div>
+      <div id="byg-guide-slot" style="flex-shrink:0;"></div>
     </div>
-    <div id="byg-plug-top"></div>
   </div>
 
   <div id="byg-results"></div>
@@ -178,7 +168,6 @@
     var monthEl = document.getElementById('byg-month');
     var unitEl = document.getElementById('byg-unit');
     var resultsEl = document.getElementById('byg-results');
-    var plugTopEl = document.getElementById('byg-plug-top');
 
     function unit() { try { return localStorage.getItem('guideTempUnit') === 'F' ? 'F' : 'C'; } catch (e) { return 'C'; } }
     function setUnit(u) { try { localStorage.setItem('guideTempUnit', u); } catch (e) {} }
@@ -329,8 +318,7 @@
     function render() {
       var k = cityEl.value;
       if (!k) {
-        resultsEl.innerHTML = '';
-        plugTopEl.innerHTML = '<div class="byg-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 12px;"><span style="font-size:22px;">🔌</span><span style="font-size:10px;color:var(--muted,#6a6660);text-transform:uppercase;letter-spacing:.05em;">Plug Adapter</span><span style="font-size:10px;color:var(--muted,#6a6660);">Select a destination</span></div>';
+        resultsEl.innerHTML = '<div class="byg-empty">Select a destination to see its weather, safety, currency, plug adapter, visa &amp; entry, and packing essentials.</div>';
         var s = document.getElementById('byg-guide-slot'); if (s) s.innerHTML = '';
         return;
       }
@@ -443,40 +431,42 @@
       var plugAnchor = country ? (COUNTRY_PLUG[country] || country.replace(/ /g,'_')) : '';
       var plugHref = 'Plug-Adapter/Plug-Adapter-Guide.html' + (plugAnchor ? '#' + plugAnchor : '');
 
-      // Plug Adapter — rendered beside the picker, not in the grid
+      // Plug Adapter — full-width strip above the grid, socket types laid out horizontally
       var plugInfo = plugAnchor ? PLUG_DATA[plugAnchor] : null;
       var plugHtml = '';
       if (plugInfo) {
-        plugHtml += '<div class="byg-card">';
-        plugHtml += '<div class="byg-card-head"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></div>';
-        plugHtml += '<div class="byg-voltage">' + plugInfo.v + '</div>';
+        plugHtml += '<div class="byg-card byg-plug-card">';
+        plugHtml += '<div class="byg-card-head" style="justify-content:space-between;">' +
+          '<span><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span> ' +
+          '<span class="byg-voltage" style="display:inline-block;margin:0 0 0 8px;">' + plugInfo.v + '</span></span>' +
+          '<a href="' + plugHref + '" class="byg-link" style="margin-top:0;">Full guide →</a>' +
+          '</div>';
+        plugHtml += '<div class="byg-plug-row">';
         for (var pi = 0; pi < plugInfo.types.length; pi++) {
           var pt = plugInfo.types[pi];
-          if (pi > 0) plugHtml += '<hr class="byg-plug-divider">';
-          plugHtml += '<div class="byg-plug-row"><div class="byg-plug-type">';
+          plugHtml += '<div class="byg-plug-type">';
           plugHtml += '<div class="byg-plug-type-name">' + pt.t + '</div>';
           plugHtml += '<div class="byg-plug-type-desc">' + pt.desc + '</div>';
           plugHtml += '<div class="byg-plug-imgs">';
           plugHtml += '<div><img src="Plug-Adapter/' + pt.s + '" alt="' + pt.t + ' socket" loading="lazy"><div class="byg-plug-img-lbl">Socket</div></div>';
           plugHtml += '<div><img src="Plug-Adapter/' + pt.p + '" alt="' + pt.t + ' plug" loading="lazy"><div class="byg-plug-img-lbl">Plug</div></div>';
-          plugHtml += '</div></div></div>';
+          plugHtml += '</div></div>';
         }
-        plugHtml += '<div class="byg-links-row"><a href="' + plugHref + '" class="byg-link">Full guide →</a></div>';
+        plugHtml += '</div>';
         plugHtml += '</div>';
       } else {
-        plugHtml += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></div>';
-        plugHtml += '<div class="byg-links-row"><a href="' + plugHref + '" class="byg-link">View plug guide →</a></div></div>';
+        plugHtml += '<div class="byg-card byg-plug-card"><div class="byg-card-head" style="justify-content:space-between;">' +
+          '<span><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></span>' +
+          '<a href="' + plugHref + '" class="byg-link" style="margin-top:0;">View plug guide →</a></div></div>';
       }
-      plugTopEl.innerHTML = '';
 
-      // Col 3: Plug + Essentials + Visa & Entry stacked
+      // Col 3: Essentials + Visa & Entry stacked
       function prepTile(icon, label, href) {
         return '<a href="' + href + '" class="byg-prep-tile">' +
           '<span class="byg-prep-tile-icon">' + icon + '</span>' +
           '<span class="byg-prep-tile-label">' + label + '</span></a>';
       }
       html += '<div class="byg-col-stack">';
-      html += plugHtml;
       html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">📋</span><span class="byg-card-title">Essentials</span></div>' +
         '<div class="byg-prep-grid">';
       html += prepTile('👕', 'Packing', 'Travel-Packing.html');
@@ -506,7 +496,7 @@
       html += '</div>'; // end col 3 stack
 
       html += '</div>';
-      resultsEl.innerHTML = html;
+      resultsEl.innerHTML = plugHtml + html;
 
       // Live clock
       if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
