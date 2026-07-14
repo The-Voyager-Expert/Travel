@@ -118,16 +118,7 @@
     null,
     { href: base + 'Trip-Essentials/Before-You-Go.html', text: '🧳 Before You Go' },
     null,
-    { group: '🗺️ Maps', children: [
-        { href: base + 'Trip-Essentials/Maps/World-Map.html',         text: '🗺️ World Map' },
-        { href: base + 'Trip-Essentials/Maps/Europe-Map.html',        text: '🗺️ Europe' },
-        { href: base + 'Trip-Essentials/Maps/Asia-Map.html',          text: '🗺️ Asia' },
-        { href: base + 'Trip-Essentials/Maps/US-Map.html',            text: '🗺️ United States' },
-        { href: base + 'Trip-Essentials/Maps/Caribbean-Map.html',     text: '🗺️ Caribbean' },
-        { href: base + 'Trip-Essentials/Maps/South-America-Map.html', text: '🗺️ South America' },
-        { href: base + 'Trip-Essentials/Maps/Africa-Map.html',        text: '🗺️ Africa' },
-        { href: base + 'Trip-Essentials/Maps/Oceania-Map.html',       text: '🗺️ Oceania' },
-    ]},
+    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
     null,
     { group: '📊 Stats', children: [
         { href: base + 'Trip-Essentials/Travel-Stats.html',               text: '📊 Travel Stats' },
