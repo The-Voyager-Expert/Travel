@@ -110,7 +110,8 @@
 </script>
 <div id="compare-mount"></div>
 <div id="guide-noresult">No destinations found. <button id="guide-noresult-reset" type="button" style="background:none;border:none;padding:0;color:#b85c2a;cursor:pointer;font:inherit;font-size:13px;text-decoration:underline">Reset filters</button></div>
-<div id="content-search" hidden></div>
+<!-- content-search (full-text "N guides mention" panel) retired 2026-07-14 —
+     replaced by the shared TVESearch city·country autocomplete (search-autocomplete.js) -->
 
 <div class="flt-controls">
   <div class="fcg" id="fstops">
@@ -3462,6 +3463,28 @@ window._giStatusFilter = 'all';
   if(gpSearch){ gpSearch.addEventListener('input', function(){ gpTerm=gNorm(this.value.trim()); buildGuidePicker(); }); }
 
   buildGuidePicker();
+}());
+</script>
+<!-- Shared search autocomplete — city·country typeahead → open the guide -->
+<script src="../assets/search-autocomplete.js?v=1"></script>
+<script>
+(function () {
+  if (!window.TVESearch) return;
+  var input = document.getElementById('guide-search');
+  if (!input) return;
+  var items = [];
+  var FLAG = /[\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+  document.querySelectorAll('.country[data-country]').forEach(function (grp) {
+    var lbl = grp.querySelector('.country-label');
+    var country = lbl ? lbl.textContent.split('·')[0].replace(FLAG, '').trim() : '';
+    grp.querySelectorAll('a.dest-card').forEach(function (card) {
+      if (card.hasAttribute('data-special')) return; // skip Best-of / non-guide cards
+      var nm = card.querySelector('.dest-name');
+      var href = card.getAttribute('href');
+      if (nm && href) items.push({ name: nm.textContent.trim(), sub: country, href: href });
+    });
+  });
+  TVESearch.attach(input, { items: items }); // default onPick: navigate to href
 }());
 </script>
 </body>
