@@ -227,28 +227,34 @@ def main() -> int:
     _mobile_render_output = ""
     if non_guide_html_changed or shared_mobile_css_changed:
         mobile_render_script = Path(__file__).resolve().parent / "validate_mobile_render.py"
-        try:
-            result = subprocess.run(
-                [sys.executable, str(mobile_render_script)],
-                capture_output=True, text=True, cwd=str(repo), timeout=180,
-            )
-            if result.returncode != 0:
-                mobile_render_failed = True
-                _mobile_render_output = (result.stdout + result.stderr).strip()
-        except subprocess.TimeoutExpired:
+        if not mobile_render_script.exists():
             print(
-                "\n⚠️  pre_push_guard: validate_mobile_render.py timed out after 180s.\n"
-                "    Proceeding without the mobile-render check.\n",
+                "\n⚠️  pre_push_guard: validate_mobile_render.py not found — skipping mobile-render check.\n",
                 file=sys.stderr,
             )
-        except Exception as exc:  # noqa: BLE001
-            # If it can't run at all (e.g. playwright not installed), warn but
-            # don't hard-block — a missing optional dep shouldn't brick pushes.
-            print(
-                f"\n⚠️  pre_push_guard: validate_mobile_render.py could not be executed ({exc}).\n"
-                "    Proceeding without the mobile-render check.\n",
-                file=sys.stderr,
-            )
+        else:
+            try:
+                result = subprocess.run(
+                    [sys.executable, str(mobile_render_script)],
+                    capture_output=True, text=True, cwd=str(repo), timeout=180,
+                )
+                if result.returncode != 0:
+                    mobile_render_failed = True
+                    _mobile_render_output = (result.stdout + result.stderr).strip()
+            except subprocess.TimeoutExpired:
+                print(
+                    "\n⚠️  pre_push_guard: validate_mobile_render.py timed out after 180s.\n"
+                    "    Proceeding without the mobile-render check.\n",
+                    file=sys.stderr,
+                )
+            except Exception as exc:  # noqa: BLE001
+                # If it can't run at all (e.g. playwright not installed), warn but
+                # don't hard-block — a missing optional dep shouldn't brick pushes.
+                print(
+                    f"\n⚠️  pre_push_guard: validate_mobile_render.py could not be executed ({exc}).\n"
+                    "    Proceeding without the mobile-render check.\n",
+                    file=sys.stderr,
+                )
 
     # ── Report and block ─────────────────────────────────────────────────────────
     if not guide_offenders and not brain_check_failed and not mobile_render_failed:
