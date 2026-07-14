@@ -3072,8 +3072,14 @@ def validate(html: str, filename: str):
     # Claude Inspiration - Extra Section.html §4, yet Trip Overview.html §3
     # defines a canonical ✨ pill for it. The ✨ CI pill is REQUIRED (mandatory
     # 2026-07-12 — same DriftyCat rule that made the section itself required).
-    # When ci_section_m is set, the guide has the div, so we require the pill.
-    if ci_section_m:
+    # When the guide has the claude-inspiration div, we require the pill.
+    # (Detected locally here — ci_section_m is not yet assigned at this point
+    # in validate(); it is computed much later in the function.)
+    _ci_section_present = re.search(
+        r'<div\b[^>]*\bclass\s*=\s*"[^"]*\bclaude-inspiration\b',
+        html, re.IGNORECASE,
+    )
+    if _ci_section_present:
         _ci_ids_present: set[str] = set(re.findall(
             r'<div\b[^>]*\bclass\s*=\s*"[^"]*\bclaude-inspiration\b[^"]*"[^>]*\bid\s*=\s*"([^"]+)"',
             html, re.IGNORECASE,
