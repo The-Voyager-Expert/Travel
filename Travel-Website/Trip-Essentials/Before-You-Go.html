@@ -11,14 +11,17 @@
    @supports rule (mobile.css) that otherwise forces the padding back to the 80px base. */
 body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important; }
 .byg-wrap { width: 100%; box-sizing: border-box; padding: 0 32px; }
-.byg-pick { margin: 0 0 16px; }
+.byg-pick { margin: 6px 0 16px; }
+.byg-find-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  line-height: 0; opacity: .45; pointer-events: none; z-index: 1; }
 .byg-select { width: 100%; min-width: 0; height: 36px; box-sizing: border-box; font-family: var(--font); font-size: 14px; font-weight: 600;
   color: var(--text,#1a1917); padding: 0 12px; border: 1px solid var(--border2,#e6e2da);
   border-radius: 6px; background: #fff; cursor: pointer; outline: none; }
-.byg-month-row { display: flex; align-items: center; gap: 8px; margin-top: 0; }
-.byg-month-select { flex: 0 0 130px; height: 40px; box-sizing: border-box; font-family: var(--font); font-size: 15px; color: var(--text,#1a1917);
+.byg-month-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 0; }
+.byg-month-select { flex: 0 0 130px; height: 40px; box-sizing: border-box; font-family: var(--font); font-size: 13px; font-weight: 500; color: #8a6c1a;
   padding: 0 14px; border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px;
   background: #fff; cursor: pointer; outline: none; }
+.byg-month-select:hover { border-color: #b85c2a; }
 /* Kill the loud gold keyboard-focus ring the shared sheet puts on selects — keep a subtle border cue */
 .byg-select:focus, .byg-select:focus-visible,
 .byg-month-select:focus, .byg-month-select:focus-visible { outline: none !important; border-color: #c8b99a; box-shadow: none; }
@@ -30,8 +33,9 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
   padding: 40px 10px; line-height: 1.6; }
 /* Search input (replaces the city dropdown) */
 #byg-find { width: 100%; min-width: 0; height: 40px; box-sizing: border-box; margin: 0; font-family: var(--font);
-  font-size: 15px; color: var(--text,#1a1917); padding: 0 18px;
+  font-size: 15px; color: var(--text,#1a1917); padding: 0 18px 0 36px;
   border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px; background: #fff; outline: none; }
+#byg-find::placeholder { color: #A8895A; }
 /* Gold clear (✕) button instead of the browser's default blue one */
 #byg-find::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none;
   width: 14px; height: 14px; cursor: pointer;
@@ -165,12 +169,13 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 
 <div class="byg-wrap">
   <div class="byg-pick" style="margin-bottom:14px;">
+    <div class="byg-find-wrap" style="position:relative;width:360px;max-width:100%;margin:0 auto 10px;">
+      <span class="byg-find-icon"><svg style="display:block" width="15" height="15" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5.5" cy="5.5" r="4.5" stroke="#3d3a32" stroke-width="1.5"/><line x1="9.35" y1="9.35" x2="12" y2="12" stroke="#3d3a32" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <input type="search" id="byg-find" placeholder="Search a city or a country" autocomplete="off" style="width:100%;">
+      <div id="byg-suggest" hidden></div>
+    </div>
     <div class="byg-month-row">
-      <div class="byg-find-wrap" style="flex:0 0 360px;max-width:100%;">
-        <input type="search" id="byg-find" placeholder="Search a city or a country" autocomplete="off" style="width:100%;">
-        <div id="byg-suggest" hidden></div>
-      </div>
-      <select class="byg-month-select" id="byg-month" style="flex:0 0 120px;"></select>
+      <select class="byg-month-select" id="byg-month" style="flex:0 0 130px;"></select>
       <div id="byg-unit" style="display:none;">
         <button type="button" data-u="C">°C</button>
         <button type="button" data-u="F">°F</button>
