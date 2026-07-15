@@ -601,6 +601,37 @@
     if (document.readyState !== 'loading') shortenTrainPill();
     else document.addEventListener('DOMContentLoaded', shortenTrainPill);
 
+    /* ── Per-guide stops map pill — injected when {slug}-stops-map.html exists.
+       Appended at the END of the .gel overview-extras row, after all static
+       pills (including ✨ Claude Inspiration). Uses a HEAD request so the guide
+       HTML never needs editing; the pill appears automatically once the map file
+       has been generated. No-op if the file is absent (404). */
+    function injectStopsMapPill() {
+      var gelRow = document.querySelector('.gel');
+      if (!gelRow) return;
+      if (gelRow.querySelector('a[href$="-stops-map.html"]')) return; // already present in HTML
+      // Derive slug from the current page filename (e.g. lisbon_v4.html → lisbon)
+      var pageName = location.pathname.split('/').pop() || '';
+      var slugMatch = pageName.match(/^(.+?)(?:_v\d+)?\.html$/);
+      if (!slugMatch) return;
+      var slug = slugMatch[1];
+      var mapHref = './' + slug + '-stops-map.html';
+      var xhr = new XMLHttpRequest();
+      xhr.open('HEAD', mapHref, true);
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          var pill = document.createElement('a');
+          pill.className = 'overview-extra-link';
+          pill.href = mapHref;
+          pill.textContent = '🗺 All Stops Map';
+          gelRow.appendChild(pill);
+        }
+      };
+      xhr.send();
+    }
+    if (document.readyState !== 'loading') injectStopsMapPill();
+    else document.addEventListener('DOMContentLoaded', injectStopsMapPill);
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectOverviewArrows);
     } else {
