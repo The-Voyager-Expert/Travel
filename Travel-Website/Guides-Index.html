@@ -97,6 +97,10 @@
     </div>
   </div>
   </div><!-- /pill-row -->
+  <div id="filter-active-bar">
+    <span>One filter at a time</span>
+    <button type="button" id="clear-all-filters">Clear all ×</button>
+  </div>
 </div>
 <script>
 /* On mobile, move the Compare cities button into the filter grid as a pill
@@ -2960,6 +2964,7 @@ window._giStatusFilter = 'all';
     it.addEventListener('click', function () {
       active = (it.dataset.days === 'all') ? null : it.dataset.days;
       applyDaysFilter();
+      if (window._refreshFilterHint) window._refreshFilterHint();
       closeMenu();
     });
   });
@@ -3296,11 +3301,59 @@ window._giStatusFilter = 'all';
     fBtn.classList.toggle('has-active', !!document.querySelector('#season-filter .mchip.on'));
     tBtn.classList.toggle('has-active', !!document.querySelector('#theme-panel .tchip.on'));
     lBtn.classList.toggle('has-active', !!document.querySelector('#lang-chips .lchip.on:not([data-l="all"])'));
+    refreshFilterHint();
   }
   document.querySelectorAll('#season-filter .mchip, #season-badge, #theme-panel .tchip, #theme-badge, #lang-chips .lchip, #lang-badge').forEach(function (el) {
     el.addEventListener('click', function () { setTimeout(refreshActive, 0); });
   });
   refreshActive();
+
+  /* Filter-active hint bar: shows when any filter is engaged, with a clear-all escape */
+  var filterBar = document.getElementById('filter-active-bar');
+  function refreshFilterHint() {
+    var anyActive = false;
+    /* disclosure buttons with has-active dot */
+    if (document.querySelector('.disc-btn.has-active')) anyActive = true;
+    /* days filter — label changes from default when active */
+    var dLabel = document.getElementById('daysJumpLabel');
+    if (dLabel && dLabel.textContent.trim() !== 'Trip Length') anyActive = true;
+    /* search box */
+    var srch = document.getElementById('guide-search');
+    if (srch && srch.value.trim()) anyActive = true;
+    /* been/want toggle */
+    if (document.querySelector('.stab.on')) anyActive = true;
+    if (filterBar) filterBar.classList.toggle('visible', anyActive);
+  }
+  window._refreshFilterHint = refreshFilterHint;
+
+  /* Clear all: mirrors the clearing done in toggle() when opening a facet */
+  function clearAllFilters() {
+    if (window._clearDaysFilter) window._clearDaysFilter();
+    if (window._clearLangFilter) window._clearLangFilter();
+    if (window._clearCountryFilter) window._clearCountryFilter();
+    if (window._clearContinentFilter) window._clearContinentFilter();
+    var sb = document.querySelector('#season-filter .mchip.on');
+    if (sb) sb.click();
+    var tb = document.querySelector('#theme-panel .tchip.on:not([data-theme="all"])');
+    if (tb) tb.click();
+    var srch = document.getElementById('guide-search');
+    if (srch && srch.value) { srch.value = ''; srch.dispatchEvent(new Event('input')); }
+    /* click the active stab to trigger its own handler (which calls applyMosaicFilter) */
+    var activeStab = document.querySelector('.stab.on');
+    if (activeStab) activeStab.click();
+    setTimeout(refreshFilterHint, 0);
+  }
+  var clearBtn = document.getElementById('clear-all-filters');
+  if (clearBtn) clearBtn.addEventListener('click', clearAllFilters);
+
+  /* Also refresh hint on search input and stab clicks */
+  (function () {
+    var srch = document.getElementById('guide-search');
+    if (srch) srch.addEventListener('input', function () { setTimeout(refreshFilterHint, 0); });
+    document.querySelectorAll('.stab').forEach(function (s) {
+      s.addEventListener('click', function () { setTimeout(refreshFilterHint, 0); });
+    });
+  }());
 
   /* Deep-link from home tiles: open a specific facet panel */
   function _openFacet(btn, panel) {
