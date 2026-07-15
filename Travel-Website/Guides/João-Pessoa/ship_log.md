@@ -10,3 +10,4 @@
 
 2026-07-06 12:45 — João-Pessoa — transit card: none (no transit card system; researched during build)
 2026-07-06 12:45 — joao-pessoa_v1.html — PASS — 0 checks
+2026-07-15 16:54 — joao-pessoa_v1.html — PASS — 0 checks
