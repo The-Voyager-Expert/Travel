@@ -607,7 +607,7 @@
        HTML never needs editing; the pill appears automatically once the map file
        has been generated. No-op if the file is absent (404). */
     function injectStopsMapPill() {
-      var gelRow = document.querySelector('.gel');
+      var gelRow = document.querySelector('.overview-extras');
       if (!gelRow) return;
       if (gelRow.querySelector('a[href$="-stops-map.html"]')) return; // already present in HTML
       // Derive slug from the current page filename (e.g. lisbon_v4.html → lisbon)
