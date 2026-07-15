@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Barbados — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Barbados — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Harrison's Cave",
+    "query": "Harrisons Cave Welchman Hall St Thomas Barbados",
+    "lat": 13.1848194,
+    "lng": -59.5735438
+  },
+  {
+    "day": 1,
+    "name": "Hunte's Gardens",
+    "query": "Huntes Gardens Castle Grant Coffee Gully St Joseph Barbados",
+    "lat": 13.1928317,
+    "lng": -59.5507809
+  },
+  {
+    "day": 1,
+    "name": "Barbados Wildlife Reserve",
+    "query": "Barbados Wildlife Reserve Farley Hill St Peter Barbados",
+    "lat": 13.2691662,
+    "lng": -59.592799
+  },
+  {
+    "day": 1,
+    "name": "St Nicholas Abbey",
+    "query": "St Nicholas Abbey Cherry Tree Hill St Peter Barbados",
+    "lat": 13.2770679,
+    "lng": -59.5891003
+  },
+  {
+    "day": 2,
+    "name": "Gun Hill Signal Station",
+    "query": "Gun Hill Signal Station Fusilier Road St George Barbados",
+    "lat": 13.1432145,
+    "lng": -59.5576019
+  },
+  {
+    "day": 2,
+    "name": "Andromeda Botanic Gardens",
+    "query": "Andromeda Botanic Gardens Bathsheba St Joseph Barbados",
+    "lat": 13.2078885,
+    "lng": -59.517838
+  },
+  {
+    "day": 2,
+    "name": "Bathsheba Soup Bowl",
+    "query": "Bathsheba Soup Bowl Bathsheba St Joseph Barbados",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 2,
+    "name": "Animal Flower Cave",
+    "query": "Animal Flower Cave North Point St Lucy Barbados",
+    "lat": 13.3345914,
+    "lng": -59.6131321
+  },
+  {
+    "day": 3,
+    "name": "Mount Gay Rum Visitor Centre",
+    "query": "Mount Gay Distilleries Exmouth Gap Brandons Spring Garden Highway Saint Michael Barbados",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Carlisle Bay",
+    "query": "Carlisle Bay Pebbles Beach Bay Street Saint Michael Barbados",
+    "lat": 13.087425,
+    "lng": -59.6154379
+  },
+  {
+    "day": 3,
+    "name": "Garrison Historic Area",
+    "query": "The Garrison Savannah Saint Michael Barbados",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "George Washington House",
+    "query": "George Washington House Bush Hill The Garrison Saint Michael Barbados",
+    "lat": 13.0819483,
+    "lng": -59.6067411
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

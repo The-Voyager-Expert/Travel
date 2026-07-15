@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Palo-Alto — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Palo-Alto — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Stanford University Main Quad",
+    "query": "Stanford University Main Quad Serra Mall Stanford CA 94305",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 1,
+    "name": "Hoover Tower",
+    "query": "Hoover Tower Stanford University Stanford CA 94305",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 1,
+    "name": "Cantor Arts Center",
+    "query": "Cantor Arts Center Stanford University 328 Lomita Drive Stanford CA 94305",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 1,
+    "name": "University Avenue Palo Alto",
+    "query": "University Avenue Palo Alto CA 94301",
+    "lat": 37.4502447,
+    "lng": -122.1573096
+  },
+  {
+    "day": 2,
+    "name": "Alcatraz Island",
+    "query": "Alcatraz Landing Pier 33 The Embarcadero San Francisco CA 94111",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 2,
+    "name": "Fisherman's Wharf",
+    "query": "Fishermans Wharf Jefferson Street San Francisco CA 94133",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 2,
+    "name": "Coit Tower",
+    "query": "Coit Tower 1 Telegraph Hill Blvd San Francisco CA 94133",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Muir Woods National Monument",
+    "query": "Muir Woods National Monument 1 Muir Woods Rd Mill Valley CA 94941",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Sausalito",
+    "query": "Bridgeway Sausalito CA 94965",
+    "lat": 37.8625515,
+    "lng": -122.4954067
+  },
+  {
+    "day": 4,
+    "name": "Cannery Row",
+    "query": "Cannery Row Monterey CA 93940",
+    "lat": 36.6134933,
+    "lng": -121.8979357
+  },
+  {
+    "day": 4,
+    "name": "17-Mile Drive",
+    "query": "Lone Cypress 17 Mile Drive Pebble Beach CA 93953",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 5,
+    "name": "Napa Valley",
+    "query": "Napa Valley Yountville CA 94599",
+    "lat": 38.3919632,
+    "lng": -122.3540744
+  },
+  {
+    "day": 5,
+    "name": "Castello di Amorosa",
+    "query": "Castello di Amorosa 4045 St Helena Hwy Calistoga CA 94515",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Allied Arts Guild",
+    "query": "Allied Arts Guild 75 Arbor Rd Menlo Park CA 94025",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Computer History Museum",
+    "query": "Computer History Museum 1401 N Shoreline Blvd Mountain View CA 94043",
+    "lat": 37.414293,
+    "lng": -122.0774488
+  },
+  {
+    "day": 6,
+    "name": "Shoreline at Mountain View",
+    "query": "Shoreline at Mountain View 3070 N Shoreline Blvd Mountain View CA 94043",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 7,
+    "name": "Ferry Building &amp; Embarcadero",
+    "query": "Ferry Building 1 Ferry Building San Francisco CA 94111",
+    "lat": 37.7959149,
+    "lng": -122.3939585
+  },
+  {
+    "day": 7,
+    "name": "Painted Ladies &amp; Alamo Square",
+    "query": "Alamo Square Park Steiner Street San Francisco CA 94117",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 7,
+    "name": "Lombard Street &amp; Powell-Hyde Cable Car",
+    "query": "Lombard Street San Francisco CA 94133",
+    "lat": 37.8021196,
+    "lng": -122.418716
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

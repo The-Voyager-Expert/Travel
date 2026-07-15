@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Salzburg — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Salzburg — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+  <button class="day-btn" data-day="8" style="--dc:#f39c12">Day 8</button>
+  <button class="day-btn" data-day="9" style="--dc:#888">Day 9</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Hohensalzburg Fortress",
+    "query": "Festungsgasse 4 Salzburg",
+    "lat": 47.7964516,
+    "lng": 13.0461279
+  },
+  {
+    "day": 1,
+    "name": "St. Peter's Abbey &amp; Catacombs",
+    "query": "Sankt-Peter-Bezirk 1 Salzburg",
+    "lat": 47.7969899,
+    "lng": 13.0448145
+  },
+  {
+    "day": 1,
+    "name": "DomQuartier Salzburg",
+    "query": "Residenzplatz 1 Salzburg",
+    "lat": 47.7985133,
+    "lng": 13.044929
+  },
+  {
+    "day": 2,
+    "name": "Mirabell Palace &amp; Gardens",
+    "query": "Mirabellplatz Salzburg",
+    "lat": 47.8051808,
+    "lng": 13.0432146
+  },
+  {
+    "day": 2,
+    "name": "Hellbrunn Palace &amp; Trick Fountains",
+    "query": "Fürstenweg 37 Salzburg Hellbrunn",
+    "lat": 47.7654784,
+    "lng": 13.0706428
+  },
+  {
+    "day": 2,
+    "name": "Untersberg",
+    "query": "Dr.-Friedrich-Oedl-Weg 2 Grödig",
+    "lat": 47.7256532,
+    "lng": 13.0421355
+  },
+  {
+    "day": 3,
+    "name": "Mozart's Birthplace",
+    "query": "Getreidegasse 9 Salzburg",
+    "lat": 47.799943,
+    "lng": 13.0435536
+  },
+  {
+    "day": 3,
+    "name": "Mozart's Residence",
+    "query": "Makartplatz 8 Salzburg",
+    "lat": 47.8026506,
+    "lng": 13.0437708
+  },
+  {
+    "day": 3,
+    "name": "Kapuzinerberg",
+    "query": "Kapuzinerberg Salzburg",
+    "lat": 47.8040674,
+    "lng": 13.0575001
+  },
+  {
+    "day": 3,
+    "name": "Museum der Moderne Mönchsberg",
+    "query": "Mönchsberg 32 Salzburg",
+    "lat": 47.8009031,
+    "lng": 13.0382993
+  },
+  {
+    "day": 4,
+    "name": "Nonnberg Abbey",
+    "query": "Nonnberggasse 2 Salzburg",
+    "lat": 47.7939464,
+    "lng": 13.0490793
+  },
+  {
+    "day": 4,
+    "name": "Salzwelten Hallein Salt Mine",
+    "query": "Ramsaußstraße 3 Bad Dürrnberg",
+    "lat": 47.6669612,
+    "lng": 13.0901835
+  },
+  {
+    "day": 6,
+    "name": "Goldenes Dachl",
+    "query": "Herzog-Friedrich-Straße 15 Innsbruck",
+    "lat": 47.2686574,
+    "lng": 11.3932692
+  },
+  {
+    "day": 6,
+    "name": "Hofburg Innsbruck",
+    "query": "Rennweg 1 Innsbruck",
+    "lat": 47.2691806,
+    "lng": 11.3947088
+  },
+  {
+    "day": 6,
+    "name": "Nordkettenbahn",
+    "query": "Rennweg Congress Innsbruck",
+    "lat": 47.2745786,
+    "lng": 11.3975241
+  },
+  {
+    "day": 7,
+    "name": "Eisriesenwelt Ice Caves",
+    "query": "Eisriesenwelt Werfen Austria",
+    "lat": 47.4975302,
+    "lng": 13.1936357
+  },
+  {
+    "day": 8,
+    "name": "Upper Belvedere",
+    "query": "Prinz-Eugen-Straße 27 Wien",
+    "lat": 48.1912243,
+    "lng": 16.3798261
+  },
+  {
+    "day": 8,
+    "name": "Schönbrunn Palace",
+    "query": "Schönbrunner Schloßstraße 47 Wien",
+    "lat": 48.1848664,
+    "lng": 16.3128721
+  },
+  {
+    "day": 5,
+    "name": "Haus der Natur",
+    "query": "Museumsplatz 5 Salzburg",
+    "lat": 47.8018019,
+    "lng": 13.0391863
+  },
+  {
+    "day": 5,
+    "name": "Hangar-7",
+    "query": "Wilhelm-Spazier-Straße 7A Salzburg",
+    "lat": 47.793687,
+    "lng": 13.0073851
+  },
+  {
+    "day": 9,
+    "name": "Königssee",
+    "query": "Seestraße 55 Schönau am Königssee",
+    "lat": 47.5902532,
+    "lng": 12.9902129
+  },
+  {
+    "day": 9,
+    "name": "Kehlsteinhaus · Eagle's Nest",
+    "query": "Kehlsteinstraße Obersalzberg Berchtesgaden",
+    "lat": null,
+    "lng": null
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c", "8": "#f39c12", "9": "#888"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

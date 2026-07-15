@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Munich — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Munich — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Marienplatz",
+    "query": "Marienplatz 1 80331 Munich",
+    "lat": 48.137499,
+    "lng": 11.5747545
+  },
+  {
+    "day": 1,
+    "name": "Frauenkirche",
+    "query": "Frauenplatz 12 80331 Munich",
+    "lat": 48.1388679,
+    "lng": 11.5743388
+  },
+  {
+    "day": 1,
+    "name": "St. Peter's Church",
+    "query": "Rindermarkt 1 80331 Munich",
+    "lat": 48.1363083,
+    "lng": 11.5753244
+  },
+  {
+    "day": 1,
+    "name": "Munich Residenz",
+    "query": "Residenzstr. 1 80333 Munich",
+    "lat": 48.1421714,
+    "lng": 11.5778676
+  },
+  {
+    "day": 2,
+    "name": "Nymphenburg Palace",
+    "query": "Schloss Nymphenburg 1 80638 Munich",
+    "lat": 48.1582569,
+    "lng": 11.5032967
+  },
+  {
+    "day": 2,
+    "name": "Olympiapark",
+    "query": "Spiridon-Louis-Ring 21 80809 Munich",
+    "lat": 48.1749959,
+    "lng": 11.5571952
+  },
+  {
+    "day": 2,
+    "name": "Olympiaturm",
+    "query": "Spiridon-Louis-Ring 7 80809 Munich",
+    "lat": 48.1744163,
+    "lng": 11.5537405
+  },
+  {
+    "day": 2,
+    "name": "BMW Welt",
+    "query": "Am Olympiapark 1 80809 Munich",
+    "lat": 48.1772189,
+    "lng": 11.5563758
+  },
+  {
+    "day": 3,
+    "name": "Haus der Kunst",
+    "query": "Prinzregentenstr. 1 80538 Munich",
+    "lat": 48.1444409,
+    "lng": 11.5852836
+  },
+  {
+    "day": 3,
+    "name": "Monopteros",
+    "query": "Monopteros Englischer Garten 80538 Munich",
+    "lat": 48.1498803,
+    "lng": 11.5909208
+  },
+  {
+    "day": 3,
+    "name": "Bayerisches Nationalmuseum",
+    "query": "Prinzregentenstr. 3 80538 Munich",
+    "lat": 48.1431228,
+    "lng": 11.5918008
+  },
+  {
+    "day": 3,
+    "name": "Hofgarten",
+    "query": "Hofgartenstr. 1 80539 Munich",
+    "lat": 48.1413919,
+    "lng": 11.5819319
+  },
+  {
+    "day": 4,
+    "name": "Hohensalzburg Fortress",
+    "query": "Mönchsberg 34 5020 Salzburg",
+    "lat": 47.7952103,
+    "lng": 13.0480971
+  },
+  {
+    "day": 4,
+    "name": "Mirabell Gardens",
+    "query": "Mirabellplatz 4 5020 Salzburg",
+    "lat": 47.8060199,
+    "lng": 13.0422828
+  },
+  {
+    "day": 4,
+    "name": "Salzburg Altstadt",
+    "query": "Getreidegasse 9 5020 Salzburg",
+    "lat": 47.799943,
+    "lng": 13.0435536
+  },
+  {
+    "day": 4,
+    "name": "Salzburg Cathedral",
+    "query": "Domplatz 1 5020 Salzburg",
+    "lat": 47.7978459,
+    "lng": 13.0466232
+  },
+  {
+    "day": 5,
+    "name": "Hohenschwangau Castle",
+    "query": "Alpseestraße 30 87645 Schwangau",
+    "lat": 47.5555583,
+    "lng": 10.7360534
+  },
+  {
+    "day": 5,
+    "name": "Neuschwanstein Castle",
+    "query": "Neuschwansteinstraße 20 87645 Schwangau",
+    "lat": 47.558457,
+    "lng": 10.7499674
+  },
+  {
+    "day": 5,
+    "name": "Marienbrücke",
+    "query": "Marienbrücke 87645 Schwangau",
+    "lat": 47.5549567,
+    "lng": 10.749404
+  },
+  {
+    "day": 5,
+    "name": "Füssen Altstadt",
+    "query": "Reichenstraße 87629 Füssen",
+    "lat": 47.5686017,
+    "lng": 10.6998783
+  },
+  {
+    "day": 6,
+    "name": "Kaiserburg Nuremberg",
+    "query": "Burg 17 90403 Nürnberg",
+    "lat": 49.4579658,
+    "lng": 11.0756621
+  },
+  {
+    "day": 6,
+    "name": "Albrecht Dürer's House",
+    "query": "Albrecht-Dürer-Straße 39 90403 Nürnberg",
+    "lat": 49.4571881,
+    "lng": 11.0739627
+  },
+  {
+    "day": 6,
+    "name": "Hauptmarkt",
+    "query": "Hauptmarkt 90403 Nürnberg",
+    "lat": 49.4536843,
+    "lng": 11.0772703
+  },
+  {
+    "day": 6,
+    "name": "St. Lorenz Church",
+    "query": "Lorenzer Platz 90402 Nürnberg",
+    "lat": 49.4510963,
+    "lng": 11.0778851
+  },
+  {
+    "day": 7,
+    "name": "Zugspitze",
+    "query": "Olympiastraße 27 82467 Garmisch-Partenkirchen",
+    "lat": 47.4926195,
+    "lng": 11.0937498
+  },
+  {
+    "day": 7,
+    "name": "Eibsee",
+    "query": "Eibsee 82491 Grainau",
+    "lat": 47.4574009,
+    "lng": 10.9910094
+  },
+  {
+    "day": 7,
+    "name": "Partnachklamm",
+    "query": "Wildenauer Straße 18 82467 Garmisch-Partenkirchen",
+    "lat": 47.4840614,
+    "lng": 11.11876
+  },
+  {
+    "day": 7,
+    "name": "Garmisch-Partenkirchen Altstadt",
+    "query": "Frühlingsstraße 82467 Garmisch-Partenkirchen",
+    "lat": null,
+    "lng": null
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

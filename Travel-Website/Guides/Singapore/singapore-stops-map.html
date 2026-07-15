@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Singapore — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Singapore — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+  <button class="day-btn" data-day="8" style="--dc:#f39c12">Day 8</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "ArtScience Museum",
+    "query": "ArtScience Museum 6 Bayfront Avenue Marina Bay Sands Singapore 018974",
+    "lat": 1.2861382,
+    "lng": 103.8592297
+  },
+  {
+    "day": 1,
+    "name": "Marina Bay Sands SkyPark",
+    "query": "Marina Bay Sands SkyPark 10 Bayfront Avenue Singapore 018956",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 1,
+    "name": "Singapore Flyer",
+    "query": "Singapore Flyer 30 Raffles Avenue Singapore 039803",
+    "lat": 1.2894379,
+    "lng": 103.8632598
+  },
+  {
+    "day": 1,
+    "name": "Supertree Grove &amp; Garden Rhapsody",
+    "query": "Supertree Grove Gardens by the Bay 18 Marina Gardens Drive Singapore 018953",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 2,
+    "name": "Cloud Forest",
+    "query": "Cloud Forest Gardens by the Bay 18 Marina Gardens Drive Singapore 018953",
+    "lat": 1.2838777,
+    "lng": 103.8660342
+  },
+  {
+    "day": 2,
+    "name": "Flower Dome",
+    "query": "Flower Dome Gardens by the Bay 18 Marina Gardens Drive Singapore 018953",
+    "lat": 1.2845359,
+    "lng": 103.8647016
+  },
+  {
+    "day": 2,
+    "name": "OCBC Skyway",
+    "query": "OCBC Skyway Gardens by the Bay 18 Marina Gardens Drive Singapore 018953",
+    "lat": 1.2821545,
+    "lng": 103.8636352
+  },
+  {
+    "day": 2,
+    "name": "Marina Barrage",
+    "query": "Marina Barrage 8 Marina Gardens Drive Singapore 018951",
+    "lat": 1.2814033,
+    "lng": 103.8725736
+  },
+  {
+    "day": 3,
+    "name": "Asian Civilisations Museum",
+    "query": "Asian Civilisations Museum 1 Empress Place Singapore 179555",
+    "lat": 1.2874464,
+    "lng": 103.8514862
+  },
+  {
+    "day": 3,
+    "name": "Buddha Tooth Relic Temple",
+    "query": "Buddha Tooth Relic Temple 288 South Bridge Road Singapore 058840",
+    "lat": 1.2815093,
+    "lng": 103.8441892
+  },
+  {
+    "day": 3,
+    "name": "Sri Veeramakaliamman Temple",
+    "query": "Sri Veeramakaliamman Temple 141 Serangoon Road Singapore 218042",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Sultan Mosque",
+    "query": "Sultan Mosque 3 Muscat Street Singapore 198833",
+    "lat": 1.3034335,
+    "lng": 103.8596966
+  },
+  {
+    "day": 4,
+    "name": "Singapore Botanic Gardens",
+    "query": "Singapore Botanic Gardens 1 Cluny Road Singapore 259569",
+    "lat": 1.3085088,
+    "lng": 103.8179136
+  },
+  {
+    "day": 4,
+    "name": "National Orchid Garden",
+    "query": "National Orchid Garden 1 Cluny Road Singapore 259569",
+    "lat": 1.3127356,
+    "lng": 103.8136121
+  },
+  {
+    "day": 4,
+    "name": "MacRitchie Reservoir",
+    "query": "MacRitchie Reservoir Venus Drive Singapore 578774",
+    "lat": 1.3448177,
+    "lng": 103.8239379
+  },
+  {
+    "day": 4,
+    "name": "TreeTop Walk",
+    "query": "TreeTop Walk MacRitchie Nature Trail Singapore 578774",
+    "lat": 1.3609912,
+    "lng": 103.8115908
+  },
+  {
+    "day": 5,
+    "name": "Fort Canning Park",
+    "query": "Fort Canning Park 51 Canning Rise Singapore 179869",
+    "lat": 1.2940165,
+    "lng": 103.8460084
+  },
+  {
+    "day": 5,
+    "name": "National Gallery Singapore",
+    "query": "National Gallery Singapore 1 St Andrews Road Singapore 178957",
+    "lat": 1.2902557,
+    "lng": 103.8514709
+  },
+  {
+    "day": 5,
+    "name": "St Andrew’s Cathedral",
+    "query": "St Andrews Cathedral 11 St Andrews Road Singapore 178959",
+    "lat": 1.2923052,
+    "lng": 103.8523107
+  },
+  {
+    "day": 5,
+    "name": "Clarke Quay",
+    "query": "Clarke Quay 3 River Valley Road Singapore 179024",
+    "lat": 1.2900576,
+    "lng": 103.8454537
+  },
+  {
+    "day": 6,
+    "name": "Katong &amp; East Coast Peranakan Walk",
+    "query": "Dakota MRT Station Exit B Singapore",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Peranakan Mansion",
+    "query": "Peranakan Mansion 214 Joo Chiat Road Singapore 427486",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Jewel Changi Canopy Park",
+    "query": "Jewel Changi Airport 78 Airport Boulevard Singapore 819666",
+    "lat": 1.3602243,
+    "lng": 103.9896749
+  },
+  {
+    "day": 6,
+    "name": "Changi Chapel &amp; Museum",
+    "query": "Changi Chapel Museum 1000 Upper Changi Road North Singapore 507707",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 7,
+    "name": "Henderson Waves",
+    "query": "Henderson Waves Henderson Road Singapore 159554",
+    "lat": 1.2761114,
+    "lng": 103.8152928
+  },
+  {
+    "day": 7,
+    "name": "Southern Ridges Walk",
+    "query": "Southern Ridges Singapore 159554",
+    "lat": 1.2555712,
+    "lng": 103.8177397
+  },
+  {
+    "day": 7,
+    "name": "Faber Peak Cable Car",
+    "query": "Faber Peak 109 Mount Faber Road Singapore 099203",
+    "lat": 1.2712059,
+    "lng": 103.8194141
+  },
+  {
+    "day": 7,
+    "name": "AltitudeX",
+    "query": "AltitudeX 109 Mount Faber Road Singapore 099203",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 8,
+    "name": "Universal Studios Singapore",
+    "query": "Universal Studios Singapore 8 Sentosa Gateway Singapore 098269",
+    "lat": 1.2566416,
+    "lng": 103.8212057
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c", "8": "#f39c12"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

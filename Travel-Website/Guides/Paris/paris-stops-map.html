@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Paris — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Paris — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Sainte-Chapelle",
+    "query": "Sainte Chapelle 10 Boulevard du Palais 75001 Paris",
+    "lat": 48.8553933,
+    "lng": 2.3449941
+  },
+  {
+    "day": 1,
+    "name": "Conciergerie",
+    "query": "Conciergerie 2 Boulevard du Palais 75001 Paris",
+    "lat": 48.8559492,
+    "lng": 2.3460263
+  },
+  {
+    "day": 1,
+    "name": "Rue Mouffetard · food street stroll",
+    "query": "Rue Mouffetard 75005 Paris",
+    "lat": 48.8412721,
+    "lng": 2.349635
+  },
+  {
+    "day": 1,
+    "name": "Les Deux Magots",
+    "query": "Les Deux Magots 6 Place Saint-Germain des Pres 75006 Paris",
+    "lat": 48.854069,
+    "lng": 2.3330634
+  },
+  {
+    "day": 2,
+    "name": "Place des Vosges &amp; Le Marais stroll",
+    "query": "Place des Vosges 75004 Paris",
+    "lat": 48.8550655,
+    "lng": 2.3653311
+  },
+  {
+    "day": 2,
+    "name": "Musée Carnavalet",
+    "query": "Musee Carnavalet 23 Rue de Sevigne 75003 Paris",
+    "lat": 48.8573232,
+    "lng": 2.3624734
+  },
+  {
+    "day": 2,
+    "name": "Palais Garnier · Opéra",
+    "query": "Palais Garnier Place de l Opera 75009 Paris",
+    "lat": 48.8714332,
+    "lng": 2.3319654
+  },
+  {
+    "day": 2,
+    "name": "Sacré-Cœur &amp; Montmartre",
+    "query": "Basilique du Sacre Coeur 35 Rue du Chevalier de la Barre 75018 Paris",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Arc de Triomphe · rooftop",
+    "query": "Arc de Triomphe Place Charles de Gaulle 75008 Paris",
+    "lat": 48.8737791,
+    "lng": 2.2950372
+  },
+  {
+    "day": 3,
+    "name": "Eiffel Tower",
+    "query": "Eiffel Tower Champ de Mars 5 Avenue Anatole France 75007 Paris",
+    "lat": 48.8582599,
+    "lng": 2.2945006
+  },
+  {
+    "day": 3,
+    "name": "Rue Cler · food street stroll",
+    "query": "Rue Cler 75007 Paris",
+    "lat": 48.8565839,
+    "lng": 2.3065089
+  },
+  {
+    "day": 3,
+    "name": "Musée de l'Orangerie",
+    "query": "Musee de l Orangerie Jardin des Tuileries 75001 Paris",
+    "lat": 48.8653454,
+    "lng": 2.3226649
+  },
+  {
+    "day": 4,
+    "name": "Fondation Monet — House &amp; Gardens",
+    "query": "Fondation Claude Monet 84 Rue Claude Monet 27620 Giverny",
+    "lat": 49.0753489,
+    "lng": 1.5337884
+  },
+  {
+    "day": 4,
+    "name": "Musée des Impressionnismes Giverny",
+    "query": "Musee des Impressionnismes 99 Rue Claude Monet 27620 Giverny",
+    "lat": 49.0763478,
+    "lng": 1.5313261
+  },
+  {
+    "day": 4,
+    "name": "Giverny Village &amp; Église Sainte-Radegonde",
+    "query": "Eglise Sainte-Radegonde Giverny 27620",
+    "lat": 49.0775493,
+    "lng": 1.5235933
+  },
+  {
+    "day": 5,
+    "name": "Reims Cathedral",
+    "query": "Cathedrale Notre-Dame de Reims Place du Cardinal Lucon 51100 Reims",
+    "lat": 49.2537696,
+    "lng": 4.0339189
+  },
+  {
+    "day": 5,
+    "name": "Palais du Tau",
+    "query": "Palais du Tau 2 Place du Cardinal Lucon 51100 Reims",
+    "lat": 49.2532624,
+    "lng": 4.0345372
+  },
+  {
+    "day": 5,
+    "name": "Champagne Cellars · Taittinger",
+    "query": "Taittinger 9 Place Saint-Nicaise 51100 Reims",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Chartres Cathedral",
+    "query": "Cathédrale Notre-Dame de Chartres 16 Cloitre Notre Dame 28000 Chartres",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Centre International du Vitrail",
+    "query": "Centre International du Vitrail 5 Rue du Cardinal Pie 28000 Chartres",
+    "lat": 48.4484843,
+    "lng": 1.4860532
+  },
+  {
+    "day": 6,
+    "name": "Old Town &amp; Eure Riverside",
+    "query": "Rue des Ecuyers 28000 Chartres",
+    "lat": 48.4462328,
+    "lng": 1.4905006
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

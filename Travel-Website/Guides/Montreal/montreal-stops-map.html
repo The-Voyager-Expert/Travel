@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Montreal — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Montreal — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+  <button class="day-btn" data-day="8" style="--dc:#f39c12">Day 8</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Notre-Dame Basilica",
+    "query": "Notre-Dame Basilica 110 Rue Notre-Dame Ouest Old Montreal",
+    "lat": 45.5044365,
+    "lng": -73.5559901
+  },
+  {
+    "day": 1,
+    "name": "Pointe-à-Callière Museum",
+    "query": "Pointe-a-Calliere Museum 350 Place Royale Old Montreal",
+    "lat": 45.5025957,
+    "lng": -73.55418
+  },
+  {
+    "day": 1,
+    "name": "Notre-Dame-de-Bon-Secours Chapel",
+    "query": "Notre-Dame-de-Bon-Secours Chapel 400 Rue Saint-Paul Est Montreal",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 1,
+    "name": "Grande Roue de Montréal",
+    "query": "Grande Roue de Montreal Quai de l Horloge Old Port Montreal",
+    "lat": 45.5084815,
+    "lng": -73.5486577
+  },
+  {
+    "day": 2,
+    "name": "McGill University",
+    "query": "McGill University 845 Rue Sherbrooke Ouest Montreal",
+    "lat": 45.5068861,
+    "lng": -73.5787118
+  },
+  {
+    "day": 2,
+    "name": "Montreal Museum of Fine Arts",
+    "query": "Montreal Museum of Fine Arts 1380 Rue Sherbrooke Ouest Montreal",
+    "lat": 45.4986971,
+    "lng": -73.5793846
+  },
+  {
+    "day": 2,
+    "name": "Place des Arts",
+    "query": "Place des Arts 175 Rue Sainte-Catherine Ouest Montreal",
+    "lat": 45.5084047,
+    "lng": -73.5665434
+  },
+  {
+    "day": 2,
+    "name": "Chinatown",
+    "query": "Montreal Chinatown Rue de la Gauchetiere Ouest Montreal",
+    "lat": 45.5063698,
+    "lng": -73.5610526
+  },
+  {
+    "day": 3,
+    "name": "Biodôme de Montréal",
+    "query": "Biodome de Montreal 4777 Avenue Pierre-De Coubertin Montreal",
+    "lat": 45.5596817,
+    "lng": -73.5495704
+  },
+  {
+    "day": 3,
+    "name": "Montreal Tower Observatory",
+    "query": "Montreal Olympic Tower 4141 Avenue Pierre-De Coubertin Montreal",
+    "lat": 45.5583923,
+    "lng": -73.5518043
+  },
+  {
+    "day": 3,
+    "name": "Montreal Botanical Garden",
+    "query": "Montreal Botanical Garden 4101 Rue Sherbrooke Est Montreal",
+    "lat": 45.5595419,
+    "lng": -73.5612435
+  },
+  {
+    "day": 3,
+    "name": "Insectarium",
+    "query": "Insectarium Montreal 4581 Rue Sherbrooke Est Montreal",
+    "lat": 45.5610089,
+    "lng": -73.5580401
+  },
+  {
+    "day": 4,
+    "name": "Parc du Mont-Royal",
+    "query": "Parc du Mont-Royal Montreal",
+    "lat": 45.5053967,
+    "lng": -73.5886405
+  },
+  {
+    "day": 4,
+    "name": "Saint Joseph's Oratory",
+    "query": "Saint Josephs Oratory 3800 Chemin Queen Mary Montreal",
+    "lat": 45.4920517,
+    "lng": -73.6166992
+  },
+  {
+    "day": 4,
+    "name": "Parc La Fontaine",
+    "query": "Parc La Fontaine Montreal Plateau Mont-Royal",
+    "lat": 45.5262562,
+    "lng": -73.5689672
+  },
+  {
+    "day": 4,
+    "name": "Church of the Madonna della Difesa",
+    "query": "Church of the Madonna della Difesa 6800 Avenue Henri-Julien Montreal",
+    "lat": 45.5348915,
+    "lng": -73.6112169
+  },
+  {
+    "day": 5,
+    "name": "Habitat 67",
+    "query": "2600 Avenue Pierre-Dupuy Montreal QC",
+    "lat": 45.4998779,
+    "lng": -73.5437925
+  },
+  {
+    "day": 5,
+    "name": "Montreal Biosphere",
+    "query": "160 Chemin Tour-de-lIsle Montreal QC",
+    "lat": 45.5140865,
+    "lng": -73.5314268
+  },
+  {
+    "day": 5,
+    "name": "Musée Stewart",
+    "query": "20 Chemin Tour-de-lIsle Montreal QC",
+    "lat": 45.504295,
+    "lng": -73.5733943
+  },
+  {
+    "day": 5,
+    "name": "Old Port Clock Tower",
+    "query": "Quai de l'Horloge Old Port Montreal QC",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Château Ramezay",
+    "query": "280 Rue Notre-Dame Est Montreal QC",
+    "lat": 45.579738,
+    "lng": -73.5130106
+  },
+  {
+    "day": 6,
+    "name": "Sir George-Étienne Cartier National Historic Site",
+    "query": "458 Rue Notre-Dame Est Montreal QC",
+    "lat": 45.5111488,
+    "lng": -73.5517126
+  },
+  {
+    "day": 6,
+    "name": "Château Dufresne",
+    "query": "2929 Avenue Jeanne-d'Arc Montreal QC",
+    "lat": 45.5535675,
+    "lng": -73.5536825
+  },
+  {
+    "day": 6,
+    "name": "Lachine Canal",
+    "query": "Lachine Canal Saint-Henri Montreal QC",
+    "lat": 45.4607603,
+    "lng": -73.6043939
+  },
+  {
+    "day": 7,
+    "name": "McCord Stewart Museum",
+    "query": "McCord Stewart Museum 690 Rue Sherbrooke Ouest Montreal QC",
+    "lat": 45.504295,
+    "lng": -73.5733943
+  },
+  {
+    "day": 7,
+    "name": "Cathédrale Marie-Reine-du-Monde",
+    "query": "Cathedral Mary Queen World 1085 Rue de la Cathedrale Montreal QC",
+    "lat": 45.4994197,
+    "lng": -73.5688518
+  },
+  {
+    "day": 7,
+    "name": "Canadian Centre for Architecture",
+    "query": "Canadian Centre for Architecture 1920 Rue Baile Montreal QC",
+    "lat": 45.490974,
+    "lng": -73.5790045
+  },
+  {
+    "day": 7,
+    "name": "Redpath Museum",
+    "query": "Redpath Museum McGill 859 Rue Sherbrooke Ouest Montreal QC",
+    "lat": 45.5044713,
+    "lng": -73.5775143
+  },
+  {
+    "day": 8,
+    "name": "Square Saint-Louis",
+    "query": "Square Saint-Louis Montreal Plateau Mont-Royal",
+    "lat": 45.5171171,
+    "lng": -73.5698253
+  },
+  {
+    "day": 8,
+    "name": "Église Saint-Jean-Baptiste",
+    "query": "Eglise Saint-Jean-Baptiste 4237 Avenue Henri-Julien Montreal QC",
+    "lat": 45.5212791,
+    "lng": -73.5795401
+  },
+  {
+    "day": 8,
+    "name": "Chapelle Notre-Dame-de-Lourdes",
+    "query": "Chapelle Notre-Dame-de-Lourdes 430 Rue Sainte-Catherine Est Montreal QC",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 8,
+    "name": "Cinémathèque québécoise",
+    "query": "Cinematheque quebecoise 335 Boulevard de Maisonneuve Est Montreal QC",
+    "lat": 45.5140329,
+    "lng": -73.5627076
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c", "8": "#f39c12"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

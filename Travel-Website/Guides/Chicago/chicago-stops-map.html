@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Chicago — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Chicago — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Art Institute of Chicago",
+    "query": "111 S Michigan Ave Chicago",
+    "lat": 41.879605,
+    "lng": -87.6230716
+  },
+  {
+    "day": 1,
+    "name": "Millennium Park",
+    "query": "201 E Randolph St Chicago",
+    "lat": 41.8841369,
+    "lng": -87.6214413
+  },
+  {
+    "day": 1,
+    "name": "Chicago Architecture Center River Cruise",
+    "query": "112 E Wacker Dr Chicago",
+    "lat": 41.888091,
+    "lng": -87.622329
+  },
+  {
+    "day": 1,
+    "name": "Skydeck Chicago at Willis Tower",
+    "query": "233 S Wacker Dr Chicago",
+    "lat": 41.878738,
+    "lng": -87.6359612
+  },
+  {
+    "day": 2,
+    "name": "Chicago Cultural Center",
+    "query": "78 E Washington St Chicago",
+    "lat": 41.8838628,
+    "lng": -87.6248023
+  },
+  {
+    "day": 2,
+    "name": "The Rookery Building",
+    "query": "209 S LaSalle St Chicago",
+    "lat": 41.8791059,
+    "lng": -87.6318306
+  },
+  {
+    "day": 2,
+    "name": "Buckingham Fountain",
+    "query": "301 S Columbus Dr Chicago",
+    "lat": 41.875802,
+    "lng": -87.6189718
+  },
+  {
+    "day": 2,
+    "name": "Chicago Riverwalk",
+    "query": "375 E Wacker Dr Chicago",
+    "lat": 41.8872334,
+    "lng": -87.6172586
+  },
+  {
+    "day": 3,
+    "name": "Field Museum",
+    "query": "1400 S Lake Shore Dr Chicago IL",
+    "lat": 41.744179,
+    "lng": -87.5404024
+  },
+  {
+    "day": 3,
+    "name": "Shedd Aquarium",
+    "query": "1200 S Lake Shore Dr Chicago IL",
+    "lat": 41.7370007,
+    "lng": -87.540233
+  },
+  {
+    "day": 3,
+    "name": "Adler Planetarium",
+    "query": "1300 S Lake Shore Dr Chicago IL",
+    "lat": 41.744179,
+    "lng": -87.5404024
+  },
+  {
+    "day": 3,
+    "name": "Navy Pier",
+    "query": "600 E Grand Ave Chicago IL",
+    "lat": 41.8923939,
+    "lng": -87.6106286
+  },
+  {
+    "day": 4,
+    "name": "Robie House",
+    "query": "5757 S Woodlawn Ave Chicago IL",
+    "lat": 41.7897893,
+    "lng": -87.595994
+  },
+  {
+    "day": 4,
+    "name": "Griffin Museum of Science and Industry",
+    "query": "5700 S DuSable Lake Shore Dr Chicago IL",
+    "lat": 41.8576313,
+    "lng": -87.6163237
+  },
+  {
+    "day": 4,
+    "name": "Promontory Point",
+    "query": "5491 S Shore Dr Chicago IL",
+    "lat": 41.796475,
+    "lng": -87.5761363
+  },
+  {
+    "day": 5,
+    "name": "Historic Third Ward",
+    "query": "Historic Third Ward Milwaukee WI",
+    "lat": 43.0327715,
+    "lng": -87.9058425
+  },
+  {
+    "day": 5,
+    "name": "Milwaukee Art Museum",
+    "query": "700 N Art Museum Dr Milwaukee WI",
+    "lat": 43.0398098,
+    "lng": -87.8970583
+  },
+  {
+    "day": 5,
+    "name": "Harley-Davidson Museum",
+    "query": "400 W Canal St Milwaukee WI",
+    "lat": 43.031325,
+    "lng": -87.9158102
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

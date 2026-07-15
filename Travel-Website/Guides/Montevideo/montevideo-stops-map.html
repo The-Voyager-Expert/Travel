@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Montevideo — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Montevideo — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Plaza Independencia",
+    "query": "Plaza Independencia Ciudad Vieja",
+    "lat": -34.9064755,
+    "lng": -56.1997577
+  },
+  {
+    "day": 1,
+    "name": "Palacio Salvo",
+    "query": "Palacio Salvo Plaza Independencia 848 Ciudad Vieja",
+    "lat": -34.9068402,
+    "lng": -56.1983509
+  },
+  {
+    "day": 1,
+    "name": "Teatro Solís",
+    "query": "Teatro Solis Buenos Aires 652 Ciudad Vieja",
+    "lat": -34.9075109,
+    "lng": -56.2009456
+  },
+  {
+    "day": 1,
+    "name": "Barrio Sur",
+    "query": "Barrio Sur south Ciudad Vieja",
+    "lat": -34.9119613,
+    "lng": -56.1912761
+  },
+  {
+    "day": 1,
+    "name": "MAPI",
+    "query": "MAPI 25 de Mayo 279 Ciudad Vieja",
+    "lat": -34.9071533,
+    "lng": -56.2101139
+  },
+  {
+    "day": 2,
+    "name": "Cabildo",
+    "query": "Cabildo Montevideo Juan Carlos Gomez 1362",
+    "lat": -34.8905417,
+    "lng": -56.1685794
+  },
+  {
+    "day": 2,
+    "name": "Museo del Carnaval",
+    "query": "Museo del Carnaval Rambla 25 de Agosto 218 Ciudad Vieja",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 2,
+    "name": "Castillo Pittamiglio",
+    "query": "Castillo Pittamiglio Rambla Mexico 1251",
+    "lat": -34.9208635,
+    "lng": -56.1499343
+  },
+  {
+    "day": 2,
+    "name": "La Rambla",
+    "query": "Rambla Republica de Mexico Parque Rodo",
+    "lat": -34.7900787,
+    "lng": -56.3543607
+  },
+  {
+    "day": 2,
+    "name": "Parque Rodó",
+    "query": "Parque Rodo",
+    "lat": -34.9100822,
+    "lng": -56.1697776
+  },
+  {
+    "day": 3,
+    "name": "MNAV",
+    "query": "MNAV Tomas Giribaldi 2283",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Fortaleza del Cerro",
+    "query": "Fortaleza del Cerro Cerro",
+    "lat": -34.888355,
+    "lng": -56.2599252
+  },
+  {
+    "day": 3,
+    "name": "Palacio Legislativo",
+    "query": "Palacio Legislativo Av de las Leyes Aguada",
+    "lat": -34.8912113,
+    "lng": -56.1871749
+  },
+  {
+    "day": 4,
+    "name": "El Prado &amp; Rosedal",
+    "query": "Rosedal Parque Prado El Prado",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 4,
+    "name": "Jardín Botánico",
+    "query": "Jardin Botanico Montevideo Av 19 de Abril 1181",
+    "lat": -34.8593556,
+    "lng": -56.2004612
+  },
+  {
+    "day": 4,
+    "name": "Estadio Centenario",
+    "query": "Estadio Centenario Av Ricaldoni Parque Batlle",
+    "lat": -34.8942474,
+    "lng": -56.1514874
+  },
+  {
+    "day": 5,
+    "name": "Barrio Histórico",
+    "query": "Barrio Historico Colonia del Sacramento",
+    "lat": -34.4722488,
+    "lng": -57.8527334
+  },
+  {
+    "day": 5,
+    "name": "Calle de los Suspiros",
+    "query": "Calle de los Suspiros Colonia del Sacramento",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 5,
+    "name": "Faro de Colonia",
+    "query": "Faro Colonia del Sacramento Misiones de los Tapes",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 5,
+    "name": "Ruinas San Francisco",
+    "query": "Ruinas San Francisco Colonia del Sacramento Misiones de los Tapes",
+    "lat": null,
+    "lng": null
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
