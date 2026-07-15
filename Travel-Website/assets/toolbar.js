@@ -132,9 +132,9 @@
         { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
       ]},
     null,
-    { group: '💻 Lounges', children: [
-        { href: base + 'Trip-Essentials/Lounges-US.html',     text: '💻 US Lounges' },
-        { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '💻 EU Lounges' },
+    { group: '🛋️ Lounges', children: [
+        { href: base + 'Trip-Essentials/Lounges-US.html',     text: '🛋️ US Lounges' },
+        { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '🛋️ EU Lounges' },
       ] },
     null,
     { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 Trains', full: '🚆 European Train Guide' },
@@ -142,7 +142,7 @@
     { group: '✈️ Flights', children: [
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
-        { href: base + 'Trip-Essentials/Baggage.html',           text: '🧳 Baggage' },
+        { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',  text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
       ] },
@@ -166,7 +166,7 @@
         { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: '🛟 Travel Insurance' },
       ] },
     null,
-    { group: '🪪 Visa', children: [
+    { group: '🪪 Visas', children: [
         { href: base + 'Trip-Essentials/Visas.html',                                    text: '🪪 Visas' },
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '🪪 Entry Requirements' },
       ] },
