@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Curitiba — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 4px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Curitiba — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Jardim Botânico de Curitiba",
+    "query": "Jardim Botânico de Curitiba",
+    "lat": -25.4417091,
+    "lng": -49.2386647
+  },
+  {
+    "day": 1,
+    "name": "Ópera de Arame",
+    "query": "Ópera de Arame Curitiba",
+    "lat": -25.384501,
+    "lng": -49.2761544
+  },
+  {
+    "day": 1,
+    "name": "Parque Tanguá",
+    "query": "Parque Tanguá Curitiba",
+    "lat": -25.3796949,
+    "lng": -49.2849831
+  },
+  {
+    "day": 1,
+    "name": "Bosque João Paulo II",
+    "query": "Bosque João Paulo II Curitiba",
+    "lat": -25.4104423,
+    "lng": -49.2692633
+  },
+  {
+    "day": 2,
+    "name": "Museu Oscar Niemeyer",
+    "query": "Museu Oscar Niemeyer Curitiba",
+    "lat": -25.409968,
+    "lng": -49.2672772
+  },
+  {
+    "day": 2,
+    "name": "Museu de Arte Contemporânea do Paraná",
+    "query": "Museu de Arte Contemporânea do Paraná Curitiba",
+    "lat": -25.4331684,
+    "lng": -49.273045
+  },
+  {
+    "day": 2,
+    "name": "Catedral Metropolitana de Curitiba",
+    "query": "Catedral Metropolitana de Curitiba",
+    "lat": -25.4288223,
+    "lng": -49.2715492
+  },
+  {
+    "day": 2,
+    "name": "Largo da Ordem",
+    "query": "Largo da Ordem Curitiba",
+    "lat": -25.4276458,
+    "lng": -49.2724503
+  },
+  {
+    "day": 3,
+    "name": "Arenitos de Vila Velha",
+    "query": "Parque Estadual de Vila Velha Ponta Grossa",
+    "lat": -25.2329936,
+    "lng": -50.0116978
+  },
+  {
+    "day": 3,
+    "name": "Furnas",
+    "query": "Furnas Vila Velha Ponta Grossa",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Lagoa Dourada",
+    "query": "Lagoa Dourada Vila Velha Ponta Grossa",
+    "lat": -25.472254,
+    "lng": -49.3299986
+  },
+  {
+    "day": 3,
+    "name": "Cânion Guartelá",
+    "query": "Cânion Guartelá Tibagi Paraná",
+    "lat": -24.5494444,
+    "lng": -50.2694444
+  },
+  {
+    "day": 4,
+    "name": "Passeio Público",
+    "query": "Passeio Público Curitiba",
+    "lat": -25.4253342,
+    "lng": -49.2673252
+  },
+  {
+    "day": 4,
+    "name": "Teatro Guairá",
+    "query": "Teatro Guaíra Curitiba",
+    "lat": -25.4280929,
+    "lng": -49.2651001
+  },
+  {
+    "day": 4,
+    "name": "Museu Paranaense",
+    "query": "Museu Paranaense Curitiba",
+    "lat": -25.4278265,
+    "lng": -49.2761115
+  },
+  {
+    "day": 4,
+    "name": "Palácio Avenida",
+    "query": "Palácio Avenida Curitiba",
+    "lat": -25.4324529,
+    "lng": -49.2736992
+  },
+  {
+    "day": 5,
+    "name": "Parque Barigui",
+    "query": "Parque Barigui Curitiba",
+    "lat": -25.4276256,
+    "lng": -49.3098438
+  },
+  {
+    "day": 5,
+    "name": "Bosque Alemão",
+    "query": "Bosque Alemão Curitiba",
+    "lat": -25.4056333,
+    "lng": -49.2865331
+  },
+  {
+    "day": 5,
+    "name": "Parque Tingui",
+    "query": "Parque Tingui Curitiba",
+    "lat": -25.400601,
+    "lng": -49.3044833
+  },
+  {
+    "day": 5,
+    "name": "Santa Felicidade",
+    "query": "Santa Felicidade Curitiba",
+    "lat": -25.4026959,
+    "lng": -49.3285775
+  },
+  {
+    "day": 6,
+    "name": "Serra Verde Express",
+    "query": "Rodoferroviaría de Curitiba",
+    "lat": -25.4379179,
+    "lng": -49.2576748
+  },
+  {
+    "day": 6,
+    "name": "Centro Histórico de Morretes",
+    "query": "Centro Histórico de Morretes Paraná",
+    "lat": null,
+    "lng": null
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
