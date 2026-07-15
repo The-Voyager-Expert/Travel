@@ -95,3 +95,33 @@
 **Recommended remediation (dedicated run):** (a) fleet-wide git-recover every pre-2026-06-20 log the same way (`b574f5165^`); (b) re-verify booking URLs for all post-2026-06-20 guides with Viator MCP connected; (c) **harden `verify_booking_links.py`'s auto-prune** so it never deletes a `result:"PASS"` booking entry when the parsed guide-URL set is empty or suspiciously mismatched (guard against a repeat). Full record: `Brain/Reference/audit_logs/audit_2026-07-14.json` (`incident_note`).
 
 ---
+
+## 🌟 Best-of Annual Link Audit — July 2026
+
+*Auto-audit run 2026-07-14. 33 pages scanned; 25 pages had changes.*
+
+### Internal guide links
+- ✅ 163 unique internal guide links checked against disk — **0 version drift**, 0 broken. All point to the current `_vN` version.
+
+### External links
+- Swept **1,956 unique** non-Wikipedia, non-Maps external URLs (≈2,400 occurrences) via parallel HTTP status check.
+- **928 live (200)** · 135 (202) · 10 (429) · minor 405/redirect/5xx = alive/transient.
+- **668 returned 403** (bot-blocks) — left untouched (not confirmed dead, per audit rule).
+- **151 unique links confirmed dead** (112 × HTTP 404 + 39 × DNS won't-resolve), 160 occurrences across 25 pages:
+  - ✅ **14 replaced with verified Wikipedia articles** (famous landmarks that had no surviving encyclopedic link): St. Stephen's Cathedral Vienna, Las Lajas Sanctuary, Cathedral of Saint Domnius, Bourges Cathedral, Hallgrímskirkja, Church of the Holy Sepulchre, Monreale Cathedral, Turin Cathedral, Westerkerk, Cathedral of Lima, St. Basil's Cathedral, St. Peter's Basilica (Best-Cathedrals); Burj Al Arab (Best-Most-Luxurious-Hotels); Etihad Towers / "Observation Deck at 300" (Best-Observation-Decks). All 14 Wikipedia targets curl-verified 200 before use.
+  - 🗑️ **146 dead links removed** (no valid replacement / card already had Wikipedia). Every affected card retained its Wikipedia + Google Maps links. Notable dead domains: `surf-forecast.com` (12 moved spot pages), `visitmexico.com` (5 — tourism site defunct for years), reorganized Italian `*.beniculturali.it` cultural sites, `chile.travel`, `spain.info`, `indonesia.travel`, boutique-resort sites (singita.com, timeandtideafrica.com, explora.com, oberoihotels.com, pellicanohotels.com), `zoomkindermuseum.at`, `mychildrensmuseum.org`, `nps.gov`/`parks.ca.gov` moved park pages.
+  - 🧹 2 duplicate Wikipedia links cleaned up on Best-Observation-Decks (a dead official URL shared between two pages caused a replace-collision; deduped).
+- ⚠️ **~18 external links returned SSL-cert or connection errors — could NOT be confirmed dead, left in place, recheck next run:**
+  - SSL cert problem (site up, cert/TLS broken): ambiente.gob.ec, castle-vianden.lu, cowa.org.nz, infomallorca.net, isoleborromee.it, laslenas.com, museosangennaro.it, museupicasso.bcn.cat, namibiatourism.com.na, rbgsyd.nsw.gov.au, telefonmuseum.dk, vietnam.travel, visitfalklands.com
+  - Connection refused/unreachable (possibly geo-blocked): leukerbad-therme.ch, mongoliatourism.gov.mn, nationalpark-berchtesgaden.de, rhone-wines.com, tourism.gov.bt
+  - Plus 42 total TLS/timeout/HTTP2 failures and 668 × 403 bot-blocks left untouched (not confirmed dead).
+
+### Stub cards (need content work)
+- None found — 0 empty `showcase-desc`, 0 zero-link cards, 0 broken image `src` across all 33 pages.
+
+### Pages with no issues (8)
+Best-Lakes, Best-Wine-Regions, Best-Safari, Best-Wonders-of-the-World, Best-Scuba-Diving, Best-National-Parks-by-Country, Best-Natural-Phenomena, Best-Kids-Friendly-Places.
+
+*brain_check 111/111 · committed 150c0fa90 · pushed to main.*
+
+---
