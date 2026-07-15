@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>João-Pessoa — All Stops Map</title>
+<style>
+html, body { height: 100vh; height: 100dvh; }
+body { display: flex; flex-direction: column; padding-bottom: 0; }
+#filter-row {
+  display: flex; gap: 6px; padding: 8px 14px; flex-wrap: wrap;
+  background: var(--surface, #fff); border-bottom: 0.5px solid var(--border, #e0ddd6);
+  flex-shrink: 0;
+}
+.day-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--dc, #c8a44a); background: #fff; color: var(--dc, #8a6c1a);
+  cursor: pointer; transition: background 0.12s, color 0.12s;
+}
+.day-btn.active { background: var(--dc, #b85c2a); color: #fff; border-color: var(--dc, #b85c2a); }
+.day-btn[data-day="all"] { --dc: #b85c2a; }
+#map-wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+#map { position: absolute; inset: 0; background: #cfe0e4; }
+.leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+.leaflet-control-zoom a { color: #6b4422; border-color: #d8d4cc; }
+.leaflet-bar a:hover { background: var(--surface, #fff); border-color: #b85c2a; }
+.stop-popup { font-size: 13px; line-height: 1.5; min-width: 160px; max-width: 220px; }
+.stop-popup strong { display: block; font-size: 14px; margin-bottom: 4px; color: #3d3a32; }
+.stop-popup .day-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+  color: #fff; display: inline-block; margin-bottom: 6px;
+}
+.stop-popup a { color: #b85c2a; text-decoration: none; font-size: 12px; }
+.stop-popup a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="João-Pessoa — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Parque Solon de Lucena",
+    "query": "Parque Solon de Lucena Centro João Pessoa",
+    "lat": -7.120229,
+    "lng": -34.8798402
+  },
+  {
+    "day": 1,
+    "name": "Centro Cultural São Francisco",
+    "query": "Centro Cultural São Francisco João Pessoa",
+    "lat": -7.1145883,
+    "lng": -34.8825453
+  },
+  {
+    "day": 1,
+    "name": "Catedral Basílica de Nossa Senhora das Neves",
+    "query": "Catedral Basilica Nossa Senhora das Neves João Pessoa",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 1,
+    "name": "Mata do Buraquinho / Jardim Botânico Benjamim Maranhão",
+    "query": "Jardim Botanico Benjamim Maranhao João Pessoa",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 2,
+    "name": "Farol do Cabo Branco",
+    "query": "Farol do Cabo Branco João Pessoa",
+    "lat": -7.1488372,
+    "lng": -34.79659
+  },
+  {
+    "day": 2,
+    "name": "Ponta do Seixas &amp; Estação Cabo Branco",
+    "query": "Ponta do Seixas João Pessoa",
+    "lat": -7.1550796,
+    "lng": -34.7933086
+  },
+  {
+    "day": 3,
+    "name": "Fortaleza de Santa Catarina",
+    "query": "Forte de Santa Catarina Cabedelo PB",
+    "lat": -6.969039,
+    "lng": -34.8396587
+  },
+  {
+    "day": 3,
+    "name": "Praia do Jacaré",
+    "query": "Praia do Jacaré Cabedelo PB",
+    "lat": -7.0572234,
+    "lng": -34.8528137
+  },
+  {
+    "day": 4,
+    "name": "Praia de Tambaú",
+    "query": "Praia de Tambaú João Pessoa",
+    "lat": -7.1153446,
+    "lng": -34.8222935
+  },
+  {
+    "day": 4,
+    "name": "Picãozinho",
+    "query": "Picãozinho catamaran Tambaú João Pessoa",
+    "lat": -7.1828344,
+    "lng": -34.8113558
+  },
+  {
+    "day": 4,
+    "name": "Praia de Bessa",
+    "query": "Praia de Bessa João Pessoa",
+    "lat": -7.0766501,
+    "lng": -34.8297413
+  },
+  {
+    "day": 5,
+    "name": "Praça Antenor Navarro",
+    "query": "Praça Antenor Navarro Centro João Pessoa",
+    "lat": -7.1134796,
+    "lng": -34.8885228
+  },
+  {
+    "day": 5,
+    "name": "Teatro Santa Roza",
+    "query": "Teatro Santa Roza Praça Pedro Américo Centro João Pessoa",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 5,
+    "name": "Espaço Cultural José Lins do Rego",
+    "query": "Espaço Cultural José Lins do Rego Tambauzinho João Pessoa",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 6,
+    "name": "Praia da Penha",
+    "query": "Escadaria Praia da Penha Varadouro João Pessoa",
+    "lat": -7.1689909,
+    "lng": -34.7958669
+  },
+  {
+    "day": 6,
+    "name": "Parque Arruda Câmara",
+    "query": "Parque Zoobotanico Arruda Câmara Roger João Pessoa",
+    "lat": -7.110982,
+    "lng": -34.8739459
+  },
+  {
+    "day": 6,
+    "name": "Praia de Cabo Branco",
+    "query": "Praia de Cabo Branco João Pessoa",
+    "lat": -7.1913374,
+    "lng": -34.7948188
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>
