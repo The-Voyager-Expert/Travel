@@ -43,7 +43,7 @@ self.addEventListener('fetch', function (e) {
     }).catch(function () {
       return caches.match(req).then(function (hit) {
         if (hit) return hit;
-        if (req.mode === 'navigate') return caches.match('Guides/Guides-Index.html');
+        if (req.mode === 'navigate') return caches.match('Guides-Index.html');
         return Response.error();
       });
     })
