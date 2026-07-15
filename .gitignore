@@ -8,9 +8,17 @@
 # private files on a public site.
 #
 # Whitelist strategy: ignore EVERY top-level entry, then re-include only the site
-# and the two deploy files. Any NEW top-level folder a crib creates is auto-
-# excluded — no maintenance needed. Files all stay on disk; this only controls
-# what git tracks/publishes.
+# (Travel-Website/) plus the deploy plumbing (.github/, .nojekyll, .gitignore).
+# DEFAULT = DRIVE-ONLY: nothing is tracked/published unless the live site needs it
+# to function. Any NEW top-level folder a crib creates is auto-excluded — no
+# maintenance needed. Files all stay on disk; this only controls what git tracks.
+#
+# GOTCHA — a whitelist does NOT untrack files ALREADY in the git index: a tracked
+# file overrides .gitignore. Anything committed BEFORE this whitelist existed stays
+# tracked + published until you `git rm --cached` it. That is how Brain/, CLAUDE.md,
+# and To Do List/ stayed published until they were untracked 2026-07-14. Audit for
+# stragglers (must print nothing):
+#   git ls-files | grep -vE '^Travel-Website/|^\.github/|^\.gitignore$|^\.nojekyll$'
 # ─────────────────────────────────────────────────────────────────────────────
 /*
 !/.gitignore
