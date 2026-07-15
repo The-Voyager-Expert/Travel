@@ -607,6 +607,7 @@
        HTML never needs editing; the pill appears automatically once the map file
        has been generated. No-op if the file is absent (404). */
     function injectStopsMapPill() {
+      console.log('[TVE] injectStopsMapPill called, readyState='+document.readyState+' gelRow='+!!document.querySelector('.overview-extras'));
       var gelRow = document.querySelector('.overview-extras');
       if (!gelRow) return;
       if (gelRow.querySelector('a[href$="-stops-map.html"]')) return; // already present in HTML
@@ -619,6 +620,7 @@
       var xhr = new XMLHttpRequest();
       xhr.open('HEAD', mapHref, true);
       xhr.onload = function () {
+        console.log('[TVE] XHR onload status='+xhr.status);
         if (xhr.status >= 200 && xhr.status < 300) {
           var pill = document.createElement('a');
           pill.className = 'overview-extra-link';
