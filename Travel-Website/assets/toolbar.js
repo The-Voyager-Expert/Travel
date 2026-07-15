@@ -5,8 +5,8 @@
  * The shared scripts/styles (toolbar.js, weather.js,
  * guide-style.css, mobile.css, climate.json) all live in assets/. Every page
  * loads them from assets/ at its own relative depth below the site root:
- *   · depth-1 pages (Guides/Guides-Index.html,
- *     Trip-Essentials/*.html):                    src="../assets/toolbar.js"
+ *   · depth-1 pages (Guides-Index.html,
+ *     Trip-Essentials/*.html):                    src="./assets/toolbar.js"
  *   · depth-2 pages (Guides/City/*.html,
  *     Trip-Essentials/Maps|Plug Adapter/*.html):  src="../../assets/toolbar.js"
  *
@@ -112,7 +112,7 @@
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
-    { href: base + 'Guides/Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
+    { href: base + 'Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
     null,
     { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing', full: '👕 Packing Checklist' },
     null,
