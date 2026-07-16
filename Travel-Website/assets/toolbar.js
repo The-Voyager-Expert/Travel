@@ -158,7 +158,6 @@
         { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ Browse by City' },
         { href: base + 'Trip-Essentials/When-to-Go.html',       text: '🌤️ When to Go' },
       ] },
-    { href: base + 'Trip-Essentials/Festival-Finder.html', text: '🎉 Festivals', full: '🎉 Festival Finder' },
     null,
     { group: '🛡️ Safety', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',      text: '🛡️ Safety Guide' },
