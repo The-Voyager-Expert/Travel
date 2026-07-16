@@ -993,7 +993,7 @@
       if (mapPill) {
         mapPill.style.borderColor = '#b85c2a';
         mapPill.style.color = '#b85c2a';
-        mapPill.parentNode.insertBefore(trigBtn, mapPill.nextSibling);
+        mapPill.parentNode.insertBefore(trigBtn, mapPill);
       } else extras.appendChild(trigBtn);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
