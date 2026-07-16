@@ -971,16 +971,13 @@
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
-    /* ── Trigger button — styled as an extras pill with terracotta border ── */
+    /* ── Trigger button — copy the extras pill exactly, terracotta border only ── */
     var trigBtn = document.createElement('button');
     trigBtn.type = 'button';
     trigBtn.textContent = '📅 Export to Calendar';
     trigBtn.className = 'overview-extra-link';
-    trigBtn.style.cssText =
-      'border:1.5px solid #b85c2a;color:#b85c2a;background:#ffffff;' +
-      'cursor:pointer;font-family:inherit;font-weight:600;' +
-      'transition:background .15s,border-color .15s;';
-    /* hover/active handled by tcStyle below */
+    /* buttons don't inherit font/cursor/background — patch those only */
+    trigBtn.style.cssText = 'cursor:pointer;font-family:inherit;background:transparent;';
     trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
 
     /* Pull All Stops Map out of .overview-extras and place both terracotta
@@ -993,25 +990,21 @@
       var mapPill = extras.querySelector('a[href*="stops-map"]');
       if (mapPill) mapPill.parentNode.removeChild(mapPill);
 
-      trigBtn.id = 'ics-cal-pill';
-      if (mapPill) mapPill.id = 'ics-map-pill';
-
-      var tcStyle = document.createElement('style');
-      tcStyle.textContent =
-        /* rest + visited: white bg, terracotta border and text */
-        '#ics-cal-pill,#ics-cal-pill:visited,' +
-        '#ics-map-pill,#ics-map-pill:visited{' +
-          'background:#ffffff!important;border-color:#b85c2a!important;color:#b85c2a!important;}' +
-        /* hover + active: terracotta fill, white text */
-        '#ics-cal-pill:hover,#ics-cal-pill:active,' +
-        '#ics-map-pill:hover,#ics-map-pill:active{' +
-          'background:#b85c2a!important;color:#ffffff!important;border-color:#b85c2a!important;}';
-      document.head.appendChild(tcStyle);
-
+      /* pillRow uses overview-extras class so both pills inherit all chip CSS */
       var pillRow = document.createElement('div');
-      pillRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
+      pillRow.className = 'overview-extras';
+      /* force flex so mobile grid doesn't kick in for this 2-pill row */
+      pillRow.setAttribute('style', 'display:flex!important;margin-bottom:8px;grid-template-columns:unset!important;');
       pillRow.appendChild(trigBtn);
       if (mapPill) pillRow.appendChild(mapPill);
+
+      /* terracotta border — only override, everything else comes from the class */
+      var tcStyle = document.createElement('style');
+      tcStyle.textContent =
+        '.overview-extras #ics-cal-pill,.overview-extras #ics-map-pill{border-color:#b85c2a!important;}';
+      document.head.appendChild(tcStyle);
+      trigBtn.id = 'ics-cal-pill';
+      if (mapPill) mapPill.id = 'ics-map-pill';
       extras.parentNode.insertBefore(pillRow, extras);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
