@@ -985,19 +985,27 @@
     trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
 
     /* Pull All Stops Map out of .overview-extras and place both terracotta
-       pills on their own row above the rest of the extras chips */
+       pills on their own row above the rest of the extras chips.
+       Use a <style> rule with IDs + !important to guarantee terracotta
+       overrides any class/pseudo-class CSS on mapPill once it moves context. */
     var lastDay = overviewDays[overviewDays.length - 1];
     var extras = lastDay.parentNode.querySelector('.overview-extras');
     if (extras) {
       var mapPill = extras.querySelector('a[href*="stops-map"]');
-      if (mapPill) {
-        mapPill.style.borderColor = '#b85c2a';
-        mapPill.style.color = '#b85c2a';
-        mapPill.parentNode.removeChild(mapPill);
-      }
+      if (mapPill) mapPill.parentNode.removeChild(mapPill);
+
+      trigBtn.id = 'ics-cal-pill';
+      if (mapPill) mapPill.id = 'ics-map-pill';
+
+      var tcStyle = document.createElement('style');
+      tcStyle.textContent =
+        '#ics-cal-pill,#ics-cal-pill:visited,#ics-cal-pill:hover,' +
+        '#ics-map-pill,#ics-map-pill:visited,#ics-map-pill:hover{' +
+        'border-color:#b85c2a!important;color:#b85c2a!important;}';
+      document.head.appendChild(tcStyle);
+
       var pillRow = document.createElement('div');
-      pillRow.style.cssText =
-        'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
+      pillRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
       pillRow.appendChild(trigBtn);
       if (mapPill) pillRow.appendChild(mapPill);
       extras.parentNode.insertBefore(pillRow, extras);
