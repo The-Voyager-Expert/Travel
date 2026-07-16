@@ -132,9 +132,9 @@
         { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
       ]},
     null,
-    { group: '🛋️ Lounges', children: [
-        { href: base + 'Trip-Essentials/Lounges-US.html',     text: '🛋️ US Lounges' },
-        { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '🛋️ EU Lounges' },
+    { group: '💻 Lounges', children: [
+        { href: base + 'Trip-Essentials/Lounges-US.html',     text: '💻 US Lounges' },
+        { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '💻 EU Lounges' },
       ] },
     null,
     { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 Trains', full: '🚆 European Train Guide' },
