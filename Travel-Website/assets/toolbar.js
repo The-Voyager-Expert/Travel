@@ -971,25 +971,29 @@
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
-    /* ── Trigger button ──────────────────────────────────────────────────── */
+    /* ── Trigger button — styled as an extras pill with terracotta border ── */
     var trigBtn = document.createElement('button');
     trigBtn.type = 'button';
     trigBtn.textContent = '📅 Export to Calendar';
+    trigBtn.className = 'overview-extra-link';
     trigBtn.style.cssText =
-      'display:block;margin:10px 0 0;padding:7px 14px;' +
-      'background:#ffffff;border:1.5px solid #c8a44a;border-radius:6px;' +
-      'font-size:12.5px;font-weight:600;color:#7a5c00;' +
-      'cursor:pointer;font-family:inherit;white-space:nowrap;' +
+      'border:1.5px solid #b85c2a;color:#b85c2a;background:#ffffff;' +
+      'cursor:pointer;font-family:inherit;font-weight:600;' +
       'transition:background .15s,border-color .15s;';
-    trigBtn.addEventListener('mouseenter', function () { trigBtn.style.background = 'rgba(200,164,74,.08)'; });
+    trigBtn.addEventListener('mouseenter', function () { trigBtn.style.background = 'rgba(184,92,42,.08)'; });
     trigBtn.addEventListener('mouseleave', function () { trigBtn.style.background = '#ffffff'; });
     trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
 
-    /* Insert between last .overview-day pill and .overview-extras row */
+    /* Insert after the All Stops Map pill inside .overview-extras */
     var lastDay = overviewDays[overviewDays.length - 1];
     var extras = lastDay.parentNode.querySelector('.overview-extras');
-    if (extras) lastDay.parentNode.insertBefore(trigBtn, extras);
-    else lastDay.parentNode.appendChild(trigBtn);
+    if (extras) {
+      var mapPill = extras.querySelector('a[href*="stops-map"]');
+      if (mapPill) mapPill.parentNode.insertBefore(trigBtn, mapPill.nextSibling);
+      else extras.appendChild(trigBtn);
+    } else {
+      lastDay.parentNode.appendChild(trigBtn);
+    }
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectICSExport);
