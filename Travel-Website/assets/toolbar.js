@@ -998,9 +998,11 @@
 
       /* terracotta border — only override, everything else comes from the class */
       var tcStyle = document.createElement('style');
+      /* [id=] attribute selector has class-level specificity (0-2-0),
+         so the normal :hover rule (0-3-0) still wins — rest state only */
       tcStyle.textContent =
-        '.overview-extras #ics-cal-pill,.overview-extras #ics-map-pill{border-color:#b85c2a!important;color:#b85c2a!important;}' +
-        '.overview-extras #ics-cal-pill:visited,.overview-extras #ics-map-pill:visited{color:#b85c2a!important;}';
+        '.overview-extras [id=ics-cal-pill],.overview-extras [id=ics-map-pill]{border-color:#b85c2a!important;color:#b85c2a;}' +
+        '.overview-extras [id=ics-cal-pill]:visited,.overview-extras [id=ics-map-pill]:visited{color:#b85c2a;}';
       document.head.appendChild(tcStyle);
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
