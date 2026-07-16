@@ -159,6 +159,8 @@
         { href: base + 'Trip-Essentials/When-to-Go.html',       text: '🌤️ When to Go' },
       ] },
     null,
+    { href: base + 'Trip-Essentials/Festival-Finder.html', text: '🎉 Festivals' },
+    null,
     { group: '🛡️ Safety', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',      text: '🛡️ Safety Guide' },
         { href: base + 'Trip-Essentials/Vaccines.html',          text: '💉 Vaccines' },
