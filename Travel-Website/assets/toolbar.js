@@ -980,8 +980,7 @@
       'border:1.5px solid #b85c2a;color:#b85c2a;background:#ffffff;' +
       'cursor:pointer;font-family:inherit;font-weight:600;' +
       'transition:background .15s,border-color .15s;';
-    trigBtn.addEventListener('mouseenter', function () { trigBtn.style.background = 'rgba(184,92,42,.08)'; });
-    trigBtn.addEventListener('mouseleave', function () { trigBtn.style.background = '#ffffff'; });
+    /* hover/active handled by tcStyle below */
     trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
 
     /* Pull All Stops Map out of .overview-extras and place both terracotta
@@ -999,9 +998,14 @@
 
       var tcStyle = document.createElement('style');
       tcStyle.textContent =
-        '#ics-cal-pill,#ics-cal-pill:visited,#ics-cal-pill:hover,' +
-        '#ics-map-pill,#ics-map-pill:visited,#ics-map-pill:hover{' +
-        'border-color:#b85c2a!important;color:#b85c2a!important;}';
+        /* rest + visited: white bg, terracotta border and text */
+        '#ics-cal-pill,#ics-cal-pill:visited,' +
+        '#ics-map-pill,#ics-map-pill:visited{' +
+          'background:#ffffff!important;border-color:#b85c2a!important;color:#b85c2a!important;}' +
+        /* hover + active: terracotta fill, white text */
+        '#ics-cal-pill:hover,#ics-cal-pill:active,' +
+        '#ics-map-pill:hover,#ics-map-pill:active{' +
+          'background:#b85c2a!important;color:#ffffff!important;border-color:#b85c2a!important;}';
       document.head.appendChild(tcStyle);
 
       var pillRow = document.createElement('div');
