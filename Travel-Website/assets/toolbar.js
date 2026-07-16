@@ -971,14 +971,12 @@
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
-    /* ── Trigger button — copy the extras pill exactly, terracotta border only ── */
-    var trigBtn = document.createElement('button');
-    trigBtn.type = 'button';
+    /* ── Trigger link — <a> matches the other pills exactly, terracotta border only ── */
+    var trigBtn = document.createElement('a');
+    trigBtn.href = '#';
     trigBtn.textContent = '📅 Export to Calendar';
     trigBtn.className = 'overview-extra-link';
-    /* buttons don't inherit font/cursor/background — patch those only */
-    trigBtn.style.cssText = 'cursor:pointer;font-family:inherit;background:transparent;';
-    trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
+    trigBtn.addEventListener('click', function (e) { e.preventDefault(); overlay.style.display = 'flex'; });
 
     /* Pull All Stops Map out of .overview-extras and place both terracotta
        pills on their own row above the rest of the extras chips.
