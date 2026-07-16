@@ -29,21 +29,26 @@
   color: #7A5C2E;
   margin-bottom: 20px;
 }
+.index-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border,#d8d4cc); border-radius: 8px; overflow: hidden; }
 .index-table thead th {
   background: var(--surface2, #f0ede8);
   border-bottom: 2px solid var(--border, #d8d4cc);
-  padding: 8px 12px;
+  padding: 10px 14px;
   text-align: left;
   font-size: var(--fs-label, 11px);
   font-weight: 700;
   color: var(--muted, #6a6660);
-  letter-spacing: 0.18em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.index-table tbody td { font-size: var(--fs-body,14px); padding: 7px 12px; color: var(--text); }
-.index-table tbody td:last-child { white-space: nowrap; }
+.index-table tbody td { font-size: var(--fs-body,14px); padding: 9px 14px; color: var(--text); border-bottom: 1px solid var(--border2,#e6e2da); }
+.index-table tbody tr:last-child td { border-bottom: none; }
+.index-table tbody td:last-child { white-space: nowrap; font-weight: 600; color: var(--muted); }
 .index-table tbody td:first-child { font-weight: 600; }
-.index-table tbody tr:hover { filter: brightness(0.96); }
+.index-table tbody tr { background: var(--surface,#fff); cursor: pointer; }
+.index-table tbody tr:hover { background: var(--hover,#faefd8); }
+/* Plug type chips */
+.type-chip { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: var(--fs-sub,12px); font-weight: 700; margin: 1px 2px; background: var(--surface2,#f0ede8); color: #5C3D11; border: 1px solid #D4C49A; letter-spacing: 0.02em; }
 .content-wrap {
   max-width: none;
   margin: 0 auto;
@@ -5760,6 +5765,22 @@ html{scroll-behavior:smooth;}
     var foot=document.querySelector('.tb-footnote');if(foot)foot.style.display=noHits?'none':'';
   });
   input.addEventListener('keydown',function(e){if(e.key==='Enter'){var a=firstLink();if(a){e.preventDefault();location.hash=a.getAttribute('href');}}});
+})();
+</script>
+<script>
+// Convert "Type C + F" text in the plug-types column into visual chips
+(function(){
+  document.querySelectorAll('.index-table tbody tr').forEach(function(r){
+    var cells = r.querySelectorAll('td');
+    if(cells.length < 2) return;
+    var td = cells[1];
+    var text = td.textContent.trim();
+    // matches "Type A + B + C" or "Type A"
+    var m = text.match(/^Type\s+(.+)$/);
+    if(!m) return;
+    var types = m[1].split(/\s*\+\s*/);
+    td.innerHTML = types.map(function(t){ return '<span class="type-chip">'+t.trim()+'</span>'; }).join(' ');
+  });
 })();
 </script>
 </body>
