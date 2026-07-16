@@ -999,8 +999,7 @@
       /* terracotta border — only override, everything else comes from the class */
       var tcStyle = document.createElement('style');
       tcStyle.textContent =
-        '.overview-extras #ics-cal-pill,.overview-extras #ics-map-pill{border-color:#b85c2a!important;color:#b85c2a!important;}' +
-        '.overview-extras #ics-cal-pill:visited,.overview-extras #ics-map-pill:visited{color:#b85c2a!important;}';
+        '.overview-extras #ics-cal-pill,.overview-extras #ics-map-pill{border-color:#b85c2a!important;}';
       document.head.appendChild(tcStyle);
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
