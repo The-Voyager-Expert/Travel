@@ -984,13 +984,17 @@
     trigBtn.addEventListener('mouseleave', function () { trigBtn.style.background = '#ffffff'; });
     trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
 
-    /* Insert after the All Stops Map pill inside .overview-extras */
+    /* Insert after the All Stops Map pill inside .overview-extras;
+       also apply terracotta border to the map pill so they read as a pair */
     var lastDay = overviewDays[overviewDays.length - 1];
     var extras = lastDay.parentNode.querySelector('.overview-extras');
     if (extras) {
       var mapPill = extras.querySelector('a[href*="stops-map"]');
-      if (mapPill) mapPill.parentNode.insertBefore(trigBtn, mapPill.nextSibling);
-      else extras.appendChild(trigBtn);
+      if (mapPill) {
+        mapPill.style.borderColor = '#b85c2a';
+        mapPill.style.color = '#b85c2a';
+        mapPill.parentNode.insertBefore(trigBtn, mapPill.nextSibling);
+      } else extras.appendChild(trigBtn);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
     }
