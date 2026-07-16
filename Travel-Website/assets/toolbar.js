@@ -842,6 +842,161 @@
     }
   }
 
+  /* ── Calendar (.ics) export — guide pages only ────────────────────────────
+     Injects an "Export to Calendar" button between the day pills and the
+     extras row in the Trip Overview. Clicking opens a date picker for Day 1;
+     on confirm it downloads an .ics file with one all-day VEVENT per guide
+     day, each pre-filled with that day's stop list from .stop-name elements.
+     Entirely client-side — no backend, no accounts. */
+  function _injectICSExport() {
+    var overviewDays = document.querySelectorAll('.overview-day');
+    if (!overviewDays.length) return;
+
+    var cityEl = document.querySelector('.title-city');
+    var city = cityEl ? cityEl.textContent.trim() : (document.title || 'Trip');
+
+    var dayBlocks = document.querySelectorAll('.day-block[id^="day"]');
+    if (!dayBlocks.length) return;
+
+    var days = [];
+    [].forEach.call(dayBlocks, function (block) {
+      var num = parseInt((block.id || '').replace('day', ''), 10);
+      if (isNaN(num) || num < 1) return;
+      var hEl = block.querySelector('.day-header');
+      var header = hEl ? hEl.textContent.trim() : 'Day ' + num;
+      var stops = [];
+      [].forEach.call(block.querySelectorAll('.stop-name'), function (s) {
+        var t = s.textContent.trim(); if (t) stops.push(t);
+      });
+      days.push({ num: num, header: header, stops: stops });
+    });
+    if (!days.length) return;
+    days.sort(function (a, b) { return a.num - b.num; });
+
+    /* ── Date picker overlay ─────────────────────────────────────────────── */
+    var overlay = document.createElement('div');
+    overlay.style.cssText =
+      'display:none;position:fixed;inset:0;z-index:2000;' +
+      'background:rgba(0,0,0,.42);align-items:center;justify-content:center;';
+
+    var box = document.createElement('div');
+    box.style.cssText =
+      'background:#fff;border-radius:12px;padding:26px 26px 20px;' +
+      'max-width:320px;width:90vw;box-shadow:0 12px 40px rgba(0,0,0,.22);' +
+      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+
+    var bTitle = document.createElement('div');
+    bTitle.textContent = '📅 Export to Calendar';
+    bTitle.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;margin-bottom:5px;';
+
+    var bSub = document.createElement('div');
+    bSub.textContent = 'When does Day 1 start? All ' + days.length +
+      ' day' + (days.length === 1 ? '' : 's') + ' will be added to your calendar.';
+    bSub.style.cssText = 'font-size:13px;color:#5b636f;margin-bottom:16px;line-height:1.45;';
+
+    var dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    var _icsD = new Date(); _icsD.setDate(_icsD.getDate() + 1);
+    dateInput.value = _icsD.getFullYear() + '-' +
+      ('0' + (_icsD.getMonth() + 1)).slice(-2) + '-' + ('0' + _icsD.getDate()).slice(-2);
+    dateInput.style.cssText =
+      'width:100%;padding:9px 11px;border:1.5px solid #c8a44a;border-radius:6px;' +
+      'font-size:15px;font-family:inherit;box-sizing:border-box;margin-bottom:18px;' +
+      'color:#1b2531;background:#fff;';
+
+    var bRow = document.createElement('div');
+    bRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
+
+    var cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText =
+      'padding:8px 14px;border:1.5px solid #ccc;border-radius:6px;' +
+      'background:#fff;font-size:13px;color:#5b636f;cursor:pointer;font-family:inherit;font-weight:500;';
+
+    var dlBtn = document.createElement('button');
+    dlBtn.type = 'button'; dlBtn.textContent = '↓ Download .ics';
+    dlBtn.style.cssText =
+      'padding:8px 16px;border:none;border-radius:6px;' +
+      'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
+      'font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;';
+
+    function _closeICS() { overlay.style.display = 'none'; }
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) _closeICS(); });
+    cancelBtn.addEventListener('click', _closeICS);
+
+    dlBtn.addEventListener('click', function () {
+      var v = dateInput.value; if (!v) return;
+      var p = v.split('-');
+      var base = new Date(+p[0], +p[1] - 1, +p[2]);
+
+      function _pad(n) { return n < 10 ? '0' + n : '' + n; }
+      function _fmtDate(d) { return '' + d.getFullYear() + _pad(d.getMonth() + 1) + _pad(d.getDate()); }
+      function _esc(s) {
+        return s.replace(/\\/g, '\\\\').replace(/;/g, '\\;')
+                .replace(/,/g, '\\,').replace(/\n/g, '\\n');
+      }
+      var _ts = new Date().getTime();
+      var out = [
+        'BEGIN:VCALENDAR', 'VERSION:2.0',
+        'PRODID:-//The Voyager Expert//Guide Calendar//EN',
+        'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+      ];
+      days.forEach(function (day, i) {
+        var d0 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
+        var d1 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i + 1);
+        var summary = _esc(day.header + (day.header.indexOf(city) >= 0 ? '' : ' · ' + city));
+        var desc = day.stops.length ? _esc(day.stops.join('\n')) : '';
+        out.push('BEGIN:VEVENT');
+        out.push('UID:' + _ts + '-day' + day.num + '@voyager-expert');
+        out.push('DTSTART;VALUE=DATE:' + _fmtDate(d0));
+        out.push('DTEND;VALUE=DATE:' + _fmtDate(d1));
+        out.push('SUMMARY:' + summary);
+        if (desc) out.push('DESCRIPTION:' + desc);
+        out.push('END:VEVENT');
+      });
+      out.push('END:VCALENDAR');
+
+      var blob = new Blob([out.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = city.toLowerCase().replace(/\s+/g, '-') + '-trip.ics';
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
+      _closeICS();
+    });
+
+    bRow.appendChild(cancelBtn); bRow.appendChild(dlBtn);
+    box.appendChild(bTitle); box.appendChild(bSub);
+    box.appendChild(dateInput); box.appendChild(bRow);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    /* ── Trigger button ──────────────────────────────────────────────────── */
+    var trigBtn = document.createElement('button');
+    trigBtn.type = 'button';
+    trigBtn.textContent = '📅 Export to Calendar';
+    trigBtn.style.cssText =
+      'display:block;margin:10px 0 0;padding:7px 14px;' +
+      'background:#ffffff;border:1.5px solid #c8a44a;border-radius:6px;' +
+      'font-size:12.5px;font-weight:600;color:#7a5c00;' +
+      'cursor:pointer;font-family:inherit;white-space:nowrap;' +
+      'transition:background .15s,border-color .15s;';
+    trigBtn.addEventListener('mouseenter', function () { trigBtn.style.background = 'rgba(200,164,74,.08)'; });
+    trigBtn.addEventListener('mouseleave', function () { trigBtn.style.background = '#ffffff'; });
+    trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
+
+    /* Insert between last .overview-day pill and .overview-extras row */
+    var lastDay = overviewDays[overviewDays.length - 1];
+    var extras = lastDay.parentNode.querySelector('.overview-extras');
+    if (extras) lastDay.parentNode.insertBefore(trigBtn, extras);
+    else lastDay.parentNode.appendChild(trigBtn);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectICSExport);
+  } else {
+    _injectICSExport();
+  }
+
   /* ── Weather widget — loaded on the Guides index ONLY ─────────────────────
      weather.js lives in assets/ (permanent home). On the index it adds the
      🌡 Weather control in the title banner (city picker + monthly high/low
