@@ -984,8 +984,8 @@
     trigBtn.addEventListener('mouseleave', function () { trigBtn.style.background = '#ffffff'; });
     trigBtn.addEventListener('click', function () { overlay.style.display = 'flex'; });
 
-    /* Insert after the All Stops Map pill inside .overview-extras;
-       also apply terracotta border to the map pill so they read as a pair */
+    /* Pull All Stops Map out of .overview-extras and place both terracotta
+       pills on their own row above the rest of the extras chips */
     var lastDay = overviewDays[overviewDays.length - 1];
     var extras = lastDay.parentNode.querySelector('.overview-extras');
     if (extras) {
@@ -993,8 +993,14 @@
       if (mapPill) {
         mapPill.style.borderColor = '#b85c2a';
         mapPill.style.color = '#b85c2a';
-        mapPill.parentNode.insertBefore(trigBtn, mapPill);
-      } else extras.appendChild(trigBtn);
+        mapPill.parentNode.removeChild(mapPill);
+      }
+      var pillRow = document.createElement('div');
+      pillRow.style.cssText =
+        'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;';
+      pillRow.appendChild(trigBtn);
+      if (mapPill) pillRow.appendChild(mapPill);
+      extras.parentNode.insertBefore(pillRow, extras);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
     }
