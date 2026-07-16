@@ -269,9 +269,10 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       if (sugActive >= 0 && rows[sugActive]) rows[sugActive].scrollIntoView({ block: 'nearest' });
     }
 
-    monthEl.innerHTML = '<option value="" disabled selected>Month</option>' +
+    var curMonth = new Date().getMonth();
+    monthEl.innerHTML = '<option value="" disabled>Month</option>' +
       MONTHS.map(function (m, i) {
-        return '<option value="' + i + '">' + m + '</option>';
+        return '<option value="' + i + '"' + (i === curMonth ? ' selected' : '') + '>' + m + '</option>';
       }).join('');
 
     function paintUnit() {
@@ -424,7 +425,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
         return;
       }
       var rec = CLIM[k];
-      var m = parseInt(monthEl.value, 10);
+      var m = parseInt(monthEl.value, 10); if (isNaN(m)) m = new Date().getMonth();
       var country = CITY_COUNTRIES[k] || '';
       var isUS = country === 'United States';
       var EU_COUNTRIES = {'France':1,'Germany':1,'Italy':1,'Spain':1,'Portugal':1,'Netherlands':1,'Belgium':1,'Switzerland':1,'Austria':1,'Greece':1,'Norway':1,'Sweden':1,'Denmark':1,'Finland':1,'Ireland':1,'United Kingdom':1,'Croatia':1,'Czech Republic':1,'Hungary':1,'Poland':1,'Slovenia':1,'Estonia':1,'Slovakia':1,'Luxembourg':1,'Monaco':1,'Iceland':1,'Montenegro':1,'Malta':1,'Turkey':1};
