@@ -34,6 +34,9 @@
   .tag.high{background:#f6d9d3; color:#a61c00;}
   .tag.oos{background:#dde3ef; color:#2f3d5e;}
   .noissue{color:#2e7d32; font-size:13px; font-style:italic;}
+  .idea{background:#fffdf7; border:1px solid var(--border); border-left:4px solid var(--gold); border-radius:8px; padding:12px 15px; margin:12px 0; box-shadow:0 1px 6px rgba(92,61,17,.05);}
+  .idea .ftitle{color:#6d5410;}
+  .ideanote{font-size:12px; color:var(--muted); font-style:italic; margin:2px 0 14px;}
   code{background:#f1ece2; padding:1px 5px; border-radius:4px; font-size:12px;}
   footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--border); color:var(--muted); font-size:12px;}
 </style>
@@ -48,7 +51,7 @@
 
   <div class="summary">
     <p><span class="ok">✓ Data &amp; coverage: fully clean this pass.</span> 220 cities in <code>climate.json</code>, weather.js baked block in sync, all 220 <code>GUIDE_LINKS</code> resolve to real files on disk — no missing, stale, or orphaned entries; no error flags; no bad hi/lo arrays; no zero coords.</p>
-    <p>This report covers only <strong>visual / structural / UX</strong> observations, which the routine leaves for the UX pass. <strong>5 findings + 1 out-of-scope note.</strong></p>
+    <p>This report covers <strong>visual / structural / UX</strong> observations (left for the UX pass) plus <strong>improvement ideas</strong> for the owner to weigh. <strong>5 findings · 1 out-of-scope note · 7 improvement ideas.</strong></p>
   </div>
 
   <h2>Climate-Finder.html — "Browse by Climate"</h2>
@@ -91,6 +94,44 @@
   <div class="finding oos">
     <div class="ftitle">Cards-ATM.html — 5 live brain_check <code>search-bar-standard</code> fails <span class="tag oos">Out of scope</span></div>
     <div class="fbody">Not a Weather-section file, but surfaced by the site-wide brain_check during this run: <code>Cards-ATM.html</code>'s search bar references <code>--border2</code>, <code>--text</code>, and <code>--accent</code> with no page-level definition or fallback, so <code>border</code> / <code>:focus border-color</code> / <code>::placeholder</code> resolve to undefined (expected <code>1.5px solid #e6e2da</code> / <code>#c8b99a</code> / <code>#A8895A</code> per § 14). This is a live failure that will block any non-guide HTML push. Flagged for the Cards &amp; ATM / UX routine — not touched here.</div>
+  </div>
+
+  <h2>💡 Improvement ideas — look, function &amp; features</h2>
+  <div class="ideanote">Proposals for the owner / UX routine to weigh — <strong>not implemented here</strong> (a crib never adds a new feature autonomously). Ranked roughly by impact-to-effort.</div>
+
+  <div class="idea">
+    <div class="ftitle">1. Give Weather.html a searchable city picker <span class="tag high">High impact</span></div>
+    <div class="fbody">Replace the 220-entry native <code>&lt;select&gt;</code> with the site's shared <code>TVESearch</code> autocomplete (already used on the Guides index). Type "Kyo" → Kyoto. Biggest single findability win on either page; reuses an existing component so no new UI vocabulary.</div>
+  </div>
+
+  <div class="idea">
+    <div class="ftitle">2. One-tap climate presets on Climate-Finder <span class="tag med">Medium impact</span></div>
+    <div class="fbody">Above the sliders, add preset chips that set the month+band in one tap: e.g. <em>Beach warm (26–32°)</em>, <em>Mild &amp; pleasant (18–24°)</em>, <em>Cool escape (&lt;10°)</em>. Most users think in "what kind of weather," not exact degrees — presets meet them there while the sliders stay for fine-tuning.</div>
+  </div>
+
+  <div class="idea">
+    <div class="ftitle">3. Cross-link the two tools <span class="tag med">Medium impact</span></div>
+    <div class="fbody">Make each Climate-Finder result card deep-link into <code>Weather.html#City</code> so a match ("Lisbon fits my band") flows straight to its full month-by-month chart. Turns two separate tools into one funnel: discover by climate → inspect the city → open the guide.</div>
+  </div>
+
+  <div class="idea">
+    <div class="ftitle">4. "Best months to visit" comfort shading on Weather.html <span class="tag med">Medium impact</span></div>
+    <div class="fbody">Shade the month-grid buttons whose average high falls in a comfortable band (e.g. 18–27°) so the good travel window is visible at a glance, without the user tapping through all 12 months. Purely additive to the existing grid.</div>
+  </div>
+
+  <div class="idea">
+    <div class="ftitle">5. Add a rainfall / dry-season filter to Climate-Finder <span class="tag low">Nice to have</span></div>
+    <div class="fbody">The finder is temperature-only, yet <code>climate.json</code> already carries <code>rain</code>/<code>rd</code> (rainy-days) for cities that have it. An optional "dry only" toggle or a max-rainfall slider would let users filter out monsoon months — high value for tropical destinations.</div>
+  </div>
+
+  <div class="idea">
+    <div class="ftitle">6. "Compare two cities" mode on Weather.html <span class="tag low">Nice to have</span></div>
+    <div class="fbody">Let users pin a second city and render both month charts side by side (or overlaid) — a common decision pattern ("Is Athens or Lisbon warmer in October?"). Builds directly on the existing per-city chart.</div>
+  </div>
+
+  <div class="idea">
+    <div class="ftitle">7. Shareable search state <span class="tag low">Nice to have</span></div>
+    <div class="fbody">Climate-Finder already reads <code>?u=</code> for units; extend URL state to month + band and add a small "Copy link to this search" action. Weather.html already deep-links per city via <code>#City</code> — a matching share affordance would make both tools linkable in trip planning.</div>
   </div>
 
   <footer>

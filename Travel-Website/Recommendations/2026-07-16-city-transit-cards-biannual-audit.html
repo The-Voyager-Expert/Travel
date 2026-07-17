@@ -172,7 +172,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
     <div class="stat-chip info"><span class="num">31</span> new cities added</div>
     <div class="stat-chip warn"><span class="num">2</span> data corrections</div>
     <div class="stat-chip ok"><span class="num">2</span> structural fixes</div>
-    <div class="stat-chip"><span class="num">4</span> UX findings logged</div>
+    <div class="stat-chip warn"><span class="num">4</span> UX findings logged</div>
+    <div class="stat-chip info"><span class="num">13</span> improvement recommendations</div>
   </div>
 
   <!-- ── Section 1: Content Changes ── -->
@@ -352,8 +353,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
   <!-- ── Section 3: Page Improvement Recommendations ── -->
   <div class="section-block">
     <div class="section-title">Section 3 — Recommendations to improve the page</div>
-    <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">These are suggestions for the owner — not items the UX routine fixes automatically. Grouped by priority.</p>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">Suggestions for the owner across four dimensions — not items the UX routine fixes automatically. Organized by dimension, then priority within each.</p>
 
+    <!-- LOOK -->
+    <div style="font-size:13px; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:14px; margin-top:8px;">Look</div>
     <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--warn); margin-bottom:10px;">High priority</div>
 
     <div class="ux-row">
@@ -383,6 +386,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
     <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--info); margin-bottom:10px; margin-top:20px;">Medium priority</div>
 
     <div class="ux-row">
+      <div class="ux-what">Badge clarity — 📲 Tap to pay is hard to spot when scanning</div>
+      <div class="ux-label">Look</div>
+      <div class="ux-why">The 📲 badge sits inline in the row header alongside the city name and card name. On a long list with 50+ entries, users who want to find contactless-friendly cities have to scan the entire left column to spot it — there is no visual weight difference between a row that has the badge and one that doesn't. The filter pill helps, but once a user is browsing all cities, the badge disappears into the noise.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a subtle terracotta left border or a tinted row background to every entry that has the <code>contactless</code> tag — a passive visual cue that doesn't require the filter to be active. Alternatively, pin the 📲 badge to a fixed column in the row so it always appears in the same horizontal position across all entries, making it immediately scannable.</div>
+    </div>
+
+    <div class="ux-row">
       <div class="ux-what">Two-system cities don't clearly warn that one card ≠ full coverage</div>
       <div class="ux-label">Content — Bangkok, Rio de Janeiro, Santiago, Buenos Aires (buses)</div>
       <div class="ux-why">Bangkok requires a Rabbit Card for BTS and a bank card for MRT — two separate systems with no integration. Rio requires RioCard Mais and a separate Jaé card. Santiago's Pago Ágil works on metro but not buses. Buenos Aires contactless works on Subte + city buses but not suburban trains. The current entries describe both systems, but a traveler skimming the row might conclude "I can tap my bank card everywhere" when that is false. The visual layout presents both items side-by-side without a clear warning that neither covers the full network.</div>
@@ -404,6 +415,132 @@ hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
       <div class="ux-why">The page shows a counter like "N cities · M regions · K tap-to-pay" calculated from <code>data-tags</code> in JavaScript. This run added 31 cities, bringing the total significantly higher. The counter itself is dynamic (computed at runtime) so it should be correct — but the number of regions is hardcoded as the count of <code>.section</code> divs, and a "regions" label that shows "4" may now feel low given the page covers ~55+ cities across 4 regions. The metric is correct but may not be the most impressive framing.</div>
       <div class="ux-label">Suggested improvement</div>
       <div class="ux-fix">Consider changing the counter bar to show "N cities · K with tap-to-pay · 4 regions" or adding a "countries covered" count (derivable from the entries) instead of the region count, which will always be 4. The city count after this run is a strong headline number worth surfacing prominently.</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; margin-top:20px;">Low priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">Stat counter framing undersells the page after 31 new additions</div>
+      <div class="ux-label">Look</div>
+      <div class="ux-why">The counter bar shows "N cities · 4 regions · K tap-to-pay." After this run the city count is substantively larger, but "4 regions" will always be 4 — it's not a metric that grows or communicates the page's breadth. A traveler landing on the page gets the impression this is a small reference, not a comprehensive one.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Replace "4 regions" with a "countries covered" count (derivable from the entries at runtime — count unique country strings) or simply remove it and lead with the city count and tap-to-pay count, both of which are strong numbers. Example: "55 cities · 38 with tap to pay."</div>
+    </div>
+
+    <!-- FUNCTION -->
+    <div style="font-size:13px; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:14px; margin-top:28px;">Function</div>
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--warn); margin-bottom:10px;">High priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">No "Showing N of M cities" counter when filters or search are active</div>
+      <div class="ux-label">Function</div>
+      <div class="ux-why">When a user activates the Europe pill and searches "app," the visible rows shrink to a handful — but there is no indication of how many results matched or how many total entries exist. The user has no way to know if their search returned 2 of 17 European entries or 2 of 55 total. This is especially disorienting on mobile where the hidden entries scroll off screen.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a live "Showing N of M" line below the filter pills that updates as <code>applyFilter()</code> runs. When nothing is filtered (All + no search text), hide it. This is a small JS addition to the existing filter function — update a <code>&lt;span&gt;</code>'s text content after each filter pass.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">No input debounce on the search listener</div>
+      <div class="ux-label">Function</div>
+      <div class="ux-why">The <code>search.addEventListener('input', applyFilter)</code> call fires synchronously on every keystroke. With 50+ rows, each containing network chips, tip text, and cell content being scanned, this runs ~5–10 DOM reads per character typed. Not a problem today, but will degrade noticeably as the page grows toward 80–100 entries.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Wrap <code>applyFilter</code> in a simple debounce with a ~150ms delay before attaching it to the input event. This is a 5-line JS change that future-proofs performance as the city list grows.</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--info); margin-bottom:10px; margin-top:20px;">Medium priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">Contactless filter may mislead — partial contactless cities show as fully contactless</div>
+      <div class="ux-label">Function</div>
+      <div class="ux-why">The 📲 filter matches any entry with <code>data-tags~="contactless"</code>. Some of those cities have contactless on metro only (Budapest — Pay&GO on 4 metro lines, buses still need a ticket), or metro + bus but not suburban rail (Buenos Aires — Subte + city buses yes, suburban trains no). A traveler filtering by "tap to pay" expecting to tap everywhere in a city will find entries that only partially support it, with no visual distinction between "fully contactless" and "metro-only contactless."</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a second tag value — e.g., <code>contactless-partial</code> — for cities where contactless works on some but not all main transit modes. Update the filter to offer three states: All tap-to-pay (both tags) / Full coverage only / Partial. Alternatively, change the badge label to "📲 Metro only" for partial cities to set expectations inline.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">No filter reset affordance when both region and search are active</div>
+      <div class="ux-label">Function</div>
+      <div class="ux-why">If a user clicks "🇪🇺 Europe" and types "app" in the search box, there is no single "clear everything" button. They must click "All" AND manually clear the text input. On mobile where the keyboard covers most of the screen, finding the "All" pill to reset the region filter requires scrolling back up — a friction point that makes the page feel less fluid than expected.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a small "✕ Clear filters" link that appears only when any filter is active (region ≠ all OR search text is non-empty). One click resets both the active pill to "All" and clears the input value. Small JS change, large usability improvement on mobile.</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; margin-top:20px;">Low priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">Filter pills don't show city counts per region</div>
+      <div class="ux-label">Function</div>
+      <div class="ux-why">The Europe pill just says "🇪🇺 Europe." After adding 17 European entries this run, showing "🇪🇺 Europe (17)" would immediately communicate coverage depth and help users calibrate expectations before filtering. This is a runtime calculation, not hardcoded — count <code>.transit-row[data-tags~="europe"]</code> elements in the JS.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">After DOM-ready, update each region pill's text to include the count in parentheses. Four lines of JS added to the existing script block.</div>
+    </div>
+
+    <!-- FEATURE -->
+    <div style="font-size:13px; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:14px; margin-top:28px;">Feature</div>
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--warn); margin-bottom:10px;">High priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">"App required before arrival" filter tag missing</div>
+      <div class="ux-label">Feature</div>
+      <div class="ux-why">Copenhagen, Munich, and Oslo have no physical card and no tap-to-pay option — the only way to board is an app set up before arrival. These cities are currently invisible to the large subset of travelers who search for "no contactless" or "physical card" because neither applies. There is no way to filter for "I need to download an app" — a completely different preparation step from getting a card. Travelers who arrive in Oslo without the Ruter app set up have no immediate fallback.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add <code>app-only</code> to the <code>data-tags</code> of Copenhagen, Munich, Oslo, and any future app-only cities. Add a "📱 App required" filter pill. This is the most actionable new filter the page could add — it directly changes pre-trip behavior for travelers who would otherwise not prepare.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">"Last verified" date per entry — travelers can't tell how fresh the data is</div>
+      <div class="ux-label">Feature</div>
+      <div class="ux-why">Transit fares, card fees, and contactless support change every 1–2 years. The page shows a single "Updated Month Year" stamp for the entire page, but the newest entries (just added this audit) are fresh while older entries may be 6–12 months stale. A traveler looking at a fare has no way to know if it was verified last week or two audits ago. This is especially relevant for volatile cities like Istanbul (rapid TL inflation) and Buenos Aires (ARS inflation).</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a <code>data-verified="YYYY-MM"</code> attribute to each <code>.transit-row</code>. Display it as a small muted "Verified Jan 2026" label inside the row. This routine already updates entries — it sets this attribute on every entry it touches. The UI can optionally highlight entries older than 12 months with a subtle stale indicator.</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--info); margin-bottom:10px; margin-top:20px;">Medium priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">Airport coverage filter — the #1 practical question, currently unanswerable</div>
+      <div class="ux-label">Feature</div>
+      <div class="ux-why">Whether a transit card covers the airport rail/bus is the single most commonly asked question about transit cards — travelers arrive, want to take the train into the city, and need to know if their card works or if they need a separate ticket. This information isn't surfaced anywhere in the filter system. A traveler connecting through multiple cities can't quickly identify which ones require a special airport ticket.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add <code>airport-covered</code> or <code>airport-extra</code> to <code>data-tags</code> per city (requires a one-time research pass for each entry). Add a "✈️ Airport included" filter pill. This would be the most unique capability this page has vs. any other transit card reference on the web.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">No "pre-trip card checklist" feature for multi-city trips</div>
+      <div class="ux-label">Feature</div>
+      <div class="ux-why">Travelers visiting 3–4 cities on one trip need to plan which transit cards to get before departure vs. at each airport. Currently they must read each entry individually and mentally track what they need. The page has all the data needed to generate a personalized checklist — it just doesn't expose it as an action.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a checkbox to each <code>.transit-row</code>. A persistent "My trip" tray at the bottom of the page lists selected cities with a summary: "Get before: Oyster (London), CharlieCard (Boston) · Get on arrival: T-money (Seoul) · App required first: Ruter (Oslo)." No server needed — localStorage keeps the selection across sessions.</div>
+    </div>
+
+    <!-- CONTENT -->
+    <div style="font-size:13px; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:14px; margin-top:28px;">Content</div>
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--warn); margin-bottom:10px;">High priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">No intro or "how to use this page" block — first-time visitors land cold</div>
+      <div class="ux-label">Content</div>
+      <div class="ux-why">The page opens directly with the search bar. There is no sentence explaining what a transit card is, why a visitor would want one instead of tapping a bank card, or how to read the entries. Users who arrive from a guide link don't know the difference between "Deposit" and "Card fee," or what 📲 means. The page reads as a table for people who already know what they're looking for, not a helpful resource for everyone.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a 2–3 sentence intro block above the search bar: what transit cards are, when to get one vs. just tapping your bank card, and a one-line key for the 📲 badge and cell labels. Doubles as useful context for search engines without being SEO-optimized filler.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">Airport access is missing from almost every entry — the #1 traveler question</div>
+      <div class="ux-label">Content gap — fleet-wide</div>
+      <div class="ux-why">Only a handful of entries (Tokyo, Stockholm, Helsinki, Vancouver) mention whether the card covers the airport connection. This is the most common practical question travelers have — they arrive, want to take the train or bus into the city, and don't know if their transit card works or if they need to buy a separate ticket. Cities where this is actively misleading: Paris (CDG not in standard Navigo zone — separate ticket needed), Barcelona (T-Casual does NOT cover airport), Rome (Leonardo Express is separate), Chicago (Blue Line CTA does work — no supplement needed). The silence treats "no mention" as "probably fine" when it isn't.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a one-line airport note to the tip bar for every city with a major airport rail or bus link. Consistent format: "✈️ Airport: [card covers it / zone add-on €X / separate ticket required]." A research pass covering the ~25 most-visited cities in the list would cover the bulk of traveler questions.</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--info); margin-bottom:10px; margin-top:20px;">Medium priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">Thin tip bars on five recently added entries</div>
+      <div class="ux-label">Content — Dublin, Porto, Geneva, Istanbul, Montreal</div>
+      <div class="ux-why">These entries have one sentence or less of useful advice. Dublin: doesn't mention the Leap Card discount vs. cash. Porto: doesn't explain the confusing zone system. Geneva: doesn't flag that the hotel card only covers the Canton, not intercity trains. Istanbul: doesn't note that the card is essential because cash costs more. Montreal: doesn't warn that OPUS can only be loaded at a physical machine, not an app.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Expand each to 2–3 practical sentences on the next update pass. The research is straightforward — these are well-documented transit systems. Prioritize information travelers need on arrival day.</div>
     </div>
 
     <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; margin-top:20px;">Low priority</div>

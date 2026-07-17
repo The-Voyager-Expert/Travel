@@ -1,0 +1,401 @@
+<title>Scripts/Docs Audit — 2026-07-17</title>
+<style>
+  :root {
+    --bg:       #f5f4f0;
+    --surface:  #ffffff;
+    --warm:     #fdf8f0;
+    --text:     #3d3a32;
+    --muted:    #6a6660;
+    --border:   #e0dbd2;
+    --terra:    #b85c2a;
+    --terra-dk: #7a3b1e;
+    --gold:     #c8a44a;
+    --green:    #2e7d32;
+    --green-bg: #e8f5e9;
+    --amber:    #b45309;
+    --amber-bg: #fef3c7;
+    --red:      #c0392b;
+    --red-bg:   #fce4ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #1c1a17;
+      --surface:  #26231e;
+      --warm:     #2e2a23;
+      --text:     #e8e2d8;
+      --muted:    #9a9288;
+      --border:   #3a352c;
+      --terra:    #d4874a;
+      --terra-dk: #b85c2a;
+      --gold:     #d4a84a;
+      --green:    #4caf50;
+      --green-bg: #1b3a1e;
+      --amber:    #f59e0b;
+      --amber-bg: #3a2a0a;
+      --red:      #ef5350;
+      --red-bg:   #3a1010;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:#f5f4f0;--surface:#ffffff;--warm:#fdf8f0;--text:#3d3a32;--muted:#6a6660;
+    --border:#e0dbd2;--terra:#b85c2a;--terra-dk:#7a3b1e;--gold:#c8a44a;
+    --green:#2e7d32;--green-bg:#e8f5e9;--amber:#b45309;--amber-bg:#fef3c7;
+    --red:#c0392b;--red-bg:#fce4ec;
+  }
+  :root[data-theme="dark"] {
+    --bg:#1c1a17;--surface:#26231e;--warm:#2e2a23;--text:#e8e2d8;--muted:#9a9288;
+    --border:#3a352c;--terra:#d4874a;--terra-dk:#b85c2a;--gold:#d4a84a;
+    --green:#4caf50;--green-bg:#1b3a1e;--amber:#f59e0b;--amber-bg:#3a2a0a;
+    --red:#ef5350;--red-bg:#3a1010;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 32px 24px 64px;
+  }
+
+  .page { max-width: 760px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header {
+    border-bottom: 2.5px solid var(--terra);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 4px;
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .header-meta {
+    margin-top: 8px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--warm);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Summary strip ── */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .stat-n {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--terra);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+
+  /* ── Section headings ── */
+  .section { margin-bottom: 28px; }
+  .section-head {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+  }
+
+  /* ── Finding cards ── */
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .finding-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  .rule-badge {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background: var(--terra);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .rule-badge.updated { background: var(--gold); }
+  .rule-badge.flag    { background: var(--amber); }
+  .rule-badge.clean   { background: var(--green); }
+
+  .finding-body { flex: 1; min-width: 0; }
+  .finding-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .finding-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Mono', Consolas, monospace;
+    font-size: 11px;
+    background: var(--warm);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 4px;
+    color: var(--terra);
+  }
+
+  .finding-detail {
+    background: var(--warm);
+    border-top: 1px solid var(--border);
+    padding: 10px 16px 10px 68px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* status pill inline */
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 10px;
+    padding: 1px 7px;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .pill-new      { background: var(--green-bg);  color: var(--green); }
+  .pill-updated  { background: var(--amber-bg);  color: var(--amber); }
+  .pill-flag     { background: var(--red-bg);    color: var(--red);   }
+  .pill-clean    { background: var(--green-bg);  color: var(--green); }
+
+  /* ── Notes ── */
+  .notes {
+    background: var(--warm);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .notes li { margin-left: 16px; margin-bottom: 5px; }
+
+  @media (max-width: 560px) {
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .finding-detail { padding-left: 16px; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="header">
+    <div class="eyebrow">Scheduled Routine</div>
+    <h1>Scripts / Docs Audit</h1>
+    <div class="header-meta">
+      <span class="meta-chip">2026-07-17</span>
+      <span class="meta-chip">brain_check.py · 179/180 ok · 0 fail</span>
+      <span class="meta-chip">89 scripts inventoried</span>
+    </div>
+  </header>
+
+  <div class="summary">
+    <div class="stat">
+      <div class="stat-n">3</div>
+      <div class="stat-label">Rules added</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">2</div>
+      <div class="stat-label">Standards updated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">3</div>
+      <div class="stat-label">Validator Index gaps flagged</div>
+    </div>
+  </div>
+
+  <!-- FIXED -->
+  <div class="section">
+    <div class="section-head">Fixed This Run — Cleanliness Checks.md</div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge">541</div>
+        <div class="finding-body">
+          <div class="finding-title">Station-box first-child margin-top <span class="pill pill-new">New</span></div>
+          <div class="finding-desc"><code>check_station_box_first_child_margin</code> — HARD-FAIL · session-start</div>
+        </div>
+      </div>
+      <div class="finding-detail">
+        Added to <code>brain_check.py</code> on 2026-07-16 but never documented. Guards against CSS margin collapse: <code>.station-box</code> has <code>padding-top: 0</code> and no <code>border-top</code>, so the first <code>.stop-row</code>'s <code>margin-top: 4px</code> collapses through the container and creates a white gap before the first station row. Requires <code>.station-box &gt; .stop-row:first-child { margin-top: 0 }</code> in <code>guide-style.css</code>.
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge">542</div>
+        <div class="finding-body">
+          <div class="finding-title">Index table terracotta design guard <span class="pill pill-new">New</span></div>
+          <div class="finding-desc"><code>check_index_table_design</code> — HARD-FAIL · session-start</div>
+        </div>
+      </div>
+      <div class="finding-detail">
+        Added 2026-07-16, never documented. Checks Currency-Guide.html and Plug-Adapter-Guide.html for five locked patterns: outer <code>border</code> (not a drop box-shadow), no <code>.idx-even/.idx-odd</code> zebra backgrounds, terracotta <code>#b85c2a</code> box-shadow on <code>tbody tr:hover td</code>, no <code>filter:brightness()</code> hover, uppercase <code>thead th</code>. Catches regressions from <code>build_currency.py</code> regenerating the page from a stale CSS template.
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge">543</div>
+        <div class="finding-body">
+          <div class="finding-title">TVESearch wiring requirement <span class="pill pill-new">New</span></div>
+          <div class="finding-desc"><code>check_city_search_tvesearch</code> — HARD-FAIL · session-start</div>
+        </div>
+      </div>
+      <div class="finding-detail">
+        Added 2026-07-16, never documented. All <code>type="search"</code> inputs across non-guide pages must load <code>assets/search-autocomplete.js</code> and wire <code>TVESearch.attach()</code>. Bare search boxes without the shared typeahead dropdown are unsupported and don't route through the search index. Skips <code>Guides/</code>, <code>_build/</code>, and <code>Recommendations/</code>.
+      </div>
+    </div>
+  </div>
+
+  <!-- STANDARDS UPDATE -->
+  <div class="section">
+    <div class="section-head">Fixed This Run — Enforcement-Standards.md</div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge updated">4</div>
+        <div class="finding-body">
+          <div class="finding-title">Row 4 (Colors) — two checks added <span class="pill pill-updated">Updated</span></div>
+          <div class="finding-desc"><code>check_guide_pill_css_canonical</code> and <code>check_index_table_design</code></div>
+        </div>
+      </div>
+      <div class="finding-detail">
+        Both enforce color standards and were absent from the enforcement table. <code>check_guide_pill_css_canonical</code> (Rule 540) is a positive assertion that the exact locked CSS for all four guide pill classes is intact in <code>guide-style.css</code> — REST gold border/white bg, HOVER terracotta gradient, ACTIVE darker gradient. <code>check_index_table_design</code> (Rule 542) enforces the terracotta table design on Currency-Guide and Plug-Adapter. Last-updated date bumped to 2026-07-17.
+      </div>
+    </div>
+  </div>
+
+  <!-- FLAGGED -->
+  <div class="section">
+    <div class="section-head">Flagged for validator-audit (read-only from this routine)</div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge flag">VI</div>
+        <div class="finding-body">
+          <div class="finding-title">Validator Index.html — 3 missing entries <span class="pill pill-flag">Flag</span></div>
+          <div class="finding-desc">For the next <code>validator-audit</code> run (daily 9am)</div>
+        </div>
+      </div>
+      <div class="finding-detail">
+        Three <code>brain_check.py</code> functions added 2026-07-16 are absent from <code>Brain/Reference/Validator Index.html</code>:
+        <code>check_station_box_first_child_margin</code> · <code>check_index_table_design</code> · <code>check_city_search_tvesearch</code>.
+        The Validator Index is owned by the <code>validator-audit</code> scheduled task and cannot be edited by this routine.
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEAN -->
+  <div class="section">
+    <div class="section-head">Clean — No Action Needed</div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge clean">✓</div>
+        <div class="finding-body">
+          <div class="finding-title">All other brain_check.py functions documented <span class="pill pill-clean">Clean</span></div>
+          <div class="finding-desc">76 of 79 functions confirmed in Cleanliness Checks.md or Enforcement-Standards.md</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge clean">✓</div>
+        <div class="finding-body">
+          <div class="finding-title">One-off CSS consolidation scripts — intentionally absent from Validator Index <span class="pill pill-clean">Clean</span></div>
+          <div class="finding-desc"><code>apply_css_consolidation.py</code>, <code>consolidate_classes_to_shared.py</code>, <code>smart_css_consolidation.py</code>, and 6 others</div>
+        </div>
+      </div>
+      <div class="finding-detail">
+        These were one-time migration tools from the 2026-06-23 CSS consolidation; they are not ongoing validators and do not belong in the Validator Index.
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <div class="rule-badge clean">✓</div>
+        <div class="finding-body">
+          <div class="finding-title">No Enforcement-Standards function names point to removed/renamed functions <span class="pill pill-clean">Clean</span></div>
+          <div class="finding-desc">All 8 standard rows verified against brain_check.py</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="section">
+    <div class="section-head">Notes</div>
+    <div class="notes">
+      <ul>
+        <li><code>Brain/Reference/</code> files are Drive-only (not git-tracked per the whitelist <code>.gitignore</code>). Changes take effect on Drive immediately — no git commit step applies.</li>
+        <li>Rule numbering at the tail of Cleanliness Checks.md is out-of-order (534, 537, 538, 536, 540, 539, 541–543). Rules are appended as discovered; no resequencing needed — the numbering is a tracking artifact, not a sort key.</li>
+        <li><code>brain_check.py</code> exited 0 failures (1 pre-existing CSS duplication warning — 52 duplicated selectors, not a new issue).</li>
+      </ul>
+    </div>
+  </div>
+
+</div>

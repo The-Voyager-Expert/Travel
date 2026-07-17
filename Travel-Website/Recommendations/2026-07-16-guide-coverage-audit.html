@@ -1,0 +1,524 @@
+<!doctype html>
+<title>Guide Coverage Audit — 2026-07-16</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --border: #e2ddd8;
+  --text: #1c1c1e;
+  --text-secondary: #5a5855;
+  --accent: #b85c2a;
+  --accent-bg: #fdf0e8;
+  --ok: #2a7a4e;
+  --ok-bg: #eef7f2;
+  --warn: #8a6c1a;
+  --warn-bg: #fdf7e6;
+  --fix: #2a567a;
+  --fix-bg: #e8f2fb;
+  --mono: 'SF Mono','Fira Code','Cascadia Code',monospace;
+  --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #19191b;
+    --surface: #242428;
+    --border: #35343a;
+    --text: #e8e6e0;
+    --text-secondary: #8a8785;
+    --accent: #d4743e;
+    --accent-bg: #2d1e14;
+    --ok: #3da06b;
+    --ok-bg: #0f2419;
+    --warn: #c8a44a;
+    --warn-bg: #211900;
+    --fix: #5a9cc8;
+    --fix-bg: #0f1f2d;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #19191b; --surface: #242428; --border: #35343a;
+  --text: #e8e6e0; --text-secondary: #8a8785;
+  --accent: #d4743e; --accent-bg: #2d1e14;
+  --ok: #3da06b; --ok-bg: #0f2419;
+  --warn: #c8a44a; --warn-bg: #211900;
+  --fix: #5a9cc8; --fix-bg: #0f1f2d;
+}
+:root[data-theme="light"] {
+  --bg: #f8f7f4; --surface: #ffffff; --border: #e2ddd8;
+  --text: #1c1c1e; --text-secondary: #5a5855;
+  --accent: #b85c2a; --accent-bg: #fdf0e8;
+  --ok: #2a7a4e; --ok-bg: #eef7f2;
+  --warn: #8a6c1a; --warn-bg: #fdf7e6;
+  --fix: #2a567a; --fix-bg: #e8f2fb;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 0 16px 64px;
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.page-head {
+  padding: 36px 0 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.page-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.commit-hash {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ── Summary chips ── */
+.summary-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.chip.ok { background: var(--ok-bg); color: var(--ok); border-color: color-mix(in srgb, var(--ok) 25%, transparent); }
+.chip.warn { background: var(--warn-bg); color: var(--warn); border-color: color-mix(in srgb, var(--warn) 25%, transparent); }
+.chip.fix { background: var(--fix-bg); color: var(--fix); border-color: color-mix(in srgb, var(--fix) 25%, transparent); }
+.chip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* ── Section cards ── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.status-badge.ok { background: var(--ok-bg); color: var(--ok); }
+.status-badge.warn { background: var(--warn-bg); color: var(--warn); }
+.status-badge.fix { background: var(--fix-bg); color: var(--fix); }
+
+.section-body {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Row items ── */
+.row-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+}
+.row-label {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  min-width: 160px;
+  font-size: 12px;
+}
+.row-value {
+  color: var(--text);
+  flex: 1;
+}
+.row-value.mono {
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+
+/* ── Fix list ── */
+.fix-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 4px;
+}
+.fix-list li {
+  font-size: 12.5px;
+  color: var(--text);
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.fix-list li::before {
+  content: '→';
+  color: var(--fix);
+  flex-shrink: 0;
+  font-size: 11px;
+}
+.fix-list .country {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+/* ── Note block ── */
+.note {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg);
+  border-left: 3px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+/* ── Commit footer ── */
+.commit-footer {
+  margin-top: 32px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.commit-footer strong { color: var(--text); }
+
+@media (max-width: 520px) {
+  .row-item { flex-direction: column; gap: 3px; }
+  .row-label { min-width: auto; }
+  .section-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+</style>
+
+<div class="page">
+
+  <header class="page-head">
+    <div class="eyebrow">Weekly Routine · The Voyager Expert</div>
+    <h1 class="page-title">Guide Coverage Audit</h1>
+    <div class="page-meta">
+      <span>2026-07-16</span>
+      <span>220 shipped guides</span>
+      <span class="commit-hash">626f71d71</span>
+    </div>
+  </header>
+
+  <div class="summary-row">
+    <div class="chip ok"><span class="dot"></span>16 surfaces clean</div>
+    <div class="chip warn"><span class="dot"></span>2 validators warned</div>
+    <div class="chip fix"><span class="dot"></span>11 fixes applied</div>
+  </div>
+
+  <!-- Step 1a: Core coverage -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">validate_guide_coverage — 18 surfaces</span>
+      <span class="status-badge ok">✓ Clean</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-value">All 220 guides present in every surface: index card, inline data (CLIMATE_INLINE / COST_DATA / SAFETY_DATA), FMAP, map pin, travel stats, safety, climate, search, status dots, currency, also-on-site links, Delta Routes, Time Zones, Read About, Stops Map.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1b: Index integrity -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Guides-Index integrity (country / alpha / inline / FMAP)</span>
+      <span class="status-badge fix">1 fix applied</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-label">Country assignment</span>
+        <span class="row-value">220 cards — all in correct country blocks ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Alphabetical order</span>
+        <span class="row-value">73 countries, 266 cards — correctly ordered ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Inline data</span>
+        <span class="row-value">All 217 shipped guide cards have CLIMATE_INLINE / COST_DATA / SAFETY_DATA ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">FMAP / flight view</span>
+        <span class="row-value">1 fail fixed — Cancun routing corrected</span>
+      </div>
+      <div class="note">
+        <strong>Cancun FMAP fix:</strong> entry had <code>r:"1stop"</code> but Delta Routes SEA shows CUN as tier-0 (seasonal nonstop, resumes Nov 9, 2026). Corrected to <code>r:"seasonal"</code>, hub cleared. validate_flight_index now exits clean (1 warn: time-label vs haversine estimate — cosmetic, not a fail).
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1b2: Filter audit -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Filter coverage (Trip Type / Language / Continent / Trip Length)</span>
+      <span class="status-badge ok">✓ Clean</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-label">THEME_DATA (Trip Type)</span>
+        <span class="row-value">219/265 cards tagged — 46 untagged are sidebar/category cards (Best of, Also on this site), not destination guides ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">data-lang (Language)</span>
+        <span class="row-value">All destination guide cards have ISO language codes ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">DAYS_DATA (Trip Length)</span>
+        <span class="row-value">219 entries — 2 updated ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Continent map</span>
+        <span class="row-value">All slugs mapped ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Travel Stats + US Stats</span>
+      <span class="status-badge ok">✓ Clean</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-label">Travel-Stats.html</span>
+        <span class="row-value">219 guides, 81 been / 138 want, 28/72 countries — parity clean ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Stats-Across-US.html</span>
+        <span class="row-value">30 US guides × 21 categories — all present ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Regional stats -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Regional stats pages (Europe / Asia / Caribbean / South America / Canada)</span>
+      <span class="status-badge ok">✓ Clean</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-value">All regional stats pages are country-level (not city-level). Every nation covered by a shipped guide is present in its page. Initial city-name check produced false positives (accent mismatches + country-vs-city mismatch). Verified: Austria, Belgium, Germany, Italy, Spain, Portugal, Norway, Switzerland, Croatia, Malta all in Europe-Stats; Japan, China, Thailand, Vietnam, Philippines, Bhutan, Laos in Asia-Stats; Bahamas in Caribbean-Stats; Brazil, Peru, Argentina in South-America-Stats; Montreal, Quebec in Canada-Stats.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Climate / Safety / Currency / Search -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Climate · Safety · Currency · Search</span>
+      <span class="status-badge ok">✓ All clean</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-label">Climate coverage</span>
+        <span class="row-value">220 cities in climate.json + weather.js — in sync ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Climate Finder countries</span>
+        <span class="row-value">CSS spec + placement — clean ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Safety Guide</span>
+        <span class="row-value">220 cities (L1 ×122 · L2 ×94 · L3 ×4), all links resolve ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Currency Guide</span>
+        <span class="row-value">71 countries, matches guide index, date current ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Search index</span>
+        <span class="row-value">220 guides + 33 pages indexed, generated 2026-07-16 ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Navigation surfaces (Time Zones · Delta Routes · Also-on-site · Guide Days)</span>
+      <span class="status-badge ok">✓ All clean</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-label">Time-Zones.html</span>
+        <span class="row-value">220 CITIES entries ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Delta-Routes-SEA.html</span>
+        <span class="row-value">220 GUIDES map entries ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Also-on-site pills</span>
+        <span class="row-value">All 220 guides use canonical pill icons and labels ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Read-about back-links</span>
+        <span class="row-value">All 220 point to current guide versions ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Guide-Days-Coverage</span>
+        <span class="row-value">220 guides present in correct tier-cards ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual / CSS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Toolbar consistency · Pill standard</span>
+      <span class="status-badge fix">1 fix applied</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-label">Toolbar consistency</span>
+        <span class="row-value">Fixed — Destination-Records.html was missing <code>data-depth="1"</code> on toolbar-mount</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Pill standard</span>
+        <span class="row-value">22 non-standard classes flagged — all in Recommendations audit files or page-specific UI chips (Pickleball, Travel Apps, Plug Adapter, Entry Requirements). Not site-design regressions; noted for future cleanup.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visas -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Visas.html — city links</span>
+      <span class="status-badge fix">9 cities added</span>
+    </div>
+    <div class="section-body">
+      <ul class="fix-list">
+        <li>Lecce <span class="country">→ Italy</span></li>
+        <li>Sardinia <span class="country">→ Italy</span></li>
+        <li>Sicily <span class="country">→ Italy</span></li>
+        <li>Málaga <span class="country">→ Spain</span></li>
+        <li>Osaka <span class="country">→ Japan</span></li>
+        <li>Victoria <span class="country">→ Canada</span></li>
+        <li>Whistler <span class="country">→ Canada</span></li>
+        <li>Los Cabos <span class="country">→ Mexico</span></li>
+        <li>San José <span class="country">→ Costa Rica</span></li>
+      </ul>
+      <div class="note">US domestic guides (30+) correctly have no Visas entry — page covers visa requirements for international travel. Tipping-Guide check: 8 apparent misses were accent/spelling variants (Montréal→Montreal, Cancún→Cancun, etc.) — all present.</div>
+    </div>
+  </div>
+
+  <!-- City-Transit-Cards -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">City-Transit-Cards.html</span>
+      <span class="status-badge ok">✓ Clean</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-value">27 guides with real transit cards (Barcelona, Paris, Melbourne, Kraków, Seoul, Chicago, Taipei, Porto Alegre, Tokyo, Istanbul, Sydney, Lisbon, New York, Madrid, Osaka, Doha, Curitiba, Vienna, Singapore, Kyoto, Hong Kong, London, Berlin, Prague, Rome, Amsterdam, São Paulo) — all present in City-Transit-Cards.html ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nearby guides -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Nearby guides</span>
+      <span class="status-badge fix">2 guides refreshed</span>
+    </div>
+    <div class="section-body">
+      <div class="row-item">
+        <span class="row-label">Missing blocks</span>
+        <span class="row-value">0 — all 220 guides have a nearby-guides block ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Broken links</span>
+        <span class="row-value">0 — all nearby-guide hrefs resolve ✓</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Non-bidirectional pairs</span>
+        <span class="row-value">216 flagged — inherent to a k-nearest-3 algorithm (Marseille's 3 nearest are Aix-en-Provence, Cannes, Nice — not Barcelona, even though Barcelona lists Marseille). Not a real bug.</span>
+      </div>
+      <div class="row-item">
+        <span class="row-label">Rebuild</span>
+        <span class="row-value">Ran <code>build_nearby_guides.py --all</code> — updated Bhutan and Orcas-Island (stale data)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Commit -->
+  <div class="commit-footer">
+    <div><strong>Commit</strong> <span class="commit-hash">626f71d71</span></div>
+    <div><strong>Files changed</strong> 5</div>
+    <div><strong>Pushed</strong> 2026-07-16</div>
+    <div><strong>Branch</strong> main</div>
+  </div>
+
+</div>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trusted Traveler Audit — Q3 2026</title>
+<style>
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface2: #f0f3f8;
+  --border: #dde3ed;
+  --text: #111827;
+  --muted: #6b7a99;
+  --navy: #0f2051;
+  --blue: #2563c8;
+  --green: #1a6e2a;
+  --green-bg: #edf7ef;
+  --green-border: #8ecf9a;
+  --amber: #c47a08;
+  --amber-bg: #fef8ec;
+  --amber-border: #f0c96a;
+  --red: #b91c1c;
+  --red-bg: #fff1f1;
+  --red-border: #f9a8a8;
+  --code-bg: #eef1f7;
+  --code: #2c3e6e;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111827;
+    --surface: #1e2433;
+    --surface2: #252d3d;
+    --border: #2f3a52;
+    --text: #e8edf5;
+    --muted: #7d8ba8;
+    --navy: #93aadf;
+    --blue: #6ea0f5;
+    --green: #6dbf80;
+    --green-bg: #0d2714;
+    --green-border: #2a6638;
+    --amber: #f0c060;
+    --amber-bg: #2a1f08;
+    --amber-border: #7a5514;
+    --red: #f87171;
+    --red-bg: #2a0f0f;
+    --red-border: #7a2222;
+    --code-bg: #1a2035;
+    --code: #93b3f5;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f7fa; --surface: #ffffff; --surface2: #f0f3f8; --border: #dde3ed;
+  --text: #111827; --muted: #6b7a99; --navy: #0f2051; --blue: #2563c8;
+  --green: #1a6e2a; --green-bg: #edf7ef; --green-border: #8ecf9a;
+  --amber: #c47a08; --amber-bg: #fef8ec; --amber-border: #f0c96a;
+  --red: #b91c1c; --red-bg: #fff1f1; --red-border: #f9a8a8;
+  --code-bg: #eef1f7; --code: #2c3e6e;
+}
+:root[data-theme="dark"] {
+  --bg: #111827; --surface: #1e2433; --surface2: #252d3d; --border: #2f3a52;
+  --text: #e8edf5; --muted: #7d8ba8; --navy: #93aadf; --blue: #6ea0f5;
+  --green: #6dbf80; --green-bg: #0d2714; --green-border: #2a6638;
+  --amber: #f0c060; --amber-bg: #2a1f08; --amber-border: #7a5514;
+  --red: #f87171; --red-bg: #2a0f0f; --red-border: #7a2222;
+  --code-bg: #1a2035; --code: #93b3f5;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px; line-height: 1.6; color: var(--text);
+  background: var(--bg); padding: 32px 16px 64px;
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+
+/* ── Header ── */
+.report-header {
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 20px; margin-bottom: 28px;
+}
+.report-meta {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+}
+.report-meta .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+h1 {
+  font-size: 22px; font-weight: 700; color: var(--navy);
+  letter-spacing: -0.01em; line-height: 1.2; text-wrap: balance;
+}
+
+/* ── Summary stats ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  margin-bottom: 32px;
+}
+@media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px;
+}
+.stat-num {
+  font-size: 26px; font-weight: 700; color: var(--navy);
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+
+/* ── Sections ── */
+.section { margin-bottom: 36px; }
+.section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 16px;
+}
+
+/* ── Change cards ── */
+.change {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; margin-bottom: 10px;
+}
+.change-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.change-type {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 3px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.ct-new { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.ct-fix { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.ct-expand { background: #eff5ff; color: var(--blue); border: 1px solid #b3ccf5; }
+.ct-text  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.change-title { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+.change-body { padding: 12px 16px; font-size: 13px; color: var(--text); line-height: 1.6; }
+.change-body p + p { margin-top: 8px; }
+.note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+/* ── Airport grid ── */
+.apt-grid {
+  display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;
+}
+.apt-chip {
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 11px; font-weight: 600;
+  background: var(--code-bg); color: var(--code);
+  padding: 2px 7px; border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Not-changed section ── */
+.noted-row {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 14px; margin-bottom: 8px;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.noted-code {
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  flex-shrink: 0; padding-top: 1px; min-width: 40px;
+}
+.noted-text { font-size: 13px; color: var(--text); }
+
+/* ── UX issues ── */
+.ux-issue {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; margin-bottom: 10px;
+}
+.ux-issue-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--surface2); border-bottom: 1px solid var(--border);
+}
+.ux-severity {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 3px; flex-shrink: 0;
+}
+.sev-low { background: #f0f3f8; color: var(--muted); border: 1px solid var(--border); }
+.sev-medium { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.ux-issue-title { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; }
+.ux-issue-body { padding: 10px 14px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+.ux-note { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+code {
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 11px; background: var(--code-bg); color: var(--code);
+  padding: 1px 5px; border-radius: 3px;
+}
+
+.footer {
+  margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted); text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="report-header">
+    <div class="report-meta">
+      <span>Trusted Traveler Programs</span>
+      <span class="dot"></span>
+      <span>Quarterly Data Audit</span>
+      <span class="dot"></span>
+      <span>2026-07-16</span>
+    </div>
+    <h1>Q3 2026 Audit — Data Corrections &amp; UX Issues</h1>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">2</div>
+      <div class="stat-label">New CLEAR airports added</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">32</div>
+      <div class="stat-label">US domestic EoA airports updated</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Intl preclearance EoA badges added</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">4</div>
+      <div class="stat-label">UX issues logged for UX routine</div>
+    </div>
+  </div>
+
+  <!-- DATA CHANGES -->
+  <div class="section">
+    <div class="section-title">Data Changes — All Committed &amp; Pushed</div>
+
+    <div class="change">
+      <div class="change-head">
+        <span class="change-type ct-new">New Airport</span>
+        <span class="change-title">BUF — Buffalo Niagara International (New York)</span>
+      </div>
+      <div class="change-body">
+        <p>Buffalo was confirmed as an active CLEAR location via clearme.com (dedicated airport page) and multiple reports indicating CLEAR launched at BUF in September 2023. The airport was missing from the page entirely. Added to the New York state block with <code>data-clear="1"</code> and CLEAR badge.</p>
+        <p class="note">Source: clearme.com/all-locations/buffalo-niagara-international + news coverage (Sept 2023).</p>
+      </div>
+    </div>
+
+    <div class="change">
+      <div class="change-head">
+        <span class="change-type ct-new">New Airport + State Block</span>
+        <span class="change-title">XNA — Northwest Arkansas National (Arkansas)</span>
+      </div>
+      <div class="change-body">
+        <p>CLEAR launched at XNA in May 2026. Confirmed via clearme.com and PR Newswire announcement. A new Arkansas state block was added to the page (alphabetical order: after Arizona). Airport has CLEAR only; no GE kiosk at XNA.</p>
+        <p class="note">Source: prnewswire.com CLEAR XNA launch announcement (May 2026) + clearme.com.</p>
+      </div>
+    </div>
+
+    <div class="change">
+      <div class="change-head">
+        <span class="change-type ct-fix">Badge Fix</span>
+        <span class="change-title">SMF — Sacramento International (California)</span>
+      </div>
+      <div class="change-body">
+        <p>SMF already had <code>data-eoa="1"</code> in the data attribute, but the <code>&lt;span class="badge badge-eoa"&gt;</code> was missing from the badge-wrap. The Enroll on Arrival badge is now present and visible in the UI.</p>
+      </div>
+    </div>
+
+    <div class="change">
+      <div class="change-head">
+        <span class="change-type ct-expand">EoA Expansion — US Domestic</span>
+        <span class="change-title">32 airports updated from data-eoa="0" → "1"</span>
+      </div>
+      <div class="change-body">
+        <p>CBP expanded the Enrollment on Arrival program from ~15 to 49+ US domestic airports. All three sources (CBP, ThriftyTraveler, The Points Guy) confirm the expansion; ThriftyTraveler and TPG each list ~49 domestic locations. Only airports already showing <code>data-ge="1"</code> (confirmed GE kiosk) were updated.</p>
+        <div class="apt-grid">
+          <span class="apt-chip">ANC</span><span class="apt-chip">FAI</span>
+          <span class="apt-chip">LAX</span><span class="apt-chip">OAK</span><span class="apt-chip">SNA</span>
+          <span class="apt-chip">FLL</span><span class="apt-chip">MIA</span><span class="apt-chip">MCO</span><span class="apt-chip">SFB</span><span class="apt-chip">TPA</span>
+          <span class="apt-chip">ATL</span>
+          <span class="apt-chip">HNL</span>
+          <span class="apt-chip">MDW</span><span class="apt-chip">ORD</span>
+          <span class="apt-chip">IND</span>
+          <span class="apt-chip">MSY</span>
+          <span class="apt-chip">BWI</span>
+          <span class="apt-chip">BOS</span>
+          <span class="apt-chip">MCI</span><span class="apt-chip">STL</span>
+          <span class="apt-chip">LAS</span>
+          <span class="apt-chip">EWR</span>
+          <span class="apt-chip">JFK</span>
+          <span class="apt-chip">CLT</span><span class="apt-chip">RDU</span>
+          <span class="apt-chip">CLE</span><span class="apt-chip">CVG</span>
+          <span class="apt-chip">PDX</span>
+          <span class="apt-chip">SJU</span>
+          <span class="apt-chip">SAT</span>
+          <span class="apt-chip">IAD</span>
+          <span class="apt-chip">MKE</span>
+        </div>
+        <p class="note" style="margin-top:10px;">Previously showing EoA (unchanged): ABQ, AUS, BNA, BOI, CVG, DEN, DTW, EWR, GEG, JFK, LIT, MCI, MEM, MSP, OMA, PHL, PHX, PIT, PVD, RIC, SAT, SEA, SLC, STS, STL, TUL, TUS.</p>
+      </div>
+    </div>
+
+    <div class="change">
+      <div class="change-head">
+        <span class="change-type ct-expand">EoA Expansion — International Preclearance</span>
+        <span class="change-title">12 preclearance airports updated (all 14 now show EoA)</span>
+      </div>
+      <div class="change-body">
+        <p>All CBP preclearance locations support Enrollment on Arrival — travelers at preclearance airports clear US customs before departure, and the GE kiosk enrollment process applies. YYZ and YVR already had the EoA badge; the remaining 12 were updated.</p>
+        <div class="apt-grid">
+          <span class="apt-chip">AUA</span><span class="apt-chip">NAS</span><span class="apt-chip">BDA</span>
+          <span class="apt-chip">YYC</span><span class="apt-chip">YEG</span><span class="apt-chip">YHZ</span><span class="apt-chip">YUL</span><span class="apt-chip">YOW</span><span class="apt-chip">YWG</span>
+          <span class="apt-chip">DUB</span><span class="apt-chip">SNN</span>
+          <span class="apt-chip">AUH</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="change">
+      <div class="change-head">
+        <span class="change-type ct-text">Text Update</span>
+        <span class="change-title">International preclearance note updated</span>
+      </div>
+      <div class="change-body">
+        <p>Changed from: <em>"Enrollment on Arrival is available at Toronto Pearson (YYZ) and Vancouver (YVR)."</em></p>
+        <p>Changed to: <em>"Enrollment on Arrival is available at all preclearance locations listed below."</em></p>
+      </div>
+    </div>
+
+    <div class="change">
+      <div class="change-head">
+        <span class="change-type ct-fix">Order Fix</span>
+        <span class="change-title">Arkansas / Arizona state blocks swapped into correct alphabetical order</span>
+      </div>
+      <div class="change-body">
+        <p>The newly added Arkansas block was inserted before Arizona. State blocks must be alphabetical. Corrected order: Alabama → Alaska → Arizona → Arkansas → California.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOT CHANGED -->
+  <div class="section">
+    <div class="section-title">Not Changed — Noted for Record</div>
+
+    <div class="noted-row">
+      <span class="noted-code">FAT</span>
+      <span class="noted-text">Fresno Yosemite International appears in some EoA lists but is not in the page's GE kiosk set (FlightQueue does not list it as a GE airport). Left unchanged — verify independently before adding.</span>
+    </div>
+    <div class="noted-row">
+      <span class="noted-code">RNO</span>
+      <span class="noted-text">Reno-Tahoe International similarly appears in EoA expansion lists but is absent from the GE kiosk list. Left unchanged.</span>
+    </div>
+    <div class="noted-row">
+      <span class="noted-code">CMH</span>
+      <span class="noted-text">Columbus John Glenn International has <code>data-ge="0"</code> in the page (CLEAR only airport) but appears in CBP's EoA list. No GE kiosk shown on the page, so EoA cannot be confirmed without conflicting data. Left unchanged.</span>
+    </div>
+  </div>
+
+  <!-- UX ISSUES -->
+  <div class="section">
+    <div class="section-title">UX Issues — Logged for UX Routine (Not Fixed)</div>
+
+    <div class="ux-issue">
+      <div class="ux-issue-head">
+        <span class="ux-severity sev-low">Low</span>
+        <span class="ux-issue-title">Outdated JS comment on EoA + preclearance filter behavior</span>
+      </div>
+      <div class="ux-issue-body">
+        The JS filter logic includes a comment: <em>"GE/CLEAR/EoA pills are US-airport programs and don't apply to preclearance, so pills leave it alone."</em> This comment was accurate when only YYZ/YVR had EoA badges. Now that all 14 preclearance airports carry EoA, the comment is misleading. The filter behavior itself is correct (EoA filter shows the intl section because all rows qualify), but the comment should be updated to reflect the changed reality.
+        <div class="ux-note" style="margin-top:6px;">Location: <code>applyFilters()</code> function comment above the <code>#intl-section</code> block.</div>
+      </div>
+    </div>
+
+    <div class="ux-issue">
+      <div class="ux-issue-head">
+        <span class="ux-severity sev-low">Low</span>
+        <span class="ux-issue-title">Dead variable references: <code>countEl</code> and <code>result</code></span>
+      </div>
+      <div class="ux-issue-body">
+        The filter script assigns <code>var countEl = document.getElementById('count-num')</code> and <code>var result = document.getElementById('tt-result')</code>. Neither <code>id="count-num"</code> nor <code>id="tt-result"</code> exists in the page HTML — both resolve to <code>null</code> and are never used after assignment. Suggests a planned result counter was stubbed out but never wired. Either remove the variables or add the elements.
+      </div>
+    </div>
+
+    <div class="ux-issue">
+      <div class="ux-issue-head">
+        <span class="ux-severity sev-low">Low</span>
+        <span class="ux-issue-title">Search autocomplete excludes international airports</span>
+      </div>
+      <div class="ux-issue-body">
+        The <code>TVESearch.attach()</code> block queries <code>#airport-list .apt-row</code>, which covers only the US domestic section. International preclearance airports (14 rows) are not included in the autocomplete item list. Typing "Dublin" or "Abu Dhabi" will not surface a suggestion in the dropdown, though the plain text search still filters the intl section correctly. Fix: also query <code>#intl-section .apt-row</code> when building the items array.
+      </div>
+    </div>
+
+    <div class="ux-issue">
+      <div class="ux-issue-head">
+        <span class="ux-severity sev-low">Low</span>
+        <span class="ux-issue-title">Inconsistent EoA label: filter pill vs. badge</span>
+      </div>
+      <div class="ux-issue-body">
+        The filter pill reads <em>"Enrollment on Arrival"</em> while the badge on each airport row reads <em>"Enroll on Arrival"</em>. These are the same program but the labels differ by one character. Recommend standardizing on one form — CBP's official name is "Enrollment on Arrival." Update the badge text from "Enroll" to "Enrollment" to match the pill and official naming.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Trusted Traveler Programs — Quarterly Data Audit · Run 2026-07-16 · Data sources: CBP, clearme.com, ThriftyTraveler, The Points Guy
+  </div>
+
+</div>
+</body>
+</html>

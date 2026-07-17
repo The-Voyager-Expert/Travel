@@ -216,6 +216,20 @@ body {
   color: var(--text);
 }
 .accurate-item span { color: var(--muted); font-size: 12px; display: block; margin-top: 2px; }
+/* ── UX fix queue ── */
+.card.ux { border-left: 3px solid #7c3aed; background: #f5f3ff; }
+@media (prefers-color-scheme: dark) { .card.ux { background: #1e1333; } }
+:root[data-theme="dark"] .card.ux { background: #1e1333; }
+:root[data-theme="light"] .card.ux { background: #f5f3ff; }
+.badge.ux { background: #7c3aed; color: #fff; }
+.ux-spec { margin-top: 8px; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 9px 12px; font-size: 12px; line-height: 1.6; }
+.ux-spec dt { font-weight: 700; color: var(--text); float: left; width: 70px; margin: 0; }
+.ux-spec dd { margin-left: 70px; color: var(--muted); margin-bottom: 3px; }
+.ux-spec code { font-family: ui-monospace, monospace; font-size: 11px; background: var(--border); padding: 1px 4px; border-radius: 3px; color: var(--text); }
+/* ── Idea cards ── */
+.card.idea { border-left: 3px solid var(--blue); background: var(--blue-bg); }
+.badge.idea { background: var(--blue); color: #fff; }
+.idea-meta { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--blue); font-weight: 700; margin-top: 6px; }
 /* ── Source note ── */
 .source-note {
   font-size: 11px;
@@ -235,10 +249,11 @@ body {
   <div class="masthead-meta">Run July 16, 2026 · US citizens traveling abroad · Sources: travel.state.gov, official government portals</div>
 </div>
 
-<div class="stat-strip">
+<div class="stat-strip" style="grid-template-columns: repeat(5, 1fr);">
   <div class="stat-tile"><div class="num">10</div><div class="lbl">Facts corrected</div></div>
   <div class="stat-tile"><div class="num">1</div><div class="lbl">Destination moved</div></div>
-  <div class="stat-tile"><div class="num">4</div><div class="lbl">Counts fixed</div></div>
+  <div class="stat-tile"><div class="num">5</div><div class="lbl">UX issues logged</div></div>
+  <div class="stat-tile"><div class="num">8</div><div class="lbl">Improvement ideas</div></div>
   <div class="stat-tile"><div class="num">0</div><div class="lbl">Fail · brain_check</div></div>
 </div>
 
@@ -336,6 +351,112 @@ body {
   <div class="card skipped">
     <div class="card-head"><span class="badge skip">Skipped</span><span class="card-country">🇱🇦 Laos airport VoA fee (~USD 35)</span></div>
     <div class="card-body">The Luang Prabang airport visa-on-arrival fee (~USD 35) was not independently confirmed at an authoritative source. The eVisa cost (USD 50) was confirmed.</div>
+  </div>
+</div>
+
+<!-- ── UX fix queue ── -->
+<div class="section">
+  <div class="section-title">UX fix queue — for the UX routine</div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Search: functional ✅ &nbsp;·&nbsp; Placeholder: no ellipsis ✅ &nbsp;·&nbsp; TVESearch: attached ✅ &nbsp;·&nbsp; No-result state: wired ✅ &nbsp;·&nbsp; CSS standard deviations: 5 items below</p>
+
+  <div class="card ux">
+    <div class="card-head"><span class="badge ux">CSS</span><span class="card-country">h1 font-size — hardcoded, should use token</span></div>
+    <div class="card-body">The page's <code>&lt;h1&gt;</code> style uses a hardcoded pixel value instead of <code>var(--fs-title)</code>, which is a brain_check hard-fail rule (added 2026-06-21).</div>
+    <dl class="ux-spec">
+      <dt>Where</dt><dd><code>.page-header h1 { font-size: 14px }</code> — in the page's <code>&lt;style&gt;</code> block, line ~18</dd>
+      <dt>Current</dt><dd><code>font-size: 14px</code> (hardcoded)</dd>
+      <dt>Standard</dt><dd><code>var(--fs-title)</code> — 18px desktop, overridden to 14px by <code>mobile.css</code> at ≤600px</dd>
+      <dt>Fix</dt><dd>Change <code>font-size: 14px</code> to <code>font-size: var(--fs-title)</code> and remove the hardcoded value. Run <code>brain_check.py</code> to confirm the check passes.</dd>
+    </dl>
+  </div>
+
+  <div class="card ux">
+    <div class="card-head"><span class="badge ux">CSS</span><span class="card-country">Placeholder color — hardcoded hex, not a CSS variable</span></div>
+    <div class="card-body">The search input's placeholder color is a raw hex value. The shared-CSS-only rule requires all colors to be CSS variables.</div>
+    <dl class="ux-spec">
+      <dt>Where</dt><dd><code>#visa-search::placeholder</code> — in the page's <code>&lt;style&gt;</code> block, line ~171</dd>
+      <dt>Current</dt><dd><code>color: #A8895A</code></dd>
+      <dt>Standard</dt><dd>Use <code>var(--muted)</code> (muted gold-brown that matches the existing palette) or <code>color: var(--accent)</code></dd>
+      <dt>Fix</dt><dd>Replace <code>color: #A8895A</code> with <code>color: var(--muted)</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="card ux">
+    <div class="card-head"><span class="badge ux">CSS</span><span class="card-country">Focus border color — hardcoded hex, not a CSS variable</span></div>
+    <div class="card-body">The search input's focus border uses a raw hex value instead of a CSS variable. Won't adapt in dark mode.</div>
+    <dl class="ux-spec">
+      <dt>Where</dt><dd><code>#visa-search:focus { border-color: #c8b99a }</code> — page <code>&lt;style&gt;</code> block, line ~172</dd>
+      <dt>Current</dt><dd><code>border-color: #c8b99a</code></dd>
+      <dt>Standard</dt><dd>Use <code>var(--border)</code> or <code>var(--accent)</code> — the accent token is the standard focus color across the site</dd>
+      <dt>Fix</dt><dd>Replace <code>border-color: #c8b99a</code> with <code>border-color: var(--accent)</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="card ux">
+    <div class="card-head"><span class="badge ux">CSS</span><span class="card-country">Multiple hardcoded hex colors in component blocks</span></div>
+    <div class="card-body">Several component-level CSS blocks use raw hex values throughout. These won't adapt to dark mode correctly and violate the shared-CSS-only rule.</div>
+    <dl class="ux-spec">
+      <dt>Where</dt><dd><code>.calc-box</code>, <code>.calc-result</code>, <code>.enote</code>, <code>.etias-banner</code> — page <code>&lt;style&gt;</code> block, lines ~217–205</dd>
+      <dt>Current</dt><dd><code>.calc-box { background: #faf8f4 }</code> · <code>.calc-result { background: #fff }</code> · <code>.enote { color: #5C3D11; background: #fbf3e2; border-color: #ecdcbb }</code> · ETIAS banner: 5 hardcoded amber/brown values</dd>
+      <dt>Standard</dt><dd><code>#faf8f4</code> → <code>var(--warm)</code> &nbsp;·&nbsp; <code>#fff</code> → <code>var(--surface)</code> &nbsp;·&nbsp; enote/banner amber shades → use existing <code>--amber-bg</code>, <code>--amber-border</code>, <code>--amber</code> tokens already defined in this very file's <code>:root</code></dd>
+      <dt>Fix</dt><dd>Swap the five raw values above for their matching tokens. The amber tokens are already in the file's <code>:root</code> block and have dark-mode overrides — use them for the ETIAS banner and <code>.enote</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="card ux">
+    <div class="card-head"><span class="badge ux">CSS</span><span class="card-country">Dead CSS class — <code>.visa-search-row</code> has no matching HTML</span></div>
+    <div class="card-body">A CSS rule exists for <code>.visa-search-row { display: none }</code> but no element in the page carries that class. This is an orphaned rule from a previous layout iteration.</div>
+    <dl class="ux-spec">
+      <dt>Where</dt><dd><code>.visa-search-row { display: none; }</code> — page <code>&lt;style&gt;</code> block, line ~167</dd>
+      <dt>Current</dt><dd>Rule exists; no element uses the class</dd>
+      <dt>Standard</dt><dd>No dead rules in page <code>&lt;style&gt;</code> blocks</dd>
+      <dt>Fix</dt><dd>Delete the <code>.visa-search-row { display: none; }</code> rule entirely. Grep the file first to confirm no element has <code>class="visa-search-row"</code> before deleting.</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- ── Improvement ideas ── -->
+<div class="section">
+  <div class="section-title">Improvement ideas — look, function &amp; feature</div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">JS</span><span class="card-country">Auto-compute section counts from the DOM</span></div>
+    <div class="card-body">All four hardcoded count badges (Schengen, Rest-of-world, Free arrival card, Visa-on-arrival) drifted this cycle. A small <code>DOMContentLoaded</code> script that counts <code>.etype .row</code> children per section and writes the result into each <code>.etype-count</code> span would keep these permanently accurate with zero manual maintenance — and prevent a repeat of this audit's most tedious fix.<div class="idea-meta">Priority: High · Effort: Low (≈15 lines of JS)</div></div>
+  </div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">Feature</span><span class="card-country">Expand "Apply" button coverage</span></div>
+    <div class="card-body">The JS <code>APPLY</code> object only injects a button for 12 of roughly 20 countries that have stable official portals. Missing: Jordan (evisa.jordan.gov.jo), Maldives (imuga.immigration.gov.mv), Nepal (online.nepalimmigration.gov.np — already cited in the rnote but no button), Bhutan (doi.gov.bt — same). Travelers at those rows have to copy the URL manually when an "Apply →" tap would do.<div class="idea-meta">Priority: Medium · Effort: Low (add 4 object entries)</div></div>
+  </div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">Editorial</span><span class="card-country">Egypt → reclassify to eVisa section</span></div>
+    <div class="card-body">Egypt now has visa2egypt.gov.eg — US$30, approved in 24–72 hours, apply online before you land. That's operationally identical to Turkey's or Vietnam's eVisa. Keeping Egypt in "Visa required" (which reads as "embassy visit, complex") materially undersells how simple the process now is. Moving it to the eVisa section would set traveler expectations correctly.<div class="idea-meta">Priority: Medium · Effort: Low (move one row + update section count)</div></div>
+  </div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">Editorial</span><span class="card-country">Bhutan and Nepal — wrong section</span></div>
+    <div class="card-body">Both are in "Free arrival card — file online before you land." The section description says "No visa." Neither qualifies: Bhutan requires a paid visa + US$100/night SDF; Nepal is a paid visa-on-arrival (USD 30/50/125 tiers). Bhutan fits "Visa required"; Nepal fits "Visa on arrival." The mismatch sets incorrect expectations — travelers in the "no visa" section don't expect to pay for one.<div class="idea-meta">Priority: High · Effort: Low (move two rows)</div></div>
+  </div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">UX</span><span class="card-country">Thailand pending-change — amber callout, not italic text</span></div>
+    <div class="card-body">The 60→30-day cut caveat is currently inline italic inside a long rnote. A traveler booking a 45-day trip to Thailand could easily miss it. For a policy change this consequential — the first 60-day visit after it takes effect would become illegal — an <code>.enote</code> amber callout directly below the row would make it visually impossible to overlook. The <code>.enote</code> class already exists on the page with exactly this visual treatment.<div class="idea-meta">Priority: High · Effort: Low (wrap existing text in .enote)</div></div>
+  </div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">JS</span><span class="card-country">ETIAS countdown — no official date is set</span></div>
+    <div class="card-body">The countdown targets <code>new Date('2026-10-01')</code>, but the EU has announced no specific launch date — only "sometime in 2026." When travelers see "X days until ETIAS," they assume it's a confirmed deadline. If the date slips (as ETIAS has done repeatedly), the counter will say "0 days" and then go negative. Consider replacing the day-count with "Q4 2026 est." until an official date is published.<div class="idea-meta">Priority: Medium · Effort: Low (change countdown display string)</div></div>
+  </div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">Mobile</span><span class="card-country">Sticky legend consumes too much mobile viewport</span></div>
+    <div class="card-body">On screens ≤ 600px the legend renders the 6 entry-type pills in a single column, occupying ~280px before any visa content appears. The search row is also hidden on mobile, so the sticky block's only function there is the pill filter — which most visitors won't use. A "Filter by entry type ▼" disclosure button that expands/collapses the pills on mobile would reclaim those ~280px for content on the initial view.<div class="idea-meta">Priority: Low · Effort: Medium (toggle + CSS)</div></div>
+  </div>
+
+  <div class="card idea">
+    <div class="card-head"><span class="badge idea">Content</span><span class="card-country">Vietnam — 83 international entry points worth noting</span></div>
+    <div class="card-body">Vietnam expanded to 83 international entry points in 2026, approving 41 new ones (seaports, border crossings, regional airports) in the first half of the year. The current rnote says "international airports." Travelers arriving on cruises or overland from Cambodia/Laos need to know their crossing is covered by the eVisa — and the broader list is a genuine selling point for flexibility.<div class="idea-meta">Priority: Low · Effort: Low (one sentence addition to rnote)</div></div>
   </div>
 </div>
 

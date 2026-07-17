@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UX Handoff — Delta Routes — 2026-07-16</title>
+<!-- source: delta-routes-audit | date: 2026-07-16 -->
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #3d3a32; background: #fdf8f4; margin: 0; padding: 24px 32px; }
+  h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #3d3a32; margin-bottom: 6px; }
+  .meta { font-size: 12px; color: #9a8a6a; margin-bottom: 24px; }
+  .issue { background: #fff; border: 1px solid #e8e5de; border-left: 4px solid #c8a44a; border-radius: 4px; padding: 14px 16px; margin-bottom: 16px; }
+  .issue-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .issue-row { font-size: 13px; color: #5a5244; line-height: 1.6; margin-bottom: 4px; }
+  .issue-row strong { color: #3d3a32; min-width: 80px; display: inline-block; }
+  code { background: #f0ede6; padding: 1px 5px; border-radius: 3px; font-size: 12px; font-family: monospace; }
+</style>
+</head>
+<body>
+<h1>UX Handoff — Delta Routes — 2026-07-16</h1>
+<div class="meta">Source: delta-routes-audit · Date: 2026-07-16 · Pages: Delta-Routes-SEA.html · Delta-Routes-Full.html</div>
+
+<div class="issue">
+  <div class="issue-title">1 · `:root {}` defined in inline page CSS on both pages</div>
+  <div class="issue-row"><strong>File:</strong> Delta-Routes-SEA.html AND Delta-Routes-Full.html</div>
+  <div class="issue-row"><strong>Element:</strong> <code>&lt;style&gt;</code> block at top of both pages, lines 11–14 (SEA) / 12–15 (Full)</div>
+  <div class="issue-row"><strong>Issue:</strong> Both pages define a <code>:root {}</code> block (tier routing color variables <code>--c0</code>, <code>--c0bg</code>, <code>--c1</code> etc.) in their inline <code>&lt;style&gt;</code>. Site rule: "NEVER define <code>body {}</code>, <code>* {}</code>, <code>:root {}</code> in pages — these belong ONLY in <code>web-travel-style.css</code>."</div>
+  <div class="issue-row"><strong>Fix:</strong> Move all six custom properties (<code>--c0</code>/<code>--c0bg</code>/<code>--c0bd</code>, <code>--c1</code>/<code>--c1bg</code>/<code>--c1bd</code>, <code>--c2</code>/<code>--c2bg</code>/<code>--c2bd</code>) into <code>Travel-Website/assets/web-travel-style.css</code>, since these variables are used identically on both Delta pages (and could be reused elsewhere). Replace the in-page <code>:root {}</code> block with a comment pointing to the shared file.</div>
+</div>
+
+<div class="issue">
+  <div class="issue-title">2 · `#fdf3e0` (banned beige) used as tier-2 card/pill background on both pages</div>
+  <div class="issue-row"><strong>File:</strong> Delta-Routes-SEA.html AND Delta-Routes-Full.html</div>
+  <div class="issue-row"><strong>Element:</strong> <code>--c2bg: #fdf3e0</code> in the <code>:root</code> block, applied via <code>.tier-pill.t2</code>, <code>.tier-badge.t2</code>, <code>.dest-card.t2</code></div>
+  <div class="issue-row"><strong>Issue:</strong> <code>#fdf3e0</code> is explicitly listed in DriftyCat as a banned beige background: "A pill/button REST state is WHITE, never beige — <code>#fdf3e0</code> (and siblings) are pure drift." The tier-2 amber family currently uses this color as the background fill for its pills, badges, and card accents.</div>
+  <div class="issue-row"><strong>Fix:</strong> Replace <code>--c2bg: #fdf3e0</code> with <code>--c2bg: #fff8ee</code> (a warm white-leaning amber that reads as "amber tier" without being the banned beige). Or better — make <code>--c2bg</code> a transparent tint: <code>rgba(200,164,74,0.10)</code> which achieves the same yellow-amber coding against a white card background, with no beige drift. Check visual rendering after change.</div>
+</div>
+
+<div class="issue">
+  <div class="issue-title">3 · Hardcoded hex colors in inline CSS on both pages</div>
+  <div class="issue-row"><strong>File:</strong> Delta-Routes-SEA.html AND Delta-Routes-Full.html</div>
+  <div class="issue-row"><strong>Element:</strong> <code>&lt;style&gt;</code> block throughout — <code>.nav-link</code>, <code>.filter-input::placeholder</code>, <code>.tag.d1</code>, <code>.hub-pill</code>, and others</div>
+  <div class="issue-row"><strong>Issue:</strong> Both pages hardcode hex values in property declarations: <code>#A8895A</code> (placeholder color), <code>#c8b99a</code> (focus border), <code>#f8e8e8</code>/<code>#7a1010</code> (d1 tag), <code>#f8ece8</code>/<code>#e8c0b0</code> (hub-pill background/border), <code>#3d3a32</code> (nav-link color), etc. Site rule: "NEVER hardcode hex colors in pages — use CSS variables."</div>
+  <div class="issue-row"><strong>Fix:</strong> Replace with the matching CSS variables from <code>web-travel-style.css</code>: <code>#3d3a32</code> → <code>var(--text)</code>, <code>#e6e2da</code> → <code>var(--border)</code>, placeholder gold → <code>var(--accent)</code>. Tag colors (<code>#f8e8e8</code>, <code>#7a1010</code>) don't have existing vars — add <code>--c-warn-bg</code>/<code>--c-warn</code> to the shared file and reference them. Hub-pill can use <code>var(--warm)</code> + <code>var(--border2)</code>.</div>
+</div>
+
+<div class="issue">
+  <div class="issue-title">4 · Active tier-pill state uses only dark shadow, not terracotta active state</div>
+  <div class="issue-row"><strong>File:</strong> Delta-Routes-SEA.html AND Delta-Routes-Full.html</div>
+  <div class="issue-row"><strong>Element:</strong> <code>.tier-pill.active { font-weight:700; box-shadow: 0 0 0 2px rgba(0,0,0,.30); }</code></div>
+  <div class="issue-row"><strong>Issue:</strong> When a tier pill is selected, it gains bold + dark ring but no background change. The site rule requires active/selected interactive states to use terracotta <code>#b85c2a</code>. These tier pills are clickable filters (line 79 SEA: "clickable tier pills") — they are interactive state pills, not just a passive legend. The active state should reflect the site's terracotta active pattern.</div>
+  <div class="issue-row"><strong>Fix:</strong> Update <code>.tier-pill.active</code> to: <code>background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a;</code> — matching the same <code>.nav-link.active</code> style already on both pages. Drop the dark box-shadow.</div>
+</div>
+
+<div class="issue">
+  <div class="issue-title">5 · "Updated July 2026" stamp floats outside the header block on SEA page</div>
+  <div class="issue-row"><strong>File:</strong> Delta-Routes-SEA.html only</div>
+  <div class="issue-row"><strong>Element:</strong> <code>&lt;span class="updated-stamp"&gt;Updated July 2026&lt;/span&gt;</code> at line 132, inside a standalone <code>.wrap</code> div after the header's closing <code>&lt;/div&gt;</code></div>
+  <div class="issue-row"><strong>Issue:</strong> The updated stamp sits in its own separate wrapper after the header, rather than inside the header block. On the Full page, the stamp appears inline in the header correctly. This creates inconsistent placement between the two pages.</div>
+  <div class="issue-row"><strong>Fix:</strong> Move the <code>&lt;span class="updated-stamp"&gt;</code> to inside the <code>.header</code> div on the SEA page, matching the Full page's layout. The stamp's injection is normally handled by <code>toolbar.js</code> via <code>data-updated</code> — check whether the SEA page has a <code>data-updated</code> attribute on the toolbar-mount div; if not, add it instead of a manual stamp.</div>
+</div>
+
+</body>
+</html>
