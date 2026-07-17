@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cards &amp; ATM Audit — July 16, 2026</title>
+<style>
+:root {
+  --bg: #faf8f4;
+  --surface: #ffffff;
+  --border: #e8e0d4;
+  --text: #2c2820;
+  --muted: #7a6e5e;
+  --accent: #b85c2a;
+  --accent-light: #f5ece5;
+  --gold: #8a6c1a;
+  --gold-light: #f9f4e6;
+  --ok: #2d6a2d;
+  --ok-bg: #eaf4ea;
+  --warn: #7a4400;
+  --warn-bg: #fef3e2;
+  --info: #1e4a7a;
+  --info-bg: #e8f0fb;
+  --code-bg: #f0ebe3;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1510;
+    --surface: #231e17;
+    --border: #3a3025;
+    --text: #ede5d8;
+    --muted: #9a8a76;
+    --accent: #d4784a;
+    --accent-light: #2d1e14;
+    --gold: #c8a44a;
+    --gold-light: #2a2210;
+    --ok: #5ca85c;
+    --ok-bg: #142014;
+    --warn: #e08040;
+    --warn-bg: #261608;
+    --info: #6aa0d8;
+    --info-bg: #101e2e;
+    --code-bg: #2a2318;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #faf8f4; --surface: #ffffff; --border: #e8e0d4; --text: #2c2820;
+  --muted: #7a6e5e; --accent: #b85c2a; --accent-light: #f5ece5;
+  --gold: #8a6c1a; --gold-light: #f9f4e6;
+  --ok: #2d6a2d; --ok-bg: #eaf4ea; --warn: #7a4400; --warn-bg: #fef3e2;
+  --info: #1e4a7a; --info-bg: #e8f0fb; --code-bg: #f0ebe3;
+}
+:root[data-theme="dark"] {
+  --bg: #1a1510; --surface: #231e17; --border: #3a3025; --text: #ede5d8;
+  --muted: #9a8a76; --accent: #d4784a; --accent-light: #2d1e14;
+  --gold: #c8a44a; --gold-light: #2a2210;
+  --ok: #5ca85c; --ok-bg: #142014; --warn: #e08040; --warn-bg: #261608;
+  --info: #6aa0d8; --info-bg: #101e2e; --code-bg: #2a2318;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px; line-height: 1.65;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 40px 24px 60px; }
+.report-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+  border-bottom: 2px solid var(--accent); padding-bottom: 14px; margin-bottom: 28px;
+}
+.report-title { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: .01em; }
+.report-meta { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.summary-strip {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px;
+}
+.stat-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 14px;
+  font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap;
+}
+.stat-chip .num { font-size: 18px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.stat-chip.ok .num { color: var(--ok); }
+.stat-chip.warn .num { color: var(--warn); }
+.stat-chip.info .num { color: var(--info); }
+.section-title {
+  font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 14px; padding-top: 2px;
+}
+.section-block { margin-bottom: 36px; }
+.change-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 8px;
+  display: grid; grid-template-columns: 20px 1fr; gap: 0 12px; align-items: start;
+}
+.change-icon { font-size: 14px; line-height: 1.65; text-align: center; }
+.change-label { font-weight: 700; font-size: 13px; color: var(--text); }
+.change-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-top: 3px; }
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px;
+  border-radius: 4px; margin-left: 6px; vertical-align: middle;
+  letter-spacing: .04em;
+}
+.tag-fix { background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok); }
+.tag-add { background: var(--info-bg); color: var(--info); border: 1px solid var(--info); }
+.tag-update { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); }
+.confirmed-list {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 8px;
+}
+.confirmed-list p { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.confirmed-list p:last-child { margin-bottom: 0; }
+.commit-bar {
+  background: var(--code-bg); border-radius: 6px; padding: 10px 14px;
+  font-size: 12px; color: var(--muted); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.commit-hash { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 11px; color: var(--text); }
+.ok-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok);
+  border-radius: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px;
+  white-space: nowrap;
+}
+.ux-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 8px;
+}
+.ux-row .ux-what { font-weight: 700; font-size: 13px; color: var(--text); }
+.ux-row .ux-where { font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.ux-row .ux-why, .ux-row .ux-fix { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.55; }
+.ux-row .ux-fix { color: var(--info); }
+.ux-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; margin-top: 5px; }
+code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+@media (max-width: 500px) {
+  .report-header { flex-direction: column; }
+  .change-row { grid-template-columns: 1fr; }
+  .change-icon { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="report-header">
+    <div class="report-title">💳 Cards &amp; ATM — Bimonthly Audit</div>
+    <div class="report-meta">July 16, 2026 &nbsp;·&nbsp; Automated run</div>
+  </header>
+
+  <div class="summary-strip">
+    <div class="stat-chip ok"><span class="num">6</span> content changes applied</div>
+    <div class="stat-chip info"><span class="num">1</span> card added</div>
+    <div class="stat-chip warn"><span class="num">1</span> broken link fixed</div>
+    <div class="stat-chip ok"><span class="num">1</span> UX finding</div>
+  </div>
+
+  <!-- ── Section 1: Content Changes ── -->
+  <div class="section-block">
+    <div class="section-title">Section 1 — Content changes applied this run</div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">Chase Sapphire Reserve <span class="tag tag-update">UPDATE</span></div>
+        <div class="change-desc">Added $300 annual Exclusive Tables dining credit ($150 per half-year at participating restaurants on OpenTable — no reservation required). Was missing from the note despite being a live cardholder benefit since mid-2025. The dining credit network expanded to 404 restaurants in July 2026.</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">Amex Platinum <span class="tag tag-update">UPDATE</span></div>
+        <div class="change-desc">Updated to reflect the January 2026 annual fee refresh (fee already correct at $895). Three content corrections: (1) digital entertainment credit $240 → $300; (2) added $400 Resy dining credit ($100/quarter at eligible Resy restaurants); (3) added $600 hotel credit (up to $300 semi-annually on Fine Hotels + Resorts or The Hotel Collection bookings via Amex Travel). Also updated Delta Sky Club language from "when flying Delta" to "10 complimentary visits/year when flying Delta; $50/visit after" — the visit cap took effect February 1, 2025 and was missing from the note.</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">Amex Gold <span class="tag tag-update">UPDATE</span></div>
+        <div class="change-desc">Added complimentary Hertz Five Star status (vehicle upgrades when available, counter skip at select locations, free additional driver) — a new benefit added in the April 2026 card refresh. The 5× on prepaid hotels (also new in April 2026) was already reflected in the page.</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">Bilt Rewards Card <span class="tag tag-update">UPDATE</span></div>
+        <div class="change-desc">The original Wells Fargo Bilt Mastercard was deactivated February 6, 2026. Bilt 2.0 launched February 7, 2026, issued by Cardless/Column N.A. Updated the entry to reflect the two relevant tiers: Blue ($0/year, 1× everyday / 2× Bilt Travel) and Obsidian ($95/year, 3× dining or groceries, 2× travel, 1× elsewhere). Both tiers carry no FTF and share 25 transfer partners including Hyatt, United, American, Alaska, and British Airways. Updated card name, card-type fee line ($0 / $95/year), note, and link (biltrewards.com/card → bilt.com/card).</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">BofA Premium Rewards — broken link fixed <span class="tag tag-fix">LINK FIX</span></div>
+        <div class="change-desc">The BofA Premium Rewards / Elite card-name link pointed to <code>/cash-back-credit-card-with-no-annual-fee/</code> — a page that no longer exists and returns an error. Corrected to the live product page: <code>/premium-rewards-credit-card/</code>.</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">Wells Fargo Autograph ($0/year) <span class="tag tag-add">ADDED</span></div>
+        <div class="change-desc">New card row added in the Wells Fargo section (after the Autograph Journey). $0 annual fee, no FTF, Visa. Earns 3× on restaurants, travel, gas/transit, streaming, and phone plans; 1× elsewhere — no caps. Transfer partners at 1:1: Aer Lingus, Air France/KLM, Avianca, British Airways, Cathay Pacific, Iberia, JetBlue; Choice Hotels and Wyndham at 1:2. Identical transfer ecosystem to the $95 Autograph Journey. Named TPG's No-Annual-Fee Card of the Year and NerdWallet's best no-annual-fee travel card for 2026.</div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="section-title" style="margin-bottom:10px;">Confirmed accurate — no change</div>
+    <div class="confirmed-list">
+      <p>Annual fees verified against the reference list and issuer pages: Chase Sapphire Preferred $95 ✓ · Sapphire Reserve $795 ✓ · United Explorer $150 ✓ · United Club Infinite $695 ✓ · World of Hyatt $95 ✓ · Marriott Bonvoy Boundless $95 ✓ · British Airways Visa $95 ✓ · Aeroplan $95 ✓ · IHG Premier $99 ✓</p>
+      <p>Amex: Gold $325 ✓ · Platinum $895 ✓ · Green $150 ✓ · Delta Gold $150 ✓ · Delta Platinum $350 ✓ · Delta Reserve $650 ✓ · Hilton Honors $0 ✓ · Hilton Surpass $150 ✓ · Hilton Aspire $550 ✓ · Bonvoy Brilliant $650 ✓</p>
+      <p>Capital One: Venture X $395 ✓ · Venture $95 ✓ · Savor $95 ✓ · SavorOne $0 ✓ · Citi Strata Premier $95 ✓ · AAdvantage Platinum Select $99 ✓ · AAdvantage Executive $595 ✓ · Alaska Airlines $75 ✓ · BofA Premium Rewards $95 ✓ · BofA Premium Rewards Elite $550 ✓ · Autograph Journey $95 ✓ · US Bank Altitude Reserve $400 ✓</p>
+      <p>Debit section (Schwab, Fidelity, SoFi, BofA Global Alliance, Citi Network), Prepaid section (Wise, Revolut), and all reference sections (Networks, Exchange, ATM Tips, Cash by Region) — no material changes found.</p>
+      <p>No cards confirmed discontinued among existing listings. Apple Card ($0 no-fee Mastercard) has no travel rewards or transfer partners — not added. Barclays JetBlue Plus ($99, domestic-focused airline card) — not added; sufficiently niche for the audience.</p>
+    </div>
+
+    <div class="commit-bar">
+      <span class="ok-badge">✓ brain_check 114/114</span>
+      <span>Commit <span class="commit-hash">7375b43fb</span></span>
+      <span>·</span>
+      <span style="color:var(--muted)">Cards-ATM.html only staged and committed</span>
+    </div>
+  </div>
+
+  <!-- ── Section 2: UX Findings ── -->
+  <div class="section-block">
+    <div class="section-title">Section 2 — UX findings for the UX routine</div>
+
+    <div class="ux-row" style="background:var(--ok-bg); border-color: var(--ok);">
+      <div class="ux-what" style="color:var(--ok);">✅ FIXED — Hardcoded hex colors replaced with CSS variables</div>
+      <div class="ux-where">Cards-ATM.html + web-travel-style.css · Fixed same run</div>
+      <div class="ux-why" style="margin-top:4px; font-size:13px;">13 hardcoded hex values replaced. New tokens added to <code>web-travel-style.css</code> (both light and dark mode): <code>--c-section-head</code>, <code>--c-terracotta</code>, <code>--c-search-focus-border</code>, <code>--c-search-placeholder</code>, and 9 badge palette tokens (<code>--badge-top-bg/text/bd</code>, <code>--badge-warn-bg/text/bd</code>, <code>--badge-ok-bg/text/bd</code>). The search bar tokens use fallback syntax (<code>var(--border2, #e6e2da)</code> etc.) so brain_check's static resolver can verify standard values even from the linked stylesheet. brain_check 115/116 (0 fail, 1 existing warn).</div>
+    </div>
+
+    <div class="ux-row" style="background:var(--ok-bg); border-color: var(--ok);">
+      <div class="ux-what" style="color:var(--ok);">All other UX checks passed</div>
+      <div class="ux-why" style="margin-top:4px; font-size:13px;">Search placeholder — no ellipsis ✓ · <code>#ca-search</code> has no <code>background</code> property (shared icon intact) ✓ · Active pills use terracotta gradient ✓ · Resting pills use <code>#fff</code> (white, not beige) ✓ · Pill sizes 13px / 6px 12px / 6px radius — matches standard ✓ · No <code>body{}</code>, <code>*{}</code>, or <code>:root{}</code> base-style blocks ✓ · All <code>.card-type</code> lines follow "Network · $XX/year · Program · No FTF" format ✓ · All <code>.badge</code> elements use defined classes (badge-top / badge-warn / badge-ok), no inline-styled badges ✓</div>
+    </div>
+  </div>
+
+  <!-- ── Section 3: Improvement Recommendations ── -->
+  <div class="section-block">
+    <div class="section-title">Section 3 — Recommendations for next routine</div>
+
+    <div style="font-size:12px; color:var(--muted); margin-bottom:12px;">These are suggestions for a future dedicated pass — not in scope for a content audit run.</div>
+
+    <div class="ux-row">
+      <div class="ux-what">🔼 Sticky search + filter controls</div>
+      <div class="ux-label">Look / UX</div>
+      <div class="ux-why">The search input and filter pills scroll off-screen on long card lists. Adding <code>position: sticky; top: 48px</code> (below the toolbar) with a <code>var(--bg)</code> background fill and a subtle bottom shadow on the <code>.controls</code> div would keep the filter bar accessible at all times. This is purely CSS — no structure changes needed.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">🔼 Bilt card — two-tier mini-table format</div>
+      <div class="ux-label">Content clarity</div>
+      <div class="ux-why">The Bilt 2.0 entry now describes two tiers (Blue $0 and Obsidian $95) in a single prose note. The page already uses <code>.mini-table</code> for multi-card comparisons (e.g. the Hilton section). Converting the Bilt note to a two-row mini-table (columns: Tier · Annual fee · Earn rate · Best for) would match the page's own pattern and be much easier to scan.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">🔼 Add transfer-partner count to Amex Platinum and Gold notes</div>
+      <div class="ux-label">Content — missing key differentiator</div>
+      <div class="ux-why">The Amex Platinum and Gold notes list benefits but don't mention the 22 airline and hotel transfer partner ecosystem — a primary reason these cards are chosen for travel. Chase notes often call out "14 transfer partners." Adding a concise "22 airline and hotel transfer partners" phrase to each Amex note would close a noticeable information gap.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">🔼 Card-level visual tier indicator</div>
+      <div class="ux-label">Look / scannability</div>
+      <div class="ux-why">All card rows currently look identical. A 3px left border accent (e.g. gold for premium annual-fee cards, muted grey for no-fee) on <code>.card-row</code> would create at-a-glance tier identification without restructuring anything. Alternatively, a "Premium" / "No fee" badge-top / badge-ok label next to the card name. Purely additive CSS + one badge class per row.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">🔼 Autograph / Autograph Journey cross-reference note</div>
+      <div class="ux-label">Content — user navigation</div>
+      <div class="ux-why">The Wells Fargo Autograph ($0) and Autograph Journey ($95) share an identical transfer partner ecosystem but different earn categories. A short cross-reference sentence on each entry ("Same transfer partners as the Autograph Journey" / "Same transfer partners as the Autograph, $0 version") would help readers evaluating which tier is right for them without re-reading both notes.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">🔼 Verify Capital One transfer partner list completeness</div>
+      <div class="ux-label">Content — accuracy check for next audit</div>
+      <div class="ux-why">Capital One has been expanding its airline transfer partner roster. The current note for the Venture X and Venture mentions the key partners but should be re-verified at the next content audit against the live Capital One rewards page to confirm no new partners were added since the last review.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
