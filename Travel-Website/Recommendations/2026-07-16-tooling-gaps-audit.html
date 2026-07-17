@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tooling Gaps Audit — 2026-07-16</title>
+<style>
+  :root{
+    --bg:#f7f4ee; --card:#fff; --ink:#26231d; --muted:#6c665b;
+    --line:#e2dccf; --accent:#b85c2a; --gold:#8a6c1a;
+    --red:#b23b2e; --orange:#c9772b; --yellow:#b79217; --green:#3f7d4e;
+    --navy:#3a4a6b; --blue:#2155a8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px 80px;}
+
+  header{padding:40px 0 8px;border-bottom:3px solid;
+    border-image:linear-gradient(90deg,#7a3b1e,#b85c2a,#d4874a) 1;margin-bottom:12px;}
+  h1{font-size:22px;letter-spacing:.04em;text-transform:uppercase;margin:0 0 5px;}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 3px;}
+
+  .lede{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:8px;padding:16px 18px;margin:18px 0;font-size:15px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0 28px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;text-align:center;}
+  .stat .v{font-size:22px;font-weight:700;}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-top:2px;}
+  .ok{color:var(--green)} .warnc{color:var(--yellow)} .badc{color:var(--red)} .bluec{color:var(--blue)}
+
+  h2{font-size:14px;letter-spacing:.04em;text-transform:uppercase;margin:34px 0 4px;
+    padding-bottom:7px;border-bottom:1px solid var(--line);}
+  h2 .n{color:var(--muted);font-weight:500;font-size:12px;}
+
+  .item{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:12px 0;}
+  .item h3{margin:0 0 6px;font-size:16px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    padding:2px 9px;border-radius:999px;color:#fff;white-space:nowrap;}
+  .t-red{background:var(--red)} .t-orange{background:var(--orange)}
+  .t-yellow{background:var(--yellow)} .t-green{background:var(--green)}
+  .t-blue{background:var(--blue)} .t-navy{background:var(--navy)}
+  .t-fixed{background:var(--green)}
+
+  .item p{margin:6px 0;font-size:15px;}
+  .lab{font-weight:700;color:var(--navy);font-size:12.5px;text-transform:uppercase;letter-spacing:.03em;}
+  .rec{border-left:3px solid var(--green);padding-left:13px;margin-top:10px;font-size:14.5px;}
+  .rec .lab{color:var(--green);}
+
+  code{background:#ede7db;border-radius:4px;padding:1px 6px;font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+  .meta-row{display:flex;gap:20px;flex-wrap:wrap;margin:8px 0 4px;font-size:13px;color:var(--muted);}
+  .meta-row span strong{color:var(--ink);}
+
+  .coverage-table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0;}
+  .coverage-table th{text-align:left;padding:7px 10px;background:#f0ead9;
+    font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .coverage-table td{padding:7px 10px;border-top:1px solid var(--line);}
+  .coverage-table tr:hover td{background:#faf7f1;}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;}
+  .dot-green{background:var(--green)} .dot-yellow{background:var(--yellow)}
+  .dot-red{background:var(--red)} .dot-blue{background:var(--blue)}
+
+  .fixed-banner{background:#f0faf2;border:1px solid #9ecfa4;border-left:4px solid var(--green);
+    border-radius:8px;padding:14px 18px;margin:12px 0;}
+  .fixed-banner h3{margin:0 0 4px;font-size:15px;color:var(--green);}
+  .fixed-banner p{margin:4px 0;font-size:14px;color:#3d6645;}
+
+  .dropped-list{background:#f9f7f2;border:1px solid var(--line);border-radius:8px;
+    padding:14px 18px;margin:12px 0;font-size:14px;}
+  .dropped-list h3{margin:0 0 8px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .dropped-list li{margin:4px 0;color:var(--muted);}
+  .dropped-list code{background:#eae7df;}
+
+  footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:13px;}
+
+  .update-reminder{background:#fffbeb;border:1px solid #c9a000;border-left:4px solid #c9a000;
+    border-radius:8px;padding:13px 16px;margin:0 0 28px;font-size:14px;line-height:1.55;
+    display:flex;gap:12px;align-items:flex-start;}
+  .update-reminder .icon{font-size:17px;line-height:1.4;flex-shrink:0;}
+
+  .applied-banner{background:#edf5ff;border:1px solid #94bad6;border-left:4px solid var(--blue);
+    border-radius:8px;padding:13px 16px;margin:10px 0;font-size:14px;}
+  .applied-banner strong{color:var(--blue);}
+
+  .closed-banner{background:#f0faf2;border:1px solid #9ecfa4;border-left:4px solid var(--green);
+    border-radius:8px;padding:13px 16px;margin:10px 0;font-size:14px;}
+  .closed-banner strong{color:var(--green);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Tooling Gaps Audit</h1>
+  <p class="sub">The Voyager Expert — scripts · routines · artifacts · connectors</p>
+  <p class="sub">2026-07-16 · scheduled weekly run · autonomous · run #2 this date</p>
+</header>
+
+<div class="update-reminder">
+  <span class="icon">&#8617;</span>
+  <div><strong>After completing work from this file:</strong> come back and move each finished item to the <a href="#fixed-section" style="color:#7a5c00;font-weight:600;">Fixed / Implemented</a> section at the bottom of this page. Open items should stay at the top — don't leave "fixed 2026-07-XX" tags scattered through the open list.</div>
+</div>
+
+<div class="lede">
+<strong>Summary.</strong>
+Two carry-over open items and one new finding this run. No fix was applied in this session.
+<br><br>
+<strong>Carry-over P2 (worse):</strong> <code>voyager_routines_export.json</code> staleness has grown from 18 missing skill dirs to <strong>30</strong> since last week's report. The JSON now counts 43 routines while the scheduler has 72 skill directories — a 29-routine gap. User action still needed (refresh from claude.ai interface). One orphaned JSON ID remains (<code>guide-days-rebuild</code>).
+<br><br>
+<strong>Carry-over P3 (confirmed unchanged):</strong> <code>filter-audit</code> and <code>filters-tags-index-audit</code> remain word-for-word identical in Steps 1–7. Only the final report filename differs. Both are active skill dirs. Monday conflict risk persists.
+<br><br>
+<strong>New P2:</strong> <code>validate_continuity_render.py</code> runs per-guide during ship (fleet-scoped, strict) and during interactive session starts (best-effort, warn), but has no scheduled periodic standalone run. A <code>guide-style.css</code> push between ship events can introduce a CSS continuity regression that goes undetected until the next guide ships. The script already caught this exact class of bug twice on 2026-07-12 when static checks passed cleanly.
+<br><br>
+<strong>2 candidates dropped by verification:</strong> (1) Backfill debt — Claude Inspiration (60 guides missing per 2026-07-12 CLAUDE.md note) confirmed CLEARED: live grep shows 0 guides missing the <code>claude-inspiration</code> div. Read About (143 guides missing per note) also CLEARED: all 220 guides have <code>*-read-about.html</code> files. (2) <code>validate_continuity_render.py</code> as completely unscheduled — it IS called fleet-wide in the ship gate (guide_tools.py line 3337); the gap is narrower than a complete absence.
+</div>
+
+<div class="grid">
+  <div class="stat"><div class="v warnc">43*</div><div class="l">Routines (JSON stale)</div></div>
+  <div class="stat"><div class="v ok">94</div><div class="l">Python scripts</div></div>
+  <div class="stat"><div class="v ok">0</div><div class="l">Fixed this run</div></div>
+  <div class="stat"><div class="v warnc">3</div><div class="l">Open gaps</div></div>
+  <div class="stat"><div class="v ok">2</div><div class="l">Dropped by verify</div></div>
+</div>
+<p style="font-size:12px;color:var(--muted);margin:-18px 0 28px;">* JSON shows 43 routines; <code>~/.claude/scheduled-tasks/</code> has <strong>72</strong> skill directories. Gap has grown from 18 → 30 missing since last report. See P2.</p>
+
+<!-- ===== VERIFICATION PROTOCOL ===== -->
+<h2>Verification protocol — required before every recommendation ships</h2>
+<div class="item" style="border-left:4px solid var(--gold);">
+  <p>
+    <span class="lab">Rule</span> The codebase drifts constantly — routines are added, scripts backfill
+    debt, gaps close between the time a recommendation is drafted and the time it's read.
+    Every candidate recommendation in this report must be verified against the live codebase
+    before it is acted on.
+  </p>
+  <p><span class="lab">Verification checklist — run before actioning any item</span></p>
+  <ul style="margin:6px 0 0;padding-left:20px;font-size:14.5px;line-height:1.9;">
+    <li><strong>Script gap:</strong> confirm the named script does not exist —
+      <code>ls Brain/scripts/{name}.py</code></li>
+    <li><strong>Routine gap:</strong> confirm no matching routine ID in
+      <code>voyager_routines_export.json</code> AND no skill dir in
+      <code>~/.claude/scheduled-tasks/</code></li>
+    <li><strong>Coverage gap:</strong> run the relevant grep / count to confirm
+      the gap is still real (e.g. <code>grep -rL 'pattern' Guides/</code>)</li>
+    <li><strong>Queue gap:</strong> confirm the queue/state file doesn't already exist</li>
+  </ul>
+  <p style="margin-top:10px;font-size:14px;color:var(--muted);">
+    This run — 2 candidates dropped after live check.
+    (1) Backfill debt: <code>grep -rL 'claude-inspiration' Travel-Website/Guides/*/[a-z]*.html</code>
+    (excluding _build, read-about, stops-map) → <strong>0 guides missing</strong>; read-about count: 220 files for 220 guides → <strong>0 missing</strong>. Both debts cleared.
+    (2) <code>validate_continuity_render.py</code> as completely unscheduled: confirmed called at
+    <code>guide_tools.py</code> lines 441–450 (session start, warn) and line 3337 (ship gate, strict, fleet-scoped).
+    Downgraded from "completely absent" to "no periodic standalone scan" (P2, not P1).
+  </p>
+</div>
+
+<!-- ===== P2 CARRY-OVER ===== -->
+<h2>Priority 2 — Open gaps <span class="n">carry-over + new</span></h2>
+
+<div class="item">
+  <h3>1. <code>voyager_routines_export.json</code> staleness has grown <span class="tag t-orange">Open · P2</span></h3>
+  <div class="meta-row">
+    <span><strong>Type:</strong> Missing export update</span>
+    <span><strong>Action required:</strong> User — refresh from claude.ai interface</span>
+    <span><strong>Risk:</strong> Audit routine reports wrong routine counts; orphaned IDs cause confusion</span>
+  </div>
+  <p>
+    <span class="lab">Gap</span> Last week's report flagged 18 skill dirs missing from the JSON; this week it's
+    <strong>30 missing</strong>. The JSON has 43 IDs; the scheduler has 72 skill directories; only 42 are in both.
+  </p>
+  <p><span class="lab">Skill dirs not in JSON (30) — new additions since last export</span></p>
+  <ul style="columns:2;column-gap:20px;margin:6px 0 8px;padding-left:20px;font-size:13.5px;line-height:1.9;">
+    <li><code>add-validator-check</code> (×5)</li>
+    <li><code>change-propagation</code></li>
+    <li><code>filter-audit</code></li>
+    <li><code>filters-tags-index-audit</code></li>
+    <li><code>fix-ux-problems</code></li>
+    <li><code>guide-audit-and-fix-2</code> (×4)</li>
+    <li><code>guide-coverage-report</code></li>
+    <li><code>on-demand-guide-day-expansion</code> (×5)</li>
+    <li><code>on-demand-validator-audit-1</code> (×5)</li>
+    <li><code>photo-freshness-audit</code></li>
+    <li><code>stats-pages-monthly-refresh</code></li>
+    <li><code>time-zones-data-audit</code></li>
+    <li><code>todays-improvement-recommendation</code></li>
+    <li><code>tooling-gaps-audit</code></li>
+    <li><code>weekly-site-sync</code></li>
+  </ul>
+  <p><span class="lab">JSON IDs with no skill dir (1 orphan)</span></p>
+  <ul style="margin:4px 0 8px;padding-left:20px;font-size:14.5px;line-height:1.8;">
+    <li><code>guide-days-rebuild</code> — superseded by <code>weekly-site-sync</code> Step 1 (confirmed last week; orphan persists in JSON)</li>
+  </ul>
+  <p>
+    <span class="lab">Live verification</span><br>
+    <code>ls ~/.claude/scheduled-tasks/ | wc -l</code> → <strong>72 directories</strong><br>
+    <code>python3 -c "import re; c=open('voyager_routines_export.json').read(); print(len(re.findall(r'\"id\"', c)), 'IDs in JSON')"</code>
+    → <strong>43 IDs</strong><br>
+    Overlap: <strong>42 in both</strong>, 30 dirs-only, 1 JSON-only
+  </p>
+  <div class="rec">
+    <span class="lab">Recommendation</span><br>
+    Refresh <code>voyager_routines_export.json</code> from the claude.ai interface (export option in the
+    scheduled-tasks panel). This is a user action — the file cannot be updated programmatically. Once refreshed,
+    this routine will report accurate counts and the gap tracking for next week will be based on a correct baseline.
+    The orphaned <code>guide-days-rebuild</code> ID should disappear after refresh if it was deleted from the scheduler.
+  </div>
+</div>
+
+<div class="item">
+  <h3>2. <code>validate_continuity_render.py</code> has no scheduled periodic fleet scan <span class="tag t-orange">Open · P2 · New</span></h3>
+  <div class="meta-row">
+    <span><strong>Type:</strong> Scheduling gap</span>
+    <span><strong>Script:</strong> <code>Brain/scripts/validate_continuity_render.py</code></span>
+    <span><strong>Risk:</strong> CSS regression to <code>guide-style.css</code> goes undetected between ship events</span>
+  </div>
+  <p>
+    <span class="lab">Gap</span> <code>validate_continuity_render.py</code> renders every guide and measures
+    actual pixel gaps in Extras-section continuous-card joins and stop-block booking-box stacks — the exact
+    class of bug that static checks cannot catch, and that shipped fleet-wide <strong>twice in one session
+    on 2026-07-12</strong> (once as a CSS specificity miss, once as a margin asymmetry miss). Both times the
+    static anchor check (<code>validate_itinerary.py</code>) passed cleanly.
+  </p>
+  <p>
+    Current invocations:
+  </p>
+  <ul style="margin:4px 0 8px;padding-left:20px;font-size:14.5px;line-height:1.8;">
+    <li><strong>Interactive session start</strong> — <code>guide_tools.py start</code> Step 3b-2 runs
+      <code>validate_continuity_render.py --warn</code> (best-effort, advisory). But scheduled/routine sessions
+      skip the ritual entirely, so this doesn't run in crib sessions.</li>
+    <li><strong>Guide ship gate</strong> — <code>guide_tools.py</code> line 3337 runs the script fleet-scoped
+      in strict mode. Catches regressions when any guide is shipped. But if no guide ships on a given day
+      (or a CSS push lands between ships), the check doesn't run.</li>
+  </ul>
+  <p>
+    The window of exposure: a commit that edits <code>guide-style.css</code> can be pushed (it passes
+    <code>pre_push_guard.py</code>'s <code>brain_check</code> gate), live on the site, and producing visible
+    card gaps across all 220 guides — until the next guide ships. The 2026-07-12 incidents prove this is
+    not a hypothetical failure mode.
+  </p>
+  <p>
+    <span class="lab">Live verification</span><br>
+    <code>grep -rn "validate_continuity_render" ~/.claude/scheduled-tasks/*/SKILL.md | wc -l</code>
+    → <strong>0 scheduled routines reference this script</strong><br>
+    <code>grep -n "continuity" Brain/scripts/guide_tools.py | head -5</code>
+    → confirmed at lines 449–450 (session-start warn) and 3337 (ship gate strict)
+  </p>
+  <div class="rec">
+    <span class="lab">Recommendation</span><br>
+    Add <code>python3 Brain/scripts/validate_continuity_render.py --warn</code> as a step in the
+    <strong><code>cross-page-consistency-audit</code></strong> (Saturday) or
+    <strong><code>ux-format-audit</code></strong> (weekly). The script needs Playwright
+    (same requirement as <code>validate_mobile_render.py</code>, which already runs in
+    <code>cross-page-consistency-audit</code>). A weekly render sweep of all guides would catch CSS
+    continuity regressions within days of them landing, not "at next ship". One line to add:
+    <code>python3 Brain/scripts/validate_continuity_render.py --warn</code> before the existing
+    <code>validate_mobile_render.py</code> call in the Saturday routine's script run block.
+    If the fleet scan is too slow (220 guides × render time), scope it to a sample of guides that have
+    continuous-card sections (any guide with Tours, Michelin, or Shows sections).
+  </div>
+</div>
+
+<!-- ===== P3 CARRY-OVER ===== -->
+<h2>Priority 3 — Open gap <span class="n">routine duplication</span></h2>
+
+<div class="item">
+  <h3>3. <code>filter-audit</code> and <code>filters-tags-index-audit</code> are still identical <span class="tag t-yellow">Open · P3 · Carry-over</span></h3>
+  <div class="meta-row">
+    <span><strong>Type:</strong> Routine duplication</span>
+    <span><strong>Risk:</strong> Conflicting Monday git commits to Guides-Index.html</span>
+    <span><strong>Carry-over from:</strong> 2026-07-16 first run</span>
+  </div>
+  <p>
+    <span class="lab">Gap</span> Both skill files are word-for-word identical in Steps 1–7. A line-by-line
+    comparison confirms zero substantive difference: same intro, same constraints, same Step 1 script call
+    (<code>audit_filters.py --apply</code>), same Steps 2–5 (index card check, theme tag audit, Best-of
+    count, commit/push), same Step 6 audit log format. The only difference is the report filename
+    (<code>filter-audit.html</code> vs <code>filters-tags-index-audit.html</code>).
+  </p>
+  <table class="coverage-table" style="margin:10px 0;">
+    <thead><tr><th>Surface</th><th>filter-audit</th><th>filters-tags-index-audit</th></tr></thead>
+    <tbody>
+      <tr><td>THEME_DATA (trip type)</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>data-lang (language)</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>DAYS_DATA (trip length)</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>CONTINENT inline map</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>Missing guide cards</td><td>&#10003;</td><td>&#10003;</td></tr>
+      <tr><td>Writes Recommendations/ report</td><td><code>filter-audit.html</code></td><td><code>filters-tags-index-audit.html</code></td></tr>
+    </tbody>
+  </table>
+  <p>
+    If both are scheduled on Monday mornings, both will pull HEAD, make the same edits to
+    <code>Guides-Index.html</code>, and attempt to push — the second push sees a conflicting commit
+    and fails or produces an unwanted merge. Double CPU spend for zero additional coverage.
+  </p>
+  <p>
+    <span class="lab">Live verification</span><br>
+    <code>diff ~/.claude/scheduled-tasks/filter-audit/SKILL.md ~/.claude/scheduled-tasks/filters-tags-index-audit/SKILL.md | head -20</code><br>
+    → Only differences: <code>name:</code> frontmatter field, <code>description:</code> frontmatter field,
+    and final report filename. Steps 1–7 are byte-identical.
+  </p>
+  <div class="rec">
+    <span class="lab">Recommendation</span><br>
+    Consolidate to <code>filters-tags-index-audit</code> (more descriptive name; writes a timestamped
+    report each run). Delete or disable <code>filter-audit</code> if it has the same cron. Alternatively
+    assign them distinct schedules to eliminate Monday conflict (e.g. <code>filter-audit</code> on
+    Wednesday, <code>filters-tags-index-audit</code> on Monday) and give them distinct
+    non-overlapping steps.
+  </div>
+</div>
+
+<!-- ===== WHAT'S ALREADY COVERED ===== -->
+<h2>What's already well-covered <span class="n">no action needed</span></h2>
+
+<div class="item">
+  <p>The following areas were checked and found clean this run:</p>
+  <ul style="margin:8px 0 0;padding-left:20px;font-size:14.5px;line-height:1.8;">
+    <li><strong>Claude Inspiration backfill CLEARED</strong> — <code>grep -rL 'claude-inspiration' Travel-Website/Guides/*/[a-z]*.html</code> (excluding _build, read-about, stops-map): <strong>0 guides missing</strong>. The 60-guide debt noted in CLAUDE.md (2026-07-12) has been fully resolved by the daily audit routines. ✓</li>
+    <li><strong>Read About backfill CLEARED</strong> — 220 guide HTML files, 220 <code>*-read-about.html</code> files. The 143-guide debt noted in CLAUDE.md has been fully resolved. ✓</li>
+    <li><strong><code>validate_search_index.py</code> fix still holding</strong> (fixed last run) — still exits OK: <code>validate_search_index: OK — 220 guides + 33 pages indexed, generated 2026-07-16 (0 day(s) ago)</code>. Page count is 33 vs 34 last week — this is a real change (one page was removed or renamed), not a regression; the validator reports OK, so all indexed pages exist. ✓</li>
+    <li><strong>Script count: 94 (was 93)</strong> — 1 new script added since last report. Both <code>build_safety_guide.py</code> and <code>validate_currency.py</code> are now tracked in git (committed 2026-07-14); these are wired into the ship gate and currency refresh routine respectively. No scheduling gap for either. ✓</li>
+    <li><strong>New routines since last report</strong> — 11 new skill dirs identified: <code>time-zones-data-audit</code> (biannual data accuracy audit), <code>add-validator-check</code> ×5 (on-demand interactive; user-gated, not autonomous), <code>on-demand-validator-audit-1</code> ×5 (on-demand batch validator), <code>fix-ux-problems</code> (collaborative, owner-approved fixes only). All have appropriate scope and autonomy settings. No gaps. ✓</li>
+    <li><strong><code>audit_transit_dupes.py</code> — on-demand only, intentional</strong> — CLAUDE.md explicitly marks this "Run on demand or in the audit pass." Advisory-only; can't hard-fail (text not geography). No scheduling gap. ✓</li>
+    <li><strong><code>encode_link_spaces.py</code> — report tool, intentional</strong> — Detects internal link paths with spaces; the fix is manual folder migration (hyphen rule). The script correctly stays on-demand. 45 legacy spaced folders are known and tracked. ✓</li>
+    <li><strong><code>validate_pill_standard.py</code></strong> — referenced in 4 routines. ✓</li>
+    <li><strong><code>validate_toolbar_consistency.py</code></strong> — referenced in 1 routine. ✓</li>
+    <li><strong><code>validate_guides_index_inline.py</code></strong> — referenced in 1 routine. ✓</li>
+    <li><strong><code>validate_climate_countries.py</code></strong> — referenced in 1 routine. ✓</li>
+    <li><strong>guide-days-rebuild JSON orphan (carry-over)</strong> — confirmed superseded by <code>weekly-site-sync</code> Step 1. The orphan entry in the JSON is harmless until the JSON is refreshed. ✓ (pending export refresh)</li>
+    <li><strong>All open items from first 2026-07-16 report</strong> — P2 (JSON staleness) and P3 (filter-audit duplication) are both still open and tracked in this report. The P1 fix (validate_search_index path bug) is confirmed holding. ✓</li>
+  </ul>
+</div>
+
+<!-- ===== DROPPED CANDIDATES ===== -->
+<div class="dropped-list">
+  <h3>Candidates dropped after live verification (2 this run)</h3>
+  <ul>
+    <li><strong>Backfill debt (Claude Inspiration + Read About):</strong> Both flagged as potential "no clearing mechanism" gaps — live check showed both debts fully resolved. Claude Inspiration: 0 guides missing (was 60). Read About: 0 guides missing (was 143). Dropped — not a gap.</li>
+    <li><strong><code>validate_continuity_render.py</code> as completely unscheduled:</strong> Initially flagged as having zero routine coverage. Live check found it wired into <code>guide_tools.py</code> at session start (warn, line 450) and ship gate (strict, line 3337). Downgraded to "no periodic standalone scan" (P2) — not "completely absent." The narrower gap is still worth addressing but not critical.</li>
+  </ul>
+</div>
+
+<!-- ===== ACTION SUMMARY ===== -->
+<h2>Action summary</h2>
+<table class="coverage-table">
+  <thead>
+    <tr><th>#</th><th>Action</th><th>Type</th><th>Priority</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Refresh <code>voyager_routines_export.json</code> from claude.ai (30 missing skill dirs; 1 orphan)</td>
+      <td>User action</td>
+      <td><span style="color:var(--orange);font-weight:700">P2</span></td>
+      <td style="color:var(--orange);">Open (carry-over)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Add <code>validate_continuity_render.py --warn</code> to <code>cross-page-consistency-audit</code> or <code>ux-format-audit</code> (weekly render sweep for CSS continuity gaps)</td>
+      <td>Routine update</td>
+      <td><span style="color:var(--orange);font-weight:700">P2</span></td>
+      <td style="color:var(--orange);">Open (new)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Consolidate <code>filter-audit</code> + <code>filters-tags-index-audit</code> (identical steps, conflict risk on Monday)</td>
+      <td>Routine cleanup</td>
+      <td><span style="color:var(--yellow);font-weight:700">P3</span></td>
+      <td style="color:var(--yellow);">Open (carry-over)</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ===== FIXED / IMPLEMENTED ===== -->
+<h2 id="fixed-section">Fixed / Implemented <span class="n">complete items from this and prior runs</span></h2>
+
+<div class="fixed-banner">
+  <h3>validate_search_index.py path format bug — Fixed 2026-07-16 (first run)</h3>
+  <p>Two-line fix: added <code>Guides/</code> prefix to guide path strings + excluded <code>*-stops-map.html</code> from the on-disk guide list. Was producing 440 false-positive "missing" entries and 220 false-positive "ghost" entries on every run. Post-fix: exits OK with 220 guides + 33 pages. Fix committed and pushed with the first 2026-07-16 report.</p>
+</div>
+
+<div class="fixed-banner">
+  <h3>Claude Inspiration backfill (60 guides) — Cleared by daily audit routines</h3>
+  <p>CLAUDE.md noted 60 guides lacked the required <code>claude-inspiration</code> div as of 2026-07-12. As of this run, live check returns 0 missing. Cleared organically by the daily guide audit and fix routines.</p>
+</div>
+
+<div class="fixed-banner">
+  <h3>Read About backfill (143 guides) — Cleared by daily audit routines</h3>
+  <p>CLAUDE.md noted 143 guides lacked a <code>*-read-about.html</code> partner as of 2026-07-10. As of this run, all 220 guides have read-about files. Cleared organically.</p>
+</div>
+
+<footer>
+  Generated 2026-07-16 · Tooling Gaps Audit · Autonomous scheduled run #2 this date ·
+  Next run: 2026-07-23 (weekly)
+</footer>
+
+</div>
+</body>
+</html>
