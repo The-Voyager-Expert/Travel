@@ -23,9 +23,10 @@
   'use strict';
 
   // US state abbreviation → full name, for auto-expanding match text.
-  // Items whose name ends in " XX" or whose sub is exactly a 2-letter state code
-  // get the full state name appended to their hidden _t match field automatically,
-  // so typing "california" or "cali" surfaces "Santa Barbara CA", "Los Angeles CA" etc.
+  // Items whose name ends in " XX" or ", XX", or whose sub is exactly a 2-letter state
+  // code, or whose name matches a known US city get the full state name appended to their
+  // hidden _t match field automatically, so typing "california" or "cali" surfaces
+  // "Santa Barbara CA", "Los Angeles CA", "Atlanta", "Seattle" etc. on every page.
   var _US = {
     'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California',
     'CO':'Colorado','CT':'Connecticut','DE':'Delaware','FL':'Florida','GA':'Georgia',
@@ -40,11 +41,57 @@
     'WV':'West Virginia','WI':'Wisconsin','WY':'Wyoming','DC':'District of Columbia'
   };
 
+  // US city name (lowercase) → full state name, for bare city names with no "XX" suffix.
+  // Used by Lounges-US, Before-You-Go, and any page where items have no state abbreviation.
+  var _US_CITIES = {
+    'alaska':'Alaska','albuquerque':'New Mexico','atlanta':'Georgia',
+    'austin':'Texas','baltimore':'Maryland','bend':'Oregon',
+    'big island':'Hawaii','billings':'Montana','birmingham':'Alabama',
+    'boise':'Idaho','boston':'Massachusetts','boulder':'Colorado',
+    'cape cod':'Massachusetts','carmel-by-the-sea':'California',
+    'charlotte':'North Carolina','charleston':'South Carolina',
+    'chicago':'Illinois','cheyenne':'Wyoming','columbia':'South Carolina',
+    'columbus':'Ohio','dallas':'Texas','denver':'Colorado',
+    'des moines':'Iowa','detroit':'Michigan','fargo':'North Dakota',
+    'florida keys':'Florida','fort lauderdale':'Florida',
+    'glacier national park':'Montana','hartford':'Connecticut',
+    'honolulu':'Hawaii','houston':'Texas','indianapolis':'Indiana',
+    'jackson':'Mississippi','jacksonville':'Florida',
+    'kansas city':'Missouri','kauai':'Hawaii','key west':'Florida',
+    'la jolla':'California','lake tahoe':'California',
+    'las vegas':'Nevada','lecce':'Italy','little rock':'Arkansas',
+    'los angeles':'California','louisville':'Kentucky',
+    'malibu':'California','maui':'Hawaii','miami':'Florida',
+    'milwaukee':'Wisconsin','minneapolis':'Minnesota',
+    'minneapolis–st. paul':'Minnesota','minneapolis-st. paul':'Minnesota',
+    'napa':'California','naples florida':'Florida','nashville':'Tennessee',
+    'new orleans':'Louisiana','new york':'New York',
+    'newark':'New Jersey','oahu':'Hawaii','oklahoma city':'Oklahoma',
+    'omaha':'Nebraska','orcas island':'Washington','orlando':'Florida',
+    'palm desert':'California','palo alto':'California','pasadena':'California',
+    'pensacola':'Florida','philadelphia':'Pennsylvania','phoenix':'Arizona',
+    'portland':'Oregon','providence':'Rhode Island',
+    'richmond':'Virginia','sacramento':'California',
+    'salt lake city':'Utah','san antonio':'Texas','san diego':'California',
+    'san francisco':'California','san jose':'California',
+    'san juan island':'Washington','santa barbara':'California',
+    'santa cruz':'California','santa monica':'California',
+    'sarasota':'Florida','scottsdale':'Arizona','seattle':'Washington',
+    'sedona':'Arizona','sioux falls':'South Dakota',
+    'tampa':'Florida','washington dc':'District of Columbia',
+    'washington d.c.':'District of Columbia','wilmington':'Delaware',
+    'yellowstone':'Wyoming'
+  };
+
   function stateText(name, sub) {
-    var m = name && name.match(/ ([A-Z]{2})$/);
+    // Handle both " CA" (space-before) and ", CA" (comma-space) formats.
+    var m = name && name.match(/[, ]+([A-Z]{2})\s*$/);
     var fromName = (m && _US[m[1]]) ? _US[m[1]] : '';
     var fromSub  = (sub && sub.length === 2) ? (_US[sub.toUpperCase()] || '') : '';
-    return fromName || fromSub;
+    // Fallback: bare city name lookup (e.g. "Atlanta", "Seattle" with no state suffix).
+    var nameLower = String(name || '').toLowerCase().replace(/[, ]+[a-z]{2}\s*$/, '').trim();
+    var fromCity  = _US_CITIES[nameLower] || '';
+    return fromName || fromSub || fromCity;
   }
 
   function buildFields(it) {
