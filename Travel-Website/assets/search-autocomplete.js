@@ -94,6 +94,21 @@
     return fromName || fromSub || fromCity;
   }
 
+  // Word-start match: q matches if it appears at position 0 or immediately after
+  // a whitespace/punctuation boundary in str. Prevents "re" from hitting "ireland",
+  // "greece", "singapore" (all have 're' mid-word) while still finding "real",
+  // "renminbi", "republic" (all start with 're').
+  function wsMatch(str, q) {
+    var i = str.indexOf(q);
+    while (i >= 0) {
+      if (i === 0) return true;
+      var prev = str[i - 1];
+      if (prev === ' ' || prev === '-' || prev === '(' || prev === ',' || prev === '.' || prev === '/') return true;
+      i = str.indexOf(q, i + 1);
+    }
+    return false;
+  }
+
   function buildFields(it) {
     it._n = String(it.name || '').toLowerCase();
     it._s = String(it.sub  || '').toLowerCase();
@@ -120,9 +135,9 @@
       if (it && it.href) { window.location.href = it.href; return; }
       input.dispatchEvent(new Event('input', { bubbles: true }));
     };
-    // Match on name OR sub OR _t (explicit text field + auto-expanded state name).
+    // Word-start match on name OR sub OR _t (explicit text field + auto-expanded state name).
     var match = opts.match || function (it, q) {
-      return it._n.indexOf(q) >= 0 || (it._s && it._s.indexOf(q) >= 0) || (it._t && it._t.indexOf(q) >= 0);
+      return wsMatch(it._n, q) || (it._s && wsMatch(it._s, q)) || (it._t && wsMatch(it._t, q));
     };
 
     items.forEach(buildFields);
@@ -146,7 +161,11 @@
       if (q.length < minChars) { hide(); return; }
       cur = items.filter(function (it) { return match(it, q); })
         .sort(function (a, b) {
-          function sc(d) { return d._n.indexOf(q) === 0 ? 0 : d._n.indexOf(q) >= 0 ? 1 : 2; }
+          function sc(d) {
+            if (d._n.indexOf(q) === 0) return 0;   // name starts with q
+            if (wsMatch(d._n, q)) return 1;          // inner word of name starts with q
+            return 2;                                  // match only in sub or text
+          }
           return sc(a) - sc(b) || a.name.localeCompare(b.name);
         })
         .slice(0, limit);

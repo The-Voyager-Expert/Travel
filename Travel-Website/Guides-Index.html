@@ -3592,7 +3592,7 @@ window._giStatusFilter = 'all';
 }());
 </script>
 <!-- Shared search autocomplete — city·country typeahead → open the guide -->
-<script src="./assets/search-autocomplete.js?v=5"></script>
+<script src="./assets/search-autocomplete.js?v=6"></script>
 <script>
 (function () {
   if (!window.TVESearch) return;
@@ -3629,7 +3629,11 @@ window._giStatusFilter = 'all';
       if (card.hasAttribute('data-special')) return; // skip Best-of / non-guide cards
       var nm = card.querySelector('.dest-name');
       var href = card.getAttribute('href');
-      if (nm && href) items.push({ name: nm.textContent.trim(), sub: country, href: href, text: US_STATES[nm.textContent.trim()] || '' });
+      if (nm && href) {
+        var cityName = nm.textContent.trim();
+        var state = (country === 'United States') ? (US_STATES[cityName] || '') : '';
+        items.push({ name: cityName, sub: state || country, href: href, text: state });
+      }
     });
   });
   TVESearch.attach(input, { items: items }); // default onPick: navigate to href

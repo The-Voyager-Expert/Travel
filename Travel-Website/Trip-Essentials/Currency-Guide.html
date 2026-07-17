@@ -1796,20 +1796,25 @@ html { scroll-behavior: smooth; }
     inp.addEventListener('input',upd); upd();
   });
   input.addEventListener('input',function(){
-    // Skip live page filter while TVESearch dropdown is open (prevents showing results twice).
-    var dd=input.parentNode&&input.parentNode.querySelector('.sa-suggest');
-    if(dd&&!dd.hidden) return;
-    var q=norm(input.value.trim()),shown=0;
+    // Defer so TVESearch renders its dropdown first (same-tick ordering).
+    // If the dropdown is open after TVESearch runs, skip the page filter — results
+    // show in the dropdown; the filter runs only after a pick (dropdown hidden).
+    var _input=input;
+    setTimeout(function(){
+      var dd=_input.parentNode&&_input.parentNode.querySelector('.sa-suggest');
+      if(dd&&!dd.hidden) return;
+      var q=norm(_input.value.trim()),shown=0;
     rows.forEach(function(r){var m=q===''||norm(r.textContent).indexOf(q)>-1;r.classList.toggle('idx-hide',!m);if(m)shown++;});
     blocks.forEach(function(b){var t=norm(b.textContent);b.style.display=(q===''||t.indexOf(q)>-1)?'':'none';});
     regions.forEach(function(s){var vis=[].slice.call(s.querySelectorAll('.country-block')).some(function(b){return b.style.display!=='none';});s.style.display=(q===''||vis)?'':'none';});
     var noHits=(shown===0&&q!=='');
-    if(noRes)noRes.style.display=noHits?'block':'none';
-    if(indexTable)indexTable.style.display=noHits?'none':'';
+      if(noRes)noRes.style.display=noHits?'block':'none';
+      if(indexTable)indexTable.style.display=noHits?'none':'';
+    },0);
   });
 })();
 </script>
-<script src="../assets/search-autocomplete.js?v=5"></script>
+<script src="../assets/search-autocomplete.js?v=6"></script>
 <script>(function(){
   if(!window.TVESearch) return;
   var input=document.getElementById('cur-search'); if(!input) return;
