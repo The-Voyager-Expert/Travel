@@ -12,23 +12,39 @@
    not overridden here. */
 .index-section { max-width: none; margin: 8px auto 0; padding: 0 32px; }
 /* last-update stamp uses shared .updated-stamp from web-travel-style.css */
+.index-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border,#d8d4cc); border-radius: 8px; overflow: hidden; }
 .index-table thead th {
   background: var(--surface2, #f0ede8); border-bottom: 2px solid var(--border, #d8d4cc);
-  padding: 8px 12px; text-align: left; font-size: var(--fs-body,14px); font-weight: 700;
-  color: var(--muted, #6a6660);
+  padding: 10px 14px; text-align: left; font-size: var(--fs-body,14px); font-weight: 700;
+  color: var(--muted, #6a6660); text-transform: uppercase; letter-spacing: 0.1em;
 }
 .index-table th:last-child, .index-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 .index-table .sym-col { text-align: right; }
-.index-table { width: 100%; border-collapse: collapse; border-radius: 0 0 6px 6px; overflow: hidden; box-shadow: 0 2px 12px rgba(92,61,17,0.10); }
-.index-table tbody td { font-size: var(--fs-body,14px); }
-.index-table tbody tr { cursor: pointer; }
-.index-table tbody tr:hover { filter: brightness(0.96); }
+.index-table tbody td { font-size: var(--fs-body,14px); padding: 9px 14px; color: var(--text); box-shadow: inset 0 -1px 0 var(--border2,#e6e2da); transition: box-shadow .1s ease; }
+.index-table tbody tr:last-child td { box-shadow: none; }
+.index-table tbody td:first-child { font-weight: 600; }
+.index-table tbody td:last-child { white-space: nowrap; font-weight: 700; color: #5C3D11; }
+.index-table tbody tr { cursor: pointer; background: var(--surface,#fff); }
+/* Full terracotta box outline on hover/press — box-shadow, not border-color:
+   with border-collapse:collapse a row's top border shares its edge with the
+   row above's bottom border, so a plain border-color hover loses that edge
+   unpredictably. box-shadow paints per-cell and never collapses with a
+   neighbor, so all four sides show reliably every time. */
+.index-table tbody tr:hover td { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a; }
+.index-table tbody tr:hover td:first-child { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a, inset 3px 0 0 #b85c2a; }
+.index-table tbody tr:hover td:last-child { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a, inset -3px 0 0 #b85c2a; }
+/* Press "sink": a plain top-to-bottom gradient, not a blurred box-shadow —
+   a blur fades near every edge of a cell (including the vertical ones between
+   columns), which is what caused the seam. A linear-gradient's value only
+   depends on height, so it's identical in every column at a given row-height:
+   no seam possible. */
+.index-table tbody tr:active td { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e; background-image: linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.03)); }
+.index-table tbody tr:active td:first-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset 3px 0 0 #7a3b1e; }
+.index-table tbody tr:active td:last-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset -3px 0 0 #7a3b1e; }
 .index-table tbody td a { color: var(--text); text-decoration: none; display: block; }
-.index-table tbody td a:hover { color: var(--accent,#8a6c1a); text-decoration: underline; }
+.index-table tbody td a:hover { color: var(--accent,#8a6c1a); }
 .index-table tbody tr.idx-hide { display: none; }
-.index-table tbody tr.idx-even { background: var(--warm,#faf7f0); }
-.index-table tbody tr.idx-odd  { background: var(--surface,#fff); }
-#cur-search { display: block; margin-left: auto; margin-right: auto; }
+#cur-search { display: block; margin: 0 auto 14px; }
 .content-wrap { max-width: none; margin: 0 auto; padding: 0 32px; }
 .region-section { margin-top: 20px; margin-bottom: 20px; }
 .region-header {
@@ -42,10 +58,10 @@
   scroll-margin-top: 72px;
 }
 .country-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 2px solid #E8D9BC; color: #5C3D11; }
-.country-name { font-size: var(--fs-title,14px); font-weight: 700; }
+.country-name { font-size: var(--fs-title); font-weight: 700; }
 .cur-full, .cur-code { font-size: var(--fs-body,14px); font-weight: 600; }
 .cur-code { letter-spacing: 0.02em; }
-.hsep { color: var(--accent); }
+.hsep { color: var(--accent, #8a6c1a); }
 .cur-symbol { font-weight: 700; margin-left: 2px; }
 .rate-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; padding: 12px 16px; background: #f0eeea; border: 1px solid #EAE0C8; border-radius: 6px; }
 .rate-main { font-size: var(--fs-body,14px); font-weight: 700; color: #5C3D11; display: inline-flex; align-items: baseline; gap: 8px; }
@@ -58,7 +74,6 @@
 .conv input:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
 .conv-out { font-variant-numeric: tabular-nums; }
 #cur-noresult { display: none; padding: 12px 4px; font-size: var(--fs-body,14px); color: #5A4A2E; }
-.rates-footer { text-align: center; font-size: var(--fs-sub,12px); color: var(--muted); margin: 24px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 html { scroll-behavior: smooth; }
 .region-section:last-child, .region-section:last-child *:last-child { margin-bottom: 0 !important; }
 @media (max-width: 600px) {
@@ -87,431 +102,431 @@ html { scroll-behavior: smooth; }
     <colgroup><col style="width:28%"><col style="width:40%"><col style="width:12%"><col style="width:20%"></colgroup>
     <thead><tr><th>Country</th><th>Currency</th><th class="sym-col">Sym</th><th>US$1</th></tr></thead>
     <tbody>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Argentina">Argentina</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Argentine Peso <span style="color:var(--accent);">ARS</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">AR$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,475</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Aruba">Aruba</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Aruban Florin <span style="color:var(--accent);">AWG</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Afl.</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.79</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Australia">Australia</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Australian Dollar <span style="color:var(--accent);">AUD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">A$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.43</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Austria">Austria</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Bahamas">Bahamas</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Bahamian Dollar <span style="color:var(--accent);">BSD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">B$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.00</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Barbados">Barbados</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Barbadian Dollar <span style="color:var(--accent);">BBD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Bds$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">2.00</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Belgium">Belgium</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Bhutan">Bhutan</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Bhutanese Ngultrum <span style="color:var(--accent);">BTN</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Nu</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">96.40</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Brazil">Brazil</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Brazilian Real <span style="color:var(--accent);">BRL</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">R$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">5.08</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Canada">Canada</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Canadian Dollar <span style="color:var(--accent);">CAD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">C$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.40</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Cayman_Islands">Cayman Islands</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Cayman Islands Dollar <span style="color:var(--accent);">KYD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">CI$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.833</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Chile">Chile</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Chilean Peso <span style="color:var(--accent);">CLP</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">CL$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">925</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#China">China</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Chinese Yuan (Renminbi) <span style="color:var(--accent);">CNY</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">¥</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">6.78</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Costa_Rica">Costa Rica</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Costa Rican Colón <span style="color:var(--accent);">CRC</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₡</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">454</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Croatia">Croatia</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Curacao">Curaçao</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Caribbean Guilder <span style="color:var(--accent);">XCG</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">ƒ</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.79</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Czech_Republic">Czech Republic</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Czech Koruna <span style="color:var(--accent);">CZK</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Kč</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">21.13</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Denmark">Denmark</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Danish Krone <span style="color:var(--accent);">DKK</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">6.52</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Egypt">Egypt</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Egyptian Pound <span style="color:var(--accent);">EGP</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">E£</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">50.54</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Estonia">Estonia</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Finland">Finland</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#France">France</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#French_Polynesia">French Polynesia</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">CFP Franc <span style="color:var(--accent);">XPF</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">XPF</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">104</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Georgia">Georgia</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Georgian Lari <span style="color:var(--accent);">GEL</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₾</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">2.63</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Germany">Germany</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Greece">Greece</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Hong_Kong">Hong Kong</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Hong Kong Dollar <span style="color:var(--accent);">HKD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">HK$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">7.84</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Hungary">Hungary</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Hungarian Forint <span style="color:var(--accent);">HUF</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Ft</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">315</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Iceland">Iceland</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Icelandic Króna <span style="color:var(--accent);">ISK</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">125</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Indonesia">Indonesia</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Indonesian Rupiah <span style="color:var(--accent);">IDR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Rp</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">17,992</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Ireland">Ireland</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Italy">Italy</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Japan">Japan</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Japanese Yen <span style="color:var(--accent);">JPY</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">¥</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">162</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Jordan">Jordan</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Jordanian Dinar <span style="color:var(--accent);">JOD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">JD</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.709</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Laos">Laos</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Lao Kip <span style="color:var(--accent);">LAK</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₭</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">22,343</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Luxembourg">Luxembourg</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Maldives">Maldives</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Maldivian Rufiyaa <span style="color:var(--accent);">MVR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Rf</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">15.44</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Malta">Malta</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Mexico">Mexico</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Mexican Peso <span style="color:var(--accent);">MXN</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">17.42</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Monaco">Monaco</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Montenegro">Montenegro</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Morocco">Morocco</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Moroccan Dirham <span style="color:var(--accent);">MAD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">DH</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.33</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Nepal">Nepal</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Nepalese Rupee <span style="color:var(--accent);">NPR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Rs</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">154</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Netherlands">Netherlands</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#New_Zealand">New Zealand</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">New Zealand Dollar <span style="color:var(--accent);">NZD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">NZ$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.71</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Norway">Norway</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Norwegian Krone <span style="color:var(--accent);">NOK</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.67</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Oman">Oman</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Omani Rial <span style="color:var(--accent);">OMR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">RO</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.384</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Peru">Peru</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Peruvian Sol <span style="color:var(--accent);">PEN</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">S/</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.39</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Philippines">Philippines</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Philippine Peso <span style="color:var(--accent);">PHP</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₱</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">61.65</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Poland">Poland</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Polish Złoty <span style="color:var(--accent);">PLN</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">zł</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.78</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Portugal">Portugal</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Puerto_Rico">Puerto Rico</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">US Dollar <span style="color:var(--accent);">USD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">—</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Qatar">Qatar</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Qatari Riyal <span style="color:var(--accent);">QAR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">QR</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.64</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Seychelles">Seychelles</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Seychellois Rupee <span style="color:var(--accent);">SCR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">SCR</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">14.27</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Singapore">Singapore</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Singapore Dollar <span style="color:var(--accent);">SGD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">S$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.29</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Sint_Maarten">Sint Maarten</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Caribbean Guilder <span style="color:var(--accent);">XCG</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">ƒ</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1.79</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Slovenia">Slovenia</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#South_Korea">South Korea</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">South Korean Won <span style="color:var(--accent);">KRW</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₩</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,480</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Spain">Spain</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span style="color:var(--accent);">EUR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.873</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Sri_Lanka">Sri Lanka</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Sri Lankan Rupee <span style="color:var(--accent);">LKR</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Rs</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">336</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Sweden">Sweden</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Swedish Krona <span style="color:var(--accent);">SEK</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.64</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Switzerland">Switzerland</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Swiss Franc <span style="color:var(--accent);">CHF</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Fr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.808</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Taiwan">Taiwan</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">New Taiwan Dollar <span style="color:var(--accent);">TWD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">NT$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">32.25</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Thailand">Thailand</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Thai Baht <span style="color:var(--accent);">THB</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">฿</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">33.57</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Turkey">Turkey</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Turkish Lira <span style="color:var(--accent);">TRY</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₺</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">47.10</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Turks_and_Caicos">Turks and Caicos</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">US Dollar <span style="color:var(--accent);">USD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">—</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_Arab_Emirates">United Arab Emirates</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">UAE Dirham <span style="color:var(--accent);">AED</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Dh</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.67</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_Kingdom">United Kingdom</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Pound Sterling <span style="color:var(--accent);">GBP</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">£</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.741</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_States">United States</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">US Dollar <span style="color:var(--accent);">USD</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">—</td>
-    </tr>
-<tr class="idx-odd">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Uruguay">Uruguay</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Uruguayan Peso <span style="color:var(--accent);">UYU</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$U</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">40.13</td>
-    </tr>
-<tr class="idx-even">
-      <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Vietnam">Vietnam</a></td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Vietnamese Dong <span style="color:var(--accent);">VND</span></td>
-      <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₫</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">26,178</td>
+<tr>
+      <td><a href="#Argentina">Argentina</a></td>
+      <td>Argentine Peso <span style="color:var(--accent);">ARS</span></td>
+      <td class="sym-col">AR$</td>
+      <td>1,486</td>
+    </tr>
+<tr>
+      <td><a href="#Aruba">Aruba</a></td>
+      <td>Aruban Florin <span style="color:var(--accent);">AWG</span></td>
+      <td class="sym-col">Afl.</td>
+      <td>1.79</td>
+    </tr>
+<tr>
+      <td><a href="#Australia">Australia</a></td>
+      <td>Australian Dollar <span style="color:var(--accent);">AUD</span></td>
+      <td class="sym-col">A$</td>
+      <td>1.44</td>
+    </tr>
+<tr>
+      <td><a href="#Austria">Austria</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Bahamas">Bahamas</a></td>
+      <td>Bahamian Dollar <span style="color:var(--accent);">BSD</span></td>
+      <td class="sym-col">B$</td>
+      <td>1.00</td>
+    </tr>
+<tr>
+      <td><a href="#Barbados">Barbados</a></td>
+      <td>Barbadian Dollar <span style="color:var(--accent);">BBD</span></td>
+      <td class="sym-col">Bds$</td>
+      <td>2.00</td>
+    </tr>
+<tr>
+      <td><a href="#Belgium">Belgium</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Bhutan">Bhutan</a></td>
+      <td>Bhutanese Ngultrum <span style="color:var(--accent);">BTN</span></td>
+      <td class="sym-col">Nu</td>
+      <td>95.72</td>
+    </tr>
+<tr>
+      <td><a href="#Brazil">Brazil</a></td>
+      <td>Brazilian Real <span style="color:var(--accent);">BRL</span></td>
+      <td class="sym-col">R$</td>
+      <td>5.12</td>
+    </tr>
+<tr>
+      <td><a href="#Canada">Canada</a></td>
+      <td>Canadian Dollar <span style="color:var(--accent);">CAD</span></td>
+      <td class="sym-col">C$</td>
+      <td>1.41</td>
+    </tr>
+<tr>
+      <td><a href="#Cayman_Islands">Cayman Islands</a></td>
+      <td>Cayman Islands Dollar <span style="color:var(--accent);">KYD</span></td>
+      <td class="sym-col">CI$</td>
+      <td>0.833</td>
+    </tr>
+<tr>
+      <td><a href="#Chile">Chile</a></td>
+      <td>Chilean Peso <span style="color:var(--accent);">CLP</span></td>
+      <td class="sym-col">CL$</td>
+      <td>925</td>
+    </tr>
+<tr>
+      <td><a href="#China">China</a></td>
+      <td>Chinese Yuan (Renminbi) <span style="color:var(--accent);">CNY</span></td>
+      <td class="sym-col">¥</td>
+      <td>6.79</td>
+    </tr>
+<tr>
+      <td><a href="#Costa_Rica">Costa Rica</a></td>
+      <td>Costa Rican Colón <span style="color:var(--accent);">CRC</span></td>
+      <td class="sym-col">₡</td>
+      <td>456</td>
+    </tr>
+<tr>
+      <td><a href="#Croatia">Croatia</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Curacao">Curaçao</a></td>
+      <td>Caribbean Guilder <span style="color:var(--accent);">XCG</span></td>
+      <td class="sym-col">ƒ</td>
+      <td>1.79</td>
+    </tr>
+<tr>
+      <td><a href="#Czech_Republic">Czech Republic</a></td>
+      <td>Czech Koruna <span style="color:var(--accent);">CZK</span></td>
+      <td class="sym-col">Kč</td>
+      <td>21.30</td>
+    </tr>
+<tr>
+      <td><a href="#Denmark">Denmark</a></td>
+      <td>Danish Krone <span style="color:var(--accent);">DKK</span></td>
+      <td class="sym-col">kr</td>
+      <td>6.55</td>
+    </tr>
+<tr>
+      <td><a href="#Egypt">Egypt</a></td>
+      <td>Egyptian Pound <span style="color:var(--accent);">EGP</span></td>
+      <td class="sym-col">E£</td>
+      <td>50.23</td>
+    </tr>
+<tr>
+      <td><a href="#Estonia">Estonia</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Finland">Finland</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#France">France</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#French_Polynesia">French Polynesia</a></td>
+      <td>CFP Franc <span style="color:var(--accent);">XPF</span></td>
+      <td class="sym-col">XPF</td>
+      <td>105</td>
+    </tr>
+<tr>
+      <td><a href="#Georgia">Georgia</a></td>
+      <td>Georgian Lari <span style="color:var(--accent);">GEL</span></td>
+      <td class="sym-col">₾</td>
+      <td>2.63</td>
+    </tr>
+<tr>
+      <td><a href="#Germany">Germany</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Greece">Greece</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Hong_Kong">Hong Kong</a></td>
+      <td>Hong Kong Dollar <span style="color:var(--accent);">HKD</span></td>
+      <td class="sym-col">HK$</td>
+      <td>7.84</td>
+    </tr>
+<tr>
+      <td><a href="#Hungary">Hungary</a></td>
+      <td>Hungarian Forint <span style="color:var(--accent);">HUF</span></td>
+      <td class="sym-col">Ft</td>
+      <td>314</td>
+    </tr>
+<tr>
+      <td><a href="#Iceland">Iceland</a></td>
+      <td>Icelandic Króna <span style="color:var(--accent);">ISK</span></td>
+      <td class="sym-col">kr</td>
+      <td>125</td>
+    </tr>
+<tr>
+      <td><a href="#Indonesia">Indonesia</a></td>
+      <td>Indonesian Rupiah <span style="color:var(--accent);">IDR</span></td>
+      <td class="sym-col">Rp</td>
+      <td>18,119</td>
+    </tr>
+<tr>
+      <td><a href="#Ireland">Ireland</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Italy">Italy</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Japan">Japan</a></td>
+      <td>Japanese Yen <span style="color:var(--accent);">JPY</span></td>
+      <td class="sym-col">¥</td>
+      <td>162</td>
+    </tr>
+<tr>
+      <td><a href="#Jordan">Jordan</a></td>
+      <td>Jordanian Dinar <span style="color:var(--accent);">JOD</span></td>
+      <td class="sym-col">JD</td>
+      <td>0.709</td>
+    </tr>
+<tr>
+      <td><a href="#Laos">Laos</a></td>
+      <td>Lao Kip <span style="color:var(--accent);">LAK</span></td>
+      <td class="sym-col">₭</td>
+      <td>22,376</td>
+    </tr>
+<tr>
+      <td><a href="#Luxembourg">Luxembourg</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Maldives">Maldives</a></td>
+      <td>Maldivian Rufiyaa <span style="color:var(--accent);">MVR</span></td>
+      <td class="sym-col">Rf</td>
+      <td>15.45</td>
+    </tr>
+<tr>
+      <td><a href="#Malta">Malta</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Mexico">Mexico</a></td>
+      <td>Mexican Peso <span style="color:var(--accent);">MXN</span></td>
+      <td class="sym-col">$</td>
+      <td>17.51</td>
+    </tr>
+<tr>
+      <td><a href="#Monaco">Monaco</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Montenegro">Montenegro</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Morocco">Morocco</a></td>
+      <td>Moroccan Dirham <span style="color:var(--accent);">MAD</span></td>
+      <td class="sym-col">DH</td>
+      <td>9.32</td>
+    </tr>
+<tr>
+      <td><a href="#Nepal">Nepal</a></td>
+      <td>Nepalese Rupee <span style="color:var(--accent);">NPR</span></td>
+      <td class="sym-col">Rs</td>
+      <td>153</td>
+    </tr>
+<tr>
+      <td><a href="#Netherlands">Netherlands</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#New_Zealand">New Zealand</a></td>
+      <td>New Zealand Dollar <span style="color:var(--accent);">NZD</span></td>
+      <td class="sym-col">NZ$</td>
+      <td>1.73</td>
+    </tr>
+<tr>
+      <td><a href="#Norway">Norway</a></td>
+      <td>Norwegian Krone <span style="color:var(--accent);">NOK</span></td>
+      <td class="sym-col">kr</td>
+      <td>9.78</td>
+    </tr>
+<tr>
+      <td><a href="#Oman">Oman</a></td>
+      <td>Omani Rial <span style="color:var(--accent);">OMR</span></td>
+      <td class="sym-col">RO</td>
+      <td>0.384</td>
+    </tr>
+<tr>
+      <td><a href="#Peru">Peru</a></td>
+      <td>Peruvian Sol <span style="color:var(--accent);">PEN</span></td>
+      <td class="sym-col">S/</td>
+      <td>3.41</td>
+    </tr>
+<tr>
+      <td><a href="#Philippines">Philippines</a></td>
+      <td>Philippine Peso <span style="color:var(--accent);">PHP</span></td>
+      <td class="sym-col">₱</td>
+      <td>61.65</td>
+    </tr>
+<tr>
+      <td><a href="#Poland">Poland</a></td>
+      <td>Polish Złoty <span style="color:var(--accent);">PLN</span></td>
+      <td class="sym-col">zł</td>
+      <td>3.80</td>
+    </tr>
+<tr>
+      <td><a href="#Portugal">Portugal</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Puerto_Rico">Puerto Rico</a></td>
+      <td>US Dollar <span style="color:var(--accent);">USD</span></td>
+      <td class="sym-col">$</td>
+      <td>—</td>
+    </tr>
+<tr>
+      <td><a href="#Qatar">Qatar</a></td>
+      <td>Qatari Riyal <span style="color:var(--accent);">QAR</span></td>
+      <td class="sym-col">QR</td>
+      <td>3.64</td>
+    </tr>
+<tr>
+      <td><a href="#Seychelles">Seychelles</a></td>
+      <td>Seychellois Rupee <span style="color:var(--accent);">SCR</span></td>
+      <td class="sym-col">SCR</td>
+      <td>14.30</td>
+    </tr>
+<tr>
+      <td><a href="#Singapore">Singapore</a></td>
+      <td>Singapore Dollar <span style="color:var(--accent);">SGD</span></td>
+      <td class="sym-col">S$</td>
+      <td>1.29</td>
+    </tr>
+<tr>
+      <td><a href="#Sint_Maarten">Sint Maarten</a></td>
+      <td>Caribbean Guilder <span style="color:var(--accent);">XCG</span></td>
+      <td class="sym-col">ƒ</td>
+      <td>1.79</td>
+    </tr>
+<tr>
+      <td><a href="#Slovenia">Slovenia</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#South_Korea">South Korea</a></td>
+      <td>South Korean Won <span style="color:var(--accent);">KRW</span></td>
+      <td class="sym-col">₩</td>
+      <td>1,497</td>
+    </tr>
+<tr>
+      <td><a href="#Spain">Spain</a></td>
+      <td>Euro <span style="color:var(--accent);">EUR</span></td>
+      <td class="sym-col">€</td>
+      <td>0.877</td>
+    </tr>
+<tr>
+      <td><a href="#Sri_Lanka">Sri Lanka</a></td>
+      <td>Sri Lankan Rupee <span style="color:var(--accent);">LKR</span></td>
+      <td class="sym-col">Rs</td>
+      <td>336</td>
+    </tr>
+<tr>
+      <td><a href="#Sweden">Sweden</a></td>
+      <td>Swedish Krona <span style="color:var(--accent);">SEK</span></td>
+      <td class="sym-col">kr</td>
+      <td>9.70</td>
+    </tr>
+<tr>
+      <td><a href="#Switzerland">Switzerland</a></td>
+      <td>Swiss Franc <span style="color:var(--accent);">CHF</span></td>
+      <td class="sym-col">Fr</td>
+      <td>0.813</td>
+    </tr>
+<tr>
+      <td><a href="#Taiwan">Taiwan</a></td>
+      <td>New Taiwan Dollar <span style="color:var(--accent);">TWD</span></td>
+      <td class="sym-col">NT$</td>
+      <td>32.18</td>
+    </tr>
+<tr>
+      <td><a href="#Thailand">Thailand</a></td>
+      <td>Thai Baht <span style="color:var(--accent);">THB</span></td>
+      <td class="sym-col">฿</td>
+      <td>33.44</td>
+    </tr>
+<tr>
+      <td><a href="#Turkey">Turkey</a></td>
+      <td>Turkish Lira <span style="color:var(--accent);">TRY</span></td>
+      <td class="sym-col">₺</td>
+      <td>47.01</td>
+    </tr>
+<tr>
+      <td><a href="#Turks_and_Caicos">Turks and Caicos</a></td>
+      <td>US Dollar <span style="color:var(--accent);">USD</span></td>
+      <td class="sym-col">$</td>
+      <td>—</td>
+    </tr>
+<tr>
+      <td><a href="#United_Arab_Emirates">United Arab Emirates</a></td>
+      <td>UAE Dirham <span style="color:var(--accent);">AED</span></td>
+      <td class="sym-col">Dh</td>
+      <td>3.67</td>
+    </tr>
+<tr>
+      <td><a href="#United_Kingdom">United Kingdom</a></td>
+      <td>Pound Sterling <span style="color:var(--accent);">GBP</span></td>
+      <td class="sym-col">£</td>
+      <td>0.748</td>
+    </tr>
+<tr>
+      <td><a href="#United_States">United States</a></td>
+      <td>US Dollar <span style="color:var(--accent);">USD</span></td>
+      <td class="sym-col">$</td>
+      <td>—</td>
+    </tr>
+<tr>
+      <td><a href="#Uruguay">Uruguay</a></td>
+      <td>Uruguayan Peso <span style="color:var(--accent);">UYU</span></td>
+      <td class="sym-col">$U</td>
+      <td>40.36</td>
+    </tr>
+<tr>
+      <td><a href="#Vietnam">Vietnam</a></td>
+      <td>Vietnamese Dong <span style="color:var(--accent);">VND</span></td>
+      <td class="sym-col">₫</td>
+      <td>26,191</td>
     </tr>
     </tbody>
   </table>
@@ -1470,7 +1485,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Canada" data-rate="1.403662" data-sym="C$">
+<div class="country-block" id="Canada" data-rate="1.414526" data-sym="C$">
   <div class="country-header">
     <span class="country-name">Canada</span>
     <span class="hsep">|</span>
@@ -1482,8 +1497,8 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Montréal · Québec City · Toronto · Vancouver · Victoria · Whistler</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">C$1.40</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">C$1.40</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">C$1.41</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">C$1.41</span></div>
     
   </div>
 </div>
@@ -1666,7 +1681,7 @@ html { scroll-behavior: smooth; }
 </div>
 <div class="region-section">
   <div class="region-header">South America</div>
-<div class="country-block" id="Argentina" data-rate="1474.7696" data-sym="AR$">
+<div class="country-block" id="Argentina" data-rate="1486.0549" data-sym="AR$">
   <div class="country-header">
     <span class="country-name">Argentina</span>
     <span class="hsep">|</span>
@@ -1678,8 +1693,8 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Buenos Aires</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">AR$1,475</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">AR$1,475</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">AR$1,486</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">AR$1,486</span></div>
     
   </div>
 </div>
@@ -1752,7 +1767,7 @@ html { scroll-behavior: smooth; }
   </div>
 </div>
 </div>
-<p class="rates-footer">Rates as of 17 July 2026 · 71 countries · Source: exchangerate-api.com</p>
+<p style="text-align:center;font-size:var(--fs-sub,12px);color:var(--muted,#6a6660);margin:24px 0 12px;padding-top:12px;border-top:1px solid var(--border,#d8d4cc);">Rates as of 17 July 2026 · 71 countries · Source: exchangerate-api.com</p>
 </div>
 
 <script>
