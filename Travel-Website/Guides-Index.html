@@ -3600,6 +3600,28 @@ window._giStatusFilter = 'all';
   if (!input) return;
   var items = [];
   var FLAG = /[\u{1F1E6}-\u{1F1FF}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+  // US state lookup so "New Mexico" surfaces Santa Fe, "California" surfaces LA, etc.
+  var US_STATES = {
+    'Alaska':'Alaska','Atlanta':'Georgia','Austin':'Texas',
+    'Bend':'Oregon','Big Island':'Hawaii','Boston':'Massachusetts',
+    'Boulder':'Colorado','Cape Cod':'Massachusetts','Carmel by the Sea':'California',
+    'Charlotte':'North Carolina','Chicago':'Illinois','Dallas':'Texas',
+    'Denver':'Colorado','Florida Keys':'Florida','Glacier National Park':'Montana',
+    'Kauai':'Hawaii','Key West':'Florida','La Jolla':'California',
+    'Lake Tahoe':'Nevada','Las Vegas':'Nevada','Los Angeles':'California',
+    'Malibu':'California','Miami':'Florida','Nashville':'Tennessee',
+    'New Orleans':'Louisiana','New York':'New York','Oahu':'Hawaii',
+    'Orcas Island':'Washington','Orlando':'Florida','Palm Desert':'California',
+    'Palo Alto':'California','Pasadena':'California','Pensacola':'Florida',
+    'Philadelphia':'Pennsylvania','Phoenix':'Arizona','Portland':'Oregon',
+    'Puerto Rico':'Puerto Rico','Sarasota':'Florida','San Diego':'California',
+    'San Francisco':'California','San Jose':'California',
+    'San Juan Island':'Washington','Santa Barbara':'California',
+    'Santa Cruz':'California','Santa Fe':'New Mexico','Santa Monica':'California',
+    'Scottsdale':'Arizona','Seattle':'Washington','Sedona':'Arizona',
+    'Virgin Islands':'US Virgin Islands','Washington DC':'Washington DC',
+    'Yellowstone':'Wyoming'
+  };
   document.querySelectorAll('.country[data-country]').forEach(function (grp) {
     var lbl = grp.querySelector('.country-label');
     var country = lbl ? lbl.textContent.split('·')[0].replace(FLAG, '').trim() : '';
@@ -3607,7 +3629,7 @@ window._giStatusFilter = 'all';
       if (card.hasAttribute('data-special')) return; // skip Best-of / non-guide cards
       var nm = card.querySelector('.dest-name');
       var href = card.getAttribute('href');
-      if (nm && href) items.push({ name: nm.textContent.trim(), sub: country, href: href });
+      if (nm && href) items.push({ name: nm.textContent.trim(), sub: country, href: href, text: US_STATES[nm.textContent.trim()] || '' });
     });
   });
   TVESearch.attach(input, { items: items }); // default onPick: navigate to href

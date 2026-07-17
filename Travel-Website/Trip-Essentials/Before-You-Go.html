@@ -38,18 +38,8 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
   border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px; background: #fff; outline: none; }
 #byg-find::placeholder { color: #A8895A; }
 #byg-find:focus, #byg-find:focus-visible { outline: none !important; border-color: #c8b99a; box-shadow: none; }
-/* Autocomplete dropdown — floats under the search box, "City · Country" rows */
+/* Autocomplete dropdown — uses shared TVESearch (.sa-suggest / .sa-row from web-travel-style.css) */
 .byg-find-wrap { position: relative; grid-column: 2; }
-#byg-suggest { position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 40;
-  background: #fff; border: 1px solid var(--border2,#e6e2da); border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(92,61,17,.16); max-height: 340px; overflow-y: auto; padding: 4px; }
-#byg-suggest[hidden] { display: none; }
-.byg-sug-row { display: block; width: 100%; text-align: left; box-sizing: border-box;
-  padding: 9px 14px; border: none; background: transparent; border-radius: 6px; cursor: pointer;
-  font-family: var(--font); font-size: 14px; font-weight: 600; color: var(--text,#1a1917); }
-.byg-sug-row .byg-sug-country { font-weight: 400; color: var(--muted,#6a6660); }
-.byg-sug-row:hover, .byg-sug-row.active { background: var(--bg,#f5f3ef); }
-.byg-sug-empty { padding: 12px; font-size: 13px; color: var(--muted,#6a6660); text-align: center; }
 .byg-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: start; max-width: 1120px; }
 /* Plug Adapter is a full-width strip above the grid — socket types laid out horizontally */
 .byg-plug-card { max-width: 1120px; margin-bottom: 14px; }
@@ -173,7 +163,6 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="byg-find-wrap" style="width:100%;max-width:100%;">
       <span class="byg-find-icon"><svg style="display:block" width="15" height="15" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5.5" cy="5.5" r="4.5" stroke="#c8a44a" stroke-width="1.5"/><line x1="9.35" y1="9.35" x2="12" y2="12" stroke="#c8a44a" stroke-width="1.5" stroke-linecap="round"/></svg></span>
       <input type="search" id="byg-find" placeholder="City or country" aria-label="Search by city or country" autocomplete="off" style="width:100%;">
-      <div id="byg-suggest" hidden></div>
     </div>
     <div class="byg-month-row">
       <select class="byg-month-select" id="byg-month"></select>
@@ -187,6 +176,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
   <div id="byg-results"></div>
 </div>
 
+<script src="../assets/search-autocomplete.js?v=2"></script>
 <script>
 (function () {
   'use strict';
@@ -199,7 +189,6 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     keys.sort(function (a, b) { return (CLIM[a].city || a).localeCompare(CLIM[b].city || b); });
 
     var searchEl = document.getElementById('byg-find');
-    var suggestEl = document.getElementById('byg-suggest');
     var monthEl = document.getElementById('byg-month');
     var unitEl = document.getElementById('byg-unit');
     var resultsEl = document.getElementById('byg-results');
@@ -225,43 +214,17 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       return { key: k, name: CLIM[k].city || k, country: country,
                nl: (CLIM[k].city || k).toLowerCase(), cl: country.toLowerCase() };
     }).sort(function (a, b) { return a.name.localeCompare(b.name); });
-    function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-    function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
-
-    var sugActive = -1;
-    function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; sugActive = -1; }
-
-    function renderSuggest() {
-      var q = (searchEl.value || '').trim().toLowerCase();
-      if (!q) { hideSuggest(); return; }
-      var matches = DESTS.filter(function (d) {
-        return d.nl.indexOf(q) >= 0 || d.cl.indexOf(q) >= 0;
-      }).sort(function (a, b) {
-        function score(d) { return d.nl.indexOf(q) === 0 ? 0 : d.nl.indexOf(q) >= 0 ? 1 : 2; }
-        return score(a) - score(b) || a.name.localeCompare(b.name);
-      }).slice(0, 60);
-      if (!matches.length) {
-        suggestEl.innerHTML = '<div class="byg-sug-empty">No destinations match “' + escHtml(searchEl.value.trim()) + '”.</div>';
-        suggestEl.hidden = false; sugActive = -1; return;
-      }
-      suggestEl.innerHTML = matches.map(function (d) {
-        return '<button type="button" class="byg-sug-row" data-city="' + escAttr(d.key) + '" data-name="' + escAttr(d.name) + '">' +
-          escHtml(d.name) + '<span class="byg-sug-country"> · ' + escHtml(d.country) + '</span></button>';
-      }).join('');
-      suggestEl.hidden = false; sugActive = -1;
-    }
-
     function chooseCity(key, name) {
       selectedCity = key;
       searchEl.value = name;
-      hideSuggest();
       render();
       // Do not scroll — keep the search box + Open Guide button in view; results render below.
     }
-    function paintActive() {
-      var rows = suggestEl.querySelectorAll('.byg-sug-row');
-      [].forEach.call(rows, function (r, i) { r.classList.toggle('active', i === sugActive); });
-      if (sugActive >= 0 && rows[sugActive]) rows[sugActive].scrollIntoView({ block: 'nearest' });
+    if (window.TVESearch) {
+      TVESearch.attach(searchEl, {
+        items: DESTS.map(function (d) { return { name: d.name, sub: d.country, key: d.key }; }),
+        onPick: function (item) { chooseCity(item.key, item.name); }
+      });
     }
 
     var curMonth = new Date().getMonth();
@@ -280,25 +243,6 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     resultsEl.addEventListener('click', function (e) {
       var b = e.target.closest('#byg-unit-card button'); if (!b) return;
       setUnit(b.dataset.u); render();
-    });
-    searchEl.addEventListener('input', renderSuggest);
-    searchEl.addEventListener('focus', function () { if (searchEl.value.trim()) renderSuggest(); });
-    suggestEl.addEventListener('mousedown', function (e) {
-      var b = e.target.closest('.byg-sug-row'); if (!b) return;
-      e.preventDefault();
-      chooseCity(b.getAttribute('data-city'), b.getAttribute('data-name'));
-    });
-    searchEl.addEventListener('keydown', function (e) {
-      var rows = suggestEl.hidden ? [] : suggestEl.querySelectorAll('.byg-sug-row');
-      if (e.key === 'ArrowDown') { e.preventDefault(); if (rows.length) { sugActive = Math.min(sugActive + 1, rows.length - 1); paintActive(); } }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); if (rows.length) { sugActive = Math.max(sugActive - 1, 0); paintActive(); } }
-      else if (e.key === 'Enter') {
-        var pick = sugActive >= 0 ? rows[sugActive] : rows[0];
-        if (pick) { e.preventDefault(); chooseCity(pick.getAttribute('data-city'), pick.getAttribute('data-name')); }
-      } else if (e.key === 'Escape') { hideSuggest(); }
-    });
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('.byg-find-wrap')) hideSuggest();
     });
     monthEl.addEventListener('change', render);
 
