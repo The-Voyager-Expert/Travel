@@ -176,7 +176,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
   <div id="byg-results"></div>
 </div>
 
-<script src="../assets/search-autocomplete.js?v=4"></script>
+<script src="../assets/search-autocomplete.js?v=5"></script>
 <script>
 (function () {
   'use strict';
@@ -222,7 +222,13 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     }
     if (window.TVESearch) {
       TVESearch.attach(searchEl, {
-        items: DESTS.map(function (d) { return { name: d.name, sub: d.country, key: d.key }; }),
+        items: DESTS.map(function (d) {
+          var sub = d.country;
+          if (d.country === 'United States' && window.TVESearch && window.TVESearch.CITIES) {
+            sub = window.TVESearch.CITIES[d.name.toLowerCase()] || 'United States';
+          }
+          return { name: d.name, sub: sub, key: d.key };
+        }),
         onPick: function (item) { chooseCity(item.key, item.name); }
       });
     }

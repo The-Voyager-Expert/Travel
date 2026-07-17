@@ -1796,6 +1796,9 @@ html { scroll-behavior: smooth; }
     inp.addEventListener('input',upd); upd();
   });
   input.addEventListener('input',function(){
+    // Skip live page filter while TVESearch dropdown is open (prevents showing results twice).
+    var dd=input.parentNode&&input.parentNode.querySelector('.sa-suggest');
+    if(dd&&!dd.hidden) return;
     var q=norm(input.value.trim()),shown=0;
     rows.forEach(function(r){var m=q===''||norm(r.textContent).indexOf(q)>-1;r.classList.toggle('idx-hide',!m);if(m)shown++;});
     blocks.forEach(function(b){var t=norm(b.textContent);b.style.display=(q===''||t.indexOf(q)>-1)?'':'none';});
@@ -1806,7 +1809,7 @@ html { scroll-behavior: smooth; }
   });
 })();
 </script>
-<script src="../assets/search-autocomplete.js?v=4"></script>
+<script src="../assets/search-autocomplete.js?v=5"></script>
 <script>(function(){
   if(!window.TVESearch) return;
   var input=document.getElementById('cur-search'); if(!input) return;

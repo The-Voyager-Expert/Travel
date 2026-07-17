@@ -202,5 +202,6 @@
     } };
   }
 
-  window.TVESearch = { attach: attach };
+  // Expose the US city→state map so pages can use it for sub-label display.
+  window.TVESearch = { attach: attach, CITIES: _US_CITIES };
 })();
