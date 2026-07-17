@@ -1,0 +1,450 @@
+<title>Cross-Page Consistency Audit — 2026-07-16</title>
+<style>
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --surface2: #f0ede8;
+  --text: #3d3a32;
+  --muted: #6a6660;
+  --border: #d8d4cc;
+  --border2: #e6e2da;
+  --accent: #b85c2a;
+  --gold: #c8a44a;
+  --green: #2a7a3b;
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1917;
+    --surface: #242220;
+    --surface2: #2e2c29;
+    --text: #e8e4de;
+    --muted: #a09890;
+    --border: #3a3834;
+    --border2: #302e2b;
+    --accent: #d4774a;
+    --gold: #d4a84a;
+    --green: #4aab5a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1917;
+  --surface: #242220;
+  --surface2: #2e2c29;
+  --text: #e8e4de;
+  --muted: #a09890;
+  --border: #3a3834;
+  --border2: #302e2b;
+  --accent: #d4774a;
+  --gold: #d4a84a;
+  --green: #4aab5a;
+}
+:root[data-theme="light"] {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --surface2: #f0ede8;
+  --text: #3d3a32;
+  --muted: #6a6660;
+  --border: #d8d4cc;
+  --border2: #e6e2da;
+  --accent: #b85c2a;
+  --gold: #c8a44a;
+  --green: #2a7a3b;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 24px 32px 48px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 900px;
+}
+h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 4px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(90deg, var(--accent) 0%, #d4874a 100%) 1;
+}
+.meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 28px;
+  letter-spacing: 0.02em;
+}
+h2 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin: 28px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border2);
+}
+h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 18px 0 8px;
+}
+p { margin: 0 0 10px; color: var(--text); }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num.green { color: var(--green); }
+.stat-num.accent { color: var(--accent); }
+.stat-num.muted { color: var(--muted); }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+thead tr { background: var(--surface2); }
+th {
+  text-align: left;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border2);
+  vertical-align: top;
+  color: var(--text);
+}
+tr:last-child td { border-bottom: none; }
+code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.tag.fixed { background: #edf7ed; color: #1e6b2e; }
+.tag.rec { background: #fef3e6; color: #7a4010; }
+.tag.ok { background: #f0f4ff; color: #2a4a7a; }
+.tag.note { background: var(--surface2); color: var(--muted); }
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.check-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.check-label { font-weight: 600; color: var(--text); }
+.check-detail { color: var(--muted); margin-top: 2px; font-size: 12px; }
+.gate-row {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.gate-name { font-weight: 600; color: var(--text); font-family: var(--mono); font-size: 11.5px; }
+.gate-detail { color: var(--muted); font-size: 12px; }
+.pill-demo {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin: 6px 0;
+}
+.pill-bad {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 14px;
+  border: 1px solid #d0a0a0;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface);
+}
+.pill-good {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface);
+}
+.arrow { color: var(--accent); font-weight: 700; }
+.rec-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.rec-block strong { color: var(--text); }
+.rec-block .rec-detail { color: var(--muted); margin-top: 3px; }
+@media (max-width: 600px) {
+  body { padding: 16px 14px 40px; }
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .gate-row { grid-template-columns: 1fr; }
+}
+</style>
+
+<h1>Cross-Page Consistency Audit</h1>
+<p class="meta">2026-07-16 · Weekly routine · 78 Trip-Essentials pages + Guides-Index + index.html scanned</p>
+
+<div class="summary-grid">
+  <div class="stat-card">
+    <div class="stat-num">80</div>
+    <div class="stat-label">Pages swept</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num accent">2</div>
+    <div class="stat-label">Violations found</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num green">2</div>
+    <div class="stat-label">Fixed &amp; pushed</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num muted">3</div>
+    <div class="stat-label">Recommendations</div>
+  </div>
+</div>
+
+<h2>Pill / Button Shape Violations</h2>
+
+<p>Two pages carried pills or badges with fully-round or stadium-shape <code>border-radius</code> values that conflict with the site standard of <code>6px</code>. Both fixed.</p>
+
+<div class="pill-demo">
+  <span class="pill-bad">+3 hrs</span>
+  <span class="arrow">→</span>
+  <span class="pill-good">+3 hrs</span>
+  <span style="font-size:12px;color:var(--muted)">999px → 6px (Time-Zones badge)</span>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Page</th><th>Element / class</th><th>Wrong value</th><th>Fix applied</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Best-Of-Index.html</code></td>
+      <td>JS-built filter chips (inline <code>style.cssText</code>, 3 instances on lines 323, 344, 345)</td>
+      <td><code>border-radius:14px</code></td>
+      <td><span class="tag fixed">Fixed</span> → <code>6px</code></td>
+    </tr>
+    <tr>
+      <td><code>Time-Zones.html</code></td>
+      <td><code>.vs-sea</code> — ahead/behind Seattle badge on every city card</td>
+      <td><code>border-radius: 999px</code></td>
+      <td><span class="tag fixed">Fixed</span> → <code>6px</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Checks 2–10: Results Per Check</h2>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 2 — Search input type</div>
+    <div class="check-detail">No <code>type="text"</code> violations. All 34 Best-of pages and all other search inputs use <code>type="search"</code>. See Recommendations for the wrapper class issue.</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 3 — Pill background colors</div>
+    <div class="check-detail">No beige/cream pill backgrounds found. No occurrences of <code>#fdf3e0</code>, <code>#fdf8f0</code>, <code>var(--warm)</code>, or siblings on pill/button elements.</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 4 — Native &lt;select&gt; appearance</div>
+    <div class="check-detail">Shared <code>web-travel-style.css</code> carries the base <code>select { -webkit-appearance: none; appearance: none; }</code> rule. No page-level style block overrides this with a different appearance value. <code>Before-You-Go.html</code> resets the focus ring on <code>.byg-select</code> and <code>.byg-month-select</code> but does not override <code>appearance</code>. 14 pages use <code>&lt;select&gt;</code> elements; all inherit correctly.</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 5 — Dropdown list item style drift</div>
+    <div class="check-detail">No local <code>&lt;style&gt;</code> block found overriding <code>.days-jump-item</code> font-weight or color for unselected items.</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 6 — Section label content (Best-of)</div>
+    <div class="check-detail"><code>Best-Of-Index.html</code> uses category labels (<em>Nature &amp; Outdoors</em>, <em>Water &amp; Adventure</em>, <em>Culture &amp; Heritage</em>, <em>Family</em>, <em>Accommodation</em>). These are intentional category headings for the index hub, not country-filter mismatches. The 33 content Best-of pages all use location names (countries, territories, island names) appropriate to their geography. No regional umbrella labels ("Caribbean Islands", "Islands") detected on content pages.</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 7 — Page banners</div>
+    <div class="check-detail">No <code>&lt;h1&gt;</code> with emoji, no inline font-size overrides, no non-standard weight/color. <code>brain_check</code> <code>check_banner_title_size</code> passes (115/116 checks OK).</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 8 — Page gutters</div>
+    <div class="check-detail">No <code>body {}</code> horizontal padding found. <code>Before-You-Go.html</code> sets <code>body { padding-bottom: ... }</code> only (safe-area bottom inset for mobile) — no horizontal impact.</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 9 — Active filter state colors</div>
+    <div class="check-detail">All filter chip active/on states use terracotta (<code>#b85c2a</code> or the gradient). The single anomaly flagged — <code>.byg-sug-row.active { background: var(--bg) }</code> in <code>Before-You-Go.html</code> — is an autocomplete suggestion list hover row, not a filter chip; correct behavior.</div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Check 10 — Toolbar presence</div>
+    <div class="check-detail">All 78 Trip-Essentials pages carry <code>toolbar.js</code> or <code>#voyager-toolbar</code>. No missing toolbar mounts.</div>
+  </div>
+</div>
+
+<h2>Check 11 — Festival Finder</h2>
+
+<div class="check-row">
+  <div class="check-icon">✅</div>
+  <div>
+    <div class="check-label">Toolbar, banner, gutter, pills, active state, search, REST state — all pass</div>
+    <div class="check-detail">
+      Toolbar mount present (<code>data-depth="1"</code>). Banner uses <code>.site-header &gt; h1.site-title</code> — matches the shared <code>.site-header h1</code> rule in <code>web-travel-style.css</code>. Gutter: <code>.ff-wrap { padding: 0 32px; }</code> → 32px desktop correct. Month button pills use <code>border-radius: 6px</code> ✓. Active month: terracotta gradient ✓. No search input on this page (month grid, not text search) ✓. All pill REST states white (<code>#fff</code>) ✓.
+    </div>
+  </div>
+</div>
+
+<div class="check-row">
+  <div class="check-icon">ℹ️</div>
+  <div>
+    <div class="check-label">Festival Finder — not in toolbar (by owner decision)</div>
+    <div class="check-detail"><code>Brain.md</code> Part 1 explicitly notes: "NOT in the toolbar and NOT in <code>Website-Main-Pages-Links.html</code> (the change-propagation routine incorrectly added it to both in July 2026; reverted by owner on 2026-07-16)." Intentional omission, not a gap.</div>
+  </div>
+</div>
+
+<h2>Fixed This Run</h2>
+
+<table>
+  <thead>
+    <tr><th>File</th><th>What changed</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Trip-Essentials/Best-Of-Index.html</code></td>
+      <td>3 occurrences of <code>border-radius:14px</code> in JS-generated filter chip inline styles → <code>6px</code></td>
+    </tr>
+    <tr>
+      <td><code>Trip-Essentials/Time-Zones.html</code></td>
+      <td><code>.vs-sea { border-radius: 999px }</code> → <code>6px</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:12px;color:var(--muted)">Committed as <code>9111840ad</code> · pushed to <code>main</code>.</p>
+
+<h2>Recommendations</h2>
+
+<div class="rec-block">
+  <strong>Best-of search wrapper: inline style instead of class (33/34 pages)</strong>
+  <div class="rec-detail">
+    Every Best-of content page (33 of 34) wraps its search input in <code>&lt;div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0"&gt;</code> instead of <code>&lt;div class="search-wrap"&gt;</code>. The type is already correct (<code>type="search"</code>). The wrapper deviation is structural (in the shared Best-of HTML template), not a CSS override that can be removed. Recommended fix: add <code>.search-wrap { display:flex; justify-content:center; gap:8px; margin:6px 0; }</code> to <code>web-travel-style.css</code> and update the template. 33-page bulk change — deferred.
+  </div>
+</div>
+
+<div class="rec-block">
+  <strong>Delta-Routes FAB button uses <code>border-radius: 50%</code></strong>
+  <div class="rec-detail">
+    <code>Delta-Routes-SEA.html</code> and <code>Delta-Routes-Full.html</code> both define <code>.hub-top.show { border-radius: 50%; }</code> for a fixed back-to-top floating action button (46×46px, <code>position:fixed</code>). A circular FAB is standard UX for a floating utility button. It is not a filter chip, disclosure toggle, or pill. Flagging for awareness rather than auto-fixing, since the circular shape is conventional for this element type and not a filter-pill drift.
+  </div>
+</div>
+
+<div class="rec-block">
+  <strong>CSS duplication warning (<code>brain_check</code>) — Recommendations/ folder only</strong>
+  <div class="rec-detail">
+    <code>brain_check</code> reports 37 duplicated CSS selectors, all originating from today's new report files in <code>Travel-Website/Recommendations/</code> (report-specific classes: <code>.ok</code>, <code>.report-title</code>, <code>.report-header</code>, <code>.change-row</code>, <code>.section-block</code>, etc. shared across 3–6 audit HTML files). These are private recommendation docs, not published pages. No action needed on the site's shared CSS. If the Recommendations report template is standardized, moving its classes into a shared report stylesheet would clear the warning.
+  </div>
+</div>
+
+<h2>Gate Results</h2>
+
+<div class="gate-row">
+  <div class="gate-name">brain_check.py</div>
+  <div class="gate-detail">115/116 ok · 1 warn (CSS duplication in Recommendations/ — out of scope)</div>
+  <div><span class="tag ok">Pass</span></div>
+</div>
+<div class="gate-row">
+  <div class="gate-name">check_css_duplication</div>
+  <div class="gate-detail">37 duplicated selectors, all in Recommendations/ folder files — out of scope</div>
+  <div><span class="tag note">Advisory</span></div>
+</div>
+<div class="gate-row">
+  <div class="gate-name">validate_mobile_render</div>
+  <div class="gate-detail">OK — 81 pages, no overflow, all filter pills within envelope (26–46px h / ≥12px font / ≥4px radius), all pill/button content centered</div>
+  <div><span class="tag ok">Pass</span></div>
+</div>
+<div class="gate-row">
+  <div class="gate-name">validate_pill_standard</div>
+  <div class="gate-detail">18 advisory items — all size-envelope variations (non-standard padding/font-size) on purpose-built small badges (rank dots, status badges, legend chips). No border-radius violations. None in scope for this routine.</div>
+  <div><span class="tag note">Advisory</span></div>
+</div>

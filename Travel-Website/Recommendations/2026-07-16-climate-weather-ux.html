@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate & Weather UX Audit — July 2026</title>
+<style>
+  :root{
+    --bg:#fdf8f0; --surface:#fff; --text:#1a1917; --muted:#6a6660;
+    --border:#e6e2da; --terracotta:#b85c2a; --gold:#8a6c1a; --navy:#3d5282;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:var(--font); color:var(--text); background:var(--bg); margin:0; line-height:1.5;}
+  .wrap{max-width:860px; margin:0 auto; padding:32px 24px 60px;}
+  header.rep{border-bottom:3px solid; border-image:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) 1; padding-bottom:14px; margin-bottom:8px;}
+  h1{font-size:20px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; color:#3d3a32; margin:0 0 4px;}
+  .sub{color:var(--muted); font-size:13px;}
+  .meta{color:var(--muted); font-size:12px; margin:2px 0 26px;}
+  .summary{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-bottom:28px; box-shadow:0 2px 12px rgba(92,61,17,.06);}
+  .summary p{margin:6px 0;}
+  .ok{color:#2e7d32; font-weight:600;}
+  h2{font-size:15px; text-transform:uppercase; letter-spacing:.05em; color:var(--terracotta); margin:30px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--border);}
+  .finding{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--terracotta); border-radius:8px; padding:12px 15px; margin:12px 0; box-shadow:0 1px 6px rgba(92,61,17,.05);}
+  .finding.low{border-left-color:#c4b896;}
+  .finding.med{border-left-color:var(--terracotta);}
+  .finding.high{border-left-color:#a61c00;}
+  .finding.oos{border-left-color:var(--navy);}
+  .ftitle{font-weight:700; font-size:14px; margin-bottom:4px;}
+  .fbody{font-size:13px; color:#33322e;}
+  .tag{display:inline-block; font-size:10px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; padding:2px 8px; border-radius:20px; margin-left:8px; vertical-align:middle;}
+  .tag.low{background:#efece3; color:#6a6660;}
+  .tag.med{background:#f6e3d6; color:#8a3d18;}
+  .tag.high{background:#f6d9d3; color:#a61c00;}
+  .tag.oos{background:#dde3ef; color:#2f3d5e;}
+  .noissue{color:#2e7d32; font-size:13px; font-style:italic;}
+  code{background:#f1ece2; padding:1px 5px; border-radius:4px; font-size:12px;}
+  footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--border); color:var(--muted); font-size:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="rep">
+    <h1>Climate &amp; Weather UX Audit</h1>
+    <div class="sub">The Voyager Expert — 🌤️ Weather section (Climate-Finder.html · Weather.html)</div>
+  </header>
+  <div class="meta">Generated 2026-07-16 · monthly climate-data-refresh routine · <strong>findings for the UX routine to action — no fixes applied here</strong></div>
+
+  <div class="summary">
+    <p><span class="ok">✓ Data &amp; coverage: fully clean this pass.</span> 220 cities in <code>climate.json</code>, weather.js baked block in sync, all 220 <code>GUIDE_LINKS</code> resolve to real files on disk — no missing, stale, or orphaned entries; no error flags; no bad hi/lo arrays; no zero coords.</p>
+    <p>This report covers only <strong>visual / structural / UX</strong> observations, which the routine leaves for the UX pass. <strong>5 findings + 1 out-of-scope note.</strong></p>
+  </div>
+
+  <h2>Climate-Finder.html — "Browse by Climate"</h2>
+
+  <div class="finding low">
+    <div class="ftitle">No city-name search entry point <span class="tag low">Low · by design</span></div>
+    <div class="fbody">The page is a reverse-climate finder driven by a month picker + a daytime-high temperature band (two <code>range</code> sliders). There is no text search box — correct for the interaction model, so the search-standard sub-checks (placeholder ellipsis, magnifier override, gold clear ✕) are <strong>N/A</strong>. UX consideration only: a lightweight "jump to a city" typeahead could complement the slider filter for users who already know the city they want. Not a defect — leave to UX judgment.</div>
+  </div>
+
+  <div class="finding med">
+    <div class="ftitle">Hardcoded accent hex in the page <code>&lt;style&gt;</code> block <span class="tag med">Medium</span></div>
+    <div class="fbody">Brand accents are written as literals rather than CSS tokens: the terracotta gradient, <code>#b85c2a</code>, <code>#a61c00</code> (hi), <code>#3d5282</code> (lo), <code>#3d3a32</code>, <code>#d8d4cc</code>. Structural colors correctly use <code>var(--surface,#fff)</code> / <code>var(--border2,#e6e2da)</code> with fallbacks, but the accents have no token. Per the SHARED-CSS-ONLY rule these accents should resolve to shared tokens. Widespread pre-existing pattern; grouped here for the UX/CSS-consolidation pass.</div>
+  </div>
+
+  <div class="finding med">
+    <div class="ftitle"><code>.sibling-pill</code> component defined locally in two pages <span class="tag med">Medium</span></div>
+    <div class="fbody">The <code>.sibling-pill</code> nav-pill class is defined identically in both <code>Climate-Finder.html</code> and <code>Weather.html</code> page <code>&lt;style&gt;</code> blocks. A component used by 2+ pages belongs in shared CSS (<code>web-travel-style.css</code>) — <code>check_css_duplication.py</code> flags this. Consolidate to one shared definition.</div>
+  </div>
+
+  <div style="font-size:13px; color:#33322e; margin:10px 0 4px;"><span class="ok">✓ Compliant:</span> viewport tag present · shared CSS at correct depth (<code>../assets/web-travel-style.css</code> + <code>../assets/mobile.css</code>) · toolbar mount has <code>data-depth="1" data-maxwidth="1040"</code> · <code>&lt;h1&gt;</code> text-only, uppercase via banner standard, terracotta underline · page gutter <code>0 32px</code> desktop / <code>0 12px</code> mobile · pill/filter states all correct (white rest, terracotta gradient on <code>.on</code>/hover, <code>#b85c2a</code> segmented buttons, terracotta slider <code>accent-color</code> — no gold-fill, no beige rest).</div>
+
+  <h2>Weather.html — "Weather by City"</h2>
+
+  <div class="finding high">
+    <div class="ftitle">City picker is a native <code>&lt;select&gt;</code> of 220 cities — no typeahead / search <span class="tag high">Review</span></div>
+    <div class="fbody">City selection is a plain HTML <code>&lt;select class="wx-city"&gt;</code> dropdown listing all 220 cities alphabetically. At that count a native dropdown is slow to scan and has no incremental search on most browsers. The routine's "search input present" expectation is not met here. A searchable/typeahead city picker (or reusing the shared <code>TVESearch</code> autocomplete component) would materially improve findability. Structural UX decision — for the UX routine to weigh.</div>
+  </div>
+
+  <div class="finding med">
+    <div class="ftitle">Page <code>&lt;style&gt;</code> uses hardcoded hex with no token fallbacks <span class="tag med">Medium</span></div>
+    <div class="fbody">The entire widget stylesheet is literal hex — <code>#c4b896</code>, <code>#b85c2a</code>, <code>#6b6860</code>, <code>#a61c00</code>, <code>#3d5282</code>, <code>#d8d5ce</code>, etc. — none routed through CSS variables (unlike Climate-Finder, which at least keeps <code>var(--x, fallback)</code> for structural colors). JS also emits inline <code>style=</code> colors into the rendered panel. Stronger SHARED-CSS divergence than the sibling page; consolidate to tokens in the CSS pass.</div>
+  </div>
+
+  <div style="font-size:13px; color:#33322e; margin:10px 0 4px;"><span class="ok">✓ Compliant:</span> viewport tag present · shared CSS at correct depth · toolbar mount <code>data-depth="1" data-maxwidth="460"</code> · <code>&lt;h1&gt;</code> text-only banner · pill states correct (<code>.wx-mon.on</code>/hover terracotta gradient, <code>.wx-unit button.on</code> <code>#b85c2a</code>, <code>.sibling-pill</code> white rest / terracotta hover) — no gold-fill, no beige rest · <code>updated-stamp</code> present and driven by <code>_generated</code>.</div>
+
+  <h2>Cross-page consistency</h2>
+  <div style="font-size:13px; color:#33322e;"><span class="ok">✓</span> Both pages share the same two sibling-nav pills (🌤 Weather by City ↔ 🌡️ Climate Finder + 📅 When to Go) and the identical "Forecast &amp; Research" external-link row — structurally consistent with each other. Banner, toolbar mount, and CSS-link pattern match the reference Trip-Essentials page (<code>Safety-Guide.html</code>). The only structural gap vs. Safety-Guide is the search-input model above (Safety-Guide has a real <code>&lt;input type="search"&gt;</code>; these two do not).</div>
+
+  <h2>Out of scope — noted for the owning routine</h2>
+  <div class="finding oos">
+    <div class="ftitle">Cards-ATM.html — 5 live brain_check <code>search-bar-standard</code> fails <span class="tag oos">Out of scope</span></div>
+    <div class="fbody">Not a Weather-section file, but surfaced by the site-wide brain_check during this run: <code>Cards-ATM.html</code>'s search bar references <code>--border2</code>, <code>--text</code>, and <code>--accent</code> with no page-level definition or fallback, so <code>border</code> / <code>:focus border-color</code> / <code>::placeholder</code> resolve to undefined (expected <code>1.5px solid #e6e2da</code> / <code>#c8b99a</code> / <code>#A8895A</code> per § 14). This is a live failure that will block any non-guide HTML push. Flagged for the Cards &amp; ATM / UX routine — not touched here.</div>
+  </div>
+
+  <footer>
+    The Voyager Expert · Climate &amp; Weather UX audit · run monthly by the climate-data-refresh routine.<br>
+    Data and content issues are fixed and pushed by that routine; the visual/format findings above are handed to the UX routine.
+  </footer>
+</div>
+</body>
+</html>

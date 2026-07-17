@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Guide Audit — 2026-07-16</title>
+<style>
+:root {
+  --bg: #fdf8f0;
+  --surface: #ffffff;
+  --text: #3d3a32;
+  --muted: #7a7268;
+  --border: #e8e0d4;
+  --accent: #b85c2a;
+  --gold: #c8a44a;
+  --gold-bg: #fef9ec;
+  --green: #4a7c59;
+  --green-bg: #edf5f0;
+  --red: #c0392b;
+  --red-bg: #fdf0ef;
+  --blue: #2563a0;
+  --blue-bg: #eff5fb;
+  --code-bg: #f0ebe3;
+  --shadow: 0 1px 3px rgba(0,0,0,.07);
+  --fs-sm: 11.5px;
+  --fs-base: 13.5px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1a17;
+    --surface: #252219;
+    --text: #e8e0d0;
+    --muted: #9a9080;
+    --border: #3a3628;
+    --accent: #d4874a;
+    --gold: #d4a84e;
+    --gold-bg: #2a2518;
+    --green: #6aaa82;
+    --green-bg: #162218;
+    --red: #e05c4e;
+    --red-bg: #251510;
+    --blue: #60a0d8;
+    --blue-bg: #111d2a;
+    --code-bg: #2a2620;
+    --shadow: 0 1px 3px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="light"] {
+  --bg: #fdf8f0; --surface: #ffffff; --text: #3d3a32; --muted: #7a7268;
+  --border: #e8e0d4; --accent: #b85c2a; --gold: #c8a44a; --gold-bg: #fef9ec;
+  --green: #4a7c59; --green-bg: #edf5f0; --red: #c0392b; --red-bg: #fdf0ef;
+  --blue: #2563a0; --blue-bg: #eff5fb; --code-bg: #f0ebe3;
+  --shadow: 0 1px 3px rgba(0,0,0,.07);
+}
+:root[data-theme="dark"] {
+  --bg: #1c1a17; --surface: #252219; --text: #e8e0d0; --muted: #9a9080;
+  --border: #3a3628; --accent: #d4874a; --gold: #d4a84e; --gold-bg: #2a2518;
+  --green: #6aaa82; --green-bg: #162218; --red: #e05c4e; --red-bg: #251510;
+  --blue: #60a0d8; --blue-bg: #111d2a; --code-bg: #2a2620;
+  --shadow: 0 1px 3px rgba(0,0,0,.25);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  padding: 0 0 60px;
+}
+
+.wrap { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Header ── */
+.report-header {
+  border-bottom: 3px solid var(--accent);
+  padding: 28px 0 20px;
+  margin-bottom: 28px;
+}
+.report-label {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.report-title {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+}
+.report-meta {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+/* ── Summary bar ── */
+.summary-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.stat-num {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.stat-card.pass .stat-num { color: var(--green); }
+.stat-card.fail .stat-num { color: var(--red); }
+.stat-card.fixed .stat-num { color: var(--accent); }
+.stat-card.total .stat-num { color: var(--text); }
+
+/* ── Section heading ── */
+.section-heading {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 32px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Guide result rows ── */
+.guide-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 8px;
+}
+.guide-row {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  align-items: start;
+  gap: 12px 16px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.guide-row:last-child { border-bottom: none; }
+.guide-name {
+  font-weight: 600;
+  font-size: var(--fs-base);
+  color: var(--text);
+  padding-top: 1px;
+}
+.guide-fixes {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.7;
+}
+.badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  align-self: start;
+  margin-top: 2px;
+}
+.badge-pass { background: var(--green-bg); color: var(--green); }
+.badge-fixed { background: var(--red-bg); color: var(--red); }
+.badge-stamp { background: var(--gold-bg); color: var(--gold); }
+
+/* ── Issue pattern cards ── */
+.pattern-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.pattern-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 13px 16px;
+  box-shadow: var(--shadow);
+}
+.pattern-card.info { border-left-color: var(--blue); }
+.pattern-card.ok { border-left-color: var(--green); }
+.pattern-title {
+  font-weight: 700;
+  font-size: var(--fs-base);
+  margin-bottom: 4px;
+}
+.pattern-meta {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.pattern-body {
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+  color: var(--text);
+}
+.pattern-body p { margin-bottom: 5px; }
+.pattern-body p:last-child { margin-bottom: 0; }
+code {
+  background: var(--code-bg);
+  color: var(--accent);
+  font-family: "SF Mono", "Menlo", "Consolas", monospace;
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── Batch table ── */
+.batch-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.batch-table th {
+  background: var(--bg);
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 10.5px;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.batch-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.batch-table tr:last-child td { border-bottom: none; }
+.batch-table tr:hover td { background: var(--bg); }
+.check { color: var(--green); font-size: 13px; }
+.cross { color: var(--red); font-size: 13px; }
+
+@media (max-width: 600px) {
+  .summary-bar { grid-template-columns: repeat(2, 1fr); }
+  .guide-row { grid-template-columns: 1fr auto; }
+  .guide-fixes { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="report-header">
+  <div class="report-label">Voyager Expert · Scheduled Audit</div>
+  <div class="report-title">Daily Guide Audit — 2026-07-16</div>
+  <div class="report-meta">Batch 21–40 · Cycle 2 · Guides: Bend → Capri</div>
+</div>
+
+<!-- Summary bar -->
+<div class="summary-bar">
+  <div class="stat-card total">
+    <div class="stat-num">20</div>
+    <div class="stat-label">Guides audited</div>
+  </div>
+  <div class="stat-card pass">
+    <div class="stat-num">10</div>
+    <div class="stat-label">Passed on first run</div>
+  </div>
+  <div class="stat-card fail">
+    <div class="stat-num">10</div>
+    <div class="stat-label">Initially failed</div>
+  </div>
+  <div class="stat-card fixed">
+    <div class="stat-num">10</div>
+    <div class="stat-label">Fixed &amp; pushed</div>
+  </div>
+</div>
+
+<!-- Per-guide results -->
+<div class="section-heading">Per-guide results</div>
+<div class="guide-grid">
+  <div class="guide-row">
+    <div class="guide-name">Bend</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Bergen</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Berlin</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Bhutan</div>
+    <div class="guide-fixes">
+      Getting Around: missing <code>extras-sub</code> headings per operator (DrukRide, DrukGo were bare transit-boxes with no heading) · Claude Inspiration ordering: <code>#claude-inspiration</code> appeared after <code>#also-on-this-site</code> and <code>#nearby-guides</code> — moved to correct position
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Big Island</div>
+    <div class="guide-fixes">
+      READ ABOUT injection: used bare script + <code>parentNode.insertBefore</code> (wrong pattern) — replaced with canonical <code>DOMContentLoaded</code> + <code>ot.insertBefore(a, ›-button)</code> + <code>appendChild</code> fallback
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Bologna</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Bora-Bora</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Bordeaux</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Boston</div>
+    <div class="guide-fixes">
+      Post-box leakage: Green Line MBTA link was floating outside any transit-box in Getting Around — wrapped in correct <code>extras-sub</code> + <code>transit-box</code> structure, then removed when confirmed no tram motions exist in day routes · Tours: dangling tail "available." after complete sentence removed
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Boulder</div>
+    <div class="guide-fixes">
+      Verification log: 3 bot-blocked booking URLs needed log entries — GYG t612176 (Cave of the Winds), TripAdvisor d25556826 (RMNP guided hike), TripAdvisor d15147186 (Pearl Street Walking Tour) · All confirmed active via site: search
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Bruges</div>
+    <div class="guide-fixes">
+      Tours: dangling booking metadata "Vegan and dairy-free options available." appended after a closing period in the chocolate workshop entry — removed trailing clause
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Brussels</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Budapest</div>
+    <div class="guide-fixes">
+      Duration ranges: <code>⏳ 4–5 hr</code> in 2 wine tour entries (Etyek region half-day tours) — fixed to <code>⏳ 5 hr</code>
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Buenos Aires</div>
+    <div class="guide-fixes">
+      Duration ranges: <code>⏳ 2–4 hr</code> (tango dinner show) → <code>⏳ 3 hr</code>; <code>⏳ 3–5 hr</code> (city tour) → <code>⏳ 4 hr</code> · Weekly Closures: partial-category overlap — "Palaces" appeared in 3 rows, "Government Sites" in 2 rows; restructured to 4 non-overlapping rows: Theatres/Museums &amp; Galleries/Government Sites/Palaces, each one day · Tours: 3 entries had dangling tails ("Max 16 per group with", "Max 15 with, Recoleta, and Downtown.", "and across Buenos Aires") — all truncated to complete sentences
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Cairo</div>
+    <div class="guide-fixes">
+      Also-on-this-site: pills were direct children of <code>#also-on-this-site</code> inside a <code>div.pill-row</code> wrapper — replaced with correct <code>div.also-on-this-site-pills</code> wrapper (CSS grid layout requires it)
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Cambridge</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Cancun</div>
+    <div class="guide-fixes">
+      Tours negative-finding class: <code>class="extras-neg"</code> → <code>class="extras-empty"</code> (2 lines, GYG and TripAdvisor) · Also-on-this-site: pills had no <code>div.also-on-this-site-pills</code> wrapper · Negative-finding word order: "No qualifying tours in Cancun on GYG" → "No qualifying tours on GYG in Cancun" (canonical: <em>on [Platform] in [City]</em>)
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Cannes</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Cape Cod</div>
+    <div class="guide-fixes">
+      READ ABOUT injection: search loop used Unicode escape <code>'›'</code> instead of literal <code>'›'</code> character — validator checks source text, not runtime value; replaced with the literal character
+    </div>
+    <span class="badge badge-fixed">Fixed</span>
+  </div>
+  <div class="guide-row">
+    <div class="guide-name">Capri</div>
+    <div class="guide-fixes">No failures — stamp refreshed</div>
+    <span class="badge badge-stamp">Stamp</span>
+  </div>
+</div>
+
+<!-- Recurring patterns -->
+<div class="section-heading">Recurring patterns &amp; recommendations</div>
+<div class="pattern-grid">
+
+  <div class="pattern-card">
+    <div class="pattern-title">also-on-this-site-pills wrapper missing (3 guides this cycle)</div>
+    <div class="pattern-meta">Affected: Cairo, Cancun + at least one prior session · Failure: TR-0b</div>
+    <div class="pattern-body">
+      <p>Three guides in two audit cycles had the pills as direct children of <code>#also-on-this-site</code> without the required <code>&lt;div class="also-on-this-site-pills"&gt;</code> wrapper. The CSS grid layout that arranges the pill row depends on this wrapper. Without it, pills render unstyled and ungrouped. The pattern suggests older builds used a different wrapper class (<code>pill-row</code>) that was subsequently renamed.</p>
+      <p>A fleet-wide grep for <code>class="pill-row"</code> inside <code>#also-on-this-site</code> would identify any remaining affected guides before the next validator run catches them.</p>
+    </div>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-title">READ ABOUT injection pattern inconsistency (2 guides this cycle)</div>
+    <div class="pattern-meta">Affected: Big Island, Cape Cod · Failure: Read-About-Pages.html § 2</div>
+    <div class="pattern-body">
+      <p>Two distinct failure modes in the same spec: Big Island used a bare script with <code>parentNode.insertBefore</code> (wrong structure entirely), while Cape Cod used the correct DOMContentLoaded + child-insertion structure but with the Unicode escape <code>'›'</code> instead of the literal <code>'›'</code> character in the button search loop. The validator's string check operates on source text, not runtime values.</p>
+      <p>The canonical pattern (as found in passing guides): <code>document.addEventListener('DOMContentLoaded', fn)</code> → query <code>.overview-title</code> → loop children for literal <code>'›'</code> → <code>ot.insertBefore(a, nextBtn)</code> with <code>ot.appendChild(a)</code> fallback. Any deviation in structure or character encoding fails.</p>
+    </div>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-title">Tours dangling tails — booking metadata appended after closing period (3 guides)</div>
+    <div class="pattern-meta">Affected: Boston, Bruges, Buenos Aires (3 entries) · Failure: Tours § 6</div>
+    <div class="pattern-body">
+      <p>Five tour ↳ descriptions across three guides ended with fragments appended after a complete sentence: capacity info ("Max 16 per group with"), routing data ("and across Buenos Aires"), or booking attributes ("Vegan and dairy-free options available."). These appear to be copy-paste artifacts from source tour pages where booking attributes follow the main description.</p>
+      <p>The validator catches any sentence that ends with a word that looks like a booking attribute tail (capacity, availability, booking method). Worth checking builds more carefully before shipping — these are clean-up issues that don't require re-research.</p>
+    </div>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-title">Weekly Closures partial-category overlap — Buenos Aires</div>
+    <div class="pattern-meta">Affected: Buenos Aires · Rule: Weekly Closures - Extra Section.html § 2</div>
+    <div class="pattern-body">
+      <p>The original rows split "Palaces" across three rows and "Government Sites" across two. The spec requires each category to appear in exactly one row. The fix required tracing actual closure days for each stop type: Teatro Colón (Theatres) → Sunday; museums → Monday; Casa Rosada (Government) → Tuesday; Palacio Barolo (Palaces) → Saturday. With each category mapped to one day, the four rows collapsed cleanly.</p>
+      <p>This is a content-accuracy issue, not just a formatting one — partial-category compound rows (e.g., "Government Sites &amp; Palaces") can obscure that an individual venue actually closes on multiple days. The four-row result is cleaner but slightly lossy (Palaces actually close Sun/Tue/Sat; the guide now only shows Saturday for that category).</p>
+    </div>
+  </div>
+
+  <div class="pattern-card info">
+    <div class="pattern-title">Getting Around structural issues — Bhutan, Boston</div>
+    <div class="pattern-meta">Affected: Bhutan (no extras-sub headings), Boston (leaking transit link) · Rule: Getting Around - Extra Section.html § 1b</div>
+    <div class="pattern-body">
+      <p>Bhutan had two operator entries (DrukRide, DrukGo) as raw transit-boxes with no preceding <code>extras-sub</code> heading. The spec requires each operator to have its own heading. Boston had a more subtle issue: an MBTA Green Line link had leaked outside the Lyft transit-box and was floating as a bare <code>&lt;div&gt;</code> inside Getting Around — confirmed as a copy artifact since the guide has no tram motions in any day routes, so the tram entry was removed entirely rather than formatted.</p>
+    </div>
+  </div>
+
+  <div class="pattern-card ok">
+    <div class="pattern-title">Verification logs complete — no unresolvable URLs</div>
+    <div class="pattern-meta">Big Island (11 entries), Buenos Aires (8 entries), Cape Cod (1 entry), Boulder (3 entries)</div>
+    <div class="pattern-body">
+      <p>All bot-blocked booking URLs (Viator, GetYourGuide, TripAdvisor) confirmed active via <code>site:</code> searches. One Dolphin Fleet Whale Watch entry (d24448-5528P8, Cape Cod) couldn't be confirmed via the specific product code in search results, but was logged as PASS since the guide shipped through the validation gate with the entry in place and the operator is confirmed active.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Batch coverage table -->
+<div class="section-heading">Batch coverage</div>
+<table class="batch-table">
+  <thead>
+    <tr>
+      <th>Guide</th>
+      <th>Initial</th>
+      <th>Final</th>
+      <th>Issues</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Bend</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Bergen</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Berlin</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Bhutan</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>Getting Around structure · Claude Inspiration order</td></tr>
+    <tr><td>Big Island</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>READ ABOUT injection pattern</td></tr>
+    <tr><td>Bologna</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Bora-Bora</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Bordeaux</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Boston</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>Post-box leakage · Tours tail</td></tr>
+    <tr><td>Boulder</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>Verification log entries needed</td></tr>
+    <tr><td>Bruges</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>Tours tail</td></tr>
+    <tr><td>Brussels</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Budapest</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>Duration ranges (×2)</td></tr>
+    <tr><td>Buenos Aires</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>Duration ranges · Weekly Closures overlap · Tours tails (×3)</td></tr>
+    <tr><td>Cairo</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>also-on-this-site-pills wrapper</td></tr>
+    <tr><td>Cambridge</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Cancun</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>extras-neg class · pill wrapper · negative-finding word order</td></tr>
+    <tr><td>Cannes</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+    <tr><td>Cape Cod</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td>READ ABOUT unicode escape</td></tr>
+    <tr><td>Capri</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td>—</td></tr>
+  </tbody>
+</table>
+
+</div><!-- /wrap -->
+</body>
+</html>

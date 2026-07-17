@@ -1,0 +1,506 @@
+<title>Travel Insurance Audit — July 2026</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-2: #f1f5f9;
+    --border: #e2e8f0;
+    --text: #0f2744;
+    --text-2: #3b5270;
+    --text-3: #64748b;
+    --accent: #1d4ed8;
+    --accent-soft: #eff6ff;
+    --added: #15803d;
+    --added-soft: #f0fdf4;
+    --added-border: #bbf7d0;
+    --updated: #b45309;
+    --updated-soft: #fffbeb;
+    --updated-border: #fde68a;
+    --confirmed: #1d4ed8;
+    --confirmed-soft: #eff6ff;
+    --confirmed-border: #bfdbfe;
+    --ux: #7c3aed;
+    --ux-soft: #f5f3ff;
+    --ux-border: #ddd6fe;
+    --removed: #b91c1c;
+    --removed-soft: #fef2f2;
+    --removed-border: #fecaca;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1829;
+      --surface: #141f30;
+      --surface-2: #1a2840;
+      --border: #243352;
+      --text: #e2eaf6;
+      --text-2: #94aabf;
+      --text-3: #64748b;
+      --accent: #60a5fa;
+      --accent-soft: #172035;
+      --added: #4ade80;
+      --added-soft: #052e16;
+      --added-border: #166534;
+      --updated: #fcd34d;
+      --updated-soft: #1c1100;
+      --updated-border: #854d0e;
+      --confirmed: #60a5fa;
+      --confirmed-soft: #172035;
+      --confirmed-border: #1d3a5f;
+      --ux: #a78bfa;
+      --ux-soft: #1e1030;
+      --ux-border: #4c1d95;
+      --removed: #f87171;
+      --removed-soft: #1f0606;
+      --removed-border: #7f1d1d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1829; --surface: #141f30; --surface-2: #1a2840;
+    --border: #243352; --text: #e2eaf6; --text-2: #94aabf; --text-3: #64748b;
+    --accent: #60a5fa; --accent-soft: #172035;
+    --added: #4ade80; --added-soft: #052e16; --added-border: #166534;
+    --updated: #fcd34d; --updated-soft: #1c1100; --updated-border: #854d0e;
+    --confirmed: #60a5fa; --confirmed-soft: #172035; --confirmed-border: #1d3a5f;
+    --ux: #a78bfa; --ux-soft: #1e1030; --ux-border: #4c1d95;
+    --removed: #f87171; --removed-soft: #1f0606; --removed-border: #7f1d1d;
+  }
+  :root[data-theme="light"] {
+    --bg: #f8fafc; --surface: #ffffff; --surface-2: #f1f5f9;
+    --border: #e2e8f0; --text: #0f2744; --text-2: #3b5270; --text-3: #64748b;
+    --accent: #1d4ed8; --accent-soft: #eff6ff;
+    --added: #15803d; --added-soft: #f0fdf4; --added-border: #bbf7d0;
+    --updated: #b45309; --updated-soft: #fffbeb; --updated-border: #fde68a;
+    --confirmed: #1d4ed8; --confirmed-soft: #eff6ff; --confirmed-border: #bfdbfe;
+    --ux: #7c3aed; --ux-soft: #f5f3ff; --ux-border: #ddd6fe;
+    --removed: #b91c1c; --removed-soft: #fef2f2; --removed-border: #fecaca;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .report-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .report-title-block { flex: 1 1 300px; }
+  .report-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+  .report-meta {
+    font-size: 12px;
+    color: var(--text-3);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .report-meta span::before { content: "·"; margin-right: 6px; color: var(--border); }
+  .report-meta span:first-child::before { content: ""; margin: 0; }
+
+  .count-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding-top: 4px;
+  }
+  .count-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 76px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .count-chip .n {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .count-chip .label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+  .count-chip.added   { background: var(--added-soft); border-color: var(--added-border); }
+  .count-chip.added .n   { color: var(--added); }
+  .count-chip.updated { background: var(--updated-soft); border-color: var(--updated-border); }
+  .count-chip.updated .n { color: var(--updated); }
+  .count-chip.confirmed { background: var(--confirmed-soft); border-color: var(--confirmed-border); }
+  .count-chip.confirmed .n { color: var(--confirmed); }
+  .count-chip.ux      { background: var(--ux-soft); border-color: var(--ux-border); }
+  .count-chip.ux .n   { color: var(--ux); }
+
+  /* ── Body wrapper ── */
+  .body-wrap { max-width: 860px; margin: 0 auto; padding: 32px 40px 0; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+
+  /* ── Change rows ── */
+  .change-list { display: flex; flex-direction: column; gap: 8px; }
+  .change-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 0 14px;
+    padding: 11px 14px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    align-items: start;
+    font-size: 13px;
+  }
+  .change-row.is-added     { background: var(--added-soft); border-color: var(--added-border); }
+  .change-row.is-updated   { background: var(--updated-soft); border-color: var(--updated-border); }
+  .change-row.is-confirmed { background: var(--confirmed-soft); border-color: var(--confirmed-border); }
+  .change-row.is-removed   { background: var(--removed-soft); border-color: var(--removed-border); }
+
+  .badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .badge.added     { background: var(--added); color: white; }
+  .badge.updated   { background: var(--updated); color: white; }
+  .badge.confirmed { background: var(--confirmed); color: white; }
+  .badge.removed   { background: var(--removed); color: white; }
+
+  .change-subject { font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .change-detail  { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .change-detail em { font-style: normal; font-weight: 600; color: var(--text); }
+  .change-old { text-decoration: line-through; color: var(--text-3); }
+  .arrow { color: var(--text-3); margin: 0 4px; }
+
+  /* ── Simple list ── */
+  .plain-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .plain-list li {
+    font-size: 13px;
+    color: var(--text-2);
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .plain-list li strong { color: var(--text); font-weight: 700; }
+  .plain-list li.none-msg { color: var(--text-3); font-style: italic; }
+
+  /* ── Validation row ── */
+  .validation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .val-card {
+    padding: 12px 14px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .val-card .val-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .val-card .val-result {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .val-card.pass { background: var(--added-soft); border-color: var(--added-border); }
+  .val-card.pass .val-result { color: var(--added); }
+
+  /* ── Commit block ── */
+  .commit-block {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-2);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 600px) {
+    .report-header { padding: 20px; }
+    .body-wrap { padding: 20px; }
+    .change-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+</style>
+
+<div class="report-header">
+  <div class="report-title-block">
+    <div class="report-eyebrow">Scheduled Audit · Biannual</div>
+    <div class="report-title">Travel Insurance Page Audit</div>
+    <div class="report-meta">
+      <span>2026-07-16</span>
+      <span>Travel-Website/Trip-Essentials/Travel-Insurance.html</span>
+      <span>travel-insurance-biannual-audit</span>
+    </div>
+  </div>
+  <div class="count-grid">
+    <div class="count-chip added"><span class="n">2</span><span class="label">Added</span></div>
+    <div class="count-chip updated"><span class="n">3</span><span class="label">Updated</span></div>
+    <div class="count-chip confirmed"><span class="n">14</span><span class="label">Confirmed</span></div>
+    <div class="count-chip ux"><span class="n">0</span><span class="label">UX Issues</span></div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+  <!-- Credit Cards -->
+  <div class="section">
+    <div class="section-title">Credit Card Benefits</div>
+    <div class="change-list">
+      <div class="change-row is-updated">
+        <span class="badge updated">Updated</span>
+        <div>
+          <div class="change-subject">Amex Platinum — Trip Delay</div>
+          <div class="change-detail">
+            <span class="change-old">None</span><span class="arrow">→</span>
+            <em>$500 after 6 hrs</em>. The card has always carried trip delay insurance ($500/covered trip, secondary, up to 2 claims/12 months, triggers at 6-hour delay). Caveat updated to note secondary coverage.
+          </div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Chase Sapphire Reserve</div>
+          <div class="change-detail">$795 fee · $10K trip cancel · $2,500 medical (with $50 deductible) · $100K evacuation · $500 after 6 hrs delay — all confirmed accurate.</div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Chase Sapphire Preferred</div>
+          <div class="change-detail">$95 fee · $10K trip cancel · $100K evacuation · $500 after 12 hrs delay — confirmed. June 2026 refresh confirmed added hotel credit and Global Entry credit; core travel insurance benefits unchanged.</div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Capital One Venture X</div>
+          <div class="change-detail">$395 fee · $2K trip cancel (common carrier only) · no medical · no evacuation · $500 after 6 hrs delay — all confirmed. Evacuation confirmed as "coordination only, no financial coverage."</div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Amex Platinum — Annual Fee</div>
+          <div class="change-detail">$895 confirmed (increased from $695 effective September 2025 for new applicants, January 2026 for existing). Page was already correct.</div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Amex Gold</div>
+          <div class="change-detail">$325 fee · no trip cancel · no medical · no evacuation · $300 after 12 hrs delay — all confirmed accurate.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coverage Guidance -->
+  <div class="section">
+    <div class="section-title">Coverage Guidance Numbers</div>
+    <div class="change-list">
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">All coverage guidance numbers</div>
+          <div class="change-detail">Trip cancel cost 4–10% · CFAR +50% premium reimburses 50–75% · Buy by 14–21 days · Medical recommended $100K · Evacuation recommended $250K–$500K · Baggage $500–$3,000 · Delay 6–12 hrs/$150–$500/day — all confirmed against Squaremouth and InsureMyTrip current market data.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Providers -->
+  <div class="section">
+    <div class="section-title">Standalone Providers</div>
+    <div class="change-list">
+      <div class="change-row is-added">
+        <span class="badge added">Added</span>
+        <div>
+          <div class="change-subject">AXA Assistance USA</div>
+          <div class="change-detail">New provider row added. Explorer Select ($250K primary medical, $500K evacuation) and Explorer Elite ($500K primary medical, $1M evacuation) fill the "highest coverage limits" gap not served by any existing provider. Backed by AXA Group. Link: axatravelinsurance.com.</div>
+        </div>
+      </div>
+      <div class="change-row is-updated">
+        <span class="badge updated">Updated</span>
+        <div>
+          <div class="change-subject">Travelex — children free description</div>
+          <div class="change-detail">
+            <span class="change-old">"Children 17 and under covered free on most plans"</span><span class="arrow">→</span>
+            <em>"One child 17 and under covered free per adult traveler on the Ultimate plan (child's trip cost must not exceed the adult's)."</em> Confirmed against Travelex site — free child coverage is specific to the Ultimate plan, not "most plans."
+          </div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">All 7 existing providers — active and accurate</div>
+          <div class="change-detail">Allianz (AllTrips annual plans) · Travel Guard/AIG (CFAR, free-look) · World Nomads (250+ activities, buy-while-traveling) · BCBS Global Solutions (formerly GeoBlue, bcbsglobalsolutions.com, rebrand through 2027) · Seven Corners (groups 10+) · IMG (imglobal.com, long-term/expat) — all confirmed active, serving US travelers, descriptions accurate, links valid.</div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Berkshire Hathaway Travel Protection — evaluated, not added</div>
+          <div class="change-detail">Active and reputable (4.5 NerdWallet). However, CFAR rate conflicting across sources (50% vs 75%) and medical limits below $100K recommendation on core plans. Insufficient confidence to add without resolving the conflict. Flagged for the next audit cycle.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="section">
+    <div class="section-title">Tips — Key Things to Know</div>
+    <div class="change-list">
+      <div class="change-row is-added">
+        <span class="badge added">Added</span>
+        <div>
+          <div class="change-subject">CFAR cancel deadline tip</div>
+          <div class="change-detail">New tip card: "CFAR has a hard cancel deadline." Most policies require canceling at least 48 hours before departure (some require 72 hours). Confirmed against Squaremouth and InsureMyTrip 2026 CFAR guidance. Notable gap in the existing tip set.</div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">All 6 existing tips confirmed accurate</div>
+          <div class="change-detail">Buy within 14–21 days · Covered reason definition · Pay with card to activate · Medicare stops at border ($30–$60 policy range) · Activity exclusions · Don't buy cruise line insurance — all verified accurate for 2026.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare Tools -->
+  <div class="section">
+    <div class="section-title">Compare Tools</div>
+    <div class="change-list">
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">InsureMyTrip &amp; Squaremouth</div>
+          <div class="change-detail">Both active, descriptions accurate, links verified.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search JS -->
+  <div class="section">
+    <div class="section-title">Search Function Audit</div>
+    <div class="change-list">
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Selector coverage — complete</div>
+          <div class="change-detail">Selector covers <code>.cov-card, .tip-card, .provider-row</code> — all content card types. New AXA Assistance USA uses <code>.provider-row</code> class, already included. <code>#ti-noresult</code> exists with correct show/hide logic. Decision table and CC table are not card-level searchable by design (table rows don't render partial visibility cleanly).</div>
+        </div>
+      </div>
+      <div class="change-row is-confirmed">
+        <span class="badge confirmed">Confirmed</span>
+        <div>
+          <div class="change-subject">Search UI standards — all pass</div>
+          <div class="change-detail">Placeholder "Provider or topic" — no trailing ellipsis ✓ · Input type is <code>search</code> ✓ · No page-specific background override on search selector ✓ · No <code>::-webkit-search-cancel-button</code> override (gold color from shared CSS) ✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UX Issues -->
+  <div class="section">
+    <div class="section-title">UX / Format Issues Logged</div>
+    <ul class="plain-list">
+      <li class="none-msg">No UX or format issues found this run. No hand-off file written.</li>
+    </ul>
+  </div>
+
+  <!-- Not Verified -->
+  <div class="section">
+    <div class="section-title">Not Verified This Run</div>
+    <ul class="plain-list">
+      <li><strong>Berkshire Hathaway Travel Protection CFAR rate:</strong> Conflicting sources (50% vs 75%). Not added until confirmed from primary source. Flagged for next audit.</li>
+    </ul>
+  </div>
+
+  <!-- Validation -->
+  <div class="section">
+    <div class="section-title">Validation</div>
+    <div class="validation-grid">
+      <div class="val-card pass">
+        <div class="val-label">brain_check.py</div>
+        <div class="val-result">114/114 ok · 0 warn · 0 fail</div>
+      </div>
+      <div class="val-card pass">
+        <div class="val-label">validate_mobile_render.py</div>
+        <div class="val-result">OK — no overflow, all pills within envelope</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Commit -->
+  <div class="section">
+    <div class="section-title">Commit</div>
+    <div class="commit-block">12deef2af &nbsp;·&nbsp; Travel Insurance: biannual audit July 2026 — Amex Platinum trip delay corrected, AXA added, Travelex plan name corrected, CFAR deadline tip added</div>
+  </div>
+
+</div>

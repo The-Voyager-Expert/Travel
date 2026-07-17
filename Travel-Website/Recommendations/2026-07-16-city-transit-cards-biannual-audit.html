@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>City Transit Cards — Biannual Audit — July 16, 2026</title>
+<style>
+:root {
+  --bg: #faf8f4;
+  --surface: #ffffff;
+  --border: #e8e0d4;
+  --text: #2c2820;
+  --muted: #7a6e5e;
+  --accent: #b85c2a;
+  --accent-light: #f5ece5;
+  --gold: #8a6c1a;
+  --gold-light: #f9f4e6;
+  --ok: #2d6a2d;
+  --ok-bg: #eaf4ea;
+  --warn: #7a4400;
+  --warn-bg: #fef3e2;
+  --info: #1e4a7a;
+  --info-bg: #e8f0fb;
+  --code-bg: #f0ebe3;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1510;
+    --surface: #231e17;
+    --border: #3a3025;
+    --text: #ede5d8;
+    --muted: #9a8a76;
+    --accent: #d4784a;
+    --accent-light: #2d1e14;
+    --gold: #c8a44a;
+    --gold-light: #2a2210;
+    --ok: #5ca85c;
+    --ok-bg: #142014;
+    --warn: #e08040;
+    --warn-bg: #261608;
+    --info: #6aa0d8;
+    --info-bg: #101e2e;
+    --code-bg: #2a2318;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #faf8f4; --surface: #ffffff; --border: #e8e0d4; --text: #2c2820;
+  --muted: #7a6e5e; --accent: #b85c2a; --accent-light: #f5ece5;
+  --gold: #8a6c1a; --gold-light: #f9f4e6;
+  --ok: #2d6a2d; --ok-bg: #eaf4ea; --warn: #7a4400; --warn-bg: #fef3e2;
+  --info: #1e4a7a; --info-bg: #e8f0fb; --code-bg: #f0ebe3;
+}
+:root[data-theme="dark"] {
+  --bg: #1a1510; --surface: #231e17; --border: #3a3025; --text: #ede5d8;
+  --muted: #9a8a76; --accent: #d4784a; --accent-light: #2d1e14;
+  --gold: #c8a44a; --gold-light: #2a2210;
+  --ok: #5ca85c; --ok-bg: #142014; --warn: #e08040; --warn-bg: #261608;
+  --info: #6aa0d8; --info-bg: #101e2e; --code-bg: #2a2318;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px; line-height: 1.65;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 40px 24px 60px; }
+.report-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+  border-bottom: 2px solid var(--accent); padding-bottom: 14px; margin-bottom: 28px;
+}
+.report-title { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: .01em; }
+.report-meta { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.summary-strip {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px;
+}
+.stat-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 14px;
+  font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap;
+}
+.stat-chip .num { font-size: 18px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.stat-chip.ok .num { color: var(--ok); }
+.stat-chip.warn .num { color: var(--warn); }
+.stat-chip.info .num { color: var(--info); }
+.section-title {
+  font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 14px; padding-top: 2px;
+}
+.section-block { margin-bottom: 36px; }
+.change-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 8px;
+  display: grid; grid-template-columns: 20px 1fr; gap: 0 12px; align-items: start;
+}
+.change-icon { font-size: 14px; line-height: 1.65; text-align: center; }
+.change-label { font-weight: 700; font-size: 13px; color: var(--text); }
+.change-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-top: 3px; }
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px;
+  border-radius: 4px; margin-left: 6px; vertical-align: middle;
+  letter-spacing: .04em;
+}
+.tag-fix { background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok); }
+.tag-add { background: var(--info-bg); color: var(--info); border: 1px solid var(--info); }
+.tag-update { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); }
+.city-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px;
+  margin-top: 10px;
+}
+.city-chip {
+  background: var(--info-bg); color: var(--info); border: 1px solid var(--info);
+  border-radius: 5px; padding: 4px 10px; font-size: 12px; font-weight: 600;
+}
+.city-chip.contactless::after {
+  content: " 📲"; font-size: 11px;
+}
+.confirmed-list {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 8px;
+}
+.confirmed-list p { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.confirmed-list p:last-child { margin-bottom: 0; }
+.notable-box {
+  background: var(--warn-bg); border: 1px solid var(--warn); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 8px;
+}
+.notable-box .notable-title { font-weight: 700; font-size: 13px; color: var(--warn); margin-bottom: 6px; }
+.notable-box ul { font-size: 13px; color: var(--muted); padding-left: 18px; }
+.notable-box li { margin-bottom: 4px; line-height: 1.55; }
+.commit-bar {
+  background: var(--code-bg); border-radius: 6px; padding: 10px 14px;
+  font-size: 12px; color: var(--muted); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.commit-hash { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 11px; color: var(--text); }
+.ok-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok);
+  border-radius: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px;
+  white-space: nowrap;
+}
+.ux-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 8px;
+}
+.ux-row .ux-what { font-weight: 700; font-size: 13px; color: var(--text); }
+.ux-row .ux-where { font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.ux-row .ux-why, .ux-row .ux-fix { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.55; }
+.ux-row .ux-fix { color: var(--info); }
+.ux-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; margin-top: 8px; }
+code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+@media (max-width: 500px) {
+  .report-header { flex-direction: column; }
+  .change-row { grid-template-columns: 1fr; }
+  .change-icon { display: none; }
+  .city-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="report-header">
+    <div class="report-title">🚇 City Transit Cards — Biannual Audit</div>
+    <div class="report-meta">July 16, 2026 &nbsp;·&nbsp; Automated run</div>
+  </header>
+
+  <div class="summary-strip">
+    <div class="stat-chip info"><span class="num">31</span> new cities added</div>
+    <div class="stat-chip warn"><span class="num">2</span> data corrections</div>
+    <div class="stat-chip ok"><span class="num">2</span> structural fixes</div>
+    <div class="stat-chip"><span class="num">4</span> UX findings logged</div>
+  </div>
+
+  <!-- ── Section 1: Content Changes ── -->
+  <div class="section-block">
+    <div class="section-title">Section 1 — Content changes applied this run</div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">London — Card fee corrected <span class="tag tag-update">UPDATE</span></div>
+        <div class="change-desc">The Oyster card entry listed a £5 <em>refundable</em> deposit, but the Oyster card fee has been £10 and is <strong>non-refundable</strong> for new cards since 2020. Cell label changed from "Deposit" to "Card fee"; value corrected to £10.</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">Washington DC — Missing guide link added <span class="tag tag-fix">FIX</span></div>
+        <div class="change-desc">The Washington DC row was missing both the <code>data-guide="Washington-DC"</code> attribute and its <code>Guide →</code> link inside <code>.tc-top</code>, despite a guide existing at <code>Travel-Website/Guides/Washington-DC/</code>. Both added.</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">Osaka / Kyoto — Dual guide links <span class="tag tag-fix">FIX</span></div>
+        <div class="change-desc">The combined Osaka/Kyoto card row previously linked only to the Kyoto guide. Added a second <code>Guide →</code> link for the Osaka guide alongside the existing Kyoto link, since both guides exist on disk.</div>
+      </div>
+    </div>
+
+    <div class="change-row">
+      <div class="change-icon">✅</div>
+      <div>
+        <div class="change-label">31 new cities added <span class="tag tag-add">ADDED</span></div>
+        <div class="change-desc">Every city with a shipped guide and no transit card entry was researched against official transit authority sources. 31 new <code>.transit-row</code> entries were added across three regions, each with verified 2026 fares, contactless status, network chips, tip text, and guide links where a guide exists.</div>
+        <div style="margin-top:10px;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Europe (17)</div>
+          <div class="city-grid">
+            <div class="city-chip contactless">Athens</div>
+            <div class="city-chip contactless">Brussels</div>
+            <div class="city-chip">Budapest</div>
+            <div class="city-chip">Copenhagen</div>
+            <div class="city-chip">Dublin</div>
+            <div class="city-chip contactless">Edinburgh</div>
+            <div class="city-chip">Geneva</div>
+            <div class="city-chip contactless">Glasgow</div>
+            <div class="city-chip contactless">Helsinki</div>
+            <div class="city-chip">Istanbul</div>
+            <div class="city-chip contactless">Milan</div>
+            <div class="city-chip">Munich</div>
+            <div class="city-chip">Oslo</div>
+            <div class="city-chip">Porto</div>
+            <div class="city-chip contactless">Stockholm</div>
+            <div class="city-chip contactless">Venice</div>
+            <div class="city-chip contactless">Zurich</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Asia (3)</div>
+          <div class="city-grid">
+            <div class="city-chip">Bangkok</div>
+            <div class="city-chip">Beijing</div>
+            <div class="city-chip">Shanghai</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Americas (11)</div>
+          <div class="city-grid">
+            <div class="city-chip contactless">Boston</div>
+            <div class="city-chip contactless">Buenos Aires</div>
+            <div class="city-chip contactless">Los Angeles</div>
+            <div class="city-chip">Montreal</div>
+            <div class="city-chip contactless">Philadelphia</div>
+            <div class="city-chip">Rio de Janeiro</div>
+            <div class="city-chip contactless">San Francisco</div>
+            <div class="city-chip">Santiago</div>
+            <div class="city-chip contactless">Seattle</div>
+            <div class="city-chip contactless">Toronto</div>
+            <div class="city-chip contactless">Vancouver</div>
+          </div>
+        </div>
+        <div style="font-size:12px; color:var(--muted); margin-top:8px;">📲 = contactless bank card / Apple Pay / Google Pay confirmed on all main lines</div>
+      </div>
+    </div>
+
+    <div class="notable-box">
+      <div class="notable-title">Notable 2026 transit changes found during research</div>
+      <ul>
+        <li><strong>Copenhagen Rejsekort discontinued May 28, 2026</strong> — physical card gone; page now reflects the Rejsekort App / Basiskort alternative. No direct tap at validators.</li>
+        <li><strong>Milan paper ATM tickets eliminated Jan 1, 2026</strong> — page reflects app/contactless-only boarding. Entry updated accordingly.</li>
+        <li><strong>Glasgow SPT Subway contactless since March 16, 2026</strong> — newly added with contactless badge.</li>
+        <li><strong>Bangkok MRT fully EMV contactless since June 2026</strong> — BTS still requires Rabbit Card; Bangkok entry reflects the two-system reality.</li>
+        <li><strong>Beijing foreign cards on all 29 subway lines since March 2026</strong> — Yikatong entry updated; virtual card in Apple Wallet noted.</li>
+        <li><strong>Los Angeles TAP contactless since May 2026</strong> — Digital TAP free via Apple Wallet noted.</li>
+        <li><strong>Seattle ORCA contactless since Feb 23, 2026</strong> — free via MyORCA app noted.</li>
+        <li><strong>Toronto PRESTO monthly fare capping replacing passes from Sep 2026</strong> — noted in tip text.</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <div class="section-title" style="margin-bottom:10px;">Confirmed accurate — no change</div>
+    <div class="confirmed-list">
+      <p>Paris (Navigo Easy, €2 fee, t+ €2.15), Amsterdam (OV-chipkaart, €7.50 refundable), Berlin (BVG, ABC zone), Barcelona (T-Casual / T-Usual), Rome (24h/48h/72h passes), Madrid (Multi card, Zone A €2.50), Vienna (Wiener Linien, 24h/48h/72h), Lisbon (Zapping / 24h pass), Prague (Lítačka) — all fares and policies confirmed against official transit authority pages. No changes.</p>
+      <p>Asia: Tokyo (IC cards / Suica / PASMO), Osaka/Kyoto (IC cards), Hong Kong (Octopus), Singapore (EZ-Link / SimplyGo), Seoul (T-money), Taipei (EasyCard) — confirmed accurate. No changes.</p>
+      <p>Americas (existing): New York (OMNY contactless + MetroCard), Chicago (Ventra), São Paulo (Bilhete Único), Porto Alegre (TRI card) — confirmed. No changes.</p>
+      <p>Oceania: Sydney (Opal), Melbourne (myki) — confirmed. No changes.</p>
+    </div>
+
+    <div class="commit-bar">
+      <span class="ok-badge">✓ brain_check 111/111</span>
+      <span>Commit <span class="commit-hash">3bdcf829d</span></span>
+      <span>·</span>
+      <span style="color:var(--muted)">City-Transit-Cards.html only staged and committed</span>
+    </div>
+  </div>
+
+  <!-- ── Section 2: UX Findings ── -->
+  <div class="section-block">
+    <div class="section-title">Section 2 — UX findings for the UX routine</div>
+
+    <div class="ux-row">
+      <div class="ux-what">Search input uses <code>type="text"</code> instead of <code>type="search"</code></div>
+      <div class="ux-where">City-Transit-Cards.html · <code>&lt;input type="text" id="tc-search"&gt;</code></div>
+      <div class="ux-label">What was found</div>
+      <div class="ux-why">The <code>#tc-search</code> input is declared as <code>type="text"</code>. The site's shared CSS in <code>web-travel-style.css</code> targets <code>input[type=search]</code> to inject the magnifier icon via <code>var(--search-icon)</code> and style the clear button via <code>::-webkit-search-cancel-button</code>. Both rules are bypassed entirely on a <code>type="text"</code> input, so the transit cards search box has no magnifier icon and no gold ✕ clear button — inconsistent with every other search box on the site.</div>
+      <div class="ux-label">Why it matters</div>
+      <div class="ux-why">Users see a plain unstyled text box instead of the standard branded search input. The missing clear button is a usability loss on mobile.</div>
+      <div class="ux-label">Suggested fix</div>
+      <div class="ux-fix">Change <code>type="text"</code> → <code>type="search"</code> on the <code>#tc-search</code> input. The shared CSS then applies automatically: magnifier icon, gold <code>::-webkit-search-cancel-button</code>, and consistent focus styling. No JS changes needed — the existing filter logic works on both input types.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">Inline <code>&lt;style&gt;</code> block duplicates shared pill and search CSS</div>
+      <div class="ux-where">City-Transit-Cards.html · <code>&lt;style&gt;</code> block · lines 9–130</div>
+      <div class="ux-label">What was found</div>
+      <div class="ux-why">The page defines <code>.search-wrap</code>, <code>#tc-search</code>, <code>#tc-search::placeholder</code>, <code>#tc-search:focus</code>, <code>.pills</code>, <code>.pill</code>, <code>.pill:hover</code>, and <code>.pill.active</code> inside a page-scoped <code>&lt;style&gt;</code> block. These duplicate classes that belong in shared CSS. When shared pill or search rules are updated in <code>web-travel-style.css</code> or <code>mobile.css</code>, this page will silently drift out of sync — the inline rules will win due to specificity.</div>
+      <div class="ux-label">Why it matters</div>
+      <div class="ux-why">Violates the site-wide SHARED CSS ONLY rule. Any future design system change (pill radius, active-state color, search width) will update every other page but leave the transit cards page visually stranded.</div>
+      <div class="ux-label">Suggested fix</div>
+      <div class="ux-fix">Audit the inline block against <code>web-travel-style.css</code> and <code>mobile.css</code>. Move any rule that already exists in shared CSS (or belongs there) out of the inline block. Anything page-specific (e.g., transit-card-specific layout rules) may stay. Run <code>python3 Brain/scripts/check_css_duplication.py</code> to confirm exit 0 after the move.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">Hardcoded hex colors in inline <code>&lt;style&gt;</code> block</div>
+      <div class="ux-where">City-Transit-Cards.html · <code>&lt;style&gt;</code> block</div>
+      <div class="ux-label">What was found</div>
+      <div class="ux-why">Two hardcoded hex values appear in the page's inline style rules where CSS variables should be used:
+        <ul style="margin: 6px 0 0 16px; font-size:12px; line-height:1.8;">
+          <li><code>#tc-search::placeholder</code> — <code>color: #A8895A</code> (should be <code>var(--muted)</code> or a placeholder token)</li>
+          <li><code>#tc-search:focus</code> — <code>border-color: #c8b99a</code> (should be <code>var(--border)</code> or <code>var(--accent)</code> at reduced opacity)</li>
+        </ul>
+      </div>
+      <div class="ux-label">Why it matters</div>
+      <div class="ux-why">Hardcoded colors don't respond to dark mode and can't be updated globally. Both values are close to existing tokens but not the same, creating subtle color inconsistency compared to other inputs on the site.</div>
+      <div class="ux-label">Suggested fix</div>
+      <div class="ux-fix">Replace <code>#A8895A</code> with <code>var(--muted)</code>; replace <code>#c8b99a</code> with <code>var(--border2)</code> or <code>var(--accent)</code>. Verify in both light and dark modes.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">Autocomplete attached to a <code>type="text"</code> input — clear button UX gap</div>
+      <div class="ux-where">City-Transit-Cards.html · inline <code>&lt;script&gt;</code> · <code>TVESearch.attach(input, …)</code></div>
+      <div class="ux-label">What was found</div>
+      <div class="ux-why">The <code>search-autocomplete.js</code> script is loaded and <code>TVESearch.attach()</code> is called correctly on <code>#tc-search</code>. However, because the input is <code>type="text"</code>, the native browser clear button (<code>::-webkit-search-cancel-button</code>) that the shared CSS styles gold is not present. Users who type a search term have no in-field clear affordance — they must backspace or click a filter pill to reset.</div>
+      <div class="ux-label">Why it matters</div>
+      <div class="ux-why">Minor usability gap, especially on mobile. Resolved as a side effect of fixing finding #1 (changing to <code>type="search"</code>).</div>
+      <div class="ux-label">Suggested fix</div>
+      <div class="ux-fix">No separate fix needed — this resolves automatically once the input type is changed to <code>type="search"</code> per finding #1 above.</div>
+    </div>
+
+    <div class="ux-row" style="background:var(--ok-bg); border-color: var(--ok);">
+      <div class="ux-what" style="color:var(--ok);">All other UX checks passed</div>
+      <div class="ux-why" style="margin-top:4px; font-size:13px;">Placeholder text — no trailing ellipsis ✓ · Active pills use terracotta gradient <code>#7a3b1e→#b85c2a→#d4874a</code> ✓ · Resting pills are white <code>#ffffff</code>, not beige ✓ · <code>TVESearch</code> script tag path correct (<code>../assets/search-autocomplete.js</code>) ✓ · No <code>body{}</code>, <code>*{}</code>, or <code>:root{}</code> base-style blocks in the inline <code>&lt;style&gt;</code> ✓ · <code>data-tags</code> contactless flags match <code>📲 Tap to pay</code> badges across all 31 new entries ✓ · All new entries in correct alphabetical order within their regional sections ✓</div>
+    </div>
+  </div>
+
+  <!-- ── Section 3: Page Improvement Recommendations ── -->
+  <div class="section-block">
+    <div class="section-title">Section 3 — Recommendations to improve the page</div>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">These are suggestions for the owner — not items the UX routine fixes automatically. Grouped by priority.</p>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--warn); margin-bottom:10px;">High priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">No intro / "how to use this page" block</div>
+      <div class="ux-label">Look &amp; Content</div>
+      <div class="ux-why">The page opens directly with the search bar and region filters. There is no sentence explaining what a transit card is, why a visitor would want one instead of tapping a bank card, or how to use the filters. First-time visitors who land here from a guide or search have no context — they may not understand the difference between "Deposit" and "Card fee," or why some cities show 📲 and others don't.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a compact intro block (2–3 sentences) below the title, above the search bar: what transit cards are, when to get one vs. just tapping your bank card, and a one-line key for the 📲 badge. This doubles as useful SEO-adjacent context and helps mobile users who scroll past the filters.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">Airport access is rarely mentioned in tip bars</div>
+      <div class="ux-label">Content gap — fleet-wide</div>
+      <div class="ux-why">Scanning all entries: only a handful of cities (Tokyo, Stockholm, Helsinki, Vancouver) mention whether the card covers the airport rail or requires a supplement. This is the #1 practical question travelers have — they arrive, want to take the train into the city, and don't know if their transit card works or if they need to buy a separate ticket. Cities like Paris (CDG — not covered by standard Navigo zones), Rome (Leonardo Express — not on the transit card), Barcelona (T-Casual — does NOT cover the airport), and Chicago (CTA Blue Line — does, no supplement) are currently silent on this.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a one-line airport note to the tip bar for every city that has a major international airport with a rail link. Use a consistent format: "✈️ Airport: [covered / zone add-on €X / separate ticket required]." This is high-value, immediately actionable information that no other element on the page currently provides.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">App-only cities don't warn users to set up the app before arrival</div>
+      <div class="ux-label">Content — Copenhagen, Munich, Oslo</div>
+      <div class="ux-why">Copenhagen (Rejsekort App / Basiskort), Munich (MVV/MVGO app), and Oslo (Ruter app) all require downloading and setting up a mobile app to buy tickets — there is no tap-at-gate contactless option and no physical card sold at most points of entry. The current tip bars describe the apps but don't flag the critical implication: if a traveler's phone is dead, roaming is off, or the app store is slow at the airport, they have no way to board. This is a real gotcha that catches visitors off guard.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a bold "⚠️ Download before you arrive — no tap-to-pay at gates" line as the opening sentence of the tip bar for all app-only cities. Consider also adding an "app-only" filter tag to <code>data-tags</code> so users can filter for this condition.</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--info); margin-bottom:10px; margin-top:20px;">Medium priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">Two-system cities don't clearly warn that one card ≠ full coverage</div>
+      <div class="ux-label">Content — Bangkok, Rio de Janeiro, Santiago, Buenos Aires (buses)</div>
+      <div class="ux-why">Bangkok requires a Rabbit Card for BTS and a bank card for MRT — two separate systems with no integration. Rio requires RioCard Mais and a separate Jaé card. Santiago's Pago Ágil works on metro but not buses. Buenos Aires contactless works on Subte + city buses but not suburban trains. The current entries describe both systems, but a traveler skimming the row might conclude "I can tap my bank card everywhere" when that is false. The visual layout presents both items side-by-side without a clear warning that neither covers the full network.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Open the tip bar for each two-system city with an explicit "⚠️ Two separate systems — no single card covers all lines." Then explain which card/method covers which system. Consider a visual separator or a distinct row style for multi-system entries so they stand out from single-card cities at a glance.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">Thin tip bars on several recently added entries</div>
+      <div class="ux-label">Content — Dublin, Porto, Geneva, Istanbul, Montreal</div>
+      <div class="ux-why">Several of the newly added entries have tip bars with one sentence or less of actionable advice — enough to pass validation but not enough to actually help a traveler plan. Examples: Dublin's tip doesn't mention that the Leap Card gives a discount vs. cash fare; Porto's doesn't warn that the Andante card zones are confusing for visitors; Geneva's doesn't mention that the hotel transit card only covers the Canton of Geneva and not intercity trains; Istanbul's doesn't note that card is essential because cash fares cost significantly more; Montreal doesn't flag that the OPUS card can't be loaded via app and must be reloaded at a physical machine or station.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">On the next update pass, expand tip bars for these five cities with at least 2–3 practical sentences each. The research is already done — these are well-documented transit systems. Prioritize the information travelers are most likely to need on arrival day.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">Stat counter accuracy after large additions</div>
+      <div class="ux-label">Look — page header counter bar</div>
+      <div class="ux-why">The page shows a counter like "N cities · M regions · K tap-to-pay" calculated from <code>data-tags</code> in JavaScript. This run added 31 cities, bringing the total significantly higher. The counter itself is dynamic (computed at runtime) so it should be correct — but the number of regions is hardcoded as the count of <code>.section</code> divs, and a "regions" label that shows "4" may now feel low given the page covers ~55+ cities across 4 regions. The metric is correct but may not be the most impressive framing.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Consider changing the counter bar to show "N cities · K with tap-to-pay · 4 regions" or adding a "countries covered" count (derivable from the entries) instead of the region count, which will always be 4. The city count after this run is a strong headline number worth surfacing prominently.</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; margin-top:20px;">Low priority</div>
+
+    <div class="ux-row">
+      <div class="ux-what">No "card expiry / value loss" information for any entry</div>
+      <div class="ux-label">Content gap — selected cities</div>
+      <div class="ux-why">Several transit cards expire or lose value if unused for a period (London Oyster balance is retained indefinitely but the card itself expires; Tokyo IC cards lose value after 10 years; Hong Kong Octopus has no expiry). Travelers who visit a city repeatedly often keep their transit card between trips — a one-line note on whether this is safe would be useful for returning visitors.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Add a brief "♻️ Reusable" or "⏳ Expires after X years" note to the tip bar for cities where this is commonly relevant (London, Tokyo, Hong Kong, Singapore, Sydney). Low effort, high value for repeat visitors.</div>
+    </div>
+
+    <div class="ux-row">
+      <div class="ux-what">No filter for "physical card required" vs "contactless OK" vs "app only"</div>
+      <div class="ux-label">Look — filter controls</div>
+      <div class="ux-why">The current filter pills are All / Europe / Asia / Americas / Oceania / 📲 Tap to pay. There is no way to filter for "I only want to tap my bank card" (contactless) vs "I need to get a physical card before arrival" vs "I need an app." As the page grows, these distinctions become more practically important — a business traveler who never carries extra cards wants a very different answer than a backpacker who pre-loads a physical card at each destination.</div>
+      <div class="ux-label">Suggested improvement</div>
+      <div class="ux-fix">Consider adding two new <code>data-tags</code> values: <code>app-only</code> (no physical card, no tap-to-pay) and exposing them as filter pills. The tag infrastructure already supports this pattern — it's an additive change. Low development effort; high utility for power users of the page.</div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
