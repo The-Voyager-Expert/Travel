@@ -913,23 +913,29 @@ document.addEventListener('DOMContentLoaded',()=>{
   var count=document.getElementById('lounge-count');
   var cards=[].slice.call(document.querySelectorAll('.airport-card'));
   var groups=[].slice.call(document.querySelectorAll('.group-header'));
+  var _input=input;
   input.addEventListener('input',function(){
-    var q=norm(input.value.trim()),shown=0;
-    cards.forEach(function(card){
-      var hay=norm(card.textContent).replace(/\buk\b/g,'uk united kingdom').replace(/\busa\b/g,'usa united states').replace(/\buae\b/g,'uae united arab emirates');
-      var match=q===''||hay.indexOf(q)>-1;
-      card.style.display=match?'':'none';
-      if(match){shown++; if(q&&window.LoungeUI)window.LoungeUI.expand(card);}
-    });
+    var _val=_input.value;
+    setTimeout(function(){
+      var dd=_input.parentNode&&_input.parentNode.querySelector('.sa-suggest');
+      if(dd&&!dd.hidden) return;
+      var q=norm(_val.trim()),shown=0;
+      cards.forEach(function(card){
+        var hay=norm(card.textContent).replace(/\buk\b/g,'uk united kingdom').replace(/\busa\b/g,'usa united states').replace(/\buae\b/g,'uae united arab emirates');
+        var match=q===''||hay.indexOf(q)>-1;
+        card.style.display=match?'':'none';
+        if(match){shown++; if(q&&window.LoungeUI)window.LoungeUI.expand(card);}
+      });
     groups.forEach(function(g){var any=false,el=g.nextElementSibling;
       while(el&&!el.classList.contains('group-header')){if(el.classList.contains('airport-card')&&el.style.display!=='none'){any=true;break;}el=el.nextElementSibling;}
       g.style.display=(q===''||any)?'':'none';});
     var noHits=(shown===0&&q!=='');
     if(noRes)noRes.style.display=noHits?'block':'none';
     if(count)count.textContent=q?(shown+(shown===1?' airport':' airports')):'';
-    if(legend)legend.style.display=q?'none':'';
-    if(pagenav)pagenav.style.display=q?'none':'';
-    var foot=document.querySelector('.tb-footnote');if(foot)foot.style.display=q?'none':'';
+      if(legend)legend.style.display=q?'none':'';
+      if(pagenav)pagenav.style.display=q?'none':'';
+      var foot=document.querySelector('.tb-footnote');if(foot)foot.style.display=q?'none':'';
+    },0);
   });
 })();
 </script>
@@ -989,7 +995,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   Object.keys(map).forEach(function(id){var s=document.getElementById(id);if(s)obs.observe(s);});
 })();
 </script>
-<script src="../assets/search-autocomplete.js?v=6"></script>
+<script src="../assets/search-autocomplete.js?v=7"></script>
 <script>
 (function () {
   if (!window.TVESearch) return;
@@ -1007,8 +1013,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     card.querySelectorAll('.lounge-name').forEach(function (l) { extra.push(l.textContent.trim()); });
     var city = nameEl.textContent.trim();
     var state = (window.TVESearch && window.TVESearch.CITIES) ? (window.TVESearch.CITIES[city.toLowerCase()] || '') : '';
-    items.push({ name: city, sub: state, text: extra.join(' ') });
+    items.push({ name: city, sub: state, text: extra.join(' '), _city: city, _code: code });
   });
+  // When multiple airports share the same city (e.g. JFK + LGA both "New York"),
+  // append the code so they're distinguishable in the dropdown.
+  var cityCount = {};
+  items.forEach(function(it) { cityCount[it._city] = (cityCount[it._city] || 0) + 1; });
+  items.forEach(function(it) { if (cityCount[it._city] > 1 && it._code) it.name = it._city + ' (' + it._code + ')'; });
   TVESearch.attach(input, { items: items });
 }());
 </script>
