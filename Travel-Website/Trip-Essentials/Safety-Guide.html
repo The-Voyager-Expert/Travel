@@ -515,8 +515,14 @@ a.city-row.hidden { display: none; }
     var nm=row.querySelector('.city-name'); if(!nm) return;
     var name=nm.textContent.trim();
     var k=name.toLowerCase(); if(!name||seen[k]) return; seen[k]=1;
-    var sub=row.querySelector('.city-country');
-    items.push({name:name, sub:sub?sub.textContent.trim():'', el:row});
+    var subEl=row.querySelector('.city-country');
+    var subText=subEl?subEl.textContent.trim():'';
+    // For US cities, show the state name so matches like "nor" → "North Carolina" make sense.
+    if(subText==='🇺🇸 USA' && window.TVESearch && window.TVESearch.CITIES){
+      var state=window.TVESearch.CITIES[name.toLowerCase()]||'';
+      if(state) subText=state;
+    }
+    items.push({name:name, sub:subText, el:row});
   });
   TVESearch.attach(input,{items:items, onPick:function(it){
     input.value=it.name;
