@@ -22,6 +22,38 @@
 (function () {
   'use strict';
 
+  // US state abbreviation → full name, for auto-expanding match text.
+  // Items whose name ends in " XX" or whose sub is exactly a 2-letter state code
+  // get the full state name appended to their hidden _t match field automatically,
+  // so typing "california" or "cali" surfaces "Santa Barbara CA", "Los Angeles CA" etc.
+  var _US = {
+    'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California',
+    'CO':'Colorado','CT':'Connecticut','DE':'Delaware','FL':'Florida','GA':'Georgia',
+    'HI':'Hawaii','ID':'Idaho','IL':'Illinois','IN':'Indiana','IA':'Iowa',
+    'KS':'Kansas','KY':'Kentucky','LA':'Louisiana','ME':'Maine','MD':'Maryland',
+    'MA':'Massachusetts','MI':'Michigan','MN':'Minnesota','MS':'Mississippi',
+    'MO':'Missouri','MT':'Montana','NE':'Nebraska','NV':'Nevada','NH':'New Hampshire',
+    'NJ':'New Jersey','NM':'New Mexico','NY':'New York','NC':'North Carolina',
+    'ND':'North Dakota','OH':'Ohio','OK':'Oklahoma','OR':'Oregon','PA':'Pennsylvania',
+    'RI':'Rhode Island','SC':'South Carolina','SD':'South Dakota','TN':'Tennessee',
+    'TX':'Texas','UT':'Utah','VT':'Vermont','VA':'Virginia','WA':'Washington',
+    'WV':'West Virginia','WI':'Wisconsin','WY':'Wyoming','DC':'District of Columbia'
+  };
+
+  function stateText(name, sub) {
+    var m = name && name.match(/ ([A-Z]{2})$/);
+    var fromName = (m && _US[m[1]]) ? _US[m[1]] : '';
+    var fromSub  = (sub && sub.length === 2) ? (_US[sub.toUpperCase()] || '') : '';
+    return fromName || fromSub;
+  }
+
+  function buildFields(it) {
+    it._n = String(it.name || '').toLowerCase();
+    it._s = String(it.sub  || '').toLowerCase();
+    var extra = stateText(it.name, it.sub);
+    it._t = (String(it.text || '') + (extra ? ' ' + extra : '')).toLowerCase();
+  }
+
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -41,17 +73,12 @@
       if (it && it.href) { window.location.href = it.href; return; }
       input.dispatchEvent(new Event('input', { bubbles: true }));
     };
-    // Match on name OR sub OR an optional free-text field `text` (e.g. an airport
-    // code + city + state string) so a search can match more than what it shows.
+    // Match on name OR sub OR _t (explicit text field + auto-expanded state name).
     var match = opts.match || function (it, q) {
       return it._n.indexOf(q) >= 0 || (it._s && it._s.indexOf(q) >= 0) || (it._t && it._t.indexOf(q) >= 0);
     };
 
-    items.forEach(function (it) {
-      it._n = String(it.name || '').toLowerCase();
-      it._s = String(it.sub || '').toLowerCase();
-      it._t = String(it.text || '').toLowerCase();
-    });
+    items.forEach(buildFields);
 
     // Dropdown floats inside the input's wrapper (needs positioning context).
     var wrap = input.parentNode;
@@ -124,7 +151,7 @@
 
     return { render: render, hide: hide, setItems: function (list) {
       items = (list || []).slice();
-      items.forEach(function (it) { it._n = String(it.name || '').toLowerCase(); it._s = String(it.sub || '').toLowerCase(); it._t = String(it.text || '').toLowerCase(); });
+      items.forEach(buildFields);
     } };
   }
 
