@@ -1,0 +1,706 @@
+<title>Rule Compliance Audit — 2026-07-17</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface2: #f2ede6;
+    --border: #e0d8ce;
+    --text: #2a2723;
+    --muted: #7a7068;
+    --accent: #b85c2a;
+    --accent-light: #fdf0e8;
+    --gold: #c8a44a;
+    --gold-light: #fdf6e0;
+    --green: #2a6a3a;
+    --green-light: #edf7f0;
+    --blue: #2a4a8a;
+    --blue-light: #edf2fb;
+    --warn: #7a5a1a;
+    --warn-light: #fdf6e0;
+    --code-bg: #f0ebe2;
+    --shadow: 0 1px 3px rgba(42,39,35,0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1814;
+      --surface: #242018;
+      --surface2: #2c2820;
+      --border: #3a3530;
+      --text: #f0ece4;
+      --muted: #9a9088;
+      --accent: #d47040;
+      --accent-light: #2a1e14;
+      --gold: #d4a840;
+      --gold-light: #241e0c;
+      --green: #4a9a5a;
+      --green-light: #0c1e10;
+      --blue: #5a82c8;
+      --blue-light: #0c1428;
+      --warn: #c8a040;
+      --warn-light: #241e0c;
+      --code-bg: #2a2620;
+      --shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1a1814;
+    --surface: #242018;
+    --surface2: #2c2820;
+    --border: #3a3530;
+    --text: #f0ece4;
+    --muted: #9a9088;
+    --accent: #d47040;
+    --accent-light: #2a1e14;
+    --gold: #d4a840;
+    --gold-light: #241e0c;
+    --green: #4a9a5a;
+    --green-light: #0c1e10;
+    --blue: #5a82c8;
+    --blue-light: #0c1428;
+    --warn: #c8a040;
+    --warn-light: #241e0c;
+    --code-bg: #2a2620;
+    --shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  :root[data-theme="light"] {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface2: #f2ede6;
+    --border: #e0d8ce;
+    --text: #2a2723;
+    --muted: #7a7068;
+    --accent: #b85c2a;
+    --accent-light: #fdf0e8;
+    --gold: #c8a44a;
+    --gold-light: #fdf6e0;
+    --green: #2a6a3a;
+    --green-light: #edf7f0;
+    --blue: #2a4a8a;
+    --blue-light: #edf2fb;
+    --warn: #7a5a1a;
+    --warn-light: #fdf6e0;
+    --code-bg: #f0ebe2;
+    --shadow: 0 1px 3px rgba(42,39,35,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .run-header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 28px 32px 22px;
+  }
+
+  .run-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .run-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .run-date {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .run-window {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .status-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px 3px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .status-pill.fixed { background: var(--green-light); color: var(--green); }
+  .status-pill.found { background: var(--accent-light); color: var(--accent); }
+  .status-pill.pass  { background: var(--green-light); color: var(--green); }
+  .status-pill.warn  { background: var(--warn-light); color: var(--warn); }
+  .status-pill.info  { background: var(--blue-light); color: var(--blue); }
+
+  .status-pill::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ── Layout ── */
+  .content {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-top: 36px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Track grid ── */
+  .track-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 580px) {
+    .track-grid { grid-template-columns: 1fr; }
+  }
+
+  .track-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .track-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .track-result {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .track-detail {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .track-card.has-findings { border-left: 3px solid var(--accent); }
+  .track-card.clean { border-left: 3px solid var(--green); }
+
+  /* ── Finding rows ── */
+  .finding-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 5px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .finding.fixed { border-left-color: var(--green); }
+  .finding.backfill { border-left-color: var(--gold); }
+  .finding.info { border-left-color: var(--blue); }
+
+  .finding-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+
+  .finding-name {
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .finding.fixed .finding-name { color: var(--green); }
+  .finding.backfill .finding-name { color: var(--gold); }
+  .finding.info .finding-name { color: var(--blue); }
+
+  .finding-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  .tag-fixed { background: var(--green-light); color: var(--green); }
+  .tag-found { background: var(--accent-light); color: var(--accent); }
+  .tag-backfill { background: var(--warn-light); color: var(--warn); }
+  .tag-info { background: var(--blue-light); color: var(--blue); }
+
+  .finding-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .finding-desc strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  code {
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: var(--text);
+  }
+
+  /* ── Validator bar ── */
+  .validator-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+
+  .vstat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+
+  .vstat-num {
+    font-size: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .vstat-num.ok { color: var(--green); }
+  .vstat-num.warn { color: var(--warn); }
+  .vstat-num.fail { color: var(--accent); }
+
+  .vstat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .vstat-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ── Summary table ── */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .summary-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .summary-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .summary-table tr:last-child td { border-bottom: none; }
+
+  .summary-table tr:hover td { background: var(--surface2); }
+
+  .summary-table .col-check {
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  .summary-table .col-date {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .summary-table .col-where {
+    color: var(--muted);
+  }
+
+  .summary-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+
+  /* ── Footer ── */
+  .run-footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 0 0; }
+
+  @media (max-width: 480px) {
+    .run-header { padding: 20px 16px 16px; }
+    .content { padding: 0 16px; }
+    .validator-bar { gap: 16px; }
+  }
+</style>
+
+<div class="run-header">
+  <div class="content" style="max-width:820px;margin:0 auto;">
+    <div class="run-meta">
+      <span class="run-title">Rule Compliance Audit</span>
+      <span class="run-date">2026-07-17</span>
+      <span class="run-window">Detection window: 2026-07-03 → 2026-07-17 (14 days · first run)</span>
+    </div>
+    <div class="status-row">
+      <span class="status-pill fixed">12 gaps fixed</span>
+      <span class="status-pill pass">brain_check 0 fail</span>
+      <span class="status-pill warn">1 warn (pre-existing)</span>
+      <span class="status-pill info">0 new enforcement gaps</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Detection Tracks -->
+  <div class="section">
+    <div class="section-label">Detection — 4 tracks</div>
+    <div class="track-grid">
+      <div class="track-card has-findings">
+        <div class="track-label">Track A — DriftyCat cross-check</div>
+        <div class="track-result">3 checks without DriftyCat bullets</div>
+        <div class="track-detail">Read CLAUDE.md DriftyCat vs brain_check ALL_CHECKS runner. Found 3 registered checks with no ⚠️ entry: <code>check_toolbar_group_icon_consistency</code>, <code>check_stop_row_rhythm</code>, <code>check_orphaned_task_folders</code>.</div>
+      </div>
+      <div class="track-card has-findings">
+        <div class="track-label">Track B — Checksum proxy (CORE RULES changes)</div>
+        <div class="track-result">1 commit — cascade already complete</div>
+        <div class="track-detail"><code>core_rules_checksums.json</code> updated 2026-07-16. Yesterday's reference docs audit confirmed all 4 new rules cascaded into CLAUDE.md and Cleanliness Checks.md. Validator Index.html body entries were NOT added — caught in prior cascade completeness check below.</div>
+      </div>
+      <div class="track-card has-findings">
+        <div class="track-label">Track C — New validator scripts</div>
+        <div class="track-result">9 checks missing from Validator Index body</div>
+        <div class="track-detail">New scripts added 2026-07-12 through 2026-07-17. All appear in brain_check runner and (for most) in Validator Index <code>.meta</code> changelog — but 9 had no body <code>&lt;li&gt;</code> entry in the browseable index.</div>
+      </div>
+      <div class="track-card clean">
+        <div class="track-label">Track D — New site pages</div>
+        <div class="track-result">No new non-guide pages</div>
+        <div class="track-detail">No commits in window added pages to <code>Travel-Website/</code> outside <code>Guides/</code>. TVESearch wiring confirmed site-wide by <code>check_city_search_tvesearch</code>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prior cascade completeness -->
+  <div class="section">
+    <div class="section-label">Prior cascade completeness — 9 Validator Index body entries missing</div>
+    <div class="finding-list">
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_toolbar_group_icon_consistency</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-12 · Rule 504</span>
+        </div>
+        <div class="finding-desc">Missing from both CLAUDE.md DriftyCat and Validator Index body. Added <code>&lt;li&gt;</code> entry and DriftyCat bullet. Check: toolbar dropdown groups (except Flights, Safety) must have children whose leading icon matches the group icon.</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_stop_row_rhythm</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-12 · Rule 505</span>
+        </div>
+        <div class="finding-desc">Missing from both CLAUDE.md DriftyCat and Validator Index body. Added both. Check: 7 locked spacing invariants in <code>guide-style.css</code> — ↳ row 6px, Wikipedia row 4px/8px, box rows 6px, stop-photos 8px, end-of-day banner 12px.</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_no_beige_pill_button</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-13 · Rule 497</span>
+        </div>
+        <div class="finding-desc">Present in Validator Index <code>.meta</code> changelog but missing from the browseable body list. Added <code>&lt;li&gt;</code> entry. DriftyCat bullet was already present (added 2026-07-13).</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_orphaned_task_folders</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-15 · warn-tier</span>
+        </div>
+        <div class="finding-desc">Missing from both CLAUDE.md DriftyCat and Validator Index body. Added both. Check: warns when <code>~/.claude/scheduled-tasks/</code> has folders with no matching live cron (a 62-folder/29-live divergence — 33 orphans — prompted this).</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_train_time_dep_arr_color</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-16 · hard-fail</span>
+        </div>
+        <div class="finding-desc">Not in Validator Index <code>.meta</code> or body (0 occurrences). Added body entry. DriftyCat bullet was already present. Check: <code>guide-style.css</code> must not set <code>color:</code> on <code>.dep</code>/<code>.arr</code> spans inside <code>.train-time</code>.</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_station_box_first_child_margin</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-16 · Rule 541</span>
+        </div>
+        <div class="finding-desc">In Validator Index <code>.meta</code> only (added yesterday's reference docs audit). Added body <code>&lt;li&gt;</code> entry. DriftyCat bullet already present.</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_index_table_design</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-16 · Rule 542</span>
+        </div>
+        <div class="finding-desc">In Validator Index <code>.meta</code> only. Added body entry. DriftyCat bullet already present. Check: Currency-Guide + Plug-Adapter <code>.index-table</code> must use terracotta design (no box-shadow, no zebra, terracotta hover, uppercase headers).</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_city_search_tvesearch</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-16 · Rule 543</span>
+        </div>
+        <div class="finding-desc">In Validator Index <code>.meta</code> only. Added body entry. DriftyCat bullet already present. Check: every search input must be wired to <code>TVESearch.attach()</code> — broadened 2026-07-17 to include <code>type="text"</code> inputs.</div>
+      </div>
+      <div class="finding fixed">
+        <div class="finding-head">
+          <span class="finding-name">check_train_time_left_padding</span>
+          <span class="finding-tag tag-fixed">FIXED</span>
+          <span style="font-size:10px;color:var(--muted)">added 2026-07-17 · Rule 538</span>
+        </div>
+        <div class="finding-desc">In Validator Index <code>.meta</code> only. Added body entry. DriftyCat bullet already present. Check: <code>div.train .train-time</code> locked to <code>padding: 2px 0</code> — no left indent after train-header moved above the box.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compliance pattern analysis -->
+  <div class="section">
+    <div class="section-label">Compliance pattern analysis — recent commit patterns</div>
+    <div class="finding-list">
+      <div class="finding backfill">
+        <div class="finding-head">
+          <span class="finding-name">Downtown Restaurants ↳ prefix</span>
+          <span class="finding-tag tag-backfill">BACKFILL QUEUE</span>
+        </div>
+        <div class="finding-desc"><strong>Pattern:</strong> 3 recent daily-audit commits added ↳ prefix to cuisine descriptions — Chicago (5), Columbia (5), Pokhara (3). <strong>Root cause:</strong> Not an enforcement gap. The validator has hard-failed on missing ↳ prefix since 2026-06-10 (CHANGELOG entry line 219). These are guides that shipped before enforcement existed. Daily audit is working through the pre-enforcement fleet backfill as expected.</div>
+      </div>
+      <div class="finding info">
+        <div class="finding-head">
+          <span class="finding-name">Read-about injection › literal (Phoenix)</span>
+          <span class="finding-tag tag-info">ALREADY COVERED</span>
+        </div>
+        <div class="finding-desc"><strong>Pattern:</strong> Phoenix fix used literal <code>›</code> character instead of <code>&rsaquo;</code>. <strong>Root cause:</strong> Phoenix was in the original 10-guide list for Rule 537 (bare appendChild without <code>›</code> search). Already enforced by <code>validate_itinerary.py</code> Rule 537. Fix confirmed and re-stamped in the daily audit commit.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixes summary table -->
+  <div class="section">
+    <div class="section-label">All fixes applied this run</div>
+    <div class="summary-table-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Check name</th>
+            <th>Added</th>
+            <th>Missing from</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-check">check_toolbar_group_icon_consistency</td>
+            <td class="col-date">2026-07-12</td>
+            <td class="col-where">DriftyCat + Validator Index body</td>
+            <td>Added both</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_stop_row_rhythm</td>
+            <td class="col-date">2026-07-12</td>
+            <td class="col-where">DriftyCat + Validator Index body</td>
+            <td>Added both</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_no_beige_pill_button</td>
+            <td class="col-date">2026-07-13</td>
+            <td class="col-where">Validator Index body</td>
+            <td>Added li entry</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_orphaned_task_folders</td>
+            <td class="col-date">2026-07-15</td>
+            <td class="col-where">DriftyCat + Validator Index body</td>
+            <td>Added both</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_train_time_dep_arr_color</td>
+            <td class="col-date">2026-07-16</td>
+            <td class="col-where">Validator Index (not in meta or body)</td>
+            <td>Added li entry</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_station_box_first_child_margin</td>
+            <td class="col-date">2026-07-16</td>
+            <td class="col-where">Validator Index body (in meta only)</td>
+            <td>Added li entry</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_index_table_design</td>
+            <td class="col-date">2026-07-16</td>
+            <td class="col-where">Validator Index body (in meta only)</td>
+            <td>Added li entry</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_city_search_tvesearch</td>
+            <td class="col-date">2026-07-16</td>
+            <td class="col-where">Validator Index body (in meta only)</td>
+            <td>Added li entry</td>
+          </tr>
+          <tr>
+            <td class="col-check">check_train_time_left_padding</td>
+            <td class="col-date">2026-07-17</td>
+            <td class="col-where">Validator Index body (in meta only)</td>
+            <td>Added li entry</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Validator results -->
+  <div class="section">
+    <div class="section-label">Validator results</div>
+    <div class="validator-bar">
+      <div class="vstat">
+        <span class="vstat-num ok">180</span>
+        <span class="vstat-label">Checks passed</span>
+      </div>
+      <div class="vstat">
+        <span class="vstat-num warn">1</span>
+        <span class="vstat-label">Warnings</span>
+      </div>
+      <div class="vstat">
+        <span class="vstat-num fail" style="color:var(--green)">0</span>
+        <span class="vstat-label">Failures</span>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div class="vstat-note"><strong>brain_check</strong> — 180/181 ok · 1 warn · 0 fail</div>
+        <div class="vstat-note" style="margin-top:4px;">Warning: <code>check_css_duplication_summary</code> — 104 duplicated CSS selectors (pre-existing known debt, not new this run)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Routine improvements (done in prior session) -->
+  <div class="section">
+    <div class="section-label">Routine improvements applied (prior session)</div>
+    <div class="finding-list">
+      <div class="finding info">
+        <div class="finding-head">
+          <span class="finding-name">Track A was silently empty every run</span>
+          <span class="finding-tag tag-info">FIXED IN ROUTINE</span>
+        </div>
+        <div class="finding-desc"><code>git log -- CLAUDE.md</code> always returned nothing — CLAUDE.md is Drive-only and untracked since 2026-07-14. Fixed: Track A now reads CLAUDE.md directly in current state and cross-references DriftyCat check references against the brain_check ALL_CHECKS runner.</div>
+      </div>
+      <div class="finding info">
+        <div class="finding-head">
+          <span class="finding-name">Track B was silently empty every run</span>
+          <span class="finding-tag tag-info">FIXED IN ROUTINE</span>
+        </div>
+        <div class="finding-desc"><code>git log -- "Brain/CORE RULES/"</code> always returned nothing — all Brain/ files are Drive-only. Fixed: Track B now uses <code>git log -- Brain/scripts/core_rules_checksums.json</code> which is committed every time CORE RULES files change.</div>
+      </div>
+      <div class="finding info">
+        <div class="finding-head">
+          <span class="finding-name">Prior cascade completeness check added</span>
+          <span class="finding-tag tag-info">NEW IN ROUTINE</span>
+        </div>
+        <div class="finding-desc">Added 2-pre step: cross-reference every registered check in brain_check ALL_CHECKS and validate_itinerary runner against Cleanliness Checks.md and Validator Index.html body entries. Catches exactly the 9-entry gap found this run.</div>
+      </div>
+      <div class="finding info">
+        <div class="finding-head">
+          <span class="finding-name">Reporting constraint enforced</span>
+          <span class="finding-tag tag-info">NEW IN ROUTINE</span>
+        </div>
+        <div class="finding-desc">Report output is HTML to <code>Travel-Website/Recommendations/</code> + Artifact at permanent URL in memory. Never .md. First run mints the URL and writes memory; subsequent runs redeploy in place.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="run-footer">
+    <span>Rule Compliance Audit — first run</span>
+    <span>brain_check: 0 fail · 1 warn · audit_log updated · Validator Index + CLAUDE.md fixed</span>
+  </div>
+
+</div>
