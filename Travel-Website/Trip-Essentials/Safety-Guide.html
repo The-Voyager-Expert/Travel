@@ -60,7 +60,7 @@ html { scroll-behavior: smooth; }
   border: 1.5px solid var(--border2,#e6e2da);
   border-radius: 6px;
   color: var(--text, #1a1917);
-  background: var(--search-icon, none) var(--surface,#fff) no-repeat 12px 50%;
+  background: var(--search-icon, none) var(--bg,#fff) no-repeat 12px 50%;
   background-size: 16px;
   outline: none;
   transition: border-color .15s, box-shadow .15s;
@@ -506,29 +506,5 @@ a.city-row.hidden { display: none; }
   window.addEventListener('hashchange', scrollToCity);
 })();
 </script>
-<script src="../assets/search-autocomplete.js?v=8"></script>
-<script>(function(){
-  if(!window.TVESearch) return;
-  var input=document.getElementById('city-search'); if(!input) return;
-  var items=[], seen={};
-  document.querySelectorAll('a.city-row').forEach(function(row){
-    var nm=row.querySelector('.city-name'); if(!nm) return;
-    var name=nm.textContent.trim();
-    var k=name.toLowerCase(); if(!name||seen[k]) return; seen[k]=1;
-    var subEl=row.querySelector('.city-country');
-    var subText=subEl?subEl.textContent.trim():'';
-    // For US cities, show the state name so matches like "nor" → "North Carolina" make sense.
-    if(subText==='🇺🇸 USA' && window.TVESearch && window.TVESearch.CITIES){
-      var state=window.TVESearch.CITIES[name.toLowerCase()]||'';
-      if(state) subText=state;
-    }
-    items.push({name:name, sub:subText, el:row});
-  });
-  TVESearch.attach(input,{items:items, onPick:function(it){
-    input.value=it.name;
-    input.dispatchEvent(new Event('input',{bubbles:true}));
-    if(it.el) it.el.scrollIntoView({block:'center'});
-  }});
-})();</script>
 </body>
 </html>
