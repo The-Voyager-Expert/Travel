@@ -65,10 +65,6 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 .cmp-input-wrap { position:relative; flex:1; min-width:180px; }
 .cmp-input { width:100%; padding:8px 12px 8px 34px; border:1px solid var(--border); border-radius:6px; background:var(--surface) var(--search-icon) no-repeat 11px center; color:var(--text); font-size:16px; box-sizing:border-box; }
 .cmp-input:focus { outline:none; border-color:var(--rust); }
-.cmp-suggestions { position:absolute; top:100%; left:0; right:0; background:var(--surface); border:1px solid var(--border); border-radius:0 0 6px 6px; max-height:180px; overflow-y:auto; z-index:200; display:none; }
-.cmp-suggestions.open { display:block; }
-.cmp-sug-item { padding:7px 12px; font-size:13px; cursor:pointer; }
-.cmp-sug-item:hover { background:var(--surface,#ffffff); border-color:#b85c2a; }
 .cmp-btn { padding:8px 18px; background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:600; white-space:nowrap; }
 .cmp-btn:hover { background:linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%); }
 .cmp-btn-clear { padding:8px 14px; background:none; border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:13px; color:var(--muted); }
@@ -185,9 +181,9 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
 <div id="compare-bar" class="active">
   <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text)">Compare up to 3 places</div>
   <div class="cmp-inputs">
-    <div class="cmp-input-wrap"><input class="cmp-input" id="cmp-a" placeholder="City or state" autocomplete="off"><div class="cmp-suggestions" id="cmp-sug-a"></div></div>
-    <div class="cmp-input-wrap"><input class="cmp-input" id="cmp-b" placeholder="City or state" autocomplete="off"><div class="cmp-suggestions" id="cmp-sug-b"></div></div>
-    <div class="cmp-input-wrap"><input class="cmp-input" id="cmp-c" placeholder="City or state" autocomplete="off"><div class="cmp-suggestions" id="cmp-sug-c"></div></div>
+    <div class="cmp-input-wrap"><input class="cmp-input" id="cmp-a" placeholder="City or state" autocomplete="off"></div>
+    <div class="cmp-input-wrap"><input class="cmp-input" id="cmp-b" placeholder="City or state" autocomplete="off"></div>
+    <div class="cmp-input-wrap"><input class="cmp-input" id="cmp-c" placeholder="City or state" autocomplete="off"></div>
     <button class="cmp-btn" id="cmp-go">Compare →</button>
     <button class="cmp-btn-clear" id="cmp-clear">Clear</button>
   </div>
@@ -3009,32 +3005,20 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
   });
   allNames = allNames.filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
 
-  var inputs = ['a','b','c'].map(function(id){
-    return {inp: document.getElementById('cmp-'+id), sug: document.getElementById('cmp-sug-'+id), val: ''};
-  });
-  function setupAC(slot) {
-    slot.inp.addEventListener('input', function() {
-      var q = slot.inp.value.trim().toLowerCase();
-      if (!q) { slot.sug.innerHTML=''; slot.sug.classList.remove('open'); return; }
-      var matches = allNames.filter(function(n){ return n.toLowerCase().indexOf(q) !== -1; }).slice(0,10);
-      slot.sug.innerHTML = matches.map(function(m){
-        return '<div class="cmp-sug-item" data-name="'+m.replace(/"/g,'&quot;')+'">'+m+'</div>';
-      }).join('');
-      slot.sug.classList.toggle('open', matches.length > 0);
-      slot.sug.querySelectorAll('.cmp-sug-item').forEach(function(item){
-        item.addEventListener('mousedown', function(e){ e.preventDefault(); slot.inp.value=item.dataset.name; slot.sug.classList.remove('open'); });
-      });
+  var inputs = ['a','b','c'].map(function(id){ return document.getElementById('cmp-'+id); });
+  if (window.TVESearch) {
+    var tveItems = allNames.map(function(n){ return {name: n}; });
+    inputs.forEach(function(inp){
+      TVESearch.attach(inp, {items: tveItems, onPick: function(item){ inp.value = item.name; }});
     });
-    slot.inp.addEventListener('blur', function(){ setTimeout(function(){ slot.sug.classList.remove('open'); }, 150); });
   }
-  inputs.forEach(setupAC);
 
   var goBtn = document.getElementById('cmp-go');
   var clearBtn = document.getElementById('cmp-clear');
   var result = document.getElementById('compare-result');
 
   goBtn.addEventListener('click', function() {
-    var chosen = inputs.map(function(s){ return s.inp.value.trim(); }).filter(function(v){ return v && placeMap[v]; });
+    var chosen = inputs.map(function(s){ return s.value.trim(); }).filter(function(v){ return v && placeMap[v]; });
     if (chosen.length < 2) { result.innerHTML='<p style="padding:12px;color:var(--muted)">Enter at least 2 matching city or state names.</p>'; result.classList.add('active'); return; }
     var cats = [];
     chosen.forEach(function(name){ placeMap[name].forEach(function(r){ if(cats.indexOf(r.cat)===-1) cats.push(r.cat); }); });
@@ -3056,7 +3040,7 @@ h1{font-size:28px;font-weight:800;margin:28px 0 4px;letter-spacing:-0.5px}
   });
 
   clearBtn.addEventListener('click', function(){
-    inputs.forEach(function(s){ s.inp.value=''; s.sug.classList.remove('open'); });
+    inputs.forEach(function(s){ s.value=''; });
     result.classList.remove('active'); result.innerHTML='';
   });
 })();
