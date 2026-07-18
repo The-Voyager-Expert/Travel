@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Rules Coherence Audit — 2026-07-18</title>
+<style>
+  :root {
+    --bg: #fdf8f0;
+    --surface: #ffffff;
+    --text: #3d3a32;
+    --muted: #6b6660;
+    --accent: #8a6c1a;
+    --border: #d4c4a0;
+    --terra: #b85c2a;
+    --terra-light: #f5ede8;
+    --green: #2e7d32;
+    --green-light: #e8f5e9;
+    --amber: #e65100;
+    --amber-light: #fff3e0;
+    --red: #c62828;
+    --red-light: #ffebee;
+    --blue-light: #e3f2fd;
+    --blue: #1565c0;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); max-width: 860px; margin: 0 auto; padding: 32px 24px; line-height: 1.55; font-size: 14px; }
+  h1 { font-size: 18px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 4px; border-bottom: 3px solid; border-image: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) 1; padding-bottom: 8px; }
+  h2 { font-size: 13px; font-weight: 700; color: var(--terra); text-transform: uppercase; letter-spacing: 0.05em; margin: 28px 0 10px; }
+  h3 { font-size: 13px; font-weight: 600; color: var(--text); margin: 16px 0 6px; }
+  .meta { font-size: 12px; color: var(--muted); margin: 6px 0 24px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+  .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 700; color: var(--terra); display: block; }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .check-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; border-radius: 6px; margin: 4px 0; border: 1px solid transparent; }
+  .check-row.pass { background: var(--green-light); border-color: #c8e6c9; }
+  .check-row.warn { background: var(--amber-light); border-color: #ffe0b2; }
+  .check-row.fail { background: var(--red-light); border-color: #ffcdd2; }
+  .check-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .check-body { flex: 1; }
+  .check-id { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .check-desc { font-size: 13px; font-weight: 600; margin: 1px 0; }
+  .check-detail { font-size: 12px; color: var(--muted); margin-top: 3px; font-family: monospace; white-space: pre-wrap; line-height: 1.4; }
+  .section-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .fix-item { background: var(--green-light); border: 1px solid #c8e6c9; border-radius: 6px; padding: 10px 14px; margin: 8px 0; }
+  .fix-item .fix-label { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.05em; }
+  .fix-item p { margin: 4px 0 0; font-size: 13px; }
+  .owner-item { background: var(--amber-light); border: 1px solid #ffe0b2; border-radius: 6px; padding: 10px 14px; margin: 8px 0; }
+  .owner-item .owner-label { font-size: 11px; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.05em; }
+  .owner-item p { margin: 4px 0 0; font-size: 13px; }
+  .rec-item { background: var(--blue-light); border: 1px solid #bbdefb; border-radius: 6px; padding: 10px 14px; margin: 8px 0; }
+  .rec-item .rec-label { font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.05em; }
+  .rec-item p { margin: 4px 0 0; font-size: 13px; }
+  .gate-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); margin: 6px 0; }
+  .gate-name { font-size: 13px; font-weight: 600; }
+  .gate-result { font-size: 12px; padding: 2px 10px; border-radius: 10px; font-weight: 700; }
+  .gate-result.pass { background: var(--green-light); color: var(--green); }
+  .gate-result.warn { background: var(--amber-light); color: var(--amber); }
+  code { background: #f0ebe0; border-radius: 3px; padding: 1px 5px; font-size: 12px; font-family: monospace; }
+  ul, ol { padding-left: 20px; margin: 6px 0; }
+  li { margin: 3px 0; }
+  @media (max-width: 600px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+
+<h1>Core Rules Coherence Audit</h1>
+<p class="meta">Run date: 2026-07-18 &nbsp;·&nbsp; Scope: All 27 CORE RULES HTML files &nbsp;·&nbsp; Routine: <code>core-rules-coherence-audit</code></p>
+
+<div class="summary-grid">
+  <div class="stat-box"><span class="stat-num" style="color:var(--green)">17</span><span class="stat-label">Pass</span></div>
+  <div class="stat-box"><span class="stat-num" style="color:var(--amber)">3</span><span class="stat-label">Warn (Owner Items)</span></div>
+  <div class="stat-box"><span class="stat-num" style="color:var(--green)">0</span><span class="stat-label">Fail</span></div>
+  <div class="stat-box"><span class="stat-num" style="color:var(--terra)">1</span><span class="stat-label">Fix Applied</span></div>
+</div>
+
+<!-- CHANGES THIS RUN -->
+<h2>Changes Applied This Run</h2>
+<div class="fix-item">
+  <div class="fix-label">Fixed &mdash; CLAUDE.md drift</div>
+  <p><strong>File:</strong> <code>CLAUDE.md</code> (Drive-only — not tracked by git)<br>
+  <strong>What changed:</strong> The Claude Inspiration DriftyCat bullet previously said <em>"Icon, title, and color theme stay Claude's free pick per guide."</em> That phrase contradicts <code>Claude Inspiration - Extra Section.html § 2</code> which says "No <code>theme-{color}</code> class is applied to the outer div." Fixed to: <em>"Icon and title stay Claude's free pick per guide — the section always renders on a plain white background (no <code>theme-{color}</code> class on the outer div, per <code>Claude Inspiration - Extra Section.html § 2</code>). Only the presence of the section became mandatory, not its content shape."</em></p>
+</div>
+
+<!-- OWNER ITEMS -->
+<h2>Owner Items (require owner approval to fix)</h2>
+
+<div class="owner-item">
+  <div class="owner-label">Owner Item — C-08: Intra-CORE-RULES contradiction (Claude Inspiration color theme)</div>
+  <p><strong>Guide Structure.html § 2</strong> item #15 says: <em>"Claude Inspiration (free-form observations from the trip — icon, title, and color theme are Claude's pick per guide)"</em>.</p>
+  <p><strong>Claude Inspiration - Extra Section.html § 2</strong> says: <em>"No <code>theme-{color}</code> class is applied to the outer div — the correct format is <code>class="claude-inspiration"</code> with no modifier."</em></p>
+  <p>Both are CORE RULES files. Cannot be resolved without owner approval. <strong>Proposed fix:</strong> update Guide Structure.html § 2 item #15 to say <em>"icon and title are Claude's pick"</em> (remove "and color theme").</p>
+</div>
+
+<div class="owner-item">
+  <div class="owner-label">Owner Item — C-18: Rules for Claude.html predates the 2026-07-12 delete policy</div>
+  <p><strong>Rules for Claude.html §2</strong> DriftyCat says: <em>"🚫 Deletion loop — never <code>rm</code> a Drive-only file. Untracked files cannot be recovered from git. Move them to <code>Travel/archive/</code> — never <code>rm</code>."</em></p>
+  <p><strong>CLAUDE.md § 3</strong> (updated 2026-07-12) says: <em>"DELETE git-tracked files (all of Travel-Website/ + tracked Brain/ files) → delete it directly — git history is the archive."</em></p>
+  <p>The delete-git-tracked policy was added to CLAUDE.md on 2026-07-12 and is correctly implemented in memory (<code>feedback_delete_vs_archive.md</code>). However, <code>Rules for Claude.html</code> predates it and still frames the entire conversation as "archive-only." The two documents now conflict. <strong>Proposed fix:</strong> update Rules for Claude.html §2 to distinguish git-tracked (delete freely) vs Drive-only (archive only), aligning with the 2026-07-12 CLAUDE.md policy.</p>
+</div>
+
+<!-- RECOMMENDATIONS -->
+<h2>Recommendations</h2>
+
+<div class="rec-item">
+  <div class="rec-label">Recommendation — C-19: nearby-guides undocumented in Guide Structure § 2</div>
+  <p>The <code>eoi_canonical_order</code> list in <code>validate_itinerary.py</code> includes <code>"nearby-guides"</code> as the final ordered section (after <code>also-on-this-site</code>). This div is injected by <code>Brain/scripts/build_nearby_guides.py</code> on ship. <strong>Guide Structure.html § 2</strong> doesn't name or describe it anywhere. Future builders won't know it exists from the spec alone. <strong>Proposed fix:</strong> add a brief mention after the Also-on-this-site entry in § 2 noting that the nearby-guides block is auto-injected at ship time and validated by <code>eoi_canonical_order</code>.</p>
+</div>
+
+<!-- 20 COHERENCE CHECKS -->
+<h2>Coherence Checks (C-01 through C-20)</h2>
+
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-01</div><div class="check-desc">All 27 CORE RULES files exist on disk</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-02</div><div class="check-desc">eoi_canonical_order matches Guide Structure § 2 section order (14 extra sections)</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-03</div><div class="check-desc">_OVERVIEW_PILL_CANONICAL_LABELS matches Trip Overview § 3 table (emoji-normalized)</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-04</div><div class="check-desc">_OVERVIEW_PILL_CANONICAL_ORDER matches Trip Overview § 3 row order</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-05</div><div class="check-desc">Claude Inspiration § 1 declares the section Required (not Optional)</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-06</div><div class="check-desc">Claude Inspiration § 2 prohibits theme-{color} class (white background)</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-07</div><div class="check-desc">Validator has check enforcing no theme-{color} on claude-inspiration div</div></div></div>
+<div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-08 — Owner Item</div><div class="check-desc">Guide Structure § 2 says "color theme are Claude's pick" — contradicts Claude Inspiration § 2 "No theme-{color} class"</div><div class="check-detail">Both are CORE RULES files. Proposed fix in Owner Items section above.</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-09</div><div class="check-desc">Photos Rules states guide-level cap of ≤1 empty photo stop ("No pictures found.")</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-10</div><div class="check-desc">Validator enforces guide-level photo cap (hard-fail at ≥2 "No pictures found." stops)</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-11</div><div class="check-desc">Tilde (∼) carve-out: Icon Order states ⏰-only; validator has GLOBAL TILDE BAN with single carve-out</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-12</div><div class="check-desc">Tours rating floor: CORE RULES says 4.5+★ / ≥6 reviews; validator enforces both</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-13</div><div class="check-desc">Also-on-site 7 required base pills (Weather→Visas) present in CORE RULES and validator TR-6</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-14</div><div class="check-desc">5 canonical negative-finding strings present in both CORE RULES and validator</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-15</div><div class="check-desc">Pickleball negative-finding says "25 min drive" (not "walk") in CORE RULES and validator</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-16</div><div class="check-desc">BUILD_STATE_PHASE_5_MAP: all referenced CORE RULES files exist on disk</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-17</div><div class="check-desc">Hotlink ban: Photos Rules mentions ban + validator hard-fails upload.wikimedia.org</div></div></div>
+<div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-18 — Owner Item</div><div class="check-desc">Rules for Claude.html says "archive always" — contradicts CLAUDE.md "delete git-tracked" (2026-07-12 policy)</div><div class="check-detail">Rules for Claude.html predates the 2026-07-12 delete policy change. Proposed fix in Owner Items section above.</div></div></div>
+<div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-19 — Recommendation</div><div class="check-desc">"nearby-guides" in eoi_canonical_order but not documented in Guide Structure § 2</div><div class="check-detail">Add a brief mention noting the auto-injected nearby-guides block. See Recommendations above.</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-20</div><div class="check-desc">All CORE RULES filenames referenced in Guide Structure § 2 exist on disk</div></div></div>
+
+<!-- GATE RESULTS -->
+<h2>Gate Results</h2>
+<div class="section-box">
+  <div class="gate-row"><span class="gate-name">validate_core_rules_coherence.py</span><span class="gate-result pass">Exit 0 — 17 PASS / 3 WARN / 0 FAIL</span></div>
+  <div class="gate-row"><span class="gate-name">brain_check.py</span><span class="gate-result warn">180/181 ok · 1 warn (CSS duplication — pre-existing)</span></div>
+  <div class="gate-row"><span class="gate-name">pre_push_guard.py</span><span class="gate-result pass">Exit 0 — safe to push</span></div>
+</div>
+
+<!-- SCOPE -->
+<h2>Scope Covered This Run</h2>
+<div class="section-box">
+  <p><strong>Full coherence sweep:</strong> All 27 CORE RULES files read and compared against validate_itinerary.py, brain_check.py, and CLAUDE.md for internal consistency.</p>
+  <p><strong>Checks covered:</strong></p>
+  <ul>
+    <li>File inventory (all 27 CORE RULES files present)</li>
+    <li>Section ordering: eoi_canonical_order vs Guide Structure § 2</li>
+    <li>Trip Overview pill labels and order vs _OVERVIEW_PILL_CANONICAL_LABELS/ORDER</li>
+    <li>Claude Inspiration Required/no-theme-class rule — CORE RULES and validator agree</li>
+    <li>Photos Rules guide-level cap (≤1) vs validator enforcement</li>
+    <li>Tilde rule (⏰ only) — CORE RULES and validator agree</li>
+    <li>Tours rating floor (4.5★ / ≥6 reviews) — CORE RULES and validator agree</li>
+    <li>Also-on-site 7 required base pills — CORE RULES and validator agree</li>
+    <li>5 canonical negative-finding strings — match across CORE RULES and validator</li>
+    <li>Pickleball "25 min drive" (2026-07-06 update) — both aligned</li>
+    <li>BUILD_STATE_PHASE_5_MAP file references all resolvable</li>
+    <li>Hotlink ban — Photos Rules and validator aligned</li>
+    <li>CLAUDE.md drift vs CORE RULES (stale "color theme" reference — fixed this run)</li>
+    <li>All CORE RULES filenames referenced in Guide Structure § 2 exist on disk</li>
+  </ul>
+  <p><strong>Not covered by this routine (handled by other validators):</strong> per-guide content checks, ship gate, coverage sweep, brain_check CSS duplication.</p>
+</div>
+
+<p style="font-size:11px;color:var(--muted);margin-top:24px;">Generated by the core-rules-coherence-audit routine · 2026-07-18</p>
+
+</body>
+</html>
