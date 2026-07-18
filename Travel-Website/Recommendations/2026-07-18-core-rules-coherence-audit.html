@@ -42,6 +42,7 @@
   .check-desc { font-size: 13px; font-weight: 600; margin: 1px 0; }
   .check-detail { font-size: 12px; color: var(--muted); margin-top: 3px; font-family: monospace; white-space: pre-wrap; line-height: 1.4; }
   .section-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .new-badge { display: inline-block; font-size: 10px; font-weight: 700; background: #e3f2fd; color: var(--blue); border-radius: 4px; padding: 1px 6px; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px; vertical-align: middle; }
   .fix-item { background: var(--green-light); border: 1px solid #c8e6c9; border-radius: 6px; padding: 10px 14px; margin: 8px 0; }
   .fix-item .fix-label { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.05em; }
   .fix-item p { margin: 4px 0 0; font-size: 13px; }
@@ -65,50 +66,62 @@
 <body>
 
 <h1>Core Rules Coherence Audit</h1>
-<p class="meta">Run date: 2026-07-18 &nbsp;·&nbsp; Scope: All 27 CORE RULES HTML files &nbsp;·&nbsp; Routine: <code>core-rules-coherence-audit</code></p>
+<p class="meta">Run date: 2026-07-18 (run 2 — expanded to 23 checks) &nbsp;·&nbsp; Scope: All 27 CORE RULES HTML files &nbsp;·&nbsp; Routine: <code>core-rules-coherence-audit</code></p>
 
 <div class="summary-grid">
-  <div class="stat-box"><span class="stat-num" style="color:var(--green)">17</span><span class="stat-label">Pass</span></div>
-  <div class="stat-box"><span class="stat-num" style="color:var(--amber)">3</span><span class="stat-label">Warn (Owner Items)</span></div>
+  <div class="stat-box"><span class="stat-num" style="color:var(--green)">18</span><span class="stat-label">Pass</span></div>
+  <div class="stat-box"><span class="stat-num" style="color:var(--amber)">5</span><span class="stat-label">Warn (Owner Items)</span></div>
   <div class="stat-box"><span class="stat-num" style="color:var(--green)">0</span><span class="stat-label">Fail</span></div>
-  <div class="stat-box"><span class="stat-num" style="color:var(--terra)">1</span><span class="stat-label">Fix Applied</span></div>
+  <div class="stat-box"><span class="stat-num" style="color:var(--terra)">3</span><span class="stat-label">New Checks</span></div>
 </div>
 
 <!-- CHANGES THIS RUN -->
 <h2>Changes Applied This Run</h2>
 <div class="fix-item">
-  <div class="fix-label">Fixed &mdash; CLAUDE.md drift</div>
-  <p><strong>File:</strong> <code>CLAUDE.md</code> (Drive-only — not tracked by git)<br>
-  <strong>What changed:</strong> The Claude Inspiration DriftyCat bullet previously said <em>"Icon, title, and color theme stay Claude's free pick per guide."</em> That phrase contradicts <code>Claude Inspiration - Extra Section.html § 2</code> which says "No <code>theme-{color}</code> class is applied to the outer div." Fixed to: <em>"Icon and title stay Claude's free pick per guide — the section always renders on a plain white background (no <code>theme-{color}</code> class on the outer div, per <code>Claude Inspiration - Extra Section.html § 2</code>). Only the presence of the section became mandatory, not its content shape."</em></p>
+  <div class="fix-label">Validator Updated &mdash; 3 new coherence checks added</div>
+  <p><strong>File:</strong> <code>Brain/scripts/validate_core_rules_coherence.py</code> (Drive-only)<br>
+  <strong>What changed:</strong> Added checks C-21, C-22, and C-23 to cover three cross-file contradictions identified during the full 27-file read. Each new check is a WARN (Owner Item — cannot fix without READ-ONLY file approval). Coherence check count grew from 20 → 23.</p>
 </div>
 
 <!-- OWNER ITEMS -->
 <h2>Owner Items (require owner approval to fix)</h2>
 
 <div class="owner-item">
-  <div class="owner-label">Owner Item — C-08: Intra-CORE-RULES contradiction (Claude Inspiration color theme)</div>
-  <p><strong>Guide Structure.html § 2</strong> item #15 says: <em>"Claude Inspiration (free-form observations from the trip — icon, title, and color theme are Claude's pick per guide)"</em>.</p>
-  <p><strong>Claude Inspiration - Extra Section.html § 2</strong> says: <em>"No <code>theme-{color}</code> class is applied to the outer div — the correct format is <code>class="claude-inspiration"</code> with no modifier."</em></p>
-  <p>Both are CORE RULES files. Cannot be resolved without owner approval. <strong>Proposed fix:</strong> update Guide Structure.html § 2 item #15 to say <em>"icon and title are Claude's pick"</em> (remove "and color theme").</p>
+  <div class="owner-label">Owner Item — C-21 NEW: Claude Inspiration § 2 internal contradiction (color theme)</div>
+  <p><strong>Claude Inspiration - Extra Section.html § 2</strong> heading says <em>"§ 2. Icon, title, and color theme"</em> and the opening sentence says <em>"Claude picks the icon, section title, and color theme per guide."</em></p>
+  <p>Yet later in the same § 2: <em>"The section renders on a plain white background. No <code>theme-{color}</code> class is applied to the outer div — the correct format is <code>class="claude-inspiration"</code> with no modifier."</em></p>
+  <p>The validator correctly enforces no theme class (hard-fail since 2026-07-12). The CORE RULES file has an internal contradiction in § 2. <strong>Proposed fix:</strong> rename § 2 heading to "§ 2. Icon and title" and change the first sentence to "Claude picks the icon and section title per guide."</p>
 </div>
 
 <div class="owner-item">
-  <div class="owner-label">Owner Item — C-18: Rules for Claude.html predates the 2026-07-12 delete policy</div>
+  <div class="owner-label">Owner Item — C-22 NEW: Trip Overview § 3 Heads Up pill uses bare ❗ (missing U+FE0F)</div>
+  <p><strong>Trip Overview.html § 3</strong> table shows the Heads Up pill as <code>❗ Heads Up</code> (bare ❗, U+2757 only — no variation selector U+FE0F).</p>
+  <p>Both <strong>Heads Up - Extra Section.html</strong> and <strong>Icon Order and Format.html</strong> use <code>❗️</code> (U+2757 + U+FE0F). The validator enforces ❗️ with VS16 everywhere via a global bare-❗ ban (hard-fail since 2026-06-05). The validator's canonical label dict also shows <code>"heads-up": "❗️ Heads Up"</code> with VS16. Trip Overview is the one file inconsistent with every other source. <strong>Proposed fix:</strong> update Trip Overview.html § 3 table Heads Up cell to <code>❗️ Heads Up</code>.</p>
+</div>
+
+<div class="owner-item">
+  <div class="owner-label">Owner Item — C-23 NEW: Icon Order § 3 shows Workaround row — contradicts Heads Up file (row is BANNED)</div>
+  <p><strong>Icon Order and Format.html § 3</strong> includes a <code>Workaround: [What To Do Instead]</code> row as part of the Heads Up entry format.</p>
+  <p><strong>Heads Up - Extra Section.html § 2</strong> shows NO Workaround row — only <code>[Venue] — [Short Title]</code> and <code>↳ [Note] ≤150 chars</code>.</p>
+  <p>The validator explicitly <strong>bans</strong> the Workaround row (<code>cg_workaround_banned</code> check — hard-fail if present). The Workaround row was removed from the format at some point and cleaned from the Heads Up file and validator, but the stale reference was not removed from Icon Order. <strong>Proposed fix:</strong> remove the Workaround row from Icon Order and Format.html § 3 Heads Up format block.</p>
+</div>
+
+<div class="owner-item">
+  <div class="owner-label">Owner Item — C-18 (carried over): Rules for Claude.html predates the 2026-07-12 delete policy</div>
   <p><strong>Rules for Claude.html §2</strong> DriftyCat says: <em>"🚫 Deletion loop — never <code>rm</code> a Drive-only file. Untracked files cannot be recovered from git. Move them to <code>Travel/archive/</code> — never <code>rm</code>."</em></p>
-  <p><strong>CLAUDE.md § 3</strong> (updated 2026-07-12) says: <em>"DELETE git-tracked files (all of Travel-Website/ + tracked Brain/ files) → delete it directly — git history is the archive."</em></p>
-  <p>The delete-git-tracked policy was added to CLAUDE.md on 2026-07-12 and is correctly implemented in memory (<code>feedback_delete_vs_archive.md</code>). However, <code>Rules for Claude.html</code> predates it and still frames the entire conversation as "archive-only." The two documents now conflict. <strong>Proposed fix:</strong> update Rules for Claude.html §2 to distinguish git-tracked (delete freely) vs Drive-only (archive only), aligning with the 2026-07-12 CLAUDE.md policy.</p>
+  <p><strong>CLAUDE.md § 3</strong> (updated 2026-07-12) now has a two-track rule: git-tracked files → delete freely (git history is the archive); Drive-only files → move to <code>Travel/archive/</code>. <code>Rules for Claude.html</code> predates this split and still frames everything as "archive-only." <strong>Proposed fix:</strong> update Rules for Claude.html §2 to add the two-track distinction and align with the 2026-07-12 CLAUDE.md policy.</p>
 </div>
 
 <!-- RECOMMENDATIONS -->
 <h2>Recommendations</h2>
 
 <div class="rec-item">
-  <div class="rec-label">Recommendation — C-19: nearby-guides undocumented in Guide Structure § 2</div>
-  <p>The <code>eoi_canonical_order</code> list in <code>validate_itinerary.py</code> includes <code>"nearby-guides"</code> as the final ordered section (after <code>also-on-this-site</code>). This div is injected by <code>Brain/scripts/build_nearby_guides.py</code> on ship. <strong>Guide Structure.html § 2</strong> doesn't name or describe it anywhere. Future builders won't know it exists from the spec alone. <strong>Proposed fix:</strong> add a brief mention after the Also-on-this-site entry in § 2 noting that the nearby-guides block is auto-injected at ship time and validated by <code>eoi_canonical_order</code>.</p>
+  <div class="rec-label">Recommendation — C-19 (carried over): nearby-guides undocumented in Guide Structure § 2</div>
+  <p>The <code>eoi_canonical_order</code> list in <code>validate_itinerary.py</code> includes <code>"nearby-guides"</code> as the final ordered section (after <code>also-on-this-site</code>). This div is auto-injected by <code>Brain/scripts/build_nearby_guides.py</code> on ship. <strong>Guide Structure.html § 2</strong> never names or describes it. Future builders won't know it exists from the spec alone. <strong>Proposed fix:</strong> add a brief note after the Also-on-this-site entry in § 2 noting the nearby-guides block is auto-injected at ship time.</p>
 </div>
 
-<!-- 20 COHERENCE CHECKS -->
-<h2>Coherence Checks (C-01 through C-20)</h2>
+<!-- 23 COHERENCE CHECKS -->
+<h2>Coherence Checks (C-01 through C-23)</h2>
 
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-01</div><div class="check-desc">All 27 CORE RULES files exist on disk</div></div></div>
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-02</div><div class="check-desc">eoi_canonical_order matches Guide Structure § 2 section order (14 extra sections)</div></div></div>
@@ -117,7 +130,7 @@
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-05</div><div class="check-desc">Claude Inspiration § 1 declares the section Required (not Optional)</div></div></div>
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-06</div><div class="check-desc">Claude Inspiration § 2 prohibits theme-{color} class (white background)</div></div></div>
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-07</div><div class="check-desc">Validator has check enforcing no theme-{color} on claude-inspiration div</div></div></div>
-<div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-08 — Owner Item</div><div class="check-desc">Guide Structure § 2 says "color theme are Claude's pick" — contradicts Claude Inspiration § 2 "No theme-{color} class"</div><div class="check-detail">Both are CORE RULES files. Proposed fix in Owner Items section above.</div></div></div>
+<div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-08</div><div class="check-desc">Guide Structure § 2 CI item — no stale "color theme" phrase</div><div class="check-detail">Guide Structure.html § 2 item #15 correctly says "icon and title are Claude's pick per guide" (color theme resolved).</div></div></div>
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-09</div><div class="check-desc">Photos Rules states guide-level cap of ≤1 empty photo stop ("No pictures found.")</div></div></div>
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-10</div><div class="check-desc">Validator enforces guide-level photo cap (hard-fail at ≥2 "No pictures found." stops)</div></div></div>
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-11</div><div class="check-desc">Tilde (∼) carve-out: Icon Order states ⏰-only; validator has GLOBAL TILDE BAN with single carve-out</div></div></div>
@@ -130,11 +143,14 @@
 <div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-18 — Owner Item</div><div class="check-desc">Rules for Claude.html says "archive always" — contradicts CLAUDE.md "delete git-tracked" (2026-07-12 policy)</div><div class="check-detail">Rules for Claude.html predates the 2026-07-12 delete policy change. Proposed fix in Owner Items section above.</div></div></div>
 <div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-19 — Recommendation</div><div class="check-desc">"nearby-guides" in eoi_canonical_order but not documented in Guide Structure § 2</div><div class="check-detail">Add a brief mention noting the auto-injected nearby-guides block. See Recommendations above.</div></div></div>
 <div class="check-row pass"><span class="check-icon">✅</span><div class="check-body"><div class="check-id">C-20</div><div class="check-desc">All CORE RULES filenames referenced in Guide Structure § 2 exist on disk</div></div></div>
+<div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-21 — Owner Item <span class="new-badge">New</span></div><div class="check-desc">Claude Inspiration § 2 internal contradiction: heading/opening says "color theme" but closes "No theme-{color} class"</div><div class="check-detail">Claude Inspiration - Extra Section.html § 2 opens "Claude picks…color theme per guide" then ends "No theme-{color} class is applied." Proposed fix in Owner Items section above.</div></div></div>
+<div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-22 — Owner Item <span class="new-badge">New</span></div><div class="check-desc">Trip Overview § 3 Heads Up pill is bare ❗ (missing U+FE0F variation selector) — validator enforces ❗️ everywhere</div><div class="check-detail">Trip Overview.html § 3: '❗ Heads Up' (bare). All other files + validator use ❗️ (U+2757+FE0F). Proposed fix in Owner Items above.</div></div></div>
+<div class="check-row warn"><span class="check-icon">⚠️</span><div class="check-body"><div class="check-id">C-23 — Owner Item <span class="new-badge">New</span></div><div class="check-desc">Icon Order and Format § 3 shows Workaround row in Heads Up — contradicts Heads Up file (row is BANNED by validator)</div><div class="check-detail">Icon Order has 'Workaround: [What To Do Instead]' in Heads Up format. Heads Up file and validator both say it never ships. Proposed fix in Owner Items above.</div></div></div>
 
 <!-- GATE RESULTS -->
 <h2>Gate Results</h2>
 <div class="section-box">
-  <div class="gate-row"><span class="gate-name">validate_core_rules_coherence.py</span><span class="gate-result pass">Exit 0 — 17 PASS / 3 WARN / 0 FAIL</span></div>
+  <div class="gate-row"><span class="gate-name">validate_core_rules_coherence.py (23 checks)</span><span class="gate-result pass">Exit 0 — 18 PASS / 5 WARN / 0 FAIL</span></div>
   <div class="gate-row"><span class="gate-name">brain_check.py</span><span class="gate-result warn">180/181 ok · 1 warn (CSS duplication — pre-existing)</span></div>
   <div class="gate-row"><span class="gate-name">pre_push_guard.py</span><span class="gate-result pass">Exit 0 — safe to push</span></div>
 </div>
@@ -142,28 +158,31 @@
 <!-- SCOPE -->
 <h2>Scope Covered This Run</h2>
 <div class="section-box">
-  <p><strong>Full coherence sweep:</strong> All 27 CORE RULES files read and compared against validate_itinerary.py, brain_check.py, and CLAUDE.md for internal consistency.</p>
+  <p><strong>Full coherence sweep:</strong> All 27 CORE RULES files read and compared against <code>validate_itinerary.py</code>, <code>brain_check.py</code>, and <code>CLAUDE.md</code> for internal consistency.</p>
   <p><strong>Checks covered:</strong></p>
   <ul>
-    <li>File inventory (all 27 CORE RULES files present)</li>
-    <li>Section ordering: eoi_canonical_order vs Guide Structure § 2</li>
-    <li>Trip Overview pill labels and order vs _OVERVIEW_PILL_CANONICAL_LABELS/ORDER</li>
+    <li>File inventory — all 27 CORE RULES files present</li>
+    <li>Section ordering — <code>eoi_canonical_order</code> vs Guide Structure § 2</li>
+    <li>Trip Overview pill labels and order vs validator canonical dicts</li>
     <li>Claude Inspiration Required/no-theme-class rule — CORE RULES and validator agree</li>
+    <li>Claude Inspiration § 2 internal contradiction (color theme vs no theme class) — NEW C-21</li>
+    <li>Trip Overview Heads Up bare ❗ vs ❗️ (VS16) — NEW C-22</li>
+    <li>Icon Order Workaround row vs Heads Up file/validator ban — NEW C-23</li>
     <li>Photos Rules guide-level cap (≤1) vs validator enforcement</li>
     <li>Tilde rule (⏰ only) — CORE RULES and validator agree</li>
     <li>Tours rating floor (4.5★ / ≥6 reviews) — CORE RULES and validator agree</li>
     <li>Also-on-site 7 required base pills — CORE RULES and validator agree</li>
     <li>5 canonical negative-finding strings — match across CORE RULES and validator</li>
-    <li>Pickleball "25 min drive" (2026-07-06 update) — both aligned</li>
+    <li>Pickleball "25 min drive" — both aligned</li>
     <li>BUILD_STATE_PHASE_5_MAP file references all resolvable</li>
     <li>Hotlink ban — Photos Rules and validator aligned</li>
-    <li>CLAUDE.md drift vs CORE RULES (stale "color theme" reference — fixed this run)</li>
+    <li>CLAUDE.md delete policy vs Rules for Claude.html (pre-existing Owner Item)</li>
     <li>All CORE RULES filenames referenced in Guide Structure § 2 exist on disk</li>
   </ul>
-  <p><strong>Not covered by this routine (handled by other validators):</strong> per-guide content checks, ship gate, coverage sweep, brain_check CSS duplication.</p>
+  <p><strong>Not covered by this routine:</strong> per-guide content checks, ship gate, coverage sweep, brain_check CSS duplication.</p>
 </div>
 
-<p style="font-size:11px;color:var(--muted);margin-top:24px;">Generated by the core-rules-coherence-audit routine · 2026-07-18</p>
+<p style="font-size:11px;color:var(--muted);margin-top:24px;">Generated by the core-rules-coherence-audit routine · 2026-07-18 (run 2 — 23 checks)</p>
 
 </body>
 </html>
