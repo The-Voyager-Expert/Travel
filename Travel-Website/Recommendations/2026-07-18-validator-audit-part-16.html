@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validator Audit — Part 16: Pickleball + Michelin</title>
+<style>
+:root {
+  --bg:#f9f7f4; --surface:#ffffff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --border:#ddd5c8; --code-bg:#f0ece6;
+  --pass:#2e6e3e; --pass-bg:#edf5f0;
+  --warn:#8a5800; --warn-bg:#fdf3e0;
+  --note:#2a4a7a; --note-bg:#edf2fb;
+  --rule-bg:#fdf4ef;
+}
+@media (prefers-color-scheme:dark) {
+  :root {
+    --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+    --accent:#d4804e; --border:#35302a; --code-bg:#2a2520;
+    --pass:#4a9960; --pass-bg:#0d2116;
+    --warn:#c89030; --warn-bg:#2a2010;
+    --note:#6090d0; --note-bg:#151e30;
+    --rule-bg:#2a1e14;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+  --accent:#d4804e; --border:#35302a; --code-bg:#2a2520;
+  --pass:#4a9960; --pass-bg:#0d2116;
+  --warn:#c89030; --warn-bg:#2a2010;
+  --note:#6090d0; --note-bg:#151e30;
+  --rule-bg:#2a1e14;
+}
+:root[data-theme="light"] {
+  --bg:#f9f7f4; --surface:#ffffff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --border:#ddd5c8; --code-bg:#f0ece6;
+  --pass:#2e6e3e; --pass-bg:#edf5f0;
+  --warn:#8a5800; --warn-bg:#fdf3e0;
+  --note:#2a4a7a; --note-bg:#edf2fb;
+  --rule-bg:#fdf4ef;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+.wrap{max-width:780px;margin:0 auto;padding:40px 24px 64px}
+.eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:normal;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:20px;line-height:1.3}
+.meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:28px;font-size:12px;color:var(--muted)}
+.meta span{white-space:nowrap}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--muted);margin:28px 0 12px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+h3{font-size:14px;font-weight:700;color:var(--text);margin:18px 0 8px}
+p{margin-bottom:12px}
+ul,ol{margin:8px 0 12px 20px}
+li{margin-bottom:5px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:14px}
+.card + .card{margin-top:-6px}
+.label{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-bottom:8px}
+.label-fixed{background:var(--pass-bg);color:var(--pass)}
+.label-parked{background:var(--warn-bg);color:var(--warn)}
+.label-verified{background:var(--note-bg);color:var(--note)}
+.rule-block{background:var(--rule-bg);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 4px 4px 0;margin:10px 0;font-size:13px}
+.smoke-row{display:grid;grid-template-columns:1fr 60px 60px;gap:0 12px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);align-items:baseline}
+.smoke-row:last-child{border-bottom:none}
+.smoke-head{display:grid;grid-template-columns:1fr 60px 60px;gap:0 12px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding-bottom:6px;border-bottom:2px solid var(--border);margin-bottom:2px}
+.s-pass{color:var(--pass);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.s-warn{color:var(--warn);text-align:right;font-variant-numeric:tabular-nums}
+.summary-stat{display:inline-flex;align-items:baseline;gap:4px;margin-right:16px}
+.ss-num{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)}
+.ss-label{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="eyebrow">Validator Deep Audit · Part 16</div>
+<h1>🏓 Pickleball + ⭐ Michelin Restaurants</h1>
+<div class="meta">
+  <span>📅 2026-07-18</span>
+  <span>🤖 Crib 4</span>
+  <span>🔍 20/20 parts this cycle — cycle complete</span>
+  <span>📄 Validator Index · validate_itinerary.py</span>
+</div>
+
+<div>
+  <span class="summary-stat"><span class="ss-num">3</span><span class="ss-label">Index fixes</span></span>
+  <span class="summary-stat"><span class="ss-num">0</span><span class="ss-label">code changes</span></span>
+  <span class="summary-stat"><span class="ss-num">1</span><span class="ss-label">Open Question parked</span></span>
+  <span class="summary-stat"><span class="ss-num">4</span><span class="ss-label">guides smoke-tested</span></span>
+</div>
+
+<h2>What Was Audited</h2>
+<p>Part 16 covers the <strong>🏓 Pickleball</strong> and <strong>⭐ Michelin Restaurants</strong> extra sections. The audit compared every Validator Index entry against the actual <code>validate_itinerary.py</code> code, and compared both against the CORE RULES source files.</p>
+
+<h2>Fixes Applied</h2>
+
+<div class="card">
+  <span class="label label-fixed">Fixed</span>
+  <h3>Michelin section note (L804) — stale "no walk/ride" description removed</h3>
+  <p>The section note at L804 of the Validator Index still described Style A as <em>"Cuisine ≤80 chars / 📍 Address only — no hours, walk, ride, or closed rows"</em>. This was written at the Style A lock (2026-05-19) and never updated when the motion row was added in 2026-06-05. The 🚶/🚕 motion row is now <strong>required</strong> in §3b entries (Check D), so the section note was actively misleading.</p>
+  <div class="rule-block">Updated to: §3b format is Cuisine + 📍 + 🚶/🚕 motion row (required); 🏛 hours and 🚫 closed are §3a-only per Check J. §3a gets the review-link heading. Motion row added 2026-06-05.</div>
+</div>
+
+<div class="card">
+  <span class="label label-fixed">Fixed</span>
+  <h3>Michelin L817 — "🚶 walk, 🚕 ride" wrongly listed as banned</h3>
+  <p>L817 said: <em>"Entries must contain only ⭐ Name / Cuisine / 📍 Address rows — 🏛 hours, 🚶 walk, 🚕 ride, and 🚫 closed rows are banned."</em></p>
+  <p>This directly contradicted L818 in the same document, which states §3b entries carry a required <code>🚶 N min · 🚕 N min → hotel</code> motion row. The code (Check D) makes 🚶/🚕 required — an entry missing 🚕 fails Check D. Only 🏛 and 🚫 are actually banned (Check J).</p>
+  <div class="rule-block">Updated L817 to: §3b bans 🏛 hours and 🚫 closed (Check J; §3a exempt). 🚶/🚕 are REQUIRED in §3b (not banned). CORE RULES §3b discrepancy noted — see Open Questions.</div>
+</div>
+
+<div class="card">
+  <span class="label label-fixed">Fixed</span>
+  <h3>Pickleball L794 — US-gate still described state-code detection (superseded 2026-07-06)</h3>
+  <p>L794 described the conditional US gate as "validator detects US state code from title-address — Pattern A: STATE DDDDD · Pattern B: , STATE · Pattern C: City STATE." This was superseded on 2026-07-06 when the primary detection signal was switched from <code>.title-address</code> state-code parsing to <code>.title-country == "United States"</code>. Hotel addresses use "Street · Neighborhood" format and never include a state code, so the old parser silently returned <code>None</code> for most US guides and the section gate quietly passed through without checking.</p>
+  <div class="rule-block">Updated L794: primary gate signal is <code>.title-country == "United States"</code> (always present, required per Hotel Banner §1). State-code patterns kept as informational hints in error messages only.</div>
+</div>
+
+<h2>Open Question Parked</h2>
+
+<div class="card">
+  <span class="label label-parked">Parked → To Do List</span>
+  <h3>Michelin §3b: CORE RULES shows 🏛/🚫 rows; validator (Check J) bans them</h3>
+  <p>The current <code>Michelin Restaurants - Extra Section.html §3b</code> template explicitly shows <code>🏛 [Hours]</code> and <code>🚫 Closed [Day]</code> as format rows. Check J in the validator bans both in §3b entries with the comment "§3b format: ⭐ Name / Cuisine / 📍 Address / 🚶/🚕 → hotel; 🏛/🚫 are §3a in-hotel only."</p>
+  <p>The ban was explicitly intentional at the Style A lock (2026-05-19) and was preserved when the motion row was added in 2026-06-05. But the CORE RULES file was not updated to remove these rows at that time. Today's CORE RULES is the authority — it shows 🏛/🚫 in §3b.</p>
+  <p>Resolving this requires an owner decision:</p>
+  <ul>
+    <li><strong>Option A:</strong> Edit CORE RULES §3b to remove 🏛/🚫 from the template (validator Check J is correct; CORE RULES needs cleanup)</li>
+    <li><strong>Option B:</strong> Update validator Check J to require 🏛/🚫 in §3b entries + fleet-wide Michelin backfill (all current guides lack these rows)</li>
+  </ul>
+  <p>Making this change unilaterally would risk either a CORE RULES edit without approval or a fleet-wide breaking change. Parked in <strong>To Do List § ❓ Open Questions</strong>.</p>
+</div>
+
+<h2>Checks Verified — No Code Changes Needed</h2>
+
+<h3>🏓 Pickleball — all 24 Index entries verified ✅</h3>
+<p>Every Validator Index entry for Pickleball has a corresponding, correct implementation in <code>validate_itinerary.py</code>:</p>
+<ul>
+  <li>No intro paragraph, 🏓 heading emoji, · Indoor / · Outdoor suffix, no <code>&lt;a&gt;</code> link in heading</li>
+  <li>🏛 hours required (must carry actual text), 📍 required (must have Google Maps link), 🚕 required (🚶 optional)</li>
+  <li>📍 row: no US ZIP code, no country name (<code>_PB_COUNTRY_RE</code> pre-compiled)</li>
+  <li>Numeric times for 🚕 (and 🚶 when present), 🚶 before 🚕 order, row order 🏛 → 📍 → 🚕</li>
+  <li>Description present, ≤80 chars</li>
+  <li>≤28 min drive cap (target ≤25; hard cap 28), ordered closest-first by 🚕</li>
+  <li>Negative-finding line when zero entries; inverse (must not appear when entries exist)</li>
+  <li>US-only gate (<code>.title-country == "United States"</code>); silently omitted non-US</li>
+  <li>No <code>&lt;p&gt;</code> tags, no duplicate venues, specific facility name (not generic label)</li>
+  <li>Exactly one suffix (Indoor XOR Outdoor), no build annotations</li>
+</ul>
+
+<h3>⭐ Michelin — all 24 Index entries verified ✅</h3>
+<p>All Michelin checks correct in code: intro paragraph gate, Not-shown overflow format, ≤5 entries (Check G), Style A shape, ⭐-in-body structural check, extra-emoji ban (Check F), cuisine ≤80 chars, cuisine no links (Check I), seafood exclusion (Check H), 📍 required with Maps link, no postal code, star tier order (Check B), within-tier closest-first by 🚕 (Check D), 1–3 stars (Check E), annotations (Check L), box drift (Check M), duplicates (Check N), no <code>&lt;p&gt;</code> (Check O), negative finding (Check C), RNH × Michelin cross-check, §3a review-link required (added 2026-07-11), §3b review-link banned (J2).</p>
+
+<h2>Smoke Tests</h2>
+<div class="card">
+  <div class="smoke-head"><div>Guide</div><div>Passed</div><div>Failed</div></div>
+  <div class="smoke-row"><div>Alaska (Pickleball + Michelin)</div><div class="s-pass">831 ✅</div><div class="s-pass">0</div></div>
+  <div class="smoke-row"><div>Zurich (Michelin)</div><div class="s-pass">835 ✅</div><div class="s-pass">0</div></div>
+  <div class="smoke-row"><div>Amalfi (Michelin)</div><div class="s-pass">827 ✅</div><div class="s-pass">0</div></div>
+  <div class="smoke-row"><div>Austin (Pickleball)</div><div class="s-pass">873 ✅</div><div class="s-pass">0</div></div>
+</div>
+<p>All four guides pass clean. No regressions introduced by the Validator Index documentation fixes.</p>
+
+<h2>brain_check Result</h2>
+<p><code>brain_check.py</code>: 180/181 ok · 1 warn (pre-existing CSS duplication) · <strong>0 failures</strong>.</p>
+
+</div>
+</body>
+</html>
