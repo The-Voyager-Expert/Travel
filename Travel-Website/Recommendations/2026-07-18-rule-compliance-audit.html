@@ -305,9 +305,9 @@
   <!-- Summary chips -->
   <div class="chips">
     <div class="chip">New rules cascaded: 0</div>
-    <div class="chip fixed"><span class="dot"></span>Enforcement gaps closed: 1</div>
-    <div class="chip warn"><span class="dot"></span>Owner items: 1</div>
-    <div class="chip pass"><span class="dot"></span>brain_check: 0 fail · 2 warn</div>
+    <div class="chip fixed"><span class="dot"></span>Enforcement gaps closed: 3</div>
+    <div class="chip warn"><span class="dot"></span>Owner items: 2</div>
+    <div class="chip pass"><span class="dot"></span>brain_check: 0 fail · 1 warn</div>
     <div class="chip pass"><span class="dot"></span>pre_push_guard: exit 0</div>
   </div>
 
@@ -399,20 +399,82 @@
         <tr><td>Note</td><td>CSS asset edits are out of scope for this routine (SKILL.md constraint). Flagged here for owner action.</td></tr>
       </table>
     </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-owner">Owner Item</span>
+        <div class="finding-title">CORE RULES doc — <code>Getting Around - Extra Section.html §1b</code> should document the negative-finding exemption</div>
+      </div>
+      <div class="finding-body">
+        The validator fix (condition <code>_ga_has_extras_sub or not _ga_has_transit_box</code>) is already in the code since 2026-07-15 — MachuPicchu is no longer blocked. But <code>Getting Around - Extra Section.html §1b</code> does not yet state explicitly that a section whose only content is an <code>extras-empty</code> negative-finding div is exempt from the "one extras-sub per operator" structural requirement.
+      </div>
+      <table class="detail-table">
+        <tr><td>File</td><td><code>Brain/CORE RULES/Getting Around - Extra Section.html §1b</code></td></tr>
+        <tr><td>Needed text</td><td>Add: "A section containing only <code>class="extras-empty"</code> (city has no ride apps, metro, tram, or ferry at all — pure negative-finding) is exempt from the extras-sub structural requirement."</td></tr>
+        <tr><td>Status</td><td>Parked in To Do List §🔧 Rules for Update — requires per-session approval before editing CORE RULES</td></tr>
+      </table>
+    </div>
   </div>
 
-  <!-- Section E: Validation -->
+  <!-- Section E: Continuation-Run Fixes -->
   <div class="section">
-    <div class="section-label">E — Validation</div>
+    <div class="section-label">E — Continuation-Run Fixes (2nd pass, same day)</div>
+    <hr class="section-rule">
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-closed">Fixed</span>
+        <div class="finding-title"><code>verify_urls.py</code> — removed <code>cabify.com</code> and <code>www.cabify.com</code> from <code>BOT_BLOCKED_HOSTS</code></div>
+      </div>
+      <div class="finding-body">Platform confirmed accessible via WebFetch as of 2026-07-16 (Platforms Audit). The San Sebastián comment was updated to remove "ride-app" since cabify was the only ride-app entry in that block. To Do List item marked done.</div>
+      <table class="detail-table">
+        <tr><td>File</td><td><code>Brain/scripts/verify_urls.py</code> (Drive-only)</td></tr>
+        <tr><td>Track</td><td>Track B (To Do List open item from Platforms Audit 2026-07-16)</td></tr>
+      </table>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-closed">Fixed</span>
+        <div class="finding-title">Validator Index.html — C-19 documentation entry added; <code>cascade_sync</code> warning cleared</div>
+      </div>
+      <div class="finding-body">
+        Commit <code>7b6f7ef1e</code> (today) updated <code>Guide Structure.html</code> and <code>Ship Checklist.html</code> to document the nearby-guides block (C-19 coherence fix). <code>brain_check cascade_sync</code> fired because the Validator Index was older. Added a .meta entry documenting C-19 as documentation-only (NB-0/NB-0b/T1c/T1d enforcement already existed from 2026-07-15). Warning now gone.
+      </div>
+      <table class="detail-table">
+        <tr><td>File</td><td><code>Brain/Reference/Validator Index.html</code> (Drive-only)</td></tr>
+        <tr><td>brain_check before</td><td>180/182 ok · 2 warn · 0 fail (cascade_sync + CSS duplication)</td></tr>
+        <tr><td>brain_check after</td><td>180/181 ok · 1 warn · 0 fail (CSS duplication only)</td></tr>
+      </table>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-closed">Fixed</span>
+        <div class="finding-title">Cleanliness Checks Rule 546 added — Getting Around STRUCTURAL check was undocumented</div>
+      </div>
+      <div class="finding-body">
+        The <code>validate_itinerary.py</code> GETTING AROUND — STRUCTURAL check (added 2026-07-15, catches a Getting Around section with transit-boxes but zero extras-sub headings) had no Cleanliness Checks.md numbered entry. Rule 546 added; "Current size" header updated from 544 to 546 with the new entries noted.
+      </div>
+      <table class="detail-table">
+        <tr><td>File</td><td><code>Brain/Reference/Cleanliness Checks.md</code> (Drive-only)</td></tr>
+        <tr><td>Rule number</td><td>546 (out-of-sequence at end of file, same pattern as 541–545)</td></tr>
+        <tr><td>Track</td><td>Track A (Cleanliness Checks coverage gap) + Track C (validator changelog)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section F: Validation -->
+  <div class="section">
+    <div class="section-label">F — Validation</div>
     <hr class="section-rule">
     <div class="validation-row">
-      <span class="icon">✓</span> brain_check.py <span class="validation-detail">180/182 ok · 2 warn · 0 fail</span>
+      <span class="icon">✓</span> brain_check.py <span class="validation-detail">180/181 ok · 1 warn · 0 fail</span>
     </div>
     <div class="validation-row">
       <span class="icon">✓</span> pre_push_guard.py <span class="validation-detail">exit 0 — safe to push</span>
     </div>
     <div class="finding-body" style="margin-top:8px; font-size:12px; color:var(--muted);">
-      Warn 1: CSS duplication (120 selectors — pre-existing). Warn 2: cascade sync (pre-existing). Both pre-date this run and are not regressions.
+      Warn 1: CSS duplication (172 selectors — pre-existing). cascade_sync cleared by Validator Index .meta update.
     </div>
   </div>
 
