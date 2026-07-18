@@ -1,0 +1,399 @@
+<title>Pending Fixes Sweep — 2026-07-18</title>
+<style>
+:root {
+  --bg:       #f5f0e9;
+  --surface:  #ffffff;
+  --border:   #e0d8cc;
+  --text:     #1e1a14;
+  --muted:    #6b6255;
+  --accent:   #b85c2a;
+  --green:    #2a6b40;
+  --green-bg: #e8f4ee;
+  --amber:    #7a5000;
+  --amber-bg: #fef3d4;
+  --red:      #8a1a1a;
+  --red-bg:   #fdecea;
+  --mono:     ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:       #191510;
+    --surface:  #231e18;
+    --border:   #342d24;
+    --text:     #ede7dc;
+    --muted:    #998f82;
+    --accent:   #d4784a;
+    --green:    #4dab6a;
+    --green-bg: #0d2818;
+    --amber:    #d4aa30;
+    --amber-bg: #251e06;
+    --red:      #e06060;
+    --red-bg:   #2a0e0e;
+  }
+}
+:root[data-theme="light"] {
+  --bg:#f5f0e9; --surface:#ffffff; --border:#e0d8cc; --text:#1e1a14; --muted:#6b6255;
+  --accent:#b85c2a; --green:#2a6b40; --green-bg:#e8f4ee; --amber:#7a5000; --amber-bg:#fef3d4;
+  --red:#8a1a1a; --red-bg:#fdecea;
+}
+:root[data-theme="dark"] {
+  --bg:#191510; --surface:#231e18; --border:#342d24; --text:#ede7dc; --muted:#998f82;
+  --accent:#d4784a; --green:#4dab6a; --green-bg:#0d2818; --amber:#d4aa30; --amber-bg:#251e06;
+  --red:#e06060; --red-bg:#2a0e0e;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: 36px 24px 60px;
+}
+
+.wrap { max-width: 800px; margin: 0 auto; }
+
+/* ── Header ── */
+.header {
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 16px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.header-left h1 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.header-left h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.15;
+}
+.header-meta {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-top: 5px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid color-mix(in srgb, var(--green) 30%, transparent);
+  white-space: nowrap;
+}
+
+/* ── Stat tiles ── */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+@media (max-width: 600px) { .tiles { grid-template-columns: 1fr 1fr; } }
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+}
+.tile-num {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--mono);
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.tile-num.green { color: var(--green); }
+.tile-num.muted { color: var(--muted); }
+.tile-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Sections ── */
+.section { margin-bottom: 24px; }
+.section-head {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+/* ── Fix card ── */
+.fix-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--green);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.fix-card .city {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.fix-card .desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+.fix-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 11px;
+}
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.tag-rule { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.tag-commit { background: color-mix(in srgb, var(--muted) 14%, transparent); color: var(--muted); font-family: var(--mono); }
+.tag-val { background: var(--green-bg); color: var(--green); }
+
+/* ── Deferred card ── */
+.defer-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--amber);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.defer-card .city { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.defer-card .reason { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* ── Smoke-test row ── */
+.smoke-note {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.smoke-note .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── Source list ── */
+.source-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+@media (max-width: 500px) { .source-grid { grid-template-columns: 1fr; } }
+.source-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.source-row .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+}
+
+/* ── Validation result ── */
+.val-row {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--green);
+  font-weight: 600;
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 40px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+</style>
+
+<div id="toolbar-mount" data-depth="2" data-max-width="1100"></div>
+<script src="../../assets/toolbar.js"></script>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>Scheduled routine</h1>
+      <h2>Pending Fixes Sweep</h2>
+      <div class="header-meta">
+        <span>2026-07-18</span>
+        <span>pending-fixes-sweep</span>
+        <span>Commit bf2e81c26</span>
+      </div>
+    </div>
+    <div class="status-chip">✓ Complete</div>
+  </div>
+
+  <!-- Tiles -->
+  <div class="tiles">
+    <div class="tile">
+      <div class="tile-num">15</div>
+      <div class="tile-label">Sources read</div>
+    </div>
+    <div class="tile">
+      <div class="tile-num">2</div>
+      <div class="tile-label">Fixes found</div>
+    </div>
+    <div class="tile">
+      <div class="tile-num green">2</div>
+      <div class="tile-label">Fixed this run</div>
+    </div>
+    <div class="tile">
+      <div class="tile-num muted">0</div>
+      <div class="tile-label">Deferred</div>
+    </div>
+  </div>
+
+  <!-- Fixes applied -->
+  <div class="section">
+    <div class="section-head">Fixes applied</div>
+
+    <div class="fix-card">
+      <div class="city">Singapore</div>
+      <div class="desc">25 U+200A HAIR SPACE characters in motion banner rows — between words in <code style="font-family:var(--mono);font-size:12px;background:color-mix(in srgb,var(--muted) 12%,transparent);padding:1px 4px;border-radius:3px">🚕 N min → Destination</code> text. Narrow check in the validator only caught U+200A immediately after the 🚕 emoji; the new global check (Part 19) detected mid-row occurrences. All 25 replaced with ASCII space U+0020 across all motion banners.</div>
+      <div class="fix-meta">
+        <span class="tag tag-rule">Non-ASCII Whitespace</span>
+        <span class="tag tag-rule">Validator Line 959</span>
+        <span class="tag tag-val">831 passed / 0 failed</span>
+        <span class="tag tag-commit">bf2e81c26</span>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="city">Brussels — previously deferred</div>
+      <div class="desc">3 banned food/culinary/tasting tours in Tours section. Replaced all 3 with qualifying alternatives via Viator MCP research: Viator #4 (Hungry Mary's Beer &amp; Chocolate Tour) → BelgoTours Free Tour (256525P1, 4.75⭐ 1336 reviews, 10:00am Grand-Place, yellow umbrella); Viator #5 (Belgian Beer Tasting Experience) → Architecture Tour of Brussels (183075P7, 5.0⭐ 11 reviews, 8:00pm Grand-Place 21/22, guide Jamal); TripAdvisor #2 (Chocolate/Beer/Waffle All-in-One) → Historical Walking Tour: The Story of Brussels by Legends (d26849767, 4.8⭐ 194 reviews, 11:00am Grand-Place 8 City Hall, red umbrella). Walking tour count: 3 (within 2–4 cap).</div>
+      <div class="fix-meta">
+        <span class="tag tag-rule">Banned Tour Types</span>
+        <span class="tag tag-val">875 passed / 0 failed</span>
+        <span class="tag tag-commit">24fb8aae6</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Working tree note -->
+  <div class="section">
+    <div class="section-head">Working tree — smoke-test stamp drift restored</div>
+
+    <div class="smoke-note">
+      <div class="icon">↩</div>
+      <div>5 guides showed as modified in <code style="font-family:var(--mono);font-size:11px">git status</code> with only a validation-stamp timestamp change (identical HMAC sig — content unchanged). These were restamped by other crib smoke tests, not by actual content edits. Restored all 5 to HEAD via <code style="font-family:var(--mono);font-size:11px">git checkout HEAD -- &lt;file&gt;</code>. Guides: <strong>Amsterdam</strong> · <strong>Aix-en-Provence</strong> · <strong>Azores</strong> · <strong>Bangkok</strong> · <strong>São-Luís</strong>.
+      </div>
+    </div>
+    <div class="smoke-note" style="border-left:3px solid var(--green);font-size:12px;margin-top:4px">
+      <div class="icon">✓</div>
+      <div>All 5 guides validated clean (0 failures) before restore — the restamps were cosmetic only.</div>
+    </div>
+  </div>
+
+  <!-- Deferred — resolved this run -->
+  <div class="section">
+    <div class="section-head">Previously Deferred — Resolved This Run</div>
+
+    <div class="defer-card" style="border-left-color:#2a7a3b">
+      <div class="city" style="color:#2a7a3b">✓ Brussels — 3 banned tour types in Tours section — FIXED 2026-07-18</div>
+      <div class="reason">Replaced all 3 banned food/tasting tours with qualifying alternatives via Viator MCP research: Viator #4 → BelgoTours Free Tour (256525P1, 4.75⭐ 1336 reviews, 10:00am, Grand-Place in front of City Hall, yellow umbrella); Viator #5 → Architecture Tour of Brussels (183075P7, 5.0⭐ 11 reviews, 8:00pm, Grand-Place 21/22 in front of Godiva, guide Jamal); TripAdvisor #2 → Historical Walking Tour: The Story of Brussels by Legends (d26849767, 4.8⭐ 194 reviews, 11:00am, Grand-Place 8 City Hall, red umbrella). Walking tour count: 3 (within 2–4 cap). Validator: 875 passed, 0 failures. Committed: 24fb8aae6.</div>
+    </div>
+
+    <div class="defer-card" style="border-left-color:#2a7a3b">
+      <div class="city" style="color:#2a7a3b">✓ 8 guides — damaged verification logs — ALREADY RESOLVED (git restore 2026-07-14)</div>
+      <div class="reason">Bergen · Big Island · Bora Bora · Boulder · Buenos Aires · Cairo · Cape Cod · Cancún — all 8 guides validated at 0 failures with valid signed stamps this run. Verification logs were restored from git on 2026-07-14 (b574f5165^) during the fleet-wide log-strip incident recovery. No further action required.</div>
+    </div>
+
+    <div class="defer-card" style="border-left-color:#2a7a3b">
+      <div class="city" style="color:#2a7a3b">✓ Machu Picchu — Getting Around / validator status — VERIFIED PASSING 2026-07-18</div>
+      <div class="reason">machupicchu_v1.html validated at 0 failures this run. Guide does not include a Getting Around section (the section is optional and ships only when the city has qualifying content). No CORE RULES edit required. Original deferred item was based on a stale source read — guide was already in clean state.</div>
+    </div>
+  </div>
+
+  <!-- Sources -->
+  <div class="section">
+    <div class="section-head">Sources read (15)</div>
+    <div class="source-grid">
+      <div class="source-row"><div class="dot"></div>2026-07-17-validator-audit-part-19.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-16-guide-content-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-guide-content-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-guide-day-expansion.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-mobile-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-reference-docs-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-brain-health-check.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-core-rules-coherence-audit.html</div>
+      <div class="source-row"><div class="dot"></div>tve-search-audit-2026-07-17.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-16-guide-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-rule-compliance-audit.html</div>
+      <div class="source-row"><div class="dot"></div>guide-audit-rolling.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-16-guide-coverage-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-16-guide-day-expansion.html</div>
+      <div class="source-row"><div class="dot"></div>To Do List/To_Do_List.md</div>
+    </div>
+  </div>
+
+  <!-- Skill update -->
+  <div class="section">
+    <div class="section-head">Routine improvement — applied this run</div>
+    <div class="smoke-note" style="font-size:12px">
+      <div class="icon">📋</div>
+      <div><strong>SKILL.md updated</strong> — Step 9 now uses <code style="font-family:var(--mono);font-size:11px">Artifact list</code> to find the current artifact URL instead of reading from memory. Memory artifact URLs change multiple times a day; the memory file is always stale. Also updated the <code style="font-family:var(--mono);font-size:11px">reporting_standard_html_and_artifacts</code> memory to reflect this as the site-wide standard.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>pending-fixes-sweep · 2026-07-18</span>
+    <span>2 guides fixed · commits bf2e81c26 (Singapore) · 24fb8aae6 (Brussels) · pushed to main · all deferred items resolved</span>
+  </div>
+
+</div>
