@@ -282,7 +282,7 @@ body {
   <!-- Tiles -->
   <div class="tiles">
     <div class="tile">
-      <div class="tile-num">15</div>
+      <div class="tile-num">30</div>
       <div class="tile-label">Sources read</div>
     </div>
     <div class="tile">
@@ -294,7 +294,7 @@ body {
       <div class="tile-label">Fixed this run</div>
     </div>
     <div class="tile">
-      <div class="tile-num muted">0</div>
+      <div class="tile-num muted">2</div>
       <div class="tile-label">Deferred</div>
     </div>
   </div>
@@ -327,16 +327,26 @@ body {
 
   <!-- Working tree note -->
   <div class="section">
-    <div class="section-head">Working tree — smoke-test stamp drift restored</div>
+    <div class="section-head">Working tree — invalid-stamp + stamp-drift + partial-work restored to HEAD</div>
 
-    <div class="smoke-note">
-      <div class="icon">↩</div>
-      <div>5 guides showed as modified in <code style="font-family:var(--mono);font-size:11px">git status</code> with only a validation-stamp timestamp change (identical HMAC sig — content unchanged). These were restamped by other crib smoke tests, not by actual content edits. Restored all 5 to HEAD via <code style="font-family:var(--mono);font-size:11px">git checkout HEAD -- &lt;file&gt;</code>. Guides: <strong>Amsterdam</strong> · <strong>Aix-en-Provence</strong> · <strong>Azores</strong> · <strong>Bangkok</strong> · <strong>São-Luís</strong>.
-      </div>
+    <div class="smoke-note" style="border-left:3px solid var(--red)">
+      <div class="icon">⚠</div>
+      <div><strong>London (london_v5.html) — Day 7 expansion reverted.</strong> Prior day-expansion crib added Day 7 with Westminster Abbey and Tower of London — both are on London's explicit skip list. Validator found 9 failures including skip-list violations, day-ordering breach (non-train Day 7 after train Day 6), descriptions &gt;320 chars, missing tour-search sentinels. Content unfixable without full reconstruction. Reverted to HEAD. Day 7 expansion must be redone with non-skip-listed stops. Also reverted: <code style="font-family:var(--mono);font-size:11px">Guides/London/_build/assets/photo_provenance.json</code> (Day 7 artifact).</div>
     </div>
+
+    <div class="smoke-note" style="margin-top:8px">
+      <div class="icon">↩</div>
+      <div><strong>Dubai — partial provenance.json reverted.</strong> <code style="font-family:var(--mono);font-size:11px">Guides/Dubai/_build/assets/photo_provenance.json</code> was modified by a stalled day-expansion crib (photos added, no guide HTML change). No guide HTML to validate or fix. Reverted to HEAD.</div>
+    </div>
+
+    <div class="smoke-note" style="margin-top:8px">
+      <div class="icon">↩</div>
+      <div><strong>41 stamp-only guides restored to HEAD.</strong> Working tree showed 41 guide HTML files as modified with only a validation-stamp timestamp change (identical HMAC sig — content unchanged). Restamped by other cribs' smoke tests, not actual content edits. All 41 confirmed valid stamps before restore. Guides span Alaska through KeyWest alphabetically.</div>
+    </div>
+
     <div class="smoke-note" style="border-left:3px solid var(--green);font-size:12px;margin-top:4px">
       <div class="icon">✓</div>
-      <div>All 5 guides validated clean (0 failures) before restore — the restamps were cosmetic only.</div>
+      <div>5 earlier stamp-drift guides also restored: <strong>Amsterdam</strong> · <strong>Aix-en-Provence</strong> · <strong>Azores</strong> · <strong>Bangkok</strong> · <strong>São-Luís</strong> (from first context window). All validated clean before restore.</div>
     </div>
   </div>
 
@@ -360,25 +370,60 @@ body {
     </div>
   </div>
 
+  <!-- Deferred items -->
+  <div class="section">
+    <div class="section-head">Deferred — requires out-of-scope changes</div>
+
+    <div class="defer-card">
+      <div class="city">San Jose — stale stamp on origin</div>
+      <div class="reason">Two blocking validator failures: (1) Calibration anchor 'No fixed palette' removed from <code style="font-family:var(--mono);font-size:11px">Claude Inspiration - Extra Section.html</code> by coherence audit run 3 today — <code style="font-family:var(--mono);font-size:11px">validate_itinerary.py</code> line 24699 still looks for this text, fleet-wide hard-fail. (2) 3 bot-blocked booking URLs have empty verification log entries (2026-07-14 strip incident). <strong>Action needed:</strong> update <code style="font-family:var(--mono);font-size:11px">validate_itinerary.py</code> calibration anchor needle + re-verify 3 URLs. Both are out-of-scope for pending-fixes-sweep (validator script change).</div>
+    </div>
+
+    <div class="defer-card">
+      <div class="city">London Day 7 — must be rebuilt with non-skip-listed stops</div>
+      <div class="reason">Guide reverted to HEAD this run. Day 7 expansion must be redone avoiding Westminster Abbey and Tower of London (both on London skip list). Tower Bridge and HMS Belfast are not on the skip list — these can remain. A new day-expansion crib must pick 2–3 replacement stops that pass the skip list and fit after the Cambridge Train Day (Day 6). Validator day-ordering check must pass.</div>
+    </div>
+
+    <div class="defer-card" style="border-left-color:var(--accent)">
+      <div class="city">Fleet-wide: validator calibration anchor 'No fixed palette' — needs script update</div>
+      <div class="reason">Today's coherence audit (run 3) removed the phrase "No fixed palette" from §2 of <code style="font-family:var(--mono);font-size:11px">Claude Inspiration - Extra Section.html</code> and renamed the section. The calibration anchor in <code style="font-family:var(--mono);font-size:11px">Brain/scripts/validate_itinerary.py</code> line 24699 still searches for 'No fixed palette' — not found → hard-fail on all guides. Until the script is updated, re-validation of any guide will fail on CI-7 calibration checks. A validator-maintenance crib must update the needle to match current text in the CORE RULES file.</div>
+    </div>
+  </div>
+
   <!-- Sources -->
   <div class="section">
-    <div class="section-head">Sources read (15)</div>
+    <div class="section-head">Sources read (30)</div>
     <div class="source-grid">
+      <div class="source-row"><div class="dot"></div>2026-07-18-brain-health-check.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-core-rules-coherence-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-folder-map-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-guide-day-expansion.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-tooling-gaps-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-validator-audit-part-1.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-validator-audit-part-2.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-18-validator-audit-part3.html</div>
       <div class="source-row"><div class="dot"></div>2026-07-17-validator-audit-part-19.html</div>
-      <div class="source-row"><div class="dot"></div>2026-07-16-guide-content-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-rule-compliance-audit.html</div>
       <div class="source-row"><div class="dot"></div>2026-07-17-guide-content-audit.html</div>
       <div class="source-row"><div class="dot"></div>2026-07-17-guide-day-expansion.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-brain-health-check.html</div>
       <div class="source-row"><div class="dot"></div>2026-07-17-mobile-audit.html</div>
       <div class="source-row"><div class="dot"></div>2026-07-17-reference-docs-audit.html</div>
-      <div class="source-row"><div class="dot"></div>2026-07-17-brain-health-check.html</div>
-      <div class="source-row"><div class="dot"></div>2026-07-18-core-rules-coherence-audit.html</div>
-      <div class="source-row"><div class="dot"></div>tve-search-audit-2026-07-17.html</div>
       <div class="source-row"><div class="dot"></div>2026-07-16-guide-audit.html</div>
-      <div class="source-row"><div class="dot"></div>2026-07-17-rule-compliance-audit.html</div>
-      <div class="source-row"><div class="dot"></div>guide-audit-rolling.html</div>
-      <div class="source-row"><div class="dot"></div>2026-07-16-guide-coverage-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-16-guide-content-audit.html</div>
       <div class="source-row"><div class="dot"></div>2026-07-16-guide-day-expansion.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-16-guide-coverage-audit.html</div>
+      <div class="source-row"><div class="dot"></div>guide-audit-rolling.html</div>
+      <div class="source-row"><div class="dot"></div>guide-day-expansion-rolling.html</div>
+      <div class="source-row"><div class="dot"></div>tve-search-audit-2026-07-17.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-scripts-docs-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-filter-audit.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-validator-audit-part-15.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-validator-audit-part-18.html</div>
+      <div class="source-row"><div class="dot"></div>2026-07-17-validator-audit-part20.html</div>
+      <div class="source-row"><div class="dot"></div>best-of-link-audit-report.html</div>
       <div class="source-row"><div class="dot"></div>To Do List/To_Do_List.md</div>
+      <div class="source-row"><div class="dot"></div>Working tree (git status)</div>
     </div>
   </div>
 
@@ -393,7 +438,7 @@ body {
 
   <div class="footer">
     <span>pending-fixes-sweep · 2026-07-18</span>
-    <span>2 guides fixed · commits bf2e81c26 (Singapore) · 24fb8aae6 (Brussels) · pushed to main · all deferred items resolved</span>
+    <span>2 guides fixed (Singapore · Brussels) · 46 working-tree reverts · 2 deferred (San Jose stale stamp · London Day 7 redo) · fleet validator calibration anchor needs script fix</span>
   </div>
 
 </div>
