@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Validator Deep Audit Part 20 — 2026-07-17</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:780px;margin:0 auto;padding:24px 20px;color:#1a1917;line-height:1.55}
+h1{font-size:20px;font-weight:700;margin:0 0 4px;color:#3d3a32}
+.meta{font-size:13px;color:#777;margin-bottom:24px}
+h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#b85c2a;margin:24px 0 10px;border-bottom:1px solid #e6e2da;padding-bottom:5px}
+h3{font-size:13px;font-weight:700;color:#3d3a32;margin:16px 0 6px}
+ul{margin:0 0 12px;padding-left:18px}
+li{font-size:13px;margin-bottom:7px}
+p{font-size:13px;margin:0 0 12px}
+.pass{color:#2e7d32;font-weight:600}
+.warn{color:#b85c2a;font-weight:600}
+.fail{color:#c0392b;font-weight:600}
+code{background:#f0ece3;border-radius:3px;padding:1px 5px;font-size:12px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-bottom:12px}
+th{background:#f5f1ea;text-align:left;padding:7px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#777}
+td{padding:7px 10px;border-bottom:1px solid #e9e5de;vertical-align:top}
+tr:last-child td{border-bottom:none}
+.sec-label{font-weight:700;color:#3d3a32}
+.count{font-weight:700;color:#b85c2a}
+</style>
+</head><body>
+
+<h1>Validator Deep Audit — Part 20 of 20</h1>
+<div class="meta">Date: 2026-07-17 · Crib: 5 · Sections: 🧠 brain_check.py · ✈️ Flight-Time View · 💰 Currency · 🗺️ Travel Tracker · 📖 Read About · 🗂 Fleet Validators · 🏗 Builders · 🔧 Infrastructure</div>
+
+<h2>Summary</h2>
+<p>This is the final part of the 20-part Validator Deep Audit cycle. All 8 sections were audited against the live code in <code>Brain/scripts/</code>. The primary finding was a significant documentation gap: <strong class="count">20 scripts and functions</strong> exist in code but were entirely absent from the Validator Index. All were added. One description mismatch was also fixed.</p>
+
+<table>
+<thead><tr><th>Section</th><th>Status</th><th>Gaps Found</th></tr></thead>
+<tbody>
+<tr><td class="sec-label">🧠 brain_check.py checks</td><td><span class="fail">FIXED</span></td><td>9 implemented functions not documented</td></tr>
+<tr><td class="sec-label">✈️ Flight-Time View</td><td><span class="pass">CLEAN</span></td><td>0 — all 11 checks correctly documented</td></tr>
+<tr><td class="sec-label">💰 Currency Guide</td><td><span class="fail">FIXED</span></td><td>1 description mismatch (stamp wording)</td></tr>
+<tr><td class="sec-label">🗺️ Travel Tracker</td><td><span class="pass">CLEAN</span></td><td>0 — all 4 items correctly documented</td></tr>
+<tr><td class="sec-label">📖 Read About Story Page</td><td><span class="pass">CLEAN</span></td><td>0 — all 12 items correctly documented</td></tr>
+<tr><td class="sec-label">🗂 Fleet Validators</td><td><span class="fail">FIXED</span></td><td>4 validators missing from index</td></tr>
+<tr><td class="sec-label">🏗 Builders</td><td><span class="fail">FIXED</span></td><td>6 builders missing from index</td></tr>
+<tr><td class="sec-label">🔧 Infrastructure</td><td><span class="fail">FIXED</span></td><td>6 infrastructure scripts missing from index</td></tr>
+</tbody>
+</table>
+
+<h2>brain_check.py — 9 Missing Functions Documented</h2>
+<p>These functions are wired in <code>brain_check.py main()</code> and run at every session start, but had no entry in the Validator Index:</p>
+<ul>
+  <li><code>check_no_dup_suffix_files()</code> — hard-fail on any <code>Name (N).html/.md</code> Drive duplicate-upload artifact</li>
+  <li><code>check_guide_filenames()</code> — hard-fail if guide HTML not named <code>{city-slug}_vN.html</code></li>
+  <li><code>check_stray_auto_generated_files()</code> — hard-fail if <code>profile_watermark.json</code>/<code>verify_cache.json</code> found outside <code>Brain/Reference/</code></li>
+  <li><code>check_guide_ship_logs()</code> — hard-fail if <code>ship_log.md</code> outside a <code>_build/</code> directory</li>
+  <li><code>check_banner_h1_text_only()</code> — hard-fail if title banner <code>&lt;h1&gt;</code> contains an emoji</li>
+  <li><code>check_page_margins()</code> — hard-fail on non-standard page gutter (not 0 32px / 0 14px mobile)</li>
+  <li><code>check_page_filename_spaces()</code> — hard-fail on space in a shareable page filename</li>
+  <li><code>check_best_of_country_order()</code> — hard-fail if Best-of country sections not in A→Z order</li>
+  <li><code>check_best_of_sidebar_coverage()</code> — hard-fail if any Best-*.html is missing a sidebar nav card</li>
+</ul>
+
+<h2>Currency Guide — Description Mismatch Fixed</h2>
+<p>The Validator Index entry at line 1129 said <em>"Last update {Mon Year}" stat pill</em> but the actual <code>validate_currency.py</code> code and the live page use <code>&lt;span class="updated-stamp"&gt;Updated Month Year&lt;/span&gt;</code>. The description was corrected to match reality.</p>
+
+<h2>Fleet Validators — 4 Scripts Added</h2>
+<ul>
+  <li><code>validate_also_on_site_pills.py</code> — standalone fleet backstop for "Also on this site" pill labels/icons</li>
+  <li><code>validate_climate_coverage.py</code> — whole-fleet check: every map-pinned city in climate.json + weather.js in sync</li>
+  <li><code>validate_travel_stats.py</code> — Travel Stats integrity: hero counts, split bars, bucket list, guide links</li>
+  <li><code>validate_safety_guide.py</code> — Safety Guide fleet backstop: one row per city, no dupes, all hrefs resolve</li>
+</ul>
+
+<h2>Builders — 6 Scripts Added</h2>
+<ul>
+  <li><code>build_nearby_guides.py</code> — injects nearby-guides cross-links (haversine-ranked); best-effort on ship</li>
+  <li><code>build_guide_map.py</code> — generates per-guide <code>{slug}-stops-map.html</code> via Nominatim geocoding</li>
+  <li><code>build_guides_index.py</code> — incremental dest-card generator for Guides-Index.html</li>
+  <li><code>build_guides_index_full.py</code> — full-page Guides-Index.html rebuild from guide data on disk</li>
+  <li><code>build_climate.py</code> — fetches Open-Meteo normals, regenerates climate.json + weather.js + Trips.html</li>
+  <li><code>update_currency_rates.py</code> — in-place rate-only update for Currency-Guide.html (no CSS/structure changes)</li>
+</ul>
+
+<h2>Infrastructure — 6 Scripts Added</h2>
+<ul>
+  <li><code>blast_radius.py</code> — shared bulk-mutation guard; raises <code>BulkMutationBlocked</code> above 40% deletion cap</li>
+  <li><code>photo_provenance.py</code> — shared photo-authenticity helpers and provenance manifest</li>
+  <li><code>audit_transit_dupes.py</code> — from-hotel transit-time duplicate surfacer (advisory, never a ship gate)</li>
+  <li><code>replace_best_of_grid.py</code> — splices a new SHOWCASE grid fragment into a Best-of page</li>
+  <li><code>fix_best_of_format.py</code> — auto-repair for Best-of pages (🌐 prefix + Google Maps links)</li>
+  <li><code>update_audit_rolling_report.py</code> — appends guide-fix summaries to the rolling audit artifact</li>
+</ul>
+
+<h2>Verification</h2>
+<ul>
+  <li><code>brain_check.py</code> — exit 0 after all edits: 180/181 ok · 1 pre-existing CSS-duplication warn · 0 fail</li>
+  <li><code>validate_itinerary.py Amsterdam</code> — exit 0 (832 passed)</li>
+  <li><code>validate_itinerary.py Barcelona</code> — exit 0</li>
+  <li><code>validate_itinerary.py Paris</code> — exit 0</li>
+  <li>Coverage artifact republished at <a href="https://claude.ai/code/artifact/65a2e7cc-d68c-4284-b3f7-76d504adbf13">65a2e7cc</a> — shows 18/20 parts complete</li>
+</ul>
+
+<h2>Cycle Status</h2>
+<p>Parts completed this cycle: 1–15, 17, 18, 20 (18 of 20). Parts 16 and 19 are claimed by Crib 4 and running concurrently.</p>
+
+</body></html>
