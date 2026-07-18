@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tooling Gaps Audit — 2026-07-18</title>
+<style>
+  :root {
+    --accent: #b85c2a;
+    --accent-dark: #7a3b1e;
+    --gold: #8a6c1a;
+    --bg: #f7f4ee;
+    --surface: #ffffff;
+    --border: #d4c4a0;
+    --text: #2c2a22;
+    --muted: #6b6455;
+    --green: #2d7a3a;
+    --amber: #c07800;
+    --red: #b02020;
+    --blue: #1a5c8a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 0 0 60px;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 55%, #d4874a 100%);
+    color: white;
+    padding: 28px 32px 24px;
+  }
+  header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.02em; }
+  header p { opacity: 0.85; font-size: 13px; margin-top: 4px; }
+  header .sub { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+  /* back link */
+  .back { display: inline-block; margin: 16px 32px; font-size: 12px; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+
+  /* summary lede */
+  .lede {
+    background: var(--surface);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 24px 0 20px;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+  .lede strong { color: var(--accent); }
+
+  /* stat tiles */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat .num { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .stat .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat.green .num { color: var(--green); }
+  .stat.amber .num { color: var(--amber); }
+  .stat.red .num { color: var(--red); }
+
+  /* section headers */
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 6px;
+    margin: 32px 0 16px;
+  }
+  h3 { font-size: 14px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
+
+  /* cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge.p2 { background: #fff3cd; color: #7a5500; border: 1px solid #f0c040; }
+  .badge.p3 { background: #e8f0fe; color: #1a4a8a; border: 1px solid #9ab0e0; }
+  .badge.fixed { background: #d4edda; color: #155724; border: 1px solid #8cba9c; }
+  .badge.open { background: #fde8e0; color: #7a2a10; border: 1px solid #e0a080; }
+  .badge.new { background: #d4edda; color: #155724; border: 1px solid #8cba9c; }
+  .badge.carryover { background: #fff3cd; color: #7a5500; border: 1px solid #f0c040; }
+
+  .card-title { font-size: 14px; font-weight: 700; flex: 1; }
+  .card p { margin-bottom: 8px; font-size: 13.5px; line-height: 1.6; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .verify-block {
+    background: #f4f1eb;
+    border-left: 3px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-size: 12.5px;
+  }
+  .verify-block code {
+    display: block;
+    background: #ebe8e0;
+    padding: 4px 8px;
+    border-radius: 3px;
+    margin: 4px 0;
+    font-family: "SF Mono", "Monaco", monospace;
+    font-size: 11.5px;
+  }
+  .verify-block .result { color: var(--green); font-weight: 600; }
+  .verify-block .no-result { color: var(--red); font-weight: 600; }
+
+  .recommendation {
+    background: #fdf8f0;
+    border: 1px solid #e8d8b8;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .recommendation strong { color: var(--accent); }
+
+  /* verification protocol */
+  .protocol {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .protocol ul { padding-left: 20px; }
+  .protocol li { margin: 6px 0; font-size: 13px; }
+  .protocol code {
+    background: #f0ede6;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: "SF Mono", monospace;
+    font-size: 11.5px;
+  }
+
+  /* action table */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th { text-align: left; padding: 8px 12px; background: #ebe8e0; font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  td { padding: 9px 12px; border-top: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: #faf8f3; }
+  td code { background: #f0ede6; padding: 1px 5px; border-radius: 3px; font-family: "SF Mono", monospace; font-size: 11px; }
+
+  /* dropped section */
+  .dropped {
+    background: #f0f4f0;
+    border: 1px solid #b8d0b8;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .dropped ul { padding-left: 18px; margin-top: 6px; }
+  .dropped li { margin: 5px 0; }
+
+  /* fixed section */
+  .fixed-card {
+    background: #f0f8f2;
+    border: 1px solid #8cba9c;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .fixed-card h3 { color: var(--green); margin-top: 0; }
+
+  /* well-covered */
+  .covered-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin: 12px 0; }
+  .covered-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+  }
+  .covered-item::before { content: "✓ "; color: var(--green); font-weight: 700; }
+
+  footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Tooling Gaps Audit — 2026-07-18</h1>
+  <p>The Voyager Expert — scripts · routines · artifacts · connectors</p>
+  <p class="sub">2026-07-18 · scheduled weekly run · autonomous · run #1 this date</p>
+</header>
+
+<div class="wrap">
+
+  <!-- Back notice -->
+  <div style="background:#fff8f0;border:1px solid #e8c890;border-radius:6px;padding:12px 16px;margin:20px 0;font-size:12.5px;">
+    After completing work from this file:
+    come back and move each finished item to the <strong>Fixed / Implemented</strong>
+    section at the bottom of this page. Open items should stay at the top — don't leave "fixed 2026-07-XX" tags scattered through the open list.
+  </div>
+
+  <!-- Summary lede -->
+  <div class="lede">
+    <strong>Summary.</strong>
+    One gap fixed since last week, two carry-overs still open. No new verified gaps this run.
+    The P2 fix (<code>validate_continuity_render.py</code> now in <code>cross-page-consistency-audit</code>) is confirmed closed.
+    The P2 JSON staleness has grown from 49 → 49 missing skill dirs (same count; 19 new dirs appeared this week but the count of "not in JSON" grew by the same amount since the JSON hasn't been refreshed).
+    The P3 filter-audit duplication is partially resolved: the two routines now differ in 18 lines (artifact publishing added to <code>filters-tags-index-audit</code>), but the core Steps 1–7 are still shared and Monday scheduling conflict risk persists.
+    <br><br>
+    <strong>3 candidates dropped by verification this run:</strong> (1) Claude Inspiration backfill — bash loop bug in earlier check reported 220 missing; corrected grep returns 0 missing (fully cleared). (2) Read-about backfill — 0 missing, fully cleared. (3) <code>validate_image_sizes.py</code> unscheduled — live photo audit finds 0 oversized photos; ship gate auto-heals at ship time; no meaningful gap.
+  </div>
+
+  <!-- Stat tiles -->
+  <div class="stats">
+    <div class="stat">
+      <div class="num">91</div>
+      <div class="lbl">Skill dirs total</div>
+    </div>
+    <div class="stat">
+      <div class="num">56</div>
+      <div class="lbl">Non-ephemeral routines</div>
+    </div>
+    <div class="stat amber">
+      <div class="num">43</div>
+      <div class="lbl">JSON count (stale)</div>
+    </div>
+    <div class="stat">
+      <div class="num">97</div>
+      <div class="lbl">Python scripts on disk</div>
+    </div>
+    <div class="stat red">
+      <div class="num">2</div>
+      <div class="lbl">Open verified gaps</div>
+    </div>
+    <div class="stat green">
+      <div class="num">1</div>
+      <div class="lbl">Fixed this week</div>
+    </div>
+    <div class="stat">
+      <div class="num">3</div>
+      <div class="lbl">Dropped by verify</div>
+    </div>
+  </div>
+
+  <!-- Verification protocol -->
+  <h2>Verification protocol — required before every recommendation ships</h2>
+  <div class="protocol">
+    <p style="font-size:13px;margin-bottom:10px;">The codebase drifts constantly — routines are added, scripts backfill debt, gaps close between the time a recommendation is drafted and the time it's read. Every candidate recommendation in this report must be verified against the live codebase before it is acted on.</p>
+    <strong style="font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);">Verification checklist — run before actioning any item</strong>
+    <ul>
+      <li><strong>Script gap:</strong> confirm the named script does not exist — <code>ls Brain/scripts/{name}.py</code></li>
+      <li><strong>Routine gap:</strong> confirm no matching routine ID in <code>voyager_routines_export.json</code> AND no skill dir in <code>~/.claude/scheduled-tasks/</code></li>
+      <li><strong>Coverage gap:</strong> run the relevant grep / count to confirm the gap is still real (e.g. <code>grep -rL 'pattern' Guides/</code>)</li>
+      <li><strong>Queue gap:</strong> confirm the queue/state file doesn't already exist</li>
+    </ul>
+    <p style="margin-top:10px;font-size:12.5px;">This run — <strong>3 candidates dropped after live check</strong> (all backfill / unscheduled-script candidates). Details in Dropped section below.</p>
+  </div>
+
+  <!-- OPEN GAPS -->
+  <h2>Open gaps — 2 carry-over</h2>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="badge p2">P2</span>
+      <span class="badge open">Open</span>
+      <span class="badge carryover">Carry-over · growing</span>
+      <div class="card-title"><code>voyager_routines_export.json</code> staleness continues to grow</div>
+    </div>
+    <p><strong>Type:</strong> Missing export update · User action required</p>
+    <p><strong>Risk:</strong> This audit routine reports wrong routine counts; orphaned IDs in the JSON cause confusion about what's actually scheduled. The gap is now large enough that the JSON is no longer a useful reference for routine discovery.</p>
+
+    <p>The JSON export was last refreshed at 43 routines. The scheduler now has 91 skill directories — a 48-dir gap. Of the 91 dirs, 56 are non-ephemeral routines (excluding <code>guide-audit-crib-*</code>, <code>on-demand-*</code>, and <code>add-validator-*</code> which are ephemeral/on-demand instances). That means 13 real standing routines are invisible to the JSON export.</p>
+
+    <p><strong>New this week (19 new skill dirs since 2026-07-16):</strong>
+    <code>core-rules-coherence-audit</code> · <code>guide-audit-crib-1</code> through <code>-10</code> (10 parallel crib instances) · <code>on-demand-validator-audit-6</code> through <code>-10</code> · <code>pending-fixes-sweep</code> · <code>rule-compliance-audit</code> · <code>tve-search-weekly-audit</code></p>
+
+    <p><strong>Skill dirs not in JSON (49) — not the full list, illustrative:</strong>
+    core-rules-coherence-audit · filter-audit · filters-tags-index-audit · fix-ux-problems · guide-coverage-report · pending-fixes-sweep · photo-freshness-audit · rule-compliance-audit · stats-pages-monthly-refresh · time-zones-data-audit · todays-improvement-recommendation · tve-search-weekly-audit · weekly-site-sync + 36 more (on-demand / crib instances).</p>
+
+    <p><strong>JSON IDs with no skill dir (1 orphan):</strong> <code>guide-days-rebuild</code> — superseded by <code>weekly-site-sync</code> Step 1 (confirmed last report; orphan persists in JSON).</p>
+
+    <div class="verify-block">
+      <strong>Live verification run:</strong>
+      <code>ls ~/.claude/scheduled-tasks/ | wc -l</code>
+      <span class="result">→ 91 directories</span>
+      <code>python3 -c "import json; d=json.load(open('voyager_routines_export.json')); print(len(d), 'IDs in JSON')"</code>
+      <span class="result">→ 43 IDs in JSON</span>
+      <code>python3: guide-days-rebuild not in ~/.claude/scheduled-tasks/</code>
+      <span class="result">→ orphan confirmed</span>
+    </div>
+
+    <div class="recommendation">
+      <strong>Action:</strong> User — refresh <code>voyager_routines_export.json</code> from the claude.ai scheduled-tasks interface (export option). This is a user action; the file cannot be updated programmatically. Once refreshed, this audit will report accurate counts. The orphaned <code>guide-days-rebuild</code> ID should disappear if it was deleted from the scheduler. Weekly gap tracking will be based on a correct baseline again.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="badge p3">P3</span>
+      <span class="badge open">Open · Partially resolved</span>
+      <span class="badge carryover">Carry-over</span>
+      <div class="card-title"><code>filter-audit</code> and <code>filters-tags-index-audit</code> share identical Steps 1–7 core body</div>
+    </div>
+    <p><strong>Type:</strong> Routine duplication · Scheduling conflict risk</p>
+    <p><strong>Risk:</strong> Both routines run the same audit steps over the same data. If both fire on the same day (both are currently unscheduled in the JSON, but likely on similar cadences), they can conflict on shared writes to <code>Guides-Index.html</code>.</p>
+
+    <p><strong>Partially resolved since last week:</strong> <code>filters-tags-index-audit</code> SKILL.md now has 18 lines not in <code>filter-audit</code> — a new artifact publishing section. The two routines are no longer word-for-word identical. However, the core Steps 1–7 workflow (which scripts to run, what to check, what to fix) is still 99% shared. The distinction in <em>scope</em> that justifies two separate routines (filter data sync vs. index completeness) is not yet reflected in the body — both still run the same <code>audit_filters.py</code> and <code>build_*_tags.py</code> stack.</p>
+
+    <div class="verify-block">
+      <strong>Live verification run:</strong>
+      <code>diff ~/.claude/scheduled-tasks/filter-audit/SKILL.md ~/.claude/scheduled-tasks/filters-tags-index-audit/SKILL.md | wc -l</code>
+      <span class="result">→ 18 lines different (down from 0 last week — some divergence)</span>
+      <code>diff shows: name/description headers differ + filters-tags-index-audit adds artifact publishing block</code>
+      <span class="result">→ core Steps 1–7 body still shared</span>
+    </div>
+
+    <div class="recommendation">
+      <strong>Action:</strong> If these routines are intentionally distinct (one fixes filter data, one audits index completeness), update their Step bodies to reflect that split. If they're intended as a single routine that was duplicated, delete one and consolidate. Low urgency since they're not causing active failures, but the shared-steps pattern means edits to one must be mirrored in the other manually.
+    </div>
+  </div>
+
+  <!-- FIXED THIS WEEK -->
+  <h2>Fixed since last report</h2>
+
+  <div class="fixed-card">
+    <h3>✓ <code>validate_continuity_render.py</code> added to <code>cross-page-consistency-audit</code></h3>
+    <p><strong>Was:</strong> P2 New gap (2026-07-16) — the script had no scheduled periodic fleet scan. A <code>guide-style.css</code> push could introduce CSS continuity regressions visible across all 220 guides and go undetected until the next guide shipped.</p>
+    <p><strong>Fixed:</strong> Confirmed at <code>~/.claude/scheduled-tasks/cross-page-consistency-audit/SKILL.md</code> line 223 — <code>python3 Brain/scripts/validate_continuity_render.py --warn</code> now runs as part of the Saturday cross-page consistency routine. This catches CSS regressions on a weekly cadence, within days of any <code>guide-style.css</code> push.</p>
+    <div class="verify-block">
+      <code>grep -n "continuity_render" ~/.claude/scheduled-tasks/cross-page-consistency-audit/SKILL.md</code>
+      <span class="result">→ line 223: python3 Brain/scripts/validate_continuity_render.py --warn</span>
+    </div>
+  </div>
+
+  <!-- WELL COVERED -->
+  <h2>Already well-covered — checked and found clean</h2>
+
+  <p style="font-size:13px;margin-bottom:12px;">The following areas were audited this run and found to have no meaningful gap:</p>
+
+  <div class="covered-grid">
+    <div class="covered-item">Claude Inspiration backfill — 0 guides missing (cleared)</div>
+    <div class="covered-item">Read-about backfill — 0 guides missing (cleared)</div>
+    <div class="covered-item">Oversized photos — 0 files >1MB across all _build/assets/</div>
+    <div class="covered-item">validate_image_sizes.py — ship gate auto-heals; no standalone gap</div>
+    <div class="covered-item">validate_continuity_render.py — now in cross-page-consistency-audit</div>
+    <div class="covered-item">validate_read_about_versions.py — in core-rules-coherence-audit + guide-coverage-report</div>
+    <div class="covered-item">validate_search_index.py — in guide-coverage-report + weekly-site-sync</div>
+    <div class="covered-item">validate_guides_index_inline.py — in guide-coverage-report</div>
+    <div class="covered-item">audit_photos.py — in photo-freshness-audit (monthly)</div>
+    <div class="covered-item">build_home_stats.py — RETIRED (not called anywhere, not an issue)</div>
+    <div class="covered-item">Stale script refs in routines — none found</div>
+    <div class="covered-item">Core rules coherence — now has dedicated routine</div>
+  </div>
+
+  <!-- ACTION SUMMARY TABLE -->
+  <h2>Action summary</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Priority</th>
+        <th>Item</th>
+        <th>Type</th>
+        <th>Owner</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge p2" style="display:inline-block">P2</span></td>
+        <td>Refresh <code>voyager_routines_export.json</code> from claude.ai interface</td>
+        <td>User action</td>
+        <td>Owner</td>
+        <td>Open · carry-over</td>
+      </tr>
+      <tr>
+        <td><span class="badge p3" style="display:inline-block">P3</span></td>
+        <td>Resolve <code>filter-audit</code> vs <code>filters-tags-index-audit</code> duplication</td>
+        <td>Routine dedup</td>
+        <td>Owner</td>
+        <td>Open · partially resolved</td>
+      </tr>
+      <tr>
+        <td><span class="badge fixed" style="display:inline-block">Fixed</span></td>
+        <td><code>validate_continuity_render.py</code> added to Saturday routine</td>
+        <td>Scheduling</td>
+        <td>—</td>
+        <td>Closed this week</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Dropped -->
+  <div class="dropped">
+    <strong>Candidates dropped after live verification (3 this run)</strong>
+    <ul>
+      <li><strong>Claude Inspiration backfill (220 missing):</strong> A bash loop used <code>grep -qL</code> (combining quiet+list-only flags) which produces incorrect results — every file appeared to not match. Corrected command: <code>find ... | xargs grep -rL 'claude-inspiration'</code> → 0 guides missing. Backfill is fully cleared.</li>
+      <li><strong>Read-about backfill (143 missing per 2026-07-10 CLAUDE.md note):</strong> Loop check: 0 guides missing a <code>*-read-about.html</code> file. Backfill fully cleared.</li>
+      <li><strong><code>validate_image_sizes.py</code> unscheduled:</strong> Live audit: <code>find Guides -path "*/_build/assets/*" ... | wc -l</code> → 0 files exceeding 1MB. The ship gate auto-heals at ship time. No periodic standalone scan is needed when the fleet is clean; this can be revisited if the ship gate starts catching oversized photos routinely.</li>
+    </ul>
+  </div>
+
+  <!-- Fixed from earlier sessions (persistent history) -->
+  <h2>Previously fixed — history</h2>
+
+  <div class="fixed-card">
+    <h3>✓ <code>validate_continuity_render.py</code> — completely unscheduled (2026-07-16 P2)</h3>
+    <p>Added to <code>cross-page-consistency-audit</code> Saturday routine. Confirmed 2026-07-18.</p>
+  </div>
+
+  <div class="fixed-card">
+    <h3>✓ Claude Inspiration backfill — 60 guides missing (2026-07-12 note)</h3>
+    <p>Cleared by the guide-audit and pending-fixes routines. Confirmed 0 missing as of 2026-07-18.</p>
+  </div>
+
+  <div class="fixed-card">
+    <h3>✓ Read-about backfill — 143 guides missing (2026-07-10 note)</h3>
+    <p>Cleared by audit/build routines. Confirmed 0 missing as of 2026-07-18.</p>
+  </div>
+
+  <div class="fixed-card">
+    <h3>✓ <code>validate_continuity_render.py</code> — downgraded from "completely absent" (2026-07-16)</h3>
+    <p>Fleet-scoped strict run confirmed at <code>guide_tools.py</code> ship gate (line 3337) and interactive session start (line 449). Then fully fixed by adding to weekly scheduled routine.</p>
+  </div>
+
+</div><!-- .wrap -->
+
+<footer class="wrap">
+  <p>Tooling Gaps Audit · The Voyager Expert · 2026-07-18 · weekly scheduled run</p>
+  <p style="margin-top:4px;">Scripts on disk: 97 · Non-ephemeral skill dirs: 56 · JSON IDs: 43 (stale — refresh needed)</p>
+</footer>
+
+</body>
+</html>
