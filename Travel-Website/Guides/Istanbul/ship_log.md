@@ -17,3 +17,9 @@
 2026-07-11 13:04 — istanbul_v2.html — PASS — 0 checks
 2026-07-11 13:04 — istanbul_v2.html — PASS — 0 checks
 2026-07-11 13:08 — istanbul_v2.html — PASS — 0 checks
+2026-07-18 12:44 — istanbul_v2.html — FAIL @ verify — 0 checks
+2026-07-18 12:44 — istanbul_v2.html — FAIL @ verify — 0 checks
+2026-07-18 12:47 — istanbul_v2.html — FAIL @ verify-booking — 0 checks
+2026-07-18 12:49 — istanbul_v2.html — FAIL @ coverage-gates — 0 checks
+2026-07-18 12:50 — istanbul_v2.html — FAIL @ coverage-gates — 0 checks
+2026-07-18 12:52 — istanbul_v2.html — PASS — 0 checks
