@@ -150,6 +150,7 @@ a.city-row.hidden { display: none; }
 <body>
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
 <script src="../assets/toolbar.js?v=103"></script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
 
 <div class="wrap">
   <div class="page-header">
@@ -504,6 +505,26 @@ a.city-row.hidden { display: none; }
 
   scrollToCity();
   window.addEventListener('hashchange', scrollToCity);
+
+  // TVESearch typeahead — build items from city rows
+  (function () {
+    var inp = document.getElementById('city-search');
+    if (!inp || typeof TVESearch === 'undefined') return;
+    var items = [];
+    document.querySelectorAll('.city-row').forEach(function (row) {
+      var city = row.getAttribute('data-city') || '';
+      var link = row.querySelector('a[href]');
+      var href = link ? link.getAttribute('href') : null;
+      if (city && href) items.push({ name: city, sub: '', href: href });
+    });
+    TVESearch.attach(inp, {
+      items: items,
+      onPick: function (item) {
+        inp.value = item.name;
+        inp.dispatchEvent(new Event('input'));
+      }
+    });
+  }());
 })();
 </script>
 </body>
