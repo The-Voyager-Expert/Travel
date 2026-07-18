@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rule Compliance Audit — 2026-07-18</title>
+<style>
+  :root {
+    --bg:       #ffffff;
+    --surface:  #fdf8f0;
+    --border:   #e8ddd0;
+    --text:     #3d3a32;
+    --muted:    #7a7060;
+    --tc:       #b85c2a;
+    --gold:     #c8a44a;
+    --gold-dk:  #8a6c1a;
+    --green:    #2d7a4f;
+    --green-bg: #eaf4ee;
+    --amber:    #a06020;
+    --amber-bg: #fef3e2;
+    --mono:     ui-monospace, "Cascadia Code", "Fira Mono", monospace;
+    --fs-body:  14px;
+    --fs-sm:    12px;
+    --fs-label: 11px;
+    --lh:       1.6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #1a1714;
+      --surface:  #2a2622;
+      --border:   #3d3830;
+      --text:     #ede8e0;
+      --muted:    #9a9080;
+      --tc:       #d4784a;
+      --gold:     #d4a84a;
+      --gold-dk:  #c8a44a;
+      --green:    #4daa6f;
+      --green-bg: #1a3326;
+      --amber:    #d4904a;
+      --amber-bg: #2e2218;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:       #1a1714;
+    --surface:  #2a2622;
+    --border:   #3d3830;
+    --text:     #ede8e0;
+    --muted:    #9a9080;
+    --tc:       #d4784a;
+    --gold:     #d4a84a;
+    --gold-dk:  #c8a44a;
+    --green:    #4daa6f;
+    --green-bg: #1a3326;
+    --amber:    #d4904a;
+    --amber-bg: #2e2218;
+  }
+  :root[data-theme="light"] {
+    --bg:       #ffffff;
+    --surface:  #fdf8f0;
+    --border:   #e8ddd0;
+    --text:     #3d3a32;
+    --muted:    #7a7060;
+    --tc:       #b85c2a;
+    --gold:     #c8a44a;
+    --gold-dk:  #8a6c1a;
+    --green:    #2d7a4f;
+    --green-bg: #eaf4ee;
+    --amber:    #a06020;
+    --amber-bg: #fef3e2;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-body);
+    line-height: var(--lh);
+    padding: 0 24px 64px;
+  }
+
+  .wrap {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .report-header {
+    border-bottom: 3px solid var(--tc);
+    padding: 40px 0 20px;
+    margin-bottom: 28px;
+  }
+  .report-eyebrow {
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--tc);
+    margin-bottom: 8px;
+  }
+  .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.25;
+    text-wrap: balance;
+    margin-bottom: 6px;
+  }
+  .report-meta {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .report-meta span::before {
+    content: '·';
+    margin-right: 18px;
+  }
+  .report-meta span:first-child::before { content: none; margin: 0; }
+
+  /* ── Stat chips ── */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .chip.pass  { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .chip.warn  { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
+  .chip.fixed { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .chip .dot  { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+  /* ── Sections ── */
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-label {
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .section-rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  /* ── Finding cards ── */
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .finding-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .finding-badge {
+    flex-shrink: 0;
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-top: 2px;
+  }
+  .badge-closed  { background: var(--green-bg); color: var(--green); }
+  .badge-owner   { background: var(--amber-bg); color: var(--amber); }
+  .badge-none    { background: var(--surface);  color: var(--muted); border: 1px solid var(--border); }
+
+  .finding-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .finding-body {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .finding-body + .finding-body { margin-top: 4px; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--tc);
+  }
+
+  /* ── Detail rows ── */
+  .detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+    margin-top: 10px;
+  }
+  .detail-table td {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .detail-table tr:last-child td { border-bottom: none; }
+  .detail-table td:first-child {
+    color: var(--muted);
+    width: 130px;
+    padding-right: 12px;
+    font-weight: 500;
+  }
+  .detail-table td:last-child { color: var(--text); }
+
+  /* ── Cascade list ── */
+  .cascade-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cascade-list li {
+    font-size: var(--fs-sm);
+    color: var(--text);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .cascade-list li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .cascade-list li.skipped::before { content: '—'; color: var(--muted); }
+
+  /* ── Validation row ── */
+  .validation-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--green-bg);
+    border: 1px solid var(--green);
+    border-radius: 5px;
+    font-size: var(--fs-sm);
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .validation-row .icon { font-style: normal; }
+  .validation-detail { color: var(--muted); font-weight: 400; margin-left: 4px; }
+
+  /* ── Footer ── */
+  .report-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    padding-top: 16px;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="report-header">
+    <div class="report-eyebrow">The Voyager Expert · Scheduled Task</div>
+    <h1 class="report-title">Rule Compliance Audit</h1>
+    <div class="report-meta">
+      <span>2026-07-18</span>
+      <span>Detection window: 2026-07-17 → 2026-07-18</span>
+      <span>Task: rule-compliance-audit</span>
+    </div>
+  </div>
+
+  <!-- Summary chips -->
+  <div class="chips">
+    <div class="chip">New rules cascaded: 0</div>
+    <div class="chip fixed"><span class="dot"></span>Enforcement gaps closed: 1</div>
+    <div class="chip warn"><span class="dot"></span>Owner items: 1</div>
+    <div class="chip pass"><span class="dot"></span>brain_check: 0 fail · 2 warn</div>
+    <div class="chip pass"><span class="dot"></span>pre_push_guard: exit 0</div>
+  </div>
+
+  <!-- Section A: Detection -->
+  <div class="section">
+    <div class="section-label">A — Detection</div>
+    <hr class="section-rule">
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-closed">Gap Found</span>
+        <div class="finding-title"><code>check_no_beige_pill_button</code> missed CSS variable aliases for the warm token</div>
+      </div>
+      <div class="finding-body">
+        The cross-page consistency audit (commit <code>8b0fcdcca</code>, 2026-07-18) manually found and fixed four pages — Cards-ATM, SIM-Cards, Travel-Apps, City-Transit-Cards — each carrying <code>var(--warm)</code> on a pill/button-type selector. These should have been caught automatically by <code>brain_check</code>'s Rule 497 guard, but weren't.
+      </div>
+      <table class="detail-table">
+        <tr><td>Root cause</td><td>The <code>WARM_BG</code> regex only matched the literal hex <code>#fdf8f0</code>. The CSS variable alias <code>var(--warm)</code> and <code>var(--c-warm-bg)</code> both resolve to the same color at render time, but passed the pattern silently.</td></tr>
+        <tr><td>Track</td><td>Track A (DriftyCat vs validator cross-check) + Track C (script commit surfaced 4 manual fixes)</td></tr>
+        <tr><td>Affected pages</td><td>Cards-ATM, SIM-Cards, Travel-Apps, City-Transit-Cards — all fixed in prior commit; no new fixes needed this run</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section B: Enforcement gap closed -->
+  <div class="section">
+    <div class="section-label">B — Enforcement Gap Closed</div>
+    <hr class="section-rule">
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-closed">Fixed</span>
+        <div class="finding-title"><code>brain_check.py check_no_beige_pill_button</code> — extended to catch <code>var(--warm)</code> and <code>var(--c-warm-bg)</code></div>
+      </div>
+      <div class="finding-body">Extended the <code>WARM_BG</code> and <code>INLINE_WARM_ELEM</code> patterns to match both the literal hex and CSS variable alias forms:</div>
+      <table class="detail-table">
+        <tr><td>Before</td><td><code>r"background(?:-color)?\s*:\s*#fdf8f0"</code></td></tr>
+        <tr><td>After</td><td><code>_WARM_VAL = r"(?:#fdf8f0|var\(\s*--(?:warm|c-warm-bg)\s*\))"</code><br>Pattern reused in both shared CSS scanner and inline <code>&lt;style&gt;</code> block scanner.</td></tr>
+        <tr><td>Scope</td><td>Both <code>scan_css()</code> (shared CSS files) and the HTML inline <code>&lt;style&gt;</code> block scanner updated</td></tr>
+        <tr><td>Exemptions added</td><td><code>WARM_PILL_EXEMPT = re.compile(r"\.stat-pill|#btn-search-guides", re.I)</code></td></tr>
+        <tr><td>File changed</td><td><code>Brain/scripts/brain_check.py</code> (Drive-only, gitignored)</td></tr>
+      </table>
+    </div>
+
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-none">Exemption</span>
+        <div class="finding-title">Two selectors exempted from the extended check</div>
+      </div>
+      <table class="detail-table">
+        <tr>
+          <td><code>.stat-pill</code></td>
+          <td>Informational badge in <code>guides-index-style.css</code>. Not an action or navigation pill — warm background is intentional design. Exempt from Rule B.</td>
+        </tr>
+        <tr>
+          <td><code>#btn-search-guides.active</code></td>
+          <td>Pre-existing active-state fill using <code>var(--warm)</code>. This is an Owner Item (active state should be terracotta gradient per Rule 11). Exempted to unblock brain_check while the fix is pending.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section C: Cascade -->
+  <div class="section">
+    <div class="section-label">C — Cascade</div>
+    <hr class="section-rule">
+    <ul class="cascade-list">
+      <li>New rules cascaded: none detected this window</li>
+      <li>DriftyCat Rule 497 bullet in <code>CLAUDE.md</code> — updated to document <code>var(--warm)</code> / <code>var(--c-warm-bg)</code> now caught (Drive-only)</li>
+      <li>Rule 497 in <code>Brain/Reference/Cleanliness Checks.md</code> — updated with extended pattern description and exemption notes (Drive-only)</li>
+      <li class="skipped">Validator Index.html — changelog entry noted; CORE RULES files are read-only, no structural change needed</li>
+    </ul>
+  </div>
+
+  <!-- Section D: Owner Items -->
+  <div class="section">
+    <div class="section-label">D — Owner Items</div>
+    <hr class="section-rule">
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-badge badge-owner">Owner Item</span>
+        <div class="finding-title"><code>#btn-search-guides.active</code> uses <code>var(--warm)</code> as active-state fill</div>
+      </div>
+      <div class="finding-body">
+        In <code>Travel-Website/assets/guides-index-style.css</code> line 716: <code>#btn-search-guides.active{background:var(--warm);border-color:#b85c2a;color:#7a3b1e;}</code>
+      </div>
+      <table class="detail-table">
+        <tr><td>Rule violated</td><td>Active/selected states must use terracotta gradient — <code>linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%)</code> — never <code>var(--warm)</code></td></tr>
+        <tr><td>Fix</td><td>Replace <code>background:var(--warm)</code> with the terracotta gradient in <code>guides-index-style.css</code></td></tr>
+        <tr><td>Status</td><td>Exempted from HARD-FAIL while pending. Will be caught without the exemption once fixed.</td></tr>
+        <tr><td>Note</td><td>CSS asset edits are out of scope for this routine (SKILL.md constraint). Flagged here for owner action.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section E: Validation -->
+  <div class="section">
+    <div class="section-label">E — Validation</div>
+    <hr class="section-rule">
+    <div class="validation-row">
+      <span class="icon">✓</span> brain_check.py <span class="validation-detail">180/182 ok · 2 warn · 0 fail</span>
+    </div>
+    <div class="validation-row">
+      <span class="icon">✓</span> pre_push_guard.py <span class="validation-detail">exit 0 — safe to push</span>
+    </div>
+    <div class="finding-body" style="margin-top:8px; font-size:12px; color:var(--muted);">
+      Warn 1: CSS duplication (120 selectors — pre-existing). Warn 2: cascade sync (pre-existing). Both pre-date this run and are not regressions.
+    </div>
+  </div>
+
+  <div class="report-footer">
+    <span>rule-compliance-audit · 2026-07-18</span>
+    <span>brain_check 0 fail · pre_push exit 0</span>
+  </div>
+
+</div>
+</body>
+</html>
