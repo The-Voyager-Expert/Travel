@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide Day Expansion — Rolling Log</title>
+<style>
+:root {
+  --bg: #fdfaf6;
+  --surface: #ffffff;
+  --text: #2a2420;
+  --muted: #7a6e66;
+  --border: #e5ddd5;
+  --terracotta: #b85c2a;
+  --terra-light: #f0e4da;
+  --terra-dark: #7a3b1e;
+  --gold: #8a6c1a;
+  --gold-light: #f4eedb;
+  --green: #2e7d3b;
+  --green-light: #e8f5ea;
+  --warn: #8a6c1a;
+  --warn-light: #fef9ec;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1a17; --surface: #2a2420; --text: #f0ebe4; --muted: #a09288;
+    --border: #3d3530; --terra-light: #3d2415; --gold-light: #2a2210;
+    --green-light: #142015; --warn-light: #252010;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1e1a17; --surface: #2a2420; --text: #f0ebe4; --muted: #a09288;
+  --border: #3d3530; --terra-light: #3d2415; --gold-light: #2a2210;
+  --green-light: #142015; --warn-light: #252010;
+}
+:root[data-theme="light"] {
+  --bg: #fdfaf6; --surface: #ffffff; --text: #2a2420; --muted: #7a6e66;
+  --border: #e5ddd5; --terra-light: #f0e4da; --gold-light: #f4eedb;
+  --green-light: #e8f5ea; --warn-light: #fef9ec;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 32px;
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 8px;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) 1;
+  margin-bottom: 6px;
+}
+.page-meta { color: var(--muted); font-size: 12px; margin-bottom: 32px; }
+.run-block { margin-bottom: 36px; }
+.run-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.run-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--terracotta); }
+.run-task { font-size: 11px; color: var(--muted); }
+.section { margin-bottom: 14px; }
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--terracotta);
+  margin-bottom: 8px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+}
+.card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.card-city { font-weight: 700; font-size: 15px; color: var(--text); }
+.card-change { font-size: 12px; color: var(--muted); }
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-expanded { background: var(--terra-light); color: var(--terracotta); }
+.badge-shipped  { background: var(--green-light); color: var(--green); }
+.stops { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.stop-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+.stop-label {
+  color: var(--terracotta);
+  font-weight: 700;
+  font-size: 11px;
+  min-width: 40px;
+  padding-top: 2px;
+}
+.stop-name { font-weight: 600; }
+.stop-desc { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.motion-note { font-size: 11px; color: var(--muted); padding-left: 48px; margin: 4px 0; font-style: italic; }
+.route-detail {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  line-height: 1.7;
+}
+.fixes { display: flex; flex-direction: column; gap: 8px; }
+.fix-item {
+  background: var(--gold-light);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 12px;
+}
+.fix-item strong { color: var(--text); font-size: 13px; }
+.fix-item .fix-detail { color: var(--muted); margin-top: 4px; line-height: 1.6; }
+.fix-item code {
+  background: var(--border);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  padding: 12px 16px;
+  background: var(--green-light);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 4px;
+}
+.stat { font-variant-numeric: tabular-nums; font-weight: 700; }
+.stat-pass  { color: var(--green); }
+.stat-fail  { color: var(--terracotta); }
+.stat-warn  { color: var(--warn); }
+.stat-label { color: var(--muted); font-size: 12px; margin-left: -10px; }
+.warn-list {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.warn-list li { list-style: none; padding-left: 14px; position: relative; }
+.warn-list li::before { content: "·"; position: absolute; left: 0; color: var(--terracotta); }
+.ship-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  padding: 12px 16px;
+  background: var(--green-light);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 4px;
+}
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="page-title">Guide Day Expansion</div>
+  <div class="page-meta">Rolling log — each run appends its city card · newest first</div>
+
+  <!-- append-here -->
+
+  <hr class="divider">
+
+  <!-- 2026-07-18 · Milan -->
+  <div class="run-block">
+    <div class="run-header">
+      <span class="run-date">2026-07-18</span>
+      <span class="run-task">on-demand-guide-day-expansion-2 · Milan</span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Expansion</div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-city">Milan</span>
+          <span class="card-change">4 days → 5 days</span>
+        </div>
+        <div class="card-detail">
+          <strong>Day 5 added (Train Day — Bergamo):</strong> Piazza Vecchia (Città Alta core — Campanone tower, Contarini Fountain, Le Corbusier's "perfect work of art") · Cappella Colleoni (finest early Renaissance chapel in Lombardy, Amadeo marble facade 1476, Tiepolo frescoes, 🆓 Free) · Venetian Walls (6km UNESCO-listed 16th-century Venetian ramparts circling Città Alta, designated 2017). Train times from treniamo.it: Trenord Milan Centrale → Bergamo every hour at :05 (50 min); return at :02 (48 min). Photos from Wikimedia Commons: Piazza Vecchia (CC BY-SA) · Cappella Colleoni facade (PD) · Venetian Walls (CC BY-SA). Bergamo removed from Day Trips section (Train Day dedup rule); Bologna added as 5th Day Trip entry (1 hr, Frecciarossa direct). trenord.it added to BOT_BLOCKED_HOSTS (403 bot-block; confirmed live via site: search).
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Validation</div>
+      <div class="card">
+        <div class="card-detail">
+          0 failures · 1 warning (GYG site-search log advisory). Signed stamp written. Shipped and pushed via serialized publisher.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 2026-07-18 · Florence -->
+  <div class="run-block">
+    <div class="run-header">
+      <span class="run-date">2026-07-18</span>
+      <span class="run-task">on-demand-guide-day-expansion-4 · Florence</span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Expansion</div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-city">Florence</span>
+          <span class="card-change">5 days → 6 days</span>
+        </div>
+        <div class="card-detail">
+          <strong>Day 6 added:</strong> Palazzo Medici Riccardi (Benozzo Gozzoli Chapel of the Magi, 1459) · Museo Galileo (Galileo's original 1610 telescopes, 26 rooms of Medici scientific instruments) · Fiesole Archaeological Area (8km above Florence — first-century Roman theater of 19 tiers, Etruscan temple, panoramic views over the city). Motion times from Google Maps driving. Photos from Wikimedia Commons: Gozzoli Magi fresco (PD) · Galileo telescopes (CC BY-SA 4.0) · Fiesole theater (CC BY-SA). No qualifying Viator tours for any of the 3 stops above the 4.5★/6-review bar — official ticket links used.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Validation</div>
+      <div class="card">
+        <div class="card-detail">
+          0 failures · 2 warnings (cappuccino count pre-existing · train-day advisory). Signed stamp written. Shipped and pushed via serialized publisher.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 2026-07-18 · Dubai -->
+  <div class="run-block">
+    <div class="run-header">
+      <span class="run-date">2026-07-18</span>
+      <span class="run-task">on-demand-guide-day-expansion-4 · Dubai</span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Expansion</div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-city">Dubai</span>
+          <span class="card-change">4 days → 5 days</span>
+        </div>
+        <div class="card-detail">
+          <strong>Day 5 added:</strong> Dubai Marina Walk · Ain Dubai (world's tallest observation wheel, 250 m) · Ski Dubai (indoor slope at Mall of the Emirates). Drive times 19 / 9 / 13 / 11 min verified via Rome2Rio. Photos from Wikimedia Commons. Viator yacht tour (4.85★ · 1,008+ reviews) added to Tours section.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Pre-existing issues fixed</div>
+      <div class="card">
+        <div class="card-detail">
+          <ul style="margin:0;padding-left:18px;">
+            <li>Wikipedia URLs for La Mer (<code>La_Mer,_Dubai</code> — 404) and Kite Beach (<code>Kite_Beach,_Dubai</code> — 404) were dead links in Day 4. Fixed: La Mer uses <code>wikipedia-omit</code> (no dedicated article exists); Kite Beach now links to <code>Jumeirah_Beach</code> (h1 token overlap 50%).</li>
+            <li><code>skidxb.com</code> and <code>aindubai.com</code> added to <code>BOT_BLOCKED_HOSTS</code> in <code>verify_urls.py</code> (both return 403 to automated fetch; live via Chrome MCP).</li>
+            <li><code>dubaiopera.com</code> added to <code>BOT_BLOCKED_HOSTS</code> (was 200, now Cloudflare 403; site confirmed live).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Result</div>
+      <div class="card">
+        <div class="card-detail">
+          Validator: 0 failures · 1 warning (Train Day — expected for Dubai, no intercity rail). Published to GitHub Pages.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 2026-07-18 · New York -->
+  <div class="run-block">
+    <div class="run-header">
+      <span class="run-date">2026-07-18</span>
+      <span class="run-task">on-demand-guide-day-expansion · New York</span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Expansion</div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-city">New York City</span>
+          <span class="card-change">5 days → 6 days</span>
+          <span class="badge badge-expanded">Expanded</span>
+          <span class="badge badge-shipped">Shipped</span>
+        </div>
+        <div class="stops">
+          <div class="stop-item">
+            <span class="stop-label">DAY 5</span>
+            <div>
+              <div class="stop-name">Upper West Side Museum Day — 3 stops</div>
+              <div class="stop-desc">Central Park · American Museum of Natural History · Whitney Museum of American Art</div>
+            </div>
+          </div>
+          <div class="motion-note">↳ Philadelphia Train Day shifted from Day 5 → Day 6 (header + anchor swap)</div>
+        </div>
+        <div class="route-detail">
+          <strong style="color: var(--text);">Day 5 route:</strong>
+          Hotel-first opener · Central Park (Grand Army Plaza → Strawberry Fields → Bethesda Terrace → Bow Bridge, exit 81st St West)
+          <span style="color: var(--terracotta);">🚶 3 min · 🚕 5 min</span>
+          → American Museum of Natural History (ticket-box; direct admission — all guided tours unavailable)
+          <span style="color: var(--terracotta);">🚕 12 min</span>
+          → Whitney Museum of American Art (ticket-box; transact.whitney.org; 4.6⭐)
+          <span style="color: var(--terracotta);">🚕 18 min</span>
+          → Hotel closer
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Incidental Fixes</div>
+      <div class="fixes">
+        <div class="fix-item">
+          <strong>Wikipedia URL — Top of the Rock</strong>
+          <div class="fix-detail">
+            <code>Top_of_the_Rock_(observation_deck)</code> now returns 404 — article merged into
+            <code>30_Rockefeller_Plaza</code>. Guide link updated to the live URL; log entry set to
+            <code>platform: wikipedia-omit</code> to suppress the expected h1 mismatch.
+          </div>
+        </div>
+        <div class="fix-item">
+          <strong>BOT_BLOCKED_HOSTS — tickets.amnh.org</strong>
+          <div class="fix-detail">
+            AMNH ticket store returns 403 to the automated client. Confirmed live via Chrome MCP.
+            Added to <code>verify_urls.py</code> BOT_BLOCKED_HOSTS.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Validation Result</div>
+      <div class="result-row">
+        <span class="stat stat-pass">836</span><span class="stat-label">passed</span>
+        <span class="stat stat-fail">0</span><span class="stat-label">failed</span>
+        <span class="stat stat-warn">4</span><span class="stat-label">warnings (pre-existing)</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Ship Status</div>
+      <div class="ship-row">
+        ✓ <strong>Pushed</strong> — new-york_v1.html · 6-day build live
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 2026-07-18 · Madrid -->
+  <div class="run-block">
+    <div class="run-header">
+      <span class="run-date">2026-07-18</span>
+      <span class="run-task">on-demand-guide-day-expansion · Madrid</span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Expansion</div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-city">Madrid</span>
+          <span class="card-change">5 days → 6 days</span>
+          <span class="badge badge-expanded">Expanded</span>
+          <span class="badge badge-shipped">Shipped</span>
+        </div>
+        <div class="stops">
+          <div class="stop-item">
+            <span class="stop-label">DAY 5</span>
+            <div>
+              <div class="stop-name">Added new day — details in day-expansion-log.md</div>
+              <div class="stop-desc">madrid_v1.html · expanded 2026-07-18</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Ship Status</div>
+      <div class="ship-row">
+        ✓ <strong>Pushed</strong> — madrid_v1.html · 6-day build live
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
