@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guide Audit — Rolling Report</title>
+<style>
+:root {
+  --bg:#f9f7f4; --surface:#ffffff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --accent-dim:#f2e8e2; --border:#ddd5c8;
+  --pass:#2e6e3e; --pass-bg:#edf5f0; --code-bg:#f0ece6;
+  --chip-bg:#ede8e1; --chip-text:#5a4e3a;
+}
+@media (prefers-color-scheme:dark) {
+  :root {
+    --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+    --accent:#d4804e; --accent-dim:#2d1e12; --border:#35302a;
+    --pass:#4a9960; --pass-bg:#0d2116; --code-bg:#2a2520;
+    --chip-bg:#2a2520; --chip-text:#c8b89a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+  --accent:#d4804e; --accent-dim:#2d1e12; --border:#35302a;
+  --pass:#4a9960; --pass-bg:#0d2116; --code-bg:#2a2520;
+  --chip-bg:#2a2520; --chip-text:#c8b89a;
+}
+:root[data-theme="light"] {
+  --bg:#f9f7f4; --surface:#ffffff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --accent-dim:#f2e8e2; --border:#ddd5c8;
+  --pass:#2e6e3e; --pass-bg:#edf5f0; --code-bg:#f0ece6;
+  --chip-bg:#ede8e1; --chip-text:#5a4e3a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+.wrap{max-width:780px;margin:0 auto;padding:40px 24px 64px}
+.eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:normal;border-bottom:2px solid var(--accent);padding-bottom:12px;margin-bottom:8px;line-height:1.2}
+.stats{display:flex;gap:12px;margin:16px 0 20px;flex-wrap:wrap}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 16px;flex:1;min-width:110px}
+.stat-num{font-size:28px;font-variant-numeric:tabular-nums;font-weight:700;line-height:1;margin-bottom:3px}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.stat.orange .stat-num{color:var(--accent)}
+.stat.green .stat-num{color:var(--pass)}
+.stat.muted .stat-num{color:var(--muted)}
+h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--muted);margin:28px 0 12px}
+.chip{display:inline-block;background:var(--chip-bg);color:var(--chip-text);font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.empty{color:var(--muted);font-style:italic;font-size:13px;padding:10px 0}
+.gl-run-header{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:700;margin:18px 0 4px}
+.gl-row{display:grid;grid-template-columns:32px 180px 1fr;align-items:baseline;gap:0 10px;padding:3px 0;border-bottom:1px solid var(--border);font-size:13px}
+.gl-row:last-child{border-bottom:none}
+.gl-fixed .gl-city{font-weight:600;color:var(--text)}
+.gl-pending .gl-city{color:var(--muted)}
+.gl-num{color:var(--muted);font-variant-numeric:tabular-nums;font-size:11px;text-align:right}
+.gl-city{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gl-clean{color:var(--muted);font-size:12px}
+.gl-pending-label{color:#b85c2a;font-size:12px;font-style:italic}
+.gl-cycle-divider{text-align:center;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);border-top:2px solid var(--accent);border-bottom:2px solid var(--accent);padding:8px 0;margin:16px 0 0}
+.gl-cycle-details>summary{list-style:none;cursor:pointer;}
+.gl-cycle-details>summary::-webkit-details-marker{display:none}
+.gl-cycle-details>summary::after{content:" ▶";font-size:9px;opacity:0.65;vertical-align:middle}
+.gl-cycle-details[open]>summary::after{content:" ▼"}
+.gl-cycle-older{display:block;text-align:center;padding:9px 16px;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:4px;margin:20px 0 8px;cursor:pointer;user-select:none;transition:color .15s,border-color .15s,background .15s}
+.gl-cycle-older:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-dim)}
+.gl-fix{color:var(--pass);font-size:12px}
+.gl-fixes-date{grid-template-columns:72px 160px 1fr}
+.pattern{border-left:3px solid var(--accent);padding:10px 14px;background:var(--accent-dim);border-radius:0 6px 6px 0;margin-bottom:8px}
+.pattern-header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px}
+.pattern-header strong{font-size:13px;color:var(--text)}
+.pattern-meta{font-size:10px;color:var(--muted);white-space:nowrap}
+.pattern-body{font-size:12px;color:var(--muted);line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">All Cribs — Shared Rolling Report</div>
+  <h1>Guide Audit — Rolling Report</h1>
+
+  <div class="gl-cycle-divider">July 17, 2026</div>
+
+
+  <div class="stats">
+    <div class="stat orange">
+      <div class="stat-num">14</div>
+      <div class="stat-label">Runs</div>
+    </div>
+    <div class="stat muted">
+      <div class="stat-num">206</div>
+      <div class="stat-label">Passed clean</div>
+    </div>
+    <div class="stat green">
+      <div class="stat-num">31</div>
+      <div class="stat-label">Fixes applied</div>
+    </div>
+    <div class="stat muted">
+      <div class="stat-num" style="font-size:18px;padding-top:5px">20/220</div>
+      <div class="stat-label">Cycle progress</div>
+    </div>
+  </div>
+
+  <div class="gl-row"><span class="gl-num">1</span><span class="gl-city">Abu-Dhabi</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">2</span><span class="gl-city">Aix-en-Provence</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">3</span><span class="gl-city">Alaska</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">4</span><span class="gl-city">Alesund</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">5</span><span class="gl-city">Amalfi</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">6</span><span class="gl-city">Amsterdam</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">7</span><span class="gl-city">Annecy</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">8</span><span class="gl-city">Aracaju</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">9</span><span class="gl-city">Arenal</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">10</span><span class="gl-city">Aruba</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">11</span><span class="gl-city">Athens</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">12</span><span class="gl-city">Atlanta</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">13</span><span class="gl-city">Austin</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">14</span><span class="gl-city">Azores</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">15</span><span class="gl-city">Bahamas</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">16</span><span class="gl-city">Bali</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">17</span><span class="gl-city">Bangkok</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">18</span><span class="gl-city">Barbados</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">19</span><span class="gl-city">Barcelona</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">20</span><span class="gl-city">Beijing</span><span class="gl-clean">clean</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">21</span><span class="gl-city">Abu-Dhabi</span><span class="gl-fix">&#8627; added theme-coral to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">22</span><span class="gl-city">Aix-en-Provence</span><span class="gl-fix">&#8627; added theme-purple to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">23</span><span class="gl-city">Alaska</span><span class="gl-fix">&#8627; added theme-sage to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">24</span><span class="gl-city">Alesund</span><span class="gl-fix">&#8627; added theme-teal to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">25</span><span class="gl-city">Amalfi</span><span class="gl-fix">&#8627; added theme-coral to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">26</span><span class="gl-city">Amsterdam</span><span class="gl-fix">&#8627; added theme-indigo to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">27</span><span class="gl-city">Annecy</span><span class="gl-fix">&#8627; added theme-sage to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">28</span><span class="gl-city">Aracaju</span><span class="gl-fix">&#8627; added theme-yellow to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">29</span><span class="gl-city">Arenal</span><span class="gl-fix">&#8627; added theme-green to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">30</span><span class="gl-city">Aruba</span><span class="gl-fix">&#8627; added theme-teal to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">31</span><span class="gl-city">Athens</span><span class="gl-fix">&#8627; added theme-amber to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">32</span><span class="gl-city">Atlanta</span><span class="gl-fix">&#8627; added theme-indigo to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">33</span><span class="gl-city">Austin</span><span class="gl-fix">&#8627; added theme-green to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">34</span><span class="gl-city">Azores</span><span class="gl-fix">&#8627; added theme-sage to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">35</span><span class="gl-city">Bahamas</span><span class="gl-fix">&#8627; added theme-teal to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">36</span><span class="gl-city">Bali</span><span class="gl-fix">&#8627; added theme-green to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">37</span><span class="gl-city">Bangkok</span><span class="gl-fix">&#8627; added theme-coral + fixed Overview pill icon (🗺️→✨)</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">38</span><span class="gl-city">Barbados</span><span class="gl-fix">&#8627; added theme-teal to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">39</span><span class="gl-city">Barcelona</span><span class="gl-fix">&#8627; added theme-coral to claude-inspiration div</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">40</span><span class="gl-city">Beijing</span><span class="gl-fix">&#8627; added theme-amber to claude-inspiration div</span></div>
+<div class="gl-row"><span class="gl-num">41</span><span class="gl-city">Bend</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">42</span><span class="gl-city">Bergen</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">43</span><span class="gl-city">Berlin</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">44</span><span class="gl-city">Bhutan</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">45</span><span class="gl-city">Big-Island</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">46</span><span class="gl-city">Bologna</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">47</span><span class="gl-city">Bora-Bora</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">48</span><span class="gl-city">Bordeaux</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">49</span><span class="gl-city">Boston</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">50</span><span class="gl-city">Boulder</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">51</span><span class="gl-city">Bruges</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">52</span><span class="gl-city">Brussels</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">53</span><span class="gl-city">Budapest</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">54</span><span class="gl-city">Buenos-Aires</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">55</span><span class="gl-city">Cairo</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">56</span><span class="gl-city">Cambridge</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">57</span><span class="gl-city">Cancun</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">58</span><span class="gl-city">Cannes</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">59</span><span class="gl-city">Cape-Cod</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">60</span><span class="gl-city">Capri</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">61</span><span class="gl-city">Carmel-by-the-Sea</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">62</span><span class="gl-city">Cascais</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">63</span><span class="gl-city">Cayman-Islands</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">64</span><span class="gl-city">Charlotte</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">65</span><span class="gl-city">Chiang-Mai</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">66</span><span class="gl-city">Chicago</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">67</span><span class="gl-city">Chongqing</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">68</span><span class="gl-city">Cinque-Terre</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">69</span><span class="gl-city">Colmar</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">70</span><span class="gl-city">Colombo</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">71</span><span class="gl-city">Columbia</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">72</span><span class="gl-city">Copenhagen</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">73</span><span class="gl-city">Corfu</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">74</span><span class="gl-city">Curacao</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">75</span><span class="gl-city">Curitiba</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">76</span><span class="gl-city">Cusco</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">77</span><span class="gl-city">Dallas</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">78</span><span class="gl-city">Denver</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">79</span><span class="gl-city">Doha</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">80</span><span class="gl-city">Dubai</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">81</span><span class="gl-city">Dublin</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">82</span><span class="gl-city">Dubrovnik</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">83</span><span class="gl-city">Edinburgh</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">84</span><span class="gl-city">Florence</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">85</span><span class="gl-city">Florianopolis</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">86</span><span class="gl-city">Florida-Keys</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">87</span><span class="gl-city">Fortaleza</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">88</span><span class="gl-city">Foz-do-Iguacu</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">89</span><span class="gl-city">Geneva</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">90</span><span class="gl-city">Glacier-National-Park</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">91</span><span class="gl-city">Glasgow</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">92</span><span class="gl-city">Gothenburg</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">93</span><span class="gl-city">Hamburg</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">94</span><span class="gl-city">Hanoi</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">95</span><span class="gl-city">Helsinki</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">96</span><span class="gl-city">Hoi-An</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">97</span><span class="gl-city">Hong-Kong</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">98</span><span class="gl-city">Istanbul</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">99</span><span class="gl-city">Joao-Pessoa</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">100</span><span class="gl-city">Kauai</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">101</span><span class="gl-city">GLOBAL / CROSS-SECTION</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">102</span><span class="gl-city">KeyWest</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">103</span><span class="gl-city">Kotor</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">104</span><span class="gl-city">Kraków</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">105</span><span class="gl-city">Kyoto</span><span class="gl-clean">clean</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">106</span><span class="gl-city">La-Jolla</span><span class="gl-fix">&#8627; merged Viator entries from root verification_log.json into _build/verification_log.json</span></div>
+<div class="gl-row"><span class="gl-num">107</span><span class="gl-city">Lagos</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">108</span><span class="gl-city">Lake-Como</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">109</span><span class="gl-city">Lake-Tahoe</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">110</span><span class="gl-city">Las-Vegas</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">111</span><span class="gl-city">Lecce</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">112</span><span class="gl-city">Lille</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">113</span><span class="gl-city">Lima</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">114</span><span class="gl-city">Lisbon</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">115</span><span class="gl-city">Ljubljana</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">116</span><span class="gl-city">London</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">117</span><span class="gl-city">Los-Angeles</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">118</span><span class="gl-city">Los-Cabos</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">119</span><span class="gl-city">Luang-Prabang</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">120</span><span class="gl-city">Lucerne</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">121</span><span class="gl-city">Luxembourg</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">122</span><span class="gl-city">Lyon</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">123</span><span class="gl-city">Maceió</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">124</span><span class="gl-city">MachuPicchu</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">125</span><span class="gl-city">Madeira</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">126</span><span class="gl-city">Madrid</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">127</span><span class="gl-city">Malaga</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">128</span><span class="gl-city">Maldives</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">129</span><span class="gl-city">Malibu</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">130</span><span class="gl-city">Manuel-Antonio</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">131</span><span class="gl-city">Marktoberdorf</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">132</span><span class="gl-city">Marrakech</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">133</span><span class="gl-city">Marseille</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">134</span><span class="gl-city">Maui</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">135</span><span class="gl-city">Melbourne</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">136</span><span class="gl-city">Miami</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">137</span><span class="gl-city">Milan</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">138</span><span class="gl-city">Monaco</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">139</span><span class="gl-city">Montevideo</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">140</span><span class="gl-city">Montreal</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">141</span><span class="gl-city">Munich</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">142</span><span class="gl-city">Muscat</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">143</span><span class="gl-city">Mykonos</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">144</span><span class="gl-city">Napa</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">145</span><span class="gl-city">Naples</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">146</span><span class="gl-city">Naples-Florida</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">147</span><span class="gl-city">Nashville</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">148</span><span class="gl-city">Natal</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">149</span><span class="gl-city">New-Orleans</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">150</span><span class="gl-city">New-York</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">151</span><span class="gl-city">Nice</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">152</span><span class="gl-city">Oahu</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">153</span><span class="gl-city">Oaxaca</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">154</span><span class="gl-city">Olinda</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">155</span><span class="gl-city">Orcas-Island</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">156</span><span class="gl-city">Orlando</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">157</span><span class="gl-city">Osaka</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">158</span><span class="gl-city">Oslo</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">159</span><span class="gl-city">Oxford</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">160</span><span class="gl-city">Palawan</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">161</span><span class="gl-city">Palm-Desert</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">162</span><span class="gl-city">Palo-Alto</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">163</span><span class="gl-city">Paris</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">164</span><span class="gl-city">Pasadena</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">165</span><span class="gl-city">Pensacola</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">166</span><span class="gl-city">Petra</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">167</span><span class="gl-city">Philadelphia</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">168</span><span class="gl-city">Phoenix</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">169</span><span class="gl-city">Phuket</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">170</span><span class="gl-city">Pisa</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">171</span><span class="gl-city">Pokhara</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">172</span><span class="gl-city">Portland</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">173</span><span class="gl-city">Porto</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">174</span><span class="gl-city">Porto-Alegre</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">175</span><span class="gl-city">Prague</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">176</span><span class="gl-city">Puerto-Rico</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">177</span><span class="gl-city">Puerto-Vallarta</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">178</span><span class="gl-city">Quebec-City</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">179</span><span class="gl-city">Queenstown</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">180</span><span class="gl-city">Recife</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">181</span><span class="gl-city">Reykjavik</span><span class="gl-clean">clean</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">182</span><span class="gl-city">Rio-de-Janeiro</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">183</span><span class="gl-city">Rome</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">184</span><span class="gl-city">Salvador</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">185</span><span class="gl-city">Salzburg</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">186</span><span class="gl-city">San-Diego</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">187</span><span class="gl-city">San-Francisco</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">188</span><span class="gl-city">San-Jose</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">189</span><span class="gl-city">San-Jose-Costa-Rica</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">190</span><span class="gl-city">San-Juan-Island</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">191</span><span class="gl-city">San-Sebastian</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">192</span><span class="gl-city">Santa-Barbara</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">193</span><span class="gl-city">Santa-Cruz</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">194</span><span class="gl-city">Santa-Fe</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">195</span><span class="gl-city">Santa-Monica</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">196</span><span class="gl-city">Santiago</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">197</span><span class="gl-city">Santorini</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">198</span><span class="gl-city">Sarasota</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">199</span><span class="gl-city">Sardinia</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">200</span><span class="gl-city">Scottsdale</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-pending"><span class="gl-num">201</span><span class="gl-city">Seattle</span><span class="gl-pending-label">pending</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">202</span><span class="gl-city">Salvador</span><span class="gl-fix">&#8627; Weekly Closures duplicate Museums token</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">203</span><span class="gl-city">San-Diego</span><span class="gl-fix">&#8627; READ ABOUT injection u203a→› + 10 bot-blocked log entries</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">204</span><span class="gl-city">San-Francisco</span><span class="gl-fix">&#8627; 5x duration units hours/minutes→hr/min + 10 bot-blocked log entries</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">205</span><span class="gl-city">San-Jose-Costa-Rica</span><span class="gl-fix">&#8627; Weekly Closures duplicate Museums token + 11 bot-blocked log entries</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">206</span><span class="gl-city">San-Sebastian</span><span class="gl-fix">&#8627; tour summary available. tail removed + 10 bot-blocked log entries</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">207</span><span class="gl-city">Santorini</span><span class="gl-fix">&#8627; tour summary available. tail removed + 10 bot-blocked log entries</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">208</span><span class="gl-city">Sardinia</span><span class="gl-fix">&#8627; READ ABOUT injection u203a→› + bot-blocked log entries</span></div>
+<div class="gl-row gl-fixed"><span class="gl-num">209</span><span class="gl-city">Scottsdale</span><span class="gl-fix">&#8627; READ ABOUT injection rewritten to canonical DOMContentLoaded pattern + 8 bot-blocked log entries</span></div>
+<div class="gl-row"><span class="gl-num">210</span><span class="gl-city">Sedona</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">211</span><span class="gl-city">Seoul</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">212</span><span class="gl-city">Seville</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">213</span><span class="gl-city">Seychelles</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">214</span><span class="gl-city">Shanghai</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">215</span><span class="gl-city">Sicily</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">216</span><span class="gl-city">Siena</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">217</span><span class="gl-city">Singapore</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">218</span><span class="gl-city">Sint-Maarten</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">219</span><span class="gl-city">Sintra</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">220</span><span class="gl-city">Sorrento</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">221</span><span class="gl-city">Split</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">222</span><span class="gl-city">Stockholm</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">223</span><span class="gl-city">Strasbourg</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">224</span><span class="gl-city">Stuttgart</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">225</span><span class="gl-city">Sydney</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">226</span><span class="gl-city">São-Luís</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">227</span><span class="gl-city">São-Paulo</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">228</span><span class="gl-city">Taipei</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">229</span><span class="gl-city">Tallinn</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">230</span><span class="gl-city">Tbilisi</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">231</span><span class="gl-city">Tokyo</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">232</span><span class="gl-city">Toledo</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">233</span><span class="gl-city">Toronto</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">234</span><span class="gl-city">Tromso</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">235</span><span class="gl-city">Turin</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">236</span><span class="gl-city">Turks-and-Caicos</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">237</span><span class="gl-city">Valletta</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">238</span><span class="gl-city">Vancouver</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">239</span><span class="gl-city">Venice</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">240</span><span class="gl-city">Verona</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">241</span><span class="gl-city">Victoria</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">242</span><span class="gl-city">Vienna</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">243</span><span class="gl-city">Virgin-Islands</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">244</span><span class="gl-city">Washington-DC</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">245</span><span class="gl-city">Wellington</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">246</span><span class="gl-city">Whistler</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">247</span><span class="gl-city">Yellowstone</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">248</span><span class="gl-city">Zhangjiajie</span><span class="gl-clean">clean</span></div>
+<div class="gl-row"><span class="gl-num">249</span><span class="gl-city">Zurich</span><span class="gl-clean">clean</span></div>
+
+
+  
+
+  <h2>Patterns Worth Flagging</h2><div class="pattern"><div class="pattern-header"><strong>READ ABOUT › escape</strong><span class="pattern-meta">2026-07-17</span></div><div class="pattern-body">8 guides used JS unicode escape \u203a instead of literal › character in injection script — validator Rule 537 catches missing › search</div></div>
+
+
+</div>
+</body>
+</html>
