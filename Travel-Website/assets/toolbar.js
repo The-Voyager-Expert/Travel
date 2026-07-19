@@ -995,17 +995,14 @@
       var pillRow = document.createElement('div');
       pillRow.className = 'overview-extras';
       /* force flex so mobile grid doesn't kick in for this 2-pill row */
-      pillRow.setAttribute('style', 'display:flex!important;margin-bottom:8px;grid-template-columns:unset!important;');
+      pillRow.setAttribute('style', 'display:flex!important;gap:8px;margin-bottom:8px;grid-template-columns:unset!important;');
       pillRow.appendChild(trigBtn);
       if (mapPill) pillRow.appendChild(mapPill);
 
-      /* terracotta border — only override, everything else comes from the class */
+      /* mobile full-width stretch for the two action pills */
       var tcStyle = document.createElement('style');
-      /* [id=] attribute selector has class-level specificity (0-2-0),
-         so the normal :hover rule (0-3-0) still wins — rest state only */
       tcStyle.textContent =
-        '.overview-extras [id=ics-cal-pill],.overview-extras [id=ics-map-pill]{border-color:#b85c2a!important;color:#b85c2a;}' +
-        '.overview-extras [id=ics-cal-pill]:visited,.overview-extras [id=ics-map-pill]:visited{color:#b85c2a;}';
+        '@media(max-width:600px){.overview-extras [id=ics-cal-pill],.overview-extras [id=ics-map-pill]{flex:1;text-align:center;justify-content:center;}}';
       document.head.appendChild(tcStyle);
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
