@@ -577,16 +577,21 @@
       })[0];
       if (raLink) ovSec.appendChild(raLink);
     }
-    /* On mobile, move the "Updated {Month}" stamp out of the top hotel banner to
-       the bottom of the "Nearby Guides" card (or "Also on this site" if no nearby
-       guides section exists). Desktop keeps it up top. */
+    /* On mobile, move the "Updated {Month}" stamp out of the top hotel banner.
+       When a Nearby Guides card exists, insert the stamp directly AFTER it (as a
+       standalone right-aligned line below the card). Otherwise fall back to
+       appending inside the "Also on this site" card. Desktop keeps it up top. */
     function repositionUpdatedStamp() {
       if (!(window.matchMedia && window.matchMedia('(max-width: 600px)').matches)) return;
       var upd = document.querySelector('.title-page .title-updated') || document.querySelector('.title-updated');
+      if (!upd) return;
       var nearby = document.getElementById('nearby-guides');
-      var also = document.getElementById('also-on-this-site');
-      var target = nearby || also;
-      if (upd && target) target.appendChild(upd);
+      if (nearby && nearby.parentNode) {
+        nearby.parentNode.insertBefore(upd, nearby.nextSibling);
+      } else {
+        var also = document.getElementById('also-on-this-site');
+        if (also) also.appendChild(upd);
+      }
     }
     function repositionMobileBits() { repositionReadAbout(); repositionUpdatedStamp(); }
     if (document.readyState === 'complete') repositionMobileBits();
