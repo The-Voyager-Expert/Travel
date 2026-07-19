@@ -1017,6 +1017,40 @@
     _injectICSExport();
   }
 
+  /* ── Visited pill — shows only on real guide pages when localStorage marks
+     the guide as visited (key: tve-visited-{slug}). Injected at runtime so
+     it is invisible to other visitors. Clicking the pill unmarks the guide. ── */
+  function _injectVisitedPill() {
+    if (!isRealGuide) return;
+    var pageName = location.pathname.split('/').pop() || '';
+    var slugMatch = pageName.match(/^(.+?)(?:_v\d+)?\.html$/);
+    if (!slugMatch) return;
+    var slug = slugMatch[1];
+    var key = 'tve-visited-' + slug;
+    if (!localStorage.getItem(key)) return;
+    var overviewSec = document.querySelector('.overview-section');
+    if (!overviewSec) return;
+    var sep = document.createElement('div');
+    sep.style.cssText = 'margin:16px 0 4px;border-top:1px solid var(--border2,#e6e2da);';
+    var pill = document.createElement('span');
+    pill.id = 'tve-visited-pill';
+    pill.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:#b85c2a;border:1px solid #9a4318;color:#fff;border-radius:4px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;margin:8px 0 4px;';
+    pill.textContent = '✓ Visited';
+    pill.title = 'Click to unmark as visited';
+    pill.addEventListener('click', function () {
+      localStorage.removeItem(key);
+      if (sep.parentNode) sep.parentNode.removeChild(sep);
+      if (pill.parentNode) pill.parentNode.removeChild(pill);
+    });
+    overviewSec.appendChild(sep);
+    overviewSec.appendChild(pill);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectVisitedPill);
+  } else {
+    _injectVisitedPill();
+  }
+
   /* ── Weather widget — loaded on the Guides index ONLY ─────────────────────
      weather.js lives in assets/ (permanent home). On the index it adds the
      🌡 Weather control in the title banner (city picker + monthly high/low

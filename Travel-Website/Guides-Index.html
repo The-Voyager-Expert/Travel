@@ -26,11 +26,6 @@
 
 <div class="topbar">
   <div id="search-wrap" style="position:relative;display:flex;align-items:center;justify-content:center">
-    <div id="status-toggle" class="status-toggle" style="position:absolute;right:calc(50% + 300px)">
-      <button class="stab" data-s="all" aria-pressed="false">All</button>
-      <button class="stab" data-s="been" aria-pressed="false">Been</button>
-      <button class="stab" data-s="want" aria-pressed="false">Want</button>
-    </div>
     <div id="guide-search-wrap" style="position:relative;display:inline-block">
       <span id="main-search-icon" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);line-height:0;pointer-events:none;z-index:1"><svg style="display:block" width="15" height="15" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5.5" cy="5.5" r="4.5" stroke="#c8a44a" stroke-width="1.5"/><line x1="9.35" y1="9.35" x2="12" y2="12" stroke="#c8a44a" stroke-width="1.5" stroke-linecap="round"/></svg></span>
       <input type="search" id="guide-search" placeholder="City or country" aria-label="Search guides" autocomplete="off">
@@ -1579,14 +1574,11 @@
 </div><!-- /wrap -->
 
 <script>
-/* Shared status-filter state — read by both mosaic and flight-time closures */
-window._giStatusFilter = 'all';
 
 (function () {
   var input     = document.getElementById('guide-search');
   var countries = [].slice.call(document.querySelectorAll('.country'));
   var noRes     = document.getElementById('guide-noresult');
-  var stabs     = [].slice.call(document.querySelectorAll('.stab'));
   if (!input) return;
 
   /* ── Alias / nickname / airport-code / region / landmark → city map ──
@@ -1660,28 +1652,9 @@ window._giStatusFilter = 'all';
     return out;
   }
 
-  /* Status toggle */
-  stabs.forEach(function (b) {
-    b.addEventListener('click', function () {
-      if (window._mutexClearFilters) window._mutexClearFilters('status');
-      var wasOn = b.classList.contains('on');
-      stabs.forEach(function (x) { x.classList.remove('on'); x.setAttribute('aria-pressed', 'false'); });
-      if (wasOn) {
-        /* re-tapping the active pill clears it — back to the cleared "all" state */
-        window._giStatusFilter = 'all';
-      } else {
-        b.classList.add('on');
-        b.setAttribute('aria-pressed', 'true');
-        window._giStatusFilter = b.dataset.s;
-      }
-      applyMosaicFilter();
-      document.dispatchEvent(new Event('gi:status'));
-    });
-  });
 
   function applyMosaicFilter() {
     var q  = input.value.trim().toLowerCase();
-    var sf = window._giStatusFilter;
     var alias = aliasCities(q);
 
     function pass(allowFuzzy) {
@@ -1695,15 +1668,13 @@ window._giStatusFilter = 'all';
         var sectionCards = [].slice.call(r.querySelectorAll('.dest-card'));
         sectionCards.forEach(function (c) {
           var name   = ((c.querySelector('.dest-name') || {}).textContent || '').toLowerCase();
-          var isWant = c.getAttribute('data-status') === 'want';
-          var statusOk = isSpecial || sf === 'all' || (sf === 'want' ? isWant : !isWant);
           var textMatch  = q === '' || labelMatch || name.indexOf(q) > -1;
           var aliasMatch = !!alias[name];
           var fuzzyMatch = false;
           if (allowFuzzy && !textMatch && !aliasMatch) {
             fuzzyMatch = within1(q, name) || name.split(/[\s-]+/).some(function (w) { return within1(q, w); });
           }
-          var match = statusOk && (textMatch || aliasMatch || fuzzyMatch);
+          var match = textMatch || aliasMatch || fuzzyMatch;
           c.style.display = match ? '' : 'none';
           c.classList.toggle('match-alias', match && q !== '' && !textMatch && (aliasMatch || fuzzyMatch));
           /* a card only counts toward its section + the result tally if it also
@@ -1727,7 +1698,7 @@ window._giStatusFilter = 'all';
 
     var shown = pass(false);
     if (shown === 0 && q.length >= 4) shown = pass(true);  // typo fallback
-    var anyFilter = q !== '' || sf !== 'all' ||
+    var anyFilter = q !== '' ||
       document.querySelector('.mchip.on[data-m]') ||
       document.querySelector('.tchip.on') ||
       document.querySelector('#continentJumpList .days-jump-item.on:not([data-cont="all"])') ||
@@ -1767,8 +1738,6 @@ window._giStatusFilter = 'all';
   if (nrReset) {
     nrReset.addEventListener('click', function () {
       input.value = '';
-      stabs.forEach(function (x) { x.classList.remove('on'); x.setAttribute('aria-pressed', 'false'); });
-      window._giStatusFilter = 'all';
       if (window._clearDaysFilter) window._clearDaysFilter();
       var sb = document.querySelector('#season-filter .mchip.on');
       if (sb) sb.click();
@@ -1808,39 +1777,11 @@ window._giStatusFilter = 'all';
     .filter(function (s) { return nonCountries.indexOf(s.getAttribute('data-country')) === -1; });
 
   function updateStats() {
-    var sf   = window._giStatusFilter || 'all';
-    var want = allCards.filter(function (c) { return c.getAttribute('data-status') === 'want'; }).length;
-    var been = allCards.length - want;
-
-    var beenC = allSections.filter(function (s) {
-      return s.querySelector('.dest-card:not([data-status="want"])');
-    }).length;
-    var wantC = allSections.filter(function (s) {
-      return s.querySelector('.dest-card[data-status="want"]');
-    }).length;
-
-    if (elG) {
-      if (sf === 'all') {
-        elG.textContent = allCards.length + ' guides | ' + been + ' visited | ' + want + ' on the list';
-      } else if (sf === 'been') {
-        elG.textContent = been + ' guides visited';
-      } else {
-        elG.textContent = want + ' guides on the list';
-      }
-    }
-    if (elC) {
-      if (sf === 'all') {
-        elC.textContent = allSections.length + ' countries | ' + beenC + ' visited';
-      } else if (sf === 'been') {
-        elC.textContent = beenC + ' countries visited';
-      } else {
-        elC.textContent = wantC + ' countries on the list';
-      }
-    }
+    if (elG) elG.textContent = allCards.length + ' guides';
+    if (elC) elC.textContent = allSections.length + ' countries';
   }
 
   updateStats();
-  document.addEventListener('gi:status', updateStats);
 }());
 </script>
 
@@ -1945,13 +1886,6 @@ window._giStatusFilter = 'all';
 
   function ok(a) {
     var r = a.dataset.routing, mins = +a.dataset.mins, delta = a.dataset.delta === '1', reg = a.dataset.region;
-    // Status filter (All / Been / Want)
-    var sf = window._giStatusFilter || 'all';
-    if (sf !== 'all' && r !== 'home') {
-      var isWant = a.getAttribute('data-status') === 'want';
-      if (sf === 'want' && !isWant) return false;
-      if (sf === 'been' && isWant) return false;
-    }
     // Numeric query = "max hours" (typing 3 → flights up to ~3h). Applies in every mode.
     if (fst.qh != null && mins > fst.qh * 60 + 5) return false;
     if (r === 'home') return fst.stop === 'all' && fst.dur === 'all' && (fst.reg === 'all' || fst.reg === reg) && !fst.q;
@@ -2006,11 +1940,6 @@ window._giStatusFilter = 'all';
 
   if (search) search.addEventListener('input', function () {
     if (document.body.classList.contains('mode-flights')) { parseQuery(search.value); apply(); }
-  });
-
-  /* Re-filter when been/want toggle changes */
-  document.addEventListener('gi:status', function () {
-    if (document.body.classList.contains('mode-flights')) apply();
   });
 
   /* Always open in "By country" on load (default) — no auto-switch to flights. */
@@ -2679,8 +2608,6 @@ window._giStatusFilter = 'all';
     /* Clear all active filters so every destination is pickable */
     var srch = document.getElementById('guide-search');
     if (srch && srch.value) { srch.value = ''; srch.dispatchEvent(new Event('input')); }
-    document.querySelectorAll('.stab').forEach(function(x){ x.classList.remove('on'); x.setAttribute('aria-pressed','false'); });
-    window._giStatusFilter = 'all';
     if (window._clearDaysFilter) window._clearDaysFilter();
     if (window._clearLangFilter) window._clearLangFilter();
     if (window._clearCountryFilter) window._clearCountryFilter();
@@ -3371,8 +3298,6 @@ window._giStatusFilter = 'all';
       if (tb) tb.click();
       var srch = document.getElementById('guide-search');
       if (srch && srch.value) { srch.value = ''; srch.dispatchEvent(new Event('input')); }
-      document.querySelectorAll('.stab').forEach(function(x){ x.classList.remove('on'); x.setAttribute('aria-pressed','false'); });
-      window._giStatusFilter = 'all';
       if (target.reset && window._setBrowseView) window._setBrowseView('country');
       setState(target.btn, target.panel, true);
     }
@@ -3408,11 +3333,6 @@ window._giStatusFilter = 'all';
     /* search box */
     var srch = document.getElementById('guide-search');
     if (srch && srch.value.trim()) label = '“' + srch.value.trim() + '”';
-    /* been/want stab */
-    if (!label) {
-      var stab = document.querySelector('.stab.on');
-      if (stab) label = stab.textContent.trim();
-    }
     /* trip type chip */
     if (!label) {
       var tc = document.querySelector('#theme-panel .tchip.on:not([data-theme="all"])');
@@ -3463,21 +3383,15 @@ window._giStatusFilter = 'all';
     if (tb) tb.click();
     var srch = document.getElementById('guide-search');
     if (srch && srch.value) { srch.value = ''; srch.dispatchEvent(new Event('input')); }
-    /* click the active stab to trigger its own handler (which calls applyMosaicFilter) */
-    var activeStab = document.querySelector('.stab.on');
-    if (activeStab) activeStab.click();
     setTimeout(refreshFilterHint, 0);
   }
   var clearBtn = document.getElementById('clear-all-filters');
   if (clearBtn) clearBtn.addEventListener('click', clearAllFilters);
 
-  /* Also refresh hint on search input and stab clicks */
+  /* Refresh hint on search input */
   (function () {
     var srch = document.getElementById('guide-search');
     if (srch) srch.addEventListener('input', function () { setTimeout(refreshFilterHint, 0); });
-    document.querySelectorAll('.stab').forEach(function (s) {
-      s.addEventListener('click', function () { setTimeout(refreshFilterHint, 0); });
-    });
   }());
 
   /* Deep-link from home tiles: open a specific facet panel */
@@ -3503,10 +3417,6 @@ window._giStatusFilter = 'all';
       if (except !== 'lang'     && window._clearLangFilter)      window._clearLangFilter();
       if (except !== 'country'  && window._clearCountryFilter)   window._clearCountryFilter();
       if (except !== 'continent'&& window._clearContinentFilter) window._clearContinentFilter();
-      if (except !== 'status') {
-        document.querySelectorAll('.stab').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false');});
-        window._giStatusFilter = 'all';
-      }
       if (except !== 'search') {
         var srch = document.getElementById('guide-search');
         if (srch && srch.value) srch.value = '';

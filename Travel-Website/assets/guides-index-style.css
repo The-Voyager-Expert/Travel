@@ -113,20 +113,7 @@
   font-style: italic;
   line-height: 1.2;
 }
-/* ── Status dot — discreet "want to go" marker (bottom-right). No dot = been. ── */
-.dest-card[data-status="want"]::after {
-  content: "";
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--gold); /* gold — want to go */
-  opacity: 0.95;
-}
 /* ── Status legend / stats strip ── */
-.status-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; }
 .stat-pill { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 12px; background: var(--warm); border: 1px solid var(--border2, #e6e2da); border-radius: 18px; font-size: 12px; color: var(--muted); line-height: 1; }
 .stat-pill b { font-weight: 600; font-size: 13px; color: var(--text, #1a1917); font-variant-numeric: tabular-nums; }
 .stat-pill .dot { width: 6px; height: 6px; border-radius: 50%; align-self: center; }
@@ -135,8 +122,6 @@
 .stat-line { font-size: 12px; color: var(--muted); margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
 .stat-line b { color: var(--text, #1a1917); font-weight: 600; font-variant-numeric: tabular-nums; }
 .stat-line--right { justify-content: flex-end; }
-.dot--want { background: var(--gold); }
-.dot--been { background: transparent; border: 1px solid var(--border); }
 .dest-flag { font-size: 15px; line-height: 1; flex-shrink: 0; }
 .dest-name { font-size: var(--fs-card-name); font-weight: 600; color: var(--text, #1a1917); }
 /* ── Search ── */
@@ -230,16 +215,9 @@ a.days-jump-item, a.days-jump-item:visited, a.days-jump-item:hover { text-decora
   .topbar { flex-wrap: wrap !important; gap: 6px !important; }
   /* Search bar full-width on its own row; un-absolute the status toggle */
   #search-wrap { flex: 0 0 100% !important; flex-wrap: wrap !important; justify-content: flex-start !important; gap: 8px !important; }
-  /* Toggle drops BELOW the search bar (order:2) and is smaller/subdued than the
-     search, so the search reads as the primary control. */
-  #search-wrap #status-toggle { position: static !important; width: 100% !important; order: 2 !important; }
   #guide-search { width: 100% !important; min-width: 0 !important; }
-  /* Filter pills keep the 40px height; the All/Been/Want toggle is smaller. */
+  /* Filter pills keep the 40px height */
   .disc-btn { height: 40px !important; font-size: 13px !important; padding: 0 12px !important; min-height: auto !important; }
-  .stab { height: 34px !important; font-size: 12px !important; padding: 0 12px !important; min-height: auto !important; }
-  /* Higher specificity than mobile.css's shared pill rule (.stab → 13px) so the
-     toggle text actually lands at the smaller 12px. */
-  #status-toggle .stab { font-size: 12px !important; }
   #guide-search { height: 48px !important; min-height: 48px !important; font-size: 16px !important; padding: 0 12px !important; padding-left: 36px !important; }
   #guide-search-wrap { width: 100% !important; display: block !important; }
   /* Search-inside-guides button retired 2026-07-14 (replaced by TVESearch). */
@@ -464,7 +442,6 @@ body.mode-flights #guide-noresult { display: none !important; }
 #fnoresult button:hover { background: var(--banner-gradient); border-color: #b85c2a; color: #fdf8f0; }
 .flt-grid { column-width: 212px; column-gap: 4px; }
 .flt-grid .dest-card { border-radius: 8px; padding: 9px 12px; align-items: baseline; border-left-width: 5px; break-inside: avoid; -webkit-column-break-inside: avoid; margin: 0 0 4px; }
-.flt-grid .dest-card[data-status="want"]::after { right: 8px; bottom: 8px; }
 /* In flight view the day-trip subtitle is irrelevant and only adds random height */
 .flt-grid .dest-sub { display: none; }
 /* Pin the airport code to a fixed top-right spot so it doesn't drift with card content */
@@ -559,13 +536,6 @@ body.mode-flights .fnote { display: block; }
 .gpr-label { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
 .gpr-langs { display:flex; flex-wrap:wrap; gap:5px; }
 .gtag { display:inline-flex; align-items:center; font-size:13px; line-height:1; padding:4px 10px; border:1px solid var(--border2, #e6e2da); border-radius:5px; background:#fff; color:#3d3a32; }
-/* ── Status filter toggle (All / Been / Want) ── */
-.status-toggle { display: inline-flex; border: 1px solid var(--border2, #e6e2da); border-radius: 6px; overflow: hidden; }
-.stab { display: inline-flex; align-items: center; height: 32px; font-family: inherit; font-size: 12px; font-weight: 500; padding: 0 14px; border: none; border-right: 1px solid var(--border2, #e6e2da); background: #fff; color: #8a6c1a; cursor: pointer; transition: background .12s, color .12s, transform .08s; white-space: nowrap; }
-.stab:last-child { border-right: none; }
-.stab:hover  { color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
-.stab:active { color: #fff; background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%); transform: scale(.97) translateY(1px); }
-.stab.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; font-weight: 600; }
 /* ══ Compare mode ══ */
 body.mode-compare .mosaic-wrap .dest-card:not([data-special]) { cursor: pointer; user-select: none; }
 body.mode-compare .mosaic-wrap .dest-card[data-special] { opacity: .55; pointer-events: none; cursor: default; }
@@ -580,11 +550,6 @@ body.mode-compare .mosaic-wrap .dest-card.cmp-sel::after {
   transform: translateY(-50%);
   font-size: 11px; font-weight: 700; color: var(--accent);
   width: auto; height: auto; border-radius: 0; background: none;
-}
-body.mode-compare .mosaic-wrap .dest-card[data-status="want"].cmp-sel::after {
-  /* override the "want" blue dot with a checkmark */
-  content: "✓"; width: auto; height: auto; background: none;
-  border-radius: 0; font-size: 11px; color: var(--accent);
 }
 /* Dim non-selected cards once 5 are chosen */
 body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45; }
@@ -702,9 +667,6 @@ body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45;
   .cmp-bar-lbl { font-size: 9px; }
   /* Safety legend — drop the desktop first-column indent so it aligns left */
   .cmp-legend-footnote { padding-left: 0; }
-  /* Status toggle (All/Been/Want) — full width on mobile */
-  .status-toggle { display: flex !important; width: 100% !important; }
-  .stab { flex: 1 !important; justify-content: center !important; height: 34px !important; font-size: 12px !important; }
 }
 
 /* (Removed 2026-06-20: a duplicate mobile banner override that forced the
