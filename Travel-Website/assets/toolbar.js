@@ -1041,7 +1041,7 @@
     wrap.style.cssText = 'text-align:right;padding:12px 0 8px;';
     var pill = document.createElement('span');
     pill.id = 'tve-visited-pill';
-    pill.style.cssText = 'display:inline-flex;align-items:center;background:#fff;border:1px solid #c8a44a;color:#8a6c1a;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;';
+    pill.style.cssText = 'display:inline-flex;align-items:center;background:#fff;border:1px solid #c8a44a;color:#8a6c1a;border-radius:6px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;';
     pill.textContent = 'Visited';
     pill.title = 'Click to unmark as visited';
     pill.addEventListener('click', function () {
