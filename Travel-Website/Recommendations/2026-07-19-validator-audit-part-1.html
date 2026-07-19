@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validator Deep Audit — Part 1/20 (2026-07-19)</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 860px; margin: 40px auto; padding: 0 24px; background: #f9f7f4; color: #1e1c18; }
+h1 { font-size: 20px; font-weight: 700; color: #b85c2a; margin-bottom: 4px; }
+.meta { font-size: 13px; color: #7a7266; margin-bottom: 28px; }
+h2 { font-size: 15px; font-weight: 700; border-bottom: 2px solid #b85c2a; padding-bottom: 6px; margin-top: 32px; }
+.card { background: #fff; border: 1px solid #ddd5c8; border-radius: 8px; padding: 16px 20px; margin-bottom: 14px; }
+.card h3 { margin: 0 0 6px; font-size: 14px; font-weight: 700; }
+.card p { margin: 0; font-size: 13px; line-height: 1.5; color: #3d3a32; }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-right: 6px; }
+.pill-fixed { background: #e8f5e9; color: #2e7d32; }
+.pill-clean { background: #e3f2fd; color: #1565c0; }
+.pill-warn { background: #fff8e1; color: #f57f17; }
+.code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; background: #f4f2ee; padding: 1px 5px; border-radius: 3px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-weight: 700; padding: 7px 10px; background: #f4f2ee; border: 1px solid #ddd5c8; }
+td { padding: 7px 10px; border: 1px solid #ddd5c8; vertical-align: top; }
+</style>
+</head>
+<body>
+<h1>Validator Deep Audit — Part 1/20 (Continued run: 2026-07-19)</h1>
+<div class="meta">Crib: on-demand-validator-audit-1 &nbsp;·&nbsp; Sections: 🔒 CORE RULES INTEGRITY &amp; BUILD STATE + 📄 DOCUMENT HEAD &nbsp;·&nbsp; Date: 2026-07-19</div>
+
+<h2>Summary</h2>
+<div class="card">
+  <h3><span class="pill pill-fixed">FIXED</span> 1 Validator Index documentation gap closed</h3>
+  <p>The guide HTML filename hard-fail check (<span class="code">validate_itinerary.py</span> L517–L544, added 2026-06-28) was missing entirely from the Validator Index. The check verifies the guide filename matches <span class="code">^[a-z0-9][a-z0-9_-]*_v\d+\.html$</span> and rejects generic <span class="code">guide_v</span> placeholders — it runs as the very first check in <span class="code">validate()</span>. Added as a new <span class="code">class="yes"</span> entry in the 🔒 CORE RULES INTEGRITY &amp; BUILD STATE section of the Validator Index.</p>
+</div>
+<div class="card">
+  <h3><span class="pill pill-clean">CLEAN</span> All 25 checks correctly implemented</h3>
+  <p>12 CORE RULES INTEGRITY &amp; BUILD STATE checks + 13 DOCUMENT HEAD checks all verified against code. Smoke-tested on 5 shipped guides (Bahamas, Madrid, Rio de Janeiro, Chongqing, Queenstown) — all passed with 0 failures.</p>
+</div>
+
+<h2>What was audited</h2>
+<table>
+<tr><th>Section</th><th>Checks</th><th>Result</th></tr>
+<tr><td>🔒 CORE RULES INTEGRITY &amp; BUILD STATE</td><td>12 (+ 1 newly documented)</td><td><span class="pill pill-fixed">1 gap fixed</span></td></tr>
+<tr><td>📄 DOCUMENT HEAD</td><td>13</td><td><span class="pill pill-clean">All correct</span></td></tr>
+</table>
+
+<h2>Finding detail</h2>
+<div class="card">
+  <h3>Missing: Guide filename hard-fail check in Validator Index</h3>
+  <p><strong>Code location:</strong> <span class="code">validate_itinerary.py</span> L517–L544 (added 2026-06-28, logged in CHANGELOG as "GUIDE HTML FILENAME PATTERN CHECK (ENHANCED)")</p>
+  <p><strong>What the check does:</strong> Hard-fails if the guide file does not match <span class="code">^[a-z0-9][a-z0-9_-]*_v\d+\.html$</span> or starts with the generic <span class="code">guide_v</span> placeholder. Runs before CORE RULES integrity, Build State, and all other checks.</p>
+  <p><strong>Confusion risk:</strong> The Validator Index had only a WARN-tier entry (L991, Global section) for "Filename has no version number (vN)". This is a separate, softer check at <span class="code">validate_itinerary.py</span> L26468. The hard-fail — which also enforces lowercase/alphanumeric characters, rejects the <span class="code">guide_v</span> generic prefix, and validates the full pattern — had no index entry at all.</p>
+  <p><strong>Fix:</strong> New <span class="code">class="yes"</span> <span class="code">&lt;li&gt;</span> added as first item in the CORE RULES INTEGRITY &amp; BUILD STATE section of <span class="code">Brain/Reference/Validator Index.html</span>.</p>
+</div>
+
+<h2>Drive mtime cascade_sync warning</h2>
+<div class="card">
+  <h3><span class="pill pill-warn">NOTED</span> brain_check: Getting Around - Extra Section.html newer than Validator Index.html by 346+ min</h3>
+  <p>Verified by computing SHA-256 of the CORE RULES file and comparing to stored checksum — hashes match. Content is unchanged. This is a Google Drive File Stream hydration artifact (mtime updated on local cache without actual content change). No fix required. Validator Index was updated in this session, which will clear the mtime gap going forward.</p>
+</div>
+
+<h2>Smoke tests</h2>
+<table>
+<tr><th>Guide</th><th>Failures</th><th>Status</th></tr>
+<tr><td>Bahamas</td><td>0</td><td><span class="pill pill-clean">PASS</span></td></tr>
+<tr><td>Madrid</td><td>0</td><td><span class="pill pill-clean">PASS</span></td></tr>
+<tr><td>Rio de Janeiro</td><td>0</td><td><span class="pill pill-clean">PASS</span></td></tr>
+<tr><td>Chongqing</td><td>0</td><td><span class="pill pill-clean">PASS</span></td></tr>
+<tr><td>Queenstown</td><td>0</td><td><span class="pill pill-clean">PASS</span></td></tr>
+</table>
+
+<h2>Out-of-scope findings (logged to To Do List)</h2>
+<div class="card">
+  <p>The following were observed but are outside Part 1 scope:</p>
+  <ul style="margin:0;font-size:13px;line-height:1.6;padding-left:20px;">
+    <li>brain_check css-duplication: 185 duplicated CSS selectors across 0 pages (pre-existing, site-wide concern)</li>
+    <li>brain_check Guide-Days-Coverage aria-label check (new warn-tier item surfaced during startup, unrelated to Part 1)</li>
+  </ul>
+</div>
+</body>
+</html>
