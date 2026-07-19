@@ -1649,6 +1649,7 @@ window._giStatusFilter = 'all';
   /* Status toggle */
   stabs.forEach(function (b) {
     b.addEventListener('click', function () {
+      if (window._mutexClearFilters) window._mutexClearFilters('status');
       var wasOn = b.classList.contains('on');
       stabs.forEach(function (x) { x.classList.remove('on'); x.setAttribute('aria-pressed', 'false'); });
       if (wasOn) {
@@ -2901,6 +2902,7 @@ window._giStatusFilter = 'all';
     chips.forEach(function (c) { c.classList.remove('on'); });
     applySeasonFilter();
   });
+  window._clearSeasonFilter = function () { if (activeMo !== null) { activeMo = null; chips.forEach(function(c){c.classList.remove('on');}); applySeasonFilter(); } };
 }());
 </script>
 
@@ -2972,6 +2974,7 @@ window._giStatusFilter = 'all';
   if (badge) badge.addEventListener('click', function () {
     selected = {}; applyThemeFilter();
   });
+  window._clearThemeFilter = function () { if (Object.keys(selected).length) { selected = {}; applyThemeFilter(); } };
 }());
 </script>
 
@@ -3028,6 +3031,7 @@ window._giStatusFilter = 'all';
   });
   items.forEach(function (it) {
     it.addEventListener('click', function () {
+      if (it.dataset.days !== 'all' && window._mutexClearFilters) window._mutexClearFilters('days');
       active = (it.dataset.days === 'all') ? null : it.dataset.days;
       applyDaysFilter();
       if (window._refreshFilterHint) window._refreshFilterHint();
@@ -3105,6 +3109,7 @@ window._giStatusFilter = 'all';
   });
   items.forEach(function (it) {
     it.addEventListener('click', function () {
+      if (it.dataset.country !== 'all' && window._mutexClearFilters) window._mutexClearFilters('country');
       active = (it.dataset.country === 'all') ? null : it.dataset.country;
       applyCountryFilter();
       closeMenu();
@@ -3255,6 +3260,7 @@ window._giStatusFilter = 'all';
   });
   items.forEach(function (it) {
     it.addEventListener('click', function () {
+      if (it.dataset.cont !== 'all' && window._mutexClearFilters) window._mutexClearFilters('continent');
       active = (it.dataset.cont === 'all') ? null : it.dataset.cont;
       applyContinentFilter();
       closeMenu();
@@ -3435,6 +3441,36 @@ window._giStatusFilter = 'all';
   }
   if (location.hash === '#by-language') _openFacet(lBtn, lPanel);
   if (location.hash === '#when-to-go') _openFacet(fBtn, fPanel);
+
+  /* Mutual exclusivity — one filter at a time.
+     Any filter activation calls _mutexClearFilters(except) first to clear
+     all other active filters before the new one is applied. The re-entry
+     guard prevents cascading input-event dispatches from the clear functions. */
+  var _mutexActive = false;
+  window._mutexClearFilters = function (except) {
+    if (_mutexActive) return;
+    _mutexActive = true;
+    try {
+      if (except !== 'theme'    && window._clearThemeFilter)     window._clearThemeFilter();
+      if (except !== 'season'   && window._clearSeasonFilter)    window._clearSeasonFilter();
+      if (except !== 'days'     && window._clearDaysFilter)      window._clearDaysFilter();
+      if (except !== 'lang'     && window._clearLangFilter)      window._clearLangFilter();
+      if (except !== 'country'  && window._clearCountryFilter)   window._clearCountryFilter();
+      if (except !== 'continent'&& window._clearContinentFilter) window._clearContinentFilter();
+      if (except !== 'status') {
+        document.querySelectorAll('.stab').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false');});
+        window._giStatusFilter = 'all';
+      }
+      if (except !== 'search') {
+        var srch = document.getElementById('guide-search');
+        if (srch && srch.value) srch.value = '';
+      }
+    } finally {
+      _mutexActive = false;
+    }
+    refreshActive();
+    setTimeout(refreshFilterHint, 0);
+  };
 }());
 </script>
 
