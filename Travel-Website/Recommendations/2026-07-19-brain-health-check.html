@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brain Health Check — 2026-07-19</title>
+<style>
+  :root {
+    --bg:        #f8f6f2;
+    --surface:   #ffffff;
+    --surface2:  #f1ede7;
+    --text:      #1c2330;
+    --muted:     #64748b;
+    --border:    #e0dbd4;
+    --accent:    #3d5a8a;
+    --ok-fg:     #1d6b3f;
+    --ok-bg:     #e8f5ee;
+    --ok-dot:    #2d7a4f;
+    --warn-fg:   #7a5217;
+    --warn-bg:   #fef4e0;
+    --warn-dot:  #c9832d;
+    --fail-fg:   #8c1f1f;
+    --fail-bg:   #fdecea;
+    --fail-dot:  #c94a3f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #0f1621;
+      --surface:  #1a2333;
+      --surface2: #222e42;
+      --text:     #e0dbd3;
+      --muted:    #7d8fa8;
+      --border:   #2a3a52;
+      --accent:   #6b9fd4;
+      --ok-fg:    #5ec98a;
+      --ok-bg:    #0d2a1c;
+      --ok-dot:   #3da865;
+      --warn-fg:  #e0a94a;
+      --warn-bg:  #261a08;
+      --warn-dot: #d4922e;
+      --fail-fg:  #e87272;
+      --fail-bg:  #2a1010;
+      --fail-dot: #d94f4f;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:        #f8f6f2;
+    --surface:   #ffffff;
+    --surface2:  #f1ede7;
+    --text:      #1c2330;
+    --muted:     #64748b;
+    --border:    #e0dbd4;
+    --accent:    #3d5a8a;
+    --ok-fg:     #1d6b3f;
+    --ok-bg:     #e8f5ee;
+    --ok-dot:    #2d7a4f;
+    --warn-fg:   #7a5217;
+    --warn-bg:   #fef4e0;
+    --warn-dot:  #c9832d;
+    --fail-fg:   #8c1f1f;
+    --fail-bg:   #fdecea;
+    --fail-dot:  #c94a3f;
+  }
+  :root[data-theme="dark"] {
+    --bg:       #0f1621;
+    --surface:  #1a2333;
+    --surface2: #222e42;
+    --text:     #e0dbd3;
+    --muted:    #7d8fa8;
+    --border:   #2a3a52;
+    --accent:   #6b9fd4;
+    --ok-fg:    #5ec98a;
+    --ok-bg:    #0d2a1c;
+    --ok-dot:   #3da865;
+    --warn-fg:  #e0a94a;
+    --warn-bg:  #261a08;
+    --warn-dot: #d4922e;
+    --fail-fg:  #e87272;
+    --fail-bg:  #2a1010;
+    --fail-dot: #d94f4f;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 36px 20px 60px;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .report-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+  }
+  .report-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .report-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 26px;
+    font-weight: normal;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin-bottom: 12px;
+  }
+  .report-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .status-pill.clean  { background: var(--ok-bg);   color: var(--ok-fg); }
+  .status-pill.warn   { background: var(--warn-bg);  color: var(--warn-fg); }
+  .status-pill.fail   { background: var(--fail-bg);  color: var(--fail-fg); }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-ok   { background: var(--ok-dot); }
+  .dot-warn { background: var(--warn-dot); }
+  .dot-fail { background: var(--fail-dot); }
+
+  /* Section heading */
+  .section-heading {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    margin-top: 32px;
+  }
+
+  /* Steps table */
+  .steps-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .steps-table thead th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    text-align: left;
+  }
+  .steps-table th:nth-child(2),
+  .steps-table td:nth-child(2) {
+    text-align: center;
+    width: 90px;
+  }
+  .steps-table tbody tr {
+    border-bottom: 1px solid var(--border);
+  }
+  .steps-table tbody tr:last-child {
+    border-bottom: none;
+  }
+  .steps-table td {
+    padding: 10px 14px;
+    vertical-align: top;
+  }
+  .step-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .step-note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .step-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .chip-clean { background: var(--ok-bg);   color: var(--ok-fg); }
+  .chip-warn  { background: var(--warn-bg);  color: var(--warn-fg); }
+  .chip-fail  { background: var(--fail-bg);  color: var(--fail-fg); }
+  .chip-fixed { background: #e8eef8; color: #2c4a80; }
+  :root[data-theme="dark"] .chip-fixed,
+  @media (prefers-color-scheme: dark) { .chip-fixed { background: #182038; color: #7da8e0; } }
+
+  /* Issues box */
+  .issues-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .issues-box.has-issues {
+    border-left: 3px solid var(--warn-dot);
+    font-style: normal;
+    color: var(--text);
+  }
+
+  /* Stash note */
+  .stash-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .stash-note strong { color: var(--text); }
+
+  /* Out-of-scope note */
+  .oos-note {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+  .oos-note strong { color: var(--text); }
+
+  /* Footer */
+  .report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  @media (max-width: 540px) {
+    .steps-table th:nth-child(2),
+    .steps-table td:nth-child(2) { width: 72px; }
+    .report-title { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="report-header">
+    <div class="report-eyebrow">The Voyager Expert · Daily Routine</div>
+    <h1 class="report-title">Brain Health Check</h1>
+    <div class="report-meta">
+      <span>2026-07-19</span>
+      <span class="status-pill clean"><span class="dot dot-ok"></span>All Clear</span>
+      <span>182/183 brain_check ok · 0 HARD-FAILs · 1 pre-existing warn</span>
+    </div>
+  </div>
+
+  <div class="stash-note">
+    <span>🗂</span>
+    <div><strong>Working tree stashed before checks.</strong> 9 guide HTML files + 3 other modified files (from parallel crib sessions) were stashed with <code>git stash -u</code> so all checks ran against committed state. Stash popped after the run.</div>
+  </div>
+
+  <div class="section-heading">Step-by-Step Results</div>
+  <table class="steps-table">
+    <thead>
+      <tr>
+        <th>Step</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="step-name">0a · To Do List intake</div>
+          <div class="step-note">Scanned for in-scope items</div>
+        </td>
+        <td><span class="step-chip chip-clean">Clean</span></td>
+        <td class="step-note">No items in the To Do List fall within brain health check scope. Out-of-scope items noted (see below).</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">0b · Working tree safety</div>
+          <div class="step-note">Stash before checks</div>
+        </td>
+        <td><span class="step-chip chip-fixed">Stashed</span></td>
+        <td class="step-note">Dirty tree (9 guides + 3 assets modified, 15 untracked). Stashed with <code>git stash -u</code>. Popped after run.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">1 · Brain check</div>
+          <div class="step-note"><code>brain_check.py</code></div>
+        </td>
+        <td><span class="step-chip chip-warn">1 Warn</span></td>
+        <td class="step-note">182/183 ok · 0 HARD-FAILs · 1 warn: 156 duplicated CSS selectors across shared files (pre-existing, confirmed in prior audit log entries). No action needed.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">2 · Hanging builds</div>
+          <div class="step-note">Phase 6 unchecked</div>
+        </td>
+        <td><span class="step-chip chip-clean">Clean</span></td>
+        <td class="step-note">No <code>build_state.md</code> files with unchecked Phase 6. All existing builds are complete or have no HTML in progress.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">3 · Ship pipeline health</div>
+          <div class="step-note">Script syntax + hook wiring</div>
+        </td>
+        <td><span class="step-chip chip-clean">Clean</span></td>
+        <td class="step-note">All 11 key scripts compile clean: <code>guide_tools</code>, <code>validate_itinerary</code>, <code>brain_check</code>, <code>pre_push_guard</code>, <code>validation_stamp</code>, <code>publish_queue</code>, <code>guide_surfaces</code>, <code>crib_safety</code>, <code>sweep_stray</code>, <code>commons_photo</code>, <code>autofix_itinerary</code>. Pre-push hook wired at <code>Brain/scripts/git-hooks</code>, executable.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">4 · Stamp integrity</div>
+          <div class="step-note">5 random sampled guides</div>
+        </td>
+        <td><span class="step-chip chip-clean">Clean</span></td>
+        <td class="step-note">5/5 valid signed stamps: Cambridge, Maceió, Azores, Bergen, Amalfi — all exit 0.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">5 · Push queue / lock</div>
+          <div class="step-note">Lock file + queue drain status</div>
+        </td>
+        <td><span class="step-chip chip-clean">Clean</span></td>
+        <td class="step-note">No <code>/tmp/voyager_push.lock</code>. No <code>publish_queue.json</code> file. Pipeline clear.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">6 · Stray file sweep</div>
+          <div class="step-note"><code>sweep_stray_travel.py</code></div>
+        </td>
+        <td><span class="step-chip chip-clean">Clean</span></td>
+        <td class="step-note">0 stray travel files outside <code>Travel/</code>. HARD RULE holding.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">7 · Repo size &amp; gitignore</div>
+          <div class="step-note">Published tree size + stragglers</div>
+        </td>
+        <td><span class="step-chip chip-clean">Clean</span></td>
+        <td class="step-note"><strong>684 MB</strong> published (well under 1 GB). No unauthorized non-<code>Travel-Website/</code> files. Non-ASCII filenames in <code>_build/assets/</code> appear in <code>git ls-files</code> output due to git path quoting — all are legitimate guide photos, not stragglers. No <code>.DS_Store</code> or <code>.fuse_hidden</code> artifacts.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="step-name">8 · Audit log freshness</div>
+          <div class="step-note">Last entry ≤ 7 days</div>
+        </td>
+        <td><span class="step-chip chip-fixed">Updated</span></td>
+        <td class="step-note">Prior brain health check entry: 2026-07-18 (1 day ago). Added today's entry: "2026-07-19 — Brain health check: clean — 182/183 ok · 1 warn · 0 fail." Audit log current.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-heading">Issues Requiring Action</div>
+  <div class="issues-box">
+    None. All steps clean or auto-resolved. The single brain_check warn (CSS duplication) is a pre-existing structural item tracked in the audit log — it does not affect site operation or block any push.
+  </div>
+
+  <div class="oos-note">
+    <strong>Out-of-scope findings noted (not actioned here):</strong> The To Do List carries several open items that fall outside brain health check scope — push gate blockers for Coeur-dAlene and Marco-Island read-about pages (needs guide build completion), the serialized publisher doubled-path bug in <code>guide_surfaces.py</code>, a false-positive FMAP match in <code>validate_guide_coverage.py</code>, stale "June 2026" update stamps on 5 regional stats pages, and the <code>Cards-ATM.html</code> search bar brain_check item. All are documented in <code>To Do List/To_Do_List.md</code>. No new out-of-scope findings surfaced during this run.
+  </div>
+
+  <div class="report-footer">
+    <span>Brain Health Check · 2026-07-19 · automated daily run</span>
+    <span>brain_check 182/183 · pipeline OK · 684 MB published</span>
+  </div>
+
+</div>
+</body>
+</html>
