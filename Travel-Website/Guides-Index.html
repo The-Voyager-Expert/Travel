@@ -100,8 +100,8 @@
   </div>
   </div><!-- /pill-row -->
   <div id="filter-active-bar">
-    <span>Showing one filter at a time</span>
-    <button type="button" id="clear-all-filters">Clear all ×</button>
+    <span></span>
+    <button type="button" id="clear-all-filters">Clear ×</button>
   </div>
 </div>
 <script>
@@ -3387,21 +3387,53 @@ window._giStatusFilter = 'all';
   });
   refreshActive();
 
-  /* Filter-active hint bar: shows when any filter is engaged, with a clear-all escape */
+  /* Filter-active hint bar: shows which filter is engaged, with a clear escape */
   var filterBar = document.getElementById('filter-active-bar');
   function refreshFilterHint() {
-    var anyActive = false;
-    /* disclosure buttons with has-active dot */
-    if (document.querySelector('.disc-btn.has-active')) anyActive = true;
-    /* days filter — label changes from default when active */
-    var dLabel = document.getElementById('daysJumpLabel');
-    if (dLabel && dLabel.textContent.trim() !== '🗓 Trip Length') anyActive = true;
+    var label = null;
     /* search box */
     var srch = document.getElementById('guide-search');
-    if (srch && srch.value.trim()) anyActive = true;
-    /* been/want toggle */
-    if (document.querySelector('.stab.on')) anyActive = true;
-    if (filterBar) filterBar.classList.toggle('visible', anyActive);
+    if (srch && srch.value.trim()) label = '“' + srch.value.trim() + '”';
+    /* been/want stab */
+    if (!label) {
+      var stab = document.querySelector('.stab.on');
+      if (stab) label = stab.textContent.trim();
+    }
+    /* trip type chip */
+    if (!label) {
+      var tc = document.querySelector('#theme-panel .tchip.on:not([data-theme="all"])');
+      if (tc) label = tc.textContent.trim();
+    }
+    /* season/month chip */
+    if (!label) {
+      var mc = document.querySelector('#season-filter .mchip.on');
+      if (mc) label = mc.textContent.trim();
+    }
+    /* language chip */
+    if (!label) {
+      var lc = document.querySelector('#lang-chips .lchip.on:not([data-l="all"])');
+      if (lc) label = lc.textContent.trim();
+    }
+    /* trip length */
+    if (!label) {
+      var di = document.querySelector('#daysJumpList .days-jump-item.on:not([data-days="all"])');
+      if (di) label = di.textContent.trim();
+    }
+    /* country */
+    if (!label) {
+      var ci = document.querySelector('#countryJumpList .days-jump-item.on:not([data-country="all"])');
+      if (ci) label = ci.textContent.trim();
+    }
+    /* continent */
+    if (!label) {
+      var ni = document.querySelector('#continentJumpList .days-jump-item.on:not([data-cont="all"])');
+      if (ni) label = ni.textContent.trim();
+    }
+    if (filterBar) {
+      var sp = filterBar.querySelector('span');
+      filterBar.classList.toggle('visible', !!label);
+      if (sp) sp.textContent = label || '';
+    }
   }
   window._refreshFilterHint = refreshFilterHint;
 
