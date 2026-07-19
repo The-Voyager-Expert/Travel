@@ -1033,22 +1033,23 @@
     var slug = slugMatch[1];
     var key = 'tve-visited-' + slug;
     if (!localStorage.getItem(key)) return;
-    var overviewSec = document.querySelector('.overview-section');
-    if (!overviewSec) return;
-    var sep = document.createElement('div');
-    sep.style.cssText = 'margin:16px 0 4px;border-top:1px solid var(--border2,#e6e2da);';
+    /* Insert after #nearby-guides (last section), or after the last .extras-section */
+    var anchor = document.getElementById('nearby-guides') ||
+      (function () { var s = document.querySelectorAll('.extras-section'); return s[s.length - 1] || null; }());
+    if (!anchor) return;
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'text-align:right;padding:12px 0 8px;';
     var pill = document.createElement('span');
     pill.id = 'tve-visited-pill';
-    pill.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:#b85c2a;border:1px solid #9a4318;color:#fff;border-radius:4px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;margin:8px 0 4px;';
+    pill.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:#b85c2a;border:1px solid #9a4318;color:#fff;border-radius:4px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;';
     pill.textContent = '✓ Visited';
     pill.title = 'Click to unmark as visited';
     pill.addEventListener('click', function () {
       localStorage.removeItem(key);
-      if (sep.parentNode) sep.parentNode.removeChild(sep);
-      if (pill.parentNode) pill.parentNode.removeChild(pill);
+      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
     });
-    overviewSec.appendChild(sep);
-    overviewSec.appendChild(pill);
+    wrap.appendChild(pill);
+    anchor.insertAdjacentElement('afterend', wrap);
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectVisitedPill);
