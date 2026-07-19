@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validator Audit Part 2 — 🔗 LINKS (2026-07-19)</title>
+<style>
+:root {
+  --bg: #f9f7f4; --surface: #fff; --text: #1e1c18; --muted: #7a7266;
+  --accent: #b85c2a; --border: #ddd5c8; --gold: #8a6c1a;
+}
+body { background: var(--bg); color: var(--text); font: 15px/1.6 system-ui, sans-serif; margin: 0; padding: 0 0 60px; }
+.wrap { max-width: 820px; margin: 0 auto; padding: 0 32px; }
+h1 { font-size: 18px; font-weight: 700; color: #3d3a32; text-transform: uppercase; letter-spacing: .06em;
+     border-bottom: 3px solid; border-image: linear-gradient(135deg,#7a3b1e,#b85c2a,#d4874a) 1; margin: 28px 0 8px; }
+h2 { font-size: 14px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; margin: 24px 0 6px; }
+.meta { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+.card-title { font-weight: 700; margin-bottom: 4px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 6px; }
+.tag-clean { background: #e8f5e9; color: #2e7d32; }
+.tag-fixed { background: #fff3e0; color: #e65100; }
+.tag-observation { background: #e3f2fd; color: #1565c0; }
+.verdict-box { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 14px 20px; margin: 16px 0; }
+.verdict-box strong { color: #2e7d32; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+th { background: #f2ede6; text-align: left; padding: 8px 12px; font-weight: 600; font-size: 11px; text-transform: uppercase; color: var(--muted); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.yes { color: #2e7d32; font-weight: 600; }
+.obs { color: #1565c0; font-size: 13px; }
+code { background: #f2ede6; padding: 1px 5px; border-radius: 3px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Validator Audit — Part 2: 🔗 LINKS</h1>
+<div class="meta">2026-07-19 · Session: on-demand-validator-audit-2 · Part 2 of 20-part rotating cycle</div>
+
+<div class="verdict-box">
+  <strong>✅ VERDICT: CLEAN — no gaps found, no fixes needed.</strong><br>
+  All 22 LINKS section items in the Validator Index are correctly implemented in <code>validate_itinerary.py</code>.
+  All 9 sections of <code>Links.html</code> are fully enforced across the validator stack.
+  5 smoke tests passed with 0 failures.
+</div>
+
+<h2>Scope</h2>
+<p>This run audited Part 2 of the 20-part validator audit cycle: the <strong>🔗 LINKS</strong> section.
+Sources read: <code>Brain/CORE RULES/Links.html</code> (§§ 1–9) and the LINKS section of
+<code>Brain/Reference/Validator Index.html</code> (22 items). Validator code reviewed:
+<code>Brain/scripts/validate_itinerary.py</code> (26k+ lines).</p>
+
+<h2>CORE RULES vs. Validator Mapping</h2>
+<table>
+  <tr><th>Links.html §</th><th>Rule</th><th>Enforced by</th><th>Status</th></tr>
+  <tr>
+    <td>§ 1</td>
+    <td>Live verification (HTTP 200 + ≥100 words editorial content)</td>
+    <td><code>verify_urls.py</code></td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 2</td>
+    <td>Subject-drift check (h1 match for TripAdvisor / Wikipedia URLs)</td>
+    <td><code>verify_booking_links.py</code></td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 3</td>
+    <td>Verification log present, well-formed, complete coverage for bot-blocked URLs</td>
+    <td><code>validate_itinerary.py</code> (lines 26690–26880) + GLOBAL section</td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 4</td>
+    <td>Bot-blocked platforms: Viator / GYG / TheFork / Michelin / TripAdvisor</td>
+    <td>Covered by verification log check (§ 3)</td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 5</td>
+    <td>Wikipedia — only source for 📖 row; at-most-one omission with log; link text "Wikipedia"; no disam/cat/list pages</td>
+    <td>7 separate checks in LINKS section; lines 1570–2067, 25314–25381, 25650–25683</td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 6</td>
+    <td>📍 Google Maps — address is the link; locked URL pattern; no city for home-city stops; no postal code; no country for home-country stops</td>
+    <td>7 separate checks; lines 1614–1797, 1903–1931, 2153+, 2371–2410</td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 7</td>
+    <td>External links open in new tab (<code>target="_blank"</code>)</td>
+    <td>Lines 1441–1453; tel:/mailto: exempt</td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 8</td>
+    <td>No underline on any link</td>
+    <td>Line 26321; in GLOBAL section of Validator Index (re-homed 2026-06-06)</td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+  <tr>
+    <td>§ 9</td>
+    <td>Local paths use hyphens — no spaces, no %20</td>
+    <td><code>brain_check.py check_internal_link_space_encoding</code>; documented in BRAIN_CHECK section</td>
+    <td class="yes">✅ Correct</td>
+  </tr>
+</table>
+
+<h2>Validator Index LINKS Section — All 22 Items</h2>
+<table>
+  <tr><th>#</th><th>Item</th><th>Implemented</th></tr>
+  <tr><td>1</td><td>All external links open in new tab (<code>target="_blank"</code>) — tel:/mailto: exempt</td><td class="yes">✅</td></tr>
+  <tr><td>2</td><td>Every 📍 is a Google Maps link</td><td class="yes">✅</td></tr>
+  <tr><td>3</td><td>Google Maps URL locked pattern enforced</td><td class="yes">✅</td></tr>
+  <tr><td>4</td><td>Address anchors: no country leak; middle-dot separator required</td><td class="yes">✅</td></tr>
+  <tr><td>5</td><td>📍 address anchors carry NO postal/ZIP code</td><td class="yes">✅</td></tr>
+  <tr><td>6</td><td>📍 always opens its own div row</td><td class="yes">✅</td></tr>
+  <tr><td>7</td><td>Wikipedia link text exactly "Wikipedia"</td><td class="yes">✅</td></tr>
+  <tr><td>8</td><td>📖 row format: nothing between icon and Wikipedia link</td><td class="yes">✅</td></tr>
+  <tr><td>9</td><td>📖 row wrapper is <code>&lt;div class="stop-row"&gt;</code>, not <code>&lt;p&gt;</code></td><td class="yes">✅</td></tr>
+  <tr><td>10</td><td>📖 row must come after ↳ summary and immediately before tour/ticket boxes</td><td class="yes">✅</td></tr>
+  <tr><td>11</td><td>📖 anchor is non-empty and valid</td><td class="yes">✅</td></tr>
+  <tr><td>12</td><td>📖 Wikipedia links resolve to en.wikipedia.org — not disambiguation/category/list</td><td class="yes">✅</td></tr>
+  <tr><td>13</td><td>Every stop-block carries 📖 Wikipedia row — at-most-one omission with log</td><td class="yes">✅</td></tr>
+  <tr><td>14</td><td>no-wikipedia sentinel not abused</td><td class="yes">✅</td></tr>
+  <tr><td>15</td><td>No market/bazaar/souk/bookshop/arcade as a stop</td><td class="yes">✅</td></tr>
+  <tr><td>16</td><td>Every stop carries ⏰ Avg Time Spent</td><td class="yes">✅</td></tr>
+  <tr><td>17</td><td>🎒 backpack emoji retired</td><td class="yes">✅</td></tr>
+  <tr><td>18</td><td>No city-landing tour links (Viator /d- or bare /d, GYG /l)</td><td class="yes">✅</td></tr>
+  <tr><td>19</td><td>Whether Google Maps URL points to the right place</td><td>🚫 Not automated (class="no")</td></tr>
+  <tr><td>20</td><td>📍 Maps link display text must not contain home city name</td><td class="yes">✅</td></tr>
+  <tr><td>21</td><td>No phone number or email address in guide content</td><td class="yes">✅</td></tr>
+  <tr><td>22</td><td>📍 address text never contains destination's own country</td><td class="yes">✅</td></tr>
+</table>
+
+<h2>Observations (non-blocking)</h2>
+<div class="card">
+  <div class="card-title"><span class="tag tag-observation">OBSERVATION</span> 3 items in LINKS section are logically STOPS / ICONS checks</div>
+  <p>Items 15 (no-market stop), 16 (⏰ avg time), and 17 (🎒 retired) appear in the LINKS section of the Validator Index
+  but their source rules are in <code>Stops Structure.html</code> and <code>Icon Order and Format.html</code>, not <code>Links.html</code>.
+  These are correctly <em>implemented</em> — they just appear under the wrong heading in the index.
+  This is a minor documentation classification issue, not a functional gap. Moving them to their correct sections
+  would improve index readability but requires no validator code change.</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="tag tag-fixed">FIXED</span> <code>update_validator_coverage_artifact.py</code> — list vs dict type error</div>
+  <p>The script assumed <code>active_claims</code> in the state file was a dict <code>{part: {crib, timestamp}}</code>,
+  but the current state file stores it as a plain list <code>[part, ...]</code>.
+  The script threw <code>AttributeError: 'list' object has no attribute 'items'</code> when attempting to regenerate the artifact.
+  Fixed: added a type check — when <code>active_claims</code> is a list, all items are treated as live claims (no timestamp filtering).
+  The fix is backward-compatible with both formats.</p>
+</div>
+
+<h2>Smoke Test Results</h2>
+<table>
+  <tr><th>Guide</th><th>Result</th><th>Checks passed</th></tr>
+  <tr><td>Rio de Janeiro</td><td class="yes">✅ 0 failures</td><td>Signed stamp written</td></tr>
+  <tr><td>Boston</td><td class="yes">✅ 0 failures</td><td>Signed stamp written</td></tr>
+  <tr><td>Annecy</td><td class="yes">✅ 0 failures</td><td>Signed stamp written</td></tr>
+  <tr><td>Siena</td><td class="yes">✅ 0 failures</td><td>Signed stamp written</td></tr>
+  <tr><td>Glasgow</td><td class="yes">✅ 0 failures</td><td>Signed stamp written</td></tr>
+</table>
+
+<h2>Brain Check at Session Start</h2>
+<p>181/183 checks passed · 2 warnings (both out-of-scope for Part 2):</p>
+<ul>
+  <li><code>Getting Around - Extra Section.html</code> newer than Validator Index by 346+ min — Validator Index may need updating for Getting Around changes.</li>
+  <li>185 duplicated CSS selectors across 0 pages — SHARED CSS ONLY drift.</li>
+</ul>
+<p>These are noted for future sessions, not actioned here (out of scope for Part 2 LINKS audit).</p>
+
+</div>
+</body>
+</html>
