@@ -631,33 +631,30 @@
       if (item.href.split('/').pop() === curr) a2.className = 'tb-active';
       hamMenu.appendChild(a2);
       firstItem = false;
+      /* ── Region section (added 2026-07-19, moved right under World Map
+         2026-07-20 — Dani: "the[y] should be together under the world map",
+         instead of buried at the very end of the main list next to Best Of.
+         Full region names now too ("South America" not "S. America") — full
+         width menu rows have plenty of room, no need to abbreviate. Works via
+         the hash router already built into World-Map.html
+         (World-Map.html#eu flies to Europe, etc.), which also fires on
+         in-page hash changes, not just initial load. ── */
+      if (/World-Map\.html$/.test(item.href)) {
+        var sepRg = document.createElement('div'); sepRg.className = 'tb-ham-sep'; hamMenu.appendChild(sepRg);
+        var hdrRg = document.createElement('div'); hdrRg.className = 'tb-ham-hdr'; hdrRg.textContent = 'Region'; hamMenu.appendChild(hdrRg);
+        var regionLinks = [
+          ['World', 'world'], ['Europe', 'eu'], ['North America', 'na'], ['Caribbean', 'cb'],
+          ['Asia', 'as'], ['Africa', 'af'], ['South America', 'sa'], ['Oceania', 'oc'],
+        ];
+        regionLinks.forEach(function (r) {
+          var a = document.createElement('a');
+          a.href = base + 'Trip-Essentials/Maps/World-Map.html#' + r[1];
+          a.textContent = r[0];
+          hamMenu.appendChild(a);
+        });
+      }
     }
   });
-  /* ── Region section (every page, added 2026-07-19) ──────────────────────
-     The on-page region-nav bottom bar on World-Map.html was removed on
-     mobile (too cluttered / had its own CSS specificity bug) and replaced
-     with this menu section. Originally gated to World-Map.html only, but
-     Dani wanted these reachable from ANY page's menu — not just after
-     already navigating to the map — so it's unconditional now, same as
-     Best Of / Also on this site. Works via the hash router already built
-     into World-Map.html (World-Map.html#eu flies to Europe, etc., and also
-     fires on in-page hash changes, not just initial load). Placed BEFORE
-     Best Of / Also on this site so those two stay last, per the locked
-     "hamburger menu must end with Best Of + Also on this site" rule. */
-  (function () {
-    var sepRg = document.createElement('div'); sepRg.className = 'tb-ham-sep'; hamMenu.appendChild(sepRg);
-    var hdrRg = document.createElement('div'); hdrRg.className = 'tb-ham-hdr'; hdrRg.textContent = 'Region'; hamMenu.appendChild(hdrRg);
-    var regionLinks = [
-      ['World', 'world'], ['Europe', 'eu'], ['N. America', 'na'], ['Caribbean', 'cb'],
-      ['Asia', 'as'], ['Africa', 'af'], ['S. America', 'sa'], ['Oceania', 'oc'],
-    ];
-    regionLinks.forEach(function (r) {
-      var a = document.createElement('a');
-      a.href = base + 'Trip-Essentials/Maps/World-Map.html#' + r[1];
-      a.textContent = r[0];
-      hamMenu.appendChild(a);
-    });
-  }());
 
   /* ── Best Of section ── */
   (function () {
