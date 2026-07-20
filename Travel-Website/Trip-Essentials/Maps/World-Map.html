@@ -113,7 +113,16 @@
   #left-panel::-webkit-scrollbar { display: none; }
   .panel-section-label { display: none; }
   #region-nav { flex-direction: row !important; gap: 6px; flex-shrink: 0; }
-  .rn { flex-shrink: 0; width: auto; padding: 7px 13px; font-size: 12px; white-space: nowrap; }
+  /* FIXED (2026-07-19): bare ".rn" here was losing to the desktop
+     "#left-panel .rn { width: 100% }" rule (line ~94) on EVERY mobile
+     screen, regardless of this media query — an ID+class selector always
+     beats a bare class selector, media query or not. That's why the World
+     button rendered ~713px wide (100% of an oversized flex-scroll
+     container) and pushed all 7 other region buttons off-screen — this
+     bug predates the 2026-07-19 map redesign, unrelated to it. Re-scoped
+     under #left-panel so specificity matches and source order (this rule
+     comes later in the file) decides it correctly. */
+  #left-panel .rn { flex-shrink: 0; width: auto; padding: 7px 13px; font-size: 12px; white-space: nowrap; }
   .rn::before { width: 8px; height: 8px; }
   .leaflet-control-zoom { margin-bottom: 70px !important; }
 }
@@ -122,7 +131,7 @@
 </head>
 <body class="map-page">
 <div id="toolbar-mount" data-depth="2" data-maxwidth="1400"></div>
-<script src="../../assets/toolbar.js?v=109"></script>
+<script src="../../assets/toolbar.js?v=110"></script>
 
 <div id="wrap">
   <div id="map"></div>
