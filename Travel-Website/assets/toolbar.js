@@ -386,11 +386,11 @@
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
-      '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;background:none;' +
+      '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;' +
         'border:none;-webkit-appearance:none;appearance:none;box-shadow:none;outline:none;' +
         '-webkit-tap-highlight-color:transparent;' +
         'padding:10px 14px 10px 8px;font-size:13px;color:#fff;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
-      '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{background:none !important;box-shadow:none !important;outline:none !important}' +
+      '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{box-shadow:none !important;outline:none !important}' +
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
          block-level box pushes the text off the bar's vertical center. */
@@ -590,7 +590,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#fff;border-radius:6px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:7px 12px;margin:0;min-height:auto;cursor:pointer;user-select:none;display:flex;align-items:center;gap:7px;color:#7a3b1e;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:#fff;border-radius:6px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:7px 12px;margin:0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:7px;color:#7a3b1e;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="#7a3b1e"/><rect y="5" width="11" height="2" rx="1" fill="#7a3b1e"/><rect y="10" width="16" height="2" rx="1" fill="#7a3b1e"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
   bar.appendChild(hamBtn);
 
