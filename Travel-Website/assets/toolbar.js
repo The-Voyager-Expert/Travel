@@ -395,18 +395,15 @@
          is an <a> linking to Guides-Index.html, and without the override the inflated
          block-level box pushes the text off the bar's vertical center. */
       '.tb-ham-label{display:block;min-height:0!important;font-size:15px;font-weight:700;color:#fff;padding-left:14px;letter-spacing:.06em;text-transform:uppercase}' +
-      '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
-        'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
-        'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:1001;padding:4px 0 8px;' +
-        /* FIXED (2026-07-20): -webkit-overflow-scrolling:touch on a tall
-           position:absolute menu is a known iOS Safari repaint bug — during
-           momentum/inertial scrolling WebKit can fail to recomposite the
-           element, letting the page underneath show through mid-scroll
-           (found live: "Stats Across Europe" menu open, page's own ranking
-           table bleeding through below the menu items). Forcing its own GPU
-           compositing layer is the standard fix for this exact class of bug.
-           Couldn't reproduce with a scripted scrollTop jump — this is a real
-           finger-swipe / momentum-scroll-only artifact. */
+      /* The menu is position:fixed so it stays fully on-screen as the user
+         scrolls — items never disappear off the top. The toolbar (.tb) is
+         NOT fixed (scrolls away as usual); only the open menu panel is fixed.
+         top:0 covers the full viewport; overflow-y:auto scrolls inside the
+         panel; body overflow:hidden (set by toggleHamMenu) locks page scroll
+         so only the menu scrolls while it is open. */
+      '.tb-ham-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;' +
+        'background:#ffffff;z-index:1001;padding:4px 0 8px;' +
+        'overflow-y:auto;-webkit-overflow-scrolling:touch;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
       '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:14px;color:#3d3a32!important;text-decoration:none;' +
@@ -764,6 +761,7 @@
     hamMenu.classList.remove('tb-ham-open');
     hamBtn.setAttribute('aria-expanded', 'false');
     hamBtn.innerHTML = hamMenuClosedHTML;
+    document.body.style.overflow = '';
   }
   function toggleHamMenu(e) {
     e.stopPropagation();
@@ -782,6 +780,7 @@
     }
     hamMenu.classList.toggle('tb-ham-open');
     var open = hamMenu.classList.contains('tb-ham-open');
+    document.body.style.overflow = open ? 'hidden' : '';
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamBtn.innerHTML = open
       ? '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><line x1="1" y1="1" x2="13" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">CLOSE</span>'
