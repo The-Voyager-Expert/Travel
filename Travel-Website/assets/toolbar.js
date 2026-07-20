@@ -91,7 +91,7 @@
     meta('apple-mobile-web-app-capable', 'yes');
     meta('mobile-web-app-capable', 'yes');
     meta('apple-mobile-web-app-status-bar-style', 'default');
-    meta('apple-mobile-web-app-title', 'Travel');
+    meta('apple-mobile-web-app-title', 'TheVoyagerExp');
     if ('serviceWorker' in navigator &&
         (location.protocol === 'https:' || location.hostname === 'localhost')) {
       window.addEventListener('load', function () {
