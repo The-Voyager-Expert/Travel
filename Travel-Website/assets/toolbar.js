@@ -293,6 +293,8 @@
     null,
     { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
     null,
+    { href: base + 'Trip-Essentials/Sunrise-Sunset.html',                      text: '🌅 Sunrise & Sunset' },
+    null,
     { group: '🌤️ Weather', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ Browse by Climate' },
         { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ Browse by City' },

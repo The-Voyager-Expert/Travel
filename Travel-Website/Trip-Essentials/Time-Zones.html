@@ -104,26 +104,7 @@ input.search:focus { border-color: #c8b99a; box-shadow: none; }
 @media (max-width: 359px) {
   .grid { grid-template-columns: 1fr; }
 }
-/* ── Sunrise & Sunset section ── */
-#sun-section { margin-top: 48px; padding-top: 36px; border-top: 2px solid var(--border); }
-#sun-section h2 { font-size: 17px; font-weight: 700; color: var(--text); margin: 0 0 18px; letter-spacing: .04em; }
-.sun-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-.sun-controls select { height: 40px; border: 1.5px solid var(--border); border-radius: 8px; padding: 0 14px; font-size: 14px; font-family: inherit; background: var(--surface); color: var(--text); cursor: pointer; }
-.sun-controls select:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
-.sun-card { background: var(--warm); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; max-width: 540px; }
-.sun-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border2); }
-.sun-row:last-child { border-bottom: none; padding-bottom: 0; }
-.sun-row-label { font-size: 13px; color: var(--muted); }
-.sun-row-value { font-size: 14px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
-.sun-golden .sun-row-label { color: #a06020; }
-.sun-golden .sun-row-value { color: #a06020; }
-.sun-special { font-size: 14px; color: var(--text); padding: 16px 18px; background: var(--warm); border: 1px solid var(--border); border-radius: 10px; max-width: 540px; }
-.sun-note { font-size: 11px; color: var(--muted); margin-top: 10px; }
-@media (max-width: 600px) {
-  .sun-controls { flex-direction: column; }
-  .sun-controls select { width: 100%; box-sizing: border-box; }
-  .sun-card { max-width: 100%; }
-}</style>
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -166,28 +147,6 @@ input.search:focus { border-color: #c8b99a; box-shadow: none; }
 
   <div class="grid" id="grid"></div>
 
-  <div id="sun-section">
-    <h2>🌅 Sunrise &amp; Sunset</h2>
-    <div class="sun-controls">
-      <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
-      <select id="sun-month" aria-label="Select month for sunrise and sunset times">
-        <option value="0">January</option>
-        <option value="1">February</option>
-        <option value="2">March</option>
-        <option value="3">April</option>
-        <option value="4">May</option>
-        <option value="5">June</option>
-        <option value="6">July</option>
-        <option value="7">August</option>
-        <option value="8">September</option>
-        <option value="9">October</option>
-        <option value="10">November</option>
-        <option value="11">December</option>
-      </select>
-    </div>
-    <div id="sun-result"></div>
-    <p class="sun-note">Times are approximate (±15–30 min) · Mid-month estimate · Computed from latitude</p>
-  </div>
 
 </div>
 
@@ -616,150 +575,6 @@ document.getElementById('grid').addEventListener('click', function(e) {
 render();
 setInterval(render, 60000);
 
-// ── Sunrise & Sunset Lookup ──────────────────────────────────────────
-var CITY_LAT = {
-  'Alaska':61,'Aracaju':-11,'Arenal':10,'Atlanta':34,'Austin':30,
-  'Bahamas':25,'Bend':44,'Big Island':20,'Boston':42,'Boulder':40,'Buenos Aires':-34,
-  'Cape Cod':42,'Carmel-by-the-Sea':36,'Charlotte':35,'Chicago':42,
-  'Coeur dAlene':48,'Columbia':34,'Cusco':-14,'Cancún':21,'Dallas':33,'Denver':40,
-  'Florida Keys':25,'Glacier National Park':49,'Hilton Head Island':32,
-  'João Pessoa':-7,'Kauai':22,'Key West':25,'La Jolla':33,'Lake Tahoe':39,
-  'Las Vegas':36,'Lima':-12,'Los Angeles':34,'Los Cabos':23,
-  'Machu Picchu':-13,'Malibu':34,'Manuel Antonio':9,'Marco Island':26,'Maui':21,
-  'Miami':26,'Montevideo':-35,'Montreal':46,'Napa':38,'Nashville':36,
-  'Natal':-5,'New Orleans':30,'New York':41,'Oahu':21,'Oaxaca':17,
-  'Olinda':-8,'Orcas Island':48,'Orlando':28,
-  'Palm Desert':34,'Palo Alto':37,'Pasadena':34,'Pensacola':30,
-  'Philadelphia':40,'Phoenix':33,'Portland':46,
-  'Puerto Rico':18,'Puerto Vallarta':21,'Quebec City':47,
-  'Curitiba':-25,'Florianópolis':-28,'Fortaleza':-4,
-  'Foz do Iguaçu':-25,'Maceió':-10,'Porto Alegre':-30,
-  'Recife':-8,'Salvador':-13,'São Luís':-2,'São Paulo':-24,
-  'Rio de Janeiro':-23,'San Diego':33,'San Francisco':38,'San Jose':37,
-  'San Jose Costa Rica':10,'San Juan Island':48,'Santa Barbara':34,
-  'Santa Cruz':37,'Santa Fe':36,'Santa Monica':34,'Santiago':-33,
-  'Sarasota':27,'Scottsdale':33,'Seattle':48,'Sedona':35,
-  'Toronto':44,'Vancouver':49,'Victoria':48,'Washington DC':39,
-  'Whistler':50,'Yellowstone':44,
-  'Aruba':12,'Barbados':13,'Cayman Islands':19,'Curacao':12,
-  'Sint Maarten':18,'Turks and Caicos':22,'Virgin Islands':18,
-  'Kraków':50,'Aix-en-Provence':44,'Alesund':62,'Amalfi':40,'Amsterdam':52,
-  'Annecy':46,'Athens':38,'Azores':38,'Barcelona':41,'Bilbao':43,'Bergen':60,
-  'Berlin':53,'Bologna':44,'Bordeaux':45,'Bruges':51,'Brussels':51,
-  'Budapest':47,'Cambridge':52,'Cannes':43,'Capri':40,'Cascais':39,
-  'Cinque Terre':44,'Colmar':48,'Copenhagen':56,'Corfu':40,'Dublin':53,
-  'Dubrovnik':43,'Edinburgh':56,'Florence':44,'Geneva':46,'Glasgow':56,
-  'Gothenburg':57,'Hamburg':54,'Helsinki':60,'Istanbul':41,'Kotor':42,
-  'Lake Como':46,'Lecce':40,'Lille':51,'Lisbon':39,'Ljubljana':46,
-  'London':51,'Lucerne':47,'Luxembourg':50,'Lyon':46,'Madeira':33,
-  'Madrid':40,'Malaga':37,'Marktoberdorf':48,'Marseille':43,'Milan':45,
-  'Monaco':44,'Munich':48,'Mykonos':37,'Nice':44,'Oslo':60,'Oxford':52,
-  'Paris':49,'Pisa':44,'Porto':41,'Prague':50,'Reykjavik':64,'Rome':42,
-  'Salzburg':47,'San Sebastian':43,'Sardinia':40,'Santorini':36,'Seville':37,
-  'Sicily':37,'Siena':43,'Sintra':39,'Sorrento':41,'Split':43,
-  'Stockholm':59,'Strasbourg':48,'Stuttgart':49,'Tallinn':59,'Tbilisi':42,
-  'Toledo':40,'Tromsø':70,'Turin':45,'Valletta':36,'Venice':45,
-  'Verona':45,'Vienna':48,'Zurich':47,
-  'Bali':-8,'Bangkok':14,'Beijing':40,'Bora Bora':-16,'Chiang Mai':19,
-  'Chongqing':30,'Colombo':7,'Hanoi':21,'Hoi An':16,'Hong Kong':22,
-  'Kyoto':35,'Luang Prabang':20,'Maldives':4,'Melbourne':-38,'Osaka':35,
-  'Palawan':10,'Phuket':8,'Queenstown':-45,'Seoul':37,'Shanghai':31,
-  'Singapore':1,'Sydney':-34,'Taipei':25,'Tokyo':36,'Wellington':-41,
-  'Zhangjiajie':29,
-  'Abu Dhabi':24,'Cairo':30,'Doha':25,'Dubai':25,
-  'Marrakech':32,'Muscat':24,'Paro':27,'Petra':30,'Pokhara':28,'Seychelles':-5
-};
-
-function getSunLat(c) {
-  if (c.name === 'Naples') return c.region === 'americas' ? 26 : 41;
-  if (c.name === 'Lagos')  return c.tz === 'Africa/Lagos' ? 6 : 37;
-  return CITY_LAT[c.name] !== undefined ? CITY_LAT[c.name] : null;
-}
-
-function calcSunTimes(lat, month) {
-  var doy = [15,46,74,105,135,166,196,227,258,288,319,349];
-  var N = doy[month];
-  var B = (360/365*(N-81)) * Math.PI/180;
-  var decl = 23.45 * Math.sin(B) * Math.PI/180;
-  var latR = lat * Math.PI/180;
-  var cosHA = -Math.tan(latR)*Math.tan(decl);
-  if (cosHA <= -1) return {type:'sun'};
-  if (cosHA >= 1)  return {type:'night'};
-  var HA = Math.acos(cosHA)*180/Math.PI;
-  var sr = 12 - HA/15, ss = 12 + HA/15;
-  return {type:'normal', sr:sr, ss:ss, len:ss-sr};
-}
-
-function sunFmtTime(h) {
-  var m = ((Math.round(h*60)%1440)+1440)%1440;
-  var hh = Math.floor(m/60), mm = m%60;
-  var ap = hh < 12 ? 'AM' : 'PM';
-  hh = hh%12||12;
-  return hh+':'+(mm<10?'0':'')+mm+' '+ap;
-}
-
-function sunFmtLen(h) {
-  var hh = Math.floor(h), mm = Math.round((h-hh)*60);
-  if (mm === 60) { hh++; mm = 0; }
-  return hh+'h '+(mm<10?'0':'')+mm+'m';
-}
-
-function renderSun() {
-  var sel = document.getElementById('sun-city');
-  var mon = document.getElementById('sun-month');
-  var res = document.getElementById('sun-result');
-  if (!sel || !mon || !res) return;
-  var idx = parseInt(sel.value, 10);
-  var month = parseInt(mon.value, 10);
-  if (isNaN(idx) || isNaN(month)) return;
-  var city = CITIES[idx];
-  if (!city) { res.innerHTML = ''; return; }
-  var lat = getSunLat(city);
-  if (lat === null) {
-    res.innerHTML = '<p class="sun-note">No data for ' + city.name + '.</p>';
-    return;
-  }
-  var r = calcSunTimes(lat, month);
-  if (r.type === 'sun') {
-    res.innerHTML = '<div class="sun-special">☀️ Midnight sun — the sun does not set in ' + city.name + ' during this month.</div>';
-    return;
-  }
-  if (r.type === 'night') {
-    res.innerHTML = '<div class="sun-special">🌑 Polar night — the sun does not rise in ' + city.name + ' during this month.</div>';
-    return;
-  }
-  var html = '<div class="sun-card">';
-  html += '<div class="sun-row"><span class="sun-row-label">Sunrise</span><span class="sun-row-value">'+sunFmtTime(r.sr)+'</span></div>';
-  html += '<div class="sun-row"><span class="sun-row-label">Sunset</span><span class="sun-row-value">'+sunFmtTime(r.ss)+'</span></div>';
-  html += '<div class="sun-row"><span class="sun-row-label">Day length</span><span class="sun-row-value">'+sunFmtLen(r.len)+'</span></div>';
-  html += '<div class="sun-row sun-golden"><span class="sun-row-label">Golden hour · morning</span><span class="sun-row-value">'+sunFmtTime(r.sr)+' – '+sunFmtTime(r.sr+0.5)+'</span></div>';
-  html += '<div class="sun-row sun-golden"><span class="sun-row-label">Golden hour · evening</span><span class="sun-row-value">'+sunFmtTime(r.ss-0.5)+' – '+sunFmtTime(r.ss)+'</span></div>';
-  html += '</div>';
-  res.innerHTML = html;
-}
-
-(function () {
-  var sel = document.getElementById('sun-city');
-  var mon = document.getElementById('sun-month');
-  if (!sel || !mon) return;
-  var sorted = [];
-  for (var i = 0; i < CITIES.length; i++) { sorted.push({c:CITIES[i], i:i}); }
-  sorted.sort(function(a,b){ return a.c.name < b.c.name ? -1 : a.c.name > b.c.name ? 1 : 0; });
-  for (var j = 0; j < sorted.length; j++) {
-    var x = sorted[j];
-    var o = document.createElement('option');
-    o.value = x.i;
-    o.textContent = x.c.name + ' · ' + x.c.country;
-    sel.appendChild(o);
-  }
-  var seaIdx = 0;
-  for (var k = 0; k < CITIES.length; k++) { if (CITIES[k].name === 'Seattle') { seaIdx = k; break; } }
-  sel.value = seaIdx;
-  mon.value = new Date().getMonth();
-  sel.addEventListener('change', renderSun);
-  mon.addEventListener('change', renderSun);
-  renderSun();
-}());
 </script>
 
 <script src="../assets/toolbar.js?v=116"></script>
