@@ -51,6 +51,18 @@
   } catch (e) {}
 })();
 
+/* ── CSS version guard — if guide-style.css is cached at v < CURRENT, swap the
+   link href so the browser re-fetches the latest styles. Transparent to HTML
+   (no guide re-stamp needed); runs before any other toolbar logic. */
+(function () {
+  var CURRENT = 30;
+  var link = document.querySelector('link[href*="guide-style.css"]');
+  if (!link) return;
+  var m = link.href.match(/[?&]v=(\d+)/);
+  if (m && parseInt(m[1], 10) >= CURRENT) return;
+  link.href = link.href.replace(/[?&]v=\d+/, '') + '?v=' + CURRENT;
+})();
+
 /* ── PWA wiring — inject the web-app manifest + Apple home-screen tags and
    register the offline service worker. One edit wires the whole site; paths use
    the page's data-depth (same base the nav uses). No-ops on file:// and never
