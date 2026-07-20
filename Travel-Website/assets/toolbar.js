@@ -590,8 +590,8 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#b85c2a;border-radius:6px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:7px 12px;margin:0;min-height:auto;cursor:pointer;user-select:none;display:flex;align-items:center;gap:7px;color:#fff;flex-shrink:0;';
-  hamBtn.innerHTML = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="white"/><rect y="5" width="11" height="2" rx="1" fill="white"/><rect y="10" width="16" height="2" rx="1" fill="white"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
+  hamBtn.style.cssText = 'background:#fff;border-radius:6px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:7px 12px;margin:0;min-height:auto;cursor:pointer;user-select:none;display:flex;align-items:center;gap:7px;color:#7a3b1e;flex-shrink:0;';
+  hamBtn.innerHTML = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="#7a3b1e"/><rect y="5" width="11" height="2" rx="1" fill="#7a3b1e"/><rect y="10" width="16" height="2" rx="1" fill="#7a3b1e"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
   bar.appendChild(hamBtn);
 
   var hamMenu = document.createElement('div');
@@ -638,8 +638,8 @@
     var open = hamMenu.classList.contains('tb-ham-open');
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamBtn.innerHTML = open
-      ? '<span style="font-size:16px;line-height:1;font-weight:400">✕</span><span style="font-size:12px;letter-spacing:.06em;font-weight:700">CLOSE</span>'
-      : '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="white"/><rect y="5" width="11" height="2" rx="1" fill="white"/><rect y="10" width="16" height="2" rx="1" fill="white"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
+      ? '<span style="font-size:16px;line-height:1;font-weight:400;color:#7a3b1e">✕</span><span style="font-size:12px;letter-spacing:.06em;font-weight:700">CLOSE</span>'
+      : '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="#7a3b1e"/><rect y="5" width="11" height="2" rx="1" fill="#7a3b1e"/><rect y="10" width="16" height="2" rx="1" fill="#7a3b1e"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
   }
   hamBtn.addEventListener('click', toggleHamMenu);
   hamBtn.addEventListener('keydown', function (e) {
@@ -647,7 +647,7 @@
   });
   document.addEventListener('click', function () {
     hamMenu.classList.remove('tb-ham-open');
-    hamBtn.innerHTML = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="white"/><rect y="5" width="11" height="2" rx="1" fill="white"/><rect y="10" width="16" height="2" rx="1" fill="white"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
+    hamBtn.innerHTML = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="#7a3b1e"/><rect y="5" width="11" height="2" rx="1" fill="#7a3b1e"/><rect y="10" width="16" height="2" rx="1" fill="#7a3b1e"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
   });
   hamMenu.addEventListener('click', function (e) { e.stopPropagation(); });
 
