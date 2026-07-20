@@ -1106,12 +1106,23 @@
       });
       out.push('END:VCALENDAR');
 
-      var blob = new Blob([out.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-      var url = URL.createObjectURL(blob);
+      var icsContent = out.join('\r\n');
+      var filename = city.toLowerCase().replace(/\s+/g, '-') + '-trip.ics';
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       var a = document.createElement('a');
-      a.href = url; a.download = city.toLowerCase().replace(/\s+/g, '-') + '-trip.ics';
+      if (isIOS) {
+        /* iOS ignores the download attribute on blob links and shows a share
+           sheet instead. A data: URI with MIME type text/calendar causes iOS
+           Safari to route it directly to Calendar's "Add to Calendar" prompt. */
+        a.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+      } else {
+        var blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        a.href = url; a.download = filename;
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      }
       document.body.appendChild(a); a.click();
-      setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
+      setTimeout(function () { if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
       _closeICS();
     });
 
