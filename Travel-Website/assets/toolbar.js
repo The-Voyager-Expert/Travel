@@ -590,7 +590,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#fff;border-radius:6px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:7px 12px;margin:0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:7px;color:#7a3b1e;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:#fff;border-radius:6px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:7px 12px;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:7px;color:#7a3b1e;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true"><rect width="16" height="2" rx="1" fill="#7a3b1e"/><rect y="5" width="11" height="2" rx="1" fill="#7a3b1e"/><rect y="10" width="16" height="2" rx="1" fill="#7a3b1e"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
   bar.appendChild(hamBtn);
 
