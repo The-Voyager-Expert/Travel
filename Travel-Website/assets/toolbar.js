@@ -1261,14 +1261,16 @@
       var icsContent = out.join('\r\n');
       var filename = city.toLowerCase().replace(/\s+/g, '-') + '-trip.ics';
       var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
       _closeICS();
       if (isIOS) {
-        /* iOS: navigate directly — stays in user-gesture context, Safari routes
-           text/calendar data URIs straight to the Calendar "Add to Calendar" prompt. */
-        window.location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+        /* iOS: navigate to blob URL without download attribute — Safari detects
+           text/calendar MIME and routes to Calendar "Add to Calendar" prompt.
+           The download attribute caused a share sheet instead; data: URIs are
+           blocked by WebKit navigation policy. */
+        window.location.href = url;
       } else {
-        var blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-        var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url; a.download = filename;
         document.body.appendChild(a); a.click();
