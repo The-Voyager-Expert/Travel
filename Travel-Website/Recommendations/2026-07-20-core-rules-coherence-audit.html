@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Rules Coherence Audit — 2026-07-20</title>
+<style>
+:root {
+  --bg:       #fdf8f0;
+  --surface:  #ffffff;
+  --warm:     #fdf3e0;
+  --text:     #3d3a32;
+  --muted:    #7a7468;
+  --border:   #e2d9c8;
+  --accent:   #b85c2a;
+  --gold:     #c8a44a;
+  --green:    #2e7d32;
+  --fs-title: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:      #1a1a1a;
+    --surface: #242420;
+    --warm:    #1e1c18;
+    --text:    #e8e0d0;
+    --muted:   #9a9080;
+    --border:  #3a3630;
+    --accent:  #d0723a;
+    --gold:    #d4a84e;
+    --green:   #4caf50;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:      #1a1a1a;
+  --surface: #242420;
+  --warm:    #1e1c18;
+  --text:    #e8e0d0;
+  --muted:   #9a9080;
+  --border:  #3a3630;
+  --accent:  #d0723a;
+  --gold:    #d4a84e;
+  --green:   #4caf50;
+}
+:root[data-theme="light"] {
+  --bg:       #fdf8f0;
+  --surface:  #ffffff;
+  --warm:     #fdf3e0;
+  --text:     #3d3a32;
+  --muted:    #7a7468;
+  --border:   #e2d9c8;
+  --accent:   #b85c2a;
+  --gold:     #c8a44a;
+  --green:    #2e7d32;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 0 32px 60px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+h1 {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  padding: 28px 0 12px;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(90deg, #7a3b1e, #b85c2a, #d4874a) 1;
+  margin-bottom: 24px;
+}
+.meta { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+.meta strong { color: var(--text); }
+h2 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin: 32px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+h3 { font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 8px; }
+p { margin-bottom: 10px; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.stat-tile .num {
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 2px;
+}
+.stat-tile .num.green { color: var(--green); }
+.stat-tile .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table th {
+  background: var(--warm);
+  text-align: left;
+  padding: 8px 10px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border-bottom: 2px solid var(--border);
+}
+table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+table tr:hover td { background: var(--warm); }
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 16px; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.badge-pass  { background: #e8f5e9; color: #1b5e20; }
+.badge-warn  { background: #fff8e1; color: #e65100; }
+.badge-fail  { background: #ffebee; color: #b71c1c; }
+.badge-none  { background: var(--warm); color: var(--muted); }
+@media (prefers-color-scheme: dark) {
+  .badge-pass { background: #1b3a1e; color: #81c784; }
+  .badge-warn { background: #2d2008; color: #ffcc02; }
+  .badge-fail { background: #2d0a0a; color: #ef9a9a; }
+}
+:root[data-theme="dark"] .badge-pass { background: #1b3a1e; color: #81c784; }
+:root[data-theme="dark"] .badge-warn { background: #2d2008; color: #ffcc02; }
+:root[data-theme="dark"] .badge-fail { background: #2d0a0a; color: #ef9a9a; }
+:root[data-theme="dark"] .badge-none { background: var(--warm); color: var(--muted); }
+.check-grid { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 13px;
+}
+.check-id { font-size: 11px; font-weight: 700; color: var(--muted); min-width: 40px; }
+.check-desc { flex: 1; color: var(--text); }
+.note-box {
+  background: var(--warm);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 5px 5px 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.owner-item {
+  background: var(--warm);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 5px 5px 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.owner-item strong { color: var(--accent); }
+.files-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.file-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-family: "SF Mono", "Fira Code", monospace;
+  color: var(--muted);
+}
+code {
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+ul { padding-left: 18px; margin-bottom: 10px; }
+li { margin-bottom: 4px; font-size: 13px; }
+.section-ok {
+  padding: 12px 14px;
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #1b5e20;
+  margin-bottom: 12px;
+}
+@media (prefers-color-scheme: dark) { .section-ok { background: #1b3a1e; border-color: #2e5d30; color: #81c784; } }
+:root[data-theme="dark"] .section-ok { background: #1b3a1e; border-color: #2e5d30; color: #81c784; }
+@media (max-width: 600px) {
+  body { padding: 0 14px 48px; }
+  h1 { font-size: 14px; }
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<h1>Core Rules Coherence Audit</h1>
+<div class="meta">
+  <strong>Run date:</strong> 2026-07-20 &nbsp;·&nbsp;
+  <strong>CORE RULES files read:</strong> 27 &nbsp;·&nbsp;
+  <strong>Reference docs cross-checked:</strong> 32 &nbsp;·&nbsp;
+  <strong>Validator checks:</strong> C-01 through C-23 &nbsp;·&nbsp;
+  <strong>Cascade:</strong> skipped (no file changes)
+</div>
+
+<div class="summary-grid">
+  <div class="stat-tile"><span class="num green">23</span><span class="label">Checks passing</span></div>
+  <div class="stat-tile"><span class="num" style="color:var(--muted)">0</span><span class="label">Contradictions (FAIL)</span></div>
+  <div class="stat-tile"><span class="num" style="color:var(--muted)">0</span><span class="label">Owner Items (WARN)</span></div>
+  <div class="stat-tile"><span class="num" style="color:var(--muted)">0</span><span class="label">CORE RULES changed</span></div>
+</div>
+
+
+<h2>Section 1 — CORE RULES Changes Detected</h2>
+<div class="section-ok">✅ No changes detected. <code>core_rules_checksums.json</code> was not committed since 2026-07-19 (run 7). All 27 checksums on disk match the registered set. CASCADE skipped.</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Status</th><th>Details</th></tr>
+<tr><td><span class="badge badge-pass">NONE</span></td><td>No Changed, New, or Removed CORE RULES files since last run (2026-07-19).</td></tr>
+</table>
+</div>
+
+
+<h2>Section 2 — Cross-Reference Health</h2>
+<div class="note-box">27 CORE RULES files scanned for cross-references (patterns: <code>Full rule:</code>, <code>See &lt;file&gt;</code>, <code>Read &lt;file&gt;</code>, <code>Brain/CORE RULES/</code>). All targets verified against disk.</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Source File</th><th>Reference</th><th>Target on Disk?</th><th>Status</th></tr>
+<tr><td>Guide Structure.html</td><td>All 26 sibling files via <code>&lt;code&gt;</code> tags</td><td>✓</td><td><span class="badge badge-pass">OK</span></td></tr>
+<tr><td>Rules for Claude.html</td><td><code>footnote.js</code> mention</td><td>N/A</td><td><span class="badge badge-pass">OK — explicit retirement notice</span></td></tr>
+<tr><td>Rules for Claude.html</td><td><code>Brain/Reference/Guide Style.css</code> mention</td><td>N/A</td><td><span class="badge badge-pass">OK — explicit retirement notice</span></td></tr>
+<tr><td>All extra section files</td><td>Cross-references to Rule authorities / CORE RULES siblings</td><td>✓</td><td><span class="badge badge-pass">OK</span></td></tr>
+</table>
+</div>
+
+<p style="font-size:13px;color:var(--muted)">Note: <code>Rules for Claude.html</code> mentions <code>footnote.js</code> and <code>Brain/Reference/Guide Style.css</code> but only to document their retirement — the surrounding text explicitly states each is archived and no longer used. These are not stale references; they are intentional retirement notices.</p>
+
+
+<h2>Section 3 — Stale Class &amp; Script References</h2>
+<div class="section-ok">✅ No stale class or script references detected.</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Check</th><th>Result</th></tr>
+<tr><td>Retired class <code>.trip-resource-pill</code> in any CORE RULES file</td><td><span class="badge badge-pass">NOT FOUND</span></td></tr>
+<tr><td>Retired class <code>.guide-link</code> in any CORE RULES file</td><td><span class="badge badge-pass">NOT FOUND</span></td></tr>
+<tr><td>Retired script <code>footnote.js</code> as an active rule</td><td><span class="badge badge-pass">NOT FOUND (only in retirement notice)</span></td></tr>
+<tr><td>Retired path <code>Brain/Reference/Guide Style.css</code> as an active rule</td><td><span class="badge badge-pass">NOT FOUND (only in retirement notice)</span></td></tr>
+<tr><td>Retired <code>build_home_stats.py</code> reference</td><td><span class="badge badge-pass">NOT FOUND</span></td></tr>
+<tr><td>Retired <code>Brain/blacklists/</code> path</td><td><span class="badge badge-pass">NOT FOUND</span></td></tr>
+<tr><td>Custom CSS classes cited in CORE RULES vs actual guide-style.css</td><td><span class="badge badge-pass">ALL PRESENT</span></td></tr>
+<tr><td>Script references in CORE RULES vs Brain/scripts/ on disk</td><td><span class="badge badge-pass">ALL EXIST</span></td></tr>
+</table>
+</div>
+
+
+<h2>Section 4 — Contradictions</h2>
+<div class="section-ok">✅ No contradictions detected. All checked pairs are internally consistent.</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Pair</th><th>Check</th><th>Verdict</th></tr>
+<tr><td>Guide Structure § 2 CI item vs Claude Inspiration § 2</td><td>C-08: Does Guide Structure say "color theme"?</td><td><span class="badge badge-pass">PASS — no conflict (fixed 2026-07-18)</span></td></tr>
+<tr><td>Trip Overview § 3 vs <code>_OVERVIEW_PILL_CANONICAL_LABELS</code></td><td>C-03 / C-04: label text + order match</td><td><span class="badge badge-pass">PASS — 15 labels match</span></td></tr>
+<tr><td>Guide Structure § 2 vs <code>eoi_canonical_order</code></td><td>C-02: 14-section sequence</td><td><span class="badge badge-pass">PASS — exact match</span></td></tr>
+<tr><td>BUILD_STATE_PHASE_5_MAP values vs disk</td><td>C-16: all 16 referenced files exist</td><td><span class="badge badge-pass">PASS</span></td></tr>
+<tr><td>Tours CORE RULES 4.5★/≥6 vs validator</td><td>C-12: rating/review floor</td><td><span class="badge badge-pass">PASS</span></td></tr>
+<tr><td>Phase read lists (CLAUDE.md vs Guide Structure)</td><td>Phase 0–5 file sets match</td><td><span class="badge badge-pass">PASS — exact match</span></td></tr>
+<tr><td>Tilde rule: Icon Order vs validator GLOBAL TILDE BAN</td><td>C-11: ⏰ carve-out only</td><td><span class="badge badge-pass">PASS</span></td></tr>
+<tr><td>Claude Inspiration mandatory: § 1 + CLAUDE.md DriftyCat</td><td>C-05: "Required" present</td><td><span class="badge badge-pass">PASS</span></td></tr>
+<tr><td>Also-on-site pill canonical set: brain_check vs Rules for Claude</td><td>C-13: 7 base pills + stats variants</td><td><span class="badge badge-pass">PASS — 13 canonical pairs consistent</span></td></tr>
+<tr><td>Trip Overview § 3 Heads Up pill emoji (❗️ VS16)</td><td>C-22: variation selector check</td><td><span class="badge badge-pass">PASS</span></td></tr>
+<tr><td>Icon Order Workaround row vs Heads Up file + validator</td><td>C-23: Workaround row ban</td><td><span class="badge badge-pass">PASS</span></td></tr>
+<tr><td>Rules for Claude.html delete/archive vs CLAUDE.md</td><td>C-18: two-track policy consistent</td><td><span class="badge badge-pass">PASS — Rules for Claude updated 2026-07-12</span></td></tr>
+<tr><td>nearby-guides in validator vs Guide Structure § 2</td><td>C-19: undocumented section</td><td><span class="badge badge-pass">PASS — no new gap</span></td></tr>
+</table>
+</div>
+
+<h3>Standing Known Owner Item (pre-existing, in To Do List)</h3>
+<div class="owner-item">
+  <strong>Tours CORE RULES § 2 vs validator — culinary/gastro/tasting ban</strong><br>
+  <code>validate_itinerary.py</code> lines 13032–13037 ban <em>culinary tours, tasting tours, gastro tours</em> (added 2026-05-24, owner-approved). These tour types do not appear in the written § 2 exclusion list in <code>Tours - Extra Section.html</code>. The enforcement is correct; the written text is lagging.<br>
+  <strong>Fix path:</strong> Owner must approve adding these three to Tours CORE RULES § 2 exclusion list. Already parked in To Do List § 🔧 Rules for Update.
+</div>
+
+
+<h2>Section 5 — Ambiguity Flags</h2>
+<div class="section-ok">✅ No actionable ambiguities detected. The 9 instances found are all contextually appropriate.</div>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>File</th><th>Phrase</th><th>Context &amp; verdict</th></tr>
+<tr><td>Downtown Restaurants</td><td>"Usually has a named identity"</td><td>Descriptive prose about downtown areas — not a rule clause. ✅ OK</td></tr>
+<tr><td>Photos Rules</td><td>"often", "usually" (2 instances)</td><td>Advisory guidance on photo selection ("Commons usually has stronger candidates"). ✅ OK</td></tr>
+<tr><td>Rules for Claude</td><td>"typically", "usually" (4 instances)</td><td>These appear in the BANNED HEDGING PHRASES list — they are quoted examples of disallowed expressions, not ambiguous rules. ✅ OK</td></tr>
+<tr><td>Train Stations Near Hotel</td><td>"usually different stations in Europe"</td><td>Factual observation about European rail infrastructure — descriptive, not prescriptive. ✅ OK</td></tr>
+</table>
+</div>
+
+
+<h2>Section 6 — Redundancy Flags</h2>
+<p style="font-size:13px">11 duplicate sentence groups detected across CORE RULES files. All are intentional.</p>
+
+<div class="tbl-wrap">
+<table>
+<tr><th>Files sharing text</th><th>Content</th><th>Verdict</th></tr>
+<tr><td>All 27 files</td><td>"ATTENTION: THIS DOCUMENT IS READ-ONLY…" banner</td><td>Intentional boilerplate — identical header on every file ✅</td></tr>
+<tr><td>All 27 files</td><td>"Rules are written like a legal document…" formatting preamble</td><td>Intentional boilerplate ✅</td></tr>
+<tr><td>Michelin, Downtown Restaurants, Restaurants Near Hotel (3)</td><td>Seafood exclusion rule (2 sentences)</td><td>Intentional shared rule — same seafood exclusion applies in all three restaurant contexts ✅</td></tr>
+<tr><td>Links + 8 extra section files (9)</td><td>Address format: city included only when different from guide city</td><td>Intentional shared format rule ✅</td></tr>
+<tr><td>Michelin + Restaurants Near Hotel (2)</td><td>"When the restaurant is in the [Hotel Building]…" format variant</td><td>Intentional shared format ✅</td></tr>
+<tr><td>Michelin, Downtown Restaurants, Restaurants Near Hotel (3)</td><td>Rating format: "N⭐ · NNN+ reviews ←…"</td><td>Intentional shared format ✅</td></tr>
+<tr><td>Stops Structure + Day Structure (2)</td><td>Train station motion row format</td><td>Intentional cross-reference — both files describe train day patterns ✅</td></tr>
+<tr><td>Icon Order + Tours (2)</td><td>Tour entry format row</td><td>Intentional — Icon Order canonicalizes the format that Tours defines ✅</td></tr>
+</table>
+</div>
+
+
+<h2>Section 7 — Cascade Summary</h2>
+<div class="section-ok">✅ No cascade required. No CORE RULES files changed since 2026-07-19 (run 7). All cross-referencing docs are already in sync from prior cascade runs.</div>
+
+
+<h2>Section 8 — Validator Status</h2>
+<p style="font-size:13px">Script: <code>Brain/scripts/validate_core_rules_coherence.py</code> — unchanged this run (last updated 2026-07-19 run 5).</p>
+
+<div class="check-grid">
+  <div class="check-row"><span class="check-id">C-01</span><span class="check-desc">All 27 CORE RULES files exist on disk</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-02</span><span class="check-desc">eoi_canonical_order matches Guide Structure § 2 section order (14 sections)</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-03</span><span class="check-desc">_OVERVIEW_PILL_CANONICAL_LABELS matches Trip Overview § 3 table (emoji-normalized)</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-04</span><span class="check-desc">_OVERVIEW_PILL_CANONICAL_ORDER matches Trip Overview § 3 row order</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-05</span><span class="check-desc">Claude Inspiration § 1 declares the section Required (not Optional)</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-06</span><span class="check-desc">Claude Inspiration § 2 prohibits theme-{color} class (white background)</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-07</span><span class="check-desc">Validator has a check enforcing no theme-{color} on claude-inspiration div</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-08</span><span class="check-desc">Guide Structure § 2 CI item vs Claude Inspiration § 2 (intra-CORE-RULES contradiction)</span><span class="badge badge-pass">PASS — fixed 2026-07-18</span></div>
+  <div class="check-row"><span class="check-id">C-09</span><span class="check-desc">Photos Rules states guide-level cap of ≤1 empty photo stop</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-10</span><span class="check-desc">Validator enforces guide-level photo cap (hard-fail at ≥2 'No pictures found.' stops)</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-11</span><span class="check-desc">Tilde carve-out: Icon Order states ⏰-only; validator has GLOBAL TILDE BAN</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-12</span><span class="check-desc">Tours rating floor: CORE RULES says 4.5+★ / ≥6 reviews; validator enforces both</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-13</span><span class="check-desc">Also-on-site 7 required base pills present in CORE RULES and validator TR-6</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-14</span><span class="check-desc">5 canonical negative-finding strings present in both CORE RULES and validator</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-15</span><span class="check-desc">Pickleball negative-finding says '25 min drive' (not 'walk') in CORE RULES and validator</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-16</span><span class="check-desc">BUILD_STATE_PHASE_5_MAP: all 16 referenced CORE RULES files exist on disk</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-17</span><span class="check-desc">Hotlink ban: Photos Rules mentions ban + validator hard-fails upload.wikimedia.org</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-18</span><span class="check-desc">Rules for Claude.html delete/archive vs CLAUDE.md two-track policy</span><span class="badge badge-pass">PASS — Rules for Claude updated 2026-07-12</span></div>
+  <div class="check-row"><span class="check-id">C-19</span><span class="check-desc">nearby-guides in eoi_canonical_order vs Guide Structure § 2 documentation</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-20</span><span class="check-desc">All CORE RULES filenames referenced in Guide Structure § 2 exist on disk</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-21</span><span class="check-desc">Claude Inspiration § 2 — no stale 'color theme' claim; 'No theme-{color} class' present</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-22</span><span class="check-desc">Trip Overview § 3 Heads Up pill has ❗️ (VS16 variation selector)</span><span class="badge badge-pass">PASS</span></div>
+  <div class="check-row"><span class="check-id">C-23</span><span class="check-desc">Icon Order and Format Workaround row vs Heads Up file (cross-file contradiction)</span><span class="badge badge-pass">PASS</span></div>
+</div>
+
+<p style="font-size:13px;color:var(--muted)">Result: <strong style="color:var(--green)">23 PASS · 0 WARN · 0 FAIL</strong></p>
+
+
+<h2>Section 9 — Owner Items</h2>
+<div class="owner-item">
+  <strong>1 standing Owner Item (pre-existing, parked since run 7 — 2026-07-19)</strong><br><br>
+  <strong>Tours - Extra Section.html § 2 — add culinary / tasting / gastro tours to exclusion list</strong><br>
+  The validator bans these tour types at <code>validate_itinerary.py</code> lines 13032–13037 (added 2026-05-24, owner-approved). The written § 2 text does not list them, creating a documentation gap. The enforcement is correct. Fix: add <em>culinary tours · tasting tours · gastro tours</em> to the § 2 exclusion bullet list. Requires per-session owner approval before CORE RULES edit.
+</div>
+
+
+<h2>Section 10 — Files Read &amp; Checked</h2>
+
+<h3>CORE RULES files (all 27)</h3>
+<div class="files-grid">
+  <span class="file-chip">Rules for Claude.html</span>
+  <span class="file-chip">Guide Structure.html</span>
+  <span class="file-chip">Day Structure.html</span>
+  <span class="file-chip">Hotel Banner.html</span>
+  <span class="file-chip">Stops Structure.html</span>
+  <span class="file-chip">Motion Rule.html</span>
+  <span class="file-chip">Tickets.html</span>
+  <span class="file-chip">Photos Rules.html</span>
+  <span class="file-chip">Links.html</span>
+  <span class="file-chip">Icon Order and Format.html</span>
+  <span class="file-chip">Trip Overview.html</span>
+  <span class="file-chip">Skip List - Extra Section.html</span>
+  <span class="file-chip">Tours - Extra Section.html</span>
+  <span class="file-chip">Getting Around - Extra Section.html</span>
+  <span class="file-chip">Weekly Closures - Extra Section.html</span>
+  <span class="file-chip">Local Tastes - Extra Section.html</span>
+  <span class="file-chip">Food Delivery - Extra Section.html</span>
+  <span class="file-chip">Michelin Restaurants - Extra Section.html</span>
+  <span class="file-chip">Restaurants Near Hotel - Extra Section.html</span>
+  <span class="file-chip">Cappuccino - Extra Section.html</span>
+  <span class="file-chip">Day Trips by Train - Extra Section.html</span>
+  <span class="file-chip">Shows, Performances &amp; Concerts - Extra Section.html</span>
+  <span class="file-chip">Train Stations Near Hotel - Extra Section.html</span>
+  <span class="file-chip">Pickleball - Extra Section.html</span>
+  <span class="file-chip">Downtown Restaurants - Extra Section.html</span>
+  <span class="file-chip">Heads Up - Extra Section.html</span>
+  <span class="file-chip">Claude Inspiration - Extra Section.html</span>
+</div>
+
+<h3>Reference &amp; validator files cross-checked</h3>
+<div class="files-grid">
+  <span class="file-chip">validate_itinerary.py</span>
+  <span class="file-chip">brain_check.py</span>
+  <span class="file-chip">validate_core_rules_coherence.py</span>
+  <span class="file-chip">core_rules_checksums.json</span>
+  <span class="file-chip">CLAUDE.md</span>
+  <span class="file-chip">audit_log.md</span>
+  <span class="file-chip">Brain.md (Part 1)</span>
+  <span class="file-chip">Change Cascade.html</span>
+  <span class="file-chip">Separation Map.md</span>
+  <span class="file-chip">Cleanliness Checks.md</span>
+  <span class="file-chip">Validator Index.html</span>
+  <span class="file-chip">Pill-Standard.md</span>
+  <span class="file-chip">Colors and Font Size.html</span>
+  <span class="file-chip">Toolbar.html</span>
+  <span class="file-chip">Navigation.html</span>
+  <span class="file-chip">Ship Checklist.html</span>
+  <span class="file-chip">Read-About-Pages.html</span>
+  <span class="file-chip">guide-style.css</span>
+  <span class="file-chip">web-travel-style.css</span>
+  <span class="file-chip">mobile.css</span>
+</div>
+
+</body>
+</html>
