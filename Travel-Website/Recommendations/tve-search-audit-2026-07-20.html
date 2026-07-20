@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TVESearch Weekly Audit — 2026-07-20</title>
+<style>
+  :root {
+    --bg: #fdf8f0; --surface: #fff; --text: #2a2520; --muted: #7a7060;
+    --border: #e6e2da; --warm: #fdf3e3;
+    --terracotta: #b85c2a; --gold: #c8a44a;
+    --green: #2a6a2a; --green-bg: #eaf4ea; --green-border: #b2d6b2;
+    --red: #c0392b; --red-bg: #fdecea; --red-border: #f0baba;
+    --amber: #7a5e0a; --amber-bg: #fffbe8; --amber-border: #e2c96b;
+    --blue: #1a4a7a; --blue-bg: #e8f0fb; --blue-border: #b2c8e8;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1a16; --surface: #2a2420; --text: #e8e0d4; --muted: #9a8a78;
+      --border: #3a3428; --warm: #2e2820;
+      --terracotta: #d4874a; --gold: #e0b860;
+      --green: #4a9a4a; --green-bg: #1a2e1a; --green-border: #2a5a2a;
+      --red: #e05050; --red-bg: #2e1a1a; --red-border: #5a2a2a;
+      --amber: #c8a84a; --amber-bg: #2e2810; --amber-border: #5a4a10;
+      --blue: #6a9ad0; --blue-bg: #1a2030; --blue-border: #2a4060;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #fdf8f0; --surface: #fff; --text: #2a2520; --muted: #7a7060;
+    --border: #e6e2da; --warm: #fdf3e3;
+    --terracotta: #b85c2a; --gold: #c8a44a;
+    --green: #2a6a2a; --green-bg: #eaf4ea; --green-border: #b2d6b2;
+    --red: #c0392b; --red-bg: #fdecea; --red-border: #f0baba;
+    --amber: #7a5e0a; --amber-bg: #fffbe8; --amber-border: #e2c96b;
+    --blue: #1a4a7a; --blue-bg: #e8f0fb; --blue-border: #b2c8e8;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1e1a16; --surface: #2a2420; --text: #e8e0d4; --muted: #9a8a78;
+    --border: #3a3428; --warm: #2e2820;
+    --terracotta: #d4874a; --gold: #e0b860;
+    --green: #4a9a4a; --green-bg: #1a2e1a; --green-border: #2a5a2a;
+    --red: #e05050; --red-bg: #2e1a1a; --red-border: #5a2a2a;
+    --amber: #c8a84a; --amber-bg: #2e2810; --amber-border: #5a4a10;
+    --blue: #6a9ad0; --blue-bg: #1a2030; --blue-border: #2a4060;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font: 13px/1.6 var(--font); padding: 0 0 60px; }
+
+  .header {
+    background: var(--surface); border-bottom: 3px solid var(--terracotta);
+    padding: 22px 40px 18px;
+  }
+  .header-top { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .header h1 { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.01em; }
+  .header .run-date { font-size: 12px; color: var(--muted); }
+  .header .subtitle { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 40px 0; }
+  .stat-tile {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 18px; display: flex; flex-direction: column; gap: 2px; min-width: 120px;
+  }
+  .stat-num { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+  .stat-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .stat-tile.pass .stat-num { color: var(--green); }
+  .stat-tile.fixed .stat-num { color: var(--terracotta); }
+  .stat-tile.blue .stat-num { color: var(--blue); }
+
+  .content { max-width: 1040px; margin: 0 auto; padding: 0 40px; }
+
+  .section { margin-top: 32px; }
+  .section-title {
+    font-size: 10px; font-weight: 800; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding-bottom: 7px; border-bottom: 2px solid var(--border); margin-bottom: 14px;
+  }
+
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px;
+    border-radius: 3px; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .badge-pass { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+  .badge-fixed { background: #fff3ee; border: 1px solid #f0c0a0; color: var(--terracotta); }
+  .badge-custom { background: var(--amber-bg); border: 1px solid var(--amber-border); color: var(--amber); }
+  .badge-skip { background: var(--warm); border: 1px solid var(--border); color: var(--muted); }
+  .badge-doc { background: var(--blue-bg); border: 1px solid var(--blue-border); color: var(--blue); }
+
+  .issue-card { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
+  .issue-head { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .issue-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .issue-file { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px; color: var(--muted); padding: 6px 16px; background: var(--warm); border-bottom: 1px solid var(--border); }
+  .issue-body { padding: 12px 16px; font-size: 12px; line-height: 1.7; }
+  .issue-body p { margin-bottom: 8px; }
+  .issue-body p:last-child { margin-bottom: 0; }
+  code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px; background: var(--warm); border: 1px solid var(--border); border-radius: 3px; padding: 1px 4px; color: var(--text); }
+  .diff-block { margin-top: 10px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+  .diff-del { background: #fff5f5; color: #8b2020; padding: 3px 10px; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px; border-bottom: 1px solid #f0d0d0; white-space: pre-wrap; }
+  .diff-add { background: #f0faf0; color: #1a4a1a; padding: 3px 10px; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px; white-space: pre-wrap; }
+  @media (prefers-color-scheme: dark) {
+    .diff-del { background: #2e1010; color: #f08080; border-bottom-color: #4a2020; }
+    .diff-add { background: #0e2010; color: #80d080; }
+  }
+  :root[data-theme="dark"] .diff-del { background: #2e1010; color: #f08080; border-bottom-color: #4a2020; }
+  :root[data-theme="dark"] .diff-add { background: #0e2010; color: #80d080; }
+
+  .ok-box { background: var(--green-bg); border: 1px solid var(--green-border); border-left: 3px solid var(--green); border-radius: 5px; padding: 10px 14px; font-size: 12px; color: var(--green); margin-bottom: 14px; }
+  .ok-box strong { color: var(--text); }
+  .note-box { background: var(--amber-bg); border: 1px solid var(--amber-border); border-left: 3px solid var(--gold); border-radius: 5px; padding: 10px 14px; font-size: 12px; color: var(--amber); margin-bottom: 14px; }
+  .note-box strong { color: var(--text); }
+
+  .results-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .results-table th { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; text-align: left; padding: 7px 10px; border-bottom: 2px solid var(--border); background: var(--warm); }
+  .results-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .results-table tr:last-child td { border-bottom: none; }
+  .results-table tr:hover td { background: var(--warm); }
+  .results-table .group-row td { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); background: var(--bg); padding: 10px 10px 4px; border-bottom: 1px solid var(--border); }
+  .page-name { font-weight: 600; }
+  .input-id { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <h1>TVESearch Weekly Audit</h1>
+    <span class="run-date">2026-07-20</span>
+  </div>
+  <div class="subtitle">Full static audit of all 67 search-input pages + live browser tests of 17 pages · Sub-truncation fix applied to 34 Best-Of pages</div>
+</div>
+
+<div class="stat-bar">
+  <div class="stat-tile pass">
+    <span class="stat-num">67</span>
+    <span class="stat-label">Pages with search inputs</span>
+  </div>
+  <div class="stat-tile pass">
+    <span class="stat-num">65</span>
+    <span class="stat-label">Pass static checks</span>
+  </div>
+  <div class="stat-tile fixed">
+    <span class="stat-num">34</span>
+    <span class="stat-label">Pages fixed (sub truncation)</span>
+  </div>
+  <div class="stat-tile blue">
+    <span class="stat-num">17</span>
+    <span class="stat-label">Live browser tests passed</span>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- IN-SCOPE TO DO ITEM -->
+  <div class="section">
+    <div class="section-title">In-Scope To Do Item — Completed</div>
+    <div class="ok-box"><strong>DONE:</strong> "Best-Of pages (34 remaining) — TVESearch sub truncation needed" — removed from To Do List after applying fix to all 34 remaining Best-Of pages.</div>
+  </div>
+
+  <!-- MAIN FIX -->
+  <div class="section">
+    <div class="section-title">Fix Applied — Best-Of Sub Truncation (34 pages)</div>
+
+    <div class="issue-card">
+      <div class="issue-head">
+        <span class="badge badge-fixed">FIXED — 34 pages</span>
+        <span class="issue-title">All Best-Of pages — sub field contained full 3–4-part tag, causing false-positive matches on buried country/province names</span>
+      </div>
+      <div class="issue-file">Travel-Website/Trip-Essentials/Best-*.html (34 files)</div>
+      <div class="issue-body">
+        <p><strong>Problem:</strong> Each Best-Of page passed the full <code>.showcase-tag</code> text as the <code>sub</code> field in its TVESearch items. Tags can be 3–4 comma-separated parts (e.g. "Qualicum Beach, Vancouver Island, British Columbia, Canada"). TVESearch matches on word-starts across both <code>name</code> and <code>sub</code>, so typing "Canada" or "British" would surface results where that word appeared anywhere in the full tag chain — not a useful match on buried province/country text.</p>
+        <p><strong>Fix (Pattern A — showcase-card block, all 34 pages):</strong></p>
+        <div class="diff-block">
+          <div class="diff-del">- if(n&amp;&amp;n.textContent.trim()) items.push({name:n.textContent.trim(), sub:t?t.textContent.trim():''});</div>
+          <div class="diff-add">+ var fullTag=t?t.textContent.trim():'';
++ var shortSub=fullTag.split(',').slice(0,2).join(',').trim();
++ if(n&amp;&amp;n.textContent.trim()) items.push({name:n.textContent.trim(), sub:shortSub});</div>
+        </div>
+        <p style="margin-top:8px"><strong>Fix (Pattern B — best-of-card fallback, Best-Of-Index only):</strong></p>
+        <div class="diff-block">
+          <div class="diff-del">- if(n&amp;&amp;n.textContent.trim()) items.push({name:n.textContent.trim(), sub:t?t.textContent.trim():'', href:a?a.getAttribute('href'):''});</div>
+          <div class="diff-add">+ var fullTag=t?t.textContent.trim():'';
++ var shortSub=fullTag.split(',').slice(0,2).join(',').trim();
++ if(n&amp;&amp;n.textContent.trim()) items.push({name:n.textContent.trim(), sub:shortSub, href:a?a.getAttribute('href'):''});</div>
+        </div>
+        <p style="margin-top:10px"><strong>Pages fixed (34):</strong> Best-Amusement-Parks, Best-Animal-Encounters, Best-Aquariums, Best-Architecture, Best-Art-Museums, Best-Beaches, Best-Castles, Best-Cathedrals, Best-Caves, Best-Gardens, Best-Hard-to-Reach-Places, Best-Hot-Springs, Best-Islands, Best-Kids-Friendly-Places, Best-Kids-Museums, Best-Lakes, Best-Most-Luxurious-Hotels, Best-Mountains-and-Rock-Formations, Best-Museums, Best-National-Parks-by-Country, Best-Natural-Phenomena, Best-Observation-Decks, Best-Of-Index, Best-Resorts, Best-Safari, Best-Scuba-Diving, Best-Ski-Resorts, Best-Surfing, Best-UNESCO-Sites, Best-Ultra-Luxurious-Resorts, Best-Unique-Museums, Best-Volcanoes, Best-Wine-Regions, Best-Wonders-of-the-World.</p>
+        <p style="color:var(--muted); margin-top:6px">Best-Unique-Hotels.html was already fixed in a prior session and skipped. Fix is local — goes live on next push.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOC CORRECTION -->
+  <div class="section">
+    <div class="section-title">Documentation Correction — TVESearch.html §4 Source Field Inaccuracy</div>
+
+    <div class="issue-card">
+      <div class="issue-head">
+        <span class="badge badge-doc">DOC FIX</span>
+        <span class="issue-title">TVESearch.html §4 incorrectly stated Best-Of items came from .best-of-section-label</span>
+      </div>
+      <div class="issue-file">Brain/Reference/TVESearch.html — §4 Best-Of group row + explanation block</div>
+      <div class="issue-body">
+        <p>The §4 table row and explanation block incorrectly described the Best-Of item source as <code>.best-of-section-label</code>. The actual source is <code>.showcase-card → .showcase-name</code> (name) + <code>.showcase-tag</code> first 2 parts (sub), with a <code>.best-of-card</code> fallback only on Best-Of-Index.</p>
+        <p><strong>Changes made to TVESearch.html:</strong> §4 group-row corrected; §4 explanation block rewritten with correct source, sub-truncation rule, and 2-part example; §7 per-page rows for Best-Of-Index and Best-Amusement-Parks updated with "2-part truncated" sub note; §6 bug log entry added for the sub-truncation fix (FIXED 2026-07-20); header badges updated — "4 bugs fixed 2026-07", new green badge "Best-Of sub truncation fix applied to all 35 pages ✓ 2026-07-20", verified date updated to 2026-07-20.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATIC AUDIT -->
+  <div class="section">
+    <div class="section-title">Static Audit — All 67 Pages</div>
+
+    <div class="ok-box"><strong>65 pass all checks.</strong> 2 non-issues documented below.</div>
+
+    <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">Checks: TVESearch script loaded at correct depth · <code>TVESearch.attach()</code> called · no ellipsis in placeholder · no beige background on search inputs · non-empty items array · no un-truncated sub pattern on Best-Of pages.</p>
+
+    <div class="issue-card">
+      <div class="issue-head">
+        <span class="badge badge-custom">NON-ISSUE</span>
+        <span class="issue-title">Guides-Index.html — static checker flagged wrong depth (false positive)</span>
+      </div>
+      <div class="issue-file">Travel-Website/Guides-Index.html</div>
+      <div class="issue-body">
+        <p>Uses <code>src="./assets/search-autocomplete.js?v=8"</code>. Static checker expected bare <code>src="assets/search-autocomplete.js"</code> at depth-0. Both are correct — the <code>./</code> prefix and <code>?v=8</code> cache-bust are intentional and have no impact on resolution. Not a bug; static checker limitation noted.</p>
+      </div>
+    </div>
+
+    <div class="issue-card">
+      <div class="issue-head">
+        <span class="badge badge-custom">DOCUMENTED — CUSTOM FILTER</span>
+        <span class="issue-title">Day-Trips.html — loads script, no TVESearch.attach() — correct by design</span>
+      </div>
+      <div class="issue-file">Travel-Website/Trip-Essentials/Day-Trips.html</div>
+      <div class="issue-body">
+        <p>Loads <code>search-autocomplete.js</code> (without <code>?v=8</code>) but uses its own inline <code>input</code>-event listener to filter 116 departure-city group rows by matching <code>data-dep</code> attributes. The filter works correctly. No <code>TVESearch.attach()</code> call is correct here — this is a group-list filter, not a city/item typeahead. Already documented in TVESearch.html §7.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROWSER TESTS -->
+  <div class="section">
+    <div class="section-title">Live Browser Tests — 17 Pages</div>
+    <div class="ok-box"><strong>All 17 passed.</strong> Dropdown (<code>.sa-suggest</code>) appears, items render with name + sub, no overflow.</div>
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Input</th>
+          <th>Result</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="group-row"><td colspan="4">Core Pages</td></tr>
+        <tr><td class="page-name">Guides-Index</td><td class="input-id">#guide-search</td><td><span class="badge badge-pass">PASS</span></td><td>Guide city search fires correctly</td></tr>
+        <tr><td class="page-name">Weather</td><td class="input-id">city search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Climate-Finder</td><td class="input-id">city search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Safety-Guide</td><td class="input-id">#city-search</td><td><span class="badge badge-pass">PASS</span></td><td>224 city rows populate correctly</td></tr>
+        <tr><td class="page-name">Currency-Guide</td><td class="input-id">#cur-search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Visas</td><td class="input-id">#visa-search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Tipping-Guide</td><td class="input-id">#search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Time-Zones</td><td class="input-id">#search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">City-Transit-Cards</td><td class="input-id">#tc-search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">SIM-Cards-Abroad</td><td class="input-id">#sim-search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Pickleball</td><td class="input-id">#city-search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Travel-Stats</td><td class="input-id">search</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Delta-Routes-SEA</td><td class="input-id">#destFilter</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr class="group-row"><td colspan="4">Best-Of Pages (spot check)</td></tr>
+        <tr><td class="page-name">Best-Beaches</td><td class="input-id">input[type=search]</td><td><span class="badge badge-pass">PASS</span></td><td>Autocomplete fires; live site shows old sub (fix local only, ships on next push)</td></tr>
+        <tr><td class="page-name">Best-National-Parks-by-Country</td><td class="input-id">input[type=search]</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Best-Wine-Regions</td><td class="input-id">input[type=search]</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+        <tr><td class="page-name">Best-Of-Index</td><td class="input-id">input[type=search]</td><td><span class="badge badge-pass">PASS</span></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CHANGES SUMMARY -->
+  <div class="section">
+    <div class="section-title">Changes Made This Run</div>
+    <table class="results-table">
+      <thead>
+        <tr><th>File</th><th>Change</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>To Do List/To_Do_List.md</code></td>
+          <td>Removed completed item "Best-Of pages (34 remaining) — TVESearch sub truncation needed"; removed the now-empty <code>## 🔧 Search/TVESearch — Fleet Fix Needed</code> section.</td>
+          <td><span class="badge badge-pass">DONE</span></td>
+        </tr>
+        <tr>
+          <td><code>Travel-Website/Trip-Essentials/Best-*.html</code> (34 files)</td>
+          <td>Applied sub-truncation fix — Pattern A (showcase-card forEach) to all 34; Pattern B (best-of-card fallback) to Best-Of-Index only.</td>
+          <td><span class="badge badge-fixed">FIXED</span></td>
+        </tr>
+        <tr>
+          <td><code>Brain/Reference/TVESearch.html</code></td>
+          <td>§4: corrected Best-Of source from <code>.best-of-section-label</code> → <code>.showcase-card → .showcase-name / .showcase-tag</code>; updated explanation block with sub-truncation rule. §6: new bug log entry for sub-truncation fix. §7: Best-Of-Index + Best-Amusement-Parks rows updated with "2-part truncated" sub note. Header badges: 4 bugs, new green badge, verified date 2026-07-20.</td>
+          <td><span class="badge badge-doc">DOC FIX</span></td>
+        </tr>
+        <tr>
+          <td>TVESearch reference Artifact</td>
+          <td>Republished <code>Brain/Reference/TVESearch.html</code> to artifact URL with label "Weekly audit 2026-07-20".</td>
+          <td><span class="badge badge-pass">DONE</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OUT OF SCOPE -->
+  <div class="section">
+    <div class="section-title">Out-of-Scope Findings</div>
+    <div class="note-box"><strong>No new out-of-scope findings discovered.</strong> All issues found were within TVESearch scope and resolved in this run. No To Do List additions needed.</div>
+  </div>
+
+</div>
+
+<div style="margin:48px 40px 0; padding-top:16px; border-top:1px solid var(--border); font-size:11px; color:var(--muted); text-align:center;">
+  TVESearch Weekly Audit · 2026-07-20 · tve-search-weekly-audit crib · The Voyager Expert
+</div>
+
+</body>
+</html>
