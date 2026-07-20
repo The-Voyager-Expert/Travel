@@ -7,184 +7,183 @@
 <title>Travel Stats</title>
 <style>
 body.stats-page {
-  --rust: #b85c2a; --rust-deep: #7a3b1e; --copper: #a8521f;
-  --navy: #2f5596; --navy-deep: #1a2e5c;
+  --rust: #b85c2a; --rust-deep: #7a3b1e; --rust-light: #fbeee4;
+  --navy: #2f5596; --navy-deep: #1a2e5c; --navy-light: #e8eef8;
   --track: #ece6dd;
 }
 .page { max-width: none; margin: 0 auto; padding: 0 32px; }
-
-/* ===== Unified header — underline style, inherits from web-travel-style.css ===== */
 .header-desc { display: none !important; }
 
-/* ===== Hero stat cards ===== */
-.hero-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
-.hero-card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 14px; min-height: 110px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; text-align: center; overflow: hidden; }
-.hero-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: currentColor; opacity: .9; }
-.hero-icon { font-size: 18px; line-height: 1; margin-bottom: 6px; }
-.hero-num { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
-.hero-label { font-size: var(--fs-label,11px); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-.hero-card.total   { color: var(--rust-deep); }
-.hero-card.been    { color: var(--rust); }
-.hero-card.country { color: var(--copper); }
-.hero-card.want    { color: var(--navy); }
-.hero-card .hero-num { color: currentColor; }
+/* ── Section jump nav ── */
+.stats-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 0 20px; }
+.stats-nav a { font-size: 12px; line-height: 1; color: #6a5230; text-decoration: none; padding: 5px 11px; border: 1px solid #dcd2c0; border-radius: 20px; background: var(--surface); white-space: nowrap; transition: all .15s; }
+.stats-nav a:hover,
+.stats-nav a.active { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
+.stats-nav a:focus-visible { outline: 2px solid #b85c2a; outline-offset: 1px; }
 
-/* ===== Quick facts strip ===== */
-.quickfacts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
-.qf { background: var(--surface2); border: 1px solid var(--border2); border-radius: 9px; padding: 12px 14px; min-height: 110px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-.qf-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: #efe7f0; background: rgba(47,85,150,.09); font-size: 15px; line-height: 1; }
-.qf-val { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-top: 4px; }
-.qf-of { font-size: 13px; font-weight: 600; color: var(--muted); }
-.qf-label { font-size: 9.5px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+/* ── Hero banner ── */
+.hero-banner { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 50%,#d4874a 100%); border-radius: 14px; padding: 28px 30px 22px; margin-bottom: 14px; color: #fff; animation: fadeUp .45s ease both; }
+.hero-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; opacity: .7; margin-bottom: 20px; font-weight: 600; }
+.hero-main-row { display: flex; align-items: center; gap: 20px; }
+.hero-block { flex: 0 0 auto; text-align: center; }
+.hero-num { font-size: 64px; font-weight: 900; letter-spacing: -.04em; line-height: 1; animation: fadeUp .5s .05s ease both; }
+.hero-label { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; opacity: .75; margin-top: 6px; font-weight: 600; }
+.hero-block--want .hero-num { opacity: .65; }
+.hero-block--want .hero-label { opacity: .55; }
+.hero-center { flex: 1; text-align: center; animation: fadeUp .5s .1s ease both; }
+.hero-pct { font-size: 40px; font-weight: 900; letter-spacing: -.03em; line-height: 1; margin-bottom: 8px; }
+.hero-bar-track { height: 14px; background: rgba(255,255,255,.25); border-radius: 7px; overflow: hidden; }
+.hero-bar-fill { height: 100%; background: rgba(255,255,255,.9); border-radius: 7px 0 0 7px; width: 36.3%; }
+.hero-pct-label { font-size: 11px; opacity: .7; margin-top: 7px; letter-spacing: .06em; }
+.hero-facts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 0; margin-top: 20px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.2); }
+.hero-fact { font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,.85); padding: 0 16px 0 0; }
+.hero-fact b { font-weight: 800; color: #fff; }
+.hero-fact:not(:last-child)::after { content: '·'; margin-left: 16px; opacity: .45; }
 
-/* ===== Section headings ===== */
-.section-title {
-  font-size: var(--fs-label,11px); letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--muted); font-weight: 700; margin: 8px 0 6px;
-}
+/* ── Section headings ── */
+.section-title { scroll-margin-top: 14px; font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text); margin: 18px 0 8px; display: flex; align-items: center; gap: 10px; }
+.section-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #b85c2a; border-radius: 2px; flex-shrink: 0; }
+.section-title .sec-count { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .04em; text-transform: none; margin-left: auto; }
+#overview { scroll-margin-top: 14px; }
 
-/* ===== Been / Want split bar ===== */
-.split-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 8px; }
-.split-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
-.split-label { font-size: var(--fs-sub,12px); font-weight: 600; }
-.split-label.been { color: var(--rust); }
-.split-label.want { color: var(--navy); }
-.split-track { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; display: flex; }
-.split-been { height: 100%; background: linear-gradient(90deg, var(--rust-deep), var(--rust)); border-radius: 5px 0 0 5px; transition: width 0.6s ease; }
-.split-want { height: 100%; background: var(--navy); flex: 1; border-radius: 0 5px 5px 0; }
-.split-sub { font-size: var(--fs-sub,12px); color: var(--muted); margin-top: 10px; }
+/* ── Been / Want split ── */
+.split-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+.split-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+.split-been-lbl { font-size: 22px; font-weight: 800; color: #b85c2a; letter-spacing: -.02em; }
+.split-want-lbl { font-size: 22px; font-weight: 800; color: #2f5596; letter-spacing: -.02em; }
+.split-been-sub,
+.split-want-sub { font-size: 11px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+.split-want-sub { text-align: right; }
+.split-track { height: 12px; background: var(--track); border-radius: 6px; overflow: hidden; display: flex; }
+.split-been { height: 100%; background: linear-gradient(90deg, #7a3b1e, #b85c2a); border-radius: 6px 0 0 6px; }
+.split-want { height: 100%; background: #2f5596; flex: 1; }
+.split-pcts { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11.5px; color: var(--muted); font-weight: 600; }
 
-/* ===== Region bars ===== */
-.region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
-.region-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
-.region-name { font-size: var(--fs-sub,12px); font-weight: 600; color: var(--text); margin-bottom: 3px; display: flex; align-items: center; justify-content: space-between; }
-.region-count { font-size: var(--fs-label,11px); color: var(--muted); }
-.region-bar-track { height: 4px; background: var(--track); border-radius: 2px; margin: 6px 0; overflow: hidden; }
-.region-bar-fill { height: 100%; border-radius: 2px; background: var(--rust); transition: width 0.5s ease; }
-.region-bar-fill.want { background: var(--navy); }
-.region-cities { font-size: var(--fs-label,11px); color: var(--muted); line-height: 1.5; }
-.region-cities a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted #c0b9b0; transition: color .12s, border-color .12s; }
-.region-cities a:hover { color: var(--accent); border-color: var(--accent); }
+/* ── Region bars ── */
+.region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.region-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid #b85c2a; border-radius: 10px; padding: 14px 16px; }
+.region-card.want { border-top-color: #2f5596; }
+.region-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.region-count { font-size: 11px; color: var(--muted); font-weight: 500; }
+.region-bar-track { height: 8px; background: var(--track); border-radius: 4px; margin: 8px 0 6px; overflow: hidden; }
+.region-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #7a3b1e, #b85c2a); }
+.region-bar-fill.want { background: #2f5596; }
+.region-cities { font-size: 11.5px; color: var(--muted); line-height: 1.7; }
+.region-cities a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted #c5bdb4; transition: color .12s, border-color .12s; }
+.region-cities a:hover { color: #b85c2a; border-color: #b85c2a; }
 
-/* ===== Flight stat cards ===== */
-.flight-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; }
-.flight-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; border-top: 3px solid var(--rust); }
-.flight-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; background: #fbeee4; font-size: 17px; margin-bottom: 8px; }
-.flight-val { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; color: var(--rust); line-height: 1.1; margin-bottom: 2px; }
-.flight-label { font-size: var(--fs-label,11px); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-.flight-sub { font-size: var(--fs-sub,12px); color: var(--muted); }
+/* ── Flight stat cards ── */
+.flight-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+.flight-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 18px 16px; position: relative; overflow: hidden; }
+.flight-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #7a3b1e, #b85c2a); }
+.flight-icon { font-size: 20px; line-height: 1; margin-bottom: 10px; }
+.flight-val { font-size: 26px; font-weight: 900; letter-spacing: -.03em; color: #b85c2a; line-height: 1.1; margin-bottom: 4px; }
+.flight-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.flight-sub { font-size: 12px; color: var(--muted); }
 
-/* ===== Bucket list ===== */
-.bucket-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
-.bucket-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--navy); border-radius: 8px; padding: 12px 14px; }
-.bucket-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+/* ── Bucket list ── */
+.bucket-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.bucket-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid #2f5596; border-radius: 8px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; transition: box-shadow .12s; }
+.bucket-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.07); }
 .bucket-name { font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; }
-.bucket-name:hover { color: var(--navy); }
-.bucket-time { font-size: var(--fs-sub,12px); color: var(--navy); font-weight: 700; white-space: nowrap; }
-.bucket-detail { font-size: var(--fs-sub,12px); color: var(--muted); }
+.bucket-name:hover { color: #2f5596; }
+.bucket-right { text-align: right; flex-shrink: 0; }
+.bucket-time { font-size: 13px; font-weight: 700; color: #2f5596; white-space: nowrap; }
+.bucket-detail { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
-/* ===== New frontiers ===== */
-.frontiers-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 8px; }
-.frontiers-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.frontier-chip { font-size: var(--fs-sub,12px); padding: 5px 12px; border-radius: 20px; font-weight: 600; background: #eef2f9; color: var(--navy); border: 1px solid #c5d3ec; display: flex; align-items: center; gap: 6px; }
-.frontier-chip.visited { background: #fbeee4; color: var(--rust); border-color: #e6c3a8; }
+/* ── New frontiers ── */
+.frontiers-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.frontiers-intro { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.frontiers-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.frontier-chip { font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 20px; background: #e8eef8; color: #2f5596; border: 1px solid #c5d3ec; display: flex; align-items: center; gap: 7px; }
+.frontier-chip.visited { background: #fbeee4; color: #b85c2a; border-color: #e0b898; }
 
-/* ===== By continent ===== */
-.cont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
-.cont-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; transition: box-shadow .15s, transform .15s; }
-.cont-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
-.cont-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 9px; }
-.cont-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.cont-total { font-size: var(--fs-label,11px); font-weight: 600; color: var(--muted); }
-.cont-track { height: 8px; background: var(--track); border-radius: 4px; overflow: hidden; display: flex; }
-.cont-been { height: 100%; background: var(--rust); }
-.cont-want { height: 100%; background: var(--navy); }
-.cont-legend { font-size: var(--fs-label,11px); color: var(--muted); margin-top: 8px; display: flex; align-items: center; gap: 6px; }
-.cont-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
-.cont-dot.been { background: var(--rust); }
-.cont-dot.want { background: var(--navy); margin-left: 8px; }
+/* ── By continent ── */
+.cont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.cont-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; transition: box-shadow .12s, transform .12s; }
+.cont-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); transform: translateY(-1px); }
+.cont-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.cont-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.cont-total { font-size: 11px; font-weight: 600; color: var(--muted); }
+.cont-track { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; display: flex; }
+.cont-been { height: 100%; background: linear-gradient(90deg, #7a3b1e, #b85c2a); }
+.cont-want { height: 100%; background: #2f5596; }
+.cont-legend { font-size: 11.5px; color: var(--muted); margin-top: 8px; display: flex; align-items: center; gap: 6px; font-weight: 500; }
+.cont-dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+.cont-dot.been { background: #b85c2a; }
+.cont-dot.want { background: #2f5596; margin-left: 8px; }
 
-/* ===== How you get there (routing) ===== */
-.route-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 8px; }
-.route-track { height: 14px; border-radius: 7px; overflow: hidden; display: flex; background: var(--track); }
+/* ── Routing ── */
+.route-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 14px; }
+.route-track { height: 16px; border-radius: 8px; overflow: hidden; display: flex; background: var(--track); margin-bottom: 14px; }
 .route-seg { height: 100%; }
-.route-seg.nonstop { background: var(--rust); }
-.route-seg.onestop { background: var(--navy); }
-.route-seg.twostop { background: var(--navy-deep); }
-.route-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px; }
-.route-key { font-size: var(--fs-sub,12px); color: var(--muted); display: flex; align-items: center; gap: 6px; }
-.route-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
-.route-dot.nonstop { background: var(--rust); }
-.route-dot.onestop { background: var(--navy); }
-.route-dot.twostop { background: var(--navy-deep); }
+.route-seg.nonstop { background: #b85c2a; }
+.route-seg.onestop { background: #2f5596; }
+.route-seg.twostop { background: #1a2e5c; }
+.route-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.route-key { font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 7px; font-weight: 500; }
+.route-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+.route-dot.nonstop { background: #b85c2a; }
+.route-dot.onestop { background: #2f5596; }
+.route-dot.twostop { background: #1a2e5c; }
+.route-num { font-size: 11px; color: var(--muted); margin-left: 2px; }
 
-/* ===== Gateway hubs ===== */
-.hub-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-.hub-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 8px 13px; display: flex; align-items: baseline; gap: 8px; transition: box-shadow .15s, transform .15s; }
-.hub-chip:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
-.hub-code { font-size: 15px; font-weight: 800; letter-spacing: 0.04em; color: var(--rust-deep); }
-.hub-count { font-size: var(--fs-label,11px); color: var(--muted); }
+/* ── Gateway hubs ── */
+.hub-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.hub-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; display: flex; align-items: baseline; gap: 9px; transition: box-shadow .12s, transform .12s, border-color .12s; }
+.hub-chip:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); border-color: #b85c2a; }
+.hub-code { font-size: 17px; font-weight: 900; letter-spacing: .06em; color: #7a3b1e; }
+.hub-count { font-size: 11.5px; color: var(--muted); font-weight: 500; }
 
-/* ===== Most-covered countries ===== */
-.ctry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
-.ctry-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; transition: box-shadow .15s, transform .15s; }
-.ctry-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
-.ctry-flag { font-size: 26px; line-height: 1; }
+/* ── Most-covered countries ── */
+.ctry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.ctry-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: box-shadow .12s, transform .12s; }
+.ctry-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); transform: translateY(-1px); }
+.ctry-flag { font-size: 28px; line-height: 1; }
 .ctry-body { flex: 1; min-width: 0; }
 .ctry-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.ctry-sub { font-size: var(--fs-label,11px); color: var(--muted); }
-.ctry-count { font-size: 22px; font-weight: 800; color: var(--rust); letter-spacing: -0.02em; }
+.ctry-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.ctry-count { font-size: 26px; font-weight: 900; color: #b85c2a; letter-spacing: -.03em; }
 
-/* ===== Responsive ===== */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Responsive ── */
 @media (max-width: 600px) {
   .page { padding: 0 14px; }
-  .hero-row { grid-template-columns: repeat(2, 1fr); }
-  .quickfacts { grid-template-columns: repeat(2, 1fr); }
-  .flight-row { grid-template-columns: repeat(2, 1fr); }
+  .hero-main-row { flex-direction: column; gap: 14px; }
+  .hero-num { font-size: 52px; }
+  .hero-pct { font-size: 32px; }
+  .hero-center { width: 100%; }
   .region-grid { grid-template-columns: 1fr; }
   .cont-grid { grid-template-columns: 1fr; }
   .ctry-grid { grid-template-columns: 1fr; }
   .bucket-row { grid-template-columns: 1fr; }
-  .hero-num { font-size: 26px; }
+  .flight-row { grid-template-columns: repeat(2, 1fr); }
 }
 html { scroll-behavior: smooth; }
-.hero-card, .qf, .region-card, .flight-card, .bucket-card { transition: box-shadow .15s, transform .15s; }
-.hero-card:hover, .qf:hover, .region-card:hover, .flight-card:hover, .bucket-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
-/* ===== Section jump nav ===== */
-.stats-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 18px; }
-.stats-nav a { font-size: 13px; line-height: 1; color: #6a5230; text-decoration: none; padding: 6px 12px; border: 1px solid #dcd2c0; border-radius: 6px; background: var(--surface); white-space: nowrap; transition: all .15s; }
-.stats-nav a:hover { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
-.stats-nav a.active { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
-.stats-nav a:focus-visible { outline: 2px solid #b85c2a; outline-offset: 1px; }
-.section-title { scroll-margin-top: 14px; }
-#overview { scroll-margin-top: 14px; }
-@media (max-width:600px) {
-  .stats-nav { flex-wrap: wrap; }
-}
 </style>
 <link rel="stylesheet" href="../assets/mobile.css?v=49">
 </head>
 <body class="stats-page">
 
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
-<script src="../assets/toolbar.js?v=103"></script>
+<script src="../assets/toolbar.js?v=116"></script>
 
 <div class="page">
 
   <div class="header">
     <h1>Travel Stats</h1>
-    <div class="header-desc">A look at where I've been — and where I'm going next.</div>
   </div>
   <span class="updated-stamp">Updated July 2026</span>
 
   <!-- SECTION JUMP NAV -->
   <nav class="stats-nav" aria-label="Jump to section">
     <a href="#overview">Overview</a>
-    <a href="#sec-split">Been vs Want</a>
-    <a href="#sec-flights">Flights</a>
-    <a href="#sec-been">Been by Region</a>
+    <a href="#sec-split">Progress</a>
+    <a href="#sec-been">Been</a>
     <a href="#sec-bucket">Bucket List</a>
     <a href="#sec-want">Wishlist</a>
+    <a href="#sec-flights">Flights</a>
     <a href="#sec-frontiers">Frontiers</a>
     <a href="#sec-continents">Continents</a>
     <a href="#sec-routing">Routing</a>
@@ -192,70 +191,59 @@ html { scroll-behavior: smooth; }
     <a href="#sec-countries">Countries</a>
   </nav>
 
-  <!-- HERO NUMBERS -->
-  <div class="hero-row" id="overview">
-    <div class="hero-card total">
-      <div class="hero-icon">📚</div>
-      <div class="hero-num">223</div>
-      <div class="hero-label">Total Guides</div>
+  <!-- HERO BANNER -->
+  <div class="hero-banner" id="overview">
+    <div class="hero-eyebrow">223 guides &nbsp;·&nbsp; a personal travel story</div>
+    <div class="hero-main-row">
+      <div class="hero-block">
+        <div class="hero-num">81</div>
+        <div class="hero-label">Been There</div>
+      </div>
+      <div class="hero-center">
+        <div class="hero-pct">36%</div>
+        <div class="hero-bar-track">
+          <div class="hero-bar-fill"></div>
+        </div>
+        <div class="hero-pct-label">of guides visited</div>
+      </div>
+      <div class="hero-block hero-block--want">
+        <div class="hero-num">142</div>
+        <div class="hero-label">On the List</div>
+      </div>
     </div>
-    <div class="hero-card been">
-      <div class="hero-icon">📸</div>
-      <div class="hero-num">81</div>
-      <div class="hero-label">Been There</div>
-    </div>
-    <div class="hero-card want">
-      <div class="hero-icon">🗺️</div>
-      <div class="hero-num">142</div>
-      <div class="hero-label">On the List</div>
-    </div>
-    <div class="hero-card country">
-      <div class="hero-icon">🌍</div>
-      <div class="hero-num">28</div>
-      <div class="hero-label">Countries Visited</div>
-    </div>
-  </div>
-
-  <!-- QUICK FACTS -->
-  <div class="quickfacts">
-    <div class="qf">
-      <span class="qf-icon">🧭</span>
-      <span class="qf-val">6<span class="qf-of"> / 9</span></span>
-      <span class="qf-label">Regions visited</span>
-    </div>
-    <div class="qf">
-      <span class="qf-icon">🚩</span>
-      <span class="qf-val">28<span class="qf-of"> / 72</span></span>
-      <span class="qf-label">Countries reached</span>
-    </div>
-    <div class="qf">
-      <span class="qf-icon">⏱</span>
-      <span class="qf-val">9h 12m</span>
-      <span class="qf-label">Avg flight (visited)</span>
-    </div>
-    <div class="qf">
-      <span class="qf-icon">✈️</span>
-      <span class="qf-val">35<span class="qf-of"> / 68</span></span>
-      <span class="qf-label">Nonstop from Seattle</span>
+    <div class="hero-facts">
+      <span class="hero-fact">🌍 <b>28</b> countries</span>
+      <span class="hero-fact">🧭 <b>6</b> of 9 regions</span>
+      <span class="hero-fact">⏱ <b>9h 12m</b> avg flight</span>
+      <span class="hero-fact">✈️ <b>35</b> of 68 nonstop from SEA</span>
     </div>
   </div>
 
   <!-- BEEN VS WANT SPLIT -->
-  <div class="section-title" id="sec-split">Been vs. Still Want to Go</div>
+  <div class="section-title" id="sec-split">Progress</div>
   <div class="split-wrap">
-    <div class="split-labels">
-      <span class="split-label been">✓ 81 been &nbsp;(36%)</span>
-      <span class="split-label want">♡ 142 on the list &nbsp;(63%)</span>
+    <div class="split-top">
+      <div>
+        <div class="split-been-lbl">81 been</div>
+        <div class="split-been-sub">Been There</div>
+      </div>
+      <div style="text-align:right">
+        <div class="split-want-lbl">142 to go</div>
+        <div class="split-want-sub">On the List</div>
+      </div>
     </div>
     <div class="split-track">
       <div class="split-been" style="width:36.3%"></div>
       <div class="split-want"></div>
     </div>
-    <div class="split-sub">223 guides total — 81 of 223 guides visited.</div>
+    <div class="split-pcts">
+      <span>36% visited</span>
+      <span>64% remaining</span>
+    </div>
   </div>
 
   <!-- FLIGHT STATS -->
-  <div class="section-title" id="sec-flights">Flight Stats (from Seattle)</div>
+  <div class="section-title" id="sec-flights">Flight Stats from Seattle</div>
   <div class="flight-row">
     <div class="flight-card">
       <div class="flight-icon">⏳</div>
@@ -278,7 +266,7 @@ html { scroll-behavior: smooth; }
   </div>
 
   <!-- REGION BREAKDOWN — BEEN -->
-  <div class="section-title" id="sec-been">Where I've Been — By Region</div>
+  <div class="section-title" id="sec-been">Where I've Been <span class="sec-count">6 regions · 81 guides</span></div>
   <div class="region-grid">
     <div class="region-card">
       <div class="region-name">🌍 Europe <span class="region-count">40 guides</span></div>
@@ -313,44 +301,44 @@ html { scroll-behavior: smooth; }
   </div>
 
   <!-- BUCKET LIST SNEAK PEEK -->
-  <div class="section-title" id="sec-bucket">Bucket List — Top Picks</div>
+  <div class="section-title" id="sec-bucket">Bucket List — Top Picks <span class="sec-count">by flight time</span></div>
   <div class="bucket-row">
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><span class="bucket-time">25h 15m</span></div>
-      <div class="bucket-detail">2 stops via AMS</div>
+      <a class="bucket-name" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a>
+      <div class="bucket-right"><div class="bucket-time">25h 15m</div><div class="bucket-detail">2 stops via AMS</div></div>
     </div>
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Queenstown/queenstown_v1.html">🇳🇿 Queenstown</a><span class="bucket-time">23h 39m</span></div>
-      <div class="bucket-detail">2 stops via SYD</div>
+      <a class="bucket-name" href="../Guides/Queenstown/queenstown_v1.html">🇳🇿 Queenstown</a>
+      <div class="bucket-right"><div class="bucket-time">23h 39m</div><div class="bucket-detail">2 stops via SYD</div></div>
     </div>
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Colombo/colombo_v1.html">🇱🇰 Colombo</a><span class="bucket-time">23h 35m</span></div>
-      <div class="bucket-detail">2 stops via ICN</div>
+      <a class="bucket-name" href="../Guides/Colombo/colombo_v1.html">🇱🇰 Colombo</a>
+      <div class="bucket-right"><div class="bucket-time">23h 35m</div><div class="bucket-detail">2 stops via ICN</div></div>
     </div>
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Bhutan/bhutan_v1.html">🇧🇹 Paro</a><span class="bucket-time">23h 20m</span></div>
-      <div class="bucket-detail">2 stops via ICN</div>
+      <a class="bucket-name" href="../Guides/Bhutan/bhutan_v1.html">🇧🇹 Paro</a>
+      <div class="bucket-right"><div class="bucket-time">23h 20m</div><div class="bucket-detail">2 stops via ICN</div></div>
     </div>
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Maldives/maldives_v1.html">🇲🇻 Maldives</a><span class="bucket-time">23h 20m</span></div>
-      <div class="bucket-detail">2 stops via DXB</div>
+      <a class="bucket-name" href="../Guides/Maldives/maldives_v1.html">🇲🇻 Maldives</a>
+      <div class="bucket-right"><div class="bucket-time">23h 20m</div><div class="bucket-detail">2 stops via DXB</div></div>
     </div>
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Luang-Prabang/luang-prabang_v1.html">🇱🇦 Luang Prabang</a><span class="bucket-time">21h 50m</span></div>
-      <div class="bucket-detail">2 stops via ICN</div>
+      <a class="bucket-name" href="../Guides/Luang-Prabang/luang-prabang_v1.html">🇱🇦 Luang Prabang</a>
+      <div class="bucket-right"><div class="bucket-time">21h 50m</div><div class="bucket-detail">2 stops via ICN</div></div>
     </div>
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Melbourne/melbourne_v1.html">🇦🇺 Melbourne</a><span class="bucket-time">19h 59m</span></div>
-      <div class="bucket-detail">1 stop via LAX</div>
+      <a class="bucket-name" href="../Guides/Melbourne/melbourne_v1.html">🇦🇺 Melbourne</a>
+      <div class="bucket-right"><div class="bucket-time">19h 59m</div><div class="bucket-detail">1 stop via LAX</div></div>
     </div>
     <div class="bucket-card">
-      <div class="bucket-top"><a class="bucket-name" href="../Guides/Bali/bali_v1.html">🇮🇩 Bali</a><span class="bucket-time">19h 55m</span></div>
-      <div class="bucket-detail">2 stops via ICN</div>
+      <a class="bucket-name" href="../Guides/Bali/bali_v1.html">🇮🇩 Bali</a>
+      <div class="bucket-right"><div class="bucket-time">19h 55m</div><div class="bucket-detail">2 stops via ICN</div></div>
     </div>
   </div>
 
   <!-- BUCKET LIST REGIONS — WANT -->
-  <div class="section-title" id="sec-want">On the List — By Region</div>
+  <div class="section-title" id="sec-want">On the List — By Region <span class="sec-count">142 guides</span></div>
   <div class="region-grid">
     <div class="region-card">
       <div class="region-name">🌍 Europe <span class="region-count">48 guides</span></div>
@@ -407,7 +395,7 @@ html { scroll-behavior: smooth; }
   <!-- NEW FRONTIERS -->
   <div class="section-title" id="sec-frontiers">New Frontiers</div>
   <div class="frontiers-card">
-    <div style="font-size:13px;color:var(--muted);line-height:1.6;">Regions visited so far are highlighted. The rest are still waiting.</div>
+    <div class="frontiers-intro">Regions visited so far are highlighted. The rest are still waiting.</div>
     <div class="frontiers-chips">
       <div class="frontier-chip visited">✓ Europe</div>
       <div class="frontier-chip">♡ United States</div>
@@ -422,7 +410,7 @@ html { scroll-behavior: smooth; }
   </div>
 
   <!-- BY CONTINENT -->
-  <div class="section-title" id="sec-continents">By Continent</div>
+  <div class="section-title" id="sec-continents">By Continent <span class="sec-count">223 guides</span></div>
   <div class="cont-grid">
     <div class="cont-card">
       <div class="cont-head">
@@ -493,14 +481,18 @@ html { scroll-behavior: smooth; }
   </div>
 
   <!-- HOW YOU GET THERE -->
-  <div class="section-title" id="sec-routing">How You Get There (from Seattle)</div>
+  <div class="section-title" id="sec-routing">How You Get There <span class="sec-count">from Seattle</span></div>
   <div class="route-wrap">
     <div class="route-track"><div class="route-seg nonstop" style="width:30.5%"></div><div class="route-seg onestop" style="width:37.7%"></div><div class="route-seg twostop" style="width:31.8%"></div></div>
-    <div class="route-legend"><span class="route-key"><span class="route-dot nonstop"></span>Nonstop · 68</span><span class="route-key"><span class="route-dot onestop"></span>1 connection · 84</span><span class="route-key"><span class="route-dot twostop"></span>2 connections · 71</span></div>
+    <div class="route-legend">
+      <span class="route-key"><span class="route-dot nonstop"></span>Nonstop <span class="route-num">68</span></span>
+      <span class="route-key"><span class="route-dot onestop"></span>1 connection <span class="route-num">84</span></span>
+      <span class="route-key"><span class="route-dot twostop"></span>2 connections <span class="route-num">71</span></span>
+    </div>
   </div>
 
   <!-- GATEWAY HUBS -->
-  <div class="section-title" id="sec-hubs">Gateway Hubs — Top Connecting Airports</div>
+  <div class="section-title" id="sec-hubs">Top Connecting Airports</div>
   <div class="hub-strip">
       <div class="hub-chip">
         <span class="hub-code">AMS</span>
@@ -537,7 +529,7 @@ html { scroll-behavior: smooth; }
   </div>
 
   <!-- MOST-COVERED COUNTRIES -->
-  <div class="section-title" id="sec-countries">Most-Covered Countries</div>
+  <div class="section-title" id="sec-countries">Most-Covered Countries <span class="sec-count">by guide count</span></div>
   <div class="ctry-grid">
     <div class="ctry-card">
       <span class="ctry-flag">🇺🇸</span>
@@ -591,7 +583,7 @@ html { scroll-behavior: smooth; }
 
 </div>
 <script>
-/* Scroll-spy — highlight the jump-nav pill for the section in view. */
+/* Scroll-spy */
 (function(){
   var links=[].slice.call(document.querySelectorAll('.stats-nav a'));
   if(!links.length||!('IntersectionObserver' in window))return;
