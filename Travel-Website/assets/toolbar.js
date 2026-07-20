@@ -630,6 +630,30 @@
       firstItem = false;
     }
   });
+  /* ── Region section (World Map page only) ──────────────────────────────
+     Added 2026-07-19: the on-page region-nav bottom bar on World-Map.html
+     was removed on mobile (too cluttered / had its own CSS specificity bug)
+     and replaced with this menu section. Works via the hash router already
+     built into World-Map.html (World-Map.html#eu flies to Europe, etc.) —
+     no new page-side JS needed, these are just plain links. Placed BEFORE
+     Best Of / Also on this site so those two stay last, per the locked
+     "hamburger menu must end with Best Of + Also on this site" rule. */
+  var isWorldMap = /\/Maps\/World-Map\.html$/.test(location.pathname);
+  if (isWorldMap) {
+    var sepRg = document.createElement('div'); sepRg.className = 'tb-ham-sep'; hamMenu.appendChild(sepRg);
+    var hdrRg = document.createElement('div'); hdrRg.className = 'tb-ham-hdr'; hdrRg.textContent = 'Region'; hamMenu.appendChild(hdrRg);
+    var regionLinks = [
+      ['World', 'world'], ['Europe', 'eu'], ['N. America', 'na'], ['Caribbean', 'cb'],
+      ['Asia', 'as'], ['Africa', 'af'], ['S. America', 'sa'], ['Oceania', 'oc'],
+    ];
+    regionLinks.forEach(function (r) {
+      var a = document.createElement('a');
+      a.href = base + 'Trip-Essentials/Maps/World-Map.html#' + r[1];
+      a.textContent = r[0];
+      hamMenu.appendChild(a);
+    });
+  }
+
   /* ── Best Of section ── */
   (function () {
     var sepBo = document.createElement('div'); sepBo.className = 'tb-ham-sep'; hamMenu.appendChild(sepBo);

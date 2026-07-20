@@ -96,35 +96,16 @@
   .rn:focus:not(:focus-visible) { outline: none; }
 
 @media (max-width: 640px) {
-  /* ── Mobile: dock the controls into a slim scrollable bottom bar ── */
-  #map-left-stack {
-    position: absolute; left: 0; right: 0; bottom: 0; top: auto;
-    transform: none; flex-direction: column; align-items: stretch;
-    gap: 0; padding: 0; z-index: 600;
-  }
-  #left-panel {
-    flex-direction: row; align-items: center; gap: 8px;
-    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    background: rgba(247,244,238,0.97); backdrop-filter: blur(6px);
-    border-radius: 0; border-top: 1px solid #d8d4cc;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.14);
-    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-  }
-  #left-panel::-webkit-scrollbar { display: none; }
-  .panel-section-label { display: none; }
-  #region-nav { flex-direction: row !important; gap: 6px; flex-shrink: 0; }
-  /* FIXED (2026-07-19): bare ".rn" here was losing to the desktop
-     "#left-panel .rn { width: 100% }" rule (line ~94) on EVERY mobile
-     screen, regardless of this media query — an ID+class selector always
-     beats a bare class selector, media query or not. That's why the World
-     button rendered ~713px wide (100% of an oversized flex-scroll
-     container) and pushed all 7 other region buttons off-screen — this
-     bug predates the 2026-07-19 map redesign, unrelated to it. Re-scoped
-     under #left-panel so specificity matches and source order (this rule
-     comes later in the file) decides it correctly. */
-  #left-panel .rn { flex-shrink: 0; width: auto; padding: 7px 13px; font-size: 12px; white-space: nowrap; }
-  .rn::before { width: 8px; height: 8px; }
-  .leaflet-control-zoom { margin-bottom: 70px !important; }
+  /* ── Mobile (2026-07-19): the on-page region-nav bottom bar is gone —
+     Dani asked for it removed from the map and moved into the site's
+     hamburger menu instead (a "Region" section, see toolbar.js). The hash
+     router below (World-Map.html#eu etc.) is what makes that work: the
+     menu links just navigate to a hash, no new JS needed on this page.
+     Was previously docked as a scrollable bottom bar (see git history for
+     that CSS if ever wanted back) — replaced, not just visually tweaked,
+     because the region-nav's job is now done by the hamburger menu. ── */
+  #map-left-stack { display: none; }
+  .leaflet-control-zoom { margin-bottom: 14px !important; }
 }
 </style>
 <link rel="stylesheet" href="../../assets/mobile.css?v=50">
@@ -1029,21 +1010,27 @@ document.querySelectorAll('.rn').forEach(el => {
   });
 });
 
-/* Hash-based region activation — World-Map.html#eu flies to Europe, etc. */
-(function () {
+/* Hash-based region activation — World-Map.html#eu flies to Europe, etc.
+   Also fires on in-page hash changes (2026-07-19), not just initial load —
+   the hamburger menu's new "Region" section (toolbar.js) links to
+   World-Map.html#eu from ANY page, but clicking that same link while
+   ALREADY on World-Map.html is a same-document hash navigation (no page
+   reload), which the original load-once IIFE would silently miss. */
+function activateRegionFromHash() {
   var hashRegion = (location.hash || '').replace('#', '').toLowerCase();
   if (hashRegion && REGIONS[hashRegion]) {
     var btn = document.querySelector('.rn[data-region="' + hashRegion + '"]');
     if (btn) {
       document.querySelectorAll('.rn').forEach(function (r) { r.classList.remove('rn-on'); });
       btn.classList.add('rn-on');
-      map.once('moveend', function () {});
-      setTimeout(function () {
-        map.flyToBounds(REGIONS[hashRegion], { ...fitOpts(true), duration: 1.2 });
-      }, 300);
     }
+    setTimeout(function () {
+      map.flyToBounds(REGIONS[hashRegion], { ...fitOpts(true), duration: 1.2 });
+    }, 300);
   }
-}());
+}
+activateRegionFromHash();
+window.addEventListener('hashchange', activateRegionFromHash);
 </script>
 </body>
 </html>
