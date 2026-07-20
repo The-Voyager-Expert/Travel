@@ -16,6 +16,8 @@
 
   /* ── Leaflet surface: kill default chrome so it reads as our warm map ── */
   .leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+  .leaflet-control-zoom a { color: #6b4422; border-color: var(--border, #d8d4cc); }
+  .leaflet-bar a:hover { background: var(--surface, #ffffff); border-color: #b85c2a; }
 
   /* ── Country polygons ── */
   .country-label-tip { background: none; border: none; box-shadow: none; padding: 0;
@@ -97,6 +99,10 @@
      that CSS if ever wanted back) — replaced, not just visually tweaked,
      because the region-nav's job is now done by the hamburger menu. ── */
   #map-left-stack { display: none; }
+  /* Pinch/tap-to-zoom already works on touch devices — the +/- widget just
+     eats screen space here (same reasoning as stops-map-style.css). Desktop
+     keeps it. */
+  .leaflet-control-zoom { display: none; }
 }
 </style>
 <link rel="stylesheet" href="../../assets/mobile.css?v=50">
@@ -471,6 +477,7 @@ const map = L.map('map', {
   maxBounds: [[-85, -200], [85, 200]],
   maxBoundsViscosity: 0,
 });
+L.control.zoom({ position: 'bottomright' }).addTo(map);
 map.createPane('countryLabels');
 map.getPane('countryLabels').style.zIndex = 590;
 map.getPane('countryLabels').style.pointerEvents = 'none';
