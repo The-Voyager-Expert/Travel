@@ -532,6 +532,9 @@
     inner.appendChild(a);
   });
 
+  /* iOS Safari: :active on <a> elements requires a touchstart listener to be registered */
+  document.addEventListener('touchstart', function () {}, { passive: true });
+
   /* Close any open dropdown when clicking elsewhere (menus live on <body> now) */
   document.addEventListener('click', function () {
     var menus = document.querySelectorAll('.tb-menu.tb-menu-open');
