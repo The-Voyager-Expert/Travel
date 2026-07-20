@@ -101,6 +101,134 @@
   } catch (e) {}
 })();
 
+/* ── PWA install banner — "Add to home screen" prompt on mobile.
+   Android/Chrome: intercepts the native beforeinstallprompt event and shows a
+   pill at the bottom of the screen. iOS/Safari: detects the platform and shows
+   a manual "Tap Share → Add to Home Screen" hint instead (no programmatic
+   prompt exists on iOS). Both dismiss permanently via localStorage.
+   Only fires on HTTPS (or localhost) and when the app isn't already installed. */
+(function () {
+  try {
+    var DISMISSED_KEY = 'tve_a2hs_dismissed';
+    if (localStorage.getItem(DISMISSED_KEY)) return;
+
+    /* Already running as installed PWA — no banner needed */
+    if (window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true) return;
+
+    /* Only show on mobile viewports */
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
+
+    var _deferredPrompt = null;
+
+    function _dismiss() {
+      localStorage.setItem(DISMISSED_KEY, '1');
+      var b = document.getElementById('tve-a2hs-banner');
+      if (b) {
+        b.style.transition = 'opacity .3s';
+        b.style.opacity = '0';
+        setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 350);
+      }
+    }
+
+    function _base() {
+      var m = document.getElementById('toolbar-mount');
+      var dep = m ? parseInt(m.dataset.depth || '1', 10) : 1;
+      return new Array(dep + 1).join('../');
+    }
+
+    function _showBanner(isIOS) {
+      if (document.getElementById('tve-a2hs-banner')) return;
+      var banner = document.createElement('div');
+      banner.id = 'tve-a2hs-banner';
+      banner.setAttribute('role', 'complementary');
+      banner.setAttribute('aria-label', 'Add to home screen');
+      banner.style.cssText = [
+        'position:fixed', 'bottom:0', 'left:0', 'right:0', 'z-index:9999',
+        'background:#fff', 'border-top:1.5px solid #c8a44a',
+        'padding:12px 16px 14px', 'display:flex', 'align-items:center',
+        'gap:12px', 'box-shadow:0 -2px 12px rgba(0,0,0,.10)',
+        'font-family:inherit', 'font-size:13px', 'color:#3d3a32',
+        'animation:tve_slide_up .35s ease'
+      ].join(';');
+
+      /* Inline keyframe */
+      if (!document.getElementById('tve-a2hs-style')) {
+        var st = document.createElement('style');
+        st.id = 'tve-a2hs-style';
+        st.textContent = '@keyframes tve_slide_up{from{transform:translateY(100%)}to{transform:translateY(0)}}';
+        document.head.appendChild(st);
+      }
+
+      /* App icon */
+      var icon = document.createElement('img');
+      icon.src = _base() + 'assets/icons/apple-touch-icon.png';
+      icon.alt = '';
+      icon.style.cssText = 'width:40px;height:40px;border-radius:9px;flex-shrink:0;';
+
+      /* Text block */
+      var txt = document.createElement('div');
+      txt.style.cssText = 'flex:1;line-height:1.35;';
+      if (isIOS) {
+        txt.innerHTML = '<strong style="display:block;font-size:13px;color:#3d3a32;">Add to Home Screen</strong>'
+          + '<span style="font-size:11px;color:#6b6860;">Tap \u{1F4E4} Share then <strong>Add to Home Screen</strong></span>';
+      } else {
+        txt.innerHTML = '<strong style="display:block;font-size:13px;color:#3d3a32;">Add to Home Screen</strong>'
+          + '<span style="font-size:11px;color:#6b6860;">Open like an app — works offline too</span>';
+      }
+
+      /* Buttons */
+      var right = document.createElement('div');
+      right.style.cssText = 'display:flex;align-items:center;gap:8px;flex-shrink:0;';
+
+      if (!isIOS) {
+        var addBtn = document.createElement('button');
+        addBtn.textContent = 'Add';
+        addBtn.style.cssText = 'background:#b85c2a;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;';
+        addBtn.onclick = function () {
+          if (_deferredPrompt) {
+            _deferredPrompt.prompt();
+            _deferredPrompt.userChoice.then(function () { _dismiss(); });
+          } else {
+            _dismiss();
+          }
+        };
+        right.appendChild(addBtn);
+      }
+
+      var closeBtn = document.createElement('button');
+      closeBtn.setAttribute('aria-label', 'Dismiss');
+      closeBtn.innerHTML = '&times;';
+      closeBtn.style.cssText = 'background:none;border:none;font-size:20px;color:#9a9690;cursor:pointer;padding:4px 6px;line-height:1;';
+      closeBtn.onclick = _dismiss;
+      right.appendChild(closeBtn);
+
+      banner.appendChild(icon);
+      banner.appendChild(txt);
+      banner.appendChild(right);
+      document.body.appendChild(banner);
+    }
+
+    /* Android/Chrome: browser fires beforeinstallprompt when the PWA criteria are met */
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      _deferredPrompt = e;
+      setTimeout(function () { _showBanner(false); }, 2000);
+    });
+
+    /* iOS Safari: no programmatic prompt — show the manual instruction instead */
+    var ua = navigator.userAgent;
+    var isIOS = /iP(hone|ad|od)/.test(ua) && !window.MSStream;
+    var isSafariOnly = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+    if (isIOS && isSafariOnly) {
+      window.addEventListener('load', function () {
+        setTimeout(function () { _showBanner(true); }, 3000);
+      });
+    }
+  } catch (e) {}
+})();
+
 (function () {
   'use strict';
 

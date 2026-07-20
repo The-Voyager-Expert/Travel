@@ -13,13 +13,14 @@
    2026-07-19: Added URL-rewriting to force-flush stale CSS/JS that iOS Safari
    aggressively caches by URL. Requests for guide-style.css?v<30 are rewritten to
    ?v=30; toolbar.js?v<102 to ?v=102. The SW file itself is always byte-checked
-   fresh by the browser, so this fix reaches devices without touching any guide HTML. */
-var CACHE = 'travel-cache-v34';
+   fresh by the browser, so this fix reaches devices without touching any guide HTML.
+   2026-07-19: Bumped toolbar.js min to 106 — adds in-page "Add to Home Screen" banner. */
+var CACHE = 'travel-cache-v35';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
    aggressively cached under the old URL. */
-var MIN_VERSIONS = { 'guide-style.css': 32, 'toolbar.js': 105 };
+var MIN_VERSIONS = { 'guide-style.css': 32, 'toolbar.js': 106 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
