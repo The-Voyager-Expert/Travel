@@ -981,10 +981,10 @@
 
     /* ── Trigger link — <a> matches the other pills exactly, terracotta border only ── */
     var trigBtn = document.createElement('a');
-    trigBtn.href = '#';
+    trigBtn.href = 'javascript:void(0)';
     trigBtn.textContent = '📅 Export to Calendar';
     trigBtn.className = 'overview-extra-link';
-    trigBtn.addEventListener('click', function (e) { e.preventDefault(); overlay.style.display = 'flex'; });
+    trigBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); overlay.style.display = 'flex'; });
 
     /* Pull All Stops Map out of .overview-extras and place both terracotta
        pills on their own row above the rest of the extras chips.
