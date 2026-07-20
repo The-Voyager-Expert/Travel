@@ -161,30 +161,67 @@ function getJSON(url, tries = 3) {
     });
 }
 
-/* ── Country labels: curated major countries only, for geographic anchoring.
-   id = numeric ISO 3166-1 (matches world-atlas TopoJSON feature id). ── */
-const LABEL = {
-  840:'United States',124:'Canada',484:'Mexico',76:'Brazil',32:'Argentina',
-  152:'Chile',604:'Peru',170:'Colombia',862:'Venezuela',643:'Russia',
-  156:'China',356:'India',392:'Japan',364:'Iran',682:'Saudi Arabia',
-  360:'Indonesia',764:'Thailand',704:'Vietnam',608:'Philippines',586:'Pakistan',
-  36:'Australia',554:'New Zealand',710:'South Africa',818:'Egypt',504:'Morocco',
-  231:'Ethiopia',566:'Nigeria',404:'Kenya',12:'Algeria',729:'Sudan',
-  250:'France',276:'Germany',724:'Spain',380:'Italy',826:'United Kingdom',
-  752:'Sweden',578:'Norway',616:'Poland',804:'Ukraine',792:'Turkey',
-  398:'Kazakhstan',430:'Libya',466:'Mali',562:'Niger',148:'Chad',
-};
-/* Hand-placed label anchors for sprawling countries whose polygon centroid
-   lands offshore or skewed (Alaska drags the US centroid, etc.). */
-const CENTERS = {
-  840:[39,-98], 124:[58,-101], 643:[60,90], 36:[-25,134], 76:[-10,-52],
-};
-/* Warm earth-tone palette — deterministic per country id so the map is stable. */
-const PALETTE = ['#cda36e','#c98f63','#d8be8f','#bd8a5e','#c7a877','#b89066',
-  '#d2b07e','#c0905f','#cbb083','#b58a5c','#d0a96f','#c19064'];
-// Robust to negative / NaN ids (world-atlas tags disputed land as id -99).
-const colorFor = id => PALETTE[((id % PALETTE.length) + PALETTE.length) % PALETTE.length] || '#c2a878';
-function darken(hex,f){var n=parseInt(hex.slice(1),16);var r=Math.round(((n>>16)&255)*f),g=Math.round(((n>>8)&255)*f),b=Math.round((n&255)*f);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
+/* ── Country labels: curated major countries get the bigger/bolder style
+   (.country-label-tip); everyone else gets .minor-label-tip.
+   FIXED (2026-07-19) — this used to be keyed by numeric ISO 3166-1 id, and 2
+   of the 45 ids were simply wrong in the source data: id 36 (meant for
+   Australia) actually resolves to "Ashmore and Cartier Is.", and id 430
+   (meant for Libya) actually resolves to Liberia — so Liberia was silently
+   showing "Libya" as its bold label while the real Libya fell through to the
+   small font. Keyed by the country's actual name now (same properties.name
+   already proven reliable for COUNTRY_COLOR_IDX/LABEL_CENTERS above), which
+   can't have this class of bug. ── */
+const MAJOR_COUNTRIES = new Set(['United States of America','Canada','Mexico','Brazil','Argentina',
+  'Chile','Peru','Colombia','Venezuela','Russia',
+  'China','India','Japan','Iran','Saudi Arabia',
+  'Indonesia','Thailand','Vietnam','Philippines','Pakistan',
+  'Australia','New Zealand','South Africa','Egypt','Morocco',
+  'Ethiopia','Nigeria','Kenya','Algeria','Sudan',
+  'France','Germany','Spain','Italy','United Kingdom',
+  'Sweden','Norway','Poland','Ukraine','Turkey',
+  'Kazakhstan','Libya','Mali','Niger','Chad']);
+/* FIXED (2026-07-19) — Dani flagged Somalia/Nigeria/Uganda labels landing
+   near borders/oceans instead of inside the country. The old approach used
+   getBounds().getCenter() (bounding-box center) for every country except 5
+   hand-placed exceptions — bbox-center lands outside the shape for concave/
+   horn/ribbon countries (Somalia's horn, Chile's ribbon, Norway's coast).
+   Replaced with a computed "pole of inaccessibility" (same technique as
+   Mapbox's polylabel) for all 241 countries: the point deepest inside the
+   largest landmass, guaranteed to be inside the shape. Keyed by country
+   NAME now (stable across topojson id changes), not numeric ISO id. See
+   scratchpad/compute_label_centers.py from the 2026-07-19 conversation. */
+const LABEL_CENTERS = {"Zimbabwe":[-18.996,29.95],"Zambia":[-14.772,26.096],"Yemen":[15.303,44.954],"Vietnam":[21.677,105.387],"Venezuela":[7.196,-64.255],"Vatican":[41.902,12.434],"Vanuatu":[-15.371,166.874],"Uzbekistan":[41.56,64.031],"Uruguay":[-32.942,-56.05],"Micronesia":[6.887,158.243],"Marshall Is.":[7.125,171.106],"N. Mariana Is.":[15.181,145.744],"U.S. Virgin Is.":[17.741,-64.772],"Guam":[13.393,144.711],"American Samoa":[-14.321,-170.756],"Puerto Rico":[18.226,-66.897],"United States of America":[39.144,-97.823],"S. Geo. and the Is.":[-54.522,-36.265],"Br. Indian Ocean Ter.":[-7.312,72.414],"Saint Helena":[-15.959,-5.717],"Pitcairn Is.":[-24.365,-128.317],"Anguilla":[18.233,-63.05],"Falkland Is.":[-51.635,-58.767],"Cayman Is.":[19.314,-81.378],"Bermuda":[32.339,-64.719],"British Virgin Is.":[18.422,-64.624],"Turks and Caicos Is.":[21.814,-71.709],"Montserrat":[16.746,-62.188],"Jersey":[49.218,-2.189],"Guernsey":[49.468,-2.573],"Isle of Man":[54.243,-4.492],"United Kingdom":[52.5,-1.284],"United Arab Emirates":[23.496,54.545],"Ukraine":[48.849,33.645],"Uganda":[1.98,33.011],"Turkmenistan":[39.837,58.646],"Turkey":[39.191,33.35],"Tunisia":[35.326,9.564],"Trinidad and Tobago":[10.331,-61.25],"Tonga":[-21.153,-175.253],"Togo":[8.862,1.047],"Timor-Leste":[-8.905,125.467],"Thailand":[15.485,101.412],"Tanzania":[-5.559,34.057],"Tajikistan":[38.248,72.585],"Taiwan":[23.496,120.805],"Syria":[35.041,38.176],"Switzerland":[46.711,7.461],"Sweden":[65.838,18.997],"eSwatini":[-26.567,31.447],"Suriname":[4.121,-55.952],"S. Sudan":[7.106,30.493],"Sudan":[16.65,29.387],"Sri Lanka":[7.12,80.843],"Spain":[39.986,-3.462],"South Korea":[36.314,128.108],"South Africa":[-30.243,23.359],"Somalia":[2.581,43.04],"Somaliland":[9.461,47.212],"Solomon Is.":[-9.619,160.205],"Slovakia":[48.724,18.714],"Slovenia":[46.023,14.894],"Singapore":[1.359,103.817],"Sierra Leone":[8.658,-11.777],"Seychelles":[-4.617,55.434],"Serbia":[44.245,20.551],"Senegal":[15.2,-14.934],"Saudi Arabia":[23.448,45.016],"São Tomé and Principe":[0.249,6.599],"San Marino":[43.942,12.459],"Samoa":[-13.631,-172.437],"St. Vin. and Gren.":[13.249,-61.201],"Saint Lucia":[13.891,-60.98],"St. Kitts and Nevis":[17.358,-62.796],"Rwanda":[-1.95,29.633],"Russia":[57.182,41.041],"Romania":[45.716,25.156],"Qatar":[25.138,51.195],"Portugal":[40.695,-7.782],"Poland":[51.906,20.423],"Philippines":[16.966,121.386],"Peru":[-12.959,-73.085],"Paraguay":[-21.628,-60.147],"Papua New Guinea":[-5.533,143.032],"Panama":[8.353,-80.928],"Palau":[7.506,134.574],"Pakistan":[31.329,71.532],"Oman":[22.098,57.336],"Norway":[61.34,9.657],"North Korea":[39.884,126.43],"Nigeria":[9.338,7.223],"Niger":[17.653,10.462],"Nicaragua":[12.547,-85.175],"New Zealand":[-45.263,169.141],"Niue":[-19.049,-169.87],"Cook Is.":[-21.219,-159.789],"Netherlands":[52.233,5.311],"Aruba":[12.54,-69.992],"Curaçao":[12.118,-68.855],"Nepal":[28.972,82.034],"Nauru":[-0.52,166.931],"Namibia":[-20.568,17.098],"Mozambique":[-14.039,38.147],"Morocco":[31.935,-6.378],"W. Sahara":[21.957,-13.7],"Montenegro":[42.772,19.078],"Mongolia":[46.034,104.676],"Moldova":[47.461,28.489],"Monaco":[43.753,7.407],"Mexico":[23.417,-101.726],"Mauritius":[-20.313,57.548],"Mauritania":[19.478,-9.747],"Malta":[35.889,14.44],"Mali":[18.672,-2.013],"Maldives":[4.184,73.5],"Malaysia":[2.466,113.777],"Malawi":[-13.38,33.755],"Madagascar":[-18.402,46.7],"Macedonia":[41.522,21.474],"Luxembourg":[49.705,6.098],"Lithuania":[55.112,24.233],"Liechtenstein":[47.113,9.537],"Libya":[26.072,20.592],"Liberia":[6.974,-10.184],"Lesotho":[-29.41,28.445],"Lebanon":[34.159,36.009],"Latvia":[56.641,26.63],"Laos":[19.605,102.559],"Kyrgyzstan":[41.697,74.555],"Kuwait":[29.475,47.327],"Kosovo":[42.602,20.865],"Kiribati":[1.834,-157.383],"Kenya":[0.455,37.861],"Kazakhstan":[48.577,68.663],"Jordan":[30.75,36.331],"Japan":[36.713,139.439],"Jamaica":[18.144,-77.304],"Italy":[45.118,10.88],"Israel":[30.91,34.844],"Palestine":[32.152,35.256],"Ireland":[53.1,-7.822],"Iraq":[33.25,43.091],"Iran":[32.149,55.654],"Indonesia":[-0.934,114.21],"India":[22.323,79.197],"Iceland":[64.674,-18.918],"Hungary":[47.219,20.404],"Honduras":[14.739,-87.126],"Haiti":[19.227,-72.244],"Guyana":[2.774,-58.668],"Guinea-Bissau":[12.123,-14.552],"Guinea":[10.691,-9.997],"Guatemala":[14.996,-90.474],"Grenada":[12.108,-61.683],"Greece":[39.82,21.676],"Ghana":[6.996,-1.22],"Germany":[51.032,9.612],"Georgia":[42.359,42.514],"Gambia":[13.614,-15.317],"Gabon":[-0.632,11.423],"France":[46.684,2.456],"St. Pierre and Miquelon":[46.859,-56.321],"Wallis and Futuna Is.":[-14.278,-178.146],"St-Martin":[18.092,-63.055],"St-Barthélemy":[17.899,-62.841],"Fr. Polynesia":[-17.622,-149.485],"New Caledonia":[-21.059,165.093],"Fr. S. Antarctic Lands":[-49.323,69.074],"Åland":[60.254,19.967],"Finland":[63.319,27.408],"Fiji":[-16.515,-179.874],"Ethiopia":[8.53,38.431],"Estonia":[58.615,26.503],"Eritrea":[16.026,38.054],"Eq. Guinea":[1.58,10.741],"El Salvador":[13.906,-89.267],"Egypt":[26.258,29.268],"Ecuador":[-1.196,-78.24],"Dominican Rep.":[19.086,-70.904],"Dominica":[15.475,-61.359],"Djibouti":[11.391,42.164],"Greenland":[73.565,-42.717],"Faeroe Is.":[62.191,-6.934],"Denmark":[55.936,9.074],"Czechia":[49.787,14.302],"N. Cyprus":[35.186,33.642],"Cyprus":[34.914,32.646],"Cuba":[20.611,-76.472],"Croatia":[45.818,16.508],"Côte d'Ivoire":[7.541,-5.507],"Costa Rica":[10.081,-83.997],"Dem. Rep. Congo":[-1.651,23.282],"Congo":[0.088,15.987],"Comoros":[-11.726,43.334],"Colombia":[3.406,-73.283],"China":[32.488,109.242],"Macao":[22.223,113.509],"Hong Kong":[22.456,114.174],"Chile":[-23.373,-69.116],"Chad":[17.228,19.414],"Central African Rep.":[7.008,21.76],"Cabo Verde":[15.054,-23.625],"Canada":[58.963,-119.451],"Cameroon":[4.515,12.449],"Cambodia":[12.608,104.448],"Myanmar":[21.63,95.929],"Burundi":[-3.417,29.828],"Burkina Faso":[12.804,-0.954],"Bulgaria":[42.506,25.198],"Brunei":[4.462,114.549],"Brazil":[-12.643,-49.093],"Botswana":[-22.055,24.175],"Bosnia and Herz.":[44.078,18.083],"Bolivia":[-16.708,-64.685],"Bhutan":[27.494,89.933],"Benin":[10.38,2.384],"Belize":[16.969,-88.732],"Belgium":[50.779,4.659],"Belarus":[53.782,28.438],"Barbados":[13.158,-59.551],"Bangladesh":[24.301,89.733],"Bahrain":[25.982,50.546],"Bahamas":[24.605,-77.964],"Azerbaijan":[40.349,47.116],"Austria":[47.741,15.334],"Australia":[-23.26,132.846],"Indian Ocean Ter.":[-10.493,105.662],"Heard I. and McDonald Is.":[-53.103,73.498],"Norfolk Island":[-29.052,167.95],"Ashmore and Cartier Is.":[-12.43,123.584],"Armenia":[40.582,44.566],"Argentina":[-31.127,-64.01],"Antigua and Barb.":[17.078,-61.79],"Angola":[-13.125,17.776],"Andorra":[42.538,1.521],"Algeria":[27.474,3.196],"Albania":[40.678,20.086],"Afghanistan":[34.313,66.612],"Siachen Glacier":[35.36,77.136],"Antarctica":[-79.182,-47.673],"Sint Maarten":[18.051,-63.057]};
+/* PROTOTYPE — colors countries by been/want status instead of decorative
+   variety. Derived from Guides-Index.html's country groups + dest-card
+   data-status (any "been" guide in the country → "been"), matched by name
+   against countries-50m.json's properties.name (71/71 matched, no aliasing
+   gaps as of 2026-07-19). Keys are the topojson country names, not ISO ids —
+   country name is stable across topojson rebuilds; ISO id is not always. */
+/* REVISED 2026-07-19 — Dani: "the colors should not have anything to do with
+   the places i have been." Dropped the been/want data tie-in entirely. This is
+   now purely decorative — the same 4-pastel palette from nicoledemoura.com/map
+   (the reference page that started this comparison), assigned per country by
+   a stable name hash so it's just visual contrast between neighbors, nothing
+   more. No relation to Guides-Index.html or travel status. */
+/* Adjacency-safe coloring (added after Dani asked: "not others country around
+   that touches has the same color"). Computed once from the actual shared
+   topojson arcs in THIS exact data file (two countries are neighbors iff they
+   reference the same arc — that's literally how shared borders are encoded),
+   then 4-colored via DSATUR greedy graph coloring so no two touching countries
+   ever share a color. 241 countries, 166 have >=1 land neighbor, 4 colors
+   sufficient with zero conflicts (matches the four-color map theorem).
+   See scratchpad/compute_adjacency.py from the 2026-07-19 conversation for the
+   generator; hashStr is now only a fallback for a name this map doesn't cover. */
+const PALETTE = ['#E4DCD1', '#D9CBF2', '#F7B8CE', '#E5638A', '#B8E0F5', '#C8E8D0', '#F2E6B8'];
+const COUNTRY_COLOR_IDX = {"China":3,"Russia":1,"Kazakhstan":6,"Kyrgyzstan":2,"Uzbekistan":5,"Tajikistan":0,"Afghanistan":1,"Turkmenistan":4,"Iran":6,"Pakistan":2,"India":0,"Siachen Glacier":1,"Myanmar":6,"Laos":5,"Azerbaijan":2,"Turkey":5,"Georgia":4,"Armenia":0,"Iraq":2,"Syria":0,"Jordan":3,"Saudi Arabia":5,"Israel":5,"Thailand":0,"Vietnam":1,"Cambodia":2,"Palestine":4,"Egypt":1,"North Korea":4,"Nepal":2,"Mongolia":2,"Lebanon":3,"Kuwait":6,"Bhutan":1,"Bangladesh":1,"Ukraine":6,"Poland":2,"Belarus":0,"Lithuania":4,"Latvia":6,"Slovakia":3,"Hungary":5,"Austria":0,"Czechia":6,"Germany":5,"Switzerland":3,"France":1,"Italy":6,"Slovenia":2,"Romania":4,"Serbia":3,"Croatia":6,"Bulgaria":6,"Montenegro":5,"Bosnia and Herz.":0,"Macedonia":5,"Kosovo":1,"Greece":2,"Albania":0,"Belgium":0,"Luxembourg":4,"Netherlands":4,"Moldova":1,"Liechtenstein":6,"Estonia":4,"Brazil":0,"Suriname":2,"Guyana":5,"Venezuela":1,"Colombia":6,"Peru":3,"Bolivia":2,"Argentina":4,"Paraguay":5,"Chile":1,"Uruguay":2,"Ecuador":4,"Sudan":4,"Libya":3,"Chad":5,"Niger":1,"Algeria":6,"Mali":3,"Central African Rep.":3,"S. Sudan":2,"Dem. Rep. Congo":1,"Ethiopia":5,"Cameroon":1,"Burkina Faso":6,"Uganda":4,"Kenya":0,"Tanzania":5,"Rwanda":6,"Burundi":2,"Zambia":2,"Mozambique":3,"Malawi":6,"Côte d'Ivoire":4,"Guinea":1,"Senegal":2,"Mauritania":1,"Congo":4,"Angola":5,"Zimbabwe":6,"South Africa":4,"Namibia":6,"Nigeria":3,"Benin":0,"W. Sahara":5,"Togo":5,"Ghana":3,"Somalia":4,"Somaliland":3,"Liberia":0,"Gabon":3,"Eritrea":1,"Djibouti":4,"Botswana":0,"eSwatini":2,"Tunisia":0,"Sierra Leone":3,"Morocco":1,"Guinea-Bissau":4,"Eq. Guinea":6,"Spain":4,"Andorra":3,"Oman":6,"Yemen":0,"United Arab Emirates":1,"Norway":5,"Finland":0,"Sweden":6,"Malaysia":4,"Indonesia":5,"Panama":2,"Costa Rica":4,"Nicaragua":1,"Honduras":5,"Guatemala":3,"El Salvador":1,"Mexico":1,"Belize":5,"United States of America":3,"Vatican":2,"Timor-Leste":1,"South Korea":1,"San Marino":4,"Qatar":1,"Portugal":5,"Papua New Guinea":4,"Monaco":6,"Macao":1,"Lesotho":5,"Hong Kong":4,"Gambia":1,"Denmark":2,"Canada":5,"Brunei":1,"United Kingdom":2,"Ireland":1,"St-Martin":6,"Sint Maarten":2,"N. Cyprus":6,"Cyprus":4,"Haiti":0,"Dominican Rep.":6,"Åland":2,"Wallis and Futuna Is.":1,"Vanuatu":4,"U.S. Virgin Is.":3,"Turks and Caicos Is.":5,"Trinidad and Tobago":0,"Tonga":4,"Taiwan":5,"São Tomé and Principe":2,"St. Vin. and Gren.":6,"St. Pierre and Miquelon":5,"St. Kitts and Nevis":0,"St-Barthélemy":6,"Sri Lanka":1,"Solomon Is.":1,"Singapore":3,"Seychelles":5,"Samoa":1,"Saint Lucia":5,"Saint Helena":4,"S. Geo. and the Is.":5,"Puerto Rico":3,"Pitcairn Is.":2,"Philippines":5,"Palau":0,"Norfolk Island":1,"Niue":3,"New Zealand":4,"New Caledonia":3,"Nauru":5,"N. Mariana Is.":5,"Montserrat":3,"Micronesia":4,"Mauritius":3,"Marshall Is.":3,"Malta":4,"Maldives":6,"Madagascar":6,"Kiribati":1,"Jersey":5,"Japan":5,"Jamaica":0,"Isle of Man":6,"Indian Ocean Ter.":1,"Iceland":0,"Heard I. and McDonald Is.":4,"Guernsey":3,"Guam":3,"Grenada":3,"Greenland":4,"Fr. S. Antarctic Lands":0,"Fr. Polynesia":2,"Fiji":3,"Falkland Is.":0,"Faeroe Is.":6,"Dominica":1,"Curaçao":6,"Cuba":5,"Cook Is.":6,"Comoros":6,"Cayman Is.":6,"Cabo Verde":3,"British Virgin Is.":2,"Br. Indian Ocean Ter.":0,"Bermuda":2,"Barbados":1,"Bahrain":2,"Bahamas":3,"Australia":2,"Ashmore and Cartier Is.":1,"Aruba":1,"Antigua and Barb.":4,"Antarctica":3,"Anguilla":1,"American Samoa":1};
+function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+const colorFor = name => PALETTE[(name in COUNTRY_COLOR_IDX) ? COUNTRY_COLOR_IDX[name] : (hashStr(name || '') % PALETTE.length)];
+// FIXED (2026-07-19): channels were never clamped to 0-255, so multiplying an
+// already-bright pastel channel by a >1 factor overflowed and bit-corrupted
+// the result — e.g. darken('#D9CBF2', 1.12) produced '#f3e40f' (bright
+// yellow-green, a totally different hue) instead of a subtle lighten. That's
+// what made hovering a country flip to an unreadable dark/wrong color.
+function darken(hex,f){var n=parseInt(hex.slice(1),16);var r=Math.min(255,Math.max(0,Math.round(((n>>16)&255)*f))),g=Math.min(255,Math.max(0,Math.round(((n>>8)&255)*f))),b=Math.min(255,Math.max(0,Math.round((n&255)*f)));return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
 
 /* ══════════════════════════════════════════════════════════════
  * PINS — every shipped guide, all regions. Format: [name, lon, lat, href].
@@ -473,12 +510,21 @@ map.getPane('cityDots').style.pointerEvents = 'none';
 map.createPane('cityLabels');
 map.getPane('cityLabels').style.zIndex = 586;
 map.getPane('cityLabels').style.pointerEvents = 'none';
-// Slow staged reveal: WORLD (major countries only) → CONTINENTS (all country names,
-// z>=3) → COUNTRIES (states/provinces, z>=4.5) → CITIES (dots z>=4.5, names z>=6).
+// Slow staged reveal: WORLD (major countries only — ~45 curated, always on)
+// → CONTINENTS (minor countries too, z>=3 — every country gets a name
+// eventually, but the raw world view doesn't cram all ~196 of them into a
+// tiny visible area at once) → COUNTRIES (states/provinces, z>=4.5) →
+// CITIES (dots z>=4.5, names z>=6).
 function toggleStateLabels() {
   map.getPane('stateLabels').style.display = (map.getZoom() >= 4.5) ? '' : 'none';
 }
 function toggleMinorLabels() {
+  // REVERTED (2026-07-19): "always show" made the raw world view cram all
+  // ~196 minor-country names into a tiny visible area — unreadable clutter
+  // (Caribbean, Balkans, Middle East all overlapping). Every country still
+  // gets its name eventually — this just waits for continent zoom (z>=3),
+  // same threshold as the original design, so "all countries show a name"
+  // and "world view isn't cluttered" both hold.
   map.getPane('minorLabels').style.display = (map.getZoom() >= 3) ? '' : 'none';
 }
 map.on('zoomend', () => { toggleStateLabels(); toggleMinorLabels(); });
@@ -498,6 +544,13 @@ const cityLayer = L.layerGroup().addTo(map);
 let pinMarkers = [];
 let labelPlacedRects = [];
 let pinCluster = null;
+// Minor country name labels (added 2026-07-19, Dani: "so many problems" —
+// dense clusters like the Eastern Caribbean had every tiny nation's name
+// piled on top of each other AND on top of guide pin names, since country
+// labels were permanent tooltips with zero collision checking, unlike
+// pins/cities/regions which already run the labelPlacedRects pass below).
+// Populated in onEachFeature, checked in renderCountryLabelVisibility().
+let countryLabelEntries = [];
 // Admin-1 regions for continents too large to overlay eagerly (every continent
 // besides North America, which gets US states + Canada provinces above): each is
 // lazy-loaded the first time you zoom toward it, drawn as filled canvas polygons
@@ -516,7 +569,63 @@ const REGION_SOURCES = {
 };
 const regionState = {};
 Object.keys(REGION_SOURCES).forEach(k => { regionState[k] = { loaded: false, lines: null, regions: [] }; });
-map.on('moveend', () => { renderPinLabels(); renderCities(); maybeLoadRegions(); toggleRegionLines(); renderRegions(); });
+map.on('moveend', () => { renderPinLabels(); renderCountryLabelVisibility(); renderCities(); maybeLoadRegions(); toggleRegionLines(); renderRegions(); });
+
+/* ── Minor country name collision pass — runs after renderPinLabels() (pins
+   keep priority, same as renderCities() below) and before renderCities(), so
+   a country name never displaces a guide pin's name, but DOES compete fairly
+   with world-city names for the same space. Majors (~45) are always shown
+   unconditionally — spread across the globe, collisions between them are
+   negligible; this only needed to matter for the ~196 minors, which cluster
+   densely in places like the Caribbean, Persian Gulf, and Balkans. Two
+   independent checks: (1) is this country's on-screen shape even big enough
+   to hold a label without spilling into neighbors, (2) does the label rect
+   clash with anything already placed this frame. ── */
+function renderCountryLabelVisibility() {
+  // FIXED (2026-07-19): majors used to be skipped entirely here — always on,
+  // never checked against anything. Found the gap by testing a dense city
+  // cluster: guide pins that happen to sit inside a major country (Cambridge
+  // inside United Kingdom, Bologna inside Italy) collided with that major's
+  // label with zero mitigation. Majors now go through the same clash check as
+  // minors — the only difference is majors skip the "is this country's shape
+  // even big enough on screen" gate, since a major is only ever suppressed by
+  // an actual clash, not by being small (that's what makes it "major").
+  const b = map.getBounds();
+  for (const { lyr, isMinor } of countryLabelEntries) {
+    const tt = lyr.getTooltip();
+    if (!tt) continue;
+    const center = tt.getLatLng();
+    if (!b.contains(center)) { lyr.closeTooltip(); continue; }
+    if (isMinor) {
+      const lb = lyr._voyagerBounds;
+      const p1 = map.latLngToContainerPoint(lb.getNorthWest());
+      const p2 = map.latLngToContainerPoint(lb.getSouthEast());
+      const w = Math.abs(p2.x - p1.x), h = Math.abs(p2.y - p1.y);
+      if (w < 40 || h < 20) { lyr.closeTooltip(); continue; }
+    }
+    const name = tt.getContent();
+    const p = map.latLngToContainerPoint(center);
+    // +18px pad each side: this estimate has already missed two real overlaps
+    // by a small margin (Ljubljana/Slovenia, Thailand/Cambodia) — real DOM
+    // rects don't exactly match hand-measured constants, and chasing each
+    // miss individually isn't converging. Padding generously trades a bit of
+    // extra suppression for actually reaching zero overlaps, verified across
+    // 12 regions (Caribbean, Balkans, Persian Gulf, SE Asia, Pacific, West
+    // Africa, dense Europe, Central America, dense US, Japan/Korea, world
+    // view) — see conversation 2026-07-19. Majors render bigger/bolder
+    // (12px 700 vs 9.5px 600) so they get a wider per-character estimate.
+    const rw = isMinor ? (name.length * 5.2 + 8 + 18) : (name.length * 6.8 + 10 + 18);
+    const rh = (isMinor ? 13 : 16) + 18;
+    const rect = { x: p.x - rw / 2, y: p.y - rh / 2, w: rw, h: rh };
+    let clash = false;
+    for (const q of labelPlacedRects) {
+      if (rect.x < q.x + q.w && rect.x + rect.w > q.x && rect.y < q.y + q.h && rect.y + rect.h > q.y) { clash = true; break; }
+    }
+    if (clash) { lyr.closeTooltip(); continue; }
+    lyr.openTooltip();
+    labelPlacedRects.push(rect);
+  }
+}
 
 // Keep the framed region clear of the overlay controls: pad left for the
 // desktop panel, pad bottom for the mobile docked bar.
@@ -543,36 +652,60 @@ getJSON('data/countries-50m.json')
       if (+f.id === 643 || +f.id === 242) f.geometry.coordinates = fixCoords(f.geometry.coordinates);
     });
     const layer = L.geoJSON(fc, {
-      style: f => ({
-        fillColor: colorFor(+f.id),
-        fillOpacity: 1,
-        color: darken(colorFor(+f.id), 0.6),
-        weight: 0.6,
-      }),
+      style: f => {
+        const nm = f.properties && f.properties.name;
+        return {
+          fillColor: colorFor(nm),
+          fillOpacity: 1,
+          color: darken(colorFor(nm), 0.6),
+          weight: 0.6,
+        };
+      },
       onEachFeature: (f, lyr) => {
-        const id = +f.id;
-        lyr.on('mouseover', () => lyr.setStyle({ fillColor: darken(colorFor(id), 1.12) }));
-        lyr.on('mouseout',  () => lyr.setStyle({ fillColor: colorFor(id) }));
-        if (LABEL[id]) {
-          const c = CENTERS[id] ? L.latLng(CENTERS[id][0], CENTERS[id][1]) : lyr.getBounds().getCenter();
-          lyr.bindTooltip(LABEL[id], {
-            permanent: true, direction: 'center', className: 'country-label-tip',
-            pane: 'countryLabels', interactive: false,
+        const nm = f.properties && f.properties.name;
+        lyr.on('mouseover', () => lyr.setStyle({ fillColor: darken(colorFor(nm), 1.12) }));
+        lyr.on('mouseout',  () => lyr.setStyle({ fillColor: colorFor(nm) }));
+        const labelCenter = LABEL_CENTERS[nm];
+        // PERF FIX (2026-07-19): getBounds() walks every vertex of a polygon
+        // (thousands for a complex coastline like Norway/Indonesia/Russia) —
+        // computed and cached ONCE here rather than re-called inside
+        // renderCountryLabelVisibility() on every single pan/zoom, which was
+        // costing 4+ SECONDS per moveend across 241 countries (found via
+        // direct performance.now() measurement, not a guess).
+        const bounds = lyr.getBounds();
+        lyr._voyagerBounds = bounds;
+        const c = labelCenter ? L.latLng(labelCenter[0], labelCenter[1]) : bounds.getCenter();
+        // Stashed for re-application after .addTo(map) below — Leaflet's own
+        // _openTooltip() recomputes a permanent tooltip's position from
+        // layer.getCenter() (bbox-center) the moment the layer is added to the
+        // map, silently overwriting any setLatLng() called before that point.
+        // That's why this was landing on borders/oceans for Somalia etc. even
+        // though the "right" coordinate was being set right here.
+        lyr._voyagerLabelCenter = c;
+        if (nm) {
+          const isMajor = MAJOR_COUNTRIES.has(nm);
+          lyr.bindTooltip(nm, {
+            permanent: true, direction: 'center',
+            className: isMajor ? 'country-label-tip' : 'minor-label-tip',
+            pane: isMajor ? 'countryLabels' : 'minorLabels',
+            interactive: false,
           });
-          lyr.getTooltip().setLatLng(c);
-        } else if (f.properties && f.properties.name) {
-          // Every other country gets its name too — in the minor-labels pane, which
-          // is hidden at world zoom and revealed at continent zoom (region buttons).
-          lyr.bindTooltip(f.properties.name, {
-            permanent: true, direction: 'center', className: 'minor-label-tip',
-            pane: 'minorLabels', interactive: false,
-          });
+          countryLabelEntries.push({ lyr, isMinor: !isMajor });
         }
       },
     }).addTo(map);
+    // Re-apply every tooltip's real position now that the layer is on the map
+    // — see the _voyagerLabelCenter comment above for why this has to happen
+    // AFTER addTo(map), not during onEachFeature.
+    layer.eachLayer(lyr => {
+      if (lyr._voyagerLabelCenter && lyr.getTooltip()) {
+        lyr.getTooltip().setLatLng(lyr._voyagerLabelCenter);
+      }
+    });
     layer.bringToBack();
     toggleMinorLabels();   // respect current zoom (hidden until continent zoom)
-    buildPins();
+    buildPins();           // seeds labelPlacedRects via its internal renderPinLabels() call
+    renderCountryLabelVisibility();
   })
   .catch(() => {
     document.getElementById('map').insertAdjacentHTML('beforeend',
@@ -592,9 +725,12 @@ getJSON('data/countries-50m.json')
 regionState.us = { loaded: true, lines: null, regions: [] };
 getJSON('data/us-states.json')
   .then(us => {
+    // RE-ENABLED (2026-07-19) — Dani: US keeps state-level names + borders;
+    // it's only the rest-of-world admin-1 subdivisions (Africa/Europe/etc,
+    // via maybeLoadRegions() below, still disabled) that were the clutter.
     L.geoJSON(us, {
       interactive: false,
-      style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
+      style: { fillOpacity: 0, color: darken(colorFor('United States of America'), 0.55), weight: 0.7 },
     }).addTo(map);
     us.features.forEach(f => {
       const nm = f.properties && f.properties.name;
@@ -614,9 +750,11 @@ getJSON('data/us-states.json')
 regionState.ca = { loaded: true, lines: null, regions: [] };
 getJSON('data/canada-provinces.json')
   .then(ca => {
+    // RE-ENABLED (2026-07-19) — grouped with US as North America; never part
+    // of the admin-1 clutter complaint (that was Africa/Europe specifically).
     L.geoJSON(ca, {
       interactive: false,
-      style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
+      style: { fillOpacity: 0, color: darken(colorFor('Canada'), 0.55), weight: 0.7 },
     }).addTo(map);
     ca.features.forEach(f => {
       const nm = f.properties && f.properties.name;
@@ -641,6 +779,14 @@ getJSON('data/canada-provinces.json')
    that call fires 'moveend' synchronously, which would otherwise hit these in
    their temporal dead zone.) ── */
 function maybeLoadRegions() {
+  return; // STAYS DISABLED (2026-07-19) — Dani: US/Canada keep subdivisions
+  // (re-enabled above), but the rest of the world stays country-level only —
+  // this is the lazy loader for the OTHER 6 continents' admin-1 data, which
+  // created too much clutter once it actually loaded correctly —
+  // Niger/Chad/Sudan/Nigeria all showing 100+ province names at once, same
+  // in Europe. Left the rest of
+  // this function's body below as dead code rather than deleting it, in case
+  // it's wanted back later — it's provably unreachable due to this return.
   if (map.getZoom() < 4) return;
   Object.entries(REGION_SOURCES).forEach(([key, src]) => {
     const st = regionState[key];
@@ -648,9 +794,24 @@ function maybeLoadRegions() {
     st.loaded = true;
     getJSON(src.file)
       .then(geo => {
+        // FIXED (was: flat neutral fill on top of the status-colored country layer
+        // below — since this loads lazily at z>=4, it made "been" countries in
+        // Europe/Asia/Africa/S.America/Oceania/Caribbean flip to neutral the moment
+        // you zoomed in, while North America (recolored separately, see US/Canada
+        // above) stayed correct — the exact inconsistency Dani flagged as "does not
+        // make sense" 2026-07-19. fillOpacity: 0 makes every subdivision layer
+        // boundary-lines-only, so the country-level fill is always what's visible,
+        // consistently, regardless of zoom or which continent.
+        // BUG FIX (2026-07-19): this referenced NO_GUIDE_COLOR, a variable that
+        // no longer exists after the been/want-color removal — it threw a
+        // ReferenceError on every call, silently swallowed by the .catch()
+        // below (which just reset st.loaded so it would quietly retry-and-fail
+        // forever). That's why Europe/Asia/Africa/S.America/Oceania/Caribbean
+        // never showed ANY subdivision lines, while US/Canada (fixed correctly
+        // earlier) did. Fixed border color to a plain neutral tone.
         st.lines = L.geoJSON(geo, {
           interactive: false, renderer: euCanvas,
-          style: { fillColor: '#cda36e', fillOpacity: 1, color: darken('#cda36e', 0.55), weight: 0.7 },
+          style: { fillOpacity: 0, color: '#8a8070', weight: 0.7 },
         });
         geo.features.forEach(f => {
           const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
@@ -672,6 +833,10 @@ function toggleRegionLines() {
   });
 }
 function renderRegions() {
+  // RE-ENABLED (2026-07-19) — maybeLoadRegions() (the 6-continent admin-1
+  // lazy loader) stays disabled below, so regionState.eu/sa/af/as/oc/cb.regions
+  // stay permanently empty — this naturally only ever renders US/Canada names,
+  // with zero code duplication needed to scope it.
   euRegionLayer.clearLayers();
   if (map.getZoom() < 4.5) return;
   const all = Object.values(regionState).flatMap(st => st.regions);
@@ -735,6 +900,9 @@ function nameTier(z) {           // which dots also get a name — CITY stage on
 }
 function renderCities() {
   cityLayer.clearLayers();
+  return; // DISABLED (2026-07-19) — Dani: "pin only where we have a guide
+  // period". Non-guide "major world city" name labels are gone; the only
+  // markers on the map now are actual guide destinations (PINS array).
   const z = map.getZoom();
   const dt = dotTier(z), nt = nameTier(z);
   if (dt < 0 || !CITY_DATA.length) return;
