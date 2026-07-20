@@ -1331,18 +1331,26 @@
       /* pillRow uses overview-extras class so both pills inherit all chip CSS */
       var pillRow = document.createElement('div');
       pillRow.className = 'overview-extras';
-      /* force flex so mobile grid doesn't kick in for this 2-pill row */
-      pillRow.setAttribute('style', 'display:flex!important;gap:8px;margin-bottom:8px;grid-template-columns:unset!important;');
-      pillRow.appendChild(trigBtn);
-      if (mapPill) pillRow.appendChild(mapPill);
-
-      /* mobile full-width stretch for the two action pills */
-      var tcStyle = document.createElement('style');
-      tcStyle.textContent =
-        '@media(max-width:600px){.overview-extras [id=ics-cal-pill],.overview-extras [id=ics-map-pill]{flex:1 1 0!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;}}';
-      document.head.appendChild(tcStyle);
+      /* force flex so mobile grid doesn't kick in for this 2-pill row;
+         gap!important needed — mobile guide-style overrides gap:0!important */
+      pillRow.setAttribute('style', 'display:flex!important;gap:8px!important;margin-bottom:8px;grid-template-columns:unset!important;width:100%;');
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
+
+      /* Inline !important beats every stylesheet rule (ID selectors, class rules,
+         mobile overrides) — CSS attribute-selector approach loses specificity on
+         mobile and leaves the pill right-aligned. Desktop unaffected. */
+      function _flexPill(el) {
+        el.style.setProperty('flex', '1 1 0', 'important');
+        el.style.setProperty('min-width', '0', 'important');
+        el.style.setProperty('align-items', 'center', 'important');
+        el.style.setProperty('justify-content', 'center', 'important');
+        el.style.setProperty('text-align', 'center', 'important');
+      }
+      _flexPill(trigBtn);
+      if (mapPill) _flexPill(mapPill);
+      pillRow.appendChild(trigBtn);
+      if (mapPill) pillRow.appendChild(mapPill);
 
       /* tve-pressed: iOS doesn't reliably fire :active on touch — add/remove
          the class on touchstart/touchend so the white-text active style shows */
