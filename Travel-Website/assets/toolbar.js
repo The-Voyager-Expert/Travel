@@ -1182,7 +1182,15 @@
     dateInput.style.cssText =
       'width:100%;padding:9px 11px;border:1.5px solid #c8a44a;border-radius:6px;' +
       'font-size:15px;font-family:inherit;box-sizing:border-box;margin-bottom:18px;' +
-      'color:#1b2531;background:#fff;';
+      'color:#1b2531;-webkit-text-fill-color:#1b2531;background:#fff;text-align:center;';
+    dateInput.addEventListener('focus', function () {
+      dateInput.style.setProperty('-webkit-text-fill-color', '#1b2531', 'important');
+      dateInput.style.setProperty('color', '#1b2531', 'important');
+    });
+    dateInput.addEventListener('blur', function () {
+      dateInput.style.setProperty('-webkit-text-fill-color', '#1b2531', 'important');
+      dateInput.style.setProperty('color', '#1b2531', 'important');
+    });
 
     var bRow = document.createElement('div');
     bRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
