@@ -401,8 +401,8 @@
          top:0 covers the full viewport; overflow-y:auto scrolls inside the
          panel; body overflow:hidden (set by toggleHamMenu) locks page scroll
          so only the menu scrolls while it is open. */
-      '.tb-ham-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;padding-top:64px;' +
-        'background:#ffffff;z-index:1001;padding:4px 0 8px;' +
+      '.tb-ham-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;' +
+        'background:#ffffff;border-top:1px solid #e6e2da;z-index:1001;padding:4px 0 16px;' +
         'overflow-y:auto;-webkit-overflow-scrolling:touch;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
