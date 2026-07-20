@@ -1193,8 +1193,7 @@
     dateInput.style.cssText =
       'width:100%;padding:9px 11px;border:1.5px solid #c8a44a;border-radius:6px;' +
       'font-size:15px;font-family:inherit;box-sizing:border-box;margin-bottom:18px;' +
-      'color:#1b2531;-webkit-text-fill-color:#1b2531;background:#fff;' +
-      'text-align:center;-webkit-appearance:none;appearance:none;';
+      'color:#1b2531;-webkit-text-fill-color:#1b2531;background:#fff;text-align:center;';
     dateInput.addEventListener('focus', function () {
       dateInput.style.setProperty('-webkit-text-fill-color', '#1b2531', 'important');
       dateInput.style.setProperty('color', '#1b2531', 'important');
@@ -1262,21 +1261,19 @@
       var icsContent = out.join('\r\n');
       var filename = city.toLowerCase().replace(/\s+/g, '-') + '-trip.ics';
       var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      var a = document.createElement('a');
+      _closeICS();
       if (isIOS) {
-        /* iOS ignores the download attribute on blob links and shows a share
-           sheet instead. A data: URI with MIME type text/calendar causes iOS
-           Safari to route it directly to Calendar's "Add to Calendar" prompt. */
-        a.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+        /* iOS: navigate directly — stays in user-gesture context, Safari routes
+           text/calendar data URIs straight to the Calendar "Add to Calendar" prompt. */
+        window.location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
       } else {
         var blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
         var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
         a.href = url; a.download = filename;
-        setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+        document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
       }
-      document.body.appendChild(a); a.click();
-      setTimeout(function () { if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
-      _closeICS();
     });
 
     bRow.appendChild(cancelBtn); bRow.appendChild(dlBtn);
