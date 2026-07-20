@@ -261,7 +261,6 @@
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
     null,
     { group: '📊 Stats', children: [
-        { href: base + 'Trip-Essentials/Travel-Stats.html',               text: '📊 Travel Stats' },
         { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: '📊 Stats Across US' },
         { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: '📊 Stats Across Canada' },
         { href: base + 'Trip-Essentials/Europe-Stats.html',               text: '📊 Stats Across Europe' },
@@ -270,7 +269,6 @@
         { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: '📊 Stats Across the Caribbean' },
         { href: base + 'Trip-Essentials/Guide-Days-Coverage.html',        text: '📊 Guide Days Coverage' },
         { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
-        { href: base + 'Trip-Essentials/Personal-Stats.html',             text: '📊 Personal Stats' },
       ]},
     null,
     { group: '💻 Lounges', children: [
@@ -662,6 +660,12 @@
         aTrips.textContent = '✈️ My Trips';
         if ('Trips.html' === curr) aTrips.className = 'tb-active';
         hamMenu.appendChild(aTrips);
+        /* OWNER-DIRECTED 2026-07-20: Personal Stats — mobile-only, right under My Trips. */
+        var aPS = document.createElement('a');
+        aPS.href = base + 'Trip-Essentials/Personal-Stats.html';
+        aPS.textContent = '📊 Personal Stats';
+        if ('Personal-Stats.html' === curr) aPS.className = 'tb-active';
+        hamMenu.appendChild(aPS);
       }
       firstItem = false;
       /* ── Region links (added 2026-07-19, moved right under World Map and
