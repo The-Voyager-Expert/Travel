@@ -635,25 +635,25 @@
       if (item.href.split('/').pop() === curr) a2.className = 'tb-active';
       hamMenu.appendChild(a2);
       firstItem = false;
-      /* ── Region section (added 2026-07-19, moved right under World Map
-         2026-07-20 — Dani: "the[y] should be together under the world map",
-         instead of buried at the very end of the main list next to Best Of.
-         Full region names now too ("South America" not "S. America") — full
-         width menu rows have plenty of room, no need to abbreviate. Works via
-         the hash router already built into World-Map.html
-         (World-Map.html#eu flies to Europe, etc.), which also fires on
-         in-page hash changes, not just initial load. ── */
+      /* ── Region links (added 2026-07-19, moved right under World Map and
+         merged into it 2026-07-20 — Dani: no separator/header between them
+         and "World Map" (reads as one continuous group now, not two), same
+         leading icon as "World Map" on every row (matches the site's locked
+         "toolbar dropdown group children share the group's leading icon"
+         rule), and no separate "World" entry — that's what tapping
+         "World Map" itself already does, no need to repeat it. Works via the
+         hash router already built into World-Map.html (World-Map.html#eu
+         flies to Europe, etc.), which also fires on in-page hash changes,
+         not just initial load. ── */
       if (/World-Map\.html$/.test(item.href)) {
-        var sepRg = document.createElement('div'); sepRg.className = 'tb-ham-sep'; hamMenu.appendChild(sepRg);
-        var hdrRg = document.createElement('div'); hdrRg.className = 'tb-ham-hdr'; hdrRg.textContent = 'Region'; hamMenu.appendChild(hdrRg);
         var regionLinks = [
-          ['World', 'world'], ['Europe', 'eu'], ['North America', 'na'], ['Caribbean', 'cb'],
+          ['Europe', 'eu'], ['North America', 'na'], ['Caribbean', 'cb'],
           ['Asia', 'as'], ['Africa', 'af'], ['South America', 'sa'], ['Oceania', 'oc'],
         ];
         regionLinks.forEach(function (r) {
           var a = document.createElement('a');
           a.href = base + 'Trip-Essentials/Maps/World-Map.html#' + r[1];
-          a.textContent = r[0];
+          a.textContent = '🗺️ ' + r[0];
           hamMenu.appendChild(a);
         });
       }
