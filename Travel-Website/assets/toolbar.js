@@ -826,10 +826,33 @@
        When a Nearby Guides card exists, insert the stamp directly AFTER it (as a
        standalone right-aligned line below the card). Otherwise fall back to
        appending inside the "Also on this site" card. Desktop keeps it up top. */
+    /* On mobile, wrap #also-on-this-site and #nearby-guides in a flex row so they
+       sit side by side. Must run before repositionUpdatedStamp so the stamp lands
+       after the wrapper, not inside it. */
+    function wrapAlsoAndNearby() {
+      if (!(window.matchMedia && window.matchMedia('(max-width: 600px)').matches)) return;
+      var also = document.getElementById('also-on-this-site');
+      var nearby = document.getElementById('nearby-guides');
+      if (!also || !nearby) return;
+      /* Only wrap when they are adjacent siblings */
+      if (also.nextElementSibling !== nearby) return;
+      var wrap = document.createElement('div');
+      wrap.id = 'also-nearby-wrap';
+      also.parentNode.insertBefore(wrap, also);
+      wrap.appendChild(also);
+      wrap.appendChild(nearby);
+    }
     function repositionUpdatedStamp() {
       if (!(window.matchMedia && window.matchMedia('(max-width: 600px)').matches)) return;
       var upd = document.querySelector('.title-page .title-updated') || document.querySelector('.title-updated');
       if (!upd) return;
+      /* After wrapAlsoAndNearby(), both sections live inside #also-nearby-wrap.
+         Insert the stamp after the wrapper if it exists, else fall back. */
+      var wrap = document.getElementById('also-nearby-wrap');
+      if (wrap && wrap.parentNode) {
+        wrap.parentNode.insertBefore(upd, wrap.nextSibling);
+        return;
+      }
       var nearby = document.getElementById('nearby-guides');
       if (nearby && nearby.parentNode) {
         nearby.parentNode.insertBefore(upd, nearby.nextSibling);
@@ -838,7 +861,7 @@
         if (also && also.parentNode) also.parentNode.insertBefore(upd, also.nextSibling);
       }
     }
-    function repositionMobileBits() { repositionReadAbout(); repositionUpdatedStamp(); }
+    function repositionMobileBits() { repositionReadAbout(); wrapAlsoAndNearby(); repositionUpdatedStamp(); }
     if (document.readyState === 'complete') repositionMobileBits();
     else window.addEventListener('load', repositionMobileBits);
 
