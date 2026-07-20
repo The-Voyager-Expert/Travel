@@ -397,7 +397,7 @@
       '.tb-ham-label{display:block;min-height:0!important;font-size:15px;font-weight:700;color:#fff;padding-left:14px;letter-spacing:.06em;text-transform:uppercase}' +
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
         'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
-        'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:999;padding:4px 0 8px;' +
+        'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:1001;padding:4px 0 8px;' +
         'max-height:calc(100dvh - 52px);overflow-y:auto;-webkit-overflow-scrolling:touch}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
       '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:14px;color:#3d3a32!important;text-decoration:none;' +
