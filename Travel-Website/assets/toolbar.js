@@ -1140,13 +1140,24 @@
 
     var box = document.createElement('div');
     box.style.cssText =
-      'background:#fff;border-radius:12px;padding:26px 26px 20px;' +
+      'position:relative;background:#fff;border-radius:12px;padding:26px 26px 20px;' +
       'max-width:320px;width:90vw;box-shadow:0 12px 40px rgba(0,0,0,.22);' +
       'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+    /* Stop touches inside the box from bubbling to the overlay backdrop */
+    box.addEventListener('click', function (e) { e.stopPropagation(); });
+    box.addEventListener('touchend', function (e) { e.stopPropagation(); });
 
     var bTitle = document.createElement('div');
-    bTitle.textContent = '📅 Export to Calendar';
-    bTitle.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;margin-bottom:5px;';
+    bTitle.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;';
+    var bTitleText = document.createElement('span');
+    bTitleText.textContent = '📅 Export to Calendar';
+    bTitleText.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;';
+    var xBtn = document.createElement('button');
+    xBtn.type = 'button'; xBtn.textContent = '✕';
+    xBtn.style.cssText =
+      'background:none;border:none;font-size:16px;color:#9a948a;cursor:pointer;' +
+      'padding:0 0 0 12px;line-height:1;flex-shrink:0;';
+    bTitle.appendChild(bTitleText); bTitle.appendChild(xBtn);
 
     var bSub = document.createElement('div');
     bSub.textContent = 'When does Day 1 start? All ' + days.length +
@@ -1180,7 +1191,10 @@
       'font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;';
 
     function _closeICS() { overlay.style.display = 'none'; }
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) _closeICS(); });
+    /* No click-outside-to-close: on iOS the native date picker dismissal
+       fires a tap on the overlay backdrop, which would close the modal
+       before the user can pick a date. Close only via X or Cancel. */
+    xBtn.addEventListener('click', _closeICS);
     cancelBtn.addEventListener('click', _closeICS);
 
     dlBtn.addEventListener('click', function () {
@@ -1273,6 +1287,16 @@
       document.head.appendChild(tcStyle);
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
+
+      /* tve-pressed: iOS doesn't reliably fire :active on touch — add/remove
+         the class on touchstart/touchend so the white-text active style shows */
+      function _addTvePress(el) {
+        el.addEventListener('touchstart', function () { el.classList.add('tve-pressed'); }, { passive: true });
+        el.addEventListener('touchend',   function () { setTimeout(function () { el.classList.remove('tve-pressed'); }, 300); }, { passive: true });
+        el.addEventListener('touchcancel',function () { el.classList.remove('tve-pressed'); }, { passive: true });
+      }
+      _addTvePress(trigBtn);
+      if (mapPill) _addTvePress(mapPill);
       /* iOS: :active on javascript:void(0) links is unreliable — use touchstart/end class */
       [trigBtn, mapPill].forEach(function (el) {
         if (!el) return;
