@@ -1071,6 +1071,15 @@ div.train .train-time   { padding: 2px 0; }
 #shows               .extras-title + .extras-sub { margin-top: 0; }
 #restaurants-near-hotel .extras-title + .extras-sub { margin-top: 0; }
 #downtown-restaurants   .extras-title + .extras-sub { margin-top: 0; }
+/* Close the second gap source: .extras-title has margin-bottom: 16px which
+   still creates a 16px white gap above the first colored entry even after the
+   margin-top reset above. When .extras-title is immediately followed by
+   .extras-sub, collapse that margin-bottom to 0. The :has(+ .extras-sub)
+   guard preserves the 16px breathing room for .extras-empty sections.
+   Enforced: brain_check check_extras_title_gap (HARD-FAIL). (2026-07-19) */
+.extras-section .extras-title:has(+ .extras-sub) {
+  margin-bottom: 0;
+}
 
 #tours               .extras-sub { color: var(--c-text-primary); }
 /* 📅 Tours — platform group sub-heading (Viator / GetYourGuide / TripAdvisor).
@@ -1868,14 +1877,6 @@ div.train .train-time   { padding: 2px 0; }
     font-weight: bold !important;
     text-transform: uppercase !important;
   }
-  /* Also on this site + Nearby Guides — 3-col grid matching desktop extras nav chip style */
-  #also-on-this-site { margin-bottom: 8px !important; }
-  .also-on-this-site-pills { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 7px !important; }
-  .also-on-this-site-pill { display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; white-space: normal !important; line-height: 1.15 !important; min-height: 46px !important; padding: 6px 12px !important; border: 0.5px solid #c8a44a !important; border-radius: 6px !important; background: #ffffff !important; font-size: 13px !important; }
-  .also-on-this-site-pills .also-on-this-site-pill[href*="Stats"],
-  .also-on-this-site-pills .also-on-this-site-pill[href*="European-Train-Guide"] { grid-column: 1 / -1 !important; }
-  .nearby-guides-pills { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 7px !important; }
-  .nearby-guide-pill { display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; white-space: normal !important; line-height: 1.15 !important; min-height: 46px !important; padding: 6px 12px !important; border: 0.5px solid #c8a44a !important; border-radius: 6px !important; background: #ffffff !important; font-size: 13px !important; }
   /* The "Updated {Month}" stamp on mobile:
      Always inserted as a sibling AFTER the last section — either AFTER
      #nearby-guides (when present) or AFTER #also-on-this-site (fallback).
@@ -2354,4 +2355,15 @@ a.nearby-guide-pill:active {
   border-color: #b85c2a;
   box-shadow: 0 1px 3px rgba(184,92,42,.12);
   transform: scale(.97) translateY(1px);
+}
+/* Mobile: Also on this site + Nearby Guides — 3-col grid, extras-nav chip style.
+   Placed AFTER the base rules so media query wins without needing !important fights. */
+@media (max-width: 600px) {
+  #also-on-this-site { margin-bottom: 8px; }
+  .also-on-this-site-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; min-height: 46px; padding: 6px 12px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 13px; }
+  .also-on-this-site-pills .also-on-this-site-pill[href*="Stats"],
+  .also-on-this-site-pills .also-on-this-site-pill[href*="European-Train-Guide"] { grid-column: 1 / -1; }
+  .nearby-guides-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .nearby-guide-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; min-height: 46px; padding: 6px 12px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 13px; }
 }
