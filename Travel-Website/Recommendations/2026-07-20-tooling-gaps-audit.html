@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tooling Gaps Audit — 2026-07-20</title>
+<style>
+  :root {
+    --accent: #b85c2a;
+    --accent-dark: #7a3b1e;
+    --gold: #8a6c1a;
+    --bg: #f7f4ee;
+    --surface: #ffffff;
+    --border: #d4c4a0;
+    --text: #2c2a22;
+    --muted: #6b6455;
+    --green: #2d7a3a;
+    --amber: #c07800;
+    --red: #b02020;
+    --blue: #1a5c8a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 0 0 60px;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 55%, #d4874a 100%);
+    color: white;
+    padding: 28px 32px 24px;
+  }
+  header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.02em; }
+  header p { opacity: 0.85; font-size: 13px; margin-top: 4px; }
+  header .sub { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+  .back { display: inline-block; margin: 16px 32px; font-size: 12px; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+
+  .lede {
+    background: var(--surface);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 24px 0 20px;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+  .lede strong { color: var(--accent); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat .num { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat.green .num { color: var(--green); }
+  .stat.amber .num { color: var(--amber); }
+  .stat.red .num { color: var(--red); }
+
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 6px;
+    margin: 32px 0 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: #fdfaf5;
+  }
+  .card-title { font-weight: 600; font-size: 14px; flex: 1; }
+  .card-body { padding: 14px 16px; font-size: 13.5px; line-height: 1.65; }
+  .card-body p { margin-bottom: 10px; }
+  .card-body p:last-child { margin-bottom: 0; }
+
+  .badge {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge.p1 { background: #fde8e8; color: var(--red); }
+  .badge.p2 { background: #fef3d8; color: var(--amber); }
+  .badge.p3 { background: #e8f0fb; color: var(--blue); }
+  .badge.new { background: #e6f4ea; color: var(--green); }
+  .badge.open { background: #fef3d8; color: var(--amber); }
+  .badge.carryover { background: #f0eafd; color: #6b2fa0; }
+  .badge.fixed { background: #e6f4ea; color: var(--green); }
+  .badge.reducing { background: #e6f4ea; color: var(--green); }
+
+  .verify-block {
+    background: #f5f2ec;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+    font-size: 12px;
+    color: #3a3530;
+    overflow-x: auto;
+  }
+
+  code {
+    background: #f0ede6;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: ui-monospace, "Cascadia Code", monospace;
+    font-size: 12.5px;
+    color: var(--accent-dark);
+  }
+
+  .affected-list {
+    background: #fdf8f2;
+    border: 1px solid #e0d4b8;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 10px 0;
+  }
+  .affected-list ul { padding-left: 18px; }
+  .affected-list li { font-size: 12.5px; margin-bottom: 3px; }
+  .affected-list li code { font-size: 11.5px; }
+
+  .action-box {
+    background: #f7fdf8;
+    border: 1px solid #b8dfc0;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .action-box strong { color: var(--green); }
+
+  .covered-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin: 12px 0; }
+  .covered-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .covered-item::before { content: "✓"; color: var(--green); flex-shrink: 0; }
+
+  .action-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+  .action-table th {
+    background: #f0ebe0;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+  }
+  .action-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #ede8de;
+    vertical-align: top;
+  }
+  .action-table tr:last-child td { border-bottom: none; }
+  .action-table code { font-size: 11.5px; }
+
+  .dropped-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 12px;
+  }
+  .dropped-section h3 { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 10px; }
+  .dropped-item { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; padding-left: 16px; position: relative; }
+  .dropped-item::before { content: "✕"; position: absolute; left: 0; color: #c0b8a8; }
+
+  .protocol-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .protocol-box ul { padding-left: 18px; margin-top: 8px; }
+  .protocol-box li { margin-bottom: 5px; }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1c18;
+      --surface: #2a2720;
+      --border: #4a4438;
+      --text: #e8e4dc;
+      --muted: #a09880;
+    }
+    header { background: linear-gradient(135deg, #5a2a10 0%, #8a4420 55%, #a86030 100%); }
+    .card-header { background: #24211c; }
+    .verify-block { background: #24211c; color: #d0c8b8; }
+    code { background: #2e2b24; color: #d4874a; }
+    .action-table th { background: #28251e; }
+    .action-box { background: #1c2620; border-color: #2a4a30; }
+    .affected-list { background: #26221c; border-color: #4a4030; }
+    .dropped-section { background: #24211c; }
+    .covered-item { background: #24211c; }
+    .protocol-box { background: #24211c; }
+    .action-table td { border-bottom-color: #38342c; }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1e1c18;
+    --surface: #2a2720;
+    --border: #4a4438;
+    --text: #e8e4dc;
+    --muted: #a09880;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f4ee;
+    --surface: #ffffff;
+    --border: #d4c4a0;
+    --text: #2c2a22;
+    --muted: #6b6455;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Tooling Gaps Audit</h1>
+  <p>Scripts · Routines · Validators · Artifacts — weekly gap scan</p>
+  <div class="sub">2026-07-20 · scheduled weekly run · autonomous</div>
+</header>
+
+<a href="." class="back">← Recommendations</a>
+
+<div class="wrap">
+
+  <!-- Lede -->
+  <div class="lede">
+    <strong>3 new verified gaps · 2 carry-overs · 4 candidates dropped after live check.</strong>
+    The most critical finding this week: <strong>7 guide-day-expansion SKILL.md files (including all 5 on-demand variants) open <code>Travel-Website/Guides/Guides-Index.html</code></strong> — the 9-line redirect stub — instead of the actual index at <code>Travel-Website/Guides-Index.html</code>. The stub has no <code>var DAYS_DATA</code>, so the day-count context step silently fails. A second new finding: <code>brain_check.py</code>'s css-duplication warning has printed "across 0 pages" since the index was relocated because the parser searches for "Total pages affected:" while the script outputs "Total pages with inline styles:" — a 1-line regex mismatch. A third confirmed gap: <code>build_guides_index.py</code> also reads the stub (already in the To Do List). The two P2 carry-overs from 2026-07-18 have both improved: the JSON staleness is down to 4 missing dirs (from 13 last week), and the filter-audit/filters-tags overlap is structurally distinct at 82 diff lines.
+  </div>
+
+  <!-- Stat tiles -->
+  <div class="stats">
+    <div class="stat">
+      <div class="num">93</div>
+      <div class="lbl">Routines in JSON</div>
+    </div>
+    <div class="stat">
+      <div class="num">99</div>
+      <div class="lbl">Scripts on disk</div>
+    </div>
+    <div class="stat red">
+      <div class="num">5</div>
+      <div class="lbl">Open verified gaps</div>
+    </div>
+    <div class="stat amber">
+      <div class="num">4</div>
+      <div class="lbl">Candidates dropped</div>
+    </div>
+  </div>
+
+  <!-- Verification protocol -->
+  <div class="protocol-box">
+    <strong style="font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);">Verification checklist</strong>
+    <ul>
+      <li><strong>Script gap:</strong> confirmed file exists / does not exist — <code>ls Brain/scripts/{name}.py</code></li>
+      <li><strong>Routine gap:</strong> confirmed no matching ID in JSON AND no skill dir in <code>~/.claude/scheduled-tasks/</code></li>
+      <li><strong>Coverage gap:</strong> ran the relevant grep / live execution to confirm gap is still real today</li>
+      <li><strong>Queue gap:</strong> confirmed no queue/state file suggesting work already in progress</li>
+    </ul>
+    <p style="margin-top:10px;font-size:12.5px;">This run — <strong>4 candidates dropped after live check.</strong> Details in Dropped section below.</p>
+  </div>
+
+  <!-- ─── NEW GAPS ─── -->
+  <h2>New gaps — 3 this run</h2>
+
+  <!-- P1: guide-day-expansion redirect stub -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge p1">P1</span>
+      <span class="badge new">New</span>
+      <div class="card-title">7 guide-day-expansion SKILL.md files open the Guides-Index redirect stub</div>
+    </div>
+    <div class="card-body">
+      <p><strong>What breaks:</strong> Every guide-day-expansion run (daily scheduled + all 5 on-demand variants) executes <code>html = open('Travel-Website/Guides/Guides-Index.html').read()</code> on line 54 of their SKILL.md. That path resolves to the 9-line redirect stub (<code>&lt;meta http-equiv="refresh" content="0;url=../Guides-Index.html"&gt;</code>) — not the actual index at <code>Travel-Website/Guides-Index.html</code>. The subsequent <code>re.search(r'var DAYS_DATA\s*=\s*(\{[^;]+\})', html, re.DOTALL)</code> returns <code>None</code>, causing <code>m.group(1)</code> to raise <code>AttributeError</code>. The crib sees the crash, skips the day-count context step, and proceeds with no day-count data — so it can't identify guides that already have many days vs. short ones.</p>
+
+      <div class="verify-block">
+wc -l "Travel-Website/Guides/Guides-Index.html"
+# → 9 lines (redirect stub confirmed)
+grep "DAYS_DATA" "Travel-Website/Guides/Guides-Index.html"
+# → (no output — stub has no DAYS_DATA block)
+
+grep -n "Guides/Guides-Index" ~/.claude/scheduled-tasks/guide-day-expansion/SKILL.md
+# → 54: html = open('Travel-Website/Guides/Guides-Index.html').read()
+</div>
+
+      <div class="affected-list">
+        <strong style="font-size:12px;display:block;margin-bottom:6px;">Affected SKILL.md files (all 7):</strong>
+        <ul>
+          <li><code>~/.claude/scheduled-tasks/guide-day-expansion/SKILL.md</code> — line 54</li>
+          <li><code>~/.claude/scheduled-tasks/on-demand-guide-day-expansion/SKILL.md</code> — line 54</li>
+          <li><code>~/.claude/scheduled-tasks/on-demand-guide-day-expansion-2/SKILL.md</code> — line 54</li>
+          <li><code>~/.claude/scheduled-tasks/on-demand-guide-day-expansion-3/SKILL.md</code> — line 54</li>
+          <li><code>~/.claude/scheduled-tasks/on-demand-guide-day-expansion-4/SKILL.md</code> — line 54</li>
+          <li><code>~/.claude/scheduled-tasks/on-demand-guide-day-expansion-5/SKILL.md</code> — line 54</li>
+          <li><code>~/.claude/scheduled-tasks/guide-content-audit/SKILL.md</code> — line 148 (has a glob fallback, so degrades gracefully, but loses all dest-card metadata)</li>
+        </ul>
+      </div>
+
+      <div class="action-box">
+        <strong>Action:</strong> In each of the 7 SKILL.md files, change the open() path from <code>'Travel-Website/Guides/Guides-Index.html'</code> to <code>'Travel-Website/Guides-Index.html'</code> (one level up — the actual index since the 2026-07-15 relocation). Also update prose references in <code>features-content-ideas</code>, <code>features-content-ideas-crib-2/3</code>, <code>ux-format-audit</code>, and <code>visas-audit</code> that mention <code>Guides/Guides-Index.html</code> in orientation steps — those cribs use the Read tool on that path and get the stub.
+      </div>
+    </div>
+  </div>
+
+  <!-- P2: brain_check css-duplication "0 pages" bug -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge p2">P2</span>
+      <span class="badge new">New · confirmed</span>
+      <div class="card-title"><code>brain_check.py</code> css-duplication warning always shows "across 0 pages"</div>
+    </div>
+    <div class="card-body">
+      <p><strong>Root cause:</strong> <code>brain_check.py</code> line 2418 searches for <code>"Total pages affected:\s*(\d+)"</code> in <code>check_css_duplication.py</code>'s stdout. But the script prints <code>"Total pages with inline styles: 128"</code> — different label. The regex never matches, <code>mp</code> is <code>None</code>, <code>pages</code> defaults to <code>0</code>, and every session start warns: "255 duplicated CSS selectors across 0 pages." This makes the warning look like a false alarm (0 pages affected?) and has been masking the real severity since the Guides-Index relocation.</p>
+
+      <div class="verify-block">
+# What check_css_duplication.py actually prints:
+python3 Brain/scripts/check_css_duplication.py 2>/dev/null | grep "^Total"
+# → Total duplicated selectors: 255
+# → Total pages with inline styles: 128
+
+# What brain_check.py parses (line 2418):
+# mp = re.search(r"Total pages affected:\s*(\d+)", result.stdout)
+# → mp is None → pages = 0
+</div>
+
+      <div class="action-box">
+        <strong>Action:</strong> In <code>Brain/scripts/brain_check.py</code> line 2418, change the regex from <code>r"Total pages affected:\s*(\d+)"</code> to <code>r"Total pages with inline styles:\s*(\d+)"</code>. One character change; the warning will then correctly read "255 duplicated CSS selectors across 128 pages."
+      </div>
+    </div>
+  </div>
+
+  <!-- P2: build_guides_index.py stale path -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge p2">P2</span>
+      <span class="badge new">New · confirmed · in To Do List (2026-07-19)</span>
+      <div class="card-title"><code>build_guides_index.py</code> reads the redirect stub at <code>Guides/Guides-Index.html</code></div>
+    </div>
+    <div class="card-body">
+      <p><strong>What breaks:</strong> Lines 25–26 of <code>build_guides_index.py</code> set <code>GUIDES_DIR = REPO_ROOT / 'Travel-Website' / 'Guides'</code> and <code>INDEX_FILE = GUIDES_DIR / 'Guides-Index.html'</code>. That resolves to the 9-line redirect stub. When the script reads it, it finds no <code>dest-card</code> entries and generates empty output — a silent no-op that looks like a successful run. Already logged to the To Do List 2026-07-19 as a known script bug.</p>
+
+      <div class="verify-block">
+# Live state:
+head -5 "Travel-Website/Guides/Guides-Index.html"
+# → &lt;meta http-equiv="refresh" content="0;url=../Guides-Index.html"&gt;
+
+# build_guides_index.py lines 25–26:
+# GUIDES_DIR = REPO_ROOT / 'Travel-Website' / 'Guides'
+# INDEX_FILE = GUIDES_DIR / 'Guides-Index.html'   ← redirect stub
+</div>
+
+      <div class="action-box">
+        <strong>Action:</strong> In <code>Brain/scripts/build_guides_index.py</code> line 26, change: <code>INDEX_FILE = GUIDES_DIR / 'Guides-Index.html'</code> → <code>INDEX_FILE = REPO_ROOT / 'Travel-Website' / 'Guides-Index.html'</code>. Matches how <code>build_status_dots.py</code>, <code>sync_tracker.py</code>, and <code>validate_guides_index_inline.py</code> resolved the same relocation.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CARRY-OVERS ─── -->
+  <h2>Carry-over gaps — 2 open</h2>
+
+  <!-- P2 carry-over: JSON staleness -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge p2">P2</span>
+      <span class="badge open">Open</span>
+      <span class="badge reducing">Carry-over · reducing</span>
+      <div class="card-title"><code>voyager_routines_export.json</code> has 4 skill dirs not yet reflected</div>
+    </div>
+    <div class="card-body">
+      <p><strong>Progress:</strong> Gap has closed significantly — down from 48 dirs in 2026-07-16, 13 dirs in 2026-07-18, to just 4 dirs today. The JSON was clearly refreshed between reports. Only 4 non-ephemeral skill dirs are still absent from the JSON:</p>
+
+      <div class="affected-list">
+        <ul>
+          <li><code>destination-scouting</code> — weekly destination research routine; has a SKILL.md + cron (not in JSON)</li>
+          <li><code>visual-drift-watch</code> — weekly visual compliance watch; has a SKILL.md (not in JSON)</li>
+          <li><code>features-content-ideas-crib-2</code> — parallel ideas crib 2; has a SKILL.md (not in JSON)</li>
+          <li><code>features-content-ideas-crib-3</code> — parallel ideas crib 3; has a SKILL.md (not in JSON)</li>
+        </ul>
+      </div>
+
+      <div class="verify-block">
+# JSON: 93 entries
+# Scheduled-tasks dirs: 97 total, 67 non-ephemeral
+# Missing from JSON (confirmed via set diff):
+for d in destination-scouting visual-drift-watch features-content-ideas-crib-2 features-content-ideas-crib-3; do
+  echo "NOT IN JSON: $d"
+done
+</div>
+
+      <div class="action-box">
+        <strong>Action:</strong> User — do one more export refresh from the claude.ai scheduled-tasks interface. The 4 missing dirs should appear once they're registered in the scheduler (or confirmed they only have local SKILL.md files without live cron registrations). Once all 4 resolve, this gap is fully closed.
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 carry-over: filter-audit duplication -->
+  <div class="card">
+    <div class="card-header">
+      <span class="badge p3">P3</span>
+      <span class="badge open">Open</span>
+      <span class="badge carryover">Carry-over</span>
+      <div class="card-title"><code>filter-audit</code> and <code>filters-tags-index-audit</code> share overlapping core steps</div>
+    </div>
+    <div class="card-body">
+      <p><strong>Status:</strong> The two SKILL.md files differ by 82 lines (up from ~18 lines noted two weeks ago — they've diverged naturally). The core Steps 1–7 covering <code>THEME_DATA</code>, <code>data-lang</code>, <code>DAYS_DATA</code>, <code>CLIMATE_INLINE</code>, <code>COST_DATA</code>, <code>SAFETY_DATA</code>, and <code>FMAP</code> are structurally shared. Both routines run on Wednesday (<code>filter-audit</code> cron: <code>0 8 * * 3</code>; <code>filters-tags-index-audit</code>: no live cron — None in JSON). Since <code>filters-tags-index-audit</code> has no live cron, there's actually no scheduling conflict. The risk is future drift if either routine adds a step the other should also have.</p>
+
+      <div class="verify-block">
+diff ~/.claude/scheduled-tasks/filter-audit/SKILL.md \
+     ~/.claude/scheduled-tasks/filters-tags-index-audit/SKILL.md | wc -l
+# → 82 lines diff
+
+# filter-audit: cron = 0 8 * * 3 (Wednesday 8am)
+# filters-tags-index-audit: cron = None (not scheduled)
+</div>
+
+      <div class="action-box">
+        <strong>Action (low urgency):</strong> Since <code>filters-tags-index-audit</code> has no live cron, no immediate conflict. Note that if it gets a cron, the two will overlap. Consider either merging them into one routine or documenting their distinct scope (e.g. <code>filter-audit</code> = apply fixes, <code>filters-tags-index-audit</code> = reporting-only).
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── ALREADY WELL-COVERED ─── -->
+  <h2>Already well-covered — audited this run</h2>
+  <div class="covered-grid">
+    <div class="covered-item">guide-day-expansion city ranking — qualitative (Step 2) unaffected by DAYS_DATA crash</div>
+    <div class="covered-item">Day-Trips.html data — <code>build_day_trips.py --dry-run</code> shows 116 cities / 447 trips; page has full inline DATA block</div>
+    <div class="covered-item"><code>validate_regional_stats_chips.py</code> — called by <code>guide_tools.py start</code> step 3f; no standalone routine gap</div>
+    <div class="covered-item">CSS consolidation scripts (9 one-off tools) — intentionally retired after 2026-06-23 consolidation; all correctly undocumented</div>
+    <div class="covered-item"><code>verify_booking_links.py</code> auto-prune guard — blast-radius guard added 2026-07-15; lines 706–712 confirm 10% cap + empty-URL-set abort</div>
+    <div class="covered-item"><code>validate_continuity_render.py</code> — confirmed in <code>cross-page-consistency-audit</code> SKILL.md line 223</div>
+    <div class="covered-item">Claude Inspiration backfill — zero guides missing section (confirmed via grep, same as 2026-07-18)</div>
+    <div class="covered-item">Read-about backfill — confirmed 0 missing in this session's grep</div>
+    <div class="covered-item">All 99 scripts referenced in at least one SKILL.md file (confirmed by Python set diff)</div>
+    <div class="covered-item">brain_check exits 193/197 ok — 4 warn (toolbar-version on prototype files + css-duplication count); 0 fail</div>
+  </div>
+
+  <!-- ─── ACTION SUMMARY TABLE ─── -->
+  <h2>Action summary</h2>
+  <div style="overflow-x: auto;">
+    <table class="action-table">
+      <thead>
+        <tr>
+          <th>Priority</th>
+          <th>Gap</th>
+          <th>Verification run</th>
+          <th>Concrete action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge p1">P1</span></td>
+          <td>7 guide-day-expansion SKILL.md files open redirect stub</td>
+          <td><code>wc -l Travel-Website/Guides/Guides-Index.html → 9</code></td>
+          <td>Change path to <code>Travel-Website/Guides-Index.html</code> in all 7 files</td>
+        </tr>
+        <tr>
+          <td><span class="badge p2">P2</span></td>
+          <td>brain_check css-duplication prints "0 pages"</td>
+          <td>Script outputs <code>Total pages with inline styles: 128</code>; regex seeks <code>Total pages affected:</code></td>
+          <td>Fix regex in <code>brain_check.py</code> line 2418</td>
+        </tr>
+        <tr>
+          <td><span class="badge p2">P2</span></td>
+          <td><code>build_guides_index.py</code> reads redirect stub (To Do List)</td>
+          <td><code>INDEX_FILE = GUIDES_DIR / 'Guides-Index.html'</code> → stub confirmed</td>
+          <td>Change <code>INDEX_FILE</code> to <code>REPO_ROOT / 'Travel-Website' / 'Guides-Index.html'</code></td>
+        </tr>
+        <tr>
+          <td><span class="badge p2">P2 ↓</span></td>
+          <td>4 skill dirs absent from <code>voyager_routines_export.json</code></td>
+          <td>Set diff: 4 dirs confirmed missing (down from 13)</td>
+          <td>User — re-export JSON from claude.ai scheduler interface</td>
+        </tr>
+        <tr>
+          <td><span class="badge p3">P3</span></td>
+          <td>filter-audit / filters-tags-index-audit step overlap</td>
+          <td>diff: 82 lines; filters-tags-index-audit has no live cron</td>
+          <td>Document distinct scope or merge; low urgency until filters-tags gets a cron</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ─── DROPPED CANDIDATES ─── -->
+  <h2>Candidates dropped by verification — 4</h2>
+  <div class="dropped-section">
+    <h3>The following items were investigated but do not represent real gaps in the live codebase:</h3>
+
+    <div class="dropped-item">
+      <strong>Day-Trips.html stale data gap</strong> — Looked like a gap because <code>grep -c 'class="dt-city"'</code> returned 3 (CSS rules only). Live check: <code>build_day_trips.py --dry-run</code> found 116 cities / 447 trips, and the actual page has a full 171KB inline <code>const DATA = [...]</code> block. Not a gap — the page IS populated.
+    </div>
+
+    <div class="dropped-item">
+      <strong><code>validate_regional_stats_chips.py</code> unscheduled</strong> — The script is called by <code>guide_tools.py start</code> step 3f as a fleet backstop with <code>--warn</code> at every session start, and as a scoped hard gate on ship. No standalone routine needed.
+    </div>
+
+    <div class="dropped-item">
+      <strong>CSS consolidation scripts are a scheduling gap</strong> — Investigated 9 one-off consolidation scripts (<code>apply_css_consolidation.py</code>, <code>consolidate_*.py</code>, etc.) not in any SKILL.md. Confirmed: these are intentionally retired one-off tools from the June 2026 consolidation project. <code>fix_also_on_this_site.py</code> carries an explicit "DO NOT RUN" docstring. None warrant routine scheduling.
+    </div>
+
+    <div class="dropped-item">
+      <strong><code>validate_image_sizes.py</code> unscheduled</strong> — carry-over from 2026-07-18, re-verified. Ship-gate auto-heals oversized photos; current fleet has 0 oversized photos on disk. No standalone routine needed.
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+</body>
+</html>
