@@ -630,6 +630,83 @@
       firstItem = false;
     }
   });
+  /* ── Best Of section ── */
+  (function () {
+    var sepBo = document.createElement('div'); sepBo.className = 'tb-ham-sep'; hamMenu.appendChild(sepBo);
+    var hdrBo = document.createElement('div'); hdrBo.className = 'tb-ham-hdr'; hdrBo.textContent = 'Best Of'; hamMenu.appendChild(hdrBo);
+    var bestOfPages = [
+      ['Amusement Parks',           'Best-Amusement-Parks.html'],
+      ['Animal Encounters',         'Best-Animal-Encounters.html'],
+      ['Aquariums',                 'Best-Aquariums.html'],
+      ['Architecture',              'Best-Architecture.html'],
+      ['Art Museums',               'Best-Art-Museums.html'],
+      ['Beaches',                   'Best-Beaches.html'],
+      ['Castles',                   'Best-Castles.html'],
+      ['Cathedrals',                'Best-Cathedrals.html'],
+      ['Caves',                     'Best-Caves.html'],
+      ['Gardens',                   'Best-Gardens.html'],
+      ['Hard-to-Reach Places',      'Best-Hard-to-Reach-Places.html'],
+      ['Hot Springs',               'Best-Hot-Springs.html'],
+      ['Islands',                   'Best-Islands.html'],
+      ['Kid-Friendly Destinations', 'Best-Kids-Friendly-Places.html'],
+      ["Kids' Museums",             'Best-Kids-Museums.html'],
+      ['Lakes',                     'Best-Lakes.html'],
+      ['Luxurious Hotels',          'Best-Most-Luxurious-Hotels.html'],
+      ['Mountains & Rock Formations','Best-Mountains-and-Rock-Formations.html'],
+      ['Museums',                   'Best-Museums.html'],
+      ['National Parks',            'Best-National-Parks-by-Country.html'],
+      ['Natural Phenomena',         'Best-Natural-Phenomena.html'],
+      ['Observation Decks',         'Best-Observation-Decks.html'],
+      ['Resorts',                   'Best-Resorts.html'],
+      ['Safari',                    'Best-Safari.html'],
+      ['Scuba Diving',              'Best-Scuba-Diving.html'],
+      ['Ski Resorts',               'Best-Ski-Resorts.html'],
+      ['Surfing',                   'Best-Surfing.html'],
+      ['Ultra Luxurious Resorts',   'Best-Ultra-Luxurious-Resorts.html'],
+      ['UNESCO Sites',              'Best-UNESCO-Sites.html'],
+      ['Unique Hotels',             'Best-Unique-Hotels.html'],
+      ['Unique Museums',            'Best-Unique-Museums.html'],
+      ['Volcanoes',                 'Best-Volcanoes.html'],
+      ['Wine Regions',              'Best-Wine-Regions.html'],
+      ['Wonders of the World',      'Best-Wonders-of-the-World.html'],
+    ];
+    bestOfPages.forEach(function (p) {
+      var a = document.createElement('a');
+      a.href = base + 'Trip-Essentials/' + p[1];
+      a.textContent = p[0];
+      if (p[1] === curr) a.className = 'tb-active';
+      hamMenu.appendChild(a);
+    });
+  }());
+
+  /* ── Also on this site section ── */
+  (function () {
+    var sepAo = document.createElement('div'); sepAo.className = 'tb-ham-sep'; hamMenu.appendChild(sepAo);
+    var hdrAo = document.createElement('div'); hdrAo.className = 'tb-ham-hdr'; hdrAo.textContent = 'Also on this site'; hamMenu.appendChild(hdrAo);
+    var alsoPages = [
+      ['Budget',                'Budget-Guide.html'],
+      ['Car Rental & Private',  'Rental-Cars.html'],
+      ['Cards & ATM',           'Cards-ATM.html'],
+      ['City Transit Cards',    'City-Transit-Cards.html'],
+      ['Festival Finder',       'Festival-Finder.html'],
+      ['Hotels & Stays',        'Hotels-Stays.html'],
+      ['Pickleball',            'Pickleball.html'],
+      ['Restaurants',           'Restaurants.html'],
+      ['SIM Cards',             'SIM-Cards.html'],
+      ['Tipping',               'Tipping-Guide.html'],
+      ['Tours & Tickets',       'Tours-Tickets.html'],
+      ['Travel Apps',           'Travel-Apps.html'],
+      ['Travel Guides',         'Travel-Guides.html'],
+    ];
+    alsoPages.forEach(function (p) {
+      var a = document.createElement('a');
+      a.href = base + 'Trip-Essentials/' + p[1];
+      a.textContent = p[0];
+      if (p[1] === curr) a.className = 'tb-active';
+      hamMenu.appendChild(a);
+    });
+  }());
+
   bar.appendChild(hamMenu);
 
   function toggleHamMenu(e) {
