@@ -55,7 +55,7 @@
    link href so the browser re-fetches the latest styles. Transparent to HTML
    (no guide re-stamp needed); runs before any other toolbar logic. */
 (function () {
-  var CURRENT = 31;
+  var CURRENT = 32;
   var link = document.querySelector('link[href*="guide-style.css"]');
   if (!link) return;
   var m = link.href.match(/[?&]v=(\d+)/);

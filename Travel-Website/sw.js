@@ -14,12 +14,12 @@
    aggressively caches by URL. Requests for guide-style.css?v<30 are rewritten to
    ?v=30; toolbar.js?v<102 to ?v=102. The SW file itself is always byte-checked
    fresh by the browser, so this fix reaches devices without touching any guide HTML. */
-var CACHE = 'travel-cache-v32';
+var CACHE = 'travel-cache-v33';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
    aggressively cached under the old URL. */
-var MIN_VERSIONS = { 'guide-style.css': 31, 'toolbar.js': 102 };
+var MIN_VERSIONS = { 'guide-style.css': 32, 'toolbar.js': 102 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
