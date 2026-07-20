@@ -382,7 +382,7 @@
     /* Mobile: hamburger menu replaces the chip row */
     '@media(max-width:600px){' +
       '.tb-site-title{display:none}' +
-      '.tb{padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);box-shadow:none}' +
+      '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
@@ -401,7 +401,7 @@
          top:0 covers the full viewport; overflow-y:auto scrolls inside the
          panel; body overflow:hidden (set by toggleHamMenu) locks page scroll
          so only the menu scrolls while it is open. */
-      '.tb-ham-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;' +
+      '.tb-ham-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;padding-top:64px;' +
         'background:#ffffff;z-index:1001;padding:4px 0 8px;' +
         'overflow-y:auto;-webkit-overflow-scrolling:touch;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
@@ -754,7 +754,10 @@
     });
   }());
 
-  bar.appendChild(hamMenu);
+  /* Append menu to body (not bar) so .tb z-index:1002 > menu z-index:1001
+     works correctly — a fixed child inside a stacking-context parent can't
+     be overlaid by that same parent's z-index. */
+  document.body.appendChild(hamMenu);
 
   var hamMenuClosedHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
   function closeHamMenu() {
