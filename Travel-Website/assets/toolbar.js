@@ -1194,18 +1194,18 @@
     });
 
     var bRow = document.createElement('div');
-    bRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
+    bRow.style.cssText = 'display:flex;gap:10px;';
 
     var cancelBtn = document.createElement('button');
     cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
     cancelBtn.style.cssText =
-      'padding:8px 14px;border:1.5px solid #ccc;border-radius:6px;' +
+      'flex:1;padding:8px 14px;border:1.5px solid #ccc;border-radius:6px;' +
       'background:#fff;font-size:13px;color:#5b636f;cursor:pointer;font-family:inherit;font-weight:500;';
 
     var dlBtn = document.createElement('button');
     dlBtn.type = 'button'; dlBtn.textContent = '↓ Download .ics';
     dlBtn.style.cssText =
-      'padding:8px 16px;border:none;border-radius:6px;' +
+      'flex:1;padding:8px 16px;border:none;border-radius:6px;' +
       'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
       'font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;';
 
