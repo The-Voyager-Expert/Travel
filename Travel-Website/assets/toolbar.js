@@ -1246,7 +1246,7 @@
       'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
       'font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;';
 
-    function _closeICS() { overlay.style.display = 'none'; }
+    function _closeICS() { overlay.style.display = 'none'; document.body.style.overflow = ''; }
     /* No click-outside-to-close: on iOS the native date picker dismissal
        fires a tap on the overlay backdrop, which would close the modal
        before the user can pick a date. Close only via X or Cancel. */
@@ -1316,7 +1316,14 @@
     trigBtn.href = 'javascript:void(0)';
     trigBtn.textContent = '📅 Export to Calendar';
     trigBtn.className = 'overview-extra-link';
-    trigBtn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); overlay.style.display = 'flex'; });
+    trigBtn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      document.body.style.overflow = 'hidden'; /* prevent iOS scroll-jump on date input focus */
+      overlay.style.display = 'flex';
+      /* Auto-focus the date input so iOS shows the native picker immediately
+         without requiring a second tap (fixed-overlay inputs need the extra nudge) */
+      setTimeout(function () { dateInput.focus(); }, 80);
+    });
 
     /* Pull All Stops Map out of .overview-extras and place both terracotta
        pills on their own row above the rest of the extras chips.
