@@ -633,10 +633,21 @@
       });
       firstItem = false;
     } else {
+      var isMapsItem = /World-Map\.html$/.test(item.href);
       if (!firstItem) {
         var sep2 = document.createElement('div');
         sep2.className = 'tb-ham-sep';
         hamMenu.appendChild(sep2);
+      }
+      /* Maps header (added 2026-07-20) — same tb-ham-hdr treatment as the
+         Lounges/Flights groups just above/below it, so "World Map" + its
+         Region children read as a labeled group like everything else in the
+         menu instead of an unlabeled pair of flat items. */
+      if (isMapsItem) {
+        var hdrM = document.createElement('div');
+        hdrM.className = 'tb-ham-hdr';
+        hdrM.textContent = 'Maps';
+        hamMenu.appendChild(hdrM);
       }
       var a2 = document.createElement('a');
       a2.href = item.href;
@@ -645,8 +656,8 @@
       hamMenu.appendChild(a2);
       firstItem = false;
       /* ── Region links (added 2026-07-19, moved right under World Map and
-         merged into it 2026-07-20 — Dani: no separator/header between them
-         and "World Map" (reads as one continuous group now, not two), same
+         merged into it 2026-07-20 — Dani: no separator between them and
+         "World Map" (reads as one continuous group now, not two), same
          leading icon as "World Map" on every row (matches the site's locked
          "toolbar dropdown group children share the group's leading icon"
          rule), and no separate "World" entry — that's what tapping
@@ -654,7 +665,7 @@
          hash router already built into World-Map.html (World-Map.html#eu
          flies to Europe, etc.), which also fires on in-page hash changes,
          not just initial load. ── */
-      if (/World-Map\.html$/.test(item.href)) {
+      if (isMapsItem) {
         var regionLinks = [
           ['Europe', 'eu'], ['North America', 'na'], ['Caribbean', 'cb'],
           ['Asia', 'as'], ['Africa', 'af'], ['South America', 'sa'], ['Oceania', 'oc'],
@@ -756,6 +767,19 @@
   }
   function toggleHamMenu(e) {
     e.stopPropagation();
+    var wasOpen = hamMenu.classList.contains('tb-ham-open');
+    // On map pages (World Map + every per-guide stops-map — both mount
+    // Leaflet onto #map, which no other page uses), tapping the CLOSE state
+    // of this same button reads as "leave the map" rather than "collapse
+    // the dropdown" — a map is a detail view you came from the guides
+    // index to look at, not a page with its own content below a menu.
+    // Picking a link inside the menu (closeHamMenu(), not this function)
+    // still just closes the overlay and stays on the map — only the
+    // explicit CLOSE tap navigates away.
+    if (wasOpen && document.getElementById('map')) {
+      window.location.href = base + 'Guides-Index.html';
+      return;
+    }
     hamMenu.classList.toggle('tb-ham-open');
     var open = hamMenu.classList.contains('tb-ham-open');
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');

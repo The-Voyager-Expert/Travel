@@ -149,7 +149,7 @@ a.city-row.hidden { display: none; }
 </head>
 <body>
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
-<script src="../assets/toolbar.js?v=115"></script>
+<script src="../assets/toolbar.js?v=116"></script>
 <script src="../assets/search-autocomplete.js?v=8"></script>
 
 <div class="wrap">
@@ -517,9 +517,11 @@ a.city-row.hidden { display: none; }
     var items = [];
     document.querySelectorAll('.city-row').forEach(function (row) {
       var city = row.getAttribute('data-city') || '';
-      var link = row.querySelector('a[href]');
-      var href = link ? link.getAttribute('href') : null;
-      if (city && href) items.push({ name: city, sub: '', href: href });
+      var href = row.getAttribute('href');
+      var countryEl = row.querySelector('.city-country');
+      var countryText = countryEl ? countryEl.textContent.trim().replace(/^\S+\s*/, '') : '';
+      var sub = (window.TVESearch && window.TVESearch.CITIES && window.TVESearch.CITIES[city.toLowerCase()]) || countryText || '';
+      if (city && href) items.push({ name: city, sub: sub, href: href });
     });
     TVESearch.attach(inp, {
       items: items,
