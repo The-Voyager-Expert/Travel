@@ -590,7 +590,7 @@
         nearby.parentNode.insertBefore(upd, nearby.nextSibling);
       } else {
         var also = document.getElementById('also-on-this-site');
-        if (also) also.appendChild(upd);
+        if (also && also.parentNode) also.parentNode.insertBefore(upd, also.nextSibling);
       }
     }
     function repositionMobileBits() { repositionReadAbout(); repositionUpdatedStamp(); }
