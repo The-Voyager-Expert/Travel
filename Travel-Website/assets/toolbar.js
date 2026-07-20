@@ -1329,13 +1329,6 @@
       }
       _addTvePress(trigBtn);
       if (mapPill) _addTvePress(mapPill);
-      /* iOS: :active on javascript:void(0) links is unreliable — use touchstart/end class */
-      [trigBtn, mapPill].forEach(function (el) {
-        if (!el) return;
-        el.addEventListener('touchstart', function () { el.classList.add('tve-pressed'); }, { passive: true });
-        el.addEventListener('touchend', function () { el.classList.remove('tve-pressed'); });
-        el.addEventListener('touchcancel', function () { el.classList.remove('tve-pressed'); });
-      });
       extras.parentNode.insertBefore(pillRow, extras);
     } else {
       lastDay.parentNode.appendChild(trigBtn);
