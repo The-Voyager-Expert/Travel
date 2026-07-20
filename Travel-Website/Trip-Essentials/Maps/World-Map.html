@@ -1024,8 +1024,16 @@ function activateRegionFromHash() {
       document.querySelectorAll('.rn').forEach(function (r) { r.classList.remove('rn-on'); });
       btn.classList.add('rn-on');
     }
+    // FIXED (2026-07-20): reported live as clicking a region link "flicks and
+    // disappears" — animated flyToBounds() + marker clustering has a known
+    // Leaflet bug where cluster bubbles can flicker/vanish mid-zoom, since
+    // clustering recalculates on different timing than the CSS zoom
+    // animation. Couldn't reproduce it visually myself, but instant
+    // fitBounds() (no animation, same non-animated call used for the
+    // initial world view on page load) removes the whole class of
+    // animation-timing glitches rather than patching around one symptom.
     setTimeout(function () {
-      map.flyToBounds(REGIONS[hashRegion], { ...fitOpts(true), duration: 1.2 });
+      map.fitBounds(REGIONS[hashRegion], fitOpts(false));
     }, 300);
   }
 }
