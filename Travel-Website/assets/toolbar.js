@@ -590,7 +590,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#7a3b1e;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:8px 0;width:90px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:#2e1208;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:8px 0;width:90px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true"><line x1="0" y1="0.75" x2="16" y2="0.75" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="0" y1="5.5" x2="11" y2="5.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="0" y1="10.25" x2="16" y2="10.25" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
   bar.appendChild(hamBtn);
 
