@@ -748,6 +748,12 @@
 
   bar.appendChild(hamMenu);
 
+  var hamMenuClosedHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
+  function closeHamMenu() {
+    hamMenu.classList.remove('tb-ham-open');
+    hamBtn.setAttribute('aria-expanded', 'false');
+    hamBtn.innerHTML = hamMenuClosedHTML;
+  }
   function toggleHamMenu(e) {
     e.stopPropagation();
     hamMenu.classList.toggle('tb-ham-open');
@@ -755,17 +761,22 @@
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamBtn.innerHTML = open
       ? '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><line x1="1" y1="1" x2="13" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">CLOSE</span>'
-      : '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
+      : hamMenuClosedHTML;
   }
   hamBtn.addEventListener('click', toggleHamMenu);
   hamBtn.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleHamMenu(e); }
   });
-  document.addEventListener('click', function () {
-    hamMenu.classList.remove('tb-ham-open');
-    hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
+  document.addEventListener('click', closeHamMenu);
+  hamMenu.addEventListener('click', function (e) {
+    e.stopPropagation();
+    // Same-page hash links (World Map's Region jumps) never unload the page,
+    // so the document-level outside-click closer above never fires for them —
+    // the menu was staying stuck open with the button reading "CLOSE" after
+    // picking a region. Close on any in-menu link tap so the map underneath
+    // is visible again immediately, same as a real page navigation would.
+    if (e.target.closest('a')) closeHamMenu();
   });
-  hamMenu.addEventListener('click', function (e) { e.stopPropagation(); });
 
   /* ── Insert toolbar ──────────────────────────────────────────────────────── */
   if (mount) {
