@@ -205,9 +205,11 @@
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
     '.tb-inner::-webkit-scrollbar{display:none}' +
-    /* Flex row — centered, width:max-content so it never left-packs */
-    '.tb-links{display:flex;flex-wrap:nowrap;' +
-      'gap:1px;align-items:center;justify-content:center}' +
+    /* Flex row — width:max-content + margin:0 auto centers the row on the viewport
+       axis. justify-content:flex-start ensures overflow always falls off the RIGHT
+       so Guides (first item) is never hidden in negative-scroll territory. */
+    '.tb-links{display:flex;flex-wrap:nowrap;width:max-content;margin:0 auto;' +
+      'gap:1px;align-items:center;justify-content:flex-start}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
