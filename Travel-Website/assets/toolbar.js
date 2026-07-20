@@ -1437,6 +1437,98 @@
     _injectVisitedPill();
   }
 
+  /* ── Address copy — multi-format clipboard popover on 📍 stop rows ─────────
+     Adds a small copy icon button after every 📍 Google Maps address link on
+     real guide pages. Clicking opens a fixed-position popover with:
+       • Copy address (plain text, decoded from Maps URL query param)
+       • Copy Maps link (the full Google Maps URL)
+       • Open in Apple Maps (UA-gated; Apple devices only)
+     Uses a single shared popover singleton to keep DOM lean across 200+ stops.
+     CSS lives in guide-style.css (.addr-copy, .addr-copy-pop). */
+  function _injectAddrCopy() {
+    if (!isRealGuide) return;
+    var rows = document.querySelectorAll('.stop-row');
+    if (!rows.length) return;
+    var pop = document.createElement('div');
+    pop.className = 'addr-copy-pop';
+    var optAddr = document.createElement('button');
+    optAddr.type = 'button'; optAddr.className = 'acp-btn'; optAddr.textContent = '📋  Copy address';
+    var optMaps = document.createElement('button');
+    optMaps.type = 'button'; optMaps.className = 'acp-btn'; optMaps.textContent = '🗺  Copy Maps link';
+    var done = document.createElement('div');
+    done.className = 'addr-copy-done'; done.textContent = '✓ Copied';
+    pop.appendChild(optAddr); pop.appendChild(optMaps);
+    var optApple = null;
+    if (/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)) {
+      optApple = document.createElement('button');
+      optApple.type = 'button'; optApple.className = 'acp-btn'; optApple.textContent = '🍎  Open in Apple Maps';
+      pop.appendChild(optApple);
+    }
+    pop.appendChild(done);
+    document.body.appendChild(pop);
+    var curAddr = '', curMapsUrl = '';
+    function copyText(str) {
+      if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(str);
+      var ta = document.createElement('textarea');
+      ta.value = str; ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+    function showDone() {
+      done.style.display = 'block';
+      setTimeout(function () { done.style.display = 'none'; pop.classList.remove('open'); }, 900);
+    }
+    function openPop(btn, addr, mapsUrl) {
+      curAddr = addr; curMapsUrl = mapsUrl; done.style.display = 'none';
+      if (optApple) optApple.setAttribute('data-q', addr);
+      var r = btn.getBoundingClientRect();
+      pop.style.top = Math.round(r.bottom + 6) + 'px';
+      pop.classList.add('open');
+      var pw = pop.offsetWidth || 180;
+      var left = Math.round(r.left);
+      if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+      if (left < 8) left = 8;
+      pop.style.left = left + 'px';
+    }
+    function closePop() { pop.classList.remove('open'); done.style.display = 'none'; }
+    optAddr.addEventListener('click', function (e) { e.stopPropagation(); copyText(curAddr).then(showDone).catch(closePop); });
+    optMaps.addEventListener('click', function (e) { e.stopPropagation(); copyText(curMapsUrl).then(showDone).catch(closePop); });
+    if (optApple) {
+      optApple.addEventListener('click', function (e) {
+        e.stopPropagation();
+        window.location.href = 'maps://?q=' + encodeURIComponent(optApple.getAttribute('data-q') || curAddr);
+        closePop();
+      });
+    }
+    document.addEventListener('click', function () { closePop(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePop(); });
+    var ICON = '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="5.5" y="2" width="8.5" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/>' +
+      '<path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+      '</svg>';
+    [].forEach.call(rows, function (row) {
+      if (!row.textContent.trimStart().startsWith('📍')) return;
+      var anchor = row.querySelector('a[href*="google.com/maps"]');
+      if (!anchor) return;
+      var addr = anchor.textContent.trim();
+      try { var qp = new URL(anchor.href).searchParams.get('query'); if (qp) addr = qp; } catch (e) {}
+      var mapsUrl = anchor.href;
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'addr-copy'; btn.setAttribute('aria-label', 'Copy address'); btn.innerHTML = ICON;
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (pop.classList.contains('open')) { closePop(); return; }
+        openPop(btn, addr, mapsUrl);
+      });
+      row.appendChild(btn);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectAddrCopy);
+  } else {
+    _injectAddrCopy();
+  }
+
   /* ── Weather widget — loaded on the Guides index ONLY ─────────────────────
      weather.js lives in assets/ (permanent home). On the index it adds the
      🌡 Weather control in the title banner (city picker + monthly high/low
