@@ -55,7 +55,7 @@
    link href so the browser re-fetches the latest styles. Transparent to HTML
    (no guide re-stamp needed); runs before any other toolbar logic. */
 (function () {
-  var CURRENT = 32;
+  var CURRENT = 33;
   var link = document.querySelector('link[href*="guide-style.css"]');
   if (!link) return;
   var m = link.href.match(/[?&]v=(\d+)/);
@@ -1301,9 +1301,23 @@
       /* tve-pressed: iOS doesn't reliably fire :active on touch — add/remove
          the class on touchstart/touchend so the white-text active style shows */
       function _addTvePress(el) {
-        el.addEventListener('touchstart', function () { el.classList.add('tve-pressed'); }, { passive: true });
-        el.addEventListener('touchend',   function () { setTimeout(function () { el.classList.remove('tve-pressed'); }, 300); }, { passive: true });
-        el.addEventListener('touchcancel',function () { el.classList.remove('tve-pressed'); }, { passive: true });
+        el.addEventListener('touchstart', function () {
+          el.classList.add('tve-pressed');
+          el.style.setProperty('color', '#fff', 'important');
+          el.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
+        }, { passive: true });
+        el.addEventListener('touchend', function () {
+          setTimeout(function () {
+            el.classList.remove('tve-pressed');
+            el.style.removeProperty('color');
+            el.style.removeProperty('-webkit-text-fill-color');
+          }, 300);
+        }, { passive: true });
+        el.addEventListener('touchcancel', function () {
+          el.classList.remove('tve-pressed');
+          el.style.removeProperty('color');
+          el.style.removeProperty('-webkit-text-fill-color');
+        }, { passive: true });
       }
       _addTvePress(trigBtn);
       if (mapPill) _addTvePress(mapPill);
