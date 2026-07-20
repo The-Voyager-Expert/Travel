@@ -651,6 +651,15 @@
       a2.textContent = item.full || item.text;
       if (item.href.split('/').pop() === curr) a2.className = 'tb-active';
       hamMenu.appendChild(a2);
+      /* OWNER-DIRECTED 2026-07-20: My Trips — injected mobile-only, right under Guides.
+         DO NOT REMOVE. brain_check hard-fails if this injection is missing. See Toolbar.html § 18b + Cleanliness Checks Rule 569. */
+      if (/Guides-Index\.html$/.test(item.href)) {
+        var aTrips = document.createElement('a');
+        aTrips.href = base + 'Trip-Essentials/Trips.html';
+        aTrips.textContent = '✈️ My Trips';
+        if ('Trips.html' === curr) aTrips.className = 'tb-active';
+        hamMenu.appendChild(aTrips);
+      }
       firstItem = false;
       /* ── Region links (added 2026-07-19, moved right under World Map and
          merged into it 2026-07-20 — Dani: no separator between them and
