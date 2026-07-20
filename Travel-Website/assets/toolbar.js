@@ -590,8 +590,8 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#2e1208;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:10px 0;width:74px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:6px;color:#fff;flex-shrink:0;';
-  hamBtn.innerHTML = '<svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="14" y2="0.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/><line x1="0" y1="5" x2="14" y2="5" stroke="#fff" stroke-width="1" stroke-linecap="round"/><line x1="0" y1="9.5" x2="14" y2="9.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
+  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 0;width:82px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
+  hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
   bar.appendChild(hamBtn);
 
   var hamMenu = document.createElement('div');
@@ -715,8 +715,8 @@
     var open = hamMenu.classList.contains('tb-ham-open');
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamBtn.innerHTML = open
-      ? '<svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><line x1="1" y1="0.5" x2="13" y2="9.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/><line x1="13" y1="0.5" x2="1" y2="9.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">CLOSE</span>'
-      : '<svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="14" y2="0.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/><line x1="0" y1="5" x2="14" y2="5" stroke="#fff" stroke-width="1" stroke-linecap="round"/><line x1="0" y1="9.5" x2="14" y2="9.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
+      ? '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><line x1="1" y1="1" x2="13" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">CLOSE</span>'
+      : '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
   }
   hamBtn.addEventListener('click', toggleHamMenu);
   hamBtn.addEventListener('keydown', function (e) {
@@ -724,7 +724,7 @@
   });
   document.addEventListener('click', function () {
     hamMenu.classList.remove('tb-ham-open');
-    hamBtn.innerHTML = '<svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="14" y2="0.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/><line x1="0" y1="5" x2="14" y2="5" stroke="#fff" stroke-width="1" stroke-linecap="round"/><line x1="0" y1="9.5" x2="14" y2="9.5" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700">MENU</span>';
+    hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
   });
   hamMenu.addEventListener('click', function (e) { e.stopPropagation(); });
 
