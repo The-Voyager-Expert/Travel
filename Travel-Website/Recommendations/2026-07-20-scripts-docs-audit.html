@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scripts / Docs Audit — 2026-07-20</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --surface2: #f4f2ed;
+    --border: #e2ddd5;
+    --text: #2c2a26;
+    --muted: #6b6560;
+    --accent: #b85c2a;
+    --accent-lt: #f5ede7;
+    --gold: #8a6c1a;
+    --gold-lt: #fdf7e8;
+    --green: #2d6e46;
+    --green-lt: #eaf4ee;
+    --warn: #b86020;
+    --warn-lt: #fef3e7;
+    --code-bg: #f0ede8;
+    --code-text: #7a3b1e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1a17;
+      --surface: #252320;
+      --surface2: #2e2b27;
+      --border: #3a3730;
+      --text: #e8e3db;
+      --muted: #908b82;
+      --accent: #c97040;
+      --accent-lt: #2d1e14;
+      --gold: #d4a84a;
+      --gold-lt: #241e0f;
+      --green: #4a9e6a;
+      --green-lt: #132a1e;
+      --warn: #d4813a;
+      --warn-lt: #281a0e;
+      --code-bg: #2a2520;
+      --code-text: #d4874a;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #faf9f6; --surface: #ffffff; --surface2: #f4f2ed; --border: #e2ddd5;
+    --text: #2c2a26; --muted: #6b6560; --accent: #b85c2a; --accent-lt: #f5ede7;
+    --gold: #8a6c1a; --gold-lt: #fdf7e8; --green: #2d6e46; --green-lt: #eaf4ee;
+    --warn: #b86020; --warn-lt: #fef3e7; --code-bg: #f0ede8; --code-text: #7a3b1e;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1a17; --surface: #252320; --surface2: #2e2b27; --border: #3a3730;
+    --text: #e8e3db; --muted: #908b82; --accent: #c97040; --accent-lt: #2d1e14;
+    --gold: #d4a84a; --gold-lt: #241e0f; --green: #4a9e6a; --green-lt: #132a1e;
+    --warn: #d4813a; --warn-lt: #281a0e; --code-bg: #2a2520; --code-text: #d4874a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+    padding: 32px 20px 60px;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .report-header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  .report-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .report-meta {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Summary strip */
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .stat-box.accent .stat-num { color: var(--accent); }
+  .stat-box.gold .stat-num   { color: var(--gold); }
+  .stat-box.green .stat-num  { color: var(--green); }
+
+  /* Sections */
+  .section { margin-bottom: 32px; }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px 10px;
+  }
+  .card-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .card-body {
+    padding: 0 16px 14px 42px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .card-body p + p { margin-top: 6px; }
+
+  .card.ok { border-left: 3px solid var(--green); }
+  .card.changed { border-left: 3px solid var(--accent); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.info { border-left: 3px solid var(--gold); }
+
+  /* Status badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .badge.ok     { background: var(--green-lt); color: var(--green); }
+  .badge.fixed  { background: var(--accent-lt); color: var(--accent); }
+  .badge.warn   { background: var(--warn-lt); color: var(--warn); }
+  .badge.info   { background: var(--gold-lt); color: var(--gold); }
+
+  /* Code / function name */
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 12px;
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* Function list */
+  .fn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 8px;
+  }
+  .fn-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 10px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .fn-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+  .fn-table tr:last-child td { border-bottom: none; }
+  .fn-table .rule-num {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .fn-table .severity {
+    white-space: nowrap;
+  }
+  .fn-table .sev-hard { color: var(--accent); font-weight: 600; }
+  .fn-table .sev-warn { color: var(--warn); font-weight: 600; }
+  .fn-table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-top: 12px; }
+
+  /* Out-of-scope list */
+  .oos-list { list-style: none; }
+  .oos-list li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .oos-list li strong { font-weight: 600; }
+  .oos-list li .oos-note {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Brain check summary */
+  .bc-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+  }
+  .bc-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .bc-dot.ok   { background: var(--green); }
+  .bc-dot.warn { background: var(--warn); }
+  .bc-count { font-variant-numeric: tabular-nums; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="report-header">
+    <div class="report-eyebrow">Scheduled Routine</div>
+    <h1 class="report-title">Scripts / Docs Audit — 2026-07-20</h1>
+    <div class="report-meta">
+      <span>Routine: <strong>scripts-docs-audit</strong></span>
+      <span>Scope: <strong>Cleanliness Checks.md · Enforcement-Standards.md</strong></span>
+      <span>Run date: <strong>2026-07-20</strong></span>
+    </div>
+  </header>
+
+  <!-- Summary strip -->
+  <div class="summary-strip">
+    <div class="stat-box green">
+      <div class="stat-num">~90</div>
+      <div class="stat-label">check_* functions audited</div>
+    </div>
+    <div class="stat-box green">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Undocumented checks</div>
+    </div>
+    <div class="stat-box accent">
+      <div class="stat-num">11</div>
+      <div class="stat-label">New checks added to Enforcement-Standards</div>
+    </div>
+    <div class="stat-box gold">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Out-of-scope findings logged</div>
+    </div>
+  </div>
+
+  <!-- brain_check result -->
+  <div class="section">
+    <div class="section-title">brain_check.py Result (session start)</div>
+    <div class="bc-row">
+      <div class="bc-dot ok"></div>
+      <div><span class="bc-count">0 hard-fails</span> &nbsp;·&nbsp; 193/197 checks ok &nbsp;·&nbsp; 4 warns (pre-existing: 3 prototype map files with stale toolbar v112; CSS duplication summary)</div>
+    </div>
+  </div>
+
+  <!-- Cleanliness Checks.md -->
+  <div class="section">
+    <div class="section-title">Cleanliness Checks.md — Coverage Audit</div>
+
+    <div class="card ok">
+      <div class="card-head">
+        <span class="card-icon">✅</span>
+        <span class="card-title">All ~90 brain_check.py <code>check_*</code> functions are documented</span>
+        <span class="badge ok">No gaps</span>
+      </div>
+      <div class="card-body">
+        <p>Cross-referenced every <code>def check_*</code> function in <code>brain_check.py</code> against Cleanliness Checks.md. All functions have a corresponding numbered rule entry (Rules 418–568). No undocumented functions found.</p>
+      </div>
+    </div>
+
+    <div class="card ok">
+      <div class="card-head">
+        <span class="card-icon">✅</span>
+        <span class="card-title">Header "Highest rule number" already updated to 568</span>
+        <span class="badge ok">No edit needed</span>
+      </div>
+      <div class="card-body">
+        <p>A prior run of this routine had already updated the header from "Highest rule number is 567" to 568. The file is current — no edit was required.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enforcement-Standards.md -->
+  <div class="section">
+    <div class="section-title">Enforcement-Standards.md — Updated</div>
+
+    <div class="card changed">
+      <div class="card-head">
+        <span class="card-icon">📝</span>
+        <span class="card-title">11 new <code>brain_check.py</code> functions added to the "Also enforced" citation block</span>
+        <span class="badge fixed">Fixed</span>
+      </div>
+      <div class="card-body">
+        <p>The doc was last updated 2026-07-18. Eleven <code>check_*</code> functions added between 2026-07-11 and 2026-07-20 were absent from the "Also enforced by brain_check.py" paragraph under the Standards section. All 11 were added; "Last Updated" bumped to 2026-07-20.</p>
+      </div>
+    </div>
+
+    <div class="fn-table-wrap">
+      <table class="fn-table">
+        <thead>
+          <tr>
+            <th>Function</th>
+            <th>Rule</th>
+            <th>Severity</th>
+            <th>Added</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>check_world_map_no_cdn</code></td>
+            <td class="rule-num">490</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-11</td>
+            <td>World-Map must not load off-host CDN / tile-server resources</td>
+          </tr>
+          <tr>
+            <td><code>check_search_aria_labels</code></td>
+            <td class="rule-num">547</td>
+            <td class="severity sev-warn">WARN</td>
+            <td>2026-07-19</td>
+            <td>Every <code>type="search"</code> input must carry a non-empty <code>aria-label</code></td>
+          </tr>
+          <tr>
+            <td><code>check_visited_pill_style</code></td>
+            <td class="rule-num">550</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-19</td>
+            <td>Visited guide pill: gold outline, gold text, 6px radius, correct anchor + placement</td>
+          </tr>
+          <tr>
+            <td><code>check_new_badge_css</code></td>
+            <td class="rule-num">551</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-19</td>
+            <td>Amber "new" badge CSS locked in <code>guides-index-style.css</code></td>
+          </tr>
+          <tr>
+            <td><code>check_new_badge_js</code></td>
+            <td class="rule-num">552</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-19</td>
+            <td>Badge injection JS in <code>Guides-Index.html</code> must not be removed</td>
+          </tr>
+          <tr>
+            <td><code>check_title_address_has_css_arrow</code></td>
+            <td class="rule-num">559</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-19</td>
+            <td><code>.title-address a::after</code> CSS arrow block must be present in <code>guide-style.css</code></td>
+          </tr>
+          <tr>
+            <td><code>check_sidebar_panel_background</code></td>
+            <td class="rule-num">561</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-19</td>
+            <td>Best Of + Also on this site sidebar panels must use default beige, not terracotta</td>
+          </tr>
+          <tr>
+            <td><code>check_mobile_menu_sections</code></td>
+            <td class="rule-num">562</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-19</td>
+            <td>Hamburger menu must include Best Of + Also on this site IIFEs</td>
+          </tr>
+          <tr>
+            <td><code>check_ham_btn_style</code></td>
+            <td class="rule-num">564</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-19/20</td>
+            <td>Hamburger button: dark terracotta pill, white SVG bars, no <code>display:</code> inline</td>
+          </tr>
+          <tr>
+            <td><code>check_toolbar_child_label_text</code></td>
+            <td class="rule-num">565</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-20</td>
+            <td>Dropdown child <code>text:</code> field must contain ≥3 ASCII word chars — never emoji-only</td>
+          </tr>
+          <tr>
+            <td><code>check_ham_menu_height</code></td>
+            <td class="rule-num">567</td>
+            <td class="severity sev-hard">HARD-FAIL</td>
+            <td>2026-07-20</td>
+            <td><code>.tb-ham-menu</code> must have no <code>height</code> or <code>max-height</code> constraint</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card info" style="margin-top:12px;">
+      <div class="card-head">
+        <span class="card-icon">ℹ️</span>
+        <span class="card-title"><code>check_updated_stamp_position</code> — Rule 568 (noted)</span>
+        <span class="badge info">Already logged</span>
+      </div>
+      <div class="card-body">
+        <p>Rule 568 (<code>check_updated_stamp_position</code> — <code>repositionUpdatedStamp()</code> must use <code>parentNode.insertBefore</code>, not <code>appendChild</code>, added 2026-07-19) was added to Cleanliness Checks.md by the prior context half of this run and the header was already bumped. No additional edit required.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- What was NOT changed -->
+  <div class="section">
+    <div class="section-title">Files Not Touched (by routine policy)</div>
+    <div class="card ok">
+      <div class="card-head">
+        <span class="card-icon">🔒</span>
+        <span class="card-title"><code>Brain/Reference/Validator Index.html</code> — owned by <em>validator-audit</em></span>
+        <span class="badge ok">Skipped</span>
+      </div>
+      <div class="card-body"><p>Read for reference only. No edits.</p></div>
+    </div>
+    <div class="card ok">
+      <div class="card-head">
+        <span class="card-icon">🔒</span>
+        <span class="card-title"><code>CLAUDE.md</code> — owned by <em>claudemd-drift-audit</em></span>
+        <span class="badge ok">Skipped</span>
+      </div>
+      <div class="card-body"><p>Read for reference only. Legacy CSS consolidation script gap logged to To Do List for claudemd-drift-audit to address.</p></div>
+    </div>
+  </div>
+
+  <!-- Out-of-scope findings -->
+  <div class="section">
+    <div class="section-title">Out-of-Scope Findings — Logged to To Do List</div>
+    <ul class="oos-list">
+      <li>
+        <strong>3 prototype/backup map files carry stale toolbar v112 (current v116)</strong>
+        <span class="oos-note"><code>World-Map-Prototype-1.html</code>, <code>World-Map-Prototype-2.html</code>, <code>World-Map-original-backup.html</code> — WARNs at session start. Fix: bump version or archive files.</span>
+      </li>
+      <li>
+        <strong>CSS duplication WARN: ~250 duplicated selectors (pre-existing)</strong>
+        <span class="oos-note"><code>brain_check check_css_duplication</code> reports ~250 duplicated CSS selectors. Pre-existing, not introduced by this run. Needs a dedicated cleanup pass.</span>
+      </li>
+      <li>
+        <strong>7 legacy CSS consolidation scripts undocumented in CLAUDE.md</strong>
+        <span class="oos-note"><code>apply_css_consolidation.py</code>, <code>consolidate_classes_to_shared.py</code>, <code>final_css_consolidation.py</code>, <code>smart_css_consolidation.py</code>, <code>fix_also_on_this_site.py</code>, <code>remove_hardcoded_colors.py</code>, <code>extract_and_add_components.py</code> — one-time June 2026 migration tools with no CLAUDE.md entry. Owned by <em>claudemd-drift-audit</em>: add "Retired" note or archive.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div style="font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:14px;margin-top:8px;">
+    Generated by <strong>scripts-docs-audit</strong> scheduled routine · 2026-07-20 · Routine scope: Cleanliness Checks.md + Enforcement-Standards.md only
+  </div>
+
+</div>
+</body>
+</html>
