@@ -15,12 +15,12 @@
    ?v=30; toolbar.js?v<102 to ?v=102. The SW file itself is always byte-checked
    fresh by the browser, so this fix reaches devices without touching any guide HTML.
    2026-07-19: Bumped toolbar.js min to 106 — adds in-page "Add to Home Screen" banner. */
-var CACHE = 'travel-cache-v40';
+var CACHE = 'travel-cache-v41';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
    aggressively cached under the old URL. */
-var MIN_VERSIONS = { 'guide-style.css': 37, 'toolbar.js': 106 };
+var MIN_VERSIONS = { 'guide-style.css': 38, 'toolbar.js': 106 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
