@@ -8,8 +8,35 @@
    History: previously assets were stale-while-revalidate, which served the OLD
    cached copy first and refreshed in the background — so CSS/JS edits only appeared
    on the SECOND visit ("updates don't go live"). Switched to network-first so the
-   cache can never hide a fresh deploy. (2026-06-20) */
-var CACHE = 'travel-cache-v30';
+   cache can never hide a fresh deploy. (2026-06-20)
+
+   2026-07-19: Added URL-rewriting to force-flush stale CSS/JS that iOS Safari
+   aggressively caches by URL. Requests for guide-style.css?v<30 are rewritten to
+   ?v=30; toolbar.js?v<102 to ?v=102. The SW file itself is always byte-checked
+   fresh by the browser, so this fix reaches devices without touching any guide HTML. */
+var CACHE = 'travel-cache-v31';
+
+/* Minimum asset versions — any request with a lower v= is rewritten to this version
+   so the browser is forced to fetch fresh content even when it has an older copy
+   aggressively cached under the old URL. */
+var MIN_VERSIONS = { 'guide-style.css': 30, 'toolbar.js': 102 };
+
+function rewriteAssetUrl(urlStr) {
+  var u;
+  try { u = new URL(urlStr); } catch (_) { return urlStr; }
+  for (var asset in MIN_VERSIONS) {
+    if (u.pathname.slice(-asset.length - 1) === '/' + asset) {
+      var m = u.search.match(/[?&]v=(\d+)/);
+      var ver = m ? parseInt(m[1], 10) : 0;
+      if (ver < MIN_VERSIONS[asset]) {
+        u.search = '?v=' + MIN_VERSIONS[asset];
+        return u.toString();
+      }
+      break;
+    }
+  }
+  return urlStr;
+}
 
 self.addEventListener('install', function (e) {
   self.skipWaiting();
@@ -32,16 +59,22 @@ self.addEventListener('fetch', function (e) {
   try { url = new URL(req.url); } catch (_) { return; }
   if (url.origin !== self.location.origin) return;
 
+  /* Rewrite stale asset version URLs so iOS HTTP cache is bypassed */
+  var rewrittenUrl = rewriteAssetUrl(req.url);
+  var fetchReq = (rewrittenUrl !== req.url)
+    ? new Request(rewrittenUrl, { cache: 'reload' })
+    : req;
+
   // Network-first: try the network, cache the fresh copy, and only fall back to
   // the cache when the network fails (offline). Navigations fall back to the
   // Guides index when the exact page isn't cached.
   e.respondWith(
-    fetch(req).then(function (res) {
+    fetch(fetchReq).then(function (res) {
       var copy = res.clone();
-      caches.open(CACHE).then(function (c) { c.put(req, copy); });
+      caches.open(CACHE).then(function (c) { c.put(fetchReq, copy); });
       return res;
     }).catch(function () {
-      return caches.match(req).then(function (hit) {
+      return caches.match(fetchReq).then(function (hit) {
         if (hit) return hit;
         if (req.mode === 'navigate') return caches.match('Guides-Index.html');
         return Response.error();
