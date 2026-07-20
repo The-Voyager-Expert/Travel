@@ -1331,27 +1331,18 @@
       /* pillRow uses overview-extras class so both pills inherit all chip CSS */
       var pillRow = document.createElement('div');
       pillRow.className = 'overview-extras';
-      /* force flex so mobile grid doesn't kick in for this 2-pill row;
-         gap:8px!important needed because mobile overview-extras has gap:0!important */
-      pillRow.setAttribute('style', 'display:flex!important;gap:8px!important;margin-bottom:8px;grid-template-columns:unset!important;width:100%;');
-
-      /* pills take equal width in the flex row — inline !important beats every
-         stylesheet rule (ID selectors, class rules, mobile overrides) so this
-         works on desktop and mobile without a separate media query */
-      function _setFlexPill(el) {
-        el.style.setProperty('flex', '1 1 0', 'important');
-        el.style.setProperty('min-width', '0', 'important');
-        el.style.setProperty('display', 'inline-flex', 'important');
-        el.style.setProperty('align-items', 'center', 'important');
-        el.style.setProperty('justify-content', 'center', 'important');
-        el.style.setProperty('text-align', 'center', 'important');
-      }
-      trigBtn.id = 'ics-cal-pill';
-      if (mapPill) mapPill.id = 'ics-map-pill';
-      _setFlexPill(trigBtn);
-      if (mapPill) _setFlexPill(mapPill);
+      /* force flex so mobile grid doesn't kick in for this 2-pill row */
+      pillRow.setAttribute('style', 'display:flex!important;gap:8px;margin-bottom:8px;grid-template-columns:unset!important;');
       pillRow.appendChild(trigBtn);
       if (mapPill) pillRow.appendChild(mapPill);
+
+      /* mobile full-width stretch for the two action pills */
+      var tcStyle = document.createElement('style');
+      tcStyle.textContent =
+        '@media(max-width:600px){.overview-extras [id=ics-cal-pill],.overview-extras [id=ics-map-pill]{flex:1 1 0!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;}}';
+      document.head.appendChild(tcStyle);
+      trigBtn.id = 'ics-cal-pill';
+      if (mapPill) mapPill.id = 'ics-map-pill';
 
       /* tve-pressed: iOS doesn't reliably fire :active on touch — add/remove
          the class on touchstart/touchend so the white-text active style shows */
