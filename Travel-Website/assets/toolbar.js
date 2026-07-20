@@ -398,7 +398,17 @@
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
         'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
         'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:1001;padding:4px 0 8px;' +
-        'max-height:calc(100dvh - 52px);overflow-y:auto;-webkit-overflow-scrolling:touch}' +
+        'max-height:calc(100dvh - 52px);overflow-y:auto;-webkit-overflow-scrolling:touch;' +
+        /* FIXED (2026-07-20): -webkit-overflow-scrolling:touch on a tall
+           position:absolute menu is a known iOS Safari repaint bug — during
+           momentum/inertial scrolling WebKit can fail to recomposite the
+           element, letting the page underneath show through mid-scroll
+           (found live: "Stats Across Europe" menu open, page's own ranking
+           table bleeding through below the menu items). Forcing its own GPU
+           compositing layer is the standard fix for this exact class of bug.
+           Couldn't reproduce with a scripted scrollTop jump — this is a real
+           finger-swipe / momentum-scroll-only artifact. */
+        'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
       '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:14px;color:#3d3a32!important;text-decoration:none;' +
         'padding:10px 18px;border-bottom:none;-webkit-tap-highlight-color:transparent}' +
@@ -1283,7 +1293,7 @@
       /* mobile full-width stretch for the two action pills */
       var tcStyle = document.createElement('style');
       tcStyle.textContent =
-        '@media(max-width:600px){.overview-extras [id=ics-cal-pill],.overview-extras [id=ics-map-pill]{flex:1;text-align:center;justify-content:center;}}';
+        '@media(max-width:600px){.overview-extras [id=ics-cal-pill],.overview-extras [id=ics-map-pill]{flex:1 1 0!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;}}';
       document.head.appendChild(tcStyle);
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
