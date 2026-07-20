@@ -55,7 +55,7 @@
    link href so the browser re-fetches the latest styles. Transparent to HTML
    (no guide re-stamp needed); runs before any other toolbar logic. */
 (function () {
-  var CURRENT = 34;
+  var CURRENT = 33;
   var link = document.querySelector('link[href*="guide-style.css"]');
   if (!link) return;
   var m = link.href.match(/[?&]v=(\d+)/);
@@ -1218,7 +1218,7 @@
       ('0' + (_icsD.getMonth() + 1)).slice(-2) + '-' + ('0' + _icsD.getDate()).slice(-2);
     dateInput.style.cssText =
       'width:100%;padding:9px 11px;border:1.5px solid #c8a44a;border-radius:6px;' +
-      'font-size:16px;font-family:inherit;box-sizing:border-box;margin-bottom:18px;' +
+      'font-size:15px;font-family:inherit;box-sizing:border-box;margin-bottom:18px;' +
       'color:#1b2531;-webkit-text-fill-color:#1b2531;background:#fff;' +
       'text-align:center;text-align-last:center;direction:ltr;';
     dateInput.addEventListener('focus', function () {
