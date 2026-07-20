@@ -611,6 +611,10 @@
         sep.className = 'tb-ham-sep';
         hamMenu.appendChild(sep);
       }
+      var hdrG = document.createElement('div');
+      hdrG.className = 'tb-ham-hdr';
+      hdrG.textContent = item.group.replace(/^[^\x00-\x7E\s]*\s*/, '').trim() || item.group;
+      hamMenu.appendChild(hdrG);
       item.children.forEach(function (ch) {
         var a = document.createElement('a');
         a.href = ch.href;
