@@ -1157,17 +1157,18 @@
     box.addEventListener('click', function (e) { e.stopPropagation(); });
     box.addEventListener('touchend', function (e) { e.stopPropagation(); });
 
-    var bTitle = document.createElement('div');
-    bTitle.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;';
-    var bTitleText = document.createElement('span');
-    bTitleText.textContent = '📅 Export to Calendar';
-    bTitleText.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;';
     var xBtn = document.createElement('button');
     xBtn.type = 'button'; xBtn.textContent = '✕';
     xBtn.style.cssText =
-      'background:none;border:none;font-size:16px;color:#9a948a;cursor:pointer;' +
-      'padding:0 0 0 12px;line-height:1;flex-shrink:0;';
-    bTitle.appendChild(bTitleText); bTitle.appendChild(xBtn);
+      'position:absolute;top:12px;right:14px;background:none;border:none;' +
+      'font-size:18px;color:#9a948a;cursor:pointer;line-height:1;padding:4px;';
+
+    var bTitle = document.createElement('div');
+    bTitle.style.cssText = 'margin-bottom:5px;padding-right:28px;';
+    var bTitleText = document.createElement('span');
+    bTitleText.textContent = '📅 Export to Calendar';
+    bTitleText.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;';
+    bTitle.appendChild(bTitleText);
 
     var bSub = document.createElement('div');
     bSub.textContent = 'When does Day 1 start? All ' + days.length +
@@ -1182,7 +1183,8 @@
     dateInput.style.cssText =
       'width:100%;padding:9px 11px;border:1.5px solid #c8a44a;border-radius:6px;' +
       'font-size:15px;font-family:inherit;box-sizing:border-box;margin-bottom:18px;' +
-      'color:#1b2531;-webkit-text-fill-color:#1b2531;background:#fff;text-align:center;';
+      'color:#1b2531;-webkit-text-fill-color:#1b2531;background:#fff;' +
+      'text-align:center;-webkit-appearance:none;appearance:none;';
     dateInput.addEventListener('focus', function () {
       dateInput.style.setProperty('-webkit-text-fill-color', '#1b2531', 'important');
       dateInput.style.setProperty('color', '#1b2531', 'important');
@@ -1268,7 +1270,7 @@
     });
 
     bRow.appendChild(cancelBtn); bRow.appendChild(dlBtn);
-    box.appendChild(bTitle); box.appendChild(bSub);
+    box.appendChild(xBtn); box.appendChild(bTitle); box.appendChild(bSub);
     box.appendChild(dateInput); box.appendChild(bRow);
     overlay.appendChild(box);
     document.body.appendChild(overlay);
