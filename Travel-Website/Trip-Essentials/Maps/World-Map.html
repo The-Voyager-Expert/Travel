@@ -16,14 +16,6 @@
 
   /* ── Leaflet surface: kill default chrome so it reads as our warm map ── */
   .leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
-  .leaflet-control-zoom a { color: #6b4422; border-color: var(--border, #d8d4cc); }
-  /* mobile.css's global tap-target rule (a{min-height:40px}) stretches Leaflet's
-     26px zoom buttons without recentering their +/- glyph — pin it back to Leaflet's
-     own line-height-based centering instead of the inflated box. */
-  @media (max-width: 600px) {
-    .leaflet-control-zoom a { min-height: auto !important; display: flex; align-items: center; justify-content: center; }
-  }
-  .leaflet-bar a:hover { background: var(--surface, #ffffff); border-color: #b85c2a; }
 
   /* ── Country polygons ── */
   .country-label-tip { background: none; border: none; box-shadow: none; padding: 0;
@@ -105,7 +97,6 @@
      that CSS if ever wanted back) — replaced, not just visually tweaked,
      because the region-nav's job is now done by the hamburger menu. ── */
   #map-left-stack { display: none; }
-  .leaflet-control-zoom { margin-bottom: 14px !important; }
 }
 </style>
 <link rel="stylesheet" href="../../assets/mobile.css?v=50">
@@ -480,7 +471,6 @@ const map = L.map('map', {
   maxBounds: [[-85, -200], [85, 200]],
   maxBoundsViscosity: 0,
 });
-L.control.zoom({ position: 'bottomright' }).addTo(map);
 map.createPane('countryLabels');
 map.getPane('countryLabels').style.zIndex = 590;
 map.getPane('countryLabels').style.pointerEvents = 'none';
@@ -618,10 +608,10 @@ function renderCountryLabelVisibility() {
 }
 
 // Keep the framed region clear of the overlay controls: pad left for the
-// desktop panel, pad bottom for the mobile docked bar.
+// desktop panel; no other controls overlay the map on mobile.
 function fitOpts(animated) {
   const base = (window.innerWidth <= 640)
-    ? { paddingTopLeft: [12, 12], paddingBottomRight: [12, 86] }
+    ? { paddingTopLeft: [12, 12], paddingBottomRight: [12, 12] }
     : { paddingTopLeft: [150, 14], paddingBottomRight: [14, 14] };
   if (!animated) base.animate = false;
   return base;
@@ -632,6 +622,12 @@ map.fitBounds(REGIONS.world, fitOpts(false));
 getJSON('data/countries-50m.json')
   .then(world => {
     const fc = topojson.feature(world, world.objects.countries);
+    // Antarctica: no guide will ever be built there, and Web Mercator smears
+    // it into a huge distorted band across the entire bottom of the world
+    // view (the projection stretches toward infinity near the poles) — reads
+    // as a giant stray colored blob, not a country. Drop it before the layer
+    // is built so it never renders (fill, border, or label).
+    fc.features = fc.features.filter(f => (f.properties && f.properties.name) !== 'Antarctica');
     // Antimeridian guard: Russia and Fiji have rings that wrap past ±180°
     // (Chukotka, the Fiji group), which Mercator smears into a horizontal
     // band across the whole map. Pin any wrapped (far-negative) vertex to the
