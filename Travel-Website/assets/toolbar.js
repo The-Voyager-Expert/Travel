@@ -398,7 +398,7 @@
       '.tb-ham-menu{display:none;position:absolute;top:100%;left:0;right:0;' +
         'background:#ffffff;border-top:1px solid #e6e2da;border-bottom:2px solid #c8c4bc;' +
         'box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:1001;padding:4px 0 8px;' +
-        'max-height:calc(100dvh - 52px);overflow-y:auto;-webkit-overflow-scrolling:touch;' +
+        'height:calc(100dvh - 52px);overflow-y:auto;-webkit-overflow-scrolling:touch;' +
         /* FIXED (2026-07-20): -webkit-overflow-scrolling:touch on a tall
            position:absolute menu is a known iOS Safari repaint bug — during
            momentum/inertial scrolling WebKit can fail to recomposite the
