@@ -334,13 +334,13 @@
       'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:hidden;flex:1}' +
-    /* Flex row — fills full width, items spread evenly. No scrolling, no gap. */
+    /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:100%;margin:0;' +
-      'gap:0;align-items:center;justify-content:space-evenly}' +
+      'gap:0;align-items:center;justify-content:space-between}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:14px;font-weight:700;color:#fff!important;text-decoration:none;padding:4px 8px;' +
+    '.tb a,.tb a:visited{font-size:14px;font-weight:700;color:#fff!important;text-decoration:none;padding:4px 5px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
@@ -348,7 +348,7 @@
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
     '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:14px;font-weight:700;color:#fff!important;' +
-      'padding:4px 8px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
+      'padding:4px 5px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb-ddbtn.tb-active{color:#7a3b1e!important;background:rgba(255,255,255,0.92);font-weight:600}' +
