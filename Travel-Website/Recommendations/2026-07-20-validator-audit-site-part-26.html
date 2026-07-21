@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Validator Audit — Site Part 26/30: Currency · Plug Adapter · Maps</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 860px; margin: 40px auto; padding: 0 24px; color: #2a2520; background: #fff; }
+h1 { font-size: 20px; font-weight: 700; color: #b85c2a; margin: 0 0 4px; }
+.meta { font-size: 13px; color: #777; margin-bottom: 28px; }
+h2 { font-size: 15px; font-weight: 700; color: #3d3a32; margin: 28px 0 8px; border-bottom: 2px solid #b85c2a; padding-bottom: 4px; }
+h3 { font-size: 13px; font-weight: 700; color: #5a5450; margin: 16px 0 6px; }
+p, li { font-size: 13px; line-height: 1.6; margin: 0 0 8px; }
+ul { padding-left: 20px; margin: 0 0 12px; }
+code { font-family: "SF Mono", Monaco, monospace; font-size: 12px; background: #f4f0eb; padding: 1px 4px; border-radius: 3px; }
+.pass { color: #2a6a2a; font-weight: 600; }
+.fail { color: #b52a2a; font-weight: 600; }
+.new { color: #b85c2a; font-weight: 600; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; margin-left: 6px; }
+.badge-pass { background: #e8f5e8; color: #2a6a2a; border: 1px solid #b8d8b8; }
+.badge-new { background: #fdecc8; color: #7a4d00; border: 1px solid #e8c97a; }
+.tbl { width: 100%; border-collapse: collapse; margin: 12px 0; }
+.tbl th { background: #b85c2a; color: #fff; text-align: left; padding: 6px 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+.tbl td { padding: 6px 10px; font-size: 12px; border-bottom: 1px solid #ebe5dc; }
+.tbl tr:hover td { background: #fdf8f0; }
+.summary-box { background: #fdf8f0; border: 1px solid #e0d5c5; border-radius: 6px; padding: 14px 18px; margin: 16px 0; }
+.summary-box p { margin: 0; }
+</style>
+</head>
+<body>
+
+<h1>Validator Audit — Site Part 26/30</h1>
+<p class="meta">💰 Currency Guide &nbsp;·&nbsp; 🔌 Plug Adapter &nbsp;·&nbsp; 🗺️ Maps &nbsp;·&nbsp; Run: 2026-07-20 &nbsp;·&nbsp; Crib: crib-14</p>
+
+<div class="summary-box">
+  <p><strong>Result:</strong> All 3 pages pass all existing checks. 2 new <code>brain_check.py</code> HARD-FAIL gates added (Rules 577–578) for World Map invariants. brain_check: <span class="pass">197/197 ok, 0 fail</span> (was 195/195).</p>
+</div>
+
+<h2>Half 1 — Page Validation</h2>
+
+<h3>💰 Currency Guide</h3>
+<p>Validated via <code>validate_currency.py</code> and the 5-pattern <code>brain_check check_index_table_design</code> battery:</p>
+<ul>
+  <li><span class="pass">✓</span> 71 countries — matches the guide index exactly</li>
+  <li><span class="pass">✓</span> Date stamp current (July 2026)</li>
+  <li><span class="pass">✓</span> <code>outer_border</code> — <code>border:</code> present (not box-shadow)</li>
+  <li><span class="pass">✓</span> <code>no_zebra</code> — no <code>.idx-even</code>/<code>.idx-odd</code> classes</li>
+  <li><span class="pass">✓</span> <code>terracotta_hover</code> — <code>#b85c2a</code> on <code>tbody tr:hover td</code></li>
+  <li><span class="pass">✓</span> <code>uppercase_header</code> — <code>text-transform: uppercase</code> on <code>thead th</code></li>
+  <li><span class="pass">✓</span> <code>no_brightness_hover</code> — no <code>filter:brightness()</code> on hover</li>
+</ul>
+
+<h3>🔌 Plug Adapter Guide</h3>
+<p>Same 5-pattern table-design battery — all pass. File at <code>Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html</code>.</p>
+<ul>
+  <li><span class="pass">✓</span> All 5 <code>check_index_table_design</code> patterns pass</li>
+</ul>
+
+<h3>🗺️ World Map</h3>
+<p>Full coverage and structural verification:</p>
+
+<table class="tbl">
+  <thead><tr><th>Check</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>PINS array count</td><td><span class="pass">224 entries — matches 224 shipped guides</span></td></tr>
+    <tr><td>All hrefs use <code>../../Guides/</code> depth</td><td><span class="pass">✓ all 224 correct</span></td></tr>
+    <tr><td>No spaces or %20 in any PINS href</td><td><span class="pass">✓ all hyphenated</span></td></tr>
+    <tr><td><code>renderCities()</code> guard present</td><td><span class="pass">✓ <code>cityLayer.clearLayers(); return;</code></span></td></tr>
+    <tr><td><code>maybeLoadRegions()</code> guard present</td><td><span class="pass">✓ <code>return;</code> as first statement</span></td></tr>
+    <tr><td>No CDN scripts or tile servers</td><td><span class="pass">✓ fully self-hosted</span></td></tr>
+    <tr><td>Region-nav dot palette</td><td><span class="pass">✓ matches Maps-Layout.html §5</span></td></tr>
+    <tr><td><code>darken()</code> clamp — no negative RGB</td><td><span class="pass">✓ Math.min/Math.max guard present</span></td></tr>
+    <tr><td>Mobile <code>#map-left-stack display:none</code> at 640px</td><td><span class="pass">✓ region-nav removed on mobile</span></td></tr>
+  </tbody>
+</table>
+
+<h3>Fleet Coverage</h3>
+<p>All 224 guides appear in all cross-guide surfaces (index cards, FMAP, map pins, climate, safety, stats, search, status dots, stops maps). No gaps.</p>
+
+<h2>Half 2 — Validator Strengthening</h2>
+
+<p>Reviewed <code>Maps-Layout.html §10</code> invariants against existing brain_check coverage. Found 2 gaps — both now enforced:</p>
+
+<h3>New Rule 577: <code>check_world_map_render_cities_disabled</code> <span class="badge badge-new">HARD-FAIL</span></h3>
+<p>The <code>renderCities()</code> function body holds ~12k world-city dot markers + label clusters. It is intentionally disabled via an early <code>cityLayer.clearLayers(); return;</code> guard (guide-only pins invariant, <code>Maps-Layout.html §10</code>). No check previously enforced this — a crib could re-enable world-city display by deleting the guard with no session-start failure.</p>
+<p>The new check regex-matches that <code>renderCities()</code> has <code>cityLayer.clearLayers();</code> immediately followed by <code>return;</code> before any render logic. Missing = HARD-FAIL.</p>
+
+<h3>New Rule 578: <code>check_world_map_load_regions_disabled</code> <span class="badge badge-new">HARD-FAIL</span></h3>
+<p><code>maybeLoadRegions()</code> lazy-loads admin-1 subdivision borders and names for all continents at zoom ≥4. It is intentionally disabled for all non-US/non-Canada continents via an early <code>return;</code> (<code>Maps-Layout.html §10</code>). The US + Canada subdivision system (re-enabled 2026-07-19) uses a separate eager-loading path and is unaffected. No check previously enforced this guard — a crib could restore 6-continent province/state label clutter by deleting the <code>return;</code>.</p>
+<p>The new check regex-matches that <code>return;</code> is the function's first statement. Missing = HARD-FAIL.</p>
+
+<h3>Files Changed</h3>
+<table class="tbl">
+  <thead><tr><th>File</th><th>Change</th></tr></thead>
+  <tbody>
+    <tr><td><code>Brain/scripts/brain_check.py</code></td><td>+2 functions: <code>check_world_map_render_cities_disabled</code>, <code>check_world_map_load_regions_disabled</code>; +2 runner calls</td></tr>
+    <tr><td><code>Brain/Reference/Cleanliness Checks.md</code></td><td>Rules 577–578 appended; highest rule: 574 → 578</td></tr>
+    <tr><td><code>Brain/Reference/Validator Index.html</code></td><td>Two new <code>class="yes"</code> entries in BRAIN_CHECK.PY INTEGRITY CHECKS section (after <code>check_world_map_no_cdn</code>)</td></tr>
+  </tbody>
+</table>
+
+<h3>brain_check Result</h3>
+<p><code>brain_check.py</code> after all changes: <span class="pass">197/197 ok · 0 warn · 0 fail</span> (was 195/195 before this session).</p>
+
+<h2>No Page Fixes Required</h2>
+<p>All 3 Part 26 pages (Currency Guide, Plug Adapter, World Map) passed every check. The session added enforcement without needing to fix anything in the live pages.</p>
+
+</body>
+</html>
