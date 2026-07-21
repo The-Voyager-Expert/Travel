@@ -830,6 +830,16 @@ function buildPins() {
     iconAnchor: [6.5, 6.5],
   });
 
+  const BEEN_CITIES = new Set(['Amalfi','Amsterdam','Bologna','Bruges','Brussels','Cambridge','Cannes','Capri','Cascais','Cinque Terre','Copenhagen','Corfu','Edinburgh','Florence','Geneva','Gothenburg','Hamburg','London','Luxembourg','Madrid','Marktoberdorf','Monaco','Munich','Nice','Oxford','Paris','Pisa','Porto','Rome','San Sebastián','Sintra','Sorrento','Strasbourg','Stuttgart','Toledo','Turin','Venice','Vienna','Lagos','Chongqing','Atlanta','Austin','Big Island','Chicago','Kauai','La Jolla','Las Vegas','Los Cabos','Maui','Miami','Nashville','New York','Oahu','Orlando','Palo Alto','Pasadena','Puerto Vallarta','San Diego','San Francisco','San Juan Island','Scottsdale','Seattle','Sedona','Toronto','Vancouver','Victoria','Whistler','Athens','Beijing','Kyoto','Seoul','Shanghai','Taipei','Tokyo','Zhangjiajie','Aruba','Cancún','Curaçao','Sint Maarten','Virgin Islands','The Bahamas','Rio de Janeiro']);
+
+  const beenIcon = L.divIcon({
+    className: '',
+    html: '<div class="city-pin" style="width:13px;height:13px;background:radial-gradient(circle at 35% 30%,#f5c842 0%,#d4a017 55%,#9a6f00 100%);box-shadow:0 0 0 2px rgba(212,160,23,0.35);"></div>',
+    iconSize: [13, 13],
+    iconAnchor: [6.5, 6.5],
+  });
+
+  const markersByName = {};
   PINS.forEach(p => {
     const m = L.marker([p[2], p[1]], { icon: pinIcon, title: p[0] });
     m.bindTooltip(p[0], {
@@ -840,6 +850,34 @@ function buildPins() {
     m.on('click', () => { (window.top || window).location.href = href; });
     pinCluster.addLayer(m);
     pinMarkers.push(m);
+    markersByName[p[0]] = m;
+  });
+
+  let visitedFilterOn = false;
+  function applyVisitedFilter(on) {
+    visitedFilterOn = on;
+    PINS.forEach(p => {
+      const m = markersByName[p[0]];
+      if (!m) return;
+      const been = BEEN_CITIES.has(p[0]);
+      if (on) {
+        if (been) {
+          m.setIcon(beenIcon);
+          if (!pinCluster.hasLayer(m)) pinCluster.addLayer(m);
+        } else {
+          pinCluster.removeLayer(m);
+        }
+      } else {
+        m.setIcon(pinIcon);
+        if (!pinCluster.hasLayer(m)) pinCluster.addLayer(m);
+      }
+    });
+    pinCluster.refreshClusters();
+    renderPinLabels();
+  }
+
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.action === 'filterBeen') applyVisitedFilter(e.data.on);
   });
 
   map.addLayer(pinCluster);
