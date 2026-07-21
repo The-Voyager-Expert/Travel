@@ -60,7 +60,7 @@ html { scroll-behavior: smooth; }
   border: 1.5px solid var(--border2,#e6e2da);
   border-radius: 6px;
   color: var(--text, #1a1917);
-  background: var(--search-icon, none) var(--surface,#fff) no-repeat 12px 50%;
+  background: var(--search-icon, none) var(--bg,#fff) no-repeat 12px 50%;
   background-size: 16px;
   outline: none;
   transition: border-color .15s, box-shadow .15s;
@@ -138,8 +138,9 @@ a.city-row.hidden { display: none; }
 .note strong { color: var(--text); }
 @media (max-width: 600px) {
   .city-grid { grid-template-columns: 1fr 1fr; }
-  .legend-pills { display: grid; grid-template-columns: 1fr 1fr; }
-  .legend-pills .badge { justify-content: center; }
+  /* Legend — single column, no pill styling */
+  .legend { display: flex !important; flex-direction: column !important; gap: 8px !important; padding: 10px 0 12px !important; margin: 0 0 12px !important; justify-content: flex-start !important; align-items: center !important; }
+  .badge { background: none !important; border: none !important; border-bottom: 1px solid currentColor !important; padding: 2px 0 !important; font-size: 12px !important; gap: 5px !important; min-height: auto !important; height: auto !important; line-height: 1.3 !important; display: inline-flex !important; }
   #city-search { width: 100%; }
   .level-heading { flex-wrap: wrap; gap: 6px; }
   .level-count { margin-left: 0; }
@@ -148,7 +149,7 @@ a.city-row.hidden { display: none; }
 </head>
 <body>
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
-<script src="../assets/toolbar.js?v=121"></script>
+<script src="../assets/toolbar.js?v=116"></script>
 <script src="../assets/search-autocomplete.js?v=8"></script>
 
 <div class="wrap">
@@ -515,12 +516,10 @@ a.city-row.hidden { display: none; }
     if (!inp || typeof TVESearch === 'undefined') return;
     var items = [];
     document.querySelectorAll('.city-row').forEach(function (row) {
-      var nameEl = row.querySelector('.city-name');
-      var city = nameEl ? nameEl.textContent.trim() : '';
-      var countryEl = row.querySelector('.city-country');
-      var countryText = countryEl ? countryEl.textContent.trim().replace(/^\S+\s*/, '') : '';
-      var href = row.getAttribute('href');
-      if (city && href) items.push({ name: city, sub: countryText, href: href });
+      var city = row.getAttribute('data-city') || '';
+      var link = row.querySelector('a[href]');
+      var href = link ? link.getAttribute('href') : null;
+      if (city && href) items.push({ name: city, sub: '', href: href });
     });
     TVESearch.attach(inp, {
       items: items,
