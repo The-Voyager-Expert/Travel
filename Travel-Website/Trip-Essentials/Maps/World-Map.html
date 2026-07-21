@@ -129,7 +129,7 @@ function toggleVisited(btn) {
 
 <div id="wrap">
   <div id="map"></div>
-  <button id="map-back-btn" onclick="history.back()" style="display:none;position:fixed;top:72px;right:16px;z-index:1100;background:#fff;border:1px solid #ddd0c4;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:#3d3a32;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.12);align-items:center;gap:6px;" aria-label="Go back">← Back</button>
+  <button id="map-back-btn" onclick="history.back()" style="display:none;position:fixed;top:72px;right:16px;z-index:1100;background:#fdf8f0;border:1.5px solid #b85c2a;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:700;color:#b85c2a;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.10);align-items:center;gap:6px;" aria-label="Go back">← Back</button>
   <script>if(new URLSearchParams(location.search).get('from')==='stats'){var b=document.getElementById('map-back-btn');if(b)b.style.display='flex';}</script>
   <div id="map-left-stack">
     <div id="left-panel">
@@ -866,30 +866,21 @@ function buildPins() {
   });
 
   let visitedFilterOn = false;
-  window.applyVisitedFilter = function applyVisitedFilter(on) {
+  window.applyVisitedFilter = function(on) {
     visitedFilterOn = on;
+    pinCluster.clearLayers();
     PINS.forEach(p => {
       const m = markersByName[p[0]];
       if (!m) return;
-      const been = BEEN_CITIES.has(p[0]);
-      if (on) {
-        if (been) {
-          m.setIcon(beenIcon);
-          if (!pinCluster.hasLayer(m)) pinCluster.addLayer(m);
-        } else {
-          pinCluster.removeLayer(m);
-        }
-      } else {
-        m.setIcon(pinIcon);
-        if (!pinCluster.hasLayer(m)) pinCluster.addLayer(m);
-      }
+      if (on && !BEEN_CITIES.has(p[0])) return;
+      m.setIcon(on ? beenIcon : pinIcon);
+      pinCluster.addLayer(m);
     });
-    pinCluster.refreshClusters();
     renderPinLabels();
-  }
+  };
 
   window.addEventListener('message', function(e) {
-    if (e.data && e.data.action === 'filterBeen') applyVisitedFilter(e.data.on);
+    if (e.data && e.data.action === 'filterBeen') window.applyVisitedFilter && window.applyVisitedFilter(e.data.on);
   });
 
   map.addLayer(pinCluster);
