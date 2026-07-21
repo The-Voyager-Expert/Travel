@@ -276,6 +276,8 @@
     { group: '✈️ Flights', children: [
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
+        { href: base + 'Trip-Essentials/Lounges-US.html',        text: '💻 US Lounges' },
+        { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: '💻 EU Lounges' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',  text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
