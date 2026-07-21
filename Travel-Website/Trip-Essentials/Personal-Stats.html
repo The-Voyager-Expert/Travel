@@ -17,36 +17,38 @@ body.personal-stats {
 
 .ps-wrap { max-width: 940px; margin: 0 auto; padding: 0 32px 48px; }
 
-/* Dark stats hero panel */
-.ps-hero {
-  background: var(--terra-deep);
-  color: #fff;
-  padding: 22px 0 20px;
-  margin-bottom: 0;
+/* Standard title banner */
+.ps-title-block {
+  max-width: 940px; margin: 0 auto; padding: 0 32px;
 }
-.ps-hero-inner {
-  max-width: 940px;
-  margin: 0 auto;
-  padding: 0 32px;
+.ps-title-block h1 {
+  font-size: var(--fs-title); font-weight: 700; color: #3d3a32;
+  text-transform: uppercase; letter-spacing: 0.06em; margin: 0;
+  padding: 18px 0 13px;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(90deg, #b85c2a, #d4874a) 1;
 }
-.ps-hero-title { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 10px; }
-.ps-pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.ps-pill {
+
+/* Uniform stat pills — all same size */
+.ps-stat-row { display: flex; gap: 8px; flex-wrap: wrap; padding: 14px 0 0; }
+.ps-stat-pill {
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
-  padding: 4px 11px; border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.35);
-  color: #fff;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 6px;
+  border: 1.5px solid #c8a44a; background: #fff; color: #5a4a2a;
+  text-decoration: none; white-space: nowrap;
 }
-.ps-pill.p1 { background: #b85c2a; border-color: #d4874a; }
-.ps-pill.p2 { background: #7a3b1e; border-color: #b85c2a; }
-.ps-pill.p3 { background: #d4874a; border-color: #e8a870; color: #3d1a08; }
-.ps-pill.p4 { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.35); }
+.ps-stat-pill.is-toggle { cursor: pointer; font: inherit; border-style: solid; }
+.ps-stat-pill.is-toggle.active {
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  border-color: #b85c2a; color: #fff;
+}
 
 /* Section divider strips */
 .ps-section-label {
   font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--terra); display: flex; align-items: center; gap: 8px;
-  background: #fff; margin: 0 -32px; padding: 13px 32px;
+  background: #fff; margin: 16px -32px 0; padding: 13px 32px;
 }
 .ps-section-label::after { content: ''; flex: 1; height: 1px; background: var(--terra-light); }
 
@@ -124,15 +126,21 @@ body.personal-stats {
 }
 .ps-been-grid a:hover { border-bottom-color: var(--terra); }
 
+#been-list { display: none; }
+#been-list.open { display: block; }
+
 @media (max-width: 600px) {
   .ps-wrap { padding: 0 14px 40px; }
-  .ps-hero { padding: 16px 0 14px; }
-  .ps-hero-inner { padding: 0 14px; }
-  .ps-hero-title { font-size: 16px; margin-bottom: 8px; }
-  .ps-section-label { margin: 0 -14px; padding: 13px 14px; }
+  .ps-title-block { padding: 0 14px; }
+  .ps-section-label { margin: 16px -14px 0; padding: 13px 14px; }
   .ps-group:hover { margin: 0 -14px; padding: 4px 14px; }
   .ps-num { font-size: 16px; }
   .ps-been-grid a { font-size: 12px; }
+  .ps-stat-row { gap: 6px; }
+  .ps-stat-pill { font-size: 11px; padding: 5px 11px; }
+  .ps-hub-strip { gap: 4px; }
+  .ps-hub { padding: 6px 10px; }
+  .ps-cont-grid, .ps-ctry-grid { grid-template-columns: 1fr; }
 }
 </style>
 <link rel="stylesheet" href="../assets/mobile.css?v=49">
@@ -142,16 +150,14 @@ body.personal-stats {
 <div id="toolbar-mount" data-depth="1" data-maxwidth="940"></div>
 <script src="../assets/toolbar.js?v=116"></script>
 
-<div class="ps-hero">
-  <div class="ps-hero-inner">
-    <div class="ps-hero-title">Personal Travel Stats</div>
-    <div class="ps-pill-row">
-      <span class="ps-pill p1">82 Been There</span>
-      <span class="ps-pill p2">142 On the List</span>
-      <span class="ps-pill p3">28 Countries</span>
-      <span class="ps-pill p4">37% Explored</span>
-      <a href="Maps/Been-Map.html" class="ps-pill p4" style="text-decoration:none;">🗺 Map</a>
-    </div>
+<div class="ps-title-block">
+  <h1>Personal Travel Stats</h1>
+  <div class="ps-stat-row">
+    <button id="been-toggle" class="ps-stat-pill is-toggle" onclick="toggleBeen(this)" aria-expanded="false">82 Been There</button>
+    <span class="ps-stat-pill">142 On the List</span>
+    <span class="ps-stat-pill">28 Countries</span>
+    <span class="ps-stat-pill">37% Explored</span>
+    <a href="Maps/Been-Map.html" class="ps-stat-pill">🗺 Map</a>
   </div>
 </div>
 
@@ -382,5 +388,13 @@ body.personal-stats {
   </div>
 
 </div>
+<script>
+function toggleBeen(btn) {
+  var list = document.getElementById('been-list');
+  var open = list.classList.toggle('open');
+  btn.classList.toggle('active', open);
+  btn.setAttribute('aria-expanded', open);
+}
+</script>
 </body>
 </html>
