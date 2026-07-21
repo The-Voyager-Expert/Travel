@@ -28,7 +28,14 @@ body.personal-stats {
   max-width: 940px;
   margin: 0 auto;
   padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
+.ps-hero-text { flex: 1; }
+.ps-hero-illus { height: 80px; width: auto; opacity: 0.7; flex-shrink: 0; pointer-events: none; }
+@media (max-width:600px) { .ps-hero-illus { display: none; } }
 .ps-hero-title { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 10px; }
 .ps-pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .ps-pill {
@@ -117,22 +124,46 @@ body.personal-stats {
   .ps-ctry-grid { grid-template-columns: 1fr; }
 }
 
-.ps-been-grid { display: flex; flex-wrap: wrap; gap: 6px 10px; padding: 10px 0 4px; }
-.ps-been-grid a {
-  font-size: 13px; font-weight: 600; color: var(--terra); text-decoration: none;
-  padding: 3px 0; border-bottom: 1px solid transparent; white-space: nowrap;
-}
-.ps-been-grid a:hover { border-bottom-color: var(--terra); }
+/* ── Stat cards (Overview) ── */
+.ps-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; padding: 16px 0 8px; }
+.ps-stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px 18px 18px; }
+.ps-stat-card-num { font-family: var(--mono); font-size: 52px; font-weight: 900; color: var(--terra); line-height: 1; letter-spacing: -0.03em; }
+.ps-stat-card-label { font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.09em; margin-top: 8px; }
+.ps-stat-card-sub { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+/* ── Region bar chart ── */
+.ps-region-row { display: flex; align-items: center; gap: 12px; padding: 5px 0; }
+.ps-region-label { font-size: 12px; font-weight: 600; color: var(--text); min-width: 130px; }
+.ps-region-bar { flex: 1; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+.ps-region-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--terra-deep), var(--terra)); }
+.ps-region-fill.want { background: #b9c8e0; }
+.ps-region-count { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--terra); min-width: 28px; text-align: right; }
+
+/* ── Flight stat cards ── */
+.ps-flight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 14px 0 4px; }
+.ps-flight-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.ps-flight-num { font-family: var(--mono); font-size: 28px; font-weight: 900; color: var(--terra); line-height: 1.1; }
+.ps-flight-label { font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 5px; }
+.ps-flight-sub { font-size: 10.5px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+
+/* ── Been There section ── */
+.ps-been-region { margin-bottom: 20px; }
+.ps-been-region-name { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--terra); margin-bottom: 8px; }
+.ps-been-cities { display: flex; flex-wrap: wrap; gap: 6px; }
+.ps-been-cities a { font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; background: var(--surface); border: 0.5px solid #c8a44a; border-radius: 6px; padding: 5px 10px; transition: background .15s, color .15s; }
+.ps-been-cities a:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: #b85c2a; }
+
+html { scroll-behavior: smooth; }
 
 @media (max-width: 600px) {
   .ps-wrap { padding: 0 14px 40px; }
-  .ps-hero { padding: 16px 0 14px; }
-  .ps-hero-inner { padding: 0 14px; }
-  .ps-hero-title { font-size: 16px; margin-bottom: 8px; }
   .ps-section-label { margin: 0 -14px; padding: 13px 14px; }
   .ps-group:hover { margin: 0 -14px; padding: 4px 14px; }
   .ps-num { font-size: 16px; }
-  .ps-been-grid a { font-size: 12px; }
+  .ps-stat-grid { grid-template-columns: 1fr 1fr; }
+  .ps-stat-card-num { font-size: 36px; }
+  .ps-flight-grid { grid-template-columns: 1fr 1fr; }
+  .ps-region-label { min-width: 90px; }
 }
 </style>
 <link rel="stylesheet" href="../assets/mobile.css?v=50">
@@ -144,6 +175,7 @@ body.personal-stats {
 
 <div class="ps-hero">
   <div class="ps-hero-inner">
+    <div class="ps-hero-text">
     <div class="ps-hero-title">Personal Travel Stats</div>
     <div class="ps-pill-row">
       <span class="ps-pill p1">82 Been There</span>
@@ -151,6 +183,8 @@ body.personal-stats {
       <span class="ps-pill p3">28 Countries</span>
       <span class="ps-pill p4">37% Explored</span>
     </div>
+    </div>
+    <img src="../Images/statistics.png" alt="" class="ps-hero-illus" aria-hidden="true">
   </div>
 </div>
 
@@ -162,165 +196,76 @@ body.personal-stats {
 <div class="ps-wrap">
 
   <div class="ps-section-label">Overview</div>
-  <div class="ps-group">
-    <div class="ps-row">
-      <span class="ps-num">82</span><span class="ps-body"><span class="ps-focus">Been There</span><div class="ps-detail">Destinations visited across 28 countries and 6 world regions</div></span>
+  <div class="ps-stat-grid">
+    <div class="ps-stat-card">
+      <div class="ps-stat-card-num">82</div>
+      <div class="ps-stat-card-label">Been There</div>
+      <div class="ps-stat-card-sub">28 countries · 6 world regions</div>
     </div>
-    <div id="been-list">
-      <div class="ps-been-grid">
-        <a href="../Guides/Amalfi/amalfi_v1.html">Amalfi</a>
-        <a href="../Guides/Amsterdam/amsterdam_v1.html">Amsterdam</a>
-        <a href="../Guides/Aruba/aruba_v1.html">Aruba</a>
-        <a href="../Guides/Athens/athens_v1.html">Athens</a>
-        <a href="../Guides/Atlanta/atlanta_v1.html">Atlanta</a>
-        <a href="../Guides/Austin/austin_v1.html">Austin</a>
-        <a href="../Guides/Beijing/beijing_v1.html">Beijing</a>
-        <a href="../Guides/Big-Island/big-island_v1.html">Big Island</a>
-        <a href="../Guides/Bologna/bologna_v1.html">Bologna</a>
-        <a href="../Guides/Bruges/bruges_v1.html">Bruges</a>
-        <a href="../Guides/Brussels/brussels_v1.html">Brussels</a>
-        <a href="../Guides/Cambridge/cambridge_v1.html">Cambridge</a>
-        <a href="../Guides/Cancun/cancun_v1.html">Canc&#xFA;n</a>
-        <a href="../Guides/Cannes/cannes_v1.html">Cannes</a>
-        <a href="../Guides/Capri/capri_v1.html">Capri</a>
-        <a href="../Guides/Cascais/cascais_v2.html">Cascais</a>
-        <a href="../Guides/Chicago/chicago_v2.html">Chicago</a>
-        <a href="../Guides/Chongqing/chongqing_v1.html">Chongqing</a>
-        <a href="../Guides/Cinque-Terre/cinque-terre_v1.html">Cinque Terre</a>
-        <a href="../Guides/Copenhagen/copenhagen_v1.html">Copenhagen</a>
-        <a href="../Guides/Corfu/corfu_v1.html">Corfu</a>
-        <a href="../Guides/Curacao/curacao_v1.html">Cura&#xE7;ao</a>
-        <a href="../Guides/Edinburgh/edinburgh_v1.html">Edinburgh</a>
-        <a href="../Guides/Florence/florence_v1.html">Florence</a>
-        <a href="../Guides/Geneva/geneva_v1.html">Geneva</a>
-        <a href="../Guides/Gothenburg/gothenburg_v1.html">Gothenburg</a>
-        <a href="../Guides/Hamburg/hamburg_v1.html">Hamburg</a>
-        <a href="../Guides/Kauai/kauai_v1.html">Kauai</a>
-        <a href="../Guides/Kyoto/kyoto_v1.html">Kyoto</a>
-        <a href="../Guides/La-Jolla/la-jolla_v1.html">La Jolla</a>
-        <a href="../Guides/Lagos/lagos_v1.html">Lagos</a>
-        <a href="../Guides/Las-Vegas/las-vegas_v1.html">Las Vegas</a>
-        <a href="../Guides/London/london_v5.html">London</a>
-        <a href="../Guides/Los-Cabos/los-cabos_v1.html">Los Cabos</a>
-        <a href="../Guides/Luxembourg/luxembourg_v1.html">Luxembourg</a>
-        <a href="../Guides/Madrid/madrid_v1.html">Madrid</a>
-        <a href="../Guides/Marktoberdorf/marktoberdorf_v1.html">Marktoberdorf</a>
-        <a href="../Guides/Maui/maui_v1.html">Maui</a>
-        <a href="../Guides/Miami/miami_v1.html">Miami</a>
-        <a href="../Guides/Monaco/monaco_v1.html">Monaco</a>
-        <a href="../Guides/Munich/munich_v2.html">Munich</a>
-        <a href="../Guides/Nashville/nashville_v1.html">Nashville</a>
-        <a href="../Guides/New-York/new-york_v1.html">New York</a>
-        <a href="../Guides/Nice/nice_v1.html">Nice</a>
-        <a href="../Guides/Oahu/oahu_v1.html">Oahu</a>
-        <a href="../Guides/Orlando/orlando_v1.html">Orlando</a>
-        <a href="../Guides/Oxford/oxford_v1.html">Oxford</a>
-        <a href="../Guides/Palo-Alto/palo-alto_v6.html">Palo Alto</a>
-        <a href="../Guides/Paris/paris_v7.html">Paris</a>
-        <a href="../Guides/Pasadena/pasadena_v5.html">Pasadena</a>
-        <a href="../Guides/Pisa/pisa_v1.html">Pisa</a>
-        <a href="../Guides/Porto/porto_v2.html">Porto</a>
-        <a href="../Guides/Puerto-Vallarta/puerto-vallarta_v1.html">Puerto Vallarta</a>
-        <a href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">Rio de Janeiro</a>
-        <a href="../Guides/Rome/rome_v1.html">Rome</a>
-        <a href="../Guides/San-Diego/san-diego_v1.html">San Diego</a>
-        <a href="../Guides/San-Francisco/san-francisco_v3.html">San Francisco</a>
-        <a href="../Guides/San-Juan-Island/san-juan-island_v1.html">San Juan Island</a>
-        <a href="../Guides/San-Sebastian/san-sebastian_v1.html">San Sebasti&#xE1;n</a>
-        <a href="../Guides/Scottsdale/scottsdale_v1.html">Scottsdale</a>
-        <a href="../Guides/Seattle/seattle_v1.html">Seattle</a>
-        <a href="../Guides/Sedona/sedona_v1.html">Sedona</a>
-        <a href="../Guides/Seoul/seoul_v1.html">Seoul</a>
-        <a href="../Guides/Shanghai/shanghai_v1.html">Shanghai</a>
-        <a href="../Guides/Sint-Maarten/sint-maarten_v1.html">Sint Maarten</a>
-        <a href="../Guides/Sintra/sintra_v2.html">Sintra</a>
-        <a href="../Guides/Sorrento/sorrento_v1.html">Sorrento</a>
-        <a href="../Guides/Strasbourg/strasbourg_v1.html">Strasbourg</a>
-        <a href="../Guides/Stuttgart/stuttgart_v1.html">Stuttgart</a>
-        <a href="../Guides/Taipei/taipei_v1.html">Taipei</a>
-        <a href="../Guides/Bahamas/bahamas_v1.html">The Bahamas</a>
-        <a href="../Guides/Tokyo/tokyo_v1.html">Tokyo</a>
-        <a href="../Guides/Toledo/toledo_v1.html">Toledo</a>
-        <a href="../Guides/Toronto/toronto_v1.html">Toronto</a>
-        <a href="../Guides/Turin/turin_v14.html">Turin</a>
-        <a href="../Guides/Vancouver/vancouver_v1.html">Vancouver</a>
-        <a href="../Guides/Venice/venice_v1.html">Venice</a>
-        <a href="../Guides/Victoria/victoria_v1.html">Victoria</a>
-        <a href="../Guides/Vienna/vienna_v1.html">Vienna</a>
-        <a href="../Guides/Virgin-Islands/virgin-islands_v1.html">Virgin Islands</a>
-        <a href="../Guides/Whistler/whistler_v1.html">Whistler</a>
-        <a href="../Guides/Zhangjiajie/zhangjiajie_v1.html">Zhangjiajie</a>
-      </div>
+    <div class="ps-stat-card">
+      <div class="ps-stat-card-num">142</div>
+      <div class="ps-stat-card-label">On the List</div>
+      <div class="ps-stat-card-sub">8 regions · every continent</div>
     </div>
-    <div class="ps-row">
-      <span class="ps-num">142</span><span class="ps-body"><span class="ps-focus">On the List</span><div class="ps-detail">Destinations I want to visit — across 8 regions, every continent</div></span>
-    </div>
-    <div class="ps-row">
-      <span class="ps-num">37%</span><span class="ps-body">
-        <span class="ps-focus">Of 223 guides explored</span>
-        <div class="ps-donut-row">
-          <svg class="ps-donut-svg" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="45" cy="45" r="34" fill="none" stroke="#e0cfc4" stroke-width="9" stroke-linecap="round"/>
-            <circle cx="45" cy="45" r="34" fill="none" stroke="url(#ps-dg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="77 136" stroke-dashoffset="54" transform="rotate(-90 45 45)"/>
-            <defs><linearGradient id="ps-dg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#6b3a1f"/><stop offset="100%" stop-color="#d4874a"/></linearGradient></defs>
-            <text x="45" y="41" text-anchor="middle" font-size="16" font-weight="900" letter-spacing="-1" fill="#1a1614" font-family="-apple-system,system-ui,sans-serif">37%</text>
-            <text x="45" y="54" text-anchor="middle" font-size="6.5" font-weight="700" letter-spacing="1.5" fill="#6b5c4e" font-family="-apple-system,system-ui,sans-serif">EXPLORED</text>
-          </svg>
-          <div class="ps-donut-leg"><strong>82</strong> visited &nbsp;·&nbsp; <strong>142</strong> want<br><strong>223</strong> total guides</div>
-        </div>
-      </span>
-    </div>
-    <div class="ps-row">
-      <span class="ps-num">28</span><span class="ps-body"><span class="ps-focus">Countries visited</span><div class="ps-detail">Across 6 of 9 world regions</div></span>
+    <div class="ps-stat-card">
+      <div class="ps-stat-card-num">28</div>
+      <div class="ps-stat-card-label">Countries</div>
+      <div class="ps-stat-card-sub">6 of 9 world regions</div>
     </div>
   </div>
 
   <div class="ps-section-label">Flights from Seattle</div>
-  <div class="ps-group">
-    <div class="ps-row">
-      <span class="ps-num" style="font-size:16px;">9h 12m</span><span class="ps-body"><span class="ps-focus">Average flight time</span><div class="ps-detail">Across all 82 been-there destinations from SEA</div></span>
+  <div class="ps-flight-grid">
+    <div class="ps-flight-card">
+      <div class="ps-flight-num">9h 12m</div>
+      <div class="ps-flight-label">Avg flight time</div>
+      <div class="ps-flight-sub">Across all 82 visited destinations from SEA</div>
     </div>
-    <div class="ps-row">
-      <span class="ps-num" style="font-size:15px;">19h 10m</span><span class="ps-body"><span class="ps-focus">Farthest visited</span><div class="ps-detail">🇨🇳 Zhangjiajie, China</div></span>
+    <div class="ps-flight-card">
+      <div class="ps-flight-num">19h 10m</div>
+      <div class="ps-flight-label">Farthest visited</div>
+      <div class="ps-flight-sub">🇨🇳 Zhangjiajie, China</div>
     </div>
-    <div class="ps-row">
-      <span class="ps-num" style="font-size:15px;">25h 15m</span><span class="ps-body"><span class="ps-focus">Farthest on the list</span><div class="ps-detail">🇸🇨 Seychelles · 2 stops via Amsterdam</div></span>
+    <div class="ps-flight-card">
+      <div class="ps-flight-num">25h 15m</div>
+      <div class="ps-flight-label">Farthest on list</div>
+      <div class="ps-flight-sub">🇸🇨 Seychelles · 2 stops via AMS</div>
     </div>
-    <div class="ps-row">
-      <span class="ps-num">35<span style="font-size:.55em;font-weight:500;color:var(--muted)">/68</span></span><span class="ps-body">
-        <span class="ps-focus">Nonstop routes from SEA covered</span>
-        <div class="ps-tags">
-          <span class="ps-tag">51% nonstop</span>
-          <span class="ps-tag">41% one-stop</span>
-          <span class="ps-tag">8% two-stop</span>
-        </div>
-      </span>
+    <div class="ps-flight-card">
+      <div class="ps-flight-num">35<span style="font-size:.55em;font-weight:500;color:var(--muted)">/68</span></div>
+      <div class="ps-flight-label">SEA nonstops covered</div>
+      <div class="ps-flight-sub">51% nonstop · 41% one-stop · 8% two-stop</div>
     </div>
-    <div class="ps-row">
-      <span class="ps-num" style="font-size:16px;">745h</span><span class="ps-body"><span class="ps-focus">Total time in the air</span><div class="ps-detail">745h 47m · 31 days one-way to every been-there destination</div></span>
+    <div class="ps-flight-card">
+      <div class="ps-flight-num">745h</div>
+      <div class="ps-flight-label">Total air time</div>
+      <div class="ps-flight-sub">31 days one-way to every visited destination</div>
+    </div>
+    <div class="ps-flight-card" style="display:flex;align-items:center;justify-content:center;background:none;border-style:dashed;opacity:.5;">
+      <div style="font-size:11px;color:var(--muted);text-align:center;">More stats<br>coming soon</div>
     </div>
   </div>
 
   <div class="ps-section-label">Been — by region</div>
-  <div class="ps-group">
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">40</span>Europe</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:100%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">24</span>North America</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:60%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">8</span>Asia</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:20%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">5</span>Caribbean</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:12%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">3</span>Central America</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:7%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">1</span>South America</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:2%"></div></div></div></div>
+  <div class="ps-group" style="padding: 8px 0;">
+    <div class="ps-region-row"><span class="ps-region-label">Europe</span><div class="ps-region-bar"><div class="ps-region-fill" style="width:100%"></div></div><span class="ps-region-count">40</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">North America</span><div class="ps-region-bar"><div class="ps-region-fill" style="width:60%"></div></div><span class="ps-region-count">24</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Asia</span><div class="ps-region-bar"><div class="ps-region-fill" style="width:20%"></div></div><span class="ps-region-count">8</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Caribbean</span><div class="ps-region-bar"><div class="ps-region-fill" style="width:12%"></div></div><span class="ps-region-count">5</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Central America</span><div class="ps-region-bar"><div class="ps-region-fill" style="width:7%"></div></div><span class="ps-region-count">3</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">South America</span><div class="ps-region-bar"><div class="ps-region-fill" style="width:2%"></div></div><span class="ps-region-count">1</span></div>
   </div>
 
   <div class="ps-section-label">On the list — by region</div>
-  <div class="ps-group">
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">48</span>Europe</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:100%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">38</span>North America</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:79%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">20</span>South America</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:42%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">15</span>Asia</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:31%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">5</span>Middle East</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:10%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">4</span>Oceania</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:8%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">4</span>Caribbean</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:8%"></div></div></div></div>
-    <div class="ps-row"><div class="ps-inline"><span class="ps-num">3</span>Africa</div><div class="ps-bar-wrap"><div class="ps-bar-track"><div class="ps-bar-fill" style="width:6%"></div></div></div></div>
+  <div class="ps-group" style="padding: 8px 0;">
+    <div class="ps-region-row"><span class="ps-region-label">Europe</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:100%"></div></div><span class="ps-region-count" style="color:var(--navy)">48</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">North America</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:79%"></div></div><span class="ps-region-count" style="color:var(--navy)">38</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">South America</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:42%"></div></div><span class="ps-region-count" style="color:var(--navy)">20</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Asia</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:31%"></div></div><span class="ps-region-count" style="color:var(--navy)">15</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Middle East</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:10%"></div></div><span class="ps-region-count" style="color:var(--navy)">5</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Oceania</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:8%"></div></div><span class="ps-region-count" style="color:var(--navy)">4</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Caribbean</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:8%"></div></div><span class="ps-region-count" style="color:var(--navy)">4</span></div>
+    <div class="ps-region-row"><span class="ps-region-label">Africa</span><div class="ps-region-bar"><div class="ps-region-fill want" style="width:6%"></div></div><span class="ps-region-count" style="color:var(--navy)">3</span></div>
   </div>
 
   <div class="ps-section-label">By Continent</div>
@@ -382,6 +327,125 @@ body.personal-stats {
       <div class="ps-ctry"><span class="ps-ctry-flag">🇫🇷</span><div class="ps-ctry-body"><div class="ps-ctry-name">France</div><div class="ps-ctry-sub">11 guides · 4 visited</div></div><span class="ps-ctry-count">11</span></div>
       <div class="ps-ctry"><span class="ps-ctry-flag">🇵🇹</span><div class="ps-ctry-body"><div class="ps-ctry-name">Portugal</div><div class="ps-ctry-sub">7 guides · 4 visited</div></div><span class="ps-ctry-count">7</span></div>
       <div class="ps-ctry"><span class="ps-ctry-flag">🇪🇸</span><div class="ps-ctry-body"><div class="ps-ctry-name">Spain</div><div class="ps-ctry-sub">7 guides · 3 visited</div></div><span class="ps-ctry-count">7</span></div>
+    </div>
+  </div>
+
+  <div class="ps-section-label" id="been-there">Been There — 82 Guides</div>
+  <div class="ps-group" style="padding-top:12px;">
+    <div class="ps-been-region">
+      <div class="ps-been-region-name">Europe · 40</div>
+      <div class="ps-been-cities">
+        <a href="../Guides/Amalfi/amalfi_v1.html">Amalfi</a>
+        <a href="../Guides/Amsterdam/amsterdam_v1.html">Amsterdam</a>
+        <a href="../Guides/Bologna/bologna_v1.html">Bologna</a>
+        <a href="../Guides/Bruges/bruges_v1.html">Bruges</a>
+        <a href="../Guides/Brussels/brussels_v1.html">Brussels</a>
+        <a href="../Guides/Cambridge/cambridge_v1.html">Cambridge</a>
+        <a href="../Guides/Cannes/cannes_v1.html">Cannes</a>
+        <a href="../Guides/Capri/capri_v1.html">Capri</a>
+        <a href="../Guides/Cascais/cascais_v2.html">Cascais</a>
+        <a href="../Guides/Cinque-Terre/cinque-terre_v1.html">Cinque Terre</a>
+        <a href="../Guides/Copenhagen/copenhagen_v1.html">Copenhagen</a>
+        <a href="../Guides/Corfu/corfu_v1.html">Corfu</a>
+        <a href="../Guides/Edinburgh/edinburgh_v1.html">Edinburgh</a>
+        <a href="../Guides/Florence/florence_v1.html">Florence</a>
+        <a href="../Guides/Geneva/geneva_v1.html">Geneva</a>
+        <a href="../Guides/Gothenburg/gothenburg_v1.html">Gothenburg</a>
+        <a href="../Guides/Hamburg/hamburg_v1.html">Hamburg</a>
+        <a href="../Guides/London/london_v5.html">London</a>
+        <a href="../Guides/Luxembourg/luxembourg_v1.html">Luxembourg</a>
+        <a href="../Guides/Madrid/madrid_v1.html">Madrid</a>
+        <a href="../Guides/Marktoberdorf/marktoberdorf_v1.html">Marktoberdorf</a>
+        <a href="../Guides/Monaco/monaco_v1.html">Monaco</a>
+        <a href="../Guides/Munich/munich_v2.html">Munich</a>
+        <a href="../Guides/Nice/nice_v1.html">Nice</a>
+        <a href="../Guides/Oxford/oxford_v1.html">Oxford</a>
+        <a href="../Guides/Paris/paris_v7.html">Paris</a>
+        <a href="../Guides/Pisa/pisa_v1.html">Pisa</a>
+        <a href="../Guides/Porto/porto_v2.html">Porto</a>
+        <a href="../Guides/Rome/rome_v1.html">Rome</a>
+        <a href="../Guides/San-Sebastian/san-sebastian_v1.html">San Sebasti&#xE1;n</a>
+        <a href="../Guides/Sintra/sintra_v2.html">Sintra</a>
+        <a href="../Guides/Sorrento/sorrento_v1.html">Sorrento</a>
+        <a href="../Guides/Strasbourg/strasbourg_v1.html">Strasbourg</a>
+        <a href="../Guides/Stuttgart/stuttgart_v1.html">Stuttgart</a>
+        <a href="../Guides/Toledo/toledo_v1.html">Toledo</a>
+        <a href="../Guides/Turin/turin_v14.html">Turin</a>
+        <a href="../Guides/Venice/venice_v1.html">Venice</a>
+        <a href="../Guides/Vienna/vienna_v1.html">Vienna</a>
+        <a href="../Guides/Lagos/lagos_v1.html">Lagos</a>
+        <a href="../Guides/Chongqing/chongqing_v1.html">Chongqing</a>
+      </div>
+    </div>
+    <div class="ps-been-region">
+      <div class="ps-been-region-name">North America · 24</div>
+      <div class="ps-been-cities">
+        <a href="../Guides/Atlanta/atlanta_v1.html">Atlanta</a>
+        <a href="../Guides/Austin/austin_v1.html">Austin</a>
+        <a href="../Guides/Big-Island/big-island_v1.html">Big Island</a>
+        <a href="../Guides/Chicago/chicago_v2.html">Chicago</a>
+        <a href="../Guides/Kauai/kauai_v1.html">Kauai</a>
+        <a href="../Guides/La-Jolla/la-jolla_v1.html">La Jolla</a>
+        <a href="../Guides/Las-Vegas/las-vegas_v1.html">Las Vegas</a>
+        <a href="../Guides/Los-Cabos/los-cabos_v1.html">Los Cabos</a>
+        <a href="../Guides/Maui/maui_v1.html">Maui</a>
+        <a href="../Guides/Miami/miami_v1.html">Miami</a>
+        <a href="../Guides/Nashville/nashville_v1.html">Nashville</a>
+        <a href="../Guides/New-York/new-york_v1.html">New York</a>
+        <a href="../Guides/Oahu/oahu_v1.html">Oahu</a>
+        <a href="../Guides/Orlando/orlando_v1.html">Orlando</a>
+        <a href="../Guides/Palo-Alto/palo-alto_v6.html">Palo Alto</a>
+        <a href="../Guides/Pasadena/pasadena_v5.html">Pasadena</a>
+        <a href="../Guides/Puerto-Vallarta/puerto-vallarta_v1.html">Puerto Vallarta</a>
+        <a href="../Guides/San-Diego/san-diego_v1.html">San Diego</a>
+        <a href="../Guides/San-Francisco/san-francisco_v3.html">San Francisco</a>
+        <a href="../Guides/San-Juan-Island/san-juan-island_v1.html">San Juan Island</a>
+        <a href="../Guides/Scottsdale/scottsdale_v1.html">Scottsdale</a>
+        <a href="../Guides/Seattle/seattle_v1.html">Seattle</a>
+        <a href="../Guides/Sedona/sedona_v1.html">Sedona</a>
+        <a href="../Guides/Toronto/toronto_v1.html">Toronto</a>
+        <a href="../Guides/Vancouver/vancouver_v1.html">Vancouver</a>
+        <a href="../Guides/Victoria/victoria_v1.html">Victoria</a>
+        <a href="../Guides/Whistler/whistler_v1.html">Whistler</a>
+      </div>
+    </div>
+    <div class="ps-been-region">
+      <div class="ps-been-region-name">Asia · 8</div>
+      <div class="ps-been-cities">
+        <a href="../Guides/Athens/athens_v1.html">Athens</a>
+        <a href="../Guides/Beijing/beijing_v1.html">Beijing</a>
+        <a href="../Guides/Kyoto/kyoto_v1.html">Kyoto</a>
+        <a href="../Guides/Seoul/seoul_v1.html">Seoul</a>
+        <a href="../Guides/Shanghai/shanghai_v1.html">Shanghai</a>
+        <a href="../Guides/Taipei/taipei_v1.html">Taipei</a>
+        <a href="../Guides/Tokyo/tokyo_v1.html">Tokyo</a>
+        <a href="../Guides/Zhangjiajie/zhangjiajie_v1.html">Zhangjiajie</a>
+      </div>
+    </div>
+    <div class="ps-been-region">
+      <div class="ps-been-region-name">Caribbean · 5</div>
+      <div class="ps-been-cities">
+        <a href="../Guides/Aruba/aruba_v1.html">Aruba</a>
+        <a href="../Guides/Cancun/cancun_v1.html">Canc&#xFA;n</a>
+        <a href="../Guides/Curacao/curacao_v1.html">Cura&#xE7;ao</a>
+        <a href="../Guides/Sint-Maarten/sint-maarten_v1.html">Sint Maarten</a>
+        <a href="../Guides/Virgin-Islands/virgin-islands_v1.html">Virgin Islands</a>
+        <a href="../Guides/Bahamas/bahamas_v1.html">The Bahamas</a>
+      </div>
+    </div>
+    <div class="ps-been-region">
+      <div class="ps-been-region-name">Central America · 3</div>
+      <div class="ps-been-cities">
+        <a href="../Guides/Cancun/cancun_v1.html">Canc&#xFA;n</a>
+        <a href="../Guides/Los-Cabos/los-cabos_v1.html">Los Cabos</a>
+        <a href="../Guides/Puerto-Vallarta/puerto-vallarta_v1.html">Puerto Vallarta</a>
+      </div>
+    </div>
+    <div class="ps-been-region">
+      <div class="ps-been-region-name">South America · 1</div>
+      <div class="ps-been-cities">
+        <a href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">Rio de Janeiro</a>
+      </div>
     </div>
   </div>
 
