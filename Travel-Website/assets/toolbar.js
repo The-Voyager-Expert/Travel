@@ -331,10 +331,9 @@
       'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:hidden;flex:1}' +
-    /* Flex row — width:max-content + margin:0 auto centers the row on the viewport
-       axis. justify-content:flex-start ensures overflow always falls off the RIGHT
-       so Guides (first item) is never hidden in negative-scroll territory. */
-    '.tb-links{display:flex;flex-wrap:nowrap;width:max-content;margin:0 auto;' +
+    /* Flex row — left-aligned so overflow always falls off the RIGHT.
+       Site title and Guides (first items) are never clipped on the left. */
+    '.tb-links{display:flex;flex-wrap:nowrap;width:max-content;margin:0;' +
       'gap:1px;align-items:center;justify-content:flex-start}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
