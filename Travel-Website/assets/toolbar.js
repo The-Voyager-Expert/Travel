@@ -271,11 +271,6 @@
         { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
       ]},
     null,
-    { group: '💻 Lounges', children: [
-        { href: base + 'Trip-Essentials/Lounges-US.html',     text: '💻 US Lounges' },
-        { href: base + 'Trip-Essentials/Lounges-Europe.html', text: '💻 EU Lounges' },
-      ] },
-    null,
     { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 Trains', full: '🚆 European Train Guide' },
     null,
     { group: '✈️ Flights', children: [
@@ -333,8 +328,7 @@
     '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:13px;font-weight:700;color:#fff!important;' +
       'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
-    '.tb-inner{overflow-x:auto;scrollbar-width:none;flex:1}' +
-    '.tb-inner::-webkit-scrollbar{display:none}' +
+    '.tb-inner{overflow-x:hidden;flex:1}' +
     /* Flex row — width:max-content + margin:0 auto centers the row on the viewport
        axis. justify-content:flex-start ensures overflow always falls off the RIGHT
        so Guides (first item) is never hidden in negative-scroll territory. */
