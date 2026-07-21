@@ -291,8 +291,8 @@
     { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency', full: '💰 Currency' },
     null,
     { group: '🕐 Time Zones', children: [
-        { href: base + 'Trip-Essentials/Time-Zones.html',             text: '🕐 Time Zones',        full: '🕐 Time Zones' },
-        { href: base + 'Trip-Essentials/Time-Zones.html#sun-section', text: '🌅 Sunrise & Sunset',  full: '🌅 Sunrise & Sunset' },
+        { href: base + 'Trip-Essentials/Time-Zones.html',        text: '🕐 Time Zones',       full: '🕐 Time Zones' },
+        { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: '🌅 Sunrise & Sunset', full: '🌅 Sunrise & Sunset' },
       ] },
     null,
     { group: '🌤️ Weather', children: [

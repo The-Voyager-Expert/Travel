@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=51">
+<title>Sunrise &amp; Sunset</title>
+<style>
+/* ── Pickers ── */
+.sun-pickers {
+  display: flex; gap: 10px; margin: 20px 0 28px; flex-wrap: wrap;
+}
+.sun-pickers select {
+  flex: 1 1 200px; min-width: 0; height: 44px;
+  padding: 0 36px 0 14px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238a6c1a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  color: var(--text); font-size: 14px; font-family: inherit;
+  cursor: pointer; appearance: none; -webkit-appearance: none;
+}
+.sun-pickers select:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Sky card ── */
+.sky-card {
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 6px 32px rgba(0,0,0,.18);
+  position: relative;
+}
+
+/* Sky gradient background — deep indigo top → twilight horizon → warm amber */
+.sky-bg {
+  background: linear-gradient(180deg,
+    #0d1540 0%,
+    #1a2e7a 18%,
+    #2563c0 38%,
+    #5ba3d9 55%,
+    #f0a84e 72%,
+    #c96a28 85%,
+    #7a2e10 100%
+  );
+  padding: 36px 32px 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Stars layer (purely decorative) */
+.sky-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.6) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.7) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.5) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.8) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.4) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.7) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.5) 1px, transparent 1px);
+  background-size:
+    140px 100px, 220px 140px, 180px 110px, 260px 160px,
+    120px 90px, 200px 130px, 160px 105px, 240px 150px;
+  background-position:
+    23px 8px, 67px 22px, 130px 5px, 190px 14px,
+    40px 40px, 100px 30px, 170px 20px, 210px 8px;
+  opacity: .5;
+  pointer-events: none;
+}
+
+/* Arc SVG container */
+.sky-arc-wrap {
+  position: relative; width: 100%; margin-bottom: 8px;
+}
+#sun-arc {
+  display: block; width: 100%; height: auto;
+  max-height: 160px;
+}
+
+/* Times row */
+.sky-times {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 12px; position: relative; z-index: 1;
+}
+.sky-time-block { min-width: 0; }
+.sky-time-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.65); margin-bottom: 4px;
+}
+.sky-time-value {
+  font-size: 28px; font-weight: 700; color: #fff;
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1;
+  white-space: nowrap;
+}
+.sky-center {
+  text-align: center; flex: 1;
+}
+.sky-day-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 3px;
+}
+.sky-day-value {
+  font-size: 17px; font-weight: 700; color: rgba(255,255,255,.9);
+  letter-spacing: -.01em; white-space: nowrap;
+}
+
+/* Ground strip — golden hour rows */
+.sky-ground {
+  background: #0d1540; padding: 20px 28px;
+}
+.sky-ground-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: #e8c97a; margin-bottom: 12px;
+}
+.sky-golden-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.sky-golden-row:last-child { border-bottom: none; padding-bottom: 0; }
+.sky-golden-label { font-size: 12px; color: rgba(255,255,255,.55); font-weight: 500; }
+.sky-golden-value {
+  font-size: 13px; color: #e8c97a;
+  font-variant-numeric: tabular-nums; font-weight: 600;
+  letter-spacing: .01em;
+}
+
+/* ── Special cases ── */
+.sky-special {
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 6px 32px rgba(0,0,0,.18);
+  padding: 52px 36px 48px;
+  text-align: center;
+}
+.sky-special.midnight-sun {
+  background: linear-gradient(160deg, #1a6baf 0%, #f0a840 45%, #e85c18 100%);
+}
+.sky-special.polar-night {
+  background: linear-gradient(160deg, #050c2a 0%, #0d1f5c 50%, #1a2a6e 100%);
+}
+.sky-special-icon { font-size: 52px; line-height: 1; margin-bottom: 14px; }
+.sky-special-title {
+  font-size: 18px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.midnight-sun .sky-special-title { color: #fff; }
+.polar-night .sky-special-title { color: rgba(255,255,255,.88); }
+.sky-special-body { font-size: 14px; }
+.midnight-sun .sky-special-body { color: rgba(255,255,255,.75); }
+.polar-night .sky-special-body { color: rgba(255,255,255,.5); }
+
+/* Note line */
+.sun-note {
+  font-size: 11px; color: var(--muted);
+  text-align: center; margin-top: 14px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 520px) {
+  .sky-bg { padding: 28px 18px 22px; }
+  .sky-time-value { font-size: 22px; }
+  .sky-day-value { font-size: 14px; }
+  .sky-ground { padding: 16px 18px; }
+  .sky-special { padding: 40px 24px; }
+  .sun-pickers select { flex-basis: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div data-toolbar data-depth="1" data-maxwidth="1100"></div>
+
+  <h1>Sunrise &amp; Sunset</h1>
+
+  <div class="sun-pickers">
+    <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
+    <select id="sun-month" aria-label="Select month for sunrise and sunset times">
+      <option value="0">January</option>
+      <option value="1">February</option>
+      <option value="2">March</option>
+      <option value="3">April</option>
+      <option value="4">May</option>
+      <option value="5">June</option>
+      <option value="6">July</option>
+      <option value="7">August</option>
+      <option value="8">September</option>
+      <option value="9">October</option>
+      <option value="10">November</option>
+      <option value="11">December</option>
+    </select>
+  </div>
+
+  <div id="sun-output"></div>
+  <p class="sun-note">Times are approximate (±15–30 min) · Mid-month estimate · Computed from latitude</p>
+</div>
+
+<script>
+var CITIES = [
+  {name:'Paro', country:'Bhutan', tz:'Asia/Thimphu', region:'asiapac', flag:'🇧🇹', guide:'Bhutan', url:'../Guides/Bhutan/bhutan_v1.html'},
+  {name:'Seychelles', country:'Seychelles', tz:'Indian/Mahe', region:'other', flag:'🇸🇨', url:'../Guides/Seychelles/seychelles_v1.html'},
+  {name:'Muscat', country:'Oman', tz:'Asia/Muscat', region:'other', flag:'🇴🇲', url:'../Guides/Muscat/muscat_v1.html'},
+  {name:'Pokhara', country:'Nepal', tz:'Asia/Kathmandu', region:'asiapac', flag:'🇳🇵', url:'../Guides/Pokhara/pokhara_v1.html'},
+  {name:'Marco Island', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', guide:'Marco-Island', url:'../Guides/Marco-Island/marco-island_v1.html'},
+  {name:'Hilton Head Island', country:'United States', tz:'America/New_York', region:'americas', flag:'🇺🇸', guide:'Hilton-Head-Island', url:'../Guides/Hilton-Head-Island/hilton-head-island_v1.html'},
+  {name:'Coeur dAlene', country:'USA · Idaho', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', guide:'Coeur-dAlene', url:'../Guides/Coeur-dAlene/coeur-dalene_v1.html'},
+  {name:'Santa Fe', country:'USA · New Mexico', tz:'America/Denver', region:'americas', flag:'🇺🇸', guide:'Santa-Fe', url:'../Guides/Santa-Fe/santa-fe_v1.html'},
+  {name:'Los Cabos', country:'Mexico', tz:'America/Mazatlan', region:'americas', flag:'🇲🇽', guide:'Los-Cabos', url:'../Guides/Los-Cabos/los-cabos_v1.html'},
+  {name:'Alaska', country:'USA', tz:'America/Anchorage', region:'americas', flag:'🇺🇸', url:'../Guides/Alaska/alaska_v1.html'},
+  {name:'Aracaju', country:'Brazil', tz:'America/Maceio', region:'americas', flag:'🇧🇷', url:'../Guides/Aracaju/aracaju_v1.html'},
+  {name:'Arenal', country:'Costa Rica', tz:'America/Costa_Rica', region:'americas', flag:'🇨🇷', url:'../Guides/Arenal/arenal_v1.html'},
+  {name:'Atlanta', country:'USA · Georgia', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Atlanta/atlanta_v1.html'},
+  {name:'Austin', country:'USA · Texas', tz:'America/Chicago', region:'americas', flag:'🇺🇸', url:'../Guides/Austin/austin_v1.html'},
+  {name:'Bend', country:'USA · Oregon', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Bend/bend_v2.html'},
+  {name:'Big Island', country:'USA · Hawaii', tz:'Pacific/Honolulu', region:'americas', flag:'🇺🇸', url:'../Guides/Big-Island/big-island_v1.html'},
+  {name:'Boston', country:'USA · Massachusetts', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Boston/boston_v1.html'},
+  {name:'Boulder', country:'USA · Colorado', tz:'America/Denver', region:'americas', flag:'🇺🇸', url:'../Guides/Boulder/boulder_v1.html'},
+  {name:'Buenos Aires', country:'Argentina', tz:'America/Argentina/Buenos_Aires', region:'americas', flag:'🇦🇷', url:'../Guides/Buenos-Aires/buenos-aires_v1.html'},
+  {name:'Cape Cod', country:'USA · Massachusetts', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Cape-Cod/cape-cod_v1.html'},
+  {name:'Carmel-by-the-Sea', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Carmel-by-the-Sea/carmel-by-the-sea_v1.html'},
+  {name:'Charlotte', country:'USA · North Carolina', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Charlotte/charlotte_v1.html'},
+  {name:'Chicago', country:'USA · Illinois', tz:'America/Chicago', region:'americas', flag:'🇺🇸', url:'../Guides/Chicago/chicago_v2.html'},
+  {name:'Columbia', country:'USA · South Carolina', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Columbia/columbia_v1.html'},
+  {name:'Cusco', country:'Peru', tz:'America/Lima', region:'americas', flag:'🇵🇪', url:'../Guides/Cusco/cusco_v1.html'},
+  {name:'Cancún', country:'Mexico', tz:'America/Cancun', region:'americas', flag:'🇲🇽', url:'../Guides/Cancun/cancun_v1.html', guide:'Cancun'},
+  {name:'Dallas', country:'USA · Texas', tz:'America/Chicago', region:'americas', flag:'🇺🇸', url:'../Guides/Dallas/dallas_v1.html'},
+  {name:'Denver', country:'USA · Colorado', tz:'America/Denver', region:'americas', flag:'🇺🇸', url:'../Guides/Denver/denver_v1.html'},
+  {name:'Glacier National Park', country:'USA · Montana', tz:'America/Denver', region:'americas', flag:'🇺🇸', guide:'Glacier-National-Park', url:'../Guides/Glacier-National-Park/glacier-national-park_v2.html'},
+  {name:'Florida Keys', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Florida-Keys/florida-keys_v1.html'},
+  {name:'Kauai', country:'USA · Hawaii', tz:'Pacific/Honolulu', region:'americas', flag:'🇺🇸', url:'../Guides/Kauai/kauai_v1.html'},
+  {name:'Key West', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/KeyWest/keywest_v1.html'},
+  {name:'La Jolla', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/La-Jolla/la-jolla_v1.html'},
+  {name:'Lake Tahoe', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', guide:'Lake-Tahoe', url:'../Guides/Lake-Tahoe/lake-tahoe_v1.html'},
+  {name:'Las Vegas', country:'USA · Nevada', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Las-Vegas/las-vegas_v1.html'},
+  {name:'Lima', country:'Peru', tz:'America/Lima', region:'americas', flag:'🇵🇪', url:'../Guides/Lima/lima_v1.html'},
+  {name:'Los Angeles', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Los-Angeles/los-angeles_v1.html'},
+  {name:'Machu Picchu', country:'Peru', tz:'America/Lima', region:'americas', flag:'🇵🇪', guide:'MachuPicchu', url:'../Guides/MachuPicchu/machupicchu_v1.html'},
+  {name:'Malibu', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Malibu/malibu_v1.html'},
+  {name:'Maui', country:'USA · Hawaii', tz:'Pacific/Honolulu', region:'americas', flag:'🇺🇸', url:'../Guides/Maui/maui_v1.html'},
+  {name:'Miami', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Miami/miami_v1.html'},
+  {name:'Manuel Antonio', country:'Costa Rica', tz:'America/Costa_Rica', region:'americas', flag:'🇨🇷', url:'../Guides/Manuel-Antonio/manuel-antonio_v1.html'},
+  {name:'Montevideo', country:'Uruguay', tz:'America/Montevideo', region:'americas', flag:'🇺🇾', url:'../Guides/Montevideo/montevideo_v1.html'},
+  {name:'Montreal', country:'Canada · Quebec', tz:'America/Toronto', region:'americas', flag:'🇨🇦', url:'../Guides/Montreal/montreal_v1.html'},
+  {name:'Napa', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Napa/napa_v1.html'},
+  {name:'Naples', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', guide:'Naples-Florida', url:'../Guides/Naples-Florida/naples-florida_v1.html'},
+  {name:'Nashville', country:'USA · Tennessee', tz:'America/Chicago', region:'americas', flag:'🇺🇸', url:'../Guides/Nashville/nashville_v1.html'},
+  {name:'Oaxaca', country:'Mexico', tz:'America/Mexico_City', region:'americas', flag:'🇲🇽', url:'../Guides/Oaxaca/oaxaca_v1.html'},
+  {name:'Puerto Vallarta', country:'Mexico', tz:'America/Mexico_City', region:'americas', flag:'🇲🇽', url:'../Guides/Puerto-Vallarta/puerto-vallarta_v1.html'},
+  {name:'New Orleans', country:'USA · Louisiana', tz:'America/Chicago', region:'americas', flag:'🇺🇸', url:'../Guides/New-Orleans/new-orleans_v1.html'},
+  {name:'New York', country:'USA · New York', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/New-York/new-york_v1.html'},
+  {name:'Oahu', country:'USA · Hawaii', tz:'Pacific/Honolulu', region:'americas', flag:'🇺🇸', url:'../Guides/Oahu/oahu_v1.html'},
+  {name:'Orlando', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Orlando/orlando_v1.html'},
+  {name:'Palm Desert', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Palm-Desert/palm-desert_v1.html'},
+  {name:'Palo Alto', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Palo-Alto/palo-alto_v6.html'},
+  {name:'Pensacola', country:'USA · Florida', tz:'America/Chicago', region:'americas', flag:'🇺🇸', url:'../Guides/Pensacola/pensacola_v1.html'},
+  {name:'Pasadena', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Pasadena/pasadena_v5.html'},
+  {name:'Philadelphia', country:'USA · Pennsylvania', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Philadelphia/philadelphia_v1.html'},
+  {name:'Phoenix', country:'USA · Arizona', tz:'America/Phoenix', region:'americas', flag:'🇺🇸', url:'../Guides/Phoenix/phoenix_v1.html'},
+  {name:'Portland', country:'USA · Oregon', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Portland/portland_v1.html'},
+  {name:'Quebec City', country:'Canada · Quebec', tz:'America/Toronto', region:'americas', flag:'🇨🇦', url:'../Guides/Quebec-City/quebec-city_v1.html'},
+  {name:'Rio de Janeiro', country:'Brazil', tz:'America/Sao_Paulo', region:'americas', flag:'🇧🇷', url:'../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html'},
+  {name:'Curitiba', country:'Brazil', tz:'America/Sao_Paulo', region:'americas', flag:'🇧🇷', url:'../Guides/Curitiba/curitiba_v1.html'},
+  {name:'Florianópolis', country:'Brazil', tz:'America/Sao_Paulo', region:'americas', flag:'🇧🇷', guide:'Florianopolis', url:'../Guides/Florianopolis/florianopolis_v1.html'},
+  {name:'Fortaleza', country:'Brazil', tz:'America/Fortaleza', region:'americas', flag:'🇧🇷', url:'../Guides/Fortaleza/fortaleza_v1.html'},
+  {name:'Foz do Iguaçu', country:'Brazil', tz:'America/Sao_Paulo', region:'americas', flag:'🇧🇷', url:'../Guides/Foz-do-Iguaçu/foz-do-iguacu_v2.html'},
+  {name:'João Pessoa', country:'Brazil', tz:'America/Recife', region:'americas', flag:'🇧🇷', url:'../Guides/João-Pessoa/joao-pessoa_v1.html'},
+  {name:'Maceió', country:'Brazil', tz:'America/Maceio', region:'americas', flag:'🇧🇷', url:'../Guides/Maceió/maceio_v1.html'},
+  {name:'Natal', country:'Brazil', tz:'America/Fortaleza', region:'americas', flag:'🇧🇷', url:'../Guides/Natal/natal_v1.html'},
+  {name:'Olinda', country:'Brazil', tz:'America/Recife', region:'americas', flag:'🇧🇷', url:'../Guides/Olinda/olinda_v1.html'},
+  {name:'Porto Alegre', country:'Brazil', tz:'America/Sao_Paulo', region:'americas', flag:'🇧🇷', url:'../Guides/Porto-Alegre/porto-alegre_v1.html'},
+  {name:'Recife', country:'Brazil', tz:'America/Recife', region:'americas', flag:'🇧🇷', url:'../Guides/Recife/recife_v1.html'},
+  {name:'Salvador', country:'Brazil', tz:'America/Bahia', region:'americas', flag:'🇧🇷', url:'../Guides/Salvador/salvador_v1.html'},
+  {name:'São Luís', country:'Brazil', tz:'America/Fortaleza', region:'americas', flag:'🇧🇷', url:'../Guides/São-Luís/sao-luis_v1.html'},
+  {name:'São Paulo', country:'Brazil', tz:'America/Sao_Paulo', region:'americas', flag:'🇧🇷', url:'../Guides/S%C3%A3o-Paulo/sao-paulo_v1.html'},
+  {name:'San Diego', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/San-Diego/san-diego_v1.html'},
+  {name:'San Francisco', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/San-Francisco/san-francisco_v3.html'},
+  {name:'San Jose', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/San-Jose/san-jose_v1.html'},
+  {name:'San Jose Costa Rica', country:'Costa Rica', tz:'America/Costa_Rica', region:'americas', flag:'🇨🇷', guide:'San-Jose-Costa-Rica', url:'../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html'},
+  {name:'Orcas Island', country:'USA · Washington', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Orcas-Island/orcas-island_v1.html'},
+  {name:'San Juan Island', country:'USA · Washington', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/San-Juan-Island/san-juan-island_v1.html'},
+  {name:'Santa Barbara', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Santa-Barbara/santa-barbara_v1.html'},
+  {name:'Santa Cruz', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Santa-Cruz/santa-cruz_v1.html'},
+  {name:'Santa Monica', country:'USA · California', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Santa-Monica/santa-monica_v1.html'},
+  {name:'Santiago', country:'Chile', tz:'America/Santiago', region:'americas', flag:'🇨🇱', url:'../Guides/Santiago/santiago_v1.html'},
+  {name:'Sarasota', country:'USA · Florida', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Sarasota/sarasota_v1.html'},
+  {name:'Scottsdale', country:'USA · Arizona', tz:'America/Phoenix', region:'americas', flag:'🇺🇸', url:'../Guides/Scottsdale/scottsdale_v1.html'},
+  {name:'Sedona', country:'USA · Arizona', tz:'America/Phoenix', region:'americas', flag:'🇺🇸', url:'../Guides/Sedona/sedona_v1.html'},
+  {name:'Seattle', country:'USA · Washington', tz:'America/Los_Angeles', region:'americas', flag:'🇺🇸', url:'../Guides/Seattle/seattle_v1.html'},
+  {name:'Toronto', country:'Canada · Ontario', tz:'America/Toronto', region:'americas', flag:'🇨🇦', url:'../Guides/Toronto/toronto_v1.html'},
+  {name:'Vancouver', country:'Canada · BC', tz:'America/Vancouver', region:'americas', flag:'🇨🇦', url:'../Guides/Vancouver/vancouver_v1.html'},
+  {name:'Victoria', country:'Canada · BC', tz:'America/Vancouver', region:'americas', flag:'🇨🇦', url:'../Guides/Victoria/victoria_v1.html'},
+  {name:'Whistler', country:'Canada · BC', tz:'America/Vancouver', region:'americas', flag:'🇨🇦', url:'../Guides/Whistler/whistler_v1.html'},
+  {name:'Washington DC', country:'USA · Washington DC', tz:'America/New_York', region:'americas', flag:'🇺🇸', url:'../Guides/Washington-DC/washington-dc_v1.html'},
+  {name:'Yellowstone', country:'USA · Wyoming', tz:'America/Denver', region:'americas', flag:'🇺🇸', url:'../Guides/Yellowstone/yellowstone_v1.html'},
+  {name:'Aruba', country:'Kingdom of Netherlands', tz:'America/Aruba', region:'caribbean', flag:'🇦🇼', url:'../Guides/Aruba/aruba_v1.html'},
+  {name:'Bahamas', country:'Bahamas', tz:'America/Nassau', region:'caribbean', flag:'🇧🇸', url:'../Guides/Bahamas/bahamas_v1.html'},
+  {name:'Barbados', country:'Barbados', tz:'America/Barbados', region:'caribbean', flag:'🇧🇧', url:'../Guides/Barbados/barbados_v1.html'},
+  {name:'Cayman Islands', country:'Cayman Islands', tz:'America/Cayman', region:'caribbean', flag:'🇰🇾', url:'../Guides/Cayman-Islands/cayman-islands_v1.html'},
+  {name:'Curacao', country:'Netherlands Antilles', tz:'America/Curacao', region:'caribbean', flag:'🇨🇼', url:'../Guides/Curacao/curacao_v1.html'},
+  {name:'Puerto Rico', country:'USA · Puerto Rico', tz:'America/Puerto_Rico', region:'caribbean', flag:'🇵🇷', url:'../Guides/Puerto-Rico/puerto-rico_v1.html'},
+  {name:'Sint Maarten', country:'Sint Maarten', tz:'America/Lower_Princes', region:'caribbean', flag:'🇸🇽', url:'../Guides/Sint-Maarten/sint-maarten_v1.html'},
+  {name:'Turks and Caicos', country:'Turks and Caicos', tz:'America/Grand_Turk', region:'caribbean', flag:'🇹🇨', url:'../Guides/Turks-and-Caicos/turks-and-caicos_v1.html'},
+  {name:'Virgin Islands', country:'USA · USVI', tz:'America/St_Thomas', region:'caribbean', flag:'🇻🇮', url:'../Guides/Virgin-Islands/virgin-islands_v1.html'},
+  {name:'Kraków', country:'Poland', tz:'Europe/Warsaw', region:'europe', flag:'🇵🇱', url:'../Guides/Kraków/krakow_v1.html'},
+  {name:'Aix-en-Provence', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Aix-en-Provence/aix-en-provence_v1.html'},
+  {name:'Alesund', country:'Norway', tz:'Europe/Oslo', region:'europe', flag:'🇳🇴', url:'../Guides/Alesund/alesund_v1.html'},
+  {name:'Amalfi', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Amalfi/amalfi_v1.html'},
+  {name:'Amsterdam', country:'Netherlands', tz:'Europe/Amsterdam', region:'europe', flag:'🇳🇱', url:'../Guides/Amsterdam/amsterdam_v1.html'},
+  {name:'Annecy', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Annecy/annecy_v1.html'},
+  {name:'Bora Bora', country:'French Polynesia', tz:'Pacific/Tahiti', region:'other', flag:'🇵🇫', url:'../Guides/Bora-Bora/bora-bora_v1.html'},
+  {name:'Athens', country:'Greece', tz:'Europe/Athens', region:'europe', flag:'🇬🇷', url:'../Guides/Athens/athens_v1.html'},
+  {name:'Azores', country:'Portugal', tz:'Atlantic/Azores', region:'europe', flag:'🇵🇹', url:'../Guides/Azores/azores_v1.html'},
+  {name:'Barcelona', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../Guides/Barcelona/barcelona_v1.html'},
+  {name:'Bilbao', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../Guides/Bilbao/bilbao_v1.html'},
+  {name:'Bergen', country:'Norway', tz:'Europe/Oslo', region:'europe', flag:'🇳🇴', url:'../Guides/Bergen/bergen_v1.html'},
+  {name:'Berlin', country:'Germany', tz:'Europe/Berlin', region:'europe', flag:'🇩🇪', url:'../Guides/Berlin/berlin_v1.html'},
+  {name:'Bologna', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Bologna/bologna_v1.html'},
+  {name:'Bordeaux', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Bordeaux/bordeaux_v1.html'},
+  {name:'Bruges', country:'Belgium', tz:'Europe/Brussels', region:'europe', flag:'🇧🇪', url:'../Guides/Bruges/bruges_v1.html'},
+  {name:'Brussels', country:'Belgium', tz:'Europe/Brussels', region:'europe', flag:'🇧🇪', url:'../Guides/Brussels/brussels_v1.html'},
+  {name:'Budapest', country:'Hungary', tz:'Europe/Budapest', region:'europe', flag:'🇭🇺', url:'../Guides/Budapest/budapest_v1.html'},
+  {name:'Cambridge', country:'UK · England', tz:'Europe/London', region:'europe', flag:'🇬🇧', url:'../Guides/Cambridge/cambridge_v1.html'},
+  {name:'Cannes', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Cannes/cannes_v1.html'},
+  {name:'Capri', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Capri/capri_v1.html'},
+  {name:'Cascais', country:'Portugal', tz:'Europe/Lisbon', region:'europe', flag:'🇵🇹', url:'../Guides/Cascais/cascais_v2.html'},
+  {name:'Cinque Terre', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Cinque-Terre/cinque-terre_v1.html'},
+  {name:'Colmar', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Colmar/colmar_v1.html'},
+  {name:'Copenhagen', country:'Denmark', tz:'Europe/Copenhagen', region:'europe', flag:'🇩🇰', url:'../Guides/Copenhagen/copenhagen_v1.html'},
+  {name:'Corfu', country:'Greece', tz:'Europe/Athens', region:'europe', flag:'🇬🇷', url:'../Guides/Corfu/corfu_v1.html'},
+  {name:'Dublin', country:'Ireland', tz:'Europe/Dublin', region:'europe', flag:'🇮🇪', url:'../Guides/Dublin/dublin_v1.html'},
+  {name:'Dubrovnik', country:'Croatia', tz:'Europe/Zagreb', region:'europe', flag:'🇭🇷', url:'../Guides/Dubrovnik/dubrovnik_v2.html'},
+  {name:'Edinburgh', country:'UK · Scotland', tz:'Europe/London', region:'europe', flag:'🇬🇧', url:'../Guides/Edinburgh/edinburgh_v1.html'},
+  {name:'Florence', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Florence/florence_v1.html'},
+  {name:'Geneva', country:'Switzerland', tz:'Europe/Zurich', region:'europe', flag:'🇨🇭', url:'../Guides/Geneva/geneva_v1.html'},
+  {name:'Glasgow', country:'UK · Scotland', tz:'Europe/London', region:'europe', flag:'🇬🇧', url:'../Guides/Glasgow/glasgow_v1.html'},
+  {name:'Gothenburg', country:'Sweden', tz:'Europe/Stockholm', region:'europe', flag:'🇸🇪', url:'../Guides/Gothenburg/gothenburg_v1.html'},
+  {name:'Hamburg', country:'Germany', tz:'Europe/Berlin', region:'europe', flag:'🇩🇪', url:'../Guides/Hamburg/hamburg_v1.html'},
+  {name:'Helsinki', country:'Finland', tz:'Europe/Helsinki', region:'europe', flag:'🇫🇮', url:'../Guides/Helsinki/helsinki_v1.html'},
+  {name:'Istanbul', country:'Turkey', tz:'Europe/Istanbul', region:'europe', flag:'🇹🇷', url:'../Guides/Istanbul/istanbul_v2.html'},
+  {name:'Lake Como', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Lake-Como/lake-como_v1.html'},
+  {name:'Lille', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Lille/lille_v1.html'},
+  {name:'Lisbon', country:'Portugal', tz:'Europe/Lisbon', region:'europe', flag:'🇵🇹', url:'../Guides/Lisbon/lisbon_v4.html'},
+  {name:'Ljubljana', country:'Slovenia', tz:'Europe/Ljubljana', region:'europe', flag:'🇸🇮', url:'../Guides/Ljubljana/ljubljana_v1.html'},
+  {name:'London', country:'UK · England', tz:'Europe/London', region:'europe', flag:'🇬🇧', url:'../Guides/London/london_v5.html'},
+  {name:'Lucerne', country:'Switzerland', tz:'Europe/Zurich', region:'europe', flag:'🇨🇭', url:'../Guides/Lucerne/lucerne_v1.html'},
+  {name:'Luxembourg', country:'Luxembourg', tz:'Europe/Luxembourg', region:'europe', flag:'🇱🇺', url:'../Guides/Luxembourg/luxembourg_v1.html'},
+  {name:'Lyon', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Lyon/lyon_v1.html'},
+  {name:'Madeira', country:'Portugal', tz:'Atlantic/Madeira', region:'europe', flag:'🇵🇹', url:'../Guides/Madeira/madeira_v1.html'},
+  {name:'Madrid', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../Guides/Madrid/madrid_v1.html'},
+  {name:'Malaga', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../Guides/Malaga/malaga_v1.html'},
+  {name:'Marktoberdorf', country:'Germany', tz:'Europe/Berlin', region:'europe', flag:'🇩🇪', url:'../Guides/Marktoberdorf/marktoberdorf_v1.html'},
+  {name:'Marseille', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Marseille/marseille_v1.html'},
+  {name:'Milan', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Milan/milan_v1.html'},
+  {name:'Monaco', country:'Monaco', tz:'Europe/Monaco', region:'europe', flag:'🇲🇨', url:'../Guides/Monaco/monaco_v1.html'},
+  {name:'Munich', country:'Germany', tz:'Europe/Berlin', region:'europe', flag:'🇩🇪', url:'../Guides/Munich/munich_v2.html'},
+  {name:'Mykonos', country:'Greece', tz:'Europe/Athens', region:'europe', flag:'🇬🇷', url:'../Guides/Mykonos/mykonos_v1.html'},
+  {name:'Naples', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Naples/naples_v1.html'},
+  {name:'Nice', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Nice/nice_v1.html'},
+  {name:'Oslo', country:'Norway', tz:'Europe/Oslo', region:'europe', flag:'🇳🇴', url:'../Guides/Oslo/oslo_v1.html'},
+  {name:'Oxford', country:'UK · England', tz:'Europe/London', region:'europe', flag:'🇬🇧', url:'../Guides/Oxford/oxford_v1.html'},
+  {name:'Paris', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Paris/paris_v7.html'},
+  {name:'Pisa', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Pisa/pisa_v1.html'},
+  {name:'Porto', country:'Portugal', tz:'Europe/Lisbon', region:'europe', flag:'🇵🇹', url:'../Guides/Porto/porto_v2.html'},
+  {name:'Prague', country:'Czech Republic', tz:'Europe/Prague', region:'europe', flag:'🇨🇿', url:'../Guides/Prague/prague_v1.html'},
+  {name:'Lecce', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Lecce/lecce_v1.html'},
+  {name:'Reykjavik', country:'Iceland', tz:'Atlantic/Reykjavik', region:'europe', flag:'🇮🇸', url:'../Guides/Reykjavik/reykjavik_v2.html'},
+  {name:'Rome', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Rome/rome_v1.html'},
+  {name:'Sardinia', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Sardinia/sardinia_v1.html'},
+  {name:'Salzburg', country:'Austria', tz:'Europe/Vienna', region:'europe', flag:'🇦🇹', url:'../Guides/Salzburg/salzburg_v1.html'},
+  {name:'San Sebastian', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../Guides/San-Sebastian/san-sebastian_v1.html'},
+  {name:'Santorini', country:'Greece', tz:'Europe/Athens', region:'europe', flag:'🇬🇷', url:'../Guides/Santorini/santorini_v1.html'},
+  {name:'Seville', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../Guides/Seville/seville_v1.html'},
+  {name:'Sicily', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Sicily/sicily_v1.html'},
+  {name:'Siena', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Siena/siena_v1.html'},
+  {name:'Sintra', country:'Portugal', tz:'Europe/Lisbon', region:'europe', flag:'🇵🇹', url:'../Guides/Sintra/sintra_v2.html'},
+  {name:'Sorrento', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Sorrento/sorrento_v1.html'},
+  {name:'Split', country:'Croatia', tz:'Europe/Zagreb', region:'europe', flag:'🇭🇷', url:'../Guides/Split/split_v1.html'},
+  {name:'Tbilisi', country:'Georgia', tz:'Asia/Tbilisi', region:'europe', flag:'🇬🇪', url:'../Guides/Tbilisi/tbilisi_v1.html'},
+  {name:'Kotor', country:'Montenegro', tz:'Europe/Podgorica', region:'europe', flag:'🇲🇪', url:'../Guides/Kotor/kotor_v1.html'},
+  {name:'Stockholm', country:'Sweden', tz:'Europe/Stockholm', region:'europe', flag:'🇸🇪', url:'../Guides/Stockholm/stockholm_v1.html'},
+  {name:'Strasbourg', country:'France', tz:'Europe/Paris', region:'europe', flag:'🇫🇷', url:'../Guides/Strasbourg/strasbourg_v1.html'},
+  {name:'Stuttgart', country:'Germany', tz:'Europe/Berlin', region:'europe', flag:'🇩🇪', url:'../Guides/Stuttgart/stuttgart_v1.html'},
+  {name:'Tallinn', country:'Estonia', tz:'Europe/Tallinn', region:'europe', flag:'🇪🇪', url:'../Guides/Tallinn/tallinn_v1.html'},
+  {name:'Toledo', country:'Spain', tz:'Europe/Madrid', region:'europe', flag:'🇪🇸', url:'../Guides/Toledo/toledo_v1.html'},
+  {name:'Tromsø', country:'Norway', tz:'Europe/Oslo', region:'europe', flag:'🇳🇴', guide:'Tromso', url:'../Guides/Tromso/tromso_v1.html'},
+  {name:'Turin', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Turin/turin_v14.html'},
+  {name:'Venice', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Venice/venice_v1.html'},
+  {name:'Verona', country:'Italy', tz:'Europe/Rome', region:'europe', flag:'🇮🇹', url:'../Guides/Verona/verona_v1.html'},
+  {name:'Vienna', country:'Austria', tz:'Europe/Vienna', region:'europe', flag:'🇦🇹', url:'../Guides/Vienna/vienna_v1.html'},
+  {name:'Valletta', country:'Malta', tz:'Europe/Malta', region:'europe', flag:'🇲🇹', url:'../Guides/Valletta/valletta_v1.html'},
+  {name:'Zurich', country:'Switzerland', tz:'Europe/Zurich', region:'europe', flag:'🇨🇭', url:'../Guides/Zurich/zurich_v1.html'},
+  {name:'Bali', country:'Indonesia', tz:'Asia/Makassar', region:'asiapac', flag:'🇮🇩', url:'../Guides/Bali/bali_v1.html'},
+  {name:'Bangkok', country:'Thailand', tz:'Asia/Bangkok', region:'asiapac', flag:'🇹🇭', url:'../Guides/Bangkok/bangkok_v1.html'},
+  {name:'Chiang Mai', country:'Thailand', tz:'Asia/Bangkok', region:'asiapac', flag:'🇹🇭', url:'../Guides/Chiang-Mai/chiang-mai_v1.html'},
+  {name:'Luang Prabang', country:'Laos', tz:'Asia/Vientiane', region:'asiapac', flag:'🇱🇦', url:'../Guides/Luang-Prabang/luang-prabang_v1.html'},
+  {name:'Beijing', country:'China', tz:'Asia/Shanghai', region:'asiapac', flag:'🇨🇳', url:'../Guides/Beijing/beijing_v1.html'},
+  {name:'Chongqing', country:'China', tz:'Asia/Shanghai', region:'asiapac', flag:'🇨🇳', url:'../Guides/Chongqing/chongqing_v1.html'},
+  {name:'Colombo', country:'Sri Lanka', tz:'Asia/Colombo', region:'asiapac', flag:'🇱🇰', url:'../Guides/Colombo/colombo_v1.html'},
+  {name:'Hanoi', country:'Vietnam', tz:'Asia/Ho_Chi_Minh', region:'asiapac', flag:'🇻🇳', url:'../Guides/Hanoi/hanoi_v1.html'},
+  {name:'Hoi An', country:'Vietnam', tz:'Asia/Ho_Chi_Minh', region:'asiapac', flag:'🇻🇳', url:'../Guides/Hoi-An/hoi-an_v1.html'},
+  {name:'Hong Kong', country:'Hong Kong SAR', tz:'Asia/Hong_Kong', region:'asiapac', flag:'🇭🇰', url:'../Guides/Hong-Kong/hong-kong_v1.html'},
+  {name:'Kyoto', country:'Japan', tz:'Asia/Tokyo', region:'asiapac', flag:'🇯🇵', url:'../Guides/Kyoto/kyoto_v1.html'},
+  {name:'Osaka', country:'Japan', tz:'Asia/Tokyo', region:'asiapac', flag:'🇯🇵', url:'../Guides/Osaka/osaka_v1.html'},
+  {name:'Maldives', country:'Maldives', tz:'Indian/Maldives', region:'asiapac', flag:'🇲🇻', url:'../Guides/Maldives/maldives_v1.html'},
+  {name:'Melbourne', country:'Australia', tz:'Australia/Melbourne', region:'asiapac', flag:'🇦🇺', url:'../Guides/Melbourne/melbourne_v1.html'},
+  {name:'Palawan', country:'Philippines', tz:'Asia/Manila', region:'asiapac', flag:'🇵🇭', url:'../Guides/Palawan/palawan_v1.html'},
+  {name:'Phuket', country:'Thailand', tz:'Asia/Bangkok', region:'asiapac', flag:'🇹🇭', url:'../Guides/Phuket/phuket_v1.html'},
+  {name:'Queenstown', country:'New Zealand', tz:'Pacific/Auckland', region:'asiapac', flag:'🇳🇿', url:'../Guides/Queenstown/queenstown_v1.html'},
+  {name:'Seoul', country:'South Korea', tz:'Asia/Seoul', region:'asiapac', flag:'🇰🇷', url:'../Guides/Seoul/seoul_v1.html'},
+  {name:'Shanghai', country:'China', tz:'Asia/Shanghai', region:'asiapac', flag:'🇨🇳', url:'../Guides/Shanghai/shanghai_v1.html'},
+  {name:'Singapore', country:'Singapore', tz:'Asia/Singapore', region:'asiapac', flag:'🇸🇬', url:'../Guides/Singapore/singapore_v3.html'},
+  {name:'Sydney', country:'Australia', tz:'Australia/Sydney', region:'asiapac', flag:'🇦🇺', url:'../Guides/Sydney/sydney_v2.html'},
+  {name:'Taipei', country:'Taiwan', tz:'Asia/Taipei', region:'asiapac', flag:'🇹🇼', url:'../Guides/Taipei/taipei_v1.html'},
+  {name:'Tokyo', country:'Japan', tz:'Asia/Tokyo', region:'asiapac', flag:'🇯🇵', url:'../Guides/Tokyo/tokyo_v1.html'},
+  {name:'Wellington', country:'New Zealand', tz:'Pacific/Auckland', region:'asiapac', flag:'🇳🇿', url:'../Guides/Wellington/wellington_v1.html'},
+  {name:'Zhangjiajie', country:'China', tz:'Asia/Shanghai', region:'asiapac', flag:'🇨🇳', url:'../Guides/Zhangjiajie/zhangjiajie_v1.html'},
+  {name:'Abu Dhabi', country:'UAE', tz:'Asia/Dubai', region:'other', flag:'🇦🇪', url:'../Guides/Abu-Dhabi/abu-dhabi_v1.html'},
+  {name:'Cairo', country:'Egypt', tz:'Africa/Cairo', region:'other', flag:'🇪🇬', url:'../Guides/Cairo/cairo_v2.html'},
+  {name:'Doha', country:'Qatar', tz:'Asia/Qatar', region:'other', flag:'🇶🇦', url:'../Guides/Doha/doha_v1.html'},
+  {name:'Dubai', country:'UAE', tz:'Asia/Dubai', region:'other', flag:'🇦🇪', url:'../Guides/Dubai/dubai_v1.html'},
+  {name:'Petra', country:'Jordan', tz:'Asia/Amman', region:'other', flag:'🇯🇴', url:'../Guides/Petra/petra_v1.html'},
+  {name:'Lagos', country:'Nigeria', tz:'Africa/Lagos', region:'other', flag:'🇳🇬', url:'../Guides/Lagos/lagos_v1.html'},
+  {name:'Marrakech', country:'Morocco', tz:'Africa/Casablanca', region:'other', flag:'🇲🇦', url:'../Guides/Marrakech/marrakech_v1.html'}
+];
+
+var CITY_LAT = {
+  'Alaska':61,'Aracaju':-11,'Arenal':10,'Atlanta':34,'Austin':30,
+  'Bahamas':25,'Bend':44,'Big Island':20,'Boston':42,'Boulder':40,'Buenos Aires':-34,
+  'Cape Cod':42,'Carmel-by-the-Sea':36,'Charlotte':35,'Chicago':42,
+  'Coeur dAlene':48,'Columbia':34,'Cusco':-14,'Cancún':21,'Dallas':33,'Denver':40,
+  'Florida Keys':25,'Glacier National Park':49,'Hilton Head Island':32,
+  'João Pessoa':-7,'Kauai':22,'Key West':25,'La Jolla':33,'Lake Tahoe':39,
+  'Las Vegas':36,'Lima':-12,'Los Angeles':34,'Los Cabos':23,
+  'Machu Picchu':-13,'Malibu':34,'Manuel Antonio':9,'Marco Island':26,'Maui':21,
+  'Miami':26,'Montevideo':-35,'Montreal':46,'Napa':38,'Nashville':36,
+  'Natal':-5,'New Orleans':30,'New York':41,'Oahu':21,'Oaxaca':17,
+  'Olinda':-8,'Orcas Island':48,'Orlando':28,
+  'Palm Desert':34,'Palo Alto':37,'Pasadena':34,'Pensacola':30,
+  'Philadelphia':40,'Phoenix':33,'Portland':46,
+  'Puerto Rico':18,'Puerto Vallarta':21,'Quebec City':47,
+  'Curitiba':-25,'Florianópolis':-28,'Fortaleza':-4,
+  'Foz do Iguaçu':-25,'Maceió':-10,'Porto Alegre':-30,
+  'Recife':-8,'Salvador':-13,'São Luís':-2,'São Paulo':-24,
+  'Rio de Janeiro':-23,'San Diego':33,'San Francisco':38,'San Jose':37,
+  'San Jose Costa Rica':10,'San Juan Island':48,'Santa Barbara':34,
+  'Santa Cruz':37,'Santa Fe':36,'Santa Monica':34,'Santiago':-33,
+  'Sarasota':27,'Scottsdale':33,'Seattle':48,'Sedona':35,
+  'Toronto':44,'Vancouver':49,'Victoria':48,'Washington DC':39,
+  'Whistler':50,'Yellowstone':44,
+  'Aruba':12,'Barbados':13,'Cayman Islands':19,'Curacao':12,
+  'Sint Maarten':18,'Turks and Caicos':22,'Virgin Islands':18,
+  'Kraków':50,'Aix-en-Provence':44,'Alesund':62,'Amalfi':40,'Amsterdam':52,
+  'Annecy':46,'Athens':38,'Azores':38,'Barcelona':41,'Bilbao':43,'Bergen':60,
+  'Berlin':53,'Bologna':44,'Bordeaux':45,'Bruges':51,'Brussels':51,
+  'Budapest':47,'Cambridge':52,'Cannes':43,'Capri':40,'Cascais':39,
+  'Cinque Terre':44,'Colmar':48,'Copenhagen':56,'Corfu':40,'Dublin':53,
+  'Dubrovnik':43,'Edinburgh':56,'Florence':44,'Geneva':46,'Glasgow':56,
+  'Gothenburg':57,'Hamburg':54,'Helsinki':60,'Istanbul':41,'Kotor':42,
+  'Lake Como':46,'Lecce':40,'Lille':51,'Lisbon':39,'Ljubljana':46,
+  'London':51,'Lucerne':47,'Luxembourg':50,'Lyon':46,'Madeira':33,
+  'Madrid':40,'Malaga':37,'Marktoberdorf':48,'Marseille':43,'Milan':45,
+  'Monaco':44,'Munich':48,'Mykonos':37,'Nice':44,'Oslo':60,'Oxford':52,
+  'Paris':49,'Pisa':44,'Porto':41,'Prague':50,'Reykjavik':64,'Rome':42,
+  'Salzburg':47,'San Sebastian':43,'Sardinia':40,'Santorini':36,'Seville':37,
+  'Sicily':37,'Siena':43,'Sintra':39,'Sorrento':41,'Split':43,
+  'Stockholm':59,'Strasbourg':48,'Stuttgart':49,'Tallinn':59,'Tbilisi':42,
+  'Toledo':40,'Tromsø':70,'Turin':45,'Valletta':36,'Venice':45,
+  'Verona':45,'Vienna':48,'Zurich':47,
+  'Bali':-8,'Bangkok':14,'Beijing':40,'Bora Bora':-16,'Chiang Mai':19,
+  'Chongqing':30,'Colombo':7,'Hanoi':21,'Hoi An':16,'Hong Kong':22,
+  'Kyoto':35,'Luang Prabang':20,'Maldives':4,'Melbourne':-38,'Osaka':35,
+  'Palawan':10,'Phuket':8,'Queenstown':-45,'Seoul':37,'Shanghai':31,
+  'Singapore':1,'Sydney':-34,'Taipei':25,'Tokyo':36,'Wellington':-41,
+  'Zhangjiajie':29,
+  'Abu Dhabi':24,'Cairo':30,'Doha':25,'Dubai':25,
+  'Marrakech':32,'Muscat':24,'Paro':27,'Petra':30,'Pokhara':28,'Seychelles':-5
+};
+
+function getSunLat(c) {
+  if (c.name === 'Naples') return c.region === 'americas' ? 26 : 41;
+  if (c.name === 'Lagos')  return c.tz === 'Africa/Lagos' ? 6 : 37;
+  return CITY_LAT[c.name] !== undefined ? CITY_LAT[c.name] : null;
+}
+
+function calcSunTimes(lat, month) {
+  var doy = [15,46,74,105,135,166,196,227,258,288,319,349];
+  var N = doy[month];
+  var B = (360/365*(N-81)) * Math.PI/180;
+  var decl = 23.45 * Math.sin(B) * Math.PI/180;
+  var latR = lat * Math.PI/180;
+  var cosHA = -Math.tan(latR)*Math.tan(decl);
+  if (cosHA <= -1) return {type:'sun'};
+  if (cosHA >= 1)  return {type:'night'};
+  var HA = Math.acos(cosHA)*180/Math.PI;
+  var sr = 12 - HA/15, ss = 12 + HA/15;
+  return {type:'normal', sr:sr, ss:ss, len:ss-sr};
+}
+
+function fmtTime(h) {
+  var m = ((Math.round(h*60)%1440)+1440)%1440;
+  var hh = Math.floor(m/60), mm = m%60;
+  var ap = hh < 12 ? 'AM' : 'PM';
+  hh = hh%12||12;
+  return hh+':'+(mm<10?'0':'')+mm+' '+ap;
+}
+
+function fmtLen(h) {
+  var hh = Math.floor(h), mm = Math.round((h-hh)*60);
+  if (mm === 60) { hh++; mm = 0; }
+  return hh+'h '+(mm<10?'0':'')+mm+'m';
+}
+
+/* Draw the SVG arc */
+function arcPoint(cx, cy, r, angleDeg) {
+  var a = angleDeg * Math.PI / 180;
+  return [cx + r * Math.cos(a), cy - r * Math.sin(a)];
+}
+
+function arcPath(cx, cy, r, startDeg, endDeg) {
+  var p1 = arcPoint(cx, cy, r, startDeg);
+  var p2 = arcPoint(cx, cy, r, endDeg);
+  var large = (startDeg - endDeg > 180) ? 1 : 0;
+  return 'M '+p1[0]+' '+p1[1]+' A '+r+' '+r+' 0 '+large+' 0 '+p2[0]+' '+p2[1];
+}
+
+function timeToAngle(t, tMin, tMax) {
+  /* maps tMin→180° (left) and tMax→0° (right) */
+  var frac = Math.max(0, Math.min(1, (t - tMin) / (tMax - tMin)));
+  return 180 - frac * 180;
+}
+
+function buildArc(sr, ss) {
+  var W = 520, H = 180;
+  var cx = W/2, cy = H + 10; /* centre below the arc, so we see the top half */
+  var r = H - 8;
+
+  var tMin = Math.min(sr - 1.5, 4);
+  var tMax = Math.max(ss + 1.5, 20);
+
+  function ta(t) { return timeToAngle(t, tMin, tMax); }
+
+  var angSr  = ta(sr);
+  var angSs  = ta(ss);
+  var angGm1 = ta(sr - 0.5); /* golden morning start */
+  var angGe2 = ta(ss + 0.5); /* golden evening end */
+
+  /* clamp to [0,180] */
+  function cl(a) { return Math.max(0, Math.min(180, a)); }
+
+  var parts = [];
+
+  /* 1. night left */
+  if (cl(angGm1) < 180) {
+    parts.push('<path d="'+arcPath(cx,cy,r,180,cl(angGm1))+'" stroke="#0b0f30" stroke-width="9" fill="none" stroke-linecap="round"/>');
+  }
+  /* 2. golden morning */
+  parts.push('<path d="'+arcPath(cx,cy,r,cl(angGm1),cl(angSr))+'" stroke="url(#goldenGrad)" stroke-width="9" fill="none" stroke-linecap="round"/>');
+  /* 3. day */
+  parts.push('<path d="'+arcPath(cx,cy,r,cl(angSr),cl(angSs))+'" stroke="url(#dayGrad)" stroke-width="9" fill="none" stroke-linecap="round"/>');
+  /* 4. golden evening */
+  parts.push('<path d="'+arcPath(cx,cy,r,cl(angSs),cl(angGe2))+'" stroke="url(#goldenGrad)" stroke-width="9" fill="none" stroke-linecap="round"/>');
+  /* 5. night right */
+  if (cl(angGe2) > 0) {
+    parts.push('<path d="'+arcPath(cx,cy,r,cl(angGe2),0)+'" stroke="#0b0f30" stroke-width="9" fill="none" stroke-linecap="round"/>');
+  }
+
+  /* sun dot at sunrise */
+  var srPt = arcPoint(cx, cy, r, angSr);
+  var ssPt = arcPoint(cx, cy, r, angSs);
+  parts.push('<circle cx="'+srPt[0]+'" cy="'+srPt[1]+'" r="6" fill="#f9c24b" stroke="#fff" stroke-width="2"/>');
+  parts.push('<circle cx="'+ssPt[0]+'" cy="'+ssPt[1]+'" r="6" fill="#e8601a" stroke="#fff" stroke-width="2"/>');
+
+  return '<svg id="sun-arc" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day arc">'
+    + '<defs>'
+    + '<linearGradient id="dayGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4ea8d9"/><stop offset="50%" stop-color="#7bc8f0"/><stop offset="100%" stop-color="#4ea8d9"/></linearGradient>'
+    + '<linearGradient id="goldenGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#e8a030"/><stop offset="100%" stop-color="#f0c848"/></linearGradient>'
+    + '</defs>'
+    + parts.join('')
+    + '</svg>';
+}
+
+function render() {
+  var sel = document.getElementById('sun-city');
+  var mon = document.getElementById('sun-month');
+  var out = document.getElementById('sun-output');
+  if (!sel || !mon || !out) return;
+  var idx = parseInt(sel.value, 10);
+  var month = parseInt(mon.value, 10);
+  if (isNaN(idx) || isNaN(month)) return;
+  var city = CITIES[idx];
+  if (!city) { out.innerHTML = ''; return; }
+  var lat = getSunLat(city);
+  if (lat === null) {
+    out.innerHTML = '<p class="sun-note">No data available for ' + city.name + '.</p>';
+    return;
+  }
+  var r = calcSunTimes(lat, month);
+
+  if (r.type === 'sun') {
+    out.innerHTML = '<div class="sky-special midnight-sun">'
+      + '<div class="sky-special-icon">☀️</div>'
+      + '<div class="sky-special-title">Midnight Sun</div>'
+      + '<div class="sky-special-body">The sun does not set in ' + city.name + ' during this month.</div>'
+      + '</div>';
+    return;
+  }
+  if (r.type === 'night') {
+    out.innerHTML = '<div class="sky-special polar-night">'
+      + '<div class="sky-special-icon">🌑</div>'
+      + '<div class="sky-special-title">Polar Night</div>'
+      + '<div class="sky-special-body">The sun does not rise in ' + city.name + ' during this month.</div>'
+      + '</div>';
+    return;
+  }
+
+  var arc = buildArc(r.sr, r.ss);
+
+  out.innerHTML = '<div class="sky-card">'
+    + '<div class="sky-bg">'
+    + '<div class="sky-arc-wrap">' + arc + '</div>'
+    + '<div class="sky-times">'
+    + '<div class="sky-time-block"><div class="sky-time-label">Sunrise</div><div class="sky-time-value">' + fmtTime(r.sr) + '</div></div>'
+    + '<div class="sky-center"><div class="sky-day-label">Day length</div><div class="sky-day-value">' + fmtLen(r.len) + '</div></div>'
+    + '<div class="sky-time-block" style="text-align:right"><div class="sky-time-label">Sunset</div><div class="sky-time-value">' + fmtTime(r.ss) + '</div></div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="sky-ground">'
+    + '<div class="sky-ground-title">Golden Hour</div>'
+    + '<div class="sky-golden-row"><span class="sky-golden-label">Morning</span><span class="sky-golden-value">' + fmtTime(r.sr) + ' – ' + fmtTime(r.sr+0.5) + '</span></div>'
+    + '<div class="sky-golden-row"><span class="sky-golden-label">Evening</span><span class="sky-golden-value">' + fmtTime(r.ss-0.5) + ' – ' + fmtTime(r.ss) + '</span></div>'
+    + '</div>'
+    + '</div>';
+}
+
+(function () {
+  var sel = document.getElementById('sun-city');
+  var mon = document.getElementById('sun-month');
+  if (!sel || !mon) return;
+  var sorted = CITIES.map(function(c,i){return {c:c,i:i};});
+  sorted.sort(function(a,b){ return a.c.name < b.c.name ? -1 : a.c.name > b.c.name ? 1 : 0; });
+  sorted.forEach(function(x){
+    var o = document.createElement('option');
+    o.value = x.i;
+    o.textContent = x.c.name + ' · ' + x.c.country;
+    sel.appendChild(o);
+  });
+  var seaIdx = 0;
+  for (var k = 0; k < CITIES.length; k++) { if (CITIES[k].name === 'Seattle') { seaIdx = k; break; } }
+  sel.value = seaIdx;
+  mon.value = new Date().getMonth();
+  sel.addEventListener('change', render);
+  mon.addEventListener('change', render);
+  render();
+}());
+</script>
+
+<script src="../assets/toolbar.js?v=116"></script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if (!window.TVESearch) return;
+  var input = document.getElementById('sun-city');
+  /* no TVESearch on a select — skip */
+}());</script>
+</body>
+</html>
