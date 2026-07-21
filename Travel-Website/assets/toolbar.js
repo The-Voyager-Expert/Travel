@@ -281,7 +281,10 @@
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 Trains', full: '🚆 European Train Guide' },
+    { group: '🚆 Trains', children: [
+        { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Train Guide', full: '🚆 European Train Guide' },
+        { href: base + 'Trip-Essentials/Day-Trips.html',            text: '🚆 Day Trips by Train',  full: '🚆 Day Trips by Train'  },
+      ] },
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },
     null,
