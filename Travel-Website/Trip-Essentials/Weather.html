@@ -11,7 +11,7 @@
 .wx-eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .wx-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .wx-city { width: 100%; max-width: 230px; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--text);
-  padding: 6px 8px; border: 1px solid var(--border-warm); border-radius: 6px; background: var(--surface); cursor: pointer; }
+  padding: 6px 8px 6px 30px; border: 1px solid var(--border-warm); border-radius: 6px; margin-bottom: 0; }
 .wx-unit { display: inline-flex; border: 1px solid var(--border-warm); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
 .wx-unit button { border: none; cursor: pointer; padding: 6px 11px; font-size: 13px; font-weight: 600;
   font-family: inherit; background: transparent; color: var(--muted); }
@@ -48,6 +48,7 @@
 <div id="toolbar-mount" data-depth="1" data-maxwidth="460"></div>
 <script src="../assets/toolbar.js?v=121"></script>
 <script src="../assets/weather.js?v=4"></script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
 
 <div class="wx-wrap">
   <div class="site-header wx-banner">
@@ -86,14 +87,12 @@
   function conv(c) { return unit() === 'F' ? Math.round(c * 9 / 5 + 32) : Math.round(c); }
 
   function header() {
-    var opts = cityKeys.map(function (k) {
-      return '<option value="' + k + '"' + (k === curKey ? ' selected' : '') + '>' + (DB[k].city || k) + '</option>';
-    }).join('');
     var u = unit();
+    var cityName = DB[curKey] ? (DB[curKey].city || curKey) : '';
     return '<div class="wx-head">' +
         '<div style="flex:1;min-width:0;">' +
           '<div class="wx-eyebrow">Typical Weather</div>' +
-          '<select class="wx-city" id="wx-city">' + opts + '</select>' +
+          '<input type="search" class="wx-city" id="wx-city-search" value="' + cityName.replace(/"/g, '&quot;') + '" placeholder="City" aria-label="Select city" autocomplete="off">' +
         '</div>' +
         '<div class="wx-unit" id="wx-unit">' +
           '<button data-u="C" aria-label="Celsius" class="' + (u === 'C' ? 'on' : '') + '">°C</button>' +
@@ -153,7 +152,10 @@
   function render() {
     panel.innerHTML = header() + body();
 
-    document.getElementById('wx-city').addEventListener('change', function () { curKey = this.value; render(); });
+    if (window.TVESearch) {
+      var inp = document.getElementById('wx-city-search');
+      if (inp) TVESearch.attach(inp, { items: tveItems, onPick: function (it) { curKey = it.key; render(); } });
+    }
     document.querySelectorAll('#wx-unit button').forEach(function (b) {
       b.addEventListener('click', function () { setUnit(b.dataset.u); render(); });
     });
@@ -178,6 +180,7 @@
     if (el) el.textContent = 'Updated ' + MON_NAMES[d.getMonth()] + ' ' + d.getFullYear();
   }
   cityKeys = Object.keys(DB).sort(function (a, b) { return (DB[a].city || a).localeCompare(DB[b].city || b); });
+  var tveItems = cityKeys.map(function (k) { return { name: DB[k].city || k, key: k }; });
   if (cityKeys.length) {
     var hashKey = decodeURIComponent(location.hash.slice(1));
     if (hashKey && cityKeys.indexOf(hashKey) >= 0) {
