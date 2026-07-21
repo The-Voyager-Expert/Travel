@@ -3,9 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Places I've Been</title>
-<script>window.location.replace('World-Map.html');</script>
-<link rel="stylesheet" href="../../assets/mobile.css">
+<title>Places I've Been · The Voyager Expert</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; background: #1a1008; }
+
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 44px; background: #3d1f0a;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+#topbar-title {
+  font-family: Georgia, serif; font-size: 13px; font-weight: 700;
+  color: #f5e6c8; letter-spacing: 0.05em; text-transform: uppercase;
+}
+#topbar-back {
+  font-size: 12px; font-weight: 600; color: #c8a44a;
+  text-decoration: none; letter-spacing: 0.03em;
+}
+#topbar-back:hover { color: #f5e6c8; }
+#topbar-count {
+  font-size: 11px; color: #c8a44a; font-weight: 600; letter-spacing: 0.04em;
+}
+
+#map { position: fixed; top: 44px; left: 0; right: 0; bottom: 0; }
+
+.been-popup .leaflet-popup-content-wrapper {
+  background: #3d1f0a; border: none; border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5); padding: 0;
+}
+.been-popup .leaflet-popup-tip { background: #3d1f0a; }
+.been-popup .leaflet-popup-content { margin: 0; }
+.popup-inner { padding: 10px 14px; }
+.popup-inner a {
+  display: block; font-size: 13px; font-weight: 700; color: #f5e6c8;
+  text-decoration: none; letter-spacing: 0.03em;
+}
+.popup-inner a:hover { color: #c8a44a; }
+.popup-inner span {
+  display: block; font-size: 10px; color: #c8a44a; margin-top: 2px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+</style>
 </head>
-<body></body>
+<body>
+
+<div id="topbar">
+  <a href="../Personal-Stats.html" id="topbar-back">← Back</a>
+  <div id="topbar-title">Places I've Been</div>
+  <div id="topbar-count">82 destinations</div>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const PINS = [
+  /* ── Europe ── */
+  ['Amsterdam',      4.90,  52.37, '../../Guides/Amsterdam/amsterdam_v1.html'],
+  ['Athens',        23.73,  37.98, '../../Guides/Athens/athens_v1.html'],
+  ['Istanbul',      28.98,  41.01, '../../Guides/Istanbul/istanbul_v2.html'],
+  ['Bologna',       11.34,  44.49, '../../Guides/Bologna/bologna_v1.html'],
+  ['Bruges',         3.22,  51.21, '../../Guides/Bruges/bruges_v1.html'],
+  ['Brussels',       4.35,  50.85, '../../Guides/Brussels/brussels_v1.html'],
+  ['Amalfi',        14.60,  40.63, '../../Guides/Amalfi/amalfi_v1.html'],
+  ['Cambridge',      0.12,  52.21, '../../Guides/Cambridge/cambridge_v1.html'],
+  ['Cannes',         7.02,  43.55, '../../Guides/Cannes/cannes_v1.html'],
+  ['Capri',         14.24,  40.55, '../../Guides/Capri/capri_v1.html'],
+  ['Cascais',       -9.55,  38.70, '../../Guides/Cascais/cascais_v2.html'],
+  ['Cinque Terre',   9.68,  44.13, '../../Guides/Cinque-Terre/cinque-terre_v1.html'],
+  ['Copenhagen',    12.57,  55.68, '../../Guides/Copenhagen/copenhagen_v1.html'],
+  ['Corfu',         19.92,  39.62, '../../Guides/Corfu/corfu_v1.html'],
+  ['Edinburgh',     -3.19,  55.95, '../../Guides/Edinburgh/edinburgh_v1.html'],
+  ['Florence',      11.26,  43.77, '../../Guides/Florence/florence_v1.html'],
+  ['Geneva',         6.14,  46.20, '../../Guides/Geneva/geneva_v1.html'],
+  ['Gothenburg',    11.97,  57.70, '../../Guides/Gothenburg/gothenburg_v1.html'],
+  ['Lagos',         -8.67,  37.10, '../../Guides/Lagos/lagos_v1.html'],
+  ['London',        -0.13,  51.51, '../../Guides/London/london_v5.html'],
+  ['Luxembourg',     6.13,  49.61, '../../Guides/Luxembourg/luxembourg_v1.html'],
+  ['Madrid',        -3.70,  40.42, '../../Guides/Madrid/madrid_v1.html'],
+  ['San Sebastian', -1.98,  43.32, '../../Guides/San-Sebastian/san-sebastian_v1.html'],
+  ['Toledo',        -4.03,  39.86, '../../Guides/Toledo/toledo_v1.html'],
+  ['Monaco',         7.42,  43.74, '../../Guides/Monaco/monaco_v1.html'],
+  ['Munich',        11.58,  48.14, '../../Guides/Munich/munich_v2.html'],
+  ['Oxford',        -1.26,  51.75, '../../Guides/Oxford/oxford_v1.html'],
+  ['Paris',          2.35,  48.85, '../../Guides/Paris/paris_v7.html'],
+  ['Nice',           7.27,  43.70, '../../Guides/Nice/nice_v1.html'],
+  ['Pisa',          10.40,  43.72, '../../Guides/Pisa/pisa_v1.html'],
+  ['Porto',         -8.61,  41.15, '../../Guides/Porto/porto_v2.html'],
+  ['Rome',          12.50,  41.90, '../../Guides/Rome/rome_v1.html'],
+  ['Sintra',        -9.39,  38.95, '../../Guides/Sintra/sintra_v2.html'],
+  ['Sorrento',      14.38,  40.63, '../../Guides/Sorrento/sorrento_v1.html'],
+  ['Strasbourg',     7.75,  48.58, '../../Guides/Strasbourg/strasbourg_v1.html'],
+  ['Stuttgart',      9.18,  48.78, '../../Guides/Stuttgart/stuttgart_v1.html'],
+  ['Turin',          7.69,  45.07, '../../Guides/Turin/turin_v14.html'],
+  ['Venice',        12.34,  45.44, '../../Guides/Venice/venice_v1.html'],
+  ['Vienna',        16.37,  48.21, '../../Guides/Vienna/vienna_v1.html'],
+  /* ── North America ── */
+  ['Atlanta',       -84.39,  33.77, '../../Guides/Atlanta/atlanta_v1.html'],
+  ['Austin',        -97.74,  30.27, '../../Guides/Austin/austin_v1.html'],
+  ['Big Island',   -155.50,  19.60, '../../Guides/Big-Island/big-island_v1.html'],
+  ['Maui',         -156.33,  20.80, '../../Guides/Maui/maui_v1.html'],
+  ['Kauai',        -159.50,  22.05, '../../Guides/Kauai/kauai_v1.html'],
+  ['Oahu',         -157.85,  21.30, '../../Guides/Oahu/oahu_v1.html'],
+  ['Chicago',       -87.63,  41.88, '../../Guides/Chicago/chicago_v2.html'],
+  ['Miami',         -80.19,  25.77, '../../Guides/Miami/miami_v1.html'],
+  ['Nashville',     -86.78,  36.16, '../../Guides/Nashville/nashville_v1.html'],
+  ['New York',      -74.00,  40.71, '../../Guides/New-York/new-york_v1.html'],
+  ['Orlando',       -81.38,  28.54, '../../Guides/Orlando/orlando_v1.html'],
+  ['Palo Alto',    -122.14,  37.44, '../../Guides/Palo-Alto/palo-alto_v6.html'],
+  ['Pasadena',     -118.14,  34.15, '../../Guides/Pasadena/pasadena_v5.html'],
+  ['Las Vegas',    -115.14,  36.17, '../../Guides/Las-Vegas/las-vegas_v1.html'],
+  ['La Jolla',     -117.27,  32.84, '../../Guides/La-Jolla/la-jolla_v1.html'],
+  ['San Diego',    -117.16,  32.72, '../../Guides/San-Diego/san-diego_v1.html'],
+  ['San Francisco',-122.42,  37.77, '../../Guides/San-Francisco/san-francisco_v3.html'],
+  ['Scottsdale',   -111.93,  33.49, '../../Guides/Scottsdale/scottsdale_v1.html'],
+  ['Sedona',       -111.76,  34.86, '../../Guides/Sedona/sedona_v1.html'],
+  ['Seattle',      -122.33,  47.61, '../../Guides/Seattle/seattle_v1.html'],
+  ['Toronto',       -79.38,  43.65, '../../Guides/Toronto/toronto_v1.html'],
+  ['Vancouver',    -123.12,  49.28, '../../Guides/Vancouver/vancouver_v1.html'],
+  ['Victoria',     -123.37,  48.43, '../../Guides/Victoria/victoria_v1.html'],
+  ['Whistler',     -122.96,  50.12, '../../Guides/Whistler/whistler_v1.html'],
+  /* ── Caribbean ── */
+  ['The Bahamas',   -77.35,  25.05, '../../Guides/Bahamas/bahamas_v1.html'],
+  ['Cancún',        -86.85,  21.16, '../../Guides/Cancun/cancun_v1.html'],
+  ['Aruba',         -70.02,  12.52, '../../Guides/Aruba/aruba_v1.html'],
+  ['Curaçao',       -68.97,  12.11, '../../Guides/Curacao/curacao_v1.html'],
+  /* ── Asia ── */
+  ['Beijing',       116.40,  39.90, '../../Guides/Beijing/beijing_v1.html'],
+  ['Chongqing',     106.55,  29.56, '../../Guides/Chongqing/chongqing_v1.html'],
+  ['Seoul',         126.98,  37.57, '../../Guides/Seoul/seoul_v1.html'],
+  ['Shanghai',      121.47,  31.23, '../../Guides/Shanghai/shanghai_v1.html'],
+  ['Taipei',        121.57,  25.03, '../../Guides/Taipei/taipei_v1.html'],
+  ['Kyoto',         135.77,  35.01, '../../Guides/Kyoto/kyoto_v1.html'],
+  ['Tokyo',         139.69,  35.69, '../../Guides/Tokyo/tokyo_v1.html'],
+  /* ── South America ── */
+  ['Rio de Janeiro', -43.17, -22.91, '../../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html'],
+];
+
+const map = L.map('map', {
+  center: [30, 10],
+  zoom: 2,
+  minZoom: 2,
+  maxZoom: 10,
+  zoomControl: true,
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19,
+}).addTo(map);
+
+const pinIcon = L.divIcon({
+  className: '',
+  html: '<div style="width:10px;height:10px;background:#b85c2a;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.4);"></div>',
+  iconSize: [10, 10],
+  iconAnchor: [5, 5],
+  popupAnchor: [0, -8],
+});
+
+PINS.forEach(function(p) {
+  L.marker([p[2], p[1]], { icon: pinIcon })
+    .bindPopup(
+      '<div class="popup-inner"><a href="' + p[3] + '">' + p[0] + '</a><span>View Guide →</span></div>',
+      { className: 'been-popup', maxWidth: 180 }
+    )
+    .addTo(map);
+});
+</script>
+</body>
 </html>
