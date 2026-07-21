@@ -373,13 +373,14 @@
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
-    '@media(max-width:600px){.tb-progress{display:none}}' +
+    '@media(max-width:1350px){.tb-progress{display:none}}' +
     /* Hide ham elements on desktop — mobile @media shows them */
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
     /* Hide desktop title on mobile — hamLabel covers it there */
     '.tb-site-title{display:block}' +
-    /* Mobile: hamburger menu replaces the chip row */
-    '@media(max-width:600px){' +
+    /* Mobile/tablet: hamburger menu replaces the chip row when viewport < 1350px
+       (the full tab row needs ~1322px; below that it overflows and clips tabs) */
+    '@media(max-width:1350px){' +
       '.tb-site-title{display:none}' +
       '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);box-shadow:none}' +
       '.tb-inner{display:none !important}' +
@@ -1533,6 +1534,151 @@
     document.addEventListener('DOMContentLoaded', _injectAddrCopy);
   } else {
     _injectAddrCopy();
+  }
+
+  /* ── Day Jump — floating pill + overlay on guide pages ────────────────────
+     Shows a small "📅 N days" pill fixed at bottom-right of the viewport.
+     Clicking opens a centered overlay card listing every day in the guide with
+     the first three stops as a preview. Tapping a day row smooth-scrolls there
+     and closes the overlay. CSS lives in guide-style.css (.day-jump-*). */
+  function _injectDayJump() {
+    if (!isRealGuide) return;
+    var dayBlocks = [].slice.call(document.querySelectorAll('.day-block[id^="day"]'));
+    if (dayBlocks.length < 2) return;
+
+    var days = [];
+    dayBlocks.forEach(function (block) {
+      var num = parseInt((block.id || '').replace('day', ''), 10);
+      if (isNaN(num) || num < 1) return;
+      var stops = [];
+      [].forEach.call(block.querySelectorAll('.stop-name'), function (s) {
+        var t = s.textContent.trim(); if (t) stops.push(t);
+      });
+      days.push({ num: num, id: block.id, stops: stops });
+    });
+    days.sort(function (a, b) { return a.num - b.num; });
+    if (!days.length) return;
+
+    var cityEl = document.querySelector('.title-city');
+    var city = cityEl ? cityEl.textContent.trim() : '';
+
+    /* ── Floating trigger button ── */
+    var trigBtn = document.createElement('button');
+    trigBtn.type = 'button';
+    trigBtn.className = 'day-jump-btn';
+    trigBtn.setAttribute('aria-label', 'Jump to a day');
+    trigBtn.innerHTML =
+      '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
+        '<rect x="1" y="3" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/>' +
+        '<path d="M4 1v2M9 1v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+        '<path d="M1 6h11" stroke="currentColor" stroke-width="1.2"/>' +
+      '</svg>' +
+      '<span>' + days.length + ' days</span>';
+
+    /* ── Overlay ── */
+    var ov = document.createElement('div');
+    ov.className = 'day-jump-overlay';
+    ov.setAttribute('role', 'dialog');
+    ov.setAttribute('aria-modal', 'true');
+    ov.setAttribute('aria-label', 'Jump to day');
+
+    var card = document.createElement('div');
+    card.className = 'day-jump-card';
+    card.addEventListener('click', function (e) { e.stopPropagation(); });
+
+    /* Head */
+    var head = document.createElement('div');
+    head.className = 'day-jump-head';
+    if (city) {
+      var cityLbl = document.createElement('div');
+      cityLbl.className = 'day-jump-city';
+      cityLbl.textContent = city;
+      head.appendChild(cityLbl);
+    }
+    var titleEl = document.createElement('div');
+    titleEl.className = 'day-jump-title';
+    titleEl.textContent = 'Jump to Day';
+    head.appendChild(titleEl);
+    var xBtn = document.createElement('button');
+    xBtn.type = 'button'; xBtn.className = 'day-jump-x'; xBtn.textContent = '✕';
+    head.appendChild(xBtn);
+    card.appendChild(head);
+
+    /* Day rows */
+    var rowEls = [];
+    days.forEach(function (d, i) {
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'day-jump-row';
+
+      var numBadge = document.createElement('span');
+      numBadge.className = 'day-jump-num';
+      numBadge.textContent = d.num;
+
+      var info = document.createElement('span');
+      info.className = 'day-jump-info';
+
+      var lbl = document.createElement('span');
+      lbl.className = 'day-jump-lbl';
+      lbl.textContent = 'Day ' + d.num;
+      info.appendChild(lbl);
+
+      if (d.stops.length) {
+        var prev = document.createElement('span');
+        prev.className = 'day-jump-preview';
+        prev.textContent = d.stops.slice(0, 3).join(' · ');
+        info.appendChild(prev);
+      }
+
+      row.appendChild(numBadge);
+      row.appendChild(info);
+      row.addEventListener('click', function () {
+        closeDJ();
+        var el = document.getElementById(d.id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      card.appendChild(row);
+      rowEls.push(row);
+    });
+
+    ov.appendChild(card);
+
+    function getCurrentDayNum() {
+      var best = days[0].num;
+      dayBlocks.forEach(function (block) {
+        if (block.getBoundingClientRect().top <= 80) {
+          var n = parseInt((block.id || '').replace('day', ''), 10);
+          if (!isNaN(n)) best = n;
+        }
+      });
+      return best;
+    }
+
+    function openDJ() {
+      var cur = getCurrentDayNum();
+      rowEls.forEach(function (r, i) {
+        r.classList.toggle('day-jump-row--active', days[i] && days[i].num === cur);
+      });
+      ov.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDJ() {
+      ov.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    trigBtn.addEventListener('click', function (e) { e.stopPropagation(); openDJ(); });
+    xBtn.addEventListener('click', function (e) { e.stopPropagation(); closeDJ(); });
+    ov.addEventListener('click', closeDJ);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDJ(); });
+
+    document.body.appendChild(ov);
+    document.body.appendChild(trigBtn);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectDayJump);
+  } else {
+    _injectDayJump();
   }
 
   /* ── Weather widget — loaded on the Guides index ONLY ─────────────────────

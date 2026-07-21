@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rule Compliance Audit — 2026-07-21</title>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --text: #3d3a32;
+    --muted: #6a6660;
+    --accent: #b85c2a;
+    --gold: #8a6c1a;
+    --gold-light: #c8a44a;
+    --border: #ddd9d2;
+    --code-bg: #ece6dd;
+    --pass-bg: #eef7ee;
+    --pass-text: #1e5a1e;
+    --fix-bg: #fef3e8;
+    --fix-text: #7a3300;
+    --warn-bg: #fffbe8;
+    --warn-text: #6a5200;
+    --chip-r: 4px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+    padding: 0 24px 56px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  /* Page title */
+  .page-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 8px;
+    margin-top: 36px;
+    margin-bottom: 4px;
+  }
+  .page-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* Verdict bar */
+  .verdict-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 28px;
+    align-items: center;
+  }
+  .vchip {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 3px 10px;
+    border-radius: var(--chip-r);
+    white-space: nowrap;
+  }
+  .vchip.ok   { background: var(--pass-bg); color: var(--pass-text); }
+  .vchip.fix  { background: var(--fix-bg);  color: var(--fix-text); }
+  .vchip.warn { background: var(--warn-bg); color: var(--warn-text); }
+  .vchip.info { background: var(--code-bg); color: var(--muted); }
+  .vchip.rule { background: #f0e8f8; color: #5a1a7a; }
+
+  /* Section headers */
+  h2 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-top: 32px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .chip {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: var(--chip-r);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .chip.fixed  { background: var(--pass-bg); color: var(--pass-text); }
+  .chip.gap    { background: #fde8e8; color: #7a0000; }
+  .chip.clean  { background: var(--pass-bg); color: var(--pass-text); }
+  .chip.note   { background: var(--code-bg); color: var(--muted); }
+  .chip.new    { background: #f0e8f8; color: #5a1a7a; }
+  .card-title {
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .card-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .card-body p + p { margin-top: 6px; }
+
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 12px;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* Evidence block */
+  .evidence {
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* brain_check result line */
+  .bc-result {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    background: var(--pass-bg);
+    color: var(--pass-text);
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* Summary table */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .summary-table th {
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #f0ece6;
+    vertical-align: top;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table td:first-child { color: var(--text); font-weight: 600; }
+  .summary-table td:last-child  { color: var(--muted); }
+
+  /* Cascade checklist */
+  .cascade-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .cascade-list li {
+    font-size: 13px;
+    padding: 4px 0;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    border-bottom: 1px solid #f0ece6;
+  }
+  .cascade-list li:last-child { border-bottom: none; }
+  .cascade-list .tick { color: var(--pass-text); font-weight: 700; flex-shrink: 0; }
+  .cascade-list .target { color: var(--text); }
+  .cascade-list .detail { color: var(--muted); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1 class="page-title">Rule Compliance Audit</h1>
+  <div class="page-meta">Run 5 · 2026-07-21 · Scheduled task: rule-compliance-audit · brain_check: 202/202 ok · No git commit (Brain/ is Drive-only)</div>
+
+  <div class="verdict-bar">
+    <span class="vchip fix">1 enforcement gap found</span>
+    <span class="vchip fix">1 fix applied</span>
+    <span class="vchip rule">Rule 583 added</span>
+    <span class="vchip ok">202/202 brain_check ok</span>
+    <span class="vchip ok">0 warn · 0 fail</span>
+    <span class="vchip info">Detection window: 2026-07-20 → 2026-07-21</span>
+  </div>
+
+
+  <h2>Part 1 — Detection: New Rules Since Run 4</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip note">ALREADY CASCADED</span>
+      <span class="card-title">Rules 580–582 (scripts/docs-audit, 2026-07-21)</span>
+    </div>
+    <div class="card-body">
+      <p>Three new toolbar hard-fail checks added by today's scripts-docs-audit run — already fully cascaded in that same session. No further action needed from this run.</p>
+      <p><strong>580</strong> — <code>check_toolbar_lounges_in_flights</code>: Lounges must be children of ✈️ Flights, never a standalone tab.<br>
+      <strong>581</strong> — <code>check_toolbar_flights_before_trains</code>: Flights group must appear before Trains in ITEMS.<br>
+      <strong>582</strong> — <code>check_toolbar_font_size_unified</code>: all toolbar font surfaces 14px + <code>.tb-inner</code> uses <code>overflow-x:hidden</code>.</p>
+    </div>
+  </div>
+
+
+  <h2>Part 2 — Cascade Verification: Rules 580–582</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip clean">CLEAN</span>
+      <span class="card-title">Cascade complete for Rules 580–582</span>
+    </div>
+    <div class="card-body">
+      <ul class="cascade-list">
+        <li><span class="tick">✓</span><span class="target">brain_check.py</span><span class="detail"> — 3 functions written and registered in ALL_CHECKS</span></li>
+        <li><span class="tick">✓</span><span class="target">Cleanliness Checks.md header</span><span class="detail"> — Updated from "579" to "582" with descriptions</span></li>
+        <li><span class="tick">✓</span><span class="target">Validator Index.html</span><span class="detail"> — 3 <code>&lt;li class="yes"&gt;</code> entries added at lines 1110–1112</span></li>
+        <li><span class="tick">✓</span><span class="target">CLAUDE.md DriftyCat bullets</span><span class="detail"> — 3 bullets exist with enforcement citations</span></li>
+      </ul>
+    </div>
+  </div>
+
+
+  <h2>Part 3 — Audit: Recent Crib Output</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip clean">CLEAN</span>
+      <span class="card-title">No systematically missed rules in recent commits</span>
+    </div>
+    <div class="card-body">
+      <p>Reviewed git log for the 2026-07-20 → 2026-07-21 detection window. Commits show rapid design iteration on the Visited pill / Personal-Stats / World-Map architecture — 15+ commits in one day. This pattern confirms a real enforcement gap (see Part 4): without a check, the Visited hamburger entry was re-added and removed repeatedly in the same window.</p>
+      <p>No guide HTML was shipped in the window. No pattern of systematically missed guide-content rules detected.</p>
+      <div class="evidence">Pattern: 374747d84 "add Visited to hamburger"
+                 3e0d16f52 "remove Visited from hamburger"
+→ 2 manual add/remove cycles in one session
+→ confirms check_no_visited_in_hamburger is load-bearing</div>
+    </div>
+  </div>
+
+
+  <h2>Part 4 — Fix: Enforcement Gap Closed</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip gap">ENFORCEMENT GAP</span>
+      <span class="card-title">Visited pill in hamburger — no enforcing check</span>
+    </div>
+    <div class="card-body">
+      <p>DriftyCat bullet "Visited pill lives ONLY on <code>World-Map.html</code> — never on Personal-Stats or in the hamburger menu (added 2026-07-21)" existed in CLAUDE.md with three drift classes but had no corresponding <code>brain_check.py</code> check.</p>
+      <p><strong>Evidence the gap is real:</strong> commit <code>374747d84</code> added <code>'🟡 Visited'</code> to the hamburger menu; commit <code>3e0d16f52</code> immediately removed it. Without a gate, any future crib session re-reading its own earlier work would re-introduce the same drift.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip fixed">FIXED</span>
+      <span class="chip new">RULE 583</span>
+      <span class="card-title">check_no_visited_in_hamburger — HARD-FAIL at session start</span>
+    </div>
+    <div class="card-body">
+      <p>Added <code>check_no_visited_in_hamburger()</code> to <code>Brain/scripts/brain_check.py</code> and registered it in ALL_CHECKS. Checks two conditions:</p>
+      <p><strong>Drift class (b):</strong> <code>toolbar.js</code> must not contain <code>'🟡 Visited'</code> — the Visited toggle must never appear in the hamburger menu.<br>
+      <strong>Drift class (a):</strong> <code>Personal-Stats.html</code> must not contain <code>'ps-visited-btn'</code> — the old Visited button must not be re-added to Personal-Stats.</p>
+      <ul class="cascade-list" style="margin-top: 10px;">
+        <li><span class="tick">✓</span><span class="target">brain_check.py</span><span class="detail"> — function added, registered in ALL_CHECKS (Drive-only)</span></li>
+        <li><span class="tick">✓</span><span class="target">Cleanliness Checks.md</span><span class="detail"> — header updated (582 → 583); Rule 583 spec entry added</span></li>
+        <li><span class="tick">✓</span><span class="target">Validator Index.html</span><span class="detail"> — <code>&lt;li class="yes"&gt;</code> entry added after Rule 582 entry</span></li>
+        <li><span class="tick">✓</span><span class="target">CLAUDE.md DriftyCat bullet</span><span class="detail"> — Enforcement citation added: "Enforced: brain_check.py check_no_visited_in_hamburger (HARD-FAIL at session start, drift classes a+b — Rule 583)"</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2>brain_check Result</h2>
+
+  <div class="bc-result">202/202 ok &nbsp;·&nbsp; 0 warn &nbsp;·&nbsp; 0 fail &nbsp;·&nbsp; Brain intact.</div>
+
+
+  <h2>Run Summary</h2>
+
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Outcome</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>New rules detected (detection window)</td>
+        <td>Rules 580–582 (already cascaded by scripts-docs-audit); Rule 583 added this run</td>
+      </tr>
+      <tr>
+        <td>Enforcement gaps found</td>
+        <td>1 — Visited pill in hamburger / Personal-Stats (Rule 583 closes it)</td>
+      </tr>
+      <tr>
+        <td>Fixes applied</td>
+        <td>1 — check_no_visited_in_hamburger added + cascaded to 4 surfaces</td>
+      </tr>
+      <tr>
+        <td>brain_check result</td>
+        <td>202/202 ok · 0 warn · 0 fail</td>
+      </tr>
+      <tr>
+        <td>Git commit</td>
+        <td>None — all modified files are Drive-only (Brain/ untracked since 2026-07-14)</td>
+      </tr>
+      <tr>
+        <td>Out-of-scope findings</td>
+        <td>None to log this run</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>
