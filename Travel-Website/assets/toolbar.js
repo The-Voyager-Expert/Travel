@@ -656,6 +656,7 @@
          DO NOT REMOVE. brain_check hard-fails if this injection is missing. See Toolbar.html § 18b + Cleanliness Checks Rule 569. */
       if (/Guides-Index\.html$/.test(item.href)) {
         var aTrips = document.createElement('a');
+        var sepTrips = document.createElement('div'); sepTrips.className = 'tb-ham-sep'; hamMenu.appendChild(sepTrips);
         aTrips.href = base + 'Trip-Essentials/Trips.html';
         aTrips.textContent = '✈️ My Trips';
         if ('Trips.html' === curr) aTrips.className = 'tb-active';
