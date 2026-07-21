@@ -290,9 +290,10 @@
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency', full: '💰 Currency' },
     null,
-    { href: base + 'Trip-Essentials/Time-Zones.html',                           text: '🕐 Time Zones' },
-    null,
-    { href: base + 'Trip-Essentials/Time-Zones.html#sun-section',               text: '🌅 Sunrise & Sunset' },
+    { group: '🕐 Time Zones', children: [
+        { href: base + 'Trip-Essentials/Time-Zones.html',             text: '🕐 Time Zones',        full: '🕐 Time Zones' },
+        { href: base + 'Trip-Essentials/Time-Zones.html#sun-section', text: '🌅 Sunrise & Sunset',  full: '🌅 Sunrise & Sunset' },
+      ] },
     null,
     { group: '🌤️ Weather', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ Browse by Climate' },
