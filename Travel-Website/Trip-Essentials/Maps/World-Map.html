@@ -943,12 +943,15 @@ function renderPinLabels() {
 /* ── Region jump buttons — switch region in place, no page reload.
    flyToBounds() animates a smooth pan+zoom to the target region now that
    maxBoundsViscosity is 0 (the prior 0.7 caused flyTo to freeze indefinitely). ── */
-document.querySelectorAll('.rn').forEach(el => {
+document.querySelectorAll('.rn[data-region]').forEach(el => {
   el.addEventListener('click', e => {
     e.preventDefault();
-    document.querySelectorAll('.rn').forEach(r => r.classList.remove('rn-on'));
+    // only reset region pills — never touch the Visited pill
+    document.querySelectorAll('.rn[data-region]').forEach(r => r.classList.remove('rn-on'));
     el.classList.add('rn-on');
     map.flyToBounds(REGIONS[el.dataset.region], { ...fitOpts(true), duration: 1.2 });
+    // re-apply visited icon state in case flying resets anything
+    if (visitedFilterOn && window.applyVisitedFilter) window.applyVisitedFilter(true);
   });
 });
 
