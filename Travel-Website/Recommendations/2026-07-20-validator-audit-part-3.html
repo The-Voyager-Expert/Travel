@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Validator Audit Part 3/20 — Stop Titles + Stop Descriptions</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 24px; color: #2d2a22; background: #fdf8f0; }
+  h1 { font-size: 1.2rem; font-weight: 700; color: #3d3a32; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 3px solid #b85c2a; padding-bottom: 8px; }
+  h2 { font-size: 1rem; font-weight: 700; color: #3d3a32; margin-top: 2rem; }
+  .meta { font-size: 0.8rem; color: #888; margin-bottom: 1.5rem; }
+  .status-box { background: #fff; border: 1.5px solid #c8a44a; border-radius: 6px; padding: 14px 18px; margin-bottom: 1.5rem; }
+  .status-clean { border-color: #4a9a4a; }
+  .pass { color: #4a9a4a; font-weight: 700; }
+  .fail { color: #b85c2a; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.75rem; }
+  th { text-align: left; background: #b85c2a; color: #fff; padding: 6px 10px; font-weight: 600; }
+  td { padding: 5px 10px; border-bottom: 1px solid #e8dfc8; vertical-align: top; }
+  tr:nth-child(even) td { background: #fdf3e0; }
+  .yes { color: #4a9a4a; font-weight: 700; }
+  code { font-family: monospace; font-size: 0.85em; background: #f0ece0; padding: 1px 4px; border-radius: 3px; }
+  .note { font-size: 0.82rem; color: #666; margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<h1>Validator Audit Part 3/20 — 🏛 Stop Titles + ↳ Stop Descriptions</h1>
+<div class="meta">Run date: 2026-07-20 · Session: validator-audit-fix-crib-1-part3 · Cycle 2</div>
+
+<div class="status-box status-clean">
+  <strong>Result: <span class="pass">CLEAN</span></strong> — deep re-verification pass. All 14 Stop Titles checks and all 13 Stop Descriptions checks verified correctly implemented in <code>validate_itinerary.py</code>. No new gaps found. No code or documentation changes required from this session.
+</div>
+
+<h2>Context</h2>
+<p>Part 3 has been run three times in this audit cycle:</p>
+<ol>
+  <li><strong>2026-07-18</strong> (original run) — 1 fix: dead overview plus-connector check that was gated on 🎒 emoji (banned since 2026-06-16), replaced with a scan of all <code>.overview-day-title</code> divs.</li>
+  <li><strong>2026-07-20, crib-3</strong> — 1 fix: tombstoned ↳+📖 merge check replaced with a real implementation. The stub always passed (empty list, never populated).</li>
+  <li><strong>2026-07-20, crib-1 (this run)</strong> — re-verification pass. All checks verified clean. No new gaps.</li>
+</ol>
+
+<h2>Stop Titles — 14 Checks (all ✅)</h2>
+<table>
+  <tr><th>Check</th><th>Code Location</th><th>Status</th></tr>
+  <tr><td>Every stop has <code>.stop-num</code> + <code>.stop-name</code> span pair</td><td>~4487</td><td class="yes">✅ Correct</td></tr>
+  <tr><td><code>.stop-num</code> format is <code>{N}.</code> (digit + period)</td><td>~4520</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>No <code>&lt;h3&gt;</code> inside stop blocks</td><td>~4510</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Every <code>.stop-name</code> carries exactly one type-modifier class (<code>self</code> only)</td><td>~4644</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>No <code>+</code> connector in stop names or <code>.overview-day-title</code> divs</td><td>~4571</td><td class="yes">✅ Correct (fixed 2026-07-18)</td></tr>
+  <tr><td>No duplicate stop names within a day</td><td>~8689</td><td class="yes">✅ Correct</td></tr>
+  <tr><td><code>.stop-name</code> is actual venue (generic labels banned)</td><td>~18309</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>No build annotations in <code>.stop-name</code></td><td>~18370</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Stop-name inner HTML (no nested tags in stop names)</td><td>~4550</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Stop-name empty check</td><td>~4545</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Per-day stop numbering resets to 1</td><td>~8389</td><td class="yes">✅ Correct</td></tr>
+  <tr><td><code>.stop-num</code> carries <code>stop-num</code> class</td><td>~4497</td><td class="yes">✅ Correct</td></tr>
+  <tr><td><code>.stop-name</code> carries <code>stop-name</code> class</td><td>~4499</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>MOD_CLASSES = ("self",) — only valid modifier</td><td>~4644</td><td class="yes">✅ Correct</td></tr>
+</table>
+
+<h2>Stop Descriptions — 13 Checks (all ✅)</h2>
+<table>
+  <tr><th>Check</th><th>Code Location</th><th>Status</th></tr>
+  <tr><td>↳ length ≤320 chars</td><td>4097</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>↳ / 📖 row class = <code>.stop-row</code></td><td>4130</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>↳ no embedded links</td><td>4171</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>↳ no build annotations</td><td>4189</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>↳ required per stop block</td><td>~25480</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>↳ + 📖 not merged on same row</td><td>25501</td><td class="yes">✅ Correct (fixed 2026-07-20 crib-3)</td></tr>
+  <tr><td>📖 in <code>&lt;div class="stop-row"&gt;</code>, not <code>&lt;p&gt;</code></td><td>25563</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>📖 after ↳ (correct order)</td><td>25579</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Back-to-back icons banned (⭐ chains exempt)</td><td>25527</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>No stray <code>&lt;p&gt;</code> inside stop-blocks</td><td>25632</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Stop-block canonical element order</td><td>7114</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Global tilde ban (↳ carve-out: ⏰~)</td><td>26114</td><td class="yes">✅ Correct</td></tr>
+  <tr><td>Parentheses banned in visible text</td><td>26594</td><td class="yes">✅ Correct</td></tr>
+</table>
+<p class="note">Note: the comma ban at line 26655 covers titles/headings; it does not apply to ↳ description text (↳ rows are prose and may contain commas). The Validator Index correctly marks this as scoped to headings only.</p>
+
+<h2>Smoke Tests</h2>
+<table>
+  <tr><th>Guide</th><th>Result</th></tr>
+  <tr><td>Amsterdam</td><td class="yes">✅ 840 passed, 0 failed (1 warn: cappuccino &lt;5 entries — expected for small markets)</td></tr>
+  <tr><td>Tokyo</td><td class="yes">✅ Passed, signed stamp written</td></tr>
+</table>
+
+<h2>brain_check.py</h2>
+<p class="pass">195/195 ok · 0 warn · 0 fail — Brain intact.</p>
+
+<h2>Recommendations</h2>
+<p>No action required. Part 3 checks are fully implemented and verified. The two prior fixes (overview plus-connector check 2026-07-18, ↳+📖 merge check 2026-07-20) are stable and correctly catching real violations.</p>
+
+</body>
+</html>
