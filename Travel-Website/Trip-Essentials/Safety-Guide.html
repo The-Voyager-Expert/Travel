@@ -515,10 +515,12 @@ a.city-row.hidden { display: none; }
     if (!inp || typeof TVESearch === 'undefined') return;
     var items = [];
     document.querySelectorAll('.city-row').forEach(function (row) {
-      var city = row.getAttribute('data-city') || '';
-      var link = row.querySelector('a[href]');
-      var href = link ? link.getAttribute('href') : null;
-      if (city && href) items.push({ name: city, sub: '', href: href });
+      var nameEl = row.querySelector('.city-name');
+      var city = nameEl ? nameEl.textContent.trim() : '';
+      var countryEl = row.querySelector('.city-country');
+      var countryText = countryEl ? countryEl.textContent.trim().replace(/^\S+\s*/, '') : '';
+      var href = row.getAttribute('href');
+      if (city && href) items.push({ name: city, sub: countryText, href: href });
     });
     TVESearch.attach(inp, {
       items: items,
