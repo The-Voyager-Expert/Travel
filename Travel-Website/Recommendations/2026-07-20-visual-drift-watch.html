@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visual Drift Watch — 2026-07-20</title>
+<style>
+:root {
+  --bg: #fafaf7;
+  --bg-card: #ffffff;
+  --text: #2d2a24;
+  --text-secondary: #6b6660;
+  --border: #e4e0d8;
+  --border-strong: #c8c2b8;
+  --accent: #4d7080;
+  --accent-muted: #e8f0f4;
+  --pass-text: #1e6640;
+  --pass-bg: #f0faf4;
+  --pass-border: #aedcc2;
+  --warn-text: #7a5200;
+  --warn-bg: #fff9ec;
+  --warn-border: #e8c97a;
+  --fail-text: #b03020;
+  --fail-bg: #fef3f1;
+  --fail-border: #f0bab4;
+  --info-text: #2a4a6a;
+  --info-bg: #f0f5fa;
+  --info-border: #b4ccdc;
+  --mono: 'Courier New', Courier, monospace;
+  --sans: system-ui, -apple-system, sans-serif;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #18171a; --bg-card: #22212a; --text: #e8e4dc; --text-secondary: #9a9490;
+    --border: #36333c; --border-strong: #4e4a54; --accent: #7aaabe; --accent-muted: #1e2a32;
+    --pass-text: #5ec48a; --pass-bg: #0e2a1c; --pass-border: #2a5a3c;
+    --warn-text: #e8b84a; --warn-bg: #2a2010; --warn-border: #6a4e10;
+    --fail-text: #e87060; --fail-bg: #2a1614; --fail-border: #5a2820;
+    --info-text: #7aaabe; --info-bg: #141e2a; --info-border: #2a3e52;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #18171a; --bg-card: #22212a; --text: #e8e4dc; --text-secondary: #9a9490;
+  --border: #36333c; --border-strong: #4e4a54; --accent: #7aaabe; --accent-muted: #1e2a32;
+  --pass-text: #5ec48a; --pass-bg: #0e2a1c; --pass-border: #2a5a3c;
+  --warn-text: #e8b84a; --warn-bg: #2a2010; --warn-border: #6a4e10;
+  --fail-text: #e87060; --fail-bg: #2a1614; --fail-border: #5a2820;
+  --info-text: #7aaabe; --info-bg: #141e2a; --info-border: #2a3e52;
+}
+:root[data-theme="light"] {
+  --bg: #fafaf7; --bg-card: #ffffff; --text: #2d2a24; --text-secondary: #6b6660;
+  --border: #e4e0d8; --border-strong: #c8c2b8; --accent: #4d7080; --accent-muted: #e8f0f4;
+  --pass-text: #1e6640; --pass-bg: #f0faf4; --pass-border: #aedcc2;
+  --warn-text: #7a5200; --warn-bg: #fff9ec; --warn-border: #e8c97a;
+  --fail-text: #b03020; --fail-bg: #fef3f1; --fail-border: #f0bab4;
+  --info-text: #2a4a6a; --info-bg: #f0f5fa; --info-border: #b4ccdc;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; padding: 0 0 60px; }
+.report-header { border-bottom: 2px solid var(--border); padding: 32px 40px 24px; display: flex; flex-direction: column; gap: 8px; }
+.report-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-secondary); }
+.report-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.report-summary-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; align-items: center; }
+.stat-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-strong); background: var(--bg-card); color: var(--text-secondary); }
+.stat-pill.pass { background: var(--pass-bg); border-color: var(--pass-border); color: var(--pass-text); }
+.stat-pill.warn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
+.stat-pill.info { background: var(--info-bg); border-color: var(--info-border); color: var(--info-text); }
+.stat-pill.pending { background: var(--bg); border-color: var(--border-strong); color: var(--text-secondary); }
+.content { padding: 0 40px; max-width: 960px; margin: 0 auto; }
+.section { margin-top: 36px; }
+.section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-secondary); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; margin-bottom: 12px; }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; border: 1px solid; vertical-align: middle; letter-spacing: 0.04em; }
+.badge.pass { background: var(--pass-bg); border-color: var(--pass-border); color: var(--pass-text); }
+.badge.warn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
+.badge.fail { background: var(--fail-bg); border-color: var(--fail-border); color: var(--fail-text); }
+.badge.info { background: var(--info-bg); border-color: var(--info-border); color: var(--info-text); }
+.badge.pending { background: var(--bg); border-color: var(--border-strong); color: var(--text-secondary); }
+.tbl-wrap { overflow-x: auto; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+thead th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--bg); }
+tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: color-mix(in srgb, var(--accent-muted) 40%, transparent); }
+.finding { border: 1px solid var(--border); border-left: 4px solid; border-radius: 0 var(--r) var(--r) 0; margin-bottom: 16px; overflow: hidden; }
+.finding.warn { border-left-color: var(--warn-border); }
+.finding.info { border-left-color: var(--info-border); }
+.finding-header { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; background: var(--bg-card); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.finding-title { font-weight: 600; font-size: 14px; flex: 1; min-width: 200px; }
+.finding-body { padding: 12px 16px; background: var(--bg); font-size: 13px; }
+.finding-body p { margin-bottom: 8px; }
+.finding-body p:last-child { margin-bottom: 0; }
+.finding-body ul, .finding-body ol { margin: 6px 0 8px 20px; }
+.finding-body li { margin-bottom: 4px; }
+.code { font-family: var(--mono); font-size: 12px; background: color-mix(in srgb, var(--text) 8%, transparent); padding: 1px 5px; border-radius: 3px; }
+.code-block { font-family: var(--mono); font-size: 12px; background: color-mix(in srgb, var(--text) 6%, transparent); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; margin: 8px 0; white-space: pre-wrap; overflow-x: auto; }
+.rec-box { background: var(--info-bg); border: 1px solid var(--info-border); border-radius: 4px; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--info-text); }
+.rec-box strong { font-weight: 700; }
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.guide-item { display: flex; align-items: center; gap: 7px; padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--pass-border); border-radius: var(--r); font-family: var(--mono); font-size: 12px; color: var(--pass-text); }
+.health-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 4px; }
+.health-cell { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; text-align: center; }
+.health-num { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: var(--accent); display: block; }
+.health-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; display: block; margin-top: 2px; }
+.report-footer { margin-top: 40px; padding: 16px 40px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 600px) {
+  .report-header, .content, .report-footer { padding-left: 16px; padding-right: 16px; }
+  .health-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="report-header">
+  <span class="report-eyebrow">The Voyager Expert · Visual Drift Watch</span>
+  <h1 class="report-title">Visual Drift Watch — 2026-07-20</h1>
+  <div class="report-summary-row">
+    <span class="stat-pill info">22 reference entries</span>
+    <span class="stat-pill pass">6 guides audited</span>
+    <span class="stat-pill pass">6 passed all checks</span>
+    <span class="stat-pill warn">2 structural findings</span>
+    <span class="stat-pill pending">5 intake items pending images</span>
+  </div>
+  <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">
+    Chrome MCP not connected — structural-only run. The entire guide fleet (200+ guides) was re-committed today as part of a bulk validator audit series. A representative sample of 6 recently-modified guides was selected for per-guide mandatory pattern checks.
+  </p>
+</header>
+
+<div class="content">
+
+<section class="section">
+  <h2 class="section-title">§ 1 — Intake Processed</h2>
+  <div class="card" style="border-left:4px solid var(--warn-border);">
+    <div class="card-title">5 annotation .txt files in <code class="code">intake/</code> — no matching image files found</div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;">These features are already documented in the MANIFEST from a previous session. The .txt files appear to be annotation drafts dropped alongside (but without) canonical screenshots. No images were moved to <code class="code">canonical/</code> this run.</p>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Intake file</th><th>Feature described</th><th>In MANIFEST?</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><code class="code">2026-07-19-also-on-site-mobile-grid.txt</code></td><td>Also on this site mobile grid</td><td>✅</td><td><span class="badge pending">PENDING IMAGE</span></td></tr>
+        <tr><td><code class="code">2026-07-19-hotel-address-arrow-mobile.txt</code></td><td>Hotel address CSS terracotta arrow</td><td>✅</td><td><span class="badge pending">PENDING IMAGE</span></td></tr>
+        <tr><td><code class="code">2026-07-19-nearby-guides-mobile-grid.txt</code></td><td>Nearby Guides mobile grid</td><td>✅</td><td><span class="badge pending">PENDING IMAGE</span></td></tr>
+        <tr><td><code class="code">2026-07-19-updated-stamp-position.txt</code></td><td>Updated stamp position after #nearby-guides</td><td>✅</td><td><span class="badge pending">PENDING IMAGE</span></td></tr>
+        <tr><td><code class="code">2026-07-19-visited-pill.txt</code></td><td>Visited pill — gold outline, white bg</td><td>✅</td><td><span class="badge pending">PENDING IMAGE</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">To process: drop matching <code class="code">.png</code> files into <code class="code">Brain/Reference/Visual-Reference/intake/</code> using the exact same base filename as the .txt files. The next run auto-moves them to <code class="code">canonical/</code>.</p>
+</section>
+
+<section class="section">
+  <h2 class="section-title">§ 2 — New Guides Audited</h2>
+  <div class="card" style="border-left:4px solid var(--info-border);margin-bottom:16px;">
+    <div class="card-title">Fleet context — 200+ guides in the 7-day window</div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">All guides were re-committed today from a multi-part bulk validator audit (commits labelled "Validator audit Part N/M"). 6 guides were selected for audit: three from the most recent named fix commits (Whistler TR-8, Sint-Maarten TR-8, Istanbul rules-sweep) and three from git status (London v5, Amalfi, Brussels). All carry signed v2 validation stamps from 2026-07-19 or 2026-07-20.</p>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Guide</th>
+          <th>Stamp</th>
+          <th>⏰ unit</th>
+          <th>↗ anchor ban</th>
+          <th>READ ABOUT style</th>
+          <th>.title-city</th>
+          <th>.stop-photos</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code class="code">Whistler/whistler_v1</code></td><td>2026-07-20</td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">PASS</span></td></tr>
+        <tr><td><code class="code">Sint-Maarten/sint-maarten_v1</code></td><td>2026-07-20</td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">PASS</span></td></tr>
+        <tr><td><code class="code">Istanbul/istanbul_v2</code></td><td>2026-07-19</td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">PASS</span></td></tr>
+        <tr><td><code class="code">London/london_v5</code></td><td>2026-07-20</td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">PASS</span></td></tr>
+        <tr><td><code class="code">Amalfi/amalfi_v1</code></td><td>2026-07-20</td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">PASS</span></td></tr>
+        <tr><td><code class="code">Brussels/brussels_v1</code></td><td>2026-07-19</td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">✅</span></td><td><span class="badge pass">PASS</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">§ 3 — Structural Findings</h2>
+
+  <div class="finding warn">
+    <div class="finding-header">
+      <span class="badge warn">⚠️ MANIFEST STALE</span>
+      <span class="finding-title">Drift table rows 2 &amp; 3 still say <code class="code">border-radius: 0</code> for also-on-site and nearby-guides mobile pills — current spec is <code class="code">border-radius: 6px</code></span>
+    </div>
+    <div class="finding-body">
+      <p><strong>What the manifest drift table says (rows 2 and 3):</strong></p>
+      <div class="code-block">Row 2 — Also on this site — mobile pills — "Correct state":
+  "Flat tile grid: border-radius 0, gap 0, border 0.5px solid #c8a44a, height 46px"
+  "Drift signature: rounded corners on pill cells (border-radius > 0)"
+
+Row 3 — Nearby Guides — mobile pills — "Correct state":
+  "border-radius: 0 (FLAT square corners — NOT rounded)"</div>
+      <p><strong>What guide-style.css actually shows today (inside <code class="code">@media (max-width: 600px)</code>):</strong></p>
+      <div class="code-block">.also-on-this-site-pill { border-radius: 6px; height: 46px; border: 0.5px solid #c8a44a; ... }
+.nearby-guide-pill     { border-radius: 6px; height: 46px; border: 0.5px solid #c8a44a; ... }</div>
+      <p><strong>What brain_check.py says:</strong> The <code class="code">check_mobile_design_system</code> function was updated 2026-07-19 with this comment:</p>
+      <div class="code-block"># also-on-this-site + nearby-guide pills on mobile = 3-col grid with gap 7px, rounded corners
+# (desktop style). Pill-level overrides removed 2026-07-19; pills inherit radius 6px / white bg
+# / normal padding from desktop rule.</div>
+      <p>The spec was intentionally changed from Form B (flat 0-radius) to Form A (6px rounded) on 2026-07-19, but only brain_check.py was updated — the MANIFEST drift table was not. This means the MANIFEST currently instructs this routine to <em>flag the correct state as drift</em>. The wrong-example screenshot (<code class="code">wrong-examples/…WRONG-rounded-pills.jpg</code>) shows Buenos Aires with rounded corners — that screenshot now depicts the <em>correct</em> current state, which makes it potentially confusing.</p>
+      <div class="rec-box">
+        <strong>Recommended fix:</strong> Update <code class="code">Brain/Reference/Visual-Reference/MANIFEST.md</code> drift table rows 2 and 3. Flip "Correct state" from <code class="code">border-radius: 0</code> to <code class="code">border-radius: 6px</code>. Update the drift signature for both rows: the wrong state is now flat-tile 0-radius (a regression back to the old style), not rounded corners. Delete the two stale .txt files from <code class="code">intake/</code> for these features (they describe the pre-fix spec). Consider either retiring or relabelling the wrong-example screenshot to avoid confusion.
+      </div>
+      <p style="margin-top:10px;"><strong>Gap type:</strong> <span class="badge warn">MANIFEST STALE</span> — Enforcement in brain_check is correct. Only the visual audit documentation is out of date. No validator code change needed.</p>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <div class="finding-header">
+      <span class="badge warn">⚠️ SPEC/CODE MISMATCH</span>
+      <span class="finding-title"><code class="code">check_ham_menu_height</code> spec says <code class="code">position:absolute;top:100%</code> — toolbar.js uses <code class="code">position:fixed;bottom:0</code>, which bypasses the height check</span>
+    </div>
+    <div class="finding-body">
+      <p><strong>Rule 567 + brain_check docstring says:</strong></p>
+      <div class="code-block">Locked spec (2026-07-20):
+  .tb-ham-menu: position:absolute; top:100%; NO height or max-height.
+  The panel must be natural height (only as tall as its items) so it
+  scrolls with the page and leaves no blank space below the last entry.</div>
+      <p><strong>toolbar.js actually has:</strong></p>
+      <div class="code-block">'.tb-ham-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;' +
+  'background:#ffffff;...overflow-y:auto;-webkit-overflow-scrolling:touch;...}'</div>
+      <p>The code includes an explicit developer comment explaining the deliberate choice:</p>
+      <div class="code-block">/* The menu is position:fixed so it stays fully on-screen as the user
+   scrolls — items never disappear off the top. The toolbar (.tb) is NOT fixed
+   (scrolls away as usual); only the open menu panel is fixed.
+   overflow-y:auto scrolls inside the panel; body overflow:hidden locks page
+   scroll so only the menu scrolls while it is open. */</div>
+      <p><strong>What brain_check actually checks:</strong> <code class="code">check_ham_menu_height</code> scans the <code class="code">.tb-ham-menu{…}</code> CSS block for literal strings <code class="code">height:</code> or <code class="code">max-height:</code>. The current block contains neither — it uses <code class="code">bottom:0</code> within <code class="code">position:fixed</code> instead. The check <strong>passes</strong> even though <code class="code">position:fixed; top:64px; bottom:0</code> is a de facto height-constrained overlay (effective height = viewport − 64px) with a white void below the last menu item if items don't fill the screen. This is exactly the class of bug Rule 567 was created to prevent.</p>
+      <ul>
+        <li>Spec says: <em>natural height, scrolls with the page</em></li>
+        <li>Implementation is: <em>fixed full-screen overlay with internal scroll</em></li>
+        <li>Developer comment confirms the fixed approach is intentional</li>
+        <li>brain_check passes because no <code class="code">height:/max-height:</code> keyword — <code class="code">bottom:0</code> is an unchecked equivalent constraint</li>
+      </ul>
+      <div class="rec-box">
+        <strong>Recommended resolution — two paths:</strong>
+        <ol style="margin:8px 0 0 16px;">
+          <li style="margin-bottom:6px;"><strong>If position:fixed is intentional</strong> (the developer comment says it is): Update Rule 567 spec and brain_check docstring to reflect "fixed full-screen panel with overflow-y:auto." Add a check that prohibits <code class="code">bottom:0</code> <em>without</em> <code class="code">overflow-y:auto</code> (catches the void bug without rejecting the current deliberate design). Update the MANIFEST entry for <code class="code">ham-menu-natural-height</code>.</li>
+          <li><strong>If position:absolute was truly required</strong>: fix toolbar.js to <code class="code">position:absolute;top:100%</code> (natural height, scrolls with page), and add <code class="code">if "position:fixed" in block: fail(…)</code> to the check.</li>
+        </ol>
+      </div>
+      <p style="margin-top:10px;"><strong>Gap type:</strong> <span class="badge warn">Brain-check gap</span> — <code class="code">check_ham_menu_height</code> validates keyword absence only. <code class="code">bottom:0</code> in a fixed-position context is an unchecked equivalent height constraint.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">§ 4 — Shared CSS / JS Checks — All Passed</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>File</th><th>Pattern verified</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Extras-section title gap</td><td><code class="code">guide-style.css</code></td><td><code class="code">.extras-title:has(+ .extras-sub)</code> present</td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>Hotel address CSS arrow</td><td><code class="code">guide-style.css</code></td><td><code class="code">.title-address a::after { border-top: 1.5px solid #b85c2a }</code></td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>Toolbar <code class="code">.tb-links</code> centering</td><td><code class="code">toolbar.js</code></td><td><code class="code">justify-content:flex-start</code> (not center)</td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>Hamburger button dark pill</td><td><code class="code">toolbar.js</code></td><td><code class="code">background:#6e3117</code> on ham button</td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>Guides-Index sidebar panels beige</td><td><code class="code">guides-index-style.css</code></td><td>No <code class="code">#b85c2a</code> on specialized-trips / also-on-site panels</td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>New badge amber honey</td><td><code class="code">guides-index-style.css</code></td><td><code class="code">border: 1.5px solid #e8c97a; background: #fdecc8; color: #7a4d00; border-radius: 3px</code></td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>Mobile menu Best Of + Also on site</td><td><code class="code">toolbar.js</code></td><td>Both IIFEs present (8 matches)</td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>Guides-Index no status-toggle</td><td><code class="code">Guides-Index.html</code></td><td>Zero matches for <code class="code">status-toggle</code></td><td><span class="badge pass">✅ PASS</span></td></tr>
+        <tr><td>Visited pill spec</td><td><code class="code">toolbar.js</code></td><td>id, background #fff, border #c8a44a, color #8a6c1a, radius 6px, text "Visited", anchor #nearby-guides, insertAdjacentElement afterend</td><td><span class="badge pass">✅ PASS</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">§ 5 — Clean Guides</h2>
+  <div class="guide-grid">
+    <div class="guide-item">✅ Whistler v1</div>
+    <div class="guide-item">✅ Sint-Maarten v1</div>
+    <div class="guide-item">✅ Istanbul v2</div>
+    <div class="guide-item">✅ London v5</div>
+    <div class="guide-item">✅ Amalfi v1</div>
+    <div class="guide-item">✅ Brussels v1</div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">§ 6 — Reference Store Health</h2>
+  <div class="health-grid">
+    <div class="health-cell"><span class="health-num">22</span><span class="health-label">Active entries</span></div>
+    <div class="health-cell"><span class="health-num" style="color:var(--pass-text);">2</span><span class="health-label">Canonical screenshots</span></div>
+    <div class="health-cell"><span class="health-num" style="color:var(--warn-text);">20</span><span class="health-label">Structural-only (no image)</span></div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title">Screenshots present in <code class="code">canonical/</code></div>
+    <div style="font-size:13px;margin-top:8px;display:flex;flex-direction:column;gap:6px;">
+      <div>✅ <code class="code">2026-07-19-trip-overview-extras-grid.jpg</code> — Trip Overview mobile extras nav grid</div>
+      <div>✅ <code class="code">2026-07-19-also-on-site-section-title.jpg</code> — Also on this site 💥 section title</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:8px;border-left:4px solid var(--warn-border);">
+    <div class="card-title">Highest-priority features to photograph next</div>
+    <div style="font-size:13px;margin-top:8px;display:flex;flex-direction:column;gap:6px;">
+      <div>⚠️ <strong>hotel-address-arrow-mobile</strong> — the CSS-drawn terracotta arrow is the most recently added feature and the most prone to platform rendering differences (Apple vs Chrome)</div>
+      <div>⚠️ <strong>hamburger-button-spec</strong> — dark terracotta pill; visual confirmation that <code class="code">#6e3117</code> renders correctly on iOS Safari vs Chrome Android</div>
+      <div>⚠️ <strong>visited-pill</strong> — gold-outline white pill; needs DevTools localStorage set to trigger: <code class="code">localStorage.setItem('tve-visited-atlanta', '1')</code> then reload Atlanta guide</div>
+      <div>⚠️ <strong>also-on-site-mobile-grid + nearby-guides-mobile-grid</strong> — need retakes with the UPDATED spec (border-radius:6px rounded corners, not the old 0-radius flat tiles documented in the stale .txt files)</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:8px;">
+    <div class="card-title">Features with only structural enforcement (no visual baseline)</div>
+    <p style="font-size:12px;color:var(--text-secondary);margin-top:4px;">Static checks catch code-level drift but not rendering issues (wrong color on a specific device, CSS gradient rendering difference, icon rendering on iOS vs Android). Screenshots for these would close that gap.</p>
+    <div style="font-size:12px;margin-top:8px;font-family:var(--mono);line-height:1.8;color:var(--text-secondary);">
+      extras-title-gap · read-about-alignment · non-title-address-arrow-ban · stop-photos-img-only<br>
+      title-city-city-only · hr-unit-avg-time · guides-index-sidebar-beige · hamburger-menu-sections<br>
+      tb-links-centering · new-badge-amber-honey · guides-index-no-status-toggle · ham-menu-natural-height<br>
+      read-about-alignment · extras-title-gap
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">§ 7 — Out-of-Scope Findings Logged</h2>
+  <div class="card">
+    <div class="card-title" style="color:var(--text-secondary);">None this run</div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">No out-of-scope issues were identified during this structural audit. To Do List items reviewed at session start — none fell within this routine's scope.</p>
+  </div>
+</section>
+
+</div>
+
+<footer class="report-footer">
+  <span>Visual Drift Watch · 2026-07-20 · Structural-only (Chrome not connected)</span>
+  <span>6 guides audited · 9 shared CSS/JS checks passed · 2 findings (manifest stale + spec-code mismatch)</span>
+</footer>
+
+</body>
+</html>

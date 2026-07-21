@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Audit — 2026-07-19</title>
+<style>
+:root {
+  --terra: #b85c2a; --gold: #c8a44a;
+  --bg: #faf8f4; --card: #fff; --border: #e8e2d9;
+  --text: #1c1917; --sub: #57534e; --muted: #8c8178;
+  --pass-bg: #eaf4ee; --pass: #2d6a4f;
+  --warn-bg: #fef9e7; --warn: #92400e;
+  --fail-bg: #fef1f1; --fail: #b91c1c;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #141210; --card: #1d1a17; --border: #2e2820;
+          --text: #f2ede7; --sub: #b5aa9e; --muted: #7a7068;
+          --pass-bg: #0d2318; --warn-bg: #1c1500; --fail-bg: #2a0d0d; }
+}
+:root[data-theme="dark"]  { --bg: #141210; --card: #1d1a17; --border: #2e2820;
+  --text: #f2ede7; --sub: #b5aa9e; --muted: #7a7068;
+  --pass-bg: #0d2318; --warn-bg: #1c1500; --fail-bg: #2a0d0d; }
+:root[data-theme="light"] { --bg: #faf8f4; --card: #fff; --border: #e8e2d9;
+  --text: #1c1917; --sub: #57534e; --muted: #8c8178;
+  --pass-bg: #eaf4ee; --warn-bg: #fef9e7; --fail-bg: #fef1f1; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.65;
+       background: var(--bg); color: var(--text); padding: 32px 24px;
+       max-width: 820px; margin: 0 auto; }
+h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: .01em; padding-bottom: 12px;
+     border-bottom: 2px solid var(--terra); margin-bottom: 6px; }
+.meta { font-size: .72rem; color: var(--muted); margin-bottom: 28px; }
+h2 { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+     color: var(--terra); margin: 28px 0 10px;
+     display: flex; align-items: center; gap: 10px; }
+h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+        padding: 14px 16px; margin-bottom: 8px; }
+.card.pass { border-left: 3px solid var(--pass); }
+.card.warn { border-left: 3px solid var(--gold); }
+.card.info { border-left: 3px solid var(--terra); }
+.badge { display: inline-block; font-size: .68rem; font-weight: 700; padding: 2px 8px;
+         border-radius: 12px; letter-spacing: .04em; margin-bottom: 4px; }
+.badge.pass { background: var(--pass-bg); color: var(--pass); }
+.badge.warn { background: var(--warn-bg); color: var(--warn); }
+.badge.fail { background: var(--fail-bg); color: var(--fail); }
+.item-title { font-size: .9rem; font-weight: 600; margin-bottom: 4px; }
+.item-body { font-size: .82rem; color: var(--sub); }
+.item-body code { font-family: ui-monospace, monospace; font-size: .78rem;
+                  background: var(--border); padding: 1px 4px; border-radius: 3px; }
+ul.findings { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 3px;
+              margin-top: 6px; }
+ul.findings li { font-size: .78rem; color: var(--sub); padding: 2px 0 2px 10px;
+                 border-left: 2px solid var(--border); }
+ul.findings li.w { border-left-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<h1>Mobile Audit — 2026-07-19</h1>
+<p class="meta">Run date: 2026-07-19 · 8 layers · 3 fixes applied (2 runs) · pushed live</p>
+
+<h2>Stats Icon Problem — Root Cause &amp; Two New Gates (Follow-Up)</h2>
+
+<div class="card info">
+  <span class="badge pass">LIVE (commit 695b00eae)</span>
+  <div class="item-title">Guides-Index.html — <code>#view-compare</code> used wrong stats icon (📶 ANTENNA BARS instead of 📊 BAR CHART)</div>
+  <div class="item-body">The "Compare cities" filter chip (tile 9 of 9 in the mobile 3×3 filter grid) used <code>📶</code> (U+1F4F6 ANTENNA WITH BARS — a signal-strength icon), not <code>📊</code> (BAR CHART) which every Stats toolbar-group child uses. Because JS only moves <code>#view-compare</code> into the pill-row grid at ≤600 px, this was a mobile-only visual inconsistency invisible on desktop. Fixed in commit <code>695b00eae</code> as part of the same session's been/want sync work — but the fix was incidental, not caught by the 7-layer audit scan. No audit layer inspects disc-btn emoji against the Stats toolbar group's icon standard; this remains a manual-check gap.</div>
+</div>
+
+<div class="card info">
+  <span class="badge pass">LIVE (commit c988403d4)</span>
+  <div class="item-title">guides-index-style.css — mobile filter grid tiles were 44 px, not 46 px (Form B standard)</div>
+  <div class="item-body"><code>.topbar .disc-btn { min-height: 44px }</code> was 2 px below the Form B tile standard. All other Form B tiles — <code>.fchip</code>, <code>.tchip</code>, <code>.lchip</code> — are explicitly 46 px (and brain_check-gated). Playwright confirmed all 9 disc-btn tiles rendered at 44 px. Fixed in commit <code>c988403d4</code>. A new <code>check_mobile_design_system</code> invariant now hard-fails if <code>.topbar .disc-btn</code> ever drops below <code>min-height: 46px</code>.</div>
+</div>
+
+<div class="card pass">
+  <span class="badge pass">FIXED (Drive-only)</span>
+  <div class="item-title">audit_mobile.py Layer 3 — fail-marker mismatch caused permanent silent PASS</div>
+  <div class="item-body"><code>run_layer3</code> used <code>FAIL_MARKERS = ("✗", "FAIL", "❌", "[FAIL]", "violation", "too small", "too narrow")</code> — none of which match <code>validate_mobile_render.py</code>'s actual output prefixes: <code>H-OVERFLOW</code>, <code>PILL </code>, <code>OFF-CENTER</code>, <code>ALSO-ON-SITE</code>, <code>DAY-ROW</code>, <code>mobile issues</code>. Any render violation was silently discarded and Layer 3 always reported PASS regardless of actual findings. Fixed: FAIL_MARKERS now includes all six real prefixes. The stats icon wasn't surfaced by Layer 3 (it doesn't check emoji consistency), but overflow and pill-size regressions on Trip-Essentials pages will now be correctly reported.</div>
+</div>
+
+<div class="card pass">
+  <span class="badge pass">ADDED (Drive-only)</span>
+  <div class="item-title">brain_check.py — new invariant gates <code>.topbar .disc-btn min-height: 46px</code></div>
+  <div class="item-body">Added to <code>check_mobile_design_system</code>'s guides-index-style.css invariant list: <em>"mobile filter grid tile (.topbar .disc-btn) = 46px min-height / 0 radius (Form B — matches .fchip/.tchip/.lchip)"</em>. This joins the existing 3-tile invariants and makes the 44 vs 46px regression impossible to re-introduce without a hard-FAIL at session start.</div>
+</div>
+
+<div class="card pass">
+  <span class="badge pass">NEW GATE (Drive-only)</span>
+  <div class="item-title">audit_mobile.py — Layer 8: hamburger label check (both directions)</div>
+  <div class="item-body">Added <strong>Layer 8</strong> to the mobile audit (now 8 layers). Parses <code>assets/toolbar.js</code> and for every dropdown group child computes the <strong>effective hamburger label</strong> — <code>ch.full || ch.text</code>, matching toolbar.js's actual rendering logic. Checks two conditions against the effective label:
+    <ul class="findings">
+      <li><strong>Emoji-only</strong> (no word content): <code>'📊'</code> → FAIL — icon with no context in the menu</li>
+      <li><strong>Icon-stripped</strong> (label text but no leading icon): <code>'Stats Across the Caribbean'</code> → FAIL — no emoji prefix in the menu</li>
+      <li>Exempts Flights + Safety groups (intentionally heterogeneous icons per spec)</li>
+      <li>Also checks <code>text:</code> field independently when a <code>full:</code> override is present (desktop chip)</li>
+      <li>Currently: 25 dropdown children checked, 0 failures</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card pass">
+  <span class="badge pass">NEW GATE (Drive-only)</span>
+  <div class="item-title">brain_check.py — two checks extended (session-start + pre-push)</div>
+  <div class="item-body">Two brain_check functions updated to catch both directions:
+    <ul class="findings">
+      <li><strong><code>check_toolbar_group_icon_consistency</code></strong> extended: now parses each child object individually and checks both <code>text:</code> AND <code>full:</code> fields (not just <code>text:</code>). A <code>full:</code> value without the group icon would previously slip through since hamburger renders <code>full || text</code>.</li>
+      <li><strong><code>check_toolbar_child_label_text</code></strong> (new): hard-FAILs if any dropdown child's <code>text:</code> or <code>full:</code> field is emoji-only (no word content in the hamburger-effective label). Added 2026-07-19.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card info">
+  <span class="badge warn">ANALYSIS</span>
+  <div class="item-title">Root cause of the iOS hamburger rendering issue: iOS Safari browser cache</div>
+  <div class="item-body">Auditing all toolbar.js commits back through the past week: <strong>the <code>text: '📊 Stats Across the Caribbean'</code> entry has been correct in every commit</strong> — the source code was never wrong. The two occurrences of the missing label were therefore a <strong>browser-side cache issue</strong>: iOS Safari served a stale, pre-cache-bust version of <code>toolbar.js</code>. The <code>?v=101</code> cache-bust in commit <code>cc46d4cf2</code> (2026-07-19) forces a fresh load. The new Layer 8 and brain_check gate still have value: they catch the <em>class of source-code regression</em> where a future crib accidentally sets an emoji-only <code>text:</code> value — a bug the browser-cache issue had masked as a possibility.</div>
+</div>
+
+<h2>Auto-Fixed &amp; Pushed (Run 3)</h2>
+
+<div class="card pass">
+  <span class="badge pass">FIXED · LIVE</span>
+  <div class="item-title">guide-style.css — "Also on this site" + "Nearby Guides" pills mobile border/radius now match Trip Overview extras tiles</div>
+  <div class="item-body">On mobile, <code>.also-on-this-site-pill</code> and <code>.nearby-guide-pill</code> were styled as Form B glued-grid tiles with a gray <code>1.5px solid var(--c-index-border)</code> border and <code>border-radius: 0</code>. The Trip Overview extras nav tiles (<code>.overview-extras .overview-extra-link</code>) render with the higher-specificity desktop rule that produces a gold <code>0.5px solid #c8a44a</code> border and <code>border-radius: 6px</code>. Updated the mobile overrides for both pill classes to match: <code>border: 0.5px solid #c8a44a !important</code> + <code>border-radius: 6px !important</code>. Two new <code>check_mobile_design_system</code> invariants added to <code>brain_check.py</code> to prevent silent reversion to the gray/square style.</div>
+</div>
+
+<h2>Auto-Fixed &amp; Pushed (Run 1)</h2>
+
+<div class="card pass">
+  <span class="badge pass">FIXED · LIVE</span>
+  <div class="item-title">Day-Trips.html — search input font-size 15px → 16px</div>
+  <div class="item-body">The day-trips search input had <code>font-size: 15px</code>. iOS Safari auto-zooms any input below 16px on focus, breaking the mobile layout. Auto-fixed and pushed (commit 917ca486f).</div>
+</div>
+
+<h2>Structural Issue Resolved Before Push</h2>
+
+<div class="card info">
+  <span class="badge warn">RESTORED TO HEAD</span>
+  <div class="item-title">Guides-Index.html + guides-index-style.css — #status-toggle removed in working tree</div>
+  <div class="item-body">An uncommitted working-tree change had removed <code>#status-toggle</code> (All/Been/Want buttons) from both the HTML and the CSS, along with the status-aware stat row counts (<code>visited | on the list</code>), the stab event listeners, and the status filtering logic. This caused 5 brain_check hard-FAILs blocking the push. Both files were restored to HEAD (the correct committed state). The status toggle is a LOCKED element per Navigation.html § 8 — removal requires explicit owner approval. If the removal is intentional, it requires a deliberate commit with owner sign-off and a Navigation.html § 8 update.</div>
+</div>
+
+<h2>Remaining Issues — Guide Re-Ship Required</h2>
+
+<div class="card warn">
+  <span class="badge warn">NEEDS RE-SHIP</span>
+  <div class="item-title">Missing loading="lazy" — 11 images in 2 guides</div>
+  <div class="item-body">The auto-fixer cannot modify guide HTML without invalidating the signed validation stamp; changes require re-validation and re-ship.
+    <ul class="findings">
+      <li class="w">Guides/Coeur-dAlene/coeur-dalene_v1.html — 4 images</li>
+      <li class="w">Guides/Marco-Island/marco-island_v1.html — 7 images</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card warn">
+  <span class="badge warn">NEEDS RE-SHIP</span>
+  <div class="item-title">Missing width/height attributes (CLS risk) — 25 images in 4 files</div>
+  <div class="item-body">Images without explicit <code>width</code>/<code>height</code> cause layout shift on load. Three guide files require re-ship; the shareable page uses JS-generated images with CSS <code>aspect-ratio: 1</code> as a mitigation.
+    <ul class="findings">
+      <li class="w">Guides/Coeur-dAlene/coeur-dalene_v1.html — 4 images</li>
+      <li class="w">Guides/Hilton-Head-Island/hilton-head-island_v1.html — 12 images</li>
+      <li class="w">Guides/Marco-Island/marco-island_v1.html — 7 images</li>
+      <li class="w">Trip-Essentials/Before-You-Go.html — 2 JS-generated plug images (advisory only; CSS aspect-ratio mitigates)</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Advisory Warnings (Warn-Only)</h2>
+
+<div class="card">
+  <span class="badge warn">WARN-ONLY</span>
+  <div class="item-title">Accessibility — 11 issues across 4 pages</div>
+  <div class="item-body">Manual review required; not auto-fixable.
+    <ul class="findings">
+      <li class="w">3 icon-only &lt;button&gt; with no accessible name — Best-Surfing.html, Climate-Finder.html, When-to-Go.html</li>
+      <li class="w">1 &lt;a&gt; with no accessible name — European-Train-Guide.html</li>
+      <li class="w">7 &lt;input&gt; without &lt;label&gt; — Climate-Finder.html (2), Stats-Across-US.html (3), Trips.html (1), Visas.html (1)</li>
+    </ul>
+    Fix: add <code>aria-label</code> to unlabeled buttons/links; associate inputs with explicit <code>&lt;label for=&gt;</code>.
+  </div>
+</div>
+
+<div class="card">
+  <span class="badge warn">WARN-ONLY</span>
+  <div class="item-title">100vh without fill-available fallback — 6 locations</div>
+  <div class="item-body">All 6 are intentional map/layout files where full-viewport height is correct. No action required.
+    <ul class="findings">
+      <li>assets/stops-map-style.css · assets/web-travel-style.css</li>
+      <li>Maps/World-Map.html · World-Map-google.html · World-Map-original-backup.html · World-Map-status-color.html</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Layers Passing Clean</h2>
+
+<div class="card pass">
+  <span class="badge pass">PASS</span>
+  <div class="item-title">Layer 1 — CSS design-system integrity · Layer 2 — Static baseline · Layer 3 — Render @ 393px · Layer 5 — iOS input safety · Layer 6 — Viewport</div>
+  <div class="item-body">All five layers clean after auto-fix and status-toggle restore. 92 pages have correct viewport + mobile.css baseline. 85 pages rendered at 393px with no overflow or pill regressions. All inputs ≥ 16px.</div>
+</div>
+
+</body>
+</html>

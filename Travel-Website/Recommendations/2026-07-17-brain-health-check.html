@@ -1,0 +1,541 @@
+<title>Brain Health Check — 2026-07-17</title>
+<style>
+  :root {
+    --bg: #f5f3f0;
+    --surface: #ffffff;
+    --surface2: #f0ede9;
+    --border: #ddd9d3;
+    --text: #1c1917;
+    --muted: #756e66;
+    --accent: #b85c2a;
+    --accent-dim: #f0e4da;
+    --ok: #2d7a4f;
+    --ok-bg: #e2f2eb;
+    --warn: #7a5c1a;
+    --warn-bg: #f5edda;
+    --fail: #8a1a1a;
+    --fail-bg: #f5dede;
+    --mono: 'Menlo','Cascadia Code','Consolas',monospace;
+    --radius: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1815;
+      --surface: #232019;
+      --surface2: #2a271f;
+      --border: #363028;
+      --text: #f0ece6;
+      --muted: #8c8278;
+      --accent: #d47040;
+      --accent-dim: #3a2518;
+      --ok: #48a870;
+      --ok-bg: #1a3525;
+      --warn: #c8a440;
+      --warn-bg: #2e2510;
+      --fail: #cc5555;
+      --fail-bg: #2e1515;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f3f0; --surface: #ffffff; --surface2: #f0ede9; --border: #ddd9d3;
+    --text: #1c1917; --muted: #756e66; --accent: #b85c2a; --accent-dim: #f0e4da;
+    --ok: #2d7a4f; --ok-bg: #e2f2eb; --warn: #7a5c1a; --warn-bg: #f5edda;
+    --fail: #8a1a1a; --fail-bg: #f5dede;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1a1815; --surface: #232019; --surface2: #2a271f; --border: #363028;
+    --text: #f0ece6; --muted: #8c8278; --accent: #d47040; --accent-dim: #3a2518;
+    --ok: #48a870; --ok-bg: #1a3525; --warn: #c8a440; --warn-bg: #2e2510;
+    --fail: #cc5555; --fail-bg: #2e1515;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 32px 24px 64px;
+  }
+
+  .wrap {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .header-left {}
+  .run-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .header-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .header-meta .date {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Summary strip */
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .stat-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .stat-tile .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-tile .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stat-tile.ok .stat-value { color: var(--ok); }
+  .stat-tile.warn .stat-value { color: var(--warn); }
+  .stat-tile.neutral .stat-value { color: var(--text); }
+
+  /* Status table */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .steps-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 28px;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+  thead th {
+    background: var(--surface2);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td {
+    padding: 10px 14px;
+    vertical-align: top;
+    font-size: 13px;
+  }
+  td.step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    width: 28px;
+    padding-right: 4px;
+    white-space: nowrap;
+  }
+  td.step-name {
+    font-weight: 600;
+    white-space: nowrap;
+    width: 200px;
+  }
+  td.step-note {
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  td.step-note code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--surface2);
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  /* Status pill */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .pill.ok { background: var(--ok-bg); color: var(--ok); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.fail { background: var(--fail-bg); color: var(--fail); }
+  .pill.fixed { background: var(--accent-dim); color: var(--accent); }
+
+  /* Issues section */
+  .issues-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 28px;
+  }
+  .issues-box.clean {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ok);
+  }
+  .issues-box.clean .icon { font-size: 20px; }
+  .issues-box.clean .clean-text { font-weight: 600; font-size: 14px; }
+  .issues-box.clean .clean-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .warn-item {
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn);
+    margin-bottom: 10px;
+  }
+  .warn-item:last-child { margin-bottom: 0; }
+  .warn-item .wi-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--warn);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .warn-item .wi-body {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .warn-item .wi-body code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--surface);
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* Stamp verification */
+  .stamp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .stamp-row:last-child { border-bottom: none; }
+  .stamp-row .s-guide {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    flex: 1;
+  }
+  .stamp-row .s-ok {
+    color: var(--ok);
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .stamps-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 28px;
+  }
+
+  /* Script health */
+  .script-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 28px;
+  }
+  .script-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+  }
+  .script-item code {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+  }
+  .script-item .ok-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ok);
+    flex-shrink: 0;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 20px 14px 48px; }
+    .summary-strip { grid-template-columns: repeat(2, 1fr); }
+    .header h1 { font-size: 18px; }
+    .header-meta { align-items: flex-start; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="header">
+    <div class="header-left">
+      <div class="run-label">Automated Routine</div>
+      <h1>Brain Health Check</h1>
+    </div>
+    <div class="header-meta">
+      <span class="date">2026-07-17</span>
+      <span>The Voyager Expert</span>
+      <span>Daily · Noon</span>
+    </div>
+  </header>
+
+  <div class="summary-strip">
+    <div class="stat-tile ok">
+      <div class="stat-value">0</div>
+      <div class="stat-label">HARD-FAILs</div>
+    </div>
+    <div class="stat-tile warn">
+      <div class="stat-value">2</div>
+      <div class="stat-label">Warnings</div>
+    </div>
+    <div class="stat-tile ok">
+      <div class="stat-value">180</div>
+      <div class="stat-label">Checks OK</div>
+    </div>
+    <div class="stat-tile neutral">
+      <div class="stat-value">673.9</div>
+      <div class="stat-label">MB Published</div>
+    </div>
+  </div>
+
+  <div class="section-label">Step-by-step Results</div>
+
+  <div class="steps-table">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Step</th>
+          <th>Status</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="step-num">0</td>
+          <td class="step-name">Working tree safety</td>
+          <td><span class="pill warn">⚠ Stashed</span></td>
+          <td class="step-note">Amsterdam guide modified + 6 Recommendations HTMLs untracked from other sessions. Stashed with <code>-u</code> before checks; restored after.</td>
+        </tr>
+        <tr>
+          <td class="step-num">1</td>
+          <td class="step-name">Brain check</td>
+          <td><span class="pill warn">⚠ 2 Warns</span></td>
+          <td class="step-note">180/182 ok · 0 fail. Warn 1: <code>Claude Inspiration - Extra Section.html</code> newer than Validator Index — already resolved by today's reference-docs-audit pass. Warn 2: 102 duplicated CSS selectors (pre-existing). No HARD-FAILs.</td>
+        </tr>
+        <tr>
+          <td class="step-num">2</td>
+          <td class="step-name">Hanging builds</td>
+          <td><span class="pill ok">✓ Clean</span></td>
+          <td class="step-note">No <code>build_state.md</code> files with Phase 6 unchecked found across all guide folders.</td>
+        </tr>
+        <tr>
+          <td class="step-num">3</td>
+          <td class="step-name">Ship pipeline health</td>
+          <td><span class="pill ok">✓ Clean</span></td>
+          <td class="step-note">11/11 scripts compiled without errors. Pre-push hook wired at <code>Brain/scripts/git-hooks</code> and executable (<code>-rwxr-xr-x</code>).</td>
+        </tr>
+        <tr>
+          <td class="step-num">4</td>
+          <td class="step-name">Validation stamps</td>
+          <td><span class="pill ok">✓ 5/5 OK</span></td>
+          <td class="step-note">Florida-Keys, Puerto-Rico, Athens, Sarasota, Denver — all valid signed stamps (exit 0).</td>
+        </tr>
+        <tr>
+          <td class="step-num">5</td>
+          <td class="step-name">Push queue / lock</td>
+          <td><span class="pill ok">✓ Clean</span></td>
+          <td class="step-note">No <code>voyager_push.lock</code> file. No <code>publish_queue.json</code> entries.</td>
+        </tr>
+        <tr>
+          <td class="step-num">6</td>
+          <td class="step-name">Stray file sweep</td>
+          <td><span class="pill ok">✓ Clean</span></td>
+          <td class="step-note">0 stray Travel files outside <code>Travel/</code>. All 4 paths reachable. HARD RULE holding.</td>
+        </tr>
+        <tr>
+          <td class="step-num">7</td>
+          <td class="step-name">Repo size &amp; gitignore</td>
+          <td><span class="pill warn">⚠ Note</span></td>
+          <td class="step-note">673.9 MB published — well under 1 GB limit. <code>.claude/workflows/fix-ux-problems.js</code> tracked outside whitelist but was deliberately committed in <code>ff713fc6c</code> for scheduled-task automation. No <code>.DS_Store</code> or <code>.fuse_hidden*</code> artifacts. Not a P0.</td>
+        </tr>
+        <tr>
+          <td class="step-num">8</td>
+          <td class="step-name">Audit log freshness</td>
+          <td><span class="pill ok">✓ Current</span></td>
+          <td class="step-note">Last entry: 2026-07-16 (1 day ago). Today's health check entry added.</td>
+        </tr>
+        <tr>
+          <td class="step-num">9</td>
+          <td class="step-name">Commit &amp; push</td>
+          <td><span class="pill ok">✓ N/A</span></td>
+          <td class="step-note"><code>Brain/Reference/audit_log.md</code> is Drive-only (gitignored). No tracked files changed this session. Nothing to commit — correct behavior.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Issues Requiring Owner Action</div>
+
+  <div class="issues-box clean">
+    <span class="icon">✓</span>
+    <div>
+      <div class="clean-text">None</div>
+      <div class="clean-sub">All pipeline gates clean. No CORE RULES issues, no orphaned builds, no syntax errors.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Script Syntax — 11/11 OK</div>
+
+  <div class="script-grid">
+    <div class="script-item"><span class="ok-dot"></span><code>guide_tools.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>validate_itinerary.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>brain_check.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>pre_push_guard.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>validation_stamp.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>publish_queue.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>guide_surfaces.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>crib_safety.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>sweep_stray_travel.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>commons_photo.py</code></div>
+    <div class="script-item"><span class="ok-dot"></span><code>autofix_itinerary.py</code></div>
+  </div>
+
+  <div class="section-label">Stamp Verification Sample</div>
+
+  <div class="stamps-box">
+    <div class="stamp-row">
+      <span class="s-guide">Guides/Florida-Keys/florida-keys_v1.html</span>
+      <span class="s-ok">✓ valid signed stamp</span>
+    </div>
+    <div class="stamp-row">
+      <span class="s-guide">Guides/Puerto-Rico/puerto-rico_v1.html</span>
+      <span class="s-ok">✓ valid signed stamp</span>
+    </div>
+    <div class="stamp-row">
+      <span class="s-guide">Guides/Athens/athens_v1.html</span>
+      <span class="s-ok">✓ valid signed stamp</span>
+    </div>
+    <div class="stamp-row">
+      <span class="s-guide">Guides/Sarasota/sarasota_v1.html</span>
+      <span class="s-ok">✓ valid signed stamp</span>
+    </div>
+    <div class="stamp-row">
+      <span class="s-guide">Guides/Denver/denver_v1.html</span>
+      <span class="s-ok">✓ valid signed stamp</span>
+    </div>
+  </div>
+
+  <div class="section-label">Pre-existing Warnings (no action needed)</div>
+
+  <div style="margin-bottom: 28px;">
+    <div class="warn-item">
+      <div class="wi-label">Warn 1 — Validator Index sync (pre-existing, self-resolving)</div>
+      <div class="wi-body"><code>Claude Inspiration - Extra Section.html</code> is newer than <code>Validator Index.html</code> by 246+ minutes. This warning pre-dates this run and was already addressed by today's earlier reference-docs-audit session, which updated Validator Index. No action needed from this run.</div>
+    </div>
+    <div class="warn-item">
+      <div class="wi-label">Warn 2 — CSS duplication (pre-existing, tracked)</div>
+      <div class="wi-body">102 duplicated CSS selectors detected (across 0 pages — selector pattern only). This is a recurring pre-existing warning related to the shared CSS consolidation effort. No regression this run.</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>Brain Health Check · 2026-07-17 · automated daily routine</span>
+    <span>The Voyager Expert pipeline</span>
+  </footer>
+
+</div>

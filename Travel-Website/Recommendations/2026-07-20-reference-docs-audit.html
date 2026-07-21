@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reference Docs Audit — 2026-07-20</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 860px; margin: 40px auto; padding: 0 24px; color: #3d3a32; background: #faf8f5; }
+  h1 { font-size: 20px; font-weight: 700; color: #3d3a32; text-transform: uppercase; letter-spacing: .05em; border-bottom: 3px solid #b85c2a; padding-bottom: 8px; margin-bottom: 4px; }
+  .meta { font-size: 13px; color: #888; margin-bottom: 28px; }
+  h2 { font-size: 15px; font-weight: 700; color: #3d3a32; margin: 28px 0 10px; text-transform: uppercase; letter-spacing: .04em; }
+  h3 { font-size: 14px; font-weight: 600; color: #5a5650; margin: 18px 0 6px; }
+  p, li { font-size: 14px; line-height: 1.6; margin: 0 0 8px; }
+  ul { padding-left: 20px; margin: 0 0 12px; }
+  code { font-family: 'SF Mono', 'Fira Mono', monospace; font-size: 12px; background: #ede9e4; padding: 1px 5px; border-radius: 3px; }
+  .fix { background: #e8f5e9; border-left: 3px solid #4caf50; padding: 10px 14px; border-radius: 4px; margin: 10px 0; }
+  .warn { background: #fff8e1; border-left: 3px solid #f9a825; padding: 10px 14px; border-radius: 4px; margin: 10px 0; }
+  .ok { background: #e3f2fd; border-left: 3px solid #1976d2; padding: 10px 14px; border-radius: 4px; margin: 10px 0; }
+  .section-label { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #b85c2a; margin-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+  th { background: #b85c2a; color: #fff; text-align: left; padding: 7px 10px; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: .05em; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e5e0d8; }
+  tr:last-child td { border-bottom: none; }
+  .pass { color: #2e7d32; font-weight: 600; }
+  .fixed { color: #1565c0; font-weight: 600; }
+  .nochange { color: #888; }
+  .footer { font-size: 12px; color: #999; margin-top: 40px; padding-top: 12px; border-top: 1px solid #e5e0d8; }
+</style>
+</head>
+<body>
+
+<h1>Reference Docs Audit</h1>
+<div class="meta">2026-07-20 · Automated scheduled routine · Detection window: 2026-07-19 (evening, after prior audit)</div>
+
+<h2>Summary</h2>
+<p>5 documentation gaps detected and corrected. All related to the 2026-07-19 evening batch of commits, after the prior reference-docs-audit run that same day. <strong>brain_check: 0 failures</strong> · <strong>pre_push_guard: exit 0</strong>.</p>
+
+<table>
+  <tr><th>Gap</th><th>File(s)</th><th>Status</th></tr>
+  <tr><td>Rule 559 documented with reversed logic — said CSS arrow must be ABSENT; actual check requires it PRESENT</td><td><code>Cleanliness Checks.md</code>, <code>Validator Index.html</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>Cleanliness Checks.md header says "Highest rule number is 563" — Rule 564 exists</td><td><code>Cleanliness Checks.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>Rules 561–564 not listed in Cleanliness Checks.md header narrative</td><td><code>Cleanliness Checks.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>CLAUDE.md DriftyCat missing Rule 563 bullet (.title-city no · STATE suffix)</td><td><code>CLAUDE.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>CLAUDE.md DriftyCat missing Rule 564 bullet (hamburger button dark terracotta pill spec)</td><td><code>CLAUDE.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>brain_check.py ALL_CHECKS comment for check_ham_btn_style cited "#2e1208" — actual check uses "#6e3117"</td><td><code>Brain/scripts/brain_check.py</code></td><td class="fixed">Fixed</td></tr>
+</table>
+
+<h2>Detection: Commits Analyzed</h2>
+<p>Commits from 2026-07-19 evening (after prior audit at ~18:00), reviewed against all reference docs:</p>
+<ul>
+  <li><code>98e93e7a0</code> — World Map redesign: adjacency-safe 7-color palette, pole-of-inaccessibility label placement, mobile hamburger region-nav</li>
+  <li><code>57cc51cfe</code> — Climate Finder mobile: Form B glued tiles for sibling + research pill rows</li>
+  <li><code>2e47e2b38</code>, <code>0997e741b</code> — Delta Routes guide pill: white background fix</li>
+  <li><code>1ae57aafd</code> — Delta Routes mobile legend: Form B glued-grid tiles</li>
+  <li><code>4dd20226a</code> — width:100% to #region-pills and #sort-pills in mobile.css</li>
+</ul>
+
+<h2>Fix Details</h2>
+
+<h3>Rule 559 — Reversed logic corrected</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> <code>Cleanliness Checks.md</code> Rule 559 documented the <em>old intermediate state</em> — it said the CSS arrow was removed and that <code>check_title_address_no_css_arrow</code> hard-fails if <code>border-top</code> is PRESENT. But the rule was reversed 2026-07-19 (the intermediate version crashed with <code>NameError: '_CSS_PATH' undefined</code>, per <code>audit_log.md</code>). The current check is <code>check_title_address_has_css_arrow</code>, which hard-fails if <code>border-top</code> is ABSENT.</p>
+  <p><strong>Fix:</strong> Rule 559 rewritten to document the correct (current) rule — CSS arrow MUST be present, <code>check_title_address_has_css_arrow</code>, Unicode ↗️ must NOT appear in HTML. Historical note added about the intermediate reversal.</p>
+  <p><strong>Also fixed:</strong> <code>Validator Index.html</code> meta div and list item — both referenced the old function name <code>check_title_address_no_css_arrow</code> and the wrong behavior. Updated to <code>check_title_address_has_css_arrow</code> with correct description.</p>
+</div>
+
+<h3>Cleanliness Checks.md header — rule count + narrative</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> Header said "Highest rule number is 563" but Rule 564 (hamburger button spec) exists in the file. Also, the header's narrative listed rules 550–559 but never mentioned 561–564, and cited the old function name <code>check_title_address_no_css_arrow</code> in the 555–559 clause.</p>
+  <p><strong>Fix:</strong> Updated to "Highest rule number is 564", corrected the function name in the 555–559 clause, and added "rules 561–564 added 2026-07-19" entry to the header narrative.</p>
+</div>
+
+<h3>CLAUDE.md DriftyCat — Rules 563 and 564</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> Rule 563 (<code>.title-city</code> must not contain <code>· STATE</code> suffix) and Rule 564 (hamburger button dark terracotta pill spec, <code>check_ham_btn_style</code>) both have working enforcement in <code>validate_itinerary.py</code> and <code>brain_check.py</code> respectively, but neither had a DriftyCat bullet in <code>CLAUDE.md</code>. Without the bullet, cribs have no in-context reminder of the rule when editing hotel banners or <code>toolbar.js</code>.</p>
+  <p><strong>Fix:</strong> Two DriftyCat bullets added after the Rule 562 bullet — one for Rule 563 (title-city no suffix, with Carmel by the Sea as the trigger example), one for Rule 564 (hamburger spec: <code>background:#6e3117</code>, <code>border-radius:8px</code>, <code>width:82px</code>, filled white SVG bars, no <code>display:</code> in inline style).</p>
+</div>
+
+<h3>brain_check.py ALL_CHECKS comment — stale color</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> The ALL_CHECKS registration comment for <code>check_ham_btn_style</code> (line 6846) cited <code>background:#2e1208</code> — an intermediate design iteration where the hamburger button color was darker. The actual function code checks for <code>background:#6e3117</code> (the final approved color).</p>
+  <p><strong>Fix:</strong> Comment updated to <code>#6e3117</code> and description corrected from "SVG bars stroke=&quot;white&quot;" to "SVG bars fill=&quot;#fff&quot;" to match the actual SVG implementation.</p>
+</div>
+
+<h2>No-Action Items</h2>
+<div class="ok">
+  <ul>
+    <li><strong>Maps-Layout.html</strong> — Already fully updated 2026-07-19 to document the World Map redesign: §6a adjacency-safe 7-color palette + DSATUR algorithm, §6b pole-of-inaccessibility label placement, §7 mobile region-nav via hamburger. No enforcement check needed (visual design, not a structural rule).</li>
+    <li><strong>Climate Finder mobile Form B glued tiles</strong> — <code>.cf-sibling-row</code> and <code>.cf-research-row</code> are page-local classes on a non-guide page (<code>Climate-Finder.html</code>). Not picked up by global brain_check pill checks. No new validator rule warranted — <code>check_mobile_design_system</code> already covers the shared mobile design system locked invariants.</li>
+    <li><strong>Rules 561, 562 in CLAUDE.md</strong> — Already have DriftyCat bullets (sidebar panels beige, mobile hamburger menu sections). No action needed.</li>
+    <li><strong>World Map no-CDN / color checks in brain_check.py</strong> — Already wired (<code>check_world_map_no_cdn</code>, <code>check_world_map_colors</code>). Maps-Layout.html was already updated. No documentation gaps.</li>
+  </ul>
+</div>
+
+<h2>Validation (Run 1)</h2>
+<div class="fix">
+  <p><code>python3 Brain/scripts/brain_check.py</code> → <strong>193/194 ok · 1 warn · 0 fail</strong> (the 1 warn is pre-existing CSS duplication advisory, not introduced by this run)</p>
+  <p><code>python3 Brain/scripts/pre_push_guard.py</code> → <strong>exit 0</strong></p>
+</div>
+
+<h2>Files Changed (Run 1)</h2>
+<table>
+  <tr><th>File</th><th>Type</th><th>Change</th></tr>
+  <tr><td><code>Brain/Reference/Cleanliness Checks.md</code></td><td>Drive-only</td><td>Header: "Highest rule number is 563" → 564; function name corrected; rules 561–564 narrative added. Rule 559: reversed rule rewritten to correct state.</td></tr>
+  <tr><td><code>Brain/Reference/Validator Index.html</code></td><td>Drive-only</td><td>Meta div: check_title_address_no_css_arrow → check_title_address_has_css_arrow (description corrected). Rule 559 list item: full rewrite to correct behavior.</td></tr>
+  <tr><td><code>CLAUDE.md</code></td><td>Drive-only</td><td>Two DriftyCat bullets added: Rule 563 (.title-city no suffix) and Rule 564 (hamburger button spec).</td></tr>
+  <tr><td><code>Brain/scripts/brain_check.py</code></td><td>Drive-only</td><td>ALL_CHECKS comment for check_ham_btn_style: #2e1208 → #6e3117; stroke="white" → fill="#fff".</td></tr>
+</table>
+
+<hr style="margin:40px 0 28px; border:none; border-top:2px solid #b85c2a;">
+
+<h1 style="margin-top:0;">Continuation Run</h1>
+<div class="meta">2026-07-20 · Context-window continuation · Detection window: 2026-07-20 commits (Personal-Stats, Being-Map, World Map, hamburger mini-stats)</div>
+
+<h2>Summary</h2>
+<p>5 additional documentation gaps found and corrected. Triggers: commits <code>70f3b3210</code> (Been-Map brain_check fix), <code>b66d4f068</code> (Been-Map new standalone map), <code>ad53e488b</code> (remove hamburger mini-stats from Guides-Index buildLSP()), and the preceding session's World-Map and Personal-Stats work.</p>
+
+<table>
+  <tr><th>Gap</th><th>File(s)</th><th>Status</th></tr>
+  <tr><td>No brain_check enforcement for <code>renderCities()</code> early-return guard (Rule 577)</td><td><code>brain_check.py</code>, <code>CLAUDE.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>No brain_check enforcement for <code>maybeLoadRegions()</code> early-return guard (Rule 578)</td><td><code>brain_check.py</code>, <code>CLAUDE.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>No brain_check enforcement for hamburger mini-stats injection ban (Rule 579)</td><td><code>brain_check.py</code>, <code>CLAUDE.md</code>, <code>Cleanliness Checks.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>Validator Index.html missing 7 entries: Rules 567, 568, 569, 573, 575, 576, 579</td><td><code>Brain/Reference/Validator Index.html</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>Brain.md documented Been-Map.html as "8th redirect stub" — it is a full standalone Leaflet map with 82 pins</td><td><code>Brain/Reference/Brain.md</code></td><td class="fixed">Fixed</td></tr>
+  <tr><td>CLAUDE.md DriftyCat had duplicate Rule 577 and Rule 578 bullets (added by two cribs)</td><td><code>CLAUDE.md</code></td><td class="fixed">Fixed</td></tr>
+</table>
+
+<h2>Fix Details</h2>
+
+<h3>Rules 577–578 — brain_check enforcement for World Map disabled functions</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> Two World-Map functions are intentionally disabled via early <code>return;</code> guards: <code>renderCities()</code> (prevents ~12k world-city dot markers from flooding the map) and <code>maybeLoadRegions()</code> (prevents 6-continent admin-1 subdivision tiles from loading). These had no enforcement gate — a crib rewriting World-Map.html could silently re-enable them.</p>
+  <p><strong>Fix:</strong> Added <code>check_world_map_render_cities_disabled()</code> (Rule 577) and <code>check_world_map_load_regions_disabled()</code> (Rule 578) to <code>brain_check.py</code>. Both are HARD-FAIL. Added DriftyCat bullets to <code>CLAUDE.md</code>. Both functions scan <code>World-Map.html</code> for the exact guard pattern (<code>cityLayer.clearLayers(); return;</code> and unconditional <code>return;</code> in <code>maybeLoadRegions</code>).</p>
+</div>
+
+<h3>Rule 579 — hamburger mini-stats injection ban</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> The <code>buildLSP()</code> function in <code>Guides-Index.html</code> previously injected a <code>div.tb-ham-stats</code> element ("82 visited · 28 countries · 37% complete") into the mobile hamburger menu. This was removed by owner direction (commit <code>ad53e488b</code>) — the hamburger is navigation-only; stats belong on Personal-Stats.html. No enforcement existed to prevent it from drifting back.</p>
+  <p><strong>Fix:</strong> Added <code>check_no_ham_stats_injection()</code> (Rule 579) to <code>brain_check.py</code> — HARD-FAIL if <code>'tb-ham-stats'</code> appears anywhere in <code>Guides-Index.html</code>. Added DriftyCat bullet to <code>CLAUDE.md</code>. Added Rule 579 to <code>Cleanliness Checks.md</code>.</p>
+</div>
+
+<h3>Validator Index.html — 7 missing entries (Rules 567, 568, 569, 573, 575, 576, 579)</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> Rules 567–576 all have working enforcement in <code>brain_check.py</code> or <code>validate_itinerary.py</code>, but none appeared in the Validator Index as of the start of this session. The Index is the authoritative list; gaps here mean future auditors can't see what's being enforced.</p>
+  <p><strong>Fix:</strong> Added entries for: <strong>567</strong> (<code>check_ham_menu_height</code> — no height/max-height on .tb-ham-menu), <strong>568</strong> (<code>check_updated_stamp_position</code> — Updated stamp sibling-insert placement), <strong>569</strong> (<code>check_mobile_trips_injection</code> — My Trips hamburger injection), <strong>573</strong> (<code>validate_itinerary.py TR-8</code> — anchor fragments for 5 resource pages), <strong>575–576</strong> (advisory — Sunrise &amp; Sunset standalone page + toolbar child position), and <strong>579</strong> (<code>check_no_ham_stats_injection</code>).</p>
+</div>
+
+<h3>Brain.md — Been-Map.html description corrected</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> The first half of this session incorrectly documented <code>Been-Map.html</code> as "An 8th redirect stub... redirects to World-Map.html (it was briefly a standalone Leaflet map showing visited guides, then converted to a simple redirect)." Reading the actual file (179 lines) and git history shows this is entirely wrong — it IS the standalone Leaflet map: full-screen, dark background, 82 visited-guide PINS with terracotta dot markers and popup links, backed by <code>Personal-Stats.html</code> via a ← Back link.</p>
+  <p><strong>Fix:</strong> Brain.md entry corrected to accurately describe Been-Map.html as a standalone "Places I've Been" map with 82 destination pins, distinct from World-Map.html.</p>
+</div>
+
+<h3>CLAUDE.md — duplicate Rule 577/578 bullets removed</h3>
+<div class="fix">
+  <p><strong>Problem:</strong> Two cribs both added DriftyCat bullets for Rules 577 and 578 to CLAUDE.md in the same session. This resulted in duplicate entries at lines 191–192 (first insertion, correct) and lines 270–271 (second insertion by a different crib).</p>
+  <p><strong>Fix:</strong> Removed the duplicate entries at the later position. The canonical entries at lines 191–192 are retained.</p>
+</div>
+
+<h2>Validation (Continuation Run)</h2>
+<div class="fix">
+  <p><code>python3 Brain/scripts/brain_check.py</code> → <strong>196/288 ok · 91 warn · 1 fail</strong></p>
+  <p>The 1 fail is <code>Personal-Stats.html: background:#ffffff (use var(--surface))</code> — introduced by another crib's work on Personal-Stats (out of scope for this audit). The 91 warns are all pre-existing toolbar-version stale warnings (v116 behind v117 across many pages). Neither was introduced by this run.</p>
+</div>
+
+<h2>Files Changed (Continuation Run)</h2>
+<table>
+  <tr><th>File</th><th>Type</th><th>Change</th></tr>
+  <tr><td><code>Brain/scripts/brain_check.py</code></td><td>Drive-only</td><td>Added <code>check_world_map_render_cities_disabled()</code> (Rule 577), <code>check_world_map_load_regions_disabled()</code> (Rule 578), <code>check_no_ham_stats_injection()</code> (Rule 579); all registered in main().</td></tr>
+  <tr><td><code>CLAUDE.md</code></td><td>Drive-only</td><td>DriftyCat bullets added for Rules 577–578 (World Map disabled functions); mini-stats ban bullet updated with Rule 579 enforcement reference; duplicate Rules 577–578 bullets removed.</td></tr>
+  <tr><td><code>Brain/Reference/Cleanliness Checks.md</code></td><td>Drive-only</td><td>Rule 579 added (hamburger mini-stats injection ban, <code>check_no_ham_stats_injection</code>).</td></tr>
+  <tr><td><code>Brain/Reference/Validator Index.html</code></td><td>Drive-only</td><td>7 entries added for Rules 567, 568, 569, 573, 575, 576, 579.</td></tr>
+  <tr><td><code>Brain/Reference/Brain.md</code></td><td>Drive-only</td><td>Been-Map.html description corrected from "8th redirect stub" to accurate standalone Leaflet map description.</td></tr>
+</table>
+<p><em>No tracked files changed (all edits are Drive-only untracked files). No commit or push required.</em></p>
+
+<div class="footer">Updated 2026-07-20 (continuation run) · reference-docs-audit routine · Combined detection window: 2026-07-19 evening + 2026-07-20 commits</div>
+
+</body>
+</html>

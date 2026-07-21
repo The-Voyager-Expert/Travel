@@ -1,0 +1,610 @@
+<title>Delta Routes Audit — July 2026</title>
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --surface2: #f0f4f8;
+    --navy: #1a2a3a;
+    --text: #1e2c3a;
+    --muted: #5a6a7a;
+    --border: #d8e2ec;
+    --red: #c41e3a;
+    --green: #15803d;
+    --amber: #92400e;
+    --blue: #1d4ed8;
+    --green-bg: #f0fdf4;
+    --red-bg: #fff1f2;
+    --amber-bg: #fffbeb;
+    --blue-bg: #eff6ff;
+    --green-border: #bbf7d0;
+    --red-border: #fecdd3;
+    --amber-border: #fde68a;
+    --blue-border: #bfdbfe;
+    --code-bg: #eef2f7;
+    --stripe-add: #15803d;
+    --stripe-remove: #c41e3a;
+    --stripe-update: #1d4ed8;
+    --stripe-verify: #5a6a7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1720;
+      --surface: #162030;
+      --surface2: #1e2d40;
+      --navy: #c8daf0;
+      --text: #d8e8f8;
+      --muted: #7a9ab8;
+      --border: #253545;
+      --red: #f87185;
+      --green: #4ade80;
+      --amber: #fbbf24;
+      --blue: #60a5fa;
+      --green-bg: #052e16;
+      --red-bg: #1f0a0e;
+      --amber-bg: #1a1000;
+      --blue-bg: #0d1f3a;
+      --green-border: #166534;
+      --red-border: #881337;
+      --amber-border: #78350f;
+      --blue-border: #1e3a5f;
+      --code-bg: #1a2a3a;
+      --stripe-add: #4ade80;
+      --stripe-remove: #f87185;
+      --stripe-update: #60a5fa;
+      --stripe-verify: #7a9ab8;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --surface2: #f0f4f8;
+    --navy: #1a2a3a;
+    --text: #1e2c3a;
+    --muted: #5a6a7a;
+    --border: #d8e2ec;
+    --red: #c41e3a;
+    --green: #15803d;
+    --amber: #92400e;
+    --blue: #1d4ed8;
+    --green-bg: #f0fdf4;
+    --red-bg: #fff1f2;
+    --amber-bg: #fffbeb;
+    --blue-bg: #eff6ff;
+    --green-border: #bbf7d0;
+    --red-border: #fecdd3;
+    --amber-border: #fde68a;
+    --blue-border: #bfdbfe;
+    --code-bg: #eef2f7;
+    --stripe-add: #15803d;
+    --stripe-remove: #c41e3a;
+    --stripe-update: #1d4ed8;
+    --stripe-verify: #5a6a7a;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1720;
+    --surface: #162030;
+    --surface2: #1e2d40;
+    --navy: #c8daf0;
+    --text: #d8e8f8;
+    --muted: #7a9ab8;
+    --border: #253545;
+    --red: #f87185;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --blue: #60a5fa;
+    --green-bg: #052e16;
+    --red-bg: #1f0a0e;
+    --amber-bg: #1a1000;
+    --blue-bg: #0d1f3a;
+    --green-border: #166534;
+    --red-border: #881337;
+    --amber-border: #78350f;
+    --blue-border: #1e3a5f;
+    --code-bg: #1a2a3a;
+    --stripe-add: #4ade80;
+    --stripe-remove: #f87185;
+    --stripe-update: #60a5fa;
+    --stripe-verify: #7a9ab8;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Header ─────────────────────────────── */
+  .report-header {
+    background: var(--navy);
+    color: #ffffff;
+    padding: 28px 32px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .report-header-inner { flex: 1; min-width: 200px; }
+  .report-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 6px;
+  }
+  .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .report-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .report-meta span { display: flex; align-items: center; gap: 5px; }
+  .commit-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* ── Summary bar ─────────────────────────── */
+  .summary-bar {
+    display: flex;
+    gap: 0;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    overflow-x: auto;
+  }
+  .summary-tile {
+    padding: 14px 20px;
+    border-right: 1px solid var(--border);
+    min-width: 100px;
+    text-align: center;
+  }
+  .summary-tile:last-child { border-right: none; }
+  .summary-num {
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .summary-num.green { color: var(--green); }
+  .summary-num.red { color: var(--red); }
+  .summary-num.blue { color: var(--blue); }
+  .summary-num.amber { color: var(--amber); }
+  .summary-num.muted { color: var(--muted); }
+  .summary-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+  }
+
+  /* ── Main layout ─────────────────────────── */
+  .report-body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+  }
+  .section { margin-bottom: 32px; }
+  .section-heading {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Change cards ────────────────────────── */
+  .change-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    display: flex;
+  }
+  .change-stripe {
+    width: 4px;
+    flex-shrink: 0;
+  }
+  .change-stripe.add { background: var(--stripe-add); }
+  .change-stripe.remove { background: var(--stripe-remove); }
+  .change-stripe.update { background: var(--stripe-update); }
+  .change-stripe.verify { background: var(--stripe-verify); }
+  .change-inner {
+    padding: 14px 16px;
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .change-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .change-badge.add { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .change-badge.remove { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .change-badge.update { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .change-badge.verify { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .change-content { flex: 1; min-width: 200px; }
+  .change-title {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .change-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .change-desc code {
+    background: var(--code-bg);
+    border-radius: 3px;
+    padding: 0px 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    color: var(--text);
+  }
+  .change-file {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    margin-top: 6px;
+    opacity: 0.8;
+  }
+  .route-code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Source table ────────────────────────── */
+  .source-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .source-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .source-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .source-table tr:last-child td { border-bottom: none; }
+  .source-table tr:hover td { background: var(--surface2); }
+  .source-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+  .status-ok { color: var(--green); font-weight: 600; }
+  .status-removed { color: var(--red); font-weight: 600; }
+
+  /* ── UX observation ─────────────────────── */
+  .obs-card {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .obs-card-title { font-weight: 600; margin-bottom: 4px; color: var(--amber); }
+  .obs-card-desc { color: var(--muted); line-height: 1.5; }
+  .obs-card-desc code {
+    background: var(--code-bg);
+    border-radius: 3px;
+    padding: 0 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    color: var(--text);
+  }
+
+  /* ── Footer ─────────────────────────────── */
+  .report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  @media (max-width: 600px) {
+    .report-header { padding: 20px 16px; }
+    .summary-bar { padding: 0 16px; }
+    .report-body { padding: 20px 16px 40px; }
+    .summary-tile { padding: 12px 14px; min-width: 80px; }
+    .summary-num { font-size: 20px; }
+  }
+</style>
+
+<div class="report-header">
+  <div class="report-header-inner">
+    <div class="report-label">Quadmonthly Routine · Delta Air Lines</div>
+    <div class="report-title">Delta Routes Audit</div>
+    <div class="report-meta">
+      <span>📅 July 20, 2026</span>
+      <span>✈️ Pages audited: SEA Hub · Full Hub</span>
+      <span>Commit <span class="commit-pill">6e9ba09</span></span>
+      <span>✅ Pushed</span>
+    </div>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="summary-tile">
+    <div class="summary-num green">1</div>
+    <div class="summary-lbl">Added</div>
+  </div>
+  <div class="summary-tile">
+    <div class="summary-num red">1</div>
+    <div class="summary-lbl">Removed</div>
+  </div>
+  <div class="summary-tile">
+    <div class="summary-num blue">4</div>
+    <div class="summary-lbl">Updated</div>
+  </div>
+  <div class="summary-tile">
+    <div class="summary-num muted">11</div>
+    <div class="summary-lbl">Verified ✓</div>
+  </div>
+  <div class="summary-tile">
+    <div class="summary-num amber">2</div>
+    <div class="summary-lbl">UX Obs.</div>
+  </div>
+</div>
+
+<div class="report-body">
+
+  <!-- Changes Made -->
+  <div class="section">
+    <div class="section-heading">Changes applied — 6 edits, 2 files</div>
+
+    <div class="change-card">
+      <div class="change-stripe remove"></div>
+      <div class="change-inner">
+        <span class="change-badge remove">Removed</span>
+        <div class="change-content">
+          <div class="change-title"><span class="route-code">JFK–GVA</span> Geneva removed from JFK nonstop Europe grid</div>
+          <div class="change-desc">Route permanently ended October 19, 2025 per Delta announcement. Delta will not operate JFK–GVA in 2026. Card was still showing with <code>Seasonal</code> tag — removed entirely. Sources: The Points Guy, Simple Flying.</div>
+          <div class="change-file">Delta-Routes-Full.html</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="change-card">
+      <div class="change-stripe update"></div>
+      <div class="change-inner">
+        <span class="change-badge update">Updated</span>
+        <div class="change-content">
+          <div class="change-title">JFK hub strength — European city count corrected</div>
+          <div class="change-desc">After removing Geneva, exactly 20 European cities remain nonstop from JFK. Updated <code>"20+ European cities"</code> → <code>"20 European cities"</code> in the hub strength blurb.</div>
+          <div class="change-file">Delta-Routes-Full.html</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="change-card">
+      <div class="change-stripe add"></div>
+      <div class="change-inner">
+        <span class="change-badge add">Added</span>
+        <div class="change-content">
+          <div class="change-title"><span class="route-code">LAX–MNL</span> Manila added to LAX Asia-Pacific nonstop grid</div>
+          <div class="change-desc">Delta announced first US carrier nonstop LAX–Manila: launches March 28, 2027 (3x weekly), scaling to daily June 7, 2027. Operated with A350-900, Delta One premium cabin. Card added with <code>New 2027</code> + <code>Delta One</code> tags. Sources: Delta News Hub (news.delta.com/meet-manila), The Points Guy, Simple Flying.</div>
+          <div class="change-file">Delta-Routes-Full.html</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="change-card">
+      <div class="change-stripe update"></div>
+      <div class="change-inner">
+        <span class="change-badge update">Updated</span>
+        <div class="change-content">
+          <div class="change-title">Philippines row added to cross-hub routing table</div>
+          <div class="change-desc">New row: <em>Philippines (Manila)</em> → best hub <code>LAX</code>. Notes: LAX–MNL nonstop from Mar 28, 2027; from SEA = 1 connection via LAX (upgrade from 2 connections via ICN or HND currently).</div>
+          <div class="change-file">Delta-Routes-Full.html</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="change-card">
+      <div class="change-stripe update"></div>
+      <div class="change-inner">
+        <span class="change-badge update">Updated</span>
+        <div class="change-content">
+          <div class="change-title">LAX hub strength — added MNL to Pacific route list</div>
+          <div class="change-desc">Added <code>MNL (nonstop from Mar 2027)</code> to the hub strength blurb alongside HKG, HND, PVG, AKL etc.</div>
+          <div class="change-file">Delta-Routes-Full.html</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="change-card">
+      <div class="change-stripe update"></div>
+      <div class="change-inner">
+        <span class="change-badge update">Updated</span>
+        <div class="change-content">
+          <div class="change-title"><span class="route-code">SEA–MNL</span> t2 card updated with 2027 LAX-MNL option</div>
+          <div class="change-desc">The t2 Manila card on the SEA page previously showed only partner-connect routing via HND/ICN. Updated meta to add <code>LAX–MNL nonstop from Mar 28, 2027</code> note; added <code>New 2027</code> tag alongside the existing <code>Via partner</code> tag.</div>
+          <div class="change-file">Delta-Routes-SEA.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verified correct -->
+  <div class="section">
+    <div class="section-heading">Routes verified — no change needed</div>
+    <div class="source-wrap">
+      <table class="source-table">
+        <thead>
+          <tr>
+            <th>Route</th>
+            <th>Page</th>
+            <th>Status</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="route-code">ATL–TLV</span> Tel Aviv</td>
+            <td>Full</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>Suspended through Dec 18, 2026; resumes Dec 19. Delta.com confirmed.</td>
+          </tr>
+          <tr>
+            <td><span class="route-code">JFK–TLV</span> Tel Aviv</td>
+            <td>Full · SEA</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>Resumes Sept 6, 2026 (seasonal winter). Delta.com flight updates page confirmed. Earlier article citing Sept 1 was the 2025 resumption date.</td>
+          </tr>
+          <tr>
+            <td><span class="route-code">ATL–RUH</span> Riyadh</td>
+            <td>Full · SEA</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>Launches Oct 23, 2026. "New Oct 2026" tags and cross-hub note accurate.</td>
+          </tr>
+          <tr>
+            <td><span class="route-code">SEA–BCN</span> Barcelona</td>
+            <td>SEA</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>May 7–Oct 22, 2026 · 3x weekly · A330-900neo. Seasonal note-box accurate.</td>
+          </tr>
+          <tr>
+            <td><span class="route-code">SEA–FCO</span> Rome</td>
+            <td>SEA</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>May 6–Oct 23, 2026 · 4x weekly · A330-900neo. Seasonal note-box accurate.</td>
+          </tr>
+          <tr>
+            <td><span class="route-code">SEA–YVR</span> Vancouver</td>
+            <td>SEA</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>Saturday-only seasonal service from May 2026. "New 2026 · Seasonal" tags correct.</td>
+          </tr>
+          <tr>
+            <td><span class="route-code">SEA–CUN</span> Cancún</td>
+            <td>SEA</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>Nonstop suspended Jun 2–Nov 8, 2026 (fuel costs). Note-box and Nov 9 resumption date accurate.</td>
+          </tr>
+          <tr>
+            <td><span class="route-code">LAX–HKG</span> Hong Kong</td>
+            <td>Full · SEA</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>Daily from Jun 2026 · A350-900 · Delta One. "New Jun 2026" tag accurate.</td>
+          </tr>
+          <tr>
+            <td>JFK Europe nonstop set (20 cities)</td>
+            <td>Full</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>AMS, ATH, BCN, CTN, CPH, DUB, EDI, LIS, LHR, MAD, MLA, MXP, NAP, OLB, CDG, OPO, FCO, ARN, VCE, ZRH. Count = 20 after GVA removal.</td>
+          </tr>
+          <tr>
+            <td>Cross-hub routing table — TLV/RUH entries</td>
+            <td>Full</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>Middle East row accurately states: JFK–TLV Sept 6, ATL–TLV Dec 19, BOS–TLV postponed indefinitely, ATL–RUH Oct 23.</td>
+          </tr>
+          <tr>
+            <td>ATL hub strength Africa listing</td>
+            <td>Full</td>
+            <td class="status-ok">✓ Correct</td>
+            <td>JNB, LOS, ACC, RAK, CPT, RUH (Oct 2026) — all accurate.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- UX Observations -->
+  <div class="section">
+    <div class="section-heading">UX / format observations — handoff only, not fixed</div>
+
+    <div class="obs-card">
+      <div class="obs-card-title">CSS variables undefined on both pages (pre-existing)</div>
+      <div class="obs-card-desc">
+        <code>--c-search-focus-border</code> and <code>--c-search-placeholder</code> are referenced in the search input CSS on both <em>Delta-Routes-SEA.html</em> and <em>Delta-Routes-Full.html</em> but are not defined in any loaded stylesheet. This causes <code>brain_check</code> to emit WARN on these pages. These CSS variables were surfaced at session start and logged to the To Do List on July 20, 2026. Ownership: UX routine. Not a blocking issue; pages render correctly because browsers silently ignore undefined custom properties.
+      </div>
+    </div>
+
+    <div class="obs-card">
+      <div class="obs-card-title">ATL–YVR Saturday seasonal service not listed on either page</div>
+      <div class="obs-card-desc">
+        Delta launched ATL–YVR Saturday service starting May 23, 2026 (seasonal). This is an ATL-hub nonstop absent from the Full page's ATL section. Surfaced during research but out of scope for this run to verify and add — requires checking whether route is still operating and will return for summer 2027. Logged for next audit. Ownership: delta-routes-audit (next run).
+      </div>
+    </div>
+  </div>
+
+  <!-- Source summary -->
+  <div class="section">
+    <div class="section-heading">Sources consulted this run</div>
+    <div style="font-size:13px; color:var(--muted); line-height:1.8;">
+      <div>• <strong>news.delta.com/meet-manila</strong> — LAX–MNL announcement (authoritative)</div>
+      <div>• <strong>news.delta.com/delta-telaviv-flight-updates</strong> — TLV resumption dates (authoritative)</div>
+      <div>• <strong>The Points Guy</strong> — GVA cancellation confirmation (Oct 19, 2025 final); MNL service details</div>
+      <div>• <strong>Simple Flying</strong> — Delta network cut list (6 routes); MNL confirmation</div>
+      <div>• <strong>View from the Wing</strong> — MNL service confirmation and analysis</div>
+      <div>• <strong>Google Flights / Web search</strong> — ATL–TLV status, SEA–YVR Saturday service</div>
+    </div>
+  </div>
+
+  <div class="report-footer">
+    <span>Delta Routes Audit · delta-routes-audit routine · July 20, 2026</span>
+    <span>Commit <code style="font-size:11px;">6e9ba09</code> · Pushed to main</span>
+  </div>
+
+</div>

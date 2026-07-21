@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rule Compliance Audit · 2026-07-20</title>
+<style>
+:root {
+  --bg: #faf7f4;
+  --surface: #ffffff;
+  --border: #e8e2d9;
+  --text: #2c2925;
+  --muted: #6a6660;
+  --accent: #b85c2a;
+  --gold: #c8a44a;
+  --gold-bg: #fdf3e0;
+  --green: #2d7a3e;
+  --green-bg: #eef7f0;
+  --code-bg: #f0ece6;
+  --header-bg: #1e1510;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font: 15px/1.6 system-ui, sans-serif; padding: 0 0 60px; }
+header { background: var(--header-bg); color: #f0ebe4; padding: 28px 40px 24px; }
+header h1 { font-size: 22px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+header p { font-size: 13px; color: #a09880; margin-top: 4px; }
+.wrap { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 36px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 15px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
+p { margin-bottom: 10px; }
+ul { padding-left: 22px; margin-bottom: 10px; }
+li { margin-bottom: 5px; }
+code { background: var(--code-bg); font-family: ui-monospace,monospace; font-size: 12.5px; padding: 1px 5px; border-radius: 3px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 22px; margin-bottom: 14px; }
+.card h3 { margin-top: 0; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 4px; margin-right: 6px; }
+.tag-ok { background: var(--green-bg); color: var(--green); }
+.tag-fix { background: #fff3ea; color: var(--accent); }
+.tag-drive { background: #f0ece6; color: #6a5030; }
+.tag-warn { background: var(--gold-bg); color: #7a5010; }
+.tag-cascade { background: #eef4ff; color: #2a4080; }
+.meta-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.section-divider { height: 1px; background: var(--border); margin: 28px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 6px 10px; border-bottom: 1px solid var(--border); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.yes { color: var(--green); font-weight: 700; }
+.no { color: var(--accent); font-weight: 700; }
+.fixed { color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Rule Compliance Audit</h1>
+    <p>2026-07-20 &nbsp;·&nbsp; Runs 3 + 4 &nbsp;·&nbsp; Weekly scheduled routine</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+<h2>Summary</h2>
+<div class="card">
+  <div class="meta-row">
+    <span class="tag tag-ok">2 DriftyCat bullets added</span>
+    <span class="tag tag-fix">Dead CSS removed</span>
+    <span class="tag tag-cascade">Header updated 574 → 579</span>
+    <span class="tag tag-ok">0 brain_check failures</span>
+  </div>
+  <p>Detection window: 2026-07-19 → 2026-07-20. This audit ran in two parts due to context overflow.</p>
+  <ul>
+    <li>Found 5 new brain_check functions (Rules 575–579) all already present in <code>brain_check.py</code>, <code>Cleanliness Checks.md</code>, and <code>Validator Index.html</code> — the prior session (run 3) had closed most of the cascade.</li>
+    <li>Missing in this run: DriftyCat bullets for Rules 577–578 (World Map disabled-function guards). Added.</li>
+    <li>Found dead <code>.tb-ham-stats</code> CSS in <code>guides-index-style.css</code> (injection removed in prior commits, CSS not cleaned). Removed and pushed.</li>
+    <li>Misleading comment in <code>Guides-Index.html</code> <code>buildLSP()</code> — "hamburger mini-stats" after the injection was already removed. Cleaned and pushed.</li>
+    <li>brain_check result: <strong>0 fail / 91 warn</strong> (toolbar-version + css-duplication, all pre-existing).</li>
+  </ul>
+</div>
+
+<h2>Part 1 — Detect</h2>
+
+<h3>New Rules Found (Detection Window 2026-07-19 → 2026-07-20)</h3>
+<table>
+  <thead>
+    <tr><th>Rule</th><th>Check Function</th><th>Severity</th><th>brain_check.py</th><th>Cleanliness Checks.md</th><th>Validator Index.html</th><th>CLAUDE.md DriftyCat</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>575 — Sunrise-Sunset.html exists as standalone page</td>
+      <td><code>check_toolbar_page_standard</code> (advisory)</td>
+      <td>ADVISORY</td>
+      <td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td>
+      <td class="yes">✓ (existing bullet)</td>
+    </tr>
+    <tr>
+      <td>576 — 🌅/🕐 group icon mismatch exempt</td>
+      <td><code>check_toolbar_group_icon_consistency</code> EXEMPT_GROUPS</td>
+      <td>ADVISORY</td>
+      <td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td>
+      <td class="yes">✓ (existing bullet)</td>
+    </tr>
+    <tr style="background:#fff9f5;">
+      <td>577 — <code>renderCities()</code> early return guard</td>
+      <td><code>check_world_map_render_cities_disabled</code></td>
+      <td>HARD-FAIL</td>
+      <td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td>
+      <td class="fixed">✗ → Added (this run)</td>
+    </tr>
+    <tr style="background:#fff9f5;">
+      <td>578 — <code>maybeLoadRegions()</code> early return guard</td>
+      <td><code>check_world_map_load_regions_disabled</code></td>
+      <td>HARD-FAIL</td>
+      <td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td>
+      <td class="fixed">✗ → Added (this run)</td>
+    </tr>
+    <tr>
+      <td>579 — <code>buildLSP()</code> must not inject <code>div.tb-ham-stats</code></td>
+      <td><code>check_no_ham_stats_injection</code></td>
+      <td>HARD-FAIL</td>
+      <td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td>
+      <td class="yes">✓ (with enforcement citation)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-divider"></div>
+<h2>Part 2 — Cascade</h2>
+
+<div class="card">
+  <div class="meta-row"><span class="tag tag-cascade">CASCADE</span><span class="tag tag-drive">DRIVE-ONLY</span></div>
+  <h3>CLAUDE.md — DriftyCat bullets added (Rules 577–578)</h3>
+  <p>Two bullets inserted after the "✈️ My Trips injection" bullet (line 269) and before "Every URL on every domain is pre-authorized":</p>
+  <ul>
+    <li><strong>Rule 577:</strong> <code>renderCities()</code> in <code>World-Map.html</code> must keep its early <code>return;</code> — non-guide world-city markers must stay disabled. Enforced: <code>brain_check.py check_world_map_render_cities_disabled</code> (HARD-FAIL).</li>
+    <li><strong>Rule 578:</strong> <code>maybeLoadRegions()</code> in <code>World-Map.html</code> must keep its early <code>return;</code> — 6-continent admin-1 subdivision tiles must stay disabled. Enforced: <code>brain_check.py check_world_map_load_regions_disabled</code> (HARD-FAIL).</li>
+  </ul>
+  <p>Rule 579 bullet already present with enforcement citation (<code>check_no_ham_stats_injection</code> HARD-FAIL) — no change needed.</p>
+</div>
+
+<div class="card">
+  <div class="meta-row"><span class="tag tag-cascade">CASCADE</span><span class="tag tag-drive">DRIVE-ONLY</span></div>
+  <h3>Cleanliness Checks.md — Header updated</h3>
+  <p>"Highest rule number is 574" → "579". Added cascade summary paragraph documenting Rules 575–579 added 2026-07-20.</p>
+</div>
+
+<div class="section-divider"></div>
+<h2>Part 3 — Audit</h2>
+
+<div class="card">
+  <h3>Patterns Observed in Recent Commits</h3>
+  <ul>
+    <li><strong>Revert-and-restore pattern:</strong> Commit <code>1ef9de856</code> reverted Guides-Index.html, guides-index-style.css, and Personal-Stats to pre-session state — too broad. Commit <code>86298fe09</code> then had to restore Guides-Index.html and CSS (only keeping Personal-Stats reverted). Indicates cribs need tighter revert scoping.</li>
+    <li><strong>Dead CSS accumulation:</strong> The <code>.tb-ham-stats</code> injection was removed from buildLSP() but the CSS rules (light + dark mode) were never cleaned up. The removal commit (<code>ad53e488b</code>) was then reverted by <code>1ef9de856</code>, then re-applied by <code>86298fe09</code> — but the CSS cleanup was never part of any commit. Fixed this run.</li>
+    <li><strong>Comment drift:</strong> buildLSP() comment said "hamburger mini-stats" after the injection was removed. Minor, but creates confusion. Fixed this run.</li>
+    <li><strong>Documentation lag:</strong> Rules 577–578 were added to enforcer files (brain_check.py, Cleanliness Checks.md, Validator Index.html) but CLAUDE.md DriftyCat bullets were missing. This is the primary gap this audit closes.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>No Systematic Guide Violations Found</h3>
+  <p>Reviewed recent guide ships (Istanbul v2, London v5). No recurring failures observed that indicate a systematic rule being consistently missed. The recent fail patterns are all one-off per commit.</p>
+</div>
+
+<div class="section-divider"></div>
+<h2>Part 4 — Fixes</h2>
+
+<div class="card">
+  <div class="meta-row"><span class="tag tag-fix">FIX</span><span class="tag tag-ok">COMMITTED 497dda211</span></div>
+  <h3>Remove dead <code>.tb-ham-stats</code> CSS from <code>guides-index-style.css</code></h3>
+  <p>The hamburger injection was removed from <code>buildLSP()</code> in prior commits, but 4 CSS rules remained as dead code:</p>
+  <ul>
+    <li>Light mode: <code>.tb-ham-stats { font-size: 12px; color: #9e9688; padding: 3px 18px 5px; line-height: 1.5; }</code></li>
+    <li>Light mode: <code>.tb-ham-stats b { color: #3d3a32; font-weight: 700; }</code></li>
+    <li>Dark mode: <code>.tb-ham-stats { color: var(--muted, #9a9690); }</code></li>
+    <li>Dark mode: <code>.tb-ham-stats b { color: var(--text, #e8e5e0); }</code></li>
+  </ul>
+  <p>All four removed. <code>check_no_ham_stats_injection</code> (Rule 579) continues to catch any re-addition of the injection block to <code>Guides-Index.html</code>.</p>
+</div>
+
+<div class="card">
+  <div class="meta-row"><span class="tag tag-fix">FIX</span><span class="tag tag-ok">COMMITTED 497dda211</span></div>
+  <h3>Clean stale "hamburger mini-stats" comment in <code>Guides-Index.html</code></h3>
+  <p>Comment on line 3663: <code>/* ── Lifetime Stats — topbar pill + hamburger mini-stats ── */</code> updated to <code>/* ── Lifetime Stats — topbar pill ── */</code>. The function now only updates the topbar pill — the hamburger injection block is gone.</p>
+</div>
+
+<div class="section-divider"></div>
+<h2>Final State</h2>
+
+<table>
+  <thead>
+    <tr><th>Gate</th><th>Result</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>brain_check.py</td><td class="yes">0 fail / 91 warn (all pre-existing)</td></tr>
+    <tr><td>pre_push_guard.py</td><td class="yes">exit 0</td></tr>
+    <tr><td>CLAUDE.md DriftyCat Rules 577–578</td><td class="yes">Added</td></tr>
+    <tr><td>Cleanliness Checks.md header</td><td class="yes">574 → 579</td></tr>
+    <tr><td>Dead .tb-ham-stats CSS</td><td class="yes">Removed (committed + pushed)</td></tr>
+    <tr><td>Stale buildLSP() comment</td><td class="yes">Cleaned (committed + pushed)</td></tr>
+    <tr><td>Tracked commit</td><td class="yes">497dda211 → pushed</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top:24px;font-size:13px;color:var(--muted);">Generated by rule-compliance-audit scheduled routine · 2026-07-20 · Runs 3 + 4</p>
+
+</div>
+</body>
+</html>

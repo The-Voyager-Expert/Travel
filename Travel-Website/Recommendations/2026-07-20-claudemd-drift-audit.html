@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLAUDE.md Drift Audit — 2026-07-20</title>
+<style>
+:root {
+  --bg: #f8f5f0;
+  --surface: #ffffff;
+  --text: #2e2b26;
+  --muted: #7a6f5e;
+  --border: #e2d9cc;
+  --accent: #c8a44a;
+  --terracotta: #b85c2a;
+  --green: #2a6e45;
+  --green-bg: #edf6f1;
+  --green-border: #a8d5ba;
+  --amber: #8a5e0a;
+  --amber-bg: #fdf3dc;
+  --amber-border: #e6c97a;
+  --blue: #1a4e7a;
+  --blue-bg: #e8f1fb;
+  --blue-border: #9fc3e6;
+  --fs-xs: 11px;
+  --fs-sm: 12.5px;
+  --fs-base: 14px;
+  --fs-md: 15px;
+  --fs-xl: 22px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1810; --surface: #26211a; --text: #e4ddd2; --muted: #9e9080;
+    --border: #3a3228; --accent: #d4aa58; --terracotta: #cc6e3a;
+    --green: #5dbf8a; --green-bg: #0d2519; --green-border: #2a6e45;
+    --amber: #d4a030; --amber-bg: #241a06; --amber-border: #7a5010;
+    --blue: #6aabde; --blue-bg: #091622; --blue-border: #1e4e7a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1c1810; --surface: #26211a; --text: #e4ddd2; --muted: #9e9080;
+  --border: #3a3228; --accent: #d4aa58; --terracotta: #cc6e3a;
+  --green: #5dbf8a; --green-bg: #0d2519; --green-border: #2a6e45;
+  --amber: #d4a030; --amber-bg: #241a06; --amber-border: #7a5010;
+  --blue: #6aabde; --blue-bg: #091622; --blue-border: #1e4e7a;
+}
+:root[data-theme="light"] {
+  --bg: #f8f5f0; --surface: #ffffff; --text: #2e2b26; --muted: #7a6f5e;
+  --border: #e2d9cc; --accent: #c8a44a; --terracotta: #b85c2a;
+  --green: #2a6e45; --green-bg: #edf6f1; --green-border: #a8d5ba;
+  --amber: #8a5e0a; --amber-bg: #fdf3dc; --amber-border: #e6c97a;
+  --blue: #1a4e7a; --blue-bg: #e8f1fb; --blue-border: #9fc3e6;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  padding: 0 0 60px;
+}
+.wrap { max-width: 780px; margin: 0 auto; padding: 0 28px; }
+
+.header {
+  background: var(--surface);
+  border-bottom: 3px solid var(--terracotta);
+  padding: 28px 0 22px;
+  margin-bottom: 32px;
+}
+.eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 6px;
+}
+h1 {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.header-meta {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.header-meta span + span::before { content: '·'; margin-right: 8px; }
+
+.summary-strip {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 18px;
+  flex: 1;
+  min-width: 130px;
+}
+.stat-card .num {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-card .label { font-size: var(--fs-xs); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.stat-card.green .num { color: var(--green); }
+.stat-card.amber .num { color: var(--amber); }
+.stat-card.blue  .num { color: var(--blue); }
+
+section { margin-bottom: 32px; }
+h2 {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--text);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.finding {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.badge {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+.badge.fixed { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.badge.oos   { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.badge.clean { background: var(--blue-bg);  color: var(--blue);  border: 1px solid var(--blue-border); }
+.finding-title { font-size: var(--fs-sm); font-weight: 600; margin-bottom: 4px; }
+.finding-desc  { font-size: var(--fs-sm); color: var(--muted); line-height: 1.55; }
+code {
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--terracotta);
+}
+
+.scope-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.scope-table th, .scope-table td { border: 1px solid var(--border); padding: 7px 12px; text-align: left; vertical-align: top; }
+.scope-table th { background: var(--bg); font-weight: 600; font-size: var(--fs-xs); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.scope-table td:first-child { white-space: nowrap; color: var(--muted); }
+.ok   { color: var(--green); font-weight: 600; }
+.drift { color: var(--terracotta); font-weight: 600; }
+
+.brain-check {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: var(--fs-sm);
+  color: var(--green);
+  font-weight: 600;
+}
+
+@media (max-width: 540px) {
+  .wrap { padding: 0 16px; }
+  .finding { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="wrap">
+    <div class="eyebrow">Scheduled Routine</div>
+    <h1>CLAUDE.md Drift Audit</h1>
+    <div class="header-meta">
+      <span>2026-07-20</span>
+      <span>Session: claudemd-drift-audit</span>
+      <span>Authority: Rules for Claude.html + toolbar.js + Brain/Reference/</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="summary-strip">
+    <div class="stat-card green"><div class="num">2</div><div class="label">Fixed</div></div>
+    <div class="stat-card blue"><div class="num">4</div><div class="label">Areas clean</div></div>
+    <div class="stat-card amber"><div class="num">1</div><div class="label">Out-of-scope</div></div>
+    <div class="stat-card"><div class="num">0</div><div class="label">brain_check failures</div></div>
+  </div>
+
+  <section>
+    <h2>Audit Scope</h2>
+    <div style="overflow-x:auto">
+    <table class="scope-table">
+      <thead><tr><th>Area</th><th>What was checked</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Routing table</td><td>Every task-type row against files on disk</td><td><span class="drift">Drift — 2 missing rows</span></td></tr>
+        <tr><td>CORE RULES file index</td><td>27 entries vs Brain/CORE RULES/ directory</td><td><span class="ok">Clean (27/27)</span></td></tr>
+        <tr><td>Validators table</td><td>89 scripts vs Brain/scripts/ directory</td><td><span class="ok">Clean (89/89)</span></td></tr>
+        <tr><td>DriftyCat section</td><td>70+ bullets vs Rules for Claude.html § 6 (42 canonical)</td><td><span class="ok">All 42 covered</span></td></tr>
+        <tr><td>Quick Reference counts</td><td>Cleanliness Checks.md rule count claim vs actual highest rule</td><td><span class="drift">Drift — stale count</span></td></tr>
+        <tr><td>Hamburger counts</td><td>"13 hub page links" claim vs toolbar.js IIFE</td><td><span class="ok">Clean (13 confirmed)</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Fixed in CLAUDE.md</h2>
+
+    <div class="finding">
+      <div><span class="badge fixed">Fixed</span></div>
+      <div>
+        <div class="finding-title">Cleanliness Checks.md count: "500-rule" → "570+ rule"</div>
+        <div class="finding-desc">
+          The Quick Reference described <code>Brain/Reference/Cleanliness Checks.md</code> as a "500-rule enforcer spec." Rules now reach number <strong>574</strong> (confirmed: rules 568, 569, 571, 574 present via grep). Updated to "570+ rule enforcer spec" — accurate for the current count and durable through the next several additions.
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div><span class="badge fixed">Fixed</span></div>
+      <div>
+        <div class="finding-title">Routing table: 2 missing Brain/Reference/ entries added</div>
+        <div class="finding-desc">
+          Two files added to Brain/Reference/ in 2026-07-11 had clear routing use-cases but no Routing table rows:<br>
+          — <code>Non-Guide-Ship-Checklist.html</code> → task row "Ship a non-guide page" (Trip-Essentials, Best-of, Maps, site root)<br>
+          — <code>Maps-Layout.html</code> → task row "Add / edit a map pin" (PINS array format, country palette, fly-to regions)<br><br>
+          Remaining new Brain/Reference/ files (Guides-Index-Format.html, Stats-Pages-Format.html, CSS-Architecture.md, Enforcement-Standards.md, Shared-CSS-Only-Rule.md) are already documented in Brain.md Part 1 and have no standalone routing use-case — no change needed.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Areas Confirmed Clean</h2>
+
+    <div class="finding">
+      <div><span class="badge clean">Clean</span></div>
+      <div>
+        <div class="finding-title">CORE RULES HTML file index — 27/27</div>
+        <div class="finding-desc">Every file in <code>Brain/CORE RULES/</code> (27 HTML files) has a matching entry in the Quick Reference table. No files missing, no ghost entries.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div><span class="badge clean">Clean</span></div>
+      <div>
+        <div class="finding-title">Validators table — 89/89</div>
+        <div class="finding-desc">All 89 Python scripts in <code>Brain/scripts/</code> are documented in the Validators table. No missing entries, no ghost entries referencing non-existent scripts.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div><span class="badge clean">Clean</span></div>
+      <div>
+        <div class="finding-title">DriftyCat vs Rules for Claude.html § 6 — all 42 canonical bullets covered</div>
+        <div class="finding-desc">Every canonical DriftyCat bullet from Rules for Claude.html § 6 has a counterpart in CLAUDE.md (some with different shorthand titles, same substance). No bullet is absent; none in CLAUDE.md contradicts its canonical version.</div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div><span class="badge clean">Clean</span></div>
+      <div>
+        <div class="finding-title">Mobile hamburger "Also on this site" count — 13 confirmed</div>
+        <div class="finding-desc">
+          CLAUDE.md claims "13 hub page links" in the mobile hamburger "Also on this site" section. Verified against toolbar.js: the IIFE appends exactly 13 links. Accurate.<br>
+          <em>Note:</em> <code>Day-Trips.html</code> appears in the Guides-Index sidebar "Also on this site" panel but is intentionally absent from the mobile hamburger section (documented as "NOT yet in the toolbar" in Brain.md Part 1). This is expected state, not drift.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Out-of-Scope Findings (logged to To Do List)</h2>
+
+    <div class="finding">
+      <div><span class="badge oos">Logged</span></div>
+      <div>
+        <div class="finding-title">Travel-Stats.html + Safety-Guide.html: stale toolbar version (v103 vs v116)</div>
+        <div class="finding-desc">
+          <code>brain_check check_toolbar_version</code> warns each session on both auto-generated pages: both embed <code>toolbar.js?v=103</code> (current is v116). Both pages are generated by builder scripts (<code>build_travel_stats.py</code>, <code>build_safety_guide.py</code>) — the template embedded in each script carries the stale version string. Fix: update the version literal in each builder's HTML template, regenerate both pages, commit. Logged to To Do List under 🔧 Site Page Fixes.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Post-Edit brain_check</h2>
+    <div class="brain-check">
+      ✓ &nbsp;194/196 ok &nbsp;·&nbsp; 2 warn &nbsp;·&nbsp; 0 fail — Brain intact. The 2 warnings are the pre-existing stale toolbar version issue above.
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

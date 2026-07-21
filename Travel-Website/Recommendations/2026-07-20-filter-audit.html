@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Filter Audit — 2026-07-20</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #2c2a24; }
+  h1 { font-size: 18px; text-transform: uppercase; letter-spacing: 0.06em; color: #3d3a32; border-bottom: 3px solid #b85c2a; padding-bottom: 8px; }
+  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: #7a3b1e; margin-top: 28px; }
+  ul { padding-left: 20px; line-height: 1.7; }
+  li { margin: 4px 0; }
+  .ok { color: #2d6a2d; }
+  .fix { color: #b85c2a; }
+  .note { color: #666; font-size: 13px; }
+  .meta { font-size: 12px; color: #888; margin-top: 32px; border-top: 1px solid #e6e2da; padding-top: 8px; }
+</style>
+</head>
+<body>
+<h1>Filter Audit — 2026-07-20</h1>
+
+<h2>Run Summary</h2>
+<ul>
+  <li><strong>Script:</strong> <code>audit_filters.py --apply</code></li>
+  <li><strong>Guides on disk:</strong> 224 · <strong>Cards in index:</strong> 271 (224 city + 47 Best-of) · <strong>Missing:</strong> 0</li>
+  <li><strong>Push:</strong> Yes — commit <code>63972e1c3</code></li>
+  <li><strong>brain_check:</strong> 193/197 ok · 4 warn · 0 fail</li>
+</ul>
+
+<h2>Changes Applied</h2>
+<ul>
+  <li class="fix"><strong>Best-of count corrected:</strong> label said "33 guides", actual card count was 34. Fixed.</li>
+  <li class="fix"><strong>Naples DAYS_DATA updated:</strong> 3 → 4 (guide has 4 days: id="day1"–id="day4"). <code>build_days_data.py --apply</code> reported the update but <code>atomic_write</code> did not persist it; applied directly.</li>
+  <li class="ok"><strong>Language tags (data-lang):</strong> 224 cards synced — already current, no net change.</li>
+  <li class="ok"><strong>Trip Type (THEME_DATA):</strong> 223/270 tagged; 47 untagged are all Best-of category pages — correct by design.</li>
+  <li class="ok"><strong>Continent map:</strong> all country slugs already mapped.</li>
+  <li class="ok"><strong>FMAP (flight time):</strong> all 224 dest-cards have a flight-time entry — no gaps.</li>
+  <li class="ok"><strong>Inline data (CLIMATE_INLINE / COST_DATA / SAFETY_DATA):</strong> 204 shipped guides fully covered.</li>
+</ul>
+
+<h2>One-Tag City Guide Review</h2>
+<p>8 city guides carry only a single theme tag. Stop names were reviewed for each. All are correctly tagged <code>nature</code> only — pure outdoor/nature destinations with no stops warranting art, history, foodie, beach, wine, or other tags:</p>
+<ul>
+  <li class="ok"><strong>Arenal</strong> — volcano, waterfall, hot springs, white-water rafting, wildlife refuge</li>
+  <li class="ok"><strong>Boulder</strong> — Flatirons, creek path, state park, scenic drives; Pearl Street Mall is shopping, not a foodie draw</li>
+  <li class="ok"><strong>Foz do Iguaçu</strong> — Iguaçu Falls (both sides), bird park, Itaipu Dam, national park</li>
+  <li class="ok"><strong>Glacier National Park</strong> — lakes, trails, glaciers, mountain passes; pure wilderness</li>
+  <li class="ok"><strong>Palm Desert</strong> — canyons, Joshua Tree, hot air balloon, tramway; Pioneertown is minor and doesn't meet history bar</li>
+  <li class="ok"><strong>Pokhara</strong> — Phewa Lake, temples, caves, paragliding, zipline; nature destination with minor religious sites</li>
+  <li class="ok"><strong>Yellowstone</strong> — geysers, hot springs, canyon, wildlife; pure nature</li>
+  <li class="ok"><strong>Zhangjiajie</strong> — Avatar mountains, elevator, canyon walks; pure nature</li>
+</ul>
+
+<h2>Tooling Note</h2>
+<ul>
+  <li class="note"><strong><code>build_days_data.py --apply</code> atomic_write issue:</strong> The script reported "Naples: 3 → 4" and returned success, but the change was not reflected in the file after the run. The <code>atomic_write</code> call in <code>crib_safety.py</code> likely wrote to a temp file that was then not renamed (possibly a permissions or path issue). Applied the change directly as a workaround. This is worth investigating if it recurs on other DAYS_DATA updates.</li>
+  <li class="note"><strong><code>build_guides_index.py --check-missing</code> stale path bug:</strong> Still reads <code>Travel-Website/Guides/Guides-Index.html</code> (redirect stub), reporting all 224 guides as missing. Fix documented in the To Do List — change line 26 to <code>INDEX_FILE = REPO_ROOT / 'Travel-Website' / 'Guides-Index.html'</code>. Used direct Python verification instead.</li>
+</ul>
+
+<div class="meta">Filter audit · 2026-07-20 · automated scheduled run</div>
+</body>
+</html>

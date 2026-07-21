@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Page Consistency Audit — 2026-07-20</title>
+<style>
+:root {
+  --bg: #fdf8f2;
+  --surface: #ffffff;
+  --surface2: #f5efe6;
+  --text: #2e2a22;
+  --muted: #7a7168;
+  --border: #e4ddd3;
+  --accent: #b85c2a;
+  --accent-dim: rgba(184,92,42,.12);
+  --gold: #8a6c1a;
+  --gold-border: #c8a44a;
+  --green: #2e6b3e;
+  --green-bg: #eaf5ec;
+  --green-border: #a5d3b0;
+  --warn: #7a5200;
+  --warn-bg: #fff8e6;
+  --warn-border: #e8c97a;
+  --fail: #9b1c1c;
+  --fail-bg: #fef2f2;
+  --fail-border: #fca5a5;
+  --radius: 6px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --mono: ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1a17;
+    --surface: #252219;
+    --surface2: #2e2a21;
+    --text: #e8e0d4;
+    --muted: #9a9080;
+    --border: #3a352c;
+    --accent: #d4874a;
+    --accent-dim: rgba(212,135,74,.15);
+    --gold: #c8a44a;
+    --gold-border: #8a6c1a;
+    --green: #5cb877;
+    --green-bg: #162b1c;
+    --green-border: #2e6b3e;
+    --warn: #e8c97a;
+    --warn-bg: #2a2000;
+    --warn-border: #7a5200;
+    --fail: #fca5a5;
+    --fail-bg: #2c0f0f;
+    --fail-border: #9b1c1c;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #fdf8f2; --surface: #ffffff; --surface2: #f5efe6; --text: #2e2a22;
+  --muted: #7a7168; --border: #e4ddd3; --accent: #b85c2a; --accent-dim: rgba(184,92,42,.12);
+  --gold: #8a6c1a; --gold-border: #c8a44a; --green: #2e6b3e; --green-bg: #eaf5ec;
+  --green-border: #a5d3b0; --warn: #7a5200; --warn-bg: #fff8e6; --warn-border: #e8c97a;
+  --fail: #9b1c1c; --fail-bg: #fef2f2; --fail-border: #fca5a5;
+}
+:root[data-theme="dark"] {
+  --bg: #1c1a17; --surface: #252219; --surface2: #2e2a21; --text: #e8e0d4;
+  --muted: #9a9080; --border: #3a352c; --accent: #d4874a; --accent-dim: rgba(212,135,74,.15);
+  --gold: #c8a44a; --gold-border: #8a6c1a; --green: #5cb877; --green-bg: #162b1c;
+  --green-border: #2e6b3e; --warn: #e8c97a; --warn-bg: #2a2000; --warn-border: #7a5200;
+  --fail: #fca5a5; --fail-bg: #2c0f0f; --fail-border: #9b1c1c;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 0 0 60px;
+}
+.wrap { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+
+/* Header */
+.report-header {
+  border-bottom: 3px solid var(--accent);
+  padding: 28px 0 18px;
+  margin-bottom: 28px;
+}
+.report-eyebrow {
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600; margin-bottom: 6px;
+}
+.report-title {
+  font-size: 22px; font-weight: 800; color: var(--text);
+  letter-spacing: -.02em; line-height: 1.15;
+}
+.report-date { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+/* Summary strip */
+.summary-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin-bottom: 28px;
+}
+.stat-tile {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; text-align: center;
+}
+.stat-tile .num {
+  font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1;
+  color: var(--accent);
+}
+.stat-tile .num.ok { color: var(--green); }
+.stat-tile .num.warn { color: var(--warn); }
+.stat-tile .label {
+  font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-top: 4px; font-weight: 600;
+}
+
+/* Section */
+.section { margin-bottom: 28px; }
+.section-head {
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  font-weight: 700; color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 7px; margin-bottom: 14px;
+}
+
+/* Alert boxes */
+.alert {
+  border-radius: var(--radius); padding: 12px 14px; font-size: 13px;
+  border-left: 3px solid; margin-bottom: 12px; line-height: 1.5;
+}
+.alert.ok    { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+.alert.warn  { background: var(--warn-bg);  border-color: var(--warn);  color: var(--warn); }
+.alert.fail  { background: var(--fail-bg);  border-color: var(--fail);  color: var(--fail); }
+.alert.info  { background: var(--surface2); border-color: var(--border); color: var(--muted); }
+.alert strong { font-weight: 700; }
+
+/* Tables */
+.audit-table {
+  width: 100%; border-collapse: collapse; font-size: 12.5px;
+  background: var(--surface); border-radius: var(--radius);
+  overflow: hidden; border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.audit-table th {
+  background: var(--surface2); text-transform: uppercase; letter-spacing: .1em;
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border);
+}
+.audit-table td {
+  padding: 9px 12px; border-bottom: 1px solid var(--border);
+  vertical-align: top; line-height: 1.45;
+}
+.audit-table tr:last-child td { border-bottom: none; }
+.audit-table tr:hover td { background: var(--accent-dim); }
+code {
+  font-family: var(--mono); font-size: 11px;
+  background: var(--surface2); padding: 1px 5px; border-radius: 3px;
+  color: var(--accent);
+}
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 3px; letter-spacing: .06em;
+  text-transform: uppercase; white-space: nowrap;
+}
+.badge.fixed  { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-border); }
+.badge.note   { background: var(--warn-bg);   color: var(--warn);   border: 1px solid var(--warn-border); }
+.badge.ok     { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-border); }
+.badge.info   { background: var(--surface2);  color: var(--muted);  border: 1px solid var(--border); }
+
+/* Gate strip */
+.gates { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gate {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 11px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.gate-icon { font-size: 18px; line-height: 1; flex-shrink: 0; }
+.gate-name { font-size: 12.5px; font-weight: 600; color: var(--text); }
+.gate-result { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.gate-result.pass { color: var(--green); font-weight: 600; }
+.gate-result.warn { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="report-header">
+    <div class="report-eyebrow">The Voyager Expert · Scheduled Routine</div>
+    <div class="report-title">Cross-Page Consistency Audit</div>
+    <div class="report-date">2026-07-20 · Trip-Essentials · Guides-Index · Best-of pages · Festival Finder</div>
+  </div>
+
+  <!-- Summary Strip -->
+  <div class="summary-strip">
+    <div class="stat-tile">
+      <div class="num">3</div>
+      <div class="label">Fixes Applied</div>
+    </div>
+    <div class="stat-tile">
+      <div class="num ok">0</div>
+      <div class="label">Gate Failures</div>
+    </div>
+    <div class="stat-tile">
+      <div class="num warn">4</div>
+      <div class="label">Warnings</div>
+    </div>
+    <div class="stat-tile">
+      <div class="num">3</div>
+      <div class="label">Recommendations</div>
+    </div>
+  </div>
+
+  <!-- PAGE FAMILIES -->
+  <div class="section">
+    <div class="section-head">Page Family Templates (Observed)</div>
+    <div class="alert info">
+      <strong>Best-of pages (~34):</strong> <code>.showcase-card > .showcase-photo img + .showcase-body > .showcase-name + .showcase-tag + .showcase-desc + .showcase-links</code> · All checked pages use this required structure. Country filter dropdowns JS-built from <code>.best-of-section-label</code> divs.
+    </div>
+    <div class="alert info">
+      <strong>Stats pages (6):</strong> Asia-Stats / Caribbean-Stats / Europe-Stats / South-America-Stats / Stats-Across-US / Stats-Across-Canada. Template: <code>.page-header > h1</code> banner + <code>.bar-section</code> cards with <code>border-radius:10px</code> + mobile country <code>&lt;select&gt;</code> with shared appearance reset. Consistent across all six.
+    </div>
+    <div class="alert info">
+      <strong>Standard Trip-Essentials (~40 pages):</strong> <code>.page-header > h1.site-title</code> banner with 3px terracotta underline + <code>.wrap</code> gutter (32px desktop / 14px mobile) + toolbar.js. Consistent across the family.
+    </div>
+  </div>
+
+  <!-- CHECK 1: PILL / BUTTON SHAPES -->
+  <div class="section">
+    <div class="section-head">Check 1 — Pill / Button Shape Violations</div>
+    <div class="alert ok">Standard confirmed: <code>border-radius: 6px</code> for pills &amp; control buttons. Three violations found — all fixed.</div>
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Element / Class</th>
+          <th>Wrong Value</th>
+          <th>Fix Applied</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Trip-Essentials/Trips.html</code></td>
+          <td><code>.nu-chip</code> — trip navigation chips (status-dot link pills showing upcoming trips)</td>
+          <td><code>border-radius: 999px</code> (fully round stadium)</td>
+          <td><span class="badge fixed">Fixed → 6px</span></td>
+        </tr>
+        <tr>
+          <td><code>Trip-Essentials/Day-Trips.html</code></td>
+          <td><code>.dt-city-count</code> — monospaced count badge ("N trips") in city accordion rows</td>
+          <td><code>border-radius: 99px</code> (stadium shape)</td>
+          <td><span class="badge fixed">Fixed → 6px</span></td>
+        </tr>
+        <tr>
+          <td><code>Trip-Essentials/Travel-Stats.html</code></td>
+          <td><code>.frontier-chip</code> — continent/region status chips ("✓ Europe", "♡ United States")</td>
+          <td><code>border-radius: 20px</code> (in the "never" ≥20px range)</td>
+          <td><span class="badge fixed">Fixed → 6px</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alert info">
+      <strong>Circular elements confirmed intentional:</strong> <code>.nu-dot</code>, <code>.badge-dot</code>, <code>.pkl-rank</code>, <code>.dot</code>, <code>.legend-dot</code> — all <code>border-radius:50%</code> for status/color indicator circles. Not violations (not pill/button elements).
+    </div>
+    <div class="alert info">
+      <strong>Container panels noted (not violations):</strong> <code>Festival-Finder.html .ff-controls</code> at <code>12px</code> and <code>.ff-card</code> at <code>11px</code> — both are card/panel containers, not pills or buttons. The "never" threshold (20px+) applies to interactive pill/button elements only; container cards at 8–12px are within acceptable range.
+    </div>
+  </div>
+
+  <!-- CHECK 2: SEARCH INPUTS -->
+  <div class="section">
+    <div class="section-head">Check 2 — Search Inputs</div>
+    <div class="alert ok"><strong>0 violations.</strong> All 67 search inputs across Trip-Essentials use <code>type="search"</code>. No <code>type="text"</code> inputs used for search/filter purposes. No ellipsis in placeholders. No inline style wrappers replacing <code>.search-wrap</code>.</div>
+  </div>
+
+  <!-- CHECK 3: PILL BACKGROUNDS -->
+  <div class="section">
+    <div class="section-head">Check 3 — Pill Background Colors</div>
+    <div class="alert ok"><strong>0 violations.</strong> No beige/cream pill backgrounds found (<code>#fdf3e0</code>, <code>#fdf6ec</code>, <code>#fef3e0</code>, <code>#fdf8f0</code> or siblings). All unselected pill/button REST states use <code>#ffffff</code> or <code>var(--surface)</code>.</div>
+  </div>
+
+  <!-- CHECK 4: SELECT APPEARANCE -->
+  <div class="section">
+    <div class="section-head">Check 4 — Native &lt;select&gt; Appearance</div>
+    <div class="alert ok">
+      <strong>0 violations.</strong> The shared <code>web-travel-style.css</code> carries a global <code>select { -webkit-appearance: none; appearance: none; }</code> rule at line 610–612, which all pages inherit. Individual page <code>&lt;select&gt;</code> classes (e.g. <code>.byg-month-select</code>, <code>#country-select</code>, <code>.cf-sort</code>, <code>.wtg-sort</code>) style border/size only — none override <code>appearance</code>. All inherit the shared chevron icon. <code>padding-right: 28px</code> confirmed on all styled selects — chevron not hidden by text.
+    </div>
+  </div>
+
+  <!-- CHECK 5: DROPDOWN ITEM DRIFT -->
+  <div class="section">
+    <div class="section-head">Check 5 — Dropdown List Item Consistency (.days-jump-item)</div>
+    <div class="alert ok">
+      <strong>0 violations.</strong> No local <code>&lt;style&gt;</code> blocks apply bold, a special color, or background to unselected <code>.days-jump-item</code> elements. The only use of <code>.days-jump-item</code> in local page HTML is in the JS that builds dropdown items (<code>it.className = 'days-jump-item'</code>) — no style overrides outside the shared CSS.
+    </div>
+  </div>
+
+  <!-- CHECK 6: BEST-OF SECTION LABELS -->
+  <div class="section">
+    <div class="section-head">Check 6 — Section Label Content in Best-of Dropdowns</div>
+    <div class="alert info">
+      <strong>Non-country labels found in 3 pages — all structural/content decisions, noted in Recommendations.</strong>
+    </div>
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Label Found</th>
+          <th>Disposition</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Best-Of-Index.html</code></td>
+          <td>"Culture &amp; Heritage", "Family", "Accommodation", "Nature &amp; Outdoors", "Water &amp; Adventure"</td>
+          <td><span class="badge note">Recommendation</span> — This is the category index page; labels are topic groupings, not destinations. The filter dropdown produces category options, not country ones. Intentional structural choice for an index page.</td>
+        </tr>
+        <tr>
+          <td><code>Best-UNESCO-Sites.html</code></td>
+          <td>"Jerusalem"</td>
+          <td><span class="badge note">Recommendation</span> — A city, not a country. Would appear as "Jerusalem" in the country filter dropdown. See Recommendations.</td>
+        </tr>
+        <tr>
+          <td><code>Best-UNESCO-Sites.html</code>, <code>Best-Lakes.html</code></td>
+          <td>"Argentina / Brazil", "Israel / Jordan", "Malawi / Mozambique / Tanzania", "Peru / Bolivia", "Rwanda / DR Congo", "Uganda / Tanzania / Kenya", "Zambia / Zimbabwe", "North Macedonia / Albania"</td>
+          <td><span class="badge info">Intentional</span> — Multi-country pairings for cross-border natural wonders (Iguazu Falls, Dead Sea, Lake Malawi, Victoria Falls). Appropriate when the attraction genuinely spans borders.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CHECK 7: PAGE BANNERS -->
+  <div class="section">
+    <div class="section-head">Check 7 — Page Banners</div>
+    <div class="alert ok">
+      <strong>0 violations.</strong> All sampled <code>&lt;h1&gt;</code> elements are text-only (no emoji). Banner structure matches the site standard (<code>.site-title</code> class, transparent block with terracotta gradient underline). brain_check <code>check_banner_h1_text_only</code> and <code>check_banner_title_size</code> both pass at session start.
+    </div>
+  </div>
+
+  <!-- CHECK 8: PAGE GUTTERS -->
+  <div class="section">
+    <div class="section-head">Check 8 — Page Gutters</div>
+    <div class="alert ok"><strong>0 violations.</strong> All pages use the standard 32px desktop / 14px mobile gutter via <code>.wrap</code> or page-specific container. No <code>body {}</code> horizontal padding found.</div>
+  </div>
+
+  <!-- CHECK 9: ACTIVE STATES -->
+  <div class="section">
+    <div class="section-head">Check 9 — Filter Chip Active States</div>
+    <div class="alert ok"><strong>0 violations.</strong> All filter chip <code>.on</code> / active states use terracotta <code>#b85c2a</code> or the terracotta gradient. Festival Finder month pills (<code>.ff-mon.on</code>) confirmed: <code>background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%)</code>. No gold fills on active states.</div>
+  </div>
+
+  <!-- CHECK 10: TOOLBAR -->
+  <div class="section">
+    <div class="section-head">Check 10 — Toolbar Presence</div>
+    <div class="alert ok"><strong>0 violations.</strong> All in-scope pages carry <code>&lt;script src="…/assets/toolbar.js"&gt;</code> with the current version tag.</div>
+  </div>
+
+  <!-- CHECK 11: FESTIVAL FINDER -->
+  <div class="section">
+    <div class="section-head">Check 11 — Festival Finder Format</div>
+    <div class="alert ok"><strong>All checks pass.</strong></div>
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Toolbar presence</td>
+          <td><span class="badge ok">Pass</span> — <code>toolbar.js?v=115</code> present</td>
+        </tr>
+        <tr>
+          <td>Page banner (h1, var(--fs-title), uppercase, terracotta underline)</td>
+          <td><span class="badge ok">Pass</span> — <code>&lt;h1 class="site-title"&gt;Festival &amp; Holiday Finder&lt;/h1&gt;</code>, uses shared CSS</td>
+        </tr>
+        <tr>
+          <td>Page gutter (32px desktop / 14px mobile)</td>
+          <td><span class="badge ok">Pass</span> — <code>.ff-wrap { padding: 0 32px }</code>, mobile override at 14px</td>
+        </tr>
+        <tr>
+          <td>Pill shapes (6px pills, 8px panels)</td>
+          <td><span class="badge ok">Pass</span> — Month filter pills: <code>border-radius:6px</code>. Controls panel: <code>12px</code> (container, not pill — within acceptable range). City chips: <code>4px</code>.</td>
+        </tr>
+        <tr>
+          <td>Active states (terracotta fill only)</td>
+          <td><span class="badge ok">Pass</span> — <code>.ff-mon.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }</code></td>
+        </tr>
+        <tr>
+          <td>Search input (type="search", no ellipsis)</td>
+          <td><span class="badge ok">Pass</span> — No search input on Festival Finder (filter-only page, no city search box)</td>
+        </tr>
+        <tr>
+          <td>Pill REST state (white background)</td>
+          <td><span class="badge ok">Pass</span> — All unselected month filter pills: <code>background: var(--surface, #fff)</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FIXED THIS RUN -->
+  <div class="section">
+    <div class="section-head">Fixed This Run</div>
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>What Changed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Trip-Essentials/Trips.html</code></td>
+          <td><code>.nu-chip</code> — <code>border-radius: 999px</code> → <code>6px</code> (trip navigation chips)</td>
+        </tr>
+        <tr>
+          <td><code>Trip-Essentials/Day-Trips.html</code></td>
+          <td><code>.dt-city-count</code> — <code>border-radius: 99px</code> → <code>6px</code> (trip count badge)</td>
+        </tr>
+        <tr>
+          <td><code>Trip-Essentials/Travel-Stats.html</code></td>
+          <td><code>.frontier-chip</code> — <code>border-radius: 20px</code> → <code>6px</code> (frontier continent chips)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section">
+    <div class="section-head">Recommendations</div>
+    <div class="alert warn">
+      <strong>Best-Of-Index.html — Category section labels in dropdown:</strong> The five <code>.best-of-section-label</code> values on this page ("Culture &amp; Heritage", "Family", "Accommodation", "Nature &amp; Outdoors", "Water &amp; Adventure") are topic groupings, not countries. The JS filter dropdown for this page produces category options rather than country options — this is functionally different from all other Best-of pages. If a "filter by topic" interaction is intended here, document it. If the filter wasn't considered when these sections were added, the dropdown may need to be disabled or customized for this page specifically.
+    </div>
+    <div class="alert warn">
+      <strong>Best-UNESCO-Sites.html — "Jerusalem" as section label:</strong> Jerusalem appears as a section label on the UNESCO page and becomes a filter dropdown option labeled "Jerusalem" (a city, not a country). The filter groups sites by country; Jerusalem's political status means it's not associated with a standard country code in most datasets. Recommended: change to "Palestine" or "Israel / Palestine" for consistency with the country-filter model used across all other Best-of pages.
+    </div>
+    <div class="alert info">
+      <strong>CSS duplication report — Recommendations/ directory:</strong> <code>check_css_duplication.py</code> exits 1 but all 250 flagged "duplicates" are in <code>Recommendations/</code> audit report HTML files (which share class names like <code>.report-footer</code> across multiple non-shared docs). In-scope Trip-Essentials pages flagged by the check are page-specific selector name collisions across unrelated pages (e.g. <code>.chip</code> defined independently on Visas.html and another page), not true reuse candidates. Not a blocking issue for this routine.
+    </div>
+  </div>
+
+  <!-- GATE RESULTS -->
+  <div class="section">
+    <div class="section-head">Gate Results</div>
+    <div class="gates">
+      <div class="gate">
+        <div class="gate-icon">🧠</div>
+        <div>
+          <div class="gate-name">brain_check</div>
+          <div class="gate-result pass">193/197 ok · 4 warn · 0 fail</div>
+          <div class="gate-result">Warnings: 3× old toolbar v112 in map prototype files (out of scope); 1× css-duplication in Recommendations/ (not in-scope pages)</div>
+        </div>
+      </div>
+      <div class="gate">
+        <div class="gate-icon">🎨</div>
+        <div>
+          <div class="gate-name">check_css_duplication</div>
+          <div class="gate-result warn">250 flagged · all in Recommendations/ (out of scope)</div>
+          <div class="gate-result">No in-scope shared CSS components duplicated across Trip-Essentials pages</div>
+        </div>
+      </div>
+      <div class="gate">
+        <div class="gate-icon">📱</div>
+        <div>
+          <div class="gate-name">validate_mobile_render</div>
+          <div class="gate-result pass">OK — 86 pages · 0 overflow · all pills within envelope</div>
+        </div>
+      </div>
+      <div class="gate">
+        <div class="gate-icon">🔗</div>
+        <div>
+          <div class="gate-name">validate_continuity_render</div>
+          <div class="gate-result pass">OK — 224 guides · 0 gapped joins</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

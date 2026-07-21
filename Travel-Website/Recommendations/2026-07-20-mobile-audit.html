@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mobile Audit — 2026-07-20</title>
+<style>
+:root {
+  --terra:#b85c2a; --gold:#c8a44a;
+  --pass:#2d6a4f; --pass-bg:#eaf4ee;
+  --warn:#7a5c00; --warn-bg:#fef9e7;
+  --bg:#faf8f4; --card:#fff; --border:#e8e2d9;
+  --text:#1c1917; --sub:#57534e; --muted:#8c8178;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#141210;--card:#1d1a17;--border:#2e2820;
+        --text:#f2ede7;--sub:#b5aa9e;--muted:#7a7068;
+        --pass-bg:#0d2318;--warn-bg:#2a2200;}
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.6;
+     background:var(--bg);color:var(--text);padding:28px 24px;max-width:820px;margin:0 auto;}
+h1{font-size:1.1rem;font-weight:700;border-bottom:2px solid var(--terra);padding-bottom:10px;margin-bottom:18px;}
+h2{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);
+   margin:24px 0 10px;display:flex;align-items:center;gap:10px;}
+h2::after{content:'';flex:1;height:1px;background:var(--border);}
+.meta{font-size:.75rem;color:var(--muted);margin-bottom:20px;}
+ul{padding-left:18px;}
+li{margin-bottom:6px;font-size:.88rem;color:var(--sub);}
+li strong{color:var(--text);}
+.pass-badge{display:inline-block;background:var(--pass-bg);color:var(--pass);
+            border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:700;
+            letter-spacing:.04em;margin-bottom:12px;}
+.warn-badge{display:inline-block;background:var(--warn-bg);color:var(--warn);
+            border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:700;
+            letter-spacing:.04em;margin-bottom:12px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;
+      padding:14px 18px;margin-bottom:10px;}
+code{background:var(--border);padding:1px 5px;border-radius:3px;font-size:.82em;}
+</style>
+</head>
+<body>
+
+<h1>Mobile Audit — 2026-07-20</h1>
+<div class="meta">Run date: 2026-07-20 &nbsp;·&nbsp; All 8 layers passed &nbsp;·&nbsp; 1 fix applied and pushed live</div>
+
+<h2>Overall result</h2>
+<span class="pass-badge">PASS — site looks good on mobile</span>
+<div class="card">
+  All 8 audit layers passed. CSS design-system intact, 90 pages with correct baseline, 83 pages rendering cleanly at 393px, all 4,914 images lazy-loaded with alt text, no iOS input zoom issues, no viewport zoom-prevention, hamburger menu labels correct.
+</div>
+
+<h2>Fix applied this run</h2>
+<div class="card">
+  <strong>7 input elements missing <code>aria-label</code> (Layer 7 — Accessibility)</strong>
+  <ul style="margin-top:8px;">
+    <li><strong>Climate-Finder.html</strong> — temperature range sliders (<code>cf-min</code>, <code>cf-max</code>) now carry <code>aria-label="Minimum temperature"</code> / <code>aria-label="Maximum temperature"</code></li>
+    <li><strong>Stats-Across-US.html</strong> — 3 compare city inputs (<code>cmp-a</code>, <code>cmp-b</code>, <code>cmp-c</code>) labelled A/B/C</li>
+    <li><strong>Trips.html</strong> — PIN gate input labelled <code>aria-label="PIN code"</code></li>
+    <li><strong>Visas.html</strong> — Schengen date input labelled <code>aria-label="Calculate as of date"</code></li>
+  </ul>
+  <p style="margin-top:8px;font-size:.82rem;color:var(--muted);">Committed c79e22f1d · pushed to main</p>
+</div>
+
+<h2>Remaining warnings (not fixable this run)</h2>
+<span class="warn-badge">4 issues — false positives from JS template strings</span>
+<div class="card">
+  <strong>Layer 7 — 3 buttons + 1 link flagged by accessibility heuristic, but all are false positives</strong>
+  <ul style="margin-top:8px;">
+    <li><strong>Best-Surfing.html</strong> — <code>&lt;button class="days-jump-item"&gt;' + c + '&lt;/button&gt;</code> — JS template string inside a JS variable, not real HTML. Buttons ARE labelled at runtime with country names.</li>
+    <li><strong>Climate-Finder.html</strong> — <code>&lt;button class="cf-mon"&gt;' + m + '&lt;/button&gt;</code> — JS template string; month name is the visible text at runtime.</li>
+    <li><strong>When-to-Go.html</strong> — same pattern as Climate-Finder (JS month buttons).</li>
+    <li><strong>European-Train-Guide.html</strong> — <code>&lt;a href="'+nameMap[m]+'"&gt;'+m+'&lt;/a&gt;</code> — JS template string; city name is populated at runtime.</li>
+  </ul>
+  <p style="margin-top:10px;font-size:.82rem;color:var(--muted);"><strong>Recommendation:</strong> update <code>audit_mobile.py</code>'s Layer 7 regex to exclude matches inside JavaScript string literals (e.g., skip button/link tags where the content contains <code>' +</code> or <code>" +</code> concatenation operators). This would eliminate all 4 recurring false positives and make the audit output cleaner.</p>
+</div>
+
+<h2>Warnings checked — no action needed</h2>
+<div class="card">
+  <ul>
+    <li><strong>Layer 4 — 2 images in Before-You-Go.html missing width/height:</strong> These are plug adapter images dynamically generated by JavaScript (<code>plugHtml += '&lt;img src="..."&gt;'</code>). The images have variable dimensions (262px vs 600px height depending on plug type), making static width/height impossible to add. CLS risk is low — the plug cards are in a scrollable secondary UI, not the main page layout. Not fixable without a runtime dimension lookup.</li>
+    <li><strong>Layer 6 — 3 uses of <code>100vh</code> without fill-available fallback:</strong> In <code>stops-map-style.css</code>, <code>web-travel-style.css</code>, and <code>World-Map.html</code>. These are intentional full-viewport layouts (the map, and the app shell min-height). iOS Safari's URL-bar handling makes <code>100vh</code> slightly taller than the viewport — acceptable for these specific full-screen layouts. No user-facing issue has been reported.</li>
+  </ul>
+</div>
+
+<h2>Fleet coverage</h2>
+<div class="card">
+  <ul>
+    <li>90 shareable pages — all have viewport tag + mobile.css baseline</li>
+    <li>83 shareable pages — rendered at 393px, no overflow, no skinny pills</li>
+    <li>4,914 images — all lazy-loaded, all have alt text</li>
+    <li>25 hamburger menu dropdown children — all have word labels with correct icon prefix</li>
+    <li>All input/select/textarea font-sizes ≥ 16px (no iOS auto-zoom)</li>
+    <li>No zoom-prevention in any viewport meta tag</li>
+  </ul>
+</div>
+
+<h2>Tooling improvement suggested</h2>
+<div class="card">
+  <p style="font-size:.88rem;"><strong>audit_mobile.py Layer 7</strong> — The button/link accessible-name heuristic uses a simple regex that matches HTML-like patterns inside JavaScript string templates. This produces 4 false positives every run (month buttons, country buttons, city links — all of which receive text at runtime). Suggested fix: exclude regex matches where the button/link content contains JS string concatenation operators (<code>' +</code> or <code>" +</code>). This is a script-only change in <code>Brain/scripts/audit_mobile.py</code> — no page edits needed.</p>
+</div>
+
+</body>
+</html>

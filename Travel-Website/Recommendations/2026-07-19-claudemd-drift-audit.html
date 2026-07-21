@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CLAUDE.md Drift Audit — 2026-07-19</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 860px; margin: 0 auto; padding: 24px 32px; color: #2d2a24; background: #fff; }
+  h1 { font-size: 18px; font-weight: 700; color: #3d3a32; text-transform: uppercase; letter-spacing: .06em; border-bottom: 3px solid #b85c2a; padding-bottom: 8px; margin-bottom: 6px; }
+  h2 { font-size: 14px; font-weight: 700; color: #3d3a32; text-transform: uppercase; letter-spacing: .04em; margin: 22px 0 8px; }
+  p, li { font-size: 13px; line-height: 1.6; margin: 4px 0; }
+  ul { margin: 6px 0 12px; padding-left: 20px; }
+  code { background: #f4f0e8; border-radius: 3px; padding: 1px 5px; font-size: 12px; }
+  .stamp { font-size: 11px; color: #8a7c6a; margin-bottom: 20px; }
+  .section { border-left: 3px solid #c8a44a; padding-left: 14px; margin: 16px 0; }
+  .fix { border-left: 3px solid #2a7a3b; padding-left: 14px; margin: 10px 0; }
+  .note { border-left: 3px solid #5b8fc8; padding-left: 14px; margin: 10px 0; }
+  .clean { border-left: 3px solid #aaa; padding-left: 14px; margin: 10px 0; }
+  .tag-fixed { background: #d6f0dc; color: #1a5c2a; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+  .tag-clean { background: #e8e8e8; color: #666; border-radius: 4px; padding: 1px 7px; font-size: 11px; }
+  .tag-warn { background: #fdecd4; color: #7a3f00; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>CLAUDE.md Drift Audit</h1>
+<p class="stamp">Run: 2026-07-19 &nbsp;·&nbsp; brain_check result: 182/183 OK · 0 failures</p>
+
+<h2>What Was Checked</h2>
+<div class="clean">
+  <p>Full cross-check of <code>CLAUDE.md</code> against five sources:</p>
+  <ul>
+    <li><code>Brain/CORE RULES/Rules for Claude.html</code> (§ 6 DriftyCat — every ⚠️ bullet, full content cross-check)</li>
+    <li><code>Travel-Website/assets/toolbar.js</code> ITEMS array (routing table audit)</li>
+    <li><code>Brain/CORE RULES/</code> file listing (CORE RULES HTML file index completeness)</li>
+    <li><code>Brain/scripts/*.py</code> listing (validators table completeness)</li>
+    <li><code>To Do List/To_Do_List.md</code> (no in-scope items found)</li>
+  </ul>
+</div>
+
+<h2>Fixes Applied (3)</h2>
+
+<div class="fix">
+  <p><strong><span class="tag-fixed">FIXED</span> Missing validators table entry — <code>build_day_trips.py</code></strong></p>
+  <p>This script aggregates "Day Trips by Train" entries from every shipped guide and writes <code>Trip-Essentials/Day-Trips.html</code>. It was present on disk but absent from the CLAUDE.md validators table. It is a meaningful, reusable build tool (not a one-off migration) and belongs in the table. Added after <code>build_day_tool.py</code>.</p>
+</div>
+
+<div class="fix">
+  <p><strong><span class="tag-fixed">FIXED</span> Missing DriftyCat bullet — "Viator and TripAdvisor MCP connectors first"</strong></p>
+  <p><code>Rules for Claude.html § 6</code> has a standalone ⚠️ bullet: <em>"Viator and TripAdvisor MCP connectors first for tour research."</em> This bullet was absent from <code>CLAUDE.md</code>'s DriftyCat section. The existing "Tour-first always" bullet only covered source order; the missing bullet covers the critical MCP-vs-web-search distinction (both Viator and TripAdvisor have live MCP connectors — never fall back to <code>site:</code> search when the connector works; GYG has no MCP, always uses <code>site:getyourguide.com</code>). Added immediately after the "Tour-first always" bullet.</p>
+</div>
+
+<div class="fix">
+  <p><strong><span class="tag-fixed">FIXED</span> Drifted DriftyCat bullet — "List fixes" ≠ audit</strong></p>
+  <p>The <code>CLAUDE.md</code> summary said: <em>"Listing what needs to be fixed and then stopping is punt behavior. Every audit session finds AND fixes."</em> The canonical <code>Rules for Claude.html § 6</code> text says: <em>"'List fixes' (without the word audit) surfaces what is already known broken — not a 27-file crawl."</em> These are different concepts. The canonical text distinguishes a "list fixes" ask (surfaces known problems only) from a full audit crawl. The CLAUDE.md version only addressed the audit-without-fixing failure mode. Rewrote to cover both distinctions. Also corrected the section reference from <code>§ 3</code> to <code>§ 6</code> + <code>§ 9</code>.</p>
+</div>
+
+<h2>Areas Audited — No Changes Needed</h2>
+
+<div class="note">
+  <p><strong>Routing table</strong> — all 8 task-routing rows are accurate. Referenced files verified to exist:</p>
+  <ul>
+    <li><code>Travel-Website/Trip-Essentials/Trips-Rules.md</code> ✅</li>
+    <li><code>Brain/CORE RULES/Links.html</code> ✅</li>
+    <li>All other routing targets confirmed present</li>
+  </ul>
+  <p>Toolbar ITEMS scanned: no new pages with dedicated governing docs require new routing rows. Pages without governing docs (Destination-Records, When-to-Go, Guide-Days-Coverage, Delta-Routes-Full, Entry-Requirements) correctly have no routing entries — they're data/reference pages, not task-driven workflows.</p>
+</div>
+
+<div class="note">
+  <p><strong>CORE RULES HTML file index</strong> — 27 files on disk, 27 entries in table. Descriptions spot-checked against first ~80 lines of each file; all accurate including the 2026-07-12 <code>Claude Inspiration - Extra Section.html</code> mandatory change and the 2026-07-11 <code>Hotel Banner.html</code> § 2b mobile card layout.</p>
+</div>
+
+<div class="note">
+  <p><strong>Validators/builders table</strong> — 89 scripts on disk, 88 in table before this run (now 89 with <code>build_day_trips.py</code> added). Two unlisted scripts examined and correctly excluded:</p>
+  <ul>
+    <li><code>fix_also_on_this_site.py</code> — docstring explicitly says "DO NOT RUN — this script is stale and will corrupt guides"; exits with error code 1 immediately. Correctly not in table.</li>
+    <li>Consolidation helpers (<code>apply_css_consolidation.py</code>, <code>consolidate_classes_to_shared.py</code>, <code>remove_components_from_pages.py</code>, <code>smart_css_consolidation.py</code>, <code>final_css_consolidation.py</code>, etc.) — one-time migration tools from the June 2026 CSS consolidation project. Correctly excluded per the skip rule in Step 4.</li>
+  </ul>
+</div>
+
+<div class="note">
+  <p><strong>DriftyCat full cross-check</strong> — 42 ⚠️ bullets in <code>Rules for Claude.html § 6</code> compared against CLAUDE.md DriftyCat. 40 were fully represented (some merged into combined bullets; substance captured). 1 was missing (Viator/TripAdvisor MCP connectors — added). 1 had drifted content (List fixes ≠ audit — fixed). Meta-rule "CSS and HTML formatting rules do not belong here" (self-referential note about Rules for Claude.html) correctly absent from CLAUDE.md.</p>
+</div>
+
+<div class="note">
+  <p><strong>To Do List scan</strong> — no items in scope for this routine found. All open items are in-progress guide builds, infra bugs, stats/audit findings, and script bug reports — none were CLAUDE.md edits.</p>
+</div>
+
+<h2>Out-of-Scope Findings — None</h2>
+<div class="clean">
+  <p>No findings requiring CORE RULES edits, validator script changes, or owner decisions were surfaced. Nothing logged to To Do List.</p>
+</div>
+
+<h2>Pre-Existing Warning (not from this run)</h2>
+<div class="note">
+  <p><span class="tag-warn">WARN</span> <strong>brain_check css-duplication:</strong> 195 duplicated CSS selectors detected across pages. This is a pre-existing warning from the shared-CSS consolidation work and is unrelated to this audit's edits. Not a failure (0 hard-fails). Owning routine: cross-page consistency audit / fix-ux-problems.</p>
+</div>
+
+</body>
+</html>

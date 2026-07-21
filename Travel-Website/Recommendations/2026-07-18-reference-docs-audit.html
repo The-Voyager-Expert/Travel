@@ -1,0 +1,379 @@
+<title>Reference Docs Audit — 2026-07-18</title>
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #f0ede8;
+  --surface2: #e8e4de;
+  --text: #1a1917;
+  --muted: #7a756d;
+  --border: #d8d3cc;
+  --accent: #b85c2a;
+  --accent-light: #d4874a;
+  --gold: #c8a44a;
+  --green: #2a6a2a;
+  --green-bg: #e8f5e8;
+  --green-border: #a0d8a0;
+  --warn-bg: #fff8e0;
+  --warn-text: #7a5800;
+  --warn-border: #e8c870;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1917;
+    --surface: #252320;
+    --surface2: #2e2b28;
+    --text: #e8e3db;
+    --muted: #9a9590;
+    --border: #3a3630;
+    --accent: #d4874a;
+    --accent-light: #e8a06a;
+    --gold: #d4b06a;
+    --green: #5ab85a;
+    --green-bg: #1a2e1a;
+    --green-border: #2a5a2a;
+    --warn-bg: #2a2000;
+    --warn-text: #d4a840;
+    --warn-border: #5a4800;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #fafaf8; --surface: #f0ede8; --surface2: #e8e4de;
+  --text: #1a1917; --muted: #7a756d; --border: #d8d3cc;
+  --accent: #b85c2a; --accent-light: #d4874a; --gold: #c8a44a;
+  --green: #2a6a2a; --green-bg: #e8f5e8; --green-border: #a0d8a0;
+  --warn-bg: #fff8e0; --warn-text: #7a5800; --warn-border: #e8c870;
+}
+:root[data-theme="dark"] {
+  --bg: #1a1917; --surface: #252320; --surface2: #2e2b28;
+  --text: #e8e3db; --muted: #9a9590; --border: #3a3630;
+  --accent: #d4874a; --accent-light: #e8a06a; --gold: #d4b06a;
+  --green: #5ab85a; --green-bg: #1a2e1a; --green-border: #2a5a2a;
+  --warn-bg: #2a2000; --warn-text: #d4a840; --warn-border: #5a4800;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  padding: 32px 24px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Header */
+.audit-header {
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 18px;
+  margin-bottom: 28px;
+}
+.audit-header h1 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.audit-header .meta {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.meta-sep { color: var(--border); }
+
+/* Stat row */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+@media (max-width: 600px) {
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.stat-card .num {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.stat-card .label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 3px;
+}
+
+/* Section */
+.section {
+  margin-bottom: 28px;
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 7px;
+  margin-bottom: 14px;
+}
+
+/* Change card */
+.change-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.change-card .change-name {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.change-card .change-type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.change-card p {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Doc update row */
+.doc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.doc-row:last-child { border-bottom: none; }
+.doc-row .doc-name {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--gold);
+  flex-shrink: 0;
+  min-width: 280px;
+}
+.doc-row .doc-action {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.check-badge {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+  font-size: 10px;
+  text-align: center;
+  line-height: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+/* No-action list */
+.no-action-list {
+  list-style: none;
+  padding: 0;
+}
+.no-action-list li {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.no-action-list li:last-child { border-bottom: none; }
+.no-action-list li::before {
+  content: "—";
+  color: var(--border);
+  flex-shrink: 0;
+}
+
+/* Brain check */
+.brain-check {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brain-check .bc-result {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* To Do resolved */
+.resolved-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text);
+}
+.resolved-card .res-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  body { padding: 20px 14px; }
+  .doc-row { flex-direction: column; gap: 3px; }
+  .doc-row .doc-name { min-width: 0; }
+}
+</style>
+
+<div class="audit-header">
+  <h1>Reference Docs Audit</h1>
+  <div class="meta">
+    <span>2026-07-18</span>
+    <span class="meta-sep">·</span>
+    <span>Detection window: 2026-07-17 → 2026-07-18</span>
+    <span class="meta-sep">·</span>
+    <span>routine: reference-docs-audit</span>
+  </div>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card">
+    <div class="num">1</div>
+    <div class="label">Change detected</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">5</div>
+    <div class="label">Doc files updated</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">0</div>
+    <div class="label">Validators added</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">0</div>
+    <div class="label">CORE RULES gaps</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Changes Detected</div>
+  <div class="change-card">
+    <div class="change-name">validate_regional_stats_chips.py</div>
+    <div class="change-type">New script · Brain/scripts/</div>
+    <p>Fleet-wide regional stats chip + bar coverage validator added 2026-07-18. For every shipped non-US/Canada guide, asserts the country has a filter chip AND a bar-row in every section of its regional stats page (Asia-Stats, Europe-Stats, Caribbean-Stats, South-America-Stats). Wired into <code>guide_tools.py start</code> Step 3f (warn-only fleet backstop) and <code>guide_tools.py ship</code> scoped gate. Was not yet documented in Brain.md, CLAUDE.md, Validator Index, or Cleanliness Checks.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Documentation Updates Made</div>
+
+  <div class="doc-row">
+    <span class="doc-name"><span class="check-badge">✓</span> Brain/Reference/Brain.md</span>
+    <span class="doc-action">Added <code>validate_regional_stats_chips.py</code> row to scripts table with job description and when-to-run</span>
+  </div>
+  <div class="doc-row">
+    <span class="doc-name"><span class="check-badge">✓</span> CLAUDE.md (validator table)</span>
+    <span class="doc-action">Added row for <code>validate_regional_stats_chips.py</code> after <code>validate_us_stats.py</code></span>
+  </div>
+  <div class="doc-row">
+    <span class="doc-name"><span class="check-badge">✓</span> Brain/Reference/Validator Index.html</span>
+    <span class="doc-action">Added enforcement row: script · severity WARN/HARD-FAIL · fires session start Step 3f + ship scoped gate</span>
+  </div>
+  <div class="doc-row">
+    <span class="doc-name"><span class="check-badge">✓</span> Brain/Reference/Cleanliness Checks.md</span>
+    <span class="doc-action">Added Rule 545 — regional stats chip + bar coverage requirement, drift class, detection method</span>
+  </div>
+  <div class="doc-row">
+    <span class="doc-name"><span class="check-badge">✓</span> To Do List/To_Do_List.md</span>
+    <span class="doc-action">Deleted resolved proposal "build validate_regional_stats_chips.py" from Regional Stats Maintenance Items section (script now exists)</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">To Do List — Resolved Item</div>
+  <div class="resolved-card">
+    <div class="res-label">Deleted from To Do</div>
+    The open proposal "No chip-coverage validator for regional stats pages — build <code>validate_regional_stats_chips.py</code>" under <em>📊 Regional Stats — Maintenance Items</em> has been removed. The script was created on 2026-07-18 and is now fully documented.
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">No-Action Items Confirmed</div>
+  <ul class="no-action-list">
+    <li>
+      <strong>guides-index-style.css webkit search decoration</strong> — added <code>::-webkit-search-decoration { -webkit-appearance: none }</code> to both search inputs (commit 6a9201157). CSS fix for browser default icon bleed on <code>type="search"</code> inputs. No new standard; no documentation needed.
+    </li>
+    <li>
+      <strong>Entry-Requirements.html CSS variable fix</strong> — hardcoded hex on <code>.status-live</code> / <code>.status-coming</code> replaced with CSS variable tokens. Fix for the existing SHARED CSS ONLY rule. Already covered by Rule 497 and <code>check_no_beige_pill_button</code>.
+    </li>
+    <li>
+      <strong>check_no_beige_pill_button extension (brain_check.py)</strong> — extended <code>WARM_BG</code> regex to catch <code>var(--warm)</code> and <code>var(--c-warm-bg)</code> aliases. Documented by the Rule Compliance Audit 2026-07-18 (Cleanliness Checks Rule 497 updated; DriftyCat entry already covered the concept).
+    </li>
+    <li>
+      <strong>CLAUDE.md DriftyCat — no new ⚠️ entries needed</strong> — <code>validate_regional_stats_chips.py</code> is a coverage backstop, not a formatting drift risk. The existing DriftyCat rule about Stats/Safety/Currency coverage gates (§ Coverage gates Steps 7–13) already covers the behavior this script enforces.
+    </li>
+    <li>
+      <strong>CORE RULES files</strong> — no new or modified files since 2026-07-17. Read-only constraint: no action.
+    </li>
+  </ul>
+</div>
+
+<div class="section">
+  <div class="section-title">brain_check + pre_push_guard</div>
+  <div class="brain-check">
+    <span>🧠</span>
+    <div>
+      <div class="bc-result">180/181 ok · 1 warn · 0 fail · pre_push_guard exit 0</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;">1 warn: CSS duplication (169 selectors) — pre-existing, unrelated to this run</div>
+    </div>
+  </div>
+</div>

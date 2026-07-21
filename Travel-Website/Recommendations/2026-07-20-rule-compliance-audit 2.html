@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rule Compliance Audit · 2026-07-20</title>
+<style>
+:root {
+  --bg: #faf7f4;
+  --surface: #ffffff;
+  --border: #e8e2d9;
+  --text: #2c2925;
+  --muted: #6a6660;
+  --accent: #b85c2a;
+  --gold: #c8a44a;
+  --gold-bg: #fdf3e0;
+  --green: #2d7a3e;
+  --green-bg: #eef7f0;
+  --code-bg: #f0ece6;
+  --header-bg: #1e1510;
+  --header-text: #f5f0e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1714;
+    --surface: #242018;
+    --border: #3a3530;
+    --text: #e8e2d9;
+    --muted: #9a9490;
+    --code-bg: #2a2520;
+    --header-bg: #0e0c0a;
+    --header-text: #f5f0e8;
+    --gold-bg: #2a2010;
+    --green-bg: #0e2014;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #faf7f4; --surface: #ffffff; --border: #e8e2d9; --text: #2c2925;
+  --muted: #6a6660; --code-bg: #f0ece6; --header-bg: #1e1510;
+  --header-text: #f5f0e8; --gold-bg: #fdf3e0; --green-bg: #eef7f0;
+}
+:root[data-theme="dark"] {
+  --bg: #1a1714; --surface: #242018; --border: #3a3530; --text: #e8e2d9;
+  --muted: #9a9490; --code-bg: #2a2520; --header-bg: #0e0c0a;
+  --header-text: #f5f0e8; --gold-bg: #2a2010; --green-bg: #0e2014;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px; line-height: 1.6;
+  background: var(--bg); color: var(--text);
+}
+.page-header {
+  background: var(--header-bg);
+  padding: 28px 32px 24px;
+  border-bottom: 3px solid var(--accent);
+}
+.page-header h1 {
+  font-size: 18px; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--header-text);
+  margin-bottom: 4px;
+}
+.page-header .meta {
+  font-size: 12px; color: rgba(245,240,232,.5); letter-spacing: .04em;
+}
+.page-header .status-line {
+  margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 4px;
+  font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+}
+.badge-ok { background: #1a3a22; color: #6dd88a; }
+.badge-warn { background: #3a2800; color: #e8b84a; }
+.badge-new { background: #3a1a08; color: var(--accent); filter: brightness(1.3); }
+.badge-fixed { background: #1a2a3a; color: #6ab4e8; }
+
+.wrap { max-width: 840px; margin: 0 auto; padding: 32px 24px; }
+
+.summary-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 16px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stat-card .num {
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.stat-card .lbl {
+  font-size: 11px; color: var(--muted); text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.section { margin-bottom: 32px; }
+.section-hd {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted);
+  border-bottom: 1px solid var(--border); padding-bottom: 6px;
+  margin-bottom: 16px;
+}
+.section-hd span {
+  display: inline-block; background: var(--accent); color: #fff;
+  border-radius: 3px; padding: 1px 6px; font-size: 10px;
+  margin-left: 6px; letter-spacing: .04em; vertical-align: middle;
+}
+
+.rule-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; margin-bottom: 10px; overflow: hidden;
+}
+.rule-card .rule-hd {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+}
+.rule-num {
+  font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+  font-size: 12px; font-weight: 700; color: var(--accent);
+  min-width: 46px; padding-top: 1px;
+}
+.rule-title { font-size: 13px; font-weight: 600; flex: 1; }
+.rule-body { padding: 10px 16px 12px; font-size: 13px; color: var(--muted); }
+.rule-body code {
+  font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+  font-size: 11.5px; background: var(--code-bg);
+  padding: 1px 4px; border-radius: 3px; color: var(--text);
+}
+.rule-body .check-fn {
+  display: inline-block; font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+  font-size: 11.5px; background: var(--code-bg);
+  padding: 2px 6px; border-radius: 3px; color: var(--text);
+  margin-top: 4px;
+}
+.tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.tag {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; padding: 2px 7px; border-radius: 3px;
+}
+.tag-hardfail { background: #3a1408; color: #e86040; }
+.tag-warn-tier { background: var(--gold-bg); color: #7a5210; }
+.tag-new-rule { background: #1a2a3a; color: #6ab4e8; }
+.tag-corrected { background: #2a1a3a; color: #b088e8; }
+
+.correction-card {
+  background: #1e1028; border: 1px solid #4a2a6a;
+  border-radius: 6px; padding: 14px 16px; margin-bottom: 10px;
+}
+.correction-card .corr-hd {
+  font-size: 12px; font-weight: 700; color: #c088e8;
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px;
+}
+.correction-card .corr-body { font-size: 13px; color: var(--muted); }
+.correction-card code {
+  font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+  font-size: 11.5px; background: rgba(255,255,255,.06);
+  padding: 1px 4px; border-radius: 3px; color: #e8e0f0;
+}
+.old-val { text-decoration: line-through; opacity: .55; }
+.new-val { color: var(--green); }
+.arrow { color: var(--muted); margin: 0 4px; }
+
+.cascade-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  overflow: hidden;
+}
+.cascade-table th {
+  background: var(--header-bg); color: rgba(245,240,232,.7);
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  padding: 8px 14px; text-align: left; font-weight: 600;
+}
+.cascade-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+.cascade-table tr:last-child td { border-bottom: none; }
+.cascade-table td code {
+  font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+  font-size: 11.5px; background: var(--code-bg);
+  padding: 1px 4px; border-radius: 3px;
+}
+.cascade-table .check { color: var(--green); font-weight: 700; }
+.cascade-table td:nth-child(1) { width: 40%; }
+
+.audit-card {
+  background: var(--green-bg); border: 1px solid #b8ddc0;
+  border-radius: 6px; padding: 14px 16px; font-size: 13px;
+}
+.audit-card strong { color: var(--green); }
+
+.brain-check-row {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 16px; font-size: 13px;
+}
+.bc-stat { font-variant-numeric: tabular-nums; }
+.bc-ok { color: var(--green); font-weight: 700; }
+.bc-warn { color: #c8a440; font-weight: 700; }
+.bc-fail { color: var(--accent); font-weight: 700; }
+.bc-sep { color: var(--border); }
+
+.footer {
+  font-size: 11px; color: var(--muted); text-align: center;
+  padding: 24px 0 32px; border-top: 1px solid var(--border); margin-top: 32px;
+}
+
+@media (max-width: 600px) {
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .page-header { padding: 20px 16px; }
+  .wrap { padding: 20px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>Rule Compliance Audit</h1>
+  <div class="meta">2026-07-20 · Run 3 · Detection window: 2026-07-19 → 2026-07-20</div>
+  <div class="status-line">
+    <span class="badge badge-new">4 new rules detected</span>
+    <span class="badge badge-fixed">5 doc gaps closed</span>
+    <span class="badge badge-ok">brain_check 0 fail</span>
+    <span class="badge badge-warn">1 warn (pre-existing)</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="num">4</div>
+      <div class="lbl">New rules detected</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">1</div>
+      <div class="lbl">Mislabel corrected</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">3</div>
+      <div class="lbl">Docs updated</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">0</div>
+      <div class="lbl">New gaps found</div>
+    </div>
+  </div>
+
+  <!-- DETECT -->
+  <div class="section">
+    <div class="section-hd">1 · Detect <span>Track A — current-state cross-check</span></div>
+
+    <div class="rule-card">
+      <div class="rule-hd">
+        <div class="rule-num">Rule 561</div>
+        <div class="rule-title">Guides-Index sidebar panels must be beige — no terracotta background</div>
+        <span class="badge badge-new" style="white-space:nowrap">New doc</span>
+      </div>
+      <div class="rule-body">
+        Both <code>.country[data-country="specialized-trips"]</code> and <code>.country[data-country="also-on-site"]</code> in <code>guides-index-style.css</code> must use the default <code>var(--warm)</code> beige. A terracotta override was removed 2026-07-19. Code existed in <code>brain_check.py</code> — documentation was missing.<br>
+        <div class="check-fn">check_sidebar_panel_background()</div>
+        <div class="tag-row">
+          <span class="tag tag-hardfail">Hard-fail</span>
+          <span class="tag tag-new-rule">Session start</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-hd">
+        <div class="rule-num">Rule 562</div>
+        <div class="rule-title">Mobile hamburger must include Best Of + Also on this site sections</div>
+        <span class="badge badge-new" style="white-space:nowrap">New doc</span>
+      </div>
+      <div class="rule-body">
+        After the main <code>ITEMS.forEach</code> loop, <code>toolbar.js</code> must append two IIFE sections: Best Of (34 links) and Also on this site (13 links). These are the only mobile entry point to those pages — the desktop sidebar is hidden on mobile. Code existed — documentation was missing.<br>
+        <div class="check-fn">check_mobile_menu_sections()</div>
+        <div class="tag-row">
+          <span class="tag tag-hardfail">Hard-fail</span>
+          <span class="tag tag-new-rule">Session start</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-hd">
+        <div class="rule-num">Rule 564</div>
+        <div class="rule-title">Mobile hamburger button spec — dark terracotta pill, filled white SVG bars</div>
+        <span class="badge badge-new" style="white-space:nowrap">New doc</span>
+      </div>
+      <div class="rule-body">
+        <code>.tb-ham</code> must be <code>background:#6e3117</code>, <code>border-radius:8px</code>, <code>width:82px</code>, three <code>fill:#fff</code> SVG rectangles. No <code>display:</code> in inline style. <code>mobile.css</code> must NOT set <code>background:none !important</code> on <code>.tb-ham</code>. Code existed — documentation was missing.<br>
+        <div class="check-fn">check_ham_btn_style()</div>
+        <div class="tag-row">
+          <span class="tag tag-hardfail">Hard-fail</span>
+          <span class="tag tag-new-rule">Session start</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-hd">
+        <div class="rule-num">Rule 565</div>
+        <div class="rule-title">Toolbar dropdown child text: field must carry a word label — never emoji-only</div>
+        <span class="badge badge-new" style="white-space:nowrap">New rule + doc</span>
+      </div>
+      <div class="rule-body">
+        Every toolbar dropdown child's <code>text:</code> or <code>full:</code> field must contain ≥3 contiguous ASCII word characters. An emoji-only value renders as just the icon in iOS Safari hamburger with no label text. Trigger: "📊 Stats Across the Caribbean" appeared as just "📊" twice in the same week. <strong>New rule number assigned this run.</strong><br>
+        <div class="check-fn">check_toolbar_child_label_text()</div>
+        <div class="tag-row">
+          <span class="tag tag-hardfail">Hard-fail</span>
+          <span class="tag tag-new-rule">Session start</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORRECTION -->
+  <div class="section">
+    <div class="section-hd">Correction <span>Mislabeled rule reference</span></div>
+    <div class="correction-card">
+      <div class="corr-hd">Validator Index.html · .meta block</div>
+      <div class="corr-body">
+        The 2026-07-19 TITLE-CITY CONTAINS STATE/REGION SUFFIX entry referenced
+        "<span class="old-val">Cleanliness Checks Rule 561</span>"
+        <span class="arrow">→</span>
+        "<span class="new-val">Cleanliness Checks Rule 563</span>".
+        Rule 561 is <code>check_sidebar_panel_background</code>; Rule 563 is the TITLE-CITY check. The mislabel would cause a reader to look up Rule 561 when tracing the TITLE-CITY failure — the wrong entry entirely.
+      </div>
+    </div>
+  </div>
+
+  <!-- CASCADE -->
+  <div class="section">
+    <div class="section-hd">2 · Cascade <span>3 Drive-only docs updated</span></div>
+    <div style="overflow-x:auto">
+    <table class="cascade-table">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Change</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Brain/Reference/Validator Index.html</code></td>
+          <td>.meta: prepended 2026-07-20 update, "Rule 561" → "Rule 563" corrected. 4 new <code>&lt;li class="yes"&gt;</code> entries added to brain_check list (Rules 561, 562, 564, 565).</td>
+          <td class="check">✓ Done</td>
+        </tr>
+        <tr>
+          <td><code>CLAUDE.md</code></td>
+          <td>Rule 565 DriftyCat ⚠️ bullet added: "Toolbar dropdown child text: field must carry a word label — never emoji-only"</td>
+          <td class="check">✓ Done</td>
+        </tr>
+        <tr>
+          <td><code>Brain/Reference/Cleanliness Checks.md</code></td>
+          <td>Rule 565 entry added after Rule 564. Header updated: "Highest rule number is <span class="old-val">564</span>" → "<span class="new-val">565</span>"</td>
+          <td class="check">✓ Done</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- AUDIT -->
+  <div class="section">
+    <div class="section-hd">3 · Audit <span>Recent crib output review</span></div>
+    <div class="audit-card">
+      <strong>No new enforcement gaps found.</strong> Reviewed 2026-07-17–19 Recommendations (CLAUDE.md drift audit, reference docs audit, visual drift watch, guide audit reports, pending fixes sweep). All systematic patterns in those reports were already addressed by prior runs or by the CASCADE edits above. The visual drift watch flagged the inverted <code>check_title_address_has_css_arrow</code> rule — that was corrected in the 2026-07-20 Reference Docs Audit (same day, different run). CSS duplication warn (238 selectors) is a pre-existing, stable backlog item — not a new gap.
+    </div>
+  </div>
+
+  <!-- FIX -->
+  <div class="section">
+    <div class="section-hd">4 · Fix <span>Enforcement gaps</span></div>
+    <div class="audit-card">
+      No additional fixes needed. All actionable enforcement gaps were closed in the CASCADE step. The css-duplication warn remains a long-term consolidation task outside this routine's scope; logged in To Do List at prior runs.
+    </div>
+  </div>
+
+  <!-- HEALTH -->
+  <div class="section">
+    <div class="section-hd">Brain check · Final state</div>
+    <div class="brain-check-row">
+      <span class="bc-stat"><span class="bc-ok">193/194 ok</span></span>
+      <span class="bc-sep">·</span>
+      <span class="bc-stat"><span class="bc-warn">1 warn</span> (css-duplication — pre-existing)</span>
+      <span class="bc-sep">·</span>
+      <span class="bc-stat"><span class="bc-ok">0 fail</span></span>
+      <span class="bc-sep">·</span>
+      <span style="color:var(--muted)">No tracked file changes (Drive-only)</span>
+    </div>
+  </div>
+
+  <div class="footer">Rule Compliance Audit · The Voyager Expert · 2026-07-20 · Run 3</div>
+</div>
+</body>
+</html>

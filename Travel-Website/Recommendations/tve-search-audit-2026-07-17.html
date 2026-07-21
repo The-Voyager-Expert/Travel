@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TVESearch Weekly Audit — 2026-07-17</title>
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<style>
+  .audit-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 24px 0; }
+  @media (max-width: 700px) { .audit-summary { grid-template-columns: 1fr 1fr; } }
+  .stat-tile { background: #fff; border: 1px solid #e6e2da; border-radius: 8px; padding: 16px 18px; }
+  .stat-num { font-size: 28px; font-weight: 800; color: #b85c2a; line-height: 1; }
+  .stat-label { font-size: 12px; color: #7a7060; margin-top: 4px; }
+  .section-head { font-size: 11px; font-weight: 800; color: #7a7060; text-transform: uppercase; letter-spacing: .12em; border-bottom: 2px solid #e6e2da; padding-bottom: 6px; margin: 28px 0 14px; }
+  .results-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .results-table th { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: #7a7060; padding: 8px 10px; text-align: left; background: #fdf3e3; border-bottom: 2px solid #e6e2da; white-space: nowrap; }
+  .results-table td { padding: 8px 10px; border-bottom: 1px solid #e6e2da; vertical-align: top; background: #fff; }
+  .results-table tr:hover td { background: #fdf8f0; }
+  .results-table td code { background: #f0ece5; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
+  .pass { color: #2a6a2a; font-weight: 700; }
+  .na { color: #7a7060; }
+  .fix-card { background: #fff; border: 1px solid #e6e2da; border-left: 4px solid #b85c2a; border-radius: 8px; padding: 14px 18px; margin-bottom: 12px; }
+  .fix-head { font-weight: 700; margin-bottom: 4px; font-size: 14px; }
+  .fix-file { font-size: 11px; color: #c8a44a; font-family: monospace; margin-bottom: 6px; }
+  .fix-body { font-size: 13px; color: #7a7060; line-height: 1.5; }
+  .diff-del { background: #fdecea; color: #8a1a1a; padding: 4px 10px; border-radius: 4px 4px 0 0; font-size: 12px; font-family: monospace; margin: 6px 0 0; }
+  .diff-add { background: #eaf4ea; color: #1a5a1a; padding: 4px 10px; border-radius: 0 0 4px 4px; font-size: 12px; font-family: monospace; margin: 0 0 6px; }
+  .pass-card { background: #eaf4ea; border: 1px solid #b2d6b2; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; font-size: 13px; }
+  .group-row td { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: #7a7060; padding: 12px 10px 4px; background: #fdf8f0; border-bottom: none; }
+  .open-q { background: #fff8e6; border: 1px solid #e8c860; border-left: 4px solid #c8a44a; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; font-size: 13px; color: #5a4800; }
+</style>
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-max-width="1100"></div>
+<div class="wrap" style="max-width:1100px;margin:0 auto;padding:32px">
+
+  <h1 style="font-size:var(--fs-title);font-weight:700;color:#3d3a32;text-transform:uppercase;letter-spacing:.06em;border-bottom:3px solid #b85c2a;padding-bottom:10px">TVESearch Weekly Audit — 2026-07-17</h1>
+
+  <!-- SUMMARY TILES -->
+  <div class="audit-summary">
+    <div class="stat-tile">
+      <div class="stat-num">65</div>
+      <div class="stat-label">Pages scanned</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Brain_check failures</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Doc discrepancies fixed</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-num">0</div>
+      <div class="stat-label">New pages discovered</div>
+    </div>
+  </div>
+
+  <!-- BRAIN_CHECK RESULTS -->
+  <div class="section-head">Brain_check gate results</div>
+  <div class="pass-card">
+    <strong>check_city_search_tvesearch</strong> — 180/181 ok · 0 fail · 1 warn (CSS duplication, out of scope). All 65 pages that carry a search input load <code>search-autocomplete.js</code> and call <code>TVESearch.attach()</code>.
+  </div>
+  <div class="pass-card">
+    <strong>check_no_ellipsis_placeholders</strong> — 180/181 ok · 0 fail. No placeholder text contains <code>…</code> or <code>...</code>.
+  </div>
+  <div class="pass-card">
+    <strong>check_search_icon_not_overridden</strong> — 180/181 ok · 0 fail. No page paints an opaque background over the shared magnifier without re-including <code>var(--search-icon)</code>.
+  </div>
+  <p style="font-size:12px;color:#7a7060;margin-top:8px">Note: the 1 warn across all checks is the site-wide CSS duplication counter (103 duplicated selectors across 0 pages) — that check is separate from TVESearch and out of scope for this audit.</p>
+
+  <!-- STATIC AUDIT RESULTS TABLE -->
+  <div class="section-head">Static audit results — all 65 pages</div>
+  <p style="font-size:12px;color:#7a7060;margin-bottom:14px">Columns: Script ✓ = correct relative-depth <code>search-autocomplete.js</code> tag · attach() ✓ = TVESearch.attach() call present · Center ✓ = wrapper has centering CSS · Placeholder ✓ = no ellipsis · Beige ✓ = no beige/cream background · Items ✓ = non-empty items array · US ✓ = TVESearch.CITIES used for US city sub labels where applicable.</p>
+
+  <div style="overflow-x:auto">
+  <table class="results-table">
+    <thead>
+      <tr>
+        <th>Page</th>
+        <th>Input ID</th>
+        <th>Script</th>
+        <th>attach()</th>
+        <th>Center</th>
+        <th>Placeholder</th>
+        <th>Beige</th>
+        <th>Items</th>
+        <th>US cities</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="group-row"><td colspan="10">Site Root (1 page)</td></tr>
+      <tr>
+        <td>Guides-Index</td><td><code>#guide-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓ TVESearch.CITIES</td>
+        <td class="na">depth-0: <code>./assets/...</code></td>
+      </tr>
+
+      <tr class="group-row"><td colspan="10">Stats Pages (6 pages)</td></tr>
+      <tr>
+        <td>Asia-Stats</td><td><code>#country-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A — countries only</td><td></td>
+      </tr>
+      <tr>
+        <td>Caribbean-Stats</td><td><code>#country-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Europe-Stats</td><td><code>#country-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>South-America-Stats</td><td><code>#country-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Stats-Across-Canada</td><td><code>#country-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Stats-Across-US</td><td><code>#cmp-a/b/c + #place-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓ (2)</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A — US-only page</td>
+        <td style="font-size:11px">2 TVESearch instances; compare inputs set value only, no event</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="10">Best-Of Pages (34 pages — all identical pattern)</td></tr>
+      <tr>
+        <td colspan="2">Best-Of-Index · Best-Amusement-Parks · Best-Animal-Encounters · Best-Aquariums · Best-Architecture · Best-Art-Museums · Best-Beaches · Best-Castles · Best-Cathedrals · Best-Caves · Best-Gardens · Best-Hard-to-Reach-Places · Best-Hot-Springs · Best-Islands · Best-Kids-Friendly-Places · Best-Kids-Museums · Best-Lakes · Best-Most-Luxurious-Hotels · Best-Mountains-and-Rock-Formations · Best-Museums · Best-National-Parks-by-Country · Best-Natural-Phenomena · Best-Observation-Decks · Best-Resorts · Best-Safari · Best-Scuba-Diving · Best-Ski-Resorts · Best-Surfing · Best-UNESCO-Sites · Best-Ultra-Luxurious-Resorts · Best-Unique-Museums · Best-Volcanoes · Best-Wine-Regions · Best-Wonders-of-the-World</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">All use <code>id="best-of-search"</code> · flex+justify:center · filterTo() custom onPick · <code>.best-of-section-label</code> source · <code>../assets/...</code> depth</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="10">Trip-Essentials — Filter Pages (24 pages)</td></tr>
+      <tr>
+        <td>Baggage</td><td><code>#bg-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Before-You-Go</td><td><code>#byg-find</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓ TVESearch.CITIES</td>
+        <td style="font-size:11px">Custom onPick: <code>chooseCity(item.key, item.name)</code></td>
+      </tr>
+      <tr>
+        <td>Budget-Guide</td><td><code>#budget-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Cards-ATM</td><td><code>#ca-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>City-Transit-Cards</td><td><code>#tc-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">sub = transit card name (not country)</td>
+      </tr>
+      <tr>
+        <td>Currency-Guide</td><td><code>#cur-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">text field has code+symbol for typing "€", "USD"</td>
+      </tr>
+      <tr>
+        <td>Delta-Routes-Full</td><td><code>#destFilter</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Delta-Routes-SEA</td><td><code>#destFilter</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Entry-Requirements</td><td><code>#er-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px;color:#b85c2a">⚠ Doc had incomplete source list — fixed in §4+§7</td>
+      </tr>
+      <tr>
+        <td>European-Train-Guide</td><td><code>#train-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Guide-Days-Coverage</td><td><code>#citySearch</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Lounges-Europe</td><td><code>#lounge-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">sub = IATA code (not state)</td>
+      </tr>
+      <tr>
+        <td>Lounges-US</td><td><code>#lounge-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓ TVESearch.CITIES</td>
+        <td style="font-size:11px">City dedup logic: "New York (JFK)" when two airports</td>
+      </tr>
+      <tr>
+        <td>Pickleball</td><td><code>#city-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">Custom wrapper: <code>.pkl-search-row</code> flex+justify:center</td>
+      </tr>
+      <tr>
+        <td>Plug-Adapter-Guide</td><td><code>#plug-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">depth-2: <code>../../assets/...</code></td>
+      </tr>
+      <tr>
+        <td>Safety-Guide</td><td><code>#city-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓ TVESearch.CITIES</td>
+        <td style="font-size:11px">Bug #2 fixed: was "🇺🇸 USA" before 2026-07</td>
+      </tr>
+      <tr>
+        <td>SIM-Cards</td><td><code>#sim-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">2 sources: <code>.info-row</code> + <code>.sim-country-card</code></td>
+      </tr>
+      <tr>
+        <td>Tap-Water</td><td><code>#tw-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+      <tr>
+        <td>Time-Zones</td><td><code>#search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A — sub=country is correct</td>
+        <td style="font-size:11px">Items from <code>window.CITIES</code> JS array (not DOM)</td>
+      </tr>
+      <tr>
+        <td>Tipping-Guide</td><td><code>#search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px;color:#b85c2a">⚠ §7 doc had stale ID (#region-pills / .pill) — fixed to #search / window.COUNTRIES</td>
+      </tr>
+      <tr>
+        <td>Travel-Insurance</td><td><code>#ti-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">Bug #3 fixed 2026-07-17: <code>.ti-search-wrap</code> was missing centering CSS</td>
+      </tr>
+      <tr>
+        <td>Trusted-Traveler</td><td><code>#tt-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">sub = airport IATA code; <code>data-text</code> for full name + terminal notes</td>
+      </tr>
+      <tr>
+        <td>Vaccines</td><td><code>#vc-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td>
+        <td style="font-size:11px">2 JS sources: <code>window.ALL_SEARCH</code> + <code>window.REGIONS</code></td>
+      </tr>
+      <tr>
+        <td>Visas</td><td><code>#visa-search</code></td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="pass">✓</td><td class="pass">✓</td><td class="pass">✓</td>
+        <td class="na">N/A</td><td></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <!-- DOC FIXES -->
+  <div class="section-head">Reference doc fixes (Brain/Reference/TVESearch.html)</div>
+
+  <div class="fix-card">
+    <div class="fix-head">§7 Tipping-Guide — stale input ID and source</div>
+    <div class="fix-file">Brain/Reference/TVESearch.html · §7 Tipping-Guide row</div>
+    <div class="fix-body">The §7 row showed <code>#region-pills</code> / <code>.pill</code> as the input ID and data source. The actual implementation uses <code>#search</code> and <code>window.COUNTRIES</code> JS array (not DOM). The §4 row was already correct. The §7 row is now updated to match.
+    </div>
+    <div class="diff-del">- Input ID: #region-pills · Source: .pill</div>
+    <div class="diff-add">+ Input ID: #search · Source: window.COUNTRIES JS array (NOT DOM) · Fields: name(country), text(c.cities)</div>
+  </div>
+
+  <div class="fix-card">
+    <div class="fix-head">§4 Entry-Requirements — incomplete source list (only 1 of 3 documented)</div>
+    <div class="fix-file">Brain/Reference/TVESearch.html · §4 Entry-Requirements row</div>
+    <div class="fix-body">
+      The §4 source column described only <code>.vf-card .vf-cities</code>. The actual item builder has three distinct sources:
+      <ol style="margin:6px 0 0 18px;line-height:1.7">
+        <li><code>.system-card</code> → system name, sub "Pre-entry system", text = countries covered</li>
+        <li><code>.evisa-table tbody tr</code> → dest name, sub "e-Visa"</li>
+        <li><code>.vf-card .vf-cities</code> → country names split by "·", sub = region label (Visa-free, eVisa required, etc.)</li>
+      </ol>
+      §4 now lists all three.
+    </div>
+  </div>
+
+  <div class="fix-card">
+    <div class="fix-head">§7 Entry-Requirements — only .system-card source documented</div>
+    <div class="fix-file">Brain/Reference/TVESearch.html · §7 Entry-Requirements row</div>
+    <div class="fix-body">The §7 row showed only <code>.system-card</code> as source. Now shows all three sources and the complete custom onPick behavior (fire input + scroll + eVisa clear-restore pattern).</div>
+  </div>
+
+  <!-- ALL-CLEAR -->
+  <div class="section-head">All-clear pages — every check passed</div>
+  <div class="pass-card">
+    All 65 pages passed every static check: script depth correct, TVESearch.attach() present, centering CSS in place, no ellipsis in placeholders, no beige/cream backgrounds, non-empty items arrays, US-city sub labels correct where applicable. Zero code changes needed — only documentation corrections.
+  </div>
+
+  <!-- OPEN QUESTIONS -->
+  <div class="section-head">Open questions</div>
+  <div class="open-q">
+    <strong>Pickleball custom search icon override:</strong> <code>.pkl-search-box input</code> sets an explicit <code>background: var(--surface) var(--search-icon) no-repeat 13px center</code>. This explicitly re-includes <code>var(--search-icon)</code>, so it passes the <code>check_search_icon_not_overridden</code> gate. No action needed — documenting for reference since it is the only page that explicitly re-sets the icon instead of relying on the shared CSS to inject it.
+  </div>
+  <div class="open-q">
+    <strong>Stats-Across-US compare widget — no input event fired:</strong> The 3 compare inputs (<code>#cmp-a</code>, <code>#cmp-b</code>, <code>#cmp-c</code>) use a custom onPick that sets <code>inp.value = item.name</code> only, without firing an input event. This is intentional — the user clicks the Compare button manually. The behavior is documented in §4 and §7 and is correct as designed.
+  </div>
+
+  <p style="font-size:12px;color:#7a7060;margin-top:24px">Audit completed 2026-07-17 · Static analysis only (browser render tests not run this pass) · Reference: <code>Brain/Reference/TVESearch.html</code></p>
+
+</div>
+<script src="../../assets/toolbar.js"></script>
+</body>
+</html>

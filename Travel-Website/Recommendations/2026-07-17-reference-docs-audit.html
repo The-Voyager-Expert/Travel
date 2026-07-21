@@ -1,0 +1,489 @@
+<title>Reference Docs Audit — 2026-07-17</title>
+<style>
+  :root {
+    --bg:       #f6f5f2;
+    --surface:  #ffffff;
+    --border:   #e2dfd9;
+    --text:     #1e1c18;
+    --muted:    #6b6560;
+    --accent:   #b85c2a;
+    --accent-bg:#f9ede6;
+    --green:    #2a7d46;
+    --green-bg: #eaf5ee;
+    --amber:    #8a5e00;
+    --amber-bg: #fdf3dc;
+    --code-bg:  #f0ede8;
+    --shadow:   0 1px 3px rgba(0,0,0,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #1a1814;
+      --surface:  #242018;
+      --border:   #36322b;
+      --text:     #e8e4dc;
+      --muted:    #9b9590;
+      --accent:   #d4784a;
+      --accent-bg:#3a2215;
+      --green:    #4caf6e;
+      --green-bg: #162b1e;
+      --amber:    #d4a830;
+      --amber-bg: #2a2008;
+      --code-bg:  #2e2a22;
+      --shadow:   0 1px 3px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:#f6f5f2; --surface:#ffffff; --border:#e2dfd9; --text:#1e1c18;
+    --muted:#6b6560; --accent:#b85c2a; --accent-bg:#f9ede6;
+    --green:#2a7d46; --green-bg:#eaf5ee; --amber:#8a5e00; --amber-bg:#fdf3dc;
+    --code-bg:#f0ede8; --shadow:0 1px 3px rgba(0,0,0,.07);
+  }
+  :root[data-theme="dark"] {
+    --bg:#1a1814; --surface:#242018; --border:#36322b; --text:#e8e4dc;
+    --muted:#9b9590; --accent:#d4784a; --accent-bg:#3a2215;
+    --green:#4caf6e; --green-bg:#162b1e; --amber:#d4a830; --amber-bg:#2a2008;
+    --code-bg:#2e2a22; --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.65 system-ui, -apple-system, sans-serif;
+    padding: 36px 24px 60px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  /* Header */
+  .run-header {
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .run-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .run-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .run-date { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+  .status-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .badge-ok   { background: var(--green-bg); color: var(--green); }
+  .badge-warn { background: var(--amber-bg); color: var(--amber); }
+  .badge-info { background: var(--accent-bg); color: var(--accent); }
+
+  /* Summary row */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .stat-card .num {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4px;
+  }
+  .stat-card .num.green { color: var(--green); }
+  .stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+  /* Sections */
+  .section { margin-bottom: 28px; }
+  .section-head {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+
+  /* Change list */
+  .change-list { display: flex; flex-direction: column; gap: 10px; }
+  .change-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 14px;
+    align-items: start;
+  }
+  .change-icon {
+    font-size: 16px;
+    line-height: 1;
+    margin-top: 1px;
+  }
+  .change-body {}
+  .change-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .change-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .change-tag {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .tag-docs   { background: var(--accent-bg); color: var(--accent); }
+  .tag-noact  { background: var(--code-bg);   color: var(--muted);  }
+
+  code {
+    font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+    font-size: 11.5px;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* Check table */
+  .check-table { width: 100%; border-collapse: collapse; }
+  .check-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 0 10px 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .check-table td {
+    font-size: 12px;
+    padding: 8px 10px 8px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .check-table tr:last-child td { border-bottom: none; }
+  .check-name { font-family: ui-monospace, monospace; font-size: 11px; color: var(--accent); }
+  .sev { font-weight: 700; font-size: 11px; }
+  .sev-fail { color: var(--green); }
+
+  /* No-action items */
+  .noact-list { display: flex; flex-direction: column; gap: 8px; }
+  .noact-row {
+    display: flex;
+    gap: 10px;
+    align-items: start;
+    padding: 9px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-size: 12px;
+    color: var(--muted);
+    box-shadow: var(--shadow);
+  }
+  .noact-row .tick { color: var(--green); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Gaps */
+  .gap-none {
+    padding: 10px 14px;
+    background: var(--green-bg);
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .footer {
+    margin-top: 40px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="run-header">
+    <div>
+      <div class="run-label">Scheduled routine</div>
+      <div class="run-title">Reference Docs Audit</div>
+      <div class="run-date">2026-07-17 · post-commit run</div>
+    </div>
+    <div class="status-bar">
+      <span class="badge badge-ok">✓ 180/181 brain_check ok</span>
+      <span class="badge badge-ok">✓ 0 fail</span>
+      <span class="badge badge-warn">⚠ 1 warn (pre-existing CSS dup)</span>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="num">4</div>
+      <div class="label">Gaps detected</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">3</div>
+      <div class="label">Doc files updated</div>
+    </div>
+    <div class="stat-card">
+      <div class="num green">0</div>
+      <div class="label">Validators written</div>
+    </div>
+    <div class="stat-card">
+      <div class="num green">0</div>
+      <div class="label">CORE RULES gaps</div>
+    </div>
+  </div>
+
+  <!-- What was detected -->
+  <div class="section">
+    <div class="section-head">Changes detected since 2026-07-16 post-revert audit</div>
+    <div class="change-list">
+
+      <div class="change-row">
+        <div class="change-icon">🔍</div>
+        <div class="change-body">
+          <div class="change-title">4 <code>brain_check.py</code> gates missing from docs</div>
+          <div class="change-desc">
+            All 4 checks existed on disk in <code>Brain/scripts/brain_check.py</code> (Drive-only) but had no entries in
+            <em>Validator Index.html</em>, and no ⚠️ bullets in <em>CLAUDE.md</em> DriftyCat.
+            Three of the four were also missing from the <em>Validator Index</em> changelog entirely.
+            The Cleanliness Checks items (541–543) existed but item 543 had a stale scope description.
+          </div>
+          <span class="change-tag tag-docs">Doc gap</span>
+        </div>
+      </div>
+
+      <div class="change-row">
+        <div class="change-icon">📱</div>
+        <div class="change-body">
+          <div class="change-title">iOS hamburger menu CSS fix — mobile.css (commit 26364428e)</div>
+          <div class="change-desc">
+            Added <code>.tb .tb-ham-menu a</code> and <code>.tb .tb-ham-menu a.tb-active</code> in mobile.css to strip
+            desktop chip background + <code>white-space:nowrap</code> from iOS hamburger links (text was clipped by
+            <code>overflow-x:hidden</code> on body). Bug fix only — no new user-facing standard, no DriftyCat entry needed.
+          </div>
+          <span class="change-tag tag-noact">No action needed</span>
+        </div>
+      </div>
+
+      <div class="change-row">
+        <div class="change-icon">💊</div>
+        <div class="change-body">
+          <div class="change-title">City Transit Cards pill REST state fix (commit ae6eb9969)</div>
+          <div class="change-desc">
+            Fixed <code>var(--warm)</code> → <code>var(--surface, #ffffff)</code> on the transit card filter pills.
+            Correct fix for the existing beige-pill rule (Cleanliness Checks Rule 455 / <code>check_no_beige_pill_button</code>).
+            No new standard introduced.
+          </div>
+          <span class="change-tag tag-noact">No action needed</span>
+        </div>
+      </div>
+
+      <div class="change-row">
+        <div class="change-icon">🔎</div>
+        <div class="change-body">
+          <div class="change-title">TVESearch v4–v8 improvements</div>
+          <div class="change-desc">
+            Word-start matching (<code>wsMatch</code>), US state sub-labels, shared <code>TVESearch.CITIES</code> map,
+            EU Train / Safety Guide / Lounges-US fixes. All already documented in <code>Brain/Reference/TVESearch.html</code>
+            (version stamp updated to v=8 as of 2026-07-17).
+          </div>
+          <span class="change-tag tag-noact">Already documented</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Doc updates made -->
+  <div class="section">
+    <div class="section-head">Documentation updates made this run</div>
+    <div class="change-list">
+
+      <div class="change-row">
+        <div class="change-icon">📋</div>
+        <div class="change-body">
+          <div class="change-title">CLAUDE.md DriftyCat — 4 new ⚠️ bullets added</div>
+          <div class="change-desc">
+            Added missing enforcement bullets for all 4 undocumented brain_check gates:
+            <code>check_train_time_left_padding</code> · <code>check_station_box_first_child_margin</code> ·
+            <code>check_index_table_design</code> · <code>check_city_search_tvesearch</code>.
+            Each bullet includes: what the standard is, the wrong behavior, and the exact enforcing check name.
+          </div>
+          <span class="change-tag tag-docs">Drive-only edit</span>
+        </div>
+      </div>
+
+      <div class="change-row">
+        <div class="change-icon">📑</div>
+        <div class="change-body">
+          <div class="change-title">Validator Index.html — 3 missing changelog entries added</div>
+          <div class="change-desc">
+            Added entries (dated 2026-07-16) for <code>check_station_box_first_child_margin</code> (Rule 541),
+            <code>check_index_table_design</code> (Rule 542), and <code>check_city_search_tvesearch</code> (Rule 543).
+            These checks were active in brain_check but absent from the Validator Index changelog.
+          </div>
+          <span class="change-tag tag-docs">Drive-only edit</span>
+        </div>
+      </div>
+
+      <div class="change-row">
+        <div class="change-icon">📝</div>
+        <div class="change-body">
+          <div class="change-title">Cleanliness Checks.md Rule 543 — scope broadened in description</div>
+          <div class="change-desc">
+            The check was silently broadened on 2026-07-17 to include <code>type="text"</code> inputs with city/country/state/search
+            placeholders (not just <code>type="search"</code>). The doc now matches the code — includes detection scope,
+            the type="text" pattern, and the "broadened 2026-07-17" timestamp.
+          </div>
+          <span class="change-tag tag-docs">Drive-only edit</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Checks coverage table -->
+  <div class="section">
+    <div class="section-head">brain_check.py gates now fully documented</div>
+    <div style="overflow-x:auto;">
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th>Check function</th>
+            <th>Rule</th>
+            <th>Severity</th>
+            <th>CLAUDE.md ⚠️</th>
+            <th>Validator Index</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="check-name">check_train_time_left_padding</span></td>
+            <td>538</td>
+            <td><span class="sev sev-fail">HARD-FAIL</span></td>
+            <td>✓ added</td>
+            <td>✓ (was present)</td>
+          </tr>
+          <tr>
+            <td><span class="check-name">check_station_box_first_child_margin</span></td>
+            <td>541</td>
+            <td><span class="sev sev-fail">HARD-FAIL</span></td>
+            <td>✓ added</td>
+            <td>✓ added</td>
+          </tr>
+          <tr>
+            <td><span class="check-name">check_index_table_design</span></td>
+            <td>542</td>
+            <td><span class="sev sev-fail">HARD-FAIL</span></td>
+            <td>✓ added</td>
+            <td>✓ added</td>
+          </tr>
+          <tr>
+            <td><span class="check-name">check_city_search_tvesearch</span></td>
+            <td>543</td>
+            <td><span class="sev sev-fail">HARD-FAIL</span></td>
+            <td>✓ added</td>
+            <td>✓ added · scope updated</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CORE RULES / ship checklist gaps -->
+  <div class="section">
+    <div class="section-head">CORE RULES gaps for owner</div>
+    <div class="gap-none">✓ None — all changes are site-wide CSS/search standards documented in Cleanliness Checks and DriftyCat. No CORE RULES file needs updating.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">No-action items confirmed</div>
+    <div class="noact-list">
+      <div class="noact-row">
+        <span class="tick">✓</span>
+        <span>TVESearch.html already up to date at v=8 — no edits needed.</span>
+      </div>
+      <div class="noact-row">
+        <span class="tick">✓</span>
+        <span>iOS hamburger CSS fix is a defensive patch; no new ⚠️ entry or invariant lock needed.</span>
+      </div>
+      <div class="noact-row">
+        <span class="tick">✓</span>
+        <span>City Transit Cards beige-pill fix covered by existing <code>check_no_beige_pill_button</code> (Rule 455); no new documentation needed.</span>
+      </div>
+      <div class="noact-row">
+        <span class="tick">✓</span>
+        <span>No guide-affecting changes detected — Steps 4–5 (guide build instruction updates) skipped correctly.</span>
+      </div>
+      <div class="noact-row">
+        <span class="tick">✓</span>
+        <span>No new validators written — all 4 checks already existed in brain_check.py; only documentation was missing.</span>
+      </div>
+      <div class="noact-row">
+        <span class="tick">✓</span>
+        <span>No tracked git files changed — all edits were Drive-only. Commit step skipped per SKILL.md.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Routine: <strong>reference-docs-audit</strong> · Scheduled task</span>
+    <span>brain_check 180/181 · 0 fail · 1 warn (pre-existing)</span>
+  </div>
+
+</div>

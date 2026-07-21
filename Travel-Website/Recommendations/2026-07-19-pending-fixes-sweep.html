@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pending Fixes Sweep — 2026-07-19</title>
+<style>
+:root {
+  --terra: #b85c2a; --gold: #c8a44a;
+  --bg: #faf8f4; --surface: #ffffff; --border: #e8e2d9;
+  --text: #3d3a32; --sub: #5c5750; --muted: #8c8480;
+  --pass-bg: #edf5f0; --pass: #2d6a4f;
+  --warn-bg: #fef6e7; --warn: #92400e;
+  --info-bg: #f0f4fb; --info: #2c4a8a;
+  --skip-bg: #f3f0ed; --skip: #7a766e;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #181614; --surface: #221f1c; --border: #332e29;
+    --text: #ede7df; --sub: #b0a89e; --muted: #7a7068;
+    --pass-bg: #0d2318; --pass: #5aa870;
+    --warn-bg: #1c1200; --warn: #e8a040;
+    --info-bg: #0c1628; --info: #7090d8;
+    --skip-bg: #1e1b18; --skip: #908880;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #181614; --surface: #221f1c; --border: #332e29;
+  --text: #ede7df; --sub: #b0a89e; --muted: #7a7068;
+  --pass-bg: #0d2318; --pass: #5aa870;
+  --warn-bg: #1c1200; --warn: #e8a040;
+  --info-bg: #0c1628; --info: #7090d8;
+  --skip-bg: #1e1b18; --skip: #908880;
+}
+:root[data-theme="light"] {
+  --bg: #faf8f4; --surface: #ffffff; --border: #e8e2d9;
+  --text: #3d3a32; --sub: #5c5750; --muted: #8c8480;
+  --pass-bg: #edf5f0; --pass: #2d6a4f;
+  --warn-bg: #fef6e7; --warn: #92400e;
+  --info-bg: #f0f4fb; --info: #2c4a8a;
+  --skip-bg: #f3f0ed; --skip: #7a766e;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px; line-height: 1.65;
+  background: var(--bg); color: var(--text);
+  padding: 36px 24px 60px;
+}
+.wrap { max-width: 820px; margin: 0 auto; }
+h1 {
+  font-size: 17px; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--text);
+  padding-bottom: 10px; border-bottom: 3px solid var(--terra);
+  margin-bottom: 4px;
+}
+.meta { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+  text-transform: uppercase; color: var(--terra);
+  margin: 28px 0 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 18px; min-width: 100px;
+}
+.stat .n { font-size: 26px; font-weight: 700; color: var(--terra); line-height: 1; }
+.stat .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase;
+             letter-spacing: 0.06em; margin-top: 3px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden; margin-bottom: 8px;
+}
+.card-head {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 13px 16px;
+}
+.badge {
+  flex-shrink: 0; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 3px; margin-top: 1px;
+}
+.badge-pass { background: var(--pass-bg); color: var(--pass); }
+.badge-warn { background: var(--warn-bg); color: var(--warn); }
+.badge-info { background: var(--info-bg); color: var(--info); }
+.badge-skip { background: var(--skip-bg); color: var(--skip); }
+.card-title { font-size: 14px; font-weight: 600; flex: 1; }
+.card-body {
+  padding: 0 16px 13px 36px; font-size: 13px;
+  color: var(--sub); line-height: 1.6;
+}
+.card-body code {
+  font-family: ui-monospace, monospace; font-size: 12px;
+  background: var(--border); padding: 1px 5px; border-radius: 3px;
+}
+ul.detail { list-style: none; margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
+ul.detail li {
+  font-size: 12px; color: var(--sub); padding: 2px 0 2px 10px;
+  border-left: 2px solid var(--border);
+}
+ul.detail li.ok { border-left-color: var(--pass); }
+table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  overflow-x: auto; display: block;
+}
+th {
+  background: var(--skip-bg); border-bottom: 2px solid var(--border);
+  padding: 7px 12px; text-align: left; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  white-space: nowrap;
+}
+td { padding: 7px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--skip-bg); }
+.ok { color: var(--pass); font-weight: 600; }
+.gap { color: var(--warn); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Pending Fixes Sweep — 2026-07-19</h1>
+<p class="meta">Run date: 2026-07-19 · Scope: guide HTML only · Source: 2026-07-19-mobile-audit.html + 2026-07-18-pending-fixes-sweep.html (carry-over)</p>
+
+<div class="stat-row">
+  <div class="stat"><div class="n">3</div><div class="lbl">Guides fixed</div></div>
+  <div class="stat"><div class="n">23</div><div class="lbl">Images fixed</div></div>
+  <div class="stat"><div class="n">14</div><div class="lbl">Chain guides restamped</div></div>
+  <div class="stat"><div class="n">1</div><div class="lbl">Deferred</div></div>
+</div>
+
+<h2>Image Attribute Fixes</h2>
+
+<div class="card">
+  <div class="card-head">
+    <span class="badge badge-pass">FIXED · LIVE</span>
+    <span class="card-title">Coeur d'Alene — add <code>loading="lazy"</code> + <code>width/height</code> to 4 stop images</span>
+  </div>
+  <div class="card-body">
+    Source: 2026-07-19-mobile-audit.html (NEEDS RE-SHIP). 4 images missing both lazy-load and explicit dimensions; dimensions sourced from <code>_build/assets/photo_provenance.json</code>.
+    <ul class="detail">
+      <li class="ok">Tubbs_Hill_and_Lake_Coeur — loading="lazy" width="800" height="429"</li>
+      <li class="ok">Mist_on_Lake_Coeur_dAlene — loading="lazy" width="800" height="450"</li>
+      <li class="ok">Old_Mission_State_Park — loading="lazy" width="800" height="639"</li>
+      <li class="ok">Corkscrew_Silverwood — loading="lazy" width="800" height="534"</li>
+    </ul>
+    Validated 0 failures · signed stamp written · commit a8b101bd0.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <span class="badge badge-pass">FIXED · LIVE</span>
+    <span class="card-title">Marco Island — add <code>loading="lazy"</code> + <code>width/height</code> to 7 stop images</span>
+  </div>
+  <div class="card-body">
+    Source: 2026-07-19-mobile-audit.html (NEEDS RE-SHIP). 7 images missing both attributes.
+    <ul class="detail">
+      <li class="ok">Key_Marco_Cat — width="800" height="1018"</li>
+      <li class="ok">Slipping_into_the_Sea (Cape Romano) — width="800" height="639"</li>
+      <li class="ok">Least_Terns_Tigertail_Beach — width="800" height="639"</li>
+      <li class="ok">Marco_Island_Beach_panoramio — width="800" height="535"</li>
+      <li class="ok">Ten_Thousand_Islands_NWR — width="800" height="533"</li>
+      <li class="ok">Collier-Seminole_SP_dredge_pano03 — width="800" height="407"</li>
+      <li class="ok">Rookery_Bay — width="800" height="600"</li>
+    </ul>
+    Validated 0 failures · signed stamp written · commit 440c41d44.
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <span class="badge badge-pass">FIXED · LIVE</span>
+    <span class="card-title">Hilton Head Island — add <code>width/height</code> to 12 stop images</span>
+  </div>
+  <div class="card-body">
+    Source: 2026-07-19-mobile-audit.html (NEEDS RE-SHIP). 12 images already had <code>loading="lazy"</code>; dimensions added only.
+    <ul class="detail">
+      <li class="ok">Stoney-Baynard_Plantation → h="480" · Lake_Joe_Sea_Pines → h="600" · Harbour_Town_July_2007 → h="600"</li>
+      <li class="ok">Plage-HHI-6 → h="587" · Pinckney_Island_NWR → h="645" · Hilton_Head_Island_Banner → h="114"</li>
+      <li class="ok">Fort_Howell → h="600" · Hilton_Head_Island_SC → h="600" · Hunting_Island_Lighthouse → h="1066"</li>
+      <li class="ok">Church_of_the_Cross → h="598" · Fish_Haul_Creek → h="360" · Plage-HHI-1 → h="533"</li>
+    </ul>
+    Validated 0 failures · signed stamp written · commit 5b8a1cf8b.
+  </div>
+</div>
+
+<h2>Carousel Chain (Automated Repair)</h2>
+
+<div class="card">
+  <div class="card-head">
+    <span class="badge badge-info">CHAIN REPAIR · LIVE</span>
+    <span class="card-title">14 guides restamped — 4 new guides spliced into A-Z carousel chain</span>
+  </div>
+  <div class="card-body">
+    Bilbao, Coeur-dAlene, Marco-Island, and Hilton-Head-Island were inserted into the alphabetical chain by prior build cribs. 8 neighbor guides had invalid stamps (data-prev/data-next changed); 6 adjacent guides had stamp-date-only drift (same sig, date bumped). All restamped and validated 0 failures.
+    <table>
+      <thead><tr><th>Guide</th><th>Change</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Big-Island</td><td>data-next: Bologna → Bilbao</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Bologna</td><td>data-prev: Big-Island → Bilbao</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Cinque-Terre</td><td>data-next: Colmar → Coeur-dAlene</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Colmar</td><td>data-prev: Cinque-Terre → Coeur-dAlene</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Helsinki</td><td>data-next: Hoi-An → Hilton-Head-Island</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Hoi-An</td><td>data-prev: Helsinki → Hilton-Head-Island</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Manuel-Antonio</td><td>data-next: Marktoberdorf → Marco-Island</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Marktoberdorf</td><td>data-prev: Manuel-Antonio → Marco-Island</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Amsterdam</td><td>Stamp date drift only (sig identical)</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Amalfi</td><td>Stamp date drift only (sig identical)</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Aracaju</td><td>Stamp date drift only (sig identical)</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Bhutan</td><td>Stamp date drift only (sig identical)</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Recife</td><td>Stamp date drift only (sig identical)</td><td class="ok">✓ Restamped</td></tr>
+        <tr><td>Zurich</td><td>Stamp date drift only (sig identical)</td><td class="ok">✓ Restamped</td></tr>
+      </tbody>
+    </table>
+    Commit 2e491aa76.
+  </div>
+</div>
+
+<h2>Bundled: Naples Day 4 Expansion</h2>
+
+<div class="card">
+  <div class="card-head">
+    <span class="badge badge-pass">SHIPPED · LIVE</span>
+    <span class="card-title">Naples — Day 4 expansion (Pio Monte della Misericordia · Chiostro di Santa Chiara · Gesù Nuovo)</span>
+  </div>
+  <div class="card-body">
+    Committed with 2 new photos, updated provenance.json, Guides-Index days 3→4, day-expansion rolling report, and Trips.html. Publisher ran automatically: Guide-Days-Coverage.html + search_index.json also updated. Commits 472dc7eb1 + 92bc6b885.
+  </div>
+</div>
+
+<h2>Deferred</h2>
+
+<div class="card">
+  <div class="card-head">
+    <span class="badge badge-warn">DEFERRED (2nd run)</span>
+    <span class="card-title">San Jose — dead GYG tour needs live replacement research</span>
+  </div>
+  <div class="card-body">
+    Carried from 2026-07-18 report. The existing GetYourGuide tour link is dead; a live replacement requires MCP tour research (Viator + TripAdvisor) which is out of scope for a format-fix sweep. Logged to To Do List. Will not self-defer a third time — next pending-fixes-sweep must attempt the replacement research.
+  </div>
+</div>
+
+<h2>Summary</h2>
+
+<table>
+  <thead><tr><th>Guide</th><th>Fix</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Coeur d'Alene</td><td>4 images: loading="lazy" + width/height</td><td class="ok">✓ Fixed · live</td></tr>
+    <tr><td>Marco Island</td><td>7 images: loading="lazy" + width/height</td><td class="ok">✓ Fixed · live</td></tr>
+    <tr><td>Hilton Head Island</td><td>12 images: width/height only</td><td class="ok">✓ Fixed · live</td></tr>
+    <tr><td>Naples</td><td>Day 4 expansion (bundled)</td><td class="ok">✓ Shipped · live</td></tr>
+    <tr><td>14 carousel guides</td><td>Chain repair + stamp refresh</td><td class="ok">✓ Restamped · live</td></tr>
+    <tr><td>San Jose</td><td>Dead GYG tour (needs live research)</td><td class="gap">⟳ Deferred</td></tr>
+  </tbody>
+</table>
+
+</div>
+</body>
+</html>

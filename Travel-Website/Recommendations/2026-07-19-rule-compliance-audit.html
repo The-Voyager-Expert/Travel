@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rule Compliance Audit — 2026-07-19</title>
+<style>
+  :root {
+    --bg:        #f7f4ef;
+    --surface:   #ffffff;
+    --surface2:  #fdf9f4;
+    --text:      #2d2b26;
+    --muted:     #6b6660;
+    --border:    #e3ddd5;
+    --accent:    #b85c2a;
+    --gold:      #c8a44a;
+    --gold-deep: #8a6c1a;
+    --green:     #4a9b6f;
+    --green-bg:  #eef7f2;
+    --amber:     #d4940a;
+    --amber-bg:  #fef8e6;
+    --red:       #c0392b;
+    --red-bg:    #fdf0ee;
+    --code-bg:   #f0ece5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:        #1c1a17;
+      --surface:   #252320;
+      --surface2:  #2a2824;
+      --text:      #e8e3da;
+      --muted:     #9a9488;
+      --border:    #38342e;
+      --accent:    #d4794a;
+      --gold:      #d4a84a;
+      --gold-deep: #c8a44a;
+      --green:     #5ab87e;
+      --green-bg:  #162a1f;
+      --amber:     #e0a51c;
+      --amber-bg:  #241e0a;
+      --red:       #e05a4e;
+      --red-bg:    #241210;
+      --code-bg:   #2a2724;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f4ef; --surface: #ffffff; --surface2: #fdf9f4;
+    --text: #2d2b26; --muted: #6b6660; --border: #e3ddd5;
+    --accent: #b85c2a; --gold: #c8a44a; --gold-deep: #8a6c1a;
+    --green: #4a9b6f; --green-bg: #eef7f2;
+    --amber: #d4940a; --amber-bg: #fef8e6;
+    --red: #c0392b; --red-bg: #fdf0ee; --code-bg: #f0ece5;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1a17; --surface: #252320; --surface2: #2a2824;
+    --text: #e8e3da; --muted: #9a9488; --border: #38342e;
+    --accent: #d4794a; --gold: #d4a84a; --gold-deep: #c8a44a;
+    --green: #5ab87e; --green-bg: #162a1f;
+    --amber: #e0a51c; --amber-bg: #241e0a;
+    --red: #e05a4e; --red-bg: #241210; --code-bg: #2a2724;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .rca-header {
+    background: var(--surface);
+    border-bottom: 3px solid var(--accent);
+    padding: 28px 32px 22px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .rca-header-left { display: flex; flex-direction: column; gap: 4px; }
+  .rca-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .rca-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .rca-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .rca-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+  .badge-pass  { background: var(--green-bg); color: var(--green); }
+  .badge-warn  { background: var(--amber-bg); color: var(--amber); }
+  .badge-fail  { background: var(--red-bg);   color: var(--red); }
+  .badge-info  { background: var(--code-bg);  color: var(--muted); }
+
+  /* ── Summary Bar ── */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sum-tile {
+    background: var(--surface);
+    padding: 16px 20px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .sum-tile:last-child { border-right: none; }
+  .sum-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .sum-value { font-size: 24px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .sum-note  { font-size: 11px; color: var(--muted); }
+
+  /* ── Body ── */
+  .rca-body { max-width: 860px; margin: 0 auto; padding: 28px 24px 0; }
+
+  /* ── Section ── */
+  .rca-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .rca-section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .section-tag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .section-tag.tag-done   { background: var(--green); }
+  .section-tag.tag-audit  { background: var(--gold-deep); }
+  .section-tag.tag-fix    { background: var(--muted); }
+  .section-tag.tag-note   { background: var(--amber); color: #fff; }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .section-title small { font-weight: 400; color: var(--muted); }
+  .rca-section-body { padding: 14px 18px; }
+
+  /* ── Finding rows ── */
+  .finding {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .finding:last-child { border-bottom: none; }
+  .finding-icon { flex-shrink: 0; width: 18px; text-align: center; margin-top: 1px; }
+  .finding-body { flex: 1; min-width: 0; }
+  .finding-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .finding-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .finding-desc code {
+    font-family: "SF Mono", "Fira Code", Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: var(--gold-deep);
+  }
+
+  /* ── Cascade Table ── */
+  .cascade-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .cg-head { grid-column: 1 / -1; display: contents; }
+  .cg-cell {
+    padding: 8px 11px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .cg-cell:last-child, .cg-cell:nth-last-child(-n+3) { border-bottom: none; }
+  .cg-head-cell {
+    padding: 6px 11px;
+    background: var(--surface2);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .cg-surface { font-weight: 600; color: var(--text); }
+  .cg-file { font-family: "SF Mono", Consolas, monospace; font-size: 11px; color: var(--muted); }
+  .cg-status-cell { display: flex; align-items: center; justify-content: flex-end; }
+
+  /* ── Recurring pattern ── */
+  .pattern-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .pattern-card:last-child { margin-bottom: 0; }
+  .pattern-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .pattern-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .pattern-body { font-size: 12px; color: var(--muted); line-height: 1.55; }
+  .pattern-body code {
+    font-family: "SF Mono", Consolas, monospace; font-size: 11px;
+    background: var(--code-bg); padding: 1px 4px; border-radius: 3px; color: var(--gold-deep);
+  }
+  .freq-chip {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 2px 7px; border-radius: 12px;
+  }
+  .freq-high   { background: var(--red-bg);   color: var(--red); }
+  .freq-medium { background: var(--amber-bg); color: var(--amber); }
+  .freq-low    { background: var(--green-bg); color: var(--green); }
+  .freq-fixed  { background: var(--green-bg); color: var(--green); }
+
+  /* ── Rule pair cards ── */
+  .rule-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .rule-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 5px 5px 0;
+    padding: 12px 14px;
+  }
+  .rule-num { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+  .rule-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .rule-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .rule-body code {
+    font-family: "SF Mono", Consolas, monospace; font-size: 11px;
+    background: var(--code-bg); padding: 1px 4px; border-radius: 3px; color: var(--gold-deep);
+  }
+  .rule-enforcer {
+    margin-top: 7px;
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--muted);
+  }
+  .enforcer-label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: var(--green); text-transform: uppercase; }
+
+  /* ── Footer ── */
+  .rca-footer {
+    max-width: 860px;
+    margin: 20px auto 0;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .footer-note { font-size: 11px; color: var(--muted); }
+  .brain-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .brain-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .brain-text { color: var(--muted); }
+  .brain-text strong { color: var(--green); font-weight: 600; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .rca-header { padding: 20px 16px 16px; }
+    .summary-bar { grid-template-columns: repeat(2, 1fr); }
+    .sum-tile { border-right: none; border-bottom: 1px solid var(--border); }
+    .sum-tile:nth-child(even) { border-left: 1px solid var(--border); }
+    .sum-tile:nth-last-child(-n+2) { border-bottom: none; }
+    .rca-body { padding: 16px 12px 0; }
+    .rule-pair { grid-template-columns: 1fr; }
+    .rca-footer { padding: 0 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="rca-header">
+  <div class="rca-header-left">
+    <div class="rca-eyebrow">The Voyager Expert · Scheduled Routine</div>
+    <div class="rca-title">Rule Compliance Audit</div>
+    <div class="rca-subtitle">Run 2 of 2026-07-19 · Detection window: 2026-07-19 (same-day gap closure)</div>
+  </div>
+  <div class="rca-meta">
+    <span class="status-badge badge-pass">✓ All cascades complete</span>
+    <span>brain_check 184/185 · 0 fail</span>
+  </div>
+</div>
+
+<!-- ── Summary tiles ── -->
+<div class="summary-bar">
+  <div class="sum-tile">
+    <span class="sum-label">New rules detected</span>
+    <span class="sum-value">2</span>
+    <span class="sum-note">Rules 548 &amp; 549</span>
+  </div>
+  <div class="sum-tile">
+    <span class="sum-label">New content detected</span>
+    <span class="sum-value">1</span>
+    <span class="sum-note">Best-Unique-Hotels.html</span>
+  </div>
+  <div class="sum-tile">
+    <span class="sum-label">Cascade surfaces updated</span>
+    <span class="sum-value">5</span>
+    <span class="sum-note">Drive-only, no git commit</span>
+  </div>
+  <div class="sum-tile">
+    <span class="sum-label">Enforcement gaps closed</span>
+    <span class="sum-value">3</span>
+    <span class="sum-note">Documentation backlog</span>
+  </div>
+</div>
+
+<!-- ── Body ── -->
+<div class="rca-body">
+
+  <!-- DETECT -->
+  <div class="rca-section">
+    <div class="rca-section-head">
+      <span class="section-tag">DETECT</span>
+      <span class="section-title">New rules &amp; content found <small>— Track A (current-state cross-check) + Track D (new pages)</small></span>
+    </div>
+    <div class="rca-section-body">
+
+      <div class="finding">
+        <div class="finding-icon">⚠️</div>
+        <div class="finding-body">
+          <div class="finding-title">Detection methodology gap identified</div>
+          <div class="finding-desc">
+            Track C (git log for <code>Brain/scripts/</code>) only surfaces rules committed within the detection window.
+            Two 2026-07-19 CHANGELOG entries in <code>validate_itinerary.py</code> were committed on 2026-07-14 —
+            before every prior RCA window — and therefore evaded all prior Track C sweeps.
+            Track A (DriftyCat vs validator cross-check, date-agnostic current-state) caught them regardless.
+            <strong>Fix:</strong> Track A is now the primary detection mechanism; Track C fills in the timing context only.
+          </div>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-icon">📍</div>
+        <div class="finding-body">
+          <div class="finding-title">Rule 548 — Stop-row map links must not contain ↗ (U+2197)</div>
+          <div class="finding-desc">
+            Hard-fail added to <code>validate_itinerary.py</code> (committed 2026-07-14, CHANGELOG dated 2026-07-19).
+            Scans every <code>&lt;div class="stop-row"&gt;📍 &lt;a&gt;</code> and fails if anchor text contains the ↗ arrow.
+            Surfaced when three guides shipped the hotel-banner link style applied to stop addresses:
+            Bilbao (58 links), Hilton Head Island (38), Marco Island (30). All fixed fleet-wide 2026-07-19.
+            No Cleanliness Checks entry or Validator Index row existed — documentation gap only.
+          </div>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-icon">⏰</div>
+        <div class="finding-body">
+          <div class="finding-title">Rule 549 — ⏰ unit must be <code>hr</code>/<code>hrs</code>, never bare <code>h</code></div>
+          <div class="finding-desc">
+            <code>_dur_valid_re</code> tightened from <code>h(?:rs?|ours?)?</code> → <code>hrs?</code> (requires at least "hr").
+            Canonical forms: <code>⏰ ~1 hr</code>, <code>⏰ ~1.5 hr</code>, <code>⏰ ~45 min</code>, <code>⏰ ~1 hr 30 min</code>.
+            Fleet impact at tightening: 47 guides used bare-h shorthand — all fixed in one audit-crib pass (commit <code>627b15254</code>).
+            Validator Index line 192 still showed stale <code>~Nh</code> examples — documentation gap.
+          </div>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-icon">🏨</div>
+        <div class="finding-body">
+          <div class="finding-title">Best-Unique-Hotels.html — new page not in Brain.md Part 1</div>
+          <div class="finding-desc">
+            Committed 2026-07-19 13:12 PDT (commit <code>535415645</code>). 26 hotels across 20 countries.
+            Wired into the Best-of toolbar chain between Ultra Luxurious Resorts and Safari.
+            <code>Brain/Reference/Brain.md</code> Part 1 Best-of list jumped from <code>Best-Ultra-Luxurious-Resorts.html</code>
+            directly to <code>Best-Unique-Museums.html</code> — documentation gap only.
+          </div>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-icon">💡</div>
+        <div class="finding-body">
+          <div class="finding-title">Visited pill (toolbar.js §16) — documented in Toolbar.html but not Brain.md</div>
+          <div class="finding-desc">
+            <code>_injectVisitedPill()</code> added 2026-07-19: runtime-injected gold-outline pill ("Visited") on guide pages
+            where <code>localStorage.getItem('tve-visited-{slug}')</code> is set. Personal — other visitors never see it.
+            Toolbar.html §16 already has a full spec; Brain.md toolbar.js entry lacked the reference — added.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CASCADE -->
+  <div class="rca-section">
+    <div class="rca-section-head">
+      <span class="section-tag tag-done">CASCADE</span>
+      <span class="section-title">Documentation cascade — all Drive-only, no tracked file changes</span>
+    </div>
+    <div class="rca-section-body">
+
+      <div class="rule-pair">
+        <div class="rule-card">
+          <div class="rule-num">Cleanliness Checks · Rule 548</div>
+          <div class="rule-title">📍 Stop-row map links — no ↗ directional arrow</div>
+          <div class="rule-body">
+            Added to <code>Brain/Reference/Cleanliness Checks.md</code> after Rule 547.
+            Rule home: <code>Icon Order and Format.html</code> row 7 / <code>Links.html</code>.
+          </div>
+          <div class="rule-enforcer">
+            <span class="enforcer-label">Hard-fail</span>
+            <code style="font-size:11px">validate_itinerary.py</code>
+          </div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">Cleanliness Checks · Rule 549</div>
+          <div class="rule-title">⏰ Unit is <code>hr</code>/<code>hrs</code> — never bare <code>h</code></div>
+          <div class="rule-body">
+            Added after Rule 548. Canonical: <code>⏰ ~1 hr</code>.
+            Decimal hours (<code>~1.5 hr</code>) remain valid. Ranges still banned.
+            Rule home: <code>Icon Order and Format.html</code> §2 Pos 4b.
+          </div>
+          <div class="rule-enforcer">
+            <span class="enforcer-label">Hard-fail</span>
+            <code style="font-size:11px">validate_itinerary.py · _dur_valid_re</code>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="cascade-grid">
+          <div class="cg-head-cell">Surface</div>
+          <div class="cg-head-cell">File</div>
+          <div class="cg-head-cell" style="text-align:right">Status</div>
+
+          <div class="cg-cell cg-surface">Cleanliness Checks — rules</div>
+          <div class="cg-cell cg-file">Brain/Reference/Cleanliness Checks.md</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ Added 548 + 549</span></div>
+
+          <div class="cg-cell cg-surface">Cleanliness Checks — header count</div>
+          <div class="cg-cell cg-file">Brain/Reference/Cleanliness Checks.md</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ 546 → 549</span></div>
+
+          <div class="cg-cell cg-surface">Validator Index — enforcement rows</div>
+          <div class="cg-cell cg-file">Brain/Reference/Validator Index.html</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ 2 rows added</span></div>
+
+          <div class="cg-cell cg-surface">Validator Index — ⏰ entry corrected</div>
+          <div class="cg-cell cg-file">Brain/Reference/Validator Index.html (line 192)</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ ~Nh removed</span></div>
+
+          <div class="cg-cell cg-surface">Validator Index — .meta changelog</div>
+          <div class="cg-cell cg-file">Brain/Reference/Validator Index.html</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ 2026-07-19 entry</span></div>
+
+          <div class="cg-cell cg-surface">DriftyCat bullets (2 new)</div>
+          <div class="cg-cell cg-file">CLAUDE.md</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ Rules 548 &amp; 549</span></div>
+
+          <div class="cg-cell cg-surface">Best-of collection list</div>
+          <div class="cg-cell cg-file">Brain/Reference/Brain.md (Part 1)</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ Hotels added; ~34</span></div>
+
+          <div class="cg-cell cg-surface">Visited pill documentation</div>
+          <div class="cg-cell cg-file">Brain/Reference/Brain.md (toolbar.js entry)</div>
+          <div class="cg-cell cg-status-cell"><span class="status-badge badge-pass">✓ §16 reference added</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT -->
+  <div class="rca-section">
+    <div class="rca-section-head">
+      <span class="section-tag tag-audit">AUDIT</span>
+      <span class="section-title">Recurring compliance patterns <small>— from recent guide commits 2026-07-14 → 2026-07-19</small></span>
+    </div>
+    <div class="rca-section-body">
+
+      <div class="pattern-card">
+        <div class="pattern-head">
+          <span class="pattern-title">Claude Inspiration pill label — wrong emoji (pre-enforcement backfill)</span>
+          <span class="freq-chip freq-high">HIGH FREQ</span>
+        </div>
+        <div class="pattern-body">
+          Multiple recent commits fix CI pill labels: Phuket (<code>🌅</code>→<code>✨</code>), Petra (<code>🏜️</code>→<code>✨</code>),
+          Osaka, Olinda, Oahu, Naples, Napa, Muscat, Malibu, Big Island, Capri, Santa Monica.
+          Enforcement (<code>_OVERVIEW_PILL_CANONICAL_LABELS</code>) added 2026-07-17 — all affected guides were built
+          before the check. <strong>Status:</strong> no enforcement gap — this is pre-enforcement debt being cleared
+          by the pending-fixes sweep. New builds post-2026-07-17 hard-fail on wrong labels.
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-head">
+          <span class="pattern-title">⏰ bare-h shorthand — 47 guides</span>
+          <span class="freq-chip freq-fixed">FIXED FLEET-WIDE</span>
+        </div>
+        <div class="pattern-body">
+          Commit <code>627b15254</code> fixed all 47 guides in one audit-crib pass. Root cause: cribs used
+          <code>~Nh</code> shorthand (natural notation) vs canonical <code>~N hr</code>. The validator tightening
+          + one focused fix pass resolved the entire fleet simultaneously.
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pattern-head">
+          <span class="pattern-title">📍 Map link ↗ arrow — 3 new guides</span>
+          <span class="freq-chip freq-fixed">FIXED FLEET-WIDE</span>
+        </div>
+        <div class="pattern-body">
+          Commit <code>4f39442d7</code> fixed Bilbao (58 links), Hilton Head Island (38), Marco Island (30).
+          Root cause: cribs used the hotel-banner map link as a template for stop address links, copying the ↗ suffix.
+          Now gated by validator hard-fail + two new DriftyCat bullets. The ↗️ indicator is exclusive to the hotel
+          <code>.title-address</code> link — stop links show address text only.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FIX -->
+  <div class="rca-section">
+    <div class="rca-section-head">
+      <span class="section-tag tag-fix">FIX</span>
+      <span class="section-title">Autonomous fixes applied</span>
+    </div>
+    <div class="rca-section-body">
+
+      <div class="finding">
+        <div class="finding-icon" style="color:var(--green)">✓</div>
+        <div class="finding-body">
+          <div class="finding-title">All 8 cascade surfaces updated (Drive-only)</div>
+          <div class="finding-desc">
+            Cleanliness Checks.md (Rules 548, 549, header count) ·
+            Validator Index.html (2 enforcement rows, ⏰ entry correction, .meta changelog) ·
+            CLAUDE.md (2 DriftyCat bullets) ·
+            Brain.md (Best-Unique-Hotels + Visited pill documentation).
+            No tracked file changes — all documentation is Drive-only.
+          </div>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-icon" style="color:var(--muted)">—</div>
+        <div class="finding-body">
+          <div class="finding-title">No validator code changes needed</div>
+          <div class="finding-desc">
+            Both new rules (548, 549) were already enforced by existing <code>validate_itinerary.py</code> checks.
+            The gaps were documentation-only — no check was missing from the code, only from the reference docs.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Methodology note -->
+  <div class="rca-section">
+    <div class="rca-section-head">
+      <span class="section-tag tag-note">NOTE</span>
+      <span class="section-title">Detection methodology — Track C gap</span>
+    </div>
+    <div class="rca-section-body">
+      <div class="finding">
+        <div class="finding-icon">🔍</div>
+        <div class="finding-body">
+          <div class="finding-title">Track C misses rules committed before the detection window</div>
+          <div class="finding-desc">
+            Track C (git log since last RCA) only surfaces rules committed within the detection window.
+            If a developer adds a CHANGELOG entry but commits the file before the current window opens,
+            Track C silently skips it. The two 2026-07-19 rules were committed on 2026-07-14
+            (before the 2026-07-18 window of the prior RCA). Track A (date-agnostic cross-check of
+            every DriftyCat bullet against every registered validator check) caught both regardless.
+            <strong>Future runs: always run Track A first; use Track C only for timing context.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /rca-body -->
+
+<div class="rca-footer">
+  <span class="footer-note">
+    Rule Compliance Audit · 2026-07-19 · Run 2 of 2 · all cascades Drive-only
+  </span>
+  <div class="brain-status">
+    <div class="brain-dot"></div>
+    <span class="brain-text">brain_check <strong>184/185 · 0 fail</strong> · pre_push_guard exit 0</span>
+  </div>
+</div>
+
+</body>
+</html>

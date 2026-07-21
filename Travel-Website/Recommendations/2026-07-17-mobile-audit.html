@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Audit — 2026-07-17</title>
+<style>
+  body { font-family: system-ui, sans-serif; font-size: 14px; line-height: 1.6;
+         max-width: 760px; margin: 0 auto; padding: 28px 24px; color: #1c1917; background: #faf8f4; }
+  h1 { font-size: 1.1rem; font-weight: 700; color: #3d3a32; text-transform: uppercase;
+       letter-spacing: .06em; border-bottom: 3px solid #b85c2a; padding-bottom: 8px; margin-bottom: 20px; }
+  h2 { font-size: .85rem; font-weight: 700; color: #b85c2a; text-transform: uppercase;
+       letter-spacing: .08em; margin: 24px 0 8px; }
+  ul { margin: 0; padding-left: 18px; }
+  li { margin-bottom: 6px; font-size: .88rem; }
+  .pass { color: #2d6a4f; font-weight: 600; }
+  .warn { color: #92400e; }
+  .meta { font-size: .75rem; color: #78716c; margin-bottom: 20px; }
+  .clean { background: #eaf4ee; border: 1px solid #2d6a4f; border-radius: 6px;
+            padding: 10px 14px; font-size: .88rem; color: #2d6a4f; font-weight: 600; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<h1>Mobile Audit — 2026-07-17</h1>
+<div class="meta">Run: 2026-07-17 · 7 layers · 51.5 s · 88 shareable pages + 529 guide files</div>
+
+<div class="clean">✔ All 7 audit layers passed — no auto-fixes applied this run.</div>
+
+<h2>What was checked</h2>
+<ul>
+  <li><strong>Layer 1 — CSS integrity:</strong> brain_check design-system tokens, pill colors, search boxes, banners, margins — PASS (22/22 invariants)</li>
+  <li><strong>Layer 2 — Static baseline:</strong> viewport tag + mobile.css present on all 88 shareable pages — PASS</li>
+  <li><strong>Layer 3 — Render @ 393px:</strong> 81 pages rendered headless; no overflow, pill size, or centering violations — PASS</li>
+  <li><strong>Layer 4 — Fleet scan:</strong> 529 guide HTML files (220 guides + 220 read-about + 89 shareable); 4,805 images — 100% lazy-loaded, 100% have alt text — PASS</li>
+  <li><strong>Layer 5 — iOS input safety:</strong> all input/select/textarea font-size ≥ 16px — no auto-zoom risk — PASS</li>
+  <li><strong>Layer 6 — Viewport/layout:</strong> no zoom-prevention, no wide inline widths, all autoplay videos have playsinline — PASS</li>
+  <li><strong>Layer 7 — Accessibility:</strong> warn-only sweep — 3 icon-only buttons and 8 unlabeled inputs flagged (see below) — PASS (warn-only)</li>
+</ul>
+
+<h2>Warnings (non-blocking)</h2>
+<ul>
+  <li class="warn"><strong>CSS duplication:</strong> 102 duplicated CSS selectors across shared files — brain_check flags this but no pages fail (warn-only). Selectors should eventually be consolidated into shared CSS files per the SHARED CSS ONLY rule.</li>
+  <li class="warn"><strong>100vh without fill-available fallback:</strong> 3 locations (<code>stops-map-style.css</code>, <code>web-travel-style.css</code>, <code>Maps/World-Map.html</code>) — advisory; maps and full-screen layouts use this deliberately.</li>
+  <li class="warn"><strong>Missing image width/height (CLS risk):</strong> 2 images in <code>Trip-Essentials/Before-You-Go.html</code> lack width/height attributes. Adding them would prevent layout shift on load. Suggest adding explicit dimensions.</li>
+  <li class="warn"><strong>Validator Index potentially stale:</strong> <code>Claude Inspiration - Extra Section.html</code> is newer than <code>Validator Index.html</code> by 246+ min — Validator Index may need a rule update check.</li>
+</ul>
+
+<h2>Accessibility findings (warn-only — manual review needed)</h2>
+<ul>
+  <li class="warn"><strong>3 icon-only &lt;button&gt; elements with no accessible name:</strong>
+    <ul>
+      <li><code>Trip-Essentials/Best-Surfing.html</code> — 1 button</li>
+      <li><code>Trip-Essentials/Climate-Finder.html</code> — 1 button</li>
+      <li><code>Trip-Essentials/When-to-Go.html</code> — 1 button</li>
+    </ul>
+    Fix: add <code>aria-label="descriptive name"</code> or <code>title="..."</code> to each.
+  </li>
+  <li class="warn"><strong>1 &lt;a&gt; with no accessible name:</strong>
+    <ul>
+      <li><code>Trip-Essentials/European-Train-Guide.html</code> — 1 link</li>
+    </ul>
+    Fix: add visible text or <code>aria-label</code>.
+  </li>
+  <li class="warn"><strong>8 &lt;input&gt; elements without &lt;label for=&gt;:</strong>
+    <ul>
+      <li><code>Guides-Index.html</code> — 1</li>
+      <li><code>Trip-Essentials/Climate-Finder.html</code> — 2</li>
+      <li><code>Trip-Essentials/Stats-Across-US.html</code> — 3</li>
+      <li><code>Trip-Essentials/Trips.html</code> — 1</li>
+      <li><code>Trip-Essentials/Visas.html</code> — 1</li>
+    </ul>
+    Fix: add associated <code>&lt;label for="input-id"&gt;</code> or use <code>aria-label</code>.
+  </li>
+</ul>
+
+<h2>Observations</h2>
+<ul>
+  <li>Mobile baseline is healthy: 88/88 pages pass, all 22 design-system invariants hold, and the full guide fleet (529 files) has 100% lazy-loading and alt-text coverage.</li>
+  <li>The accessibility layer continues to surface the same recurring 12 issues across the same pages — these are persistent warnings that would benefit from a dedicated a11y fix pass.</li>
+  <li>The CSS duplication warning (102 selectors) is stable from prior runs — this is a long-term consolidation task, not a regression.</li>
+  <li>The <code>Before-You-Go.html</code> CLS risk (2 images missing width/height) is a minor but easy fix worth addressing in the next edit of that page.</li>
+</ul>
+
+<div class="meta" style="margin-top:24px">Generated by mobile-audit scheduled task · 2026-07-17</div>
+
+</body>
+</html>

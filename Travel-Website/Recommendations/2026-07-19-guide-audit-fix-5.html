@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Guide Audit & Fix — 2026-07-19 (Session 5)</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:860px;margin:40px auto;padding:0 24px;color:#2d2d2d;line-height:1.6}
+h1{font-size:22px;border-bottom:3px solid #b85c2a;padding-bottom:8px;color:#3d3a32}
+h2{font-size:17px;margin-top:28px;color:#3d3a32}
+h3{font-size:14px;margin-top:20px;color:#5a5a5a}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th{background:#b85c2a;color:#fff;padding:7px 10px;text-align:left}
+td{padding:7px 10px;border-bottom:1px solid #e8e2da}
+tr:nth-child(even)td{background:#fdf8f0}
+.pill{display:inline-block;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:600}
+.ok{background:#d4edda;color:#155724}
+.fail{background:#f8d7da;color:#721c24}
+.info{background:#d1ecf1;color:#0c5460}
+code{background:#f0ede8;padding:2px 5px;border-radius:3px;font-size:12px}
+.meta{font-size:12px;color:#888;margin-bottom:24px}
+ul{margin:6px 0;padding-left:20px}
+li{margin-bottom:4px}
+</style>
+</head>
+<body>
+<h1>Guide Audit &amp; Fix — 2026-07-19 (Session 5)</h1>
+<p class="meta">Session: guide-audit-and-fix-5 &nbsp;·&nbsp; Scope: format audit only (no URL checks) &nbsp;·&nbsp; 6 guides shipped 2026-07-19</p>
+
+<h2>Validator Changes</h2>
+
+<h3>⏰ ROW FORMAT — <code>hr</code> unit required (new hard-fail)</h3>
+<p>The canonical examples in <em>Icon Order and Format.html §2</em> are <code>⏰ ~1 hr</code>, <code>⏰ ~45 min</code> — the unit is always <code>hr</code>, never bare <code>h</code>. <code>_dur_valid_re</code> tightened: accepts <code>hrs?</code> minimum, rejects <code>~Nh</code>. Decimal form (<code>~1.5 hr</code>) remains valid.</p>
+<p><span class="pill fail">Fleet impact</span> 47 guides use <code>⏰ ~Nh</code> and will now fail until corrected (future audit passes).</p>
+
+<h3>📍 STOP-ROW MAP LINKS — no directional arrow (new hard-fail)</h3>
+<p>A <code>📍</code> address link inside a stop block must never contain <code>↗</code> (U+2197). The <code>↗️</code> indicator belongs only on the hotel <code>.title-address</code> map link. Check scans every <code>&lt;div class="stop-row"&gt;📍 &lt;a ...&gt;</code> and hard-fails on U+2197 in anchor text.</p>
+
+<h2>Fixes Applied</h2>
+<table>
+<tr><th>Guide</th><th>Issue</th><th>Fixes</th><th>Result</th></tr>
+<tr><td>Naples</td><td><code>⏰ ~1h</code> / <code>~2h</code> bare-h unit</td><td>10 rows → <code>~N hr</code> / <code>~N hr M min</code></td><td><span class="pill ok">✅ 0 failures</span></td></tr>
+<tr><td>Bali</td><td>Same bare-h pattern</td><td>14 rows fixed</td><td><span class="pill ok">✅ 0 failures</span></td></tr>
+<tr><td>Bilbao</td><td><code>↗</code> in all 58 stop map links + hotel</td><td>58 stop links cleaned, hotel <code>↗→↗️</code></td><td><span class="pill ok">✅ 0 failures</span></td></tr>
+<tr><td>Marco Island</td><td>Same <code>↗</code> pattern, 30 stop links</td><td>30 stop links cleaned, hotel <code>↗→↗️</code></td><td><span class="pill ok">✅ 0 failures</span></td></tr>
+<tr><td>Hilton Head Island</td><td><code>↗</code> in stop links (incl. multi-link rows) + hotel</td><td>41 stop links cleaned, hotel <code>↗→↗️</code></td><td><span class="pill ok">✅ 0 failures</span></td></tr>
+<tr><td>Coeur d'Alene</td><td>—</td><td>Already clean</td><td><span class="pill ok">✅ 0 failures</span></td></tr>
+</table>
+
+<h2>Out-of-Scope Findings</h2>
+<ul>
+<li><strong>47 guides</strong> use <code>⏰ ~Nh</code> (bare <code>h</code>) — will fail the new check. Fleet-wide fix needed in a future audit pass. Logged to To Do List.</li>
+<li>The <code>↗</code> stop-link pattern was limited to 3 of the 6 audited guides — not fleet-wide.</li>
+</ul>
+</body>
+</html>

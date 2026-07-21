@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pending Fixes Sweep — 2026-07-20 (Run 2)</title>
+<style>
+:root {
+  --bg:#f9f7f4; --surface:#fff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --gold:#c8a44a; --gold-dk:#8a6c1a;
+  --border:#ddd5c8; --code-bg:#f0ece6;
+  --fix-bg:#edf5f0; --fix-text:#2e6e3e; --fix-border:#b8d8c2;
+  --stamp-bg:#fef8ec; --stamp-text:#7a5200; --stamp-border:#e8d49a;
+  --skip-bg:#f5f0f0; --skip-text:#7a3a2e; --skip-border:#d8bab8;
+  --info-bg:#eef4fb; --info-text:#1e4a7a; --info-border:#b8d0e8;
+}
+@media (prefers-color-scheme:dark) {
+  :root {
+    --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+    --accent:#d4804e; --gold:#d4b060; --gold-dk:#c8a44a;
+    --border:#35302a; --code-bg:#2a2520;
+    --fix-bg:#0d2116; --fix-text:#4a9960; --fix-border:#1a4028;
+    --stamp-bg:#1e1800; --stamp-text:#c8a040; --stamp-border:#4a3a10;
+    --skip-bg:#1e1010; --skip-text:#c06050; --skip-border:#4a2020;
+    --info-bg:#0f1e30; --info-text:#60a0d8; --info-border:#1a3858;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+  --accent:#d4804e; --gold:#d4b060; --gold-dk:#c8a44a;
+  --border:#35302a; --code-bg:#2a2520;
+  --fix-bg:#0d2116; --fix-text:#4a9960; --fix-border:#1a4028;
+  --stamp-bg:#1e1800; --stamp-text:#c8a040; --stamp-border:#4a3a10;
+  --skip-bg:#1e1010; --skip-text:#c06050; --skip-border:#4a2020;
+  --info-bg:#0f1e30; --info-text:#60a0d8; --info-border:#1a3858;
+}
+:root[data-theme="light"] {
+  --bg:#f9f7f4; --surface:#fff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --gold:#c8a44a; --gold-dk:#8a6c1a;
+  --border:#ddd5c8; --code-bg:#f0ece6;
+  --fix-bg:#edf5f0; --fix-text:#2e6e3e; --fix-border:#b8d8c2;
+  --stamp-bg:#fef8ec; --stamp-text:#7a5200; --stamp-border:#e8d49a;
+  --skip-bg:#f5f0f0; --skip-text:#7a3a2e; --skip-border:#d8bab8;
+  --info-bg:#eef4fb; --info-text:#1e4a7a; --info-border:#b8d0e8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;padding:40px 24px 64px}
+.wrap{max-width:720px;margin:0 auto}
+.eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:normal;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:20px}
+h2{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:28px 0 10px}
+p{margin-bottom:12px;color:var(--text)}
+ul{margin:8px 0 12px 20px}
+li{margin-bottom:6px}
+code{font-size:12px;background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'Menlo','Courier New',monospace}
+.meta{font-size:12px;color:var(--muted);margin-bottom:24px}
+.fix-block{background:var(--fix-bg);border:1px solid var(--fix-border);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.fix-block .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fix-text);margin-bottom:6px}
+.fix-block p{margin-bottom:0;font-size:13px}
+.stamp-block{background:var(--stamp-bg);border:1px solid var(--stamp-border);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.stamp-block .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stamp-text);margin-bottom:6px}
+.stamp-block p{margin-bottom:0;font-size:13px}
+.info-block{background:var(--info-bg);border:1px solid var(--info-border);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.info-block .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--info-text);margin-bottom:6px}
+.info-block p{margin-bottom:0;font-size:13px}
+.skip-block{background:var(--skip-bg);border:1px solid var(--skip-border);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.skip-block .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--skip-text);margin-bottom:6px}
+.skip-block p{margin-bottom:0;font-size:13px}
+.divider{border:none;border-top:1px solid var(--border);margin:28px 0}
+.summary-row{display:flex;gap:24px;margin-bottom:24px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .n{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)}
+.stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Pending Fixes Sweep · 2026-07-20 · Run 2</div>
+  <h1>🔧 Pending Fixes Sweep</h1>
+  <p class="meta">Session: <code>pending-fixes-sweep-2026-07-20-run2</code> · Scope: <code>Travel-Website/Guides/</code> · Sources read: all Recommendations files + To Do List</p>
+
+  <div class="summary-row">
+    <div class="stat"><span class="n">1</span><span class="lbl">Guide HTML fixed</span></div>
+    <div class="stat"><span class="n">16</span><span class="lbl">Stamp refreshes committed</span></div>
+    <div class="stat"><span class="n">0</span><span class="lbl">Failures remaining</span></div>
+    <div class="stat"><span class="n">1</span><span class="lbl">Stale To-Do cleared</span></div>
+  </div>
+
+  <h2>Fix Applied — Guide HTML</h2>
+
+  <div class="fix-block">
+    <div class="label">San Jose · <code>san-jose_v1.html</code> — TR-8 also-on-site pill anchors</div>
+    <p>Added <code>#San Jose</code> to Weather.html, Time-Zones.html, and Safety-Guide.html also-on-this-site pill hrefs. The Plug-Adapter (<code>#USA</code>) and Currency (<code>#United_States</code>) pills already had anchors. Rule: TR-8 — anchor fragments enable auto-scroll to the city's section when a visitor taps the pill. Validator: <strong>837 passed, 0 failed, 3 warnings</strong>. Committed and pushed.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Stamp Refreshes Committed</h2>
+
+  <div class="stamp-block">
+    <div class="label">16 guides — validation stamp timestamp only</div>
+    <p>All 16 guides had valid signed stamps (same HMAC signature, timestamp updated from a prior session). No content changes. Committed in two batches:<br>
+    <strong>Batch 1 (14):</strong> Amsterdam · Bhutan · London · Oxford · Queenstown · Rio-de-Janeiro · Rome · San-Diego · San-Francisco · San-Juan-Island · San-Sebastian · Santa-Barbara · Santa-Monica · Santiago<br>
+    <strong>Batch 2 (2):</strong> Amalfi · Zurich<br>
+    <strong>Batch 3 (1):</strong> Amsterdam (second timestamp refresh triggered during session)</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>To Do List — Stale Item Cleared</h2>
+
+  <div class="info-block">
+    <div class="label">San Jose — GYG dead tour (logged 2026-07-18, deferred 4 times)</div>
+    <p>The To Do List item described a dead GetYourGuide tour (<code>t73498</code>) that needed replacement research. On inspection, the guide's Tours section already correctly shows <code>.extras-empty</code>: "No qualifying tours on GetYourGuide in San Jose." The comment at line 266 explains why: no qualifying public/group GYG tours exist for San Jose (remaining listings are either private tours or depart from San Francisco). The item was stale — the guide was already correctly handling this edge case. Deleted from To Do List.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Out of Scope — Not Fixed</h2>
+
+  <div class="skip-block">
+    <div class="label">Cape Town — in-progress build (untracked)</div>
+    <p>Cape Town folder present with <code>_build/build_state.md</code> (Phases 0–4 complete, Phase 5 unchecked, no guide HTML yet). Resumable build — left untouched per CORE RULES: never archive an incomplete guide build.</p>
+  </div>
+
+  <div class="skip-block">
+    <div class="label">All other To Do List items</div>
+    <p>Trip-Essentials fixes (stats pages, stale update stamps), validator/script bugs, tooling feature requests, CORE RULES edits requiring owner approval, Brain.md HEADS-UP updates — all outside guide HTML scope. Left in To Do List.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Sources Read</h2>
+  <p style="font-size:13px;color:var(--muted)">All files in <code>Travel-Website/Recommendations/</code> (July 2026) · <code>To Do List/To_Do_List.md</code> · dirty working tree (16 guides checked) · <code>validate_itinerary.py</code> on San Jose · <code>validation_stamp.py</code> on all 17 dirty guides</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validator Deep Audit — Part 19: Global / Cross-Section</title>
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<style>
+  body { max-width: 860px; margin: 0 auto; padding: 0 32px 48px; }
+  h1 { font-size: var(--fs-title); font-weight: 700; color: #3d3a32; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 3px solid; border-image: linear-gradient(90deg,#7a3b1e,#b85c2a,#d4874a) 1; padding-bottom: 8px; margin-bottom: 24px; }
+  .meta { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+  h2 { font-size: 15px; font-weight: 700; color: #3d3a32; text-transform: uppercase; letter-spacing: 0.04em; margin: 28px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+  h3 { font-size: 14px; font-weight: 600; color: #3d3a32; margin: 18px 0 8px; }
+  p, li { font-size: 13px; line-height: 1.6; color: var(--text); }
+  ul { padding-left: 20px; margin: 8px 0; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:600; }
+  .badge-fix { background:#b85c2a; color:#fff; }
+  .badge-ok { background:#2e7d44; color:#fff; }
+  .badge-gap { background:#c0392b; color:#fff; }
+  .check-table { width:100%; border-collapse:collapse; font-size:12px; margin:12px 0; }
+  .check-table th { background:#f5f0e8; text-align:left; padding:6px 10px; font-weight:600; border:1px solid var(--border); }
+  .check-table td { padding:5px 10px; border:1px solid var(--border); vertical-align:top; }
+  .check-table tr:nth-child(even) td { background:#fafafa; }
+  .code { font-family:monospace; font-size:12px; background:#f5f0e8; padding:10px 14px; border-radius:4px; overflow-x:auto; margin:8px 0; white-space:pre; }
+  .highlight { background:#fff3cd; border-left:3px solid #e6a817; padding:10px 14px; font-size:13px; margin:10px 0; }
+  .warn { background:#fdecea; border-left:3px solid #c0392b; padding:10px 14px; font-size:13px; margin:10px 0; }
+</style>
+</head>
+<body>
+
+<h1>Validator Deep Audit — Part 19: ⚙️ Global / Cross-Section</h1>
+<p class="meta">Date: 2026-07-17 &nbsp;·&nbsp; Scope: <code>Brain/Reference/Validator Index.html</code> § GLOBAL / CROSS-SECTION &nbsp;·&nbsp; Target: <code>Brain/scripts/validate_itinerary.py</code></p>
+
+<h2>Summary</h2>
+<p>Two enforcement gaps were closed in the <strong>⚙️ GLOBAL / CROSS-SECTION</strong> section of the Validator Index. All other checks in this section were already correctly implemented and verified. The cycle now stands at <strong>19/20 parts complete</strong>.</p>
+
+<table class="check-table">
+  <tr><th>Gap #</th><th>Validator Index Line</th><th>Description</th><th>Status</th></tr>
+  <tr>
+    <td>1</td>
+    <td>959</td>
+    <td>Non-ASCII whitespace — global hard fail</td>
+    <td><span class="badge badge-fix">FIXED</span></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>960</td>
+    <td>Global inline <code>style=</code> on <code>&lt;div&gt;</code> with layout/paint properties</td>
+    <td><span class="badge badge-fix">FIXED</span></td>
+  </tr>
+  <tr>
+    <td>—</td>
+    <td>All others (≈43 checks)</td>
+    <td>Section ID check, universal sections, editorial drift, hotel pickup ban, price ban, year ban, CSS link-color invariants, Style A canonical, orphaned assets, extra section uniqueness, dep/arr color, TB-1–TB-11, MAP PIN, FINAL GATE…</td>
+    <td><span class="badge badge-ok">VERIFIED ✓</span></td>
+  </tr>
+</table>
+
+<h2>Fix 1: Global Non-ASCII Whitespace Check (Line 959)</h2>
+
+<h3>What the Validator Index says</h3>
+<p>"Non-ASCII whitespace — global hard fail (locked 2026-05-18)" — mandates checking for U+2004 THREE-PER-EM, U+200A HAIR SPACE, U+00A0 NBSP, U+2009 THIN SPACE, U+202F NARROW NBSP, U+200B ZERO-WIDTH SPACE, and 7+ others.</p>
+
+<h3>What was actually implemented (the gap)</h3>
+<p>Only a narrow check existed: after <code>🚕</code> emoji in motion banner divs (<code>.next</code>, <code>.hotel-first</code>, etc.) for exactly U+2004 and U+200A. This left the following undetected:</p>
+<ul>
+  <li>Non-ASCII spaces appearing ELSEWHERE in the same motion banner row (e.g., between "3 min" and "→")</li>
+  <li>Non-ASCII spaces in any other guide section (stop boxes, extras, overview, etc.)</li>
+  <li>All other banned code points (U+00A0, U+2009, U+202F, U+200B, U+205F, U+3000, U+FEFF, U+2000–U+2003, U+2005–U+2008)</li>
+</ul>
+
+<h3>Fix applied</h3>
+<p>New check scans the full visible guide text (all HTML tags and comments stripped) for any of 17 banned Unicode space characters. One context example is reported per unique code point found. Carve-out preserved: U+200A immediately after ❗/❗️ in Heads Up titles is exempt (already documented at line 23156 of the validator).</p>
+
+<div class="highlight">
+<strong>Immediate real-world catch:</strong> Singapore v3 (<code>singapore_v1.html</code>) fails the new check with a genuine U+200A (HAIR SPACE) in a <code>🚕 3 min → Marina Bay Sands SkyPa...</code> motion banner row — the space is BETWEEN words, not immediately after the 🚕 emoji, so the old narrow check missed it. This confirms the gap was real, not theoretical.
+</div>
+
+<h3>Recommended follow-up</h3>
+<div class="warn">
+<strong>Singapore v3</strong> needs a content fix: locate the U+200A HAIR SPACE in the motion banner row and replace with a standard U+0020 ASCII space. Run <code>validate_itinerary.py singapore_v1.html</code> to confirm the exact location. This fix is out of scope for the audit crib (own-work rule) — assign to the next Singapore-touching session.<br><strong style="color:#2a7a3b">✓ Fixed 2026-07-18 by pending-fixes-sweep — 25 U+200A hair spaces replaced with ASCII space across all motion banners; guide re-validated at 831 passed / 0 failed and re-stamped.</strong>
+</div>
+
+<h2>Fix 2: Global Inline style= on &lt;div&gt; Check (Line 960)</h2>
+
+<h3>What the Validator Index says</h3>
+<p>"Global inline style= on div — previously only font-size, font-family, and text-decoration were individually checked — this global check catches everything else" — mandates checking for: margin, padding, border, background, color, display, width, height, opacity, flex, grid, position, z-index.</p>
+
+<h3>What was actually implemented (the gap)</h3>
+<p>Per-class inline style checks existed (e.g., checking <code>style="display:none"</code> in specific contexts, checking <code>style="color:..."</code> on <code>.dep</code>/<code>.arr</code> spans). No global scan of ALL <code>&lt;div&gt;</code> elements for layout/paint inline styles existed.</p>
+
+<h3>Fix applied</h3>
+<p>New check scans every <code>&lt;div style="..."&gt;</code> in the guide HTML for inline styles containing any of the 13 banned layout/paint properties. One sentinel exemption: <code>display:none</code> alone is allowed (used as a JavaScript-controlled visibility toggle in guide HTML). Preventive guard — 0 current guides are affected.</p>
+
+<h2>Verification Results After Fixes</h2>
+
+<table class="check-table">
+  <tr><th>Check</th><th>Result</th></tr>
+  <tr><td>Python syntax (<code>py_compile</code>)</td><td>Clean — no errors</td></tr>
+  <tr><td>brain_check.py</td><td>0 failures (1 pre-existing CSS duplication warn, unrelated)</td></tr>
+  <tr><td>Singapore v3 — non-ASCII whitespace</td><td>NOW FAILS with U+200A — confirmed real violation caught</td></tr>
+  <tr><td>Fleet — inline div style check</td><td>0 guides affected — preventive guard in place</td></tr>
+  <tr><td>Coverage artifact</td><td>Updated to 19/20 done at <a href="https://claude.ai/code/artifact/65a2e7cc-d68c-4284-b3f7-76d504adbf13">artifact</a></td></tr>
+</table>
+
+<h2>Checks Verified as Correctly Implemented (Not Gaps)</h2>
+<p>The following GLOBAL / CROSS-SECTION checks were verified present and correct in <code>validate_itinerary.py</code> before any changes:</p>
+<ul>
+  <li>Section ID uniqueness / <code>id=</code> must be on correct element type</li>
+  <li>Universal required sections present (hotel banner, trip overview, also-on-site pills)</li>
+  <li>Editorial drift word bans ("world-class", "nestled", "vibrant", etc.)</li>
+  <li>Hotel pickup ban ("pick you up", "pickup from hotel", etc.)</li>
+  <li>Prose tail after ⏰ row (body text after the avg-time row)</li>
+  <li>Price / currency ban ($ € £ ¥ and ISO codes) — hard FAIL</li>
+  <li>Year ban (4-digit years in visible text)</li>
+  <li>CSS link-color invariants (also-on-site pill colors)</li>
+  <li>Style A canonical block detection</li>
+  <li>Style A continuous-run check</li>
+  <li>Orphaned asset detection (<code>_build/assets/</code> files not referenced)</li>
+  <li>Extra section uniqueness (no section appears twice)</li>
+  <li>Motion rule §2 no-motion section ban</li>
+  <li>dep/arr span color check (U+200A after 🚕 in motion banner — the existing narrow check)</li>
+  <li>TB-1 through TB-11 toolbar checks</li>
+  <li>MAP PIN section checks</li>
+  <li>FINAL GATE (build_state Phase 6 check)</li>
+  <li>GUIDES INDEX section checks</li>
+</ul>
+
+<h2>Cycle Status</h2>
+<p>Parts completed this cycle: <strong>1–15, 17–20</strong> (19 of 20). Part 16 is claimed by crib 4 (as of 2026-07-17T15:43). When Part 16 completes, the full 20-part cycle will be done and a new cycle should begin.</p>
+
+<h2>Action Items</h2>
+<ol>
+  <li><strong>Fix Singapore v3</strong> — remove U+200A HAIR SPACE from motion banner row. Assign to next Singapore-touching session.</li>
+  <li><strong>Part 16</strong> — follow up with crib 4 on status; if stale, reclaim and run.</li>
+  <li>No Validator Index edits needed — both gaps were implementation-only (the Index accurately described what should exist; the code was missing it).</li>
+</ol>
+
+</body>
+</html>

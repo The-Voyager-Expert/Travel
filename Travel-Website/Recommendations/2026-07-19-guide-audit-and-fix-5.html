@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guide Audit & Fix — 2026-07-19 — Run 5</title>
+<style>
+:root{--bg:#f9f7f4;--surface:#fff;--text:#1e1c18;--muted:#7a7266;--accent:#b85c2a;--border:#ddd5c8;--green:#2d6a4f;--red:#a01d1d;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);margin:0;padding:32px;max-width:900px;font-size:14px;line-height:1.6;}
+h1{font-size:18px;font-weight:700;color:#3d3a32;text-transform:uppercase;letter-spacing:.06em;border-bottom:3px solid var(--accent);padding-bottom:8px;margin-bottom:4px;}
+h2{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin:28px 0 6px;}
+h3{font-size:13px;font-weight:600;color:#3d3a32;margin:16px 0 4px;}
+.meta{color:var(--muted);font-size:12px;margin-bottom:28px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:14px;}
+.stat-row{display:flex;gap:24px;margin-bottom:20px;flex-wrap:wrap;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;min-width:100px;}
+.stat .n{font-size:28px;font-weight:700;color:var(--accent);}
+.stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:6px;}
+th{text-align:left;padding:5px 8px;background:#f0ece6;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+td{padding:5px 8px;border-top:1px solid var(--border);}
+.pass{color:var(--green);font-weight:600;}
+.fail{color:var(--red);font-weight:600;}
+.tag{display:inline-block;background:#f0ece6;border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-size:11px;color:var(--muted);margin-right:4px;}
+.count{font-weight:600;color:var(--accent);}
+ul{margin:6px 0;padding-left:20px;}
+li{margin:3px 0;}
+</style>
+</head>
+<body>
+
+<h1>Guide Audit &amp; Fix — Run 5</h1>
+<p class="meta">2026-07-19 · guide-audit-and-fix-5 · FORMAT ONLY</p>
+
+<div class="stat-row">
+  <div class="stat"><div class="n">47</div><div class="lbl">Guides Fixed</div></div>
+  <div class="stat"><div class="n">454</div><div class="lbl">Patterns Corrected</div></div>
+  <div class="stat"><div class="n">3</div><div class="lbl">Guides Deep-Audited</div></div>
+  <div class="stat"><div class="n">0</div><div class="lbl">New Violations Found</div></div>
+</div>
+
+<h2>In-Scope To Do Item — Executed</h2>
+<div class="card">
+  <h3>Fleet-wide ⏰ bare-h format violation (47 guides)</h3>
+  <p>The <code>_dur_valid_re</code> check in <code>validate_itinerary.py</code> was tightened in an earlier run to require <code>hrs?</code> (not bare <code>h</code>) in Avg Time Spent rows. 47 guides had the old <code>⏰ ~Nh</code> / <code>⏰ ~Nh Mmin</code> format. All were fixed via batch Python script and re-validated to 0 failures.</p>
+  <p><strong>Fix applied:</strong> 4 regex patterns normalized all occurrences to canonical form: <code>⏰ ~N hr</code> / <code>⏰ ~N hr M min</code> / <code>⏰ ~N min</code>.</p>
+  <p><strong>Total substitutions:</strong> 454 across 47 guides. Sydney had the most (32); Venice the fewest (5).</p>
+  <p><strong>Validator check:</strong> Already enforced by <code>_dur_valid_re</code> in <code>validate_itinerary.py</code> (added in a prior run — CHANGELOG entry confirmed at line 68). No new check needed.</p>
+  <p><strong>Commit:</strong> <code>627b15254</code> — pushed to main.</p>
+</div>
+
+<h2>Deep Format Audit — New &amp; Expanded Guides</h2>
+
+<h3>Bilbao — bilbao_v1.html (NEW guide, 934 lines)</h3>
+<div class="card">
+  <p><span class="tag">PASS</span> Built after the validator tightening — all ⏰ rows already canonical (<code>~2 hr</code>, <code>~45 min</code>, <code>~1 hr 30 min</code>, etc.).</p>
+  <p><span class="tag">PASS</span> All stop-block structure correct: tour-box / ticket-box, photos after box, correct icon order.</p>
+  <p><span class="tag">PASS</span> Motion banners correctly formatted across all 4 days including Day 4 Gernika ride-only (<code>🏨 From Hotel: 🚕 40 min → Gernika</code>). All walk-over-40 sentinels present.</p>
+  <p><span class="tag">PASS</span> Tours section: 5 Viator + 5 GYG + 5 TripAdvisor entries, all with correct <code>🕐 · ⏳ · 👥</code> rows using <code>⏳</code> (not <code>⏰</code>) for tour duration.</p>
+  <p><span class="tag">PASS</span> Claude Inspiration: <code>class="claude-inspiration"</code> only — no <code>theme-</code> class on outer div. ✓</p>
+  <p><span class="tag">PASS</span> Also-on-this-site pills: all 8 present in canonical order (Weather → Time Zones → Plug Adapter → Currency → Safety Guide → Visas → Stats Across Europe → European Train Guide). All use <code>also-on-this-site-pill</code> class. ✓</p>
+  <p><span class="tag">PASS</span> Michelin: 2 ⭐⭐⭐ entries before 3 ⭐ entries — correct tier ordering. Walk-over-40 sentinels on Larrabetzu (30km) and Atxondo (40km). ✓</p>
+  <p><span class="tag">PASS</span> Train Stations: correct <code>.station-box</code> format with 📍 + walk/ride rows. ✓</p>
+  <p><span class="tag">PASS</span> Day Trips: 6 entries with <code>.transit-box</code>, each with <code>↳</code> description + 🎫 book at links. ✓</p>
+  <p><span class="tag">NOTE</span> Stray <code>&lt;!-- nearby-guides --&gt;</code> comment at line 929 (after the closing <code>&lt;!-- /nearby-guides --&gt;</code>). Harmless artifact; validator passes.</p>
+  <p><strong>Validator result:</strong> <span class="pass">832 passed / 0 failed</span> / 1 warning (Cappuccino below 5 entries — advisory).</p>
+</div>
+
+<h3>Naples — naples_v1.html (Day 4 expansion)</h3>
+<div class="card">
+  <p><span class="tag">PASS</span> Already clean — no bare-h ⏰ patterns, all stop-blocks correct, validator passed before this run.</p>
+  <p>Day 4 expansion (Pio Monte della Misericordia · Chiostro di Santa Chiara · Gesù Nuovo): correct stop-block format, proper motion banners.</p>
+  <p><strong>Validator result:</strong> <span class="pass">834 passed / 0 failed</span> / 2 warnings (advisory).</p>
+</div>
+
+<h3>London — london_v5.html (Day 7 expansion + bare-h fix)</h3>
+<div class="card">
+  <p><span class="tag">FIXED</span> 12 bare-h ⏰ patterns normalized in the batch pass.</p>
+  <p>Day 7 expansion (Marylebone &amp; Regent's Park): structure audited as part of the batch — validator confirms clean post-fix.</p>
+  <p><strong>Validator result:</strong> <span class="pass">0 failures</span> after fix.</p>
+</div>
+
+<h2>Guides Fixed — Full List</h2>
+<table>
+<thead><tr><th>Guide</th><th>Patterns</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Sydney</td><td class="count">32</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Reykjavik</td><td class="count">21</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Natal</td><td class="count">21</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Paris</td><td class="count">21</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Istanbul</td><td class="count">17</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Marrakech</td><td class="count">17</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Singapore</td><td class="count">20</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Turin</td><td class="count">15</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>São-Paulo</td><td class="count">14</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Montreal</td><td class="count">13</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Tokyo</td><td class="count">13</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Maceió</td><td class="count">12</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Split</td><td class="count">12</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>London</td><td class="count">12</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Palo-Alto</td><td class="count">11</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Pasadena</td><td class="count">11</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Portland</td><td class="count">11</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Recife</td><td class="count">11</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Lisbon</td><td class="count">10</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Porto-Alegre</td><td class="count">9</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Seville</td><td class="count">8</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Maldives</td><td class="count">8</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Florida-Keys</td><td class="count">8</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Marrakech</td><td class="count">17</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Rio-de-Janeiro</td><td class="count">8</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Oslo</td><td class="count">8</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Quebec-City</td><td class="count">7</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Cascais</td><td class="count">7</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Cusco</td><td class="count">7</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Madeira</td><td class="count">7</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Luang-Prabang</td><td class="count">5</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Sintra</td><td class="count">6</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Salvador</td><td class="count">6</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Sicily</td><td class="count">6</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Alesund</td><td class="count">6</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>São-Luís</td><td class="count">6</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Munich</td><td class="count">6</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Palawan</td><td class="count">6</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Rome</td><td class="count">5</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Venice</td><td class="count">5</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Pokhara</td><td class="count">5</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Luang-Prabang</td><td class="count">5</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Manuel-Antonio</td><td class="count">4</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Colombo</td><td class="count">4</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Pensacola</td><td class="count">4</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Chiang-Mai</td><td class="count">3</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Porto</td><td class="count">3</td><td class="pass">✓ Fixed</td></tr>
+<tr><td>Bora-Bora</td><td class="count">2</td><td class="pass">✓ Fixed</td></tr>
+</tbody>
+</table>
+
+<h2>Out-of-Scope Observations</h2>
+<div class="card">
+  <ul>
+    <li><strong>Helsinki</strong>: Modified by a parallel crib (day expansion — Trip Overview titles updated for Day 3 and Day 4). Not touched by this routine.</li>
+    <li><strong>Amsterdam / Coeur-d'Alene</strong>: Had pre-existing unstaged modifications before this session started. Not this routine's work.</li>
+    <li><strong>Bilbao stray comment</strong>: Line 929 has a duplicate <code>&lt;!-- nearby-guides --&gt;</code> comment after the closing tag. Cosmetic only — logged here for awareness, no action needed.</li>
+  </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,444 @@
+<title>CLAUDE.md Drift Audit — 2026-07-18</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #fdf8f0;
+    --surface2: #f6f0e6;
+    --text: #3d3a32;
+    --muted: #7a6e63;
+    --accent: #b85c2a;
+    --gold: #c8a44a;
+    --border: #e0d8cc;
+    --green: #3a7a4a;
+    --green-bg: #edf7ef;
+    --amber: #8a6010;
+    --amber-bg: #fef8ea;
+    --blue: #2a5c8a;
+    --blue-bg: #eaf2fa;
+    --grey: #5a5550;
+    --grey-bg: #f4f1ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1b17;
+      --surface: #272319;
+      --surface2: #302c24;
+      --text: #e8e0d4;
+      --muted: #9a9086;
+      --accent: #d4784a;
+      --gold: #d4a84a;
+      --border: #3e382e;
+      --green: #5aad6a;
+      --green-bg: #182e1e;
+      --amber: #c9a040;
+      --amber-bg: #231c08;
+      --blue: #6aabda;
+      --blue-bg: #0e1e2e;
+      --grey: #9a9086;
+      --grey-bg: #2a2620;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #ffffff; --surface: #fdf8f0; --surface2: #f6f0e6;
+    --text: #3d3a32; --muted: #7a6e63; --accent: #b85c2a;
+    --gold: #c8a44a; --border: #e0d8cc;
+    --green: #3a7a4a; --green-bg: #edf7ef;
+    --amber: #8a6010; --amber-bg: #fef8ea;
+    --blue: #2a5c8a; --blue-bg: #eaf2fa;
+    --grey: #5a5550; --grey-bg: #f4f1ec;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1e1b17; --surface: #272319; --surface2: #302c24;
+    --text: #e8e0d4; --muted: #9a9086; --accent: #d4784a;
+    --gold: #d4a84a; --border: #3e382e;
+    --green: #5aad6a; --green-bg: #182e1e;
+    --amber: #c9a040; --amber-bg: #231c08;
+    --blue: #6aabda; --blue-bg: #0e1e2e;
+    --grey: #9a9086; --grey-bg: #2a2620;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* Header */
+  .rpt-header {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+  }
+  .rpt-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .rpt-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .rpt-meta {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Summary stats row */
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 18px;
+    min-width: 110px;
+    text-align: center;
+  }
+  .stat-chip .num {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    display: block;
+  }
+  .stat-chip .lbl {
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Brain check bar */
+  .bc-bar {
+    background: var(--green-bg);
+    border: 1px solid var(--green);
+    border-radius: 6px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--green);
+    margin-bottom: 36px;
+  }
+  .bc-bar .icon { font-size: 16px; }
+
+  /* Section */
+  .section { margin-bottom: 40px; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+  }
+
+  /* Finding card */
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 14px;
+    align-items: start;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .badge-fixed    { background: var(--green-bg);  color: var(--green); }
+  .badge-ok       { background: var(--grey-bg);   color: var(--grey); }
+  .badge-info     { background: var(--blue-bg);   color: var(--blue); }
+  .badge-oos      { background: var(--amber-bg);  color: var(--amber); }
+
+  .finding-body h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .finding-body p {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .finding-body code {
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--text);
+  }
+
+  /* Diff block */
+  .diff {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 12px;
+    overflow-x: auto;
+  }
+  .diff-del {
+    color: #b83a2a;
+    display: block;
+    white-space: pre-wrap;
+  }
+  .diff-add {
+    color: var(--green);
+    display: block;
+    white-space: pre-wrap;
+  }
+  @media (prefers-color-scheme: dark) {
+    .diff-del { color: #e07060; }
+  }
+  :root[data-theme="dark"] .diff-del { color: #e07060; }
+
+  /* Scope table */
+  .scope-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .scope-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 12px 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .scope-table td {
+    padding: 7px 12px 7px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+  .scope-table tr:last-child td { border-bottom: none; }
+  .scope-table code {
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 24px 16px 60px; }
+    .finding { grid-template-columns: 1fr; }
+    .stats-row { gap: 8px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="rpt-header">
+    <div class="rpt-eyebrow">Scheduled Audit · 2026-07-18</div>
+    <div class="rpt-title">CLAUDE.md Drift Audit</div>
+    <div class="rpt-meta">Automated routine · No user present · Drive-only edit (not git-tracked)</div>
+  </header>
+
+  <div class="stats-row">
+    <div class="stat-chip"><span class="num">1</span><span class="lbl">Fixed</span></div>
+    <div class="stat-chip"><span class="num">4</span><span class="lbl">Confirmed OK</span></div>
+    <div class="stat-chip"><span class="num">2</span><span class="lbl">Correctly excluded</span></div>
+    <div class="stat-chip"><span class="num">1</span><span class="lbl">OOS finding</span></div>
+  </div>
+
+  <div class="bc-bar">
+    <span class="icon">✅</span>
+    <span><strong>brain_check:</strong> 180/181 ok · 1 warn · 0 fail — CSS-duplication warn is pre-existing site-wide, unrelated to this edit.</span>
+  </div>
+
+  <!-- FINDINGS -->
+  <div class="section">
+    <div class="section-label">Findings — DriftyCat cross-check</div>
+
+    <div class="finding">
+      <span class="badge badge-fixed">Fixed</span>
+      <div class="finding-body">
+        <h4>DriftyCat contradiction — "Phase 5 reads: one batch" vs. CORE RULES "before each section"</h4>
+        <p>
+          <code>CLAUDE.md</code> line 261 read: <em>"Phase 5 reads — one batch at the start, not per-section … Within a session this one read-pass covers all 14 sections — no per-section re-read needed."</em>
+          <br><br>
+          <code>Rules for Claude.html §6</code> (the authority, line 436) says: <em>"Before each extra section — re-read its rule file. The matching *Extra Section*.html file gets re-opened at the start of every section, even if it was read earlier in the build. One read per build isn't enough."</em>
+          <br><br>
+          The CLAUDE.md Guide Build Phases section also correctly says "re-read at start of each Extra Section build," so the DriftyCat bullet was internally inconsistent with both the authority and another CLAUDE.md section.
+        </p>
+        <div class="diff">
+<span class="diff-del">- ⚠️ Phase 5 reads — one batch at the start, not per-section. Read ALL extra section rule files as a single batch at the start of Phase 5, before writing any section. Within a session this one read-pass covers all 14 sections — no per-section re-read needed. Across sessions always re-read the full Phase 5 batch at the start of Phase 5 (the cross-session guarantee still holds). Full rule: Rules for Claude.html § 3 + CLAUDE.md § Guide build phases Phase 5.</span>
+<span class="diff-add">+ ⚠️ Before each extra section — re-read its rule file. The matching *Extra Section*.html file gets re-opened at the start of every section, even if it was read earlier in the build. Each section's format and rules are different; one read per build isn't enough. Full rule: Rules for Claude.html § 6.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALIDATORS TABLE -->
+  <div class="section">
+    <div class="section-label">Validators table — new &amp; retired scripts</div>
+
+    <div class="finding">
+      <span class="badge badge-ok">Confirmed</span>
+      <div class="finding-body">
+        <h4><code>validate_regional_stats_chips.py</code> already in table</h4>
+        <p>
+          This script (added 2026-07-18) validates fleet-wide regional stats chip + bar coverage for non-US/non-Canada guides across Asia-Stats, Europe-Stats, Caribbean-Stats, and South-America-Stats. It was already present in the Validators table at the correct position (after <code>validate_us_stats.py</code>), with an accurate description referencing the <code>_check_guide_in_regional_stats</code> ship gate. No edit needed.
+        </p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <span class="badge badge-ok">Correctly excluded</span>
+      <div class="finding-body">
+        <h4><code>fix_also_on_this_site.py</code> — stale/DO NOT RUN</h4>
+        <p>Docstring says "DO NOT RUN — this script is stale and will corrupt guides: uses the old <code>trip-resource-pill</code> class and a wrong CWD path." Script exits 1 immediately. Correctly absent from the Validators table.</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <span class="badge badge-ok">Correctly excluded</span>
+      <div class="finding-body">
+        <h4><code>extract_and_add_components.py</code> — CSS consolidation helper</h4>
+        <p>Docstring identifies it as "Phase 3 — EXTRACT: Pull the best component definitions and add to shared CSS." Part of the one-time CSS consolidation suite (like <code>consolidate_*.py</code>, <code>apply_css_*.py</code>). Correctly absent from the Validators table per the consolidation-helper exclusion rule.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTING TABLE -->
+  <div class="section">
+    <div class="section-label">Routing table — new toolbar pages</div>
+
+    <div class="finding">
+      <span class="badge badge-ok">No action</span>
+      <div class="finding-body">
+        <h4>4 new toolbar pages — no governing docs, no routing rows needed</h4>
+        <p>
+          Four pages are in <code>toolbar.js</code> ITEMS that have no Routing table entry:
+          <code>Destination-Records.html</code>, <code>Delta-Routes-Full.html</code>, <code>When-to-Go.html</code>, <code>Entry-Requirements.html</code>.
+          <br><br>
+          The Routing table maps tasks Claude might be asked to do to governing documents. None of these pages represent a task Claude performs that has a dedicated rule file — they are reference/data pages for users. No new rows added.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORE RULES INDEX -->
+  <div class="section">
+    <div class="section-label">CORE RULES HTML file index</div>
+
+    <div class="finding">
+      <span class="badge badge-ok">Confirmed</span>
+      <div class="finding-body">
+        <h4>All 27 CORE RULES files accounted for, descriptions accurate</h4>
+        <p>
+          Disk listing matched the CLAUDE.md index exactly — no missing files, no extra files, no stale descriptions found. Key verifications: <code>Claude Inspiration - Extra Section.html</code> description correctly reflects the mandatory-section rule (2026-07-12) and the "no <code>theme-{color}</code> class" format (§ 2 still says that — see OOS finding below).
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUT OF SCOPE -->
+  <div class="section">
+    <div class="section-label">Out-of-scope findings — logged to To Do List</div>
+
+    <div class="finding">
+      <span class="badge badge-oos">OOS · CORE RULES</span>
+      <div class="finding-body">
+        <h4>Claude Inspiration: validator and CORE RULES disagree on <code>theme-{color}</code></h4>
+        <p>
+          <code>Claude Inspiration - Extra Section.html § 2</code> (the CORE RULES authority) says: "The section renders on a plain white background. No <code>theme-{color}</code> class is applied to the outer div."
+          <br><br>
+          The validator (<code>validate_itinerary.py</code>, fixed 2026-07-17 per To Do List) now hard-fails any guide whose <code>claude-inspiration</code> div is <em>missing</em> the <code>theme-{color}</code> class — the opposite behavior. The CORE RULES file has not been updated to match.
+          <br><br>
+          Resolution requires a CORE RULES edit (explicit per-session approval needed). Logged to To Do List § 🔧 Rules for Update.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCOPE TABLE -->
+  <div class="section">
+    <div class="section-label">Files checked</div>
+    <table class="scope-table">
+      <thead>
+        <tr><th>File / source</th><th>Scope</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>CLAUDE.md</code></td>
+          <td>Full read · DriftyCat, Routing, CORE RULES index, Validators table</td>
+          <td>1 DriftyCat bullet fixed</td>
+        </tr>
+        <tr>
+          <td><code>Brain/CORE RULES/Rules for Claude.html</code></td>
+          <td>Full read · §6 DriftyCat (all ~36 bullets cross-checked)</td>
+          <td>1 contradiction found and fixed in CLAUDE.md</td>
+        </tr>
+        <tr>
+          <td><code>Brain/CORE RULES/</code> directory</td>
+          <td>File listing vs. CORE RULES index</td>
+          <td>27 files · all accounted for</td>
+        </tr>
+        <tr>
+          <td><code>Brain/CORE RULES/Claude Inspiration - Extra Section.html</code></td>
+          <td>§ 2 rule (theme-class) verified</td>
+          <td>OOS discrepancy found · logged</td>
+        </tr>
+        <tr>
+          <td><code>Brain/scripts/</code> directory</td>
+          <td>89 scripts vs. Validators table</td>
+          <td>All accounted for; exclusions confirmed correct</td>
+        </tr>
+        <tr>
+          <td><code>Travel-Website/assets/toolbar.js</code></td>
+          <td>ITEMS array (33 pages) vs. Routing table</td>
+          <td>4 new pages · no governing docs · no rows added</td>
+        </tr>
+        <tr>
+          <td><code>To Do List/To_Do_List.md</code></td>
+          <td>In-scope items scan</td>
+          <td>No in-scope items · OOS finding logged</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

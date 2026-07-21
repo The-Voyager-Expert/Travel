@@ -1,0 +1,403 @@
+<title>Guide Audit &amp; Fix 5 — 2026-07-20</title>
+<style>
+  :root {
+    --ink:      #211a14;
+    --ink-2:    #5a4a3a;
+    --ground:   #f9f6f1;
+    --surface:  #ffffff;
+    --border:   #e0d8ce;
+    --terra:    #b85c2a;
+    --terra-lt: #f0e4da;
+    --gold:     #c8a44a;
+    --gold-dk:  #8a6c1a;
+    --green:    #2d7a4a;
+    --green-lt: #dff0e7;
+    --amber:    #b87720;
+    --amber-lt: #fef3d8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink:      #ede6db;
+      --ink-2:    #a89880;
+      --ground:   #1a1410;
+      --surface:  #241e17;
+      --border:   #3a3028;
+      --terra:    #d4784a;
+      --terra-lt: #3a2218;
+      --gold:     #d4b060;
+      --gold-dk:  #c8a44a;
+      --green:    #4aab6a;
+      --green-lt: #1a3228;
+      --amber:    #d49a40;
+      --amber-lt: #3a2c10;
+    }
+  }
+  :root[data-theme="light"] {
+    --ink:      #211a14;
+    --ink-2:    #5a4a3a;
+    --ground:   #f9f6f1;
+    --surface:  #ffffff;
+    --border:   #e0d8ce;
+    --terra:    #b85c2a;
+    --terra-lt: #f0e4da;
+    --gold:     #c8a44a;
+    --gold-dk:  #8a6c1a;
+    --green:    #2d7a4a;
+    --green-lt: #dff0e7;
+    --amber:    #b87720;
+    --amber-lt: #fef3d8;
+  }
+  :root[data-theme="dark"] {
+    --ink:      #ede6db;
+    --ink-2:    #a89880;
+    --ground:   #1a1410;
+    --surface:  #241e17;
+    --border:   #3a3028;
+    --terra:    #d4784a;
+    --terra-lt: #3a2218;
+    --gold:     #d4b060;
+    --gold-dk:  #c8a44a;
+    --green:    #4aab6a;
+    --green-lt: #1a3228;
+    --amber:    #d49a40;
+    --amber-lt: #3a2c10;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    padding: 48px 20px 80px;
+  }
+
+  .doc {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .doc-header {
+    border-bottom: 2.5px solid var(--terra);
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+  }
+  .doc-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 8px;
+  }
+  .doc-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    text-wrap: balance;
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+  .doc-meta span { display: flex; align-items: center; gap: 5px; }
+  .meta-dot {
+    width: 5px; height: 5px;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Summary row */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .summary-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .summary-cell .val {
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .summary-cell .lbl {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .val-green { color: var(--green); }
+  .val-terra { color: var(--terra); }
+  .val-neutral { color: var(--ink-2); }
+
+  /* Guide results table */
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .guide-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--ground);
+  }
+  .guide-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-variant-numeric: tabular-nums;
+  }
+  .guide-table tr:last-child td { border-bottom: none; }
+  .guide-table tbody tr:hover td { background: var(--terra-lt); }
+  .city-name { font-weight: 600; color: var(--ink); }
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .pill-pass { background: var(--green-lt); color: var(--green); }
+  .pill-warn { background: var(--amber-lt); color: var(--amber); }
+  .pill-fix  { background: var(--terra-lt); color: var(--terra); }
+  .fix-note { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+
+  /* Callout box */
+  .callout {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    background: var(--amber-lt);
+    border-radius: 0 6px 6px 0;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  .callout-head {
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 6px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .callout p { font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
+  .callout p + p { margin-top: 8px; }
+  .callout code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--ink);
+  }
+  .callout-verdict {
+    border-left-color: var(--green);
+    background: var(--green-lt);
+  }
+  .callout-verdict .callout-head { color: var(--green); }
+
+  /* Prose */
+  .prose { font-size: 14px; color: var(--ink-2); line-height: 1.7; }
+  .prose + .prose { margin-top: 10px; }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+</style>
+
+<div class="doc">
+
+  <div class="doc-header">
+    <div class="doc-eyebrow">Guide Audit &amp; Fix · Session 5</div>
+    <h1 class="doc-title">Post-Ship Format Audit — 2026-07-20</h1>
+    <div class="doc-meta">
+      <span><span class="meta-dot"></span>Crib: guide-audit-and-fix-5</span>
+      <span><span class="meta-dot"></span>Scope: format only — no URL checks</span>
+      <span><span class="meta-dot"></span>9 guides audited</span>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section">
+    <div class="section-title">Summary</div>
+    <div class="summary-grid">
+      <div class="summary-cell">
+        <div class="val val-green">9</div>
+        <div class="lbl">Guides Passed</div>
+      </div>
+      <div class="summary-cell">
+        <div class="val val-neutral">0</div>
+        <div class="lbl">Fixes Applied</div>
+      </div>
+      <div class="summary-cell">
+        <div class="val val-neutral">0</div>
+        <div class="lbl">New Checks Added</div>
+      </div>
+    </div>
+    <p class="prose">All 9 guides with per-guide commits since 2026-07-19 were validated to 0 hard failures. One suspected format violation in Bhutan was investigated and found to be correct — see Notable Investigation below.</p>
+  </div>
+
+  <!-- Guide results -->
+  <div class="section">
+    <div class="section-title">Guide Results</div>
+    <div style="overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:6px;">
+      <table class="guide-table">
+        <thead>
+          <tr>
+            <th>Guide</th>
+            <th>Commit scope</th>
+            <th>Validator</th>
+            <th>Warnings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="city-name">Charlotte</td>
+            <td>⏰ bare <code>h</code> → <code>hr</code> (Rule 549)</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="city-name">Bhutan</td>
+            <td>TR-8 also-on-site pill anchors</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td class="city-name">Bahamas</td>
+            <td>TR-8 also-on-site pill anchors</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="city-name">Luang-Prabang</td>
+            <td>Photo-credit divs → comments; TR-8</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="city-name">London</td>
+            <td>⏰ bare <code>h</code> → <code>hr</code> (Rule 549)</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td class="city-name">Bilbao</td>
+            <td>Rule 558 + TR-8</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td class="city-name">Santa Barbara</td>
+            <td>Prior session fix</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td class="city-name">San Juan Island</td>
+            <td>Prior session fix</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td class="city-name">San Jose</td>
+            <td>Prior session fix</td>
+            <td><span class="pill pill-pass">0 fail</span></td>
+            <td>3</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Notable investigation -->
+  <div class="section">
+    <div class="section-title">Notable Investigation</div>
+
+    <div class="callout">
+      <div class="callout-head">⚑ Bhutan — Motion banner time format suspected</div>
+      <p>Bhutan's inter-city drive banners use <code>1h</code>, <code>1h 30min</code>, and <code>2h 30min</code> (6 instances across Days 1–4). The prior session flagged this as a potential violation, expecting the canonical format to be <code>N min</code> throughout.</p>
+      <p>Investigation confirmed the banners are correct. The validator enforces two distinct formats depending on duration: <strong>&lt; 60 min → <code>N min</code></strong>; <strong>≥ 60 min → <code>Xh Ymin</code> or <code>Xh</code></strong>. Writing <code>60 min</code> for a 60-minute ride would itself be a hard failure. The Motion Rule HTML shows <code>[N min]</code> throughout as a generic placeholder — the validator changelog entry 2026-05-25 documents the actual split rule and that Motion Rule.html §1 was updated accordingly (the read-only doc doesn't show the change in the code grep since the prose uses placeholders).</p>
+    </div>
+
+    <div class="callout callout-verdict">
+      <div class="callout-head">✓ Verdict: No violation — format is correct</div>
+      <p>No validator check was added (the check already exists and fires correctly). No guide edit was made. Bhutan's motion banners comply with Motion Rule §1 as enforced.</p>
+    </div>
+  </div>
+
+  <!-- Warnings summary -->
+  <div class="section">
+    <div class="section-title">Open Warnings (not blocked)</div>
+    <p class="prose">Warnings are not failures and do not affect ship status. They are noted for awareness.</p>
+    <ul style="margin-top:12px; padding-left:20px; font-size:13.5px; color:var(--ink-2); line-height:2;">
+      <li><strong>London</strong> — 1 Shows entry without a <code><!-- ride-only: walk NN min --></code> sentinel; 1 img alt that reads as a full sentence</li>
+      <li><strong>Bilbao</strong> — Cappuccino section below recommended minimum entry count</li>
+      <li><strong>Santa Barbara, San Juan Island</strong> — Downtown Restaurants below recommended minimum</li>
+      <li><strong>San Jose</strong> — 3 miscellaneous warns (img alt, section count)</li>
+      <li><strong>Bhutan</strong> — 3 warns (see guide validator output for detail)</li>
+    </ul>
+  </div>
+
+  <!-- No new validator checks -->
+  <div class="section">
+    <div class="section-title">Validator Changes</div>
+    <p class="prose">No new checks were added this session. The investigation into Bhutan's motion banners confirmed the existing check is correct and fires as specified.</p>
+  </div>
+
+  <!-- Out-of-scope -->
+  <div class="section">
+    <div class="section-title">Out-of-Scope Findings</div>
+    <p class="prose">No out-of-scope findings identified during this session beyond items already logged in prior sessions. To Do List was reviewed at session start; no in-scope format items were present.</p>
+  </div>
+
+  <div class="doc-footer">
+    Generated by guide-audit-and-fix-5 · 2026-07-20 · Format-only audit (no URL verification)
+  </div>
+
+</div>

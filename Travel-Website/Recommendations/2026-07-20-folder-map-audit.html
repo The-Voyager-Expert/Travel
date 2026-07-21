@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folder Map Audit — 2026-07-20</title>
+<style>
+  :root {
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --border: #dddbd5;
+    --text: #1c1a16;
+    --muted: #6a6660;
+    --accent: #2558a0;
+    --accent-light: #e8eef8;
+    --ok: #166534;
+    --ok-bg: #dcfce7;
+    --warn: #92400e;
+    --warn-bg: #fef3c7;
+    --fixed: #1d4ed8;
+    --fixed-bg: #dbeafe;
+    --mono: 'Courier New', Courier, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b;
+      --surface: #27272a;
+      --border: #3f3f46;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --accent: #60a5fa;
+      --accent-light: #1e3a5f;
+      --ok: #86efac;
+      --ok-bg: #14532d;
+      --warn: #fcd34d;
+      --warn-bg: #451a03;
+      --fixed: #93c5fd;
+      --fixed-bg: #1e3a5f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #18181b;
+    --surface: #27272a;
+    --border: #3f3f46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --accent: #60a5fa;
+    --accent-light: #1e3a5f;
+    --ok: #86efac;
+    --ok-bg: #14532d;
+    --warn: #fcd34d;
+    --warn-bg: #451a03;
+    --fixed: #93c5fd;
+    --fixed-bg: #1e3a5f;
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f3ef;
+    --surface: #ffffff;
+    --border: #dddbd5;
+    --text: #1c1a16;
+    --muted: #6a6660;
+    --accent: #2558a0;
+    --accent-light: #e8eef8;
+    --ok: #166534;
+    --ok-bg: #dcfce7;
+    --warn: #92400e;
+    --warn-bg: #fef3c7;
+    --fixed: #1d4ed8;
+    --fixed-bg: #dbeafe;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 32px 24px 64px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .report-header {
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 16px;
+    margin-bottom: 28px;
+  }
+  .report-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .report-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: var(--ok-bg);
+    color: var(--ok);
+  }
+
+  /* Summary row */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Sections */
+  section { margin-bottom: 28px; }
+  .section-heading {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+
+  /* Finding rows */
+  .finding {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid transparent;
+  }
+  .finding.ok {
+    background: var(--ok-bg);
+    border-color: var(--ok-bg);
+  }
+  .finding.fixed {
+    background: var(--fixed-bg);
+    border-color: var(--fixed-bg);
+  }
+  .finding.warn {
+    background: var(--warn-bg);
+    border-color: var(--warn-bg);
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .badge.ok { background: var(--ok); color: var(--bg); }
+  .badge.fixed { background: var(--fixed); color: #fff; }
+  .badge.warn { background: var(--warn); color: var(--bg); }
+  .finding-body { flex: 1; }
+  .finding-title {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 3px;
+    color: var(--text);
+  }
+  .finding-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: rgba(0,0,0,0.06);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  :root[data-theme="dark"] code,
+  @media (prefers-color-scheme: dark) { code { background: rgba(255,255,255,0.08); } }
+
+  /* brain_check result */
+  .check-result {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ok);
+    border-radius: 4px;
+    padding: 12px 14px;
+    color: var(--ok);
+  }
+
+  @media (max-width: 520px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .stat-value { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="report-header">
+  <div class="report-meta">Folder Map Audit · 2026-07-20 · Routine scheduled task</div>
+  <div class="report-title">Brain.md / Toolbar-Standard / Travel-Folder-Organization</div>
+  <div class="report-status">✓ Brain check 195/195 · Fixes applied</div>
+</div>
+
+<div class="summary-grid">
+  <div class="stat-card">
+    <div class="stat-value">3</div>
+    <div class="stat-label">Docs audited</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">2</div>
+    <div class="stat-label">Brain.md fixes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">2</div>
+    <div class="stat-label">Stale HU entries</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">0</div>
+    <div class="stat-label">brain_check fails</div>
+  </div>
+</div>
+
+<!-- Brain.md Part 1 -->
+<section>
+  <div class="section-heading">Brain.md Part 1 — vs disk</div>
+
+  <div class="finding fixed">
+    <span class="badge fixed">Fixed</span>
+    <div class="finding-body">
+      <div class="finding-title">Missing script: <code>update_audit_rolling_report.py</code></div>
+      <div class="finding-desc">
+        Script exists in <code>Brain/scripts/</code> and is called by every guide-audit crib/routine, but had no entry in the
+        "index/manifest builders and batch runners" table. Added row: appends run results to
+        <code>audit_fix_log.json</code>, prunes entries &gt;30 days, regenerates <code>Recommendations/guide-audit-rolling.html</code>.
+      </div>
+    </div>
+  </div>
+
+  <div class="finding fixed">
+    <span class="badge fixed">Fixed</span>
+    <div class="finding-body">
+      <div class="finding-title">Missing directory: <code>Brain/Reference/Visual-Reference/</code></div>
+      <div class="finding-desc">
+        Directory exists on disk with <code>MANIFEST.md</code> (14-feature visual drift table used by the
+        visual-drift-watch routine), <code>HOW-TO-ADD-REFERENCE.md</code>, and three subdirs
+        (<code>canonical/</code>, <code>intake/</code>, <code>wrong-examples/</code>).
+        Not previously documented in the Brain/Reference/ table. Entry added.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Toolbar-Standard -->
+<section>
+  <div class="section-heading">Toolbar-Standard.md — vs toolbar.js ITEMS</div>
+
+  <div class="finding ok">
+    <span class="badge ok">Clean</span>
+    <div class="finding-body">
+      <div class="finding-title">All 14 ITEMS slots match</div>
+      <div class="finding-desc">
+        Every entry in <code>Toolbar-Standard.md</code> (14 slots, including 5 dropdown groups) matches the
+        current <code>toolbar.js</code> ITEMS array exactly — labels, icons, hrefs, and child order all verified.
+        No drift found.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Travel-Folder-Organization -->
+<section>
+  <div class="section-heading">Travel-Folder-Organization.md — vs disk rules</div>
+
+  <div class="finding ok">
+    <span class="badge ok">Clean</span>
+    <div class="finding-body">
+      <div class="finding-title">All three zone rules current</div>
+      <div class="finding-desc">
+        Travel root, <code>_build/</code>, and <code>Brain/scripts/</code> zone rules all reflect current
+        practice. No new organizational patterns found on disk that are absent from the doc.
+        Last updated 2026-06-28 — still accurate.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Part 3 Heads Up spot-check -->
+<section>
+  <div class="section-heading">Brain.md Part 3 — Heads Up spot-check (time-bounded entries)</div>
+
+  <div class="finding warn">
+    <span class="badge warn">Stale</span>
+    <div class="finding-body">
+      <div class="finding-title">Atlanta — MLK Jr. Birth Home: <strong>REOPENED July 4, 2026</strong></div>
+      <div class="finding-desc">
+        Heads Up entry (source: 2026-06-06) says the Birth Home "is closed for a major rehabilitation project into 2026."
+        Confirmed via NPS, AJC, Fox 5 Atlanta, and 11Alive: the Birth Home reopened to the public on July 4, 2026
+        following the completion of the multi-year restoration. The Note and Workaround need to be removed or updated.
+        Logged to To Do List.
+      </div>
+    </div>
+  </div>
+
+  <div class="finding warn">
+    <span class="badge warn">Verify</span>
+    <div class="finding-body">
+      <div class="finding-title">Strasbourg — Barrage Vauban panoramic terrace: closure window has passed</div>
+      <div class="finding-desc">
+        Entry (source: 2026-06-06) says the rooftop terrace is "closed for renovation through the first half of 2026."
+        Today is 2026-07-20 — the first half has ended. Web search did not return a definitive reopening confirmation
+        (search results reference the closure period but not a specific reopen date). Recommend verifying at
+        <code>visitstrasbourg.fr</code> and updating the entry. Logged to To Do List.
+      </div>
+    </div>
+  </div>
+
+  <div class="finding ok">
+    <span class="badge ok">Current</span>
+    <div class="finding-body">
+      <div class="finding-title">Other time-bounded entries still within their stated windows</div>
+      <div class="finding-desc">
+        Dublin Castle (May 5–Dec 31, 2026), Chester Beatty Library (Jun 15–Dec 2026), Vienna Café Central
+        (Mar 16–fall 2026), Stockholm Kungliga Operan (open through Dec 1), Geneva Jet d'Eau (shutdown
+        Nov 2–Dec 3), Florence Dome maintenance (Nov 2026) — all within stated windows or far future.
+        No action needed.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Part 4 Skip List -->
+<section>
+  <div class="section-heading">Brain.md Part 4 — Cities Skip List</div>
+
+  <div class="finding ok">
+    <span class="badge ok">Clean</span>
+    <div class="finding-body">
+      <div class="finding-title">3 cities, all permanent venues — no stale entries</div>
+      <div class="finding-desc">
+        London, Paris, and Munich skip lists contain permanent landmark attractions (Westminster Abbey,
+        The Louvre, English Garden, etc.). None reference temporary closures or construction.
+        No changes needed.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- brain_check -->
+<section>
+  <div class="section-heading">brain_check result</div>
+  <div class="check-result">━━━ brain_check ━━━<br>━━━ result: 195/195 ok · 0 warn · 0 fail ━━━<br><br>Brain intact.</div>
+</section>
+
+</body>
+</html>

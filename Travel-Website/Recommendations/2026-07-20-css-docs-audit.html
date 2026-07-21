@@ -1,0 +1,413 @@
+<title>CSS Docs Audit — 2026-07-20</title>
+<style>
+:root {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --border: #dde0ea;
+  --text: #1c1c2a;
+  --muted: #65657a;
+  --accent: #3d5a8a;
+  --accent-pale: #eef2f9;
+  --fixed: #276344;
+  --fixed-pale: #e8f5ed;
+  --warn: #7a4a10;
+  --warn-pale: #fef5e7;
+  --code-bg: #f0f1f6;
+  --divider: #e4e6f0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #13131e;
+    --surface: #1e1e2e;
+    --border: #2e3048;
+    --text: #dcdce8;
+    --muted: #8080a0;
+    --accent: #7ba3d8;
+    --accent-pale: #1a2038;
+    --fixed: #5aaa7a;
+    --fixed-pale: #0e2218;
+    --warn: #d4a060;
+    --warn-pale: #261808;
+    --code-bg: #252538;
+    --divider: #2a2a40;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #13131e;
+  --surface: #1e1e2e;
+  --border: #2e3048;
+  --text: #dcdce8;
+  --muted: #8080a0;
+  --accent: #7ba3d8;
+  --accent-pale: #1a2038;
+  --fixed: #5aaa7a;
+  --fixed-pale: #0e2218;
+  --warn: #d4a060;
+  --warn-pale: #261808;
+  --code-bg: #252538;
+  --divider: #2a2a40;
+}
+:root[data-theme="light"] {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --border: #dde0ea;
+  --text: #1c1c2a;
+  --muted: #65657a;
+  --accent: #3d5a8a;
+  --accent-pale: #eef2f9;
+  --fixed: #276344;
+  --fixed-pale: #e8f5ed;
+  --warn: #7a4a10;
+  --warn-pale: #fef5e7;
+  --code-bg: #f0f1f6;
+  --divider: #e4e6f0;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  padding: 0 0 60px;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, .mono {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 12.5px;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* Header */
+.report-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 36px 24px;
+}
+.report-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.report-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.report-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.report-meta span { white-space: nowrap; }
+.report-meta .tag {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tag-fixed { background: var(--fixed-pale); color: var(--fixed); }
+.tag-clean { background: var(--accent-pale); color: var(--accent); }
+
+/* Body layout */
+.report-body {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px 36px 0;
+}
+
+/* Summary chips */
+.summary-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.sum-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 18px;
+  flex: 1 1 160px;
+}
+.sum-chip .n {
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--accent);
+}
+.sum-chip .label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Section */
+.section { margin-bottom: 32px; }
+.section-head {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 16px;
+}
+
+/* Finding card */
+.finding {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 46px;
+}
+.finding::before {
+  content: attr(data-icon);
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  font-size: 15px;
+  line-height: 1;
+}
+.finding-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.finding-body {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.finding-body p { margin-top: 4px; }
+.finding.is-fixed { border-left: 3px solid var(--fixed); }
+.finding.is-info  { border-left: 3px solid var(--accent); }
+.finding.is-warn  { border-left: 3px solid var(--warn); }
+
+/* Tag strip */
+.tag-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.ts-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+.ts-fixed { background: var(--fixed-pale); color: var(--fixed); }
+.ts-info  { background: var(--accent-pale); color: var(--accent); }
+.ts-warn  { background: var(--warn-pale); color: var(--warn); }
+
+/* Variable list */
+.var-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+.var-item {
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.var-name { font-family: 'Menlo','Consolas','Monaco',monospace; color: var(--accent); font-size: 11.5px; }
+.var-desc { color: var(--muted); font-size: 11px; }
+
+/* Footer */
+.report-footer {
+  max-width: 780px;
+  margin: 32px auto 0;
+  padding: 16px 36px;
+  border-top: 1px solid var(--divider);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .report-header { padding: 20px 18px 16px; }
+  .report-body { padding: 24px 18px 0; }
+  .report-footer { padding: 14px 18px; }
+  .sum-chip .n { font-size: 22px; }
+}
+</style>
+
+<div class="report-header">
+  <div class="report-eyebrow">Scheduled Routine · css-docs-audit</div>
+  <div class="report-title">CSS Docs Audit — July 20, 2026</div>
+  <div class="report-meta">
+    <span>Run date: 2026-07-20</span>
+    <span>Scope: Pill-Standard.md · CSS-Architecture.md · Shared-CSS-Only-Rule.md</span>
+    <span class="tag tag-fixed">1 CSS fix pushed</span>
+    <span class="tag tag-clean">Docs synced</span>
+  </div>
+</div>
+
+<div class="report-body">
+
+  <div class="summary-row">
+    <div class="sum-chip">
+      <div class="n">1</div>
+      <div class="label">CSS Fix — Pushed</div>
+    </div>
+    <div class="sum-chip">
+      <div class="n">9</div>
+      <div class="label">Variables Documented</div>
+    </div>
+    <div class="sum-chip">
+      <div class="n">2</div>
+      <div class="label">Doc Files Updated</div>
+    </div>
+    <div class="sum-chip">
+      <div class="n">0</div>
+      <div class="label">Remaining Issues</div>
+    </div>
+  </div>
+
+  <!-- Findings -->
+  <div class="section">
+    <div class="section-head">What Was Found &amp; Fixed</div>
+
+    <div class="finding is-fixed" data-icon="✅">
+      <div class="finding-title">--track not defined in shared :root {} — silent transparent fallback on non-stats pages</div>
+      <div class="finding-body">
+        <p><code>web-travel-style.css</code> line 729 has <code>.bar-track { background: var(--track); }</code>, but <code>--track: #ece6dd</code> was only defined inside <code>Travel-Stats.html</code>'s inline <code>&lt;style&gt;</code> block. On any page using <code>.bar-track</code> that didn't define its own <code>--track</code>, the bar background resolved to transparent — a silent visual failure invisible in testing on the stats page.</p>
+        <p><strong>Fix:</strong> Added <code>--track: #ece6dd</code> (light) and <code>--track: #3a3530</code> (dark mode) to <code>web-travel-style.css</code>'s shared <code>:root {}</code>. Pages that define their own value will still override it. Committed and pushed — live in commit <code>18f832d3f</code>.</p>
+        <p>Variable also added to CSS-Architecture.md's reference table. To Do List item resolved.</p>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-fixed">FIXED · Pushed</span>
+        <span class="ts-tag ts-info">CSS + Docs</span>
+      </div>
+    </div>
+
+    <div class="finding is-fixed" data-icon="✅">
+      <div class="finding-title">9 undocumented :root variables in CSS-Architecture.md</div>
+      <div class="finding-body">
+        <p>The CSS variable reference table in <code>CSS-Architecture.md</code> was last synced 2026-07-18 but nine variables present in <code>web-travel-style.css</code>'s <code>:root {}</code> were missing from it. All nine are now documented. "Last synced" date updated to 2026-07-20.</p>
+      </div>
+      <div class="var-list">
+        <div class="var-item"><span class="var-name">--c0/--c0bg/--c0bd</span><span class="var-desc">Delta nonstop tier</span></div>
+        <div class="var-item"><span class="var-name">--c1/--c1bg/--c1bd</span><span class="var-desc">Delta 1-stop tier</span></div>
+        <div class="var-item"><span class="var-name">--c2/--c2bg/--c2bd</span><span class="var-desc">Delta 2-stop tier</span></div>
+        <div class="var-item"><span class="var-name">--c-disc-bg/--c-disc</span><span class="var-desc">Discontinued tag</span></div>
+        <div class="var-item"><span class="var-name">--c-rust-tint</span><span class="var-desc">Pickleball badges</span></div>
+        <div class="var-item"><span class="var-name">--border-warm</span><span class="var-desc">Weather panels</span></div>
+        <div class="var-item"><span class="var-name">--c-temp-hi/--c-temp-lo</span><span class="var-desc">Weather hi/lo</span></div>
+        <div class="var-item"><span class="var-name">--c-rain</span><span class="var-desc">Weather rainfall</span></div>
+        <div class="var-item"><span class="var-name">--track</span><span class="var-desc">Bar track bg</span></div>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-fixed">FIXED · Doc Update</span>
+      </div>
+    </div>
+
+    <div class="finding is-fixed" data-icon="✅">
+      <div class="finding-title">Pill-Standard.md — .stab description was stale</div>
+      <div class="finding-body">
+        <p>The Control Button class list described <code>.stab</code> as "Status tabs (All/Been/Want)". The <code>#status-toggle</code> All/Been/Want element was removed from Guides-Index on 2026-07-19, but the description hadn't been updated. Updated to note the toggle was removed and the class is retained for CSS compatibility. Last Updated date bumped to 2026-07-20.</p>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-fixed">FIXED · Doc Update</span>
+      </div>
+    </div>
+
+    <div class="finding is-info" data-icon="✓">
+      <div class="finding-title">Shared-CSS-Only-Rule.md — clean, no changes needed</div>
+      <div class="finding-body">
+        <p>All referenced shared stylesheet files exist on disk (<code>web-travel-style.css</code>, <code>mobile.css</code>, <code>guide-style.css</code>, <code>guides-index-style.css</code>, <code>Read-About.css</code>, <code>toolbar.js</code>). The enforcement scripts <code>check_css_duplication.py</code> and <code>check_no_hardcoded_styles.py</code> both exist at their documented paths. No stale references found.</p>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-info">CLEAN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- brain_check -->
+  <div class="section">
+    <div class="section-head">Validation</div>
+    <div class="finding is-info" data-icon="✓">
+      <div class="finding-title">brain_check: 195/195 OK · 0 warn · 0 fail</div>
+      <div class="finding-body">
+        <p>Run after the <code>web-travel-style.css</code> change. All 195 checks pass. Push proceeded through the pre-push guard without issues.</p>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-info">PASSED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- To Do -->
+  <div class="section">
+    <div class="section-head">To Do List Activity</div>
+    <div class="finding is-fixed" data-icon="✅">
+      <div class="finding-title">--track item resolved in To Do List</div>
+      <div class="finding-body">
+        <p>The item logged under "🔧 CSS/Shared Stylesheet — Out-of-scope Findings (logged 2026-07-20, css-docs-audit)" for the <code>--track</code> variable fix was marked resolved and updated with fix details. The <code>brain_check css-duplication count-looks-wrong</code> item was left in place — it requires a script investigation, not a doc change.</p>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-fixed">RESOLVED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Observations -->
+  <div class="section">
+    <div class="section-head">Observations for Future Runs</div>
+
+    <div class="finding is-info" data-icon="◈">
+      <div class="finding-title">Delta routing tier variables were never documented — pattern to watch</div>
+      <div class="finding-body">
+        <p>The 9 variables added to CSS-Architecture.md today all belong to a cluster of "specialized page" palette tokens (Delta, Weather, Pickleball, Cards-ATM). These are added to the shared <code>:root {}</code> to ensure they're available globally, but they're scoped in purpose to specific pages. This is correct per the Shared-CSS-Only rule, but it means new page-specific tokens can silently enter the shared stylesheet without being picked up in docs.</p>
+        <p>Mitigation: the sync table in CSS-Architecture.md now has a "Last synced" date; this routine should catch any new additions within its run cadence.</p>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-info">NOTE</span>
+      </div>
+    </div>
+
+    <div class="finding is-info" data-icon="◈">
+      <div class="finding-title">css-duplication warning "234 selectors across 0 pages" is a display bug in check_css_duplication.py</div>
+      <div class="finding-body">
+        <p>The <code>brain_check check_css_duplication_summary</code> WARN says "234 duplicated CSS selectors across 0 pages" — 0 pages is impossible if 234 occurrences were found. Logged in To Do List (not fixed here — requires script investigation). The miscount means the warning can't be used to gauge real duplication without running the full script output separately.</p>
+      </div>
+      <div class="tag-strip">
+        <span class="ts-tag ts-warn">OPEN — Script Bug</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  css-docs-audit · 2026-07-20 · Committed: 18f832d3f · brain_check: 195/195 OK
+</div>

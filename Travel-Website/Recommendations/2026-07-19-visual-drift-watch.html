@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Visual Drift Watch — 2026-07-19</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* ── Token system ── */
+:root {
+  --bg:         #f5f6f8;
+  --surface:    #ffffff;
+  --surface2:   #f0f1f4;
+  --border:     #dde1e9;
+  --text:       #1a1d24;
+  --muted:      #6b7280;
+  --accent:     #1a6eff;
+  --accent-dim: #dbeafe;
+  --green:      #16a34a;
+  --green-dim:  #dcfce7;
+  --amber:      #b45309;
+  --amber-dim:  #fef3c7;
+  --red:        #dc2626;
+  --red-dim:    #fee2e2;
+  --slate:      #475569;
+  --code-bg:    #f1f3f7;
+
+  --fs-xs:   11px;
+  --fs-sm:   13px;
+  --fs-base: 15px;
+  --fs-lg:   18px;
+  --fs-xl:   24px;
+  --fs-2xl:  36px;
+
+  --r: 8px;
+  --r-sm: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:         #0d1117;
+    --surface:    #161b22;
+    --surface2:   #1c2128;
+    --border:     #30363d;
+    --text:       #e6edf3;
+    --muted:      #8b949e;
+    --accent:     #4ca3ff;
+    --accent-dim: #0c2a52;
+    --green:      #3fb950;
+    --green-dim:  #0d2a14;
+    --amber:      #e3b341;
+    --amber-dim:  #2d1f00;
+    --red:        #f85149;
+    --red-dim:    #2d0000;
+    --slate:      #8d96a3;
+    --code-bg:    #1c2128;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d1117; --surface: #161b22; --surface2: #1c2128;
+  --border: #30363d; --text: #e6edf3; --muted: #8b949e;
+  --accent: #4ca3ff; --accent-dim: #0c2a52;
+  --green: #3fb950; --green-dim: #0d2a14;
+  --amber: #e3b341; --amber-dim: #2d1f00;
+  --red: #f85149; --red-dim: #2d0000;
+  --slate: #8d96a3; --code-bg: #1c2128;
+}
+:root[data-theme="light"] {
+  --bg: #f5f6f8; --surface: #ffffff; --surface2: #f0f1f4;
+  --border: #dde1e9; --text: #1a1d24; --muted: #6b7280;
+  --accent: #1a6eff; --accent-dim: #dbeafe;
+  --green: #16a34a; --green-dim: #dcfce7;
+  --amber: #b45309; --amber-dim: #fef3c7;
+  --red: #dc2626; --red-dim: #fee2e2;
+  --slate: #475569; --code-bg: #f1f3f7;
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: var(--fs-base); }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ── */
+.wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+/* ── Header ── */
+.header {
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.header-eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.header h1 {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.header-meta {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.dot { color: var(--border); }
+
+/* ── Stats strip ── */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 18px;
+}
+.stat-label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.stat-value.val-zero { color: var(--muted); }
+.stat-value.val-accent { color: var(--accent); }
+.stat-value.val-green { color: var(--green); }
+.stat-value.val-amber { color: var(--amber); }
+.stat-sub {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* ── Section ── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.section-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.section-body {
+  padding: 20px;
+}
+
+/* ── Notice block ── */
+.notice {
+  border-radius: var(--r);
+  padding: 16px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.notice.no-ref {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+}
+.notice.info {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+.notice-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.notice-text strong {
+  display: block;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.notice-text p {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+.notice-text p + p { margin-top: 6px; }
+
+/* ── Table ── */
+.data-table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+th {
+  text-align: left;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface2); }
+
+/* ── Badge / status chip ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.badge-new { background: var(--accent-dim); color: var(--accent); }
+.badge-pass { background: var(--green-dim); color: var(--green); }
+.badge-skip { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.badge-amber { background: var(--amber-dim); color: var(--amber); }
+
+/* ── Mono code snippet ── */
+.code {
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Mono', 'Consolas', monospace;
+  font-size: var(--fs-xs);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 2px 6px;
+  color: var(--text);
+}
+
+/* ── Change list ── */
+.change-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.change-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+}
+.change-icon { flex-shrink: 0; font-size: 16px; line-height: 1.4; }
+.change-body { flex: 1; min-width: 0; }
+.change-title { font-size: var(--fs-sm); font-weight: 600; color: var(--text); }
+.change-sub { font-size: var(--fs-xs); color: var(--muted); margin-top: 2px; }
+
+/* ── Recommendation block ── */
+.rec-block {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 14px 16px;
+  margin-top: 16px;
+}
+.rec-block strong {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 5px;
+}
+.rec-block p {
+  font-size: var(--fs-sm);
+  color: var(--text);
+  line-height: 1.6;
+}
+.rec-block code {
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Mono', monospace;
+  font-size: .92em;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* ── How-to steps ── */
+.step-list { list-style: none; display: flex; flex-direction: column; gap: 8px; counter-reset: steps; }
+.step-list li {
+  counter-increment: steps;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  line-height: 1.6;
+}
+.step-list li::before {
+  content: counter(steps);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <div class="header-eyebrow">Weekly Routine · Visual Drift Watch</div>
+    <h1>Visual Drift Watch</h1>
+    <div class="header-meta">
+      <span>Run date: 2026-07-19</span>
+      <span class="dot">·</span>
+      <span>0 guides audited (no refs at run time)</span>
+      <span class="dot">·</span>
+      <span>8 drift rules catalogued</span>
+      <span class="dot">·</span>
+      <span>Reference store: 2 canonical + 5 pending</span>
+    </div>
+  </header>
+
+  <!-- ── Stats strip ── -->
+  <div class="stats-strip">
+    <div class="stat-tile">
+      <div class="stat-label">Guides audited</div>
+      <div class="stat-value val-zero">0</div>
+      <div class="stat-sub">Refs added mid-session</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Drift rules</div>
+      <div class="stat-value val-green">8</div>
+      <div class="stat-sub">Catalogued this session</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Canonical screenshots</div>
+      <div class="stat-value val-accent">2</div>
+      <div class="stat-sub">In canonical/</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">Pending screenshots</div>
+      <div class="stat-value val-amber">5</div>
+      <div class="stat-sub">intake/ stubs waiting</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-label">New guides this week</div>
+      <div class="stat-value val-accent">5</div>
+      <div class="stat-sub">All validated ✓</div>
+    </div>
+  </div>
+
+  <!-- ── Section 1: Intake ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Section 1 — Intake processed</div>
+    </div>
+    <div class="section-body">
+      <div class="notice info" style="margin-bottom: 16px;">
+        <div class="notice-icon">📥</div>
+        <div class="notice-text">
+          <strong>2 screenshots ingested from Screenshots/ — reference store built this session</strong>
+          <p>Screenshots were dropped into <span class="code">Screenshots/</span> during this session and processed into the reference store. 2 moved to <span class="code">canonical/</span>. 1 moved to <span class="code">wrong-examples/</span> (documents drift, not a baseline). 5 additional manifest entries have <span class="code">.txt</span> stubs in <span class="code">intake/</span> awaiting matching PNGs.</p>
+        </div>
+      </div>
+
+      <div class="data-table-wrap">
+        <table>
+          <thead>
+            <tr><th>File</th><th>Destination</th><th>Feature</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="code">IMG_8392.jpeg</span></td>
+              <td><span class="badge badge-pass">canonical/</span></td>
+              <td>Trip Overview extras nav grid — Buenos Aires, correct rounded-chip Form A style</td>
+            </tr>
+            <tr>
+              <td><span class="code">IMG_8393.jpeg</span></td>
+              <td><span class="badge badge-pass">canonical/</span></td>
+              <td>"Also on this site" section title — 💥 emoji via CSS <span class="code">::before</span></td>
+            </tr>
+            <tr>
+              <td><span class="code">IMG_8390.jpeg</span></td>
+              <td><span class="badge badge-amber">wrong-examples/</span></td>
+              <td>Also-on-site + Nearby Guides pills — WRONG rounded corners (pre-fix drift state)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <div class="section-title" style="font-size: var(--fs-xs); margin-bottom: 10px;">Pending intake — drop PNG to activate</div>
+        <div class="data-table-wrap">
+          <table>
+            <thead>
+              <tr><th>Filename to drop</th><th>Feature</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="code">2026-07-19-also-on-site-mobile-grid.png</span></td><td>Also-on-site flat tile grid (Form B, border-radius 0)</td></tr>
+              <tr><td><span class="code">2026-07-19-nearby-guides-mobile-grid.png</span></td><td>Nearby Guides flat tile grid (3-col, border-radius 0)</td></tr>
+              <tr><td><span class="code">2026-07-19-updated-stamp-position.png</span></td><td>Updated stamp after #nearby-guides (runtime position)</td></tr>
+              <tr><td><span class="code">2026-07-19-visited-pill.png</span></td><td>Visited pill — gold border, white bg, 6px radius</td></tr>
+              <tr><td><span class="code">2026-07-19-hotel-address-arrow-mobile.png</span></td><td>Hotel address with terracotta CSS arrow (not emoji)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 1b: Drift catalog ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Drift Catalog — 8 rules registered</div>
+    </div>
+    <div class="section-body">
+      <p style="font-size: var(--fs-sm); color: var(--muted); margin-bottom: 16px;">All 8 drift rules are documented in <span class="code">MANIFEST.md</span> and will be cross-checked on every future run. Rules with canonical screenshots perform visual diff; rules without screenshots run structural HTML/CSS pattern checks only.</p>
+      <div class="data-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Feature</th>
+              <th>Correct pattern</th>
+              <th>Drift = wrong when</th>
+              <th>Screenshot</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs);">1</td>
+              <td><strong>Also-on-site title</strong></td>
+              <td><span class="code">::before</span> injects 💥 emoji</td>
+              <td>No emoji / wrong emoji</td>
+              <td><span class="badge badge-pass">✓ canonical</span></td>
+            </tr>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs);">2</td>
+              <td><strong>Also-on-site pills (mobile)</strong></td>
+              <td>Flat tile: border-radius 0, gap 0, height 46px</td>
+              <td>Rounded corners on cells</td>
+              <td><span class="badge badge-amber">Pending PNG</span></td>
+            </tr>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs);">3</td>
+              <td><strong>Nearby Guides (mobile)</strong></td>
+              <td>Flat tile: same as row 2, 3-col grid</td>
+              <td>Rounded corners on cells</td>
+              <td><span class="badge badge-amber">Pending PNG</span></td>
+            </tr>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs);">4</td>
+              <td><strong>Trip Overview extras grid</strong></td>
+              <td>Rounded chip: border-radius 6px (Form A — opposite of rows 2–3)</td>
+              <td>Flat/square chips on extras nav</td>
+              <td><span class="badge badge-pass">✓ canonical</span></td>
+            </tr>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs);">5</td>
+              <td><strong>Export + All Stops Map</strong></td>
+              <td>border-radius 0, uppercase bold, own flex row</td>
+              <td>Rounded or lowercase; mixed into extras grid</td>
+              <td><span class="badge badge-pass">✓ in row 4 screenshot</span></td>
+            </tr>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs);">6</td>
+              <td><strong>Updated stamp position</strong></td>
+              <td>Sibling after #nearby-guides (runtime)</td>
+              <td>Inside pill grid or before nearby guides</td>
+              <td><span class="badge badge-amber">Pending PNG</span></td>
+            </tr>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs);">7</td>
+              <td><strong>Visited pill</strong></td>
+              <td>Gold border, white bg, 6px radius, text "Visited"</td>
+              <td>Terracotta fill / wrong border / wrong text</td>
+              <td><span class="badge badge-amber">Pending PNG</span></td>
+            </tr>
+            <tr>
+              <td style="font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-xs); font-weight: 600; color: var(--accent);">8</td>
+              <td><strong>Hotel address arrow (mobile)</strong> <span class="badge badge-new" style="margin-left: 4px;">NEW</span></td>
+              <td>Terracotta CSS chevron on <span class="code">.title-address a::after</span> (not ↗️ emoji); stop-row addresses: zero arrow</td>
+              <td>Apple emoji ↗️ in HTML; plain ↗ in anchor text; any arrow on stop links; arrow absent from hotel</td>
+              <td><span class="badge badge-amber">Pending PNG</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rec-block">
+        <strong>Implementation gap — Row 8</strong>
+        <p>The terracotta CSS arrow on the hotel address was implemented, then removed (commits <span class="code">573a15bdf</span> → <span class="code">c76b3c600</span>). <code>brain_check check_title_address_no_css_arrow</code> currently hard-FAILS if the <span class="code">::after</span> returns — this check is <strong>inverted</strong> vs. the spec. To re-implement: update that brain_check rule to verify the correct border style instead of blocking the selector.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 2: No-ref notice ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Section 2 — New guides audited</div>
+    </div>
+    <div class="section-body">
+      <div class="notice no-ref">
+        <div class="notice-icon">📋</div>
+        <div class="notice-text">
+          <strong>No visual references registered — audit skipped</strong>
+          <p>The manifest at <span class="code">Brain/Reference/Visual-Reference/MANIFEST.md</span> has no active entries. Without baseline reference screenshots there is nothing to compare newly shipped guides against, so the visual and structural cross-checks in Steps 4–6 were skipped per routine protocol.</p>
+          <p>See Section 5 for how to add the first reference screenshots and activate the audit.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="section-title" style="margin-bottom: 12px; font-size: var(--fs-xs);">New guides added to git this week — all carry signed v2 stamps</div>
+        <div class="data-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Guide</th>
+                <th>File</th>
+                <th>Stamp</th>
+                <th>Visual audit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Bilbao</strong></td>
+                <td><span class="code">Bilbao/bilbao_v1.html</span></td>
+                <td><span class="badge badge-pass">v2 signed</span></td>
+                <td><span class="badge badge-skip">No refs — skipped</span></td>
+              </tr>
+              <tr>
+                <td><strong>Coeur d'Alene</strong></td>
+                <td><span class="code">Coeur-dAlene/coeur-dalene_v1.html</span></td>
+                <td><span class="badge badge-pass">v2 signed</span></td>
+                <td><span class="badge badge-skip">No refs — skipped</span></td>
+              </tr>
+              <tr>
+                <td><strong>Hilton Head Island</strong></td>
+                <td><span class="code">Hilton-Head-Island/hilton-head-island_v1.html</span></td>
+                <td><span class="badge badge-pass">v2 signed</span></td>
+                <td><span class="badge badge-skip">No refs — skipped</span></td>
+              </tr>
+              <tr>
+                <td><strong>Marco Island</strong></td>
+                <td><span class="code">Marco-Island/marco-island_v1.html</span></td>
+                <td><span class="badge badge-pass">v2 signed</span></td>
+                <td><span class="badge badge-skip">No refs — skipped</span></td>
+              </tr>
+              <tr>
+                <td><strong>Santa Fe</strong></td>
+                <td><span class="code">Santa-Fe/santa-fe_v1.html</span></td>
+                <td><span class="badge badge-pass">v2 signed</span></td>
+                <td><span class="badge badge-skip">No refs — skipped</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 3: No gaps ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Section 3 — Enforcement gaps summary</div>
+    </div>
+    <div class="section-body">
+      <div class="notice info">
+        <div class="notice-icon">✅</div>
+        <div class="notice-text">
+          <strong>No enforcement gaps diagnosed this run</strong>
+          <p>Gap analysis only runs when drift is found. No reference baselines → no drift findings → no gap analysis. Once reference screenshots are added, this section will report which tool (validator, brain_check, ship gate, or pre-push) is missing a check for any drifted feature.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 4: Fleet context ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Section 4 — Fleet activity this week</div>
+    </div>
+    <div class="section-body">
+      <p style="font-size: var(--fs-sm); color: var(--muted); margin-bottom: 16px;">218 guide files were modified this week — 5 new first-time additions, and 213 touched by fleet-wide fix passes. An unusually active week with several locked visual patterns being changed. These are strong candidates for adding reference screenshots.</p>
+
+      <ul class="change-list">
+        <li class="change-item">
+          <div class="change-icon">⏰</div>
+          <div class="change-body">
+            <div class="change-title">⏰ bare-h → hr fix across 47 guides</div>
+            <div class="change-sub">Commit <span class="code">627b152</span> · guide-audit-and-fix-5 · Changed bare "h" suffix to canonical "hr" in avg-time rows</div>
+          </div>
+        </li>
+        <li class="change-item">
+          <div class="change-icon">🔵</div>
+          <div class="change-body">
+            <div class="change-title">Mobile also-on-site + nearby-guide pills: border-radius 0 (tile style)</div>
+            <div class="change-sub">Commits <span class="code">30749e3</span> / <span class="code">4462f3d</span> / <span class="code">10dc56a</span> · Locked pill shape on mobile guide pages</div>
+          </div>
+        </li>
+        <li class="change-item">
+          <div class="change-icon">🗺️</div>
+          <div class="change-body">
+            <div class="change-title">Map link arrows: ↗ removed from stop links, hotel ↗ upgraded to ↗️</div>
+            <div class="change-sub">Commit <span class="code">4f39442</span> · Fleet-wide link-format correction per Icon Order rules (Rule 548)</div>
+          </div>
+        </li>
+        <li class="change-item">
+          <div class="change-icon">💊</div>
+          <div class="change-body">
+            <div class="change-title">Visited pill: gold outline style + border-radius 6px</div>
+            <div class="change-sub">Commits <span class="code">125db65</span> / <span class="code">ab7d961</span> · New locked pill shape for localStorage-driven visited indicator (Rule 550)</div>
+          </div>
+        </li>
+        <li class="change-item">
+          <div class="change-icon">📅</div>
+          <div class="change-body">
+            <div class="change-title">Export Calendar + All Stops Map pills: matched to Read About pill style</div>
+            <div class="change-sub">Commits <span class="code">864e26b</span> / <span class="code">7900fa0</span> / <span class="code">97a1d3c</span> · Corrected inconsistent button styling across guide action pills</div>
+          </div>
+        </li>
+        <li class="change-item">
+          <div class="change-icon">🔗</div>
+          <div class="change-body">
+            <div class="change-title">Title link: both desktop and mobile now go to Guides-Index.html</div>
+            <div class="change-sub">Commit <span class="code">e38fa38</span> · Guide header title now always navigates back to the index</div>
+          </div>
+        </li>
+        <li class="change-item">
+          <div class="change-icon">📍</div>
+          <div class="change-body">
+            <div class="change-title">Updated stamp: always positioned after section, never inside pill grid</div>
+            <div class="change-sub">Commit <span class="code">e704306</span> · Stamp placement drift corrected</div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="rec-block">
+        <strong>Visual reference opportunity</strong>
+        <p>This week's changes locked several visual patterns that are now enforced by validators and brain_check. Each is a good candidate for a reference screenshot — particularly the mobile also-on-site tile pill shape, the visited pill gold border look, and the map link arrow format. Screenshots taken now would catch any future regression in these locked forms.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 5: Reference store ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Section 5 — Reference store health</div>
+    </div>
+    <div class="section-body">
+      <div class="data-table-wrap" style="margin-bottom: 20px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Count</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Active manifest entries</td>
+              <td><strong>7</strong></td>
+              <td><span class="badge badge-pass">Store bootstrapped this session</span></td>
+            </tr>
+            <tr>
+              <td>Drift table rules</td>
+              <td><strong>8</strong></td>
+              <td><span class="badge badge-pass">Row 8 added this session (hotel arrow)</span></td>
+            </tr>
+            <tr>
+              <td>Canonical screenshots on disk</td>
+              <td><strong>2</strong></td>
+              <td><span class="badge badge-pass">trip-overview-extras-grid + also-on-site-section-title</span></td>
+            </tr>
+            <tr>
+              <td>Wrong-example screenshots</td>
+              <td><strong>1</strong></td>
+              <td><span class="badge badge-pass">also-on-site-nearby-WRONG-rounded-pills.jpg</span></td>
+            </tr>
+            <tr>
+              <td>Pending intake stubs (awaiting PNG)</td>
+              <td><strong>5</strong></td>
+              <td><span class="badge badge-amber">Drop matching PNGs to activate</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <div class="section-title" style="font-size: var(--fs-xs); margin-bottom: 12px;">How to add the first reference screenshot</div>
+        <ol class="step-list">
+          <li>Open a shipped guide in Chrome. Navigate to the section you want to capture (e.g., scroll to the "Also on this site" block).</li>
+          <li>Take a screenshot of the section. Name it descriptively: <span class="code">YYYY-MM-DD-feature-name.png</span> (e.g., <span class="code">2026-07-19-also-on-site-pills-mobile.png</span>).</li>
+          <li>Drop the PNG in <span class="code">Brain/Reference/Visual-Reference/intake/</span>.</li>
+          <li>Create a companion <span class="code">.txt</span> file with the exact same base name. Describe: what section it shows, what the correct HTML/CSS patterns are (one per line), and which tool currently enforces it.</li>
+          <li>On the next <span class="code">visual-drift-watch</span> run, the routine ingests it, moves it to <span class="code">canonical/</span>, and adds it to the manifest. From that run onward, every newly shipped guide is compared against it.</li>
+        </ol>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div class="section-title" style="font-size: var(--fs-xs); margin-bottom: 10px;">Suggested first reference captures — high-value locked patterns</div>
+        <div class="data-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>What to capture</th>
+                <th>Enforced by</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Also-on-site pills (mobile)</td>
+                <td>Mobile view of the "Also on this site" pill grid — border-radius 0 tile style</td>
+                <td><span class="code">brain_check</span> / <span class="code">validate_itinerary</span></td>
+              </tr>
+              <tr>
+                <td>Visited pill</td>
+                <td>Gold border, white bg, 6px radius pill at bottom of guide</td>
+                <td><span class="code">brain_check check_visited_pill_style</span></td>
+              </tr>
+              <tr>
+                <td>Map link arrows</td>
+                <td>Stop row 📍 address link — text only, no ↗ arrow appended</td>
+                <td><span class="code">validate_itinerary</span> Rule 548</td>
+              </tr>
+              <tr>
+                <td>Hotel banner (mobile)</td>
+                <td>Mobile card under gradient line — hotel name + Maps link ↗</td>
+                <td><span class="code">brain_check</span> / <span class="code">Hotel Banner.html</span></td>
+              </tr>
+              <tr>
+                <td>Trip Overview pill strip</td>
+                <td>All day cards + extras pills in correct order and style</td>
+                <td><span class="code">validate_itinerary</span> TR checks</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 6: Out-of-scope ── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Section 6 — Out-of-scope findings</div>
+    </div>
+    <div class="section-body">
+      <div class="notice info">
+        <div class="notice-icon">📝</div>
+        <div class="notice-text">
+          <strong>Nothing logged to To Do List this run</strong>
+          <p>No out-of-scope problems were encountered. The To Do List scan at Step 0 found no Visual Reference or Drift Watch items.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <span>Visual Drift Watch · 2026-07-19</span>
+    <span>8 drift rules · 2 canonical screenshots · 5 pending PNGs · audit activates next run</span>
+  </footer>
+
+</div>
+</body>
+</html>
