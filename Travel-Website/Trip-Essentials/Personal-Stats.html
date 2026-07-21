@@ -505,5 +505,93 @@ html { scroll-behavior: smooth; }
   </div>
 
 </div>
+
+<!-- ── Custom page scrollbar (desktop only) — lets you scroll even over the map iframe ── -->
+<div id="ps-scrollbar" aria-hidden="true">
+  <div id="ps-thumb"></div>
+</div>
+<style>
+@media (min-width:601px) {
+  #ps-scrollbar {
+    position: fixed;
+    right: 4px;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    z-index: 9000;
+    border-radius: 5px;
+    background: rgba(0,0,0,0.06);
+    cursor: pointer;
+  }
+  #ps-thumb {
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    border-radius: 4px;
+    background: rgba(107,58,31,0.35);
+    transition: background .15s;
+    cursor: grab;
+    min-height: 32px;
+  }
+  #ps-thumb:hover, #ps-thumb.dragging { background: rgba(107,58,31,0.6); }
+}
+@media (max-width:600px) { #ps-scrollbar { display:none; } }
+</style>
+<script>
+(function(){
+  var bar = document.getElementById('ps-scrollbar');
+  var thumb = document.getElementById('ps-thumb');
+  if (!bar) return;
+
+  function update() {
+    var scrollTop = window.scrollY;
+    var docH = document.documentElement.scrollHeight;
+    var winH = window.innerHeight;
+    var barH = bar.clientHeight;
+    var thumbH = Math.max(32, (winH / docH) * barH);
+    var maxTop = barH - thumbH;
+    var thumbTop = (scrollTop / (docH - winH)) * maxTop;
+    thumb.style.height = thumbH + 'px';
+    thumb.style.top = thumbTop + 'px';
+  }
+
+  window.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  update();
+
+  // Click on track scrolls to that position
+  bar.addEventListener('click', function(e) {
+    if (e.target === thumb) return;
+    var rect = bar.getBoundingClientRect();
+    var ratio = (e.clientY - rect.top) / rect.height;
+    var docH = document.documentElement.scrollHeight;
+    window.scrollTo({ top: ratio * (docH - window.innerHeight), behavior: 'smooth' });
+  });
+
+  // Drag thumb
+  var dragStartY, dragStartScroll;
+  thumb.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    thumb.classList.add('dragging');
+    dragStartY = e.clientY;
+    dragStartScroll = window.scrollY;
+    function onMove(e) {
+      var delta = e.clientY - dragStartY;
+      var barH = bar.clientHeight;
+      var docH = document.documentElement.scrollHeight;
+      var winH = window.innerHeight;
+      var scrollRange = docH - winH;
+      window.scrollTo(0, dragStartScroll + delta * (scrollRange / barH));
+    }
+    function onUp() {
+      thumb.classList.remove('dragging');
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+})();
+</script>
 </body>
 </html>
