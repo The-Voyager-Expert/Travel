@@ -331,10 +331,9 @@
       'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
     /* Scroll container — takes remaining space */
     '.tb-inner{overflow-x:hidden;flex:1}' +
-    /* Flex row — left-aligned so overflow always falls off the RIGHT.
-       Site title and Guides (first items) are never clipped on the left. */
-    '.tb-links{display:flex;flex-wrap:nowrap;width:max-content;margin:0;' +
-      'gap:1px;align-items:center;justify-content:flex-start}' +
+    /* Flex row — fills full width, items spread evenly. No scrolling, no gap. */
+    '.tb-links{display:flex;flex-wrap:nowrap;width:100%;margin:0;' +
+      'gap:0;align-items:center;justify-content:space-evenly}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
