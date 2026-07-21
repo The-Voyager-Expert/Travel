@@ -332,8 +332,8 @@
     '.tb-scroll-wrap{display:none!important}' +
     '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:13px;font-weight:700;color:#fff!important;' +
       'letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;white-space:nowrap;margin-left:32px;background:transparent!important;text-decoration:none!important}' +
-    /* Scroll container — takes remaining space */
-    '.tb-inner{overflow-x:hidden;flex:1}' +
+    /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
+    '.tb-inner{flex:1}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:100%;margin:0;' +
       'gap:0;align-items:center;justify-content:space-between}' +
