@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Validator Audit — Site Part 21 · 2026-07-20</title>
+<style>
+:root{--bg:#f9f7f4;--surface:#fff;--text:#1e1c18;--muted:#7a7266;--accent:#b85c2a;--border:#ddd5c8;--pass:#2e6e3e;--pass-bg:#edf5f0;--warn:#8a5800;--warn-bg:#fdf3e0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7;padding:40px 24px 80px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-family:Georgia,serif;font-size:22px;font-weight:normal;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:6px}
+.meta{font-size:12px;color:var(--muted);margin-bottom:28px}
+h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:28px 0 10px}
+p{margin-bottom:10px}
+ul{padding-left:20px;margin-bottom:10px}
+li{margin-bottom:4px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px}
+.tag-fix{background:var(--pass-bg);color:var(--pass)}
+.tag-clean{background:#e8f0fe;color:#1a5276}
+.tag-warn{background:var(--warn-bg);color:var(--warn)}
+code{font-family:ui-monospace,monospace;font-size:12px;background:#ece9e4;padding:1px 4px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Validator Audit — Site Part 21</h1>
+<div class="meta">2026-07-20 · crib-11 · Guides Index: dest-cards &amp; inline data</div>
+
+<h2>Scope</h2>
+<p>Part 21 covers Guides-Index.html dest-cards, inline filter data (CLIMATE_INLINE / COST_DATA / SAFETY_DATA), DAYS_DATA, THEME_DATA, data-lang, data-shipped, data-status, country ordering, and new-badge CSS/JS.</p>
+
+<h2>Fixes Applied</h2>
+<ul>
+  <li><span class="tag tag-fix">FIXED</span> <strong>DAYS_DATA — Naples 3→4</strong>: <code>audit_filters.py --apply</code> detected Naples had 3 days in DAYS_DATA but the shipped guide has 4 days. Updated in Guides-Index.html.</li>
+  <li><span class="tag tag-fix">FIXED</span> <strong>Safety-Guide.html toolbar stale version (v103→v116)</strong>: <code>brain_check</code> warned the auto-generated Safety-Guide.html referenced <code>toolbar.js?v=103</code> while current is <code>v=116</code>. Fixed the template in <code>build_safety_guide.py</code> and regenerated the page. <code>brain_check</code> now passes 195/195 with 0 warnings.</li>
+  <li><span class="tag tag-fix">FIXED</span> <strong>Artifact script — site parts 21–30 not displayed</strong>: <code>update_validator_coverage_artifact.py</code> only generated a progress bar for parts 1–20. Added <code>SITE_ROWS</code> and <code>SITE_PART_SECTIONS</code> for parts 21–30, a second labeled progress bar, and a separate "Site Audit" table section. Artifact re-published.</li>
+</ul>
+
+<h2>Validators Run — All Passed</h2>
+<ul>
+  <li><span class="tag tag-clean">PASS</span> <code>validate_guides_index_inline.py</code> — CLIMATE_INLINE / COST_DATA / SAFETY_DATA cover 207 shipped guides (224 total cards). No gaps.</li>
+  <li><span class="tag tag-clean">PASS</span> <code>validate_guide_country_assignment.py</code> — 224 cards, all under correct country blocks. No cross-country contamination.</li>
+  <li><span class="tag tag-clean">PASS</span> <code>validate_guides_index_alphabetical.py</code> — 73 countries, 271 guides, all in correct A-Z order.</li>
+  <li><span class="tag tag-clean">PASS</span> <code>audit_filters.py</code> (dry-run then apply) — FMAP all covered, CONTINENT map complete, inline data complete. 1 DAYS_DATA fix (Naples). data-lang and THEME_DATA written.</li>
+  <li><span class="tag tag-clean">PASS</span> <code>brain_check.py</code> — 195/195 ok, 0 warn, 0 fail (after Safety-Guide fix).</li>
+</ul>
+
+<h2>Validator Code (3B) — Status</h2>
+<ul>
+  <li><code>check_new_badge_css</code> — verifies <code>.dest-new-badge</code> has <code>border:1.5px solid #e8c97a</code>, <code>background:#fdecc8</code>, <code>color:#7a4d00</code>, <code>border-radius:3px</code>. Confirmed correct in <code>guides-index-style.css</code>. ✅</li>
+  <li><code>check_new_badge_js</code> — verifies JS reads <code>data-shipped</code>, checks ≤14 days, injects <code>span.dest-new-badge</code>. Confirmed correct. ✅</li>
+  <li>Fleet-wide alphabetical, country-assignment, and inline-data validators are all documented in the Validator Index (🗂 FLEET VALIDATORS section). ✅</li>
+  <li>No missing checks found for Part 21 scope.</li>
+</ul>
+
+<h2>Data Quality Notes</h2>
+<ul>
+  <li>142 cards <code>data-status="want"</code> · 83 cards <code>data-status="been"</code> — correct distribution; "been" reflects visited cities marked by the owner.</li>
+  <li>5 dest-cards have <code>data-shipped</code> (Hong-Kong, Bilbao, Coeur-dAlene, Hilton-Head-Island, Marco-Island) — all shipped within the last 14 days at time of ship; badge JS fires for ≤14-day-old dates only, so some may have expired by now.</li>
+  <li>47 "untagged" THEME_DATA entries are Best-of page cards (Amusement Parks, Architecture, Beaches…), not city guides — this is expected and correct.</li>
+</ul>
+</div>
+</body>
+</html>
