@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Validator Audit — Part 1 Report · 2026-07-21</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 24px; color: #2d2a24; line-height: 1.6; }
+h1 { font-size: 1.3rem; font-weight: 700; color: #3d3a32; border-bottom: 3px solid #b85c2a; padding-bottom: 8px; margin-bottom: 4px; }
+.meta { font-size: 0.82rem; color: #888; margin-bottom: 28px; }
+h2 { font-size: 1rem; font-weight: 700; color: #3d3a32; margin-top: 32px; margin-bottom: 8px; border-left: 3px solid #b85c2a; padding-left: 10px; }
+.item { background: #fdf8f0; border: 1px solid #e8d8b8; border-radius: 6px; padding: 14px 16px; margin-bottom: 14px; }
+.item-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+.item-detail { font-size: 0.88rem; color: #555; }
+.tag { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 4px; padding: 2px 8px; margin-right: 6px; }
+.tag-fix { background: #d4edda; color: #155724; }
+.tag-doc { background: #cfe2ff; color: #084298; }
+.tag-clean { background: #f8d7da; color: #721c24; }
+.status-ok { color: #155724; font-weight: 700; }
+.status-warn { color: #856404; font-weight: 700; }
+code { font-family: monospace; background: #f1ede6; padding: 1px 5px; border-radius: 3px; font-size: 0.88rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; margin-top: 8px; }
+th { text-align: left; background: #f1ede6; padding: 6px 10px; border: 1px solid #e0d4c0; font-weight: 700; }
+td { padding: 6px 10px; border: 1px solid #e0d4c0; vertical-align: top; }
+</style>
+</head>
+<body>
+
+<h1>Validator Audit — Part 1: CORE RULES Integrity &amp; Build State + Document Head</h1>
+<p class="meta">Run: validator-audit-fix-crib-2 · Date: 2026-07-21 · Cycle: 2 · Parts completed this cycle: 1, 2, 3, 4, 5, 6, 7, 8, 11, 21, 25, 26</p>
+
+<h2>Scope</h2>
+<p>Deep comparison of two sections of <code>Brain/Reference/Validator Index.html</code> against <code>Brain/scripts/validate_itinerary.py</code>:</p>
+<ul>
+  <li><strong>🔒 CORE RULES INTEGRITY &amp; BUILD STATE</strong> — checksums, content drift, build-state tracker, Phase 1–5 checks</li>
+  <li><strong>📄 DOCUMENT HEAD</strong> — viewport, DOCTYPE, lang, charset, title, h1, inline-style, stylesheet, Google Fonts, malformed entities, bare domains</li>
+</ul>
+
+<h2>Findings &amp; Fixes</h2>
+
+<div class="item">
+  <div class="item-title"><span class="tag tag-fix">FIXED</span> Phase 3 comment in <code>validate_itinerary.py</code> incorrectly described as stops-conditional</div>
+  <div class="item-detail">
+    <strong>File:</strong> <code>Brain/scripts/validate_itinerary.py</code> line 676<br>
+    <strong>Was:</strong> <code>#   - Phase 3 entry unchecked + stops    → FAIL (skip when no stops)</code><br>
+    <strong>Now:</strong> <code>#   - Phase 3 entry unchecked            → FAIL</code><br>
+    <strong>Why:</strong> Phase 3 (Day Structure.html) is enforced unconditionally at line 1049 — no stops-gate exists for it. Only Phase 4 is stops-conditional (lines 1052–1061). The wrong comment implied Phase 3 would be skipped for guides with no explicit stop blocks, which is false. A crib reading this comment to understand Phase 3 enforcement would have been misled into believing it was optional in no-stop guides.
+  </div>
+</div>
+
+<div class="item">
+  <div class="item-title"><span class="tag tag-doc">DOCUMENTED</span> <code>validate_core_rules_coherence.py</code> added to Validator Index</div>
+  <div class="item-detail">
+    <strong>File:</strong> <code>Brain/Reference/Validator Index.html</code> — FLEET VALIDATORS section<br>
+    Script existed in <code>Brain/scripts/</code> (20-check CORE RULES coherence sweep) but had no entry in the Validator Index. Any crib consulting the Index to understand available validators would have missed it.
+  </div>
+</div>
+
+<div class="item">
+  <div class="item-title"><span class="tag tag-doc">DOCUMENTED</span> <code>build_day_trips.py</code> added to Validator Index</div>
+  <div class="item-detail">
+    <strong>File:</strong> <code>Brain/Reference/Validator Index.html</code> — BUILDERS section<br>
+    Script existed (aggregates Day Trips by Train entries from all shipped guides → <code>Trip-Essentials/Day-Trips.html</code>) but was absent from the Index. CLAUDE.md listed it; the Validator Index did not.
+  </div>
+</div>
+
+<div class="item">
+  <div class="item-title"><span class="tag tag-doc">DOCUMENTED</span> <code>update_validator_coverage_artifact.py</code> added to Validator Index</div>
+  <div class="item-detail">
+    <strong>File:</strong> <code>Brain/Reference/Validator Index.html</code> — INFRASTRUCTURE &amp; TOOLING section<br>
+    Script existed (regenerates <code>validator_coverage_artifact.html</code> from <code>validator_audit_state.json</code>; called at start and end of each audit-crib run) but had no Index entry.
+  </div>
+</div>
+
+<h2>Verified — No Gaps Found</h2>
+<table>
+  <tr><th>Section</th><th>Check count</th><th>Status</th></tr>
+  <tr><td>CORE RULES Integrity — SHA-256 checksum guard</td><td>1</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>CORE RULES Content — banned phrases + note-span drift words</td><td>2</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>Build-state tracker — Phase 1 check</td><td>1</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>Build-state tracker — Phase 2 check</td><td>1</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>Build-state tracker — Phase 3 check (always required)</td><td>1</td><td class="status-ok">✅ correct (comment bug fixed)</td></tr>
+  <tr><td>Build-state tracker — Phase 4 check (stops-conditional)</td><td>1</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>Build-state tracker — Phase 5 check (per extras-section + claude-inspiration)</td><td>1</td><td class="status-ok">✅ correct (added 2026-07-20)</td></tr>
+  <tr><td>Guide filename pattern check</td><td>1</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>Validation stamp — read + write</td><td>2</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>DOCUMENT HEAD — viewport, DOCTYPE, lang, charset</td><td>4</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>DOCUMENT HEAD — title, h1, nothing-before-title-page</td><td>3</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>DOCUMENT HEAD — inline-style, stylesheet, Google Fonts ban</td><td>3</td><td class="status-ok">✅ correct</td></tr>
+  <tr><td>DOCUMENT HEAD — malformed HTML entities, bare domains</td><td>2</td><td class="status-ok">✅ correct</td></tr>
+</table>
+
+<h2>Smoke Test</h2>
+<p><code>python3 Brain/scripts/validate_itinerary.py Travel-Website/Guides/Zurich/zurich_v1.html</code> — <span class="status-ok">✅ passed</span> (3 pre-existing advisory warnings, no hard failures, stamp written).</p>
+
+<h2>Summary</h2>
+<p>All 14 CORE RULES INTEGRITY &amp; BUILD STATE checks and all 13 DOCUMENT HEAD checks are correctly implemented and documented. One code comment bug corrected (Phase 3 falsely described as stops-conditional). Three scripts missing from the Validator Index documented. No validator logic changes — comment fix only.</p>
+
+</body>
+</html>
