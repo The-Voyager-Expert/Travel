@@ -691,11 +691,6 @@
           a.textContent = '🗺️ ' + r[0];
           hamMenu.appendChild(a);
         });
-        var sepV = document.createElement('div'); sepV.className = 'tb-ham-sep'; hamMenu.appendChild(sepV);
-        var aV = document.createElement('a');
-        aV.href = base + 'Trip-Essentials/Maps/World-Map.html?from=stats';
-        aV.textContent = '🟡 Visited';
-        hamMenu.appendChild(aV);
       }
     }
   });
