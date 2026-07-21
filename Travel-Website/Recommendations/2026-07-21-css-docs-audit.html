@@ -1,0 +1,500 @@
+<title>CSS Docs Audit — 2026-07-21</title>
+<style>
+  :root {
+    --bg:        #f8f7f4;
+    --surface:   #ffffff;
+    --text:      #2c2a26;
+    --muted:     #6b6659;
+    --border:    #e2ddd5;
+    --accent:    #b85c2a;
+    --accent-bg: #fbeee4;
+    --ok:        #2d7a3e;
+    --ok-bg:     #e8f5ec;
+    --warn:      #8a6200;
+    --warn-bg:   #fff8e0;
+    --code-bg:   #efefec;
+    --code-text: #4a3e2a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:        #1c1a17;
+      --surface:   #252320;
+      --text:      #e8e4dc;
+      --muted:     #9e9888;
+      --border:    #38342c;
+      --accent:    #d4784a;
+      --accent-bg: #2e1a0e;
+      --ok:        #52c46e;
+      --ok-bg:     #0e2416;
+      --warn:      #e0a820;
+      --warn-bg:   #1e1700;
+      --code-bg:   #2a2720;
+      --code-text: #c8c0a8;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:        #1c1a17;
+    --surface:   #252320;
+    --text:      #e8e4dc;
+    --muted:     #9e9888;
+    --border:    #38342c;
+    --accent:    #d4784a;
+    --accent-bg: #2e1a0e;
+    --ok:        #52c46e;
+    --ok-bg:     #0e2416;
+    --warn:      #e0a820;
+    --warn-bg:   #1e1700;
+    --code-bg:   #2a2720;
+    --code-text: #c8c0a8;
+  }
+  :root[data-theme="light"] {
+    --bg:        #f8f7f4;
+    --surface:   #ffffff;
+    --text:      #2c2a26;
+    --muted:     #6b6659;
+    --border:    #e2ddd5;
+    --accent:    #b85c2a;
+    --accent-bg: #fbeee4;
+    --ok:        #2d7a3e;
+    --ok-bg:     #e8f5ec;
+    --warn:      #8a6200;
+    --warn-bg:   #fff8e0;
+    --code-bg:   #efefec;
+    --code-text: #4a3e2a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── header ── */
+  .report-header {
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+  }
+  .report-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.25;
+    text-wrap: balance;
+    margin-bottom: 6px;
+  }
+  .report-meta {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  /* ── summary strip ── */
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+  .stat-card .num {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4px;
+  }
+  .stat-card .label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stat-card.accent .num { color: var(--accent); }
+  .stat-card.ok .num { color: var(--ok); }
+  .stat-card.warn .num { color: var(--warn); }
+
+  /* ── section ── */
+  .section {
+    margin-bottom: 40px;
+  }
+  .section-head {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+
+  /* ── finding cards ── */
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .finding-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .finding-head:last-child { border-bottom: none; }
+  .finding-file {
+    font-family: ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--code-text);
+    background: var(--code-bg);
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .finding-desc {
+    flex: 1;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .badge-fixed { background: var(--ok-bg); color: var(--ok); }
+  .badge-clean { background: var(--ok-bg); color: var(--ok); }
+  .badge-warn  { background: var(--warn-bg); color: var(--warn); }
+  .badge-oos   { background: var(--code-bg); color: var(--muted); }
+
+  .finding-body {
+    padding: 14px 18px;
+  }
+
+  /* ── variable table ── */
+  .var-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    overflow-x: auto;
+    display: block;
+  }
+  .var-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 12px 6px 0;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .var-table td {
+    padding: 7px 12px 7px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .var-table tr:last-child td { border-bottom: none; }
+  .var-name {
+    font-family: ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
+    font-size: 11.5px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .var-val {
+    font-family: ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
+    font-size: 11.5px;
+    color: var(--code-text);
+    white-space: nowrap;
+  }
+  .var-note {
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 4px;
+    border: 1px solid rgba(0,0,0,.12);
+  }
+
+  /* ── brain check results ── */
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .check-row:last-child { border-bottom: none; }
+  .check-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .check-file {
+    font-family: ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
+    font-size: 11px;
+    color: var(--code-text);
+  }
+  .check-msg { color: var(--muted); font-size: 12.5px; }
+
+  /* ── oos notes ── */
+  .oos-item {
+    padding: 9px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .oos-item:last-child { border-bottom: none; }
+  .oos-dot {
+    width: 6px; height: 6px;
+    background: var(--muted);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .oos-text { color: var(--muted); line-height: 1.5; }
+  .oos-text strong { color: var(--text); font-weight: 600; }
+  .oos-text code {
+    font-family: ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--code-text);
+  }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 28px 16px 60px; }
+    .summary-strip { grid-template-columns: repeat(2, 1fr); }
+    .stat-card .num { font-size: 22px; }
+    .report-meta { gap: 12px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="report-header">
+    <div class="report-eyebrow">Scheduled Routine · css-docs-audit</div>
+    <h1 class="report-title">CSS Docs Audit — 2026-07-21</h1>
+    <div class="report-meta">
+      <span>3 docs audited</span>
+      <span>3 CSS source files read</span>
+      <span>5 variables added to docs</span>
+      <span>brain_check: 0 failures</span>
+    </div>
+  </header>
+
+  <!-- Summary strip -->
+  <div class="summary-strip">
+    <div class="stat-card accent">
+      <div class="num">5</div>
+      <div class="label">Variables added</div>
+    </div>
+    <div class="stat-card ok">
+      <div class="num">2</div>
+      <div class="label">Docs fully clean</div>
+    </div>
+    <div class="stat-card ok">
+      <div class="num">0</div>
+      <div class="label">brain_check failures</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="num">2</div>
+      <div class="label">Warnings (OOS)</div>
+    </div>
+  </div>
+
+  <!-- Findings -->
+  <div class="section">
+    <div class="section-head">Findings &amp; Fixes</div>
+
+    <!-- CSS-Architecture.md — fixed -->
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-file">Brain/Reference/CSS-Architecture.md</span>
+        <span class="finding-desc">5 CSS variables missing from the variable reference table</span>
+        <span class="badge badge-fixed">Fixed</span>
+      </div>
+      <div class="finding-body">
+        <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+          Cross-referencing the <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">:root {}</code> block in <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">web-travel-style.css</code>
+          against the documented variable table found 5 variables that had been added to the stylesheet but never reflected in the doc.
+          All 5 rows added; "Last synced" date updated to 2026-07-21.
+        </p>
+        <div style="overflow-x:auto">
+          <table class="var-table">
+            <thead>
+              <tr>
+                <th>Variable(s)</th>
+                <th>Value(s)</th>
+                <th>Purpose</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="var-name">--rust</span></td>
+                <td><span class="var-val"><span class="swatch" style="background:#b85c2a"></span>#b85c2a</span></td>
+                <td><span class="var-note">Terracotta/rust accent — Pickleball highlights, Travel-Stats sr-val colored values</span></td>
+                <td><span class="badge badge-fixed">Added</span></td>
+              </tr>
+              <tr>
+                <td><span class="var-name">--tier-req / --tier-req-text</span></td>
+                <td><span class="var-val"><span class="swatch" style="background:#f0c040"></span>#f0c040 / <span class="swatch" style="background:#5a3a00"></span>#5a3a00</span></td>
+                <td><span class="var-note">Vaccines.html — Required tier dot fill / badge text</span></td>
+                <td><span class="badge badge-fixed">Added</span></td>
+              </tr>
+              <tr>
+                <td><span class="var-name">--tier-rec / --tier-rec-text</span></td>
+                <td><span class="var-val"><span class="swatch" style="background:#6db96d"></span>#6db96d / <span class="swatch" style="background:#ffffff;border:1px solid #ccc"></span>#ffffff</span></td>
+                <td><span class="var-note">Vaccines.html — Recommended tier dot fill / badge text</span></td>
+                <td><span class="badge badge-fixed">Added</span></td>
+              </tr>
+              <tr>
+                <td><span class="var-name">--tier-con / --tier-con-text</span></td>
+                <td><span class="var-val"><span class="swatch" style="background:#93a8d8"></span>#93a8d8 / <span class="swatch" style="background:#ffffff;border:1px solid #ccc"></span>#ffffff</span></td>
+                <td><span class="var-note">Vaccines.html — Consider tier dot fill / badge text</span></td>
+                <td><span class="badge badge-fixed">Added</span></td>
+              </tr>
+              <tr>
+                <td><span class="var-name">--tier-med / --tier-med-text</span></td>
+                <td><span class="var-val"><span class="swatch" style="background:#e08080"></span>#e08080 / <span class="swatch" style="background:#ffffff;border:1px solid #ccc"></span>#ffffff</span></td>
+                <td><span class="var-note">Vaccines.html — Medical tier dot fill / badge text</span></td>
+                <td><span class="badge badge-fixed">Added</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pill-Standard.md — clean -->
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-file">Brain/Reference/Pill-Standard.md</span>
+        <span class="finding-desc">Form A, Form B, control button spec, rest-state rule</span>
+        <span class="badge badge-clean">Clean</span>
+      </div>
+      <div class="finding-body">
+        <p style="font-size:13px;color:var(--muted)">
+          All documented values verified against <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">mobile.css</code>
+          and <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">guide-style.css</code>.
+          Form A: <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">13px / 8px 14px / 6px</code> matches.
+          Form B: <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">46px / 12px / 0 radius</code> matches.
+          Control button: <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">height:32px / 1.5px border / 6px radius</code> matches
+          the <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">.disc-btn</code> definition in
+          <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">web-travel-style.css</code>.
+          No changes needed.
+        </p>
+      </div>
+    </div>
+
+    <!-- Shared-CSS-Only-Rule.md — clean -->
+    <div class="finding">
+      <div class="finding-head">
+        <span class="finding-file">Brain/Reference/Shared-CSS-Only-Rule.md</span>
+        <span class="finding-desc">Six shared CSS file references</span>
+        <span class="badge badge-clean">Clean</span>
+      </div>
+      <div class="finding-body">
+        <p style="font-size:13px;color:var(--muted)">
+          All six referenced shared CSS files confirmed present on disk:
+          <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">web-travel-style.css</code> ·
+          <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">mobile.css</code> ·
+          <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">guide-style.css</code> ·
+          <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">guides-index-style.css</code> ·
+          <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">Read-About.css</code>.
+          Rule descriptions match current enforcement. No changes needed.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- brain_check -->
+  <div class="section">
+    <div class="section-head">brain_check Results</div>
+    <div class="finding">
+      <div class="check-row">
+        <span class="check-icon">✅</span>
+        <span>202 / 204 checks passed · <strong>0 failures</strong> · 2 warnings</span>
+      </div>
+      <div class="check-row">
+        <span class="check-icon">⚠️</span>
+        <div>
+          <div class="check-file">Trip-Essentials/Travel-Stats.html · Trip-Essentials/Safety-Guide.html</div>
+          <div class="check-msg">[toolbar-version] toolbar.js?v=116 is behind current v=122 — auto-generated pages, out of scope for this audit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Git status -->
+  <div class="section">
+    <div class="section-head">Git / Commit Status</div>
+    <div class="finding">
+      <div class="finding-head" style="border-bottom:none">
+        <span class="badge badge-clean" style="flex-shrink:0">No commit needed</span>
+        <span class="finding-desc">All edits were to <code style="font-family:monospace;font-size:11px;background:var(--code-bg);padding:1px 5px;border-radius:3px">Brain/Reference/CSS-Architecture.md</code> — a Drive-only (gitignored) file. Changes are live on save; no tracked files were modified.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Out-of-scope -->
+  <div class="section">
+    <div class="section-head">Out-of-scope Findings (logged to To Do List)</div>
+    <div class="finding">
+      <div class="oos-item">
+        <div class="oos-dot"></div>
+        <div class="oos-text">
+          <strong>Toolbar version drift</strong> — <code>Travel-Stats.html</code> and <code>Safety-Guide.html</code> reference
+          <code>toolbar.js?v=116</code> while the current version is <code>v=122</code>. Both are auto-generated pages
+          (rebuilt by <code>build_travel_stats.py</code> and <code>build_safety_guide.py</code>); the version query string
+          should be updated when they next regenerate.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
