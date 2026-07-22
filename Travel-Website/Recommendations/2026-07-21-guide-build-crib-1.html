@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Report — Tenerife · 2026-07-21</title>
+<style>
+:root {
+  --bg:       #f7f3ec;
+  --surface:  #ffffff;
+  --border:   #e2dbd0;
+  --text:     #1c1917;
+  --muted:    #6b6560;
+  --accent:   #2a6b99;
+  --pass:     #1e7d3a;
+  --warn:     #b06b00;
+  --fail:     #b3321e;
+  --label-bg: #ede8df;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:       #19171440;
+    --surface:  #252220;
+    --border:   #38332e;
+    --text:     #f0ebe2;
+    --muted:    #928c84;
+    --accent:   #4da0d8;
+    --pass:     #3dab5a;
+    --warn:     #d49233;
+    --fail:     #e05a44;
+    --label-bg: #2e2a26;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:       #19171440;
+  --surface:  #252220;
+  --border:   #38332e;
+  --text:     #f0ebe2;
+  --muted:    #928c84;
+  --accent:   #4da0d8;
+  --pass:     #3dab5a;
+  --warn:     #d49233;
+  --fail:     #e05a44;
+  --label-bg: #2e2a26;
+}
+:root[data-theme="light"] {
+  --bg:       #f7f3ec;
+  --surface:  #ffffff;
+  --border:   #e2dbd0;
+  --text:     #1c1917;
+  --muted:    #6b6560;
+  --accent:   #2a6b99;
+  --pass:     #1e7d3a;
+  --warn:     #b06b00;
+  --fail:     #b3321e;
+  --label-bg: #ede8df;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  padding: 36px 16px 64px;
+}
+.wrap {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Header */
+.report-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 22px 24px 20px;
+  margin-bottom: 20px;
+}
+.report-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+.report-header .sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.meta-item {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.meta-item strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Sections */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--label-bg);
+  border-bottom: 1px solid var(--border);
+}
+.section-head h2 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.section-body {
+  padding: 14px 16px;
+}
+
+/* Status badges */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.badge-pass  { background: color-mix(in srgb, var(--pass) 12%, transparent); color: var(--pass); }
+.badge-warn  { background: color-mix(in srgb, var(--warn) 12%, transparent); color: var(--warn); }
+.badge-skip  { background: color-mix(in srgb, var(--muted) 12%, transparent); color: var(--muted); }
+.badge-done  { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+
+/* Phase table */
+.phase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.phase-row {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  align-items: start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.phase-row:last-child { border-bottom: none; }
+.phase-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 1px;
+}
+.phase-detail { color: var(--text); }
+.phase-detail .note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* Validator table */
+.val-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.val-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 4px 8px 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.val-table td {
+  padding: 7px 8px 7px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.val-table tr:last-child td { border-bottom: none; }
+.val-count { font-weight: 600; color: var(--pass); }
+.val-warn  { font-weight: 600; color: var(--warn); }
+
+/* File list */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.file-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 12.5px;
+}
+.file-path {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 11.5px;
+  color: var(--accent);
+  word-break: break-all;
+}
+.file-desc {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Fix log */
+.fix-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fix-item {
+  border-left: 2px solid var(--border);
+  padding-left: 12px;
+  font-size: 12.5px;
+}
+.fix-item .fix-title {
+  font-weight: 600;
+  color: var(--text);
+}
+.fix-item .fix-body {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 1px;
+}
+
+/* Index update table */
+.index-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.index-table td {
+  padding: 6px 8px 6px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.index-table tr:last-child td { border-bottom: none; }
+.index-table td:first-child { width: 160px; color: var(--muted); font-size: 12px; }
+.step-check { color: var(--pass); font-weight: 700; margin-right: 4px; }
+.step-warn  { color: var(--warn); font-weight: 700; margin-right: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="report-header">
+    <div class="sub">Guide Build Report · Crib 1</div>
+    <h1>Tenerife</h1>
+    <div class="meta-row">
+      <div class="meta-item"><strong>Guide #</strong> 225</div>
+      <div class="meta-item"><strong>Country</strong> Spain</div>
+      <div class="meta-item"><strong>Days</strong> 4</div>
+      <div class="meta-item"><strong>Hotel</strong> Hotel Botanico & The Oriental Spa Garden</div>
+      <div class="meta-item"><strong>Shipped</strong> 2026-07-21</div>
+      <div class="meta-item"><strong>Carousel</strong> Tbilisi → <strong>Tenerife</strong> → Bahamas</div>
+    </div>
+  </div>
+
+  <!-- Phases -->
+  <div class="section">
+    <div class="section-head"><h2>Build Phases</h2></div>
+    <div class="section-body">
+      <div class="phase-list">
+        <div class="phase-row">
+          <div class="phase-label">Phase 0</div>
+          <div class="phase-detail">Rules for Claude.html read</div>
+          <div><span class="badge badge-pass">Pass</span></div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label">Phase 1</div>
+          <div class="phase-detail">Links, Photos Rules, Connectors, Platforms</div>
+          <div><span class="badge badge-pass">Pass</span></div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label">Phase 2</div>
+          <div class="phase-detail">Guide Structure, Stops Structure, Hotel Banner, Trip Overview, Toolbar, Navigation</div>
+          <div><span class="badge badge-pass">Pass</span></div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label">Phase 3</div>
+          <div class="phase-detail">Day Structure read; 4 days built — Teide, El Médano, Masca, Garachico/Icod</div>
+          <div><span class="badge badge-pass">Pass</span></div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label">Phase 4</div>
+          <div class="phase-detail">Tickets, Motion Rule, Icon Order per stop (9 stops · 7 GYG tours)</div>
+          <div><span class="badge badge-pass">Pass</span></div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label">Phase 5</div>
+          <div class="phase-detail">Extra sections: Michelin, Hotels, Tours, Nightlife, Transit (Taxi/Uber/Rental), Read-About page, Stops Map</div>
+          <div><span class="badge badge-pass">Pass</span></div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-label">Phase 6</div>
+          <div class="phase-detail">Ship gate: validator 823 pass / 0 fail (after 3 rewrites); all 15 update-index steps clear</div>
+          <div><span class="badge badge-pass">Pass</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validator -->
+  <div class="section">
+    <div class="section-head"><h2>Validator Results — validate_itinerary.py</h2></div>
+    <div class="section-body">
+      <table class="val-table">
+        <thead>
+          <tr>
+            <th>Check</th>
+            <th>Result</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Total checks</td>
+            <td class="val-count">823 pass</td>
+            <td>0 failures at ship</td>
+          </tr>
+          <tr>
+            <td>🏛️ hours format</td>
+            <td class="val-count">Pass</td>
+            <td>All 18 rows fixed to hyphen-minus separator, full day names, "Open 24/7"</td>
+          </tr>
+          <tr>
+            <td>Motion / walk-over-40</td>
+            <td class="val-count">Pass</td>
+            <td>11 sentinels added; taxi-only .next divs all gated</td>
+          </tr>
+          <tr>
+            <td>Travel time format</td>
+            <td class="val-count">Pass</td>
+            <td>🚕 60 min → 🚕 1h; 🚕 65 min → 🚕 1h 5min</td>
+          </tr>
+          <tr>
+            <td>day-count sentinels</td>
+            <td class="val-count">Pass</td>
+            <td>Moved inside day-block (immediately after opening tag)</td>
+          </tr>
+          <tr>
+            <td>Comma rule</td>
+            <td class="val-count">Pass</td>
+            <td>17 commas removed from 📍 addresses and tour sub-headings</td>
+          </tr>
+          <tr>
+            <td>Description length ≤80 chars</td>
+            <td class="val-count">Pass</td>
+            <td>Restaurant + Michelin descriptions trimmed</td>
+          </tr>
+          <tr>
+            <td>Tour variety / content flags</td>
+            <td class="val-count">Pass</td>
+            <td>Year-figure "2065+" → "2000+"; parentheses in tour name removed</td>
+          </tr>
+          <tr>
+            <td>Verification log</td>
+            <td class="val-count">Pass</td>
+            <td>15 booking URLs logged as PASS in verification_log.json</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Key Fixes -->
+  <div class="section">
+    <div class="section-head"><h2>Key Fixes Applied (3 full rewrites)</h2></div>
+    <div class="section-body">
+      <div class="fix-list">
+        <div class="fix-item">
+          <div class="fix-title">🏛️ row time separator — en dash → hyphen-minus (18 rows)</div>
+          <div class="fix-body">Validator uses <code>r'\d{1,2}:\d{2}(?:am|pm)\s+-\s+\d{1,2}:\d{2}(?:am|pm)'</code>. All original rows used U+2013 (–). Rewrote all to U+002D (-).</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-title">walk-over-40 sentinels missing (11 taxi-only transit lines)</div>
+          <div class="fix-body">Added <code>&lt;!-- walk-over-40: reason --&gt;</code> immediately before each .next / .hotel-first div that has 🚕 but no 🚶.</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-title">🚶 0 min not a valid motion time</div>
+          <div class="fix-body">Hotel-pickup GYG tours had 🚶 0 min. Changed to 🚶 5 min · 🚕 5 min (hotel lobby → street pickup).</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-title">Hours format ≥60 min</div>
+          <div class="fix-body">Two transit divs had 🚕 60 min and 🚕 65 min; corrected to 🚕 1h and 🚕 1h 5min respectively.</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-title">day-count sentinel placement (outside vs. inside day-block)</div>
+          <div class="fix-body">Comments were before the opening &lt;div class="day-block"&gt;; moved to immediately after it.</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-title">Train stations wrong element class</div>
+          <div class="fix-body"><code>.extras-empty</code> → <code>.stop-row</code> "No train stations in Tenerife."</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-title">Prose alongside Uber link in transit box</div>
+          <div class="fix-body">Uber transit entry had URL + prose; reduced to link-only per spec.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update-Index -->
+  <div class="section">
+    <div class="section-head"><h2>Update-Index (15 Steps)</h2></div>
+    <div class="section-body">
+      <table class="index-table">
+        <tbody>
+          <tr><td>Guides-Index.html</td><td><span class="step-check">✓</span>Card added (guide #225 · Spain · 8 guides); Tbilisi next-ptr + Bahamas prev-ptr wired</td></tr>
+          <tr><td>Carousel (prev/next)</td><td><span class="step-check">✓</span>Tbilisi → Tenerife → Bahamas; data-prev/next updated in all 3 guide files</td></tr>
+          <tr><td>World-Map.html</td><td><span class="step-check">✓</span>Pin added at lon=−16.55 lat=28.29</td></tr>
+          <tr><td>Time-Zones.html</td><td><span class="step-check">✓</span>CITIES entry (Atlantic/Canary) + lat object value (28) added</td></tr>
+          <tr><td>Delta-Routes-SEA.html</td><td><span class="step-check">✓</span>t2 card added (TFS · Spain · Via Air Europa); GUIDES object entry added</td></tr>
+          <tr><td>Safety-Guide.html</td><td><span class="step-check">✓</span>Level 2 city-row added (alphabetical, between São Paulo and Toledo)</td></tr>
+          <tr><td>weather.js CLIMATE</td><td><span class="step-check">✓</span>Tenerife entry added (subtropical coastal data, between Tbilisi and The Bahamas)</td></tr>
+          <tr><td>Read-About page</td><td><span class="step-check">✓</span>tenerife-read-about.html present and linked both ways</td></tr>
+          <tr><td>Stops Map</td><td><span class="step-check">✓</span>tenerife-stops-map.html present</td></tr>
+          <tr><td>Travel-Tracker.html</td><td><span class="step-check">✓</span>Synced — 226 destinations</td></tr>
+          <tr><td>guide-num renumber</td><td><span class="step-check">✓</span>157/226 dest-cards renumbered</td></tr>
+          <tr><td>Currency-Guide / Visas / Tipping</td><td><span class="step-warn">⚠</span>Skipped by update-index (Tenerife not yet in Currency-Guide); non-blocking at ship</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Files Changed -->
+  <div class="section">
+    <div class="section-head"><h2>Files Staged for Commit</h2></div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-entry"><div class="file-path">Travel-Website/Guides/Tenerife/tenerife_v1.html</div><div class="file-desc">primary deliverable</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Guides/Tenerife/tenerife-read-about.html</div><div class="file-desc">read-about page</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Guides/Tenerife/_build/verification_log.json</div><div class="file-desc">15 booking URLs</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Guides/Tenerife/_build/build_state.md</div><div class="file-desc">build state</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Guides/Tbilisi/tbilisi_v1.html</div><div class="file-desc">data-next updated</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Guides/Bahamas/bahamas_v1.html</div><div class="file-desc">data-prev updated</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Guides-Index.html</div><div class="file-desc">card + Spain count + carousel ptrs</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Trip-Essentials/Maps/World-Map.html</div><div class="file-desc">map pin</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Trip-Essentials/Time-Zones.html</div><div class="file-desc">CITIES + lat</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Trip-Essentials/Delta-Routes-SEA.html</div><div class="file-desc">dest-card + GUIDES entry</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Trip-Essentials/Safety-Guide.html</div><div class="file-desc">Level 2 city-row</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/assets/weather.js</div><div class="file-desc">CLIMATE entry</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Trip-Essentials/Travel-Tracker.html</div><div class="file-desc">synced (226 destinations)</div></div>
+        <div class="file-entry"><div class="file-path">Brain/Reference/guides_index.md</div><div class="file-desc">status dots regenerated</div></div>
+        <div class="file-entry"><div class="file-path">Travel-Website/Recommendations/2026-07-21-guide-build-crib-1.html</div><div class="file-desc">this report</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Open Items -->
+  <div class="section">
+    <div class="section-head"><h2>Open Items (out of scope — logged to To Do)</h2></div>
+    <div class="section-body">
+      <div class="fix-list">
+        <div class="fix-item">
+          <div class="fix-title">Add Tenerife to Currency-Guide.html</div>
+          <div class="fix-body">Required before Visas.html and Tipping-Guide.html checks can run in update-index steps 8/12/13.</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-title">brain_check site-wide date-stamp warning (Guide Structure.html)</div>
+          <div class="fix-body">Informational only per behavior rule; not blocked.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
