@@ -464,6 +464,12 @@ def check_html_name_mentions(report: Report) -> None:
 _MCP_TOOL_ID_RE = re.compile(r'mcp__[a-z0-9\-]{8,}__\w+')
 
 
+# 2. Attributed-quote signatures — "— Name YYYY-MM-DD" attribution blocks freeze
+#    an editorial decision to a moment. Rules of record are impersonal and
+#    dateless in the body; attributions belong in audit_log.md, not the rule doc.
+_ATTR_QUOTE_RE = re.compile(r'[—\-]\s*[A-Z][a-zA-Z]+,?\s+\d{4}-\d{2}-\d{2}')
+
+
 # 4. First-person pronouns inside <blockquote> — personal voice captured
 #    verbatim rather than translated into a neutral rule.
 _BLOCKQUOTE_RE = re.compile(r'<blockquote>(.*?)</blockquote>', re.IGNORECASE | re.DOTALL)
@@ -507,6 +513,38 @@ def check_html_mcp_tool_ids(report: Report) -> None:
         report.warn(
             f"HTML MCP tool ID check: hardcoded tool IDs found in {len(flagged)} file(s). "
             f"Move to a connector capabilities doc, not a rule:\n{lines}"
+        )
+
+
+def check_html_attributed_quotes(report: Report) -> None:
+    """Warn if a '— Name YYYY-MM-DD' attributed-quote signature appears in any
+    CORE RULES HTML rule doc. Rules of record are impersonal and dateless in the
+    body; attribution blocks read as editorial decisions frozen to a moment and
+    belong in audit_log.md, not the doc (Cleanliness Checks Rule 519)."""
+    html_files, ok = _load_html_files()
+    if not ok:
+        return  # already warned by check_html_name_mentions
+    flagged: list[tuple[Path, list[str]]] = []
+    for fp in html_files:
+        try:
+            text = fp.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        hits = _ATTR_QUOTE_RE.findall(text)
+        if hits:
+            flagged.append((fp, hits))
+    if not flagged:
+        report.ok(
+            f"HTML attributed-quote check: no '— Name YYYY-MM-DD' signatures across "
+            f"{len(html_files)} files."
+        )
+    else:
+        lines = "\n".join(
+            f"    {_display_path(fp)} ({len(h)}×)" for fp, h in flagged
+        )
+        report.warn(
+            f"HTML attributed-quote check: attribution signatures in {len(flagged)} file(s). "
+            f"Paraphrase into timeless rule text; move the attribution to audit_log.md:\n{lines}"
         )
 
 
@@ -7230,6 +7268,7 @@ def main(argv: list[str]) -> int:
     check_audit_staleness(report)
     check_html_name_mentions(report)        # warns on name in HTML rule content (added 2026-05-08)
     check_html_mcp_tool_ids(report)         # warns on hardcoded MCP tool IDs (added 2026-05-08)
+    check_html_attributed_quotes(report)    # warns on '— Name YYYY-MM-DD' attribution signatures in rule docs (implemented 2026-07-22 — documented Rule 519 since 2026-05-08, never coded until now)
     check_html_first_person_blockquotes(report)  # warns on personal voice in blockquotes (added 2026-05-08)
     check_no_archive_subfolders_in_guides(report)  # fails on archive/ inside Guides/ (added 2026-05-09)
     check_no_stray_archive_dirs(report)            # fails on archive/ folders outside Travel/archive/ anywhere (added 2026-06-05)
