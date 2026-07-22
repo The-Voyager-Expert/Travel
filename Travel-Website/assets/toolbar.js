@@ -786,6 +786,8 @@
     hamBtn.setAttribute('aria-expanded', 'false');
     hamBtn.innerHTML = hamMenuClosedHTML;
     document.body.style.overflow = '';
+    var djBtn = document.querySelector('.day-jump-btn');
+    if (djBtn) djBtn.style.display = '';
   }
   function toggleHamMenu(e) {
     e.stopPropagation();
@@ -805,6 +807,8 @@
     hamMenu.classList.toggle('tb-ham-open');
     var open = hamMenu.classList.contains('tb-ham-open');
     document.body.style.overflow = open ? 'hidden' : '';
+    var djBtn = document.querySelector('.day-jump-btn');
+    if (djBtn) djBtn.style.display = open ? 'none' : '';
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamBtn.innerHTML = open
       ? '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><line x1="1" y1="1" x2="13" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">CLOSE</span>'
