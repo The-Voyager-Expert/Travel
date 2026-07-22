@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validator Audit — Part 1/20 (run 2) — 2026-07-22</title>
+<style>
+  body{font-family:system-ui,-apple-system,sans-serif;max-width:820px;margin:0 auto;padding:32px 20px 64px;color:#1e1c18;background:#f9f7f4;line-height:1.6;font-size:15px}
+  h1{font-size:22px;border-bottom:2px solid #b85c2a;padding-bottom:10px;margin-bottom:4px}
+  .sub{color:#7a7266;font-size:13px;margin-bottom:24px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#7a7266;margin:28px 0 10px}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
+  th{background:#f0ece6;text-align:left;padding:7px 10px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#5a4e3a;border-bottom:2px solid #ddd5c8}
+  td{padding:6px 10px;border-bottom:1px solid #ddd5c8;vertical-align:top}
+  code{background:#f0ece6;padding:1px 5px;border-radius:3px;font-size:13px}
+  .n{color:#7a7266}
+  .ok{color:#2e6e3e;font-weight:600}
+</style>
+</head>
+<body>
+<h1>Validator Deep Audit — Part 1 of 20 <span class="n">(run 2)</span></h1>
+<div class="sub">2026-07-22 · Section: 🔒 CORE RULES INTEGRITY &amp; BUILD STATE + 📄 DOCUMENT HEAD · crib: scheduled</div>
+
+<p><em>Companion to the earlier same-day <code>2026-07-22-validator-audit-part-1.html</code> (crib 3). The shared claim snippet reassigns the lowest <strong>unclaimed</strong> part rather than the lowest <strong>uncompleted</strong> one, so this crib re-audited Part 1 while parts 12–20 remained pending. The re-audit was still worthwhile — it surfaced a real gap the earlier "clean" pass missed.</em></p>
+
+<h2>Scope</h2>
+<p>Re-compared every ✅ entry in the Validator Index for the two Part-1 sections against <code>validate_itinerary.py</code> and the governing CORE RULES (<code>Rules for Claude.html</code>, <code>Guide Structure.html</code>). 26 index checks reviewed (13 integrity/build-state + 13 document-head).</p>
+
+<h2>Result</h2>
+<table>
+  <tr><th>Metric</th><th>Count</th></tr>
+  <tr><td>Checks added (new <code>check()</code> calls)</td><td>0</td></tr>
+  <tr><td>Checks fixed (corrected logic/scope)</td><td class="ok">1</td></tr>
+  <tr><td>Checks removed (dead/stale)</td><td>0</td></tr>
+  <tr><td>Duplicate/redundant checks</td><td>0 found</td></tr>
+</table>
+
+<h2>Fix applied</h2>
+<table>
+  <tr><th>Check</th><th>Change</th></tr>
+  <tr>
+    <td>Malformed HTML entities (📄 DOCUMENT HEAD)</td>
+    <td>The check label and the Validator Index both promise "No malformed HTML entities (missing semicolon)", but the implementation only matched <em>named</em> references (<code>&amp;[a-zA-Z]{2,8}</code>). Numeric character references missing their semicolon — decimal <code>&amp;#8217</code> and hex <code>&amp;#x2019</code> — passed invisibly. Extended the scan to cover both numeric forms. Unit-tested: flags all three malformed forms; passes valid <code>&amp;amp;</code> / <code>&amp;#8217;</code> / <code>&amp;#x2019;</code>; no false-fire on "AT&amp;T"; href contents excluded (tags stripped first). A fleet-wide scan of all 226 shipped guides before shipping confirmed <strong>0 pre-existing hits</strong> — no guide is newly failed. Validator Index entry updated.</td>
+  </tr>
+</table>
+
+<h2>Guides smoke-tested</h2>
+<p>Full validator run, exit 0, zero tracebacks: <strong>Recife, Zurich, Bhutan, Amalfi</strong> (signed stamps reverted after each — a direct run re-signs the stamp, which is out of this crib's scope). Plus a regex-level fleet scan of all 226 guides. <code>brain_check.py</code> exits 0 (0 fail; 89 pre-existing warns unrelated to Part 1).</p>
+
+<h2>Reviewed and confirmed correct (no change)</h2>
+<ul>
+  <li>Guide filename pattern <code>{city_slug}_v*.html</code> + <code>guide_v</code> placeholder rejection.</li>
+  <li>CORE RULES SHA-256 integrity guard: checksums-present, dir-reachable, per-file hash with 2× re-read hydration retry, and the untracked-file coverage check — matches Index.</li>
+  <li>CORE RULES content guards (banned layout-annotation phrases; drift words in <code>.note</code> spans) — code is a superset of the Index list.</li>
+  <li>Build-state Phase 1–5 gates with Phase-1/2 early-halt; required-file lists match <code>Guide Structure.html</code>; Phase 5 detects both <code>extras-section</code> and <code>claude-inspiration</code>.</li>
+  <li>Document head: viewport, DOCTYPE, <code>lang="en"</code>, charset, non-empty <code>&lt;title&gt;</code>, no body <code>&lt;h1&gt;</code>, nothing-before-<code>.title-page</code>, no inline <code>&lt;style&gt;</code>, canonical stylesheet link, no Google Fonts, bare-domain-must-be-anchor — all present and correct.</li>
+</ul>
+
+<h2>Out-of-scope notes (logged, not fixed)</h2>
+<ul>
+  <li><strong>Claim snippet re-audits low parts:</strong> the shared claim logic selects the lowest part not in <code>active_claims</code>, ignoring <code>completed_this_cycle</code> — so a crib running alone always re-does Part 1 while parts 12–20 stay pending until 12+ cribs run at once. Logged to the To Do List for the task-file maintainer.</li>
+  <li><strong>Coverage-artifact URL dead again:</strong> <code>65a2e7cc-…</code> returned "deleted / no write access" (Step 1b + Step 6). Already logged in the To Do List (systemic across ~7 routines); coverage HTML is on disk + committed, so no data lost. Not re-minted.</li>
+  <li><strong>build_state.md Phase-5 template drift (informational):</strong> <code>Guide Structure.html</code> lists <code>Read-About-Pages.html</code> as a Phase-5 read, but the validator's Phase-5 gate keys off shipping section IDs only; older guides also use varied Phase-5 headers (e.g. Bend: "Phase 5 — Ship gate"). Adding it as a hard-fail would fail much of the fleet — intentionally not added.</li>
+</ul>
+
+<h2>Summary</h2>
+<p>Part 1's checks are otherwise complete, correctly scoped, and aligned with the CORE RULES — no dead or duplicate checks. One genuine implementation gap closed: the malformed-entity check now covers numeric character references as well as named ones, a risk-free improvement (0 fleet hits). Validator code and Validator Index are in sync.</p>
+</body>
+</html>
