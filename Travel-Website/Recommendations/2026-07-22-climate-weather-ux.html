@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate & Weather Pages — UX Audit · July 2026</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #f7f5f2;
+  --border: #e4e0d9;
+  --text: #1a1917;
+  --muted: #6a6660;
+  --accent: #b85c2a;
+  --accent-dim: #f4ebe4;
+  --ok: #2d6a38;
+  --ok-bg: #eaf4ec;
+  --warn: #7a5200;
+  --warn-bg: #fef6e4;
+  --resolved-bg: #eaf4f0;
+  --resolved: #1a5c42;
+  --idea-bg: #eef2fb;
+  --idea: #2a407a;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1917;
+    --surface: #242220;
+    --border: #3a3530;
+    --text: #ede9e4;
+    --muted: #9a948e;
+    --accent: #d4874a;
+    --accent-dim: #2e1e0e;
+    --ok: #5caa6c;
+    --ok-bg: #0e2614;
+    --warn: #e0a030;
+    --warn-bg: #231700;
+    --resolved-bg: #0d2820;
+    --resolved: #5cbf9a;
+    --idea-bg: #101828;
+    --idea: #7ea4e0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1917;
+  --surface: #242220;
+  --border: #3a3530;
+  --text: #ede9e4;
+  --muted: #9a948e;
+  --accent: #d4874a;
+  --accent-dim: #2e1e0e;
+  --ok: #5caa6c;
+  --ok-bg: #0e2614;
+  --warn: #e0a030;
+  --warn-bg: #231700;
+  --resolved-bg: #0d2820;
+  --resolved: #5cbf9a;
+  --idea-bg: #101828;
+  --idea: #7ea4e0;
+}
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f7f5f2;
+  --border: #e4e0d9;
+  --text: #1a1917;
+  --muted: #6a6660;
+  --accent: #b85c2a;
+  --accent-dim: #f4ebe4;
+  --ok: #2d6a38;
+  --ok-bg: #eaf4ec;
+  --warn: #7a5200;
+  --warn-bg: #fef6e4;
+  --resolved-bg: #eaf4f0;
+  --resolved: #1a5c42;
+  --idea-bg: #eef2fb;
+  --idea: #2a407a;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 32px 24px 64px;
+}
+.page { max-width: 760px; margin: 0 auto; }
+.header { border-bottom: 3px solid var(--accent); padding-bottom: 16px; margin-bottom: 28px; }
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--text);
+  line-height: 1.25;
+}
+.meta { font-size: 12px; color: var(--muted); }
+.data-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+}
+.data-summary h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+.data-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; font-size: 13px; }
+.data-row:last-child { margin-bottom: 0; }
+.badge {
+  display: inline-block;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+.badge-ok { background: var(--ok-bg); color: var(--ok); }
+.badge-warn { background: var(--warn-bg); color: var(--warn); }
+.badge-resolved { background: var(--resolved-bg); color: var(--resolved); }
+.badge-idea { background: var(--idea-bg); color: var(--idea); }
+.section { margin-bottom: 32px; }
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.section-file {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+  margin: 0 0 14px;
+}
+.finding {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.finding:last-child { margin-bottom: 0; }
+.finding-warn { background: var(--warn-bg); }
+.finding-ok { background: var(--ok-bg); }
+.finding-resolved { background: var(--resolved-bg); }
+.finding-label { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding-top: 2px; }
+.finding-warn .finding-label { color: var(--warn); }
+.finding-ok .finding-label { color: var(--ok); }
+.finding-resolved .finding-label { color: var(--resolved); }
+.finding-text { font-size: 13px; color: var(--text); }
+.finding-text strong { font-weight: 700; }
+.finding-text code {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  background: rgba(0,0,0,0.06);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.no-issues {
+  background: var(--ok-bg);
+  color: var(--ok);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ideas-section { margin-bottom: 32px; }
+.ideas-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.idea-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 6px 10px;
+  align-items: start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.idea-item:last-child { border-bottom: none; }
+.idea-rank {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--idea);
+  background: var(--idea-bg);
+  border-radius: 4px;
+  text-align: center;
+  padding: 3px 0;
+  margin-top: 1px;
+}
+.idea-content strong { font-weight: 700; font-size: 13px; display: block; margin-bottom: 2px; }
+.idea-content p { margin: 0; font-size: 13px; color: var(--muted); }
+.footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tally {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.tally-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  text-align: center;
+  min-width: 80px;
+}
+.tally-num { font-size: 22px; font-weight: 700; color: var(--accent); line-height: 1; }
+.tally-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="eyebrow">Monthly Maintenance Run · Climate Data Refresh</div>
+    <h1>Climate &amp; Weather Pages — UX Audit</h1>
+    <div class="meta">Run 2026-07-22 · climate-data-refresh routine · pages audited: <code style="font-family:ui-monospace,monospace;font-size:11px">Climate-Finder.html</code> · <code style="font-family:ui-monospace,monospace;font-size:11px">Weather.html</code></div>
+  </div>
+
+  <!-- Data changes this run -->
+  <div class="data-summary">
+    <h2>Data Changes This Run</h2>
+    <div class="data-row">
+      <span class="badge badge-ok">Fixed</span>
+      <span><strong>climate.json:</strong> Removed 2 stale duplicate entries ("Cancun" without accent, "San Sebastián" with accent). Pin labels matched after cache rename ("Cancun" → "Cancún") and re-run of build_climate.py. No network fetches needed — all 226 pins already in cache.</span>
+    </div>
+    <div class="data-row">
+      <span class="badge badge-ok">Synced</span>
+      <span><strong>weather.js:</strong> CLIMATE block re-baked — 226 cities. Trips.html CLIMATE block also updated in same run.</span>
+    </div>
+    <div class="data-row">
+      <span class="badge badge-ok">Validated</span>
+      <span><strong>validator:</strong> validate_climate_coverage.py exits 0 — 226 cities, weather.js baked block in sync, all By-Climate guide links present.</span>
+    </div>
+    <div class="data-row">
+      <span class="badge badge-ok">Clean</span>
+      <span><strong>GUIDE_LINKS:</strong> 226 entries — all version links current, no orphaned entries. (6 URL-encoded paths confirmed valid on disk.)</span>
+    </div>
+    <div class="data-row">
+      <span class="badge badge-ok">Clean</span>
+      <span><strong>Data integrity:</strong> All 226 city entries — 12 valid hi/lo values, no zero coords, no duplicates.</span>
+    </div>
+  </div>
+
+  <!-- Tally -->
+  <div class="tally">
+    <div class="tally-item"><div class="tally-num">4</div><div class="tally-lbl">UX Issues</div></div>
+    <div class="tally-item"><div class="tally-num">1</div><div class="tally-lbl">Resolved</div></div>
+    <div class="tally-item"><div class="tally-num">7</div><div class="tally-lbl">Ideas</div></div>
+    <div class="tally-item"><div class="tally-num">0</div><div class="tally-lbl">Brain-check fails</div></div>
+  </div>
+
+  <!-- Climate-Finder audit -->
+  <div class="section">
+    <div class="section-title">🌡️ Climate-Finder.html</div>
+    <div class="section-file">Travel-Website/Trip-Essentials/Climate-Finder.html</div>
+
+    <div class="finding finding-warn">
+      <div class="finding-label">UX-1</div>
+      <div class="finding-text">
+        <strong>Hardcoded hex colors in &lt;style&gt; block.</strong>
+        Multiple literal hex values in the page-level stylesheet: <code>#fff</code> (card/button rest state), <code>#b85c2a</code>, <code>#7a3b1e</code>, <code>#d4874a</code> (active gradient), <code>#a61c00</code> (hi-temp label), <code>#3d5282</code> (lo-temp label). These do not adapt in dark mode and diverge from the CSS-variable-only rule. Should use <code>var(--surface)</code>, <code>var(--c-temp-hi)</code>, <code>var(--c-temp-lo)</code>, and the shared terracotta token. Handler: UX / CSS routine.
+      </div>
+    </div>
+
+    <div class="finding finding-warn">
+      <div class="finding-label">UX-2</div>
+      <div class="finding-text">
+        <strong>Results cards show hi/lo only — rainfall data unused.</strong>
+        Each climate.json entry carries <code>rain</code> (mm/month) and <code>rain_days</code> fields; Weather.html shows this data in the city panel, but Climate-Finder result cards display only the hi/lo temperature strip. A traveler filtering for "20–26°C in November" has no way to see whether those destinations are wet or dry that month. Low implementation effort — the data is already baked into <code>window.TravelClimate</code>. Handler: UX / ideas approval.
+      </div>
+    </div>
+
+    <div class="finding finding-ok">
+      <div class="finding-label">OK</div>
+      <div class="finding-text">
+        <strong>Viewport, CSS links, toolbar, h1, data-updated.</strong>
+        <code>meta viewport</code> present · <code>../assets/web-travel-style.css</code> ✓ · <code>../assets/mobile.css?v=51</code> ✓ · toolbar-mount has <code>data-depth="1"</code> and <code>data-maxwidth="1040"</code> ✓ · <code>data-updated="2026-07"</code> ✓ · <code>h1.site-title</code> plain text ✓ · brain_check 192/192 ✓.
+      </div>
+    </div>
+
+    <div class="finding finding-ok">
+      <div class="finding-label">OK</div>
+      <div class="finding-text">
+        <strong>Filter pill states.</strong>
+        Month pills: rest state <code>background: #fff</code> (white) ✓ — active state uses terracotta gradient ✓. °C/°F toggle: rest state <code>#fff</code> ✓ — active state <code>#b85c2a</code> ✓. Sort select: neutral ✓. No beige rest-states, no gold fills.
+      </div>
+    </div>
+  </div>
+
+  <!-- Weather audit -->
+  <div class="section">
+    <div class="section-title">🌤 Weather.html</div>
+    <div class="section-file">Travel-Website/Trip-Essentials/Weather.html</div>
+
+    <div class="finding finding-resolved">
+      <div class="finding-label">Resolved</div>
+      <div class="finding-text">
+        <strong>City picker upgraded from native &lt;select&gt; to TVESearch typeahead (since July 16 report).</strong>
+        Weather.html now loads <code>search-autocomplete.js?v=8</code> and calls <code>TVESearch.attach()</code> on the city input, replacing the native 226-entry dropdown that had no typeahead. City-name search now works correctly.
+      </div>
+    </div>
+
+    <div class="finding finding-warn">
+      <div class="finding-label">UX-3</div>
+      <div class="finding-text">
+        <strong><code>mobile.css?v=50</code> — one version behind Climate-Finder's <code>v=51</code>.</strong>
+        Both pages should pin to the same mobile.css version. Update Weather.html line 45 to <code>../assets/mobile.css?v=51</code>. Handler: UX routine (formatting fix).
+      </div>
+    </div>
+
+    <div class="finding finding-warn">
+      <div class="finding-label">UX-4</div>
+      <div class="finding-text">
+        <strong>Hardcoded hex colors in &lt;style&gt; block.</strong>
+        <code>#b85c2a</code> (unit toggle active, bar active state), <code>rgba(184,92,42,.30)</code> (bar inactive fill) — literal values that don't adapt to dark mode. Should use CSS variable tokens. Handler: UX / CSS routine.
+      </div>
+    </div>
+
+    <div class="finding finding-ok">
+      <div class="finding-label">OK</div>
+      <div class="finding-text">
+        <strong>Viewport, CSS links, toolbar, h1, data-updated, search placeholder.</strong>
+        <code>meta viewport</code> ✓ · <code>../assets/web-travel-style.css</code> ✓ · toolbar-mount <code>data-depth="1"</code>, <code>data-maxwidth="460"</code> ✓ · <code>data-updated="2026-07"</code> ✓ · <code>h1.site-title</code> plain text ✓ · TVESearch attached, placeholder "City" (no trailing <code>…</code>) ✓ · unit toggle active state terracotta ✓ · brain_check 192/192 ✓.
+      </div>
+    </div>
+
+    <div class="finding finding-ok">
+      <div class="finding-label">Note</div>
+      <div class="finding-text">
+        <strong>City search input width 230px (within a 460px panel).</strong>
+        The <code>.wx-city</code> max-width is 230px — below the 360px site search standard. Within the narrow-panel layout (<code>.wx-wrap { max-width: 460px }</code>) this is proportionate and does not create overflow. No change needed; flagged as reference.
+      </div>
+    </div>
+  </div>
+
+  <!-- Improvement ideas -->
+  <div class="ideas-section">
+    <div class="ideas-title">💡 Improvement Ideas</div>
+    <p style="font-size:12px;color:var(--muted);margin:6px 0 14px;">Proposals only — never implemented by this routine. Ranked roughly by impact-to-effort.</p>
+
+    <div class="idea-item">
+      <div class="idea-rank">#1</div>
+      <div class="idea-content">
+        <strong>Climate-Finder cards: rainfall indicator</strong>
+        <p>Add a small "☔ Wet" / "☀️ Dry" badge or a rain-days bar to each result card for the selected month. The <code>rain</code> and <code>rain_days</code> fields are already in <code>window.TravelClimate</code> — no new data needed. A traveler choosing between Lima and Lisbon in March needs wet/dry context as much as temperature.</p>
+      </div>
+    </div>
+
+    <div class="idea-item">
+      <div class="idea-rank">#2</div>
+      <div class="idea-content">
+        <strong>Climate-Finder: add a rainfall filter</strong>
+        <p>A third control alongside the temperature sliders: a "Rainy days per month" range (0–5 / 5–12 / 12+). Pairs naturally with temperature to surface genuinely pleasant destinations — e.g. "22–28°C, under 6 rainy days" surfaces the Mediterranean in May/June rather than Bangkok in March.</p>
+      </div>
+    </div>
+
+    <div class="idea-item">
+      <div class="idea-rank">#3</div>
+      <div class="idea-content">
+        <strong>Climate presets / one-tap filters</strong>
+        <p>Pre-fill the sliders with named comfort profiles: "☀️ Hot &amp; Dry" (28–36°C, ≤4 rain days), "🌤 Perfect Summer" (22–28°C), "🧥 Cool City Break" (10–18°C), "⛷ Ski Season" (−10–4°C). Reduces the configuration burden for first-time visitors and makes the tool feel opinionated rather than mechanical.</p>
+      </div>
+    </div>
+
+    <div class="idea-item">
+      <div class="idea-rank">#4</div>
+      <div class="idea-content">
+        <strong>Weather.html → Climate-Finder cross-link: "Best months for [City]"</strong>
+        <p>Below the city panel, show a row: "Best months (18–27°C, ≤8 rain days): Apr · May · Jun · Oct" — computed live from that city's CLIMATE entry. Clicking a month jumps to Climate-Finder pre-filtered to that month and temp band. Ties the two tools together into a research loop rather than leaving them as independent pages.</p>
+      </div>
+    </div>
+
+    <div class="idea-item">
+      <div class="idea-rank">#5</div>
+      <div class="idea-content">
+        <strong>Climate-Finder: city-name search to filter results</strong>
+        <p>Currently there is no way to find a specific city in the results grid — you have to scan visually through 226 cards. A small search input that filters the rendered cards by city name (client-side, instant) would help users who know they want Paris but want to see its specific month/temperature data in context of the other results.</p>
+      </div>
+    </div>
+
+    <div class="idea-item">
+      <div class="idea-rank">#6</div>
+      <div class="idea-content">
+        <strong>Compare two cities in Weather.html</strong>
+        <p>A "Compare" toggle that shows two city panels side-by-side (or stacked on mobile) — same month selector, both updating together. The infrastructure is already there; it's a layout and state change, not new data. Particularly useful when choosing between two finalist destinations.</p>
+      </div>
+    </div>
+
+    <div class="idea-item">
+      <div class="idea-rank">#7</div>
+      <div class="idea-content">
+        <strong>Shareable search-state links from Climate-Finder</strong>
+        <p>Climate-Finder already writes URL params (<code>?mon=</code>, <code>minc=</code>, <code>maxc=</code>, <code>u=</code>) — but there is no share button or visible URL update as the user adjusts filters. A small "Copy link" pill beneath the results summary would make the tool shareable: e.g. "Mediterranean summer: warm &amp; dry in August." Zero new data; just surfacing the existing state mechanism.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>climate-data-refresh routine · run 2026-07-22</span>
+    <span>UX fixes → ux-format-audit routine · ideas → owner review</span>
+  </div>
+
+</div>
+</body>
+</html>
