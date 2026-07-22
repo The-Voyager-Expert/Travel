@@ -3270,6 +3270,89 @@ def check_focus_outline_double_border(report: "Report") -> None:
         report.ok("focus-outline-double-border — no double-gold :focus outlines on form elements.")
 
 
+def check_picker_select_gold_color(report: "Report") -> None:
+    """FAIL if any Trip-Essentials page CSS rule for a select element uses a
+    non-gold text color.
+
+    Design rule: any <select> dropdown that appears alongside a search bar
+    (in a pickers/controls row) must use color:var(--accent) so its text is
+    gold, matching the search input's magnifier icon and the chevron SVG.
+    Using color:var(--text) (dark text) breaks the visual pairing.
+
+    Caught: .sun-pickers select { color: var(--text) }
+    Fix:    change to color: var(--accent)
+
+    Selector patterns checked: any CSS rule whose selector contains 'select'
+    and sets color to anything other than var(--accent) or #8a6c1a.
+
+    Added 2026-07-22: gold-color rule for picker selects alongside search bars.
+    """
+    import re as _re
+
+    STYLE_BLOCK_RE = _re.compile(r'<style[^>]*>(.*?)</style>', _re.S | _re.I)
+    CSS_RULE_RE    = _re.compile(r'([^{}]+)\{([^{}]*)\}', _re.S)
+    COLOR_RE       = _re.compile(r'(?<![a-z-])color\s*:\s*([^;}\n]+)', _re.I)
+
+    # Selector must use 'select' as a CSS ELEMENT TYPE TOKEN — not as part of an
+    # ID or class name (e.g. #country-select / .byg-select must not match).
+    # A token is an element type when it appears at the start of the selector,
+    # after whitespace, or after a combinator (>, +, ~, comma).
+    # Followed by: end-of-string, whitespace, pseudo-class (:), attribute ([), or { .
+    SELECT_SEL_RE = _re.compile(
+        r'(?:^|[\s>+~,])\s*select(?:\s|:|$|\[|,|\{|::)',
+        _re.I,
+    )
+    PSEUDO_RE     = _re.compile(r':(?:focus|hover|active|disabled)\b', _re.I)
+
+    _GOLD_OK = {'var(--accent)', '#8a6c1a', 'var(--accent) !important', '#8a6c1a !important'}
+
+    failures: list[str] = []
+
+    for fpath in sorted(set(_shareable_pages())):
+        if not fpath.exists():
+            continue
+        try:
+            text = fpath.read_text(encoding='utf-8', errors='replace')
+        except Exception:
+            continue
+
+        # Only pages that actually have a <select> in the HTML body
+        if '<select' not in text.lower():
+            continue
+
+        rel = (str(fpath.relative_to(TRAVEL_ROOT))
+               if str(fpath).startswith(str(TRAVEL_ROOT)) else str(fpath))
+
+        for style_m in STYLE_BLOCK_RE.finditer(text):
+            css = style_m.group(1)
+            for rule_m in CSS_RULE_RE.finditer(css):
+                sel  = rule_m.group(1).strip()
+                body = rule_m.group(2)
+
+                if not SELECT_SEL_RE.search(sel):
+                    continue
+                if PSEUDO_RE.search(sel):
+                    continue  # focus/hover rules change border, not text color
+
+                color_m = COLOR_RE.search(body)
+                if not color_m:
+                    continue
+                val = color_m.group(1).strip().rstrip(';').strip()
+                if val.lower() in _GOLD_OK:
+                    continue
+
+                failures.append(
+                    f"[picker-select-gold-color] {rel}: "
+                    f"'{sel.strip()}' sets color:{val} — "
+                    f"picker selects must use color:var(--accent) (gold)"
+                )
+
+    for msg in failures:
+        report.fail(msg)
+    if not failures:
+        report.ok("picker-select-gold-color — all picker selects use gold text color.")
+
+
 def check_guides_index_banner_subtitle(report: "Report") -> None:
     """Fail if Guides-Index.html has a subtitle element inside the Travel Guides banner.
 
@@ -7388,6 +7471,7 @@ def main(argv: list[str]) -> int:
     check_guides_index_banner_subtitle(report)          # fails if Guides-Index.html banner has a subtitle element (added 2026-06-12)
     check_search_bar_standard(report)                   # fails if any search input has placeholder words, pill shape, fixed width, or width animation (added 2026-06-13)
     check_focus_outline_double_border(report)           # fails if any page inline CSS sets outline (non-none) on a form element :focus rule — double-gold drift (added 2026-07-22)
+    check_picker_select_gold_color(report)              # fails if any page select in a picker row uses non-gold text color — must be color:var(--accent) (added 2026-07-22)
     # check_index_stat_row RETIRED 2026-07-20 — stat-row removed from Guides-Index.html on owner direction
     # (too prominent; info already visible in page content). See Navigation.html § 8 + Cleanliness Checks Rule 571.
     check_guides_index_topbar_layout(report)            # fails if #status-toggle position or #search-wrap centering drifts from the locked topbar layout (Navigation.html § 8; added 2026-07-11)
