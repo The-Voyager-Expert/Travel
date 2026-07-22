@@ -261,13 +261,13 @@
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
     null,
     { group: '📊 Stats', children: [
+        { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
         { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: '📊 Stats Across US' },
         { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: '📊 Stats Across Canada' },
         { href: base + 'Trip-Essentials/Europe-Stats.html',               text: '📊 Stats Across Europe' },
         { href: base + 'Trip-Essentials/Asia-Stats.html',                 text: '📊 Stats Across Asia' },
         { href: base + 'Trip-Essentials/South-America-Stats.html',        text: '📊 Stats Across South America' },
         { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: '📊 Stats Across the Caribbean' },
-        { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
       ]},
     null,
     { group: '✈️ Flights', children: [
