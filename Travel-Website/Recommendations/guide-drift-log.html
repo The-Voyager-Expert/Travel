@@ -418,15 +418,15 @@ a:hover { text-decoration: underline; }
         <div class="stat-block-label">Running Totals</div>
         <div class="stat-row">
           <span class="stat-row-label">Runs completed</span>
-          <span class="stat-row-value" id="total-runs">1</span>
+          <span class="stat-row-value" id="total-runs">2</span>
         </div>
         <div class="stat-row">
           <span class="stat-row-label">Guides audited</span>
-          <span class="stat-row-value" id="total-guides">6</span>
+          <span class="stat-row-value" id="total-guides">11</span>
         </div>
         <div class="stat-row">
           <span class="stat-row-label">Failures found</span>
-          <span class="stat-row-value red" id="total-failures">0</span>
+          <span class="stat-row-value red" id="total-failures">3</span>
         </div>
         <div class="stat-row">
           <span class="stat-row-label">System fixes</span>
@@ -434,7 +434,7 @@ a:hover { text-decoration: underline; }
         </div>
         <div class="stat-row">
           <span class="stat-row-label">Guide fixes</span>
-          <span class="stat-row-value green" id="total-guide-fixes">0</span>
+          <span class="stat-row-value green" id="total-guide-fixes">3</span>
         </div>
         <div class="stat-row">
           <span class="stat-row-label">Repeat offenders</span>
@@ -462,6 +462,57 @@ a:hover { text-decoration: underline; }
 
       <div class="section-heading">Run History</div>
       <div id="run-history">
+
+        <div class="run-entry">
+          <div class="run-header">
+            <div>
+              <span class="run-date">2026-07-21</span>
+              <span class="run-window" style="margin-left:10px;">14-day window: 2026-07-07 – 2026-07-21</span>
+            </div>
+            <div class="run-badges">
+              <span class="badge badge-guides">5 guides audited</span>
+              <span class="badge badge-clean" style="background:var(--red-bg);color:var(--red);border-color:var(--red-border);">3 failures</span>
+              <span class="badge badge-sys">0 sys fixes</span>
+              <span class="badge badge-fix">3 guide fixes</span>
+            </div>
+          </div>
+          <div class="run-body">
+            <div class="finding-row" style="grid-template-columns: 130px 1fr 130px; font-size:11.5px; font-weight:700; color:var(--muted); padding-bottom:6px;">
+              <span>FAILURE TYPE</span><span>DESCRIPTION &amp; ROOT CAUSE</span><span style="text-align:right;">ACTION</span>
+            </div>
+            <div class="finding-row" style="grid-template-columns: 130px 1fr 130px;">
+              <span class="finding-check">TR-8 bare</span>
+              <div class="finding-detail">
+                Coeur d'Alene — all 5 also-on-site pills bare (no fragments). Weather, Time Zones, Safety, Plug Adapter, Currency all linked to page root with no anchor.
+                <div class="cause">Validator blind spot: <code>validate_itinerary.py</code> passes guides with bare pill hrefs (no fragment). Root cause: crib omitted fragments entirely. Systemic: same type of omission fixed in Abu Dhabi, Alaska, Aracaju in the pending-fixes-sweep 2026-07-21.</div>
+              </div>
+              <div class="finding-action"><span class="action-tag fixed">FIXED</span></div>
+            </div>
+            <div class="finding-row" style="grid-template-columns: 130px 1fr 130px; margin-top:8px;">
+              <span class="finding-check">TR-8 wrong fragment</span>
+              <div class="finding-detail">
+                Hilton Head Island + Marco Island — Plug Adapter used <code>#United-States</code> (should be <code>#USA</code>); Weather + Safety used <code>#City-Folder-Name</code> hyphen form (e.g. <code>#Hilton-Head-Island</code>) which fails for Weather (CLIMATE key uses spaces: <code>"Hilton Head Island"</code>) and Safety Guide (<code>data-city</code> uses spaces: <code>"hilton head island"</code>).
+                <div class="cause">Validator blind spot: validator doesn't cross-reference pill fragments against destination-page lookup keys. Root cause: cribs default to folder-name hyphen form for all fragments. This works for Time Zones (<code>c.guide</code> field accepts it) but breaks Weather and Safety. <strong>Recurring drift risk</strong> — any multi-word city guide shipped by a crib will have this bug unless the crib is explicitly told to use the space form for Weather and Safety pills.</div>
+              </div>
+              <div class="finding-action"><span class="action-tag fixed">FIXED</span></div>
+            </div>
+            <div class="finding-row" style="grid-template-columns: 130px 1fr 130px; margin-top:8px;">
+              <span class="finding-check">Missing map pill</span>
+              <div class="finding-detail">
+                Hilton Head Island — <code>🗺 All Stops Map</code> pill absent from overview-extras despite <code>hilton-head-island-stops-map.html</code> being present in the guide folder.
+                <div class="cause">Validator blind spot: no check that a stops-map file in the guide folder has a corresponding overview-extra pill. Execution gap — file was built but pill not wired in.</div>
+              </div>
+              <div class="finding-action"><span class="action-tag fixed">FIXED</span></div>
+            </div>
+            <div class="run-guides-list">
+              <span class="guide-chip clean">Bilbao</span>
+              <span class="guide-chip clean">Istanbul</span>
+              <span class="guide-chip" style="background:var(--red-bg);color:var(--red);border-color:var(--red-border);">Coeur d'Alene</span>
+              <span class="guide-chip" style="background:var(--red-bg);color:var(--red);border-color:var(--red-border);">Hilton Head Island</span>
+              <span class="guide-chip" style="background:var(--red-bg);color:var(--red);border-color:var(--red-border);">Marco Island</span>
+            </div>
+          </div>
+        </div>
 
         <div class="run-entry">
           <div class="run-header">
