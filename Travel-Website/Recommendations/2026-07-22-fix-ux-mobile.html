@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fix UX Problems (Mobile) — 2026-07-22</title>
+<style>
+  :root {
+    --bg:#fdf8f4; --surface:#fff; --text:#3d3a32; --muted:#9a8a6a;
+    --border:#e8e5de; --border2:#d4d0c8; --accent:#c8a44a;
+    --terra:#b85c2a; --green:#2d7a4a; --red:#a61c00;
+    --open-border:#c8a44a; --fixed-border:#2d7a4a; --warn-border:#d8a830;
+    --fixed-bg:#f4faf6; --warn-bg:#fffbf2; --code-bg:#f0ede6;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#1e1b18; --surface:#27231f; --text:#e4e0d8; --muted:#8a8278;
+      --border:#3a3630; --border2:#4a4640; --accent:#d4b060;
+      --terra:#d07040; --green:#4aaa70; --red:#e05030;
+      --fixed-bg:#1e2820; --warn-bg:#26221a; --code-bg:#322e2a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1e1b18; --surface:#27231f; --text:#e4e0d8; --muted:#8a8278;
+    --border:#3a3630; --border2:#4a4640; --terra:#d07040; --green:#4aaa70;
+    --fixed-bg:#1e2820; --warn-bg:#26221a; --code-bg:#322e2a;
+  }
+  :root[data-theme="light"]{
+    --bg:#fdf8f4; --surface:#fff; --text:#3d3a32; --muted:#9a8a6a;
+    --border:#e8e5de; --terra:#b85c2a; --green:#2d7a4a;
+    --fixed-bg:#f4faf6; --warn-bg:#fffbf2; --code-bg:#f0ede6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    font-size:14px;line-height:1.6;color:var(--text);background:var(--bg);padding:32px;max-width:860px;margin:0 auto}
+  h1{font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .doc-meta{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:24px}
+  .summary-bar{display:flex;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);
+    border-radius:8px;padding:14px 18px;margin-bottom:28px}
+  .summary-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:4px;font-weight:600;font-size:12px}
+  .pill-fixed{background:rgba(45,122,74,.10);color:var(--green);border:1px solid var(--fixed-border)}
+  .pill-warn{background:rgba(216,168,48,.10);color:#8a6010;border:1px solid var(--warn-border)}
+  .pill-open{background:rgba(200,164,74,.12);color:var(--terra);border:1px solid var(--open-border)}
+  .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;color:var(--muted);
+    border-bottom:1px solid var(--border);padding-bottom:6px;margin:32px 0 14px}
+  .file-name{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px}
+  .file-name code{color:var(--text);font-size:12px}
+  .issue{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--open-border);
+    border-radius:4px;padding:12px 14px;margin-bottom:10px}
+  .issue.fixed{background:var(--fixed-bg);border-left-color:var(--fixed-border)}
+  .issue.warn{background:var(--warn-bg);border-left-color:var(--warn-border)}
+  .issue-title{font-weight:700;font-size:13px;margin-bottom:5px}
+  .issue-row{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:3px}
+  .issue-row strong{color:var(--text)}
+  code{background:var(--code-bg);padding:1px 5px;border-radius:3px;font-size:12px;
+    font-family:'SF Mono','Fira Code',monospace;color:var(--text)}
+  .badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+    padding:1px 6px;border-radius:3px;vertical-align:middle;margin-left:4px}
+  .badge-fixed{background:rgba(45,122,74,.12);color:var(--green)}
+  .badge-both{background:rgba(184,92,42,.12);color:var(--terra)}
+  .badge-no-gate{background:rgba(161,28,0,.10);color:var(--red)}
+  .plat{font-size:11px;color:var(--muted);font-style:italic}
+  .note{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:4px;
+    padding:10px 14px;font-size:12px;color:var(--muted);margin-top:28px}
+  .note strong{color:var(--text)}
+  ul{margin:6px 0 0 18px}
+  li{font-size:13px;color:var(--muted);margin-bottom:4px}
+  li strong{color:var(--text)}
+</style>
+</head>
+<body>
+
+<h1>Fix UX Problems — Mobile Run</h1>
+<div class="doc-meta">
+  Run date: 2026-07-22 &nbsp;·&nbsp; Crib: <strong>fix-ux-problems</strong> (mobile-primary) &nbsp;·&nbsp;
+  Scope: Trip-Essentials CSS / dark-mode / accessibility (non-guide) &nbsp;·&nbsp;
+  Sources: shared UX artifact, site-drift-log, latest mobile-audit (2026-07-20), climate-weather-ux (2026-07-22), Recommendations queue, To Do List
+</div>
+
+<div class="summary-bar">
+  <span class="summary-pill pill-fixed">2 files fixed (both platforms)</span>
+  <span class="summary-pill pill-fixed">18 hex literals → dark-mode tokens</span>
+  <span class="summary-pill pill-warn">brain_check 0 fail (89 pre-existing warns)</span>
+  <span class="summary-pill pill-open">2 out-of-scope logged</span>
+</div>
+
+<!-- FIXED THIS RUN -->
+<div class="section-label">Fixed this run — dark-mode token conversions (desktop + mobile)</div>
+
+<div class="file-name"><code>Trip-Essentials/Climate-Finder.html</code></div>
+<div class="issue fixed">
+  <div class="issue-title">Hardcoded terracotta / temp / rain hex in inline &lt;style&gt; — did not adapt in dark mode <span class="badge badge-fixed">Fixed</span> <span class="badge badge-both">Both platforms</span> <span class="badge badge-no-gate">No gate</span></div>
+  <div class="issue-row"><strong>Fix applied (11 conversions):</strong> Standalone accent <code>#b85c2a</code> → <code>var(--rust)</code> on <code>.cf-mon:hover</code>/<code>.cf-mon.on</code> border-color, <code>.cf-sliderrow input accent-color</code>, <code>.cf-tval</code> color, <code>.cf-summary b</code> color, <code>a.cf-card:hover</code> border-color, <code>a.cf-card:hover .cf-city-arrow</code> color. Temp labels <code>.cf-hi #a61c00</code> → <code>var(--c-temp-hi)</code>, <code>.cf-lo #3d5282</code> → <code>var(--c-temp-lo)</code>. JS-rendered rain values <code>#4a7c9b</code> → <code>var(--c-rain)</code> (×2). Rest-state <code>background:#fff</code> → <code>var(--surface,#fff)</code> on <code>.cf-mon</code>/<code>.cf-seg button</code>/<code>.cf-sort</code>.</div>
+  <div class="issue-row"><strong>Left literal (by standard):</strong> active-state <strong>backgrounds</strong> stay <code>#b85c2a</code> (<code>.cf-seg button.on</code>, JS strip bar) and the terracotta gradient stays literal — <code>brain_check.check_pill_hover_behavior</code> bans <code>var(--rust)</code> as a background fill (terracotta tokens are for text/border/accent only). White-on-color text stays <code>#fff</code>.</div>
+  <div class="plat">Verified: both light + dark render; temp labels now lighten in dark mode (#e05030 / #6090e0), matching Weather.html's already-tokenized panel.</div>
+</div>
+
+<div class="file-name"><code>Trip-Essentials/Weather.html</code></div>
+<div class="issue fixed">
+  <div class="issue-title">Residual standalone terracotta <code>#b85c2a</code> in inline &lt;style&gt; (survived the 2026-07-20 tokenization pass) <span class="badge badge-fixed">Fixed</span> <span class="badge badge-both">Both platforms</span> <span class="badge badge-no-gate">No gate</span></div>
+  <div class="issue-row"><strong>Fix applied (7 conversions):</strong> <code>.wx-collab.on</code> color → <code>var(--rust)</code>; <code>.wx-mon:hover</code>/<code>.wx-mon.on</code> border-color → <code>var(--rust)</code>. Temp colors + surfaces already used tokens from the prior run.</div>
+  <div class="issue-row"><strong>Left literal (by standard):</strong> <code>.wx-unit button.on</code> and <code>.wx-bar.on</code> <strong>backgrounds</strong> revert/stay <code>#b85c2a</code> (solid terracotta bg is gate-tolerated; <code>var(--rust)</code> bg is banned). Gradient stays literal.</div>
+</div>
+
+<!-- ALREADY FIXED / VERIFIED -->
+<div class="section-label">Verified — already fixed before this run</div>
+<div class="issue fixed">
+  <div class="issue-title">Weather.html + Climate-Finder both at <code>mobile.css?v=53</code> <span class="badge badge-fixed">Already fixed</span></div>
+  <div class="issue-row">climate-weather-ux UX-3 (Weather one version behind) is STALE — both pages now pin <code>v=53</code>, the site majority (76 pages). The remaining <code>v=51</code> straggler is <code>Sunrise-Sunset.html</code> (logged, not swept).</div>
+</div>
+<div class="issue fixed">
+  <div class="issue-title">Pickleball <code>.pkl-finder-btn</code> + <code>.pkl-pill</code> rest states <span class="badge badge-fixed">Already fixed</span></div>
+  <div class="issue-row">To Do List line ~167 flags <code>.pkl-finder-btn</code> as beige — verified STALE: current code is <code>background: var(--surface)</code> (fixed in the 2026-07-20 run). No action needed; left for the cross-page-consistency routine that owns that queue item.</div>
+</div>
+
+<!-- MOBILE CHECKS -->
+<div class="section-label">Mobile detection results</div>
+<div class="issue">
+  <div class="issue-title">Mobile audit baseline — clean</div>
+  <div class="issue-row">Latest <code>2026-07-20-mobile-audit.html</code>: all 8 layers passed (90 pages baseline, 83 rendered @393px no overflow, 4,914 images lazy+alt, hamburger labels correct). Its only open recommendation (Layer 7 JS-template false positives) was already resolved 2026-07-21 (audit_mobile.py fix). No open mobile-audit items in scope.</div>
+</div>
+<div class="issue">
+  <div class="issue-title">Hamburger day-jump overlay grep — 1 match (expected 2)</div>
+  <div class="issue-row"><code>grep -c "day-jump-btn.*display.*none\|djBtn.*display.*none" toolbar.js</code> = 1. <code>toolbar.js</code> is a HARD-LOCKED shared file (log only, never edit here). The day-jump-hidden-when-hamburger-open behavior may be implemented via a single combined rule rather than two; not a confirmed regression. Flagged for the toolbar owner — not fixed. <span class="plat">Chrome not driven this run (headless scheduled session); relied on static grep + mobile-audit render layer.</span></div>
+</div>
+
+<!-- OUT OF SCOPE -->
+<div class="section-label">Out-of-scope — logged to To Do List</div>
+<div class="issue">
+  <div class="issue-title"><code>brain_check</code> hardcoded-hex PALETTE gap (root cause of recurring drift) <span class="badge badge-no-gate">Validator</span></div>
+  <div class="issue-row">Root cause of the recurring terracotta/temp-hex drift: <code>check_no_hardcoded_hex_colors</code>'s PALETTE lists only 14 neutral colors — it cannot catch <code>#a61c00</code>/<code>#3d5282</code>/<code>#4a7c9b</code> (now tokened) or 3-digit <code>#fff</code>. Logged for <strong>add-validator-check</strong> crib with exact PALETTE additions + the <code>#b85c2a</code>-background caveat (would conflict with <code>check_pill_hover_behavior</code>).</div>
+</div>
+<div class="issue">
+  <div class="issue-title"><code>Sunrise-Sunset.html</code> — <code>mobile.css?v=51</code> straggler</div>
+  <div class="issue-row">One page behind the <code>v=53</code> standard. Not bumped (per "CSS version bump scope: touched files only, never site-wide"). Logged for the next crib that ships Sunrise-Sunset.</div>
+</div>
+
+<div class="note">
+  <strong>brain_check: 0 fail.</strong> Two edits briefly introduced 3 <code>check_pill_hover_behavior</code> fails (<code>var(--rust)</code> used as an active background) — caught and reverted to literal <code>#b85c2a</code> backgrounds before commit. Remaining 89 warns are all pre-existing and unrelated: toolbar.js <code>?v=124→v125</code> drift across ~85 pages (known logged pattern) + <code>Safety-Guide.html</code>/<code>Travel-Stats.html</code> missing <code>data-updated</code> (auto-generated pages, separate task). No <code>data-updated</code> bump on the two edited pages — pure CSS fix with zero content assessment (fifth non-negotiable exemption). <code>To_Do_List.md</code> is gitignored (Drive-only) — findings persist there without a commit. Guide files + <code>guide-drift-log.html</code> in the working tree are another crib's WIP — not touched, not staged.
+</div>
+
+</body>
+</html>
