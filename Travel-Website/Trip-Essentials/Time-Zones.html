@@ -525,8 +525,15 @@ function render() {
     filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
   }
 
+  // Auto-sync Sunrise & Sunset when search narrows to one city
+  if (filtered.length === 1) {
+    var idx = CITIES.indexOf(filtered[0]);
+    var sel = document.getElementById('sun-city');
+    if (sel && String(idx) !== sel.value) { sel.value = String(idx); renderSun(); }
+  }
+
   if (filtered.length === 0) {
-    grid.innerHTML = '<div class="empty">No cities match “' + searchVal + '”</div>';
+    grid.innerHTML = '<div class=”empty”>No cities match “' + searchVal + '”</div>';
     return;
   }
 
