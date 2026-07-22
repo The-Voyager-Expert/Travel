@@ -4203,10 +4203,11 @@ def check_toolbar_font_size_unified(report: "Report") -> None:
                 ".tb-ham-label has a non-zero padding-left — this shifts the centering zone "
                 "off the left edge; use padding:0 (Rule 582, added 2026-07-22)"
             )
-        if "font-size:20px" not in ham_block:
+        if "font-size:20px!important" not in ham_block:
             problems.append(
-                ".tb-ham-label font-size is not 20px — mobile title size drifted; "
-                "restore to 20px (Rule 582, updated 2026-07-22)"
+                ".tb-ham-label font-size is not 20px!important — mobile title size drifted "
+                "or !important dropped (loses to .tb a specificity); "
+                "restore to 20px!important (Rule 582, updated 2026-07-22)"
             )
 
     # Guard: hamburger breakpoint must not exceed 1260px (1280px CSS = MacBook Air 13" 2x retina)
