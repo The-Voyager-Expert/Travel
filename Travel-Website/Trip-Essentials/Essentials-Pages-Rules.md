@@ -137,6 +137,10 @@ The folder name must exactly match the guide folder under `Travel-Website/Guides
 
 Additionally, each guide HTML file itself must carry a silent `<!-- transit-card: ... -->` comment recording the transit card research result (see Ship Checklist § 11 Step 11).
 
+## Filter chip containers — mobile stretch (all pages)
+
+- **Any filter chip row (category filters, region filters, search filters) must carry `class="filter-chip-row"` on its container element.** This single class makes all chips stretch to equal-width grid cells on mobile via `mobile.css` — no per-page CSS needed. Without it, chips render as content-sized blobs that don't fill the width. The inline `display:flex` style on the container can stay; `mobile.css` overrides it with `display:grid !important` at ≤600px. (added 2026-07-21)
+
 ## Active / selected pill colour (all pages)
 
 - **Active / selected filter pill color: terracotta `#b85c2a`, matching the banner.** Any pill, chip, or tab that indicates "currently selected" uses `background: #b85c2a; color: #fff; border-color: #b85c2a` — the same mid-tone as the banner gradient. Do not use `var(--text)` (dark/black) or `var(--accent)` (gold) for selected state. (added 2026-06-19, corrected 2026-06-19)
