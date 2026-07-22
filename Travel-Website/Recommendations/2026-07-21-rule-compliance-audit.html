@@ -34,7 +34,6 @@
   }
   .wrap { max-width: 720px; margin: 0 auto; }
 
-  /* Page title */
   .page-title {
     font-size: 18px;
     font-weight: 700;
@@ -52,7 +51,6 @@
     margin-bottom: 24px;
   }
 
-  /* Verdict bar */
   .verdict-bar {
     display: flex;
     gap: 10px;
@@ -78,7 +76,6 @@
   .vchip.info { background: var(--code-bg); color: var(--muted); }
   .vchip.rule { background: #f0e8f8; color: #5a1a7a; }
 
-  /* Section headers */
   h2 {
     font-size: 12px;
     font-weight: 700;
@@ -91,7 +88,6 @@
     border-bottom: 1px solid var(--border);
   }
 
-  /* Cards */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -120,6 +116,7 @@
   .chip.clean  { background: var(--pass-bg); color: var(--pass-text); }
   .chip.note   { background: var(--code-bg); color: var(--muted); }
   .chip.new    { background: #f0e8f8; color: #5a1a7a; }
+  .chip.warn   { background: var(--warn-bg); color: var(--warn-text); }
   .card-title {
     font-weight: 700;
     color: var(--text);
@@ -131,6 +128,11 @@
     line-height: 1.55;
   }
   .card-body p + p { margin-top: 6px; }
+  .card-body ul {
+    margin-top: 8px;
+    padding-left: 18px;
+  }
+  .card-body li { margin-bottom: 4px; }
 
   code {
     font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
@@ -140,7 +142,6 @@
     border-radius: 3px;
   }
 
-  /* Evidence block */
   .evidence {
     font-size: 12px;
     font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
@@ -152,22 +153,20 @@
     line-height: 1.6;
   }
 
-  /* brain_check result line */
   .bc-result {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 13px;
     font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-    background: var(--pass-bg);
-    color: var(--pass-text);
+    background: var(--warn-bg);
+    color: var(--warn-text);
     border-radius: 4px;
     padding: 6px 12px;
     margin-top: 4px;
     font-weight: 600;
   }
 
-  /* Summary table */
   .summary-table {
     width: 100%;
     border-collapse: collapse;
@@ -193,128 +192,169 @@
   .summary-table td:first-child { color: var(--text); font-weight: 600; }
   .summary-table td:last-child  { color: var(--muted); }
 
-  /* Cascade checklist */
-  .cascade-list {
+  .checks-list {
     list-style: none;
     margin-top: 8px;
   }
-  .cascade-list li {
+  .checks-list li {
     font-size: 13px;
-    padding: 4px 0;
+    padding: 5px 0;
     display: flex;
     gap: 8px;
     align-items: flex-start;
     border-bottom: 1px solid #f0ece6;
   }
-  .cascade-list li:last-child { border-bottom: none; }
-  .cascade-list .tick { color: var(--pass-text); font-weight: 700; flex-shrink: 0; }
-  .cascade-list .target { color: var(--text); }
-  .cascade-list .detail { color: var(--muted); }
+  .checks-list li:last-child { border-bottom: none; }
+  .checks-list .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+  .checks-list .badge.warn  { background: var(--warn-bg); color: var(--warn-text); }
+  .checks-list .badge.hard  { background: #fde8e8; color: #7a0000; }
+  .checks-list .badge.ret   { background: var(--code-bg); color: var(--muted); }
+  .checks-list .name { color: var(--text); font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 12px; }
+  .checks-list .detail { color: var(--muted); font-size: 12px; }
 
   .divider {
     height: 1px;
     background: var(--border);
     margin: 28px 0;
   }
+
+  .prev-run {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold-light);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .prev-run strong { color: var(--text); }
+  .prev-run + .prev-run { margin-top: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <h1 class="page-title">Rule Compliance Audit</h1>
-  <div class="page-meta">Run 5 · 2026-07-21 · Scheduled task: rule-compliance-audit · brain_check: 202/202 ok · No git commit (Brain/ is Drive-only)</div>
+  <div class="page-meta">Run 7 · 2026-07-21 · Scheduled task: rule-compliance-audit · brain_check: 193/194 ok · 1 advisory warn · Baseline: 10-day git diff</div>
 
   <div class="verdict-bar">
-    <span class="vchip fix">1 enforcement gap found</span>
-    <span class="vchip fix">1 fix applied</span>
-    <span class="vchip rule">Rule 583 added</span>
-    <span class="vchip ok">202/202 brain_check ok</span>
-    <span class="vchip ok">0 warn · 0 fail</span>
-    <span class="vchip info">Detection window: 2026-07-20 → 2026-07-21</span>
+    <span class="vchip fix">16 VI gaps closed</span>
+    <span class="vchip fix">Checksum stale — resolved</span>
+    <span class="vchip ok">193/194 brain_check ok</span>
+    <span class="vchip warn">1 advisory warn (pre-existing)</span>
+    <span class="vchip info">Detection window: 2026-07-11 → 2026-07-21</span>
   </div>
 
 
-  <h2>Part 1 — Detection: New Rules Since Run 4</h2>
-
-  <div class="card">
-    <div class="card-head">
-      <span class="chip note">ALREADY CASCADED</span>
-      <span class="card-title">Rules 580–582 (scripts/docs-audit, 2026-07-21)</span>
-    </div>
-    <div class="card-body">
-      <p>Three new toolbar hard-fail checks added by today's scripts-docs-audit run — already fully cascaded in that same session. No further action needed from this run.</p>
-      <p><strong>580</strong> — <code>check_toolbar_lounges_in_flights</code>: Lounges must be children of ✈️ Flights, never a standalone tab.<br>
-      <strong>581</strong> — <code>check_toolbar_flights_before_trains</code>: Flights group must appear before Trains in ITEMS.<br>
-      <strong>582</strong> — <code>check_toolbar_font_size_unified</code>: all toolbar font surfaces 14px + <code>.tb-inner</code> uses <code>overflow-x:hidden</code>.</p>
-    </div>
-  </div>
-
-
-  <h2>Part 2 — Cascade Verification: Rules 580–582</h2>
+  <h2>Part 1 — Detection: New Rules in 10-Day Window</h2>
 
   <div class="card">
     <div class="card-head">
       <span class="chip clean">CLEAN</span>
-      <span class="card-title">Cascade complete for Rules 580–582</span>
+      <span class="card-title">No new rules beyond those already documented in runs 5–6</span>
     </div>
     <div class="card-body">
-      <ul class="cascade-list">
-        <li><span class="tick">✓</span><span class="target">brain_check.py</span><span class="detail"> — 3 functions written and registered in ALL_CHECKS</span></li>
-        <li><span class="tick">✓</span><span class="target">Cleanliness Checks.md header</span><span class="detail"> — Updated from "579" to "582" with descriptions</span></li>
-        <li><span class="tick">✓</span><span class="target">Validator Index.html</span><span class="detail"> — 3 <code>&lt;li class="yes"&gt;</code> entries added at lines 1110–1112</span></li>
-        <li><span class="tick">✓</span><span class="target">CLAUDE.md DriftyCat bullets</span><span class="detail"> — 3 bullets exist with enforcement citations</span></li>
+      <p>Track A (DriftyCat cross-check): 44 bullets in Rules for Claude.html §6 — all enforcement citations present.<br>
+      Track B (CORE RULES checksums): <strong>Guide Structure.html was stale</strong> — modified after run 6 but checksum not updated. Fixed (see Part 3).<br>
+      Track C (git log Brain/scripts/): no new brain_check functions registered in the 10-day window. Rules 580–583 (toolbar checks, Visited-in-hamburger) were added 2026-07-21 and documented in runs 5–6.<br>
+      Track D (new non-guide HTML): no new pages requiring cross-registration.</p>
+    </div>
+  </div>
+
+
+  <h2>Part 2 — Cross-Reference: brain_check vs. Validator Index</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip gap">16 GAPS FOUND</span>
+      <span class="card-title">15 undocumented active checks + 1 stale retirement status in Validator Index.html</span>
+    </div>
+    <div class="card-body">
+      <p>Full grep of brain_check.py call site (lines 7172–7278, 101 active calls) cross-referenced against Validator Index.html brain_check section. The grep pattern was corrected to <code>check_[a-z0-9_]+</code> (prior runs used <code>check_[a-z_]+</code>, missing names with digits). Three additional entries found via plain-English search (no <code>check_</code> prefix in VI). Final gap count: 15 missing + 1 wrong class.</p>
+      <ul class="checks-list">
+        <li><span class="badge ret">RETIRED</span><span><span class="name">check_index_stat_row</span> <span class="detail">— was class="yes" but stat-row removed 2026-07-20; function no longer called</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_audit_staleness</span> <span class="detail">— audit log staleness (added ~2026-05)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_core_rules_checksums</span> <span class="detail">— CORE RULES checksum drift (added 2026-05-30)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_doc_index_vs_core_rules</span> <span class="detail">— doc-index ↔ Brain/ parity (added 2026-05-07)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_no_html_in_profile</span> <span class="detail">— HTML fences banned in CLAUDE.md (added 2026-04-25)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_profile_sections</span> <span class="detail">— CLAUDE.md required section headers (added ~2026-05-07)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_html_name_mentions</span> <span class="detail">— owner name in rule content (added 2026-05-08)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_html_mcp_tool_ids</span> <span class="detail">— hardcoded MCP IDs in rules (added 2026-05-08)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_html_date_stamps</span> <span class="detail">— YYYY-MM-DD in rule content (added 2026-05-08)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_html_attributed_quotes</span> <span class="detail">— attributed quotes in rules (added 2026-05-08)</span></span></li>
+        <li><span class="badge warn">WARN</span><span><span class="name">check_html_first_person_blockquotes</span> <span class="detail">— first-person voice in rules (added 2026-05-08)</span></span></li>
+        <li><span class="badge hard">HARD-FAIL</span><span><span class="name">check_no_archive_subfolders_in_guides</span> <span class="detail">— archive/ inside Guides/ (added 2026-05-09)</span></span></li>
+        <li><span class="badge hard">HARD-FAIL</span><span><span class="name">check_new_badge_css</span> <span class="detail">— .dest-new-badge CSS spec (added 2026-07-19)</span></span></li>
+        <li><span class="badge hard">HARD-FAIL</span><span><span class="name">check_new_badge_js</span> <span class="detail">— badge JS data-shipped/14-day expiry (added 2026-07-19)</span></span></li>
+        <li><span class="badge hard">HARD-FAIL</span><span><span class="name">check_visited_pill_style</span> <span class="detail">— _injectVisitedPill() spec (added 2026-07-19)</span></span></li>
+        <li><span class="badge hard">HARD-FAIL</span><span><span class="name">check_extras_title_gap</span> <span class="detail">— gap-fix CSS for 14 section IDs (added 2026-07-19)</span></span></li>
       </ul>
     </div>
   </div>
 
-
-  <h2>Part 3 — Audit: Recent Crib Output</h2>
-
   <div class="card">
     <div class="card-head">
-      <span class="chip clean">CLEAN</span>
-      <span class="card-title">No systematically missed rules in recent commits</span>
+      <span class="chip note">ROOT CAUSE</span>
+      <span class="card-title">VI updates fell behind during high-velocity crib sessions in April–July</span>
     </div>
     <div class="card-body">
-      <p>Reviewed git log for the 2026-07-20 → 2026-07-21 detection window. Commits show rapid design iteration on the Visited pill / Personal-Stats / World-Map architecture — 15+ commits in one day. This pattern confirms a real enforcement gap (see Part 4): without a check, the Visited hamburger entry was re-added and removed repeatedly in the same window.</p>
-      <p>No guide HTML was shipped in the window. No pattern of systematically missed guide-content rules detected.</p>
-      <div class="evidence">Pattern: 374747d84 "add Visited to hamburger"
-                 3e0d16f52 "remove Visited from hamburger"
-→ 2 manual add/remove cycles in one session
-→ confirms check_no_visited_in_hamburger is load-bearing</div>
+      <p>The 15 undocumented checks were added across 3 months (2026-04-25 through 2026-07-19) during sessions focused on enforcement implementation. Validator Index documentation is a low-priority trailing step and was skipped in each session. The 4 badge/pill/gap checks from 2026-07-19 were the most recent; the audit/rules hygiene checks from 2026-04/05 were oldest. All are now documented.</p>
     </div>
   </div>
 
 
-  <h2>Part 4 — Fix: Enforcement Gap Closed</h2>
-
-  <div class="card">
-    <div class="card-head">
-      <span class="chip gap">ENFORCEMENT GAP</span>
-      <span class="card-title">Visited pill in hamburger — no enforcing check</span>
-    </div>
-    <div class="card-body">
-      <p>DriftyCat bullet "Visited pill lives ONLY on <code>World-Map.html</code> — never on Personal-Stats or in the hamburger menu (added 2026-07-21)" existed in CLAUDE.md with three drift classes but had no corresponding <code>brain_check.py</code> check.</p>
-      <p><strong>Evidence the gap is real:</strong> commit <code>374747d84</code> added <code>'🟡 Visited'</code> to the hamburger menu; commit <code>3e0d16f52</code> immediately removed it. Without a gate, any future crib session re-reading its own earlier work would re-introduce the same drift.</p>
-    </div>
-  </div>
+  <h2>Part 3 — Fix: CORE RULES Checksum Stale</h2>
 
   <div class="card">
     <div class="card-head">
       <span class="chip fixed">FIXED</span>
-      <span class="chip new">RULE 583</span>
-      <span class="card-title">check_no_visited_in_hamburger — HARD-FAIL at session start</span>
+      <span class="card-title">Guide Structure.html checksum out of date — check_core_rules_checksums warning resolved</span>
     </div>
     <div class="card-body">
-      <p>Added <code>check_no_visited_in_hamburger()</code> to <code>Brain/scripts/brain_check.py</code> and registered it in ALL_CHECKS. Checks two conditions:</p>
-      <p><strong>Drift class (b):</strong> <code>toolbar.js</code> must not contain <code>'🟡 Visited'</code> — the Visited toggle must never appear in the hamburger menu.<br>
-      <strong>Drift class (a):</strong> <code>Personal-Stats.html</code> must not contain <code>'ps-visited-btn'</code> — the old Visited button must not be re-added to Personal-Stats.</p>
-      <ul class="cascade-list" style="margin-top: 10px;">
-        <li><span class="tick">✓</span><span class="target">brain_check.py</span><span class="detail"> — function added, registered in ALL_CHECKS (Drive-only)</span></li>
-        <li><span class="tick">✓</span><span class="target">Cleanliness Checks.md</span><span class="detail"> — header updated (582 → 583); Rule 583 spec entry added</span></li>
-        <li><span class="tick">✓</span><span class="target">Validator Index.html</span><span class="detail"> — <code>&lt;li class="yes"&gt;</code> entry added after Rule 582 entry</span></li>
-        <li><span class="tick">✓</span><span class="target">CLAUDE.md DriftyCat bullet</span><span class="detail"> — Enforcement citation added: "Enforced: brain_check.py check_no_visited_in_hamburger (HARD-FAIL at session start, drift classes a+b — Rule 583)"</span></li>
-      </ul>
+      <p>brain_check opened at 192/194 ok · 2 warn: (1) <code>check_core_rules_checksums</code> — Guide Structure.html content hash diverged from stored value; (2) <code>check_html_date_stamps</code> — pre-existing advisory.</p>
+      <p>Fix: ran <code>python3 Brain/scripts/update_core_rules_checksums.py</code>. Guide Structure.html hash updated; <code>format_version.json</code> bumped to 2026-07-21. Committed to git (tracked files).</p>
+      <div class="evidence">brain_check before: 192/194 ok · 2 warn · 0 fail
+brain_check after:  193/194 ok · 1 warn · 0 fail</div>
+    </div>
+  </div>
+
+
+  <h2>Part 4 — Fix: Validator Index Documentation Gaps</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip fixed">FIXED</span>
+      <span class="card-title">Validator Index.html — 16 gaps closed in one edit pass</span>
+    </div>
+    <div class="card-body">
+      <p><strong>Change 1 — Retirement correction:</strong> <code>check_index_stat_row</code> changed from <code>class="yes"</code> to <code>class="warn"</code> with RETIRED annotation (stat-row removed 2026-07-20; function no longer called in brain_check.py; Rule 571 replaced it).</p>
+      <p><strong>Change 2 — 15 new entries added</strong> to the brain_check section before the closing <code>&lt;/ul&gt;</code>: 11 WARN-level checks (audit staleness, checksums, doc-index parity, CLAUDE.md hygiene, rule-content hygiene) and 4 HARD-FAIL checks (new badge CSS/JS, Visited pill style, extras title gap).</p>
+      <p><strong>Change 3 — Meta block updated</strong> to "rule-compliance-audit run 7" with summary of all changes.</p>
+      <div class="evidence">Validator Index.html brain_check section: 16 gaps closed
+check_index_stat_row: class="yes" → class="warn" (RETIRED 2026-07-20)
+15 new &lt;li&gt; entries added (11 warn + 4 hard-fail)</div>
+    </div>
+  </div>
+
+
+  <h2>Part 5 — Advisory Warn (Pre-existing, Non-Blocking)</h2>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="chip warn">ADVISORY</span>
+      <span class="card-title">check_html_date_stamps — Guide Structure.html has 1 YYYY-MM-DD in rule content</span>
+    </div>
+    <div class="card-body">
+      <p>Guide Structure.html contains 1 bare date in rule content. This is a pre-existing condition in rule documentation text, advisory only (does not block session start), and expected in a document that references specific revision dates. Not actioned — the date is load-bearing in context (a phase timeline reference, not a stale session anchor).</p>
     </div>
   </div>
 
@@ -322,7 +362,7 @@
 
   <h2>brain_check Result</h2>
 
-  <div class="bc-result">202/202 ok &nbsp;·&nbsp; 0 warn &nbsp;·&nbsp; 0 fail &nbsp;·&nbsp; Brain intact.</div>
+  <div class="bc-result">193/194 ok &nbsp;·&nbsp; 1 warn &nbsp;·&nbsp; 0 fail &nbsp;·&nbsp; Brain intact. (1 advisory pre-existing)</div>
 
 
   <h2>Run Summary</h2>
@@ -336,24 +376,28 @@
     </thead>
     <tbody>
       <tr>
-        <td>New rules detected (detection window)</td>
-        <td>Rules 580–582 (already cascaded by scripts-docs-audit); Rule 583 added this run</td>
+        <td>New rules detected</td>
+        <td>None new — Rules 580–583 already documented in runs 5–6</td>
       </tr>
       <tr>
-        <td>Enforcement gaps found</td>
-        <td>1 — Visited pill in hamburger / Personal-Stats (Rule 583 closes it)</td>
+        <td>CORE RULES checksum</td>
+        <td>Guide Structure.html stale — resolved via update_core_rules_checksums.py</td>
       </tr>
       <tr>
-        <td>Fixes applied</td>
-        <td>1 — check_no_visited_in_hamburger added + cascaded to 4 surfaces</td>
+        <td>VI gaps closed</td>
+        <td>16 — 15 undocumented active checks added + check_index_stat_row retirement corrected</td>
+      </tr>
+      <tr>
+        <td>Oldest undocumented check</td>
+        <td>check_no_html_in_profile — added 2026-04-25, went undocumented for ~87 days</td>
       </tr>
       <tr>
         <td>brain_check result</td>
-        <td>202/202 ok · 0 warn · 0 fail</td>
+        <td>193/194 ok · 1 warn · 0 fail (1 advisory: html_date_stamps on Guide Structure.html)</td>
       </tr>
       <tr>
         <td>Git commit</td>
-        <td>None — all modified files are Drive-only (Brain/ untracked since 2026-07-14)</td>
+        <td>core_rules_checksums.json + format_version.json (checksum refresh)</td>
       </tr>
       <tr>
         <td>Out-of-scope findings</td>
@@ -361,6 +405,20 @@
       </tr>
     </tbody>
   </table>
+
+  <div class="divider"></div>
+
+  <h2>Prior Runs</h2>
+
+  <div class="prev-run">
+    <strong>Run 6 — 2026-07-21</strong><br>
+    Same-day second run (run 5 also on 2026-07-21). Detection tracks all empty. Fixed: Cleanliness Checks.md Rule 531 (section list 9 → 14 IDs) + Validator Index meta timestamp (resolves cascade_sync warn). brain_check: 194/194 ok · 0 warn · 0 fail.
+  </div>
+
+  <div class="prev-run">
+    <strong>Run 5 — 2026-07-21</strong><br>
+    Detected Rules 580–582 via scripts-docs-audit (same day). Added Rule 583 (check_no_visited_in_hamburger — Visited in hamburger had no gate; git evidence: add+remove in one session). brain_check: 202/202 ok · 0 warn · 0 fail after fix.
+  </div>
 
 </div>
 </body>
