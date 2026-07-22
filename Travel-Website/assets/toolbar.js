@@ -366,8 +366,8 @@
       'border:none;border-radius:6px;background:transparent;white-space:nowrap}' +
     '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '!important}' +
     '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + '!important;font-weight:500}' +
-    /* Separator */
-    '.tb-sep{width:1px;height:18px;background:rgba(255,255,255,0.3);margin:0;flex-shrink:0}' +
+    /* Separator — hidden */
+    '.tb-sep{display:none}' +
     /* Scroll progress bar — hidden on mobile (overlaps toolbar) */
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
