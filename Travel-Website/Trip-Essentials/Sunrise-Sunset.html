@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../assets/web-travel-style.css">
-<link rel="stylesheet" href="../assets/mobile.css?v=51">
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
 <title>Sunrise &amp; Sunset</title>
 <style>
 /* ── Pickers ── */
@@ -20,6 +20,21 @@
   cursor: pointer; appearance: none; -webkit-appearance: none;
 }
 .sun-pickers select:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── City search input ── */
+.sun-city-wrap {
+  flex: 1 1 200px; min-width: 0; position: relative;
+}
+.sun-city-wrap input[type="search"] {
+  width: 100%; height: 44px; box-sizing: border-box;
+  padding: 0 14px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--surface);
+  color: var(--text); font-size: 16px; font-family: inherit;
+  -webkit-appearance: none; appearance: none;
+}
+.sun-city-wrap input[type="search"]:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sun-city-wrap input[type="search"]::-webkit-search-cancel-button { display: none; }
 
 /* ── Sky card ── */
 .sky-card {
@@ -129,6 +144,7 @@
   .sky-time-value { font-size: 22px; }
   .sky-special { padding: 40px 24px; }
   .sun-pickers select { flex-basis: 100%; }
+  .sun-city-wrap { flex-basis: 100%; }
 }
 </style>
 </head>
@@ -141,7 +157,9 @@
   </div>
 
   <div class="sun-pickers">
-    <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
+    <div class="sun-city-wrap">
+      <input type="search" id="sun-city-search" placeholder="City" aria-label="Search for a city" autocomplete="off" spellcheck="false">
+    </div>
     <select id="sun-month" aria-label="Select month for sunrise and sunset times">
       <option value="0">January</option>
       <option value="1">February</option>
@@ -546,14 +564,15 @@ function buildArc(sr, ss) {
     + '</svg>';
 }
 
+var curCityIdx = -1;
+
 function render() {
-  var sel = document.getElementById('sun-city');
   var mon = document.getElementById('sun-month');
   var out = document.getElementById('sun-output');
-  if (!sel || !mon || !out) return;
-  var idx = parseInt(sel.value, 10);
+  if (!mon || !out) return;
+  var idx = curCityIdx;
   var month = parseInt(mon.value, 10);
-  if (isNaN(idx) || isNaN(month)) return;
+  if (idx < 0 || isNaN(month)) return;
   var city = CITIES[idx];
   if (!city) { out.innerHTML = ''; return; }
   var lat = getSunLat(city);

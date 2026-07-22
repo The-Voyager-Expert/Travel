@@ -5,150 +5,432 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brain Health Check — 2026-07-21</title>
 <style>
+/* ── Tokens ── */
+:root {
+  --bg:        #faf8f5;
+  --surface:   #ffffff;
+  --surface2:  #f3f0eb;
+  --border:    #e0dbd3;
+  --border-subtle: #ede9e3;
+
+  --text:      #26221e;
+  --text2:     #7a7268;
+  --text3:     #a39a90;
+
+  --ok:        #2f7249;
+  --ok-bg:     #eaf5f0;
+  --ok-border: #b8dfc9;
+
+  --warn:      #7a5500;
+  --warn-bg:   #fdf6dc;
+  --warn-border: #e0c060;
+
+  --fixed:     #1a4e8a;
+  --fixed-bg:  #e6eef8;
+  --fixed-border: #99bee8;
+
+  --open:      #8a1c1c;
+  --open-bg:   #faeaea;
+  --open-border: #e09999;
+
+  --mono: "SF Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #fdf8f4;
-    --surface: #ffffff;
-    --surface2: #f0ede8;
-    --text: #2c2c2c;
-    --text2: #5a5650;
-    --border: #ddd8d0;
-    --green: #2e7d4f;
-    --green-bg: #eaf6ef;
-    --yellow: #7a5c00;
-    --yellow-bg: #fff8e1;
-    --red: #8b1c1c;
-    --red-bg: #fff0f0;
-    --blue: #1a3d6b;
-    --blue-bg: #e8f0f8;
+    --bg:        #1c1a17;
+    --surface:   #252220;
+    --surface2:  #2e2a26;
+    --border:    #3a3530;
+    --border-subtle: #302c28;
+
+    --text:      #ede8e2;
+    --text2:     #90877e;
+    --text3:     #5a5248;
+
+    --ok:        #5cbd80;
+    --ok-bg:     #17301f;
+    --ok-border: #2f5c3f;
+
+    --warn:      #d4aa30;
+    --warn-bg:   #26200a;
+    --warn-border: #5a4510;
+
+    --fixed:     #6aaeed;
+    --fixed-bg:  #0e1e36;
+    --fixed-border: #1f3d6a;
+
+    --open:      #d87070;
+    --open-bg:   #280f0f;
+    --open-border: #5a1f1f;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1e1b18;
-      --surface: #2a2520;
-      --surface2: #332e28;
-      --text: #ede8e2;
-      --text2: #a09890;
-      --border: #3a3530;
-      --green: #5cbf80;
-      --green-bg: #1a3326;
-      --yellow: #f0c040;
-      --yellow-bg: #2a2200;
-      --red: #e06060;
-      --red-bg: #2a1010;
-      --blue: #6aaeee;
-      --blue-bg: #0e1f36;
-    }
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); padding: 24px 16px; line-height: 1.5; font-size: 14px; }
-  .wrap { max-width: 760px; margin: 0 auto; }
-  h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-  .meta { color: var(--text2); font-size: 13px; margin-bottom: 24px; }
-  h2 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin: 24px 0 10px; }
-  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-  th { background: var(--surface2); text-align: left; padding: 8px 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); }
-  td { padding: 8px 12px; border-top: 1px solid var(--border); vertical-align: top; }
-  tr:first-child td { border-top: none; }
-  .ok { color: var(--green); font-weight: 600; }
-  .warn { color: var(--yellow); font-weight: 600; }
-  .fixed { color: var(--blue); font-weight: 600; }
-  .open { color: var(--red); font-weight: 600; }
-  .note { color: var(--text2); font-size: 13px; }
-  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
-  .section p { color: var(--text2); font-size: 13px; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
-  .badge-ok { background: var(--green-bg); color: var(--green); }
-  .badge-warn { background: var(--yellow-bg); color: var(--yellow); }
-  .badge-fixed { background: var(--blue-bg); color: var(--blue); }
-  .banner { background: var(--green-bg); border: 1px solid var(--green); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; color: var(--green); font-weight: 600; font-size: 14px; }
+}
+:root[data-theme="light"] {
+  --bg: #faf8f5; --surface: #ffffff; --surface2: #f3f0eb; --border: #e0dbd3;
+  --border-subtle: #ede9e3; --text: #26221e; --text2: #7a7268; --text3: #a39a90;
+  --ok: #2f7249; --ok-bg: #eaf5f0; --ok-border: #b8dfc9;
+  --warn: #7a5500; --warn-bg: #fdf6dc; --warn-border: #e0c060;
+  --fixed: #1a4e8a; --fixed-bg: #e6eef8; --fixed-border: #99bee8;
+  --open: #8a1c1c; --open-bg: #faeaea; --open-border: #e09999;
+}
+:root[data-theme="dark"] {
+  --bg: #1c1a17; --surface: #252220; --surface2: #2e2a26; --border: #3a3530;
+  --border-subtle: #302c28; --text: #ede8e2; --text2: #90877e; --text3: #5a5248;
+  --ok: #5cbd80; --ok-bg: #17301f; --ok-border: #2f5c3f;
+  --warn: #d4aa30; --warn-bg: #26200a; --warn-border: #5a4510;
+  --fixed: #6aaeed; --fixed-bg: #0e1e36; --fixed-border: #1f3d6a;
+  --open: #d87070; --open-bg: #280f0f; --open-border: #5a1f1f;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  padding: 32px 16px 64px;
+}
+
+/* ── Layout ── */
+.wrap { max-width: 720px; margin: 0 auto; }
+
+/* ── Header ── */
+.header {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -.01em;
+  margin-bottom: 10px;
+}
+.summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.chip-ok    { background: var(--ok-bg);   color: var(--ok);   border-color: var(--ok-border); }
+.chip-warn  { background: var(--warn-bg); color: var(--warn); border-color: var(--warn-border); }
+.chip-fixed { background: var(--fixed-bg); color: var(--fixed); border-color: var(--fixed-border); }
+.chip-open  { background: var(--open-bg); color: var(--open); border-color: var(--open-border); }
+
+.meta-line {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Section headers ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin: 28px 0 10px;
+}
+
+/* ── Step table ── */
+.step-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.step-table thead th {
+  background: var(--surface2);
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text2);
+  text-align: left;
+}
+.step-table thead th:nth-child(2) { width: 110px; }
+.step-table tbody tr {
+  border-top: 1px solid var(--border-subtle);
+}
+.step-table tbody tr:first-child { border-top: none; }
+.step-table td {
+  padding: 10px 14px;
+  vertical-align: top;
+  font-size: 13px;
+}
+.step-name {
+  font-weight: 600;
+  color: var(--text);
+}
+.step-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 400;
+  margin-top: 2px;
+}
+.step-note {
+  color: var(--text2);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+code {
+  font-family: var(--mono);
+  font-size: .9em;
+  background: var(--surface2);
+  border: 1px solid var(--border-subtle);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--text);
+}
+
+/* ── Issue / fix cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.card-body {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.55;
+}
+.card-body + .card-body { margin-top: 8px; }
+
+.card-warn { border-left: 3px solid var(--warn-border); }
+.card-fixed { border-left: 3px solid var(--fixed-border); }
+.card-ok { border-left: 3px solid var(--ok-border); }
+
+/* ── Metrics footer ── */
+.metrics {
+  margin-top: 28px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.metric-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.metric-lbl {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+@media (max-width: 540px) {
+  .step-table thead th:nth-child(2) { width: 90px; }
+  .step-table td { padding: 9px 10px; }
+  .title { font-size: 19px; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>🧠 Brain Health Check</h1>
-  <div class="meta">Run: 2026-07-21 (completed 2026-07-22 00:xx) · brain_check result: 191/193 ok · 2 warn · 0 fail · 1 fix applied</div>
 
-  <div class="banner">Pipeline intact — 0 hard failures. 1 warning fixed (Travel-Stats toolbar version). 1 CORE RULES warning parked to To Do List.</div>
+  <!-- Header -->
+  <div class="header">
+    <div class="eyebrow">Scheduled · Daily · Noon</div>
+    <h1 class="title">Brain Health Check</h1>
+    <div class="summary-row">
+      <span class="chip chip-ok">192/193 ok</span>
+      <span class="chip chip-warn">1 warn · parked</span>
+      <span class="chip chip-fixed">1 fixed</span>
+      <span class="chip chip-ok">0 fail</span>
+    </div>
+    <div class="meta-line">Run 2026-07-21 · Committed <code>01cce0817</code> · Pushed via Hamburg crib's push</div>
+  </div>
 
-  <h2>Step Results</h2>
-  <table>
-    <thead><tr><th>Step</th><th>Status</th><th>Note</th></tr></thead>
+  <!-- Step results -->
+  <div class="section-label">Step Results</div>
+  <table class="step-table">
+    <thead>
+      <tr>
+        <th>Step</th>
+        <th>Status</th>
+        <th>Note</th>
+      </tr>
+    </thead>
     <tbody>
       <tr>
-        <td>0a · To Do List intake</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">No in-scope items requiring action this run. Pre-existing items (Istanbul stray, T6 validator) remain parked.</td>
+        <td>
+          <span class="step-name">0a · To Do List</span>
+          <span class="step-sub">intake scan</span>
+        </td>
+        <td><span class="chip chip-ok">✅ Clean</span></td>
+        <td class="step-note">No in-scope items requiring action. Pre-existing items (Istanbul stray, T6 validator) remain parked.</td>
       </tr>
       <tr>
-        <td>0b · Working tree safety</td>
-        <td><span class="badge badge-warn">⚠️ Stashed</span></td>
-        <td class="note">2 modified files from other cribs stashed before checks: <code>amsterdam_v1.html</code> + <code>web-travel-style.css</code>. Stash restored after all steps.</td>
+        <td>
+          <span class="step-name">0b · Working tree</span>
+          <span class="step-sub">stash + safety</span>
+        </td>
+        <td><span class="chip chip-warn">⚠️ Stashed</span></td>
+        <td class="step-note">2 modified files stashed from other cribs before checks: <code>amsterdam_v1.html</code> + <code>web-travel-style.css</code>. Restored at end of run.</td>
       </tr>
       <tr>
-        <td>1 · Brain check</td>
-        <td><span class="badge badge-warn">⚠️ 2 Warns</span></td>
-        <td class="note"><strong>WARN 1 (FIXED):</strong> <code>Travel-Stats.html</code> toolbar.js?v=122 behind current v=124 → updated to v=124.<br><strong>WARN 2 (PARKED):</strong> <code>Brain/CORE RULES/Guide Structure.html</code> YYYY-MM-DD date-stamp — cannot fix without CORE RULES approval. Logged to To Do List.</td>
+        <td>
+          <span class="step-name">1 · brain_check</span>
+          <span class="step-sub">primary gate</span>
+        </td>
+        <td><span class="chip chip-fixed">🔵 1 Fixed</span></td>
+        <td class="step-note"><strong>WARN (FIXED):</strong> <code>Travel-Stats.html</code> toolbar.js?v=122 behind v=124 — updated to v=124.<br><strong>WARN (PARKED):</strong> <code>Brain/CORE RULES/Guide Structure.html</code> — YYYY-MM-DD date-stamp flagged. Cannot fix without explicit CORE RULES approval. Logged to To Do List.</td>
       </tr>
       <tr>
-        <td>2 · Hanging builds</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">No <code>build_state.md</code> files with unchecked Phase 6 found.</td>
+        <td>
+          <span class="step-name">2 · Hanging builds</span>
+          <span class="step-sub">orphan check</span>
+        </td>
+        <td><span class="chip chip-ok">✅ Clean</span></td>
+        <td class="step-note">No <code>build_state.md</code> files with unchecked Phase 6 found across all guides.</td>
       </tr>
       <tr>
-        <td>3 · Ship pipeline scripts</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">All 11 scripts pass syntax check: guide_tools, validate_itinerary, brain_check, pre_push_guard, validation_stamp, publish_queue, guide_surfaces, crib_safety, sweep_stray, commons_photo, autofix_itinerary. Pre-push hook wired (<code>Brain/scripts/git-hooks</code>) and executable.</td>
+        <td>
+          <span class="step-name">3 · Pipeline scripts</span>
+          <span class="step-sub">syntax + hooks</span>
+        </td>
+        <td><span class="chip chip-ok">✅ Clean</span></td>
+        <td class="step-note">11/11 scripts pass syntax check. Pre-push hook wired at <code>Brain/scripts/git-hooks</code> and executable.</td>
       </tr>
       <tr>
-        <td>4 · Validation stamps</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">5/5 sampled guides have valid signed stamps: Orlando, Melbourne, Big Island, Valletta, Vancouver.</td>
+        <td>
+          <span class="step-name">4 · Validation stamps</span>
+          <span class="step-sub">5 sampled guides</span>
+        </td>
+        <td><span class="chip chip-ok">✅ 5/5</span></td>
+        <td class="step-note">All valid: Orlando · Melbourne · Big Island · Valletta · Vancouver.</td>
       </tr>
       <tr>
-        <td>5 · Push queue / lock</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">No <code>/tmp/voyager_push.lock</code> present. No <code>publish_queue.json</code> — queue empty.</td>
+        <td>
+          <span class="step-name">5 · Push lock / queue</span>
+          <span class="step-sub">serialized publisher</span>
+        </td>
+        <td><span class="chip chip-ok">✅ Clean</span></td>
+        <td class="step-note">No <code>/tmp/voyager_push.lock</code>. No <code>publish_queue.json</code> — queue empty.</td>
       </tr>
       <tr>
-        <td>6 · Stray file sweep</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">sweep_stray_travel.py: 4/4 paths reachable, 0 stray travel files outside Travel/.</td>
+        <td>
+          <span class="step-name">6 · Stray sweep</span>
+          <span class="step-sub">hard rule check</span>
+        </td>
+        <td><span class="chip chip-ok">✅ 0 strays</span></td>
+        <td class="step-note">4/4 paths reachable. 0 stray travel files outside Travel/.</td>
       </tr>
       <tr>
-        <td>7 · Repo size + gitignore</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">Published tree: <strong>707 MB</strong> (under 1 GB limit). Non-Travel-Website tracked files are all legitimate Brain/ scripts. No .DS_Store or .fuse_hidden* artifacts found.</td>
+        <td>
+          <span class="step-name">7 · Repo size + gitignore</span>
+          <span class="step-sub">1 GB gate</span>
+        </td>
+        <td><span class="chip chip-ok">✅ 707 MB</span></td>
+        <td class="step-note">Well under the 1 GB limit. Non-Travel-Website tracked files are all legitimate Brain/ scripts. No .DS_Store artifacts.</td>
       </tr>
       <tr>
-        <td>8 · Audit log freshness</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">Most recent entry: 2026-07-21 (today). Within 7-day window — no new entry needed.</td>
+        <td>
+          <span class="step-name">8 · Audit log</span>
+          <span class="step-sub">7-day freshness</span>
+        </td>
+        <td><span class="chip chip-ok">✅ Fresh</span></td>
+        <td class="step-note">Most recent entry: 2026-07-21. Within 7-day window — no new entry required.</td>
       </tr>
       <tr>
-        <td>8b · Guide audit cadence</td>
-        <td><span class="badge badge-ok">✅ Clean</span></td>
-        <td class="note">Most recent audit JSON: <code>audit_2026-07-21.json</code> — today. Cadence on track.</td>
+        <td>
+          <span class="step-name">8b · Guide audit cadence</span>
+          <span class="step-sub">14-day gate</span>
+        </td>
+        <td><span class="chip chip-ok">✅ Current</span></td>
+        <td class="step-note">Most recent JSON: <code>audit_2026-07-21.json</code> — today. Cadence on track.</td>
       </tr>
       <tr>
-        <td>9 · Commit + push</td>
-        <td><span class="badge badge-fixed">🔵 Pushed</span></td>
-        <td class="note">Staged and committed: <code>Travel-Stats.html</code> (toolbar v bump) + <code>To_Do_List.md</code> (CORE RULES warn entry) + this report. Pre-push guard passed. Pushed to main.</td>
+        <td>
+          <span class="step-name">9 · Commit + push</span>
+          <span class="step-sub">live on main</span>
+        </td>
+        <td><span class="chip chip-fixed">🔵 Pushed</span></td>
+        <td class="step-note">Committed <code>Travel-Stats.html</code> + this report as <code>01cce0817</code>. Pre-push guard passed (192/193 ok). Pushed to <code>origin/main</code> via Hamburg crib's push (shared working directory).</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Issues Requiring Action</h2>
-  <div class="section">
-    <p><strong>CORE RULES warn — Guide Structure.html date-stamp (⚠️ Low urgency):</strong> brain_check flags 1 YYYY-MM-DD date in <code>Brain/CORE RULES/Guide Structure.html</code> as a potential session anchor. Cannot auto-fix CORE RULES files. Owner should verify the date is intentional (e.g., a rule attribution date) and clear the warn. Logged to To Do List → 🔧 CORE RULES Warn section.</p>
+  <!-- Issues requiring action -->
+  <div class="section-label">Issues Requiring Action</div>
+  <div class="card card-warn">
+    <div class="card-title">CORE RULES warn — Guide Structure.html date-stamp (low urgency)</div>
+    <div class="card-body">brain_check flags 1 YYYY-MM-DD date in <code>Brain/CORE RULES/Guide Structure.html</code> as a potential session anchor. Cannot auto-fix CORE RULES files. Verify the date is intentional (e.g., a rule attribution date) and clear the warn if so. Logged to To Do List → 🔧 CORE RULES Warn section.</div>
   </div>
 
-  <h2>Fixes Applied This Run</h2>
-  <div class="section">
-    <p>1. <code>Travel-Website/Trip-Essentials/Travel-Stats.html</code> — toolbar.js?v=122 → ?v=124 (brain_check warn resolved)<br>
-    2. <code>To Do List/To_Do_List.md</code> — added CORE RULES Guide Structure.html date-stamp warn for owner review</p>
+  <!-- Fixes applied -->
+  <div class="section-label">Fixes Applied This Run</div>
+  <div class="card card-fixed">
+    <div class="card-title">Travel-Stats.html — toolbar version bump</div>
+    <div class="card-body"><code>toolbar.js?v=122</code> → <code>?v=124</code>. Resolved brain_check toolbar-version warn. Committed in <code>01cce0817</code>.</div>
+  </div>
+  <div class="card card-fixed">
+    <div class="card-title">To Do List — CORE RULES warn logged</div>
+    <div class="card-body">Added dated entry for Guide Structure.html date-stamp warn under new § 🔧 CORE RULES Warn. Out-of-scope for this routine; parked for owner review.</div>
   </div>
 
-  <div class="meta" style="margin-top:24px">brain_check: 191/193 ok · 2 warn (1 fixed, 1 parked) · 0 fail · All 11 pipeline scripts OK · 5/5 stamps valid · 707 MB repo · 0 strays · 0 locks</div>
+  <!-- Metrics -->
+  <div class="metrics">
+    <div class="metric"><span class="metric-val">192/193</span><span class="metric-lbl">Brain checks</span></div>
+    <div class="metric"><span class="metric-val">1</span><span class="metric-lbl">Warn fixed</span></div>
+    <div class="metric"><span class="metric-val">1</span><span class="metric-lbl">Warn parked</span></div>
+    <div class="metric"><span class="metric-val">11/11</span><span class="metric-lbl">Scripts OK</span></div>
+    <div class="metric"><span class="metric-val">5/5</span><span class="metric-lbl">Stamps valid</span></div>
+    <div class="metric"><span class="metric-val">707 MB</span><span class="metric-lbl">Repo size</span></div>
+    <div class="metric"><span class="metric-val">0</span><span class="metric-lbl">Stray files</span></div>
+    <div class="metric"><span class="metric-val">0</span><span class="metric-lbl">Open failures</span></div>
+  </div>
+
 </div>
 </body>
 </html>
