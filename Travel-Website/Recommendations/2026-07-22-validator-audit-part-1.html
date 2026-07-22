@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validator Audit — Part 1/20 (2026-07-22)</title>
+<style>
+  body { font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #2b2822; max-width: 820px; margin: 32px auto; padding: 0 18px; }
+  h1 { font-size: 20px; border-bottom: 2px solid #b85c2a; padding-bottom: 8px; }
+  h2 { font-size: 16px; margin-top: 28px; color: #b85c2a; }
+  .meta { color: #6b665c; font-size: 13px; margin-bottom: 20px; }
+  ul { padding-left: 20px; } li { margin: 6px 0; }
+  code { background: #f2ede4; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .clean { background: #eef6ec; border-left: 3px solid #4a8f3c; padding: 8px 12px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>Validator Audit — Part 1 / 20</h1>
+<p class="meta">Crib 3 · 2026-07-22 · Sections: 🔒 CORE RULES INTEGRITY &amp; BUILD STATE + 📄 DOCUMENT HEAD · Guide tested: Montevideo (montevideo_v1.html)</p>
+
+<p class="clean"><strong>Result: clean.</strong> Every Validator Index item in both Part 1 sections has a working implementation in <code>validate_itinerary.py</code>; every check in code has a matching Index entry; all checks execute and pass; no dead code, no duplicates, no un-suppressed warns. No fix, add, or removal was warranted this run.</p>
+
+<h2>I did</h2>
+<ul>
+  <li>Read the Validator Index Part 1 sections (🔒 CORE RULES INTEGRITY &amp; BUILD STATE lines 46–62; 📄 DOCUMENT HEAD lines 65–80) and audited each bullet against <code>validate_itinerary.py</code>.</li>
+  <li>Audited the CORE RULES INTEGRITY checks (lines 706–922): filename-pattern gate, checksum-file present/readable, CORE RULES dir reachable, SHA-256 match with double re-read, checksum-store coverage, banned annotation phrases, note-span drift words — all present and correct.</li>
+  <li>Audited the BUILD-STATE TRACKER checks (lines 924–1106): Phase 1–5 gating, basename-normalised lookup, Phase 1/2 early-exit halt, Phase 4 stops-gated, Phase 5 per-shipping-section incl. <code>claude-inspiration</code> id detection — all present and correct.</li>
+  <li>Audited the DOCUMENT HEAD checks (lines 1108–1567 + 1489–1626): viewport, DOCTYPE, <code>lang="en"</code>, charset, non-empty <code>&lt;title&gt;</code>, no <code>&lt;h1&gt;</code>, nothing-before-<code>.title-page</code>, no inline <code>&lt;style&gt;</code>, canonical stylesheet link, no Google Fonts, malformed-entity scan — all present and correct.</li>
+  <li>Verified checksum-store integrity by script: 27 stored keys (all basenames, no path prefixes) = 27 CORE RULES <code>.html</code> on disk, 0 untracked, 0 stale — the coverage comparison logic is sound.</li>
+  <li>Ran <code>validate_itinerary.py</code> on Montevideo with and without <code>SKIP_CORE_RULES_INTEGRITY</code>: all Part 1 checks green (integrity 27/27 match, build-state Phase 1–5 pass, all head checks pass).</li>
+  <li>Ran <code>brain_check.py</code>: 190/193 ok, 0 fail (3 pre-existing warns unrelated to Part 1 — see below).</li>
+  <li>Refreshed the validator coverage artifact (<code>update_validator_coverage_artifact.py</code>) and advanced the audit state file (Part 1 marked complete).</li>
+  <li>No edit to the Validator Index was needed — it accurately reflects the code.</li>
+</ul>
+
+<h2>I built</h2>
+<ul>
+  <li>Nothing built this run. Part 1 coverage was already complete and correct; adding a check would mean inventing a rule (out of a crib's mandate).</li>
+</ul>
+
+<h2>I logged in the To do file</h2>
+<ul>
+  <li><strong>Validator-coverage Artifact URL is dead</strong> — <code>claude.ai/code/artifact/65a2e7cc-…</code> (the task's Step 1b/Step 6 publish target) returns "deleted, or you no longer have write access." The coverage HTML is still generated to disk (<code>Brain/scripts/validator_coverage_artifact.html</code>) and committed, so no data is lost. Logged as an owner action item to re-share/recreate the artifact (not minted autonomously, to preserve the one-URL convention). This is the 2nd audit artifact URL to die — flagged for drift-watch if a 3rd appears.</li>
+  <li>The brain_check warns adjacent to Part 1 (<code>Travel-Stats.html</code> + <code>Safety-Guide.html</code> toolbar <code>?v=122</code> behind <code>v=124</code>, both missing <code>data-updated</code>) are already in the To Do List (line 588, brain-health-check routine) and out of Part 1 scope — not re-logged.</li>
+</ul>
+
+<h2>I logged in the Drift file</h2>
+<ul>
+  <li>Nothing logged this run. The dead-artifact-URL issue is currently a one-off owner action (2nd occurrence, different URL from the rolling-audit one) — escalated to the To Do List, not yet a confirmed recurring drift pattern. If a 3rd audit artifact URL dies, it becomes drift.</li>
+</ul>
+</body>
+</html>
