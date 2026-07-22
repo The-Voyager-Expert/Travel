@@ -333,7 +333,7 @@
     '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:14px;font-weight:700;color:#fff!important;' +
       'letter-spacing:.08em;text-transform:uppercase;padding:5px 0;white-space:nowrap;width:220px;text-align:center;margin-left:0;background:transparent!important;text-decoration:none!important}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
-    '.tb-inner{flex:1}' +
+    '.tb-inner{flex:1;padding-right:20px}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:100%;margin:0;' +
       'gap:0;align-items:center;justify-content:space-between}' +
