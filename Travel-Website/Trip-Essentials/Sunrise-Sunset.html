@@ -123,8 +123,32 @@
   text-align: center; margin-top: 14px;
 }
 
-/* ── Mobile city search ── */
-#sun-city-search-wrap { display: none; position: relative; }
+/* Remove page-header gradient stripe on this page */
+@media (min-width: 601px) {
+  .page-header {
+    border-bottom: none !important;
+    border-image: none !important;
+  }
+}
+
+/* City name label above sky card */
+.sun-city-label {
+  font-size: 16px; font-weight: 600; color: var(--text);
+  margin-bottom: 14px;
+}
+
+/* ── City search (all screens) ── */
+#sun-city { display: none; }
+#sun-city-search-wrap { display: block; flex: 1 1 200px; min-width: 0; position: relative; }
+#sun-city-search {
+  width: 100%; height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--text);
+  font-size: 16px; font-family: inherit;
+  box-sizing: border-box;
+}
+#sun-city-search:focus { outline: none; }
 
 /* ── Mobile ── */
 @media (max-width: 520px) {
@@ -132,9 +156,7 @@
   .sky-time-value { font-size: 22px; }
   .sky-special { padding: 40px 24px; }
   .sun-pickers select { flex-basis: 100%; }
-  /* swap select → search on mobile */
-  #sun-city { display: none; }
-  #sun-city-search-wrap { display: block; flex: 1 1 100%; }
+  #sun-city-search-wrap { flex-basis: 100%; }
   .sun-pickers { flex-wrap: wrap; }
 }
 </style>
@@ -563,7 +585,7 @@ function render() {
   if (!sel || !mon || !out) return;
   var idx = parseInt(sel.value, 10);
   var month = parseInt(mon.value, 10);
-  if (isNaN(idx) || isNaN(month)) return;
+  if (isNaN(idx) || isNaN(month)) { out.innerHTML = ''; return; }
   var city = CITIES[idx];
   if (!city) { out.innerHTML = ''; return; }
   var lat = getSunLat(city);
@@ -574,7 +596,8 @@ function render() {
   var r = calcSunTimes(lat, month);
 
   if (r.type === 'sun') {
-    out.innerHTML = '<div class="sky-special midnight-sun">'
+    out.innerHTML = '<div class="sun-city-label">' + city.flag + ' ' + city.name + ' · ' + city.country + '</div>'
+      + '<div class="sky-special midnight-sun">'
       + '<div class="sky-special-icon">☀️</div>'
       + '<div class="sky-special-title">Midnight Sun</div>'
       + '<div class="sky-special-body">The sun does not set in ' + city.name + ' during this month.</div>'
@@ -582,7 +605,8 @@ function render() {
     return;
   }
   if (r.type === 'night') {
-    out.innerHTML = '<div class="sky-special polar-night">'
+    out.innerHTML = '<div class="sun-city-label">' + city.flag + ' ' + city.name + ' · ' + city.country + '</div>'
+      + '<div class="sky-special polar-night">'
       + '<div class="sky-special-icon">🌑</div>'
       + '<div class="sky-special-title">Polar Night</div>'
       + '<div class="sky-special-body">The sun does not rise in ' + city.name + ' during this month.</div>'
@@ -592,7 +616,8 @@ function render() {
 
   var arc = buildArc(r.sr, r.ss);
 
-  out.innerHTML = '<div class="sky-card">'
+  out.innerHTML = '<div class="sun-city-label">' + city.flag + ' ' + city.name + ' · ' + city.country + '</div>'
+    + '<div class="sky-card">'
     + '<div class="sky-bg">'
     + '<div class="sky-arc-wrap">' + arc + '</div>'
     + '<div class="sky-times">'
@@ -615,13 +640,13 @@ function render() {
     o.textContent = x.c.name + ' · ' + x.c.country;
     sel.appendChild(o);
   });
-  var seaIdx = 0;
-  for (var k = 0; k < CITIES.length; k++) { if (CITIES[k].name === 'Seattle') { seaIdx = k; break; } }
-  sel.value = seaIdx;
+  var placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Select a city…';
+  sel.insertBefore(placeholder, sel.firstChild);
   mon.value = new Date().getMonth();
   sel.addEventListener('change', render);
   mon.addEventListener('change', render);
-  render();
 }());
 </script>
 
@@ -648,12 +673,6 @@ function render() {
     }
   });
 
-  // Pre-fill the search input to match the default selected city (Seattle)
-  var defaultIdx = parseInt(sel.value, 10);
-  if (!isNaN(defaultIdx) && CITIES[defaultIdx]) {
-    var c = CITIES[defaultIdx];
-    searchInput.value = c.name + ' · ' + c.country;
-  }
 }());</script>
 </body>
 </html>
