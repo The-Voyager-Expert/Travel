@@ -393,7 +393,7 @@
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
          block-level box pushes the text off the bar's vertical center. */
-      '.tb-ham-label{display:block;min-height:0!important;flex:1;text-align:center;font-size:15px;font-weight:700;color:#fff;padding:0;letter-spacing:.06em;text-transform:uppercase}' +
+      '.tb-ham-label{display:block;min-height:0!important;flex:1;text-align:center;font-size:16px;font-weight:700;color:#fff;padding:0;letter-spacing:.06em;text-transform:uppercase}' +
       /* The menu is position:fixed so it stays fully on-screen as the user
          scrolls — items never disappear off the top. The toolbar (.tb) is
          NOT fixed (scrolls away as usual); only the open menu panel is fixed.
