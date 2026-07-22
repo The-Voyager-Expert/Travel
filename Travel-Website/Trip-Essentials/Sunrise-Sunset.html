@@ -123,12 +123,28 @@
   text-align: center; margin-top: 14px;
 }
 
+/* ── Mobile city search ── */
+#sun-city-search-wrap { display: none; }
+#sun-city-search {
+  flex: 1 1 200px; min-width: 0; height: 44px;
+  padding: 0 36px 0 14px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--surface);
+  color: var(--text); font-size: 16px; font-family: inherit;
+  width: 100%; box-sizing: border-box;
+}
+#sun-city-search:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 /* ── Mobile ── */
 @media (max-width: 520px) {
   .sky-bg { padding: 28px 18px 22px; }
   .sky-time-value { font-size: 22px; }
   .sky-special { padding: 40px 24px; }
   .sun-pickers select { flex-basis: 100%; }
+  /* swap select → search on mobile */
+  #sun-city { display: none; }
+  #sun-city-search-wrap { display: flex; flex: 1 1 100%; }
+  .sun-pickers { flex-wrap: wrap; }
 }
 </style>
 </head>
@@ -142,6 +158,9 @@
 
   <div class="sun-pickers">
     <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
+    <div id="sun-city-search-wrap">
+      <input id="sun-city-search" type="text" autocomplete="off" spellcheck="false" placeholder="Search city…" aria-label="Search city for sunrise and sunset times">
+    </div>
     <select id="sun-month" aria-label="Select month for sunrise and sunset times">
       <option value="0">January</option>
       <option value="1">February</option>
@@ -619,8 +638,31 @@ function render() {
 <script src="../assets/search-autocomplete.js?v=8"></script>
 <script>(function(){
   if (!window.TVESearch) return;
-  var input = document.getElementById('sun-city');
-  /* no TVESearch on a select — skip */
+  var searchInput = document.getElementById('sun-city-search');
+  var sel = document.getElementById('sun-city');
+  if (!searchInput || !sel) return;
+
+  // Build items array from CITIES (same sort order as the select)
+  var items = CITIES.map(function(c, i) {
+    return { name: c.name, sub: c.country, _idx: i };
+  });
+
+  TVESearch.attach(searchInput, {
+    items: items,
+    onPick: function(item) {
+      // Sync the hidden select so render() works unchanged
+      sel.value = item._idx;
+      searchInput.value = item.name + ' · ' + item.sub;
+      render();
+    }
+  });
+
+  // Pre-fill the search input to match the default selected city (Seattle)
+  var defaultIdx = parseInt(sel.value, 10);
+  if (!isNaN(defaultIdx) && CITIES[defaultIdx]) {
+    var c = CITIES[defaultIdx];
+    searchInput.value = c.name + ' · ' + c.country;
+  }
 }());</script>
 </body>
 </html>
