@@ -782,11 +782,26 @@
   document.body.appendChild(hamMenu);
 
   var hamMenuClosedHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
+  var _hamSavedScroll = 0;
+  function _lockBodyScroll() {
+    _hamSavedScroll = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + _hamSavedScroll + 'px';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  function _unlockBodyScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, _hamSavedScroll);
+  }
   function closeHamMenu() {
     hamMenu.classList.remove('tb-ham-open');
     hamBtn.setAttribute('aria-expanded', 'false');
     hamBtn.innerHTML = hamMenuClosedHTML;
-    document.body.style.overflow = '';
+    _unlockBodyScroll();
     var djBtn = document.querySelector('.day-jump-btn');
     if (djBtn) djBtn.style.display = '';
   }
@@ -807,7 +822,7 @@
     }
     hamMenu.classList.toggle('tb-ham-open');
     var open = hamMenu.classList.contains('tb-ham-open');
-    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) { _lockBodyScroll(); } else { _unlockBodyScroll(); }
     var djBtn = document.querySelector('.day-jump-btn');
     if (djBtn) djBtn.style.display = open ? 'none' : '';
     hamBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
