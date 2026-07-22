@@ -16,7 +16,6 @@ Twenty-seven standalone pages carry an in-page search box, plus all 33 Best-of p
 | `Lounges-Europe.html` | airport cards inside country blocks | country blocks |
 | `Delta-Routes-SEA.html` | destination cards | sections (also has tier-pill filters) |
 | `Delta-Routes-Full.html` | destination cards | hub sections + the cross-hub table |
-| `Guide-Days-Coverage.html` | city pills (by name) | tier sections (collapses non-matching tiers) |
 | `Asia-Stats.html` | country rows | stat sections |
 | `Baggage.html` | airline rows | carrier groups |
 | `Budget-Guide.html` | city entries | budget tiers |
