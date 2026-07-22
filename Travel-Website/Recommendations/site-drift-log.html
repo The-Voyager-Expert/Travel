@@ -144,6 +144,85 @@ h1 { font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacin
   </div>
 </div>
 
+<div class="entry">
+  <div class="entry-header">
+    <span class="entry-title">verify-booking blind retry loop</span>
+    <span class="badge badge-escalated">Escalated</span>
+  </div>
+  <div class="entry-desc">When a guide's <code>verification_log.json</code> is empty or missing, <code>guide_tools.py ship</code> fails at <code>verify-booking</code> with no detail about which URLs are missing entries. Cribs have no visibility into the specific problem — they retry ship, get the same failure, retry again. Pattern: 3–8 FAIL @ verify-booking per guide before the crib figures out which bot-blocked URLs need log entries. Root cause: 2026-07-14 auto-prune incident stripped verification_log.json from 208 of 219 guides. Partial fix: <code>check-vlog &lt;City&gt;</code> command added to guide_tools.py (2026-07-21) so cribs can see missing entries before shipping. Fleet-wide log rebuild still pending.</div>
+  <div class="entry-meta">First seen: 2026-07-19 · Escalated to To Do List 2026-07-21 · Routines: build-process-audit</div>
+  <div class="entry-log">
+    <div class="log-row">
+      <span class="log-date">2026-07-19</span>
+      <span class="log-routine">build-process-audit</span>
+      <span class="log-count">Bilbao ×2 · Hilton Head ×5 · root cause identified (strip incident)</span>
+    </div>
+    <div class="log-row">
+      <span class="log-date">2026-07-21</span>
+      <span class="log-routine">build-process-audit</span>
+      <span class="log-count">Zhangjiajie ×8 · Kauai ×3 · check-vlog command built</span>
+    </div>
+  </div>
+</div>
+
+<div class="entry">
+  <div class="entry-header">
+    <span class="entry-title">High validate FAIL count per guide (structural errors)</span>
+    <span class="badge badge-watching">Watching</span>
+  </div>
+  <div class="entry-desc">New guides consistently require 15–25 validate FAIL cycles before reaching PASS. Evidence: Bilbao 21 FAILs, Hilton Head 17 FAILs, Kotor 14+ FAILs. These are structural errors — wrong CSS class, missing wrapper div, wrong section order — not content errors. Cribs write every wrapper from scratch by reading Guide Structure.html, Stops Structure.html, Day Structure.html. Even after reading all three files, structural mismatches are common. The <code>fix &lt;City&gt;</code> shortcut (~20s per cycle) reduces wall-clock cost but doesn't address the root cause. A guide stub template generator would eliminate structural FAILs at the source.</div>
+  <div class="entry-meta">First seen: 2026-07-19 · Watching · Routines: build-process-audit</div>
+  <div class="entry-log">
+    <div class="log-row">
+      <span class="log-date">2026-07-19</span>
+      <span class="log-routine">build-process-audit</span>
+      <span class="log-count">Bilbao 21 FAILs @ validate · Hilton Head 17+ FAILs @ validate</span>
+    </div>
+    <div class="log-row">
+      <span class="log-date">2026-07-21</span>
+      <span class="log-routine">build-process-audit</span>
+      <span class="log-count">Pattern confirmed · stub template generator logged to To Do List</span>
+    </div>
+  </div>
+</div>
+
+<div class="entry">
+  <div class="entry-header">
+    <span class="entry-title">Non-European guides incorrectly carrying European regional pills</span>
+    <span class="badge badge-watching">Watching</span>
+  </div>
+  <div class="entry-desc">Guides for cities in Africa, Oceania, and the Indian Ocean have shipped with <code>📊 Stats Across Europe</code> and <code>🚆 European Train Guide</code> pills. Root cause: guide cribs copy also-on-site pill blocks from European guides without removing the region-specific pills. No brain_check guard currently enforces pill/region matching. Fixed 8 instances in this run (Lagos, Wellington, Melbourne, Seychelles, Cairo, Sydney, Queenstown, Marrakech). Recommendation: add a brain_check region-guard for Stats and European Train pills.</div>
+  <div class="entry-meta">First seen: 2026-07-21 · Escalated to To Do List 2026-07-21 · Routines: ux-format-audit</div>
+  <div class="entry-log">
+    <div class="log-row">
+      <span class="log-date">2026-07-21</span>
+      <span class="log-routine">ux-format-audit</span>
+      <span class="log-count">×8 guides fixed this run</span>
+    </div>
+  </div>
+</div>
+
+<div class="entry">
+  <div class="entry-header">
+    <span class="entry-title">SKILL.md files accumulate stale Guides-Index path after relocations</span>
+    <span class="badge badge-escalated">Escalated</span>
+  </div>
+  <div class="entry-desc">When site structure changes (e.g. Guides-Index.html relocated from <code>Travel-Website/Guides/</code> to <code>Travel-Website/</code> on 2026-07-15), routine SKILL.md files that hard-code the old path silently read a redirect stub instead of the real index. Fixes are applied in batches but consistently miss files — P1 from 2026-07-20 fixed 7 guide-day-expansion files but left 6 others (features-content-ideas ×3, visas-audit, reference-docs-monthly-audit, cross-page-consistency-audit) with the stale path. Pattern: each tooling-gaps-audit finds a fresh set of stragglers from the same root relocation.</div>
+  <div class="entry-meta">First seen: 2026-07-20 · Escalated to To Do List 2026-07-21 · Routines: tooling-gaps-audit</div>
+  <div class="entry-log">
+    <div class="log-row">
+      <span class="log-date">2026-07-20</span>
+      <span class="log-routine">tooling-gaps-audit</span>
+      <span class="log-count">×7 SKILL.md files (guide-day-expansion cribs) — P1 action, fixed same day</span>
+    </div>
+    <div class="log-row">
+      <span class="log-date">2026-07-21</span>
+      <span class="log-routine">tooling-gaps-audit</span>
+      <span class="log-count">×6 SKILL.md files still stale — escalated to To Do List</span>
+    </div>
+  </div>
+</div>
+
 <!-- ENTRY TEMPLATE (copy when adding a new pattern):
 <div class="entry">
   <div class="entry-header">
