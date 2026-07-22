@@ -171,6 +171,7 @@ input.search:focus { border-color: #c8b99a; box-shadow: none; }
     <div class="sun-controls">
       <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
       <select id="sun-month" aria-label="Select month for sunrise and sunset times">
+        <option value="">Month</option>
         <option value="0">January</option>
         <option value="1">February</option>
         <option value="2">March</option>
@@ -713,7 +714,7 @@ function renderSun() {
   if (!sel || !mon || !res) return;
   var idx = parseInt(sel.value, 10);
   var month = parseInt(mon.value, 10);
-  if (isNaN(idx) || isNaN(month)) return;
+  if (isNaN(idx) || isNaN(month)) { res.innerHTML = ''; return; }
   var city = CITIES[idx];
   if (!city) { res.innerHTML = ''; return; }
   var lat = getSunLat(city);
@@ -754,17 +755,16 @@ function renderSun() {
     o.textContent = x.c.name + ' · ' + x.c.country;
     sel.appendChild(o);
   }
-  var seaIdx = 0;
-  for (var k = 0; k < CITIES.length; k++) { if (CITIES[k].name === 'Seattle') { seaIdx = k; break; } }
-  sel.value = seaIdx;
-  mon.value = new Date().getMonth();
+  var placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Select a city…';
+  sel.insertBefore(placeholder, sel.firstChild);
   sel.addEventListener('change', renderSun);
   mon.addEventListener('change', renderSun);
-  renderSun();
 }());
 </script>
 
-<script src="../assets/toolbar.js?v=124"></script>
+<script src="../assets/toolbar.js?v=125"></script>
 
 <script src="../assets/search-autocomplete.js?v=8"></script>
 <script>(function(){
