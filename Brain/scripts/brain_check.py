@@ -3188,6 +3188,88 @@ def check_search_bar_standard(report: "Report") -> None:
         report.ok("search-bar-standard — all search inputs conform to § 14.")
 
 
+def check_focus_outline_double_border(report: "Report") -> None:
+    """FAIL if any Trip-Essentials page inline CSS sets a non-none outline in a
+    :focus rule on a form element (select, input, textarea).
+
+    The site focus standard uses border-color + box-shadow changes only — never
+    an additional outline ring. Adding outline:N on :focus over a border creates
+    the recurring 'double-gold' regression: element border (inner ring) + outline
+    (outer ring), both warm/gold tones, looking like a thick double border.
+
+    Example caught: .sun-pickers select:focus { outline: 2px solid var(--accent) }
+    Fix: remove the outline or set outline:none; change border-color on :focus instead.
+
+    Scope: inline <style> blocks in Trip-Essentials/ pages only. Shared CSS assets
+    are excluded — web-travel-style.css correctly uses border-color on .search-input:focus
+    and that pattern must not be flagged. Search-specific selectors (.search-input,
+    .filter-input, #*search) are already gated by check_search_bar_standard; this
+    check covers the remaining form elements (select, textarea, non-search input).
+
+    Added 2026-07-22: double-gold drift recurring on input/select :focus rules.
+    """
+    import re as _re
+
+    STYLE_BLOCK_RE = _re.compile(r'<style[^>]*>(.*?)</style>', _re.S | _re.I)
+    CSS_RULE_RE    = _re.compile(r'([^{}]+)\{([^{}]*)\}', _re.S)
+    OUTLINE_RE     = _re.compile(r'(?<![a-z-])outline\s*:\s*([^;}\n]+)', _re.I)
+
+    # Selectors that could match form elements — exclude search-specific ones
+    # already covered by check_search_bar_standard.
+    SEARCH_SEL_RE = _re.compile(
+        r'\.search-input\b|\.filter-input\b|#[a-z-]*search\b'
+        r'|input\s*\[\s*type\s*=\s*["\']?search["\']?\s*\]',
+        _re.I,
+    )
+    FORM_EL_RE = _re.compile(r'\b(?:select|textarea|input)\b', _re.I)
+
+    _OUTLINE_NONE = {'none', '0', '0px', 'none !important', '0 !important', '0px !important'}
+
+    failures: list[str] = []
+
+    for fpath in sorted(set(_shareable_pages())):
+        if not fpath.exists():
+            continue
+        try:
+            text = fpath.read_text(encoding='utf-8', errors='replace')
+        except Exception:
+            continue
+
+        rel = (str(fpath.relative_to(TRAVEL_ROOT))
+               if str(fpath).startswith(str(TRAVEL_ROOT)) else str(fpath))
+
+        for style_m in STYLE_BLOCK_RE.finditer(text):
+            css = style_m.group(1)
+            for rule_m in CSS_RULE_RE.finditer(css):
+                sel  = rule_m.group(1).strip()
+                body = rule_m.group(2)
+
+                if ':focus' not in sel.lower():
+                    continue
+                if not FORM_EL_RE.search(sel):
+                    continue
+                if SEARCH_SEL_RE.search(sel):
+                    continue  # already covered by check_search_bar_standard
+
+                outline_m = OUTLINE_RE.search(body)
+                if not outline_m:
+                    continue
+                val = outline_m.group(1).strip().rstrip(';').strip()
+                if val.lower() in _OUTLINE_NONE:
+                    continue
+
+                failures.append(
+                    f"[focus-outline-double-border] {rel}: "
+                    f"'{sel.strip()}' sets outline:{val} on :focus — "
+                    f"double-gold drift; use border-color:#c8b99a instead"
+                )
+
+    for msg in failures:
+        report.fail(msg)
+    if not failures:
+        report.ok("focus-outline-double-border — no double-gold :focus outlines on form elements.")
+
+
 def check_guides_index_banner_subtitle(report: "Report") -> None:
     """Fail if Guides-Index.html has a subtitle element inside the Travel Guides banner.
 
@@ -7305,6 +7387,7 @@ def main(argv: list[str]) -> int:
     check_pdf_gradient_sync(report)                     # warns if guide-style.css .title-page gradient diverges from PDF Render Notes.md (added 2026-06-11)
     check_guides_index_banner_subtitle(report)          # fails if Guides-Index.html banner has a subtitle element (added 2026-06-12)
     check_search_bar_standard(report)                   # fails if any search input has placeholder words, pill shape, fixed width, or width animation (added 2026-06-13)
+    check_focus_outline_double_border(report)           # fails if any page inline CSS sets outline (non-none) on a form element :focus rule — double-gold drift (added 2026-07-22)
     # check_index_stat_row RETIRED 2026-07-20 — stat-row removed from Guides-Index.html on owner direction
     # (too prominent; info already visible in page content). See Navigation.html § 8 + Cleanliness Checks Rule 571.
     check_guides_index_topbar_layout(report)            # fails if #status-toggle position or #search-wrap centering drifts from the locked topbar layout (Navigation.html § 8; added 2026-07-11)
