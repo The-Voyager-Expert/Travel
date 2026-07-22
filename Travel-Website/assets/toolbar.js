@@ -394,7 +394,7 @@
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
          block-level box pushes the text off the bar's vertical center. */
-      '.tb-ham-label{display:block;min-height:0!important;flex:1;text-align:center;font-size:16px;font-weight:700;color:#fff;padding:0;letter-spacing:.06em;text-transform:uppercase}' +
+      '.tb-ham-label{display:block;min-height:0!important;flex:1;text-align:center;font-size:18px;font-weight:700;color:#fff;padding:0;letter-spacing:.06em;text-transform:uppercase}' +
       /* The menu is position:fixed so it stays fully on-screen as the user
          scrolls — items never disappear off the top. The toolbar (.tb) is
          NOT fixed (scrolls away as usual); only the open menu panel is fixed.
@@ -600,7 +600,7 @@
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
   hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 0;width:82px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
-  hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
+  hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg><span style="font-size:14px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
   bar.appendChild(hamBtn);
 
   var hamMenu = document.createElement('div');
@@ -781,7 +781,7 @@
      be overlaid by that same parent's z-index. */
   document.body.appendChild(hamMenu);
 
-  var hamMenuClosedHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:12px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
+  var hamMenuClosedHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg><span style="font-size:14px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
   var _hamSavedScroll = 0;
   function _lockBodyScroll() {
     _hamSavedScroll = window.scrollY || window.pageYOffset || 0;
