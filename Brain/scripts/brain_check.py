@@ -3353,6 +3353,87 @@ def check_picker_select_gold_color(report: "Report") -> None:
         report.ok("picker-select-gold-color — all picker selects use gold text color.")
 
 
+def check_search_icon_placeholder_gold(report: "Report") -> None:
+    """FAIL if any Trip-Essentials page CSS rule uses var(--search-icon) as a
+    background but lacks a matching ::placeholder { color: #A8895A } rule.
+
+    The gold magnifier icon (var(--search-icon)) and gold placeholder text
+    (#A8895A) are a paired visual unit — the icon sets the gold tone and the
+    placeholder must match it. Shipping the icon without the placeholder color
+    leaves the text in browser-default gray while the icon is gold, which looks
+    mismatched (the recurring pattern: icon ✓ but placeholder ✗).
+
+    For each selector S that sets background:...var(--search-icon)..., the
+    same <style> block must also contain a rule for S::placeholder with
+    color:#A8895A (case-insensitive). The check handles compound selectors
+    (e.g. '.pkl-search-box input' → looks for
+    '.pkl-search-box input::placeholder').
+
+    Note: .search-input class gets its placeholder from web-travel-style.css
+    (checked by check_search_bar_standard); this check targets custom selectors
+    that use var(--search-icon) directly without inheriting the shared class.
+
+    Added 2026-07-22: gold-icon / gold-placeholder pairing enforcement.
+    """
+    import re as _re
+
+    STYLE_BLOCK_RE  = _re.compile(r'<style[^>]*>(.*?)</style>', _re.S | _re.I)
+    CSS_RULE_RE     = _re.compile(r'([^{}]+)\{([^{}]*)\}', _re.S)
+    ICON_USE_RE     = _re.compile(r'var\s*\(\s*--search-icon\s*\)', _re.I)
+    PH_COLOR_RE     = _re.compile(
+        r'color\s*:\s*#[Aa]8895[Aa]\b',
+        _re.I,
+    )
+
+    failures: list[str] = []
+
+    for fpath in sorted(set(_shareable_pages())):
+        if not fpath.exists():
+            continue
+        try:
+            text = fpath.read_text(encoding='utf-8', errors='replace')
+        except Exception:
+            continue
+
+        rel = (str(fpath.relative_to(TRAVEL_ROOT))
+               if str(fpath).startswith(str(TRAVEL_ROOT)) else str(fpath))
+
+        for style_m in STYLE_BLOCK_RE.finditer(text):
+            css = style_m.group(1)
+
+            # Collect all rules: (selector_stripped, body)
+            rules = [(r.group(1).strip(), r.group(2)) for r in CSS_RULE_RE.finditer(css)]
+
+            # Build set of selectors that have a valid ::placeholder gold color
+            ph_selectors: set[str] = set()
+            for sel, body in rules:
+                if '::placeholder' in sel.lower() and PH_COLOR_RE.search(body):
+                    # Strip the ::placeholder pseudo to get the base selector
+                    base = _re.sub(r'\s*::placeholder\b.*', '', sel, flags=_re.I).strip()
+                    ph_selectors.add(base)
+
+            # Check selectors that use var(--search-icon)
+            for sel, body in rules:
+                if not ICON_USE_RE.search(body):
+                    continue
+                # Skip pseudo-state rules (:focus etc.) — they don't set background
+                if ':' in sel and '::' not in sel:
+                    continue
+                sel_clean = sel.strip()
+                if sel_clean not in ph_selectors:
+                    failures.append(
+                        f"[search-icon-placeholder-gold] {rel}: "
+                        f"'{sel_clean}' uses var(--search-icon) but has no "
+                        f"'{sel_clean}::placeholder {{color:#A8895A}}' rule — "
+                        f"icon is gold, placeholder text must match"
+                    )
+
+    for msg in failures:
+        report.fail(msg)
+    if not failures:
+        report.ok("search-icon-placeholder-gold — all search-icon inputs have gold placeholder.")
+
+
 def check_guides_index_banner_subtitle(report: "Report") -> None:
     """Fail if Guides-Index.html has a subtitle element inside the Travel Guides banner.
 
@@ -7472,6 +7553,7 @@ def main(argv: list[str]) -> int:
     check_search_bar_standard(report)                   # fails if any search input has placeholder words, pill shape, fixed width, or width animation (added 2026-06-13)
     check_focus_outline_double_border(report)           # fails if any page inline CSS sets outline (non-none) on a form element :focus rule — double-gold drift (added 2026-07-22)
     check_picker_select_gold_color(report)              # fails if any page select in a picker row uses non-gold text color — must be color:var(--accent) (added 2026-07-22)
+    check_search_icon_placeholder_gold(report)         # fails if any CSS rule uses var(--search-icon) without a paired ::placeholder { color:#A8895A } — gold icon must match gold placeholder (added 2026-07-22)
     # check_index_stat_row RETIRED 2026-07-20 — stat-row removed from Guides-Index.html on owner direction
     # (too prominent; info already visible in page content). See Navigation.html § 8 + Cleanliness Checks Rule 571.
     check_guides_index_topbar_layout(report)            # fails if #status-toggle position or #search-wrap centering drifts from the locked topbar layout (Navigation.html § 8; added 2026-07-11)
