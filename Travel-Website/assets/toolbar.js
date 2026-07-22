@@ -697,6 +697,12 @@
   (function () {
     var sepBo = document.createElement('div'); sepBo.className = 'tb-ham-sep'; hamMenu.appendChild(sepBo);
     var hdrBo = document.createElement('div'); hdrBo.className = 'tb-ham-hdr'; hdrBo.textContent = 'Best Of'; hamMenu.appendChild(hdrBo);
+    var browseLink = document.createElement('a');
+    browseLink.href = base + 'Trip-Essentials/Best-Of-Index.html';
+    browseLink.textContent = '🏆 Browse by category →';
+    browseLink.style.cssText = 'color:#b85c2a;font-weight:500;background:#fdf8f4;';
+    if ('Best-Of-Index.html' === curr) browseLink.classList.add('tb-active');
+    hamMenu.appendChild(browseLink);
     var bestOfPages = [
       ['Amusement Parks',           'Best-Amusement-Parks.html'],
       ['Animal Encounters',         'Best-Animal-Encounters.html'],
