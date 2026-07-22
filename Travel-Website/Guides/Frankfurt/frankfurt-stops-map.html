@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+<title>Frankfurt — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Frankfurt — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Römerberg",
+    "query": "Römerberg 60311 Frankfurt am Main",
+    "lat": 50.1102096,
+    "lng": 8.6821665
+  },
+  {
+    "day": 1,
+    "name": "Historisches Museum Frankfurt",
+    "query": "Historisches Museum Frankfurt Saalhof 1 Altstadt",
+    "lat": 50.1096033,
+    "lng": 8.682443
+  },
+  {
+    "day": 1,
+    "name": "Kaiserdom (Frankfurt Cathedral)",
+    "query": "Frankfurt Cathedral Domplatz 1 Altstadt",
+    "lat": 50.1106666,
+    "lng": 8.6853436
+  },
+  {
+    "day": 1,
+    "name": "Paulskirche",
+    "query": "Paulskirche Paulsplatz 11 Frankfurt am Main",
+    "lat": 50.1111734,
+    "lng": 8.680755
+  },
+  {
+    "day": 1,
+    "name": "Goethe-Haus",
+    "query": "Goethe-Haus Frankfurt Großer Hirschgraben 23",
+    "lat": 50.1112009,
+    "lng": 8.6775928
+  },
+  {
+    "day": 2,
+    "name": "Liebieghaus Sculpture Collection",
+    "query": "Liebieghaus Schaumainkai 71 Sachsenhausen Frankfurt",
+    "lat": 50.1016651,
+    "lng": 8.6717478
+  },
+  {
+    "day": 2,
+    "name": "Städel Museum",
+    "query": "Städel Museum Schaumainkai 63 Sachsenhausen Frankfurt",
+    "lat": 50.1032949,
+    "lng": 8.6738582
+  },
+  {
+    "day": 2,
+    "name": "Deutsches Filmmuseum (DFF)",
+    "query": "Deutsches Filmmuseum Schaumainkai 41 Frankfurt",
+    "lat": 50.1050639,
+    "lng": 8.6776864
+  },
+  {
+    "day": 2,
+    "name": "Museum Angewandte Kunst (MAK)",
+    "query": "Museum Angewandte Kunst Schaumainkai 17 Frankfurt",
+    "lat": 50.1062658,
+    "lng": 8.6809469
+  },
+  {
+    "day": 3,
+    "name": "Senckenberg Museum",
+    "query": "Senckenberg Museum Senckenberganlage 25 Frankfurt",
+    "lat": 50.1175421,
+    "lng": 8.6516651
+  },
+  {
+    "day": 3,
+    "name": "Palmengarten",
+    "query": "Palmengarten Frankfurt Siesmayerstraße 61",
+    "lat": 50.1236712,
+    "lng": 8.6559598
+  },
+  {
+    "day": 3,
+    "name": "Alte Oper",
+    "query": "Alte Oper Frankfurt Opernplatz 1",
+    "lat": 50.1160471,
+    "lng": 8.6719866
+  },
+  {
+    "day": 4,
+    "name": "Schirn Kunsthalle Frankfurt",
+    "query": "Schirn Kunsthalle Frankfurt Römerberg Altstadt",
+    "lat": 50.110256,
+    "lng": 8.6836356
+  },
+  {
+    "day": 4,
+    "name": "Jüdisches Museum Frankfurt",
+    "query": "Jüdisches Museum Frankfurt Bertha-Pappenheim-Platz 1",
+    "lat": 50.1072204,
+    "lng": 8.6744759
+  },
+  {
+    "day": 4,
+    "name": "Eiserner Steg",
+    "query": "Eiserner Steg Frankfurt am Main",
+    "lat": 50.1080536,
+    "lng": 8.6821423
+  },
+  {
+    "day": 4,
+    "name": "Main Tower Observatory",
+    "query": "Main Tower Frankfurt Neue Mainzer Straße 52",
+    "lat": 50.1125418,
+    "lng": 8.6721959
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps ↗</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

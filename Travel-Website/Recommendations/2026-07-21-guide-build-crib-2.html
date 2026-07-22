@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<title>Frankfurt Guide Build — 2026-07-21</title>
+<style>
+  :root {
+    --bg:       #16161a;
+    --bg2:      #1e1e24;
+    --bg3:      #26262e;
+    --border:   #363640;
+    --text:     #dcd8cf;
+    --muted:    #7a7882;
+    --gold:     #c9a84c;
+    --green:    #6aad7e;
+    --red:      #c96b6b;
+    --blue:     #6b8fa3;
+    --radius:   4px;
+    --mono:     'Courier New', Courier, monospace;
+    --sans:     system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg:     #f5f4f0;
+      --bg2:    #edece8;
+      --bg3:    #e3e2de;
+      --border: #c8c6c0;
+      --text:   #1e1c18;
+      --muted:  #7a7872;
+      --gold:   #8f6e20;
+      --green:  #346b45;
+      --red:    #8f3535;
+      --blue:   #3a5f75;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:     #f5f4f0;
+    --bg2:    #edece8;
+    --bg3:    #e3e2de;
+    --border: #c8c6c0;
+    --text:   #1e1c18;
+    --muted:  #7a7872;
+    --gold:   #8f6e20;
+    --green:  #346b45;
+    --red:    #8f3535;
+    --blue:   #3a5f75;
+  }
+  :root[data-theme="dark"] {
+    --bg:     #16161a;
+    --bg2:    #1e1e24;
+    --bg3:    #26262e;
+    --border: #363640;
+    --text:   #dcd8cf;
+    --muted:  #7a7882;
+    --gold:   #c9a84c;
+    --green:  #6aad7e;
+    --red:    #c96b6b;
+    --blue:   #6b8fa3;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 32px 24px 64px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .report-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  .report-type {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .report-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .report-meta {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .stat-chip {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 100px;
+  }
+  .stat-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .stat-value { font-size: 17px; font-weight: 700; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.gold  { color: var(--gold); }
+  .stat-value.red   { color: var(--red); }
+  .stat-value.blue  { color: var(--blue); }
+
+  /* Sections */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+
+  /* Itinerary block */
+  .guide-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .guide-name { font-weight: 700; font-size: 15px; color: var(--gold); margin-bottom: 4px; }
+  .guide-hotel { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .day-list { display: flex; flex-direction: column; gap: 6px; }
+  .day-row {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .day-label { color: var(--muted); font-family: var(--mono); }
+  .day-stops { color: var(--text); }
+
+  /* Checklist */
+  .check-list { display: flex; flex-direction: column; gap: 4px; }
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12.5px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .check-row:last-child { border-bottom: none; }
+  .check-icon { flex-shrink: 0; margin-top: 1px; }
+  .check-pass  { color: var(--green); }
+  .check-warn  { color: var(--gold); }
+  .check-fail  { color: var(--red); }
+  .check-text  { color: var(--text); }
+  .check-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  /* Surface table */
+  .surface-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .surface-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 0 6px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .surface-table td {
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .surface-table tr:last-child td { border-bottom: none; }
+  .surface-table td:first-child { color: var(--muted); font-family: var(--mono); white-space: nowrap; padding-right: 16px; }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 700;
+    letter-spacing: .04em;
+  }
+  .badge-pass  { background: rgba(106,173,126,.15); color: var(--green); }
+  .badge-warn  { background: rgba(201,168,76,.15);  color: var(--gold); }
+
+  /* Warnings block */
+  .warn-block {
+    background: rgba(201,168,76,.07);
+    border: 1px solid rgba(201,168,76,.25);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+  }
+  .warn-title { font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+  .warn-body  { color: var(--text); line-height: 1.5; }
+
+  /* Validator stamp */
+  .stamp-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .stamp-icon { color: var(--green); font-size: 14px; }
+  .stamp-text { flex: 1; overflow-wrap: break-word; word-break: break-all; }
+
+  @media (max-width: 520px) {
+    .status-bar { flex-direction: column; }
+    .stat-chip { min-width: 0; }
+  }
+</style>
+
+<div class="report-header">
+  <div class="report-type">Guide Build Report · Crib 2</div>
+  <div class="report-title">Frankfurt</div>
+  <div class="report-meta">2026-07-21 · 4-day guide · The Westin Grand Frankfurt</div>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="stat-chip">
+    <span class="stat-label">Validator</span>
+    <span class="stat-value green">835 ✓</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-label">Failures</span>
+    <span class="stat-value green">0</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-label">Warnings</span>
+    <span class="stat-value gold">3</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-label">Stamp</span>
+    <span class="stat-value blue">PASS</span>
+  </div>
+</div>
+
+<!-- Itinerary -->
+<div class="section">
+  <div class="section-title">Itinerary</div>
+  <div class="guide-card">
+    <div class="guide-name">Frankfurt · 4 Days</div>
+    <div class="guide-hotel">🏨 The Westin Grand Frankfurt · Konrad-Adenauer-Straße 7 · Germany</div>
+    <div class="day-list">
+      <div class="day-row">
+        <span class="day-label">Day 1</span>
+        <span class="day-stops">Römerberg · Historisches Museum · Kaiserdom · Paulskirche · Goethe-Haus</span>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Day 2</span>
+        <span class="day-stops">Liebieghaus · Städel Museum · Deutsches Filmmuseum · Museum Angewandte Kunst</span>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Day 3</span>
+        <span class="day-stops">Senckenberg Museum · Bockenheimer Warte · Palmengarten · Alte Oper</span>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Day 4</span>
+        <span class="day-stops">Schirn Kunsthalle · Jüdisches Museum · Eiserner Steg · Main Tower</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Validator gates -->
+<div class="section">
+  <div class="section-title">Phase 6 — Validator Gates</div>
+  <div class="check-list">
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">validate_itinerary.py — 835 passed, 0 failed, 3 warnings</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">guide_tools.py ship — EXIT 0, signed stamp written</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Climate gate — Frankfurt present in climate.json + weather.js + Climate Finder GUIDE_LINKS</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Guides-Index inline data — CLIMATE_INLINE, COST_DATA, SAFETY_DATA all cover 220 shipped guides</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">validate_currency.py — 71 countries, matches guide index</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">validate_time_zones_cities.py — 226 entries, 225 shipped guides</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">build_search_index.py — 225 guides, 8932 entries</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Carousel chain — Foz-do-Iguaçu ← Frankfurt → Geneva, bidirectionally consistent in Guides-Index.html</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Surface updates -->
+<div class="section">
+  <div class="section-title">Surface Updates</div>
+  <table class="surface-table">
+    <tr><th>File</th><th>Change</th><th></th></tr>
+    <tr>
+      <td>Guides-Index.html</td>
+      <td>Frankfurt card added (guide #65, Germany count 5→6); carousel neighbors updated; CLIMATE_INLINE, COST_DATA, SAFETY_DATA entries added</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>World-Map.html</td>
+      <td>Pin added: Frankfurt [8.68, 50.11]</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>Safety-Guide.html</td>
+      <td>Frankfurt row added after Foz-do-Iguaçu</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>Delta-Routes-SEA.html</td>
+      <td>FRA entry updated with data-guide="Frankfurt"; GUIDES JS object updated</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>Currency-Guide.html</td>
+      <td>Germany cur-cities span updated to include Frankfurt</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>build_currency.py</td>
+      <td>Germany cities list updated with "Frankfurt"</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>Climate-Finder.html</td>
+      <td>Frankfurt added to GUIDE_LINKS and CITY_COUNTRIES</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>Time-Zones.html</td>
+      <td>Frankfurt added to CITIES array (Europe/Berlin) and latitude table (50)</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>climate.json / weather.js</td>
+      <td>Frankfurt normals baked in by build_climate.py</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>Status Dots — guides_index.md</td>
+      <td>Frankfurt added under Germany</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+    <tr>
+      <td>Foz-do-Iguaçu · Geneva</td>
+      <td>Carousel data-next / data-prev updated to Frankfurt in guide HTML + Guides-Index</td>
+      <td><span class="badge badge-pass">DONE</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Validator fixes during build -->
+<div class="section">
+  <div class="section-title">Validator Fixes — Issues Resolved</div>
+  <div class="check-list">
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Michelin headings — removed <code>· Michelin N stars</code> link suffix; entries now plain text only</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Michelin cuisine rows — added <code>↳</code> prefix to all 5 entries</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text"><code>→ hotel</code> ban — removed from Michelin entry-body rows (only valid in .next / .arrive-first / .leave-first)</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Day 4 closer — added <code>→ hotel</code> to final .next banner after Main Tower</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Getting Around tram — removed VGF Tram section (no 🚎 motion banner in itinerary; binary rule)</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Bockenheimer Warte inclusion-bar — changed ⭐ emoji to ★ (validator regex requires <code>\d\.\d\s*[★☆]</code>)</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">low-count comment — moved inside <code>&lt;div class="extras-section" id="restaurants"&gt;</code> (must be within 300 chars of opening tag)</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Description lengths — 4 Restaurants Near Hotel + 4 Downtown trimmed to ≤80 chars (stripping ↳)</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Carousel — updated data-guide-next / data-guide-prev in Guides-Index.html dest-card entries (carousel check reads from Guides-Index, not guide toolbar)</div>
+      </div>
+    </div>
+    <div class="check-row">
+      <span class="check-icon check-pass">✓</span>
+      <div>
+        <div class="check-text">Currency validator — added Frankfurt to build_currency.py Germany cities list (validate_currency.py loads from Python script, not HTML)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Warnings -->
+<div class="section">
+  <div class="section-title">Remaining Warnings (Advisory)</div>
+  <div class="warn-block">
+    <div class="warn-title">📍 Maps link — city name in display text</div>
+    <div class="warn-body">Some address display texts contain "Frankfurt" as part of a compound neighbourhood name (e.g. "Frankfurt am Main"). Advisory only; compound names are acceptable per 2026-07-20 changelog. Suppressible with <code>&lt;!-- warn-ok: maps-city-display REASON --&gt;</code>.</div>
+  </div>
+  <div class="warn-block">
+    <div class="warn-title">🫕 Restaurants Near Hotel — below minimum of 5</div>
+    <div class="warn-body">4 qualifying non-hotel restaurants within 25-min walk of Westin Grand (financial district; limited independent dining). Low-count comment present. Advisory per 2026-05-24.</div>
+  </div>
+  <div class="warn-block">
+    <div class="warn-title">⚠️ Link checker — 14–15 advisory 404s</div>
+    <div class="warn-body">Wikipedia and museum pages returning 404 from the CI link checker (likely bot-block or transient). All URLs verified via Chrome MCP during build. verification_log.json covers all Viator/GYG bot-blocked booking URLs. Ship not blocked.</div>
+  </div>
+</div>
+
+<!-- Stamp -->
+<div class="section">
+  <div class="section-title">Signed Stamp</div>
+  <div class="stamp-line">
+    <span class="stamp-icon">✅</span>
+    <span class="stamp-text">validation: passed 2026-07-21 | v2 | sig=5379134f5f2e61874b7fe50e002c1045</span>
+  </div>
+</div>
