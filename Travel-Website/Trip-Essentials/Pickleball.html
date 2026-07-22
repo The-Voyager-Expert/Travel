@@ -649,7 +649,7 @@ html { scroll-behavior: smooth; }</style>
       <div class="pkl-courts" id="courts-10">
         <div class="pkl-court-row">
           <span class="pkl-court-type ct-outdoor">Outdoor</span>
-          <div><div class="pkl-court-name">Shelby Park</div><div class="pkl-court-detail">14 courts · ongoing expansion · most popular site in the city · 2500 Shelby Ave</div></div>
+          <div><div class="pkl-court-name">Shelby Park</div><div class="pkl-court-detail">8 courts · free open play · most popular site in the city · 2500 Shelby Ave</div></div>
         </div>
         <div class="pkl-court-row">
           <span class="pkl-court-type ct-indoor">Indoor</span>
@@ -1330,56 +1330,57 @@ html { scroll-behavior: smooth; }</style>
 })();
 
 /* ============================================================
-   WORLD MAP (bubble)
+   WORLD MAP (tile grid — countries grouped by region)
    ============================================================ */
 (function(){
-  var VW=800,VH=360;
-  var COUNTRIES=[
-    ['USA',    38,-97,  48,'#b85c2a'],
-    ['India',  20, 77,  28,'#d4874a'],
-    ['Canada', 58,-95,  26,'#d4874a'],
-    ['UK',     54, -2,  18,'#e8b87a'],
-    ['Spain',  40, -4,  18,'#e8b87a'],
-    ['Australia',-27,133,17,'#e8b87a'],
-    ['France', 46,  2,  16,'#e8b87a'],
-    ['Brazil', -9,-53,  14,'#ece6dd'],
-    ['Netherlands',52, 5,12,'#ece6dd'],
-    ['Germany',51, 10, 12,'#ece6dd'],
-    ['Japan',  36,138,  11,'#ece6dd'],
-    ['Mexico', 23,-102,  10,'#ece6dd']
+  var CW=68,CH=52,GAP=6;
+  var FILL=['#ece6dd','#e8b87a','#d4874a','#b85c2a'];
+  var TC  =['#6a6660','#7a3b1e','#ffffff','#ffffff'];
+  // [abbr, flag, row, col, level, tooltip]
+  // Cols 0-1=Americas | gap col2 | cols 3-5=Europe | gap col6 | cols 7-8=Asia·Pacific
+  var TILES=[
+    ['CAN','🇨🇦',0,1,2,'Canada · 3.6M players'],
+    ['USA','🇺🇸',1,0,3,'United States · 24.3M players'],
+    ['MEX','🇲🇽',2,1,0,'Mexico · 100K players'],
+    ['BRA','🇧🇷',3,0,0,'Brazil · 250K players'],
+    ['UK', '🇬🇧',0,3,1,'United Kingdom · 500K players'],
+    ['NL', '🇳🇱',0,4,0,'Netherlands · 200K players'],
+    ['DE', '🇩🇪',0,5,0,'Germany · 150K players'],
+    ['ES', '🇪🇸',1,3,1,'Spain · 500K players'],
+    ['FR', '🇫🇷',1,4,1,'France · 300K players'],
+    ['IND','🇮🇳',1,7,2,'India · 3M+ players'],
+    ['JPN','🇯🇵',0,8,0,'Japan · 120K players'],
+    ['AUS','🇦🇺',2,7,1,'Australia · 400K players']
   ];
-  function proj(lat,lon){ return { x:(lon+180)/360*VW, y:(90-lat)/180*VH }; }
-  var p=['<svg viewBox="0 0 '+VW+' '+VH+'" xmlns="http://www.w3.org/2000/svg">'];
-  p.push('<rect width="'+VW+'" height="'+VH+'" fill="#e8f0f7" rx="8"/>');
-  var lands=[
-    'M 60,55 L 230,55 L 260,95 L 280,140 L 260,200 L 240,230 L 200,260 L 160,270 L 130,250 L 100,210 L 70,160 L 55,100 Z',
-    'M 185,240 L 240,230 L 265,260 L 280,310 L 260,340 L 220,350 L 190,330 L 175,290 Z',
-    'M 355,50 L 430,50 L 440,90 L 420,110 L 390,115 L 360,95 Z',
-    'M 360,115 L 430,115 L 450,170 L 440,230 L 410,260 L 380,250 L 355,200 L 350,150 Z',
-    'M 430,40 L 700,40 L 730,80 L 720,130 L 680,150 L 600,160 L 530,155 L 480,130 L 450,100 L 430,70 Z',
-    'M 620,160 L 680,155 L 700,180 L 680,200 L 640,195 Z',
-    'M 640,240 L 740,240 L 760,280 L 740,310 L 690,320 L 650,300 L 635,270 Z',
-    'M 700,90 L 720,85 L 730,105 L 718,115 L 700,110 Z'
+  var COLS=9,ROWS=4,SX=CW+GAP,SY=CH+GAP;
+  var W=COLS*SX+GAP,H=ROWS*SY+GAP+22;
+  var p=['<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'];
+  p.push('<rect width="'+W+'" height="'+H+'" fill="#e8f0f7" rx="8"/>');
+  var BANDS=[
+    {c0:0,c1:1,label:'AMERICAS'},
+    {c0:3,c1:5,label:'EUROPE'},
+    {c0:7,c1:8,label:'ASIA · PACIFIC'}
   ];
-  p.push('<g fill="#dde8d2" stroke="#c8d8be" stroke-width="0.8">');
-  lands.forEach(function(d){p.push('<path d="'+d+'"/>');});
-  p.push('</g>');
-  p.push('<line x1="0" y1="180" x2="'+VW+'" y2="180" stroke="#c0cdd8" stroke-width="0.6" stroke-dasharray="4,6"/>');
-  p.push('<line x1="400" y1="0" x2="400" y2="'+VH+'" stroke="#c0cdd8" stroke-width="0.6" stroke-dasharray="4,6"/>');
-  COUNTRIES.forEach(function(c){
-    var pos=proj(c[1],c[2]),r=c[3];
-    p.push('<circle cx="'+pos.x.toFixed(1)+'" cy="'+pos.y.toFixed(1)+'" r="'+(r+4)+'" fill="'+c[4]+'" opacity="0.18"/>');
+  BANDS.forEach(function(b){
+    var bx=b.c0*SX+GAP-2,bw=(b.c1-b.c0+1)*SX,lx=bx+bw/2;
+    p.push('<rect x="'+bx+'" y="'+GAP+'" width="'+bw+'" height="'+(ROWS*SY-GAP/2)+'" fill="rgba(0,0,0,0.022)" rx="6"/>');
+    p.push('<text x="'+lx+'" y="'+(H-6)+'" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="8.5" font-weight="700" letter-spacing="0.09em" fill="#9a9490">'+b.label+'</text>');
   });
-  COUNTRIES.forEach(function(c){
-    var pos=proj(c[1],c[2]),r=c[3];
-    p.push('<circle cx="'+pos.x.toFixed(1)+'" cy="'+pos.y.toFixed(1)+'" r="'+r+'" fill="'+c[4]+'" opacity="0.85" stroke="#fff" stroke-width="1.2"/>');
-    if(r>=14){
-      p.push('<text x="'+pos.x.toFixed(1)+'" y="'+(pos.y+4).toFixed(1)+'" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="'+(r>25?10:8.5)+'" font-weight="700" fill="#fff" opacity="0.95">'+c[0]+'</text>');
-    }
+  TILES.forEach(function(t){
+    var abbr=t[0],flag=t[1],row=t[2],col=t[3],lv=t[4],tip=t[5];
+    var x=col*SX+GAP,y=row*SY+GAP;
+    p.push('<rect class="state-path" x="'+x+'" y="'+y+'" width="'+CW+'" height="'+CH+'" rx="5" fill="'+FILL[lv]+'" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" data-name="'+tip+'"/>');
+    p.push('<text x="'+(x+CW/2)+'" y="'+(y+CH/2-8)+'" text-anchor="middle" dominant-baseline="middle" font-size="17" pointer-events="none">'+flag+'</text>');
+    p.push('<text x="'+(x+CW/2)+'" y="'+(y+CH/2+10)+'" text-anchor="middle" dominant-baseline="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="9.5" font-weight="700" fill="'+TC[lv]+'" pointer-events="none">'+abbr+'</text>');
   });
   p.push('</svg>');
   var el=document.getElementById('pkl-world-map');
   if(el) el.innerHTML=p.join('');
+  var tip=document.getElementById('pkl-map-tooltip');
+  if(tip&&el){
+    el.addEventListener('mousemove',function(e){var t=e.target,nm=t.getAttribute('data-name');if(nm){tip.textContent=nm;tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';}else{tip.style.display='none';}});
+    el.addEventListener('mouseleave',function(){tip.style.display='none';});
+  }
 })();
 
 /* ============================================================
