@@ -2428,6 +2428,7 @@ def check_no_hardcoded_hex_colors(report: "Report") -> None:
         '#1a1917': '--text', '#6a6660': '--muted', '#8a6c1a': '--accent',
         '#faefd8': '--hover', '#1a3a8b': '--navy', '#2a6a2a': '--green',
         '#c8961a': '--gold', '#a02020': '--red',
+        '#a61c00': '--c-temp-hi', '#3d5282': '--c-temp-lo', '#4a7c9b': '--c-rain',
     }
     STYLE_BLOCK = re.compile(r'<style[^>]*>(.*?)</style>', re.S | re.I)
     PROP_VAL = re.compile(r'(color|background(?:-color)?|border-color)\s*:\s*(#[0-9a-fA-F]{6})\b', re.I)
