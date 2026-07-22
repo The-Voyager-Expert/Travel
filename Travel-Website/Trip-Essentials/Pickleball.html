@@ -156,6 +156,20 @@
 .tier-major { background: var(--c-rust-tint); color: var(--rust); border: 1px solid #e6c3a8; }
 .tier-atp   { background: #e8f0f8; color: #1a4a7a; border: 1px solid #b0cce0; }
 .tier-ppa   { background: #e8f4ec; color: #2e7d4f; border: 1px solid #b8ddc8; }
+@media (prefers-color-scheme: dark) {
+  .ct-outdoor,.tag-ne,.tag-out,.tier-ppa { background:#1a3025; color:#70d480; border-color:#2a5040; }
+  .ct-indoor,.tag-in,.tier-atp           { background:#152035; color:#70aadc; border-color:#1e3855; }
+  .tag-west                              { background:#302010; color:#d8a050; border-color:#504020; }
+  .tag-mw                                { background:#201530; color:#b080e0; border-color:#382060; }
+  .tag-comp                              { background:#301a08; color:#d09050; border-color:#502808; }
+}
+:root[data-theme="dark"] {
+  .ct-outdoor,.tag-ne,.tag-out,.tier-ppa { background:#1a3025; color:#70d480; border-color:#2a5040; }
+  .ct-indoor,.tag-in,.tier-atp           { background:#152035; color:#70aadc; border-color:#1e3855; }
+  .tag-west                              { background:#302010; color:#d8a050; border-color:#504020; }
+  .tag-mw                                { background:#201530; color:#b080e0; border-color:#382060; }
+  .tag-comp                              { background:#301a08; color:#d09050; border-color:#502808; }
+}
 /* SKILL QUIZ */
 .pkl-quiz-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
 .pkl-quiz-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
@@ -1639,8 +1653,11 @@ html { scroll-behavior: smooth; }</style>
   var input=document.getElementById('city-search');
   if(!input) return;
   var cards=[].slice.call(document.querySelectorAll('#city-grid .pkl-city'));
-  var items=cards.map(function(card){ return { name:(card.getAttribute('data-name')||'').trim() }; })
-    .filter(function(it){ return it.name; });
+  var items=cards.map(function(card){
+    var raw=(card.getAttribute('data-name')||'').trim();
+    var m=raw.match(/^(.*)\s+([A-Z]{2})$/);
+    return m ? {name:m[1], sub:m[2]} : {name:raw};
+  }).filter(function(it){ return it.name; });
   TVESearch.attach(input,{items:items});
 }());</script>
 </body>

@@ -110,6 +110,9 @@ input.search:focus { border-color: #c8b99a; box-shadow: none; }
 .sun-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 .sun-controls select { height: 40px; border: 1.5px solid var(--border); border-radius: 8px; padding: 0 14px; font-size: 16px; font-family: inherit; background: var(--surface); color: var(--accent); cursor: pointer; min-width: 0; }
 .sun-controls select:focus { border-color: #c8b99a; outline: none; }
+.sun-city-input { height: 40px; border: 1.5px solid var(--border); border-radius: 8px; padding: 0 14px 0 36px; font-size: 16px; font-family: inherit; background: var(--surface) var(--search-icon) no-repeat 13px center; color: var(--text); min-width: 160px; flex: 1; outline: none; transition: border-color .15s; box-sizing: border-box; }
+.sun-city-input::placeholder { color: #A8895A; }
+.sun-city-input:focus { border-color: #c8b99a; }
 .sun-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; max-width: 540px; }
 .sun-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border2); }
 .sun-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -121,7 +124,7 @@ input.search:focus { border-color: #c8b99a; box-shadow: none; }
 .sun-note { font-size: 11px; color: var(--muted); margin-top: 10px; }
 @media (max-width: 600px) {
   .sun-controls { flex-direction: column; }
-  .sun-controls select { width: 100%; box-sizing: border-box; }
+  .sun-controls select, .sun-city-input { width: 100%; box-sizing: border-box; }
   .sun-card, .sun-special { max-width: 100%; }
 }</style>
 </head>
@@ -169,7 +172,7 @@ input.search:focus { border-color: #c8b99a; box-shadow: none; }
   <div id="sun-section">
     <h2>🌅 Sunrise &amp; Sunset</h2>
     <div class="sun-controls">
-      <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
+      <input class="sun-city-input" id="sun-city-input" type="search" placeholder="City" autocomplete="off" aria-label="Select city for sunrise and sunset times">
       <select id="sun-month" aria-label="Select month for sunrise and sunset times">
         <option value="">Month</option>
         <option value="0">January</option>
@@ -492,6 +495,7 @@ function vsSeattle(tz, date) {
 var activeRegion = 'all';
 var searchVal    = '';
 var activeSort   = 'alpha';
+var _sunCityIdx  = null;
 
 function render() {
   var now  = new Date();
@@ -527,9 +531,13 @@ function render() {
 
   // Auto-sync Sunrise & Sunset when search narrows to one city
   if (filtered.length === 1) {
-    var idx = CITIES.indexOf(filtered[0]);
-    var sel = document.getElementById('sun-city');
-    if (sel && String(idx) !== sel.value) { sel.value = String(idx); renderSun(); }
+    var syncIdx = CITIES.indexOf(filtered[0]);
+    var sunInp = document.getElementById('sun-city-input');
+    if (sunInp && _sunCityIdx !== syncIdx) {
+      _sunCityIdx = syncIdx;
+      sunInp.value = filtered[0].name;
+      renderSun();
+    }
   }
 
   if (filtered.length === 0) {
@@ -715,13 +723,12 @@ function sunFmtLen(h) {
 }
 
 function renderSun() {
-  var sel = document.getElementById('sun-city');
   var mon = document.getElementById('sun-month');
   var res = document.getElementById('sun-result');
-  if (!sel || !mon || !res) return;
-  var idx = parseInt(sel.value, 10);
+  if (!mon || !res) return;
+  var idx = _sunCityIdx;
   var month = parseInt(mon.value, 10);
-  if (isNaN(idx) || isNaN(month)) { res.innerHTML = ''; return; }
+  if (idx === null || isNaN(month)) { res.innerHTML = ''; return; }
   var city = CITIES[idx];
   if (!city) { res.innerHTML = ''; return; }
   var lat = getSunLat(city);
@@ -749,24 +756,8 @@ function renderSun() {
 }
 
 (function () {
-  var sel = document.getElementById('sun-city');
   var mon = document.getElementById('sun-month');
-  if (!sel || !mon) return;
-  var sorted = [];
-  for (var i = 0; i < CITIES.length; i++) { sorted.push({c:CITIES[i], i:i}); }
-  sorted.sort(function(a,b){ return a.c.name < b.c.name ? -1 : a.c.name > b.c.name ? 1 : 0; });
-  for (var j = 0; j < sorted.length; j++) {
-    var x = sorted[j];
-    var o = document.createElement('option');
-    o.value = x.i;
-    o.textContent = x.c.name + ' · ' + x.c.country;
-    sel.appendChild(o);
-  }
-  var placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = 'Select a city…';
-  sel.insertBefore(placeholder, sel.firstChild);
-  sel.addEventListener('change', renderSun);
+  if (!mon) return;
   mon.addEventListener('change', renderSun);
 }());
 </script>
@@ -776,11 +767,20 @@ function renderSun() {
 <script src="../assets/search-autocomplete.js?v=8"></script>
 <script>(function(){
   if(!window.TVESearch) return;
-  var input=document.getElementById('search');
-  if(!input) return;
   var src=window.CITIES||[];
-  var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
-  TVESearch.attach(input,{items:items});
+  var input=document.getElementById('search');
+  if(input){
+    var items=src.map(function(c){ return { name:c.name, sub:c.country }; });
+    TVESearch.attach(input,{items:items});
+  }
+  var sunInp=document.getElementById('sun-city-input');
+  if(sunInp){
+    var sunItems=src.map(function(c,i){ return { name:c.name, sub:c.country, _idx:i }; });
+    TVESearch.attach(sunInp,{
+      items:sunItems,
+      onPick:function(it){ _sunCityIdx=it._idx; renderSun(); }
+    });
+  }
 }());</script>
 </body>
 </html>
