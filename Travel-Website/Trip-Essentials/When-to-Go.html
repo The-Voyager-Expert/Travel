@@ -84,6 +84,7 @@ a.wtg-card:hover .wtg-city-arrow { opacity: 1; color: var(--rust); }
 <div id="toolbar-mount" data-depth="1" data-maxwidth="1040" data-updated="2026-07"></div>
 <script src="../assets/toolbar.js?v=124"></script>
 <script src="../assets/weather.js?v=4"></script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
 
 <div class="wtg-wrap">
   <div class="site-header">
@@ -118,6 +119,10 @@ a.wtg-card:hover .wtg-city-arrow { opacity: 1; color: var(--rust); }
           <option value="dry">Driest first</option>
           <option value="az">A–Z</option>
         </select>
+      </div>
+      <div>
+        <div class="wtg-label">City</div>
+        <input type="search" id="wtg-city-search" class="search-input" placeholder="Search city" aria-label="Search by city" autocomplete="off" style="width:180px;">
       </div>
       <div class="wtg-spacer"></div>
     </div>
@@ -172,6 +177,7 @@ a.wtg-card:hover .wtg-city-arrow { opacity: 1; color: var(--rust); }
 
     var month = new Date().getMonth();
     var sort = 'tier';
+    var cityFilter = null;
 
     var monthsEl = document.getElementById('wtg-months');
     monthsEl.innerHTML = MONTHS.map(function (m, i) {
@@ -257,13 +263,18 @@ a.wtg-card:hover .wtg-city-arrow { opacity: 1; color: var(--rust); }
     }
 
     function render() {
+      var filteredKeys = cityFilter ? keys.filter(function (k) { return k === cityFilter; }) : keys;
       var summaryEl = document.getElementById('wtg-summary');
-      summaryEl.innerHTML = '<b>' + keys.length + '</b> destinations in ' + MONTHS_LONG[month];
+      if (cityFilter && filteredKeys.length === 1) {
+        summaryEl.innerHTML = '<b>' + (CLIM[cityFilter].city || cityFilter) + '</b> in ' + MONTHS_LONG[month];
+      } else {
+        summaryEl.innerHTML = '<b>' + filteredKeys.length + '</b> destination' + (filteredKeys.length === 1 ? '' : 's') + ' in ' + MONTHS_LONG[month];
+      }
 
       if (sort === 'tier') {
         var buckets = {};
         TIERS.forEach(function (t) { buckets[t.key] = []; });
-        keys.forEach(function (k) {
+        filteredKeys.forEach(function (k) {
           var t = tierFor(CLIM[k].hi[month]);
           buckets[t.key].push(k);
         });
@@ -287,11 +298,29 @@ a.wtg-card:hover .wtg-city-arrow { opacity: 1; color: var(--rust); }
         });
         resultsEl.innerHTML = html;
       } else {
-        var sorted = keys.slice().sort(sortFn);
+        var sorted = filteredKeys.slice().sort(sortFn);
         resultsEl.innerHTML = '<div class="wtg-grid" style="margin-top:14px;">' + sorted.map(card).join('') + '</div>';
       }
     }
 
+    if (window.TVESearch) {
+      var cityInp = document.getElementById('wtg-city-search');
+      if (cityInp) {
+        var tveItems = keys.map(function(k) { return { name: CLIM[k].city || k, sub: CITY_COUNTRIES[k] || '' }; });
+        TVESearch.attach(cityInp, {
+          items: tveItems,
+          onPick: function(it) {
+            var picked = it.name;
+            var match = keys.filter(function(k) { return (CLIM[k].city || k) === picked; });
+            cityFilter = match.length ? match[0] : null;
+            render();
+          }
+        });
+        cityInp.addEventListener('input', function() {
+          if (cityInp.value === '') { cityFilter = null; render(); }
+        });
+      }
+    }
     paintMonths(); paintUnit(); render();
   }
 

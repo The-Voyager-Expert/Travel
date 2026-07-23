@@ -82,6 +82,9 @@ a.ff-cl-city:hover { border-color: var(--rust); color: var(--rust); }
 /* No-events notice */
 .ff-none { color: var(--muted); font-size: var(--fs-sub); padding: 14px 0 4px; }
 
+/* City search */
+.ff-search-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+
 @media (max-width: 600px) {
   .ff-wrap { padding: 0 14px; }
   .ff-month-grid { grid-template-columns: repeat(6, 1fr); }
@@ -107,6 +110,10 @@ a.ff-cl-city:hover { border-color: var(--rust); color: var(--rust); }
     <a href="Weather.html" class="sibling-pill">🌤 Weather by City</a>
   </div>
 
+  <div class="ff-search-wrap">
+    <input type="search" id="ff-city-search" class="search-input" placeholder="Search city" aria-label="Search by city" autocomplete="off" style="width:240px;">
+  </div>
+
   <div class="ff-controls">
     <div class="ff-ctrl-label">Which month are you traveling?</div>
     <div class="ff-month-grid" id="ff-months"></div>
@@ -115,7 +122,7 @@ a.ff-cl-city:hover { border-color: var(--rust); color: var(--rust); }
   <div id="ff-results">
     <div class="ff-empty">
       <span class="ff-empty-icon">🎉</span>
-      Select a month above to see festivals, events, and holiday closures across the 220 guide destinations.
+      Search a city above, or select a month to see festivals, events, and holiday closures.
     </div>
   </div>
 </div>
@@ -476,6 +483,7 @@ const FF_HOLIDAYS = [
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 let activeMon = null;
+let activeCity = null;
 
 function initMonths() {
   const grid = document.getElementById('ff-months');
@@ -488,6 +496,9 @@ function initMonths() {
       document.querySelectorAll('.ff-mon').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
       activeMon = i;
+      activeCity = null;
+      const cityInp = document.getElementById('ff-city-search');
+      if (cityInp) cityInp.value = '';
       renderResults(i);
     });
     grid.appendChild(btn);
@@ -574,7 +585,67 @@ function renderResults(mon) {
   results.innerHTML = html;
 }
 
+function renderCityResults(cityName) {
+  const lower = cityName.toLowerCase();
+  const matched = FF_FESTIVALS.filter(f => f.city.toLowerCase() === lower);
+  if (!matched.length) {
+    document.getElementById('ff-results').innerHTML =
+      `<div class="ff-empty"><span class="ff-empty-icon">🔍</span>No festivals found for "${cityName}".</div>`;
+    return;
+  }
+  const monthsWithEvents = [...new Set(matched.flatMap(f => f.months))].sort((a, b) => a - b);
+  let html = `<div class="ff-section-head">
+    <span class="ff-section-icon">📍</span>
+    <span class="ff-section-title">Festivals in ${cityName}</span>
+    <span class="ff-section-count">${matched.length} event${matched.length !== 1 ? 's' : ''}</span>
+  </div><div class="ff-grid">`;
+  monthsWithEvents.forEach(mon => {
+    matched.filter(f => f.months.includes(mon)).forEach(f => {
+      const isLink = !!f.guide;
+      const tag = isLink ? 'a' : 'div';
+      const linkAttr = isLink ? ` href="${f.guide}"` : '';
+      html += `<${tag}${linkAttr} class="ff-card${f.guide ? '' : ' ff-no-guide'}">
+        <div class="ff-card-top">
+          <span class="ff-city">${MONTH_FULL[mon]}</span>
+          <span class="ff-flag-country">${f.flag}<br>${f.country}</span>
+        </div>
+        <div class="ff-event-name">${f.name}</div>
+        <div class="ff-dates">📅 ${f.dates}</div>
+        <div class="ff-desc">${f.desc}</div>
+      </${tag}>`;
+    });
+  });
+  html += `</div>`;
+  document.getElementById('ff-results').innerHTML = html;
+}
+
 initMonths();
+
+if (window.TVESearch) {
+  const cityInp = document.getElementById('ff-city-search');
+  if (cityInp) {
+    const seen = new Set();
+    const tveItems = FF_FESTIVALS
+      .filter(f => { if (seen.has(f.city)) return false; seen.add(f.city); return true; })
+      .map(f => ({ name: f.city, sub: f.country }));
+    TVESearch.attach(cityInp, {
+      items: tveItems,
+      onPick: function(it) {
+        document.querySelectorAll('.ff-mon').forEach(b => b.classList.remove('on'));
+        activeMon = null;
+        activeCity = it.name;
+        renderCityResults(it.name);
+      }
+    });
+    cityInp.addEventListener('input', function() {
+      if (cityInp.value === '') {
+        activeCity = null;
+        document.getElementById('ff-results').innerHTML =
+          `<div class="ff-empty"><span class="ff-empty-icon">🎉</span>Search a city above, or select a month to see festivals, events, and holiday closures.</div>`;
+      }
+    });
+  }
+}
 </script>
 </body>
 </html>
