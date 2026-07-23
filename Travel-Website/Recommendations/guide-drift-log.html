@@ -479,6 +479,44 @@ a:hover { text-decoration: underline; }
           <div class="run-header">
             <div>
               <span class="run-date">2026-07-22</span>
+              <span class="run-window" style="margin-left:10px;">guide-content-audit · Frankfurt (Cycle 1)</span>
+            </div>
+            <div class="run-badges">
+              <span class="badge badge-guides">1 guide audited</span>
+              <span class="badge badge-fix">8 issues fixed</span>
+              <span class="badge badge-sys">2 patterns noted</span>
+            </div>
+          </div>
+          <div class="run-body">
+            <div class="finding-row" style="grid-template-columns: 130px 1fr 130px; font-size:11.5px; font-weight:700; color:var(--muted); padding-bottom:6px;">
+              <span>PATTERN</span><span>DESCRIPTION &amp; ROOT CAUSE</span><span style="text-align:right;">ACTION</span>
+            </div>
+            <div class="finding-row" style="grid-template-columns: 130px 1fr 130px;">
+              <span class="finding-check">Museum URL churn</span>
+              <div class="finding-detail">
+                Frankfurt — 9 museum ticket/visit page URLs had drifted since the guide was built: Historisches Museum, Liebieghaus, Städel, MAK, Main Tower, Palmengarten restructured their ticket-page paths; Goethe-Haus and Jewish Museum changed their root domains entirely; Oper Frankfurt's subdomain (<code>oper.frankfurt.de</code>) no longer resolves in DNS.
+                <div class="cause"><strong>Recurring pattern:</strong> German cultural institution websites restructure admissions/ticket paths and occasionally migrate domains without redirects. Frankfurt had 9 affected URLs in a single guide. No prior drift log entry covered this specific city, but the path-restructuring pattern (ticket page moved from <code>/en/visit/tickets</code> to <code>/en/visit</code> or <code>/en/information-tickets</code>) is consistent across European cultural institutions. All 9 fixed; verification_log.json updated with new URLs.</div>
+              </div>
+              <div class="finding-action"><span class="action-tag fixed">FIXED</span></div>
+            </div>
+            <div class="finding-row" style="grid-template-columns: 130px 1fr 130px; margin-top:8px;">
+              <span class="finding-check">German name wiki-alias</span>
+              <div class="finding-detail">
+                Kaiserdom (Wikipedia H1: "Frankfurt Cathedral") and Paulskirche (Wikipedia H1: "St. Paul's Church, Frankfurt am Main") — German canonical stop names share 0% token overlap with English Wikipedia article H1s, blocking verify_booking_links.py H1 match gate.
+                <div class="cause"><strong>Recurring pattern (new):</strong> German cities use canonical German stop names that do not token-match English Wikipedia article titles. Fixed by adding <code>&lt;!-- wiki-alias: English Name --&gt;</code> inside each stop-block; the alias is tried as a separate H1-match candidate. Bockenheimer Warte additionally has no English Wikipedia article at all — logged as <code>wikipedia-omit</code> in verification_log.json (sole allowed omission per guide).</div>
+              </div>
+              <div class="finding-action"><span class="action-tag fixed">FIXED</span></div>
+            </div>
+          </div>
+          <div class="run-guides-list">
+            <span class="guide-chip fixed">Frankfurt</span>
+          </div>
+        </div>
+
+        <div class="run-entry">
+          <div class="run-header">
+            <div>
+              <span class="run-date">2026-07-22</span>
               <span class="run-window" style="margin-left:10px;">visual-drift-watch · weekly structural sweep (220 guides)</span>
             </div>
             <div class="run-badges">
