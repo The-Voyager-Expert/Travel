@@ -1819,6 +1819,179 @@
     _injectOfflineBtn();
   }
 
+  /* ── Neighborhood selector — injected before #also-on-this-site on guide pages
+     that have a NEIGH_DATA entry. Shows 3 neighborhoods with a "best fit" pick
+     so readers who want to switch hotels can see how the stops distribute.      */
+  var NEIGH_DATA = {
+    'amsterdam':    { n: [{ name: 'Jordaan',                  why: 'Canals, boutiques, central walking base', rec: true },
+                           { name: 'Museumkwartier',          why: 'Steps from Van Gogh & Rijksmuseum' },
+                           { name: 'De Pijp',                 why: 'Albert Cuyp market, lively café scene' }] },
+    'athens':       { n: [{ name: 'Koukaki',                  why: 'Quiet, local, 10 min walk to Acropolis Museum', rec: true },
+                           { name: 'Monastiraki',             why: 'Flea market, street food, Acropolis views' },
+                           { name: 'Plaka',                   why: 'Historic lanes, closest to most ancient sites' }] },
+    'bali':         { n: [{ name: 'Ubud',                     why: 'Rice terraces, temples, cultural heart', rec: true },
+                           { name: 'Seminyak',                why: 'Beach clubs, upscale dining, sunset strips' },
+                           { name: 'Canggu',                  why: 'Surf, cafés, relaxed digital nomad vibe' }] },
+    'bangkok':      { n: [{ name: 'Old Town / Rattanakosin',  why: 'Grand Palace and temple cluster nearby', rec: true },
+                           { name: 'Sukhumvit',               why: 'BTS access, expat restaurants, convenience' },
+                           { name: 'Silom',                   why: 'Lumphini Park, business district, nightlife' }] },
+    'barcelona':    { n: [{ name: 'El Born / Sant Pere',      why: 'Picasso Museum, beach walkable, vibrant', rec: true },
+                           { name: 'Gothic Quarter',          why: 'Most central, near Ramblas and cathedral' },
+                           { name: 'Eixample',                why: 'Sagrada Família area, grid streets, great dining' }] },
+    'berlin':       { n: [{ name: 'Prenzlauer Berg',          why: 'Charming streets, cafés, excellent transport links', rec: true },
+                           { name: 'Mitte',                   why: 'Museum Island, Brandenburg Gate — most central' },
+                           { name: 'Kreuzberg',               why: 'Street art, markets, multicultural nightlife' }] },
+    'bruges':       { n: [{ name: 'Historic Centre',          why: 'All sights walkable from one medieval core', rec: true },
+                           { name: 'Sint-Andries',            why: 'Edge of centre, quieter, short walk in' },
+                           { name: 'Assebroek',               why: 'Residential, cheaper, 15 min cycle to centre' }] },
+    'budapest':     { n: [{ name: 'District V (Inner City)',  why: 'Chain Bridge, Parliament, riverside — central', rec: true },
+                           { name: 'District VII (Jewish Quarter)', why: 'Ruin bars, Great Synagogue, lively nights' },
+                           { name: 'Castle District (Buda)',  why: 'Historic hilltop, views — quieter after 6pm' }] },
+    'buenos-aires': { n: [{ name: 'Palermo',                  why: 'Parks, restaurants, safest base for most stops', rec: true },
+                           { name: 'Recoleta',                why: 'Upscale, cemetery, MALBA — elegant streets' },
+                           { name: 'San Telmo',               why: 'Tango, antique market, colonial atmosphere' }] },
+    'copenhagen':   { n: [{ name: 'Nørrebro',                 why: 'Local cafés, Lakes, excellent transport', rec: true },
+                           { name: 'Vesterbro',               why: 'Trendy meatpacking district, central, lively' },
+                           { name: 'Indre By (City Centre)',  why: 'Closest to Tivoli, Strøget and canals' }] },
+    'dubai':        { n: [{ name: 'Downtown',                 why: 'Burj Khalifa and Dubai Mall on your doorstep', rec: true },
+                           { name: 'JBR / Marina',            why: 'Beach, walks, restaurants — resort feel' },
+                           { name: 'Deira',                   why: 'Old Dubai, souks, Gold Market — authentic side' }] },
+    'dublin':       { n: [{ name: 'South City Centre',        why: "St Stephen's Green, Trinity College, Georgian squares", rec: true },
+                           { name: 'Temple Bar',              why: 'Lively pubs, easy walking — lively at night' },
+                           { name: 'Docklands',               why: 'Modern, quieter, DART access — less touristy' }] },
+    'dubrovnik':    { n: [{ name: 'Old Town',                 why: 'Everything within the walls — no transport needed', rec: true },
+                           { name: 'Lapad',                   why: 'Beach, quieter, good bus links to Old Town' },
+                           { name: 'Gruž',                    why: 'Port-side, local feel, ferry connections' }] },
+    'edinburgh':    { n: [{ name: 'Old Town',                 why: "Castle, Royal Mile, Arthur's Seat — all walkable", rec: true },
+                           { name: 'New Town',                why: 'Georgian streets, Princes Street, great dining' },
+                           { name: 'Leith',                   why: 'Waterfront, creative restaurants — 20 min to centre' }] },
+    'florence':     { n: [{ name: 'Oltrarno',                 why: 'South of the Arno, Pitti Palace, local feel', rec: true },
+                           { name: 'Santa Croce',             why: 'Near Uffizi, lively piazzas, leather market' },
+                           { name: 'San Lorenzo',             why: 'Central market, Accademia nearby, busy' }] },
+    'istanbul':     { n: [{ name: 'Sultanahmet',              why: 'Hagia Sophia, Blue Mosque — at the door', rec: true },
+                           { name: 'Beyoğlu / Taksim',        why: 'Istiklal Street, modern side, restaurants' },
+                           { name: 'Karaköy',                 why: 'Hip waterfront, gallery scene, ferry hub' }] },
+    'kyoto':        { n: [{ name: 'Downtown (Kawaramachi)',   why: 'Central, Nishiki Market, easy bus access to all districts', rec: true },
+                           { name: 'Gion',                    why: 'Machiya townhouses, geisha district atmosphere' },
+                           { name: 'Arashiyama',              why: 'Bamboo grove close by — peaceful, western Kyoto' }] },
+    'lake-como':    { n: [{ name: 'Bellagio',                 why: 'Central-lake position, ferries to all three arms', rec: true },
+                           { name: 'Como Town',               why: 'Main transport hub, trains to Milan, cheaper' },
+                           { name: 'Varenna',                 why: 'Quieter, rocky beauty, fewer crowds than Bellagio' }] },
+    'lisbon':       { n: [{ name: 'Príncipe Real',            why: 'Upscale, gardens, central and easy to walk everywhere', rec: true },
+                           { name: 'Chiado / Bairro Alto',    why: 'Shopping, cafés, nightlife — core of the action' },
+                           { name: 'Alfama',                  why: 'Fado, historic castle area — hilly, fewer conveniences' }] },
+    'london':       { n: [{ name: 'South Bank / Southwark',   why: 'Borough Market, Tate Modern, Tube links', rec: true },
+                           { name: 'Covent Garden',           why: 'West End, central — walkable to most Day 1 stops' },
+                           { name: 'Shoreditch / Hoxton',     why: 'East London markets, street art, food scene' }] },
+    'madrid':       { n: [{ name: 'Malasaña / Chueca',        why: 'Best café and restaurant scene, central, walkable', rec: true },
+                           { name: 'La Latina',               why: 'Sunday market, tapas bars, old Madrid feel' },
+                           { name: 'Sol / Centro',            why: 'Most central of all, Prado and Retiro walkable' }] },
+    'marrakech':    { n: [{ name: 'Medina (central Riad)',    why: "Djemaa el-Fna, souks at the door — fully immersive", rec: true },
+                           { name: 'Northern Medina',         why: 'Medersa Ben Youssef area, slightly quieter Riad zone' },
+                           { name: 'Guéliz (Nouvelle Ville)', why: 'Modern, easier to navigate, good restaurants' }] },
+    'melbourne':    { n: [{ name: 'Fitzroy / Collingwood',    why: 'Galleries, best café scene, laneway culture', rec: true },
+                           { name: 'CBD / Southbank',         why: 'Cultural precinct, MCG access, tram network hub' },
+                           { name: 'St Kilda',                why: 'Beachside, Luna Park, lively weekend market' }] },
+    'mykonos':      { n: [{ name: 'Mykonos Town (Chora)',     why: 'Windmills, Little Venice, ferry port at hand', rec: true },
+                           { name: 'Ornos',                   why: 'Calmer beach, family-friendly, good bus links' },
+                           { name: 'Platis Gialos',           why: 'Long beach, quieter, central south coast' }] },
+    'naples':       { n: [{ name: 'Spaccanapoli / Centro Storico', why: 'UNESCO old city, best pizza, all sights walkable', rec: true },
+                           { name: 'Chiaia',                  why: 'Upscale, waterfront, quieter streets' },
+                           { name: 'Vomero',                  why: 'Hilltop escape, funicular down, residential calm' }] },
+    'new-york':     { n: [{ name: "Midtown / Hell's Kitchen", why: 'Times Square, MoMA, Central Park — best access', rec: true },
+                           { name: 'Brooklyn (DUMBO / Williamsburg)', why: 'Manhattan Bridge views, great food, hip' },
+                           { name: 'Lower Manhattan',         why: 'Financial District, Brooklyn Bridge, 9/11 Memorial close' }] },
+    'nice':         { n: [{ name: 'Old Town (Vieux Nice)',    why: 'Cours Saleya market, beach, Baroque streets', rec: true },
+                           { name: 'Promenade des Anglais',   why: 'Beachfront strip, easy access to all districts' },
+                           { name: 'Cimiez',                  why: 'Hilltop quiet, Matisse Museum, Roman ruins nearby' }] },
+    'paris':        { n: [{ name: 'Le Marais (3rd / 4th)',    why: 'Pompidou, Picasso Museum, Seine — most walkable', rec: true },
+                           { name: "Saint-Germain-des-Prés",  why: "Left Bank, Musée d'Orsay, café culture" },
+                           { name: 'Montmartre (18th)',        why: 'Sacré-Cœur, village feel — hilly, quieter evenings' }] },
+    'porto':        { n: [{ name: 'Ribeira (Riverside)',      why: 'UNESCO waterfront, wine lodges across the bridge', rec: true },
+                           { name: 'Bonfim',                  why: 'Trendy, local tile streets, less crowded' },
+                           { name: 'Baixa',                   why: 'Central Bolhão market, Clérigos Tower walkable' }] },
+    'prague':       { n: [{ name: 'Vinohrady',                why: 'Charming Art Nouveau streets, excellent restaurants, metro', rec: true },
+                           { name: 'Old Town (Staré Město)',  why: 'Clock Tower, Charles Bridge — very central but busy' },
+                           { name: 'Malá Strana',             why: 'Below the castle, cobblestones, quieter side' }] },
+    'rio-de-janeiro':{ n: [{ name: 'Ipanema',                 why: 'Iconic beach, safer than Copacabana, great restaurants', rec: true },
+                            { name: 'Copacabana',             why: 'Most famous beach strip, central, lively' },
+                            { name: 'Santa Teresa',           why: 'Bohemian hilltop, arts scene, trams up' }] },
+    'rome':         { n: [{ name: 'Trastevere',               why: 'Cobblestone village feel, walkable to Vatican and centro', rec: true },
+                           { name: 'Monti',                   why: 'Colosseum and Forum steps away, central bohemian vibe' },
+                           { name: 'Prati',                   why: 'Near Vatican, quieter streets, excellent restaurants' }] },
+    'santorini':    { n: [{ name: 'Fira',                     why: 'Most central, cable car to port, caldera rim views', rec: true },
+                           { name: 'Oia',                     why: 'Iconic sunset — worth it, but 30 km from airport' },
+                           { name: 'Imerovigli',              why: 'Quieter caldera views between Fira and Oia' }] },
+    'seville':      { n: [{ name: 'Santa Cruz',               why: 'Jewish Quarter, Cathedral and Alcázar on foot', rec: true },
+                           { name: 'El Arenal',               why: 'Torre del Oro, riverside walks, bullfighting arena' },
+                           { name: 'Triana',                  why: 'Across the Guadalquivir — flamenco, local ceramic shops' }] },
+    'singapore':    { n: [{ name: 'Marina Bay / CBD',         why: 'Gardens by the Bay, skyline, MRT hub', rec: true },
+                           { name: 'Kampong Glam',            why: 'Malay Quarter, Sultan Mosque, Arab Street cafés' },
+                           { name: 'Tiong Bahru',             why: 'Vintage estate, independent cafés, hawker centre' }] },
+    'sydney':       { n: [{ name: 'Circular Quay / The Rocks', why: 'Opera House and Harbour Bridge at the door', rec: true },
+                           { name: 'Surry Hills',             why: 'Best restaurant and bar scene, walkable to CBD' },
+                           { name: 'Bondi',                   why: 'Iconic beach, coastal walk — 30 min bus to centre' }] },
+    'tokyo':        { n: [{ name: 'Shinjuku',                 why: 'Transport hub, Gyoen garden, 24-hour convenience', rec: true },
+                           { name: 'Asakusa',                 why: 'Senso-ji Temple, Skytree close, old Tokyo feel' },
+                           { name: 'Shibuya / Harajuku',      why: 'Crossing, Meiji Shrine, Yoyogi Park — youth culture' }] },
+    'venice':       { n: [{ name: 'Dorsoduro',                why: 'Accademia, less touristy, great cicchetti bars', rec: true },
+                           { name: 'Cannaregio',              why: 'Jewish Ghetto, canal walks, authentic local feel' },
+                           { name: 'San Marco',               why: 'Most central — convenient but priciest and busiest' }] },
+    'vienna':       { n: [{ name: 'Innere Stadt (1st)',        why: 'Opera, Belvedere, Schönbrunn — everything walkable', rec: true },
+                           { name: 'Naschmarkt area (5th/6th)', why: 'Market, Secession building, nightlife — artsy and central' },
+                           { name: 'Leopoldstadt (2nd)',       why: 'Prater, Ferris wheel, Jewish heritage, less touristy' }] }
+  };
+
+  function _injectNeighborhoodSelector() {
+    if (!isRealGuide) return;
+    var also = document.getElementById('also-on-this-site');
+    if (!also) return;
+    var pageName = location.pathname.split('/').pop() || '';
+    var slugMatch = pageName.match(/^(.+?)(?:_v\d+)?\.html$/);
+    if (!slugMatch) return;
+    var slug = slugMatch[1];
+    var entry = NEIGH_DATA[slug];
+    if (!entry) return;
+    var wrap = document.createElement('div');
+    wrap.id = 'neighborhood-selector';
+    var h = document.createElement('h2');
+    h.className = 'extras-title';
+    h.textContent = '🏨 Thinking of switching hotels?';
+    var sub = document.createElement('p');
+    sub.className = 'neigh-subtitle';
+    sub.textContent = 'Based on where the stops fall across all your days';
+    var grid = document.createElement('div');
+    grid.className = 'neigh-grid';
+    entry.n.forEach(function (nb) {
+      var card = document.createElement('div');
+      card.className = 'neigh-card' + (nb.rec ? ' neigh-rec' : '');
+      var name = document.createElement('div');
+      name.className = 'neigh-name';
+      name.textContent = nb.name;
+      var why = document.createElement('div');
+      why.className = 'neigh-why';
+      why.textContent = nb.why;
+      card.appendChild(name);
+      card.appendChild(why);
+      if (nb.rec) {
+        var badge = document.createElement('span');
+        badge.className = 'neigh-badge';
+        badge.textContent = 'best fit';
+        card.appendChild(badge);
+      }
+      grid.appendChild(card);
+    });
+    wrap.appendChild(h);
+    wrap.appendChild(sub);
+    wrap.appendChild(grid);
+    also.parentNode.insertBefore(wrap, also);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectNeighborhoodSelector);
+  } else {
+    _injectNeighborhoodSelector();
+  }
+
   /* ── Weather widget — loaded on the Guides index ONLY ─────────────────────
      weather.js lives in assets/ (permanent home). On the index it adds the
      🌡 Weather control in the title banner (city picker + monthly high/low
