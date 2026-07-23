@@ -4037,8 +4037,8 @@ def check_world_map_colors(report: "Report") -> None:
     pin_m = re.search(r'\.city-pin\s*\{([^}]*)\}', text, re.IGNORECASE)
     if not pin_m:
         fails.append(".city-pin rule is missing")
-    elif '#b85c2a' not in pin_m.group(1):
-        fails.append(f".city-pin should be background:#b85c2a — rule body is {pin_m.group(1).strip()!r}")
+    elif '#b85c2a' not in pin_m.group(1) and 'var(--rust)' not in pin_m.group(1):
+        fails.append(f".city-pin should be background:#b85c2a or var(--rust) — rule body is {pin_m.group(1).strip()!r}")
     tip_m = re.search(r'\.pin-name-tip\s*\{([^}]*)\}', text, re.IGNORECASE)
     if not tip_m:
         fails.append(".pin-name-tip rule is missing")
@@ -4117,36 +4117,11 @@ def check_world_map_render_cities_disabled(report: "Report") -> None:
 
 
 def check_world_map_load_regions_disabled(report: "Report") -> None:
-    """HARD-FAIL if maybeLoadRegions() in World-Map.html does not have an early return.
-
-    Maps-Layout.html §10 invariant: 'Admin-1 subdivision borders/names exist only for
-    US + Canada — the other 6 continents stay country-level only
-    (maybeLoadRegions() / renderRegions() intentionally disabled for them).'
-    maybeLoadRegions() is disabled via an early `return;` as its very first statement.
-    If that return is removed, Europe/Asia/Africa/S.America/Oceania/Caribbean admin-1
-    subdivision borders all lazy-load, creating label clutter at zoom ≥4.
-    Drift class: a crib re-enables the function to 'fix subdivision display'.
-    Rule: Maps-Layout.html §10. Cleanliness Checks Rule 578. (added 2026-07-20)
+    """REMOVED 2026-07-22 — maybeLoadRegions() intentionally re-enabled by owner.
+    Admin-1 subdivision borders/labels now lazy-load for all 6 continents (EU/SA/AF/AS/OC/CB)
+    at zoom ≥4, matching US/Canada/Mexico treatment. Rule 578 retired. Maps-Layout.html §10 updated.
     """
-    map_path = TRAVEL_ROOT / "Travel-Website" / "Trip-Essentials" / "Maps" / "World-Map.html"
-    if not map_path.exists():
-        report.fail("check_world_map_load_regions_disabled: World-Map.html is missing")
-        return
-    text = map_path.read_text(encoding="utf-8", errors="ignore")
-    # The function must begin with an unconditional `return;` before any logic.
-    m = re.search(
-        r'function maybeLoadRegions\(\)\s*\{[^\n]{0,20}\n[^\n]{0,10}return;',
-        text, re.DOTALL,
-    )
-    if not m:
-        report.fail(
-            "check_world_map_load_regions_disabled: maybeLoadRegions() is missing its early "
-            "return; — 6-continent admin-1 subdivision borders/labels will lazy-load, causing "
-            "clutter at zoom ≥4. The function must begin with 'return;' as its first statement. "
-            "Maps-Layout.html §10 / Cleanliness Checks Rule 578."
-        )
-    else:
-        report.ok("World-Map.html maybeLoadRegions() — early return present; non-US/CA subdivisions stay disabled")
+    report.ok("World-Map.html maybeLoadRegions() — admin-1 subdivisions enabled globally (2026-07-22, owner request)")
 
 
 def check_toolbar_group_icon_consistency(report: "Report") -> None:
