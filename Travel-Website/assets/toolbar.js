@@ -1211,8 +1211,22 @@
       var hEl = block.querySelector('.day-header');
       var header = hEl ? hEl.textContent.trim() : 'Day ' + num;
       var stops = [];
-      [].forEach.call(block.querySelectorAll('.stop-name'), function (s) {
-        var t = s.textContent.trim(); if (t) stops.push(t);
+      [].forEach.call(block.querySelectorAll('.stop-block'), function (sb) {
+        var nameEl = sb.querySelector('.stop-name');
+        var name = nameEl ? nameEl.textContent.trim() : '';
+        if (!name) return;
+        var stopDesc = '', stopAddr = '', stopAddrHref = '';
+        [].forEach.call(sb.querySelectorAll('.stop-row'), function (row) {
+          var txt = row.textContent.trim();
+          if (!stopDesc && txt.indexOf('↳') === 0) {
+            stopDesc = txt.replace(/^↳\s*/, '');
+          } else if (!stopAddr && txt.indexOf('📍') === 0) {
+            var aEl = row.querySelector('a');
+            stopAddr = aEl ? aEl.textContent.trim() : txt.replace(/^📍\s*/, '');
+            stopAddrHref = aEl ? aEl.href : '';
+          }
+        });
+        stops.push({ name: name, desc: stopDesc, addr: stopAddr, href: stopAddrHref });
       });
       days.push({ num: num, header: header, stops: stops });
     });
@@ -1315,13 +1329,23 @@
         var d0 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
         var d1 = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i + 1);
         var summary = _esc(day.header + (day.header.indexOf(city) >= 0 ? '' : ' · ' + city));
-        var desc = day.stops.length ? _esc(day.stops.join('\n')) : '';
+        var descParts = [];
+        day.stops.forEach(function (s, si) {
+          var lines = [(si + 1) + '. ' + s.name];
+          if (s.addr) lines.push('📍 ' + s.addr);
+          if (s.desc) lines.push(s.desc);
+          descParts.push(lines.join('\n'));
+        });
+        var desc = descParts.length ? _esc(descParts.join('\n\n')) : '';
+        /* LOCATION: first stop's Google Maps URL so calendar apps show a map link */
+        var firstHref = day.stops.length && day.stops[0].href ? day.stops[0].href : '';
         out.push('BEGIN:VEVENT');
         out.push('UID:' + _ts + '-day' + day.num + '@voyager-expert');
         out.push('DTSTART;VALUE=DATE:' + _fmtDate(d0));
         out.push('DTEND;VALUE=DATE:' + _fmtDate(d1));
         out.push('SUMMARY:' + summary);
         if (desc) out.push('DESCRIPTION:' + desc);
+        if (firstHref) out.push('LOCATION:' + _esc(firstHref));
         out.push('END:VEVENT');
       });
       out.push('END:VCALENDAR');
