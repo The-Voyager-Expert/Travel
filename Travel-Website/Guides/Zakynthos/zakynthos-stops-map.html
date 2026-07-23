@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<title>Zakynthos — All Stops Map</title>
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Zakynthos — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Blue Caves",
+    "query": "Agios Nikolaos Port Zakynthos",
+    "lat": 37.9050,
+    "lng": 20.7910
+  },
+  {
+    "day": 1,
+    "name": "Navagio Beach Viewpoint",
+    "query": "Navagio Beach Viewpoint Zakynthos",
+    "lat": 37.8660,
+    "lng": 20.6245
+  },
+  {
+    "day": 1,
+    "name": "Venetian Castle Bohali",
+    "query": "Venetian Castle Bohali Zakynthos",
+    "lat": 37.7960,
+    "lng": 20.8885
+  },
+  {
+    "day": 1,
+    "name": "Byzantine Museum of Zakynthos",
+    "query": "Byzantine Museum Plateia Solomou Zakynthos",
+    "lat": 37.7908,
+    "lng": 20.8940
+  },
+  {
+    "day": 2,
+    "name": "Cape Keri & Mizithres Sea Stacks",
+    "query": "Cape Keri Mizithres Zakynthos",
+    "lat": 37.6530,
+    "lng": 20.7875
+  },
+  {
+    "day": 2,
+    "name": "Laganas Turtle Boat",
+    "query": "Laganas Waterfront Zakynthos",
+    "lat": 37.7360,
+    "lng": 20.8510
+  },
+  {
+    "day": 2,
+    "name": "Gerakas Beach",
+    "query": "Gerakas Beach Zakynthos",
+    "lat": 37.7010,
+    "lng": 20.9465
+  },
+  {
+    "day": 3,
+    "name": "Porto Limnionas",
+    "query": "Porto Limnionas Zakynthos",
+    "lat": 37.7510,
+    "lng": 20.7430
+  },
+  {
+    "day": 3,
+    "name": "Anafonitria Monastery",
+    "query": "Anafonitria Monastery Zakynthos",
+    "lat": 37.8295,
+    "lng": 20.6985
+  },
+  {
+    "day": 3,
+    "name": "Church of Saint Dionysios",
+    "query": "Agios Dionysios Church Zakynthos Town",
+    "lat": 37.7884,
+    "lng": 20.8965
+  },
+  {
+    "day": 3,
+    "name": "Solomos Museum",
+    "query": "Solomos Museum Plateia Solomou Zakynthos",
+    "lat": 37.7900,
+    "lng": 20.8960
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: '<div style="width:14px;height:14px;background:' + color + ';border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>',
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(function(s) { return s.lat != null && s.lng != null; }).forEach(function(s) {
+  var color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  var marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(function(m) { return m.getLatLng(); })), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.day-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    var day = btn.dataset.day;
+    cluster.clearLayers();
+    var visible = day === 'all' ? markers : markers.filter(function(m) { return String(m._day) === day; });
+    visible.forEach(function(m) { cluster.addLayer(m); });
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

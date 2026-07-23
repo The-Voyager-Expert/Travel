@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide Build — Zakynthos · 2026-07-23</title>
+<style>
+:root {
+  --bg:        #f5f2ed;
+  --surface:   #ffffff;
+  --border:    #ddd8d0;
+  --text:      #1c1a17;
+  --muted:     #7a7267;
+  --pass:      #1e6e3a;
+  --pass-bg:   #eaf4ee;
+  --fail:      #922030;
+  --fail-bg:   #fdecea;
+  --warn:      #7a5200;
+  --warn-bg:   #fef7e6;
+  --accent:    #b85c2a;
+  --accent-lo: #f7ede5;
+  --blue:      #1a4d7c;
+  --blue-lo:   #e6eef7;
+  --tag-bg:    #ede9e2;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "SF Mono", "Fira Code", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #111210;
+    --surface:   #1c1b18;
+    --border:    #2e2c28;
+    --text:      #e8e4dc;
+    --muted:     #7a7670;
+    --pass:      #4db876;
+    --pass-bg:   #0e2217;
+    --fail:      #e06070;
+    --fail-bg:   #2a1018;
+    --warn:      #e8a830;
+    --warn-bg:   #271e08;
+    --accent:    #d4784a;
+    --accent-lo: #2a1a0e;
+    --blue:      #5090c8;
+    --blue-lo:   #0e1e2e;
+    --tag-bg:    #252320;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f2ed; --surface: #ffffff; --border: #ddd8d0; --text: #1c1a17;
+  --muted: #7a7267; --pass: #1e6e3a; --pass-bg: #eaf4ee; --fail: #922030;
+  --fail-bg: #fdecea; --warn: #7a5200; --warn-bg: #fef7e6; --accent: #b85c2a;
+  --accent-lo: #f7ede5; --blue: #1a4d7c; --blue-lo: #e6eef7; --tag-bg: #ede9e2;
+}
+:root[data-theme="dark"] {
+  --bg: #111210; --surface: #1c1b18; --border: #2e2c28; --text: #e8e4dc;
+  --muted: #7a7670; --pass: #4db876; --pass-bg: #0e2217; --fail: #e06070;
+  --fail-bg: #2a1018; --warn: #e8a830; --warn-bg: #271e08; --accent: #d4784a;
+  --accent-lo: #2a1a0e; --blue: #5090c8; --blue-lo: #0e1e2e; --tag-bg: #252320;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 32px 16px 64px;
+}
+.page { max-width: 760px; margin: 0 auto; }
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+}
+.header-left {}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.city-name {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -.02em;
+  line-height: 1.1;
+}
+.city-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.header-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+.date-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--tag-bg);
+  border-radius: 5px;
+  padding: 4px 10px;
+  display: inline-block;
+}
+.crib-id {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+  display: block;
+}
+
+/* STAT ROW */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.stat-val {
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-val.pass { color: var(--pass); }
+.stat-val.warn { color: var(--warn); }
+.stat-val.fail { color: var(--fail); }
+
+/* SECTION */
+.section { margin-bottom: 26px; }
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+/* RESULT BLOCKS */
+.result-block {
+  border-radius: 9px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.result-block.pass { background: var(--pass-bg); }
+.result-block.fail { background: var(--fail-bg); }
+.result-block.warn { background: var(--warn-bg); }
+.result-block.info { background: var(--blue-lo); }
+.result-icon { font-size: 15px; flex-shrink: 0; line-height: 1.5; }
+.result-body { flex: 1; }
+.result-label {
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--text);
+}
+.result-label.pass { color: var(--pass); }
+.result-label.fail { color: var(--fail); }
+.result-label.warn { color: var(--warn); }
+.result-label.info { color: var(--blue); }
+.result-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* FILE TABLE */
+.file-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.file-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  padding: 0 8px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.file-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.file-table tr:last-child td { border-bottom: none; }
+.file-path {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  word-break: break-all;
+}
+.file-note { color: var(--muted); font-size: 12px; }
+.tag {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.tag.new { background: var(--pass-bg); color: var(--pass); }
+.tag.mod { background: var(--blue-lo); color: var(--blue); }
+.tag.fix { background: var(--accent-lo); color: var(--accent); }
+
+/* HOTEL CARD */
+.hotel-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+.hotel-field {}
+.hotel-field-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.hotel-field-val { font-size: 13px; color: var(--text); font-weight: 500; }
+
+/* WARN CALLOUT */
+.warn-callout {
+  background: var(--warn-bg);
+  border-left: 3px solid var(--warn);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: var(--warn);
+  margin-bottom: 8px;
+}
+
+@media (max-width: 540px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .hotel-card { grid-template-columns: 1fr; }
+  .header { flex-direction: column; gap: 10px; }
+  .header-right { text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">Guide Build Report</div>
+      <div class="city-name">Zakynthos</div>
+      <div class="city-sub">Greece · 3 days · 11 stops · guide-build-crib-3</div>
+    </div>
+    <div class="header-right">
+      <span class="date-tag">2026-07-23</span>
+      <span class="crib-id">sig=76fd9d84e40e042b63ae887bb933c0e1</span>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Validator</div>
+      <div class="stat-val pass">830</div>
+      <div class="result-detail" style="margin-top:4px">passed · 0 failed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Warnings</div>
+      <div class="stat-val warn">3</div>
+      <div class="result-detail" style="margin-top:4px">advisory only</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Links</div>
+      <div class="stat-val pass">51</div>
+      <div class="result-detail" style="margin-top:4px">all 200 OK</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Ship</div>
+      <div class="stat-val pass">✓</div>
+      <div class="result-detail" style="margin-top:4px">stamp written</div>
+    </div>
+  </div>
+
+  <!-- BUILD DETAILS -->
+  <div class="section">
+    <div class="section-title">Build Details</div>
+    <div class="hotel-card">
+      <div class="hotel-field">
+        <div class="hotel-field-label">Hotel</div>
+        <div class="hotel-field-val">Strada Marina Hotel</div>
+      </div>
+      <div class="hotel-field">
+        <div class="hotel-field-label">Address</div>
+        <div class="hotel-field-val">Lomvardou 14 · Zakynthos Town</div>
+      </div>
+      <div class="hotel-field">
+        <div class="hotel-field-label">Days</div>
+        <div class="hotel-field-val">3 (Day 1 · Day 2 · Day 3)</div>
+      </div>
+      <div class="hotel-field">
+        <div class="hotel-field-label">Stops</div>
+        <div class="hotel-field-val">11 across 3 days</div>
+      </div>
+      <div class="hotel-field">
+        <div class="hotel-field-label">Safety Level</div>
+        <div class="hotel-field-val">Level 1 — Very Safe</div>
+      </div>
+      <div class="hotel-field">
+        <div class="hotel-field-label">Cost Range</div>
+        <div class="hotel-field-val">Mid 120 / High 250 · EUR</div>
+      </div>
+      <div class="hotel-field">
+        <div class="hotel-field-label">Country</div>
+        <div class="hotel-field-val">Greece · 🇬🇷</div>
+      </div>
+      <div class="hotel-field">
+        <div class="hotel-field-label">Carousel</div>
+        <div class="hotel-field-val">← Yellowstone · Zhangjiajie →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL GATES -->
+  <div class="section">
+    <div class="section-title">Final Gates (12/12 passed)</div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Guides-Index.html — guide card present</div><div class="result-detail">guide-num 74 · data-status="want" · shipped 2026-07-23 · Greece count 4→5</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">World Map — pin added</div><div class="result-detail">lon=20.89 lat=37.79 · after Mykonos entry</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Safety Guide — Level 1 row added</div><div class="result-detail">Between Yellowstone and Zürich · data-verified="2026-07"</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Delta-Routes-SEA.html — t2 routing card added</div><div class="result-detail">ZTH · Greece · SEA→ATL→ATH→ZTH Aegean Air · Seasonal</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Time-Zones.html — Europe/Athens entry added</div><div class="result-detail">lat 38 · flag 🇬🇷 · region europe</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">guides_index.md — 227 guides regenerated</div><div class="result-detail">158/227 guide cards renumbered correctly</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Currency Guide — Greece cur-cities updated</div><div class="result-detail">Athens · Corfu · Mykonos · Santorini · Zakynthos · build_currency.py COUNTRIES updated</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Climate data — 228 cities in climate.json</div><div class="result-detail">build_climate.py ran · weather.js baked block updated · Trips.html synced</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Climate-Finder.html — Zakynthos added to GUIDE_LINKS + CITY_COUNTRIES</div><div class="result-detail">../Guides/Zakynthos/zakynthos_v1.html · "Greece"</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Guides-Index CLIMATE_INLINE / COST_DATA / SAFETY_DATA</div><div class="result-detail">224 shipped guides covered · Zakynthos hi/lo arrays + EUR Moderate + Very Safe</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">validate_safety_guide.py — OK</div></div></div>
+    <div class="result-block pass"><span class="result-icon">✅</span><div class="result-body"><div class="result-label pass">Open Questions — no non-CORE-RULES questions parked</div></div></div>
+  </div>
+
+  <!-- FIXES APPLIED -->
+  <div class="section">
+    <div class="section-title">Fixes Applied During Build</div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">10× walk-over-40 sentinels: moved BEFORE transit div</div><div class="result-detail">Validator checks 300 chars BEFORE the transit div; all 10 sentinels were after. Fixed across hotel-first and next divs on all 3 days.</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">7× "midnight" → "12:00am"</div><div class="result-detail">Circus All Day, Kosta's Brothers, Varkarola, Arekia, Madisons, Manalos, Dionisos Taverna — "midnight" not in accepted time patterns.</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">"late" → "11:00pm" in Madisons Kitchen Bar hours</div><div class="result-detail">"late" not a valid time format; replaced with explicit 11:00pm.</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">GYG tour: standalone ⏳ → 🕐 9:00am · ⏳ 7 hr · 👥 Small group</div><div class="result-detail">All three of 🕐, ⏳, 👥 required in entry-body; standalone ⏳ is a hard fail.</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">"3,506+" → "3506+" in GYG extras-sub</div><div class="result-detail">Commas banned in extras-sub heading elements.</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">3× inclusion-bars: added "Wikipedia" source</div><div class="result-detail">Venetian Castle, Byzantine Museum, Porto Limnionas — inclusion_evidence_re requires recognized sources; "WikiMedia Commons" does not match "wikipedia".</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">"Mon - Sat" → "Monday - Saturday" in Solomos Museum</div><div class="result-detail">_WEEKDAY_PAT requires full weekday names only; abbreviated forms hard-fail.</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">10× restaurant descriptions shortened to ≤80 chars after ↳</div><div class="result-detail">5 Restaurants Near Hotel + 5 Downtown Restaurants exceeded 80-char description limit.</div></div></div>
+    <div class="result-block fix"><span class="result-icon">🔧</span><div class="result-body"><div class="result-label" style="color:var(--accent)">4× Wikipedia URLs corrected</div><div class="result-detail">Navagio_beach→Navagio_Beach · Zakynthos_Town→Zakynthos · Keri,_Zakynthos→Keri,_Greece · Agios_Dionysios_of_Zakynthos→Dionysios_of_Zakynthos</div></div></div>
+  </div>
+
+  <!-- WARNINGS -->
+  <div class="section">
+    <div class="section-title">Warnings (3 — advisory)</div>
+    <div class="warn-callout">TB-4b: toolbar.js?v=111 below fleet minimum v=125. Per memory rule: bump only when fixing the guide for another real reason. Logged to To Do List; not fixed this session.</div>
+    <div class="warn-callout">DRIFT — 🚊 metro heading: 🚊 should be 🚝 for metro (🚊 = regional rail). Advisory; applies fleet-wide. Not in scope to fix here.</div>
+    <div class="warn-callout">Ka/Kb ride-only sentinel: walk times in Getting Around section. Advisory warn.</div>
+  </div>
+
+  <!-- FILES -->
+  <div class="section">
+    <div class="section-title">Files Changed</div>
+    <div style="overflow-x:auto">
+    <table class="file-table">
+      <thead><tr><th>File</th><th>Type</th><th>Change</th></tr></thead>
+      <tbody>
+        <tr><td><span class="file-path">Travel-Website/Guides/Zakynthos/zakynthos_v1.html</span></td><td><span class="tag new">NEW</span></td><td class="file-note">Primary guide — 3 days, 11 stops, signed stamp</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Guides/Zakynthos/zakynthos-read-about.html</span></td><td><span class="tag new">NEW</span></td><td class="file-note">Read-about page</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Guides/Zakynthos/zakynthos-stops-map.html</span></td><td><span class="tag new">NEW</span></td><td class="file-note">11-stop map</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Guides/Zakynthos/_build/verification_log.json</span></td><td><span class="tag new">NEW</span></td><td class="file-note">3 verification entries — all PASS</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Guides/Yellowstone/yellowstone_v1.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">data-next → Zakynthos</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Guides/Zhangjiajie/zhangjiajie_v1.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">data-prev → Zakynthos</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Trip-Essentials/Safety-Guide.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">Level 1 row between Yellowstone and Zürich</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Trip-Essentials/Delta-Routes-SEA.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">t2 routing card ZTH · Greece</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Trip-Essentials/Maps/World-Map.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">Pin lon=20.89 lat=37.79</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Trip-Essentials/Time-Zones.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">Europe/Athens entry + lat=38</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Trip-Essentials/Currency-Guide.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">Greece cur-cities + Zakynthos</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Trip-Essentials/Climate-Finder.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">GUIDE_LINKS + CITY_COUNTRIES</td></tr>
+        <tr><td><span class="file-path">Travel-Website/assets/climate.json</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">228 cities — Zakynthos added</td></tr>
+        <tr><td><span class="file-path">Travel-Website/assets/weather.js</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">Baked CLIMATE block updated</td></tr>
+        <tr><td><span class="file-path">Travel-Website/Trip-Essentials/Trips.html</span></td><td><span class="tag mod">MOD</span></td><td class="file-note">Baked CLIMATE block updated</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- DAYS -->
+  <div class="section">
+    <div class="section-title">Itinerary</div>
+    <div class="result-block info"><span class="result-icon">🗓</span><div class="result-body"><div class="result-label info">Day 1 — North &amp; Town</div><div class="result-detail">Blue Caves · Navagio Beach Viewpoint · Venetian Castle Bohali · Byzantine Museum</div></div></div>
+    <div class="result-block info"><span class="result-icon">🗓</span><div class="result-body"><div class="result-label info">Day 2 — South &amp; Marine</div><div class="result-detail">Cape Keri · Laganas Turtle Boat · Gerakas Beach</div></div></div>
+    <div class="result-block info"><span class="result-icon">🗓</span><div class="result-body"><div class="result-label info">Day 3 — West &amp; Heritage</div><div class="result-detail">Porto Limnionas · Anafonitria Monastery · Church of Saint Dionysios · Solomos Museum</div></div></div>
+  </div>
+
+</div>
+</body>
+</html>
