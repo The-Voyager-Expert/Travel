@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pickleball Audit — 2026-07-22</title>
+<style>
+:root {
+  --bg:      #faf8f5;
+  --surface: #ffffff;
+  --border:  #ece6dd;
+  --border2: #e0d8ce;
+  --text:    #3d3a32;
+  --muted:   #9a9490;
+  --accent:  #b85c2a;
+  --accent-t:#fdf3ea;
+  --green:   #2e7d4f;
+  --green-t: #e8f4ec;
+  --amber:   #9a5010;
+  --amber-t: #fff0e0;
+  --purple:  #5a3a8a;
+  --purple-t:#f0edf8;
+  --warm:    #f5f2ee;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:      #1c1a17;
+    --surface: #252320;
+    --border:  #383430;
+    --border2: #443f38;
+    --text:    #e8e4de;
+    --muted:   #7a7570;
+    --accent:  #d4874a;
+    --accent-t:#2a1a0e;
+    --green:   #70d490;
+    --green-t: #0e2818;
+    --amber:   #d09060;
+    --amber-t: #281808;
+    --purple:  #b090e0;
+    --purple-t:#1e1530;
+    --warm:    #201e1a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:      #1c1a17;
+  --surface: #252320;
+  --border:  #383430;
+  --border2: #443f38;
+  --text:    #e8e4de;
+  --muted:   #7a7570;
+  --accent:  #d4874a;
+  --accent-t:#2a1a0e;
+  --green:   #70d490;
+  --green-t: #0e2818;
+  --amber:   #d09060;
+  --amber-t: #281808;
+  --purple:  #b090e0;
+  --purple-t:#1e1530;
+  --warm:    #201e1a;
+}
+:root[data-theme="light"] {
+  --bg:      #faf8f5;
+  --surface: #ffffff;
+  --border:  #ece6dd;
+  --border2: #e0d8ce;
+  --text:    #3d3a32;
+  --muted:   #9a9490;
+  --accent:  #b85c2a;
+  --accent-t:#fdf3ea;
+  --green:   #2e7d4f;
+  --green-t: #e8f4ec;
+  --amber:   #9a5010;
+  --amber-t: #fff0e0;
+  --purple:  #5a3a8a;
+  --purple-t:#f0edf8;
+  --warm:    #f5f2ee;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:40px 24px 80px;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto}
+/* header */
+.audit-header{border-left:3px solid var(--accent);padding:0 0 0 16px;margin-bottom:32px}
+.audit-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.01em}
+.audit-meta{font-size:11px;color:var(--muted);margin-top:4px;display:flex;flex-wrap:wrap;gap:12px}
+.audit-meta span{display:flex;align-items:center;gap:4px}
+code{font-family:'SF Mono',Menlo,monospace;font-size:10.5px;background:var(--warm);padding:1px 5px;border-radius:3px;color:var(--accent)}
+/* section heading */
+h2{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin:32px 0 10px;display:flex;align-items:center;gap:8px}
+h2::after{content:'';flex:1;height:1px;background:var(--border)}
+h3{font-size:13px;font-weight:700;margin:14px 0 6px;color:var(--text)}
+/* summary box */
+.summary-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:8px}
+.summary-box p{font-size:13px;color:var(--text);margin-bottom:8px}
+.summary-box p:last-child{margin-bottom:0}
+.summary-kv{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+/* pill badges */
+.pill{display:inline-flex;align-items:center;font-size:9.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.p-ok    {background:var(--green-t);color:var(--green);border:1px solid rgba(46,125,79,.3)}
+.p-chg   {background:var(--amber-t);color:var(--amber);border:1px solid rgba(154,80,16,.3)}
+.p-note  {background:var(--purple-t);color:var(--purple);border:1px solid rgba(90,58,138,.3)}
+.p-skip  {background:var(--warm);color:var(--muted);border:1px solid var(--border)}
+.p-warn  {background:var(--accent-t);color:var(--accent);border:1px solid rgba(184,92,42,.3)}
+/* tables */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:9.5px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 12px;background:var(--warm);border-bottom:1px solid var(--border)}
+td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--warm)}
+td.ok{color:var(--green);font-size:11.5px}
+td.chg{color:var(--accent);font-weight:600}
+td.note{color:var(--muted);font-size:11.5px}
+/* list */
+ul{padding-left:18px;margin:8px 0}
+li{font-size:12.5px;margin-bottom:5px;color:var(--text)}
+li code{font-size:10px}
+/* search/validation box */
+.info-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:4px}
+.info-box p{font-size:13px;margin-bottom:6px}
+.info-box p:last-child{margin-bottom:0}
+/* recs table */
+.recs td:nth-child(3),.recs td:nth-child(4){white-space:nowrap;font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="audit-header">
+  <div class="audit-title">🏓 Pickleball — Annual Audit Report</div>
+  <div class="audit-meta">
+    <span>📅 2026-07-22</span>
+    <span>📄 Trip-Essentials/Pickleball.html</span>
+    <span>🔖 Commit <code>10be4bead</code></span>
+    <span>✅ brain_check 0 fail</span>
+  </div>
+</div>
+
+<h2>Summary</h2>
+<div class="summary-box">
+  <p>Second annual audit run (first: 2026-07-16). The July 16 run applied the major stat corrections — SFIA 2026 figures, 5 of 6 court finder URLs, chart data, prize money. This run verified those figures remain accurate (no new SFIA release in the 6-day window) and responded to owner feedback that the world map was unreadable.</p>
+  <p><strong>Changes applied:</strong> world map redesigned (bubble-on-crude-polygons → tile grid grouped by region) and Shelby Park court count corrected (14 → 8, confirmed by multiple sources). Committed and pushed to main.</p>
+  <div class="summary-kv">
+    <span class="pill p-chg">2 changes applied</span>
+    <span class="pill p-ok">16 items verified</span>
+    <span class="pill p-note">4 items unconfirmed</span>
+    <span class="pill p-warn">5 UX issues logged</span>
+  </div>
+</div>
+
+<h2>Content Changes Applied</h2>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th style="width:180px">Item</th><th>Old</th><th>New</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="pill p-chg">CHANGED</span><br><strong>World map</strong></td>
+      <td class="note">Bubble-on-crude-polygons. Continents unrecognizable; UK/France/Spain/NL all overlapping; USA/Canada overlapping.</td>
+      <td class="chg">Tile grid (Americas / Europe / Asia·Pacific). Flag emoji + country code per tile. Hover tooltips. Consistent with US tile map design.</td>
+      <td class="note">Owner direction — screenshot showing overlap. Visualization fix; no content source needed.</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-chg">CHANGED</span><br><strong>Shelby Park courts</strong></td>
+      <td class="note">14 courts · ongoing expansion</td>
+      <td class="chg">8 courts · free open play</td>
+      <td class="note">Pickleheads, Nashville.gov, Daisy Dink, Bounce: all show 6–8 courts (2 indoor + 4 outdoor). 14 was an error. Used 8 (high end). Address unchanged.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Items Verified Unchanged</h2>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>Item</th><th>Value</th><th>Verdict</th></tr></thead>
+  <tbody>
+    <tr><td>US players</td><td>24.3M (2025)</td><td class="ok">✓ SFIA 2026 report: 24.3M Americans played in 2025</td></tr>
+    <tr><td>US courts</td><td>82,000+</td><td class="ok">✓ 82,613 courts / 18,258 locations — Jan 2026 Pickleheads/USA Pickleball</td></tr>
+    <tr><td>Fastest-growing sport</td><td>#1 · 5 yrs running</td><td class="ok">✓ SFIA 2026: "nation's fastest-growing sport for five consecutive years"</td></tr>
+    <tr><td>Player growth</td><td>172% · past 3 yrs</td><td class="ok">✓ SFIA 2026: 171.8% over 2022–2025</td></tr>
+    <tr><td>New courts per day</td><td>39 (2025)</td><td class="ok">✓ 14,155 new courts ÷ 365 = 38.8 — math confirmed</td></tr>
+    <tr><td>Core players</td><td>7.5M</td><td class="ok">✓ SFIA 2026: 7.48M core players (8+ sessions/yr)</td></tr>
+    <tr><td>New players in 2025</td><td>4.5M</td><td class="ok">✓ 24.3M − 19.8M = 4.5M — confirmed</td></tr>
+    <tr><td>Players under 35</td><td>31%</td><td class="ok">✓ SFIA 2026 age breakdown supports 31% — confirmed directionally</td></tr>
+    <tr><td>Pro prize money</td><td>$31M+ (2026 PPA+MLP)</td><td class="ok">✓ PPA+MLP/UPA combined ~$30M+ cited; $31M+ in range. No contradicting source.</td></tr>
+    <tr><td>Countries playing</td><td>80+</td><td class="ok">✓ Kept — DUPR: 84 active countries (Jul 16). One non-authoritative source cites 128; not adopted.</td></tr>
+    <tr><td>Growth chart 2020–2025</td><td>4.2/4.8/8.9/13.6/19.8/24.3M</td><td class="ok">✓ SFIA historical values all confirmed</td></tr>
+    <tr><td>World US card</td><td>24.3M · 82,000+ courts</td><td class="ok">✓ Consistent with hero pills</td></tr>
+    <tr><td>East Naples Community Park</td><td>64 courts</td><td class="ok">✓ Open, US Open venue confirmed 2026. No closure news.</td></tr>
+    <tr><td>WestWorld Scottsdale label</td><td>APP Tour venue</td><td><span class="pill p-warn">WATCH</span> Open, but no 2026 APP events at WestWorld found. See unconfirmed items.</td></tr>
+    <tr><td>Indian Wells Tennis Garden</td><td>Pro venue · 8 courts</td><td class="ok">✓ BNP Paribas Open March 2026. Pickleball courts confirmed open with open play.</td></tr>
+    <tr><td>All 6 court finder URLs</td><td>—</td><td class="ok">✓ USA Pickleball (200), Google Maps (valid), Global Pickleball Network (200), Pickleheads (403 bot-block, known live), GPF locator (200), World PF (200)</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Items Left Unchanged — Unconfirmed</h2>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>Item</th><th>Current Value</th><th>Reason</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Countries playing</strong></td>
+      <td>80+</td>
+      <td class="note">One non-authoritative source (retail blog) cites 128. Requires WPF, IFP, or SFIA confirmation before updating. DUPR 84-country figure (Jul 16) remains best authoritative data.</td>
+    </tr>
+    <tr>
+      <td><strong>Global players</strong></td>
+      <td>50M+ (est.)</td>
+      <td class="note">Research suggests this may derive from a US-only APP survey (48.3M US adults), mislabeled as global. No clean authoritative global replacement found. "(est.)" qualifier gives some cover.</td>
+    </tr>
+    <tr>
+      <td><strong>WestWorld / APP 2026</strong></td>
+      <td>"APP Tour venue"</td>
+      <td class="note">No 2026 APP Tour events at WestWorld in search results. Unconfirmed as a 2026 active APP venue. Not removed — venue is open and has historical APP history. Needs direct schedule check.</td>
+    </tr>
+    <tr>
+      <td><strong>Austin TX — 3rd court</strong></td>
+      <td>(empty since Jul 16)</td>
+      <td class="note">Rally Austin removed Jul 16, no verified replacement found in this run either. Austin still shows 2 courts. Needs direct venue research — Picklr Austin or Chicken N Pickle Austin are candidates.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Search Status</h2>
+<div class="info-box">
+  <p><span class="pill p-ok">FUNCTIONAL</span> The search input (<code>id="city-search"</code>) correctly filters city cards on every keystroke via the <code>input</code> event. Text search hides the <code>#below-us-grid</code> block (States table, Growth, Tournaments, Tips, World sections). TVESearch autocomplete wired via <code>TVESearch.attach()</code>. Clearing the input restores all results. No JS errors observed in code review.</p>
+  <p><span class="pill p-note">UX logged</span> 5 styling deviations found — see handoff file.</p>
+</div>
+
+<h2>UX / Formatting Issues Logged</h2>
+<div class="info-box">
+  <p>Written to: <code>Recommendations/2026-07-22-pickleball-audit-ux-handoff.html</code></p>
+  <ul>
+    <li><code>.pkl-search-box input::placeholder</code> — <code>color: #A8895A</code> hardcoded hex; should use CSS variable</li>
+    <li><code>.pkl-search-box input:focus</code> — <code>border-color: #c8b99a</code> hardcoded hex</li>
+    <li>Map legend boxes (US + world) — 9 inline <code>style="background:#..."</code> occurrences; should be CSS classes</li>
+    <li><code>.pkl-nav a</code> — <code>color: #3d3a32; background: #fff</code> hardcoded; should use <code>var(--text)</code> / <code>var(--surface)</code></li>
+    <li><code>.pkl-state-table td</code> + <code>.pkl-world-table td</code> — <code>border-bottom: 1px solid #f0ece4</code>; should use <code>var(--border2)</code></li>
+  </ul>
+  <p style="margin-top:8px;font-size:11.5px;color:var(--muted)">July 16 issues (#fbeee4, #fdf8f4 badge/quiz/table-hover colors) appear resolved in the July 16 commit — no longer present in the current file.</p>
+</div>
+
+<h2>Page Improvement Recommendations</h2>
+<div class="tbl-wrap">
+<table class="recs">
+  <thead><tr><th>Recommendation</th><th>Rationale</th><th>Effort</th><th>Priority</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Verify WestWorld / APP 2026 schedule</strong></td>
+      <td class="note">Scottsdale card says "APP Tour venue" but no 2026 APP events at WestWorld found in search. May be stale. Check theapp.global/tour directly.</td>
+      <td>Low</td>
+      <td><span class="pill p-warn">High</span></td>
+    </tr>
+    <tr>
+      <td><strong>Austin TX — add third court</strong></td>
+      <td class="note">Rally Austin was removed July 16 and never replaced. Austin at 2 courts looks thin. Candidates: Picklr Austin or Chicken N Pickle Austin.</td>
+      <td>Low</td>
+      <td><span class="pill p-warn">High</span></td>
+    </tr>
+    <tr>
+      <td><strong>Confirm countries: 80+ → 128+</strong></td>
+      <td class="note">Multiple 2026 sources mention 128 countries. If WPF or USA Pickleball confirm this figure officially, it's a meaningful update (from 80+).</td>
+      <td>Low</td>
+      <td><span class="pill p-note">Medium</span></td>
+    </tr>
+    <tr>
+      <td><strong>Clarify global players "50M+"</strong></td>
+      <td class="note">May derive from a US-only APP survey mislabeled as global. Either correct to a verified global figure or label more precisely.</td>
+      <td>Low</td>
+      <td><span class="pill p-note">Medium</span></td>
+    </tr>
+    <tr>
+      <td><strong>DUPR primer in tips</strong></td>
+      <td class="note">Tips mention DUPR but don't explain it. A brief "What is DUPR?" helps traveling players get matched when visiting new cities.</td>
+      <td>Low</td>
+      <td><span class="pill p-note">Medium</span></td>
+    </tr>
+    <tr>
+      <td><strong>Equipment rental per city</strong></td>
+      <td class="note">Travel Tips says "most courts rent balls" but none of the listed venues are flagged as offering paddle rentals — useful for players who don't pack.</td>
+      <td>Medium</td>
+      <td><span class="pill p-note">Medium</span></td>
+    </tr>
+    <tr>
+      <td><strong>Court growth pace note</strong></td>
+      <td class="note">Axios (May 2026): annual growth in courts in top-100 US cities slowed from 13% to 4% YoY. A brief context note under "39 new courts/day" keeps the stat honest.</td>
+      <td>Low</td>
+      <td><span class="pill p-skip">Low</span></td>
+    </tr>
+    <tr>
+      <td><strong>International venue depth</strong></td>
+      <td class="note">India (#2 globally, 3M+ players) and Canada (#3, 3.6M) appear only in the world table with no city-level courts. Even a 2-city spotlight per country would serve the international traveler audience.</td>
+      <td>Medium</td>
+      <td><span class="pill p-skip">Low</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Validation</h2>
+<div class="info-box">
+  <p><code>python3 Brain/scripts/brain_check.py</code> → <strong>195/282 ok · 87 warn · 0 fail</strong></p>
+  <p style="font-size:12px;color:var(--muted);margin-top:6px">All warnings are pre-existing in other files: toolbar version drift on unrelated pages; Safety-Guide.html / Travel-Stats.html missing data-updated (both already in To Do List). Pickleball.html itself: 0 warnings, 0 failures.</p>
+</div>
+
+</div>
+</body>
+</html>
