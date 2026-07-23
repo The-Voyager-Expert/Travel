@@ -819,6 +819,28 @@ getJSON('data/canada-provinces.json')
   })
   .catch(() => {});
 
+/* ── Mexico state boundaries ── same treatment as US/Canada: overlay the 31 states
+   + CDMX on top of the Mexico polygon, borders only (fillOpacity: 0), names
+   revealed at the same z>=4.5 gate as US states and Canadian provinces. ── */
+regionState.mx = { loaded: true, lines: null, regions: [] };
+getJSON('data/mexico-states.json')
+  .then(mx => {
+    L.geoJSON(mx, {
+      interactive: false,
+      style: { fillOpacity: 0, color: darken(colorFor('Mexico'), 0.55), weight: 0.7 },
+    }).addTo(map);
+    mx.features.forEach(f => {
+      const nm = f.properties && f.properties.name;
+      if (!nm) return;
+      const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+      const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+      regionState.mx.regions.push({ name: nm, lat: c.lat, lon: c.lng, sz });
+    });
+    regionState.mx.regions.sort((a, b) => b.sz - a.sz);
+    toggleStateLabels(); renderRegions();
+  })
+  .catch(() => {});
+
 /* ── Admin-1 regions (Europe, South America, Africa, Asia, Oceania, Caribbean) ──
    same idea as US states: subdivide every country in these continents with
    filled polygons + names, same look as the US/Canada overlay. Each set is up to
