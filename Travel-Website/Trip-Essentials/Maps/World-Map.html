@@ -17,7 +17,7 @@
   /* ── Leaflet surface: kill default chrome so it reads as our warm map ── */
   .leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
   .leaflet-control-zoom a { color: #6b4422; border-color: var(--border, #d8d4cc); }
-  .leaflet-bar a:hover { background: var(--surface, #ffffff); border-color: #b85c2a; }
+  .leaflet-bar a:hover { background: var(--surface, #ffffff); border-color: var(--rust); }
 
   /* ── Country polygons ── */
   .country-label-tip { background: none; border: none; box-shadow: none; padding: 0;
@@ -39,7 +39,7 @@
   .city-name-tip::before { display: none; }
 
   /* ── Pin markers ── */
-  .city-pin { background: #b85c2a; border: 1.8px solid #fdf8f0; border-radius: 50%;
+  .city-pin { background: var(--rust); border: 1.8px solid #fdf8f0; border-radius: 50%;
     box-shadow: 0 1px 4px rgba(0,0,0,0.30); transition: transform 0.12s, background 0.12s; }
   .city-pin:hover { background: #7a3b1e; transform: scale(1.45); }
   .pin-name-tip { background: none; border: none; box-shadow: none; padding: 0; margin: 0;
@@ -65,7 +65,7 @@
   #region-nav { display:flex; flex-direction:column; gap:4px; }
   .rn { padding:5px 14px; border-radius:20px; border:1.5px solid #d8d4cc; background:var(--bg, #f5f4f0); color:#6b4422; font-size: 12px; font-weight:600; text-decoration:none; white-space:nowrap; display:flex; align-items:center; gap:5px; transition:background .12s,border-color .12s; cursor:pointer; }
   .rn::before { content:''; width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-  .rn:hover { background:var(--surface,#ffffff); border-color:#b85c2a; }
+  .rn:hover { background:var(--surface,#ffffff); border-color:var(--rust); }
   .rn-wd  { background:#eee9e2 !important; border-color:#c4bcae !important; color:#5a5446 !important; }
   .rn-wd::before  { background:#8a8270; }
   .rn-eu  { background:#fde8e8 !important; border-color:#f0a0a0 !important; color:var(--red, #a02020) !important; }
@@ -84,8 +84,8 @@
   .rn-oc::before  { background:#8050d0; }
   .rn-vs  { background:#fdf5d8 !important; border-color:#d8c87a !important; color:#7a6000 !important; -webkit-appearance:none; appearance:none; box-sizing:border-box; line-height:19.2px; }
   .rn-vs::before  { background:#c8940a; }
-  .rn-vs.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:#fff !important; border-color:#b85c2a !important; }
-  .rn.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:var(--warm, #fdf8f0) !important; border-color:#b85c2a !important; }
+  .rn-vs.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:#fff !important; border-color:var(--rust) !important; }
+  .rn.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:var(--warm, #fdf8f0) !important; border-color:var(--rust) !important; }
   .rn.rn-on::before { background:rgba(255,255,255,0.55); }
 
   /* Uniform pill width so no label sizes the panel differently. */
@@ -852,14 +852,9 @@ getJSON('data/mexico-states.json')
    that call fires 'moveend' synchronously, which would otherwise hit these in
    their temporal dead zone.) ── */
 function maybeLoadRegions() {
-  return; // STAYS DISABLED (2026-07-19) — Dani: US/Canada keep subdivisions
-  // (re-enabled above), but the rest of the world stays country-level only —
-  // this is the lazy loader for the OTHER 6 continents' admin-1 data, which
-  // created too much clutter once it actually loaded correctly —
-  // Niger/Chad/Sudan/Nigeria all showing 100+ province names at once, same
-  // in Europe. Left the rest of
-  // this function's body below as dead code rather than deleting it, in case
-  // it's wanted back later — it's provably unreachable due to this return.
+  // RE-ENABLED (2026-07-22) — Dani: extend subdivisions to all continents,
+  // matching the US/Canada/Mexico treatment. Lazy-loads per bounding-box
+  // intersection so only the visible continent's data is fetched at any time.
   if (map.getZoom() < 4) return;
   Object.entries(REGION_SOURCES).forEach(([key, src]) => {
     const st = regionState[key];
@@ -906,10 +901,9 @@ function toggleRegionLines() {
   });
 }
 function renderRegions() {
-  // RE-ENABLED (2026-07-19) — maybeLoadRegions() (the 6-continent admin-1
-  // lazy loader) stays disabled below, so regionState.eu/sa/af/as/oc/cb.regions
-  // stay permanently empty — this naturally only ever renders US/Canada names,
-  // with zero code duplication needed to scope it.
+  // Renders all loaded admin-1 region names (US, Canada, Mexico eager-loaded;
+  // Europe/S.America/Africa/Asia/Oceania/Caribbean lazy-loaded via maybeLoadRegions).
+  // Collision-checked against guide pins and country labels — guide pin names always win.
   euRegionLayer.clearLayers();
   if (map.getZoom() < 4.5) return;
   const all = Object.values(regionState).flatMap(st => st.regions);
