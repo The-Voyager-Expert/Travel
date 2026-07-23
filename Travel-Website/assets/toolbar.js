@@ -1218,12 +1218,13 @@
         var stopDesc = '', stopAddr = '', stopAddrHref = '';
         [].forEach.call(sb.querySelectorAll('.stop-row'), function (row) {
           var txt = row.textContent.trim();
-          if (!stopDesc && txt.indexOf('↳') === 0) {
-            stopDesc = txt.replace(/^↳\s*/, '');
-          } else if (!stopAddr && txt.indexOf('📍') === 0) {
-            var aEl = row.querySelector('a');
-            stopAddr = aEl ? aEl.textContent.trim() : txt.replace(/^📍\s*/, '');
-            stopAddrHref = aEl ? aEl.href : '';
+          /* Address row: detect by Maps URL in the link (more reliable than emoji check) */
+          var mapsEl = row.querySelector('a[href*="google.com/maps"], a[href*="maps.google.com"]');
+          if (!stopAddr && mapsEl) {
+            stopAddr = mapsEl.textContent.trim();
+            stopAddrHref = mapsEl.href;
+          } else if (!stopDesc && txt.charAt(0) === '↳') {
+            stopDesc = txt.slice(1).trim();
           }
         });
         stops.push({ name: name, desc: stopDesc, addr: stopAddr, href: stopAddrHref });
@@ -1333,19 +1334,17 @@
         day.stops.forEach(function (s, si) {
           var lines = [(si + 1) + '. ' + s.name];
           if (s.addr) lines.push('📍 ' + s.addr);
+          if (s.href) lines.push(s.href);   /* Maps URL per stop — tappable in Apple/Google Calendar */
           if (s.desc) lines.push(s.desc);
           descParts.push(lines.join('\n'));
         });
         var desc = descParts.length ? _esc(descParts.join('\n\n')) : '';
-        /* LOCATION: first stop's Google Maps URL so calendar apps show a map link */
-        var firstHref = day.stops.length && day.stops[0].href ? day.stops[0].href : '';
         out.push('BEGIN:VEVENT');
         out.push('UID:' + _ts + '-day' + day.num + '@voyager-expert');
         out.push('DTSTART;VALUE=DATE:' + _fmtDate(d0));
         out.push('DTEND;VALUE=DATE:' + _fmtDate(d1));
         out.push('SUMMARY:' + summary);
         if (desc) out.push('DESCRIPTION:' + desc);
-        if (firstHref) out.push('LOCATION:' + _esc(firstHref));
         out.push('END:VEVENT');
       });
       out.push('END:VCALENDAR');
