@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+<title>Multi-Destination Trip Planning</title>
+<style>
+.ts-intro { font-size: var(--fs-body, 14px); color: var(--muted); line-height: 1.7;
+  max-width: 640px; margin-bottom: 36px; }
+
+.ts-section { margin-bottom: 40px; }
+.ts-section h2 { font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--text); border-bottom: 2px solid var(--rust, #b85c2a);
+  padding-bottom: 6px; margin-bottom: 14px; }
+.ts-section p { font-size: var(--fs-body, 14px); color: var(--text); line-height: 1.7;
+  margin-bottom: 10px; }
+.ts-section p:last-child { margin-bottom: 0; }
+
+/* Pill chips for examples and inline labels */
+.ts-tag { display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; padding: 2px 8px; border-radius: 4px;
+  background: var(--surface, #fff); border: 1px solid var(--border2, #e0dbd2);
+  color: var(--muted); margin-right: 4px; white-space: nowrap; }
+.ts-tag-rail { background: var(--rust, #b85c2a); color: #fff; border-color: transparent; }
+.ts-tag-flight { background: var(--text, #1a1917); color: #fff; border-color: transparent; }
+.ts-tag-ferry { background: var(--muted, #6a6660); color: #fff; border-color: transparent; }
+
+/* Hub grid */
+.ts-hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; margin-top: 10px; }
+.ts-hub { background: var(--surface, #fff); border: 1px solid var(--border2, #e0dbd2);
+  border-radius: 9px; padding: 12px 14px; }
+.ts-hub-region { font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--rust, #b85c2a); margin-bottom: 4px; }
+.ts-hub-cities { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.ts-hub-note { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* Worked examples */
+.ts-example { background: var(--surface, #fff); border: 1px solid var(--border2, #e0dbd2);
+  border-radius: 11px; padding: 18px 20px; margin-bottom: 14px; }
+.ts-example-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;
+  flex-wrap: wrap; }
+.ts-example-title { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; min-width: 160px; }
+.ts-example-meta { font-size: 12px; color: var(--muted); }
+.ts-leg-list { list-style: none; padding: 0; margin: 10px 0 0; border-top: 1px solid var(--border2, #e0dbd2);
+  padding-top: 10px; }
+.ts-leg { display: flex; align-items: baseline; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid var(--border2, #e0dbd2); font-size: 13px; }
+.ts-leg:last-child { border-bottom: none; }
+.ts-leg-city { font-weight: 600; color: var(--text); min-width: 120px; }
+.ts-leg-note { color: var(--muted); font-size: 12px; }
+.ts-example-tip { margin-top: 10px; font-size: 12px; color: var(--muted); background: var(--bg, #f5f3ef);
+  border-radius: 6px; padding: 8px 12px; line-height: 1.55; }
+.ts-example-tip strong { color: var(--text); }
+
+/* Planning order list */
+.ts-steps { list-style: none; padding: 0; margin: 10px 0 0; counter-reset: ts-step; }
+.ts-step { display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border2, #e0dbd2);
+  counter-increment: ts-step; }
+.ts-step:last-child { border-bottom: none; }
+.ts-step::before { content: counter(ts-step); flex-shrink: 0; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--rust, #b85c2a); color: #fff; font-size: 11px;
+  font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.ts-step-body { font-size: 13px; color: var(--text); line-height: 1.6; }
+.ts-step-body strong { font-weight: 700; }
+
+/* Cross-links */
+.ts-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.ts-link-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+  color: var(--rust, #b85c2a); background: var(--surface, #fff); border: 1px solid var(--border2, #e0dbd2);
+  border-radius: 5px; padding: 5px 10px; text-decoration: none; }
+.ts-link-pill:hover { border-color: var(--rust, #b85c2a); }
+
+@media (max-width: 600px) {
+  .ts-hub-grid { grid-template-columns: 1fr 1fr; }
+  .ts-leg-city { min-width: 100px; }
+}
+</style>
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-07"></div>
+
+<div class="wrap">
+
+<h1>Multi-Destination Trip Planning</h1>
+
+<p class="ts-intro">Visiting two or three cities in one trip is often better value than visiting one — if you build the routing intelligently. A poorly structured multi-city itinerary adds hours of dead travel and unnecessary cost. A well-structured one lets geography carry you forward.</p>
+
+<!-- ─── 1. Open-Jaw Tickets ──────────────────────────── -->
+<div class="ts-section">
+  <h2>The Open-Jaw Ticket</h2>
+  <p>A standard round-trip forces you to fly back to where you started — even if you've ended your trip 600 km away. An <strong>open-jaw ticket</strong> lets you fly into one city and out of another, with no backtracking.</p>
+  <p>Example: you fly <strong>Seattle → Lisbon</strong> (SEA → LIS) and return <strong>Madrid → Seattle</strong> (MAD → SEA), spending the middle days traveling south through Spain by train. The open-jaw costs roughly the same as a Lisbon round-trip, and you save two full travel days that would otherwise be spent reversing your route.</p>
+  <p>Open-jaw tickets are bookable through any standard flight search (Google Flights calls it "multi-city"; most airline sites support it). Book the inbound and outbound legs together as one itinerary — if either leg is on the same airline or alliance, fares are usually competitive with a direct round-trip.</p>
+</div>
+
+<!-- ─── 2. Building a Flight Arc ────────────────────── -->
+<div class="ts-section">
+  <h2>Building a Flight Arc</h2>
+  <p>The key principle for multi-destination routing: <strong>travel in one direction</strong>. Enter from the west, exit from the east — or enter in the north and exit in the south. When your travel arc has geographic logic, connecting legs are short and cheap. When it doesn't, you pay extra to backtrack.</p>
+  <p><strong>Geographic chaining</strong> means picking cities in a natural sequence along a route. Lisbon → Seville → Barcelona → Madrid follows the Iberian coast north and east — each connection is a comfortable train or short flight, and the final city is your airport-exit point. The alternative (Lisbon → Barcelona → Seville → Madrid) scrambles the geography and requires backtracking.</p>
+  <p><strong>Hub-and-spoke</strong> is a different model: fly into one major hub and take radial day trips or overnight trains from there. Tokyo as a base with day-trips to Kyoto, Nara, and Hakone is hub-and-spoke — no open-jaw needed, very low friction. Works best when the hub city anchors the trip and side cities are genuinely close.</p>
+</div>
+
+<!-- ─── 3. Regional Hubs ──────────────────────────────── -->
+<div class="ts-section">
+  <h2>Regional Hubs That Unlock a Region</h2>
+  <p>Some cities carry excellent flight connectivity into a region and serve as natural launching points for multi-city arcs. Flying into a hub first — even if it's not your primary destination — often produces better routing and lower total fares than flying directly into a secondary city.</p>
+  <div class="ts-hub-grid">
+    <div class="ts-hub">
+      <div class="ts-hub-region">Western Europe</div>
+      <div class="ts-hub-cities">Paris · Lisbon · Madrid</div>
+      <div class="ts-hub-note">Strong transatlantic connections; dense rail network radiates outward. Lisbon is particularly well-priced for US–Europe entry.</div>
+    </div>
+    <div class="ts-hub">
+      <div class="ts-hub-region">Northern Europe</div>
+      <div class="ts-hub-cities">Amsterdam · London · Frankfurt</div>
+      <div class="ts-hub-note">Major hubs for Scandinavia, the Baltics, and Central Europe. AMS and FRA have exceptional frequency from North America.</div>
+    </div>
+    <div class="ts-hub">
+      <div class="ts-hub-region">Middle East</div>
+      <div class="ts-hub-cities">Dubai · Istanbul</div>
+      <div class="ts-hub-note">Emirates and Turkish Airlines connect almost every region; layovers are often 4–8h and make viable stopovers in their own right.</div>
+    </div>
+    <div class="ts-hub">
+      <div class="ts-hub-region">Southeast Asia</div>
+      <div class="ts-hub-cities">Bangkok · Singapore · Kuala Lumpur</div>
+      <div class="ts-hub-note">Budget airlines (AirAsia, Scoot, Lion Air) fan out from all three. Bangkok is usually the cheapest Asia entry from the US via a layover.</div>
+    </div>
+    <div class="ts-hub">
+      <div class="ts-hub-region">East Asia</div>
+      <div class="ts-hub-cities">Tokyo · Seoul</div>
+      <div class="ts-hub-note">NRT and ICN are natural entry points for Japan–Korea arcs. Haneda (HND) works better for Tokyo-only trips given its central location.</div>
+    </div>
+    <div class="ts-hub">
+      <div class="ts-hub-region">Latin America</div>
+      <div class="ts-hub-cities">Bogotá · Lima · São Paulo</div>
+      <div class="ts-hub-note">Avianca (BOG) and LATAM (LIM, GRU) hub here with dense regional networks. Bogotá reaches the Caribbean, Andes, and Amazon efficiently.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 4. Adding a Rail Leg ─────────────────────────── -->
+<div class="ts-section">
+  <h2>Adding a Rail Leg</h2>
+  <p>On routes where a high-speed train covers the distance in under 3 hours, the train is almost always the better choice over a short flight: no airport check-in overhead, city-center to city-center, and often cheaper than a last-minute flight.</p>
+  <p>Key rail connections worth substituting for flights in the guide fleet:</p>
+  <ul style="font-size:13px; color:var(--text); line-height:2; padding-left:18px;">
+    <li><strong>Paris → Amsterdam</strong> — 3h20 on Eurostar/Thalys (city-center to city-center)</li>
+    <li><strong>Tokyo → Kyoto</strong> — 2h15 on the Shinkansen Nozomi</li>
+    <li><strong>Tokyo → Osaka</strong> — 2h30 on the Shinkansen (skip the Kyoto stop if time-limited)</li>
+    <li><strong>Lisbon → Seville</strong> — ~3h by Alfa Pendular + Avant combination or direct bus</li>
+    <li><strong>Barcelona → Madrid</strong> — 2h30 on the AVE high-speed</li>
+    <li><strong>London → Paris</strong> — 2h15 on the Eurostar</li>
+    <li><strong>Vienna → Budapest</strong> — 2h40 on the Railjet; <strong>Vienna → Prague</strong> — 4h on Railjet</li>
+    <li><strong>Milan → Venice</strong> — 2h15 on the Frecciarossa</li>
+  </ul>
+  <p style="margin-top:12px;">See the <a href="European-Train-Guide.html">European Train Guide</a> for booking platforms, pass options, and a full route reference.</p>
+</div>
+
+<!-- ─── 5. Managing Luggage ──────────────────────────── -->
+<div class="ts-section">
+  <h2>Managing Luggage Across Cities</h2>
+  <p><strong>Pack for the hardest leg.</strong> If any leg of your trip requires navigating a crowded market, a Shinkansen with no luggage storage, or a narrow medina street, that leg sets the size limit for your whole bag. Multi-city trips reward carry-on-only travel more than single-city trips.</p>
+  <p><strong>Forwarding luggage.</strong> In Japan, <em>takkyubin</em> (luggage forwarding) services (TA-Q-BIN) are widely available at convenience stores: ship your bag from your Kyoto ryokan to your Osaka hotel for ¥1,000–2,000 and travel hands-free on the Shinkansen. Similar services exist in South Korea. In Europe, luggage-forwarding is less common but possible via Excess Baggage Company (UK) and Luggage Forward (international).</p>
+  <p><strong>Left-luggage storage.</strong> Most major train stations offer coin lockers or staffed left-luggage counters. Useful on arrival day (before hotel check-in) or departure day (after check-out, before an evening train). Typical cost: €4–8/day in Europe, ¥600–900/day in Japan.</p>
+  <p>For more on what to pack and airline bag restrictions, see <a href="Travel-Packing.html">Travel Packing</a> and <a href="Baggage.html">Baggage Fees</a>.</p>
+</div>
+
+<!-- ─── 6. Worked Examples ───────────────────────────── -->
+<div class="ts-section">
+  <h2>Worked Examples</h2>
+
+  <!-- Japan Arc -->
+  <div class="ts-example">
+    <div class="ts-example-head">
+      <div class="ts-example-title">Japan Arc · 7 nights</div>
+      <span class="ts-tag ts-tag-flight">1 flight</span>
+      <span class="ts-tag ts-tag-rail">2 rail legs</span>
+      <span class="ts-tag">Open-jaw</span>
+    </div>
+    <div class="ts-example-meta">Fly INTO Tokyo (NRT/HND) · Return FROM Osaka (KIX)</div>
+    <ul class="ts-leg-list">
+      <li class="ts-leg">
+        <span class="ts-leg-city">Tokyo</span>
+        <span class="ts-tag ts-tag-flight">Fly in</span>
+        <span class="ts-leg-note">3 nights — Shinjuku, Shibuya, Asakusa base</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Kyoto</span>
+        <span class="ts-tag ts-tag-rail">2h15 Shinkansen</span>
+        <span class="ts-leg-note">2 nights — temples, Fushimi Inari, Arashiyama</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Osaka → KIX</span>
+        <span class="ts-tag ts-tag-rail">16 min train</span>
+        <span class="ts-leg-note">2 nights — Dotonbori, Shinsekai; fly home from KIX</span>
+      </li>
+    </ul>
+    <div class="ts-example-tip"><strong>Tip:</strong> Book an open-jaw (NRT in / KIX out) as one itinerary — same price as a Tokyo round-trip with no backtracking. Get the JR Pass for unlimited Shinkansen travel before leaving home.</div>
+  </div>
+
+  <!-- Iberian Loop -->
+  <div class="ts-example">
+    <div class="ts-example-head">
+      <div class="ts-example-title">Iberian Peninsula Loop · 10 nights</div>
+      <span class="ts-tag ts-tag-flight">1 flight</span>
+      <span class="ts-tag ts-tag-rail">3 rail legs</span>
+      <span class="ts-tag">Open-jaw</span>
+    </div>
+    <div class="ts-example-meta">Fly INTO Lisbon (LIS) · Return FROM Madrid (MAD)</div>
+    <ul class="ts-leg-list">
+      <li class="ts-leg">
+        <span class="ts-leg-city">Lisbon</span>
+        <span class="ts-tag ts-tag-flight">Fly in</span>
+        <span class="ts-leg-note">3 nights — Alfama, Belém, Sintra day trip</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Seville</span>
+        <span class="ts-tag ts-tag-rail">~3h bus/rail</span>
+        <span class="ts-leg-note">2 nights — Alcázar, tapas bar crawl, Flamenco</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Barcelona</span>
+        <span class="ts-tag ts-tag-flight">1h20 flight</span>
+        <span class="ts-leg-note">3 nights — Gaudí, Gothic Quarter, La Boqueria</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Madrid → MAD</span>
+        <span class="ts-tag ts-tag-rail">2h30 AVE</span>
+        <span class="ts-leg-note">2 nights — Prado, El Retiro; fly home from MAD</span>
+      </li>
+    </ul>
+    <div class="ts-example-tip"><strong>Tip:</strong> The Lisbon–Seville gap is the least seamless leg (no high-speed rail). Consider a Flixbus or a 1-stop train via Badajoz/Huelva (~3h30). The rest of the arc is fast rail throughout.</div>
+  </div>
+
+  <!-- Southeast Asia Arc -->
+  <div class="ts-example">
+    <div class="ts-example-head">
+      <div class="ts-example-title">Southeast Asia Arc · 12 nights</div>
+      <span class="ts-tag ts-tag-flight">4 flights</span>
+      <span class="ts-tag">Multi-city</span>
+    </div>
+    <div class="ts-example-meta">All one-way budget flights — fly in and out of any city</div>
+    <ul class="ts-leg-list">
+      <li class="ts-leg">
+        <span class="ts-leg-city">Bangkok</span>
+        <span class="ts-tag ts-tag-flight">Fly in</span>
+        <span class="ts-leg-note">3 nights — temples, street food, Chao Phraya</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Chiang Mai</span>
+        <span class="ts-tag ts-tag-flight">1h AirAsia ~$30</span>
+        <span class="ts-leg-note">3 nights — Doi Inthanon, Sunday Walking Street</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Hanoi</span>
+        <span class="ts-tag ts-tag-flight">2h VietJet ~$40</span>
+        <span class="ts-leg-note">3 nights — Old Quarter, Ha Long Bay day tour</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Ho Chi Minh City</span>
+        <span class="ts-tag ts-tag-flight">2h Vietnam Air</span>
+        <span class="ts-leg-note">3 nights — Ben Thanh, Mekong Delta, Phú Quốc option</span>
+      </li>
+    </ul>
+    <div class="ts-example-tip"><strong>Tip:</strong> Budget airlines in Southeast Asia run 3–4× daily on these routes. Book each leg separately on Google Flights or directly with AirAsia/VietJet — total cost for the connecting flights is typically under $120. Enter Bangkok on a through-ticket from the US and book the regional hops independently.</div>
+  </div>
+
+  <!-- Mediterranean Sampler -->
+  <div class="ts-example">
+    <div class="ts-example-head">
+      <div class="ts-example-title">Mediterranean Sampler · 9 nights</div>
+      <span class="ts-tag ts-tag-flight">2 flights</span>
+      <span class="ts-tag ts-tag-ferry">1 ferry</span>
+      <span class="ts-tag">Open-jaw</span>
+    </div>
+    <div class="ts-example-meta">Fly INTO Athens (ATH) · Return FROM Rome (FCO)</div>
+    <ul class="ts-leg-list">
+      <li class="ts-leg">
+        <span class="ts-leg-city">Athens</span>
+        <span class="ts-tag ts-tag-flight">Fly in</span>
+        <span class="ts-leg-note">3 nights — Acropolis, Plaka, Monastiraki</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Santorini</span>
+        <span class="ts-tag ts-tag-ferry">~8h ferry</span>
+        <span class="ts-leg-note">2 nights — Oia sunset, caldera views</span>
+      </li>
+      <li class="ts-leg">
+        <span class="ts-leg-city">Rome</span>
+        <span class="ts-tag ts-tag-flight">1h20 flight to FCO</span>
+        <span class="ts-leg-note">4 nights — Colosseum, Vatican, Trastevere; fly home</span>
+      </li>
+    </ul>
+    <div class="ts-example-tip"><strong>Tip:</strong> The overnight Santorini ferry from Piraeus leaves around 9 pm and arrives at 5–6 am — book a cabin for a proper night's sleep. Flying Athens→Santorini is 45 min and cheaper in high season; the ferry is the better experience out of season.</div>
+  </div>
+
+</div>
+
+<!-- ─── 7. Planning Order ─────────────────────────────── -->
+<div class="ts-section">
+  <h2>How to Plan It — The Right Sequence</h2>
+  <ol class="ts-steps">
+    <li class="ts-step">
+      <div class="ts-step-body"><strong>Choose your entry and exit cities.</strong> Start with where you're flying in and out — these anchor everything else. Entry and exit can be the same city (round-trip) or different (open-jaw).</div>
+    </li>
+    <li class="ts-step">
+      <div class="ts-step-body"><strong>Map a geographic arc between them.</strong> List the cities you want to visit and arrange them so travel moves in one consistent direction. Eliminate backtracking.</div>
+    </li>
+    <li class="ts-step">
+      <div class="ts-step-body"><strong>Identify which connecting legs are rail and which are air.</strong> Any connection under ~3 hours by high-speed train: default to rail. Over that, or where no fast rail exists: budget airline or regional flight.</div>
+    </li>
+    <li class="ts-step">
+      <div class="ts-step-body"><strong>Book the transatlantic or long-haul flights first.</strong> Get the open-jaw or multi-city international fare locked before anything else. These seats constrain your schedule; the regional connections are flexible.</div>
+    </li>
+    <li class="ts-step">
+      <div class="ts-step-body"><strong>Book rail legs and regional flights.</strong> In Europe, book Eurail or point-to-point tickets (high-demand routes like Paris→Amsterdam and London→Paris sell out weeks in advance). In Asia, book Shinkansen reserved seats for travel at specific times.</div>
+    </li>
+    <li class="ts-step">
+      <div class="ts-step-body"><strong>Set accommodation check-out to allow midday city transfers.</strong> Aim for a check-out at 11 am–noon and a check-in after 3 pm at the next city. This gives you a comfortable transfer window and a few hours to explore before settling in.</div>
+    </li>
+  </ol>
+</div>
+
+<!-- ─── Cross-links ───────────────────────────────────── -->
+<div class="ts-section" style="margin-bottom:20px;">
+  <h2>Related Pages</h2>
+  <div class="ts-links">
+    <a class="ts-link-pill" href="European-Train-Guide.html">🚄 European Train Guide</a>
+    <a class="ts-link-pill" href="Baggage.html">🧳 Baggage Fees</a>
+    <a class="ts-link-pill" href="Travel-Packing.html">📦 Travel Packing</a>
+    <a class="ts-link-pill" href="Before-You-Go.html">✈️ Before You Go</a>
+    <a class="ts-link-pill" href="Day-Trips.html">🗺️ Day Trips</a>
+    <a class="ts-link-pill" href="Delta-Routes-SEA.html">🛫 Delta Routes from SEA</a>
+  </div>
+</div>
+
+</div><!-- .wrap -->
+
+<script src="../assets/toolbar.js?v=125"></script>
+</body>
+</html>
