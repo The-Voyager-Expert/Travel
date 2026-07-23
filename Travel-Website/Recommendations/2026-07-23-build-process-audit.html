@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Process Audit — 2026-07-23</title>
+<style>
+:root {
+  --bg: #f5f1ec; --surface: #ffffff; --border: #e4ddd6; --text: #3a3028;
+  --muted: #8a7f74; --accent: #b85c2a; --accent-bg: #fdf0e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1e1b18; --surface: #27231e; --border: #3c362f; --text: #ede5db;
+    --muted: #9a8f82; --accent: #c87840; --accent-bg: #2a1a10;
+  }
+}
+:root[data-theme="dark"] { --bg:#1e1b18;--surface:#27231e;--border:#3c362f;--text:#ede5db;--muted:#9a8f82;--accent:#c87840;--accent-bg:#2a1a10; }
+:root[data-theme="light"] { --bg:#f5f1ec;--surface:#ffffff;--border:#e4ddd6;--text:#3a3028;--muted:#8a7f74;--accent:#b85c2a;--accent-bg:#fdf0e8; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; padding: 32px 24px; }
+.wrap { max-width: 760px; margin: 0 auto; }
+h1 { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin-bottom: 4px; }
+.meta { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 24px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+ul { padding-left: 20px; margin-top: 4px; }
+li { margin-bottom: 6px; font-size: 13px; }
+code { background: var(--border); padding: 1px 5px; border-radius: 3px; font-size: 12px; font-family: 'SF Mono', Consolas, monospace; }
+.run-header { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 4px; padding: 10px 14px; margin-bottom: 20px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Build Process Audit</h1>
+<div class="meta">Run 5 · 2026-07-23 · 7 guides reviewed (last 30 days) · 2 failure patterns tracked · 1 fix applied</div>
+
+<div class="run-header">
+  Guides reviewed: Frankfurt, Tenerife, Amsterdam, Bilbao, Brussels, Zhangjiajie, Kauai ·
+  Prior runs: 4 (2026-07-21) · 3 (2026-07-21) · 2 (2026-07-21) · 1 (2026-07-20)
+</div>
+
+<h2>I did</h2>
+<ul>
+  <li>Read <code>CLAUDE.md</code> § Guide build phases and <code>guide_tools.py</code> USAGE docstring</li>
+  <li>Reviewed ship logs for 7 guides: Frankfurt (12 FAILs), Tenerife (4 FAILs, no PASS entry), Amsterdam (clean since 07-21), Bilbao (36 FAILs), Brussels (7 FAILs), Zhangjiajie (8 FAILs), Kauai (3 FAILs)</li>
+  <li>Read <code>Brain/Reference/audit_log.md</code> entries for all prior build-process-audit runs and related audits (guide-drift-audit, rule-compliance-audit)</li>
+  <li>Ran <code>brain_check.py</code> — 89 toolbar-version WARNs on Trip-Essentials pages (all behind v=125), 0 FAILs; out-of-scope per toolbar-version-bump memory rule</li>
+  <li>Confirmed stub subcommand implemented (lines 3475–3637 of <code>guide_tools.py</code>) and wired in CLAUDE.md Between Phase 2 and 3</li>
+  <li>Confirmed <code>check-vlog</code> subcommand implemented (lines 3952–4001) but NOT auto-called in ship chain — identified as root cause of Frankfurt's 6 verify-booking FAILs on 2026-07-22</li>
+  <li>Added advisory <code>check-vlog</code> call to ship chain in <code>guide_tools.py</code> (runs before brain-check gate, always exits 0, prints missing vlog entries automatically)</li>
+  <li>Updated ship USAGE docstring to document the new advisory step</li>
+  <li>Added log-row to <em>verify-booking blind retry loop</em> entry in site-drift-log.html (Frankfurt 6 FAILs + advisory wired)</li>
+  <li>Added log-row to <em>High validate FAIL count</em> entry in site-drift-log.html (stub now wired in CLAUDE.md)</li>
+  <li>Updated site-drift-log.html subtitle timestamp to 2026-07-23</li>
+  <li>Added TR-8 pill fragment cross-reference validator gap to <code>To Do List/To_Do_List.md</code></li>
+  <li>Wrote this report to <code>Travel-Website/Recommendations/2026-07-23-build-process-audit.html</code></li>
+  <li>Prepended entry to <code>Brain/Reference/audit_log.md</code></li>
+</ul>
+
+<h2>I built</h2>
+<ul>
+  <li><strong>Advisory check-vlog step in ship chain</strong> — <code>Brain/scripts/guide_tools.py</code> lines 4066–4081: added <code>_run_check_vlog(_vlog_city)</code> call between <code>_patch_verification_log</code> and the brain-check gate. Runs in static mode (no network calls), always exits 0, prints all missing <code>verification_log.json</code> entries before the gate chain starts. Eliminates the blind FAIL @ verify-booking retry loop (Frankfurt: 6 FAILs on 07-22 despite check-vlog being available as standalone since 07-21). Updated USAGE docstring to document <code>check-vlog(advisory) + brain-check + validate + verify + verify-booking</code> chain shape.</li>
+</ul>
+
+<h2>I logged in the to-do list</h2>
+<ul>
+  <li><strong>TR-8 pill fragment cross-reference validator gap</strong> — newly shipped guides consistently have wrong also-on-site pill fragment anchors for Weather and Safety Guide pills. Cribs write <code>#City-Folder-Name</code> (hyphen) but Weather needs CLIMATE_DATA key (space form) and Safety Guide needs data-city attribute (space form). Found in 3 of 5 guides in guide-drift-audit run 2 (Coeur-dAlene, Hilton Head Island, Marco Island). Validator checks fragment existence but not format correctness. Fix: add cross-reference check in <code>validate_itinerary.py</code>. Handler: validator maintainer.</li>
+</ul>
+
+<h2>I logged in the Drift log</h2>
+<ul>
+  <li><strong>verify-booking blind retry loop</strong> — appended log-row: Frankfurt ×6 FAILs on 2026-07-22 despite check-vlog standalone being available since 2026-07-21. Root cause confirmed: cribs don't run check-vlog manually before ship. Fix applied this run (advisory auto-step in ship chain).</li>
+  <li><strong>High validate FAIL count</strong> — appended log-row: Frankfurt 3 FAILs @ validate this run; stub command now wired in CLAUDE.md (Between Phase 2 and 3), confirming the structural-error mitigation path is in place.</li>
+</ul>
+
+</div>
+</body>
+</html>
