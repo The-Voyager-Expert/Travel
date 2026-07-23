@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core Rules Coherence Audit — 2026-07-23</title>
+<style>
+/* ── Reset + base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #3d3a32;
+  background: #fdf8f0;
+  padding: 40px 48px 64px;
+  max-width: 960px;
+}
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #e8e0d0; }
+}
+:root[data-theme="dark"] body { background: #1a1a1a; color: #e8e0d0; }
+:root[data-theme="light"] body { background: #fdf8f0; color: #3d3a32; }
+
+/* ── Title banner ── */
+h1 {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #3d3a32;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(90deg, #b85c2a 0%, #c8a44a 100%) 1;
+}
+@media (prefers-color-scheme: dark) { h1 { color: #e8e0d0; } }
+:root[data-theme="dark"] h1 { color: #e8e0d0; }
+:root[data-theme="light"] h1 { color: #3d3a32; }
+
+.run-meta {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 32px;
+  margin-top: 6px;
+}
+
+/* ── Section headings ── */
+h2 {
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #b85c2a;
+  margin-top: 40px;
+  margin-bottom: 14px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e8ddd0;
+}
+@media (prefers-color-scheme: dark) { h2 { border-color: #3a3530; } }
+:root[data-theme="dark"] h2 { border-color: #3a3530; }
+
+h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #c8a44a;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+/* ── Status badges ── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+.badge-pass { background: #d4edda; color: #155724; }
+.badge-none { background: #e8ddd0; color: #6d5d4e; }
+.badge-skip { background: #e8e0f0; color: #4a3d6e; }
+.badge-warn { background: #fff3cd; color: #856404; }
+@media (prefers-color-scheme: dark) {
+  .badge-pass { background: #1a3a22; color: #75c68a; }
+  .badge-none { background: #2a2520; color: #b8a898; }
+  .badge-skip { background: #1e1a2e; color: #9a88c8; }
+  .badge-warn { background: #2a2410; color: #c8a44a; }
+}
+
+/* ── Stat tiles ── */
+.stat-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+.stat-tile {
+  flex: 1 1 130px;
+  background: #fff;
+  border: 1px solid #e8ddd0;
+  border-radius: 6px;
+  padding: 14px 18px;
+  text-align: center;
+}
+@media (prefers-color-scheme: dark) {
+  .stat-tile { background: #252220; border-color: #3a3530; }
+}
+:root[data-theme="dark"] .stat-tile { background: #252220; border-color: #3a3530; }
+.stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: #b85c2a;
+  line-height: 1.2;
+}
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* ── Check table ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+}
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  padding: 8px 10px;
+  border-bottom: 2px solid #e8ddd0;
+  background: #faf6f0;
+}
+@media (prefers-color-scheme: dark) {
+  th { background: #222; border-color: #3a3530; }
+}
+:root[data-theme="dark"] th { background: #222; border-color: #3a3530; }
+td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #f0ede8;
+  vertical-align: top;
+}
+@media (prefers-color-scheme: dark) {
+  td { border-color: #2a2520; }
+}
+:root[data-theme="dark"] td { border-color: #2a2520; }
+tr:last-child td { border-bottom: none; }
+
+.check-id { font-weight: 700; color: #c8a44a; white-space: nowrap; }
+.check-result { font-size: 14px; text-align: center; }
+
+/* ── Code / inline ── */
+code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background: #f0ede8;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+@media (prefers-color-scheme: dark) {
+  code { background: #2a2520; }
+}
+:root[data-theme="dark"] code { background: #2a2520; }
+
+/* ── Section cards ── */
+.card {
+  background: #fff;
+  border: 1px solid #e8ddd0;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin: 10px 0;
+}
+@media (prefers-color-scheme: dark) {
+  .card { background: #222; border-color: #3a3530; }
+}
+:root[data-theme="dark"] .card { background: #222; border-color: #3a3530; }
+
+.clean-box {
+  background: #f0f9f2;
+  border-left: 3px solid #75c68a;
+  padding: 10px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 10px 0;
+  font-size: 13px;
+}
+@media (prefers-color-scheme: dark) {
+  .clean-box { background: #1a2e20; border-color: #4a8c5a; }
+}
+:root[data-theme="dark"] .clean-box { background: #1a2e20; border-color: #4a8c5a; }
+
+p, li { margin-bottom: 6px; }
+ul, ol { padding-left: 20px; }
+</style>
+</head>
+<body>
+
+<h1>Core Rules Coherence Audit</h1>
+<p class="run-meta">Run 10 · 2026-07-23 · Scheduled automated audit · Prev run: 2026-07-22 (run 9)</p>
+
+<!-- ── Summary tiles ── -->
+<div class="stat-row">
+  <div class="stat-tile">
+    <div class="stat-num">0</div>
+    <div class="stat-label">CORE RULES Changed</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Cross-ref Issues</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Contradictions</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Ambiguity Flags</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-num">11</div>
+    <div class="stat-label">Redundant Groups</div>
+  </div>
+  <div class="stat-tile">
+    <div class="stat-num">23/23</div>
+    <div class="stat-label">Validator Checks</div>
+  </div>
+</div>
+
+<!-- ─────────────────────────── S1 ─────────────────────────── -->
+<h2>§ 1 — CORE RULES Changes Detected</h2>
+<div class="clean-box">
+  <strong>No changes detected.</strong> Detection window: 2026-07-22 → 2026-07-23. No commits to
+  <code>Brain/scripts/core_rules_checksums.json</code> in the window. Live SHA-256 comparison of all 27
+  CORE RULES files against stored checksums: <strong>0 drift</strong>. CASCADE skipped.
+</div>
+<p>Changed: <span class="badge badge-none">none</span> &nbsp;
+   New: <span class="badge badge-none">none</span> &nbsp;
+   Removed: <span class="badge badge-none">none</span></p>
+
+<!-- ─────────────────────────── S2 ─────────────────────────── -->
+<h2>§ 2 — Cross-Reference Health</h2>
+<div class="clean-box">
+  <strong>0 orphaned cross-references.</strong> All "Full rule:" pointers and "See &lt;filename&gt;" references in the 27 CORE RULES files resolve to files on disk. On-demand doc references (Delta / Hotels &amp; Rentals / Car Rentals) are Drive-only and resolve via the mounted path.
+</div>
+
+<h3>Files with cross-references checked</h3>
+<ul>
+  <li><code>Photos Rules.html</code> → <code>Rules for Claude.html</code> (Full rule) ✅</li>
+  <li><code>Links.html</code> → <code>Rules for Claude.html</code> (Full rule) ✅</li>
+  <li><code>Guide Structure.html</code> → all 16 Extra Section files, Reference docs, On Demand docs ✅</li>
+  <li><code>Rules for Claude.html</code> → <code>Tours - Extra Section.html</code>, <code>Icon Order and Format.html</code>,
+      <code>Stops Structure.html</code>, <code>Day Structure.html</code>, <code>Guide Structure.html</code>,
+      <code>Toolbar.html</code>, <code>Ship Checklist.html</code> ✅</li>
+</ul>
+
+<!-- ─────────────────────────── S3 ─────────────────────────── -->
+<h2>§ 3 — Stale Class &amp; Script References</h2>
+
+<h3>Class names</h3>
+<table>
+  <tr><th>Pattern</th><th>Appears in</th><th>Status</th></tr>
+  <tr>
+    <td><code>.trip-resource-pill</code></td>
+    <td><code>Guide Structure.html</code> §5</td>
+    <td><span class="badge badge-pass">OK</span> — correctly documented as retired &amp; forbidden; not a live requirement</td>
+  </tr>
+  <tr>
+    <td><code>footnote.js</code></td>
+    <td><code>Rules for Claude.html</code> §4</td>
+    <td><span class="badge badge-pass">OK</span> — correctly documented as removed/archived</td>
+  </tr>
+  <tr>
+    <td><code>Brain/Reference/Guide Style.css</code></td>
+    <td><code>Rules for Claude.html</code> §2 + §4</td>
+    <td><span class="badge badge-pass">OK</span> — correctly documented as retired (twice); current canonical is <code>guide-style.css</code></td>
+  </tr>
+</table>
+<p style="font-size:13px; color:#888; margin-top:8px;">All three retired-pattern appearances are anti-pattern documentation (they tell Claude what NOT to do). No live usage; no defects.</p>
+
+<h3>Script references</h3>
+<div class="clean-box">
+  All <code>.py</code> script names referenced in CORE RULES files exist on disk under <code>Brain/scripts/</code>. 0 missing scripts.
+</div>
+
+<!-- ─────────────────────────── S4 ─────────────────────────── -->
+<h2>§ 4 — Contradictions</h2>
+<div class="clean-box">
+  <strong>0 contradictions detected.</strong> All historically-drifting pairs verified coherent this run.
+</div>
+
+<table>
+  <tr>
+    <th class="check-id">Pair</th>
+    <th>Description</th>
+    <th>Result</th>
+  </tr>
+  <tr>
+    <td class="check-id">Nav pills</td>
+    <td><code>_OVERVIEW_PILL_CANONICAL_LABELS</code> (validate_itinerary.py) vs Trip Overview.html §3 — 15 pills checked</td>
+    <td class="check-result">✅</td>
+  </tr>
+  <tr>
+    <td class="check-id">Section order</td>
+    <td><code>eoi_canonical_order</code> (17 entries in validator) vs Guide Structure.html §2 section list</td>
+    <td class="check-result">✅</td>
+  </tr>
+  <tr>
+    <td class="check-id">Also-on-site pills</td>
+    <td><code>brain_check.py</code> <code>_CANONICAL_PAIRS</code> (14) vs CORE RULES declared pill set (Guide Structure §5)</td>
+    <td class="check-result">✅</td>
+  </tr>
+  <tr>
+    <td class="check-id">Tours bar</td>
+    <td>Tours - Extra Section.html §4 (4.5+★ · ≥6 reviews) vs <code>validate_itinerary.py</code> enforced thresholds</td>
+    <td class="check-result">✅</td>
+  </tr>
+  <tr>
+    <td class="check-id">Claude Inspiration</td>
+    <td>§1 "Required" status + §2 white-bg + nav pill "✨ Claude Inspiration" — all three match validator</td>
+    <td class="check-result">✅</td>
+  </tr>
+  <tr>
+    <td class="check-id">Tilde carve-out</td>
+    <td>Icon Order and Format.html tilde rule vs DriftyCat + validator global tilde ban</td>
+    <td class="check-result">✅</td>
+  </tr>
+  <tr>
+    <td class="check-id">BUILD_STATE_PHASE_5_MAP</td>
+    <td>All 16 CORE RULES filenames referenced in the map exist on disk</td>
+    <td class="check-result">✅</td>
+  </tr>
+  <tr>
+    <td class="check-id">Tours exclusions</td>
+    <td>Tours §2 exclusion list vs <code>banned_tour_types</code> in validate_itinerary.py — culinary/tasting/gastro all present</td>
+    <td class="check-result">✅</td>
+  </tr>
+</table>
+
+<!-- ─────────────────────────── S5 ─────────────────────────── -->
+<h2>§ 5 — Ambiguity Flags</h2>
+<div class="clean-box">
+  <strong>0 new ambiguity flags.</strong> Two potential patterns found; both resolved on context.
+</div>
+
+<table>
+  <tr><th>Location</th><th>Text</th><th>Verdict</th></tr>
+  <tr>
+    <td><code>Train Stations Near Hotel - Extra Section.html</code> Summary</td>
+    <td>"The two are <em>usually</em> different stations in Europe."</td>
+    <td><span class="badge badge-pass">Not a defect</span> — appears in the meta Summary field (descriptive), not in a rule body. Describes a geographic reality, not a rule.</td>
+  </tr>
+  <tr>
+    <td><code>Rules for Claude.html</code> §6 hedging-language list</td>
+    <td>Lists "typically" / "usually" as banned hedging language</td>
+    <td><span class="badge badge-pass">Not a defect</span> — these are the prohibited phrases themselves, enumerated correctly in the ban list.</td>
+  </tr>
+</table>
+
+<!-- ─────────────────────────── S6 ─────────────────────────── -->
+<h2>§ 6 — Redundancy Flags</h2>
+<div class="card">
+  <p><strong>11 redundant groups — unchanged from run 9. All intentional boilerplate.</strong></p>
+  <ul>
+    <li>All-file banner ("ATTENTION: THIS DOCUMENT IS READ-ONLY…") — all 27 files. Intentional: each file must carry the read-only notice independently.</li>
+    <li>Address city/country carve-outs ("The city is included only when…" / "The country is included only when…") — in 9 section files sharing address format rules. Intentional: each section file is self-contained for build-time reference.</li>
+    <li>Seafood exclusion rule — Restaurants Near Hotel, Downtown Restaurants, Michelin Restaurants. Intentional: each restaurant section independently requires the rule.</li>
+    <li>Walk/ride/hotel return format — Cappuccino + Restaurants Near Hotel. Intentional formatting boilerplate.</li>
+    <li>Icon tram format — Day Structure + Stops Structure (shared transit pattern). Intentional.</li>
+    <li>Tour entry format — Tours + Icon Order and Format. Intentional: Icon Order references the tour row for format completeness.</li>
+    <li>"When the restaurant is in the Hotel Building" — Michelin + Restaurants Near Hotel. Intentional shared rule.</li>
+  </ul>
+</div>
+
+<!-- ─────────────────────────── S7 ─────────────────────────── -->
+<h2>§ 7 — Cascade Summary</h2>
+<div class="clean-box">
+  <strong>CASCADE skipped.</strong> No CORE RULES files changed since the last run (2026-07-22). No cascade steps needed on any reference doc, CLAUDE.md, Brain.md, Validator Index, or Rule Dependencies.
+</div>
+
+<!-- ─────────────────────────── S8 ─────────────────────────── -->
+<h2>§ 8 — Validator Status</h2>
+<table>
+  <tr><th>Script</th><th>Result</th><th>Notes</th></tr>
+  <tr>
+    <td><code>validate_core_rules_coherence.py</code></td>
+    <td><span class="badge badge-pass">EXIT 0 — 23/23 PASS</span></td>
+    <td>All C-01 through C-23 checks pass. Unchanged from run 9. Drive-only (not committed to git per established convention).</td>
+  </tr>
+  <tr>
+    <td><code>brain_check.py</code></td>
+    <td><span class="badge badge-warn">195/282 ok · 87 warn · 0 fail</span></td>
+    <td>Exit 0. Warnings: 16 pages on toolbar.js?v=124 (behind v=125, TB-4b acceptable); <code>check_non_guide_data_updated</code> for Safety-Guide.html and Travel-Stats.html (pre-existing, in To Do List).</td>
+  </tr>
+  <tr>
+    <td><code>pre_push_guard.py</code></td>
+    <td><span class="badge badge-pass">EXIT 0</span></td>
+    <td>No unvalidated guide stamps blocking push.</td>
+  </tr>
+</table>
+
+<!-- ─────────────────────────── S9 ─────────────────────────── -->
+<h2>§ 9 — Owner Items</h2>
+<div class="clean-box">
+  <strong>0 owner items this run.</strong> No CORE RULES contradictions or gaps requiring owner attention. Pre-existing owner item from the To Do List (check_html_date_stamps / inline date annotations) remains out of scope for this routine.
+</div>
+
+<!-- ─────────────────────────── S10 ─────────────────────────── -->
+<h2>§ 10 — Files Read &amp; Checked</h2>
+<table>
+  <tr><th>Category</th><th>Files</th></tr>
+  <tr>
+    <td>CORE RULES HTML (full read)</td>
+    <td>All 27 — Rules for Claude.html · Guide Structure.html · Day Structure.html · Trip Overview.html · Hotel Banner.html · Stops Structure.html · Motion Rule.html · Tickets.html · Photos Rules.html · Links.html · Icon Order and Format.html · and all 16 Extra Section files</td>
+  </tr>
+  <tr>
+    <td>Validators</td>
+    <td><code>validate_itinerary.py</code> (key structures extracted) · <code>brain_check.py</code> (run + CANONICAL_PAIRS extracted) · <code>validate_core_rules_coherence.py</code> (run)</td>
+  </tr>
+  <tr>
+    <td>Checksums</td>
+    <td><code>Brain/scripts/core_rules_checksums.json</code> — live SHA-256 comparison vs all 27 files</td>
+  </tr>
+  <tr>
+    <td>Audit log</td>
+    <td><code>Brain/Reference/audit_log.md</code> (detection window established)</td>
+  </tr>
+</table>
+
+<p style="margin-top:32px; font-size:12px; color:#aaa;">Report generated 2026-07-23 · Run 10 · Next scheduled run: 2026-07-24</p>
+
+</body>
+</html>
