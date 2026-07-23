@@ -1729,6 +1729,96 @@
     _injectDayJump();
   }
 
+  /* ── Save for offline — pill on guide pages so readers can explicitly cache
+     the guide before going offline (flight, tunnel, abroad without data).
+     The SW already caches every visited page; this button confirms intent and
+     persists the saved state in localStorage so returning visits show ✓. ── */
+  function _injectOfflineBtn() {
+    if (!isRealGuide) return;
+    if (!('caches' in window)) return;
+
+    var storageKey = 'tve-offline-' + location.pathname;
+    var saved = !!localStorage.getItem(storageKey);
+
+    var btn = document.createElement('a');
+    btn.href = 'javascript:void(0)';
+    btn.className = 'overview-extra-link';
+    btn.id = 'tve-offline-btn';
+    btn.textContent = saved ? '✓ Saved offline' : '💾 Save for offline';
+    if (saved) {
+      btn.style.setProperty('opacity', '0.55', 'important');
+      btn.style.setProperty('pointer-events', 'none', 'important');
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      if (localStorage.getItem(storageKey)) return;
+      btn.textContent = 'Saving…';
+      var markSaved = function () {
+        localStorage.setItem(storageKey, '1');
+        btn.textContent = '✓ Saved offline';
+        btn.style.setProperty('opacity', '0.55', 'important');
+        btn.style.setProperty('pointer-events', 'none', 'important');
+      };
+      /* caches.match searches all caches — if SW already cached this page on
+         load (normal case), confirm immediately without a second network hit. */
+      caches.match(location.href).then(function (hit) {
+        if (hit) return markSaved();
+        /* Not cached yet (first load, SW just registered) — fetch it; the SW
+           will intercept and cache the response. */
+        return fetch(location.href).then(markSaved)['catch'](markSaved);
+      })['catch'](markSaved);
+    });
+
+    /* Inject into the ICS pill row (_injectICSExport runs first because it is
+       registered above; by the time this runs #ics-cal-pill already exists). */
+    var icsCalPill = document.getElementById('ics-cal-pill');
+    if (icsCalPill) {
+      var pillRow = icsCalPill.parentNode;
+      btn.style.setProperty('flex', '1 1 0', 'important');
+      btn.style.setProperty('min-width', '0', 'important');
+      btn.style.setProperty('align-items', 'center', 'important');
+      btn.style.setProperty('justify-content', 'center', 'important');
+      btn.style.setProperty('text-align', 'center', 'important');
+      pillRow.appendChild(btn);
+      /* iOS :active workaround — touch events don't reliably fire :active */
+      btn.addEventListener('touchstart', function () {
+        if (localStorage.getItem(storageKey)) return;
+        btn.classList.add('tve-pressed');
+        btn.style.setProperty('color', '#fff', 'important');
+        btn.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
+      }, { passive: true });
+      btn.addEventListener('touchend', function () {
+        setTimeout(function () {
+          btn.classList.remove('tve-pressed');
+          btn.style.removeProperty('color');
+          btn.style.removeProperty('-webkit-text-fill-color');
+        }, 300);
+      }, { passive: true });
+      btn.addEventListener('touchcancel', function () {
+        btn.classList.remove('tve-pressed');
+        btn.style.removeProperty('color');
+        btn.style.removeProperty('-webkit-text-fill-color');
+      }, { passive: true });
+    } else {
+      /* Fallback: no ICS row (guide without overview days) — insert before extras */
+      var offlineDays = document.querySelectorAll('.overview-day');
+      if (!offlineDays.length) return;
+      var offlineLast = offlineDays[offlineDays.length - 1];
+      var offlineExtras = offlineLast.parentNode.querySelector('.overview-extras');
+      if (offlineExtras) {
+        offlineExtras.parentNode.insertBefore(btn, offlineExtras);
+      } else {
+        offlineLast.parentNode.appendChild(btn);
+      }
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectOfflineBtn);
+  } else {
+    _injectOfflineBtn();
+  }
+
   /* ── Weather widget — loaded on the Guides index ONLY ─────────────────────
      weather.js lives in assets/ (permanent home). On the index it adds the
      🌡 Weather control in the title banner (city picker + monthly high/low
