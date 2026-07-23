@@ -32,34 +32,7 @@
 }
 
 /* ── Search bar ───────────────────────────────────── */
-.dt-search-bar {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin: 28px 0 24px;
-  background: var(--dt-card);
-  border: 1.5px solid var(--dt-accent);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--dt-shadow);
-}
-.dt-search-bar input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 16px;
-  padding: 11px 14px;
-  color: var(--dt-ink);
-  font-family: inherit;
-}
-.dt-search-bar input::placeholder { color: var(--dt-subtle); }
-.dt-search-icon {
-  padding: 0 14px;
-  color: var(--dt-accent);
-  font-size: 16px;
-  user-select: none;
-}
+.dt-search-wrap { display: flex; justify-content: center; margin: 28px 0 24px; }
 
 /* ── Stats bar ────────────────────────────────────── */
 .dt-stats {
@@ -215,9 +188,8 @@
     Every train day trip from every guide — organized by departure city. Tap a city to see where you can go.
   </p>
 
-  <div class="dt-search-bar">
-    <span class="dt-search-icon">🔍</span>
-    <input type="search" id="dt-search" placeholder="Filter by departure city" aria-label="Filter by departure city">
+  <div class="dt-search-wrap">
+    <input type="search" id="dt-search" class="search-input" placeholder="Filter by departure city" aria-label="Filter by departure city" autocomplete="off" style="width:280px;">
   </div>
 
   <div class="dt-stats" id="dt-stats"></div>
@@ -305,6 +277,16 @@ function filter(q) {
 }
 
 search.addEventListener('input', () => filter(search.value));
+
+if (window.TVESearch) {
+  TVESearch.attach(search, {
+    items: DATA.map(d => ({ name: d.city, sub: '' })),
+    onPick: function(it) {
+      search.value = it.name;
+      filter(it.name);
+    }
+  });
+}
 
 // Initial render
 render(DATA);
