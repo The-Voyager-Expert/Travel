@@ -635,16 +635,33 @@ function renderCountryLabelVisibility() {
   // minors — the only difference is majors skip the "is this country's shape
   // even big enough on screen" gate, since a major is only ever suppressed by
   // an actual clash, not by being small (that's what makes it "major").
+  // FIXED (2026-07-22): old b.contains(center) check hid the label for large
+  // countries when zoomed into a corner (e.g. "Brazil" missing when viewing NE
+  // Brazil, its true center being in central Brazil). Now: if the country bounds
+  // overlap the viewport we show the label — at the true LABEL_CENTER when it's
+  // in view, or at the center of the country's visible slice otherwise.
   const b = map.getBounds();
   for (const { lyr, isMinor } of countryLabelEntries) {
     const tt = lyr.getTooltip();
     if (!tt) continue;
-    const center = tt.getLatLng();
-    if (!b.contains(center)) { lyr.closeTooltip(); continue; }
+    const cb = lyr._voyagerBounds;
+    if (!b.overlaps(cb)) { lyr.closeTooltip(); continue; }
+    const trueCenter = lyr._voyagerLabelCenter;
+    let center;
+    if (b.contains(trueCenter)) {
+      center = trueCenter;
+    } else {
+      // Country straddles the viewport edge — label the visible slice's center
+      const latMin = Math.max(b.getSouth(), cb.getSouth());
+      const latMax = Math.min(b.getNorth(), cb.getNorth());
+      const lngMin = Math.max(b.getWest(), cb.getWest());
+      const lngMax = Math.min(b.getEast(), cb.getEast());
+      if (latMin >= latMax || lngMin >= lngMax) { lyr.closeTooltip(); continue; }
+      center = L.latLng((latMin + latMax) / 2, (lngMin + lngMax) / 2);
+    }
     if (isMinor) {
-      const lb = lyr._voyagerBounds;
-      const p1 = map.latLngToContainerPoint(lb.getNorthWest());
-      const p2 = map.latLngToContainerPoint(lb.getSouthEast());
+      const p1 = map.latLngToContainerPoint(cb.getNorthWest());
+      const p2 = map.latLngToContainerPoint(cb.getSouthEast());
       const w = Math.abs(p2.x - p1.x), h = Math.abs(p2.y - p1.y);
       if (w < 40 || h < 20) { lyr.closeTooltip(); continue; }
     }
@@ -667,6 +684,7 @@ function renderCountryLabelVisibility() {
       if (rect.x < q.x + q.w && rect.x + rect.w > q.x && rect.y < q.y + q.h && rect.y + rect.h > q.y) { clash = true; break; }
     }
     if (clash) { lyr.closeTooltip(); continue; }
+    tt.setLatLng(center);   // keep tooltip position fresh (may be clamped slice center)
     lyr.openTooltip();
     labelPlacedRects.push(rect);
   }
