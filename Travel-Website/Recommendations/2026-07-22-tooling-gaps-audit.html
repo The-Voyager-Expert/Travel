@@ -1,0 +1,403 @@
+<title>Tooling Gaps Audit — 2026-07-22</title>
+<style>
+  :root {
+    --accent: #b85c2a;
+    --accent-dim: #8b3d15;
+    --gold: #8a6c1a;
+    --gold-light: #c9a33a;
+    --bg: #f7f4ee;
+    --surface: #efe9df;
+    --surface2: #e4ddd2;
+    --text: #2e2a22;
+    --text-muted: #6b6055;
+    --border: #cfc7b8;
+    --built-bg: #e8f0e2;
+    --built-text: #2a5216;
+    --logged-bg: #fdf2e8;
+    --logged-text: #6b3010;
+    --dropped-bg: #f0eee8;
+    --dropped-text: #5a5248;
+    --code-bg: #e8e2d8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1a14;
+      --surface: #272218;
+      --surface2: #332c21;
+      --text: #e8e0d4;
+      --text-muted: #a09080;
+      --border: #4a4030;
+      --built-bg: #1a2e10;
+      --built-text: #8fcf6a;
+      --logged-bg: #2e1a08;
+      --logged-text: #e8a060;
+      --dropped-bg: #22201a;
+      --dropped-text: #9a9080;
+      --code-bg: #2a2418;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1e1a14;
+    --surface: #272218;
+    --surface2: #332c21;
+    --text: #e8e0d4;
+    --text-muted: #a09080;
+    --border: #4a4030;
+    --built-bg: #1a2e10;
+    --built-text: #8fcf6a;
+    --logged-bg: #2e1a08;
+    --logged-text: #e8a060;
+    --dropped-bg: #22201a;
+    --dropped-text: #9a9080;
+    --code-bg: #2a2418;
+  }
+  :root[data-theme="light"] {
+    --accent: #b85c2a;
+    --gold: #8a6c1a;
+    --bg: #f7f4ee;
+    --surface: #efe9df;
+    --surface2: #e4ddd2;
+    --text: #2e2a22;
+    --text-muted: #6b6055;
+    --border: #cfc7b8;
+    --built-bg: #e8f0e2;
+    --built-text: #2a5216;
+    --logged-bg: #fdf2e8;
+    --logged-text: #6b3010;
+    --dropped-bg: #f0eee8;
+    --dropped-text: #5a5248;
+    --code-bg: #e8e2d8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.6;
+    padding: 24px 20px 48px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .run-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 10px;
+    margin-bottom: 6px;
+  }
+  .run-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  .run-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .run-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  /* Lede bar */
+  .lede {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .lede strong { color: var(--accent); }
+
+  /* Status chips */
+  .chip {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+  .chip-built { background: var(--built-bg); color: var(--built-text); }
+  .chip-logged { background: var(--logged-bg); color: var(--logged-text); }
+  .chip-dropped { background: var(--dropped-bg); color: var(--dropped-text); }
+  .chip-clean { background: var(--surface2); color: var(--text-muted); }
+
+  /* Section headers */
+  h2 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .card-name {
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .card-path {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    color: var(--text-muted);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  .card-body {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .card-body code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    padding: 1px 4px;
+    border-radius: 2px;
+    color: var(--text);
+  }
+
+  /* Logged items list */
+  .logged-list {
+    list-style: none;
+    margin: 6px 0 0 0;
+  }
+  .logged-list li {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    padding: 4px 0 4px 14px;
+    position: relative;
+    border-top: 1px solid var(--border);
+  }
+  .logged-list li:first-child { border-top: none; }
+  .logged-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 11px;
+    line-height: 1.9;
+  }
+  .logged-list code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    padding: 1px 4px;
+    border-radius: 2px;
+    color: var(--text);
+  }
+  .sub-list {
+    list-style: none;
+    margin: 4px 0 2px 12px;
+  }
+  .sub-list li {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    padding: 2px 0 2px 12px;
+    border-top: none;
+    position: relative;
+  }
+  .sub-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gold-light);
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  /* Clean grid */
+  .clean-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 6px;
+  }
+  .clean-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .clean-item::before { content: '✓'; color: var(--gold); font-size: 11px; }
+
+  /* Dropped */
+  .dropped-card {
+    background: var(--dropped-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+    color: var(--dropped-text);
+  }
+  .dropped-card code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    padding: 1px 4px;
+    border-radius: 2px;
+  }
+
+  .footer-note {
+    margin-top: 32px;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+</style>
+
+<div class="run-header">
+  <div class="run-title">Tooling Gaps Audit</div>
+  <div class="run-date">2026-07-22</div>
+</div>
+<div class="run-meta">scheduled weekly run · autonomous · builder mode</div>
+
+<div class="lede">
+  <strong>1 gap found → 1 built.</strong> &nbsp;11 problems logged (10 orphan-routine / 1 stale MCP ref). &nbsp;1 candidate dropped (manual routine). &nbsp;Surfaces audited: scripts (100+), routines (export + 110 SKILL.md dirs), connectors (Connectors.html), To Do List (755 lines).
+</div>
+
+<!-- BUILT -->
+<h2>What was built</h2>
+
+<div class="card">
+  <div class="card-head">
+    <span class="chip chip-built">Built</span>
+    <span class="card-name">Scheduled Tasks MCP — connector documentation</span>
+    <span class="card-path">Brain/Reference/Connectors.html</span>
+  </div>
+  <div class="card-body">
+    New "🤖 Automation &amp; Infrastructure" section added to <code>Connectors.html</code>. Documents all four tools —
+    <code>list_scheduled_tasks</code>, <code>create_scheduled_task</code>, <code>update_scheduled_task</code>, <code>delete_scheduled_task</code> — and clarifies the
+    relationship between the scheduling system and <code>voyager_routines_export.json</code> (the JSON is auto-generated by
+    <code>todo-list-sweep</code>; editing it by hand has no effect). Includes a dependency note listing which routines use this connector.
+    <br><br>
+    <strong>Gap confirmed:</strong> grep of <code>Connectors.html</code> returned 0 hits for "scheduled-tasks" before this run. The connector is referenced by
+    <code>todo-list-sweep</code> SKILL.md (<code>mcp__scheduled-tasks__list_scheduled_tasks</code>) and is the foundation for all crib registration.
+  </div>
+</div>
+
+<!-- LOGGED -->
+<h2>What was logged to the To Do List</h2>
+
+<div class="card">
+  <div class="card-head">
+    <span class="chip chip-logged">Logged</span>
+    <span class="card-name">10 orphan routines — SKILL.md exists, never registered in scheduling system</span>
+  </div>
+  <div class="card-body">
+    SKILL.md files exist on disk at <code>~/.claude/scheduled-tasks/{id}/</code> but none have entries in <code>voyager_routines_export.json</code>
+    (confirmed via full-export cross-reference). These routines never ran, so any scripts they were designed to create were also never created.
+  </div>
+  <ul class="logged-list">
+    <li>
+      <strong><code>change-propagation</code></strong> — Important sync crib: detects new features/pages/scripts added since last run and syncs all dependent docs. No registered schedule. Handler: owner — register via <code>create_scheduled_task</code> or confirm existing scope coverage.
+    </li>
+    <li>
+      <strong><code>weekly-site-sync</code></strong> — Keeps all derived surfaces in sync with live guides (day counts, map pins, stats, search index, tracker, coverage pages). No registered schedule. Handler: owner.
+    </li>
+    <li>
+      <strong><code>reference-docs-monthly-audit</code></strong> — Different scope from the registered <code>reference-docs-audit</code>: this one audits the remaining Brain/Reference MD files (Travel-Tracker-Sync, audit_log staleness, CSS consolidation docs, status dots). No registered schedule. Handler: owner.
+    </li>
+    <li>
+      <strong><code>filters-tags-index-audit</code></strong> — Very similar scope to the registered <code>filter-audit</code>; likely superseded. No registered schedule. Handler: owner — confirm if this is an older version of <code>filter-audit</code> and delete directory if redundant.
+    </li>
+    <li>
+      <strong><code>add-validator-check-5</code> through <code>add-validator-check-11</code> (7 cribs)</strong> — Day-specific validator cribs, each designed to build 1–2 new standalone validator scripts. None were ever registered/run. As a consequence, the following 9 validator scripts were never created:
+      <ul class="sub-list">
+        <li><code>validate_tipping_visas_coverage.py</code> — every guide country covered in Tipping-Guide + Visas</li>
+        <li><code>validate_best_of_link_health.py</code> — external link health sweep for Best-of pages</li>
+        <li><code>validate_day_trips_sync.py</code> — Day-Trips.html stays in sync with guide HTML</li>
+        <li><code>validate_sunrise_sunset_cities.py</code> — Sunrise-Sunset.html city array coverage</li>
+        <li><code>validate_planning_pages_coverage.py</code> — Before-You-Go / When-to-Go destination coverage</li>
+        <li><code>validate_trip_essentials_links.py</code> — link health for Festival-Finder, SIM-Cards, etc.</li>
+        <li><code>validate_best_of_guide_crosslinks.py</code> — Best-of internal guide cross-links</li>
+        <li><code>validate_redirect_targets.py</code> — redirect stubs point to correct targets</li>
+        <li><code>validate_trips_climate_sync.py</code> — Trips.html CLIMATE block matches climate.json</li>
+      </ul>
+      Handler: owner — register the 7 cribs via <code>create_scheduled_task</code> (they self-build their scripts when they run), or build the scripts manually using the SKILL.md files as specs.
+    </li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <span class="chip chip-logged">Logged</span>
+    <span class="card-name">Stale MCP tool ID in <code>todo-list-sweep</code> SKILL.md</span>
+    <span class="card-path">~/.claude/scheduled-tasks/todo-list-sweep/SKILL.md</span>
+  </div>
+  <div class="card-body">
+    The SKILL.md references <code>mcp__c9c414e0-9fa7-4ae9-9b0b-ddc88a9094c9__search_files</code> (old Drive MCP UUID)
+    for Drive-only file deletions. The current Drive MCP tool is
+    <code>mcp__31de7368-fbc7-4276-b358-ef9f010f8dd4__search_files</code> (confirmed in active deferred-tools registry).
+    The old UUID will 404 or route to a disconnected connector. Fix: update the one line in that SKILL.md.
+    Handler: owner or tooling crib.
+  </div>
+</div>
+
+<!-- CLEAN -->
+<h2>Already well-covered</h2>
+<div class="clean-grid">
+  <div class="clean-item">All 100+ scripts in Brain/scripts/ present</div>
+  <div class="clean-item">Claude in Chrome MCP documented ✓</div>
+  <div class="clean-item">Google Drive MCP documented ✓</div>
+  <div class="clean-item">Google Calendar documented ✓</div>
+  <div class="clean-item">Viator, TripAdvisor, Booking.com documented ✓</div>
+  <div class="clean-item">All 80+ registered routines have SKILL.md</div>
+  <div class="clean-item">Scripts called on ship wired correctly</div>
+  <div class="clean-item">filter-audit registered &amp; active</div>
+  <div class="clean-item">reference-docs-audit registered &amp; active</div>
+  <div class="clean-item">brain_check, validate_itinerary present</div>
+  <div class="clean-item">world_map_audit.py present &amp; scheduled</div>
+  <div class="clean-item">Daily audit cribs (7) all registered</div>
+</div>
+
+<!-- DROPPED -->
+<h2>Candidates dropped by verification</h2>
+<div class="dropped-card">
+  <code>pre-trip-deep-audit</code> — SKILL.md exists on disk, no export entry. Dropped: this routine is intentionally manual (description: "Manual — Pre-Trip Deep Audit"). Manual routines don't need scheduling system registration. Not a gap.
+</div>
+
+<div class="footer-note">
+  tooling-gaps-audit run 2026-07-22 · 1 built (Connectors.html) · 11 logged to To_Do_List.md · 1 candidate dropped · commit pending
+</div>
