@@ -1897,6 +1897,9 @@
     'buenos-aires': { n: [{ name: 'Palermo',                  why: 'Parks, restaurants, safest base for most stops', rec: true },
                            { name: 'Recoleta',                why: 'Upscale, cemetery, MALBA — elegant streets' },
                            { name: 'San Telmo',               why: 'Tango, antique market, colonial atmosphere' }] },
+    'cologne':      { n: [{ name: 'Altstadt-Nord',            why: 'Cathedral, Museum Ludwig, hotel — everything walkable', rec: true },
+                           { name: 'Altstadt-Süd',            why: 'Chocolate Museum, Museum Schnütgen, Rhine riverside' },
+                           { name: 'Deutz (right bank)',      why: 'Quieter, Rhine views of Cathedral, easy tram to old town' }] },
     'crete':        { n: [{ name: 'City Center',              why: 'Harbor, museums, Old Town — all walkable', rec: true },
                            { name: 'Ammoudara',               why: 'Beach neighborhood 4km west, quieter' },
                            { name: 'Knossos Area',            why: 'South of city, close to the palace' }] },
@@ -2124,4 +2127,154 @@
     }
   }
   _injectStopStrip();
+
+  /* ── 7-day weather strip — real guide pages only ──────────────────────────
+     Fetches a live forecast from Open-Meteo (free, no API key). Coordinates
+     come from climate.json. Response is cached in sessionStorage under
+     'wx-{slug}' so only the first page-load per session hits the network.
+     Degrades silently when offline or when the city has no coordinate entry.
+     Rendered between .title-page and .overview-section. */
+  function _injectWeatherStrip() {
+    if (!isRealGuide) return;
+    if (!navigator.onLine) return;
+
+    var cityEl = document.querySelector('.title-city');
+    if (!cityEl) return;
+    var rawCity = cityEl.textContent.trim();
+    var cityLower = rawCity.toLowerCase();
+
+    /* WMO weather-code → emoji */
+    var WMO = {
+      0:'☀️', 1:'🌤️', 2:'🌥️', 3:'☁️',
+      45:'🌫️', 48:'🌫️',
+      51:'🌦️', 53:'🌦️', 55:'🌧️',
+      56:'🌧️', 57:'🌧️',
+      61:'🌧️', 63:'🌧️', 65:'🌧️',
+      66:'🌧️', 67:'🌧️',
+      71:'🌨️', 73:'🌨️', 75:'❄️', 77:'🌨️',
+      80:'🌦️', 81:'🌧️', 82:'⛈️',
+      85:'🌨️', 86:'❄️',
+      95:'⛈️', 96:'⛈️', 99:'⛈️'
+    };
+    var DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    function _renderStrip(data) {
+      var titlePage = document.querySelector('.title-page');
+      if (!titlePage || document.getElementById('tve-wx-strip')) return;
+
+      var daily = data.daily;
+      if (!daily || !daily.time || !daily.time.length) return;
+
+      /* ── Outer strip ── */
+      var strip = document.createElement('div');
+      strip.id = 'tve-wx-strip';
+      strip.style.cssText =
+        'display:flex;align-items:center;' +
+        'background:#f0ede5;border:1px solid #ddd8cc;border-radius:6px;' +
+        'padding:6px 10px;margin-bottom:0;font-family:inherit;box-sizing:border-box;' +
+        'overflow:hidden;';
+
+      /* "This Week" label */
+      var lbl = document.createElement('div');
+      lbl.style.cssText =
+        'font-size:10px;font-weight:700;color:#9a9690;letter-spacing:0.05em;' +
+        'text-transform:uppercase;flex-shrink:0;margin-right:10px;line-height:1;';
+      lbl.textContent = 'This Week';
+      strip.appendChild(lbl);
+
+      /* 7-column grid */
+      var grid = document.createElement('div');
+      grid.style.cssText = 'display:flex;flex:1;justify-content:space-between;gap:2px;';
+
+      var n = Math.min(7, daily.time.length);
+      for (var i = 0; i < n; i++) {
+        var dt = new Date(daily.time[i] + 'T12:00:00');
+        var col = document.createElement('div');
+        col.style.cssText =
+          'display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;gap:1px;';
+
+        var dayDiv = document.createElement('div');
+        dayDiv.style.cssText =
+          'font-size:9px;font-weight:700;color:#6b6860;letter-spacing:0.03em;line-height:1.2;';
+        dayDiv.textContent = i === 0 ? 'Today' : DAY[dt.getDay()];
+
+        var iconDiv = document.createElement('div');
+        iconDiv.style.cssText = 'font-size:15px;line-height:1.3;';
+        iconDiv.textContent = WMO[daily.weathercode[i]] || '🌡️';
+
+        var tempDiv = document.createElement('div');
+        tempDiv.style.cssText =
+          'font-size:9px;color:#3d3a32;white-space:nowrap;line-height:1.2;';
+        tempDiv.textContent =
+          Math.round(daily.temperature_2m_max[i]) + '°/' +
+          Math.round(daily.temperature_2m_min[i]) + '°';
+
+        col.appendChild(dayDiv);
+        col.appendChild(iconDiv);
+        col.appendChild(tempDiv);
+        grid.appendChild(col);
+      }
+      strip.appendChild(grid);
+
+      /* Source note */
+      var src = document.createElement('div');
+      src.style.cssText =
+        'font-size:9px;color:#b0aa9e;flex-shrink:0;margin-left:8px;line-height:1;' +
+        'white-space:nowrap;';
+      src.textContent = '°C';
+      strip.appendChild(src);
+
+      titlePage.insertAdjacentElement('afterend', strip);
+    }
+
+    function _fetchForecast(lat, lon) {
+      var cacheKey = 'wx-' + cityLower.replace(/\s+/g, '-');
+      var hit = sessionStorage.getItem(cacheKey);
+      if (hit) {
+        try { _renderStrip(JSON.parse(hit)); return; } catch(e) {}
+      }
+      var url = 'https://api.open-meteo.com/v1/forecast' +
+        '?latitude=' + lat + '&longitude=' + lon +
+        '&daily=temperature_2m_max,temperature_2m_min,weathercode' +
+        '&timezone=auto&forecast_days=7';
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.timeout = 6000;
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            var data = JSON.parse(xhr.responseText);
+            try { sessionStorage.setItem(cacheKey, xhr.responseText); } catch(e) {}
+            _renderStrip(data);
+          } catch(e) {}
+        }
+      };
+      xhr.send();
+    }
+
+    /* Load climate.json → find lat/lon → fetch forecast */
+    var cxhr = new XMLHttpRequest();
+    cxhr.open('GET', base + 'assets/climate.json', true);
+    cxhr.timeout = 6000;
+    cxhr.onload = function () {
+      if (cxhr.status < 200 || cxhr.status >= 300) return;
+      try {
+        var climate = JSON.parse(cxhr.responseText);
+        var entry = null;
+        for (var k in climate) {
+          if (k === '_meta') continue;
+          if (k.toLowerCase() === cityLower) { entry = climate[k]; break; }
+        }
+        if (!entry || entry.lat == null || entry.lon == null) return;
+        _fetchForecast(entry.lat, entry.lon);
+      } catch(e) {}
+    };
+    cxhr.send();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectWeatherStrip);
+  } else {
+    _injectWeatherStrip();
+  }
+
 }());
