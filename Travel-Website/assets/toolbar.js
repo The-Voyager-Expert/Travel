@@ -862,6 +862,24 @@
     document.body.insertBefore(bar, document.body.firstChild);
   }
 
+  /* ── Guide-page back-link — thin breadcrumb bar below toolbar on guide pages ── */
+  if (isRealGuide) {
+    var backGuides = document.createElement('a');
+    backGuides.id = 'tve-back-guides';
+    backGuides.href = base + 'Guides-Index.html';
+    backGuides.textContent = '← All Guides';
+    backGuides.style.cssText = 'display:block;text-align:center;padding:5px 0;font-size:12px;font-weight:500;' +
+      'letter-spacing:.04em;color:#6b6860;background:#f0ece4;border-bottom:1px solid #dedad4;' +
+      'text-decoration:none;transition:color .12s,background .12s;';
+    backGuides.addEventListener('mouseenter', function () {
+      backGuides.style.color = '#b85c2a'; backGuides.style.background = '#f7f2e8';
+    });
+    backGuides.addEventListener('mouseleave', function () {
+      backGuides.style.color = '#6b6860'; backGuides.style.background = '#f0ece4';
+    });
+    bar.insertAdjacentElement('afterend', backGuides);
+  }
+
   /* ── Arrows inside .overview-title: [‹] · title · [›] — real guides only ─── */
   /* Deferred to DOMContentLoaded: script runs at the top of <body>, before
      .overview-title exists in the DOM. querySelector would return null if run
