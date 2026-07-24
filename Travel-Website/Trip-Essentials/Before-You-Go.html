@@ -530,20 +530,24 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
             '</div>';
         }
       }
-      // Essentials card (col 2, below Safety)
-      function prepTile(icon, label, href) {
-        return '<a href="' + href + '" class="byg-prep-tile">' +
-          '<span class="byg-prep-tile-icon">' + icon + '</span>' +
-          '<span class="byg-prep-tile-label">' + label + '</span></a>';
+      // Essentials — each as its own standalone card
+      function essCard(icon, title, linkLabel, href) {
+        return '<div class="byg-card byg-card-fixed-sm">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">' + icon + '</span><span class="byg-card-title">' + title + '</span></div>' +
+          '<div class="byg-links-row"><a href="' + href + '" class="byg-link">' + linkLabel + ' →</a></div>' +
+          '</div>';
       }
-      html += '<div class="byg-card"><div class="byg-card-head"><span class="byg-card-icon">📋</span><span class="byg-card-title">Essentials</span></div>' +
-        '<div class="byg-prep-grid">';
-      html += prepTile('👕', 'Packing', 'Travel-Packing.html');
-      html += prepTile('🛃', 'Global Entry', 'Trusted-Traveler.html');
-      if (statsLink) { html += prepTile('📊', 'Stats', statsLink); }
-      if (loungeLink) { html += prepTile('💻', 'Lounges', loungeLink); }
-      if (isEurope) { html += prepTile('🚆', 'EU Trains', 'European-Train-Guide.html'); }
-      html += '</div></div>';
+      html += essCard('👕', 'Packing', 'Packing list', 'Travel-Packing.html');
+      html += essCard('🛃', 'Global Entry', 'Find airports', 'Trusted-Traveler.html');
+      if (statsLink) {
+        var statsTitle = isUS ? 'Stats — United States' : isEurope ? 'Stats — Europe' : isAsia ? 'Stats — Asia' : isCaribbean ? 'Stats — Caribbean' : isSouthAmerica ? 'Stats — South America' : isCanada ? 'Stats — Canada' : 'Travel Stats';
+        html += essCard('📊', statsTitle, 'View stats', statsLink);
+      }
+      if (loungeLink) {
+        var loungeTitle = isUS ? 'Lounges — United States' : 'Lounges — Europe';
+        html += essCard('💻', loungeTitle, 'Find lounges', loungeLink);
+      }
+      if (isEurope) { html += essCard('🚆', 'EU Trains', 'Train guide', 'European-Train-Guide.html'); }
 
       // Visa & Entry card (col 2, below Essentials)
       var visaInfo = country ? VISA_DATA[country] : null;
