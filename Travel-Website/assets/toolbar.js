@@ -870,10 +870,10 @@
     backGuides.href = base + 'Guides-Index.html';
     backGuides.textContent = '‹ All Guides';
     backGuides.style.cssText = 'display:block;padding:5px 32px;font-size:12px;font-weight:600;' +
-      'letter-spacing:.04em;color:#7a3b1e;background:#f5f4f0;border-bottom:1px solid #e4e0da;' +
-      'text-decoration:none;transition:color .12s;';
+      'letter-spacing:.04em;color:#8a6c1a;background:#f5f4f0;border-bottom:1px solid #e4e0da;' +
+      'text-align:right;text-decoration:none;transition:color .12s;';
     backGuides.addEventListener('mouseenter', function () { backGuides.style.color = '#b85c2a'; });
-    backGuides.addEventListener('mouseleave', function () { backGuides.style.color = '#7a3b1e'; });
+    backGuides.addEventListener('mouseleave', function () { backGuides.style.color = '#8a6c1a'; });
     bar.insertAdjacentElement('afterend', backGuides);
   }
 
@@ -2186,6 +2186,10 @@
     'lisbon': { h: [
       { name: 'Sheraton Lisboa Hotel & Spa', note: 'Marriott family — pool, spa, central location near Marquês de Pombal · 8.6 Booking.com' },
       { name: 'InterContinental Lisbon by IHG', note: 'First-tier brand — 8.9 Booking.com, scenic views, Avenida da Liberdade area' }
+    ] },
+    'melbourne': { h: [
+      { name: 'The Langham Melbourne', note: 'Langham brand — riverside Southbank on the Yarra, pool, spa · 8.9 Booking.com' },
+      { name: 'Crown Towers Melbourne', note: 'Crown brand — Southbank entertainment precinct, pool, suite-focused luxury · 8.8 Booking.com' }
     ] }
   };
 
