@@ -2225,6 +2225,10 @@
       strip.appendChild(src);
 
       titlePage.insertAdjacentElement('afterend', strip);
+      /* Close the gap above (title-page margin-bottom) and below (overview-section margin-top) */
+      titlePage.style.marginBottom = '0';
+      var afterStrip = strip.nextElementSibling;
+      if (afterStrip) afterStrip.style.marginTop = '0';
     }
 
     function _fetchForecast(lat, lon) {
