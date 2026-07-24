@@ -1216,9 +1216,9 @@
         var name = nameEl ? nameEl.textContent.trim() : '';
         if (!name) return;
         var stopDesc = '', stopAddr = '', stopAddrHref = '';
+        var stopHours = '', stopDuration = '', stopWarning = '', stopTicketUrl = '';
         [].forEach.call(sb.querySelectorAll('.stop-row'), function (row) {
           var txt = row.textContent.trim();
-          /* Address row: detect by Maps URL in the link (more reliable than emoji check) */
           var mapsEl = row.querySelector('a[href*="google.com/maps"], a[href*="maps.google.com"]');
           if (!stopAddr && mapsEl) {
             stopAddr = mapsEl.textContent.trim();
@@ -1227,7 +1227,25 @@
             stopDesc = txt.slice(1).trim();
           }
         });
-        stops.push({ name: name, desc: stopDesc, addr: stopAddr, href: stopAddrHref });
+        /* Ticket/tour box rows (plain divs, not .stop-row) — hours, duration, warnings, ticket */
+        [].forEach.call(sb.querySelectorAll('.ticket-box > div, .tour-box > div'), function (div) {
+          var txt = div.textContent.trim();
+          var first = txt.charAt(0);
+          if (!stopHours && (first === '🏛' || txt.slice(0,2) === '🏛')) {
+            stopHours = txt;
+          } else if (!stopDuration && (first === '⏰' || txt.slice(0,2) === '⏰')) {
+            stopDuration = txt;
+          } else if (!stopWarning && (first === '⚠' || txt.slice(0,2) === '⚠')) {
+            stopWarning = txt;
+          } else if (!stopTicketUrl) {
+            var ticketLink = div.querySelector('a[href]:not([href*="google.com/maps"])');
+            if (ticketLink && (txt.slice(0,2) === '🎟' || txt.charAt(0) === '🎟')) {
+              stopTicketUrl = ticketLink.href;
+            }
+          }
+        });
+        stops.push({ name: name, desc: stopDesc, addr: stopAddr, href: stopAddrHref,
+                     hours: stopHours, duration: stopDuration, warning: stopWarning, ticketUrl: stopTicketUrl });
       });
       days.push({ num: num, header: header, stops: stops });
     });
@@ -1333,8 +1351,12 @@
         var descParts = [];
         day.stops.forEach(function (s, si) {
           var lines = [(si + 1) + '. ' + s.name];
+          if (s.hours) lines.push(s.hours);
+          if (s.duration) lines.push(s.duration);
           if (s.addr) lines.push('📍 ' + s.addr);
-          if (s.href) lines.push(s.href);   /* Maps URL per stop — tappable in Apple/Google Calendar */
+          if (s.href) lines.push(s.href);   /* Maps URL — tappable in Apple/Google Calendar */
+          if (s.ticketUrl) lines.push('🎟️ ' + s.ticketUrl);
+          if (s.warning) lines.push(s.warning);
           if (s.desc) lines.push(s.desc);
           descParts.push(lines.join('\n'));
         });
@@ -1913,6 +1935,9 @@
     'prague':       { n: [{ name: 'Vinohrady',                why: 'Charming Art Nouveau streets, excellent restaurants, metro', rec: true },
                            { name: 'Old Town (Staré Město)',  why: 'Clock Tower, Charles Bridge — very central but busy' },
                            { name: 'Malá Strana',             why: 'Below the castle, cobblestones, quieter side' }] },
+    'rhodes':        { n: [{ name: 'Medieval Town',                why: 'UNESCO walled city — every stop walkable from the hotel', rec: true },
+                           { name: 'New Town',                    why: 'Mandraki harbour, modern restaurants, quieter nights' },
+                           { name: 'Ixia',                        why: 'Western beachfront, close to airport, resort strip' }] },
     'rio-de-janeiro':{ n: [{ name: 'Ipanema',                 why: 'Iconic beach, safer than Copacabana, great restaurants', rec: true },
                             { name: 'Copacabana',             why: 'Most famous beach strip, central, lively' },
                             { name: 'Santa Teresa',           why: 'Bohemian hilltop, arts scene, trams up' }] },
@@ -1954,7 +1979,7 @@
     if (!entry) return;
     var wrap = document.createElement('div');
     wrap.id = 'neighborhood-selector';
-    var h = document.createElement('h2');
+    var h = document.createElement('div');
     h.className = 'extras-title';
     h.textContent = '🏨 Thinking of switching hotels?';
     var sub = document.createElement('p');
@@ -1984,6 +2009,7 @@
     wrap.appendChild(h);
     wrap.appendChild(sub);
     wrap.appendChild(grid);
+    wrap.addEventListener('click', function (e) { e.stopPropagation(); });
     also.parentNode.insertBefore(wrap, also);
   }
   if (document.readyState === 'loading') {
