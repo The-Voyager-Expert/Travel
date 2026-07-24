@@ -1430,9 +1430,8 @@
       /* pillRow uses overview-extras class so both pills inherit all chip CSS */
       var pillRow = document.createElement('div');
       pillRow.className = 'overview-extras';
-      /* force flex so mobile grid doesn't kick in for this 2-pill row;
-         gap!important needed — mobile guide-style overrides gap:0!important */
-      pillRow.setAttribute('style', 'display:flex!important;gap:8px!important;margin-bottom:8px;grid-template-columns:unset!important;width:100%;');
+      pillRow.id = 'ics-pill-row';
+      pillRow.setAttribute('style', 'display:flex;gap:8px;margin-bottom:8px;width:100%;');
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
 
