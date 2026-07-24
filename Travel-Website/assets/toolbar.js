@@ -1052,7 +1052,9 @@
           fetchXhr.send();
         });
 
-        afterEl.insertAdjacentElement('afterend', optBtn);
+        gelRow.appendChild(optBtn);
+      };
+      checkXhr.send();
 
       /* ── k-means geographic clustering ─────────────────────────────────── */
       function distKm(a, b) {
