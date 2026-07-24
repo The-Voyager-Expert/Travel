@@ -259,6 +259,8 @@
     null,
     { href: base + 'Trip-Essentials/Before-You-Go.html', text: '🧳 Before You Go' },
     null,
+    { href: base + 'Trip-Essentials/Trip-Stacking.html', text: '🗓️ Trip Stacking', full: '🗓️ Multi-Destination Trip' },
+    null,
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
     null,
     { group: '📊 Stats', children: [
