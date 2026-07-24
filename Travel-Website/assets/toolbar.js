@@ -2216,6 +2216,30 @@
     'amalfi': { h: [
       { name: 'Hotel Santa Caterina', note: 'Independent family estate — 1880s cliffside villa, saltwater pool, sea-view terraces, Michelin-starred dining · 9.6 Booking.com' },
       { name: 'Anantara Convento di Amalfi Grand Hotel', note: 'Anantara brand — converted 13th-century convent above town, infinity pool, dramatic coastal views · 9.1 Booking.com' }
+    ] },
+    'amsterdam': { h: [
+      { name: 'Waldorf Astoria Amsterdam', note: 'Waldorf Astoria brand — six 17th-century canal palaces on Herengracht, Guerlain Spa with pool, Michelin-recognized dining · 9.3 Booking.com' },
+      { name: 'InterContinental Amstel Amsterdam', note: 'IHG brand — landmark 1867 riverside building on the Amstel River, indoor pool and health club, river-terrace dining · 8.7 Booking.com' }
+    ] },
+    'annecy': { h: [
+      { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com' },
+      { name: 'Le Clos des Sens', note: 'Independent boutique — 19th-century mansion in Annecy-le-Vieux, home to a three-Michelin-star restaurant (Laurent Petit) · 8.9 Booking.com' }
+    ] },
+    'aracaju': { h: [
+      { name: 'Radisson Hotel Aracaju', note: 'Radisson brand — full-service spa, outdoor pool, 4 min walk to Aracaju Oceanarium, #1 on TripAdvisor in Aracaju' },
+      { name: 'Hotel da Costa by Nobile', note: 'Nobile Hotels — beachfront on Orla de Atalaia, outdoor pool with sea view, breakfast highly rated · 8.8 Booking.com' }
+    ] },
+    'arenal': { h: [
+      { name: 'Nayara Springs', note: 'Small Luxury Hotels — adults-only, 35 private villas each with volcanic hot-spring plunge pool, Arenal Volcano views, 24-hour butler' },
+      { name: 'Tabacón Thermal Resort & Spa', note: 'Small Luxury Hotels — natural volcanic thermal river on-site, waterfalls and pools up to 100°F, 900+ acres of rainforest · 9.1 Booking.com' }
+    ] },
+    'aruba': { h: [
+      { name: 'Bucuti & Tara Beach Resort', note: "Independent boutique — Caribbean's first carbon-neutral hotel, adults-only on Eagle Beach, complimentary breakfast · 9.6 Booking.com" },
+      { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site' }
+    ] },
+    'athens': { h: [
+      { name: 'Hotel Grande Bretagne', note: 'Marriott Luxury Collection — 1874 landmark on Syntagma Square, Acropolis-view balconies, rooftop restaurant, indoor pool · 9.2 Booking.com' },
+      { name: 'King George, a Luxury Collection Hotel, Athens', note: 'Marriott Luxury Collection — intimate 102-room boutique on Syntagma Square, rooftop Tudor Hall with Acropolis panorama · 9.3 Booking.com' }
     ] }
   };
 
