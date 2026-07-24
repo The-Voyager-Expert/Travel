@@ -2103,6 +2103,10 @@
      search process used to pick the guide hotel; added during each guide build.  */
   var HOTEL_ALT_DATA = {
     /* entries added per guide during build — see Hotels & Rentals - On Demand.html */
+    'lisbon': { h: [
+      { name: 'Sheraton Lisboa Hotel & Spa', note: 'Marriott family — pool, spa, central location near Marquês de Pombal · 8.6 Booking.com' },
+      { name: 'InterContinental Lisbon by IHG', note: 'First-tier brand — 8.9 Booking.com, scenic views, Avenida da Liberdade area' }
+    ] }
   };
 
   function _injectHotelAlternatives() {
