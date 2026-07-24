@@ -1757,6 +1757,25 @@
     _injectDayJump();
   }
 
+  /* ── ?day=N deep link — scroll to Day N on page load ────────────────────
+     Sharing guide.html?day=2 opens directly at Day 2 without hunting for it.
+     No-ops silently if the parameter is absent, non-numeric, or out of range. */
+  function _applyDayParam() {
+    if (!isRealGuide) return;
+    var raw = new URLSearchParams(location.search).get('day');
+    if (!raw) return;
+    var n = parseInt(raw, 10);
+    if (isNaN(n) || n < 1) return;
+    var target = document.getElementById('day' + n);
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _applyDayParam);
+  } else {
+    _applyDayParam();
+  }
+
   /* ── Save for offline — pill on guide pages so readers can explicitly cache
      the guide before going offline (flight, tunnel, abroad without data).
      The SW already caches every visited page; this button confirms intent and
