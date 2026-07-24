@@ -134,9 +134,11 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 .byg-intro-num { font-size: 22px; font-weight: 700; color: var(--rust,#b85c2a); line-height: 1; }
 .byg-intro-lbl { font-size: 11px; color: var(--muted,#6a6660); margin-top: 2px; }
 .byg-intro-divider { width: 1px; height: 32px; background: var(--border2,#e6e2da); }
+.byg-intro-guide { flex-shrink: 0; border-left: 1px solid var(--border2,#e6e2da); padding-left: 20px; margin-left: 4px; display: flex; align-items: center; }
 @media (max-width: 700px) {
   .byg-intro { flex-wrap: wrap; gap: 12px; margin-top: 16px; }
   .byg-intro-stats { border-left: none; padding-left: 0; margin-left: 0; border-top: 1px solid var(--border2,#e6e2da); padding-top: 12px; width: 100%; justify-content: center; }
+  .byg-intro-guide { border-left: none; padding-left: 0; margin-left: 0; border-top: 1px solid var(--border2,#e6e2da); padding-top: 12px; width: 100%; justify-content: center; }
 }
 .byg-plug-divider { border: none; border-top: 1px solid var(--border2,#e6e2da); margin: 10px 0 0; }
 .byg-voltage { font-size: 11px; color: var(--muted,#6a6660); margin-bottom: 8px; }
@@ -151,10 +153,10 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 .byg-visa-days { font-size: 22px; font-weight: 700; color: var(--text,#1a1917); margin: 8px 0 2px; }
 .byg-visa-note { font-size: 11px; color: var(--muted,#6a6660); line-height: 1.4; margin-top: 6px; margin-bottom: 6px; }
 .byg-guide-pill { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px;
-  font-weight: 600; color: #8a6c1a; text-decoration: none; padding: 0 16px; height: 40px; box-sizing: border-box;
-  border: 1.5px solid #c8a44a; border-radius: 18px;
+  font-weight: 600; color: var(--accent,#8a6c1a); text-decoration: none; padding: 0 16px; height: 40px; box-sizing: border-box;
+  border: 1.5px solid var(--gold,#c8a44a); border-radius: 18px;
   transition: border-color .15s, color .15s, box-shadow .15s; white-space: nowrap; }
-.byg-guide-pill:hover { border-color: #b85c2a; color: #b85c2a; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+.byg-guide-pill:hover { border-color: var(--rust,#b85c2a); color: var(--rust,#b85c2a); box-shadow: 0 4px 16px rgba(0,0,0,.18); }
 @media (max-width: 1000px) and (min-width: 701px) {
   .byg-cards { grid-template-columns: repeat(2, 1fr); }
 }
@@ -166,8 +168,6 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
   .byg-pick { grid-template-columns: 1fr; row-gap: 8px; margin-top: 16px; }
   .byg-find-wrap { grid-column: 1; }
   .byg-month-row { grid-column: 1; justify-self: center; }
-  /* Open Guide back in normal flow on mobile so it can't overlap the full-width search */
-  #byg-guide-slot { position: static !important; top: auto !important; right: auto !important; text-align: center; margin-bottom: 8px; }
 }
 </style>
 <link rel="stylesheet" href="../assets/mobile.css?v=53">
@@ -182,18 +182,18 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
   </div>
 </div>
 <div class="byg-wrap">
-  <div id="byg-guide-slot" style="position:absolute;top:6px;right:32px;text-align:right;z-index:2;"></div>
   <div class="byg-intro">
     <div class="byg-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
     <div class="byg-intro-body">
       <div class="byg-intro-title">Everything in one place</div>
-      <div class="byg-intro-sub">Select a city and month — weather, safety, costs, visa requirements, plug adapters, tap water, packing lists, and more, all pulled together before you go.</div>
+      <div class="byg-intro-sub">Select a city and month — weather, safety, costs, visa requirements, plug adapters, and more.</div>
     </div>
     <div class="byg-intro-stats">
       <div class="byg-intro-stat"><span class="byg-intro-num" id="byg-city-count">—</span><span class="byg-intro-lbl">cities</span></div>
       <div class="byg-intro-divider"></div>
       <div class="byg-intro-stat"><span class="byg-intro-num">12</span><span class="byg-intro-lbl">topics</span></div>
     </div>
+    <div id="byg-guide-slot" class="byg-intro-guide"></div>
   </div>
   <div class="byg-pick" style="margin-bottom:14px;margin-top:22px;">
     <div class="byg-find-wrap" style="width:100%;max-width:100%;">
@@ -970,7 +970,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       if (guideSlot) {
         var guideLink = GUIDE_LINKS[k];
         guideSlot.innerHTML = guideLink
-          ? '<a href="' + guideLink + '" class="byg-guide-pill">🌐 Open Guide →</a>'
+          ? '<a href="' + guideLink + '" class="byg-guide-pill">Open Guide →</a>'
           : '';
       }
     }

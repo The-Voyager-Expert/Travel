@@ -6394,24 +6394,27 @@ def check_guide_pill_css_canonical(report: "Report") -> None:
         background: var(--c-card-bg)  ·  border: 0.5px solid #c8a44a  ·  border-radius: 6px
 
     .also-on-this-site-pill:
-        background: #ffffff            ·  border: 0.5px solid #c8a44a  ·  border-radius: 6px
+        background: #ffffff  ·  border: 1.5px solid #c8a44a  ·  border-radius: 18px
+        color: #8a6c1a (gold text — matches day-jump-btn)
 
     .overview-day  (day-nav card — 8px radius, not 6px):
         background: var(--c-card-bg)  ·  border: 0.5px solid #c8a44a  ·  border-radius: 8px
 
     .nearby-guide-pill:
-        background: #ffffff            ·  border: 0.5px solid #c8a44a  ·  border-radius: 6px
+        background: #ffffff  ·  border: 1.5px solid #c8a44a  ·  border-radius: 18px
+        color: #8a6c1a (gold text — matches day-jump-btn)
 
-    ── HOVER / ACTIVE STATE (selected — the "Export to Calendar" example) ────
-    hover gradient:  linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%)
-    active gradient: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%)
-    border on hover/active: border-color: #b85c2a
-    text on hover/active:   color: #fff  (may have !important)
+    ── HOVER / ACTIVE STATE ─────────────────────────────────────────────────
+    .also-on-this-site-pill and .nearby-guide-pill hover: border-color + color → #b85c2a
+    .overview-extras .overview-extra-link and .overview-day hover: terracotta gradient
+    hover gradient (OEL + OD only): linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%)
+    active gradient (OEL + OD only): linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%)
 
     Source: guide-style.css (single source of truth).
     Rule authority: Brain/Reference/Pill-Standard.md § "Rest state = WHITE";
                     Brain/Reference/Colors and Font Size.html § 11 + § 17.
     Cleanliness Checks.md Rule 540.  Added 2026-07-16.
+    Updated 2026-07-24: AOSP + NGP switched to gold text + 1.5px border + 18px radius.
     """
     import re as _re
 
@@ -6456,56 +6459,55 @@ def check_guide_pill_css_canonical(report: "Report") -> None:
     _assert(_OEL,  "border-radius: 6px",             "rest — 6px radius")
 
     _assert(_AOSP, "background: #ffffff",            "rest — white background")
-    _assert(_AOSP, "border: 0.5px solid #c8a44a",   "rest — gold border")
-    _assert(_AOSP, "border-radius: 6px",             "rest — 6px radius")
+    _assert(_AOSP, "border: 1.5px solid #c8a44a",   "rest — gold border 1.5px")
+    _assert(_AOSP, "border-radius: 18px",            "rest — 18px pill radius")
+    _assert(_AOSP, "color: #8a6c1a",                 "rest — gold text")
 
     _assert(_OD,   "background: var(--c-card-bg)",  "rest — warm card background")
     _assert(_OD,   "border: 0.5px solid #c8a44a",   "rest — gold border")
     _assert(_OD,   "border-radius: 8px",             "rest — 8px radius (day card)")
 
     _assert(_NGP,  "background: #ffffff",            "rest — white background")
-    _assert(_NGP,  "border: 0.5px solid #c8a44a",   "rest — gold border")
-    _assert(_NGP,  "border-radius: 6px",             "rest — 6px radius")
+    _assert(_NGP,  "border: 1.5px solid #c8a44a",   "rest — gold border 1.5px")
+    _assert(_NGP,  "border-radius: 18px",            "rest — 18px pill radius")
+    _assert(_NGP,  "color: #8a6c1a",                 "rest — gold text")
 
     # ── HOVER STATE ───────────────────────────────────────────────────────────
     _HGRAD = "linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%)"
     _HBORD = "border-color: #b85c2a"
 
+    # OEL and OD keep terracotta gradient hover
     _assert(_OEL  + ":hover",           _HGRAD, "hover — terracotta gradient")
     _assert(_OEL  + ":hover",           _HBORD, "hover — terracotta border")
     _assert(_OEL  + ":hover",           "color: #fff", "hover — white text")
 
-    _assert("a" + _AOSP + ":hover",    _HGRAD, "hover — terracotta gradient")
-    _assert("a" + _AOSP + ":hover",    _HBORD, "hover — terracotta border")
-
     _assert(_OD   + ":hover",           _HGRAD, "hover — terracotta gradient")
     _assert(_OD   + ":hover",           _HBORD, "hover — terracotta border")
 
-    _assert("a" + _NGP + ":hover",     _HGRAD, "hover — terracotta gradient")
+    # AOSP and NGP use gold→terracotta border+color shift on hover (no gradient fill)
+    _assert("a" + _AOSP + ":hover",    _HBORD, "hover — terracotta border")
+    _assert("a" + _AOSP + ":hover",    "color: #b85c2a", "hover — terracotta text")
+
     _assert("a" + _NGP + ":hover",     _HBORD, "hover — terracotta border")
+    _assert("a" + _NGP + ":hover",     "color: #b85c2a", "hover — terracotta text")
 
     # ── ACTIVE (PRESS) STATE ─────────────────────────────────────────────────
     _AGRAD = "linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%)"
 
+    # OEL and OD keep gradient active
     _assert(_OEL  + ":active",          _AGRAD,        "active — darker gradient")
     _assert(_OEL  + ":active",          "color: #fff",  "active — white text")
 
-    _assert("a" + _AOSP + ":active",   _AGRAD,         "active — darker gradient")
-    _assert("a" + _AOSP + ":active",   "color: #fff",  "active — white text")
-
     _assert(_OD   + ":active",          _AGRAD,         "active — darker gradient")
-
-    _assert("a" + _NGP + ":active",    _AGRAD,         "active — darker gradient")
-    _assert("a" + _NGP + ":active",    "color: #fff",  "active — white text")
 
     for f in fails:
         report.fail(f"check_guide_pill_css_canonical: {f}")
     if not fails:
         report.ok(
             "Guide pill CSS canonical: all 4 pill classes have correct "
-            "rest-state (white/#fff bg, #c8a44a gold border, 6px/8px radius) "
-            "and hover/active-state (terracotta gradient, #b85c2a border, "
-            "white text) in guide-style.css"
+            "rest-state and hover/active-state in guide-style.css "
+            "(AOSP+NGP: gold text+1.5px border+18px radius, hover=terracotta text/border; "
+            "OEL+OD: terracotta gradient hover/active)"
         )
 
 
