@@ -5783,8 +5783,11 @@ def check_mobile_design_system(report: "Report") -> None:
             # also-on-this-site + nearby-guide pills on mobile = 3-col grid with gap 7px, rounded corners (desktop style).
             # Pill-level overrides removed 2026-07-19; pills inherit radius 6px / white bg / normal padding from desktop rule.
             # Updated stamp must be a sibling AFTER both sections — never a child (grid cell) inside them (2026-07-19)
+            # Stamp must be left-aligned on mobile to avoid overlapping the "N days" pill at bottom-right (2026-07-24)
             ('Updated stamp: sibling selector covers also-on-this-site fallback (stamp never inside pill grid)',
              _re.compile(r'#also-on-this-site \+ \.title-updated', _re.I)),
+            ('Updated stamp mobile: must be text-align: left (not right — avoids overlap with days pill)',
+             _re.compile(r'#also-on-this-site \+ \.title-updated \{[^}]*text-align: left !important', _re.I)),
             # also-on-this-site mobile grid: 6-col so last-row pills can span 3 or 6 (added 2026-07-20)
             ('also-on-this-site mobile grid = repeat(6,1fr) / pills span 2',
              _re.compile(r'\.also-on-this-site-pills \{[^}]*grid-template-columns: repeat\(6, 1fr\)', _re.I)),
