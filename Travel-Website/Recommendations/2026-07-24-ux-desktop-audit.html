@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop UX & Format Audit — 2026-07-24</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 860px; margin: 40px auto; padding: 0 24px; color: #3d3a32; background: #faf8f5; }
+  h1 { font-size: 1.4rem; font-weight: 700; color: #1a1816; margin-bottom: 4px; }
+  .meta { font-size: 0.85rem; color: #888; margin-bottom: 32px; }
+  h2 { font-size: 1.05rem; font-weight: 700; border-bottom: 2px solid #e8e4dd; padding-bottom: 6px; margin-top: 36px; }
+  h3 { font-size: 0.95rem; font-weight: 700; margin-top: 20px; margin-bottom: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; margin: 12px 0 20px; }
+  th { background: #f0ece4; text-align: left; padding: 7px 10px; font-weight: 600; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e8e4dd; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.78rem; font-weight: 600; }
+  .fixed   { background: #d4edda; color: #155724; }
+  .open    { background: #fff3cd; color: #856404; }
+  .nofix   { background: #f0ece4; color: #5a5550; }
+  .logged  { background: #e3eefe; color: #1c3a6e; }
+  ul { padding-left: 20px; margin: 6px 0; }
+  li { margin-bottom: 4px; }
+  code { background: #f0ece4; padding: 1px 5px; border-radius: 3px; font-size: 0.85em; }
+  .section-note { font-size: 0.85rem; color: #666; margin-top: -4px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<h1>Desktop UX &amp; Format Audit — 2026-07-24</h1>
+<div class="meta">Routine: ux-format-audit · Run date: 2026-07-24 · Commit: ac9530fb5 · brain_check: 195/282 ok · 87 warn · 0 fail</div>
+
+<h2>Summary</h2>
+<table>
+  <tr><th>Category</th><th>Result</th></tr>
+  <tr><td>Regional pills sweep (Europe-Stats on non-European guides)</td><td><span class="badge fixed">7 FIXED</span></td></tr>
+  <tr><td>To Do List in-scope drain</td><td><span class="badge fixed">1 stale item deleted (Safety-Guide brain_check)</span></td></tr>
+  <tr><td>brain_check post-fix</td><td><span class="badge fixed">0 fail</span></td></tr>
+  <tr><td>Day-jump hamburger anomaly</td><td><span class="badge logged">LOGGED to To Do List</span></td></tr>
+  <tr><td>Drift log</td><td><span class="badge fixed">×2 row added</span></td></tr>
+</table>
+
+<h2>1. Regional Pills — Europe-Stats on Non-European Guides</h2>
+<p class="section-note">The 2026-07-21 run found and "fixed" 8 guides but never committed. All fixes vanished. This run re-identified and permanently committed 7 fixes (Lagos, Portugal confirmed correctly European — not removed).</p>
+
+<table>
+  <tr><th>Guide</th><th>Country / Region</th><th>Action</th><th>Stamp</th></tr>
+  <tr><td>Wellington</td><td>New Zealand · Oceania</td><td><span class="badge fixed">REMOVED Europe-Stats pill</span></td><td>passed 2026-07-24</td></tr>
+  <tr><td>Melbourne</td><td>Australia · Oceania</td><td><span class="badge fixed">REMOVED Europe-Stats pill</span></td><td>passed 2026-07-24</td></tr>
+  <tr><td>Seychelles</td><td>Seychelles · Indian Ocean</td><td><span class="badge fixed">REMOVED Europe-Stats pill</span></td><td>passed 2026-07-24</td></tr>
+  <tr><td>Sydney</td><td>Australia · Oceania</td><td><span class="badge fixed">REMOVED Europe-Stats pill</span></td><td>passed 2026-07-24</td></tr>
+  <tr><td>Cairo</td><td>Egypt · Africa</td><td><span class="badge fixed">REMOVED Europe-Stats pill</span></td><td>passed 2026-07-24</td></tr>
+  <tr><td>Queenstown</td><td>New Zealand · Oceania</td><td><span class="badge fixed">REMOVED Europe-Stats pill</span></td><td>passed 2026-07-24</td></tr>
+  <tr><td>Marrakech</td><td>Morocco · Africa</td><td><span class="badge fixed">REMOVED Europe-Stats pill</span></td><td>passed 2026-07-24</td></tr>
+  <tr><td>Lagos</td><td>Portugal · Europe ✓</td><td><span class="badge nofix">NOT REMOVED — pill is correct</span></td><td>untouched</td></tr>
+</table>
+
+<p><strong>Root cause of recurrence:</strong> 2026-07-21 session fixes were in-session edits only — never git-committed. Drift log updated with ×2 row. No brain_check gate currently catches pill/region mismatch.</p>
+
+<h2>2. To Do List — In-Scope Drain</h2>
+<h3>Stale item deleted</h3>
+<p><strong>Safety-Guide.html — 4 hardcoded hex colors (brain_check hard-fail)</strong> — DELETED.</p>
+<p>brain_check currently shows 0 fail. The 4 hex values in question are inside <code>linear-gradient()</code> shorthand — the PALETTE regex only matches <code>color:</code>, <code>background:</code>, <code>background-color:</code>, and <code>border-color:</code> as property names. Gradient syntax is not caught. The item was stale and removed.</p>
+
+<h2>3. Out-of-Scope Findings Logged</h2>
+<table>
+  <tr><th>Finding</th><th>Handler</th><th>Status</th></tr>
+  <tr>
+    <td><code>toolbar.js</code> day-jump-btn display:none count = 1 (expected 2)</td>
+    <td>Next crib to edit toolbar.js</td>
+    <td><span class="badge logged">LOGGED to To Do List</span></td>
+  </tr>
+</table>
+
+<p><code>grep -c "djBtn.*display.*none\|day-jump-btn.*display.*none" Travel-Website/assets/toolbar.js</code> returns 1. Possible causes: (a) a refactored toggle using CSS class instead of inline style for one branch; (b) a missing hide or show branch. toolbar.js is LOCKED for all scheduled cribs — parked for the next crib that legitimately edits it.</p>
+
+<h2>4. Drift Log Update</h2>
+<p>Entry "Non-European guides incorrectly carrying European regional pills" updated with ×2 log-row for 2026-07-24. Description updated to clarify Lagos (Portugal) is a European city and its Europe-Stats pill is correct. Root-cause note: prior 2026-07-21 session's fixes were never committed; this run committed all 7 permanent fixes.</p>
+
+<h2>5. Brain Check Results</h2>
+<pre style="background:#f0ece4;padding:12px;border-radius:4px;font-size:0.85rem;overflow-x:auto;">brain_check 2026-07-24 post-fix
+195/282 ok · 87 warn · 0 fail</pre>
+
+<p>87 warn: toolbar.js version mismatch (many guides at v=100/122/124 vs current v=125) — warn-only per memory rule <code>feedback_toolbar_version_bump_rule</code>. Not actioned.</p>
+
+</body>
+</html>
