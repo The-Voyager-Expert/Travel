@@ -1350,14 +1350,20 @@
         var summary = _esc(day.header + (day.header.indexOf(city) >= 0 ? '' : ' · ' + city));
         var descParts = [];
         day.stops.forEach(function (s, si) {
-          var lines = [(si + 1) + '. ' + s.name];
+          var lines = ['▸ ' + (si + 1) + '. ' + s.name.toUpperCase()];
+          if (s.desc) lines.push(s.desc);
+          /* Location block */
+          var hasLoc = s.addr || s.href;
+          if (hasLoc) lines.push('');
+          if (s.addr) lines.push('📍 ' + s.addr);
+          if (s.href) lines.push(s.href);
+          /* Practical info block */
+          var hasPractical = s.hours || s.duration || s.ticketUrl || s.warning;
+          if (hasPractical) lines.push('');
           if (s.hours) lines.push(s.hours);
           if (s.duration) lines.push(s.duration);
-          if (s.addr) lines.push('📍 ' + s.addr);
-          if (s.href) lines.push(s.href);   /* Maps URL — tappable in Apple/Google Calendar */
           if (s.ticketUrl) lines.push('🎟️ ' + s.ticketUrl);
           if (s.warning) lines.push(s.warning);
-          if (s.desc) lines.push(s.desc);
           descParts.push(lines.join('\n'));
         });
         var desc = descParts.length ? _esc(descParts.join('\n\n')) : '';
