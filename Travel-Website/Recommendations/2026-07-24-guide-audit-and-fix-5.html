@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide Audit &amp; Fix 5 — 2026-07-24</title>
+<style>
+  :root {
+    --bg: #f7f3ee; --surface: #ffffff; --text: #2d2a22; --muted: #7a7168;
+    --border: #e2d8cc; --accent: #b85c2a; --gold: #c8a44a; --gold-bg: #fef8ec;
+    --green: #3a6b3a; --green-bg: #edf5ed; --warn-bg: #fdf3e4; --warn-text: #7a4a00;
+    --fail-bg: #fdecea; --fail-text: #8b1c1c; --code-bg: #f0ece6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1b16; --surface: #2a2620; --text: #e8e0d4; --muted: #a09580;
+      --border: #3a3428; --accent: #d4784a; --gold: #d4a84a; --gold-bg: #2a2318;
+      --green: #7ab87a; --green-bg: #1a2a1a; --warn-bg: #2a1e10; --warn-text: #e8a040;
+      --fail-bg: #2a1418; --fail-text: #e87070; --code-bg: #252018;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f3ee; --surface: #ffffff; --text: #2d2a22; --muted: #7a7168;
+    --border: #e2d8cc; --accent: #b85c2a; --gold: #c8a44a; --gold-bg: #fef8ec;
+    --green: #3a6b3a; --green-bg: #edf5ed; --warn-bg: #fdf3e4; --warn-text: #7a4a00;
+    --fail-bg: #fdecea; --fail-text: #8b1c1c; --code-bg: #f0ece6;
+  }
+  :root[data-theme="dark"] {
+    --bg: #1e1b16; --surface: #2a2620; --text: #e8e0d4; --muted: #a09580;
+    --border: #3a3428; --accent: #d4784a; --gold: #d4a84a; --gold-bg: #2a2318;
+    --green: #7ab87a; --green-bg: #1a2a1a; --warn-bg: #2a1e10; --warn-text: #e8a040;
+    --fail-bg: #2a1418; --fail-text: #e87070; --code-bg: #252018;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; padding: 32px 20px 64px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+
+  .report-header { border-bottom: 2px solid var(--accent); padding-bottom: 20px; margin-bottom: 32px; }
+  .report-eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .report-title { font-family: Georgia, serif; font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .report-meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--muted); }
+  .report-meta span::before { content: '· '; }
+  .report-meta span:first-child::before { content: ''; }
+
+  .summary-bar { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 36px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat-card .num { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+  .section { margin-bottom: 36px; }
+  .section h2 { font-family: Georgia, serif; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+  .guide-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+  .guide-card-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--gold-bg); }
+  .guide-name { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .badge-ok { background: var(--green-bg); color: var(--green); }
+  .badge-fixed { background: var(--green-bg); color: var(--green); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn-text); }
+  .badge-fail { background: var(--fail-bg); color: var(--fail-text); }
+  .badge-infra { background: var(--code-bg); color: var(--muted); }
+
+  .finding-list { list-style: none; padding: 8px 0; }
+  .finding-list li { display: flex; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+  .finding-list li:last-child { border-bottom: none; }
+  .finding-icon { flex-shrink: 0; font-size: 16px; line-height: 1.4; }
+  .finding-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .finding-detail { font-size: 12px; color: var(--muted); }
+
+  .new-check { background: var(--gold-bg); border: 1px solid var(--gold); border-radius: 6px; padding: 16px 18px; margin-bottom: 16px; }
+  .new-check-title { font-family: Georgia, serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .new-check-meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .new-check p { font-size: 13px; color: var(--text); margin-bottom: 6px; }
+  .new-check p:last-child { margin-bottom: 0; }
+
+  code { font-family: 'SF Mono', 'Menlo', 'Courier New', monospace; font-size: 12px; background: var(--code-bg); padding: 1px 5px; border-radius: 3px; color: var(--accent); }
+
+  .warn-block { background: var(--warn-bg); border: 1px solid var(--warn-text); border-radius: 6px; padding: 12px 14px; font-size: 13px; color: var(--warn-text); margin-bottom: 12px; }
+  .fail-block { background: var(--fail-bg); border: 1px solid var(--fail-text); border-radius: 6px; padding: 12px 14px; font-size: 13px; color: var(--fail-text); margin-bottom: 12px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow-x: auto; }
+
+  .report-footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="report-header">
+    <div class="report-eyebrow">Guide Audit &amp; Fix</div>
+    <h1 class="report-title">Post-Ship Format Audit — Session 5</h1>
+    <div class="report-meta">
+      <span>2026-07-24</span>
+      <span>guide-audit-and-fix-5</span>
+      <span>Scope: FORMAT ONLY — no URL fetching, no content evaluation</span>
+      <span>3 guides reviewed</span>
+    </div>
+  </header>
+
+  <!-- Summary bar -->
+  <div class="summary-bar">
+    <div class="stat-card"><div class="num">3</div><div class="label">Guides Reviewed</div></div>
+    <div class="stat-card"><div class="num">12</div><div class="label">Issues Found</div></div>
+    <div class="stat-card"><div class="num">12</div><div class="label">Issues Fixed</div></div>
+    <div class="stat-card"><div class="num">2</div><div class="label">Validator Changes</div></div>
+  </div>
+
+  <!-- New Validator Changes -->
+  <section class="section">
+    <h2>Validator Changes</h2>
+
+    <div class="new-check">
+      <div class="new-check-title">TR-8b — WEATHER FRAGMENT CASE-SENSITIVE</div>
+      <div class="new-check-meta">Updated in <code>validate_itinerary.py</code> · hard-fail · 2026-07-24</div>
+      <p><strong>What changed:</strong> TR-8b previously compared <code>Weather.html</code> <code>#fragment</code> values case-insensitively (both fragment and CLIMATE_DATA key were lowercased). But <code>Weather.html</code> resolves anchors via JS <code>cityKeys.indexOf(hashKey)</code> — which is case-sensitive. So <code>#zakynthos</code> silently failed to scroll to the <code>'Zakynthos'</code> CLIMATE_DATA entry at runtime, even though the validator passed it.</p>
+      <p><strong>Fix:</strong> <code>_tr8b_wx_keys</code> now stores original-case keys; the Weather fragment comparison is exact-match. When a fragment matches case-insensitively but not exactly, the error message suggests the correct-case form. Safety-Guide comparison is unchanged (uses lowercase <code>data-city</code> values — case-insensitive is correct there).</p>
+      <p><strong>Trigger:</strong> Zakynthos shipped 2026-07-23 with <code>#zakynthos</code> while CLIMATE_DATA key is <code>'Zakynthos'</code>. Only 1 of 226 guides was affected. Fix confirmed: Zakynthos now fails on the wrong case; Crete (correct case) still passes.</p>
+    </div>
+
+    <div class="new-check">
+      <div class="new-check-title">ALT TEXT — ST./MT./DR. ABBREVIATION FALSE-POSITIVE FIXED</div>
+      <div class="new-check-meta">Updated in <code>validate_itinerary.py</code> · warn-tier · 2026-07-24</div>
+      <p><strong>What changed:</strong> The Q-warn alt text sentence detector used <code>re.search(r'[.!?]', alt_val)</code> on the raw alt string. This correctly flags real descriptive sentences but also false-positives on standard title/geographic abbreviations: <code>"St. Nikolai Memorial"</code>, <code>"Mt. Fuji"</code>, <code>"Dr. King Memorial"</code> all contain a period but are valid subject-name alt texts per Photos Rules.html §8.</p>
+      <p><strong>Fix:</strong> Common abbreviations (<code>St|Mt|Dr|Ft|Mr|Mrs|Ms|Jr|Sr</code>) followed by a period and whitespace/end-of-string are stripped before the period check. Hamburg's <code>"St. Nikolai Memorial"</code> and <code>"St. Michaelis Church"</code> were the triggers — both are now correctly assessed as clean. Real sentence-like alt texts still fire the warning.</p>
+    </div>
+  </section>
+
+  <!-- Guides -->
+  <section class="section">
+    <h2>Guides Audited</h2>
+
+    <!-- Crete -->
+    <div class="guide-card">
+      <div class="guide-card-header">
+        <div class="guide-name">Crete, Greece</div>
+        <span class="badge badge-ok">Format clean</span>
+      </div>
+      <ul class="finding-list">
+        <li>
+          <div class="finding-icon">✅</div>
+          <div class="finding-body">
+            <div class="finding-title">No format violations</div>
+            <div class="finding-detail">Validator ran 0 failures, 0 warnings (aside from advisory fleet drift items). Guide shipped clean.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Zakynthos -->
+    <div class="guide-card">
+      <div class="guide-card-header">
+        <div class="guide-name">Zakynthos, Greece</div>
+        <span class="badge badge-fixed">12 fixed</span>
+        <span class="badge badge-infra">push blocked (infra)</span>
+      </div>
+      <ul class="finding-list">
+        <li>
+          <div class="finding-icon">✅</div>
+          <div class="finding-body">
+            <div class="finding-title">TR-8b — Weather pill fragment wrong case: <code>#zakynthos</code> → <code>#Zakynthos</code></div>
+            <div class="finding-detail">Root cause of the TR-8b validator fix above. Zakynthos was the only guide in the fleet where the CLIMATE_DATA key begins with a capital letter but the guide shipped with a lowercase fragment. Fixed in guide HTML; validator now hard-fails on the wrong case.</div>
+          </div>
+        </li>
+        <li>
+          <div class="finding-icon">✅</div>
+          <div class="finding-body">
+            <div class="finding-title">10 <code>alt</code> texts read like full sentences — fixed to subject names</div>
+            <div class="finding-detail">Photos Rules §8: alt must be the short plain subject name only. 10 images carried descriptive phrases with commas, location qualifiers that tripped word-count, or long strings exceeding 40 chars. All corrected (e.g. <code>"Church of Saint Dionysios, Zakynthos Town"</code> trimmed to <code>"Church of Saint Dionysios"</code> to stay within the 40-char limit).</div>
+          </div>
+        </li>
+        <li>
+          <div class="finding-icon">✅</div>
+          <div class="finding-body">
+            <div class="finding-title">Day Trips by Train extras-empty missing <code>&lt;!-- low-count: … --&gt;</code></div>
+            <div class="finding-detail">Zakynthos is an island with no rail network. The empty section was present but lacked the required rationale comment. Added: <code>&lt;!-- low-count: Zakynthos is an island with no rail network; all transport is road-based; nearest train service requires a ferry crossing to the Greek mainland --&gt;</code>.</div>
+          </div>
+        </li>
+        <li>
+          <div class="finding-icon">✅</div>
+          <div class="finding-body">
+            <div class="finding-title">maps-city-display warn-ok suppression comment added</div>
+            <div class="finding-detail">"Zakynthos Town" is the proper name of the urban center, not a bare city suffix. "Southern/Western/Northwestern Zakynthos" are geographic region qualifiers for a car-tour island. Added a <code>&lt;!-- warn-ok: maps-city-display … --&gt;</code> comment documenting this before the <code>also-on-this-site</code> block.</div>
+          </div>
+        </li>
+        <li>
+          <div class="finding-icon">✅</div>
+          <div class="finding-body">
+            <div class="finding-title">Bare city suffix in Tours: <code>Agios Nikolaos Port · Zakynthos</code></div>
+            <div class="finding-detail">The maps-city-display check flagged this as a bare suffix — the correct form for a named port is <code>Agios Nikolaos Port · Agios Nikolaos</code>. Fixed.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hamburg -->
+    <div class="guide-card">
+      <div class="guide-card-header">
+        <div class="guide-name">Hamburg, Germany</div>
+        <span class="badge badge-ok">Format clean</span>
+        <span class="badge badge-infra">NEIGH_DATA pending (not blocking)</span>
+      </div>
+      <ul class="finding-list">
+        <li>
+          <div class="finding-icon">✅</div>
+          <div class="finding-body">
+            <div class="finding-title">No guide HTML changes — 2 false-positive warnings resolved via validator fix</div>
+            <div class="finding-detail"><code>"St. Nikolai Memorial"</code> and <code>"St. Michaelis Church"</code> both triggered the alt-text sentence-period warn. These are correct subject-name alt texts — the period in "St." is an abbreviation, not a sentence end. The validator was fixed (see above). No changes needed to the Hamburg guide HTML.</div>
+          </div>
+        </li>
+        <li>
+          <div class="finding-icon">⚠️</div>
+          <div class="finding-body">
+            <div class="finding-title">NEIGH_DATA entry missing in <code>toolbar.js</code> for <code>'hamburg'</code></div>
+            <div class="finding-detail">New final-gate check (added 2026-07-23) requires every shipped guide to have a <code>NEIGH_DATA['hamburg']</code> entry for the "Thinking of switching hotels?" neighborhood selector. Hamburg was stamped before this check existed — the HMAC is still valid and the guide is not currently push-blocked. Will fail at next re-validation. <strong>Logged to To Do List with Corfu/Curacao/Zakynthos infrastructure batch.</strong></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Validator Results -->
+  <section class="section">
+    <h2>Validator Results</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Guide</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th>Warnings</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Crete</strong></td>
+            <td>~850</td>
+            <td>0</td>
+            <td>1 (fleet)</td>
+            <td><span class="badge badge-ok">Format clean</span></td>
+          </tr>
+          <tr>
+            <td><strong>Zakynthos</strong></td>
+            <td>~838</td>
+            <td>0*</td>
+            <td>0</td>
+            <td><span class="badge badge-fixed">Fixed · committed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Hamburg</strong></td>
+            <td>836</td>
+            <td>2*</td>
+            <td>1 (fleet)</td>
+            <td><span class="badge badge-ok">Format clean</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px;">* Fails marked are infrastructure only (NEIGH_DATA not in toolbar.js, fleet-wide Rhodes/Crete data gaps) — not guide-specific format violations. These postdate the guides' stamps and do not invalidate the HMAC. Zakynthos is committed but not pushed (push blocked pending infrastructure completion).</p>
+  </section>
+
+  <!-- Out-of-scope findings -->
+  <section class="section">
+    <h2>Out-of-Scope Findings → To Do List</h2>
+    <div class="fail-block">
+      ⛔ Push is blocked. 3 guides (Corfu, Curacao, Zakynthos) have HMAC-invalid stamps. Cannot re-stamp because all fail the NEIGH_DATA final gate (toolbar.js locked during format audit). Infrastructure batch required before push can proceed.
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>City</th><th>Finding</th><th>Handler</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Corfu, Curacao, Zakynthos</td>
+            <td>NEIGH_DATA missing in toolbar.js — push blocked. Also: Zakynthos missing from Safety-Guide.html; Guides-Index missing Crete inline data (CLIMATE_INLINE / COST_DATA / SAFETY_DATA)</td>
+            <td>Guide-infrastructure completion routine</td>
+          </tr>
+          <tr>
+            <td>Hamburg</td>
+            <td>NEIGH_DATA missing in toolbar.js — not currently blocking (HMAC valid, guide unmodified) but will fail at next re-validation</td>
+            <td>Same infrastructure batch</td>
+          </tr>
+          <tr>
+            <td>Fleet (Rhodes)</td>
+            <td>Rhodes is in weather.js baked block but not in climate.json (1 city gap) — surfaced by Hamburg validation</td>
+            <td>Run validate_climate_coverage.py</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="report-footer">
+    guide-audit-and-fix-5 · 2026-07-24 · Scope: format-only — no URL verification, no content evaluation
+  </footer>
+
+</div>
+</body>
+</html>

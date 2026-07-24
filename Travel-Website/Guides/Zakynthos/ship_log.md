@@ -14,3 +14,16 @@
 2026-07-23 15:46 — zakynthos_v1.html — FAIL @ verify — 0 checks
 2026-07-23 15:46 — zakynthos_v1.html — FAIL @ verify — 0 checks
 2026-07-23 15:48 — zakynthos_v1.html — FAIL @ verify-booking — 0 checks
+2026-07-24 07:21 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:21 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:22 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:22 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:23 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:23 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:24 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:24 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:24 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:25 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:25 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:25 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
+2026-07-24 07:26 — zakynthos_v1.html — FAIL @ validate — 827/831 passed, 4 failed
