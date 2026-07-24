@@ -1304,7 +1304,7 @@
       btn.style.cssText =
         'display:inline-flex;align-items:center;flex-shrink:0;' +
         'background:none;border:none;cursor:pointer;padding:0;margin-left:10px;' +
-        'color:#b85c2a;transition:opacity .12s;opacity:' + (on ? '1' : '.65') + ';';
+        'color:#8a6c1a;transition:opacity .12s;opacity:' + (on ? '1' : '.65') + ';';
 
       tc.appendChild(btn);
 
