@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+<title>Cologne — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Cologne — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all" style="--dc:#b85c2a">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js?v=111"></script>
+<script>
+const STOPS = [
+  {"day":1,"name":"Cologne Cathedral","query":"Cologne Cathedral Domkloster 4 Altstadt-Nord Cologne","lat":50.9412784,"lng":6.9582814},
+  {"day":1,"name":"Museum Ludwig","query":"Museum Ludwig Heinrich-Böll-Platz 1 Cologne","lat":50.9390823,"lng":6.9601694},
+  {"day":1,"name":"Hohenzollern Bridge","query":"Hohenzollernbrücke Cologne","lat":50.9410744,"lng":6.9644261},
+  {"day":1,"name":"Gross St. Martin","query":"Gross St Martin Church An Gross St Martin 9 Cologne","lat":50.9369528,"lng":6.9600731},
+  {"day":2,"name":"Kolumba","query":"Kolumba Museum Kolumbastraße 4 Cologne","lat":50.9384553,"lng":6.9540117},
+  {"day":2,"name":"Museum of Applied Arts","query":"Museum für Angewandte Kunst Köln An der Rechtschule Cologne","lat":50.9372498,"lng":6.9529874},
+  {"day":2,"name":"EL-DE House","query":"EL-DE-Haus Appellhofplatz 23 Cologne","lat":50.9388157,"lng":6.9493741},
+  {"day":2,"name":"Roman Praetorium","query":"Roman Praetorium Kleine Budengasse 2 Cologne","lat":50.9378444,"lng":6.9583044},
+  {"day":3,"name":"Museum Schütgen","query":"Museum Schütgen Cäcilienstraße 29 Cologne","lat":50.9342519,"lng":6.9487756},
+  {"day":3,"name":"Rautenstrauch-Joest Museum","query":"Rautenstrauch-Joest Museum Cäcilienstraße 29 Cologne","lat":50.9341722,"lng":6.9490128},
+  {"day":3,"name":"Chocolate Museum","query":"Schokoladenmuseum Am Schokoladenmuseum 1 Cologne","lat":50.9283436,"lng":6.9635056},
+  {"day":3,"name":"St. Gereon's Basilica","query":"St Gereon Basilica Gereonsdriesch 2 Cologne","lat":50.9407589,"lng":6.9494553},
+  {"day":4,"name":"Kölnisches Stadtmuseum","query":"Kölnisches Stadtmuseum Zeughausstraße 1 Cologne","lat":50.9388888,"lng":6.9531944},
+  {"day":4,"name":"Botanical Garden Flora","query":"Botanischer Garten Flora Am Botanischen Garten 4 Cologne","lat":50.9636111,"lng":6.9527778},
+  {"day":4,"name":"Cologne Cable Car","query":"Kölner Seilbahn Riehler Straße 180 Cologne","lat":50.9658333,"lng":6.9666667},
+  {"day":4,"name":"Rhine Park","query":"Rheinpark Cologne Deutz","lat":50.9433333,"lng":6.9786111}
+];
+const DAY_COLORS = {1:"#b85c2a",2:"#4a90d9",3:"#7ab648",4:"#9b59b6"};
+document.addEventListener("DOMContentLoaded",function(){
+  const map=L.map("map").setView([50.940,6.960],14);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a>"}).addTo(map);
+  const markers=L.markerClusterGroup({disableClusteringAtZoom:15});
+  const allLayers=[];
+  STOPS.forEach(function(stop,i){
+    const color=DAY_COLORS[stop.day]||"#b85c2a";
+    const num=STOPS.filter(s=>s.day===stop.day).indexOf(stop)+1;
+    const icon=L.divIcon({className:"",html:'<div style="background:'+color+';color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,0.35)">'+num+'</div>',iconSize:[28,28],iconAnchor:[14,14]});
+    const mapsUrl="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(stop.query);
+    const marker=L.marker([stop.lat,stop.lng],{icon:icon}).bindPopup('<strong>Day '+stop.day+' · Stop '+num+'</strong><br>'+stop.name+'<br><a href="'+mapsUrl+'" target="_blank" rel="noopener">Google Maps</a>');
+    marker._stopDay=stop.day;
+    markers.addLayer(marker);
+    allLayers.push(marker);
+  });
+  map.addLayer(markers);
+  document.querySelectorAll(".day-btn").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      document.querySelectorAll(".day-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const day=btn.dataset.day;
+      markers.clearLayers();
+      allLayers.forEach(function(m){if(day==="all"||m._stopDay===parseInt(day)){markers.addLayer(m);}});
+      map.addLayer(markers);
+    });
+  });
+});
+</script>
+</body>
+</html>

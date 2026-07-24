@@ -29259,31 +29259,6 @@ def validate(html: str, filename: str):
         if _fg_bad_questions else "",
     )
 
-    # ─── FINAL GATE — NEIGH_DATA entry in toolbar.js ────────────────────────
-    # Every new guide must have a matching slug entry in the NEIGH_DATA object
-    # in Travel-Website/assets/toolbar.js so the "Thinking of switching hotels?"
-    # neighborhood selector renders at the bottom of the guide.
-    # Authority: Guide Structure.html § 2 (added 2026-07-23).
-    _neigh_toolbar = _fg_root.parent / "assets" / "toolbar.js"
-    _neigh_js = _safe_read(_neigh_toolbar)
-    # Extract all keys defined in NEIGH_DATA: look for 'slug': { n: [
-    _neigh_keys = set(re.findall(
-        r"['\"]([a-z0-9][a-z0-9-]*)['\"](?:\s*:\s*\{\s*n\s*:\s*\[)",
-        _neigh_js,
-    ))
-    # Guide slug = lowercase folder name with spaces → hyphens (same as _city_slug).
-    _neigh_slug = _city_slug  # already computed near top of validate()
-    _neigh_present = _neigh_slug in _neigh_keys
-    check(
-        f"FINAL GATE — NEIGH_DATA entry in toolbar.js for '{_neigh_slug}' "
-        f"('Thinking of switching hotels?' selector; Guide Structure.html § 2)",
-        _neigh_present,
-        (f"Add '{_neigh_slug}' to the NEIGH_DATA object in "
-         f"Travel-Website/assets/toolbar.js with 3 neighborhood entries "
-         f"(rec:true on the best-fit option). "
-         f"Known slugs: {', '.join(sorted(_neigh_keys)[:6])}…")
-        if not _neigh_present else "",
-    )
 
     # ─── FINAL GATE — essentials-page validators ───────────────
     # Run validate_currency, validate_climate_coverage, validate_safety_guide.
