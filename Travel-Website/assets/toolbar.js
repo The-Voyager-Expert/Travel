@@ -817,7 +817,12 @@
     // still just closes the overlay and stays on the map — only the
     // explicit CLOSE tap navigates away.
     if (wasOpen && document.getElementById('map')) {
-      window.location.href = base + 'Guides-Index.html';
+      // World Map → Guides-Index; per-guide stops-map → back to the guide.
+      if (/\-stops-map\.html$/.test(location.pathname)) {
+        window.history.back();
+      } else {
+        window.location.href = base + 'Guides-Index.html';
+      }
       return;
     }
     hamMenu.classList.toggle('tb-ham-open');
