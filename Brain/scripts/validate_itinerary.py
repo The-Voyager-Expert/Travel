@@ -111,11 +111,12 @@ CHANGELOG = [
      "data-city values (from Trip-Essentials/Safety-Guide.html) so any mismatch is caught before shipping. "
      "Skipped in published-only mode. Hard-fail. Found in 3/5 recently audited guides: Coeur-dAlene, "
      "Hilton Head Island, Marco Island (guide-drift-audit run 2, 2026-07-21)."),
-    ("2026-07-24", "HOTEL_ALT_DATA — neighborhood selector replaced. The NEIGH_DATA final gate "
-     "(added 2026-07-23) has been removed. The section concept changed: instead of neighborhood "
-     "picks based on stop distribution, it now shows runner-up hotels from the guide's hotel "
-     "research. Data lives in HOTEL_ALT_DATA in toolbar.js; the section is optional and renders "
-     "only when an entry exists. No ship-gate check. Authority: Guide Structure.html § 2."),
+    ("2026-07-24", "HOTEL_ALT_DATA — neighborhood selector replaced; FINAL GATE re-added. "
+     "NEIGH_DATA removed; concept changed to runner-up hotels from hotel research. "
+     "Data lives in HOTEL_ALT_DATA in toolbar.js. FINAL GATE hard-fails if the guide's slug "
+     "is absent from HOTEL_ALT_DATA — every guide shipping from 2026-07-24 onward must have "
+     "an entry. Older guides fail on reship (correct: forces adding the data). "
+     "Authority: Guide Structure.html § 2, Toolbar.html § 19, Ship Checklist.html § 10."),
     ("2026-07-23", "TOURS — Kb RIDE-ONLY SENTINEL WARN (todo-list-sweep 2026-07-23). "
      "The Ka check (Shows §3) warns when a Shows entry is ride-only (🚕 without 🚶) but lacks a "
      "<!-- ride-only: walk NN min --> sentinel documenting that the meeting point is >40 min walk. "
@@ -29259,6 +29260,27 @@ def validate(html: str, filename: str):
         if _fg_bad_questions else "",
     )
 
+
+    # ─── FINAL GATE — HOTEL_ALT_DATA entry ──────────────────────────────────
+    # Every guide shipping from 2026-07-24 onward must have a slug entry in
+    # HOTEL_ALT_DATA in toolbar.js. Runner-up hotels are identified during hotel
+    # research (Hotels & Rentals - On Demand.html) and added at build time.
+    # Older guides also fail on reship — correct: forces adding the data first.
+    _fg_toolbar_js  = _fg_root.parent / "assets" / "toolbar.js"
+    _fg_toolbar_src = _safe_read(_fg_toolbar_js) or ""
+    _fg_slug        = re.sub(r'_v\d+$', '', _fg_guide.stem)
+    _fg_hotel_alt_keys = set(re.findall(
+        r"""['"]([\w-]+)['"]\s*:\s*\{\s*h\s*:""", _fg_toolbar_src
+    ))
+    _fg_hotel_alt_ok = _fg_slug in _fg_hotel_alt_keys
+    check(
+        "FINAL GATE — HOTEL_ALT_DATA entry present in toolbar.js "
+        "(add during build — runner-up hotels from hotel research; see Hotels & Rentals - On Demand.html)",
+        _fg_hotel_alt_ok,
+        (f"No HOTEL_ALT_DATA entry for slug '{_fg_slug}' in Travel-Website/assets/toolbar.js — "
+         f"add: '{_fg_slug}': {{ h: [{{ name: 'Hotel Name', note: 'one-line reason' }}, ...] }}")
+        if not _fg_hotel_alt_ok else "",
+    )
 
     # ─── FINAL GATE — essentials-page validators ───────────────
     # Run validate_currency, validate_climate_coverage, validate_safety_guide.
