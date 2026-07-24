@@ -1951,7 +1951,7 @@
       if (d.stops.length) {
         var prev = document.createElement('span');
         prev.className = 'day-jump-preview';
-        prev.textContent = d.stops.slice(0, 3).join(' · ');
+        prev.textContent = d.stops.join(' · ');
         info.appendChild(prev);
       }
 
