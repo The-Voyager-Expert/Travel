@@ -798,6 +798,7 @@
     window.scrollTo(0, _hamSavedScroll);
   }
   function closeHamMenu() {
+    if (!hamMenu.classList.contains('tb-ham-open')) return;
     hamMenu.classList.remove('tb-ham-open');
     hamBtn.setAttribute('aria-expanded', 'false');
     hamBtn.innerHTML = hamMenuClosedHTML;
