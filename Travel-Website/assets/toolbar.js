@@ -2170,7 +2170,7 @@
       strip.id = 'tve-wx-strip';
       strip.style.cssText =
         'display:flex;align-items:center;' +
-        'background:#f0ede5;border:1px solid #ddd8cc;border-radius:6px;' +
+        'background:#e8f3fc;border:1px solid #c2d8ef;border-radius:6px;' +
         'padding:6px 10px;margin-bottom:0;font-family:inherit;box-sizing:border-box;' +
         'overflow:hidden;';
 
