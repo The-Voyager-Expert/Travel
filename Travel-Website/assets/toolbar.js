@@ -1766,7 +1766,7 @@
     btn.href = 'javascript:void(0)';
     btn.className = 'overview-extra-link';
     btn.id = 'tve-offline-btn';
-    btn.textContent = saved ? '✓ Saved offline' : '💾 Save for offline';
+    btn.textContent = saved ? '✓ Saved offline' : '⏬ Save for offline';
     if (saved) {
       btn.style.setProperty('opacity', '0.55', 'important');
       btn.style.setProperty('pointer-events', 'none', 'important');
@@ -1872,6 +1872,9 @@
     'buenos-aires': { n: [{ name: 'Palermo',                  why: 'Parks, restaurants, safest base for most stops', rec: true },
                            { name: 'Recoleta',                why: 'Upscale, cemetery, MALBA — elegant streets' },
                            { name: 'San Telmo',               why: 'Tango, antique market, colonial atmosphere' }] },
+    'crete':        { n: [{ name: 'City Center',              why: 'Harbor, museums, Old Town — all walkable', rec: true },
+                           { name: 'Ammoudara',               why: 'Beach neighborhood 4km west, quieter' },
+                           { name: 'Knossos Area',            why: 'South of city, close to the palace' }] },
     'copenhagen':   { n: [{ name: 'Nørrebro',                 why: 'Local cafés, Lakes, excellent transport', rec: true },
                            { name: 'Vesterbro',               why: 'Trendy meatpacking district, central, lively' },
                            { name: 'Indre By (City Centre)',  why: 'Closest to Tivoli, Strøget and canals' }] },
