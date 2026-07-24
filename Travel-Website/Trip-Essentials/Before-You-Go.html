@@ -119,6 +119,25 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 .byg-plug-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .byg-plug-imgs img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--border2,#e6e2da); }
 .byg-plug-img-lbl { font-size: 9px; color: var(--muted,#6a6660); text-align: center; margin-top: 3px; }
+/* Intro banner */
+.byg-intro { display: flex; align-items: center; gap: 16px; background: var(--surface,#fff);
+  border: 1px solid var(--border2,#e6e2da); border-radius: 11px;
+  box-shadow: 0 1px 6px rgba(92,61,17,0.05); padding: 16px 20px;
+  margin-top: 28px; margin-bottom: 0; max-width: 1120px; }
+.byg-intro-icon { font-size: 24px; flex-shrink: 0; }
+.byg-intro-body { flex: 1; min-width: 0; }
+.byg-intro-title { font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text,#1a1917); margin-bottom: 4px; }
+.byg-intro-sub { font-size: 13px; color: var(--muted,#6a6660); line-height: 1.5; }
+.byg-intro-stats { display: flex; align-items: center; gap: 0; flex-shrink: 0; border-left: 1px solid var(--border2,#e6e2da); padding-left: 20px; margin-left: 4px; }
+.byg-intro-stat { display: flex; flex-direction: column; align-items: center; padding: 0 14px; }
+.byg-intro-num { font-size: 22px; font-weight: 700; color: var(--rust,#b85c2a); line-height: 1; }
+.byg-intro-lbl { font-size: 11px; color: var(--muted,#6a6660); margin-top: 2px; }
+.byg-intro-divider { width: 1px; height: 32px; background: var(--border2,#e6e2da); }
+@media (max-width: 700px) {
+  .byg-intro { flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .byg-intro-stats { border-left: none; padding-left: 0; margin-left: 0; border-top: 1px solid var(--border2,#e6e2da); padding-top: 12px; width: 100%; justify-content: center; }
+}
 .byg-plug-divider { border: none; border-top: 1px solid var(--border2,#e6e2da); margin: 10px 0 0; }
 .byg-voltage { font-size: 11px; color: var(--muted,#6a6660); margin-bottom: 8px; }
 .byg-visa-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px; color: #fff; letter-spacing: .03em; }
@@ -161,7 +180,19 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 </div>
 <div class="byg-wrap">
   <div id="byg-guide-slot" style="position:absolute;top:6px;right:32px;text-align:right;z-index:2;"></div>
-  <div class="byg-pick" style="margin-bottom:14px;">
+  <div class="byg-intro">
+    <div class="byg-intro-icon">✈️</div>
+    <div class="byg-intro-body">
+      <div class="byg-intro-title">Everything in one place</div>
+      <div class="byg-intro-sub">Select a city and month — weather, safety, costs, visa requirements, plug adapters, tap water, packing lists, and more, all pulled together before you go.</div>
+    </div>
+    <div class="byg-intro-stats">
+      <div class="byg-intro-stat"><span class="byg-intro-num" id="byg-city-count">—</span><span class="byg-intro-lbl">cities</span></div>
+      <div class="byg-intro-divider"></div>
+      <div class="byg-intro-stat"><span class="byg-intro-num">12</span><span class="byg-intro-lbl">topics</span></div>
+    </div>
+  </div>
+  <div class="byg-pick" style="margin-bottom:14px;margin-top:22px;">
     <div class="byg-find-wrap" style="width:100%;max-width:100%;">
       <span class="byg-find-icon"><svg style="display:block" width="15" height="15" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5.5" cy="5.5" r="4.5" stroke="#c8a44a" stroke-width="1.5"/><line x1="9.35" y1="9.35" x2="12" y2="12" stroke="#c8a44a" stroke-width="1.5" stroke-linecap="round"/></svg></span>
       <input type="search" id="byg-find" placeholder="City or country" aria-label="Search by city or country" autocomplete="off" style="width:100%;">
@@ -190,6 +221,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     var CLIM = window.TravelClimate || {};
     var keys = Object.keys(CLIM).filter(function (k) { return k !== '_generated' && k !== '_meta' && CLIM[k] && CLIM[k].hi; });
     keys.sort(function (a, b) { return (CLIM[a].city || a).localeCompare(CLIM[b].city || b); });
+    (function () { var el = document.getElementById('byg-city-count'); if (el) el.textContent = keys.length; }());
 
     var searchEl = document.getElementById('byg-find');
     var monthEl = document.getElementById('byg-month');
