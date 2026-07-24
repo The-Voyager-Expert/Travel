@@ -922,12 +922,13 @@ function toggleRegionLines() {
   });
 }
 function renderRegions() {
-  // Renders all loaded admin-1 region names (US, Canada, Mexico eager-loaded;
-  // Europe/S.America/Africa/Asia/Oceania/Caribbean lazy-loaded via maybeLoadRegions).
-  // Collision-checked against guide pins and country labels — guide pin names always win.
+  // Labels only for NA (US/Canada/Mexico) — their states/provinces are large
+  // enough to read cleanly. Rest-of-world admin-1 regions still get boundary
+  // lines (via toggleRegionLines) for map texture but no text labels, since
+  // European/Asian/etc. subdivisions are too small and create a cluttered mess.
   euRegionLayer.clearLayers();
   if (map.getZoom() < 4.5) return;
-  const all = Object.values(regionState).flatMap(st => st.regions);
+  const all = ['us', 'ca', 'mx'].flatMap(k => (regionState[k] || { regions: [] }).regions);
   if (!all.length) return;
   const b = map.getBounds();
   // Seeded with guide-pin + city label rects (placed earlier this moveend, see
