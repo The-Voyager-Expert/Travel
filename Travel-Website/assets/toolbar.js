@@ -2380,4 +2380,53 @@
     _injectWeatherStrip();
   }
 
+  /* ── Scroll-to-top FAB + Back-to-index pill — guide pages only ──────────
+     Back-to-index: fixed pill bottom-left, always visible, links to Guides-Index.
+     Scroll-to-top: fixed circle bottom-right above day-jump, fades in after
+     300px of scroll, smooth-scrolls to top on click. CSS: .tve-scroll-top /
+     .tve-back-index in guide-style.css. */
+  function _injectScrollFab() {
+    if (!isRealGuide) return;
+
+    var backPill = document.createElement('a');
+    backPill.href = base + 'Guides-Index.html';
+    backPill.className = 'tve-back-index';
+    backPill.setAttribute('aria-label', 'All Guides');
+    backPill.innerHTML =
+      '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
+        '<path d="M8 2L4 6.5L8 11" stroke="currentColor" stroke-width="1.6"' +
+        ' stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>' +
+      '<span>Guides</span>';
+    document.body.appendChild(backPill);
+
+    var topBtn = document.createElement('button');
+    topBtn.type = 'button';
+    topBtn.className = 'tve-scroll-top';
+    topBtn.setAttribute('aria-label', 'Scroll to top');
+    topBtn.innerHTML =
+      '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
+        '<path d="M6.5 10V3M3 6l3.5-3 3.5 3" stroke="currentColor" stroke-width="1.6"' +
+        ' stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>';
+    document.body.appendChild(topBtn);
+
+    topBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    window.addEventListener('scroll', function () {
+      if (window.scrollY > 300) {
+        topBtn.classList.add('visible');
+      } else {
+        topBtn.classList.remove('visible');
+      }
+    }, { passive: true });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectScrollFab);
+  } else {
+    _injectScrollFab();
+  }
+
 }());
