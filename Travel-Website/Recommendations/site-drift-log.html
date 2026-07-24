@@ -318,13 +318,34 @@ h1 { font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacin
     <span class="entry-title">Validator Index documents checks as "Enforced" that were never coded in brain_check.py</span>
     <span class="badge">Watching</span>
   </div>
-  <div class="entry-desc">Checks appear as "Enforced (added YYYY-MM-DD)" in the Validator Index AND as rule citations in CORE RULES files, yet the corresponding `def check_...()` function never existed in brain_check.py. Two confirmed instances in 2026-07-22 rule-compliance-audit: `check_html_date_stamps` and `check_html_attributed_quotes` — both documented since 2026-05-08, neither ever coded. `check_html_attributed_quotes` was implemented this run (0 hits, clean); `check_html_date_stamps` downgraded to human-check (spec's "not an annotation" carve-out isn't machine-distinguishable). Watch: if a third phantom "Enforced" check surfaces, the pattern is systemic.</div>
-  <div class="entry-meta">First seen: 2026-07-22 · Watching · Routines: rule-compliance-audit</div>
+  <div class="entry-desc">Checks appear as "Enforced (added YYYY-MM-DD)" in the Validator Index AND as rule citations in CORE RULES files, yet the corresponding check function never existed. Two confirmed instances in 2026-07-22 rule-compliance-audit: `check_html_date_stamps` and `check_html_attributed_quotes` — both documented since 2026-05-08, neither ever coded. `check_html_attributed_quotes` was implemented this run (0 hits, clean); `check_html_date_stamps` downgraded to human-check (spec's "not an annotation" carve-out isn't machine-distinguishable). <strong>CONFIRMED SYSTEMIC 2026-07-24:</strong> the predicted third instance surfaced in a different file — the Validator Index's Getting Around row "No Google Maps link inside <code>.ride-apps</code>" was marked Enforced but no such check has ever existed in <code>validate_itinerary.py</code>, and it could never have fired: <code>.ride-apps</code> is the legacy class, itself hard-failed by the §1 "no legacy .ride-apps div" check since the 2026-05-19 per-app split. The sibling Shows aggregator check keyed off the same stale class and was retired years-equivalent earlier with the inline note "the old check never matched anything" — the Getting Around twin was left documented. The pattern now spans BOTH validator files (brain_check.py and validate_itinerary.py), so it is not a brain_check quirk. Next handler should sweep the whole Index for rows whose cited class/selector no longer exists anywhere in the fleet.</div>
+  <div class="entry-meta">First seen: 2026-07-22 · Confirmed systemic (3 instances, 2 files) · Routines: rule-compliance-audit · validator-audit</div>
   <div class="entry-log">
     <div class="log-row">
       <span class="log-date">2026-07-22</span>
       <span class="log-routine">rule-compliance-audit</span>
       <span class="log-count">×1 — two phantom "Enforced" checks found; one implemented, one downgraded to human-check</span>
+    </div>
+    <div class="log-row">
+      <span class="log-date">2026-07-24</span>
+      <span class="log-routine">validator-audit (Part 14)</span>
+      <span class="log-count">×2 — third instance, in validate_itinerary.py's Index rows: ".ride-apps Google Maps ban" documented Enforced, never coded, un-fireable (class is itself banned); row retired</span>
+    </div>
+  </div>
+</div>
+
+<div class="entry">
+  <div class="entry-header">
+    <span class="entry-title">A rule construct enforced in one CORE RULES subsection, never in the sibling subsections that use the identical construct</span>
+    <span class="badge">Watching</span>
+  </div>
+  <div class="entry-desc">CORE RULES Extra Section files define one shape and reuse it across their numbered subsections. When a validator pass closes a gap, it repeatedly closes it for the ONE subsection that triggered the report and leaves the identical construct unchecked in the siblings — so the same drift hard-fails in §1 and ships silently in §2–§4. Confirmed twice in <code>Getting Around - Extra Section.html</code>: (1) the <code>[X Operator]</code> link row is identical in §1b/§2b/§3b/§4b, but the "link text is the lowercase operator domain" rule was enforced for ride apps only (2026-07-12) and went unchecked for tram/metro/ferry until 2026-07-24 — 3 ferry guides shipped operator names instead of domains; (2) the 3-row transit-box shape was gated for Metro (§3b) and Ferry (§4b) but never for Tram (§2b), which reads identically in the rules — Edinburgh shipped a 4th row that every existing tram check passed. Both closed 2026-07-24. Watch: when a future audit adds a subsection-scoped check, verify whether the sibling subsections share the construct before closing the part.</div>
+  <div class="entry-meta">First seen: 2026-07-24 · Watching · Routines: validator-audit</div>
+  <div class="entry-log">
+    <div class="log-row">
+      <span class="log-date">2026-07-24</span>
+      <span class="log-routine">validator-audit (Part 14)</span>
+      <span class="log-count">×2 — Getting Around §2b/§3b/§4b: operator-domain rule + tram row-count gate both missing where §1b/§3b/§4b had them</span>
     </div>
   </div>
 </div>

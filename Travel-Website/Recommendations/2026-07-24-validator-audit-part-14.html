@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validator Audit — Part 14 · 🚌 Getting Around · 2026-07-24</title>
+<style>
+  :root{
+    --bg:#faf7f2; --surface:#ffffff; --ink:#2b2924; --muted:#6b665c;
+    --line:#e6e0d6; --rust:#b5623c; --gold:#c9a227; --green:#4a7c4e;
+    --warn:#b07d1f; --code-bg:#f3efe8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#1c1a17; --surface:#25221e; --ink:#eae5dc; --muted:#a49d91;
+           --line:#3a3530; --rust:#d98055; --code-bg:#2f2b26; }
+  }
+  :root[data-theme="dark"]{ --bg:#1c1a17; --surface:#25221e; --ink:#eae5dc; --muted:#a49d91;
+           --line:#3a3530; --rust:#d98055; --code-bg:#2f2b26; }
+  :root[data-theme="light"]{ --bg:#faf7f2; --surface:#ffffff; --ink:#2b2924; --muted:#6b665c;
+           --line:#e6e0d6; --rust:#b5623c; --code-bg:#f3efe8; }
+  body{ background:var(--bg); color:var(--ink); font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; margin:0; padding:32px 16px 64px; }
+  .wrap{ max-width:860px; margin:0 auto; }
+  h1{ font-size:22px; letter-spacing:.02em; margin:0 0 4px; }
+  .sub{ color:var(--muted); font-size:14px; margin:0 0 28px; }
+  h2{ font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:var(--rust);
+      border-bottom:1px solid var(--line); padding-bottom:8px; margin:36px 0 14px; }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px 20px; margin:0 0 14px; }
+  ul{ margin:0; padding-left:20px; }
+  li{ margin:0 0 12px; }
+  code{ background:var(--code-bg); border-radius:4px; padding:1px 5px; font-size:.88em; }
+  .tag{ display:inline-block; font-size:11px; font-weight:700; letter-spacing:.05em;
+        text-transform:uppercase; padding:2px 8px; border-radius:999px; margin-right:6px;
+        border:1px solid var(--line); background:var(--surface); }
+  .t-new{ color:var(--green); border-color:var(--green); }
+  .t-fix{ color:var(--rust); border-color:var(--rust); }
+  .t-doc{ color:var(--warn); border-color:var(--warn); }
+  .stats{ display:flex; flex-wrap:wrap; gap:10px; margin:0 0 24px; }
+  .stat{ background:var(--surface); border:1px solid var(--line); border-radius:8px;
+         padding:10px 16px; min-width:104px; }
+  .stat .n{ font-size:22px; font-weight:700; color:var(--rust); display:block; }
+  .stat .l{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+  .scroll{ overflow-x:auto; }
+  table{ border-collapse:collapse; width:100%; font-size:14px; min-width:520px; }
+  th,td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+  .ok{ color:var(--green); font-weight:700; }
+  .no{ color:var(--rust); font-weight:700; }
+  .foot{ color:var(--muted); font-size:13px; margin-top:36px; border-top:1px solid var(--line); padding-top:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Validator Audit — Part 14 · 🚌 Getting Around</h1>
+<p class="sub">2026-07-24 · crib-5 · cycle 1, part 14 of 20 · source <code>Brain/scripts/validate_itinerary.py</code></p>
+
+<div class="stats">
+  <div class="stat"><span class="n">2</span><span class="l">Checks added</span></div>
+  <div class="stat"><span class="n">2</span><span class="l">Defects fixed</span></div>
+  <div class="stat"><span class="n">0</span><span class="l">Checks removed</span></div>
+  <div class="stat"><span class="n">4</span><span class="l">Guides now failing</span></div>
+  <div class="stat"><span class="n">230</span><span class="l">Guides swept</span></div>
+</div>
+
+<h2>I did</h2>
+<div class="card">
+<ul>
+  <li>Claimed Part 14 (🚌 Getting Around) under the file lock; ran <code>guide_tools.py start</code> and read <code>To Do List/To_Do_List.md</code>, <code>Rules for Claude.html</code> and <code>Getting Around - Extra Section.html</code> (§1–§4).</li>
+  <li>Audited every Getting Around check function in <code>validate_itinerary.py</code> — 30 checks across the main GA block (L15957–16950) and the cross-cutting tram / metro / ferry blocks (L27755–28151) — rule-by-rule against the four CORE RULES subsections.</li>
+  <li><strong>Ride Apps §1b — PASS.</strong> All 9 checks verified live and correct: first-subsection order, <code>extras-sub</code>-not-<code>&lt;strong&gt;</code>, link-only transit-box, intermediate-div gap ban, prose-alongside-link ban, one-operator-per-entry, named-heading (no "Ride App(s)" placeholder), lowercase-domain link text, canonical negative wording. No gaps.</li>
+  <li><strong>Tram §2b — 1 GAP FOUND.</strong> Tram was the only Getting Around subsection with no row-count gate (see <em>I built</em> #1).</li>
+  <li><strong>Metro §3b — PASS.</strong> Check D (3-row shape), operator-link requirement, <code>&lt;!-- metro-requested --&gt;</code> gate, 🚊→🚝 drift sentinel and tram-text-in-metro drift all verified firing. All 22 metro guides clean.</li>
+  <li><strong>Ferry §4b — PASS on shape.</strong> 3-row shape and negative-finding-is-drift both verified; all 26 ferry guides are 3-row clean. Link-text gap found (see <em>I built</em> #2).</li>
+  <li><strong>Section-wide — PASS.</strong> Structural <code>extras-sub</code>-required, icon allowlist, no-emoji-led-rows, airport-content ban (incl. IATA codes), GA-icon drift, tram-declared-but-never-ridden, no <code>&lt;p&gt;</code>, no <code>&lt;br&gt;</code>, no annotation leakage, no intro prose, trailing-period — all verified live and firing.</li>
+  <li><span class="tag t-fix">fixed</span> Icon-allowlist failure message still read <em>"only 🚕 🚎 🚝 permitted in Getting Around"</em> after 🚢 was added to <code>_GA_ALLOWED_ICONS</code> on 2026-05-31. A builder shipping a valid 🚢 Ferry heading would have been told, on an unrelated failure, that their icon was banned. Message corrected.</li>
+  <li><span class="tag t-doc">doc</span> Retired a <strong>phantom Validator Index row</strong> — "No Google Maps link inside <code>.ride-apps</code>" was marked Enforced but no such function has ever existed in <code>validate_itinerary.py</code>, and it could never have fired: <code>.ride-apps</code> is the legacy class, itself hard-failed by the §1 "no legacy .ride-apps div" check since the 2026-05-19 per-app split. Its sibling — the Shows aggregator check keyed off the same stale class — was retired long ago with the inline note <em>"the old check never matched anything"</em>; the Getting Around twin was left documented. Row rewritten as retired, with a note that a Maps-href ban would be a genuinely new check, not a revival.</li>
+  <li><span class="tag t-fix">verified no-change</span> Suspected false positive in the GA trailing-period check (<code>&lt;div&gt;</code> text ≥20 chars must end with "."), which would misfire on a long operator-link row such as <code>visitluxembourg.com/mobility</code>. Swept all 230 guides: <strong>0 hits</strong>. No change made — the concern is real in principle but has no fleet instance, and inventing an exemption for it would add untested surface.</li>
+  <li>Updated <code>Brain/Reference/Validator Index.html</code> — 2 new check rows, 1 row retired, header "Last updated" rewritten to 2026-07-24 with the full Part 14 record.</li>
+  <li>Updated <code>Brain/Reference/Cleanliness Checks.md</code> — appended Rules <strong>592</strong> and <strong>593</strong>, each with its drift class and fleet impact at introduction.</li>
+  <li>Added the Part 14 entry to the <code>CHANGELOG</code> tuple at the head of <code>validate_itinerary.py</code>.</li>
+  <li>Ran the validator end-to-end on 5 guides and <code>brain_check.py</code> (see <em>Verification</em>), marked Part 14 complete in <code>validator_audit_state.json</code> (14/20 this cycle), refreshed the coverage artifact, committed and pushed.</li>
+</ul>
+</div>
+
+<h2>I built</h2>
+<div class="card">
+<ul>
+  <li>
+    <span class="tag t-new">new hard-fail</span>
+    <strong><code>GETTING AROUND — TRAM TRANSIT-BOX 3-ROW SHAPE (§2b)</code></strong><br>
+    <em>What it validates:</em> every real 🚎 Tram <code>.transit-box</code> must hold exactly 3 child divs in order — (1) <code>↳ [Description]</code> ≤160 chars with no <code>&lt;a&gt;</code> and a capital letter after the ↳, (2) the locked <code>"[City] has a tram system — operated by [Operator]. Line(s) used on this trip: [N]."</code> row, (3) the operator link row with an <code>&lt;a href&gt;</code>. Negative-finding entries ("No tram found in [City].") are excluded.<br>
+    <em>Why it was needed:</em> tram was the <strong>only</strong> Getting Around subsection with no row-count gate. Metro (Check D, §3b) and Ferry (§4b) have enforced an exact 3-child-div shape for months; tram had only a row-1 description check, a body-<em>wide</em> template search (<code>TRAM TEMPLATE ADHERENCE</code> matches the sentence anywhere in the box) and a link-<em>presence</em> check (any <code>&lt;a href&gt;</code> anywhere in the box). None of the three counts rows, so an arbitrary number of extra rows could sit between them and every existing tram check still passed. Row-1 "no link" and "capital after ↳" were added at the same time for exact parity with §3b/§4b, which already require both.<br>
+    <em>Fleet impact:</em> 1 guide — <strong>Edinburgh</strong>, which ships a 4th row (<code>Board at … ride … alight at …</code>). That is the <code>.next-tram</code> motion sub-line format, not a transit-box row; its "Board at" anchor also renders a Google Maps URL with the display text <code>google.com</code>. The other 14 tram guides were already 3-row clean.
+  </li>
+  <li>
+    <span class="tag t-new">new hard-fail</span>
+    <strong><code>GETTING AROUND — TRAM/METRO/FERRY OPERATOR LINK TEXT IS A DOMAIN</code></strong><br>
+    <em>What it validates:</em> reads the <strong>last</strong> row of every 🚎 / 🚝 / 🚢 <code>.transit-box</code> — the operator link row per §2b/§3b/§4b — and hard-fails any <code>&lt;a&gt;</code> whose visible text contains an uppercase letter. The all-lowercase test is the same one §1b uses, chosen because the full domain set can't be enumerated.<br>
+    <em>Why it was needed:</em> the CORE RULES close all four subsection entries with the identical link-row construct — <code>[Ride App Operator]</code> (§1b), <code>[Tram Operator]</code> (§2b), <code>[Metro Operator]</code> (§3b), <code>[Ferry Operator]</code> (§4b). The 2026-07-12 pass established that this placeholder means the visible text is the operator's lowercase domain and enforced it <strong>for §1b only</strong>. The other three use the same construct and were never checked, so an operator's proper name or a domain-plus-description shipped in a tram/metro/ferry link row while the identical drift hard-failed one subsection above it.<br>
+    <em>Fleet impact:</em> 3 ferry guides — <strong>Boston</strong> (<code>mbta.com — Inner Harbor Ferry.</code>), <strong>Istanbul</strong> (<code>Şehir Hatları</code>), <strong>Stockholm</strong> (<code>SL</code>). 23 of the other 26 ferry guides, all 22 metro guides and all 15 tram guides already conformed — the drift is the exception, not the standard.
+  </li>
+</ul>
+</div>
+
+<h2>Verification</h2>
+<div class="card scroll">
+<table>
+  <tr><th>Guide</th><th>Why chosen</th><th>Tram 3-row</th><th>Operator domain</th><th>Result</th></tr>
+  <tr><td>Edinburgh</td><td>4-row tram box (predicted catch)</td><td class="no">FAIL ✔ expected</td><td class="ok">pass</td><td>881 passed · 3 failed</td></tr>
+  <tr><td>Boston</td><td>ferry link "mbta.com — Inner Harbor Ferry."</td><td class="ok">n/a</td><td class="no">FAIL ✔ expected</td><td>839 passed · 4 failed</td></tr>
+  <tr><td>Amsterdam</td><td>control — tram + metro + ferry all present</td><td class="ok">pass</td><td class="ok">pass</td><td>841 passed · 2 failed</td></tr>
+  <tr><td>Tokyo</td><td>control — metro</td><td class="ok">n/a</td><td class="ok">pass</td><td>882 passed · 2 failed</td></tr>
+  <tr><td>Lisbon</td><td>control — tram + ferry</td><td class="ok">pass</td><td class="ok">pass</td><td>841 passed · 2 failed</td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted);margin:12px 0 0">
+Every residual failure above is a pre-existing FINAL GATE infrastructure failure (climate coverage · Safety Guide row · Guides-Index <code>CLIMATE_INLINE</code>/<code>COST_DATA</code>/<code>SAFETY_DATA</code> · Boston's missing <code>NEIGH_DATA</code>), unrelated to this part and already tracked on the To Do List — they fire on every guide right now. <strong>Neither new check produced a single false positive across the 230-guide sweep:</strong> exactly the 1 + 3 guides predicted by the pre-change analysis failed, and no others. <code>brain_check.py</code>: <strong>195/283 ok · 88 warn · 0 fail</strong> (all warnings pre-existing toolbar-version stragglers, unrelated).
+</p>
+</div>
+
+<h2>I logged in the To do file</h2>
+<div class="card">
+<ul>
+  <li><strong>Edinburgh — tram transit-box 4th row + <code>google.com</code> Maps display text.</strong> Two defects in one row; fix is to delete the 4th row (moving the board/ride/alight content to the Day-N <code>.next-tram</code> sub-line if the ride is actually planned). File and exact markup cited. <em>Suggested handler: pending-fixes-sweep, or the next guide-audit crib that owns Edinburgh.</em></li>
+  <li><strong>Boston / Istanbul / Stockholm — 🚢 Ferry operator link text is not the lowercase domain.</strong> Current and suggested replacement values given for each (<code>mbta.com</code> · <code>sehirhatlari.istanbul</code> · <code>sl.se</code>), with a note to verify each domain resolves before editing. <em>Suggested handler: pending-fixes-sweep.</em></li>
+  <li><strong>Annecy / Yellowstone — Getting Around <code>.extras-empty</code> carries prose beyond the negative-finding lines.</strong> Both use the §1b whole-section exemption but append an explanatory sentence; §1b says negative-finding lines only. Deliberately <em>not</em> turned into a check — the content is useful and only 2 guides do it, so the call is above a validator crib's authority. <em>Suggested handler: owner, or a UX/content crib.</em></li>
+  <li><strong>⚠️ CORE RULES wording conflict — §1b whole-section exemption is stale.</strong> It still says "all four subsections ship only negative-finding lines", but §4 Ferry's negative line was removed as drift (2026-06-16) and §2 Tram's was replaced by the binary form (2026-06-17) — only §1 and §3 still have one. The exemption's <em>behaviour</em> is correct and correctly validated; only the sentence is stale. CORE RULES are read-only, so this is <strong>parked for owner approval, not edited</strong>, with a suggested rewrite. <em>Handler: owner.</em></li>
+</ul>
+</div>
+
+<h2>I logged in the Drift file</h2>
+<div class="card">
+<ul>
+  <li><strong>Escalated an existing entry to systemic:</strong> <em>"Validator Index documents checks as Enforced that were never coded."</em> It was opened 2026-07-22 at ×1 with the explicit note <em>"if a third phantom Enforced check surfaces, the pattern is systemic."</em> The predicted third instance surfaced this run — and in a <strong>different file</strong> (<code>validate_itinerary.py</code>, not <code>brain_check.py</code>), so it is not a brain_check quirk. Badge and meta updated to "Confirmed systemic (3 instances, 2 files)", with a recommendation that the next handler sweep the whole Index for rows whose cited class or selector no longer exists anywhere in the fleet.</li>
+  <li><strong>New entry (Watching):</strong> <em>"A rule construct enforced in one CORE RULES subsection, never in the sibling subsections that use the identical construct."</em> CORE RULES Extra Section files define one shape and reuse it across their numbered subsections; a validator pass repeatedly closes the gap only for the subsection that triggered the report. Confirmed twice in this one file this run — the <code>[X Operator]</code> link row (§1b enforced 2026-07-12, §2b/§3b/§4b unchecked until today) and the 3-row transit-box shape (§3b/§4b gated, §2b never). Logged with the guidance that a future audit adding a subsection-scoped check should verify whether the siblings share the construct before closing the part.</li>
+</ul>
+</div>
+
+<p class="foot">
+Cycle 1 progress: parts 1–14 complete, 6 remaining. Files changed this run —
+<code>Brain/scripts/validate_itinerary.py</code> ·
+<code>Brain/Reference/Validator Index.html</code> ·
+<code>Brain/Reference/Cleanliness Checks.md</code> ·
+<code>Brain/scripts/validator_audit_state.json</code> ·
+<code>Brain/scripts/validator_coverage_artifact.html</code> ·
+<code>To Do List/To_Do_List.md</code> ·
+<code>Travel-Website/Recommendations/site-drift-log.html</code> ·
+this report. No guide HTML was edited — validator-audit scope is validator code and its documentation only.
+</p>
+
+</div>
+</body>
+</html>
