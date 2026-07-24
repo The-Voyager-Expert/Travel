@@ -867,8 +867,7 @@
   if (isRealGuide) {
     var backStrip = document.createElement('div');
     backStrip.id = 'tve-back-guides';
-    backStrip.style.cssText = 'display:flex;justify-content:flex-end;padding:6px 32px;' +
-      'background:#f5f4f0;border-bottom:1px solid #e4e0da;';
+    backStrip.style.cssText = 'display:flex;justify-content:flex-end;padding:6px 32px;background:#f5f4f0;';
     var backGuides = document.createElement('a');
     backGuides.href = base + 'Guides-Index.html';
     backGuides.textContent = '‹ All Guides';
@@ -1053,9 +1052,7 @@
           fetchXhr.send();
         });
 
-        gelRow.appendChild(optBtn);
-      };
-      checkXhr.send();
+        afterEl.insertAdjacentElement('afterend', optBtn);
 
       /* ── k-means geographic clustering ─────────────────────────────────── */
       function distKm(a, b) {
@@ -2199,6 +2196,26 @@
     'melbourne': { h: [
       { name: 'The Langham Melbourne', note: 'Langham brand — riverside Southbank on the Yarra, pool, spa · 8.9 Booking.com' },
       { name: 'Crown Towers Melbourne', note: 'Crown brand — Southbank entertainment precinct, pool, suite-focused luxury · 8.8 Booking.com' }
+    ] },
+    'abu-dhabi': { h: [
+      { name: 'Emirates Palace Mandarin Oriental', note: 'Mandarin Oriental brand — iconic West Corniche, 1km private beach, pool and spa · 9.1 Booking.com' },
+      { name: 'Four Seasons Hotel Abu Dhabi at Al Maryah Island', note: 'Four Seasons brand — Al Maryah Island, rooftop pool with city views, near The Galleria · 9.2 Booking.com' }
+    ] },
+    'aix-en-provence': { h: [
+      { name: 'Le Pigonnet', note: 'Esprit de France — landscaped garden, outdoor pool, views of Mont Sainte-Victoire · 9.1 Booking.com' },
+      { name: 'Villa Saint-Ange', note: 'Independent boutique — 18th-century bastide estate, heated pool, Provençal garden · 9.3 Booking.com' }
+    ] },
+    'alaska': { h: [
+      { name: 'Hotel Captain Cook', note: 'Independent — Anchorage landmark since 1965, three-tower downtown complex with on-site dining · 8.8 Booking.com' },
+      { name: 'Marriott Anchorage Downtown', note: 'Marriott brand — indoor pool, largest downtown full-service hotel, West 7th Avenue · 7.9 Booking.com' }
+    ] },
+    'alesund': { h: [
+      { name: 'Hotel 1904', note: "Independent boutique — Ålesund's oldest hotel, original Art Nouveau building, city center · 9.0 Booking.com" },
+      { name: 'Thon Hotel Ålesund', note: 'Thon Hotels — central location, harbor-facing rooms · 8.7 Booking.com' }
+    ] },
+    'amalfi': { h: [
+      { name: 'Hotel Santa Caterina', note: 'Independent family estate — 1880s cliffside villa, saltwater pool, sea-view terraces, Michelin-starred dining · 9.6 Booking.com' },
+      { name: 'Anantara Convento di Amalfi Grand Hotel', note: 'Anantara brand — converted 13th-century convent above town, infinity pool, dramatic coastal views · 9.1 Booking.com' }
     ] }
   };
 
