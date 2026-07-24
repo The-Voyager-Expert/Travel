@@ -225,6 +225,9 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       return null;
     }
 
+    // Cities that have entries in Day-Trips.html (keyed by guide folder name = climateKey)
+    var DAY_TRIP_CITIES = {"Aix-en-Provence":1,"Amsterdam":1,"Annecy":1,"Athens":1,"Bangkok":1,"Barcelona":1,"Beijing":1,"Bergen":1,"Berlin":1,"Bilbao":1,"Bologna":1,"Bordeaux":1,"Boston":1,"Bruges":1,"Brussels":1,"Budapest":1,"Cairo":1,"Cambridge":1,"Cannes":1,"Carmel-by-the-Sea":1,"Cascais":1,"Charlotte":1,"Chiang-Mai":1,"Chicago":1,"Chongqing":1,"Cinque-Terre":1,"Colmar":1,"Cologne":1,"Copenhagen":1,"Curitiba":1,"Denver":1,"Dublin":1,"Edinburgh":1,"Florence":1,"Frankfurt":1,"Geneva":1,"Glacier-National-Park":1,"Glasgow":1,"Gothenburg":1,"Hamburg":1,"Hanoi":1,"Helsinki":1,"Hong-Kong":1,"Istanbul":1,"Kraków":1,"Kyoto":1,"Lagos":1,"Lake-Como":1,"Lecce":1,"Lille":1,"Lisbon":1,"Ljubljana":1,"London":1,"Los-Angeles":1,"Luang-Prabang":1,"Lucerne":1,"Luxembourg":1,"Lyon":1,"Madrid":1,"Malaga":1,"Malibu":1,"Marktoberdorf":1,"Marseille":1,"Melbourne":1,"Miami":1,"Milan":1,"Monaco":1,"Montreal":1,"Munich":1,"Napa":1,"Naples":1,"New-Orleans":1,"New-York":1,"Nice":1,"Orlando":1,"Osaka":1,"Oslo":1,"Oxford":1,"Paris":1,"Philadelphia":1,"Pisa":1,"Portland":1,"Porto":1,"Porto-Alegre":1,"Prague":1,"Quebec-City":1,"Rome":1,"Salzburg":1,"San-Diego":1,"San-Jose":1,"San-Sebastian":1,"Santa-Barbara":1,"Santa-Fe":1,"Santa-Monica":1,"Santiago":1,"Seattle":1,"Seoul":1,"Seville":1,"Shanghai":1,"Sicily":1,"Siena":1,"Sintra":1,"Sorrento":1,"Split":1,"Stockholm":1,"Strasbourg":1,"Stuttgart":1,"Sydney":1,"Taipei":1,"Tallinn":1,"Tbilisi":1,"Tokyo":1,"Toledo":1,"Toronto":1,"Turin":1,"Venice":1,"Verona":1,"Vienna":1,"Washington-DC":1,"Wellington":1,"Zurich":1};
+
     // Flat destination list for the autocomplete: type a city -> that city; type a
     // country -> all its cities. Each row shows "City · Country".
     var DESTS = keys.map(function (k) {
@@ -538,17 +541,21 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
           '<div class="byg-links-row"><a href="' + href + '" class="byg-link">' + linkLabel + ' →</a></div>' +
           '</div>';
       }
+      var cityParam = encodeURIComponent(CLIM[k].city || k);
       html += essCard('👕', 'Packing', 'Packing list', 'Travel-Packing.html');
-      html += essCard('🛃', 'Global Entry', 'Find airports', 'Trusted-Traveler.html');
+      html += essCard('🛃', 'Global Entry', 'Find airports', 'Trusted-Traveler.html?q=' + cityParam);
       if (statsLink) {
         var statsTitle = isUS ? 'Stats — United States' : isEurope ? 'Stats — Europe' : isAsia ? 'Stats — Asia' : isCaribbean ? 'Stats — Caribbean' : isSouthAmerica ? 'Stats — South America' : isCanada ? 'Stats — Canada' : 'Travel Stats';
         html += essCard('📊', statsTitle, 'View stats', statsLink);
       }
       if (loungeLink) {
         var loungeTitle = isUS ? 'Lounges — United States' : 'Lounges — Europe';
-        html += essCard('💻', loungeTitle, 'Find lounges', loungeLink);
+        html += essCard('💻', loungeTitle, 'Find lounges', loungeLink + '?q=' + cityParam);
       }
       if (isEurope) { html += essCard('🚆', 'EU Trains', 'Train guide', 'European-Train-Guide.html'); }
+      if (DAY_TRIP_CITIES[climateKey]) {
+        html += essCard('🗺️', 'Day Trips', 'View day trips', 'Day-Trips.html?city=' + cityParam);
+      }
 
       // Visa & Entry card (col 2, below Essentials)
       var visaInfo = country ? VISA_DATA[country] : null;
