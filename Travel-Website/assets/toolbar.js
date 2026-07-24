@@ -1490,17 +1490,21 @@
     var _MONTHS = ['January','February','March','April','May','June',
                    'July','August','September','October','November','December'];
     function _injectUpdated() {
-      var m = /^(\d{4})-(\d{2})$/.exec(_updated);
-      if (!m) return;
-      var yr = parseInt(m[1], 10), mo = parseInt(m[2], 10);
+      var mFull  = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.exec(_updated);
+      var mShort = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(_updated);
+      var yr, mo, dy;
+      if (mFull)       { yr = +mFull[1];  mo = +mFull[2];  dy = +mFull[3]; }
+      else if (mShort) { yr = +mShort[1]; mo = +mShort[2]; dy = null; }
+      else             { return; }
       if (yr <= 2000 || mo < 1 || mo > 12) return;
       var el = document.createElement('div');
       el.className = 'title-updated';
-      el.textContent = 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
+      el.textContent = dy
+        ? 'Updated ' + _MONTHS[mo - 1] + ' ' + dy + ', ' + yr
+        : 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
       var tp = document.querySelector('.title-page');
       if (!tp) return;
       tp.appendChild(el);
-
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _injectUpdated);

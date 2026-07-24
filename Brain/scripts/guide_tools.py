@@ -3817,7 +3817,7 @@ def _run_stub(city: str, days: int = 3, country: str = "") -> int:
         map_region = "world"; map_label = "\U0001f5fa️ World Map"
 
     city_upper    = city.upper()
-    data_updated  = _dt.date.today().strftime("%Y-%m")
+    data_updated  = _dt.date.today().strftime("%Y-%m-%d")
     city_display  = city.replace("-", " ")
     # Country anchor used for Plug-Adapter and Currency pills.
     # Falls back to a FILL token when --country was not supplied.
