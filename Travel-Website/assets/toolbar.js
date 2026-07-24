@@ -1052,7 +1052,37 @@
           fetchXhr.send();
         });
 
-        gelRow.appendChild(optBtn);
+        /* Place in the ICS pill row between All Stops Map and Save for offline */
+        optBtn.style.setProperty('flex', '1 1 0', 'important');
+        optBtn.style.setProperty('min-width', '0', 'important');
+        optBtn.style.setProperty('align-items', 'center', 'important');
+        optBtn.style.setProperty('justify-content', 'center', 'important');
+        optBtn.style.setProperty('text-align', 'center', 'important');
+        optBtn.addEventListener('touchstart', function () {
+          optBtn.classList.add('tve-pressed');
+          optBtn.style.setProperty('color', '#fff', 'important');
+          optBtn.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
+        }, { passive: true });
+        optBtn.addEventListener('touchend', function () {
+          setTimeout(function () {
+            optBtn.classList.remove('tve-pressed');
+            optBtn.style.removeProperty('color');
+            optBtn.style.removeProperty('-webkit-text-fill-color');
+          }, 300);
+        }, { passive: true });
+        optBtn.addEventListener('touchcancel', function () {
+          optBtn.classList.remove('tve-pressed');
+          optBtn.style.removeProperty('color');
+          optBtn.style.removeProperty('-webkit-text-fill-color');
+        }, { passive: true });
+        var offlineBtn = document.getElementById('tve-offline-btn');
+        if (offlineBtn) {
+          offlineBtn.parentNode.insertBefore(optBtn, offlineBtn);
+        } else {
+          var icsRow = document.getElementById('ics-pill-row');
+          if (icsRow) icsRow.appendChild(optBtn);
+          else gelRow.appendChild(optBtn);
+        }
       };
       checkXhr.send();
 
