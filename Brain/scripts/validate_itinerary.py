@@ -111,11 +111,11 @@ CHANGELOG = [
      "data-city values (from Trip-Essentials/Safety-Guide.html) so any mismatch is caught before shipping. "
      "Skipped in published-only mode. Hard-fail. Found in 3/5 recently audited guides: Coeur-dAlene, "
      "Hilton Head Island, Marco Island (guide-drift-audit run 2, 2026-07-21)."),
-    ("2026-07-23", "FINAL GATE — NEIGH_DATA entry required. New hard-fail: every new guide must have "
-     "a matching entry in the NEIGH_DATA object in Travel-Website/assets/toolbar.js so the "
-     "'Thinking of switching hotels?' neighborhood selector renders. The check reads toolbar.js, "
-     "extracts all city slugs from NEIGH_DATA via regex, and fails if the guide's slug is absent. "
-     "Authority: Guide Structure.html § 2 (neighborhood selector requirement added 2026-07-23)."),
+    ("2026-07-24", "HOTEL_ALT_DATA — neighborhood selector replaced. The NEIGH_DATA final gate "
+     "(added 2026-07-23) has been removed. The section concept changed: instead of neighborhood "
+     "picks based on stop distribution, it now shows runner-up hotels from the guide's hotel "
+     "research. Data lives in HOTEL_ALT_DATA in toolbar.js; the section is optional and renders "
+     "only when an entry exists. No ship-gate check. Authority: Guide Structure.html § 2."),
     ("2026-07-23", "TOURS — Kb RIDE-ONLY SENTINEL WARN (todo-list-sweep 2026-07-23). "
      "The Ka check (Shows §3) warns when a Shows entry is ride-only (🚕 without 🚶) but lacks a "
      "<!-- ride-only: walk NN min --> sentinel documenting that the meeting point is >40 min walk. "

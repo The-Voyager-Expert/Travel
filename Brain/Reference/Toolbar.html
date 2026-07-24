@@ -207,16 +207,14 @@ When this file drifts from Brain/CORE RULES/, fix it in the same pass. CORE RULE
 <p><strong>Placement:</strong> sits inside the <code>ITEMS.forEach</code> loop immediately after the Guides link — before the Region links, before the Best Of IIFE, before the Also on this site IIFE. The locked "must end with Best Of + Also on this site" rule (§ 18) still holds.</p>
 <p><strong>When to update:</strong> only if <code>Trips.html</code> is renamed or moved. The injection is keyed on <code>/Guides-Index\.html$/</code> — if Guides-Index is ever renamed, update the regex too.</p>
 
-<h2>§ 19. Neighborhood selector — NEIGH_DATA (added 2026-07-23)</h2>
-<p><strong>What it is:</strong> <code>toolbar.js</code> injects a "🏨 Thinking of switching hotels?" block immediately before <code>#also-on-this-site</code> on every guide whose slug has a matching entry in the <code>NEIGH_DATA</code> object. The block shows 3 neighborhood cards with a one-line tagline each; one card is marked <code>rec: true</code> and gets a "best fit" badge. The section is runtime-only — it never appears in guide HTML.</p>
-<p><strong>Entry format</strong> (inside the <code>NEIGH_DATA</code> object literal in <code>toolbar.js</code>):</p>
-<pre><code>'city-slug': { n: [{ name: 'Neighborhood', why: 'one-line tagline', rec: true },
-                    { name: 'Neighborhood', why: 'one-line tagline' },
-                    { name: 'Neighborhood', why: 'one-line tagline' }] },</code></pre>
-<p>The slug must match the guide's filename slug (e.g. <code>lisbon_v4.html</code> → <code>'lisbon'</code>). Names are plain neighborhood or district names — no "Area" or "Region" suffix. Taglines are factual, one-phrase descriptors (beach clubs, temple district, etc.). <code>rec: true</code> marks the single best-fit pick based on where the guide's stops cluster.</p>
-<p><strong>When to add:</strong> before every new guide ships. The ship-gate validator hard-fails if the slug is absent from <code>NEIGH_DATA</code>. Add the entry to <code>toolbar.js</code>, bump its <code>?v=</code> cache-buster in the guide's script tag, and commit both files together.</p>
-<p><strong>Click behavior:</strong> the cards are purely informational — no links, no anchors. The heading uses a <code>div.extras-title</code> (not <code>h2</code>) and a <code>stopPropagation</code> guard to prevent any browser scroll side-effects on click.</p>
-<p><strong>Enforcement:</strong> FINAL GATE in <code>validate_itinerary.py</code> — hard-fails if <code>NEIGH_DATA</code> in <code>Travel-Website/assets/toolbar.js</code> has no entry for this guide's slug. Authority: <code>Guide Structure.html § 2</code>.</p>
+<h2>§ 19. Alternative hotel recommendations — HOTEL_ALT_DATA (updated 2026-07-24)</h2>
+<p><strong>What it is:</strong> <code>toolbar.js</code> injects a "🏨 Alternative Hotel Recommendations" block immediately before <code>#also-on-this-site</code> on guides whose slug has an entry in the <code>HOTEL_ALT_DATA</code> object. The block shows runner-up hotels from the same hotel search process used to pick the guide hotel — not neighborhoods, not stop-based. The section is runtime-only and optional — it renders only when an entry exists.</p>
+<p><strong>Entry format</strong> (inside the <code>HOTEL_ALT_DATA</code> object literal in <code>toolbar.js</code>):</p>
+<pre><code>'city-slug': { h: [{ name: 'Hotel Name', note: 'one-line reason' },
+                    { name: 'Hotel Name', note: 'one-line reason' }] },</code></pre>
+<p>The slug must match the guide's filename slug (e.g. <code>lisbon_v4.html</code> → <code>'lisbon'</code>). Names are the exact hotel names found during research. Notes are brief factual descriptors (rooftop pool, quieter location, better price point, etc.).</p>
+<p><strong>When to add:</strong> during guide builds, when hotel research turns up strong runner-up options. Not required — skip if no notable alternatives were found. No ship-gate check; the section simply does not appear if the slug is absent.</p>
+<p><strong>Click behavior:</strong> cards are informational only — no links, no anchors. The heading uses a <code>div.extras-title</code> and a <code>stopPropagation</code> guard to prevent scroll side-effects on click.</p>
 
 <h2>§ 20. Sticky stop-name strip — guide pages only (added 2026-07-23)</h2>
 <p><strong>What it is:</strong> a slim fixed strip that appears at the top of the viewport while the reader is mid-way through a stop on a guide page. It shows the stop number and name — <code>📍 3. Kunsthaus Zürich</code> — so context is never lost on long 6–8 stop days where the stop header has scrolled off screen by the time the reader reaches restaurant picks or a transport note.</p>
