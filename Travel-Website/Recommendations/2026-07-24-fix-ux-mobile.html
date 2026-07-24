@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fix UX Mobile — 2026-07-24</title>
+<style>
+:root {
+  --bg:#faf8f4; --surface:#fff; --text:#3d3a32; --muted:#9a8a6a;
+  --border:#e8e5de; --border2:#d4d0c8; --accent:#c8a44a;
+  --terra:#b85c2a; --green:#2d7a4a; --red:#a61c00;
+  --open-bg:#fff; --open-border:#c8a44a;
+  --fixed-bg:#f4faf6; --fixed-border:#2d7a4a;
+  --warn-bg:#fffbf2; --warn-border:#d8a830;
+  --code-bg:#f0ede6;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:#1e1b18; --surface:#27231f; --text:#e4e0d8; --muted:#8a8278;
+    --border:#3a3630; --border2:#4a4640; --accent:#d4b060;
+    --terra:#d07040; --green:#4aaa70; --red:#e05030;
+    --open-bg:#27231f; --open-border:#d4b060;
+    --fixed-bg:#1e2820; --fixed-border:#4aaa70;
+    --warn-bg:#26221a; --warn-border:#d4a030;
+    --code-bg:#322e2a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#1e1b18; --surface:#27231f; --text:#e4e0d8; --muted:#8a8278;
+  --border:#3a3630; --border2:#4a4640; --accent:#d4b060;
+  --terra:#d07040; --green:#4aaa70; --red:#e05030;
+  --open-bg:#27231f; --open-border:#d4b060;
+  --fixed-bg:#1e2820; --fixed-border:#4aaa70;
+  --warn-bg:#26221a; --warn-border:#d4a030;
+  --code-bg:#322e2a;
+}
+:root[data-theme="light"] {
+  --bg:#faf8f4; --surface:#fff; --text:#3d3a32; --muted:#9a8a6a;
+  --border:#e8e5de; --border2:#d4d0c8; --accent:#c8a44a;
+  --terra:#b85c2a; --green:#2d7a4a; --red:#a61c00;
+  --open-bg:#fff; --open-border:#c8a44a;
+  --fixed-bg:#f4faf6; --fixed-border:#2d7a4a;
+  --warn-bg:#fffbf2; --warn-border:#d8a830;
+  --code-bg:#f0ede6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:14px;line-height:1.6;color:var(--text);background:var(--bg);padding:32px}
+.doc-header{margin-bottom:28px}
+.doc-header h1{font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text);margin-bottom:4px}
+.doc-meta{font-size:12px;color:var(--muted);line-height:1.7}
+.summary-bar{display:flex;gap:16px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:28px;font-size:13px}
+.summary-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:4px;font-weight:600;font-size:12px}
+.pill-open{background:rgba(200,164,74,.12);color:var(--terra);border:1px solid var(--open-border)}
+.pill-fixed{background:rgba(45,122,74,.10);color:var(--green);border:1px solid var(--fixed-border)}
+.pill-warn{background:rgba(216,168,48,.10);color:#8a6010;border:1px solid var(--warn-border)}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:14px;margin-top:32px}
+.file-group{margin-bottom:24px}
+.file-name{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.01em}
+.file-name code{color:var(--text);font-size:12px}
+.issue{background:var(--open-bg);border:1px solid var(--border);border-left:4px solid var(--open-border);border-radius:4px;padding:12px 14px;margin-bottom:10px}
+.issue.fixed{background:var(--fixed-bg);border-left-color:var(--fixed-border)}
+.issue.warn{background:var(--warn-bg);border-left-color:var(--warn-border)}
+.issue.skip{background:var(--surface);border-left-color:var(--border2)}
+.issue-title{font-weight:700;font-size:13px;margin-bottom:5px;color:var(--text)}
+.issue-row{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:3px}
+.issue-row strong{color:var(--text);display:inline-block;min-width:70px}
+code{background:var(--code-bg);padding:1px 5px;border-radius:3px;font-size:12px;font-family:'SF Mono','Fira Code',monospace;color:var(--text)}
+.badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:3px;vertical-align:middle;margin-left:4px}
+.badge-fixed{background:rgba(45,122,74,.12);color:var(--green)}
+.badge-no-gate{background:rgba(161,28,0,.10);color:var(--red)}
+.badge-skip{background:rgba(160,140,100,.10);color:var(--muted)}
+.badge-open{background:rgba(200,164,74,.15);color:var(--terra)}
+.brain-check-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:14px}
+.brain-check-title{font-weight:700;font-size:13px;margin-bottom:8px}
+.brain-check-row{font-size:13px;color:var(--muted);margin-bottom:3px}
+.ok{color:var(--green)} .warn{color:#8a6010}
+.note{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:4px;padding:10px 14px;font-size:12px;color:var(--muted);margin-top:28px}
+.note strong{color:var(--text)}
+@media(max-width:600px){body{padding:18px}.summary-bar{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>Fix UX Mobile — Routine Report</h1>
+  <div class="doc-meta">
+    Run date: 2026-07-24 &nbsp;·&nbsp;
+    Scope: Trip-Essentials + non-guide pages (CSS / HTML / accessibility / dark-mode tokens) &nbsp;·&nbsp;
+    Chrome: not connected — structural-only mode &nbsp;·&nbsp;
+    Mode: <strong>7 fixes applied to Pickleball.html · 0 already-fixed items found</strong>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <span class="summary-pill pill-fixed">7 items fixed this run</span>
+  <span class="summary-pill pill-fixed">0 already fixed before run</span>
+  <span class="summary-pill pill-warn">5 items skipped (Chrome required)</span>
+  <span class="summary-pill pill-warn">3 items deferred (out of scope / owner decision)</span>
+  <span class="summary-pill pill-fixed">brain_check 0 FAIL</span>
+</div>
+
+
+<!-- STEP 0 — Shared artifact -->
+<div class="section-label">Shared artifact — desktop crib findings reviewed</div>
+<div class="file-group">
+  <div class="issue skip">
+    <div class="issue-title">Desktop crib last run: 2026-07-20 — all items fixed <span class="badge badge-skip">No open items</span></div>
+    <div class="issue-row"><strong>Status:</strong> Shared artifact (8c1fa05a) shows 13 items fixed + 6 continuation fixes in the 2026-07-20 run. No open items carried over from the desktop crib this run.</div>
+  </div>
+</div>
+
+
+<!-- STEP 0b — Drift log -->
+<div class="section-label">Drift log root-cause research (×2+ patterns)</div>
+
+<div class="file-group">
+  <div class="issue warn">
+    <div class="issue-title">Pattern: Trip-Essentials hex literals slip through brain_check (×2 runs) — root cause confirmed</div>
+    <div class="issue-row"><strong>Root cause:</strong> <code>brain_check.check_no_hardcoded_hex_colors</code>'s PALETTE dict includes only 14 neutral hex values (#ffffff, border greys, etc.) — it does NOT include the semantic/token-backed hexes: <code>#A8895A</code> (search placeholder), <code>#c8b99a</code> (search focus border), <code>#3d3a32</code> (warm text), <code>#f0ece4</code> (table divider). These are tokens that exist in web-travel-style.css but are not in the guard's watch list.</div>
+    <div class="issue-row"><strong>Action:</strong> Fixed the Pickleball.html instances this run (see §Fixed below). Logged To Do List item for validator-audit crib to expand PALETTE dict to include these token-backed hexes — preventing recurrence without per-page patrol.</div>
+    <div class="issue-row"><strong>Drift log:</strong> Appended ×3 note + root cause + action to site-drift-log.html entry.</div>
+  </div>
+</div>
+
+
+<!-- STEP 0c — Prior mobile-audit -->
+<div class="section-label">Prior mobile-audit review (2026-07-20)</div>
+<div class="file-group">
+  <div class="issue skip">
+    <div class="issue-title">2026-07-20 mobile audit: all 8 layers PASS — no carry-over items <span class="badge badge-skip">Clean</span></div>
+    <div class="issue-row"><strong>Status:</strong> The 4 JS-template-string false positives flagged in 2026-07-20 were fixed by audit_mobile.py update on 2026-07-21 (per To Do List). No unfixed items from that report.</div>
+  </div>
+</div>
+
+
+<!-- STEP 1 — To Do List intake -->
+<div class="section-label">To Do List intake — in-scope items reviewed</div>
+
+<div class="file-group">
+  <div class="issue skip">
+    <div class="issue-title">Sunrise-Sunset.html — mobile.css?v=51 straggler <span class="badge badge-skip">Out of scope per rule</span></div>
+    <div class="issue-row"><strong>Rule:</strong> CSS version bump scope: touched files only. Sunrise-Sunset is not being shipped this run. Handler: next crib that ships Sunrise-Sunset.</div>
+  </div>
+</div>
+
+<div class="file-group">
+  <div class="issue warn">
+    <div class="issue-title">Travel-Insurance.html <code>.tag-weak</code> — warm rest-state background <span class="badge badge-skip">Decision: keep (semantic signal)</span></div>
+    <div class="issue-row"><strong>Context:</strong> <code>background: var(--warm)</code> on "Basic only" coverage chips. Per spec, REST backgrounds must be <code>var(--surface)</code>. However, the warm background is the semantic differentiation between "weak" and "full" coverage — removing it requires re-encoding strength as a border or label instead.</div>
+    <div class="issue-row"><strong>Decision:</strong> Keep warm background as intentional semantic signal. Owner direction needed to confirm or choose alternative encoding. Logged to To Do List for owner decision.</div>
+  </div>
+  <div class="issue warn">
+    <div class="issue-title">Trusted-Traveler.html <code>.apt-loc-label</code> — warm rest-state background <span class="badge badge-skip">Decision: keep (semantic signal)</span></div>
+    <div class="issue-row"><strong>Decision:</strong> Same as above — warm background carries airport-type semantic meaning. Keep; log for owner decision.</div>
+  </div>
+</div>
+
+
+<!-- STEP 2 — Recommendations queue -->
+<div class="section-label">Recommendations queue — confirmed-open items found</div>
+
+<div class="file-group">
+  <div class="issue warn">
+    <div class="issue-title">Pickleball.html (2026-07-22 report) — 5 hardcoded hex clusters confirmed open</div>
+    <div class="issue-row"><strong>Source:</strong> Pickleball-audit 2026-07-22 logged 5 categories of hardcoded hex; all 5 confirmed present on disk before this run.</div>
+    <div class="issue-row"><strong>Fixed this run:</strong> 7 specific properties across those clusters — see §Fixed below.</div>
+  </div>
+</div>
+
+
+<!-- STEP 3 — Mobile detection -->
+<div class="section-label">Mobile detection — Chrome not connected, structural only</div>
+
+<div class="file-group">
+  <div class="issue skip">
+    <div class="issue-title">Chrome mobile emulation — skipped (not connected) <span class="badge badge-skip">Skip</span></div>
+    <div class="issue-row"><strong>Status:</strong> Chrome MCP returned [] — no connected browser. All mobile checks performed via CSS source review and prior audit_mobile.py results (2026-07-20: all 8 layers PASS).</div>
+  </div>
+  <div class="issue skip">
+    <div class="issue-title">Visual Drift Watch intake — 5 PNG captures pending (Chrome required) <span class="badge badge-skip">Skip</span></div>
+    <div class="issue-row"><strong>Items:</strong> also-on-site-mobile-grid, nearby-guides-mobile-grid, updated-stamp-position, visited-pill, hotel-address-arrow-mobile. Already in MANIFEST.md intake/ — awaiting Chrome-connected run.</div>
+  </div>
+  <div class="issue skip">
+    <div class="issue-title">Hamburger overlay check — grep result <span class="badge badge-skip">Pass</span></div>
+    <div class="issue-row"><strong>Checked:</strong> toolbar.js day-jump-btn hide logic confirmed present (2 occurrences of <code>djBtn</code> hide/show pattern). No issue.</div>
+  </div>
+</div>
+
+
+<!-- FIXED THIS RUN -->
+<div class="section-label">Fixed this run — 7 items applied to Pickleball.html</div>
+
+<div class="file-group">
+  <div class="file-name"><code>Trip-Essentials/Pickleball.html</code></div>
+
+  <div class="issue fixed">
+    <div class="issue-title"><code>.pkl-nav a</code> — rest-state text + background hardcoded <span class="badge badge-fixed">Fixed</span> <span class="badge badge-no-gate">No gate</span></div>
+    <div class="issue-row"><strong>Fix:</strong> <code>color: #3d3a32</code> → <code>var(--text)</code> · <code>background: #fff</code> → <code>var(--surface)</code>. Platform: both (dark-mode adapts automatically).</div>
+    <div class="issue-row"><strong>Why it matters:</strong> In dark mode, #3d3a32 (near-black) would render as near-black text on a dark page background. Nav links were invisible in dark mode rest state.</div>
+  </div>
+
+  <div class="issue fixed">
+    <div class="issue-title"><code>.pkl-search-box input::placeholder</code> — hardcoded <code>#A8895A</code> <span class="badge badge-fixed">Fixed</span> <span class="badge badge-no-gate">No gate</span></div>
+    <div class="issue-row"><strong>Fix:</strong> <code>#A8895A</code> → <code>var(--c-search-placeholder)</code>. Token exists in web-travel-style.css with dark-mode equivalent. Platform: both.</div>
+  </div>
+
+  <div class="issue fixed">
+    <div class="issue-title"><code>.pkl-search-box input:focus</code> — hardcoded <code>#c8b99a</code> border <span class="badge badge-fixed">Fixed</span> <span class="badge badge-no-gate">No gate</span></div>
+    <div class="issue-row"><strong>Fix:</strong> <code>#c8b99a</code> → <code>var(--c-search-focus-border)</code>. Token exists in web-travel-style.css with dark-mode equivalent. Platform: both.</div>
+  </div>
+
+  <div class="issue fixed">
+    <div class="issue-title"><code>.pkl-city.has-guide</code> — hardcoded <code>#b85c2a</code> left-border accent <span class="badge badge-fixed">Fixed</span> <span class="badge badge-no-gate">No gate</span></div>
+    <div class="issue-row"><strong>Fix:</strong> <code>#b85c2a</code> → <code>var(--rust)</code>. Platform: both.</div>
+  </div>
+
+  <div class="issue fixed">
+    <div class="issue-title"><code>.pkl-world-table td</code>, <code>.pkl-state-table td</code>, <code>.pkl-tour-table td</code> — hardcoded <code>#f0ece4</code> row dividers <span class="badge badge-fixed">Fixed</span> <span class="badge badge-no-gate">No gate</span></div>
+    <div class="issue-row"><strong>Fix:</strong> <code>border-bottom: 1px solid #f0ece4</code> → <code>var(--border2)</code> on all 3 table cell selectors. Platform: both. Dark mode: border now adapts to dark theme's <code>--border2</code> value.</div>
+  </div>
+</div>
+
+
+<!-- VALIDATION -->
+<div class="section-label">Post-fix validation</div>
+<div class="brain-check-box">
+  <div class="brain-check-title">brain_check: <span class="ok">195/283 ok</span> &nbsp;·&nbsp; <span class="warn">88 warn</span> &nbsp;·&nbsp; <span class="ok">0 fail</span></div>
+  <div class="brain-check-row"><strong class="warn">88 WARNs (all pre-existing):</strong> toolbar.js version lag — ~88 pages at v124 vs current v125. Pre-existing fleet-wide drift, not introduced by this run. 3 pages missing data-updated (Currency-Guide, Safety-Guide, Travel-Stats) — pre-existing, assigned to their respective content routines.</div>
+  <div class="brain-check-row" style="margin-top:6px;font-size:12px;">No new failures introduced by Pickleball.html edits.</div>
+</div>
+
+
+<!-- DEFERRED / OUT OF SCOPE -->
+<div class="section-label">Out of scope — logged to To Do List</div>
+
+<div class="file-group">
+  <div class="issue skip">
+    <div class="issue-title">Visual Drift Watch enforcement gaps: Rule 554 + Rule 567 <span class="badge badge-skip">toolbar.js locked — logged</span></div>
+    <div class="issue-row"><strong>Rule 554:</strong> .tb-links centering check targets wrong file (guide-style.css) — correct target is toolbar.js. Also: spec says flex-start, actual is space-between; neither is the banned center, no visual regression exists.</div>
+    <div class="issue-row"><strong>Rule 567:</strong> Hamburger menu check false-positives on separator child (height:1px); actual menu uses position:fixed; bottom:0; overflow-y:auto — manifest spec stale. Logged both to To Do List for validator-audit/visual-drift-watch handler.</div>
+  </div>
+  <div class="issue skip">
+    <div class="issue-title">Also-on-site / nearby-guide pill <code>border-radius</code> discrepancy <span class="badge badge-skip">Owner decision needed</span></div>
+    <div class="issue-row">Manifest says border-radius:0 (commit 30749e3c); current guide-style.css has border-radius:6px. Chrome required to visually verify gap impact at gap:0. Logged for owner confirmation.</div>
+  </div>
+  <div class="issue skip">
+    <div class="issue-title">Travel-Stats.html <code>.frontier-chip.visited</code> active warm fill <span class="badge badge-skip">stats-pages refresh routine</span></div>
+    <div class="issue-row">Continent filter badge active state uses warm cream instead of terracotta gradient. Handler: stats-pages refresh routine.</div>
+  </div>
+  <div class="issue skip">
+    <div class="issue-title">Pickleball.html map legend inline <code>style="background:#..."</code> (8 instances) <span class="badge badge-skip">Intentional data-viz colors</span></div>
+    <div class="issue-row">Graduated heat-map tier colors (#b85c2a, #d4874a, #e8b87a, #ece6dd, #f5f2ee) for world and US maps. These are data visualization colors that need to stay consistent regardless of light/dark mode. Not CSS chrome — intentionally inline on the legend boxes. Left as-is.</div>
+  </div>
+  <div class="issue skip">
+    <div class="issue-title">Pickleball.html tooltip <code>background: #3d3a32</code> <span class="badge badge-skip">Intentional contrast design</span></div>
+    <div class="issue-row">Fixed dark background for map tooltip is intentional high-contrast design (dark bg on any theme for readability). Left as-is.</div>
+  </div>
+  <div class="issue skip">
+    <div class="issue-title">Validator PALETTE dict gap — brain_check doesn't catch semantic hex tokens <span class="badge badge-skip">Logged for validator-audit</span></div>
+    <div class="issue-row">Root cause of the recurring drift pattern. Logged To Do List item for validator-audit crib to expand check_no_hardcoded_hex_colors PALETTE dict to include #A8895A, #c8b99a, #3d3a32, #f0ece4.</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Run 2026-07-24 — 7 Pickleball.html dark-mode token fixes applied and pushed.</strong>
+  Chrome not connected — structural-only run. 5 visual intake items and 1 mobile emulation check remain pending for Chrome-connected run.
+  brain_check: 0 FAIL.
+</div>
+
+</body>
+</html>
