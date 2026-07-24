@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Photo Orientation Audit — 2026-07-24</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #222; }
+h1 { font-size: 1.4rem; margin-bottom: 4px; }
+.meta { color: #666; font-size: .85rem; margin-bottom: 24px; }
+.summary { background: #fff3cd; border-left: 4px solid #c8a200; padding: 12px 16px; margin-bottom: 24px; border-radius: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+th { background: #f4f4f4; text-align: left; padding: 8px 10px; border-bottom: 2px solid #ddd; }
+td { padding: 7px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+tr:hover td { background: #fafafa; }
+.city { font-weight: 600; }
+.file { font-family: monospace; font-size: .8rem; color: #555; }
+.badge-port { background: #d1ecf1; color: #0c5460; padding: 2px 6px; border-radius: 3px; font-size: .75rem; }
+.badge-land { background: #f8d7da; color: #721c24; padding: 2px 6px; border-radius: 3px; font-size: .75rem; }
+a { color: #0066cc; }
+.fix-cmd { font-family: monospace; font-size: .78rem; color: #555; }
+.section-note { margin: 20px 0 10px; font-size: .9rem; font-weight: 600; color: #444; }
+</style>
+</head>
+<body>
+<h1>Photo Orientation Audit</h1>
+<div class="meta">Run: 2026-07-24 · Script: <code>Brain/scripts/audit_photo_orientation.py</code> · 2,653 photos checked across all guides</div>
+
+<div class="summary">
+  <strong>44 mismatches found across 40 guides.</strong> Each entry below is a photo whose stored pixel orientation (landscape/portrait) disagrees with the Wikimedia Commons original. These images were downloaded sideways — EXIF auto-correction either wasn't applied or the file had no EXIF. The fix for each is to find a correctly-oriented replacement on Commons and re-download.
+  <br><br>
+  <strong>Root cause fixed:</strong> <code>commons_photo.py --download</code> now (a) applies <code>ImageOps.exif_transpose()</code> on every download, (b) resizes by longest-side not always width=800, and (c) hard-blocks the save when the downloaded orientation doesn't match the Commons original — forcing the builder to find a better source image.
+</div>
+
+<p class="section-note">Mismatches to fix</p>
+<table>
+<thead>
+<tr><th>Guide</th><th>File</th><th>Commons original</th><th>Stored on disk</th><th>Replace from</th></tr>
+</thead>
+<tbody>
+<tr><td class="city">Bali</td><td class="file">800px-Museum_Blanco_Renaissance.jpg</td><td>2988×5312 <span class="badge-port">portrait</span></td><td>800×450 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Museum_Blanco_Renaissance.jpg">Commons</a></td></tr>
+<tr><td class="city">Berlin</td><td class="file">800px-Holocaust-Mahnmal.jpg</td><td>2268×4032 <span class="badge-port">portrait</span></td><td>800×450 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Holocaust_Mahnmal_Berlin.jpg">Commons</a></td></tr>
+<tr><td class="city">Bora-Bora</td><td class="file">800px-Mount_Otemanu_Bora_Bora.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>1280×960 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Mount_Otemanu_Bora_Bora.jpg">Commons</a></td></tr>
+<tr><td class="city">Bora-Bora</td><td class="file">800px-Snorkeling_Bora_Bora.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Snorkeling_in_Bora_Bora.jpg">Commons</a></td></tr>
+<tr><td class="city">Cancun</td><td class="file">800px-Punta_Sur_Lighthouse_Isla_Mujeres.jpg</td><td>2926×4817 <span class="badge-port">portrait</span></td><td>800×485 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Punta_Sur_Lighthouse,_Isla_Mujeres.jpg">Commons</a></td></tr>
+<tr><td class="city">Chiang-Mai</td><td class="file">800px-Buatong_Waterfall_Thailand.jpg</td><td>2304×3456 <span class="badge-port">portrait</span></td><td>800×533 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%81%E0%B8%AB%E0%B8%99%E0%B8%B6%E0%B9%88%E0%B8%87%E0%B9%80%E0%B8%AB%E0%B8%99%E0%B8%B5%E0%B8%A2%E0%B8%A7_%E0%B9%91_-_One_sticky_waterfall_1.jpg">Commons</a></td></tr>
+<tr><td class="city">Denver</td><td class="file">800px-Buffalo_Bill_Grave.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Buffalo_Bill_Cody%27s_Grave.jpg">Commons</a></td></tr>
+<tr><td class="city">Dublin</td><td class="file">800px-Marshs_Library_Dublin_entrance.jpg</td><td>3000×4000 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Arched_entrance_with_cast_iron_grille_at_Marsh%27s_Library,_Dublin.jpg">Commons</a></td></tr>
+<tr><td class="city">Fortaleza</td><td class="file">800px-Praia_de_Meireles_Fortaleza.jpg</td><td>2448×3264 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Avenida_Beira_Mar_(Fortaleza)_57.jpg">Commons</a></td></tr>
+<tr><td class="city">Gothenburg</td><td class="file">800px-Poseidon.jpg</td><td>800×600 <span class="badge-land">landscape</span></td><td>800×1195 <span class="badge-port">portrait</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Poseidon.jpg">Commons</a></td></tr>
+<tr><td class="city">Gothenburg</td><td class="file">800px-Liseberg.jpg</td><td>3072×2304 <span class="badge-land">landscape</span></td><td>800×1066 <span class="badge-port">portrait</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Liseberg.jpg">Commons</a></td></tr>
+<tr><td class="city">Hamburg</td><td class="file">800px-Hamburg_-_Hauptkirche_St._Michaelis.jpg</td><td>3456×5184 <span class="badge-port">portrait</span></td><td>800×533 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Hamburg_-_Hauptkirche_St._Michaelis.jpg">Commons</a></td></tr>
+<tr><td class="city">Hilton-Head-Island</td><td class="file">800px-Fort_Howell.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Fort_Howell_Brigde.jpg">Commons</a></td></tr>
+<tr><td class="city">Hoi-An</td><td class="file">800px-Quan_Cong_Temple.jpg</td><td>3888×5184 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Quan_Cong_Temple_1.jpg">Commons</a></td></tr>
+<tr><td class="city">La-Jolla</td><td class="file">800px-UCSD_Geisel_Library.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:UCSD_Geisel_Library.jpg">Commons</a></td></tr>
+<tr><td class="city">Lake-Como</td><td class="file">800px-Via_Lungolago_Bellagio.jpg</td><td>3456×4608 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Lake_Como_-_Bellagio_-_Lungolago_Europa_-_coin_operated_telescope_(27969991650).jpg">Commons</a></td></tr>
+<tr><td class="city">Lima</td><td class="file">800px-Museo_Larco.jpg</td><td>1067×1600 <span class="badge-port">portrait</span></td><td>800×533 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Museo_Larco.jpg">Commons</a></td></tr>
+<tr><td class="city">Ljubljana</td><td class="file">800px-Ljubljana_Castle.jpg</td><td>3000×4000 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Ljubljana_Castle.jpg">Commons</a></td></tr>
+<tr><td class="city">Lyon</td><td class="file">800px-Maison_des_Canuts.JPG</td><td>4000×6016 <span class="badge-port">portrait</span></td><td>800×531 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:La_Maison_des_Canuts_Panneau.JPG">Commons</a></td></tr>
+<tr><td class="city">Madrid</td><td class="file">800px-National_Archaeological_Museum_Madrid.jpg</td><td>3096×5504 <span class="badge-port">portrait</span></td><td>800×450 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:National_Archaeological_Museum,_Madrid_(Spain).jpg">Commons</a></td></tr>
+<tr><td class="city">Malaga</td><td class="file">800px-soho-street-art-malaga.jpg</td><td>1920×2560 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Soho_Street_Art_Malaga.jpg">Commons</a></td></tr>
+<tr><td class="city">Monaco</td><td class="file">800px-Palais_Princier_de_Monaco.jpg</td><td>3456×4608 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Palais_Princier_de_Monaco.jpg">Commons</a></td></tr>
+<tr><td class="city">Osaka</td><td class="file">800px-Tsutenkaku.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Tsutenkaku_(2018).jpg">Commons</a></td></tr>
+<tr><td class="city">Oxford</td><td class="file">800px-Magdalen.jpg</td><td>600×800 <span class="badge-port">portrait</span></td><td>800×1066 <span class="badge-port">portrait (inverted)</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Magdalen.jpg">Commons</a></td></tr>
+<tr><td class="city">Paris</td><td class="file">800px-Sainte_Chapelle_Paris.jpg</td><td>1174×1724 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Sainte-Chapelle.jpg">Commons</a></td></tr>
+<tr><td class="city">Petra</td><td class="file">800px-Al_Khazneh_(The_Treasury)_in_Petra.jpg</td><td>1914×2478 <span class="badge-port">portrait</span></td><td>800×617 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Al_Khazneh_(The_Treasury)_in_Petra.jpg">Commons</a></td></tr>
+<tr><td class="city">Porto-Alegre</td><td class="file">800px-Museu_de_Ciências_e_Tecnologia_da_PUCRS…jpg</td><td>6000×8000 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Museu_de_Ci%C3%AAncias_e_Tecnologia_da_PUCRS,_Porto_Alegre,_setembro_de_2022_(100).jpg">Commons</a></td></tr>
+<tr><td class="city">Puerto-Vallarta</td><td class="file">800px-Church_of_Our_Lady_of_Guadalupe_Puerto_Vallarta_2014.jpg</td><td>3000×4000 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Church_of_Our_Lady_of_Guadalupe,_Puerto_Vallarta_(2014)_-_09.JPG">Commons</a></td></tr>
+<tr><td class="city">San-Jose</td><td class="file">800px-Rock_cut_tomb_RosicrucianMuseum.jpg</td><td>3072×4608 <span class="badge-port">portrait</span></td><td>800×533 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Baboon_mummy_at_Rosicrucian_Egyptian_Museum.JPG">Commons</a></td></tr>
+<tr><td class="city">Santa-Cruz</td><td class="file">800px-Mission_Santa_Cruz_front_facade.jpg</td><td>3672×4896 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Mission_Santa_Cruz,_front_facade.JPG">Commons</a></td></tr>
+<tr><td class="city">Sarasota</td><td class="file">800px-Downtown_Sarasota_Arts.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Author_Jason_Vuic_at_Bookstore1_in_downtown_Sarasota,_Florida_Monday_November_10,_2025_2.jpg">Commons</a></td></tr>
+<tr><td class="city">Shanghai</td><td class="file">800px-tianzifang.jpg</td><td>3000×4000 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Tianzifang.jpg">Commons</a></td></tr>
+<tr><td class="city">Split</td><td class="file">800px-Peristyle.jpg</td><td>444×600 <span class="badge-port">portrait</span></td><td>800×533 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Peristyle.jpg">Commons</a></td></tr>
+<tr><td class="city">São-Luís</td><td class="file">800px-Praca_Joao_Lisboa.jpg</td><td>3000×4000 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Pra%C3%A7a_Jo%C3%A3o_Lisboa_-_S%C3%A3o_Lu%C3%ADs_-_20240914151705.jpg">Commons</a></td></tr>
+<tr><td class="city">Taipei</td><td class="file">800px-Taipei101.jpg</td><td>3008×2000 <span class="badge-land">landscape</span></td><td>800×1066 <span class="badge-port">portrait</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Taipei101.jpg">Commons</a></td></tr>
+<tr><td class="city">Tallinn</td><td class="file">800px-KGB_Prison_Tallinn.jpg</td><td>3468×4624 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Former_KGB_prison_in_Tallinn.jpg">Commons</a></td></tr>
+<tr><td class="city">Tenerife</td><td class="file">800px-Siam_Park_Tenerife.jpg</td><td>960×720 <span class="badge-land">landscape</span></td><td>800×1066 <span class="badge-port">portrait</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Siam_Park,_Costa_Adeje,_Tenerife_09.jpg">Commons</a></td></tr>
+<tr><td class="city">Vancouver</td><td class="file">800px-Nitobe_Memorial_Garden.jpg</td><td>3000×4496 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Nitobe_Memorial_Garden.jpg">Commons</a></td></tr>
+<tr><td class="city">Vancouver</td><td class="file">800px-Shannon_Falls.jpg</td><td>1536×1944 <span class="badge-port">portrait</span></td><td>800×533 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Shannon_Falls.jpg">Commons</a></td></tr>
+<tr><td class="city">Vancouver</td><td class="file">800px-Harbour_Centre.jpg</td><td>1200×1600 <span class="badge-port">portrait</span></td><td>800×533 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Harbour_Centre.jpg">Commons</a></td></tr>
+<tr><td class="city">Venice</td><td class="file">800px-SanRocco.jpg</td><td>1242×1485 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:SanRocco.jpg">Commons</a></td></tr>
+<tr><td class="city">Verona</td><td class="file">800px-Verona_Cathedral.jpg</td><td>1145×1386 <span class="badge-port">portrait</span></td><td>800×664 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Verona_Cathedral.jpg">Commons</a></td></tr>
+<tr><td class="city">Virgin-Islands</td><td class="file">800px-synagogue.jpg</td><td>1024×768 <span class="badge-land">landscape</span></td><td>433×537 <span class="badge-port">portrait</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Synagogue.jpg">Commons</a></td></tr>
+<tr><td class="city">Wellington</td><td class="file">800px-Weta_Workshop_armor.jpg</td><td>3024×4032 <span class="badge-port">portrait</span></td><td>800×600 <span class="badge-land">landscape</span></td><td><a href="https://commons.wikimedia.org/wiki/File:Weta_Workshop_armor_(52379969701).jpg">Commons</a></td></tr>
+</tbody>
+</table>
+
+<p style="margin-top:24px;font-size:.85rem;color:#555;">
+Re-run: <code>python3 Brain/scripts/audit_photo_orientation.py</code><br>
+Fix each: <code>python3 Brain/scripts/commons_photo.py --download "Travel-Website/Guides/&lt;City&gt;/_build/assets/&lt;file&gt;" "File:..."</code><br>
+Then update the HTML <code>width=</code>/<code>height=</code> attributes to match the new dimensions and re-validate.
+</p>
+</body>
+</html>
