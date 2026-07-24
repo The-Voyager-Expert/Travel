@@ -257,10 +257,7 @@
     null,
     { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing', full: '👕 Packing Checklist' },
     null,
-    { group: '🧳 Before You Go', children: [
-        { href: base + 'Trip-Essentials/Before-You-Go.html',  text: '🧳 Before You Go' },
-        { href: base + 'Trip-Essentials/Trip-Stacking.html',  text: '🗓️ Trip Stacking' },
-      ]},
+    { href: base + 'Trip-Essentials/Before-You-Go.html', text: '🧳 Before You Go' },
     null,
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
     null,
