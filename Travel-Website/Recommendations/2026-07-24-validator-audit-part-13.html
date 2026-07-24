@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validator Audit — Guide Part 13 (SHOWS + GETTING AROUND)</title>
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<style>
+:root {
+  --bg:#f9f7f4; --surface:#ffffff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --accent-dim:#f2e8e2; --border:#ddd5c8;
+  --pass:#2e6e3e; --pass-bg:#edf5f0;
+  --warn:#8a5800; --warn-bg:#fdf3e0; --warn-border:#e8c840;
+  --fail:#7a2020; --fail-bg:#f8eded; --fail-border:#e0b4b4;
+  --chip:#ede8e1; --chip-text:#5a4e3a;
+  --code-bg:#f0ece6;
+}
+@media (prefers-color-scheme:dark) {
+  :root {
+    --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+    --accent:#d4804e; --accent-dim:#2d1e12; --border:#35302a;
+    --pass:#4a9960; --pass-bg:#0d2116;
+    --warn:#c89030; --warn-bg:#2a2010; --warn-border:#806020;
+    --fail:#c06060; --fail-bg:#2a1818; --fail-border:#7a3030;
+    --chip:#2a2520; --chip-text:#c8b89a;
+    --code-bg:#2a2520;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#18160f; --surface:#221e15; --text:#ede9e2; --muted:#8c8278;
+  --accent:#d4804e; --accent-dim:#2d1e12; --border:#35302a;
+  --pass:#4a9960; --pass-bg:#0d2116;
+  --warn:#c89030; --warn-bg:#2a2010; --warn-border:#806020;
+  --fail:#c06060; --fail-bg:#2a1818; --fail-border:#7a3030;
+  --chip:#2a2520; --chip-text:#c8b89a;
+  --code-bg:#2a2520;
+}
+:root[data-theme="light"] {
+  --bg:#f9f7f4; --surface:#ffffff; --text:#1e1c18; --muted:#7a7266;
+  --accent:#b85c2a; --accent-dim:#f2e8e2; --border:#ddd5c8;
+  --pass:#2e6e3e; --pass-bg:#edf5f0;
+  --warn:#8a5800; --warn-bg:#fdf3e0; --warn-border:#e8c840;
+  --fail:#7a2020; --fail-bg:#f8eded; --fail-border:#e0b4b4;
+  --chip:#ede8e1; --chip-text:#5a4e3a;
+  --code-bg:#f0ece6;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+.wrap{max-width:860px;margin:0 auto;padding:32px 24px 64px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:normal;border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px;line-height:1.2}
+h2{font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--muted);margin:0 0 14px}
+.meta-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:28px;font-size:13px}
+.meta-row{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:12px}
+.meta-field span:first-child{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.meta-divider{border-top:1px solid var(--border);padding-top:12px;display:flex;gap:16px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:22px}
+.card ul{font-size:13px;line-height:1.7;padding-left:20px;color:var(--text)}
+.card p{font-size:13px;color:var(--text);margin-bottom:14px}
+.sub-label{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.sub-label:first-child{margin-top:0}
+.warn-box{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:6px;padding:12px 16px;margin-bottom:22px;font-size:13px}
+.warn-box strong{color:var(--warn)}
+.warn-box ul{margin:8px 0 0;padding-left:18px;line-height:1.7;color:var(--text)}
+.fail-box{background:var(--fail-bg);border:1px solid var(--fail-border);border-radius:6px;padding:12px 16px;margin-bottom:28px;font-size:13px}
+.fail-box strong{color:var(--fail)}
+.fail-box ul{margin:8px 0 0;padding-left:18px;line-height:1.7;color:var(--text)}
+.pass-box{background:var(--pass-bg);border:1px solid var(--pass);border-radius:8px;padding:18px 20px;margin-bottom:28px}
+.pass-box .pass-title{font-size:15px;font-weight:700;color:var(--pass);margin-bottom:8px}
+.pass-box p{font-size:13px;color:var(--text);margin:0}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--code-bg);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:8px 12px;text-align:left;border-bottom:2px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:last-child{border-bottom:none}
+td{padding:8px 12px;vertical-align:middle}
+td.pass{color:var(--pass)}
+td.muted{color:var(--muted)}
+.progress-chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px}
+.chip-done{background:var(--accent);color:#fff}
+.chip-this{background:var(--pass);color:#fff}
+.chip-todo{background:var(--chip);color:var(--chip-text)}
+.section-gap{margin-top:32px}
+</style>
+</head>
+<body>
+<div id="toolbar-mount" data-depth="2" data-maxwidth="860"></div>
+<script src="../../assets/toolbar.js?v=125"></script>
+
+<div class="wrap">
+
+<div class="eyebrow">Validator Deep Audit · Guide Part 13 / 20</div>
+<h1>🎭 SHOWS + 🚌 GETTING AROUND — Audit Report</h1>
+
+<div class="meta-card">
+  <div class="meta-row">
+    <div class="meta-field"><span>Date</span><span>2026-07-24</span></div>
+    <div class="meta-field"><span>Crib</span><span>validator-audit-fix-crib-12</span></div>
+    <div class="meta-field"><span>Result</span><span style="color:var(--pass);font-weight:700">✅ Clean — no gaps found</span></div>
+    <div class="meta-field"><span>Guides tested</span><span>Amsterdam · Prague</span></div>
+  </div>
+  <div class="meta-divider">
+    <div><strong>SHOWS:</strong> 33 automated &middot; 2 warn &middot; 2 human-only</div>
+    <div style="color:var(--border)">·</div>
+    <div><strong>GETTING AROUND:</strong> 32 automated &middot; 2 warn &middot; 1 human-only</div>
+  </div>
+</div>
+
+<!-- ─── SHOWS ──────────────────────────────────────────────────── -->
+<h2>🎭 Shows, Performances &amp; Concerts</h2>
+
+<div class="card">
+  <p>All 33 automated checks confirmed implemented. No gaps, no stale entries, no dead code. Covers:</p>
+  <ul>
+    <li>Pin required, ticket link required, aggregator ban on 🎟 link destination</li>
+    <li>Motion row required (🚶/🚕); 🎟 link non-empty visible text</li>
+    <li>Negative-finding exact wording; no negative line when entries ship</li>
+    <li>↳ description: ≤160 chars, ≥10 chars, plain text (no link), starts capital, ends period</li>
+    <li>Annotation leakage, no intro prose before first entry, no &lt;p&gt; tags inside .shows-box</li>
+    <li>Dupe headings; icon order inside .shows-box (↳ → 🎟 → 📍 → 🚶/🚕)</li>
+    <li>No ⭐ in headings, no bold link text, combined motion row format (🚶 N min · 🚕 M min)</li>
+    <li>🚎 tram row uses → arrows; 🎭 icon must not appear in entry divs (X2 check)</li>
+    <li>.shows-box icon allowlist; extras-title exact wording</li>
+    <li>Pin → Google Maps; stray section icon outside .shows-box</li>
+  </ul>
+</div>
+
+<div class="warn-box">
+  <strong>⚠️ Warn-only (2 items — by design)</strong>
+  <ul>
+    <li>Split motion row (🚶 on separate line from 🚕) — suppressible with warn-ok sentinel</li>
+    <li>Ride-only sentinel for shows with no walk option — suppressible with warn-ok sentinel</li>
+  </ul>
+</div>
+
+<div class="fail-box">
+  <strong>❌ Human-only (2 items — not automatable)</strong>
+  <ul>
+    <li>Whether the show description accurately describes the experience</li>
+    <li>Whether the booking link is still live and points to the right venue</li>
+  </ul>
+</div>
+
+<!-- ─── GETTING AROUND ─────────────────────────────────────────── -->
+<div class="section-gap">
+<h2>🚌 Getting Around</h2>
+</div>
+
+<div class="card">
+  <p>All 32 automated checks confirmed implemented across primary section checks (lines 15957–16874) and cross-cutting checks (lines 27817–28151). No gaps, no stale entries. Covers:</p>
+
+  <div class="sub-label">Ride Apps (§1)</div>
+  <ul>
+    <li>Ride apps must be first subsection</li>
+    <li>Sub-headings use &lt;div class="extras-sub"&gt;</li>
+    <li>Per-app transit-box: exactly 1 child div (link only, no description row)</li>
+    <li>One operator per 🚕 entry — no aggregate "Uber · Bolt" entries</li>
+    <li>Heading names the operator, not generic "Ride Apps"</li>
+    <li>Link text is lowercase operator domain (uber.com, bolt.eu…)</li>
+    <li>No loose &lt;div&gt; content after transit-box; no legacy .ride-apps div</li>
+    <li>No Maps link inside .ride-apps; .ride-apps class must not appear outside Getting Around section</li>
+    <li>STRUCTURAL: at least one extras-sub heading when transit-boxes are present</li>
+  </ul>
+
+  <div class="sub-label">Format</div>
+  <ul>
+    <li>Extras-sub icon allowlist: 🚕 🚎 🚝 🚢 only</li>
+    <li>No emoji-led rows inside transit-box; description entries end with period</li>
+    <li>Airport content banned (✈️, "airport", IATA codes)</li>
+    <li>No &lt;p&gt; tags, no &lt;br&gt; tags, no annotation leakage, no intro prose</li>
+    <li>GA drift: 🚕 🚎 🚝 icons outside Getting Around section hard-fail</li>
+  </ul>
+
+  <div class="sub-label">🚎 Tram (§2)</div>
+  <ul>
+    <li>Tram is BINARY: positive entry naming lines ridden, OR exactly "No tram found in [City]."</li>
+    <li>Banned wordings: "No tram rides on this trip", "does not have a tram", "Line(s): none/0/—"</li>
+    <li>Description row required (§2b): first row ≤160 chars, starts with ↳</li>
+    <li>No "Yes"/"No" lead; operator link required when city HAS tram; no link when negative</li>
+    <li>If tram declared, at least one motion banner must contain 🚎</li>
+    <li>DRIFT: 🚊 as metro heading hard-fails (icon reassigned 2026-05-26 to regional train)</li>
+  </ul>
+
+  <div class="sub-label">🚝 Metro (§3)</div>
+  <ul>
+    <li>Ships only when explicitly requested — requires &lt;!-- metro-requested --&gt; comment</li>
+    <li>3-row shape: (1) ↳ description ≤80 chars · (2) template line · (3) operator link</li>
+    <li>Must not contain tram negative-finding text; old 🚊 heading is drift</li>
+  </ul>
+
+  <div class="sub-label">🚢 Ferry (§4)</div>
+  <ul>
+    <li>3-row shape: (1) ↳ description ≤80 chars · (2) "[City] has a ferry — operated by…" · (3) operator link</li>
+    <li>Ferry negative-finding is DRIFT — section omitted entirely when no relevant ferry route; "No ferry available in [City]." hard-fails</li>
+  </ul>
+</div>
+
+<div class="warn-box">
+  <strong>⚠️ Warn-only (2 items — by design)</strong>
+  <ul>
+    <li>Empty ride-apps section negative-finding — check retired 2026-05-25; enforce at build time</li>
+    <li>Search reminder: confirm ride-app availability via live search before shipping (suppressible with warn-ok sentinel)</li>
+  </ul>
+</div>
+
+<div class="fail-box">
+  <strong>❌ Human-only (1 item — not automatable)</strong>
+  <ul>
+    <li>Whether listed ride apps actually operate in the city</li>
+  </ul>
+</div>
+
+<!-- ─── FINDINGS ────────────────────────────────────────────────── -->
+<div class="section-gap">
+<h2>Findings</h2>
+</div>
+
+<div class="pass-box">
+  <div class="pass-title">No gaps found</div>
+  <p>Both sections pass Half 1 (live-page validation) and Half 2 (Index vs code cross-check) with zero issues. All documented checks are correctly implemented. No dead code. No stale Index entries. The cross-cut checks added in prior sessions — tram operator link bug fix (2026-07-17), ferry negative-finding drift (2026-06-16), metro-requested sentinel — are all verified present and correct in validate_itinerary.py lines 27817–28151.</p>
+</div>
+
+<!-- ─── SMOKE TESTS ──────────────────────────────────────────────── -->
+<div class="section-gap">
+<h2>Smoke Tests</h2>
+</div>
+
+<div class="tbl-wrap" style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:28px">
+<table>
+  <thead>
+    <tr>
+      <th>Guide</th>
+      <th>SHOWS</th>
+      <th>GETTING AROUND</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Amsterdam</td>
+      <td class="pass">✅ 34 pass</td>
+      <td class="pass">✅ 30+ pass</td>
+      <td class="muted">Has ferry (IJ ferry) — ferry 3-row shape verified</td>
+    </tr>
+    <tr>
+      <td>Prague</td>
+      <td class="pass">✅ 40 pass</td>
+      <td class="pass">✅ 20+ pass</td>
+      <td class="muted">Has tram — tram binary, operator link, motion banner all verified</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ─── CYCLE PROGRESS ──────────────────────────────────────────── -->
+<div class="section-gap">
+<h2>Cycle 2 Progress — Guide Audit</h2>
+</div>
+
+<div class="card" style="margin-bottom:8px">
+  <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Parts completed this cycle</div>
+  <div class="progress-chips">
+    <span class="chip chip-done">1</span>
+    <span class="chip chip-done">2</span>
+    <span class="chip chip-done">3</span>
+    <span class="chip chip-done">4</span>
+    <span class="chip chip-done">5</span>
+    <span class="chip chip-done">6</span>
+    <span class="chip chip-done">7</span>
+    <span class="chip chip-done">8</span>
+    <span class="chip chip-done">9</span>
+    <span class="chip chip-done">10</span>
+    <span class="chip chip-done">11</span>
+    <span class="chip chip-done">12</span>
+    <span class="chip chip-this">13 ← this run</span>
+    <span class="chip chip-todo">14</span>
+    <span class="chip chip-todo">15</span>
+    <span class="chip chip-todo">16</span>
+    <span class="chip chip-todo">17</span>
+    <span class="chip chip-todo">18</span>
+    <span class="chip chip-todo">19</span>
+    <span class="chip chip-todo">20</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
