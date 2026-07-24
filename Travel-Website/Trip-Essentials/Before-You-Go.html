@@ -42,7 +42,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 .byg-find-wrap { position: relative; grid-column: 2; }
 .byg-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: start; max-width: 1120px; }
 /* Plug Adapter is a full-width strip above the grid — socket types laid out horizontally */
-.byg-plug-card { max-width: 1120px; margin-bottom: 14px; }
+.byg-plug-card { max-width: 1440px; margin-bottom: 14px; }
 .byg-plug-card .byg-plug-row { display: flex; gap: 20px; margin-top: 8px; flex-wrap: wrap; }
 .byg-plug-card .byg-plug-type { flex: 1; min-width: 180px; padding: 10px 14px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px; background: var(--bg,#f5f3ef); }
 .byg-plug-card .byg-plug-imgs { grid-template-columns: 1fr 1fr; gap: 12px; max-width: 230px; }
@@ -809,13 +809,6 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
       }
       var cityParam = encodeURIComponent(CLIM[k].city || k);
       var airInfo = CITY_AIRPORTS[CLIM[k].city || k] || CITY_AIRPORTS[k];
-      var geHtml = '<div class="byg-card byg-card-fixed-sm"><div class="byg-card-head"><span class="byg-card-icon">🛃</span><span class="byg-card-title">Global Entry</span></div>';
-      if (airInfo) {
-        geHtml += '<div class="byg-row"><span class="byg-row-label">Airport</span><span class="byg-row-value" style="font-size:12px;font-weight:500;">' + airInfo.name + ' (' + airInfo.iata + ')</span></div>' +
-          '<div class="byg-row"><span class="byg-row-label">Status</span><span class="byg-safety-badge ' + (airInfo.ge ? 'byg-water-safe' : 'byg-water-unsafe') + '">' + (airInfo.ge ? 'Available' : 'Not available') + '</span></div>';
-      }
-      geHtml += '<div class="byg-links-row"><a href="Trusted-Traveler.html?q=' + cityParam + '" class="byg-link">Find airports →</a></div></div>';
-      html += geHtml;
       if (statsLink) {
         var statsTitle = isUS ? 'Stats — United States' : isEurope ? 'Stats — Europe' : isAsia ? 'Stats — Asia' : isCaribbean ? 'Stats — Caribbean' : isSouthAmerica ? 'Stats — South America' : isCanada ? 'Stats — Canada' : 'Travel Stats';
         html += essCard('📊', statsTitle, 'View stats', statsLink);
@@ -884,13 +877,7 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
           '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">All currencies →</a></div>' +
           '</div>';
       }
-      html += essCard('👕', 'Packing', 'Packing list', 'Travel-Packing.html');
-      if (DAY_TRIP_CITIES[climateKey]) {
-        html += essCard('🗺️', 'Day Trips', 'View day trips', 'Day-Trips.html?city=' + cityParam);
-      }
-      if (isEurope) { html += essCard('🚆', 'EU Trains', 'Train guide', 'European-Train-Guide.html'); }
-
-      // Visa & Entry card (col 3, below EU Trains)
+      // Visa & Entry card (col 3)
       if (visaInfo) {
         var visaTypeLabels = {"domestic":"Domestic","visa-free":"Visa-free","arrival-card":"Arrival Card","eta":"ETA Required","evisa":"eVisa Required","voa":"Visa on Arrival","visa-required":"Visa Required"};
         var visaTypeCss = {"domestic":"byg-visa-domestic","visa-free":"byg-visa-free","arrival-card":"byg-visa-card","eta":"byg-visa-eta","evisa":"byg-visa-evisa","voa":"byg-visa-voa","visa-required":"byg-visa-required"};
@@ -906,8 +893,25 @@ body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
         }
         html += '</div>';
       }
+      // Global Entry (col 3, below Visa & Entry)
+      var geHtml = '<div class="byg-card byg-card-fixed-sm"><div class="byg-card-head"><span class="byg-card-icon">🛃</span><span class="byg-card-title">Global Entry</span></div>';
+      if (airInfo) {
+        geHtml += '<div class="byg-row"><span class="byg-row-label">Airport</span><span class="byg-row-value" style="font-size:12px;font-weight:500;">' + airInfo.name + ' (' + airInfo.iata + ')</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Status</span><span class="byg-safety-badge ' + (airInfo.ge ? 'byg-water-safe' : 'byg-water-unsafe') + '">' + (airInfo.ge ? 'Available' : 'Not available') + '</span></div>';
+      }
+      geHtml += '<div class="byg-links-row"><a href="Trusted-Traveler.html?q=' + cityParam + '" class="byg-link">Find airports →</a></div></div>';
+      html += geHtml;
 
       html += '</div>'; // end col 3 stack
+
+      // Col 4: Packing + Day Trips + EU Trains
+      html += '<div class="byg-col-stack">';
+      html += essCard('👕', 'Packing', 'Packing list', 'Travel-Packing.html');
+      if (DAY_TRIP_CITIES[climateKey]) {
+        html += essCard('🗺️', 'Day Trips', 'View day trips', 'Day-Trips.html?city=' + cityParam);
+      }
+      if (isEurope) { html += essCard('🚆', 'EU Trains', 'Train guide', 'European-Train-Guide.html'); }
+      html += '</div>'; // end col 4 stack
 
       html += '</div>';
       resultsEl.innerHTML = plugHtml + html;
