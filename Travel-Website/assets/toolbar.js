@@ -983,6 +983,233 @@
     if (document.readyState !== 'loading') injectStopsMapPill();
     else document.addEventListener('DOMContentLoaded', injectStopsMapPill);
 
+    /* ── Route Optimizer Preview Button — guide pages with a stops-map only ── */
+    function injectOptimizeButton() {
+      var gelRow = document.querySelector('.overview-extras');
+      if (!gelRow) return;
+      var pageName = location.pathname.split('/').pop() || '';
+      var slugMatch = pageName.match(/^(.+?)(?:_v\d+)?\.html$/);
+      if (!slugMatch) return;
+      var mapHref = './' + slugMatch[1] + '-stops-map.html';
+
+      /* Only show the button if the stops-map actually exists */
+      var checkXhr = new XMLHttpRequest();
+      checkXhr.open('HEAD', mapHref, true);
+      checkXhr.onload = function () {
+        if (checkXhr.status < 200 || checkXhr.status >= 300) return;
+
+        var optBtn = document.createElement('a');
+        optBtn.className = 'overview-extra-link';
+        optBtn.href = '#';
+        optBtn.textContent = '🔀 Preview Optimized';
+        optBtn.style.cssText = 'cursor:pointer;';
+
+        optBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (optBtn.getAttribute('data-busy') === '1') return;
+          optBtn.setAttribute('data-busy', '1');
+          optBtn.textContent = '⏳ Loading…';
+
+          var fetchXhr = new XMLHttpRequest();
+          fetchXhr.open('GET', mapHref, true);
+          fetchXhr.onload = function () {
+            if (fetchXhr.status < 200 || fetchXhr.status >= 300) {
+              optBtn.textContent = '🔀 Preview Optimized';
+              optBtn.removeAttribute('data-busy');
+              return;
+            }
+            var m = fetchXhr.responseText.match(/(?:var|const|let)\s+STOPS\s*=\s*(\[[\s\S]*?\]);/);
+            if (!m) { optBtn.textContent = '🔀 Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
+            var stops;
+            try { stops = JSON.parse(m[1]); } catch (ex) { optBtn.textContent = '🔀 Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
+            runPreview(stops);
+            optBtn.textContent = '✅ Optimized (preview)';
+          };
+          fetchXhr.onerror = function () { optBtn.textContent = '🔀 Preview Optimized'; optBtn.removeAttribute('data-busy'); };
+          fetchXhr.send();
+        });
+
+        gelRow.appendChild(optBtn);
+      };
+      checkXhr.send();
+
+      /* ── k-means geographic clustering ─────────────────────────────────── */
+      function distKm(a, b) {
+        var dlat = (a.lat - b.lat) * 111;
+        var dlng = (a.lng - b.lng) * 88;
+        return Math.sqrt(dlat * dlat + dlng * dlng);
+      }
+
+      function kmeans(items, k) {
+        var withCoord = items.filter(function (s) { return s.lat !== null && s.lng !== null; });
+        var noCoord   = items.filter(function (s) { return s.lat === null || s.lng === null; });
+        if (withCoord.length === 0) {
+          /* No coordinates: split evenly */
+          var even = []; for (var ei = 0; ei < k; ei++) even.push([]);
+          items.forEach(function (s, i) { even[i % k].push(s); });
+          return even;
+        }
+        /* k-means++ initialisation */
+        var centroids = [withCoord[0]];
+        while (centroids.length < Math.min(k, withCoord.length)) {
+          var dists2 = withCoord.map(function (s) {
+            var mn = Infinity;
+            centroids.forEach(function (c) { var d = distKm(s, c); if (d < mn) mn = d; });
+            return mn * mn;
+          });
+          var tot = dists2.reduce(function (a, b) { return a + b; }, 0);
+          var r = (tot * 17393 / 65536) % tot; /* deterministic pseudo-random pick */
+          var cum = 0;
+          for (var j = 0; j < withCoord.length; j++) {
+            cum += dists2[j];
+            if (cum >= r) { centroids.push(withCoord[j]); break; }
+          }
+        }
+        while (centroids.length < k) centroids.push(centroids[centroids.length - 1]);
+
+        /* Iterate */
+        var asgn = new Array(withCoord.length).fill(0);
+        for (var iter = 0; iter < 60; iter++) {
+          var changed = false;
+          withCoord.forEach(function (s, i) {
+            var best = 0, bestD = Infinity;
+            centroids.forEach(function (c, ci) { var d = distKm(s, c); if (d < bestD) { bestD = d; best = ci; } });
+            if (asgn[i] !== best) { asgn[i] = best; changed = true; }
+          });
+          if (!changed) break;
+          centroids = centroids.map(function (_, ci) {
+            var mem = withCoord.filter(function (_, i) { return asgn[i] === ci; });
+            if (!mem.length) return centroids[ci];
+            return { lat: mem.reduce(function (s, m) { return s + m.lat; }, 0) / mem.length,
+                     lng: mem.reduce(function (s, m) { return s + m.lng; }, 0) / mem.length };
+          });
+        }
+
+        /* Build clusters */
+        var clusters = []; for (var ci = 0; ci < k; ci++) clusters.push([]);
+        withCoord.forEach(function (s, i) { clusters[asgn[i]].push(s); });
+        noCoord.forEach(function (s) {
+          var mi = 0; clusters.forEach(function (c, i) { if (c.length < clusters[mi].length) mi = i; });
+          clusters[mi].push(s);
+        });
+        return clusters;
+      }
+
+      function nearestNeighborOrder(items) {
+        if (items.length <= 1) return items.slice();
+        var withCoord = items.filter(function (s) { return s.lat !== null && s.lng !== null; });
+        var noCoord   = items.filter(function (s) { return s.lat === null || s.lng === null; });
+        if (!withCoord.length) return items.slice();
+        var ordered = [withCoord[0]];
+        var rem = withCoord.slice(1);
+        while (rem.length) {
+          var last = ordered[ordered.length - 1];
+          var bi = 0, bd = Infinity;
+          rem.forEach(function (s, i) { var d = distKm(last, s); if (d < bd) { bd = d; bi = i; } });
+          ordered.push(rem[bi]);
+          rem.splice(bi, 1);
+        }
+        return ordered.concat(noCoord);
+      }
+
+      /* ── DOM rewrite ──────────────────────────────────────────────────── */
+      function runPreview(stopsData) {
+        /* Build name → coords lookup */
+        var coordMap = {};
+        stopsData.forEach(function (s) { coordMap[s.name] = { lat: s.lat, lng: s.lng }; });
+
+        /* Collect stop-block elements, keyed by name */
+        var dayBlocks = [].slice.call(document.querySelectorAll('.day-block'));
+        var nonTrainBlocks = [];
+        dayBlocks.forEach(function (db) {
+          var hdr = db.querySelector('.day-header');
+          if (hdr && /Train Day/i.test(hdr.textContent)) return;
+          nonTrainBlocks.push(db);
+        });
+
+        /* Gather all stop elements from non-train days */
+        var allItems = [];
+        nonTrainBlocks.forEach(function (db) {
+          [].slice.call(db.querySelectorAll('.stop-block')).forEach(function (sb) {
+            var nameEl = sb.querySelector('.stop-name');
+            var name = nameEl ? nameEl.textContent.trim() : '';
+            var coords = coordMap[name] || { lat: null, lng: null };
+            allItems.push({ elem: sb, name: name, lat: coords.lat, lng: coords.lng });
+          });
+        });
+        if (!allItems.length) return;
+
+        /* k-means then nearest-neighbor */
+        var k = nonTrainBlocks.length;
+        var clusters = kmeans(allItems, k);
+        var ordered = clusters.map(function (c) { return nearestNeighborOrder(c); });
+
+        /* Rewrite each non-train day-block */
+        nonTrainBlocks.forEach(function (db, ci) {
+          var dayStops = ordered[ci] || [];
+
+          /* Detach all stop-blocks and .next / .next-tram / .next-metro banners */
+          [].slice.call(db.querySelectorAll('.stop-block, .next, .next-tram, .next-metro')).forEach(function (el) {
+            if (el.parentNode) el.parentNode.removeChild(el);
+          });
+
+          /* Re-insert in optimized order */
+          dayStops.forEach(function (stop, si) {
+            /* Inter-stop motion banner */
+            if (si > 0) {
+              var prev = dayStops[si - 1];
+              var banner = document.createElement('div');
+              banner.className = 'next';
+              if (prev.lat !== null && stop.lat !== null) {
+                var dlat = (stop.lat - prev.lat) * 111;
+                var dlng = (stop.lng - prev.lng) * 88;
+                var km = Math.sqrt(dlat * dlat + dlng * dlng);
+                var walkM = Math.round(km / (5 / 60));
+                var taxiM = Math.max(2, Math.round(km / (20 / 60)));
+                banner.textContent = walkM <= 30
+                  ? '🚶 ' + walkM + ' min · 🚕 ' + taxiM + ' min → ' + stop.name
+                  : '🚕 ' + taxiM + ' min → ' + stop.name;
+              } else {
+                banner.textContent = '→ ' + stop.name;
+              }
+              db.appendChild(banner);
+            }
+
+            /* Update stop number */
+            var numEl = stop.elem.querySelector('.stop-num');
+            if (numEl) numEl.textContent = (si + 1) + '.';
+
+            db.appendChild(stop.elem);
+          });
+
+          /* Close with → hotel */
+          if (dayStops.length) {
+            var hotelBanner = document.createElement('div');
+            hotelBanner.className = 'next';
+            hotelBanner.textContent = '→ hotel';
+            db.appendChild(hotelBanner);
+          }
+        });
+
+        /* Floating notice */
+        var notice = document.createElement('div');
+        notice.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);' +
+          'background:#2c2c2c;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;' +
+          'z-index:9999;display:flex;align-items:center;gap:14px;' +
+          'box-shadow:0 2px 12px rgba(0,0,0,.35);max-width:90vw;white-space:nowrap;';
+        notice.innerHTML = '<span>🔀 Preview only — run <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px;">optimize_route.py</code> to commit</span>';
+        var resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        resetBtn.style.cssText = 'background:#fff;color:#2c2c2c;border:none;border-radius:4px;' +
+          'padding:4px 12px;font-size:12px;cursor:pointer;font-weight:700;flex-shrink:0;';
+        resetBtn.addEventListener('click', function () { location.reload(); });
+        notice.appendChild(resetBtn);
+        document.body.appendChild(notice);
+      }
+    }
+    if (document.readyState !== 'loading') injectOptimizeButton();
+    else document.addEventListener('DOMContentLoaded', injectOptimizeButton);
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectOverviewArrows);
     } else {
