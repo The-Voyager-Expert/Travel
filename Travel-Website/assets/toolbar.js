@@ -863,18 +863,27 @@
     document.body.insertBefore(bar, document.body.firstChild);
   }
 
-  /* ── Guide-page back-link — breadcrumb strip below toolbar, desktop only ── */
+  /* ── Guide-page back-link — pill strip below toolbar, desktop only ── */
   if (isRealGuide) {
+    var backStrip = document.createElement('div');
+    backStrip.id = 'tve-back-guides';
+    backStrip.style.cssText = 'display:flex;justify-content:flex-end;padding:6px 32px;' +
+      'background:#f5f4f0;border-bottom:1px solid #e4e0da;';
     var backGuides = document.createElement('a');
-    backGuides.id = 'tve-back-guides';
     backGuides.href = base + 'Guides-Index.html';
     backGuides.textContent = '‹ All Guides';
-    backGuides.style.cssText = 'display:block;padding:5px 32px;font-size:12px;font-weight:600;' +
-      'letter-spacing:.04em;color:#8a6c1a;background:#f5f4f0;border-bottom:1px solid #e4e0da;' +
-      'text-align:right;text-decoration:none;transition:color .12s;';
-    backGuides.addEventListener('mouseenter', function () { backGuides.style.color = '#b85c2a'; });
-    backGuides.addEventListener('mouseleave', function () { backGuides.style.color = '#8a6c1a'; });
-    bar.insertAdjacentElement('afterend', backGuides);
+    backGuides.style.cssText = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
+      'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
+      'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+      'text-decoration:none;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;';
+    backGuides.addEventListener('mouseenter', function () {
+      backGuides.style.color = '#b85c2a'; backGuides.style.borderColor = '#b85c2a';
+    });
+    backGuides.addEventListener('mouseleave', function () {
+      backGuides.style.color = '#8a6c1a'; backGuides.style.borderColor = '#c8a44a';
+    });
+    backStrip.appendChild(backGuides);
+    bar.insertAdjacentElement('afterend', backStrip);
   }
 
   /* ── Arrows inside .overview-title: [‹] · title · [›] — real guides only ─── */
