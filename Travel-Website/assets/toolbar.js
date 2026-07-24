@@ -2038,4 +2038,71 @@
     _wx.src = base + 'assets/weather.js?v=4';
     document.head.appendChild(_wx);
   }
+
+  /* ── Sticky stop-name strip — guide pages only ──────────────────────────────
+     A slim fixed strip at the top of the viewport that shows the name of the
+     stop currently being read — "📍 1. Panthéon" — so context is never lost on
+     long days where the stop header has scrolled off screen. Uses
+     IntersectionObserver on every .stop-header element. The strip appears when
+     a header exits the top of the viewport and clears when no headers remain
+     above it (e.g. scrolled back to the top). Zero guide HTML changes. */
+  function _injectStopStrip() {
+    if (!isRealGuide) return;
+    if (!window.IntersectionObserver) return;
+
+    var strip = document.createElement('div');
+    strip.id = 'tve-stop-strip';
+    strip.style.cssText =
+      'display:none;position:fixed;top:0;left:0;right:0;z-index:101;' +
+      'height:28px;align-items:center;' +
+      'background:#f0ede5;border-bottom:1px solid #ddd8cc;' +
+      'padding:0 16px;font-size:12px;font-weight:500;color:#6b6860;' +
+      'letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' +
+      'box-sizing:border-box;pointer-events:none;';
+    document.body.appendChild(strip);
+
+    function _setupStopStrip() {
+      var headers = [].slice.call(document.querySelectorAll('.stop-header'));
+      if (!headers.length) return;
+
+      var aboveViewport = new Set();
+
+      function _updateStrip() {
+        var current = null;
+        for (var i = headers.length - 1; i >= 0; i--) {
+          if (aboveViewport.has(headers[i])) { current = headers[i]; break; }
+        }
+        if (current) {
+          var nameEl = current.querySelector('.stop-name');
+          var numEl  = current.querySelector('.stop-num');
+          var num    = numEl  ? numEl.textContent.trim()  : '';
+          var name   = nameEl ? nameEl.textContent.trim() : '';
+          strip.textContent = '📍 ' + (num ? num + ' ' : '') + name;
+          strip.style.display = 'flex';
+        } else {
+          strip.style.display = 'none';
+        }
+      }
+
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+            aboveViewport.add(entry.target);
+          } else {
+            aboveViewport.delete(entry.target);
+          }
+        });
+        _updateStrip();
+      }, { threshold: 0 });
+
+      headers.forEach(function(h) { obs.observe(h); });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setupStopStrip);
+    } else {
+      _setupStopStrip();
+    }
+  }
+  _injectStopStrip();
 }());
