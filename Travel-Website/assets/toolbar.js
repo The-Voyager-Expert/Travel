@@ -1259,43 +1259,48 @@
   }
 
   /* ── In-guide bookmark — pin this guide as current trip from inside the guide.
-     Button sits centred in .overview-title (position:absolute; left:50%).
-     Desktop only: hidden on mobile pending a placement decision.
-     Shares the same localStorage key / data format as the Guides-Index pin. */
+     Button sits to the right of .title-city ("LISBON") with a 10px gap.
+     All viewports. Resting colour: terracotta #b85c2a (outline when unpinned,
+     filled when pinned). Shares tve_pinned_guide localStorage format. */
   if (isRealGuide) {
     function injectGuideBookmark() {
-      if (window.matchMedia && window.matchMedia('(max-width:600px)').matches) return;
-      var ot = document.querySelector('.overview-title');
-      if (!ot || document.getElementById('guide-pin-btn')) return;
+      var tc = document.querySelector('.title-city');
+      if (!tc || document.getElementById('guide-pin-btn')) return;
 
       var KEY  = 'tve_pinned_guide';
       var name = document.title;
       var pm   = location.pathname.match(/(\/Guides\/.+)$/);
       var href = pm ? '.' + pm[1] : location.pathname;
 
-      var SVG_OUT  = '<svg width="13" height="15" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
-      var SVG_FILL = '<svg width="13" height="15" viewBox="0 0 12 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+      var SVG_OUT  = '<svg width="14" height="16" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+      var SVG_FILL = '<svg width="14" height="16" viewBox="0 0 12 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 
-      function getPin()   { try { return JSON.parse(localStorage.getItem(KEY)); } catch(e) { return null; } }
+      function getPin()    { try { return JSON.parse(localStorage.getItem(KEY)); } catch(e) { return null; } }
       function pinActive() { var p = getPin(); return !!(p && p.href === href); }
+
+      /* Wrap existing city-name text so .title-city stays flex-able */
+      var textSpan = document.createElement('span');
+      while (tc.firstChild) textSpan.appendChild(tc.firstChild);
+      tc.style.display    = 'inline-flex';
+      tc.style.alignItems = 'center';
+      tc.appendChild(textSpan);
 
       var on = pinActive();
       var btn = document.createElement('button');
-      btn.id   = 'guide-pin-btn';
-      btn.type = 'button';
+      btn.id        = 'guide-pin-btn';
+      btn.type      = 'button';
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
       btn.title     = on ? 'Remove current trip pin' : 'Pin as current trip';
       btn.innerHTML = on ? SVG_FILL : SVG_OUT;
       btn.style.cssText =
-        'position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;' +
-        'display:flex;align-items:center;background:none;border:none;cursor:pointer;' +
-        'padding:0 14px;color:' + (on ? '#b85c2a' : '#b0aa9f') + ';transition:color .12s;z-index:1;';
+        'display:inline-flex;align-items:center;flex-shrink:0;' +
+        'background:none;border:none;cursor:pointer;padding:0;margin-left:10px;' +
+        'color:#b85c2a;transition:opacity .12s;opacity:' + (on ? '1' : '.65') + ';';
 
-      ot.style.position = 'relative';
-      ot.appendChild(btn);
+      tc.appendChild(btn);
 
-      btn.addEventListener('mouseenter', function() { if (!pinActive()) btn.style.color = '#b85c2a'; });
-      btn.addEventListener('mouseleave', function() { if (!pinActive()) btn.style.color = '#b0aa9f'; });
+      btn.addEventListener('mouseenter', function() { btn.style.opacity = '1'; });
+      btn.addEventListener('mouseleave', function() { btn.style.opacity = pinActive() ? '1' : '.65'; });
 
       btn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1303,13 +1308,13 @@
         if (pinActive()) {
           localStorage.removeItem(KEY);
           btn.innerHTML = SVG_OUT;
-          btn.style.color = '#b0aa9f';
+          btn.style.opacity = '.65';
           btn.setAttribute('aria-pressed', 'false');
           btn.title = 'Pin as current trip';
         } else {
           localStorage.setItem(KEY, JSON.stringify({ href: href, name: name, flag: '' }));
           btn.innerHTML = SVG_FILL;
-          btn.style.color = '#b85c2a';
+          btn.style.opacity = '1';
           btn.setAttribute('aria-pressed', 'true');
           btn.title = 'Remove current trip pin';
         }
