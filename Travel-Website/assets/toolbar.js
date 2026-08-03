@@ -1180,8 +1180,9 @@
         strip.appendChild(linksRow);
         /* Insert the card right after the anchor the user landed on (e.g. #Austria),
            so it's visible without scrolling on long pages like Currency and Plug-Adapter.
+           Use location.hash (current page anchor) not the referrer anchor.
            Fall back to appending to .wrap/.content-wrap if the anchor isn't found. */
-        var anchorId = ref.split('#')[1] || '';
+        var anchorId = location.hash ? location.hash.slice(1) : '';
         var anchorEl = anchorId ? document.getElementById(anchorId) : null;
         if (anchorEl && anchorEl.parentNode) {
           anchorEl.parentNode.insertBefore(strip, anchorEl.nextSibling);
