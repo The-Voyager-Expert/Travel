@@ -1317,13 +1317,14 @@
       if (raLink) ovSec.appendChild(raLink);
     }
     /* Move the "Updated {Month}" stamp to the end of the guide on all viewports.
-       When a Nearby Guides card exists, insert the stamp directly AFTER it (as a
-       standalone right-aligned line below the card). Otherwise fall back to
-       appending inside the "Also on this site" card. */
+       Priority: #tve-best-of-crosslinks (last DOM element) → #also-in-country →
+       #nearby-guides → #also-on-this-site (fallback). Best Of is injected on
+       DOMContentLoaded before this runs on 'load', so it always exists when it exists. */
     function repositionUpdatedStamp() {
       var upd = document.querySelector('.title-page .title-updated') || document.querySelector('.title-updated');
       if (!upd) return;
-      /* Prefer #also-in-country (last injected) -> #nearby-guides -> #also-on-this-site */
+      var bestOf = document.getElementById('tve-best-of-crosslinks');
+      if (bestOf && bestOf.parentNode) { bestOf.parentNode.insertBefore(upd, bestOf.nextSibling); return; }
       var alsoIn = document.getElementById('also-in-country');
       if (alsoIn && alsoIn.parentNode) { alsoIn.parentNode.insertBefore(upd, alsoIn.nextSibling); return; }
       var nearby = document.getElementById('nearby-guides');
@@ -3864,9 +3865,14 @@
       wrap.appendChild(h);
       wrap.appendChild(pills);
       anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
-      /* Move the "Updated" stamp to appear after this section */
+      /* Move the "Updated" stamp after the last footer section.
+         Prefer Best Of (#tve-best-of-crosslinks) if present — it is always last. */
       var stamp = document.querySelector('.title-updated');
-      if (stamp && stamp.parentNode) { wrap.parentNode.insertBefore(stamp, wrap.nextSibling); }
+      if (stamp && stamp.parentNode) {
+        var _bestOf = document.getElementById('tve-best-of-crosslinks');
+        var _anchor = (_bestOf && _bestOf.parentNode) ? _bestOf : wrap;
+        _anchor.parentNode.insertBefore(stamp, _anchor.nextSibling);
+      }
     }
     function _run() {
       try {
