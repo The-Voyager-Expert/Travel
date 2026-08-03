@@ -1945,9 +1945,10 @@ div.train .train-time   { padding: 2px 0; }
     -webkit-text-fill-color: #fff !important;
   }
   /* The "Updated {Month}" stamp on mobile:
-     Always inserted as a sibling AFTER the last section — either AFTER
-     #nearby-guides (when present) or AFTER #also-on-this-site (fallback).
-     Never inside either pill grid. */
+     Always inserted as a sibling AFTER the last section — #tve-best-of-crosslinks
+     when Best Of exists, then #also-in-country, #nearby-guides, or #also-on-this-site.
+     Never inside any pill grid. */
+  #tve-best-of-crosslinks + .title-updated,
   #also-in-country + .title-updated,
   #also-nearby-wrap + .title-updated,
   #nearby-guides + .title-updated,
@@ -1957,6 +1958,7 @@ div.train .train-time   { padding: 2px 0; }
 /* Updated stamp repositioned after last guide card (all viewports): absorb the
    card's 24px margin-bottom so the stamp sits flush just below the card. The
    mobile !important rule above overrides this on ≤600px viewports. */
+#tve-best-of-crosslinks + .title-updated,
 #also-in-country + .title-updated,
 #also-nearby-wrap + .title-updated,
 #nearby-guides + .title-updated,
@@ -2463,13 +2465,13 @@ a.nearby-guide-pill:active {
    Stats + European Train are each 1 col so they appear side-by-side on the last row.
    Placed AFTER the base rules so media query wins without needing !important fights. */
 @media (max-width: 600px) {
-  .also-on-this-site-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; grid-column: span 2; }
-  /* 1 pill alone on last row → full width */
-  .also-on-this-site-pill:last-child:nth-child(3n+1) { grid-column: span 6; }
-  /* 2 pills on last row → side by side, each half width */
-  .also-on-this-site-pill:last-child:nth-child(3n+2) { grid-column: span 3; }
-  .also-on-this-site-pill:nth-last-child(2):nth-child(3n+1) { grid-column: span 3; }
+  /* 3-col grid — pills share rows naturally; only 1 lone pill needs a full-width override.
+     Switched from repeat(6,1fr)+span-2+nth-child overrides 2026-08-04: Safari iOS ignored
+     grid-column set via nth-child pseudo-class selectors, causing pills to stack solo. */
+  .also-on-this-site-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; }
+  /* 1 pill alone on last row → span all 3 cols; 2+ pills share the row naturally */
+  .also-on-this-site-pill:last-child:nth-child(3n+1) { grid-column: span 3; }
   .nearby-guides-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
   .nearby-guide-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; }
 }
