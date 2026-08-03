@@ -35,7 +35,7 @@
 
   /* ── Typography ── */
   --font:     'Roboto', Arial, sans-serif;
-  --fs-body:  14px;   /* matches guides */
+  --fs-body:  15px;
   --fs-title: 18px;   /* page title size */
   --fs-sub:   12px;   /* sub-lines, descriptions */
   --fs-label: 11px;   /* decorative uppercase labels */
@@ -296,6 +296,9 @@ body > .title-updated { padding-left: 32px; }
    that need a specific visited color carry their own a.class:visited rule. */
 a { color: #8a6c1a; text-decoration: none; }
 a:hover { text-decoration: none; }
+/* Inline prose links inside paragraphs get an underline on hover for discoverability.
+   This is scoped to <p> and .prose so it never fires on pills, chips, or nav elements. */
+p a:hover, .prose a:hover { text-decoration: underline; }
 /* Styled link components (tiles / pills / buttons / cards / chips) are not prose links —
    they must never underline on hover. The hover underline is for inline text links only.
    Fixes the tile/button hover-underline that showed up across the site (e.g. Essentials tiles). */
@@ -560,11 +563,12 @@ input[type="text"]::placeholder,
   padding: 14px 18px;
   display: flex;
   flex-direction: column;
-  transition: box-shadow .15s, border-color .15s;
+  transition: box-shadow .15s, border-color .15s, transform .15s;
 }
 .best-of-card:hover {
   box-shadow: 0 3px 10px rgba(92,61,17,.10);
   border-color: var(--accent);
+  transform: translateY(-2px);
 }
 .best-of-name {
   font-size: 15px;
@@ -646,9 +650,9 @@ input[type="text"]::placeholder,
   #region-filters > span.bo-active,
   #region-filters > span.bo-active:hover,
   #region-filters > span.bo-active:focus {
-    background: #f0ede8 !important;
-    border: 1.5px solid var(--border) !important;
-    color: #6a6660 !important;
+    background: #b85c2a !important;
+    border: 1.5px solid #b85c2a !important;
+    color: #fff !important;
   }
 }
 
@@ -659,10 +663,10 @@ input[type="text"]::placeholder,
   /* Best-Of-Index region-filter chips — mobile Form B glued grid (owner report
      2026-07-29). .filter-chip-row (mobile.css) already grids the container but
      leaves a 6px gap and lets the inline JS styles show through — those set a
-     strong solid terracotta fill + white text on .bo-active, which is the
-     desktop-canonical-only look (see the min-width:601px block above), never
-     meant for mobile. Override the container gap and every child (ID beats the
-     shared .filter-chip-row class even against !important). */
+     strong solid terracotta fill + white text on .bo-active. Override gap and
+     every child (ID beats the shared .filter-chip-row class even against
+     !important). Active state uses terracotta border + text on white bg for
+     mobile readability (fixed 2026-08-03, was inverted muted-beige). */
   #region-filters { gap: 0 !important; }
   #region-filters > span {
     height: 40px !important;
@@ -677,9 +681,9 @@ input[type="text"]::placeholder,
   #region-filters > span.bo-active,
   #region-filters > span.bo-active:hover,
   #region-filters > span.bo-active:focus {
-    background: #f0ede8 !important;
-    border: 1.5px solid var(--border) !important;
-    color: #6a6660 !important;
+    background: var(--surface, #ffffff) !important;
+    border: 1.5px solid #b85c2a !important;
+    color: #b85c2a !important;
   }
 }
 
@@ -715,7 +719,7 @@ input[type="text"]::placeholder,
   box-shadow: 0 8px 22px rgba(92,61,17,.15);
   transform: translateY(-2px);
 }
-.showcase-photo { width: 100%; height: 190px; background: var(--hover); }
+.showcase-photo { width: 100%; height: 190px; background: var(--hover); overflow: hidden; }
 .showcase-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .showcase-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .showcase-name { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
