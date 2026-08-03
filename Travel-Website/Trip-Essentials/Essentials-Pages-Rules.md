@@ -72,7 +72,7 @@ When active, the shared footnote is appended at runtime by `footnote.js` (auto-l
 
 Scope of countries: exactly the set of countries in the guides index (`Guides/Guides-Index.html`) — no more, no less. Virgin Islands files under the United States (matches the index flag); each of the 133 guide cities maps to one country block.
 
-Typography & colour (the page follows the site scale in `Brain/Reference/Colors and Font Size.html`):
+Typography & colour (the page follows the site scale in `Brain/Reference/Formatting.html#sec-colors`):
 
 - All type uses `var(--font)` and the `--fs-*` scale — **no hardcoded pixel font sizes**.
 - Banner / region headers use the warm terracotta palette (`var(--banner-gradient)`) — **no green**.
@@ -98,7 +98,7 @@ Refresh: monthly (and on demand) via `python3 Brain/scripts/build_currency.py &&
 
 ## Title banner — LOCKED format (every Essentials page, the Guides index, the Main Pages hub)
 
-The full spec and rationale live in `Brain/Reference/Colors and Font Size.html` § 16. Short version — every page's banner is **identical**, so do not invent a variant:
+The full spec and rationale live in `Brain/Reference/Formatting.html#sec-colors` § 16. Short version — every page's banner is **identical**, so do not invent a variant:
 
 - **Markup:** one `<div class="page-header">` (or `header` / `site-header`) holding a single `<h1>`. Nothing else inside the banner div — no `<span>`, `<p>`, eyebrow, date stamp, or subtitle. The "Updated …" stamp and any subtitle go **below** the banner.
 - **The `<h1>` is text-only — NO emoji.** The tab's emoji lives in the toolbar label, never in the heading. (Cribs keep pasting it in — e.g. Pickleball 🏓 — don't.)
