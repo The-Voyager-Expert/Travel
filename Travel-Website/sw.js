@@ -176,7 +176,11 @@
 /* 2026-08-03: Best-Of pages: added best-of-features.js (continent filter, sort, favorites,
    star ratings, compare panel) across all 35 showcase pages + Best-Of-Index.html.
    New .bo-* CSS appended to web-travel-style.css. — CACHE to v211. */
-var CACHE = 'travel-cache-v211';
+/* 2026-08-04: back-to-guide pill leaked onto aggregator/nav pages — going guide →
+   Guides Index made document.referrer a guide, so "← Back to {City}" fired on the
+   index (and would on Before-You-Go / Climate-Finder / When-to-Go). injectBackToGuidePill
+   now early-returns on those no-standalone-content hubs. — toolbar.js min to 157, CACHE to v212. */
+var CACHE = 'travel-cache-v212';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -184,7 +188,7 @@ var CACHE = 'travel-cache-v211';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 156, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 157, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

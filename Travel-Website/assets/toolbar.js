@@ -1084,6 +1084,15 @@
        Guide B from Guide A's strip doesn't need a "back to Guide A" pill.
        Skip any page inside the Guides folder (real guide + stops-map + read-about). */
     if (/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
+    /* Owner bug 2026-08-04: guide → Guides Index showed "← Back to Amsterdam" on
+       the index. Aggregator / navigation pages (CLAUDE.md: index, Before-You-Go,
+       Climate-Finder, When-to-Go) have NO standalone content — a guide's chrome
+       links to them ("‹ All Guides" → the index), so document.referrer is a guide
+       and the pill fired. These are hubs the reader navigated AWAY to, not a page
+       the guide recommends — never show the back-to-guide pill (or its desktop
+       card) here. Content pages (Currency, Plug-Adapter, …) are unaffected. */
+    if ({ '': 1, 'index': 1, 'guides_index': 1, 'Guides-Index': 1,
+          'Before-You-Go': 1, 'Climate-Finder': 1, 'When-to-Go': 1 }[thisPage]) return;
     /* Source guide = document.referrer when it points at a guide. The
        referrer is empty on a hard refresh, a bookmark/hamburger entry, an
        iOS standalone/PWA launch, or any hop that isn't a direct guide→page
