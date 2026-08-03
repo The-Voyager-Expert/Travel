@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Stats Across South America</title>
+<style>.stats-nav { display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 8px 0 10px; margin: 0 0 28px;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg); }
+.stats-nav a { font-family: inherit; display: inline-flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 400; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.stats-nav a:hover, .stats-nav a.active { border-color: var(--rust); color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+
+/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Desktop-Pill-Format.html.
+   Scoped to @media (min-width: 601px) so mobile keeps its rest/hover/active/
+   visited states. 19 pills → balanced 10+9 rows via flex-basis calc(100%/10). */
+@media (min-width: 601px) {
+  .stats-nav { gap: 0; }
+  .stats-nav a { flex: 1 1 calc(100% / 10 - 0.01px); height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
+  .stats-nav a:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  .stats-nav a.active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+.bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 20px; overflow: hidden; scroll-margin-top: 56px; }
+.cat-sec-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border2); background: var(--surface); }
+.bar-rank { width: 20px; font-size: 11px; color: var(--muted); font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-country { width: 140px; font-size: 12px; color: var(--text); font-weight: 400; flex-shrink: 0; }
+.bar-val { width: 72px; font-size: 11px; color: var(--muted); text-align: right; flex-shrink: 0; }
+.sun-table td.country-name { text-align: left; font-size: 12px; color: var(--text); font-weight: 400; }
+.search-row { display: flex; flex-direction: column; align-items: center; margin: 0 0 18px; }
+.search-box { width: 360px; max-width: 100%; padding: 11px 18px; font-size: 15px; border: 1.5px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); outline: none; transition: border-color .15s; }
+.search-box::placeholder { color: #A8895A; }
+.search-box:focus { border-color: #B8860B; }
+.sr-table td { padding: 5px 6px; border-bottom: 1px solid var(--border2); }
+.sr-table tr:last-child td { border-bottom: none; }
+.sr-table td.sr-cat { color: var(--muted); font-size: 12px; }
+.footnotes strong { color: var(--text); }
+.footnotes ul.src-list { margin: 10px 0 0; padding-left: 20px; }
+.footnotes ul.src-list li { margin-bottom: 6px; line-height: 1.5; }
+.footnotes ul.src-list a { color: var(--rust); text-decoration: none; font-weight: 600; }
+.footnotes ul.src-list a:hover { }
+.footnotes .fn-tail { margin-top: 10px; }
+/* Country picker becomes a dropdown on mobile (chips on desktop) */
+#country-select { width: 100%; box-sizing: border-box; font-family: inherit; font-size: 16px; color: #3d3a32; background-color: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px; padding: 11px 28px 11px 14px; cursor: pointer; }@media (max-width: 700px) {
+  .bar-country { width: 120px; }
+  .bar-val { width: 60px; }
+  .wrap { padding-left: 14px; padding-right: 14px; }
+  .search-box { width: 100%; }
+}@media (max-width: 600px) {
+  nav.stats-nav { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; }
+  nav.stats-nav a { font-family: inherit; text-align: center; }
+  /* Trim the empty gap under the search box (empty .search-hint reserved space). */
+  .search-row { margin: 0 0 8px !important; }
+  .search-hint { min-height: 0 !important; margin-top: 0 !important; }
+  /* Section header: drop the long Source line to its own row so the title
+     isn't squeezed to one word per line. */
+  .cat-sec-head { flex-wrap: wrap !important; }
+  .cat-sec-src { flex-basis: 100% !important; margin-top: 2px; }
+}
+
+/* city-link — regular-weight guide link + terracotta → arrow.
+   Rule doc: Brain/Reference/Stats-Pages-Format.html § 11.
+   Enforced by validate_stats_link_format.py. Added 2026-07-28. */
+.city-link { color: var(--text); text-decoration: none; font-weight: 400; }
+.city-link::after { content: " \2192"; color: #7a3b1e; font-weight: 600; margin-left: 3px; }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="980" data-updated="2026-07-30"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+<div class="wrap">
+
+<div class="page-header"><h1>Stats Across South America</h1></div>
+
+<div class="search-row">
+  <input type="search" id="country-search" class="search-box" placeholder="Country" aria-label="Search by country" autocomplete="off" spellcheck="false">
+  <div id="search-hint" class="search-hint"></div>
+</div>
+
+<nav class="stats-nav">
+  <a href="#population">Population</a>
+  <a href="#happiness">Happiness</a>
+  <a href="#gdp">GDP/capita</a>
+  <a href="#wage">Min wage</a>
+  <a href="#cost">Cost of living</a>
+  <a href="#life">Life expectancy</a>
+  <a href="#medage">Median age</a>
+  <a href="#hdi">HDI</a>
+  <a href="#poverty">Poverty rate</a>
+  <a href="#literacy">Literacy</a>
+  <a href="#schooling">Schooling</a>
+  <a href="#internet">Internet</a>
+  <a href="#vacation">Vacation days</a>
+  <a href="#alcohol">Alcohol/capita</a>
+  <a href="#corruption">Corruption</a>
+  <a href="#renewables">Renewables</a>
+  <a href="#visitors">Visitors</a>
+  <a href="#unesco">UNESCO sites</a>
+  <a href="#sunshine">Sunshine</a>
+</nav>
+<div class="country-select-wrap">
+  <select id="country-select" aria-label="Choose country">
+    <option value="">🌍 Choose country</option>
+  </select>
+</div>
+<div class="country-chips" id="country-chips">
+  <button class="country-chip" data-q="argentina">🇦🇷 Argentina</button>
+  <button class="country-chip" data-q="bolivia">🇧🇴 Bolivia</button>
+  <button class="country-chip" data-q="brazil">🇧🇷 Brazil</button>
+  <button class="country-chip" data-q="chile">🇨🇱 Chile</button>
+  <button class="country-chip" data-q="colombia">🇨🇴 Colombia</button>
+  <button class="country-chip" data-q="ecuador">🇪🇨 Ecuador</button>
+  <button class="country-chip" data-q="guyana">🇬🇾 Guyana</button>
+  <button class="country-chip" data-q="paraguay">🇵🇾 Paraguay</button>
+  <button class="country-chip" data-q="peru">🇵🇪 Peru</button>
+  <button class="country-chip" data-q="suriname">🇸🇷 Suriname</button>
+  <button class="country-chip" data-q="uruguay">🇺🇾 Uruguay</button>
+  <button class="country-chip" data-q="venezuela">🇻🇪 Venezuela</button>
+</div>
+<div id="search-results">
+  <div id="sr-title" class="sr-title"></div>
+  <div id="sr-body"></div>
+</div>
+
+<div class="sections-grid">
+<!-- POPULATION -->
+<div class="bar-section" id="population">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">👥</span>
+    <span class="cat-sec-name">Population</span>
+    <span class="cat-sec-src">Source: World Bank / UN 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">211M</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><span class="bar-val">52.3M</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><span class="bar-val">45.5M</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:16%"></div></div><span class="bar-val">34.0M</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><span class="bar-val">28.4M</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><span class="bar-val">19.6M</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><span class="bar-val">18.0M</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><span class="bar-val">12.4M</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:3%"></div></div><span class="bar-val">6.9M</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:2%"></div></div><span class="bar-val">3.4M</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0.83M</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0.62M</span></div>
+</div>
+
+<!-- HAPPINESS -->
+<div class="bar-section" id="happiness">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">😊</span>
+    <span class="cat-sec-name">Happiness Index (World Happiness Report)</span>
+    <span class="cat-sec-src">Source: World Happiness Report 2024 (score out of 10) · Guyana &amp; Suriname not ranked</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">6.40</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span class="bar-val">6.33</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><span class="bar-val">6.27</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span class="bar-val">6.19</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">5.92</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:91%"></div></div><span class="bar-val">5.84</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:88%"></div></div><span class="bar-val">5.63</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:87%"></div></div><span class="bar-val">5.56</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><span class="bar-val">5.53</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">5.21</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- GDP/CAPITA -->
+<div class="bar-section" id="gdp">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">💰</span>
+    <span class="cat-sec-name">GDP per Capita (USD)</span>
+    <span class="cat-sec-src">Source: IMF World Economic Outlook 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">$30,650</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><span class="bar-val">$22,800</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:56%"></div></div><span class="bar-val">$17,100</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:47%"></div></div><span class="bar-val">$14,400</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:37%"></div></div><span class="bar-val">$11,350</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:27%"></div></div><span class="bar-val">$8,300</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><span class="bar-val">$7,800</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:23%"></div></div><span class="bar-val">$6,900</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span class="bar-val">$6,500</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:20%"></div></div><span class="bar-val">$6,200</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span class="bar-val">$3,800</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span class="bar-val">$3,700</span></div>
+</div>
+
+<!-- MINIMUM WAGE -->
+<div class="bar-section" id="wage">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">💵</span>
+    <span class="cat-sec-name">Minimum Wage (monthly, USD)</span>
+    <span class="cat-sec-src">Source: National labor ministries 2024 (converted at market rate)</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">$560</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill alt" style="width:89%"></div></div><span class="bar-val">$500</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill alt" style="width:82%"></div></div><span class="bar-val">$460</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill alt" style="width:66%"></div></div><span class="bar-val">$370</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill alt" style="width:64%"></div></div><span class="bar-val">$360</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill alt" style="width:59%"></div></div><span class="bar-val">$330</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill alt" style="width:54%"></div></div><span class="bar-val">$300</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill alt" style="width:50%"></div></div><span class="bar-val">$280</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill alt" style="width:49%"></div></div><span class="bar-val">$275</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill alt" style="width:41%"></div></div><span class="bar-val">$230</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill alt" style="width:39%"></div></div><span class="bar-val">$220</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill alt" style="width:1%"></div></div><span class="bar-val">$4</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- COST OF LIVING -->
+<div class="bar-section" id="cost">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🛒</span>
+    <span class="cat-sec-name">Cost of Living Index (NYC = 100)</span>
+    <span class="cat-sec-src">Source: Numbeo Cost of Living Index 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">47.5</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">44.0</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">38.5</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">38.0</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div><span class="bar-val">35.5</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><span class="bar-val">35.0</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:72%"></div></div><span class="bar-val">34.0</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:71%"></div></div><span class="bar-val">33.5</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:68%"></div></div><span class="bar-val">32.5</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:65%"></div></div><span class="bar-val">31.0</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:64%"></div></div><span class="bar-val">30.5</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:63%"></div></div><span class="bar-val">30.0</span></div>
+</div>
+
+<!-- LIFE EXPECTANCY -->
+<div class="bar-section" id="life">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">❤️</span>
+    <span class="cat-sec-name">Life Expectancy (years)</span>
+    <span class="cat-sec-src">Source: WHO / World Bank 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">80.2</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span class="bar-val">78.1</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span class="bar-val">77.7</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:96%"></div></div><span class="bar-val">77.0</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:96%"></div></div><span class="bar-val">76.7</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:96%"></div></div><span class="bar-val">76.6</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:95%"></div></div><span class="bar-val">75.9</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">74.3</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="bar-val">72.1</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:89%"></div></div><span class="bar-val">71.7</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><span class="bar-val">68.6</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><span class="bar-val">65.7</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- MEDIAN AGE -->
+<div class="bar-section" id="medage">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🎂</span>
+    <span class="cat-sec-name">Median Age (years)</span>
+    <span class="cat-sec-src">Source: UN World Population Prospects 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">36.4</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill alt" style="width:99%"></div></div><span class="bar-val">36.0</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill alt" style="width:92%"></div></div><span class="bar-val">33.5</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill alt" style="width:90%"></div></div><span class="bar-val">32.8</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill alt" style="width:86%"></div></div><span class="bar-val">31.3</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill alt" style="width:82%"></div></div><span class="bar-val">30.0</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill alt" style="width:81%"></div></div><span class="bar-val">29.5</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill alt" style="width:81%"></div></div><span class="bar-val">29.5</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill alt" style="width:79%"></div></div><span class="bar-val">28.8</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill alt" style="width:73%"></div></div><span class="bar-val">26.7</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill alt" style="width:73%"></div></div><span class="bar-val">26.5</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill alt" style="width:70%"></div></div><span class="bar-val">25.3</span></div>
+</div>
+
+<!-- HDI -->
+<div class="bar-section" id="hdi">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">📈</span>
+    <span class="cat-sec-name">Human Development Index (0–1)</span>
+    <span class="cat-sec-src">Source: UNDP Human Development Report 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">0.860</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span class="bar-val">0.849</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span class="bar-val">0.830</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:89%"></div></div><span class="bar-val">0.765</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:89%"></div></div><span class="bar-val">0.762</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:88%"></div></div><span class="bar-val">0.760</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:88%"></div></div><span class="bar-val">0.758</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><span class="bar-val">0.742</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">0.731</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">0.730</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">0.699</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">0.698</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- POVERTY RATE -->
+<div class="bar-section" id="poverty">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">📉</span>
+    <span class="cat-sec-name">Poverty Rate (% below $6.85/day)</span>
+    <span class="cat-sec-src">Source: World Bank, 2017 PPP · Venezuela, Guyana &amp; Suriname — no comparable recent survey</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">35%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:94%"></div></div><span class="bar-val">33%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:94%"></div></div><span class="bar-val">33%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:86%"></div></div><span class="bar-val">30%</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">28%</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:66%"></div></div><span class="bar-val">23%</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:63%"></div></div><span class="bar-val">22%</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:31%"></div></div><span class="bar-val">11%</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:20%"></div></div><span class="bar-val">7%</span></div>
+</div>
+
+<!-- LITERACY -->
+<div class="bar-section" id="literacy">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">📚</span>
+    <span class="cat-sec-name">Adult Literacy Rate (%)</span>
+    <span class="cat-sec-src">Source: UNESCO Institute for Statistics 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">99.0%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">98.8%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill alt" style="width:98%"></div></div><span class="bar-val">97.1%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill alt" style="width:98%"></div></div><span class="bar-val">97.0%</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill alt" style="width:97%"></div></div><span class="bar-val">95.6%</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill alt" style="width:95%"></div></div><span class="bar-val">94.5%</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill alt" style="width:95%"></div></div><span class="bar-val">94.5%</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill alt" style="width:95%"></div></div><span class="bar-val">94.4%</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill alt" style="width:95%"></div></div><span class="bar-val">94.3%</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill alt" style="width:95%"></div></div><span class="bar-val">93.9%</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill alt" style="width:95%"></div></div><span class="bar-val">93.6%</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill alt" style="width:89%"></div></div><span class="bar-val">88.5%</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- SCHOOLING -->
+<div class="bar-section" id="schooling">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🎓</span>
+    <span class="cat-sec-name">Mean Years of Schooling</span>
+    <span class="cat-sec-src">Source: UNDP Human Development Report 2024 (adults 25+)</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">11.1 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><span class="bar-val">10.9 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">10.3 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:89%"></div></div><span class="bar-val">9.9 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:88%"></div></div><span class="bar-val">9.8 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">9.4 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">9.0 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">9.0 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">8.9 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">8.9 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:77%"></div></div><span class="bar-val">8.6 yr</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div><span class="bar-val">8.3 yr</span></div>
+</div>
+
+<!-- INTERNET -->
+<div class="bar-section" id="internet">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🌐</span>
+    <span class="cat-sec-name">Internet Penetration (%)</span>
+    <span class="cat-sec-src">Source: ITU / World Bank 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">91%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill alt" style="width:99%"></div></div><span class="bar-val">90%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill alt" style="width:97%"></div></div><span class="bar-val">88%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill alt" style="width:92%"></div></div><span class="bar-val">84%</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill alt" style="width:88%"></div></div><span class="bar-val">80%</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill alt" style="width:87%"></div></div><span class="bar-val">79%</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill alt" style="width:86%"></div></div><span class="bar-val">78%</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill alt" style="width:86%"></div></div><span class="bar-val">78%</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill alt" style="width:81%"></div></div><span class="bar-val">74%</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill alt" style="width:80%"></div></div><span class="bar-val">73%</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill alt" style="width:79%"></div></div><span class="bar-val">72%</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill alt" style="width:77%"></div></div><span class="bar-val">70%</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- VACATION DAYS -->
+<div class="bar-section" id="vacation">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🏖️</span>
+    <span class="cat-sec-name">Statutory Paid Annual Leave (working days)</span>
+    <span class="cat-sec-src">Source: National labor codes / ILO 2023 (base entitlement)</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">30 days</span></div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">30 days</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill alt" style="width:67%"></div></div><span class="bar-val">20 days</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill alt" style="width:50%"></div></div><span class="bar-val">15 days</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill alt" style="width:50%"></div></div><span class="bar-val">15 days</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill alt" style="width:50%"></div></div><span class="bar-val">15 days</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill alt" style="width:50%"></div></div><span class="bar-val">15 days</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill alt" style="width:50%"></div></div><span class="bar-val">15 days</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill alt" style="width:47%"></div></div><span class="bar-val">14 days</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill alt" style="width:40%"></div></div><span class="bar-val">12 days</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill alt" style="width:40%"></div></div><span class="bar-val">12 days</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill alt" style="width:40%"></div></div><span class="bar-val">12 days</span></div>
+</div>
+
+<!-- ALCOHOL/CAPITA -->
+<div class="bar-section" id="alcohol">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🍺</span>
+    <span class="cat-sec-name">Alcohol Consumption per Capita (liters pure alcohol/year)</span>
+    <span class="cat-sec-src">Source: WHO Global Status Report on Alcohol 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">9.7 L</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span class="bar-val">9.6 L</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><span class="bar-val">8.0 L</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:81%"></div></div><span class="bar-val">7.9 L</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div><span class="bar-val">7.8 L</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><span class="bar-val">7.2 L</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:65%"></div></div><span class="bar-val">6.3 L</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:58%"></div></div><span class="bar-val">5.6 L</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:58%"></div></div><span class="bar-val">5.6 L</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:51%"></div></div><span class="bar-val">4.9 L</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:49%"></div></div><span class="bar-val">4.8 L</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:44%"></div></div><span class="bar-val">4.3 L</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- CORRUPTION -->
+<div class="bar-section" id="corruption">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">⚖️</span>
+    <span class="cat-sec-name">Corruption Perceptions Index (100 = least corrupt)</span>
+    <span class="cat-sec-src">Source: Transparency International CPI 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">73</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill alt" style="width:90%"></div></div><span class="bar-val">66</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill alt" style="width:55%"></div></div><span class="bar-val">40</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill alt" style="width:55%"></div></div><span class="bar-val">40</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill alt" style="width:55%"></div></div><span class="bar-val">40</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill alt" style="width:51%"></div></div><span class="bar-val">37</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill alt" style="width:49%"></div></div><span class="bar-val">36</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill alt" style="width:47%"></div></div><span class="bar-val">34</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill alt" style="width:45%"></div></div><span class="bar-val">33</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill alt" style="width:40%"></div></div><span class="bar-val">29</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill alt" style="width:38%"></div></div><span class="bar-val">28</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill alt" style="width:18%"></div></div><span class="bar-val">13</span></div>
+</div>
+
+<!-- RENEWABLES -->
+<div class="bar-section" id="renewables">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">⚡</span>
+    <span class="cat-sec-name">Renewable Energy Share (% of electricity)</span>
+    <span class="cat-sec-src">Source: Ember Climate / IEA 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">100%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:94%"></div></div><span class="bar-val">94%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:89%"></div></div><span class="bar-val">89%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:79%"></div></div><span class="bar-val">79%</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div><span class="bar-val">75%</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:70%"></div></div><span class="bar-val">70%</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><span class="bar-val">60%</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><span class="bar-val">60%</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:45%"></div></div><span class="bar-val">45%</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:35%"></div></div><span class="bar-val">35%</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:33%"></div></div><span class="bar-val">33%</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:4%"></div></div><span class="bar-val">4%</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- ANNUAL VISITORS -->
+<div class="bar-section" id="visitors">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">✈️</span>
+    <span class="cat-sec-name">International Tourist Arrivals (millions/year)</span>
+    <span class="cat-sec-src">Source: UNWTO 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">6.4M</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill alt" style="width:92%"></div></div><span class="bar-val">5.9M</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill alt" style="width:70%"></div></div><span class="bar-val">4.5M</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill alt" style="width:69%"></div></div><span class="bar-val">4.4M</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill alt" style="width:52%"></div></div><span class="bar-val">3.3M</span></div>
+      <div class="bar-row"><span class="bar-rank">6</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill alt" style="width:39%"></div></div><span class="bar-val">2.5M</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill alt" style="width:20%"></div></div><span class="bar-val">1.3M</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill alt" style="width:19%"></div></div><span class="bar-val">1.2M</span></div>
+      <div class="bar-row"><span class="bar-rank">9</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill alt" style="width:16%"></div></div><span class="bar-val">1.0M</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill alt" style="width:8%"></div></div><span class="bar-val">0.5M</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill alt" style="width:5%"></div></div><span class="bar-val">0.3M</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill alt" style="width:5%"></div></div><span class="bar-val">0.3M</span></div>
+</div>
+
+<!-- UNESCO SITES -->
+<div class="bar-section" id="unesco">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🏛️</span>
+    <span class="cat-sec-name">UNESCO World Heritage Sites</span>
+    <span class="cat-sec-src">Source: UNESCO World Heritage List 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">🇧🇷 Brazil</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">23 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cusco/cusco_v1.html">🇵🇪 Peru</a><div class="bar-track"><div class="bar-fill" style="width:57%"></div></div><span class="bar-val">13 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Argentina</a><div class="bar-track"><div class="bar-fill" style="width:48%"></div></div><span class="bar-val">11 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><span class="bar-country">🇨🇴 Colombia</span><div class="bar-track"><div class="bar-fill" style="width:39%"></div></div><span class="bar-val">9 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><span class="bar-country">🇧🇴 Bolivia</span><div class="bar-track"><div class="bar-fill" style="width:30%"></div></div><span class="bar-val">7 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">5</span><a class="bar-country city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Chile</a><div class="bar-track"><div class="bar-fill" style="width:30%"></div></div><span class="bar-val">7 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">7</span><span class="bar-country">🇪🇨 Ecuador</span><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><span class="bar-val">5 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><a class="bar-country city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Uruguay</a><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><span class="bar-val">3 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">8</span><span class="bar-country">🇻🇪 Venezuela</span><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><span class="bar-val">3 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">10</span><span class="bar-country">🇸🇷 Suriname</span><div class="bar-track"><div class="bar-fill" style="width:9%"></div></div><span class="bar-val">2 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">11</span><span class="bar-country">🇵🇾 Paraguay</span><div class="bar-track"><div class="bar-fill" style="width:4%"></div></div><span class="bar-val">1 site</span></div>
+      <div class="bar-row"><span class="bar-rank">12</span><span class="bar-country">🇬🇾 Guyana</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0 sites</span></div>
+</div>
+</div>
+
+<!-- SUNSHINE TABLE -->
+<div class="bar-section" id="sunshine">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">☀️</span>
+    <span class="cat-sec-name">Average Sunshine Hours by Month (major city)</span>
+    <span class="cat-sec-src">Source: World Meteorological Organization / climate data composites · Southern-hemisphere summer is Dec–Feb</span>
+  </div>
+  <div class="sun-table-wrap">
+    <table class="sun-table">
+      <thead>
+        <tr>
+          <th>Country / City</th>
+          <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+          <th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+          <th>Annual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="country-name">🇧🇴 La Paz</td>
+          <td class="sun-c3">170</td><td class="sun-c3">165</td><td class="sun-c3">195</td><td class="sun-c3">230</td><td class="sun-c4">270</td><td class="sun-c4">265</td>
+          <td class="sun-c4">280</td><td class="sun-c4">280</td><td class="sun-c4">255</td><td class="sun-c4">260</td><td class="sun-c4">260</td><td class="sun-c3">215</td>
+          <td class="sun-c5"><strong>2,845</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Santiago/santiago_v1.html">🇨🇱 Santiago</a></td>
+          <td class="sun-c5">354</td><td class="sun-c5">305</td><td class="sun-c4">285</td><td class="sun-c3">225</td><td class="sun-c3">170</td><td class="sun-c2">140</td>
+          <td class="sun-c2">150</td><td class="sun-c3">168</td><td class="sun-c3">183</td><td class="sun-c3">232</td><td class="sun-c4">291</td><td class="sun-c5">337</td>
+          <td class="sun-c5"><strong>2,840</strong></td></tr>
+        <tr><td class="country-name">🇵🇾 Asunción</td>
+          <td class="sun-c4">245</td><td class="sun-c3">215</td><td class="sun-c3">230</td><td class="sun-c3">210</td><td class="sun-c3">195</td><td class="sun-c3">175</td>
+          <td class="sun-c3">200</td><td class="sun-c3">215</td><td class="sun-c3">200</td><td class="sun-c3">220</td><td class="sun-c3">235</td><td class="sun-c4">250</td>
+          <td class="sun-c4"><strong>2,590</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Montevideo/montevideo_v1.html">🇺🇾 Montevideo</a></td>
+          <td class="sun-c4">285</td><td class="sun-c4">250</td><td class="sun-c3">235</td><td class="sun-c3">195</td><td class="sun-c3">160</td><td class="sun-c2">130</td>
+          <td class="sun-c2">140</td><td class="sun-c3">160</td><td class="sun-c3">175</td><td class="sun-c3">215</td><td class="sun-c4">250</td><td class="sun-c4">280</td>
+          <td class="sun-c4"><strong>2,475</strong></td></tr>
+        <tr><td class="country-name">🇧🇷 Brasília</td>
+          <td class="sun-c3">175</td><td class="sun-c3">170</td><td class="sun-c3">180</td><td class="sun-c3">200</td><td class="sun-c3">230</td><td class="sun-c4">250</td>
+          <td class="sun-c4">270</td><td class="sun-c4">275</td><td class="sun-c3">215</td><td class="sun-c3">185</td><td class="sun-c3">160</td><td class="sun-c3">165</td>
+          <td class="sun-c4"><strong>2,475</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/São-Paulo/sao-paulo_v1.html">🇧🇷 São Paulo</a></td>
+          <td class="sun-c3">195</td><td class="sun-c3">175</td><td class="sun-c3">165</td><td class="sun-c3">155</td><td class="sun-c2">140</td><td class="sun-c2">130</td>
+          <td class="sun-c3">155</td><td class="sun-c3">175</td><td class="sun-c3">165</td><td class="sun-c3">165</td><td class="sun-c3">155</td><td class="sun-c3">175</td>
+          <td class="sun-c3"><strong>1,950</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Buenos-Aires/buenos-aires_v1.html">🇦🇷 Buenos Aires</a></td>
+          <td class="sun-c4">270</td><td class="sun-c4">240</td><td class="sun-c3">233</td><td class="sun-c3">195</td><td class="sun-c3">164</td><td class="sun-c2">130</td>
+          <td class="sun-c2">142</td><td class="sun-c3">166</td><td class="sun-c3">180</td><td class="sun-c3">213</td><td class="sun-c3">235</td><td class="sun-c4">258</td>
+          <td class="sun-c4"><strong>2,426</strong></td></tr>
+        <tr><td class="country-name">🇻🇪 Caracas</td>
+          <td class="sun-c3">220</td><td class="sun-c3">215</td><td class="sun-c3">230</td><td class="sun-c3">200</td><td class="sun-c3">185</td><td class="sun-c3">175</td>
+          <td class="sun-c3">195</td><td class="sun-c3">200</td><td class="sun-c3">195</td><td class="sun-c3">195</td><td class="sun-c3">185</td><td class="sun-c3">195</td>
+          <td class="sun-c4"><strong>2,390</strong></td></tr>
+        <tr><td class="country-name">🇬🇾 Georgetown</td>
+          <td class="sun-c3">195</td><td class="sun-c3">200</td><td class="sun-c3">215</td><td class="sun-c3">195</td><td class="sun-c3">165</td><td class="sun-c2">150</td>
+          <td class="sun-c3">175</td><td class="sun-c3">205</td><td class="sun-c3">220</td><td class="sun-c3">225</td><td class="sun-c3">210</td><td class="sun-c3">200</td>
+          <td class="sun-c4"><strong>2,355</strong></td></tr>
+        <tr><td class="country-name">🇸🇷 Paramaribo</td>
+          <td class="sun-c3">160</td><td class="sun-c3">165</td><td class="sun-c3">185</td><td class="sun-c3">180</td><td class="sun-c3">165</td><td class="sun-c3">165</td>
+          <td class="sun-c3">190</td><td class="sun-c3">215</td><td class="sun-c3">235</td><td class="sun-c4">240</td><td class="sun-c3">205</td><td class="sun-c3">175</td>
+          <td class="sun-c3"><strong>2,280</strong></td></tr>
+        <tr><td class="country-name">🇪🇨 Quito</td>
+          <td class="sun-c2">150</td><td class="sun-c2">130</td><td class="sun-c2">140</td><td class="sun-c2">135</td><td class="sun-c3">160</td><td class="sun-c3">195</td>
+          <td class="sun-c3">230</td><td class="sun-c3">225</td><td class="sun-c3">185</td><td class="sun-c3">165</td><td class="sun-c3">165</td><td class="sun-c3">160</td>
+          <td class="sun-c3"><strong>2,040</strong></td></tr>
+        <tr><td class="country-name">🇨🇴 Bogotá</td>
+          <td class="sun-c2">150</td><td class="sun-c2">120</td><td class="sun-c2">110</td><td class="sun-c2">90</td><td class="sun-c2">95</td><td class="sun-c2">110</td>
+          <td class="sun-c2">130</td><td class="sun-c2">130</td><td class="sun-c2">110</td><td class="sun-c2">110</td><td class="sun-c2">110</td><td class="sun-c2">140</td>
+          <td class="sun-c2"><strong>1,405</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Lima/lima_v1.html">🇵🇪 Lima</a></td>
+          <td class="sun-c3">179</td><td class="sun-c3">175</td><td class="sun-c3">180</td><td class="sun-c2">150</td><td class="sun-c2">90</td><td class="sun-c1">35</td>
+          <td class="sun-c1">30</td><td class="sun-c1">33</td><td class="sun-c1">50</td><td class="sun-c2">85</td><td class="sun-c2">120</td><td class="sun-c2">155</td>
+          <td class="sun-c2"><strong>1,282</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;align-items:center;">
+    <span style="font-size:11px;color:var(--muted);font-style:italic;">Sunshine hours/month · </span>
+    <span style="font-size:11px;background:#fff8f0;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#7a3b1e;">under 80</span>
+    <span style="font-size:11px;background:#ffe8cc;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#7a3b1e;">80–160</span>
+    <span style="font-size:11px;background:#ffc970;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#5a2e0e;">160–240</span>
+    <span style="font-size:11px;background:#ffa020;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#3a1a00;">240–300</span>
+    <span style="font-size:11px;background:#ff7700;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#fff;">300–360</span>
+    <span style="font-size:11px;background:#e85d00;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#fff;">360+</span>
+  </div>
+</div>
+
+<div class="footnotes">
+<strong>Sources</strong>
+<ul class="src-list">
+<li><a href="https://data.worldbank.org/" target="_blank" rel="noopener">World Bank Open Data (2024)</a> — population, life expectancy</li>
+<li><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN World Population Prospects (2024)</a> — median age</li>
+<li><a href="https://worldhappiness.report/" target="_blank" rel="noopener">World Happiness Report (2024)</a> — happiness index</li>
+<li><a href="https://www.imf.org/en/Publications/WEO" target="_blank" rel="noopener">IMF World Economic Outlook (2024)</a> — GDP per capita</li>
+<li><a href="https://hdr.undp.org/data-center" target="_blank" rel="noopener">UNDP Human Development Report (2024)</a> — Human Development Index, mean years of schooling</li>
+<li><a href="https://pip.worldbank.org/" target="_blank" rel="noopener">World Bank Poverty &amp; Inequality Platform</a> — poverty rate ($6.85/day, 2017 PPP)</li>
+<li><a href="https://uis.unesco.org/" target="_blank" rel="noopener">UNESCO Institute for Statistics</a> — adult literacy</li>
+<li><a href="https://datahub.itu.int/" target="_blank" rel="noopener">ITU DataHub (2023)</a> — internet penetration</li>
+<li><a href="https://www.numbeo.com/cost-of-living/" target="_blank" rel="noopener">Numbeo (2024)</a> — cost of living</li>
+<li><a href="https://wageindicator.org/salary/minimum-wage" target="_blank" rel="noopener">WageIndicator Foundation (2024)</a> — minimum wage</li>
+<li><a href="https://www.ilo.org/" target="_blank" rel="noopener">International Labour Organization</a> — statutory paid annual leave</li>
+<li><a href="https://www.who.int/data/gho/data/themes/global-information-system-on-alcohol-and-health" target="_blank" rel="noopener">WHO Global status report on alcohol (2023)</a> — alcohol consumption per capita</li>
+<li><a href="https://www.transparency.org/en/cpi/2023" target="_blank" rel="noopener">Transparency International CPI (2023)</a> — corruption perceptions</li>
+<li><a href="https://ember-energy.org/" target="_blank" rel="noopener">Ember (2023)</a> — renewable electricity share</li>
+<li><a href="https://www.unwto.org/tourism-statistics" target="_blank" rel="noopener">UN Tourism / UNWTO (2023)</a> — international tourist arrivals</li>
+<li><a href="https://whc.unesco.org/en/list/" target="_blank" rel="noopener">UNESCO World Heritage Centre (2024)</a> — World Heritage sites</li>
+<li><a href="https://worldweather.wmo.int/" target="_blank" rel="noopener">WMO World Weather Information Service</a> — sunshine hours by month</li>
+</ul>
+<div class="fn-tail">All figures represent the most recent available data at time of publication. Minimum wages converted to USD at market rates; Venezuela, Guyana &amp; Suriname are excluded from some categories where no comparable recent survey exists.</div>
+</div>
+
+</div>
+<script>
+(function() {
+  var input   = document.getElementById('country-search');
+  var hint    = document.getElementById('search-hint');
+  var box     = document.getElementById('search-results');
+  var srTitle = document.getElementById('sr-title');
+  var srBody  = document.getElementById('sr-body');
+  if (!input) return;
+
+  // Pre-tag every .bar-row with country name and category
+  document.querySelectorAll('.bar-row').forEach(function(row) {
+    var countryEl = row.querySelector('.bar-country');
+    var valEl     = row.querySelector('.bar-val');
+    if (!countryEl) return;
+    row.dataset.country = countryEl.textContent.trim().toLowerCase();
+    row.dataset.label   = countryEl.textContent.trim();
+    row.dataset.val     = valEl ? valEl.textContent.trim() : '';
+    var section = row.closest('.bar-section');
+    if (section) {
+      var head = section.querySelector('.cat-sec-name');
+      row.dataset.cat = head ? head.textContent.trim() : '';
+    }
+  });
+
+  function run() {
+    var q = input.value.trim().toLowerCase();
+    if (!q) {
+      box.classList.remove('active');
+      hint.textContent = '';
+      return;
+    }
+
+    var rows = [];
+    document.querySelectorAll('.bar-row').forEach(function(row) {
+      if ((row.dataset.country || '').indexOf(q) !== -1) {
+        rows.push({ cat: row.dataset.cat, label: row.dataset.label, val: row.dataset.val });
+      }
+    });
+
+    box.classList.add('active');
+
+    if (rows.length === 0) {
+      srTitle.textContent = '';
+      srBody.innerHTML = '<p class="sr-none">No data found for "' + input.value.trim() + '"</p>';
+      hint.textContent = '';
+      return;
+    }
+
+    var name = rows[0].label;
+    srTitle.textContent = name + ' — ' + rows.length + ' categor' + (rows.length !== 1 ? 'ies' : 'y');
+    hint.textContent = '';
+
+    var html = '<table class="sr-table"><thead><tr><th>Category</th><th class="sr-val">Value</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      html += '<tr><td class="sr-cat">' + r.cat + '</td><td class="sr-val">' + r.val + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    srBody.innerHTML = html;
+  }
+
+  input.addEventListener('input', function() {
+    document.querySelectorAll('.country-chip').forEach(function(c) { c.classList.remove('active'); });
+    run();
+  });
+  input.addEventListener('search', run);
+
+  document.querySelectorAll('.country-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.country-chip').forEach(function(c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      input.value = chip.dataset.q;
+      run();
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+  /* Mobile country picker — a <select> populated from the chips; same action. */
+  var sel = document.getElementById('country-select');
+  if (sel) {
+    document.querySelectorAll('.country-chip').forEach(function(chip) {
+      var o = document.createElement('option');
+      o.value = chip.dataset.q;
+      o.textContent = chip.textContent.trim();
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change', function() {
+      document.querySelectorAll('.country-chip').forEach(function(c) { c.classList.remove('active'); });
+      if (!sel.value) return;
+      input.value = sel.value;
+      run();
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('country-search'); if(!input) return;
+  var seen={}, items=[];
+  document.querySelectorAll('.bar-country').forEach(function(el){
+    var name=el.textContent.trim().replace(/^[^\p{L}]+/u,'').trim();
+    if(!name) return;
+    var k=name.toLowerCase(); if(seen[k]) return; seen[k]=1;
+    items.push({name:name});
+  });
+  TVESearch.attach(input,{items:items});
+}());</script>
+<script>(function(){
+var G={
+'UAE':'../Guides/Dubai/dubai_v1.html',
+'Argentina':'../Guides/Buenos-Aires/buenos-aires_v1.html',
+'Austria':'../Guides/Vienna/vienna_v1.html',
+'Australia':'../Guides/Sydney/sydney_v2.html',
+'Aruba':'../Guides/Aruba/aruba_v1.html',
+'Barbados':'../Guides/Barbados/barbados_v1.html',
+'Belgium':'../Guides/Brussels/brussels_v1.html',
+'Brazil':'../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html',
+'Bahamas':'../Guides/Bahamas/bahamas_v1.html',
+'Bhutan':'../Guides/Bhutan/bhutan_v1.html',
+'Switzerland':'../Guides/Zurich/zurich_v1.html',
+'Chile':'../Guides/Santiago/santiago_v1.html',
+'China':'../Guides/Beijing/beijing_v1.html',
+'Costa Rica':'../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html',
+'Curaçao':'../Guides/Curacao/curacao_v1.html',
+'Czech Republic':'../Guides/Prague/prague_v1.html',
+'Germany':'../Guides/Berlin/berlin_v1.html',
+'Denmark':'../Guides/Copenhagen/copenhagen_v1.html',
+'Estonia':'../Guides/Tallinn/tallinn_v1.html',
+'Egypt':'../Guides/Cairo/cairo_v2.html',
+'Spain':'../Guides/Barcelona/barcelona_v1.html',
+'Finland':'../Guides/Helsinki/helsinki_v1.html',
+'France':'../Guides/Paris/paris_v7.html',
+'United Kingdom':'../Guides/London/london_v5.html',
+'Georgia':'../Guides/Tbilisi/tbilisi_v1.html',
+'Greece':'../Guides/Athens/athens_v1.html',
+'Hong Kong':'../Guides/Hong-Kong/hong-kong_v1.html',
+'Croatia':'../Guides/Dubrovnik/dubrovnik_v2.html',
+'Hungary':'../Guides/Budapest/budapest_v1.html',
+'Indonesia':'../Guides/Bali/bali_v1.html',
+'Ireland':'../Guides/Dublin/dublin_v1.html',
+'Iceland':'../Guides/Reykjavik/reykjavik_v2.html',
+'Italy':'../Guides/Rome/rome_v1.html',
+'Jordan':'../Guides/Petra/petra_v1.html',
+'Japan':'../Guides/Tokyo/tokyo_v1.html',
+'South Korea':'../Guides/Seoul/seoul_v1.html',
+'Cayman Is.':'../Guides/Cayman-Islands/cayman-islands_v1.html',
+'Laos':'../Guides/Luang-Prabang/luang-prabang_v1.html',
+'Sri Lanka':'../Guides/Colombo/colombo_v1.html',
+'Luxembourg':'../Guides/Luxembourg/luxembourg_v1.html',
+'Morocco':'../Guides/Marrakech/marrakech_v1.html',
+'Monaco':'../Guides/Monaco/monaco_v1.html',
+'Montenegro':'../Guides/Kotor/kotor_v1.html',
+'Malta':'../Guides/Valletta/valletta_v1.html',
+'Maldives':'../Guides/Maldives/maldives_v1.html',
+'Mexico':'../Guides/Cancun/cancun_v1.html',
+'Netherlands':'../Guides/Amsterdam/amsterdam_v1.html',
+'Norway':'../Guides/Oslo/oslo_v1.html',
+'Nepal':'../Guides/Pokhara/pokhara_v1.html',
+'New Zealand':'../Guides/Queenstown/queenstown_v1.html',
+'Oman':'../Guides/Muscat/muscat_v1.html',
+'Peru':'../Guides/Cusco/cusco_v1.html',
+'French Polynesia':'../Guides/Bora-Bora/bora-bora_v1.html',
+'Philippines':'../Guides/Palawan/palawan_v1.html',
+'Poland':'../Guides/Kraków/krakow_v1.html',
+'Puerto Rico':'../Guides/Puerto-Rico/puerto-rico_v1.html',
+'Portugal':'../Guides/Lisbon/lisbon_v4.html',
+'Qatar':'../Guides/Doha/doha_v1.html',
+'Seychelles':'../Guides/Seychelles/seychelles_v1.html',
+'Sweden':'../Guides/Stockholm/stockholm_v1.html',
+'Singapore':'../Guides/Singapore/singapore_v3.html',
+'Slovenia':'../Guides/Ljubljana/ljubljana_v1.html',
+'Sint Maarten':'../Guides/Sint-Maarten/sint-maarten_v1.html',
+'Turks and Caicos':'../Guides/Turks-and-Caicos/turks-and-caicos_v1.html',
+'Thailand':'../Guides/Bangkok/bangkok_v1.html',
+'Turkey':'../Guides/Istanbul/istanbul_v2.html',
+'Taiwan':'../Guides/Taipei/taipei_v1.html',
+'Uruguay':'../Guides/Montevideo/montevideo_v1.html',
+'U.S. Virgin Is.':'../Guides/Virgin-Islands/virgin-islands_v1.html',
+'Vietnam':'../Guides/Hanoi/hanoi_v1.html'
+};
+document.querySelectorAll('.bar-country').forEach(function(el){
+  var t=el.textContent.trim();
+  var n=t.replace(/^[^\p{L}]+/u,'').trim();
+  if(!G[n])return;
+  var a=document.createElement('a');
+  a.href=G[n];a.target='_blank';a.rel='noopener';a.className='cgl';
+  a.textContent=t;el.textContent='';el.appendChild(a);
+});
+}());</script>
+</body>
+</html>

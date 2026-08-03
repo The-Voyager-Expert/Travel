@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Travel Insurance</title>
+<style>
+/* All colors via CSS variables — no hardcoded hex */
+
+.page-desc { font-size: 12px; color: var(--muted); margin: 4px 0 20px; line-height: 1.5; }
+
+.ti-search-wrap { display: flex; justify-content: center; margin: 35px 0 16px; }
+
+/* Section headers */
+.section-head {
+  font-size: 10.5px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.16em;
+  margin: 32px 0 14px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border2);
+}
+
+/* Coverage type cards */
+.coverage-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px; margin-bottom: 6px;
+}
+.cov-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 16px 18px;
+}
+.cov-icon { font-size: 20px; margin-bottom: 8px; line-height: 1; }
+.cov-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.cov-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.cov-limit {
+  margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border2);
+  font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 3px;
+}
+.cov-limit-row { display: flex; gap: 6px; }
+.cov-limit-label { font-weight: 600; color: var(--text); min-width: 80px; flex-shrink: 0; }
+
+/* Decision table */
+.decision-wrap {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin-bottom: 24px;
+}
+.decision-table th {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 10px 14px 8px; text-align: left;
+  border-bottom: 1px solid var(--border2);
+}
+.decision-table td {
+  font-size: 13px; padding: 11px 14px;
+  border-top: 1px solid var(--border2);
+  vertical-align: top; line-height: 1.45; color: var(--text);
+}
+.decision-table tr:first-child td { border-top: none; }
+.situation { font-weight: 600; }
+.rec { font-size: 12px; color: var(--muted); margin-top: 2px; }
+/* Recommendation badges — canonical spec: Brain/Reference/Badge-Formatting-and-Colors.html */
+.rec-badge {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+}
+.rec-standalone { background: #e8f5e8; color: #1a5a1a; border: 1px solid #9ad09a; }
+.rec-card       { background: #fff8e0; color: #7a5800; border: 1px solid #e8c870; }
+.rec-skip       { background: var(--warm); color: #a67b5b; border: 1px solid rgba(166,123,91,0.45); }
+:root[data-theme="dark"] .rec-standalone { background: #0d200d; color: #5aaa5e; border-color: #3a7a3a; }
+:root[data-theme="dark"] .rec-card       { background: #281f00; color: #d4a830; border-color: #7a6010; }
+:root[data-theme="dark"] .rec-skip       { background: #242220; color: #d4b39a; border-color: rgba(212,179,154,0.35); }
+:root[data-theme="light"] .rec-standalone { background: #e8f5e8; color: #1a5a1a; border-color: #9ad09a; }
+:root[data-theme="light"] .rec-card       { background: #fff8e0; color: #7a5800; border-color: #e8c870; }
+:root[data-theme="light"] .rec-skip       { background: var(--warm); color: #a67b5b; border-color: rgba(166,123,91,0.45); }
+@media (prefers-color-scheme: dark) {
+  .rec-standalone { background: #0d200d; color: #5aaa5e; border-color: #3a7a3a; }
+  .rec-card       { background: #281f00; color: #d4a830; border-color: #7a6010; }
+  .rec-skip       { background: #242220; color: #d4b39a; border-color: rgba(212,179,154,0.35); }
+}
+
+/* Credit card table */
+.cc-wrap {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin-bottom: 24px;
+  overflow-x: auto;
+}
+.cc-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.cc-table th {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 10px 14px 8px; text-align: left;
+  border-bottom: 1px solid var(--border2); white-space: nowrap;
+}
+.cc-table td {
+  font-size: 12px; padding: 10px 14px;
+  border-top: 1px solid var(--border2);
+  vertical-align: top; line-height: 1.45; color: var(--text);
+}
+.cc-table tr:first-child td { border-top: none; }
+.cc-name { font-weight: 700; font-size: 13px; }
+.cc-caveat { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.tag-strong { background: var(--c-tag-good-bg); color: #1a5a1a; border: 1px solid var(--c-tag-good-border); }  /* canonical GREEN text */
+.tag-ok     { background: var(--c-tag-ok-bg); color: var(--c-tag-ok-text); border: 1px solid var(--c-tag-ok-border); }
+.tag-weak   { background: var(--surface2); color: var(--muted); border: 1px solid var(--border2); }
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+}
+
+/* Provider list */
+.provider-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.provider-row {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 16px; display: grid; grid-template-columns: 180px 1fr auto;
+  gap: 0 16px; align-items: start;
+}
+.prov-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.prov-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 2px 8px; border-radius: 4px; margin-top: 5px;
+  background: var(--c-tag-good-bg); color: #1a5a1a; border: 1px solid var(--c-tag-good-border);  /* canonical GREEN text */
+}
+.prov-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.prov-link {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 5px 12px; border-radius: 6px; font-family: inherit; font-size: 11px; font-weight: 400;
+  background: var(--surface); border: 1.5px solid var(--border2, #e6e2da);
+  color: var(--muted); text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  transition: border-color .15s, background .15s;
+}
+a.prov-link:visited { color: #6a6660; }
+.prov-link:hover { border-color: var(--rust); background: var(--warm); text-decoration: none; }
+
+/* Tips */
+.tips-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px; margin-bottom: 28px;
+}
+.tip-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 16px; border-left: 3px solid var(--border);
+}
+.tip-text strong { color: var(--text); font-weight: 700; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .coverage-grid { grid-template-columns: 1fr; }
+  .provider-row { grid-template-columns: 1fr; gap: 6px; }
+  /* Keep the wide comparison table a real table (mobile.css display:block breaks
+     its columns → cells squish to one word/line); scroll it in its wrapper.
+     Right-edge fade mask + inline scrollbar hint tells the user there is more
+     to the right; padding tightens so more columns fit before the cutoff. */
+  .cc-wrap {
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+            mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+  }
+  .cc-table { display: table; min-width: 480px; }
+  .cc-table th { padding: 10px 10px 8px; font-size: 10px; letter-spacing: 0.04em; }
+  .cc-table td { padding: 10px 10px; }
+  .cc-table .tag { padding: 2px 5px; }
+  .prov-link { width: fit-content; }
+  .tips-grid { grid-template-columns: 1fr; }
+  .decision-table th:nth-child(3), .decision-table td:nth-child(3) { display: none; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-01"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>Travel Insurance</h1>
+  </div>
+  <div class="ti-search-wrap">
+    <input type="search" id="ti-search" placeholder="Provider or topic" aria-label="Search travel insurance by provider or topic" autocomplete="off" spellcheck="false">
+  </div>
+  <div id="ti-noresult" class="empty-state" style="display:none;">No matches — clear the search to see everything.</div>
+
+  <!-- ── Coverage Types ──────────────────────────────────── -->
+  <div class="section-head">Three Types of Coverage</div>
+
+  <div class="coverage-grid">
+    <div class="cov-card">
+      <div class="cov-name">Trip Cancellation &amp; Interruption</div>
+      <div class="cov-desc">Reimburses non-refundable prepaid costs if you have to cancel or cut a trip short for a covered reason — illness, death of a family member, natural disaster, jury duty.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Typical cost</span>4–10% of trip value</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">CFAR upgrade</span>+50% of premium · reimburses 50–75%</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Buy by</span>Within 14–21 days of first deposit</div>
+      </div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-name">Emergency Medical</div>
+      <div class="cov-desc">Covers hospital stays, ER visits, prescriptions, and imaging abroad. Critical because US health insurance (including Medicare) typically doesn't cover international care.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Recommended</span>At least $100,000</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Credit cards</span>$0–$2,500 (not enough)</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Real cost</span>A hospitalization abroad: $10,000–$50,000+</div>
+      </div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-name">Medical Evacuation</div>
+      <div class="cov-desc">Pays for emergency transport from a remote area or inadequate facility to a proper hospital — or home. The most expensive travel emergency by far if uninsured.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Recommended</span>$250,000–$500,000</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Real cost</span>$100,000–$200,000+ uninsured</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Best card</span>CSR/Preferred: $100,000 · Amex: uncapped</div>
+      </div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-name">Baggage &amp; Delay</div>
+      <div class="cov-desc">Covers lost, stolen, or damaged luggage and reimbursement for essentials if bags are delayed. Trip delay coverage pays for hotel and meals when a flight delay strands you overnight.</div>
+      <div class="cov-limit">
+        <div class="cov-limit-row"><span class="cov-limit-label">Baggage</span>$500–$3,000 per person</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Trip delay</span>Kicks in after 6–12 hrs · $150–$500/day</div>
+        <div class="cov-limit-row"><span class="cov-limit-label">Cards</span>Most premium cards cover this well</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Credit Card Coverage ────────────────────────────── -->
+  <div class="section-head">What Your Credit Card Covers</div>
+
+  <div class="cc-wrap">
+    <table class="cc-table">
+      <thead>
+        <tr>
+          <th>Card</th>
+          <th>Trip Cancel</th>
+          <th>Emergency Medical</th>
+          <th>Evacuation</th>
+          <th>Trip Delay</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="cc-name">Chase Sapphire Reserve</div>
+            <div class="cc-caveat">Must pay with card · $795/yr fee</div>
+          </td>
+          <td><span class="tag tag-strong">$10K / person</span></td>
+          <td><span class="tag tag-weak">$2,500</span></td>
+          <td><span class="tag tag-ok">$100,000</span></td>
+          <td><span class="tag tag-strong">$500 after 6 hrs</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="cc-name">Amex Platinum</div>
+            <div class="cc-caveat">Round-trip ticket required · $895/yr fee · secondary coverage</div>
+          </td>
+          <td><span class="tag tag-ok">$10K / person</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-strong">Uncapped</span></td>
+          <td><span class="tag tag-ok">$500 after 6 hrs</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="cc-name">Chase Sapphire Preferred</div>
+            <div class="cc-caveat">Must pay with card · $95/yr fee</div>
+          </td>
+          <td><span class="tag tag-strong">$10K / person</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-ok">$100,000</span></td>
+          <td><span class="tag tag-ok">$500 after 12 hrs</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="cc-name">Capital One Venture X</div>
+            <div class="cc-caveat">Flights only — hotels/tours excluded · $395/yr fee</div>
+          </td>
+          <td><span class="tag tag-ok">$2K / person</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-ok">$500 after 6 hrs</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="cc-name">Amex Gold</div>
+            <div class="cc-caveat">Must pay with card · $325/yr fee</div>
+          </td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">$300 after 12 hrs</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── When to Buy Standalone ──────────────────────────── -->
+  <div class="section-head">When to Buy Standalone vs. Use Your Card</div>
+
+  <div class="decision-wrap">
+    <table class="decision-table">
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Recommendation</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="situation">International trip, any length</div>
+          </td>
+          <td><span class="rec-badge rec-standalone">Buy standalone</span></td>
+          <td class="rec">Credit cards cap emergency medical at $0–$2,500. A hospitalization abroad easily runs $20,000+. Medicare doesn't cover outside the US.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Pre-existing medical condition</div>
+          </td>
+          <td><span class="rec-badge rec-standalone">Buy standalone</span></td>
+          <td class="rec">Buy within 14–21 days of first deposit to qualify for a pre-existing condition waiver. Cards rarely cover pre-existing conditions at all.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Trip over $5,000 non-refundable</div>
+          </td>
+          <td><span class="rec-badge rec-standalone">Buy standalone</span></td>
+          <td class="rec">Cards cap at $10,000/person but that excludes hotels booked direct, tour packages, and cruises on some cards. A policy covers the full trip cost.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Adventure / remote destination</div>
+          </td>
+          <td><span class="rec-badge rec-standalone">Buy standalone</span></td>
+          <td class="rec">Skiing, diving, trekking — many cards exclude "hazardous activities." Evacuation from a remote location can top $150,000.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Cruise</div>
+          </td>
+          <td><span class="rec-badge rec-standalone">Buy standalone</span></td>
+          <td class="rec">Medical care on a ship is expensive; medevac to a port hospital is even more so. Cruise line insurance is often overpriced — compare independently.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Domestic US trip, flexible bookings</div>
+          </td>
+          <td><span class="rec-badge rec-card">Card coverage likely enough</span></td>
+          <td class="rec">Your US health insurance works domestically. If flights and hotels are refundable, trip cancellation risk is low. A premium card handles delay and bags.</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="situation">Short domestic, under $1,500 total</div>
+          </td>
+          <td><span class="rec-badge rec-skip">Skip or card only</span></td>
+          <td class="rec">Insurance at 4–10% of trip cost isn't worth it for a cheap, mostly-refundable trip where your own health insurance is valid.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Standalone Providers ────────────────────────────── -->
+  <div class="section-head">Standalone Providers</div>
+
+  <div class="provider-list">
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Allianz Travel</div>
+        <div class="prov-tag">Best for annual / multi-trip plans</div>
+      </div>
+      <div class="prov-desc">10 plan tiers from basic cancellation to comprehensive. AllTrips annual plans worth it if you take 3+ trips per year. 24-hr multilingual assistance and TravelSmart app.</div>
+      <a class="prov-link" href="https://www.allianztravelinsurance.com/" target="_blank" rel="noopener">allianztravelinsurance.com</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Travel Guard (AIG)</div>
+        <div class="prov-tag">Best CFAR option · generous free-look period</div>
+      </div>
+      <div class="prov-desc">Strong Cancel For Any Reason upgrade. Transparent pricing and a free-look cancellation period if you change your mind after purchase. Good for expensive custom trips.</div>
+      <a class="prov-link" href="https://www.travelguard.com/" target="_blank" rel="noopener">travelguard.com</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">World Nomads</div>
+        <div class="prov-tag">Best for adventure travel</div>
+      </div>
+      <div class="prov-desc">Covers 250+ adventure activities (skiing, scuba, trekking, motorbike) that most plans exclude. Buy or extend while already traveling. Popular with independent travelers.</div>
+      <a class="prov-link" href="https://www.worldnomads.com/" target="_blank" rel="noopener">worldnomads.com</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">BCBS Global Solutions</div>
+        <div class="prov-tag">Best medical-only coverage · formerly GeoBlue</div>
+      </div>
+      <div class="prov-desc">Medical-focused plans with a global network of vetted providers — often zero out-of-pocket with in-network care. GeoBlue rebranded to Blue Cross Blue Shield Global Solutions in early 2026; same plans, same network, new name.</div>
+      <a class="prov-link" href="https://bcbsglobalsolutions.com/" target="_blank" rel="noopener">bcbsglobalsolutions.com</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Travelex</div>
+        <div class="prov-tag">Best for families — kids included free</div>
+      </div>
+      <div class="prov-desc">One child 17 and under covered free per adult traveler on the Ultimate plan (child's trip cost must not exceed the adult's). Simple plan structure. Good baseline comprehensive coverage without complexity.</div>
+      <a class="prov-link" href="https://www.travelexinsurance.com/" target="_blank" rel="noopener">travelexinsurance.com</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">Seven Corners</div>
+        <div class="prov-tag">Best for groups and mid-trip protection</div>
+      </div>
+      <div class="prov-desc">Covers groups of 10+. Strong mid-trip interruption protection. Good medical limits and evacuation coverage. Works well for organized tours and group travel.</div>
+      <a class="prov-link" href="https://www.sevencorners.com/" target="_blank" rel="noopener">sevencorners.com</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">IMG (International Medical Group)</div>
+        <div class="prov-tag">Best for long-term, expat &amp; extended travel</div>
+      </div>
+      <div class="prov-desc">35+ years in international insurance with 1M+ global providers. Covers vacationers, students, expats, and mission workers. The go-to for extended stays, relocations, and people living abroad long-term who need annual renewable international health coverage.</div>
+      <a class="prov-link" href="https://www.imglobal.com/" target="_blank" rel="noopener">imglobal.com</a>
+    </div>
+    <div class="provider-row">
+      <div>
+        <div class="prov-name">AXA Assistance USA</div>
+        <div class="prov-tag">Best for highest medical and evacuation limits</div>
+      </div>
+      <div class="prov-desc">Explorer Select and Explorer Elite plans offer primary emergency medical coverage (up to $500,000) and medical evacuation (up to $1,000,000) — among the highest limits available from a major US insurer. Backed by AXA Group, one of the world's largest insurers, with 24/7 multilingual assistance and a global provider network. The right choice when maximum coverage limits matter more than price.</div>
+      <a class="prov-link" href="https://www.axatravelinsurance.com/" target="_blank" rel="noopener">axatravelinsurance.com</a>
+    </div>
+  </div>
+
+  <!-- ── Compare Tools ───────────────────────────────────── -->
+  <div class="section-head">Compare Policies Before Buying</div>
+  <p class="compare-intro">Both sites let you enter your trip details and compare plans side by side by price, coverage limits, and customer ratings.</p>
+  <div class="coverage-grid compare-grid">
+    <div class="cov-card">
+      <div class="cov-name">InsureMyTrip</div>
+      <div class="cov-desc">Side-by-side comparison of 20+ providers. Filter by coverage type, price, and customer reviews. Unbiased marketplace.</div>
+      <div class="cov-card-link"><a class="prov-link" href="https://www.insuremytrip.com/" target="_blank" rel="noopener">insuremytrip.com</a></div>
+    </div>
+    <div class="cov-card">
+      <div class="cov-name">Squaremouth</div>
+      <div class="cov-desc">Search by the coverage amounts you need, not the plan name. Good for finding specific limits (evacuation, CFAR, pre-existing condition waiver).</div>
+      <div class="cov-card-link"><a class="prov-link" href="https://www.squaremouth.com/" target="_blank" rel="noopener">squaremouth.com</a></div>
+    </div>
+  </div>
+
+  <!-- ── Tips ───────────────────────────────────────────── -->
+  <div class="section-head">Key Things to Know</div>
+
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-text"><strong>Buy within 14–21 days of first deposit</strong> to qualify for a pre-existing condition waiver and the widest CFAR eligibility window. The clock starts on the day you pay your first deposit, not when you book flights.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-text"><strong>Read what "covered reason" means.</strong> Basic trip cancellation covers a specific list: illness, death, jury duty, severe weather. It does not cover changing your mind, work conflicts, or fear of flying. CFAR covers anything — at a higher premium.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-text"><strong>You must pay with the card to activate card coverage.</strong> Charge at least the flights (or the full trip cost) to your premium card. Paying with points or a different card voids the protection.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-text"><strong>Medicare and most US health plans stop at the border.</strong> If you're on Medicare, you have effectively zero international medical coverage. A standalone travel medical policy ($30–$60 for a short trip) fills that gap entirely.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-text"><strong>Check the activity exclusions list.</strong> Skiing, diving, motorcycling, and trekking above certain altitudes are excluded from most standard plans. World Nomads covers these; most others don't without a rider.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-text"><strong>Don't buy the cruise line's insurance.</strong> It's almost always more expensive and covers less than a comparable third-party plan. The one exception: cruise credit (vs. cash back) — some cruise line policies let you cancel for credit rather than cash.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-text"><strong>CFAR has a hard cancel deadline.</strong> Most Cancel For Any Reason policies require you to cancel at least 48 hours before departure — some require 72 hours. If you wait until the night before to cancel, CFAR won't cover you. Check your exact window when you buy.</div>
+    </div>
+  </div>
+
+</div><!-- /.wrap -->
+
+<script>
+(function () {
+  var inp = document.getElementById('ti-search');
+  var noRes = document.getElementById('ti-noresult');
+  if (!inp) return;
+  var cards = [].slice.call(document.querySelectorAll('.cov-card, .tip-card, .provider-row'));
+  var groups = [], cur = null;
+  [].slice.call(document.querySelectorAll('.section-head, .cov-card, .tip-card, .provider-row')).forEach(function (el) {
+    if (el.classList.contains('section-head')) { cur = { head: el, cards: [] }; groups.push(cur); }
+    else if (cur) { cur.cards.push(el); }
+  });
+  function expand(s) { return s.replace(/\buk\b/g, 'uk united kingdom').replace(/\busa\b/g, 'usa united states').replace(/\buae\b/g, 'uae united arab emirates'); }
+  inp.addEventListener('input', function () {
+    var q = inp.value.trim().toLowerCase();
+    var vis = 0;
+    cards.forEach(function (c) {
+      var show = !q || expand(c.textContent.toLowerCase()).indexOf(q) >= 0;
+      c.style.display = show ? '' : 'none';
+      if (show && q) vis++;
+    });
+    groups.forEach(function (g) {
+      var any = g.cards.some(function (c) { return c.style.display !== 'none'; });
+      g.head.style.display = (q && !any) ? 'none' : '';
+    });
+    if (noRes) noRes.style.display = (q && vis === 0) ? '' : 'none';
+  });
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('ti-search'); if(!input) return;
+  var items=[], seen={};
+  function add(name, sub){
+    if(!name||seen[name.toLowerCase()]) return; seen[name.toLowerCase()]=1;
+    items.push(sub ? {name:name, sub:sub} : {name:name});
+  }
+  document.querySelectorAll('.provider-row .prov-name').forEach(function(el){
+    var tag=(el.parentNode.querySelector('.prov-tag')||{}).textContent||'';
+    add(el.textContent.trim(), tag.trim());
+  });
+  document.querySelectorAll('.cov-card .cov-name').forEach(function(el){ add(el.textContent.trim()); });
+  document.querySelectorAll('.section-head').forEach(function(el){ add(el.textContent.trim()); });
+  TVESearch.attach(input,{items:items});
+}());</script>
+</body>
+</html>

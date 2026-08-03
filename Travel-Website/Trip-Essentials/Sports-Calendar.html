@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Sports &amp; Major Events Calendar</title>
+<style>
+/* Page-specific styles only — inherits base from web-travel-style.css */
+.sc-wrap { padding: 0 32px; margin: 8px auto 0; }
+.sc-siblings { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 18px; }
+/* Controls */
+.sc-controls { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 16px 18px; box-shadow: 0 2px 12px rgba(92,61,17,.07); margin-bottom: 22px; }
+.sc-ctrl-label { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 9px; }
+
+/* Month grid */
+.sc-month-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 5px; }
+.sc-mon {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border2); border-radius: 6px; cursor: pointer;
+  padding: 9px 2px; font-family: inherit; font-size: 11.5px; font-weight: 400; color: var(--muted, #6a6660);
+  background: var(--surface,#ffffff); text-align: center; line-height: 1.25;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.sc-mon:hover { border-color: var(--rust); color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
+.sc-mon.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); font-weight: 600; }
+@media (min-width: 601px) {
+  .sc-month-grid { gap: 0; }
+  .sc-mon { padding: 10px 2px; border-width: 1.5px; border-radius: 0; margin-left: 0; color: #3d3a32; font-weight: 500; background: var(--surface, #ffffff); }
+  .sc-mon:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); font-weight: 500; color: inherit;}
+  .sc-mon.on,
+  .sc-mon.on:hover,
+  .sc-mon.on:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); font-weight: 500; }
+}
+.sc-mon-abbr { display: block; font-size: 12px; }
+
+/* Sport filter */
+.sc-sport-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.sc-sport-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  border: 1.5px solid var(--border2); border-radius: 20px; cursor: pointer;
+  padding: 5px 12px; font-family: inherit; font-size: 12px; font-weight: 400; color: var(--muted);
+  background: var(--surface, #fff); transition: border-color .12s, color .12s, background .12s;
+}
+.sc-sport-btn:hover { border-color: var(--rust); }
+.sc-sport-btn.on { background: var(--rust, #b85c2a); border-color: var(--rust); color: #fff; font-weight: 600; }
+
+/* Empty state */
+.sc-empty { text-align: center; color: var(--muted); padding: 56px 20px 40px; line-height: 1.7; }
+.sc-empty-icon { font-size: 44px; display: block; margin-bottom: 14px; }
+
+/* Section headings */
+.sc-section-head { display: flex; align-items: center; gap: 10px; margin: 28px 0 14px; padding-bottom: 9px; border-bottom: 2px solid var(--border2); }
+.sc-section-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.sc-section-count { font-size: var(--fs-label); color: var(--muted); margin-left: auto; letter-spacing: .04em; }
+
+/* Event cards */
+.sc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+.sc-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 11px;
+  padding: 15px 16px; box-shadow: 0 1px 6px rgba(92,61,17,.05);
+}
+a.sc-card {
+  display: block; text-decoration: none; color: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+a.sc-card:hover { border-color: var(--rust); box-shadow: 0 3px 10px rgba(184,92,42,.12); }
+.sc-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.sc-city { font-size: var(--fs-body); font-weight: 700; color: var(--text); }
+a.sc-card:hover .sc-city { color: var(--rust); }
+.sc-flag-country { font-size: 10.5px; color: var(--muted); text-align: right; line-height: 1.5; flex-shrink: 0; }
+.sc-sport-tag {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .04em;
+  padding: 2px 7px; border-radius: 4px; margin-bottom: 6px;
+  background: rgba(184,92,42,.08); color: var(--rust); border: 1px solid rgba(184,92,42,.2);
+}
+.sc-event-name { font-size: 13px; font-weight: 700; color: var(--rust); margin-bottom: 3px; }
+.sc-dates { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: .02em; }
+.sc-desc { font-size: var(--fs-sub); color: var(--text); line-height: 1.5; }
+.sc-no-guide .sc-city { color: var(--muted); }
+
+/* No-events notice */
+.sc-none { color: var(--muted); font-size: var(--fs-sub); padding: 14px 0 4px; }
+
+/* City search */
+.sc-search-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+
+@media (max-width: 600px) {
+  .sc-wrap { padding: 0 14px; }
+  .sc-month-grid { grid-template-columns: repeat(6, 1fr); }
+  .sc-grid { grid-template-columns: 1fr; }
+  .sc-siblings { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .sc-siblings .sibling-pill { justify-content: center; text-align: center; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="1040" data-updated="2026-08-01"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="sc-wrap">
+  <div class="site-header">
+    <h1 class="site-title">Sports &amp; Major Events Calendar</h1>
+  </div>
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-7H13V8c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55.45 1 1 1h3.5c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg></div>
+    <div>
+      <div class="page-intro-head">Sporting events by city and month</div>
+      <div class="page-intro-sub">Find major recurring events by destination — Formula 1 Grands Prix, tennis Grand Slams, Six Nations rugby, world marathons, cycling Grand Tours, and more across the fleet's cities.</div>
+    </div>
+  </div>
+
+  <div class="sc-search-wrap">
+    <input type="search" id="sc-city-search" class="search-input" placeholder="City" aria-label="Search by city" autocomplete="off" style="width:240px;">
+  </div>
+
+  <div class="sc-siblings">
+    <a href="Festival-Finder.html" class="sibling-pill">🎭 Festival finder</a>
+    <a href="When-to-Go.html" class="sibling-pill">📅 When to go</a>
+    <a href="Climate-Finder.html" class="sibling-pill">🌡️ Climate finder</a>
+    <a href="Weather.html" class="sibling-pill">🌤 Weather by city</a>
+  </div>
+
+  <div class="sc-controls">
+    <div class="sc-ctrl-label">Which month are you traveling?</div>
+    <div class="sc-month-grid" id="sc-months"></div>
+    <div class="sc-ctrl-label" style="margin-top:16px;">Filter by sport</div>
+    <div class="sc-sport-row" id="sc-sport-row"></div>
+  </div>
+
+  <div id="sc-results">
+    <div class="sc-empty">
+      <span class="sc-empty-icon">🏟️</span>
+      Search a city above, or select a month to browse sporting events.
+    </div>
+  </div>
+</div>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ── Data ─────────────────────────────────────────────────────── */
+// months: 0=Jan … 11=Dec; guide paths relative to Trip-Essentials/
+const SE_EVENTS = [
+
+  /* JANUARY */
+  { months:[0], city:'Melbourne', country:'Australia', flag:'🇦🇺', sport:'Tennis',
+    guide:'../Guides/Melbourne/melbourne_v1.html',
+    name:'Australian Open', dates:'Mid-January (2 weeks, Melbourne Park)',
+    desc:'The year\'s first Grand Slam — Rod Laver Arena, Margaret Court Arena, and John Cain Arena host the world\'s best players across two scorching summer weeks. 800,000 spectators make this the most-attended tennis tournament on earth.' },
+
+  /* FEBRUARY */
+  { months:[1,2], city:'London', country:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'Rugby',
+    guide:'../Guides/London/london_v5.html',
+    name:'Six Nations — Twickenham', dates:'February–March (2–3 home matches, dates vary)',
+    desc:'England\'s Six Nations home matches at Twickenham (82,000 capacity) are among the loudest afternoons in English sport. The England–France and England–Ireland fixtures carry centuries of rivalry and sell out within hours of going on sale.' },
+  { months:[1,2], city:'Paris', country:'France', flag:'🇫🇷', sport:'Rugby',
+    guide:'../Guides/Paris/paris_v7.html',
+    name:'Six Nations — Stade de France', dates:'February–March (2–3 home matches, dates vary)',
+    desc:'Les Bleus at the Stade de France (80,000) have dominated the Six Nations in recent years. Home match weekends see Paris\'s bars and restaurants fill with fans from across Europe for one of the great rugby atmospheres.' },
+  { months:[1,2], city:'Edinburgh', country:'Scotland', flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', sport:'Rugby',
+    guide:'../Guides/Edinburgh/edinburgh_v1.html',
+    name:'Six Nations — Murrayfield', dates:'February–March (2–3 home matches, dates vary)',
+    desc:'Murrayfield (67,144) becomes a wall of sound on Six Nations day — the Calcutta Cup against England is one of sport\'s oldest rivalries. Edinburgh\'s pubs and Princes Street Gardens fill for the whole weekend.' },
+  { months:[1,2], city:'Dublin', country:'Ireland', flag:'🇮🇪', sport:'Rugby',
+    guide:'../Guides/Dublin/dublin_v1.html',
+    name:'Six Nations — Aviva Stadium', dates:'February–March (2–3 home matches, dates vary)',
+    desc:'Ireland has become the Six Nations\' dominant force. Aviva Stadium (51,700) home matches — particularly Ireland v England and Ireland v France — sell out within minutes. The post-match pub culture in Dublin is an event in itself.' },
+  { months:[1,2], city:'Rome', country:'Italy', flag:'🇮🇹', sport:'Rugby',
+    guide:'../Guides/Rome/rome_v1.html',
+    name:'Six Nations — Stadio Olimpico', dates:'February–March (2–3 home matches, dates vary)',
+    desc:'Italy\'s Six Nations home matches at the 70,634-seat Stadio Olimpico offer the most accessible tickets in the tournament and a uniquely Roman experience. The post-match evening in central Rome is its own spectacle.' },
+
+  /* MARCH */
+  { months:[2], city:'Tokyo', country:'Japan', flag:'🇯🇵', sport:'Marathon',
+    guide:'../Guides/Tokyo/tokyo_v1.html',
+    name:'Tokyo Marathon', dates:'First Sunday of March',
+    desc:'One of the six Abbott World Marathon Majors — 38,000 runners pass Shinjuku, Asakusa, the Imperial Palace, and Tokyo Tower. The course\'s flat precision, the extraordinarily organised crowd support, and the city\'s energy make Tokyo one of the world\'s best marathon experiences.' },
+  { months:[2], city:'Melbourne', country:'Australia', flag:'🇦🇺', sport:'F1',
+    guide:'../Guides/Melbourne/melbourne_v1.html',
+    name:'Formula 1 Australian Grand Prix', dates:'Late March (Albert Park Circuit)',
+    desc:'The traditional F1 season opener — Albert Park\'s temporary street circuit runs through royal parkland just 3 km from the CBD. 400,000 fans across four days, a festival atmosphere in the paddock village, and the year\'s first podium make this the most anticipated debut race on the calendar.' },
+  { months:[2], city:'London', country:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'Other',
+    guide:'../Guides/London/london_v5.html',
+    name:'Cheltenham Festival', dates:'Mid-March (4 days, Cheltenham Racecourse, ~2 hrs from London)',
+    desc:'The premier jump-racing meeting in the world — 250,000 spectators over four days, 28 championship races culminating in the Gold Cup, and a passionate Irish contingent that effectively takes over the Cotswolds town. The Cheltenham roar as the tapes rise for a big race is unlike anything else in sport.' },
+
+  /* APRIL */
+  { months:[3], city:'London', country:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'Marathon',
+    guide:'../Guides/London/london_v5.html',
+    name:'London Marathon', dates:'Late April (last Sunday)',
+    desc:'One of the world\'s great sporting events — 50,000 runners pass the Tower of London, Cutty Sark, Canary Wharf, and the Mall watched by over 700,000 spectators. The London Marathon is the world\'s largest annual fundraising event and one of the most competitive elite fields in distance running.' },
+  { months:[3], city:'Boston', country:'United States', flag:'🇺🇸', sport:'Marathon',
+    guide:'../Guides/Boston/boston_v1.html',
+    name:'Boston Marathon', dates:'Patriots Day (3rd Monday of April)',
+    desc:'The world\'s oldest annual marathon (1897) and the most prestigious — a qualifying time is required for every age-group entry. The 26.2-mile course from Hopkinton to Boylston Street draws 500,000 spectators on a Massachusetts state holiday.' },
+  { months:[3], city:'Paris', country:'France', flag:'🇫🇷', sport:'Marathon',
+    guide:'../Guides/Paris/paris_v7.html',
+    name:'Paris Marathon', dates:'First Sunday of April',
+    desc:'One of Europe\'s largest marathons — 50,000 runners pass the Eiffel Tower, the Louvre, Bois de Boulogne, and Bois de Vincennes on a spring morning. An exceptionally fast course watched by enormous Parisian crowds along the entire route.' },
+  { months:[3], city:'Osaka', country:'Japan', flag:'🇯🇵', sport:'F1',
+    guide:'../Guides/Osaka/osaka_v1.html',
+    name:'Formula 1 Japanese Grand Prix', dates:'Early April (Suzuka Circuit, ~90 min from Osaka)',
+    desc:'Suzuka\'s legendary figure-of-eight circuit — the Esses, Spoon Curve, and the flat-out 130R corner — produces some of F1\'s most memorable moments. The Japanese fans are the most meticulous in the sport and camp out overnight to secure positions at the iconic corners.' },
+
+  /* MAY */
+  { months:[4], city:'Monaco', country:'Monaco', flag:'🇲🇨', sport:'F1',
+    guide:'../Guides/Monaco/monaco_v1.html',
+    name:'Formula 1 Monaco Grand Prix', dates:'Late May (Circuit de Monaco)',
+    desc:'The jewel of the F1 calendar — street-level barriers inches from the cars at Casino Square, the tunnel, and the chicane. No run-off areas, no overtaking, and yet every racing driver\'s ultimate ambition. A race unchanged in character since 1929 that blends motorsport and glamour like no other event on earth.' },
+  { months:[4,5], city:'Paris', country:'France', flag:'🇫🇷', sport:'Tennis',
+    guide:'../Guides/Paris/paris_v7.html',
+    name:'Roland Garros (French Open)', dates:'Late May – early June (2 weeks)',
+    desc:'The clay-court Grand Slam at Roland Garros in the Bois de Boulogne — the slowest surface in tennis rewards stamina and heavy topspin. Philippe-Chatrier Court holds 15,225 fans; marathon five-set matches on Court Suzanne-Lenglen are the tournament\'s defining spectacle.' },
+  { months:[4], city:'London', country:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'Football',
+    guide:'../Guides/London/london_v5.html',
+    name:'FA Cup Final', dates:'Late May (Wembley Stadium)',
+    desc:'The oldest domestic cup competition in football concludes at Wembley\'s 90,000-seat national stadium. The FA Cup Final is English football\'s showpiece occasion — an occasion that has defined the sport since the first final was played at the Kennington Oval in 1872.' },
+
+  /* JUNE */
+  { months:[5,6], city:'London', country:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'Tennis',
+    guide:'../Guides/London/london_v5.html',
+    name:'Wimbledon', dates:'Late June – early July (2 weeks, All England Club)',
+    desc:'The oldest and most prestigious tennis tournament in the world — grass courts, strawberries and cream, Centre Court\'s retractable roof, and the strict all-white dress code. Wimbledon is unlike any other sporting event: a fortnight that transforms south-west London into the centre of the tennis world.' },
+  { months:[5], city:'Montreal', country:'Canada', flag:'🇨🇦', sport:'F1',
+    guide:'../Guides/Montreal/montreal_v1.html',
+    name:'Formula 1 Canadian Grand Prix', dates:'Early June (Circuit Gilles Villeneuve, Île Notre-Dame)',
+    desc:'The Circuit Gilles Villeneuve — an island circuit in the St. Lawrence River — is F1\'s most unpredictable race for overtaking and the Wall of Champions hairpin ends careers. 300,000 fans across the weekend and the city\'s vibrant festival atmosphere make this one of the most celebrated races of the season.' },
+  { months:[5], city:'London', country:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'Other',
+    guide:'../Guides/London/london_v5.html',
+    name:'Royal Ascot', dates:'Mid-June (5 days, Ascot Racecourse, ~50 min from London)',
+    desc:'Britain\'s most prestigious flat race meeting — 300,000 spectators across five days, the daily Royal Procession up the course, and the most elaborate hat-wearing spectacle in sport. The Gold Cup and Queen Anne Stakes are the centrepieces of the flat-racing calendar.' },
+
+  /* JULY */
+  { months:[6], city:'Paris', country:'France', flag:'🇫🇷', sport:'Cycling',
+    guide:'../Guides/Paris/paris_v7.html',
+    name:'Tour de France — Champs-Élysées Finale', dates:'Third Sunday of July',
+    desc:'The world\'s greatest cycling race concludes with the ceremonial final stage along the Champs-Élysées — the peloton\'s sprint past the Arc de Triomphe, watched by half a million people lining the avenue, is the most iconic finish line in sport. The yellow jersey is decided before this stage, making it a pure celebration.' },
+  { months:[6], city:'London', country:'England', flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'F1',
+    guide:'../Guides/London/london_v5.html',
+    name:'Formula 1 British Grand Prix', dates:'Early July (Silverstone, ~90 min from London)',
+    desc:'Silverstone is the spiritual home of Formula 1 — the fastest sequence of corners on the calendar (Maggotts, Becketts, Chapel), 150,000 fans over race weekend, and the passionate home crowd make this a bucket-list race. The British GP has been held every year since the first F1 championship in 1950.' },
+  { months:[6], city:'Budapest', country:'Hungary', flag:'🇭🇺', sport:'F1',
+    guide:'../Guides/Budapest/budapest_v1.html',
+    name:'Formula 1 Hungarian Grand Prix', dates:'Late July (Hungaroring, 20 km from Budapest)',
+    desc:'The Hungaroring\'s twisting layout rewards car setup and strategy over raw speed. 200,000 fans across the weekend form a fiercely enthusiastic crowd — and with Budapest\'s thermal baths, ruin bars, and nightlife as backdrop, the Hungarian GP is one of the most sociable race weekends of the year.' },
+  { months:[6], city:'Brussels', country:'Belgium', flag:'🇧🇪', sport:'F1',
+    guide:'../Guides/Brussels/brussels_v1.html',
+    name:'Formula 1 Belgian Grand Prix', dates:'Late July (Spa-Francorchamps, ~2 hrs from Brussels)',
+    desc:'Spa-Francorchamps is widely regarded as the greatest racing circuit in the world — Eau Rouge/Raidillon uphill, the Pouhon double-apex, and the Ardennes\' famously unpredictable weather. The Belgian GP is the most technically demanding and scenically spectacular race on the F1 calendar.' },
+  { months:[6,7,8], city:'Madrid', country:'Spain', flag:'🇪🇸', sport:'Cycling',
+    guide:'../Guides/Madrid/madrid_v1.html',
+    name:'Vuelta a España — Madrid Finale', dates:'Late August – mid-September (finale in Madrid)',
+    desc:'The third Grand Tour of the cycling season finishes in a criterium in central Madrid — the final stage around the Paseo de la Castellana and Paseo del Prado, watched by thousands of Spanish fans on a warm autumn afternoon, is the traditional close of the professional road-racing season.' },
+
+  /* AUGUST */
+  { months:[7,8], city:'New York', country:'United States', flag:'🇺🇸', sport:'Tennis',
+    guide:'../Guides/New-York/new-york_v1.html',
+    name:'US Open', dates:'Late August – mid-September (2 weeks, Flushing Meadows)',
+    desc:'The hardcourt Grand Slam at the USTA Billie Jean King National Tennis Center — the world\'s loudest tennis crowd, electric night-session atmosphere, and Arthur Ashe Stadium\'s 23,771-seat drama. The US Open is the most theatrical major in tennis and a quintessential New York late-summer event.' },
+  { months:[7], city:'Amsterdam', country:'Netherlands', flag:'🇳🇱', sport:'F1',
+    guide:'../Guides/Amsterdam/amsterdam_v1.html',
+    name:'Formula 1 Dutch Grand Prix', dates:'Late August (Zandvoort, 30 min from Amsterdam)',
+    desc:'Zandvoort\'s banked corners and the orange ocean of 100,000 fans — the most vocally partisan crowd on the entire F1 calendar — create a uniquely intense atmosphere. The circuit\'s dune setting and the North Sea breeze make the Dutch GP unlike any other race weekend.' },
+
+  /* SEPTEMBER */
+  { months:[8], city:'Berlin', country:'Germany', flag:'🇩🇪', sport:'Marathon',
+    guide:'../Guides/Berlin/berlin_v1.html',
+    name:'Berlin Marathon', dates:'Last Sunday of September',
+    desc:'The world\'s fastest marathon course — 40+ world records broken on Berlin\'s flat streets, including Eliud Kipchoge\'s back-to-back world records in 2018 (2:01:39) and 2022 (2:01:09). 60,000 runners pass through the Brandenburg Gate at the finish in one of running\'s most emotionally charged moments.' },
+  { months:[8], city:'Singapore', country:'Singapore', flag:'🇸🇬', sport:'F1',
+    guide:'../Guides/Singapore/singapore_v3.html',
+    name:'Formula 1 Singapore Grand Prix', dates:'Mid-September (Marina Bay Street Circuit)',
+    desc:'F1\'s only night race — 1,500 floodlights illuminate the Marina Bay circuit under Singapore\'s spectacular skyline. The tropical heat and humidity, the longest race of the season by elapsed time, and the most visually dramatic setting in the sport make the Singapore GP uniquely unforgettable.' },
+  { months:[8], city:'Milan', country:'Italy', flag:'🇮🇹', sport:'F1',
+    guide:'../Guides/Milan/milan_v1.html',
+    name:'Formula 1 Italian Grand Prix', dates:'Early September (Monza, 30 min from Milan)',
+    desc:'Monza is the temple of F1 speed — the tifosi-packed Parabolica grandstands, 200+ mph straights through royal parkland, and 100 years of motorsport heritage. The Italian GP produces the calendar\'s loudest, most emotionally charged crowd, particularly when Ferrari leads through the first chicane.' },
+  { months:[8], city:'Melbourne', country:'Australia', flag:'🇦🇺', sport:'Football',
+    guide:'../Guides/Melbourne/melbourne_v1.html',
+    name:'AFL Grand Final', dates:'Last Saturday of September (MCG)',
+    desc:'Australian rules football\'s championship match at the Melbourne Cricket Ground (100,024 capacity) is Australia\'s most-attended domestic sporting event and the day of a Victorian public holiday. The MCG\'s roar when the ball is bounced is the loudest in the Southern Hemisphere.' },
+
+  /* OCTOBER */
+  { months:[9], city:'Chicago', country:'United States', flag:'🇺🇸', sport:'Marathon',
+    guide:'../Guides/Chicago/chicago_v2.html',
+    name:'Chicago Marathon', dates:'Second Sunday of October',
+    desc:'One of the six Abbott World Marathon Majors — 50,000 runners circle Chicago\'s 29 famous neighborhoods on a flat, fast course watched by 1.7 million spectators. The deep drumline crowds through Bronzeville and Pilsen are the loudest on the course.' },
+  { months:[9], city:'Amsterdam', country:'Netherlands', flag:'🇳🇱', sport:'Marathon',
+    guide:'../Guides/Amsterdam/amsterdam_v1.html',
+    name:'Amsterdam Marathon', dates:'Third Sunday of October',
+    desc:'One of Europe\'s most scenic marathon courses — past the Rijksmuseum, Vondelpark, the 1928 Olympic Stadium, and the canal belt. 20,000 runners, a flat fast course through the city\'s most photogenic streets, and a famously enthusiastic Dutch crowd.' },
+  { months:[9], city:'Austin', country:'United States', flag:'🇺🇸', sport:'F1',
+    guide:'../Guides/Austin/austin_v1.html',
+    name:'Formula 1 United States Grand Prix', dates:'Mid-October (Circuit of the Americas)',
+    desc:'COTA\'s challenging layout — blind uphill Turn 1, sweeping infield sector, long DRS straight — is paired with Austin\'s legendary music and festival culture. 400,000 fans across the long weekend make the US GP one of the largest F1 events by attendance anywhere in the world.' },
+
+  /* NOVEMBER */
+  { months:[10], city:'New York', country:'United States', flag:'🇺🇸', sport:'Marathon',
+    guide:'../Guides/New-York/new-york_v1.html',
+    name:'TCS New York City Marathon', dates:'First Sunday of November',
+    desc:'The world\'s largest marathon — 55,000 runners cross all five boroughs from the Verrazzano-Narrows Bridge to Central Park, watched by 2 million spectators. Running the five-borough course is one of the most exhilarating sporting experiences New York offers any visitor.' },
+  { months:[10], city:'Las-Vegas', country:'United States', flag:'🇺🇸', sport:'F1',
+    guide:'../Guides/Las-Vegas/las-vegas_v1.html',
+    name:'Formula 1 Las Vegas Grand Prix', dates:'Mid-November (Las Vegas Strip Circuit)',
+    desc:'The most audacious venue in F1 history — the night race down the Strip past the Bellagio fountains, Caesars Palace, and the Sphere at 200+ mph is pure spectacle. Las Vegas returned to the F1 calendar in 2023 with a three-day extravaganza that is equal parts motorsport and entertainment event.' },
+  { months:[10,11], city:'Abu-Dhabi', country:'UAE', flag:'🇦🇪', sport:'F1',
+    guide:'../Guides/Abu-Dhabi/abu-dhabi_v1.html',
+    name:'Formula 1 Abu Dhabi Grand Prix', dates:'Late November (Yas Marina Circuit, season finale)',
+    desc:'F1\'s season finale on Yas Island — a twilight-to-night race with the iconic W Hotel bridging the track and the Yas Viceroy Hotel illuminated against the desert sky. The drivers\' and constructors\' championship can still be decided in the final laps of the year, making Abu Dhabi the most title-decisive race on the calendar.' }
+];
+
+/* ── Sport types ──────────────────────────────────────────────── */
+const SPORT_TYPES = ['All','Tennis','F1','Football','Rugby','Marathon','Cycling','Other'];
+const SPORT_ICONS = { All:'🏅', Tennis:'🎾', F1:'🏎️', Football:'⚽', Rugby:'🏉', Marathon:'🏃', Cycling:'🚴', Other:'🐎' };
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let activeMon   = null;
+let activeSport = 'All';
+let activeCity  = null;
+
+function initMonths() {
+  const grid = document.getElementById('sc-months');
+  MONTHS.forEach((m, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'sc-mon';
+    btn.innerHTML = `<span class="sc-mon-abbr">${m}</span>`;
+    btn.setAttribute('aria-label', MONTH_FULL[i]);
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.sc-mon').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      activeMon  = i;
+      activeCity = null;
+      const inp = document.getElementById('sc-city-search');
+      if (inp) inp.value = '';
+      renderMonthResults();
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function initSportFilter() {
+  const row = document.getElementById('sc-sport-row');
+  SPORT_TYPES.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'sc-sport-btn' + (s === 'All' ? ' on' : '');
+    btn.textContent = (SPORT_ICONS[s] || '') + ' ' + s;
+    btn.setAttribute('aria-label', 'Filter: ' + s);
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.sc-sport-btn').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      activeSport = s;
+      if (activeCity)        renderCityResults(activeCity);
+      else if (activeMon !== null) renderMonthResults();
+    });
+    row.appendChild(btn);
+  });
+}
+
+function filterBySport(events) {
+  if (activeSport === 'All') return events;
+  return events.filter(e => e.sport === activeSport);
+}
+
+function cardHTML(e, labelOverride) {
+  const isLink = !!e.guide;
+  const tag  = isLink ? 'a' : 'div';
+  const attr = isLink ? ` href="${e.guide}"` : '';
+  const displayCity = labelOverride || e.city;
+  return `<${tag}${attr} class="sc-card${e.guide ? '' : ' sc-no-guide'}">
+    <div class="sc-card-top">
+      <span class="sc-city">${displayCity}</span>
+      <span class="sc-flag-country">${e.flag}<br>${e.country}</span>
+    </div>
+    <div class="sc-sport-tag">${SPORT_ICONS[e.sport] || ''} ${e.sport}</div>
+    <div class="sc-event-name">${e.name}</div>
+    <div class="sc-dates">📅 ${e.dates}</div>
+    <div class="sc-desc">${e.desc}</div>
+  </${tag}>`;
+}
+
+function renderMonthResults() {
+  const all    = SE_EVENTS.filter(e => e.months.includes(activeMon));
+  const events = filterBySport(all);
+  const res    = document.getElementById('sc-results');
+  let html     = `<div class="sc-section-head">
+    <span class="sc-section-title">Sporting Events in ${MONTH_FULL[activeMon]}</span>
+    <span class="sc-section-count">${events.length} event${events.length !== 1 ? 's' : ''}</span>
+  </div>`;
+  if (!events.length) {
+    html += `<p class="sc-none">No major events curated for this month${activeSport !== 'All' ? ' in ' + activeSport : ''} yet.</p>`;
+  } else {
+    html += `<div class="sc-grid">` + events.map(e => cardHTML(e)).join('') + `</div>`;
+  }
+  res.innerHTML = html;
+}
+
+function renderCityResults(cityName) {
+  const lower   = cityName.toLowerCase();
+  const all     = SE_EVENTS.filter(e => e.city.toLowerCase() === lower);
+  const matched = filterBySport(all);
+  const res     = document.getElementById('sc-results');
+  if (!matched.length) {
+    res.innerHTML = `<div class="sc-empty"><span class="sc-empty-icon">🔍</span>No events found for "${cityName}"${activeSport !== 'All' ? ' in ' + activeSport : ''}.</div>`;
+    return;
+  }
+  const months = [...new Set(matched.flatMap(e => e.months))].sort((a,b)=>a-b);
+  let html = `<div class="sc-section-head">
+    <span class="sc-section-title">Sporting Events in ${cityName}</span>
+    <span class="sc-section-count">${matched.length} event${matched.length !== 1 ? 's' : ''}</span>
+  </div><div class="sc-grid">`;
+  months.forEach(mon => {
+    matched.filter(e => e.months.includes(mon)).forEach(e => {
+      html += cardHTML(e, MONTH_FULL[mon]);
+    });
+  });
+  html += `</div>`;
+  res.innerHTML = html;
+}
+
+initMonths();
+initSportFilter();
+
+if (window.TVESearch) {
+  const inp = document.getElementById('sc-city-search');
+  if (inp) {
+    const seen = new Set();
+    const tveItems = SE_EVENTS
+      .filter(e => { if (seen.has(e.city)) return false; seen.add(e.city); return true; })
+      .map(e => ({ name: e.city, sub: e.country }));
+    TVESearch.attach(inp, {
+      items: tveItems,
+      onPick: function(it) {
+        document.querySelectorAll('.sc-mon').forEach(b => b.classList.remove('on'));
+        activeMon  = null;
+        activeCity = it.name;
+        renderCityResults(it.name);
+      }
+    });
+    inp.addEventListener('input', function() {
+      if (inp.value === '') {
+        activeCity = null;
+        document.getElementById('sc-results').innerHTML =
+          `<div class="sc-empty"><span class="sc-empty-icon">🏟️</span>Search a city above, or select a month to browse sporting events.</div>`;
+      }
+    });
+  }
+}
+</script>
+</body>
+</html>

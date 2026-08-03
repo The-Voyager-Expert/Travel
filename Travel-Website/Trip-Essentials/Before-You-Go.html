@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Before You Go</title>
+<style>
+/* This page's grid is compact — trim the global 80px trailing padding to a snug gap so it
+   doesn't leave a big empty band under the cards. !important beats the shared safe-area
+   @supports rule (mobile.css) that otherwise forces the padding back to the 80px base. */
+body { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important; }
+.byg-wrap { width: 100%; box-sizing: border-box; padding: 0 32px; position: relative; }
+/* Search stays centered on the page (middle column); month sits in the right column beside it */
+.byg-pick { margin: 35px 0 16px; display: grid; grid-template-columns: 1fr 360px 1fr; align-items: center; column-gap: 10px; }
+.byg-find-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  line-height: 0; pointer-events: none; z-index: 1; color: var(--accent); }
+.byg-select { width: 100%; min-width: 0; height: 36px; box-sizing: border-box; font-family: var(--font); font-size: 16px; font-weight: 600;
+  color: var(--text,#1a1917); padding: 0 12px; border: 1px solid var(--border2,#e6e2da);
+  border-radius: 6px; background-color: #fff; cursor: pointer; outline: none; }
+.byg-month-row { grid-column: 3; justify-self: start; display: flex; align-items: center; gap: 8px; margin: 0; }
+.byg-month-select { flex: 0 0 auto; width: auto; height: 40px; box-sizing: border-box; font-family: var(--font); font-size: 16px; font-weight: 500; color: var(--accent);
+  padding: 0 28px 0 12px; border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px;
+  background-color: #fff; cursor: pointer; outline: none; }
+.byg-month-select:hover { border-color: var(--rust); }
+/* Kill the loud gold keyboard-focus ring the shared sheet puts on selects — keep a subtle border cue */
+.byg-select:focus, .byg-select:focus-visible,
+.byg-month-select:focus, .byg-month-select:focus-visible { outline: none !important; border-color: var(--c-search-focus-border); box-shadow: none; }
+.byg-unit { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; }
+.byg-unit button { border: none; cursor: pointer; padding: 7px 11px; font-size: 12px; font-weight: 600;
+  font-family: var(--font); background: transparent; color: var(--muted,#6a6660); }
+.byg-unit button.on { background: #f0ede8; color: var(--muted); }
+.byg-empty { text-align: center; color: var(--muted,#6a6660); font-size: var(--fs-body,14px);
+  padding: 40px 10px; line-height: 1.6; }
+/* Search input (replaces the city dropdown) */
+#byg-find { width: 100%; min-width: 0; height: 40px; box-sizing: border-box; margin: 0; font-family: var(--font);
+  font-size: 15px; color: var(--text,#1a1917); padding: 0 18px 0 36px;
+  border: 1.5px solid var(--border2,#e6e2da); border-radius: 6px; background: #fff; outline: none; }
+#byg-find::placeholder { color: var(--c-search-placeholder); }
+#byg-find:focus, #byg-find:focus-visible { outline: none !important; border-color: var(--c-search-focus-border); box-shadow: none; }
+/* Autocomplete dropdown — uses shared TVESearch (.sa-suggest / .sa-row from web-travel-style.css) */
+.byg-find-wrap { position: relative; grid-column: 2; }
+.byg-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: start; max-width: 1440px; }
+/* Plug Adapter is a full-width strip above the grid — socket types laid out horizontally */
+.byg-plug-card { max-width: 1440px; margin-bottom: 14px; }
+.byg-plug-card .byg-plug-row { display: flex; gap: 20px; margin-top: 8px; flex-wrap: wrap; }
+.byg-plug-card .byg-plug-type { flex: 1; min-width: 180px; padding: 10px 14px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px; background: var(--bg,#f5f3ef); }
+.byg-plug-card .byg-plug-imgs { grid-template-columns: 1fr 1fr; gap: 12px; max-width: 230px; }
+.byg-plug-card .byg-plug-imgs img { width: 100%; max-width: 104px; height: auto; aspect-ratio: 1; object-fit: contain; background: #fff; padding: 8px; }
+.byg-plug-card .byg-plug-type-desc { font-size: 10px; }
+.byg-col-stack { display: flex; flex-direction: column; gap: 14px; }
+/* The four top info cards size to their content so each has the same bottom padding
+   (no card is forced tall with a big empty band). Safety note clamped so it stays tidy. */
+.byg-card-fixed, .byg-card-fixed-sm { height: auto; }
+.byg-safety-note { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.byg-prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.byg-prep-tile { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; padding: 10px 6px; height: 70px; border: 1px solid var(--border2,#e6e2da); border-radius: 9px;
+  background: var(--bg,#f5f3ef); text-decoration: none; text-align: center;
+  transition: border-color .15s, background .15s; }
+.byg-prep-tile:hover { border-color: var(--rust); background: var(--bg, #f5f4f0); }
+.byg-prep-tile-icon { font-size: 18px; }
+.byg-prep-tile-label { font-size: 11px; font-weight: 600; color: var(--text,#1a1917);
+  text-transform: uppercase; letter-spacing: .04em; line-height: 1.3; }
+.byg-card { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 11px; padding: 16px 18px 20px; box-shadow: 0 1px 6px rgba(92,61,17,0.05); }
+.byg-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.byg-card-icon { font-size: 18px; }
+.byg-card-title { font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text,#1a1917); }
+.byg-row { display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0; border-bottom: 1px solid var(--border2,#e6e2da); }
+.byg-row:last-child { border-bottom: none; }
+.byg-row-label { font-size: 12px; color: var(--muted,#6a6660); }
+.byg-row-value { font-size: 14px; font-weight: 600; color: var(--text,#1a1917); text-align: right; }
+.byg-unit-inline { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+.byg-unit-inline button { border: none; cursor: pointer; padding: 5px 9px; font-size: 11px; font-weight: 600; background: var(--surface,#fff); color: var(--text,#1a1917); }
+.byg-unit-inline button.on { background: #f0ede8; color: var(--muted); }
+.byg-temps { display: flex; gap: 20px; margin: 8px 0 6px; }
+.byg-hi { color: var(--c-temp-hi); font-size: 32px; font-weight: 700; }
+.byg-lo { color: var(--c-temp-lo); font-size: 32px; font-weight: 700; }
+.byg-rain-row { display: flex; gap: 14px; margin-top: 4px; }
+.byg-rain-val { font-size: 14px; font-weight: 700; color: var(--c-rain); }
+.byg-rain-lbl { font-size: 11px; color: var(--muted,#6a6660); }
+.byg-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px;
+  color: #3d3a32; padding: 6px 12px; border: 1px solid var(--border2,#e6e2da);
+  border-radius: 6px; background: #fff; text-decoration: none;
+  transition: border-color .15s, box-shadow .15s, transform .08s; margin-top: 8px; }
+.byg-link:hover { border-color: var(--rust); box-shadow: 0 3px 10px rgba(184,92,42,.12); transform: translateY(-1px); text-decoration: none; }
+.byg-links-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+/* Result badges — canonical family palette (Pill-Standard.md § Behavior 3).
+   Border stays neutral (var(--border2)) per the Tap-Water / Safety-Guide
+   pattern; family color lives in bg + text only (no dot — these are inline
+   result tags injected by JS, not legend pills). */
+.byg-safety-badge, .byg-cost-badge {
+  display: inline-block; padding: 3px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  line-height: 1.5; border: 1px solid var(--border2, #e6e2da);
+}
+/* GREEN — safe / low / budget / verylow / verysafe */
+.byg-safety-verylow,
+.byg-safety-low,
+.byg-safety-safe,
+.byg-safety-verysafe,
+.byg-water-safe,
+.byg-cost-budget           { background: #e8f5e8; color: #1a5a1a; }
+/* YELLOW — moderate / varies / expensive */
+.byg-safety-moderate,
+.byg-water-varies,
+.byg-cost-expensive        { background: #fff8e0; color: #7a5800; }
+/* RED — caution / unsafe / premium / luxury */
+.byg-safety-caution,
+.byg-water-unsafe,
+.byg-cost-premium,
+.byg-cost-luxury           { background: #fdf0e8; color: #7a3a1a; }
+/* BLUE — moderate cost */
+.byg-cost-moderate,
+.byg-cost-mid-range        { background: #e8f0fb; color: var(--navy); }
+.byg-strip { display: flex; align-items: flex-end; gap: 2px; height: 40px; margin-top: 8px; }
+.byg-bar { flex: 1; position: relative; height: 40px; }
+.byg-bar > span { position: absolute; left: 50%; transform: translateX(-50%); width: 5px; border-radius: 3px; }
+.byg-bar-label { font-size: 9px; color: var(--muted); text-align: center; margin-top: 2px; }
+.byg-chart-wrap { margin-top: 4px; }
+.byg-card-compact { padding: 10px 14px; }
+.byg-card-compact .byg-row { padding: 4px 0; }
+.byg-plug-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.byg-plug-type { flex: 1; min-width: 0; }
+.byg-plug-type-name { font-size: 11px; font-weight: 700; color: var(--text,#1a1917); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.byg-plug-type-desc { font-size: 10px; color: var(--muted,#6a6660); margin-bottom: 6px; line-height: 1.3; }
+.byg-plug-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.byg-plug-imgs img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--border2,#e6e2da); }
+.byg-plug-img-lbl { font-size: 9px; color: var(--muted,#6a6660); text-align: center; margin-top: 3px; }
+/* Intro banner */
+.byg-intro { display: flex; align-items: center; gap: 16px; background: var(--surface,#fff);
+  border: 1px solid var(--border2,#e6e2da); border-radius: 11px;
+  box-shadow: 0 1px 6px rgba(92,61,17,0.05); padding: 16px 20px;
+  margin-top: 28px; margin-bottom: 0; max-width: 1120px; }
+.byg-intro-icon { font-size: 24px; flex-shrink: 0; }
+.byg-intro-body { flex: 1; min-width: 0; }
+.byg-intro-title { font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--text,#1a1917); margin-bottom: 4px; }
+.byg-intro-sub { font-size: 13px; color: var(--muted,#6a6660); line-height: 1.5; }
+.byg-topics-pill { display: inline-flex; align-items: center; gap: 5px; margin-left: 4px; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border2,#e6e2da); font-size: 11px; color: var(--muted,#6a6660); vertical-align: middle; }
+
+.byg-intro-guide { flex-shrink: 0; border-left: 1px solid var(--border2,#e6e2da); padding-left: 20px; margin-left: 4px; display: flex; align-items: center; }
+@media (max-width: 700px) {
+  .byg-intro { flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.byg-intro-guide { border-left: none; padding-left: 0; margin-left: 0; border-top: 1px solid var(--border2,#e6e2da); padding-top: 12px; width: 100%; justify-content: center; }
+}
+.byg-plug-divider { border: none; border-top: 1px solid var(--border2,#e6e2da); margin: 10px 0 0; }
+.byg-voltage { font-size: 11px; color: var(--muted,#6a6660); margin-bottom: 8px; }
+.byg-visa-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: .04em; text-transform: uppercase; line-height: 1.5; }
+/* Canonical family trios per Badge spec 2026-07-29. */
+.byg-visa-domestic { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }  /* GREEN */
+.byg-visa-free     { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }  /* GREEN */
+.byg-visa-card     { background: var(--warm); color: #8a4a10; border: 1px solid rgba(184,134,90,0.4); }  /* ORANGE */
+.byg-visa-eta      { background: var(--warm); color: #8a4a10; border: 1px solid rgba(184,134,90,0.4); }  /* ORANGE */
+.byg-visa-evisa    { background: var(--warm); color: #8a4a10; border: 1px solid rgba(184,134,90,0.4); }  /* ORANGE */
+.byg-visa-voa      { background: var(--warm); color: #8a4a10; border: 1px solid rgba(184,134,90,0.4); }  /* ORANGE */
+.byg-visa-required { background: #fdf0e8; color: #7a3a1a; border: 1px solid rgba(122,58,26,0.4); }  /* RED */
+.byg-visa-note { font-size: 11px; color: var(--muted,#6a6660); line-height: 1.4; margin-top: 6px; margin-bottom: 6px; }
+.byg-guide-pill { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px;
+  font-weight: 600; color: var(--accent,#8a6c1a); text-decoration: none; padding: 0 16px; height: 40px; box-sizing: border-box;
+  border: 1.5px solid var(--gold,#c8a44a); border-radius: 18px;
+  transition: border-color .15s, color .15s, box-shadow .15s; white-space: nowrap; }
+.byg-guide-pill::after { content: '›'; margin-left: 4px; font-size: 16px; line-height: 1; }
+.byg-guide-pill:hover { border-color: var(--rust,#b85c2a); color: var(--rust,#b85c2a); box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+@media (max-width: 1000px) and (min-width: 701px) {
+  .byg-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .byg-wrap { padding: 0 14px; }
+  .byg-plug-card .byg-plug-type { min-width: 0; flex: 1 1 100%; }
+  .byg-cards { grid-template-columns: 1fr; }
+  .byg-col-stack { gap: 12px; }
+  .byg-pick { grid-template-columns: 1fr; row-gap: 8px; margin-top: 16px; }
+  .byg-find-wrap { grid-column: 1; }
+  .byg-month-row { grid-column: 1; justify-self: center; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="900"></div>
+  <script src="../assets/toolbar.js?v=127"></script>
+  <script src="../assets/weather.js?v=4"></script>
+  <div class="site-header">
+    <h1 class="site-title">Before You Go</h1>
+  </div>
+</div>
+<div class="byg-wrap">
+  <div class="byg-intro">
+    <div class="byg-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true"><path d="M20 6h-3V4c0-1.1-.9-2-2-2h-6c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-5 0H9V4h6v2z"/></svg></div>
+    <div class="byg-intro-body">
+      <div class="byg-intro-title">Everything in one place</div>
+      <div class="byg-intro-sub">Select a city and month — weather, safety, costs, visa requirements, plug adapters, and more.</div>
+    </div>
+
+    <div id="byg-guide-slot" class="byg-intro-guide"></div>
+  </div>
+  <div class="byg-pick" style="margin-bottom:14px;margin-top:22px;">
+    <div class="byg-find-wrap" style="width:100%;max-width:100%;">
+      <span class="byg-find-icon"><svg style="display:block" width="15" height="15" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5.5" cy="5.5" r="4.5" stroke="#c8a44a" stroke-width="1.5"/><line x1="9.35" y1="9.35" x2="12" y2="12" stroke="#c8a44a" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <input type="search" id="byg-find" placeholder="City or country" aria-label="Search by city or country" autocomplete="off" style="width:100%;">
+    </div>
+    <div class="byg-month-row">
+      <select class="byg-month-select" id="byg-month"></select>
+      <div id="byg-unit" style="display:none;">
+        <button type="button" data-u="C" aria-label="Celsius">°C</button>
+        <button type="button" data-u="F" aria-label="Fahrenheit">°F</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="byg-results"></div>
+  <img loading="lazy" src="../Images/women%20with%20luggage.png" alt="" aria-hidden="true" width="1537" height="1023" style="display:block;width:100%;max-width:600px;margin:100px auto 0;pointer-events:none;">
+</div>
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>
+(function () {
+  'use strict';
+  var MONTHS = ['January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
+
+  function start() {
+    var CLIM = window.TravelClimate || {};
+    var keys = Object.keys(CLIM).filter(function (k) { return k !== '_generated' && k !== '_meta' && CLIM[k] && CLIM[k].hi; });
+    keys.sort(function (a, b) { return (CLIM[a].city || a).localeCompare(CLIM[b].city || b); });
+    var searchEl = document.getElementById('byg-find');
+    var monthEl = document.getElementById('byg-month');
+    var unitEl = document.getElementById('byg-unit');
+    var resultsEl = document.getElementById('byg-results');
+    var selectedCity = '';
+
+    function unit() { try { return localStorage.getItem('guideTempUnit') === 'F' ? 'F' : 'C'; } catch (e) { return 'C'; } }
+    function setUnit(u) { try { localStorage.setItem('guideTempUnit', u); } catch (e) {} }
+    function conv(c) { return unit() === 'F' ? Math.round(c * 9 / 5 + 32) : Math.round(c); }
+
+    var GUIDE_LINKS = {"Abu Dhabi":"../Guides/Abu-Dhabi/abu-dhabi_v1.html","Doha":"../Guides/Doha/doha_v1.html","Aix-en-Provence":"../Guides/Aix-en-Provence/aix-en-provence_v1.html","Alaska":"../Guides/Alaska/alaska_v1.html","Alesund":"../Guides/Alesund/alesund_v1.html","Amalfi":"../Guides/Amalfi/amalfi_v1.html","Amsterdam":"../Guides/Amsterdam/amsterdam_v1.html","Annecy":"../Guides/Annecy/annecy_v1.html","Arenal":"../Guides/Arenal/arenal_v1.html","Aruba":"../Guides/Aruba/aruba_v1.html","Manuel Antonio":"../Guides/Manuel-Antonio/manuel-antonio_v1.html","Athens":"../Guides/Athens/athens_v1.html","Atlanta":"../Guides/Atlanta/atlanta_v1.html","Austin":"../Guides/Austin/austin_v1.html","Azores":"../Guides/Azores/azores_v1.html","Bali":"../Guides/Bali/bali_v1.html","Bora-Bora":"../Guides/Bora-Bora/bora-bora_v1.html","The Bahamas":"../Guides/Bahamas/bahamas_v1.html","Bangkok":"../Guides/Bangkok/bangkok_v1.html","Barbados":"../Guides/Barbados/barbados_v1.html","Barcelona":"../Guides/Barcelona/barcelona_v1.html","Beijing":"../Guides/Beijing/beijing_v1.html","Bend":"../Guides/Bend/bend_v2.html","Bergen":"../Guides/Bergen/bergen_v1.html","Berlin":"../Guides/Berlin/berlin_v1.html","Hamburg":"../Guides/Hamburg/hamburg_v1.html","Hanoi":"../Guides/Hanoi/hanoi_v1.html","Hoi An":"../Guides/Hoi-An/hoi-an_v1.html","Big Island":"../Guides/Big-Island/big-island_v1.html","Bologna":"../Guides/Bologna/bologna_v1.html","Bordeaux":"../Guides/Bordeaux/bordeaux_v1.html","Boston":"../Guides/Boston/boston_v1.html","Boulder":"../Guides/Boulder/boulder_v1.html","Cape Cod":"../Guides/Cape-Cod/cape-cod_v1.html","Bruges":"../Guides/Bruges/bruges_v1.html","Brussels":"../Guides/Brussels/brussels_v1.html","Buenos Aires":"../Guides/Buenos-Aires/buenos-aires_v1.html","Cambridge":"../Guides/Cambridge/cambridge_v1.html","Cannes":"../Guides/Cannes/cannes_v1.html","Capri":"../Guides/Capri/capri_v1.html","Cascais":"../Guides/Cascais/cascais_v2.html","Cayman Islands":"../Guides/Cayman-Islands/cayman-islands_v1.html","Charlotte":"../Guides/Charlotte/charlotte_v1.html","Chicago":"../Guides/Chicago/chicago_v2.html","Columbia":"../Guides/Columbia/columbia_v1.html","Chongqing":"../Guides/Chongqing/chongqing_v1.html","Cinque Terre":"../Guides/Cinque-Terre/cinque-terre_v1.html","Colmar":"../Guides/Colmar/colmar_v1.html","San Jose Costa Rica":"../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html","Colombo":"../Guides/Colombo/colombo_v1.html","Copenhagen":"../Guides/Copenhagen/copenhagen_v1.html","Corfu":"../Guides/Corfu/corfu_v1.html","Curaçao":"../Guides/Curacao/curacao_v1.html","Curitiba":"../Guides/Curitiba/curitiba_v1.html","Cusco":"../Guides/Cusco/cusco_v1.html","Dallas":"../Guides/Dallas/dallas_v1.html","Denver":"../Guides/Denver/denver_v1.html","Dubai":"../Guides/Dubai/dubai_v1.html","Dublin":"../Guides/Dublin/dublin_v1.html","Dubrovnik":"../Guides/Dubrovnik/dubrovnik_v2.html","Edinburgh":"../Guides/Edinburgh/edinburgh_v1.html","Florence":"../Guides/Florence/florence_v1.html","Geneva":"../Guides/Geneva/geneva_v1.html","Glacier National Park":"../Guides/Glacier-National-Park/glacier-national-park_v2.html","Glasgow":"../Guides/Glasgow/glasgow_v1.html","Gothenburg":"../Guides/Gothenburg/gothenburg_v1.html","Helsinki":"../Guides/Helsinki/helsinki_v1.html","Hong Kong":"../Guides/Hong-Kong/hong-kong_v1.html","Budapest":"../Guides/Budapest/budapest_v1.html","Reykjavik":"../Guides/Reykjavik/reykjavik_v2.html","Istanbul":"../Guides/Istanbul/istanbul_v2.html","Florida Keys":"../Guides/Florida-Keys/florida-keys_v1.html","Kauai":"../Guides/Kauai/kauai_v1.html","Key West":"../Guides/KeyWest/keywest_v1.html","Kyoto":"../Guides/Kyoto/kyoto_v1.html","Lagos":"../Guides/Lagos/lagos_v1.html","Lake Como":"../Guides/Lake-Como/lake-como_v1.html","Lake Tahoe":"../Guides/Lake-Tahoe/lake-tahoe_v1.html","Lille":"../Guides/Lille/lille_v1.html","Lima":"../Guides/Lima/lima_v1.html","Lisbon":"../Guides/Lisbon/lisbon_v4.html","Ljubljana":"../Guides/Ljubljana/ljubljana_v1.html","London":"../Guides/London/london_v5.html","La Jolla":"../Guides/La-Jolla/la-jolla_v1.html","Los Angeles":"../Guides/Los-Angeles/los-angeles_v1.html","Los Cabos":"../Guides/Los-Cabos/los-cabos_v1.html","Lucerne":"../Guides/Lucerne/lucerne_v1.html","Luxembourg":"../Guides/Luxembourg/luxembourg_v1.html","Lyon":"../Guides/Lyon/lyon_v1.html","MachuPicchu":"../Guides/MachuPicchu/machupicchu_v1.html","Madeira":"../Guides/Madeira/madeira_v1.html","Madrid":"../Guides/Madrid/madrid_v1.html","Maldives":"../Guides/Maldives/maldives_v1.html","Malaga":"../Guides/Malaga/malaga_v1.html","Marktoberdorf":"../Guides/Marktoberdorf/marktoberdorf_v1.html","Marrakech":"../Guides/Marrakech/marrakech_v1.html","Marseille":"../Guides/Marseille/marseille_v1.html","Maui":"../Guides/Maui/maui_v1.html","Melbourne":"../Guides/Melbourne/melbourne_v1.html","Miami":"../Guides/Miami/miami_v1.html","Montevideo":"../Guides/Montevideo/montevideo_v1.html","Milan":"../Guides/Milan/milan_v1.html","Monaco":"../Guides/Monaco/monaco_v1.html","Montreal":"../Guides/Montreal/montreal_v1.html","Munich":"../Guides/Munich/munich_v2.html","Mykonos":"../Guides/Mykonos/mykonos_v1.html","Naples":"../Guides/Naples/naples_v1.html","Las Vegas":"../Guides/Las-Vegas/las-vegas_v1.html","Naples Florida":"../Guides/Naples-Florida/naples-florida_v1.html","Nashville":"../Guides/Nashville/nashville_v1.html","New Orleans":"../Guides/New-Orleans/new-orleans_v1.html","New York":"../Guides/New-York/new-york_v1.html","Nice":"../Guides/Nice/nice_v1.html","Oahu":"../Guides/Oahu/oahu_v1.html","Orcas Island":"../Guides/Orcas-Island/orcas-island_v1.html","Orlando":"../Guides/Orlando/orlando_v1.html","Osaka":"../Guides/Osaka/osaka_v1.html","Oslo":"../Guides/Oslo/oslo_v1.html","Oxford":"../Guides/Oxford/oxford_v1.html","Palm Desert":"../Guides/Palm-Desert/palm-desert_v1.html","Palo Alto":"../Guides/Palo-Alto/palo-alto_v6.html","Chiang Mai":"../Guides/Chiang-Mai/chiang-mai_v1.html","Palawan":"../Guides/Palawan/palawan_v1.html","Paris":"../Guides/Paris/paris_v7.html","Pasadena":"../Guides/Pasadena/pasadena_v5.html","Pensacola":"../Guides/Pensacola/pensacola_v1.html","Philadelphia":"../Guides/Philadelphia/philadelphia_v1.html","Phoenix":"../Guides/Phoenix/phoenix_v1.html","Phuket":"../Guides/Phuket/phuket_v1.html","Pisa":"../Guides/Pisa/pisa_v1.html","Portland":"../Guides/Portland/portland_v1.html","Petra":"../Guides/Petra/petra_v1.html","Porto":"../Guides/Porto/porto_v2.html","Lecce":"../Guides/Lecce/lecce_v1.html","Prague":"../Guides/Prague/prague_v1.html","Puerto Rico":"../Guides/Puerto-Rico/puerto-rico_v1.html","Quebec City":"../Guides/Quebec-City/quebec-city_v1.html","Queenstown":"../Guides/Queenstown/queenstown_v1.html","Aracaju":"../Guides/Aracaju/aracaju_v1.html","Rio de Janeiro":"../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html","Fortaleza":"../Guides/Fortaleza/fortaleza_v1.html","Natal":"../Guides/Natal/natal_v1.html","Olinda":"../Guides/Olinda/olinda_v1.html","Recife":"../Guides/Recife/recife_v1.html","Porto Alegre":"../Guides/Porto-Alegre/porto-alegre_v1.html","Salvador":"../Guides/Salvador/salvador_v1.html","Rome":"../Guides/Rome/rome_v1.html","Sardinia":"../Guides/Sardinia/sardinia_v1.html","Salzburg":"../Guides/Salzburg/salzburg_v1.html","San Diego":"../Guides/San-Diego/san-diego_v1.html","Sedona":"../Guides/Sedona/sedona_v1.html","San Francisco":"../Guides/San-Francisco/san-francisco_v3.html","San Jose":"../Guides/San-Jose/san-jose_v1.html","San Juan Island":"../Guides/San-Juan-Island/san-juan-island_v1.html","Santa Barbara":"../Guides/Santa-Barbara/santa-barbara_v1.html","Cairo":"../Guides/Cairo/cairo_v2.html","Carmel-by-the-Sea":"../Guides/Carmel-by-the-Sea/carmel-by-the-sea_v1.html","Malibu":"../Guides/Malibu/malibu_v1.html","Napa":"../Guides/Napa/napa_v1.html","Santa Cruz":"../Guides/Santa-Cruz/santa-cruz_v1.html","Santa Monica":"../Guides/Santa-Monica/santa-monica_v1.html","San Sebastian":"../Guides/San-Sebastian/san-sebastian_v1.html","Santiago":"../Guides/Santiago/santiago_v1.html","Santorini":"../Guides/Santorini/santorini_v1.html","Scottsdale":"../Guides/Scottsdale/scottsdale_v1.html","Sarasota":"../Guides/Sarasota/sarasota_v1.html","Seattle":"../Guides/Seattle/seattle_v1.html","Seoul":"../Guides/Seoul/seoul_v1.html","Seville":"../Guides/Seville/seville_v1.html","Shanghai":"../Guides/Shanghai/shanghai_v1.html","Sicily":"../Guides/Sicily/sicily_v1.html","Siena":"../Guides/Siena/siena_v1.html","Singapore":"../Guides/Singapore/singapore_v3.html","Sint Maarten":"../Guides/Sint-Maarten/sint-maarten_v1.html","Sintra":"../Guides/Sintra/sintra_v2.html","Sorrento":"../Guides/Sorrento/sorrento_v1.html","Split":"../Guides/Split/split_v1.html","Stockholm":"../Guides/Stockholm/stockholm_v1.html","Strasbourg":"../Guides/Strasbourg/strasbourg_v1.html","Stuttgart":"../Guides/Stuttgart/stuttgart_v1.html","Sydney":"../Guides/Sydney/sydney_v2.html","Taipei":"../Guides/Taipei/taipei_v1.html","Tallinn":"../Guides/Tallinn/tallinn_v1.html","Tokyo":"../Guides/Tokyo/tokyo_v1.html","Toledo":"../Guides/Toledo/toledo_v1.html","Toronto":"../Guides/Toronto/toronto_v1.html","Tromso":"../Guides/Tromso/tromso_v1.html","Turks and Caicos":"../Guides/Turks-and-Caicos/turks-and-caicos_v1.html","Turin":"../Guides/Turin/turin_v14.html","Vancouver":"../Guides/Vancouver/vancouver_v1.html","Victoria":"../Guides/Victoria/victoria_v1.html","Venice":"../Guides/Venice/venice_v1.html","Verona":"../Guides/Verona/verona_v1.html","Vienna":"../Guides/Vienna/vienna_v1.html","Virgin Islands":"../Guides/Virgin-Islands/virgin-islands_v1.html","Washington DC":"../Guides/Washington-DC/washington-dc_v1.html","Wellington":"../Guides/Wellington/wellington_v1.html","Whistler":"../Guides/Whistler/whistler_v1.html","Yellowstone":"../Guides/Yellowstone/yellowstone_v1.html","Zhangjiajie":"../Guides/Zhangjiajie/zhangjiajie_v1.html","Zurich":"../Guides/Zurich/zurich_v1.html","Florianópolis":"../Guides/Florianopolis/florianopolis_v1.html","Foz do Iguaçu":"../Guides/Foz-do-Iguaçu/foz-do-iguacu_v2.html","Paro":"../Guides/Bhutan/bhutan_v1.html","Pokhara":"../Guides/Pokhara/pokhara_v1.html","João Pessoa":"../Guides/João-Pessoa/joao-pessoa_v1.html","Kraków":"../Guides/Kraków/krakow_v1.html","Maceió":"../Guides/Maceió/maceio_v1.html","São Luís":"../Guides/São-Luís/sao-luis_v1.html","São Paulo":"../Guides/São-Paulo/sao-paulo_v1.html","Puerto Vallarta":"../Guides/Puerto-Vallarta/puerto-vallarta_v1.html","Cancun":"../Guides/Cancun/cancun_v1.html","Oaxaca":"../Guides/Oaxaca/oaxaca_v1.html","Tbilisi":"../Guides/Tbilisi/tbilisi_v1.html","Valletta":"../Guides/Valletta/valletta_v1.html","Kotor":"../Guides/Kotor/kotor_v1.html","Luang Prabang":"../Guides/Luang-Prabang/luang-prabang_v1.html","Seychelles":"../Guides/Seychelles/seychelles_v1.html","Muscat":"../Guides/Muscat/muscat_v1.html"};
+
+    var CITY_COUNTRIES = {"Abu Dhabi":"United Arab Emirates","Aix-en-Provence":"France","Alaska":"United States","Alesund":"Norway","Amalfi":"Italy","Amsterdam":"Netherlands","Annecy":"France","Aracaju":"Brazil","Arenal":"Costa Rica","Aruba":"Aruba","Athens":"Greece","Atlanta":"United States","Austin":"United States","Azores":"Portugal","Bali":"Indonesia","Bangkok":"Thailand","Barbados":"Barbados","Barcelona":"Spain","Beijing":"China","Bend":"United States","Bergen":"Norway","Berlin":"Germany","Big Island":"United States","Bologna":"Italy","Bora-Bora":"French Polynesia","Bordeaux":"France","Boston":"United States","Boulder":"United States","Bruges":"Belgium","Brussels":"Belgium","Budapest":"Hungary","Buenos Aires":"Argentina","Cairo":"Egypt","Cambridge":"United Kingdom","Cannes":"France","Cape Cod":"United States","Cape Town":"South Africa","Capri":"Italy","Carmel-by-the-Sea":"United States","Cascais":"Portugal","Cayman Islands":"Cayman Islands","Charlotte":"United States","Chiang Mai":"Thailand","Chicago":"United States","Chongqing":"China","Cinque Terre":"Italy","Colmar":"France","Colombo":"Sri Lanka","Columbia":"United States","Copenhagen":"Denmark","Corfu":"Greece","Curaçao":"Curaçao","Curitiba":"Brazil","Cusco":"Peru","Dallas":"United States","Denver":"United States","Doha":"Qatar","Dubai":"United Arab Emirates","Dublin":"Ireland","Dubrovnik":"Croatia","Edinburgh":"United Kingdom","Florence":"Italy","Florida Keys":"United States","Florianópolis":"Brazil","Fortaleza":"Brazil","Foz do Iguaçu":"Brazil","Geneva":"Switzerland","Glacier National Park":"United States","Glasgow":"United Kingdom","Gothenburg":"Sweden","Granada":"Spain","Hamburg":"Germany","Hanoi":"Vietnam","Helsinki":"Finland","Hoi An":"Vietnam","Hong Kong":"China","Istanbul":"Turkey","João Pessoa":"Brazil","Kauai":"United States","Key West":"United States","Kraków":"Poland","Kyoto":"Japan","La Jolla":"United States","Lagos":"Portugal","Lake Como":"Italy","Lake Tahoe":"United States","Las Vegas":"United States","Lecce":"Italy","Lille":"France","Lima":"Peru","Lisbon":"Portugal","Ljubljana":"Slovenia","London":"United Kingdom","Los Angeles":"United States","Los Cabos":"Mexico","Lucerne":"Switzerland","Luxembourg":"Luxembourg","Lyon":"France","MachuPicchu":"Peru","Maceió":"Brazil","Madeira":"Portugal","Madrid":"Spain","Malaga":"Spain","Maldives":"Maldives","Malibu":"United States","Manuel Antonio":"Costa Rica","Marktoberdorf":"Germany","Marrakech":"Morocco","Marseille":"France","Maui":"United States","Melbourne":"Australia","Miami":"United States","Milan":"Italy","Monaco":"Monaco","Montevideo":"Uruguay","Montreal":"Canada","Munich":"Germany","Muscat":"Oman","Mykonos":"Greece","Napa":"United States","Naples":"Italy","Naples Florida":"United States","Nashville":"United States","Natal":"Brazil","New Orleans":"United States","New York":"United States","Nice":"France","Oahu":"United States","Oaxaca":"Mexico","Olinda":"Brazil","Orcas Island":"United States","Orlando":"United States","Osaka":"Japan","Oslo":"Norway","Oxford":"United Kingdom","Palawan":"Philippines","Palm Desert":"United States","Palo Alto":"United States","Paris":"France","Paro":"Bhutan","Pasadena":"United States","Pensacola":"United States","Petra":"Jordan","Philadelphia":"United States","Phoenix":"United States","Phuket":"Thailand","Pokhara":"Nepal","Porto":"Portugal","Porto Alegre":"Brazil","Portland":"United States","Prague":"Czech Republic","Puerto Rico":"United States","Puerto Vallarta":"Mexico","Quebec City":"Canada","Queenstown":"New Zealand","Recife":"Brazil","Reykjavik":"Iceland","Rio de Janeiro":"Brazil","Rome":"Italy","Salvador":"Brazil","Salzburg":"Austria","San Diego":"United States","San Francisco":"United States","San Jose":"United States","San Jose Costa Rica":"Costa Rica","San Juan Island":"United States","San Sebastian":"Spain","Santa Barbara":"United States","Santa Cruz":"United States","Santa Monica":"United States","Santiago":"Chile","Santorini":"Greece","São Luís":"Brazil","São Paulo":"Brazil","Sarasota":"United States","Sardinia":"Italy","Scottsdale":"United States","Seattle":"United States","Sedona":"United States","Seoul":"South Korea","Seville":"Spain","Seychelles":"Seychelles","Shanghai":"China","Sicily":"Italy","Siena":"Italy","Singapore":"Singapore","Sint Maarten":"Sint Maarten","Sintra":"Portugal","Sorrento":"Italy","Split":"Croatia","Stockholm":"Sweden","Strasbourg":"France","Stuttgart":"Germany","Sydney":"Australia","Taipei":"Taiwan","Tallinn":"Estonia","Tbilisi":"Georgia","The Bahamas":"Bahamas","Tokyo":"Japan","Toledo":"Spain","Toronto":"Canada","Tromso":"Norway","Turin":"Italy","Turks and Caicos":"Turks & Caicos","Vancouver":"Canada","Valletta":"Malta","Venice":"Italy","Verona":"Italy","Victoria":"Canada","Vienna":"Austria","Virgin Islands":"United States","Washington DC":"United States","Wellington":"New Zealand","Whistler":"Canada","Yellowstone":"United States","Zhangjiajie":"China","Zurich":"Switzerland","Cancun":"Mexico","Kotor":"Montenegro","Luang Prabang":"Laos","Pisa":"Italy"};
+
+    var SAFETY = {"Abu Dhabi":{"level":"Very Safe","note":"Low crime, strict laws"},"Amsterdam":{"level":"Safe","note":"Bike theft common"},"Athens":{"level":"Safe","note":"Pickpockets in tourist areas"},"Bali":{"level":"Safe","note":"Mind drink spiking and motorbike theft"},"Bangkok":{"level":"Safe","note":"Scams common near attractions"},"Barcelona":{"level":"Moderate","note":"High pickpocket risk"},"Berlin":{"level":"Safe","note":""},"Buenos Aires":{"level":"Moderate","note":"Petty theft common"},"Cairo":{"level":"Moderate","note":"Exercise usual caution in crowded areas"},"Cusco":{"level":"Moderate","note":"Altitude + petty theft"},"Dubai":{"level":"Very Safe","note":"Very low crime"},"Dublin":{"level":"Safe","note":""},"Florence":{"level":"Safe","note":"Pickpockets near Duomo"},"Hong Kong":{"level":"Safe","note":"Very low violent crime"},"Istanbul":{"level":"Safe","note":"Pickpockets in tourist areas"},"Lisbon":{"level":"Safe","note":"Pickpockets in Alfama"},"London":{"level":"Safe","note":"Pickpockets on tube"},"Marrakech":{"level":"Moderate","note":"Persistent touts in medina"},"Miami":{"level":"Moderate","note":"Varies by area"},"Naples":{"level":"Moderate","note":"Scooter theft, stay aware"},"New York":{"level":"Safe","note":"Stay aware in crowds"},"Paris":{"level":"Moderate","note":"High pickpocket risk"},"Prague":{"level":"Safe","note":"Tourist scams in center"},"Rio de Janeiro":{"level":"Caution","note":"Petty crime, avoid favelas"},"Rome":{"level":"Moderate","note":"High pickpocket risk"},"Singapore":{"level":"Very Safe","note":"Very strict laws"},"Tokyo":{"level":"Very Safe","note":"Extremely safe"}};
+
+    var COST = {"Abu-Dhabi":{"currency":"AED (dirham)","tier":"Expensive"},"Aix-en-Provence":{"currency":"EUR (euro)","tier":"Expensive"},"Alaska":{"currency":"USD (dollar)","tier":"Expensive"},"Alesund":{"currency":"NOK (krone)","tier":"Premium"},"Amalfi":{"currency":"EUR (euro)","tier":"Expensive"},"Amsterdam":{"currency":"EUR (euro)","tier":"Expensive"},"Annecy":{"currency":"EUR (euro)","tier":"Expensive"},"Aracaju":{"currency":"BRL (real)","tier":"Budget"},"Arenal":{"currency":"CRC","tier":"budget"},"Aruba":{"currency":"AWG (florin)","tier":"Expensive"},"Athens":{"currency":"EUR (euro)","tier":"Moderate"},"Atlanta":{"currency":"USD (dollar)","tier":"Moderate"},"Austin":{"currency":"USD (dollar)","tier":"Moderate"},"Azores":{"currency":"EUR (euro)","tier":"Moderate"},"Bahamas":{"currency":"BSD (dollar)","tier":"Expensive"},"Bali":{"currency":"IDR (rupiah)","tier":"Budget"},"Bangkok":{"currency":"THB (baht)","tier":"Budget"},"Barbados":{"currency":"BBD (dollar)","tier":"Expensive"},"Barcelona":{"currency":"EUR (euro)","tier":"Moderate"},"Beijing":{"currency":"CNY (yuan)","tier":"Moderate"},"Bend":{"currency":"USD (dollar)","tier":"Moderate"},"Bergen":{"currency":"NOK (krone)","tier":"Premium"},"Berlin":{"currency":"EUR (euro)","tier":"Moderate"},"Big-Island":{"currency":"USD (dollar)","tier":"Moderate"},"Bologna":{"currency":"EUR (euro)","tier":"Moderate"},"Bora-Bora":{"currency":"XPF (franc)","tier":"Premium"},"Bordeaux":{"currency":"EUR (euro)","tier":"Moderate"},"Boston":{"currency":"USD (dollar)","tier":"Expensive"},"Boulder":{"currency":"USD (dollar)","tier":"Mid-range"},"Bruges":{"currency":"EUR (euro)","tier":"Moderate"},"Brussels":{"currency":"EUR (euro)","tier":"Moderate"},"Paro":{"currency":"BTN (ngultrum)","tier":"Expensive"},"Budapest":{"currency":"HUF (forint)","tier":"Budget"},"Buenos-Aires":{"currency":"ARS (peso)","tier":"Budget"},"Cairo":{"currency":"EGP (pound)","tier":"Budget"},"Cambridge":{"currency":"GBP (pound)","tier":"Expensive"},"Cancun":{"currency":"MXN (peso)","tier":"Moderate"},"Cannes":{"currency":"EUR (euro)","tier":"Premium"},"Cape-Cod":{"currency":"USD (dollar)","tier":"Mid-range"},"Capri":{"currency":"EUR (euro)","tier":"Premium"},"Carmel-by-the-Sea":{"currency":"USD (dollar)","tier":"Expensive"},"Cascais":{"currency":"EUR (euro)","tier":"Moderate"},"Cayman-Islands":{"currency":"KYD (dollar)","tier":"Premium"},"Charlotte":{"currency":"USD (dollar)","tier":"Moderate"},"Chiang-Mai":{"currency":"THB (baht)","tier":"Budget"},"Chicago":{"currency":"USD (dollar)","tier":"Moderate"},"Chongqing":{"currency":"CNY (yuan)","tier":"Budget"},"Cinque-Terre":{"currency":"EUR (euro)","tier":"Moderate"},"Colmar":{"currency":"EUR (euro)","tier":"Moderate"},"Colombo":{"currency":"LKR (rupee)","tier":"Budget"},"Columbia":{"currency":"USD (dollar)","tier":"Budget"},"Copenhagen":{"currency":"DKK (krone)","tier":"Premium"},"Corfu":{"currency":"EUR (euro)","tier":"Moderate"},"Curacao":{"currency":"ANG (guilder)","tier":"Expensive"},"Curitiba":{"currency":"BRL (real)","tier":"Budget"},"Cusco":{"currency":"PEN (sol)","tier":"Budget"},"Dallas":{"currency":"USD (dollar)","tier":"Moderate"},"Denver":{"currency":"USD (dollar)","tier":"Moderate"},"Doha":{"currency":"QAR (riyal)","tier":"Expensive"},"Dubai":{"currency":"AED (dirham)","tier":"Expensive"},"Dublin":{"currency":"EUR (euro)","tier":"Expensive"},"Dubrovnik":{"currency":"EUR (euro)","tier":"Moderate"},"Edinburgh":{"currency":"GBP (pound)","tier":"Moderate"},"Florence":{"currency":"EUR (euro)","tier":"Moderate"},"Florianópolis":{"currency":"BRL (real)","tier":"Budget"},"Florida-Keys":{"currency":"USD (dollar)","tier":"Expensive"},"Fortaleza":{"currency":"BRL (real)","tier":"Budget"},"Foz-do-Iguaçu":{"currency":"BRL (real)","tier":"Budget"},"Geneva":{"currency":"CHF (franc)","tier":"Premium"},"Glacier-National-Park":{"currency":"USD","tier":"mid"},"Glasgow":{"currency":"GBP (pound)","tier":"Moderate"},"Gothenburg":{"currency":"SEK (krona)","tier":"Premium"},"Hamburg":{"currency":"EUR (euro)","tier":"Moderate"},"Hanoi":{"currency":"VND (dong)","tier":"Budget"},"Helsinki":{"currency":"EUR (euro)","tier":"Expensive"},"Hoi-An":{"currency":"VND (dong)","tier":"Budget"},"Hong-Kong":{"currency":"HKD (dollar)","tier":"Expensive"},"Istanbul":{"currency":"TRY (lira)","tier":"Moderate"},"João-Pessoa":{"currency":"BRL (real)","tier":"Budget"},"Kauai":{"currency":"USD (dollar)","tier":"Expensive"},"Key West":{"currency":"USD (dollar)","tier":"Moderate"},"Kotor":{"currency":"EUR (euro)","tier":"Budget"},"Kraków":{"currency":"PLN (złoty)","tier":"Budget"},"Kyoto":{"currency":"JPY (yen)","tier":"Moderate"},"La-Jolla":{"currency":"USD (dollar)","tier":"Expensive"},"Lagos":{"currency":"EUR (euro)","tier":"Budget"},"Lake-Como":{"currency":"EUR (euro)","tier":"Expensive"},"Lake-Tahoe":{"currency":"USD (dollar)","tier":"Moderate"},"Las-Vegas":{"currency":"USD","tier":"mid"},"Lecce":{"currency":"EUR (euro)","tier":"Budget"},"Lille":{"currency":"EUR (euro)","tier":"Moderate"},"Lima":{"currency":"PEN (sol)","tier":"Budget"},"Los Cabos":{"currency":"MXN (peso)","tier":"Moderate"},"Lisbon":{"currency":"EUR (euro)","tier":"Moderate"},"Ljubljana":{"currency":"EUR (euro)","tier":"Moderate"},"London":{"currency":"GBP (pound)","tier":"Expensive"},"Los-Angeles":{"currency":"USD (dollar)","tier":"Expensive"},"Luang Prabang":{"currency":"LAK (kip)","tier":"Budget"},"Luang-Prabang":{"currency":"LAK (kip)","tier":"Budget"},"Lucerne":{"currency":"CHF (franc)","tier":"Premium"},"Luxembourg":{"currency":"EUR (euro)","tier":"Expensive"},"Lyon":{"currency":"EUR (euro)","tier":"Moderate"},"Maceió":{"currency":"BRL (real)","tier":"Budget"},"MachuPicchu":{"currency":"PEN (sol)","tier":"Budget"},"Madeira":{"currency":"EUR (euro)","tier":"Moderate"},"Madrid":{"currency":"EUR (euro)","tier":"Moderate"},"Maldives":{"currency":"MVR (rufiyaa)","tier":"Premium"},"Malibu":{"currency":"USD (dollar)","tier":"Expensive"},"Manuel-Antonio":{"currency":"CRC (colón)","tier":"Moderate"},"Marktoberdorf":{"currency":"EUR (euro)","tier":"Moderate"},"Marrakech":{"currency":"MAD (dirham)","tier":"Budget"},"Marseille":{"currency":"EUR (euro)","tier":"Moderate"},"Maui":{"currency":"USD (dollar)","tier":"Expensive"},"Melbourne":{"currency":"AUD (dollar)","tier":"Moderate"},"Miami":{"currency":"USD (dollar)","tier":"Expensive"},"Milan":{"currency":"EUR (euro)","tier":"Expensive"},"Monaco":{"currency":"EUR (euro)","tier":"Premium"},"Montevideo":{"currency":"UYU (peso)","tier":"Moderate"},"Montreal":{"currency":"CAD (dollar)","tier":"Moderate"},"Munich":{"currency":"EUR (euro)","tier":"Expensive"},"Muscat":{"currency":"OMR (rial)","tier":"Moderate"},"Mykonos":{"currency":"EUR (euro)","tier":"Expensive"},"Málaga":{"currency":"EUR (euro)","tier":"Moderate"},"Napa":{"currency":"USD (dollar)","tier":"Expensive"},"Naples":{"currency":"EUR (euro)","tier":"Moderate"},"Naples, Florida":{"currency":"USD (dollar)","tier":"Expensive"},"Naples-Florida":{"currency":"USD (dollar)","tier":"Expensive"},"Nashville":{"currency":"USD (dollar)","tier":"Moderate"},"Natal":{"currency":"BRL (real)","tier":"Budget"},"New-Orleans":{"currency":"USD","tier":"mid"},"New-York":{"currency":"USD (dollar)","tier":"Expensive"},"Nice":{"currency":"EUR (euro)","tier":"Expensive"},"Oahu":{"currency":"USD (dollar)","tier":"Expensive"},"Oaxaca":{"currency":"MXN (peso)","tier":"Budget"},"Olinda":{"currency":"BRL (real)","tier":"Budget"},"Orcas-Island":{"currency":"USD (dollar)","tier":"Moderate"},"Orlando":{"currency":"USD (dollar)","tier":"Moderate"},"Osaka":{"currency":"JPY (yen)","tier":"Moderate"},"Oslo":{"currency":"NOK (krone)","tier":"Premium"},"Oxford":{"currency":"GBP (pound)","tier":"Expensive"},"Palawan":{"currency":"PHP (peso)","tier":"Budget"},"Palm-Desert":{"currency":"USD (dollar)","tier":"Moderate"},"Palo-Alto":{"currency":"USD (dollar)","tier":"Expensive"},"Paris":{"currency":"EUR (euro)","tier":"Expensive"},"Pasadena":{"currency":"USD (dollar)","tier":"Moderate"},"Pensacola":{"currency":"USD (dollar)","tier":"Moderate"},"Petra":{"currency":"JOD (dinar)","tier":"Moderate"},"Philadelphia":{"currency":"USD (dollar)","tier":"Moderate"},"Phoenix":{"currency":"USD (dollar)","tier":"Moderate"},"Phuket":{"currency":"THB (baht)","tier":"Budget"},"Pisa":{"currency":"EUR (euro)","tier":"Moderate"},"Pokhara":{"currency":"NPR (rupee)","tier":"Budget"},"Portland":{"currency":"USD (dollar)","tier":"Moderate"},"Porto":{"currency":"EUR (euro)","tier":"Moderate"},"Porto-Alegre":{"currency":"BRL (real)","tier":"Budget"},"Prague":{"currency":"CZK (koruna)","tier":"Moderate"},"Puerto Vallarta":{"currency":"MXN (peso)","tier":"$"},"Puerto-Rico":{"currency":"USD (dollar)","tier":"Moderate"},"Quebec-City":{"currency":"CAD (dollar)","tier":"Moderate"},"Queenstown":{"currency":"NZD (dollar)","tier":"Expensive"},"Recife":{"currency":"BRL (real)","tier":"Budget"},"Reykjavik":{"currency":"ISK (krona)","tier":"Premium"},"Rio-de-Janeiro":{"currency":"BRL (real)","tier":"Budget"},"Rome":{"currency":"EUR (euro)","tier":"Moderate"},"Salvador":{"currency":"BRL (real)","tier":"Budget"},"Salzburg":{"currency":"EUR (euro)","tier":"Expensive"},"San-Diego":{"currency":"USD (dollar)","tier":"Expensive"},"San-Francisco":{"currency":"USD (dollar)","tier":"Premium"},"San-Jose":{"currency":"USD (dollar)","tier":"Mid-range"},"San-Jose-Costa-Rica":{"currency":"CRC (colón)","tier":"Moderate"},"San-Juan-Island":{"currency":"USD (dollar)","tier":"Expensive"},"San-Sebastian":{"currency":"EUR (euro)","tier":"Moderate"},"Santa-Barbara":{"currency":"USD (dollar)","tier":"Premium"},"Santa-Cruz":{"currency":"USD (dollar)","tier":"Moderate"},"Santa-Monica":{"currency":"USD (dollar)","tier":"Expensive"},"Santiago":{"currency":"CLP (peso)","tier":"Budget"},"Santorini":{"currency":"EUR (euro)","tier":"Expensive"},"Sarasota":{"currency":"USD (dollar)","tier":"Moderate"},"Sardinia":{"currency":"EUR (euro)","tier":"Luxury"},"Scottsdale":{"currency":"USD (dollar)","tier":"Moderate"},"Seattle":{"currency":"USD (dollar)","tier":"Expensive"},"Sedona":{"currency":"USD (dollar)","tier":"Moderate"},"Seoul":{"currency":"KRW (won)","tier":"Moderate"},"Seville":{"currency":"EUR (euro)","tier":"Moderate"},"Seychelles":{"currency":"SCR (rupee)","tier":"Luxury"},"Shanghai":{"currency":"CNY (yuan)","tier":"Moderate"},"Sicily":{"currency":"EUR (euro)","tier":"Moderate"},"Siena":{"currency":"EUR (euro)","tier":"Moderate"},"Singapore":{"currency":"SGD (dollar)","tier":"Expensive"},"Sint-Maarten":{"currency":"USD/ANG","tier":"Expensive"},"Sintra":{"currency":"EUR (euro)","tier":"Moderate"},"Sorrento":{"currency":"EUR (euro)","tier":"Expensive"},"Split":{"currency":"EUR (euro)","tier":"Moderate"},"Stockholm":{"currency":"SEK (krona)","tier":"Premium"},"Strasbourg":{"currency":"EUR (euro)","tier":"Moderate"},"Stuttgart":{"currency":"EUR (euro)","tier":"Moderate"},"Sydney":{"currency":"AUD (dollar)","tier":"Expensive"},"São-Luís":{"currency":"BRL (real)","tier":"Budget"},"São-Paulo":{"currency":"BRL (real)","tier":"Moderate"},"Taipei":{"currency":"TWD (dollar)","tier":"Budget"},"Tallinn":{"currency":"EUR (euro)","tier":"Moderate"},"Tbilisi":{"currency":"GEL (lari)","tier":"Budget"},"Tokyo":{"currency":"JPY (yen)","tier":"Moderate"},"Toledo":{"currency":"EUR (euro)","tier":"Moderate"},"Toronto":{"currency":"CAD (dollar)","tier":"Moderate"},"Tromso":{"currency":"NOK (krone)","tier":"Premium"},"Turin":{"currency":"EUR (euro)","tier":"Moderate"},"Turks-and-Caicos":{"currency":"USD (dollar)","tier":"Premium"},"Valletta":{"currency":"EUR (euro)","tier":"Moderate"},"Vancouver":{"currency":"CAD (dollar)","tier":"Expensive"},"Venice":{"currency":"EUR (euro)","tier":"Expensive"},"Verona":{"currency":"EUR (euro)","tier":"Moderate"},"Victoria":{"currency":"CAD (dollar)","tier":"Moderate"},"Vienna":{"currency":"EUR (euro)","tier":"Moderate"},"Virgin-Islands":{"currency":"USD (dollar)","tier":"Moderate"},"Washington-DC":{"currency":"USD (dollar)","tier":"Moderate"},"Wellington":{"currency":"NZD (dollar)","tier":"Expensive"},"Whistler":{"currency":"CAD (dollar)","tier":"Premium"},"Yellowstone":{"currency":"USD (dollar)","tier":"Moderate"},"Zhangjiajie":{"currency":"CNY (yuan)","tier":"Budget"},"Zurich":{"currency":"CHF (franc)","tier":"Premium"},"The-Bahamas":{"currency":"BSD (dollar)","tier":"Expensive"},"Curaçao":{"currency":"ANG (guilder)","tier":"Expensive"},"Malaga":{"currency":"EUR (euro)","tier":"Moderate"}};
+    var SAFETY_FULL = {"Abu-Dhabi":{"level":"Very Safe","note":"Low crime, strict laws"},"Aix-en-Provence":{"level":"Safe","note":""},"Alaska":{"level":"Safe","note":"Wildlife awareness needed"},"Alesund":{"level":"Very Safe","note":""},"Amalfi":{"level":"Safe","note":"Watch for pickpockets"},"Amsterdam":{"level":"Safe","note":"Bike theft common"},"Annecy":{"level":"Very Safe","note":""},"Aracaju":{"level":"Safe","note":"Petty crime; take precautions"},"Arenal":{"level":"Low","note":"Generally safe; exercise normal precautions"},"Aruba":{"level":"Safe","note":"Outside resort areas, take care"},"Athens":{"level":"Safe","note":"Pickpockets in tourist areas"},"Atlanta":{"level":"Moderate","note":"Varies by neighborhood"},"Austin":{"level":"Safe","note":""},"Azores":{"level":"Very Safe","note":""},"Bahamas":{"level":"Moderate","note":"Stick to tourist areas"},"Bali":{"level":"Safe","note":"Mind drink spiking and motorbike theft"},"Bangkok":{"level":"Safe","note":"Scams common near attractions"},"Barbados":{"level":"Safe","note":"Petty theft on beaches"},"Barcelona":{"level":"Moderate","note":"High pickpocket risk"},"Beijing":{"level":"Safe","note":"Low crime for tourists"},"Bend":{"level":"Very Safe","note":""},"Bergen":{"level":"Very Safe","note":""},"Berlin":{"level":"Safe","note":""},"Big-Island":{"level":"Safe","note":"Lava zone awareness needed"},"Bologna":{"level":"Safe","note":""},"Bora-Bora":{"level":"Very Safe","note":"Remote island; very low crime"},"Bordeaux":{"level":"Safe","note":""},"Boston":{"level":"Safe","note":""},"Boulder":{"level":"Safe","note":""},"Bruges":{"level":"Very Safe","note":""},"Brussels":{"level":"Safe","note":"Stay alert in some areas"},"Paro":{"level":"Safe","note":"Very low crime; daily SDF applies"},"Budapest":{"level":"Safe","note":"Pickpockets in tourist areas"},"Buenos-Aires":{"level":"Moderate","note":"Petty theft common"},"Cairo":{"level":"Moderate","note":"Exercise usual caution in crowded areas"},"Cambridge":{"level":"Safe","note":""},"Cancun":{"level":"Moderate","note":"Hotel zone is safe; avoid traveling outside tourist areas at night"},"Cannes":{"level":"Safe","note":"Watch valuables"},"Cape-Cod":{"level":"Safe","note":""},"Capri":{"level":"Very Safe","note":""},"Carmel-by-the-Sea":{"level":"Very Safe","note":""},"Cascais":{"level":"Very Safe","note":""},"Cayman-Islands":{"level":"Very Safe","note":""},"Charlotte":{"level":"Moderate","note":"Uptown and South End are safe; avoid isolated areas at night"},"Chiang-Mai":{"level":"Very Safe","note":""},"Chicago":{"level":"Moderate","note":"Varies by neighborhood"},"Chongqing":{"level":"Safe","note":""},"Cinque-Terre":{"level":"Safe","note":""},"Colmar":{"level":"Very Safe","note":""},"Colombo":{"level":"Very Safe","note":""},"Columbia":{"level":"Moderate","note":"Downtown and Five Points are safe; exercise usual urban caution at night"},"Copenhagen":{"level":"Very Safe","note":""},"Corfu":{"level":"Safe","note":""},"Curacao":{"level":"Moderate","note":"Petty crime in some areas"},"Curitiba":{"level":"Safe","note":""},"Cusco":{"level":"Moderate","note":"Altitude + petty theft"},"Dallas":{"level":"Moderate","note":"Watch Downtown at night"},"Denver":{"level":"Safe","note":""},"Doha":{"level":"Very Safe","note":"Very low crime, strict laws"},"Dubai":{"level":"Very Safe","note":"Very low crime"},"Dublin":{"level":"Safe","note":""},"Dubrovnik":{"level":"Very Safe","note":""},"Edinburgh":{"level":"Safe","note":""},"Florence":{"level":"Safe","note":"Pickpockets near Duomo"},"Florianópolis":{"level":"Safe","note":""},"Florida-Keys":{"level":"Safe","note":""},"Fortaleza":{"level":"Safe","note":"Petty crime; take precautions"},"Foz-do-Iguaçu":{"level":"Safe","note":""},"Geneva":{"level":"Very Safe","note":""},"Glacier-National-Park":{"level":"Safe","note":""},"Glasgow":{"level":"Safe","note":""},"Gothenburg":{"level":"Very Safe","note":""},"Hamburg":{"level":"Safe","note":""},"Hanoi":{"level":"Safe","note":"Watch for traffic and petty theft"},"Helsinki":{"level":"Very Safe","note":""},"Hoi-An":{"level":"Safe","note":"Very safe; watch for motorbike traffic"},"Hong-Kong":{"level":"Safe","note":"Very low violent crime"},"Istanbul":{"level":"Safe","note":"Pickpockets in tourist areas"},"João-Pessoa":{"level":"Safe","note":""},"Kauai":{"level":"Safe","note":"Ocean safety awareness"},"Key West":{"level":"Very Safe","note":""},"Kotor":{"level":"Very Safe","note":""},"Kraków":{"level":"Safe","note":""},"Kyoto":{"level":"Very Safe","note":""},"La-Jolla":{"level":"Safe","note":""},"Lagos":{"level":"Safe","note":"Portugal — low crime"},"Lake-Como":{"level":"Very Safe","note":""},"Lake-Tahoe":{"level":"Very Safe","note":""},"Las-Vegas":{"level":1,"note":"Normal precautions"},"Lecce":{"level":"Safe","note":"Low crime in Lecce"},"Lille":{"level":"Safe","note":""},"Lima":{"level":"Moderate","note":"Petty theft, avoid at night"},"Los Cabos":{"level":"Moderate","note":"Stay in resort areas; exercise increased caution per State Dept"},"Lisbon":{"level":"Safe","note":"Pickpockets in Alfama"},"Ljubljana":{"level":"Very Safe","note":""},"London":{"level":"Safe","note":"Pickpockets on tube"},"Los-Angeles":{"level":"Moderate","note":"Varies by neighborhood"},"Luang Prabang":{"level":"Safe","note":"Level 1 — Exercise Normal Precautions"},"Luang-Prabang":{"level":"Safe","note":"Low crime; exercise increased caution per State Dept Level 2"},"Lucerne":{"level":"Very Safe","note":""},"Luxembourg":{"level":"Very Safe","note":""},"Lyon":{"level":"Safe","note":""},"Maceió":{"level":"Safe","note":"Petty crime; take precautions"},"MachuPicchu":{"level":"Safe","note":""},"Madeira":{"level":"Very Safe","note":""},"Madrid":{"level":"Safe","note":"Pickpockets on metro"},"Maldives":{"level":"Safe","note":""},"Malibu":{"level":"Safe","note":""},"Manuel-Antonio":{"level":"Safe","note":""},"Marktoberdorf":{"level":"Very Safe","note":""},"Marrakech":{"level":"Moderate","note":"Persistent touts in medina"},"Marseille":{"level":"Moderate","note":"Avoid certain suburbs"},"Maui":{"level":"Safe","note":"Ocean safety awareness"},"Melbourne":{"level":"Safe","note":""},"Miami":{"level":"Moderate","note":"Varies by area"},"Milan":{"level":"Safe","note":"Pickpockets on trams"},"Monaco":{"level":"Very Safe","note":""},"Montevideo":{"level":"Safe","note":"Petty theft in Old City; avoid outskirts at night"},"Montreal":{"level":"Safe","note":""},"Munich":{"level":"Very Safe","note":""},"Muscat":{"level":"Very Safe","note":"Very low crime, strict laws"},"Mykonos":{"level":"Very Safe","note":""},"Málaga":{"level":"Safe","note":""},"Napa":{"level":"Safe","note":""},"Naples":{"level":"Moderate","note":"Scooter theft, stay aware"},"Naples, Florida":{"level":"Very Safe","note":"Affluent, low-crime area"},"Naples-Florida":{"level":"Very Safe","note":"Affluent, low-crime area"},"Nashville":{"level":"Safe","note":"Downtown and East Nashville safe; exercise usual caution at night"},"Natal":{"level":"Safe","note":""},"New-Orleans":{"level":1,"note":"Normal precautions"},"New-York":{"level":"Safe","note":"Stay aware in crowds"},"Nice":{"level":"Safe","note":""},"Oahu":{"level":"Safe","note":"Car break-ins at beaches"},"Oaxaca":{"level":"Moderate","note":"Historic center is safe; exercise increased caution outside tourist areas"},"Olinda":{"level":"Safe","note":""},"Orcas-Island":{"level":"Very Safe","note":""},"Orlando":{"level":"Safe","note":"Tourist areas well-patrolled"},"Osaka":{"level":"Very Safe","note":""},"Oslo":{"level":"Very Safe","note":""},"Oxford":{"level":"Safe","note":""},"Palawan":{"level":"Very Safe","note":""},"Palm-Desert":{"level":"Very Safe","note":""},"Palo-Alto":{"level":"Very Safe","note":""},"Paris":{"level":"Moderate","note":"High pickpocket risk"},"Pasadena":{"level":"Safe","note":""},"Pensacola":{"level":"Safe","note":""},"Petra":{"level":"Very Safe","note":"Jordan is one of the safest countries in the region"},"Philadelphia":{"level":"Moderate","note":"Center City and tourist areas are safe; avoid North Philly at night"},"Phoenix":{"level":"Moderate","note":"Downtown and tourist areas are safe; exercise caution after dark in West Phoenix"},"Phuket":{"level":"Safe","note":"Beach scams common"},"Pisa":{"level":"Safe","note":"Pickpockets near Tower"},"Pokhara":{"level":"Caution","note":"Trekking hazards; altitude risk on routes"},"Portland":{"level":"Moderate","note":"Downtown tourist areas safe; avoid Old Town at night"},"Porto":{"level":"Safe","note":""},"Porto-Alegre":{"level":"Safe","note":"Petty crime; take precautions"},"Prague":{"level":"Safe","note":"Tourist scams in center"},"Puerto Vallarta":{"level":"2","note":"Exercise increased caution."},"Puerto-Rico":{"level":"Moderate","note":"Stay in tourist zones"},"Quebec-City":{"level":"Very Safe","note":""},"Queenstown":{"level":"Very Safe","note":"Outdoor adventure risks"},"Recife":{"level":"Safe","note":"Petty crime; take precautions"},"Reykjavik":{"level":"Very Safe","note":"Weather risks outdoors"},"Rio-de-Janeiro":{"level":"Caution","note":"Petty crime, avoid favelas"},"Rome":{"level":"Moderate","note":"High pickpocket risk"},"Salvador":{"level":"Safe","note":"Petty crime; take precautions"},"Salzburg":{"level":"Very Safe","note":""},"San-Diego":{"level":"Safe","note":""},"San-Francisco":{"level":"Moderate","note":"Property crime high"},"San-Jose":{"level":"Moderate","note":"Property crime in some areas"},"San-Jose-Costa-Rica":{"level":"Moderate","note":"Petty theft in urban areas"},"San-Juan-Island":{"level":"Low","note":"Quiet island community; very low crime"},"San-Sebastian":{"level":"Very Safe","note":""},"Santa-Barbara":{"level":"Very Safe","note":""},"Santa-Cruz":{"level":"Moderate","note":"Downtown can be rough after dark"},"Santa-Monica":{"level":"Safe","note":""},"Santiago":{"level":"Moderate","note":"Petty theft improving"},"Santorini":{"level":"Very Safe","note":""},"Sarasota":{"level":"Safe","note":""},"Sardinia":{"level":"Low","note":"Exercise normal precautions"},"Scottsdale":{"level":"Very Safe","note":""},"Seattle":{"level":"Moderate","note":"Property crime common"},"Sedona":{"level":"Very Safe","note":""},"Seoul":{"level":"Very Safe","note":""},"Seville":{"level":"Safe","note":""},"Seychelles":{"level":"Low","note":"Exercise normal precautions"},"Shanghai":{"level":"Very Safe","note":"Very low crime"},"Sicily":{"level":"Safe","note":"Petty theft in tourist areas"},"Siena":{"level":"Very Safe","note":""},"Singapore":{"level":"Very Safe","note":"Very strict laws"},"Sint-Maarten":{"level":"Moderate","note":"Hurricane recovery ongoing"},"Sintra":{"level":"Safe","note":""},"Sorrento":{"level":"Safe","note":""},"Split":{"level":"Very Safe","note":""},"Stockholm":{"level":"Safe","note":""},"Strasbourg":{"level":"Safe","note":""},"Stuttgart":{"level":"Safe","note":""},"Sydney":{"level":"Safe","note":""},"São-Luís":{"level":"Safe","note":""},"São-Paulo":{"level":"3","note":"Exercise increased caution; petty crime and theft common"},"Taipei":{"level":"Very Safe","note":""},"Tallinn":{"level":"Safe","note":""},"Tbilisi":{"level":"Safe","note":"Low crime; exercise normal caution"},"Tokyo":{"level":"Very Safe","note":"Extremely safe"},"Toledo":{"level":"Safe","note":""},"Toronto":{"level":"Safe","note":""},"Tromso":{"level":"Very Safe","note":"Arctic weather risks"},"Turin":{"level":"Safe","note":""},"Turks-and-Caicos":{"level":"Safe","note":""},"Valletta":{"level":"Very Safe","note":""},"Vancouver":{"level":"Safe","note":"Downtown East Side area"},"Venice":{"level":"Safe","note":"Pickpockets on waterbuses"},"Verona":{"level":"Safe","note":""},"Victoria":{"level":"Safe","note":""},"Vienna":{"level":"Very Safe","note":""},"Virgin-Islands":{"level":"Moderate","note":"Petty crime, check advisories"},"Washington-DC":{"level":"Moderate","note":"Exercise caution near transit hubs at night"},"Wellington":{"level":"Very Safe","note":""},"Whistler":{"level":"Very Safe","note":""},"Yellowstone":{"level":"Safe","note":""},"Zhangjiajie":{"level":"Safe","note":""},"Zurich":{"level":"Very Safe","note":""},"The-Bahamas":{"level":"Moderate","note":"Stick to tourist areas"},"Curaçao":{"level":"Moderate","note":"Petty crime in some areas"},"Malaga":{"level":"Safe","note":""}};
+
+    // Tap water safety by country — 'safe' | 'varies' | 'unsafe'
+    // Required for every destination country in CITY_COUNTRIES; preflight warns when missing.
+    var WATER_DATA = {
+      'safe':   ['Australia','Austria','Belgium','Canada','Denmark','Estonia','Finland','France','Germany','Hong Kong','Iceland','Ireland','Japan','Latvia','Lithuania','Luxembourg','Monaco','Netherlands','New Zealand','Norway','Singapore','South Korea','Sweden','Switzerland','Taiwan','United Kingdom','United States'],
+      'varies': ['Argentina','Armenia','Azerbaijan','Bahamas','Barbados','Cayman Islands','Chile','Colombia','Costa Rica','Croatia','Curaçao','Czech Republic','French Polynesia','Georgia','Greece','Hungary','Israel','Italy','Jamaica','Malta','Maldives','Montenegro','Oman','Philippines','Poland','Portugal','Qatar','Romania','Sardinia','Seychelles','Serbia','Sint Maarten','Slovakia','Slovenia','South Africa','Spain','Trinidad and Tobago','Turks & Caicos','United Arab Emirates','Uruguay'],
+      'unsafe': ['Bhutan','Bolivia','Brazil','Cambodia','China','Cuba','Ecuador','Egypt','El Salvador','Guatemala','Honduras','India','Indonesia','Jordan','Kenya','Laos','Malaysia','Mexico','Morocco','Myanmar','Nepal','Nigeria','Peru','Philippines','Rwanda','Saudi Arabia','Sri Lanka','Tanzania','Thailand','Turkey','Vietnam']
+    };
+    function waterStatus(c) {
+      if (!c) return null;
+      if (WATER_DATA.safe.indexOf(c) >= 0) return 'safe';
+      if (WATER_DATA.varies.indexOf(c) >= 0) return 'varies';
+      if (WATER_DATA.unsafe.indexOf(c) >= 0) return 'unsafe';
+      return null;
+    }
+
+    var VACCINE_DATA = {
+      routine:     ['Australia','Austria','Belgium','Canada','Croatia','Czech Republic','Denmark','Estonia','Finland','France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Japan','Luxembourg','Malta','Monaco','Montenegro','Netherlands','New Zealand','Norway','Poland','Portugal','Romania','Serbia','Singapore','Slovakia','Slovenia','South Korea','Spain','Sweden','Switzerland','Taiwan','United Kingdom','United States'],
+      recommended: ['Argentina','Armenia','Azerbaijan','Aruba','Bahamas','Barbados','Bhutan','Bolivia','Brazil','Cambodia','Cayman Islands','Chile','China','Colombia','Costa Rica','Cuba','Curaçao','Ecuador','Egypt','El Salvador','French Polynesia','Georgia','Guatemala','Honduras','India','Indonesia','Israel','Jamaica','Jordan','Kenya','Laos','Malaysia','Maldives','Mexico','Morocco','Myanmar','Nepal','Nigeria','Oman','Peru','Philippines','Qatar','Rwanda','Saudi Arabia','Seychelles','Sint Maarten','South Africa','Sri Lanka','Tanzania','Thailand','Trinidad and Tobago','Turkey','Turks & Caicos','United Arab Emirates','Uruguay','Vietnam']
+    };
+    function vaccineStatus(c) {
+      if (!c) return null;
+      if (VACCINE_DATA.routine.indexOf(c) >= 0) return 'routine';
+      if (VACCINE_DATA.recommended.indexOf(c) >= 0) return 'recommended';
+      return null;
+    }
+    var CITY_AIRPORTS = {
+      'Abu Dhabi':{name:'Abu Dhabi International',iata:'AUH',ge:true},
+      'Aix-en-Provence':{name:'Marseille Provence Airport',iata:'MRS',ge:false},
+      'Alaska':{name:'Ted Stevens Anchorage Intl',iata:'ANC',ge:true},
+      'Alesund':{name:'Ålesund Vigra Airport',iata:'AES',ge:false},
+      'Amalfi':{name:'Naples International Airport',iata:'NAP',ge:false},
+      'Amsterdam':{name:'Amsterdam Airport Schiphol',iata:'AMS',ge:false},
+      'Annecy':{name:'Geneva Airport',iata:'GVA',ge:false},
+      'Aracaju':{name:'Santa Maria Airport',iata:'AJU',ge:false},
+      'Arenal':{name:'Juan Santamaría International',iata:'SJO',ge:false},
+      'Aruba':{name:'Queen Beatrix International',iata:'AUA',ge:true},
+      'Athens':{name:'Athens Eleftherios Venizelos',iata:'ATH',ge:false},
+      'Atlanta':{name:'Hartsfield-Jackson Atlanta Intl',iata:'ATL',ge:true},
+      'Austin':{name:'Austin-Bergstrom International',iata:'AUS',ge:true},
+      'Azores':{name:'João Paulo II Airport',iata:'PDL',ge:false},
+      'Bali':{name:'Ngurah Rai International',iata:'DPS',ge:false},
+      'Bangkok':{name:'Suvarnabhumi Airport',iata:'BKK',ge:false},
+      'Barbados':{name:'Grantley Adams International',iata:'BGI',ge:false},
+      'Barcelona':{name:'Barcelona El Prat Airport',iata:'BCN',ge:false},
+      'Beijing':{name:'Beijing Capital International',iata:'PEK',ge:false},
+      'Bend':{name:'Redmond Municipal Airport',iata:'RDM',ge:true},
+      'Bergen':{name:'Bergen Flesland Airport',iata:'BGO',ge:false},
+      'Berlin':{name:'Berlin Brandenburg Airport',iata:'BER',ge:false},
+      'Big Island':{name:'Ellison Onizuka Kona International',iata:'KOA',ge:true},
+      'Bologna':{name:'Bologna Guglielmo Marconi Airport',iata:'BLQ',ge:false},
+      'Bora-Bora':{name:'Motu Mute Airport',iata:'BOB',ge:false},
+      'Bordeaux':{name:'Bordeaux–Mérignac Airport',iata:'BOD',ge:false},
+      'Boston':{name:'Logan International Airport',iata:'BOS',ge:true},
+      'Boulder':{name:'Denver International Airport',iata:'DEN',ge:true},
+      'Bruges':{name:'Brussels Airport',iata:'BRU',ge:false},
+      'Brussels':{name:'Brussels Airport',iata:'BRU',ge:false},
+      'Budapest':{name:'Budapest Ferenc Liszt International',iata:'BUD',ge:false},
+      'Buenos Aires':{name:'Ministro Pistarini International',iata:'EZE',ge:false},
+      'Cairo':{name:'Cairo International Airport',iata:'CAI',ge:false},
+      'Cambridge':{name:'London Heathrow Airport',iata:'LHR',ge:false},
+      'Cancun':{name:'Cancún International Airport',iata:'CUN',ge:false},
+      'Cannes':{name:'Nice Côte d\'Azur Airport',iata:'NCE',ge:false},
+      'Cape Cod':{name:'Barnstable Municipal Airport',iata:'HYA',ge:true},
+      'Capri':{name:'Naples International Airport',iata:'NAP',ge:false},
+      'Carmel-by-the-Sea':{name:'Monterey Regional Airport',iata:'MRY',ge:true},
+      'Cascais':{name:'Lisbon Humberto Delgado Airport',iata:'LIS',ge:false},
+      'Cayman Islands':{name:'Owen Roberts International',iata:'GCM',ge:false},
+      'Charlotte':{name:'Charlotte Douglas International',iata:'CLT',ge:true},
+      'Chiang Mai':{name:'Chiang Mai International Airport',iata:'CNX',ge:false},
+      'Chicago':{name:"O'Hare International Airport",iata:'ORD',ge:true},
+      'Chongqing':{name:'Chongqing Jiangbei International',iata:'CKG',ge:false},
+      'Cinque Terre':{name:'Genoa Cristoforo Colombo Airport',iata:'GOA',ge:false},
+      'Colmar':{name:'EuroAirport Basel-Mulhouse',iata:'BSL',ge:false},
+      'Colombo':{name:'Bandaranaike International Airport',iata:'CMB',ge:false},
+      'Columbia':{name:'Columbia Metropolitan Airport',iata:'CAE',ge:true},
+      'Copenhagen':{name:'Copenhagen Airport Kastrup',iata:'CPH',ge:false},
+      'Corfu':{name:'Corfu International Airport',iata:'CFU',ge:false},
+      'Curaçao':{name:'Curaçao International Airport',iata:'CUR',ge:false},
+      'Curitiba':{name:'Afonso Pena International Airport',iata:'CWB',ge:false},
+      'Cusco':{name:'Alejandro Velasco Astete International',iata:'CUZ',ge:false},
+      'Dallas':{name:'Dallas/Fort Worth International',iata:'DFW',ge:true},
+      'Denver':{name:'Denver International Airport',iata:'DEN',ge:true},
+      'Doha':{name:'Hamad International Airport',iata:'DOH',ge:false},
+      'Dubai':{name:'Dubai International Airport',iata:'DXB',ge:false},
+      'Dublin':{name:'Dublin Airport',iata:'DUB',ge:true},
+      'Dubrovnik':{name:'Dubrovnik Airport',iata:'DBV',ge:false},
+      'Edinburgh':{name:'Edinburgh Airport',iata:'EDI',ge:false},
+      'Florence':{name:'Florence Peretola Airport',iata:'FLR',ge:false},
+      'Florianópolis':{name:'Hercílio Luz International Airport',iata:'FLN',ge:false},
+      'Florida Keys':{name:'Key West International Airport',iata:'EYW',ge:true},
+      'Fortaleza':{name:'Pinto Martins International Airport',iata:'FOR',ge:false},
+      'Foz do Iguaçu':{name:'Cataratas International Airport',iata:'IGU',ge:false},
+      'Geneva':{name:'Geneva Airport',iata:'GVA',ge:false},
+      'Glacier National Park':{name:'Glacier Park International Airport',iata:'FCA',ge:true},
+      'Glasgow':{name:'Glasgow International Airport',iata:'GLA',ge:false},
+      'Gothenburg':{name:'Gothenburg Landvetter Airport',iata:'GOT',ge:false},
+      'Hamburg':{name:'Hamburg Airport',iata:'HAM',ge:false},
+      'Hanoi':{name:'Noi Bai International Airport',iata:'HAN',ge:false},
+      'Helsinki':{name:'Helsinki-Vantaa Airport',iata:'HEL',ge:false},
+      'Hoi An':{name:'Da Nang International Airport',iata:'DAD',ge:false},
+      'Hong Kong':{name:'Hong Kong International Airport',iata:'HKG',ge:false},
+      'Istanbul':{name:'Istanbul Airport',iata:'IST',ge:false},
+      'João Pessoa':{name:'Presidente Castro Pinto International',iata:'JPA',ge:false},
+      'Kauai':{name:'Lihue Airport',iata:'LIH',ge:true},
+      'Key West':{name:'Key West International Airport',iata:'EYW',ge:true},
+      'Kotor':{name:'Tivat Airport',iata:'TIV',ge:false},
+      'Kraków':{name:'John Paul II International Airport',iata:'KRK',ge:false},
+      'Kyoto':{name:'Osaka Kansai International Airport',iata:'KIX',ge:false},
+      'La Jolla':{name:'San Diego International Airport',iata:'SAN',ge:true},
+      'Lagos':{name:'Faro Airport',iata:'FAO',ge:false},
+      'Lake Como':{name:'Milan Malpensa Airport',iata:'MXP',ge:false},
+      'Lake Tahoe':{name:'Reno-Tahoe International Airport',iata:'RNO',ge:true},
+      'Las Vegas':{name:'Harry Reid International Airport',iata:'LAS',ge:true},
+      'Lecce':{name:'Brindisi Airport',iata:'BDS',ge:false},
+      'Lille':{name:'Lille Airport',iata:'LIL',ge:false},
+      'Lima':{name:'Jorge Chávez International Airport',iata:'LIM',ge:false},
+      'Lisbon':{name:'Lisbon Humberto Delgado Airport',iata:'LIS',ge:false},
+      'Ljubljana':{name:'Ljubljana Jože Pučnik Airport',iata:'LJU',ge:false},
+      'London':{name:'London Heathrow Airport',iata:'LHR',ge:false},
+      'Los Angeles':{name:'Los Angeles International Airport',iata:'LAX',ge:true},
+      'Los Cabos':{name:'Los Cabos International Airport',iata:'SJD',ge:false},
+      'Luang Prabang':{name:'Luang Prabang International Airport',iata:'LPQ',ge:false},
+      'Lucerne':{name:'Zurich Airport',iata:'ZRH',ge:false},
+      'Luxembourg':{name:'Luxembourg Airport',iata:'LUX',ge:false},
+      'Lyon':{name:'Lyon Saint-Exupéry Airport',iata:'LYS',ge:false},
+      'Maceió':{name:'Zumbi dos Palmares International',iata:'MCZ',ge:false},
+      'MachuPicchu':{name:'Alejandro Velasco Astete International',iata:'CUZ',ge:false},
+      'Madeira':{name:'Madeira Airport',iata:'FNC',ge:false},
+      'Madrid':{name:'Adolfo Suárez Madrid-Barajas Airport',iata:'MAD',ge:false},
+      'Malaga':{name:'Málaga-Costa del Sol Airport',iata:'AGP',ge:false},
+      'Maldives':{name:'Velana International Airport',iata:'MLE',ge:false},
+      'Malibu':{name:'Los Angeles International Airport',iata:'LAX',ge:true},
+      'Manuel Antonio':{name:'Quepos La Managua Airport',iata:'XQP',ge:false},
+      'Marktoberdorf':{name:'Munich International Airport',iata:'MUC',ge:false},
+      'Marrakech':{name:'Marrakech Menara Airport',iata:'RAK',ge:false},
+      'Marseille':{name:'Marseille Provence Airport',iata:'MRS',ge:false},
+      'Maui':{name:'Kahului Airport',iata:'OGG',ge:true},
+      'Melbourne':{name:'Melbourne Airport',iata:'MEL',ge:false},
+      'Miami':{name:'Miami International Airport',iata:'MIA',ge:true},
+      'Milan':{name:'Milan Malpensa Airport',iata:'MXP',ge:false},
+      'Monaco':{name:'Nice Côte d\'Azur Airport',iata:'NCE',ge:false},
+      'Montevideo':{name:'Carrasco International Airport',iata:'MVD',ge:false},
+      'Montreal':{name:'Montréal-Pierre Elliott Trudeau Intl',iata:'YUL',ge:true},
+      'Munich':{name:'Munich International Airport',iata:'MUC',ge:false},
+      'Muscat':{name:'Muscat International Airport',iata:'MCT',ge:false},
+      'Mykonos':{name:'Mykonos Island National Airport',iata:'JMK',ge:false},
+      'Napa':{name:'San Francisco International Airport',iata:'SFO',ge:true},
+      'Naples':{name:'Naples International Airport',iata:'NAP',ge:false},
+      'Naples Florida':{name:'Southwest Florida International Airport',iata:'RSW',ge:true},
+      'Nashville':{name:'Nashville International Airport',iata:'BNA',ge:true},
+      'Natal':{name:'Governador Aluízio Alves International',iata:'NAT',ge:false},
+      'New Orleans':{name:'Louis Armstrong Intl Airport',iata:'MSY',ge:true},
+      'New York':{name:'John F. Kennedy International Airport',iata:'JFK',ge:true},
+      'Nice':{name:'Nice Côte d\'Azur Airport',iata:'NCE',ge:false},
+      'Oahu':{name:'Daniel K. Inouye International Airport',iata:'HNL',ge:true},
+      'Oaxaca':{name:'Xoxocotlán International Airport',iata:'OAX',ge:false},
+      'Olinda':{name:'Recife/Guararapes International Airport',iata:'REC',ge:false},
+      'Orcas Island':{name:'Orcas Island Airport',iata:'ESD',ge:true},
+      'Orlando':{name:'Orlando International Airport',iata:'MCO',ge:true},
+      'Osaka':{name:'Kansai International Airport',iata:'KIX',ge:false},
+      'Oslo':{name:'Oslo Gardermoen Airport',iata:'OSL',ge:false},
+      'Oxford':{name:'London Heathrow Airport',iata:'LHR',ge:false},
+      'Palawan':{name:'Puerto Princesa Airport',iata:'PPS',ge:false},
+      'Palm Desert':{name:'Palm Springs International Airport',iata:'PSP',ge:true},
+      'Palo Alto':{name:'San Francisco International Airport',iata:'SFO',ge:true},
+      'Paris':{name:'Charles de Gaulle Airport',iata:'CDG',ge:false},
+      'Paro':{name:'Paro Airport',iata:'PBH',ge:false},
+      'Pasadena':{name:'Los Angeles International Airport',iata:'LAX',ge:true},
+      'Pensacola':{name:'Pensacola International Airport',iata:'PNS',ge:true},
+      'Petra':{name:'Queen Alia International Airport',iata:'AMM',ge:false},
+      'Philadelphia':{name:'Philadelphia International Airport',iata:'PHL',ge:true},
+      'Phoenix':{name:'Phoenix Sky Harbor International',iata:'PHX',ge:true},
+      'Phuket':{name:'Phuket International Airport',iata:'HKT',ge:false},
+      'Pisa':{name:'Pisa International Airport',iata:'PSA',ge:false},
+      'Pokhara':{name:'Pokhara International Airport',iata:'PKR',ge:false},
+      'Porto':{name:'Francisco Sá Carneiro Airport',iata:'OPO',ge:false},
+      'Porto Alegre':{name:'Salgado Filho International Airport',iata:'POA',ge:false},
+      'Portland':{name:'Portland International Airport',iata:'PDX',ge:true},
+      'Prague':{name:'Václav Havel Airport Prague',iata:'PRG',ge:false},
+      'Puerto Rico':{name:'Luis Muñoz Marín International Airport',iata:'SJU',ge:true},
+      'Puerto Vallarta':{name:'Lic. Gustavo Díaz Ordaz International',iata:'PVR',ge:false},
+      'Quebec City':{name:'Québec City Jean Lesage International',iata:'YQB',ge:true},
+      'Queenstown':{name:'Queenstown Airport',iata:'ZQN',ge:false},
+      'Recife':{name:'Recife/Guararapes International Airport',iata:'REC',ge:false},
+      'Reykjavik':{name:'Keflavík International Airport',iata:'KEF',ge:false},
+      'Rio de Janeiro':{name:'Galeão International Airport',iata:'GIG',ge:false},
+      'Rome':{name:'Rome Fiumicino Airport',iata:'FCO',ge:false},
+      'Salvador':{name:'Deputado Luís Eduardo Magalhães Intl',iata:'SSA',ge:false},
+      'Salzburg':{name:'Salzburg Airport W.A. Mozart',iata:'SZG',ge:false},
+      'San Diego':{name:'San Diego International Airport',iata:'SAN',ge:true},
+      'San Francisco':{name:'San Francisco International Airport',iata:'SFO',ge:true},
+      'San Jose':{name:'Norman Y. Mineta San José International',iata:'SJC',ge:true},
+      'San Jose Costa Rica':{name:'Juan Santamaría International Airport',iata:'SJO',ge:false},
+      'San Juan Island':{name:'Seattle-Tacoma International Airport',iata:'SEA',ge:true},
+      'San Sebastian':{name:'San Sebastián Airport',iata:'EAS',ge:false},
+      'Santa Barbara':{name:'Santa Barbara Airport',iata:'SBA',ge:true},
+      'Santa Cruz':{name:'Norman Y. Mineta San José International',iata:'SJC',ge:true},
+      'Santa Monica':{name:'Los Angeles International Airport',iata:'LAX',ge:true},
+      'Santiago':{name:'Arturo Merino Benítez International',iata:'SCL',ge:false},
+      'Santorini':{name:'Santorini National Airport',iata:'JTR',ge:false},
+      'São Luís':{name:'Marechal Cunha Machado International',iata:'SLZ',ge:false},
+      'São Paulo':{name:'São Paulo/Guarulhos International',iata:'GRU',ge:false},
+      'Sarasota':{name:'Sarasota-Bradenton International Airport',iata:'SRQ',ge:true},
+      'Sardinia':{name:'Cagliari Elmas Airport',iata:'CAG',ge:false},
+      'Scottsdale':{name:'Phoenix Sky Harbor International',iata:'PHX',ge:true},
+      'Seattle':{name:'Seattle-Tacoma International Airport',iata:'SEA',ge:true},
+      'Sedona':{name:'Phoenix Sky Harbor International',iata:'PHX',ge:true},
+      'Seoul':{name:'Incheon International Airport',iata:'ICN',ge:false},
+      'Seville':{name:'Sevilla Airport',iata:'SVQ',ge:false},
+      'Seychelles':{name:'Seychelles International Airport',iata:'SEZ',ge:false},
+      'Shanghai':{name:'Shanghai Pudong International Airport',iata:'PVG',ge:false},
+      'Sicily':{name:'Catania Fontanarossa Airport',iata:'CTA',ge:false},
+      'Siena':{name:'Florence Peretola Airport',iata:'FLR',ge:false},
+      'Singapore':{name:'Singapore Changi Airport',iata:'SIN',ge:false},
+      'Sint Maarten':{name:'Princess Juliana International Airport',iata:'SXM',ge:false},
+      'Sintra':{name:'Lisbon Humberto Delgado Airport',iata:'LIS',ge:false},
+      'Sorrento':{name:'Naples International Airport',iata:'NAP',ge:false},
+      'Split':{name:'Split Airport',iata:'SPU',ge:false},
+      'Stockholm':{name:'Stockholm Arlanda Airport',iata:'ARN',ge:false},
+      'Strasbourg':{name:'Strasbourg Airport',iata:'SXB',ge:false},
+      'Stuttgart':{name:'Stuttgart Airport',iata:'STR',ge:false},
+      'Sydney':{name:'Sydney Kingsford Smith Airport',iata:'SYD',ge:false},
+      'Taipei':{name:'Taiwan Taoyuan International Airport',iata:'TPE',ge:false},
+      'Tallinn':{name:'Tallinn Airport',iata:'TLL',ge:false},
+      'Tbilisi':{name:'Tbilisi International Airport',iata:'TBS',ge:false},
+      'The Bahamas':{name:'Lynden Pindling International Airport',iata:'NAS',ge:true},
+      'Tokyo':{name:'Narita International Airport',iata:'NRT',ge:false},
+      'Toledo':{name:'Adolfo Suárez Madrid-Barajas Airport',iata:'MAD',ge:false},
+      'Toronto':{name:'Toronto Pearson International Airport',iata:'YYZ',ge:true},
+      'Tromso':{name:'Tromsø Airport',iata:'TOS',ge:false},
+      'Turin':{name:'Turin Airport',iata:'TRN',ge:false},
+      'Turks and Caicos':{name:'Providenciales International Airport',iata:'PLS',ge:false},
+      'Valletta':{name:'Malta International Airport',iata:'MLA',ge:false},
+      'Vancouver':{name:'Vancouver International Airport',iata:'YVR',ge:true},
+      'Venice':{name:'Venice Marco Polo Airport',iata:'VCE',ge:false},
+      'Verona':{name:'Verona Villafranca Airport',iata:'VRN',ge:false},
+      'Victoria':{name:'Victoria International Airport',iata:'YYJ',ge:false},
+      'Vienna':{name:'Vienna International Airport',iata:'VIE',ge:false},
+      'Virgin Islands':{name:'Cyril E. King Airport',iata:'STT',ge:true},
+      'Washington DC':{name:'Dulles International Airport',iata:'IAD',ge:true},
+      'Wellington':{name:'Wellington International Airport',iata:'WLG',ge:false},
+      'Whistler':{name:'Vancouver International Airport',iata:'YVR',ge:true},
+      'Yellowstone':{name:'Bozeman Yellowstone International Airport',iata:'BZN',ge:true},
+      'Zhangjiajie':{name:'Zhangjiajie Hehua Airport',iata:'DYG',ge:false},
+      'Zurich':{name:'Zurich Airport',iata:'ZRH',ge:false}
+    };
+
+    // Cities that have entries in Day-Trips.html — value = trip count (keyed by guide folder name = climateKey)
+    var DAY_TRIP_CITIES = {"Aix-en-Provence":5,"Amsterdam":5,"Annecy":5,"Athens":5,"Bangkok":1,"Barcelona":5,"Beijing":3,"Bergen":5,"Berlin":5,"Bilbao":6,"Bologna":5,"Bordeaux":5,"Boston":3,"Bruges":5,"Brussels":5,"Budapest":5,"Cairo":1,"Cambridge":5,"Cannes":5,"Carmel-by-the-Sea":2,"Cascais":5,"Charlotte":2,"Chiang-Mai":2,"Chicago":1,"Chongqing":3,"Cinque-Terre":5,"Colmar":5,"Cologne":6,"Copenhagen":5,"Curitiba":1,"Denver":1,"Dublin":5,"Edinburgh":5,"Florence":5,"Frankfurt":7,"Geneva":5,"Glacier-National-Park":1,"Glasgow":5,"Gothenburg":5,"Hamburg":5,"Hanoi":2,"Helsinki":5,"Hong-Kong":2,"Istanbul":5,"Kraków":5,"Kyoto":3,"Lagos":5,"Lake-Como":5,"Lecce":5,"Lille":5,"Lisbon":5,"Ljubljana":5,"London":5,"Los-Angeles":2,"Luang-Prabang":2,"Lucerne":5,"Luxembourg":5,"Lyon":5,"Madrid":5,"Malaga":6,"Malibu":2,"Marktoberdorf":5,"Marseille":5,"Melbourne":3,"Miami":2,"Milan":5,"Monaco":5,"Montreal":2,"Munich":5,"Napa":2,"Naples":5,"New-Orleans":3,"New-York":2,"Nice":5,"Orlando":2,"Osaka":3,"Oslo":5,"Oxford":5,"Paris":5,"Philadelphia":3,"Pisa":5,"Portland":2,"Porto":5,"Porto-Alegre":1,"Prague":5,"Quebec-City":1,"Rome":5,"Salzburg":5,"San-Diego":1,"San-Jose":1,"San-Sebastian":5,"Santa-Barbara":3,"Santa-Fe":1,"Santa-Monica":2,"Santiago":1,"Seattle":3,"Seoul":1,"Seville":5,"Shanghai":1,"Sicily":5,"Siena":5,"Sintra":5,"Sorrento":5,"Split":5,"Stockholm":5,"Strasbourg":5,"Stuttgart":5,"Sydney":2,"Taipei":3,"Tallinn":5,"Tbilisi":5,"Tokyo":3,"Toledo":5,"Toronto":1,"Turin":5,"Venice":5,"Verona":5,"Vienna":5,"Washington-DC":2,"Wellington":2,"Zurich":6};
+    var LOUNGE_DATA = {"AMS":{"pp":[{"n":"Aspire Lounge No. 41","t":"Departure Hall 2, Panorama Deck, 3rd floor"},{"n":"Aspire Lounge No. 26","t":"Departure Hall 1, after security, upper level"}],"st":{"has":true,"lounges":[{"n":"KLM Crown Lounge 52","t":"Holland Boulevard, between E and F piers, upper level"},{"n":"KLM Crown Lounge 25","t":"Terminal D, upper level"}]}},"CDG":{"pp":[{"n":"ICare Lounge","t":"T1, international zone, after passport control"},{"n":"Salon Paul Maxence","t":"T2A–C, common area after security / passport control"},{"n":"Sheltair Lounge","t":"T2D, Level 1 after security, near Gate D56"},{"n":"YotelAir Paris CDG","t":"T2E, Hall L — take shuttle train to Gate L"}],"st":{"has":true,"lounges":[{"n":"Air France Lounge — T2E Hall L","t":"T2E, Hall L"},{"n":"Air France Lounge — T2F","t":"T2F, post-security"},{"n":"Air France Lounges — T2E Halls K & M","t":"T2E — Hall K or Hall M"},{"n":"Air France Lounge — T2G","t":"T2G"}]}},"ORY":{"pp":null,"st":{"has":true,"lounges":[{"n":"Air France Lounge","t":"Orly 4 (international terminal)"}]}},"NCE":{"pp":[],"st":{"has":false}},"LYS":{"pp":null,"st":{"has":false}},"LHR":{"pp":[{"n":"No1 Lounge","t":"T3 (also T2) — follow signs to Lounge F"},{"n":"Plaza Premium Lounge","t":"T2 and T4 — check PP app per terminal"},{"n":"My Lounge","t":"T3, Lounge D — near Gates 1–22"}],"st":{"has":true,"lounges":[{"n":"Air France / KLM Lounge","t":"T4, Level 2 Departures, opposite Gate 10a"},{"n":"Virgin Atlantic Clubhouse (Delta access)","t":"T3, Lounge H area, Gates 13–22, post-security"}]}},"LGW":{"pp":[{"n":"No1 Lounge","t":"North Terminal and South Terminal (separate lounges)"},{"n":"My Lounge · Club Aspire","t":"North and South terminals — varies by lounge"}],"st":{"has":false}},"MAN":{"pp":[{"n":"Escape Lounge · No1 Lounge · Aspire","t":"T1, T2, T3 — multiple lounges across terminals"}],"st":{"has":false}},"EDI":{"pp":[{"n":"Aspire Lounge (Gate 16) · Escape Lounge · Turkish Airlines Lounge","t":"Single terminal — all airside"}],"st":{"has":false}},"VIE":{"pp":[{"n":"Vienna Lounge","t":"T1, post-security"}],"st":{"has":false}},"BRU":{"pp":[{"n":"Aspire Lounge · No1 Lounge","t":"Non-Schengen zone, airside — check PP app"}],"st":{"has":true,"lounges":[{"n":"SkyTeam / Brussels Airlines Lounge","t":"Pier A, airside after security"}]}},"DBV":{"pp":null,"st":{"has":false}},"SPU":{"pp":null,"st":{"has":false}},"ZAG":{"pp":[{"n":"VIP Lounge","t":"Franjo Tuđman Airport, airside"}],"st":{"has":false}},"CPH":{"pp":[{"n":"Eventyr Lounge","t":"Pier C, non-Schengen, near Gate 26, 2nd floor"},{"n":"Aspire Lounge · Carlsberg Aviator Lounge","t":"Between Piers A and B, airside"}],"st":{"has":true,"lounges":[{"n":"SAS Lounge","t":"Pier C and Pier D (separate lounges)"}]}},"HEL":{"pp":[{"n":"Aspire Lounge","t":"Non-Schengen zone, airside — check PP app"}],"st":{"has":false}},"FRA":{"pp":[{"n":"Priority Lounge","t":"T2, Level 3, near Gates E6–E9"},{"n":"LuxxLounge","t":"T1, landside — between Halls B and C, Gallery Level"}],"st":{"has":true,"lounges":[{"n":"SkyTeam Lounge — T3","t":"T3, 4th floor mezzanine, non-Schengen international zone"},{"n":"Air France / KLM Lounge","t":"T2, Hall D, Level 2 — after Schengen security, near Gate D26"}]}},"MUC":{"pp":[{"n":"Escape Lounge · Lufthansa Business Lounge (partner)","t":"T1 and T2 — check PP app per terminal"}],"st":{"has":true,"lounges":[{"n":"Air France / KLM Lounge","t":"T1, Level 5, near D gates, airside"}]}},"BER":{"pp":[{"n":"Aspire Lounge · No1 Lounge","t":"T1, airside — check PP app for exact location"}],"st":{"has":true,"lounges":[{"n":"SkyTeam / partner lounge","t":"BER is an SAS partner lounge location — SkyTeam Elite Plus check lounge finder"}]}},"DUS":{"pp":[{"n":"Aspire Lounge · Airportclub","t":"Check PP app — multiple terminals"}],"st":{"has":false}},"HAM":{"pp":[{"n":"Aspire Lounge","t":"Airside, after security — check PP app"}],"st":{"has":false}},"ATH":{"pp":[{"n":"Goldair Handling Lounge · Aspire Lounge","t":"Main terminal, airside — check PP app for zone"}],"st":{"has":true,"lounges":[{"n":"Aegean / SkyTeam partner lounge","t":"SkyTeam Elite Plus has partner access — check lounge finder"}]}},"HER":{"pp":[{"n":"Goldair VIP Lounge","t":"Airside — check PP app"}],"st":{"has":false}},"SKG":{"pp":[{"n":"Goldair VIP Lounge","t":"Airside — check PP app"}],"st":{"has":false}},"DUB":{"pp":[{"n":"Liffey Lounge","t":"T2, airside after security"}],"st":{"has":false}},"FCO":{"pp":[{"n":"Prima Vista Lounge","t":"T1, mezzanine level, near Gates A31–A52"},{"n":"Plaza Premium Lounge","t":"T3, international departures — check PP app"},{"n":"TAV Primeclass Lounge","t":"T1, airside"}],"st":{"has":true,"lounges":[{"n":"ITA Airways Lounge (SkyTeam partner)","t":"SkyTeam Elite Plus can access when flying SkyTeam carriers — check lounge finder"}]}},"MXP":{"pp":[{"n":"Sala Montale · Aspire Lounge","t":"T1, Boarding Area B, near Gates B50–59, post-security"}],"st":{"has":true,"lounges":[{"n":"SkyTeam / ITA partner lounge","t":"MXP is an SAS partner access airport. SkyTeam Elite Plus check lounge finder"}]}},"VCE":{"pp":[{"n":"Marco Polo Club","t":"Airside — check PP app"}],"st":{"has":false}},"NAP":{"pp":[{"n":"Capri Lounge · Sala VIP","t":"Airside — check PP app"}],"st":{"has":false}},"LUX":{"pp":[{"n":"Lounge LUX","t":"Airside, non-Schengen zone"}],"st":{"has":false}},"OSL":{"pp":[{"n":"Aspire Lounge · No1 Lounge","t":"International zone, airside — check PP app"}],"st":{"has":true,"lounges":[{"n":"SAS Lounge","t":"International zone — merged Gold + main lounge (Oct 2025)"}]}},"BGO":{"pp":[{"n":"Lounge BGO","t":"Airside — check PP app"}],"st":{"has":false}},"LIS":{"pp":[{"n":"Sala VIP · ANA Lounges","t":"T1 and T2, airside — check PP app"}],"st":{"has":false}},"OPO":{"pp":[{"n":"Porto Airport VIP Lounge","t":"Airside, non-Schengen zone — check PP app"}],"st":{"has":false}},"FAO":{"pp":[{"n":"ANA VIP Lounge","t":"Airside — check PP app"}],"st":{"has":false}},"MAD":{"pp":[{"n":"Plaza Mayor","t":"T4, 1st floor, Schengen boarding area, near Iberia gates"},{"n":"Neptuno Lounge · Soho","t":"T4 Satellite (T4S) — after security"},{"n":"Cibeles","t":"T1, 2nd floor, between Gates B26–B29 — follow Sala VIP signs"},{"n":"Puerta de Alcalá · Puerta del Sol","t":"T2 (Puerta de Alcalá) · T3 (Puerta del Sol)"}],"st":{"has":false}},"BCN":{"pp":[{"n":"Sala VIP Pau Casals","t":"T1, international zone, non-Schengen"},{"n":"Sala VIP Miró","t":"T1, Schengen zone — entrance through duty-free shop"},{"n":"Sala VIP Canudas","t":"T2, airside at U-gates"}],"st":{"has":false}},"AGP":{"pp":[{"n":"Sala VIP","t":"T3, airside — check PP app"}],"st":{"has":false}},"PMI":{"pp":[{"n":"Sala VIP · Aspire Lounge","t":"Airside — check PP app"}],"st":{"has":false}},"VLC":{"pp":[{"n":"Sala VIP","t":"Airside — check PP app"}],"st":{"has":false}},"ARN":{"pp":[{"n":"Aspire Lounge · No1 Lounge","t":"T5, international zone — check PP app"}],"st":{"has":true,"lounges":[{"n":"SAS Lounge","t":"T5, international zone — merged Gold + main lounge (Oct 2025)"},{"n":"American Express Lounge by Pontus Frithiof","t":"Terminal 5, Marketplace — between Gate area D and F"}]}},"GOT":{"pp":[{"n":"Aspire Lounge","t":"Airside — check PP app"}],"st":{"has":true,"lounges":[{"n":"SAS Lounge","t":"Airside — SkyTeam domestic access included from April 2025"}]}},"GVA":{"pp":[{"n":"Aspire Lounge · No1 Lounge","t":"Airside — check PP app for Schengen / non-Schengen zone"}],"st":{"has":true,"lounges":[{"n":"Air France Lounge","t":"Main Terminal, airside"}]}},"ZRH":{"pp":[{"n":"Aspire Lounge · SWISS Business Lounge (partner)","t":"Airside — check PP app per zone"}],"st":{"has":true,"lounges":[{"n":"SkyTeam / partner lounge","t":"ZRH is an SAS partner access airport. SkyTeam Elite Plus check SkyTeam lounge finder"}]}},"ATL":{"pp":[{"n":"The Club ATL","t":"Concourse T (domestic), airside after security"}],"st":{"has":true,"lounges":[{"n":"Delta Sky Club — Concourse D Centerpoint","t":"Concourse D, near Gate D18 — 24,000 sq ft, 500+ seats"},{"n":"Delta Sky Clubs — Concourses A, C, D, E, F, T","t":"Multiple locations across concourses A, C, D, E, F, T"}]}},"BOS":{"pp":[{"n":"Air France Lounge","t":"Terminal E, after security"}],"st":{"has":true,"lounges":[{"n":"Delta One Lounge","t":"Terminal A, near Gate A7"},{"n":"Delta Sky Club — Main Terminal","t":"Terminal A, near Gate A6"},{"n":"Delta Sky Club — Satellite Terminal","t":"Terminal A Satellite, Gate A18"},{"n":"Delta Sky Club Express — International Terminal","t":"Terminal E, near Gate E13"}]}},"DTW":{"pp":[{"n":"Minute Suites","t":"McNamara Terminal — airside"}],"st":{"has":true,"lounges":[{"n":"Delta Sky Club — McNamara Main","t":"McNamara Terminal, near Gate A38"},{"n":"Delta Sky Clubs — 2 additional locations","t":"McNamara Terminal — further down concourse"}]}},"JFK":{"pp":[{"n":"Air France Lounge — T1","t":"Terminal 1, near Gate 1"}],"st":{"has":true,"lounges":[{"n":"Delta One Lounge","t":"Terminal 4, Main Arrivals Level"},{"n":"Delta Sky Club — Concourse B","t":"Terminal 4, near Gate B37"},{"n":"Delta Sky Club — Concourse A","t":"Terminal 4, near Gate A31"},{"n":"Air France Lounge","t":"Terminal 1, near Gate 1"},{"n":"Virgin Atlantic Clubhouse","t":"Terminal 4, near Virgin Atlantic gates"}]}},"LAX":{"pp":[{"n":"Korean Air Business Lounge","t":"TBIT, international zone — check PP app"}],"st":{"has":true,"lounges":[{"n":"Delta One Lounge","t":"Terminal 3 — exclusive Delta One area"},{"n":"Delta Sky Club — Terminal 3","t":"Terminal 3, indoor/outdoor, Sky Deck"},{"n":"Delta Sky Club — Sky Way (T2–T3)","t":"Sky Way corridor between Terminals 2 and 3"},{"n":"Air France Lounge","t":"TBIT, Midfield Satellite Concourse, 6th floor"}]}},"MSP":{"pp":[{"n":"PGA MSP Lounge","t":"T1, north side of airport mall"}],"st":{"has":true,"lounges":[{"n":"Delta Sky Club — Concourse F","t":"T1 Concourse F — 450+ seats"},{"n":"Delta Sky Club — B Gates","t":"B Gates, right side of CenterPoint"}]}},"SAN":{"pp":null,"st":{"has":true,"lounges":[{"n":"Delta Sky Club","t":"T2 West, mezzanine level, between Gates 47–48"}]}},"SEA":{"pp":[{"n":"The Club SEA","t":"Concourse A, after security — check PP app"}],"st":{"has":true,"lounges":[{"n":"Delta One Lounge","t":"Concourse A, near Gate 11 — above the Sky Club"},{"n":"Delta Sky Club — Concourse A","t":"Concourse A, near Gate 11 — 14,000 sq ft"},{"n":"Delta Sky Club — South Satellite","t":"South Satellite Terminal"}]}},"SFO":{"pp":[{"n":"Brass Rail Restaurant (PP dining credit)","t":"International Terminal — check PP app"}],"st":{"has":true,"lounges":[{"n":"Delta Sky Club","t":"Terminal 1 (Harvey Milk), Level 2, near Gate C3"},{"n":"Air France Lounge","t":"International Terminal A (ITN-A), right after security"}]}},"SLC":{"pp":null,"st":{"has":true,"lounges":[{"n":"Delta Sky Club — Concourse B Centerpoint","t":"Concourse B, Centerpoint — 30,000+ sq ft"},{"n":"Delta Sky Club — Concourse A","t":"Concourse A, Level 2, after security"}]}},"IAD":{"pp":[{"n":"Turkish Airlines Lounge","t":"Midfield Terminal, near Gate B43"}],"st":{"has":true,"lounges":[{"n":"Air France Lounge","t":"Terminal A, after security"},{"n":"Virgin Atlantic Clubhouse","t":"Terminal A, in front of Gate A32"}]}},"IAH":{"pp":[{"n":"Air France Lounge","t":"Terminal D, after security"}],"st":{"has":true,"lounges":[{"n":"Air France Lounge","t":"Terminal D, after security"},{"n":"KLM Crown Lounge","t":"Terminal D, after security"}]}},"LGA":{"pp":[{"n":"Air Canada Maple Leaf Lounge","t":"Landside, before security, Concourse A"}],"st":{"has":true,"lounges":[{"n":"Delta Sky Club","t":"Terminal C, left of security checkpoint exit — 35,100 sq ft"}]}},"MIA":{"pp":[{"n":"Turkish Airlines Lounge","t":"South Terminal, between Concourses H and J, 3rd floor"}],"st":{"has":true,"lounges":[{"n":"Delta Sky Club","t":"South Terminal, Concourse H"},{"n":"Air France Lounge — MIA","t":"Concourse H, Level 3 — outdoor terrace"}]}},"ORD":{"pp":[{"n":"Air France Lounge","t":"Terminal 5, next to the LOT lounge"}],"st":{"has":true,"lounges":[{"n":"Delta Sky Club","t":"Terminal 5, Concourse M, between Gates M11 and M14"},{"n":"Air France Lounge — ORD","t":"Terminal 5, next to the LOT lounge — 105 seats"}]}}};
+
+    // Flat destination list for the autocomplete: type a city -> that city; type a
+    // country -> all its cities. Each row shows "City · Country".
+    var DESTS = keys.map(function (k) {
+      var country = CITY_COUNTRIES[k] || 'Other';
+      return { key: k, name: CLIM[k].city || k, country: country,
+               nl: (CLIM[k].city || k).toLowerCase(), cl: country.toLowerCase() };
+    }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+    function chooseCity(key, name) {
+      selectedCity = key;
+      searchEl.value = name;
+      render();
+      // Do not scroll — keep the search box + Open Guide button in view; results render below.
+    }
+    if (window.TVESearch) {
+      TVESearch.attach(searchEl, {
+        items: DESTS.map(function (d) {
+          var sub = d.country;
+          if (d.country === 'United States' && window.TVESearch && window.TVESearch.CITIES) {
+            sub = window.TVESearch.CITIES[d.name.toLowerCase()] || 'United States';
+          }
+          return { name: d.name, sub: sub, key: d.key };
+        }),
+        onPick: function (item) { chooseCity(item.key, item.name); }
+      });
+    }
+
+    var curMonth = new Date().getMonth();
+    monthEl.innerHTML = '<option value="" disabled>Month</option>' +
+      MONTHS.map(function (m, i) {
+        return '<option value="' + i + '"' + (i === curMonth ? ' selected' : '') + '>' + m + '</option>';
+      }).join('');
+
+    function paintUnit() {
+      [].forEach.call(unitEl.children, function (b) { b.classList.toggle('on', b.dataset.u === unit()); });
+    }
+    unitEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      setUnit(b.dataset.u); paintUnit(); render();
+    });
+    resultsEl.addEventListener('click', function (e) {
+      var b = e.target.closest('#byg-unit-card button'); if (!b) return;
+      setUnit(b.dataset.u); render();
+    });
+    monthEl.addEventListener('change', render);
+
+    var clockInterval = null;
+    var CURRENCY_RATES = {"Austria":{"r":0.874818,"s":"€"},"Belgium":{"r":0.874818,"s":"€"},"Croatia":{"r":0.874818,"s":"€"},"Montenegro":{"r":0.874818,"s":"€"},"Czech_Republic":{"r":21.215423,"s":"Kč"},"Denmark":{"r":6.528931,"s":"kr"},"Estonia":{"r":0.874818,"s":"€"},"Finland":{"r":0.874818,"s":"€"},"France":{"r":0.874818,"s":"€"},"Georgia":{"r":2.634217,"s":"₾"},"Germany":{"r":0.874818,"s":"€"},"Greece":{"r":0.874818,"s":"€"},"Hungary":{"r":312.710343,"s":"Ft"},"Iceland":{"r":125.373823,"s":"kr"},"Ireland":{"r":0.874818,"s":"€"},"Italy":{"r":0.874818,"s":"€"},"Luxembourg":{"r":0.874818,"s":"€"},"Malta":{"r":0.874818,"s":"€"},"Monaco":{"r":0.874818,"s":"€"},"Netherlands":{"r":0.874818,"s":"€"},"Norway":{"r":9.723995,"s":"kr"},"Poland":{"r":3.780599,"s":"zł"},"Portugal":{"r":0.874818,"s":"€"},"Slovenia":{"r":0.874818,"s":"€"},"Spain":{"r":0.874818,"s":"€"},"Sweden":{"r":9.666252,"s":"kr"},"Switzerland":{"r":0.806944,"s":"Fr"},"Turkey":{"r":46.952282,"s":"₺"},"United_Kingdom":{"r":0.746032,"s":"£"},"United_Arab_Emirates":{"r":3.6725,"s":"Dh"},"Qatar":{"r":3.64,"s":"QR"},"Oman":{"r":0.384497,"s":"RO"},"Jordan":{"r":0.709,"s":"JD"},"Egypt":{"r":49.646687,"s":"E£"},"Morocco":{"r":9.349537,"s":"DH"},"Seychelles":{"r":14.204485,"s":"SCR"},"Maldives":{"r":15.441262,"s":"Rf"},"China":{"r":6.80023,"s":"¥"},"Bhutan":{"r":95.476557,"s":"Nu"},"Hong_Kong":{"r":7.836696,"s":"HK$"},"Indonesia":{"r":18099.045042,"s":"Rp"},"Japan":{"r":162.37855,"s":"¥"},"Nepal":{"r":152.762492,"s":"Rs"},"Singapore":{"r":1.292589,"s":"S$"},"Sri_Lanka":{"r":335.320285,"s":"Rs"},"South_Korea":{"r":1508.28806,"s":"₩"},"Taiwan":{"r":32.122475,"s":"NT$"},"Philippines":{"r":61.630078,"s":"₱"},"Laos":{"r":22333.022933,"s":"₭"},"Thailand":{"r":33.413991,"s":"฿"},"Vietnam":{"r":26230.033368,"s":"₫"},"French_Polynesia":{"r":104.394762,"s":"XPF"},"Australia":{"r":1.440997,"s":"A$"},"New_Zealand":{"r":1.737392,"s":"NZ$"},"United_States":{"r":1,"s":"$"},"Canada":{"r":1.417165,"s":"C$"},"Mexico":{"r":17.544749,"s":"$"},"Costa_Rica":{"r":454.894959,"s":"₡"},"Aruba":{"r":1.79,"s":"Afl."},"Bahamas":{"r":1,"s":"B$"},"Barbados":{"r":2,"s":"Bds$"},"Cayman_Islands":{"r":0.833333,"s":"CI$"},"Curacao":{"r":1.79,"s":"ƒ"},"Sint_Maarten":{"r":1.79,"s":"ƒ"},"Puerto_Rico":{"r":1,"s":"$"},"Turks_and_Caicos":{"r":1,"s":"$"},"Argentina":{"r":1490.9024,"s":"AR$"},"Brazil":{"r":5.140206,"s":"R$"},"Chile":{"r":935.767879,"s":"CL$"},"Peru":{"r":3.402424,"s":"S/"},"Uruguay":{"r":40.221873,"s":"$U"},"Colombia":{"r":4355,"s":"COP"},"Venezuela":{"r":46,"s":"Bs.D"}};
+    var PLUG_DATA = {"Austria":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Austria_TC_Wall_Socket.jpg","p":"imgs/Austria_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Austria_TF_Wall_Socket.jpg","p":"imgs/Austria_TF_Plug.jpg"}]},"Belgium":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Belgium_TC_Wall_Socket.jpg","p":"imgs/Belgium_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Belgium_TE_Wall_Socket.jpg","p":"imgs/Belgium_TE_Plug.jpg"}]},"Denmark":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Denmark_TC_Wall_Socket.jpg","p":"imgs/Denmark_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Denmark_TE_Wall_Socket.jpg","p":"imgs/Denmark_TE_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Denmark_TF_Wall_Socket.jpg","p":"imgs/Denmark_TF_Plug.jpg"},{"t":"Type K","desc":"Two round + earth (Danish)","s":"imgs/Denmark_TK_Wall_Socket.jpg","p":"imgs/Denmark_TK_Plug.jpg"}]},"Finland":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Finland_TC_Wall_Socket.jpg","p":"imgs/Finland_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Finland_TF_Wall_Socket.jpg","p":"imgs/Finland_TF_Plug.jpg"}]},"France":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/France_TC_Wall_Socket.jpg","p":"imgs/France_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/France_TE_Wall_Socket.jpg","p":"imgs/France_TE_Plug.jpg"}]},"Germany":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Germany_TC_Wall_Socket.jpg","p":"imgs/Germany_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Germany_TF_Wall_Socket.jpg","p":"imgs/Germany_TF_Plug.jpg"}]},"Greece":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Greece_TC_Wall_Socket.jpg","p":"imgs/Greece_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Greece_TF_Wall_Socket.jpg","p":"imgs/Greece_TF_Plug.jpg"}]},"Iceland":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Iceland_TC_Wall_Socket.jpg","p":"imgs/Iceland_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Iceland_TF_Wall_Socket.jpg","p":"imgs/Iceland_TF_Plug.jpg"}]},"Ireland":{"v":"230V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Ireland_TG_Wall_Socket.jpg","p":"imgs/Ireland_TG_Plug.jpg"}]},"Italy":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Italy_TC_Wall_Socket.jpg","p":"imgs/Italy_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Italy_TF_Wall_Socket.jpg","p":"imgs/Italy_TF_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Italy_TL_Wall_Socket.jpg","p":"imgs/Italy_TL_Plug.jpg"}]},"Liechtenstein":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Liechtenstein_TC_Wall_Socket.jpg","p":"imgs/Liechtenstein_TC_Plug.jpg"},{"t":"Type J","desc":"Three round pins, offset triangle","s":"imgs/Liechtenstein_TJ_Wall_Socket.jpg","p":"imgs/Liechtenstein_TJ_Plug.jpg"}]},"Luxembourg":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Luxembourg_TC_Wall_Socket.jpg","p":"imgs/Luxembourg_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Luxembourg_TF_Wall_Socket.jpg","p":"imgs/Luxembourg_TF_Plug.jpg"}]},"Malta":{"v":"230V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Malta_TG_Wall_Socket.jpg","p":"imgs/Malta_TG_Plug.jpg"}]},"Monaco":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Monaco_TC_Wall_Socket.jpg","p":"imgs/Monaco_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Monaco_TE_Wall_Socket.jpg","p":"imgs/Monaco_TE_Plug.jpg"}]},"Netherlands":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Netherlands_TC_Wall_Socket.jpg","p":"imgs/Netherlands_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Netherlands_TF_Wall_Socket.jpg","p":"imgs/Netherlands_TF_Plug.jpg"}]},"Norway":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Norway_TC_Wall_Socket.jpg","p":"imgs/Norway_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Norway_TF_Wall_Socket.jpg","p":"imgs/Norway_TF_Plug.jpg"}]},"Portugal":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Portugal_TC_Wall_Socket.jpg","p":"imgs/Portugal_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Portugal_TF_Wall_Socket.jpg","p":"imgs/Portugal_TF_Plug.jpg"}]},"San_Marino":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/San_Marino_TC_Wall_Socket.jpg","p":"imgs/San_Marino_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/San_Marino_TF_Wall_Socket.jpg","p":"imgs/San_Marino_TF_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/San_Marino_TL_Wall_Socket.jpg","p":"imgs/San_Marino_TL_Plug.jpg"}]},"Spain":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Spain_TC_Wall_Socket.jpg","p":"imgs/Spain_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Spain_TF_Wall_Socket.jpg","p":"imgs/Spain_TF_Plug.jpg"}]},"Sweden":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Sweden_TC_Wall_Socket.jpg","p":"imgs/Sweden_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Sweden_TF_Wall_Socket.jpg","p":"imgs/Sweden_TF_Plug.jpg"}]},"Switzerland":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Switzerland_TC_Wall_Socket.jpg","p":"imgs/Switzerland_TC_Plug.jpg"},{"t":"Type J","desc":"Three round pins, offset triangle","s":"imgs/Switzerland_TJ_Wall_Socket.jpg","p":"imgs/Switzerland_TJ_Plug.jpg"}]},"United_Kingdom":{"v":"230V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/United_Kingdom_TG_Wall_Socket.jpg","p":"imgs/United_Kingdom_TG_Plug.jpg"}]},"Vatican_City":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Vatican_City_TC_Wall_Socket.jpg","p":"imgs/Vatican_City_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Vatican_City_TF_Wall_Socket.jpg","p":"imgs/Vatican_City_TF_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Vatican_City_TL_Wall_Socket.jpg","p":"imgs/Vatican_City_TL_Plug.jpg"}]},"Albania":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Albania_TC_Wall_Socket.jpg","p":"imgs/Albania_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Albania_TF_Wall_Socket.jpg","p":"imgs/Albania_TF_Plug.jpg"}]},"Belarus":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Belarus_TC_Wall_Socket.jpg","p":"imgs/Belarus_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Belarus_TF_Wall_Socket.jpg","p":"imgs/Belarus_TF_Plug.jpg"}]},"Bosnia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Bosnia_TC_Wall_Socket.jpg","p":"imgs/Bosnia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Bosnia_TF_Wall_Socket.jpg","p":"imgs/Bosnia_TF_Plug.jpg"}]},"Bulgaria":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Bulgaria_TC_Wall_Socket.jpg","p":"imgs/Bulgaria_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Bulgaria_TF_Wall_Socket.jpg","p":"imgs/Bulgaria_TF_Plug.jpg"}]},"Croatia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Croatia_TC_Wall_Socket.jpg","p":"imgs/Croatia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Croatia_TF_Wall_Socket.jpg","p":"imgs/Croatia_TF_Plug.jpg"}]},"Czech_Republic":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Czech_Republic_TC_Wall_Socket.jpg","p":"imgs/Czech_Republic_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Czech_Republic_TE_Wall_Socket.jpg","p":"imgs/Czech_Republic_TE_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Czech_Republic_TF_Wall_Socket.jpg","p":"imgs/Czech_Republic_TF_Plug.jpg"}]},"Estonia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Estonia_TC_Wall_Socket.jpg","p":"imgs/Estonia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Estonia_TF_Wall_Socket.jpg","p":"imgs/Estonia_TF_Plug.jpg"}]},"Hungary":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Hungary_TC_Wall_Socket.jpg","p":"imgs/Hungary_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Hungary_TF_Wall_Socket.jpg","p":"imgs/Hungary_TF_Plug.jpg"}]},"Kosovo":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Kosovo_TC_Wall_Socket.jpg","p":"imgs/Kosovo_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Kosovo_TF_Wall_Socket.jpg","p":"imgs/Kosovo_TF_Plug.jpg"}]},"Latvia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Latvia_TC_Wall_Socket.jpg","p":"imgs/Latvia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Latvia_TF_Wall_Socket.jpg","p":"imgs/Latvia_TF_Plug.jpg"}]},"Lithuania":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Lithuania_TC_Wall_Socket.jpg","p":"imgs/Lithuania_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Lithuania_TF_Wall_Socket.jpg","p":"imgs/Lithuania_TF_Plug.jpg"}]},"Moldova":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Moldova_TC_Wall_Socket.jpg","p":"imgs/Moldova_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Moldova_TF_Wall_Socket.jpg","p":"imgs/Moldova_TF_Plug.jpg"}]},"Montenegro":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Montenegro_TC_Wall_Socket.jpg","p":"imgs/Montenegro_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Montenegro_TF_Wall_Socket.jpg","p":"imgs/Montenegro_TF_Plug.jpg"}]},"North_Macedonia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/North_Macedonia_TC_Wall_Socket.jpg","p":"imgs/North_Macedonia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/North_Macedonia_TF_Wall_Socket.jpg","p":"imgs/North_Macedonia_TF_Plug.jpg"}]},"Poland":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Poland_TC_Wall_Socket.jpg","p":"imgs/Poland_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Poland_TE_Wall_Socket.jpg","p":"imgs/Poland_TE_Plug.jpg"}]},"Romania":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Romania_TC_Wall_Socket.jpg","p":"imgs/Romania_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Romania_TF_Wall_Socket.jpg","p":"imgs/Romania_TF_Plug.jpg"}]},"Russia":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Russia_TC_Wall_Socket.jpg","p":"imgs/Russia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Russia_TF_Wall_Socket.jpg","p":"imgs/Russia_TF_Plug.jpg"}]},"Serbia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Serbia_TC_Wall_Socket.jpg","p":"imgs/Serbia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Serbia_TF_Wall_Socket.jpg","p":"imgs/Serbia_TF_Plug.jpg"}]},"Slovenia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Slovenia_TC_Wall_Socket.jpg","p":"imgs/Slovenia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Slovenia_TF_Wall_Socket.jpg","p":"imgs/Slovenia_TF_Plug.jpg"}]},"Slovakia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Slovakia_TC_Wall_Socket.jpg","p":"imgs/Slovakia_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Slovakia_TE_Wall_Socket.jpg","p":"imgs/Slovakia_TE_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Slovakia_TF_Wall_Socket.jpg","p":"imgs/Slovakia_TF_Plug.jpg"}]},"Turkey":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Turkey_TC_Wall_Socket.jpg","p":"imgs/Turkey_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Turkey_TF_Wall_Socket.jpg","p":"imgs/Turkey_TF_Plug.jpg"}]},"Ukraine":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Ukraine_TC_Wall_Socket.jpg","p":"imgs/Ukraine_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Ukraine_TF_Wall_Socket.jpg","p":"imgs/Ukraine_TF_Plug.jpg"}]},"Faroe_Islands":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Faroe_Islands_TC_Wall_Socket.jpg","p":"imgs/Faroe_Islands_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Faroe_Islands_TE_Wall_Socket.jpg","p":"imgs/Faroe_Islands_TE_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Faroe_Islands_TF_Wall_Socket.jpg","p":"imgs/Faroe_Islands_TF_Plug.jpg"},{"t":"Type K","desc":"Two round + earth (Danish)","s":"imgs/Faroe_Islands_TK_Wall_Socket.jpg","p":"imgs/Faroe_Islands_TK_Plug.jpg"}]},"Greenland":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Greenland_TC_Wall_Socket.jpg","p":"imgs/Greenland_TC_Plug.jpg"},{"t":"Type K","desc":"Two round + earth (Danish)","s":"imgs/Greenland_TK_Wall_Socket.jpg","p":"imgs/Greenland_TK_Plug.jpg"}]},"Cyprus":{"v":"230V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Cyprus_TG_Wall_Socket.jpg","p":"imgs/Cyprus_TG_Plug.jpg"}]},"Iran":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Iran_TC_Wall_Socket.jpg","p":"imgs/Iran_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Iran_TF_Wall_Socket.jpg","p":"imgs/Iran_TF_Plug.jpg"}]},"Iraq":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Iraq_TC_Wall_Socket.jpg","p":"imgs/Iraq_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Iraq_TD_Wall_Socket.jpg","p":"imgs/Iraq_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Iraq_TG_Wall_Socket.jpg","p":"imgs/Iraq_TG_Plug.jpg"}]},"Jordan":{"v":"230V / 50Hz","types":[{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Jordan_TB_Wall_Socket.jpg","p":"imgs/Jordan_TB_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Jordan_TC_Wall_Socket.jpg","p":"imgs/Jordan_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Jordan_TD_Wall_Socket.jpg","p":"imgs/Jordan_TD_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Jordan_TF_Wall_Socket.jpg","p":"imgs/Jordan_TF_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Jordan_TG_Wall_Socket.jpg","p":"imgs/Jordan_TG_Plug.jpg"},{"t":"Type J","desc":"Three round pins, offset triangle","s":"imgs/Jordan_TJ_Wall_Socket.jpg","p":"imgs/Jordan_TJ_Plug.jpg"}]},"Kuwait":{"v":"240V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Kuwait_TC_Wall_Socket.jpg","p":"imgs/Kuwait_TC_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Kuwait_TG_Wall_Socket.jpg","p":"imgs/Kuwait_TG_Plug.jpg"}]},"Lebanon":{"v":"220V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Lebanon_TA_Wall_Socket.jpg","p":"imgs/Lebanon_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Lebanon_TB_Wall_Socket.jpg","p":"imgs/Lebanon_TB_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Lebanon_TC_Wall_Socket.jpg","p":"imgs/Lebanon_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Lebanon_TD_Wall_Socket.jpg","p":"imgs/Lebanon_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Lebanon_TG_Wall_Socket.jpg","p":"imgs/Lebanon_TG_Plug.jpg"}]},"Oman":{"v":"240V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Oman_TC_Wall_Socket.jpg","p":"imgs/Oman_TC_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Oman_TG_Wall_Socket.jpg","p":"imgs/Oman_TG_Plug.jpg"}]},"Qatar":{"v":"240V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Qatar_TD_Wall_Socket.jpg","p":"imgs/Qatar_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Qatar_TG_Wall_Socket.jpg","p":"imgs/Qatar_TG_Plug.jpg"}]},"Syria":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Syria_TC_Wall_Socket.jpg","p":"imgs/Syria_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Syria_TE_Wall_Socket.jpg","p":"imgs/Syria_TE_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Syria_TL_Wall_Socket.jpg","p":"imgs/Syria_TL_Plug.jpg"}]},"Tunisia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Tunisia_TC_Wall_Socket.jpg","p":"imgs/Tunisia_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Tunisia_TE_Wall_Socket.jpg","p":"imgs/Tunisia_TE_Plug.jpg"}]},"Bangladesh":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Bangladesh_TC_Wall_Socket.jpg","p":"imgs/Bangladesh_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Bangladesh_TD_Wall_Socket.jpg","p":"imgs/Bangladesh_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Bangladesh_TG_Wall_Socket.jpg","p":"imgs/Bangladesh_TG_Plug.jpg"},{"t":"Type K","desc":"Two round + earth (Danish)","s":"imgs/Bangladesh_TK_Wall_Socket.jpg","p":"imgs/Bangladesh_TK_Plug.jpg"}]},"China":{"v":"220V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/China_TA_Wall_Socket.jpg","p":"imgs/China_TA_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/China_TC_Wall_Socket.jpg","p":"imgs/China_TC_Plug.jpg"},{"t":"Type I","desc":"Two flat angled pins + ground","s":"imgs/China_TI_Wall_Socket.jpg","p":"imgs/China_TI_Plug.jpg"}]},"Hong_Kong":{"v":"220V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Hong_Kong_TG_Wall_Socket.jpg","p":"imgs/Hong_Kong_TG_Plug.jpg"}]},"India":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/India_TC_Wall_Socket.jpg","p":"imgs/India_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/India_TD_Wall_Socket.jpg","p":"imgs/India_TD_Plug.jpg"},{"t":"Type M","desc":"Three large round pins, 15A","s":"imgs/India_TM_Wall_Socket.jpg","p":"imgs/India_TM_Plug.jpg"}]},"Indonesia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Indonesia_TC_Wall_Socket.jpg","p":"imgs/Indonesia_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Indonesia_TF_Wall_Socket.jpg","p":"imgs/Indonesia_TF_Plug.jpg"}]},"Israel":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Israel_TC_Wall_Socket.jpg","p":"imgs/Israel_TC_Plug.jpg"},{"t":"Type H","desc":"Three round pins Y-shape","s":"imgs/Israel_TH_Wall_Socket.jpg","p":"imgs/Israel_TH_Plug.jpg"}]},"Japan":{"v":"100V / 50-60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Japan_TA_Wall_Socket.jpg","p":"imgs/Japan_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Japan_TB_Wall_Socket.jpg","p":"imgs/Japan_TB_Plug.jpg"}]},"Cambodia":{"v":"230V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Cambodia_TA_Wall_Socket.jpg","p":"imgs/Cambodia_TA_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Cambodia_TC_Wall_Socket.jpg","p":"imgs/Cambodia_TC_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Cambodia_TG_Wall_Socket.jpg","p":"imgs/Cambodia_TG_Plug.jpg"}]},"Laos":{"v":"230V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Laos_TA_Wall_Socket.jpg","p":"imgs/Laos_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Laos_TB_Wall_Socket.jpg","p":"imgs/Laos_TB_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Laos_TC_Wall_Socket.jpg","p":"imgs/Laos_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Laos_TF_Wall_Socket.jpg","p":"imgs/Laos_TF_Plug.jpg"}]},"Maldives":{"v":"230V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Maldives_TD_Wall_Socket.jpg","p":"imgs/Maldives_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Maldives_TG_Wall_Socket.jpg","p":"imgs/Maldives_TG_Plug.jpg"},{"t":"Type J","desc":"Three round pins, offset triangle","s":"imgs/Maldives_TJ_Wall_Socket.jpg","p":"imgs/Maldives_TJ_Plug.jpg"},{"t":"Type K","desc":"Two round + earth (Danish)","s":"imgs/Maldives_TK_Wall_Socket.jpg","p":"imgs/Maldives_TK_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Maldives_TL_Wall_Socket.jpg","p":"imgs/Maldives_TL_Plug.jpg"}]},"Malaysia":{"v":"240V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Malaysia_TG_Wall_Socket.jpg","p":"imgs/Malaysia_TG_Plug.jpg"}]},"Myanmar":{"v":"230V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Myanmar_TA_Wall_Socket.jpg","p":"imgs/Myanmar_TA_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Myanmar_TC_Wall_Socket.jpg","p":"imgs/Myanmar_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Myanmar_TD_Wall_Socket.jpg","p":"imgs/Myanmar_TD_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Myanmar_TF_Wall_Socket.jpg","p":"imgs/Myanmar_TF_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Myanmar_TG_Wall_Socket.jpg","p":"imgs/Myanmar_TG_Plug.jpg"}]},"Nepal":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Nepal_TC_Wall_Socket.jpg","p":"imgs/Nepal_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Nepal_TD_Wall_Socket.jpg","p":"imgs/Nepal_TD_Plug.jpg"},{"t":"Type M","desc":"Three large round pins, 15A","s":"imgs/Nepal_TM_Wall_Socket.jpg","p":"imgs/Nepal_TM_Plug.jpg"}]},"Philippines":{"v":"220V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Philippines_TA_Wall_Socket.jpg","p":"imgs/Philippines_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Philippines_TB_Wall_Socket.jpg","p":"imgs/Philippines_TB_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Philippines_TC_Wall_Socket.jpg","p":"imgs/Philippines_TC_Plug.jpg"}]},"Saudi_Arabia":{"v":"220V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Saudi_Arabia_TA_Wall_Socket.jpg","p":"imgs/Saudi_Arabia_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Saudi_Arabia_TB_Wall_Socket.jpg","p":"imgs/Saudi_Arabia_TB_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Saudi_Arabia_TG_Wall_Socket.jpg","p":"imgs/Saudi_Arabia_TG_Plug.jpg"}]},"Singapore":{"v":"230V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Singapore_TG_Wall_Socket.jpg","p":"imgs/Singapore_TG_Plug.jpg"}]},"Sri_Lanka":{"v":"230V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Sri_Lanka_TD_Wall_Socket.jpg","p":"imgs/Sri_Lanka_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Sri_Lanka_TG_Wall_Socket.jpg","p":"imgs/Sri_Lanka_TG_Plug.jpg"},{"t":"Type M","desc":"Three large round pins, 15A","s":"imgs/Sri_Lanka_TM_Wall_Socket.jpg","p":"imgs/Sri_Lanka_TM_Plug.jpg"}]},"South_Korea":{"v":"220V / 60Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/South_Korea_TC_Wall_Socket.jpg","p":"imgs/South_Korea_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/South_Korea_TF_Wall_Socket.jpg","p":"imgs/South_Korea_TF_Plug.jpg"}]},"Taiwan":{"v":"110V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Taiwan_TA_Wall_Socket.jpg","p":"imgs/Taiwan_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Taiwan_TB_Wall_Socket.jpg","p":"imgs/Taiwan_TB_Plug.jpg"}]},"Tajikistan":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Tajikistan_TC_Wall_Socket.jpg","p":"imgs/Tajikistan_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Tajikistan_TF_Wall_Socket.jpg","p":"imgs/Tajikistan_TF_Plug.jpg"}]},"Thailand":{"v":"220V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Thailand_TA_Wall_Socket.jpg","p":"imgs/Thailand_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Thailand_TB_Wall_Socket.jpg","p":"imgs/Thailand_TB_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Thailand_TC_Wall_Socket.jpg","p":"imgs/Thailand_TC_Plug.jpg"},{"t":"Type O","desc":"Three round pins (Thai)","s":"imgs/Thailand_TO_Wall_Socket.jpg","p":"imgs/Thailand_TO_Plug.jpg"}]},"Turkmenistan":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Turkmenistan_TC_Wall_Socket.jpg","p":"imgs/Turkmenistan_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Turkmenistan_TF_Wall_Socket.jpg","p":"imgs/Turkmenistan_TF_Plug.jpg"}]},"Uzbekistan":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Uzbekistan_TC_Wall_Socket.jpg","p":"imgs/Uzbekistan_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Uzbekistan_TF_Wall_Socket.jpg","p":"imgs/Uzbekistan_TF_Plug.jpg"}]},"UAE":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/UAE_TC_Wall_Socket.jpg","p":"imgs/UAE_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/UAE_TD_Wall_Socket.jpg","p":"imgs/UAE_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/UAE_TG_Wall_Socket.jpg","p":"imgs/UAE_TG_Plug.jpg"}]},"Vietnam":{"v":"220V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Vietnam_TA_Wall_Socket.jpg","p":"imgs/Vietnam_TA_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Vietnam_TC_Wall_Socket.jpg","p":"imgs/Vietnam_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Vietnam_TF_Wall_Socket.jpg","p":"imgs/Vietnam_TF_Plug.jpg"}]},"Australia":{"v":"230V / 50Hz","types":[{"t":"Type I","desc":"Two flat angled pins + ground","s":"imgs/Australia_TI_Wall_Socket.jpg","p":"imgs/Australia_TI_Plug.jpg"}]},"Fiji":{"v":"240V / 50Hz","types":[{"t":"Type I","desc":"Two flat angled pins + ground","s":"imgs/Fiji_TI_Wall_Socket.jpg","p":"imgs/Fiji_TI_Plug.jpg"}]},"New_Zealand":{"v":"230V / 50Hz","types":[{"t":"Type I","desc":"Two flat angled pins + ground","s":"imgs/New_Zealand_TI_Wall_Socket.jpg","p":"imgs/New_Zealand_TI_Plug.jpg"}]},"Papua_New_Guinea":{"v":"240V / 50Hz","types":[{"t":"Type I","desc":"Two flat angled pins + ground","s":"imgs/Papua_New_Guinea_TI_Wall_Socket.jpg","p":"imgs/Papua_New_Guinea_TI_Plug.jpg"}]},"Argentina":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Argentina_TC_Wall_Socket.jpg","p":"imgs/Argentina_TC_Plug.jpg"},{"t":"Type I","desc":"Two flat angled pins + ground","s":"imgs/Argentina_TI_Wall_Socket.jpg","p":"imgs/Argentina_TI_Plug.jpg"}]},"Bolivia":{"v":"220V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Bolivia_TA_Wall_Socket.jpg","p":"imgs/Bolivia_TA_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Bolivia_TC_Wall_Socket.jpg","p":"imgs/Bolivia_TC_Plug.jpg"}]},"Brazil":{"v":"127/220V / 60Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Brazil_TC_Wall_Socket.jpg","p":"imgs/Brazil_TC_Plug.jpg"},{"t":"Type N","desc":"Two round + ground (Brazilian)","s":"imgs/Brazil_TN_Wall_Socket.jpg","p":"imgs/Brazil_TN_Plug.jpg"}]},"Canada":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Canada_TA_Wall_Socket.jpg","p":"imgs/Canada_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Canada_TB_Wall_Socket.jpg","p":"imgs/Canada_TB_Plug.jpg"}]},"Chile":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Chile_TC_Wall_Socket.jpg","p":"imgs/Chile_TC_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Chile_TL_Wall_Socket.jpg","p":"imgs/Chile_TL_Plug.jpg"}]},"Colombia":{"v":"110V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Colombia_TA_Wall_Socket.jpg","p":"imgs/Colombia_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Colombia_TB_Wall_Socket.jpg","p":"imgs/Colombia_TB_Plug.jpg"}]},"Costa_Rica":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Costa_Rica_TA_Wall_Socket.jpg","p":"imgs/Costa_Rica_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Costa_Rica_TB_Wall_Socket.jpg","p":"imgs/Costa_Rica_TB_Plug.jpg"}]},"Cuba":{"v":"110/220V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Cuba_TA_Wall_Socket.jpg","p":"imgs/Cuba_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Cuba_TB_Wall_Socket.jpg","p":"imgs/Cuba_TB_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Cuba_TC_Wall_Socket.jpg","p":"imgs/Cuba_TC_Plug.jpg"}]},"Dominican_Rep":{"v":"110V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Dominican_Rep_TA_Wall_Socket.jpg","p":"imgs/Dominican_Rep_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Dominican_Rep_TB_Wall_Socket.jpg","p":"imgs/Dominican_Rep_TB_Plug.jpg"}]},"Ecuador":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Ecuador_TA_Wall_Socket.jpg","p":"imgs/Ecuador_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Ecuador_TB_Wall_Socket.jpg","p":"imgs/Ecuador_TB_Plug.jpg"}]},"El_Salvador":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/El_Salvador_TA_Wall_Socket.jpg","p":"imgs/El_Salvador_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/El_Salvador_TB_Wall_Socket.jpg","p":"imgs/El_Salvador_TB_Plug.jpg"}]},"Guatemala":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Guatemala_TA_Wall_Socket.jpg","p":"imgs/Guatemala_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Guatemala_TB_Wall_Socket.jpg","p":"imgs/Guatemala_TB_Plug.jpg"}]},"Honduras":{"v":"110V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Honduras_TA_Wall_Socket.jpg","p":"imgs/Honduras_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Honduras_TB_Wall_Socket.jpg","p":"imgs/Honduras_TB_Plug.jpg"}]},"Jamaica":{"v":"110V / 50Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Jamaica_TA_Wall_Socket.jpg","p":"imgs/Jamaica_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Jamaica_TB_Wall_Socket.jpg","p":"imgs/Jamaica_TB_Plug.jpg"}]},"Mexico":{"v":"127V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Mexico_TA_Wall_Socket.jpg","p":"imgs/Mexico_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Mexico_TB_Wall_Socket.jpg","p":"imgs/Mexico_TB_Plug.jpg"}]},"Nicaragua":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Nicaragua_TA_Wall_Socket.jpg","p":"imgs/Nicaragua_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Nicaragua_TB_Wall_Socket.jpg","p":"imgs/Nicaragua_TB_Plug.jpg"}]},"Panama":{"v":"110V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Panama_TA_Wall_Socket.jpg","p":"imgs/Panama_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Panama_TB_Wall_Socket.jpg","p":"imgs/Panama_TB_Plug.jpg"}]},"Peru":{"v":"220V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Peru_TA_Wall_Socket.jpg","p":"imgs/Peru_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Peru_TB_Wall_Socket.jpg","p":"imgs/Peru_TB_Plug.jpg"},{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Peru_TC_Wall_Socket.jpg","p":"imgs/Peru_TC_Plug.jpg"}]},"Puerto_Rico":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Puerto_Rico_TA_Wall_Socket.jpg","p":"imgs/Puerto_Rico_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Puerto_Rico_TB_Wall_Socket.jpg","p":"imgs/Puerto_Rico_TB_Plug.jpg"}]},"Trinidad":{"v":"115V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Trinidad_TA_Wall_Socket.jpg","p":"imgs/Trinidad_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Trinidad_TB_Wall_Socket.jpg","p":"imgs/Trinidad_TB_Plug.jpg"}]},"Uruguay":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Uruguay_TC_Wall_Socket.jpg","p":"imgs/Uruguay_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Uruguay_TF_Wall_Socket.jpg","p":"imgs/Uruguay_TF_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Uruguay_TL_Wall_Socket.jpg","p":"imgs/Uruguay_TL_Plug.jpg"}]},"USA":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/USA_TA_Wall_Socket.jpg","p":"imgs/USA_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/USA_TB_Wall_Socket.jpg","p":"imgs/USA_TB_Plug.jpg"}]},"Venezuela":{"v":"120V / 60Hz","types":[{"t":"Type A","desc":"Two flat parallel blades","s":"imgs/Venezuela_TA_Wall_Socket.jpg","p":"imgs/Venezuela_TA_Plug.jpg"},{"t":"Type B","desc":"Two flat blades + round ground pin","s":"imgs/Venezuela_TB_Wall_Socket.jpg","p":"imgs/Venezuela_TB_Plug.jpg"}]},"Algeria":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Algeria_TC_Wall_Socket.jpg","p":"imgs/Algeria_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Algeria_TF_Wall_Socket.jpg","p":"imgs/Algeria_TF_Plug.jpg"}]},"Angola":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Angola_TC_Wall_Socket.jpg","p":"imgs/Angola_TC_Plug.jpg"}]},"Cameroon":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Cameroon_TC_Wall_Socket.jpg","p":"imgs/Cameroon_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Cameroon_TE_Wall_Socket.jpg","p":"imgs/Cameroon_TE_Plug.jpg"}]},"Cote_dIvoire":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Cote_dIvoire_TC_Wall_Socket.jpg","p":"imgs/Cote_dIvoire_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Cote_dIvoire_TE_Wall_Socket.jpg","p":"imgs/Cote_dIvoire_TE_Plug.jpg"}]},"Egypt":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Egypt_TC_Wall_Socket.jpg","p":"imgs/Egypt_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Egypt_TF_Wall_Socket.jpg","p":"imgs/Egypt_TF_Plug.jpg"}]},"Ethiopia":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Ethiopia_TC_Wall_Socket.jpg","p":"imgs/Ethiopia_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Ethiopia_TE_Wall_Socket.jpg","p":"imgs/Ethiopia_TE_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Ethiopia_TF_Wall_Socket.jpg","p":"imgs/Ethiopia_TF_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Ethiopia_TL_Wall_Socket.jpg","p":"imgs/Ethiopia_TL_Plug.jpg"}]},"Ghana":{"v":"230V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Ghana_TD_Wall_Socket.jpg","p":"imgs/Ghana_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Ghana_TG_Wall_Socket.jpg","p":"imgs/Ghana_TG_Plug.jpg"}]},"Kenya":{"v":"240V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Kenya_TG_Wall_Socket.jpg","p":"imgs/Kenya_TG_Plug.jpg"}]},"Libya":{"v":"127/230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Libya_TC_Wall_Socket.jpg","p":"imgs/Libya_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Libya_TD_Wall_Socket.jpg","p":"imgs/Libya_TD_Plug.jpg"},{"t":"Type L","desc":"Three round pins in a row","s":"imgs/Libya_TL_Wall_Socket.jpg","p":"imgs/Libya_TL_Plug.jpg"}]},"Madagascar":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Madagascar_TC_Wall_Socket.jpg","p":"imgs/Madagascar_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Madagascar_TD_Wall_Socket.jpg","p":"imgs/Madagascar_TD_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Madagascar_TE_Wall_Socket.jpg","p":"imgs/Madagascar_TE_Plug.jpg"}]},"Morocco":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Morocco_TC_Wall_Socket.jpg","p":"imgs/Morocco_TC_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Morocco_TE_Wall_Socket.jpg","p":"imgs/Morocco_TE_Plug.jpg"}]},"Mozambique":{"v":"220V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Mozambique_TC_Wall_Socket.jpg","p":"imgs/Mozambique_TC_Plug.jpg"},{"t":"Type F","desc":"Two round pins + side clips (Schuko)","s":"imgs/Mozambique_TF_Wall_Socket.jpg","p":"imgs/Mozambique_TF_Plug.jpg"},{"t":"Type M","desc":"Three large round pins, 15A","s":"imgs/Mozambique_TM_Wall_Socket.jpg","p":"imgs/Mozambique_TM_Plug.jpg"}]},"Namibia":{"v":"220V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Namibia_TD_Wall_Socket.jpg","p":"imgs/Namibia_TD_Plug.jpg"},{"t":"Type M","desc":"Three large round pins, 15A","s":"imgs/Namibia_TM_Wall_Socket.jpg","p":"imgs/Namibia_TM_Plug.jpg"}]},"Nigeria":{"v":"240V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Nigeria_TD_Wall_Socket.jpg","p":"imgs/Nigeria_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Nigeria_TG_Wall_Socket.jpg","p":"imgs/Nigeria_TG_Plug.jpg"}]},"Rwanda":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Rwanda_TC_Wall_Socket.jpg","p":"imgs/Rwanda_TC_Plug.jpg"},{"t":"Type J","desc":"Three round pins, offset triangle","s":"imgs/Rwanda_TJ_Wall_Socket.jpg","p":"imgs/Rwanda_TJ_Plug.jpg"}]},"Senegal":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Senegal_TC_Wall_Socket.jpg","p":"imgs/Senegal_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Senegal_TD_Wall_Socket.jpg","p":"imgs/Senegal_TD_Plug.jpg"},{"t":"Type E","desc":"Two round pins + earth from wall","s":"imgs/Senegal_TE_Wall_Socket.jpg","p":"imgs/Senegal_TE_Plug.jpg"}]},"South_Africa":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/South_Africa_TC_Wall_Socket.jpg","p":"imgs/South_Africa_TC_Plug.jpg"},{"t":"Type M","desc":"Three large round pins, 15A","s":"imgs/South_Africa_TM_Wall_Socket.jpg","p":"imgs/South_Africa_TM_Plug.jpg"},{"t":"Type N","desc":"Two round + ground (Brazilian)","s":"imgs/South_Africa_TN_Wall_Socket.jpg","p":"imgs/South_Africa_TN_Plug.jpg"}]},"Sudan":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Sudan_TC_Wall_Socket.jpg","p":"imgs/Sudan_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Sudan_TD_Wall_Socket.jpg","p":"imgs/Sudan_TD_Plug.jpg"}]},"Tanzania":{"v":"230V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Tanzania_TD_Wall_Socket.jpg","p":"imgs/Tanzania_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Tanzania_TG_Wall_Socket.jpg","p":"imgs/Tanzania_TG_Plug.jpg"}]},"Uganda":{"v":"240V / 50Hz","types":[{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Uganda_TG_Wall_Socket.jpg","p":"imgs/Uganda_TG_Plug.jpg"}]},"Zambia":{"v":"230V / 50Hz","types":[{"t":"Type C","desc":"Two round pins (Europlug)","s":"imgs/Zambia_TC_Wall_Socket.jpg","p":"imgs/Zambia_TC_Plug.jpg"},{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Zambia_TD_Wall_Socket.jpg","p":"imgs/Zambia_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Zambia_TG_Wall_Socket.jpg","p":"imgs/Zambia_TG_Plug.jpg"}]},"Zimbabwe":{"v":"220V / 50Hz","types":[{"t":"Type D","desc":"Three large round pins (triangle)","s":"imgs/Zimbabwe_TD_Wall_Socket.jpg","p":"imgs/Zimbabwe_TD_Plug.jpg"},{"t":"Type G","desc":"Three rectangular pins (British)","s":"imgs/Zimbabwe_TG_Wall_Socket.jpg","p":"imgs/Zimbabwe_TG_Plug.jpg"}]}};
+
+    var CITY_TZ = {"Abu Dhabi":"Asia/Dubai","Aix-en-Provence":"Europe/Paris","Alaska":"America/Anchorage","Alesund":"Europe/Oslo","Amalfi":"Europe/Rome","Amsterdam":"Europe/Amsterdam","Annecy":"Europe/Paris","Aracaju":"America/Fortaleza","Arenal":"America/Costa_Rica","Aruba":"America/Aruba","Athens":"Europe/Athens","Atlanta":"America/New_York","Austin":"America/Chicago","Azores":"Atlantic/Azores","Bali":"Asia/Makassar","Bangkok":"Asia/Bangkok","Barbados":"America/Barbados","Barcelona":"Europe/Madrid","Beijing":"Asia/Shanghai","Bend":"America/Los_Angeles","Bergen":"Europe/Oslo","Berlin":"Europe/Berlin","Big Island":"Pacific/Honolulu","Bologna":"Europe/Rome","Bora-Bora":"Pacific/Tahiti","Bordeaux":"Europe/Paris","Boston":"America/New_York","Boulder":"America/Denver","Bruges":"Europe/Brussels","Brussels":"Europe/Brussels","Budapest":"Europe/Budapest","Buenos Aires":"America/Argentina/Buenos_Aires","Cairo":"Africa/Cairo","Cambridge":"Europe/London","Cannes":"Europe/Paris","Cape Cod":"America/New_York","Capri":"Europe/Rome","Carmel-by-the-Sea":"America/Los_Angeles","Cascais":"Europe/Lisbon","Cayman Islands":"America/Cayman","Charlotte":"America/New_York","Chiang Mai":"Asia/Bangkok","Chicago":"America/Chicago","Chongqing":"Asia/Shanghai","Cinque Terre":"Europe/Rome","Colmar":"Europe/Paris","Colombo":"Asia/Colombo","Columbia":"America/New_York","Copenhagen":"Europe/Copenhagen","Corfu":"Europe/Athens","Curaçao":"America/Curacao","Curitiba":"America/Sao_Paulo","Cusco":"America/Lima","Dallas":"America/Chicago","Denver":"America/Denver","Doha":"Asia/Qatar","Dubai":"Asia/Dubai","Dublin":"Europe/Dublin","Dubrovnik":"Europe/Zagreb","Edinburgh":"Europe/London","Florence":"Europe/Rome","Florida Keys":"America/New_York","Florianópolis":"America/Sao_Paulo","Fortaleza":"America/Fortaleza","Foz do Iguaçu":"America/Sao_Paulo","Geneva":"Europe/Zurich","Glacier National Park":"America/Denver","Glasgow":"Europe/London","Gothenburg":"Europe/Stockholm","Hamburg":"Europe/Berlin","Hanoi":"Asia/Ho_Chi_Minh","Helsinki":"Europe/Helsinki","Hoi An":"Asia/Ho_Chi_Minh","Hong Kong":"Asia/Hong_Kong","Istanbul":"Europe/Istanbul","João Pessoa":"America/Fortaleza","Kauai":"Pacific/Honolulu","Key West":"America/New_York","Kotor":"Europe/Podgorica","Kraków":"Europe/Warsaw","Kyoto":"Asia/Tokyo","La Jolla":"America/Los_Angeles","Lagos":"Europe/Lisbon","Lake Como":"Europe/Rome","Lake Tahoe":"America/Los_Angeles","Las Vegas":"America/Los_Angeles","Lecce":"Europe/Rome","Lille":"Europe/Paris","Lima":"America/Lima","Lisbon":"Europe/Lisbon","Ljubljana":"Europe/Ljubljana","London":"Europe/London","Los Angeles":"America/Los_Angeles","Los Cabos":"America/Mazatlan","Luang Prabang":"Asia/Vientiane","Lucerne":"Europe/Zurich","Luxembourg":"Europe/Luxembourg","Lyon":"Europe/Paris","MachuPicchu":"America/Lima","Maceió":"America/Fortaleza","Madeira":"Atlantic/Madeira","Madrid":"Europe/Madrid","Maldives":"Indian/Maldives","Malibu":"America/Los_Angeles","Manuel Antonio":"America/Costa_Rica","Marktoberdorf":"Europe/Berlin","Marrakech":"Africa/Casablanca","Marseille":"Europe/Paris","Maui":"Pacific/Honolulu","Melbourne":"Australia/Melbourne","Miami":"America/New_York","Milan":"Europe/Rome","Monaco":"Europe/Monaco","Montevideo":"America/Montevideo","Montreal":"America/Toronto","Munich":"Europe/Berlin","Muscat":"Asia/Muscat","Mykonos":"Europe/Athens","Napa":"America/Los_Angeles","Naples":"Europe/Rome","Naples Florida":"America/New_York","Nashville":"America/Chicago","Natal":"America/Fortaleza","New Orleans":"America/Chicago","New York":"America/New_York","Nice":"Europe/Paris","Oahu":"Pacific/Honolulu","Oaxaca":"America/Mexico_City","Olinda":"America/Fortaleza","Orcas Island":"America/Los_Angeles","Orlando":"America/New_York","Osaka":"Asia/Tokyo","Oslo":"Europe/Oslo","Oxford":"Europe/London","Palawan":"Asia/Manila","Palm Desert":"America/Los_Angeles","Palo Alto":"America/Los_Angeles","Paris":"Europe/Paris","Paro":"Asia/Thimphu","Pasadena":"America/Los_Angeles","Pensacola":"America/Chicago","Petra":"Asia/Amman","Philadelphia":"America/New_York","Phoenix":"America/Phoenix","Phuket":"Asia/Bangkok","Pokhara":"Asia/Kathmandu","Porto":"Europe/Lisbon","Porto Alegre":"America/Sao_Paulo","Portland":"America/Los_Angeles","Prague":"Europe/Prague","Puerto Rico":"America/Puerto_Rico","Puerto Vallarta":"America/Mexico_City","Quebec City":"America/Toronto","Queenstown":"Pacific/Auckland","Recife":"America/Fortaleza","Reykjavik":"Atlantic/Reykjavik","Rio de Janeiro":"America/Sao_Paulo","Rome":"Europe/Rome","Salvador":"America/Fortaleza","Salzburg":"Europe/Vienna","San Diego":"America/Los_Angeles","San Francisco":"America/Los_Angeles","San Jose":"America/Los_Angeles","San Jose Costa Rica":"America/Costa_Rica","San Juan Island":"America/Los_Angeles","San Sebastian":"Europe/Madrid","Santa Barbara":"America/Los_Angeles","Santa Cruz":"America/Los_Angeles","Santa Monica":"America/Los_Angeles","Santiago":"America/Santiago","Santorini":"Europe/Athens","Sarasota":"America/New_York","Sardinia":"Europe/Rome","Scottsdale":"America/Phoenix","Seattle":"America/Los_Angeles","Sedona":"America/Phoenix","Seoul":"Asia/Seoul","Seville":"Europe/Madrid","Seychelles":"Indian/Mahe","Shanghai":"Asia/Shanghai","Sicily":"Europe/Rome","Siena":"Europe/Rome","Singapore":"Asia/Singapore","Sint Maarten":"America/Lower_Princes","Sintra":"Europe/Lisbon","Sorrento":"Europe/Rome","Split":"Europe/Zagreb","Stockholm":"Europe/Stockholm","Strasbourg":"Europe/Paris","Stuttgart":"Europe/Berlin","Sydney":"Australia/Sydney","Taipei":"Asia/Taipei","Tallinn":"Europe/Tallinn","Tbilisi":"Asia/Tbilisi","The Bahamas":"America/Nassau","Tokyo":"Asia/Tokyo","Toledo":"Europe/Madrid","Toronto":"America/Toronto","Tromso":"Europe/Oslo","Turin":"Europe/Rome","Turks and Caicos":"America/Grand_Turk","Valletta":"Europe/Malta","Vancouver":"America/Vancouver","Venice":"Europe/Rome","Verona":"Europe/Rome","Victoria":"America/Vancouver","Vienna":"Europe/Vienna","Virgin Islands":"America/St_Thomas","Washington DC":"America/New_York","Wellington":"Pacific/Auckland","Whistler":"America/Vancouver","Yellowstone":"America/Denver","Zhangjiajie":"Asia/Shanghai","Zurich":"Europe/Zurich","Cancun":"America/Cancun","Florianópolis":"America/Sao_Paulo","São Luís":"America/Fortaleza","São Paulo":"America/Sao_Paulo","Pisa":"Europe/Rome"};
+
+    var CITY_LAT = {"Abu Dhabi":24,"Aix-en-Provence":44,"Alaska":61,"Alesund":62,"Amalfi":40,"Amsterdam":52,"Annecy":46,"Aracaju":-11,"Arenal":10,"Aruba":12,"Athens":38,"Atlanta":34,"Austin":30,"Azores":38,"Bali":-8,"Bangkok":14,"Barbados":13,"Barcelona":41,"Beijing":40,"Bend":44,"Bergen":60,"Berlin":53,"Big Island":20,"Bologna":44,"Bora-Bora":-16,"Bordeaux":45,"Boston":42,"Boulder":40,"Bruges":51,"Brussels":51,"Budapest":47,"Buenos Aires":-34,"Cairo":30,"Cambridge":52,"Cannes":43,"Cape Cod":42,"Capri":40,"Carmel-by-the-Sea":36,"Cascais":39,"Cayman Islands":19,"Charlotte":35,"Chiang Mai":19,"Chicago":42,"Chongqing":30,"Cinque Terre":44,"Colmar":48,"Colombo":7,"Columbia":34,"Copenhagen":56,"Corfu":40,"Curaçao":12,"Curitiba":-25,"Cusco":-14,"Dallas":33,"Denver":40,"Doha":25,"Dubai":25,"Dublin":53,"Dubrovnik":43,"Edinburgh":56,"Florence":44,"Florida Keys":25,"Florianópolis":-28,"Fortaleza":-4,"Foz do Iguaçu":-25,"Geneva":46,"Glacier National Park":49,"Glasgow":56,"Gothenburg":57,"Hamburg":54,"Hanoi":21,"Helsinki":60,"Hoi An":16,"Hong Kong":22,"Istanbul":41,"João Pessoa":-7,"Kauai":22,"Key West":25,"Kotor":42,"Kraków":50,"Kyoto":35,"La Jolla":33,"Lagos":37,"Lake Como":46,"Lake Tahoe":39,"Las Vegas":36,"Lecce":40,"Lille":51,"Lima":-12,"Lisbon":39,"Ljubljana":46,"London":51,"Los Angeles":34,"Los Cabos":23,"Luang Prabang":20,"Lucerne":47,"Luxembourg":50,"Lyon":46,"MachuPicchu":-13,"Maceió":-10,"Madeira":33,"Madrid":40,"Maldives":4,"Malibu":34,"Manuel Antonio":9,"Marktoberdorf":48,"Marrakech":32,"Marseille":43,"Maui":21,"Melbourne":-38,"Miami":26,"Milan":45,"Monaco":44,"Montevideo":-35,"Montreal":46,"Munich":48,"Muscat":24,"Mykonos":37,"Napa":38,"Naples":41,"Naples Florida":26,"Nashville":36,"Natal":-5,"New Orleans":30,"New York":41,"Nice":44,"Oahu":21,"Oaxaca":17,"Olinda":-8,"Orcas Island":48,"Orlando":28,"Osaka":35,"Oslo":60,"Oxford":52,"Palawan":10,"Palm Desert":34,"Palo Alto":37,"Paris":49,"Paro":27,"Pasadena":34,"Pensacola":30,"Petra":30,"Philadelphia":40,"Phoenix":33,"Phuket":8,"Pokhara":28,"Porto":41,"Porto Alegre":-30,"Portland":46,"Prague":50,"Puerto Rico":18,"Puerto Vallarta":21,"Quebec City":47,"Queenstown":-45,"Recife":-8,"Reykjavik":64,"Rio de Janeiro":-23,"Rome":42,"Salvador":-13,"Salzburg":47,"San Diego":33,"San Francisco":38,"San Jose":37,"San Jose Costa Rica":10,"San Juan Island":48,"San Sebastian":43,"Santa Barbara":34,"Santa Cruz":37,"Santa Monica":34,"Santiago":-33,"Santorini":36,"Sarasota":27,"Sardinia":40,"Scottsdale":33,"Seattle":48,"Sedona":35,"Seoul":37,"Seville":37,"Seychelles":-5,"Shanghai":31,"Sicily":37,"Siena":43,"Singapore":1,"Sint Maarten":18,"Sintra":39,"Sorrento":41,"Split":43,"Stockholm":59,"Strasbourg":48,"Stuttgart":49,"Sydney":-34,"Taipei":25,"Tallinn":59,"Tbilisi":42,"The Bahamas":25,"Tokyo":36,"Toledo":40,"Toronto":44,"Tromso":70,"Turin":45,"Turks and Caicos":22,"Valletta":36,"Vancouver":49,"Venice":45,"Verona":45,"Victoria":48,"Vienna":48,"Virgin Islands":18,"Washington DC":39,"Wellington":-41,"Whistler":50,"Yellowstone":44,"Zhangjiajie":29,"Zurich":47,"Cancun":21,"São Luís":-2,"São Paulo":-24,"Pisa":44,"Marco Island":26,"Hilton Head Island":32,"Coeur dAlene":48,"Santa Fe":36};
+
+    var VISA_DATA = {
+      "United States":{"type":"domestic","days":null,"note":"No passport required"},
+      "France":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Germany":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Italy":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Spain":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Netherlands":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Portugal":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Greece":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Austria":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Belgium":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Switzerland":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Denmark":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Finland":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Norway":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Sweden":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Iceland":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Poland":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Hungary":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Czech Republic":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Croatia":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Slovenia":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Estonia":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Luxembourg":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Monaco":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Malta":{"type":"visa-free","days":"90 days","note":"Part of Schengen area"},
+      "Ireland":{"type":"visa-free","days":"90 days","note":null},
+      "United Kingdom":{"type":"eta","days":"6 months","note":"ETA required (£16), apply online before travel"},
+      "Montenegro":{"type":"visa-free","days":"90 days","note":null},
+      "Georgia":{"type":"visa-free","days":"365 days","note":null},
+      "Turkey":{"type":"evisa","days":"90 days","note":"eVisa required (USD 50) at evisa.gov.tr"},
+      "Canada":{"type":"visa-free","days":"6 months","note":null},
+      "Mexico":{"type":"visa-free","days":"180 days","note":null},
+      "Brazil":{"type":"evisa","days":"90 days","note":"eVisa required (~USD 81), apply at gov.br"},
+      "Argentina":{"type":"visa-free","days":"90 days","note":null},
+      "Chile":{"type":"visa-free","days":"90 days","note":null},
+      "Uruguay":{"type":"visa-free","days":"90 days","note":null},
+      "Peru":{"type":"visa-free","days":"90 days","note":null},
+      "Colombia":{"type":"visa-free","days":"90 days","note":null},
+      "Costa Rica":{"type":"visa-free","days":"90 days","note":null},
+      "Aruba":{"type":"visa-free","days":"30 days","note":"Dutch territory"},
+      "Curaçao":{"type":"visa-free","days":"90 days","note":"Dutch territory"},
+      "Barbados":{"type":"visa-free","days":"6 months","note":null},
+      "Bahamas":{"type":"visa-free","days":"90 days","note":null},
+      "Sint Maarten":{"type":"visa-free","days":"90 days","note":"Dutch territory"},
+      "Cayman Islands":{"type":"visa-free","days":"30 days","note":"British territory"},
+      "Turks & Caicos":{"type":"visa-free","days":"90 days","note":"British territory"},
+      "French Polynesia":{"type":"visa-free","days":"90 days","note":"French territory"},
+      "Japan":{"type":"visa-free","days":"90 days","note":null},
+      "South Korea":{"type":"visa-free","days":"90 days","note":"K-ETA waived through Dec 2026"},
+      "Taiwan":{"type":"visa-free","days":"90 days","note":null},
+      "China":{"type":"visa-required","days":null,"note":"Apply at Chinese consulate before travel"},
+      "Hong Kong":{"type":"visa-free","days":"90 days","note":"Separate entry from mainland China"},
+      "Singapore":{"type":"arrival-card","days":"90 days","note":"SG Arrival Card required before landing"},
+      "Thailand":{"type":"arrival-card","days":"60 days","note":"TDAC required before landing"},
+      "Vietnam":{"type":"evisa","days":"90 days","note":"eVisa (USD 25) or 45-day exemption applies"},
+      "Indonesia":{"type":"voa","days":"30 days","note":"Visa on arrival (IDR 500K, ~USD 30)"},
+      "Philippines":{"type":"visa-free","days":"30 days","note":null},
+      "Laos":{"type":"evisa","days":"30 days","note":"eVisa required (~USD 50) at laoevisa.gov.la"},
+      "Australia":{"type":"eta","days":"90 days","note":"ETA required (AUD 20), via Australian ETA app"},
+      "New Zealand":{"type":"eta","days":"90 days","note":"NZeTA required (NZD 17 + NZD 35 IVL levy)"},
+      "Sri Lanka":{"type":"evisa","days":"30 days","note":"Free ETA required at eta.gov.lk before travel"},
+      "Nepal":{"type":"voa","days":"30 days","note":"VOA available (USD 30 for 15 days, USD 50 for 30)"},
+      "Bhutan":{"type":"visa-required","days":null,"note":"Visa required + Sustainable Dev. Fee (USD 100/day)"},
+      "United Arab Emirates":{"type":"voa","days":"30 days","note":"Free visa on arrival, extendable"},
+      "Qatar":{"type":"visa-free","days":"30 days","note":"Visa-free or free visa on arrival"},
+      "Oman":{"type":"voa","days":"30 days","note":"Free e-visa or visa on arrival for US citizens"},
+      "Jordan":{"type":"voa","days":"30 days","note":"VOA (JD 40, ~USD 56); free with Jordan Pass at Petra"},
+      "Egypt":{"type":"voa","days":"30 days","note":"VOA (USD 25) at Cairo airport; e-Visa also available"},
+      "Morocco":{"type":"visa-free","days":"90 days","note":null},
+      "Seychelles":{"type":"visa-free","days":"30 days","note":"Travel permit issued on arrival"},
+      "Maldives":{"type":"voa","days":"30 days","note":"Free visa on arrival"}
+    };
+
+    function safetyClass(level) {
+      var l = (level + '').toLowerCase().replace(/\s+/g, '');
+      if (l === 'verysafe') return 'byg-safety-verysafe';
+      if (l === 'safe' || l === 'low') return 'byg-safety-safe';
+      if (l === 'moderate' || l === '1' || l === '2') return 'byg-safety-moderate';
+      return 'byg-safety-caution';
+    }
+    function costClass(tier) {
+      var t = (tier + '').toLowerCase().replace(/[\s-]+/g, '');
+      if (t === 'budget') return 'byg-cost-budget';
+      if (t === 'moderate' || t === 'midrange' || t === 'mid') return 'byg-cost-moderate';
+      if (t === 'expensive') return 'byg-cost-expensive';
+      return 'byg-cost-premium';
+    }
+
+    function strip(rec, m) {
+      var vals = rec.hi.concat(rec.lo);
+      var lo0 = Math.min.apply(null, vals), hi0 = Math.max.apply(null, vals);
+      var span = (hi0 - lo0) || 1, H = 40, out = '', labels = '';
+      var ML = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+      for (var j = 0; j < 12; j++) {
+        var top = (1 - (rec.hi[j] - lo0) / span) * H;
+        var bot = (1 - (rec.lo[j] - lo0) / span) * H;
+        var bh = Math.max(2, bot - top);
+        out += '<div class="byg-bar"><span style="top:' + top + 'px;height:' + bh + 'px;background:' +
+          (j === m ? '#b85c2a' : 'rgba(184,92,42,.28)') + ';"></span></div>';
+      }
+      return '<div class="byg-strip">' + out + '</div>';
+    }
+
+    function calcSunTimes(lat, month) {
+      var doy = [15,46,74,105,135,166,196,227,258,288,319,349];
+      var N = doy[month];
+      var B = (360/365*(N-81)) * Math.PI/180;
+      var decl = 23.45 * Math.sin(B) * Math.PI/180;
+      var latR = lat * Math.PI/180;
+      var cosHA = -Math.tan(latR)*Math.tan(decl);
+      if (cosHA <= -1) return {type:'sun'};
+      if (cosHA >= 1)  return {type:'night'};
+      var HA = Math.acos(cosHA)*180/Math.PI;
+      var sr = 12 - HA/15, ss = 12 + HA/15;
+      return {type:'normal', sr:sr, ss:ss, len:ss-sr};
+    }
+
+    function sunFmtTime(h) {
+      var mins = ((Math.round(h*60)%1440)+1440)%1440;
+      var hh = Math.floor(mins/60), mm = mins%60;
+      var ap = hh < 12 ? 'AM' : 'PM';
+      hh = hh%12||12;
+      return hh+':'+(mm<10?'0':'')+mm+' '+ap;
+    }
+
+    function sunFmtLen(h) {
+      var hh = Math.floor(h), mm = Math.round((h-hh)*60);
+      if (mm === 60) { hh++; mm = 0; }
+      return hh+'h '+(mm<10?'0':'')+mm+'m';
+    }
+
+    function render() {
+      var k = selectedCity;
+      if (!k) {
+        resultsEl.innerHTML = '';
+        var s = document.getElementById('byg-guide-slot'); if (s) s.innerHTML = '';
+        return;
+      }
+      var rec = CLIM[k];
+      var m = parseInt(monthEl.value, 10); if (isNaN(m)) m = new Date().getMonth();
+      var country = CITY_COUNTRIES[k] || '';
+      var isUS = country === 'United States';
+      var EU_COUNTRIES = {'France':1,'Germany':1,'Italy':1,'Spain':1,'Portugal':1,'Netherlands':1,'Belgium':1,'Switzerland':1,'Austria':1,'Greece':1,'Norway':1,'Sweden':1,'Denmark':1,'Finland':1,'Ireland':1,'United Kingdom':1,'Croatia':1,'Czech Republic':1,'Hungary':1,'Poland':1,'Slovenia':1,'Estonia':1,'Slovakia':1,'Luxembourg':1,'Monaco':1,'Iceland':1,'Montenegro':1,'Malta':1,'Turkey':1};
+      var isEurope = !!EU_COUNTRIES[country];
+      var ASIA_COUNTRIES = {'Japan':1,'China':1,'South Korea':1,'Thailand':1,'Vietnam':1,'Indonesia':1,'Singapore':1,'Philippines':1,'Taiwan':1,'India':1,'Sri Lanka':1,'Nepal':1,'Bhutan':1,'Cambodia':1,'Laos':1,'Myanmar':1,'Malaysia':1,'Maldives':1,'Georgia':1};
+      var isAsia = !!ASIA_COUNTRIES[country];
+      var CARIB_COUNTRIES = {'Aruba':1,'Barbados':1,'Cayman Islands':1,'Curaçao':1,'Sint Maarten':1,'Turks & Caicos':1,'Bahamas':1,'Puerto Rico':1,'Virgin Islands':1,'Jamaica':1,'Trinidad and Tobago':1};
+      var isCaribbean = !!CARIB_COUNTRIES[country];
+      var SOUTH_AM_COUNTRIES = {'Brazil':1,'Argentina':1,'Peru':1,'Chile':1,'Colombia':1,'Uruguay':1,'Ecuador':1,'Bolivia':1,'Paraguay':1,'Venezuela':1};
+      var isSouthAmerica = !!SOUTH_AM_COUNTRIES[country];
+      var isCanada = country === 'Canada';
+      var statsLink = isUS ? 'Stats-Across-US.html' : isEurope ? 'Europe-Stats.html' : isAsia ? 'Asia-Stats.html' : isCaribbean ? 'Caribbean-Stats.html' : isSouthAmerica ? 'South-America-Stats.html' : isCanada ? 'Stats-Across-Canada.html' : null;
+      var loungeLink = isUS ? 'Lounges-US.html' : isEurope ? 'Lounges-Europe.html' : null;
+      var climateKey = k.replace(/ /g, '-');
+
+      var safetyData = SAFETY_FULL[climateKey] || SAFETY_FULL[k] || null;
+      var costData = COST[climateKey] || COST[k] || null;
+
+      // Col 1: Weather + Safety stacked
+      var html = '<div class="byg-cards">';
+      html += '<div class="byg-col-stack">';
+      var u = unit();
+      var unitToggleHtml = '<div class="byg-unit byg-unit-inline" id="byg-unit-card">' +
+        '<button type="button" data-u="C" aria-label="Celsius" class="' + (u==='C'?'on':'') + '">°C</button>' +
+        '<button type="button" data-u="F" aria-label="Fahrenheit" class="' + (u==='F'?'on':'') + '">°F</button>' +
+        '</div>';
+      html += '<div class="byg-card byg-card-fixed">' +
+        '<div class="byg-card-head" style="display:flex;align-items:center;justify-content:space-between;">' +
+          '<span style="display:inline-flex;align-items:center;gap:8px;"><span class="byg-card-icon">🌤️</span><span class="byg-card-title">Weather in ' + MONTHS[m] + '</span></span>' +
+          unitToggleHtml +
+        '</div>' +
+        '<div class="byg-temps">' +
+          '<div><span class="byg-hi">' + conv(rec.hi[m]) + '°</span> <span style="font-size:11px;color:var(--muted);">HIGH</span></div>' +
+          '<div><span class="byg-lo">' + conv(rec.lo[m]) + '°</span> <span style="font-size:11px;color:var(--muted);">LOW</span></div>' +
+        '</div>';
+      if (rec.rain && rec.rd) {
+        html += '<div class="byg-rain-row">' +
+          '<div><span class="byg-rain-val">' + (rec.rain[m] || 0) + '</span><span class="byg-rain-lbl"> mm rain</span></div>' +
+          '<div><span class="byg-rain-val">' + (rec.rd[m] || 0) + '</span><span class="byg-rain-lbl"> rainy days</span></div>' +
+        '</div>';
+      }
+      html += '<div class="byg-chart-wrap">' + strip(rec, m) + '</div>';
+      html += '<div class="byg-links-row">' +
+        '<a href="Weather.html#' + encodeURIComponent(k) + '" class="byg-link">Full forecast →</a>' +
+      '</div></div>';
+
+      var tz = CITY_TZ[k] || null;
+      if (tz) {
+        var nowForClock = new Date();
+        var initTime = nowForClock.toLocaleTimeString('en-US', {timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true});
+        var initTzLabel = nowForClock.toLocaleDateString('en-US', {timeZone: tz, weekday: 'long'}) + ' · ' +
+          nowForClock.toLocaleTimeString('en-US', {timeZone: tz, timeZoneName: 'short'}).split(' ').pop();
+        html += '<div class="byg-card byg-card-fixed-sm">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">🕐</span><span class="byg-card-title">Local Time</span></div>' +
+          '<div id="byg-clock" style="font-size:32px;font-weight:700;color:var(--text,#1a1917);letter-spacing:-.01em;margin:6px 0 2px;">' + initTime + '</div>' +
+          '<div id="byg-clock-tz" style="font-size:11px;color:var(--muted,#6a6660);text-transform:uppercase;letter-spacing:.05em;">' + initTzLabel + '</div>' +
+          '<div class="byg-links-row"><a href="Time-Zones.html" class="byg-link">All time zones →</a></div>' +
+          '</div>';
+      }
+      // Sunrise & Sunset card (col 1, below Local Time)
+      if (CITY_LAT[k] !== undefined) {
+        var sunLat = CITY_LAT[k];
+        var sunR = calcSunTimes(sunLat, m);
+        if (sunR.type === 'normal') {
+          html += '<div class="byg-card">' +
+            '<div class="byg-card-head"><span class="byg-card-icon">🌅</span><span class="byg-card-title">Sunrise &amp; Sunset</span></div>' +
+            '<div class="byg-row"><span class="byg-row-label">Sunrise</span><span class="byg-row-value" style="font-weight:600;">' + sunFmtTime(sunR.sr) + '</span></div>' +
+            '<div class="byg-row"><span class="byg-row-label">Sunset</span><span class="byg-row-value" style="font-weight:600;">' + sunFmtTime(sunR.ss) + '</span></div>' +
+            '<div class="byg-row"><span class="byg-row-label">Day length</span><span class="byg-row-value" style="font-weight:600;">' + sunFmtLen(sunR.len) + '</span></div>' +
+            '<div class="byg-row"><span class="byg-row-label" style="color:#a06020;">Golden hour · eve</span><span class="byg-row-value" style="font-weight:600;color:#a06020;">' + sunFmtTime(sunR.ss-0.5) + ' – ' + sunFmtTime(sunR.ss) + '</span></div>' +
+            '<div class="byg-links-row"><a href="Sunrise-Sunset.html" class="byg-link">All sun times →</a></div>' +
+            '</div>';
+        } else if (sunR.type === 'sun') {
+          html += '<div class="byg-card">' +
+            '<div class="byg-card-head"><span class="byg-card-icon">🌅</span><span class="byg-card-title">Sunrise &amp; Sunset</span></div>' +
+            '<div style="font-size:13px;color:var(--muted);padding:6px 0;">☀️ Midnight sun this month — sun does not set</div></div>';
+        } else if (sunR.type === 'night') {
+          html += '<div class="byg-card">' +
+            '<div class="byg-card-head"><span class="byg-card-icon">🌅</span><span class="byg-card-title">Sunrise &amp; Sunset</span></div>' +
+            '<div style="font-size:13px;color:var(--muted);padding:6px 0;">🌑 Polar night this month — sun does not rise</div></div>';
+        }
+      }
+      html += '</div>'; // end col 1 stack
+
+      // Col 2: Safety + Cost & Currency + Visa & Entry stacked
+      html += '<div class="byg-col-stack">';
+      // Safety card (col 2, top)
+      if (safetyData) {
+        var lvl = typeof safetyData.level === 'number' ? ['','Safe','Moderate','Caution'][safetyData.level] || safetyData.level : safetyData.level;
+        html += '<div class="byg-card byg-card-fixed-sm">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">🛡️</span><span class="byg-card-title">Safety</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Level</span><span class="byg-safety-badge ' + safetyClass(lvl) + '">' + lvl + '</span></div>';
+        if (safetyData.note) {
+          html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value byg-safety-note" style="font-weight:400;font-size:12px;">' + safetyData.note + '</span></div>';
+        }
+        html += '<div class="byg-links-row"><a href="Safety-Guide.html" class="byg-link">All safety →</a></div></div>';
+        // Tap Water — standalone card below Safety
+        var ws = waterStatus(country);
+        if (ws) {
+          var wsLabel = ws === 'safe' ? 'Safe to drink' : ws === 'varies' ? 'Varies by area' : 'Avoid tap water';
+          html += '<div class="byg-card byg-card-fixed-sm">' +
+            '<div class="byg-card-head"><span class="byg-card-icon">🚰</span><span class="byg-card-title">Tap Water</span></div>' +
+            '<div class="byg-row"><span class="byg-row-label">Status</span><span class="byg-safety-badge byg-water-' + ws + '">' + wsLabel + '</span></div>' +
+            '<div class="byg-links-row"><a href="Tap-Water.html" class="byg-link">All regions →</a></div>' +
+            '</div>';
+        }
+        // Vaccines — standalone card with status
+        var vs = vaccineStatus(country);
+        html += '<div class="byg-card byg-card-fixed-sm">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">💉</span><span class="byg-card-title">Vaccines</span></div>' +
+          (vs ? '<div class="byg-row"><span class="byg-row-label">For ' + country + '</span><span class="byg-safety-badge ' + (vs === 'routine' ? 'byg-water-safe' : 'byg-water-varies') + '">' + (vs === 'routine' ? 'Routine only' : 'Recommended') + '</span></div>' : '') +
+          '<div class="byg-links-row"><a href="Vaccines.html" class="byg-link">All vaccines →</a></div>' +
+          '</div>';
+      }
+      // Essentials — each as its own standalone card
+      function essCard(icon, title, linkLabel, href) {
+        return '<div class="byg-card byg-card-fixed-sm">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">' + icon + '</span><span class="byg-card-title">' + title + '</span></div>' +
+          '<div class="byg-links-row"><a href="' + href + '" class="byg-link">' + linkLabel + ' →</a></div>' +
+          '</div>';
+      }
+      var cityParam = encodeURIComponent(CLIM[k].city || k);
+      var airInfo = CITY_AIRPORTS[CLIM[k].city || k] || CITY_AIRPORTS[k];
+      if (statsLink) {
+        var statsTitle = isUS ? 'Stats — United States' : isEurope ? 'Stats — Europe' : isAsia ? 'Stats — Asia' : isCaribbean ? 'Stats — Caribbean' : isSouthAmerica ? 'Stats — South America' : isCanada ? 'Stats — Canada' : 'Travel Stats';
+        html += essCard('📊', statsTitle, 'View stats', statsLink);
+      }
+      // Visa & Entry card (col 2, below Essentials)
+      var visaInfo = country ? VISA_DATA[country] : null;
+      html += '</div>'; // end col 2 stack
+
+      var COUNTRY_PLUG = {'United States':'USA','United Arab Emirates':'UAE','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Trinidad','Turks & Caicos':'USA','Cayman Islands':'Jamaica','French Polynesia':'France'};
+      var plugAnchor = country ? (COUNTRY_PLUG[country] || country.replace(/ /g,'_')) : '';
+      var plugHref = 'Plug-Adapter/Plug-Adapter-Guide.html' + (plugAnchor ? '#' + plugAnchor : '');
+
+      // Plug Adapter — full-width strip above the grid, socket types laid out horizontally
+      var plugInfo = plugAnchor ? PLUG_DATA[plugAnchor] : null;
+      var plugHtml = '';
+      if (plugInfo) {
+        plugHtml += '<div class="byg-card byg-plug-card">';
+        plugHtml += '<div class="byg-card-head" style="justify-content:space-between;">' +
+          '<span style="display:inline-flex;align-items:center;gap:8px;"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span> ' +
+          '<span class="byg-voltage" style="display:inline-block;margin:0 0 0 8px;">' + plugInfo.v + '</span></span>' +
+          '<a href="' + plugHref + '" class="byg-link" style="margin-top:0;">All plugs →</a>' +
+          '</div>';
+        plugHtml += '<div class="byg-plug-row">';
+        for (var pi = 0; pi < plugInfo.types.length; pi++) {
+          var pt = plugInfo.types[pi];
+          plugHtml += '<div class="byg-plug-type">';
+          plugHtml += '<div class="byg-plug-type-name">' + pt.t + '</div>';
+          plugHtml += '<div class="byg-plug-type-desc">' + pt.desc + '</div>';
+          plugHtml += '<div class="byg-plug-imgs">';
+          plugHtml += '<div><img src="Plug-Adapter/' + pt.s + '" alt="' + pt.t + ' socket" loading="lazy"><div class="byg-plug-img-lbl">Socket</div></div>';
+          plugHtml += '<div><img src="Plug-Adapter/' + pt.p + '" alt="' + pt.t + ' plug" loading="lazy"><div class="byg-plug-img-lbl">Plug</div></div>';
+          plugHtml += '</div></div>';
+        }
+        plugHtml += '</div>';
+        plugHtml += '</div>';
+      } else {
+        plugHtml += '<div class="byg-card byg-plug-card"><div class="byg-card-head" style="justify-content:space-between;">' +
+          '<span style="display:inline-flex;align-items:center;gap:8px;"><span class="byg-card-icon">🔌</span><span class="byg-card-title">Plug Adapter</span></span>' +
+          '<a href="' + plugHref + '" class="byg-link" style="margin-top:0;">All plugs →</a></div></div>';
+      }
+
+      // Col 3: Cost & Currency + Visa & Entry stacked
+      html += '<div class="byg-col-stack">';
+
+      // Cost & Currency card (col 3, top)
+      if (costData) {
+        var COUNTRY_CURRENCY = {'United States':'United_States','United Arab Emirates':'United_Arab_Emirates','United Kingdom':'United_Kingdom','South Korea':'South_Korea','New Zealand':'New_Zealand','Sri Lanka':'Sri_Lanka','Costa Rica':'Costa_Rica','Czech Republic':'Czech_Republic','Hong Kong':'Hong_Kong','Puerto Rico':'Puerto_Rico','Sint Maarten':'Sint_Maarten','Turks & Caicos':'Turks_and_Caicos','Cayman Islands':'Cayman_Islands','French Polynesia':'French_Polynesia'};
+        var currAnchor = country ? (COUNTRY_CURRENCY[country] || country.replace(/ /g,'_')) : '';
+        var currHref = 'Currency-Guide.html' + (currAnchor ? '#' + currAnchor : '');
+        var rateInfo = currAnchor ? CURRENCY_RATES[currAnchor] : null;
+        var rateHtml = '';
+        if (rateInfo && rateInfo.r !== 1) {
+          var r = rateInfo.r, sym = rateInfo.s;
+          var fmtRate = r >= 100 ? Math.round(r).toLocaleString() : r >= 10 ? r.toFixed(1) : r >= 1 ? r.toFixed(2) : r.toFixed(3);
+          rateHtml = '<div class="byg-row"><span class="byg-row-label">1 USD =</span><span class="byg-row-value" style="font-weight:700;">' + fmtRate + ' ' + sym + '</span></div>';
+        }
+        html += '<div class="byg-card byg-card-fixed-sm">' +
+          '<div class="byg-card-head"><span class="byg-card-icon">💰</span><span class="byg-card-title">Cost &amp; Currency</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Cost level</span><span class="byg-cost-badge ' + costClass(costData.tier) + '">' + costData.tier + '</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Currency</span><span class="byg-row-value">' + costData.currency + '</span></div>' +
+          rateHtml +
+          '<div class="byg-links-row"><a href="' + currHref + '" class="byg-link">All currencies →</a></div>' +
+          '</div>';
+      }
+      // Visa & Entry card (col 3)
+      if (visaInfo) {
+        var visaTypeLabels = {"domestic":"Domestic","visa-free":"Visa-free","arrival-card":"Arrival Card","eta":"ETA Required","evisa":"eVisa Required","voa":"Visa on Arrival","visa-required":"Visa Required"};
+        var visaTypeCss = {"domestic":"byg-visa-domestic","visa-free":"byg-visa-free","arrival-card":"byg-visa-card","eta":"byg-visa-eta","evisa":"byg-visa-evisa","voa":"byg-visa-voa","visa-required":"byg-visa-required"};
+        var vLabel = visaTypeLabels[visaInfo.type] || visaInfo.type;
+        var vCss = visaTypeCss[visaInfo.type] || 'byg-visa-domestic';
+        html += '<div class="byg-card">';
+        html += '<div class="byg-card-head"><span class="byg-card-icon">🛂</span><span class="byg-card-title">Visa &amp; Entry</span></div>';
+        html += '<div class="byg-row"><span class="byg-row-label">Type</span><span class="byg-visa-badge ' + vCss + '">' + vLabel + '</span></div>';
+        if (visaInfo.days) { html += '<div class="byg-row"><span class="byg-row-label">Duration</span><span class="byg-row-value">' + visaInfo.days + '</span></div>'; }
+        if (visaInfo.note) { html += '<div class="byg-row"><span class="byg-row-label">Note</span><span class="byg-row-value" style="font-weight:400;font-size:12px;">' + visaInfo.note + '</span></div>'; }
+        if (!isUS) {
+          html += '<div class="byg-links-row"><a href="Visas.html" class="byg-link">Visas →</a><a href="Entry-Requirements.html" class="byg-link">Entry requirements →</a></div>';
+        }
+        html += '</div>';
+      }
+      // Global Entry (col 3, below Visa & Entry)
+      var geHtml = '<div class="byg-card byg-card-fixed-sm"><div class="byg-card-head"><span class="byg-card-icon">🛃</span><span class="byg-card-title">Global Entry</span></div>';
+      if (airInfo) {
+        geHtml += '<div class="byg-row"><span class="byg-row-label">Airport</span><span class="byg-row-value" style="font-size:12px;font-weight:500;">' + airInfo.name + ' (' + airInfo.iata + ')</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Status</span><span class="byg-safety-badge ' + (airInfo.ge ? 'byg-water-safe' : 'byg-water-unsafe') + '">' + (airInfo.ge ? 'Available' : 'Not available') + '</span></div>';
+      }
+      geHtml += '<div class="byg-links-row"><a href="Trusted-Traveler.html?q=' + cityParam + '" class="byg-link">Find airports →</a></div></div>';
+      html += geHtml;
+
+      html += '</div>'; // end col 3 stack
+
+      // Col 4: Traffic + TSA (US only) + Airport Lounges + Packing + Day Trips + EU Trains
+      html += '<div class="byg-col-stack">';
+      if (airInfo) {
+        var trafficHref = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(airInfo.name);
+        html += '<div class="byg-card byg-card-fixed-sm"><div class="byg-card-head"><span class="byg-card-icon">🚗</span><span class="byg-card-title">Traffic to Airport</span></div>' +
+          '<div class="byg-row"><span class="byg-row-label">Airport</span><span class="byg-row-value" style="font-size:12px;font-weight:500;">' + airInfo.name + ' (' + airInfo.iata + ')</span></div>' +
+          '<div class="byg-links-row"><a href="' + trafficHref + '" class="byg-link" target="_blank" rel="noopener">Traffic →</a></div></div>';
+        if (isUS) {
+          html += '<div class="byg-card byg-card-fixed-sm"><div class="byg-card-head"><span class="byg-card-icon">🛃</span><span class="byg-card-title">TSA Wait Times</span></div>' +
+            '<div class="byg-row"><span class="byg-row-label">Airport</span><span class="byg-row-value" style="font-size:12px;font-weight:500;">' + airInfo.name + ' (' + airInfo.iata + ')</span></div>' +
+            '<div class="byg-links-row"><a href="https://www.tsawaittimes.com/" class="byg-link" target="_blank" rel="noopener">Check wait →</a></div></div>';
+        }
+      }
+      if (loungeLink) {
+        var loungeCardHtml = '<div class="byg-card byg-card-fixed-sm"><div class="byg-card-head"><span class="byg-card-icon">💻</span><span class="byg-card-title">Airport Lounges</span></div>';
+        if (airInfo) {
+          var ld = LOUNGE_DATA[airInfo.iata];
+          if (ld) {
+            if (ld.st) {
+              if (ld.st.has && ld.st.lounges && ld.st.lounges.length) {
+                loungeCardHtml += '<div class="byg-row" style="align-items:flex-start;"><span class="byg-row-label" style="padding-top:1px;">SkyTeam</span><span class="byg-row-value" style="font-size:11px;">' + ld.st.lounges.slice(0,2).map(function(l){return l.n;}).join('<br>') + (ld.st.lounges.length > 2 ? '<br><span style="color:var(--muted);">+' + (ld.st.lounges.length-2) + ' more</span>' : '') + '</span></div>';
+              } else if (!ld.st.has) {
+                loungeCardHtml += '<div class="byg-row"><span class="byg-row-label">SkyTeam</span><span class="byg-row-value" style="font-size:11px;color:var(--muted,#6a6660);">No dedicated lounge</span></div>';
+              }
+            }
+            if (ld.pp && ld.pp.length) {
+              ld.pp.slice(0,2).forEach(function(l) {
+                loungeCardHtml += '<div class="byg-row" style="align-items:flex-start;"><span class="byg-row-label" style="padding-top:1px;">PP</span><span class="byg-row-value" style="font-size:11px;"><span style="font-weight:600;">' + l.n + '</span><br><span style="color:var(--muted,#6a6660);">' + l.t + '</span></span></div>';
+              });
+              if (ld.pp.length > 2) {
+                loungeCardHtml += '<div style="font-size:10px;color:var(--muted,#6a6660);padding:0 0 4px 0;">+' + (ld.pp.length-2) + ' more — see full list</div>';
+              }
+            } else if (ld.pp === null) {
+              loungeCardHtml += '<div class="byg-row"><span class="byg-row-label">PP</span><span class="byg-row-value" style="font-size:11px;color:var(--muted,#6a6660);">No PP lounges</span></div>';
+            }
+          }
+        }
+        loungeCardHtml += '<div class="byg-links-row"><a href="' + loungeLink + '?q=' + cityParam + '" class="byg-link">All lounges →</a></div></div>';
+        html += loungeCardHtml;
+      }
+      html += essCard('👕', 'Packing', 'Packing list', 'Travel-Packing.html');
+      if (DAY_TRIP_CITIES[climateKey]) {
+        var tripCount = DAY_TRIP_CITIES[climateKey];
+        html += essCard('🗺️', 'Day Trips', tripCount + ' day trip' + (tripCount !== 1 ? 's' : ''), 'Day-Trips.html?city=' + cityParam);
+      }
+      if (isEurope) { html += essCard('🚆', 'EU Trains', 'Find trains', 'European-Train-Guide.html'); }
+      html += '</div>'; // end col 4 stack
+
+      html += '</div>';
+      resultsEl.innerHTML = plugHtml + html;
+
+      // Live clock
+      if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
+      var tz2 = CITY_TZ[k];
+      if (tz2) {
+        function tickClock() {
+          var el = document.getElementById('byg-clock');
+          var elTz = document.getElementById('byg-clock-tz');
+          if (!el) { clearInterval(clockInterval); clockInterval = null; return; }
+          var now = new Date();
+          var time = now.toLocaleTimeString('en-US', {timeZone: tz2, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true});
+          var tzName = now.toLocaleDateString('en-US', {timeZone: tz2, weekday: 'long'}) + ' · ' +
+            now.toLocaleTimeString('en-US', {timeZone: tz2, timeZoneName: 'short'}).split(' ').pop();
+          el.textContent = time;
+          if (elTz) elTz.textContent = tzName;
+        }
+        tickClock();
+        clockInterval = setInterval(tickClock, 1000);
+      }
+
+      var guideSlot = document.getElementById('byg-guide-slot');
+      if (guideSlot) {
+        var guideLink = GUIDE_LINKS[k];
+        guideSlot.innerHTML = guideLink
+          ? '<a href="' + guideLink + '" class="byg-guide-pill">Guide →</a>'
+          : '';
+      }
+    }
+
+    paintUnit();
+
+    var hash = decodeURIComponent(location.hash.slice(1));
+    if (hash && keys.indexOf(hash) >= 0) { selectedCity = hash; searchEl.value = CLIM[hash].city || hash; }
+    render();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+}());
+</script>
+</body>
+</html>

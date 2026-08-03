@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Recommendations — Not Yet Implemented</title>
+<style>
+  :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
+    --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368;
+    --eff-s-bg:#e6f0e6; --eff-s-fg:#2c6238; --eff-m-bg:#f6ead3; --eff-m-fg:#875311; --eff-l-bg:#f6ddd6; --eff-l-fg:#8f2e1c;
+    --shadow:0 1px 2px rgba(60,45,25,.05), 0 6px 20px -12px rgba(60,45,25,.18); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#181511; --surface:#221e18; --surface2:#2a251d; --ink:#efe8db; --muted:#a89f8f; --faint:#7c7364; --line:#38322a;
+    --rust:#e08a52; --open:#e37256; --partial:#dca63f; --unsure:#a49a8a;
+    --eff-s-bg:#20301f; --eff-s-fg:#8fce97; --eff-m-bg:#332711; --eff-m-fg:#e2b358; --eff-l-bg:#3a201a; --eff-l-fg:#ef9d84;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6); } }
+  :root[data-theme="light"]{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
+    --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368;
+    --eff-s-bg:#e6f0e6; --eff-s-fg:#2c6238; --eff-m-bg:#f6ead3; --eff-m-fg:#875311; --eff-l-bg:#f6ddd6; --eff-l-fg:#8f2e1c;
+    --shadow:0 1px 2px rgba(60,45,25,.05), 0 6px 20px -12px rgba(60,45,25,.18); }
+  :root[data-theme="dark"]{ --bg:#181511; --surface:#221e18; --surface2:#2a251d; --ink:#efe8db; --muted:#a89f8f; --faint:#7c7364; --line:#38322a;
+    --rust:#e08a52; --open:#e37256; --partial:#dca63f; --unsure:#a49a8a;
+    --eff-s-bg:#20301f; --eff-s-fg:#8fce97; --eff-m-bg:#332711; --eff-m-fg:#e2b358; --eff-l-bg:#3a201a; --eff-l-fg:#ef9d84;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6); }
+  *{ box-sizing:border-box; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--ink); background:var(--bg); margin:0; padding:0 18px 96px; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:940px; margin:0 auto; }
+  header{ padding:40px 0 8px; }
+  .eyebrow{ font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--rust); margin:0 0 10px; }
+  h1{ font-size:30px; font-weight:800; letter-spacing:-.01em; line-height:1.05; margin:0 0 10px; text-wrap:balance; }
+  .sub{ font-size:13.5px; color:var(--muted); line-height:1.6; max-width:64ch; }
+  .sub b{ color:var(--ink); font-weight:600; }
+  .totals{ display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:10px; margin:22px 0 6px; }
+  .stat{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); }
+  .stat b{ font-size:22px; font-weight:800; display:block; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+  .stat.s-open b{ color:var(--open); } .stat.s-partial b{ color:var(--partial); } .stat.s-unsure b{ color:var(--unsure); }
+  .stat span{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-weight:600; }
+  .controls{ display:flex; gap:8px; margin:16px 0 2px; }
+  .controls button{ font-family:inherit; font-size:12px; font-weight:600; padding:7px 13px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:9px; cursor:pointer; transition:border-color .15s,background .15s; }
+  .controls button:hover{ border-color:var(--rust); }
+  .controls button:focus-visible{ outline:2px solid var(--rust); outline-offset:2px; }
+  .nav{ display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 10px; position:sticky; top:0; z-index:5; background:linear-gradient(var(--bg) 70%, transparent); padding:12px 0 10px; }
+  .navchip{ font-size:12px; font-weight:600; text-decoration:none; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:6px 12px; white-space:nowrap; transition:border-color .15s; }
+  .navchip:hover{ border-color:var(--rust); }
+  .navcount{ color:var(--rust); font-weight:800; font-variant-numeric:tabular-nums; }
+  .cat{ margin:14px 0; }
+  .cathead{ width:100%; display:flex; align-items:center; gap:12px; cursor:pointer; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:15px 18px; font-family:inherit; text-align:left; box-shadow:var(--shadow); }
+  .cathead:focus-visible{ outline:2px solid var(--rust); outline-offset:2px; }
+  .catname{ font-size:15.5px; font-weight:800; color:var(--ink); flex:1; letter-spacing:-.005em; }
+  .catcount{ font-size:12px; font-weight:800; color:#fff; background:var(--rust); border-radius:22px; padding:2px 11px; font-variant-numeric:tabular-nums; }
+  .catchev{ font-size:20px; color:var(--faint); transition:transform .18s; }
+  .cat:not(.collapsed) .catchev{ transform:rotate(90deg); }
+  .catbody{ padding:10px 2px 4px; }
+  .cat.collapsed .catbody{ display:none; }
+  .tile{ background:var(--surface); border:1px solid var(--line); border-radius:11px; margin:8px 0; overflow:hidden; transition:border-color .15s; }
+  .tile[open]{ border-color:var(--rust); }
+  summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:11px; padding:13px 15px; }
+  summary::-webkit-details-marker{ display:none; }
+  summary:focus-visible{ outline:2px solid var(--rust); outline-offset:-2px; border-radius:11px; }
+  .ttitle{ flex:1; font-size:13.5px; font-weight:600; line-height:1.4; }
+  .tstatus{ font-size:9.5px; font-weight:800; letter-spacing:.05em; padding:3px 7px; border-radius:5px; color:#fff; white-space:nowrap; }
+  .st-open{ background:var(--open); } .st-partial{ background:var(--partial); } .st-unsure{ background:var(--unsure); }
+  .chev{ font-size:18px; color:var(--faint); transition:transform .18s; }
+  .tile[open] .chev{ transform:rotate(90deg); }
+  .tbody{ padding:2px 15px 15px; border-top:1px solid var(--line); background:var(--surface2); }
+  .tdetail{ font-size:13px; line-height:1.6; color:var(--ink); margin:13px 0 11px; }
+  .tmeta{ display:flex; gap:6px; flex-wrap:wrap; }
+  .badge{ font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:6px; background:var(--surface); color:var(--muted); border:1px solid var(--line); }
+  .eff-s{ background:var(--eff-s-bg); color:var(--eff-s-fg); border-color:transparent; }
+  .eff-m{ background:var(--eff-m-bg); color:var(--eff-m-fg); border-color:transparent; }
+  .eff-l{ background:var(--eff-l-bg); color:var(--eff-l-fg); border-color:transparent; }
+  .src{ font-family:ui-monospace,Menlo,monospace; font-size:10px; }
+  .tev{ font-size:12px; color:var(--muted); line-height:1.55; margin:11px 0 0; padding-top:9px; border-top:1px dashed var(--line); }
+  footer{ font-size:12px; color:var(--faint); line-height:1.6; margin-top:34px; padding-top:16px; border-top:1px solid var(--line); }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">The Voyager Expert &middot; Backlog</p>
+  <h1>Open Recommendations</h1>
+  <div class="sub">Every idea proposed across the <b>Recommendations</b> archive that is <b>not yet implemented</b>. Each was cross-checked against the live codebase &mdash; confirmed-done items were dropped, new-city-guide suggestions routed to the destination-scouting report. Click any tile to expand. Status: <b>OPEN</b> = not done &middot; <b>PARTIAL</b> = partly done &middot; <b>UNSURE</b> = couldn't verify from code alone.</div>
+  <div class="totals">
+    <div class="stat"><b>121</b><span>open items</span></div>
+    <div class="stat s-open"><b>95</b><span>Open</span></div>
+    <div class="stat s-partial"><b>9</b><span>Partial</span></div>
+    <div class="stat s-unsure"><b>17</b><span>Unsure</span></div>
+    <div class="stat"><b>7</b><span>categories</span></div>
+  </div>
+  <div class="controls">
+    <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=true)">Expand all</button>
+    <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=false)">Collapse all</button>
+  </div>
+</header>
+<nav class="nav"><a href="#new-features-pages" class="navchip">🆕 New Features &amp; Pages <span class="navcount">28</span></a><a href="#tools-scripts" class="navchip">🔧 Tools &amp; Scripts <span class="navcount">14</span></a><a href="#validators-gates" class="navchip">✅ Validators &amp; Gates <span class="navcount">9</span></a><a href="#trip-essentials-pages" class="navchip">🧳 Trip-Essentials Pages <span class="navcount">37</span></a><a href="#guides" class="navchip">🗺 Guides <span class="navcount">5</span></a><a href="#ux-css-layout" class="navchip">📱 UX, CSS &amp; Layout <span class="navcount">24</span></a><a href="#docs-rules" class="navchip">📄 Docs &amp; Rules <span class="navcount">4</span></a></nav>
+
+  <section class="cat" id="new-features-pages">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">🆕 New Features &amp; Pages</span>
+      <span class="catcount">28</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Monthly Crowd Calendar page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Interactive Weather-group page: pick a month, see every destination ranked by expected tourist density with a Quiet/Moderate/Busy/Peak badge. Mirrors Festival-Finder pipeline with build_crowd_calendar.py + curated JSON.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Crowd-Calendar.html + Brain/scripts/build_crowd_calendar.py</span><span class="badge src">2026-07-19-crib2b-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Crowd-Calendar page or build_crowd_calendar.py found; &#x27;crowd.calendar&#x27; matches only inside the recommendation reports themselves.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Dark Mode toggle in toolbar</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Persistent sun/moon button injected by toolbar.js that sets data-theme=dark on &lt;html&gt; and stores preference in localStorage; CSS token override block covers whole site.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-19-crib2b-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;data-theme|toggleTheme|setTheme|theme-toggle&#x27; toolbar.js → 0 matches (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">&quot;Open Right Now&quot; stop filter</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">An &#x27;Open now&#x27; pill on guide day nav that dims stop blocks whose hours row excludes the current destination-local time, parsing hours client-side.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-19-crib2b-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No &#x27;open now&#x27; hours-parsing filter found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Overtourism Survival Guide page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials page with tactics for the fleet&#x27;s 10 most-crowded marquee stops: best exact hour, timed-entry link, shoulder month, and a less-visited nearby alternative each.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-19-crib2b-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No overtourism page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Best Destinations for Rainy Days (Best-of page)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">New Best-of collection page curating ~20-25 destinations enhanced by rain, with best indoor fallback per entry; built via build_showcase_cards.py.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/ (Best-of)</span><span class="badge src">2026-07-19-crib2b-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No rainy/rain Best-of page in Trip-Essentials/ listing; no reference in Best-Of-Index.html. (build_showcase_cards.py already exists.)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Public Transportation Etiquette by City page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials page on behavioral rules of metro/bus/tram across fleet cities (silence in Japan, German validators, London escalator side, MTR/MRT eating bans, etc.) - the behavior layer City-Transit-Cards.html (payment) omits.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Public-Transit-Etiquette page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">ZTL / Congestion Zone warning chip on guides</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js injects a &#x27;Restricted Driving Zone&#x27; chip at Trip Overview for cities with camera-enforced driving restrictions (Italian ZTL, London Congestion/ULEZ, Paris Crit&#x27;Air, Stockholm), linking to an Urban Driving Restrictions page.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No ZTL_CITIES object or ZTL chip found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Guide-specific packing summary chip</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js injects a &#x27;Pack for This Trip&#x27; collapsible at Trip Overview, a short destination-specific checklist derived from the guide&#x27;s THEME_DATA/FMAP metadata (zero user input).</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No PACK_RULES map or packing chip found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Estimated daily ticket spend chip at day headers</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js sums ticket-price values in each guide day&#x27;s stop cards and injects a &#x27;~EUR55 in paid entries&#x27; chip at the day header.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No day-cost/ticket-sum chip found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Walk-in vs. Book-ahead badge on stops</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js injects a per-stop badge: &#x27;Walk-in&#x27; (no booking link), &#x27;Book ahead&#x27; (has ticket/reservation link), or &#x27;Timed entry&#x27;, so readers see which stops need pre-arrival action.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No walkin/book-ahead badge found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Working Holiday Visa Guide page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials reference on bilateral working-holiday programs (Australia 417, NZ IEP, UK YMS, Japan, Ireland, South Korea) - actual employment abroad, distinct from Digital-Nomad-Visas.html.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Working-Holiday page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Urban Driving Restrictions Reference page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials page on city driving restrictions that surprise tourists (Italian ZTL, London CC/ULEZ, Paris Crit&#x27;Air, Stockholm tax, Singapore ERP) - where you legally cannot drive and the fines.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Urban-Driving page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">City Market Days Reference page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials page aggregating fleet cities&#x27; iconic outdoor markets by day/hours/type (Borough, Portobello, Marche d&#x27;Aligre, Tsukiji Outer, Boqueria, Mauerpark, Naschmarkt, Grand Bazaar, etc.).</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Market-Days page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Traveling Internationally with Minors page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials reference on documentation for crossing borders with children (consent letters, South Africa/Brazil/Mexico/Canada/Chile rules, unaccompanied-minor programs, child passports).</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-30-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Minors page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Scenic &amp; Iconic Train Journeys page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials reference on bucket-list rail journeys as experiences (Rocky Mountaineer, Glacier Express, Trans-Siberian, Indian Pacific, El Chepe, Eastern &amp; Oriental, Andean Explorer) with booking, cost, timing.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Scenic-Train-Journeys page in Trip-Essentials/ listing; no reference in Best-Of-Index.html.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">&quot;Time at This Stop&quot; duration chip</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js injects a &#x27;~2 h&#x27; estimated-visit chip on each stop card via a STOP_TYPE_DURATION lookup keyed by the stop&#x27;s type emoji, so readers can judge whether a day fits.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No STOP_TYPE_DURATION map or stop-dur chip found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Altitude warning callout on high-elevation guides</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js injects an AMS advisory chip at Trip Overview for cities above ~2000m (Cusco, Machu Picchu, Quito, Lake Tahoe) via an ALTITUDE_CITIES lookup.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No ALTITUDE_CITIES object or altitude-warning found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Cross-guide stop bookmark wishlist</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js adds a star button on each stop saving it to localStorage[&#x27;tve_wishlist&#x27;]; a floating chip expands a panel of saved stops grouped by guide - a cross-trip planning tool.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No tve_wishlist / stop-star code found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Lounge quick-link injection at guide arrival</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js injects a &#x27;Lounge at [Airport]&#x27; chip in each guide&#x27;s arrival section, deriving IATA from FMAP and linking to Lounges-US/Europe or the Before-You-Go LOUNGE_DATA panel.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No LOUNGE_AIRPORTS set or lounge-chip found in toolbar.js.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Winery &amp; Tasting Room Visit Guide page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials logistics reference for visiting wineries in fleet wine regions (Napa, Burgundy, Chianti, Barossa, Mendoza, Stellenbosch) - reservations, tasting costs, transport, shipping/customs.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Winery-Tasting page in Trip-Essentials/ listing (Best-Wine-Regions.html exists but is a list, not logistics).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">International Nightlife Guide by City page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials reference on how nightlife works per fleet city (hours, dress codes, door culture, late transport) for Madrid, Barcelona, Berlin, Ibiza, Bangkok, Tokyo, NYC, London, Lisbon.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Nightlife-Guide page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Gap Year &amp; Extended Travel Planning Guide page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials planning reference for 3-12+ month trips: long-term insurance (World Nomads/SafetyWing), monthly budgets by region, mail forwarding, tax residency, banking (Schwab), eSIM, storage.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Gap-Year page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Beach Club Culture Guide page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Trip-Essentials reference on how beach clubs work across Mykonos, Ibiza, Bali, Miami/Cannes, Amalfi - day pass vs sunbed rental vs table minimum, F&amp;B minimums, reservations, tipping.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/</span><span class="badge src">2026-07-31-crib2-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No Beach-Club-Culture page in Trip-Essentials/ listing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">&quot;I&#x27;ve Been&quot; in-guide visited toggle</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">A &#x27;Mark as Visited&#x27; chip in each guide&#x27;s Trip Overview writing the same tve-visited-{city} localStorage key the Guides-Index been/want filter uses, syncing guide and index.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-19-crib2b-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No &#x27;mark as visited&#x27;/tve-visited injection found in toolbar.js (only a null-guard comment matched &#x27;been&#x27;).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Trip Twin similarity finder on Guides-Index</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">A &#x27;Find my match&#x27; tool: user types home city; client-side similarity scores destinations across climate, cost, safety (CLIMATE_INLINE/COST_DATA/SAFETY_DATA) and surfaces 3 closest matches.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides-Index.html</span><span class="badge src">2026-07-19-crib2b-ideas.html</span></div>
+          <p class="tev"><b>Checked:</b> No &#x27;Trip Twin&#x27;/&#x27;find my match&#x27; similarity code found in toolbar.js; not observed on Guides-Index.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Best-of pages: enhanced filtering &amp; sorting</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Add filter pills (region/continent, difficulty, best season, budget tier, trip type) and sort options (alphabetical, rating, popularity, newest, distance).</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Best-Of/</span><span class="badge src">best-of-link-audit-report.html</span></div>
+          <p class="tev"><b>Checked:</b> Product idea list; not bugs, noted for product team</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Best-of pages: per-attraction metadata icons</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Add time-to-visit indicators, cost tier icons (free/$/$$/$$$), accessibility notes, and seasonal/peak guidance per attraction.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Best-Of/</span><span class="badge src">best-of-link-audit-report.html</span></div>
+          <p class="tev"><b>Checked:</b> Idea list; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Best-of pages: favorites, quick-compare, ratings, proximity map</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Allow saving favorites/collections, side-by-side compare of 2-3 attractions, 1-5 star user ratings, and a proximity map for day-route planning.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Best-Of/</span><span class="badge src">best-of-link-audit-report.html</span></div>
+          <p class="tev"><b>Checked:</b> Idea list; large features, not implemented</p>
+        </div>
+      </details></div>
+  </section>
+  <section class="cat" id="tools-scripts">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">🔧 Tools &amp; Scripts</span>
+      <span class="catcount">14</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Cape Town + Puerto Vallarta wrong regional Stats pill</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Cape Town shows a &#x27;Stats Across Europe&#x27; pill (South Africa is not in Europe) and Puerto Vallarta shows &#x27;Stats Across the Caribbean&#x27; — both because no Africa-Stats page exists and the FMAP region maps them to the nearest stats page. Validator TR-6 hard-fails if the pill is removed, so the fix requires creating an Africa-Stats page (or equivalent) or remapping the FMAP region. Owner decision.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Guides/Cape-Town/, Puerto-Vallarta/; Europe-Stats.html; FMAP</span><span class="badge src">2026-07-30-guide-audit-and-fix-5.html; 2026-07-30-guide-coverage-report.html; 2026-07-31-guide-coverage-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> cape-town_v1.html: &#x27;Stats Across Europe&#x27; present (1 match); puerto-vallarta_v1.html: &#x27;Stats Across the Caribbean&#x27; present (1 match); Africa-Stats.html not found (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Wire or archive Sports-Calendar.html and Trip-Stacking.html</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Both pages exist on disk under Trip-Essentials but are absent from toolbar.js and Website-Main-Pages-Links.html — not reachable from the site. Owner decision required: add to toolbar (full Change Cascade) or archive.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/assets/toolbar.js; Trip-Essentials/</span><span class="badge src">2026-07-30-guide-coverage-report.html; 2026-07-31-guide-coverage-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Sports-Calendar.html and Trip-Stacking.html both confirmed on disk; grep &#x27;Sports-Calendar|Trip-Stacking&#x27; toolbar.js → 0 matches (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">validate_best_of_link_health.py validator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">External HTTP link-health sweep across all Best-of pages. Carried forward from the 07-22 tooling log; dropped in 07-30 run due to bot-detection on external URLs.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/</span><span class="badge src">2026-07-30-tooling-gaps-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> No validate_best_of_link* script in Brain/scripts/ (grep returned none).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">validate_planning_pages_coverage.py validator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Coverage validator for planning pages, carried forward as an outstanding missing script from the 07-22 log.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/</span><span class="badge src">2026-07-30-tooling-gaps-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> No validate_planning_pages* script in Brain/scripts/ (grep returned none).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">validate_best_of_guide_crosslinks.py validator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Validator confirming Best-of pages and guides cross-link correctly. Carried forward as outstanding from the 07-22 log.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/</span><span class="badge src">2026-07-30-tooling-gaps-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> No validate_best_of_guide_crosslink* script in Brain/scripts/ (grep returned none).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Make nearby-guides links bidirectional fleet-wide</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">build_nearby_guides.py is inherently asymmetric, leaving ~225 nearby-guide pairs non-bidirectional across the fleet (guide A lists B as nearby but B does not list A). Requires an attended session to reconcile.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/build_nearby_guides.py; Travel-Website/Guides/</span><span class="badge src">2026-07-30-guide-coverage-report.html</span></div>
+          <p class="tev"><b>Checked:</b> Reported as open item carried forward on 2026-07-30; no reconciliation reported in later coverage runs (2026-07-31 only re-ran build with same asymmetric tool).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">check_back_to_guide_pill: Travel-Stats allow-list orphan</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">brain_check advisory warn: Travel-Stats is in the back-to-guide pill allow-list but no guide links to it, so the pill will never inject on those pages. Advisory; either drop Travel-Stats from the allow-list or accept as intentional.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/brain_check.py allow-list / toolbar.js</span><span class="badge src">2026-07-31-brain-health-check, brainmd-audit, todo-list-sweep</span></div>
+          <p class="tev"><b>Checked:</b> Reported as live advisory warn in multiple 2026-07-31 audits; no fix reported</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Safety-Guide badge fix reverted by each Stockholm Publish</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Safety-Guide.html badge-dot/level-color fix (a.badge:visited rule + Apple-emoji dots replacing banned .badge-dot spans) is repeatedly reverted when a Stockholm &#x27;Publish&#x27; commit ships Trip-Essentials pages from a working tree lacking the prior fix. todo-list-sweep re-applied it 2026-07-31 (6 fails→0). Root cause (Publish overwrites concurrent Trip-Essentials fixes) is a recurring regression, not permanently fixed.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Safety-Guide.html + Publish workflow</span><span class="badge src">2026-07-31-todo-list-sweep.html, rule-compliance-audit.html; memory project_safety_guide_badge_regression</span></div>
+          <p class="tev"><b>Checked:</b> Memory note confirms it is re-applied each Stockholm Publish; drift-log entry logged; workflow root cause unaddressed</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Mobile-render retry loop on new guide builds</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">New builds hit repeated Playwright mobile-render hard-fails (Cape Town: 4 consecutive) only after the expensive validate+verify+verify-booking chain passes; each fail forces a full re-ship. No pre-build 393px mobile checklist exists. Logged to Drift Log as &#x27;Watching&#x27; — monitoring, not yet actioned.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">CLAUDE.md build phases / guide_tools.py pre-ship mobile step</span><span class="badge src">2026-07-30-build-process-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Drift-log entry status Watching; no rule/script change made pending more evidence</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">TR-11 toolbar.js ?v= cache-bust drift across sibling files</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">In most guide folders the three sibling HTML files (main / read-about / stops-map) disagree on the ?v=N cache-bust query on their toolbar.js reference, so tap-through re-fetches toolbar.js and defeats the cache-bust. Emitter side was fixed (build_guide_map.py now emits ?v=100), and a warn-level TR-11 check was added, but pre-existing shipped guides remain drifted until regenerated. Report cited 229 of 232 drifted at introduction.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/*/*.html; Brain/scripts/build_guide_map.py</span><span class="badge src">2026-08-01-guide-drift-audit-run5.html</span></div>
+          <p class="tev"><b>Checked:</b> 48 of 232 main guide files still reference a bare toolbar.js (no ?v=); many folders still internally inconsistent. Emitter fix + warn check in place; fleet self-corrects only on rebuild.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Fleet-wide From-Hotel opener names wrong first stop</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">New 2026-07-30 hard-fail: the &#x27;🏨 From Hotel: … → [Destination]&#x27; day-opener must name the actual first stop-block after route-optimizer reordering. pending-fixes-sweep fixed 5 guides (20 openers); report states 163 guides outstanding. To Do List is now empty so status is ambiguous — either resolved fleet-wide, since brain_check shows 0 fail, or the tracking line was removed.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Guides/*/*_v1.html (day openers)</span><span class="badge src">2026-07-31-pending-fixes-sweep.html, visual-drift-watch.html</span></div>
+          <p class="tev"><b>Checked:</b> Report says 163 guides remaining; To Do List empty; all 2026-07-31 audits show brain_check 0 fail — a live hard-fail would block, so most/all may now be clean</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">emoji-audit SKILL.md may mislabel Icon Order as git-tracked</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">emojis-audit report flagged that the routine&#x27;s SKILL.md Step 7 describes Icon Order and Format.html as git-tracked when it is gitignored (only Hotel Banner.html is the sole tracked CORE RULES file). A future run following the &#x27;commit and push it&#x27; half could force-add. Owner-only (SKILL.md lives outside repo). Could not verify the current wording under the renamed &#x27;emoji-audit&#x27; task.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">~/.claude/scheduled-tasks/emoji-audit/SKILL.md</span><span class="badge src">2026-07-31-emojis-audit.html, todo-list-sweep.html</span></div>
+          <p class="tev"><b>Checked:</b> grep of emoji-audit/SKILL.md for &#x27;Icon Order&#x27;/&#x27;git-tracked&#x27;/&#x27;Step 7&#x27; returned nothing — content not found under that name; brain-health-check Step 7 P0 was fixed, so this may have been too</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">74-guide img width/height missing (CLS risk)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Existing guide-infrastructure To Do item noted as context by visual-drift: ~74 guides carry &lt;img&gt; tags lacking explicit width/height, a layout-shift (CLS) risk. To Do List is now empty so tracking status is unclear.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Guides/*/*_v1.html img tags</span><span class="badge src">2026-07-31-visual-drift-watch.html §8</span></div>
+          <p class="tev"><b>Checked:</b> Mentioned as pre-existing To Do context; To Do List now empty — cannot confirm open vs resolved</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">validate_flight_index.py WARNs on Granada/Cape Town times</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">validate_flight_index.py warned that Granada shows 13h30m (expected ~16h30m) and Cape Town 24h30m (expected ~23h30m) flight durations; needs cross-check against Delta flight data. Logged 2026-07-30 for deep-audit/guide-content-audit. To Do List now empty — status unclear.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Granada / Cape Town guide flight index data</span><span class="badge src">2026-07-30-scripts-docs-audit.html To Do List Changes</span></div>
+          <p class="tev"><b>Checked:</b> Logged as new To Do item 2026-07-30; To Do List now empty; not confirmed fixed</p>
+        </div>
+      </details></div>
+  </section>
+  <section class="cat" id="validators-gates">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">✅ Validators &amp; Gates</span>
+      <span class="catcount">9</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Promote TR-10 (rel=noopener) to hard-fail; fleet now aligned</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">TR-10 (every target=_blank anchor must carry rel=noopener) shipped as warn-level because 203 guides were non-compliant. The fleet has since been backfilled to 100% compliance, so the run-4 recommendation to upgrade TR-10 from warn() to check() in validate_itinerary.py is now actionable to freeze the invariant.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/validate_itinerary.py</span><span class="badge src">2026-08-01-guide-drift-audit-run4.html</span></div>
+          <p class="tev"><b>Checked:</b> validate_itinerary.py line 2379 still calls warn() for TR-10, not check() (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Add Validator Index vs code threshold/severity drift sweep</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Nothing cross-checks the Validator Index&#x27;s stated numeric thresholds and severity labels against the live constants in validate_itinerary.py. Two confirmed drifts already surfaced: walk-cap documented as 40 but code fails above 44 (Part 3), and the ⏳ unit-spelling row labeled &#x27;warn&#x27; 15 days after the check was promoted to hard-fail (Part 5). Proposes a diff sweep of every Index row citing a number or a severity so these drifts are caught automatically instead of by manual audit.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/ (new tool) + Brain/Reference/Validator Index.html</span><span class="badge src">2026-07-30-validator-audit-part-5.html</span></div>
+          <p class="tev"><b>Checked:</b> No *drift* or *index*-diff script in Brain/scripts/; grep of scripts referencing &#x27;Validator Index&#x27; (brain_check, guide_tools, doc_workshop_validator, validate_itinerary) shows none diffs Index numbers/severities against code. Companion dead-check-sweep proposal WAS implemented (--count-matches, changelog L334), this severity/threshold sweep was not.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Enforce Read-About-Pages.html as Phase 5 build_state hard-fail</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Guide Structure.html §1 lists Brain/Reference/Read-About-Pages.html as a Phase 5 required read and the guide_tools init template includes it (as an unchecked &#x27;- [ ]&#x27; line), but the validator Phase 5 gate keys only off shipping extras-section IDs (BUILD_STATE_PHASE_5_MAP), so the read-about spec-read is never enforced. Deferred because ~218 of 224 shipped guides lack the build_state.md entry and adding a hard-fail now would fail most of the fleet; owner decision needed on enforcement timeline plus a fleet-wide build_state backfill first. Note: read-about page CONTENT is already independently enforced (page-exists + JS link-injection + className + DOMContentLoaded checks), so this is only the build_state read-tracking gap.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/validate_itinerary.py (Phase 5 gate) + fleet build_state.md backfill</span><span class="badge src">2026-07-20-validator-audit-part-1-rerun.html; 2026-07-22-validator-audit-part-1-run2.html</span></div>
+          <p class="tev"><b>Checked:</b> BUILD_STATE_PHASE_5_MAP (validate_itinerary.py L1630) maps only extras-section ids -&gt; extras files; Read-About-Pages.html absent. guide_tools.py L779 has it as unchecked template line only. Deferred-by-design per report; owner-gated.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Add preventive gates for img loading=lazy and width/height</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Run-5 census found loading=&quot;lazy&quot; and width=+height= both present on 100% of img tags across all 232 guides but neither is validator-enforced. Candidate preventive TR-12/TR-13 hard-fails to freeze these CLS/perf invariants (like NB-4 froze the also-on-this-site shim).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/validate_itinerary.py</span><span class="badge src">2026-08-01-guide-drift-audit-run5.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;loading.*lazy|TR-12|TR-13&#x27; validate_itinerary.py → 0 matches; no preventive check implemented (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Extend TR-11 consistency check to other shared assets</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">TR-11 only covers toolbar.js intra-folder consistency. Guide folders also reference web-travel-style.css, mobile.css, guide-style.css, leaflet/MarkerCluster CSS — same ?v= sibling-drift risk. Recommendation: generalize TR-11 to survey every shared-asset reference in the folder.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/validate_itinerary.py</span><span class="badge src">2026-08-01-guide-drift-audit-run5.html</span></div>
+          <p class="tev"><b>Checked:</b> Run-5 forward-watch recommendation; TR-11 currently scoped to toolbar.js only.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Optional: warn on host inconsistency (bare-domain vs www.)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Soft signal: Coeur-dAlene uses uber.com/lyft.com and Cape-Town has one bare webtickets.co.za vs the fleet-wide www.-prefixed forms. Both resolve; no user impact. A warn-level fleet-consistency check would need a ~200-domain canonical-host allow-list. Deferred to owner decision.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Brain/scripts/validate_itinerary.py</span><span class="badge src">2026-08-01-guide-drift-audit.html; run2</span></div>
+          <p class="tev"><b>Checked:</b> Deferred low-severity item across drift runs 1-2; no allow-list or check built. Owner decision pending.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Food Delivery preamble check misses div-based preamble</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The Food Delivery preamble ban (Cleanliness rule 402) only counts &lt;p&gt; tags in #food-delivery. Div-based preamble text before the first .extras-sub entry is not caught. The original _fd_preamble_bad variable was removed 2026-05-24 and replaced with a &lt;p&gt;-tag counter, leaving a coverage gap the doc itself flags as &#x27;Partially enforced&#x27;.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/validate_itinerary.py (Food Delivery section, ~line 14413)</span><span class="badge src">2026-07-31-validator-audit-part-12.html</span></div>
+          <p class="tev"><b>Checked:</b> validate_itinerary.py ~line 14413: check still counts only &lt;p&gt; tags via re.findall(r&#x27;&lt;p\b&#x27;, _fd_inner); no div-based preamble detection added (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Sweep Validator Index numbers vs code thresholds</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Part 20 logged a To Do item: sweep Validator Index.html for every row citing a number or severity label (hard-fail/warn) and diff against validate_itinerary.py / brain_check.py to catch stale/wrong thresholds. Flagged as too large for a section slot; needs a dedicated full-part run. Handler: validator-audit.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/Reference/Validator Index.html + Brain/scripts/validate_itinerary.py + brain_check.py</span><span class="badge src">2026-07-31-validator-audit-part-20.html</span></div>
+          <p class="tev"><b>Checked:</b> To Do List/To_Do_List.md &#x27;### validator-audit&#x27; section is now EMPTY (grep found header only, no numeric-threshold-sweep line). Cannot confirm the dedicated sweep was ever executed; per DONE=DELETE rule an empty section is ambiguous.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Fix validator-audit claim snippet to pick lowest UNcompleted part</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The shared claim snippet selects the lowest part not in active_claims rather than the lowest part not in completed_this_cycle, so a crib running alone always re-audits Part 1 while parts 12-20 stay pending until 12+ cribs run concurrently. Caused a wasted Part-1 re-run on 2026-07-22. Logged for the task-file maintainer. Not in the validator scripts themselves (lives in the scheduled-task claim snippet / validator_audit_state.json orchestration) so scope/location is uncertain.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">validator-audit scheduled-task claim snippet / Brain/scripts/validator_audit_state.json</span><span class="badge src">2026-07-22-validator-audit-part-1-run2.html</span></div>
+          <p class="tev"><b>Checked:</b> validator_audit_state.json exists; claim-selection logic not found in any Brain/scripts/*.py (crib_safety.py/daily_audit.py claim logic is guide-lease, not part-selection). Cycle counter has since advanced (Part 10 = Cycle 9), so may be moot, but cannot confirm the snippet was corrected.</p>
+        </div>
+      </details></div>
+  </section>
+  <section class="cat" id="trip-essentials-pages">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">🧳 Trip-Essentials Pages</span>
+      <span class="catcount">37</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Sticky search + filter controls on Cards-ATM</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Make the search input and filter pills sticky (position:sticky; top:48px) so they stay accessible on the long card list. Purely CSS.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Cards-ATM.html</span><span class="badge src">2026-07-16-cards-atm-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;position:sticky&#x27; Cards-ATM.html → 0 matches (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Add intro / &#x27;how to use&#x27; block to City-Transit page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Page opens cold with a search bar; add a 2-3 sentence intro on what transit cards are, when to use one, and a 📲 badge key.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;intro|how to use&#x27; → 0 matches</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Delta Routes: tier-pill active state not terracotta</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Clickable .tier-pill.active still uses only a dark box-shadow; site standard requires the terracotta gradient active fill.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Delta-Routes-SEA.html + Delta-Routes-Full.html</span><span class="badge src">2026-07-16-delta-routes-ux-handoff.html</span></div>
+          <p class="tev"><b>Checked:</b> SEA line 108: box-shadow:0 0 0 2px rgba(0,0,0,.30) only; Full line 157: background:var(--bg,#f5f4f0), no terracotta gradient (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Travel-Insurance: add anchor jump-nav pills</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Four sections (Cards/Guidance/Providers/Tips) have no jump nav; add a .also-on-this-site-pill row at top.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Travel-Insurance.html</span><span class="badge src">2026-07-16-travel-insurance-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;also-on-this-site-pill|jump-nav|anchor&#x27; Travel-Insurance.html → 0 matches (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Trusted-Traveler: badge says &#x27;Enroll&#x27; vs pill &#x27;Enrollment&#x27;</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Filter pill reads &#x27;Enrollment on Arrival&#x27; but row badges read &#x27;Enroll on Arrival&#x27;; standardize to CBP&#x27;s &#x27;Enrollment on Arrival&#x27;.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Trusted-Traveler.html</span><span class="badge src">2026-07-16-trusted-traveler-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;Enroll on Arrival&#x27; → 61 matches; &#x27;Enrollment on Arrival&#x27; → 2 (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Visas: auto-compute section counts from DOM</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Section count badges are hardcoded spans and drifted this cycle; a small DOMContentLoaded script counting rows per section keeps them accurate.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep etype-count → static text spans (&#x27;24 countries&#x27; etc.), no counting JS</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Climate-Finder: surface rainfall in result cards + rainfall filter</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">climate.json has rain/rain_days already in window.TravelClimate; add a ☔Wet/☀️Dry badge per card and a &#x27;rainy days per month&#x27; filter.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Climate-Finder.html</span><span class="badge src">2026-07-22-climate-weather-ux.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;rain_days|☔|Wet|rainfall&#x27; Climate-Finder.html → 0 matches (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Card-level visual tier indicator on card rows</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">All card rows look identical; add a 3px left-border accent (gold=premium, grey=no-fee) or a Premium/No-fee badge for at-a-glance tiering.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Cards-ATM.html</span><span class="badge src">2026-07-16-cards-atm-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> No tier-accent styling found; proactive suggestion not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Add airport-access note to each transit-card entry</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Only a few cities note whether the card covers the airport rail. Add a consistent &#x27;✈️ Airport: covered / add-on / separate ticket&#x27; line per major-airport city.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Flagged as fleet-wide gap; no airport-note pattern added</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Warn app-only cities to set up app before arrival</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Copenhagen, Munich, Oslo have no tap-to-pay/physical card; add a bold &#x27;Download before you arrive&#x27; line and an app-only data-tag + filter pill.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Proactive suggestion; no app-only tag/pill found</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">&#x27;Showing N of M cities&#x27; live counter on filter/search</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Add a live count below the filter pills that updates as applyFilter runs, so users know how many matched.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Proactive JS suggestion; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Two-system / partial-contactless warnings + contactless-partial tag</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Cities like Bangkok/Rio/Buenos Aires have partial coverage; add explicit &#x27;two separate systems&#x27; warnings and a contactless-partial tag so the 📲 filter isn&#x27;t misleading.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Proactive suggestion cluster; no partial tag found</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Per-entry &#x27;last verified&#x27; date on transit rows</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Add data-verified=&#x27;YYYY-MM&#x27; per .transit-row shown as a small label, so travelers can gauge data freshness (esp. Istanbul/Buenos Aires).</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Feature suggestion; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Clear-filters affordance + region-count pills + search debounce</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Add a &#x27;✕ Clear filters&#x27; link when any filter active, show per-region counts on pills, and debounce the search listener for scale.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Function suggestions; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Delta Routes: add ATL–YVR Saturday seasonal service</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Delta launched ATL–YVR Saturday seasonal service (from May 23, 2026); absent from the Full page ATL section. Verify still operating and add.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Delta-Routes-Full.html</span><span class="badge src">2026-07-20-delta-routes-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Explicitly logged for next audit; not yet added</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Travel-Insurance: transpose card comparison table</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Flip the credit-card table so each card is a column and each coverage type a row, matching comparison-site convention and mobile scanning.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Travel-Insurance.html</span><span class="badge src">2026-07-16-travel-insurance-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Look suggestion; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Travel-Insurance: category chips + provider filter chips</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Add glanceable category chips to provider tags and All/Medical/Adventure/Families/Annual filter chips driven by data-category.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Travel-Insurance.html</span><span class="badge src">2026-07-16-travel-insurance-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Function/feature suggestion; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Travel-Insurance: card coverage quick-check + trip-cost estimator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Add a card selector that surfaces a 3-line &#x27;what you already have&#x27; summary, and a trip-value input that outputs the 4–10% premium range.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Travel-Insurance.html</span><span class="badge src">2026-07-16-travel-insurance-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Feature suggestions; pure JS, not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Travel-Insurance: add Berkshire Hathaway provider (CFAR rate)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">BHTP deferred pending primary-source confirmation of CFAR reimbursement rate (50% vs 75% conflict). Verify and add.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Travel-Insurance.html</span><span class="badge src">2026-07-16-travel-insurance-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Deferred to next cycle; not added</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Pickleball: verify WestWorld APP 2026 + add Austin 3rd court</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Scottsdale WestWorld card says &#x27;APP Tour venue&#x27; but no 2026 APP events found — verify at theapp.global/tour. Austin shows only 2 courts since Rally Austin was removed; add a third (Picklr / Chicken N Pickle).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Pickleball.html</span><span class="badge src">2026-07-22-pickleball-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Both flagged High priority, unconfirmed at run time; not resolved</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Re-verify Capital One transfer partner list</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Cap One has been expanding airline transfer partners; re-verify Venture X/Venture notes against the live rewards page at next audit.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Cards-ATM.html</span><span class="badge src">2026-07-16-cards-atm-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Next-audit accuracy task; nothing marks it done</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Expand thin tip bars for 5 transit cities</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Dublin, Porto, Geneva, Istanbul, Montreal have one-line tips; expand each to 2-3 practical arrival-day sentences.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Content-depth suggestion; not verified expanded</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Passport photo cost + 38-page book monitoring</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Photo cost range not on state.gov (kept as general range); 38-page single-book change pending with no implementation date — recheck next run.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Passport.html</span><span class="badge src">2026-07-16-passport-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Explicit &#x27;not verified&#x27; / monitor items; no firm policy to add</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Entry-Requirements: improvement ideas (8)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Delayed-status visual split, per-row &#x27;last verified&#x27; badge, jump-nav pills, trip checklist widget, processing-time column, region emoji, @media print layout, destination-count summary line.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Entry-Requirements.html</span><span class="badge src">2026-07-16-entry-requirements-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Proactive idea list; owner-review items, not implemented by routine</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Entry-Requirements: verify India 30-day seasonal e-visa fee</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">One source reports $25 (Apr–Jun) / $40 (Jul–Mar); page lists $25 which may underquote. Confirm on official fee table and add seasonal note.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Entry-Requirements.html</span><span class="badge src">2026-07-16-entry-requirements-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Recommendation for next run; unverified</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Visas: Thailand 60→30-day caveat as amber callout</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The consequential Thailand stay-cut caveat is buried in italic prose; wrap in the existing .enote amber callout so it can&#x27;t be missed.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Idea; not verified implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Visas: mobile legend disclosure + Vietnam entry-points note</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">On ≤600px the sticky 6-pill legend eats ~280px — add a &#x27;Filter by entry type ▼&#x27; disclosure. Also add Vietnam&#x27;s 83 international entry points to the rnote.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Idea items; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Climate/Weather: 5 improvement ideas</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Climate presets/one-tap filters, city-name search of results grid, Weather↔Climate-Finder &#x27;best months&#x27; cross-link, compare-two-cities in Weather, shareable search-state &#x27;copy link&#x27; pill.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Climate-Finder.html + Weather.html</span><span class="badge src">2026-07-22-climate-weather-ux.html</span></div>
+          <p class="tev"><b>Checked:</b> Owner-review idea list; routine never implements</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Pickleball: confirm countries 80+→128 and clarify global 50M+</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Multiple 2026 sources cite 128 countries (page says 80+); verify with WPF/USA Pickleball. Global &#x27;50M+&#x27; may be a mislabeled US-only survey — correct or label precisely.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Pickleball.html</span><span class="badge src">2026-07-22-pickleball-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Medium-priority accuracy recs pending authoritative source</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Pickleball: equipment rental per city, court-growth note, intl venue depth</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Flag paddle-rental venues per city; add an Axios court-growth-slowing context note under &#x27;39 new courts/day&#x27;; add city-level spotlights for India/Canada which appear only in the world table.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Pickleball.html</span><span class="badge src">2026-07-22-pickleball-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Medium/low-priority content recs; not implemented</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Add transfer-partner count to Amex Platinum/Gold notes</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Amex notes omit the 22 airline/hotel transfer partner ecosystem, a key travel differentiator. Add a concise &#x27;22 transfer partners&#x27; phrase.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Cards-ATM.html</span><span class="badge src">2026-07-16-cards-atm-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Cards-ATM.html line 225 now states &#x27;Points transfer to 20+ airline and hotel partners&#x27; for Amex Gold — transfer count concept present; exact &#x27;22&#x27; phrasing not added (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Convert Bilt 2.0 note to two-tier mini-table</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The Bilt Blue vs Obsidian tiers are in a single prose note; page already uses .mini-table elsewhere. Convert to a scannable two-row table.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Cards-ATM.html</span><span class="badge src">2026-07-16-cards-atm-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Did not locate a Bilt mini-table; note format not confirmed converted</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Entry-Requirements: search appears above alert/description</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">DOM order puts search before the ETIAS alert and page description; reorder to title → description → alert → search → content.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Entry-Requirements.html</span><span class="badge src">2026-07-16-entry-requirements-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> DOM order not re-verified</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Trusted-Traveler: outdated JS comment + intl autocomplete gap</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">applyFilters() comment about EoA/preclearance is now stale; TVESearch.attach only queries #airport-list .apt-row, excluding 14 intl preclearance airports from autocomplete.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Trusted-Traveler.html</span><span class="badge src">2026-07-16-trusted-traveler-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Not directly re-verified in JS; low-severity items logged for UX routine</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Visas: expand Apply-button coverage to 4 more countries</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">APPLY object lacks buttons for Jordan, Maldives, Nepal, Bhutan though portals exist; add 4 object entries.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> APPLY object contents not re-verified</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Visas: reclassify Egypt to eVisa; move Bhutan/Nepal out of &#x27;Free arrival&#x27;</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Egypt now has an online eVisa (visa2egypt.gov.eg $30) — belongs in eVisa section. Bhutan (paid+SDF) and Nepal (paid VOA) are wrongly in &#x27;Free arrival card — no visa&#x27;.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Editorial section moves; placement not re-verified (visa2egypt present 3x)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Visas: add Bhutan 5% tourism GST note</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">A 5% GST on tourism services (excl. SDF) took effect Jan 1, 2026; add a one-line note to the Bhutan rnote.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Recommendation; not verified present</p>
+        </div>
+      </details></div>
+  </section>
+  <section class="cat" id="guides">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">🗺 Guides</span>
+      <span class="catcount">5</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Replace 44 sideways-downloaded guide photos</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">audit_photo_orientation.py found 44 photos across 40 guides stored in the wrong orientation (landscape stored where Commons original is portrait, and vice-versa). Root cause was fixed in commons_photo.py (exif_transpose + longest-side resize + orientation-mismatch save block), but the individual photos still need re-downloading from a correctly-oriented Commons source and their HTML width/height updated. Files listed: Bali, Berlin, Bora-Bora (x2), Cancun, Chiang-Mai, Denver, Dublin, Fortaleza, Gothenburg (x2), Hamburg, Hilton-Head-Island, Hoi-An, La-Jolla, Lake-Como, Lima, Ljubljana, Lyon, Madrid, Malaga, Monaco, Osaka, Oxford, Paris, Petra, Porto-Alegre, Puerto-Vallarta, San-Jose, Santa-Cruz, Sarasota, Shanghai, Split, Sao-Luis, Taipei, Tallinn, Tenerife, Vancouver (x3), Venice, Verona, Virgin-Islands, Wellington.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Guides/&lt;City&gt;/_build/assets/</span><span class="badge src">2026-07-24-photo-orientation-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Sampled 22 of the listed files with PIL: 21 still stored in the reported wrong orientation (e.g. Berlin Holocaust-Mahnmal 800x450 landscape, Ljubljana Castle 800x600 landscape, Taipei101 800x1066 portrait), 1 missing (Osaka Tsutenkaku). No replacements applied.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Ljubljana: add a dedicated train-day itinerary</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">6-day Ljubljana guide ships without a dedicated train day (Day Structure.html §6). Day 6 covers Postojna/Predjama by car/coach; Lake Bled and Bohinj are rail-reachable but not structured as a train day. Logged for a future day-expansion or content refresh.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/Ljubljana/ljubljana_v1.html</span><span class="badge src">2026-07-24-guide-content-audit-ljubljana.html</span></div>
+          <p class="tev"><b>Checked:</b> Reported as accepted warning logged to To Do; not addressed in-session. Not re-verified in codebase but no train-day expansion reported since.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Verify Granada and Cape Town flight-time discrepancies</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Flight-time WARNs flagged for verification: Granada (13h30m vs 16h30m) and Cape Town (24h30m vs 23h30m). Remain in To Do under deep-audit; not touched.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/Granada/, Cape-Town/</span><span class="badge src">2026-07-31-guide-coverage-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Listed as open To Do item on 2026-07-31; no resolution reported.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Backfill From-Hotel openers on pre-fix guides</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Fleet scan found 168 of 233 guides where the &#x27;🏨 From Hotel&#x27; opener points at a stop that is no longer the first stop of the day, because optimize_route.py historically reordered stops after openers were written. The optimizer has since been patched to rewrite the opener destination (Option B, permanent fix), so newly-optimized guides self-correct, but pre-fix guides shipped before that patch may still carry stale openers until re-optimized. In-window offenders (Madrid Day 1, Cape Town Days 1-2, Hilton Head) were fixed; Salzburg Days 4-5 and the rest of the fleet were not individually verified.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/*/[slug]_v1.html</span><span class="badge src">2026-07-30-guide-audit-and-fix-5.html; 2026-07-30-guide-coverage-report.html</span></div>
+          <p class="tev"><b>Checked:</b> optimize_route.py lines 430-435 now &#x27;Update hotel-first destination to match new first stop&#x27; (root cause fixed). Spot-checked: Madrid Day 1 opener now &#x27;→ Galería de las Colecciones Reales&#x27; (fixed), Salzburg openers look plausible. Fleet-wide backfill of 168 pre-fix guides not verified.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Metro heading emoji drift: 🚊 should be 🚝 fleet-wide</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Getting Around metro headings use 🚊 (regional rail) where 🚝 (metro) is correct. Flagged during the Zakynthos build as an advisory that applies fleet-wide; not in scope to fix in that session.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Guides/*/</span><span class="badge src">2026-07-23-guide-build-crib-3.html</span></div>
+          <p class="tev"><b>Checked:</b> Zakynthos itself has no metro (island) so not verifiable there; fleet-wide prevalence not scanned. Advisory only, no validator gate.</p>
+        </div>
+      </details></div>
+  </section>
+  <section class="cat" id="ux-css-layout">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">📱 UX, CSS &amp; Layout</span>
+      <span class="catcount">24</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Entry-Requirements: status badges use hardcoded hex</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">.status-live/.status-coming use literal hex (#e8f5e8 etc.); add --status-live-* / --status-coming-* tokens to shared CSS.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Entry-Requirements.html</span><span class="badge src">2026-07-16-entry-requirements-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> .status-live still has #e8f5e8/#1a5a1a/#9ad09a at line 20; dark-mode overrides added but no --status-live-* tokens (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Trusted-Traveler: dead JS vars countEl and tt-result</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">var countEl (count-num) and var result (tt-result) resolve to null — no matching elements. Remove the vars or wire a result counter.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Trusted-Traveler.html</span><span class="badge src">2026-07-16-trusted-traveler-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;countEl|tt-result&#x27; → 3 matches still present (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Visas: dead CSS class .visa-search-row</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Rule &#x27;.visa-search-row { display:none }&#x27; has no matching HTML element; delete the orphaned rule.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;visa-search-row&#x27; Visas.html → 1 match (CSS rule only, no element uses it) (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Pickleball: 9 inline map-legend background styles</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">US + world map legends use 9 inline style=&#x27;background:#...&#x27; attributes; convert to variable-backed CSS classes.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Pickleball.html</span><span class="badge src">2026-07-22-pickleball-audit-ux-handoff.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;style=&quot;background:#&#x27; Pickleball.html → 9 matches (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Pickleball: pkl-nav + table borders hardcoded hex</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">.pkl-nav a uses #3d3a32/#fff and .pkl-state-table/.pkl-world-table td use border #f0ece4; replace with var(--text)/--surface/--border2.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Pickleball.html</span><span class="badge src">2026-07-22-pickleball-audit-ux-handoff.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;#3d3a32|#f0ece4&#x27; Pickleball.html → 3 matches (lines 30, 36, 58) (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Festival-Finder active month grey on desktop, not terracotta</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">In Festival-Finder.html, .ff-mon.on inside @media (min-width:601px) overrides the mobile terracotta gradient with background:#f0ede8 / color:var(--muted), so the selected month renders muted grey on desktop instead of the site-standard terracotta fill. Remove or re-state the gradient inside the desktop media query.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Festival-Finder.html (lines 28-32)</span><span class="badge src">2026-07-30-cross-page-consistency-audit.html (Check 9)</span></div>
+          <p class="tev"><b>Checked:</b> grep confirms lines 29-31 still: background:#f0ede8; border:1.5px solid var(--border); color:var(--muted) overriding terracotta on desktop (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Create dedicated Africa-Stats page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Cape Town, Cairo, Marrakech, Seychelles are folded into Europe-Stats.html (titled &#x27;Stats Across Europe, Oceania &amp; Africa&#x27;) as a geographically incorrect workaround with partial data. A standalone Africa-Stats.html for Egypt, Morocco, South Africa, Seychelles would allow the also-on-site pills to be corrected. Owner/new-page decision, data-research task.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/ (new Africa-Stats.html); Europe-Stats.html</span><span class="badge src">2026-07-30-stats-pages-recommendations.html (Rec 1)</span></div>
+          <p class="tev"><b>Checked:</b> Africa-Stats.html not found in Trip-Essentials/; Europe-Stats.html still titled with Africa section (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Create dedicated Oceania-Stats page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Australia (Melbourne, Sydney), New Zealand (Queenstown, Wellington) and Bora Bora are folded into Europe-Stats as a trailing Oceania section. A standalone Oceania-Stats.html would give them equal treatment and let Europe-Stats title revert to Europe-only. Owner/new-page + data-research.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/ (new Oceania-Stats.html)</span><span class="badge src">2026-07-30-stats-pages-recommendations.html (Rec 6)</span></div>
+          <p class="tev"><b>Checked:</b> Oceania-Stats.html not found in Trip-Essentials/; Europe-Stats.html still contains Oceania section (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Climate-Finder: hardcoded hex in &lt;style&gt; block</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Literal hex (#b85c2a, #7a3b1e, #d4874a, #a61c00, #3d5282, #fff) don&#x27;t adapt to dark mode; use tokens (--surface, --c-temp-hi/lo, terracotta).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Climate-Finder.html</span><span class="badge src">2026-07-22-climate-weather-ux.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;#b85c2a|#7a3b1e|#a61c00&#x27; Climate-Finder.html → 1+ matches still present (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Fix Visas.html badge pills failing pill-standard validator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">validate_pill_standard.py fails on Visas.html badge pills (shape/format). Pre-existing, flagged for the UX routine; out of scope for coverage runs.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-31-guide-coverage-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Reported as pre-existing failure noted for UX routine on 2026-07-31; not fixed in-run.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Festival-Finder controls panel radius exceeds 8px max</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">.ff-controls uses border-radius:12px; audit recommends reducing to 8px to match the dropdown/panel standard (or leaving it if a distinct card feel is intended — borderline).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Festival-Finder.html (line 13)</span><span class="badge src">2026-07-30-cross-page-consistency-audit.html (Check 11 / Recommendations)</span></div>
+          <p class="tev"><b>Checked:</b> .ff-controls { border-radius: 12px } still at line 13 (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Add data-src-year attribute to stats bar-sections</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Bar sections cite sources in header text but have no programmatic currency marker. Adding data-src-year to each .bar-section would let future tooling flag stale data and surface currency to travelers. Attribute-only, no functional change.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/*-Stats.html bar sections</span><span class="badge src">2026-07-30-stats-pages-recommendations.html (Rec 5)</span></div>
+          <p class="tev"><b>Checked:</b> grep -rn &#x27;data-src-year&#x27; Trip-Essentials/*-Stats.html → 0 matches (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Cross-link regional stats pages to each other</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The regional stats pages share no navigation between them; a traveler on Europe-Stats must return to the toolbar to reach Asia-Stats. Add a small &#x27;Also in Stats&#x27; cross-nav row to each stats page. Structural nav change — likely needs owner approval.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/*-Stats.html (Europe, Asia, Caribbean, South-America, Stats-Across-US, Stats-Across-Canada)</span><span class="badge src">2026-07-30-stats-pages-recommendations.html (Rec 7)</span></div>
+          <p class="tev"><b>Checked:</b> grep of Europe-Stats.html for links to other stats pages / &#x27;Also in Stats&#x27; returned nothing.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">css-duplication: 26 selectors across 54 pages</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">brain_check advisory warn: 26 duplicated CSS selectors across 54 pages that should live in shared CSS per the Shared-CSS-Only rule. Recurring, tracked as pending-fixes-sweep scope. Advisory (not hard-fail).</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/assets/*.css + page-local styles</span><span class="badge src">2026-07-31-brain-health-check, brainmd-audit, todo-list-sweep, reference-docs</span></div>
+          <p class="tev"><b>Checked:</b> Reported as live brain_check warn in 5+ separate 2026-07-31 audits; no report claims a fix; advisory so not gated</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">hardcoded-hex: 195 hex values across 41 pages</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">brain_check advisory warn: 195 hardcoded hex colors across 41 pages matching shared CSS variables; should use var(--x). Recurring, pending-fixes-sweep scope. Advisory (not hard-fail).</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/ HTML pages</span><span class="badge src">2026-07-31-brain-health-check, brainmd-audit, todo-list-sweep, rule-compliance</span></div>
+          <p class="tev"><b>Checked:</b> Reported as live brain_check warn across multiple 2026-07-31 audits; count drifts 195-196; no fix reported</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Delta Routes: :root block still inline on SEA page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Move tier color custom properties (--c0..--c2) into web-travel-style.css. Full page already fixed; SEA still defines :root inline.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Delta-Routes-SEA.html</span><span class="badge src">2026-07-16-delta-routes-ux-handoff.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;:root&#x27; Delta-Routes-SEA.html → 1 match (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Pickleball: hardcoded placeholder hex + focus border</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">.pkl-search-box placeholder color #A8895A (focus #c8b99a already fixed) should use var(--muted).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Trip-Essentials/Pickleball.html</span><span class="badge src">2026-07-22-pickleball-audit-ux-handoff.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;#A8895A&#x27; Pickleball.html → 1 match at line 63 (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Delta Routes: hardcoded placeholder hex on SEA page</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Replace remaining hardcoded hex (e.g. #A8895A placeholder) with CSS variables. Full page clean; SEA still has one.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Delta-Routes-SEA.html</span><span class="badge src">2026-07-16-delta-routes-ux-handoff.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;#A8895A&#x27; Delta-Routes-SEA.html → 1 match at line 72 (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Entry-Requirements: apply links hidden on mobile</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The @media(max-width:600px) rule display:none the 4th (Apply links) column, removing the e-visa CTA on mobile. Move the apply link into the destination cell.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Entry-Requirements.html</span><span class="badge src">2026-07-16-entry-requirements-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep display:none → 1 match still present; not confirmed which column, flagged high-value</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Fill full stat categories for Africa/Oceania cities</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Report says Cairo, Marrakech, Seychelles, Melbourne, Sydney, Queenstown, Wellington had only population+happiness, missing ~12 categories (income, cost-of-living, HDI, internet, vacation days, corruption, renewables). The validator blocker is now resolved, but full data completeness for these cities may still be partial.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Europe-Stats.html (Africa/Oceania sections)</span><span class="badge src">2026-07-30-stats-pages-recommendations.html (Rec 2)</span></div>
+          <p class="tev"><b>Checked:</b> validate_regional_stats_chips.py now exits 0 (&#x27;every shipped regional guide has a chip + bar-row in every section&#x27;, 4 pages) — the exit-1 blocker is gone. But that check verifies chip+bar-row presence, not full per-category data; completeness of the 12 categories not independently confirmed.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">City-Transit inline &lt;style&gt; duplicates shared pill/search CSS</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Page-scoped rules for .search-wrap/.pill/.pill.active duplicate shared CSS and will drift; move shared rules to web-travel-style.css.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/City-Transit-Cards.html</span><span class="badge src">2026-07-16-city-transit-cards-biannual-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> type=search + hardcoded hex fixes are DONE; full de-dup of the inline block not confirmed</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Delta Routes: undefined search CSS vars cause brain_check WARN</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">--c-search-focus-border and --c-search-placeholder are referenced but undefined in loaded CSS on both Delta pages. Define or remove.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Delta-Routes-SEA.html + Delta-Routes-Full.html</span><span class="badge src">2026-07-20-delta-routes-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Pre-existing WARN logged to To Do; current brain_check state not verified</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Visas: h1 font-size should use var(--fs-title)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">h1 uses a hardcoded pixel value instead of the --fs-title token (brain_check hard-fail rule).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Visas.html</span><span class="badge src">2026-07-16-visas-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> grep var(--fs-title) → 0; page uses .masthead h1 font-size:22px, differs from report&#x27;s .page-header h1 reference</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Day-jump pill hamburger hide count = 1 (expected 2)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">audit grep for day-jump hide in toolbar.js returns 1, expected 2. Line 906 uses a single conditional (djBtn.style.display = open ? &#x27;none&#x27; : &#x27;&#x27;) plus line 879 show-on-init. Report notes it may be a false positive if the conditional is functionally equivalent to two explicit hides. toolbar.js is a locked/structural file.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/assets/toolbar.js (line 906)</span><span class="badge src">2026-07-30-ux-desktop-audit.html (Step 4f); 2026-07-31-fix-ux-mobile.html</span></div>
+          <p class="tev"><b>Checked:</b> grep confirms 1 conditional hide at line 906 + show at line 879. Functionally appears correct (hides when hamburger open); likely benign false positive; locked file.</p>
+        </div>
+      </details></div>
+  </section>
+  <section class="cat" id="docs-rules">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">📄 Docs &amp; Rules</span>
+      <span class="catcount">4</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Digital-Nomad-Visas missing from Website-Main-Pages-Links</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Digital-Nomad-Visas.html is on the toolbar (toolbar.js ITEMS, 🪪 Visas group) but absent from Brain/CORE RULES/Website-Main-Pages-Links.html. brain_check flags this as a recurring advisory (toolbar↔Main-Pages-Links / Change Cascade drift) across multiple 2026-07-31 audits. Owner-only structural change.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/CORE RULES/Website-Main-Pages-Links.html</span><span class="badge src">2026-07-31-brain-health-check.html, claudemd-drift, reference-docs, emojis, brainmd audits</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;Digital-Nomad-Visas&#x27; Brain/CORE RULES/Website-Main-Pages-Links.html → 0 matches; still absent (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Mobile-grid pill border-radius: spec 0 vs live 6px</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Visual-drift open spec questions: also-on-site-mobile-grid and nearby-guides-mobile-grid original spec says border-radius:0 but live CSS has border-radius:6px. brain_check does not enforce radius. Owner decision needed to reconcile the manifest spec with the shipped CSS.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/Reference/Visual-Reference/MANIFEST.md vs assets CSS</span><span class="badge src">2026-07-31-visual-drift-watch.html §7</span></div>
+          <p class="tev"><b>Checked:</b> Listed as 2 open spec questions in reference-store health; owner-decision, not auto-resolvable</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Emoji Library search box: 9 chrome deviations from site standard</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Brain/Reference/Emoji Library.html paints its own grey (#999) magnifier vs site-standard gold #c8a44a, plus border-radius 8px vs 6px and other divergences from Colors and Font Size §14 / Cleanliness Rules 498-500,530,588. It is a Brain reference doc (not a Travel-Website/ page) so §14 does not strictly govern and brain_check never scans it. Owner call: fix to standard or document as an intentional exception (full-bleed width may suit a 775-row table).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/Reference/Emoji Library.html</span><span class="badge src">2026-07-31-emojis-audit.html, todo-list-sweep.html</span></div>
+          <p class="tev"><b>Checked:</b> Handed to ux-format-audit/owner; To Do List empty so no active tracking line, but no fix reported</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Day-Trips.html custom search: migrate to TVESearch or keep</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Day-Trips.html loads search-autocomplete.js (v=8, fixed 2026-07-31) but never calls TVESearch.attach(); it uses a fully custom native-input filter over window.DATA (departure-city sections). Working correctly. Owner decision deferred: (A) migrate to TVESearch.attach() with custom onPick for consistency, or (B) keep custom. Now documented in TVESearch.html §7b.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Trip-Essentials/Day-Trips.html</span><span class="badge src">tve-search-audit-2026-07-31.html Open Questions</span></div>
+          <p class="tev"><b>Checked:</b> Report explicitly defers decision to owner; script-version fix already applied and doc reclassified</p>
+        </div>
+      </details></div>
+  </section>
+<footer>Generated from a read-only audit of the Recommendations archive against the live codebase. A consolidated backlog for review &mdash; not a to-do commitment.</footer>
+</div>
+</body>
+</html>
