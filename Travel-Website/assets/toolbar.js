@@ -443,18 +443,20 @@
          is toggled by toggleHamMenu()/closeHamMenu(). */
       'body.tve-ham-open #tve-back-to-guide,body.tve-ham-open #tve-back-to-byg{display:none!important}' +
       '.tb-ham-menu a,.tb-ham-menu a:visited{display:block;font-size:14px;color:#3d3a32!important;text-decoration:none;' +
-        'padding:10px 18px;border-bottom:none;-webkit-tap-highlight-color:transparent;cursor:pointer;touch-action:manipulation}' +
+        'padding:10px 24px;border-bottom:none;-webkit-tap-highlight-color:transparent;cursor:pointer;touch-action:manipulation}' +
       /* LOCKED — pill matches desktop .tb-active chip shape (border-radius:14px,
          padding:4px 12px), sized to hug the word only, not full row width.
          Text stays the normal row color — only the border marks it active.
+         margin-left:12px so icon at 12+12=24px aligns with inactive item text at 24px.
          Mirrored in mobile.css. Memory: feedback_hamburger_active_pill. */
       '.tb-ham-menu a.tb-active{display:inline-flex;align-items:center;justify-content:center;color:#3d3a32!important;background:transparent;' +
-        'border:1.5px solid #b85c2a;border-radius:14px;margin:6px 18px;padding:4px 12px;font-weight:600}' +
+        'border:1.5px solid #b85c2a;border-radius:14px;margin:6px 12px;padding:4px 12px;font-weight:600}' +
       '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
-      '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 18px}' +
-      '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 18px 2px}' +
+      '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
+      '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
     '}' +
-    '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}'
+    '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}' +
+    '#tve-back-guides button{display:none!important}}'
     ;
   document.head.appendChild(styleEl);
 
@@ -978,7 +980,7 @@
       'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
       'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
       'cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
-      'margin-right:auto;';
+      'margin-right:auto;-webkit-appearance:none;box-sizing:border-box;line-height:1;font-family:inherit;';
     printBtn.addEventListener('mouseenter', function () {
       if (document.getElementById('tve-print-mode')) return;
       printBtn.style.color = '#b85c2a'; printBtn.style.borderColor = '#b85c2a';
