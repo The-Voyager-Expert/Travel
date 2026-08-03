@@ -274,14 +274,14 @@
   // § 7 Centering; brain_check.py check_toolbar_centering enforces it.
   var maxWidth   = mount ? parseInt(mount.dataset.maxwidth || '760', 10) : 760;
   var base       = new Array(depth + 1).join('../');   // e.g. depth=2 → '../../'
-  var curr     = location.pathname.split('/').pop() || '';
+  var curr     = location.pathname.split('/').pop() || 'index.html';
   var prevHref = mount ? (mount.dataset.prev || '') : '';
   var nextHref = mount ? (mount.dataset.next || '') : '';
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     null,
-    { href: base + 'Guides-Index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
+    { href: base + 'index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
     null,
     { href: base + 'Trip-Essentials/Travel-Packing.html', text: '👕 Packing', full: '👕 Packing Checklist' },
     null,
@@ -606,7 +606,7 @@
   var siteTitle = document.createElement('a');
   siteTitle.className = 'tb-site-title';
   siteTitle.textContent = 'The Voyager Expert';
-  siteTitle.href = base + 'Guides-Index.html';
+  siteTitle.href = base + 'index.html';
   siteTitle.style.textDecoration = 'none';
   bar.appendChild(siteTitle);
 
@@ -656,7 +656,7 @@
   var hamLabel = document.createElement('a');
   hamLabel.className = 'tb-ham-label';
   hamLabel.textContent = 'THE VOYAGER EXPERT';
-  hamLabel.href = base + 'Guides-Index.html';
+  hamLabel.href = base + 'index.html';
   hamLabel.style.cssText = 'text-decoration:none;color:#fff;';
   bar.appendChild(hamLabel);
 
@@ -720,7 +720,7 @@
       hamMenu.appendChild(a2);
       /* OWNER-DIRECTED 2026-07-20: My Trips — injected mobile-only, right under Guides.
          DO NOT REMOVE. brain_check hard-fails if this injection is missing. See Toolbar.html § 18b + Cleanliness Checks Rule 569. */
-      if (/Guides-Index\.html$/.test(item.href)) {
+      if (/(?:Guides-Index|index)\.html$/.test(item.href)) {
         var aTrips = document.createElement('a');
         var sepTrips = document.createElement('div'); sepTrips.className = 'tb-ham-sep'; hamMenu.appendChild(sepTrips);
         aTrips.href = base + 'Trip-Essentials/Trips.html';
@@ -896,7 +896,7 @@
       if (/\-stops-map\.html$/.test(location.pathname)) {
         window.history.back();
       } else {
-        window.location.href = base + 'Guides-Index.html';
+        window.location.href = base + 'index.html';
       }
       return;
     }
@@ -958,7 +958,7 @@
       backBYG.style.color = '#8a6c1a'; backBYG.style.borderColor = '#c8a44a';
     });
     var backGuides = document.createElement('a');
-    backGuides.href = base + 'Guides-Index.html';
+    backGuides.href = base + 'index.html';
     backGuides.textContent = '‹ All Guides';
     backGuides.style.cssText = pillStyle;
     backGuides.addEventListener('mouseenter', function () {
@@ -1077,37 +1077,11 @@
   }());
 
   (function injectBackToGuidePill() {
-    var pagesLinkedFromGuides = {
-      /* also-on-this-site static pills */
-      'Asia-Stats': 1, 'Caribbean-Stats': 1, 'Currency-Guide': 1,
-      'Europe-Stats': 1, 'European-Train-Guide': 1, 'Plug-Adapter-Guide': 1,
-      'Safety-Guide': 1, 'South-America-Stats': 1, 'Stats-Across-Canada': 1,
-      'Stats-Across-US': 1, 'Sunrise-Sunset': 1, 'Time-Zones': 1,
-      'Visas': 1, 'Weather': 1, 'World-Map': 1,
-      /* Best-Of cross-links — injected at runtime by CITY_BEST_OF_MAP below.
-         Not in static guide HTML; the validator reads CITY_BEST_OF_MAP directly.
-         Travel-Stats is NEVER a guide link — owner rule 2026-08-02. */
-      'Best-Amusement-Parks': 1, 'Best-Aquariums': 1,
-      'Best-Architecture': 1, 'Best-Art-Museums': 1, 'Best-Beaches': 1,
-      'Best-Castles': 1, 'Best-Cathedrals': 1, 'Best-Caves': 1,
-      'Best-Gardens': 1, 'Best-Hot-Springs': 1,
-      'Best-Islands': 1, 'Best-Kids-Friendly-Places': 1, 'Best-Kids-Museums': 1,
-      'Best-Lakes': 1, 'Best-Most-Luxurious-Hotels': 1,
-      'Best-Mountains-and-Rock-Formations': 1, 'Best-Museums': 1,
-      'Best-National-Parks-by-Country': 1,
-      'Best-Observation-Decks': 1, 'Best-Resorts': 1, 'Best-Safari': 1,
-      'Best-Scuba-Diving': 1, 'Best-Ski-Resorts': 1,
-      'Best-Ultra-Luxurious-Resorts': 1, 'Best-UNESCO-Sites': 1,
-      'Best-Unique-Museums': 1, 'Best-Volcanoes': 1,
-      'Best-Wine-Regions': 1, 'Best-Wonders-of-the-World': 1
-    };
     var thisPage = location.pathname.replace(/.*\//, '').replace(/\.html$/, '');
-    /* Pill only injects on Trip-Essentials pages in the allow-list (one link
-       away from a guide). Owner rule 2026-07-28: never chain guide-to-guide
-       — a reader who reached Guide B from Guide A's Nearby Guides / "Also in
-       {Country}" strip is now reading Guide B and doesn't need a "back to
-       Guide A" pill cluttering it. */
-    if (!pagesLinkedFromGuides[thisPage]) return;
+    /* Owner rule 2026-07-28: never chain guide-to-guide — a reader who reached
+       Guide B from Guide A's strip doesn't need a "back to Guide A" pill.
+       Skip any page inside the Guides folder (real guide + stops-map + read-about). */
+    if (/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
     /* Source guide = document.referrer when it points at a guide. The
        referrer is empty on a hard refresh, a bookmark/hamburger entry, an
        iOS standalone/PWA launch, or any hop that isn't a direct guide→page
@@ -1153,13 +1127,12 @@
       pill.textContent = '← Back to ' + cityName;
       document.body.appendChild(pill);
       void pill.offsetHeight;
-      /* ── Desktop inline "Also on this site" back card (Currency / Plug / Time Zones only) ──
+      /* ── Desktop inline "Also on this site" back card (all non-guide pages) ──
          Mobile already has the floating pill above. Desktop users get an inline card
          appended to the page's .wrap or .content-wrap, using the shared .also-strip /
          .also-strip-head / .also-links / .also-on-this-site-pill classes from
          web-travel-style.css. Links back to the guide's #also-on-this-site section. */
-      var desktopPages = {'Currency-Guide':1,'Plug-Adapter-Guide':1,'Time-Zones':1};
-      if (desktopPages[thisPage]) {
+      {
         var dCss = document.createElement('style');
         dCss.textContent = '@media(max-width:600px){#tve-back-guide-desktop{display:none!important}}';
         document.head.appendChild(dCss);
@@ -3825,7 +3798,7 @@
      panel) and per-guide hover weather on the cards. Deliberately NOT loaded
      on individual guide pages. Bump the ?v= below whenever weather.js changes
      so the browser refreshes it (it has no version tag on the page itself). */
-  if (curr === 'Guides-Index.html') {
+  if (curr === 'Guides-Index.html' || curr === 'index.html') {
     var _wx = document.createElement('script');
     _wx.src = base + 'assets/weather.js?v=4';
     document.head.appendChild(_wx);

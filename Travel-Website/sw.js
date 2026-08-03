@@ -163,7 +163,9 @@
    would drop the margin — added it at min 1, CACHE to v206. */
 /* 2026-08-03: back-to-guide desktop card anchors after landing element + mobile pill
    fixes — bumped toolbar.js min to 154, CACHE to v207. */
-var CACHE = 'travel-cache-v207';
+/* 2026-08-03: Guides-Index.html → index.html (no-redirect root URL); back-to-guide pill
+   site-wide (all non-guide pages) — bumped toolbar.js min to 155, CACHE to v208. */
+var CACHE = 'travel-cache-v208';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -171,7 +173,7 @@ var CACHE = 'travel-cache-v207';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 154, 'mobile.css': 65, 'web-travel-style.css': 6, 'Read-About.css': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 155, 'mobile.css': 65, 'web-travel-style.css': 6, 'Read-About.css': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
@@ -228,7 +230,7 @@ self.addEventListener('fetch', function (e) {
     }).catch(function () {
       return caches.match(fetchReq).then(function (hit) {
         if (hit) return hit;
-        if (req.mode === 'navigate') return caches.match('Guides-Index.html');
+        if (req.mode === 'navigate') return caches.match('index.html');
         return Response.error();
       });
     })
