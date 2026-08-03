@@ -84,10 +84,10 @@
   <h1>Open Recommendations</h1>
   <div class="sub">Every idea proposed across the <b>Recommendations</b> archive that is <b>not yet implemented</b>. Each was cross-checked against the live codebase &mdash; confirmed-done items were dropped, new-city-guide suggestions routed to the destination-scouting report. Click any tile to expand. Status: <b>OPEN</b> = not done &middot; <b>PARTIAL</b> = partly done &middot; <b>UNSURE</b> = couldn't verify from code alone. <b>PENDING</b> = awaiting your approval (CORE RULES / toolbar / new design).</div>
   <div class="totals">
-    <div class="stat"><b>92</b><span>open items</span></div>
-    <div class="stat s-open"><b>80</b><span>Open</span></div>
-    <div class="stat s-partial"><b>4</b><span>Partial</span></div>
-    <div class="stat s-unsure"><b>8</b><span>Unsure</span></div>
+    <div class="stat"><b>115</b><span>open items</span></div>
+    <div class="stat s-open"><b>94</b><span>Open</span></div>
+    <div class="stat s-partial"><b>7</b><span>Partial</span></div>
+    <div class="stat s-unsure"><b>14</b><span>Unsure</span></div>
     <div class="stat s-pending"><b>0</b><span>Pending approval</span></div>
   </div>
   <div class="controls">
@@ -95,7 +95,7 @@
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=false)">Collapse all</button>
   </div>
 </header>
-<nav class="nav"><a href="#ux-css-layout" class="navchip">📱 UX, CSS &amp; Layout <span class="navcount">22</span></a><a href="#new-features-pages" class="navchip">🆕 New Features &amp; Pages <span class="navcount">28</span></a><a href="#tools-scripts" class="navchip">🔧 Tools &amp; Scripts <span class="navcount">3</span></a><a href="#trip-essentials-pages" class="navchip">🧳 Trip-Essentials Pages <span class="navcount">37</span></a><a href="#docs-rules" class="navchip">📄 Docs &amp; Rules <span class="navcount">2</span></a></nav>
+<nav class="nav"><a href="#ux-css-layout" class="navchip">📱 UX, CSS &amp; Layout <span class="navcount">22</span></a><a href="#new-features-pages" class="navchip">🆕 New Features &amp; Pages <span class="navcount">28</span></a><a href="#tools-scripts" class="navchip">🔧 Tools &amp; Scripts <span class="navcount">14</span></a><a href="#validators-gates" class="navchip">✅ Validators &amp; Gates <span class="navcount">5</span></a><a href="#trip-essentials-pages" class="navchip">🧳 Trip-Essentials Pages <span class="navcount">37</span></a><a href="#guides" class="navchip">🗺 Guides <span class="navcount">5</span></a><a href="#docs-rules" class="navchip">📄 Docs &amp; Rules <span class="navcount">4</span></a><a href="#rules-change-approval" class="navchip">⚖️ Rules Change Approval <span class="navcount">0</span></a></nav>
 
   <section class="cat" id="ux-css-layout">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -716,22 +716,10 @@
   <section class="cat" id="tools-scripts">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
       <span class="catname">🔧 Tools &amp; Scripts</span>
-      <span class="catcount">3</span>
+      <span class="catcount">14</span>
       <span class="catchev">&rsaquo;</span>
     </button>
     <div class="catbody">
-      <details class="tile">
-        <summary>
-          <span class="tstatus st-open">OPEN</span>
-          <span class="ttitle">Nearby-guides: owner call needed on MAX_DIST_KM / MAX_NEARBY</span>
-          <span class="chev">&rsaquo;</span>
-        </summary>
-        <div class="tbody">
-          <p class="tdetail">Re-diagnosed 2026-08-03, replacing the old &quot;inherently asymmetric, ~225 non-bidirectional pairs&quot; framing. Measured: 762 directed links across 232 guides, <b>194 one-way</b>, from two causes — neither a mechanical sweep. <b>(1) 86 are cap collisions</b>: the target already lists its 5 closest neighbours (<code>MAX_NEARBY = 5</code>), so reciprocating would mean displacing a closer city. <b>(2) 60 guides ship a Nearby Guides section with ZERO shipped guide inside <code>MAX_DIST_KM = 350</code></b> (Tokyo, Singapore, Sydney, Reykjavik, Cape Town, Bali, Seoul …) — their blocks predate the current radius. One owner decision remains: raise the radius/cap for isolated cities, or accept that those 60 ship no Nearby Guides section. A crib cannot make that call — it deletes a visible section from 60 guides.</p>
-          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/build_nearby_guides.py (MAX_DIST_KM / MAX_NEARBY) + 60 guide pages</span><span class="badge src">pending-fixes-sweep 2026-08-03 (re-diagnosis)</span></div>
-          <p class="tev"><b>Checked:</b> The third cause &mdash; a stale block no re-run could correct &mdash; <b>is fixed and shipped</b>: the tool returned early on zero candidates and left the old block in place, so Istanbul kept a &quot;🗺️ Rhodes&quot; pill for a guide ~700 km away. The zero-candidate path now strips it; Istanbul re-validated 880 passed / 0 failed. The other 60 were deliberately NOT regenerated &mdash; that is the owner decision above.</p>
-        </div>
-      </details>
       <details class="tile">
         <summary>
           <span class="tstatus st-open">OPEN</span>
@@ -756,9 +744,219 @@
           <p class="tev"><b>Checked:</b> Sports-Calendar.html and Trip-Stacking.html both confirmed on disk; grep &#x27;Sports-Calendar|Trip-Stacking&#x27; toolbar.js → 0 matches (re-checked 2026-08-03)</p>
         </div>
       </details>
-                                                                              </div>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">validate_best_of_link_health.py validator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">External HTTP link-health sweep across all Best-of pages. Carried forward from the 07-22 tooling log; dropped in 07-30 run due to bot-detection on external URLs.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/</span><span class="badge src">2026-07-30-tooling-gaps-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> No validate_best_of_link* script in Brain/scripts/ (grep returned none).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">validate_planning_pages_coverage.py validator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Coverage validator for planning pages, carried forward as an outstanding missing script from the 07-22 log.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/</span><span class="badge src">2026-07-30-tooling-gaps-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> No validate_planning_pages* script in Brain/scripts/ (grep returned none).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">validate_best_of_guide_crosslinks.py validator</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Validator confirming Best-of pages and guides cross-link correctly. Carried forward as outstanding from the 07-22 log.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/</span><span class="badge src">2026-07-30-tooling-gaps-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> No validate_best_of_guide_crosslink* script in Brain/scripts/ (grep returned none).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Make nearby-guides links bidirectional fleet-wide</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">build_nearby_guides.py is inherently asymmetric, leaving ~225 nearby-guide pairs non-bidirectional across the fleet (guide A lists B as nearby but B does not list A). Requires an attended session to reconcile.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/build_nearby_guides.py; Travel-Website/Guides/</span><span class="badge src">2026-07-30-guide-coverage-report.html</span></div>
+          <p class="tev"><b>Checked:</b> Reported as open item carried forward on 2026-07-30; no reconciliation reported in later coverage runs (2026-07-31 only re-ran build with same asymmetric tool).</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">check_back_to_guide_pill: Travel-Stats allow-list orphan</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">brain_check advisory warn: Travel-Stats is in the back-to-guide pill allow-list but no guide links to it, so the pill will never inject on those pages. Advisory; either drop Travel-Stats from the allow-list or accept as intentional.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/brain_check.py allow-list / toolbar.js</span><span class="badge src">2026-07-31-brain-health-check, brainmd-audit, todo-list-sweep</span></div>
+          <p class="tev"><b>Checked:</b> Reported as live advisory warn in multiple 2026-07-31 audits; no fix reported</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Safety-Guide badge fix reverted by each Stockholm Publish</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Safety-Guide.html badge-dot/level-color fix (a.badge:visited rule + Apple-emoji dots replacing banned .badge-dot spans) is repeatedly reverted when a Stockholm &#x27;Publish&#x27; commit ships Trip-Essentials pages from a working tree lacking the prior fix. todo-list-sweep re-applied it 2026-07-31 (6 fails→0). Root cause (Publish overwrites concurrent Trip-Essentials fixes) is a recurring regression, not permanently fixed.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Trip-Essentials/Safety-Guide.html + Publish workflow</span><span class="badge src">2026-07-31-todo-list-sweep.html, rule-compliance-audit.html; memory project_safety_guide_badge_regression</span></div>
+          <p class="tev"><b>Checked:</b> Memory note confirms it is re-applied each Stockholm Publish; drift-log entry logged; workflow root cause unaddressed</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Mobile-render retry loop on new guide builds</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">New builds hit repeated Playwright mobile-render hard-fails (Cape Town: 4 consecutive) only after the expensive validate+verify+verify-booking chain passes; each fail forces a full re-ship. No pre-build 393px mobile checklist exists. Logged to Drift Log as &#x27;Watching&#x27; — monitoring, not yet actioned.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">CLAUDE.md build phases / guide_tools.py pre-ship mobile step</span><span class="badge src">2026-07-30-build-process-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Drift-log entry status Watching; no rule/script change made pending more evidence</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">TR-11 toolbar.js ?v= cache-bust drift across sibling files</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">In most guide folders the three sibling HTML files (main / read-about / stops-map) disagree on the ?v=N cache-bust query on their toolbar.js reference, so tap-through re-fetches toolbar.js and defeats the cache-bust. Emitter side was fixed (build_guide_map.py now emits ?v=100), and a warn-level TR-11 check was added, but pre-existing shipped guides remain drifted until regenerated. Report cited 229 of 232 drifted at introduction.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/*/*.html; Brain/scripts/build_guide_map.py</span><span class="badge src">2026-08-01-guide-drift-audit-run5.html</span></div>
+          <p class="tev"><b>Checked:</b> 48 of 232 main guide files still reference a bare toolbar.js (no ?v=); many folders still internally inconsistent. Emitter fix + warn check in place; fleet self-corrects only on rebuild.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Fleet-wide From-Hotel opener names wrong first stop</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">New 2026-07-30 hard-fail: the &#x27;🏨 From Hotel: … → [Destination]&#x27; day-opener must name the actual first stop-block after route-optimizer reordering. pending-fixes-sweep fixed 5 guides (20 openers); report states 163 guides outstanding. To Do List is now empty so status is ambiguous — either resolved fleet-wide, since brain_check shows 0 fail, or the tracking line was removed.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Guides/*/*_v1.html (day openers)</span><span class="badge src">2026-07-31-pending-fixes-sweep.html, visual-drift-watch.html</span></div>
+          <p class="tev"><b>Checked:</b> Report says 163 guides remaining; To Do List empty; all 2026-07-31 audits show brain_check 0 fail — a live hard-fail would block, so most/all may now be clean</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">emoji-audit SKILL.md may mislabel Icon Order as git-tracked</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">emojis-audit report flagged that the routine&#x27;s SKILL.md Step 7 describes Icon Order and Format.html as git-tracked when it is gitignored (only Hotel Banner.html is the sole tracked CORE RULES file). A future run following the &#x27;commit and push it&#x27; half could force-add. Owner-only (SKILL.md lives outside repo). Could not verify the current wording under the renamed &#x27;emoji-audit&#x27; task.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">~/.claude/scheduled-tasks/emoji-audit/SKILL.md</span><span class="badge src">2026-07-31-emojis-audit.html, todo-list-sweep.html</span></div>
+          <p class="tev"><b>Checked:</b> grep of emoji-audit/SKILL.md for &#x27;Icon Order&#x27;/&#x27;git-tracked&#x27;/&#x27;Step 7&#x27; returned nothing — content not found under that name; brain-health-check Step 7 P0 was fixed, so this may have been too</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">74-guide img width/height missing (CLS risk)</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Existing guide-infrastructure To Do item noted as context by visual-drift: ~74 guides carry &lt;img&gt; tags lacking explicit width/height, a layout-shift (CLS) risk. To Do List is now empty so tracking status is unclear.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Guides/*/*_v1.html img tags</span><span class="badge src">2026-07-31-visual-drift-watch.html §8</span></div>
+          <p class="tev"><b>Checked:</b> Mentioned as pre-existing To Do context; To Do List now empty — cannot confirm open vs resolved</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">validate_flight_index.py WARNs on Granada/Cape Town times</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">validate_flight_index.py warned that Granada shows 13h30m (expected ~16h30m) and Cape Town 24h30m (expected ~23h30m) flight durations; needs cross-check against Delta flight data. Logged 2026-07-30 for deep-audit/guide-content-audit. To Do List now empty — status unclear.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">Granada / Cape Town guide flight index data</span><span class="badge src">2026-07-30-scripts-docs-audit.html To Do List Changes</span></div>
+          <p class="tev"><b>Checked:</b> Logged as new To Do item 2026-07-30; To Do List now empty; not confirmed fixed</p>
+        </div>
+      </details></div>
   </section>
-  
+  <section class="cat" id="validators-gates">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">✅ Validators &amp; Gates</span>
+      <span class="catcount">5</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Promote TR-10 (rel=noopener) to hard-fail; fleet now aligned</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">TR-10 (every target=_blank anchor must carry rel=noopener) shipped as warn-level because 203 guides were non-compliant. The fleet has since been backfilled to 100% compliance, so the run-4 recommendation to upgrade TR-10 from warn() to check() in validate_itinerary.py is now actionable to freeze the invariant.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/validate_itinerary.py</span><span class="badge src">2026-08-01-guide-drift-audit-run4.html</span></div>
+          <p class="tev"><b>Checked:</b> validate_itinerary.py line 2379 still calls warn() for TR-10, not check() (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Add preventive gates for img loading=lazy and width/height</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Run-5 census found loading=&quot;lazy&quot; and width=+height= both present on 100% of img tags across all 232 guides but neither is validator-enforced. Candidate preventive TR-12/TR-13 hard-fails to freeze these CLS/perf invariants (like NB-4 froze the also-on-this-site shim).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/validate_itinerary.py</span><span class="badge src">2026-08-01-guide-drift-audit-run5.html</span></div>
+          <p class="tev"><b>Checked:</b> grep &#x27;loading.*lazy|TR-12|TR-13&#x27; validate_itinerary.py → 0 matches; no preventive check implemented (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Extend TR-11 consistency check to other shared assets</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">TR-11 only covers toolbar.js intra-folder consistency. Guide folders also reference web-travel-style.css, mobile.css, guide-style.css, leaflet/MarkerCluster CSS — same ?v= sibling-drift risk. Recommendation: generalize TR-11 to survey every shared-asset reference in the folder.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/scripts/validate_itinerary.py</span><span class="badge src">2026-08-01-guide-drift-audit-run5.html</span></div>
+          <p class="tev"><b>Checked:</b> Run-5 forward-watch recommendation; TR-11 currently scoped to toolbar.js only.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Food Delivery preamble check misses div-based preamble</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The Food Delivery preamble ban (Cleanliness rule 402) only counts &lt;p&gt; tags in #food-delivery. Div-based preamble text before the first .extras-sub entry is not caught. The original _fd_preamble_bad variable was removed 2026-05-24 and replaced with a &lt;p&gt;-tag counter, leaving a coverage gap the doc itself flags as &#x27;Partially enforced&#x27;.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/validate_itinerary.py (Food Delivery section, ~line 14413)</span><span class="badge src">2026-07-31-validator-audit-part-12.html</span></div>
+          <p class="tev"><b>Checked:</b> validate_itinerary.py ~line 14413: check still counts only &lt;p&gt; tags via re.findall(r&#x27;&lt;p\b&#x27;, _fd_inner); no div-based preamble detection added (re-checked 2026-08-03)</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Fix validator-audit claim snippet to pick lowest UNcompleted part</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The shared claim snippet selects the lowest part not in active_claims rather than the lowest part not in completed_this_cycle, so a crib running alone always re-audits Part 1 while parts 12-20 stay pending until 12+ cribs run concurrently. Caused a wasted Part-1 re-run on 2026-07-22. Logged for the task-file maintainer. Not in the validator scripts themselves (lives in the scheduled-task claim snippet / validator_audit_state.json orchestration) so scope/location is uncertain.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: low</span><span class="badge tgt">validator-audit scheduled-task claim snippet / Brain/scripts/validator_audit_state.json</span><span class="badge src">2026-07-22-validator-audit-part-1-run2.html</span></div>
+          <p class="tev"><b>Checked:</b> validator_audit_state.json exists; claim-selection logic not found in any Brain/scripts/*.py (crib_safety.py/daily_audit.py claim logic is guide-lease, not part-selection). Cycle counter has since advanced (Part 10 = Cycle 9), so may be moot, but cannot confirm the snippet was corrected.</p>
+        </div>
+      </details></div>
+  </section>
   <section class="cat" id="trip-essentials-pages">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
       <span class="catname">🧳 Trip-Essentials Pages</span>
@@ -1211,11 +1409,78 @@
         </div>
       </details></div>
   </section>
-  
+  <section class="cat" id="guides">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">🗺 Guides</span>
+      <span class="catcount">5</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Replace 44 sideways-downloaded guide photos</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">audit_photo_orientation.py found 44 photos across 40 guides stored in the wrong orientation (landscape stored where Commons original is portrait, and vice-versa). Root cause was fixed in commons_photo.py (exif_transpose + longest-side resize + orientation-mismatch save block), but the individual photos still need re-downloading from a correctly-oriented Commons source and their HTML width/height updated. Files listed: Bali, Berlin, Bora-Bora (x2), Cancun, Chiang-Mai, Denver, Dublin, Fortaleza, Gothenburg (x2), Hamburg, Hilton-Head-Island, Hoi-An, La-Jolla, Lake-Como, Lima, Ljubljana, Lyon, Madrid, Malaga, Monaco, Osaka, Oxford, Paris, Petra, Porto-Alegre, Puerto-Vallarta, San-Jose, Santa-Cruz, Sarasota, Shanghai, Split, Sao-Luis, Taipei, Tallinn, Tenerife, Vancouver (x3), Venice, Verona, Virgin-Islands, Wellington.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: high</span><span class="badge tgt">Travel-Website/Guides/&lt;City&gt;/_build/assets/</span><span class="badge src">2026-07-24-photo-orientation-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Sampled 22 of the listed files with PIL: 21 still stored in the reported wrong orientation (e.g. Berlin Holocaust-Mahnmal 800x450 landscape, Ljubljana Castle 800x600 landscape, Taipei101 800x1066 portrait), 1 missing (Osaka Tsutenkaku). No replacements applied.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Ljubljana: add a dedicated train-day itinerary</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">6-day Ljubljana guide ships without a dedicated train day (Day Structure.html §6). Day 6 covers Postojna/Predjama by car/coach; Lake Bled and Bohinj are rail-reachable but not structured as a train day. Logged for a future day-expansion or content refresh.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/Ljubljana/ljubljana_v1.html</span><span class="badge src">2026-07-24-guide-content-audit-ljubljana.html</span></div>
+          <p class="tev"><b>Checked:</b> Reported as accepted warning logged to To Do; not addressed in-session. Not re-verified in codebase but no train-day expansion reported since.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Verify Granada and Cape Town flight-time discrepancies</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Flight-time WARNs flagged for verification: Granada (13h30m vs 16h30m) and Cape Town (24h30m vs 23h30m). Remain in To Do under deep-audit; not touched.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/Granada/, Cape-Town/</span><span class="badge src">2026-07-31-guide-coverage-audit.html</span></div>
+          <p class="tev"><b>Checked:</b> Listed as open To Do item on 2026-07-31; no resolution reported.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-partial">PARTIAL</span>
+          <span class="ttitle">Backfill From-Hotel openers on pre-fix guides</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Fleet scan found 168 of 233 guides where the &#x27;🏨 From Hotel&#x27; opener points at a stop that is no longer the first stop of the day, because optimize_route.py historically reordered stops after openers were written. The optimizer has since been patched to rewrite the opener destination (Option B, permanent fix), so newly-optimized guides self-correct, but pre-fix guides shipped before that patch may still carry stale openers until re-optimized. In-window offenders (Madrid Day 1, Cape Town Days 1-2, Hilton Head) were fixed; Salzburg Days 4-5 and the rest of the fleet were not individually verified.</p>
+          <div class="tmeta"><span class="badge eff-l">L</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/*/[slug]_v1.html</span><span class="badge src">2026-07-30-guide-audit-and-fix-5.html; 2026-07-30-guide-coverage-report.html</span></div>
+          <p class="tev"><b>Checked:</b> optimize_route.py lines 430-435 now &#x27;Update hotel-first destination to match new first stop&#x27; (root cause fixed). Spot-checked: Madrid Day 1 opener now &#x27;→ Galería de las Colecciones Reales&#x27; (fixed), Salzburg openers look plausible. Fleet-wide backfill of 168 pre-fix guides not verified.</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-unsure">UNSURE</span>
+          <span class="ttitle">Metro heading emoji drift: 🚊 should be 🚝 fleet-wide</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Getting Around metro headings use 🚊 (regional rail) where 🚝 (metro) is correct. Flagged during the Zakynthos build as an advisory that applies fleet-wide; not in scope to fix in that session.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: low</span><span class="badge tgt">Travel-Website/Guides/*/</span><span class="badge src">2026-07-23-guide-build-crib-3.html</span></div>
+          <p class="tev"><b>Checked:</b> Zakynthos itself has no metro (island) so not verifiable there; fleet-wide prevalence not scanned. Advisory only, no validator gate.</p>
+        </div>
+      </details></div>
+  </section>
   <section class="cat" id="docs-rules">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
       <span class="catname">📄 Docs &amp; Rules</span>
-      <span class="catcount">2</span>
+      <span class="catcount">4</span>
       <span class="catchev">&rsaquo;</span>
     </button>
     <div class="catbody">
@@ -1231,7 +1496,31 @@
           <p class="tev"><b>Checked:</b> grep &#x27;Digital-Nomad-Visas&#x27; Brain/CORE RULES/Website-Main-Pages-Links.html → 0 matches; still absent (re-checked 2026-08-03)</p>
         </div>
       </details>
-                  <details class="tile">
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Mobile-grid pill border-radius: spec 0 vs live 6px</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Visual-drift open spec questions: also-on-site-mobile-grid and nearby-guides-mobile-grid original spec says border-radius:0 but live CSS has border-radius:6px. brain_check does not enforce radius. Owner decision needed to reconcile the manifest spec with the shipped CSS.</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/Reference/Visual-Reference/MANIFEST.md vs assets CSS</span><span class="badge src">2026-07-31-visual-drift-watch.html §7</span></div>
+          <p class="tev"><b>Checked:</b> Listed as 2 open spec questions in reference-store health; owner-decision, not auto-resolvable</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">OPEN</span>
+          <span class="ttitle">Emoji Library search box: 9 chrome deviations from site standard</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Brain/Reference/Emoji Library.html paints its own grey (#999) magnifier vs site-standard gold #c8a44a, plus border-radius 8px vs 6px and other divergences from Colors and Font Size §14 / Cleanliness Rules 498-500,530,588. It is a Brain reference doc (not a Travel-Website/ page) so §14 does not strictly govern and brain_check never scans it. Owner call: fix to standard or document as an intentional exception (full-bleed width may suit a 775-row table).</p>
+          <div class="tmeta"><span class="badge eff-s">S</span><span class="badge conf">conf: med</span><span class="badge tgt">Brain/Reference/Emoji Library.html</span><span class="badge src">2026-07-31-emojis-audit.html, todo-list-sweep.html</span></div>
+          <p class="tev"><b>Checked:</b> Handed to ux-format-audit/owner; To Do List empty so no active tracking line, but no fix reported</p>
+        </div>
+      </details>
+      <details class="tile">
         <summary>
           <span class="tstatus st-open">OPEN</span>
           <span class="ttitle">Day-Trips.html custom search: migrate to TVESearch or keep</span>
@@ -1244,7 +1533,14 @@
         </div>
       </details></div>
   </section>
-  
+  <section class="cat" id="rules-change-approval">
+    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
+      <span class="catname">⚖️ Rules Change Approval</span>
+      <span class="catcount">0</span>
+      <span class="catchev">&rsaquo;</span>
+    </button>
+    <div class="catbody"><p class="rules-empty">No pending approvals.</p><p class="rules-hint">Scope: CORE RULES edits &middot; toolbar structural changes &middot; new design decisions. Everything else goes to the To&nbsp;Do&nbsp;List for cribs to resolve. To propose: add an entry to <code>Brain/scripts/open_recs/rules_changes.json</code> and rebuild.</p></div>
+  </section>
 <footer>Generated from a read-only audit of the Recommendations archive against the live codebase. Rules Change Approval section built from Brain/scripts/open_recs/rules_changes.json. A consolidated backlog for review &mdash; not a to-do commitment.</footer>
 </div>
 </body>
