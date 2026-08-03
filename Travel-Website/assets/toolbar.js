@@ -1153,6 +1153,34 @@
       pill.textContent = '← Back to ' + cityName;
       document.body.appendChild(pill);
       void pill.offsetHeight;
+      /* ── Desktop inline "Also on this site" back card (Currency / Plug / Time Zones only) ──
+         Mobile already has the floating pill above. Desktop users get an inline card
+         appended to the page's .wrap or .content-wrap, using the shared .also-strip /
+         .also-strip-head / .also-links / .also-on-this-site-pill classes from
+         web-travel-style.css. Links back to the guide's #also-on-this-site section. */
+      var desktopPages = {'Currency-Guide':1,'Plug-Adapter-Guide':1,'Time-Zones':1};
+      if (desktopPages[thisPage]) {
+        var dCss = document.createElement('style');
+        dCss.textContent = '@media(max-width:600px){#tve-back-guide-desktop{display:none!important}}';
+        document.head.appendChild(dCss);
+        var strip = document.createElement('div');
+        strip.id = 'tve-back-guide-desktop';
+        strip.className = 'also-strip';
+        var hdr = document.createElement('div');
+        hdr.className = 'also-strip-head';
+        hdr.textContent = '💥 Also on this site';
+        var linksRow = document.createElement('div');
+        linksRow.className = 'also-links';
+        var bp = document.createElement('a');
+        bp.className = 'also-on-this-site-pill';
+        bp.href = guideHref;
+        bp.textContent = '← Back to ' + cityName + ' guide';
+        linksRow.appendChild(bp);
+        strip.appendChild(hdr);
+        strip.appendChild(linksRow);
+        var cont = document.querySelector('.wrap') || document.querySelector('.content-wrap');
+        if (cont) { cont.appendChild(strip); }
+      }
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', build);
