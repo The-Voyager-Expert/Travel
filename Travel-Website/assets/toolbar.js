@@ -1178,8 +1178,17 @@
         linksRow.appendChild(bp);
         strip.appendChild(hdr);
         strip.appendChild(linksRow);
-        var cont = document.querySelector('.wrap') || document.querySelector('.content-wrap');
-        if (cont) { cont.appendChild(strip); }
+        /* Insert the card right after the anchor the user landed on (e.g. #Austria),
+           so it's visible without scrolling on long pages like Currency and Plug-Adapter.
+           Fall back to appending to .wrap/.content-wrap if the anchor isn't found. */
+        var anchorId = ref.split('#')[1] || '';
+        var anchorEl = anchorId ? document.getElementById(anchorId) : null;
+        if (anchorEl && anchorEl.parentNode) {
+          anchorEl.parentNode.insertBefore(strip, anchorEl.nextSibling);
+        } else {
+          var cont = document.querySelector('.wrap') || document.querySelector('.content-wrap');
+          if (cont) { cont.appendChild(strip); }
+        }
       }
     }
     if (document.readyState === 'loading') {
