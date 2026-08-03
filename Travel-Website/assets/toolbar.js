@@ -4332,4 +4332,35 @@
     }, 250);
   }
 
+  // ── Collapsible extras sections ──────────────────────────────────────────
+  (function _sectionCollapse() {
+    function _setup() {
+      document.querySelectorAll('.extras-section').forEach(function (sec) {
+        var title = sec.querySelector(':scope > .extras-title');
+        if (!title || title.querySelector('.sec-chev')) return;
+        var chev = document.createElement('span');
+        chev.className = 'sec-chev';
+        chev.setAttribute('aria-hidden', 'true');
+        chev.textContent = '›'; /* › */
+        title.appendChild(chev);
+        title.setAttribute('role', 'button');
+        title.setAttribute('tabindex', '0');
+        title.addEventListener('click', function () {
+          sec.classList.toggle('collapsed');
+        });
+        title.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            sec.classList.toggle('collapsed');
+          }
+        });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setup);
+    } else {
+      _setup();
+    }
+  }());
+
 }());
