@@ -180,7 +180,10 @@
    Guides Index made document.referrer a guide, so "← Back to {City}" fired on the
    index (and would on Before-You-Go / Climate-Finder / When-to-Go). injectBackToGuidePill
    now early-returns on those no-standalone-content hubs. — toolbar.js min to 157, CACHE to v212. */
-var CACHE = 'travel-cache-v212';
+/* 2026-08-04: Time Zones / Plug Adapter / Currency pills in the guide "Also on this
+   site" strip are now MOBILE-ONLY — hidden on desktop (≥601px) via guide-style.css
+   attribute-href media query. Pills stay in guide HTML (no per-guide edit). — guide-style.css min to 53, CACHE to v213. */
+var CACHE = 'travel-cache-v213';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -188,7 +191,7 @@ var CACHE = 'travel-cache-v212';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 157, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 53, 'toolbar.js': 157, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
