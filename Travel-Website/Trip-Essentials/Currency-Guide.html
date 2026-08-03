@@ -1799,7 +1799,12 @@ html { scroll-behavior: smooth; }
   var indexTable=document.querySelector('.index-table');
   var noRes=document.getElementById('cur-noresult');
   function norm(s){return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}
-  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();location.hash=hash;var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
+  /* Scroll ONLY — never assign location.hash. Assigning it triggers iOS Safari's
+     native fragment navigation, which drops the compositor layer for the fixed
+     "← Back to {City}" pill so it stays invisible until a later repaint. Match the
+     other jump-to-anchor pages: scrollIntoView() and never touch the URL hash.
+     Incoming #country deep-links still work via the browser's native on-load scroll. */
+  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
   rows.forEach(function(r){r.addEventListener('click',function(e){var a=r.querySelector('a[href^="#"]');if(!a)return;e.preventDefault();jumpTo(a.getAttribute('href'));});});
   /* per-country converter: type a US$ amount, see it in that currency */
   function fmtAmt(v){

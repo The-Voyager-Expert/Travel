@@ -168,7 +168,12 @@
 /* 2026-08-03: back-to-guide DESKTOP card now injects on every page layout (robust
    container fallback — .wrap/.wx-wrap/.dt-wrap/.index-section/… + toolbar fallback);
    was silently dropped on pages without .wrap. Bumped toolbar.js min to 156, CACHE to v209. */
-var CACHE = 'travel-cache-v209';
+/* 2026-08-03: Currency-Guide.html jumpTo still assigned location.hash=hash (the iOS
+   compositor-drop bug that hides the fixed "← Back to {City}" pill) — Plug-Adapter was
+   fixed 2026-08-01 but Currency was missed. Removed it so Currency matches the other
+   scroll-only jump pages. CACHE bump forces the stale Currency/Plug page HTML off the
+   user's device. — CACHE to v210. */
+var CACHE = 'travel-cache-v210';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
