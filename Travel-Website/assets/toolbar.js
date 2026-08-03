@@ -1151,17 +1151,30 @@
         linksRow.appendChild(bp);
         strip.appendChild(hdr);
         strip.appendChild(linksRow);
-        /* Insert the card right after the anchor the user landed on (e.g. #Austria),
-           so it's visible without scrolling on long pages like Currency and Plug-Adapter.
-           Use location.hash (current page anchor) not the referrer anchor.
-           Fall back to appending to .wrap/.content-wrap if the anchor isn't found. */
+        /* Placement — must land on EVERY page layout, not just .wrap ones.
+           1) If the reader arrived at a specific anchor (e.g. #Austria) and that
+              element exists on this page, drop the card right after it so it's
+              visible without scrolling on long pages (Currency, Plug-Adapter).
+           2) Otherwise put the card at the TOP of the page's main content so it's
+              visible on load — regardless of the wrapper class this page uses.
+              Container classes vary across Trip-Essentials (.wrap, .wx-wrap,
+              .dt-wrap, .index-section, …); a broad selector + toolbar fallback
+              guarantees the card appears on every current AND future page. */
         var anchorId = location.hash ? location.hash.slice(1) : '';
         var anchorEl = anchorId ? document.getElementById(anchorId) : null;
         if (anchorEl && anchorEl.parentNode) {
           anchorEl.parentNode.insertBefore(strip, anchorEl.nextSibling);
         } else {
-          var cont = document.querySelector('.wrap') || document.querySelector('.content-wrap');
-          if (cont) { cont.appendChild(strip); }
+          var cont = document.querySelector(
+            '.wrap, .content-wrap, .wx-wrap, .dt-wrap, .index-section, main, .container, article'
+          );
+          if (cont) {
+            cont.insertBefore(strip, cont.firstChild);
+          } else {
+            var tb = document.querySelector('.tb');
+            if (tb && tb.parentNode) { tb.parentNode.insertBefore(strip, tb.nextSibling); }
+            else { document.body.insertBefore(strip, document.body.firstChild); }
+          }
         }
       }
     }
