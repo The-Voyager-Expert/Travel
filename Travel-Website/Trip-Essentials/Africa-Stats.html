@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Stats Across Africa</title>
+<style>.stats-nav { display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 8px 0 10px; margin: 0 0 28px;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg); }
+.stats-nav a { font-family: inherit; display: inline-flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 400; color: var(--muted); text-decoration: none; white-space: nowrap; }
+
+@media (min-width: 601px) {
+  .stats-nav { gap: 0; }
+  .stats-nav a { flex: 1 1 calc(100% / 9 - 0.01px); height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
+  .stats-nav a:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  .stats-nav a.active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+.stats-nav a:hover, .stats-nav a.active { border-color: var(--rust); color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+.bar-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 20px; overflow: hidden; scroll-margin-top: 56px; }
+.cat-sec-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border2); background: var(--surface); }
+.bar-rank { width: 20px; font-size: 11px; color: var(--muted); text-align: right; flex-shrink: 0; }
+.bar-country { width: 150px; font-size: 12px; color: var(--text); font-weight: 400; flex-shrink: 0; }
+.bar-val { width: 78px; font-size: 11px; color: var(--muted); text-align: right; flex-shrink: 0; }
+.sun-table td.country-name { text-align: left; font-size: 12px; color: var(--text); font-weight: 400; }
+.fact-table td.fact-left { text-align: left; font-weight: 600; }
+.search-row { display: flex; flex-direction: column; align-items: center; margin: 0 0 18px; }
+.search-box { width: 360px; max-width: 100%; padding: 11px 18px; font-size: 15px; border: 1.5px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); outline: none; transition: border-color .15s; }
+.search-box::placeholder { color: #A8895A; }
+.search-box:focus { border-color: #B8860B; }
+.sr-table td { padding: 5px 6px; border-bottom: 1px solid var(--border2); }
+.sr-table tr:last-child td { border-bottom: none; }
+.sr-table td.sr-cat { color: var(--muted); font-size: 12px; }
+.footnotes strong { color: var(--text); }
+.footnotes ul.src-list { margin: 10px 0 0; padding-left: 20px; }
+.footnotes ul.src-list li { margin-bottom: 6px; line-height: 1.5; }
+.footnotes ul.src-list a { color: var(--rust); text-decoration: none; font-weight: 600; }
+.footnotes ul.src-list a:hover { }
+.footnotes .fn-tail { margin-top: 10px; }
+#country-select { width: 100%; box-sizing: border-box; font-family: inherit; font-size: 16px; color: #3d3a32; background-color: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px; padding: 11px 28px 11px 14px; cursor: pointer; }@media (max-width: 700px) {
+  .bar-country { width: 128px; }
+  .bar-val { width: 64px; }
+  .wrap { padding-left: 14px; padding-right: 14px; }
+  .search-box { width: 100%; }
+}@media (max-width: 600px) {
+  nav.stats-nav { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; }
+  nav.stats-nav a { font-family: inherit; text-align: center; }
+  .search-row { margin: 0 0 8px !important; }
+  .search-hint { min-height: 0 !important; margin-top: 0 !important; }
+  .cat-sec-head { flex-wrap: wrap !important; }
+  .cat-sec-src { flex-basis: 100% !important; margin-top: 2px; }
+}
+
+.city-link { color: var(--text); text-decoration: none; font-weight: 400; }
+.city-link::after { content: " \2192"; color: #7a3b1e; font-weight: 600; margin-left: 3px; }
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="980" data-updated="2026-08-03"></div>
+<script src="../assets/toolbar.js?v=100"></script>
+<div class="wrap">
+
+<div class="page-header"><h1>STATS ACROSS AFRICA</h1></div>
+
+<div class="search-row">
+  <input type="search" id="country-search" class="search-box" placeholder="Country" aria-label="Search by country" autocomplete="off" spellcheck="false">
+  <div id="search-hint" class="search-hint"></div>
+</div>
+
+<nav class="stats-nav">
+  <a href="#population">Population</a>
+  <a href="#happiness">Happiness</a>
+  <a href="#gdp">GDP/capita</a>
+  <a href="#income">Income</a>
+  <a href="#cost">Cost of living</a>
+  <a href="#life">Life expectancy</a>
+  <a href="#medage">Median age</a>
+  <a href="#homeown">Homeownership</a>
+  <a href="#poverty">Poverty</a>
+  <a href="#hdi">HDI</a>
+  <a href="#university">University</a>
+  <a href="#internet">Internet</a>
+  <a href="#vacation">Vacation days</a>
+  <a href="#alcohol">Alcohol</a>
+  <a href="#corruption">Corruption</a>
+  <a href="#renewables">Renewables</a>
+  <a href="#visitors">Visitors</a>
+  <a href="#unesco">UNESCO sites</a>
+</nav>
+<div class="country-select-wrap">
+  <select id="country-select" aria-label="Choose country">
+    <option value="">🌍 Choose country</option>
+  </select>
+</div>
+<div class="country-chips" id="country-chips">
+  <button class="country-chip" data-q="egypt">🇪🇬 Egypt</button>
+  <button class="country-chip" data-q="morocco">🇲🇦 Morocco</button>
+  <button class="country-chip" data-q="south africa">🇿🇦 South Africa</button>
+  <button class="country-chip" data-q="seychelles">🇸🇨 Seychelles</button>
+</div>
+<div id="search-results">
+  <div id="sr-title" class="sr-title"></div>
+  <div id="sr-body"></div>
+</div>
+
+<div class="sections-grid">
+<!-- POPULATION -->
+<div class="bar-section" id="population" data-src-year="2024">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">👥</span>
+    <span class="cat-sec-name">Population</span>
+    <span class="cat-sec-src">Source: World Bank 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">105.9M</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><span class="bar-val">63.0M</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:36%"></div></div><span class="bar-val">37.8M</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-val">0.1M</span></div>
+</div>
+
+<!-- HAPPINESS -->
+<div class="bar-section" id="happiness" data-src-year="2024">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">😊</span>
+    <span class="cat-sec-name">Happiness Index (World Happiness Report)</span>
+    <span class="cat-sec-src">Source: World Happiness Report 2024 (score out of 10)</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">5.42</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span class="bar-val">5.24</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">4.62</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><span class="bar-val">4.11</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- GDP/CAPITA -->
+<div class="bar-section" id="gdp" data-src-year="2024">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">💰</span>
+    <span class="cat-sec-name">GDP per Capita (USD, nominal)</span>
+    <span class="cat-sec-src">Source: IMF World Economic Outlook 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">$19,400</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:29%"></div></div><span class="bar-val">$5,709</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:26%"></div></div><span class="bar-val">$5,107</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:22%"></div></div><span class="bar-val">$4,295</span></div>
+</div>
+
+<!-- INCOME -->
+<div class="bar-section" id="income" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">💵</span>
+    <span class="cat-sec-name">Median Household Income (USD/year)</span>
+    <span class="cat-sec-src">Source: World Bank / OECD 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">$14,000</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:47%"></div></div><span class="bar-val">$6,600</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:39%"></div></div><span class="bar-val">$5,400</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:30%"></div></div><span class="bar-val">$4,200</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- COST OF LIVING -->
+<div class="bar-section" id="cost" data-src-year="2024">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🛒</span>
+    <span class="cat-sec-name">Cost of Living Index (NYC = 100)</span>
+    <span class="cat-sec-src">Source: Numbeo Cost of Living Index 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">66.0</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:51%"></div></div><span class="bar-val">33.8</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:45%"></div></div><span class="bar-val">29.9</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:44%"></div></div><span class="bar-val">29.1</span></div>
+</div>
+
+<!-- LIFE EXPECTANCY -->
+<div class="bar-section" id="life" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">❤️</span>
+    <span class="cat-sec-name">Life Expectancy (years)</span>
+    <span class="cat-sec-src">Source: WHO / World Bank 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">74.3</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span class="bar-val">73.4</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span class="bar-val">72.1</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:90%"></div></div><span class="bar-val">66.5</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- MEDIAN AGE -->
+<div class="bar-section" id="medage" data-src-year="2024">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🎂</span>
+    <span class="cat-sec-name">Median Age (years)</span>
+    <span class="cat-sec-src">Source: UN World Population Prospects 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">34.3</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:86%"></div></div><span class="bar-val">29.6</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:81%"></div></div><span class="bar-val">27.7</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:72%"></div></div><span class="bar-val">24.6</span></div>
+</div>
+
+<!-- HOMEOWNERSHIP -->
+<div class="bar-section" id="homeown" data-src-year="2021">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🏠</span>
+    <span class="cat-sec-name">Homeownership Rate (%)</span>
+    <span class="cat-sec-src">Source: World Bank / national census 2021&ndash;23</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">77%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:84%"></div></div><span class="bar-val">65%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:83%"></div></div><span class="bar-val">64%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div><span class="bar-val">60%</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- POVERTY -->
+<div class="bar-section" id="poverty" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">📉</span>
+    <span class="cat-sec-name">Poverty Rate (%)</span>
+    <span class="cat-sec-src">Source: World Bank 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">55.5%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:54%"></div></div><span class="bar-val">29.7%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:41%"></div></div><span class="bar-val">22.9%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:36%"></div></div><span class="bar-val">19.9%</span></div>
+</div>
+
+<!-- HDI -->
+<div class="bar-section" id="hdi" data-src-year="2025">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">📈</span>
+    <span class="cat-sec-name">Human Development Index (0&ndash;1)</span>
+    <span class="cat-sec-src">Source: UNDP Human Development Report 2025</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">0.796</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:93%"></div></div><span class="bar-val">0.741</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:91%"></div></div><span class="bar-val">0.728</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:88%"></div></div><span class="bar-val">0.698</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- UNIVERSITY -->
+<div class="bar-section" id="university" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🎓</span>
+    <span class="cat-sec-name">Tertiary Education Attainment (% adults 25&ndash;64)</span>
+    <span class="cat-sec-src">Source: UNESCO / World Bank / OECD 2022&ndash;23</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">27%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:63%"></div></div><span class="bar-val">17%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:48%"></div></div><span class="bar-val">13%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:33%"></div></div><span class="bar-val">9%</span></div>
+</div>
+
+<!-- INTERNET -->
+<div class="bar-section" id="internet" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🌐</span>
+    <span class="cat-sec-name">Internet Penetration (%)</span>
+    <span class="cat-sec-src">Source: ITU / World Bank 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">88%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:91%"></div></div><span class="bar-val">80%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">75%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><span class="bar-val">72%</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- VACATION DAYS -->
+<div class="bar-section" id="vacation" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🏖️</span>
+    <span class="cat-sec-name">Statutory Paid Vacation Days (minimum by law)</span>
+    <span class="cat-sec-src">Source: ILO / national labour law 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">21 days</span></div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">21 days</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:86%"></div></div><span class="bar-val">18 days</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:71%"></div></div><span class="bar-val">15 days</span></div>
+</div>
+
+<!-- ALCOHOL -->
+<div class="bar-section" id="alcohol" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🍺</span>
+    <span class="cat-sec-name">Alcohol Consumption per Capita (litres pure alcohol/year)</span>
+    <span class="cat-sec-src">Source: WHO Global Status Report on Alcohol 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">7.3 L</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:84%"></div></div><span class="bar-val">6.1 L</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><span class="bar-val">1.5 L</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:5%"></div></div><span class="bar-val">0.4 L</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- CORRUPTION -->
+<div class="bar-section" id="corruption" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">⚖️</span>
+    <span class="cat-sec-name">Corruption Perceptions Index (100 = least corrupt)</span>
+    <span class="cat-sec-src">Source: Transparency International CPI 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">70</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:59%"></div></div><span class="bar-val">41</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:54%"></div></div><span class="bar-val">38</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:50%"></div></div><span class="bar-val">35</span></div>
+</div>
+
+<!-- RENEWABLES -->
+<div class="bar-section" id="renewables" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">⚡</span>
+    <span class="cat-sec-name">Renewable Energy Share (% of electricity)</span>
+    <span class="cat-sec-src">Source: Ember Climate / IEA 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">35%</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:77%"></div></div><span class="bar-val">27%</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:57%"></div></div><span class="bar-val">20%</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:26%"></div></div><span class="bar-val">9%</span></div>
+</div>
+</div>
+
+<div class="sections-grid">
+<!-- VISITORS -->
+<div class="bar-section" id="visitors" data-src-year="2023">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">✈️</span>
+    <span class="cat-sec-name">International Tourist Arrivals (millions/year)</span>
+    <span class="cat-sec-src">Source: UNWTO / national tourism boards 2023</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill alt" style="width:100%"></div></div><span class="bar-val">14.9M</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill alt" style="width:97%"></div></div><span class="bar-val">14.5M</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill alt" style="width:57%"></div></div><span class="bar-val">8.5M</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill alt" style="width:2%"></div></div><span class="bar-val">0.35M</span></div>
+</div>
+
+<!-- UNESCO -->
+<div class="bar-section" id="unesco" data-src-year="2024">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🏛️</span>
+    <span class="cat-sec-name">UNESCO World Heritage Sites</span>
+    <span class="cat-sec-src">Source: UNESCO World Heritage List 2024</span>
+  </div>
+      <div class="bar-row"><span class="bar-rank">1</span><a class="bar-country city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">12 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">2</span><a class="bar-country city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a><div class="bar-track"><div class="bar-fill" style="width:75%"></div></div><span class="bar-val">9 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">3</span><a class="bar-country city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a><div class="bar-track"><div class="bar-fill" style="width:58%"></div></div><span class="bar-val">7 sites</span></div>
+      <div class="bar-row"><span class="bar-rank">4</span><a class="bar-country city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a><div class="bar-track"><div class="bar-fill" style="width:17%"></div></div><span class="bar-val">2 sites</span></div>
+</div>
+</div>
+
+<!-- SUNSHINE TABLE -->
+<div class="bar-section" id="sunshine" data-src-year="2020">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">☀️</span>
+    <span class="cat-sec-name">Average Sunshine Hours by Month (main city)</span>
+    <span class="cat-sec-src">Source: NOAA / WMO climate normals &middot; SA Weather Service &middot; climate-data composites (estimated)</span>
+  </div>
+  <div class="sun-table-wrap">
+    <table class="sun-table">
+      <thead>
+        <tr>
+          <th>Country / City</th>
+          <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th>
+          <th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+          <th>Annual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt (Cairo)</a></td>
+          <td class="sun-c4">272</td><td class="sun-c4">250</td><td class="sun-c4">272</td><td class="sun-c5">291</td><td class="sun-c6">335</td><td class="sun-c6">354</td>
+          <td class="sun-c6">365</td><td class="sun-c6">357</td><td class="sun-c5">321</td><td class="sun-c5">307</td><td class="sun-c4">279</td><td class="sun-c4">267</td>
+          <td class="sun-c5"><strong>3,670</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco (Marrakech)</a></td>
+          <td class="sun-c4">248</td><td class="sun-c3">225</td><td class="sun-c4">264</td><td class="sun-c4">261</td><td class="sun-c5">293</td><td class="sun-c5">326</td>
+          <td class="sun-c6">350</td><td class="sun-c6">341</td><td class="sun-c5">300</td><td class="sun-c4">278</td><td class="sun-c4">242</td><td class="sun-c4">239</td>
+          <td class="sun-c5"><strong>3,367</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa (Cape Town)</a></td>
+          <td class="sun-c6">352</td><td class="sun-c5">304</td><td class="sun-c5">290</td><td class="sun-c4">240</td><td class="sun-c3">197</td><td class="sun-c3">176</td>
+          <td class="sun-c3">197</td><td class="sun-c3">206</td><td class="sun-c3">228</td><td class="sun-c4">284</td><td class="sun-c5">303</td><td class="sun-c5">338</td>
+          <td class="sun-c5"><strong>3,115</strong></td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles (Mah&eacute;)</a></td>
+          <td class="sun-c2">156</td><td class="sun-c2">168</td><td class="sun-c3">205</td><td class="sun-c3">228</td><td class="sun-c4">255</td><td class="sun-c3">240</td>
+          <td class="sun-c3">236</td><td class="sun-c4">248</td><td class="sun-c4">243</td><td class="sun-c3">236</td><td class="sun-c3">213</td><td class="sun-c3">174</td>
+          <td class="sun-c4"><strong>2,602</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;align-items:center;">
+    <span style="font-size:11px;color:var(--muted);font-style:italic;">Sunshine hours/month &middot; </span>
+    <span style="font-size:11px;background:#fff8f0;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#7a3b1e;">under 80</span>
+    <span style="font-size:11px;background:#ffe8cc;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#7a3b1e;">80&ndash;160</span>
+    <span style="font-size:11px;background:#ffc970;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#5a2e0e;">160&ndash;240</span>
+    <span style="font-size:11px;background:#ffa020;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#3a1a00;">240&ndash;300</span>
+    <span style="font-size:11px;background:#ff7700;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#fff;">300&ndash;360</span>
+    <span style="font-size:11px;background:#e85d00;border:1px solid var(--border2);padding:2px 8px;border-radius:4px;color:#fff;">360+ / yr-high</span>
+  </div>
+</div>
+
+<!-- PRACTICAL FACTS TABLE -->
+<div class="bar-section" id="practical">
+  <div class="cat-sec-head">
+    <span class="cat-sec-icon">🧭</span>
+    <span class="cat-sec-name">Practical Quick Facts</span>
+    <span class="cat-sec-src">Currency &middot; languages &middot; driving side &middot; plugs &amp; voltage</span>
+  </div>
+  <div class="sun-table-wrap">
+    <table class="sun-table fact-table">
+      <thead>
+        <tr>
+          <th>Country</th><th>Currency</th><th>Languages</th><th>Drives</th><th>Plug &middot; Volts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Cairo/cairo_v2.html">🇪🇬 Egypt</a></td><td class="fact-left">Egyptian pound (EGP)</td><td class="fact-left">Arabic</td><td>Right</td><td>C / F &middot; 220V</td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Marrakech/marrakech_v1.html">🇲🇦 Morocco</a></td><td class="fact-left">Moroccan dirham (MAD)</td><td class="fact-left">Arabic, Amazigh, French</td><td>Right</td><td>C / E &middot; 220V</td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Cape-Town/cape-town_v1.html">🇿🇦 South Africa</a></td><td class="fact-left">South African rand (ZAR)</td><td class="fact-left">11 official (English, Zulu, Xhosa, Afrikaans widely spoken)</td><td>Left</td><td>M (Type M/N) &middot; 230V</td></tr>
+        <tr><td class="country-name"><a class="city-link" href="../Guides/Seychelles/seychelles_v1.html">🇸🇨 Seychelles</a></td><td class="fact-left">Seychellois rupee (SCR)</td><td class="fact-left">Seychellois Creole, English, French</td><td>Left</td><td>G &middot; 240V</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footnotes">
+<strong>Sources</strong>
+<ul class="src-list">
+<li><a href="https://data.worldbank.org/" target="_blank" rel="noopener">World Bank Open Data (2023&ndash;24)</a> &mdash; population, GDP per capita, life expectancy, poverty rate, homeownership, internet penetration</li>
+<li><a href="https://worldhappiness.report/" target="_blank" rel="noopener">World Happiness Report 2024</a> &mdash; happiness scores (0&ndash;10 scale)</li>
+<li><a href="https://www.imf.org/en/Publications/WEO" target="_blank" rel="noopener">IMF World Economic Outlook 2024</a> &mdash; GDP per capita (current USD)</li>
+<li><a href="https://www.numbeo.com/cost-of-living/" target="_blank" rel="noopener">Numbeo Cost of Living Index 2024</a> &mdash; cost of living (NYC = 100)</li>
+<li><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN World Population Prospects 2024</a> &mdash; median age</li>
+<li><a href="https://hdr.undp.org/" target="_blank" rel="noopener">UNDP Human Development Report 2025</a> &mdash; Human Development Index</li>
+<li><a href="https://www.transparency.org/en/cpi/2023" target="_blank" rel="noopener">Transparency International CPI 2023</a> &mdash; corruption perceptions (0&ndash;100)</li>
+<li><a href="https://www.unwto.org/" target="_blank" rel="noopener">UNWTO / national tourism boards 2023</a> &mdash; international tourist arrivals</li>
+<li><a href="https://whc.unesco.org/en/list/" target="_blank" rel="noopener">UNESCO World Heritage List 2024</a> &mdash; heritage site counts</li>
+<li><a href="https://www.who.int/data/gho" target="_blank" rel="noopener">WHO Global Health Observatory</a> &mdash; alcohol consumption, life expectancy</li>
+<li><a href="https://ember-climate.org/" target="_blank" rel="noopener">Ember Climate / IEA 2023</a> &mdash; renewable energy share</li>
+<li><a href="https://weather-and-climate.com/" target="_blank" rel="noopener">WMO / climate-data composites</a> &mdash; sunshine hours, temperatures (estimated)</li>
+</ul>
+<div class="fn-tail">Figures represent the most recent available data at time of publication. Poverty definitions vary by country &mdash; South Africa uses the national upper-bound poverty line; Egypt, Morocco, and Seychelles figures are from the World Bank international poverty assessment. Sunshine hours outside Cairo and Cape Town are estimated from climate composites.</div>
+</div>
+
+</div>
+<script>
+(function() {
+  var input   = document.getElementById('country-search');
+  var hint    = document.getElementById('search-hint');
+  var box     = document.getElementById('search-results');
+  var srTitle = document.getElementById('sr-title');
+  var srBody  = document.getElementById('sr-body');
+  if (!input) return;
+
+  document.querySelectorAll('.bar-row').forEach(function(row) {
+    var countryEl = row.querySelector('.bar-country');
+    var valEl     = row.querySelector('.bar-val');
+    if (!countryEl) return;
+    row.dataset.country = countryEl.textContent.trim().toLowerCase();
+    row.dataset.label   = countryEl.textContent.trim();
+    row.dataset.val     = valEl ? valEl.textContent.trim() : '';
+    var section = row.closest('.bar-section');
+    if (section) {
+      var head = section.querySelector('.cat-sec-name');
+      row.dataset.cat = head ? head.textContent.trim() : '';
+    }
+  });
+
+  function run() {
+    var q = input.value.trim().toLowerCase();
+    if (!q) {
+      box.classList.remove('active');
+      hint.textContent = '';
+      return;
+    }
+
+    var rows = [];
+    document.querySelectorAll('.bar-row').forEach(function(row) {
+      if ((row.dataset.country || '').indexOf(q) !== -1) {
+        rows.push({ cat: row.dataset.cat, label: row.dataset.label, val: row.dataset.val });
+      }
+    });
+
+    box.classList.add('active');
+
+    if (rows.length === 0) {
+      srTitle.textContent = '';
+      srBody.innerHTML = '<p class="sr-none">No data found for "' + input.value.trim() + '"</p>';
+      hint.textContent = '';
+      return;
+    }
+
+    var name = rows[0].label;
+    srTitle.textContent = name + ' — ' + rows.length + ' categor' + (rows.length !== 1 ? 'ies' : 'y');
+    hint.textContent = '';
+
+    var html = '<table class="sr-table"><thead><tr><th>Category</th><th class="sr-val">Value</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      html += '<tr><td class="sr-cat">' + r.cat + '</td><td class="sr-val">' + r.val + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    srBody.innerHTML = html;
+  }
+
+  input.addEventListener('input', function() {
+    document.querySelectorAll('.country-chip').forEach(function(c) { c.classList.remove('active'); });
+    run();
+  });
+  input.addEventListener('search', run);
+
+  document.querySelectorAll('.country-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.country-chip').forEach(function(c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      input.value = chip.dataset.q;
+      run();
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+  var sel = document.getElementById('country-select');
+  if (sel) {
+    document.querySelectorAll('.country-chip').forEach(function(chip) {
+      var o = document.createElement('option');
+      o.value = chip.dataset.q;
+      o.textContent = chip.textContent.trim();
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change', function() {
+      document.querySelectorAll('.country-chip').forEach(function(c) { c.classList.remove('active'); });
+      if (!sel.value) return;
+      input.value = sel.value;
+      run();
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('country-search'); if(!input) return;
+  var seen={}, items=[];
+  document.querySelectorAll('.bar-country').forEach(function(el){
+    var name=el.textContent.trim().replace(/^[^\p{L}]+/u,'').trim();
+    if(!name) return;
+    var k=name.toLowerCase(); if(seen[k]) return; seen[k]=1;
+    items.push({name:name});
+  });
+  TVESearch.attach(input,{items:items});
+}());</script>
+<script>(function(){
+var G={
+'Egypt':'../Guides/Cairo/cairo_v2.html',
+'Morocco':'../Guides/Marrakech/marrakech_v1.html',
+'South Africa':'../Guides/Cape-Town/cape-town_v1.html',
+'Seychelles':'../Guides/Seychelles/seychelles_v1.html'
+};
+document.querySelectorAll('.bar-country').forEach(function(el){
+  var t=el.textContent.trim();
+  var n=t.replace(/^[^\p{L}]+/u,'').trim();
+  if(!G[n])return;
+  var a=document.createElement('a');
+  a.href=G[n];a.target='_blank';a.rel='noopener';a.className='cgl';
+  a.textContent=t;el.textContent='';el.appendChild(a);
+});
+}());</script>
+</body>
+</html>
