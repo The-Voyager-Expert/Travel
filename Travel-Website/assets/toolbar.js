@@ -1778,7 +1778,10 @@
       row.appendChild(bPrev);
       row.appendChild(centre);
       row.appendChild(bNext);
-      header.parentNode.insertBefore(row, header.nextSibling);
+      /* Insert after .page-intro-card if present; otherwise fall back to after .page-header */
+      var introCard = document.querySelector('.page-intro-card');
+      var anchor = introCard || header;
+      anchor.parentNode.insertBefore(row, anchor.nextSibling);
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectBestOfArrows);
