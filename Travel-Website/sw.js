@@ -161,7 +161,9 @@
    on 223 of the 232 read-about pages; folded into Read-About.css so the 9 stragglers
    match too. Read-About.css had no ?v= and was not in MIN_VERSIONS, so a cached copy
    would drop the margin — added it at min 1, CACHE to v206. */
-var CACHE = 'travel-cache-v206';
+/* 2026-08-03: back-to-guide desktop card anchors after landing element + mobile pill
+   fixes — bumped toolbar.js min to 154, CACHE to v207. */
+var CACHE = 'travel-cache-v207';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -169,7 +171,7 @@ var CACHE = 'travel-cache-v206';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 153, 'mobile.css': 65, 'web-travel-style.css': 6, 'Read-About.css': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 154, 'mobile.css': 65, 'web-travel-style.css': 6, 'Read-About.css': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
