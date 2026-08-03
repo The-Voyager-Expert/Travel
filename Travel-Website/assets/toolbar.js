@@ -2564,6 +2564,83 @@
     _injectOfflineBtn();
   }
 
+  /* ── "I've Been" visited toggle — pill on guide pages so readers can mark a
+     destination as visited. Writes tve-visited-{folder} to localStorage; the
+     Guides-Index reads the same key to override data-status on cards. ── */
+  function _injectVisitedToggle() {
+    if (!isRealGuide) return;
+
+    var parts = location.pathname.split('/');
+    var gi = parts.indexOf('Guides');
+    if (gi < 0 || !parts[gi + 1]) return;
+    var cityFolder = parts[gi + 1].toLowerCase();
+    var storageKey = 'tve-visited-' + cityFolder;
+    var visited = !!localStorage.getItem(storageKey);
+
+    var btn = document.createElement('a');
+    btn.href = 'javascript:void(0)';
+    btn.className = 'overview-extra-link' + (visited ? ' tve-been' : '');
+    btn.id = 'tve-visited-btn';
+    btn.textContent = visited ? '✓ I’ve Been' : '📍 I’ve Been';
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      var nowVisited = !!localStorage.getItem(storageKey);
+      if (nowVisited) {
+        localStorage.removeItem(storageKey);
+        btn.textContent = '📍 I’ve Been';
+        btn.classList.remove('tve-been');
+      } else {
+        localStorage.setItem(storageKey, '1');
+        btn.textContent = '✓ I’ve Been';
+        btn.classList.add('tve-been');
+      }
+    });
+
+    var icsCalPill = document.getElementById('ics-cal-pill');
+    if (icsCalPill) {
+      var pillRow = icsCalPill.parentNode;
+      btn.style.setProperty('flex', '1 1 0', 'important');
+      btn.style.setProperty('min-width', '0', 'important');
+      btn.style.setProperty('align-items', 'center', 'important');
+      btn.style.setProperty('justify-content', 'center', 'important');
+      btn.style.setProperty('text-align', 'center', 'important');
+      pillRow.appendChild(btn);
+      btn.addEventListener('touchstart', function () {
+        btn.classList.add('tve-pressed');
+        btn.style.setProperty('color', '#fff', 'important');
+        btn.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
+      }, { passive: true });
+      btn.addEventListener('touchend', function () {
+        setTimeout(function () {
+          btn.classList.remove('tve-pressed');
+          btn.style.removeProperty('color');
+          btn.style.removeProperty('-webkit-text-fill-color');
+        }, 300);
+      }, { passive: true });
+      btn.addEventListener('touchcancel', function () {
+        btn.classList.remove('tve-pressed');
+        btn.style.removeProperty('color');
+        btn.style.removeProperty('-webkit-text-fill-color');
+      }, { passive: true });
+    } else {
+      var visitDays = document.querySelectorAll('.overview-day');
+      if (!visitDays.length) return;
+      var visitLast = visitDays[visitDays.length - 1];
+      var visitExtras = visitLast.parentNode.querySelector('.overview-extras');
+      if (visitExtras) {
+        visitExtras.parentNode.insertBefore(btn, visitExtras);
+      } else {
+        visitLast.parentNode.appendChild(btn);
+      }
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectVisitedToggle);
+  } else {
+    _injectVisitedToggle();
+  }
+
   /* ── Alternative hotel recommendations — injected before #also-on-this-site on
      guide pages that have a HOTEL_ALT_DATA entry. Runner-up hotels from the same
      search process used to pick the guide hotel; added during each guide build.  */
