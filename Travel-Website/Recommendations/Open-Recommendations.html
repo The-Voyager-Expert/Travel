@@ -6,19 +6,19 @@
 <title>Open Recommendations — Not Yet Implemented</title>
 <style>
   :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
-    --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368;
+    --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
     --eff-s-bg:#e6f0e6; --eff-s-fg:#2c6238; --eff-m-bg:#f6ead3; --eff-m-fg:#875311; --eff-l-bg:#f6ddd6; --eff-l-fg:#8f2e1c;
     --shadow:0 1px 2px rgba(60,45,25,.05), 0 6px 20px -12px rgba(60,45,25,.18); }
   @media (prefers-color-scheme:dark){ :root{ --bg:#181511; --surface:#221e18; --surface2:#2a251d; --ink:#efe8db; --muted:#a89f8f; --faint:#7c7364; --line:#38322a;
-    --rust:#e08a52; --open:#e37256; --partial:#dca63f; --unsure:#a49a8a;
+    --rust:#e08a52; --open:#e37256; --partial:#dca63f; --unsure:#a49a8a; --pending:#6fa3ef;
     --eff-s-bg:#20301f; --eff-s-fg:#8fce97; --eff-m-bg:#332711; --eff-m-fg:#e2b358; --eff-l-bg:#3a201a; --eff-l-fg:#ef9d84;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6); } }
   :root[data-theme="light"]{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
-    --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368;
+    --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
     --eff-s-bg:#e6f0e6; --eff-s-fg:#2c6238; --eff-m-bg:#f6ead3; --eff-m-fg:#875311; --eff-l-bg:#f6ddd6; --eff-l-fg:#8f2e1c;
     --shadow:0 1px 2px rgba(60,45,25,.05), 0 6px 20px -12px rgba(60,45,25,.18); }
   :root[data-theme="dark"]{ --bg:#181511; --surface:#221e18; --surface2:#2a251d; --ink:#efe8db; --muted:#a89f8f; --faint:#7c7364; --line:#38322a;
-    --rust:#e08a52; --open:#e37256; --partial:#dca63f; --unsure:#a49a8a;
+    --rust:#e08a52; --open:#e37256; --partial:#dca63f; --unsure:#a49a8a; --pending:#6fa3ef;
     --eff-s-bg:#20301f; --eff-s-fg:#8fce97; --eff-m-bg:#332711; --eff-m-fg:#e2b358; --eff-l-bg:#3a201a; --eff-l-fg:#ef9d84;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6); }
   *{ box-sizing:border-box; }
@@ -32,7 +32,7 @@
   .totals{ display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:10px; margin:22px 0 6px; }
   .stat{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow); }
   .stat b{ font-size:22px; font-weight:800; display:block; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
-  .stat.s-open b{ color:var(--open); } .stat.s-partial b{ color:var(--partial); } .stat.s-unsure b{ color:var(--unsure); }
+  .stat.s-open b{ color:var(--open); } .stat.s-partial b{ color:var(--partial); } .stat.s-unsure b{ color:var(--unsure); } .stat.s-pending b{ color:var(--pending); }
   .stat span{ font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font-weight:600; }
   .controls{ display:flex; gap:8px; margin:16px 0 2px; }
   .controls button{ font-family:inherit; font-size:12px; font-weight:600; padding:7px 13px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:9px; cursor:pointer; transition:border-color .15s,background .15s; }
@@ -58,7 +58,7 @@
   summary:focus-visible{ outline:2px solid var(--rust); outline-offset:-2px; border-radius:11px; }
   .ttitle{ flex:1; font-size:13.5px; font-weight:600; line-height:1.4; }
   .tstatus{ font-size:9.5px; font-weight:800; letter-spacing:.05em; padding:3px 7px; border-radius:5px; color:#fff; white-space:nowrap; }
-  .st-open{ background:var(--open); } .st-partial{ background:var(--partial); } .st-unsure{ background:var(--unsure); }
+  .st-open{ background:var(--open); } .st-partial{ background:var(--partial); } .st-unsure{ background:var(--unsure); } .st-pending{ background:var(--pending); }
   .chev{ font-size:18px; color:var(--faint); transition:transform .18s; }
   .tile[open] .chev{ transform:rotate(90deg); }
   .tbody{ padding:2px 15px 15px; border-top:1px solid var(--line); background:var(--surface2); }
@@ -70,6 +70,9 @@
   .eff-l{ background:var(--eff-l-bg); color:var(--eff-l-fg); border-color:transparent; }
   .src{ font-family:ui-monospace,Menlo,monospace; font-size:10px; }
   .tev{ font-size:12px; color:var(--muted); line-height:1.55; margin:11px 0 0; padding-top:9px; border-top:1px dashed var(--line); }
+  .rules-empty{ font-size:13px; color:var(--faint); font-style:italic; padding:8px 4px 2px; }
+  .rules-hint{ font-size:11px; color:var(--faint); margin:10px 4px 4px; padding-top:8px; border-top:1px dashed var(--line); line-height:1.55; }
+  .rules-hint code{ font-family:ui-monospace,Menlo,monospace; font-size:10px; }
   footer{ font-size:12px; color:var(--faint); line-height:1.6; margin-top:34px; padding-top:16px; border-top:1px solid var(--line); }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 </style>
@@ -79,20 +82,20 @@
 <header>
   <p class="eyebrow">The Voyager Expert &middot; Backlog</p>
   <h1>Open Recommendations</h1>
-  <div class="sub">Every idea proposed across the <b>Recommendations</b> archive that is <b>not yet implemented</b>. Each was cross-checked against the live codebase &mdash; confirmed-done items were dropped, new-city-guide suggestions routed to the destination-scouting report. Click any tile to expand. Status: <b>OPEN</b> = not done &middot; <b>PARTIAL</b> = partly done &middot; <b>UNSURE</b> = couldn't verify from code alone.</div>
+  <div class="sub">Every idea proposed across the <b>Recommendations</b> archive that is <b>not yet implemented</b>. Each was cross-checked against the live codebase &mdash; confirmed-done items were dropped, new-city-guide suggestions routed to the destination-scouting report. Click any tile to expand. Status: <b>OPEN</b> = not done &middot; <b>PARTIAL</b> = partly done &middot; <b>UNSURE</b> = couldn't verify from code alone. <b>PENDING</b> = awaiting your approval (CORE RULES / toolbar / new design).</div>
   <div class="totals">
-    <div class="stat"><b>93</b><span>open items</span></div>
-    <div class="stat s-open"><b>81</b><span>Open</span></div>
+    <div class="stat"><b>92</b><span>open items</span></div>
+    <div class="stat s-open"><b>80</b><span>Open</span></div>
     <div class="stat s-partial"><b>4</b><span>Partial</span></div>
     <div class="stat s-unsure"><b>8</b><span>Unsure</span></div>
-    <div class="stat"><b>6</b><span>categories</span></div>
+    <div class="stat s-pending"><b>0</b><span>Pending approval</span></div>
   </div>
   <div class="controls">
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=true)">Expand all</button>
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=false)">Collapse all</button>
   </div>
 </header>
-<nav class="nav"><a href="#ux-css-layout" class="navchip">📱 UX, CSS &amp; Layout <span class="navcount">22</span></a><a href="#new-features-pages" class="navchip">🆕 New Features &amp; Pages <span class="navcount">28</span></a><a href="#tools-scripts" class="navchip">🔧 Tools &amp; Scripts <span class="navcount">3</span></a><a href="#trip-essentials-pages" class="navchip">🧳 Trip-Essentials Pages <span class="navcount">37</span></a><a href="#guides" class="navchip">🗺 Guides <span class="navcount">1</span></a><a href="#docs-rules" class="navchip">📄 Docs &amp; Rules <span class="navcount">2</span></a></nav>
+<nav class="nav"><a href="#ux-css-layout" class="navchip">📱 UX, CSS &amp; Layout <span class="navcount">22</span></a><a href="#new-features-pages" class="navchip">🆕 New Features &amp; Pages <span class="navcount">28</span></a><a href="#tools-scripts" class="navchip">🔧 Tools &amp; Scripts <span class="navcount">3</span></a><a href="#trip-essentials-pages" class="navchip">🧳 Trip-Essentials Pages <span class="navcount">37</span></a><a href="#docs-rules" class="navchip">📄 Docs &amp; Rules <span class="navcount">2</span></a></nav>
 
   <section class="cat" id="ux-css-layout">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -724,9 +727,9 @@
           <span class="chev">&rsaquo;</span>
         </summary>
         <div class="tbody">
-          <p class="tdetail">Re-diagnosed 2026-08-03, replacing the old &quot;build_nearby_guides.py is inherently asymmetric, ~225 non-bidirectional pairs, needs an attended session&quot; framing. Measured: 762 directed links across 232 guides, <b>194 one-way</b>, from two causes — neither a mechanical sweep. <b>(1) 86 are cap collisions</b>: the target already lists its 5 closest neighbours (<code>MAX_NEARBY = 5</code>) so it cannot reciprocate with a 6th; reciprocating would mean displacing a closer city. <b>(2) 60 guides ship a Nearby Guides section with ZERO shipped guide inside <code>MAX_DIST_KM = 350</code></b> (Tokyo, Singapore, Sydney, Reykjavik, Cape Town, Bali, Seoul …) — their blocks predate the current radius. One owner decision remains: raise the radius/cap for isolated cities, or accept that those 60 ship no Nearby Guides section. A crib cannot make that call — it deletes a visible section from 60 guides.</p>
+          <p class="tdetail">Re-diagnosed 2026-08-03, replacing the old &quot;inherently asymmetric, ~225 non-bidirectional pairs&quot; framing. Measured: 762 directed links across 232 guides, <b>194 one-way</b>, from two causes — neither a mechanical sweep. <b>(1) 86 are cap collisions</b>: the target already lists its 5 closest neighbours (<code>MAX_NEARBY = 5</code>), so reciprocating would mean displacing a closer city. <b>(2) 60 guides ship a Nearby Guides section with ZERO shipped guide inside <code>MAX_DIST_KM = 350</code></b> (Tokyo, Singapore, Sydney, Reykjavik, Cape Town, Bali, Seoul …) — their blocks predate the current radius. One owner decision remains: raise the radius/cap for isolated cities, or accept that those 60 ship no Nearby Guides section. A crib cannot make that call — it deletes a visible section from 60 guides.</p>
           <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge tgt">Brain/scripts/build_nearby_guides.py (MAX_DIST_KM / MAX_NEARBY) + 60 guide pages</span><span class="badge src">pending-fixes-sweep 2026-08-03 (re-diagnosis)</span></div>
-          <p class="tev"><b>Checked:</b> The third cause &mdash; a stale block no re-run could correct &mdash; <b>is fixed</b>: the tool returned early on zero candidates and left the old block in place, so Istanbul kept a &quot;🗺️ Rhodes&quot; pill for a guide ~700 km away. The zero-candidate path now strips it; Istanbul shipped fixed (880 passed, 0 failed). The other 60 were deliberately NOT regenerated &mdash; that is the owner decision above.</p>
+          <p class="tev"><b>Checked:</b> The third cause &mdash; a stale block no re-run could correct &mdash; <b>is fixed and shipped</b>: the tool returned early on zero candidates and left the old block in place, so Istanbul kept a &quot;🗺️ Rhodes&quot; pill for a guide ~700 km away. The zero-candidate path now strips it; Istanbul re-validated 880 passed / 0 failed. The other 60 were deliberately NOT regenerated &mdash; that is the owner decision above.</p>
         </div>
       </details>
       <details class="tile">
@@ -753,7 +756,7 @@
           <p class="tev"><b>Checked:</b> Sports-Calendar.html and Trip-Stacking.html both confirmed on disk; grep &#x27;Sports-Calendar|Trip-Stacking&#x27; toolbar.js → 0 matches (re-checked 2026-08-03)</p>
         </div>
       </details>
-                              </div>
+                                                                              </div>
   </section>
   
   <section class="cat" id="trip-essentials-pages">
@@ -1208,27 +1211,7 @@
         </div>
       </details></div>
   </section>
-  <section class="cat" id="guides">
-    <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
-      <span class="catname">🗺 Guides</span>
-      <span class="catcount">1</span>
-      <span class="catchev">&rsaquo;</span>
-    </button>
-    <div class="catbody">
-            <details class="tile">
-        <summary>
-          <span class="tstatus st-open">OPEN</span>
-          <span class="ttitle">Ljubljana: add a dedicated train-day itinerary</span>
-          <span class="chev">&rsaquo;</span>
-        </summary>
-        <div class="tbody">
-          <p class="tdetail">6-day Ljubljana guide ships without a dedicated train day (Day Structure.html §6). Day 6 covers Postojna/Predjama by car/coach; Lake Bled and Bohinj are rail-reachable but not structured as a train day. Logged for a future day-expansion or content refresh.</p>
-          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: med</span><span class="badge tgt">Travel-Website/Guides/Ljubljana/ljubljana_v1.html</span><span class="badge src">2026-07-24-guide-content-audit-ljubljana.html</span></div>
-          <p class="tev"><b>Checked:</b> Reported as accepted warning logged to To Do; not addressed in-session. Not re-verified in codebase but no train-day expansion reported since.</p>
-        </div>
-      </details>
-                        </div>
-  </section>
+  
   <section class="cat" id="docs-rules">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
       <span class="catname">📄 Docs &amp; Rules</span>
@@ -1261,7 +1244,8 @@
         </div>
       </details></div>
   </section>
-<footer>Generated from a read-only audit of the Recommendations archive against the live codebase. A consolidated backlog for review &mdash; not a to-do commitment.</footer>
+  
+<footer>Generated from a read-only audit of the Recommendations archive against the live codebase. Rules Change Approval section built from Brain/scripts/open_recs/rules_changes.json. A consolidated backlog for review &mdash; not a to-do commitment.</footer>
 </div>
 </body>
 </html>
