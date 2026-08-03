@@ -85,7 +85,7 @@
   border-radius: 10px; overflow: hidden; margin-bottom: 24px;
   overflow-x: auto;
 }
-.cc-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.cc-table { width: 100%; border-collapse: collapse; min-width: 680px; }
 .cc-table th {
   font-size: 11px; font-weight: 700; color: var(--muted);
   text-transform: uppercase; letter-spacing: 0.06em;
@@ -154,6 +154,13 @@ a.prov-link:visited { color: #6a6660; }
 .ti-pf:hover { background: var(--bg); border-color: var(--rust); }
 .ti-pf.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); font-weight: 600; }
 
+/* Quick check widget */
+.qc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.qc-card-check, .qc-cost-check { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 16px; }
+.qc-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 6px; }
+.qc-select, .qc-input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border2); border-radius: 6px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); box-sizing: border-box; }
+.qc-summary, .qc-estimate { margin-top: 12px; font-size: 13px; color: var(--text); line-height: 1.55; min-height: 50px; }
+
 /* Mobile */
 @media (max-width: 600px) {
   .coverage-grid { grid-template-columns: 1fr; }
@@ -167,13 +174,14 @@ a.prov-link:visited { color: #6a6660; }
     -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
             mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
   }
-  .cc-table { display: table; min-width: 480px; }
+  .cc-table { display: table; min-width: 640px; }
   .cc-table th { padding: 10px 10px 8px; font-size: 10px; letter-spacing: 0.04em; }
   .cc-table td { padding: 10px 10px; }
   .cc-table .tag { padding: 2px 5px; }
   .prov-link { width: fit-content; }
   .tips-grid { grid-template-columns: 1fr; }
   .decision-table th:nth-child(3), .decision-table td:nth-child(3) { display: none; }
+  .qc-wrap { grid-template-columns: 1fr; }
 }
 </style>
 <link rel="stylesheet" href="../assets/mobile.css?v=53">
@@ -240,6 +248,28 @@ a.prov-link:visited { color: #6a6660; }
     </div>
   </div>
 
+  <!-- ── Quick Check ─────────────────────────────────────── -->
+  <div class="section-head">Quick Check</div>
+  <div class="qc-wrap">
+    <div class="qc-card-check">
+      <label class="qc-label" for="qc-card">Your card</label>
+      <select id="qc-card" class="qc-select">
+        <option value="">Select a card</option>
+        <option value="csr">Chase Sapphire Reserve</option>
+        <option value="plat">Amex Platinum</option>
+        <option value="csp">Chase Sapphire Preferred</option>
+        <option value="vx">Capital One Venture X</option>
+        <option value="gold">Amex Gold</option>
+      </select>
+      <div id="qc-summary" class="qc-summary"></div>
+    </div>
+    <div class="qc-cost-check">
+      <label class="qc-label" for="qc-cost">Trip cost ($)</label>
+      <input type="number" id="qc-cost" class="qc-input" placeholder="5000" min="0">
+      <div id="qc-estimate" class="qc-estimate"></div>
+    </div>
+  </div>
+
   <!-- ── Credit Card Coverage ────────────────────────────── -->
   <div class="section-head" id="ti-cards" style="scroll-margin-top:64px;">What Your Credit Card Covers</div>
 
@@ -247,63 +277,62 @@ a.prov-link:visited { color: #6a6660; }
     <table class="cc-table">
       <thead>
         <tr>
-          <th>Card</th>
-          <th>Trip Cancel</th>
-          <th>Emergency Medical</th>
-          <th>Evacuation</th>
-          <th>Trip Delay</th>
+          <th>Coverage</th>
+          <th>CSR</th>
+          <th>Amex Plat</th>
+          <th>CSP</th>
+          <th>Venture X</th>
+          <th>Amex Gold</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>
-            <div class="cc-name">Chase Sapphire Reserve</div>
-            <div class="cc-caveat">Must pay with card · $795/yr fee</div>
-          </td>
+          <td><div class="cc-name">Trip Cancellation</div></td>
           <td><span class="tag tag-strong">$10K / person</span></td>
-          <td><span class="tag tag-weak">$2,500</span></td>
-          <td><span class="tag tag-ok">$100,000</span></td>
-          <td><span class="tag tag-strong">$500 after 6 hrs</span></td>
-        </tr>
-        <tr>
-          <td>
-            <div class="cc-name">Amex Platinum</div>
-            <div class="cc-caveat">Round-trip ticket required · $895/yr fee · secondary coverage</div>
-          </td>
           <td><span class="tag tag-ok">$10K / person</span></td>
-          <td><span class="tag tag-weak">None</span></td>
-          <td><span class="tag tag-strong">Uncapped</span></td>
-          <td><span class="tag tag-ok">$500 after 6 hrs</span></td>
-        </tr>
-        <tr>
-          <td>
-            <div class="cc-name">Chase Sapphire Preferred</div>
-            <div class="cc-caveat">Must pay with card · $95/yr fee</div>
-          </td>
           <td><span class="tag tag-strong">$10K / person</span></td>
-          <td><span class="tag tag-weak">None</span></td>
-          <td><span class="tag tag-ok">$100,000</span></td>
-          <td><span class="tag tag-ok">$500 after 12 hrs</span></td>
-        </tr>
-        <tr>
-          <td>
-            <div class="cc-name">Capital One Venture X</div>
-            <div class="cc-caveat">Flights only — hotels/tours excluded · $395/yr fee</div>
-          </td>
           <td><span class="tag tag-ok">$2K / person</span></td>
           <td><span class="tag tag-weak">None</span></td>
-          <td><span class="tag tag-weak">None</span></td>
-          <td><span class="tag tag-ok">$500 after 6 hrs</span></td>
         </tr>
         <tr>
-          <td>
-            <div class="cc-name">Amex Gold</div>
-            <div class="cc-caveat">Must pay with card · $325/yr fee</div>
-          </td>
+          <td><div class="cc-name">Emergency Medical</div></td>
+          <td><span class="tag tag-weak">$2,500</span></td>
           <td><span class="tag tag-weak">None</span></td>
           <td><span class="tag tag-weak">None</span></td>
           <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+        </tr>
+        <tr>
+          <td><div class="cc-name">Evacuation</div></td>
+          <td><span class="tag tag-ok">$100,000</span></td>
+          <td><span class="tag tag-strong">Uncapped</span></td>
+          <td><span class="tag tag-ok">$100,000</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+          <td><span class="tag tag-weak">None</span></td>
+        </tr>
+        <tr>
+          <td><div class="cc-name">Trip Delay</div></td>
+          <td><span class="tag tag-strong">$500 after 6 hrs</span></td>
+          <td><span class="tag tag-ok">$500 after 6 hrs</span></td>
+          <td><span class="tag tag-ok">$500 after 12 hrs</span></td>
+          <td><span class="tag tag-ok">$500 after 6 hrs</span></td>
           <td><span class="tag tag-weak">$300 after 12 hrs</span></td>
+        </tr>
+        <tr>
+          <td><div class="cc-name">Annual Fee</div></td>
+          <td><span class="tag tag-weak">$795</span></td>
+          <td><span class="tag tag-weak">$895</span></td>
+          <td><span class="tag tag-strong">$95</span></td>
+          <td><span class="tag tag-ok">$395</span></td>
+          <td><span class="tag tag-ok">$325</span></td>
+        </tr>
+        <tr>
+          <td><div class="cc-name">Caveats</div></td>
+          <td><div class="cc-caveat">Must pay with card</div></td>
+          <td><div class="cc-caveat">Round-trip ticket required · secondary coverage</div></td>
+          <td><div class="cc-caveat">Must pay with card</div></td>
+          <td><div class="cc-caveat">Flights only — hotels/tours excluded</div></td>
+          <td><div class="cc-caveat">Must pay with card</div></td>
         </tr>
       </tbody>
     </table>
@@ -562,5 +591,38 @@ a.prov-link:visited { color: #6a6660; }
   document.querySelectorAll('.section-head').forEach(function(el){ add(el.textContent.trim()); });
   TVESearch.attach(input,{items:items});
 }());</script>
+<script>
+(function () {
+  var CARDS = {
+    csr: { name: 'Chase Sapphire Reserve', cancel: '$10,000/person', medical: '$2,500', evac: '$100,000', delay: '$500 after 6 hrs', note: 'Must pay with card. Best overall card coverage — the only premium card with emergency medical (though $2,500 is minimal).' },
+    plat: { name: 'Amex Platinum', cancel: '$10,000/person', medical: 'None', evac: 'Uncapped', delay: '$500 after 6 hrs', note: 'Round-trip ticket required. Secondary coverage only. Uncapped evacuation is the standout — but zero emergency medical.' },
+    csp: { name: 'Chase Sapphire Preferred', cancel: '$10,000/person', medical: 'None', evac: '$100,000', delay: '$500 after 12 hrs', note: 'Must pay with card. Solid cancellation and evacuation. No emergency medical.' },
+    vx: { name: 'Capital One Venture X', cancel: '$2,000/person', medical: 'None', evac: 'None', delay: '$500 after 6 hrs', note: 'Flights only — hotels and tours excluded. No medical or evacuation coverage.' },
+    gold: { name: 'Amex Gold', cancel: 'None', medical: 'None', evac: 'None', delay: '$300 after 12 hrs', note: 'Minimal coverage. Trip delay only. Buy standalone for any international trip.' }
+  };
+  var sel = document.getElementById('qc-card');
+  var sum = document.getElementById('qc-summary');
+  if (sel && sum) {
+    sel.addEventListener('change', function () {
+      var c = CARDS[sel.value];
+      if (!c) { sum.innerHTML = ''; return; }
+      sum.innerHTML = '<strong>' + c.name + '</strong><br>' +
+        'Cancel: ' + c.cancel + ' · Medical: ' + c.medical + ' · Evac: ' + c.evac + ' · Delay: ' + c.delay +
+        '<br><span style="font-size:12px;color:var(--muted);">' + c.note + '</span>';
+    });
+  }
+  var costIn = document.getElementById('qc-cost');
+  var estEl = document.getElementById('qc-estimate');
+  if (costIn && estEl) {
+    costIn.addEventListener('input', function () {
+      var v = parseFloat(costIn.value);
+      if (!v || v <= 0) { estEl.innerHTML = ''; return; }
+      var lo = Math.round(v * 0.04), hi = Math.round(v * 0.10);
+      estEl.innerHTML = 'Estimated premium: <strong>$' + lo.toLocaleString() + ' – $' + hi.toLocaleString() + '</strong>' +
+        '<br><span style="font-size:12px;color:var(--muted);">4–10% of trip cost. CFAR adds ~50% to the premium. Buy within 14–21 days of first deposit for pre-existing condition waiver.</span>';
+    });
+  }
+})();
+</script>
 </body>
 </html>

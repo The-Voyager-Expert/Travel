@@ -113,7 +113,10 @@ a.chip-link:hover {
 @media (max-width: 600px) {
   .launch-grid { column-width: auto; column-count: 1; }
   a.chip-link { font-size: 14px; padding: 8px 8px; }
-  .legend-pills { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .legend-pills { display: none; }
+  .legend.legend-expanded .legend-pills { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .legend-toggle { display: block; width: 100%; padding: 8px; background: none; border: 1px solid var(--border2); border-radius: 6px; font-size: 13px; color: var(--muted); cursor: pointer; font-family: inherit; margin-top: 4px; }
+  .legend-toggle:hover { color: var(--text); border-color: var(--border); }
   .legend .pill { font-size: 13px; justify-content: center; text-align: center; }
   .etype { scroll-margin-top: 140px; }
 }
@@ -122,6 +125,7 @@ a.chip-link:hover {
   padding: 12px 0 14px; margin: 0 0 18px;
   position: sticky; top: 0; z-index: 10;
   background: var(--bg); border-bottom: 1px solid var(--border2, #e6e2da); }
+.legend-toggle { display: none; }
 .legend-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
 .legend .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
   background: #fff; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; color: var(--text, #1a1917); line-height: 1; text-decoration: none; }
@@ -401,6 +405,7 @@ a.apply-link:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#
   <div class="view active" id="view-visa">
     <div class="legend">
       <input type="search" id="visa-search" placeholder="Country" aria-label="Search countries" autocomplete="off" spellcheck="false">
+      <button class="legend-toggle" id="legend-toggle" type="button">Filter by entry type ▼</button>
       <div class="legend-pills">
       <a href="#section-vf" class="pill pill-vf">🟢 Visa-free</a>
       <a href="#section-card" class="pill pill-card">🔵 Free arrival card</a>
@@ -514,6 +519,7 @@ a.apply-link:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#
           <span class="cty">🇹🇭 Thailand</span><span class="lim">30 days</span>
           <span class="cty-guides" style="font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;"><a href="../Guides/Bangkok/bangkok_v1.html" style="color:var(--accent);">Bangkok</a> · <a href="../Guides/Chiang-Mai/chiang-mai_v1.html" style="color:var(--accent);">Chiang Mai</a> · <a href="../Guides/Phuket/phuket_v1.html" style="color:var(--accent);">Phuket</a></span>
           <span class="rnote">File the free <b>Thailand Digital Arrival Card (TDAC)</b> online within 72 hours before arrival. <b>Effective July 2026, the visa-free exemption is 30 days</b> (reduced from 60; Royal Gazette published). Verify current rules at tdac.immigration.go.th before travel.</span>
+          <div class="enote"><b>Stay cut:</b> Thailand's visa-free stay was reduced from 60 to 30 days effective July 2026 (Royal Gazette published). Plan accordingly — overstays incur fines.</div>
         </div>
         <div class="row">
           <span class="cty">🇸🇬 Singapore</span><span class="lim">90 days</span>
@@ -585,7 +591,7 @@ a.apply-link:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#
         <div class="row">
           <span class="cty">🇻🇳 Vietnam</span><span class="lim">eVisa</span>
           <span class="cty-guides" style="font-size:11px;color:var(--muted,#6a6660);display:block;margin-top:3px;"><a href="../Guides/Hanoi/hanoi_v1.html" style="color:var(--accent);">Hanoi</a> · <a href="../Guides/Hoi-An/hoi-an_v1.html" style="color:var(--accent);">Hoi An</a></span>
-          <span class="rnote">Apply at <b>evisa.gov.vn</b> — 90-day single-entry ~US$25 or multiple-entry ~US$50, processed in 3–5 business days. Visa on arrival also available at international airports with a pre-approved letter. US citizens are <b>not</b> covered by Vietnam's 45-day visa exemption and need this eVisa for mainland travel. The one carve-out: <b>Phú Quốc island</b> allows a 30-day visa-free stay if you arrive there directly from abroad.</span>
+          <span class="rnote">Apply at <b>evisa.gov.vn</b> — 90-day single-entry ~US$25 or multiple-entry ~US$50, processed in 3–5 business days. Visa on arrival also available at international airports with a pre-approved letter. US citizens are <b>not</b> covered by Vietnam's 45-day visa exemption and need this eVisa for mainland travel. The one carve-out: <b>Phú Quốc island</b> allows a 30-day visa-free stay if you arrive there directly from abroad. Vietnam has 83 international entry points accepting eVisa holders.</span>
         </div>
         <div class="row">
           <span class="cty">🇪🇬 Egypt</span><span class="lim">eVisa · $30</span>
@@ -884,6 +890,16 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
+
+  // ── Mobile legend disclosure ──────────────────────────────────────────────
+  var legToggle = document.getElementById('legend-toggle');
+  var legEl = document.querySelector('.legend');
+  if (legToggle && legEl) {
+    legToggle.addEventListener('click', function () {
+      var expanded = legEl.classList.toggle('legend-expanded');
+      legToggle.textContent = expanded ? 'Filter by entry type ▲' : 'Filter by entry type ▼';
+    });
+  }
 
   // ── Mobile Schengen collapse ──────────────────────────────────────────────
   var grid    = document.getElementById('schengen-grid');
