@@ -8,9 +8,9 @@ HTML carrying the `<!-- validation: passed -->` stamp) it asserts the guide is
 present — with a link that resolves to a real file — in every surface that actually
 ships to users:
 
-  index card     Guides/Guides-Index.html              (dest-card href + link)
-  index inline   Guides/Guides-Index.html              (CLIMATE_INLINE / COST_DATA / SAFETY_DATA)
-  FMAP           Guides/Guides-Index.html              (flight-time view entry)
+  index card     index.html              (dest-card href + link)
+  index inline   index.html              (CLIMATE_INLINE / COST_DATA / SAFETY_DATA)
+  FMAP           index.html              (flight-time view entry)
   map pin        Trip-Essentials/Maps/World-Map.html   (PINS array href + link)
   travel stats   Trip-Essentials/Travel-Stats.html     (guide link; home/origin exempt)
   safety         Trip-Essentials/Safety-Guide.html     (one row + link)
@@ -112,7 +112,7 @@ def main() -> int:
         print("check_coverage: no shipped guides found — nothing to check.")
         return 0
 
-    index_html  = _read(GUIDES_DIR / "Guides-Index.html")
+    index_html  = _read(WEB / "index.html")
     world_html  = _read(MAPS_DIR / "World-Map.html")
     stats_html  = _read(ESSENTIALS / "Travel-Stats.html")
     safety_html = _read(ESSENTIALS / "Safety-Guide.html")
