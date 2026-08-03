@@ -641,12 +641,28 @@ document.getElementById('grid').addEventListener('click', function(e) {
 
 // Hash-based deep link: Time-Zones.html#Barcelona pre-selects that city
 (function () {
-  var hashCity = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+  /* Guide "Also on this site" pills build the fragment from the guide FOLDER
+     name, so a multi-word city arrives separator-joined and unaccented:
+     #New_Orleans, #Porto-Alegre, #Krakow, #Sao_Paulo. The old comparison was a
+     raw lowercased === against c.name / c.guide ("new orleans", "kraków"), so
+     every one of those pills silently fell through to `if (!match) return` and
+     the reader landed on an unfiltered page. Normalising both sides — strip
+     accents, fold _ and - to a space, collapse runs — makes the match tolerant
+     of the fragment convention the rest of the site already uses (fixed
+     2026-08-03; caught by validate_planning_pages_coverage.py). */
+  function normKey(s) {
+    return (s || '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim().toLowerCase();
+  }
+  var hashCity = normKey(decodeURIComponent(location.hash.slice(1)));
   if (!hashCity) return;
   // Match against c.guide (folder name exceptions) or c.name
   var match = CITIES.find(function (c) {
-    return (c.guide && c.guide.toLowerCase() === hashCity) ||
-           c.name.toLowerCase() === hashCity;
+    return (c.guide && normKey(c.guide) === hashCity) ||
+           normKey(c.name) === hashCity;
   });
   if (!match) return;
   searchVal = match.name.toLowerCase();
