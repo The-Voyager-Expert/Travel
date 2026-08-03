@@ -46,7 +46,7 @@
     if (!head || document.querySelector('link[href*="fonts.googleapis.com/css2"]')) return;
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap';
     head.appendChild(link);
   } catch (e) {}
 })();
@@ -1198,7 +1198,7 @@
       'Asia-Stats': 1, 'Caribbean-Stats': 1, 'Currency-Guide': 1,
       'Day-Trips': 1, 'Entry-Requirements': 1, 'Europe-Stats': 1,
       'European-Train-Guide': 1, 'Lounges-Europe': 1, 'Lounges-US': 1,
-      'Plug-Adapter-Guide': 1, 'Safety-Guide': 1, 'South-America-Stats': 1,
+      'Oceania-Stats': 1, 'Plug-Adapter-Guide': 1, 'Safety-Guide': 1, 'South-America-Stats': 1,
       'Stats-Across-Canada': 1, 'Stats-Across-US': 1, 'Sunrise-Sunset': 1,
       'Tap-Water': 1, 'Time-Zones': 1, 'Travel-Packing': 1,
       'Trusted-Traveler': 1, 'Vaccines': 1, 'Visas': 1, 'Weather': 1
