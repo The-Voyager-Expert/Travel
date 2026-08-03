@@ -133,15 +133,15 @@
 </div>
 
 <div id="trip-twin-mount">
-  <button id="btn-trip-twin" class="disc-btn" aria-expanded="false" aria-controls="trip-twin-panel">🪢 Trip Twin <span class="disc-caret">▾</span></button>
+  <button id="btn-trip-twin" class="disc-btn" aria-expanded="false" aria-controls="trip-twin-panel">Trip Escape <span class="disc-caret">▾</span></button>
 </div>
 <div id="trip-twin-panel" hidden>
   <div id="tt-inner">
-    <p class="tt-tagline">Find guides that feel like home — matched on climate, budget, and safety.</p>
+    <p class="tt-tagline">Find guides that are nothing like home — the opposite climate, opposite budget, total change of scene.</p>
     <div id="tt-city-row">
-      <div class="tt-label">Home city <span style="font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;color:var(--muted)">(optional — any fleet city as a proxy)</span></div>
+      <div class="tt-label">Where you are <span style="font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;color:var(--muted)">(optional — any fleet city as a proxy)</span></div>
       <div id="tt-city-wrap">
-        <input type="text" id="tt-city" placeholder="e.g. Miami, London, Sedona" autocomplete="off" spellcheck="false">
+        <input type="text" id="tt-city" placeholder="e.g. Miami, London, Sedona" autocomplete="off" spellcheck="false" aria-label="Your current city">
         <div id="tt-suggest-list" hidden></div>
       </div>
       <span id="tt-city-badge" hidden></span>
@@ -168,11 +168,11 @@
     <div class="tt-safe-row">
       <label class="tt-check-lbl"><input type="checkbox" id="tt-safe"> Safe destinations only</label>
     </div>
-    <button id="tt-go" type="button" class="tt-go-btn" disabled>Find My Twin</button>
+    <button id="tt-go" type="button" class="tt-go-btn" disabled>Find My Escape</button>
     <p id="tt-err" hidden></p>
   </div>
   <div id="tt-results" hidden>
-    <p class="tt-res-head">Your top matches</p>
+    <p class="tt-res-head">Your escape destinations</p>
     <div id="tt-res-cards"></div>
     <button id="tt-back" type="button" class="tt-back-btn">← Try again</button>
   </div>
@@ -4145,7 +4145,7 @@
         cityIn.value = cityName(c);
         matchedCard = c;
         sugList.hidden = true;
-        badge.textContent = '✓ Using ' + cityName(c) + ' as your baseline';
+        badge.textContent = '✓ Escaping from ' + cityName(c);
         badge.hidden = false;
         updateGo();
       });
@@ -4179,14 +4179,12 @@
   function scoreCard(ref, card) {
     var cl = hiData(card);
     if (!cl) return -1;
-    var cSim = ref.avgHi !== null ? Math.max(0, 1 - Math.abs(ref.avgHi - cl.avg) / 50) : 0.5;
+    var cContrast = ref.avgHi !== null ? Math.min(1, Math.abs(ref.avgHi - cl.avg) / 50) : 0.5;
     var co = costMid(card);
-    var coSim = (ref.costMid !== null && co !== null) ? Math.max(0, 1 - Math.abs(ref.costMid - co) / 280) : 0.5;
+    var coContrast = (ref.costMid !== null && co !== null) ? Math.min(1, Math.abs(ref.costMid - co) / 280) : 0.5;
     var sa = safety(card);
-    var saSim = sa !== null
-      ? (ref.safetyLvl !== null ? Math.max(0, 1 - Math.abs(ref.safetyLvl - sa) / 3) : (sa === 1 ? 0.9 : sa === 2 ? 0.7 : 0.5))
-      : 0.65;
-    return 0.60 * cSim + 0.25 * coSim + 0.15 * saSim;
+    var saScore = sa !== null ? (sa === 1 ? 1.0 : sa === 2 ? 0.7 : 0.4) : 0.65;
+    return 0.60 * cContrast + 0.25 * coContrast + 0.15 * saScore;
   }
 
   function whyReasons(ref, card) {
@@ -4194,20 +4192,19 @@
     var cl = hiData(card);
     if (cl && ref.avgHi !== null) {
       var d = Math.abs(ref.avgHi - cl.avg);
-      if (d < 5) list.push('Near-identical climate');
-      else if (d < 12) list.push('Very similar climate');
-      else if (d < 22) list.push('Similar climate');
+      if (d > 35) list.push('Complete climate flip');
+      else if (d > 22) list.push('Strong climate contrast');
+      else if (d > 10) list.push('Different climate');
     }
     var co = costMid(card);
     if (co !== null && ref.costMid !== null) {
       var cd = Math.abs(ref.costMid - co);
-      if (cd < 35) list.push('Same budget tier');
-      else if (cd < 90) list.push('Similar budget');
+      if (cd > 200) list.push('Opposite budget range');
+      else if (cd > 90) list.push('Different budget tier');
     }
     var sa = safety(card);
     if (sa === 1) { list.push('Very safe'); }
-    else if (sa !== null && ref.safetyLvl !== null && sa === ref.safetyLvl) { list.push('Same safety level'); }
-    if (!list.length) list.push('Good overall match');
+    if (!list.length) list.push('Strong contrast');
     return list.slice(0, 3);
   }
 
@@ -4215,7 +4212,7 @@
     errP.hidden = true;
     var ref = buildRef();
     if (ref.avgHi === null) {
-      errP.textContent = 'Please enter a home city or select a climate type to continue.';
+      errP.textContent = 'Please enter your current city or select a climate type to continue.';
       errP.hidden = false;
       return;
     }
@@ -4230,7 +4227,7 @@
     scored.sort(function (a, b) { return b.score - a.score; });
     var top = scored.slice(0, 3);
     if (!top.length) {
-      errP.textContent = 'No matching destinations found. Try adjusting your preferences.';
+      errP.textContent = 'No escape destinations found. Try adjusting your preferences.';
       errP.hidden = false;
       return;
     }
@@ -4254,7 +4251,7 @@
         '</span>' +
         '<span class="tt-res-score">' +
           '<span class="tt-res-pct">' + pct + '%</span>' +
-          '<span class="tt-res-pct-lbl">match</span>' +
+          '<span class="tt-res-pct-lbl">contrast</span>' +
         '</span>';
       cards.appendChild(a);
     });
