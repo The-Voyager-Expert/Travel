@@ -307,6 +307,7 @@
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',  text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
+        { href: base + 'Trip-Essentials/Trip-Stacking.html',     text: '✈️ Multi-Destination Planning' },
       ] },
     null,
     { group: '🚆 Trains', children: [
@@ -324,9 +325,10 @@
       ] },
     null,
     { group: '🌤️ Weather', children: [
-        { href: base + 'Trip-Essentials/Climate-Finder.html', text: '🌤️ Browse by Climate' },
-        { href: base + 'Trip-Essentials/Weather.html',          text: '🌤️ Browse by City' },
-        { href: base + 'Trip-Essentials/When-to-Go.html',       text: '🌤️ When to Go' },
+        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: '🌤️ Browse by Climate' },
+        { href: base + 'Trip-Essentials/Weather.html',           text: '🌤️ Browse by City' },
+        { href: base + 'Trip-Essentials/When-to-Go.html',        text: '🌤️ When to Go' },
+        { href: base + 'Trip-Essentials/Sports-Calendar.html',   text: '🌤️ Sports Calendar' },
       ] },
     null,
     { group: '🛡️ Safety', children: [
