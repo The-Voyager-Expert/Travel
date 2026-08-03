@@ -173,7 +173,10 @@
    fixed 2026-08-01 but Currency was missed. Removed it so Currency matches the other
    scroll-only jump pages. CACHE bump forces the stale Currency/Plug page HTML off the
    user's device. — CACHE to v210. */
-var CACHE = 'travel-cache-v210';
+/* 2026-08-03: Best-Of pages: added best-of-features.js (continent filter, sort, favorites,
+   star ratings, compare panel) across all 35 showcase pages + Best-Of-Index.html.
+   New .bo-* CSS appended to web-travel-style.css. — CACHE to v211. */
+var CACHE = 'travel-cache-v211';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -181,7 +184,7 @@ var CACHE = 'travel-cache-v210';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 156, 'mobile.css': 65, 'web-travel-style.css': 6, 'Read-About.css': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 52, 'toolbar.js': 156, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
