@@ -50,8 +50,9 @@
   --c-gettingaround-border: #1c8a99;
   --c-daytrips-bg:       var(--c-warm-bg);   /* ⛲️ Day Trips — deep teal-green (chosen 2026-06-01) */
   --c-daytrips-border:   #0d6b7a;
+  --c-extras-border:     #BA7517;             /* unified border — all extras sections (2026-08-04) */
   --c-michelin-bg:       var(--c-warm-bg);   /* ⭐ Michelin — champagne cream (lightened 2026-05-19; was #fff0d6 too heavy) */
-  --c-michelin-border:   #BA7517;
+  --c-michelin-border:   var(--c-extras-border);
   --c-pickleball-bg:     var(--c-warm-bg);   /* 🏓 Pickleball — dusty rose (chosen 2026-06-01) */
   --c-pickleball-border: #792a45;
   --c-headsup-bg:        var(--c-warm-bg);               /* ❗️ Heads Up */
@@ -499,6 +500,9 @@ a, a:visited { color: #2867c4; text-decoration: none; }
   border-radius: 4px;
   color: var(--c-text-muted);
   margin: 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   /* 2026-05-07: removed word-spacing: -0.08em — it over-compressed narrow
      emoji like 🚌 to near-zero gap while 🚶/🚕 still showed visible gaps.
      Consistent spacing is enforced via the HTML template instead: always
@@ -521,7 +525,7 @@ a, a:visited { color: #2867c4; text-decoration: none; }
 /* Per core rules/Types of Days and Stops.html (re-locked 2026-04-25). Expected
    children of .stop-block, in order:
      1× .stop-header                 — wraps .stop-num + .stop-name
-     1× .stop-row prefixed `↳ …`     — 2-4 sentence prose summary
+     1× .stop-row — prose summary (plain text, no prefix)
      1× .stop-row prefixed `📖 …`    — Wikipedia anchor (en.wikipedia.org)
      1+× booking boxes               — combination depends on the stop type:
                                         Type 1 (guided)   → 1+ .tour-box (📅)
@@ -540,14 +544,21 @@ a, a:visited { color: #2867c4; text-decoration: none; }
                                         (.guided / .self / .train) */
 .stop-block            { margin-bottom: 8px; scroll-margin-top: 20px; }
 .stop-block:last-child { margin-bottom: 0; }
-/* ↳ prose summary row — 2nd child of every .stop-block per the documented
+/* When a stop follows a transit banner, add margin-top so the gap above
+   the stop title equals the gap below it (both 16px total: banner's own
+   8px bottom + 8px here = title-to-description 16px). Covers all three
+   banner variants. */
+.next       + .stop-block,
+.next-tram  + .stop-block,
+.next-metro + .stop-block { margin-top: 8px; }
+/* Prose summary row — 2nd child of every .stop-block per the documented
    contract above. Targeted by POSITION, not the .stop-row class, because
    a large share of shipped guides never applied that class to this exact
    row — a class-based fix would silently miss those. (2026-07-12) */
 .stop-block > :nth-child(2) { margin-top: 16px; }
 .stop-num,
 .stop-name             { font-weight: bold; font-size: var(--fs-base); color: var(--c-text-primary); }
-/* .stop-row matches body weight (17px desktop / 21px mobile) — the ↳ prose
+/* .stop-row matches body weight (17px desktop / 21px mobile) — the prose
    summary and 📖 Wikipedia row are PRIMARY content under each stop name,
    not "support content," so they should read at body size, not at the
    smaller booking-box-internal size. Bumped 2026-04-26 after owner flagged
@@ -556,7 +567,7 @@ a, a:visited { color: #2867c4; text-decoration: none; }
 .stop-subtitle         { font-size: 0.88em; color: #666; margin-bottom: 8px; }
 
 /* 📖 Wikipedia reading row. Asymmetric (2026-08-04): 12px top / 18px bottom.
-   Top = 2 more than the general stop-row (10px), matching the ↳ prose
+   Top = 2 more than the general stop-row (10px), matching the prose
    margin-top (12px). Bottom = 18px so that wiki_bottom + box_margin_top (4px)
    = 22px — equal to the total gap above Wikipedia (prose bottom 10 + wiki
    top 12 = 22). The user measures "space after Wikipedia" to the TOP BORDER
@@ -983,10 +994,10 @@ div.train .train-time   { padding: 2px 0; }
 .claude-inspiration p:last-child { margin-bottom: 0; }
 
 .extras-title {
-  color: var(--c-brand);
+  color: var(--c-extras-border);
   font-size: var(--fs-header);
   font-weight: bold;
-  border-bottom: 1px solid var(--c-brand);
+  border-bottom: 1px solid var(--c-extras-border);
   padding-bottom: 8px;
   margin-bottom: 16px;
   display: flex;
@@ -1085,37 +1096,22 @@ div.train .train-time   { padding: 2px 0; }
 #tours .extras-sub a:hover { text-decoration: underline; }
 
 
-/* ── extras-title colors — big section headings + underline match the border
-   token. Same token drives the left stripe, the underline, and both title
-   levels — change one token, everything updates. (2026-05-09) ── */
-#tours              .extras-title { color: var(--c-tours-border);        border-bottom-color: var(--c-tours-border); }
+/* ── extras-title :empty::before — CSS-injected section titles.
+   Color is set once on the base .extras-title rule (var(--c-extras-border) — unified gold 2026-08-04).
+   No per-section color overrides; all sections share the same gold. ── */
 #tours              .extras-title:empty::before { content: "📅 Tours"; }
-#weekly-closures    .extras-title { color: var(--c-closures-border);     border-bottom-color: var(--c-closures-border); }
 #weekly-closures    .extras-title:empty::before { content: "🗓️ Weekly Closures"; }
-#cappuccino         .extras-title { color: var(--c-cappuccino-border);   border-bottom-color: var(--c-cappuccino-border); }
 #cappuccino         .extras-title:empty::before { content: "☕ Cappuccino"; }
-#restaurants        .extras-title { color: var(--c-nearhotel-border);    border-bottom-color: var(--c-nearhotel-border); }
 #restaurants        .extras-title:empty::before { content: "🫕 Restaurants Near Hotel"; }
-#downtown           .extras-title { color: var(--c-downtown-border);     border-bottom-color: var(--c-downtown-border); }
 #downtown           .extras-title:empty::before { content: "🍽️ Downtown Restaurants"; }
-#local-tastes       .extras-title { color: var(--c-tastes-border);       border-bottom-color: var(--c-tastes-border); }
 #local-tastes       .extras-title:empty::before { content: "🍮 Local Tastes"; }
-#shows              .extras-title { color: var(--c-shows-border);        border-bottom-color: var(--c-shows-border); }
 #shows              .extras-title:empty::before { content: "🎭 Shows, Performances & Concerts"; }
-#getting-around     .extras-title { color: var(--c-gettingaround-border); border-bottom-color: var(--c-gettingaround-border); }
 #getting-around     .extras-title:empty::before { content: "🚌 Getting Around"; }
-#stations-near-hotel .extras-title { color: var(--c-stations-border);   border-bottom-color: var(--c-stations-border); }
 #stations-near-hotel .extras-title:empty::before { content: "🚆 Train Stations Near Hotel"; }
-#day-trips          .extras-title { color: var(--c-daytrips-border);     border-bottom-color: var(--c-daytrips-border); }
-#day-trips-by-train .extras-title { color: var(--c-daytrips-border);     border-bottom-color: var(--c-daytrips-border); }
 #day-trips-by-train .extras-title:empty::before { content: "⛲️ Day Trips by Train"; }
-#michelin           .extras-title { color: var(--c-michelin-border);     border-bottom-color: var(--c-michelin-border); }
 #michelin           .extras-title:empty::before { content: "⭐ Michelin Restaurants"; }
-#pickleball         .extras-title { color: var(--c-pickleball-border);   border-bottom-color: var(--c-pickleball-border); }
 #pickleball         .extras-title:empty::before { content: "🏓 Pickleball"; }
-#heads-up           .extras-title { color: var(--c-headsup-border);      border-bottom-color: var(--c-headsup-border); }
 #heads-up           .extras-title:empty::before { content: "❗️ Heads Up"; }
-#food-delivery      .extras-title { color: var(--c-delivery-border);     border-bottom-color: var(--c-delivery-border); }
 #food-delivery      .extras-title:empty::before { content: "🚗 Food Delivery"; }
 #also-on-this-site  .extras-title:empty::before { content: "💥 Also on this site"; }
 
@@ -1163,7 +1159,7 @@ div.train .train-time   { padding: 2px 0; }
 #tours .tours-group {
   font-weight: bold;
   font-size: var(--fs-stop-row);
-  color: var(--c-tours-border);
+  color: var(--c-extras-border);
   letter-spacing: 0.3px;
   margin: 20px 0 6px;
 }
@@ -1184,10 +1180,10 @@ div.train .train-time   { padding: 2px 0; }
 #heads-up      .extras-sub { color: var(--c-text-primary); }
 #food-delivery       .extras-sub { color: var(--c-text-primary); }
 
-/* ❗️ Heads Up — all colors from dedicated headsup tokens only, no warn bleed */
+/* ❗️ Heads Up — text colors from dedicated tokens; border unified to extras gold */
 #heads-up .transit-box {
   background: var(--c-card-bg);
-  border-color: var(--c-headsup-border);
+  border-color: var(--c-extras-border);
   color: var(--c-headsup-text);
 }
 #heads-up .transit-box a { color: var(--c-headsup-link); }
@@ -1205,21 +1201,21 @@ div.train .train-time   { padding: 2px 0; }
   padding: 8px 14px;
   border-radius: 4px;
 }
-#weekly-closures     .extras-empty { background: var(--c-card-bg);       border: 1.5px solid var(--c-closures-border); }
-#cappuccino          .extras-empty { background: var(--c-card-bg);     border: 1.5px solid var(--c-cappuccino-border); }
-#restaurants         .extras-empty { background: var(--c-card-bg);      border: 1.5px solid var(--c-nearhotel-border); }
-#downtown            .extras-empty { background: var(--c-card-bg);       border: 1.5px solid var(--c-downtown-border); }
-#local-tastes        .extras-empty { background: var(--c-card-bg);         border: 1.5px solid var(--c-tastes-border); }
-#shows               .extras-empty { background: var(--c-card-bg);          border: 1.5px solid var(--c-shows-border); }
-#getting-around      .extras-empty { background: var(--c-card-bg);  border: 1.5px solid var(--c-gettingaround-border); }
-#stations-near-hotel .extras-empty { background: var(--c-card-bg);       border: 1.5px solid var(--c-stations-border); }
-#day-trips           .extras-empty { background: var(--c-card-bg);       border: 1.5px solid var(--c-daytrips-border); }
-#day-trips-by-train  .extras-empty { background: var(--c-card-bg);       border: 1.5px solid var(--c-daytrips-border); color: var(--c-text-muted) !important; }
-#pickleball          .extras-empty { background: var(--c-card-bg);     border: 1.5px solid var(--c-pickleball-border); }
-#michelin            .extras-empty { background: var(--c-card-bg);       border: 1.5px solid var(--c-michelin-border); }
-#food-delivery       .extras-empty { background: var(--c-card-bg);       border: 1.5px solid var(--c-delivery-border); }
-#heads-up      .extras-empty { background: var(--c-card-bg);         border: 1.5px solid var(--c-headsup-border); }
-#tours               .extras-empty { background: var(--c-card-bg);          border: 1.5px solid var(--c-tours-border); }
+#weekly-closures     .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#cappuccino          .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#restaurants         .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#downtown            .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#local-tastes        .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#shows               .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#getting-around      .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#stations-near-hotel .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#day-trips           .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#day-trips-by-train  .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); color: var(--c-text-muted) !important; }
+#pickleball          .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#michelin            .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#food-delivery       .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#heads-up            .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
+#tours               .extras-empty { background: var(--c-card-bg); border: 1.5px solid var(--c-extras-border); }
 
 /* Lavender extras-box — Michelin and Shows both use this palette (matches
    .overview-day / Trip Overview). One box per entry; sits directly below
@@ -1270,7 +1266,7 @@ div.train .train-time   { padding: 2px 0; }
 /* 📅 Tours */
 #tours .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-tours-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1278,7 +1274,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #tours .entry-body {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-tours-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1288,7 +1284,7 @@ div.train .train-time   { padding: 2px 0; }
 /* ☕ Cappuccino */
 #cappuccino .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-cappuccino-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1296,7 +1292,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #cappuccino .entry-body {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-cappuccino-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1307,7 +1303,7 @@ div.train .train-time   { padding: 2px 0; }
 #restaurants .extras-sub,
 #restaurants-near-hotel .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-nearhotel-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1316,7 +1312,7 @@ div.train .train-time   { padding: 2px 0; }
 #restaurants .entry-body,
 #restaurants-near-hotel .entry-body {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-nearhotel-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1327,7 +1323,7 @@ div.train .train-time   { padding: 2px 0; }
 #downtown .extras-sub,
 #downtown-restaurants .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-downtown-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1336,7 +1332,7 @@ div.train .train-time   { padding: 2px 0; }
 #downtown .entry-body,
 #downtown-restaurants .entry-body {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-downtown-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1346,7 +1342,7 @@ div.train .train-time   { padding: 2px 0; }
 /* ❗️ Heads Up */
 #heads-up .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-headsup-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1355,7 +1351,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #heads-up .transit-box {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-headsup-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1395,23 +1391,16 @@ div.train .train-time   { padding: 2px 0; }
 #local-tastes .extras-sub           { color: var(--c-text-primary); }
 #local-tastes .entry-body         { color: var(--c-tastes-text); }
 
-/* 🗓️ Weekly Closures — slate gray, unified block below title (chosen 2026-05-09)
-   All .stop-row entries merge into one visual area — no gaps between rows,
-   rounded only at the very top (first child) and bottom (last child).
-   No guide changes needed — .stop-row is already the class on every entry.
-   Bottom padding restored to 28px (standard .extras-section value) — 16px was
-   too tight and left almost no visible space below the colored block. (2026-05-18) */
+/* 🗓️ Weekly Closures — each closure row is its own individual bordered box with gap below. (2026-08-04) */
 #weekly-closures {
   padding: 20px 24px 28px !important;
 }
 #weekly-closures .extras-title {
   margin-bottom: 10px;
 }
-/* All closure rows — one continuous colored block, no per-row padding creating block feel.
-   Each closure row is its own individual bordered box with gap below. (2026-08-04) */
 #weekly-closures .stop-row {
   background: var(--c-closures-bg) !important;
-  border: 1.5px solid var(--c-closures-border);
+  border: 1.5px solid var(--c-extras-border);
   padding: 10px 14px !important;
   margin: 0 0 8px 0 !important;
   font-size: var(--fs-base);
@@ -1429,7 +1418,7 @@ div.train .train-time   { padding: 2px 0; }
    tastes have always been".) */
 #stations-near-hotel .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-stations-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 8px 14px 0 14px;
@@ -1439,7 +1428,7 @@ div.train .train-time   { padding: 2px 0; }
 #stations-near-hotel .extras-title + .extras-sub { margin-top: 12px; }
 #stations-near-hotel .station-box {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-stations-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   margin: 0;
@@ -1464,7 +1453,7 @@ div.train .train-time   { padding: 2px 0; }
 #day-trips .extras-sub,
 #day-trips-by-train .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-daytrips-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1473,7 +1462,7 @@ div.train .train-time   { padding: 2px 0; }
 #day-trips .transit-box,
 #day-trips-by-train .transit-box {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-daytrips-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1507,7 +1496,7 @@ div.train .train-time   { padding: 2px 0; }
    matching Day Trips / Michelin / Getting Around / Food Delivery shape. */
 #pickleball .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-pickleball-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1515,7 +1504,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #pickleball .entry-body {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-pickleball-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1529,7 +1518,7 @@ div.train .train-time   { padding: 2px 0; }
    Restaurants / Downtown / Day Trips per-entry block treatment. */
 #getting-around .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-gettingaround-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1537,7 +1526,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #getting-around .transit-box {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-gettingaround-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1551,7 +1540,7 @@ div.train .train-time   { padding: 2px 0; }
    local tastes have always been".) */
 #food-delivery .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-delivery-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1559,7 +1548,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #food-delivery .transit-box {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-delivery-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1584,7 +1573,7 @@ div.train .train-time   { padding: 2px 0; }
   color: var(--c-text-muted);
   margin-top: 14px;
   padding: 7px 14px;
-  border: 1.5px solid var(--c-michelin-border);
+  border: 1.5px solid var(--c-extras-border);
   background: var(--c-card-bg);
   border-radius: 0 4px 4px 0;
 }
@@ -1603,10 +1592,10 @@ div.train .train-time   { padding: 2px 0; }
 }
 .transit-box strong { color: var(--c-text-primary); }
 
-/* Getting Around — ride-app name: bold + section coral. (2026-05-19) */
+/* Getting Around — ride-app name: bold + extras gold. (2026-05-19, unified 2026-08-04) */
 #getting-around .ride-app,
 #getting-around .ride-app strong {
-  color: var(--c-gettingaround-border);
+  color: var(--c-extras-border);
   font-weight: bold;
 }
 
@@ -1638,7 +1627,7 @@ div.train .train-time   { padding: 2px 0; }
    Style-A skeleton. */
 #local-tastes .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-tastes-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1647,7 +1636,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #local-tastes .entry-body {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-tastes-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -1862,6 +1851,10 @@ div.train .train-time   { padding: 2px 0; }
   .next-tram,
   .next-metro,
   .warn { padding: 10px 12px; }
+  /* On mobile, allow transit banners to wrap naturally — desktop enforces nowrap. */
+  .next,
+  .next-tram,
+  .next-metro { white-space: normal; overflow: visible; text-overflow: clip; }
   /* .tour-meet intentionally NOT indented — "no indentation, they are all one block"
      (owner, re-locked 2026-04-26). No margin-left override on mobile. */
 
@@ -1975,7 +1968,7 @@ div.train .train-time   { padding: 2px 0; }
    Description, booking link, address, walk time all live INSIDE shows-box. */
 #shows .extras-sub {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-shows-border);
+  border: 1.5px solid var(--c-extras-border);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   padding: 10px 14px 0 14px;
@@ -1983,7 +1976,7 @@ div.train .train-time   { padding: 2px 0; }
 }
 #shows .shows-box {
   background: var(--c-card-bg);
-  border: 1.5px solid var(--c-shows-border);
+  border: 1.5px solid var(--c-extras-border);
   border-top: none;
   border-radius: 0 0 4px 4px;
   padding: 0 14px 8px 14px;
@@ -2380,6 +2373,10 @@ a.also-on-this-site-pill:active {
   box-shadow: 0 1px 3px rgba(184,92,42,.12);
   transform: scale(.97) translateY(1px);
 }
+/* Override the .extras-section fit-content(720px) cap for the also-on-this-site card
+   so the pill row gets the full container width — prevents European guides (6 pills)
+   from wrapping the last pill onto a lonely second row. */
+#also-on-this-site { grid-template-columns: 1fr; }
 /* Owner rule 2026-08-04: the Time Zones · Plug Adapter · Currency pills in the
    "Also on this site" strip are MOBILE-ONLY. They stay in the guide HTML so mobile
    still shows them, but are hidden on desktop (≥601px), where the toolbar and
@@ -2400,6 +2397,9 @@ a.also-on-this-site-pill:active {
    exactly — class="nearby-guide-pill" so validator also-on-site checks skip. */
 #nearby-guides .extras-title:empty::before { content: "🗺️ Nearby Guides"; }
 #nearby-guides { border-left-color: var(--c-brand); }
+/* No collapse toggle on Nearby Guides — suppress ::after chevron and reset cursor */
+#nearby-guides > .extras-title::after { content: none; }
+#nearby-guides > .extras-title { cursor: default; }
 .nearby-guides-pills {
   display: flex;
   flex-wrap: wrap;
