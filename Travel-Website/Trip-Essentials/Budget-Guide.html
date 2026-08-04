@@ -32,15 +32,27 @@
   .sort-btn.active:focus { background: #f0ede8 !important;
     border: 1.5px solid var(--border) !important; color: var(--muted) !important; }
 }
+.index-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border,#d8d4cc); border-radius: 8px; overflow: hidden; }
 .index-table thead th {
   background: var(--surface2, #f0ede8); border-bottom: 2px solid var(--border, #d8d4cc);
   padding: 8px 12px; text-align: left; font-size: var(--fs-body,14px); font-weight: 700;
   color: var(--muted);
 }
 .index-table th:last-child, .index-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
-.index-table tbody td { font-size: var(--fs-body,14px); }
-.index-table tbody tr { cursor: pointer; }
-.index-table tbody tr:hover { filter: brightness(0.96); }
+.index-table tbody td { font-size: var(--fs-body,14px); box-shadow: inset 0 -1px 0 var(--border2,#e6e2da); transition: box-shadow .1s ease; }
+.index-table tbody tr:last-child td { box-shadow: none; }
+.index-table tbody tr { cursor: pointer; background: var(--surface,#fff); }
+/* Full terracotta box outline on hover/press — box-shadow, not border-color:
+   with border-collapse:collapse a row's top border shares its edge with the
+   row above's bottom border, so a plain border-color hover loses that edge
+   unpredictably. box-shadow paints per-cell and never collapses with a neighbor. */
+.index-table tbody tr:hover td { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a; }
+.index-table tbody tr:hover td:first-child { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a, inset 3px 0 0 #b85c2a; }
+.index-table tbody tr:hover td:last-child { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a, inset -3px 0 0 #b85c2a; }
+/* Press "sink": linear-gradient avoids column seams that a blurred box-shadow would cause. */
+.index-table tbody tr:active td { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e; background-image: linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.03)); }
+.index-table tbody tr:active td:first-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset 3px 0 0 #7a3b1e; }
+.index-table tbody tr:active td:last-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset -3px 0 0 #7a3b1e; }
 .index-table tbody td a { color: var(--text); text-decoration: none; display: block; }
 .index-table tbody td a:visited { color: #3d3a32; text-decoration: none; }
 .index-table tbody td a:hover { color: var(--accent,#8a6c1a); }
@@ -330,7 +342,6 @@ function initBudgetTable(cities) {
     const guideUrl = GUIDES[toGuideSlug(city.name)];
     const cityCell = guideUrl ? `<a href="${guideUrl}">${city.name}</a>` : city.name;
     const row = document.createElement('tr');
-    row.style.background = idx % 2 === 0 ? '#FAF7F0' : '#FFFFFF';
     row.innerHTML = `
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);">${cityCell}</td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">$${city.hotel}</td>
