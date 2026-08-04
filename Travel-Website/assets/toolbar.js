@@ -34,7 +34,8 @@
     (document.head || document.documentElement).appendChild(_s);
     setTimeout(function () {
       var el = document.getElementById('_tbhide');
-      if (el) { el.parentNode.removeChild(el); document.body.style.opacity = '1'; }
+      if (el) el.parentNode.removeChild(el);
+      document.body.style.opacity = '1'; /* always reveal — also clears CSS body{opacity:0} */
     }, 2000);
   } catch (e) {}
 })();
