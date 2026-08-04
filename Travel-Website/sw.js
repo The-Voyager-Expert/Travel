@@ -186,7 +186,10 @@
    2026-08-04: Individual entry boxes site-wide — removed continuous-run merge, fit-content(720px) grid, tour/ticket-box width fit-content, internal stop spacing, day-header 1px border, chevron color, entry-body row gap. guide-style.css min to 54, CACHE to v215. */
 /* 2026-08-04: Best-Of prev/next arrows now insert after .page-intro-card (below the
    banner) instead of after .page-header — bumped toolbar.js min to 158, CACHE to v214. */
-var CACHE = 'travel-cache-v215';
+/* 2026-08-04: Wikipedia row margin-bottom 12px → 6px (symmetric with margin-top, 2 less
+   than prose→wiki gap); mobile .tour-box/.ticket-box min-width:100% so boxes never
+   narrower than stop photos — guide-style.css min to 55, CACHE to v216. */
+var CACHE = 'travel-cache-v216';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -194,7 +197,7 @@ var CACHE = 'travel-cache-v215';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 54, 'toolbar.js': 158, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 55, 'toolbar.js': 158, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
