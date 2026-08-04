@@ -22,3 +22,10 @@
 2026-08-04 05:59 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
 2026-08-04 06:00 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
 2026-08-04 06:07 — banff_v1.html — PASS — 884/884 passed, 0 failed
+2026-08-04 06:08 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:09 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:09 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:10 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:10 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:11 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:26 — banff_v1.html — PASS — 884/884 passed, 0 failed
