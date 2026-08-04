@@ -112,6 +112,8 @@
       <a class="days-jump-item" href="./Trip-Essentials/Travel-Guides.html" role="menuitem">Travel Guides</a>
     </div>
   </div>
+  <button id="btn-trip-twin" class="disc-btn" aria-expanded="false" aria-controls="trip-twin-panel">Trip Escape <span class="disc-caret">▾</span></button>
+  <button id="btn-new-filter" class="disc-btn" aria-pressed="false">🆕 New</button>
   </div><!-- /pill-row -->
   <div id="filter-active-bar">
     <span></span>
@@ -132,9 +134,6 @@
   <div id="cmp-hint" style="display:none;font-size:11px;color:var(--muted);text-align:center;margin:2px 0 0;white-space:nowrap">Tap cities to select, then compare</div>
 </div>
 
-<div id="trip-twin-mount">
-  <button id="btn-trip-twin" class="disc-btn" aria-expanded="false" aria-controls="trip-twin-panel">Trip Escape <span class="disc-caret">▾</span></button>
-</div>
 <div id="trip-twin-panel" hidden>
   <div id="tt-inner">
     <p class="tt-tagline">Find guides that are nothing like home — the opposite climate, opposite budget, total change of scene.</p>
@@ -1804,7 +1803,7 @@
           c.classList.toggle('match-alias', match && q !== '' && !textMatch && (aliasMatch || fuzzyMatch));
           /* a card only counts toward its section + the result tally if it also
              survives the season + theme filters (which hide via !important class) */
-          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('country-hide') && !c.classList.contains('continent-hide');
+          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('country-hide') && !c.classList.contains('continent-hide') && !c.classList.contains('new-hide');
           if (visible) { any = true; shown++; sectionVisible++; }
         });
         r.style.display = any ? '' : 'none';
@@ -1829,7 +1828,8 @@
       document.querySelector('#continentJumpList .days-jump-item.on:not([data-cont="all"])') ||
       document.querySelector('#countryJumpList .days-jump-item.on:not([data-country="all"])') ||
       document.querySelector('#daysJumpList .days-jump-item.on:not([data-days="all"])') ||
-      ([].some.call(document.querySelectorAll('.lchip.on'), function(c) { return c.dataset.l && c.dataset.l !== 'all'; }));
+      ([].some.call(document.querySelectorAll('.lchip.on'), function(c) { return c.dataset.l && c.dataset.l !== 'all'; })) ||
+      (document.getElementById('btn-new-filter') && document.getElementById('btn-new-filter').getAttribute('aria-pressed') === 'true');
     noRes.style.display = (shown === 0 && anyFilter) ? 'block' : 'none';
     clearKbd();
   }
@@ -3553,6 +3553,8 @@
     var srch = document.getElementById('guide-search');
     if (srch && srch.value) { srch.value = ''; srch.dispatchEvent(new Event('input')); }
     if (window._exitCompareMode) window._exitCompareMode();
+    var nf = document.getElementById('btn-new-filter');
+    if (nf && nf.getAttribute('aria-pressed') === 'true') nf.click();
     setTimeout(refreshFilterHint, 0);
   }
   var clearBtn = document.getElementById('clear-all-filters');
@@ -3769,6 +3771,30 @@
     badge.className = 'dest-new-badge';
     badge.textContent = 'new';
     card.appendChild(badge);
+  });
+}());
+</script>
+<!-- "New" filter pill — shows only guides shipped within the last 14 days -->
+<script>
+(function () {
+  var btn = document.getElementById('btn-new-filter');
+  if (!btn) return;
+  var DAY = 86400000;
+  var now = Date.now();
+  function isNew(card) {
+    var d = card.dataset.shipped ? new Date(card.dataset.shipped) : null;
+    return d && !isNaN(d) && (now - d.getTime()) <= 14 * DAY;
+  }
+  btn.addEventListener('click', function () {
+    var active = btn.getAttribute('aria-pressed') === 'true';
+    active = !active;
+    btn.setAttribute('aria-pressed', String(active));
+    btn.classList.toggle('has-active', active);
+    document.querySelectorAll('a.dest-card').forEach(function (c) {
+      c.classList.toggle('new-hide', active && !isNew(c));
+    });
+    var searchInput = document.getElementById('guide-search');
+    if (searchInput) searchInput.dispatchEvent(new Event('input', { bubbles: true }));
   });
 }());
 </script>
