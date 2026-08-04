@@ -112,7 +112,7 @@
       <a class="days-jump-item" href="./Trip-Essentials/Travel-Guides.html" role="menuitem">Travel Guides</a>
     </div>
   </div>
-  <button id="btn-trip-twin" class="disc-btn" aria-expanded="false" aria-controls="trip-twin-panel">Trip Escape <span class="disc-caret">▾</span></button>
+  <button id="btn-trip-twin" class="disc-btn" aria-expanded="false" aria-controls="trip-twin-panel">🌴 <span class="pl" data-short="Escape">Trip Escape</span> <span class="disc-caret">▾</span></button>
   <button id="btn-new-filter" class="disc-btn" aria-pressed="false">🆕 New</button>
   </div><!-- /pill-row -->
   <div id="filter-active-bar">
@@ -3786,10 +3786,8 @@
     return d && !isNaN(d) && (now - d.getTime()) <= 14 * DAY;
   }
   btn.addEventListener('click', function () {
-    var active = btn.getAttribute('aria-pressed') === 'true';
-    active = !active;
+    var active = btn.getAttribute('aria-pressed') !== 'true';
     btn.setAttribute('aria-pressed', String(active));
-    btn.classList.toggle('has-active', active);
     document.querySelectorAll('a.dest-card').forEach(function (c) {
       c.classList.toggle('new-hide', active && !isNew(c));
     });
@@ -4069,11 +4067,39 @@
   var allCards = Array.from(document.querySelectorAll('a.dest-card'));
   var matchedCard = null;
 
-  // Panel toggle
+  function closeTT() {
+    panel.hidden = true;
+    btnTT.setAttribute('aria-expanded', 'false');
+  }
+
+  // Register so other panels can close Trip Escape
+  window._closeTripTwin = closeTT;
+
+  // Patch _collapseFacetPanels to also close Trip Escape
+  var _origCollapse = window._collapseFacetPanels;
+  window._collapseFacetPanels = function () {
+    if (_origCollapse) _origCollapse();
+    closeTT();
+  };
+
+  // Panel toggle — close all other panels first when opening
   btnTT.addEventListener('click', function () {
+    var opening = panel.hidden;
+    if (opening) {
+      if (window._collapseFacetPanels) window._collapseFacetPanels();
+      if (window._closeDaysMenu) window._closeDaysMenu();
+      if (window._closeCountryMenu) window._closeCountryMenu();
+      if (window._closeBestofMenu) window._closeBestofMenu();
+      if (window._closeContinentMenu) window._closeContinentMenu();
+    }
     panel.hidden = !panel.hidden;
     btnTT.setAttribute('aria-expanded', String(!panel.hidden));
   });
+
+  // Close panel on outside click
+  document.addEventListener('click', function (e) {
+    if (!panel.hidden && !panel.contains(e.target) && e.target !== btnTT) closeTT();
+  }, true);
 
   backBtn.addEventListener('click', function () {
     results.hidden = true;
