@@ -4344,14 +4344,10 @@
   // ── Collapsible extras sections ──────────────────────────────────────────
   (function _sectionCollapse() {
     function _setup() {
-      document.querySelectorAll('.extras-section').forEach(function (sec) {
+      document.querySelectorAll('.extras-section, .claude-inspiration, #hotel-alternatives').forEach(function (sec) {
         var title = sec.querySelector(':scope > .extras-title');
-        if (!title || title.querySelector('.sec-chev')) return;
-        var chev = document.createElement('span');
-        chev.className = 'sec-chev';
-        chev.setAttribute('aria-hidden', 'true');
-        chev.textContent = '›'; /* › */
-        title.appendChild(chev);
+        if (!title || sec.dataset.collapseInited) return;
+        sec.dataset.collapseInited = '1';
         title.setAttribute('role', 'button');
         title.setAttribute('tabindex', '0');
         title.addEventListener('click', function () {
