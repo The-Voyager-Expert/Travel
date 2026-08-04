@@ -113,6 +113,7 @@
     </div>
   </div>
   <button id="btn-trip-twin" class="disc-btn" aria-expanded="false" aria-controls="trip-twin-panel">🌴 <span class="pl" data-short="Escape">Trip Escape</span> <span class="disc-caret">▾</span></button>
+  <button id="btn-new-filter" class="disc-btn" aria-pressed="false"><span class="pill-gold">Guide</span></button>
   </div><!-- /pill-row -->
   <div id="filter-active-bar">
     <span></span>
@@ -1802,7 +1803,7 @@
           c.classList.toggle('match-alias', match && q !== '' && !textMatch && (aliasMatch || fuzzyMatch));
           /* a card only counts toward its section + the result tally if it also
              survives the season + theme filters (which hide via !important class) */
-          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('country-hide') && !c.classList.contains('continent-hide');
+          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('country-hide') && !c.classList.contains('continent-hide') && !c.classList.contains('new-hide');
           if (visible) { any = true; shown++; sectionVisible++; }
         });
         r.style.display = any ? '' : 'none';
@@ -3770,6 +3771,28 @@
     badge.className = 'dest-new-badge';
     badge.textContent = 'new';
     card.appendChild(badge);
+  });
+}());
+</script>
+<!-- "Guide" filter pill — shows only guides shipped within the last 21 days -->
+<script>
+(function () {
+  var btn = document.getElementById('btn-new-filter');
+  if (!btn) return;
+  var DAY = 86400000;
+  var now = Date.now();
+  function isNew(card) {
+    var d = card.dataset.shipped ? new Date(card.dataset.shipped) : null;
+    return d && !isNaN(d) && (now - d.getTime()) <= 21 * DAY;
+  }
+  btn.addEventListener('click', function () {
+    var active = btn.getAttribute('aria-pressed') !== 'true';
+    btn.setAttribute('aria-pressed', String(active));
+    document.querySelectorAll('a.dest-card').forEach(function (c) {
+      c.classList.toggle('new-hide', active && !isNew(c));
+    });
+    var searchInput = document.getElementById('guide-search');
+    if (searchInput) searchInput.dispatchEvent(new Event('input', { bubbles: true }));
   });
 }());
 </script>
