@@ -47,7 +47,7 @@
     if (!head || document.querySelector('link[href*="fonts.googleapis.com/css2"]')) return;
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap';
     head.appendChild(link);
   } catch (e) {}
 })();
@@ -1836,7 +1836,7 @@
      Source: the EXPLICIT data-updated="YYYY-MM" or "YYYY-MM-DD" attribute on
      toolbar-mount — NOT document.lastModified (which bumps on every file touch).
      Guide pages: injects a .title-updated div into .title-page (near top), then
-       repositionUpdatedStamp() moves it to after #also-on-this-site (bottom).
+       repositionUpdatedStamp() moves it to after the LAST section on the page (bottom).
      Non-guide pages: injects .title-updated at the END of body — always the
        true visual bottom even on stats pages where .wrap closes early. Style
        and mobile padding are set inline; no separate repositioning needed.
