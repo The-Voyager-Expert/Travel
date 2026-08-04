@@ -2738,6 +2738,10 @@
       { name: 'Hyatt Regency Bali', note: 'Hyatt family — private beach, 3 pools, tropical gardens, Sanur · 9.0 Booking.com' },
       { name: 'InterContinental Bali Resort by IHG', note: 'IHG first-tier — 6 pools, beachfront Jimbaran Bay, spa · 9.0 Booking.com' }
     ] },
+    'banff': { h: [
+      { name: 'Fairmont Banff Springs', note: 'Fairmont brand — 1888 sandstone castle at the confluence of the Bow and Spray Rivers, 2 outdoor pools, full spa, fine-dining 1888 Chop House · 9.2 Booking.com' },
+      { name: 'The Rimrock Resort Hotel', note: 'Independent luxury — clifftop perch 6 km from downtown on Sulphur Mountain Road, panoramic six-range mountain views, Primrose dining room, full-service spa · 9.1 Booking.com' }
+    ] },
     'bangkok': { h: [
       { name: 'Mandarin Oriental Bangkok', note: 'Mandarin Oriental brand — 1876 Chao Phraya River landmark, celebrated Authors\' Wing, riverfront dining, Sala Rim Naam Thai restaurant · 9.4 Booking.com' },
       { name: 'The Peninsula Bangkok', note: 'Peninsula brand — all-suite riverside tower, rooftop infinity pool over the Chao Phraya, complimentary river ferry · 9.4 Booking.com' }
