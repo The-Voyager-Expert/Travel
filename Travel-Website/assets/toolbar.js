@@ -1969,8 +1969,8 @@
           if (!stopAddr && mapsEl) {
             stopAddr = mapsEl.textContent.trim();
             stopAddrHref = mapsEl.href;
-          } else if (!stopDesc && txt.charAt(0) === '↳') {
-            stopDesc = txt.slice(1).trim();
+          } else if (!stopDesc && !txt.startsWith('📖')) {
+            stopDesc = txt;
           }
         });
         /* Ticket/tour box rows (plain divs, not .stop-row) — hours, duration, warnings, ticket */
@@ -4052,7 +4052,7 @@
       strip.style.cssText =
         'display:flex;align-items:center;text-decoration:none;width:100%;' +
         'background:#e8f3fc;border:1px solid #c2d8ef;border-radius:6px;' +
-        'padding:' + (isMobile ? '4px 6px' : '6px 10px') + ';margin-bottom:0;font-family:inherit;box-sizing:border-box;' +
+        'padding:' + (isMobile ? '4px 6px' : '6px 10px') + ';margin-bottom:' + (isMobile ? '0' : '16px') + ';font-family:inherit;box-sizing:border-box;' +
         'overflow:hidden;cursor:pointer;transition:background .15s;';
       strip.addEventListener('mouseenter', function () { strip.style.background = '#dcedf8'; });
       strip.addEventListener('mouseleave', function () { strip.style.background = '#e8f3fc'; });
@@ -4354,7 +4354,7 @@
     function _setup() {
       document.querySelectorAll('.extras-section, .claude-inspiration, #hotel-alternatives').forEach(function (sec) {
         var title = sec.querySelector(':scope > .extras-title');
-        if (!title || sec.dataset.collapseInited) return;
+        if (!title || sec.dataset.collapseInited || sec.id === 'nearby-guides') return;
         sec.dataset.collapseInited = '1';
         title.setAttribute('role', 'button');
         title.setAttribute('tabindex', '0');
