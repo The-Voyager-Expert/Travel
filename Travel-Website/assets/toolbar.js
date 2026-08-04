@@ -1139,56 +1139,6 @@
       pill.textContent = '← Back to ' + cityName;
       document.body.appendChild(pill);
       void pill.offsetHeight;
-      /* ── Desktop inline "Also on this site" back card (all non-guide pages) ──
-         Mobile already has the floating pill above. Desktop users get an inline card
-         appended to the page's .wrap or .content-wrap, using the shared .also-strip /
-         .also-strip-head / .also-links / .also-on-this-site-pill classes from
-         web-travel-style.css. Links back to the guide's #also-on-this-site section. */
-      {
-        var dCss = document.createElement('style');
-        dCss.textContent = '@media(max-width:600px){#tve-back-guide-desktop{display:none!important}}';
-        document.head.appendChild(dCss);
-        var strip = document.createElement('div');
-        strip.id = 'tve-back-guide-desktop';
-        strip.className = 'also-strip';
-        var hdr = document.createElement('div');
-        hdr.className = 'also-strip-head';
-        hdr.textContent = '💥 Also on this site';
-        var linksRow = document.createElement('div');
-        linksRow.className = 'also-links';
-        var bp = document.createElement('a');
-        bp.className = 'also-on-this-site-pill';
-        bp.href = guideHref;
-        bp.textContent = '← Back to ' + cityName + ' guide';
-        linksRow.appendChild(bp);
-        strip.appendChild(hdr);
-        strip.appendChild(linksRow);
-        /* Placement — must land on EVERY page layout, not just .wrap ones.
-           1) If the reader arrived at a specific anchor (e.g. #Austria) and that
-              element exists on this page, drop the card right after it so it's
-              visible without scrolling on long pages (Currency, Plug-Adapter).
-           2) Otherwise put the card at the TOP of the page's main content so it's
-              visible on load — regardless of the wrapper class this page uses.
-              Container classes vary across Trip-Essentials (.wrap, .wx-wrap,
-              .dt-wrap, .index-section, …); a broad selector + toolbar fallback
-              guarantees the card appears on every current AND future page. */
-        var anchorId = location.hash ? location.hash.slice(1) : '';
-        var anchorEl = anchorId ? document.getElementById(anchorId) : null;
-        if (anchorEl && anchorEl.parentNode) {
-          anchorEl.parentNode.insertBefore(strip, anchorEl.nextSibling);
-        } else {
-          var cont = document.querySelector(
-            '.wrap, .content-wrap, .wx-wrap, .dt-wrap, .index-section, main, .container, article'
-          );
-          if (cont) {
-            cont.insertBefore(strip, cont.firstChild);
-          } else {
-            var tb = document.querySelector('.tb');
-            if (tb && tb.parentNode) { tb.parentNode.insertBefore(strip, tb.nextSibling); }
-            else { document.body.insertBefore(strip, document.body.firstChild); }
-          }
-        }
-      }
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', build);
@@ -4396,6 +4346,22 @@
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             sec.classList.toggle('collapsed');
+          }
+        });
+      });
+      document.querySelectorAll('.day-block').forEach(function (day) {
+        var hdr = day.querySelector(':scope > .day-header');
+        if (!hdr || day.dataset.collapseInited) return;
+        day.dataset.collapseInited = '1';
+        hdr.setAttribute('role', 'button');
+        hdr.setAttribute('tabindex', '0');
+        hdr.addEventListener('click', function () {
+          day.classList.toggle('collapsed');
+        });
+        hdr.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            day.classList.toggle('collapsed');
           }
         });
       });
