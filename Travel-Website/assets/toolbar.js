@@ -1084,7 +1084,7 @@
        Guide B from Guide A's strip doesn't need a "back to Guide A" pill.
        Skip any page inside the Guides folder (real guide + stops-map + read-about). */
     if (/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
-    /* Owner bug 2026-08-04: guide → Guides Index showed "← Back to Amsterdam" on
+    /* Owner bug 2026-08-04: guide → Guides Index showed "← Amsterdam" on
        the index. Aggregator / navigation pages (CLAUDE.md: index, Before-You-Go,
        Climate-Finder, When-to-Go) have NO standalone content — a guide's chrome
        links to them ("‹ All Guides" → the index), so document.referrer is a guide
@@ -1135,7 +1135,7 @@
       var pill = document.createElement('a');
       pill.id = 'tve-back-to-guide';
       pill.href = guideHref;
-      pill.textContent = '← Back to ' + cityName;
+      pill.textContent = '← ' + cityName;
       document.body.appendChild(pill);
       void pill.offsetHeight;
     }
