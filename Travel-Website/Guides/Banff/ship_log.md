@@ -18,3 +18,7 @@
 2026-08-04 05:52 — banff_v1.html — FAIL @ index-filters — 0 checks — 1 filter(s): THEME_DATA (trip-type filter) — add to build_theme_tags.py → --apply
 2026-08-04 05:56 — banff_v1.html — FAIL @ index-filters — 0 checks — 1 filter(s): THEME_DATA (trip-type filter) — add to build_theme_tags.py → --apply
 2026-08-04 05:58 — banff_v1.html — PASS — 878/878 passed, 0 failed
+2026-08-04 05:59 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 05:59 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:00 — banff_v1.html — FAIL @ validate — 883/884 passed, 1 failed — CAROUSEL — globally alphabetical A→Z order across all guides (carousel ignores regions; pure city-name sort, diacritics
+2026-08-04 06:07 — banff_v1.html — PASS — 884/884 passed, 0 failed
