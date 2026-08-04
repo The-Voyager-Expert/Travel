@@ -34,6 +34,7 @@ Last updated: 2026-06-26
 - [x] Cappuccino - Extra Section.html
 - [x] Restaurants Near Hotel - Extra Section.html
 - [x] Downtown Restaurants - Extra Section.html
+- [x] Read-About-Pages.html
 - [x] Local Tastes - Extra Section.html
 - [x] Food Delivery - Extra Section.html
 - [x] Shows, Performances & Concerts - Extra Section.html
