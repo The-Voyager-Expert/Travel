@@ -4092,6 +4092,35 @@
         col.appendChild(tempDiv);
         grid.appendChild(col);
       }
+      /* ── NOW block — current temperature + current condition icon ── */
+      if (data.current && data.current.temperature_2m != null) {
+        var nowBlock = document.createElement('div');
+        nowBlock.style.cssText =
+          'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
+          'padding-right:' + (isMobile ? '6px' : '10px') + ';margin-right:' + (isMobile ? '4px' : '8px') + ';' +
+          'border-right:1px solid #c2d8ef;flex-shrink:0;gap:1px;';
+
+        if (!isMobile) {
+          var nowLabel = document.createElement('div');
+          nowLabel.style.cssText = 'font-size:8px;font-weight:700;color:#6b6860;letter-spacing:0.03em;';
+          nowLabel.textContent = 'NOW';
+          nowBlock.appendChild(nowLabel);
+        }
+
+        var nowIcon = document.createElement('div');
+        nowIcon.style.cssText = 'font-size:' + (isMobile ? '16px' : '20px') + ';line-height:1.2;';
+        nowIcon.textContent = WMO[data.current.weather_code] || '🌡️';
+        nowBlock.appendChild(nowIcon);
+
+        var nowTemp = document.createElement('div');
+        nowTemp.style.cssText =
+          'font-size:' + (isMobile ? '10px' : '13px') + ';font-weight:700;color:#3d3a32;white-space:nowrap;';
+        nowTemp.textContent = _wxConv(data.current.temperature_2m) + '°' + u;
+        nowBlock.appendChild(nowTemp);
+
+        strip.insertBefore(nowBlock, grid);
+      }
+
       strip.appendChild(grid);
 
       /* °C/°F toggle */
@@ -4137,6 +4166,7 @@
       var url = 'https://api.open-meteo.com/v1/forecast' +
         '?latitude=' + lat + '&longitude=' + lon +
         '&daily=temperature_2m_max,temperature_2m_min,weathercode' +
+        '&current=temperature_2m,weather_code' +
         '&timezone=auto&forecast_days=7';
       var xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);
