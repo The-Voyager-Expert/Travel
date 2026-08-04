@@ -308,7 +308,6 @@
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',  text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
-        { href: base + 'Trip-Essentials/Trip-Stacking.html',     text: '✈️ Multi-Destination Planning' },
       ] },
     null,
     { group: '🚆 Trains', children: [
@@ -1268,22 +1267,21 @@
       if (raLink) ovSec.appendChild(raLink);
     }
     /* Move the "Updated {Month}" stamp to the end of the guide on all viewports.
-       Priority: #tve-best-of-crosslinks (last DOM element) → #also-in-country →
-       #nearby-guides → #also-on-this-site (fallback). Best Of is injected on
-       DOMContentLoaded before this runs on 'load', so it always exists when it exists. */
+       Finds whichever candidate section appears LAST in DOM order — compareDocumentPosition
+       flag 4 = DOCUMENT_POSITION_FOLLOWING — so adding new sections never strands the
+       stamp in the middle of the page. */
     function repositionUpdatedStamp() {
       var upd = document.querySelector('.title-page .title-updated') || document.querySelector('.title-updated');
       if (!upd) return;
-      var bestOf = document.getElementById('tve-best-of-crosslinks');
-      if (bestOf && bestOf.parentNode) { bestOf.parentNode.insertBefore(upd, bestOf.nextSibling); return; }
-      var alsoIn = document.getElementById('also-in-country');
-      if (alsoIn && alsoIn.parentNode) { alsoIn.parentNode.insertBefore(upd, alsoIn.nextSibling); return; }
-      var nearby = document.getElementById('nearby-guides');
-      if (nearby && nearby.parentNode) {
-        nearby.parentNode.insertBefore(upd, nearby.nextSibling);
-      } else {
-        var also = document.getElementById('also-on-this-site');
-        if (also && also.parentNode) also.parentNode.insertBefore(upd, also.nextSibling);
+      var ids = ['tve-best-of-crosslinks', 'also-in-country', 'nearby-guides', 'also-on-this-site'];
+      var last = null;
+      ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (!last || (last.compareDocumentPosition(el) & 4)) { last = el; }
+      });
+      if (last && last.parentNode) {
+        last.parentNode.insertBefore(upd, last.nextSibling);
       }
     }
     function repositionMobileBits() { repositionReadAbout(); repositionUpdatedStamp(); }
