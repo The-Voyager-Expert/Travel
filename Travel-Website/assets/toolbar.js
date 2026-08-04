@@ -3001,6 +3001,10 @@
       { name: 'Sonesta Resort Hilton Head Island', note: 'Sonesta brand — North Forest Beach Drive oceanfront, two pools, beach access, on-site dining, family-friendly full-service resort · 8.6 Booking.com' },
       { name: 'The Inn at Harbour Town', note: 'Independent boutique — inside Sea Pines plantation, overlooking Heritage Golf Links, butler service, Sea Pines resort amenity access · 9.1 Booking.com' }
     ] },
+    'hiroshima': { h: [
+      { name: 'Grand Prince Hotel Hiroshima', note: 'Prince Hotels brand — waterfront hotel on the Motoyasu River, panoramic city views, spa, pool, closest major hotel to Peace Memorial Park · 8.9 Booking.com' },
+      { name: 'Sheraton Grand Hiroshima Hotel', note: 'Marriott brand — directly connected to JR Hiroshima Station, Shinkansen-accessible, Club Lounge, contemporary rooms above the transit hub · 8.7 Booking.com' }
+    ] },
     'hoi-an': { h: [
       { name: 'Anantara Hội An Resort', note: 'Anantara brand — Thu Bon River frontage in the Ancient Town, colonial-style architecture, riverside pool, spa · 9.2 Booking.com' },
       { name: 'Victoria Hội An Beach Resort & Spa', note: 'Victoria Hotels brand — beachfront between Old Town and Cua Dai Beach, pool, spa, traditional Vietnamese architecture · 8.8 Booking.com' }
