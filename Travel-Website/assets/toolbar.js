@@ -1281,16 +1281,9 @@
         if (!last || (last.compareDocumentPosition(el) & 4)) { last = el; }
       });
       if (last && last.parentNode) {
+        last.parentNode.insertBefore(upd, last.nextSibling);
         var _ne = document.querySelector('.title-no-entries');
-        if (_ne) {
-          var _row = document.createElement('div');
-          _row.className = 'tve-stamp-row';
-          _row.insertBefore(upd, null);
-          _row.insertBefore(_ne, null);
-          last.parentNode.insertBefore(_row, last.nextSibling);
-        } else {
-          last.parentNode.insertBefore(upd, last.nextSibling);
-        }
+        if (_ne) upd.parentNode.insertBefore(_ne, upd.nextSibling);
       }
     }
     function repositionMobileBits() { repositionReadAbout(); repositionUpdatedStamp(); }
