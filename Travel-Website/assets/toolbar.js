@@ -1652,7 +1652,6 @@
           if (ngPills) ngPills.style.display = expanded ? '' : 'none';
           if (ngTitle) {
             ngTitle.style.marginBottom = expanded ? '' : '0';
-            ngTitle.style.borderBottomColor = expanded ? '' : 'transparent';
           }
           ng.style.paddingBottom = expanded ? '' : '14px';
         }
@@ -4421,7 +4420,6 @@
             var open = ng.style.paddingBottom !== '';
             if (ngPills) ngPills.style.display = open ? '' : 'none';
             ngTitle.style.marginBottom = open ? '' : '0';
-            ngTitle.style.borderBottomColor = open ? '' : 'transparent';
             ng.style.paddingBottom = open ? '' : '14px';
           }
           ngTitle.addEventListener('click', _ngToggle);
