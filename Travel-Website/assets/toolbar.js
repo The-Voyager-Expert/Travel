@@ -1630,17 +1630,15 @@
     function injectOverviewToggle() {
       var sec = document.querySelector('.overview-section');
       if (!sec || document.getElementById('overview-toggle-btn')) return;
-      var extras = sec.querySelector('.overview-extras');
-      if (!extras) return;
       var btn = document.createElement('button');
       btn.id = 'overview-toggle-btn';
       btn.type = 'button';
       btn.className = 'overview-toggle-btn';
       var expanded = true;
       function getTargets() {
-        var list = []; var el = sec.nextElementSibling;
-        while (el) { list.push(el); el = el.nextElementSibling; }
-        return list;
+        return Array.from(document.querySelectorAll(
+          '.day-block, .extras-section, .claude-inspiration'
+        ));
       }
       function render() {
         btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
@@ -1648,7 +1646,8 @@
         getTargets().forEach(function(d) { d.style.display = expanded ? '' : 'none'; });
       }
       btn.addEventListener('click', function() { expanded = !expanded; render(); });
-      extras.appendChild(btn);
+      sec.insertAdjacentElement('afterend', btn);
+      render();
     }
     if (document.readyState !== 'loading') injectOverviewToggle();
     else document.addEventListener('DOMContentLoaded', injectOverviewToggle);
