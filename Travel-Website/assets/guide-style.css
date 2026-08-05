@@ -628,12 +628,21 @@ a, a:visited { color: #2867c4; text-decoration: none; }
   border-radius: 4px 4px 0 0;
   padding: 8px 14px;
 }
-/* Card directly after prose (no Wikipedia row) — glue to the white prose block. */
+/* Zero prose bottom padding when a booking box or Wikipedia row follows
+   so the join uses only the first child's 6px margin as spacing. */
+.stop-block > :nth-child(2):has(+ .tour-box),
+.stop-block > :nth-child(2):has(+ .ticket-box),
+.stop-block > :nth-child(2):has(+ .stop-row) {
+  padding-bottom: 0;
+}
+/* Card directly after prose (no Wikipedia row) — glue to the white prose block.
+   padding-top: 0 so the 6px div margin inside the box is the only gap. */
 .stop-block > :nth-child(2) + .tour-box,
 .stop-block > :nth-child(2) + .ticket-box {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   margin-top: 0;
+  padding-top: 0;
 }
 .stop-num              { font-weight: bold; font-size: var(--fs-base); color: var(--c-text-primary); margin-right: 5px; }
 .stop-name             { font-weight: bold; font-size: var(--fs-base); color: var(--c-text-primary); }
@@ -647,7 +656,9 @@ a, a:visited { color: #2867c4; text-decoration: none; }
 
 /* 📖 Wikipedia reading row — continuation of the white prose block (2026-08-05).
    No top margin or top radius; glued flush below prose. Scoped via :has()
-   to the exact en.wikipedia.org anchor. Browser support: Chromium 105+. */
+   to the exact en.wikipedia.org anchor. Browser support: Chromium 105+.
+   padding-bottom reduced to 0 when a booking box follows, so the only gap at
+   the join is the 6px div margin inside the box (matches internal row rhythm). */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) {
   margin-top: 0;
   margin-bottom: 0;
@@ -655,12 +666,18 @@ a, a:visited { color: #2867c4; text-decoration: none; }
   border-radius: 0;
   padding: 8px 14px;
 }
-/* Card below Wikipedia row — glue to the white block above. */
+.stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]):has(+ .tour-box),
+.stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]):has(+ .ticket-box) {
+  padding-bottom: 0;
+}
+/* Card below Wikipedia row — glue to the white block above.
+   padding-top: 0 so the 6px div margin inside the box is the only gap. */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .tour-box,
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .ticket-box {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   margin-top: 0;
+  padding-top: 0;
 }
 /* Stop photo — included in the white merged card (2026-08-05).
    The booking box above loses its bottom radius when a photo follows so
