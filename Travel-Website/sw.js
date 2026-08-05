@@ -197,7 +197,8 @@
 /* 2026-08-05: Nearby Guides — restore chevron + cursor:pointer; collapse btn white bg — guide-style.css min to 59, CACHE to v221. */
 /* 2026-08-05: Collapsed extras-title — keep gold bar visible (remove border-bottom-color:transparent) — guide-style.css min to 60, toolbar.js min to 162, CACHE to v222. */
 /* 2026-08-05: Transit banner font color → #7a5c1e (warm olive-gold) — guide-style.css min to 61, CACHE to v223. */
-var CACHE = 'travel-cache-v223';
+/* 2026-08-05: ICS pill row → Option D style (beige fill #ede8db, no border, #7a5c1e text, separate chips) — guide-style.css min to 62, CACHE to v224. */
+var CACHE = 'travel-cache-v224';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -205,7 +206,7 @@ var CACHE = 'travel-cache-v223';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 61, 'toolbar.js': 162, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 62, 'toolbar.js': 162, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
