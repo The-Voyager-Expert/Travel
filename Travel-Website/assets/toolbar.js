@@ -1621,6 +1621,36 @@
     else document.addEventListener('DOMContentLoaded', styleOverviewDayNumbers);
   }
 
+  /* ── Trip Overview: collapse / expand toggle above Day 1 ────────────────────
+     A small pill button sits between the TRIP OVERVIEW header and the first
+     day card. Clicking it collapses all .overview-day cards (saves vertical
+     space for returning visitors) or expands them. State is session-only. */
+  if (isRealGuide) {
+    function injectOverviewToggle() {
+      var sec = document.querySelector('.overview-section');
+      if (!sec || document.getElementById('overview-toggle-btn')) return;
+      var days = sec.querySelectorAll('.overview-day');
+      if (!days.length) return;
+      var btn = document.createElement('button');
+      btn.id = 'overview-toggle-btn';
+      btn.type = 'button';
+      btn.className = 'overview-toggle-btn';
+      var expanded = true;
+      function render() {
+        btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
+        btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        [].slice.call(days).forEach(function(d) {
+          d.style.display = expanded ? '' : 'none';
+        });
+      }
+      btn.addEventListener('click', function() { expanded = !expanded; render(); });
+      render();
+      sec.insertBefore(btn, days[0]);
+    }
+    if (document.readyState !== 'loading') injectOverviewToggle();
+    else document.addEventListener('DOMContentLoaded', injectOverviewToggle);
+  }
+
   /* ── In-guide bookmark — pin this guide as current trip from inside the guide.
      Button sits to the right of .title-city ("LISBON") with a 10px gap.
      All viewports. Resting colour: terracotta #b85c2a (outline when unpinned,
