@@ -4407,6 +4407,29 @@
           }
         });
       });
+      /* #nearby-guides has ID-specificity CSS that blocks .collapsed — drive via
+         inline styles instead (same approach as the global collapse button). */
+      var ng = document.getElementById('nearby-guides');
+      if (ng && !ng.dataset.collapseInited) {
+        var ngTitle = ng.querySelector(':scope > .extras-title');
+        if (ngTitle) {
+          ng.dataset.collapseInited = '1';
+          ngTitle.setAttribute('role', 'button');
+          ngTitle.setAttribute('tabindex', '0');
+          function _ngToggle() {
+            var ngPills = ng.querySelector('.nearby-guides-pills');
+            var open = ng.style.paddingBottom !== '';
+            if (ngPills) ngPills.style.display = open ? '' : 'none';
+            ngTitle.style.marginBottom = open ? '' : '0';
+            ngTitle.style.borderBottomColor = open ? '' : 'transparent';
+            ng.style.paddingBottom = open ? '' : '14px';
+          }
+          ngTitle.addEventListener('click', _ngToggle);
+          ngTitle.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _ngToggle(); }
+          });
+        }
+      }
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _setup);
