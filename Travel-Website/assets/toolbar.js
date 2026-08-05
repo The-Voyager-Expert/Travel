@@ -3649,7 +3649,7 @@
 
   /* ── Best-Of cross-links — injected before #also-on-this-site on guide pages
      that appear in one or more Best-Of collections. CITY_BEST_OF_MAP is generated
-     by Brain/scripts/build_best_of_map.py — re-run after adding a new Best-Of
+     by Brain/scripts/build/build_best_of_map.py — re-run after adding a new Best-Of
      page or a new guide link inside an existing Best-Of page.
      Data is embedded directly (no XHR). Keys: city folder name, lowercased. */
   var CITY_BEST_OF_MAP = {
@@ -3856,7 +3856,7 @@
 
   /* ── "Also in [Country]" section — injected after #nearby-guides on
      guide pages that share a country with ≥1 other fleet guide. Fetches
-     assets/country_guides.json (built by Brain/scripts/build_country_guides.py
+     assets/country_guides.json (built by Brain/scripts/build/build_country_guides.py
      after each ship). Countries with only one fleet guide get no section.
      Uses sessionStorage to avoid re-fetching on same-tab navigation. */
   (function () {

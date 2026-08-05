@@ -21,7 +21,7 @@
  *
  * The data is climate NORMALS — avg daily high/low (°C), 12 values Jan..Dec per
  * guide folder. Not a forecast; these typical averages do not shift, which is
- * why they may live in the guide. Regenerate with Brain/scripts/build_climate.py
+ * why they may live in the guide. Regenerate with Brain/scripts/build/build_climate.py
  * (it rewrites both Guides/climate.json and the CLIMATE block below, between the
  * CLIMATE_DATA markers).
  */
