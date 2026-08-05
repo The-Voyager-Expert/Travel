@@ -619,7 +619,20 @@ a, a:visited { color: #2867c4; text-decoration: none; }
    contract above. Targeted by POSITION, not the .stop-row class, because
    a large share of shipped guides never applied that class to this exact
    row — a class-based fix would silently miss those. (2026-07-12) */
-.stop-block > :nth-child(2) { margin-top: 20px; }
+.stop-block > :nth-child(2) {
+  margin-top: 20px;
+  margin-bottom: 0;
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 8px 14px;
+}
+/* Card directly after prose (no Wikipedia row) — glue to the white prose block. */
+.stop-block > :nth-child(2) + .tour-box,
+.stop-block > :nth-child(2) + .ticket-box {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 0;
+}
 .stop-num              { font-weight: bold; font-size: var(--fs-base); color: var(--c-text-primary); margin-right: 5px; }
 .stop-name             { font-weight: bold; font-size: var(--fs-base); color: var(--c-text-primary); }
 /* .stop-row matches body weight (17px desktop / 21px mobile) — the prose
@@ -630,23 +643,17 @@ a, a:visited { color: #2867c4; text-decoration: none; }
 .stop-row              { margin: 10px 0; font-size: var(--fs-stop-row); color: var(--c-text-primary); }
 .stop-subtitle         { font-size: 0.88em; color: #666; margin-bottom: 8px; }
 
-/* 📖 Wikipedia reading row. Asymmetric (2026-08-04): 12px top / 18px bottom.
-   Top = 2 more than the general stop-row (10px), matching the prose
-   margin-top (12px). Bottom = 18px so that wiki_bottom + box_margin_top (4px)
-   = 22px — equal to the total gap above Wikipedia (prose bottom 10 + wiki
-   top 12 = 22). The user measures "space after Wikipedia" to the TOP BORDER
-   of the booking rectangle, not to text inside it. Was 6px/6px (2026-07-12).
-   Scoped via :has() to the exact en.wikipedia.org anchor so the rule only
-   fires on the 📖 row. Browser support: Chromium 105+ (render_pdf.py). */
+/* 📖 Wikipedia reading row — continuation of the white prose block (2026-08-05).
+   No top margin or top radius; glued flush below prose. Scoped via :has()
+   to the exact en.wikipedia.org anchor. Browser support: Chromium 105+. */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) {
-  margin-top: 18px;
+  margin-top: 0;
   margin-bottom: 0;
   background: var(--c-card-bg);
-  border-radius: 4px 4px 0 0;
+  border-radius: 0;
   padding: 8px 14px;
 }
-/* Card below Wikipedia row loses its top radius — the two elements
-   render as one continuous white block. */
+/* Card below Wikipedia row — glue to the white block above. */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .tour-box,
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .ticket-box {
   border-top-left-radius: 0;
