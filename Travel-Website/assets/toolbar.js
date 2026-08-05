@@ -1643,7 +1643,20 @@
       function render() {
         btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
         btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        getTargets().forEach(function(d) { d.style.display = expanded ? '' : 'none'; });
+        getTargets().forEach(function(el) {
+          var titleClass = el.classList.contains('day-block') ? 'day-header'
+                         : el.classList.contains('extras-section') ? 'extras-title'
+                         : null;
+          if (titleClass) {
+            Array.from(el.children).forEach(function(child) {
+              if (!child.classList.contains(titleClass)) {
+                child.style.display = expanded ? '' : 'none';
+              }
+            });
+          } else {
+            el.style.display = expanded ? '' : 'none';
+          }
+        });
       }
       btn.addEventListener('click', function() { expanded = !expanded; render(); });
       sec.insertAdjacentElement('afterend', btn);
