@@ -1637,7 +1637,7 @@
       var expanded = true;
       function getTargets() {
         return Array.from(document.querySelectorAll(
-          '.day-block, .extras-section, .claude-inspiration'
+          '.day-block, .extras-section, .claude-inspiration, #hotel-alternatives'
         ));
       }
       function render() {
