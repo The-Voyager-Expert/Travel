@@ -1282,6 +1282,8 @@
       });
       if (last && last.parentNode) {
         last.parentNode.insertBefore(upd, last.nextSibling);
+        var _ne = document.querySelector('.title-no-entries');
+        if (_ne) upd.parentNode.insertBefore(_ne, upd.nextSibling);
       }
     }
     function repositionMobileBits() { repositionReadAbout(); repositionUpdatedStamp(); }
@@ -1916,6 +1918,27 @@
           mst.id = 'tve-stamp-mobile-style';
           mst.textContent = '@media (max-width:600px){body>.title-updated{padding-left:14px!important}}';
           document.head.appendChild(mst);
+        }
+      }
+      /* No-entries footnote: lists sections omitted for having no qualifying
+         content. Source: data-no-entries on toolbar-mount (comma-separated).
+         Spec: Brain/Reference/Toolbar.html § 10. */
+      var _neRaw = mount ? (mount.dataset.noEntries || '') : '';
+      if (_neRaw) {
+        var _neEl = document.createElement('div');
+        _neEl.className = 'title-no-entries';
+        _neEl.textContent = 'No entries for: ' + _neRaw.split(',').map(function(s) { return s.trim(); }).filter(Boolean).join(' \xb7 ');
+        if (tp) {
+          tp.appendChild(_neEl);
+        } else {
+          _neEl.style.cssText = 'display:block;font-size:10.5px;color:#c0bbb5;margin:-18px 0 20px;padding-left:32px;text-align:left;';
+          document.body.appendChild(_neEl);
+          if (!document.getElementById('tve-no-entries-mobile-style')) {
+            var _nmst = document.createElement('style');
+            _nmst.id = 'tve-no-entries-mobile-style';
+            _nmst.textContent = '@media (max-width:600px){body>.title-no-entries{padding-left:14px!important}}';
+            document.head.appendChild(_nmst);
+          }
         }
       }
     }
