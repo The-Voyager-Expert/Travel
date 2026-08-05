@@ -65,7 +65,7 @@
      2. Bump CACHE version in sw.js
      3. Done — one or two files, zero guide re-stamps */
 (function () {
-  var CURRENT = 34;
+  var CURRENT = 35;
   var link = document.querySelector('link[href*="guide-style.css"]');
   if (!link) return;
   var m = link.href.match(/[?&]v=(\d+)/);
@@ -2243,6 +2243,51 @@
     document.addEventListener('DOMContentLoaded', _injectICSExport);
   } else {
     _injectICSExport();
+  }
+
+
+  /* ── Stop duration chip — surfaces ⏰ value from each stop's box into header ──
+     For every .stop-block on a real guide page:
+       1. Find the ⏰ ~XX div inside .tour-box or .ticket-box
+       2. Extract the duration string (e.g. "~30 min", "~1.5 h")
+       3. Set display:flex on .stop-header so margin-left:auto can right-align the chip
+       4. Append <span class="stop-dur"> with the value
+       5. Remove the source ⏰ div (cosmetic — the data was read first)
+     Stops without a ⏰ row are silently skipped (no chip, no layout change).
+     CSS for .stop-dur lives in guide-style.css. */
+  function _injectStopDuration() {
+    if (!isRealGuide) return;
+    var blocks = document.querySelectorAll('.stop-block');
+    if (!blocks.length) return;
+    [].forEach.call(blocks, function (sb) {
+      var durDiv = null, durText = '';
+      [].forEach.call(sb.querySelectorAll('.tour-box > div, .ticket-box > div'), function (div) {
+        if (durDiv) return;
+        var txt = div.textContent.trim();
+        var first = txt.charAt(0);
+        if (first === '⏰' || txt.slice(0, 2) === '⏰') {
+          durDiv = div;
+          durText = txt.replace(/^⏰\s*/, '').trim();
+        }
+      });
+      if (!durDiv || !durText) return;
+      var header = sb.querySelector('.stop-header');
+      if (!header) return;
+      header.style.display = 'flex';
+      header.style.alignItems = 'center';
+      var nameEl = header.querySelector('.stop-name');
+      if (nameEl) nameEl.style.flex = '1';
+      var chip = document.createElement('span');
+      chip.className = 'stop-dur';
+      chip.textContent = '⏱ ' + durText;
+      header.appendChild(chip);
+      durDiv.parentNode.removeChild(durDiv);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectStopDuration);
+  } else {
+    _injectStopDuration();
   }
 
 
