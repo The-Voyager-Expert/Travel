@@ -1644,6 +1644,18 @@
         btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
         btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         getTargets().forEach(function(el) { el.classList.toggle('collapsed', !expanded); });
+        /* Nearby Guides has ID-specificity CSS that fights .collapsed — drive inline */
+        var ng = document.getElementById('nearby-guides');
+        if (ng) {
+          var ngPills = ng.querySelector('.nearby-guides-pills');
+          var ngTitle = ng.querySelector('.extras-title');
+          if (ngPills) ngPills.style.display = expanded ? '' : 'none';
+          if (ngTitle) {
+            ngTitle.style.marginBottom = expanded ? '' : '0';
+            ngTitle.style.borderBottomColor = expanded ? '' : 'transparent';
+          }
+          ng.style.paddingBottom = expanded ? '' : '14px';
+        }
       }
       btn.addEventListener('click', function() { expanded = !expanded; render(); });
       sec.insertAdjacentElement('afterend', btn);
