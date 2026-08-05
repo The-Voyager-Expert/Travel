@@ -1621,31 +1621,34 @@
     else document.addEventListener('DOMContentLoaded', styleOverviewDayNumbers);
   }
 
-  /* ── Guide content collapse / expand toggle after Trip Overview ─────────────
-     A small pill button sits AFTER the .overview-section (Trip Overview stays
-     fully visible). Clicking it hides all day blocks and extra sections below,
-     letting the reader use the guide as a compact reference. Session-only. */
+  /* ── Guide content collapse / expand toggle — right side of Trip Overview ───
+     Button lives inside .overview-extras (right-aligned via margin-left:auto).
+     Clicking hides all day blocks and extra sections that follow .overview-section.
+     Targets are re-queried on every click so dynamically-injected sections
+     (hotel banner, etc.) are always included. Session-only state. */
   if (isRealGuide) {
     function injectOverviewToggle() {
       var sec = document.querySelector('.overview-section');
       if (!sec || document.getElementById('overview-toggle-btn')) return;
-      var targets = [];
-      var el = sec.nextElementSibling;
-      while (el) { targets.push(el); el = el.nextElementSibling; }
-      if (!targets.length) return;
+      var extras = sec.querySelector('.overview-extras');
+      if (!extras) return;
       var btn = document.createElement('button');
       btn.id = 'overview-toggle-btn';
       btn.type = 'button';
       btn.className = 'overview-toggle-btn';
       var expanded = true;
+      function getTargets() {
+        var list = []; var el = sec.nextElementSibling;
+        while (el) { list.push(el); el = el.nextElementSibling; }
+        return list;
+      }
       function render() {
         btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
         btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        targets.forEach(function(d) { d.style.display = expanded ? '' : 'none'; });
+        getTargets().forEach(function(d) { d.style.display = expanded ? '' : 'none'; });
       }
       btn.addEventListener('click', function() { expanded = !expanded; render(); });
-      render();
-      sec.parentNode.insertBefore(btn, sec.nextSibling);
+      extras.appendChild(btn);
     }
     if (document.readyState !== 'loading') injectOverviewToggle();
     else document.addEventListener('DOMContentLoaded', injectOverviewToggle);
