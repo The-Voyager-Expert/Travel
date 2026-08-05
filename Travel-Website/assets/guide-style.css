@@ -519,6 +519,27 @@ a, a:visited { color: #2867c4; text-decoration: none; }
   margin-bottom: 10px;
 }
 .arrive-first { border-left: 3px solid var(--c-next-border); }
+/* Glue adjacent motion banners into one visual block (owner rule 2026-08-05).
+   When a .next-tram sub-line sits immediately below its parent banner, zero
+   the touching radii and collapse the margin so they read as a single box.
+   Backgrounds are identical (#cdb28a) so no seam is visible.
+   .hotel-first has no left bar, so suppress the tram's left border in that
+   pairing — a half-bar (bottom-only) would look broken. */
+.hotel-first:has(+ .next-tram),
+.arrive-first:has(+ .next-tram),
+.next:has(+ .next-tram) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
+}
+.hotel-first + .next-tram,
+.arrive-first + .next-tram,
+.next + .next-tram {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 0;
+}
+.hotel-first + .next-tram { border-left: none; }
 
 /* .next — between-stop transition + end-of-day return banner.
    Expected text shape: `🚶 {N} · 🚕 {M} → {next stop}` between stops or
@@ -1419,16 +1440,29 @@ div.train .train-time   { padding: 2px 0; }
 #weekly-closures .stop-row {
   background: var(--c-card-bg) !important;
   border: 1.5px solid transparent;
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
   padding: 10px 14px !important;
-  margin: 0 0 8px 0 !important;
+  margin: 0 !important;
   font-size: var(--fs-base);
   line-height: 1.6;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
   color: var(--c-text-primary);
 }
+/* First entry — top corners rounded, space below the section title */
+#weekly-closures .extras-title + .stop-row {
+  margin-top: 12px !important;
+  border-radius: 4px 4px 0 0 !important;
+}
+/* Last entry — bottom corners rounded, no separator line */
+#weekly-closures .stop-row:last-child {
+  border-radius: 0 0 4px 4px !important;
+  border-bottom: 1.5px solid transparent !important;
+}
+/* Single entry (only child) — all corners rounded */
+#weekly-closures .extras-title + .stop-row:last-child {
+  border-radius: 4px !important;
+}
 #weekly-closures .stop-row strong { color: var(--c-text-primary); }
-#weekly-closures .extras-title + .stop-row { margin-top: 12px !important; }
-#weekly-closures .stop-row:last-child { margin-bottom: 0 !important; }
 
 /* 🚆 Train Stations Near Hotel — per-entry continuous block (Local Tastes pattern).
    Station-name heading + station-box body merged into one colored block per station.
