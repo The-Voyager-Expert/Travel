@@ -192,7 +192,9 @@
 /* 2026-08-04: Weather strip — added NOW block showing live current temperature + current
    condition icon (from Open-Meteo &current=temperature_2m,weather_code); current-moment
    icon matches Google's icon; unit follows °C/°F toggle same as daily forecast — toolbar.js min to 160, CACHE to v219. */
-var CACHE = 'travel-cache-v219';
+/* 2026-08-05: Transit banners soft warm gold #ede8db; day-header font 17px; nearby-guides
+   per-section collapse via inline styles — guide-style.css min to 58, toolbar.js min to 161, CACHE to v220. */
+var CACHE = 'travel-cache-v220';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -200,7 +202,7 @@ var CACHE = 'travel-cache-v219';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 57, 'toolbar.js': 160, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 58, 'toolbar.js': 161, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
