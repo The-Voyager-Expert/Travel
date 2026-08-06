@@ -4262,6 +4262,57 @@
     _injectBestOfAndFixOrphans();
   }
 
+  /* ── End-section nav pills — injects overview-extra-link pills for the five
+     bottom sections (Also on This Site, Best Of, Nearby Guides, Alt. Hotels,
+     Also in Country) so they are reachable from the scrollable pill strip above
+     the guide days. Injected dynamically so pills only appear when the section
+     is present and has content. (owner rule 2026-08-06) */
+  function _injectEndSectionPills() {
+    if (!isRealGuide) return;
+    var row = document.querySelector('.overview-extras:not(#ics-pill-row)');
+    if (!row) return;
+    function addPill(href, text) {
+      var a = document.createElement('a');
+      a.className = 'overview-extra-link';
+      a.href = href;
+      a.textContent = text;
+      row.appendChild(a);
+    }
+    /* 1. Also on This Site — always present in real guides */
+    if (document.getElementById('also-on-this-site')) {
+      addPill('#also-on-this-site', '🔗 Also on This Site');
+    }
+    /* 2. Best Of — only when this city appears in CITY_BEST_OF_MAP */
+    var _epParts = location.pathname.split('/');
+    var _epgi = _epParts.indexOf('Guides');
+    if (_epgi >= 0) {
+      var _epSlug = _epParts[_epgi + 1].toLowerCase();
+      if (CITY_BEST_OF_MAP[_epSlug] && CITY_BEST_OF_MAP[_epSlug].length) {
+        addPill('#tve-best-of-crosslinks', '⭐ Best Of');
+      }
+    }
+    /* 3. Nearby Guides — only when the section has pills (build_nearby_guides populated it) */
+    var _epng = document.getElementById('nearby-guides');
+    if (_epng) {
+      var _epngp = _epng.querySelector('.nearby-guides-pills');
+      if (_epngp && _epngp.children.length > 0) {
+        addPill('#nearby-guides', '🗺️ Nearby Guides');
+      }
+    }
+    /* 4. Alternative Hotel Recommendations — only when HOTEL_ALT_DATA has an entry for this guide */
+    var _epPage = location.pathname.split('/').pop() || '';
+    var _epMatch = _epPage.match(/^(.+?)(?:_v\d+)?\.html$/);
+    if (_epMatch && HOTEL_ALT_DATA[_epMatch[1]]) {
+      addPill('#hotel-alternatives', '🏨 Alt. Hotels');
+    }
+    /* 5. Also in Country — async; pill is appended by the XHR _build() callback below */
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectEndSectionPills);
+  } else {
+    _injectEndSectionPills();
+  }
+
   /* ── "Also in [Country]" section — injected after #nearby-guides on
      guide pages that share a country with ≥1 other fleet guide. Fetches
      assets/country_guides.json (built by Brain/scripts/build/build_country_guides.py
@@ -4300,6 +4351,15 @@
       wrap.appendChild(pills);
       anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
       _fixPillGridOrphans(pills);
+      /* Append nav pill for Also in Country to the scrollable pill strip */
+      var _aicRow = document.querySelector('.overview-extras:not(#ics-pill-row)');
+      if (_aicRow) {
+        var _aicPill = document.createElement('a');
+        _aicPill.className = 'overview-extra-link';
+        _aicPill.href = '#also-in-country';
+        _aicPill.textContent = '🌍 Also in ' + country;
+        _aicRow.appendChild(_aicPill);
+      }
       /* Move the "Updated" stamp after the last footer section.
          Prefer Best Of (#tve-best-of-crosslinks) if present — it is always last. */
       var stamp = document.querySelector('.title-updated');
