@@ -3542,7 +3542,9 @@
     ] },
     'muscat': { h: [
       { name: 'The Chedi Muscat', note: 'GHM brand — 21 acres on the Sea of Oman, three pools including The Long Pool, award-winning spa · 9.1 Booking.com' },
-      { name: 'Al Bustan Palace, A Ritz-Carlton Hotel', note: 'Ritz-Carlton brand — private crescent-cove beach, outdoor amphitheater, palace-scale architecture · 9.0 Booking.com' }
+      { name: 'Al Bustan Palace, A Ritz-Carlton Hotel', note: 'Ritz-Carlton brand — private crescent-cove beach, outdoor amphitheater, palace-scale architecture · 9.0 Booking.com' },
+      { name: 'Shangri-La Barr Al Jissah, Muscat', note: 'Shangri-La brand — clifftop resort in Bandar Jissah, two outdoor pools, private beach, marina · 8.5 Booking.com' },
+      { name: 'InterContinental Muscat by IHG', note: 'IHG brand — Shati Al Qurum, direct beach access, palm gardens, five restaurants, spa · 8.9 Booking.com' }
     ] },
     'mykonos': { h: [
       { name: 'Santa Marina, A Luxury Collection Resort', note: 'Marriott Luxury Collection — private beach on Ornos Bay, infinity pools, Caprice beach bar · 9.1 Booking.com' },
