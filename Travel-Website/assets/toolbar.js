@@ -4322,7 +4322,7 @@
       strip.style.cssText =
         'display:flex;align-items:center;text-decoration:none;width:100%;' +
         'background:#e8f3fc;border:1px solid #c2d8ef;border-radius:6px;' +
-        'padding:' + (isMobile ? '5px 6px' : '9px 10px') + ';margin-bottom:' + (isMobile ? '0' : '16px') + ';font-family:inherit;box-sizing:border-box;' +
+        'padding:' + (isMobile ? '5px 6px' : '6px 10px') + ';margin-bottom:' + (isMobile ? '0' : '16px') + ';font-family:inherit;box-sizing:border-box;' +
         'overflow:hidden;cursor:pointer;transition:background .15s;';
       strip.addEventListener('mouseenter', function () { strip.style.background = '#dcedf8'; });
       strip.addEventListener('mouseleave', function () { strip.style.background = '#e8f3fc'; });
