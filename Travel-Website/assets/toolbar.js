@@ -4753,4 +4753,26 @@
     }
   }());
 
+  /* ── Move .overview-extras (and #ics-pill-row) out of the white Trip Overview
+     card so they render on the beige page background between the card and day blocks.
+     Runs last on DOMContentLoaded so all chip injection is already complete. ── */
+  (function _extrasOutOfCard() {
+    function _move() {
+      var ovSec = document.querySelector('.overview-section');
+      if (!ovSec) return;
+      var parent = ovSec.parentNode;
+      var after = ovSec.nextSibling;
+      var children = Array.prototype.slice.call(ovSec.children);
+      children.forEach(function(child) {
+        if (child.classList.contains('overview-extras') || child.id === 'ics-pill-row') {
+          parent.insertBefore(child, after);
+          after = child.nextSibling;
+        }
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _move);
+    } else { _move(); }
+  }());
+
 }());
