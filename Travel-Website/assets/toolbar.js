@@ -383,14 +383,14 @@
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:14px;font-weight:700;color:#fff!important;text-decoration:none;padding:4px 2px;' +
+    '.tb a,.tb a:visited{font-size:13px;font-weight:700;color:#fff!important;text-decoration:none;padding:4px 2px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb a.tb-active{color:#fff!important;background:transparent;border:1.5px solid rgba(255,255,255,0.7);border-radius:14px;padding:4px 12px;font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:14px;font-weight:700;color:#fff!important;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;font-weight:700;color:#fff!important;' +
       'padding:4px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
@@ -471,14 +471,14 @@
     '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}' +
     '#tve-back-guides button{display:none!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
-    '.tb-theme-toggle{flex-shrink:0;margin-left:6px;margin-right:12px;width:34px;height:34px;border-radius:50%;' +
+    '.tb-theme-toggle{flex-shrink:0;margin-left:4px;margin-right:8px;width:28px;height:28px;border-radius:50%;' +
       'border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'transition:background .15s,border-color .15s;outline:none;padding:0;' +
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
     '.tb-theme-toggle:hover{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.8)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
-    '@media(max-width:1260px){.tb-theme-toggle{margin-left:0;margin-right:14px}}' +
+    '@media(max-width:1260px){.tb-theme-toggle{margin-left:0;margin-right:10px}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
     /* Covers all tokens from web-travel-style.css + guide-style.css dark blocks. */
     /* html[data-theme="dark"] specificity (0,1,1) > :root (0,1,0) — always wins. */
