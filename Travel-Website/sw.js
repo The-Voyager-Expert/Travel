@@ -219,7 +219,8 @@
 /* 2026-08-05: index.html changed after the v250 bump (Hiroshima listing) but shipped without a CACHE bump — returning visitors were served the stale cached index when clicking "The Voyager Expert" / All Guides. Bump CACHE to v251 to purge the stale index for all clients. */
 /* 2026-08-05: action-pill row — remove font-weight (back to normal), I've Been button matches its siblings at rest/hover and its been-state uses var(--c-next-bg) bg with terracotta text+border — guide-style.css min to 80, CACHE to v252. */
 /* 2026-08-05: I've Been been-state → font-weight 700 (terracotta bold), scoped to #tve-visited-btn.tve-been only; rest of the row unchanged — guide-style.css min to 81, CACHE to v253. */
-var CACHE = 'travel-cache-v253';
+/* 2026-08-05: I've Been been-state — restore collapsed left border so all four sides are uniformly terracotta (was showing the neighbour's faded gold on the shared edge) — guide-style.css min to 82, CACHE to v254. */
+var CACHE = 'travel-cache-v254';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -227,7 +228,7 @@ var CACHE = 'travel-cache-v253';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 81, 'toolbar.js': 171, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 82, 'toolbar.js': 171, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
