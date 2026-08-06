@@ -4554,7 +4554,7 @@
     _ssCss.id = 'tve-share-stop-css';
     _ssCss.textContent =
       '.tve-share-stop-btn{background:none;border:none;cursor:pointer;' +
-      'color:#a8a09a;padding:0 0 0 6px;line-height:1;vertical-align:middle;' +
+      'color:#a8a09a;padding:0;margin-left:12px;line-height:1;vertical-align:middle;' +
       'display:inline-flex;align-items:center;flex-shrink:0;}' +
       '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#b85c2a;}' +
       '.tve-share-stop-btn:focus-visible{outline:2px solid #b85c2a;' +
