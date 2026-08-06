@@ -4715,4 +4715,39 @@
     }
   }());
 
+  /* ── Section nav chip → expand target section on click ─────────────────────
+     Overview-extras chips link to #section-id anchors.  If the section is
+     currently collapsed (.collapsed class or nearby-guides inline style),
+     remove the collapse so the content is visible when the browser scrolls. */
+  (function _chipExpandOnClick() {
+    function _setup() {
+      var extras = document.querySelector('.overview-extras:not(#ics-pill-row)');
+      if (!extras) return;
+      extras.querySelectorAll('.overview-extra-link[href^="#"]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var id = chip.getAttribute('href').slice(1);
+          var sec = document.getElementById(id);
+          if (!sec) return;
+          /* Standard collapsible sections — remove .collapsed */
+          if (sec.classList.contains('collapsed')) {
+            sec.classList.remove('collapsed');
+          }
+          /* #nearby-guides uses inline styles instead of .collapsed */
+          if (sec.id === 'nearby-guides') {
+            var ngPills = sec.querySelector('.nearby-guides-pills');
+            if (ngPills) ngPills.style.display = '';
+            sec.style.paddingBottom = '';
+            var ngTitle = sec.querySelector(':scope > .extras-title');
+            if (ngTitle) ngTitle.style.marginBottom = '';
+          }
+        });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setup);
+    } else {
+      _setup();
+    }
+  }());
+
 }());
