@@ -2731,24 +2731,14 @@ a.nearby-guide-pill:active {
   box-shadow: 0 1px 3px rgba(184,92,42,.12);
   transform: scale(.97) translateY(1px);
 }
-/* Mobile: Also on this site pills — 3-col grid.
-   Stats + European Train are each 1 col so they appear side-by-side on the last row.
+/* Mobile: Also on this site pills — 6-col grid (pills span 2 = 1/3 width each).
+   Orphan layout is JS-driven via _fixPillGridOrphans in toolbar.js: inline gridColumn
+   overrides prevent pills from sitting alone at 1/3 width. CSS :nth-child selectors
+   for grid-column are silently ignored on iOS Safari — first confirmed 2026-08-04.
    Placed AFTER the base rules so media query wins without needing !important fights. */
 @media (max-width: 600px) {
-  /* 3-col grid — pills share rows naturally; only 1 lone pill needs a full-width override.
-     Switched from repeat(6,1fr)+span-2+nth-child overrides 2026-08-04: Safari iOS ignored
-     grid-column set via nth-child pseudo-class selectors, causing pills to stack solo. */
-  .also-on-this-site-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
-  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; }
-  /* 1 pill alone on last row → span all 3 cols */
-  .also-on-this-site-pill:last-child:nth-child(3n+1) { grid-column: span 3; }
-  /* 8-pill case (South America / Asia / Caribbean / etc.): item 7 (Visas) is 2nd-to-last
-     at position 3n+1 — not last-child so the rule above misses it, leaving it orphaned.
-     span 3 here makes Visas full-width; Stats then fills the next row cleanly. */
-  .also-on-this-site-pill:nth-last-child(2):nth-child(3n+1) { grid-column: span 3; }
-  /* Stats/European-Train pill always full-width when last — mobile_check enforces ≥85% width */
-  .also-on-this-site-pill[href*="Stats"]:last-child,
-  .also-on-this-site-pill[href*="European-Train-Guide"]:last-child { grid-column: span 3; }
+  .also-on-this-site-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
+  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; grid-column: span 2; }
   /* Nearby Guides on mobile: flex-wrap matches desktop (gap:0 grid + border-radius:6px = double-border mess). */
   .nearby-guides-pills { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; }
   .nearby-guide-pill { font-size: 12px; padding: 5px 10px; }
@@ -2782,13 +2772,12 @@ a.also-in-country-pill:active {
   transform: scale(.97) translateY(1px);
 }
 @media (max-width: 600px) {
-  .also-in-country-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .also-in-country-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
   .also-in-country-pill { display: flex; align-items: center; justify-content: center;
     text-align: center; white-space: normal; line-height: 1.15; height: 46px;
     padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px;
-    background: #ffffff; font-size: 12px; }
-  /* 1 pill alone on last row → span all 3 cols (no leading span here, so 3n+1 is correct) */
-  .also-in-country-pill:last-child:nth-child(3n+1) { grid-column: span 3; }
+    background: #ffffff; font-size: 12px; grid-column: span 2; }
+  /* Orphan layout: JS-driven via _fixPillGridOrphans (toolbar.js) — same as also-on-this-site. */
 }
 
 /* ── Alternative hotel recommendations — injected by toolbar.js before

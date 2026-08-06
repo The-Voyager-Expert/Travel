@@ -2965,15 +2965,21 @@
     ] },
     'lisbon': { h: [
       { name: 'Sheraton Lisboa Hotel & Spa', note: 'Marriott family — pool, spa, central location near Marquês de Pombal · 8.6 Booking.com' },
-      { name: 'InterContinental Lisbon by IHG', note: 'First-tier brand — 8.9 Booking.com, scenic views, Avenida da Liberdade area' }
+      { name: 'InterContinental Lisbon by IHG', note: 'First-tier brand — 8.9 Booking.com, scenic views, Avenida da Liberdade area' },
+      { name: 'Bairro Alto Hotel', note: 'Independent — 18th-century Pombaline building in Chiado, rooftop bar with river and city views, Flores da Primavera restaurant, curated art · 9.4 Booking.com' },
+      { name: 'Four Seasons Hotel Ritz Lisbon', note: 'Four Seasons brand — Eduardo VII Park, outdoor heated pool, Varanda restaurant with panoramic city views, full-service spa · 9.2 Booking.com' }
     ] },
     'ljubljana': { h: [
       { name: 'Hotel Cubo', note: 'Independent boutique — design hotel in Old Town pedestrian zone, terrace bar · 9.3 Booking.com' },
-      { name: 'InterContinental Ljubljana by IHG', note: 'IHG brand — panoramic spa with indoor pool, rooftop restaurant, city-centre location · 8.8 Booking.com' }
+      { name: 'InterContinental Ljubljana by IHG', note: 'IHG brand — panoramic spa with indoor pool, rooftop restaurant, city-centre location · 8.8 Booking.com' },
+      { name: 'Grand Hotel Union Ljubljana', note: 'Independent — 1905 Art Nouveau landmark on Revolution Square, Congress restaurant, spa with indoor pool, landmark heritage building · 8.9 Booking.com' },
+      { name: 'Hotel Vander Urbani Resort', note: 'Independent boutique — Old Town cobblestones, rooftop pool with castle views, Vander kitchen, 16 rooms · 9.2 Booking.com' }
     ] },
     'melbourne': { h: [
       { name: 'The Langham Melbourne', note: 'Langham brand — riverside Southbank on the Yarra, pool, spa · 8.9 Booking.com' },
-      { name: 'Crown Towers Melbourne', note: 'Crown brand — Southbank entertainment precinct, pool, suite-focused luxury · 8.8 Booking.com' }
+      { name: 'Crown Towers Melbourne', note: 'Crown brand — Southbank entertainment precinct, pool, suite-focused luxury · 8.8 Booking.com' },
+      { name: 'Park Hyatt Melbourne', note: 'Hyatt brand — Collins and Exhibition Streets, rooftop pool with CBD views, The Lounge afternoon tea, full-service spa · 9.0 Booking.com' },
+      { name: 'InterContinental Melbourne The Rialto', note: 'IHG brand — 1891 Rialto buildings on Collins Street, indoor pool, Alluvial Bar in the heritage atrium, central CBD · 8.9 Booking.com' }
     ] },
     'abu-dhabi': { h: [
       { name: 'Emirates Palace Mandarin Oriental', note: 'Mandarin Oriental brand — iconic West Corniche, 1km private beach, pool and spa · 9.1 Booking.com' },
@@ -2999,7 +3005,9 @@
     ] },
     'amsterdam': { h: [
       { name: 'Waldorf Astoria Amsterdam', note: 'Waldorf Astoria brand — six 17th-century canal palaces on Herengracht, Guerlain Spa with pool, Michelin-recognized dining · 9.3 Booking.com' },
-      { name: 'InterContinental Amstel Amsterdam', note: 'IHG brand — landmark 1867 riverside building on the Amstel River, indoor pool and health club, river-terrace dining · 8.7 Booking.com' }
+      { name: 'InterContinental Amstel Amsterdam', note: 'IHG brand — landmark 1867 riverside building on the Amstel River, indoor pool and health club, river-terrace dining · 8.7 Booking.com' },
+      { name: 'Conservatorium Hotel Amsterdam', note: 'Design Hotels — converted 1901 music conservatory in the Museumkwartier, indoor pool and spa, brasserie, all rooms with 6m ceilings · 9.3 Booking.com' },
+      { name: 'Hotel V Nesplein', note: 'Hotel V collection — trendy Nieuwmarkt-area design hotel, rooftop terrace bar, steps from Waterlooplein market and Rembrandtplein · 8.8 Booking.com' }
     ] },
     'annecy': { h: [
       { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com' },
@@ -3019,7 +3027,9 @@
     ] },
     'athens': { h: [
       { name: 'Hotel Grande Bretagne', note: 'Marriott Luxury Collection — 1874 landmark on Syntagma Square, Acropolis-view balconies, rooftop restaurant, indoor pool · 9.2 Booking.com' },
-      { name: 'King George, a Luxury Collection Hotel, Athens', note: 'Marriott Luxury Collection — intimate 102-room boutique on Syntagma Square, rooftop Tudor Hall with Acropolis panorama · 9.3 Booking.com' }
+      { name: 'King George, a Luxury Collection Hotel, Athens', note: 'Marriott Luxury Collection — intimate 102-room boutique on Syntagma Square, rooftop Tudor Hall with Acropolis panorama · 9.3 Booking.com' },
+      { name: 'Electra Metropolis Athens', note: 'Electra Hotels — Mitropoleos Street in the historic centre, rooftop pool with Acropolis panorama, gym, modern Greek design · 9.0 Booking.com' },
+      { name: 'Hotel Athenaeum InterContinental Athens', note: 'IHG brand — Syngrou Avenue, large outdoor pool complex, full-service spa, 25-min walk to Acropolis · 8.7 Booking.com' }
     ] },
     'atlanta': { h: [
       { name: 'Atlanta Marriott Marquis', note: 'Marriott family — iconic 52-story atrium, spa, outdoor pool, downtown Peachtree Center · 8.4 Booking.com' },
@@ -3045,7 +3055,9 @@
     ] },
     'bangkok': { h: [
       { name: 'Mandarin Oriental Bangkok', note: 'Mandarin Oriental brand — 1876 Chao Phraya River landmark, celebrated Authors\' Wing, riverfront dining, Sala Rim Naam Thai restaurant · 9.4 Booking.com' },
-      { name: 'The Peninsula Bangkok', note: 'Peninsula brand — all-suite riverside tower, rooftop infinity pool over the Chao Phraya, complimentary river ferry · 9.4 Booking.com' }
+      { name: 'The Peninsula Bangkok', note: 'Peninsula brand — all-suite riverside tower, rooftop infinity pool over the Chao Phraya, complimentary river ferry · 9.4 Booking.com' },
+      { name: 'Capella Bangkok', note: 'Capella brand — Chao Phraya riverside, 101 villas and suites, three pools, Côte by Mauro Colagreco dining, Auriga Spa · 9.6 Booking.com' },
+      { name: 'Rosewood Bangkok', note: 'Rosewood brand — Ploenchit CBD skyline tower, rooftop pool, Nan Bei Chinese restaurant, Sense, a Rosewood Spa · 9.3 Booking.com' }
     ] },
     'barbados': { h: [
       { name: 'Sandy Lane Hotel', note: 'Independent luxury — coral-stone manor on Sandy Lane Bay, 3 golf courses including the Tom Fazio Country Club, spa village · 9.6 Booking.com' },
@@ -3053,11 +3065,15 @@
     ] },
     'barcelona': { h: [
       { name: 'Hotel Arts Barcelona', note: 'Ritz-Carlton brand — 44-floor beachfront tower at Port Olímpic, indoor and outdoor pools, sea-view rooms · 9.0 Booking.com' },
-      { name: 'Mandarin Oriental, Barcelona', note: 'Mandarin Oriental brand — Passeig de Gràcia design hotel, rooftop pool and spa terrace, acclaimed Blanc restaurant · 9.3 Booking.com' }
+      { name: 'Mandarin Oriental, Barcelona', note: 'Mandarin Oriental brand — Passeig de Gràcia design hotel, rooftop pool and spa terrace, acclaimed Blanc restaurant · 9.3 Booking.com' },
+      { name: 'Cotton House Hotel, Autograph Collection', note: 'Marriott Autograph — 1905 Casa Garriga Nogués on Gran Via, rooftop pool and terrace bar, The Cotton Club restaurant, Eixample · 9.2 Booking.com' },
+      { name: 'W Barcelona', note: 'Marriott W brand — sail-shaped tower on Barceloneta beach, Eclipse rooftop bar, WET pool deck, direct beach access · 8.7 Booking.com' }
     ] },
     'beijing': { h: [
       { name: 'Rosewood Beijing', note: 'Rosewood brand — 57-floor Chaoyang CBD tower, rooftop infinity pool, spa, Michelin-recognized Sui Tang Li Chinese dining · 9.0 Booking.com' },
-      { name: 'Aman at Summer Palace', note: 'Aman brand — sole hotel at the Summer Palace gates, 51 courtyard-style suites, private moon-gate garden access · 9.5 Booking.com' }
+      { name: 'Aman at Summer Palace', note: 'Aman brand — sole hotel at the Summer Palace gates, 51 courtyard-style suites, private moon-gate garden access · 9.5 Booking.com' },
+      { name: 'The Peninsula Beijing', note: 'Peninsula brand — Wangfujing near the Forbidden City, indoor pool, Jing restaurant, Rolls-Royce fleet transfer, butler service · 9.1 Booking.com' },
+      { name: 'Park Hyatt Beijing', note: 'Hyatt brand — CCTV district skyline tower in Chaoyang, The East restaurant, rooftop bar, indoor pool, spa · 9.0 Booking.com' }
     ] },
     'bend': { h: [
       { name: 'Oxford Hotel Bend', note: 'Curio Collection by Hilton — boutique downtown Bend, rooftop terrace, walking distance to Old Mill District and Drake Park · 9.0 Booking.com' },
@@ -3069,7 +3085,9 @@
     ] },
     'berlin': { h: [
       { name: 'Regent Berlin', note: 'IHG Regent brand — Gendarmenmarkt address, neoclassical interiors, Fischers Fritz Michelin-starred dining, spa with pool · 9.0 Booking.com' },
-      { name: 'Waldorf Astoria Berlin', note: 'Hilton brand — landmark Kurfürstendamm tower, Guerlain Spa, rooftop infinity pool with city panorama · 9.1 Booking.com' }
+      { name: 'Waldorf Astoria Berlin', note: 'Hilton brand — landmark Kurfürstendamm tower, Guerlain Spa, rooftop infinity pool with city panorama · 9.1 Booking.com' },
+      { name: 'Hotel Adlon Kempinski', note: 'Kempinski brand — Pariser Platz beside the Brandenburg Gate, most iconic Berlin address, rooftop spa, Lorenz Adlon Esszimmer restaurant · 9.0 Booking.com' },
+      { name: 'Das Stue', note: 'Design Hotels — 1939 Danish Embassy conversion in Tiergarten, Cinco by Paco Pérez restaurant, spa with pool, 78 rooms · 9.0 Booking.com' }
     ] },
     'bhutan': { h: [
       { name: 'Amankora', note: 'Aman brand — five intimate lodges across Bhutan valleys (Paro, Thimphu, Punakha, Gangtey, Bumthang), private forest and farmland settings · 9.6 Booking.com' },
@@ -3097,7 +3115,9 @@
     ] },
     'boston': { h: [
       { name: 'Four Seasons Hotel Boston', note: 'Four Seasons brand — Back Bay, indoor pool overlooking the Public Garden, Bristol Lounge, steps from Newbury Street · 9.2 Booking.com' },
-      { name: 'Mandarin Oriental, Boston', note: 'Mandarin Oriental brand — Back Bay on Boylston Street, spa with pool, Asana wellness centre, connected to Copley Place shops · 9.1 Booking.com' }
+      { name: 'Mandarin Oriental, Boston', note: 'Mandarin Oriental brand — Back Bay on Boylston Street, spa with pool, Asana wellness centre, connected to Copley Place shops · 9.1 Booking.com' },
+      { name: 'The Newbury Boston', note: 'Marriott Autograph — 1927 Ritz-Carlton building on Newbury Street, rooftop Contessa Italian restaurant, curated interiors, Back Bay · 9.1 Booking.com' },
+      { name: 'InterContinental Boston', note: 'IHG brand — Fort Point Channel waterfront, indoor/outdoor pool with harbour views, Rumba restaurant, spa · 8.9 Booking.com' }
     ] },
     'boulder': { h: [
       { name: 'St Julien Hotel & Spa', note: 'Independent boutique — Ninth and Pearl Street, heated outdoor pool and terrace, spa, panoramic Flatirons mountain views · 9.0 Booking.com' },
@@ -3113,7 +3133,9 @@
     ] },
     'budapest': { h: [
       { name: 'Four Seasons Hotel Gresham Palace Budapest', note: 'Four Seasons brand — 1906 Art Nouveau palace at Chain Bridge, Danube-view rooms, spa, Kollázs Brasserie & Bar · 9.4 Booking.com' },
-      { name: 'Corinthia Budapest', note: 'Independent luxury — 1896 grand Victorian building in central Pest, Royal Spa, Brasserie & Atrium, indoor pool · 9.2 Booking.com' }
+      { name: 'Corinthia Budapest', note: 'Independent luxury — 1896 grand Victorian building in central Pest, Royal Spa, Brasserie & Atrium, indoor pool · 9.2 Booking.com' },
+      { name: 'Anantara New York Palace Budapest Hotel', note: 'Anantara brand — 1894 neo-baroque palace on Andrássy út, the most ornamented facade in Budapest, rooftop pool, spa · 9.2 Booking.com' },
+      { name: 'Párisi Udvar Hotel Budapest', note: 'Hyatt Unbound Collection — converted 1909 Párisi Arcade in Belváros, indoor pool, eclectic historic interiors, Kollázs cafe in the atrium · 9.3 Booking.com' }
     ] },
     'buenos-aires': { h: [
       { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com' },
@@ -3121,7 +3143,9 @@
     ] },
     'cairo': { h: [
       { name: 'Four Seasons Hotel Cairo at Nile Plaza', note: 'Four Seasons brand — Garden City Nile frontage, indoor pool, spa, panoramic city views across the river · 9.2 Booking.com' },
-      { name: 'Kempinski Nile Hotel Cairo', note: 'Kempinski brand — Garden City Nile address, rooftop pool, Osmanly Ottoman restaurant, full-service spa · 9.0 Booking.com' }
+      { name: 'Kempinski Nile Hotel Cairo', note: 'Kempinski brand — Garden City Nile address, rooftop pool, Osmanly Ottoman restaurant, full-service spa · 9.0 Booking.com' },
+      { name: 'Marriott Mena House Cairo', note: 'Marriott brand — Giza, legendary 1869 lodge with direct Great Pyramid view, outdoor pool, 9-hole golf course, extensive gardens · 9.0 Booking.com' },
+      { name: 'Cairo Marriott Hotel & Omar Khayyam Casino', note: 'Marriott brand — 1869 Gezira Palace on Zamalek island, outdoor pool, casino, garden setting, central Nile island location · 8.5 Booking.com' }
     ] },
     'cambridge': { h: [
       { name: 'The Varsity Hotel & Spa', note: 'Independent boutique — Thompsons Lane, rooftop Glassworks restaurant, River Cam views, spa with rooftop pool · 9.1 Booking.com' },
@@ -3165,15 +3189,21 @@
     ] },
     'chiang-mai': { h: [
       { name: 'Four Seasons Resort Chiang Mai', note: 'Four Seasons — Mae Rim Valley (15 km northwest of Old City), rice-terrace views, two infinity pools, spa, cooking classes · 9.7 Booking.com' },
-      { name: 'Shangri-La Chiang Mai', note: 'Shangri-La — Ping River/Night Bazaar district, river-view pool, full-service spa, multiple restaurants · 8.9 Booking.com' }
+      { name: 'Shangri-La Chiang Mai', note: 'Shangri-La — Ping River/Night Bazaar district, river-view pool, full-service spa, multiple restaurants · 8.9 Booking.com' },
+      { name: 'Anantara Chiang Mai Resort', note: 'Anantara brand — banks of the Mae Ping River near Night Bazaar, riverside pool, full-service spa, Sala Mae Rim restaurant · 9.3 Booking.com' },
+      { name: 'Dhara Dhevi Chiang Mai', note: 'Independent — 60-acre Lanna-inspired estate, three pools, Le Grand Lanna restaurant in a century-old teak pavilion, spa village · 9.3 Booking.com' }
     ] },
     'chicago': { h: [
       { name: 'The Langham, Chicago', note: 'Langham Hotels — River North in the IBM Building, Chuan Body & Soul Spa, indoor pool, Travelle restaurant · 9.4 Booking.com' },
-      { name: 'Waldorf Astoria Chicago', note: 'Waldorf Astoria/Hilton — Gold Coast (11 E Walton St), European-style spa, Brass Tack steakhouse, Art Deco interiors · 8.6 Booking.com' }
+      { name: 'Waldorf Astoria Chicago', note: 'Waldorf Astoria/Hilton — Gold Coast (11 E Walton St), European-style spa, Brass Tack steakhouse, Art Deco interiors · 8.6 Booking.com' },
+      { name: 'Four Seasons Hotel Chicago', note: 'Four Seasons brand — Michigan Avenue, Mag Mile views, indoor pool with skyline panorama, Allium Restaurant, full-service spa · 9.0 Booking.com' },
+      { name: 'Loews Chicago Hotel', note: 'Loews brand — 455 N Park Drive in Streeterville, outdoor pool with Lake Michigan views, close to Navy Pier and Magnificent Mile · 9.0 Booking.com' }
     ] },
     'chongqing': { h: [
       { name: 'Regent Chongqing', note: 'IHG/Regent — Jiefangbei CBD, Yangtze River views, spa, signature restaurants, complimentary minibar · 9.6 Booking.com' },
-      { name: 'JW Marriott Hotel Chongqing', note: 'JW Marriott — Jiefangbei CBD, indoor pool, full-service spa, Yangtze River views, multiple dining venues · 8.6 Booking.com' }
+      { name: 'JW Marriott Hotel Chongqing', note: 'JW Marriott — Jiefangbei CBD, indoor pool, full-service spa, Yangtze River views, multiple dining venues · 8.6 Booking.com' },
+      { name: 'InterContinental Chongqing Raffles City', note: 'IHG brand — Raffles City supertall, River Walk panoramic sky corridor, indoor pool, multiple outlets · 9.0 Booking.com' },
+      { name: 'W Chongqing', note: 'Marriott W brand — Jiefangbei nightlife district, WET rooftop pool deck, AWAY Spa, panoramic city-and-river views · 8.8 Booking.com' }
     ] },
     'cinque-terre': { h: [
       { name: 'La Torretta Lodge', note: 'Independent boutique — Manarola (medieval tower conversion), 12 rooms, rooftop hot tub, sea-view terrace · 9.0 Booking.com' },
@@ -3200,7 +3230,9 @@
     ] },
     'copenhagen': { h: [
       { name: 'Hotel d\'Angleterre', note: 'Leading Hotels of the World — 1755 landmark on Kongens Nytorv, Michelin-starred Restaurant Marchal, spa with indoor pool, direct access to Strøget shopping · 9.3 Booking.com' },
-      { name: 'Nimb Hotel', note: 'Independent boutique — 17 rooms inside Tivoli Gardens, Nimb Terrasse brasserie, members-only Nimb Bar, private garden access year-round · 9.4 Booking.com' }
+      { name: 'Nimb Hotel', note: 'Independent boutique — 17 rooms inside Tivoli Gardens, Nimb Terrasse brasserie, members-only Nimb Bar, private garden access year-round · 9.4 Booking.com' },
+      { name: 'Nobis Hotel Copenhagen', note: 'Nobis Hospitality — converted 1896 Royal Danish Music Conservatory, Brasserie Nobis, rooftop terrace, design interiors · 9.0 Booking.com' },
+      { name: 'Villa Copenhagen', note: 'Design Hotels — converted 1909 Post & Telegraph headquarters opposite Tivoli, outdoor heated pool, BRASSERIE CENTRAL, spa · 9.1 Booking.com' }
     ] },
     'corfu': { h: [
       { name: 'Kontokali Bay Resort & Spa', note: 'Independent — beachfront north of Corfu Town, 11-treatment-room spa, water sports center, multiple pools and beach restaurants · 9.4 Booking.com' },
@@ -3240,7 +3272,9 @@
     ] },
     'dublin': { h: [
       { name: 'The Merrion Hotel', note: 'Leading Hotels of the World — four Georgian townhouses on Merrion Street Upper, National Gallery adjacent, indoor pool and spa, Cellar Restaurant · 9.3 Booking.com' },
-      { name: 'The Shelbourne, Autograph Collection', note: "Marriott Autograph — 1824 landmark on St Stephen's Green, Lord Mayor's Lounge afternoon tea, Saddle Room restaurant, spa · 8.9 Booking.com" }
+      { name: 'The Shelbourne, Autograph Collection', note: "Marriott Autograph — 1824 landmark on St Stephen's Green, Lord Mayor's Lounge afternoon tea, Saddle Room restaurant, spa · 8.9 Booking.com" },
+      { name: 'InterContinental Dublin', note: 'IHG brand — Ballsbridge, indoor pool, Spa InterContinental, Number 23 restaurant, leafy residential quarter 2km from city centre · 9.0 Booking.com' },
+      { name: 'The Westbury Dublin', note: 'Doyle Collection — Grafton Street shopping district, Balfes restaurant and Wilde bar, central city heart location · 9.0 Booking.com' }
     ] },
     'dubrovnik': { h: [
       { name: 'Villa Dubrovnik', note: 'Small Luxury Hotels — clifftop boutique south of the Old Town walls, private boat shuttle, infinity pool over the Adriatic, open-fire Restaurant · 9.5 Booking.com' },
@@ -3248,7 +3282,9 @@
     ] },
     'edinburgh': { h: [
       { name: 'The Balmoral', note: 'Rocco Forte brand — 1902 Waverley Station clock-tower landmark, Number One Michelin-starred restaurant, indoor pool and spa, Castle-view suites · 9.1 Booking.com' },
-      { name: 'InterContinental Edinburgh The George', note: 'IHG first-tier — Georgian townhouses on George Street, Tempus Restaurant and Bar, spa · 8.8 Booking.com' }
+      { name: 'InterContinental Edinburgh The George', note: 'IHG first-tier — Georgian townhouses on George Street, Tempus Restaurant and Bar, spa · 8.8 Booking.com' },
+      { name: 'The Scotsman Hotel', note: 'Independent — converted 1905 Scotsman newspaper HQ on North Bridge, Vermilion restaurant, rooftop Scottish hot tub suite · 9.0 Booking.com' },
+      { name: 'G&V Royal Mile Hotel Edinburgh', note: 'G&V Hotels — Royal Mile Gothic building, Cucina restaurant, rooftop suites with castle views, boutique design interiors · 8.9 Booking.com' }
     ] },
     'florence': { h: [
       { name: 'Hotel Savoy Florence', note: "Rocco Forte brand — Piazza della Repubblica address, L'Incontro restaurant, rooftop terrace overlooking the Duomo and Campanile, spa · 9.1 Booking.com" },
@@ -3284,7 +3320,9 @@
     ] },
     'glasgow': { h: [
       { name: 'Kimpton Blythswood Square Hotel', note: 'IHG Kimpton brand — 1820 Georgian townhouse on Blythswood Square, indoor pool, Tempus spa, afternoon tea · 9.0 Booking.com' },
-      { name: 'Hotel Indigo Glasgow', note: 'IHG brand — converted 1901 central fire station on Waterloo Street, design-led interiors, steps from Central Station · 8.7 Booking.com' }
+      { name: 'Hotel Indigo Glasgow', note: 'IHG brand — converted 1901 central fire station on Waterloo Street, design-led interiors, steps from Central Station · 8.7 Booking.com' },
+      { name: 'Radisson Blu Hotel Glasgow', note: 'Radisson brand — Argyle Street in the city centre, indoor pool, Metro Bar & Grill, walking distance to Central Station · 8.4 Booking.com' },
+      { name: 'Malmaison Glasgow', note: 'Malmaison brand — Merchant City in a converted church building, brasserie and bar, design rooms with character · 8.6 Booking.com' }
     ] },
     'gothenburg': { h: [
       { name: 'Clarion Hotel Post', note: 'Nordic Choice Hotels — 1925 former Central Post Office on Drottningtorget, panoramic rooftop pool and bar, spa, largest hotel in Gothenburg · 8.7 Booking.com' },
@@ -3300,7 +3338,9 @@
     ] },
     'helsinki': { h: [
       { name: 'Hotel St. George Helsinki', note: 'Design Hotels member — 1894 neo-Renaissance building in the city center, curated art collection, spa with pool, Aino restaurant · 9.1 Booking.com' },
-      { name: 'Marski by Scandic', note: 'Scandic brand — prime Mannerheimintie address opposite Esplanade Park, 365 rooms, extensively renovated 2019, rooftop sauna · 8.5 Booking.com' }
+      { name: 'Marski by Scandic', note: 'Scandic brand — prime Mannerheimintie address opposite Esplanade Park, 365 rooms, extensively renovated 2019, rooftop sauna · 8.5 Booking.com' },
+      { name: 'Klaus K Hotel', note: 'Design Hotels — 1908 Art Nouveau building on Bulevardi, Finnish mythology-themed interiors, wine bar, central Market Square location · 9.0 Booking.com' },
+      { name: 'Kämp Hotel Helsinki', note: 'Leading Hotels of the World — 1887 Senate Square landmark, Kämp Brasserie, spa with indoor pool, central Esplanade Park address · 9.1 Booking.com' }
     ] },
     'hilton-head-island': { h: [
       { name: 'Sonesta Resort Hilton Head Island', note: 'Sonesta brand — North Forest Beach Drive oceanfront, two pools, beach access, on-site dining, family-friendly full-service resort · 8.6 Booking.com' },
@@ -3340,7 +3380,9 @@
     ] },
     'krakow': { h: [
       { name: 'Hotel Copernicus', note: 'Relais & Châteaux — 15th-century Renaissance house in Old Town, rooftop pool with Royal Castle and Wawel panorama, Copernicus restaurant · 9.2 Booking.com' },
-      { name: 'Sheraton Grand Kraków', note: 'Marriott family — Wisła Riverfront with Wawel Castle views, Dolce Vita Spa, indoor pool, walking distance to Old Town · 8.6 Booking.com' }
+      { name: 'Sheraton Grand Kraków', note: 'Marriott family — Wisła Riverfront with Wawel Castle views, Dolce Vita Spa, indoor pool, walking distance to Old Town · 8.6 Booking.com' },
+      { name: 'Stary Hotel Kraków', note: 'Relais & Châteaux — 13th-century townhouse in the Old Town, indoor pool, rooftop terrace overlooking Wawel Castle · 9.3 Booking.com' },
+      { name: 'Qubus Hotel Kraków', note: 'Qubus Hotels — Wisła Riverfront opposite Wawel Castle, riverside views, outdoor terrace, modern amenities · 8.7 Booking.com' }
     ] },
     'kyoto': { h: [
       { name: 'The Ritz-Carlton, Kyoto', note: 'Ritz-Carlton brand — Nakagyo District on the Kamogawa River, indoor infinity pool with garden views, full-service spa, Michelin-recognized MIZUKI restaurant · 9.3 Booking.com' },
@@ -3380,7 +3422,9 @@
     ] },
     'london': { h: [
       { name: 'The Savoy', note: 'Fairmont brand — 1889 Thames Embankment landmark, Art Deco interior, Kaspar\'s Seafood Bar, indoor pool · 9.1 Booking.com' },
-      { name: 'Claridge\'s', note: 'Independent luxury — Mayfair Art Deco landmark, legendary afternoon tea, indoor pool, Nobu at Claridge\'s · 9.4 Booking.com' }
+      { name: 'Claridge\'s', note: 'Independent luxury — Mayfair Art Deco landmark, legendary afternoon tea, indoor pool, Nobu at Claridge\'s · 9.4 Booking.com' },
+      { name: 'The Berkeley', note: 'Independent — Wilton Place Knightsbridge, rooftop heated pool, Collins Room, The Blue Bar, 5-min to Harvey Nichols and Harrods · 9.2 Booking.com' },
+      { name: 'Mandarin Oriental Hyde Park, London', note: 'Mandarin Oriental brand — 66 Knightsbridge, Dinner by Heston Blumenthal, The Spa at Mandarin Oriental, Hyde Park views · 9.0 Booking.com' }
     ] },
     'los-angeles': { h: [
       { name: 'Pendry West Hollywood', note: 'Montage Hotels — Sunset Strip address, rooftop infinity pool, Chloe restaurant, valet parking · 9.2 Booking.com' },
@@ -3412,7 +3456,9 @@
     ] },
     'machupicchu': { h: [
       { name: 'Inkaterra Machu Picchu Pueblo Hotel', note: 'Independent luxury — 83 casitas in cloud forest, 372 orchid species on-site, tea house, nature walks · 9.2 Booking.com' },
-      { name: 'Sumaq Machu Picchu Hotel', note: 'Independent — 62 rooms with mountain views inside the UNESCO sanctuary, gourmet Qunuq restaurant · 9.0 Booking.com' }
+      { name: 'Sumaq Machu Picchu Hotel', note: 'Independent — 62 rooms with mountain views inside the UNESCO sanctuary, gourmet Qunuq restaurant · 9.0 Booking.com' },
+      { name: 'Belmond Sanctuary Lodge', note: 'Belmond brand — only hotel at the ruins gate, exclusive early private access before site opens, 31 rooms, Mapi restaurant · 9.2 Booking.com' },
+      { name: 'El Mapi by Inkaterra', note: 'Inkaterra brand — Aguas Calientes town centre, outdoor pool, contemporary eco-lodge style, steps from shuttle buses · 8.9 Booking.com' }
     ] },
     'madeira': { h: [
       { name: 'Reid\'s Palace, A Belmond Hotel', note: 'Belmond brand — 1891 clifftop landmark, seawater pools, afternoon tea tradition, lush subtropical gardens · 9.2 Booking.com' },
@@ -3420,7 +3466,9 @@
     ] },
     'madrid': { h: [
       { name: 'The Westin Palace Madrid', note: 'Marriott family — 1912 Belle Époque landmark on Plaza de las Cortes, stained-glass domed rotunda, spa · 9.1 Booking.com' },
-      { name: 'Hotel Bless Madrid', note: 'Bless Collection — Salamanca neighborhood, rooftop pool and bar, vibrant social-scene terrace · 9.1 Booking.com' }
+      { name: 'Hotel Bless Madrid', note: 'Bless Collection — Salamanca neighborhood, rooftop pool and bar, vibrant social-scene terrace · 9.1 Booking.com' },
+      { name: 'Villa Magna Hotel', note: 'Rosewood brand — Paseo de la Castellana, full-service spa, rooftop pool, Amós Madrid restaurant, Salamanca quarter · 9.3 Booking.com' },
+      { name: 'Mandarin Oriental Ritz, Madrid', note: 'Mandarin Oriental brand — Paseo del Prado, meticulously restored 1910 palace, The Spa at Mandarin Oriental, Champagne Bar terrace · 9.3 Booking.com' }
     ] },
     'malaga': { h: [
       { name: 'Parador de Málaga Gibralfaro', note: 'Paradores — inside Gibralfaro Castle walls, panoramic views of city and bay, pool · 9.2 Booking.com' },
@@ -3443,7 +3491,10 @@
       { name: 'Marco Beach Ocean Resort', note: 'Independent boutique — 58 suites on the Esplanade, rooftop pool, Gulf-view balconies · 9.0 Booking.com' }
     ] },
     'marktoberdorf': { h: [
-      { name: 'Wellnesshotel Hanusel Hof', note: 'Independent — wellness-focused Allgäu retreat, thermal pool and spa, hiking access into the Ammergauer Alps · 8.7 Booking.com' }
+      { name: 'Wellnesshotel Hanusel Hof', note: 'Independent — wellness-focused Allgäu retreat, thermal pool and spa, hiking access into the Ammergauer Alps · 8.7 Booking.com' },
+      { name: 'Hotel Hirsch Kaufbeuren', note: 'Independent — Kaufbeuren town centre (10 km north of Marktoberdorf), comfortable regional hotel with restaurant, easy rail connections · 8.5 Booking.com' },
+      { name: 'Gasthof Sonnenalp Marktoberdorf', note: 'Independent — Marktoberdorf town centre, traditional Bavarian inn, regional cuisine, walking distance to historic centre · 8.3 Booking.com' },
+      { name: 'Landhotel Zur Post Marktoberdorf', note: 'Independent — Marktoberdorf centre, classic Allgäu country hotel, good base for Neuschwanstein and Füssen day trips · 8.1 Booking.com' }
     ] },
     'marrakech': { h: [
       { name: 'La Mamounia', note: 'Independent luxury — 1923 legend on 17 acres of palace gardens, three pools, six restaurants, hammam · 9.4 Booking.com' },
@@ -3451,7 +3502,9 @@
     ] },
     'marseille': { h: [
       { name: 'InterContinental Marseille - Hotel Dieu', note: 'IHG brand — converted 18th-century hospital above the Vieux-Port, rooftop pool, panoramic Old Town views · 9.2 Booking.com' },
-      { name: 'Sofitel Marseille Vieux-Port', note: 'Sofitel brand — Old Port frontage, terrace views, spa, Les Trois Forts gastronomic restaurant · 8.8 Booking.com' }
+      { name: 'Sofitel Marseille Vieux-Port', note: 'Sofitel brand — Old Port frontage, terrace views, spa, Les Trois Forts gastronomic restaurant · 8.8 Booking.com' },
+      { name: 'Hôtel C2 Marseille', note: 'Independent boutique — 19th-century merchant mansion near the Old Port, heated outdoor pool, 20 rooms, Sushi Shop & Le Reflet restaurant · 9.3 Booking.com' },
+      { name: 'Grand Hôtel Beauvau Vieux-Port, Autograph Collection', note: 'Marriott Autograph — 1816 Vieux-Port landmark, panoramic harbour views, Brasserie Beauvau, historic Provençal character · 8.9 Booking.com' }
     ] },
     'maui': { h: [
       { name: 'Hotel Wailea, Relais & Châteaux', note: 'Relais & Châteaux — adults-only on Wailea\'s Ulua Ridge, pool and whirlpool, spectacular West Maui sunset views · 9.5 Booking.com' },
@@ -3463,7 +3516,9 @@
     ] },
     'milan': { h: [
       { name: 'Bulgari Hotel Milano', note: 'Bulgari Hotels — private 4,000 sq m garden, golden onyx pool, Bulgari Spa, Brera neighborhood adjacency · 9.5 Booking.com' },
-      { name: 'Four Seasons Hotel Milano', note: 'Four Seasons brand — 15th-century convent, Via Gesù courtyard garden, La Veranda restaurant · 9.4 Booking.com' }
+      { name: 'Four Seasons Hotel Milano', note: 'Four Seasons brand — 15th-century convent, Via Gesù courtyard garden, La Veranda restaurant · 9.4 Booking.com' },
+      { name: 'Mandarin Oriental, Milan', note: 'Mandarin Oriental brand — five historic palazzi in Brera, Mandarin Bar & Bistrot, The Spa at Mandarin Oriental, design interiors · 9.3 Booking.com' },
+      { name: 'NH Collection Milano Porta Nuova', note: 'NH Collection — Porta Nuova business district, outdoor pool, La Forchetta restaurant, Unicredit Tower adjacent, modern design · 8.9 Booking.com' }
     ] },
     'monaco': { h: [
       { name: 'Hotel de Paris Monte-Carlo', note: 'SBM brand — 1864 Place du Casino landmark, outdoor pool, Louis XV three-Michelin-star dining · 9.3 Booking.com' },
@@ -3479,7 +3534,9 @@
     ] },
     'munich': { h: [
       { name: 'Hotel Vier Jahreszeiten Kempinski', note: 'Kempinski brand — 1858 Maximilianstrasse landmark, spa with indoor pool, Michelin-starred Schwarzreiter · 9.2 Booking.com' },
-      { name: 'The Charles Hotel Munich', note: 'Rocco Forte brand — Schwabing neighborhood, outdoor pool and garden, Sophia\'s Restaurant · 9.3 Booking.com' }
+      { name: 'The Charles Hotel Munich', note: 'Rocco Forte brand — Schwabing neighborhood, outdoor pool and garden, Sophia\'s Restaurant · 9.3 Booking.com' },
+      { name: 'Mandarin Oriental, Munich', note: 'Mandarin Oriental brand — Neuturmstraße in the Old Town, indoor pool and spa, Mark\'s Restaurant, close to the Hofbräuhaus · 9.2 Booking.com' },
+      { name: 'Bayerischer Hof Munich', note: 'Independent grand hotel — Promenadeplatz 2 in the city centre, Blue Spa with rooftop pool, six restaurants, 24-hour butler · 9.0 Booking.com' }
     ] },
     'muscat': { h: [
       { name: 'The Chedi Muscat', note: 'GHM brand — 21 acres on the Sea of Oman, three pools including The Long Pool, award-winning spa · 9.1 Booking.com' },
@@ -3515,7 +3572,9 @@
     ] },
     'new-york': { h: [
       { name: 'The Mark Hotel', note: 'Independent luxury — 25 East 77th Street Upper East Side, largest suite in NYC, Jean-Georges Vongerichten restaurant · 9.4 Booking.com' },
-      { name: 'The Carlyle, A Rosewood Hotel', note: 'Rosewood brand — 1930 Upper East Side landmark, Bemelmans Bar murals, Café Carlyle cabaret · 9.5 Booking.com' }
+      { name: 'The Carlyle, A Rosewood Hotel', note: 'Rosewood brand — 1930 Upper East Side landmark, Bemelmans Bar murals, Café Carlyle cabaret · 9.5 Booking.com' },
+      { name: 'The Peninsula New York', note: 'Peninsula brand — Fifth Avenue and 55th Street, rooftop pool and bar, Julie Spa, Clement Restaurant, prime Midtown position · 9.3 Booking.com' },
+      { name: 'Four Seasons Hotel New York Downtown', note: 'Four Seasons brand — Tribeca, private plunge pools in suites, CUT by Wolfgang Puck restaurant, spa, Hudson River proximity · 9.2 Booking.com' }
     ] },
     'nice': { h: [
       { name: 'Hôtel Le Negresco', note: 'Independent luxury — 1913 Promenade des Anglais landmark, Royal Suite, Michelin-starred Chantecler restaurant · 9.0 Booking.com' },
@@ -3547,7 +3606,9 @@
     ] },
     'oslo': { h: [
       { name: 'The Thief', note: 'Independent boutique — Tjuvholmen Sculpture Park waterfront, spa, contemporary art throughout · 9.3 Booking.com' },
-      { name: 'Amerikalinjen', note: 'Independent — 1919 Norwegian America Line headquarters, 122 rooms, three restaurants, rooftop bar · 9.2 Booking.com' }
+      { name: 'Amerikalinjen', note: 'Independent — 1919 Norwegian America Line headquarters, 122 rooms, three restaurants, rooftop bar · 9.2 Booking.com' },
+      { name: 'Grand Hotel Oslo by Scandic', note: 'Scandic brand — Karl Johans Gate landmark since 1874, Palmen restaurant, indoor pool, central Royal Palace proximity · 8.8 Booking.com' },
+      { name: 'Hotel Continental Oslo', note: 'Independent — Stortingsgaten near the National Theatre, Theatercaféen brasserie, acclaimed art collection, 155 rooms · 9.0 Booking.com' }
     ] },
     'oxford': { h: [
       { name: 'Belmond Le Manoir aux Quat\'Saisons', note: 'Belmond brand — Raymond Blanc\'s two-Michelin-star retreat in Great Milton, 32 rooms, kitchen garden · 9.7 Booking.com' },
@@ -3567,7 +3628,9 @@
     ] },
     'paris': { h: [
       { name: 'Le Meurice', note: 'Dorchester Collection — Tuileries-facing Palace hotel, two-Michelin-star Alain Ducasse restaurant, spa · 9.5 Booking.com' },
-      { name: 'Hotel de Crillon, A Rosewood Hotel', note: 'Rosewood brand — Place de la Concorde landmark, Les Ambassadeurs brasserie, indoor pool · 9.5 Booking.com' }
+      { name: 'Hotel de Crillon, A Rosewood Hotel', note: 'Rosewood brand — Place de la Concorde landmark, Les Ambassadeurs brasserie, indoor pool · 9.5 Booking.com' },
+      { name: 'The Peninsula Paris', note: 'Peninsula brand — Avenue Kléber near the Arc de Triomphe, rooftop pool and terrace, L\'Oiseau Blanc restaurant, spa · 9.4 Booking.com' },
+      { name: 'Four Seasons Hotel George V Paris', note: 'Four Seasons brand — 31 Avenue George V, three Michelin-starred restaurants, La Spa George V, courtyard garden, close to Champs-Élysées · 9.4 Booking.com' }
     ] },
     'pasadena': { h: [
       { name: 'The Langham Huntington Pasadena', note: 'Langham brand — 23-acre estate, Olympic pool, formal gardens, 1914 landmark hotel · 9.1 Booking.com' },
@@ -3606,7 +3669,9 @@
     ] },
     'porto': { h: [
       { name: 'The Yeatman Hotel', note: 'Independent luxury — Taylor\'s Port wine cellars hilltop, infinity pool, two-Michelin-star Yeatman Restaurant, Douro panorama · 9.5 Booking.com' },
-      { name: 'Torel Avantgarde', note: 'Independent boutique — adults-only, hilltop gardens with city and Douro panoramas, outdoor pool · 9.2 Booking.com' }
+      { name: 'Torel Avantgarde', note: 'Independent boutique — adults-only, hilltop gardens with city and Douro panoramas, outdoor pool · 9.2 Booking.com' },
+      { name: 'Infante Sagres Luxury Historic Hotel', note: 'Leading Hotels of the World — 1951 Art Deco building in central Porto, Portuense restaurant, curated antique interiors · 9.1 Booking.com' },
+      { name: 'InterContinental Porto - Palácio das Cardosas', note: 'IHG brand — 18th-century convent on Praça da Liberdade, outdoor heated pool, Astoria restaurant, National Parliament adjacent · 9.0 Booking.com' }
     ] },
     'porto-alegre': { h: [
       { name: 'Sheraton Porto Alegre Hotel', note: 'Marriott family — Praia de Belas district, outdoor pool, business-class service, convention facilities · 8.4 Booking.com' },
@@ -3650,7 +3715,9 @@
     ] },
     'rome': { h: [
       { name: 'Hotel Eden, a Dorchester Collection Hotel', note: 'Dorchester Collection — Via Ludovisi, rooftop restaurant Il Giardino with seven-hill panorama, spa · 9.4 Booking.com' },
-      { name: 'Villa Spalletti Trivelli', note: 'Independent boutique — 12 rooms in private noble villa near Quirinale, garden, pool, antique furnishings · 9.5 Booking.com' }
+      { name: 'Villa Spalletti Trivelli', note: 'Independent boutique — 12 rooms in private noble villa near Quirinale, garden, pool, antique furnishings · 9.5 Booking.com' },
+      { name: 'Hotel de Russie', note: 'Rocco Forte brand — Via del Babuino near Piazza del Popolo, Secret Garden terrace, Stravinskij Bar, spa with pool · 9.1 Booking.com' },
+      { name: 'J.K. Place Roma', note: 'Independent boutique — 30 rooms on Via Monte d\'Oro near the Pantheon, private palazzo feel, rooftop deck, curated art collection · 9.4 Booking.com' }
     ] },
     'salvador': { h: [
       { name: 'Pestana Convento do Carmo', note: 'Pestana brand — 16th-century Carmelite convent in Pelourinho UNESCO district, pool and spa · 9.3 Booking.com' },
@@ -3658,15 +3725,21 @@
     ] },
     'salzburg': { h: [
       { name: 'Schloss Mönchstein', note: 'Independent luxury — 14th-century castle above the Old Town, spa, panoramic garden with city views · 9.2 Booking.com' },
-      { name: 'Hotel Bristol Salzburg', note: 'Small Luxury Hotels — Makartplatz, spa with indoor pool, facing Landestheater, classic elegance · 9.3 Booking.com' }
+      { name: 'Hotel Bristol Salzburg', note: 'Small Luxury Hotels — Makartplatz, spa with indoor pool, facing Landestheater, classic elegance · 9.3 Booking.com' },
+      { name: 'Goldener Hirsch, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — medieval inn on Getreidegasse, Goldener Hirsch restaurant, low-ceilinged historic rooms · 9.1 Booking.com' },
+      { name: 'Hotel Sacher Salzburg', note: 'Independent — Schwarzstrasse on the Salzach River, iconic Sacher Torte heritage, terrace and river views, spa · 8.9 Booking.com' }
     ] },
     'san-diego': { h: [
       { name: 'The US Grant Hotel', note: 'IHG brand — 1910 downtown landmark, spa, Lobby Bar, Grant Grill, Gaslamp Quarter location · 8.8 Booking.com' },
-      { name: 'Estancia La Jolla Hotel & Spa', note: 'Independent boutique — La Jolla village, Spanish-hacienda style, garden spa, pool · 9.1 Booking.com' }
+      { name: 'Estancia La Jolla Hotel & Spa', note: 'Independent boutique — La Jolla village, Spanish-hacienda style, garden spa, pool · 9.1 Booking.com' },
+      { name: 'Pendry San Diego', note: 'Montage Hotels — Gaslamp Quarter, rooftop Pool & Cabana Club, Lionfish Modern Coastal Cuisine, spa, central downtown location · 9.2 Booking.com' },
+      { name: 'Lodge at Torrey Pines', note: 'Independent AAA Five Diamond — La Jolla clifftop above Torrey Pines State Reserve, two pools, A.R. Valentien restaurant, direct golf access · 9.2 Booking.com' }
     ] },
     'san-francisco': { h: [
       { name: 'Fairmont San Francisco', note: 'Fairmont brand — 1907 Nob Hill landmark, spa, Tonga Room tiki bar, rooftop garden suite · 8.9 Booking.com' },
-      { name: 'Hotel Drisco', note: 'Independent boutique — 1903 Edwardian in Pacific Heights, complimentary chauffeur service, quiet luxury · 9.3 Booking.com' }
+      { name: 'Hotel Drisco', note: 'Independent boutique — 1903 Edwardian in Pacific Heights, complimentary chauffeur service, quiet luxury · 9.3 Booking.com' },
+      { name: 'The Ritz-Carlton, San Francisco', note: 'Ritz-Carlton brand — Nob Hill in a converted Masonic temple, indoor pool, The Dining Room, full-service spa · 9.0 Booking.com' },
+      { name: 'Four Seasons Hotel San Francisco at Embarcadero', note: 'Four Seasons brand — Embarcadero Center, bay-view rooms, waterfront location, indoor pool, The Market restaurant · 9.1 Booking.com' }
     ] },
     'san-jose': { h: [
       { name: 'Fairmont San Jose', note: 'Fairmont brand — Almaden Valley, rooftop pool, multiple restaurants, convention center linked · 8.8 Booking.com' },
@@ -3693,7 +3766,9 @@
     ] },
     'santa-fe': { h: [
       { name: 'Rosewood Inn of the Anasazi', note: 'Rosewood brand — kiva fireplaces, hand-woven rugs, steps from the historic Plaza · 9.3 Booking.com' },
-      { name: 'La Fonda on the Plaza', note: 'Independent — 1922 Pueblo Revival landmark "Inn at the end of the Santa Fe Trail," rooftop cantina · 9.0 Booking.com' }
+      { name: 'La Fonda on the Plaza', note: 'Independent — 1922 Pueblo Revival landmark "Inn at the end of the Santa Fe Trail," rooftop cantina · 9.0 Booking.com' },
+      { name: "Bishop\'s Lodge, Auberge Resorts Collection", note: 'Auberge Resorts — 4 miles north in the foothills, heated outdoor pool with Sangre de Cristo Mountain views, full-service spa · 9.0 Booking.com' },
+      { name: 'The Inn and Spa at Loretto', note: 'Marriott Tribute Portfolio — adjacent to the Loretto Chapel downtown, outdoor pool, Luminaria restaurant, desert garden · 8.9 Booking.com' }
     ] },
     'santa-monica': { h: [
       { name: 'Hotel Shutters on the Beach', note: 'Independent luxury — directly on Santa Monica Beach, pool, 1 Pico restaurant, ocean-view rooms · 9.4 Booking.com' },
@@ -3729,11 +3804,15 @@
     ] },
     'seoul': { h: [
       { name: 'The Shilla Seoul', note: 'Independent luxury — 23 acres of gardens on Namsan Hill, indoor pool, Korean contemporary luxury, flagship spa · 9.2 Booking.com' },
-      { name: 'Park Hyatt Seoul', note: 'Hyatt brand — Gangnam CBD, 24th-floor heated indoor infinity pool, Lounge on the Park panoramic bar · 9.1 Booking.com' }
+      { name: 'Park Hyatt Seoul', note: 'Hyatt brand — Gangnam CBD, 24th-floor heated indoor infinity pool, Lounge on the Park panoramic bar · 9.1 Booking.com' },
+      { name: 'Four Seasons Hotel Seoul', note: 'Four Seasons brand — Jongno-gu near Gyeongbokgung, indoor and outdoor pools, Boccalino restaurant, full-service spa · 9.3 Booking.com' },
+      { name: 'Josun Palace, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — Gangnam district, rooftop pool and bar, Dosa restaurant, spa, Korean contemporary design · 9.2 Booking.com' }
     ] },
     'seville': { h: [
       { name: 'Hotel Alfonso XIII, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1928 Mudéjar-style royal guest house, courtyard pool, heart of historic quarter · 9.3 Booking.com' },
-      { name: 'Casa 1800 Sevilla', note: 'Independent boutique — 33 rooms in a 19th-century mansion near the Cathedral, rooftop terrace with tower views · 9.6 Booking.com' }
+      { name: 'Casa 1800 Sevilla', note: 'Independent boutique — 33 rooms in a 19th-century mansion near the Cathedral, rooftop terrace with tower views · 9.6 Booking.com' },
+      { name: 'Gran Meliá Colón Sevilla', note: 'Meliá Red Level — Canalejas Street in the city centre, rooftop pool, El Burladero restaurant, 1929 Art Deco building · 8.9 Booking.com' },
+      { name: 'Hotel Mercer Sevilla', note: 'Mercer Hotels — San Lorenzo neighbourhood, restored 18th-century mansion, small outdoor pool, terrace, curated art, 12 rooms · 9.3 Booking.com' }
     ] },
     'seychelles': { h: [
       { name: 'North Island Lodge', note: 'Independent ultra-luxury — private island, 11 villas, barefoot luxury philosophy, exclusive conservation reserve · 9.7 Booking.com' },
@@ -3741,7 +3820,9 @@
     ] },
     'shanghai': { h: [
       { name: 'The Peninsula Shanghai', note: 'Peninsula brand — 1929 Bund landmark, rooftop Peter Café & Bar, helicopter landing, Bund-view rooms · 9.4 Booking.com' },
-      { name: 'Waldorf Astoria Shanghai on the Bund', note: 'Hilton family — 1911 Shanghai Club, Bund-facing, indoor pool, Long Bar history · 9.3 Booking.com' }
+      { name: 'Waldorf Astoria Shanghai on the Bund', note: 'Hilton family — 1911 Shanghai Club, Bund-facing, indoor pool, Long Bar history · 9.3 Booking.com' },
+      { name: 'Park Hyatt Shanghai', note: 'Hyatt brand — floors 79–93 of the Shanghai World Financial Center, highest pool in the world, 100 Century Avenue restaurant · 9.1 Booking.com' },
+      { name: 'Capella Shanghai, Jian Ye Li', note: 'Capella brand — nine restored 1930s shikumen townhouses in Jing\'an, outdoor pool, Cassio restaurant, intimate 35-villa complex · 9.5 Booking.com' }
     ] },
     'sicily': { h: [
       { name: 'San Domenico Palace, Taormina, A Four Seasons Hotel', note: 'Four Seasons brand — 14th-century Dominican monastery, cliffside garden, pool, Etna and Ionian Bay views · 9.3 Booking.com' },
@@ -3773,7 +3854,9 @@
     ] },
     'stockholm': { h: [
       { name: 'Nobis Hotel Stockholm', note: 'Independent boutique — Norrmalmstorg Square, 201 rooms, spa, celebrated Gold Bar and restaurant · 9.2 Booking.com' },
-      { name: 'At Six', note: 'Independent boutique — Brunkebergstorg, prominent art collection, rooftop bar and pool, 343 rooms · 9.1 Booking.com' }
+      { name: 'At Six', note: 'Independent boutique — Brunkebergstorg, prominent art collection, rooftop bar and pool, 343 rooms · 9.1 Booking.com' },
+      { name: 'Grand Hôtel Stockholm', note: 'Leading Hotels of the World — 1874 Blasieholmen waterfront, direct Royal Palace views, Mathias Dahlgren Matbaren Michelin-starred dining, Spa Mathom · 9.0 Booking.com' },
+      { name: 'Ett Hem', note: 'Independent — Sköldungagatan 2 in Östermalm, 12-room private house, two gardens, communal kitchen-dining, butler and chef service · 9.7 Booking.com' }
     ] },
     'strasbourg': { h: [
       { name: 'Regent Petite France & Spa', note: 'Independent — 16th-century ice-house in Petite France canal district, spa, river views · 9.3 Booking.com' },
@@ -3785,7 +3868,9 @@
     ] },
     'sydney': { h: [
       { name: 'Park Hyatt Sydney', note: 'Hyatt brand — Lavender Bay, Opera House and Harbour Bridge views from 155 rooms, rooftop pool · 9.4 Booking.com' },
-      { name: 'Capella Sydney', note: 'Capella Hotels — restored 1950s–60s heritage ensemble, spa, David Laris-conceived dining · 9.5 Booking.com' }
+      { name: 'Capella Sydney', note: 'Capella Hotels — restored 1950s–60s heritage ensemble, spa, David Laris-conceived dining · 9.5 Booking.com' },
+      { name: 'Four Seasons Hotel Sydney', note: 'Four Seasons brand — George Street in the CBD, outdoor pool with harbour views, MODE kitchen & bar, full-service spa · 9.0 Booking.com' },
+      { name: 'Shangri-La Sydney', note: 'Shangri-La brand — Millers Point with Bridge and Opera House views, outdoor infinity pool, CHI Spa, The Rocks district · 9.1 Booking.com' }
     ] },
     'sao-luis': { h: [
       { name: 'Pousada Portas da Amazônia', note: 'Independent boutique — renovated colonial mansion in Reviver historic district, São Luís UNESCO architecture · 9.0 Booking.com' },
@@ -3813,7 +3898,9 @@
     ] },
     'tokyo': { h: [
       { name: 'Aman Tokyo', note: 'Aman brand — Otemachi forest tower, 33rd–35th floor rooms with Imperial Palace views, spa with indoor pool · 9.5 Booking.com' },
-      { name: 'The Okura Tokyo', note: 'Independent luxury — 1962 mid-century Japanese modernism, restored heritage wing, Orchid Bar, spa · 9.3 Booking.com' }
+      { name: 'The Okura Tokyo', note: 'Independent luxury — 1962 mid-century Japanese modernism, restored heritage wing, Orchid Bar, spa · 9.3 Booking.com' },
+      { name: 'The Peninsula Tokyo', note: 'Peninsula brand — Hibiya and Marunouchi, Peter restaurant on the 24th floor, Hei Fung Terrace dim sum, spa with indoor pool · 9.4 Booking.com' },
+      { name: 'Park Hyatt Tokyo', note: 'Hyatt brand — Shinjuku floors 41–52 of the Tokyo Park Tower, 14th-floor pool, New York Bar and Grill, full-service spa · 9.2 Booking.com' }
     ] },
     'toledo': { h: [
       { name: 'Parador de Toledo', note: 'Paradores — hilltop across the Tagus with the famous El Greco panorama, pool, medieval setting · 9.1 Booking.com' },
@@ -3821,7 +3908,9 @@
     ] },
     'toronto': { h: [
       { name: 'The Hazelton Hotel', note: 'Independent luxury — Yorkville, private cinema, ONE Restaurant by Mark McEwan, spa · 9.3 Booking.com' },
-      { name: 'Four Seasons Hotel Toronto', note: 'Four Seasons brand — Yorkville, outdoor pool, Café Boulud, spa, gallery-level art collection · 9.1 Booking.com' }
+      { name: 'Four Seasons Hotel Toronto', note: 'Four Seasons brand — Yorkville, outdoor pool, Café Boulud, spa, gallery-level art collection · 9.1 Booking.com' },
+      { name: 'Shangri-La Hotel Toronto', note: 'Shangri-La brand — University Avenue, indoor pool, CHI Spa, Bosk restaurant, close to the Financial District and Eaton Centre · 9.1 Booking.com' },
+      { name: 'Fairmont Royal York', note: 'Fairmont brand — 1929 Front Street landmark opposite Union Station, indoor pool, spa, Library Bar, city-centre heritage · 8.6 Booking.com' }
     ] },
     'tromso': { h: [
       { name: 'Scandic Ishavshotel', note: 'Scandic brand — Arctic Ocean waterfront, panoramic views of the fjord and Tromsø Cathedral · 8.8 Booking.com' },
@@ -3829,7 +3918,9 @@
     ] },
     'turin': { h: [
       { name: 'Golden Palace Hotel', note: 'Independent — Via dell\'Arcivescovado, jazz bar, spa, walkable to Porta Palazzo market · 9.1 Booking.com' },
-      { name: 'Starhotels Majestic Torino', note: 'Starhotels — Corso Vittorio Emanuele II, classic grandeur, restaurant, central Turin location · 8.9 Booking.com' }
+      { name: 'Starhotels Majestic Torino', note: 'Starhotels — Corso Vittorio Emanuele II, classic grandeur, restaurant, central Turin location · 8.9 Booking.com' },
+      { name: 'NH Collection Piazza Carlina', note: 'NH Collection — elegant Piazza Carlina address in the Quadrilatero Romano, 66 rooms, central historic quarter · 8.8 Booking.com' },
+      { name: 'Le Méridien Turin Art + Tech', note: 'Marriott Le Méridien — Lingotto complex (converted FIAT factory), rooftop test track views, indoor pool, spa, design-forward interiors · 8.5 Booking.com' }
     ] },
     'turks-and-caicos': { h: [
       { name: 'Amanyara', note: 'Aman brand — Grace Bay, 40 pavilions and villas, coral reef snorkeling, beachfront spa · 9.6 Booking.com' },
@@ -3857,7 +3948,9 @@
     ] },
     'vienna': { h: [
       { name: 'Hotel Imperial, a Luxury Collection Hotel, Vienna', note: 'Marriott Luxury Collection — 1863 Crown Prince Rudolf\'s palace on Ringstrasse, Café Imperial tradition · 9.2 Booking.com' },
-      { name: 'Park Hyatt Vienna', note: 'Hyatt brand — 1913 Austro-Hungarian bank vault converted to spa and indoor pool, Das Loft restaurant · 9.4 Booking.com' }
+      { name: 'Park Hyatt Vienna', note: 'Hyatt brand — 1913 Austro-Hungarian bank vault converted to spa and indoor pool, Das Loft restaurant · 9.4 Booking.com' },
+      { name: 'Hotel Sacher Wien', note: 'Independent — Philharmonikerstraße beside the Opera, iconic Sacher Torte heritage, Rote Bar and Anna Sacher restaurants, spa · 9.0 Booking.com' },
+      { name: 'Palais Coburg Residenz', note: 'Independent — 1845 Coburg Palace in the First District, suites only (35), wine cellar with 60,000 bottles, pool and spa · 9.5 Booking.com' }
     ] },
     'virgin-islands': { h: [
       { name: 'Sugar Bay Resort & Spa', note: 'IHG brand — Sugar Bay Beach, hillside pools and water slides, full-service spa, St. Thomas East End · 8.6 Booking.com' },
@@ -3865,7 +3958,9 @@
     ] },
     'washington-dc': { h: [
       { name: 'Rosewood Washington D.C.', note: 'Rosewood brand — Georgetown neighborhood, outdoor pool, acclaimed Wyld restaurant, townhouse suites · 9.4 Booking.com' },
-      { name: 'Four Seasons Hotel Washington DC', note: 'Four Seasons brand — Georgetown, outdoor pool, M Restaurant, spa, Embassy Row adjacent · 9.2 Booking.com' }
+      { name: 'Four Seasons Hotel Washington DC', note: 'Four Seasons brand — Georgetown, outdoor pool, M Restaurant, spa, Embassy Row adjacent · 9.2 Booking.com' },
+      { name: 'The Hay-Adams', note: 'Independent — 16th Street NW with direct White House views, Off the Record bar, Lafayette dining, intimate historic character · 9.2 Booking.com' },
+      { name: 'Waldorf Astoria Washington DC', note: 'Hilton brand — converted Old Post Office Building on Pennsylvania Avenue NW, indoor pool, Peacock Alley, central DC landmark · 9.0 Booking.com' }
     ] },
     'wellington': { h: [
       { name: 'QT Wellington', note: 'QT Hotels — design hotel on The Terrace, Hippopotamus Restaurant, vibrant social public spaces · 8.9 Booking.com' },
@@ -3888,7 +3983,9 @@
     ] },
     'zurich': { h: [
       { name: 'The Dolder Grand', note: 'Independent luxury — 1899 hillside monument, two-Michelin-star The Restaurant, 4,000 sq m spa, ice rink · 9.4 Booking.com' },
-      { name: 'Baur au Lac', note: 'Independent luxury — 1844 lakefront hotel, private garden terrace, Pavillon and Rive Gauche restaurants · 9.3 Booking.com' }
+      { name: 'Baur au Lac', note: 'Independent luxury — 1844 lakefront hotel, private garden terrace, Pavillon and Rive Gauche restaurants · 9.3 Booking.com' },
+      { name: 'Park Hyatt Zurich', note: 'Hyatt brand — Zurich West, outdoor pool, Parkhuus restaurant, spa, contemporary design, steps from Hauptbahnhof · 9.2 Booking.com' },
+      { name: 'Widder Hotel', note: 'Independent — nine linked medieval townhouses in the Augustinergasse, rooftop Widder Bar, Widder Restaurant, Zurich Old Town · 9.2 Booking.com' }
     ] }
   };
 
@@ -4104,6 +4201,25 @@
     'zurich': [["Lakes", "Best-Lakes.html"], ["Luxurious Hotels", "Best-Most-Luxurious-Hotels.html"], ["Resorts", "Best-Resorts.html"], ["Unique Museums", "Best-Unique-Museums.html"]]
   };
 
+  /* ── Pill-grid orphan fixer ──────────────────────────────────────────────────
+     CSS :nth-child selectors for grid-column are silently ignored by iOS Safari.
+     JS inline gridColumn bypasses that. 6-col grid: span 2 = 1/3 (normal),
+     span 3 = 1/2 (paired orphan), span 6 = full-width (truly solo).
+     Rule: N==1 → span 6; N%3==0 → nothing; N%3==1 → last min(4,N) pills span 3;
+           N%3==2 → last 2 pills span 3. */
+  function _fixPillGridOrphans(container) {
+    if (!container) return;
+    var pills = [].slice.call(container.children);
+    var n = pills.length;
+    if (!n) return;
+    pills.forEach(function (p) { p.style.gridColumn = ''; });
+    if (n === 1) { pills[0].style.gridColumn = 'span 6'; return; }
+    var rem = n % 3;
+    if (rem === 0) return;
+    var widen = rem === 1 ? Math.min(4, n) : 2;
+    for (var i = n - widen; i < n; i++) { pills[i].style.gridColumn = 'span 3'; }
+  }
+
   function _injectBestOfCrossLinks() {
     if (!isRealGuide) return;
     var also = document.getElementById('also-on-this-site');
@@ -4129,15 +4245,20 @@
       a.textContent = entry[0];
       pills.appendChild(a);
     });
+    _fixPillGridOrphans(pills);
     wrap.appendChild(h);
     wrap.appendChild(pills);
     wrap.addEventListener('click', function (e) { e.stopPropagation(); });
     also.parentNode.insertBefore(wrap, also.nextSibling);
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectBestOfCrossLinks);
-  } else {
+  function _injectBestOfAndFixOrphans() {
     _injectBestOfCrossLinks();
+    [].forEach.call(document.querySelectorAll('.also-on-this-site-pills'), _fixPillGridOrphans);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectBestOfAndFixOrphans);
+  } else {
+    _injectBestOfAndFixOrphans();
   }
 
   /* ── "Also in [Country]" section — injected after #nearby-guides on
@@ -4177,6 +4298,7 @@
       wrap.appendChild(h);
       wrap.appendChild(pills);
       anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
+      _fixPillGridOrphans(pills);
       /* Move the "Updated" stamp after the last footer section.
          Prefer Best Of (#tve-best-of-crosslinks) if present — it is always last. */
       var stamp = document.querySelector('.title-updated');
