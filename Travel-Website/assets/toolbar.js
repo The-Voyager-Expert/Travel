@@ -2773,9 +2773,30 @@
     btn.href = 'javascript:void(0)';
     btn.className = 'overview-extra-link';
     btn.id = 'tve-offline-btn';
-    btn.textContent = saved ? '✓ Saved offline' : '⏬ Save for offline';
+    btn.textContent = saved ? '✓ Saved for offline' : '⏬ Save for offline';
     if (saved) {
+      btn.classList.add('tve-saved');
       btn.style.setProperty('cursor', 'default', 'important');
+    }
+
+    /* Transient confirmation toast — bottom-centre, auto-dismiss. Only fires on a
+       fresh save (not on page load when already saved), so the reader gets a clear
+       "this is now available offline" receipt at the moment of action. */
+    function showOfflineToast() {
+      var t = document.createElement('div');
+      t.className = 'tve-toast';
+      t.setAttribute('role', 'status');
+      t.textContent = '✓ Saved for offline — available without a connection';
+      document.body.appendChild(t);
+      /* Force a reflow so the opacity/transform transition fires reliably — more
+         robust than requestAnimationFrame, which browsers throttle in background
+         tabs (the fade-in would otherwise never start). */
+      void t.offsetWidth;
+      t.classList.add('tve-toast-in');
+      setTimeout(function () {
+        t.classList.remove('tve-toast-in');
+        setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 320);
+      }, 3200);
     }
 
     btn.addEventListener('click', function (e) {
@@ -2784,8 +2805,10 @@
       btn.textContent = 'Saving…';
       var markSaved = function () {
         localStorage.setItem(storageKey, '1');
-        btn.textContent = '✓ Saved offline';
+        btn.textContent = '✓ Saved for offline';
+        btn.classList.add('tve-saved');
         btn.style.setProperty('cursor', 'default', 'important');
+        showOfflineToast();
       };
       /* caches.match searches all caches — if SW already cached this page on
          load (normal case), confirm immediately without a second network hit. */

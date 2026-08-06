@@ -221,7 +221,8 @@
 /* 2026-08-05: I've Been been-state → font-weight 700 (terracotta bold), scoped to #tve-visited-btn.tve-been only; rest of the row unchanged — guide-style.css min to 81, CACHE to v253. */
 /* 2026-08-05: I've Been been-state — restore collapsed left border so all four sides are uniformly terracotta (was showing the neighbour's faded gold on the shared edge) — guide-style.css min to 82, CACHE to v254. */
 /* 2026-08-05: collapse/expand toggle (.overview-toggle-btn) — full-width bar → small right-aligned pill matching the action-pill look (bg, border, size, hover); ▲ Collapse / ▼ Expand — guide-style.css min to 83, CACHE to v255. */
-var CACHE = 'travel-cache-v255';
+/* 2026-08-05: Save-for-offline — label "Saved" → "✓ Saved for offline", saved state now mirrors I've Been (terracotta bold, uniform terracotta border via .tve-saved), plus a bottom-centre confirmation toast on save — toolbar.js min to 172, guide-style.css min to 84, CACHE to v256. */
+var CACHE = 'travel-cache-v256';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -229,7 +230,7 @@ var CACHE = 'travel-cache-v255';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 83, 'toolbar.js': 171, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 84, 'toolbar.js': 172, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

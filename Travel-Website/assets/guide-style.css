@@ -466,16 +466,42 @@ a:hover { text-decoration: underline; }
 #ics-cal-pill:visited, #ics-map-pill:visited, #tve-offline-btn:visited, #tve-visited-btn:visited { color: #5a3c0e; }
 #ics-cal-pill:active, #ics-map-pill:active, #tve-offline-btn:active, #tve-visited-btn:active, #tve-preview-btn:active,
 #ics-cal-pill.tve-pressed, #ics-map-pill.tve-pressed, #tve-offline-btn.tve-pressed, #tve-visited-btn.tve-pressed { background: #e5ddc8; }
-#tve-visited-btn.tve-been { background: var(--c-next-bg); border-color: #b85c2a; color: #b85c2a; font-weight: 700; }
-#tve-visited-btn.tve-been:visited { color: #b85c2a; }
-/* Been state: restore the collapsed left border (the button-group :not(:first-child)
-   rule zeroes it) so all four sides are uniformly terracotta; -1px margin overlaps
-   the neighbour's right border so there's no double seam or layout shift. Needs the
+/* "Toggled-on" states — I've Been (visited) and Save-for-offline (saved) share the
+   same terracotta-bold treatment so the row reads one consistent "this is on" language. */
+#tve-visited-btn.tve-been, #tve-offline-btn.tve-saved { background: var(--c-next-bg); border-color: #b85c2a; color: #b85c2a; font-weight: 700; }
+#tve-visited-btn.tve-been:visited, #tve-offline-btn.tve-saved:visited { color: #b85c2a; }
+/* Restore the collapsed left border (the button-group :not(:first-child) rule zeroes
+   it) so all four sides are uniformly terracotta; -1px margin overlaps the neighbour's
+   right border so there's no double seam or layout shift. Needs the
    #ics-pill-row > id.class specificity to beat the (1,2,0) button-group rule. */
-#ics-pill-row > #tve-visited-btn.tve-been { border-left-width: 1px; margin-left: -1px; }
+#ics-pill-row > #tve-visited-btn.tve-been,
+#ics-pill-row > #tve-offline-btn.tve-saved { border-left-width: 1px; margin-left: -1px; }
 @media (hover: hover) {
   #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover, #tve-preview-btn:hover { background: #faefd8; border-color: rgba(138,108,26,.45); }
 }
+/* Transient confirmation toast (Save for offline). Fixed bottom-centre, fades in,
+   auto-dismisses. Dark warm bg reads in both light and dark mode. */
+.tve-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(12px);
+  background: #3d3a32;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity .28s ease, transform .28s ease;
+  pointer-events: none;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+.tve-toast-in { opacity: 1; transform: translateX(-50%) translateY(0); }
 .overview-sep {
   color: #d4b896;
   font-weight: normal;
