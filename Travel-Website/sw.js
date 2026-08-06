@@ -235,7 +235,8 @@
 /* 2026-08-06: collapse pill margin 20px/20px → 32px top / 8px bottom so it sits closer to Day 1 and reads as the control for the day blocks (was ambiguous, floating between the nav pills and the days) — guide-style.css min to 91, CACHE to v267. */
 /* 2026-08-06: stop content card inset 28px each side (desktop) so it reads as a card floating inside the beige day-block section (beige frames it left+right); title header stays full-width — guide-style.css min to 92, CACHE to v268. */
 /* 2026-08-06: all extras sections + Claude Inspiration + Hotel Alternatives — inner white cards now inset to the same width as the stop card (48px section padding, desktop) so every section reads as a card-in-a-section, consistent with the stops — guide-style.css min to 93, CACHE to v269. */
-var CACHE = 'travel-cache-v269';
+/* 2026-08-06: uniform 16px title-to-content gap across all sections (was 12px most, 20px Tours) — guide-style.css min to 94, CACHE to v270. */
+var CACHE = 'travel-cache-v270';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -243,7 +244,7 @@ var CACHE = 'travel-cache-v269';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 93, 'toolbar.js': 177, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 94, 'toolbar.js': 177, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
