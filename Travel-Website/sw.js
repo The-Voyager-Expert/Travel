@@ -225,7 +225,8 @@
 /* 2026-08-05: collapse pill — centre it (was right-aligned) + bottom gap 8px→20px so Day 1 isn't crowding it — guide-style.css min to 85, CACHE to v257. */
 /* 2026-08-05: section nav chips (row 2) font 13px→14px for readability, still under the 15px action row — guide-style.css min to 86, CACHE to v258. */
 /* 2026-08-05: Save-for-offline is now a two-way toggle — a second click returns it from "✓ Saved for offline" to the resting "⏬ Save for offline" (mirrors I've Been); was previously one-way/stuck — toolbar.js min to 173, CACHE to v259. */
-var CACHE = 'travel-cache-v259';
+/* 2026-08-05: action toolbar — top gap from Trip Overview card 20px→36px so the pill band doesn't overshadow the itinerary; gap between the two pill rows stays 20px (they group as a controls unit) — guide-style.css min to 87, CACHE to v260. */
+var CACHE = 'travel-cache-v260';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -233,7 +234,7 @@ var CACHE = 'travel-cache-v259';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 86, 'toolbar.js': 173, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 87, 'toolbar.js': 173, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
