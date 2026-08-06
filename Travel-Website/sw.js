@@ -206,7 +206,8 @@
 /* 2026-08-05: weather-strip: fix NOW block — strip.insertBefore(nowBlock, grid) threw NotFoundError because grid was not yet a child of strip; changed to strip.appendChild(nowBlock) so it inserts left of grid correctly — toolbar.js min to 163, CACHE to v231. */
 /* 2026-08-05: weather-strip toggle: stack °C/°F vertically + fill full strip height — flex-direction:column, align-self:stretch, flex:1 per button — toolbar.js min to 164, CACHE to v232. */
 /* 2026-08-05: weather-strip: remove "Today" label — show day abbreviation for all 7 columns; NOW block already identifies the current day — toolbar.js min to 165, CACHE to v233. */
-var CACHE = 'travel-cache-v233';
+/* 2026-08-05: weather-strip: larger 7-day grid — day+temp 9px→12px, icon 15px→22px, col gap 1px→3px, strip padding 6px→9px desktop — toolbar.js min to 166, CACHE to v234. */
+var CACHE = 'travel-cache-v234';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -214,7 +215,7 @@ var CACHE = 'travel-cache-v233';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 68, 'toolbar.js': 165, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 68, 'toolbar.js': 166, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

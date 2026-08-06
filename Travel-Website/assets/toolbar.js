@@ -4322,7 +4322,7 @@
       strip.style.cssText =
         'display:flex;align-items:center;text-decoration:none;width:100%;' +
         'background:#e8f3fc;border:1px solid #c2d8ef;border-radius:6px;' +
-        'padding:' + (isMobile ? '4px 6px' : '6px 10px') + ';margin-bottom:' + (isMobile ? '0' : '16px') + ';font-family:inherit;box-sizing:border-box;' +
+        'padding:' + (isMobile ? '5px 6px' : '9px 10px') + ';margin-bottom:' + (isMobile ? '0' : '16px') + ';font-family:inherit;box-sizing:border-box;' +
         'overflow:hidden;cursor:pointer;transition:background .15s;';
       strip.addEventListener('mouseenter', function () { strip.style.background = '#dcedf8'; });
       strip.addEventListener('mouseleave', function () { strip.style.background = '#e8f3fc'; });
@@ -4338,20 +4338,20 @@
         var dt = new Date(daily.time[i] + 'T12:00:00');
         var col = document.createElement('div');
         col.style.cssText =
-          'display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;gap:1px;';
+          'display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;gap:3px;';
 
         var dayDiv = document.createElement('div');
         dayDiv.style.cssText =
-          'font-size:9px;font-weight:700;color:#6b6860;letter-spacing:0.03em;line-height:1.2;';
+          'font-size:' + (isMobile ? '10px' : '12px') + ';font-weight:700;color:#6b6860;letter-spacing:0.03em;line-height:1.2;';
         dayDiv.textContent = DAY[dt.getDay()];
 
         var iconDiv = document.createElement('div');
-        iconDiv.style.cssText = 'font-size:15px;line-height:1.3;';
+        iconDiv.style.cssText = 'font-size:' + (isMobile ? '17px' : '22px') + ';line-height:1.2;';
         iconDiv.textContent = WMO[daily.weathercode[i]] || '🌡️';
 
         var tempDiv = document.createElement('div');
         tempDiv.style.cssText =
-          'font-size:9px;color:#3d3a32;white-space:nowrap;line-height:1.2;';
+          'font-size:' + (isMobile ? '10px' : '12px') + ';color:#3d3a32;white-space:nowrap;line-height:1.2;';
         tempDiv.textContent =
           _wxConv(daily.temperature_2m_max[i]) + '°/' +
           _wxConv(daily.temperature_2m_min[i]) + '°';
