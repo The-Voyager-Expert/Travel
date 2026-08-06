@@ -4387,7 +4387,7 @@
         nowTemp.textContent = _wxConv(data.current.temperature_2m) + '°' + u;
         nowBlock.appendChild(nowTemp);
 
-        strip.insertBefore(nowBlock, grid);
+        strip.appendChild(nowBlock);
       }
 
       strip.appendChild(grid);

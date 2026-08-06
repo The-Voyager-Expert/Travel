@@ -203,7 +203,8 @@
 /* 2026-08-05: nav pills → Option D style (beige fill #ede8db, no border, #7a5c1e text, hover darkens to #d8d2c2) — guide-style.css min to 65, CACHE to v227. */
 /* 2026-08-05: nav pills min-height: 52px — both nav pill rows same height as ICS row — guide-style.css min to 66, CACHE to v228. */
 /* 2026-08-05: Revert nav + ICS pills to Aug 3 style — gold-border chips (var(--c-card-bg) fill, 0.5px #c8a44a border, terracotta hover gradient); ICS row back to button-group (flush, collapsed borders, rounded ends) — guide-style.css min to 68, CACHE to v230. */
-var CACHE = 'travel-cache-v230';
+/* 2026-08-05: weather-strip: fix NOW block — strip.insertBefore(nowBlock, grid) threw NotFoundError because grid was not yet a child of strip; changed to strip.appendChild(nowBlock) so it inserts left of grid correctly — toolbar.js min to 163, CACHE to v231. */
+var CACHE = 'travel-cache-v231';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -211,7 +212,7 @@ var CACHE = 'travel-cache-v230';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 68, 'toolbar.js': 162, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 68, 'toolbar.js': 163, 'mobile.css': 65, 'web-travel-style.css': 8, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
