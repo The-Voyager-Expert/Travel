@@ -2801,7 +2801,14 @@
 
     btn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
-      if (localStorage.getItem(storageKey)) return;
+      if (localStorage.getItem(storageKey)) {
+        /* Already saved → toggle back to the resting state (mirrors I've Been). */
+        localStorage.removeItem(storageKey);
+        btn.textContent = '⏬ Save for offline';
+        btn.classList.remove('tve-saved');
+        btn.style.setProperty('cursor', 'pointer', 'important');
+        return;
+      }
       btn.textContent = 'Saving…';
       var markSaved = function () {
         localStorage.setItem(storageKey, '1');
