@@ -4350,11 +4350,11 @@
       strip.rel = 'noopener';
       strip.style.cssText =
         'display:flex;align-items:center;text-decoration:none;width:100%;' +
-        'background:#e8f3fc;border:1px solid #c2d8ef;border-radius:6px;' +
+        'background:#f3efe6;border:1px solid #e3dccd;border-radius:6px;' +
         'padding:' + (isMobile ? '5px 6px' : '6px 10px') + ';margin-bottom:' + (isMobile ? '0' : '16px') + ';font-family:inherit;box-sizing:border-box;' +
         'overflow:hidden;cursor:pointer;transition:background .15s;';
-      strip.addEventListener('mouseenter', function () { strip.style.background = '#dcedf8'; });
-      strip.addEventListener('mouseleave', function () { strip.style.background = '#e8f3fc'; });
+      strip.addEventListener('mouseenter', function () { strip.style.background = '#ece5d6'; });
+      strip.addEventListener('mouseleave', function () { strip.style.background = '#f3efe6'; });
 
       /* 7 days on desktop AND mobile — the strip is now width:100% and each column
          is flex:1 min-width:0, so all 7 always fit; icons/temps shrink smoothly on
@@ -4396,7 +4396,7 @@
         nowBlock.style.cssText =
           'display:flex;flex-direction:column;align-items:center;justify-content:center;' +
           'padding-right:' + (isMobile ? '6px' : '10px') + ';margin-right:' + (isMobile ? '4px' : '8px') + ';' +
-          'border-right:1px solid #c2d8ef;flex-shrink:0;gap:1px;';
+          'border-right:1px solid #e3dccd;flex-shrink:0;gap:1px;';
 
         if (!isMobile) {
           var nowLabel = document.createElement('div');
@@ -4424,7 +4424,7 @@
       /* °C/°F toggle */
       var toggle = document.createElement('div');
       toggle.style.cssText =
-        'display:inline-flex;flex-direction:column;border:1px solid #c2d8ef;border-radius:5px;overflow:hidden;' +
+        'display:inline-flex;flex-direction:column;border:1px solid #e3dccd;border-radius:5px;overflow:hidden;' +
         'flex-shrink:0;align-self:stretch;margin-left:8px;';
       ['C','F'].forEach(function (t) {
         var btn = document.createElement('button');
@@ -4432,7 +4432,7 @@
         btn.textContent = '°' + t;
         btn.style.cssText =
           'border:none;cursor:pointer;flex:1;padding:0 7px;font-size:10px;font-weight:600;' +
-          'background:' + (u === t ? '#5b8db8' : 'transparent') + ';' +
+          'background:' + (u === t ? '#8a6c1a' : 'transparent') + ';' +
           'color:' + (u === t ? '#fff' : '#9a9690') + ';';
         btn.addEventListener('click', function (e) {
           e.preventDefault();
