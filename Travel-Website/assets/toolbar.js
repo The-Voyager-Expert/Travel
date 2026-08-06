@@ -1884,6 +1884,64 @@
     else document.addEventListener('DOMContentLoaded', injectGuideBookmark);
   }
 
+  /* ── Altitude advisory banner — high-elevation guides only ───────────────── */
+  if (isRealGuide) {
+    var ALTITUDE_CITIES = {
+      'Cusco':       { elev: '3,400 m', text: 'Cusco sits at 3,400 m — roughly 30% less oxygen than at sea level. Allow 48 hours to acclimatize before strenuous activity.' },
+      'MachuPicchu': { elev: '2,430 m', text: 'Machu Picchu is at 2,430 m. Most visitors arrive via Cusco first for acclimatization; the altitude still shortens breath on the steeper paths.' },
+      'Santa-Fe':    { elev: '2,134 m', text: 'Santa Fe sits at 7,000 ft (2,134 m). Arriving from sea level, expect mild shortness of breath and a possible headache on the first day.' },
+      'Lake-Tahoe':  { elev: '1,897 m', text: 'Lake Tahoe\'s basin sits at 6,225 ft (1,897 m). Higher exertion feels harder than expected on arrival; ease into strenuous hikes on day two.' }
+    };
+    function injectAltitudeBanner() {
+      var urlParts = location.pathname.split('/');
+      var gi       = urlParts.indexOf('Guides');
+      if (gi < 0 || !urlParts[gi + 1]) return;
+      var cityData = ALTITUDE_CITIES[urlParts[gi + 1]];
+      if (!cityData) return;
+      var ovSec    = document.querySelector('.overview-section');
+      var extrasEl = document.querySelector('.overview-extras');
+      if (!ovSec || !extrasEl) return;
+      var pn = (location.pathname.split('/').pop() || '');
+      var sm = pn.match(/^(.+?)(?:_v\d+)?\.html$/);
+      var raHref = sm ? './' + sm[1] + '-read-about.html#altitude' : null;
+      var banner = document.createElement('div');
+      banner.id  = 'ams-advisory';
+      var icon = document.createElement('span');
+      icon.className   = 'ams-icon';
+      icon.textContent = '🏔';
+      var body = document.createElement('div');
+      body.className = 'ams-body';
+      var lbl = document.createElement('div');
+      lbl.className = 'ams-label';
+      var lblSpan = document.createElement('span');
+      lblSpan.textContent = 'Altitude Advisory';
+      var elev = document.createElement('span');
+      elev.className   = 'ams-elev';
+      elev.textContent = cityData.elev;
+      lbl.appendChild(lblSpan);
+      lbl.appendChild(elev);
+      var txt = document.createElement('div');
+      txt.className = 'ams-text';
+      if (raHref) {
+        txt.appendChild(document.createTextNode(cityData.text + ' '));
+        var a = document.createElement('a');
+        a.href        = raHref;
+        a.textContent = 'Read more';
+        a.className   = 'ams-read-more';
+        txt.appendChild(a);
+      } else {
+        txt.textContent = cityData.text;
+      }
+      body.appendChild(lbl);
+      body.appendChild(txt);
+      banner.appendChild(icon);
+      banner.appendChild(body);
+      ovSec.insertBefore(banner, extrasEl);
+    }
+    if (document.readyState !== 'loading') injectAltitudeBanner();
+    else document.addEventListener('DOMContentLoaded', injectAltitudeBanner);
+  }
+
   /* ── Best Of pages: stamp above terracotta line, arrows below it ─────────── */
   var isBestOf = /\/Trip-Essentials\/Best-/.test(location.pathname) && (prevHref || nextHref);
   if (isBestOf) {
