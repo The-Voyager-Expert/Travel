@@ -238,7 +238,8 @@
 /* 2026-08-06: uniform 16px title-to-content gap across all sections (was 12px most, 20px Tours) — guide-style.css min to 94, CACHE to v270. */
 /* 2026-08-06: transit banner attaches to the stop ABOVE it — pulled up to 4px below the card (was 14px) vs 8px above the next stop, so it reads as departing the stop above — guide-style.css min to 95, CACHE to v271. */
 /* 2026-08-06: stop title-to-content gap 10px→16px so it matches the extras sections' 16px — title-to-content spacing now uniform across every section (stops + extras) — guide-style.css min to 96, CACHE to v272. */
-var CACHE = 'travel-cache-v272';
+/* 2026-08-06: transit banner inset 28px each side to align with the inset stop cards (was full day-block width) so it sits in the same column as the card above — guide-style.css min to 97, CACHE to v273. */
+var CACHE = 'travel-cache-v273';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -246,7 +247,7 @@ var CACHE = 'travel-cache-v272';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 96, 'toolbar.js': 177, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 97, 'toolbar.js': 177, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
