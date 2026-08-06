@@ -216,7 +216,8 @@
 /* 2026-08-05: guide a:hover underline; day-block background warm→white — guide-style.css min to 72, CACHE to v241. */
 /* 2026-08-05: day-block revert warm-bg; tve-been terracotta pressed; overview-section bottom padding 16→8px — guide-style.css min to 73, CACHE to v242. */
 /* 2026-08-05: overview-section padding revert 16px; fix overview-day:hover underline — guide-style.css min to 74, CACHE to v243. */
-var CACHE = 'travel-cache-v250';
+/* 2026-08-05: index.html changed after the v250 bump (Hiroshima listing) but shipped without a CACHE bump — returning visitors were served the stale cached index when clicking "The Voyager Expert" / All Guides. Bump CACHE to v251 to purge the stale index for all clients. */
+var CACHE = 'travel-cache-v251';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
