@@ -213,7 +213,8 @@
 /* 2026-08-05: a:hover underline site-wide; remove scoped prose rule + check_pill_link_underline validator — web-travel-style.css min to 9, CACHE to v238. */
 /* 2026-08-05: move .overview-extras + #ics-pill-row out of white card to beige background — toolbar.js min to 169, CACHE to v239. */
 /* 2026-08-05: overview-extras gap 6→8px, margin-top 12→20px; ics-pill-row margin-bottom 10→14px — guide-style.css min to 71, CACHE to v240. */
-var CACHE = 'travel-cache-v240';
+/* 2026-08-05: guide a:hover underline; day-block background warm→white — guide-style.css min to 72, CACHE to v241. */
+var CACHE = 'travel-cache-v241';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -221,7 +222,7 @@ var CACHE = 'travel-cache-v240';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 71, 'toolbar.js': 169, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 72, 'toolbar.js': 169, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
