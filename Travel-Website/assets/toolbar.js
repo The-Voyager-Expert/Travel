@@ -2490,7 +2490,7 @@
       if (nameEl) nameEl.style.flex = '1';
       var chip = document.createElement('span');
       chip.className = 'stop-dur';
-      chip.textContent = '⏱ ' + durText;
+      chip.textContent = durText;
       header.appendChild(chip);
       durDiv.parentNode.removeChild(durDiv);
     });
