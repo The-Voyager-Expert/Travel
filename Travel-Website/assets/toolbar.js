@@ -3669,7 +3669,9 @@
     ] },
     'portland': { h: [
       { name: 'The Benson Hotel, Autograph Collection', note: 'Marriott Autograph Collection — 1912 downtown landmark, Circassian walnut-paneled lobby, The London Grill · 8.9 Booking.com' },
-      { name: 'Hotel deLuxe', note: 'Independent boutique — Hollywood-themed vintage design, Driftwood Room bar, Pearl District adjacent · 8.7 Booking.com' }
+      { name: 'Hotel deLuxe', note: 'Independent boutique — Hollywood-themed vintage design, Driftwood Room bar, Pearl District adjacent · 8.7 Booking.com' },
+      { name: 'The Heathman Hotel', note: 'Independent historic — 1927 arts district landmark adjacent to Arlene Schnitzer Concert Hall, Tea Court lobby, literary guest book collection · 9.2 Expedia' },
+      { name: 'The Nines, A Luxury Collection Hotel', note: 'Marriott Luxury Collection — upper floors of the 1909 Meier & Frank Building on National Register, atrium lobby, Urban Farmer restaurant · 4.4 TripAdvisor' }
     ] },
     'porto': { h: [
       { name: 'The Yeatman Hotel', note: 'Independent luxury — Taylor\'s Port wine cellars hilltop, infinity pool, two-Michelin-star Yeatman Restaurant, Douro panorama · 9.5 Booking.com' },
