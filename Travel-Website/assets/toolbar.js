@@ -2775,7 +2775,7 @@
     btn.id = 'tve-offline-btn';
     btn.textContent = saved ? '✓ Saved offline' : '⏬ Save for offline';
     if (saved) {
-      btn.style.setProperty('pointer-events', 'none', 'important');
+      btn.style.setProperty('cursor', 'default', 'important');
     }
 
     btn.addEventListener('click', function (e) {
@@ -2785,7 +2785,7 @@
       var markSaved = function () {
         localStorage.setItem(storageKey, '1');
         btn.textContent = '✓ Saved offline';
-        btn.style.setProperty('pointer-events', 'none', 'important');
+        btn.style.setProperty('cursor', 'default', 'important');
       };
       /* caches.match searches all caches — if SW already cached this page on
          load (normal case), confirm immediately without a second network hit. */
