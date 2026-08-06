@@ -216,7 +216,7 @@
 /* 2026-08-05: guide a:hover underline; day-block background warm→white — guide-style.css min to 72, CACHE to v241. */
 /* 2026-08-05: day-block revert warm-bg; tve-been terracotta pressed; overview-section bottom padding 16→8px — guide-style.css min to 73, CACHE to v242. */
 /* 2026-08-05: overview-section padding revert 16px; fix overview-day:hover underline — guide-style.css min to 74, CACHE to v243. */
-var CACHE = 'travel-cache-v247';
+var CACHE = 'travel-cache-v248';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -224,7 +224,7 @@ var CACHE = 'travel-cache-v247';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 77, 'toolbar.js': 170, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 77, 'toolbar.js': 171, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

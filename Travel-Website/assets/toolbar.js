@@ -4769,17 +4769,6 @@
           after = child.nextSibling;
         }
       });
-      /* Force ICS action-bar pill colors to match the duration chip — inline
-         !important overrides any CSS cascade including class-specificity races. */
-      var pillRow = document.getElementById('ics-pill-row');
-      if (pillRow) {
-        var pills = pillRow.querySelectorAll('.overview-extra-link');
-        [].forEach.call(pills, function(p) {
-          p.style.setProperty('background', '#f5f0e6', 'important');
-          p.style.setProperty('color', '#5a3c0e', 'important');
-          p.style.setProperty('border-color', '#bba070', 'important');
-        });
-      }
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _move);
