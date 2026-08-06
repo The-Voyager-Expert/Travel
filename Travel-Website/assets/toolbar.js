@@ -1502,6 +1502,7 @@
 
         var optBtn = document.createElement('a');
         optBtn.className = 'overview-extra-link';
+        optBtn.id = 'tve-preview-btn';
         optBtn.href = '#';
         optBtn.textContent = '🔀 Preview Optimized';
         optBtn.style.cssText = 'cursor:pointer;';
