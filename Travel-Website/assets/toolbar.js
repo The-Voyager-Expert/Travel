@@ -1763,7 +1763,7 @@
         var text = el.textContent || '';
         var m = /^Day\s+\d+/.exec(text);
         if (!m) return;
-        var rest = text.slice(m[0].length);
+        var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ');
         var num = document.createElement('span');
         num.className = 'overview-day-num';
         num.textContent = m[0];
@@ -2403,7 +2403,7 @@
       var pillRow = document.createElement('div');
       pillRow.className = 'overview-extras';
       pillRow.id = 'ics-pill-row';
-      pillRow.setAttribute('style', 'display:flex;gap:0;margin-bottom:8px;width:100%;');
+      pillRow.setAttribute('style', 'display:flex;gap:0;margin-bottom:16px;width:100%;');
       trigBtn.id = 'ics-cal-pill';
       if (mapPill) mapPill.id = 'ics-map-pill';
 
