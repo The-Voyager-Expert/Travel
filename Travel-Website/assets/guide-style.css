@@ -2103,6 +2103,10 @@ div.train .train-time   { padding: 2px 0; }
   /* Extras nav — uniform 3-across glued grid tiles (matches the site's mobile
      filter panels): equal-width cells, ~46px tall, centred, separators dropped. */
   .overview-extras { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
+  /* Orphan fix: the hidden <span>|</span> is always child 1, so section links start
+     at child 2. A lone last link therefore lands at DOM position 3n+2, not 3n+1.
+     Exclude #ics-pill-row (sibling with same class, 2-col grid) to avoid breaking it. */
+  .overview-extras:not(#ics-pill-row) > .overview-extra-link:last-child:nth-child(3n+2) { grid-column: span 3; }
   .overview-extra-link {
     width: auto !important; height: 46px !important;
     display: flex !important; align-items: center; justify-content: center;
@@ -2784,6 +2788,8 @@ a.also-in-country-pill:active {
     text-align: center; white-space: normal; line-height: 1.15; height: 46px;
     padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px;
     background: #ffffff; font-size: 12px; }
+  /* 1 pill alone on last row → span all 3 cols (no leading span here, so 3n+1 is correct) */
+  .also-in-country-pill:last-child:nth-child(3n+1) { grid-column: span 3; }
 }
 
 /* ── Alternative hotel recommendations — injected by toolbar.js before
