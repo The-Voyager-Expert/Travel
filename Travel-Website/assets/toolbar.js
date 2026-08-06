@@ -1532,7 +1532,7 @@
           fetchXhr.send();
         });
 
-        /* Place in the ICS pill row between All Stops Map and Save for offline */
+        /* Place in the ICS pill row between All Stops Map and Save for Offline */
         optBtn.style.setProperty('flex', '1 1 0', 'important');
         optBtn.style.setProperty('min-width', '0', 'important');
         optBtn.style.setProperty('align-items', 'center', 'important');
@@ -2758,7 +2758,7 @@
     _applyDayParam();
   }
 
-  /* ── Save for offline — pill on guide pages so readers can explicitly cache
+  /* ── Save for Offline — pill on guide pages so readers can explicitly cache
      the guide before going offline (flight, tunnel, abroad without data).
      The SW already caches every visited page; this button confirms intent and
      persists the saved state in localStorage so returning visits show ✓. ── */
@@ -2773,7 +2773,7 @@
     btn.href = 'javascript:void(0)';
     btn.className = 'overview-extra-link';
     btn.id = 'tve-offline-btn';
-    btn.textContent = saved ? '✓ Saved for offline' : '⏬ Save for offline';
+    btn.textContent = saved ? '✓ Saved for Offline' : '⏬ Save for Offline';
     if (saved) {
       btn.classList.add('tve-saved');
       btn.style.setProperty('cursor', 'default', 'important');
@@ -2786,7 +2786,7 @@
       var t = document.createElement('div');
       t.className = 'tve-toast';
       t.setAttribute('role', 'status');
-      t.textContent = '✓ Saved for offline — available without a connection';
+      t.textContent = '✓ Saved for Offline — available without a connection';
       document.body.appendChild(t);
       /* Force a reflow so the opacity/transform transition fires reliably — more
          robust than requestAnimationFrame, which browsers throttle in background
@@ -2804,7 +2804,7 @@
       if (localStorage.getItem(storageKey)) {
         /* Already saved → toggle back to the resting state (mirrors I've Been). */
         localStorage.removeItem(storageKey);
-        btn.textContent = '⏬ Save for offline';
+        btn.textContent = '⏬ Save for Offline';
         btn.classList.remove('tve-saved');
         btn.style.setProperty('cursor', 'pointer', 'important');
         return;
@@ -2812,7 +2812,7 @@
       btn.textContent = 'Saving…';
       var markSaved = function () {
         localStorage.setItem(storageKey, '1');
-        btn.textContent = '✓ Saved for offline';
+        btn.textContent = '✓ Saved for Offline';
         btn.classList.add('tve-saved');
         btn.style.setProperty('cursor', 'default', 'important');
         showOfflineToast();
