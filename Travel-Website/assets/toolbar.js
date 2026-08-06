@@ -4351,7 +4351,7 @@
       strip.style.cssText =
         'display:flex;align-items:center;text-decoration:none;width:100%;' +
         'background:#f3efe6;border:1px solid #e3dccd;border-radius:6px;' +
-        'padding:' + (isMobile ? '5px 6px' : '6px 10px') + ';margin-bottom:' + (isMobile ? '0' : '16px') + ';font-family:inherit;box-sizing:border-box;' +
+        'padding:' + (isMobile ? '5px 6px' : '6px 10px') + ';margin:' + (isMobile ? '12px 0' : '0 0 16px') + ';font-family:inherit;box-sizing:border-box;' +
         'overflow:hidden;cursor:pointer;transition:background .15s;';
       strip.addEventListener('mouseenter', function () { strip.style.background = '#ece5d6'; });
       strip.addEventListener('mouseleave', function () { strip.style.background = '#f3efe6'; });
@@ -4447,12 +4447,6 @@
       strip.appendChild(toggle);
 
       titlePage.insertAdjacentElement('afterend', strip);
-      /* On mobile: close the gap above and below the strip */
-      if (window.innerWidth <= 600) {
-        titlePage.style.marginBottom = '0';
-        var afterStrip = strip.nextElementSibling;
-        if (afterStrip) afterStrip.style.marginTop = '0';
-      }
     }
 
     function _fetchForecast(lat, lon) {
