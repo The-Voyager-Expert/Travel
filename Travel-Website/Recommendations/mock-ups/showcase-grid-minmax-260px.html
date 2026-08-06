@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup: showcase-grid minmax 300px → 260px</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660;
+    --accent: #c8a44a; --rust: #b85c2a; --border2: #e6e2da; --hover: #ebe7e1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Roboto', Arial, sans-serif; background: var(--bg); color: var(--text); padding: 24px 20px; }
+  h1 { font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .context { font-size: 12px; color: var(--muted); margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 8px 12px; line-height: 1.6; }
+  .panels { display: flex; gap: 20px; flex-wrap: wrap; }
+  .panel { flex: 1 1 300px; }
+  .panel-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--border2); }
+  .panel-label.after-label { color: var(--rust); }
+  .viewport-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; font-style: italic; }
+
+  /* Viewport simulator */
+  .vp-sim { border: 1.5px solid var(--border2); border-radius: 6px; padding: 10px; background: var(--bg); }
+  .vp-label { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.04em; }
+
+  /* BEFORE — minmax 300px — simulate 620px effective width */
+  .grid-before { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+  /* AFTER — minmax 260px — same width */
+  .grid-after  { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+
+  .showcase-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .showcase-photo { width: 100%; aspect-ratio: 4/3; background: var(--hover); display: flex; align-items: center; justify-content: center; }
+  .showcase-photo span { font-size: 10px; color: var(--muted); }
+  .showcase-body { padding: 10px 12px; }
+  .showcase-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .showcase-tag { font-size: 11px; color: var(--muted); }
+
+  .diff-note { margin-top: 10px; font-size: 11px; color: var(--muted); background: #f0ede8; border-radius: 4px; padding: 6px 10px; }
+  .diff-note code { font-family: monospace; font-size: 10.5px; color: var(--rust); background: #fef0e8; padding: 1px 4px; border-radius: 2px; }
+</style>
+</head>
+<body>
+  <h1>showcase-grid — minmax(300px) → minmax(260px)</h1>
+  <p class="meta">Finding: showcase-grid-minmax-260px · 2026-08-06 · Target: web-travel-style.css lines 531, 705</p>
+  <div class="context">
+    At viewport widths 601–640px (just above the 600px mobile breakpoint), effective grid width is ~570–610px. With <code>minmax(300px, 1fr)</code>, two 300px columns need 600px — so at 601px viewport only one column fits. This creates a jarring single-column layout on small desktops and large tablets. Lowering to 260px gives two columns from ~540px effective width.
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-label">BEFORE — minmax(300px, 1fr) at ~600px width</div>
+      <div class="vp-sim" style="max-width:320px;">
+        <div class="vp-label">Simulated 620px viewport (≈320px panel × 1 col)</div>
+        <div class="grid-before">
+          <div class="showcase-card">
+            <div class="showcase-photo"><span>photo</span></div>
+            <div class="showcase-body"><div class="showcase-name">Patagonia, Argentina</div><div class="showcase-tag">South America</div></div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-photo"><span>photo</span></div>
+            <div class="showcase-body"><div class="showcase-name">Iguazú Falls</div><div class="showcase-tag">Argentina / Brazil</div></div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-photo"><span>photo</span></div>
+            <div class="showcase-body"><div class="showcase-name">Galápagos Islands</div><div class="showcase-tag">Ecuador</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">Current: <code>grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));</code> — one card per row at 600–640px viewport, identical to mobile layout despite being above the 600px mobile breakpoint.</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label after-label">AFTER — minmax(260px, 1fr) at ~600px width</div>
+      <div class="vp-sim" style="max-width:560px;">
+        <div class="vp-label">Same 620px viewport — now 2 columns</div>
+        <div class="grid-after">
+          <div class="showcase-card">
+            <div class="showcase-photo"><span>photo</span></div>
+            <div class="showcase-body"><div class="showcase-name">Patagonia, Argentina</div><div class="showcase-tag">South America</div></div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-photo"><span>photo</span></div>
+            <div class="showcase-body"><div class="showcase-name">Iguazú Falls</div><div class="showcase-tag">Argentina / Brazil</div></div>
+          </div>
+          <div class="showcase-card">
+            <div class="showcase-photo"><span>photo</span></div>
+            <div class="showcase-body"><div class="showcase-name">Galápagos Islands</div><div class="showcase-tag">Ecuador</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">Proposed: <code>grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));</code> at lines 531 and 705. Two columns from ~540px effective viewport width. G Adventures and Intrepid use 2-column card grids from ~480px viewport. Applies to both <code>.best-of-grid</code> and <code>.showcase-grid</code>.</div>
+    </div>
+  </div>
+</body>
+</html>
