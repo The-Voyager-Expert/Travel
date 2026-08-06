@@ -231,7 +231,8 @@
 /* 2026-08-05: guide city title #3d3a32→#b85c2a terracotta (ties to the gradient underline + brand accent); country label stays dark; dark-mode override unchanged — guide-style.css min to 88, CACHE to v263. */
 /* 2026-08-06: collapse pill symmetric 20px top+bottom margin; Save-for-Offline label capitalised (Save for Offline / Saved for Offline, preposition lowercase like Export to Calendar) — guide-style.css min to 89, toolbar.js min to 176, CACHE to v264. */
 /* 2026-08-06: toolbar breathing room (owner-approved) — brand box 220px→184px, tb-inner padding-right 20px→6px, theme-toggle margin-left 12px→6px; reclaims ~56px so the 13 nav items go from 5px→~9px gaps. Matching brain_check guards updated. — toolbar.js min to 177, CACHE to v265. */
-var CACHE = 'travel-cache-v265';
+/* 2026-08-06: no-entries footnote — .tve-stamp-row padding-right:120px so the right-aligned footnote always ends before the fixed day-jump + scroll-top pills (was running under them at the page bottom) — guide-style.css min to 90, CACHE to v266. */
+var CACHE = 'travel-cache-v266';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -239,7 +240,7 @@ var CACHE = 'travel-cache-v265';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 89, 'toolbar.js': 177, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 90, 'toolbar.js': 177, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
