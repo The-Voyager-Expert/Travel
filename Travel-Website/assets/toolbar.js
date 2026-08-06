@@ -437,7 +437,7 @@
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
          block-level box pushes the text off the bar's vertical center. */
-      '.tb-ham-label{display:block;min-height:0!important;flex:1;text-align:center;font-size:17px!important;font-weight:700;color:#fff;padding:0;letter-spacing:.06em;text-transform:uppercase}' +
+      '.tb-ham-label{display:block;min-height:0!important;position:absolute;left:0;right:0;text-align:center;font-size:17px!important;font-weight:700;color:#fff;padding:0;letter-spacing:.06em;text-transform:uppercase;pointer-events:none}' +
       /* The menu is position:fixed so it stays fully on-screen as the user
          scrolls — items never disappear off the top. The toolbar (.tb) is
          NOT fixed (scrolls away as usual); only the open menu panel is fixed.
@@ -478,7 +478,7 @@
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
     '.tb-theme-toggle:hover{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.8)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
-    '@media(max-width:1260px){.tb-theme-toggle{margin-left:0;margin-right:10px}}' +
+    '@media(max-width:1260px){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
     /* Covers all tokens from web-travel-style.css + guide-style.css dark blocks. */
     /* html[data-theme="dark"] specificity (0,1,1) > :root (0,1,0) — always wins. */
@@ -768,8 +768,8 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 0;width:82px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
-  hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg><span style="font-size:14px;letter-spacing:.06em;font-weight:700;color:#fff;">MENU</span>';
+  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
+  hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg>';
   bar.appendChild(hamBtn);
 
   /* ── Theme toggle ───────────────────────────────────────────────────────── */
