@@ -374,9 +374,9 @@
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
     '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:14px;font-weight:700;color:#fff!important;' +
-      'letter-spacing:.08em;text-transform:uppercase;padding:5px 0;white-space:nowrap;width:220px;text-align:center;margin-left:0;background:transparent!important;text-decoration:none!important}' +
+      'letter-spacing:.08em;text-transform:uppercase;padding:5px 0;white-space:nowrap;width:184px;text-align:center;margin-left:0;background:transparent!important;text-decoration:none!important}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
-    '.tb-inner{flex:1;padding-right:20px}' +
+    '.tb-inner{flex:1;padding-right:6px}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:100%;margin:0;' +
       'gap:0;align-items:center;justify-content:space-between}' +
@@ -471,7 +471,7 @@
     '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}' +
     '#tve-back-guides button{display:none!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
-    '.tb-theme-toggle{flex-shrink:0;margin-left:12px;margin-right:12px;width:34px;height:34px;border-radius:50%;' +
+    '.tb-theme-toggle{flex-shrink:0;margin-left:6px;margin-right:12px;width:34px;height:34px;border-radius:50%;' +
       'border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'transition:background .15s,border-color .15s;outline:none;padding:0;' +
