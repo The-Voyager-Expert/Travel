@@ -4343,7 +4343,7 @@
         var dayDiv = document.createElement('div');
         dayDiv.style.cssText =
           'font-size:9px;font-weight:700;color:#6b6860;letter-spacing:0.03em;line-height:1.2;';
-        dayDiv.textContent = i === 0 ? 'Today' : DAY[dt.getDay()];
+        dayDiv.textContent = DAY[dt.getDay()];
 
         var iconDiv = document.createElement('div');
         iconDiv.style.cssText = 'font-size:15px;line-height:1.3;';
