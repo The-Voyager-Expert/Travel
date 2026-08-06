@@ -4395,14 +4395,14 @@
       /* °C/°F toggle */
       var toggle = document.createElement('div');
       toggle.style.cssText =
-        'display:inline-flex;border:1px solid #c2d8ef;border-radius:5px;overflow:hidden;' +
-        'flex-shrink:0;margin-left:8px;';
+        'display:inline-flex;flex-direction:column;border:1px solid #c2d8ef;border-radius:5px;overflow:hidden;' +
+        'flex-shrink:0;align-self:stretch;margin-left:8px;';
       ['C','F'].forEach(function (t) {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.textContent = '°' + t;
         btn.style.cssText =
-          'border:none;cursor:pointer;padding:3px 7px;font-size:10px;font-weight:600;' +
+          'border:none;cursor:pointer;flex:1;padding:0 7px;font-size:10px;font-weight:600;' +
           'background:' + (u === t ? '#5b8db8' : 'transparent') + ';' +
           'color:' + (u === t ? '#fff' : '#9a9690') + ';';
         btn.addEventListener('click', function (e) {
