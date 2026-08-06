@@ -1089,7 +1089,7 @@
   if (isRealGuide) {
     var backStrip = document.createElement('div');
     backStrip.id = 'tve-back-guides';
-    backStrip.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:2px 32px;background:#f5f4f0;';
+    backStrip.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:2px 32px;background:#f5f4f0;margin-bottom:12px;';
     var pillStyle = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
       'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
       'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
