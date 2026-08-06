@@ -1230,14 +1230,14 @@
        Skip any page inside the Guides folder (real guide + stops-map + read-about). */
     if (/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
     /* Owner bug 2026-08-04: guide → Guides Index showed "← Amsterdam" on
-       the index. Aggregator / navigation pages (CLAUDE.md: index, Before-You-Go,
-       Climate-Finder, When-to-Go) have NO standalone content — a guide's chrome
-       links to them ("‹ All Guides" → the index), so document.referrer is a guide
-       and the pill fired. These are hubs the reader navigated AWAY to, not a page
-       the guide recommends — never show the back-to-guide pill (or its desktop
-       card) here. Content pages (Currency, Plug-Adapter, …) are unaffected. */
+       the index. Pure-navigation hubs (index, Climate-Finder, When-to-Go) have
+       no standalone content — a guide's chrome links to them ("‹ All Guides"),
+       so document.referrer is a guide and the pill fired there. Exclude those.
+       Before-You-Go is intentionally NOT excluded (owner 2026-08-06): the reader
+       taps "Before You Go" from the guide toolbar to do pre-trip research —
+       a back-to-guide pill is useful there. */
     if ({ '': 1, 'index': 1, 'guides_index': 1, 'Guides-Index': 1,
-          'Before-You-Go': 1, 'Climate-Finder': 1, 'When-to-Go': 1 }[thisPage]) return;
+          'Climate-Finder': 1, 'When-to-Go': 1 }[thisPage]) return;
     /* Source guide = document.referrer when it points at a guide. The
        referrer is empty on a hard refresh, a bookmark/hamburger entry, an
        iOS standalone/PWA launch, or any hop that isn't a direct guide→page
@@ -2985,7 +2985,9 @@
     ] },
     'alaska': { h: [
       { name: 'Hotel Captain Cook', note: 'Independent — Anchorage landmark since 1965, three-tower downtown complex with on-site dining · 8.8 Booking.com' },
-      { name: 'Marriott Anchorage Downtown', note: 'Marriott brand — indoor pool, largest downtown full-service hotel, West 7th Avenue · 7.9 Booking.com' }
+      { name: 'Marriott Anchorage Downtown', note: 'Marriott brand — indoor pool, largest downtown full-service hotel, West 7th Avenue · 7.9 Booking.com' },
+      { name: 'Hilton Anchorage', note: 'Hilton brand — renovated downtown tower, rooftop bar, on-site fitness centre · 8.1 Booking.com' },
+      { name: 'Sheraton Anchorage Hotel & Spa', note: 'Marriott Sheraton brand — full-service spa and indoor pool, central Anchorage location · 8.0 Booking.com' }
     ] },
     'alesund': { h: [
       { name: 'Hotel 1904', note: "Independent boutique — Ålesund's oldest hotel, original Art Nouveau building, city center · 9.0 Booking.com" },
