@@ -3260,7 +3260,9 @@
     ] },
     'denver': { h: [
       { name: 'The Brown Palace Hotel and Spa, Autograph Collection', note: 'Marriott Autograph — 1892 triangular-atrium landmark in downtown Denver, Ship Tavern, three-level spa, indoor pool · 9.0 Booking.com' },
-      { name: 'Four Seasons Hotel Denver', note: 'Four Seasons brand — LoDo district, rooftop heated outdoor pool with mountain views, EDGE Restaurant & Bar, spa · 9.1 Booking.com' }
+      { name: 'Four Seasons Hotel Denver', note: 'Four Seasons brand — LoDo district, rooftop heated outdoor pool with mountain views, EDGE Restaurant & Bar, spa · 9.1 Booking.com' },
+      { name: 'The Oxford Hotel', note: "Independent boutique — LoDo's oldest hotel (1891), private health club and spa, McCormick's Fish House, historic Cruise Room cocktail bar · 8.9 Booking.com" },
+      { name: 'The Crawford Hotel', note: 'Independent boutique — inside Denver Union Station, 122 rooms, Tesla car service, spa access, Union Station dining and bars steps away · 8.6 Booking.com' }
     ] },
     'doha': { h: [
       { name: 'Four Seasons Hotel Doha', note: 'Four Seasons brand — private beach on the West Bay Corniche, 3 outdoor pools, Nobu Doha restaurant, spa and wellness centre · 9.3 Booking.com' },
