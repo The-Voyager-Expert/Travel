@@ -246,7 +246,13 @@
 /* 2026-08-06: stop-dur chip — remove ⏱ icon prefix, plain duration text only — toolbar.js min to 180, CACHE to v278. */
 /* 2026-08-06: mobile toolbar redesign — icon-only hamburger (no MENU/CLOSE text), dark-mode toggle moved to left, title absolutely centered — toolbar.js min to 181, CACHE to v279. */
 /* 2026-08-06: mobile stamp-row stacked layout fix — margin -20px overlapped 16px mobile card gap; changed to -10px — guide-style.css min to 101, CACHE to v280. */
-var CACHE = 'travel-cache-v280';
+/* 2026-08-06: Currency-Guide jumpTo REGRESSED to location.hash=hash (reintroduced by the
+   99f482b fleet regen after 14e67ca fixed it) — the iOS-Safari compositor-drop bug that
+   makes the fixed "← Back to {City}" pill invisible on mobile, then float over the hamburger.
+   Removed the hash assignment so Currency matches Plug + the other scroll-only jump pages.
+   New brain_check.check_no_location_hash_in_jump_pages hard-fails on any future reintroduction.
+   CACHE bump purges the stale Currency page HTML off devices. — CACHE to v281. */
+var CACHE = 'travel-cache-v281';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy

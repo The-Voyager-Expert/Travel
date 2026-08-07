@@ -40,7 +40,7 @@
 .index-table tbody tr:active td:first-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset 3px 0 0 #7a3b1e; }
 .index-table tbody tr:active td:last-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset -3px 0 0 #7a3b1e; }
 .index-table tbody td a { color: var(--text); text-decoration: none; display: block; }
-.index-table tbody td a:hover { color: var(--accent,#8a6c1a); }
+.index-table tbody td a:hover { color: var(--accent,#8a6c1a); text-decoration: underline; }
 .index-table tbody tr.idx-hide { display: none; }
 #cur-search { display: block; margin: 0 auto 14px; }
 .content-wrap { max-width: none; margin: 0 auto; padding: 0 32px; }
@@ -1822,7 +1822,16 @@ html { scroll-behavior: smooth; }
   var indexTable=document.querySelector('.index-table');
   var noRes=document.getElementById('cur-noresult');
   function norm(s){return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}
-  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();location.hash=hash;var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
+  /* Scroll ONLY — never assign location.hash. Assigning it triggers iOS Safari's
+     native fragment navigation, which drops the compositor layer of the fixed
+     "← Back to {City}" pill (toolbar.js) so it goes invisible until a later
+     repaint (e.g. opening the hamburger, where it then floats over the menu).
+     This matches Plug-Adapter-Guide + the 14 other pill-pages, which all scroll
+     via scrollIntoView() and never touch the URL hash. Do NOT reintroduce that
+     hash assignment here — a fleet regen brought it back once (fixed 14e67ca,
+     regressed by 99f482b). brain_check.check_no_location_hash_in_jump_pages
+     now hard-fails on it. */
+  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
   rows.forEach(function(r){r.addEventListener('click',function(e){var a=r.querySelector('a[href^="#"]');if(!a)return;e.preventDefault();jumpTo(a.getAttribute('href'));});});
   /* per-country converter: type a US$ amount, see it in that currency */
   function fmtAmt(v){
