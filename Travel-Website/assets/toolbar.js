@@ -3161,7 +3161,9 @@
     ] },
     'cape-cod': { h: [
       { name: 'The Wequassett Resort and Golf Club', note: 'Independent luxury — Pleasant Bay waterfront in Harwich, 18-hole championship golf, 4 pools, spa with Cape Cod salt-air treatments · 9.1 Booking.com' },
-      { name: 'Ocean Edge Resort & Golf Club', note: 'Independent resort — Brewster beachfront, 6 pools, oceanfront private beach, 18-hole golf, tennis and spa complex · 8.7 Booking.com' }
+      { name: 'Ocean Edge Resort & Golf Club', note: 'Independent resort — Brewster beachfront, 6 pools, oceanfront private beach, 18-hole golf, tennis and spa complex · 8.7 Booking.com' },
+      { name: 'Chatham Inn Relais & Châteaux', note: 'Independent Relais & Châteaux — Cape Cod\'s only R&C property, 18 rooms in 1839 historic inn, Cuvée restaurant rated top Cape Cod dining, Forbes Five-Star 2024 · Forbes Five-Star' },
+      { name: 'Land\'s End Inn', note: 'Independent adults-only B&B — Victorian-era hilltop inn in Provincetown West End, panoramic bay views from Gull Hill, wine and cheese hour daily · 9.5 Kayak' }
     ] },
     'cape-town': { h: [
       { name: 'One&Only Cape Town', note: 'One&Only Resorts — V&A Waterfront, two-island resort layout, overwater spa, NOBU restaurant, two pools · 9.4 Booking.com' },
