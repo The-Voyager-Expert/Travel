@@ -716,6 +716,7 @@
   /* ── Prev / Next sticky nav-bar — sits just below toolbar, sticks to top ── */
   var isRealGuide = /\/Guides\//.test(location.pathname) && location.pathname.indexOf('guides_index') < 0;
   var isReadAbout = /\-read-about\.html$/.test(location.pathname);
+  var isStopsMap = /\-stops-map\.html$/.test(location.pathname);
   var _raCityName = '';
   if (isReadAbout) {
     var _raParts = location.pathname.split('/');
@@ -1100,6 +1101,20 @@
       'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
       'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
       'text-decoration:none;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;';
+    if (isStopsMap) {
+      var _smParts = location.pathname.split('/');
+      var _smGi = _smParts.indexOf('Guides');
+      var _smCity = _smGi >= 0 && _smParts[_smGi + 1] ? _smParts[_smGi + 1].replace(/-/g, ' ') : 'Guide';
+      var smPill = document.createElement('a');
+      smPill.href = '#';
+      smPill.textContent = '‹ ' + _smCity;
+      smPill.style.cssText = pillStyle;
+      smPill.addEventListener('click', function (e) { e.preventDefault(); history.back(); });
+      smPill.addEventListener('mouseenter', function () { smPill.style.color = '#b85c2a'; smPill.style.borderColor = '#b85c2a'; });
+      smPill.addEventListener('mouseleave', function () { smPill.style.color = '#8a6c1a'; smPill.style.borderColor = '#c8a44a'; });
+      backStrip.appendChild(smPill);
+      bar.insertAdjacentElement('afterend', backStrip);
+    } else {
     var backBYG = document.createElement('a');
     backBYG.href = base + 'Trip-Essentials/Before-You-Go.html' + cityHash;
     backBYG.textContent = 'Before You Go';
@@ -1210,6 +1225,7 @@
     backStrip.appendChild(backBYG);
     backStrip.appendChild(backGuides);
     bar.insertAdjacentElement('afterend', backStrip);
+    }
   }
 
   /* ── Back-to-guide pill on Trip-Essentials pages linked from guides ──
