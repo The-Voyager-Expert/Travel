@@ -264,7 +264,8 @@
    CACHE bump purges stale Currency/Plug HTML off devices. — CACHE to v282. */
 /* 2026-08-06: bo-sort-select pill-ified — matched border-radius/font/background to .bo-chip so Sort dropdown no longer clashes with region chips. web-travel-style.css → v10. CACHE to v283. */
 /* 2026-08-06: read-about back-strip pills — two fixes: (1) querySelector updated from .story-back (removed) to .story-footer-back so "‹ City" pill links correctly; (2) added white-space:nowrap + line-height:1 + box-sizing:border-box to pillStyle so text can't overflow fixed 28px pill height on mobile. Also overflow-x:auto on strip container. toolbar.js → v182. CACHE to v284. */
-var CACHE = 'travel-cache-v284';
+/* 2026-08-06: read-about story-footer Print button — stripped heavy pill styling (height:28px, border, padding, box-shadow) to match plain-text style of the flanking ← City link and label; font-size:13px, font-weight:500, no border/bg. toolbar.js → v183. CACHE to v285. */
+var CACHE = 'travel-cache-v285';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -272,7 +273,7 @@ var CACHE = 'travel-cache-v284';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 101, 'toolbar.js': 182, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 101, 'toolbar.js': 183, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

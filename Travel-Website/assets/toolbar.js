@@ -1139,13 +1139,11 @@
           var fp = document.createElement('button');
           fp.type = 'button';
           fp.textContent = '🖨 Print';
-          fp.style.cssText = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
-            'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
-            'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
-            'cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
-            '-webkit-appearance:none;font-family:inherit;line-height:1;box-sizing:border-box;';
-          fp.addEventListener('mouseenter', function () { fp.style.color = '#b85c2a'; fp.style.borderColor = '#b85c2a'; });
-          fp.addEventListener('mouseleave', function () { fp.style.color = '#8a6c1a'; fp.style.borderColor = '#c8a44a'; });
+          fp.style.cssText = 'font-size:13px;font-weight:500;color:#8a6c1a;' +
+            'background:none;border:none;padding:0;cursor:pointer;font-family:inherit;' +
+            'transition:color .12s;-webkit-appearance:none;';
+          fp.addEventListener('mouseenter', function () { fp.style.color = '#b85c2a'; });
+          fp.addEventListener('mouseleave', function () { fp.style.color = '#8a6c1a'; });
           fp.id = 'tve-ra-print';
           fp.addEventListener('click', function () { window.print(); });
           var lbl = sf.querySelector('.story-footer-label');
