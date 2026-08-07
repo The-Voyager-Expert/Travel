@@ -1799,7 +1799,7 @@
         var text = el.textContent || '';
         var m = /^Day\s+\d+/.exec(text);
         if (!m) return;
-        var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ');
+        var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ').replace(/🚆\s+(?=Train Day)/, '🚆 · ');
         var num = document.createElement('span');
         num.className = 'overview-day-num';
         num.textContent = m[0];
