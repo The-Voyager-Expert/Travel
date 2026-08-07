@@ -664,6 +664,39 @@ a:hover { text-decoration: underline; }
 .day-block > .next:last-child { margin-bottom: 12px; }
 
 
+/* ─── LOUNGE ARRIVAL CHIP ──────────────────────────────────────────────────── */
+/* Injected by toolbar.js at the top of Day 1. Teal border/bg (airport context).
+   Same shape as .hotel-first (padding, radius, margin-bottom). */
+.lounge-arrival-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #eef6f7;
+  border-left: 3px solid var(--c-gettingaround-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: var(--fs-base);
+  color: #0d5060;
+  margin-bottom: 10px;
+  text-decoration: none;
+}
+.lounge-arrival-chip:hover { background: #e3f2f4; }
+.lac-iata {
+  font-weight: 700;
+  letter-spacing: .04em;
+  flex-shrink: 0;
+}
+.lac-div  { opacity: .4; flex-shrink: 0; }
+.lac-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lac-link {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: var(--c-gettingaround-border);
+}
+.lac-link::after { content: ' ›'; font-size: 14px; opacity: .7; }
+
 /* ─── STOP BLOCK ───────────────────────────────────────────────────────────── */
 /* Per core rules/Types of Days and Stops.html (re-locked 2026-04-25). Expected
    children of .stop-block, in order:
@@ -1946,6 +1979,9 @@ div.train .train-time   { padding: 2px 0; }
   .toolbar-essentials a { background-color: #fff; color: var(--c-title-bg); }
   .essentials-link:hover { background: rgba(200,160,64,.08); }
   .claude-inspiration.theme-sage { --ci-bg: #1e2a26; }
+  .lounge-arrival-chip { background: #1a2e30; color: #7ecfd8; }
+  .lounge-arrival-chip:hover { background: #1e3638; }
+  .lac-link { color: #56bfcc; }
 }
 
 /* ─── RETIRED SELECTORS (Rule 11 markers — preserved for re-invention prevention) */
@@ -3137,3 +3173,111 @@ a.also-in-country-pill:active {
   .tve-scroll-top { bottom: 62px; right: 16px; }
   .tve-mobile-back-wrap { bottom: 18px; right: 112px; } /* clears .day-jump-btn at right:16 + 8px gap */
 }
+
+/* ── Open-right-now stop filter (toolbar.js) ──────────────────────────────
+   Row injected at the bottom of .overview-section (stays inside the white
+   card; _extrasOutOfCard only moves .overview-extras / #ics-pill-row).
+   The pill is a toggle; when ON, closed .stop-block elements dim and a
+   .closed-now-badge appears in their header. Day 2+ auto-collapse with a
+   .day-header-filter-note badge. */
+.open-now-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 16px 11px;
+  border-top: 0.5px solid rgba(200,164,74,0.35);
+}
+.open-now-local-time {
+  font-size: 12px;
+  color: var(--c-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.open-now-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 14px;
+  border: 1.5px solid #bba870;
+  background: var(--c-next-bg);
+  color: #5a3c0e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
+}
+@media (hover: hover) {
+  .open-now-pill:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
+}
+.open-now-pill.on {
+  background: #1a6b35;
+  border-color: #1a6b35;
+  color: #fff;
+}
+.open-now-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: background 0.18s, opacity 0.18s, box-shadow 0.18s;
+}
+.open-now-pill.on .open-now-dot {
+  background: #6dff9e;
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(109,255,158,0.25);
+}
+/* Dimmed stop block — filter ON + stop is currently closed */
+.stop-block.stop-closed {
+  opacity: 0.3;
+  filter: grayscale(0.2);
+  pointer-events: none;
+  transition: opacity 0.22s, filter 0.22s;
+}
+/* "Closed" badge in .stop-header (between stop name and duration chip) */
+.closed-now-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #9b1c1c;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  padding: 1px 6px;
+  margin-left: 10px;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+/* "filter active" badge on auto-collapsed day headers */
+.day-header-filter-note {
+  font-size: 11px;
+  font-weight: 500;
+  color: #1a6b35;
+  background: #e6f4ec;
+  border: 1px solid #a8d8b8;
+  border-radius: 8px;
+  padding: 1px 7px;
+  margin-left: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+.day-header-filter-note.visible { opacity: 1; }
+
+@media (prefers-color-scheme: dark) {
+  .open-now-pill { color: #c8a860; border-color: #5a4a20; }
+  .open-now-pill.on { color: #d0ffd8; background: #1a5a2e; border-color: #1a5a2e; }
+  .closed-now-badge { color: #fca5a5; background: #3b1212; border-color: #7a2020; }
+  .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }
+}
+:root[data-theme="dark"] .open-now-pill { color: #c8a860; border-color: #5a4a20; }
+:root[data-theme="dark"] .open-now-pill.on { color: #d0ffd8; background: #1a5a2e; border-color: #1a5a2e; }
+:root[data-theme="dark"] .closed-now-badge { color: #fca5a5; background: #3b1212; border-color: #7a2020; }
+:root[data-theme="dark"] .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }

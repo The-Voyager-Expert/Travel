@@ -322,8 +322,9 @@
       ] },
     null,
     { group: '🚆 Trains', children: [
-        { href: base + 'Trip-Essentials/European-Train-Guide.html', text: '🚆 European Train Guide', full: '🚆 European Train Guide' },
-        { href: base + 'Trip-Essentials/Day-Trips.html',            text: '🚆 Day Trips by Train',  full: '🚆 Day Trips by Train'  },
+        { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: '🚆 European Train Guide',      full: '🚆 European Train Guide'      },
+        { href: base + 'Trip-Essentials/Day-Trips.html',              text: '🚆 Day Trips by Train',        full: '🚆 Day Trips by Train'        },
+        { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: '🚆 Scenic Train Journeys',    full: '🚆 Scenic Train Journeys'    },
       ] },
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },
@@ -5076,6 +5077,375 @@
     } else {
       _setup();
     }
+  }());
+
+  /* ── Open-right-now stop filter ───────────────────────────────────────────
+     Injects a pill at the bottom of .overview-section (inside the white Trip
+     Overview card). When toggled ON:
+       • Stop blocks whose 🏛️ hours row excludes the current local/dest time
+         are dimmed (.stop-closed) and a "Closed" badge appears in their header.
+       • Day 2+ auto-collapse with a "filter active" badge; state is restored
+         when the filter is turned off.
+     Hours are read from .tour-box/.ticket-box children starting with 🏛.
+     Timezone: data-timezone on toolbar-mount → city lookup map → user local.
+     Spec: 2026-07-19-crib2b-ideas.html. */
+  (function _injectOpenNowFilter() {
+    if (!isRealGuide) return;
+
+    /* ── Destination timezone map (folder slug → IANA) ── */
+    var _TZ = {
+      'abu-dhabi':'Asia/Dubai','aix-en-provence':'Europe/Paris',
+      'alaska':'America/Anchorage','alesund':'Europe/Oslo',
+      'amalfi':'Europe/Rome','amsterdam':'Europe/Amsterdam',
+      'annecy':'Europe/Paris','aracaju':'America/Fortaleza',
+      'arenal':'America/Costa_Rica','aruba':'America/Aruba',
+      'athens':'Europe/Athens','atlanta':'America/New_York',
+      'austin':'America/Chicago','azores':'Atlantic/Azores',
+      'bahamas':'America/Nassau','bali':'Asia/Makassar',
+      'banff':'America/Edmonton','bangkok':'Asia/Bangkok',
+      'barbados':'America/Barbados','barcelona':'Europe/Madrid',
+      'beijing':'Asia/Shanghai','bend':'America/Los_Angeles',
+      'bergen':'Europe/Oslo','berlin':'Europe/Berlin',
+      'bhutan':'Asia/Thimphu','big-island':'Pacific/Honolulu',
+      'bilbao':'Europe/Madrid','bologna':'Europe/Rome',
+      'bora-bora':'Pacific/Tahiti','bordeaux':'Europe/Paris',
+      'boston':'America/New_York','boulder':'America/Denver',
+      'bruges':'Europe/Brussels','brussels':'Europe/Brussels',
+      'budapest':'Europe/Budapest',
+      'buenos-aires':'America/Argentina/Buenos_Aires',
+      'buenos aires':'America/Argentina/Buenos_Aires',
+      'cairo':'Africa/Cairo','cambridge':'Europe/London',
+      'cancun':'America/Cancun','cannes':'Europe/Paris',
+      'cape-cod':'America/New_York','cape-town':'Africa/Johannesburg',
+      'capri':'Europe/Rome','carmel-by-the-sea':'America/Los_Angeles',
+      'cascais':'Europe/Lisbon','cayman-islands':'America/Cayman',
+      'charlotte':'America/New_York','chiang-mai':'Asia/Bangkok',
+      'chicago':'America/Chicago','chongqing':'Asia/Shanghai',
+      'cinque-terre':'Europe/Rome','coeur-dalene':'America/Los_Angeles',
+      'colmar':'Europe/Paris','cologne':'Europe/Berlin',
+      'colombo':'Asia/Colombo','columbia':'America/New_York',
+      'copenhagen':'Europe/Copenhagen','corfu':'Europe/Athens',
+      'crete':'Europe/Athens','curacao':'America/Curacao',
+      'curitiba':'America/Sao_Paulo','cusco':'America/Lima',
+      'dallas':'America/Chicago','denver':'America/Denver',
+      'doha':'Asia/Qatar','dubai':'Asia/Dubai',
+      'dublin':'Europe/Dublin','dubrovnik':'Europe/Zagreb',
+      'edinburgh':'Europe/London','florence':'Europe/Rome',
+      'florianopolis':'America/Sao_Paulo',
+      'florida keys':'America/New_York',
+      'florida-keys':'America/New_York',
+      'fortaleza':'America/Fortaleza',
+      'foz-do-iguaçu':'America/Sao_Paulo',
+      'frankfurt':'Europe/Berlin',
+      'galapagos-islands':'Pacific/Galapagos',
+      'geneva':'Europe/Zurich',
+      'glacier-national-park':'America/Denver',
+      'glasgow':'Europe/London','gothenburg':'Europe/Stockholm',
+      'granada':'Europe/Madrid','hamburg':'Europe/Berlin',
+      'hanoi':'Asia/Bangkok','helsinki':'Europe/Helsinki',
+      'hilton-head-island':'America/New_York',
+      'hiroshima':'Asia/Tokyo','hoi-an':'Asia/Bangkok',
+      'hong-kong':'Asia/Hong_Kong','istanbul':'Europe/Istanbul',
+      'joão-pessoa':'America/Fortaleza',
+      'kauai':'Pacific/Honolulu','keywest':'America/New_York',
+      'kotor':'Europe/Belgrade','kraków':'Europe/Warsaw',
+      'kyoto':'Asia/Tokyo','la-jolla':'America/Los_Angeles',
+      'lagos':'Africa/Lagos','lake-como':'Europe/Rome',
+      'lake-tahoe':'America/Los_Angeles','las-vegas':'America/Los_Angeles',
+      'lecce':'Europe/Rome','lille':'Europe/Paris',
+      'lima':'America/Lima','lisbon':'Europe/Lisbon',
+      'ljubljana':'Europe/Ljubljana','london':'Europe/London',
+      'los-angeles':'America/Los_Angeles','los-cabos':'America/Mazatlan',
+      'luang-prabang':'Asia/Vientiane','lucerne':'Europe/Zurich',
+      'luxembourg':'Europe/Luxembourg','lyon':'Europe/Paris',
+      'maceió':'America/Maceio','machupicchu':'America/Lima',
+      'madeira':'Atlantic/Madeira','madrid':'Europe/Madrid',
+      'malaga':'Europe/Madrid','maldives':'Indian/Maldives',
+      'malibu':'America/Los_Angeles',
+      'manuel-antonio':'America/Costa_Rica',
+      'marco-island':'America/New_York',
+      'marktoberdorf':'Europe/Berlin',
+      'marrakech':'Africa/Casablanca',
+      'marseille':'Europe/Paris','maui':'Pacific/Honolulu',
+      'melbourne':'Australia/Melbourne','miami':'America/New_York',
+      'milan':'Europe/Rome','monaco':'Europe/Paris',
+      'montevideo':'America/Montevideo','montreal':'America/Toronto',
+      'munich':'Europe/Berlin','muscat':'Asia/Muscat',
+      'mykonos':'Europe/Athens','napa':'America/Los_Angeles',
+      'naples':'Europe/Rome','naples-florida':'America/New_York',
+      'nashville':'America/Chicago','natal':'America/Fortaleza',
+      'new-orleans':'America/Chicago','new-york':'America/New_York',
+      'nice':'Europe/Paris','oahu':'Pacific/Honolulu',
+      'oaxaca':'America/Mexico_City','olinda':'America/Recife',
+      'orcas-island':'America/Los_Angeles','orlando':'America/New_York',
+      'osaka':'Asia/Tokyo','oslo':'Europe/Oslo',
+      'oxford':'Europe/London','palawan':'Asia/Manila',
+      'palm-desert':'America/Los_Angeles','palo-alto':'America/Los_Angeles',
+      'paris':'Europe/Paris','pasadena':'America/Los_Angeles',
+      'pensacola':'America/Chicago','petra':'Asia/Amman',
+      'philadelphia':'America/New_York','phoenix':'America/Phoenix',
+      'phuket':'Asia/Bangkok','pisa':'Europe/Rome',
+      'pokhara':'Asia/Kathmandu','portland':'America/Los_Angeles',
+      'porto':'Europe/Lisbon','porto-alegre':'America/Sao_Paulo',
+      'prague':'Europe/Prague','puerto-rico':'America/Puerto_Rico',
+      'puerto-vallarta':'America/Mazatlan',
+      'quebec-city':'America/Toronto','queenstown':'Pacific/Auckland',
+      'recife':'America/Recife','reykjavik':'Atlantic/Reykjavik',
+      'rhodes':'Europe/Athens','rio-de-janeiro':'America/Sao_Paulo',
+      'rome':'Europe/Rome','salvador':'America/Bahia',
+      'salzburg':'Europe/Vienna','san-diego':'America/Los_Angeles',
+      'san-francisco':'America/Los_Angeles',
+      'san-jose':'America/Los_Angeles',
+      'san-jose-costa-rica':'America/Costa_Rica',
+      'san-juan-island':'America/Los_Angeles',
+      'san-sebastian':'Europe/Madrid',
+      'santa-barbara':'America/Los_Angeles',
+      'santa-cruz':'America/Los_Angeles',
+      'santa-fe':'America/Denver','santa-monica':'America/Los_Angeles',
+      'santiago':'America/Santiago','santorini':'Europe/Athens',
+      'sarasota':'America/New_York','sardinia':'Europe/Rome',
+      'scottsdale':'America/Phoenix','seattle':'America/Los_Angeles',
+      'sedona':'America/Phoenix','seoul':'Asia/Seoul',
+      'seville':'Europe/Madrid','seychelles':'Indian/Mahe',
+      'shanghai':'Asia/Shanghai','sicily':'Europe/Rome',
+      'siena':'Europe/Rome','singapore':'Asia/Singapore',
+      'sint-maarten':'America/Lower_Princes',
+      'sintra':'Europe/Lisbon','sorrento':'Europe/Rome',
+      'split':'Europe/Zagreb','stockholm':'Europe/Stockholm',
+      'strasbourg':'Europe/Paris','stuttgart':'Europe/Berlin',
+      'sydney':'Australia/Sydney',
+      'são-luís':'America/Fortaleza','são-paulo':'America/Sao_Paulo',
+      'taipei':'Asia/Taipei','tallinn':'Europe/Tallinn',
+      'tbilisi':'Asia/Tbilisi','tenerife':'Atlantic/Canary',
+      'tokyo':'Asia/Tokyo','toledo':'Europe/Madrid',
+      'toronto':'America/Toronto','tromso':'Europe/Oslo',
+      'turin':'Europe/Rome','turks-and-caicos':'America/Grand_Turk',
+      'valletta':'Europe/Malta','vancouver':'America/Vancouver',
+      'venice':'Europe/Rome','verona':'Europe/Rome',
+      'victoria':'America/Vancouver','vienna':'Europe/Vienna',
+      'virgin-islands':'America/St_Thomas',
+      'washington-dc':'America/New_York',
+      'wellington':'Pacific/Auckland','whistler':'America/Vancouver',
+      'yellowstone':'America/Denver','zakynthos':'Europe/Athens',
+      'zhangjiajie':'Asia/Shanghai','zurich':'Europe/Zurich'
+    };
+
+    /* ── Time helpers ── */
+    function _parseTimeVal(s) {
+      var m = s.trim().match(/^(\d+):(\d+)\s*(am|pm)$/i);
+      if (!m) return null;
+      var h = parseInt(m[1], 10), mn = parseInt(m[2], 10), ap = m[3].toLowerCase();
+      if (ap === 'pm' && h !== 12) h += 12;
+      if (ap === 'am' && h === 12) h = 0;
+      return h + mn / 60;
+    }
+    var _DAYS = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    function _segOpen(seg, dow, h) {
+      seg = seg.trim();
+      if (/open 24\/7/i.test(seg)) return true;
+      var daily = seg.match(/^daily\s+(\d+:\d+\s*[ap]m)\s*[-–]\s*(\d+:\d+\s*[ap]m)$/i);
+      if (daily) {
+        var o = _parseTimeVal(daily[1]), c = _parseTimeVal(daily[2]);
+        return o !== null && c !== null && h >= o && h < c;
+      }
+      var rng = seg.match(/^([a-z]+)\s*[-–]\s*([a-z]+)\s+(\d+:\d+\s*[ap]m)\s*[-–]\s*(\d+:\d+\s*[ap]m)$/i);
+      if (rng) {
+        var sd = _DAYS.indexOf(rng[1].toLowerCase());
+        var ed = _DAYS.indexOf(rng[2].toLowerCase());
+        var o2 = _parseTimeVal(rng[3]), c2 = _parseTimeVal(rng[4]);
+        if (sd < 0 || ed < 0 || o2 === null || c2 === null) return null;
+        var inDay = (sd <= ed) ? (dow >= sd && dow <= ed) : (dow >= sd || dow <= ed);
+        return inDay && h >= o2 && h < c2;
+      }
+      return null;
+    }
+    function _hoursOpen(txt, dow, h) {
+      if (!txt) return null;
+      var segs = txt.split('\xb7');
+      var parsed = false;
+      for (var i = 0; i < segs.length; i++) {
+        var r = _segOpen(segs[i], dow, h);
+        if (r === true) return true;
+        if (r !== null) parsed = true;
+      }
+      return parsed ? false : null;
+    }
+    function _getHoursText(sb) {
+      var txt = '';
+      [].forEach.call(sb.querySelectorAll('.tour-box > div, .ticket-box > div'), function(d) {
+        if (txt) return;
+        var t = d.textContent.trim();
+        /* 🏛 is surrogate pair 🏛; slice(0,2) covers both bare and VS16 variants */
+        if (t.slice(0, 2) === '🏛') {
+          /* Strip emoji + optional VS16 + space */
+          txt = t.slice(t.indexOf(' ') + 1).trim();
+        }
+      });
+      return txt;
+    }
+
+    /* ── Destination time ── */
+    function _destInfo() {
+      /* Derive slug from URL path: …/Guides/Geneva/geneva_v1.html → "geneva" */
+      var parts = location.pathname.split('/');
+      var gi = parts.indexOf('Guides');
+      var slug = gi >= 0 && parts[gi + 1] ? parts[gi + 1].toLowerCase() : '';
+      var tz = (mount && mount.dataset.timezone) || _TZ[slug] || '';
+      var now = new Date();
+      var dow, hour, timeStr;
+      if (tz) {
+        try {
+          var hFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
+          var dFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short' });
+          timeStr = hFmt.format(now);
+          var dayStr = dFmt.format(now);
+          var DOW = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+          dow = DOW[dayStr] !== undefined ? DOW[dayStr] : now.getDay();
+          /* Extract hour decimal from formatted parts */
+          var pFmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: 'numeric', hour12: false });
+          var hParts = pFmt.formatToParts ? pFmt.formatToParts(now) : [];
+          var hh = now.getHours(), mm = now.getMinutes();
+          hParts.forEach(function(p) {
+            if (p.type === 'hour') hh = parseInt(p.value, 10);
+            if (p.type === 'minute') mm = parseInt(p.value, 10);
+          });
+          hour = hh + mm / 60;
+        } catch (e) {
+          tz = '';
+        }
+      }
+      if (!tz) {
+        dow = now.getDay();
+        hour = now.getHours() + now.getMinutes() / 60;
+        timeStr = '';
+      }
+      /* City display name: capitalise slug or read from .title-city */
+      var cityEl = document.querySelector('.title-city');
+      var city = cityEl ? cityEl.textContent.trim() : '';
+      /* Title-city is uppercase (e.g. "GENEVA") — title-case it */
+      city = city.replace(/\b\w/g, function(c) { return c.toUpperCase(); }).replace(/\B\w/g, function(c) { return c.toLowerCase(); });
+      return { dow: dow, hour: hour, timeStr: timeStr, city: city, hasTz: !!tz };
+    }
+
+    /* ── Main setup ── */
+    function _setup() {
+      var ovSec = document.querySelector('.overview-section');
+      var overviewDays = document.querySelectorAll('.overview-day');
+      if (!ovSec || !overviewDays.length) return;
+      if (document.getElementById('tve-open-now-row')) return;
+
+      /* Build row */
+      var row = document.createElement('div');
+      row.id = 'tve-open-now-row';
+      row.className = 'open-now-row';
+
+      var timeLabel = document.createElement('span');
+      timeLabel.className = 'open-now-local-time';
+      timeLabel.id = 'tve-open-now-time';
+
+      var pill = document.createElement('button');
+      pill.type = 'button';
+      pill.className = 'open-now-pill';
+      pill.id = 'tve-open-now-pill';
+      pill.setAttribute('aria-pressed', 'false');
+
+      var dot = document.createElement('span');
+      dot.className = 'open-now-dot';
+      pill.appendChild(dot);
+      pill.appendChild(document.createTextNode(' Open right now'));
+
+      row.appendChild(timeLabel);
+      row.appendChild(pill);
+      ovSec.appendChild(row);
+
+      /* State */
+      var filterOn = false;
+      var preCollapsed = {};
+
+      function _updateLabel() {
+        var info = _destInfo();
+        timeLabel.textContent = info.hasTz
+          ? ('🕐 ' + info.city + ' \xb7 ' + info.timeStr)
+          : '';
+      }
+
+      function _applyFilter() {
+        var info = _destInfo();
+        [].forEach.call(document.querySelectorAll('.stop-block'), function(sb) {
+          var txt = _getHoursText(sb);
+          var status = _hoursOpen(txt, info.dow, info.hour);
+          var badge = sb.querySelector('.closed-now-badge');
+          if (!filterOn) {
+            sb.classList.remove('stop-closed');
+            if (badge) badge.parentNode.removeChild(badge);
+          } else if (status === false) {
+            sb.classList.add('stop-closed');
+            if (!badge) {
+              var b = document.createElement('span');
+              b.className = 'closed-now-badge';
+              b.textContent = 'Closed';
+              var hdr = sb.querySelector('.stop-header');
+              if (hdr) {
+                var dur = hdr.querySelector('.stop-dur');
+                if (dur) hdr.insertBefore(b, dur); else hdr.appendChild(b);
+              }
+            }
+          } else {
+            sb.classList.remove('stop-closed');
+            if (badge) badge.parentNode.removeChild(badge);
+          }
+        });
+      }
+
+      function _applyCollapse() {
+        var dayBlocks = [].slice.call(document.querySelectorAll('.day-block[id^="day"]'));
+        if (filterOn) {
+          /* First non-collapsed day stays expanded; everything else collapses */
+          var firstExpanded = null;
+          for (var i = 0; i < dayBlocks.length; i++) {
+            if (!dayBlocks[i].classList.contains('collapsed')) { firstExpanded = dayBlocks[i]; break; }
+          }
+          dayBlocks.forEach(function(block) {
+            var hdr = block.querySelector('.day-header');
+            if (block === firstExpanded) return;
+            preCollapsed[block.id] = block.classList.contains('collapsed');
+            block.classList.add('collapsed');
+            if (hdr) {
+              var note = hdr.querySelector('.day-header-filter-note');
+              if (!note) {
+                note = document.createElement('span');
+                note.className = 'day-header-filter-note';
+                note.textContent = 'filter active';
+                hdr.appendChild(note);
+              }
+              void note.offsetWidth; /* reflow for transition */
+              note.classList.add('visible');
+            }
+          });
+        } else {
+          dayBlocks.forEach(function(block) {
+            var note = block.querySelector('.day-header-filter-note');
+            if (note) note.classList.remove('visible');
+            if (!preCollapsed[block.id]) block.classList.remove('collapsed');
+          });
+        }
+      }
+
+      pill.addEventListener('click', function() {
+        filterOn = !filterOn;
+        pill.classList.toggle('on', filterOn);
+        pill.setAttribute('aria-pressed', String(filterOn));
+        _applyCollapse();
+        _applyFilter();
+      });
+
+      _updateLabel();
+      setInterval(function() { _updateLabel(); if (filterOn) _applyFilter(); }, 60000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setup);
+    } else { _setup(); }
   }());
 
   /* ── Move .overview-extras (and #ics-pill-row) out of the white Trip Overview
