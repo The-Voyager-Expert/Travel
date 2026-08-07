@@ -445,7 +445,7 @@
          panel; body overflow:hidden (set by toggleHamMenu) locks page scroll
          so only the menu scrolls while it is open. */
       '.tb-ham-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;' +
-        'background:#ffffff;border-top:1px solid #e6e2da;z-index:1001;padding:4px 0 16px;' +
+        'background:#faf8f5;border-top:1px solid #e6e2da;z-index:1001;padding:4px 0 16px;' +
         'overflow-y:auto;-webkit-overflow-scrolling:touch;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
@@ -4304,7 +4304,7 @@
     }
     /* 1. Also on This Site — always present in real guides */
     if (document.getElementById('also-on-this-site')) {
-      addPill('#also-on-this-site', '🔗 Also on This Site');
+      addPill('#also-on-this-site', '💥 Also on this site');
     }
     /* 2. Best Of — only when this city appears in CITY_BEST_OF_MAP */
     var _epParts = location.pathname.split('/');
