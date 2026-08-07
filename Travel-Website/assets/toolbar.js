@@ -3332,7 +3332,9 @@
     ] },
     'glacier-national-park': { h: [
       { name: 'Many Glacier Hotel', note: 'National Historic Landmark 1915 — Swiss chalet on Swiftcurrent Lake, most dramatic NPS setting in the park, mountain-and-lake panorama · 8.9 Booking.com' },
-      { name: 'The Lodge at Whitefish Lake', note: 'Renaissance Hotels (Marriott family) — Whitefish, 14 miles east of the park, marina resort, outdoor pool, lakefront spa, year-round mountain access · 9.0 Booking.com' }
+      { name: 'Lake McDonald Lodge', note: 'Historic NPS concessionaire lodge (1913) on the western shore of Lake McDonald, hunting-lodge-style great room, boat rentals on the lake · 8.5 Booking.com' },
+      { name: 'Rising Sun Motor Inn', note: 'NPS lodging on the eastern edge of the park near St. Mary Lake, motel-style cabins, Walking Bear Restaurant on site, close to Going-to-the-Sun Road · 7.8 Booking.com' },
+      { name: 'The Lodge at Whitefish Lake', note: 'Renaissance Hotels (Marriott family) — Whitefish, 26 miles north of the park, marina resort, outdoor pool, lakefront spa, year-round mountain access · 9.0 Booking.com' }
     ] },
     'glasgow': { h: [
       { name: 'Kimpton Blythswood Square Hotel', note: 'IHG Kimpton brand — 1820 Georgian townhouse on Blythswood Square, indoor pool, Tempus spa, afternoon tea · 9.0 Booking.com' },
