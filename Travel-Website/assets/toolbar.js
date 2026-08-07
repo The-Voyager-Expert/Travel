@@ -2798,7 +2798,6 @@
     document.body.appendChild(ov);
     document.body.appendChild(trigBtn);
   }
-  window.__tveMidpoint = 'line2801';
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectDayJump);
   } else {
@@ -5460,15 +5459,12 @@
     } else { _setup(); }
   }());
 
-  window.__tveReachedLounge = true;
-
   /* ── Lounge arrival chip — injected at the top of Day 1 ─────────────────────
      Reads the city slug from the page path → looks up destination IATA via
      CHIP_DATA → routes to Lounges-US, Lounges-Europe, or Before-You-Go#lounges
      based on which page covers that airport. Chip sits immediately after the
      .day-header (above .hotel-first). CSS: guide-style.css .lounge-arrival-chip */
   (function _loungeChipInject() {
-    window.__tveLoungeIife = 'ran path='+location.pathname+' rs='+document.readyState;
     if (!/\/Guides\//.test(location.pathname)
         || /-read-about\.html$/.test(location.pathname)
         || /-stops-map\.html$/.test(location.pathname)) return;
@@ -5717,24 +5713,20 @@
     var EU_IATAS = ['AMS','CDG','ORY','NCE','LYS','LHR','LGW','MAN','EDI','VIE','BRU','DBV','SPU','ZAG','CPH','HEL','FRA','MUC','BER','DUS','HAM','ATH','HER','SKG','DUB','FCO','MXP','VCE','NAP','LUX','OSL','BGO','LIS','OPO','FAO','MAD','BCN','AGP','PMI','VLC','ARN','GOT','GVA','ZRH'];
 
     function _inject() {
-      window.__tveLounge = window.__tveLounge || [];
       var parts = location.pathname.split('/');
       var gi = parts.indexOf('Guides');
-      window.__tveLounge.push('gi='+gi+' path='+location.pathname);
       if (gi < 0) return;
       var slug = parts[gi + 1] || '';
       var info = CHIP_DATA[slug];
-      window.__tveLounge.push('slug='+slug+' infoExists='+(!!info));
       if (!info) return;
 
       var day1 = document.getElementById('day1');
-      window.__tveLounge.push('day1='+!!day1);
       if (!day1) return;
       var dayHdr = day1.querySelector(':scope > .day-header');
-      window.__tveLounge.push('dayHdr='+!!dayHdr);
       if (!dayHdr) return;
 
-      var dep = parseInt((document.getElementById('toolbar-mount') || {}).dataset.depth || '2', 10);
+      var mountEl = document.getElementById('toolbar-mount');
+      var dep = mountEl ? parseInt(mountEl.dataset.depth || '2', 10) : 2;
       var base = new Array(dep + 1).join('../');
       var href, label;
       if (US_IATAS.indexOf(info.iata) >= 0) {
@@ -5757,16 +5749,12 @@
         '<span class="lac-name">' + info.name + '</span>' +
         '<span class="lac-link">' + label + '</span>';
 
-      window.__tveLounge.push('inserting chip href='+href);
       dayHdr.insertAdjacentElement('afterend', chip);
-      window.__tveLounge.push('chip inserted ok');
     }
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _inject);
-      window.__tveLoungeListenerAdded = true;
     } else {
-      window.__tveLoungeElsePath = true;
       _inject();
     }
   }());
