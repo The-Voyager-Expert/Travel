@@ -3300,7 +3300,9 @@
     ] },
     'florida-keys': { h: [
       { name: 'Casa Marina Key West, Curio Collection by Hilton', note: "Hilton Curio brand — 1920 Flagler oceanfront resort, Key West's largest, private beach, two pools, Atlantic-view rooms · 8.5 Booking.com" },
-      { name: 'Opal Key Resort & Marina', note: 'Independent luxury — Key West harbour and marina setting, free-form pool, sunset deck, private dock, tropical grounds · 8.6 Booking.com' }
+      { name: 'Opal Key Resort & Marina', note: 'Independent luxury — Key West harbour and marina setting, free-form pool, sunset deck, private dock, tropical grounds · 8.6 Booking.com' },
+      { name: 'The Reach Key West, Curio Collection by Hilton', note: 'Hilton Curio brand — Simonton Beach, private beach on the Atlantic, full-service resort, three pools, at the quiet end of Duval Street · 8.7 Booking.com' },
+      { name: 'Southernmost Beach Resort', note: 'Independent boutique — Atlantic beachfront on South Beach, private beach access, two pools, five-minute walk to Duval Street · 8.3 Booking.com' }
     ] },
     'fortaleza': { h: [
       { name: 'Gran Marquise Hotel', note: 'Independent luxury — Meireles Av. Beira Mar beachfront, rooftop pool with Atlantic views, top-rated address in Fortaleza · 9.2 Booking.com' },
@@ -3312,11 +3314,21 @@
     ] },
     'frankfurt': { h: [
       { name: 'Steigenberger Frankfurter Hof', note: 'Steigenberger brand — 1876 Kaiserplatz landmark, Michelin-recognized The Faces restaurant, historic grand-hotel address · 8.7 Booking.com' },
-      { name: 'Villa Kennedy', note: 'Rocco Forte brand — 1901 Sachsenhausen patrician villa, garden pool, Vigna restaurant, spa, 15-minute walk to Römer · 9.0 Booking.com' }
+      { name: 'Villa Kennedy', note: 'Rocco Forte brand — 1901 Sachsenhausen patrician villa, garden pool, Vigna restaurant, spa, 15-minute walk to Römer · 9.0 Booking.com' },
+      { name: 'Jumeirah Frankfurt', note: 'Jumeirah brand — Westend tower with panoramic city views, spa, pool, rooftop terrace, 10-minute walk to Alte Oper · 8.9 Booking.com' },
+      { name: 'Hotel Hessischer Hof', note: 'Independent grand hotel — 1952 address near Alte Oper and Messe, decorated with Hessian art collection, restaurant Sèvres · 8.6 Booking.com' }
+    ] },
+    'galapagos-islands': { h: [
+      { name: 'Finch Bay Ecolodge', note: 'Relais & Châteaux eco-resort at Finch Bay — naturalist-guided excursions, pool, pier with direct water-taxi access to Las Grietas, most prestigious address on Santa Cruz · 9.2 Booking.com' },
+      { name: 'Hotel Ikala Galapagos', note: 'Boutique hotel with pool and garden on Av. Charles Darwin — central Puerto Ayora location, 5-min walk to Charles Darwin Research Station · 8.8 Booking.com' },
+      { name: 'Galapagos Safari Camp', note: 'Luxury tented camp in the Santa Cruz highlands — highland setting near El Chato tortoise reserve and Los Gemelos craters, butler service, 4x4 transfers · 9.0 Booking.com' },
+      { name: 'Sol y Mar B&B', note: 'Waterfront guesthouse with harbor views on Av. Darwin — steps from the main dock and water-taxi pier, closest budget option to the boat terminal · 8.4 Booking.com' }
     ] },
     'geneva': { h: [
       { name: 'Beau-Rivage Geneva', note: 'Independent grand hotel — 1865 Quai du Mont-Blanc lakefront, indoor pool, Michelin-starred Chat Botté restaurant, panoramic lake views · 9.1 Booking.com' },
-      { name: 'Four Seasons Hotel des Bergues Geneva', note: 'Four Seasons brand — 1834 lakeside founding address on the Rhône, private lake pier, spa, Mont Blanc views from upper floors · 9.3 Booking.com' }
+      { name: 'Four Seasons Hotel des Bergues Geneva', note: 'Four Seasons brand — 1834 lakeside founding address on the Rhône, private lake pier, spa, Mont Blanc views from upper floors · 9.3 Booking.com' },
+      { name: 'Hotel President Wilson', note: 'Marriott Autograph Collection — 1962 Quai Wilson lakefront, largest standard suite in Europe, outdoor pool, panoramic lake and Alps views · 9.0 Booking.com' },
+      { name: 'Mandarin Oriental Geneva', note: 'Mandarin Oriental brand — Quai Turrettini on the Rhône, spa, two restaurants, five-minute walk to the Old Town and Cathédrale Saint-Pierre · 9.1 Booking.com' }
     ] },
     'glacier-national-park': { h: [
       { name: 'Many Glacier Hotel', note: 'National Historic Landmark 1915 — Swiss chalet on Swiftcurrent Lake, most dramatic NPS setting in the park, mountain-and-lake panorama · 8.9 Booking.com' },
