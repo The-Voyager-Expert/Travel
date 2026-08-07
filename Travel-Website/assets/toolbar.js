@@ -1096,11 +1096,12 @@
   if (isRealGuide) {
     var backStrip = document.createElement('div');
     backStrip.id = 'tve-back-guides';
-    backStrip.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:2px 32px;background:#f5f4f0;margin-bottom:12px;';
+    backStrip.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:2px 32px;background:#f5f4f0;margin-bottom:12px;overflow-x:auto;';
     var pillStyle = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
       'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
       'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
-      'text-decoration:none;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;';
+      'text-decoration:none;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
+      'white-space:nowrap;line-height:1;box-sizing:border-box;';
     if (isStopsMap) {
       var _smParts = location.pathname.split('/');
       var _smGi = _smParts.indexOf('Guides');
@@ -1130,7 +1131,7 @@
       backGuides.textContent = '‹ ' + (_raCityName || 'Guide');
       backGuides.href = './';
       document.addEventListener('DOMContentLoaded', function () {
-        var sb = document.querySelector('.story-back');
+        var sb = document.querySelector('.story-footer-back');
         if (sb) backGuides.href = sb.getAttribute('href');
         /* Inject a print pill into the story-footer alongside the back link. */
         var sf = document.querySelector('.story-footer');
