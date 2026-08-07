@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Mobile filter chip strip horizontal scroll</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660;
+    --accent: #c8a44a; --rust: #b85c2a; --border: #e6e2da;
+    --font: 'Roboto', Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1e1b16; --surface: #2a2620; --text: #ede7db; --muted: #a89f8f; --border: #3a342a; }
+  }
+  :root[data-theme="light"] { --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660; --border: #e6e2da; }
+  :root[data-theme="dark"]  { --bg: #1e1b16; --surface: #2a2620; --text: #ede7db; --muted: #a89f8f; --border: #3a342a; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); padding: 32px 24px 64px; }
+  .mockup-header { max-width: 820px; margin: 0 auto 32px; }
+  .mockup-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--rust); margin-bottom: 8px; }
+  .mockup-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .mockup-meta { font-size: 12px; color: var(--muted); }
+  .mockup-meta code { background: var(--border); padding: 1px 5px; border-radius: 3px; font-family: 'SF Mono', Menlo, monospace; font-size: 11px; color: var(--rust); }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 820px; margin: 0 auto; }
+  @media (max-width: 640px) { .panels { grid-template-columns: 1fr; } }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .panel-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; padding: 10px 18px; border-bottom: 1px solid var(--border); }
+  .label-before { color: #7a6040; background: #fdf5e6; }
+  .label-after  { color: #2a5c2a; background: #edf5ed; }
+  @media (prefers-color-scheme: dark) {
+    .label-before { background: #2e2510; color: #d4a84a; }
+    .label-after  { background: #102510; color: #72c272; }
+  }
+  :root[data-theme="dark"] .label-before { background: #2e2510; color: #d4a84a; }
+  :root[data-theme="dark"] .label-after  { background: #102510; color: #72c272; }
+  .panel-body { padding: 22px 18px; }
+  .context-label { font-size: 11px; color: var(--muted); margin-bottom: 14px; font-weight: 500; }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 260px; border: 2px solid var(--border); border-radius: 18px; overflow: hidden;
+    background: var(--bg); margin: 0 auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  }
+  .phone-content { padding: 14px 0 18px; }
+  .phone-page-title { font-size: 15px; font-weight: 700; color: var(--text); padding: 0 14px 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+
+  /* BEFORE: chips wrap to multiple rows */
+  .chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px; }
+  .chip-wrap-item {
+    padding: 7px 12px; font-size: 11.5px; font-family: var(--font);
+    border: 1.5px solid var(--border); border-radius: 0; background: var(--surface);
+    color: var(--muted); white-space: nowrap; height: 36px;
+    display: flex; align-items: center;
+  }
+  .chip-wrap-item.chip-active { background: #f0ede8; color: #6a6660; border-color: var(--border); }
+
+  /* AFTER: single row scroll */
+  .chips-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 14px; }
+  .chips-scroll { display: flex; flex-wrap: nowrap; gap: 0; width: max-content; }
+  .chip-scroll-item {
+    padding: 7px 12px; font-size: 11.5px; font-family: var(--font);
+    border: 1.5px solid var(--border); border-right: none; background: var(--surface);
+    color: var(--muted); white-space: nowrap; height: 36px;
+    display: flex; align-items: center;
+  }
+  .chip-scroll-item:last-child { border-right: 1.5px solid var(--border); }
+  .chip-scroll-item.chip-active { background: #fff8f4; color: #b85c2a; border-color: #b85c2a; font-weight: 600; }
+
+  /* Fake card below filter */
+  .fake-card { margin: 12px 14px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .fake-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .fake-card-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .state-note { font-size: 11px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
+  .state-note strong { color: var(--text); }
+
+  /* scroll hint arrow */
+  .scroll-hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+
+  .diff-note { max-width: 820px; margin: 20px auto 0; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--rust); border-radius: 8px; padding: 14px 18px; font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .diff-note strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="mockup-header">
+  <div class="mockup-eyebrow">UX Research · Mobile UX · 2026-08-03</div>
+  <div class="mockup-title">Mobile filter chips: wrap → horizontal scroll</div>
+  <div class="mockup-meta">Add <code>overflow-x: auto; flex-wrap: nowrap</code> to <code>#region-filters</code> in <code>mobile.css</code></div>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-label label-before">Before — chips wrap (2+ rows)</div>
+    <div class="panel-body">
+      <div class="context-label">Best-Of page — mobile ~375px wide</div>
+      <div class="phone-frame">
+        <div class="phone-content">
+          <div class="phone-page-title">Best Of</div>
+          <div class="chips-wrap">
+            <div class="chip-wrap-item chip-active">All</div>
+            <div class="chip-wrap-item">Americas</div>
+            <div class="chip-wrap-item">Europe</div>
+            <div class="chip-wrap-item">Asia Pacific</div>
+            <div class="chip-wrap-item">Middle East</div>
+            <div class="chip-wrap-item">Africa</div>
+          </div>
+          <div class="fake-card">
+            <div class="fake-card-title">Best Beaches</div>
+            <div class="fake-card-sub">12 destinations</div>
+          </div>
+        </div>
+      </div>
+      <div class="state-note"><strong>Problem:</strong> Chips wrap to a second row, consuming vertical space and pushing content down before the user even starts reading. 6 chips = 2 rows on a 375px screen.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-label label-after">After — single row, scroll right</div>
+    <div class="panel-body">
+      <div class="context-label">Best-Of page — mobile ~375px wide</div>
+      <div class="phone-frame">
+        <div class="phone-content">
+          <div class="phone-page-title">Best Of</div>
+          <div class="chips-scroll-wrap">
+            <div class="chips-scroll">
+              <div class="chip-scroll-item chip-active">All</div>
+              <div class="chip-scroll-item">Americas</div>
+              <div class="chip-scroll-item">Europe</div>
+              <div class="chip-scroll-item">Asia Pacific</div>
+              <div class="chip-scroll-item">Middle East</div>
+              <div class="chip-scroll-item">Africa</div>
+            </div>
+          </div>
+          <div class="scroll-hint">← scroll →</div>
+          <div class="fake-card">
+            <div class="fake-card-title">Best Beaches</div>
+            <div class="fake-card-sub">12 destinations</div>
+          </div>
+        </div>
+      </div>
+      <div class="state-note"><strong>Fix:</strong> Single row with horizontal scroll. Content appears immediately below, not pushed down by filter rows. Swipe to see more filters. Same pattern as GetYourGuide, Viator, Klook mobile.</div>
+    </div>
+  </div>
+</div>
+
+<div class="diff-note">
+  <strong>CSS change:</strong> On mobile, override <code>#region-filters</code> with <code>overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; padding-bottom: 4px;</code> and set child chips to <code>white-space: nowrap; flex-shrink: 0</code>. No layout changes to the cards below.
+</div>
+
+</body>
+</html>
