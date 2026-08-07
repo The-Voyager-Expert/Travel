@@ -1868,13 +1868,15 @@
   /* ── In-guide bookmark — pin this guide as current trip from inside the guide.
      Button sits to the right of .title-city ("LISBON") with a 10px gap.
      All viewports. Resting colour: terracotta #b85c2a (outline when unpinned,
-     filled when pinned). Shares tve_pinned_guide localStorage format. */
+     filled when pinned). Shares tve_pinned_guides localStorage store with the
+     Guides Index (plural key, array of up to 3 pins). */
   if (isRealGuide) {
     function injectGuideBookmark() {
       var tc = document.querySelector('.title-city');
       if (!tc || document.getElementById('guide-pin-btn')) return;
 
-      var KEY  = 'tve_pinned_guide';
+      var KEY  = 'tve_pinned_guides';
+      var MAX  = 3;
       var name = document.title;
       var pm   = location.pathname.match(/(\/Guides\/.+)$/);
       var href = pm ? '.' + pm[1] : location.pathname;
@@ -1882,8 +1884,19 @@
       var SVG_OUT  = '<svg width="14" height="16" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
       var SVG_FILL = '<svg width="14" height="16" viewBox="0 0 12 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 
-      function getPin()    { try { return JSON.parse(localStorage.getItem(KEY)); } catch(e) { return null; } }
-      function pinActive() { var p = getPin(); return !!(p && p.href === href); }
+      function getPins() {
+        try {
+          var raw = localStorage.getItem(KEY);
+          if (raw) return JSON.parse(raw) || [];
+          var old = localStorage.getItem('tve_pinned_guide');
+          if (old) {
+            var d = JSON.parse(old);
+            if (d && d.href) { var arr = [d]; localStorage.setItem(KEY, JSON.stringify(arr)); localStorage.removeItem('tve_pinned_guide'); return arr; }
+          }
+          return [];
+        } catch (e) { return []; }
+      }
+      function pinActive() { return getPins().some(function (p) { return p.href === href; }); }
 
       /* Wrap existing city-name text so .title-city stays flex-able */
       var textSpan = document.createElement('span');
@@ -1897,7 +1910,7 @@
       btn.id        = 'guide-pin-btn';
       btn.type      = 'button';
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-      btn.title     = on ? 'Remove current trip pin' : 'Pin as current trip';
+      btn.title     = on ? 'Remove bookmark' : 'Bookmark this guide';
       btn.innerHTML = on ? SVG_FILL : SVG_OUT;
       btn.style.cssText =
         'display:inline-flex;align-items:center;flex-shrink:0;' +
@@ -1912,18 +1925,23 @@
       btn.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        var pins = getPins();
         if (pinActive()) {
-          localStorage.removeItem(KEY);
+          pins = pins.filter(function (p) { return p.href !== href; });
+          localStorage.setItem(KEY, JSON.stringify(pins));
           btn.innerHTML = SVG_OUT;
           btn.style.opacity = '.65';
           btn.setAttribute('aria-pressed', 'false');
-          btn.title = 'Pin as current trip';
+          btn.title = 'Bookmark this guide';
         } else {
-          localStorage.setItem(KEY, JSON.stringify({ href: href, name: name, flag: '' }));
+          pins = pins.filter(function (p) { return p.href !== href; });
+          pins.push({ href: href, name: name, flag: '' });
+          if (pins.length > MAX) pins = pins.slice(pins.length - MAX);
+          localStorage.setItem(KEY, JSON.stringify(pins));
           btn.innerHTML = SVG_FILL;
           btn.style.opacity = '1';
           btn.setAttribute('aria-pressed', 'true');
-          btn.title = 'Remove current trip pin';
+          btn.title = 'Remove bookmark';
         }
       });
     }
