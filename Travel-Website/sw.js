@@ -245,7 +245,8 @@
 /* 2026-08-06: also-on-this-site + also-in-country mobile grid — switch to 6-col (span 2 = 1/3 each); orphan layout via JS _fixPillGridOrphans (inline gridColumn, bypasses iOS Safari :nth-child bug); all CSS :nth-child overrides removed — guide-style.css min to 100, toolbar.js min to 179, CACHE to v277. */
 /* 2026-08-06: stop-dur chip — remove ⏱ icon prefix, plain duration text only — toolbar.js min to 180, CACHE to v278. */
 /* 2026-08-06: mobile toolbar redesign — icon-only hamburger (no MENU/CLOSE text), dark-mode toggle moved to left, title absolutely centered — toolbar.js min to 181, CACHE to v279. */
-var CACHE = 'travel-cache-v279';
+/* 2026-08-06: mobile stamp-row stacked layout fix — margin -20px overlapped 16px mobile card gap; changed to -10px — guide-style.css min to 101, CACHE to v280. */
+var CACHE = 'travel-cache-v280';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -253,7 +254,7 @@ var CACHE = 'travel-cache-v279';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 100, 'toolbar.js': 181, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 101, 'toolbar.js': 181, 'mobile.css': 65, 'web-travel-style.css': 9, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
