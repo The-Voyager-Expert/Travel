@@ -95,7 +95,7 @@
   .filter-btn[data-ftype="private"]    { background:rgba(160,40,110,0.08); color:#8a2168; border-color:rgba(160,40,110,0.4); }
   .filter-btn[data-ftype="pass"]       { background:#fff8e0; color:#7a5800; border-color:rgba(122,88,0,0.4); }
   .filter-btn[data-ftype="scenic"]     { background:rgba(138,108,26,0.07); color:var(--muted); border-color:var(--border2); }
-  .filter-btn[data-ftype]:not([data-ftype="all"]).active { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:var(--rust); color:#fff; }
+  .filter-btn[data-ftype]:not([data-ftype="all"]).active { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color:var(--rust); color:#fff; box-shadow: 0 0 0 2px rgba(184,92,42,0.35); }
   /* :visited */
   .book-link.primary:visited   { color:#3d3a32; }
   .book-link.secondary:visited { color:#6a6660; }
@@ -267,7 +267,9 @@
     background: transparent;
     border: none;
   }
-  .legend-item { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.5; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border2, #e6e2da); white-space: nowrap; }
+  .legend-item { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.5; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border2, #e6e2da); white-space: nowrap; cursor: pointer; user-select: none; transition: box-shadow 0.15s, opacity 0.15s; }
+  .legend-item:hover { box-shadow: 0 0 0 2px rgba(184,92,42,0.35); }
+  .legend-item.active { border-color: var(--rust) !important; border-width: 2px; box-shadow: 0 0 0 2px rgba(184,92,42,0.25); }
   .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   /* Legend items — canonical family trios; dots use sphere mid tones per Badge spec 2026-07-29.
      (Class name `.beige` kept as legacy alias; colors are the ORANGE family since the rename.) */
@@ -396,9 +398,9 @@
 
   <!-- LEGEND -->
   <div class="legend">
-    <div class="legend-item beige"><div class="legend-dot"></div> Origin country</div>
-    <div class="legend-item blue"><div class="legend-dot"></div> Countries crossed/served</div>
-    <div class="legend-item green"><div class="legend-dot"></div> Additional stops</div>
+    <div class="legend-item beige" data-dfilt="origin"><div class="legend-dot"></div> Origin country</div>
+    <div class="legend-item blue" data-dfilt="cross"><div class="legend-dot"></div> Countries crossed/served</div>
+    <div class="legend-item green" data-dfilt="stop"><div class="legend-dot"></div> Additional stops</div>
   </div>
 
   <!-- ===== MULTI-COUNTRY / INTERNATIONAL ===== -->
@@ -2705,6 +2707,7 @@
 <script>
 (function(){
   var activeType='all';
+  var activeDot=null;
   var searchEl=document.getElementById('train-search');
   var countEl=document.getElementById('train-count');
   var noRes=document.getElementById('train-noresult');
@@ -2747,7 +2750,8 @@
       var typeMatch=activeType==='all'||(card.dataset.type||'').includes(activeType);
       var hay=card.textContent.toLowerCase().replace(/\buk\b/g,'uk united kingdom').replace(/\busa\b/g,'usa united states').replace(/\buae\b/g,'uae united arab emirates');
       var textMatch=!q||hay.includes(q);
-      if(typeMatch&&textMatch){card.classList.remove('hidden');shown++;}
+      var dotMatch=!activeDot||card.querySelector('.ctag.'+activeDot);
+      if(typeMatch&&textMatch&&dotMatch){card.classList.remove('hidden');shown++;}
       else{card.classList.add('hidden');}
     });
     sections.forEach(function(section){
@@ -2813,6 +2817,22 @@
     if(btn){btn.classList.add('active');btn.setAttribute('aria-pressed','true');}
     applyFilters();
   };
+
+  // ---- Legend dot filters ----
+  document.querySelectorAll('.legend-item[data-dfilt]').forEach(function(item){
+    item.addEventListener('click',function(){
+      var filt=item.dataset.dfilt;
+      if(activeDot===filt){
+        activeDot=null;
+        item.classList.remove('active');
+      } else {
+        activeDot=filt;
+        document.querySelectorAll('.legend-item[data-dfilt]').forEach(function(i){i.classList.remove('active');});
+        item.classList.add('active');
+      }
+      applyFilters();
+    });
+  });
 
   // ---- Scroll-spy — highlight the jump pill for the section in view ----
   if('IntersectionObserver' in window){
