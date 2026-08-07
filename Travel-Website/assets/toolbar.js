@@ -3207,10 +3207,10 @@
       { name: 'Alvear Palace Hotel', note: 'Leading Hotels of the World — 1932 French Renaissance landmark in Recoleta, Alvear Art Restaurant, butler service · 9.5 Booking.com' }
     ] },
     'cairo': { h: [
-      { name: 'Four Seasons Hotel Cairo at Nile Plaza', note: 'Four Seasons brand — Garden City Nile frontage, indoor pool, spa, panoramic city views across the river · 9.2 Booking.com' },
-      { name: 'Kempinski Nile Hotel Cairo', note: 'Kempinski brand — Garden City Nile address, rooftop pool, Osmanly Ottoman restaurant, full-service spa · 9.0 Booking.com' },
-      { name: 'Marriott Mena House Cairo', note: 'Marriott brand — Giza, legendary 1869 lodge with direct Great Pyramid view, outdoor pool, 9-hole golf course, extensive gardens · 9.0 Booking.com' },
-      { name: 'Cairo Marriott Hotel & Omar Khayyam Casino', note: 'Marriott brand — 1869 Gezira Palace on Zamalek island, outdoor pool, casino, garden setting, central Nile island location · 8.5 Booking.com' }
+      { name: 'Four Seasons Hotel Cairo at Nile Plaza', note: 'Four Seasons brand — Garden City Nile frontage, indoor pool, spa, panoramic city views across the river · 9.2 Booking.com', url: 'https://www.booking.com/hotel/eg/four-seasons-cairo-at-nile-plaza.html' },
+      { name: 'Kempinski Nile Hotel Cairo', note: 'Kempinski brand — Garden City Nile address, rooftop pool, Osmanly Ottoman restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/kempinski-nile-cairo.html' },
+      { name: 'Marriott Mena House Cairo', note: 'Marriott brand — Giza, legendary 1869 lodge with direct Great Pyramid view, outdoor pool, 9-hole golf course, extensive gardens · 9.0 Booking.com', url: 'https://www.booking.com/hotel/eg/mena-house-oberoi.html' },
+      { name: 'Cairo Marriott Hotel & Omar Khayyam Casino', note: 'Marriott brand — 1869 Gezira Palace on Zamalek island, outdoor pool, casino, garden setting, central Nile island location · 8.5 Booking.com', url: 'https://www.booking.com/hotel/eg/cairo-marriott-omar-khayyam-casino.html' }
     ] },
     'cambridge': { h: [
       { name: 'The Varsity Hotel & Spa', note: 'Independent boutique — Thompsons Lane, rooftop Glassworks restaurant, River Cam views, spa with rooftop pool · 9.1 Booking.com' },
