@@ -267,7 +267,7 @@
 /* 2026-08-06: read-about story-footer Print button — stripped heavy pill styling (height:28px, border, padding, box-shadow) to match plain-text style of the flanking ← City link and label; font-size:13px, font-weight:500, no border/bg. toolbar.js → v183. CACHE to v285. */
 /* 2026-08-07: lounge arrival chip — toolbar.js injects .lounge-arrival-chip at top of Day 1: teal banner with IATA + airport name → Lounges-US / Lounges-Europe / BYG#lounges based on which page covers that airport; CSS in guide-style.css. toolbar.js → v184, guide-style.css → v102. CACHE to v286. */
 /* 2026-08-07: Photo lightbox — toolbar.js attaches click handlers to .stop-photos img on guide pages; opens fullscreen overlay with stop-name caption + ←→ day navigation; keyboard Escape/arrows; touch swipe on mobile. Zero guide HTML changes. toolbar.js → v185. CACHE to v287. */
-var CACHE = 'travel-cache-v290';
+var CACHE = 'travel-cache-v291';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -275,7 +275,7 @@ var CACHE = 'travel-cache-v290';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 102, 'toolbar.js': 188, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 102, 'toolbar.js': 189, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -5764,7 +5764,11 @@
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _inject);
-    } else { _inject(); }
+      window.__tveLoungeListenerAdded = true;
+    } else {
+      window.__tveLoungeElsePath = true;
+      _inject();
+    }
   }());
 
   /* ── Move .overview-extras (and #ics-pill-row) out of the white Trip Overview
