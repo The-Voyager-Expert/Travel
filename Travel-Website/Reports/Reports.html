@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports — The Voyager Expert Hub</title>
-<!-- built: 2026-08-07 19:59 UTC | backlog: 135 | scouting-open: 46 -->
+<!-- built: 2026-08-07 20:03 UTC | backlog: 135 | scouting-open: 46 -->
 <style>
   :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
     --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
@@ -4007,33 +4007,8 @@
 
     <h3>Mobile UX</h3>
 
-    <div class="entry">
-      <div class="entry-date">2026-08-06</div>
-      <span class="entry-type type-open">OPEN</span>
-      <div class="entry-category">Mobile UX · Effort: S · Confidence: medium</div>
-      <div class="entry-title">Add <code>overscroll-behavior: contain</code> to <code>.tb-ham-menu</code> to prevent iOS scroll chaining</div>
-      <div class="entry-detail">toolbar.js injects <code>.tb-ham-menu{...overflow-y:auto;-webkit-overflow-scrolling:touch;...}</code> — no <code>overscroll-behavior</code> property. On iOS, reaching the top or bottom of the scrollable hamburger menu triggers elastic "rubber-band" chaining that visually shifts the locked page behind the overlay, causing a disorienting flicker even though <code>_lockBodyScroll()</code> sets <code>body.style.overflow='hidden'</code>. The site already uses <code>overscroll-behavior-x: contain</code> on <code>body</code> (mobile.css line 54) — the same pattern should apply to the scrollable overlay. Fix: add <code>overscroll-behavior: contain;</code> to the <code>.tb-ham-menu</code> CSS string in toolbar.js inside the existing <code>@media(max-width:1260px)</code> block, immediately after <code>-webkit-overflow-scrolling:touch</code>. Evidence: toolbar.js grep confirms absence of <code>overscroll-behavior</code> in the <code>.tb-ham-menu</code> rule; mobile.css line 54 confirms the pattern is established on the site. Benchmark: Intrepid Travel, G Adventures, and mobile-first booking platforms all apply <code>overscroll-behavior: contain</code> to full-viewport drawer overlays.</div>
-      <div class="entry-target">Target: <code>Travel-Website/assets/toolbar.js</code> (hamburger menu CSS string, ~line 448)</div>
-    </div>
 
-    <div class="entry">
-      <div class="entry-date">2026-08-06</div>
-      <span class="entry-type type-open">OPEN</span>
-      <div class="entry-category">Mobile UX · Effort: S · Confidence: high</div>
-      <div class="entry-title">Theme toggle button is 28px wide on mobile — horizontal tap target below 44px minimum</div>
-      <div class="entry-detail">toolbar.js injects <code>.tb-theme-toggle{...width:28px;height:28px;border-radius:50%;...}</code>. On mobile, the universal <code>a, button { min-height: 40px; }</code> rule (mobile.css line 82-83) raises the effective height to 40px, but no <code>min-width</code> override exists — the button stays 28px wide. The tap target is 28×40px: width is 36% below Apple HIG's 44px minimum and 42% below Google Material Design's 48px minimum. The button is positioned at the top-left of the mobile toolbar (via <code>@media(max-width:1260px){.tb-theme-toggle{order:-1}}</code>), where 28px width makes it a small target for a frequently used dark/light toggle. Fix: add <code>.tb-theme-toggle { min-width: 44px; }</code> to <code>mobile.css</code>. The circle renders at 28px visually (via <code>border-radius:50%</code>); the transparent hit area extends to 44px with no visual change, as the button is already <code>display:flex;align-items:center;justify-content:center</code>.</div>
-      <div class="entry-target">Target: <code>Travel-Website/assets/mobile.css</code> (add within @media block)</div>
-      <div class="entry-mockup"><a href="ux-research-mockups/theme-toggle-narrow-touch-target.html">View mockup →</a></div>
-    </div>
 
-    <div class="entry">
-      <div class="entry-date">2026-08-06</div>
-      <span class="entry-type type-open">OPEN</span>
-      <div class="entry-category">Mobile UX · Effort: S · Confidence: medium</div>
-      <div class="entry-title">A2HS banner (<code>position:fixed; bottom:0</code>) doesn't account for iPhone home indicator</div>
-      <div class="entry-detail">The Add-to-Home-Screen banner (toolbar.js) sets <code>style.cssText</code> with <code>padding:12px 16px 14px</code> — fixed 14px bottom padding. The banner is <code>position:fixed; bottom:0</code>. On iPhone X–16 (with Dynamic Island or notch), the home indicator occupies ~34px at the bottom edge. The 14px bottom padding falls entirely inside the home indicator zone — the Add/Close buttons may be partially obscured on iPhones with a home indicator. The site's mobile.css correctly handles this for in-flow content at line 500-505: <code>@supports (padding: env(safe-area-inset-top)) { body { padding-bottom: calc(var(--pb, 80px) + env(safe-area-inset-bottom, 0px)); } }</code> — but <code>position:fixed</code> elements at <code>bottom:0</code> are not affected by body padding. Fix: In toolbar.js, change <code>'padding:12px 16px 14px'</code> in the banner's <code>style.cssText</code> array to <code>'padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px))'</code>. The <code>env()</code> fallback of <code>0px</code> means older devices see no change.</div>
-      <div class="entry-target">Target: <code>Travel-Website/assets/toolbar.js</code> (banner style.cssText array, ~line 187)</div>
-    </div>
 
     <div class="entry">
       <div class="entry-date">2026-08-06</div>
@@ -4045,45 +4020,9 @@
       <div class="entry-mockup"><a href="ux-research-mockups/best-of-showcase-card-no-active-state.html">View mockup →</a></div>
     </div>
 
-    <div class="entry">
-      <div class="entry-date">2026-08-06</div>
-      <span class="entry-type type-open">OPEN</span>
-      <div class="entry-category">Mobile UX · Effort: S · Confidence: high</div>
-      <div class="entry-title">Increase mobile Form-A filter chip padding — computed touch height is ~29px, below the 40px site floor</div>
-      <div class="entry-detail"><code>mobile.css</code> lines 209-215 apply to <code>.pill, .filter-btn, .filter-pill, .tier-pill, .fchip, .mchip, .tchip, .stab, .stats-nav a</code>: <code>font-size: 13px !important; min-height: auto !important; padding: 8px 14px !important; line-height: 1 !important;</code>. Computed height = 13px × 1 + 8px + 8px = 29px. The universal tap target rule at mobile.css line 82-83 sets <code>a, button { min-height: 40px; }</code>, but it is explicitly overridden to <code>auto</code> for chips at line 211, leaving Form-A pills 27% below the site's own floor. Form B grid chips (<code>.jump-pill, .jump-btn</code>, <code>#region-pills .pill</code>) correctly get explicit <code>height: 46px</code> (lines 287 and 240). Fix: Change <code>padding: 8px 14px !important</code> at mobile.css line 212 to <code>padding: 12px 14px !important</code>, giving 13 + 24 = 37px — close to the 40px floor without the row-height bloat the comment at line 206-208 warned against. Benchmark: Lonely Planet, Rick Steves, and Nomadic Matt all use ≥36px touch targets for inline filter chips on mobile.</div>
-      <div class="entry-target">Target: <code>Travel-Website/assets/mobile.css</code> (line 212)</div>
-      <div class="entry-mockup"><a href="ux-research-mockups/mobile-filter-pill-touch-height.html">View mockup →</a></div>
-    </div>
 
-    <div class="entry">
-      <div class="entry-date">2026-08-04</div>
-      <span class="entry-type type-open">OPEN</span>
-      <div class="entry-category">Mobile UX · Effort: S · Confidence: medium</div>
-      <div class="entry-title">Increase mobile body line-height from 1.55 to 1.65</div>
-      <div class="entry-detail"><code>mobile.css</code> line 97 sets <code>body { line-height: 1.55; }</code>, overriding the desktop value of 1.6 (web-travel-style.css line 184). Editorial benchmark sites (Rough Guides, Nomadic Matt) use 1.6–1.8 line-height for comfortable reading on mobile. The 1.55 value is below the recommended range for small-screen prose and compresses line spacing on the most-used device class. Change to <code>line-height: 1.65</code> — a modest improvement that aligns with benchmark editorial standards without adding bulk.</div>
-      <div class="entry-target">Target: <code>Travel-Website/assets/mobile.css</code> (line 97)</div>
-      <div class="entry-mockup"><a href="ux-research-mockups/mobile-body-line-height-1-65.html">View mockup →</a></div>
-    </div>
 
-    <div class="entry">
-      <div class="entry-date">2026-08-04</div>
-      <span class="entry-type type-open">OPEN</span>
-      <div class="entry-category">Mobile UX · Effort: M · Confidence: medium</div>
-      <div class="entry-title">Collapse guide extras sections by default on mobile</div>
-      <div class="entry-detail">Guide <code>.extras-section</code> elements (Restaurants, Shopping, Nightlife, Spas, etc.) are expanded by default on all screen sizes. On mobile, a guide with 4+ extras sections forces users to scroll through all expanded content — potentially hundreds of pixels — to reach later sections or the page footer. Intrepid Travel and G Adventures collapse itinerary day sections by default on mobile and expand on tap. Implementation: on page load for viewports ≤768px, add the <code>collapsed</code> class to all <code>.extras-section</code> elements (guide-style.css lines 1062–1069 already define the collapsed state with display:none on children and chevron rotation). The collapse/expand JS is already present in guides — this is a default-state change, not a new feature.</div>
-      <div class="entry-target">Target: <code>Travel-Website/assets/toolbar.js</code> (or a <code>@media (max-width: 768px)</code> initial-state block)</div>
-      <div class="entry-mockup"><a href="ux-research-mockups/extras-section-collapse-by-default-on-mobile.html">View mockup →</a></div>
-    </div>
 
-    <div class="entry">
-      <div class="entry-date">2026-08-03</div>
-      <span class="entry-type type-open">OPEN</span>
-      <div class="entry-category">Mobile UX · Effort: S · Confidence: high</div>
-      <div class="entry-title">Mobile filter chip strip: replace wrap with horizontal scroll</div>
-      <div class="entry-detail">On mobile, <code>#region-filters</code> chips wrap to multiple rows. Replace with <code>overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap;</code> to create a single-row scrollable strip that doesn't push content down. This is the dominant mobile filter pattern at GetYourGuide, Viator, TripAdvisor, Booking.com, and Klook. Current code: <code>#region-filters { gap: 0 !important; }</code> on mobile — no overflow or flex-wrap override present.</div>
-      <div class="entry-target">Target: <code>Travel-Website/assets/mobile.css</code></div>
-      <div class="entry-mockup"><a href="ux-research-mockups/mobile-filter-chip-strip-horizontal-scroll.html">View mockup →</a></div>
-    </div>
 
     <h3>UX / Desktop</h3>
 
