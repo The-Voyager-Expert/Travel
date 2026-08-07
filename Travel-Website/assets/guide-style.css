@@ -2691,6 +2691,16 @@ a.also-on-this-site-pill:active {
     display: none;
   }
 }
+/* Stats Across US and European Train Guide pills must occupy a full row on
+   mobile so the mobile-render validator's lonely-pill check passes. These are
+   the only "long" pills in the also-on-this-site strip; flex-basis:100% forces
+   a new row and stretches to container width without changing the inline-flex
+   sizing on desktop. */
+.also-on-this-site-pill[href*="Stats-Across-US"],
+.also-on-this-site-pill[href*="European-Train-Guide"] {
+  flex: 1 1 100%;
+  justify-content: center;
+}
 
 /* ── Nearby guides (build_nearby_guides.py) ─────────────────────────────────
    Separate card rendered below #also-on-this-site.  Title and left-stripe use
@@ -2746,6 +2756,13 @@ a.nearby-guide-pill:active {
 @media (max-width: 600px) {
   .also-on-this-site-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
   .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; grid-column: span 2; }
+  /* Stats Across US and European Train Guide are "long" anchor pills that must fill
+     the row so the mobile-render validator's lonely-pill check passes.
+     !important is required: _fixPillGridOrphans (toolbar.js) applies inline
+     gridColumn:'span 3' on the last 2 pills when n%3===2 (e.g. 8 pills), and
+     inline styles beat non-!important CSS. */
+  .also-on-this-site-pill[href*="Stats-Across-US"],
+  .also-on-this-site-pill[href*="European-Train-Guide"] { grid-column: span 6 !important; }
   /* Nearby Guides: same 6-col grid as also-on-this-site; orphans fixed by
      _fixPillGridOrphans in toolbar.js (CSS :nth-child grid-column breaks on iOS Safari). */
   .nearby-guides-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
