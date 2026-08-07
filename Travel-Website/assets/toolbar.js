@@ -715,6 +715,14 @@
 
   /* ── Prev / Next sticky nav-bar — sits just below toolbar, sticks to top ── */
   var isRealGuide = /\/Guides\//.test(location.pathname) && location.pathname.indexOf('guides_index') < 0;
+  var isReadAbout = /\-read-about\.html$/.test(location.pathname);
+  var _raCityName = '';
+  if (isReadAbout) {
+    var _raParts = location.pathname.split('/');
+    var _raGi = _raParts.indexOf('Guides');
+    var _raCityFolder = _raGi >= 0 && _raParts[_raGi + 1] ? _raParts[_raGi + 1] : '';
+    _raCityName = _raCityFolder.replace(/-/g, ' ');
+  }
 
   /* ── City hash for Before-You-Go deep-links ────────────────────────────── */
   var cityHash = '';
@@ -1103,8 +1111,38 @@
       backBYG.style.color = '#8a6c1a'; backBYG.style.borderColor = '#c8a44a';
     });
     var backGuides = document.createElement('a');
-    backGuides.href = base + 'index.html';
-    backGuides.textContent = '‹ All Guides';
+    if (isReadAbout) {
+      backGuides.textContent = '‹ ' + (_raCityName || 'Guide');
+      backGuides.href = './';
+      document.addEventListener('DOMContentLoaded', function () {
+        var sb = document.querySelector('.story-back');
+        if (sb) backGuides.href = sb.getAttribute('href');
+        /* Inject a print pill into the story-footer alongside the back link. */
+        var sf = document.querySelector('.story-footer');
+        if (sf) {
+          var fp = document.createElement('button');
+          fp.type = 'button';
+          fp.textContent = '🖨 Print';
+          fp.style.cssText = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
+            'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
+            'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+            'cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
+            '-webkit-appearance:none;font-family:inherit;line-height:1;box-sizing:border-box;';
+          fp.addEventListener('mouseenter', function () { fp.style.color = '#b85c2a'; fp.style.borderColor = '#b85c2a'; });
+          fp.addEventListener('mouseleave', function () { fp.style.color = '#8a6c1a'; fp.style.borderColor = '#c8a44a'; });
+          fp.id = 'tve-ra-print';
+          fp.addEventListener('click', function () { window.print(); });
+          var lbl = sf.querySelector('.story-footer-label');
+          if (lbl) sf.insertBefore(fp, lbl); else sf.appendChild(fp);
+          var phs = document.createElement('style');
+          phs.textContent = '@media print{#tve-ra-print{display:none!important}}';
+          document.head.appendChild(phs);
+        }
+      });
+    } else {
+      backGuides.href = base + 'index.html';
+      backGuides.textContent = '‹ All Guides';
+    }
     backGuides.style.cssText = pillStyle;
     backGuides.addEventListener('mouseenter', function () {
       backGuides.style.color = '#b85c2a'; backGuides.style.borderColor = '#b85c2a';
