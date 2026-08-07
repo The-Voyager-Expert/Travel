@@ -3230,8 +3230,10 @@
       { name: 'Land\'s End Inn', note: 'Independent adults-only B&B — Victorian-era hilltop inn in Provincetown West End, panoramic bay views from Gull Hill, wine and cheese hour daily · 9.5 Kayak' }
     ] },
     'cape-town': { h: [
-      { name: 'One&Only Cape Town', note: 'One&Only Resorts — V&A Waterfront, two-island resort layout, overwater spa, NOBU restaurant, two pools · 9.4 Booking.com' },
-      { name: 'The Silo Hotel', note: 'Royal Portfolio — V&A Waterfront Silo District, converted grain silo, 28 rooms, panoramic rooftop bar, curated art collection · 9.0 Booking.com' }
+      { name: 'One&Only Cape Town', url: 'https://www.booking.com/hotel/za/one-and-only-cape-town.html', note: 'One&Only Resorts — V&A Waterfront, two-island resort layout, overwater spa, NOBU restaurant, two pools · 9.4 Booking.com' },
+      { name: 'The Silo Hotel', url: 'https://www.booking.com/hotel/za/the-silo.html', note: 'Royal Portfolio — V&A Waterfront Silo District, converted grain silo, 28 rooms, panoramic rooftop bar, curated art collection · 9.0 Booking.com' },
+      { name: 'Belmond Mount Nelson Hotel', url: 'https://www.booking.com/hotel/za/mount-nelson.html', note: 'Belmond — Gardens district, iconic pink hotel, 9 acres of gardens, spa, six restaurants and bars, direct Garden Route access · 9.2 Booking.com' },
+      { name: 'The Twelve Apostles Hotel & Spa', url: 'https://www.booking.com/hotel/za/the-twelve-apostles.html', note: 'Red Carnation Hotels — Camps Bay, nestled between Twelve Apostles mountain and Atlantic, spa, movie theatre, two restaurants · 9.1 Booking.com' }
     ] },
     'capri': { h: [
       { name: 'J.K. Place Capri', note: 'Independent boutique — Marina Grande, 22 rooms, infinity sea-view pool, Forbes Five-Star-rated sun terraces · 9.6 Booking.com' },
