@@ -1,112 +1,95 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Day Trips by Train — The Voyager Expert</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Day Trips by Train — The Voyager Expert</title>
 <style>
-/* ── Page tokens ──────────────────────────────────── */
-:root {
-  --dt-ink:     var(--text, #2c2a24);
-  --dt-muted:   #6a6760;
-  --dt-subtle:  #9c9790;
-  --dt-bg:      var(--bg, #f5f3ee);
-  --dt-card:    var(--surface, #ffffff);
-  --dt-rule:    #dbd8d0;
-  --dt-rule2:   #cbc8c0;
-  --dt-accent:  var(--accent, #c8a44a);
-  --dt-terra:   #b85c2a;
-  --dt-terra-s: #f0e3da;
-  --dt-shadow:  0 1px 3px rgba(0,0,0,.06), 0 4px 14px rgba(0,0,0,.07);
-}
-
-/* ── Layout ───────────────────────────────────────── */
-.dt-wrap {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 32px 80px;
-}
-
 /* ── Stats bar ────────────────────────────────────── */
 .dt-stats {
   font-size: 13px;
-  color: var(--dt-muted);
-  margin-bottom: 20px;
+  color: var(--muted, #6a6660);
+  margin-bottom: 22px;
   display: flex;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
+  justify-content: center;
 }
-.dt-stats b { color: var(--dt-ink); font-weight: 650; }
+.dt-stats b { color: var(--text, #3d3a32); font-weight: 650; }
 
 /* ── City group ───────────────────────────────────── */
 .dt-city {
-  border: 1px solid var(--dt-rule);
+  border: 1px solid var(--border2, #e6e2da);
   border-radius: 10px;
   margin-bottom: 10px;
-  background: var(--dt-card);
+  background: var(--surface, #ffffff);
   overflow: hidden;
-  box-shadow: var(--dt-shadow);
+  box-shadow: 0 1px 4px rgba(92,61,17,.05);
 }
 .dt-city-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 18px;
+  gap: 12px;
+  padding: 14px 20px;
   cursor: pointer;
   user-select: none;
   border-bottom: 1px solid transparent;
-  transition: background .12s;
+  transition: background .15s;
 }
-.dt-city-head:hover { background: var(--dt-terra-s); }
+.dt-city-head:hover { background: rgba(184,92,42,.04); }
 .dt-city.open .dt-city-head {
-  border-bottom-color: var(--dt-rule);
-  background: var(--dt-terra-s);
+  border-bottom-color: var(--border2, #e6e2da);
+  background: rgba(184,92,42,.04);
 }
 .dt-city-name {
   font-weight: 700;
   font-size: 15.5px;
-  color: var(--dt-ink);
+  color: var(--text, #3d3a32);
   flex: 1;
 }
 .dt-city-count {
-  font-size: 12px;
-  color: var(--dt-muted);
-  font-family: ui-monospace, Menlo, Consolas, monospace;
-  background: var(--dt-bg);
-  border: 1px solid var(--dt-rule2);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, #6a6660);
+  background: var(--bg, #f5f3ee);
+  border: 1px solid var(--border2, #e6e2da);
   border-radius: 99px;
-  padding: 2px 9px;
+  padding: 2px 10px;
+  letter-spacing: 0.02em;
 }
 .dt-city-arrow {
-  color: var(--dt-subtle);
-  font-size: 13px;
+  color: var(--muted, #6a6660);
+  font-size: 12px;
   transition: transform .2s;
+  opacity: .5;
 }
-.dt-city.open .dt-city-arrow { transform: rotate(90deg); }
+.dt-city.open .dt-city-arrow { transform: rotate(90deg); opacity: .8; }
 .dt-guide-link {
   font-size: 12px;
-  color: var(--dt-accent);
+  color: var(--muted, #6a6660);
   text-decoration: none;
-  padding: 3px 8px;
-  border: 1px solid var(--dt-accent);
+  padding: 3px 10px;
+  border: 1px solid var(--border2, #e6e2da);
   border-radius: 5px;
   white-space: nowrap;
-  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 500;
+  transition: border-color .15s, color .15s, background .15s;
 }
-.dt-guide-link::after { content: ' →'; }
-.dt-guide-link:hover { background: var(--dt-terra-s); color: var(--dt-terra); border-color: var(--dt-terra); }
+.dt-guide-link::after { content: ' \203A'; }
+.dt-guide-link:hover { background: var(--bg,#f5f4f0); border-color: var(--rust,#b85c2a); }
+.dt-guide-link:visited { color: #6a6660; }
 
 /* ── Trip entries ─────────────────────────────────── */
-.dt-trips { padding: 0 18px 14px; display: none; }
+.dt-trips { padding: 0 20px 16px; display: none; }
 .dt-city.open .dt-trips { display: block; }
 
 .dt-trip {
-  padding: 13px 0;
-  border-bottom: 1px solid var(--dt-rule);
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border, #eae7e0);
   display: grid;
   grid-template-columns: 1fr;
-  gap: 5px;
+  gap: 6px;
 }
 .dt-trip:last-child { border-bottom: none; }
 
@@ -119,52 +102,49 @@
 .dt-dest {
   font-weight: 700;
   font-size: 15px;
-  color: var(--dt-ink);
+  color: var(--text, #3d3a32);
 }
 .dt-time {
-  font-size: 12.5px;
-  color: var(--dt-terra);
-  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--rust,#b85c2a);
   white-space: nowrap;
+  background: rgba(184,92,42,.07);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 .dt-desc {
-  font-size: 14px;
-  color: var(--dt-ink);
-  line-height: 1.55;
+  font-size: 13.5px;
+  color: var(--text, #3d3a32);
+  line-height: 1.6;
   margin: 0;
 }
 .dt-book {
   display: flex;
-  gap: 7px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-top: 3px;
+  margin-top: 4px;
+  align-items: center;
 }
 .dt-book-link {
   font-size: 12px;
-  color: var(--dt-muted);
+  color: var(--muted, #6a6660);
   text-decoration: none;
-  padding: 2px 9px;
-  border: 1px solid var(--dt-rule2);
+  padding: 3px 10px;
+  border: 1px solid var(--border2, #e6e2da);
   border-radius: 5px;
-  font-family: ui-monospace, Menlo, Consolas, monospace;
-  background: var(--dt-bg);
-  transition: border-color .12s, color .12s;
+  font-weight: 500;
+  background: var(--surface, #fff);
+  transition: border-color .15s, color .15s, background .15s;
 }
-.dt-book-link:hover { border-color: var(--dt-accent); color: var(--dt-accent); }
-.dt-book-prefix { font-size: 12px; color: var(--dt-subtle); align-self: center; }
-
-/* ── Empty state ──────────────────────────────────── */
-.dt-empty {
-  text-align: center;
-  padding: 48px 24px;
-  color: var(--dt-muted);
-  font-size: 15px;
-}
+.dt-book-link:hover { border-color: var(--rust,#b85c2a); background: var(--bg,#f5f4f0); }
+.dt-book-link:visited { color: #6a6660; }
+.dt-book-prefix { font-size: 12px; color: var(--muted, #6a6660); }
 
 /* ── Mobile ───────────────────────────────────────── */
 @media (max-width: 600px) {
-  .dt-wrap { padding: 0 14px 60px; }
-  .dt-city-head { padding: 11px 14px; }
+  .dt-city-head { padding: 12px 14px; }
   .dt-trips { padding: 0 14px 12px; }
 }
 </style>
@@ -172,13 +152,13 @@
 </head>
 <body>
 
-<div id="toolbar-mount" data-depth="1" data-maxwidth="1080" data-updated="2026-07-19"></div>
-<!-- toolbar.js ?v= is FROZEN — cache-busting via sw.js MIN_VERSIONS only -->
+<div class="wrap">
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="900" data-updated="2026-07-19"></div>
 <script src="../assets/toolbar.js?v=103"></script>
 
-<div class="dt-wrap">
+<div class="page-header"><h1>DAY TRIPS BY TRAIN</h1></div>
 
-  <div class="page-header"><h1>DAY TRIPS BY TRAIN</h1></div>
 <div class="page-intro-card">
   <div class="page-intro-icon">
     <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true">
@@ -186,18 +166,28 @@
     </svg>
   </div>
   <div>
-    <div class="page-intro-sub">Every train day trip from every guide — organized by departure city. Tap a city to see where you can go.</div>
+    <div class="page-intro-head">Train day trips from every guide</div>
+    <div class="page-intro-sub">Organized by departure city. Tap a city to see where you can go and how long it takes.</div>
   </div>
 </div>
 
-  <div style="display:flex; justify-content:center; margin:0 0 18px;">
-    <input type="search" id="dt-search" class="search-input" placeholder="Departure city" aria-label="Search by departure city" autocomplete="off" spellcheck="false" style="width:360px;">
+<div style="display:flex; justify-content:center; margin:0 0 18px;">
+  <input type="search" id="dt-search" class="search-input" placeholder="Departure city" aria-label="Search by departure city" autocomplete="off" spellcheck="false" style="width:360px;">
+</div>
+
+<div class="dt-stats" id="dt-stats"></div>
+
+<div id="dt-list"></div>
+
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-pills">
+    <a class="also-on-this-site-pill" href="European-Train-Guide.html">🚆 European train guide</a>
+    <a class="also-on-this-site-pill" href="City-Transit-Cards.html">🚇 City transit cards</a>
+    <a class="also-on-this-site-pill" href="Budget-Guide.html">💰 Budget guide</a>
   </div>
-
-  <div class="dt-stats" id="dt-stats"></div>
-
-  <div id="dt-list"></div>
-
 </div>
 
 <script>
@@ -236,7 +226,7 @@ function buildTrips(trips) {
 
 function render(cities) {
   if (!cities.length) {
-    list.innerHTML = '<div class="dt-empty">No cities match that search.</div>';
+    list.innerHTML = '<div class="empty-state"><span class="empty-state-icon">🔍</span><div class="empty-state-text">No cities match that search.</div></div>';
     renderStats([]);
     return;
   }

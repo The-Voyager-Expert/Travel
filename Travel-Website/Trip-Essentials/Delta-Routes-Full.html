@@ -20,7 +20,7 @@
   /* ── Hub segmented control ── */
   .hub-nav{display:flex;align-items:center;justify-content:center;}
   .hub-chips{display:flex;border:1px solid var(--border2, #e6e2da);border-radius:5px;overflow:hidden;}
-  .hub-chip{font-family:'SF Mono','Fira Code',Consolas,'Courier New',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);padding:7px 12px;background:var(--surface, #ffffff);border:none;border-right:1px solid var(--border2, #e6e2da);cursor:pointer;transition:background .1s,color .1s;user-select:none;line-height:1;}
+  .hub-chip{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);padding:7px 12px;background:var(--surface, #ffffff);border:none;border-right:1px solid var(--border2, #e6e2da);cursor:pointer;transition:background .1s,color .1s;user-select:none;line-height:1;}
   .hub-chip:last-child{border-right:none;}
   .hub-chip:hover{background:var(--surface2, #f5f4f0);color:var(--text);}
   .hub-chip.active{background:var(--rust, #b85c2a);color:#fff;border-right-color:var(--rust, #b85c2a);}
@@ -51,12 +51,14 @@
   .tier-pill.seasonal { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); }                    /* YELLOW */
   .tier-pill.new      { background: rgba(184,92,42,.08); color: #8a4a10; border: 1px solid rgba(184,134,90,0.4); }             /* ORANGE */
   .tier-pill.summer   { background: rgba(160,40,110,0.08); color: #8a2168; border: 1px solid rgba(160,40,110,0.4); }    /* PINK */
-  /* Family dots — hybrid: 7 families use the Apple color-circle emoji directly
-     in the markup (🟢 🔵 🔴 🟣 🟡 🟠 ⚫). Only PINK needs a CSS sphere because
-     no matching color-circle emoji exists — its palette is matched to Apple's
-     🩷 pink heart so the pink hue reads consistent with the rest of the emoji
-     set even though the shape stays a sphere. 14px, sized to emoji visual weight. */
   .family-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: -2px; margin-right: 5px; box-shadow: inset -1px -1px 2px rgba(0,0,0,0.15); }
+  .family-dot.green  { background: radial-gradient(circle at 30% 30%, #a8f0a0 0%, #4caf50 55%, #1b6e1b 100%); }
+  .family-dot.blue   { background: radial-gradient(circle at 30% 30%, #a0c8f0 0%, #3b7ddd 55%, #1a3a8b 100%); }
+  .family-dot.black  { background: radial-gradient(circle at 30% 30%, #666 0%, #333 55%, #000 100%); }
+  .family-dot.red    { background: radial-gradient(circle at 30% 30%, #f0a8a0 0%, #dd3b3b 55%, #8b1a1a 100%); }
+  .family-dot.purple { background: radial-gradient(circle at 30% 30%, #d8b4fe 0%, #9b5de5 55%, #6a1fcf 100%); }
+  .family-dot.yellow { background: radial-gradient(circle at 30% 30%, #fff4a0 0%, #e6c619 55%, #9a7e00 100%); }
+  .family-dot.orange { background: radial-gradient(circle at 30% 30%, #ffd4a0 0%, #e68a2e 55%, #8a4a10 100%); }
   .family-dot.pink   { background: radial-gradient(circle at 30% 30%, #ffcce0 0%, #f688b8 55%, #c02870 100%); }
 
   /* Desktop-only nav shape (Form-A pill). Mobile pill overrides live inside the
@@ -119,12 +121,9 @@
   .filter-bar { margin-bottom: 4px; }
 /* unified filter search */
 .filter-bar{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:18px;}
-.filter-input{width:360px;box-sizing:border-box;padding:11px 18px;font-size:16px;border:1.5px solid var(--border2, #e6e2da);border-radius:6px;background:var(--surface, #ffffff);color:var(--text, #1a1917);outline:none;transition:border-color .15s,box-shadow .15s;}
-.filter-input:focus{border-color: var(--c-search-focus-border); box-shadow: none;}
-.filter-input::placeholder{color: var(--c-search-placeholder);}
 /* uniform comfortable page gutter */
-/* hide no-results until an empty search */
-.no-results{display:none;padding:14px 4px;font-size: var(--fs-body,14px);color:var(--muted);}
+/* hide empty-state until an empty search */
+.empty-state{display:none;}
 /* hide chrome when search is active */
 body.is-searching #route-nav .book-strip,
 body.is-searching #route-nav .hub-nav,
@@ -140,7 +139,6 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
 .hub-section:last-child, .hub-section:last-child *:last-child{margin-bottom:0 !important}
 /* clickable tier pills */
 .tier-pill{cursor:pointer;transition:box-shadow .12s,transform .12s;}@media (max-width:600px) {
-  .filter-input { width: 100%; }
   .wrap{padding:0 14px;}
   /* Form B glued 2-across grid — Nonstop + 1-connection tiers stretch full
      width, no gap, square corners, 46px tall, 12px font. Semantic tier bg
@@ -181,7 +179,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
 </div>
 <div class="wrap">
   <div class="filter-bar" id="route-nav">
-    <input class="filter-input search-input" id="destFilter" type="search" placeholder="City or airport code" aria-label="Filter destinations" autocomplete="off">
+    <input class="search-input" id="destFilter" type="search" placeholder="City or airport code" aria-label="Filter destinations" autocomplete="off">
     <div class="book-strip">
       <span class="zone-ew">Book on</span>
       <div class="book-links">
@@ -218,17 +216,17 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
   <div class="filter-row">
     <span class="zone-ew">Filter by</span>
     <div class="tier-legend">
-      <div class="tier-pill t0">🟢 Nonstop</div>
-      <div class="tier-pill t1">🔵 1 connection via Delta hub</div>
-      <div class="tier-pill winter">⚫ Winter</div>
-      <div class="tier-pill yr">🔴 Year-round</div>
-      <div class="tier-pill d1">🟣 Delta One</div>
-      <div class="tier-pill seasonal">🟡 Seasonal</div>
-      <div class="tier-pill new">🟠 New</div>
+      <div class="tier-pill t0"><span class="family-dot green"></span>Nonstop</div>
+      <div class="tier-pill t1"><span class="family-dot blue"></span>1 Connection via Delta Hub</div>
+      <div class="tier-pill winter"><span class="family-dot black"></span>Winter</div>
+      <div class="tier-pill yr"><span class="family-dot red"></span>Year-round</div>
+      <div class="tier-pill d1"><span class="family-dot purple"></span>Delta One</div>
+      <div class="tier-pill seasonal"><span class="family-dot yellow"></span>Seasonal</div>
+      <div class="tier-pill new"><span class="family-dot orange"></span>New</div>
       <div class="tier-pill summer"><span class="family-dot pink"></span>Summer</div>
     </div>
   </div>
-  <div class="no-results" id="noResults">No destinations match your search.</div>
+  <div class="empty-state" id="noResults"><span class="empty-state-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><div class="empty-state-text">No destinations match your search.</div></div>
 
   <!-- ATL -->
   <div class="hub-section" id="atl">
@@ -240,7 +238,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     <div class="hub-strength">🌎 <strong>Strengths:</strong> Latin America fortress (BOG, LIM, SCL, GRU, GIG, CTG, GUA, PTY, SJO, SAL) · Africa gateway (JNB, LOS, ACC, RAK, CPT, RUH Oct 2026) · Europe (LHR, AMS, CDG, FRA, FCO, MXP, ATH, DUB, MAD, LIS) · Asia (HND, ICN nonstop)</div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🇪🇺 Europe — Nonstop</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid" style="margin-bottom:10px;">
         <div class="dest-card t0"><div class="dest-city">Amsterdam</div><div class="dest-code">AMS</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Athens</div><div class="dest-code">ATH</div><div class="dest-meta">A330</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -254,7 +252,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
         <div class="dest-card t0"><div class="dest-city">Reykjavik</div><div class="dest-code">KEF</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Rome Fiumicino</div><div class="dest-code">FCO</div><div class="tags"><span class="tag yr">Year-round</span></div></div>
       </div>
-      <div class="tier-badge t1">🔵 1 connection via JFK or DTW</div>
+      <div class="tier-badge t1"><span class="family-dot blue"></span>1 Connection via JFK or DTW</div>
       <div class="dest-grid">
         <div class="dest-card t1"><div class="dest-city">Barcelona</div><div class="dest-code">BCN</div><div class="dest-meta">Via JFK or SEA</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
         <div class="dest-card t1"><div class="dest-city">Copenhagen</div><div class="dest-code">CPH</div><div class="dest-meta">Via JFK or MSP</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -271,12 +269,12 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     </div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🌏 Asia-Pacific — Nonstop</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid" style="margin-bottom:10px;">
         <div class="dest-card t0"><div class="dest-city">Seoul Incheon</div><div class="dest-code">ICN</div><div class="dest-meta">A350</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Tokyo Haneda</div><div class="dest-code">HND</div><div class="dest-meta">A350</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
       </div>
-      <div class="tier-badge t1">🔵 1 connection via SEA or LAX</div>
+      <div class="tier-badge t1"><span class="family-dot blue"></span>1 Connection via SEA or LAX</div>
       <div class="dest-grid">
         <div class="dest-card t1"><div class="dest-city">Auckland</div><div class="dest-code">AKL</div><div class="dest-meta">Via LAX–AKL daily</div></div>
         <div class="dest-card t1"><div class="dest-city">Hong Kong</div><div class="dest-code">HKG</div><div class="dest-meta">Via LAX–HKG daily</div><div class="tags"><span class="tag new">New Jun 2026</span></div></div>
@@ -288,7 +286,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     </div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🌍 Africa & Middle East — ATL is the US gateway</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Accra</div><div class="dest-code">ACC · Ghana</div><div class="tags"><span class="tag yr">Year-round</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Cape Town</div><div class="dest-code">CPT</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -301,7 +299,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     </div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🌎 Latin America & Caribbean — ATL fortress</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Aruba</div><div class="dest-code">AUA</div></div>
         <div class="dest-card t0"><div class="dest-city">Bogotá</div><div class="dest-code">BOG</div><div class="tags"><span class="tag yr">Year-round</span></div></div>
@@ -350,7 +348,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     <div class="hub-strength">🇪🇺 <strong>Strengths:</strong> Europe — LHR, CDG, AMS, DUB, MAD (new May 2026), NCE (new May 2026). Delta One Lounge = best food of any D1 location. T-E Sky Club Express opens 5 PM for evening departures.</div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🇪🇺 Europe</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Amsterdam</div><div class="dest-code">AMS</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Dublin</div><div class="dest-code">DUB</div><div class="dest-meta">A330</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -382,7 +380,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     <div class="hub-strength">🌏 <strong>Strengths:</strong> Only US hub with both Asia (HND, ICN) AND deep Europe (AMS, CDG, FRA, LHR, FCO, MUC, DUB) nonstop. Sole carrier from DTW to Asia. McNamara Terminal rarely crowded.</div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🇪🇺 Europe</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Amsterdam</div><div class="dest-code">AMS</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Dublin</div><div class="dest-code">DUB</div><div class="dest-meta">4x weekly</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -396,7 +394,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     </div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🌏 Asia — only carrier from DTW to Asia</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Seoul Incheon</div><div class="dest-code">ICN</div><div class="dest-meta">A350</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Shanghai Pudong</div><div class="dest-code">PVG</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -426,7 +424,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     <div class="hub-strength">🇪🇺 <strong>Strengths:</strong> Largest European nonstop network of any US hub — 20 European cities including OPO, OLB, MLA (all new 2026), CTN. Only US hub with EZE nonstop. New Dec 2026: LIR (Liberia, Costa Rica). D1 Lounge + Virgin Clubhouse = best pre-flight combo in the US.</div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🇪🇺 Europe — JFK has the most European nonstops</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Amsterdam</div><div class="dest-code">AMS</div><div class="dest-meta">Up to 4x daily</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Athens</div><div class="dest-code">ATH</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -477,7 +475,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     <div class="hub-strength">🌏 <strong>Strengths:</strong> Pacific powerhouse — SYD, MEL, BNE, AKL (Australia/NZ), HND, PVG, HKG (new Jun 2026), MNL (nonstop from Mar 2027), CDG, LHR. Only hub with Australia/NZ nonstop. T3 has D1 Lounge with outdoor Sky Deck overlooking the airfield.</div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🌏 Asia-Pacific — LAX is the only US gateway to Australia/NZ</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Auckland</div><div class="dest-code">AKL · NZ</div><div class="dest-meta">A350</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Brisbane</div><div class="dest-code">BNE · Australia</div><div class="tags"><span class="tag yr">Year-round</span></div></div>
@@ -516,7 +514,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     <div class="hub-strength">🌍 <strong>Strengths:</strong> Sole carrier from MSP to Asia (HND, ICN). 8 European nonstops 2025–2026: AMS, CDG, LHR, DUB, FCO, CPH, ARN, KEF. Largest-ever Latin America/Caribbean winter schedule. Concourse F flagship club is outstanding.</div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🇪🇺 Europe</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Amsterdam</div><div class="dest-code">AMS</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Copenhagen</div><div class="dest-code">CPH</div><div class="dest-meta">3x weekly</div><div class="tags"><span class="tag seasonal">Seasonal</span></div></div>
@@ -530,7 +528,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     </div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🌏 Asia — only carrier from MSP to Asia</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Seoul Incheon</div><div class="dest-code">ICN</div><div class="dest-meta">A330</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">Tokyo Haneda</div><div class="dest-code">HND</div><div class="dest-meta">A330</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
@@ -607,7 +605,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     <div class="hub-strength">🏔️ <strong>Strengths:</strong> Surprising international reach — LHR, AMS, CDG (seasonal), ICN (seasonal summer), LIM (year-round). Ski destination connectivity unmatched. New 30,000 sq ft Concourse B club is one of the best in the system.</div>
     <div class="region-block">
       <div class="region-header"><span class="region-title">🇪🇺 Europe · 🌏 Asia</span><div class="region-line"></div></div>
-      <div class="tier-badge t0">🟢 Nonstop</div>
+      <div class="tier-badge t0"><span class="family-dot green"></span>Nonstop</div>
       <div class="dest-grid">
         <div class="dest-card t0"><div class="dest-city">Amsterdam</div><div class="dest-code">AMS</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
         <div class="dest-card t0"><div class="dest-city">London Heathrow</div><div class="dest-code">LHR</div><div class="tags"><span class="tag yr">Year-round</span><span class="tag d1">Delta One</span></div></div>
