@@ -5465,6 +5465,7 @@
      based on which page covers that airport. Chip sits immediately after the
      .day-header (above .hotel-first). CSS: guide-style.css .lounge-arrival-chip */
   (function _loungeChipInject() {
+    window.__tveLoungeIife = 'ran path='+location.pathname+' rs='+document.readyState;
     if (!/\/Guides\//.test(location.pathname)
         || /-read-about\.html$/.test(location.pathname)
         || /-stops-map\.html$/.test(location.pathname)) return;
@@ -5713,20 +5714,21 @@
     var EU_IATAS = ['AMS','CDG','ORY','NCE','LYS','LHR','LGW','MAN','EDI','VIE','BRU','DBV','SPU','ZAG','CPH','HEL','FRA','MUC','BER','DUS','HAM','ATH','HER','SKG','DUB','FCO','MXP','VCE','NAP','LUX','OSL','BGO','LIS','OPO','FAO','MAD','BCN','AGP','PMI','VLC','ARN','GOT','GVA','ZRH'];
 
     function _inject() {
+      window.__tveLounge = window.__tveLounge || [];
       var parts = location.pathname.split('/');
       var gi = parts.indexOf('Guides');
-      console.log('[lounge-chip] gi='+gi+' path='+location.pathname);
+      window.__tveLounge.push('gi='+gi+' path='+location.pathname);
       if (gi < 0) return;
       var slug = parts[gi + 1] || '';
       var info = CHIP_DATA[slug];
-      console.log('[lounge-chip] slug='+slug+' info='+JSON.stringify(info));
+      window.__tveLounge.push('slug='+slug+' infoExists='+(!!info));
       if (!info) return;
 
       var day1 = document.getElementById('day1');
-      console.log('[lounge-chip] day1='+!!day1);
+      window.__tveLounge.push('day1='+!!day1);
       if (!day1) return;
       var dayHdr = day1.querySelector(':scope > .day-header');
-      console.log('[lounge-chip] dayHdr='+!!dayHdr);
+      window.__tveLounge.push('dayHdr='+!!dayHdr);
       if (!dayHdr) return;
 
       var dep = parseInt((document.getElementById('toolbar-mount') || {}).dataset.depth || '2', 10);
@@ -5752,7 +5754,9 @@
         '<span class="lac-name">' + info.name + '</span>' +
         '<span class="lac-link">' + label + '</span>';
 
+      window.__tveLounge.push('inserting chip href='+href);
       dayHdr.insertAdjacentElement('afterend', chip);
+      window.__tveLounge.push('chip inserted ok');
     }
 
     if (document.readyState === 'loading') {
