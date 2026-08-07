@@ -76,7 +76,7 @@
      2. Bump CACHE version in sw.js
      3. Done — one or two files, zero guide re-stamps */
 (function () {
-  var CURRENT = 35;
+  var CURRENT = 102;
   var link = document.querySelector('link[href*="guide-style.css"]');
   if (!link) return;
   var m = link.href.match(/[?&]v=(\d+)/);
@@ -776,7 +776,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#96502e;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg>';
   bar.appendChild(hamBtn);
 
@@ -5446,6 +5446,303 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _setup);
     } else { _setup(); }
+  }());
+
+  /* ── Lounge arrival chip — injected at the top of Day 1 ─────────────────────
+     Reads the city slug from the page path → looks up destination IATA via
+     CHIP_DATA → routes to Lounges-US, Lounges-Europe, or Before-You-Go#lounges
+     based on which page covers that airport. Chip sits immediately after the
+     .day-header (above .hotel-first). CSS: guide-style.css .lounge-arrival-chip */
+  (function _loungeChipInject() {
+    if (!/\/Guides\//.test(location.pathname)
+        || /-read-about\.html$/.test(location.pathname)
+        || /-stops-map\.html$/.test(location.pathname)) return;
+
+    /* city-slug → {iata, name}  (derived from index.html FMAP "i" field) */
+    var CHIP_DATA = {
+      'Abu-Dhabi':         {iata:'AUH', name:'Abu Dhabi International'},
+      'Aix-en-Provence':   {iata:'MRS', name:'Marseille Provence'},
+      'Alaska':            {iata:'ANC', name:'Ted Stevens Anchorage International'},
+      'Alesund':           {iata:'AES', name:'Ålesund Airport, Vigra'},
+      'Amalfi':            {iata:'NAP', name:'Naples International'},
+      'Amsterdam':         {iata:'AMS', name:'Amsterdam Schiphol'},
+      'Annecy':            {iata:'GVA', name:'Geneva International'},
+      'Aracaju':           {iata:'AJU', name:'Aracaju Marechal Cunha Machado'},
+      'Arenal':            {iata:'SJO', name:'Juan Santamaría International'},
+      'Aruba':             {iata:'AUA', name:'Queen Beatrix International'},
+      'Athens':            {iata:'ATH', name:'Athens Eleftherios Venizelos'},
+      'Atlanta':           {iata:'ATL', name:'Hartsfield-Jackson Atlanta International'},
+      'Austin':            {iata:'AUS', name:'Austin–Bergstrom International'},
+      'Azores':            {iata:'PDL', name:'João Paulo II Airport'},
+      'Bahamas':           {iata:'NAS', name:'Lynden Pindling International'},
+      'Bali':              {iata:'DPS', name:'Ngurah Rai International'},
+      'Banff':             {iata:'YYC', name:'Calgary International'},
+      'Bangkok':           {iata:'BKK', name:'Suvarnabhumi Airport'},
+      'Barbados':          {iata:'BGI', name:'Grantley Adams International'},
+      'Barcelona':         {iata:'BCN', name:'Barcelona El Prat'},
+      'Beijing':           {iata:'PEK', name:'Beijing Capital International'},
+      'Bend':              {iata:'RDM', name:'Roberts Field'},
+      'Bergen':            {iata:'BGO', name:'Bergen Flesland'},
+      'Berlin':            {iata:'BER', name:'Berlin Brandenburg'},
+      'Bhutan':            {iata:'PBH', name:'Paro Airport'},
+      'Big-Island':        {iata:'KOA', name:'Ellison Onizuka Kona International'},
+      'Bilbao':            {iata:'BIO', name:'Bilbao Airport'},
+      'Bologna':           {iata:'BLQ', name:'Bologna Guglielmo Marconi'},
+      'Bora-Bora':         {iata:'BOB', name:'Bora Bora Airport (Motu Mute)'},
+      'Bordeaux':          {iata:'BOD', name:'Bordeaux–Mérignac'},
+      'Boston':            {iata:'BOS', name:'Boston Logan International'},
+      'Boulder':           {iata:'DEN', name:'Denver International'},
+      'Bruges':            {iata:'BRU', name:'Brussels Airport'},
+      'Brussels':          {iata:'BRU', name:'Brussels Airport'},
+      'Budapest':          {iata:'BUD', name:'Budapest Ferenc Liszt'},
+      'Buenos-Aires':      {iata:'EZE', name:'Ministro Pistarini International'},
+      'Cairo':             {iata:'CAI', name:'Cairo International'},
+      'Cambridge':         {iata:'LHR', name:'London Heathrow'},
+      'Cancun':            {iata:'CUN', name:'Cancún International'},
+      'Cannes':            {iata:'NCE', name:'Nice Côte d\'Azur'},
+      'Cape-Cod':          {iata:'BOS', name:'Boston Logan International'},
+      'Cape-Town':         {iata:'CPT', name:'Cape Town International'},
+      'Capri':             {iata:'NAP', name:'Naples International'},
+      'Carmel-by-the-Sea': {iata:'SFO', name:'San Francisco International'},
+      'Cascais':           {iata:'LIS', name:'Lisbon Humberto Delgado'},
+      'Cayman-Islands':    {iata:'GCM', name:'Owen Roberts International'},
+      'Charlotte':         {iata:'CLT', name:'Charlotte Douglas International'},
+      'Chiang-Mai':        {iata:'CNX', name:'Chiang Mai International'},
+      'Chicago':           {iata:'ORD', name:'O\'Hare International'},
+      'Chongqing':         {iata:'CKG', name:'Chongqing Jiangbei International'},
+      'Cinque-Terre':      {iata:'PSA', name:'Pisa Galileo Galilei'},
+      'Coeur-dAlene':      {iata:'GEG', name:'Spokane International'},
+      'Colmar':            {iata:'BSL', name:'EuroAirport Basel–Mulhouse–Freiburg'},
+      'Cologne':           {iata:'CGN', name:'Cologne Bonn Airport'},
+      'Colombo':           {iata:'CMB', name:'Bandaranaike International'},
+      'Columbia':          {iata:'CAE', name:'Columbia Metropolitan'},
+      'Copenhagen':        {iata:'CPH', name:'Copenhagen Kastrup'},
+      'Corfu':             {iata:'CFU', name:'Corfu Ioannis Kapodistrias'},
+      'Crete':             {iata:'HER', name:'Heraklion Nikos Kazantzakis'},
+      'Curacao':           {iata:'CUR', name:'Hato International'},
+      'Curitiba':          {iata:'CWB', name:'Curitiba Afonso Pena'},
+      'Cusco':             {iata:'CUZ', name:'Alejandro Velasco Astete International'},
+      'Dallas':            {iata:'DFW', name:'Dallas/Fort Worth International'},
+      'Denver':            {iata:'DEN', name:'Denver International'},
+      'Doha':              {iata:'DOH', name:'Hamad International'},
+      'Dubai':             {iata:'DXB', name:'Dubai International'},
+      'Dublin':            {iata:'DUB', name:'Dublin International'},
+      'Dubrovnik':         {iata:'DBV', name:'Dubrovnik Airport'},
+      'Edinburgh':         {iata:'EDI', name:'Edinburgh Airport'},
+      'Florence':          {iata:'FLR', name:'Florence Peretola'},
+      'Florianopolis':     {iata:'FLN', name:'Florianópolis Hercílio Luz'},
+      'Florida-Keys':      {iata:'MIA', name:'Miami International'},
+      'Fortaleza':         {iata:'FOR', name:'Fortaleza Pinto Martins'},
+      'Foz-do-Iguaçu':     {iata:'IGU', name:'Foz do Iguaçu International'},
+      'Frankfurt':         {iata:'FRA', name:'Frankfurt am Main'},
+      'Galapagos-Islands': {iata:'GPS', name:'Seymour Núñez Airport'},
+      'Geneva':            {iata:'GVA', name:'Geneva International'},
+      'Glacier-National-Park': {iata:'FCA', name:'Glacier Park International'},
+      'Glasgow':           {iata:'GLA', name:'Glasgow International'},
+      'Gothenburg':        {iata:'GOT', name:'Gothenburg Landvetter'},
+      'Granada':           {iata:'GRX', name:'Federico García Lorca Granada–Jaén'},
+      'Hamburg':           {iata:'HAM', name:'Hamburg Airport'},
+      'Hanoi':             {iata:'HAN', name:'Noi Bai International'},
+      'Helsinki':          {iata:'HEL', name:'Helsinki-Vantaa'},
+      'Hilton-Head-Island':{iata:'HHH', name:'Hilton Head Airport'},
+      'Hiroshima':         {iata:'HIJ', name:'Hiroshima Airport'},
+      'Hoi-An':            {iata:'DAD', name:'Da Nang International'},
+      'Hong-Kong':         {iata:'HKG', name:'Hong Kong International'},
+      'Istanbul':          {iata:'IST', name:'Istanbul Airport'},
+      'João-Pessoa':       {iata:'JPA', name:'João Pessoa Castro Pinto'},
+      'Kauai':             {iata:'LIH', name:'Lihue Airport'},
+      'KeyWest':           {iata:'EYW', name:'Key West International'},
+      'Kotor':             {iata:'TIV', name:'Tivat Airport'},
+      'Kraków':            {iata:'KRK', name:'Kraków John Paul II'},
+      'Kyoto':             {iata:'HND', name:'Tokyo Haneda'},
+      'La-Jolla':          {iata:'SAN', name:'San Diego International'},
+      'Lagos':             {iata:'FAO', name:'Faro Airport'},
+      'Lake-Como':         {iata:'MXP', name:'Milan Malpensa'},
+      'Lake-Tahoe':        {iata:'RNO', name:'Reno-Tahoe International'},
+      'Las-Vegas':         {iata:'LAS', name:'Harry Reid International'},
+      'Lecce':             {iata:'BDS', name:'Brindisi Airport'},
+      'Lille':             {iata:'CDG', name:'Paris – Charles de Gaulle'},
+      'Lima':              {iata:'LIM', name:'Jorge Chávez International'},
+      'Lisbon':            {iata:'LIS', name:'Lisbon Humberto Delgado'},
+      'Ljubljana':         {iata:'LJU', name:'Ljubljana Jože Pučnik'},
+      'London':            {iata:'LHR', name:'London Heathrow'},
+      'Los-Angeles':       {iata:'LAX', name:'Los Angeles International'},
+      'Los-Cabos':         {iata:'SJD', name:'Los Cabos International'},
+      'Luang-Prabang':     {iata:'LPQ', name:'Luang Prabang International'},
+      'Lucerne':           {iata:'ZRH', name:'Zurich International'},
+      'Luxembourg':        {iata:'LUX', name:'Luxembourg Findel'},
+      'Lyon':              {iata:'LYS', name:'Lyon Saint-Exupéry'},
+      'Maceió':            {iata:'MCZ', name:'Zumbi dos Palmares International'},
+      'MachuPicchu':       {iata:'CUZ', name:'Alejandro Velasco Astete International'},
+      'Madeira':           {iata:'FNC', name:'Madeira Cristiano Ronaldo'},
+      'Madrid':            {iata:'MAD', name:'Adolfo Suárez Madrid–Barajas'},
+      'Malaga':            {iata:'AGP', name:'Málaga Costa del Sol'},
+      'Maldives':          {iata:'MLE', name:'Velana International'},
+      'Malibu':            {iata:'LAX', name:'Los Angeles International'},
+      'Manuel-Antonio':    {iata:'SJO', name:'Juan Santamaría International'},
+      'Marco-Island':      {iata:'RSW', name:'Southwest Florida International'},
+      'Marktoberdorf':     {iata:'MUC', name:'Munich International'},
+      'Marrakech':         {iata:'RAK', name:'Marrakech Menara'},
+      'Marseille':         {iata:'MRS', name:'Marseille Provence'},
+      'Maui':              {iata:'OGG', name:'Kahului Airport'},
+      'Melbourne':         {iata:'MEL', name:'Melbourne Airport (Tullamarine)'},
+      'Miami':             {iata:'MIA', name:'Miami International'},
+      'Milan':             {iata:'MXP', name:'Milan Malpensa'},
+      'Monaco':            {iata:'NCE', name:'Nice Côte d\'Azur'},
+      'Montevideo':        {iata:'MVD', name:'Carrasco International'},
+      'Montreal':          {iata:'YUL', name:'Montréal-Trudeau International'},
+      'Munich':            {iata:'MUC', name:'Munich International'},
+      'Muscat':            {iata:'MCT', name:'Muscat International'},
+      'Mykonos':           {iata:'JMK', name:'Mykonos Island National Airport'},
+      'Napa':              {iata:'SFO', name:'San Francisco International'},
+      'Naples':            {iata:'NAP', name:'Naples International'},
+      'Naples-Florida':    {iata:'RSW', name:'Southwest Florida International'},
+      'Nashville':         {iata:'BNA', name:'Nashville International'},
+      'Natal':             {iata:'NAT', name:'Aluízio Alves International'},
+      'New-Orleans':       {iata:'MSY', name:'Louis Armstrong New Orleans International'},
+      'New-York':          {iata:'JFK', name:'John F. Kennedy International'},
+      'Nice':              {iata:'NCE', name:'Nice Côte d\'Azur'},
+      'Oahu':              {iata:'HNL', name:'Daniel K. Inouye International'},
+      'Oaxaca':            {iata:'OAX', name:'Xoxocotlán International'},
+      'Olinda':            {iata:'REC', name:'Recife Guararapes–Gilberto Freyre'},
+      'Orcas-Island':      {iata:'ORS', name:'Orcas Island Airport'},
+      'Orlando':           {iata:'MCO', name:'Orlando International'},
+      'Osaka':             {iata:'KIX', name:'Kansai International'},
+      'Oslo':              {iata:'OSL', name:'Oslo Gardermoen'},
+      'Oxford':            {iata:'LHR', name:'London Heathrow'},
+      'Palawan':           {iata:'PPS', name:'Puerto Princesa International'},
+      'Palm-Desert':       {iata:'PSP', name:'Palm Springs International'},
+      'Palo-Alto':         {iata:'SFO', name:'San Francisco International'},
+      'Paris':             {iata:'CDG', name:'Paris – Charles de Gaulle'},
+      'Pasadena':          {iata:'LAX', name:'Los Angeles International'},
+      'Pensacola':         {iata:'PNS', name:'Pensacola International'},
+      'Petra':             {iata:'AMM', name:'Queen Alia International'},
+      'Philadelphia':      {iata:'PHL', name:'Philadelphia International'},
+      'Phoenix':           {iata:'PHX', name:'Phoenix Sky Harbor'},
+      'Phuket':            {iata:'HKT', name:'Phuket International'},
+      'Pisa':              {iata:'PSA', name:'Pisa Galileo Galilei'},
+      'Pokhara':           {iata:'KTM', name:'Tribhuvan International'},
+      'Portland':          {iata:'PDX', name:'Portland International'},
+      'Porto':             {iata:'OPO', name:'Porto Francisco Sá Carneiro'},
+      'Porto-Alegre':      {iata:'POA', name:'Porto Alegre Salgado Filho'},
+      'Prague':            {iata:'PRG', name:'Václav Havel Airport Prague'},
+      'Puerto-Rico':       {iata:'SJU', name:'Luis Muñoz Marín International'},
+      'Puerto-Vallarta':   {iata:'PVR', name:'Puerto Vallarta Licenciado Gustavo Díaz Ordaz'},
+      'Quebec-City':       {iata:'YQB', name:'Québec City Jean Lesage'},
+      'Queenstown':        {iata:'ZQN', name:'Queenstown Airport'},
+      'Recife':            {iata:'REC', name:'Recife Guararapes–Gilberto Freyre'},
+      'Reykjavik':         {iata:'KEF', name:'Keflavík International'},
+      'Rhodes':            {iata:'RHO', name:'Rhodes Diagoras'},
+      'Rio-de-Janeiro':    {iata:'GIG', name:'Rio de Janeiro Galeão International'},
+      'Rome':              {iata:'FCO', name:'Rome Fiumicino (Leonardo da Vinci)'},
+      'Salvador':          {iata:'SSA', name:'Luís Eduardo Magalhães International'},
+      'Salzburg':          {iata:'SZG', name:'Salzburg Airport'},
+      'San-Diego':         {iata:'SAN', name:'San Diego International'},
+      'San-Francisco':     {iata:'SFO', name:'San Francisco International'},
+      'San-Jose':          {iata:'SJC', name:'San José International'},
+      'San-Jose-Costa-Rica':{iata:'SJO', name:'Juan Santamaría International'},
+      'San-Juan-Island':   {iata:'FHR', name:'Friday Harbor Seaplane Base'},
+      'San-Sebastian':     {iata:'BIO', name:'Bilbao Airport'},
+      'Santa-Barbara':     {iata:'LAX', name:'Los Angeles International'},
+      'Santa-Cruz':        {iata:'SFO', name:'San Francisco International'},
+      'Santa-Fe':          {iata:'ABQ', name:'Albuquerque Sunport'},
+      'Santa-Monica':      {iata:'LAX', name:'Los Angeles International'},
+      'Santiago':          {iata:'SCL', name:'Santiago Comodoro Arturo Merino Benítez'},
+      'Santorini':         {iata:'JTR', name:'Santorini Thira National Airport'},
+      'Sarasota':          {iata:'SRQ', name:'Sarasota–Bradenton International'},
+      'Sardinia':          {iata:'OLB', name:'Olbia Costa Smeralda'},
+      'Scottsdale':        {iata:'PHX', name:'Phoenix Sky Harbor'},
+      'Seattle':           {iata:'SEA', name:'Seattle-Tacoma International'},
+      'Sedona':            {iata:'PHX', name:'Phoenix Sky Harbor'},
+      'Seoul':             {iata:'ICN', name:'Incheon International'},
+      'Seville':           {iata:'SVQ', name:'Seville Airport'},
+      'Seychelles':        {iata:'SEZ', name:'Seychelles International'},
+      'Shanghai':          {iata:'PVG', name:'Shanghai Pudong International'},
+      'Sicily':            {iata:'CTA', name:'Catania–Fontanarossa'},
+      'Siena':             {iata:'FLR', name:'Florence Peretola'},
+      'Singapore':         {iata:'SIN', name:'Singapore Changi'},
+      'Sint-Maarten':      {iata:'SXM', name:'Princess Juliana International'},
+      'Sintra':            {iata:'LIS', name:'Lisbon Humberto Delgado'},
+      'Sorrento':          {iata:'NAP', name:'Naples International'},
+      'Split':             {iata:'SPU', name:'Split Airport'},
+      'Stockholm':         {iata:'ARN', name:'Stockholm Arlanda'},
+      'Strasbourg':        {iata:'SXB', name:'Strasbourg Airport'},
+      'Stuttgart':         {iata:'STR', name:'Stuttgart Airport'},
+      'Sydney':            {iata:'SYD', name:'Sydney Kingsford Smith'},
+      'São-Luís':          {iata:'SLZ', name:'Marechal Cunha Machado International'},
+      'São-Paulo':         {iata:'GRU', name:'São Paulo Guarulhos International'},
+      'Taipei':            {iata:'TPE', name:'Taiwan Taoyuan International'},
+      'Tallinn':           {iata:'TLL', name:'Tallinn Lennart Meri'},
+      'Tbilisi':           {iata:'TBS', name:'Tbilisi International'},
+      'Tenerife':          {iata:'TFS', name:'Tenerife South Airport'},
+      'Tokyo':             {iata:'HND', name:'Tokyo Haneda'},
+      'Toledo':            {iata:'MAD', name:'Adolfo Suárez Madrid–Barajas'},
+      'Toronto':           {iata:'YYZ', name:'Toronto Pearson International'},
+      'Tromso':            {iata:'TOS', name:'Tromsø Airport'},
+      'Turin':             {iata:'TRN', name:'Turin Airport'},
+      'Turks-and-Caicos':  {iata:'PLS', name:'Providenciales International'},
+      'Valletta':          {iata:'MLA', name:'Malta International'},
+      'Vancouver':         {iata:'YVR', name:'Vancouver International'},
+      'Venice':            {iata:'VCE', name:'Venice Marco Polo'},
+      'Verona':            {iata:'VRN', name:'Verona Villafranca'},
+      'Victoria':          {iata:'YVR', name:'Vancouver International'},
+      'Vienna':            {iata:'VIE', name:'Vienna International'},
+      'Virgin-Islands':    {iata:'STT', name:'Cyril E. King Airport'},
+      'Washington-DC':     {iata:'DCA', name:'Ronald Reagan Washington National'},
+      'Wellington':        {iata:'WLG', name:'Wellington International'},
+      'Whistler':          {iata:'YVR', name:'Vancouver International'},
+      'Yellowstone':       {iata:'DEN', name:'Denver International'},
+      'Zakynthos':         {iata:'ZTH', name:'Zakynthos International'},
+      'Zhangjiajie':       {iata:'DYG', name:'Zhangjiajie Hehua Airport'},
+      'Zurich':            {iata:'ZRH', name:'Zurich International'}
+    };
+
+    /* Sets of IATAs covered by each Lounges page */
+    var US_IATAS = ['ATL','BOS','DTW','JFK','LAX','MSP','SAN','SEA','SFO','SLC','IAD','IAH','LGA','MIA','ORD'];
+    var EU_IATAS = ['AMS','CDG','ORY','NCE','LYS','LHR','LGW','MAN','EDI','VIE','BRU','DBV','SPU','ZAG','CPH','HEL','FRA','MUC','BER','DUS','HAM','ATH','HER','SKG','DUB','FCO','MXP','VCE','NAP','LUX','OSL','BGO','LIS','OPO','FAO','MAD','BCN','AGP','PMI','VLC','ARN','GOT','GVA','ZRH'];
+
+    function _inject() {
+      var parts = location.pathname.split('/');
+      var gi = parts.indexOf('Guides');
+      if (gi < 0) return;
+      var slug = parts[gi + 1] || '';
+      var info = CHIP_DATA[slug];
+      if (!info) return;
+
+      var day1 = document.getElementById('day1');
+      if (!day1) return;
+      var dayHdr = day1.querySelector(':scope > .day-header');
+      if (!dayHdr) return;
+
+      var dep = parseInt((document.getElementById('toolbar-mount') || {}).dataset.depth || '2', 10);
+      var base = new Array(dep + 1).join('../');
+      var href, label;
+      if (US_IATAS.indexOf(info.iata) >= 0) {
+        href = base + 'Trip-Essentials/Lounges-US.html';
+        label = 'US Lounges';
+      } else if (EU_IATAS.indexOf(info.iata) >= 0) {
+        href = base + 'Trip-Essentials/Lounges-Europe.html';
+        label = 'EU Lounges';
+      } else {
+        href = base + 'Trip-Essentials/Before-You-Go.html#lounges';
+        label = 'Before You Go';
+      }
+
+      var chip = document.createElement('a');
+      chip.className = 'lounge-arrival-chip';
+      chip.href = href;
+      chip.innerHTML =
+        '<span class="lac-iata">✈ ' + info.iata + '</span>' +
+        '<span class="lac-div">|</span>' +
+        '<span class="lac-name">' + info.name + '</span>' +
+        '<span class="lac-link">' + label + '</span>';
+
+      dayHdr.insertAdjacentElement('afterend', chip);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _inject);
+    } else { _inject(); }
   }());
 
   /* ── Move .overview-extras (and #ics-pill-row) out of the white Trip Overview
