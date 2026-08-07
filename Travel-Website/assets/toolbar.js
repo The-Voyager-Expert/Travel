@@ -5715,14 +5715,18 @@
     function _inject() {
       var parts = location.pathname.split('/');
       var gi = parts.indexOf('Guides');
+      console.log('[lounge-chip] gi='+gi+' path='+location.pathname);
       if (gi < 0) return;
       var slug = parts[gi + 1] || '';
       var info = CHIP_DATA[slug];
+      console.log('[lounge-chip] slug='+slug+' info='+JSON.stringify(info));
       if (!info) return;
 
       var day1 = document.getElementById('day1');
+      console.log('[lounge-chip] day1='+!!day1);
       if (!day1) return;
       var dayHdr = day1.querySelector(':scope > .day-header');
+      console.log('[lounge-chip] dayHdr='+!!dayHdr);
       if (!dayHdr) return;
 
       var dep = parseInt((document.getElementById('toolbar-mount') || {}).dataset.depth || '2', 10);
