@@ -1282,14 +1282,11 @@
        Skip any page inside the Guides folder (real guide + stops-map + read-about). */
     if (/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
     /* Owner bug 2026-08-04: guide → Guides Index showed "← Amsterdam" on
-       the index. Pure-navigation hubs (index, Climate-Finder, When-to-Go) have
-       no standalone content — a guide's chrome links to them ("‹ All Guides"),
-       so document.referrer is a guide and the pill fired there. Exclude those.
-       Before-You-Go is intentionally NOT excluded (owner 2026-08-06): the reader
-       taps "Before You Go" from the guide toolbar to do pre-trip research —
-       a back-to-guide pill is useful there. */
-    if ({ '': 1, 'index': 1, 'guides_index': 1, 'Guides-Index': 1,
-          'Climate-Finder': 1, 'When-to-Go': 1 }[thisPage]) return;
+       the index. The Guides Index is a pure-navigation hub — exclude it.
+       Climate-Finder and When-to-Go were previously excluded here too, but
+       owner rule 2026-08-06: every page reachable from a guide must show the
+       back pill, so those exclusions are removed. */
+    if ({ '': 1, 'index': 1, 'guides_index': 1, 'Guides-Index': 1 }[thisPage]) return;
     /* Source guide = document.referrer when it points at a guide. The
        referrer is empty on a hard refresh, a bookmark/hamburger entry, an
        iOS standalone/PWA launch, or any hop that isn't a direct guide→page
@@ -4422,6 +4419,14 @@
       });
       wrap.appendChild(h);
       wrap.appendChild(pills);
+      /* Collapse — injected after DOMContentLoaded so _sectionCollapse missed it */
+      wrap.dataset.collapseInited = '1';
+      h.setAttribute('role', 'button');
+      h.setAttribute('tabindex', '0');
+      h.addEventListener('click', function () { wrap.classList.toggle('collapsed'); });
+      h.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); wrap.classList.toggle('collapsed'); }
+      });
       anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
       _fixPillGridOrphans(pills);
       /* Append nav pill for Also in Country to the scrollable pill strip */
@@ -4431,6 +4436,9 @@
         _aicPill.className = 'overview-extra-link';
         _aicPill.href = '#also-in-country';
         _aicPill.textContent = '🌍 Also in ' + country;
+        _aicPill.addEventListener('click', function () {
+          if (wrap.classList.contains('collapsed')) wrap.classList.remove('collapsed');
+        });
         _aicRow.appendChild(_aicPill);
       }
       /* Re-anchor the stamp (and no-entries row) after the now-last footer section.
