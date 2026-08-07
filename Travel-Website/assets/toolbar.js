@@ -5770,4 +5770,159 @@
     } else { _move(); }
   }());
 
+  /* ── Photo lightbox — guide pages only ────────────────────────────────────
+     Click any .stop-photos img to open a fullscreen overlay with the photo
+     at full resolution, the stop name as a caption, and left/right navigation
+     through all photos within the same day block. Keyboard: ← → Escape.
+     Mobile: swipe left/right to navigate, tap outside photo to close.
+     Zero guide HTML changes — all state is in JS. */
+  (function _initPhotoLightbox() {
+    if (!isRealGuide) return;
+
+    /* ── Inject styles ── */
+    var style = document.createElement('style');
+    style.textContent =
+      '#tve-lb{display:none;position:fixed;inset:0;z-index:10000;' +
+        'background:rgba(0,0,0,.92);flex-direction:column;align-items:center;' +
+        'justify-content:center;gap:0;box-sizing:border-box;' +
+        'touch-action:pan-y pinch-zoom}' +
+      '#tve-lb.open{display:flex}' +
+      '#tve-lb-img-wrap{position:relative;display:flex;align-items:center;' +
+        'justify-content:center;max-width:min(92vw,1200px);max-height:80vh}' +
+      '#tve-lb-img{max-width:100%;max-height:80vh;border-radius:6px;' +
+        'object-fit:contain;display:block;user-select:none;-webkit-user-drag:none}' +
+      '#tve-lb-cap{color:#e8e4dc;font-size:13px;font-weight:500;margin-top:14px;' +
+        'text-align:center;max-width:min(92vw,1200px);' +
+        'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' +
+        'letter-spacing:0.01em}' +
+      '#tve-lb-close{position:fixed;top:16px;right:18px;' +
+        'color:#ccc;font-size:22px;line-height:1;cursor:pointer;' +
+        'background:none;border:none;padding:6px 8px;' +
+        'font-family:inherit;opacity:.8}' +
+      '#tve-lb-close:hover{opacity:1}' +
+      '.tve-lb-arrow{position:fixed;top:50%;transform:translateY(-50%);' +
+        'background:none;border:none;color:#ccc;font-size:32px;line-height:1;' +
+        'cursor:pointer;padding:12px 14px;opacity:.7;font-family:inherit}' +
+      '.tve-lb-arrow:hover{opacity:1}' +
+      '#tve-lb-prev{left:12px}' +
+      '#tve-lb-next{right:12px}' +
+      '@media(max-width:600px){' +
+        '.tve-lb-arrow{font-size:24px;padding:8px 10px}' +
+        '#tve-lb-prev{left:4px}#tve-lb-next{right:4px}' +
+      '}' +
+      '.stop-photos img{cursor:zoom-in}';
+    document.head.appendChild(style);
+
+    /* ── Build overlay DOM ── */
+    var lb      = document.createElement('div');   lb.id = 'tve-lb';
+    var imgWrap = document.createElement('div');   imgWrap.id = 'tve-lb-img-wrap';
+    var img     = document.createElement('img');   img.id = 'tve-lb-img'; img.alt = '';
+    var cap     = document.createElement('div');   cap.id = 'tve-lb-cap';
+    var closeBtn = document.createElement('button'); closeBtn.id = 'tve-lb-close';
+    closeBtn.textContent = '✕'; closeBtn.setAttribute('aria-label', 'Close');
+    var prevBtn = document.createElement('button');
+    prevBtn.id = 'tve-lb-prev'; prevBtn.className = 'tve-lb-arrow';
+    prevBtn.textContent = '‹'; prevBtn.setAttribute('aria-label', 'Previous photo');
+    var nextBtn = document.createElement('button');
+    nextBtn.id = 'tve-lb-next'; nextBtn.className = 'tve-lb-arrow';
+    nextBtn.textContent = '›'; nextBtn.setAttribute('aria-label', 'Next photo');
+
+    imgWrap.appendChild(img);
+    lb.appendChild(closeBtn);
+    lb.appendChild(prevBtn);
+    lb.appendChild(nextBtn);
+    lb.appendChild(imgWrap);
+    lb.appendChild(cap);
+    document.body.appendChild(lb);
+
+    /* ── State ── */
+    var photos = [];   /* [{src, alt, caption}] for current day */
+    var idx    = 0;
+
+    function _show(list, i) {
+      photos = list; idx = i;
+      _render();
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function _hide() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+      photos = []; idx = 0;
+    }
+
+    function _render() {
+      var p = photos[idx];
+      img.src = p.src; img.alt = p.alt;
+      cap.textContent = p.caption;
+      prevBtn.style.display = photos.length > 1 ? '' : 'none';
+      nextBtn.style.display = photos.length > 1 ? '' : 'none';
+    }
+
+    function _prev() { if (!photos.length) return; idx = (idx - 1 + photos.length) % photos.length; _render(); }
+    function _next() { if (!photos.length) return; idx = (idx + 1) % photos.length; _render(); }
+
+    /* ── Attach click handlers after DOM ready ── */
+    function _setup() {
+      var days = [].slice.call(document.querySelectorAll('.day-block'));
+      days.forEach(function(day) {
+        /* Build photo list for this day */
+        var dayPhotos = [];
+        var blocks = [].slice.call(day.querySelectorAll('.stop-block'));
+        blocks.forEach(function(block) {
+          var nameEl = block.querySelector('.stop-name');
+          var caption = nameEl ? nameEl.textContent.trim() : '';
+          var imgs = [].slice.call(block.querySelectorAll('.stop-photos img'));
+          imgs.forEach(function(image) {
+            dayPhotos.push({ src: image.src, alt: image.alt || '', caption: caption });
+          });
+        });
+        if (!dayPhotos.length) return;
+
+        /* Wire each img in this day */
+        var dayImgs = [].slice.call(day.querySelectorAll('.stop-photos img'));
+        dayImgs.forEach(function(image, i) {
+          image.addEventListener('click', function(e) {
+            e.stopPropagation();
+            _show(dayPhotos, i);
+          });
+        });
+      });
+
+      /* Close on backdrop click (outside the image) */
+      lb.addEventListener('click', function(e) {
+        if (e.target === lb || e.target === imgWrap) _hide();
+      });
+      closeBtn.addEventListener('click', _hide);
+      prevBtn.addEventListener('click', function(e) { e.stopPropagation(); _prev(); });
+      nextBtn.addEventListener('click', function(e) { e.stopPropagation(); _next(); });
+
+      /* Keyboard */
+      document.addEventListener('keydown', function(e) {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'ArrowLeft')  { _prev(); }
+        if (e.key === 'ArrowRight') { _next(); }
+        if (e.key === 'Escape')     { _hide(); }
+      });
+
+      /* Touch swipe */
+      var touchStartX = 0;
+      lb.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].clientX;
+      }, { passive: true });
+      lb.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) < 40) return;   /* too short — treat as tap */
+        if (dx < 0) _next(); else _prev();
+      }, { passive: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setup);
+    } else {
+      _setup();
+    }
+  }());
+
 }());
