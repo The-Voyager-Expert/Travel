@@ -5793,6 +5793,53 @@
     } else { _move(); }
   }());
 
+  /* ── Back-to-Top pill — Trip-Essentials pages only ───────────────────────
+     Floating pill appears after 600px scroll on TE pages (not guides — they
+     have day navigation). Collapses within 200px of the top. */
+  if (!isRealGuide) {
+    (function() {
+      var pill = document.createElement('button');
+      pill.id = 'tve-back-to-top';
+      pill.setAttribute('aria-label', 'Back to top');
+      pill.textContent = '↑ Top';
+      pill.style.cssText = [
+        'position:fixed', 'bottom:24px', 'right:20px', 'z-index:900',
+        'display:none', 'align-items:center', 'gap:4px',
+        'font-family:inherit', 'font-size:12px', 'font-weight:600',
+        'color:#b85c2a', 'background:#fff', 'border:1.5px solid #b85c2a',
+        'border-radius:20px', 'padding:7px 14px', 'cursor:pointer',
+        'box-shadow:0 2px 8px rgba(0,0,0,.12)',
+        'transition:opacity .2s,transform .2s',
+        'opacity:0', 'transform:translateY(4px)'
+      ].join(';');
+      document.body.appendChild(pill);
+
+      pill.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      var visible = false;
+      function _update() {
+        var y = window.scrollY || window.pageYOffset;
+        var show = y > 600;
+        if (show === visible) return;
+        visible = show;
+        if (show) {
+          pill.style.display = 'flex';
+          requestAnimationFrame(function() {
+            pill.style.opacity = '1';
+            pill.style.transform = 'translateY(0)';
+          });
+        } else {
+          pill.style.opacity = '0';
+          pill.style.transform = 'translateY(4px)';
+          setTimeout(function() { if (!visible) pill.style.display = 'none'; }, 200);
+        }
+      }
+      window.addEventListener('scroll', _update, { passive: true });
+    }());
+  }
+
   /* ── Photo lightbox — guide pages only ────────────────────────────────────
      Click any .stop-photos img to open a fullscreen overlay with the photo
      at full resolution, the stop name as a caption, and left/right navigation
