@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* iOS back-to-guide pill fix — strip the incoming #Country deep-link BEFORE the
+   matching <div class="country-block" id="Country"> parses, so iOS Safari never
+   performs a native on-load fragment jump. That native jump drops the compositor
+   layer of the fixed "← Back to {City}" pill (toolbar.js #tve-back-to-guide),
+   leaving the reader with no visible route back to the guides on mobile. The
+   country is re-scrolled with scrollIntoView() on load (safe — never touches the
+   hash). This is the ONLY reason Currency/Plug differ from the other pill pages,
+   which have no element id matching their incoming #City fragment. Do NOT remove. */
+(function(){try{var h=location.hash;if(h&&h.length>1){window.__tveDeep=decodeURIComponent(h.slice(1));history.replaceState(null,'',location.pathname+location.search);}}catch(e){}}());
+</script>
 <link rel="stylesheet" href="../../assets/web-travel-style.css">
 <title>World Plug Guide</title>
 <style>.back-link {
@@ -5937,6 +5948,18 @@ html{scroll-behavior:smooth;}
   function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();}}
   // whole row is clickable (rows show a pointer cursor) — tap anywhere to open that country
   rows.forEach(function(r){r.addEventListener('click',function(e){var a=r.querySelector('a[href^="#"]');if(!a)return;e.preventDefault();jumpTo(a.getAttribute('href'));});});
+  /* Re-scroll to the incoming #Country deep-link (stripped in <head> to dodge the
+     iOS native-fragment-jump that hides the back-to-guide pill). This page has
+     ~580 lazy flag images with no reserved height, so the target keeps sinking as
+     they load. On a deep-link arrival only, force those images eager so the layout
+     is final before we scroll (normal browsing keeps lazy-loading); then a short
+     settle loop lands the country. scrollIntoView only (never touches the hash). */
+  if(window.__tveDeep){[].forEach.call(document.querySelectorAll('img[loading="lazy"]'),function(im){im.loading='eager';});}
+  window.addEventListener('load',function(){
+    if(!window.__tveDeep)return;var el=document.getElementById(window.__tveDeep);if(!el)return;
+    var last=-1,tries=0;(function settle(){el.scrollIntoView();var y=Math.round(el.getBoundingClientRect().top);
+      if(Math.abs(y-last)>2&&++tries<12){last=y;setTimeout(settle,120);}}());
+  });
   input.addEventListener('input',function(){
     var q=norm(input.value.trim()),shown=0;
     rows.forEach(function(r){var m=q===''||norm(r.textContent).indexOf(q)>-1;r.classList.toggle('idx-hide',!m);if(m)shown++;});

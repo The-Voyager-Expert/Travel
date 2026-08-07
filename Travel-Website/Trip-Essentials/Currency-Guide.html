@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* iOS back-to-guide pill fix — strip the incoming #Country deep-link BEFORE the
+   matching <div class="country-block" id="Country"> parses, so iOS Safari never
+   performs a native on-load fragment jump. That native jump drops the compositor
+   layer of the fixed "← Back to {City}" pill (toolbar.js #tve-back-to-guide),
+   leaving the reader with no visible route back to the guides on mobile. The
+   country is re-scrolled with scrollIntoView() on load (safe — never touches the
+   hash). This is the ONLY reason Currency/Plug differ from the other pill pages,
+   which have no element id matching their incoming #City fragment. Do NOT remove. */
+(function(){try{var h=location.hash;if(h&&h.length>1){window.__tveDeep=decodeURIComponent(h.slice(1));history.replaceState(null,'',location.pathname+location.search);}}catch(e){}}());
+</script>
 <link rel="stylesheet" href="../assets/web-travel-style.css">
 <title>World Currency Guide</title>
 <style>
@@ -1833,6 +1844,15 @@ html { scroll-behavior: smooth; }
      now hard-fails on it. */
   function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
   rows.forEach(function(r){r.addEventListener('click',function(e){var a=r.querySelector('a[href^="#"]');if(!a)return;e.preventDefault();jumpTo(a.getAttribute('href'));});});
+  /* Re-scroll to the incoming #Country deep-link (stripped in <head> to dodge the
+     iOS native-fragment-jump that hides the back-to-guide pill). Runs on window
+     'load'; a short settle loop re-scrolls until the target stops moving (robust
+     if any content above it reflows). scrollIntoView only (never touches the hash). */
+  window.addEventListener('load',function(){
+    if(!window.__tveDeep)return;var el=document.getElementById(window.__tveDeep);if(!el)return;
+    var last=-1,tries=0;(function settle(){el.scrollIntoView();var y=Math.round(el.getBoundingClientRect().top);
+      if(Math.abs(y-last)>2&&++tries<12){last=y;setTimeout(settle,120);}}());
+  });
   /* per-country converter: type a US$ amount, see it in that currency */
   function fmtAmt(v){
     if(v>=1000)return v.toLocaleString('en-US',{maximumFractionDigits:0});

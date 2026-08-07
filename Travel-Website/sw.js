@@ -252,7 +252,17 @@
    Removed the hash assignment so Currency matches Plug + the other scroll-only jump pages.
    New brain_check.check_no_location_hash_in_jump_pages hard-fails on any future reintroduction.
    CACHE bump purges the stale Currency page HTML off devices. — CACHE to v281. */
-var CACHE = 'travel-cache-v281';
+/* 2026-08-06: THE REAL back-pill fix for Currency + Plug — the pill was invisible on iOS
+   because these two are the only pill-pages whose incoming #Country deep-link matches an
+   element id (<div class="country-block" id="France">), so iOS Safari does a NATIVE on-load
+   fragment jump that drops the fixed pill's compositor layer. (The prior jumpTo/location.hash
+   fix only covered the CLICK path, not the incoming deep-link — hence "no progress".) Both
+   pages now strip the incoming #Country hash in a <head> script BEFORE the id block parses
+   (history.replaceState), then re-scroll to the country via scrollIntoView on window load
+   (Plug force-loads its ~580 lazy flags first so the target doesn't drift). No native fragment
+   nav = pill survives on iOS. Matches how Safety/Time-Zones (no matching id) already worked.
+   CACHE bump purges stale Currency/Plug HTML off devices. — CACHE to v282. */
+var CACHE = 'travel-cache-v282';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
