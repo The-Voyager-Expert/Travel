@@ -187,7 +187,7 @@
       banner.style.cssText = [
         'position:fixed', 'bottom:0', 'left:0', 'right:0', 'z-index:9999',
         'background:#fff', 'border-top:1.5px solid #c8a44a',
-        'padding:12px 16px 14px', 'display:flex', 'align-items:center',
+        'padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px))', 'display:flex', 'align-items:center',
         'gap:12px', 'box-shadow:0 -2px 12px rgba(0,0,0,.10)',
         'font-family:inherit', 'font-size:13px', 'color:#3d3a32',
         'animation:tve_slide_up .35s ease'
@@ -447,7 +447,7 @@
          so only the menu scrolls while it is open. */
       '.tb-ham-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;' +
         'background:#ffffff;border-top:1px solid #e6e2da;z-index:1001;padding:4px 0 16px;' +
-        'overflow-y:auto;-webkit-overflow-scrolling:touch;' +
+        'overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
       /* While the hamburger menu is open it covers the viewport (z-index:1001),
@@ -471,7 +471,7 @@
     '}' +
     '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
-    '.tb-theme-toggle{flex-shrink:0;margin-left:4px;margin-right:8px;width:28px;height:28px;border-radius:50%;' +
+    '.tb-theme-toggle{flex-shrink:0;margin-left:4px;margin-right:8px;width:40px;height:40px;border-radius:50%;' +
       'border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'transition:background .15s,border-color .15s;outline:none;padding:0;' +
@@ -5005,6 +5005,14 @@
           }
         });
       });
+      /* Collapse all extras sections by default on mobile (≤768px).
+         guide-style.css already defines .extras-section.collapsed (lines 1062-1069). */
+      if (window.innerWidth <= 768) {
+        document.querySelectorAll('.extras-section').forEach(function (sec) {
+          if (sec.id !== 'nearby-guides') sec.classList.add('collapsed');
+        });
+      }
+
       document.querySelectorAll('.day-block').forEach(function (day) {
         var hdr = day.querySelector(':scope > .day-header');
         if (!hdr || day.dataset.collapseInited) return;
