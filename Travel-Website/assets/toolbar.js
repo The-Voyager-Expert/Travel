@@ -3978,7 +3978,9 @@
     ] },
     'yellowstone': { h: [
       { name: 'Old Faithful Inn', note: 'Independent — 1904 historic log lodge beside Old Faithful geyser, National Historic Landmark · 9.0 Booking.com' },
-      { name: 'Lake Yellowstone Hotel', note: 'Independent — 1891 lakefront colonial structure, panoramic Yellowstone Lake views, inside the park · 8.8 Booking.com' }
+      { name: 'Lake Yellowstone Hotel', note: 'Independent — 1891 lakefront colonial structure, panoramic Yellowstone Lake views, inside the park · 8.8 Booking.com' },
+      { name: 'Canyon Lodge & Cabins', note: 'Independent — largest lodging complex inside Yellowstone, central location near Grand Canyon of the Yellowstone, cabin and motel room options · 8.2 Booking.com' },
+      { name: 'Roosevelt Lodge Cabins', note: 'Independent — rustic frontier cabins in the northeast quadrant near Lamar Valley, Old West cookouts, closest lodge to Tower Fall · 8.5 Expedia' }
     ] },
     'zakynthos': { h: [
       { name: 'Porto Zante Villas & Spa', note: 'Independent ultra-luxury — private white-sand beach, 8 beachfront villas, spa, Laganas Bay turtle sanctuary views · 9.7 Booking.com' },
