@@ -325,6 +325,7 @@
         { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: '🚆 European Train Guide',      full: '🚆 European Train Guide'      },
         { href: base + 'Trip-Essentials/Day-Trips.html',              text: '🚆 Day Trips by Train',        full: '🚆 Day Trips by Train'        },
         { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: '🚆 Scenic Train Journeys',    full: '🚆 Scenic Train Journeys'    },
+        { href: base + 'Trip-Essentials/Train-Passes.html',           text: '🚆 Train Pass Comparison',    full: '🚆 Train Pass Comparison'    },
       ] },
     null,
     { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters', full: '🔌 Plug Adapters' },

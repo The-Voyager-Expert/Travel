@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Regional Train Pass Comparison</title>
+<style>
+/* ── Intro card ── */
+.page-intro-card {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;
+  box-shadow: 0 1px 6px rgba(92,61,17,.05);
+}
+.page-intro-icon { flex-shrink: 0; display: flex; align-items: center; }
+.page-intro-head { font-size: 16px; font-weight: 800; color: var(--text,#3d3a32); margin: 0 0 4px; letter-spacing: -0.01em; }
+.page-intro-sub  { font-size: 12.5px; color: var(--muted,#6a6660); line-height: 1.55; margin: 0; }
+
+/* ── Region filter strip ── */
+.filter-strip {
+  display: flex; flex-wrap: nowrap; gap: 0;
+  justify-content: center; margin: 0 0 14px;
+}
+.rgn-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface,#fff); border: 1.5px solid var(--border2,#e6e2da);
+  color: var(--muted,#6a6660); font-size: 13px; font-weight: 500;
+  height: 36px; padding: 0 16px; cursor: pointer; border-radius: 0;
+  transition: all .15s; font-family: inherit;
+}
+.rgn-pill:first-child { border-radius: 6px 0 0 6px; }
+.rgn-pill:last-child  { border-radius: 0 6px 6px 0; }
+.rgn-pill:hover       { background: var(--bg,#f5f4f0); border-color: #b85c2a; color: #3d3a32; }
+.rgn-pill.active      { background: #f0ede8; border-color: var(--border,#d8d4cc); color: var(--muted,#6a6660); }
+
+/* ── Eligibility legend (interactive filter badges) ── */
+.elig-legend {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  justify-content: center; margin: 0 0 20px;
+}
+.elig-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 4px;
+  border: 1px solid; white-space: nowrap; cursor: pointer;
+  transition: opacity .15s; user-select: none;
+}
+.elig-badge:focus { outline: 2.5px solid currentColor; outline-offset: 2px; }
+.elig-badge.dimmed { opacity: 0.38; }
+.e-orange { background: #fdf8f0; color: #8a4a10; border-color: rgba(184,134,90,.4); }
+.e-yellow { background: #fff8e0; color: #7a5800;  border-color: rgba(122,88,0,.4); }
+.e-green  { background: #e8f5e8; color: #1a5a1a;  border-color: rgba(26,90,26,.4); }
+
+/* ── Pass card grid ── */
+.passes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 14px; padding: 0 0 28px;
+}
+.pass-card {
+  display: flex; flex-direction: column;
+  background: var(--surface,#fff);
+  border: 1px solid var(--border,#d8d4cc);
+  border-radius: 8px; overflow: hidden;
+  transition: box-shadow .18s, border-color .15s;
+}
+.pass-card:hover { border-color: var(--accent,#8a6c1a); box-shadow: 0 4px 14px rgba(138,108,26,.1); }
+.pass-card.hidden { display: none; }
+
+.card-top {
+  padding: 14px 16px 12px;
+  background: var(--surface2,#f0ede8);
+  border-bottom: 1px solid var(--border,#d8d4cc);
+}
+.card-name { font-size: 14.5px; font-weight: 700; color: var(--text,#1a1917); margin: 0 0 8px; line-height: 1.2; }
+.card-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+/* Badge shape — locked spec: 11px/700/0.04em/3px 8px/1px solid/4px */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; border: 1px solid;
+  white-space: nowrap; line-height: 1.5;
+}
+.badge.b-blue   { background: #e8f0fb; color: #1a3a8b; border-color: rgba(26,58,139,.4); }
+.badge.b-green  { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,.4); }
+.badge.b-grey   { background: rgba(138,108,26,.07); color: #6a6660; border-color: rgba(106,102,96,.4); }
+.badge.b-orange { background: #fdf8f0; color: #8a4a10; border-color: rgba(184,134,90,.4); }
+.badge.b-yellow { background: #fff8e0; color: #7a5800;  border-color: rgba(122,88,0,.4); }
+
+.card-body { padding: 14px 16px; flex: 1; }
+.info-row  { display: flex; gap: 10px; margin-bottom: 11px; align-items: flex-start; }
+.info-row:last-child { margin-bottom: 0; }
+.info-icon    { font-size: 13px; flex-shrink: 0; width: 18px; text-align: center; margin-top: 3px; }
+.info-content { flex: 1; font-size: 13.5px; color: var(--text,#3d3a32); line-height: 1.5; }
+.info-label   { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted,#6a6660); margin-bottom: 2px; }
+
+.card-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border2,#e6e2da);
+}
+.card-footer a.apply-btn { font-size: 13px; }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .passes-grid { grid-template-columns: 1fr; }
+  .filter-strip { flex-wrap: wrap; gap: 0; width: 100%; }
+  .rgn-pill { flex: 1 1 auto; height: 40px; font-size: 12.5px; }
+  .rgn-pill:first-child { border-radius: 6px 6px 0 0; }
+  .rgn-pill:last-child  { border-radius: 0 0 6px 6px; }
+  .page-intro-card { gap: 14px; padding: 14px 16px; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="960" data-updated="2026-08-07"></div>
+  <script src="../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header">
+    <h1>REGIONAL TRAIN PASS COMPARISON</h1>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true">
+        <path d="M4 15.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V5c0-3.5-3.58-4-8-4S4 1.5 4 5v10.5zm8 1.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-7H6V5h12v5z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="page-intro-head">Which rail pass beats buying tickets individually</div>
+      <div class="page-intro-sub">Covers 8 major passes — Eurail Global, Interrail, JR Pass, BritRail, Swiss Travel Pass, and more. For each: who can buy it, what trains are included, typical cost, and when the pass wins versus advance point-to-point fares. European operators and routes are covered separately on the European Train Guide.</div>
+    </div>
+  </div>
+
+  <!-- Region filter -->
+  <div class="filter-strip" role="group" aria-label="Filter by region" id="rgn-filter">
+    <button class="rgn-pill active" data-rgn="all">All passes</button>
+    <button class="rgn-pill" data-rgn="europe">Europe</button>
+    <button class="rgn-pill" data-rgn="japan">Japan</button>
+    <button class="rgn-pill" data-rgn="uk">United Kingdom</button>
+  </div>
+
+  <!-- Eligibility legend — interactive: click to filter by eligibility -->
+  <div class="elig-legend" id="elig-filter" role="group" aria-label="Filter by eligibility">
+    <span class="elig-badge e-orange" data-elig="non-residents" role="button" tabindex="0">Non-residents only</span>
+    <span class="elig-badge e-yellow" data-elig="eu-residents"  role="button" tabindex="0">EU residents only</span>
+    <span class="elig-badge e-green"  data-elig="open"          role="button" tabindex="0">Open to all</span>
+  </div>
+
+  <!-- Pass cards -->
+  <div class="passes-grid" id="passes-grid">
+
+    <!-- 1. Eurail Global -->
+    <div class="pass-card" data-rgn="europe" data-elig="non-residents">
+      <div class="card-top">
+        <div class="card-name">Eurail Global Pass</div>
+        <div class="card-badges">
+          <span class="badge b-blue">33 European countries</span>
+          <span class="badge b-orange">Non-residents only</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            Most national rail networks across 33 European countries. High-speed trains (TGV, Thalys, Eurostar) require a separate seat reservation at additional cost.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            From ~€224 (5 travel days within 2 months, 2nd class adult) up to ~€690 for a 3-month continuous pass. Flexi passes let you use non-consecutive days.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            Visiting 3 or more countries with a flexible itinerary and 10+ train journeys in the pass window, or mixing fast trains across borders where advance fares are hard to find.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.eurail.com/en/eurail-passes/global-pass" target="_blank" rel="noopener">Buy at eurail.com</a>
+      </div>
+    </div>
+
+    <!-- 2. Interrail Global -->
+    <div class="pass-card" data-rgn="europe" data-elig="eu-residents">
+      <div class="card-top">
+        <div class="card-name">Interrail Global Pass</div>
+        <div class="card-badges">
+          <span class="badge b-blue">33 European countries</span>
+          <span class="badge b-yellow">EU residents only</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            Identical network to Eurail Global — all 33 countries. The European resident counterpart to Eurail. Same seat reservation surcharges apply on high-speed routes.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            From ~€218 (5 days within 1 month, 2nd class adult). Pricing broadly mirrors Eurail. Youth (under 28) and senior (60+) discounts available.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            Same use case as Eurail — multi-country, rail-heavy, flexible travel. Designed for EU, EEA, and Swiss residents; proof of residency required at purchase.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.interrail.eu/en/interrail-passes/global-pass" target="_blank" rel="noopener">Buy at interrail.eu</a>
+      </div>
+    </div>
+
+    <!-- 3. Swiss Travel Pass -->
+    <div class="pass-card" data-rgn="europe" data-elig="non-residents">
+      <div class="card-top">
+        <div class="card-name">Swiss Travel Pass</div>
+        <div class="card-badges">
+          <span class="badge b-blue">Switzerland</span>
+          <span class="badge b-orange">Non-residents only</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            All Swiss Federal Railways, PostBus routes, and lake boats. Most mountain railways included (Rigi, Pilatus, Schynige Platte). Jungfraujoch and a handful of aerial cableways receive a 25% discount rather than free entry.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            3 days ~CHF 244 ($275 USD), 6 days ~CHF 320 ($360), 8 days ~CHF 355 ($400) — 2nd class adult. Includes free admission to 500+ Swiss museums.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            Almost always the better value within Switzerland. Zurich → Lucerne → Interlaken → Zermatt → Geneva costs substantially more individually. Mountain railway access at no extra charge seals it.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.swisstravelsystem.com/en/swiss-travel-pass" target="_blank" rel="noopener">Buy at swisstravelsystem.com</a>
+      </div>
+    </div>
+
+    <!-- 4. Germany Deutschlandticket -->
+    <div class="pass-card" data-rgn="europe" data-elig="open">
+      <div class="card-top">
+        <div class="card-name">Germany Deutschlandticket</div>
+        <div class="card-badges">
+          <span class="badge b-blue">Germany</span>
+          <span class="badge b-green">Open to all</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            All regional trains (RE, RB, S-Bahn) and local transit (U-Bahn, trams, city buses) across Germany. Does <strong>not</strong> cover ICE, IC, or EC long-distance trains — those require a separate ticket.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            €49/month, sold as a monthly subscription. Cancel any month. Available to tourists and residents alike with no residency requirement.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            Slow travel through Germany using regional trains, or a longer city stay with heavy local transit use. Not suited for fast inter-city hops — ICE trains require a separate Bahn ticket regardless.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.bahn.de/angebot/regio/deutschland-ticket" target="_blank" rel="noopener">Buy at bahn.de</a>
+      </div>
+    </div>
+
+    <!-- 5. Renfe Spain Pass -->
+    <div class="pass-card" data-rgn="europe" data-elig="non-residents">
+      <div class="card-top">
+        <div class="card-name">Renfe Spain Pass</div>
+        <div class="card-badges">
+          <span class="badge b-blue">Spain</span>
+          <span class="badge b-orange">Non-residents only</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            All Renfe-operated trains — AVE high-speed, Alvia, and Intercity services. Seat reservations are included with most pass journeys. Must be purchased before entering Spain.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            4 trips from ~€105, 8 trips from ~€170, 12 trips from ~€230 — 2nd class adult. Non-EU residents only; sold online via Renfe and select rail agents.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            3 or more Spanish cities with AVE connections. Madrid → Barcelona and Madrid → Seville each run €50–80 individually; a 4-trip pass pays off by the third journey.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.renfe.com/en/viajeros/spain-pass" target="_blank" rel="noopener">Buy at renfe.com</a>
+      </div>
+    </div>
+
+    <!-- 6. Eurail/Interrail One Country -->
+    <div class="pass-card" data-rgn="europe" data-elig="non-residents">
+      <div class="card-top">
+        <div class="card-name">Eurail / Interrail One Country Pass</div>
+        <div class="card-badges">
+          <span class="badge b-blue">Single European country</span>
+          <span class="badge b-orange">Non-residents (Eurail) · EU residents (Interrail)</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            National rail in one country of choice: France, Italy, Germany, Austria, Norway, Portugal, and others. Same reservation rules apply on high-speed routes. Useful for countries not covered by a dedicated national pass.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            From ~€115 (3 travel days within 1 month, 2nd class adult). Pricing varies by country — Italy and France passes tend to be higher; Eastern Europe lower.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            Deep rail exploration of one country with a flexible schedule. In Italy and France, advance fares booked 6+ weeks ahead often undercut the pass significantly.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.eurail.com/en/eurail-passes/one-country-pass" target="_blank" rel="noopener">Buy at eurail.com</a>
+      </div>
+    </div>
+
+    <!-- 7. JR Pass -->
+    <div class="pass-card" data-rgn="japan" data-elig="non-residents">
+      <div class="card-top">
+        <div class="card-name">Japan Rail Pass (JR Pass)</div>
+        <div class="card-badges">
+          <span class="badge b-green">Japan</span>
+          <span class="badge b-orange">Non-residents only</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            All JR shinkansen (bullet trains) except the fastest Nozomi and Mizuho services; all JR limited express, express, and local trains; some JR bus and ferry routes. Exchange the voucher for a physical pass at JR offices in Japan.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            7-day ~¥50,000 ($330 USD), 14-day ~¥80,000 ($530), 21-day ~¥100,000 ($665) — ordinary (2nd) class. Prices increased substantially in 2023.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            Tokyo plus 2 or more shinkansen cities: Kyoto, Osaka, Hiroshima, Kanazawa, or Hokkaido. Tokyo → Osaka → Kyoto → Tokyo round trip on the shinkansen alone nearly covers the 7-day pass cost. Not worth it for a Tokyo-only stay.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.japan-rail-pass.com" target="_blank" rel="noopener">Buy at japan-rail-pass.com</a>
+      </div>
+    </div>
+
+    <!-- 8. BritRail -->
+    <div class="pass-card" data-rgn="uk" data-elig="non-residents">
+      <div class="card-top">
+        <div class="card-name">BritRail Pass</div>
+        <div class="card-badges">
+          <span class="badge b-grey">United Kingdom</span>
+          <span class="badge b-orange">Non-residents only</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-icon">🗺</span>
+          <div class="info-content">
+            <span class="info-label">Coverage</span>
+            All National Rail trains in England, Scotland, and Wales. Does not cover Northern Ireland, the London Underground, or private heritage railways. Must be purchased outside the UK before travel — it cannot be bought in Britain.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">💶</span>
+          <div class="info-content">
+            <span class="info-label">Cost range</span>
+            2 consecutive days from ~$120 USD, 8 days from ~$370, 1 month from ~$695. Flexi passes (choose non-consecutive travel days within a 2-month window) are also available.
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">✓</span>
+          <div class="info-content">
+            <span class="info-label">Pass wins when</span>
+            4 or more UK cities over 2+ weeks with spontaneous, unplanned travel. UK advance fares can be very cheap (London → Edinburgh from £35 if booked early) — a fixed itinerary often makes individual tickets the better deal.
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a class="apply-btn" href="https://www.britrail.com" target="_blank" rel="noopener">Buy at britrail.com</a>
+      </div>
+    </div>
+
+  </div><!-- /passes-grid -->
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-label">Also on this site</div>
+  <div class="also-pills">
+    <a class="also-on-this-site-pill" href="European-Train-Guide.html">🚆 European train guide</a>
+    <a class="also-on-this-site-pill" href="Scenic-Train-Journeys.html">🚆 Scenic train journeys</a>
+    <a class="also-on-this-site-pill" href="Day-Trips.html">🚆 Day trips by train</a>
+  </div>
+</div>
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>
+(function () {
+  'use strict';
+  var cards      = [].slice.call(document.querySelectorAll('.pass-card'));
+  var rgnPills   = [].slice.call(document.querySelectorAll('.rgn-pill'));
+  var eligBadges = [].slice.call(document.querySelectorAll('.elig-badge'));
+  var activeRgn  = 'all';
+  var activeElig = null;   /* null = no elig filter */
+
+  function applyFilters() {
+    cards.forEach(function (c) {
+      var rgnOk  = (activeRgn  === 'all') || (c.dataset.rgn  === activeRgn);
+      var eligOk = (!activeElig)           || (c.dataset.elig === activeElig);
+      c.classList.toggle('hidden', !(rgnOk && eligOk));
+    });
+  }
+
+  /* Region filter */
+  rgnPills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      activeRgn = pill.dataset.rgn;
+      rgnPills.forEach(function (p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+      applyFilters();
+    });
+  });
+
+  /* Eligibility filter — toggle on/off */
+  eligBadges.forEach(function (badge) {
+    function toggle() {
+      if (activeElig === badge.dataset.elig) {
+        activeElig = null;
+        eligBadges.forEach(function (b) { b.classList.remove('dimmed'); });
+      } else {
+        activeElig = badge.dataset.elig;
+        eligBadges.forEach(function (b) {
+          b.classList.toggle('dimmed', b.dataset.elig !== activeElig);
+        });
+      }
+      applyFilters();
+    }
+    badge.addEventListener('click', toggle);
+    badge.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+}());
+</script>
+</body>
+</html>
