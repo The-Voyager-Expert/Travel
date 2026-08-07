@@ -4417,14 +4417,32 @@
         _aicPill.textContent = '🌍 Also in ' + country;
         _aicRow.appendChild(_aicPill);
       }
-      /* Move the "Updated" stamp after the last footer section.
-         Prefer Best Of (#tve-best-of-crosslinks) if present — it is always last. */
-      var stamp = document.querySelector('.title-updated');
-      if (stamp && stamp.parentNode) {
-        var _bestOf = document.getElementById('tve-best-of-crosslinks');
-        var _anchor = (_bestOf && _bestOf.parentNode) ? _bestOf : wrap;
-        _anchor.parentNode.insertBefore(stamp, _anchor.nextSibling);
-      }
+      /* Re-anchor the stamp (and no-entries row) after the now-last footer section.
+         Uses the same DOM-last logic as repositionUpdatedStamp() — compareDocumentPosition
+         flag 4 = DOCUMENT_POSITION_FOLLOWING — so #also-in-country (just inserted)
+         is always found as the last section rather than hard-coding Best Of. */
+      (function () {
+        var _s = document.querySelector('.title-page .title-updated') || document.querySelector('.title-updated');
+        if (!_s) return;
+        var _sids = ['tve-best-of-crosslinks', 'also-in-country', 'nearby-guides', 'also-on-this-site'];
+        var _slast = null;
+        _sids.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          if (!_slast || (_slast.compareDocumentPosition(el) & 4)) { _slast = el; }
+        });
+        if (!_slast || !_slast.parentNode) return;
+        var _sne = document.querySelector('.title-no-entries');
+        if (_sne) {
+          var _srow = document.createElement('div');
+          _srow.className = 'tve-stamp-row';
+          _srow.appendChild(_s);
+          _srow.appendChild(_sne);
+          _slast.parentNode.insertBefore(_srow, _slast.nextSibling);
+        } else {
+          _slast.parentNode.insertBefore(_s, _slast.nextSibling);
+        }
+      }());
     }
     function _run() {
       try {
