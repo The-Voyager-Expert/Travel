@@ -445,7 +445,7 @@
          panel; body overflow:hidden (set by toggleHamMenu) locks page scroll
          so only the menu scrolls while it is open. */
       '.tb-ham-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;' +
-        'background:#faf8f5;border-top:1px solid #e6e2da;z-index:1001;padding:4px 0 16px;' +
+        'background:#ffffff;border-top:1px solid #e6e2da;z-index:1001;padding:4px 0 16px;' +
         'overflow-y:auto;-webkit-overflow-scrolling:touch;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}' +
       '.tb-ham-menu.tb-ham-open{display:block}' +
@@ -468,8 +468,7 @@
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
     '}' +
-    '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}' +
-    '#tve-back-guides button{display:none!important}}' +
+    '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '.tb-theme-toggle{flex-shrink:0;margin-left:4px;margin-right:8px;width:28px;height:28px;border-radius:50%;' +
       'border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);' +
@@ -768,7 +767,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:#96502e;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg>';
   bar.appendChild(hamBtn);
 
@@ -1799,16 +1798,13 @@
         btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
         btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         getTargets().forEach(function(el) { el.classList.toggle('collapsed', !expanded); });
-        /* Nearby Guides has ID-specificity CSS that fights .collapsed — drive inline */
         var ng = document.getElementById('nearby-guides');
         if (ng) {
           var ngPills = ng.querySelector('.nearby-guides-pills');
+          if (ngPills) ngPills.style.display = '';
           var ngTitle = ng.querySelector('.extras-title');
-          if (ngPills) ngPills.style.display = expanded ? '' : 'none';
-          if (ngTitle) {
-            ngTitle.style.marginBottom = expanded ? '' : '0';
-          }
-          ng.style.paddingBottom = expanded ? '' : '14px';
+          if (ngTitle) ngTitle.style.marginBottom = '';
+          ng.style.paddingBottom = '';
         }
       }
       btn.addEventListener('click', function() { expanded = !expanded; render(); });
@@ -4926,11 +4922,11 @@
           ngTitle.setAttribute('role', 'button');
           ngTitle.setAttribute('tabindex', '0');
           function _ngToggle() {
+            ng.classList.toggle('collapsed');
             var ngPills = ng.querySelector('.nearby-guides-pills');
-            var open = ng.style.paddingBottom !== '';
-            if (ngPills) ngPills.style.display = open ? '' : 'none';
-            ngTitle.style.marginBottom = open ? '' : '0';
-            ng.style.paddingBottom = open ? '' : '14px';
+            if (ngPills) ngPills.style.display = '';
+            ngTitle.style.marginBottom = '';
+            ng.style.paddingBottom = '';
           }
           ngTitle.addEventListener('click', _ngToggle);
           ngTitle.addEventListener('keydown', function (e) {
@@ -4948,21 +4944,14 @@
 
   /* ── Section nav chip → expand target section on click ─────────────────────
      Overview-extras chips link to #section-id anchors.  If the section is
-     currently collapsed (.collapsed class or nearby-guides inline style),
-     remove the collapse so the content is visible when the browser scrolls. */
+     currently collapsed (.collapsed class), remove the collapse so the
+     content is visible when the browser scrolls. */
   (function _chipExpandOnClick() {
     function _expandTarget(href) {
       var id = (href || '').slice(1);
       var sec = document.getElementById(id);
       if (!sec) return;
       if (sec.classList.contains('collapsed')) sec.classList.remove('collapsed');
-      if (sec.id === 'nearby-guides') {
-        var ngPills = sec.querySelector('.nearby-guides-pills');
-        if (ngPills) ngPills.style.display = '';
-        sec.style.paddingBottom = '';
-        var ngTitle = sec.querySelector(':scope > .extras-title');
-        if (ngTitle) ngTitle.style.marginBottom = '';
-      }
     }
     function _setup() {
       /* Section nav chips */
