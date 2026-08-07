@@ -4097,13 +4097,22 @@
     entry.h.forEach(function (hotel) {
       var card = document.createElement('div');
       card.className = 'neigh-card';
-      var name = document.createElement('div');
-      name.className = 'neigh-name';
-      name.textContent = hotel.name;
+      var nameEl;
+      if (hotel.url) {
+        nameEl = document.createElement('a');
+        nameEl.href = hotel.url;
+        nameEl.target = '_blank';
+        nameEl.rel = 'noopener noreferrer';
+        nameEl.className = 'neigh-name ext-arrow';
+      } else {
+        nameEl = document.createElement('div');
+        nameEl.className = 'neigh-name';
+      }
+      nameEl.textContent = hotel.name;
       var note = document.createElement('div');
       note.className = 'neigh-why';
       note.textContent = hotel.note;
-      card.appendChild(name);
+      card.appendChild(nameEl);
       card.appendChild(note);
       grid.appendChild(card);
     });
