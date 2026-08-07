@@ -2798,6 +2798,7 @@
     document.body.appendChild(ov);
     document.body.appendChild(trigBtn);
   }
+  window.__tveMidpoint = 'line2801';
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectDayJump);
   } else {
@@ -5458,6 +5459,8 @@
       document.addEventListener('DOMContentLoaded', _setup);
     } else { _setup(); }
   }());
+
+  window.__tveReachedLounge = true;
 
   /* ── Lounge arrival chip — injected at the top of Day 1 ─────────────────────
      Reads the city slug from the page path → looks up destination IATA via
