@@ -10,9 +10,24 @@
   .nav { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 0; }
   .nav-inner { max-width: none; margin: 0 auto; padding: 10px 32px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-start; }
   .nav-logo { font-size: var(--fs-sub,12px); font-weight: 700; color: var(--accent); letter-spacing: 0.06em; margin-right: 6px; white-space: nowrap; text-transform: uppercase; }
-  .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
-  .nav-link { font-size: 13px; line-height: 1; color: var(--text); text-decoration: none; padding: 6px 12px; border: 1px solid var(--border2); border-radius: 6px; background: var(--surface); white-space: nowrap; transition: color .15s, border-color .15s, background .15s; cursor: pointer; }
-  .nav-link:hover { color: #fff; border-color: var(--rust); background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+  /* ── Book-on strip ── */
+  .book-strip{display:flex;align-items:center;justify-content:center;}
+  .zone-ew{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);white-space:nowrap;padding-right:12px;margin-right:4px;border-right:1px solid var(--border);line-height:1;flex-shrink:0;}
+  .book-links{display:flex;align-items:center;}
+  .book-link{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text);text-decoration:none;padding:4px 14px;border-right:1px solid var(--border);transition:color .12s;white-space:nowrap;line-height:1.4;}
+  .book-link:last-child{border-right:none;}
+  .book-link:hover{color:var(--rust);}
+  /* ── Hub segmented control ── */
+  .hub-nav{display:flex;align-items:center;justify-content:center;}
+  .hub-chips{display:flex;border:1px solid var(--border2, #e6e2da);border-radius:5px;overflow:hidden;}
+  .hub-chip{font-family:'SF Mono','Fira Code',Consolas,'Courier New',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);padding:7px 12px;background:var(--surface, #ffffff);border:none;border-right:1px solid var(--border2, #e6e2da);cursor:pointer;transition:background .1s,color .1s;user-select:none;line-height:1;}
+  .hub-chip:last-child{border-right:none;}
+  .hub-chip:hover{background:var(--surface2, #f5f4f0);color:var(--text);}
+  .hub-chip.active{background:var(--rust, #b85c2a);color:#fff;border-right-color:var(--rust, #b85c2a);}
+  /* ── Filter row (legend wrapper) ── */
+  .filter-row{display:flex;align-items:flex-start;flex-wrap:wrap;justify-content:center;gap:6px;padding:10px 0 4px;border-top:1px solid var(--border);width:100%;margin-top:4px;}
+  .filter-row .zone-ew{margin-top:3px;}
+  .filter-row .tier-legend{margin-top:0;margin-bottom:0;flex:1;justify-content:center;}
 
   /* @media (min-width: 601px) canonical block moved BELOW the base .tier-legend
      / .tier-pill declarations so source-order lets my overrides win — see line
@@ -48,24 +63,8 @@
      max-width:600px block further below. Nav border and color are page-chrome,
      not badge chrome — badge colors are identical mobile + desktop by design. */
   @media (min-width: 601px) {
-    .nav-links { gap: 0; justify-content: center; }
-    a.nav-link { padding: 5px 12px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; background: var(--surface, #ffffff); display: inline-flex; align-items: center; justify-content: center; margin-left: 0; }
-    a.nav-link:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: var(--rust); }
-    a.nav-link.active,
-    a.nav-link.active:hover,
-    a.nav-link.active:focus { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
-    /* Natural width + centered, not full-width stretch (owner report 2026-07-29:
-       flex:1 1 calc(100%/4) grew every pill to fill the row, making them look
-       oversized). Pills now sit at their own content width, touching each
-       other, centered as one compact group. */
-    .tier-legend { gap: 0 !important; justify-content: center; }
-    .tier-pill { flex: 0 1 auto; border-radius: 0 !important; margin-left: 0; padding: 6px 10px !important; font-size: 11px !important; }
-    .tier-pill:hover { box-shadow: none; }
-    .tier-pill.new, .tier-pill.summer { min-width: 70px; }
-    /* Card tags become bare colored dots — the legend at the top explains
-       what each color means, so repeating the word inside every card tag
-       is redundant. Family bg/border stay from .tag.* rules; only text and
-       padding get zeroed. */
+    /* Card tags become bare colored dots on desktop — the filter legend above
+       explains what each color means, so repeating the label in every card is redundant. */
     .dest-card .tags .tag {
       font-size: 0 !important;
       padding: 0 !important;
@@ -127,8 +126,9 @@
 /* hide no-results until an empty search */
 .no-results{display:none;padding:14px 4px;font-size: var(--fs-body,14px);color:var(--muted);}
 /* hide chrome when search is active */
-body.is-searching #route-nav .nav-links,
-body.is-searching .tier-legend,
+body.is-searching #route-nav .book-strip,
+body.is-searching #route-nav .hub-nav,
+body.is-searching .filter-row,
 body.is-searching .hub-strength,
 body.is-searching .hub-header,
 body.is-searching .region-header { display:none !important; }
@@ -145,14 +145,10 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
   /* Form B glued 2-across grid — Nonstop + 1-connection tiers stretch full
      width, no gap, square corners, 46px tall, 12px font. Semantic tier bg
      colors (green/blue) preserved — that's the meaning of the pill. */
-  .tier-legend{display:grid !important;grid-template-columns:1fr 1fr !important;gap:0 !important;margin-top:8px;margin-bottom:6px;width:100%;}
-  /* Match Guides-Index disc-btn border standard: 1.5px + margin-left:-1.5px
-     overlap (see SEA note). */
-  .tier-legend .tier-pill{height:46px !important;border:1.5px solid var(--border2, #e6e2da) !important;border-radius:0 !important;font-size:12px !important;padding:4px 6px !important;gap:4px !important;min-height:auto !important;display:flex !important;align-items:center !important;justify-content:center !important;text-align:center !important;white-space:normal !important;line-height:1.12 !important;}
-  .tier-legend .tier-pill:not(:first-child){margin-left:-1.5px !important;}
   .nav-inner{padding:8px 14px;}
-  .nav-links{flex-wrap:wrap !important;justify-content:flex-start !important;}
-  .nav-link{flex-shrink:0;}
+  #route-nav .hub-nav{display:none !important;}
+  .filter-row{padding:8px 0 6px;gap:5px;}
+  .book-link{padding:3px 10px;}
 }
 .tier-pill.active{font-weight:700;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);color:#fff;border-color:var(--rust);}
 /* secondary nav: solid page-bg so content doesn't bleed through on scroll */
@@ -166,7 +162,6 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
   border-bottom:1px solid var(--border2);padding:11px 14px;font-size:13px;color:var(--text);cursor:pointer;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple Color Emoji','Segoe UI Emoji',Arial,sans-serif;}
 .hub-jump-item:active{background:rgba(138,108,26,.08);}@media(max-width:600px) {
-  #route-nav .nav-links{display:none!important;}
   .hub-jump{display:block;position:sticky;top:0;z-index:60;background:var(--bg);padding:8px 0 10px;}
 }@media(max-width:600px) {
   .hub-top.show{position:fixed;right:14px;bottom:16px;width:46px;height:46px;border-radius:50%;
@@ -186,21 +181,27 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
 </div>
 <div class="wrap">
   <div class="filter-bar" id="route-nav">
-    <input class="filter-input" id="destFilter" type="search" placeholder="City or airport code" aria-label="Filter destinations" autocomplete="off">
-    <div class="nav-links">
-      <a class="nav-link" href="https://www.delta.com" target="_blank" rel="noopener">✈️ Delta</a>
-      <a class="nav-link" href="https://www.google.com/flights" target="_blank" rel="noopener">🔍 Google Flights</a>
-      <a class="nav-link" href="https://www.skyscanner.com" target="_blank" rel="noopener">🌐 Skyscanner</a>
+    <input class="filter-input search-input" id="destFilter" type="search" placeholder="City or airport code" aria-label="Filter destinations" autocomplete="off">
+    <div class="book-strip">
+      <span class="zone-ew">Book on</span>
+      <div class="book-links">
+        <a class="book-link" href="https://www.delta.com" target="_blank" rel="noopener">✈️ Delta</a>
+        <a class="book-link" href="https://www.google.com/flights" target="_blank" rel="noopener">🔍 Google Flights</a>
+        <a class="book-link" href="https://www.skyscanner.com" target="_blank" rel="noopener">🌐 Skyscanner</a>
+      </div>
     </div>
-    <div class="nav-links">
-      <a class="nav-link" onclick="document.getElementById('atl').scrollIntoView({behavior:'smooth'})">ATL</a>
-      <a class="nav-link" onclick="document.getElementById('bos').scrollIntoView({behavior:'smooth'})">BOS</a>
-      <a class="nav-link" onclick="document.getElementById('dtw').scrollIntoView({behavior:'smooth'})">DTW</a>
-      <a class="nav-link" onclick="document.getElementById('jfk').scrollIntoView({behavior:'smooth'})">JFK</a>
-      <a class="nav-link" onclick="document.getElementById('lax').scrollIntoView({behavior:'smooth'})">LAX</a>
-      <a class="nav-link" onclick="document.getElementById('msp').scrollIntoView({behavior:'smooth'})">MSP</a>
-      <a class="nav-link" onclick="document.getElementById('sea').scrollIntoView({behavior:'smooth'})">SEA</a>
-      <a class="nav-link" onclick="document.getElementById('slc').scrollIntoView({behavior:'smooth'})">SLC</a>
+    <div class="hub-nav">
+      <span class="zone-ew">Hub</span>
+      <div class="hub-chips" id="hubChipNav">
+        <button class="hub-chip" data-hub="atl" onclick="document.getElementById('atl').scrollIntoView({behavior:'smooth'})">ATL</button>
+        <button class="hub-chip" data-hub="bos" onclick="document.getElementById('bos').scrollIntoView({behavior:'smooth'})">BOS</button>
+        <button class="hub-chip" data-hub="dtw" onclick="document.getElementById('dtw').scrollIntoView({behavior:'smooth'})">DTW</button>
+        <button class="hub-chip" data-hub="jfk" onclick="document.getElementById('jfk').scrollIntoView({behavior:'smooth'})">JFK</button>
+        <button class="hub-chip" data-hub="lax" onclick="document.getElementById('lax').scrollIntoView({behavior:'smooth'})">LAX</button>
+        <button class="hub-chip" data-hub="msp" onclick="document.getElementById('msp').scrollIntoView({behavior:'smooth'})">MSP</button>
+        <button class="hub-chip" data-hub="sea" onclick="document.getElementById('sea').scrollIntoView({behavior:'smooth'})">SEA</button>
+        <button class="hub-chip" data-hub="slc" onclick="document.getElementById('slc').scrollIntoView({behavior:'smooth'})">SLC</button>
+      </div>
     </div>
     <span class="filter-count" id="filterCount"></span>
   </div>
@@ -214,15 +215,18 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
 </div>
 
 <div class="wrap">
-  <div class="tier-legend">
-    <div class="tier-pill t0">🟢 Nonstop</div>
-    <div class="tier-pill t1">🔵 1 connection via Delta hub</div>
-    <div class="tier-pill winter">⚫ Winter</div>
-    <div class="tier-pill yr">🔴 Year-round</div>
-    <div class="tier-pill d1">🟣 Delta One</div>
-    <div class="tier-pill seasonal">🟡 Seasonal</div>
-    <div class="tier-pill new">🟠 New</div>
-    <div class="tier-pill summer"><span class="family-dot pink"></span>Summer</div>
+  <div class="filter-row">
+    <span class="zone-ew">Filter by</span>
+    <div class="tier-legend">
+      <div class="tier-pill t0">🟢 Nonstop</div>
+      <div class="tier-pill t1">🔵 1 connection via Delta hub</div>
+      <div class="tier-pill winter">⚫ Winter</div>
+      <div class="tier-pill yr">🔴 Year-round</div>
+      <div class="tier-pill d1">🟣 Delta One</div>
+      <div class="tier-pill seasonal">🟡 Seasonal</div>
+      <div class="tier-pill new">🟠 New</div>
+      <div class="tier-pill summer"><span class="family-dot pink"></span>Summer</div>
+    </div>
   </div>
   <div class="no-results" id="noResults">No destinations match your search.</div>
 
@@ -683,7 +687,7 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
     if(noResults)noResults.style.display=noHits?'block':'none';
     var ss=document.getElementById('_search_hide');
     if(!ss){ss=document.createElement('style');ss.id='_search_hide';document.head.appendChild(ss);}
-    ss.textContent=q?'#route-nav .nav-links,#route-nav .nav-links *,.tier-legend,.hub-strength,.hub-header,.region-header{display:none!important;visibility:hidden!important}':'';
+    ss.textContent=q?'#route-nav .book-strip,#route-nav .hub-nav,.filter-row,.hub-strength,.hub-header,.region-header{display:none!important;visibility:hidden!important}':'';
     document.body.classList.toggle('is-searching',!!q);
     var foot=document.querySelector('.tb-footnote');if(foot)foot.style.display=q?'none':'';
     document.querySelectorAll('.dest-grid').forEach(function(g){
@@ -727,10 +731,10 @@ body.is-searching #route-nav.filter-bar { display:flex !important; }
       toggle=document.getElementById('hubJumpToggle'),
       list=document.getElementById('hubJumpList');
   if(!jump||!toggle||!list)return;
-  [].forEach.call(document.querySelectorAll('#route-nav .nav-link'),function(a){
-    var m=(a.getAttribute('onclick')||'').match(/getElementById\(['"]([^'"]+)['"]\)/);
-    if(!m)return;
-    var target=document.getElementById(m[1]), label=(a.textContent||'').trim();
+  [].forEach.call(document.querySelectorAll('.hub-chip[data-hub]'),function(btn){
+    var hubId=btn.getAttribute('data-hub');
+    var target=document.getElementById(hubId);
+    var label=(btn.textContent||'').trim();
     if(target){var c=target.querySelector('.hub-city'); if(c)label=label+' · '+c.textContent.trim();}
     var item=document.createElement('button');
     item.type='button'; item.className='hub-jump-item'; item.setAttribute('role','menuitem');
