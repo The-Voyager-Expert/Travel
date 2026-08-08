@@ -307,7 +307,8 @@
 /* 2026-08-08: Comment-only correction on the Read more chip. Its note still explained the #fffdf9 fill as "--c-next-bg against #f1ece3 is a two-value difference" - true when the panel was the report's #f1ece3, false the moment the panel moved onto --c-next-bg itself. The reason is now stated correctly: the chip sits ON the panel, the panel IS --c-next-bg, so a --c-next-bg fill would be no chip at all; #fffdf9 is what lifts it off. Same drift class as the retired-backpack comments purged earlier today - a comment that contradicts the code beside it is what feeds wrong values back into the next change. guide-style.css -> v126. CACHE to v327. */
 /* 2026-08-07: Stop hours — row spacing normalised. .tour-box/.ticket-box give every direct child margin-top:6px and the hours row added 6px of its own vertical padding on top, so its text sat 12px from the next row's while every other pair in the card sat at 6px. Outer margins now 0 and the following sibling's margin-top cancelled, so the padding provides the spacing and text-to-text rhythm is a uniform 6px. Verified on Melbourne, Boston, Rome, Big-Island. toolbar.js -> v208. CACHE to v328. */
 /* 2026-08-08: HOTEL_ALT_DATA['maui'] — added Grand Wailea and Fairmont Kea Lani as runner-up hotels, added Booking.com url field to all 4 Maui entries. toolbar.js -> v209. CACHE to v329. */
-var CACHE = 'travel-cache-v335';
+/* 2026-08-07: Stop hours — re-applies the owner-requested chevron + per-stop grouping that e3d4cb20 reverted. Both were direct owner instructions in session: "make this more obvious so people know these open bigger arrow" and, on Carmel Mission rendering two bands, "it is all over the place". The revert was a crib design call ("too heavy for the inline context"); the owner's instruction governs. Kept intact from that commit: the Oahu HOTEL_ALT_DATA urls fixing two FINAL GATE failures, and the guide-style.css floor. toolbar.js -> v214. CACHE to v336. */
+var CACHE = 'travel-cache-v336';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -315,7 +316,7 @@ var CACHE = 'travel-cache-v335';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 130, 'toolbar.js': 213, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 130, 'toolbar.js': 214, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
