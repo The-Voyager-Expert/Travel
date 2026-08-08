@@ -1403,6 +1403,63 @@
     }
   }());
 
+  /* ── History back / forward pills (mobile only, guide pages only) ────────
+     Replaces the native iOS/Android browser arrows that disappear in
+     standalone PWA mode. Back is bottom-left, Forward is bottom-right.
+     Forward starts hidden and reveals itself only when a popstate event fires
+     (in-page hash navigation went back), keeping it invisible until useful.
+     Only injected when history.length > 1 (something to go back to).        */
+  (function injectHistoryNavPills() {
+    if (!/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
+    if (history.length <= 1) return;
+
+    function build() {
+      var css = document.createElement('style');
+      css.textContent =
+        '#tve-nav-back,#tve-nav-fwd{position:fixed;bottom:24px;z-index:1400;' +
+        'display:inline-flex;align-items:center;height:34px;padding:0 14px;' +
+        'background:#fff;border:1.5px solid #c8a44a;border-radius:17px;' +
+        'font-size:13px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+        'box-shadow:0 2px 10px rgba(0,0,0,.14);cursor:pointer;' +
+        'font-family:inherit;-webkit-appearance:none;' +
+        'transition:color .15s,border-color .15s,box-shadow .15s}' +
+        '#tve-nav-back{left:16px}' +
+        '#tve-nav-fwd{right:16px;display:none}' +
+        '#tve-nav-back:hover,#tve-nav-fwd:hover{color:#b85c2a;border-color:#b85c2a;' +
+        'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
+        'body.tve-ham-open #tve-nav-back,' +
+        'body.tve-ham-open #tve-nav-fwd{display:none!important}' +
+        '@media(min-width:601px){#tve-nav-back,#tve-nav-fwd{display:none!important}}';
+      document.head.appendChild(css);
+
+      var backPill = document.createElement('button');
+      backPill.id = 'tve-nav-back';
+      backPill.textContent = '← Back';
+      backPill.addEventListener('click', function () { history.back(); });
+
+      var fwdPill = document.createElement('button');
+      fwdPill.id = 'tve-nav-fwd';
+      fwdPill.textContent = 'Forward →';
+      fwdPill.addEventListener('click', function () {
+        fwdPill.style.display = 'none';
+        history.forward();
+      });
+
+      document.body.appendChild(backPill);
+      document.body.appendChild(fwdPill);
+
+      window.addEventListener('popstate', function () {
+        fwdPill.style.display = 'inline-flex';
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', build);
+    } else {
+      build();
+    }
+  }());
+
   /* ── Arrows inside .overview-title: [‹] · title · [›] — real guides only ─── */
   /* Deferred to DOMContentLoaded: script runs at the top of <body>, before
      .overview-title exists in the DOM. querySelector would return null if run
