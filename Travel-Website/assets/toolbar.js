@@ -508,6 +508,12 @@
       '--badge-ok-bg:#0a200a;--badge-ok-text:#80cc80;--badge-ok-bd:#306030;' +
       '--c-page-bg:#1a1917;--c-card-bg:#2a2825;--c-card-shadow:0 2px 8px rgba(0,0,0,0.25);' +
       '--c-warm-bg:#242220;--c-brand-hover:#2e2a1e;' +
+      /* Pill palette — mirrors the dark block in guide-style.css. */
+      '--c-pill-bg:#2a2825;--c-pill-hover:#332f2a;--c-pill-active:#3d3830;' +
+      '--c-pill-text:#c8a060;--c-pill-bd:rgba(200,160,96,.30);' +
+      '--c-pill-bd-hover:rgba(200,160,96,.50);--c-pill-bd-active:rgba(200,160,96,.65);' +
+      '--c-action-text:#c8a060;--c-action-press:#3d3830;' +
+      '--c-float-bg:#2a2825;--c-float-bd:#7a6430;--c-float-text:#c8a060;' +
       '--c-text-primary:#e8e5e0;--c-text-muted:#999;--c-link:#5a9aee;' +
       '--c-next-bg:#222120;--c-next-border:#444;--c-skip-note:#777;' +
       '--c-index-bg:#1e1c1a;--c-index-border:#3a3730;' +
@@ -547,6 +553,12 @@
       '--badge-ok-bg:#e4f5e4;--badge-ok-text:#1a5c1a;--badge-ok-bd:#90cc90;' +
       '--c-page-bg:#f5f4f0;--c-card-bg:#fff;--c-card-shadow:0 2px 8px rgba(0,0,0,0.07);' +
       '--c-warm-bg:#fdf8f0;--c-brand-hover:#faefd8;' +
+      /* Pill palette — mirrors the :root defaults in guide-style.css. */
+      '--c-pill-bg:#fdf8f0;--c-pill-hover:#faefd8;--c-pill-active:#f5e8c8;' +
+      '--c-pill-text:#8a6c1a;--c-pill-bd:rgba(138,108,26,.25);' +
+      '--c-pill-bd-hover:rgba(138,108,26,.45);--c-pill-bd-active:rgba(138,108,26,.6);' +
+      '--c-action-text:#5a3c0e;--c-action-press:#e5ddc8;' +
+      '--c-float-bg:#ffffff;--c-float-bd:#c8a44a;--c-float-text:#8a6c1a;' +
       '--c-text-primary:#3d3a32;--c-text-muted:#555;--c-link:#2867c4;' +
       '--c-next-bg:#ede8db;--c-next-border:#bba070;--c-skip-note:#999;' +
       '--c-index-bg:#f0ede8;--c-index-border:#d8d4cc;' +
@@ -1318,8 +1330,8 @@
       css.textContent =
         '#tve-back-to-guide{position:fixed;bottom:24px;left:16px;z-index:1400;' +
         'display:inline-flex;align-items:center;height:34px;padding:0 14px;' +
-        'background:#fff;border:1.5px solid #c8a44a;border-radius:17px;' +
-        'font-size:13px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+        'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:17px;' +
+        'font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
         'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
         'transition:color .15s,border-color .15s,box-shadow .15s;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
@@ -1380,8 +1392,8 @@
       css.textContent =
         '#tve-back-to-byg{position:fixed;bottom:24px;left:16px;z-index:1400;' +
         'display:inline-flex;align-items:center;height:34px;padding:0 14px;' +
-        'background:#fff;border:1.5px solid #c8a44a;border-radius:17px;' +
-        'font-size:13px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+        'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:17px;' +
+        'font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
         'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
         'transition:color .15s,border-color .15s,box-shadow .15s;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
@@ -1418,8 +1430,8 @@
       css.textContent =
         '#tve-nav-back,#tve-nav-fwd{position:fixed;bottom:24px;z-index:1400;' +
         'display:inline-flex;align-items:center;height:34px;padding:0 14px;' +
-        'background:#fff;border:1.5px solid #c8a44a;border-radius:17px;' +
-        'font-size:13px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+        'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:17px;' +
+        'font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
         'box-shadow:0 2px 10px rgba(0,0,0,.14);cursor:pointer;' +
         'font-family:inherit;-webkit-appearance:none;' +
         'transition:color .15s,border-color .15s,box-shadow .15s}' +
@@ -3532,9 +3544,10 @@
     _injectVisitedToggle();
   }
 
-  /* ── Mark Stops — per-stop checkbox on every .stop-block. Clicking marks a
-     stop as visited: header text dims to 0.4 opacity, button shows ✓ in
-     terracotta. State is stored in localStorage as a JSON array of stop
+  /* ── Mark Stops — per-stop checkbox on every .stop-block. The circle carries
+     a faint ✓ when unchecked so the affordance is legible; clicking marks the
+     stop as visited: the circle fills solid terracotta with a white ✓ and the
+     header text dims to 0.4 opacity. State is stored in localStorage as a JSON array of stop
      indices keyed by city folder: tve-stops-{folder}. Saved state is applied
      on every load so marks persist across sessions. CSS in guide-style.css. ── */
   function _injectMarkStops() {
@@ -3575,9 +3588,15 @@
       var btn = document.createElement('span');
       btn.className = 'stop-mark-btn';
       btn.setAttribute('role', 'checkbox');
-      btn.setAttribute('aria-label', 'Mark stop as visited');
       btn.setAttribute('tabindex', '0');
       btn.textContent = '✓'; /* ✓ */
+
+      /* Label + tooltip state the action outright — an unlabelled circle gave
+         no clue what it did, and the dimmed header alone read as "disabled". */
+      function label(isDone) {
+        btn.setAttribute('aria-label', isDone ? 'Visited — click to unmark' : 'Mark stop as visited');
+        btn.setAttribute('title', isDone ? 'Visited — click to unmark' : 'Mark as visited');
+      }
 
       if (done[idx]) {
         sb.classList.add('stop-done');
@@ -3585,6 +3604,7 @@
       } else {
         btn.setAttribute('aria-checked', 'false');
       }
+      label(!!done[idx]);
 
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -3592,10 +3612,12 @@
           delete done[idx];
           sb.classList.remove('stop-done');
           btn.setAttribute('aria-checked', 'false');
+          label(false);
         } else {
           done[idx] = true;
           sb.classList.add('stop-done');
           btn.setAttribute('aria-checked', 'true');
+          label(true);
         }
         save();
       });
@@ -5615,10 +5637,18 @@
      to top on click. Appears on ALL pages tall enough to scroll (> 1.5×
      viewport). On guide pages sits above day-jump (bottom offset via
      guide-style.css); on non-guide pages sits at bottom:24px (web-travel-style.css).
-     Back-to-index pill is guide-only and injected separately below. */
-  function _injectScrollFab() {
-    if (document.documentElement.scrollHeight <= window.innerHeight * 1.5) return;
+     Back-to-index pill is guide-only and injected separately below.
 
+     The "tall enough" test is evaluated ON EVERY SCROLL, never once at
+     injection time. Bug 2026-08-07: it used to be a one-shot `return` guard at
+     DOMContentLoaded, which measured pages that build their own body from JS
+     while they were still empty — When-to-Go (852px at DCL → 26,785px final,
+     31 screens), Climate-Finder (1,005 → 14,066) and Budget-Guide (852 → 6,344)
+     therefore never got a FAB at all, and neither did Before-You-Go or
+     Sports-Calendar once a search rendered results. The button is now always
+     created; it is inert until the page is genuinely both tall and scrolled,
+     because its base CSS is opacity:0 + pointer-events:none until .visible. */
+  function _injectScrollFab() {
     var topBtn = document.createElement('button');
     topBtn.type = 'button';
     topBtn.className = 'tve-scroll-top';
@@ -5642,14 +5672,13 @@
       if (_pillByg) _pillByg.style.display = 'none';
     });
 
-    window.addEventListener('scroll', function () {
-      if (window.scrollY > 300) {
-        topBtn.classList.add('visible');
-      } else {
-        topBtn.classList.remove('visible');
-      }
-    }, { passive: true });
-
+    function _syncFab() {
+      var tall = document.documentElement.scrollHeight > window.innerHeight * 1.5;
+      topBtn.classList.toggle('visible', tall && window.scrollY > 300);
+    }
+    window.addEventListener('scroll', _syncFab, { passive: true });
+    window.addEventListener('resize', _syncFab, { passive: true });
+    _syncFab();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectScrollFab);
