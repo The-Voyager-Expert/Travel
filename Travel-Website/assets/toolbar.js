@@ -4041,8 +4041,10 @@
       { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html' }
     ] },
     'aracaju': { h: [
-      { name: 'Radisson Hotel Aracaju', note: 'Radisson brand — full-service spa, outdoor pool, 4 min walk to Aracaju Oceanarium, #1 on TripAdvisor in Aracaju' },
-      { name: 'Hotel da Costa by Nobile', note: 'Nobile Hotels — beachfront on Orla de Atalaia, outdoor pool with sea view, breakfast highly rated · 8.8 Booking.com' }
+      { name: 'Vidam Hotel Aracaju - Transamerica Collection', note: 'Transamerica brand — full-service spa, outdoor pool, near Aracaju Oceanarium on Orla de Atalaia · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/radisson-aracaju.html' },
+      { name: 'Hotel da Costa by Nobile', note: 'Nobile Hotels — beachfront on Orla de Atalaia, outdoor pool with sea view, breakfast highly rated · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/da-costa.html' },
+      { name: 'Celi Hotel Aracaju', note: 'Independent — Orla de Atalaia beachfront, Atlantic Ocean views, Maramar Restaurant, rooftop pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/celi-aracaju.html' },
+      { name: 'Quality Hotel Aracaju', note: 'Choice Hotels brand — semi-Olympic pool and spa, near Sergipe River and Beira-Mar Avenue · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/quality-aracaju.html' }
     ] },
     'arenal': { h: [
       { name: 'Nayara Springs', note: 'Small Luxury Hotels — adults-only, 35 private villas each with volcanic hot-spring plunge pool, Arenal Volcano views, 24-hour butler' },
@@ -4073,7 +4075,10 @@
       { name: 'W Austin', note: 'Marriott W brand — Downtown on Lavaca Street above ACL Live, rooftop pool with city views, AWAY spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/w-austin.html' }
     ] },
     'azores': { h: [
-      { name: 'Delta Hotels by Marriott Azores', note: 'Marriott family — ocean or mountain views, outdoor pool, 10-min from downtown Ponta Delgada · 9.2 Booking.com' }
+      { name: 'Delta Hotels by Marriott Azores', note: 'Marriott family — ocean or mountain views, outdoor pool, 10-min from downtown Ponta Delgada · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pt/delta-hotels-by-marriott-azores.html' },
+      { name: 'Grand Hotel Açores Atlântico', note: 'Independent — 5-star marina-facing landmark, heated indoor pool, 8 conference rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/acores-atlantico.html' },
+      { name: 'Hotel Talisman', note: 'Independent boutique — historic center Ponta Delgada, rooftop pool, park views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/pt/talisman.html' },
+      { name: 'Mercure Ponta Delgada Azores', note: 'Accor brand — central Ponta Delgada, modern amenities, highly rated WiFi and location · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pt/mercure-ponta-delgada-azores.html' }
     ] },
     'bahamas': { h: [
       { name: 'Courtyard by Marriott Nassau Downtown/Junkanoo Beach', note: 'Marriott family — Junkanoo Beach access, outdoor pool, downtown Nassau · 7.2 Booking.com' }
