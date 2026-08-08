@@ -3825,8 +3825,10 @@
       { name: 'Six Senses Paro', note: 'Six Senses brand — reimagined farmhouses and watchtowers in the Paro Valley, wellness spa, farm-to-table dining · 9.5 Booking.com' }
     ] },
     'big-island': { h: [
-      { name: 'Mauna Kea Beach Hotel, Autograph Collection', note: 'Marriott Autograph Collection — iconic 1965 Kohala Coast resort by Laurance Rockefeller, private beach, 2 championship golf courses · 9.1 Booking.com' },
-      { name: 'Mauna Lani, Auberge Resorts Collection', note: 'Auberge brand — Kohala Coast, private snorkel beach, adults-only infinity pool, Naupaka Spa in lava fields · 9.2 Booking.com' }
+      { name: 'Mauna Kea Beach Hotel, Autograph Collection', note: 'Marriott Autograph Collection — iconic 1965 Kohala Coast resort by Laurance Rockefeller, private beach, 2 championship golf courses · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/mauna-kea-beach.html' },
+      { name: 'Mauna Lani, Auberge Resorts Collection', note: 'Auberge brand — Kohala Coast, private snorkel beach, adults-only infinity pool, Naupaka Spa in lava fields · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/mauna-lani-auberge-resorts-collection.html' },
+      { name: 'Fairmont Orchid', note: 'IHG Luxury & Lifestyle brand — 32-acre Kohala Coast beachfront resort, oceanfront pool, Spa Without Walls, direct beach access · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-fairmont-orchid.html' },
+      { name: 'Hilton Waikoloa Village', note: 'Hilton brand — 62-acre lagoon resort with 3 pools, canal boat and monorail between buildings, dolphin interaction program · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-waikoloa-village.html' }
     ] },
     'bilbao': { h: [
       { name: 'Hotel Carlton Bilbao', note: 'Leading Hotels of the World — 1920s grand hotel near the old town, historic rooms where Hemingway and royalty stayed · 8.8 Booking.com' },
@@ -7119,17 +7121,19 @@
      scannable without changing a single chip: fill, border, radius, padding
      and font-size are all untouched — only the container gains group wrappers.
 
-     TWO HARD CONSTRAINTS, both load-bearing:
+     TWO THINGS TO KNOW BEFORE EDITING:
 
-     1. ORDER IS NEVER CHANGED. Pill order is hard-failed by the validator
-        (_OVERVIEW_PILL_CANONICAL_ORDER in validate_itinerary.py, per
-        Trip Overview.html §3). Every group below is therefore a CONTIGUOUS
-        RUN of that canonical order — chips are only ever partitioned, never
-        resorted. A chip whose anchor is unknown to GROUPS falls through to
-        the trailing catch-all, so a future pill can never vanish.
-        Consequence: ⭐ Michelin sits in "More in this guide" rather than with
-        the food chips, because canonical order places it at position 13.
-        Moving it would need a spec + fleet change, not a CSS change.
+     1. THE GROUPS ARE THEMATIC, AND THEY DO REORDER THE RENDERED ROW.
+        Owner decision 2026-08-07: the reader should see food together, transport
+        together, planning together — so ⭐ Michelin sits with the food chips even
+        though canonical order places it at position 13, and ✨ Claude Inspiration
+        sits under "Plan & do". The GUIDE HTML IS UNTOUCHED and still carries the
+        canonical order that _OVERVIEW_PILL_CANONICAL_ORDER (validate_itinerary.py)
+        hard-fails on — the regrouping is presentational and runtime-only, so that
+        check still sees, and still governs, the authored order. Never "fix" a
+        guide's HTML to match this rendering. A chip whose anchor is unknown to
+        GROUPS falls through to the trailing catch-all, so a future pill can never
+        silently vanish.
 
      2. MOBILE IS LEFT ENTIRELY ALONE. Below 601px the row is a glued 3-across
         grid whose rules use direct-child selectors and nth-child(3n+2) math
@@ -7138,11 +7142,12 @@
         restored on the way back down. Mobile renders byte-identical to before. */
   (function _groupExtrasPills() {
     var GROUPS = [
-      ['Plan',        ['weekly-closures', 'tours']],
-      ['Eat & drink', ['cappuccino', 'restaurants', 'downtown', 'local-tastes', 'food-delivery']],
-      ['Out & about', ['shows', 'getting-around', 'stations-near-hotel', 'day-trips-by-train', 'pickleball']],
-      ['More',        ['michelin', 'heads-up', 'claude-inspiration']],
-      ['Elsewhere',   null]   /* catch-all — must stay last */
+      ['Eat & drink',           ['cappuccino', 'restaurants', 'downtown', 'local-tastes',
+                                 'food-delivery', 'michelin']],
+      ['Get around',            ['getting-around', 'stations-near-hotel', 'day-trips-by-train']],
+      ['Plan & do',             ['weekly-closures', 'tours', 'shows', 'pickleball',
+                                 'heads-up', 'claude-inspiration']],
+      ['Elsewhere on the site', null]   /* catch-all — must stay last */
     ];
     var mq = window.matchMedia('(min-width: 601px)');
     var row = null, flat = null;
@@ -7238,6 +7243,87 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _init);
     } else { _init(); }
+  }());
+
+  /* ── Trip Overview day rows → left rail + soft stop list + stop count ──────
+     The day rows ship as one 15px run — "Day 1 · Stop · Stop · Stop" — with no
+     fixed left edge and no fixed right edge, so five rows of different lengths
+     read as five underlined sentences rather than one table. This splits each
+     row into three columns without touching a single guide's HTML:
+
+         [ DAY 1 ]  Chihuly Garden and Glass · Space Needle · …   [ 4 stops ]
+
+     Purely presentational, and applied at runtime — the guide HTML keeps its
+     canonical "Day N · stop · stop" single-string title, so every static check
+     that reads .overview-day-title (must start with "Day ", label-appears-once,
+     stop-count sync) sees exactly what it saw before.
+
+     Rows whose title does not match the canonical shape are LEFT ALONE rather
+     than half-transformed — a guide with an unexpected format degrades to the
+     old rendering instead of losing its stop names.
+
+     Train Days keep their full "🚆 Train Day · {Destination}" body and get no
+     stop count: per Trip Overview.html §2 a Train Day card carries no inline
+     stop list, and the validator's own count-sync skips them for that reason. */
+  (function _dayRowRail() {
+    var TITLE_RE = /^\s*(Day\s+\d+)\s*[·–—-]\s*([\s\S]+)$/;
+
+    function _stopCount(anchor) {
+      /* Count the real .stop-block elements in the day this row links to —
+         more truthful than counting separators in the title, which a stop name
+         containing a "·" would inflate. Falls back to the title segments. */
+      var href = anchor.getAttribute('href') || '';
+      if (href.charAt(0) === '#') {
+        var block = document.getElementById(href.slice(1));
+        if (block) {
+          var n = block.querySelectorAll('.stop-block').length;
+          if (n) return n;
+        }
+      }
+      return 0;
+    }
+
+    function _apply() {
+      var rows = document.querySelectorAll('.overview-day');
+      if (!rows.length) return;
+      [].forEach.call(rows, function(row) {
+        var title = row.querySelector('.overview-day-title');
+        if (!title || title.querySelector('.ovd-num')) return;   /* already done */
+        var m = TITLE_RE.exec(title.textContent);
+        if (!m) return;                                          /* unknown shape — leave it */
+
+        var label = m[1].trim();
+        var body  = m[2].trim();
+        var isTrainDay = body.indexOf('Train Day') !== -1;
+
+        var num = document.createElement('span');
+        num.className = 'ovd-num';
+        num.textContent = label;
+
+        var stops = document.createElement('span');
+        stops.className = 'ovd-stops';
+        stops.textContent = body;
+
+        title.textContent = '';
+        title.appendChild(num);
+        title.appendChild(stops);
+
+        if (!isTrainDay) {
+          var n = _stopCount(row);
+          if (n) {
+            var cnt = document.createElement('span');
+            cnt.className = 'ovd-count';
+            cnt.textContent = n + (n === 1 ? ' stop' : ' stops');
+            title.appendChild(cnt);
+          }
+        }
+        row.classList.add('tve-railed');
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _apply);
+    } else { _apply(); }
   }());
 
   /* ── Photo lightbox — guide pages only ────────────────────────────────────

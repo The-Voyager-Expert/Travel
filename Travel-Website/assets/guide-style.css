@@ -367,6 +367,39 @@ a:hover { text-decoration: underline; }
   transform: scale(.97) translateY(1px);
 }
 .overview-day-title      { color: var(--c-text-primary); font-weight: normal; font-size: var(--fs-overview-day-title); }
+/* Day-row rail — structure injected at runtime by toolbar.js _dayRowRail; the
+   guide HTML keeps its single-string "Day N · stop · stop" title, so every static
+   check that reads .overview-day-title is unaffected. Rows the script does not
+   recognise never get .tve-railed and keep the original rendering untouched.
+   The fixed-width rail is what gives five rows of different lengths one shared
+   left edge, and the right-aligned count gives them a shared right edge — the
+   pair is what turns the block from five sentences into a table. */
+.overview-day.tve-railed .overview-day-title {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.ovd-num {
+  flex: 0 0 58px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--c-brand);
+  white-space: nowrap;
+}
+.ovd-stops { flex: 1 1 auto; min-width: 0; color: #6f695d; }
+.ovd-count {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: #9a9284;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Zebra replaces the gold hairline: five gold underlines read as five separate
+   links, a faint alternating tint reads as one table. */
+.overview-day.tve-railed { border-bottom: none; }
+.overview-day.tve-railed:nth-of-type(even) { background: #fbf8f2; }
 .overview-day-num        { color: var(--c-text-primary); font-weight: normal; }
 .overview-day-stops      { color: var(--c-text-primary); font-size: var(--fs-overview-stops); line-height: 1.5; }
 /* Collapse/expand toggle — sits between TRIP OVERVIEW and Day 1 as its own row */
@@ -464,29 +497,25 @@ a:hover { text-decoration: underline; }
    radius, padding and font-size all still come from the rules above; grouping is
    layout-only. Group order mirrors the canonical pill order (Trip Overview.html §3),
    never a resort — see the comment block in toolbar.js.
-   Labels sit in a fixed-width LEFT RAIL rather than stacked above each run: a
-   stacked label costs a whole extra line per group and tripled the row height
-   (113px flat -> 379px). The rail keeps one line per group and gives the chips a
-   single shared left edge. */
+   Labels are STACKED above each run (owner decision 2026-08-07). A left rail was
+   tried first and read messy: every run ended at a different x, so the block had
+   no right edge, and a one-chip group left an orphaned line beside its label.
+   Stacking gives each group a clean block with its own left AND right edge.
+   The chips themselves keep the beige treatment they already had — fill, gold
+   border, 20px radius, padding, font-size all still come from the rules above.
+   Grouping is layout-only; do not restyle the chips here. */
 .overview-extras.tve-grouped { display: block; }
-.ov-grp {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 8px;
-}
+.ov-grp { margin-bottom: 14px; }
 .ov-grp:last-child { margin-bottom: 0; }
 .ov-grp-label {
-  flex: 0 0 88px;
-  text-align: right;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: .1em;
+  letter-spacing: .13em;
   text-transform: uppercase;
   color: #a49b8b;
-  white-space: nowrap;
+  margin-bottom: 7px;
 }
-.ov-grp-row { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.ov-grp-row { display: flex; flex-wrap: wrap; gap: 8px; }
 /* Export to Calendar + All Stops Map — match Read About pill visually:
    gold text, same border style/weight, same radius. The scoped
    .overview-extras .overview-extra-link rule would otherwise win with dark
@@ -2330,6 +2359,17 @@ div.train .train-time   { padding: 2px 0; }
   .claude-inspiration { padding: 12px 18px 20px; margin-bottom: 16px; }
 
   .overview-day        { padding: 9px 14px; }
+  /* Day rail on mobile: the desktop three-column form leaves the stop list only
+     ~155px of a 390px screen, so a 5-stop day wraps to six lines. Stack instead —
+     "DAY 4 … 5 stops" on its own header row, stop names full width beneath. */
+  .overview-day.tve-railed .overview-day-title {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 3px 8px;
+  }
+  .ovd-num   { flex: none; grid-column: 1; grid-row: 1; }
+  .ovd-count { grid-column: 2; grid-row: 1; align-self: center; }
+  .ovd-stops { grid-column: 1 / -1; grid-row: 2; }
 
   .stop-photos { flex-direction: column; }
   /* `flex: none` RESETS the desktop `flex: 1 1 0%`. Without this reset, tall

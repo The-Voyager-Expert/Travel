@@ -184,7 +184,8 @@
    site" strip are now MOBILE-ONLY — hidden on desktop (≥601px) via guide-style.css
    attribute-href media query. Pills stay in guide HTML (no per-guide edit). — guide-style.css min to 53, CACHE to v213.
    2026-08-04: Individual entry boxes site-wide — removed continuous-run merge, fit-content(720px) grid, tour/ticket-box width fit-content, internal stop spacing, day-header 1px border, chevron color, entry-body row gap. guide-style.css min to 54, CACHE to v215.
-   2026-08-07: Trip Overview section-nav chips grouped into labelled runs on desktop (.ov-grp CSS in guide-style.css; the toolbar.js half shipped in a66baef). Chip appearance unchanged, mobile glued grid untouched. guide-style.css min to 103, toolbar.js min to 191, CACHE to v293. */
+   2026-08-07: Trip Overview section-nav chips grouped into labelled runs on desktop (.ov-grp CSS in guide-style.css; the toolbar.js half shipped in a66baef). Chip appearance unchanged, mobile glued grid untouched. guide-style.css min to 103, toolbar.js min to 191, CACHE to v293.
+   2026-08-07: Trip Overview redesign — day rows get a DAY N rail, softened stop list and right-aligned stop count with zebra rows (toolbar.js _dayRowRail + .ovd-* CSS); section-nav chips regrouped into stacked labelled runs (Eat & drink · Get around · Plan & do · Elsewhere on the site) with the beige pill treatment unchanged. Both runtime-injected, zero guide HTML edits. guide-style.css min to 113, toolbar.js min to 204, CACHE to v313. */
 /* 2026-08-04: Best-Of prev/next arrows now insert after .page-intro-card (below the
    banner) instead of after .page-header — bumped toolbar.js min to 158, CACHE to v214. */
 /* 2026-08-04: Wikipedia row margin-bottom 12px → 6px (symmetric with margin-top, 2 less
@@ -287,7 +288,7 @@
 /* 2026-08-07: 🕵️ Scams & Traps moved to the bottom of the 🛡️ Safety dropdown (was second, right under Safety Guide). Owner request. One nav array feeds both the desktop flyout and the mobile hamburger, so the order moves on both surfaces in a single edit. toolbar.js -> v203. CACHE to v310. */
 /* 2026-08-07: Dark mode — four un-themed components, all the same root cause: a hardcoded light hex that never flipped. (1) --c-brand had no dark value, so the guide's primary accent (TRIP OVERVIEW, day headers, section titles, section left-borders, focus rings) stayed #8a6c1a at 2.97:1 on the dark card — now #c8a060, the gold the pills use, at 6.1:1; it is only ever a foreground, never a fill, so the flip is safe everywhere. (2) The global `a, a:visited` rule hardcoded #2867c4, so --c-link's dark value #5a9aee reached nothing and body links sat at 2.68:1 — now var(--c-link), same hex in light, and validate_itinerary's CANONICAL_LINK_BLUE check still passes because it resolves var() against the light :root. (3) The mobile hotel card pinned color:#8a6c1a !important, which beat the dark #ccc8c0 override — now var(--c-pill-text). (4) New --c-navbtn-bd / --c-navbtn-text for the prev/next chevrons, which rendered as white boxes. Sydney measures clean in dark via the new validate_dark_mode.py; light mode verified byte-identical by rendering both schemes before/after and diffing computed styles. guide-style.css -> v111, web-travel-style.css -> v12. CACHE to v311. */
 /* 2026-08-08: Open-right-now row — the "🕐 {City} · {time}" label now inks exactly like the "Open right now" pill beside it. It was the row's only un-matched element: --c-text-muted (#555) at the default weight 400, against the pill's --c-action-text (#5a3c0e) at 600, so on the warm card it read as a faint caption rather than the pill's counterpart — owner reported it as barely visible. Label picks up font-weight 600, color var(--c-action-text) and letter-spacing 0.01em; 12px and tabular-nums were already shared. Computed styles on Melbourne now diff clean across all four properties. Dark mode needs no override — --c-action-text already flips to #c8a060. guide-style.css -> v112. CACHE to v312. */
-var CACHE = 'travel-cache-v312';
+var CACHE = 'travel-cache-v313';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -295,7 +296,7 @@ var CACHE = 'travel-cache-v312';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 112, 'toolbar.js': 203, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 113, 'toolbar.js': 204, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
