@@ -3079,7 +3079,16 @@
       var names = txt.match(RE_DAYNM) || [];
       if (!names.length) {
         /* No day named — "Daily …" or a bare "Open 24/7" covers the whole week. */
-        return (RE_DAILY.test(txt) || val === '24h') ? { days: ALL.slice(), val: val } : null;
+        if (RE_DAILY.test(txt) || val === '24h') return { days: ALL.slice(), val: val };
+        /* A bare time range is the second half of a SPLIT-HOURS listing:
+           "Daily 9:00am - 12:00pm · 3:00pm - 6:00pm" names the day once and
+           lets the afternoon inherit it. Returning null here failed the whole
+           stop (69 stops across 46 guides), which left the authored 🏛️ line
+           on screen — the exact leak the 🏛️ ban names. Only the caller knows
+           which days came before, so hand it back as a continuation and let
+           the merge loop attach it. A bare "Closed" stays unreadable: there is
+           no sane way to append "shut" to a set of opening hours. */
+        return val === 'closed' ? null : { cont: true, val: val };
       }
       var key = function (n) { return IDX[n.toLowerCase().replace(/s$/, '')]; };
       if (names.length === 1) return { days: [key(names[0])], val: val };
@@ -3230,11 +3239,28 @@
       });
       if (!parts.length) return;
 
-      var week = [], bad = false;
+      var week = [], bad = false, prev = null;
       parts.forEach(function (p) {
         var seg = _seg(p);
         if (!seg) { bad = true; return; }
+        if (seg.cont) {
+          /* Split-hours continuation — inherit the previous segment's days and
+             APPEND, so a lunch-break listing reads as one day with two windows
+             rather than overwriting the morning. Appending to "closed" or "24h"
+             would be nonsense, and a continuation with nothing before it has no
+             days to inherit; both stay unreadable. */
+          if (!prev || prev.val === 'closed' || prev.val === '24h') { bad = true; return; }
+          var merged = prev.val + ', ' + seg.val;
+          /* Only days this segment's parent actually wrote are extended — a day
+             already claimed by an EARLIER segment keeps its own hours. Rewriting
+             prev.val to the merged string is what lets a third and fourth window
+             chain on (Dublin ships Sunday as 9–10:30, 12:45–2:30, 4:30–6). */
+          prev.days.forEach(function (d) { if (week[d] === prev.val) week[d] = merged; });
+          prev.val = merged;
+          return;
+        }
         seg.days.forEach(function (d) { if (week[d] === undefined) week[d] = seg.val; });
+        prev = seg;
       });
       /* Any segment we could not read → leave the stop entirely alone. A
          partially understood schedule is worse than the authored lines. */
@@ -6861,13 +6887,18 @@
       return h + mn / 60;
     }
     var _DAYS = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    /* One " · " segment → { inDay: covers TODAY, open: h falls inside it }, or
+       null when the shape is unrecognised. The two questions are kept apart
+       because a bare "3:00pm - 6:00pm" continuation carries no day of its own
+       and has to borrow the day of the segment before it — see _hoursOpen. */
     function _segOpen(seg, dow, h) {
       seg = seg.trim();
-      if (/open 24\/7/i.test(seg)) return true;
+      if (/open 24\/7/i.test(seg)) return { inDay: true, open: true };
       var daily = seg.match(/^daily\s+(\d+:\d+\s*[ap]m)\s*[-–]\s*(\d+:\d+\s*[ap]m)$/i);
       if (daily) {
         var o = _parseTimeVal(daily[1]), c = _parseTimeVal(daily[2]);
-        return o !== null && c !== null && h >= o && h < c;
+        if (o === null || c === null) return null;
+        return { inDay: true, open: h >= o && h < c };
       }
       var rng = seg.match(/^([a-z]+)\s*[-–]\s*([a-z]+)\s+(\d+:\d+\s*[ap]m)\s*[-–]\s*(\d+:\d+\s*[ap]m)$/i);
       if (rng) {
@@ -6875,19 +6906,43 @@
         var ed = _DAYS.indexOf(rng[2].toLowerCase());
         var o2 = _parseTimeVal(rng[3]), c2 = _parseTimeVal(rng[4]);
         if (sd < 0 || ed < 0 || o2 === null || c2 === null) return null;
-        var inDay = (sd <= ed) ? (dow >= sd && dow <= ed) : (dow >= sd || dow <= ed);
-        return inDay && h >= o2 && h < c2;
+        var inR = (sd <= ed) ? (dow >= sd && dow <= ed) : (dow >= sd || dow <= ed);
+        return { inDay: inR, open: inR && h >= o2 && h < c2 };
+      }
+      /* A single named day — "Friday 9:00am - 12:00pm". Never handled before,
+         which is why the Friday half of every Gulf listing read as noise. */
+      var one = seg.match(/^([a-z]+)\s+(\d+:\d+\s*[ap]m)\s*[-–]\s*(\d+:\d+\s*[ap]m)$/i);
+      if (one) {
+        var d1 = _DAYS.indexOf(one[1].toLowerCase());
+        var o3 = _parseTimeVal(one[2]), c3 = _parseTimeVal(one[3]);
+        if (d1 < 0 || o3 === null || c3 === null) return null;
+        return { inDay: dow === d1, open: dow === d1 && h >= o3 && h < c3 };
+      }
+      /* Bare range — the afternoon half of a split day. Its day is whatever the
+         previous segment named; _hoursOpen supplies it. */
+      var cont = seg.match(/^(\d+:\d+\s*[ap]m)\s*[-–]\s*(\d+:\d+\s*[ap]m)$/i);
+      if (cont) {
+        var o4 = _parseTimeVal(cont[1]), c4 = _parseTimeVal(cont[2]);
+        if (o4 === null || c4 === null) return null;
+        return { cont: true, open: h >= o4 && h < c4 };
       }
       return null;
     }
     function _hoursOpen(txt, dow, h) {
       if (!txt) return null;
       var segs = txt.split('\xb7');
-      var parsed = false;
+      var parsed = false, lastInDay = null;
       for (var i = 0; i < segs.length; i++) {
         var r = _segOpen(segs[i], dow, h);
-        if (r === true) return true;
-        if (r !== null) parsed = true;
+        if (r === null) continue;
+        /* A continuation only speaks about today if the segment it continues
+           did. Treating it as its own segment is what made a 4pm visit to a
+           "Daily 9:00am - 12:00pm · 3:00pm - 6:00pm" stop read as Closed. */
+        var inDay = r.cont ? lastInDay : r.inDay;
+        if (inDay === null) continue;
+        parsed = true;
+        if (inDay && r.open) return true;
+        if (!r.cont) lastInDay = r.inDay;
       }
       return parsed ? false : null;
     }
