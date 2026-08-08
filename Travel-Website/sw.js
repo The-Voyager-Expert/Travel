@@ -316,7 +316,8 @@
 /* 2026-08-08: Crete HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v217. CACHE to v341. */
 /* 2026-08-08: Bali HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v218. CACHE to v342. */
 /* 2026-08-08: Buenos Aires HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v219. CACHE to v343. */
-var CACHE = 'travel-cache-v343';
+/* 2026-08-08: Section-nav chips (Trip Overview row 2) — every chip is now one identical size with its label centred on both axes (owner rule 2026-08-08). Desktop: min-height:46px only equalised chips WITHIN a row, so a row carrying a two-line label ("Restaurants Near Hotel") stood visibly taller than the all-one-line row under it; grid-auto-rows:1fr in an indefinite-height grid resolves to the tallest row and hands that height to every row, so all chips match regardless of label length. justify-content flex-start → center plus text-align:center centres the icon+text line horizontally and puts a wrapped second line under the first (align-items:center already handled vertical). Mobile: dropped the :last-child:nth-child(3n+2) orphan span — it stretched a lone trailing chip across all 3 columns, rendering "Alt. Hotels" ~3× wider than its neighbours, which is the one thing the same-size rule forbids; a lone tile now keeps track width at the left of its row, matching desktop. Measured across Big-Island, Seoul, Buenos-Aires, Cape-Town, Crete at 320/360/375/393/601/768/1024/1440px: every chip identical W×H at every width, zero clipped labels. guide-style.css -> v133. CACHE to v344. */
+var CACHE = 'travel-cache-v344';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -324,7 +325,7 @@ var CACHE = 'travel-cache-v343';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 132, 'toolbar.js': 219, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 133, 'toolbar.js': 219, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

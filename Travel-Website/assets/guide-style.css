@@ -508,10 +508,22 @@ a:hover { text-decoration: underline; }
      viewport instead. */
   grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   gap: 8px;
+  /* Every row the same height (owner rule 2026-08-08). min-height alone only
+     equalised chips WITHIN a row — grid stretches items to their row, so a row
+     holding a two-line label ("Restaurants Near Hotel") sat visibly taller than
+     an all-one-line row below it. 1fr auto-rows in an indefinite-height grid
+     resolve to the tallest row and hand that same height to every other row, so
+     all chips end up one identical size regardless of label length. */
+  grid-auto-rows: 1fr;
 }
 .overview-extras:not(#ics-pill-row) .overview-extra-link {
   border-radius: 8px;
-  justify-content: flex-start;
+  /* Label centred on both axes (owner rule 2026-08-08) — justify-content centres
+     the icon+text flex line horizontally, text-align centres the second line of a
+     wrapped label under the first, align-items centres the line box vertically in
+     the stretched grid cell. */
+  justify-content: center;
+  text-align: center;
   /* Button proportions: a narrow track plus a floor on height, so a one-line and
      a two-line chip are the same size and the row reads as a set of buttons
      rather than a set of text links that happen to have borders. */
@@ -2524,10 +2536,11 @@ div.train .train-time   { padding: 2px 0; }
   /* Extras nav — uniform 3-across glued grid tiles (matches the site's mobile
      filter panels): equal-width cells, ~46px tall, centred, separators dropped. */
   .overview-extras { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
-  /* Orphan fix: the hidden <span>|</span> is always child 1, so section links start
-     at child 2. A lone last link therefore lands at DOM position 3n+2, not 3n+1.
-     Exclude #ics-pill-row (sibling with same class, 2-col grid) to avoid breaking it. */
-  .overview-extras:not(#ics-pill-row) > .overview-extra-link:last-child:nth-child(3n+2) { grid-column: span 3; }
+  /* Every tile is one identical size (owner rule 2026-08-08) — the old orphan fix
+     stretched a lone trailing chip across all 3 columns, so "Alt. Hotels" rendered
+     ~3× wider than every other chip. A lone tile at normal width now simply sits
+     at the left of its row, matching desktop, where a lone last chip is also left
+     at track width. Do not reinstate the span. */
   /* Chips are direct children of .overview-extras again (the grouped-run
      wrappers were retired 2026-08-08), so the glued 3-across grid and its
      nth-child orphan rule above apply unchanged. The desktop 3-column grid is
