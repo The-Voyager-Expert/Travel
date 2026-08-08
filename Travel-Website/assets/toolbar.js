@@ -2889,8 +2889,8 @@
            end: on desktop it read as trailing off into the middle of the page
            instead of stopping at the card edge. The hairline closes it. Same
            tint as .tve-ph-hr so the band, its divider and its panel agree. */
-        '.tve-ph{border-left:2.5px solid #b85c2a;' +
-        'border-right:1px solid rgba(184,92,42,.28);background:#fdf8f0;color:#3d3a32;' +
+        '.tve-ph{border-left:2.5px solid #bba070;' +
+        'border-right:1px solid rgba(187,160,112,.45);background:#fdf8f0;color:#6b5320;' +
         'font-weight:500;padding:6px 14px 6px 11.5px;border-radius:0;' +
         'margin:6px -14px 0;line-height:1.45;font-size:inherit;}' +
         /* Scoping to the card is what wins the specificity fight —
@@ -2904,8 +2904,19 @@
            so this is the common case, not an edge one: without it the band starts
            14px below the card's top edge where every plain first row starts at 8. */
         '.tour-box > .tve-ph-top,.ticket-box > .tve-ph-top{margin-top:0!important;}' +
-        /* Open-around-the-clock variant — the warm tan already used by transit banners */
-        '.tve-ph-24{border-left-color:#bba070!important;background:#f5f0e6!important;' +
+        /* Open-around-the-clock variant — SAME SKIN as every other band
+           (owner rule 2026-08-08). The 24h row used to be the only band with
+           its own colours: an #f5f0e6 fill on a .tour-box that is ITSELF
+           #f5f0e6, so it had no fill contrast at all and vanished into its own
+           card while the cream bands on neighbouring stops read as strips —
+           one kind of information rendered two different ways down a day.
+           Owner: "make sure these that are not toolbar also don't pass the
+           middle of the page and match color the same color". Every band now
+           shares one skin and the 24h distinction is carried by the label,
+           which already says "Open 24h". The rule is kept rather than deleted
+           because the class is still stamped in JS and
+           check_stop_hours_contract hard-fails a tve-ph-* class with no CSS. */
+        '.tve-ph-24{border-left-color:#bba070!important;background:#fdf8f0!important;' +
         'border-right-color:rgba(187,160,112,.45)!important;color:#6b5320!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
@@ -2920,15 +2931,20 @@
         '-webkit-user-select:none;user-select:none;}' +
         '.tve-ph-lbl{flex:1;}' +
         /* Chevron reads as a control, not punctuation. At 11px inline it was
-           near-invisible — nothing signalled that the row opened. 22px round chip
-           with a terracotta tint; also gives it a real tap target. Owner-requested
-           2026-08-07 ("make this more obvious so people know these open"). */
-        '.tve-ph-chv{font-size:15px;font-weight:700;color:#b85c2a;line-height:1;' +
+           near-invisible — nothing signalled that the row opened. 22px round chip;
+           also gives it a real tap target. Owner-requested 2026-08-07 ("make this
+           more obvious so people know these open"). Palette: the TAN family —
+           #6b5320 glyph in a #bba070 ring on the cream fill (owner picked option
+           G from the 2026-08-08 mockups). It was terracotta, which put a second
+           accent colour in a row whose rail is already the band's accent; tan is
+           the same family as the rail, so the chip reads as part of the band
+           rather than as a competing mark. Hover deepens the fill to #f5f0e6. */
+        '.tve-ph-chv{font-size:15px;font-weight:700;color:#6b5320;line-height:1;' +
         'display:inline-flex;align-items:center;justify-content:center;flex:none;' +
         'width:22px;height:22px;border-radius:50%;' +
-        'border:1px solid rgba(184,92,42,.38);background:rgba(184,92,42,.09);' +
+        'border:1px solid #bba070;background:#fdf8f0;' +
         'transition:transform .2s,background .15s;}' +
-        '.tve-ph-wrap:hover .tve-ph-chv{background:rgba(184,92,42,.20);}' +
+        '.tve-ph-wrap:hover .tve-ph-chv{background:#f5f0e6;}' +
         '.tve-ph-toggle[aria-expanded="true"] .tve-ph-chv{transform:rotate(90deg);}' +
         /* Expandable panel — absolute, so it floats OVER the rows beneath it.
            A hover trigger that pushed content down would reflow the page under
@@ -2940,9 +2956,9 @@
            right end and its foot were invisible and the schedule looked like it
            ran off the page. The shadow alone was not enough at the right edge. */
         '.tve-ph-panel{display:none;position:absolute;left:0;right:0;top:100%;z-index:6;' +
-        'border-left:2.5px solid #b85c2a;background:#fdf8f0;' +
-        'border-right:1px solid rgba(184,92,42,.28);' +
-        'border-bottom:1px solid rgba(184,92,42,.28);' +
+        'border-left:2.5px solid #bba070;background:#fdf8f0;' +
+        'border-right:1px solid rgba(187,160,112,.45);' +
+        'border-bottom:1px solid rgba(187,160,112,.45);' +
         'padding:0 14px 8px 11.5px;border-radius:0;' +
         'box-shadow:0 6px 16px rgba(61,58,50,.16);}' +
         '.tve-ph-panel.tve-ph-open{display:block;}' +
@@ -2953,7 +2969,7 @@
         '.tve-ph-wrap:hover .tve-ph-panel{display:block;}' +
         '.tve-ph-wrap:hover .tve-ph-chv{transform:rotate(90deg);}' +
         '}' +
-        '.tve-ph-hr{border:none;border-top:1px solid rgba(184,92,42,.22);margin:0 0 6px;}' +
+        '.tve-ph-hr{border:none;border-top:1px solid rgba(187,160,112,.45);margin:0 0 6px;}' +
         /* Schedule grid */
         '.tve-ph-grid{display:grid;grid-template-columns:5.5em 1fr;font-size:13px;}' +
         '.tve-ph-d{font-weight:600;padding:2px 8px 2px 0;color:#3d3a32;line-height:1.45;}' +
@@ -2962,17 +2978,21 @@
         '.tve-ph-24v{color:#6b5320!important;font-weight:600;}' +
         '.tve-ph-tag24{font-size:10px;font-weight:700;background:#f5f0e6;color:#6b5320;' +
         'border:1px solid #bba070;padding:0 3px;border-radius:3px;margin-right:4px;}' +
-        /* Today highlight — warm terracotta wash, applied to the day/time cells */
-        '.tve-ph-td{background:#f3e3d7;border-radius:3px 0 0 3px;padding-left:4px;}' +
-        '.tve-ph-tt{background:#f3e3d7;border-radius:0 3px 3px 0;padding-left:4px;}' +
-        '.tve-ph-now{font-size:10px;font-weight:700;color:#b85c2a;' +
+        /* Today highlight — the tan family's own wash (#f5f0e6, the palette's
+           --c-next-bg and the documented partner of the #bba070 rail), so the
+           one highlighted row inside the panel stays in the same family as the
+           rail, the divider and the chevron. It was the terracotta wash #f3e3d7,
+           left over from when the band was terracotta. */
+        '.tve-ph-td{background:#f5f0e6;border-radius:3px 0 0 3px;padding-left:4px;}' +
+        '.tve-ph-tt{background:#f5f0e6;border-radius:0 3px 3px 0;padding-left:4px;}' +
+        '.tve-ph-now{font-size:10px;font-weight:700;color:#6b5320;' +
         'text-transform:uppercase;letter-spacing:.05em;margin-left:4px;}' +
         /* Dark mode — data-theme="dark" */
         'html[data-theme="dark"] .tve-ph{background:#242220;border-left-color:#c8a060;' +
         'border-right-color:rgba(200,160,96,.28);color:#e8e5e0;}' +
-        'html[data-theme="dark"] .tve-ph-24{background:#2a2825!important;' +
-        'border-left-color:#7a6430!important;border-right-color:rgba(122,100,48,.55)!important;' +
-        'color:#c8a060!important;}' +
+        'html[data-theme="dark"] .tve-ph-24{background:#242220!important;' +
+        'border-left-color:#c8a060!important;border-right-color:rgba(200,160,96,.28)!important;' +
+        'color:#e8e5e0!important;}' +
         'html[data-theme="dark"] .tve-ph-chv{color:#c8a060;}' +
         'html[data-theme="dark"] .tve-ph-panel{background:#242220;border-left-color:#c8a060;' +
         'border-right-color:rgba(200,160,96,.28);border-bottom-color:rgba(200,160,96,.28);' +
@@ -2991,9 +3011,9 @@
         '@media(prefers-color-scheme:dark){' +
         'html:not([data-theme="light"]) .tve-ph{background:#242220;border-left-color:#c8a060;' +
         'border-right-color:rgba(200,160,96,.28);color:#e8e5e0;}' +
-        'html:not([data-theme="light"]) .tve-ph-24{background:#2a2825!important;' +
-        'border-left-color:#7a6430!important;border-right-color:rgba(122,100,48,.55)!important;' +
-        'color:#c8a060!important;}' +
+        'html:not([data-theme="light"]) .tve-ph-24{background:#242220!important;' +
+        'border-left-color:#c8a060!important;border-right-color:rgba(200,160,96,.28)!important;' +
+        'color:#e8e5e0!important;}' +
         'html:not([data-theme="light"]) .tve-ph-chv{color:#c8a060;}' +
         'html:not([data-theme="light"]) .tve-ph-panel{background:#242220;border-left-color:#c8a060;' +
         'border-right-color:rgba(200,160,96,.28);border-bottom-color:rgba(200,160,96,.28);' +
