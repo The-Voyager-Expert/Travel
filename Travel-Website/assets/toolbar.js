@@ -317,8 +317,9 @@
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: '💻 US Lounges' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: '💻 EU Lounges' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
-        { href: base + 'Trip-Essentials/Luggage-Storage.html',   text: '🧳 Luggage Storage' },
-        { href: base + 'Trip-Essentials/Trusted-Traveler.html',  text: '🛂 Global Entry & CLEAR' },
+        { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: '🧳 Luggage Storage' },
+        { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: '⏱️ Connection Times' },
+        { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
       ] },
     null,
@@ -4796,10 +4797,10 @@
       { name: 'L\'Auberge de Sedona', note: 'Independent luxury — Oak Creek canyon setting, cottage suites, farm-to-table Cress restaurant · 9.2 Booking.com' }
     ] },
     'seoul': { h: [
-      { name: 'The Shilla Seoul', note: 'Independent luxury — 23 acres of gardens on Namsan Hill, indoor pool, Korean contemporary luxury, flagship spa · 9.2 Booking.com' },
-      { name: 'Park Hyatt Seoul', note: 'Hyatt brand — Gangnam CBD, 24th-floor heated indoor infinity pool, Lounge on the Park panoramic bar · 9.1 Booking.com' },
-      { name: 'Four Seasons Hotel Seoul', note: 'Four Seasons brand — Jongno-gu near Gyeongbokgung, indoor and outdoor pools, Boccalino restaurant, full-service spa · 9.3 Booking.com' },
-      { name: 'Josun Palace, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — Gangnam district, rooftop pool and bar, Dosa restaurant, spa, Korean contemporary design · 9.2 Booking.com' }
+      { name: 'The Shilla Seoul', note: 'Independent luxury — 23 acres of gardens on Namsan Hill, indoor pool, Korean contemporary luxury, flagship spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/kr/the-shilla.html' },
+      { name: 'Park Hyatt Seoul', note: 'Hyatt brand — Gangnam CBD, 24th-floor heated indoor infinity pool, Lounge on the Park panoramic bar · 9.1 Booking.com', url: 'https://www.booking.com/hotel/kr/park-hyatt-seoul.html' },
+      { name: 'Four Seasons Hotel Seoul', note: 'Four Seasons brand — Jongno-gu near Gyeongbokgung, indoor and outdoor pools, Boccalino restaurant, full-service spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/kr/four-seasons-seoul.html' },
+      { name: 'Josun Palace, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — Gangnam district, rooftop pool and bar, Dosa restaurant, spa, Korean contemporary design · 9.2 Booking.com', url: 'https://www.booking.com/hotel/kr/josun-palace-a-luxury-collection-seoul-gangnam.html' }
     ] },
     'seville': { h: [
       { name: 'Hotel Alfonso XIII, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1928 Mudéjar-style royal guest house, courtyard pool, heart of historic quarter · 9.3 Booking.com' },
@@ -5688,6 +5689,238 @@
       xhr.send();
     }
 
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _run);
+    } else {
+      _run();
+    }
+  })();
+
+  /* ── In-guide currency converter — collapsed pill on the action row ────────
+     A 💱 Currency pill appended to #ics-pill-row that expands, in place, into a
+     two-field converter: US$ ⇄ local. Both fields are live inputs — editing
+     either rewrites the other — because a reader inside an itinerary needs the
+     conversion in both directions: budgeting outbound ("what is $60 here?") and
+     reading a price inbound ("the menu says ¥4,800").
+
+     Adds no data pipeline. The rate is the one Currency-Guide.html already
+     carries: update_currency_rates.py refreshes that page monthly and now emits
+     assets/currency_rates.json from the same country blocks in the same pass, so
+     page and pill cannot quote different numbers. Reading the JSON instead of
+     the page keeps the cost at ~9 KB rather than the 1,800-line guide.
+
+     Country resolution reuses assets/country_guides.json — already fetched and
+     sessionStorage-cached under tvecg by the "Also in [Country]" section, so on
+     a warm tab this feature costs one extra request, not two. Both sides of the
+     join are FOLDED (lowercase, accents stripped, underscores → spaces): the
+     Currency-Guide anchors are ASCII with underscores while country_guides.json
+     holds display strings, four of them all-caps or accented (Curaçao, MALTA,
+     PHILIPPINES, SOUTH AFRICA). Without the fold those four render no pill.
+
+     Renders nothing at all when the country is unknown or already on USD
+     (Ecuador, Puerto Rico, Turks and Caicos, United States) — a US$→US$ box is
+     noise. Like every fetch-backed feature it is invisible over file:// (§ 34). */
+  (function () {
+    if (!isRealGuide) return;
+
+    function _curFold(s) {
+      return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/_/g, ' ').trim().toLowerCase();
+    }
+
+    /* Amounts: whole numbers once past 100 — ¥1,578 not ¥1,578.59. */
+    function _curAmt(v) {
+      var dp = Math.abs(v) >= 100 ? 0 : 2;
+      return v.toLocaleString('en-US',
+        { minimumFractionDigits: dp, maximumFractionDigits: dp });
+    }
+
+    /* Reference rate: mirrors fmt_rate() in update_currency_rates.py exactly so
+       the pill's "US$1 ≈ …" line is byte-identical to the page's. */
+    function _curRate(r) {
+      if (r >= 100) return r.toLocaleString('en-US', { maximumFractionDigits: 0 });
+      if (r >= 1) return r.toLocaleString('en-US',
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return r.toFixed(3);
+    }
+
+    function _curJSON(key, file, cb) {
+      try {
+        var hit = sessionStorage.getItem(key);
+        /* setTimeout, not a bare cb(): a cache hit would otherwise resolve
+           SYNCHRONOUSLY inside this feature's own DOMContentLoaded handler, and
+           _extrasOutOfCard — registered later on that same event — had not yet
+           lifted #ics-pill-row out of .overview-section. The panel was inserted
+           beside the row's old position and then left behind inside the white
+           Trip Overview card when the row moved, on warm tabs only. Deferring by
+           a macrotask puts _build after the whole DOMContentLoaded dispatch, so
+           cold and warm loads land identically. */
+        if (hit) { var d = JSON.parse(hit); setTimeout(function () { cb(d); }, 0); return; }
+      } catch (e) {}
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', base + 'assets/' + file, true);
+      xhr.timeout = 6000;
+      xhr.onload = function () {
+        if (xhr.status < 200 || xhr.status >= 300) return;
+        try {
+          var data = JSON.parse(xhr.responseText);
+          try { sessionStorage.setItem(key, xhr.responseText); } catch (e) {}
+          cb(data);
+        } catch (e) {}
+      };
+      xhr.send();
+    }
+
+    function _build(cg, cur) {
+      if (document.getElementById('tve-cur-pill')) return;
+      var row = document.getElementById('ics-pill-row');
+      if (!row) return;
+
+      var country = cg && cg._by_slug && cg._by_slug[curr];
+      var c = country && cur && cur.rates && cur.rates[_curFold(country)];
+      if (!c || !c.rate || c.iso === 'USD') return;
+
+      var sym = c.sym || '';
+
+      /* ── Pill ── */
+      var pill = document.createElement('a');
+      pill.href = 'javascript:void(0)';
+      pill.className = 'overview-extra-link';
+      pill.id = 'tve-cur-pill';
+      pill.textContent = '💱 Currency';
+      pill.setAttribute('aria-expanded', 'false');
+      pill.setAttribute('aria-controls', 'tve-cur-panel');
+      pill.style.setProperty('flex', '1 1 0', 'important');
+      pill.style.setProperty('min-width', '0', 'important');
+      pill.style.setProperty('align-items', 'center', 'important');
+      pill.style.setProperty('justify-content', 'center', 'important');
+      pill.style.setProperty('text-align', 'center', 'important');
+
+      /* ── Panel — hidden until the pill is tapped ── */
+      var panel = document.createElement('div');
+      panel.className = 'tve-cur-panel';
+      panel.id = 'tve-cur-panel';
+      panel.hidden = true;
+
+      var fields = document.createElement('div');
+      fields.className = 'tve-cur-row';
+
+      function _field(label, aria) {
+        var wrap = document.createElement('label');
+        wrap.className = 'tve-cur-field';
+        var tag = document.createElement('span');
+        tag.className = 'tve-cur-sym';
+        tag.textContent = label;
+        var input = document.createElement('input');
+        input.className = 'tve-cur-in';
+        input.type = 'number';
+        input.min = '0';
+        input.step = 'any';
+        input.setAttribute('inputmode', 'decimal');
+        input.setAttribute('aria-label', aria);
+        wrap.appendChild(tag);
+        wrap.appendChild(input);
+        return { wrap: wrap, input: input };
+      }
+
+      var usd = _field('US$', 'Amount in US dollars');
+      var loc = _field(sym || c.iso, 'Amount in ' + c.name);
+      var eq = document.createElement('span');
+      eq.className = 'tve-cur-eq';
+      eq.textContent = '=';
+
+      fields.appendChild(usd.wrap);
+      fields.appendChild(eq);
+      fields.appendChild(loc.wrap);
+      panel.appendChild(fields);
+
+      /* Two-way binding. The `busy` latch stops the programmatic .value write
+         from re-entering through the other field's own input event, which would
+         round the number the reader is still typing out from under them. */
+      var busy = false;
+      function _bind(src, dst, factor) {
+        src.addEventListener('input', function () {
+          if (busy) return;
+          busy = true;
+          var n = parseFloat(src.value);
+          dst.value = (src.value === '' || isNaN(n)) ? '' : _curAmt(n * factor)
+            .replace(/,/g, '');   /* number inputs reject grouping separators */
+          busy = false;
+        });
+      }
+      _bind(usd.input, loc.input, c.rate);
+      _bind(loc.input, usd.input, 1 / c.rate);
+
+      usd.input.value = '10';
+      loc.input.value = _curAmt(10 * c.rate).replace(/,/g, '');
+
+      /* ── Reference line — the rate, its currency, and the way out ── */
+      var note = document.createElement('div');
+      note.className = 'tve-cur-note';
+      note.appendChild(document.createTextNode(
+        'US$1 ≈ ' + sym + _curRate(c.rate) + ' · ' + c.name + ' (' + c.iso + ')' +
+        (cur._as_of ? ' · rates as of ' + cur._as_of : '') + ' · '
+      ));
+      var more = document.createElement('a');
+      more.className = 'tve-cur-more';
+      more.href = base + 'Trip-Essentials/Currency-Guide.html#' + c.id;
+      more.textContent = 'Currency Guide ›';
+      note.appendChild(more);
+      panel.appendChild(note);
+
+      pill.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        /* Insurance against any future pass that relocates the row after build:
+           the panel must open directly beneath the pill it belongs to, not
+           wherever the row used to be. */
+        if (pill.parentNode && pill.parentNode.nextSibling !== panel) {
+          pill.parentNode.parentNode.insertBefore(panel, pill.parentNode.nextSibling);
+        }
+        var open = panel.hidden;
+        panel.hidden = !open;
+        pill.classList.toggle('tve-cur-on', open);
+        pill.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) usd.input.focus();
+      });
+
+      /* iOS does not reliably fire :active on touch — same shim the rest of the
+         action row uses so the pressed state shows. */
+      pill.addEventListener('touchstart', function () {
+        pill.classList.add('tve-pressed');
+        pill.style.setProperty('color', '#fff', 'important');
+        pill.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
+      }, { passive: true });
+      pill.addEventListener('touchend', function () {
+        setTimeout(function () {
+          pill.classList.remove('tve-pressed');
+          pill.style.removeProperty('color');
+          pill.style.removeProperty('-webkit-text-fill-color');
+        }, 300);
+      }, { passive: true });
+      pill.addEventListener('touchcancel', function () {
+        pill.classList.remove('tve-pressed');
+        pill.style.removeProperty('color');
+        pill.style.removeProperty('-webkit-text-fill-color');
+      }, { passive: true });
+
+      row.appendChild(pill);
+      /* Panel is a SIBLING of the row, not a child — #ics-pill-row is a flex
+         row on desktop and a 2-column grid on mobile; a block child would be
+         laid out as another pill in both. */
+      row.parentNode.insertBefore(panel, row.nextSibling);
+    }
+
+    function _run() {
+      _curJSON('tvecg', 'country_guides.json', function (cg) {
+        _curJSON('tvecur', 'currency_rates.json', function (cur) {
+          _build(cg, cur);
+        });
+      });
+    }
+
+    /* Waits for DOMContentLoaded even on a warm sessionStorage hit: #ics-pill-row
+       is built by _injectICSExport on that same event, and this listener is
+       registered later, so the row is always in the DOM by the time _build runs. */
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _run);
     } else {
