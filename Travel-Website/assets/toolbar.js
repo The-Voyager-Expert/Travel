@@ -346,6 +346,7 @@
     null,
     { group: '🛡️ Safety', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',      text: '🛡️ Safety Guide' },
+        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: '🕵️ Scams & Traps' },
         { href: base + 'Trip-Essentials/Vaccines.html',          text: '💉 Vaccines' },
         { href: base + 'Trip-Essentials/Tap-Water.html',         text: '🚰 Tap Water' },
         { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: '🛟 Travel Insurance' },
@@ -3579,11 +3580,19 @@
 
       /* Ensure flex layout — _injectStopDuration already sets it when a
          duration chip is present; set it here for stops without one. */
-      if (header.style.display !== 'flex') {
-        header.style.display = 'flex';
-        header.style.alignItems = 'center';
-        var nameEl = header.querySelector('.stop-name');
-        if (nameEl) nameEl.style.flex = '1';
+      header.style.display = 'flex';
+      header.style.alignItems = 'center';
+
+      /* The control sits against the stop name, not out on the right rail, so
+         it reads as part of the title. That means the NAME must size to its
+         own content — _injectStopDuration sets flex:1, which would swallow the
+         row and push the control back to the far right — and the control
+         carries margin-right:auto instead. It, not the name, is now the spacer
+         that keeps the duration chip, share and star pinned right. */
+      var nameEl = header.querySelector('.stop-name');
+      if (nameEl) {
+        nameEl.style.flex = '0 1 auto';
+        nameEl.style.minWidth = '0';
       }
 
       var btn = document.createElement('span');
@@ -3627,7 +3636,9 @@
         if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); btn.click(); }
       });
 
-      header.appendChild(btn);
+      /* Directly after the name — insertBefore(x, null) degrades to append. */
+      if (nameEl) header.insertBefore(btn, nameEl.nextSibling);
+      else header.appendChild(btn);
     });
   }
   if (document.readyState === 'loading') {
