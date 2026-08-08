@@ -1161,7 +1161,17 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   background: var(--c-next-bg);
   border-top: 1px solid #e4ddd0;
   border-radius: 0;
-  padding: 12px 15px;
+  /* 9.125px bottom, not 12: from the Read more pill down to the photo every
+     gap is ONE constant, 12.25px ink-edge to ink-edge (owner rule 2026-08-08,
+     "ALL the same from READ MORE TO THE PICTURE ALWAYS"). A text row carries
+     3.125px of half-leading inside its line box, so the padding either side of
+     it supplies 12.25 - 3.125 = 9.125. The box below adds nothing (its
+     padding-top is zeroed in the next rule) — the two blocks share one fill,
+     so splitting the gap across them would be invisible and only make the
+     arithmetic harder to check. Locked by check_stop_card_gap_constant. */
+  /* 6px bottom + the box's 3.125 top = the 9.125 outer half of the 12.25
+     constant. Split across both blocks so NEITHER is zero — see the box rule. */
+  padding: 12px 15px 6px;
 }
 /* Card below Wikipedia row — continues the panel rather than reverting to
    white, and takes enough top padding to clear the colour boundary. */
@@ -1170,7 +1180,13 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   margin-top: 0;
-  padding-top: 10px;
+  /* !important so it beats the unscoped 8px rule further down. */
+  /* NON-ZERO on purpose. Padding is what BLOCKS margin collapsing: with 0 here,
+     the inner margin-bottom:10px on .tour-meet's last child collapses out
+     through the box and reappears as a phantom 10px between the card and the
+     photo (measured on Götaplatsen, 22.38px against the 12.25 constant). Split
+     the 9.125 across both blocks rather than giving it all to one. */
+  padding-top: 3.125px !important;
 }
 /* Every box and the photo strip inside a stop that has a Read more row share
    the panel, so the card seals on the panel instead of on white. */
@@ -1242,11 +1258,23 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   margin-bottom: 0;
+  /* Mirror of the Read-more rule: the photo strip below pays the whole gap, so
+     the box adds nothing. !important beats the unscoped padding-bottom:8px. */
+  /* NON-ZERO on purpose. Padding is what BLOCKS margin collapsing: with 0 here,
+     the inner margin-bottom:10px on .tour-meet's last child collapses out
+     through the box and reappears as a phantom 10px between the card and the
+     photo (measured on Götaplatsen, 22.38px against the 12.25 constant). Split
+     the 9.125 across both blocks rather than giving it all to one. */
+  padding-bottom: 3.125px !important;
 }
 .stop-block > .stop-photos {
   background: var(--c-card-bg);
   border-radius: 0 0 4px 4px;
-  padding: 10px 14px 12px;
+  /* 9.125px above the image = 12.25 minus the 3.125 half-leading of the text
+     row that precedes it. Same constant as the Read-more end of the card. */
+  /* 6px above the image + the box's 3.125 bottom = 9.125; plus the 3.125
+     half-leading of the text row above = the 12.25 constant. */
+  padding: 6px 14px 12px;
   margin-top: 0;
 }
 
@@ -1418,6 +1446,9 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
 .ticket-box + .tour-box,
 .ticket-box + .ticket-box {
   margin-top: 0;
+  /* 3px each side + the two 3.125 half-leadings = the 12.25 constant. Both
+     stay non-zero so the rows' margins cannot collapse across the seam. */
+  padding-top: 3px !important;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -1426,6 +1457,7 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
 .ticket-box:has(+ .tour-box),
 .ticket-box:has(+ .ticket-box) {
   margin-bottom: 0;
+  padding-bottom: 3px !important;   /* pairs with the padding-top above */
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -1477,6 +1509,14 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   font-size: var(--fs-base);
   line-height: 1.55;
 }
+/* The rows INSIDE .tour-meet keep the base `.stop-row { margin: 10px 0 }`,
+   because the `.tour-box > div` override reaches direct children only. With no
+   padding on .tour-meet those 10px collapse straight out of it — 10px above,
+   pushing the meeting point off the card's 12.25px constant, and 10px below,
+   escaping through the box and landing between the card and the photo (22.38px
+   measured on Götaplatsen, against 12.25 everywhere else). The gap belongs to
+   .tour-meet's own margin, not to a row nested inside it. */
+.tour-meet > div       { margin-top: 0; margin-bottom: 0; }
 .tour-meet > div + div { margin-top: 2px; }
 .tour-meet a           { text-decoration: none; }
 .tour-meet a:hover     { text-decoration: underline; }
@@ -1575,6 +1615,10 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
    HTML shape: <div class="stop-photos stop-photos-empty"><em>No pictures found.</em></div>
    Override the flex row to block so the lone <em> sits as a normal text line,
    not a stretched flex item. Subdued italic keeps it visually subordinate. */
+/* The empty state is a PAINTED block, so its own top edge is what the reader
+   sees — there is no image inset below a transparent strip. It therefore needs
+   the 6px the photo strip's padding-top supplies in the normal case, as margin. */
+.stop-photos.stop-photos-empty { margin-top: 6px; }
 .stop-photos.stop-photos-empty {
   display: block;
   font-style: italic;
@@ -2696,6 +2740,13 @@ div.train .train-time   { padding: 2px 0; }
   .next-tram,
   .next-metro,
   .warn { padding: 10px 12px; }
+  /* .tour-meet is in that list for its horizontal padding only. Its 10px of
+     VERTICAL padding pushed the meeting-point text 10px inside its own box, so
+     on mobile every gap touching it measured 22.13 / 22.38 against the card's
+     12.25 constant. It is also the one element in the list that is not a box:
+     its own spec (see .tour-meet above) says it "renders as just-another-row",
+     and a row has no vertical padding. */
+  .tour-meet { padding-top: 0; padding-bottom: 0; }
   /* On mobile, allow transit banners to wrap naturally — desktop enforces nowrap. */
   .next,
   .next-tram,
