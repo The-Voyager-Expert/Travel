@@ -2884,7 +2884,13 @@
            6px padding is INSIDE the slab and is not spacing between rows; zeroing
            the margins to "keep text-to-text at 6px" is what left the tinted band
            glued to the link above it and to the ⚠️/📍 line under it. */
-        '.tve-ph{border-left:2.5px solid #b85c2a;background:#fdf8f0;color:#3d3a32;' +
+        /* RIGHT EDGE — the band's cream (#fdf8f0) is within a hair of the page
+           background (#faf7f2), so with only a left rail the slab had no visible
+           end: on desktop it read as trailing off into the middle of the page
+           instead of stopping at the card edge. The hairline closes it. Same
+           tint as .tve-ph-hr so the band, its divider and its panel agree. */
+        '.tve-ph{border-left:2.5px solid #b85c2a;' +
+        'border-right:1px solid rgba(184,92,42,.28);background:#fdf8f0;color:#3d3a32;' +
         'font-weight:500;padding:6px 14px 6px 11.5px;border-radius:0;' +
         'margin:6px -14px 0;line-height:1.45;font-size:inherit;}' +
         /* Scoping to the card is what wins the specificity fight —
@@ -2900,7 +2906,7 @@
         '.tour-box > .tve-ph-top,.ticket-box > .tve-ph-top{margin-top:0!important;}' +
         /* Open-around-the-clock variant — the warm tan already used by transit banners */
         '.tve-ph-24{border-left-color:#bba070!important;background:#f5f0e6!important;' +
-        'color:#6b5320!important;}' +
+        'border-right-color:rgba(187,160,112,.45)!important;color:#6b5320!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
         '.tve-ph-src{display:none!important;}' +
@@ -2929,8 +2935,14 @@
            the cursor every time it crossed a stop while scrolling. */
         /* Same 11.5px left padding as the toggle, so the schedule's day column
            starts on the card's icon column instead of 2px off it. */
+        /* Right + bottom hairlines for the same reason as .tve-ph above: the
+           open panel is a cream slab on a near-cream page, so without them its
+           right end and its foot were invisible and the schedule looked like it
+           ran off the page. The shadow alone was not enough at the right edge. */
         '.tve-ph-panel{display:none;position:absolute;left:0;right:0;top:100%;z-index:6;' +
         'border-left:2.5px solid #b85c2a;background:#fdf8f0;' +
+        'border-right:1px solid rgba(184,92,42,.28);' +
+        'border-bottom:1px solid rgba(184,92,42,.28);' +
         'padding:0 14px 8px 11.5px;border-radius:0;' +
         'box-shadow:0 6px 16px rgba(61,58,50,.16);}' +
         '.tve-ph-panel.tve-ph-open{display:block;}' +
@@ -2956,11 +2968,14 @@
         '.tve-ph-now{font-size:10px;font-weight:700;color:#b85c2a;' +
         'text-transform:uppercase;letter-spacing:.05em;margin-left:4px;}' +
         /* Dark mode — data-theme="dark" */
-        'html[data-theme="dark"] .tve-ph{background:#242220;border-left-color:#c8a060;color:#e8e5e0;}' +
+        'html[data-theme="dark"] .tve-ph{background:#242220;border-left-color:#c8a060;' +
+        'border-right-color:rgba(200,160,96,.28);color:#e8e5e0;}' +
         'html[data-theme="dark"] .tve-ph-24{background:#2a2825!important;' +
-        'border-left-color:#7a6430!important;color:#c8a060!important;}' +
+        'border-left-color:#7a6430!important;border-right-color:rgba(122,100,48,.55)!important;' +
+        'color:#c8a060!important;}' +
         'html[data-theme="dark"] .tve-ph-chv{color:#c8a060;}' +
         'html[data-theme="dark"] .tve-ph-panel{background:#242220;border-left-color:#c8a060;' +
+        'border-right-color:rgba(200,160,96,.28);border-bottom-color:rgba(200,160,96,.28);' +
         'box-shadow:0 6px 16px rgba(0,0,0,.5);}' +
         'html[data-theme="dark"] .tve-ph-hr{border-top-color:rgba(200,160,96,.25);}' +
         'html[data-theme="dark"] .tve-ph-d{color:#e8e5e0;}' +
@@ -2974,11 +2989,14 @@
         'html[data-theme="dark"] .tve-ph-now{color:#c8a060;}' +
         /* Dark mode — prefers-color-scheme fallback (first visit, no data-theme stamped) */
         '@media(prefers-color-scheme:dark){' +
-        'html:not([data-theme="light"]) .tve-ph{background:#242220;border-left-color:#c8a060;color:#e8e5e0;}' +
+        'html:not([data-theme="light"]) .tve-ph{background:#242220;border-left-color:#c8a060;' +
+        'border-right-color:rgba(200,160,96,.28);color:#e8e5e0;}' +
         'html:not([data-theme="light"]) .tve-ph-24{background:#2a2825!important;' +
-        'border-left-color:#7a6430!important;color:#c8a060!important;}' +
+        'border-left-color:#7a6430!important;border-right-color:rgba(122,100,48,.55)!important;' +
+        'color:#c8a060!important;}' +
         'html:not([data-theme="light"]) .tve-ph-chv{color:#c8a060;}' +
         'html:not([data-theme="light"]) .tve-ph-panel{background:#242220;border-left-color:#c8a060;' +
+        'border-right-color:rgba(200,160,96,.28);border-bottom-color:rgba(200,160,96,.28);' +
         'box-shadow:0 6px 16px rgba(0,0,0,.5);}' +
         'html:not([data-theme="light"]) .tve-ph-hr{border-top-color:rgba(200,160,96,.25);}' +
         'html:not([data-theme="light"]) .tve-ph-d{color:#e8e5e0;}' +
@@ -3788,7 +3806,11 @@
 
   /* ── Alternative hotel recommendations — injected before #also-on-this-site on
      guide pages that have a HOTEL_ALT_DATA entry. Runner-up hotels from the same
-     search process used to pick the guide hotel; added during each guide build.  */
+     search process used to pick the guide hotel; added during each guide build.
+     Every slug carries a MINIMUM of 4 hotels — there is NO maximum; list every
+     alternative that clears the quality bar. Each hotel needs name + note + url
+     (Booking.com property page). Enforced by the FINAL GATE in
+     validate_itinerary.py and fleet-wide by check_post_ci_sections.py.          */
   var HOTEL_ALT_DATA = {
     /* entries added per guide during build — see Hotels & Rentals - On Demand.html */
     'granada': { h: [
@@ -3815,8 +3837,10 @@
       { name: 'InterContinental Melbourne The Rialto', note: 'IHG brand — 1891 Rialto buildings on Collins Street, indoor pool, Alluvial Bar in the heritage atrium, central CBD · 8.9 Booking.com' }
     ] },
     'abu-dhabi': { h: [
-      { name: 'Emirates Palace Mandarin Oriental', note: 'Mandarin Oriental brand — iconic West Corniche, 1km private beach, pool and spa · 9.1 Booking.com' },
-      { name: 'Four Seasons Hotel Abu Dhabi at Al Maryah Island', note: 'Four Seasons brand — Al Maryah Island, rooftop pool with city views, near The Galleria · 9.2 Booking.com' }
+      { name: 'Emirates Palace Mandarin Oriental', note: 'Mandarin Oriental brand — iconic West Corniche, 1km private beach, pool and spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ae/emirates-palace.html' },
+      { name: 'Four Seasons Hotel Abu Dhabi at Al Maryah Island', note: 'Four Seasons brand — Al Maryah Island, rooftop pool with city views, near The Galleria · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ae/four-seasons-abu-dhabi-at-al-maryah-island.html' },
+      { name: 'Conrad Abu Dhabi Etihad Towers', note: 'Hilton Conrad brand — Etihad Towers on the Corniche, infinity pool, private beach area, spa with steam room · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ae/conrad-abu-dhabi-etihad-towers.html' },
+      { name: 'Park Hyatt Abu Dhabi Hotel and Villas', note: 'Hyatt brand — beachfront on Saadiyat Island, outdoor pool, tennis courts, full-service spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ae/park-hyatt-abu-dhabi-and-villas.html' }
     ] },
     'aix-en-provence': { h: [
       { name: 'Le Pigonnet', note: 'Esprit de France — landscaped garden, outdoor pool, views of Mont Sainte-Victoire · 9.1 Booking.com' },

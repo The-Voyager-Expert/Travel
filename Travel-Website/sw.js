@@ -317,7 +317,8 @@
 /* 2026-08-08: Bali HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v218. CACHE to v342. */
 /* 2026-08-08: Buenos Aires HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v219. CACHE to v343. */
 /* 2026-08-08: Section-nav chips (Trip Overview row 2) — every chip is now one identical size with its label centred on both axes (owner rule 2026-08-08). Desktop: min-height:46px only equalised chips WITHIN a row, so a row carrying a two-line label ("Restaurants Near Hotel") stood visibly taller than the all-one-line row under it; grid-auto-rows:1fr in an indefinite-height grid resolves to the tallest row and hands that height to every row, so all chips match regardless of label length. justify-content flex-start → center plus text-align:center centres the icon+text line horizontally and puts a wrapped second line under the first (align-items:center already handled vertical). Mobile: dropped the :last-child:nth-child(3n+2) orphan span — it stretched a lone trailing chip across all 3 columns, rendering "Alt. Hotels" ~3× wider than its neighbours, which is the one thing the same-size rule forbids; a lone tile now keeps track width at the left of its row, matching desktop. Measured across Big-Island, Seoul, Buenos-Aires, Cape-Town, Crete at 320/360/375/393/601/768/1024/1440px: every chip identical W×H at every width, zero clipped labels. guide-style.css -> v133. CACHE to v344. */
-var CACHE = 'travel-cache-v344';
+/* 2026-08-08: Stop hours — the band and its open panel now close on the right (owner rule 2026-08-08). Both carried a 2.5px terracotta rail on the left and nothing on the right, and their cream fill (#fdf8f0) sits within a hair of the page background (#faf7f2): on desktop the slab therefore had no visible end, reading as if the row and the dropdown trailed off into the middle of the page rather than stopping at the card edge — the card's own beige body ends there but the band's cream does not announce it. .tve-ph and .tve-ph-panel take border-right:1px rgba(184,92,42,.28) — the same tint as .tve-ph-hr, so band, divider and panel agree — and the panel takes a matching border-bottom so the open schedule terminates as a closed box instead of relying on the box-shadow, which was too soft to read at the right edge. The 24h variant gets the tan equivalent rgba(187,160,112,.45) to match its #bba070 rail, and all four dark-mode blocks (data-theme and the prefers-color-scheme fallback, band and panel) get rgba(200,160,96,.28) / rgba(122,100,48,.55). box-sizing:border-box is global in guide-style.css, so the hairline is absorbed by the padding and the full-bleed width _phFit() computes is unchanged — verified at 1440px on Berlin: band and panel still measure the card's exact 1280px. toolbar.js -> v220. CACHE to v345. */
+var CACHE = 'travel-cache-v345';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -325,7 +326,7 @@ var CACHE = 'travel-cache-v344';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 133, 'toolbar.js': 219, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 133, 'toolbar.js': 220, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
