@@ -4614,8 +4614,10 @@
       { name: 'Hotel Hermitage Monte-Carlo', note: 'SBM brand — Belle Époque landmark, heated outdoor pool, Vistamar Mediterranean restaurant · 9.2 Booking.com' }
     ] },
     'montevideo': { h: [
-      { name: 'Radisson Montevideo Victoria Plaza Hotel', note: 'Radisson brand — Plaza Independencia landmark tower, outdoor pool, panoramic city views · 8.3 Booking.com' },
-      { name: 'Cottage Hotel Montevideo', note: 'Independent boutique — Pocitos neighborhood, curated art, quiet residential atmosphere · 9.1 Booking.com' }
+      { name: 'Radisson Montevideo Victoria Plaza Hotel', note: 'Radisson brand — Plaza Independencia landmark tower, outdoor pool, panoramic city views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/uy/radisson-montevideo-victoria-plaza.html' },
+      { name: 'Cottage Hotel Montevideo', note: 'Independent boutique — Pocitos neighborhood, curated art, quiet residential atmosphere · 9.1 Booking.com', url: 'https://www.booking.com/hotel/uy/cottage-puerto-buceo.html' },
+      { name: 'Hyatt Centric Montevideo', note: 'Hyatt brand — La Rambla oceanfront boulevard, indoor pool, beachfront location · 8.9 Booking.com', url: 'https://www.booking.com/hotel/uy/hyatt-centric-montevideo.html' },
+      { name: 'Esplendor by Wyndham Montevideo Cervantes', note: 'Wyndham brand — Art Deco landmark, rooftop terrace with city views, indoor pool · 8.1 Booking.com', url: 'https://www.booking.com/hotel/uy/esplendor-cervantes-montevideo.html' }
     ] },
     'montreal': { h: [
       { name: 'Ritz-Carlton, Montréal', note: 'Ritz-Carlton brand — 1912 Sherbrooke Street landmark, spa with indoor pool, Maison Boulud gastronomic dining · 9.3 Booking.com' },
