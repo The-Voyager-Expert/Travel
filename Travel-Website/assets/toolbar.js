@@ -2855,33 +2855,44 @@
       var _phCss = document.createElement('style');
       _phCss.id = 'tve-ph-css';
       _phCss.textContent =
+        /* ── Palette ──────────────────────────────────────────────────────────
+           Site tokens only — no green, no blue. The guide palette is warm:
+           --c-warm-bg #fdf8f0 is "the single shared background — all section
+           cards, boxes, banners", #b85c2a is the brand terracotta, and the
+           transit-banner pair (--c-next-bg #f5f0e6 / --c-next-border #bba070)
+           is the one other warm tone already in use. So:
+             terracotta rail = a specific schedule
+             tan-gold rail   = open around the clock
+           Dark mode uses the palette's own warm gold #c8a060, which the tokens
+           declare is "only ever a foreground — never a fill", so it is used for
+           rails, text and borders and never as a background. */
         /* Base row */
-        '.tve-ph{border-left:2.5px solid #2d6a4f;background:#eef7f1;color:#1a4a34;' +
+        '.tve-ph{border-left:2.5px solid #b85c2a;background:#fdf8f0;color:#3d3a32;' +
         'font-weight:500;padding:6px 10px;margin-bottom:6px;border-radius:0 3px 3px 0;' +
         'line-height:1.45;font-size:inherit;}' +
-        /* 24h variant */
-        '.tve-ph-24{border-left-color:#2980b9!important;background:#e8f4fd!important;' +
-        'color:#1a5276!important;}' +
+        /* Open-around-the-clock variant — the warm tan already used by transit banners */
+        '.tve-ph-24{border-left-color:#bba070!important;background:#f5f0e6!important;' +
+        'color:#6b5320!important;}' +
+        /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
+           filter can still read its textContent. */
+        '.tve-ph-src{display:none!important;}' +
         /* Toggle (multi-day) — wrapped with the panel so hover covers both */
         '.tve-ph-wrap{position:relative;margin-bottom:6px;}' +
         '.tve-ph-toggle{display:flex!important;align-items:center;gap:7px;cursor:pointer;' +
         'border-radius:0 3px 0 0!important;margin-bottom:0!important;' +
         '-webkit-user-select:none;user-select:none;}' +
         '.tve-ph-lbl{flex:1;}' +
-        '.tve-ph-chv{font-size:11px;color:#2d6a4f;transition:transform .2s;' +
+        '.tve-ph-chv{font-size:11px;color:#b85c2a;transition:transform .2s;' +
         'display:inline-block;line-height:1;}' +
         '.tve-ph-toggle[aria-expanded="true"] .tve-ph-chv{transform:rotate(90deg);}' +
         /* Expandable panel — absolute, so it floats OVER the rows beneath it.
            A hover trigger that pushed content down would reflow the page under
            the cursor every time it crossed a stop while scrolling. */
         '.tve-ph-panel{display:none;position:absolute;left:0;right:0;top:100%;z-index:6;' +
-        'border-left:2.5px solid #2d6a4f;background:#eef7f1;' +
+        'border-left:2.5px solid #b85c2a;background:#fdf8f0;' +
         'padding:0 10px 8px;border-radius:0 0 3px 0;' +
         'box-shadow:0 6px 16px rgba(61,58,50,.16);}' +
         '.tve-ph-panel.tve-ph-open{display:block;}' +
-        /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
-           filter can still read its textContent. */
-        '.tve-ph-src{display:none!important;}' +
         /* Hover expand — pointer devices only. Touch screens report hover:none
            and fall through to the tap handler, so a phone never lands in a
            stuck hover state it cannot clear. */
@@ -2889,52 +2900,54 @@
         '.tve-ph-wrap:hover .tve-ph-panel{display:block;}' +
         '.tve-ph-wrap:hover .tve-ph-chv{transform:rotate(90deg);}' +
         '}' +
-        '.tve-ph-hr{border:none;border-top:1px solid rgba(45,106,79,.2);margin:0 0 6px;}' +
+        '.tve-ph-hr{border:none;border-top:1px solid rgba(184,92,42,.22);margin:0 0 6px;}' +
         /* Schedule grid */
         '.tve-ph-grid{display:grid;grid-template-columns:5.5em 1fr;font-size:13px;}' +
-        '.tve-ph-d{font-weight:600;padding:2px 8px 2px 0;color:#1a4a34;line-height:1.45;}' +
-        '.tve-ph-t{padding:2px 0;color:#1a4a34;line-height:1.45;}' +
+        '.tve-ph-d{font-weight:600;padding:2px 8px 2px 0;color:#3d3a32;line-height:1.45;}' +
+        '.tve-ph-t{padding:2px 0;color:#3d3a32;line-height:1.45;}' +
         '.tve-ph-cl{color:#9a9088!important;font-style:italic;}' +
-        '.tve-ph-24v{color:#1a5276!important;font-weight:600;}' +
-        '.tve-ph-tag24{font-size:10px;font-weight:700;background:#e8f4fd;color:#1a5276;' +
-        'border:1px solid #2980b9;padding:0 3px;border-radius:3px;margin-right:4px;}' +
-        /* Today highlight (applied as direct classes on day/time cells) */
-        '.tve-ph-td{background:#d8f0e3;border-radius:3px 0 0 3px;padding-left:4px;}' +
-        '.tve-ph-tt{background:#d8f0e3;border-radius:0 3px 3px 0;padding-left:4px;}' +
-        '.tve-ph-now{font-size:10px;font-weight:700;color:#2d6a4f;' +
+        '.tve-ph-24v{color:#6b5320!important;font-weight:600;}' +
+        '.tve-ph-tag24{font-size:10px;font-weight:700;background:#f5f0e6;color:#6b5320;' +
+        'border:1px solid #bba070;padding:0 3px;border-radius:3px;margin-right:4px;}' +
+        /* Today highlight — warm terracotta wash, applied to the day/time cells */
+        '.tve-ph-td{background:#f3e3d7;border-radius:3px 0 0 3px;padding-left:4px;}' +
+        '.tve-ph-tt{background:#f3e3d7;border-radius:0 3px 3px 0;padding-left:4px;}' +
+        '.tve-ph-now{font-size:10px;font-weight:700;color:#b85c2a;' +
         'text-transform:uppercase;letter-spacing:.05em;margin-left:4px;}' +
         /* Dark mode — data-theme="dark" */
-        'html[data-theme="dark"] .tve-ph{background:#1a2e22;border-left-color:#52b788;color:#a3d5b8;}' +
-        'html[data-theme="dark"] .tve-ph-24{background:#0d2133!important;' +
-        'border-left-color:#2980b9!important;color:#7ec8e3!important;}' +
-        'html[data-theme="dark"] .tve-ph-chv{color:#52b788;}' +
-        'html[data-theme="dark"] .tve-ph-panel{background:#1a2e22;border-left-color:#52b788;' +
+        'html[data-theme="dark"] .tve-ph{background:#242220;border-left-color:#c8a060;color:#e8e5e0;}' +
+        'html[data-theme="dark"] .tve-ph-24{background:#2a2825!important;' +
+        'border-left-color:#7a6430!important;color:#c8a060!important;}' +
+        'html[data-theme="dark"] .tve-ph-chv{color:#c8a060;}' +
+        'html[data-theme="dark"] .tve-ph-panel{background:#242220;border-left-color:#c8a060;' +
         'box-shadow:0 6px 16px rgba(0,0,0,.5);}' +
-        'html[data-theme="dark"] .tve-ph-hr{border-top-color:rgba(82,183,136,.2);}' +
-        'html[data-theme="dark"] .tve-ph-d{color:#a3d5b8;}' +
-        'html[data-theme="dark"] .tve-ph-t{color:#a3d5b8;}' +
-        'html[data-theme="dark"] .tve-ph-24v{color:#7ec8e3!important;}' +
-        'html[data-theme="dark"] .tve-ph-tag24{background:#0d2133;color:#7ec8e3;' +
-        'border-color:#2980b9;}' +
+        'html[data-theme="dark"] .tve-ph-hr{border-top-color:rgba(200,160,96,.25);}' +
+        'html[data-theme="dark"] .tve-ph-d{color:#e8e5e0;}' +
+        'html[data-theme="dark"] .tve-ph-t{color:#e8e5e0;}' +
+        'html[data-theme="dark"] .tve-ph-cl{color:#999!important;}' +
+        'html[data-theme="dark"] .tve-ph-24v{color:#c8a060!important;}' +
+        'html[data-theme="dark"] .tve-ph-tag24{background:#2a2825;color:#c8a060;' +
+        'border-color:#7a6430;}' +
         'html[data-theme="dark"] .tve-ph-td,' +
-        'html[data-theme="dark"] .tve-ph-tt{background:#1e3d2a;}' +
-        'html[data-theme="dark"] .tve-ph-now{color:#52b788;}' +
+        'html[data-theme="dark"] .tve-ph-tt{background:#3d3830;}' +
+        'html[data-theme="dark"] .tve-ph-now{color:#c8a060;}' +
         /* Dark mode — prefers-color-scheme fallback (first visit, no data-theme stamped) */
         '@media(prefers-color-scheme:dark){' +
-        'html:not([data-theme="light"]) .tve-ph{background:#1a2e22;border-left-color:#52b788;color:#a3d5b8;}' +
-        'html:not([data-theme="light"]) .tve-ph-24{background:#0d2133!important;' +
-        'border-left-color:#2980b9!important;color:#7ec8e3!important;}' +
-        'html:not([data-theme="light"]) .tve-ph-chv{color:#52b788;}' +
-        'html:not([data-theme="light"]) .tve-ph-panel{background:#1a2e22;border-left-color:#52b788;' +
+        'html:not([data-theme="light"]) .tve-ph{background:#242220;border-left-color:#c8a060;color:#e8e5e0;}' +
+        'html:not([data-theme="light"]) .tve-ph-24{background:#2a2825!important;' +
+        'border-left-color:#7a6430!important;color:#c8a060!important;}' +
+        'html:not([data-theme="light"]) .tve-ph-chv{color:#c8a060;}' +
+        'html:not([data-theme="light"]) .tve-ph-panel{background:#242220;border-left-color:#c8a060;' +
         'box-shadow:0 6px 16px rgba(0,0,0,.5);}' +
-        'html:not([data-theme="light"]) .tve-ph-hr{border-top-color:rgba(82,183,136,.2);}' +
-        'html:not([data-theme="light"]) .tve-ph-d{color:#a3d5b8;}' +
-        'html:not([data-theme="light"]) .tve-ph-t{color:#a3d5b8;}' +
-        'html:not([data-theme="light"]) .tve-ph-24v{color:#7ec8e3!important;}' +
-        'html:not([data-theme="light"]) .tve-ph-tag24{background:#0d2133;color:#7ec8e3;border-color:#2980b9;}' +
+        'html:not([data-theme="light"]) .tve-ph-hr{border-top-color:rgba(200,160,96,.25);}' +
+        'html:not([data-theme="light"]) .tve-ph-d{color:#e8e5e0;}' +
+        'html:not([data-theme="light"]) .tve-ph-t{color:#e8e5e0;}' +
+        'html:not([data-theme="light"]) .tve-ph-cl{color:#999!important;}' +
+        'html:not([data-theme="light"]) .tve-ph-24v{color:#c8a060!important;}' +
+        'html:not([data-theme="light"]) .tve-ph-tag24{background:#2a2825;color:#c8a060;border-color:#7a6430;}' +
         'html:not([data-theme="light"]) .tve-ph-td,' +
-        'html:not([data-theme="light"]) .tve-ph-tt{background:#1e3d2a;}' +
-        'html:not([data-theme="light"]) .tve-ph-now{color:#52b788;}' +
+        'html:not([data-theme="light"]) .tve-ph-tt{background:#3d3830;}' +
+        'html:not([data-theme="light"]) .tve-ph-now{color:#c8a060;}' +
         '}';
       (document.head || document.documentElement).appendChild(_phCss);
     }
