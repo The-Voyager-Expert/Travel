@@ -4684,8 +4684,10 @@
       { name: 'Hotel Continental Oslo', note: 'Independent — Stortingsgaten near the National Theatre, Theatercaféen brasserie, acclaimed art collection, 155 rooms · 9.0 Booking.com' }
     ] },
     'oxford': { h: [
-      { name: 'Belmond Le Manoir aux Quat\'Saisons', note: 'Belmond brand — Raymond Blanc\'s two-Michelin-star retreat in Great Milton, 32 rooms, kitchen garden · 9.7 Booking.com' },
-      { name: 'Macdonald Randolph Hotel', note: 'Macdonald Hotels — 1866 Neo-Gothic facing the Ashmolean, Spires spa, afternoon tea tradition · 8.9 Booking.com' }
+      { name: 'Le Manoir aux Quat\'Saisons, A Belmond Hotel', note: 'Belmond brand — Raymond Blanc\'s two-Michelin-star retreat in Great Milton, 32 rooms, kitchen garden · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gb/belmond-le-manoir-aux-quat-39-saisons.html' },
+      { name: 'The Randolph Hotel Oxford, a Graduate by Hilton', note: 'Hilton Graduate brand — 1866 Neo-Gothic landmark facing the Ashmolean, Spires spa, afternoon tea tradition · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gb/randolph-hotel.html' },
+      { name: 'Malmaison Oxford', note: 'Independent boutique — converted 19th-century prison, distinctive Grade II listed architecture, Brasserie and bar in the castle courtyard · 8.3 Booking.com', url: 'https://www.booking.com/hotel/gb/malmaison-oxford.html' },
+      { name: 'Old Bank Hotel', note: 'Independent boutique 5-star — Oxford High Street, views of university spires, Quod restaurant and terrace, 43 rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gb/the-old-bank.html' }
     ] },
     'palawan': { h: [
       { name: 'Amanpulo', note: 'Aman brand — Pamalican private island, 40 casitas, crystal-clear lagoon, seaplane or charter access · 9.7 Booking.com' },
