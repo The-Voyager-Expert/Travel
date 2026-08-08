@@ -3,17 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>
-/* iOS back-to-guide pill fix — strip the incoming #Country deep-link BEFORE the
-   matching <div class="country-block" id="Country"> parses, so iOS Safari never
-   performs a native on-load fragment jump. That native jump drops the compositor
-   layer of the fixed "← Back to {City}" pill (toolbar.js #tve-back-to-guide),
-   leaving the reader with no visible route back to the guides on mobile. The
-   country is re-scrolled with scrollIntoView() on load (safe — never touches the
-   hash). This is the ONLY reason Currency/Plug differ from the other pill pages,
-   which have no element id matching their incoming #City fragment. Do NOT remove. */
-(function(){try{var h=location.hash;if(h&&h.length>1){window.__tveDeep=decodeURIComponent(h.slice(1));history.replaceState(null,'',location.pathname+location.search);}}catch(e){}}());
-</script>
 <link rel="stylesheet" href="../assets/web-travel-style.css">
 <title>World Currency Guide</title>
 <style>
@@ -31,20 +20,27 @@
 .index-table th:last-child, .index-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 .index-table .sym-col { text-align: right; }
 .index-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border,#d8d4cc); border-radius: 8px; overflow: hidden; }
-.index-table tbody td { font-size: var(--fs-body,14px); padding: 9px 14px; color: var(--text); box-shadow: inset 0 -1px 0 var(--border2,#e6e2da); transition: border-color .1s ease, box-shadow .12s ease, transform .08s ease; }
+.index-table tbody td { font-size: var(--fs-body,14px); padding: 9px 14px; color: var(--text); box-shadow: inset 0 -1px 0 var(--border2,#e6e2da); transition: box-shadow .1s ease; }
 .index-table tbody tr:last-child td { box-shadow: none; }
-.index-table tbody td:first-child { font-weight: 600; border-left: 3px solid transparent; }
-.index-table tbody td:last-child { white-space: nowrap; font-weight: 700; color: #5C3D11; border-right: 3px solid transparent; }
+.index-table tbody td:first-child { font-weight: 600; }
+.index-table tbody td:last-child { white-space: nowrap; font-weight: 700; color: #5C3D11; }
 .index-table tbody tr { cursor: pointer; background: var(--surface,#fff); }
-/* Variant B — accent bars only; press deepens bars + nudges row down 1px. */
-.index-table tbody tr:hover td { box-shadow: inset 0 -1px 0 var(--rust,#b85c2a); }
-.index-table tbody tr:hover td:first-child { border-left-color: var(--rust,#b85c2a); }
-.index-table tbody tr:hover td:last-child { border-right-color: var(--rust,#b85c2a); }
-.index-table tbody tr:active td { box-shadow: inset 0 -1px 0 #7a3b1e, inset 0 3px 6px rgba(0,0,0,.16); transform: translateY(1px); }
-.index-table tbody tr:active td:first-child { border-left-color: #7a3b1e; }
-.index-table tbody tr:active td:last-child { border-right-color: #7a3b1e; }
+/* Full terracotta box outline on hover/press — box-shadow, not border-color:
+   with border-collapse:collapse a row's top border shares its edge with the
+   row above's bottom border, so a plain border-color hover loses that edge
+   unpredictably. box-shadow paints per-cell and never collapses with a
+   neighbor, so all four sides show reliably every time. */
+.index-table tbody tr:hover td { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a; }
+.index-table tbody tr:hover td:first-child { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a, inset 3px 0 0 #b85c2a; }
+.index-table tbody tr:hover td:last-child { box-shadow: inset 0 2px 0 #b85c2a, inset 0 -2px 0 #b85c2a, inset -3px 0 0 #b85c2a; }
+/* Press "sink": a plain top-to-bottom gradient, not a blurred box-shadow —
+   a blur fades near every edge of a cell, producing seams between columns.
+   A linear-gradient is identical in every column at a given row height. */
+.index-table tbody tr:active td { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e; background-image: linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.03)); }
+.index-table tbody tr:active td:first-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset 3px 0 0 #7a3b1e; }
+.index-table tbody tr:active td:last-child { box-shadow: inset 0 2px 0 #7a3b1e, inset 0 -2px 0 #7a3b1e, inset -3px 0 0 #7a3b1e; }
 .index-table tbody td a { color: var(--text); text-decoration: none; display: block; }
-.index-table tbody td a:hover { color: var(--accent,#8a6c1a); text-decoration: underline; }
+.index-table tbody td a:hover { color: var(--accent,#8a6c1a); }
 .index-table tbody tr.idx-hide { display: none; }
 #cur-search { display: block; margin: 0 auto 14px; }
 .content-wrap { max-width: none; margin: 0 auto; padding: 0 32px; }
@@ -87,17 +83,18 @@ html { scroll-behavior: smooth; }
 }
 </style>
 <link rel="stylesheet" href="../assets/mobile.css">
+<script>(function(){try{var h=location.hash;if(h&&h.length>1){window.__tveDeep=decodeURIComponent(h.slice(1));history.replaceState(null,'',location.pathname+location.search);}}catch(e){}}());</script>
 </head>
 <body>
 
-<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-updated="2026-08-07"></div>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-updated="2026-08-08"></div>
 <script src="../assets/toolbar.js?v=103"></script>
 
 <div class="index-section">
   <div class="site-header">
     <h1 class="site-title">WORLD CURRENCY GUIDE</h1>
   </div>
-  <input id="cur-search" type="search" placeholder="Country or currency" aria-label="Search by country or currency" autocomplete="off" spellcheck="false" class="search-input">
+  <input id="cur-search" type="search" class="search-input" placeholder="Country or currency" aria-label="Search by country or currency" autocomplete="off" spellcheck="false">
   <div id="cur-noresult">No country matches that search.</div>
   <table class="index-table">
     <colgroup><col style="width:28%"><col style="width:40%"><col style="width:12%"><col style="width:20%"></colgroup>
@@ -107,7 +104,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Argentina">Argentina</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Argentine Peso <span class="cur-iso">ARS</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">AR$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,497</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,498</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Aruba">Aruba</a></td>
@@ -125,7 +122,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Austria">Austria</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Bahamas">Bahamas</a></td>
@@ -143,13 +140,13 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Belgium">Belgium</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Bhutan">Bhutan</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Bhutanese Ngultrum <span class="cur-iso">BTN</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Nu</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">95.26</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">95.24</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Brazil">Brazil</a></td>
@@ -173,7 +170,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Chile">Chile</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Chilean Peso <span class="cur-iso">CLP</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">CL$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">914</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">916</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#China">China</a></td>
@@ -191,7 +188,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Croatia">Croatia</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Curacao">Curaçao</a></td>
@@ -203,13 +200,13 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Czech_Republic">Czech Republic</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Czech Koruna <span class="cur-iso">CZK</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Kč</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">21.02</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">21.01</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Denmark">Denmark</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Danish Krone <span class="cur-iso">DKK</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">6.47</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">6.46</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Ecuador">Ecuador</a></td>
@@ -227,19 +224,19 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Estonia">Estonia</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Finland">Finland</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#France">France</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#French_Polynesia">French Polynesia</a></td>
@@ -257,49 +254,49 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Germany">Germany</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Greece">Greece</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Hong_Kong">Hong Kong</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Hong Kong Dollar <span class="cur-iso">HKD</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">HK$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">7.84</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">7.85</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Hungary">Hungary</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Hungarian Forint <span class="cur-iso">HUF</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Ft</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">316</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">315</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Iceland">Iceland</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Icelandic Króna <span class="cur-iso">ISK</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">123</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">124</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Indonesia">Indonesia</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Indonesian Rupiah <span class="cur-iso">IDR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Rp</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">17,936</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">17,863</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Ireland">Ireland</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Italy">Italy</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Japan">Japan</a></td>
@@ -317,49 +314,49 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Laos">Laos</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Lao Kip <span class="cur-iso">LAK</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₭</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">22,409</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">22,334</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Luxembourg">Luxembourg</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Maldives">Maldives</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Maldivian Rufiyaa <span class="cur-iso">MVR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Rf</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">15.44</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">15.45</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Malta">Malta</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Mexico">Mexico</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Mexican Peso <span class="cur-iso">MXN</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">17.22</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">17.15</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Monaco">Monaco</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Montenegro">Montenegro</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Morocco">Morocco</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Moroccan Dirham <span class="cur-iso">MAD</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">DH</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.32</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.31</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Nepal">Nepal</a></td>
@@ -371,7 +368,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Netherlands">Netherlands</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#New_Zealand">New Zealand</a></td>
@@ -383,7 +380,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Norway">Norway</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Norwegian Krone <span class="cur-iso">NOK</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.54</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.50</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Oman">Oman</a></td>
@@ -401,19 +398,19 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Philippines">Philippines</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Philippine Peso <span class="cur-iso">PHP</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₱</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">60.81</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">60.86</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Poland">Poland</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Polish Złoty <span class="cur-iso">PLN</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">zł</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.73</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">3.72</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Portugal">Portugal</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Puerto_Rico">Puerto Rico</a></td>
@@ -431,7 +428,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Seychelles">Seychelles</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Seychellois Rupee <span class="cur-iso">SCR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">SCR</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">14.49</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">14.58</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Singapore">Singapore</a></td>
@@ -449,25 +446,25 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Slovenia">Slovenia</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#South_Africa">South Africa</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">South African Rand <span class="cur-iso">ZAR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">R</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">16.34</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">16.17</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#South_Korea">South Korea</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">South Korean Won <span class="cur-iso">KRW</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₩</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,423</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">1,412</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Spain">Spain</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Euro <span class="cur-iso">EUR</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">€</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.867</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.866</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Sri_Lanka">Sri Lanka</a></td>
@@ -479,31 +476,31 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Sweden">Sweden</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Swedish Krona <span class="cur-iso">SEK</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">kr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.51</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">9.48</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Switzerland">Switzerland</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Swiss Franc <span class="cur-iso">CHF</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">Fr</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.812</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.809</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Taiwan">Taiwan</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">New Taiwan Dollar <span class="cur-iso">TWD</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">NT$</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">32.21</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">32.20</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Thailand">Thailand</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Thai Baht <span class="cur-iso">THB</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">฿</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">33.09</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">33.00</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Turkey">Turkey</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Turkish Lira <span class="cur-iso">TRY</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₺</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">47.65</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">47.71</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Turks_and_Caicos">Turks and Caicos</a></td>
@@ -521,7 +518,7 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_Kingdom">United Kingdom</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Pound Sterling <span class="cur-iso">GBP</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">£</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.743</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">0.742</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#United_States">United States</a></td>
@@ -533,13 +530,13 @@ html { scroll-behavior: smooth; }
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Uruguay">Uruguay</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Uruguayan Peso <span class="cur-iso">UYU</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">$U</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">40.23</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">40.24</td>
     </tr>
 <tr>
       <td style="padding:5px 12px;font-size:var(--fs-body);font-weight:600;color:var(--text);"><a href="#Vietnam">Vietnam</a></td>
       <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);">Vietnamese Dong <span class="cur-iso">VND</span></td>
       <td class="sym-col" style="padding:5px 8px;font-size:var(--fs-body);">₫</td>
-      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">26,148</td>
+      <td style="padding:5px 12px;font-size:var(--fs-body);color:var(--text);white-space:nowrap;">26,187</td>
     </tr>
     </tbody>
   </table>
@@ -548,7 +545,7 @@ html { scroll-behavior: smooth; }
 <div class="content-wrap">
 <div class="region-section">
   <div class="region-header">Europe</div>
-<div class="country-block" id="Austria" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Austria" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Austria</span>
     <span class="hsep">|</span>
@@ -560,12 +557,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Salzburg · Vienna</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Belgium" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Belgium" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Belgium</span>
     <span class="hsep">|</span>
@@ -577,12 +574,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Bruges · Brussels</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Croatia" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Croatia" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Croatia</span>
     <span class="hsep">|</span>
@@ -594,12 +591,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Dubrovnik · Split</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     <div class="cur-note">Adopted the euro in 2023.</div>
   </div>
 </div>
-<div class="country-block" id="Montenegro" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Montenegro" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Montenegro</span>
     <span class="hsep">|</span>
@@ -611,12 +608,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Kotor</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     <div class="cur-note">Uses the euro without EU membership.</div>
   </div>
 </div>
-<div class="country-block" id="Czech_Republic" data-rate="21.015863" data-sym="Kč">
+<div class="country-block" id="Czech_Republic" data-rate="21.01074" data-sym="Kč">
   <div class="country-header">
     <span class="country-name">Czech Republic</span>
     <span class="hsep">|</span>
@@ -628,12 +625,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Prague</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Kč21.02</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Kč21.02</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Kč21.01</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Kč21.01</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Denmark" data-rate="6.471948" data-sym="kr">
+<div class="country-block" id="Denmark" data-rate="6.463267" data-sym="kr">
   <div class="country-header">
     <span class="country-name">Denmark</span>
     <span class="hsep">|</span>
@@ -645,12 +642,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Copenhagen</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr6.47</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr6.47</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr6.46</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr6.46</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Estonia" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Estonia" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Estonia</span>
     <span class="hsep">|</span>
@@ -662,12 +659,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Tallinn</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Finland" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Finland" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Finland</span>
     <span class="hsep">|</span>
@@ -679,12 +676,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Helsinki</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="France" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="France" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">France</span>
     <span class="hsep">|</span>
@@ -696,12 +693,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Aix-en-Provence · Annecy · Bordeaux · Cannes · Colmar · Lille · Lyon · Marseille · Nice · Paris · Strasbourg</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Georgia" data-rate="2.619117" data-sym="₾">
+<div class="country-block" id="Georgia" data-rate="2.619874" data-sym="₾">
   <div class="country-header">
     <span class="country-name">Georgia</span>
     <span class="hsep">|</span>
@@ -718,7 +715,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Germany" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Germany" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Germany</span>
     <span class="hsep">|</span>
@@ -730,12 +727,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Berlin · Cologne · Frankfurt · Hamburg · Marktoberdorf · Munich · Stuttgart</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Greece" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Greece" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Greece</span>
     <span class="hsep">|</span>
@@ -747,12 +744,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Athens · Corfu · Crete · Mykonos · Rhodes · Santorini · Zakynthos</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Hungary" data-rate="316.141023" data-sym="Ft">
+<div class="country-block" id="Hungary" data-rate="314.943603" data-sym="Ft">
   <div class="country-header">
     <span class="country-name">Hungary</span>
     <span class="hsep">|</span>
@@ -764,12 +761,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Budapest</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Ft316</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Ft316</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Ft315</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Ft315</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Iceland" data-rate="122.9106" data-sym="kr">
+<div class="country-block" id="Iceland" data-rate="123.50853" data-sym="kr">
   <div class="country-header">
     <span class="country-name">Iceland</span>
     <span class="hsep">|</span>
@@ -781,12 +778,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Reykjavik</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr123</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr123</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr124</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr124</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Ireland" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Ireland" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Ireland</span>
     <span class="hsep">|</span>
@@ -798,12 +795,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Dublin</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Italy" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Italy" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Italy</span>
     <span class="hsep">|</span>
@@ -815,12 +812,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Amalfi · Bologna · Capri · Cinque Terre · Florence · Lake Como · Lecce · Milan · Naples · Pisa · Rome · Sardinia · Sicily · Siena · Sorrento · Turin · Venice · Verona</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Luxembourg" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Luxembourg" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Luxembourg</span>
     <span class="hsep">|</span>
@@ -832,12 +829,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Luxembourg</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Malta" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Malta" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Malta</span>
     <span class="hsep">|</span>
@@ -849,12 +846,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Valletta</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Monaco" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Monaco" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Monaco</span>
     <span class="hsep">|</span>
@@ -866,12 +863,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Monaco</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Netherlands" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Netherlands" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Netherlands</span>
     <span class="hsep">|</span>
@@ -883,12 +880,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Amsterdam</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Norway" data-rate="9.536328" data-sym="kr">
+<div class="country-block" id="Norway" data-rate="9.503837" data-sym="kr">
   <div class="country-header">
     <span class="country-name">Norway</span>
     <span class="hsep">|</span>
@@ -900,12 +897,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Ålesund · Bergen · Oslo · Tromsø</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr9.54</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr9.54</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr9.50</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr9.50</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Poland" data-rate="3.72938" data-sym="zł">
+<div class="country-block" id="Poland" data-rate="3.721095" data-sym="zł">
   <div class="country-header">
     <span class="country-name">Poland</span>
     <span class="hsep">|</span>
@@ -917,12 +914,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Kraków</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">zł3.73</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">zł3.73</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">zł3.72</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">zł3.72</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Portugal" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Portugal" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Portugal</span>
     <span class="hsep">|</span>
@@ -934,12 +931,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Azores · Cascais · Lagos · Lisbon · Madeira · Porto · Sintra</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Slovenia" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Slovenia" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Slovenia</span>
     <span class="hsep">|</span>
@@ -951,12 +948,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Ljubljana</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Spain" data-rate="0.867316" data-sym="€">
+<div class="country-block" id="Spain" data-rate="0.865666" data-sym="€">
   <div class="country-header">
     <span class="country-name">Spain</span>
     <span class="hsep">|</span>
@@ -968,12 +965,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Barcelona · Bilbao · Granada · Madrid · Málaga · San Sebastián · Seville · Tenerife · Toledo</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.867</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.867</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">€0.866</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">€0.866</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Sweden" data-rate="9.507099" data-sym="kr">
+<div class="country-block" id="Sweden" data-rate="9.479258" data-sym="kr">
   <div class="country-header">
     <span class="country-name">Sweden</span>
     <span class="hsep">|</span>
@@ -985,12 +982,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Gothenburg · Stockholm</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr9.51</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr9.51</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">kr9.48</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">kr9.48</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Switzerland" data-rate="0.811611" data-sym="Fr">
+<div class="country-block" id="Switzerland" data-rate="0.808566" data-sym="Fr">
   <div class="country-header">
     <span class="country-name">Switzerland</span>
     <span class="hsep">|</span>
@@ -1002,12 +999,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Geneva · Lucerne · Zurich</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Fr0.812</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Fr0.812</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Fr0.809</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Fr0.809</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Turkey" data-rate="47.647224" data-sym="₺">
+<div class="country-block" id="Turkey" data-rate="47.712319" data-sym="₺">
   <div class="country-header">
     <span class="country-name">Turkey</span>
     <span class="hsep">|</span>
@@ -1019,12 +1016,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Istanbul</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₺47.65</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₺47.65</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₺47.71</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₺47.71</span></div>
     
   </div>
 </div>
-<div class="country-block" id="United_Kingdom" data-rate="0.743043" data-sym="£">
+<div class="country-block" id="United_Kingdom" data-rate="0.74208" data-sym="£">
   <div class="country-header">
     <span class="country-name">United Kingdom</span>
     <span class="hsep">|</span>
@@ -1036,8 +1033,8 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Cambridge · Edinburgh · Glasgow · London · Oxford</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">£0.743</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">£0.743</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">£0.742</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">£0.742</span></div>
     
   </div>
 </div>
@@ -1115,7 +1112,7 @@ html { scroll-behavior: smooth; }
 </div>
 <div class="region-section">
   <div class="region-header">Africa</div>
-<div class="country-block" id="Egypt" data-rate="49.788892" data-sym="E£">
+<div class="country-block" id="Egypt" data-rate="49.793552" data-sym="E£">
   <div class="country-header">
     <span class="country-name">Egypt</span>
     <span class="hsep">|</span>
@@ -1132,7 +1129,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Morocco" data-rate="9.320817" data-sym="DH">
+<div class="country-block" id="Morocco" data-rate="9.3091" data-sym="DH">
   <div class="country-header">
     <span class="country-name">Morocco</span>
     <span class="hsep">|</span>
@@ -1144,12 +1141,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Marrakech</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">DH9.32</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">DH9.32</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">DH9.31</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">DH9.31</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Seychelles" data-rate="14.488585" data-sym="SCR">
+<div class="country-block" id="Seychelles" data-rate="14.583738" data-sym="SCR">
   <div class="country-header">
     <span class="country-name">Seychelles</span>
     <span class="hsep">|</span>
@@ -1161,12 +1158,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Seychelles</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">SCR14.49</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">SCR14.49</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">SCR14.58</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">SCR14.58</span></div>
     
   </div>
 </div>
-<div class="country-block" id="South_Africa" data-rate="16.336173" data-sym="R">
+<div class="country-block" id="South_Africa" data-rate="16.167927" data-sym="R">
   <div class="country-header">
     <span class="country-name">South Africa</span>
     <span class="hsep">|</span>
@@ -1178,15 +1175,15 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Cape Town</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">R16.34</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">R16.34</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">R16.17</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">R16.17</span></div>
     
   </div>
 </div>
 </div>
 <div class="region-section">
   <div class="region-header">Asia</div>
-<div class="country-block" id="Maldives" data-rate="15.444195" data-sym="Rf">
+<div class="country-block" id="Maldives" data-rate="15.450567" data-sym="Rf">
   <div class="country-header">
     <span class="country-name">Maldives</span>
     <span class="hsep">|</span>
@@ -1198,12 +1195,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Maldives</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Rf15.44</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Rf15.44</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Rf15.45</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Rf15.45</span></div>
     
   </div>
 </div>
-<div class="country-block" id="China" data-rate="6.763426" data-sym="¥">
+<div class="country-block" id="China" data-rate="6.759674" data-sym="¥">
   <div class="country-header">
     <span class="country-name">China</span>
     <span class="hsep">|</span>
@@ -1220,7 +1217,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Bhutan" data-rate="95.264789" data-sym="Nu">
+<div class="country-block" id="Bhutan" data-rate="95.242085" data-sym="Nu">
   <div class="country-header">
     <span class="country-name">Bhutan</span>
     <span class="hsep">|</span>
@@ -1232,12 +1229,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Paro</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Nu95.26</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Nu95.26</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Nu95.24</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Nu95.24</span></div>
     <div class="cur-note">Pegged 1:1 to the Indian Rupee; INR also accepted.</div>
   </div>
 </div>
-<div class="country-block" id="Hong_Kong" data-rate="7.844712" data-sym="HK$">
+<div class="country-block" id="Hong_Kong" data-rate="7.845454" data-sym="HK$">
   <div class="country-header">
     <span class="country-name">Hong Kong</span>
     <span class="hsep">|</span>
@@ -1249,12 +1246,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Hong Kong</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">HK$7.84</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">HK$7.84</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">HK$7.85</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">HK$7.85</span></div>
     <div class="cur-note">Pegged to the US dollar (~7.8).</div>
   </div>
 </div>
-<div class="country-block" id="Indonesia" data-rate="17936.304774" data-sym="Rp">
+<div class="country-block" id="Indonesia" data-rate="17863.334654" data-sym="Rp">
   <div class="country-header">
     <span class="country-name">Indonesia</span>
     <span class="hsep">|</span>
@@ -1266,12 +1263,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Bali</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Rp17,936</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Rp17,936</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">Rp17,863</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">Rp17,863</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Japan" data-rate="158.205205" data-sym="¥">
+<div class="country-block" id="Japan" data-rate="157.859145" data-sym="¥">
   <div class="country-header">
     <span class="country-name">Japan</span>
     <span class="hsep">|</span>
@@ -1288,7 +1285,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Nepal" data-rate="152.423663" data-sym="Rs">
+<div class="country-block" id="Nepal" data-rate="152.387337" data-sym="Rs">
   <div class="country-header">
     <span class="country-name">Nepal</span>
     <span class="hsep">|</span>
@@ -1305,7 +1302,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Singapore" data-rate="1.282913" data-sym="S$">
+<div class="country-block" id="Singapore" data-rate="1.279239" data-sym="S$">
   <div class="country-header">
     <span class="country-name">Singapore</span>
     <span class="hsep">|</span>
@@ -1322,7 +1319,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Sri_Lanka" data-rate="335.279973" data-sym="Rs">
+<div class="country-block" id="Sri_Lanka" data-rate="335.352247" data-sym="Rs">
   <div class="country-header">
     <span class="country-name">Sri Lanka</span>
     <span class="hsep">|</span>
@@ -1339,7 +1336,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="South_Korea" data-rate="1423.480079" data-sym="₩">
+<div class="country-block" id="South_Korea" data-rate="1411.629686" data-sym="₩">
   <div class="country-header">
     <span class="country-name">South Korea</span>
     <span class="hsep">|</span>
@@ -1351,12 +1348,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Busan · Seoul</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₩1,423</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₩1,423</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₩1,412</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₩1,412</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Taiwan" data-rate="32.210706" data-sym="NT$">
+<div class="country-block" id="Taiwan" data-rate="32.196077" data-sym="NT$">
   <div class="country-header">
     <span class="country-name">Taiwan</span>
     <span class="hsep">|</span>
@@ -1368,12 +1365,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Taipei</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">NT$32.21</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">NT$32.21</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">NT$32.20</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">NT$32.20</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Philippines" data-rate="60.812934" data-sym="₱">
+<div class="country-block" id="Philippines" data-rate="60.861039" data-sym="₱">
   <div class="country-header">
     <span class="country-name">Philippines</span>
     <span class="hsep">|</span>
@@ -1385,12 +1382,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Palawan</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₱60.81</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₱60.81</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₱60.86</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₱60.86</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Laos" data-rate="22408.610947" data-sym="₭">
+<div class="country-block" id="Laos" data-rate="22334.145279" data-sym="₭">
   <div class="country-header">
     <span class="country-name">Laos</span>
     <span class="hsep">|</span>
@@ -1402,12 +1399,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Luang Prabang</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₭22,409</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₭22,409</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₭22,334</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₭22,334</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Thailand" data-rate="33.086318" data-sym="฿">
+<div class="country-block" id="Thailand" data-rate="33.001783" data-sym="฿">
   <div class="country-header">
     <span class="country-name">Thailand</span>
     <span class="hsep">|</span>
@@ -1419,12 +1416,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Bangkok · Chiang Mai · Phuket</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">฿33.09</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">฿33.09</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">฿33.00</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">฿33.00</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Vietnam" data-rate="26148.366158" data-sym="₫">
+<div class="country-block" id="Vietnam" data-rate="26186.832633" data-sym="₫">
   <div class="country-header">
     <span class="country-name">Vietnam</span>
     <span class="hsep">|</span>
@@ -1436,15 +1433,15 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Hanoi · Hoi An</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₫26,148</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₫26,148</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">₫26,187</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">₫26,187</span></div>
     
   </div>
 </div>
 </div>
 <div class="region-section">
   <div class="region-header">Oceania</div>
-<div class="country-block" id="French_Polynesia" data-rate="103.499127" data-sym="XPF">
+<div class="country-block" id="French_Polynesia" data-rate="103.301516" data-sym="XPF">
   <div class="country-header">
     <span class="country-name">French Polynesia</span>
     <span class="hsep">|</span>
@@ -1461,7 +1458,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Australia" data-rate="1.421461" data-sym="A$">
+<div class="country-block" id="Australia" data-rate="1.417271" data-sym="A$">
   <div class="country-header">
     <span class="country-name">Australia</span>
     <span class="hsep">|</span>
@@ -1478,7 +1475,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="New_Zealand" data-rate="1.703428" data-sym="NZ$">
+<div class="country-block" id="New_Zealand" data-rate="1.697978" data-sym="NZ$">
   <div class="country-header">
     <span class="country-name">New Zealand</span>
     <span class="hsep">|</span>
@@ -1515,7 +1512,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Canada" data-rate="1.401227" data-sym="C$">
+<div class="country-block" id="Canada" data-rate="1.395208" data-sym="C$">
   <div class="country-header">
     <span class="country-name">Canada</span>
     <span class="hsep">|</span>
@@ -1532,7 +1529,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Mexico" data-rate="17.221292" data-sym="$">
+<div class="country-block" id="Mexico" data-rate="17.153604" data-sym="$">
   <div class="country-header">
     <span class="country-name">Mexico</span>
     <span class="hsep">|</span>
@@ -1544,15 +1541,15 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Cancún · Los Cabos · Oaxaca · Puerto Vallarta</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">$17.22</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">$17.22</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">$17.15</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">$17.15</span></div>
     
   </div>
 </div>
 </div>
 <div class="region-section">
   <div class="region-header">Central America</div>
-<div class="country-block" id="Costa_Rica" data-rate="454.324539" data-sym="₡">
+<div class="country-block" id="Costa_Rica" data-rate="454.409842" data-sym="₡">
   <div class="country-header">
     <span class="country-name">Costa Rica</span>
     <span class="hsep">|</span>
@@ -1711,7 +1708,7 @@ html { scroll-behavior: smooth; }
 </div>
 <div class="region-section">
   <div class="region-header">South America</div>
-<div class="country-block" id="Argentina" data-rate="1497.0062" data-sym="AR$">
+<div class="country-block" id="Argentina" data-rate="1498.4355" data-sym="AR$">
   <div class="country-header">
     <span class="country-name">Argentina</span>
     <span class="hsep">|</span>
@@ -1723,12 +1720,12 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Buenos Aires</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">AR$1,497</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">AR$1,497</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">AR$1,498</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">AR$1,498</span></div>
     
   </div>
 </div>
-<div class="country-block" id="Brazil" data-rate="5.113927" data-sym="R$">
+<div class="country-block" id="Brazil" data-rate="5.107295" data-sym="R$">
   <div class="country-header">
     <span class="country-name">Brazil</span>
     <span class="hsep">|</span>
@@ -1745,7 +1742,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Chile" data-rate="913.927033" data-sym="CL$">
+<div class="country-block" id="Chile" data-rate="915.594192" data-sym="CL$">
   <div class="country-header">
     <span class="country-name">Chile</span>
     <span class="hsep">|</span>
@@ -1757,8 +1754,8 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Santiago</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">CL$914</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">CL$914</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">CL$916</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">CL$916</span></div>
     
   </div>
 </div>
@@ -1779,7 +1776,7 @@ html { scroll-behavior: smooth; }
     <div class="cur-note">Ecuador has been fully dollarized since 2000.</div>
   </div>
 </div>
-<div class="country-block" id="Peru" data-rate="3.382232" data-sym="S/">
+<div class="country-block" id="Peru" data-rate="3.382791" data-sym="S/">
   <div class="country-header">
     <span class="country-name">Peru</span>
     <span class="hsep">|</span>
@@ -1796,7 +1793,7 @@ html { scroll-behavior: smooth; }
     
   </div>
 </div>
-<div class="country-block" id="Uruguay" data-rate="40.227327" data-sym="$U">
+<div class="country-block" id="Uruguay" data-rate="40.241879" data-sym="$U">
   <div class="country-header">
     <span class="country-name">Uruguay</span>
     <span class="hsep">|</span>
@@ -1808,23 +1805,13 @@ html { scroll-behavior: smooth; }
     <span class="cur-cities">Guides: Montevideo</span>
   </div>
   <div class="cur-block">
-    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">$U40.23</span></div></div>
-    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">$U40.23</span></div>
+    <div class="rate-row"><div class="rate-main"><span class="rate-from">US$1</span><span class="rate-eq">≈</span><span class="rate-to">$U40.24</span></div></div>
+    <div class="conv">US$ <input class="conv-in" type="number" min="0" step="1" value="1" inputmode="decimal" aria-label="Amount in US dollars"> = <span class="conv-out">$U40.24</span></div>
     
   </div>
 </div>
 </div>
-<p class="rates-footer">Rates as of 7 August 2026 · 73 countries · Source: exchangerate-api.com</p>
-</div>
-
-<div class="also-strip" id="also-on-this-site">
-  <div class="also-strip-head">Also on this site</div>
-  <div class="also-links">
-    <a class="also-on-this-site-pill" href="Cards-ATM.html">💳 Cards &amp; ATM</a>
-    <a class="also-on-this-site-pill" href="Budget-Guide.html">💰 Budget guide</a>
-    <a class="also-on-this-site-pill" href="Tipping-Guide.html">🪙 Tipping</a>
-    <a class="also-on-this-site-pill" href="Before-You-Go.html">✅ Before you go</a>
-  </div>
+<p class="rates-footer">Rates as of 8 August 2026 · 73 countries · Source: exchangerate-api.com</p>
 </div>
 
 <script>
@@ -1836,26 +1823,9 @@ html { scroll-behavior: smooth; }
   var indexTable=document.querySelector('.index-table');
   var noRes=document.getElementById('cur-noresult');
   function norm(s){return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}
-  /* Scroll ONLY — never assign location.hash. Assigning it triggers iOS Safari's
-     native fragment navigation, which drops the compositor layer of the fixed
-     "← Back to {City}" pill (toolbar.js) so it goes invisible until a later
-     repaint (e.g. opening the hamburger, where it then floats over the menu).
-     This matches Plug-Adapter-Guide + the 14 other pill-pages, which all scroll
-     via scrollIntoView() and never touch the URL hash. Do NOT reintroduce that
-     hash assignment here — a fleet regen brought it back once (fixed 14e67ca,
-     regressed by 99f482b). brain_check.check_no_location_hash_in_jump_pages
-     now hard-fails on it. */
-  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
+  function jumpTo(hash){var el=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));if(el){el.scrollIntoView();history.replaceState(null,'',hash);var ci=el.querySelector('.conv-in');if(ci){ci.focus();ci.select();}}}
   rows.forEach(function(r){r.addEventListener('click',function(e){var a=r.querySelector('a[href^="#"]');if(!a)return;e.preventDefault();jumpTo(a.getAttribute('href'));});});
-  /* Re-scroll to the incoming #Country deep-link (stripped in <head> to dodge the
-     iOS native-fragment-jump that hides the back-to-guide pill). Runs on window
-     'load'; a short settle loop re-scrolls until the target stops moving (robust
-     if any content above it reflows). scrollIntoView only (never touches the hash). */
-  window.addEventListener('load',function(){
-    if(!window.__tveDeep)return;var el=document.getElementById(window.__tveDeep);if(!el)return;
-    var last=-1,tries=0;(function settle(){el.scrollIntoView();var y=Math.round(el.getBoundingClientRect().top);
-      if(Math.abs(y-last)>2&&++tries<12){last=y;setTimeout(settle,120);}}());
-  });
+  if(window.__tveDeep){setTimeout(function(){jumpTo('#'+window.__tveDeep);},0);}
   /* per-country converter: type a US$ amount, see it in that currency */
   function fmtAmt(v){
     if(v>=1000)return v.toLocaleString('en-US',{maximumFractionDigits:0});
