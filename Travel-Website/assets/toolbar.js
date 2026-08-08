@@ -4084,8 +4084,10 @@
       { name: 'Domes Miramare, a Luxury Collection Resort, Corfu', note: 'Marriott Luxury Collection — adults-only, Moraitika beachfront on the Ionian, overwater pool-bungalow suites, spa and infinity pool · 9.1 Booking.com' }
     ] },
     'crete': { h: [
-      { name: 'Galaxy Hotel Iraklio', note: 'Independent 5-star — Heraklion\'s central elegant district, two on-site restaurants, freshwater outdoor pool, wellness and fitness center · 8.6 Booking.com' },
-      { name: 'Lato Boutique Hotel', note: 'Independent boutique — Old Town Heraklion near the Venetian harbour, Brilliant Cuisine rooftop restaurant with Koules Fortress and sea panoramas · 8.4 Booking.com' }
+      { name: 'Galaxy Hotel Iraklio', note: 'Independent 5-star — Heraklion\'s central elegant district, two on-site restaurants, freshwater outdoor pool, wellness and fitness center · 8.6 Booking.com', url: 'https://www.booking.com/hotel/gr/galaxy-heraklion.html' },
+      { name: 'Lato Boutique Hotel', note: 'Independent boutique — Old Town Heraklion near the Venetian harbour, Brilliant Cuisine rooftop restaurant with Koules Fortress and sea panoramas · 8.4 Booking.com', url: 'https://www.booking.com/hotel/gr/lato-boutique-hotel.html' },
+      { name: 'Capsis Astoria City Center Hotel', note: 'Independent 4-star — central Heraklion near Eleftherias Square, contemporary rooms, rooftop pool, walking distance to the Archaeological Museum · 8.1 Booking.com', url: 'https://www.booking.com/hotel/gr/capsis-astoria.html' },
+      { name: 'Olive Green Hotel', note: 'Independent eco-boutique — sustainable 4-star near the city port, bike-friendly, organic breakfast, 8-min walk to the Heraklion waterfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/gr/olive-green-hotel.html' }
     ] },
     'curacao': { h: [
       { name: 'Baoase Luxury Resort', note: 'Independent boutique — adults-only, private beach on Piscadera Bay, Baoase Culinary Beach restaurant, full-service spa · 9.4 Booking.com' },
