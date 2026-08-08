@@ -3879,8 +3879,10 @@
       { name: 'Courtyard by Marriott Nassau Downtown/Junkanoo Beach', note: 'Marriott family — Junkanoo Beach access, outdoor pool, downtown Nassau · 7.2 Booking.com' }
     ] },
     'bali': { h: [
-      { name: 'Hyatt Regency Bali', note: 'Hyatt family — private beach, 3 pools, tropical gardens, Sanur · 9.0 Booking.com' },
-      { name: 'InterContinental Bali Resort by IHG', note: 'IHG first-tier — 6 pools, beachfront Jimbaran Bay, spa · 9.0 Booking.com' }
+      { name: 'Hyatt Regency Bali', note: 'Hyatt family — private beach, 3 pools, tropical gardens, Sanur · 9.0 Booking.com', url: 'https://www.booking.com/hotel/id/hyatt-regency-bali.html' },
+      { name: 'InterContinental Bali Resort by IHG', note: 'IHG first-tier — 6 pools, beachfront Jimbaran Bay, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/id/intercontinental-bali-resort.html' },
+      { name: 'Four Seasons Resort Bali at Sayan', note: 'Four Seasons brand — Ubud jungle ridge above the Ayung River gorge, signature treetop restaurant, 2 pools, riverside spa · 9.5 Booking.com', url: 'https://www.booking.com/hotel/id/four-seasons-resort-bali-at-sayan.html' },
+      { name: 'The St. Regis Bali Resort', note: 'Marriott Luxury Collection — Nusa Dua beachfront, private pool villas, 24-hr butler service, Kayuputi Pan-Asian dining · 9.7 Booking.com', url: 'https://www.booking.com/hotel/id/the-st-regis-bali-resort.html' }
     ] },
     'banff': { h: [
       { name: 'Fairmont Banff Springs', note: 'Fairmont brand — 1888 sandstone castle at the confluence of the Bow and Spray Rivers, 2 outdoor pools, full spa, fine-dining 1888 Chop House · 9.2 Booking.com' },
