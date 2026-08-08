@@ -299,7 +299,8 @@
 /* 2026-08-08: Booking row — 🎟️ retired (owner rule 2026-08-08), the solid twin of the .free-flag change above. The row was `<div>🎟️ <a>{domain}</a></div>`; it is now `<div><span class="ticket-flag"></span><a>{domain}</a></div>` — the symbol and the link, nothing else. Same reason as 🆓: the Apple glyph is a fixed-colour platform drawing that ignores CSS and cannot flip for dark mode. Deliberately the SAME silhouette as the Free stub, just filled: a whole ticket means one is required, a torn hollow stub means none is, and the only difference between the two rows is weight. 1375 rows across 210 guides. Scope is the row lead only — 🎟 survives in day titles and prose, so the new hard-fail is anchored on a div-leading glyph, and the row is normalised back to the legacy token in memory so every position-1 check keeps matching one canonical form. guide-style.css -> v123. CACHE to v324. */
 /* 2026-08-08: Stop panel recoloured onto --c-next-bg. The panel structure came from the Open-Recommendations report card body, and its #f1ece3 was copied verbatim - but that hex was picked for a small tile framed in white, and once it filled two thirds of every stop card it read flat and grey rather than warm. Owner picked #f5f0e6 instead: --c-next-bg, the guide's own token, already the fill of the .stop-dur duration chip and the transit banners, so the panel belongs to the guide palette rather than importing the report's. Using the token rather than the hex also retires the hardcoded dark overrides - --c-next-bg is themed to #222120 above, so only the hairline literal and the chip fill still need a dark twin. guide-style.css -> v124. CACHE to v325. */
 /* 2026-08-08: Free row — the word "Free" goes bold (owner rule 2026-08-08). It already inked terracotta to match the torn-stub mark, but at weight 400 the label still read lighter than the full-colour emoji rows bracketing it (🚫 Closed Monday above, 📍 address below), so the pairing landed as icon-plus-caption rather than one mark. Weight 700 on .free-flag closes it. Colour and the dark-mode #d4874a retint are unchanged. guide-style.css -> v125. CACHE to v326. */
-var CACHE = 'travel-cache-v326';
+/* 2026-08-08: Comment-only correction on the Read more chip. Its note still explained the #fffdf9 fill as "--c-next-bg against #f1ece3 is a two-value difference" - true when the panel was the report's #f1ece3, false the moment the panel moved onto --c-next-bg itself. The reason is now stated correctly: the chip sits ON the panel, the panel IS --c-next-bg, so a --c-next-bg fill would be no chip at all; #fffdf9 is what lifts it off. Same drift class as the retired-backpack comments purged earlier today - a comment that contradicts the code beside it is what feeds wrong values back into the next change. guide-style.css -> v126. CACHE to v327. */
+var CACHE = 'travel-cache-v327';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -307,7 +308,7 @@ var CACHE = 'travel-cache-v326';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 125, 'toolbar.js': 207, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 126, 'toolbar.js': 207, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
