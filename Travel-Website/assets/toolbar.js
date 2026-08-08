@@ -4139,8 +4139,8 @@
       { name: 'Hilton Waikoloa Village', note: 'Hilton brand — 62-acre lagoon resort with 3 pools, canal boat and monorail between buildings, dolphin interaction program · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-waikoloa-village.html' }
     ] },
     'bilbao': { h: [
-      { name: 'Hotel Carlton Bilbao', note: 'Leading Hotels of the World — 1920s grand hotel near the old town, historic rooms where Hemingway and royalty stayed · 8.8 Booking.com' },
-      { name: 'Meliá Bilbao', note: 'Meliá brand — contemporary tower beside the Guggenheim, spa, outdoor pool, city-view rooms · 8.7 Booking.com' },
+      { name: 'Hotel Carlton Bilbao', note: 'Leading Hotels of the World — 1920s grand hotel near the old town, historic rooms where Hemingway and royalty stayed · 8.8 Booking.com', url: 'https://www.booking.com/hotel/es/carlton-bilbao.html' },
+      { name: 'Meliá Bilbao', note: 'Meliá brand — contemporary tower beside the Guggenheim, spa, outdoor pool, city-view rooms · 8.7 Booking.com', url: 'https://www.booking.com/hotel/es/melia-bilbao.html' },
       { name: 'Hotel Miró', note: 'Independent boutique — Alameda Mazarredo between the Guggenheim and Fine Arts Museum, spa with hot tub, fitness centre · 9.1 Booking.com', url: 'https://www.booking.com/hotel/es/mirohotel.html' },
       { name: 'Hotel Ercilla de Bilbao, Autograph Collection', note: 'Marriott Autograph Collection — Calle Ercilla in the Ensanche, fitness centre, terrace, on-site Basque restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/es/gtercilla.html' }
     ] },
@@ -4394,10 +4394,10 @@
       { name: 'Mandarin Oriental Geneva', note: 'Mandarin Oriental brand — Quai Turrettini on the Rhône, spa, two restaurants, five-minute walk to the Old Town and Cathédrale Saint-Pierre · 9.1 Booking.com' }
     ] },
     'glacier-national-park': { h: [
-      { name: 'Many Glacier Hotel', note: 'National Historic Landmark 1915 — Swiss chalet on Swiftcurrent Lake, most dramatic NPS setting in the park, mountain-and-lake panorama · 8.9 Booking.com' },
-      { name: 'Lake McDonald Lodge', note: 'Historic NPS concessionaire lodge (1913) on the western shore of Lake McDonald, hunting-lodge-style great room, boat rentals on the lake · 8.5 Booking.com' },
-      { name: 'Rising Sun Motor Inn', note: 'NPS lodging on the eastern edge of the park near St. Mary Lake, motel-style cabins, Walking Bear Restaurant on site, close to Going-to-the-Sun Road · 7.8 Booking.com' },
-      { name: 'The Lodge at Whitefish Lake', note: 'Renaissance Hotels (Marriott family) — Whitefish, 26 miles north of the park, marina resort, outdoor pool, lakefront spa, year-round mountain access · 9.0 Booking.com' }
+      { name: 'Great Northern Resort', note: 'Independent — West Glacier, at the park entrance on US-2, log cabins and lodge rooms modeled after the Glacier Park Chalets, complimentary breakfast, 1 mile from the west gate', url: 'https://www.booking.com/hotel/us/great-northern-resort-lodge.html' },
+      { name: 'Firebrand Hotel', note: 'Independent boutique — downtown Whitefish, 26 miles north of the park entrance, rooftop hot tub and terrace, walkable to restaurants and Amtrak station · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/firebrand.html' },
+      { name: 'Grouse Mountain Lodge', note: 'Glacier Park Collection — Whitefish, 26 miles north of the park entrance, mountain lodge on the golf course, indoor pool, hot tub and sauna · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/grouse-mountain-lodge.html' },
+      { name: 'The Lodge at Whitefish Lake', note: 'Renaissance Hotels (Marriott family) — Whitefish, 26 miles north of the park, marina resort, outdoor pool, lakefront spa, year-round mountain access · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/lodge-at-whitefish-lake.html' }
     ] },
     'glasgow': { h: [
       { name: 'Kimpton Blythswood Square Hotel', note: 'IHG Kimpton brand — 1820 Georgian townhouse on Blythswood Square, indoor pool, Tempus spa, afternoon tea · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/blythswood-square.html' },
