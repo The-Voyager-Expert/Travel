@@ -314,7 +314,8 @@
 /* 2026-08-08: Stop hours — the band is now a full-bleed strip on the card's own row rhythm. It sat inside the content column with a 10px inset, which put its 🕐 12.5px right of the column every other icon row in the card lines up on (🎟️ ⚠️ 🚫 📍), so the icon run stepped in at the hours row and back out at the next one on every stop; and its outer margins were zeroed to hold text-to-text at 6px, which glued the tinted slab to the booking link above it and to the ⚠️/📍 line below it. Negative side margins now cancel the card padding so the rail lands on the card edge and border-left(2.5) + padding-left puts the text back on the icon column, and the slab takes the card's normal 6px margin above and below. The bleed is READ OFF THE CARD by _phFit() and written as !important inline styles, re-run on a debounced resize: the card is padding 10px 14px on desktop but 10px 12px at the mobile breakpoint, so a hardcoded -14px hangs the band 2px off both edges at 393px. Bands that are the card's first VISIBLE row (2,127 cards fleet-wide lead with 🏛️, and the authored rows stay in the DOM as display:none so :first-child cannot see it) are stamped .tve-ph-top and drop the top margin. Measured across 111 bands on Melbourne, Boston, Rome, Big-Island, Tokyo, Carmel-by-the-Sea at 1280px and 393px plus a live resize in both directions: 0 alignment or rhythm deviations. toolbar.js -> v215. CACHE to v339. */
 /* 2026-08-08: Also-on-this-site + Nearby Guides pills — ported from 6-col CSS grid + JS orphan fix to pure-CSS flex (flex: 1 1 28%). CSS :nth-child grid-column selectors are silently dropped by iOS Safari, so orphan rows (last pill at 1/3 width) were only correctable via JS (_fixPillGridOrphans) which ran once at DOMContentLoaded and got the wrong answer on rotate. flex: 1 1 28% needs no JS: every row's pills grow to fill the row; a lone last pill fills the full width by itself at every orientation. _fixPillGridOrphans still runs for .also-in-country-pills (still on the grid). guide-style.css -> v132, toolbar.js -> v216, mobile.css -> v68. CACHE to v340. */
 /* 2026-08-08: Crete HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v217. CACHE to v341. */
-var CACHE = 'travel-cache-v341';
+/* 2026-08-08: Bali HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v218. CACHE to v342. */
+var CACHE = 'travel-cache-v342';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -322,7 +323,7 @@ var CACHE = 'travel-cache-v341';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 132, 'toolbar.js': 217, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 132, 'toolbar.js': 218, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
