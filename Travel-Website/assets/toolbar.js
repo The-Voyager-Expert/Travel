@@ -317,6 +317,7 @@
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: '💻 US Lounges' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: '💻 EU Lounges' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
+        { href: base + 'Trip-Essentials/Luggage-Storage.html',   text: '🧳 Luggage Storage' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',  text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
       ] },
@@ -5684,6 +5685,184 @@
     document.addEventListener('DOMContentLoaded', _injectScrollFab);
   } else {
     _injectScrollFab();
+  }
+
+  /* ── Best-Of country jump — floating pill + overlay (MOBILE ONLY) ─────────
+     Best-Of pages already ship a country filter: the #regionJump disclosure
+     ("Filter by country") in the page's own controls block, populated and
+     wired by each page's inline script. It is position:relative, so it is
+     off-screen after one swipe — on Best-Ultra-Luxurious-Resorts that leaves
+     96 screens and 48 country sections with no way to filter or to tell which
+     country you are in. Guides solved the identical problem with the fixed
+     .day-jump-btn pill; this is that pattern applied to Best-Of.
+
+     Zero duplicated filter logic: the overlay rows forward to .click() on the
+     matching hidden #regionJumpList item, so the page's own handler does the
+     filtering exactly as it does from the dropdown. The pill label mirrors
+     #regionJumpLabel via MutationObserver, so filtering from either surface
+     keeps both in sync.
+
+     Mobile-only (@media min-width:601px hides it) — on desktop the controls
+     block stays within easy reach and the scrollbar gives position feedback. */
+  function _injectBestOfJump() {
+    var jump = document.getElementById('regionJump');
+    var list = document.getElementById('regionJumpList');
+    var label = document.getElementById('regionJumpLabel');
+    if (!jump || !list || !label) return;
+    var items = [].slice.call(list.querySelectorAll('.days-jump-item'));
+    if (items.length < 3) return;   /* "All countries" + at least 2 real ones */
+    var grid = document.querySelector('.showcase-grid');
+
+    var css = document.createElement('style');
+    css.textContent =
+      '#tve-bo-jump{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));' +
+      'right:16px;z-index:1400;display:inline-flex;align-items:center;gap:6px;' +
+      'height:36px;padding:0 14px;background:#fff;border:1.5px solid #c8a44a;' +
+      'border-radius:18px;font-size:13px;font-weight:700;letter-spacing:.03em;' +
+      'color:#8a6c1a;cursor:pointer;font-family:inherit;-webkit-appearance:none;' +
+      'box-shadow:0 2px 10px rgba(0,0,0,.14);max-width:64vw;white-space:nowrap;' +
+      'overflow:hidden;text-overflow:ellipsis;' +
+      'transition:color .15s,border-color .15s,box-shadow .15s}' +
+      '#tve-bo-jump:hover{color:#b85c2a;border-color:#b85c2a;' +
+      'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
+      /* Lift the scroll-top FAB clear of the pill, same as guide pages do for
+         .day-jump-btn (guide-style.css). mobile.css inflates both controls to
+         a 40px tap target, so the sum is 20 + 40 + 12px gap = 72. */
+      'body.tve-has-bo-jump .tve-scroll-top{' +
+      'bottom:calc(72px + env(safe-area-inset-bottom,0px))}' +
+      '#tve-bo-ov{position:fixed;inset:0;z-index:1500;display:none;' +
+      'align-items:center;justify-content:center;background:rgba(40,36,30,.42)}' +
+      '#tve-bo-ov.open{display:flex}' +
+      '#tve-bo-card{width:92vw;max-width:420px;max-height:70vh;display:flex;' +
+      'flex-direction:column;background:#fff;border:1.5px solid #c8a44a;' +
+      'border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.28);overflow:hidden}' +
+      '#tve-bo-head{display:flex;align-items:center;gap:8px;padding:12px 14px;' +
+      'border-bottom:1px solid #e4ddd4;background:#fdf8f0}' +
+      '#tve-bo-title{flex:1;font-size:13px;font-weight:700;letter-spacing:.06em;' +
+      'text-transform:uppercase;color:#8a6c1a}' +
+      '#tve-bo-x{background:none;border:none;font-size:17px;line-height:1;' +
+      'color:#8a8578;cursor:pointer;padding:2px 4px;font-family:inherit;' +
+      '-webkit-appearance:none}' +
+      '#tve-bo-x:hover{color:#3d3a32}' +
+      '#tve-bo-rows{overflow-y:auto;-webkit-overflow-scrolling:touch}' +
+      '.tve-bo-row{display:block;width:100%;text-align:left;background:none;' +
+      'border:none;border-bottom:1px solid #eee8e0;padding:12px 16px;' +
+      'font-size:14px;color:#3d3a32;font-family:inherit;cursor:pointer;' +
+      '-webkit-appearance:none}' +
+      '.tve-bo-row:last-child{border-bottom:none}' +
+      '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#7a3b1e;font-weight:700}' +
+      'body.tve-ham-open #tve-bo-jump{display:none!important}' +
+      '@media(min-width:601px){#tve-bo-jump,#tve-bo-ov{display:none!important}}';
+    document.head.appendChild(css);
+
+    var pill = document.createElement('button');
+    pill.type = 'button';
+    pill.id = 'tve-bo-jump';
+    pill.setAttribute('aria-label', 'Filter by country');
+    pill.setAttribute('aria-expanded', 'false');
+
+    var ov = document.createElement('div');
+    ov.id = 'tve-bo-ov';
+    ov.setAttribute('role', 'dialog');
+    ov.setAttribute('aria-modal', 'true');
+    ov.setAttribute('aria-label', 'Filter by country');
+
+    var card = document.createElement('div');
+    card.id = 'tve-bo-card';
+    card.addEventListener('click', function (e) { e.stopPropagation(); });
+
+    var head = document.createElement('div');
+    head.id = 'tve-bo-head';
+    var title = document.createElement('div');
+    title.id = 'tve-bo-title';
+    title.textContent = 'Filter by country';
+    var xBtn = document.createElement('button');
+    xBtn.type = 'button';
+    xBtn.id = 'tve-bo-x';
+    xBtn.textContent = '✕';
+    xBtn.setAttribute('aria-label', 'Close');
+    head.appendChild(title);
+    head.appendChild(xBtn);
+    card.appendChild(head);
+
+    var rows = document.createElement('div');
+    rows.id = 'tve-bo-rows';
+    var rowEls = [];
+    items.forEach(function (src) {
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'tve-bo-row';
+      row.textContent = src.textContent;
+      row.addEventListener('click', function () {
+        /* Forward to the page's own handler — no duplicated filter logic. */
+        src.click();
+        closeOv();
+        /* Land on the grid so the filtered result is the first thing seen. */
+        var target = grid || document.body;
+        var top = target.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top: top < 0 ? 0 : top, behavior: 'smooth' });
+      });
+      rows.appendChild(row);
+      rowEls.push(row);
+    });
+    card.appendChild(rows);
+    ov.appendChild(card);
+
+    /* Pill label mirrors the dropdown's label; the country count is the
+       resting state, matching the guide pill's "N days".
+
+       "Is anything filtered?" is read off #regionJumpLabel, never off a data
+       attribute or a row's .on class — the per-page filter scripts ship in
+       THREE variants (32 Best-Of pages key rows off data-region via innerHTML,
+       Best-Museums off data-type, Best-Unique-Hotels builds rows with
+       createElement and never marks the reset row .on until the reader
+       filters something). All three agree on exactly one thing:
+       `label.textContent = active || defaultLabel`. So the label is the only
+       reliable cross-fleet signal. Row highlighting still uses .on, which is
+       correct wherever the variant sets it and simply shows no highlight at
+       rest where it does not. */
+    var countLabel = (items.length - 1) + ' countries';
+    var defaultLabel = label.textContent.trim();
+    function syncLabel() {
+      var cur = label.textContent.trim();
+      pill.textContent = '🌍 ' + (cur === defaultLabel ? countLabel : cur);
+      rowEls.forEach(function (r, i) {
+        r.classList.toggle('tve-bo-row--on', items[i].classList.contains('on'));
+      });
+    }
+    var mo = new MutationObserver(syncLabel);
+    mo.observe(list, { subtree: true, attributes: true, attributeFilter: ['class'] });
+    mo.observe(label, { subtree: true, childList: true, characterData: true });
+    syncLabel();
+
+    function openOv() {
+      ov.classList.add('open');
+      pill.setAttribute('aria-expanded', 'true');
+      var on = rows.querySelector('.tve-bo-row--on');
+      if (on) on.scrollIntoView({ block: 'center' });
+    }
+    function closeOv() {
+      ov.classList.remove('open');
+      pill.setAttribute('aria-expanded', 'false');
+    }
+    pill.addEventListener('click', function (e) {
+      e.stopPropagation();
+      ov.classList.contains('open') ? closeOv() : openOv();
+    });
+    xBtn.addEventListener('click', closeOv);
+    ov.addEventListener('click', closeOv);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeOv();
+    });
+
+    document.body.appendChild(pill);
+    document.body.appendChild(ov);
+    document.body.classList.add('tve-has-bo-jump');
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectBestOfJump);
+  } else {
+    _injectBestOfJump();
   }
 
   /* ── Share-this-stop button — guide pages only ───────────────────────────
