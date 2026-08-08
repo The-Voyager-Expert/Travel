@@ -86,7 +86,16 @@
 
 /* ── Mobile ── */
 @media (max-width: 600px) {
-  .sc-legend { gap: 6px; }
+  /* Legend strip = 6-col grid, each badge spanning 2 (3 per row) with the
+     trailing row widened to span 3 (2 per row) — the site's standard fix for a
+     dangling orphan pill (Page-Format § 12 pill-width rule: all rows in a strip
+     must look equal). 7 badges wrap 3 / 2 / 2 instead of a lone 7th centered on
+     its own row. Spans are set INLINE by JS, never by a CSS :nth-child rule —
+     iOS Safari mis-applies :nth-child here (same reason toolbar.js
+     _fixPillGridOrphans uses inline gridColumn for the guide pill grids).
+     Locked badge shape props are untouched; only the width stretches. */
+  .sc-legend { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .sc-legend .sc-badge { text-align: center; padding-left: 4px; padding-right: 4px; }
   .scam-line { flex-direction: column; gap: 0; }
   .scam-label { flex: none; }
   .city-count { margin-left: 0; flex-basis: 100%; }
@@ -115,7 +124,7 @@
     </div>
     <div>
       <div class="page-intro-head">Known schemes at guide destinations</div>
-      <div class="page-intro-sub">The specific, documented scams travellers meet in each city — how each one works, how to shut it down, and the legitimate price so an inflated one is obvious. Safety Guide covers a country's overall crime risk level; this page covers the individual tricks. Prices are the official or typical rate at the last review and drift over time.</div>
+      <div class="page-intro-sub">The documented scams travellers meet in each city — how each one works, how to shut it down, and the legitimate price so an inflated one is obvious. Safety Guide covers a country's overall risk level; this covers the individual tricks. Price anchors are the rate at last review and drift over time.</div>
     </div>
   </div>
 
@@ -160,7 +169,7 @@
 
 <div class="also-strip" id="also-on-this-site">
   <div class="also-strip-head">Also on this site</div>
-  <div class="also-pills">
+  <div class="also-links">
     <a class="also-on-this-site-pill" href="Safety-Guide.html">🛡️ Safety guide</a>
     <a class="also-on-this-site-pill" href="Cards-ATM.html">💳 Cards &amp; ATM</a>
     <a class="also-on-this-site-pill" href="Currency-Guide.html">💱 Currency</a>
@@ -1004,6 +1013,38 @@ var CITIES = [
     });
     render();
   }
+
+  /* Mobile legend grid — same orphan fix toolbar.js _fixPillGridOrphans applies
+     to the guide pill grids. 6 columns, each badge spanning 2 (3 per row); when
+     the count leaves a short final row, the trailing badges widen to span 3
+     (2 per row) so no badge dangles alone. Set INLINE, never via CSS
+     :nth-child — iOS Safari mis-applies :nth-child on this grid. Desktop uses
+     display:flex, which ignores gridColumn, so this is a no-op there. */
+  var narrow = window.matchMedia('(max-width: 359px)');
+
+  function fixLegendOrphans() {
+    var badges = [].slice.call(legendEl.querySelectorAll('.sc-badge'));
+    var n = badges.length;
+    if (!n) return;
+    /* 2 per row under 360px — at 320px a 3-across cell is ~92px and the longest
+       label ("FAKE OFFICIAL") overruns it. Widening to 2 across keeps the badge
+       at its locked 11px rather than dropping to the 10px last-resort size. */
+    var perRow  = narrow.matches ? 2 : 3;
+    var baseSpan = 6 / perRow;
+    badges.forEach(function (b) { b.style.gridColumn = 'span ' + baseSpan; });
+    if (n === 1) { badges[0].style.gridColumn = 'span 6'; return; }
+    var rem = n % perRow;
+    if (rem === 0) return;
+    if (perRow === 2) {
+      badges[n - 1].style.gridColumn = 'span 6';   /* lone trailing badge → full width */
+      return;
+    }
+    var widen = rem === 1 ? Math.min(4, n) : 2;    /* 3-across: last row → 2 across */
+    for (var i = n - widen; i < n; i++) badges[i].style.gridColumn = 'span 3';
+  }
+  fixLegendOrphans();
+  if (narrow.addEventListener) narrow.addEventListener('change', fixLegendOrphans);
+  else if (narrow.addListener) narrow.addListener(fixLegendOrphans);
 
   legendEl.querySelectorAll('.sc-badge').forEach(function (b) {
     b.setAttribute('aria-pressed', 'false');
