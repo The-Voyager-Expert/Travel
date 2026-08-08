@@ -2514,12 +2514,13 @@ div.train .train-time   { padding: 2px 0; }
 @media (max-width: 600px) {
   body         { font-size: var(--fs-base); line-height: 1.55; }
   /* Bottom padding reserves the floating-control band. On mobile the container
-     is nearly full-width, so with the old 32px the fixed .tve-scroll-top FAB
-     (bottom:62px, 36px tall → occupies the last 98px of the viewport) landed
-     ON TOP of the final card once the reader hit the end of the page — the
-     round FAB overlapping a .extras-title / .neigh-card pill reads as a
-     doubled pill in the bottom-right corner. 110px = 98px stack + 12px gap. */
-  .container   { padding: 0 14px 110px; }
+     is nearly full-width, so with the old 32px the fixed controls landed ON TOP
+     of the final card once the reader hit the end of the page — a round gold
+     FAB overlapping a .extras-title / .nearby-guide-pill reads as a doubled
+     pill in the corner. The band is now ONE row (back · days · arrow, all at
+     bottom: 23px, 36px tall) = the last 59px of the viewport; 72px = 59 + 13px
+     gap. Re-tune together with MOBILE_FLOAT_BAND_PX in brain_check.py. */
+  .container   { padding: 0 14px 72px; }
 
   /* Hotel banner on mobile: below the gradient line (order 3) the "Updated" stamp
      sits on its own row (right-aligned), then ONE white card holds the hotel name
@@ -3556,7 +3557,20 @@ a.also-in-country-pill:active {
   white-space: normal;
 }
 @media (max-width: 600px) {
-  .day-jump-btn { bottom: 18px; right: 16px; }
+  /* ONE row of floating controls across the foot of the guide (owner rule
+     2026-08-08): "← Back" left, "N days" centred, scroll-top arrow right.
+     The days pill used to sit bottom-right with the arrow stacked directly
+     above it; centring the pill frees the right corner so the arrow drops
+     into the same row instead of on top of it.
+     bottom: 23px puts a 36px control's centre 41px above the viewport floor —
+     the same optical line as #tve-nav-back (34px tall at bottom: 24px), so all
+     three read as one row. Change these two `bottom` values together. */
+  .day-jump-btn {
+    bottom: 23px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   .day-jump-card { width: 92vw; max-height: 70vh; }
 }
 
@@ -3632,8 +3646,12 @@ a.also-in-country-pill:active {
 }
 
 @media (max-width: 600px) {
-  .tve-scroll-top { bottom: 62px; right: 16px; }
-  .tve-mobile-back-wrap { bottom: 18px; right: 112px; } /* clears .day-jump-btn at right:16 + 8px gap */
+  /* Same row as the centred .day-jump-btn — see the note on that rule. The FAB
+     used to be lifted to bottom: 62px to clear the days pill stacked beneath it;
+     the pill now sits centre-stage, so the right corner is free and the arrow
+     drops to the shared 23px line. */
+  .tve-scroll-top { bottom: 23px; right: 16px; }
+  .tve-mobile-back-wrap { bottom: 18px; right: 112px; } /* clears the right-corner .tve-scroll-top (36px at right:16) + gap */
 }
 
 /* ── Open-right-now stop filter (toolbar.js) ──────────────────────────────
