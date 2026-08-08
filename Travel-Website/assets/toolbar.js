@@ -2886,11 +2886,21 @@
            `padding: 10px 12px` at the mobile breakpoint (guide-style.css § mobile),
            so _phFit() re-reads the real padding off the card and overrides both at
            runtime. Hardcoding 14 hung the band 2px off each edge at 393px.
-           VERTICAL — the slab takes the card's normal 6px row rhythm above and
-           below instead of butting flush against the neighbouring lines. Its own
-           6px padding is INSIDE the slab and is not spacing between rows; zeroing
-           the margins to "keep text-to-text at 6px" is what left the tinted band
-           glued to the link above it and to the ⚠️/📍 line under it. */
+           VERTICAL — the card's row gap is 6px, and the band SPLITS it: 3px of
+           padding inside the tint, 3px of margin outside it, top and bottom. That
+           is the whole fix. Two earlier attempts each moved all 6px to one side
+           and each was rejected: 6px margin + 6px padding put the band's text 12px
+           from its neighbour's while every other pair sat at 6px (the band became
+           the odd row out, 35px pitch against 29px), and 0 margin + 6px padding
+           kept the pitch right but let the tint run edge-to-edge into the rows
+           above and below with no clear space at all — owner, 2026-08-08, on a
+           screenshot of this exact card. 3+3 is the only split that satisfies both
+           constraints at once: margin+padding still totals the 6px the rhythm
+           needs, so every text row in the card stays on one 29.25px grid, and the
+           tint now ends 3px short of that gap on each side so it reads as its own
+           object rather than a stripe wedged between two lines. Line-height is
+           1.55 to match `.tour-box > div` exactly — at 1.45 the band was 1.5px
+           short and threw the two pitches around it to 28.4 / 28.9. */
         /* RIGHT EDGE — the band's cream (#fdf8f0) is within a hair of the page
            background (#faf7f2), so with only a left rail the slab had no visible
            end: on desktop it read as trailing off into the middle of the page
@@ -2898,33 +2908,23 @@
            tint as .tve-ph-hr so the band, its divider and its panel agree. */
         '.tve-ph{border-left:2.5px solid #bba070;' +
         'border-right:1px solid rgba(187,160,112,.45);background:#fdf8f0;color:#6b5320;' +
-        'font-weight:500;padding:6px 14px 6px 11.5px;border-radius:0;' +
-        'margin:6px -14px 0;line-height:1.45;font-size:inherit;}' +
+        'font-weight:500;padding:3px 14px 3px 11.5px;border-radius:0;' +
+        'margin:3px -14px 0;line-height:1.55;font-size:inherit;}' +
         /* Scoping to the card is what wins the specificity fight —
            .tour-box > div (0,1,1) outranks .tve-ph (0,1,0). */
-        /* VERTICAL — the slab's own 6px padding IS the row gap (owner rule
-           2026-08-08, "make sure the space is right between the items in the
-           stop"). Every plain row in the card is 6px from its neighbour, but the
-           band is the one row with a tinted box around its text: 6px of padding
-           inside it, so a 6px margin on top of that put the band's TEXT 12px from
-           the next row's text while every other pair sat at 6px — measurably the
-           odd row out on Austin (35px pitch vs 29px for its neighbours). Zeroing
-           the margin and the following row's margin-top puts every text pair in
-           the card on the same 6px rhythm, with the tint extending 6px past its
-           own text the way a full-bleed tinted row should.
-           This was tried once before (2026-08-08 morning) and reverted as "glued
-           to the line above and below with no edge between them" — but that was
-           an INSET band with no rail on the card edge and no right border. The
-           slab now carries a 2.5px rail, a right hairline and a full-bleed span,
-           so it reads as its own object without needing a margin to prove it. */
+        /* 3px above the tint — the outer half of the 6px gap (see the base rule).
+           The scoped selector is what wins the specificity fight against
+           `.tour-box > div` (0,1,1) beating `.tve-ph` (0,1,0). */
         '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
         '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{' +
-        'margin:0 -14px!important;}' +
-        /* The row AFTER the band drops its own 6px too — otherwise the band's
-           padding-bottom and the neighbour's margin-top stack back up to 12px. */
+        'margin:3px -14px 0!important;}' +
+        /* The row AFTER the band contributes the other outer half: 3px, not the
+           card's usual 6px, because the band's own 3px padding-bottom already
+           carries the inner half. Leaving 6px here stacks to 9px and the band
+           sits low in its slot. */
         '.tour-box > .tve-ph + *,.ticket-box > .tve-ph + *,' +
         '.tour-box > .tve-ph-wrap + *,.ticket-box > .tve-ph-wrap + *{' +
-        'margin-top:0!important;}' +
+        'margin-top:3px!important;}' +
         /* First VISIBLE row of the card. The authored 🏛️ rows the band replaces
            stay in the DOM as display:none, so :first-child never matches it — JS
            stamps this class instead. 2,127 cards across the fleet lead with 🏛️,
@@ -2977,7 +2977,10 @@
            A hover trigger that pushed content down would reflow the page under
            the cursor every time it crossed a stop while scrolling. */
         /* Same 11.5px left padding as the toggle, so the schedule's day column
-           starts on the card's icon column instead of 2px off it. */
+           starts on the card's icon column instead of 2px off it. padding-top is
+           3px because the panel opens at the toggle's bottom edge, which the
+           3+3 gap split moved 3px closer to the label — without it the divider
+           rides up against the "Today" line. */
         /* Right + bottom hairlines for the same reason as .tve-ph above: the
            open panel is a cream slab on a near-cream page, so without them its
            right end and its foot were invisible and the schedule looked like it
@@ -2986,7 +2989,7 @@
         'border-left:2.5px solid #bba070;background:#fdf8f0;' +
         'border-right:1px solid rgba(187,160,112,.45);' +
         'border-bottom:1px solid rgba(187,160,112,.45);' +
-        'padding:0 14px 8px 11.5px;border-radius:0;' +
+        'padding:3px 14px 8px 11.5px;border-radius:0;' +
         'box-shadow:0 6px 16px rgba(61,58,50,.16);}' +
         '.tve-ph-panel.tve-ph-open{display:block;}' +
         /* Hover expand — pointer devices only. Touch screens report hover:none
