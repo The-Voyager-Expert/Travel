@@ -187,7 +187,8 @@
    2026-08-07: Trip Overview section-nav chips grouped into labelled runs on desktop (.ov-grp CSS in guide-style.css; the toolbar.js half shipped in a66baef). Chip appearance unchanged, mobile glued grid untouched. guide-style.css min to 103, toolbar.js min to 191, CACHE to v293.
    2026-08-07: Trip Overview redesign — day rows get a DAY N rail, softened stop list and right-aligned stop count with zebra rows (toolbar.js _dayRowRail + .ovd-* CSS); section-nav chips regrouped into stacked labelled runs (Eat & drink · Get around · Plan & do · Elsewhere on the site) with the beige pill treatment unchanged. Both runtime-injected, zero guide HTML edits. guide-style.css min to 113, toolbar.js min to 204, CACHE to v313.
    2026-08-07: Trip Overview chip grouping now applies on MOBILE too (was desktop-only). The glued 3-across grid moves down one level — .overview-extras stacks the groups and each .ov-grp-row is the 6-column grid with chips spanning 2; trailing orphans widened by the existing _fixPillGridOrphans helper, same idiom as .also-on-this-site-pills. guide-style.css min to 114, toolbar.js min to 205, CACHE to v314.
-   2026-08-08: Cache bump only — force a fresh Pages deploy so every CDN edge re-fetches the Trip Overview day rail (.ovd-*) and grouped section-nav chips (.ov-grp*). Both shipped in 76703826 + e934f72b and are correct on origin/main; this purges any edge still holding the pre-deploy copy. guide-style.css min to 122, toolbar.js min to 207, CACHE to v323. */
+   2026-08-08: Cache bump only — force a fresh Pages deploy so every CDN edge re-fetches the Trip Overview day rail (.ovd-*) and grouped section-nav chips (.ov-grp*). Both shipped in 76703826 + e934f72b and are correct on origin/main; this purges any edge still holding the pre-deploy copy. guide-style.css min to 122, toolbar.js min to 207, CACHE to v323.
+   2026-08-08: Section-nav chips — labelled group runs retired; the row is now an even 3-column grid and each chip carries a dot in its own section's colour, read from that section's --c-*-border token. Chips stay beige; only the radius softens 20px -> 8px. Rendered order returns to canonical (no regrouping). guide-style.css min to 127, toolbar.js min to 210, CACHE to v330. */
 /* 2026-08-04: Best-Of prev/next arrows now insert after .page-intro-card (below the
    banner) instead of after .page-header — bumped toolbar.js min to 158, CACHE to v214. */
 /* 2026-08-04: Wikipedia row margin-bottom 12px → 6px (symmetric with margin-top, 2 less
@@ -302,7 +303,7 @@
 /* 2026-08-08: Comment-only correction on the Read more chip. Its note still explained the #fffdf9 fill as "--c-next-bg against #f1ece3 is a two-value difference" - true when the panel was the report's #f1ece3, false the moment the panel moved onto --c-next-bg itself. The reason is now stated correctly: the chip sits ON the panel, the panel IS --c-next-bg, so a --c-next-bg fill would be no chip at all; #fffdf9 is what lifts it off. Same drift class as the retired-backpack comments purged earlier today - a comment that contradicts the code beside it is what feeds wrong values back into the next change. guide-style.css -> v126. CACHE to v327. */
 /* 2026-08-07: Stop hours — row spacing normalised. .tour-box/.ticket-box give every direct child margin-top:6px and the hours row added 6px of its own vertical padding on top, so its text sat 12px from the next row's while every other pair in the card sat at 6px. Outer margins now 0 and the following sibling's margin-top cancelled, so the padding provides the spacing and text-to-text rhythm is a uniform 6px. Verified on Melbourne, Boston, Rome, Big-Island. toolbar.js -> v208. CACHE to v328. */
 /* 2026-08-08: HOTEL_ALT_DATA['maui'] — added Grand Wailea and Fairmont Kea Lani as runner-up hotels, added Booking.com url field to all 4 Maui entries. toolbar.js -> v209. CACHE to v329. */
-var CACHE = 'travel-cache-v329';
+var CACHE = 'travel-cache-v330';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -310,7 +311,7 @@ var CACHE = 'travel-cache-v329';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 126, 'toolbar.js': 209, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 127, 'toolbar.js': 210, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -491,33 +491,33 @@ a:hover { text-decoration: underline; }
   border-color: var(--c-pill-bd-active);
   transform: scale(.97) translateY(1px);
 }
-/* Grouped runs — the section-nav chips split into short labelled runs instead of
-   one ragged 13-17 chip wrap. Structure is injected by toolbar.js _groupExtrasPills
-   and ONLY at >=601px: the class .tve-grouped never appears on mobile, so the glued
-   3-across grid at the bottom of this file keeps its direct-child / nth-child rules
-   intact. Chip appearance is deliberately NOT touched here — fill, border, 20px
-   radius, padding and font-size all still come from the rules above; grouping is
-   layout-only. Group order mirrors the canonical pill order (Trip Overview.html §3),
-   never a resort — see the comment block in toolbar.js.
-   Labels are STACKED above each run (owner decision 2026-08-07). A left rail was
-   tried first and read messy: every run ended at a different x, so the block had
-   no right edge, and a one-chip group left an orphaned line beside its label.
-   Stacking gives each group a clean block with its own left AND right edge.
-   The chips themselves keep the beige treatment they already had — fill, gold
-   border, 20px radius, padding, font-size all still come from the rules above.
-   Grouping is layout-only; do not restyle the chips here. */
-.overview-extras.tve-grouped { display: block; }
-.ov-grp { margin-bottom: 14px; }
-.ov-grp:last-child { margin-bottom: 0; }
-.ov-grp-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  color: #a49b8b;
-  margin-bottom: 7px;
+/* Section-nav chips — even 3-column grid + a section-colour dot.
+   The grid is what squares the row's right edge against the flush action bar
+   directly above it; a flex wrap left 13-17 chips ending on a ragged third row,
+   which is the single strongest "unfinished" cue on the page.
+   The dot is injected by toolbar.js _extrasSectionDots and takes its colour from
+   the SAME --c-*-border custom property that draws that section's box further
+   down the guide, so a chip and its destination can never drift apart.
+   Chip colours are otherwise untouched: the beige fill, gold border and text all
+   still come from the .overview-extras .overview-extra-link rules above. Only the
+   corner radius softens from a 20px pill to an 8px tile, because a pill stretched
+   to a fixed grid column reads as a pill that got pulled. */
+.overview-extras:not(#ics-pill-row) {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
-.ov-grp-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.overview-extras:not(#ics-pill-row) .overview-extra-link {
+  border-radius: 8px;
+  justify-content: flex-start;
+}
+.ov-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  display: inline-block;
+}
 /* Export to Calendar + All Stops Map — match Read About pill visually:
    gold text, same border style/weight, same radius. The scoped
    .overview-extras .overview-extra-link rule would otherwise win with dark
@@ -2515,22 +2515,12 @@ div.train .train-time   { padding: 2px 0; }
      at child 2. A lone last link therefore lands at DOM position 3n+2, not 3n+1.
      Exclude #ics-pill-row (sibling with same class, 2-col grid) to avoid breaking it. */
   .overview-extras:not(#ics-pill-row) > .overview-extra-link:last-child:nth-child(3n+2) { grid-column: span 3; }
-  /* Grouped runs on mobile (2026-08-07): the chips are no longer direct children
-     of .overview-extras, so the grid moves down one level — .overview-extras
-     stacks the groups, and each .ov-grp-row is itself the 6-column grid with the
-     chips spanning 2 (= 3-across). Same idiom as .also-on-this-site-pills, and
-     the trailing orphans are widened by the same _fixPillGridOrphans helper, so
-     the mobile-render validator's lonely-pill rule holds by construction.
-     The orphan rule above simply stops matching once grouped — harmless. */
-  .overview-extras.tve-grouped { display: block !important; }
-  .ov-grp { margin-bottom: 16px; }
-  .ov-grp-label { font-size: 10px; letter-spacing: .12em; margin-bottom: 6px; }
-  .ov-grp-row {
-    display: grid !important;
-    grid-template-columns: repeat(6, 1fr) !important;
-    gap: 6px !important;
-  }
-  .ov-grp-row > .overview-extra-link { grid-column: span 2; }
+  /* Chips are direct children of .overview-extras again (the grouped-run
+     wrappers were retired 2026-08-08), so the glued 3-across grid and its
+     nth-child orphan rule above apply unchanged. The desktop 3-column grid is
+     overridden back to the mobile 3-across by the !important rule above; only
+     the dot needs sizing down here. */
+  .ov-dot { width: 6px; height: 6px; }
   .overview-extra-link {
     width: auto !important; height: 46px !important;
     display: flex !important; align-items: center; justify-content: center;
