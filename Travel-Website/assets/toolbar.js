@@ -4382,10 +4382,10 @@
       { name: 'Hotel Hessischer Hof', note: 'Independent grand hotel — 1952 address near Alte Oper and Messe, decorated with Hessian art collection, restaurant Sèvres · 8.6 Booking.com' }
     ] },
     'galapagos-islands': { h: [
-      { name: 'Finch Bay Ecolodge', note: 'Relais & Châteaux eco-resort at Finch Bay — naturalist-guided excursions, pool, pier with direct water-taxi access to Las Grietas, most prestigious address on Santa Cruz · 9.2 Booking.com' },
-      { name: 'Hotel Ikala Galapagos', note: 'Boutique hotel with pool and garden on Av. Charles Darwin — central Puerto Ayora location, 5-min walk to Charles Darwin Research Station · 8.8 Booking.com' },
-      { name: 'Galapagos Safari Camp', note: 'Luxury tented camp in the Santa Cruz highlands — highland setting near El Chato tortoise reserve and Los Gemelos craters, butler service, 4x4 transfers · 9.0 Booking.com' },
-      { name: 'Sol y Mar B&B', note: 'Waterfront guesthouse with harbor views on Av. Darwin — steps from the main dock and water-taxi pier, closest budget option to the boat terminal · 8.4 Booking.com' }
+      { name: 'Finch Bay Ecolodge', note: 'Relais & Châteaux eco-resort at Finch Bay — naturalist-guided excursions, pool, pier with direct water-taxi access to Las Grietas, most prestigious address on Santa Cruz · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ec/finch-bay.html' },
+      { name: 'Hotel Ikala Galapagos', note: 'Boutique hotel with pool and garden on Av. Charles Darwin — central Puerto Ayora location, 5-min walk to Charles Darwin Research Station · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ec/ikala-galapagos.html' },
+      { name: 'Galapagos Safari Camp', note: 'Luxury tented camp in the Santa Cruz highlands — highland setting near El Chato tortoise reserve and Los Gemelos craters, butler service, 4x4 transfers · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ec/galapagos-safari-camp-cumbaya.html' },
+      { name: 'Sol y Mar B&B', note: 'Waterfront guesthouse with harbor views on Av. Darwin — steps from the main dock and water-taxi pier, closest budget option to the boat terminal · 8.4 Booking.com', url: 'https://www.booking.com/hotel/ec/solymar.html' }
     ] },
     'geneva': { h: [
       { name: 'Beau-Rivage Geneva', note: 'Independent grand hotel — 1865 Quai du Mont-Blanc lakefront, indoor pool, Michelin-starred Chat Botté restaurant, panoramic lake views · 9.1 Booking.com' },
@@ -4502,8 +4502,10 @@
       { name: 'Barrière Lille', note: 'Barrière group — L\'Alliance hotel connected to Grand Casino Barrière, spa with pool and hammam, rooftop terrace, central Lille location · 8.7 Booking.com' }
     ] },
     'lima': { h: [
-      { name: 'Belmond Miraflores Park', note: 'Belmond brand — Miraflores clifftop overlooking the Pacific, rooftop heated pool with ocean views, full-service spa, 81 rooms · 9.0 Booking.com' },
-      { name: 'Hotel B', note: 'Small Luxury Hotels of the World — 1914 Republican mansion in Barranco arts district, 17 rooms, curated contemporary art collection, rooftop terrace · 9.5 Booking.com' }
+      { name: 'Belmond Miraflores Park', note: 'Belmond brand — Miraflores clifftop overlooking the Pacific, rooftop heated pool with ocean views, full-service spa, 81 rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pe/miraflores-park.html' },
+      { name: 'Hotel B', note: 'Small Luxury Hotels of the World — 1914 Republican mansion in Barranco arts district, 17 rooms, curated contemporary art collection, rooftop terrace · 9.5 Booking.com', url: 'https://www.booking.com/hotel/pe/arts-boutique-b.html' },
+      { name: 'JW Marriott Hotel Lima', note: 'Marriott JW brand — Miraflores oceanfront tower, Pacific-view rooms, outdoor pool, Fishmar seafood restaurant, steps from Larcomar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pe/jw-marriott-lima.html' },
+      { name: 'Country Club Lima Hotel', note: 'Leading Hotels of the World — 1927 San Isidro mansion, 83 rooms, 300+ art pieces from Pedro de Osma Museum, El Perroquet restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/pe/country-club-lima.html' }
     ] },
     'london': { h: [
       { name: 'The Savoy', note: 'Fairmont brand — 1889 Thames Embankment landmark, Art Deco interior, Kaspar\'s Seafood Bar, indoor pool · 9.1 Booking.com' },
