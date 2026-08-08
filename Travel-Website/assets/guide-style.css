@@ -602,6 +602,79 @@ a:hover { text-decoration: underline; }
 @media (hover: hover) {
   #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover, #tve-preview-btn:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
 }
+
+/* ── In-guide currency converter — 💱 Currency pill + expanded panel ─────────
+   The pill is the sixth member of #ics-pill-row and inherits the row's chrome
+   from the rules above; only the states it adds are declared here. Open reuses
+   the exact terracotta treatment I've Been / Save-for-offline use for "this is
+   on", so the row speaks one state language rather than three.
+   Every colour resolves through a theme token: the panel is injected by
+   toolbar.js, which also injects the html[data-theme="dark"] token block, so a
+   bare hex here would look correct in light mode and be invisible in dark. */
+#tve-cur-pill { color: var(--c-action-text); }
+#tve-cur-pill:visited { color: var(--c-action-text); }
+#tve-cur-pill:active, #tve-cur-pill.tve-pressed { background: var(--c-action-press); }
+#tve-cur-pill.tve-cur-on { background: var(--c-next-bg); border-color: #b85c2a; color: #b85c2a; font-weight: 700; }
+#tve-cur-pill.tve-cur-on:visited { color: #b85c2a; }
+/* Same collapsed-left-border restore the other two toggled-on pills need — the
+   button-group :not(:first-child) rule zeroes it; -1px margin hides the seam. */
+#ics-pill-row > #tve-cur-pill.tve-cur-on { border-left-width: 1px; margin-left: -1px; }
+@media (hover: hover) {
+  #tve-cur-pill:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
+}
+
+.tve-cur-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  /* -8px pulls the panel up through #ics-pill-row's 14px bottom margin so it
+     reads as the pill expanding rather than as a separate card below it. */
+  margin: -8px 0 16px;
+  padding: 12px 14px;
+  background: var(--c-warm-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 6px;
+}
+/* [hidden] is (0,1,0) and loses to the .tve-cur-panel display above — without
+   this the panel would ship permanently open. Same trap as every other
+   display-carrying class in this file. */
+#tve-cur-panel[hidden] { display: none; }
+.tve-cur-row { display: flex; align-items: center; gap: 8px; width: 100%; }
+.tve-cur-field { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.tve-cur-sym { font-size: 13px; font-weight: 700; color: var(--c-action-text); white-space: nowrap; }
+.tve-cur-eq { font-size: 14px; color: var(--c-text-muted); }
+.tve-cur-in {
+  width: 96px;
+  padding: 6px 9px;
+  border: 1px solid var(--c-next-border);
+  border-radius: 4px;
+  background: var(--c-card-bg);
+  color: var(--c-text-primary);
+  -webkit-text-fill-color: var(--c-text-primary);   /* iOS greys the value without this */
+  font-family: inherit;
+  /* 16px is load-bearing, not a taste call: iOS Safari zooms the whole page on
+     focus for any input under 16px, which throws the reader out of the guide. */
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.tve-cur-in::-webkit-outer-spin-button,
+.tve-cur-in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.tve-cur-in:focus { outline: none; border-color: #b85c2a; }
+.tve-cur-note { font-size: 11px; line-height: 1.5; color: var(--c-text-muted); }
+.tve-cur-more { color: var(--c-index-accent); text-decoration: none; font-weight: 600; }
+.tve-cur-more:visited { color: var(--c-index-accent); }
+.tve-cur-more:hover { text-decoration: underline; }
+/* Fixed 96px fields overflow the row at 320px (2 × 96 + labels + gaps > the
+   264px of content a 320px viewport leaves once page and panel padding are
+   taken). Letting both fields share the row instead keeps the converter on one
+   line at every width the site supports, down to 320px. */
+@media (max-width: 600px) {
+  .tve-cur-field { flex: 1 1 0; }
+  .tve-cur-in { width: auto; flex: 1 1 0; min-width: 0; }
+}
 /* Transient confirmation toast (Save for offline). Fixed bottom-centre, fades in,
    auto-dismisses. Dark warm bg reads in both light and dark mode. */
 .tve-toast {
@@ -3784,13 +3857,6 @@ a.also-in-country-pill:active {
   .ticket-flag::before { background-color: #d4874a; }
   .free-flag::before { background-color: #d4874a; }
 }
-:root[data-theme="dark"] .open-now-pill { color: #c8a860; border-color: #5a4a20; }
-:root[data-theme="dark"] .open-now-pill.on { color: #d0ffd8; background: #1a5a2e; border-color: #1a5a2e; }
-:root[data-theme="dark"] .closed-now-badge { color: #fca5a5; background: #3b1212; border-color: #7a2020; }
-:root[data-theme="dark"] .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }
-:root[data-theme="dark"] .free-flag { color: #d4874a; }
-:root[data-theme="dark"] .ticket-flag::before { background-color: #d4874a; }
-:root[data-theme="dark"] .free-flag::before { background-color: #d4874a; }
 :root[data-theme="dark"] .lounge-arrival-chip { background: #2a211c; color: #d4874a; border-left-color: #a05a2e; }
 :root[data-theme="dark"] .lounge-arrival-chip:hover { background: #33281f; }
 :root[data-theme="dark"] a.lounge-arrival-chip:visited { color: #d4874a; }
@@ -3799,3 +3865,10 @@ a.also-in-country-pill:active {
 :root[data-theme="dark"] .next,
 :root[data-theme="dark"] .next-tram,
 :root[data-theme="dark"] .next-metro { background: #232221; color: #9d988c; }
+:root[data-theme="dark"] .open-now-pill { color: #c8a860; border-color: #5a4a20; }
+:root[data-theme="dark"] .open-now-pill.on { color: #d0ffd8; background: #1a5a2e; border-color: #1a5a2e; }
+:root[data-theme="dark"] .closed-now-badge { color: #fca5a5; background: #3b1212; border-color: #7a2020; }
+:root[data-theme="dark"] .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }
+:root[data-theme="dark"] .free-flag { color: #d4874a; }
+:root[data-theme="dark"] .ticket-flag::before { background-color: #d4874a; }
+:root[data-theme="dark"] .free-flag::before { background-color: #d4874a; }
