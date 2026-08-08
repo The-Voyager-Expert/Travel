@@ -275,7 +275,10 @@
 /* 2026-08-07: ✨ Worth Knowing (was ✨ Claude Inspiration) — section title is now CSS-injected via #claude-inspiration .extras-title:empty::before so the heading always matches the Extras-row pill; each guide's own creative line moves into <p class="wk-headline"> as the first row of the white card. guide-style.css -> v104. CACHE to v297. */
 /* 2026-08-07: Mark Stop circle — the unchecked circle was an empty ring (color:transparent) that gave no clue what it did, and the checked state only dimmed the header, which read as "disabled". Unchecked now carries a faint #c8baa8 ✓ so it reads as a tick-box; checked fills SOLID #b85c2a with a white ✓; hover tints the ✓ terracotta; toolbar.js sets a title/aria-label that flips between "Mark as visited" and "Visited — click to unmark". guide-style.css -> v105, toolbar.js -> v195. CACHE to v298. */
 /* 2026-08-07: Mark Stop — checked state is now a "✓ Visited" pill, not a bare filled circle. The tooltip only reachable on desktop hover left mobile with no wording at all; the word now ships in the control itself once a stop is marked (::after on .stop-block.stop-done .stop-mark-btn; width:auto + 8px padding + 10px radius). Unchecked stays a compact circle — every stop carrying the word permanently would be noise. Verified at 393px and 1200px: no horizontal overflow, long stop names wrap cleanly. guide-style.css -> v106. CACHE to v299. */
-var CACHE = 'travel-cache-v299';
+/* 2026-08-07: Luggage Storage wired into the toolbar — new '🧳 Luggage Storage' child in the ✈️ Flights dropdown, directly after 🛄 Baggage (owner-approved 2026-08-07). Filed with Baggage rather than 🚆 Trains: the Trains group is strictly rail-travel (guide/day-trips/scenic/passes), while the page spans 71 cities across 5 regions, many with no station storage at all — Baggage is the real sibling (airline bag rules vs. on-the-ground bag storage). One ITEMS edit covers desktop chips + mobile hamburger (both build from the same array). — bumped toolbar.js min to 196, CACHE to v300. */
+/* 2026-08-07: Scams & Tourist Traps wired into the toolbar — new '🕵️ Scams & Traps' child in the 🛡️ Safety dropdown, directly after 🛡️ Safety Guide (owner-approved 2026-08-07). Placed there because Safety-Guide gives a country's macro advisory level and this page gives the specific schemes at each city — the two are read together. 🕵️ picked from the Emoji Library (Detective) so the child does not repeat the group's own 🛡️. toolbar.js -> v197. CACHE to v301. */
+/* 2026-08-07: Stop hours collapse — toolbar.js _upgradeStopHours() rewrites the authored 🏛 hours row on every stop whose listing has 2+ ' · '-separated segments: the authored row is hidden (.tve-ph-src) and replaced by a collapsed row naming today, expanding on hover (pointer devices) or tap/Enter/Space to a Mon–Sun grid with 24h badges. Single-segment listings are left exactly as authored. 'Today' resolves against the DESTINATION timezone via _tveDestNow(), never the reader's clock. 425 rows across 142 guides. Self-contained — CSS ships inside toolbar.js as <style id="tve-ph-css">. Zero guide HTML changes. This bump also releases the _syncFab and _injectCopyDayButtons fixes that shipped in the same window without one. toolbar.js -> v198. CACHE to v302. */
+var CACHE = 'travel-cache-v302';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -283,7 +286,7 @@ var CACHE = 'travel-cache-v299';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 106, 'toolbar.js': 195, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 106, 'toolbar.js': 198, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
