@@ -2624,6 +2624,463 @@
   }
 
 
+  /* ── Destination timezone map (guide folder slug → IANA) ─────────────────
+     Module scope: both _upgradeStopHours and _injectOpenNowFilter read it. */
+  var _TVE_TZ = {
+    'abu-dhabi':'Asia/Dubai','aix-en-provence':'Europe/Paris',
+    'alaska':'America/Anchorage','alesund':'Europe/Oslo',
+    'amalfi':'Europe/Rome','amsterdam':'Europe/Amsterdam',
+    'annecy':'Europe/Paris','aracaju':'America/Fortaleza',
+    'arenal':'America/Costa_Rica','aruba':'America/Aruba',
+    'athens':'Europe/Athens','atlanta':'America/New_York',
+    'austin':'America/Chicago','azores':'Atlantic/Azores',
+    'bahamas':'America/Nassau','bali':'Asia/Makassar',
+    'banff':'America/Edmonton','bangkok':'Asia/Bangkok',
+    'barbados':'America/Barbados','barcelona':'Europe/Madrid',
+    'beijing':'Asia/Shanghai','bend':'America/Los_Angeles',
+    'bergen':'Europe/Oslo','berlin':'Europe/Berlin',
+    'bhutan':'Asia/Thimphu','big-island':'Pacific/Honolulu',
+    'bilbao':'Europe/Madrid','bologna':'Europe/Rome',
+    'bora-bora':'Pacific/Tahiti','bordeaux':'Europe/Paris',
+    'boston':'America/New_York','boulder':'America/Denver',
+    'bruges':'Europe/Brussels','brussels':'Europe/Brussels',
+    'budapest':'Europe/Budapest',
+    'buenos-aires':'America/Argentina/Buenos_Aires',
+    'buenos aires':'America/Argentina/Buenos_Aires',
+    'cairo':'Africa/Cairo','cambridge':'Europe/London',
+    'cancun':'America/Cancun','cannes':'Europe/Paris',
+    'cape-cod':'America/New_York','cape-town':'Africa/Johannesburg',
+    'capri':'Europe/Rome','carmel-by-the-sea':'America/Los_Angeles',
+    'cascais':'Europe/Lisbon','cayman-islands':'America/Cayman',
+    'charlotte':'America/New_York','chiang-mai':'Asia/Bangkok',
+    'chicago':'America/Chicago','chongqing':'Asia/Shanghai',
+    'cinque-terre':'Europe/Rome','coeur-dalene':'America/Los_Angeles',
+    'colmar':'Europe/Paris','cologne':'Europe/Berlin',
+    'colombo':'Asia/Colombo','columbia':'America/New_York',
+    'copenhagen':'Europe/Copenhagen','corfu':'Europe/Athens',
+    'crete':'Europe/Athens','curacao':'America/Curacao',
+    'curitiba':'America/Sao_Paulo','cusco':'America/Lima',
+    'dallas':'America/Chicago','denver':'America/Denver',
+    'doha':'Asia/Qatar','dubai':'Asia/Dubai',
+    'dublin':'Europe/Dublin','dubrovnik':'Europe/Zagreb',
+    'edinburgh':'Europe/London','florence':'Europe/Rome',
+    'florianopolis':'America/Sao_Paulo',
+    'florida keys':'America/New_York',
+    'florida-keys':'America/New_York',
+    'fortaleza':'America/Fortaleza',
+    'foz-do-iguaçu':'America/Sao_Paulo',
+    'frankfurt':'Europe/Berlin',
+    'galapagos-islands':'Pacific/Galapagos',
+    'geneva':'Europe/Zurich',
+    'glacier-national-park':'America/Denver',
+    'glasgow':'Europe/London','gothenburg':'Europe/Stockholm',
+    'granada':'Europe/Madrid','hamburg':'Europe/Berlin',
+    'hanoi':'Asia/Bangkok','helsinki':'Europe/Helsinki',
+    'hilton-head-island':'America/New_York',
+    'hiroshima':'Asia/Tokyo','hoi-an':'Asia/Bangkok',
+    'hong-kong':'Asia/Hong_Kong','istanbul':'Europe/Istanbul',
+    'joão-pessoa':'America/Fortaleza',
+    'kauai':'Pacific/Honolulu','keywest':'America/New_York',
+    'kotor':'Europe/Belgrade','kraków':'Europe/Warsaw',
+    'kyoto':'Asia/Tokyo','la-jolla':'America/Los_Angeles',
+    'lagos':'Africa/Lagos','lake-como':'Europe/Rome',
+    'lake-tahoe':'America/Los_Angeles','las-vegas':'America/Los_Angeles',
+    'lecce':'Europe/Rome','lille':'Europe/Paris',
+    'lima':'America/Lima','lisbon':'Europe/Lisbon',
+    'ljubljana':'Europe/Ljubljana','london':'Europe/London',
+    'los-angeles':'America/Los_Angeles','los-cabos':'America/Mazatlan',
+    'luang-prabang':'Asia/Vientiane','lucerne':'Europe/Zurich',
+    'luxembourg':'Europe/Luxembourg','lyon':'Europe/Paris',
+    'maceió':'America/Maceio','machupicchu':'America/Lima',
+    'madeira':'Atlantic/Madeira','madrid':'Europe/Madrid',
+    'malaga':'Europe/Madrid','maldives':'Indian/Maldives',
+    'malibu':'America/Los_Angeles',
+    'manuel-antonio':'America/Costa_Rica',
+    'marco-island':'America/New_York',
+    'marktoberdorf':'Europe/Berlin',
+    'marrakech':'Africa/Casablanca',
+    'marseille':'Europe/Paris','maui':'Pacific/Honolulu',
+    'melbourne':'Australia/Melbourne','miami':'America/New_York',
+    'milan':'Europe/Rome','monaco':'Europe/Paris',
+    'montevideo':'America/Montevideo','montreal':'America/Toronto',
+    'munich':'Europe/Berlin','muscat':'Asia/Muscat',
+    'mykonos':'Europe/Athens','napa':'America/Los_Angeles',
+    'naples':'Europe/Rome','naples-florida':'America/New_York',
+    'nashville':'America/Chicago','natal':'America/Fortaleza',
+    'new-orleans':'America/Chicago','new-york':'America/New_York',
+    'nice':'Europe/Paris','oahu':'Pacific/Honolulu',
+    'oaxaca':'America/Mexico_City','olinda':'America/Recife',
+    'orcas-island':'America/Los_Angeles','orlando':'America/New_York',
+    'osaka':'Asia/Tokyo','oslo':'Europe/Oslo',
+    'oxford':'Europe/London','palawan':'Asia/Manila',
+    'palm-desert':'America/Los_Angeles','palo-alto':'America/Los_Angeles',
+    'paris':'Europe/Paris','pasadena':'America/Los_Angeles',
+    'pensacola':'America/Chicago','petra':'Asia/Amman',
+    'philadelphia':'America/New_York','phoenix':'America/Phoenix',
+    'phuket':'Asia/Bangkok','pisa':'Europe/Rome',
+    'pokhara':'Asia/Kathmandu','portland':'America/Los_Angeles',
+    'porto':'Europe/Lisbon','porto-alegre':'America/Sao_Paulo',
+    'prague':'Europe/Prague','puerto-rico':'America/Puerto_Rico',
+    'puerto-vallarta':'America/Mazatlan',
+    'quebec-city':'America/Toronto','queenstown':'Pacific/Auckland',
+    'recife':'America/Recife','reykjavik':'Atlantic/Reykjavik',
+    'rhodes':'Europe/Athens','rio-de-janeiro':'America/Sao_Paulo',
+    'rome':'Europe/Rome','salvador':'America/Bahia',
+    'salzburg':'Europe/Vienna','san-diego':'America/Los_Angeles',
+    'san-francisco':'America/Los_Angeles',
+    'san-jose':'America/Los_Angeles',
+    'san-jose-costa-rica':'America/Costa_Rica',
+    'san-juan-island':'America/Los_Angeles',
+    'san-sebastian':'Europe/Madrid',
+    'santa-barbara':'America/Los_Angeles',
+    'santa-cruz':'America/Los_Angeles',
+    'santa-fe':'America/Denver','santa-monica':'America/Los_Angeles',
+    'santiago':'America/Santiago','santorini':'Europe/Athens',
+    'sarasota':'America/New_York','sardinia':'Europe/Rome',
+    'scottsdale':'America/Phoenix','seattle':'America/Los_Angeles',
+    'sedona':'America/Phoenix','seoul':'Asia/Seoul',
+    'seville':'Europe/Madrid','seychelles':'Indian/Mahe',
+    'shanghai':'Asia/Shanghai','sicily':'Europe/Rome',
+    'siena':'Europe/Rome','singapore':'Asia/Singapore',
+    'sint-maarten':'America/Lower_Princes',
+    'sintra':'Europe/Lisbon','sorrento':'Europe/Rome',
+    'split':'Europe/Zagreb','stockholm':'Europe/Stockholm',
+    'strasbourg':'Europe/Paris','stuttgart':'Europe/Berlin',
+    'sydney':'Australia/Sydney',
+    'são-luís':'America/Fortaleza','são-paulo':'America/Sao_Paulo',
+    'taipei':'Asia/Taipei','tallinn':'Europe/Tallinn',
+    'tbilisi':'Asia/Tbilisi','tenerife':'Atlantic/Canary',
+    'tokyo':'Asia/Tokyo','toledo':'Europe/Madrid',
+    'toronto':'America/Toronto','tromso':'Europe/Oslo',
+    'turin':'Europe/Rome','turks-and-caicos':'America/Grand_Turk',
+    'valletta':'Europe/Malta','vancouver':'America/Vancouver',
+    'venice':'Europe/Rome','verona':'Europe/Rome',
+    'victoria':'America/Vancouver','vienna':'Europe/Vienna',
+    'virgin-islands':'America/St_Thomas',
+    'washington-dc':'America/New_York',
+    'wellington':'Pacific/Auckland','whistler':'America/Vancouver',
+    'yellowstone':'America/Denver','zakynthos':'Europe/Athens',
+    'zhangjiajie':'Asia/Shanghai','zurich':'Europe/Zurich'
+  };
+
+  /* ── Destination weekday + clock (shared) ────────────────────────────────────
+     Resolves the destination timezone from data-timezone on #toolbar-mount, or
+     failing that the Guides/{City}/ folder slug, and reports the weekday index
+     and formatted time for THAT city — never the reader's own clock. A guide is
+     read weeks before the trip and often from another continent, so "today" has
+     to mean today at the destination or it means nothing. `local` is false when
+     no timezone could be resolved; callers suppress the today marker then rather
+     than showing the reader's own weekday. Shared by the stop-hours injection
+     and the Open Now filter. */
+  function _tveDestNow() {
+    var parts = location.pathname.split('/');
+    var gi    = parts.indexOf('Guides');
+    var slug  = gi >= 0 && parts[gi + 1] ? parts[gi + 1].toLowerCase() : '';
+    var tz    = (mount && mount.dataset && mount.dataset.timezone) || _TVE_TZ[slug] || '';
+    var now   = new Date();
+    var out   = { dow: now.getDay(), tz: tz, local: false, time: '' };
+    if (!tz) return out;
+    try {
+      var DOW = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+      var d = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short' }).format(now);
+      if (DOW[d] !== undefined) { out.dow = DOW[d]; out.local = true; }
+      out.time = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true
+      }).format(now);
+    } catch (err) { /* Intl or tz unsupported → marker suppressed by local:false */ }
+    return out;
+  }
+
+
+  /* ── Stop hours — collapsed row, hover-expand week schedule ──────────────────
+     Every guide already writes opening hours as a structured 🏛️ row inside the
+     stop's .tour-box / .ticket-box, in one consistent authored shape:
+
+         🏛️ Daily 9:00am - 4:00pm
+         🏛️ Open 24/7
+         🏛️ Tuesday - Sunday 10:00am - 5:00pm
+         🏛️ Monday - Saturday 8:30am - 6:00pm · Sunday 1:00pm - 6:00pm
+
+     Segments are separated by " · ". This pass UPGRADES those rows — it reads
+     only authored data and never parses narrative prose. (An earlier version
+     parsed stop prose instead and skipped any stop that already had a 🏛️ row;
+     since 235/235 guides carry 🏛️ rows on essentially every stop, it matched
+     nothing anywhere on the site.)
+
+       · one segment  → left exactly as authored. A chevron that expands to a
+                        single line is a lie, so simple rows get no affordance.
+       · 2+ segments  → the authored row is hidden and replaced by a collapsed
+                        row naming TODAY, expanding on hover (pointer devices)
+                        or tap / Enter / Space to a Mon–Sun grid.
+
+     Days absent from the listing render as Closed — an hours listing that names
+     Tuesday–Sunday is universally read as "shut on Monday".
+
+     🔒 Coupling with the Open Now filter: that filter reads the FIRST
+     .tour-box/.ticket-box child whose text starts with 🏛 and parses it. The
+     authored row is therefore kept in the DOM (hidden with .tve-ph-src, which
+     leaves textContent intact) and the replacement row starts with 🕐, not 🏛,
+     so the filter still resolves to the authored string either way.
+
+     "Today" comes from _tveDestNow() — the DESTINATION's weekday, never the
+     reader's; a guide is read weeks ahead and often from another continent.
+     When no timezone resolves the marker is suppressed rather than shown
+     against the wrong day. Zero guide HTML changes — toolbar.js only. */
+  function _upgradeStopHours() {
+    if (!isRealGuide) return;
+    var srcRows = [];
+    [].forEach.call(document.querySelectorAll('.tour-box > div, .ticket-box > div'), function (d) {
+      if (d.textContent.trim().slice(0, 2) === '🏛') srcRows.push(d);
+    });
+    if (!srcRows.length) return;
+
+    /* ── CSS — injected once per page load ─────────────────────────────────── */
+    if (!document.getElementById('tve-ph-css')) {
+      var _phCss = document.createElement('style');
+      _phCss.id = 'tve-ph-css';
+      _phCss.textContent =
+        /* Base row */
+        '.tve-ph{border-left:2.5px solid #2d6a4f;background:#eef7f1;color:#1a4a34;' +
+        'font-weight:500;padding:6px 10px;margin-bottom:6px;border-radius:0 3px 3px 0;' +
+        'line-height:1.45;font-size:inherit;}' +
+        /* 24h variant */
+        '.tve-ph-24{border-left-color:#2980b9!important;background:#e8f4fd!important;' +
+        'color:#1a5276!important;}' +
+        /* Toggle (multi-day) — wrapped with the panel so hover covers both */
+        '.tve-ph-wrap{position:relative;margin-bottom:6px;}' +
+        '.tve-ph-toggle{display:flex!important;align-items:center;gap:7px;cursor:pointer;' +
+        'border-radius:0 3px 0 0!important;margin-bottom:0!important;' +
+        '-webkit-user-select:none;user-select:none;}' +
+        '.tve-ph-lbl{flex:1;}' +
+        '.tve-ph-chv{font-size:11px;color:#2d6a4f;transition:transform .2s;' +
+        'display:inline-block;line-height:1;}' +
+        '.tve-ph-toggle[aria-expanded="true"] .tve-ph-chv{transform:rotate(90deg);}' +
+        /* Expandable panel — absolute, so it floats OVER the rows beneath it.
+           A hover trigger that pushed content down would reflow the page under
+           the cursor every time it crossed a stop while scrolling. */
+        '.tve-ph-panel{display:none;position:absolute;left:0;right:0;top:100%;z-index:6;' +
+        'border-left:2.5px solid #2d6a4f;background:#eef7f1;' +
+        'padding:0 10px 8px;border-radius:0 0 3px 0;' +
+        'box-shadow:0 6px 16px rgba(61,58,50,.16);}' +
+        '.tve-ph-panel.tve-ph-open{display:block;}' +
+        /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
+           filter can still read its textContent. */
+        '.tve-ph-src{display:none!important;}' +
+        /* Hover expand — pointer devices only. Touch screens report hover:none
+           and fall through to the tap handler, so a phone never lands in a
+           stuck hover state it cannot clear. */
+        '@media(hover:hover){' +
+        '.tve-ph-wrap:hover .tve-ph-panel{display:block;}' +
+        '.tve-ph-wrap:hover .tve-ph-chv{transform:rotate(90deg);}' +
+        '}' +
+        '.tve-ph-hr{border:none;border-top:1px solid rgba(45,106,79,.2);margin:0 0 6px;}' +
+        /* Schedule grid */
+        '.tve-ph-grid{display:grid;grid-template-columns:5.5em 1fr;font-size:13px;}' +
+        '.tve-ph-d{font-weight:600;padding:2px 8px 2px 0;color:#1a4a34;line-height:1.45;}' +
+        '.tve-ph-t{padding:2px 0;color:#1a4a34;line-height:1.45;}' +
+        '.tve-ph-cl{color:#9a9088!important;font-style:italic;}' +
+        '.tve-ph-24v{color:#1a5276!important;font-weight:600;}' +
+        '.tve-ph-tag24{font-size:10px;font-weight:700;background:#e8f4fd;color:#1a5276;' +
+        'border:1px solid #2980b9;padding:0 3px;border-radius:3px;margin-right:4px;}' +
+        /* Today highlight (applied as direct classes on day/time cells) */
+        '.tve-ph-td{background:#d8f0e3;border-radius:3px 0 0 3px;padding-left:4px;}' +
+        '.tve-ph-tt{background:#d8f0e3;border-radius:0 3px 3px 0;padding-left:4px;}' +
+        '.tve-ph-now{font-size:10px;font-weight:700;color:#2d6a4f;' +
+        'text-transform:uppercase;letter-spacing:.05em;margin-left:4px;}' +
+        /* Dark mode — data-theme="dark" */
+        'html[data-theme="dark"] .tve-ph{background:#1a2e22;border-left-color:#52b788;color:#a3d5b8;}' +
+        'html[data-theme="dark"] .tve-ph-24{background:#0d2133!important;' +
+        'border-left-color:#2980b9!important;color:#7ec8e3!important;}' +
+        'html[data-theme="dark"] .tve-ph-chv{color:#52b788;}' +
+        'html[data-theme="dark"] .tve-ph-panel{background:#1a2e22;border-left-color:#52b788;' +
+        'box-shadow:0 6px 16px rgba(0,0,0,.5);}' +
+        'html[data-theme="dark"] .tve-ph-hr{border-top-color:rgba(82,183,136,.2);}' +
+        'html[data-theme="dark"] .tve-ph-d{color:#a3d5b8;}' +
+        'html[data-theme="dark"] .tve-ph-t{color:#a3d5b8;}' +
+        'html[data-theme="dark"] .tve-ph-24v{color:#7ec8e3!important;}' +
+        'html[data-theme="dark"] .tve-ph-tag24{background:#0d2133;color:#7ec8e3;' +
+        'border-color:#2980b9;}' +
+        'html[data-theme="dark"] .tve-ph-td,' +
+        'html[data-theme="dark"] .tve-ph-tt{background:#1e3d2a;}' +
+        'html[data-theme="dark"] .tve-ph-now{color:#52b788;}' +
+        /* Dark mode — prefers-color-scheme fallback (first visit, no data-theme stamped) */
+        '@media(prefers-color-scheme:dark){' +
+        'html:not([data-theme="light"]) .tve-ph{background:#1a2e22;border-left-color:#52b788;color:#a3d5b8;}' +
+        'html:not([data-theme="light"]) .tve-ph-24{background:#0d2133!important;' +
+        'border-left-color:#2980b9!important;color:#7ec8e3!important;}' +
+        'html:not([data-theme="light"]) .tve-ph-chv{color:#52b788;}' +
+        'html:not([data-theme="light"]) .tve-ph-panel{background:#1a2e22;border-left-color:#52b788;' +
+        'box-shadow:0 6px 16px rgba(0,0,0,.5);}' +
+        'html:not([data-theme="light"]) .tve-ph-hr{border-top-color:rgba(82,183,136,.2);}' +
+        'html:not([data-theme="light"]) .tve-ph-d{color:#a3d5b8;}' +
+        'html:not([data-theme="light"]) .tve-ph-t{color:#a3d5b8;}' +
+        'html:not([data-theme="light"]) .tve-ph-24v{color:#7ec8e3!important;}' +
+        'html:not([data-theme="light"]) .tve-ph-tag24{background:#0d2133;color:#7ec8e3;border-color:#2980b9;}' +
+        'html:not([data-theme="light"]) .tve-ph-td,' +
+        'html:not([data-theme="light"]) .tve-ph-tt{background:#1e3d2a;}' +
+        'html:not([data-theme="light"]) .tve-ph-now{color:#52b788;}' +
+        '}';
+      (document.head || document.documentElement).appendChild(_phCss);
+    }
+
+    /* ── Parsing ────────────────────────────────────────────────────────────── */
+    var DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; /* display order */
+    var IDX  = { mon:0, monday:0, tue:1, tuesday:1, wed:2, wednesday:2, thu:3, thursday:3,
+                 fri:4, friday:4, sat:5, saturday:5, sun:6, sunday:6 };
+    var _TM  = '\\d{1,2}(?::\\d{2})?\\s*(?:am|pm)';
+    var RE_RANGE = new RegExp('(' + _TM + ')\\s*[-–—]\\s*(' + _TM + ')', 'i');
+    var RE_DAYNM = /(Mondays?|Tuesdays?|Wednesdays?|Thursdays?|Fridays?|Saturdays?|Sundays?)/gi;
+    var RE_24    = /open\s*24\s*\/\s*7|24\s*hours?|\bopen\s*24h\b|always\s+open|around\s+the\s+clock/i;
+    var RE_DAILY = /\b(?:daily|every\s+day)\b/i;
+    var RE_CLOSED = /\bclosed\b/i;
+    var ALL = [0, 1, 2, 3, 4, 5, 6];
+
+    /* One " · " segment → { days:[idx…], val } | null when unrecognised. */
+    function _seg(txt) {
+      var val = null;
+      if (RE_24.test(txt)) {
+        val = '24h';
+      } else {
+        var m = txt.match(RE_RANGE);
+        if (m) val = m[1].trim() + ' – ' + m[2].trim();
+      }
+      if (!val && RE_CLOSED.test(txt)) val = 'closed';
+      if (!val) return null;
+
+      RE_DAYNM.lastIndex = 0;
+      var names = txt.match(RE_DAYNM) || [];
+      if (!names.length) {
+        /* No day named — "Daily …" or a bare "Open 24/7" covers the whole week. */
+        return (RE_DAILY.test(txt) || val === '24h') ? { days: ALL.slice(), val: val } : null;
+      }
+      var key = function (n) { return IDX[n.toLowerCase().replace(/s$/, '')]; };
+      if (names.length === 1) return { days: [key(names[0])], val: val };
+      /* "Monday and Wednesday" lists discrete days; "Monday - Saturday" spans. */
+      if (/\band\b|,/.test(txt)) {
+        return { days: names.map(key), val: val };
+      }
+      var a = key(names[0]), b = key(names[names.length - 1]), days = [];
+      for (var i = 0; i < 7; i++) { var d = (a + i) % 7; days.push(d); if (d === b) break; }
+      return { days: days, val: val };
+    }
+
+    /* ── Today, at the destination ──────────────────────────────────────────── */
+    var _dest   = _tveDestNow();
+    var _todayI = _dest.local ? (_dest.dow + 6) % 7 : -1; /* JS 0=Sun → Mon-first */
+
+    /* ── Build the collapsed row + hover panel for one parsed week ──────────── */
+    function _build(week) {
+      var panel = document.createElement('div');
+      panel.className = 'tve-ph-panel';
+      panel.appendChild(document.createElement('div')).className = 'tve-ph-hr';
+      var grid = document.createElement('div');
+      grid.className = 'tve-ph-grid';
+      DAYS.forEach(function (name, i) {
+        var v = week[i] === undefined ? 'closed' : week[i];
+        var today = i === _todayI;
+        var dEl = document.createElement('div');
+        dEl.className = 'tve-ph-d' + (today ? ' tve-ph-td' : '');
+        dEl.textContent = name;
+        if (today) {
+          var nw = document.createElement('span');
+          nw.className = 'tve-ph-now';
+          nw.textContent = 'today';
+          dEl.appendChild(nw);
+        }
+        var tEl = document.createElement('div');
+        if (v === 'closed') {
+          tEl.className = 'tve-ph-t tve-ph-cl' + (today ? ' tve-ph-tt' : '');
+          tEl.textContent = 'Closed';
+        } else if (v === '24h') {
+          tEl.className = 'tve-ph-t tve-ph-24v' + (today ? ' tve-ph-tt' : '');
+          var tag = document.createElement('span');
+          tag.className = 'tve-ph-tag24';
+          tag.textContent = '24h';
+          tEl.appendChild(tag);
+          tEl.appendChild(document.createTextNode('Open all day'));
+        } else {
+          tEl.className = 'tve-ph-t' + (today ? ' tve-ph-tt' : '');
+          tEl.textContent = v;
+        }
+        grid.appendChild(dEl);
+        grid.appendChild(tEl);
+      });
+      panel.appendChild(grid);
+
+      /* Collapsed label. Most readers never expand, so the always-visible line
+         answers the question instead of announcing that an answer exists. */
+      var tv = _todayI >= 0 ? (week[_todayI] === undefined ? 'closed' : week[_todayI]) : null;
+      var txt = 'Hours vary by day';
+      if (tv === 'closed')    txt = 'Closed today';
+      else if (tv === '24h')  txt = 'Today · open 24h';
+      else if (tv)            txt = 'Today · ' + tv;
+
+      var toggle = document.createElement('div');
+      toggle.className = 'tve-ph tve-ph-toggle';
+      toggle.setAttribute('role', 'button');
+      toggle.setAttribute('tabindex', '0');
+      toggle.setAttribute('aria-expanded', 'false');
+      var lbl = document.createElement('span');
+      lbl.className = 'tve-ph-lbl';
+      lbl.textContent = '🕐 ' + txt; /* 🕐 */
+      var chv = document.createElement('span');
+      chv.className = 'tve-ph-chv';
+      chv.textContent = '›'; /* › */
+      toggle.appendChild(lbl);
+      toggle.appendChild(chv);
+
+      function _t() {
+        var open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
+        panel.classList.toggle('tve-ph-open', !open);
+      }
+      toggle.addEventListener('click', _t);
+      toggle.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _t(); }
+      });
+
+      /* The WRAP is the hover target, not the toggle: the panel is absolutely
+         positioned beneath the toggle but inside the wrap, so a cursor moving
+         down into the schedule stays within the hovered element. */
+      var wrap = document.createElement('div');
+      wrap.className = 'tve-ph-wrap';
+      wrap.appendChild(toggle);
+      wrap.appendChild(panel);
+      return wrap;
+    }
+
+    /* ── Walk the authored 🏛️ rows ──────────────────────────────────────────── */
+    srcRows.forEach(function (row) {
+      var raw = row.textContent.replace(/^🏛️?\s*/, '').trim();
+      var parts = raw.split('·').map(function (s) { return s.trim(); }).filter(Boolean);
+      if (parts.length < 2) return;            /* simple listing → leave as authored */
+
+      var week = [], bad = false;
+      parts.forEach(function (p) {
+        var s = _seg(p);
+        if (!s) { bad = true; return; }
+        s.days.forEach(function (d) { if (week[d] === undefined) week[d] = s.val; });
+      });
+      /* Any segment we could not read → leave the whole row alone. A partially
+         understood schedule is worse than the authored line it would replace. */
+      if (bad) return;
+
+      var vals = {}, n = 0;
+      for (var i = 0; i < 7; i++) { var v = week[i] === undefined ? 'closed' : week[i];
+        if (!vals[v]) { vals[v] = 1; n++; } }
+      if (n < 2) return;                       /* uniform week → nothing to expand */
+
+      row.classList.add('tve-ph-src');         /* hidden; textContent kept for Open Now */
+      row.parentNode.insertBefore(_build(week), row.nextSibling);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _upgradeStopHours);
+  } else {
+    _upgradeStopHours();
+  }
+
+
   /* ── Address copy — multi-format clipboard popover on 📍 stop rows ─────────
      Adds a small copy icon button after every 📍 Google Maps address link on
      real guide pages. Clicking opens a fixed-position popover with:
@@ -4500,6 +4957,108 @@
     _injectBestOfAndFixOrphans();
   }
 
+  /* ── "Also a day trip from" — compact row at the foot of Trip Overview ──────
+     62 of the fleet's guides are themselves listed as a train day trip by one
+     or more OTHER guides (Florence is a day trip from Bologna, Pisa, Rome and
+     Siena). That relationship already exists in the Day Trips data but was only
+     ever readable in the outbound direction. This injects the inbound view.
+
+     Data: assets/day_trip_from.json — the reverse index emitted by
+     Brain/scripts/build/build_day_trips.py (same parse as Day-Trips.html, so
+     the two can never disagree). Keyed by destination guide filename; the value
+     is the departure guides, pre-sorted by city name. Destinations with no
+     shipped guide are omitted at build time, so every link here resolves.
+
+     Zero guide HTML changes — the row is injected, never authored. Anchored
+     after the last .overview-day so it lands inside the white Trip Overview
+     card regardless of whether .overview-extras has already been moved out
+     of it by the grouping pass further down this file. */
+  (function () {
+    if (!isRealGuide) return;
+    var _dtCacheKey = 'tvedtf';
+
+    function _dtfCss() {
+      if (document.getElementById('tve-adtf-css')) return;
+      var s = document.createElement('style');
+      s.id = 'tve-adtf-css';
+      s.textContent =
+        '.tve-adtf{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;' +
+        'padding:9px 16px 10px;font-size:12px;line-height:1.5;}' +
+        '.tve-adtf-label{color:#6a6760;white-space:nowrap;}' +
+        '.tve-adtf-cities{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 6px;min-width:0;}' +
+        '.tve-adtf-sep{color:#c8a44a;}' +
+        '.tve-adtf a{color:#8a6c1a;text-decoration:none;border-bottom:1px solid transparent;}' +
+        '.tve-adtf a:hover{color:#b85c2a;border-bottom-color:#b85c2a;text-decoration:none;}' +
+        '@media (max-width:600px){.tve-adtf{padding:9px 14px 10px;}}';
+      document.head.appendChild(s);
+    }
+
+    function _dtfBuild(data) {
+      var from = data[curr];
+      if (!from || !from.length) return;
+      /* Anchor on the last day card — .overview-extras may already have been
+         relocated out of the card by the time this runs. */
+      var days = document.querySelectorAll('.overview-section .overview-day');
+      if (!days.length) return;
+      var last = days[days.length - 1];
+      if (!last.parentNode) return;
+      if (document.getElementById('tve-also-day-trip-from')) return;
+
+      _dtfCss();
+      var row = document.createElement('div');
+      row.id = 'tve-also-day-trip-from';
+      row.className = 'tve-adtf';
+
+      var label = document.createElement('span');
+      label.className = 'tve-adtf-label';
+      label.textContent = '🚆 Also a day trip from';
+      row.appendChild(label);
+
+      var cities = document.createElement('span');
+      cities.className = 'tve-adtf-cities';
+      from.forEach(function (g, i) {
+        if (i) {
+          var sep = document.createElement('span');
+          sep.className = 'tve-adtf-sep';
+          sep.textContent = '·';
+          cities.appendChild(sep);
+        }
+        var a = document.createElement('a');
+        a.href = '../' + g.dir + '/' + g.slug;
+        a.textContent = g.city;
+        cities.appendChild(a);
+      });
+      row.appendChild(cities);
+
+      last.parentNode.insertBefore(row, last.nextSibling);
+    }
+
+    function _dtfRun() {
+      try {
+        var hit = sessionStorage.getItem(_dtCacheKey);
+        if (hit) { _dtfBuild(JSON.parse(hit)); return; }
+      } catch (e) {}
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', base + 'assets/day_trip_from.json', true);
+      xhr.timeout = 6000;
+      xhr.onload = function () {
+        if (xhr.status < 200 || xhr.status >= 300) return;
+        try {
+          var data = JSON.parse(xhr.responseText);
+          try { sessionStorage.setItem(_dtCacheKey, xhr.responseText); } catch (e) {}
+          _dtfBuild(data);
+        } catch (e) {}
+      };
+      xhr.send();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _dtfRun);
+    } else {
+      _dtfRun();
+    }
+  }());
+
   /* ── End-section nav pills — injects overview-extra-link pills for the five
      bottom sections (Also on This Site, Best Of, Nearby Guides, Alt. Hotels,
      Also in Country) so they are reachable from the scrollable pill strip above
@@ -4654,6 +5213,102 @@
       };
       xhr.send();
     }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _run);
+    } else {
+      _run();
+    }
+  })();
+
+  /* ── Quick Facts strip — real guide pages only ────────────────────────────
+     The four facts a reader checks before committing to an itinerary:
+     🗣️ language · 💰 cost tier · 🔌 plug type · 🌤️ best months. Each one
+     already lives on a Trip-Essentials page (Budget-Guide, Plug-Adapter-Guide,
+     When-to-Go); assets/quick_facts.json joins them per guide so reading all
+     four no longer costs four page visits. Built by
+     Brain/scripts/build/build_quick_facts.py, refreshed on every ship.
+
+     Anchored ABOVE .overview-section rather than below .title-page on purpose:
+     the weather strip anchors itself to .title-page and lands asynchronously,
+     so anchoring both to the banner would race for the same slot. Going in
+     above TRIP OVERVIEW instead makes the order deterministic no matter which
+     resolves first — banner → weather → quick facts → TRIP OVERVIEW.
+
+     Degrades silently: no JSON, no entry for this guide, or a partial entry
+     simply renders fewer pills (or nothing at all). Colors are theme tokens,
+     so the strip follows the dark-mode overrides in guide-style.css. */
+  (function () {
+    if (!isRealGuide) return;
+    var _qfKey = 'tveqf';
+
+    function _build(data) {
+      if (document.getElementById('tve-quick-facts')) return;
+      var facts = data && data.facts && data.facts[curr];
+      if (!facts) return;
+
+      var anchor    = document.querySelector('.overview-section');
+      var titlePage = document.querySelector('.title-page');
+      if (!anchor && !titlePage) return;
+
+      /* [emoji, title-attribute label, value] — order is the reading order the
+         feature was specified with; a missing fact drops its pill entirely. */
+      var items = [];
+      if (facts.lang)   items.push(['🗣️', 'Language', facts.lang]);
+      if (facts.cost)   items.push(['💰', 'Cost tier',
+                                    facts.cost + (facts.cost_detail ? ' · ' + facts.cost_detail : '')]);
+      if (facts.plug)   items.push(['🔌', 'Plug type', facts.plug]);
+      if (facts.months) items.push(['🌤️', 'Best months', facts.months]);
+      if (!items.length) return;
+
+      var isMobile = window.innerWidth <= 600;
+      var strip = document.createElement('div');
+      strip.id = 'tve-quick-facts';
+      /* Matches the weather strip's own margins so the two stack evenly. */
+      strip.style.cssText =
+        'display:flex;flex-wrap:wrap;gap:6px;width:100%;box-sizing:border-box;' +
+        'margin:' + (isMobile ? '12px 0' : '0 0 16px') + ';';
+
+      items.forEach(function (it) {
+        var pill = document.createElement('span');
+        pill.title = it[1];
+        pill.style.cssText =
+          'display:inline-flex;align-items:center;gap:5px;' +
+          'padding:5px 10px;border-radius:6px;' +
+          'background:var(--c-warm-bg,#f3efe6);' +
+          'border:1px solid var(--c-index-border,#e3dccd);' +
+          'font-size:12px;font-weight:500;line-height:1.35;' +
+          'color:var(--c-text-primary,#3d3a32);white-space:nowrap;';
+        var ico = document.createElement('span');
+        ico.textContent = it[0];
+        ico.style.cssText = 'font-size:12px;line-height:1;';
+        pill.appendChild(ico);
+        pill.appendChild(document.createTextNode(it[2]));
+        strip.appendChild(pill);
+      });
+
+      if (anchor) anchor.parentNode.insertBefore(strip, anchor);
+      else titlePage.insertAdjacentElement('afterend', strip);
+    }
+
+    function _run() {
+      try {
+        var hit = sessionStorage.getItem(_qfKey);
+        if (hit) { _build(JSON.parse(hit)); return; }
+      } catch (e) {}
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', base + 'assets/quick_facts.json', true);
+      xhr.timeout = 6000;
+      xhr.onload = function () {
+        if (xhr.status < 200 || xhr.status >= 300) return;
+        try {
+          var data = JSON.parse(xhr.responseText);
+          try { sessionStorage.setItem(_qfKey, xhr.responseText); } catch (e) {}
+          _build(data);
+        } catch (e) {}
+      };
+      xhr.send();
+    }
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _run);
     } else {
@@ -5612,142 +6267,7 @@
     if (!isRealGuide) return;
 
     /* ── Destination timezone map (folder slug → IANA) ── */
-    var _TZ = {
-      'abu-dhabi':'Asia/Dubai','aix-en-provence':'Europe/Paris',
-      'alaska':'America/Anchorage','alesund':'Europe/Oslo',
-      'amalfi':'Europe/Rome','amsterdam':'Europe/Amsterdam',
-      'annecy':'Europe/Paris','aracaju':'America/Fortaleza',
-      'arenal':'America/Costa_Rica','aruba':'America/Aruba',
-      'athens':'Europe/Athens','atlanta':'America/New_York',
-      'austin':'America/Chicago','azores':'Atlantic/Azores',
-      'bahamas':'America/Nassau','bali':'Asia/Makassar',
-      'banff':'America/Edmonton','bangkok':'Asia/Bangkok',
-      'barbados':'America/Barbados','barcelona':'Europe/Madrid',
-      'beijing':'Asia/Shanghai','bend':'America/Los_Angeles',
-      'bergen':'Europe/Oslo','berlin':'Europe/Berlin',
-      'bhutan':'Asia/Thimphu','big-island':'Pacific/Honolulu',
-      'bilbao':'Europe/Madrid','bologna':'Europe/Rome',
-      'bora-bora':'Pacific/Tahiti','bordeaux':'Europe/Paris',
-      'boston':'America/New_York','boulder':'America/Denver',
-      'bruges':'Europe/Brussels','brussels':'Europe/Brussels',
-      'budapest':'Europe/Budapest',
-      'buenos-aires':'America/Argentina/Buenos_Aires',
-      'buenos aires':'America/Argentina/Buenos_Aires',
-      'cairo':'Africa/Cairo','cambridge':'Europe/London',
-      'cancun':'America/Cancun','cannes':'Europe/Paris',
-      'cape-cod':'America/New_York','cape-town':'Africa/Johannesburg',
-      'capri':'Europe/Rome','carmel-by-the-sea':'America/Los_Angeles',
-      'cascais':'Europe/Lisbon','cayman-islands':'America/Cayman',
-      'charlotte':'America/New_York','chiang-mai':'Asia/Bangkok',
-      'chicago':'America/Chicago','chongqing':'Asia/Shanghai',
-      'cinque-terre':'Europe/Rome','coeur-dalene':'America/Los_Angeles',
-      'colmar':'Europe/Paris','cologne':'Europe/Berlin',
-      'colombo':'Asia/Colombo','columbia':'America/New_York',
-      'copenhagen':'Europe/Copenhagen','corfu':'Europe/Athens',
-      'crete':'Europe/Athens','curacao':'America/Curacao',
-      'curitiba':'America/Sao_Paulo','cusco':'America/Lima',
-      'dallas':'America/Chicago','denver':'America/Denver',
-      'doha':'Asia/Qatar','dubai':'Asia/Dubai',
-      'dublin':'Europe/Dublin','dubrovnik':'Europe/Zagreb',
-      'edinburgh':'Europe/London','florence':'Europe/Rome',
-      'florianopolis':'America/Sao_Paulo',
-      'florida keys':'America/New_York',
-      'florida-keys':'America/New_York',
-      'fortaleza':'America/Fortaleza',
-      'foz-do-iguaçu':'America/Sao_Paulo',
-      'frankfurt':'Europe/Berlin',
-      'galapagos-islands':'Pacific/Galapagos',
-      'geneva':'Europe/Zurich',
-      'glacier-national-park':'America/Denver',
-      'glasgow':'Europe/London','gothenburg':'Europe/Stockholm',
-      'granada':'Europe/Madrid','hamburg':'Europe/Berlin',
-      'hanoi':'Asia/Bangkok','helsinki':'Europe/Helsinki',
-      'hilton-head-island':'America/New_York',
-      'hiroshima':'Asia/Tokyo','hoi-an':'Asia/Bangkok',
-      'hong-kong':'Asia/Hong_Kong','istanbul':'Europe/Istanbul',
-      'joão-pessoa':'America/Fortaleza',
-      'kauai':'Pacific/Honolulu','keywest':'America/New_York',
-      'kotor':'Europe/Belgrade','kraków':'Europe/Warsaw',
-      'kyoto':'Asia/Tokyo','la-jolla':'America/Los_Angeles',
-      'lagos':'Africa/Lagos','lake-como':'Europe/Rome',
-      'lake-tahoe':'America/Los_Angeles','las-vegas':'America/Los_Angeles',
-      'lecce':'Europe/Rome','lille':'Europe/Paris',
-      'lima':'America/Lima','lisbon':'Europe/Lisbon',
-      'ljubljana':'Europe/Ljubljana','london':'Europe/London',
-      'los-angeles':'America/Los_Angeles','los-cabos':'America/Mazatlan',
-      'luang-prabang':'Asia/Vientiane','lucerne':'Europe/Zurich',
-      'luxembourg':'Europe/Luxembourg','lyon':'Europe/Paris',
-      'maceió':'America/Maceio','machupicchu':'America/Lima',
-      'madeira':'Atlantic/Madeira','madrid':'Europe/Madrid',
-      'malaga':'Europe/Madrid','maldives':'Indian/Maldives',
-      'malibu':'America/Los_Angeles',
-      'manuel-antonio':'America/Costa_Rica',
-      'marco-island':'America/New_York',
-      'marktoberdorf':'Europe/Berlin',
-      'marrakech':'Africa/Casablanca',
-      'marseille':'Europe/Paris','maui':'Pacific/Honolulu',
-      'melbourne':'Australia/Melbourne','miami':'America/New_York',
-      'milan':'Europe/Rome','monaco':'Europe/Paris',
-      'montevideo':'America/Montevideo','montreal':'America/Toronto',
-      'munich':'Europe/Berlin','muscat':'Asia/Muscat',
-      'mykonos':'Europe/Athens','napa':'America/Los_Angeles',
-      'naples':'Europe/Rome','naples-florida':'America/New_York',
-      'nashville':'America/Chicago','natal':'America/Fortaleza',
-      'new-orleans':'America/Chicago','new-york':'America/New_York',
-      'nice':'Europe/Paris','oahu':'Pacific/Honolulu',
-      'oaxaca':'America/Mexico_City','olinda':'America/Recife',
-      'orcas-island':'America/Los_Angeles','orlando':'America/New_York',
-      'osaka':'Asia/Tokyo','oslo':'Europe/Oslo',
-      'oxford':'Europe/London','palawan':'Asia/Manila',
-      'palm-desert':'America/Los_Angeles','palo-alto':'America/Los_Angeles',
-      'paris':'Europe/Paris','pasadena':'America/Los_Angeles',
-      'pensacola':'America/Chicago','petra':'Asia/Amman',
-      'philadelphia':'America/New_York','phoenix':'America/Phoenix',
-      'phuket':'Asia/Bangkok','pisa':'Europe/Rome',
-      'pokhara':'Asia/Kathmandu','portland':'America/Los_Angeles',
-      'porto':'Europe/Lisbon','porto-alegre':'America/Sao_Paulo',
-      'prague':'Europe/Prague','puerto-rico':'America/Puerto_Rico',
-      'puerto-vallarta':'America/Mazatlan',
-      'quebec-city':'America/Toronto','queenstown':'Pacific/Auckland',
-      'recife':'America/Recife','reykjavik':'Atlantic/Reykjavik',
-      'rhodes':'Europe/Athens','rio-de-janeiro':'America/Sao_Paulo',
-      'rome':'Europe/Rome','salvador':'America/Bahia',
-      'salzburg':'Europe/Vienna','san-diego':'America/Los_Angeles',
-      'san-francisco':'America/Los_Angeles',
-      'san-jose':'America/Los_Angeles',
-      'san-jose-costa-rica':'America/Costa_Rica',
-      'san-juan-island':'America/Los_Angeles',
-      'san-sebastian':'Europe/Madrid',
-      'santa-barbara':'America/Los_Angeles',
-      'santa-cruz':'America/Los_Angeles',
-      'santa-fe':'America/Denver','santa-monica':'America/Los_Angeles',
-      'santiago':'America/Santiago','santorini':'Europe/Athens',
-      'sarasota':'America/New_York','sardinia':'Europe/Rome',
-      'scottsdale':'America/Phoenix','seattle':'America/Los_Angeles',
-      'sedona':'America/Phoenix','seoul':'Asia/Seoul',
-      'seville':'Europe/Madrid','seychelles':'Indian/Mahe',
-      'shanghai':'Asia/Shanghai','sicily':'Europe/Rome',
-      'siena':'Europe/Rome','singapore':'Asia/Singapore',
-      'sint-maarten':'America/Lower_Princes',
-      'sintra':'Europe/Lisbon','sorrento':'Europe/Rome',
-      'split':'Europe/Zagreb','stockholm':'Europe/Stockholm',
-      'strasbourg':'Europe/Paris','stuttgart':'Europe/Berlin',
-      'sydney':'Australia/Sydney',
-      'são-luís':'America/Fortaleza','são-paulo':'America/Sao_Paulo',
-      'taipei':'Asia/Taipei','tallinn':'Europe/Tallinn',
-      'tbilisi':'Asia/Tbilisi','tenerife':'Atlantic/Canary',
-      'tokyo':'Asia/Tokyo','toledo':'Europe/Madrid',
-      'toronto':'America/Toronto','tromso':'Europe/Oslo',
-      'turin':'Europe/Rome','turks-and-caicos':'America/Grand_Turk',
-      'valletta':'Europe/Malta','vancouver':'America/Vancouver',
-      'venice':'Europe/Rome','verona':'Europe/Rome',
-      'victoria':'America/Vancouver','vienna':'Europe/Vienna',
-      'virgin-islands':'America/St_Thomas',
-      'washington-dc':'America/New_York',
-      'wellington':'Pacific/Auckland','whistler':'America/Vancouver',
-      'yellowstone':'America/Denver','zakynthos':'Europe/Athens',
-      'zhangjiajie':'Asia/Shanghai','zurich':'Europe/Zurich'
-    };
+    var _TZ = _TVE_TZ;
 
     /* ── Time helpers ── */
     function _parseTimeVal(s) {
@@ -6289,6 +6809,133 @@
     } else { _move(); }
   }());
 
+  /* ── Group the extras nav chips into labelled runs (DESKTOP ONLY) ──────────
+     The section-nav row ships as a flat list of 13-17 chips that wrap to a
+     ragged 3 rows. Grouping them into short labelled runs makes the row
+     scannable without changing a single chip: fill, border, radius, padding
+     and font-size are all untouched — only the container gains group wrappers.
+
+     TWO HARD CONSTRAINTS, both load-bearing:
+
+     1. ORDER IS NEVER CHANGED. Pill order is hard-failed by the validator
+        (_OVERVIEW_PILL_CANONICAL_ORDER in validate_itinerary.py, per
+        Trip Overview.html §3). Every group below is therefore a CONTIGUOUS
+        RUN of that canonical order — chips are only ever partitioned, never
+        resorted. A chip whose anchor is unknown to GROUPS falls through to
+        the trailing catch-all, so a future pill can never vanish.
+        Consequence: ⭐ Michelin sits in "More in this guide" rather than with
+        the food chips, because canonical order places it at position 13.
+        Moving it would need a spec + fleet change, not a CSS change.
+
+     2. MOBILE IS LEFT ENTIRELY ALONE. Below 601px the row is a glued 3-across
+        grid whose rules use direct-child selectors and nth-child(3n+2) math
+        (guide-style.css ~2210). Wrapping chips in group divs would break every
+        one of them, so the DOM is only restructured at >=601px and is fully
+        restored on the way back down. Mobile renders byte-identical to before. */
+  (function _groupExtrasPills() {
+    var GROUPS = [
+      ['Plan',        ['weekly-closures', 'tours']],
+      ['Eat & drink', ['cappuccino', 'restaurants', 'downtown', 'local-tastes', 'food-delivery']],
+      ['Out & about', ['shows', 'getting-around', 'stations-near-hotel', 'day-trips-by-train', 'pickleball']],
+      ['More',        ['michelin', 'heads-up', 'claude-inspiration']],
+      ['Elsewhere',   null]   /* catch-all — must stay last */
+    ];
+    var mq = window.matchMedia('(min-width: 601px)');
+    var row = null, flat = null;
+
+    function _anchor(a) {
+      var h = a.getAttribute('href') || '';
+      var i = h.indexOf('#');
+      return i === -1 ? '' : h.slice(i + 1);
+    }
+    function _groupIndexFor(a) {
+      var key = _anchor(a);
+      for (var g = 0; g < GROUPS.length; g++) {
+        var keys = GROUPS[g][1];
+        if (keys && keys.indexOf(key) !== -1) return g;
+      }
+      return GROUPS.length - 1;
+    }
+
+    /* Returns the .ov-grp-row for group g, creating the wrapper in canonical
+       position if this is the first chip to land in it. Groups are inserted in
+       GROUPS order via data-g, so a late-arriving chip never jumps the queue. */
+    function _rowFor(g) {
+      var existing = row.querySelector('.ov-grp[data-g="' + g + '"] > .ov-grp-row');
+      if (existing) return existing;
+      var wrap = document.createElement('div');
+      wrap.className = 'ov-grp';
+      wrap.setAttribute('data-g', String(g));
+      var lab = document.createElement('div');
+      lab.className = 'ov-grp-label';
+      lab.textContent = GROUPS[g][0];
+      var inner = document.createElement('div');
+      inner.className = 'ov-grp-row';
+      wrap.appendChild(lab);
+      wrap.appendChild(inner);
+      var after = null;
+      [].slice.call(row.querySelectorAll('.ov-grp')).forEach(function(w) {
+        if (after === null && +w.getAttribute('data-g') > g) { after = w; }
+      });
+      row.insertBefore(wrap, after);
+      return inner;
+    }
+
+    function _place(a) {
+      if (flat.indexOf(a) === -1) { flat.push(a); }   /* remember for _ungroup */
+      _rowFor(_groupIndexFor(a)).appendChild(a);
+    }
+
+    function _group() {
+      if (!row) return;
+      var chips = [].slice.call(row.querySelectorAll(':scope > a.overview-extra-link'));
+      if (!row.classList.contains('tve-grouped') && chips.length < 4) return;
+      chips.forEach(_place);
+      row.classList.add('tve-grouped');
+    }
+
+    function _ungroup() {
+      if (!row || !row.classList.contains('tve-grouped')) return;
+      flat.forEach(function(a) { row.appendChild(a); });   /* restores original order */
+      [].slice.call(row.querySelectorAll('.ov-grp')).forEach(function(w) { w.remove(); });
+      row.classList.remove('tve-grouped');
+    }
+
+    function _apply() { if (mq.matches) { _group(); } else { _ungroup(); } }
+
+    function _init() {
+      if (!isRealGuide) return;   /* Reports.html reuses .overview-extras — never group it */
+      row = document.querySelector('.overview-extras:not(#ics-pill-row)');
+      if (!row) return;
+      flat = [].slice.call(row.querySelectorAll(':scope > a.overview-extra-link'));
+      if (!flat.length) return;
+      _apply();
+      if (mq.addEventListener) { mq.addEventListener('change', _apply); }
+      else if (mq.addListener) { mq.addListener(_apply); }   /* Safari < 14 */
+
+      /* Some chips arrive late — "🌍 Also in {Country}" is appended only after
+         country_guides.json resolves, well after DOMContentLoaded. Without this
+         they land as bare direct children below the grouped rail. Watching only
+         row's own childList (not subtree) means re-parenting a chip into a group
+         cannot re-trigger the observer. */
+      if (typeof MutationObserver === 'function') {
+        new MutationObserver(function(muts) {
+          if (!row.classList.contains('tve-grouped')) return;
+          muts.forEach(function(m) {
+            [].slice.call(m.addedNodes).forEach(function(n) {
+              if (n.nodeType === 1 && n.tagName === 'A' &&
+                  n.classList.contains('overview-extra-link')) { _place(n); }
+            });
+          });
+        }).observe(row, { childList: true });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _init);
+    } else { _init(); }
+  }());
+
   /* ── Photo lightbox — guide pages only ────────────────────────────────────
      Click any .stop-photos img to open a fullscreen overlay with the photo
      at full resolution, the stop name as a caption, and left/right navigation
@@ -6443,5 +7090,207 @@
       _setup();
     }
   }());
+
+
+  /* ── Copy Day as Text — per-day plain-text itinerary export ─────────────────
+     A "Copy day" button in every .day-header that writes the whole day to the
+     clipboard as plain text: the day label, the From-Hotel line, then each stop
+     in order with its number, name, address, and the transit hop to the next
+     stop — finishing with a deep link back to that day.
+
+     Deliberately NOT a full dump. Descriptions, hours, ticket rows and photos
+     stay out: the paste target is Notes or a WhatsApp message to whoever you're
+     travelling with, where the useful payload is "where we're going, in what
+     order, and how we get between them". A guide day pasted in full would be
+     several screens of scrolling and would not survive the trip.
+
+     Zero guide HTML changes and no guide-style.css dependency — the markup and
+     its CSS are both injected here, so the feature lands on all 235 guides at
+     once and cannot drift out of sync with a stylesheet.
+
+     Placement note: .day-header is itself the collapse toggle (guide-style.css
+     .day-header{cursor:pointer} + .day-block.collapsed), so every handler here
+     stops propagation — otherwise copying a day would also fold it shut. The
+     button sits after the label text and before the ::after chevron, which the
+     header's `margin-left:auto` keeps pinned right. ── */
+  function _injectCopyDayButtons() {
+    if (!isRealGuide) return;
+
+    var dayBlocks = document.querySelectorAll('.day-block[id^="day"]');
+    if (!dayBlocks.length) return;
+
+    var _copySvg =
+      '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">' +
+        '<rect x="1" y="1" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.3"/>' +
+        '<path d="M4 11h6a1 1 0 0 0 1-1V4" stroke="currentColor" stroke-width="1.3" ' +
+          'stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>';
+    var _okSvg =
+      '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">' +
+        '<path d="M2 6l3 3 5-5" stroke="#b85c2a" stroke-width="1.8" ' +
+          'stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>';
+
+    var _cdCss = document.createElement('style');
+    _cdCss.id = 'tve-copy-day-css';
+    _cdCss.textContent =
+      '.tve-copy-day-btn{background:none;border:none;cursor:pointer;' +
+      'color:#a8a09a;padding:0;margin-left:14px;line-height:1;' +
+      'display:inline-flex;align-items:center;gap:5px;flex-shrink:0;' +
+      'font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.01em;}' +
+      '.tve-copy-day-btn:hover,.tve-copy-day-btn:focus-visible{color:#b85c2a;}' +
+      '.tve-copy-day-btn:focus-visible{outline:2px solid #b85c2a;' +
+      'outline-offset:3px;border-radius:4px;}' +
+      '.tve-copy-day-btn.copied{color:#b85c2a;}';
+    (document.head || document.documentElement).appendChild(_cdCss);
+
+    /* Header label without anything injected into it — the mark-stops badge,
+       the filter note and this button all live in .day-header too. */
+    function _dayLabel(hdr) {
+      var clone = hdr.cloneNode(true);
+      [].forEach.call(
+        clone.querySelectorAll('.tve-copy-day-btn, .day-header-filter-note'),
+        function (el) { el.parentNode.removeChild(el); }
+      );
+      return clone.textContent.replace(/\s+/g, ' ').trim();
+    }
+
+    /* Build the plain text for one .day-block. Walks DIRECT children in document
+       order rather than querying stops and transit banners separately — the hop
+       only makes sense glued to the stop it leaves from, and that pairing lives
+       in the source order, not in either node list on its own. */
+    function _dayText(block, hdr) {
+      var cityEl = document.querySelector('.title-city');
+      var city   = cityEl ? cityEl.textContent.trim() : '';
+      var label  = _dayLabel(hdr) || 'Day';
+
+      var out = [city ? city + ' — ' + label : label, ''];
+
+      var hotel = block.querySelector('.hotel-first');
+      if (hotel) { out.push(hotel.textContent.replace(/\s+/g, ' ').trim(), ''); }
+
+      var n = 0;
+      [].forEach.call(block.children, function (el) {
+        if (!el.classList) return;
+
+        if (el.classList.contains('stop-block')) {
+          n++;
+          var nameEl = el.querySelector('.stop-name');
+          var name   = nameEl ? nameEl.textContent.replace(/\s+/g, ' ').trim() : '';
+          if (!name) { n--; return; }
+
+          var numEl = el.querySelector('.stop-num');
+          var num   = numEl ? numEl.textContent.replace(/\s+/g, ' ').trim() : (n + '.');
+          if (num && num.slice(-1) !== '.') num += '.';
+
+          out.push(num + ' ' + name);
+
+          var mapEl = el.querySelector(
+            'a[href*="google.com/maps"], a[href*="maps.google.com"]'
+          );
+          if (mapEl) {
+            var addr = mapEl.textContent.replace(/\s+/g, ' ').trim();
+            if (addr) out.push('   📍 ' + addr);
+          }
+          return;
+        }
+
+        if (el.classList.contains('next') ||
+            el.classList.contains('next-tram') ||
+            el.classList.contains('next-metro')) {
+          /* A hop before any stop has been emitted has nothing to attach to. */
+          if (!n) return;
+          var hop = el.textContent.replace(/\s+/g, ' ').trim();
+          if (hop) out.push('   ' + hop);
+          out.push('');
+        }
+      });
+
+      /* Trailing blank lines collapse to exactly one before the link. */
+      while (out.length && out[out.length - 1] === '') out.pop();
+      out.push('', location.href.replace(/#.*$/, '') + '#' + block.id);
+
+      return out.join('\n');
+    }
+
+    /* Clipboard write with an execCommand fallback — the async Clipboard API is
+       absent or rejects outside a secure context, and guides get opened from
+       file:// and from the offline PWA cache. Returns a promise of a boolean. */
+    function _write(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text)
+          .then(function () { return true; })
+          .catch(function () { return _writeLegacy(text); });
+      }
+      return Promise.resolve(_writeLegacy(text));
+    }
+
+    function _writeLegacy(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0;';
+      document.body.appendChild(ta);
+      var ok = false;
+      try {
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        ok = document.execCommand('copy');
+      } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    function _setup() {
+      [].forEach.call(dayBlocks, function (block) {
+        var hdr = block.querySelector(':scope > .day-header');
+        if (!hdr || hdr.querySelector('.tve-copy-day-btn')) return;
+        if (!block.querySelector('.stop-block')) return;
+
+        var label = _dayLabel(hdr) || 'this day';
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tve-copy-day-btn';
+        btn.setAttribute('aria-label', 'Copy ' + label + ' as text');
+        btn.setAttribute('title', 'Copy this day as plain text');
+        btn.innerHTML = _copySvg + '<span>Copy day</span>';
+
+        var resetTimer = null;
+        function _flash(msg) {
+          clearTimeout(resetTimer);
+          btn.classList.add('copied');
+          btn.innerHTML = _okSvg + '<span>' + msg + '</span>';
+          resetTimer = setTimeout(function () {
+            btn.classList.remove('copied');
+            btn.innerHTML = _copySvg + '<span>Copy day</span>';
+          }, 1800);
+        }
+
+        function _copy(e) {
+          /* .day-header is the collapse toggle — never let this reach it. */
+          e.preventDefault();
+          e.stopPropagation();
+          _write(_dayText(block, hdr)).then(function (ok) {
+            _flash(ok ? 'Copied' : 'Press ⌘C');
+          });
+        }
+
+        btn.addEventListener('click', _copy);
+        btn.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { _copy(e); }
+        });
+
+        hdr.appendChild(btn);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setup);
+    } else {
+      _setup();
+    }
+  }
+  _injectCopyDayButtons();
 
 }());

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports — The Voyager Expert Hub</title>
-<!-- built: 2026-08-07 20:30 UTC | backlog: 123 | scouting-open: 46 -->
+<!-- built: 2026-08-08 05:27 UTC | backlog: 123 | scouting-open: 46 -->
 <style>
   :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
     --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
@@ -234,7 +234,7 @@
   <div class="sub">Every idea, finding, and candidate that is <b>not yet implemented</b>. Backlog tiles are cross-checked against the live codebase. Click any section header to expand. Scroll down for rolling logs and destination scouting.</div>
   <div class="totals">
     <div class="stat"><b>123</b><span>backlog items</span></div>
-    <div class="stat s-open"><b>123</b><span>Open</span></div>
+    <div class="stat s-open"><b>122</b><span>Open</span></div>
     <div class="stat s-partial"><b>0</b><span>Partial</span></div>
     <div class="stat s-unsure"><b>0</b><span>Unsure</span></div>
     <div class="stat s-pending"><b>0</b><span>Pending approval</span></div>
@@ -771,19 +771,6 @@
       <details class="tile">
         <summary>
           <span class="tstatus st-open">OPEN</span>
-          <span class="ttitle">Stop Opening Hours as a Structured Data Row</span>
-          <span class="chev">&rsaquo;</span>
-        </summary>
-        <div class="tbody">
-          <p class="tdetail">toolbar.js makes a single pass over all .stop-item elements on guide pages, extracts hours text via pattern-matching (&quot;Mon–Fri 9am–6pm&quot;, &quot;Daily 10:00–18:00&quot;, &quot;closed Tuesdays&quot;) from stop body text, and renders a dedicated 🕒 Hours: row in the stop&#x27;s structured data section alongside address, transit, and ticket rows. No match = no injection. Zero guide HTML changes.</p>
-          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge scope scope-ALL GUIDES via toolbar.js injection">ALL GUIDES via toolbar.js injection</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-31-weekly-ideas-all-cribs</span></div>
-          <p class="tev"><b>Checked:</b> Re-checked 2026-08-07: no 🕒 Hours: row injection or prose hours pattern-matching found in toolbar.js. Note: toolbar.js does have stopHours extraction for existing structured 🏛 rows (lines ~2256–2285) but this is a different mechanism reading pre-existing ticket-box data, not injecting a new row from prose text.</p>
-          <p class="tmockup-missing">⚠ No mockup yet — add one before implementing</p>
-        </div>
-      </details>
-      <details class="tile">
-        <summary>
-          <span class="tstatus st-open">OPEN</span>
           <span class="ttitle">Site-wide Accessibility Controls (text size / high contrast / reduced motion)</span>
           <span class="chev">&rsaquo;</span>
         </summary>
@@ -1077,6 +1064,19 @@
           <p class="tdetail">After a user marks 2+ guides as &#x27;Been To&#x27; (via ive-been-in-guide-toggle), Guides-Index surfaces a &#x27;What next?&#x27; strip: 3 destination recommendations based on proximity (haversine from been-to cities), cost tier match, and unexplored regions. Pure client-side using tve_been_to localStorage + FMAP data already in toolbar.js. Depends on ive-been-in-guide-toggle being built first.</p>
           <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: medium</span><span class="badge scope scope-ONE PAGE ONLY — Guides-Index.html (depends on ive-been-in-guide-toggle)">ONE PAGE ONLY — Guides-Index.html (depends on ive-been-in-guide-toggle)</span><span class="badge tgt">Travel-Website/Guides-Index.html</span><span class="badge src">content-suggestions-artifact-2026-08-01</span></div>
           <p class="tev"><b>Checked:</b> Checked 2026-08-07: no tve_been_to localStorage or &#x27;What next?&#x27; strip in Guides-Index. Prerequisite: ive-been-in-guide-toggle.</p>
+          <p class="tmockup-missing">⚠ No mockup yet — add one before implementing</p>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-open">IMPLEMENTED</span>
+          <span class="ttitle">Stop hours — collapsed row with hover-expand week schedule</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">toolbar.js upgrades the structured 🏛️ hours row that every guide already authors inside .tour-box/.ticket-box. Rows listing a single segment are left exactly as written — a chevron that expands to one line is a lie. Rows with 2+ &quot; · &quot; segments (e.g. &quot;Monday - Saturday 8:30am - 6:00pm · Sunday 1:00pm - 6:00pm&quot;) are hidden and replaced by a collapsed row naming TODAY, which expands on hover (pointer devices) or tap/Enter/Space to a Mon–Sun grid with 24h badges and today highlighted. The panel is absolutely positioned so hover never reflows the page under the cursor. Zero guide HTML changes.</p>
+          <div class="tmeta"><span class="badge eff-m">M</span><span class="badge conf">conf: high</span><span class="badge scope scope-425 rows across 142 guides — via toolbar.js, no guide HTML changes">425 rows across 142 guides — via toolbar.js, no guide HTML changes</span><span class="badge tgt">Travel-Website/assets/toolbar.js</span><span class="badge src">2026-07-31-weekly-ideas-all-cribs</span></div>
+          <p class="tev"><b>Checked:</b> Reworked 2026-08-07. The original prose-parsing implementation injected NOTHING anywhere: it skipped any stop already carrying a 🏛️ row, and a full Playwright sweep of all 235 guides / 3,507 stop-blocks found 3,561 🏛️ rows — i.e. essentially every stop — so the skip fired universally and total injected rows across the site was 0. Repointed at the 🏛️ rows themselves: sweep now yields 425 collapsed rows across 142 guides. Today resolves via _tveDestNow() against the DESTINATION timezone (verified: host Friday 22:22 PDT → Los-Angeles marks Fri, Tokyo/Boston mark Sat); marker suppressed when no tz resolves. The authored 🏛️ row stays in the DOM hidden via .tve-ph-src so the Open Now filter still reads its textContent. brain_check 0 fail; verified at 393px with no overflow.</p>
           <p class="tmockup-missing">⚠ No mockup yet — add one before implementing</p>
         </div>
       </details></div>
