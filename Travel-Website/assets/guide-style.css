@@ -881,15 +881,18 @@ a:hover { text-decoration: underline; }
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1.5px solid #c8baa8;
-  background: transparent;
+  /* Same palette as the .stop-dur chip and as the checked state — the earlier
+     #c8baa8-on-transparent ring was so faint it was barely visible against
+     the page. Tokens, not literals: all three carry dark-mode values. */
+  border: 1px solid var(--c-next-border);
+  background: var(--c-next-bg);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: #c8baa8;
+  color: var(--c-action-text);
   transition: border-color .15s, background .15s, color .15s;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -901,22 +904,26 @@ a:hover { text-decoration: underline; }
    only spacer. A fixed 8px keeps a gap on a full row, where the auto margin
    collapses to nothing and "Visited" would otherwise touch the chip. */
 .stop-header .stop-mark-btn ~ .stop-dur { margin-left: 8px; }
-/* Checked: the ring is gone and the word stands in its place. font-size:0
-   suppresses the ✓ text node; ::after restores a size for the label, so the
-   swap needs no second element and no JS beyond the class toggle. Height is
-   pinned at 20px so the row does not jump between the two states. */
+/* Checked: the ring is gone and the word stands in its place, wearing the
+   EXACT treatment of the .stop-dur chip it shares the row with — same
+   --c-next-bg fill, --c-next-border hairline, --c-action-text ink, 20px
+   radius, 12px/700 — so a marked stop reads as one uniform line rather than
+   two competing styles. Any change to the chip must be mirrored here.
+   Deliberately token-based, not literal: all three tokens already carry
+   dark-mode values, so this state follows the theme for free.
+   font-size:0 suppresses the ✓ text node; ::after restores a size for the
+   label, so the swap needs no second element and no JS beyond the class
+   toggle. Height is padding-driven, matching the chip exactly. */
 .stop-block.stop-done .stop-mark-btn {
-  border: none;
-  background: none;
-  border-radius: 0;
+  background: var(--c-next-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 20px;
   width: auto;
-  padding: 0;
+  height: auto;
+  padding: 2px 10px;
   font-size: 0;
-  /* Same grey as the "NOT REQUIRED" badge on Visa-Processing-Times (--muted
-     in web-travel-style.css). Literal, not var(--muted): guides do not load
-     web-travel-style.css, so the token is not resolvable here. Dark-mode
-     counterpart #9a9690 is in the dark block further down. */
-  color: #6a6660;
+  color: var(--c-action-text);
+  white-space: nowrap;
 }
 .stop-block.stop-done .stop-mark-btn::after {
   content: "Visited";
@@ -924,7 +931,7 @@ a:hover { text-decoration: underline; }
   font-weight: 700;
   letter-spacing: 0.01em;
 }
-.stop-block.stop-done .stop-mark-btn:hover { color: #b85c2a; }
+.stop-block.stop-done .stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
 .stop-block.stop-done .stop-header .stop-num,
 .stop-block.stop-done .stop-header .stop-name,
 .stop-block.stop-done .stop-header .stop-dur { opacity: 0.4; }
@@ -2146,8 +2153,8 @@ div.train .train-time   { padding: 2px 0; }
     --c-alt-text:      #a8cce0;
   }
   ::selection { background: rgba(200,160,64,.3); }
-  .stop-mark-btn { border-color: #5a5040; color: #5a5040; }
-  .stop-block.stop-done .stop-mark-btn { color: #9a9690; }
+  /* .stop-mark-btn needs no dark override — it is built from --c-next-bg /
+     --c-next-border / --c-action-text, which are all themed above. */
   .title-city, .title-country { color: #e8e5e0; }
   .title-hotel, .title-address { color: #ccc8c0; }
   .title-address::before { color: #ccc8c0; }
