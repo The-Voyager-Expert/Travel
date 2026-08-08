@@ -456,6 +456,29 @@ renderCity('All');
 
   inp.addEventListener('input', function () { runQuery(inp.value); });
 }());
+
+/* ── Deep link — #City opens the page filtered on that city ────────────────
+   Guides link in this way from the 🏨 Alternative Hotel Recommendations block
+   (toolbar.js AN_NEIGHBORHOOD_CITIES), so a reader arrives on their own city
+   rather than the full eight-city list. Unknown or empty hash = no-op. */
+(function () {
+  function applyHash() {
+    var raw = (location.hash || '').replace(/^#/, '');
+    if (!raw) return;
+    try { raw = decodeURIComponent(raw); } catch (e) { /* malformed escape — use raw */ }
+    raw = raw.trim().toLowerCase();
+    for (var i = 0; i < AN_CITIES.length; i++) {
+      if (AN_CITIES[i].city.toLowerCase() === raw) {
+        var inp = document.getElementById('an-search');
+        if (inp) inp.value = '';
+        renderCity(AN_CITIES[i].city);
+        return;
+      }
+    }
+  }
+  applyHash();
+  window.addEventListener('hashchange', applyHash);
+}());
 </script>
 </body>
 </html>
