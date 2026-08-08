@@ -6,7 +6,7 @@ How the Trip Essentials pages behave. Covers the in-page search and the no-resul
 
 ## Pages with a search box
 
-Twenty-seven standalone pages carry an in-page search box, plus all 33 Best-of pages share one:
+Twenty-eight standalone pages carry an in-page search box, plus all 33 Best-of pages share one:
 
 | Page | Searches over | Section/grouping it collapses |
 |------|---------------|-------------------------------|
@@ -24,6 +24,7 @@ Twenty-seven standalone pages carry an in-page search box, plus all 33 Best-of p
 | `City-Transit-Cards.html` | transit card rows | city groups |
 | `European-Train-Guide.html` | operator/country/route entries | operator sections |
 | `Europe-Stats.html` | country rows | stat sections |
+| `Luggage-Storage.html` | city cards | region sections |
 | `Pickleball.html` | city entries | state/region sections |
 | `Safety-Guide.html` | city rows | safety-level sections |
 | `SIM-Cards.html` | provider/country entries | region sections |

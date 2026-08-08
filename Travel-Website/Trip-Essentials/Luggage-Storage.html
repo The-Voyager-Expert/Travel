@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Luggage Storage</title>
+<style>/* ── Search + filter controls ── */
+.controls {
+  display: flex; flex-direction: column;
+  gap: 10px; align-items: center; margin-bottom: 20px;
+}
+.search-wrap { position: relative; width: 360px; max-width: 100%; }
+#ls-search {
+  width: 360px; max-width: 100%; padding: 11px 18px; padding-left: 36px;
+  border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px;
+  font-family: inherit; font-size: 16px; color: var(--text, #1a1917);
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+#ls-search::placeholder { color: var(--c-search-placeholder); }
+#ls-search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
+.pills { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+.pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2, #e6e2da);
+  background: var(--surface, #ffffff); font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1;
+  color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+.pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+@media (min-width: 601px) {
+  .pills { gap: 0; }
+  .pills .pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--text, #3d3a32); border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  .pills .pill.active,
+  .pills .pill.active:hover,
+  .pills .pill.active:focus { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border: 1.5px solid var(--rust); color: #fff; font-weight: 600; }
+}
+/* ── No results ── */
+#no-results { display: none; }
+/* ── Section header ── */
+.section-head {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--muted);
+  margin: 28px 0 10px;
+}
+/* ── Provider primer ── */
+.ls-primer { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; margin: 0 0 6px; }
+.ls-prim-card { background: var(--surface, #ffffff); border: 1px solid var(--border2, #e6e2da); border-radius: 10px; padding: 12px 14px; }
+.ls-prim-name { font-size: 13px; font-weight: 700; color: var(--text, #1a1917); margin-bottom: 2px; }
+.ls-prim-model { font-size: 11.5px; color: var(--rust, #b85c2a); font-weight: 600; margin-bottom: 5px; }
+.ls-prim-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.ls-prim-card a { color: var(--text, #1a1917); font-size: 12px; text-decoration: none; }
+.ls-prim-card a:hover { color: var(--rust); text-decoration: underline; }
+/* ── Legend ── */
+.ls-legend { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 0 0 14px; }
+/* ── City cards ── */
+.row-list { display: flex; flex-direction: column; gap: 8px; }
+.ls-row {
+  background: var(--surface, #ffffff); border: 1px solid var(--border2, #e6e2da); border-radius: 10px;
+  overflow: hidden; transition: box-shadow .15s, transform .15s;
+}
+.ls-row:hover { box-shadow: 0 3px 11px rgba(0,0,0,.08); transform: translateY(-1px); }
+.ls-row.hidden { display: none; }
+/* Card top strip */
+.ls-top {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--border2, #e6e2da);
+}
+.ls-city { font-size: 14px; font-weight: 700; color: var(--text, #1a1917); }
+.ls-guide { margin-left: 6px; font-size: 11px; font-weight: 600; color: var(--accent); text-decoration: none; opacity: 0.8; }
+.ls-guide:hover { text-decoration: underline; }
+a.ls-guide:visited { color: #8a6c1a; }
+/* Main station name — plain body text, right-aligned. */
+.ls-station {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  text-align: right;
+}
+/* ── Badges — canonical families, Formatting.html#sec-badges ── */
+.ls-tag {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  line-height: 1.5; padding: 3px 8px; border: 1px solid; border-radius: 4px;
+  text-transform: uppercase; white-space: nowrap;
+}
+.ls-lockers { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+.ls-desk    { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+.ls-none    { background: #fdf0e8; border-color: rgba(122,58,26,0.4); color: #7a3a1a; }
+.ls-247     { background: #e8f0fb; border-color: rgba(26,58,139,0.4); color: var(--navy); }
+:root[data-theme="dark"] .ls-lockers { background: #0d200d; border-color: rgba(90,170,94,0.4); color: #5aaa5e; }
+:root[data-theme="dark"] .ls-desk    { background: #281f00; border-color: rgba(212,168,48,0.4); color: #d4a830; }
+:root[data-theme="dark"] .ls-none    { background: #2a1408; border-color: rgba(232,168,128,0.4); color: #e8a880; }
+:root[data-theme="dark"] .ls-247     { background: #0a1a3a; border-color: rgba(147,180,255,0.4); color: #93b4ff; }
+/* Provider chips — canonical PURPLE family (operator tag). */
+.ls-prov { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 16px 10px; }
+.prov-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: inherit; font-size: 11px; font-weight: 400;
+  padding: 2px 8px; border-radius: 6px;
+  background: #f3e8ff; border: 1px solid rgba(124,58,237,0.4); color: #7c3aed;
+  white-space: nowrap;
+}
+/* Info grid */
+.ls-body { padding: 0 16px 0; }
+.ls-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; border-top: 1px solid var(--border2, #e6e2da);
+}
+.ls-cell { padding: 10px 12px 10px 0; border-right: 1px solid var(--border2, #e6e2da); }
+.ls-cell:nth-child(even) { padding-left: 12px; border-right: none; }
+.ls-label {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px;
+}
+.ls-val { font-size: 13px; color: var(--text, #1a1917); line-height: 1.45; }
+/* Tip bar */
+.ls-tip {
+  margin: 0 16px;
+  border-top: 1px solid var(--border2, #e6e2da);
+  padding: 10px 12px;
+  background: var(--warm);
+  border-radius: 0 0 6px 6px;
+  margin-bottom: 12px;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.ls-tip-icon { font-size: 13px; line-height: 1.45; flex-shrink: 0; opacity: .7; }
+.ls-tip-text { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.ls-verified { font-size: 10px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; display: block; text-align: right; padding: 0 16px 8px; }
+/* ── Live result count ── */
+.ls-result { text-align: center; font-size: 12px; color: var(--muted); margin: 6px 0 10px; min-height: 15px; }
+/* ── Clear filters link ── */
+#ls-clear { display: none; font-size: 11px; color: var(--rust, #b85c2a); cursor: pointer; background: none; border: none; padding: 0; text-decoration: underline; }
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .search-wrap { width: 100%; }
+  .ls-grid { grid-template-columns: 1fr; }
+  .ls-cell { border-right: none; padding-left: 0; }
+  .ls-cell:nth-child(even) { padding-left: 0; border-top: 1px solid var(--border2, #e6e2da); }
+  .ls-station { margin-left: 0; text-align: left; }
+  .ls-top { gap: 7px; }
+  .ls-primer { grid-template-columns: 1fr; }
+  /* Form B glued 3-across grid — full width, no gaps, square corners, 46px. */
+  .pills { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .pill { height: 46px !important; padding: 4px 6px !important; border-radius: 0 !important; font-size: 12px !important; white-space: normal !important; line-height: 1.12 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-07"></div>
+  <script src="../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header">
+    <h1>LUGGAGE STORAGE</h1>
+  </div>
+
+  <p style="font-size:13px;color:var(--text,#3d3a32);max-width:640px;margin:0 auto 16px;text-align:center;line-height:1.55;">Hotel checkout is 11am and the flight is at 9pm. This is where the bags go. Every card below covers what the city's main station actually offers, what the app networks cost, and the one thing worth knowing before you turn up.</p>
+
+
+  <div class="ls-primer" id="ls-primer">
+    <div class="ls-prim-card">
+      <div class="ls-prim-name">Bounce</div>
+      <div class="ls-prim-model">Flat rate per bag, per 24 hours</div>
+      <div class="ls-prim-desc">The widest network — 30,000+ partner shops across 4,000+ cities. Around $3–6 per bag per day plus a service fee, with cover up to $10,000 per booking. Long-term storage available.<br><a href="https://bounce.com" target="_blank" rel="noopener" class="ext-arrow">bounce.com</a></div>
+    </div>
+    <div class="ls-prim-card">
+      <div class="ls-prim-name">Radical Storage</div>
+      <div class="ls-prim-model">Flat rate per bag, per day</div>
+      <div class="ls-prim-desc">13,000+ spots in 2,000+ cities. Roughly €5–6 a day in Europe and from $2.50–4.90 in the US, with no size or weight limit and a €3,000 guarantee for a small protection fee.<br><a href="https://radicalstorage.com" target="_blank" rel="noopener" class="ext-arrow">radicalstorage.com</a></div>
+    </div>
+    <div class="ls-prim-card">
+      <div class="ls-prim-name">Stasher</div>
+      <div class="ls-prim-model">Rolling 24 hours from drop-off</div>
+      <div class="ls-prim-desc">Strong in the UK, Europe and US cities. From about $2.49 per bag, charged as a flat upfront rate that runs a rolling 24 hours from the moment you drop. Cover up to $13,000 per booking.<br><a href="https://stasher.com" target="_blank" rel="noopener" class="ext-arrow">stasher.com</a></div>
+    </div>
+    <div class="ls-prim-card">
+      <div class="ls-prim-name">LuggageHero</div>
+      <div class="ls-prim-model">Hourly, with a daily cap</div>
+      <div class="ls-prim-desc">The one to use for short gaps — from about $1–2 per bag per hour, capped at roughly $8 a day. A one-off service fee per bag covers a guarantee up to $500. Best value under about five hours.<br><a href="https://luggagehero.com" target="_blank" rel="noopener" class="ext-arrow">luggagehero.com</a></div>
+    </div>
+    <div class="ls-prim-card">
+      <div class="ls-prim-name">Your hotel</div>
+      <div class="ls-prim-model">Usually free, same day only</div>
+      <div class="ls-prim-desc">Nearly every hotel holds bags free after checkout and before check-in, and it is almost always the cheapest option. Ask at the desk rather than assuming — and expect same-day only, with no cover if something goes missing.</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="search" class="search-input" id="ls-search" placeholder="City, country or station" aria-label="Search by city, country or station" autocomplete="off">
+    </div>
+    <div class="pills">
+      <button class="pill active" data-filter="all">All</button>
+      <button class="pill" data-filter="europe">🇪🇺 Europe</button>
+      <button class="pill" data-filter="asia">🌏 Asia</button>
+      <button class="pill" data-filter="americas">🌎 Americas</button>
+      <button class="pill" data-filter="oceania">🇦🇺 Oceania</button>
+      <button class="pill" data-filter="africame">🌍 Africa &amp; Middle East</button>
+      <button class="pill" data-filter="lockers">🔒 Station lockers</button>
+      <button class="pill" data-filter="open247">🕐 Open 24/7</button>
+    </div>
+  </div>
+
+  <div class="ls-legend" id="ls-legend">
+    <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+    <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+    <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+    <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+  </div>
+
+  <div style="text-align:center;margin:2px 0 0;"><button id="ls-clear">✕ Clear filters</button></div>
+  <p id="ls-result" class="ls-result"></p>
+  <div id="no-results" class="empty-state">Nothing matches your search.</div>
+
+  <!-- ── 🇪🇺 Europe ── -->
+  <div class="section" data-section="europe">
+    <div class="section-head">🇪🇺 Europe</div>
+    <div class="row-list">
+
+      <div class="ls-row" data-verified="2026-08" data-tags="britain england europe kingdom london oyster uk united" data-guide="London">
+        <div class="ls-top">
+          <span class="ls-city">🇬🇧 London</span><a href="../Guides/London/london_v5.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">St Pancras · King's Cross · Euston · Victoria · Waterloo · Paddington</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Stasher</span><span class="prov-chip">Bounce</span><span class="prov-chip">LuggageHero</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Excess Baggage / Left Baggage staffed counters at every major terminus, roughly 07:00–23:00. £10 up to 3 hours, £15 up to 24 hours. No self-service lockers anywhere on the London rail network.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about £4–6 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The station counters cost two to three times the app networks for the same day. Stasher and LuggageHero both have partner shops within a few minutes' walk of every terminus — book on the phone while you are still on the train.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe eurostar france lockers navigo paris" data-guide="Paris">
+        <div class="ls-top">
+          <span class="ls-city">🇫🇷 Paris</span><a href="../Guides/Paris/paris_v7.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Gare du Nord · Gare de Lyon · Gare de l'Est · Montparnasse · Austerlitz</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SNCF consigne lockers: €5.50 small, €7.50 medium, €9.50 large for up to 48 hours. Gare du Nord 06:15–23:15 (level −1, opposite platform 3); Gare de Lyon 06:15–22:00 (Hall 3, level −1); Gare de l'Est 07:30–22:30; Montparnasse 07:00–22:00; Austerlitz 07:00–23:30. Bags are X-rayed on entry.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4–6 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The Gare du Nord consigne backs up between 09:00 and 11:00 when the Eurostar arrivals stack. Gare de l'Est is a ten-minute walk and almost always has free lockers.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe italy kipoint rome termini" data-guide="Rome">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Rome</span><a href="../Guides/Rome/rome_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Roma Termini</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Stasher</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito bagagli near platform 24, roughly 07:00–21:00. About €6 for the first five hours, then an hourly surcharge — a full day lands around €10–12 per bag. Cards and cash.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">In summer the Termini queue runs 20–30 minutes, worst mid-morning and late afternoon when every hotel checkout hits at once. Partner shops on Via Giolitti and Via Marsala are within 200 m of the same platforms at roughly a third of the price.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe firenze florence italy smn" data-guide="Florence">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Florence</span><a href="../Guides/Florence/florence_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Firenze Santa Maria Novella</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito, roughly 07:00–21:00, about €10–12 per bag per day. No self-service lockers.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Florence is small enough to walk end to end, so a bag drop near SMN covers the whole historic centre. Book ahead in high season — the shops nearest the station sell out by mid-morning.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe italy lucia santa venezia venice" data-guide="Venice">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Venice</span><a href="../Guides/Venice/venice_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Venezia Santa Lucia</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito, roughly 07:00–21:00, about €10–12 per bag per day. Venezia Mestre on the mainland also has a facility.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Dragging a wheeled case over Venice's bridges is genuinely miserable. Drop everything at Santa Lucia before you cross the Ponte degli Scalzi, not after.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="centrale europe italy milan milano" data-guide="Milan">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Milan</span><a href="../Guides/Milan/milan_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Milano Centrale</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Stasher</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito, roughly 07:00–21:00, about €10–12 per bag per day.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Milano Porta Garibaldi has no facility at all, so if you are connecting between the two stations, leave bags at Centrale.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="centrale europe italy naples napoli" data-guide="Naples">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Naples</span><a href="../Guides/Naples/naples_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Napoli Centrale</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito, roughly 08:00–20:00, about €10–12 per bag per day.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Sorrento and the Amalfi towns have no station storage at all, so if you are day-tripping down the coast, the bags stay in Naples.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="bologna centrale europe italy" data-guide="Bologna">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Bologna</span><a href="../Guides/Bologna/bologna_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Bologna Centrale</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito, roughly 07:00–22:00, about €10–12 per bag per day.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Bologna Centrale's longer hours make it the most forgiving Italian deposit for a late train — it stays open an hour past most of the others.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe italy nuova porta torino turin" data-guide="Turin">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Turin</span><a href="../Guides/Turin/turin_v14.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Torino Porta Nuova</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito, roughly 08:00–20:00, about €10–12 per bag per day. Porta Susa has no facility.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">High-speed trains split between Porta Nuova and Porta Susa. Only Porta Nuova stores bags, so check which station your onward train leaves from before you drop.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="arena europe italy nuova porta verona" data-guide="Verona">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Verona</span><a href="../Guides/Verona/verona_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Verona Porta Nuova</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">KiPoint staffed deposito, roughly 08:00–20:00, about €10–12 per bag per day.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The deposit closes at 20:00, which is before most summer opera performances at the Arena finish. Plan the bag pickup for before the show, not after.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="centrale europe italy leaning pisa tower" data-guide="Pisa">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇹 Pisa</span><a href="../Guides/Pisa/pisa_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Pisa Centrale</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Staffed deposit off platform 1 at Pisa Centrale. Around €5–8 per bag for a few hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The Leaning Tower is a 25-minute walk or a short bus ride from Centrale and the site itself bans large bags — drop at the station first, not at the tower.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="barcelona catalonia europe sants spain" data-guide="Barcelona">
+        <div class="ls-top">
+          <span class="ls-city">🇪🇸 Barcelona</span><a href="../Guides/Barcelona/barcelona_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Barcelona Sants</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Staffed consigna downstairs near the Saba car park, roughly 05:30–23:00. About €6 for up to two hours, €10 for 2–24 hours. Barcelona França has nothing.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €3–5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Sants opens at 05:30 and closes at 23:00 — the longest window of any major Spanish station. For a late flight out of El Prat, the app shops around Plaça Catalunya are closer to where you will actually be spending the afternoon.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="atocha chamartin europe madrid spain" data-guide="Madrid">
+        <div class="ls-top">
+          <span class="ls-city">🇪🇸 Madrid</span><a href="../Guides/Madrid/madrid_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Atocha · Chamartín</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">None. The Atocha consigna is closed and Chamartín's went with the rebuild — Madrid's two main stations no longer store luggage at all.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €3.40 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">This surprises people every week. There is no official left luggage at Atocha — book an app shop before you arrive, several of which sit within a hundred metres of the station entrance.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="andalusia europe justa lockers santa sevilla seville spain" data-guide="Seville">
+        <div class="ls-top">
+          <span class="ls-city">🇪🇸 Seville</span><a href="../Guides/Seville/seville_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Sevilla Santa Justa</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Privately run lockers at Santa Justa, bookable in advance online. No Renfe-operated consigna.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Book the Santa Justa lockers ahead — walk-up availability is limited and Seville's summer heat makes hauling a case across the old town a genuinely bad afternoon.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="basque donostia europe san sansebastián sebastián spain" data-guide="San-Sebastian">
+        <div class="ls-top">
+          <span class="ls-city">🇪🇸 San Sebastián</span><a href="../Guides/San-Sebastian/san-sebastian_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Amara · Renfe station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Nothing at either rail station. The nearby bus station has modern lockers, around €8 per 24 hours for a large one.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The bus station lockers are the practical answer here — they are a short walk from the Renfe station and open far longer hours than anything else in town.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="apolonia europe lisbon lockers oriente portugal rossio santa" data-guide="Lisbon">
+        <div class="ls-top">
+          <span class="ls-city">🇵🇹 Lisbon</span><a href="../Guides/Lisbon/lisbon_v4.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Santa Apolónia · Oriente · Rossio · Cais do Sodré</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">CP self-service lockers at all four stations in small, medium and large. Roughly €1.50–2.50 for the first hour, €3.50–5.50 for 4–6 hours, €6–9 for 7–24 hours. Coin-operated; 24-hour maximum.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €3.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The lockers are coin-operated, so break a note before you get there. Oriente is the most convenient drop if you are flying out — it is two Metro stops from the airport.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="bento campanha europe lockers porto portugal sao" data-guide="Porto">
+        <div class="ls-top">
+          <span class="ls-city">🇵🇹 Porto</span><a href="../Guides/Porto/porto_v2.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Campanhã · São Bento</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">CP self-service lockers at both. Campanhã takes coins, notes and bank cards and allows up to 72 hours; São Bento is coin-only with a 24-hour maximum. Roughly €6–9 for 7–24 hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €3.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Campanhã is the one to use for anything over a day — São Bento caps at 24 hours and only takes coins. São Bento is the prettier station but the worse locker.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="amsterdam centraal europe holland lockers netherlands" data-guide="Amsterdam">
+        <div class="ls-top">
+          <span class="ls-city">🇳🇱 Amsterdam</span><a href="../Guides/Amsterdam/amsterdam_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Amsterdam Centraal</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">NS self-service lockers at the western end of the station building, 07:00–00:30. Around €10 small, €15 large, €20 XL per 24 hours, up to 72 hours. Card only — no cash.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €2–5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Centraal's lockers are among the most expensive in Europe and take cards only. The app shops around the station and the Jordaan run a third of the price and often accept cash.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="belgium brussels europe eurostar lockers midi open247 zuid" data-guide="Brussels">
+        <div class="ls-top">
+          <span class="ls-city">🇧🇪 Brussels</span><a href="../Guides/Brussels/brussels_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Bruxelles-Midi / Brussel-Zuid</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SNCB card-operated lockers, available 24 hours. €6.50 medium, €9.00 large, €11.00 XL, €13.50 XXL per 24 hours. Bookable online in advance. Nord, Central and Luxembourg have the same system.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Midi's lockers run round the clock and can be reserved online — the only major European terminus where you can guarantee a locker before you land. Contactless card only.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="belgium bruges brugge europe flanders lockers open247" data-guide="Bruges">
+        <div class="ls-top">
+          <span class="ls-city">🇧🇪 Bruges</span><a href="../Guides/Bruges/bruges_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Brugge</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SNCB card-operated lockers on the same national system as Brussels — same sizes, same €6.50–13.50 per 24-hour band, available round the clock.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Bruges is a classic one-day stop between trains, and the station lockers make it work — the historic centre is a 20-minute walk or a short bus ride from the platforms.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="berlin europe germany hauptbahnhof hbf lockers" data-guide="Berlin">
+        <div class="ls-top">
+          <span class="ls-city">🇩🇪 Berlin</span><a href="../Guides/Berlin/berlin_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Berlin Hauptbahnhof</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">DB self-service lockers, roughly €4–7 per 24 hours depending on size, plus a staffed Gepäckcenter 06:00–22:00 at about €5 per item. Bags are X-rayed at the staffed desk.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Hauptbahnhof lockers fill fast on summer weekends. The staffed Gepäckcenter never runs out of space and costs about the same — use it when the locker bank is full.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe germany hauptbahnhof hbf lockers munchen munich oktoberfest open247" data-guide="Munich">
+        <div class="ls-top">
+          <span class="ls-city">🇩🇪 Munich</span><a href="../Guides/Munich/munich_v2.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">München Hauptbahnhof</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">DB self-service lockers available 24 hours: about €4 small and €6 medium per 24 hours. Plenty of both sizes.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Munich has one of the largest and cheapest locker banks in Germany and it runs round the clock — useful for a late Oktoberfest night or an early train to the Alps.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe frankfurt germany hauptbahnhof hbf layover lockers open247" data-guide="Frankfurt">
+        <div class="ls-top">
+          <span class="ls-city">🇩🇪 Frankfurt</span><a href="../Guides/Frankfurt/frankfurt_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Frankfurt (Main) Hauptbahnhof</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">DB self-service lockers available 24 hours: about €4 small and €6 medium per 24 hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Frankfurt Hbf is a 15-minute train ride from the airport, so the station lockers are the natural place to park bags on a long layover rather than paying airport rates.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="cologne dom europe germany hauptbahnhof hbf koln lockers" data-guide="Cologne">
+        <div class="ls-top">
+          <span class="ls-city">🇩🇪 Cologne</span><a href="../Guides/Cologne/cologne_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Köln Hauptbahnhof</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Automated storage machines in the main corridor outside the ticket office: about €3 up to 2 hours, €6 up to 24 hours, €12 up to 48 hours, €18 up to 72 hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The cathedral is literally at the station exit, so the two-hour €3 band covers a Dom visit and a walk along the Rhine without paying for a full day.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="altona europe germany hamburg hauptbahnhof hbf lockers" data-guide="Hamburg">
+        <div class="ls-top">
+          <span class="ls-city">🇩🇪 Hamburg</span><a href="../Guides/Hamburg/hamburg_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Hamburg Hauptbahnhof</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Self-service lockers plus a staffed Gepäckcenter 08:00–20:00 at about €5 per item. Hamburg-Altona has lockers at roughly €4 small and €6 large.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Altona is the quieter option and usually has free lockers when the Hauptbahnhof bank is picked clean — it is four minutes away on the S-Bahn.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="austria europe hauptbahnhof lockers vienna westbahnhof wien" data-guide="Vienna">
+        <div class="ls-top">
+          <span class="ls-city">🇦🇹 Vienna</span><a href="../Guides/Vienna/vienna_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Wien Hauptbahnhof</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">ÖBB self-service lockers — over 500 of them — at about €2.00 small, €2.50 medium, €3.50 large, €4.50 jumbo. Westbahnhof and Meidling run the same system.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Austria has the cheapest station lockers in Western Europe by a wide margin — a large locker in Vienna costs less than an hour of app storage in London.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe hb lockers sbb switzerland zurich" data-guide="Zurich">
+        <div class="ls-top">
+          <span class="ls-city">🇨🇭 Zurich</span><a href="../Guides/Zurich/zurich_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Zürich Hauptbahnhof</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SBB card-operated lockers: CHF 5 small, 7 medium, 9 large, 10 XL, 12 XXL for up to six hours, then roughly half that again per further six hours. Staffed left-luggage office 07:30–19:30 weekdays, 08:30–19:00 weekends.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about CHF 5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">SBB lockers price in six-hour blocks, not days — a short stopover is cheap but an overnight is not. For anything over 12 hours the staffed office usually wins.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="cornavin europe geneva geneve lockers sbb switzerland" data-guide="Geneva">
+        <div class="ls-top">
+          <span class="ls-city">🇨🇭 Geneva</span><a href="../Guides/Geneva/geneva_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Genève-Cornavin</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SBB card-operated lockers on the same national tariff as Zurich — CHF 5–12 for up to six hours by size. A staffed left-luggage office is also on site.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about CHF 5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Cornavin is a seven-minute walk from the lake, so the six-hour locker band comfortably covers a Jet d'Eau afternoon between trains.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe lockers lucerne luzern pilatus sbb switzerland" data-guide="Lucerne">
+        <div class="ls-top">
+          <span class="ls-city">🇨🇭 Lucerne</span><a href="../Guides/Lucerne/lucerne_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Luzern</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SBB self-service lockers on the national tariff, plus a staffed left-luggage office at the station.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about CHF 6 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Lucerne station sits directly on the lake pier, so bags go in a locker and you walk straight onto a Pilatus or Rigi boat without a detour.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="czech czechia europe hlavni lockers nadrazi prague praha republic" data-guide="Prague">
+        <div class="ls-top">
+          <span class="ls-city">🇨🇿 Prague</span><a href="../Guides/Prague/prague_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Praha hlavní nádraží</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Locker room on level −2, 03:30–00:30: 125 CZK large, 175 CZK extra-large per 24 hours, up to 72 hours, contactless card or cash. Staffed office on level −1, 06:00–23:00, about €2.50 small and €4 larger — and it takes skis and bikes.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The staffed office is roughly half the locker price and stays open to 23:00. It is on level −1 inside the southernmost passageway — easy to walk past.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="budapest europe hungary keleti lockers nyugati open247" data-guide="Budapest">
+        <div class="ls-top">
+          <span class="ls-city">🇭🇺 Budapest</span><a href="../Guides/Budapest/budapest_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Budapest Keleti</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Self-service lockers on the lower level behind platforms 6–9, available round the clock: 1,600 HUF small, 1,800 standard, 2,000 large per 24 hours, up to 72 hours. Lower-level lockers take cards; ground-level ones are coin-only.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €2.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Use the lower-level bank behind platforms 6–9 — it takes cards. The ground-floor lockers only swallow 100 and 200 forint coins, which is a problem if you have just arrived.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe glowny krakow kraków lockers open247 poland" data-guide="Kraków">
+        <div class="ls-top">
+          <span class="ls-city">🇵🇱 Kraków</span><a href="../Guides/Kraków/krakow_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Kraków Główny</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Coin-operated lockers available round the clock at 15 zł small and 20 zł large per 24 hours, plus a staffed office 09:00–21:00 Mon–Sat and 10:00–21:00 Sun at about 6 zł per medium item.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €3 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The lockers only take 1, 2 and 5 złoty coins. The staffed office is a third of the price if you arrive during its hours — and the station sits directly under the Galeria Krakowska mall, two minutes from the old town walls.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="copenhagen denmark europe hovedbanegard kobenhavn lockers" data-guide="Copenhagen">
+        <div class="ls-top">
+          <span class="ls-city">🇩🇰 Copenhagen</span><a href="../Guides/Copenhagen/copenhagen_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">København H</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Baggage Center down the steps in the corner of the main concourse near platforms 11 and 12, 05:30–01:00 Mon–Sat and 06:00–01:00 Sun. Staffed from 75 DKK small and 85 DKK large; lockers 70 DKK small and 80 DKK large, up to 72 hours. Coins or cards.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about 50 DKK per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The entrance is an unmarked stairwell in the concourse corner — look for the 'Baggage Center' sign one flight down, not at concourse level. Open until 01:00, which covers almost any late departure.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="centralstation europe gamla lockers open247 stan stockholm sweden" data-guide="Stockholm">
+        <div class="ls-top">
+          <span class="ls-city">🇸🇪 Stockholm</span><a href="../Guides/Stockholm/stockholm_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Stockholm Centralstation</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Self-service lockers one level below the main hall near the toilets, available round the clock. Roughly 49 SEK per hour for a small locker capped at 299 SEK per 24 hours, and 79 SEK per hour capped at 399 SEK for a large. Contactless card.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about 60 SEK per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Stockholm charges by the hour with a daily cap, so a two-hour stop is cheap and an overnight is not. Past about six hours the app shops around Gamla Stan are much better value.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe flytoget lockers norway open247 oslo s sentralstasjon" data-guide="Oslo">
+        <div class="ls-top">
+          <span class="ls-city">🇳🇴 Oslo</span><a href="../Guides/Oslo/oslo_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Oslo Sentralstasjon</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Self-service lockers down the escalators from the main concourse near platform 13, available round the clock. Charged hourly — 29 NOK small, 39 medium, 69 large — capped at 129, 189 and 299 NOK per 24 hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about 90 NOK per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Same hourly-with-a-cap model as Stockholm. Oslo S is on the Flytoget airport line, so bags can sit in a locker until the last possible train to Gardermoen.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="central europe finland helsinki lockers rautatieasema" data-guide="Helsinki">
+        <div class="ls-top">
+          <span class="ls-city">🇫🇮 Helsinki</span><a href="../Guides/Helsinki/helsinki_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Helsingin päärautatieasema</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Self-service lockers downstairs from the side corridor parallel with platform 11, 06:00–24:00, card payment. Standard locker: €3.90 for 3 hours, €5.90 for 6, €8.90 for 12, €12.90 for 24, €17.90 for 72.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The banded pricing is unusually generous at the long end — €17.90 buys three full days, which is cheaper than three separate 24-hour bookings almost anywhere else in the Nordics.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe ljubljana lockers open247 slovenia" data-guide="Ljubljana">
+        <div class="ls-top">
+          <span class="ls-city">🇸🇮 Ljubljana</span><a href="../Guides/Ljubljana/ljubljana_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">Ljubljana</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Self-service lockers off platform 1, available round the clock, at about €4 small, €5 medium and €6 large. They have occasionally been closed for station building work — the bus station next door is the fallback.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The rail and bus stations sit side by side, so if the platform-1 lockers are shut for works, the bus terminal is a 60-second walk.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="acropolis athens europe greece larissa monastiraki plaka" data-guide="Athens">
+        <div class="ls-top">
+          <span class="ls-city">🇬🇷 Athens</span><a href="../Guides/Athens/athens_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Larissa Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span><span class="prov-chip">Stasher</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No reliable public left-luggage at Larissa Station. Athens runs almost entirely on app shops and hotel bag holds.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €2.50–5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Plaka and Monastiraki have the densest shop coverage, which is where you want bags parked anyway — the Acropolis entrance bans large luggage outright.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe istanbul lockers sirkeci sultanahmet turkey" data-guide="Istanbul">
+        <div class="ls-top">
+          <span class="ls-city">🇹🇷 Istanbul</span><a href="../Guides/Istanbul/istanbul_v2.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Sirkeci</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">A limited bank of credit-card-operated lockers on the main concourse at Sirkeci, next to the platforms. Capacity is small — do not count on a free one.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Sirkeci's locker bank is genuinely small. Sultanahmet is a ten-minute walk and has far more app shops, which is the safer plan for a full day.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="bar connolly dublin europe heuston ireland temple" data-guide="Dublin">
+        <div class="ls-top">
+          <span class="ls-city">🇮🇪 Dublin</span><a href="../Guides/Dublin/dublin_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Heuston · Connolly</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No self-service lockers at either Dublin station. Storage is app shops and hotel bag holds only.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Temple Bar and around O'Connell Street have the best shop density. Dublin Airport also runs a paid left-luggage desk in Terminal 1 if you are only passing through.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="edinburgh europe kingdom mile royal scotland uk united waverley" data-guide="Edinburgh">
+        <div class="ls-top">
+          <span class="ls-city">🇬🇧 Edinburgh</span><a href="../Guides/Edinburgh/edinburgh_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Edinburgh Waverley</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Stasher</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Staffed left-luggage counter at Waverley on the standard UK tariff — roughly £10 for up to 3 hours and £15 for up to 24. No self-service lockers.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about £5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Waverley sits in the valley between the Old and New Towns, so a bag drop there is walking distance from both. The app shops on the Royal Mile undercut the station counter by more than half.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="central europe glasgow kingdom queen scotland street uk united" data-guide="Glasgow">
+        <div class="ls-top">
+          <span class="ls-city">🇬🇧 Glasgow</span><a href="../Guides/Glasgow/glasgow_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Glasgow Central</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Stasher</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Staffed left-luggage counter at Central on the standard UK tariff — roughly £10 for up to 3 hours and £15 for up to 24. Queen Street has a smaller staffed office.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about £5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Central and Queen Street are a ten-minute walk apart with no shared storage. Drop at whichever one your onward train leaves from, not the one you arrived at.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="europe eurostar flandres france lille" data-guide="Lille">
+        <div class="ls-top">
+          <span class="ls-city">🇫🇷 Lille</span><a href="../Guides/Lille/lille_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Lille Europe</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Staffed facility at the extreme south end of the concourse beyond 'Accès A', 07:30–20:00. €4 up to 2 hours, €5.50 up to 10 hours, €9.50 up to 24 hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Lille Europe and Lille Flandres are a five-minute walk apart. Only Europe stores bags, and its two-hour €4 band is ideal for a Eurostar connection with a wander through the Vieux-Lille.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="dieu europe france lockers lyon part perrache" data-guide="Lyon">
+        <div class="ls-top">
+          <span class="ls-city">🇫🇷 Lyon</span><a href="../Guides/Lyon/lyon_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Lyon Part-Dieu</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SNCF self-service lockers, 06:15–23:00, €5.50 to €9.50 by size for up to 48 hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Part-Dieu has the lockers; Perrache does not. Vieux-Lyon and the Presqu'île are both a short Metro ride from Part-Dieu, so the station is a fine base for a bag-free day.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="charles europe france marseille port saint vieux" data-guide="Marseille">
+        <div class="ls-top">
+          <span class="ls-city">🇫🇷 Marseille</span><a href="../Guides/Marseille/marseille_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Marseille Saint-Charles</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Staffed left-luggage office, 08:15–21:00, roughly €3 to €9.50 per item per 24 hours depending on size.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Saint-Charles sits at the top of a long monumental staircase above the city. Leave the bags before you walk down to the Vieux-Port — you will not want to carry them back up.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="azur cote europe france nice riviera ville" data-guide="Nice">
+        <div class="ls-top">
+          <span class="ls-city">🇫🇷 Nice</span><a href="../Guides/Nice/nice_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Nice-Ville</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Staffed office to the right of the main hall near the waiting room, 08:15–21:00. €5.50 cabin-size, €7.50 medium, €9.50 large, €15 for bikes, skis or instruments.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Nice-Ville is the only station on the Côte d'Azur with reliable staffed storage — Cannes and the smaller Riviera stops have nothing, so bags stay in Nice for a coastal day trip.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="bordeaux europe france jean lockers saint" data-guide="Bordeaux">
+        <div class="ls-top">
+          <span class="ls-city">🇫🇷 Bordeaux</span><a href="../Guides/Bordeaux/bordeaux_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Bordeaux Saint-Jean</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">SNCF self-service lockers, roughly 07:00–22:30 weekdays, 07:00–20:30 Saturdays and 09:15–22:45 Sundays.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The Saturday closing at 20:30 is the earliest of the week and catches people out. Check the day's hours before you commit to a late pickup.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 🌏 Asia ── -->
+  <div class="section" data-section="asia">
+    <div class="section-head">🌏 Asia</div>
+    <div class="row-list">
+
+      <div class="ls-row" data-verified="2026-08" data-tags="asia card coin ic japan locker lockers pasmo suica tokyo" data-guide="Tokyo">
+        <div class="ls-top">
+          <span class="ls-city">🇯🇵 Tokyo</span><a href="../Guides/Tokyo/tokyo_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Tokyo Station and every JR / Metro station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Coin lockers</span><span class="prov-chip">ecbo cloak</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Coin lockers everywhere: about ¥400 small, ¥500 medium, ¥700 large per calendar day. Tokyo Station alone has over 4,000. Newer touchscreen banks take Suica, PASMO and most regional IC cards.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about ¥600 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Japanese lockers reset at midnight rather than running a rolling 24 hours, so an overnight stay costs two days. Big suitcases rarely fit — the large size tops out around 103 cm tall.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="asia coin icoca japan kyoto locker lockers suica" data-guide="Kyoto">
+        <div class="ls-top">
+          <span class="ls-city">🇯🇵 Kyoto</span><a href="../Guides/Kyoto/kyoto_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Kyoto Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Coin lockers</span><span class="prov-chip">ecbo cloak</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Coin lockers throughout Kyoto Station and the subway network at roughly ¥400–700 per calendar day by size, plus a staffed bag-drop counter in the station.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about ¥600 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Kyoto Station lockers are picked clean by 09:00 in cherry-blossom and autumn-colour season. The staffed counter inside the station is the reliable fallback — and it takes full-size suitcases.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="asia coin icoca japan locker lockers namba osaka umeda" data-guide="Osaka">
+        <div class="ls-top">
+          <span class="ls-city">🇯🇵 Osaka</span><a href="../Guides/Osaka/osaka_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Osaka / Umeda Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Coin lockers</span><span class="prov-chip">ecbo cloak</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Coin lockers across the Osaka–Umeda complex and the subway at roughly ¥400–700 per calendar day by size. Touchscreen banks take ICOCA and other IC cards.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about ¥600 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The Osaka–Umeda station complex is enormous and lockers are scattered across several levels. Photograph the locker number and the nearest exit sign — people lose them.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="asia coin hiroshima japan locker lockers miyajima park peace" data-guide="Hiroshima">
+        <div class="ls-top">
+          <span class="ls-city">🇯🇵 Hiroshima</span><a href="../Guides/Hiroshima/hiroshima_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Hiroshima Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Coin lockers</span><span class="prov-chip">ecbo cloak</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Coin lockers at Hiroshima Station in the usual ¥400–700 per calendar day range, plus lockers at the Peace Memorial Park tram stops.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about ¥600 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Hiroshima is a classic between-trains stop. Lockers at the station cover the tram ride to the Peace Park and back inside a single calendar day's charge.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="arex asia korea lockers myeongdong seoul south t-locker t-money" data-guide="Seoul">
+        <div class="ls-top">
+          <span class="ls-city">🇰🇷 Seoul</span><a href="../Guides/Seoul/seoul_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Seoul Station and the subway network</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">T-Locker</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">T-Locker self-service lockers across Seoul Station and most subway stations, charged in blocks — roughly ₩2,000 small, ₩3,000 medium and ₩4,000 large for four hours, with extensions after. Paid by T-money card or card.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about ₩6,000 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The lockers bill in four-hour blocks, so a full day stacks up. Seoul Station also runs a staffed storage desk, and the AREX airport line leaves from the same building.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="airport asia china express hong hongkong kong kowloon mtr sha tsim tsui" data-guide="Hong-Kong">
+        <div class="ls-top">
+          <span class="ls-city">🇭🇰 Hong Kong</span><a href="../Guides/Hong-Kong/hong-kong_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Hong Kong Station · Kowloon Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">MTR staffed left-luggage: about HK$60 per item for up to 3 hours, HK$87 for 3–24 hours and HK$133 for each further 24 hours.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about HK$19 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The MTR desk is expensive — the app shops around Tsim Sha Tsui and Central run a fraction of the price. The MTR desks do sit right on the Airport Express, which is what you are paying for.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="asia bay changi jewel marina mrt orchard singapore" data-guide="Singapore">
+        <div class="ls-top">
+          <span class="ls-city">🇸🇬 Singapore</span><a href="../Guides/Singapore/singapore_v3.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-desk">🟡 STAFFED DESK</span>
+          <span class="ls-station">Changi Airport</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Smarte Carte counters in every Changi terminal: about S$11 for items under 10 kg and S$16 for large items per 24 hours. MRT stations have no public lockers.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about S$3.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Changi's own counters are three times the app rate. Jewel, Marina Bay, Orchard Road and Chinatown all have partner shops, and Singapore is small enough that any of them works for a full day.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="asia bangkok bts hua lamphong lockers mrt open247 siam skytrain sukhumvit thailand" data-guide="Bangkok">
+        <div class="ls-top">
+          <span class="ls-city">🇹🇭 Bangkok</span><a href="../Guides/Bangkok/bangkok_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-tag ls-247">🔵 OPEN 24/7</span>
+          <span class="ls-station">BTS Skytrain and MRT stations</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">BTS lockers</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Automated lockers at BTS and MRT stations in four sizes, available round the clock, from about ฿20 per hour with a two-hour minimum. Day rates start around ฿350 for 12–24 hours; up to four days.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about ฿65 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The BTS lockers bill hourly, so for anything past half a day the app shops are cheaper. Hua Lamphong and Krung Thep Aphiwat also have staffed storage if you are taking a sleeper train.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="asia easycard lockers main mrt station taipei taiwan" data-guide="Taipei">
+        <div class="ls-top">
+          <span class="ls-city">🇹🇼 Taipei</span><a href="../Guides/Taipei/taipei_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-lockers">🟢 STATION LOCKERS</span>
+          <span class="ls-station">Taipei Main Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Coin lockers</span><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">Touchscreen lockers on B1 of Taipei Main Station and across the MRT, charged in three-hour blocks — roughly NT$40 small to NT$110 extra-large per block, up to 72 hours. Coins, EasyCard or mobile payment.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about NT$150 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Lockers follow station operating hours, so they are not truly 24/7 — check the last-access time if your flight is late. B1 has the largest bank in the city.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 🌎 Americas ── -->
+  <div class="section" data-section="americas">
+    <div class="section-head">🌎 Americas</div>
+    <div class="row-list">
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas central grand manhattan new newyork nyc penn states united usa york" data-guide="New-York">
+        <div class="ls-top">
+          <span class="ls-city">🇺🇸 New York</span><a href="../Guides/New-York/new-york_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Penn Station · Grand Central · Port Authority</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Stasher</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">None. Public lockers were removed from US rail terminals and airports after 2001 and never came back. Neither Penn Station nor Grand Central stores luggage.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about $2.49–6 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Midtown has the densest shop network in the country — there is usually something within two blocks of wherever you are. Book on the phone rather than walking in; the shops nearest Penn Station fill up first.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas capitol dc smithsonian states station union united usa washington washingtondc" data-guide="Washington-DC">
+        <div class="ls-top">
+          <span class="ls-city">🇺🇸 Washington DC</span><a href="../Guides/Washington-DC/washington-dc_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Union Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers. Amtrak handles checked baggage for its own ticketed passengers only; everyone else uses app shops.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about $3.90 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">The Smithsonian museums and the Capitol all screen bags and turn away large luggage, so a drop near Union Station or Penn Quarter is effectively mandatory on a departure day.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas chicago loop millennium north river states station union united usa" data-guide="Chicago">
+        <div class="ls-top">
+          <span class="ls-city">🇺🇸 Chicago</span><a href="../Guides/Chicago/chicago_v2.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Union Station · Ogilvie</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers at either downtown terminal. Amtrak checked baggage covers ticketed passengers only.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about $2.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Chicago has some of the cheapest app storage in the United States. The Loop and River North both have dense coverage, which puts you next to the Art Institute and Millennium Park.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas back bay boston freedom south states station trail united usa" data-guide="Boston">
+        <div class="ls-top">
+          <span class="ls-city">🇺🇸 Boston</span><a href="../Guides/Boston/boston_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">South Station · Back Bay</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers. Storage is app shops and hotel bag holds.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about $4.90 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Back Bay and Downtown Crossing have the best coverage. Boston is compact enough to walk the Freedom Trail end to end from a single drop point.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas area bay fishermans francisco san sanfrancisco sf square states union united usa wharf" data-guide="San-Francisco">
+        <div class="ls-top">
+          <span class="ls-city">🇺🇸 San Francisco</span><a href="../Guides/San-Francisco/san-francisco_v3.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Salesforce Transit Center · Caltrain 4th &amp; King</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Stasher</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers at any transit hub. App shops and hotel bag holds only.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about $5 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Union Square and Fisherman's Wharf have the densest coverage. Do not leave bags visible in a rental car anywhere in the city — smash-and-grab is the single most common theft here.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas angeles hollywood la lax los losangeles monica santa states station union united usa" data-guide="Los-Angeles">
+        <div class="ls-top">
+          <span class="ls-city">🇺🇸 Los Angeles</span><a href="../Guides/Los-Angeles/los-angeles_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Union Station · LAX</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Stasher</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">LuggageHero</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers. LAX has no landside left-luggage counter either; everything runs through app shops near the terminals and in the city.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about $2.49 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">LA is too spread out to store bags anywhere but where you will actually be. Pick a shop near the neighbourhood you are spending the afternoon in, not near the airport.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas canada cn express station toronto tower union up" data-guide="Toronto">
+        <div class="ls-top">
+          <span class="ls-city">🇨🇦 Toronto</span><a href="../Guides/Toronto/toronto_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Union Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers at Union Station. Storage runs through app shops and hotel bag holds.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about C$6 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Union Station sits directly under the downtown core and the UP Express to Pearson leaves from the same building, so a drop nearby covers both the CN Tower area and the airport run.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas canada centrale gare montreal quebec vieux" data-guide="Montreal">
+        <div class="ls-top">
+          <span class="ls-city">🇨🇦 Montreal</span><a href="../Guides/Montreal/montreal_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Gare Centrale</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers at Gare Centrale. App shops and hotel bag holds only.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about C$6 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Old Montreal has the best shop coverage and is where you want to spend a bag-free afternoon anyway. Winter matters here — a drop point with indoor access beats one that means standing in the cold.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="americas brazil copacabana de guarda ipanema janeiro novo rio riodejaneiro volumes" data-guide="Rio-de-Janeiro">
+        <div class="ls-top">
+          <span class="ls-city">🇧🇷 Rio de Janeiro</span><a href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Rodoviária Novo Rio · Santos Dumont</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No reliable public lockers. The Novo Rio bus terminal has a paid guarda-volumes counter; otherwise it is app shops and hotel bag holds.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about R$20 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Copacabana and Ipanema have the best shop coverage. Do not carry visible luggage on the beach strip — leave it stored and travel with nothing you would mind losing.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="aires americas argentina buenos buenosaires palermo recoleta retiro san telmo" data-guide="Buenos-Aires">
+        <div class="ls-top">
+          <span class="ls-city">🇦🇷 Buenos Aires</span><a href="../Guides/Buenos-Aires/buenos-aires_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Retiro · Terminal de Ómnibus</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No reliable public lockers at Retiro. The bus terminal has a paid guarda-equipaje counter; otherwise app shops, several of which run round the clock.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about US$2.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Buenos Aires has some of the cheapest storage anywhere and several 24-hour partner shops — useful given how many long-haul flights out leave close to midnight.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 🇦🇺 Oceania ── -->
+  <div class="section" data-section="oceania">
+    <div class="section-head">🇦🇺 Oceania</div>
+    <div class="row-list">
+
+      <div class="ls-row" data-verified="2026-08" data-tags="australia central circular haymarket house nsw oceania opera quay sydney" data-guide="Sydney">
+        <div class="ls-top">
+          <span class="ls-city">🇦🇺 Sydney</span><a href="../Guides/Sydney/sydney_v2.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Central Station · Circular Quay</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers at Central or anywhere on the Sydney Trains network. Storage is app shops around Haymarket and the CBD.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about A$3.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Most Sydney drop points are on George Street around Haymarket, a short walk from Central. From there the Opera House and the Harbour Bridge walk are both a single train stop away.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="australia cross flinders melbourne oceania skybus southern victoria" data-guide="Melbourne">
+        <div class="ls-top">
+          <span class="ls-city">🇦🇺 Melbourne</span><a href="../Guides/Melbourne/melbourne_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Southern Cross · Flinders Street</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span><span class="prov-chip">Nannybag</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers at either station. App shops cluster within a minute or two of Southern Cross and along the CBD grid.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about A$3.50 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Southern Cross is where the SkyBus to Tullamarine leaves from, so a drop there covers both a last day in the CBD and the airport run without doubling back.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 🌍 Africa & Middle East ── -->
+  <div class="section" data-section="africame">
+    <div class="section-head">🌍 Africa & Middle East</div>
+    <div class="row-list">
+
+      <div class="ls-row" data-verified="2026-08" data-tags="africame arab deira downtown dubai dxb emirates marina metro uae united" data-guide="Dubai">
+        <div class="ls-top">
+          <span class="ls-city">🇦🇪 Dubai</span><a href="../Guides/Dubai/dubai_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Metro network · DXB</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span><span class="prov-chip">Bounce</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers on the Dubai Metro. DXB has paid left-luggage counters in the terminals; in the city it is app shops, several open round the clock, at about AED 25 per day.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about AED 25 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Dubai's long hotel-checkout-to-midnight-flight gap is the classic case for this. Most malls will not hold luggage, so book a shop near Downtown or Deira rather than assuming somewhere will take it.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="africame el fna gueliz jemaa marrakech medina morocco riad" data-guide="Marrakech">
+        <div class="ls-top">
+          <span class="ls-city">🇲🇦 Marrakech</span><a href="../Guides/Marrakech/marrakech_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Marrakech-Ville</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No dependable public lockers. Storage runs through app partner shops in the medina and Gueliz, and through riad bag holds.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about €4 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Riads almost universally hold bags after checkout at no charge and it is the most reliable option in the medina — the alleys are hard to navigate with a case, and app coverage here is thinner than in Europe.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+
+      <div class="ls-row" data-verified="2026-08" data-tags="africa africame bowl cape capetown city mountain south table town v&a waterfront" data-guide="Cape-Town">
+        <div class="ls-top">
+          <span class="ls-city">🇿🇦 Cape Town</span><a href="../Guides/Cape-Town/cape-town_v1.html" class="ls-guide">Guide</a>
+          <span class="ls-tag ls-none">🔴 NO STATION STORAGE</span>
+          <span class="ls-station">Cape Town Station</span>
+        </div>
+        <div class="ls-prov"><span class="prov-chip">Bounce</span><span class="prov-chip">Radical Storage</span></div>
+        <div class="ls-body">
+          <div class="ls-grid">
+            <div class="ls-cell">
+              <div class="ls-label">At the station</div>
+              <div class="ls-val">No public lockers at Cape Town Station. Storage is app partner shops around the V&amp;A Waterfront and the City Bowl, plus hotel bag holds.</div>
+            </div>
+            <div class="ls-cell">
+              <div class="ls-label">App networks</div>
+              <div class="ls-val">From about R80 per bag per day</div>
+            </div>
+          </div>
+        </div>
+        <div class="ls-tip">
+          <span class="ls-tip-icon">💡</span>
+          <span class="ls-tip-text">Table Mountain's cableway will not take large luggage, so bags have to go somewhere before you go up. The V&amp;A Waterfront has the most reliable coverage in the city.</span>
+        </div>
+        <span class="ls-verified">Verified Aug 2026</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-pills">
+    <a class="also-on-this-site-pill" href="Travel-Packing.html">🧳 Travel packing</a>
+    <a class="also-on-this-site-pill" href="Baggage.html">🛄 Airline baggage</a>
+    <a class="also-on-this-site-pill" href="City-Transit-Cards.html">🚇 City transit cards</a>
+    <a class="also-on-this-site-pill" href="European-Train-Guide.html">🚆 European trains</a>
+    <a class="also-on-this-site-pill" href="Day-Trips.html">🗺️ Day trips</a>
+    <a class="also-on-this-site-pill" href="Hotels-Stays.html">🏨 Hotels &amp; stays</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var search      = document.getElementById('ls-search');
+  var pills       = document.querySelectorAll('.pill');
+  var noRes       = document.getElementById('no-results');
+  var allRows     = document.querySelectorAll('.ls-row');
+  var sections    = document.querySelectorAll('.section');
+  var result      = document.getElementById('ls-result');
+  var clearBtn    = document.getElementById('ls-clear');
+  var primer      = document.getElementById('ls-primer');
+  var legend      = document.getElementById('ls-legend');
+  var also        = document.getElementById('also-on-this-site');
+  var total       = allRows.length;
+  var activeFilter = 'all';
+  var _debounceTimer;
+
+  function matchFilter(tags) {
+    if (activeFilter === 'all') return true;
+    return tags.split(' ').indexOf(activeFilter) !== -1;
+  }
+
+  function applyFilter() {
+    var q = search.value.trim().toLowerCase();
+    var shown = 0;
+
+    allRows.forEach(function (row) {
+      var tags = row.getAttribute('data-tags') || '';
+      var text = row.textContent.toLowerCase();
+      var show = matchFilter(tags) && (!q || text.indexOf(q) !== -1);
+      row.classList.toggle('hidden', !show);
+      if (show) shown++;
+    });
+
+    sections.forEach(function (sec) {
+      var hasVisible = Array.prototype.slice.call(sec.querySelectorAll('.ls-row')).some(function (r) {
+        return !r.classList.contains('hidden');
+      });
+      sec.style.display = hasVisible ? '' : 'none';
+    });
+
+    var isFiltered = (activeFilter !== 'all' || search.value.trim() !== '');
+    if (clearBtn) clearBtn.style.display = isFiltered ? 'inline' : 'none';
+    noRes.style.display = shown ? 'none' : 'block';
+
+    /* No-results state: only title, search box and the message stay visible. */
+    var empty = (shown === 0);
+    if (primer) primer.style.display = empty ? 'none' : '';
+    if (legend) legend.style.display = empty ? 'none' : '';
+    if (also)   also.style.display   = empty ? 'none' : '';
+    var foot = document.getElementById('ls-shared-footnote');
+    if (foot) foot.style.display = empty ? 'none' : '';
+
+    if (result) {
+      var lockerCount = document.querySelectorAll('.ls-row[data-tags~="lockers"]').length;
+      result.textContent = (shown === total && !q && activeFilter === 'all')
+        ? total + ' cities \u00b7 ' + sections.length + ' regions \u00b7 ' + lockerCount + ' with station lockers'
+        : 'Showing ' + shown + ' of ' + total;
+    }
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function () {
+      search.value = '';
+      pills.forEach(function (p) { p.classList.remove('active'); });
+      var allPill = document.querySelector('.pill[data-filter="all"]');
+      if (allPill) allPill.classList.add('active');
+      activeFilter = 'all';
+      clearBtn.style.display = 'none';
+      applyFilter();
+    });
+  }
+
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      pills.forEach(function (p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+      activeFilter = pill.getAttribute('data-filter');
+      applyFilter();
+    });
+  });
+
+  search.addEventListener('input', function () {
+    clearTimeout(_debounceTimer);
+    _debounceTimer = setTimeout(applyFilter, 180);
+  });
+
+  applyFilter();
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('ls-search'); if(!input) return;
+  var items=[];
+  document.querySelectorAll('.ls-row').forEach(function(row){
+    var c=row.querySelector('.ls-city');
+    if(!c) return;
+    var city=c.textContent.replace(/^[^A-Za-z0-9]+/,'').trim();
+    var st=row.querySelector('.ls-station');
+    if(city) items.push({name:city, sub:st?st.textContent.trim():'', text:(row.getAttribute('data-tags')||'')});
+  });
+  TVESearch.attach(input,{items:items});
+}());</script>
+
+</body>
+</html>
