@@ -711,15 +711,25 @@ a:hover { text-decoration: underline; }
    the yellow "departure day" banner from when arrival/departure days had
    their own blocks. With "Day 1 = first full touring day" (Guide Structure.html)
    there is no departure day in the guide; the class had no remaining trigger. */
+/* Palette (owner change 2026-08-08): STONE NEUTRAL, shared by all five motion
+   banners — .hotel-first / .arrive-first above and .next / .next-tram /
+   .next-metro below. They were warm beige (#f5f0e6 on #7a5c1e), the same
+   family as the stop cards' own furniture, so a walking time read with the
+   same weight as the places it connects. Transit is plumbing between stops,
+   not content: pulling it onto a grey removes it from the warm palette
+   entirely and lets the eye skip banner→banner to the next stop. Fill #f2f1ec,
+   ink #5a564a. Backgrounds MUST stay identical across all five — the
+   :has(+ .next-tram) glue below collapses the radius and margin between a
+   banner and its tram sub-line and relies on there being no visible seam. */
 .hotel-first,
 .arrive-first {
-  background: #f5f0e6;
+  background: #f2f1ec;
   border: 1.5px solid transparent;
   padding: 8px 12px;
   font-size: var(--fs-base);
   border-radius: 4px;
   margin-bottom: 10px;
-  color: #7a5c1e;
+  color: #5a564a;
 }
 .hotel-first,
 .arrive-first { border-left: none; }
@@ -759,12 +769,12 @@ a:hover { text-decoration: underline; }
 .next,
 .next-tram,
 .next-metro {
-  background: #f5f0e6;
+  background: #f2f1ec;
   border: 1.5px solid transparent;
   padding: 8px 12px;
   font-size: var(--fs-base);
   border-radius: 4px;
-  color: #7a5c1e;
+  color: #5a564a;
   margin: 8px 0;
   white-space: nowrap;
   overflow: hidden;
@@ -790,27 +800,44 @@ a:hover { text-decoration: underline; }
 /* ─── LOUNGE ARRIVAL CHIP ──────────────────────────────────────────────────── */
 /* Injected by toolbar.js at the top of Day 1.
    Same shape as .hotel-first (padding, radius, margin-bottom).
-   Palette (owner change 2026-08-08): brand gold, not the Getting Around teal.
-   The teal read as the only cool element on a warm cream page — it broke the
-   day card's colour system to signal "transport", a signal the ✈ glyph and the
-   IATA code already carry. Now built entirely from the pill tokens
-   (--c-pill-hover fill / --c-action-text ink / --c-float-bd rule /
-   --c-pill-text link), so light and dark flip together with the rest of the
-   gold family and this block needs no dark-mode override of its own. */
+   Palette (owner change 2026-08-08): TERRACOTTA, the site accent — not the
+   Getting Around teal it shipped in. The teal was the only cool element on a
+   warm cream page: it broke the day card's colour system to signal
+   "transport", a signal the ✈ glyph and the IATA code already carry. #b85c2a
+   is the accent already used for the guide's own links and marks, so the chip
+   now reads as the one actionable thing at the top of Day 1 rather than as a
+   foreign object. Deliberately NOT the same family as the stone motion
+   banners below it — the chip is a link out, they are plumbing.
+   Literal hexes, not tokens: the accent has no fill/ink token pair, so the
+   dark twins are declared explicitly in both dark blocks further down. */
 .lounge-arrival-chip {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--c-pill-hover);
-  border-left: 3px solid var(--c-float-bd);
+  background: #fbf0ea;
+  border-left: 3px solid #b85c2a;
   border-radius: 4px;
   padding: 8px 12px;
   font-size: var(--fs-base);
-  color: var(--c-action-text);
+  color: #7a3b1e;
   margin-bottom: 10px;
   text-decoration: none;
 }
-.lounge-arrival-chip:hover { background: var(--c-pill-active); }
+.lounge-arrival-chip:hover { background: #f6e4d9; }
+/* Visited lock. The chip is an <a>, and the global `a, a:visited { color:
+   var(--c-link) }` at the top of this file is specificity 0-1-1 — it outranks
+   the 0-1-0 `.lounge-arrival-chip` rule above, so after the reader clicks
+   through to the lounges page the IATA code and airport name repaint link-blue
+   while the fill and rail stay put — exactly what the owner reported on
+   2026-08-08. The `a.` prefix takes this to 0-2-1 so it wins. Same lock the
+   other three anchor pills carry (also-on-this-site, nearby-guide,
+   also-in-country) — see the 2026-07-28 sw.js entry for the original bug.
+   Now enforced for JS-built anchors too: brain_check's
+   _anchor_classes_from_js pairs each document.createElement('a') with the
+   className set on it, so check_universal_visited_color_match sees classes
+   like this one that the CSS never writes with an `a.` prefix.
+   Owner rule 2026-07-28: no font-color change after visit. */
+a.lounge-arrival-chip:visited { color: #7a3b1e; }
 .lac-iata {
   font-weight: 700;
   letter-spacing: .04em;
@@ -823,7 +850,7 @@ a:hover { text-decoration: underline; }
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
-  color: var(--c-pill-text);
+  color: #b85c2a;
 }
 .lac-link::after { content: ' ›'; font-size: 14px; opacity: .7; }
 
@@ -2386,11 +2413,16 @@ div.train .train-time   { padding: 2px 0; }
   .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) { border-top-color: #38322a; }
   .stop-row a[href*="en.wikipedia.org"] { background: #221e18; }
   .stop-row a[href*="en.wikipedia.org"]:hover { color: #d4784a; border-color: #d4784a; }
+  /* Motion banners — dark twin of the 2026-08-08 stone repaint. They were
+     #222120/#c8a060, the warm gold every other guide foreground uses; the
+     light side deliberately left that family, so the dark side does too or
+     the two modes stop agreeing about what transit is. Neutral grey ink on
+     the same near-black fill: #9d988c is 5.6:1 on #232221, clear AA. */
   .hotel-first,
   .arrive-first,
   .next,
   .next-tram,
-  .next-metro { background: #222120; color: #c8a060; }
+  .next-metro { background: #232221; color: #9d988c; }
   .also-on-this-site-pill,
   .nearby-guide-pill { background: var(--c-card-bg); color: #b8962a; border-color: #8a7a40; }
   .guide-nav a { color: var(--c-title-bg); }
@@ -2398,9 +2430,13 @@ div.train .train-time   { padding: 2px 0; }
   .toolbar-essentials a { background-color: var(--c-card-bg); color: var(--c-title-bg); }
   .essentials-link:hover { background: rgba(200,160,64,.08); }
   .claude-inspiration.theme-sage { --ci-bg: #1e2a26; }
-  /* .lounge-arrival-chip needs no dark override — since the 2026-08-08 gold
-     repaint it is built from --c-pill-hover / --c-pill-active / --c-action-text
-     / --c-pill-text / --c-float-bd, all themed above. */
+  /* Lounge chip — dark twin of the 2026-08-08 terracotta repaint. #d4874a is
+     the palette's established dark lift of #b85c2a (same one .free-flag and
+     the pullquote border use), so the accent stays one colour across modes. */
+  .lounge-arrival-chip { background: #2a211c; color: #d4874a; border-left-color: #a05a2e; }
+  .lounge-arrival-chip:hover { background: #33281f; }
+  a.lounge-arrival-chip:visited { color: #d4874a; }
+  .lac-link { color: #d4874a; }
 }
 
 /* ─── RETIRED SELECTORS (Rule 11 markers — preserved for re-invention prevention) */
@@ -3733,3 +3769,12 @@ a.also-in-country-pill:active {
 :root[data-theme="dark"] .free-flag { color: #d4874a; }
 :root[data-theme="dark"] .ticket-flag::before { background-color: #d4874a; }
 :root[data-theme="dark"] .free-flag::before { background-color: #d4874a; }
+:root[data-theme="dark"] .lounge-arrival-chip { background: #2a211c; color: #d4874a; border-left-color: #a05a2e; }
+:root[data-theme="dark"] .lounge-arrival-chip:hover { background: #33281f; }
+:root[data-theme="dark"] a.lounge-arrival-chip:visited { color: #d4874a; }
+:root[data-theme="dark"] .lac-link { color: #d4874a; }
+:root[data-theme="dark"] .hotel-first,
+:root[data-theme="dark"] .arrive-first,
+:root[data-theme="dark"] .next,
+:root[data-theme="dark"] .next-tram,
+:root[data-theme="dark"] .next-metro { background: #232221; color: #9d988c; }
