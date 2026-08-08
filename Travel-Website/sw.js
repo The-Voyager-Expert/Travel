@@ -183,7 +183,8 @@
 /* 2026-08-04: Time Zones / Plug Adapter / Currency pills in the guide "Also on this
    site" strip are now MOBILE-ONLY — hidden on desktop (≥601px) via guide-style.css
    attribute-href media query. Pills stay in guide HTML (no per-guide edit). — guide-style.css min to 53, CACHE to v213.
-   2026-08-04: Individual entry boxes site-wide — removed continuous-run merge, fit-content(720px) grid, tour/ticket-box width fit-content, internal stop spacing, day-header 1px border, chevron color, entry-body row gap. guide-style.css min to 54, CACHE to v215. */
+   2026-08-04: Individual entry boxes site-wide — removed continuous-run merge, fit-content(720px) grid, tour/ticket-box width fit-content, internal stop spacing, day-header 1px border, chevron color, entry-body row gap. guide-style.css min to 54, CACHE to v215.
+   2026-08-07: Trip Overview section-nav chips grouped into labelled runs on desktop (.ov-grp CSS in guide-style.css; the toolbar.js half shipped in a66baef). Chip appearance unchanged, mobile glued grid untouched. guide-style.css min to 103, toolbar.js min to 191, CACHE to v293. */
 /* 2026-08-04: Best-Of prev/next arrows now insert after .page-intro-card (below the
    banner) instead of after .page-header — bumped toolbar.js min to 158, CACHE to v214. */
 /* 2026-08-04: Wikipedia row margin-bottom 12px → 6px (symmetric with margin-top, 2 less
@@ -268,7 +269,7 @@
 /* 2026-08-07: lounge arrival chip — toolbar.js injects .lounge-arrival-chip at top of Day 1: teal banner with IATA + airport name → Lounges-US / Lounges-Europe / BYG#lounges based on which page covers that airport; CSS in guide-style.css. toolbar.js → v184, guide-style.css → v102. CACHE to v286. */
 /* 2026-08-07: Photo lightbox — toolbar.js attaches click handlers to .stop-photos img on guide pages; opens fullscreen overlay with stop-name caption + ←→ day navigation; keyboard Escape/arrows; touch swipe on mobile. Zero guide HTML changes. toolbar.js → v185. CACHE to v287. */
 /* 2026-08-07: Fix lounge arrival chip — TypeError crash in _inject() when toolbar-mount is already removed from DOM; explicit null-check on mountEl before reading .dataset.depth. toolbar.js → v190. CACHE to v292. */
-var CACHE = 'travel-cache-v292';
+var CACHE = 'travel-cache-v293';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -276,7 +277,7 @@ var CACHE = 'travel-cache-v292';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 102, 'toolbar.js': 190, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 103, 'toolbar.js': 191, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
