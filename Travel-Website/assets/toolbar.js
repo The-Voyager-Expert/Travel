@@ -4837,10 +4837,10 @@
       { name: 'Lodge at Torrey Pines', note: 'Independent AAA Five Diamond — La Jolla clifftop above Torrey Pines State Reserve, two pools, A.R. Valentien restaurant, direct golf access · 9.2 Booking.com' }
     ] },
     'san-francisco': { h: [
-      { name: 'Fairmont San Francisco', note: 'Fairmont brand — 1907 Nob Hill landmark, spa, Tonga Room tiki bar, rooftop garden suite · 8.9 Booking.com' },
-      { name: 'Hotel Drisco', note: 'Independent boutique — 1903 Edwardian in Pacific Heights, complimentary chauffeur service, quiet luxury · 9.3 Booking.com' },
-      { name: 'The Ritz-Carlton, San Francisco', note: 'Ritz-Carlton brand — Nob Hill in a converted Masonic temple, indoor pool, The Dining Room, full-service spa · 9.0 Booking.com' },
-      { name: 'Four Seasons Hotel San Francisco at Embarcadero', note: 'Four Seasons brand — Embarcadero Center, bay-view rooms, waterfront location, indoor pool, The Market restaurant · 9.1 Booking.com' }
+      { name: 'Fairmont San Francisco', note: 'Fairmont brand — 1907 Nob Hill landmark, spa, Tonga Room tiki bar, rooftop garden suite · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/the-fairmont-san-francisco-san-francisco-california.html' },
+      { name: 'Hotel Drisco', note: 'Independent boutique — 1903 Edwardian in Pacific Heights, complimentary chauffeur service, quiet luxury · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/drisco.html' },
+      { name: 'The Ritz-Carlton, San Francisco', note: 'Ritz-Carlton brand — Nob Hill in a converted Masonic temple, indoor pool, The Dining Room, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-san-francisco.html' },
+      { name: 'Four Seasons Hotel San Francisco at Embarcadero', note: 'Four Seasons brand — Embarcadero Center, bay-view rooms, waterfront location, indoor pool, The Market restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-embarcadero.html' }
     ] },
     'san-jose': { h: [
       { name: 'Fairmont San Jose', note: 'Fairmont brand — Almaden Valley, rooftop pool, multiple restaurants, convention center linked · 8.8 Booking.com' },

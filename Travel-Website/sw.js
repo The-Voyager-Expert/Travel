@@ -364,7 +364,8 @@
 /* 2026-08-08: hours band stops at the CENTRE of the desktop screen (owner rule: "make sure this stops in the middle of the desktop screen not more than that"). At 1440px the card is 1280px wide, so the full-bleed strip ran nearly the whole window for a row of nine words. width:calc(50% + 14px) is the screen centre exactly, not an approximation: the card is centred, so its left edge sits at (V-W)/2 and the band - full-bleed, starting on that edge - must be W/2 wide to end at V/2; 50% resolves against the card's CONTENT box (W-28 at the 14px gutter) and the +14 is the bleed back over it. Measured 0.00px off centre at 1440 and 1200. Desktop only: at 393px half the screen cannot hold the label and the chevron, so mobile keeps the full-bleed strip. toolbar.js -> v248. CACHE to v387. */
 /* 2026-08-08: Oslo hotel alternatives — added Booking.com url fields to all 4 hotels (The Thief, Amerikalinjen, Grand Hotel Oslo, Hotel Continental Oslo). toolbar.js -> v249. CACHE to v388. */
 /* 2026-08-08: Paris hotel alternatives — added Booking.com url fields to all 4 hotels (Le Meurice, Hotel de Crillon, The Peninsula Paris, Four Seasons Hotel George V). toolbar.js -> v250. CACHE to v389. */
-var CACHE = 'travel-cache-v389';
+/* 2026-08-08: San Francisco hotel alternatives — added Booking.com url fields to all 4 hotels (Fairmont San Francisco, Hotel Drisco, Ritz-Carlton SF, Four Seasons Embarcadero). toolbar.js -> v251. CACHE to v390. */
+var CACHE = 'travel-cache-v390';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -372,7 +373,7 @@ var CACHE = 'travel-cache-v389';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 149, 'toolbar.js': 250, 'mobile.css': 68, 'web-travel-style.css': 16, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 149, 'toolbar.js': 251, 'mobile.css': 68, 'web-travel-style.css': 16, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
