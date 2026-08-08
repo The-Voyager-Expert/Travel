@@ -4364,10 +4364,10 @@
       { name: 'The Lodge at Whitefish Lake', note: 'Renaissance Hotels (Marriott family) — Whitefish, 26 miles north of the park, marina resort, outdoor pool, lakefront spa, year-round mountain access · 9.0 Booking.com' }
     ] },
     'glasgow': { h: [
-      { name: 'Kimpton Blythswood Square Hotel', note: 'IHG Kimpton brand — 1820 Georgian townhouse on Blythswood Square, indoor pool, Tempus spa, afternoon tea · 9.0 Booking.com' },
-      { name: 'Hotel Indigo Glasgow', note: 'IHG brand — converted 1901 central fire station on Waterloo Street, design-led interiors, steps from Central Station · 8.7 Booking.com' },
-      { name: 'Radisson Blu Hotel Glasgow', note: 'Radisson brand — Argyle Street in the city centre, indoor pool, Metro Bar & Grill, walking distance to Central Station · 8.4 Booking.com' },
-      { name: 'Malmaison Glasgow', note: 'Malmaison brand — Merchant City in a converted church building, brasserie and bar, design rooms with character · 8.6 Booking.com' }
+      { name: 'Kimpton Blythswood Square Hotel', note: 'IHG Kimpton brand — 1820 Georgian townhouse on Blythswood Square, indoor pool, Tempus spa, afternoon tea · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/blythswood-square.html' },
+      { name: 'Hotel Indigo Glasgow', note: 'IHG brand — converted 1901 central fire station on Waterloo Street, design-led interiors, steps from Central Station · 8.7 Booking.com', url: 'https://www.booking.com/hotel/gb/indigo-glasgow.html' },
+      { name: 'Radisson Blu Hotel Glasgow', note: 'Radisson brand — Argyle Street in the city centre, indoor pool, Metro Bar & Grill, walking distance to Central Station · 8.4 Booking.com', url: 'https://www.booking.com/hotel/gb/radissonsashotelglasgow.html' },
+      { name: 'Malmaison Glasgow', note: 'Malmaison brand — Merchant City in a converted church building, brasserie and bar, design rooms with character · 8.6 Booking.com', url: 'https://www.booking.com/hotel/gb/malmaison-glasgow.html' }
     ] },
     'gothenburg': { h: [
       { name: 'Clarion Hotel Post', note: 'Nordic Choice Hotels — 1925 former Central Post Office on Drottningtorget, panoramic rooftop pool and bar, spa, largest hotel in Gothenburg · 8.7 Booking.com' },
