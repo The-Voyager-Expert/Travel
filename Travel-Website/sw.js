@@ -354,7 +354,9 @@
 /* 2026-08-08: Glasgow hotel alternatives — added Booking.com url fields for all 4 hotels (Kimpton Blythswood Square, Hotel Indigo, Radisson Blu, Malmaison); removed erroneous "Best Of" from Glasgow data-no-entries. toolbar.js -> v240. CACHE to v377. */
 /* 2026-08-08: Hiroshima hotel alternatives — added Booking.com url fields + 2 additional hotels (Hilton Hiroshima, ANA Crowne Plaza) to reach the 4-hotel minimum; removed erroneous "Best Of" from Hiroshima data-no-entries. toolbar.js -> v241. CACHE to v378. */
 /* 2026-08-08: Lagos hotel alternatives — added Booking.com url fields + 2 additional hotels (Iberostar Selection Lagos Algarve, Vila Vita Parc) to reach the 4-hotel minimum; removed erroneous "Best Of" from Lagos data-no-entries. toolbar.js -> v242. CACHE to v379. */
-var CACHE = 'travel-cache-v379';
+/* 2026-08-08: Muscat hotel alternatives — added Booking.com url fields to all 4 hotels (The Chedi, Al Bustan Palace, Shangri-La Barr Al Jissah, InterContinental); removed erroneous "Best Of" from Muscat data-no-entries. toolbar.js -> v243. CACHE to v380. */
+/* 2026-08-08: Columbia hotel alternatives — added Booking.com url fields to existing 2 hotels (Hotel Trundle, Hilton Columbia Center) + 2 new hotels (Hyatt Place Columbia/Downtown/The Vista, SpringHill Suites Columbia Downtown The Vista) to reach 4-hotel minimum; removed "Best Of" from Columbia data-no-entries (city IS in CITY_BEST_OF_MAP). toolbar.js -> v244. CACHE to v381. */
+var CACHE = 'travel-cache-v381';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -362,7 +364,7 @@ var CACHE = 'travel-cache-v379';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 148, 'toolbar.js': 242, 'mobile.css': 68, 'web-travel-style.css': 14, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 148, 'toolbar.js': 244, 'mobile.css': 68, 'web-travel-style.css': 14, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

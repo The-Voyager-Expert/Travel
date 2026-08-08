@@ -2963,7 +2963,7 @@
         '.tve-ph{border-left:2.5px solid #bba070;' +
         'border-right:1px solid rgba(187,160,112,.45);background:#fdf8f0;color:#6b5320;' +
         'font-weight:500;padding:3px 14px 3px 11.5px;border-radius:0;' +
-        'margin:3px -14px 0;line-height:1.55;font-size:inherit;}' +
+        'margin:9.125px -14px 0;line-height:1.55;font-size:inherit;}' +
         /* Scoping to the card is what wins the specificity fight —
            .tour-box > div (0,1,1) outranks .tve-ph (0,1,0). */
         /* 3px above the tint — the outer half of the 6px gap (see the base rule).
@@ -2971,20 +2971,26 @@
            `.tour-box > div` (0,1,1) beating `.tve-ph` (0,1,0). */
         '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
         '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{' +
-        'margin:3px -14px 0!important;}' +
+        'margin:9.125px -14px 0!important;}' +
         /* The row AFTER the band contributes the other outer half: 3px, not the
            card's usual 6px, because the band's own 3px padding-bottom already
            carries the inner half. Leaving 6px here stacks to 9px and the band
            sits low in its slot. */
         '.tour-box > .tve-ph + *,.ticket-box > .tve-ph + *,' +
         '.tour-box > .tve-ph-wrap + *,.ticket-box > .tve-ph-wrap + *{' +
-        'margin-top:3px!important;}' +
+        'margin-top:9.125px!important;}' +
         /* First VISIBLE row of the card. The authored 🏛️ rows the band replaces
            stay in the DOM as display:none, so :first-child never matches it — JS
            stamps this class instead. 2,127 cards across the fleet lead with 🏛️,
            so this is the common case, not an edge one: without it the band starts
            14px below the card's top edge where every plain first row starts at 8. */
-        '.tour-box > .tve-ph-top,.ticket-box > .tve-ph-top{margin-top:0!important;}' +
+        '.tour-box > .tve-ph-top,.ticket-box > .tve-ph-top{margin-top:3.125px!important;}' +
+        /* Mirror of .tve-ph-top at the other end. A band that is the LAST
+           visible row butts onto the photo strip, which pays 9.125px — the
+           half-leading of the text row it was sized for. A tint has no
+           leading, so the band supplies the missing 3.125 itself or it sits
+           3px closer to the photo than every other gap in the card. */
+        '.tour-box > .tve-ph-end,.ticket-box > .tve-ph-end{margin-bottom:3.125px!important;}' +
         /* Open-around-the-clock variant — SAME SKIN as every other band
            (owner rule 2026-08-08). The 24h row used to be the only band with
            its own colours: an #f5f0e6 fill on a .tour-box that is ITSELF
@@ -3365,6 +3371,14 @@
         prev = prev.previousElementSibling;
       }
       if (lead) el.classList.add('tve-ph-top');
+      /* Same walk forward: a band with no visible row after it is the card's
+         last row and needs the bottom mirror of .tve-ph-top. */
+      var nxt = el.nextElementSibling, trail = true;
+      while (nxt) {
+        if (nxt.getClientRects().length) { trail = false; break; }
+        nxt = nxt.nextElementSibling;
+      }
+      if (trail) el.classList.add('tve-ph-end');
       _phBands.push(el);
     });
 
@@ -4254,8 +4268,10 @@
       { name: 'Cinnamon Grand Colombo', note: 'Cinnamon Hotels & Resorts — 501-room city landmark near World Trade Center and Independence Square, multiple dining venues, outdoor pool, spa · 8.6 Booking.com' }
     ] },
     'columbia': { h: [
-      { name: 'Hotel Trundle', note: 'Independent boutique — Main Street District, art deco-inspired interiors celebrating Columbia\'s arts scene, rooftop bar with city views · 9.1 Booking.com' },
-      { name: 'Hilton Columbia Center', note: 'Hilton brand — downtown Columbia, Whiskey Bar rooftop with skyline views, close to the Vista arts and dining district · 8.3 Booking.com' }
+      { name: 'Hotel Trundle', note: 'Independent boutique — Main Street District, art deco-inspired interiors celebrating Columbia\'s arts scene, rooftop bar with city views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/trundle.html' },
+      { name: 'Hilton Columbia Center', note: 'Hilton brand — downtown Columbia, Whiskey Bar rooftop with skyline views, close to the Vista arts and dining district · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-columbia-center.html' },
+      { name: 'Hyatt Place Columbia/Downtown/The Vista', note: 'Hyatt brand — Vista entertainment district, indoor heated saltwater pool, complimentary breakfast, walking distance to South Carolina State Museum and the arts scene · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-columbia-47-downtown-47-the-vista.html' },
+      { name: 'SpringHill Suites Columbia Downtown The Vista', note: 'Marriott brand — all-suite hotel in the Vista, indoor swimming pool, fitness center, bar, adjacent to South Carolina State Museum and Columbia Museum of Art · 8.1 Booking.com', url: 'https://www.booking.com/hotel/us/springhill-suites-columbia-downtown-the-vista.html' }
     ] },
     'copenhagen': { h: [
       { name: 'Hotel d\'Angleterre', note: 'Leading Hotels of the World — 1755 landmark on Kongens Nytorv, Michelin-starred Restaurant Marchal, spa with indoor pool, direct access to Strøget shopping · 9.3 Booking.com' },
@@ -4592,10 +4608,10 @@
       { name: 'Bayerischer Hof Munich', note: 'Independent grand hotel — Promenadeplatz 2 in the city centre, Blue Spa with rooftop pool, six restaurants, 24-hour butler · 9.0 Booking.com' }
     ] },
     'muscat': { h: [
-      { name: 'The Chedi Muscat', note: 'GHM brand — 21 acres on the Sea of Oman, three pools including The Long Pool, award-winning spa · 9.1 Booking.com' },
-      { name: 'Al Bustan Palace, A Ritz-Carlton Hotel', note: 'Ritz-Carlton brand — private crescent-cove beach, outdoor amphitheater, palace-scale architecture · 9.0 Booking.com' },
-      { name: 'Shangri-La Barr Al Jissah, Muscat', note: 'Shangri-La brand — clifftop resort in Bandar Jissah, two outdoor pools, private beach, marina · 8.5 Booking.com' },
-      { name: 'InterContinental Muscat by IHG', note: 'IHG brand — Shati Al Qurum, direct beach access, palm gardens, five restaurants, spa · 8.9 Booking.com' }
+      { name: 'The Chedi Muscat', note: 'GHM brand — 21 acres on the Sea of Oman, three pools including The Long Pool, award-winning spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/om/the-chedi-muscat.html' },
+      { name: 'Al Bustan Palace, A Ritz-Carlton Hotel', note: 'Ritz-Carlton brand — private crescent-cove beach, outdoor amphitheater, palace-scale architecture · 9.0 Booking.com', url: 'https://www.booking.com/hotel/om/al-bustan-palace-ritz-carlton.html' },
+      { name: 'Shangri-La Barr Al Jissah, Muscat', note: 'Shangri-La brand — clifftop resort in Bandar Jissah, two outdoor pools, private beach, marina · 8.5 Booking.com', url: 'https://www.booking.com/hotel/om/shangri-la-s-barr-al-jissah-resort-spa-muscat.html' },
+      { name: 'InterContinental Muscat by IHG', note: 'IHG brand — Shati Al Qurum, direct beach access, palm gardens, five restaurants, spa · 8.9 Booking.com', url: 'https://www.booking.com/hotel/om/intercontinental-muscat.html' }
     ] },
     'mykonos': { h: [
       { name: 'Santa Marina, A Luxury Collection Resort', note: 'Marriott Luxury Collection — private beach on Ornos Bay, infinity pools, Caprice beach bar · 9.1 Booking.com' },
