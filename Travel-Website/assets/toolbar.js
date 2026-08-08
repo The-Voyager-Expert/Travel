@@ -4281,8 +4281,10 @@
       { name: 'Grand Hôtel Beauvau Vieux-Port, Autograph Collection', note: 'Marriott Autograph — 1816 Vieux-Port landmark, panoramic harbour views, Brasserie Beauvau, historic Provençal character · 8.9 Booking.com' }
     ] },
     'maui': { h: [
-      { name: 'Hotel Wailea, Relais & Châteaux', note: 'Relais & Châteaux — adults-only on Wailea\'s Ulua Ridge, pool and whirlpool, spectacular West Maui sunset views · 9.5 Booking.com' },
-      { name: 'Andaz Maui at Wailea Resort', note: 'Hyatt brand — five pools on Mokapu Beach, cliff-edge adults pool, seven dining venues · 9.1 Booking.com' }
+      { name: 'Hotel Wailea, Relais & Châteaux', note: 'Relais & Châteaux — adults-only on Wailea\'s Ulua Ridge, pool and whirlpool, spectacular West Maui sunset views · 9.5 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-wailea-relais-chateaux.html' },
+      { name: 'Andaz Maui at Wailea Resort', note: 'Hyatt brand — five pools on Mokapu Beach, cliff-edge adults pool, seven dining venues · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/andaz-maui-at-wailea.html' },
+      { name: 'Grand Wailea, A Waldorf Astoria Resort', note: 'Waldorf Astoria — nine themed pools on 40 oceanfront acres of Wailea Beach, Spa Grande, multiple dining outlets · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/grand-wailea-resort-spa.html' },
+      { name: 'Fairmont Kea Lani, Maui', note: 'Fairmont — all-suite and private villa resort, plunge pools, Kea Lani Restaurant, white-sand Polo Beach · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/the-fairmont-kea-lani.html' }
     ] },
     'miami': { h: [
       { name: 'The Setai Miami Beach', note: 'Independent luxury — three infinity pools, private beach on Collins Avenue, Asian-influenced spa and restaurant · 9.3 Booking.com' },
@@ -7136,138 +7138,84 @@
     } else { _move(); }
   }());
 
-  /* ── Group the extras nav chips into labelled runs (DESKTOP ONLY) ──────────
-     The section-nav row ships as a flat list of 13-17 chips that wrap to a
-     ragged 3 rows. Grouping them into short labelled runs makes the row
-     scannable without changing a single chip: fill, border, radius, padding
-     and font-size are all untouched — only the container gains group wrappers.
+  /* ── Section-nav chips: a dot in each section's own colour ────────────────
+     The row ships as a flat list of 13-17 chips, every one identical in weight,
+     wrapping to a ragged three rows. Two presentational changes, both applied at
+     runtime so no guide HTML is touched:
 
-     TWO THINGS TO KNOW BEFORE EDITING:
+       1. A dot is prepended to each chip, coloured with the border token of the
+          section that chip jumps to. The colours are not invented here: each is
+          read from the same --c-*-border custom property that already draws that
+          section's box further down the guide, so a chip and its destination can
+          never disagree — recolour a section and its chip follows. Off-guide
+          links (Also on this site, Best Of, Nearby Guides, Alt. Hotels, Also in
+          Country) share one neutral grey; they leave the guide, so they have no
+          section colour to borrow.
 
-     1. THE GROUPS ARE THEMATIC, AND THEY DO REORDER THE RENDERED ROW.
-        Owner decision 2026-08-07: the reader should see food together, transport
-        together, planning together — so ⭐ Michelin sits with the food chips even
-        though canonical order places it at position 13, and ✨ Claude Inspiration
-        sits under "Plan & do". The GUIDE HTML IS UNTOUCHED and still carries the
-        canonical order that _OVERVIEW_PILL_CANONICAL_ORDER (validate_itinerary.py)
-        hard-fails on — the regrouping is presentational and runtime-only, so that
-        check still sees, and still governs, the authored order. Never "fix" a
-        guide's HTML to match this rendering. A chip whose anchor is unknown to
-        GROUPS falls through to the trailing catch-all, so a future pill can never
-        silently vanish.
+       2. The row becomes an even 3-column grid (CSS, below). That is what squares
+          the ragged right edge against the flush action bar above it.
 
-     2. MOBILE GROUPS TOO (2026-08-07). The row was desktop-only at first because
-        below 601px it is a glued 3-across grid whose rules key on DIRECT-CHILD
-        anchors and nth-child(3n+2) math (guide-style.css ~2210) — wrapping chips
-        in group divs stops every one of them matching. The fix is to move the
-        grid down one level: each .ov-grp-row becomes the 6-column grid and the
-        chips span 2, which is the same idiom .also-on-this-site-pills already
-        uses. Trailing orphans are widened by _fixPillGridOrphans — the SAME
-        helper those rails use, so the lonely-pill rule the mobile-render
-        validator checks is satisfied by construction rather than by new math.
-        The helper writes inline grid-column, which desktop's flex row ignores,
-        so it is safe to run at every width. */
-  (function _groupExtrasPills() {
-    var GROUPS = [
-      ['Eat & drink',           ['cappuccino', 'restaurants', 'downtown', 'local-tastes',
-                                 'food-delivery', 'michelin']],
-      ['Get around',            ['getting-around', 'stations-near-hotel', 'day-trips-by-train']],
-      ['Plan & do',             ['weekly-closures', 'tours', 'shows', 'pickleball',
-                                 'heads-up', 'claude-inspiration']],
-      ['Elsewhere on the site', null]   /* catch-all — must stay last */
-    ];
-    var mq = window.matchMedia('(min-width: 601px)');
-    var row = null, flat = null;
+     ORDER IS UNTOUCHED — chips are never reordered or regrouped, so the rendered
+     sequence is exactly the canonical order the guide HTML carries and
+     _OVERVIEW_PILL_CANONICAL_ORDER (validate_itinerary.py) enforces.
+
+     "Also in {Country}" is appended only after country_guides.json resolves, well
+     after DOMContentLoaded, so a MutationObserver picks it up. It watches the
+     row's own childList only (not subtree), so inserting a dot INSIDE a chip
+     cannot re-trigger it. */
+  (function _extrasSectionDots() {
+    var VARS = {
+      'weekly-closures':     '--c-closures-border',
+      'tours':               '--c-tours-border',
+      'cappuccino':          '--c-cappuccino-border',
+      'restaurants':         '--c-nearhotel-border',
+      'downtown':            '--c-downtown-border',
+      'local-tastes':        '--c-tastes-border',
+      'food-delivery':       '--c-delivery-border',
+      'shows':               '--c-shows-border',
+      'getting-around':      '--c-gettingaround-border',
+      'stations-near-hotel': '--c-stations-border',
+      'day-trips-by-train':  '--c-daytrips-border',
+      'pickleball':          '--c-pickleball-border',
+      'michelin':            '--c-michelin-border',
+      'heads-up':            '--c-headsup-border',
+      'claude-inspiration':  '--c-sage-border'
+    };
+    var OFFSITE = '#b0a692';
+    var row = null;
 
     function _anchor(a) {
       var h = a.getAttribute('href') || '';
       var i = h.indexOf('#');
       return i === -1 ? '' : h.slice(i + 1);
     }
-    function _groupIndexFor(a) {
-      var key = _anchor(a);
-      for (var g = 0; g < GROUPS.length; g++) {
-        var keys = GROUPS[g][1];
-        if (keys && keys.indexOf(key) !== -1) return g;
-      }
-      return GROUPS.length - 1;
+
+    function _decorate(a) {
+      if (!a || a.querySelector('.ov-dot')) return;
+      var v = VARS[_anchor(a)];
+      var dot = document.createElement('i');
+      dot.className = 'ov-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      dot.style.background = v ? 'var(' + v + ', ' + OFFSITE + ')' : OFFSITE;
+      a.insertBefore(dot, a.firstChild);
     }
 
-    /* Returns the .ov-grp-row for group g, creating the wrapper in canonical
-       position if this is the first chip to land in it. Groups are inserted in
-       GROUPS order via data-g, so a late-arriving chip never jumps the queue. */
-    function _rowFor(g) {
-      var existing = row.querySelector('.ov-grp[data-g="' + g + '"] > .ov-grp-row');
-      if (existing) return existing;
-      var wrap = document.createElement('div');
-      wrap.className = 'ov-grp';
-      wrap.setAttribute('data-g', String(g));
-      var lab = document.createElement('div');
-      lab.className = 'ov-grp-label';
-      lab.textContent = GROUPS[g][0];
-      var inner = document.createElement('div');
-      inner.className = 'ov-grp-row';
-      wrap.appendChild(lab);
-      wrap.appendChild(inner);
-      var after = null;
-      [].slice.call(row.querySelectorAll('.ov-grp')).forEach(function(w) {
-        if (after === null && +w.getAttribute('data-g') > g) { after = w; }
-      });
-      row.insertBefore(wrap, after);
-      return inner;
-    }
-
-    function _place(a) {
-      if (flat.indexOf(a) === -1) { flat.push(a); }   /* remember for _ungroup */
-      _rowFor(_groupIndexFor(a)).appendChild(a);
-    }
-
-    function _group() {
+    function _apply() {
       if (!row) return;
-      var chips = [].slice.call(row.querySelectorAll(':scope > a.overview-extra-link'));
-      if (!row.classList.contains('tve-grouped') && chips.length < 4) return;
-      chips.forEach(_place);
-      row.classList.add('tve-grouped');
+      [].forEach.call(row.querySelectorAll(':scope > a.overview-extra-link'), _decorate);
     }
-
-    function _ungroup() {
-      if (!row || !row.classList.contains('tve-grouped')) return;
-      flat.forEach(function(a) { row.appendChild(a); });   /* restores original order */
-      [].slice.call(row.querySelectorAll('.ov-grp')).forEach(function(w) { w.remove(); });
-      row.classList.remove('tve-grouped');
-    }
-
-    /* Widen the trailing orphans of every group row using the SAME helper the
-       also-on-this-site / nearby-guides rails use, so a group ending in one or
-       two chips fills its row instead of leaving a ragged gap. The helper writes
-       inline grid-column, which the desktop flex row ignores — safe at any width. */
-    function _fixOrphans() {
-      if (!row) return;
-      [].forEach.call(row.querySelectorAll('.ov-grp-row'), _fixPillGridOrphans);
-    }
-
-    function _apply() { _group(); _fixOrphans(); }
 
     function _init() {
-      if (!isRealGuide) return;   /* Reports.html reuses .overview-extras — never group it */
+      if (!isRealGuide) return;
       row = document.querySelector('.overview-extras:not(#ics-pill-row)');
       if (!row) return;
-      flat = [].slice.call(row.querySelectorAll(':scope > a.overview-extra-link'));
-      if (!flat.length) return;
       _apply();
-
-      /* Some chips arrive late — "🌍 Also in {Country}" is appended only after
-         country_guides.json resolves, well after DOMContentLoaded. Without this
-         they land as bare direct children below the grouped rail. Watching only
-         row's own childList (not subtree) means re-parenting a chip into a group
-         cannot re-trigger the observer. */
       if (typeof MutationObserver === 'function') {
         new MutationObserver(function(muts) {
-          if (!row.classList.contains('tve-grouped')) return;
           muts.forEach(function(m) {
             [].slice.call(m.addedNodes).forEach(function(n) {
               if (n.nodeType === 1 && n.tagName === 'A' &&
-                  n.classList.contains('overview-extra-link')) { _place(n); _fixOrphans(); }
+                  n.classList.contains('overview-extra-link')) { _decorate(n); }
             });
           });
         }).observe(row, { childList: true });
