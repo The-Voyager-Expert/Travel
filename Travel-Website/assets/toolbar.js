@@ -7140,6 +7140,84 @@
     } else { _move(); }
   }());
 
+  /* ── Section-nav chips: reorder by theme ──────────────────────────────────
+     Chips ship in the canonical order defined by Guide Structure.html, which
+     interleaves the kinds — food, transport, planning and off-guide links are
+     mixed through one 13-17 chip run, so a reader hunting for somewhere to eat
+     scans the whole row. This sorts them into four themes:
+
+         Eat & drink · Get around · Plan & do · Elsewhere on the site
+
+     ORDER ONLY. No wrappers, no labels, no CSS: the grid, the beige tiles and
+     every chip value stay exactly as they are. The sort is stable, so within a
+     theme the chips keep their canonical sequence relative to each other.
+
+     The GUIDE HTML IS NOT TOUCHED. It still carries the canonical order that
+     _OVERVIEW_PILL_CANONICAL_ORDER (validate_itinerary.py) hard-fails on, and
+     that check reads the file, not the rendered DOM — so it still sees, and
+     still governs, the authored order. Never rewrite a guide's pill order to
+     match this rendering.
+
+     An anchor missing from RANK sorts to the end rather than being dropped, so
+     a pill added later still appears; give it a rank here when it lands.
+     "Also in {Country}" arrives only after country_guides.json resolves, so a
+     MutationObserver re-sorts. It watches childList on the row itself, and the
+     re-sort only moves existing children (appendChild of a node already in the
+     row is a move, not an insertion), so it settles rather than looping. */
+  (function _extrasThemeOrder() {
+    var RANK = {
+      /* Eat & drink */
+      'cappuccino': 10, 'restaurants': 11, 'downtown': 12, 'local-tastes': 13,
+      'food-delivery': 14, 'michelin': 15,
+      /* Get around */
+      'getting-around': 20, 'stations-near-hotel': 21, 'day-trips-by-train': 22,
+      /* Plan & do */
+      'weekly-closures': 30, 'tours': 31, 'shows': 32, 'pickleball': 33,
+      'heads-up': 34, 'claude-inspiration': 35
+      /* Elsewhere on the site — everything else, ranked below */
+    };
+    var ELSEWHERE = 90;
+    var row = null, sorting = false;
+
+    function _rank(a) {
+      var h = a.getAttribute('href') || '';
+      var i = h.indexOf('#');
+      if (i === -1) return ELSEWHERE;                 /* links to another page */
+      var r = RANK[h.slice(i + 1)];
+      return typeof r === 'number' ? r : ELSEWHERE;
+    }
+
+    function _sort() {
+      if (!row || sorting) return;
+      var chips = [].slice.call(row.querySelectorAll(':scope > a.overview-extra-link'));
+      if (chips.length < 2) return;
+      /* decorate-sort-undecorate keeps it stable across engines */
+      var ordered = chips.map(function(a, i) { return { a: a, r: _rank(a), i: i }; })
+                         .sort(function(x, y) { return x.r - y.r || x.i - y.i; });
+      var same = ordered.every(function(o, i) { return o.i === i; });
+      if (same) return;
+      sorting = true;
+      var frag = document.createDocumentFragment();
+      ordered.forEach(function(o) { frag.appendChild(o.a); });
+      row.appendChild(frag);
+      sorting = false;
+    }
+
+    function _init() {
+      if (!isRealGuide) return;
+      row = document.querySelector('.overview-extras:not(#ics-pill-row)');
+      if (!row) return;
+      _sort();
+      if (typeof MutationObserver === 'function') {
+        new MutationObserver(function() { _sort(); }).observe(row, { childList: true });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _init);
+    } else { _init(); }
+  }());
+
   /* ── Trip Overview day rows → left rail + soft stop list + stop count ──────
      The day rows ship as one 15px run — "Day 1 · Stop · Stop · Stop" — with no
      fixed left edge and no fixed right edge, so five rows of different lengths
