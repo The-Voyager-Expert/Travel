@@ -314,10 +314,12 @@ a:hover { text-decoration: underline; }
                        anchors fail the ship-gate (validator: section-anchor
                        verification check).
      Expected children:
-       1. .overview-day-title (required) — `Day N · {type icon} {type label}` matching one
-                              of the four locked day-overview labels:
-                              🎒 Self · 🚩 Guided · 🎒 + 🚩 Self + Guided ·
-                              🚆 Train Day
+       1. .overview-day-title (required) — an in-city day is `Day N – Stop1 · Stop2 · …`,
+                              en dash, NO type icon and NO type label. A train day is
+                              `Day N · 🚆 Train Day — City`.
+                              The backpack (U+1F392) was RETIRED 2026-06-16 and is
+                              banned from guide HTML (validator hard-fail). Do not
+                              reintroduce it here or in any label, mockup, or example.
           Stop names are embedded in the title string, joined by ` · `, rather than
           placed in a separate div.
        2. .overview-day-stops (optional / unused in current guides) — if present,
@@ -532,16 +534,6 @@ a:hover { text-decoration: underline; }
   background: var(--c-next-bg);
   color: var(--c-action-text);
   letter-spacing: 0.01em;
-  /* 700 — the weight of the two chips this row already shares its palette with
-     (.stop-dur "~45 min" and the "📖 Read more" chip). All three were already
-     byte-identical on fill, border and ink; this row inherited font-weight:normal
-     from .overview-extra-link, and 400 strokes of #5a3c0e simply READ lighter
-     than the same hex at 700 — which is what the owner saw as a colour mismatch
-     (2026-08-08, the same diagnosis as the Read more chip and the open-now label).
-     Note this does not weaken the toggled-on state: #tve-visited-btn.tve-been and
-     #tve-offline-btn.tve-saved signal "on" with terracotta fill-ink AND border,
-     not with weight alone. */
-  font-weight: 700;
 }
 #ics-pill-row > .overview-extra-link:not(:first-child) {
   border-left-width: 0;
@@ -1072,11 +1064,19 @@ a:hover { text-decoration: underline; }
    stop-type icon via ::before so the author never types the icon into
    the title — no forgotten icons, no wrong icons, no drift.
 
+   ⚠️ THE BACKPACK IS RETIRED. U+1F392 was removed 2026-06-16 and is BANNED
+   from guide HTML — validate_itinerary.py hard-fails on the character, and
+   brain_check.check_no_backpack_in_shared_assets bans it from THIS file so the
+   glyph cannot live on in a comment. A self-guided stop renders NO title icon
+   at all: `.stop-name.self::before { content: "" }`, below. This note exists
+   because the retired icon kept being read back out of this very comment block
+   and re-added to mockups and examples. The code below is the truth — never a
+   glyph you find in prose.
+
    Three modifier classes ↔ four locked stop types:
      .stop-name.guided  → 🚩         — Type 1 Guided Tour Stop
-                        → 🚩 or 🎒   — Type 3 Alternation Stop (auto-flip
-                                       below when both boxes ship)
-     .stop-name.self    → 🎒         — Type 2 Self-Guided Stop
+                        → 🚩         — Type 3 Alternation Stop (both boxes ship)
+     .stop-name.self    → (no icon)  — Type 2 Self-Guided Stop
                                        (Option 1 .tour-box led by 📍 OR
                                         Option 2 .ticket-box led by 🎟️ —
                                         XOR; alternation uses `guided`,
@@ -1089,9 +1089,10 @@ a:hover { text-decoration: underline; }
    section is now "Day Trips - Extra Section" with ⛲️) — different glyphs,
    different surfaces.
 
-   Type 3 Alternation auto-flip — re-locked 2026-04-25.
-   When a .stop-block carries both a .tour-box AND a .ticket-box, the
-   :has() rule below promotes the title icon from "🚩" to "🚩 or 🎒".
+   Type 3 Alternation — re-locked 2026-04-25, icon simplified 2026-06-16.
+   When a .stop-block carries both a .tour-box AND a .ticket-box the stop is
+   still 🚩; the old "auto-flip to a second icon" behaviour went away with the
+   backpack on 2026-06-16, so the :has() rule below simply restates "🚩 ".
    owner 2026-04-25: *"yes, this is all right... should not be retired
    ... we just created"*. The 2026-04-24 retirement was reversed; the
    validator's mutual-exclusion hard-fail was removed in lockstep. */
