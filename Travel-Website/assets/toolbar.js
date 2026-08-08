@@ -509,13 +509,14 @@
       '--badge-warn-bg:#2a1408;--badge-warn-text:#e8a880;--badge-warn-bd:rgba(232,168,128,0.4);' +
       '--badge-ok-bg:#0a200a;--badge-ok-text:#80cc80;--badge-ok-bd:#306030;' +
       '--c-page-bg:#1a1917;--c-card-bg:#2a2825;--c-card-shadow:0 2px 8px rgba(0,0,0,0.25);' +
-      '--c-warm-bg:#242220;--c-brand-hover:#2e2a1e;' +
+      '--c-warm-bg:#242220;--c-brand:#c8a060;--c-brand-hover:#2e2a1e;' +
       /* Pill palette — mirrors the dark block in guide-style.css. */
       '--c-pill-bg:#2a2825;--c-pill-hover:#332f2a;--c-pill-active:#3d3830;' +
       '--c-pill-text:#c8a060;--c-pill-bd:rgba(200,160,96,.30);' +
       '--c-pill-bd-hover:rgba(200,160,96,.50);--c-pill-bd-active:rgba(200,160,96,.65);' +
       '--c-action-text:#c8a060;--c-action-press:#3d3830;' +
       '--c-float-bg:#2a2825;--c-float-bd:#7a6430;--c-float-text:#c8a060;' +
+      '--c-navbtn-bd:#5a5040;--c-navbtn-text:#b0aca4;' +
       '--c-text-primary:#e8e5e0;--c-text-muted:#999;--c-link:#5a9aee;' +
       '--c-next-bg:#222120;--c-next-border:#444;--c-skip-note:#777;' +
       '--c-index-bg:#1e1c1a;--c-index-border:#3a3730;' +
@@ -554,13 +555,14 @@
       '--badge-warn-bg:#fdf0e8;--badge-warn-text:#7a3a1a;--badge-warn-bd:rgba(122,58,26,0.4);' +
       '--badge-ok-bg:#e4f5e4;--badge-ok-text:#1a5c1a;--badge-ok-bd:#90cc90;' +
       '--c-page-bg:#f5f4f0;--c-card-bg:#fff;--c-card-shadow:0 2px 8px rgba(0,0,0,0.07);' +
-      '--c-warm-bg:#fdf8f0;--c-brand-hover:#faefd8;' +
+      '--c-warm-bg:#fdf8f0;--c-brand:#8a6c1a;--c-brand-hover:#faefd8;' +
       /* Pill palette — mirrors the :root defaults in guide-style.css. */
       '--c-pill-bg:#fdf8f0;--c-pill-hover:#faefd8;--c-pill-active:#f5e8c8;' +
       '--c-pill-text:#8a6c1a;--c-pill-bd:rgba(138,108,26,.25);' +
       '--c-pill-bd-hover:rgba(138,108,26,.45);--c-pill-bd-active:rgba(138,108,26,.6);' +
       '--c-action-text:#5a3c0e;--c-action-press:#e5ddc8;' +
       '--c-float-bg:#ffffff;--c-float-bd:#c8a44a;--c-float-text:#8a6c1a;' +
+      '--c-navbtn-bd:#c4b896;--c-navbtn-text:#6b6860;' +
       '--c-text-primary:#3d3a32;--c-text-muted:#555;--c-link:#2867c4;' +
       '--c-next-bg:#ede8db;--c-next-border:#bba070;--c-skip-note:#999;' +
       '--c-index-bg:#f0ede8;--c-index-border:#d8d4cc;' +
@@ -773,8 +775,8 @@
 
   /* ── Prev / Next — arrows flanking the .overview-title ───────────────────── */
   var btnStyle = 'display:inline-flex;align-items:center;justify-content:center;' +
-    'width:30px;height:30px;border-radius:6px;border:1.5px solid #c4b896;' +
-    'background:#ffffff;color:#6b6860;font-size:18px;line-height:1;' +
+    'width:30px;height:30px;border-radius:6px;border:1.5px solid var(--c-navbtn-bd,#c4b896);' +
+    'background:var(--c-float-bg,#ffffff);color:var(--c-muted,#6b6860);font-size:18px;line-height:1;' +
     'padding:0;text-decoration:none;flex-shrink:0;';
 
   /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
@@ -1112,10 +1114,10 @@
   if (isRealGuide) {
     var backStrip = document.createElement('div');
     backStrip.id = 'tve-back-guides';
-    backStrip.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:2px 32px;background:#f5f4f0;margin-bottom:12px;overflow-x:auto;';
+    backStrip.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:2px 32px;background:var(--c-page-bg,#f5f4f0);margin-bottom:12px;overflow-x:auto;';
     var pillStyle = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
-      'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
-      'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+      'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
+      'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
       'text-decoration:none;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
       'white-space:nowrap;line-height:1;box-sizing:border-box;';
     if (isStopsMap) {
@@ -1128,7 +1130,7 @@
       smPill.style.cssText = pillStyle;
       smPill.addEventListener('click', function (e) { e.preventDefault(); history.back(); });
       smPill.addEventListener('mouseenter', function () { smPill.style.color = '#b85c2a'; smPill.style.borderColor = '#b85c2a'; });
-      smPill.addEventListener('mouseleave', function () { smPill.style.color = '#8a6c1a'; smPill.style.borderColor = '#c8a44a'; });
+      smPill.addEventListener('mouseleave', function () { smPill.style.color = 'var(--c-float-text,#8a6c1a)'; smPill.style.borderColor = 'var(--c-float-bd,#c8a44a)'; });
       backStrip.appendChild(smPill);
       bar.insertAdjacentElement('afterend', backStrip);
     } else {
@@ -1140,7 +1142,7 @@
       backBYG.style.color = '#b85c2a'; backBYG.style.borderColor = '#b85c2a';
     });
     backBYG.addEventListener('mouseleave', function () {
-      backBYG.style.color = '#8a6c1a'; backBYG.style.borderColor = '#c8a44a';
+      backBYG.style.color = 'var(--c-float-text,#8a6c1a)'; backBYG.style.borderColor = 'var(--c-float-bd,#c8a44a)';
     });
     var backGuides = document.createElement('a');
     if (isReadAbout) {
@@ -1155,11 +1157,11 @@
           var fp = document.createElement('button');
           fp.type = 'button';
           fp.textContent = '🖨 Print';
-          fp.style.cssText = 'font-size:13px;font-weight:500;color:#8a6c1a;' +
+          fp.style.cssText = 'font-size:13px;font-weight:500;color:var(--c-float-text,#8a6c1a);' +
             'background:none;border:none;padding:0;cursor:pointer;font-family:inherit;' +
             'transition:color .12s;-webkit-appearance:none;';
           fp.addEventListener('mouseenter', function () { fp.style.color = '#b85c2a'; });
-          fp.addEventListener('mouseleave', function () { fp.style.color = '#8a6c1a'; });
+          fp.addEventListener('mouseleave', function () { fp.style.color = 'var(--c-float-text,#8a6c1a)'; });
           fp.id = 'tve-ra-print';
           fp.addEventListener('click', function () { window.print(); });
           var lbl = sf.querySelector('.story-footer-label');
@@ -1178,7 +1180,7 @@
       backGuides.style.color = '#b85c2a'; backGuides.style.borderColor = '#b85c2a';
     });
     backGuides.addEventListener('mouseleave', function () {
-      backGuides.style.color = '#8a6c1a'; backGuides.style.borderColor = '#c8a44a';
+      backGuides.style.color = 'var(--c-float-text,#8a6c1a)'; backGuides.style.borderColor = 'var(--c-float-bd,#c8a44a)';
     });
     /* ── Print-Ready Full Guide Mode — guide pages only ─────────────────────
        "🖨 Print Guide" sits at the left of the back-strip (margin-right:auto
@@ -1190,8 +1192,8 @@
     printBtn.type = 'button';
     printBtn.textContent = '🖨 Print Guide';
     printBtn.style.cssText = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
-      'background:#fff;border:1.5px solid #c8a44a;border-radius:14px;' +
-      'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+      'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
+      'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
       'cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,.10);transition:color .12s,border-color .12s;' +
       'margin-right:auto;-webkit-appearance:none;box-sizing:border-box;line-height:1;font-family:inherit;';
     printBtn.addEventListener('mouseenter', function () {
@@ -1200,15 +1202,15 @@
     });
     printBtn.addEventListener('mouseleave', function () {
       if (document.getElementById('tve-print-mode')) return;
-      printBtn.style.color = '#8a6c1a'; printBtn.style.borderColor = '#c8a44a';
+      printBtn.style.color = 'var(--c-float-text,#8a6c1a)'; printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
     });
     printBtn.addEventListener('click', function () {
       var existing = document.getElementById('tve-print-mode');
       if (existing) {
         existing.parentNode.removeChild(existing);
         printBtn.textContent = '🖨 Print Guide';
-        printBtn.style.color = '#8a6c1a';
-        printBtn.style.borderColor = '#c8a44a';
+        printBtn.style.color = 'var(--c-float-text,#8a6c1a)';
+        printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
       } else {
         var css = document.createElement('style');
         css.id = 'tve-print-mode';
@@ -1229,8 +1231,8 @@
           var st = document.getElementById('tve-print-mode');
           if (st) { st.parentNode.removeChild(st); }
           printBtn.textContent = '🖨 Print Guide';
-          printBtn.style.color = '#8a6c1a';
-          printBtn.style.borderColor = '#c8a44a';
+          printBtn.style.color = 'var(--c-float-text,#8a6c1a)';
+          printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
           window.removeEventListener('afterprint', onAP);
         });
         window.print();
@@ -2978,6 +2980,14 @@
       return { days: days, val: val };
     }
 
+    /* Contiguous day indices → a compact label ("Tue–Sat", "Mon"). Used only by
+       the flat single-segment row; the grid prints each day on its own line. */
+    function _span(days) {
+      if (!days || !days.length) return '';
+      if (days.length === 1) return DAYS[days[0]];
+      return DAYS[days[0]] + '–' + DAYS[days[days.length - 1]];
+    }
+
     /* ── Today, at the destination ──────────────────────────────────────────── */
     var _dest   = _tveDestNow();
     var _todayI = _dest.local ? (_dest.dow + 6) % 7 : -1; /* JS 0=Sun → Mon-first */
@@ -3067,7 +3077,34 @@
     srcRows.forEach(function (row) {
       var raw = row.textContent.replace(/^🏛️?\s*/, '').trim();
       var parts = raw.split('·').map(function (s) { return s.trim(); }).filter(Boolean);
-      if (parts.length < 2) return;            /* simple listing → leave as authored */
+
+      /* ── Single-segment listing → flat styled row, no chevron ─────────────
+         The schedule is uniform, so there is nothing to expand and no toggle
+         is offered — a chevron that opens onto one line is a lie. It still
+         gets the styled row, because the alternative is a feature that is
+         invisible on the 93 guides whose every stop is "Daily 9-5" or
+         "Open 24/7" (Big-Island: 16 rows, not one of them varied). */
+      if (parts.length < 2) {
+        var one = _seg(parts[0] || '');
+        if (!one) return;                      /* unparseable → leave as authored */
+        var flat = document.createElement('div');
+        var whole = one.days.length === 7;
+        var label;
+        if (one.val === '24h') {
+          flat.className = 'tve-ph tve-ph-24';
+          label = whole ? 'Open 24h · every day' : _span(one.days) + ' · open 24h';
+        } else if (one.val === 'closed') {
+          flat.className = 'tve-ph';
+          label = 'Closed ' + _span(one.days);
+        } else {
+          flat.className = 'tve-ph';
+          label = (whole ? 'Daily' : _span(one.days)) + ' · ' + one.val;
+        }
+        flat.textContent = '🕐 ' + label; /* 🕐 */
+        row.classList.add('tve-ph-src');       /* hidden; textContent kept for Open Now */
+        row.parentNode.insertBefore(flat, row.nextSibling);
+        return;
+      }
 
       var week = [], bad = false;
       parts.forEach(function (p) {
