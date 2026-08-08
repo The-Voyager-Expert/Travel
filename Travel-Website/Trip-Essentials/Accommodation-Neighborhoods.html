@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Accommodation Neighborhoods</title>
+<style>
+/* Page-specific styles only — base, colors and pills come from web-travel-style.css */
+
+/* ── Intro card ── */
+.page-intro-card {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;
+  box-shadow: 0 1px 6px rgba(92,61,17,.05);
+}
+.page-intro-icon { flex-shrink: 0; display: flex; align-items: center; }
+.page-intro-head { font-size: 16px; font-weight: 800; color: var(--text,#3d3a32); margin: 0 0 4px; letter-spacing: -0.01em; }
+.page-intro-sub  { font-size: 12.5px; color: var(--muted,#6a6660); line-height: 1.55; margin: 0; }
+
+/* ── Search ── */
+.an-search-wrap { display: flex; justify-content: center; margin: 0 0 18px; }
+
+/* ── Sibling pills (shape comes from shared .sibling-pill) ── */
+.an-siblings { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 18px; }
+
+/* ── City filter strip — glued/squared on desktop so it reads as a different
+      control from the rounded sibling pills above it (Page-Format § 5) ── */
+.an-controls {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 12px;
+  padding: 16px 18px; box-shadow: 0 2px 12px rgba(92,61,17,.07); margin-bottom: 22px;
+}
+.an-ctrl-label { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 9px; }
+.an-city-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.an-cbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border2); border-radius: 6px; cursor: pointer;
+  padding: 9px 4px; font-family: inherit; font-size: 12px; font-weight: 400;
+  color: var(--muted,#6a6660); background: var(--surface,#ffffff);
+  text-align: center; line-height: 1.25;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.an-cbtn:hover { border-color: var(--rust); color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); font-weight: 600; }
+.an-cbtn.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); font-weight: 600; }
+@media (min-width: 601px) {
+  .an-city-grid { grid-template-columns: repeat(9, 1fr); gap: 0; }
+  .an-cbtn { padding: 10px 3px; border-width: 1.5px; border-radius: 0; color: var(--text); font-weight: 500; background: var(--surface,#ffffff); }
+  .an-cbtn:hover { background: var(--bg,#f5f4f0); border-color: var(--rust); color: inherit; font-weight: 500; }
+  .an-cbtn.on,
+  .an-cbtn.on:hover,
+  .an-cbtn.on:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); font-weight: 500; }
+}
+
+/* ── City section header ── */
+.an-city-head {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 28px 0 14px; padding-bottom: 9px; border-bottom: 2px solid var(--border2);
+}
+.an-city-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.an-city-meta { font-size: 11.5px; color: var(--muted); letter-spacing: .02em; }
+.an-city-head .also-on-this-site-pill { margin-left: auto; }
+
+/* ── District cards ── */
+.an-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.an-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 11px;
+  padding: 15px 16px; box-shadow: 0 1px 6px rgba(92,61,17,.05);
+  display: flex; flex-direction: column;
+}
+.an-name { font-size: var(--fs-body); font-weight: 700; color: var(--text); margin-bottom: 7px; }
+.an-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 9px; }
+.an-desc { font-size: var(--fs-sub); color: var(--text); line-height: 1.55; margin-bottom: 11px; }
+.an-row { display: flex; gap: 8px; font-size: 12px; line-height: 1.5; padding-top: 8px; border-top: 1px solid #efece6; }
+.an-row-label {
+  flex: 0 0 74px; font-size: 10px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted); padding-top: 2px;
+}
+.an-row-val { color: var(--text); flex: 1; }
+.an-days { color: var(--rust); font-weight: 600; }
+
+/* ── Badges — canonical shape, 7 badge families (Formatting.html#sec-badges) ── */
+.an-badge {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  line-height: 1.5; padding: 3px 8px; border: 1px solid; border-radius: 4px;
+  text-transform: uppercase; white-space: nowrap;
+}
+.an-b-central { background:#e8f5e8; border-color:rgba(26,90,26,0.4);   color:#1a5a1a; }
+.an-b-transit { background:#e8f0fb; border-color:rgba(26,58,139,0.4);  color:var(--navy); }
+.an-b-night   { background:#f3e8ff; border-color:rgba(124,58,237,0.4); color:#7c3aed; }
+.an-b-quiet   { background:#fff8e0; border-color:rgba(122,88,0,0.4);   color:#7a5800; }
+.an-b-value   { background:var(--warm); border-color:rgba(184,134,90,0.4); color:#8a4a10; }
+.an-b-upscale { background:#fdf0e8; border-color:rgba(122,58,26,0.4);  color:#7a3a1a; }
+.an-b-local   { background:rgba(138,108,26,0.07); border-color:rgba(106,102,96,0.4); color:var(--muted); }
+
+@media (max-width: 600px) {
+  .an-grid { grid-template-columns: 1fr; }
+  .an-siblings { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .an-siblings .sibling-pill { justify-content: center; text-align: center; }
+  .an-city-head .also-on-this-site-pill { margin-left: 0; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="1040" data-updated="2026-08-07"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>ACCOMMODATION NEIGHBORHOODS</h1>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true">
+        <path d="M4 21V9.2l6-4.2 6 4.2V21h-4v-5h-4v5H4zm14 0V10.6l2 1.4V21h-2zM11.5 3.4 20 9.35V11l-8.5-5.95L3 11V9.35l8.5-5.95z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="page-intro-head">Where to stay in the eight cities where the choice is hardest</div>
+      <div class="page-intro-sub">Eight guide cities where "which neighborhood" is a real decision. Each district lists what it offers, which numbered days of that city's guide it keeps you closest to, and the transit that connects it. Day numbers refer to the guide itinerary, not to dates.</div>
+    </div>
+  </div>
+
+  <div class="an-search-wrap">
+    <input type="search" id="an-search" class="search-input" placeholder="City or neighborhood" aria-label="Search by city or neighborhood" autocomplete="off" spellcheck="false" style="width:360px;">
+  </div>
+
+  <div class="an-siblings">
+    <a href="Hotels-Stays.html" class="sibling-pill">🏨 Hotels &amp; stays</a>
+    <a href="City-Transit-Cards.html" class="sibling-pill">🚇 City transit cards</a>
+    <a href="Budget-Guide.html" class="sibling-pill">💵 Budget by city</a>
+    <a href="Day-Trips.html" class="sibling-pill">🚆 Day trips by train</a>
+  </div>
+
+  <div class="an-controls">
+    <div class="an-ctrl-label">Filter by city</div>
+    <div class="an-city-grid" id="an-city-grid"></div>
+  </div>
+
+  <div id="an-results"></div>
+
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-pills">
+    <a class="also-on-this-site-pill" href="Hotels-Stays.html">🏨 Hotels &amp; stays</a>
+    <a class="also-on-this-site-pill" href="City-Transit-Cards.html">🚇 City transit cards</a>
+    <a class="also-on-this-site-pill" href="Budget-Guide.html">💰 Budget guide</a>
+    <a class="also-on-this-site-pill" href="Restaurants.html">🍽 Restaurants</a>
+    <a class="also-on-this-site-pill" href="Tours-Tickets.html">🎟 Tours &amp; tickets</a>
+  </div>
+</div>
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>
+/* ── City index ───────────────────────────────────────────────────────────
+   guide = path relative to Trip-Essentials/ ; days = day count in that guide */
+const AN_CITIES = [
+  { city:'Amsterdam', country:'Netherlands',   flag:'🇳🇱', days:6, guide:'../Guides/Amsterdam/amsterdam_v1.html' },
+  { city:'Bangkok',   country:'Thailand',      flag:'🇹🇭', days:6, guide:'../Guides/Bangkok/bangkok_v1.html' },
+  { city:'Barcelona', country:'Spain',         flag:'🇪🇸', days:6, guide:'../Guides/Barcelona/barcelona_v1.html' },
+  { city:'Lisbon',    country:'Portugal',      flag:'🇵🇹', days:8, guide:'../Guides/Lisbon/lisbon_v4.html' },
+  { city:'New York',  country:'United States', flag:'🇺🇸', days:6, guide:'../Guides/New-York/new-york_v1.html' },
+  { city:'Paris',     country:'France',        flag:'🇫🇷', days:7, guide:'../Guides/Paris/paris_v7.html' },
+  { city:'Rome',      country:'Italy',         flag:'🇮🇹', days:6, guide:'../Guides/Rome/rome_v1.html' },
+  { city:'Tokyo',     country:'Japan',         flag:'🇯🇵', days:7, guide:'../Guides/Tokyo/tokyo_v1.html' }
+];
+
+/* ── Badge families — one class per district characteristic ── */
+const AN_TAGS = {
+  central: { label:'CENTRAL',     cls:'an-b-central' },
+  transit: { label:'TRANSIT HUB', cls:'an-b-transit' },
+  night:   { label:'NIGHTLIFE',   cls:'an-b-night'   },
+  quiet:   { label:'QUIET',       cls:'an-b-quiet'   },
+  value:   { label:'VALUE',       cls:'an-b-value'   },
+  upscale: { label:'UPSCALE',     cls:'an-b-upscale' },
+  local:   { label:'LOCAL',       cls:'an-b-local'   }
+};
+
+/* ── Districts ─────────────────────────────────────────────────────────── */
+const AN_DISTRICTS = [
+
+  /* ══ AMSTERDAM ══ */
+  { city:'Amsterdam', name:'Canal Ring (Grachtengordel)', tags:['central'], days:'Day 2 · Day 5',
+    desc:'The horseshoe of Herengracht, Keizersgracht and Prinsengracht. The Anne Frank House, the Negen Straatjes and the Rembrandtplein museums are all reachable on foot. Canal-house hotels have steep stairs and few lifts.',
+    transit:'Trams 2, 12, 13 and 17; 10–15 minutes on foot from Centraal.' },
+  { city:'Amsterdam', name:'Jordaan', tags:['quiet','local'], days:'Day 2',
+    desc:'Former working-class grid west of Prinsengracht, now the quietest central address, with small hotels and B&Bs. Anne Frank House and Westerkerk sit on its eastern edge.',
+    transit:'Trams 3, 5 and 13; Metro 52 at Rokin, 12 minutes on foot.' },
+  { city:'Amsterdam', name:'Museum Quarter (Oud-Zuid)', tags:['upscale','quiet'], days:'Day 1',
+    desc:'Wide streets around Museumplein. The Rijksmuseum, Van Gogh Museum, Concertgebouw and Vondelpark make up the entire Day 1 route, all within a few hundred metres.',
+    transit:'Trams 2, 5 and 12; Metro 52 at Europaplein for the RAI.' },
+  { city:'Amsterdam', name:'De Pijp', tags:['value','night'], days:'Day 5',
+    desc:'Dense 19th-century district around the Albert Cuyp market, with the widest restaurant range in the city and the lowest rates still within tram distance of the centre. The Heineken Experience sits on its northern edge.',
+    transit:'Metro 52 at De Pijp; trams 4, 12 and 24.' },
+  { city:'Amsterdam', name:'Centrum &amp; Centraal', tags:['transit'], days:'Day 4 · Day 6',
+    desc:'Everything departs from here: the free Noord ferries for the EYE Filmmuseum and A\'DAM Lookout, the Schiphol trains, and the Day 6 intercity to Utrecht. Also the noisiest part of the city.',
+    transit:'All tram lines; Metro 51, 52, 53 and 54; direct Schiphol trains every few minutes; free ferries to Noord.' },
+  { city:'Amsterdam', name:'Plantage', tags:['quiet'], days:'Day 3 · Day 5',
+    desc:'Green, low-density district around Artis and the Hortus Botanicus, next to the Portuguese Synagogue and the Jewish Historical Museum. Very few hotels, so book early.',
+    transit:'Tram 14; Metro 51, 53 and 54 at Waterlooplein; walking distance to NEMO.' },
+
+  /* ══ BANGKOK ══ */
+  { city:'Bangkok', name:'Siam &amp; Ratchaprasong', tags:['central','transit'], days:'Day 1 · Day 4',
+    desc:'The hotel and shopping-mall core. The Jim Thompson House, the Bangkok Art &amp; Culture Centre and the Erawan Shrine are all reachable on the elevated walkway network without touching street level.',
+    transit:'BTS Siam is the interchange between the Sukhumvit and Silom lines; Chit Lom and National Stadium on either side.' },
+  { city:'Bangkok', name:'Sukhumvit (Asok–Phrom Phong)', tags:['night'], days:'Day 2',
+    desc:'The longest run of international hotels in the city, with Benjakitti Forest Park at its western end and the widest choice of restaurants and bars after dark.',
+    transit:'BTS Asok and MRT Sukhumvit interchange; Airport Rail Link at Makkasan, one MRT stop away.' },
+  { city:'Bangkok', name:'Silom &amp; Sathorn', tags:['upscale'], days:'Day 2 · Day 4',
+    desc:'The financial district — busy on weekdays, quiet at weekends. Holds the King Power MahaNakhon SkyWalk and the closest hotels to Lumphini Park.',
+    transit:'BTS Sala Daeng and MRT Si Lom interchange; Chao Phraya express boats from Sathorn Pier.' },
+  { city:'Bangkok', name:'Riverside (Charoen Krung)', tags:['upscale','quiet'], days:'Day 2 · Day 5',
+    desc:'River-facing hotels between Lhong 1919 and Wat Yannawa. Boats are the fastest route to the Old City temples, bypassing road traffic entirely.',
+    transit:'BTS Saphan Taksin at Sathorn Pier; Chao Phraya express boats to Wat Arun, Wat Pho and the Grand Palace.' },
+  { city:'Bangkok', name:'Rattanakosin (Old City)', tags:['local'], days:'Day 1 · Day 3 · Day 5',
+    desc:'The temple quarter itself — the Grand Palace, Wat Pho, Wat Suthat and the Giant Swing are on foot. Stock is guesthouses and small boutique hotels; there is nothing above mid-range.',
+    transit:'MRT Sanam Chai; Chao Phraya boats at Tha Tien and Tha Chang.' },
+  { city:'Bangkok', name:'Phaya Thai &amp; Ratchathewi', tags:['value','transit'], days:'Day 1 · Day 6',
+    desc:'The cheapest rooms still on the BTS network, one stop from Siam. The Airport Rail Link terminus makes it the shortest transfer from Suvarnabhumi.',
+    transit:'BTS Phaya Thai and Ratchathewi; Airport Rail Link to Suvarnabhumi; Makkasan interchange to the MRT Blue Line for Krung Thep Aphiwat and the Ayutthaya trains.' },
+
+  /* ══ BARCELONA ══ */
+  { city:'Barcelona', name:'Dreta de l\'Eixample', tags:['central','upscale'], days:'Day 2 · Day 3',
+    desc:'The grid between Passeig de Gràcia and the Sagrada Família, holding Casa Batlló, Casa Milà and most of the city\'s larger hotels. Flat, wide pavements and the shortest walk to the Day 2 route.',
+    transit:'Metro L2, L3 and L4 at Passeig de Gràcia; L5 at Sagrada Família; R2 Nord airport train at Passeig de Gràcia.' },
+  { city:'Barcelona', name:'Barri Gòtic', tags:['central'], days:'Day 1',
+    desc:'The medieval core, walkable to the Palau de la Música, Palau Güell and the port. Rooms are small, foot traffic is heavy and street noise carries late.',
+    transit:'Metro L3 at Liceu; L4 at Jaume I; L1 and L3 at Catalunya with the Aerobús stop.' },
+  { city:'Barcelona', name:'El Born (La Ribera)', tags:['night'], days:'Day 1',
+    desc:'Narrow streets between the Gothic Quarter and Parc de la Ciutadella — the densest evening restaurant and bar area, with the Palau de la Música Catalana at its northern edge.',
+    transit:'Metro L4 at Jaume I and Barceloneta; L1 at Arc de Triomf.' },
+  { city:'Barcelona', name:'Gràcia', tags:['local','quiet'], days:'Day 3',
+    desc:'A former village absorbed into the city, built around small squares. Lower rates than the Eixample and the shortest approach on foot to Park Güell and the Bunkers del Carmel.',
+    transit:'Metro L3 at Fontana; L4 at Joanic; FGC at Gràcia.' },
+  { city:'Barcelona', name:'Sants &amp; Hostafrancs', tags:['value','transit'], days:'Day 4 · Day 6',
+    desc:'Plain residential district around Barcelona Sants. The Day 6 Girona train departs from the station itself, and the Montjuïc funicular is two metro stops away.',
+    transit:'Barcelona Sants — AVE and regional trains, Metro L1, L3 and L5, R2 Nord airport train.' },
+  { city:'Barcelona', name:'Poble-sec', tags:['value'], days:'Day 4 · Day 5',
+    desc:'Below Montjuïc, the cheapest address still within walking distance of the centre. The Day 4 cable car, castle and Barcelona Pavilion are directly above it on the hill.',
+    transit:'Metro L3 at Poble-sec and Paral·lel; L2 at Paral·lel; Montjuïc funicular from Paral·lel.' },
+
+  /* ══ LISBON ══ */
+  { city:'Lisbon', name:'Baixa &amp; Chiado', tags:['central'], days:'Day 1 · Day 3 · Day 4',
+    desc:'The flat grid between Praça do Comércio and Rossio. The Chiado, the Convento do Carmo and Cais do Sodré are all on foot, and it is the only central district that avoids the hills. Highest room rates in the city.',
+    transit:'Metro Blue at Baixa-Chiado; Green at Rossio; trams 15 and 28; Santa Justa lift.' },
+  { city:'Lisbon', name:'Bairro Alto &amp; Príncipe Real', tags:['night'], days:'Day 1',
+    desc:'The Day 1 route runs straight through it — Igreja de São Roque, the Miradouro de São Pedro de Alcântara and Príncipe Real. Bars on the Bairro Alto grid stay open into the early hours, so light sleepers should look one street back.',
+    transit:'Metro Yellow at Rato; Glória funicular from Restauradores; walk down to Cais do Sodré.' },
+  { city:'Lisbon', name:'Alfama &amp; Graça', tags:['local'], days:'Day 3 · Day 7',
+    desc:'The oldest quarter, below the Castelo de São Jorge and covered end to end on Day 3. Steep stepped streets, mostly small guesthouses and apartments, and no way to arrive by car.',
+    transit:'Tram 28; Metro Blue at Santa Apolónia; lifts at Chão do Loureiro and Castelo.' },
+  { city:'Lisbon', name:'Avenida da Liberdade &amp; Marquês de Pombal', tags:['upscale','transit'], days:'Day 1 · Day 8',
+    desc:'The luxury hotel corridor, and the best-connected address in the city — for the airport and for the Day 8 Setúbal train, which leaves from Roma-Areeiro and Entrecampos rather than the riverside stations.',
+    transit:'Metro Blue and Yellow interchange at Marquês de Pombal; Metro Red to the airport from São Sebastião; Aerobus along the Avenida.' },
+  { city:'Lisbon', name:'Cais do Sodré &amp; Santos', tags:['value','night'], days:'Day 2 · Day 4 · Day 6',
+    desc:'River-front district at the bottom of Bairro Alto, and the departure station for the Cascais line that stops at Alcântara for the LX Factory and at Belém for the Day 2 monuments.',
+    transit:'Metro Green terminus; Cascais-line trains to Belém and Alcântara; trams 15 and 25; ferries to Cacilhas.' },
+  { city:'Lisbon', name:'Parque das Nações', tags:['quiet','value'], days:'Day 5 · Day 7',
+    desc:'Modern waterfront district built for Expo \'98, with the Oceanário, the Telecabine and Gare do Oriente on the doorstep. Flat, quiet and one metro stop from the airport, but 20 minutes from the historic centre.',
+    transit:'Metro Red at Oriente — one stop from the airport; all northbound intercity trains from Gare do Oriente.' },
+
+  /* ══ NEW YORK ══ */
+  { city:'New York', name:'Midtown West (Times Square–Penn)', tags:['transit'], days:'Day 2 · Day 3 · Day 6',
+    desc:'The largest hotel supply in the city across the widest range of rates, and the base for the Day 6 Philadelphia train from Moynihan Train Hall. Crowded at street level at all hours.',
+    transit:'A/C/E, 1/2/3, N/Q/R/W and 7 lines; Moynihan Train Hall and Penn Station; Port Authority Bus Terminal.' },
+  { city:'New York', name:'Midtown East &amp; Murray Hill', tags:['central','value'], days:'Day 2',
+    desc:'Quieter than the west side at similar rates. The Museum of Modern Art, Top of the Rock and the Frick Collection are each within walking distance or one crosstown ride.',
+    transit:'4/5/6 and 7 at Grand Central; E/M at Lexington-53rd; Metro-North at Grand Central.' },
+  { city:'New York', name:'Upper West Side', tags:['quiet'], days:'Day 3 · Day 5',
+    desc:'Residential blocks between Central Park and the Hudson, next to the American Museum of Natural History and the park\'s western entrances. Few hotels, but the calmest Manhattan base.',
+    transit:'1/2/3 on Broadway; B/C on Central Park West; crosstown buses at 79th and 86th to the Metropolitan Museum.' },
+  { city:'New York', name:'Upper East Side', tags:['upscale','quiet'], days:'Day 2 · Day 3',
+    desc:'Museum Mile itself — the Metropolitan Museum, the Guggenheim and the Frick Collection are on foot. The quietest part of Manhattan after dark, with correspondingly little to do in the evening.',
+    transit:'4/5/6 on Lexington Avenue; Q on Second Avenue.' },
+  { city:'New York', name:'Chelsea &amp; Flatiron', tags:['central','night'], days:'Day 3 · Day 5',
+    desc:'Between the High Line and Madison Square, with the Whitney Museum at its southern end. The densest concentration of restaurants and bars in Manhattan, and the shortest walk onto the Day 3 route.',
+    transit:'1/A/C/E at 14th Street; L crosstown; F/M at 23rd Street; direct walk to the High Line and Hudson Yards.' },
+  { city:'New York', name:'Lower Manhattan (Financial District)', tags:['value'], days:'Day 1 · Day 5',
+    desc:'Business-district hotels whose rates drop sharply at weekends, next to One World Observatory, the 9/11 Memorial and the Manhattan approach to the Brooklyn Bridge.',
+    transit:'Fulton Center — eleven subway lines; PATH at World Trade Center; ferries from Battery Park and Pier 11.' },
+
+  /* ══ PARIS ══ */
+  { city:'Paris', name:'Le Marais (3e–4e)', tags:['central','night'], days:'Day 1 · Day 2 · Day 4',
+    desc:'Days 1, 2 and 4 all pass through it — Place des Vosges, the Musée Carnavalet and Île Saint-Louis are on foot. Small hotels in converted hôtels particuliers; very busy on weekends.',
+    transit:'Métro 1 at Saint-Paul and Hôtel de Ville; Métro 8 at Chemin Vert; Métro 11 at Rambuteau.' },
+  { city:'Paris', name:'Saint-Germain-des-Prés (6e)', tags:['upscale'], days:'Day 1 · Day 4',
+    desc:'Left Bank quarter around Les Deux Magots, within walking distance of Sainte-Chapelle, the Musée de Cluny and the Musée d\'Orsay. Among the highest room rates in the city.',
+    transit:'Métro 4 and 10 at Odéon; Métro 4 at Saint-Germain-des-Prés; RER B at Saint-Michel Notre-Dame.' },
+  { city:'Paris', name:'Latin Quarter (5e)', tags:['value'], days:'Day 1 · Day 4',
+    desc:'The cheapest central rooms on the Left Bank, around Rue Mouffetard and the Panthéon. RER B runs direct from Charles de Gaulle without a change.',
+    transit:'RER B at Luxembourg and Saint-Michel; Métro 7 at Place Monge; Métro 10 at Cluny-La Sorbonne.' },
+  { city:'Paris', name:'Champ de Mars &amp; Rue Cler (7e)', tags:['quiet'], days:'Day 3',
+    desc:'Residential streets between the Eiffel Tower and Les Invalides, with the Day 3 route running directly through them. Calm in the evening, with correspondingly few late options.',
+    transit:'Métro 8 at École Militaire; RER C at Champ de Mars-Tour Eiffel and Pont de l\'Alma.' },
+  { city:'Paris', name:'Opéra &amp; Grands Boulevards (9e)', tags:['transit'], days:'Day 2 · Day 5',
+    desc:'Larger hotels around the Palais Garnier, and the strongest base for the three train days — Saint-Lazare for Giverny, Gare de l\'Est for Reims and Montparnasse for Chartres are each a direct ride away.',
+    transit:'Métro 3, 7, 8 and 9; RER A and E at Auber and Haussmann Saint-Lazare; Roissybus to Charles de Gaulle from Opéra.' },
+  { city:'Paris', name:'Montmartre (18e)', tags:['local'], days:'Day 2',
+    desc:'The hill around Sacré-Cœur — cheaper than the central arrondissements and quiet at night once you are away from Pigalle. Steep streets, and the longest ride to the train-day stations.',
+    transit:'Métro 12 at Abbesses and Lamarck-Caulaincourt; Métro 2 at Anvers; funicular from Place Saint-Pierre.' },
+
+  /* ══ ROME ══ */
+  { city:'Rome', name:'Centro Storico', tags:['central'], days:'Day 1 · Day 3 · Day 5',
+    desc:'The Pantheon and Piazza Navona core. Everything on Days 1, 3 and 5 is walkable from it, and no metro line reaches it at all. Rooms are small and expensive, and street noise carries late.',
+    transit:'No metro. Bus and tram hub at Largo di Torre Argentina; 15–20 minutes on foot to the Colosseum.' },
+  { city:'Rome', name:'Monti', tags:['central','local'], days:'Day 1',
+    desc:'Residential grid directly behind the Roman Forum, with a good spread of small hotels and independent restaurants. The closest neighborhood to the whole Day 1 route.',
+    transit:'Metro B at Cavour; Metro A and B interchange at Termini, 10 minutes on foot.' },
+  { city:'Rome', name:'Prati', tags:['quiet'], days:'Day 2 · Day 3',
+    desc:'Wide 19th-century streets north of the Vatican walls — quieter and cheaper than the centro storico, with the Vatican Museums entrance a short walk away and Castel Sant\'Angelo at its southern edge.',
+    transit:'Metro A at Ottaviano-San Pietro and Lepanto; tram 19.' },
+  { city:'Rome', name:'Trastevere', tags:['night','local'], days:'Day 3 · Day 4',
+    desc:'Across the river below the Janiculum, holding the densest run of evening restaurants and bars in the city. Cobbled, hilly, and loud after dark.',
+    transit:'No metro. Tram 8 to Largo di Torre Argentina; walking distance up to the Aventine.' },
+  { city:'Rome', name:'Termini &amp; Esquilino', tags:['value','transit'], days:'Day 6',
+    desc:'The cheapest central rooms in Rome, and the only address that puts both metro lines and every regional train on the doorstep — including the Day 6 departure for Orvieto.',
+    transit:'Metro A and B interchange; Leonardo Express to Fiumicino; all intercity and regional trains.' },
+  { city:'Rome', name:'Spanish Steps &amp; Campo Marzio', tags:['upscale'], days:'Day 5',
+    desc:'The luxury hotel and flagship-shopping district, sitting on the Day 5 route through Piazza del Popolo, the Pincian Hill terrace and the Villa Borghese gardens.',
+    transit:'Metro A at Spagna and Flaminio.' },
+
+  /* ══ TOKYO ══ */
+  { city:'Tokyo', name:'Shinjuku', tags:['central','transit'], days:'Day 1 · Day 7',
+    desc:'The largest concentration of hotels in the city at every price level, wrapped around the world\'s busiest station. Meiji Shrine and Shinjuku Gyoen are both walkable from the south and east exits.',
+    transit:'JR Yamanote, Chuo and Sobu lines; Marunouchi, Oedo and Shinjuku subway lines; Narita Express and the direct JR–Tobu limited express to Nikko.' },
+  { city:'Tokyo', name:'Shibuya', tags:['central','night'], days:'Day 1',
+    desc:'Rebuilt around Shibuya Scramble Square and Miyashita Park, with late-opening restaurants and bars across the whole grid. One stop from Harajuku for Meiji Shrine.',
+    transit:'JR Yamanote and Saikyo lines; Ginza, Hanzomon and Fukutoshin subway lines; Tokyu lines toward Yokohama.' },
+  { city:'Tokyo', name:'Marunouchi &amp; Ginza', tags:['upscale','transit'], days:'Day 4',
+    desc:'Tokyo Station\'s business and luxury district, alongside the Imperial Palace East Garden and a short walk from Hamarikyu Gardens. Highest average room rates in the city.',
+    transit:'Tokyo Station — all Shinkansen lines, Narita Express, Yamanote and Keiyo lines; Ginza, Marunouchi and Hibiya subway lines.' },
+  { city:'Tokyo', name:'Asakusa', tags:['value','local'], days:'Day 6 · Day 7',
+    desc:'Low-rise old-Tokyo district around Senso-ji, with the cheapest central rooms and a large stock of small hotels and ryokan. Also the Tobu departure point for Nikko.',
+    transit:'Ginza and Asakusa subway lines; Tobu Skytree Line for Nikko; Sumida River boats to Hamarikyu and Odaiba.' },
+  { city:'Tokyo', name:'Roppongi &amp; Azabudai', tags:['upscale','night'], days:'Day 2',
+    desc:'High-rise hotel cluster around Roppongi Hills and Azabudai Hills, putting the Mori Art Museum and teamLab Borderless within a few minutes on foot.',
+    transit:'Hibiya and Oedo subway lines at Roppongi; Namboku and Oedo lines at Azabu-juban.' },
+  { city:'Tokyo', name:'Ueno', tags:['value','transit'], days:'Day 4 · Day 6',
+    desc:'Business hotels around Ueno Park at well below Ginza rates, next to the Tokyo National Museum and a short walk into Yanaka and Nezu.',
+    transit:'JR Yamanote and Keihin-Tohoku lines; Ginza and Hibiya subway lines; Keisei Skyliner direct to Narita.' }
+];
+
+/* ── Render ───────────────────────────────────────────────────────────── */
+let activeCity = 'All';
+
+function badgeHTML(key) {
+  const t = AN_TAGS[key];
+  if (!t) return '';
+  return '<span class="an-badge ' + t.cls + '">' + t.label + '</span>';
+}
+
+function cardHTML(d) {
+  return `<article class="an-card">
+    <div class="an-name">${d.name}</div>
+    <div class="an-tags">${d.tags.map(badgeHTML).join('')}</div>
+    <div class="an-desc">${d.desc}</div>
+    <div class="an-row"><span class="an-row-label">Closest to</span><span class="an-row-val an-days">${d.days}</span></div>
+    <div class="an-row"><span class="an-row-label">Transit</span><span class="an-row-val">${d.transit}</span></div>
+  </article>`;
+}
+
+function cityBlockHTML(cityName, districts) {
+  const c = AN_CITIES.find(x => x.city === cityName);
+  if (!c) return '';
+  return `<div class="an-city-head">
+      <span class="an-city-title">${c.flag} ${c.city}</span>
+      <span class="an-city-meta">${c.country} · ${c.days}-day guide · ${districts.length} neighborhoods</span>
+      <a class="also-on-this-site-pill" href="${c.guide}">🗺 ${c.city} guide</a>
+    </div>
+    <div class="an-grid">${districts.map(cardHTML).join('')}</div>`;
+}
+
+function render(filterFn, emptyMsg) {
+  const res = document.getElementById('an-results');
+  const matched = AN_DISTRICTS.filter(filterFn);
+  if (!matched.length) {
+    res.innerHTML = `<div class="empty-state">
+      <span class="empty-state-icon">🔍</span>
+      <div class="empty-state-text">${emptyMsg}</div>
+    </div>`;
+    return;
+  }
+  let html = '';
+  AN_CITIES.forEach(c => {
+    const list = matched.filter(d => d.city === c.city);
+    if (list.length) html += cityBlockHTML(c.city, list);
+  });
+  res.innerHTML = html;
+}
+
+function renderCity(cityName) {
+  activeCity = cityName;
+  document.querySelectorAll('.an-cbtn').forEach(b => {
+    b.classList.toggle('on', b.dataset.city === cityName);
+  });
+  if (cityName === 'All') {
+    render(() => true, '');
+  } else {
+    render(d => d.city === cityName, '');
+  }
+}
+
+function initCityFilter() {
+  const grid = document.getElementById('an-city-grid');
+  const opts = ['All'].concat(AN_CITIES.map(c => c.city));
+  opts.forEach(name => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'an-cbtn' + (name === 'All' ? ' on' : '');
+    b.dataset.city = name;
+    b.textContent = name === 'All' ? 'All cities' : name;
+    b.addEventListener('click', () => {
+      const inp = document.getElementById('an-search');
+      if (inp) inp.value = '';
+      renderCity(name);
+    });
+    grid.appendChild(b);
+  });
+}
+
+initCityFilter();
+renderCity('All');
+
+/* ── Search — scoped to this page's own cities and neighborhoods ── */
+(function () {
+  const inp = document.getElementById('an-search');
+  if (!inp) return;
+
+  // Fold accents so "gracia" matches "Gràcia" and "sao" matches "São"
+  const fold = s => s.replace(/&amp;/g, '&').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  function runQuery(q) {
+    const lower = fold(q.trim());
+    if (!lower) { renderCity('All'); return; }
+    document.querySelectorAll('.an-cbtn').forEach(b => b.classList.remove('on'));
+    activeCity = null;
+    render(
+      d => fold(d.name).indexOf(lower) !== -1
+        || fold(d.city).indexOf(lower) !== -1
+        || fold(d.desc).indexOf(lower) !== -1
+        || d.tags.some(t => fold(AN_TAGS[t].label).indexOf(lower) !== -1),
+      `No neighborhood matches "${q}". This page covers ${AN_CITIES.length} cities — clear the search to see them all.`
+    );
+  }
+
+  if (window.TVESearch) {
+    const items = AN_CITIES.map(c => ({ name: c.city, sub: c.country }))
+      .concat(AN_DISTRICTS.map(d => ({ name: d.name.replace(/&amp;/g, '&'), sub: d.city })));
+    TVESearch.attach(inp, { items: items, onPick: it => runQuery(it.name) });
+  }
+
+  inp.addEventListener('input', function () { runQuery(inp.value); });
+}());
+</script>
+</body>
+</html>
