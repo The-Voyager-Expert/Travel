@@ -2895,9 +2895,29 @@
         'margin:6px -14px 0;line-height:1.45;font-size:inherit;}' +
         /* Scoping to the card is what wins the specificity fight —
            .tour-box > div (0,1,1) outranks .tve-ph (0,1,0). */
+        /* VERTICAL — the slab's own 6px padding IS the row gap (owner rule
+           2026-08-08, "make sure the space is right between the items in the
+           stop"). Every plain row in the card is 6px from its neighbour, but the
+           band is the one row with a tinted box around its text: 6px of padding
+           inside it, so a 6px margin on top of that put the band's TEXT 12px from
+           the next row's text while every other pair sat at 6px — measurably the
+           odd row out on Austin (35px pitch vs 29px for its neighbours). Zeroing
+           the margin and the following row's margin-top puts every text pair in
+           the card on the same 6px rhythm, with the tint extending 6px past its
+           own text the way a full-bleed tinted row should.
+           This was tried once before (2026-08-08 morning) and reverted as "glued
+           to the line above and below with no edge between them" — but that was
+           an INSET band with no rail on the card edge and no right border. The
+           slab now carries a 2.5px rail, a right hairline and a full-bleed span,
+           so it reads as its own object without needing a margin to prove it. */
         '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
         '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{' +
-        'margin:6px -14px 0!important;}' +
+        'margin:0 -14px!important;}' +
+        /* The row AFTER the band drops its own 6px too — otherwise the band's
+           padding-bottom and the neighbour's margin-top stack back up to 12px. */
+        '.tour-box > .tve-ph + *,.ticket-box > .tve-ph + *,' +
+        '.tour-box > .tve-ph-wrap + *,.ticket-box > .tve-ph-wrap + *{' +
+        'margin-top:0!important;}' +
         /* First VISIBLE row of the card. The authored 🏛️ rows the band replaces
            stay in the DOM as display:none, so :first-child never matches it — JS
            stamps this class instead. 2,127 cards across the fleet lead with 🏛️,
