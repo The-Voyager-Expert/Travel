@@ -3843,8 +3843,10 @@
       { name: 'Park Hyatt Abu Dhabi Hotel and Villas', note: 'Hyatt brand — beachfront on Saadiyat Island, outdoor pool, tennis courts, full-service spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ae/park-hyatt-abu-dhabi-and-villas.html' }
     ] },
     'aix-en-provence': { h: [
-      { name: 'Le Pigonnet', note: 'Esprit de France — landscaped garden, outdoor pool, views of Mont Sainte-Victoire · 9.1 Booking.com' },
-      { name: 'Villa Saint-Ange', note: 'Independent boutique — 18th-century bastide estate, heated pool, Provençal garden · 9.3 Booking.com' }
+      { name: 'Le Pigonnet', note: 'Esprit de France — landscaped garden, outdoor pool, views of Mont Sainte-Victoire · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/le-pigonnet.html' },
+      { name: 'Villa Saint-Ange', note: 'Independent boutique — 18th-century bastide estate, heated pool, Provençal garden · 9.3 Booking.com' },
+      { name: 'Les Suites du Cours & Spa', note: 'Independent boutique — 5-star on Cours Mirabeau in the historic centre, spa with hot tub, soundproofed suites · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/les-suites-du-cours.html' },
+      { name: 'Château de la Gaude', note: 'Independent — 18th-century château estate north of the centre, heated infinity pool, spa with steam room, gardens · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/chateau-de-la-gaude.html' }
     ] },
     'alaska': { h: [
       { name: 'Hotel Captain Cook', note: 'Independent — Anchorage landmark since 1965, three-tower downtown complex with on-site dining · 8.8 Booking.com' },
@@ -3853,12 +3855,16 @@
       { name: 'Sheraton Anchorage Hotel & Spa', note: 'Marriott Sheraton brand — full-service spa and indoor pool, central Anchorage location · 8.0 Booking.com' }
     ] },
     'alesund': { h: [
-      { name: 'Hotel 1904', note: "Independent boutique — Ålesund's oldest hotel, original Art Nouveau building, city center · 9.0 Booking.com" },
-      { name: 'Thon Hotel Ålesund', note: 'Thon Hotels — central location, harbor-facing rooms · 8.7 Booking.com' }
+      { name: 'Hotel 1904', note: '', url: 'https://www.booking.com/hotel/no/hotel-1904.html' },
+      { name: 'Thon Hotel Ålesund', note: 'Thon Hotels — central location, harbor-facing rooms · 8.7 Booking.com', url: 'https://www.booking.com/hotel/no/thon-alesund-alesund.html' },
+      { name: 'Hotel Noreg', note: 'Independent — Kongensgate in the Art Nouveau centre, sauna, fitness centre, hot spring bath · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/hotel-noreg.html' },
+      { name: 'Scandic Parken', note: 'Scandic brand — Storgata below Aksla hill, sauna, fitness centre, on-site restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-parken.html' }
     ] },
     'amalfi': { h: [
       { name: 'Hotel Santa Caterina', note: 'Independent family estate — 1880s cliffside villa, saltwater pool, sea-view terraces, Michelin-starred dining · 9.6 Booking.com' },
-      { name: 'Anantara Convento di Amalfi Grand Hotel', note: 'Anantara brand — converted 13th-century convent above town, infinity pool, dramatic coastal views · 9.1 Booking.com' }
+      { name: 'Anantara Convento di Amalfi Grand Hotel', note: 'Anantara brand — converted 13th-century convent above town, infinity pool, dramatic coastal views · 9.1 Booking.com' },
+      { name: 'Hotel Luna Convento', note: 'Independent — 13th-century clifftop convent on Via Pantaleone Comite, saltwater pool with sea views, cloister, Saracen tower bar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/luna-convento-torre-saracena-sas.html' },
+      { name: 'Hotel Antica Repubblica', note: 'Independent — historic centre off Salita Truglio, 170 m from the beach, soundproofed rooms, terrace · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/anticarepubblica.html' }
     ] },
     'amsterdam': { h: [
       { name: 'Waldorf Astoria Amsterdam', note: 'Waldorf Astoria brand — six 17th-century canal palaces on Herengracht, Guerlain Spa with pool, Michelin-recognized dining · 9.3 Booking.com' },
@@ -3868,7 +3874,9 @@
     ] },
     'annecy': { h: [
       { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com' },
-      { name: 'Le Clos des Sens', note: 'Independent boutique — 19th-century mansion in Annecy-le-Vieux, home to a three-Michelin-star restaurant (Laurent Petit) · 8.9 Booking.com' }
+      { name: 'Le Clos des Sens', note: 'Independent boutique — 19th-century mansion in Annecy-le-Vieux, home to a three-Michelin-star restaurant (Laurent Petit) · 8.9 Booking.com' },
+      { name: 'Rivage Hôtel & Spa Annecy', note: 'Independent — Avenue du Petit Port by the lake, year-round indoor pool, spa with steam room, sauna · 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/rivage-amp-spa-annecy.html' },
+      { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html' }
     ] },
     'aracaju': { h: [
       { name: 'Radisson Hotel Aracaju', note: 'Radisson brand — full-service spa, outdoor pool, 4 min walk to Aracaju Oceanarium, #1 on TripAdvisor in Aracaju' },
@@ -3879,8 +3887,10 @@
       { name: 'Tabacón Thermal Resort & Spa', note: 'Small Luxury Hotels — natural volcanic thermal river on-site, waterfalls and pools up to 100°F, 900+ acres of rainforest · 9.1 Booking.com' }
     ] },
     'aruba': { h: [
-      { name: 'Bucuti & Tara Beach Resort', note: "Independent boutique — Caribbean's first carbon-neutral hotel, adults-only on Eagle Beach, complimentary breakfast · 9.6 Booking.com" },
-      { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site' }
+      { name: 'Bucuti & Tara Beach Resort', note: '' },
+      { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site' },
+      { name: 'Renaissance Wind Creek Aruba Resort', note: 'Marriott Renaissance brand — Oranjestad harbourfront, private beach area, rooftop and infinity pools, casino · 8.9 Booking.com', url: 'https://www.booking.com/hotel/aw/renaissance-aruba-resort-and-casino.html' },
+      { name: 'Aruba Marriott Resort & Stellaris Casino', note: 'Marriott brand — beachfront on Palm Beach, heated pool with swim-up bar, spa, tennis court · 8.8 Booking.com', url: 'https://www.booking.com/hotel/aw/aruba-marriott-resort-stellaris-casino.html' }
     ] },
     'athens': { h: [
       { name: 'Hotel Grande Bretagne', note: 'Marriott Luxury Collection — 1874 landmark on Syntagma Square, Acropolis-view balconies, rooftop restaurant, indoor pool · 9.2 Booking.com' },
@@ -3890,11 +3900,15 @@
     ] },
     'atlanta': { h: [
       { name: 'Atlanta Marriott Marquis', note: 'Marriott family — iconic 52-story atrium, spa, outdoor pool, downtown Peachtree Center · 8.4 Booking.com' },
-      { name: 'The Westin Peachtree Plaza, Atlanta', note: 'Marriott family — landmark 73-story cylinder tower, indoor/outdoor rooftop pool, city views · 8.5 Booking.com' }
+      { name: 'The Westin Peachtree Plaza, Atlanta', note: 'Marriott family — landmark 73-story cylinder tower, indoor/outdoor rooftop pool, city views · 8.5 Booking.com' },
+      { name: 'The St. Regis Atlanta', note: 'Marriott St. Regis brand — Buckhead on West Paces Ferry Road, heated outdoor pool with pool bar, spa, garden terrace · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/st-regis-buckhead-atlanta.html' },
+      { name: 'Four Seasons Hotel Atlanta', note: 'Four Seasons brand — Midtown on 14th Street, year-round indoor pool, full-service spa, sauna · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-atlanta.html' }
     ] },
     'austin': { h: [
       { name: 'JW Marriott Austin', note: 'Marriott family — rooftop pool and spa, 2nd Street dining district, downtown luxury · 8.6 Booking.com' },
-      { name: 'Hilton Austin', note: 'Hilton family — convention center adjacency, city-view rooms, downtown · 8.1 Booking.com' }
+      { name: 'Hilton Austin', note: 'Hilton family — convention center adjacency, city-view rooms, downtown · 8.1 Booking.com' },
+      { name: 'Hotel Van Zandt', note: "Hyatt Destination brand — Rainey Street Historic District, heated rooftop pool, live music, Geraldine's restaurant · 8.8 Booking.com", url: 'https://www.booking.com/hotel/us/van-zandt.html' },
+      { name: 'W Austin', note: 'Marriott W brand — Downtown on Lavaca Street above ACL Live, rooftop pool with city views, AWAY spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/w-austin.html' }
     ] },
     'azores': { h: [
       { name: 'Delta Hotels by Marriott Azores', note: 'Marriott family — ocean or mountain views, outdoor pool, 10-min from downtown Ponta Delgada · 9.2 Booking.com' }
@@ -3910,7 +3924,9 @@
     ] },
     'banff': { h: [
       { name: 'Fairmont Banff Springs', note: 'Fairmont brand — 1888 sandstone castle at the confluence of the Bow and Spray Rivers, 2 outdoor pools, full spa, fine-dining 1888 Chop House · 9.2 Booking.com' },
-      { name: 'The Rimrock Resort Hotel', note: 'Independent luxury — clifftop perch 6 km from downtown on Sulphur Mountain Road, panoramic six-range mountain views, Primrose dining room, full-service spa · 9.1 Booking.com' }
+      { name: 'The Rimrock Resort Hotel', note: 'Independent luxury — clifftop perch 6 km from downtown on Sulphur Mountain Road, panoramic six-range mountain views, Primrose dining room, full-service spa · 9.1 Booking.com' },
+      { name: 'Banff Park Lodge', note: 'Independent — Lynx Street a block off Banff Avenue, year-round indoor pool, steam room, on-site dining · 8.7 Booking.com', url: 'https://www.booking.com/hotel/ca/banff-park-lodge.html' },
+      { name: 'Mount Royal Hotel', note: 'Independent — 138 Banff Avenue in the town centre, rooftop hot tubs, ski storage, mountain-view rooms · 8.4 Booking.com', url: 'https://www.booking.com/hotel/ca/mount-royal-banff.html' }
     ] },
     'bangkok': { h: [
       { name: 'Mandarin Oriental Bangkok', note: 'Mandarin Oriental brand — 1876 Chao Phraya River landmark, celebrated Authors\' Wing, riverfront dining, Sala Rim Naam Thai restaurant · 9.4 Booking.com' },
@@ -3940,7 +3956,9 @@
     ] },
     'bergen': { h: [
       { name: 'Hotel Norge by Scandic', note: 'Scandic brand — grand property on Ole Bulls plass, central Bergen, indoor pool and spa, celebrated Matbørsen restaurant · 8.8 Booking.com' },
-      { name: 'Clarion Hotel Admiral', note: 'Nordic Choice Hotels — harbourfront position opposite Bryggen, Wharf-view rooms, rooftop bar with Puddefjorden panorama · 8.5 Booking.com' }
+      { name: 'Clarion Hotel Admiral', note: 'Nordic Choice Hotels — harbourfront position opposite Bryggen, Wharf-view rooms, rooftop bar with Puddefjorden panorama · 8.5 Booking.com' },
+      { name: 'Opus XVI', note: 'Small Luxury Hotels — Vågsallmenningen in Bergenhus, former bank building steps from Bryggen, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/opus-xvi.html' },
+      { name: 'Bergen Børs Hotel', note: 'Independent — 5-star in the 1862 stock exchange on Vågsallmenningen, Bare restaurant, harbour-side location · 8.6 Booking.com', url: 'https://www.booking.com/hotel/no/bergen-bors.html' }
     ] },
     'berlin': { h: [
       { name: 'Regent Berlin', note: 'IHG Regent brand — Gendarmenmarkt address, neoclassical interiors, Fischers Fritz Michelin-starred dining, spa with pool · 9.0 Booking.com' },
@@ -3960,7 +3978,9 @@
     ] },
     'bilbao': { h: [
       { name: 'Hotel Carlton Bilbao', note: 'Leading Hotels of the World — 1920s grand hotel near the old town, historic rooms where Hemingway and royalty stayed · 8.8 Booking.com' },
-      { name: 'Meliá Bilbao', note: 'Meliá brand — contemporary tower beside the Guggenheim, spa, outdoor pool, city-view rooms · 8.7 Booking.com' }
+      { name: 'Meliá Bilbao', note: 'Meliá brand — contemporary tower beside the Guggenheim, spa, outdoor pool, city-view rooms · 8.7 Booking.com' },
+      { name: 'Hotel Miró', note: 'Independent boutique — Alameda Mazarredo between the Guggenheim and Fine Arts Museum, spa with hot tub, fitness centre · 9.1 Booking.com', url: 'https://www.booking.com/hotel/es/mirohotel.html' },
+      { name: 'Hotel Ercilla de Bilbao, Autograph Collection', note: 'Marriott Autograph Collection — Calle Ercilla in the Ensanche, fitness centre, terrace, on-site Basque restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/es/gtercilla.html' }
     ] },
     'bologna': { h: [
       { name: 'I Portici Hotel Bologna', note: 'Preferred Hotels & Resorts — historic palazzo beneath the famous porticoes, Michelin-starred I Portici restaurant, spa · 9.2 Booking.com' },
@@ -3968,11 +3988,15 @@
     ] },
     'bora-bora': { h: [
       { name: 'Four Seasons Resort Bora Bora', note: 'Four Seasons brand — overwater bungalows on private Motu Tehotu islet, lagoon snorkel beach, coral-garden reef access · 9.5 Booking.com' },
-      { name: 'The St. Regis Bora Bora Resort', note: 'Marriott Luxury Collection — private islet on the Bora Bora lagoon, overwater villas, Deep Ocean Spa, Butler service · 9.4 Booking.com' }
+      { name: 'The St. Regis Bora Bora Resort', note: 'Marriott Luxury Collection — private islet on the Bora Bora lagoon, overwater villas, Deep Ocean Spa, Butler service · 9.4 Booking.com' },
+      { name: 'Le Bora Bora by Pearl Resorts', note: 'Pearl Resorts — Motu Tevairoa with overwater bungalows, private beach, spa, tennis court, lagoon water sports · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pf/bora-bora-pearl-beach-resort-spa.html' },
+      { name: 'InterContinental Bora Bora Le Moana Resort by IHG', note: 'IHG brand — Matira Point on the main island, overwater bungalows, private beach area, pool bar, diving and snorkelling · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pf/intercontinental-bora-bora-le-moana-resort.html' }
     ] },
     'bordeaux': { h: [
-      { name: 'InterContinental Bordeaux – Le Grand Hotel', note: 'IHG brand — 1780 neoclassical palazzo on Place de la Comédie, rooftop pool with Grand Théâtre views, Le Pressoir d\'Argent Gordon Ramsay restaurant · 9.0 Booking.com' },
-      { name: 'Burdigala Hotel by HappyCulture', note: 'HappyCulture — design hotel in the Golden Triangle quarter, Vinothèque wine bar, central to Saint-Pierre and Chartrons · 8.9 Booking.com' }
+      { name: 'InterContinental Bordeaux – Le Grand Hotel', note: "IHG brand — 1780 neoclassical palazzo on Place de la Comédie, rooftop pool with Grand Théâtre views, Le Pressoir d'Argent Gordon Ramsay restaurant · 9.0 Booking.com" },
+      { name: 'Burdigala Hotel by HappyCulture', note: 'HappyCulture — design hotel in the Golden Triangle quarter, Vinothèque wine bar, central to Saint-Pierre and Chartrons · 8.9 Booking.com' },
+      { name: 'Le Palais Gallien Hôtel & Spa', note: "Independent — 5-star townhouse on Rue Abbé de l'Epée in the city centre, heated indoor and seasonal outdoor pools, spa, garden · 8.9 Booking.com", url: 'https://www.booking.com/hotel/fr/le-palais-gallien.html' },
+      { name: 'Le Boutique Hotel & Spa', note: 'Independent — 5-star on Rue Lafaurie de Monbadon in the city centre, heated outdoor pool, spa with steam room, wine bar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/fr/le-boutique-bordeaux.html' }
     ] },
     'boston': { h: [
       { name: 'Four Seasons Hotel Boston', note: 'Four Seasons brand — Back Bay, indoor pool overlooking the Public Garden, Bristol Lounge, steps from Newbury Street · 9.2 Booking.com' },
