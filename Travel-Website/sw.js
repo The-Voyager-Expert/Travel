@@ -286,7 +286,8 @@
 /* 2026-08-07: Stop hours — single-segment listings now get the flat styled row too (🕐 Daily · 9:00am – 5:00pm / 🕐 Open 24h · every day), not just varied schedules. The first cut left uniform listings exactly as authored, which meant the feature was invisible on the 93 guides whose every stop is 'Daily 9-5' or 'Open 24/7' — Big-Island has 16 hours rows and not one of them is varied, so the guide looked completely unchanged. No chevron on these: there is nothing to expand. Coverage 142 -> 235 guides, 425 -> 3,486 rows. toolbar.js -> v202. CACHE to v309. */
 /* 2026-08-07: 🕵️ Scams & Traps moved to the bottom of the 🛡️ Safety dropdown (was second, right under Safety Guide). Owner request. One nav array feeds both the desktop flyout and the mobile hamburger, so the order moves on both surfaces in a single edit. toolbar.js -> v203. CACHE to v310. */
 /* 2026-08-07: Dark mode — four un-themed components, all the same root cause: a hardcoded light hex that never flipped. (1) --c-brand had no dark value, so the guide's primary accent (TRIP OVERVIEW, day headers, section titles, section left-borders, focus rings) stayed #8a6c1a at 2.97:1 on the dark card — now #c8a060, the gold the pills use, at 6.1:1; it is only ever a foreground, never a fill, so the flip is safe everywhere. (2) The global `a, a:visited` rule hardcoded #2867c4, so --c-link's dark value #5a9aee reached nothing and body links sat at 2.68:1 — now var(--c-link), same hex in light, and validate_itinerary's CANONICAL_LINK_BLUE check still passes because it resolves var() against the light :root. (3) The mobile hotel card pinned color:#8a6c1a !important, which beat the dark #ccc8c0 override — now var(--c-pill-text). (4) New --c-navbtn-bd / --c-navbtn-text for the prev/next chevrons, which rendered as white boxes. Sydney measures clean in dark via the new validate_dark_mode.py; light mode verified byte-identical by rendering both schemes before/after and diffing computed styles. guide-style.css -> v111, web-travel-style.css -> v12. CACHE to v311. */
-var CACHE = 'travel-cache-v311';
+/* 2026-08-08: Open-right-now row — the "🕐 {City} · {time}" label now inks exactly like the "Open right now" pill beside it. It was the row's only un-matched element: --c-text-muted (#555) at the default weight 400, against the pill's --c-action-text (#5a3c0e) at 600, so on the warm card it read as a faint caption rather than the pill's counterpart — owner reported it as barely visible. Label picks up font-weight 600, color var(--c-action-text) and letter-spacing 0.01em; 12px and tabular-nums were already shared. Computed styles on Melbourne now diff clean across all four properties. Dark mode needs no override — --c-action-text already flips to #c8a060. guide-style.css -> v112. CACHE to v312. */
+var CACHE = 'travel-cache-v312';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -294,7 +295,7 @@ var CACHE = 'travel-cache-v311';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 111, 'toolbar.js': 203, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 112, 'toolbar.js': 203, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
