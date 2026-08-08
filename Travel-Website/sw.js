@@ -358,7 +358,9 @@
 /* 2026-08-08: Columbia hotel alternatives — added Booking.com url fields to existing 2 hotels (Hotel Trundle, Hilton Columbia Center) + 2 new hotels (Hyatt Place Columbia/Downtown/The Vista, SpringHill Suites Columbia Downtown The Vista) to reach 4-hotel minimum; removed "Best Of" from Columbia data-no-entries (city IS in CITY_BEST_OF_MAP). toolbar.js -> v244. CACHE to v381. */
 /* 2026-08-08: desktop-ux-fix — correct stale :visited hex for stats city links. web-travel-style.css had `color: #1a1917` for a.rank-city, a.city-link, a.bucket-name, a.bar-country :visited but --text is #3d3a32 in :root (not #1a1917, the old palette value). Browsers ignore var() in :visited, so these links turned gold (#8a6c1a) on click. Fixed to #3d3a32. brain_check _VAR_TO_HEX["--text"] corrected. Per-page fixes: Trips.html trip-jump-pill, Destination-Records.html rank-city, Festival-Finder.html ff-cl-city. web-travel-style.css -> v15. CACHE to v382. */
 /* 2026-08-08: Oxford hotel alternatives — added Booking.com url fields to all 4 hotels (Le Manoir, Randolph Hotel updated to Graduate by Hilton brand, Malmaison Oxford, Old Bank Hotel); removed erroneous "Best Of" from Oxford data-no-entries. toolbar.js -> v245. CACHE to v383. */
-var CACHE = 'travel-cache-v383';
+/* 2026-08-08: desktop-ux-fix batch 2 — web-travel-style.css :visited comment block reworded + reformatted (editorial only, no functional CSS change). Separate bump needed because commit d113a2c4 modified web-travel-style.css after the v15 bump already landed in d6160990. web-travel-style.css -> v16. CACHE to v384. */
+/* 2026-08-08: Palm-Desert hotel alternatives — added Booking.com url fields + 2 new hotels (JW Marriott Desert Springs, La Quinta Resort & Club Curio Collection) to reach 4-hotel minimum; removed erroneous "Best Of" from Palm-Desert data-no-entries. toolbar.js -> v246. CACHE to v385. */
+var CACHE = 'travel-cache-v385';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -366,7 +368,7 @@ var CACHE = 'travel-cache-v383';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 148, 'toolbar.js': 245, 'mobile.css': 68, 'web-travel-style.css': 15, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 148, 'toolbar.js': 246, 'mobile.css': 68, 'web-travel-style.css': 16, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
