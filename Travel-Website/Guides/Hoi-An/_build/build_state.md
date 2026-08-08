@@ -43,7 +43,7 @@ Last updated: 2026-07-04
 - [x] Day Trips by Train - Extra Section.html
 - [x] Michelin Restaurants - Extra Section.html
 - [x] Heads Up - Extra Section.html
-- [x] Claude Inspiration - Extra Section.html
+- [x] Worth Knowing - Extra Section.html
 
 ## Phase 6 — Ship gate
 - [x] Brain/Reference/Ship Checklist.html

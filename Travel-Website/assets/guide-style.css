@@ -35,6 +35,33 @@ body { opacity: 0; transition: none; }
   --c-brand-pale:    var(--c-warm-bg);
   --c-brand-hover:   #faefd8;
 
+  /* ── Pill palette (2026-08-07) — the Trip Overview chip family: section-nav
+     pills, READ ABOUT, the ICS action row, the collapse toggle, stop-duration
+     and open-now chips. These were hardcoded cream (#fdf8f0) + dark-gold text,
+     so in dark mode the whole pill grid stayed near-white on a black page —
+     the brightest thing on screen. Routing them through tokens lets the dark
+     block below flip fill and text together; the light values here are the
+     exact hexes they replaced, so light mode is unchanged.
+     Dark text is #c8a060 (the palette's existing --c-section-head gold):
+     6.1:1 on the dark pill fill, 6.6:1 on --c-next-bg — both clear AA. ── */
+  --c-pill-bg:        #fdf8f0;
+  --c-pill-hover:     #faefd8;
+  --c-pill-active:    #f5e8c8;
+  --c-pill-text:      #8a6c1a;
+  --c-pill-bd:        rgba(138,108,26,.25);
+  --c-pill-bd-hover:  rgba(138,108,26,.45);
+  --c-pill-bd-active: rgba(138,108,26,.6);
+  --c-action-text:    #5a3c0e;   /* ICS action row / toggle / duration chips — bolder than pill text */
+  --c-action-press:   #e5ddc8;
+
+  /* Floating controls — day-jump ("8 days"), scroll-to-top, prev/next nav pills.
+     Same story as the pills: hardcoded #fff, so they stayed white blobs on the
+     dark page. Kept separate from --c-pill-* because their light fill is pure
+     white and their border is solid #c8a44a, not a gold tint. */
+  --c-float-bg:       #ffffff;
+  --c-float-bd:       #c8a44a;
+  --c-float-text:     #8a6c1a;
+
   /* ── Extras-section box palettes — each section has its own tokens so any
      one can be recolored independently. Change bg + border here; the
      ID-scoped rules below pick them up automatically. (2026-05-06) ── */
@@ -345,7 +372,7 @@ a:hover { text-decoration: underline; }
   background: var(--c-next-bg);
   border: 1px solid var(--c-next-border);
   border-radius: 6px;
-  color: #5a3c0e;
+  color: var(--c-action-text);
   font-size: 15px;
   font-weight: normal;
   letter-spacing: 0.01em;
@@ -355,8 +382,8 @@ a:hover { text-decoration: underline; }
 }
 @media (hover: hover) {
   .overview-toggle-btn:hover {
-    background: #faefd8;
-    border-color: rgba(138,108,26,.45);
+    background: var(--c-pill-hover);
+    border-color: var(--c-pill-bd-hover);
   }
 }
 /* § 6 extras navigation pills — Trip Overview.html § 6, Formatting.html#sec-colors § 17.
@@ -377,7 +404,7 @@ a:hover { text-decoration: underline; }
 .overview-extras > span { display: none; } /* legacy leading "|" markup — chips need no separator */
 .overview-extra-link {
   display: inline-block;
-  color: var(--c-brand);
+  color: var(--c-pill-text);
   background: none;
   border: none;
   border-radius: 0;
@@ -388,17 +415,17 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
   width: auto;
 }
-.overview-extra-link:visited { color: #8a6c1a; }
-.overview-extra-link:active  { color: var(--c-brand); }
+.overview-extra-link:visited { color: var(--c-pill-text); }
+.overview-extra-link:active  { color: var(--c-pill-text); }
 .overview-extra-link:focus   { outline: none; }
 .overview-extra-link:hover   { text-decoration: underline; }
 .overview-extras .overview-extra-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--c-brand);
-  background: #fdf8f0;
-  border: 1px solid rgba(138,108,26,.25);
+  color: var(--c-pill-text);
+  background: var(--c-pill-bg);
+  border: 1px solid var(--c-pill-bd);
   border-radius: 20px;
   padding: 6px 12px;
   cursor: pointer;
@@ -411,17 +438,17 @@ a:hover { text-decoration: underline; }
     padding: 4px 10px;
   }
 }
-.overview-extras .overview-extra-link:visited { color: #8a6c1a; }
+.overview-extras .overview-extra-link:visited { color: var(--c-pill-text); }
 .overview-extras .overview-extra-link:hover   { text-decoration: none; }
 @media (hover: hover) {
   .overview-extras .overview-extra-link:hover {
-    background: #faefd8;
-    border-color: rgba(138,108,26,.45);
+    background: var(--c-pill-hover);
+    border-color: var(--c-pill-bd-hover);
   }
 }
 .overview-extras .overview-extra-link:active {
-  background: #f5e8c8;
-  border-color: rgba(138,108,26,.6);
+  background: var(--c-pill-active);
+  border-color: var(--c-pill-bd-active);
   transform: scale(.97) translateY(1px);
 }
 /* Grouped runs — the section-nav chips split into short labelled runs instead of
@@ -469,7 +496,7 @@ a:hover { text-decoration: underline; }
 #ics-pill-row > .overview-extra-link {
   border: 1px solid var(--c-next-border);
   background: var(--c-next-bg);
-  color: #5a3c0e;
+  color: var(--c-action-text);
   letter-spacing: 0.01em;
 }
 #ics-pill-row > .overview-extra-link:not(:first-child) {
@@ -493,10 +520,10 @@ a:hover { text-decoration: underline; }
 #ams-advisory .ams-read-more:visited { color:var(--c-alt-border); }
 #ams-advisory .ams-read-more:hover   { text-decoration:underline; }
 
-#ics-cal-pill, #ics-map-pill, #tve-offline-btn, #tve-visited-btn, #tve-preview-btn { color: #5a3c0e; }
-#ics-cal-pill:visited, #ics-map-pill:visited, #tve-offline-btn:visited, #tve-visited-btn:visited { color: #5a3c0e; }
+#ics-cal-pill, #ics-map-pill, #tve-offline-btn, #tve-visited-btn, #tve-preview-btn { color: var(--c-action-text); }
+#ics-cal-pill:visited, #ics-map-pill:visited, #tve-offline-btn:visited, #tve-visited-btn:visited { color: var(--c-action-text); }
 #ics-cal-pill:active, #ics-map-pill:active, #tve-offline-btn:active, #tve-visited-btn:active, #tve-preview-btn:active,
-#ics-cal-pill.tve-pressed, #ics-map-pill.tve-pressed, #tve-offline-btn.tve-pressed, #tve-visited-btn.tve-pressed { background: #e5ddc8; }
+#ics-cal-pill.tve-pressed, #ics-map-pill.tve-pressed, #tve-offline-btn.tve-pressed, #tve-visited-btn.tve-pressed { background: var(--c-action-press); }
 /* "Toggled-on" states — I've Been (visited) and Save-for-offline (saved) share the
    same terracotta-bold treatment so the row reads one consistent "this is on" language. */
 #tve-visited-btn.tve-been, #tve-offline-btn.tve-saved { background: var(--c-next-bg); border-color: #b85c2a; color: #b85c2a; font-weight: 700; }
@@ -508,7 +535,7 @@ a:hover { text-decoration: underline; }
 #ics-pill-row > #tve-visited-btn.tve-been,
 #ics-pill-row > #tve-offline-btn.tve-saved { border-left-width: 1px; margin-left: -1px; }
 @media (hover: hover) {
-  #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover, #tve-preview-btn:hover { background: #faefd8; border-color: rgba(138,108,26,.45); }
+  #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover, #tve-preview-btn:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
 }
 /* Transient confirmation toast (Save for offline). Fixed bottom-centre, fades in,
    auto-dismisses. Dark warm bg reads in both light and dark mode. */
@@ -832,13 +859,16 @@ a:hover { text-decoration: underline; }
   padding: 2px 10px 2px 8px;
   font-size: 12px;
   font-weight: 700;
-  color: #5a3c0e;
+  color: var(--c-action-text);
   letter-spacing: 0.01em;
   margin-left: auto;
   white-space: nowrap;
   flex-shrink: 0;
 }
-/* ── Mark Stop — checkbox injected by toolbar.js into each .stop-header ─── */
+/* ── Mark Stop — checkbox injected by toolbar.js into each .stop-header.
+   The unchecked circle carries a faint ✓ so it reads as a tick-box rather
+   than a decorative dot; the checked state is a SOLID terracotta fill with a
+   white ✓ so "done" is unmistakable and never mistaken for "disabled". ─── */
 .stop-mark-btn {
   flex-shrink: 0;
   margin-left: 8px;
@@ -853,17 +883,17 @@ a:hover { text-decoration: underline; }
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: transparent;
+  color: #c8baa8;
   transition: border-color .15s, background .15s, color .15s;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
 }
-.stop-mark-btn:hover { border-color: #b85c2a; }
+.stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
 .stop-block.stop-done .stop-mark-btn {
   border-color: #b85c2a;
-  background: var(--c-next-bg);
-  color: #b85c2a;
+  background: #b85c2a;
+  color: #fff;
 }
 .stop-block.stop-done .stop-header .stop-num,
 .stop-block.stop-done .stop-header .stop-name,
@@ -915,7 +945,8 @@ a:hover { text-decoration: underline; }
   border-radius: 4px;
   padding: 3px 9px;
   color: #8a8070;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 1.2;
   font-weight: 500;
   letter-spacing: .01em;
   text-decoration: none;
@@ -1376,6 +1407,18 @@ div.train .train-time   { padding: 2px 0; }
   border-radius: 0;
   padding: 10px 14px;
 }
+/* Worth Knowing headline — the per-guide creative title. The section title
+   itself is fixed ("✨ Worth Knowing", injected by the :empty::before rule
+   below) so the pill and the heading always match; the guide's own line moves
+   down here as the first row of the white card, where it reads as a headline
+   over the prose rather than as a second section name. (2026-08-07) */
+.claude-inspiration .wk-headline {
+  font-weight: 700;
+  font-size: var(--fs-lead, 16px);
+  line-height: 1.4;
+  color: var(--c-text-primary);
+  padding-bottom: 2px;
+}
 .claude-inspiration p:first-of-type { border-radius: 4px 4px 0 0; padding-top: 12px; }
 .claude-inspiration p:last-of-type  { border-radius: 0 0 4px 4px; padding-bottom: 12px; }
 .claude-inspiration p:only-of-type  { border-radius: 4px; }
@@ -1516,6 +1559,7 @@ div.train .train-time   { padding: 2px 0; }
 #heads-up           .extras-title:empty::before { content: "❗️ Heads Up"; }
 #food-delivery      .extras-title:empty::before { content: "🚗 Food Delivery"; }
 #also-on-this-site  .extras-title:empty::before { content: "💥 Also on this site"; }
+#claude-inspiration .extras-title:empty::before { content: "✨ Worth Knowing"; }
 
 /* ── extras-sub title color — matches each section's border token.
    Same token drives the left stripe, the big title, and the sub-titles.
@@ -2021,6 +2065,22 @@ div.train .train-time   { padding: 2px 0; }
     --c-card-shadow:   0 2px 8px rgba(0, 0, 0, 0.25);
     --c-warm-bg:       #242220;
     --c-brand-hover:   #2e2a1e;
+    /* Pill palette — dark. Fill is --c-card-bg so a pill reads as a raised tile
+       on the #1a1917 page, the same elevation language the section cards use.
+       Text/border are the warm gold already in this palette (--c-section-head),
+       not the light-mode #8a6c1a, which sits at 3.0:1 on this fill. */
+    --c-pill-bg:        #2a2825;
+    --c-pill-hover:     #332f2a;
+    --c-pill-active:    #3d3830;
+    --c-pill-text:      #c8a060;
+    --c-pill-bd:        rgba(200,160,96,.30);
+    --c-pill-bd-hover:  rgba(200,160,96,.50);
+    --c-pill-bd-active: rgba(200,160,96,.65);
+    --c-action-text:    #c8a060;
+    --c-action-press:   #3d3830;
+    --c-float-bg:       #2a2825;
+    --c-float-bd:       #7a6430;
+    --c-float-text:     #c8a060;
     --c-text-primary:  #e8e5e0;
     --c-text-muted:    #999;
     --c-link:          #5a9aee;
@@ -2047,7 +2107,7 @@ div.train .train-time   { padding: 2px 0; }
     --c-alt-text:      #a8cce0;
   }
   ::selection { background: rgba(200,160,64,.3); }
-  .stop-mark-btn { border-color: #5a5040; }
+  .stop-mark-btn { border-color: #5a5040; color: #5a5040; }
   .title-city, .title-country { color: #e8e5e0; }
   .title-hotel, .title-address { color: #ccc8c0; }
   .title-address::before { color: #ccc8c0; }
@@ -2069,7 +2129,7 @@ div.train .train-time   { padding: 2px 0; }
   .nearby-guide-pill { background: var(--c-card-bg); color: #b8962a; border-color: #8a7a40; }
   .guide-nav a { color: var(--c-title-bg); }
   .toolbar-nav a,
-  .toolbar-essentials a { background-color: #fff; color: var(--c-title-bg); }
+  .toolbar-essentials a { background-color: var(--c-card-bg); color: var(--c-title-bg); }
   .essentials-link:hover { background: rgba(200,160,64,.08); }
   .claude-inspiration.theme-sage { --ci-bg: #1e2a26; }
   .lounge-arrival-chip { background: #1a2e30; color: #7ecfd8; }
@@ -2248,13 +2308,13 @@ div.train .train-time   { padding: 2px 0; }
     display: flex !important; align-items: center; justify-content: center;
     text-align: center; white-space: normal !important; line-height: 1.15;
     padding: 4px 6px !important;
-    background: #fdf8f0;
-    border: 1px solid rgba(138,108,26,.25);
+    background: var(--c-pill-bg);
+    border: 1px solid var(--c-pill-bd);
     border-radius: 20px;
   }
   .overview-extra-link:hover, .overview-extra-link:active {
-    background: #faefd8 !important;
-    border-color: rgba(138,108,26,.45) !important; color: var(--c-brand) !important; text-decoration: none !important;
+    background: var(--c-pill-hover) !important;
+    border-color: var(--c-pill-bd-hover) !important; color: var(--c-pill-text) !important; text-decoration: none !important;
   }
   /* Pipe separator (::before content:'|') and the leading <span>|</span> markup
      were retired site-wide (desktop chips need no separator) — the base rule
@@ -2774,9 +2834,9 @@ body.index-page .overview-day:hover .idx-city { color: var(--c-brand); }
   align-items: center;
   gap: 4px;
   font-size: 13px;
-  color: #8a6c1a;
-  background: #ffffff;
-  border: 0.5px solid #c8a44a;
+  color: var(--c-float-text);
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
   border-radius: 6px;
   padding: 6px 12px;
   text-decoration: none;
@@ -2786,7 +2846,7 @@ body.index-page .overview-day:hover .idx-city { color: var(--c-brand); }
 /* Prevent visited color-drift: browser default turns visited links purple/blue.
    Pin visited to the rest-state gold so nothing changes after a click.
    (Owner rule 2026-07-28 — pill visited-color audit.) */
-a.also-on-this-site-pill:visited { color: #8a6c1a; }
+a.also-on-this-site-pill:visited { color: var(--c-float-text); }
 @media (hover:hover) {
   a.also-on-this-site-pill:hover {
     background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
@@ -2843,9 +2903,9 @@ a.also-on-this-site-pill:active {
   align-items: center;
   gap: 4px;
   font-size: 13px;
-  color: #8a6c1a;
-  background: #ffffff;
-  border: 0.5px solid #c8a44a;
+  color: var(--c-float-text);
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
   border-radius: 6px;
   padding: 6px 12px;
   text-decoration: none;
@@ -2853,7 +2913,7 @@ a.also-on-this-site-pill:active {
   transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
 }
 /* Visited-color lock — pin to rest gold so nothing turns purple/blue. */
-a.nearby-guide-pill:visited { color: #8a6c1a; }
+a.nearby-guide-pill:visited { color: var(--c-float-text); }
 @media (hover:hover) {
   a.nearby-guide-pill:hover {
     background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
@@ -2876,7 +2936,7 @@ a.nearby-guide-pill:active {
    Placed AFTER the base rules so media query wins without needing !important fights. */
 @media (max-width: 600px) {
   .also-on-this-site-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; grid-column: span 2; }
+  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid var(--c-float-bd); border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
   /* Stats Across US and European Train Guide are "long" anchor pills that must fill
      the row so the mobile-render validator's lonely-pill check passes.
      !important is required: _fixPillGridOrphans (toolbar.js) applies inline
@@ -2887,7 +2947,7 @@ a.nearby-guide-pill:active {
   /* Nearby Guides: same 6-col grid as also-on-this-site; orphans fixed by
      _fixPillGridOrphans in toolbar.js (CSS :nth-child grid-column breaks on iOS Safari). */
   .nearby-guides-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .nearby-guide-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: #ffffff; font-size: 12px; grid-column: span 2; }
+  .nearby-guide-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid var(--c-float-bd); border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
 }
 
 /* ── Also in [Country] — injected by toolbar.js after #nearby-guides ─────────────
@@ -2897,13 +2957,13 @@ a.nearby-guide-pill:active {
 .also-in-country-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
 .also-in-country-pill {
   display: inline-flex; font-family: var(--font-family); align-items: center;
-  gap: 4px; font-size: 13px; color: #8a6c1a; background: #ffffff;
-  border: 0.5px solid #c8a44a; border-radius: 6px; padding: 6px 12px;
+  gap: 4px; font-size: 13px; color: var(--c-float-text); background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd); border-radius: 6px; padding: 6px 12px;
   text-decoration: none; cursor: pointer;
   transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
 }
 /* Visited-color lock — pin to rest gold so nothing turns purple/blue. */
-a.also-in-country-pill:visited { color: #8a6c1a; }
+a.also-in-country-pill:visited { color: var(--c-float-text); }
 @media (hover:hover) {
   a.also-in-country-pill:hover {
     background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
@@ -2921,8 +2981,8 @@ a.also-in-country-pill:active {
   .also-in-country-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
   .also-in-country-pill { display: flex; align-items: center; justify-content: center;
     text-align: center; white-space: normal; line-height: 1.15; height: 46px;
-    padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px;
-    background: #ffffff; font-size: 12px; grid-column: span 2; }
+    padding: 4px 6px; border: 0.5px solid var(--c-float-bd); border-radius: 6px;
+    background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
   /* Orphan layout: JS-driven via _fixPillGridOrphans (toolbar.js) — same as also-on-this-site. */
 }
 
@@ -3047,10 +3107,10 @@ a.also-in-country-pill:active {
   gap: 5px;
   height: 36px;
   padding: 0 14px;
-  background: #fff;
-  border: 0.5px solid #c8a44a;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
   border-radius: 18px;
-  color: #8a6c1a;
+  color: var(--c-float-text);
   font-size: 13px;
   font-weight: 700;
   font-family: inherit;
@@ -3077,7 +3137,7 @@ a.also-in-country-pill:active {
 .day-jump-overlay.open { display: flex; }
 .day-jump-card {
   position: relative;
-  background: #fdf8f0;
+  background: var(--c-pill-bg);
   border-radius: 14px;
   width: 300px;
   max-width: 90vw;
@@ -3148,9 +3208,9 @@ a.also-in-country-pill:active {
   height: 32px;
   margin-top: 1px;
   border-radius: 50%;
-  background: #fff;
-  border: 0.5px solid #c8a44a;
-  color: #8a6c1a;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  color: var(--c-float-text);
   font-size: 14px;
   font-weight: 800;
   display: flex;
@@ -3170,7 +3230,7 @@ a.also-in-country-pill:active {
 .day-jump-lbl {
   font-size: 14px;
   font-weight: 700;
-  color: #8a6c1a;
+  color: var(--c-float-text);
   line-height: 1.2;
 }
 .day-jump-preview {
@@ -3193,9 +3253,9 @@ a.also-in-country-pill:active {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #fff;
-  border: 0.5px solid #c8a44a;
-  color: #8a6c1a;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  color: var(--c-float-text);
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(0,0,0,.14);
   display: flex;
@@ -3235,10 +3295,10 @@ a.also-in-country-pill:active {
   gap: 5px;
   height: 36px;
   padding: 0 14px;
-  background: #fff;
-  border: 0.5px solid #c8a44a;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
   border-radius: 18px;
-  color: #8a6c1a;
+  color: var(--c-float-text);
   font-size: 13px;
   font-weight: 700;
   font-family: inherit;
@@ -3286,7 +3346,7 @@ a.also-in-country-pill:active {
   border-radius: 14px;
   border: 1.5px solid #bba870;
   background: var(--c-next-bg);
-  color: #5a3c0e;
+  color: var(--c-action-text);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
