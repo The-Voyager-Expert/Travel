@@ -1577,7 +1577,7 @@
 
     /* ── Per-guide stops map pill — injected when {slug}-stops-map.html exists.
        Appended at the END of the .gel overview-extras row, after all static
-       pills (including ✨ Claude Inspiration). Uses a HEAD request so the guide
+       pills (including ✨ Worth Knowing). Uses a HEAD request so the guide
        HTML never needs editing; the pill appears automatically once the map file
        has been generated. No-op if the file is absent (404). */
     function injectStopsMapPill() {
@@ -5874,6 +5874,54 @@
     document.addEventListener('DOMContentLoaded', _injectBestOfJump);
   } else {
     _injectBestOfJump();
+  }
+
+  /* ── Map pages: "← All Guides" pill (MOBILE ONLY) ─────────────────────────
+     World-Map and the seven region maps fill the viewport with Leaflet and
+     ship exactly one on-screen control between them (#visited-pill-mobile,
+     World-Map only). Leaving the map relied entirely on the branch in
+     toggleHamMenu() that turns the hamburger's CLOSE tap into "go to the
+     Guides Index" — correct behaviour, but nothing on screen says so, and a
+     reader has no reason to expect a close button to navigate. This makes
+     that exact destination visible, using the same fixed-pill family as
+     #tve-back-to-guide / #tve-back-to-byg.
+
+     Per-guide stops-maps are excluded: they already carry both the "‹ City"
+     back-strip and the #tve-nav-back history pill.
+
+     Bottom-LEFT so it clears #visited-pill-mobile, which is centred
+     (left:50%, translateX(-50%), ~110px wide) — no overlap at 393px. */
+  function _injectMapBackPill() {
+    if (!document.getElementById('map')) return;
+    if (/-stops-map\.html$/.test(location.pathname)) return;
+    /* World-Map.html?embed=1 strips the toolbar and the visited pill for
+       embedding; this pill is chrome too, so it goes with them. */
+    if (location.search.indexOf('embed=1') !== -1) return;
+
+    var css = document.createElement('style');
+    css.textContent =
+      '#tve-map-back{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));' +
+      'left:16px;z-index:1400;display:inline-flex;align-items:center;height:34px;' +
+      'padding:0 14px;background:#fff;border:1.5px solid #c8a44a;border-radius:17px;' +
+      'font-size:13px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
+      'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
+      'white-space:nowrap;transition:color .15s,border-color .15s,box-shadow .15s}' +
+      '#tve-map-back:hover{color:#b85c2a;border-color:#b85c2a;' +
+      'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
+      'body.tve-ham-open #tve-map-back{display:none!important}' +
+      '@media(min-width:601px){#tve-map-back{display:none!important}}';
+    document.head.appendChild(css);
+
+    var pill = document.createElement('a');
+    pill.id = 'tve-map-back';
+    pill.href = base + 'index.html';
+    pill.textContent = '← All Guides';
+    document.body.appendChild(pill);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectMapBackPill);
+  } else {
+    _injectMapBackPill();
   }
 
   /* ── Share-this-stop button — guide pages only ───────────────────────────

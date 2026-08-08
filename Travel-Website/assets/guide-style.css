@@ -865,13 +865,19 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
   flex-shrink: 0;
 }
-/* ── Mark Stop — checkbox injected by toolbar.js into each .stop-header.
-   The unchecked circle carries a faint ✓ so it reads as a tick-box rather
-   than a decorative dot; the checked state is a SOLID terracotta "✓ Visited"
-   pill so "done" is unmistakable and never mistaken for "disabled". ─── */
+/* ── Mark Stop — checkbox injected by toolbar.js directly after .stop-name,
+   so it sits against the title rather than out on the right rail with the
+   share and star. Two states, and they swap places rather than stacking:
+   unchecked is a small ring with a faint ✓ inside; checked replaces that ring
+   entirely with the plain brown word "Visited" — no fill, no border, no
+   glyph. The earlier solid-terracotta pill read far too loud sitting next to
+   every marked stop, which is the whole reason this is text now. ─── */
 .stop-mark-btn {
   flex-shrink: 0;
   margin-left: 8px;
+  /* The spacer for the whole header — see toolbar.js _injectMarkStops. The
+     name sizes to its content, so this is what pushes chip/share/star right. */
+  margin-right: auto;
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -890,26 +896,35 @@ a:hover { text-decoration: underline; }
   -webkit-user-select: none;
 }
 .stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
-/* Checked: the circle grows into a "✓ Visited" pill. The word only appears
-   once a stop is marked — every stop carrying it permanently would be noise —
-   but it is what makes the state self-explaining on mobile, where there is no
-   hover and therefore no tooltip. */
+/* The chip's own margin-left:auto would split the free space with the
+   button's margin-right:auto and strand the chip mid-row — the button is the
+   only spacer. A fixed 8px keeps a gap on a full row, where the auto margin
+   collapses to nothing and "Visited" would otherwise touch the chip. */
+.stop-header .stop-mark-btn ~ .stop-dur { margin-left: 8px; }
+/* Checked: the ring is gone and the word stands in its place. font-size:0
+   suppresses the ✓ text node; ::after restores a size for the label, so the
+   swap needs no second element and no JS beyond the class toggle. Height is
+   pinned at 20px so the row does not jump between the two states. */
 .stop-block.stop-done .stop-mark-btn {
-  border-color: #b85c2a;
-  background: #b85c2a;
-  color: #fff;
+  border: none;
+  background: none;
+  border-radius: 0;
   width: auto;
-  min-width: 20px;
-  padding: 0 8px;
-  gap: 4px;
-  border-radius: 10px;
+  padding: 0;
+  font-size: 0;
+  /* Same grey as the "NOT REQUIRED" badge on Visa-Processing-Times (--muted
+     in web-travel-style.css). Literal, not var(--muted): guides do not load
+     web-travel-style.css, so the token is not resolvable here. Dark-mode
+     counterpart #9a9690 is in the dark block further down. */
+  color: #6a6660;
 }
 .stop-block.stop-done .stop-mark-btn::after {
   content: "Visited";
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
+.stop-block.stop-done .stop-mark-btn:hover { color: #b85c2a; }
 .stop-block.stop-done .stop-header .stop-num,
 .stop-block.stop-done .stop-header .stop-name,
 .stop-block.stop-done .stop-header .stop-dur { opacity: 0.4; }
@@ -955,12 +970,15 @@ a:hover { text-decoration: underline; }
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  /* Warm fill — the site-wide light-brown card token, not a bespoke colour, so
-     the chip tints with every other warm surface (owner 2026-08-07). It reads
-     as light brown because the chip sits on the WHITE prose card. Note the
-     selector carries no pill/btn/chip token, so brain_check's warm-pill ban
+  /* Fill — the GREY badge recipe (owner 2026-08-07, pointed at the NOT REQUIRED
+     badge on Trip-Essentials/Visa-Processing-Times.html: .spd-free). Same tint,
+     but the alpha is raised from .07 to .145 because that badge sits on the
+     page's warm #f5f4f0 while this chip sits on the WHITE prose card — at .07
+     over white the chip washes out to #f7f5ef. .145 over white composites to
+     the same #eeebe1 the badge actually shows. Note the selector carries no
+     pill/btn/chip token, so brain_check's warm-pill ban
      (check_no_beige_pill_button Rule B) does not apply here. */
-  background: var(--c-warm-bg);
+  background: rgba(138, 108, 26, 0.145);
   border: 1px solid #ddd8ce;
   border-radius: 4px;
   padding: 3px 9px;
@@ -1385,10 +1403,10 @@ div.train .train-time   { padding: 2px 0; }
     margin-right: -28px;
   }
 }
-/* ── Claude Inspiration — same card shape as .extras-section.
+/* ── Worth Knowing (class stays .claude-inspiration) — same card shape as .extras-section.
    <p> entries get breathing room; last <p> strips its bottom margin
    so the card padding is the only space at the foot. */
-/* ── Claude Inspiration color themes ─────────────────────────────────────────
+/* ── Worth Knowing color themes ─────────────────────────────────────────
    Claude picks a theme class, an emoji, and a title for each guide.
    No inline styles needed — just add one theme class to the div.
    Available themes (one per guide, chosen to match the city's personality):
@@ -2127,6 +2145,7 @@ div.train .train-time   { padding: 2px 0; }
   }
   ::selection { background: rgba(200,160,64,.3); }
   .stop-mark-btn { border-color: #5a5040; color: #5a5040; }
+  .stop-block.stop-done .stop-mark-btn { color: #9a9690; }
   .title-city, .title-country { color: #e8e5e0; }
   .title-hotel, .title-address { color: #ccc8c0; }
   .title-address::before { color: #ccc8c0; }
