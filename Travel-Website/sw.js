@@ -272,7 +272,9 @@
 /* 2026-08-07: Quick Facts strip — toolbar.js injects #tve-quick-facts above TRIP OVERVIEW on every guide: 🗣️ language · 💰 cost tier · 🔌 plug type · 🌤️ best months, read from the new assets/quick_facts.json (built by Brain/scripts/build/build_quick_facts.py, which joins Budget-Guide + Plug-Adapter-Guide + When-to-Go + climate.json per guide). Zero guide HTML changes. toolbar.js → v192. CACHE to v294. */
 /* 2026-08-07: Copy Day as Text — toolbar.js injects a "Copy day" button into every .day-header on guide pages; writes the day to the clipboard as plain text (day label, From-Hotel line, then each stop with number, name, address and the transit hop to the next stop, ending in a #dayN deep link). Descriptions/hours/photos deliberately excluded — the paste target is Notes or WhatsApp. Own CSS injected from toolbar.js, so no guide-style.css dependency. Zero guide HTML changes. toolbar.js → v193. CACHE to v295. */
 /* 2026-08-07: "Also a day trip from" row — toolbar.js injects #tve-also-day-trip-from at the foot of TRIP OVERVIEW on the 62 guides that other guides list as a train day trip ("Also a day trip from  Bologna / Pisa / Rome / Siena", each city linked). Reads the new assets/day_trip_from.json (reverse index emitted by Brain/scripts/build/build_day_trips.py from the same parse that builds Day-Trips.html). Self-contained variant — the CSS ships inside toolbar.js as <style id="tve-adtf-css">, using --c-text-muted / --c-index-accent with literal fallbacks so the row follows dark mode. Zero guide HTML changes. toolbar.js -> v194. CACHE to v296. */
-var CACHE = 'travel-cache-v296';
+/* 2026-08-07: ✨ Worth Knowing (was ✨ Claude Inspiration) — section title is now CSS-injected via #claude-inspiration .extras-title:empty::before so the heading always matches the Extras-row pill; each guide's own creative line moves into <p class="wk-headline"> as the first row of the white card. guide-style.css -> v104. CACHE to v297. */
+/* 2026-08-07: Mark Stop circle — the unchecked circle was an empty ring (color:transparent) that gave no clue what it did, and the checked state only dimmed the header, which read as "disabled". Unchecked now carries a faint #c8baa8 ✓ so it reads as a tick-box; checked fills SOLID #b85c2a with a white ✓; hover tints the ✓ terracotta; toolbar.js sets a title/aria-label that flips between "Mark as visited" and "Visited — click to unmark". guide-style.css -> v105, toolbar.js -> v195. CACHE to v298. */
+var CACHE = 'travel-cache-v298';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -280,7 +282,7 @@ var CACHE = 'travel-cache-v296';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 103, 'toolbar.js': 194, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 105, 'toolbar.js': 195, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
