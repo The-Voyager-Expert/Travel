@@ -284,7 +284,8 @@
 /* 2026-08-07: Mark Stop — BOTH states now wear the .stop-dur chip treatment so a stop header reads as one uniform line. Unchecked: the #c8baa8-on-transparent ring was barely visible against the page — now --c-next-bg fill, 1px --c-next-border hairline, --c-action-text checkmark (still a 20px circle). Checked: the plain grey word is now the full chip — same fill, hairline, ink, 20px radius, 12px/700 — computed-style verified identical to the neighbouring duration chip at both 393px and 1200px. All token-based, so the dark-mode override on .stop-mark-btn is gone (the tokens are already themed). guide-style.css -> v109. CACHE to v307. */
 /* 2026-08-07: 📖 Read more chip — font-weight 500 -> 700. Owner reported the chip's font "not matching" the NOT REQUIRED pill on Visa-Processing-Times and asked for the colour code to be copied. A computed-style diff of both elements showed all three colours were ALREADY byte-identical (text #6a6660, fill rgba(138,108,26,0.07), border rgba(106,102,96,0.4)) — the mismatch was weight, not colour: the pill inks at 700, the chip at 500, and thinner strokes in the same hex read as a paler grey. Only the weight moved; 14px and sentence case stay, since the pill's own 11px UPPERCASE would turn the label into "READ MORE" and break the approved Option E mockup. guide-style.css -> v110. CACHE to v308. */
 /* 2026-08-07: Stop hours — single-segment listings now get the flat styled row too (🕐 Daily · 9:00am – 5:00pm / 🕐 Open 24h · every day), not just varied schedules. The first cut left uniform listings exactly as authored, which meant the feature was invisible on the 93 guides whose every stop is 'Daily 9-5' or 'Open 24/7' — Big-Island has 16 hours rows and not one of them is varied, so the guide looked completely unchanged. No chevron on these: there is nothing to expand. Coverage 142 -> 235 guides, 425 -> 3,486 rows. toolbar.js -> v202. CACHE to v309. */
-var CACHE = 'travel-cache-v309';
+/* 2026-08-07: 🕵️ Scams & Traps moved to the bottom of the 🛡️ Safety dropdown (was second, right under Safety Guide). Owner request. One nav array feeds both the desktop flyout and the mobile hamburger, so the order moves on both surfaces in a single edit. toolbar.js -> v203. CACHE to v310. */
+var CACHE = 'travel-cache-v310';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -292,7 +293,7 @@ var CACHE = 'travel-cache-v309';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 110, 'toolbar.js': 202, 'mobile.css': 66, 'web-travel-style.css': 11, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 110, 'toolbar.js': 203, 'mobile.css': 66, 'web-travel-style.css': 11, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

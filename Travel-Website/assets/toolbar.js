@@ -346,10 +346,10 @@
     null,
     { group: '🛡️ Safety', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',      text: '🛡️ Safety Guide' },
-        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: '🕵️ Scams & Traps' },
         { href: base + 'Trip-Essentials/Vaccines.html',          text: '💉 Vaccines' },
         { href: base + 'Trip-Essentials/Tap-Water.html',         text: '🚰 Tap Water' },
         { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: '🛟 Travel Insurance' },
+        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: '🕵️ Scams & Traps' },
       ] },
     null,
     { group: '🪪 Visas', children: [
@@ -776,7 +776,7 @@
   /* ── Prev / Next — arrows flanking the .overview-title ───────────────────── */
   var btnStyle = 'display:inline-flex;align-items:center;justify-content:center;' +
     'width:30px;height:30px;border-radius:6px;border:1.5px solid var(--c-navbtn-bd,#c4b896);' +
-    'background:var(--c-float-bg,#ffffff);color:var(--c-muted,#6b6860);font-size:18px;line-height:1;' +
+    'background:var(--c-float-bg,#ffffff);color:var(--c-navbtn-text,#6b6860);font-size:18px;line-height:1;' +
     'padding:0;text-decoration:none;flex-shrink:0;';
 
   /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
