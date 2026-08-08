@@ -217,7 +217,7 @@ def main() -> int:
         for f in fails:
             print(f"    {FAIL} {f}")
     print(f"\n{total_failures} failure(s) across {len(guide_failures)} guide(s).")
-    print("Run Brain/scripts/validate_itinerary.py locally and fix all failures before pushing.")
+    print("Run Brain/scripts/validate/validate_itinerary.py locally and fix all failures before pushing.")
     return 1
 
 

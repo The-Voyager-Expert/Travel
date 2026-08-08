@@ -17,7 +17,7 @@ ships to users:
   climate        assets/climate.json + assets/weather.js (both Weather tabs)
   search index   assets/search_index.json              (guides list)
 
-This is the repo-resident SUBSET of Brain/scripts/validate_guide_coverage.py (the
+This is the repo-resident SUBSET of Brain/scripts/validate/validate_guide_coverage.py (the
 authoritative whole-fleet sweep, which additionally checks the two Brain-only
 authoring trackers — status-dots and the currency country map — that are never
 published and so can't reach users via a deploy). The Brain superset runs locally
@@ -236,7 +236,7 @@ def main() -> int:
     print("Each shipped guide must appear (with a working link) in the index card, "
           "FMAP, map pin, travel stats, safety guide, both Weather tabs, search, "
           "and have a <!-- also-on-this-site --> block.")
-    print("Fix locally with: python3 Brain/scripts/validate_guide_coverage.py")
+    print("Fix locally with: python3 Brain/scripts/validate/validate_guide_coverage.py")
     return 1
 
 
