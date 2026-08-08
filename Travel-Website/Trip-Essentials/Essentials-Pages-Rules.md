@@ -6,7 +6,7 @@ How the Trip Essentials pages behave. Covers the in-page search and the no-resul
 
 ## Pages with a search box
 
-Twenty-eight standalone pages carry an in-page search box, plus all 33 Best-of pages share one:
+Twenty-nine standalone pages carry an in-page search box, plus all 33 Best-of pages share one:
 
 | Page | Searches over | Section/grouping it collapses |
 |------|---------------|-------------------------------|
@@ -23,6 +23,7 @@ Twenty-eight standalone pages carry an in-page search box, plus all 33 Best-of p
 | `Cards-ATM.html` | card/country/topic entries | topic sections |
 | `Caribbean-Stats.html` | island rows | stat sections |
 | `City-Transit-Cards.html` | transit card rows | city groups |
+| `Disney-Parks.html` | timing-tip rows (by topic, park or resort) | trip-phase section labels |
 | `European-Train-Guide.html` | operator/country/route entries | operator sections |
 | `Europe-Stats.html` | country rows | stat sections |
 | `Luggage-Storage.html` | city cards | region sections |
