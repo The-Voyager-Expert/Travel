@@ -4123,8 +4123,8 @@
       { name: 'InterContinental Bora Bora Le Moana Resort by IHG', note: 'IHG brand — Matira Point on the main island, overwater bungalows, private beach area, pool bar, diving and snorkelling · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pf/intercontinental-bora-bora-le-moana-resort.html' }
     ] },
     'bordeaux': { h: [
-      { name: 'InterContinental Bordeaux – Le Grand Hotel', note: "IHG brand — 1780 neoclassical palazzo on Place de la Comédie, rooftop pool with Grand Théâtre views, Le Pressoir d'Argent Gordon Ramsay restaurant · 9.0 Booking.com" },
-      { name: 'Burdigala Hotel by HappyCulture', note: 'HappyCulture — design hotel in the Golden Triangle quarter, Vinothèque wine bar, central to Saint-Pierre and Chartrons · 8.9 Booking.com' },
+      { name: 'InterContinental Bordeaux – Le Grand Hotel', note: "IHG brand — 1780 neoclassical palazzo on Place de la Comédie, rooftop pool with Grand Théâtre views, Le Pressoir d'Argent Gordon Ramsay restaurant · 9.0 Booking.com", url: 'https://www.booking.com/hotel/fr/grand-hotel-bordeaux-spa.html' },
+      { name: 'Burdigala Hotel by HappyCulture', note: 'HappyCulture — design hotel in the Golden Triangle quarter, Vinothèque wine bar, central to Saint-Pierre and Chartrons · 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/burdigalabord.html' },
       { name: 'Le Palais Gallien Hôtel & Spa', note: "Independent — 5-star townhouse on Rue Abbé de l'Epée in the city centre, heated indoor and seasonal outdoor pools, spa, garden · 8.9 Booking.com", url: 'https://www.booking.com/hotel/fr/le-palais-gallien.html' },
       { name: 'Le Boutique Hotel & Spa', note: 'Independent — 5-star on Rue Lafaurie de Monbadon in the city centre, heated outdoor pool, spa with steam room, wine bar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/fr/le-boutique-bordeaux.html' }
     ] },
@@ -4147,10 +4147,10 @@
       { name: 'Brussels Marriott Hotel Grand Place', note: 'Marriott brand — Rue Auguste Orts, rooftop terrace, steps from Grand Place and Sainte-Catherine quarter · 8.6 Booking.com' }
     ] },
     'budapest': { h: [
-      { name: 'Four Seasons Hotel Gresham Palace Budapest', note: 'Four Seasons brand — 1906 Art Nouveau palace at Chain Bridge, Danube-view rooms, spa, Kollázs Brasserie & Bar · 9.4 Booking.com' },
-      { name: 'Corinthia Budapest', note: 'Independent luxury — 1896 grand Victorian building in central Pest, Royal Spa, Brasserie & Atrium, indoor pool · 9.2 Booking.com' },
-      { name: 'Anantara New York Palace Budapest Hotel', note: 'Anantara brand — 1894 neo-baroque palace on Andrássy út, the most ornamented facade in Budapest, rooftop pool, spa · 9.2 Booking.com' },
-      { name: 'Párisi Udvar Hotel Budapest', note: 'Hyatt Unbound Collection — converted 1909 Párisi Arcade in Belváros, indoor pool, eclectic historic interiors, Kollázs cafe in the atrium · 9.3 Booking.com' }
+      { name: 'Four Seasons Hotel Gresham Palace Budapest', note: 'Four Seasons brand — 1906 Art Nouveau palace at Chain Bridge, Danube-view rooms, spa, Kollázs Brasserie & Bar · 9.4 Booking.com', url: 'https://www.booking.com/hotel/hu/four-seasons-gresham-palace-budapest.html' },
+      { name: 'Corinthia Budapest', note: 'Independent luxury — 1896 grand Victorian building in central Pest, Royal Spa, Brasserie & Atrium, indoor pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hu/corinthiaroyal.html' },
+      { name: 'Anantara New York Palace Budapest Hotel', note: 'Anantara brand — 1894 neo-baroque palace on Andrássy út, the most ornamented facade in Budapest, rooftop pool, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hu/new-york-palace-dedica-collection.html' },
+      { name: 'Párisi Udvar Hotel Budapest', note: 'Hyatt Unbound Collection — converted 1909 Párisi Arcade in Belváros, indoor pool, eclectic historic interiors, Kollázs cafe in the atrium · 9.3 Booking.com', url: 'https://www.booking.com/hotel/hu/parisi-udvar-budapest-in-the-unbound-collection-by-hyatt.html' }
     ] },
     'buenos-aires': { h: [
       { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ar/park-hyatt-buenos-aires.html' },
@@ -4179,8 +4179,10 @@
       { name: 'Hyatt Zilara Cancun', note: 'Hyatt brand — adults-only all-inclusive, 3 oceanfront pools, 8 dining options, beachfront Hotel Zone · 9.0 Booking.com' }
     ] },
     'cannes': { h: [
-      { name: 'Carlton Cannes, a Regent Hotel', note: 'IHG Regent brand — iconic 1911 La Croisette palace, private beach concession, Belle Époque sea-view suites · 9.1 Booking.com' },
-      { name: 'Majestic Barrière Cannes', note: 'Barrière group — La Croisette landmark, two pools, private beach club, Fouquet\'s Cannes restaurant, full-service spa · 9.0 Booking.com' }
+      { name: 'Carlton Cannes, a Regent Hotel', note: 'IHG Regent brand — iconic 1911 La Croisette palace, private beach concession, Belle Époque sea-view suites · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/carlton-cannes-a-regent-hotel.html' },
+      { name: 'Majestic Barrière Cannes', note: 'Barrière group — La Croisette landmark, two pools, private beach club, Fouquet\'s Cannes restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/majestic-barriere.html' },
+      { name: 'Five Seas by Inwood Hotels', note: 'Independent boutique — 5-star, 328 feet from La Croisette and Palais des Festivals, rooftop pool, full-service spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/five.html' },
+      { name: 'Mondrian Cannes', note: 'Mondrian brand — La Croisette, 75 rooms and suites with sea or city views, 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/grand-cannes.html' }
     ] },
     'cape-cod': { h: [
       { name: 'The Wequassett Resort and Golf Club', note: 'Independent luxury — Pleasant Bay waterfront in Harwich, 18-hole championship golf, 4 pools, spa with Cape Cod salt-air treatments · 9.1 Booking.com' },
@@ -4440,8 +4442,10 @@
       { name: 'Estancia La Jolla Hotel & Spa', note: 'Marriott Tribute Portfolio — hacienda-style resort near UCSD, outdoor pool, full-service spa, lush California garden, 10 min from La Jolla Cove · 8.8 Booking.com' }
     ] },
     'lagos': { h: [
-      { name: 'Bela Vista Hotel & Spa', note: 'Leading Hotels of the World — 1918 Art Nouveau manor in Praia da Rocha (Portimão, 20 km east), clifftop Atlantic views, outdoor pool, Michelin-recognized Boa Mesa restaurant · 9.3 Booking.com' },
-      { name: 'Dona Filipa Hotel', note: 'Marriott Autograph Collection — Vale do Lobo resort estate (55 km east of Lagos), San Lorenzo golf access, 3 pools, spa, direct beach · 8.5 Booking.com' }
+      { name: 'Bela Vista Hotel & Spa', note: 'Leading Hotels of the World — 1918 Art Nouveau manor in Praia da Rocha (Portimão, 20 km east), clifftop Atlantic views, outdoor pool, Michelin-recognized Boa Mesa restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/bela-vista.html' },
+      { name: 'Dona Filipa Hotel', note: 'Marriott Autograph Collection — Vale do Lobo resort estate (55 km east of Lagos), San Lorenzo golf access, 3 pools, spa, direct beach · 8.5 Booking.com', url: 'https://www.booking.com/hotel/pt/dona-filipa.html' },
+      { name: 'Iberostar Selection Lagos Algarve', note: 'Iberostar brand — 5-star beachfront resort on Meia Praia, 5 km from the old town, outdoor pool with ocean views, spa, direct beach access · 8.8 Booking.com', url: 'https://www.booking.com/hotel/pt/iberostar-lagos-algarve.html' },
+      { name: 'Vila Vita Parc', note: 'Leading Hotels of the World — clifftop resort in Armação de Pêra (50 km east), 12 restaurants, multiple pools, spa, Michelin-starred Ocean restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pt/vila-vita-parc-resort-spa.html' }
     ] },
     'lake-como': { h: [
       { name: "Villa d'Este", note: 'Leading Hotels of the World — 16th-century Renaissance villa in Cernobbio, floating 40 m lake pool, private beach, spa, celebrated Como Grill dining · 9.5 Booking.com' },

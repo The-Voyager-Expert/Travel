@@ -353,7 +353,8 @@
 /* 2026-08-08: Banff hotel alternatives — added Booking.com url fields to Fairmont Banff Springs and The Rimrock Resort Hotel in HOTEL_ALT_DATA; removed erroneous "Best Of" from Banff data-no-entries (city IS in CITY_BEST_OF_MAP). toolbar.js -> v239. CACHE unchanged (already v376). */
 /* 2026-08-08: Glasgow hotel alternatives — added Booking.com url fields for all 4 hotels (Kimpton Blythswood Square, Hotel Indigo, Radisson Blu, Malmaison); removed erroneous "Best Of" from Glasgow data-no-entries. toolbar.js -> v240. CACHE to v377. */
 /* 2026-08-08: Hiroshima hotel alternatives — added Booking.com url fields + 2 additional hotels (Hilton Hiroshima, ANA Crowne Plaza) to reach the 4-hotel minimum; removed erroneous "Best Of" from Hiroshima data-no-entries. toolbar.js -> v241. CACHE to v378. */
-var CACHE = 'travel-cache-v378';
+/* 2026-08-08: Lagos hotel alternatives — added Booking.com url fields + 2 additional hotels (Iberostar Selection Lagos Algarve, Vila Vita Parc) to reach the 4-hotel minimum; removed erroneous "Best Of" from Lagos data-no-entries. toolbar.js -> v242. CACHE to v379. */
+var CACHE = 'travel-cache-v379';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
