@@ -4149,8 +4149,8 @@
       { name: 'Hotel Corona d\'Oro', note: 'Independent — 14th-century palazzo steps from Piazza Maggiore, frescoed ceilings, courtyard garden, tasteful historic interiors · 9.0 Booking.com' }
     ] },
     'bora-bora': { h: [
-      { name: 'Four Seasons Resort Bora Bora', note: 'Four Seasons brand — overwater bungalows on private Motu Tehotu islet, lagoon snorkel beach, coral-garden reef access · 9.5 Booking.com' },
-      { name: 'The St. Regis Bora Bora Resort', note: 'Marriott Luxury Collection — private islet on the Bora Bora lagoon, overwater villas, Deep Ocean Spa, Butler service · 9.4 Booking.com' },
+      { name: 'Four Seasons Resort Bora Bora', note: 'Four Seasons brand — overwater bungalows on private Motu Tehotu islet, lagoon snorkel beach, coral-garden reef access · 9.5 Booking.com', url: 'https://www.booking.com/hotel/pf/four-seasons-resort-bora-bora.html' },
+      { name: 'The St. Regis Bora Bora Resort', note: 'Marriott Luxury Collection — private islet on the Bora Bora lagoon, overwater villas, Deep Ocean Spa, Butler service · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pf/the-st-regis-bora-bora-resort.html' },
       { name: 'Le Bora Bora by Pearl Resorts', note: 'Pearl Resorts — Motu Tevairoa with overwater bungalows, private beach, spa, tennis court, lagoon water sports · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pf/bora-bora-pearl-beach-resort-spa.html' },
       { name: 'InterContinental Bora Bora Le Moana Resort by IHG', note: 'IHG brand — Matira Point on the main island, overwater bungalows, private beach area, pool bar, diving and snorkelling · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pf/intercontinental-bora-bora-le-moana-resort.html' }
     ] },

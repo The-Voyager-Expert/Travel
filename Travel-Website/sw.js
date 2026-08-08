@@ -366,7 +366,8 @@
 /* 2026-08-08: Paris hotel alternatives — added Booking.com url fields to all 4 hotels (Le Meurice, Hotel de Crillon, The Peninsula Paris, Four Seasons Hotel George V). toolbar.js -> v250. CACHE to v389. */
 /* 2026-08-08: San Francisco hotel alternatives — added Booking.com url fields to all 4 hotels (Fairmont San Francisco, Hotel Drisco, Ritz-Carlton SF, Four Seasons Embarcadero). toolbar.js -> v251. CACHE to v390. */
 /* 2026-08-08: Bilbao hotel alternatives — added Booking.com url fields to Hotel Carlton and Meliá Bilbao; removed erroneous "Best Of" from data-no-entries; stripped 🏨 from 4 .next day openers. toolbar.js -> v252. CACHE to v391. */
-var CACHE = 'travel-cache-v391';
+/* 2026-08-08: Bora Bora hotel alternatives — added Booking.com url fields to Four Seasons Resort Bora Bora and St. Regis Bora Bora; fix 🏛️/⏰ rows at Matira Point (remove stop-row class); stripped 🏨 from 3 .hotel-first openers. toolbar.js -> v253. CACHE to v392. */
+var CACHE = 'travel-cache-v392';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -374,7 +375,7 @@ var CACHE = 'travel-cache-v391';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 149, 'toolbar.js': 252, 'mobile.css': 68, 'web-travel-style.css': 16, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 149, 'toolbar.js': 253, 'mobile.css': 68, 'web-travel-style.css': 16, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
