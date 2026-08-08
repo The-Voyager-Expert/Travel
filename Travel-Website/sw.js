@@ -315,7 +315,8 @@
 /* 2026-08-08: Also-on-this-site + Nearby Guides pills — ported from 6-col CSS grid + JS orphan fix to pure-CSS flex (flex: 1 1 28%). CSS :nth-child grid-column selectors are silently dropped by iOS Safari, so orphan rows (last pill at 1/3 width) were only correctable via JS (_fixPillGridOrphans) which ran once at DOMContentLoaded and got the wrong answer on rotate. flex: 1 1 28% needs no JS: every row's pills grow to fill the row; a lone last pill fills the full width by itself at every orientation. _fixPillGridOrphans still runs for .also-in-country-pills (still on the grid). guide-style.css -> v132, toolbar.js -> v216, mobile.css -> v68. CACHE to v340. */
 /* 2026-08-08: Crete HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v217. CACHE to v341. */
 /* 2026-08-08: Bali HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v218. CACHE to v342. */
-var CACHE = 'travel-cache-v342';
+/* 2026-08-08: Buenos Aires HOTEL_ALT_DATA — expanded from 2 to 4 runner-up hotels, added Booking.com url fields to all entries. toolbar.js -> v219. CACHE to v343. */
+var CACHE = 'travel-cache-v343';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -323,7 +324,7 @@ var CACHE = 'travel-cache-v342';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 132, 'toolbar.js': 218, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 132, 'toolbar.js': 219, 'mobile.css': 68, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
