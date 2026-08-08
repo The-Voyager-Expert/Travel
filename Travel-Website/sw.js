@@ -300,7 +300,8 @@
 /* 2026-08-08: Stop panel recoloured onto --c-next-bg. The panel structure came from the Open-Recommendations report card body, and its #f1ece3 was copied verbatim - but that hex was picked for a small tile framed in white, and once it filled two thirds of every stop card it read flat and grey rather than warm. Owner picked #f5f0e6 instead: --c-next-bg, the guide's own token, already the fill of the .stop-dur duration chip and the transit banners, so the panel belongs to the guide palette rather than importing the report's. Using the token rather than the hex also retires the hardcoded dark overrides - --c-next-bg is themed to #222120 above, so only the hairline literal and the chip fill still need a dark twin. guide-style.css -> v124. CACHE to v325. */
 /* 2026-08-08: Free row — the word "Free" goes bold (owner rule 2026-08-08). It already inked terracotta to match the torn-stub mark, but at weight 400 the label still read lighter than the full-colour emoji rows bracketing it (🚫 Closed Monday above, 📍 address below), so the pairing landed as icon-plus-caption rather than one mark. Weight 700 on .free-flag closes it. Colour and the dark-mode #d4874a retint are unchanged. guide-style.css -> v125. CACHE to v326. */
 /* 2026-08-08: Comment-only correction on the Read more chip. Its note still explained the #fffdf9 fill as "--c-next-bg against #f1ece3 is a two-value difference" - true when the panel was the report's #f1ece3, false the moment the panel moved onto --c-next-bg itself. The reason is now stated correctly: the chip sits ON the panel, the panel IS --c-next-bg, so a --c-next-bg fill would be no chip at all; #fffdf9 is what lifts it off. Same drift class as the retired-backpack comments purged earlier today - a comment that contradicts the code beside it is what feeds wrong values back into the next change. guide-style.css -> v126. CACHE to v327. */
-var CACHE = 'travel-cache-v327';
+/* 2026-08-07: Stop hours — row spacing normalised. .tour-box/.ticket-box give every direct child margin-top:6px and the hours row added 6px of its own vertical padding on top, so its text sat 12px from the next row's while every other pair in the card sat at 6px. Outer margins now 0 and the following sibling's margin-top cancelled, so the padding provides the spacing and text-to-text rhythm is a uniform 6px. Verified on Melbourne, Boston, Rome, Big-Island. toolbar.js -> v208. CACHE to v328. */
+var CACHE = 'travel-cache-v328';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -308,7 +309,7 @@ var CACHE = 'travel-cache-v327';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 126, 'toolbar.js': 207, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 126, 'toolbar.js': 208, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

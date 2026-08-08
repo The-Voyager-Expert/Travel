@@ -2867,9 +2867,17 @@
            declare is "only ever a foreground — never a fill", so it is used for
            rails, text and borders and never as a background. */
         /* Base row */
+        /* Spacing: .tour-box/.ticket-box give every direct child margin-top:6px, and
+           this row adds 6px of its own vertical padding on top of that — so its text
+           sat 12px from the next row's while every other pair in the card sat at 6px,
+           and the band read as adrift from the rows it belongs with. The padding IS
+           the spacing here: outer margins go to 0 and the following sibling's
+           margin-top is cancelled, giving a uniform 6px text-to-text rhythm. */
         '.tve-ph{border-left:2.5px solid #b85c2a;background:#fdf8f0;color:#3d3a32;' +
-        'font-weight:500;padding:6px 10px;margin-bottom:6px;border-radius:0 3px 3px 0;' +
+        'font-weight:500;padding:6px 10px;border-radius:0 3px 3px 0;' +
+        'margin-top:0!important;margin-bottom:0!important;' +
         'line-height:1.45;font-size:inherit;}' +
+        '.tve-ph + div,.tve-ph-wrap + div{margin-top:0!important;}' +
         /* Open-around-the-clock variant — the warm tan already used by transit banners */
         '.tve-ph-24{border-left-color:#bba070!important;background:#f5f0e6!important;' +
         'color:#6b5320!important;}' +
@@ -2877,9 +2885,9 @@
            filter can still read its textContent. */
         '.tve-ph-src{display:none!important;}' +
         /* Toggle (multi-day) — wrapped with the panel so hover covers both */
-        '.tve-ph-wrap{position:relative;margin-bottom:6px;}' +
+        '.tve-ph-wrap{position:relative;margin-top:0!important;margin-bottom:0!important;}' +
         '.tve-ph-toggle{display:flex!important;align-items:center;gap:7px;cursor:pointer;' +
-        'border-radius:0 3px 0 0!important;margin-bottom:0!important;' +
+        'border-radius:0 3px 0 0!important;margin-top:0!important;margin-bottom:0!important;' +
         '-webkit-user-select:none;user-select:none;}' +
         '.tve-ph-lbl{flex:1;}' +
         '.tve-ph-chv{font-size:11px;color:#b85c2a;transition:transform .2s;' +
