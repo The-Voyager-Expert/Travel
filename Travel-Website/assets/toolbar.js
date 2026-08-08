@@ -2878,6 +2878,25 @@
         'margin-top:0!important;margin-bottom:0!important;' +
         'line-height:1.45;font-size:inherit;}' +
         '.tve-ph + div,.tve-ph-wrap + div{margin-top:0!important;}' +
+        /* .tour-box > div (0,1,1) outranks .tve-ph (0,1,0), so the box's 6px margin was
+           still applied on top of this row's own 6px padding — a card with an hours row
+           sat 32px below "Read more" where a plain card sat at 20px. Scoping to the box
+           wins the specificity fight; the row then needs a -6px pull-up ONLY where it is
+           the first visible child (its hidden authored source being :first-child), so its
+           text lands exactly where a plain first row's does. Applying that pull-up
+           unconditionally collapsed mid-card gaps to 0 — measured, not assumed. */
+        /* The card gives every direct child margin-top:6px, and this row adds 6px of
+           its own padding on top — so it sat 12px below the row above where every
+           other pair sat at 6px, and 14px below the card's top edge where a plain
+           first row sits at 8px. Dropping the margin fixes both: the band's EDGE now
+           starts exactly where any other first row starts, and mid-card text-to-text
+           is 6px like everything else. Scoping to the card is what wins the
+           specificity fight — .tour-box > div (0,1,1) outranks .tve-ph (0,1,0).
+           A filled, padded block cannot match both the edge rhythm and the text
+           rhythm of unpadded rows; pulling it up by its padding to align the text
+           left only 2px above the band where plain cards have 8px, so edges win. */
+        '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
+        '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{margin-top:0!important;}' +
         /* Open-around-the-clock variant — the warm tan already used by transit banners */
         '.tve-ph-24{border-left-color:#bba070!important;background:#f5f0e6!important;' +
         'color:#6b5320!important;}' +
@@ -2890,8 +2909,15 @@
         'border-radius:0 3px 0 0!important;margin-top:0!important;margin-bottom:0!important;' +
         '-webkit-user-select:none;user-select:none;}' +
         '.tve-ph-lbl{flex:1;}' +
-        '.tve-ph-chv{font-size:11px;color:#b85c2a;transition:transform .2s;' +
-        'display:inline-block;line-height:1;}' +
+        /* Chevron reads as a control, not punctuation. At 11px inline it was
+           near-invisible — nothing signalled that the row opened. Now a 22px round
+           chip with a terracotta tint, which also gives it a real tap target. */
+        '.tve-ph-chv{font-size:15px;font-weight:700;color:#b85c2a;line-height:1;' +
+        'display:inline-flex;align-items:center;justify-content:center;flex:none;' +
+        'width:22px;height:22px;border-radius:50%;' +
+        'border:1px solid rgba(184,92,42,.38);background:rgba(184,92,42,.09);' +
+        'transition:transform .2s,background .15s;}' +
+        '.tve-ph-wrap:hover .tve-ph-chv{background:rgba(184,92,42,.20);}' +
         '.tve-ph-toggle[aria-expanded="true"] .tve-ph-chv{transform:rotate(90deg);}' +
         /* Expandable panel — absolute, so it floats OVER the rows beneath it.
            A hover trigger that pushed content down would reflow the page under
@@ -3001,14 +3027,6 @@
       return { days: days, val: val };
     }
 
-    /* Contiguous day indices → a compact label ("Tue–Sat", "Mon"). Used only by
-       the flat single-segment row; the grid prints each day on its own line. */
-    function _span(days) {
-      if (!days || !days.length) return '';
-      if (days.length === 1) return DAYS[days[0]];
-      return DAYS[days[0]] + '–' + DAYS[days[days.length - 1]];
-    }
-
     /* ── Today, at the destination ──────────────────────────────────────────── */
     var _dest   = _tveDestNow();
     var _todayI = _dest.local ? (_dest.dow + 6) % 7 : -1; /* JS 0=Sun → Mon-first */
@@ -3094,56 +3112,67 @@
       return wrap;
     }
 
-    /* ── Walk the authored 🏛️ rows ──────────────────────────────────────────── */
+    /* ── Walk the authored 🏛️ rows, GROUPED BY STOP ─────────────────────────
+       A stop can carry more than one 🏛️ row — Carmel Mission ships
+       "Mon-Sat 9:30am - 5:00pm" on one and "Sun 10:30am - 5:00pm" on the
+       next. That is ONE weekly schedule split across two lines, not two
+       schedules, and emitting a band per row stacked two near-identical
+       strips with a gap between them. Grouping by the containing box means
+       exactly one band per stop, which is also what makes the vertical
+       rhythm deterministic: there is never a band-to-band gap to tune. */
+    var groups = [], boxes = [];
     srcRows.forEach(function (row) {
-      var raw = row.textContent.replace(/^🏛️?\s*/, '').trim();
-      var parts = raw.split('·').map(function (s) { return s.trim(); }).filter(Boolean);
+      var box = row.parentNode;
+      var i = boxes.indexOf(box);
+      if (i < 0) { boxes.push(box); groups.push({ box: box, rows: [row] }); }
+      else { groups[i].rows.push(row); }
+    });
 
-      /* ── Single-segment listing → flat styled row, no chevron ─────────────
-         The schedule is uniform, so there is nothing to expand and no toggle
-         is offered — a chevron that opens onto one line is a lie. It still
-         gets the styled row, because the alternative is a feature that is
-         invisible on the 93 guides whose every stop is "Daily 9-5" or
-         "Open 24/7" (Big-Island: 16 rows, not one of them varied). */
-      if (parts.length < 2) {
-        var one = _seg(parts[0] || '');
-        if (!one) return;                      /* unparseable → leave as authored */
-        var flat = document.createElement('div');
-        var whole = one.days.length === 7;
-        var label;
-        if (one.val === '24h') {
-          flat.className = 'tve-ph tve-ph-24';
-          label = whole ? 'Open 24h · every day' : _span(one.days) + ' · open 24h';
-        } else if (one.val === 'closed') {
-          flat.className = 'tve-ph';
-          label = 'Closed ' + _span(one.days);
-        } else {
-          flat.className = 'tve-ph';
-          label = (whole ? 'Daily' : _span(one.days)) + ' · ' + one.val;
-        }
-        flat.textContent = '🕐 ' + label; /* 🕐 */
-        row.classList.add('tve-ph-src');       /* hidden; textContent kept for Open Now */
-        row.parentNode.insertBefore(flat, row.nextSibling);
-        return;
-      }
-
-      var week = [], bad = false;
-      parts.forEach(function (p) {
-        var s = _seg(p);
-        if (!s) { bad = true; return; }
-        s.days.forEach(function (d) { if (week[d] === undefined) week[d] = s.val; });
+    groups.forEach(function (grp) {
+      /* Every " · " segment from every 🏛️ row on this stop, in source order. */
+      var parts = [];
+      grp.rows.forEach(function (r) {
+        r.textContent.replace(/^🏛️?\s*/, '').trim().split('·').forEach(function (x) {
+          x = x.trim();
+          if (x) parts.push(x);
+        });
       });
-      /* Any segment we could not read → leave the whole row alone. A partially
-         understood schedule is worse than the authored line it would replace. */
+      if (!parts.length) return;
+
+      var week = [], bad = false, is24 = false;
+      parts.forEach(function (p) {
+        var seg = _seg(p);
+        if (!seg) { bad = true; return; }
+        if (seg.val === '24h') is24 = true;
+        seg.days.forEach(function (d) { if (week[d] === undefined) week[d] = seg.val; });
+      });
+      /* Any segment we could not read → leave the stop entirely alone. A
+         partially understood schedule is worse than the authored lines. */
       if (bad) return;
 
-      var vals = {}, n = 0;
-      for (var i = 0; i < 7; i++) { var v = week[i] === undefined ? 'closed' : week[i];
-        if (!vals[v]) { vals[v] = 1; n++; } }
-      if (n < 2) return;                       /* uniform week → nothing to expand */
+      /* Days the listing never names are read as closed — an hours listing
+         that names Tuesday–Sunday means "shut on Monday" everywhere. */
+      var uniform = true;
+      for (var i = 1; i < 7; i++) {
+        if ((week[i] === undefined ? 'closed' : week[i]) !==
+            (week[0] === undefined ? 'closed' : week[0])) { uniform = false; break; }
+      }
 
-      row.classList.add('tve-ph-src');         /* hidden; textContent kept for Open Now */
-      row.parentNode.insertBefore(_build(week), row.nextSibling);
+      var el;
+      if (!uniform) {
+        el = _build(week);                       /* varies by day → collapse */
+      } else {
+        /* Same value all seven days → flat row, nothing to expand. */
+        var v = week[0] === undefined ? 'closed' : week[0];
+        if (v === 'closed') return;              /* "closed every day" is not a schedule */
+        el = document.createElement('div');
+        el.className = 'tve-ph' + (v === '24h' ? ' tve-ph-24' : '');
+        el.textContent = '🕐 ' + (v === '24h' ? 'Open 24h · every day' : 'Daily · ' + v); /* 🕐 */
+      }
+
+      grp.rows.forEach(function (r) { r.classList.add('tve-ph-src'); });
+      var last = grp.rows[grp.rows.length - 1];
+      last.parentNode.insertBefore(el, last.nextSibling);
     });
   }
   if (document.readyState === 'loading') {
