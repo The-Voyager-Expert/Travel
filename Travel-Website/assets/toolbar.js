@@ -6731,6 +6731,353 @@
   }
   _injectWishlistButtons();
 
+  /* ── My Trip Notes — private per-stop annotations ────────────────────────
+     A ✎ button in each .stop-header opens a one-line input under the stop
+     name; the note saves to localStorage['tve-notes-{cityFolder}'] as a
+     { stopId: text } map — guide slug + stop, exactly like the tve-stops-
+     {folder} mark-stops store next to it. Emptying the input deletes the note.
+
+     Every note in the guide also collects into a "MY TRIP NOTES" card injected
+     above TRIP OVERVIEW. The card is hidden until the reader writes their
+     first note, so a guide nobody has annotated looks untouched. Its 🖨 button
+     prints the notes list alone (hides every other body-level child while the
+     print dialog is open), giving the one-page take-with-you list.
+
+     Per-guide, not cross-guide: the card sits inside one guide and reads that
+     guide's store. The cross-guide surface is the wishlist above.
+     No account, no server, pure client-side. Zero guide HTML changes. */
+  function _injectStopNotes() {
+    if (!isRealGuide) return;
+
+    var parts = location.pathname.split('/');
+    var gi = parts.indexOf('Guides');
+    if (gi < 0 || !parts[gi + 1]) return;
+    var storageKey = 'tve-notes-' + parts[gi + 1].toLowerCase();
+    var MAXLEN     = 140;
+
+    /* ── Load / save ─────────────────────────────────────────────────────── */
+    function _load() {
+      try {
+        var o = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+      } catch (e) { return {}; }
+    }
+    function _save(map) {
+      try { localStorage.setItem(storageKey, JSON.stringify(map)); } catch (e) {}
+    }
+    var notes = _load();
+    function _count() { return Object.keys(notes).length; }
+
+    /* ── SVG ─────────────────────────────────────────────────────────────── */
+    var _pencilSvg =
+      '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
+        '<path d="M8.9 1.6l2.5 2.5-6.6 6.6-3.1.6.6-3.1z" stroke="currentColor"' +
+        ' stroke-width="1.3" stroke-linejoin="round"/>' +
+        '<line x1="7.7" y1="2.8" x2="10.2" y2="5.3" stroke="currentColor" stroke-width="1.3"/>' +
+      '</svg>';
+    var _pencilFillSvg =
+      '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
+        '<path d="M8.9 1.6l2.5 2.5-6.6 6.6-3.1.6.6-3.1z" stroke="currentColor"' +
+        ' stroke-width="1.3" stroke-linejoin="round" fill="currentColor"/>' +
+      '</svg>';
+
+    /* ── CSS ─────────────────────────────────────────────────────────────── */
+    var _nCss = document.createElement('style');
+    _nCss.id  = 'tve-notes-css';
+    _nCss.textContent =
+      /* Pencil button in stop-header — sits last, after share and ★ */
+      '.tve-note-btn{background:none;border:none;cursor:pointer;color:#a8a09a;padding:0;' +
+      'margin-left:8px;line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
+      'transition:color .15s;font-family:inherit;}' +
+      '.tve-note-btn:hover{color:#b85c2a;}' +
+      '.tve-note-btn.tve-note-has{color:#b85c2a;}' +
+      '.tve-note-btn:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;border-radius:3px;}' +
+
+      /* Saved note line under the stop header */
+      '.tve-note-saved{display:none;align-items:flex-start;gap:7px;margin:8px 0 0;' +
+      'padding:7px 11px;background:var(--c-next-bg,#f5f0e6);' +
+      'border-left:3px solid #b85c2a;border-radius:0 5px 5px 0;' +
+      'font-size:13px;line-height:1.5;color:var(--c-text-primary,#3d3a32);' +
+      'font-family:inherit;cursor:pointer;}' +
+      '.tve-note-saved.tve-note-on{display:flex;}' +
+      '.tve-note-saved:hover{background:var(--c-warm-bg,#fdf8f0);}' +
+      '.tve-note-saved-txt{flex:1;min-width:0;overflow-wrap:anywhere;}' +
+      '.tve-note-saved-tag{font-size:10px;font-weight:700;letter-spacing:.09em;' +
+      'text-transform:uppercase;color:#b85c2a;flex-shrink:0;padding-top:2px;}' +
+
+      /* Inline editor */
+      '.tve-note-edit{display:none;align-items:center;gap:7px;margin:8px 0 0;}' +
+      '.tve-note-edit.tve-note-on{display:flex;}' +
+      '.tve-note-input{flex:1;min-width:0;font-family:inherit;font-size:13px;' +
+      'color:var(--c-text-primary,#3d3a32);background:var(--c-card-bg,#fff);' +
+      'border:1px solid var(--c-next-border,#bba070);border-radius:5px;padding:6px 9px;' +
+      '-webkit-appearance:none;box-sizing:border-box;}' +
+      '.tve-note-input:focus{outline:none;border-color:#b85c2a;box-shadow:0 0 0 2px rgba(184,92,42,.15);}' +
+      '.tve-note-save{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
+      'border:1px solid #b85c2a;border-radius:5px;padding:5px 12px;cursor:pointer;' +
+      'font-family:inherit;flex-shrink:0;transition:background .12s,color .12s;}' +
+      '.tve-note-save:hover{background:#b85c2a;color:#fff;}' +
+
+      /* MY TRIP NOTES card — mirrors .overview-section / .overview-title */
+      '#tve-notes-card{display:none;background:var(--c-card-bg,#fff);' +
+      'box-shadow:var(--c-card-shadow,0 1px 3px rgba(0,0,0,.08));border-radius:12px;' +
+      'padding:16px 16px 10px;margin-bottom:8px;}' +
+      '#tve-notes-card.tve-note-on{display:block;}' +
+      '.tve-notes-hdr{display:flex;align-items:center;gap:10px;' +
+      'color:var(--c-brand,#8a6c1a);font-size:var(--fs-base,16px);font-weight:bold;' +
+      'text-transform:uppercase;border-bottom:2px solid var(--c-brand,#8a6c1a);' +
+      'padding-bottom:6px;margin-bottom:8px;}' +
+      '.tve-notes-hdr-t{flex:1;}' +
+      '.tve-notes-act{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;' +
+      'color:var(--c-brand,#8a6c1a);background:none;border:none;cursor:pointer;padding:2px 4px;' +
+      'border-radius:3px;font-family:inherit;transition:color .12s;flex-shrink:0;}' +
+      '.tve-notes-act:hover{color:#b85c2a;}' +
+      '.tve-notes-row{display:flex;gap:10px;padding:9px 4px;border-bottom:0.5px solid #c8a44a;' +
+      'text-decoration:none;color:inherit;}' +
+      '.tve-notes-row:last-child{border-bottom:none;}' +
+      '.tve-notes-row:hover{background:var(--c-warm-bg,#fdf8f0);}' +
+      '.tve-notes-row-info{flex:1;min-width:0;}' +
+      '.tve-notes-row-name{font-size:13px;font-weight:600;color:var(--c-text-primary,#3d3a32);' +
+      'font-family:inherit;}' +
+      '.tve-notes-row-day{font-size:11px;color:#9a908a;font-weight:400;margin-left:6px;}' +
+      '.tve-notes-row-txt{font-size:13px;line-height:1.5;color:var(--c-text-primary,#3d3a32);' +
+      'margin-top:2px;overflow-wrap:anywhere;}' +
+
+      /* Print-only notes sheet — body-level, revealed by body.tve-notes-printing */
+      '#tve-notes-print{display:none;}' +
+      '.tve-np-h1{font-size:18px;font-weight:700;margin:0 0 4px;}' +
+      '.tve-np-sub{font-size:12px;color:#555;margin:0 0 16px;}' +
+      '.tve-np-item{margin:0 0 14px;padding:0 0 0 10px;border-left:2px solid #000;' +
+      'break-inside:avoid;page-break-inside:avoid;}' +
+      '.tve-np-name{font-size:13px;font-weight:700;}' +
+      '.tve-np-day{font-size:11px;font-weight:400;color:#555;margin-left:6px;}' +
+      '.tve-np-txt{font-size:13px;line-height:1.5;margin-top:2px;}' +
+      '@media print{' +
+      /* Printing the whole guide (the 🖨 Print Guide back-strip button) keeps the
+         reader's note text but drops every control — a pencil, an open input and
+         two action words are screen affordances, not page content. */
+      '.tve-note-btn,.tve-note-edit,.tve-notes-act{display:none!important;}' +
+      /* Printing the notes ALONE: everything else at body level steps aside. */
+      'body.tve-notes-printing>*:not(#tve-notes-print){display:none!important;}' +
+      'body.tve-notes-printing #tve-notes-print{display:block!important;color:#000;}' +
+      '}';
+    (document.head || document.documentElement).appendChild(_nCss);
+
+    /* ── MY TRIP NOTES card ──────────────────────────────────────────────── */
+    var card = document.createElement('div');
+    card.id  = 'tve-notes-card';
+
+    var cHdr   = document.createElement('div'); cHdr.className = 'tve-notes-hdr';
+    var cTitle = document.createElement('span'); cTitle.className = 'tve-notes-hdr-t';
+    var cPrint = document.createElement('button');
+    cPrint.type = 'button'; cPrint.className = 'tve-notes-act'; cPrint.textContent = '🖨 Print';
+    cPrint.setAttribute('aria-label', 'Print my trip notes');
+    var cClear = document.createElement('button');
+    cClear.type = 'button'; cClear.className = 'tve-notes-act'; cClear.textContent = 'Clear all';
+    cHdr.appendChild(cTitle); cHdr.appendChild(cPrint); cHdr.appendChild(cClear);
+
+    var cBody = document.createElement('div');
+    card.appendChild(cHdr); card.appendChild(cBody);
+
+    var printSheet = document.createElement('div');
+    printSheet.id = 'tve-notes-print';
+    document.body.appendChild(printSheet);
+
+    /* Stop metadata, filled as the pencil buttons are injected: id → {name, day, el} */
+    var meta  = {};
+    var order = [];
+
+    function _renderCard() {
+      var ids = order.filter(function (id) { return notes[id]; });
+      var n   = ids.length;
+      card.classList.toggle('tve-note-on', n > 0);
+      cTitle.textContent = n === 1 ? 'My Trip Notes · 1 note' : 'My Trip Notes · ' + n + ' notes';
+
+      cBody.innerHTML = '';
+      ids.forEach(function (id) {
+        var m   = meta[id] || {};
+        var row = document.createElement('a');
+        row.className = 'tve-notes-row';
+        row.href = '#' + id;
+
+        var info = document.createElement('div'); info.className = 'tve-notes-row-info';
+        var nm   = document.createElement('div'); nm.className = 'tve-notes-row-name';
+        nm.textContent = m.name || '';
+        if (m.day) {
+          var dy = document.createElement('span'); dy.className = 'tve-notes-row-day';
+          dy.textContent = m.day; nm.appendChild(dy);
+        }
+        var tx = document.createElement('div'); tx.className = 'tve-notes-row-txt';
+        tx.textContent = notes[id];
+        info.appendChild(nm); info.appendChild(tx);
+        row.appendChild(info);
+        cBody.appendChild(row);
+      });
+    }
+
+    function _setNote(id, text) {
+      text = (text || '').trim().slice(0, MAXLEN);
+      if (text) { notes[id] = text; } else { delete notes[id]; }
+      _save(notes);
+      _renderCard();
+    }
+
+    cClear.addEventListener('click', function () {
+      notes = {};
+      _save(notes);
+      [].forEach.call(document.querySelectorAll('.tve-note-saved'), function (el) {
+        el.classList.remove('tve-note-on');
+      });
+      [].forEach.call(document.querySelectorAll('.tve-note-btn'), function (b) {
+        b.classList.remove('tve-note-has');
+        b.innerHTML = _pencilSvg;
+        b.setAttribute('title', 'Add a private note');
+      });
+      _renderCard();
+    });
+
+    cPrint.addEventListener('click', function () {
+      var ids = order.filter(function (id) { return notes[id]; });
+      if (!ids.length) return;
+
+      printSheet.innerHTML = '';
+      var cityEl = document.querySelector('.title-city');
+      var h1 = document.createElement('div'); h1.className = 'tve-np-h1';
+      h1.textContent = 'My Trip Notes' + (cityEl ? ' — ' + cityEl.textContent.trim() : '');
+      var sub = document.createElement('div'); sub.className = 'tve-np-sub';
+      sub.textContent = ids.length === 1 ? '1 note' : ids.length + ' notes';
+      printSheet.appendChild(h1); printSheet.appendChild(sub);
+
+      ids.forEach(function (id) {
+        var m    = meta[id] || {};
+        var item = document.createElement('div'); item.className = 'tve-np-item';
+        var nm   = document.createElement('div'); nm.className = 'tve-np-name';
+        nm.textContent = m.name || '';
+        if (m.day) {
+          var dy = document.createElement('span'); dy.className = 'tve-np-day';
+          dy.textContent = m.day; nm.appendChild(dy);
+        }
+        var tx = document.createElement('div'); tx.className = 'tve-np-txt';
+        tx.textContent = notes[id];
+        item.appendChild(nm); item.appendChild(tx);
+        printSheet.appendChild(item);
+      });
+
+      document.body.classList.add('tve-notes-printing');
+      window.addEventListener('afterprint', function onAP() {
+        document.body.classList.remove('tve-notes-printing');
+        window.removeEventListener('afterprint', onAP);
+      });
+      window.print();
+    });
+
+    /* ── Inject the pencil + editor into every stop ──────────────────────── */
+    function _setup() {
+      [].forEach.call(document.querySelectorAll('.stop-block'), function (sb) {
+        var header = sb.querySelector('.stop-header');
+        var nameEl = sb.querySelector('.stop-name');
+        if (!header || !nameEl) return;
+        var stopName = nameEl.textContent.trim();
+
+        /* Reuse the id the share/wishlist injectors already assigned. */
+        if (!sb.id) {
+          var slug = stopName.toLowerCase()
+            .replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+          sb.id = 'stop-' + (slug || String(Math.random()).slice(2, 8));
+        }
+        var id = sb.id;
+
+        var dayBlock = sb.parentNode;
+        while (dayBlock && !dayBlock.classList.contains('day-block')) { dayBlock = dayBlock.parentNode; }
+        var dayHdr = dayBlock && dayBlock.querySelector('.day-header');
+        meta[id] = { name: stopName, day: dayHdr ? dayHdr.textContent.trim() : '' };
+        order.push(id);
+
+        /* Saved-note line */
+        var saved    = document.createElement('div');
+        saved.className = 'tve-note-saved';
+        var savedTag = document.createElement('span'); savedTag.className = 'tve-note-saved-tag';
+        savedTag.textContent = 'Note';
+        var savedTxt = document.createElement('span'); savedTxt.className = 'tve-note-saved-txt';
+        saved.appendChild(savedTag); saved.appendChild(savedTxt);
+        saved.setAttribute('title', 'Click to edit this note');
+
+        /* Editor */
+        var edit  = document.createElement('div'); edit.className = 'tve-note-edit';
+        var input = document.createElement('input');
+        input.type = 'text'; input.className = 'tve-note-input'; input.maxLength = MAXLEN;
+        input.placeholder = 'Private note — book ahead, skip if raining…';
+        input.setAttribute('aria-label', 'Private note for ' + stopName);
+        var saveBtn = document.createElement('button');
+        saveBtn.type = 'button'; saveBtn.className = 'tve-note-save'; saveBtn.textContent = 'Save';
+        edit.appendChild(input); edit.appendChild(saveBtn);
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tve-note-btn';
+
+        function _paint() {
+          var has = !!notes[id];
+          btn.classList.toggle('tve-note-has', has);
+          btn.innerHTML = has ? _pencilFillSvg : _pencilSvg;
+          btn.setAttribute('title', has ? 'Edit your note' : 'Add a private note');
+          btn.setAttribute('aria-label', stopName + (has ? ' — edit your note' : ' — add a private note'));
+          savedTxt.textContent = notes[id] || '';
+          saved.classList.toggle('tve-note-on', has && !edit.classList.contains('tve-note-on'));
+        }
+
+        function _open() {
+          input.value = notes[id] || '';
+          edit.classList.add('tve-note-on');
+          saved.classList.remove('tve-note-on');
+          input.focus();
+        }
+        function _commit() {
+          _setNote(id, input.value);
+          edit.classList.remove('tve-note-on');
+          _paint();
+        }
+
+        btn.addEventListener('click', function () {
+          if (edit.classList.contains('tve-note-on')) { _commit(); } else { _open(); }
+        });
+        saved.addEventListener('click', _open);
+        saveBtn.addEventListener('click', _commit);
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter')  { e.preventDefault(); _commit(); }
+          if (e.key === 'Escape') { edit.classList.remove('tve-note-on'); _paint(); }
+        });
+        input.addEventListener('blur', function () {
+          /* Let a click on Save land first — blur fires before click. */
+          setTimeout(function () {
+            if (edit.classList.contains('tve-note-on')) _commit();
+          }, 150);
+        });
+
+        header.appendChild(btn);
+        header.insertAdjacentElement('afterend', edit);
+        header.insertAdjacentElement('afterend', saved);
+        _paint();
+      });
+
+      /* Card goes at the top of the guide, above TRIP OVERVIEW. */
+      var ov = document.querySelector('.overview-section');
+      if (ov && ov.parentNode) { ov.parentNode.insertBefore(card, ov); }
+      else {
+        var container = document.querySelector('.container');
+        if (container) container.insertBefore(card, container.firstChild);
+      }
+      _renderCard();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setup);
+    } else {
+      _setup();
+    }
+  }
+  _injectStopNotes();
+
   /* ── Back-to-guide anchor re-scroll ─────────────────────────────────────
      When the reader taps the pill on a Trip-Essentials page, they land on
      the source guide at #also-on-this-site. The browser's initial fragment
