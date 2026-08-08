@@ -3975,8 +3975,10 @@
       { name: 'Párisi Udvar Hotel Budapest', note: 'Hyatt Unbound Collection — converted 1909 Párisi Arcade in Belváros, indoor pool, eclectic historic interiors, Kollázs cafe in the atrium · 9.3 Booking.com' }
     ] },
     'buenos-aires': { h: [
-      { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com' },
-      { name: 'Alvear Palace Hotel', note: 'Leading Hotels of the World — 1932 French Renaissance landmark in Recoleta, Alvear Art Restaurant, butler service · 9.5 Booking.com' }
+      { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ar/park-hyatt-buenos-aires.html' },
+      { name: 'Alvear Palace Hotel', note: 'Leading Hotels of the World — 1932 French Renaissance landmark in Recoleta, Alvear Art Restaurant, butler service · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ar/alvear-palace.html' },
+      { name: 'Four Seasons Hotel Buenos Aires', note: 'Four Seasons brand — Recoleta garden mansion tower, Le Mistral restaurant, outdoor pool, spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ar/four-seasons-buenos-aires.html' },
+      { name: 'Faena Hotel Buenos Aires', note: 'Faena brand — Philippe Starck–designed waterfront tower in Puerto Madero, Rojo Tango dinner-show, rooftop pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ar/faena-hotel-buenos-aires.html' }
     ] },
     'busan': { h: [
       { name: 'Park Hyatt Busan', note: 'Hyatt brand — Haeundae-gu, 38th-floor infinity pool with Gwangalli Bridge panorama, spa, ocean-view dining · 9.0 Booking.com', url: 'https://www.booking.com/hotel/kr/park-hyatt-busan.html' },
