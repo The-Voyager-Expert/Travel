@@ -4101,10 +4101,10 @@
       { name: 'Coral Reef Club', note: 'Independent boutique — adults-focused west coast retreat, private beach, lush tropical gardens, suites and cottages · 9.5 Booking.com' }
     ] },
     'barcelona': { h: [
-      { name: 'Hotel Arts Barcelona', note: 'Ritz-Carlton brand — 44-floor beachfront tower at Port Olímpic, indoor and outdoor pools, sea-view rooms · 9.0 Booking.com' },
-      { name: 'Mandarin Oriental, Barcelona', note: 'Mandarin Oriental brand — Passeig de Gràcia design hotel, rooftop pool and spa terrace, acclaimed Blanc restaurant · 9.3 Booking.com' },
-      { name: 'Cotton House Hotel, Autograph Collection', note: 'Marriott Autograph — 1905 Casa Garriga Nogués on Gran Via, rooftop pool and terrace bar, The Cotton Club restaurant, Eixample · 9.2 Booking.com' },
-      { name: 'W Barcelona', note: 'Marriott W brand — sail-shaped tower on Barceloneta beach, Eclipse rooftop bar, WET pool deck, direct beach access · 8.7 Booking.com' }
+      { name: 'Hotel Arts Barcelona', note: 'Ritz-Carlton brand — 44-floor beachfront tower at Port Olímpic, indoor and outdoor pools, sea-view rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/arts-barcelona.html' },
+      { name: 'Mandarin Oriental, Barcelona', note: 'Mandarin Oriental brand — Passeig de Gràcia design hotel, rooftop pool and spa terrace, acclaimed Blanc restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/mandarin-oriental-barcelona.html' },
+      { name: 'Cotton House Hotel, Autograph Collection', note: 'Marriott Autograph — 1905 Casa Garriga Nogués on Gran Via, rooftop pool and terrace bar, The Cotton Club restaurant, Eixample · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/cotton-house-autograph-collection.html' },
+      { name: 'W Barcelona', note: 'Marriott W brand — sail-shaped tower on Barceloneta beach, Eclipse rooftop bar, WET pool deck, direct beach access · 8.7 Booking.com', url: 'https://www.booking.com/hotel/es/w-barcelona.html' }
     ] },
     'beijing': { h: [
       { name: 'Rosewood Beijing', note: 'Rosewood brand — 57-floor Chaoyang CBD tower, rooftop infinity pool, spa, Michelin-recognized Sui Tang Li Chinese dining · 9.0 Booking.com' },
@@ -4724,10 +4724,10 @@
       { name: 'Graduate by Hilton Palo Alto', note: 'Hilton Graduate brand — 488 University Avenue downtown, restaurant and bar, walk to Stanford campus · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/graduate-palo-alto.html' }
     ] },
     'paris': { h: [
-      { name: 'Le Meurice', note: 'Dorchester Collection — Tuileries-facing Palace hotel, two-Michelin-star Alain Ducasse restaurant, spa · 9.5 Booking.com' },
-      { name: 'Hotel de Crillon, A Rosewood Hotel', note: 'Rosewood brand — Place de la Concorde landmark, Les Ambassadeurs brasserie, indoor pool · 9.5 Booking.com' },
-      { name: 'The Peninsula Paris', note: 'Peninsula brand — Avenue Kléber near the Arc de Triomphe, rooftop pool and terrace, L\'Oiseau Blanc restaurant, spa · 9.4 Booking.com' },
-      { name: 'Four Seasons Hotel George V Paris', note: 'Four Seasons brand — 31 Avenue George V, three Michelin-starred restaurants, La Spa George V, courtyard garden, close to Champs-Élysées · 9.4 Booking.com' }
+      { name: 'Le Meurice', note: 'Dorchester Collection — Tuileries-facing Palace hotel, two-Michelin-star Alain Ducasse restaurant, spa · 9.5 Booking.com', url: 'https://www.booking.com/hotel/fr/le-meurice-paris.html' },
+      { name: 'Hotel de Crillon, A Rosewood Hotel', note: 'Rosewood brand — Place de la Concorde landmark, Les Ambassadeurs brasserie, indoor pool · 9.5 Booking.com', url: 'https://www.booking.com/hotel/fr/de-crillon-paris.html' },
+      { name: 'The Peninsula Paris', note: 'Peninsula brand — Avenue Kléber near the Arc de Triomphe, rooftop pool and terrace, L\'Oiseau Blanc restaurant, spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/fr/the-peninsula-paris.html' },
+      { name: 'Four Seasons Hotel George V Paris', note: 'Four Seasons brand — 31 Avenue George V, three Michelin-starred restaurants, La Spa George V, courtyard garden, close to Champs-Élysées · 9.4 Booking.com', url: 'https://www.booking.com/hotel/fr/four-seasons-george-v-paris.html' }
     ] },
     'pasadena': { h: [
       { name: 'The Langham Huntington, Pasadena', note: 'Langham brand — 23-acre estate on South Oak Knoll, Olympic pool, formal gardens, 1914 landmark hotel · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-langham-huntington-spa-pasadena.html' },
@@ -5089,10 +5089,10 @@
       { name: 'Pullman Zhangjiajie', note: 'Accor Pullman brand — modern full-service hotel in Zhangjiajie city, pool, 30 minutes from Wulingyuan park gate · 8.8 Booking.com' }
     ] },
     'zurich': { h: [
-      { name: 'The Dolder Grand', note: 'Independent luxury — 1899 hillside monument, two-Michelin-star The Restaurant, 4,000 sq m spa, ice rink · 9.4 Booking.com' },
-      { name: 'Baur au Lac', note: 'Independent luxury — 1844 lakefront hotel, private garden terrace, Pavillon and Rive Gauche restaurants · 9.3 Booking.com' },
-      { name: 'Park Hyatt Zurich', note: 'Hyatt brand — Zurich West, outdoor pool, Parkhuus restaurant, spa, contemporary design, steps from Hauptbahnhof · 9.2 Booking.com' },
-      { name: 'Widder Hotel', note: 'Independent — nine linked medieval townhouses in the Augustinergasse, rooftop Widder Bar, Widder Restaurant, Zurich Old Town · 9.2 Booking.com' }
+      { name: 'The Dolder Grand', note: 'Independent luxury — 1899 hillside monument, two-Michelin-star The Restaurant, 4,000 sq m spa, ice rink · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ch/the-dolder-grand.html' },
+      { name: 'Baur au Lac', note: 'Independent luxury — 1844 lakefront hotel, private garden terrace, Pavillon and Rive Gauche restaurants · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ch/baur-au-lac.html' },
+      { name: 'Park Hyatt Zurich', note: 'Hyatt brand — Zurich West, outdoor pool, Parkhuus restaurant, spa, contemporary design, steps from Hauptbahnhof · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ch/park-hyatt-zurich.html' },
+      { name: 'Mandarin Oriental Savoy, Zurich', note: 'Mandarin Oriental brand — historic Savoy building on Paradeplatz, Fraumünster and Bahnhofstrasse 2 min walk, garden terrace, restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/ch/mandarin-oriental-savoy-zurich.html' }
     ] }
   };
 
