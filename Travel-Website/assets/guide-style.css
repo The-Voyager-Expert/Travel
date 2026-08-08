@@ -2717,9 +2717,25 @@ div.train .train-time   { padding: 2px 0; }
     border: 1px solid var(--c-pill-bd);
     border-radius: 20px;
   }
-  .overview-extra-link:hover, .overview-extra-link:active {
+  /* Press feedback. :active is the touch-correct half and stays unconditional;
+     :hover is gated behind (hover: hover) because iOS Safari LATCHES :hover on
+     the last element tapped and holds it until you tap somewhere else. With the
+     two selectors sharing one !important block, tapping a pill repainted its
+     label #8a6c1a and left it there — so the 💱 Currency pill (the one pill you
+     tap and then keep looking at, because its panel opens in place) sat gold
+     while its five neighbours sat #5a3c0e, and the terracotta .tve-cur-on /
+     .tve-been "on" ink lost to the !important as well. Splitting the rule keeps
+     the press state on touch and hands the resting state back to the row
+     (owner report 2026-08-08: "currency pill font not matching the rest"). */
+  .overview-extra-link:active {
     background: var(--c-pill-hover) !important;
     border-color: var(--c-pill-bd-hover) !important; color: var(--c-pill-text) !important; text-decoration: none !important;
+  }
+  @media (hover: hover) {
+    .overview-extra-link:hover {
+      background: var(--c-pill-hover) !important;
+      border-color: var(--c-pill-bd-hover) !important; color: var(--c-pill-text) !important; text-decoration: none !important;
+    }
   }
   /* Pipe separator (::before content:'|') and the leading <span>|</span> markup
      were retired site-wide (desktop chips need no separator) — the base rule
