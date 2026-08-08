@@ -7135,11 +7135,17 @@
         GROUPS falls through to the trailing catch-all, so a future pill can never
         silently vanish.
 
-     2. MOBILE IS LEFT ENTIRELY ALONE. Below 601px the row is a glued 3-across
-        grid whose rules use direct-child selectors and nth-child(3n+2) math
-        (guide-style.css ~2210). Wrapping chips in group divs would break every
-        one of them, so the DOM is only restructured at >=601px and is fully
-        restored on the way back down. Mobile renders byte-identical to before. */
+     2. MOBILE GROUPS TOO (2026-08-07). The row was desktop-only at first because
+        below 601px it is a glued 3-across grid whose rules key on DIRECT-CHILD
+        anchors and nth-child(3n+2) math (guide-style.css ~2210) — wrapping chips
+        in group divs stops every one of them matching. The fix is to move the
+        grid down one level: each .ov-grp-row becomes the 6-column grid and the
+        chips span 2, which is the same idiom .also-on-this-site-pills already
+        uses. Trailing orphans are widened by _fixPillGridOrphans — the SAME
+        helper those rails use, so the lonely-pill rule the mobile-render
+        validator checks is satisfied by construction rather than by new math.
+        The helper writes inline grid-column, which desktop's flex row ignores,
+        so it is safe to run at every width. */
   (function _groupExtrasPills() {
     var GROUPS = [
       ['Eat & drink',           ['cappuccino', 'restaurants', 'downtown', 'local-tastes',
@@ -7210,7 +7216,16 @@
       row.classList.remove('tve-grouped');
     }
 
-    function _apply() { if (mq.matches) { _group(); } else { _ungroup(); } }
+    /* Widen the trailing orphans of every group row using the SAME helper the
+       also-on-this-site / nearby-guides rails use, so a group ending in one or
+       two chips fills its row instead of leaving a ragged gap. The helper writes
+       inline grid-column, which the desktop flex row ignores — safe at any width. */
+    function _fixOrphans() {
+      if (!row) return;
+      [].forEach.call(row.querySelectorAll('.ov-grp-row'), _fixPillGridOrphans);
+    }
+
+    function _apply() { _group(); _fixOrphans(); }
 
     function _init() {
       if (!isRealGuide) return;   /* Reports.html reuses .overview-extras — never group it */
@@ -7219,8 +7234,6 @@
       flat = [].slice.call(row.querySelectorAll(':scope > a.overview-extra-link'));
       if (!flat.length) return;
       _apply();
-      if (mq.addEventListener) { mq.addEventListener('change', _apply); }
-      else if (mq.addListener) { mq.addListener(_apply); }   /* Safari < 14 */
 
       /* Some chips arrive late — "🌍 Also in {Country}" is appended only after
          country_guides.json resolves, well after DOMContentLoaded. Without this
@@ -7233,7 +7246,7 @@
           muts.forEach(function(m) {
             [].slice.call(m.addedNodes).forEach(function(n) {
               if (n.nodeType === 1 && n.tagName === 'A' &&
-                  n.classList.contains('overview-extra-link')) { _place(n); }
+                  n.classList.contains('overview-extra-link')) { _place(n); _fixOrphans(); }
             });
           });
         }).observe(row, { childList: true });
