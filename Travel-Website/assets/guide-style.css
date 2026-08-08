@@ -1140,6 +1140,33 @@ a:hover { text-decoration: underline; }
   border-radius: 4px;
   margin: 4px 0;
 }
+/* ── NO-TICKET ROW ICON (2026-08-08) ────────────────────────────────────
+   Replaces `🆓 Free` on the free-entry row of a .tour-box / .ticket-box.
+   🆓 was the odd one out in the icon row: every sibling (🏛️ ⏰ 🚫 📍 💵) is a
+   pictogram, while 🆓 is Latin text inside a blue-grey iOS badge that
+   ignores CSS color — the same defect that retired the up-right arrow site-wide
+   (CLAUDE.md sixth non-negotiable). This is a torn ticket stub drawn as a
+   CSS mask, so it takes the guide's warm accent as a background-color and
+   retints in dark mode like every other guide foreground.
+
+   Markup:  <div><span class="free-flag">No ticket</span></div>
+   Icon and wording are one unit: the stub reads "nothing to buy, nothing
+   to queue for", which is the useful fact — "Free" only said the obvious.
+   Timed entry still lives in a 🎟 .ticket-box, never on this row.
+
+   Swapping the artwork later is ONE line: replace the data-URI below.
+   The 505 guide rows carry only the class, never the drawing. ── */
+.free-flag::before {
+  content: "";
+  display: inline-block;
+  width: 1.45em;
+  height: 0.86em;   /* 22:13 — the ticket's own aspect ratio */
+  margin-right: 0.3em;
+  vertical-align: -0.06em;
+  background-color: #b85c2a;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13' fill='none' stroke='%23000' stroke-width='1.9' stroke-linejoin='round'%3E%3Cpath d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5Z'/%3E%3Cpath d='M12 6.5l0.9 2.2-1.8 2.2 1.8 2.2-1.8 2.2 0.9 2.2' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13' fill='none' stroke='%23000' stroke-width='1.9' stroke-linejoin='round'%3E%3Cpath d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5Z'/%3E%3Cpath d='M12 6.5l0.9 2.2-1.8 2.2 1.8 2.2-1.8 2.2 0.9 2.2' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
 /* ── STOPS — CONTINUOUS RUN (added 2026-07-12, same defect class as the
    Extras-section Style A continuity fix: a stop that carries multiple
    .tour-box siblings, or a .tour-box + .ticket-box pair (per Guide
@@ -1241,7 +1268,7 @@ a:hover { text-decoration: underline; }
                                       when a Stop Flag applies (per
                                       Types of Days and Stops.html § Stop
                                       Flags). Order of multiple flags:
-                                      🚫 → 🆓 → 💵 → ⚠️.
+                                      🚫 → .free-flag → 💵 → ⚠️.
      1× <div> `⏰ ~{duration} typical visit`
 
    No 🕐 / ⏳ / 👥 inside .ticket-box — those glyphs only fire when someone
@@ -2421,7 +2448,6 @@ div.train .train-time   { padding: 2px 0; }
     gap: 6px !important;
   }
   .ov-grp-row > .overview-extra-link { grid-column: span 2; }
-
   .overview-extra-link {
     width: auto !important; height: 46px !important;
     display: flex !important; align-items: center; justify-content: center;
@@ -3055,7 +3081,7 @@ a.nearby-guide-pill:active {
    Placed AFTER the base rules so media query wins without needing !important fights. */
 @media (max-width: 600px) {
   .also-on-this-site-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid var(--c-float-bd); border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
+  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
   /* Stats Across US and European Train Guide are "long" anchor pills that must fill
      the row so the mobile-render validator's lonely-pill check passes.
      !important is required: _fixPillGridOrphans (toolbar.js) applies inline
@@ -3066,7 +3092,7 @@ a.nearby-guide-pill:active {
   /* Nearby Guides: same 6-col grid as also-on-this-site; orphans fixed by
      _fixPillGridOrphans in toolbar.js (CSS :nth-child grid-column breaks on iOS Safari). */
   .nearby-guides-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .nearby-guide-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid var(--c-float-bd); border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
+  .nearby-guide-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
 }
 
 /* ── Also in [Country] — injected by toolbar.js after #nearby-guides ─────────────
@@ -3544,6 +3570,9 @@ a.also-in-country-pill:active {
   .open-now-pill.on { color: #d0ffd8; background: #1a5a2e; border-color: #1a5a2e; }
   .closed-now-badge { color: #fca5a5; background: #3b1212; border-color: #7a2020; }
   .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }
+  /* No-ticket stub — #b85c2a sits at 2.6:1 on the #2a2825 card. Same lift the
+     pullquote border uses, so the warm family stays one system. (2026-08-08) */
+  .free-flag::before { background-color: #d4874a; }
 }
 :root[data-theme="dark"] .lounge-arrival-chip { background: #1a2e30; color: #7ecfd8; }
 :root[data-theme="dark"] .lounge-arrival-chip:hover { background: #1e3638; }
@@ -3552,3 +3581,4 @@ a.also-in-country-pill:active {
 :root[data-theme="dark"] .open-now-pill.on { color: #d0ffd8; background: #1a5a2e; border-color: #1a5a2e; }
 :root[data-theme="dark"] .closed-now-badge { color: #fca5a5; background: #3b1212; border-color: #7a2020; }
 :root[data-theme="dark"] .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }
+:root[data-theme="dark"] .free-flag::before { background-color: #d4874a; }
