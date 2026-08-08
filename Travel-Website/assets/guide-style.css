@@ -3159,25 +3159,16 @@ a.nearby-guide-pill:active {
   box-shadow: 0 1px 3px rgba(184,92,42,.12);
   transform: scale(.97) translateY(1px);
 }
-/* Mobile: Also on this site pills — 6-col grid (pills span 2 = 1/3 width each).
-   Orphan layout is JS-driven via _fixPillGridOrphans in toolbar.js: inline gridColumn
-   overrides prevent pills from sitting alone at 1/3 width. CSS :nth-child selectors
-   for grid-column are silently ignored on iOS Safari — first confirmed 2026-08-04.
-   Placed AFTER the base rules so media query wins without needing !important fights. */
+/* Mobile: Also on this site pills — flex row (mirrors Trip-Essentials .also-links).
+   flex: 1 1 28% keeps 3 pills per row at typical label lengths; a lone last pill
+   grows full-width in CSS with no JS needed. Replaces the 6-col grid + JS orphan
+   fix (2026-08-08 — iOS Safari silently drops CSS :nth-child grid-column). */
 @media (max-width: 600px) {
-  .also-on-this-site-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .also-on-this-site-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
-  /* Stats Across US and European Train Guide are "long" anchor pills that must fill
-     the row so the mobile-render validator's lonely-pill check passes.
-     !important is required: _fixPillGridOrphans (toolbar.js) applies inline
-     gridColumn:'span 3' on the last 2 pills when n%3===2 (e.g. 8 pills), and
-     inline styles beat non-!important CSS. */
-  .also-on-this-site-pill[href*="Stats-Across-US"],
-  .also-on-this-site-pill[href*="European-Train-Guide"] { grid-column: span 6 !important; }
-  /* Nearby Guides: same 6-col grid as also-on-this-site; orphans fixed by
-     _fixPillGridOrphans in toolbar.js (CSS :nth-child grid-column breaks on iOS Safari). */
-  .nearby-guides-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
-  .nearby-guide-pill { display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
+  .also-on-this-site-pills { display: flex; flex-wrap: wrap; gap: 0; width: 100%; }
+  .also-on-this-site-pill { flex: 1 1 28%; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; box-sizing: border-box; }
+  /* Nearby Guides: same flex row as also-on-this-site. */
+  .nearby-guides-pills { display: flex; flex-wrap: wrap; gap: 0; width: 100%; }
+  .nearby-guide-pill { flex: 1 1 28%; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; box-sizing: border-box; }
 }
 
 /* ── Also in [Country] — injected by toolbar.js after #nearby-guides ─────────────

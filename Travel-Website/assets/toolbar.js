@@ -5125,7 +5125,6 @@
       a.textContent = entry[0];
       pills.appendChild(a);
     });
-    _fixPillGridOrphans(pills);
     wrap.appendChild(h);
     wrap.appendChild(pills);
     wrap.addEventListener('click', function (e) { e.stopPropagation(); });
@@ -5133,8 +5132,6 @@
   }
   function _injectBestOfAndFixOrphans() {
     _injectBestOfCrossLinks();
-    [].forEach.call(document.querySelectorAll('.also-on-this-site-pills'), _fixPillGridOrphans);
-    [].forEach.call(document.querySelectorAll('.nearby-guides-pills'), _fixPillGridOrphans);
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectBestOfAndFixOrphans);
