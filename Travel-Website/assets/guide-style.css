@@ -2152,40 +2152,59 @@ div.train .train-time   { padding: 2px 0; }
   margin: 0;
 }
 
-/* 🚌 Getting Around — per-subsection continuous blocks (2026-05-19, stable).
-   Each subsection (Ride apps, Tram, etc.) = one .extras-sub heading + one
-   .transit-box body, merged into a single colored block per subsection
-   with white space between subsequent subsections. Matches Cappuccino /
-   Restaurants / Downtown / Day Trips per-entry block treatment. */
-#getting-around .extras-sub {
-  background: var(--c-card-bg);
-  border-radius: 4px 4px 0 0;
-  padding: 10px 14px 12px 14px;
-  margin: 14px 0 0;
+/* 🚌 Getting Around · 🚗 Food Delivery — SIDE-BY-SIDE entry rows
+   (owner rule 2026-08-08; replaces the 2026-05-19 stacked heading-over-body
+   block). Every entry in these two sections is ONE row of a single white card:
+   the entry name (.extras-sub) in the left column, its body (.transit-box —
+   the operator link, plus the description lines a transit mode carries) in the
+   right column. The section itself is the 2-column grid, so the name column is
+   one width down the whole section and every name/link pair lines up. The
+   .extras-title spans both columns and keeps its own card shape.
+   Enforced: brain_check check_getting_around_side_by_side (HARD-FAIL) — both
+   the CSS below and the per-guide alternating .extras-sub/.transit-box pairs
+   the grid depends on. Do NOT restore the stacked shape. */
+#getting-around,
+#food-delivery {
+  display: grid;
+  /* Name column sizes to the longest name in the section so every link lines up,
+     but is capped at 38% of the section so a long transit-mode name (e.g.
+     "🚢 Chao Phraya Express Boat") can never squeeze its description column to a
+     word per line on a phone. */
+  grid-template-columns: fit-content(38%) minmax(0, 1fr);
+  align-items: stretch;
 }
-#getting-around .transit-box {
-  background: var(--c-card-bg);
-  border-radius: 0 0 4px 4px;
-  padding: 0 14px 8px 14px;
-  margin: 0;
+#getting-around > .extras-title,
+#food-delivery  > .extras-title {
+  grid-column: 1 / -1;
+  min-width: 0;
 }
-
-/* 🚗 Food Delivery — per-platform continuous block (Local Tastes pattern).
-   Platform-name heading + transit-box description merged into one colored
-   block per platform. Same shape as #getting-around per-subsection blocks.
-   (Restructured 2026-05-19 per owner: "color is the entire entry... like
-   local tastes have always been".) */
-#food-delivery .extras-sub {
+#getting-around > .extras-sub,
+#food-delivery  > .extras-sub {
+  grid-column: 1;
   background: var(--c-card-bg);
-  border-radius: 4px 4px 0 0;
-  padding: 10px 14px 12px 14px;
-  margin: 14px 0 0;
+  border: 1.5px solid transparent;
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+  padding: 10px 14px;
+  margin: 14px 0 0 !important;
 }
-#food-delivery .transit-box {
+#getting-around > .transit-box,
+#food-delivery  > .transit-box {
+  grid-column: 2;
   background: var(--c-card-bg);
-  border-radius: 0 0 4px 4px;
-  padding: 0 14px 8px 14px;
-  margin: 0;
+  border-left: 0;
+  border-radius: 0 4px 4px 0;
+  padding: 10px 14px 10px 0;
+  margin: 14px 0 0 !important;
+}
+/* First entry row takes the uniform 16px title→content gap on BOTH halves so the
+   card's top edge is level across the two columns (the shared
+   `.extras-title + *` rule only reaches the left one). */
+#getting-around > .extras-title + .extras-sub,
+#getting-around > .extras-title + .extras-sub + .transit-box,
+#food-delivery  > .extras-title + .extras-sub,
+#food-delivery  > .extras-title + .extras-sub + .transit-box {
+  margin-top: 16px !important;
 }
 
 /* Retired 2026-05-19 — .ride-apps was a pre-Style-A wrapper for the Getting
