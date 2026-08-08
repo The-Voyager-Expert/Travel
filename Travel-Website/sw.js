@@ -269,7 +269,9 @@
 /* 2026-08-07: lounge arrival chip — toolbar.js injects .lounge-arrival-chip at top of Day 1: teal banner with IATA + airport name → Lounges-US / Lounges-Europe / BYG#lounges based on which page covers that airport; CSS in guide-style.css. toolbar.js → v184, guide-style.css → v102. CACHE to v286. */
 /* 2026-08-07: Photo lightbox — toolbar.js attaches click handlers to .stop-photos img on guide pages; opens fullscreen overlay with stop-name caption + ←→ day navigation; keyboard Escape/arrows; touch swipe on mobile. Zero guide HTML changes. toolbar.js → v185. CACHE to v287. */
 /* 2026-08-07: Fix lounge arrival chip — TypeError crash in _inject() when toolbar-mount is already removed from DOM; explicit null-check on mountEl before reading .dataset.depth. toolbar.js → v190. CACHE to v292. */
-var CACHE = 'travel-cache-v293';
+/* 2026-08-07: Quick Facts strip — toolbar.js injects #tve-quick-facts above TRIP OVERVIEW on every guide: 🗣️ language · 💰 cost tier · 🔌 plug type · 🌤️ best months, read from the new assets/quick_facts.json (built by Brain/scripts/build/build_quick_facts.py, which joins Budget-Guide + Plug-Adapter-Guide + When-to-Go + climate.json per guide). Zero guide HTML changes. toolbar.js → v192. CACHE to v294. */
+/* 2026-08-07: Copy Day as Text — toolbar.js injects a "Copy day" button into every .day-header on guide pages; writes the day to the clipboard as plain text (day label, From-Hotel line, then each stop with number, name, address and the transit hop to the next stop, ending in a #dayN deep link). Descriptions/hours/photos deliberately excluded — the paste target is Notes or WhatsApp. Own CSS injected from toolbar.js, so no guide-style.css dependency. Zero guide HTML changes. toolbar.js → v193. CACHE to v295. */
+var CACHE = 'travel-cache-v295';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -277,7 +279,7 @@ var CACHE = 'travel-cache-v293';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 103, 'toolbar.js': 191, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 103, 'toolbar.js': 193, 'mobile.css': 65, 'web-travel-style.css': 10, 'Read-About.css': 1, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

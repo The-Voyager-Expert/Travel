@@ -7116,8 +7116,10 @@
   function _injectCopyDayButtons() {
     if (!isRealGuide) return;
 
-    var dayBlocks = document.querySelectorAll('.day-block[id^="day"]');
-    if (!dayBlocks.length) return;
+    /* Note: the day-blocks are queried inside _setup(), not here. toolbar.js is
+       a blocking <script> immediately after <body>, so at call time the body is
+       present but the day markup has not been parsed yet — a query up here
+       returns an empty list on every guide. */
 
     var _copySvg =
       '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">' +
@@ -7159,10 +7161,23 @@
        order rather than querying stops and transit banners separately — the hop
        only makes sense glued to the stop it leaves from, and that pairing lives
        in the source order, not in either node list on its own. */
+    /* City name comes from <title>, not .title-city. The banner element ships
+       ALL CAPS in the source ("LISBON"), which is right for a headline and
+       shouty in a message to someone — and re-casing it in JS cannot be done
+       safely: any generic title-caser turns "Rio de Janeiro" into "Rio De
+       Janeiro" and "Washington DC" into "Washington Dc". <title> already
+       carries the correctly-cased name on all 235 guides, so read it there and
+       do no transformation at all. .title-city is the fallback, used verbatim. */
+    function _cityName() {
+      var t = (document.title || '').replace(/\s+/g, ' ').trim();
+      if (t) return t;
+      var el = document.querySelector('.title-city');
+      return el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+    }
+
     function _dayText(block, hdr) {
-      var cityEl = document.querySelector('.title-city');
-      var city   = cityEl ? cityEl.textContent.trim() : '';
-      var label  = _dayLabel(hdr) || 'Day';
+      var city  = _cityName();
+      var label = _dayLabel(hdr) || 'Day';
 
       var out = [city ? city + ' — ' + label : label, ''];
 
@@ -7242,6 +7257,9 @@
     }
 
     function _setup() {
+      var dayBlocks = document.querySelectorAll('.day-block[id^="day"]');
+      if (!dayBlocks.length) return;
+
       [].forEach.call(dayBlocks, function (block) {
         var hdr = block.querySelector(':scope > .day-header');
         if (!hdr || hdr.querySelector('.tve-copy-day-btn')) return;
