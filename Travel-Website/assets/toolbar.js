@@ -3007,6 +3007,24 @@
         'border-right-color:rgba(187,160,112,.45)!important;color:#6b5320!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
+                /* DESKTOP WIDTH — the band stops at the horizontal centre of the screen
+           and no further (owner rule 2026-08-08: "make sure this stops in the
+           middle of the desktop screen not more than that"). At 1440px the card
+           is 1280px wide, so a full-bleed strip ran nearly the whole window for
+           a row that says nine words.
+           `calc(50% + 14px)` IS the screen centre, not an approximation: the
+           card is centred, so its left edge sits at (V - W) / 2 and the band —
+           which is full-bleed, starting on that edge — must be W/2 wide to end
+           at V/2. 50% resolves against the card's CONTENT box (W - 28 at the
+           14px gutter), so half of that plus the 14px the band bleeds back over
+           is exactly W/2. The 14 is re-read at runtime by _phFit for the mobile
+           gutter, but this rule is desktop-only, where the gutter is 14.
+           Mobile keeps the full-bleed strip: at 393px half the screen cannot
+           hold "Today · 10:00am - 8:00pm" and the chevron. */
+        '@media(min-width:601px){' +
+        '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
+        '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{width:calc(50% + 14px);}' +
+        '}' +
         '.tve-ph-src{display:none!important;}' +
         /* Toggle (multi-day) — wrapped with the panel so hover covers both */
         /* The WRAP carries the full-bleed margins (rule above); the toggle inside
@@ -5012,8 +5030,10 @@
       { name: 'Parrot Cay by COMO', note: 'COMO Hotels — private island, COMO Shambhala Retreat spa, white-sand beaches · 9.5 Booking.com' }
     ] },
     'valletta': { h: [
-      { name: 'The Phoenicia Malta', note: 'Small Luxury Hotels — 1947 landmark at city gate, outdoor pool in formal gardens, Malta\'s most storied hotel · 9.1 Booking.com' },
-      { name: 'Ursulino Malta', note: 'Independent boutique — within the historic city walls, curated rooms, intimate boutique atmosphere · 9.3 Booking.com' }
+      { name: 'The Phoenicia Malta', note: 'Small Luxury Hotels — 1947 landmark at city gate, outdoor pool in formal gardens, Malta\'s most storied hotel · 9.1 Booking.com', url: 'https://www.booking.com/hotel/mt/the-phoenicia-malta.html' },
+      { name: 'Ursulino Malta', note: 'Independent boutique — within the historic city walls, curated rooms, intimate boutique atmosphere · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mt/ursulino-valletta.html' },
+      { name: 'Rosselli AX Privilege', note: 'AX Hotels — 17th-century Baroque palazzo in old Valletta, Michelin-starred Under Grain restaurant, personal butler service · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mt/rosselli-valletta.html' },
+      { name: 'Grand Hotel Excelsior', note: 'Preferred Hotels & Resorts — outside Valletta city gate, views of Marsamxett Harbour, outdoor pool, full-service spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/mt/excelsior-grand-malta.html' }
     ] },
     'vancouver': { h: [
       { name: 'Fairmont Hotel Vancouver', note: 'Fairmont brand — 1939 "Castle in the City," spa, Notch8 Restaurant & Bar, iconic copper roof · 8.9 Booking.com' },
