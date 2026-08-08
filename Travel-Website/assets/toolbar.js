@@ -2878,25 +2878,6 @@
         'margin-top:0!important;margin-bottom:0!important;' +
         'line-height:1.45;font-size:inherit;}' +
         '.tve-ph + div,.tve-ph-wrap + div{margin-top:0!important;}' +
-        /* .tour-box > div (0,1,1) outranks .tve-ph (0,1,0), so the box's 6px margin was
-           still applied on top of this row's own 6px padding — a card with an hours row
-           sat 32px below "Read more" where a plain card sat at 20px. Scoping to the box
-           wins the specificity fight; the row then needs a -6px pull-up ONLY where it is
-           the first visible child (its hidden authored source being :first-child), so its
-           text lands exactly where a plain first row's does. Applying that pull-up
-           unconditionally collapsed mid-card gaps to 0 — measured, not assumed. */
-        /* The card gives every direct child margin-top:6px, and this row adds 6px of
-           its own padding on top — so it sat 12px below the row above where every
-           other pair sat at 6px, and 14px below the card's top edge where a plain
-           first row sits at 8px. Dropping the margin fixes both: the band's EDGE now
-           starts exactly where any other first row starts, and mid-card text-to-text
-           is 6px like everything else. Scoping to the card is what wins the
-           specificity fight — .tour-box > div (0,1,1) outranks .tve-ph (0,1,0).
-           A filled, padded block cannot match both the edge rhythm and the text
-           rhythm of unpadded rows; pulling it up by its padding to align the text
-           left only 2px above the band where plain cards have 8px, so edges win. */
-        '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
-        '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{margin-top:0!important;}' +
         /* Open-around-the-clock variant — the warm tan already used by transit banners */
         '.tve-ph-24{border-left-color:#bba070!important;background:#f5f0e6!important;' +
         'color:#6b5320!important;}' +
@@ -2909,15 +2890,8 @@
         'border-radius:0 3px 0 0!important;margin-top:0!important;margin-bottom:0!important;' +
         '-webkit-user-select:none;user-select:none;}' +
         '.tve-ph-lbl{flex:1;}' +
-        /* Chevron reads as a control, not punctuation. At 11px inline it was
-           near-invisible — nothing signalled that the row opened. Now a 22px round
-           chip with a terracotta tint, which also gives it a real tap target. */
-        '.tve-ph-chv{font-size:15px;font-weight:700;color:#b85c2a;line-height:1;' +
-        'display:inline-flex;align-items:center;justify-content:center;flex:none;' +
-        'width:22px;height:22px;border-radius:50%;' +
-        'border:1px solid rgba(184,92,42,.38);background:rgba(184,92,42,.09);' +
-        'transition:transform .2s,background .15s;}' +
-        '.tve-ph-wrap:hover .tve-ph-chv{background:rgba(184,92,42,.20);}' +
+        '.tve-ph-chv{font-size:11px;color:#b85c2a;transition:transform .2s;' +
+        'display:inline-block;line-height:1;}' +
         '.tve-ph-toggle[aria-expanded="true"] .tve-ph-chv{transform:rotate(90deg);}' +
         /* Expandable panel — absolute, so it floats OVER the rows beneath it.
            A hover trigger that pushed content down would reflow the page under
@@ -3027,6 +3001,14 @@
       return { days: days, val: val };
     }
 
+    /* Contiguous day indices → a compact label ("Tue–Sat", "Mon"). Used only by
+       the flat single-segment row; the grid prints each day on its own line. */
+    function _span(days) {
+      if (!days || !days.length) return '';
+      if (days.length === 1) return DAYS[days[0]];
+      return DAYS[days[0]] + '–' + DAYS[days[days.length - 1]];
+    }
+
     /* ── Today, at the destination ──────────────────────────────────────────── */
     var _dest   = _tveDestNow();
     var _todayI = _dest.local ? (_dest.dow + 6) % 7 : -1; /* JS 0=Sun → Mon-first */
@@ -3112,67 +3094,56 @@
       return wrap;
     }
 
-    /* ── Walk the authored 🏛️ rows, GROUPED BY STOP ─────────────────────────
-       A stop can carry more than one 🏛️ row — Carmel Mission ships
-       "Mon-Sat 9:30am - 5:00pm" on one and "Sun 10:30am - 5:00pm" on the
-       next. That is ONE weekly schedule split across two lines, not two
-       schedules, and emitting a band per row stacked two near-identical
-       strips with a gap between them. Grouping by the containing box means
-       exactly one band per stop, which is also what makes the vertical
-       rhythm deterministic: there is never a band-to-band gap to tune. */
-    var groups = [], boxes = [];
+    /* ── Walk the authored 🏛️ rows ──────────────────────────────────────────── */
     srcRows.forEach(function (row) {
-      var box = row.parentNode;
-      var i = boxes.indexOf(box);
-      if (i < 0) { boxes.push(box); groups.push({ box: box, rows: [row] }); }
-      else { groups[i].rows.push(row); }
-    });
+      var raw = row.textContent.replace(/^🏛️?\s*/, '').trim();
+      var parts = raw.split('·').map(function (s) { return s.trim(); }).filter(Boolean);
 
-    groups.forEach(function (grp) {
-      /* Every " · " segment from every 🏛️ row on this stop, in source order. */
-      var parts = [];
-      grp.rows.forEach(function (r) {
-        r.textContent.replace(/^🏛️?\s*/, '').trim().split('·').forEach(function (x) {
-          x = x.trim();
-          if (x) parts.push(x);
-        });
-      });
-      if (!parts.length) return;
+      /* ── Single-segment listing → flat styled row, no chevron ─────────────
+         The schedule is uniform, so there is nothing to expand and no toggle
+         is offered — a chevron that opens onto one line is a lie. It still
+         gets the styled row, because the alternative is a feature that is
+         invisible on the 93 guides whose every stop is "Daily 9-5" or
+         "Open 24/7" (Big-Island: 16 rows, not one of them varied). */
+      if (parts.length < 2) {
+        var one = _seg(parts[0] || '');
+        if (!one) return;                      /* unparseable → leave as authored */
+        var flat = document.createElement('div');
+        var whole = one.days.length === 7;
+        var label;
+        if (one.val === '24h') {
+          flat.className = 'tve-ph tve-ph-24';
+          label = whole ? 'Open 24h · every day' : _span(one.days) + ' · open 24h';
+        } else if (one.val === 'closed') {
+          flat.className = 'tve-ph';
+          label = 'Closed ' + _span(one.days);
+        } else {
+          flat.className = 'tve-ph';
+          label = (whole ? 'Daily' : _span(one.days)) + ' · ' + one.val;
+        }
+        flat.textContent = '🕐 ' + label; /* 🕐 */
+        row.classList.add('tve-ph-src');       /* hidden; textContent kept for Open Now */
+        row.parentNode.insertBefore(flat, row.nextSibling);
+        return;
+      }
 
-      var week = [], bad = false, is24 = false;
+      var week = [], bad = false;
       parts.forEach(function (p) {
-        var seg = _seg(p);
-        if (!seg) { bad = true; return; }
-        if (seg.val === '24h') is24 = true;
-        seg.days.forEach(function (d) { if (week[d] === undefined) week[d] = seg.val; });
+        var s = _seg(p);
+        if (!s) { bad = true; return; }
+        s.days.forEach(function (d) { if (week[d] === undefined) week[d] = s.val; });
       });
-      /* Any segment we could not read → leave the stop entirely alone. A
-         partially understood schedule is worse than the authored lines. */
+      /* Any segment we could not read → leave the whole row alone. A partially
+         understood schedule is worse than the authored line it would replace. */
       if (bad) return;
 
-      /* Days the listing never names are read as closed — an hours listing
-         that names Tuesday–Sunday means "shut on Monday" everywhere. */
-      var uniform = true;
-      for (var i = 1; i < 7; i++) {
-        if ((week[i] === undefined ? 'closed' : week[i]) !==
-            (week[0] === undefined ? 'closed' : week[0])) { uniform = false; break; }
-      }
+      var vals = {}, n = 0;
+      for (var i = 0; i < 7; i++) { var v = week[i] === undefined ? 'closed' : week[i];
+        if (!vals[v]) { vals[v] = 1; n++; } }
+      if (n < 2) return;                       /* uniform week → nothing to expand */
 
-      var el;
-      if (!uniform) {
-        el = _build(week);                       /* varies by day → collapse */
-      } else {
-        /* Same value all seven days → flat row, nothing to expand. */
-        var v = week[0] === undefined ? 'closed' : week[0];
-        if (v === 'closed') return;              /* "closed every day" is not a schedule */
-        el = document.createElement('div');
-        el.className = 'tve-ph' + (v === '24h' ? ' tve-ph-24' : '');
-        el.textContent = '🕐 ' + (v === '24h' ? 'Open 24h · every day' : 'Daily · ' + v); /* 🕐 */
-      }
-
-      grp.rows.forEach(function (r) { r.classList.add('tve-ph-src'); });
-      var last = grp.rows[grp.rows.length - 1];
-      last.parentNode.insertBefore(el, last.nextSibling);
+      row.classList.add('tve-ph-src');         /* hidden; textContent kept for Open Now */
+      row.parentNode.insertBefore(_build(week), row.nextSibling);
     });
   }
   if (document.readyState === 'loading') {
@@ -4388,8 +4359,10 @@
       { name: 'Hyatt Regency Nice Palais de la Méditerranée', note: 'Hyatt brand — 1929 Art Deco Promenade des Anglais façade, sea-view rooftop, spa · 8.7 Booking.com' }
     ] },
     'oahu': { h: [
-      { name: 'Royal Hawaiian, a Luxury Collection Resort', note: 'Marriott Luxury Collection — 1927 "Pink Palace of the Pacific," oceanfront on central Waikiki Beach, four pools · 9.1 Booking.com' },
-      { name: 'Four Seasons Resort Oahu at Ko Olina', note: 'Four Seasons brand — West Oahu lagoon beach, adults-focused pools, spa, away from Waikiki crowds · 9.3 Booking.com' }
+      { name: 'Royal Hawaiian, a Luxury Collection Resort', note: 'Marriott Luxury Collection — 1927 "Pink Palace of the Pacific," oceanfront on central Waikiki Beach, four pools · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/royal-hawaiian-a-luxury-collection-resort-honolulu.html' },
+      { name: 'Four Seasons Resort Oahu at Ko Olina', note: 'Four Seasons brand — West Oahu lagoon beach, adults-focused pools, spa, away from Waikiki crowds · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-resort-oahu-at-ko-olina.html' },
+      { name: 'Hyatt Regency Waikiki Beach Resort and Spa', note: 'Hyatt brand — twin towers on the beach at Kūhiō Ave, rooftop pool, open-air atrium mall · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-waikiki-beach-resort-and-spa.html' },
+      { name: 'Moana Surfrider, A Westin Resort & Spa, Waikiki Beach', note: 'Marriott Westin — 1901 "First Lady of Waikiki," beachfront, iconic banyan courtyard, historic character · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/moana-surfrider-a-westin-resort-spa-waikiki-beach.html' }
     ] },
     'oaxaca': { h: [
       { name: 'Casa Oaxaca Hotel', note: 'Independent boutique — 6 suites around a colonial courtyard, rooftop pool, acclaimed El Restaurante, historic zone · 9.4 Booking.com' },
@@ -7165,95 +7138,6 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', _move);
     } else { _move(); }
-  }());
-
-  /* ── Section-nav chips: a dot in each section's own colour ────────────────
-     The row ships as a flat list of 13-17 chips, every one identical in weight,
-     wrapping to a ragged three rows. Two presentational changes, both applied at
-     runtime so no guide HTML is touched:
-
-       1. A dot is prepended to each chip, coloured with the border token of the
-          section that chip jumps to. The colours are not invented here: each is
-          read from the same --c-*-border custom property that already draws that
-          section's box further down the guide, so a chip and its destination can
-          never disagree — recolour a section and its chip follows. Off-guide
-          links (Also on this site, Best Of, Nearby Guides, Alt. Hotels, Also in
-          Country) share one neutral grey; they leave the guide, so they have no
-          section colour to borrow.
-
-       2. The row becomes an even 3-column grid (CSS, below). That is what squares
-          the ragged right edge against the flush action bar above it.
-
-     ORDER IS UNTOUCHED — chips are never reordered or regrouped, so the rendered
-     sequence is exactly the canonical order the guide HTML carries and
-     _OVERVIEW_PILL_CANONICAL_ORDER (validate_itinerary.py) enforces.
-
-     "Also in {Country}" is appended only after country_guides.json resolves, well
-     after DOMContentLoaded, so a MutationObserver picks it up. It watches the
-     row's own childList only (not subtree), so inserting a dot INSIDE a chip
-     cannot re-trigger it. */
-  (function _extrasSectionDots() {
-    var VARS = {
-      'weekly-closures':     '--c-closures-border',
-      'tours':               '--c-tours-border',
-      'cappuccino':          '--c-cappuccino-border',
-      'restaurants':         '--c-nearhotel-border',
-      'downtown':            '--c-downtown-border',
-      'local-tastes':        '--c-tastes-border',
-      'food-delivery':       '--c-delivery-border',
-      'shows':               '--c-shows-border',
-      'getting-around':      '--c-gettingaround-border',
-      'stations-near-hotel': '--c-stations-border',
-      'day-trips-by-train':  '--c-daytrips-border',
-      'pickleball':          '--c-pickleball-border',
-      'michelin':            '--c-michelin-border',
-      'heads-up':            '--c-headsup-border',
-      'claude-inspiration':  '--c-sage-border'
-    };
-    var OFFSITE = '#b0a692';
-    var row = null;
-
-    function _anchor(a) {
-      var h = a.getAttribute('href') || '';
-      var i = h.indexOf('#');
-      return i === -1 ? '' : h.slice(i + 1);
-    }
-
-    function _decorate(a) {
-      if (!a || a.querySelector('.ov-dot')) return;
-      var v = VARS[_anchor(a)];
-      var dot = document.createElement('i');
-      dot.className = 'ov-dot';
-      dot.setAttribute('aria-hidden', 'true');
-      dot.style.background = v ? 'var(' + v + ', ' + OFFSITE + ')' : OFFSITE;
-      a.insertBefore(dot, a.firstChild);
-    }
-
-    function _apply() {
-      if (!row) return;
-      [].forEach.call(row.querySelectorAll(':scope > a.overview-extra-link'), _decorate);
-    }
-
-    function _init() {
-      if (!isRealGuide) return;
-      row = document.querySelector('.overview-extras:not(#ics-pill-row)');
-      if (!row) return;
-      _apply();
-      if (typeof MutationObserver === 'function') {
-        new MutationObserver(function(muts) {
-          muts.forEach(function(m) {
-            [].slice.call(m.addedNodes).forEach(function(n) {
-              if (n.nodeType === 1 && n.tagName === 'A' &&
-                  n.classList.contains('overview-extra-link')) { _decorate(n); }
-            });
-          });
-        }).observe(row, { childList: true });
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', _init);
-    } else { _init(); }
   }());
 
   /* ── Trip Overview day rows → left rail + soft stop list + stop count ──────
