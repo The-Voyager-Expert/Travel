@@ -4065,10 +4065,10 @@
       { name: 'Le Boutique Hotel & Spa', note: 'Independent — 5-star on Rue Lafaurie de Monbadon in the city centre, heated outdoor pool, spa with steam room, wine bar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/fr/le-boutique-bordeaux.html' }
     ] },
     'boston': { h: [
-      { name: 'Four Seasons Hotel Boston', note: 'Four Seasons brand — Back Bay, indoor pool overlooking the Public Garden, Bristol Lounge, steps from Newbury Street · 9.2 Booking.com' },
-      { name: 'Mandarin Oriental, Boston', note: 'Mandarin Oriental brand — Back Bay on Boylston Street, spa with pool, Asana wellness centre, connected to Copley Place shops · 9.1 Booking.com' },
-      { name: 'The Newbury Boston', note: 'Marriott Autograph — 1927 Ritz-Carlton building on Newbury Street, rooftop Contessa Italian restaurant, curated interiors, Back Bay · 9.1 Booking.com' },
-      { name: 'InterContinental Boston', note: 'IHG brand — Fort Point Channel waterfront, indoor/outdoor pool with harbour views, Rumba restaurant, spa · 8.9 Booking.com' }
+      { name: 'Four Seasons Hotel Boston', note: 'Four Seasons brand — 200 Boylston Street, indoor pool overlooking the Public Garden, Bristol Lounge, steps from Boston Common · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-boston.html' },
+      { name: 'Mandarin Oriental, Boston', note: 'Mandarin Oriental brand — Back Bay on Boylston Street, spa with hot tub, sauna, connected to Copley Place shops · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/mandarin-oriental-boston.html' },
+      { name: 'The Newbury Boston', note: 'Marriott Autograph — 1927 Ritz-Carlton building on Newbury Street, rooftop Contessa Italian restaurant, curated interiors, Back Bay · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-newbury-boston.html' },
+      { name: 'InterContinental Boston', note: 'IHG brand — 510 Atlantic Avenue on the Fort Point Channel waterfront, indoor pool, spa with steam room · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/intercontinental-boston.html' }
     ] },
     'boulder': { h: [
       { name: 'St Julien Hotel & Spa', note: 'Independent boutique — Ninth and Pearl Street, heated outdoor pool and terrace, spa, panoramic Flatirons mountain views · 9.0 Booking.com' },
@@ -4157,10 +4157,10 @@
       { name: 'Dhara Dhevi Chiang Mai', note: 'Independent — 60-acre Lanna-inspired estate, three pools, Le Grand Lanna restaurant in a century-old teak pavilion, spa village · 9.3 Booking.com' }
     ] },
     'chicago': { h: [
-      { name: 'The Langham, Chicago', note: 'Langham Hotels — River North in the IBM Building, Chuan Body & Soul Spa, indoor pool, Travelle restaurant · 9.4 Booking.com' },
-      { name: 'Waldorf Astoria Chicago', note: 'Waldorf Astoria/Hilton — Gold Coast (11 E Walton St), European-style spa, Brass Tack steakhouse, Art Deco interiors · 8.6 Booking.com' },
-      { name: 'Four Seasons Hotel Chicago', note: 'Four Seasons brand — Michigan Avenue, Mag Mile views, indoor pool with skyline panorama, Allium Restaurant, full-service spa · 9.0 Booking.com' },
-      { name: 'Loews Chicago Hotel', note: 'Loews brand — 455 N Park Drive in Streeterville, outdoor pool with Lake Michigan views, close to Navy Pier and Magnificent Mile · 9.0 Booking.com' }
+      { name: 'The Langham, Chicago', note: 'Langham Hotels — 330 North Wabash Avenue in the IBM Building, Chuan Body & Soul Spa, indoor pool, kids club · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/the-langham-chicago.html' },
+      { name: 'Waldorf Astoria Chicago', note: 'Waldorf Astoria/Hilton — Gold Coast (11 E Walton St), European-style spa, sauna, Art Deco interiors · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/chicago-11-walton.html' },
+      { name: 'Four Seasons Hotel Chicago', note: 'Four Seasons brand — 120 East Delaware Place off Michigan Avenue, 50-foot indoor pool, Adorn Bar & Restaurant, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-chicago.html' },
+      { name: 'Loews Chicago Hotel', note: 'Loews brand — 455 North Park Drive in Streeterville, indoor pool, close to Navy Pier and Magnificent Mile · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/loews-chicago.html' }
     ] },
     'chongqing': { h: [
       { name: 'Regent Chongqing', note: 'IHG/Regent — Jiefangbei CBD, Yangtze River views, spa, signature restaurants, complimentary minibar · 9.6 Booking.com' },
@@ -4610,8 +4610,10 @@
       { name: 'Parker Palm Springs', note: 'Parker brand — 144 acres of vintage desert resort, two pools, Gene Autry\'s former home, Palm Springs style · 9.0 Booking.com' }
     ] },
     'palo-alto': { h: [
-      { name: 'Rosewood Sand Hill', note: 'Rosewood brand — 16-acre Menlo Park estate, two outdoor pools, Sense spa, Madera restaurant · 9.3 Booking.com' },
-      { name: 'The Clement Palo Alto', note: 'Independent boutique — downtown Palo Alto, 23 suites, butler service, close to University Avenue · 9.4 Booking.com' }
+      { name: 'Rosewood Sand Hill', note: 'Rosewood brand — 16-acre Menlo Park estate, two outdoor pools, Sense spa, Madera restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-sand-hill-94025.html' },
+      { name: 'The Clement Palo Alto', note: 'Independent boutique — 711 El Camino Real, all-suite with rooftop pool, close to University Avenue · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-clement.html' },
+      { name: 'AC Hotel by Marriott Palo Alto', note: 'Marriott AC brand — 744 San Antonio Road, terrace and bar, fitness centre, 4-star · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/ac-by-marriott-palo-alto.html' },
+      { name: 'Graduate by Hilton Palo Alto', note: 'Hilton Graduate brand — 488 University Avenue downtown, restaurant and bar, walk to Stanford campus · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/graduate-palo-alto.html' }
     ] },
     'paris': { h: [
       { name: 'Le Meurice', note: 'Dorchester Collection — Tuileries-facing Palace hotel, two-Michelin-star Alain Ducasse restaurant, spa · 9.5 Booking.com' },
@@ -4620,8 +4622,10 @@
       { name: 'Four Seasons Hotel George V Paris', note: 'Four Seasons brand — 31 Avenue George V, three Michelin-starred restaurants, La Spa George V, courtyard garden, close to Champs-Élysées · 9.4 Booking.com' }
     ] },
     'pasadena': { h: [
-      { name: 'The Langham Huntington Pasadena', note: 'Langham brand — 23-acre estate, Olympic pool, formal gardens, 1914 landmark hotel · 9.1 Booking.com' },
-      { name: 'Hotel Dena Pasadena, Curio Collection by Hilton', note: 'Hilton Curio — near Convention Center, rooftop pool, design-forward rooms · 8.6 Booking.com' }
+      { name: 'The Langham Huntington, Pasadena', note: 'Langham brand — 23-acre estate on South Oak Knoll, Olympic pool, formal gardens, 1914 landmark hotel · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-langham-huntington-spa-pasadena.html' },
+      { name: 'Hotel Dena, Pasadena Los Angeles, a Tribute Portfolio Hotel', note: 'Marriott Tribute Portfolio — 303 Cordova Street near the Convention Center, heated outdoor pool, restaurant and bar · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/sheraton-pasadena.html' },
+      { name: 'Hyatt Place Pasadena', note: 'Hyatt Place brand — 399 East Green Street steps from Paseo Colorado, outdoor pool, fitness centre · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-place-pasadena.html' },
+      { name: 'Pasadena Hotel & Pool', note: 'Independent — 928 East Colorado Boulevard, rooftop pool with pool bar, restaurant, 4-star · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/pasadenahotelandpool.html' }
     ] },
     'pensacola': { h: [
       { name: 'Portofino Island Resort', note: 'Independent — Santa Rosa Island, Gulf Spa, multiple pools, direct Gulf of Mexico beachfront · 8.7 Booking.com' },
