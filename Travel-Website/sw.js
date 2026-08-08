@@ -371,7 +371,8 @@
 /* 2026-08-08: Montevideo hotel alternatives — added Booking.com url fields to Radisson + Cottage; added 2 new hotels (Hyatt Centric Montevideo, Esplendor by Wyndham Cervantes) to reach 4-hotel minimum; stripped 🏨 from hotel-first openers. toolbar.js -> v255. CACHE to v394. */
 /* 2026-08-08: Split hotel alternatives — added Booking.com url fields to Vestibul Palace + Radisson Blu; added 2 new hotels (Cornaro Hotel, AC Hotel by Marriott Split) to reach 4-hotel minimum; stripped 🏨 from hotel-first openers. toolbar.js -> v256. CACHE to v395. */
 /* 2026-08-08: Azores hotel alternatives — added Booking.com url fields to Delta Hotels Marriott; added 3 new hotels (Grand Hotel Açores Atlântico, Hotel Talisman, Mercure Ponta Delgada) to reach 4-hotel minimum; stripped 🏨 from hotel-first openers. toolbar.js -> v257. CACHE to v396. */
-var CACHE = 'travel-cache-v396';
+/* 2026-08-08: Aracaju hotel alternatives — rebranded Radisson → Vidam Transamerica; added Booking.com url fields to da Costa; added 2 new hotels (Celi Hotel, Quality Hotel Aracaju) to reach 4-hotel minimum; stripped 🏨 from hotel-first openers. toolbar.js -> v258. CACHE to v397. */
+var CACHE = 'travel-cache-v397';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -379,7 +380,7 @@ var CACHE = 'travel-cache-v396';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 149, 'toolbar.js': 257, 'mobile.css': 68, 'web-travel-style.css': 16, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 149, 'toolbar.js': 258, 'mobile.css': 68, 'web-travel-style.css': 16, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
