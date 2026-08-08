@@ -4392,8 +4392,10 @@
       { name: 'The Inn at Harbour Town', note: 'Independent boutique — inside Sea Pines plantation, overlooking Heritage Golf Links, butler service, Sea Pines resort amenity access · 9.1 Booking.com' }
     ] },
     'hiroshima': { h: [
-      { name: 'Grand Prince Hotel Hiroshima', note: 'Prince Hotels brand — waterfront hotel on the Motoyasu River, panoramic city views, spa, pool, closest major hotel to Peace Memorial Park · 8.9 Booking.com' },
-      { name: 'Sheraton Grand Hiroshima Hotel', note: 'Marriott brand — directly connected to JR Hiroshima Station, Shinkansen-accessible, Club Lounge, contemporary rooms above the transit hub · 8.7 Booking.com' }
+      { name: 'Grand Prince Hotel Hiroshima', note: 'Prince Hotels brand — waterfront hotel on the Motoyasu River, panoramic city views, spa, pool, closest major hotel to Peace Memorial Park · 8.9 Booking.com', url: 'https://www.booking.com/hotel/jp/grand-prince-hiroshima.html' },
+      { name: 'Sheraton Grand Hiroshima Hotel', note: 'Marriott brand — directly connected to JR Hiroshima Station, Shinkansen-accessible, Club Lounge, contemporary rooms above the transit hub · 8.7 Booking.com', url: 'https://www.booking.com/hotel/jp/sheraton-hiroshima.html' },
+      { name: 'Hilton Hiroshima', note: 'Hilton brand — modern 5-star in city centre, indoor pool, spa, fitness center, 1.6km from Peace Memorial Park · 9.2 Booking.com', url: 'https://www.booking.com/hotel/jp/hilton-hiroshima.html' },
+      { name: 'ANA Crowne Plaza Hiroshima', note: 'IHG brand — 5-minute walk from Peace Memorial Park, city-centre location, fitness center, panoramic views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/jp/ana-crowne-plaza-hiroshima.html' }
     ] },
     'hoi-an': { h: [
       { name: 'Anantara Hội An Resort', note: 'Anantara brand — Thu Bon River frontage in the Ancient Town, colonial-style architecture, riverside pool, spa · 9.2 Booking.com' },
