@@ -865,12 +865,17 @@ a:hover { text-decoration: underline; }
   border-radius: 4px 4px 0 0;
   padding: 8px 14px;
 }
-/* Zero prose bottom padding when a booking box or Wikipedia row follows
-   so the join uses only the first child's 6px margin as spacing. */
+/* Zero prose bottom padding when a booking box follows so the join uses only
+   the first child's 6px margin as spacing. */
 .stop-block > :nth-child(2):has(+ .tour-box),
-.stop-block > :nth-child(2):has(+ .ticket-box),
-.stop-block > :nth-child(2):has(+ .stop-row) {
+.stop-block > :nth-child(2):has(+ .ticket-box) {
   padding-bottom: 0;
+}
+/* ...but when the Read more row follows, the prose keeps real bottom padding.
+   Everything below the prose is now a tinted panel (see below), so the
+   description must not sit flush on a colour boundary. (owner 2026-08-08) */
+.stop-block > :nth-child(2):has(+ .stop-row) {
+  padding-bottom: 14px;
 }
 /* Card directly after prose (no Wikipedia row) — glue to the white prose block.
    padding-top: 0 so the 6px div margin inside the box is the only gap. */
@@ -982,27 +987,38 @@ a:hover { text-decoration: underline; }
 /* 📖 Wikipedia reading row — continuation of the white prose block (2026-08-05).
    No top margin or top radius; glued flush below prose. Scoped via :has()
    to the exact en.wikipedia.org anchor. Browser support: Chromium 105+.
-   padding-bottom reduced to 0 when a booking box follows, so the only gap at
-   the join is the 6px div margin inside the box (matches internal row rhythm). */
+   Owner 2026-08-08: the description keeps the white block at the top of the
+   card; EVERYTHING below it -- this row, the booking box, and the photo area --
+   sits on a tinted panel that runs to the bottom of the card and wraps around
+   the photo on all four sides. The tone is COPIED, not invented: it is the
+   Open-Recommendations report card body, verbatim from Reports.html
+     line 9   --surface2 #f1ece3 - --line #e4ddd0  (dark: #2a251d / #38322a)
+     line 65  .tbody{ border-top:1px solid var(--line); background:var(--surface2) }
+   Do not substitute a guide token or a hand-mixed beige; if the report's
+   palette moves, move these with it and keep the two surfaces identical. */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) {
   margin-top: 0;
   margin-bottom: 0;
-  background: var(--c-card-bg);
+  background: #f1ece3;
+  border-top: 1px solid #e4ddd0;
   border-radius: 0;
-  padding: 8px 14px;
+  padding: 12px 15px;
 }
-.stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]):has(+ .tour-box),
-.stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]):has(+ .ticket-box) {
-  padding-bottom: 0;
-}
-/* Card below Wikipedia row — glue to the white block above.
-   padding-top: 0 so the 6px div margin inside the box is the only gap. */
+/* Card below Wikipedia row — continues the panel rather than reverting to
+   white, and takes enough top padding to clear the colour boundary. */
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .tour-box,
 .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .ticket-box {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   margin-top: 0;
-  padding-top: 0;
+  padding-top: 10px;
+}
+/* Every box and the photo strip inside a stop that has a Read more row share
+   the panel, so the card seals on the panel instead of on white. */
+.stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .tour-box,
+.stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .ticket-box,
+.stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .stop-photos {
+  background: #f1ece3;
 }
 /* Wikipedia link → "📖 Read more" chip (2026-08-07, recoloured 2026-08-08).
    Terracotta text + border on hover. No chevron. The 📖 emoji lives inside
@@ -1022,7 +1038,12 @@ a:hover { text-decoration: underline; }
      visibly cooler than the duration pill. Using the tokens rather than the
      hexes also means the dark block themes both chips together. Shape stays
      as approved (4px radius, 14px, sentence case) — only the colour changed. */
-  background: var(--c-next-bg);
+  /* Fill only: #fffdf9 is Reports.html's --surface, the white its own badges
+     sit on over the --surface2 body. This chip now sits on that same panel,
+     and --c-next-bg (#f5f0e6) against #f1ece3 is a two-value difference --
+     the chip lost its ground entirely. Border and ink stay on the duration-pill
+     tokens; only the fill moved. (owner 2026-08-08) */
+  background: #fffdf9;
   border: 1px solid var(--c-next-border);
   border-radius: 4px;
   padding: 3px 9px;
@@ -1160,13 +1181,16 @@ a:hover { text-decoration: underline; }
    CSS mask, so it takes the guide's warm accent as a background-color and
    retints in dark mode like every other guide foreground.
 
-   Markup:  <div><span class="free-flag">No ticket</span></div>
-   Icon and wording are one unit: the stub reads "nothing to buy, nothing
-   to queue for", which is the useful fact — "Free" only said the obvious.
-   Timed entry still lives in a 🎟 .ticket-box, never on this row.
+   Markup:  <div><span class="free-flag">Free</span></div>
+   The word is "Free", nothing else, and it inks the same terracotta as the
+   stub so icon and label read as one mark rather than a glyph with a grey
+   caption beside it. Timed entry still lives in a ticket box, never here.
 
    Swapping the artwork later is ONE line: replace the data-URI below.
    The 505 guide rows carry only the class, never the drawing. ── */
+.free-flag {
+  color: #b85c2a;
+}
 .free-flag::before {
   content: "";
   display: inline-block;
@@ -2248,6 +2272,18 @@ div.train .train-time   { padding: 2px 0; }
   /* "📖 Read more" needs no dark fill/border/ink override — it is built from
      --c-next-bg / --c-next-border / --c-action-text, all themed above, exactly
      like the .stop-dur duration chip. Only the hover terracotta lightens. */
+  /* Panel + chip dark twins — the report's own dark tokens (Reports.html
+     line 13): --surface2 #2a251d, --line #38322a, --surface #221e18. */
+  .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) {
+    background: #2a251d;
+    border-top-color: #38322a;
+  }
+  .stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .tour-box,
+  .stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .ticket-box,
+  .stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .stop-photos {
+    background: #2a251d;
+  }
+  .stop-row a[href*="en.wikipedia.org"] { background: #221e18; }
   .stop-row a[href*="en.wikipedia.org"]:hover { color: #d4784a; border-color: #d4784a; }
   .hotel-first,
   .arrive-first,
@@ -3583,6 +3619,7 @@ a.also-in-country-pill:active {
   .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }
   /* No-ticket stub — #b85c2a sits at 2.6:1 on the #2a2825 card. Same lift the
      pullquote border uses, so the warm family stays one system. (2026-08-08) */
+  .free-flag { color: #d4874a; }
   .free-flag::before { background-color: #d4874a; }
 }
 :root[data-theme="dark"] .lounge-arrival-chip { background: #1a2e30; color: #7ecfd8; }
@@ -3592,4 +3629,5 @@ a.also-in-country-pill:active {
 :root[data-theme="dark"] .open-now-pill.on { color: #d0ffd8; background: #1a5a2e; border-color: #1a5a2e; }
 :root[data-theme="dark"] .closed-now-badge { color: #fca5a5; background: #3b1212; border-color: #7a2020; }
 :root[data-theme="dark"] .day-header-filter-note { color: #6dff9e; background: #1a3822; border-color: #2a5a38; }
+:root[data-theme="dark"] .free-flag { color: #d4874a; }
 :root[data-theme="dark"] .free-flag::before { background-color: #d4874a; }
