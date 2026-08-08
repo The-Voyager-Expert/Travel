@@ -4984,10 +4984,10 @@
       s.textContent =
         '.tve-adtf{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;' +
         'padding:9px 16px 10px;font-size:12px;line-height:1.5;}' +
-        '.tve-adtf-label{color:#6a6760;white-space:nowrap;}' +
+        '.tve-adtf-label{color:var(--c-text-muted,#6a6760);white-space:nowrap;}' +
         '.tve-adtf-cities{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 6px;min-width:0;}' +
         '.tve-adtf-sep{color:#c8a44a;}' +
-        '.tve-adtf a{color:#8a6c1a;text-decoration:none;border-bottom:1px solid transparent;}' +
+        '.tve-adtf a{color:var(--c-index-accent,#8a6c1a);text-decoration:none;border-bottom:1px solid transparent;}' +
         '.tve-adtf a:hover{color:#b85c2a;border-bottom-color:#b85c2a;text-decoration:none;}' +
         '@media (max-width:600px){.tve-adtf{padding:9px 14px 10px;}}';
       document.head.appendChild(s);
