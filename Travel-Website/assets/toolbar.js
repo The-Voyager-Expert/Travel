@@ -2867,24 +2867,37 @@
            declare is "only ever a foreground — never a fill", so it is used for
            rails, text and borders and never as a background. */
         /* Base row */
-        /* Spacing: .tour-box/.ticket-box give every direct child margin-top:6px, and
-           this row adds 6px of its own vertical padding on top of that — so its text
-           sat 12px from the next row's while every other pair in the card sat at 6px,
-           and the band read as adrift from the rows it belongs with. The padding IS
-           the spacing here: outer margins go to 0 and the following sibling's
-           margin-top is cancelled, giving a uniform 6px text-to-text rhythm. */
+        /* HORIZONTAL — the band is a FULL-BLEED strip. Its negative side margins
+           cancel the card's 14px padding, so the rail sits flush to the card edge
+           and the 🕐 lands on exactly the same x as every other icon row in the
+           card (🎟️ ⚠️ 🚫 📍). Inset by 10px inside the content column the glyph
+           sat 12.5px right of that column and the icon run visibly stepped in and
+           back out on every stop (owner report 2026-08-08, "look the spaces it is
+           a mess all over the place"). border-left(2.5) + padding-left(11.5) = the
+           card's own 14px gutter, which is what puts the text back on the column.
+           These two numbers are the DESKTOP default only — the card drops to
+           `padding: 10px 12px` at the mobile breakpoint (guide-style.css § mobile),
+           so _phFit() re-reads the real padding off the card and overrides both at
+           runtime. Hardcoding 14 hung the band 2px off each edge at 393px.
+           VERTICAL — the slab takes the card's normal 6px row rhythm above and
+           below instead of butting flush against the neighbouring lines. Its own
+           6px padding is INSIDE the slab and is not spacing between rows; zeroing
+           the margins to "keep text-to-text at 6px" is what left the tinted band
+           glued to the link above it and to the ⚠️/📍 line under it. */
         '.tve-ph{border-left:2.5px solid #b85c2a;background:#fdf8f0;color:#3d3a32;' +
-        'font-weight:500;padding:6px 10px;border-radius:0 3px 3px 0;' +
-        'margin-top:0!important;margin-bottom:0!important;' +
-        'line-height:1.45;font-size:inherit;}' +
-        '.tve-ph + div,.tve-ph-wrap + div{margin-top:0!important;}' +
-        /* The card gives every direct child margin-top:6px and this row adds 6px of
-           its own padding, so it sat 14px below the card's top edge where a plain
-           first row sits at 8px. Dropping the margin aligns the edges and leaves
-           internal text-to-text at 6px. Scoping to the card is what wins the
-           specificity fight — .tour-box > div (0,1,1) outranks .tve-ph (0,1,0). */
+        'font-weight:500;padding:6px 14px 6px 11.5px;border-radius:0;' +
+        'margin:6px -14px 0;line-height:1.45;font-size:inherit;}' +
+        /* Scoping to the card is what wins the specificity fight —
+           .tour-box > div (0,1,1) outranks .tve-ph (0,1,0). */
         '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
-        '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{margin-top:0!important;}' +
+        '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{' +
+        'margin:6px -14px 0!important;}' +
+        /* First VISIBLE row of the card. The authored 🏛️ rows the band replaces
+           stay in the DOM as display:none, so :first-child never matches it — JS
+           stamps this class instead. 2,127 cards across the fleet lead with 🏛️,
+           so this is the common case, not an edge one: without it the band starts
+           14px below the card's top edge where every plain first row starts at 8. */
+        '.tour-box > .tve-ph-top,.ticket-box > .tve-ph-top{margin-top:0!important;}' +
         /* Open-around-the-clock variant — the warm tan already used by transit banners */
         '.tve-ph-24{border-left-color:#bba070!important;background:#f5f0e6!important;' +
         'color:#6b5320!important;}' +
@@ -2892,9 +2905,12 @@
            filter can still read its textContent. */
         '.tve-ph-src{display:none!important;}' +
         /* Toggle (multi-day) — wrapped with the panel so hover covers both */
-        '.tve-ph-wrap{position:relative;margin-top:0!important;margin-bottom:0!important;}' +
+        /* The WRAP carries the full-bleed margins (rule above); the toggle inside
+           it must not repeat them or the strip bleeds 14px twice and overhangs
+           the card on both sides. */
+        '.tve-ph-wrap{position:relative;}' +
         '.tve-ph-toggle{display:flex!important;align-items:center;gap:7px;cursor:pointer;' +
-        'border-radius:0 3px 0 0!important;margin-top:0!important;margin-bottom:0!important;' +
+        'border-radius:0!important;margin:0!important;' +
         '-webkit-user-select:none;user-select:none;}' +
         '.tve-ph-lbl{flex:1;}' +
         /* Chevron reads as a control, not punctuation. At 11px inline it was
@@ -2911,9 +2927,11 @@
         /* Expandable panel — absolute, so it floats OVER the rows beneath it.
            A hover trigger that pushed content down would reflow the page under
            the cursor every time it crossed a stop while scrolling. */
+        /* Same 11.5px left padding as the toggle, so the schedule's day column
+           starts on the card's icon column instead of 2px off it. */
         '.tve-ph-panel{display:none;position:absolute;left:0;right:0;top:100%;z-index:6;' +
         'border-left:2.5px solid #b85c2a;background:#fdf8f0;' +
-        'padding:0 10px 8px;border-radius:0 0 3px 0;' +
+        'padding:0 14px 8px 11.5px;border-radius:0;' +
         'box-shadow:0 6px 16px rgba(61,58,50,.16);}' +
         '.tve-ph-panel.tve-ph-open{display:block;}' +
         /* Hover expand — pointer devices only. Touch screens report hover:none
@@ -3101,6 +3119,32 @@
       return wrap;
     }
 
+    /* ── Full-bleed fit ─────────────────────────────────────────────────────
+       The band cancels its card's horizontal padding so its rail sits on the
+       card edge and its text lands on the same column as every other icon row.
+       That padding is 14px on desktop and 12px at the mobile breakpoint, so the
+       number cannot live in the stylesheet — it is read off the card here and
+       re-read on resize, which is also what makes an orientation change land on
+       the right value instead of a 2px overhang. 2.5px is the rail width. */
+    var _phBands = [];
+    function _phFit() {
+      _phBands.forEach(function (outer) {
+        if (!outer.parentNode) return;
+        var cs = getComputedStyle(outer.parentNode);
+        var pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0;
+        outer.style.setProperty('margin-left', -pl + 'px', 'important');
+        outer.style.setProperty('margin-right', -pr + 'px', 'important');
+        var pad = function (n) {
+          if (!n) return;
+          n.style.setProperty('padding-left', (pl - 2.5) + 'px', 'important');
+          n.style.setProperty('padding-right', pr + 'px', 'important');
+        };
+        /* Flat band paints itself; a wrap paints through its toggle + panel. */
+        if (outer.classList.contains('tve-ph')) pad(outer);
+        else { pad(outer.querySelector('.tve-ph-toggle')); pad(outer.querySelector('.tve-ph-panel')); }
+      });
+    }
+
     /* ── Walk the authored 🏛️ rows, GROUPED BY STOP ─────────────────────────
        A stop can carry more than one 🏛️ row — Carmel Mission ships
        "Mon-Sat 9:30am - 5:00pm" on one and "Sun 10:30am - 5:00pm" on the
@@ -3160,6 +3204,27 @@
       grp.rows.forEach(function (r) { r.classList.add('tve-ph-src'); });
       var last = grp.rows[grp.rows.length - 1];
       last.parentNode.insertBefore(el, last.nextSibling);
+
+      /* Nothing VISIBLE above it → the band is the card's first row and must not
+         carry the 6px row margin, or it starts 14px below the card's top edge
+         where a plain first row starts at 8px. :first-child cannot express this:
+         the authored 🏛️ rows are still there, just display:none. Rect count is
+         the test rather than the .tve-ph-src class, so any other hidden row a
+         later pass leaves behind is skipped too. */
+      var prev = el.previousElementSibling, lead = true;
+      while (prev) {
+        if (prev.getClientRects().length) { lead = false; break; }
+        prev = prev.previousElementSibling;
+      }
+      if (lead) el.classList.add('tve-ph-top');
+      _phBands.push(el);
+    });
+
+    _phFit();
+    var _phT;
+    window.addEventListener('resize', function () {
+      clearTimeout(_phT);
+      _phT = setTimeout(_phFit, 120);
     });
   }
   if (document.readyState === 'loading') {
@@ -3910,6 +3975,12 @@
     'buenos-aires': { h: [
       { name: 'Park Hyatt Buenos Aires', note: 'Hyatt brand — 1934 Palacio Duhau mansion merged with contemporary tower, Recoleta, Duhau Restaurant & Vinoteca, 3 pools · 9.4 Booking.com' },
       { name: 'Alvear Palace Hotel', note: 'Leading Hotels of the World — 1932 French Renaissance landmark in Recoleta, Alvear Art Restaurant, butler service · 9.5 Booking.com' }
+    ] },
+    'busan': { h: [
+      { name: 'Park Hyatt Busan', note: 'Hyatt brand — Haeundae-gu, 38th-floor infinity pool with Gwangalli Bridge panorama, spa, ocean-view dining · 9.0 Booking.com', url: 'https://www.booking.com/hotel/kr/park-hyatt-busan.html' },
+      { name: 'Westin Josun Busan', note: 'Marriott brand — Haeundae Beach, direct beachfront access, outdoor pool, full-service spa, panoramic sea views · 8.9 Booking.com', url: 'https://www.booking.com/hotel/kr/westin-josun-busan.html' },
+      { name: 'Centara Grand Hotel Busan', note: 'Centara brand — Haeundae-gu tower, 20-minute drive from Seomyeon, ocean views, pool and spa, near Centum City · 8.6 Booking.com', url: 'https://www.booking.com/hotel/kr/centara-grand-hotel-busan.html' },
+      { name: 'Novotel Ambassador Busan', note: 'Accor brand — Haeundae-gu, outdoor pool, business center, 10-min walk to Haeundae Beach, free airport shuttle · 8.2 Booking.com', url: 'https://www.booking.com/hotel/kr/novotel-ambassador-busan.html' }
     ] },
     'cairo': { h: [
       { name: 'Four Seasons Hotel Cairo at Nile Plaza', note: 'Four Seasons brand — Garden City Nile frontage, indoor pool, spa, panoramic city views across the river · 9.2 Booking.com', url: 'https://www.booking.com/hotel/eg/four-seasons-cairo-at-nile-plaza.html' },
