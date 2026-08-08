@@ -4696,10 +4696,10 @@
       { name: 'Conrad Osaka', note: 'Hilton family — Nakanoshima Festival City, sky infinity pool on 40th floor, harbor views · 9.2 Booking.com' }
     ] },
     'oslo': { h: [
-      { name: 'The Thief', note: 'Independent boutique — Tjuvholmen Sculpture Park waterfront, spa, contemporary art throughout · 9.3 Booking.com' },
-      { name: 'Amerikalinjen', note: 'Independent — 1919 Norwegian America Line headquarters, 122 rooms, three restaurants, rooftop bar · 9.2 Booking.com' },
-      { name: 'Grand Hotel Oslo by Scandic', note: 'Scandic brand — Karl Johans Gate landmark since 1874, Palmen restaurant, indoor pool, central Royal Palace proximity · 8.8 Booking.com' },
-      { name: 'Hotel Continental Oslo', note: 'Independent — Stortingsgaten near the National Theatre, Theatercaféen brasserie, acclaimed art collection, 155 rooms · 9.0 Booking.com' }
+      { name: 'The Thief', note: 'Independent boutique — Tjuvholmen Sculpture Park waterfront, spa, contemporary art throughout · 9.3 Booking.com', url: 'https://www.booking.com/hotel/no/the-thief.html' },
+      { name: 'Amerikalinjen', note: 'Independent — 1919 Norwegian America Line headquarters, 122 rooms, three restaurants, rooftop bar · 9.2 Booking.com', url: 'https://www.booking.com/hotel/no/amerikalinjen.html' },
+      { name: 'Grand Hotel Oslo by Scandic', note: 'Scandic brand — Karl Johans Gate landmark since 1874, Palmen restaurant, indoor pool, central Royal Palace proximity · 8.8 Booking.com', url: 'https://www.booking.com/hotel/no/grand.html' },
+      { name: 'Hotel Continental Oslo', note: 'Independent — Stortingsgaten near the National Theatre, Theatercaféen brasserie, acclaimed art collection, 155 rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/no/continental.html' }
     ] },
     'oxford': { h: [
       { name: 'Le Manoir aux Quat\'Saisons, A Belmond Hotel', note: 'Belmond brand — Raymond Blanc\'s two-Michelin-star retreat in Great Milton, 32 rooms, kitchen garden · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gb/belmond-le-manoir-aux-quat-39-saisons.html' },
