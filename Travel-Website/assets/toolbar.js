@@ -290,6 +290,46 @@
   var prevHref = mount ? (mount.dataset.prev || '') : '';
   var nextHref = mount ? (mount.dataset.next || '') : '';
 
+  /* ── "new" badge on dropdown children ──────────────────────────────────────
+     A page shipped within the last NEW_WINDOW_DAYS shows a small gold NEW badge
+     next to its name inside its dropdown (and in the mobile hamburger). Set by
+     `newSince: 'YYYY-MM-DD'` — the page's ship date — on the child entry.
+
+     Owner rule 2026-08-08: a new page's NEW badge belongs on the toolbar entry,
+     beside the name, under the section it sits in ("it is under Safety, and
+     there [are] others like that"). Before this, a freshly shipped page had to
+     be duplicated into the Also Recommended panel on index.html just to earn a
+     badge — that duplication is now banned (brain_check.
+     check_also_recommended_excludes_toolbar_pages), so the badge lives here.
+
+     The window matches the Also Recommended / Guides-Index badge exactly (21
+     days, index.html "New badge" script), so the badge self-expires and no crib
+     has to remember to strip it. A `newSince` date left behind after the window
+     closes is harmless — it simply stops rendering.
+
+     Never put the badge on the top strip. A badge widens the tab and the strip
+     has no spare width (Nineteenth non-negotiable). Dropdown children only. */
+  var NEW_WINDOW_DAYS = 21;
+  function isNewEntry(entry) {
+    if (!entry || !entry.newSince) return false;
+    var d = new Date(entry.newSince + 'T00:00:00');
+    if (isNaN(d.getTime())) return false;
+    return (Date.now() - d.getTime()) <= NEW_WINDOW_DAYS * 86400000;
+  }
+  /* Write `text` into `el` as a label span, plus a NEW badge when in-window. */
+  function setEntryLabel(el, text, entry, badgeClass) {
+    if (!isNewEntry(entry)) { el.textContent = text; return; }
+    el.classList.add('tb-has-new');
+    var lb = document.createElement('span');
+    lb.className = 'tb-entry-label';
+    lb.textContent = text;
+    var nb = document.createElement('span');
+    nb.className = badgeClass;
+    nb.textContent = 'new';
+    el.appendChild(lb);
+    el.appendChild(nb);
+  }
+
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     null,
@@ -319,9 +359,9 @@
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: '💻 US Lounges' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: '💻 EU Lounges' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
-        { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: '🧳 Luggage Storage' },
-        { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: '⏱️ Connection Times' },
-        { href: base + 'Trip-Essentials/Cruise-Ships.html',            text: '🚢 Cruise Lines' },
+        { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: '🧳 Luggage Storage', newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: '⏱️ Connection Times', newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Cruise-Ships.html',            text: '🚢 Cruise Lines', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
       ] },
@@ -353,8 +393,8 @@
         { href: base + 'Trip-Essentials/Vaccines.html',          text: '💉 Vaccines' },
         { href: base + 'Trip-Essentials/Tap-Water.html',         text: '🚰 Tap Water' },
         { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: '🛟 Travel Insurance' },
-        { href: base + 'Trip-Essentials/First-Timer-Mistakes.html', text: '⚠️ First-Timer Mistakes' },
-        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: '🕵️ Scams & Traps' },
+        { href: base + 'Trip-Essentials/First-Timer-Mistakes.html', text: '⚠️ First-Timer Mistakes', newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: '🕵️ Scams & Traps', newSince: '2026-08-07' },
       ] },
     null,
     { group: '🪪 Visas', children: [
@@ -418,6 +458,14 @@
       'border:none;border-radius:6px;background:transparent;white-space:nowrap}' +
     '.tb-menu a:hover{background:' + acLt + ';color:' + accent + '!important}' +
     '.tb-menu a.tb-active{background:' + acMd + ';color:' + accent + '!important;font-weight:500}' +
+    /* "new" badge on a recently shipped dropdown child — name left, badge right.
+       Colours are the site's NEW badge exactly (.dest-new-badge in
+       guides-index-style.css): 1.5px #e8c97a border, #fdecc8 fill, #7a4d00 text.
+       Keep the two in sync — it is one badge appearing on two surfaces. */
+    '.tb-menu a.tb-has-new{display:flex;align-items:center;justify-content:space-between;gap:12px}' +
+    '.tb-new,.tb-ham-new{flex-shrink:0;font-size:7.5px;font-weight:700;letter-spacing:.07em;' +
+      'text-transform:uppercase;padding:1px 4px;border-radius:3px;line-height:12px;' +
+      'border:1.5px solid #e8c97a;background:#fdecc8;color:#7a4d00;pointer-events:none}' +
     /* Separator */
     '.tb-sep{display:none}' +
     /* Scroll progress bar — hidden on mobile (overlaps toolbar) */
@@ -472,6 +520,10 @@
          Mirrored in mobile.css. Memory: feedback_hamburger_active_pill. */
       '.tb-ham-menu a.tb-active{display:inline-flex;align-items:center;justify-content:center;color:#3d3a32!important;background:transparent;' +
         'border:1.5px solid #b85c2a;border-radius:14px;margin:6px 12px;padding:4px 12px;font-weight:600}' +
+      /* "new" badge in the hamburger — inline-flex so the badge sits beside the
+         label rather than wrapping. Placed after the .tb-active rule above so an
+         item that is both active and new keeps the pill AND shows the badge. */
+      '.tb-ham-menu a.tb-has-new{display:inline-flex;align-items:center;gap:8px}' +
       '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
@@ -632,8 +684,8 @@
       item.children.forEach(function (ch) {
         var ca = document.createElement('a');
         ca.href = ch.href;
-        ca.textContent = ch.text;
-        if (ch.href.split('/').pop() === curr) { ca.className = 'tb-active'; groupActive = true; }
+        setEntryLabel(ca, ch.text, ch, 'tb-new');
+        if (ch.href.split('/').pop() === curr) { ca.classList.add('tb-active'); groupActive = true; }
         menu.appendChild(ca);
       });
       if (groupActive) btn.classList.add('tb-active');
@@ -868,8 +920,8 @@
       item.children.forEach(function (ch) {
         var a = document.createElement('a');
         a.href = ch.href;
-        a.textContent = ch.full || ch.text;
-        if (ch.href.split('/').pop() === curr) a.className = 'tb-active';
+        setEntryLabel(a, ch.full || ch.text, ch, 'tb-ham-new');
+        if (ch.href.split('/').pop() === curr) a.classList.add('tb-active');
         hamMenu.appendChild(a);
       });
       firstItem = false;
@@ -4996,6 +5048,27 @@
     ] }
   };
 
+  /* ── Neighborhood cross-link — appended under the Alternative Hotel
+     Recommendations grid on the guides Accommodation-Neighborhoods.html covers.
+     That page carries district-by-district "where to stay" detail for a small
+     set of cities; those are exactly the guides where the hotel block should
+     hand the reader on to it. Key = guide filename slug; value = the city name
+     as written in the page's own AN_CITIES array — it becomes the #hash the
+     page reads on load to open pre-filtered on that city.
+     The two lists are kept in lockstep by brain_check
+     check_accommodation_neighborhoods_crosslink (hard-fail on either side
+     drifting). Owner rule 2026-08-08. */
+  var AN_NEIGHBORHOOD_CITIES = {
+    'amsterdam': 'Amsterdam',
+    'bangkok':   'Bangkok',
+    'barcelona': 'Barcelona',
+    'lisbon':    'Lisbon',
+    'new-york':  'New York',
+    'paris':     'Paris',
+    'rome':      'Rome',
+    'tokyo':     'Tokyo'
+  };
+
   function _injectHotelAlternatives() {
     if (!isRealGuide) return;
     var also = document.getElementById('also-on-this-site');
@@ -5037,6 +5110,17 @@
     });
     wrap.appendChild(h);
     wrap.appendChild(grid);
+    var anCity = AN_NEIGHBORHOOD_CITIES[slug];
+    if (anCity) {
+      var anPills = document.createElement('div');
+      anPills.className = 'also-on-this-site-pills neigh-more';
+      var anLink = document.createElement('a');
+      anLink.className = 'also-on-this-site-pill';
+      anLink.href = base + 'Trip-Essentials/Accommodation-Neighborhoods.html#' + encodeURIComponent(anCity);
+      anLink.textContent = '🏘 Which neighborhood to stay in';
+      anPills.appendChild(anLink);
+      wrap.appendChild(anPills);
+    }
     wrap.addEventListener('click', function (e) { e.stopPropagation(); });
     also.parentNode.insertBefore(wrap, also);
   }
