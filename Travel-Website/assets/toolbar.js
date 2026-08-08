@@ -4053,8 +4053,8 @@
       { name: 'The St. Regis Bali Resort', note: 'Marriott Luxury Collection — Nusa Dua beachfront, private pool villas, 24-hr butler service, Kayuputi Pan-Asian dining · 9.7 Booking.com', url: 'https://www.booking.com/hotel/id/the-st-regis-bali-resort.html' }
     ] },
     'banff': { h: [
-      { name: 'Fairmont Banff Springs', note: 'Fairmont brand — 1888 sandstone castle at the confluence of the Bow and Spray Rivers, 2 outdoor pools, full spa, fine-dining 1888 Chop House · 9.2 Booking.com' },
-      { name: 'The Rimrock Resort Hotel', note: 'Independent luxury — clifftop perch 6 km from downtown on Sulphur Mountain Road, panoramic six-range mountain views, Primrose dining room, full-service spa · 9.1 Booking.com' },
+      { name: 'Fairmont Banff Springs', note: 'Fairmont brand — 1888 sandstone castle at the confluence of the Bow and Spray Rivers, 2 outdoor pools, full spa, fine-dining 1888 Chop House · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ca/fairmont-banff-springs.html' },
+      { name: 'The Rimrock Resort Hotel', note: 'Independent luxury — clifftop perch 6 km from downtown on Sulphur Mountain Road, panoramic six-range mountain views, Primrose dining room, full-service spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ca/rimrock-resort-hotel.html' },
       { name: 'Banff Park Lodge', note: 'Independent — Lynx Street a block off Banff Avenue, year-round indoor pool, steam room, on-site dining · 8.7 Booking.com', url: 'https://www.booking.com/hotel/ca/banff-park-lodge.html' },
       { name: 'Mount Royal Hotel', note: 'Independent — 138 Banff Avenue in the town centre, rooftop hot tubs, ski storage, mountain-view rooms · 8.4 Booking.com', url: 'https://www.booking.com/hotel/ca/mount-royal-banff.html' }
     ] },
