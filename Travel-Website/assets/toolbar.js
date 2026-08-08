@@ -3075,6 +3075,87 @@
     _injectVisitedToggle();
   }
 
+  /* ── Mark Stops — per-stop checkbox on every .stop-block. Clicking marks a
+     stop as visited: header text dims to 0.4 opacity, button shows ✓ in
+     terracotta. State is stored in localStorage as a JSON array of stop
+     indices keyed by city folder: tve-stops-{folder}. Saved state is applied
+     on every load so marks persist across sessions. CSS in guide-style.css. ── */
+  function _injectMarkStops() {
+    if (!isRealGuide) return;
+    var blocks = document.querySelectorAll('.stop-block');
+    if (!blocks.length) return;
+
+    var parts = location.pathname.split('/');
+    var gi = parts.indexOf('Guides');
+    if (gi < 0 || !parts[gi + 1]) return;
+    var cityFolder = parts[gi + 1].toLowerCase();
+    var storageKey = 'tve-stops-' + cityFolder;
+
+    var done = {};
+    try {
+      var raw = localStorage.getItem(storageKey);
+      if (raw) { JSON.parse(raw).forEach(function (i) { done[i] = true; }); }
+    } catch (e) {}
+
+    function save() {
+      var arr = Object.keys(done).filter(function (k) { return done[k]; }).map(Number);
+      try { localStorage.setItem(storageKey, JSON.stringify(arr)); } catch (e) {}
+    }
+
+    [].forEach.call(blocks, function (sb, idx) {
+      var header = sb.querySelector('.stop-header');
+      if (!header) return;
+
+      /* Ensure flex layout — _injectStopDuration already sets it when a
+         duration chip is present; set it here for stops without one. */
+      if (header.style.display !== 'flex') {
+        header.style.display = 'flex';
+        header.style.alignItems = 'center';
+        var nameEl = header.querySelector('.stop-name');
+        if (nameEl) nameEl.style.flex = '1';
+      }
+
+      var btn = document.createElement('span');
+      btn.className = 'stop-mark-btn';
+      btn.setAttribute('role', 'checkbox');
+      btn.setAttribute('aria-label', 'Mark stop as visited');
+      btn.setAttribute('tabindex', '0');
+      btn.textContent = '✓'; /* ✓ */
+
+      if (done[idx]) {
+        sb.classList.add('stop-done');
+        btn.setAttribute('aria-checked', 'true');
+      } else {
+        btn.setAttribute('aria-checked', 'false');
+      }
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (done[idx]) {
+          delete done[idx];
+          sb.classList.remove('stop-done');
+          btn.setAttribute('aria-checked', 'false');
+        } else {
+          done[idx] = true;
+          sb.classList.add('stop-done');
+          btn.setAttribute('aria-checked', 'true');
+        }
+        save();
+      });
+
+      btn.addEventListener('keydown', function (e) {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); btn.click(); }
+      });
+
+      header.appendChild(btn);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectMarkStops);
+  } else {
+    _injectMarkStops();
+  }
+
   /* ── Alternative hotel recommendations — injected before #also-on-this-site on
      guide pages that have a HOTEL_ALT_DATA entry. Runner-up hotels from the same
      search process used to pick the guide hotel; added during each guide build.  */
@@ -5012,6 +5093,376 @@
     }
   }
   _injectShareStopButtons();
+
+  /* ── Stop wishlist — cross-guide bookmark feature ────────────────────────
+     Injects a ★ star button into each .stop-header (appended after the share
+     button). Saved stops persist to localStorage['tve_wishlist'] as an array
+     of {stopId, guide, stopName, day, href} objects. A floating chip at
+     bottom-right (above the scroll-top FAB) expands a panel showing all saved
+     stops grouped by guide — cross-trip planning tool.
+     Zero guide HTML changes — entirely injected from toolbar.js. */
+  function _injectWishlistButtons() {
+    if (!isRealGuide) return;
+
+    var KEY         = 'tve_wishlist';
+    var STAR_COLOR  = '#c48f3e';
+
+    /* ── Load / save ─────────────────────────────────────────────────────── */
+    function _load() {
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) { return []; }
+    }
+    function _save(arr) {
+      try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch(e) {}
+    }
+    function _indexBy(arr, stopId) {
+      for (var i = 0; i < arr.length; i++) { if (arr[i].stopId === stopId) return i; }
+      return -1;
+    }
+    function _toTitleCase(str) {
+      return str.toLowerCase().replace(/(?:^|\s)\S/g, function(c) { return c.toUpperCase(); });
+    }
+
+    /* ── CSS ─────────────────────────────────────────────────────────────── */
+    var _wlCss = document.createElement('style');
+    _wlCss.id  = 'tve-wishlist-css';
+    _wlCss.textContent =
+      /* Star button in stop-header */
+      '.tve-wl-btn{background:none;border:none;cursor:pointer;color:#a8a09a;padding:0;margin-left:8px;' +
+      'line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
+      'transition:color .15s;font-family:inherit;}' +
+      '.tve-wl-btn:hover{color:' + STAR_COLOR + ';}' +
+      '.tve-wl-btn.tve-wl-saved{color:' + STAR_COLOR + ';}' +
+      '.tve-wl-btn:focus-visible{outline:2px solid ' + STAR_COLOR + ';outline-offset:2px;border-radius:3px;}' +
+
+      /* Floating FAB — sits above the scroll-top FAB (bottom:68px+36px+12px=116px) */
+      '#tve-wl-fab{position:fixed;bottom:116px;right:24px;z-index:1398;display:none;align-items:center;' +
+      'gap:6px;background:#231f1b;color:#f6f2ec;border:none;border-radius:20px;' +
+      'padding:8px 13px 8px 10px;font-size:13px;font-weight:600;cursor:pointer;' +
+      'box-shadow:0 4px 16px rgba(0,0,0,.22);font-family:inherit;white-space:nowrap;' +
+      'transition:transform .12s,box-shadow .12s;}' +
+      '#tve-wl-fab:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.28);}' +
+      '#tve-wl-fab.tve-wl-fab-on{display:inline-flex;}' +
+      '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#fff;border-radius:10px;' +
+      'font-size:11px;font-weight:700;padding:0 6px;min-width:18px;text-align:center;line-height:18px;}' +
+
+      /* Panel — anchored above the FAB */
+      '#tve-wl-panel{position:fixed;bottom:168px;right:24px;z-index:1397;width:296px;' +
+      'max-width:calc(100vw - 32px);background:#fff;border:1px solid #e4ddd4;border-radius:10px;' +
+      'box-shadow:0 8px 32px rgba(0,0,0,.16);overflow:hidden;display:none;}' +
+      '#tve-wl-panel.tve-wl-open{display:block;}' +
+      '.tve-wl-phdr{display:flex;align-items:center;padding:11px 14px;' +
+      'background:#f9f5ef;border-bottom:1px solid #e4ddd4;gap:8px;}' +
+      '.tve-wl-ptitle{font-size:13px;font-weight:700;color:#231f1b;flex:1;font-family:inherit;}' +
+      '.tve-wl-pclear{font-size:11px;color:#a8a09a;background:none;border:none;cursor:pointer;' +
+      'padding:2px 4px;border-radius:3px;font-family:inherit;transition:color .12s;}' +
+      '.tve-wl-pclear:hover{color:#b85c2a;}' +
+      '.tve-wl-pclose{background:none;border:none;cursor:pointer;color:#a8a09a;' +
+      'display:flex;align-items:center;padding:2px;margin-left:2px;border-radius:3px;}' +
+      '.tve-wl-pclose:hover{color:#231f1b;}' +
+      '.tve-wl-pbody{max-height:300px;overflow-y:auto;}' +
+      '.tve-wl-pguide{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;' +
+      'color:#a8a09a;padding:7px 14px 5px;background:#f9f5ef;' +
+      'border-bottom:1px solid #e4ddd4;border-top:1px solid #e4ddd4;}' +
+      '.tve-wl-prow{display:flex;align-items:center;padding:8px 14px;gap:9px;' +
+      'border-bottom:1px solid #efe9e0;text-decoration:none;cursor:pointer;}' +
+      '.tve-wl-prow:last-child{border-bottom:none;}' +
+      '.tve-wl-prow:hover{background:#f9f5ef;}' +
+      '.tve-wl-prow-info{flex:1;min-width:0;}' +
+      '.tve-wl-prow-name{font-size:13px;font-weight:500;color:#231f1b;' +
+      'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:inherit;}' +
+      '.tve-wl-prow-meta{font-size:11px;color:#9a908a;margin-top:1px;font-family:inherit;}' +
+      '.tve-wl-prow-rm{background:none;border:none;cursor:pointer;color:#c0b8b0;' +
+      'display:flex;align-items:center;padding:2px;flex-shrink:0;border-radius:3px;transition:color .12s;}' +
+      '.tve-wl-prow-rm:hover{color:#b85c2a;}' +
+      '.tve-wl-pfooter{display:flex;align-items:center;gap:8px;padding:9px 14px;' +
+      'border-top:1px solid #e4ddd4;background:#f9f5ef;}' +
+      '.tve-wl-copy{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
+      'border:1px solid #b85c2a;border-radius:5px;padding:4px 11px;cursor:pointer;' +
+      'font-family:inherit;transition:background .12s,color .12s;}' +
+      '.tve-wl-copy:hover{background:#b85c2a;color:#fff;}' +
+      '.tve-wl-empty{padding:24px 14px;text-align:center;color:#a8a09a;' +
+      'font-size:13px;line-height:1.6;font-family:inherit;}' +
+      /* Mobile: align with scroll-top FAB (bottom:62px+36px+10px=108px) */
+      '@media(max-width:600px){' +
+      '#tve-wl-fab{bottom:108px;right:16px;}' +
+      '#tve-wl-panel{bottom:160px;right:16px;}' +
+      '}';
+    (document.head || document.documentElement).appendChild(_wlCss);
+
+    /* ── SVG templates ───────────────────────────────────────────────────── */
+    var _starOut =
+      '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">' +
+        '<path d="M7 1.5l1.55 3.14 3.47.5-2.51 2.45.59 3.46L7 9.27l-3.1 1.63.59-3.46L2 4.99l3.47-.5z"' +
+        ' stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>' +
+      '</svg>';
+    var _starFill =
+      '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">' +
+        '<path d="M7 1.5l1.55 3.14 3.47.5-2.51 2.45.59 3.46L7 9.27l-3.1 1.63.59-3.46L2 4.99l3.47-.5z"' +
+        ' stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="currentColor"/>' +
+      '</svg>';
+    var _closeSvg =
+      '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
+        '<line x1="3" y1="3" x2="10" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+        '<line x1="10" y1="3" x2="3" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '</svg>';
+
+    /* ── Build FAB ───────────────────────────────────────────────────────── */
+    var fab = document.createElement('button');
+    fab.type = 'button';
+    fab.id   = 'tve-wl-fab';
+    fab.setAttribute('aria-label', 'Open wishlist');
+
+    var fabStar = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    fabStar.setAttribute('width', '13'); fabStar.setAttribute('height', '13');
+    fabStar.setAttribute('viewBox', '0 0 14 14'); fabStar.setAttribute('fill', 'none');
+    fabStar.setAttribute('aria-hidden', 'true');
+    var fabStarPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    fabStarPath.setAttribute('d', 'M7 1.5l1.55 3.14 3.47.5-2.51 2.45.59 3.46L7 9.27l-3.1 1.63.59-3.46L2 4.99l3.47-.5z');
+    fabStarPath.setAttribute('fill', STAR_COLOR);
+    fabStarPath.setAttribute('stroke', STAR_COLOR);
+    fabStarPath.setAttribute('stroke-width', '0.5');
+    fabStar.appendChild(fabStarPath);
+
+    var fabLabel = document.createTextNode(' Wishlist ');
+    var fabCnt   = document.createElement('span');
+    fabCnt.id    = 'tve-wl-fab-cnt';
+    fab.appendChild(fabStar);
+    fab.appendChild(fabLabel);
+    fab.appendChild(fabCnt);
+    document.body.appendChild(fab);
+
+    /* ── Build panel ─────────────────────────────────────────────────────── */
+    var panel = document.createElement('div');
+    panel.id  = 'tve-wl-panel';
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-label', 'Wishlist panel');
+
+    var phdr   = document.createElement('div');  phdr.className = 'tve-wl-phdr';
+    var ptitle = document.createElement('span'); ptitle.className = 'tve-wl-ptitle';
+    var pclear = document.createElement('button'); pclear.type = 'button'; pclear.className = 'tve-wl-pclear'; pclear.textContent = 'Clear all';
+    var pclose = document.createElement('button'); pclose.type = 'button'; pclose.className = 'tve-wl-pclose'; pclose.setAttribute('aria-label', 'Close wishlist'); pclose.innerHTML = _closeSvg;
+    phdr.appendChild(ptitle); phdr.appendChild(pclear); phdr.appendChild(pclose);
+
+    var pbody = document.createElement('div'); pbody.className = 'tve-wl-pbody';
+
+    var pfooter = document.createElement('div'); pfooter.className = 'tve-wl-pfooter';
+    var pcopy   = document.createElement('button'); pcopy.type = 'button'; pcopy.className = 'tve-wl-copy'; pcopy.textContent = 'Copy list';
+    pfooter.appendChild(pcopy);
+
+    panel.appendChild(phdr); panel.appendChild(pbody); panel.appendChild(pfooter);
+    document.body.appendChild(panel);
+
+    /* ── Render panel body from localStorage ─────────────────────────────── */
+    function _renderPanel() {
+      var arr = _load();
+      var n   = arr.length;
+      ptitle.textContent  = n === 1 ? 'Wishlist · 1 stop' : 'Wishlist · ' + n + ' stops';
+      fabCnt.textContent  = n;
+      fab.classList.toggle('tve-wl-fab-on', n > 0);
+
+      pbody.innerHTML = '';
+      if (n === 0) {
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'tve-wl-empty';
+        emptyDiv.textContent = 'Tap a stop\'s ★ to save it here. Saves appear grouped by guide.';
+        pbody.appendChild(emptyDiv);
+        return;
+      }
+
+      /* Group by guide, preserve insertion order for headers, alpha-sort the groups */
+      var byGuide = {};
+      var guideOrder = [];
+      arr.forEach(function(e) {
+        var g = e.guide || 'Unknown';
+        if (!byGuide[g]) { byGuide[g] = []; guideOrder.push(g); }
+        byGuide[g].push(e);
+      });
+      guideOrder.sort();
+
+      guideOrder.forEach(function(gName) {
+        var ghdr = document.createElement('div');
+        ghdr.className = 'tve-wl-pguide';
+        ghdr.textContent = gName;
+        pbody.appendChild(ghdr);
+
+        byGuide[gName].forEach(function(entry) {
+          var row = document.createElement('a');
+          row.className = 'tve-wl-prow';
+          if (entry.href) { row.href = entry.href; }
+
+          /* Amber star icon */
+          var rowStar = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          rowStar.setAttribute('width', '12'); rowStar.setAttribute('height', '12');
+          rowStar.setAttribute('viewBox', '0 0 14 14'); rowStar.setAttribute('fill', 'none');
+          rowStar.setAttribute('aria-hidden', 'true');
+          rowStar.style.flexShrink = '0'; rowStar.style.marginTop = '1px';
+          var rsp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          rsp.setAttribute('d', 'M7 1.5l1.55 3.14 3.47.5-2.51 2.45.59 3.46L7 9.27l-3.1 1.63.59-3.46L2 4.99l3.47-.5z');
+          rsp.setAttribute('fill', STAR_COLOR); rsp.setAttribute('stroke', STAR_COLOR); rsp.setAttribute('stroke-width', '0.5');
+          rowStar.appendChild(rsp);
+
+          var info    = document.createElement('div'); info.className = 'tve-wl-prow-info';
+          var nameDiv = document.createElement('div'); nameDiv.className = 'tve-wl-prow-name'; nameDiv.textContent = entry.stopName || '';
+          var metaDiv = document.createElement('div'); metaDiv.className = 'tve-wl-prow-meta'; metaDiv.textContent = entry.day || '';
+          info.appendChild(nameDiv); info.appendChild(metaDiv);
+
+          var rmBtn = document.createElement('button');
+          rmBtn.type = 'button'; rmBtn.className = 'tve-wl-prow-rm';
+          rmBtn.setAttribute('aria-label', 'Remove ' + (entry.stopName || '') + ' from wishlist');
+          rmBtn.innerHTML = _closeSvg;
+          rmBtn.dataset.stopId = entry.stopId;
+          rmBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            _removeEntry(rmBtn.dataset.stopId);
+          });
+
+          row.appendChild(rowStar); row.appendChild(info); row.appendChild(rmBtn);
+          pbody.appendChild(row);
+        });
+      });
+    }
+
+    /* ── Add / remove entries ────────────────────────────────────────────── */
+    function _addEntry(stopId, guide, stopName, day, href) {
+      var arr = _load();
+      if (_indexBy(arr, stopId) >= 0) return;
+      arr.push({ stopId: stopId, guide: guide, stopName: stopName, day: day, href: href });
+      _save(arr); _renderPanel();
+    }
+
+    function _removeEntry(stopId) {
+      var arr = _load();
+      var idx = _indexBy(arr, stopId);
+      if (idx < 0) return;
+      arr.splice(idx, 1);
+      _save(arr);
+      var btn = document.querySelector('.tve-wl-btn[data-stop-id="' + stopId + '"]');
+      if (btn) {
+        btn.classList.remove('tve-wl-saved');
+        btn.innerHTML = _starOut;
+        btn.setAttribute('title', 'Save to wishlist');
+      }
+      _renderPanel();
+    }
+
+    /* ── FAB / panel toggle ──────────────────────────────────────────────── */
+    var _panelOpen = false;
+    function _openPanel()  { _panelOpen = true;  panel.classList.add('tve-wl-open'); }
+    function _closePanel() { _panelOpen = false; panel.classList.remove('tve-wl-open'); }
+
+    fab.addEventListener('click', function() {
+      if (_panelOpen) { _closePanel(); } else { _openPanel(); }
+    });
+    pclose.addEventListener('click', _closePanel);
+    document.addEventListener('click', function(e) {
+      if (_panelOpen && !panel.contains(e.target) && !fab.contains(e.target)) { _closePanel(); }
+    });
+
+    pclear.addEventListener('click', function() {
+      _save([]);
+      [].forEach.call(document.querySelectorAll('.tve-wl-btn.tve-wl-saved'), function(b) {
+        b.classList.remove('tve-wl-saved');
+        b.innerHTML = _starOut;
+        b.setAttribute('title', 'Save to wishlist');
+      });
+      _renderPanel();
+    });
+
+    pcopy.addEventListener('click', function() {
+      var arr = _load();
+      if (!arr.length) return;
+      var byGuide = {}, guideOrder = [];
+      arr.forEach(function(e) {
+        var g = e.guide || 'Unknown';
+        if (!byGuide[g]) { byGuide[g] = []; guideOrder.push(g); }
+        byGuide[g].push(e);
+      });
+      guideOrder.sort();
+      var lines = [];
+      guideOrder.forEach(function(g) {
+        lines.push(g + ':');
+        byGuide[g].forEach(function(e) {
+          lines.push('  · ' + e.stopName + (e.day ? ' (' + e.day + ')' : '') + (e.href ? ' — ' + e.href : ''));
+        });
+      });
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(lines.join('\n')).then(function() {
+          var orig = pcopy.textContent;
+          pcopy.textContent = '✓ Copied';
+          setTimeout(function() { pcopy.textContent = orig; }, 1800);
+        }).catch(function() {});
+      }
+    });
+
+    /* ── Inject star buttons into every .stop-header ─────────────────────── */
+    function _setup() {
+      var arr      = _load();
+      var cityEl   = document.querySelector('.title-city');
+      var guideName = document.title || (cityEl ? _toTitleCase(cityEl.textContent.trim()) : '');
+
+      [].forEach.call(document.querySelectorAll('.stop-block'), function(sb) {
+        var nameEl = sb.querySelector('.stop-name');
+        if (!nameEl) return;
+        var stopName = nameEl.textContent.trim();
+
+        /* Use ID already assigned by the share-button injector; assign one if missing */
+        if (!sb.id) {
+          var slug = stopName.toLowerCase()
+            .replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+          sb.id = 'stop-wl-' + (slug || String(Math.random()).slice(2, 8));
+        }
+        var stopId = sb.id;
+
+        /* Day label — walk up to the parent .day-block's .day-header */
+        var dayBlock = sb.parentNode;
+        while (dayBlock && !dayBlock.classList.contains('day-block')) { dayBlock = dayBlock.parentNode; }
+        var dayHdr = dayBlock && dayBlock.querySelector('.day-header');
+        var day    = dayHdr ? dayHdr.textContent.trim() : '';
+
+        var href    = location.href.replace(/#.*$/, '') + '#' + stopId;
+        var isSaved = _indexBy(arr, stopId) >= 0;
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tve-wl-btn' + (isSaved ? ' tve-wl-saved' : '');
+        btn.dataset.stopId = stopId;
+        btn.setAttribute('title', isSaved ? 'Remove from wishlist' : 'Save to wishlist');
+        btn.setAttribute('aria-label', stopName + (isSaved ? ' — remove from wishlist' : ' — save to wishlist'));
+        btn.innerHTML = isSaved ? _starFill : _starOut;
+
+        btn.addEventListener('click', function() {
+          var saved = btn.classList.contains('tve-wl-saved');
+          if (saved) {
+            btn.classList.remove('tve-wl-saved');
+            btn.innerHTML = _starOut;
+            btn.setAttribute('title', 'Save to wishlist');
+            btn.setAttribute('aria-label', stopName + ' — save to wishlist');
+            _removeEntry(stopId);
+          } else {
+            btn.classList.add('tve-wl-saved');
+            btn.innerHTML = _starFill;
+            btn.setAttribute('title', 'Remove from wishlist');
+            btn.setAttribute('aria-label', stopName + ' — remove from wishlist');
+            btn.style.transform = 'scale(1.35)';
+            setTimeout(function() { btn.style.transform = ''; }, 200);
+            _addEntry(stopId, guideName, stopName, day, href);
+          }
+        });
+
+        var header = sb.querySelector('.stop-header');
+        if (header) header.appendChild(btn);
+      });
+
+      _renderPanel();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _setup);
+    } else {
+      _setup();
+    }
+  }
+  _injectWishlistButtons();
 
   /* ── Back-to-guide anchor re-scroll ─────────────────────────────────────
      When the reader taps the pill on a Trip-Essentials page, they land on
