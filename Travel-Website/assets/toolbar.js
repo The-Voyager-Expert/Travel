@@ -1433,7 +1433,11 @@
     function build() {
       var css = document.createElement('style');
       css.textContent =
-        '#tve-nav-back,#tve-nav-fwd{position:fixed;bottom:24px;z-index:1400;' +
+        /* bottom:6px seats these 34px pills as low as the viewport allows and
+           puts their centre 23px above the floor — the same optical line as the
+           centred .day-jump-btn (34px at bottom:6px) and .tve-scroll-top (36px
+           at bottom:5px) in guide-style.css. Move all three together. */
+        '#tve-nav-back,#tve-nav-fwd{position:fixed;bottom:6px;z-index:1400;' +
         'display:inline-flex;align-items:center;height:34px;padding:0 14px;' +
         'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:17px;' +
         'font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
