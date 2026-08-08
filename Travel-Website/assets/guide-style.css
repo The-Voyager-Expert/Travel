@@ -506,13 +506,24 @@ a:hover { text-decoration: underline; }
      label like "Tours" sits alone in a ~440px box. The min track keeps a cell
      near the width a chip actually wants and lets the column COUNT grow with the
      viewport instead. */
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   gap: 8px;
 }
 .overview-extras:not(#ics-pill-row) .overview-extra-link {
   border-radius: 8px;
   justify-content: flex-start;
-  padding: 7px 12px;
+  /* Button proportions: a narrow track plus a floor on height, so a one-line and
+     a two-line chip are the same size and the row reads as a set of buttons
+     rather than a set of text links that happen to have borders. */
+  padding: 10px 13px;
+  min-height: 46px;
+  /* The base chip rule is white-space: nowrap, which was right for a shrink-to-fit
+     pill but overflows a fixed grid track — "Restaurants Near Hotel" spilled past
+     its tile. Wrap instead; min-height keeps a one-line and a two-line chip the
+     same size, so the row stays a grid of equal buttons. */
+  white-space: normal;
+  line-height: 1.25;
+  align-items: center;
 }
 /* Export to Calendar + All Stops Map — match Read About pill visually:
    gold text, same border style/weight, same radius. The scoped
@@ -2000,8 +2011,14 @@ div.train .train-time   { padding: 2px 0; }
 #local-tastes .entry-body         { color: var(--c-tastes-text); }
 
 /* 🗓️ Weekly Closures — each closure row is its own individual bordered box with gap below. (2026-08-04) */
+/* Top/bottom only — NEVER a `padding` shorthand here. The shared card-in-section
+   rule (~line 1534) sets padding-left/right: 48px on desktop; a shorthand on this
+   ID resets both sides, so the section's content un-insets while its `.extras-title`
+   keeps its −28px pull-out and hangs off the left edge of the beige card. Locked by
+   brain_check.check_extras_section_inset (2026-08-08). */
 #weekly-closures {
-  padding: 20px 24px 28px !important;
+  padding-top: 20px;
+  padding-bottom: 28px;
 }
 #weekly-closures .extras-title {
   margin-bottom: 10px;

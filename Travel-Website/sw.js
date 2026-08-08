@@ -192,7 +192,8 @@
    2026-08-08: Section-nav grid sized properly — repeat(3, 1fr) handed every chip a third of the guide width, so on a wide screen a two-word label sat alone in a ~440px box. Now repeat(auto-fill, minmax(230px, 1fr)): the column COUNT grows with the viewport (6 at 1600px, 4 at 1200px, 3 at 900px) and a cell stays near the width a chip wants. Chip padding 4px 10px -> 7px 12px. guide-style.css min to 128, CACHE to v331.
    2026-08-08: Re-bump — the previous floor was spent on a commit that carried the bump but not the CSS (the file was mid-write when the path-limited commit ran). guide-style.css min to 129, CACHE to v332.
    2026-08-08: Section-colour dots removed from the nav chips (_extrasSectionDots + .ov-dot deleted). The auto-fill grid, beige pills and canonical order are unchanged. guide-style.css min to 130, toolbar.js min to 211, CACHE to v333.
-   2026-08-08: Section-nav chips reordered by theme — Eat & drink, Get around, Plan & do, Elsewhere on the site. Order only: no wrappers, no labels, no CSS change, and the guide HTML keeps its canonical order. toolbar.js min to 213, CACHE to v335. */
+   2026-08-08: Section-nav chips reordered by theme — Eat & drink, Get around, Plan & do, Elsewhere on the site. Order only: no wrappers, no labels, no CSS change, and the guide HTML keeps its canonical order. toolbar.js min to 213, CACHE to v335.
+   2026-08-08: Section-nav chips given button proportions — min track 230px -> 168px (narrower, more columns), padding 10px 13px, min-height 46px, and white-space normal so a long label wraps inside its tile instead of overflowing it. guide-style.css min to 131, CACHE to v337. */
 /* 2026-08-04: Best-Of prev/next arrows now insert after .page-intro-card (below the
    banner) instead of after .page-header — bumped toolbar.js min to 158, CACHE to v214. */
 /* 2026-08-04: Wikipedia row margin-bottom 12px → 6px (symmetric with margin-top, 2 less
@@ -308,7 +309,7 @@
 /* 2026-08-07: Stop hours — row spacing normalised. .tour-box/.ticket-box give every direct child margin-top:6px and the hours row added 6px of its own vertical padding on top, so its text sat 12px from the next row's while every other pair in the card sat at 6px. Outer margins now 0 and the following sibling's margin-top cancelled, so the padding provides the spacing and text-to-text rhythm is a uniform 6px. Verified on Melbourne, Boston, Rome, Big-Island. toolbar.js -> v208. CACHE to v328. */
 /* 2026-08-08: HOTEL_ALT_DATA['maui'] — added Grand Wailea and Fairmont Kea Lani as runner-up hotels, added Booking.com url field to all 4 Maui entries. toolbar.js -> v209. CACHE to v329. */
 /* 2026-08-07: Stop hours — re-applies the owner-requested chevron + per-stop grouping that e3d4cb20 reverted. Both were direct owner instructions in session: "make this more obvious so people know these open bigger arrow" and, on Carmel Mission rendering two bands, "it is all over the place". The revert was a crib design call ("too heavy for the inline context"); the owner's instruction governs. Kept intact from that commit: the Oahu HOTEL_ALT_DATA urls fixing two FINAL GATE failures, and the guide-style.css floor. toolbar.js -> v214. CACHE to v336. */
-var CACHE = 'travel-cache-v336';
+var CACHE = 'travel-cache-v337';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -316,7 +317,7 @@ var CACHE = 'travel-cache-v336';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 130, 'toolbar.js': 214, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
+var MIN_VERSIONS = { 'guide-style.css': 131, 'toolbar.js': 214, 'mobile.css': 66, 'web-travel-style.css': 12, 'Read-About.css': 2, 'best-of-features.js': 1 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
