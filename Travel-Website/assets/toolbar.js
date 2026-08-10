@@ -558,9 +558,9 @@
    centred text label worked. Desktop keeps the terracotta bar untouched. */
     '@media(max-width:1260px){' +
       '.tb{background:transparent!important}' +
-      '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#b85c2a!important}' +
-      '.tb-theme-toggle{border-color:rgba(184,92,42,.55)!important;background:transparent!important}' +
-      '.tb-theme-toggle:hover{border-color:rgba(184,92,42,.85)!important;background:transparent!important}' +
+      '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#7a3b1e!important}' +
+      '.tb-theme-toggle{border-color:rgba(122,59,30,.55)!important;background:transparent!important}' +
+      '.tb-theme-toggle:hover{border-color:rgba(122,59,30,.85)!important;background:transparent!important}' +
       '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:0;flex:none;pointer-events:none;text-align:center}' +
       '.tb a.tb-brand-logo img{max-width:168px;margin:0 auto;display:inline-block;pointer-events:auto}' +
     '}' +
@@ -589,19 +589,19 @@
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#b85c2a!important;text-decoration:none;padding:2px 2px;' +
+    '.tb a,.tb a:visited{font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#7a3b1e!important;text-decoration:none;padding:2px 2px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
-    '.tb a:hover{color:#b85c2a!important;background:transparent}' +
-    '.tb a.tb-active{color:#b85c2a!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
+    '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
+    '.tb a.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(122,59,30,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#b85c2a!important;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#7a3b1e!important;' +
       'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
-    '.tb-ddbtn:hover{color:#b85c2a!important;background:transparent}' +
-    '.tb-ddbtn.tb-active{color:#b85c2a!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
-    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#b85c2a!important;background:transparent}' +
+    '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
+    '.tb-ddbtn.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(122,59,30,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
+    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#7a3b1e!important;background:transparent}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
@@ -652,7 +652,7 @@
       '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;' +
         'border:none;-webkit-appearance:none;appearance:none;box-shadow:none;outline:none;' +
         '-webkit-tap-highlight-color:transparent;' +
-        'padding:10px 14px 10px 8px;font-size:13px;color:#b85c2a;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
+        'padding:10px 14px 10px 8px;font-size:13px;color:#7a3b1e;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
       '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{box-shadow:none !important;outline:none !important}' +
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
@@ -700,11 +700,11 @@
     '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
-      'border:1.5px solid rgba(184,92,42,.55);background:transparent;color:#b85c2a;' +
+      'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#7a3b1e;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'transition:background .15s,border-color .15s;outline:none;padding:0;' +
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
-    '.tb-theme-toggle:hover{background:transparent;border-color:rgba(184,92,42,.85)}' +
+    '.tb-theme-toggle:hover{background:transparent;border-color:rgba(122,59,30,.85)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
     '@media(max-width:1260px){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
@@ -1015,7 +1015,7 @@
   hamLabel.className = 'tb-ham-label';
   hamLabel.textContent = 'GUIDE MY DAYS';
   hamLabel.href = base + 'index.html';
-  hamLabel.style.cssText = 'text-decoration:none;color:#b85c2a;';
+  hamLabel.style.cssText = 'text-decoration:none;color:#7a3b1e;';
   bar.appendChild(hamLabel);
 
   var hamBtn = document.createElement('div');
@@ -1024,7 +1024,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#b85c2a;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#7a3b1e;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg>';
   bar.appendChild(hamBtn);
 
@@ -1170,7 +1170,7 @@
     var browseLink = document.createElement('a');
     browseLink.href = base + 'Trip-Essentials/Best-Of-Index.html';
     browseLink.textContent = 'Browse by category';
-    browseLink.style.cssText = 'color:#b85c2a;font-weight:500;background:#fdf8f4;';
+    browseLink.style.cssText = 'color:#7a3b1e;font-weight:500;background:#fdf8f4;';
     if ('Best-Of-Index.html' === curr) browseLink.classList.add('tb-active');
     hamMenu.appendChild(browseLink);
     var bestOfPages = [
@@ -1605,7 +1605,7 @@
         'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
         'transition:color .15s,border-color .15s,box-shadow .15s;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
-        '#tve-back-to-guide:hover{color:#b85c2a;border-color:#b85c2a;' +
+        '#tve-back-to-guide:hover{color:#7a3b1e;border-color:#7a3b1e;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
         '@media(min-width:601px){#tve-back-to-guide{display:none}}';
       document.head.appendChild(css);
@@ -1673,7 +1673,7 @@
         'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
         'transition:color .15s,border-color .15s,box-shadow .15s;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
-        '#tve-back-to-byg:hover{color:#b85c2a;border-color:#b85c2a;' +
+        '#tve-back-to-byg:hover{color:#7a3b1e;border-color:#7a3b1e;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
         '@media(min-width:601px){#tve-back-to-byg{display:none}}';
       document.head.appendChild(css);
@@ -1719,7 +1719,7 @@
         'box-shadow:0 2px 10px rgba(0,0,0,.14);cursor:pointer;' +
         'font-family:inherit;-webkit-appearance:none;' +
         'transition:color .15s,border-color .15s,box-shadow .15s}' +
-        '#tve-nav-back:hover{color:#b85c2a;border-color:#b85c2a;' +
+        '#tve-nav-back:hover{color:#7a3b1e;border-color:#7a3b1e;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
         'body.tve-ham-open #tve-nav-back{display:none!important}' +
         '@media(min-width:601px){#tve-nav-back{display:none!important}}';
@@ -2114,7 +2114,7 @@
         /* Floating notice */
         var notice = document.createElement('div');
         notice.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);' +
-          'background:#2c2c2c;color:#b85c2a;padding:10px 18px;border-radius:8px;font-size:13px;' +
+          'background:#2c2c2c;color:#7a3b1e;padding:10px 18px;border-radius:8px;font-size:13px;' +
           'z-index:9999;display:flex;align-items:center;gap:14px;' +
           'box-shadow:0 2px 12px rgba(0,0,0,.35);max-width:90vw;white-space:nowrap;';
         notice.innerHTML = '<span>🔀 Preview only — run <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px;">optimize_route.py</code> to commit</span>';
@@ -2692,7 +2692,7 @@
     dlBtn.style.cssText =
       'flex:1;padding:8px 16px;border:none;border-radius:6px;' +
       'background:#b85c2a;' +
-      'font-size:13px;font-weight:700;color:#b85c2a;cursor:pointer;font-family:inherit;';
+      'font-size:13px;font-weight:700;color:#7a3b1e;cursor:pointer;font-family:inherit;';
 
     function _closeICS() { overlay.style.display = 'none'; document.body.style.overflow = ''; }
     /* No click-outside-to-close: on iOS the native date picker dismissal
@@ -3189,7 +3189,7 @@
            instead of stopping at the card edge. The hairline closes it. Same
            tint as .tve-ph-hr so the band, its divider and its panel agree. */
         '.tve-ph{border-left:2.5px solid #b85c2a;' +
-        'border-right:1px solid rgba(187,160,112,.45);background:transparent;color:#b85c2a;' +
+        'border-right:1px solid rgba(187,160,112,.45);background:transparent;color:#7a3b1e;' +
         'font-weight:500;padding:0 14px 0 11.5px;border-radius:0;' +
         'margin:6px -14px 0;line-height:1.55;font-size:inherit;}' +
         /* Scoping to the card is what wins the specificity fight —
@@ -3231,8 +3231,8 @@
            which already says "Open 24h". The rule is kept rather than deleted
            because the class is still stamped in JS and
            check_stop_hours_contract hard-fails a tve-ph-* class with no CSS. */
-        '.tve-ph-24{border-left-color:#b85c2a!important;background:transparent!important;' +
-        'border-right-color:rgba(187,160,112,.45)!important;color:#b85c2a!important;}' +
+        '.tve-ph-24{border-left-color:#7a3b1e!important;background:transparent!important;' +
+        'border-right-color:rgba(187,160,112,.45)!important;color:#7a3b1e!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
                 /* DESKTOP WIDTH — the band stops at the horizontal centre of the screen
@@ -3272,7 +3272,7 @@
            accent colour in a row whose rail is already the band's accent; tan is
            the same family as the rail, so the chip reads as part of the band
            rather than as a competing mark. Hover deepens the fill to #f5f0e6. */
-        '.tve-ph-chv{font-size:15px;font-weight:700;color:#b85c2a;line-height:1;' +
+        '.tve-ph-chv{font-size:15px;font-weight:700;color:#7a3b1e;line-height:1;' +
         'display:inline-flex;align-items:center;justify-content:center;flex:none;' +
         'width:22px;height:22px;border-radius:50%;' +
         'border:1px solid #b85c2a;background:transparent;' +
@@ -6154,7 +6154,7 @@
            :visited needs no rule: this is a class-specificity author selector,
            so it already outranks the UA visited style in every state. */
         '.tve-adtf a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;}' +
-        '.tve-adtf a:hover{color:#b85c2a;border-bottom-color:#b85c2a;text-decoration:none;}' +
+        '.tve-adtf a:hover{color:#7a3b1e;border-bottom-color:#7a3b1e;text-decoration:none;}' +
         /* Mobile mirrors the day row's stacked form: label on its own line, body full width. */
         '@media (max-width:600px){.tve-adtf{display:grid;grid-template-columns:1fr;' +
         'gap:3px 8px;padding:9px 14px;}.tve-adtf-label{flex:none;}}';
@@ -7141,7 +7141,7 @@
       'box-shadow:0 2px 10px rgba(0,0,0,.14);max-width:64vw;white-space:nowrap;' +
       'overflow:hidden;text-overflow:ellipsis;' +
       'transition:color .15s,border-color .15s,box-shadow .15s}' +
-      '#tve-bo-jump:hover{color:#b85c2a;border-color:#b85c2a;' +
+      '#tve-bo-jump:hover{color:#7a3b1e;border-color:#7a3b1e;' +
       'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
       /* Lift the scroll-top FAB clear of the pill, same as guide pages do for
          .day-jump-btn (guide-style.css). 20 (the pill's own bottom) + 28 (its
@@ -7172,7 +7172,7 @@
       'font-size:14px;color:#3d3a32;font-family:inherit;cursor:pointer;' +
       '-webkit-appearance:none}' +
       '.tve-bo-row:last-child{border-bottom:none}' +
-      '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#b85c2a;font-weight:700}' +
+      '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#7a3b1e;font-weight:700}' +
       'body.tve-ham-open #tve-bo-jump{display:none!important}' +
       '@media(min-width:601px){#tve-bo-jump,#tve-bo-ov{display:none!important}}';
     document.head.appendChild(css);
@@ -7342,7 +7342,7 @@
       'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
       'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
       'white-space:nowrap;transition:color .15s,border-color .15s,box-shadow .15s}' +
-      '#tve-map-back:hover{color:#b85c2a;border-color:#b85c2a;' +
+      '#tve-map-back:hover{color:#7a3b1e;border-color:#7a3b1e;' +
       'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
       'body.tve-ham-open #tve-map-back{display:none!important}' +
       '@media(min-width:601px){#tve-map-back{display:none!important}}';
@@ -7388,7 +7388,7 @@
       '.tve-share-stop-btn{background:none;border:none;cursor:pointer;' +
       'color:#a8a09a;padding:0;margin-left:12px;line-height:1;vertical-align:middle;' +
       'display:inline-flex;align-items:center;flex-shrink:0;}' +
-      '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#b85c2a;}' +
+      '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#7a3b1e;}' +
       '.tve-share-stop-btn:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:2px;border-radius:3px;}';
     (document.head || document.documentElement).appendChild(_ssCss);
@@ -7500,7 +7500,7 @@
       'transition:transform .12s,box-shadow .12s;}' +
       '#tve-wl-fab:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.28);}' +
       '#tve-wl-fab.tve-wl-fab-on{display:inline-flex;}' +
-      '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#b85c2a;border-radius:10px;' +
+      '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#7a3b1e;border-radius:10px;' +
       'font-size:11px;font-weight:700;padding:0 6px;min-width:18px;text-align:center;line-height:18px;}' +
 
       /* Panel — anchored above the FAB */
@@ -7513,7 +7513,7 @@
       '.tve-wl-ptitle{font-size:13px;font-weight:700;color:#231f1b;flex:1;font-family:inherit;}' +
       '.tve-wl-pclear{font-size:11px;color:#a8a09a;background:none;border:none;cursor:pointer;' +
       'padding:2px 4px;border-radius:3px;font-family:inherit;transition:color .12s;}' +
-      '.tve-wl-pclear:hover{color:#b85c2a;}' +
+      '.tve-wl-pclear:hover{color:#7a3b1e;}' +
       '.tve-wl-pclose{background:none;border:none;cursor:pointer;color:#a8a09a;' +
       'display:flex;align-items:center;padding:2px;margin-left:2px;border-radius:3px;}' +
       '.tve-wl-pclose:hover{color:#231f1b;}' +
@@ -7531,13 +7531,13 @@
       '.tve-wl-prow-meta{font-size:11px;color:#9a908a;margin-top:1px;font-family:inherit;}' +
       '.tve-wl-prow-rm{background:none;border:none;cursor:pointer;color:#c0b8b0;' +
       'display:flex;align-items:center;padding:2px;flex-shrink:0;border-radius:3px;transition:color .12s;}' +
-      '.tve-wl-prow-rm:hover{color:#b85c2a;}' +
+      '.tve-wl-prow-rm:hover{color:#7a3b1e;}' +
       '.tve-wl-pfooter{display:flex;align-items:center;gap:8px;padding:9px 14px;' +
       'border-top:1px solid #e4ddd4;background:#f9f5ef;}' +
-      '.tve-wl-copy{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
+      '.tve-wl-copy{font-size:12px;font-weight:600;color:#7a3b1e;background:none;' +
       'border:1px solid #b85c2a;border-radius:5px;padding:4px 11px;cursor:pointer;' +
       'font-family:inherit;transition:background .12s,color .12s;}' +
-      '.tve-wl-copy:hover{background:#b85c2a;color:#b85c2a;}' +
+      '.tve-wl-copy:hover{background:#b85c2a;color:#7a3b1e;}' +
       '.tve-wl-empty{padding:24px 14px;text-align:center;color:#a8a09a;' +
       'font-size:13px;line-height:1.6;font-family:inherit;}' +
       /* Mobile: align with scroll-top FAB (bottom:62px+36px+10px=108px) */
@@ -7880,8 +7880,8 @@
       '.tve-note-btn{background:none;border:none;cursor:pointer;color:#a8a09a;padding:0;' +
       'margin-left:8px;line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
       'transition:color .15s;font-family:inherit;}' +
-      '.tve-note-btn:hover{color:#b85c2a;}' +
-      '.tve-note-btn.tve-note-has{color:#b85c2a;}' +
+      '.tve-note-btn:hover{color:#7a3b1e;}' +
+      '.tve-note-btn.tve-note-has{color:#7a3b1e;}' +
       '.tve-note-btn:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;border-radius:3px;}' +
 
       /* Saved note line under the stop header */
@@ -7894,7 +7894,7 @@
       '.tve-note-saved:hover{background:var(--c-warm-bg,#fdf8f0);}' +
       '.tve-note-saved-txt{flex:1;min-width:0;overflow-wrap:anywhere;}' +
       '.tve-note-saved-tag{font-size:10px;font-weight:700;letter-spacing:.09em;' +
-      'text-transform:uppercase;color:#b85c2a;flex-shrink:0;padding-top:2px;}' +
+      'text-transform:uppercase;color:#7a3b1e;flex-shrink:0;padding-top:2px;}' +
 
       /* Inline editor */
       '.tve-note-edit{display:none;align-items:center;gap:7px;margin:8px 0 0;}' +
@@ -7903,11 +7903,11 @@
       'color:var(--c-text-primary,#3d3a32);background:var(--c-card-bg,#fff);' +
       'border:1px solid var(--c-next-border,#bba070);border-radius:5px;padding:6px 9px;' +
       '-webkit-appearance:none;box-sizing:border-box;}' +
-      '.tve-note-input:focus{outline:none;border-color:#b85c2a;box-shadow:0 0 0 2px rgba(184,92,42,.15);}' +
-      '.tve-note-save{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
+      '.tve-note-input:focus{outline:none;border-color:#7a3b1e;box-shadow:0 0 0 2px rgba(184,92,42,.15);}' +
+      '.tve-note-save{font-size:12px;font-weight:600;color:#7a3b1e;background:none;' +
       'border:1px solid #b85c2a;border-radius:5px;padding:5px 12px;cursor:pointer;' +
       'font-family:inherit;flex-shrink:0;transition:background .12s,color .12s;}' +
-      '.tve-note-save:hover{background:#b85c2a;color:#b85c2a;}' +
+      '.tve-note-save:hover{background:#b85c2a;color:#7a3b1e;}' +
 
       /* MY TRIP NOTES card — mirrors .overview-section / .overview-title */
       '#tve-notes-card{display:none;background:var(--c-card-bg,#fff);' +
@@ -7922,7 +7922,7 @@
       '.tve-notes-act{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;' +
       'color:var(--c-brand,#8a6c1a);background:none;border:none;cursor:pointer;padding:2px 4px;' +
       'border-radius:3px;font-family:inherit;transition:color .12s;flex-shrink:0;}' +
-      '.tve-notes-act:hover{color:#b85c2a;}' +
+      '.tve-notes-act:hover{color:#7a3b1e;}' +
       '.tve-notes-row{display:flex;gap:10px;padding:9px 4px;border-bottom:0.5px solid #c8a44a;' +
       'text-decoration:none;color:inherit;}' +
       '.tve-notes-row:last-child{border-bottom:none;}' +
@@ -9206,10 +9206,10 @@
       'color:#a8a09a;padding:0;margin-left:14px;line-height:1;' +
       'display:inline-flex;align-items:center;gap:5px;flex-shrink:0;' +
       'font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.01em;}' +
-      '.tve-copy-day-btn:hover,.tve-copy-day-btn:focus-visible{color:#b85c2a;}' +
+      '.tve-copy-day-btn:hover,.tve-copy-day-btn:focus-visible{color:#7a3b1e;}' +
       '.tve-copy-day-btn:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:3px;border-radius:4px;}' +
-      '.tve-copy-day-btn.copied{color:#b85c2a;}';
+      '.tve-copy-day-btn.copied{color:#7a3b1e;}';
     (document.head || document.documentElement).appendChild(_cdCss);
 
     /* Header label without anything injected into it — the mark-stops badge,
@@ -9434,7 +9434,7 @@
       'color:#a8a09a;padding:0;margin-left:14px;line-height:1;' +
       'display:inline-flex;align-items:center;gap:5px;flex-shrink:0;' +
       'font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.01em;}' +
-      '.tve-map-day-link:hover,.tve-map-day-link:focus-visible{color:#b85c2a;}' +
+      '.tve-map-day-link:hover,.tve-map-day-link:focus-visible{color:#7a3b1e;}' +
       '.tve-map-day-link:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:3px;border-radius:4px;}' +
       '@media (max-width:480px){.tve-map-day-link span{display:none;}' +
@@ -9840,11 +9840,11 @@
         'border-color:var(--c-pill-bd-hover);}}' +
         '.tve-stf-chip:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;}' +
         '.tve-stf-chip.is-on{background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
-        'border-color:#b85c2a;color:#b85c2a;}' +
+        'border-color:#7a3b1e;color:#7a3b1e;}' +
         '.tve-stf-chip.is-on .tve-stf-n{opacity:.85;}' +
         '@media (hover:hover){.tve-stf-chip.is-on:hover{' +
         'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
-        'border-color:#b85c2a;}}' +
+        'border-color:#7a3b1e;}}' +
         '.overview-day.tve-stf-dim{opacity:.35;pointer-events:none;}' +
         ':root[data-theme="dark"] #tve-stf{border-top-color:rgba(212,184,150,.16);}' +
         ':root[data-theme="dark"] #tve-stf .tve-stf-lead{color:#8a827a;}' +
