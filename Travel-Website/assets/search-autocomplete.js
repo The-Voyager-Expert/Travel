@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════════
- * TVESearch — shared search autocomplete (The Voyager Expert)
+ * TVESearch — shared search autocomplete (Guide My Days)
  *
  * ONE implementation of the "type a city → that city; type a country → the
  * country + all its cities" typeahead, extracted from the Before-You-Go search

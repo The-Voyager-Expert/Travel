@@ -227,7 +227,7 @@
 /* 2026-08-05: guide a:hover underline; day-block background warm→white — guide-style.css min to 72, CACHE to v241. */
 /* 2026-08-05: day-block revert warm-bg; tve-been terracotta pressed; overview-section bottom padding 16→8px — guide-style.css min to 73, CACHE to v242. */
 /* 2026-08-05: overview-section padding revert 16px; fix overview-day:hover underline — guide-style.css min to 74, CACHE to v243. */
-/* 2026-08-05: index.html changed after the v250 bump (Hiroshima listing) but shipped without a CACHE bump — returning visitors were served the stale cached index when clicking "The Voyager Expert" / All Guides. Bump CACHE to v251 to purge the stale index for all clients. */
+/* 2026-08-05: index.html changed after the v250 bump (Hiroshima listing) but shipped without a CACHE bump — returning visitors were served the stale cached index when clicking "Guide My Days" / All Guides. Bump CACHE to v251 to purge the stale index for all clients. */
 /* 2026-08-05: action-pill row — remove font-weight (back to normal), I've Been button matches its siblings at rest/hover and its been-state uses var(--c-next-bg) bg with terracotta text+border — guide-style.css min to 80, CACHE to v252. */
 /* 2026-08-05: I've Been been-state → font-weight 700 (terracotta bold), scoped to #tve-visited-btn.tve-been only; rest of the row unchanged — guide-style.css min to 81, CACHE to v253. */
 /* 2026-08-05: I've Been been-state — restore collapsed left border so all four sides are uniformly terracotta (was showing the neighbour's faded gold on the shared edge) — guide-style.css min to 82, CACHE to v254. */
@@ -437,7 +437,8 @@
 /* 2026-08-09: HOTEL_ALT_DATA cross-city dedup — brain_check warned on 4 hotels listed under 2 slugs each: "Estancia La Jolla Hotel & Spa" + "Lodge at Torrey Pines" (la-jolla, san-diego — physically in La Jolla); "Sanctuary Camelback Mountain Resort & Spa" (phoenix, scottsdale — Paradise Valley); "Four Seasons Resort Scottsdale at Troon North" (phoenix, scottsdale — North Scottsdale). Replaced all four in the wrong slot with genuine city-centre properties: Manchester Grand Hyatt San Diego (8.6) + Marriott Marquis San Diego Marina (8.6) in san-diego; Hyatt Regency Phoenix Downtown (8.5) + Kimpton Hotel Palomar Phoenix Cityscape by IHG (8.7) in phoenix. toolbar.js -> v290. CACHE to v450. */
 /* 2026-08-10: "Map day" — a link in every guide .day-header (next to Copy day) that opens that day's stops as ONE Google Maps route (first stop = origin, last = destination, rest = waypoints; travelmode=walking). Place strings reuse each stop's authored ?query= so the route lands on the same pins the per-stop 📍 links do. Zero guide HTML; self-styled CSS (#tve-map-day-css), label hidden below 480px. Toolbar.html § 40. toolbar.js -> v291. CACHE to v451. */
 /* 2026-08-10: hotel-rehome(bhutan) — HOTEL_ALT_DATA['bhutan'] quoted 9.6 for Amankora and 9.5 for Six Senses Paro with no url behind either, and the Booking.com connector lists neither property, so those scores were never read anywhere (the Tawaraya failure mode). Replaced with Zhiwaling Heritage (9.0) and Rema Resort (9.1), each carrying the url its score came from. toolbar.js -> v292. CACHE to v452. */
-var CACHE = 'travel-cache-v452';
+/* 2026-08-10: REBRAND — The Voyager Expert -> Guide My Days. Site title, mobile hamburger label, PWA apple-mobile-web-app-title and the .ics PRODID all renamed in toolbar.js; manifest name/short_name renamed; 239 pages swept for the old brand string. The wordmark PNG was added to index.html only (above .header, on the page's light background) — deliberately NOT in the toolbar, which is solid terracotta #b85c2a and would swallow the logo's orange script. toolbar.js -> v293. CACHE to v453. */
+var CACHE = 'travel-cache-v453';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -445,7 +446,7 @@ var CACHE = 'travel-cache-v452';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 158, 'toolbar.js': 292, 'mobile.css': 73, 'web-travel-style.css': 20, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 158, 'toolbar.js': 293, 'mobile.css': 73, 'web-travel-style.css': 20, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

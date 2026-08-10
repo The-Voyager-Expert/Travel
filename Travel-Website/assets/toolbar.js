@@ -112,7 +112,7 @@
     meta('apple-mobile-web-app-capable', 'yes');
     meta('mobile-web-app-capable', 'yes');
     meta('apple-mobile-web-app-status-bar-style', 'default');
-    meta('apple-mobile-web-app-title', 'TheVoyagerExp');
+    meta('apple-mobile-web-app-title', 'Guide My Days');
     if ('serviceWorker' in navigator &&
         (location.protocol === 'https:' || location.hostname === 'localhost')) {
       var _hadCtl = !!navigator.serviceWorker.controller;
@@ -847,7 +847,7 @@
 
   var siteTitle = document.createElement('a');
   siteTitle.className = 'tb-site-title';
-  siteTitle.textContent = 'The Voyager Expert';
+  siteTitle.textContent = 'Guide My Days';
   siteTitle.href = base + 'index.html';
   siteTitle.style.textDecoration = 'none';
   /* OWNER 2026-08-09: the title joins .tb-links as its first flex item instead
@@ -911,7 +911,7 @@
   /* ── Mobile hamburger menu ──────────────────────────────────────────────── */
   var hamLabel = document.createElement('a');
   hamLabel.className = 'tb-ham-label';
-  hamLabel.textContent = 'THE VOYAGER EXPERT';
+  hamLabel.textContent = 'GUIDE MY DAYS';
   hamLabel.href = base + 'index.html';
   hamLabel.style.cssText = 'text-decoration:none;color:#fff;';
   bar.appendChild(hamLabel);
@@ -2578,7 +2578,7 @@
       var _ts = new Date().getTime();
       var out = [
         'BEGIN:VCALENDAR', 'VERSION:2.0',
-        'PRODID:-//The Voyager Expert//Guide Calendar//EN',
+        'PRODID:-//Guide My Days//Guide Calendar//EN',
         'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       ];
       days.forEach(function (day, i) {
