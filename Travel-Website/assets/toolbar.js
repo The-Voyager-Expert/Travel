@@ -502,10 +502,11 @@
   var styleEl = document.createElement('style');
   styleEl.textContent =
     /* Toolbar outer — flex row so title + nav sit side by side */
-    /* Bar height: padding 16px -> 9px (owner 2026-08-10, "less thicker"). The
-       tabs set their own 4px padding, so this is pure bar chrome above and
-       below them and trims ~14px off every page's fold. */
-    '.tb{padding:9px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
+    /* Bar height: padding 16px -> 9px (owner 2026-08-10, "less thicker"), then
+       9px -> 8px when the tab font went 13px -> 14px. The tabs' own vertical
+       padding was cut 4px -> 2px in the same pass, so the taller text is fully
+       absorbed and the bar is no thicker than before. */
+    '.tb{padding:8px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
       'background:#b85c2a;' +
       'border-bottom:none;box-shadow:none;' +
       'display:flex;align-items:center}' +
@@ -558,15 +559,15 @@
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:13px;font-weight:700;color:#fff!important;text-decoration:none;padding:4px 2px;' +
+    '.tb a,.tb a:visited{font-size:14px;font-weight:700;color:#fff!important;text-decoration:none;padding:2px 2px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb a.tb-active{color:#fff!important;background:transparent;border:1.5px solid rgba(255,255,255,0.7);border-radius:14px;padding:4px 12px;font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:13px;font-weight:700;color:#fff!important;' +
-      'padding:4px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:14px;font-weight:700;color:#fff!important;' +
+      'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb-ddbtn.tb-active{color:#fff!important;background:transparent;border:1.5px solid rgba(255,255,255,0.7);border-radius:14px;padding:4px 12px;font-weight:600}' +
