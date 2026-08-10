@@ -1343,7 +1343,12 @@
      index copy is gone; this is the only wordmark on the site. */
   var tveBrandLogo = document.createElement('a');
   tveBrandLogo.className = 'tb-brand-logo';
-  tveBrandLogo.href = base + 'index.html';
+  /* Links to the site ROOT, not to index.html — the address bar should read
+     https://guidemydays.com, not .../index.html. `base` is already the
+     relative hop to the root ('../../' at depth 2), which resolves to '/';
+     at depth 0 it is empty, and an empty href would re-point at the current
+     page, so './' is used there. Pages serves index.html at '/' either way. */
+  tveBrandLogo.href = base || './';
   tveBrandLogo.setAttribute('aria-label', 'Guide My Days — home');
   var _bImg = document.createElement('img');
   _bImg.src = base + 'Images/Logos/guidemydays-wordmark-serif-script-swoosh.png';
