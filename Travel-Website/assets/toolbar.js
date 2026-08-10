@@ -543,10 +543,11 @@
     '@media(max-width:600px){.tb-brand-logo{padding:8px 10px 10px 10px}.tb-brand-logo img{max-width:132px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
-   in the bar the same). Left edge -> first tab, tab -> tab, and last tab ->
+   in the bar the same) — both use the SAME clamp() so they stay equal at every
+   width while shrinking together as the viewport narrows. Left edge -> first tab, tab -> tab, and last tab ->
    theme toggle are all 10px; the toggle's own margin-left is 0 so this padding
    is the only thing between them, otherwise the two would stack to 20px. */
-    '.tb-inner{flex:1;padding-left:10px;padding-right:10px}' +
+    '.tb-inner{flex:1;padding-left:clamp(6px,0.78vw,10px);padding-right:clamp(6px,0.78vw,10px)}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     /* OWNER 2026-08-10: tabs pushed LEFT with one EQUAL gap between every pair.
        Was justify-content:space-between + gap:0, which spread the row edge to
@@ -555,18 +556,18 @@
        longer needs to fill the bar, so: flex-start + a fixed gap, and
        width:auto so the row is exactly as wide as its tabs. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:10px;align-items:center;justify-content:flex-start}' +
+      'gap:clamp(6px,0.78vw,10px);align-items:center;justify-content:flex-start}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:14px;font-weight:700;color:#fff!important;text-decoration:none;padding:2px 2px;' +
+    '.tb a,.tb a:visited{font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#fff!important;text-decoration:none;padding:2px 2px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
     '.tb a.tb-active{color:#fff!important;background:transparent;border:1.5px solid rgba(255,255,255,0.7);border-radius:14px;padding:4px 12px;font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:14px;font-weight:700;color:#fff!important;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#fff!important;' +
       'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#fff!important;background:rgba(255,255,255,0.18)}' +
