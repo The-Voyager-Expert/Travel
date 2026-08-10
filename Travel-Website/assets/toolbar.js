@@ -595,14 +595,14 @@
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#7a3b1e!important;text-decoration:none;padding:2px 2px;' +
+    '.tb a,.tb a:visited{font-size:14px;font-weight:700;color:#7a3b1e!important;text-decoration:none;padding:2px 2px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
     '.tb a.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#7a3b1e!important;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:14px;font-weight:700;color:#7a3b1e!important;' +
       'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
