@@ -561,7 +561,7 @@
       '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#b85c2a!important}' +
       '.tb-theme-toggle{border-color:rgba(184,92,42,.55)!important;background:transparent!important;color:#b85c2a!important}' +
       '.tb-theme-toggle:hover{border-color:rgba(184,92,42,.85)!important;background:transparent!important}' +
-      '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:0;flex:none;pointer-events:none;text-align:center}' +
+      '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:3px 0 0;flex:none;pointer-events:none;text-align:center}' +
       '.tb a.tb-brand-logo img{max-width:168px;margin:0 auto;display:inline-block;pointer-events:auto}' +
     '}' +
     '@media(max-width:600px){.tb a.tb-brand-logo img{max-width:150px}}' +
