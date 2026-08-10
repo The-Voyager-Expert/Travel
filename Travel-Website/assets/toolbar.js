@@ -1025,7 +1025,7 @@
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
   hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#7a3b1e;flex-shrink:0;';
-  hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg>';
+  hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="currentColor"/></svg>';
   bar.appendChild(hamBtn);
 
   /* ── Theme toggle ───────────────────────────────────────────────────────── */
@@ -1257,7 +1257,7 @@
      be overlaid by that same parent's z-index. */
   document.body.appendChild(hamMenu);
 
-  var hamMenuClosedHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="#fff"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="#fff"/></svg>';
+  var hamMenuClosedHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="currentColor"/></svg>';
   var _hamSavedScroll = 0;
   function _lockBodyScroll() {
     _hamSavedScroll = window.scrollY || window.pageYOffset || 0;
