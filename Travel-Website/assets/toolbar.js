@@ -633,7 +633,12 @@
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
          block-level box pushes the text off the bar's vertical center. */
-      '.tb-ham-label{display:block;min-height:0!important;position:absolute;left:0;right:0;text-align:center;font-size:17px!important;font-weight:700;color:#fff;padding:0;letter-spacing:.06em;text-transform:uppercase;pointer-events:none}' +
+      /* 2026-08-10: the centred 'GUIDE MY DAYS' text label is HIDDEN on mobile.
+   The wordmark image now renders above the bar on every page including
+   mobile, so the label was a second brand in the same viewport — image
+   above, text centred in the bar below it. The element itself is kept
+   (check_brand_title_link asserts its href) but never shown. */
+      '.tb-ham-label{display:none!important}' +
       /* The menu is position:fixed so it stays fully on-screen as the user
          scrolls — items never disappear off the top. The toolbar (.tb) is
          NOT fixed (scrolls away as usual); only the open menu panel is fixed.
