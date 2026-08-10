@@ -576,7 +576,13 @@
    width. Without it the bar overflows to the right and pushes the theme
    toggle off the edge — the toggle's own flex-shrink:0 cannot help,
    because the overflow happens upstream of it. */
-    '.tb-inner{flex:1;min-width:0;padding-left:clamp(6px,0.78vw,10px);padding-right:clamp(6px,0.78vw,10px)}' +
+    /* flex:0 1 auto, not flex:1 (owner 2026-08-10). With flex:1 the container took
+   all remaining width and the unused space collected between the last tab and
+   the theme toggle — ~21px against a 10px left gutter, and it varied with the
+   viewport. Shrink-to-fit removes that slack so the toggle sits one gutter
+   after the last tab, as if it were the next tab, and the gap matches the
+   left margin exactly at every width. */
+    '.tb-inner{flex:0 1 auto;min-width:0;padding-left:clamp(6px,0.78vw,10px);padding-right:clamp(6px,0.78vw,10px)}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     /* OWNER 2026-08-10: tabs pushed LEFT with one EQUAL gap between every pair.
        Was justify-content:space-between + gap:0, which spread the row edge to
