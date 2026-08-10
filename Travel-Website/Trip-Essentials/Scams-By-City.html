@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Scams &amp; Tourist Traps</title>
+<style>
+/* ── Badge legend (interactive filter) ── */
+.sc-legend {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  margin: 0 0 18px;
+}
+.sc-badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.04em; line-height: 1.5; padding: 3px 8px;
+  border: 1px solid; border-radius: 4px;
+  text-transform: uppercase; white-space: nowrap;
+}
+.sc-legend .sc-badge { cursor: pointer; user-select: none; }
+.sc-legend .sc-badge:focus-visible { outline: 2px solid var(--rust, #b85c2a); outline-offset: 2px; }
+.filter-on { outline: 2.5px solid currentColor; outline-offset: 2px; }
+
+.sc-badge.pick     { background: #fdf0e8; border-color: rgba(122,58,26,0.4); color: #7a3a1a; }
+.sc-badge.distract { background: var(--warm); border-color: rgba(184,134,90,0.4); color: #8a4a10; }
+.sc-badge.official { background: #e8f0fb; border-color: rgba(26,58,139,0.4); color: var(--navy); }
+.sc-badge.over     { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+.sc-badge.gift     { background: #f3e8ff; border-color: rgba(124,58,237,0.4); color: #7c3aed; }
+.sc-badge.goods    { background: rgba(160,40,110,0.08); border-color: rgba(160,40,110,0.4); color: #8a2168; }
+.sc-badge.money    { background: rgba(138,108,26,0.07); border-color: rgba(106,102,96,0.4); color: var(--muted); }
+
+:root[data-theme="dark"] .sc-badge.pick     { background: #2a1408; border-color: #7a3a1a; color: #e0a078; }
+:root[data-theme="dark"] .sc-badge.distract { background: #241a0c; border-color: #8a5a10; color: #e0b070; }
+:root[data-theme="dark"] .sc-badge.official { background: #0d1830; border-color: #2a4a90; color: #7aa4e8; }
+:root[data-theme="dark"] .sc-badge.over     { background: #281f00; border-color: #7a6010; color: #d4a830; }
+:root[data-theme="dark"] .sc-badge.gift     { background: #1d1030; border-color: #5a3a9a; color: #b28ae8; }
+:root[data-theme="dark"] .sc-badge.goods    { background: #2a0d1e; border-color: #8a2168; color: #e08ac0; }
+:root[data-theme="dark"] .sc-badge.money    { background: #242220; border-color: rgba(200,196,190,0.35); color: #c8c4be; }
+
+/* ── Region headers ── */
+.region-header {
+  background: var(--surface2); color: var(--text);
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 9px 16px; border-radius: 6px;
+  border: 1.5px solid var(--border, #d8d5ce);
+  margin: 22px 0 10px;
+}
+.region-header:first-child { margin-top: 0; }
+
+/* ── City cards ── */
+.city-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; margin-bottom: 10px; padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(26,25,23,.04);
+}
+.city-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.city-flag { font-size: 18px; line-height: 1; }
+.city-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.city-country { font-size: 11.5px; color: var(--muted); }
+.city-count { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+.scam { border-top: 1px solid #f0ede8; padding: 11px 0 3px; }
+.scam:first-of-type { border-top: none; padding-top: 0; }
+.scam-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.scam-name { font-size: 13.5px; font-weight: 600; color: var(--text); }
+.scam-line { font-size: 12.5px; color: var(--text); line-height: 1.55; margin-bottom: 4px; display: flex; gap: 8px; }
+.scam-label { color: var(--muted); flex: 0 0 92px; }
+.scam-anchor {
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+  background: var(--bg); border-left: 3px solid var(--rust, #b85c2a);
+  padding: 6px 10px; border-radius: 0 4px 4px 0; margin-top: 7px;
+}
+.scam-anchor strong { color: var(--text); font-weight: 600; }
+
+/* ── Sources ── */
+.sources { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--border2, #e6e2da); }
+.sources h2 { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 9px; }
+.source-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.source-list li { font-size: 12px; line-height: 1.5; }
+.source-list a { color: #3d3a32; text-decoration: none; }
+.source-list a:visited { color: #3d3a32; }
+.source-list a:hover { color: var(--rust); }
+/* :visited must carry a literal hex — browsers drop var() there */
+:root[data-theme="dark"] .source-list a,
+:root[data-theme="dark"] .source-list a:visited { color: #d8d4cc; }
+
+/* ── Desktop legend ── */
+@media (min-width: 601px) {
+  /* Every legend badge shares one width so the centered strip reads as an even
+     row instead of seven different-length slivers. 108px clears the longest
+     label (FAKE OFFICIAL measures 106px at 11px/700/0.04em). Page-Format § 12
+     pill width rule: short-label pills in a centered legend need a min-width. */
+  .sc-legend .sc-badge { min-width: 108px; text-align: center; }
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  /* Legend strip = 6-col grid, each badge spanning 2 (3 per row) with the
+     trailing row widened to span 3 (2 per row) — the site's standard fix for a
+     dangling orphan pill (Page-Format § 12 pill-width rule: all rows in a strip
+     must look equal). 7 badges wrap 3 / 2 / 2 instead of a lone 7th centered on
+     its own row. Spans are set INLINE by JS, never by a CSS :nth-child rule —
+     iOS Safari mis-applies :nth-child here (same reason toolbar.js
+     _fixPillGridOrphans uses inline gridColumn for the guide pill grids).
+     Locked badge shape props are untouched; only the width stretches. */
+  .sc-legend { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .sc-legend .sc-badge { text-align: center; padding-left: 4px; padding-right: 4px; }
+  .scam-line { flex-direction: column; gap: 0; }
+  .scam-label { flex: none; }
+  .city-count { margin-left: 0; flex-basis: 100%; }
+}
+@media (max-width: 359px) {
+  .wrap { padding: 0 14px; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="900" data-updated="2026-08-08"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header">
+    <h1>SCAMS &amp; TOURIST TRAPS</h1>
+  </div>
+
+  <div class="page-intro-card">
+    <div class="page-intro-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true">
+        <path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3zm-1 5h2v6h-2V7zm0 8h2v2h-2v-2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="page-intro-head">Known schemes at guide destinations</div>
+      <div class="page-intro-sub">The documented scams travellers meet in each city — how each one works, how to shut it down, and the legitimate price so an inflated one is obvious. Safety Guide covers a country's overall risk level; this covers the individual tricks. Price anchors are the rate at last review and drift over time.</div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; margin:0 0 16px;">
+    <input type="search" id="page-search" class="search-input"
+      placeholder="City or scam" aria-label="Search by city or scam"
+      autocomplete="off" spellcheck="false" style="width:360px;">
+  </div>
+
+  <div class="sc-legend" id="sc-legend" role="group" aria-label="Filter by scam type">
+    <span class="sc-badge pick"     data-filter="pick"     role="button" tabindex="0">Pickpocket</span>
+    <span class="sc-badge distract" data-filter="distract" role="button" tabindex="0">Distraction</span>
+    <span class="sc-badge official" data-filter="official" role="button" tabindex="0">Fake official</span>
+    <span class="sc-badge over"     data-filter="over"     role="button" tabindex="0">Overcharge</span>
+    <span class="sc-badge gift"     data-filter="gift"     role="button" tabindex="0">Forced gift</span>
+    <span class="sc-badge goods"    data-filter="goods"    role="button" tabindex="0">Fake goods</span>
+    <span class="sc-badge money"    data-filter="money"    role="button" tabindex="0">Card &amp; cash</span>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="empty-state" id="empty" hidden>
+    <span class="empty-state-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
+    <div class="empty-state-text" id="empty-text">No city or scam matches that search.</div>
+  </div>
+
+  <div class="sources">
+    <h2>Sources</h2>
+    <ul class="source-list">
+      <li><a href="https://www.adr.it/web/aeroporti-di-roma-en/pax-fco-taxi" target="_blank" rel="noopener">Aeroporti di Roma — Fiumicino taxi fixed fares</a></li>
+      <li><a href="https://www.parisaeroport.fr/en/passengers/transport-parking/taxi/cdg" target="_blank" rel="noopener">Paris Aéroport — CDG taxi flat rates</a></li>
+      <li><a href="https://www.tmb.cat/en/barcelona-fares-metro-bus/transport-ticket-fares" target="_blank" rel="noopener">TMB Barcelona — transport ticket fares</a></li>
+      <li><a href="https://www.nyc.gov/site/tlc/passengers/taxi-fare.page" target="_blank" rel="noopener">NYC Taxi &amp; Limousine Commission — taxi fares</a></li>
+      <li><a href="https://www.veneziaunica.it/en/plan-your-trip/useful-information" target="_blank" rel="noopener">Venezia Unica — official gondola tariff information</a></li>
+      <li><a href="https://www.aia.gr/en/traveller/transportation-airport/private-transportation" target="_blank" rel="noopener">Athens International Airport — taxi flat fares</a></li>
+      <li><a href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html" target="_blank" rel="noopener">U.S. State Department — Travel Advisories</a></li>
+      <li><a href="https://www.gov.uk/foreign-travel-advice" target="_blank" rel="noopener">UK Foreign Office — Foreign Travel Advice</a></li>
+    </ul>
+  </div>
+
+</div><!-- /.wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Safety-Guide.html">🛡️ Safety guide</a>
+    <a class="also-on-this-site-pill" href="Cards-ATM.html">💳 Cards &amp; ATM</a>
+    <a class="also-on-this-site-pill" href="Currency-Guide.html">💱 Currency</a>
+    <a class="also-on-this-site-pill" href="Tipping-Guide.html">🪙 Tipping</a>
+    <a class="also-on-this-site-pill" href="Travel-Insurance.html">🛟 Travel insurance</a>
+    <a class="also-on-this-site-pill" href="Tours-Tickets.html">🎟️ Tours &amp; tickets</a>
+    <a class="also-on-this-site-pill" href="Before-You-Go.html">✅ Before you go</a>
+  </div>
+</div>
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>
+var TYPES = {
+  pick:     'Pickpocket',
+  distract: 'Distraction',
+  official: 'Fake official',
+  over:     'Overcharge',
+  gift:     'Forced gift',
+  goods:    'Fake goods',
+  money:    'Card &amp; cash'
+};
+
+var REGIONS = [
+  ['europe',   'Europe'],
+  ['asia',     'Asia'],
+  ['africa',   'Africa &amp; Middle East'],
+  ['americas', 'Americas']
+];
+
+var CITIES = [
+  /* ─────────────── EUROPE ─────────────── */
+  {
+    city: 'Amsterdam', country: 'Netherlands', flag: '🇳🇱', region: 'europe',
+    scams: [
+      {
+        t: 'Street drug sale', c: 'goods',
+        how: 'A dealer near Centraal or the Red Light District sells what he calls cocaine or MDMA. It is almost always crushed household powder — sometimes something genuinely dangerous. Buyers who complain get robbed instead of refunded.',
+        avoid: 'Anything sold on the street is fake. Soft drugs are legal only in licensed coffeeshops, and those never sell anything else.',
+        anchor: 'There is no legitimate street price — every street sale here is counterfeit.'
+      },
+      {
+        t: 'Stolen bike resale', c: 'goods',
+        how: 'Someone offers a bike for €30–50 in cash near a station. It is stolen, buying it is a criminal offence, and the lock usually will not open once you have paid.',
+        avoid: 'Rent from a shop with a receipt and two locks.',
+        anchor: 'A legitimate day rental is about €10–15; a decent second-hand bike from a shop is €120 upward.'
+      },
+      {
+        t: 'Centraal and tram-2 pickpockets', c: 'pick',
+        how: 'Crowded boarding on tram routes 2 and 12 and the Centraal escalators; a team blocks the door while a second lifts the wallet.',
+        avoid: 'Zip bags shut and wear them in front while boarding. Do not keep a phone in a back pocket.',
+        anchor: 'A GVB day ticket is about €9 — buying it from a machine or the driver removes any reason to open a wallet in the crowd.'
+      }
+    ]
+  },
+  {
+    city: 'Athens', country: 'Greece', flag: '🇬🇷', region: 'europe',
+    scams: [
+      {
+        t: 'Friendly-local bar bill', c: 'over',
+        how: 'A well-dressed man strikes up a conversation near Syntagma or Monastiraki, suggests a bar he knows, and hostesses join the table. The bill arrives at several hundred euros and the door is blocked until it is paid.',
+        avoid: 'Never follow a stranger to a bar he chose. Leave the moment unrequested company sits down.',
+        anchor: 'A beer in a normal Athens bar is €4–6; a bill above about €50 for two people is the tell.'
+      },
+      {
+        t: 'Airport taxi refusing the flat fare', c: 'over',
+        how: 'A driver at Eleftherios Venizelos claims the fixed airport fare does not apply to your address, or that luggage and tolls are extra.',
+        avoid: 'Use the official yellow rank at Exit 3 and state the flat fare before the boot is opened. Uber and FreeNow dispatch the same licensed taxis with the price shown up front.',
+        anchor: 'The legal flat fare to central Athens is €40 between 05:00 and midnight, €55 overnight — tolls and luggage included.'
+      },
+      {
+        t: 'Metro line-3 pickpockets', c: 'pick',
+        how: 'The airport metro line into Syntagma is worked hard, especially the door crush at Monastiraki.',
+        avoid: 'Stand with your back to the carriage wall and keep a hand on the bag zip at every stop.',
+        anchor: 'An airport metro ticket is about €9 — buy it at the machine, not from anyone offering to help.'
+      }
+    ]
+  },
+  {
+    city: 'Barcelona', country: 'Spain', flag: '🇪🇸', region: 'europe',
+    scams: [
+      {
+        t: 'La Rambla pickpocket teams', c: 'pick',
+        how: 'Three-person teams work the Rambla, the Boqueria entrance and the L3 metro. One bumps, one lifts, one walks the wallet away within seconds.',
+        avoid: 'Nothing valuable in outer pockets, bag worn across the chest, phone off the café table.',
+        anchor: 'A T-casual 10-journey transport ticket is €13.00 for 2026 — carry only that plus a small amount of cash on the Rambla.'
+      },
+      {
+        t: 'Football-shirt hug and bird-mess wipe', c: 'distract',
+        how: 'A stranger celebrates your shirt with a hug, or points out a "bird dropping" on your shoulder and helps clean it. Both are cover for hands in your pockets.',
+        avoid: 'Step back, refuse all physical contact, and check your pockets immediately.',
+        anchor: 'No legitimate service is offered here — anyone who touches you unprompted is working a team.'
+      },
+      {
+        t: 'Ticket-machine "helper"', c: 'money',
+        how: 'A man offers to work the metro ticket machine for you, watches the PIN, then swaps or pockets the card during the "help".',
+        avoid: 'Refuse all help at machines. Cover the keypad. Buy in the staffed office if unsure.',
+        anchor: 'A single metro journey is about €2.65 — never a reason to let anyone touch your card.'
+      }
+    ]
+  },
+  {
+    city: 'Budapest', country: 'Hungary', flag: '🇭🇺', region: 'europe',
+    scams: [
+      {
+        t: 'Consumption-girl bar bill', c: 'over',
+        how: 'Two women invite you for a drink in District VI or VII. The bill runs to hundreds of euros, a security man appears, and you are walked to an ATM. Hungary\'s consumer authority has repeatedly blacklisted the bars involved.',
+        avoid: 'Only enter bars you chose yourself. Ask for a printed price list before ordering anywhere new.',
+        anchor: 'A beer in a Budapest ruin bar is about 1,200–1,800 HUF; a €200 tab for two rounds is not a misunderstanding.'
+      },
+      {
+        t: 'Street currency exchange', c: 'money',
+        how: 'Someone offers a better forint rate than the bank, then hands over a folded wad short of the count — or notes from a withdrawn currency.',
+        avoid: 'Exchange only in a shop with the rate posted and no commission. Never on the street.',
+        anchor: 'A fair Budapest exchange office lands within about 1–2% of the mid-market rate; anything much better is the hook.'
+      },
+      {
+        t: 'Unmetered airport taxi', c: 'over',
+        how: 'A driver approaches inside the terminal and quotes a flat "city price" well above the meter.',
+        avoid: 'Főtaxi holds the exclusive airport concession — use their desk or app at the terminal exit.',
+        anchor: 'The metered airport run to central Pest is roughly 9,000–12,000 HUF; a €60–70 quote is a markup.'
+      }
+    ]
+  },
+  {
+    city: 'Florence', country: 'Italy', flag: '🇮🇹', region: 'europe',
+    scams: [
+      {
+        t: 'Friendship bracelet', c: 'gift',
+        how: 'Near San Lorenzo and the Duomo a man ties a woven bracelet to your wrist "as a gift", then demands payment and follows you if you refuse.',
+        avoid: 'Keep hands in pockets and keep walking. Once it is tied, cut it off and pay nothing.',
+        anchor: 'The bracelet is worth well under €1; the demand is usually €10–20.'
+      },
+      {
+        t: 'Fake designer leather', c: 'goods',
+        how: 'Blankets of "Florentine leather" bags near Mercato Centrale. The goods are imported synthetic, and buying counterfeits carries fines for the buyer in Italy.',
+        avoid: 'Buy leather in a shop with a receipt. Street tables that fold away in seconds are the tell.',
+        anchor: 'Genuine Florentine leather from a workshop starts around €150–200 for a small bag; a €40 "Prada" is neither.'
+      }
+    ]
+  },
+  {
+    city: 'Istanbul', country: 'Turkey', flag: '🇹🇷', region: 'europe',
+    scams: [
+      {
+        t: 'Dropped shoeshine brush', c: 'gift',
+        how: 'A shoeshiner drops a brush in front of you. You return it, he insists on a free shine out of gratitude, then names a large price and tells a story about needing the money.',
+        avoid: 'Do not pick up the brush. Keep walking.',
+        anchor: 'A genuine shoeshine is about 100–150 TRY; the scam version ends at ten times that.'
+      },
+      {
+        t: 'Beyoğlu nightclub bill', c: 'over',
+        how: 'A friendly English speaker near Istiklal invites you for one drink. Hostesses arrive, the bill is thousands of lira, and staff escort you to an ATM.',
+        avoid: 'Never accept a bar invitation from a stranger near Istiklal or Taksim. Walk out at the first unrequested company.',
+        anchor: 'A beer in a normal Istiklal bar is about 150–250 TRY.'
+      },
+      {
+        t: 'Carpet-shop "friend"', c: 'goods',
+        how: 'A man near the Blue Mosque strikes up a genuinely charming conversation and steers you to his cousin\'s carpet shop, where the pressure and the commission both start.',
+        avoid: 'Anyone who approaches you first near a major mosque is working. Choose your own shop.',
+        anchor: 'Ask three shops for a price on the same size and knot count before buying anything — the spread is usually 3–4x.'
+      },
+      {
+        t: 'Taxi meter and note swap', c: 'money',
+        how: 'The meter is set to the night tariff in daylight, or the driver palms your 200 TRY note and shows a 20 to claim you underpaid.',
+        avoid: 'Use BiTaksi or Uber so the fare is fixed in-app. Say the note value aloud as you hand it over.',
+        anchor: 'Sultanahmet to Taksim on the meter is roughly 200–300 TRY in normal traffic.'
+      }
+    ]
+  },
+  {
+    city: 'Lisbon', country: 'Portugal', flag: '🇵🇹', region: 'europe',
+    scams: [
+      {
+        t: 'Tram 28 pickpockets', c: 'pick',
+        how: 'The standing crush on the 28 through Alfama is the single most worked spot in the city, along with the Santa Justa lift queue.',
+        avoid: 'Ride early morning when there are seats, keep bags in front, phone away while boarding.',
+        anchor: 'A Navegante day ticket is about €6.80 — no need to carry much else on the tram.'
+      },
+      {
+        t: 'Fake drugs in Baixa', c: 'goods',
+        how: 'Sellers around Rossio and Cais do Sodré offer hashish that is bay leaf and henna. Portugal decriminalised possession, not selling, and the product is not real.',
+        avoid: 'Say nothing and keep walking; engaging marks you as a target for the rest of the street.',
+        anchor: 'There is no legitimate product being sold — every one of these transactions is counterfeit.'
+      },
+      {
+        t: 'Couvert you did not order', c: 'over',
+        how: 'Bread, olives and cheese arrive unasked at a tourist-area restaurant and appear on the bill at inflated prices.',
+        avoid: 'Send back anything you did not order, before touching it. That is normal and expected in Portugal.',
+        anchor: 'A fair couvert is €1.50–3 per person; €8–12 per person is the tourist version.'
+      }
+    ]
+  },
+  {
+    city: 'London', country: 'United Kingdom', flag: '🇬🇧', region: 'europe',
+    scams: [
+      {
+        t: 'Three-cup shell game', c: 'distract',
+        how: 'On Westminster Bridge and near the London Eye, a dealer runs cups and a ball with a ring of plants winning easily. The game cannot be won, and the crowd includes pickpockets.',
+        avoid: 'Do not stop to watch — the audience is the real target.',
+        anchor: 'There is no honest version of this game; every stake is lost by design.'
+      },
+      {
+        t: 'Moped phone snatch', c: 'pick',
+        how: 'A rider mounts the pavement and takes the phone out of your hand mid-call, most often in the West End and around Camden.',
+        avoid: 'Step into a doorway to use a phone, keep it away from the kerb, enable a remote wipe.',
+        anchor: 'No transaction is involved — the phone is simply gone, so the defence is not using it kerbside.'
+      },
+      {
+        t: 'Unlicensed minicab', c: 'over',
+        how: 'A driver outside a club offers a lift. Unbooked minicabs are illegal, uninsured for you, and the fare is invented at the destination.',
+        avoid: 'Only a black cab may be hailed on the street. Everything else must be booked through an app or office.',
+        anchor: 'A metered black cab across central London is roughly £15–30; a quoted "£80 flat" from a street tout is not a fare.'
+      }
+    ]
+  },
+  {
+    city: 'Madrid', country: 'Spain', flag: '🇪🇸', region: 'europe',
+    scams: [
+      {
+        t: 'Rosemary sprig blessing', c: 'gift',
+        how: 'A woman near Sol or the Plaza Mayor presses a sprig of rosemary into your hand, reads your palm, then demands payment and becomes loud if refused.',
+        avoid: 'Do not accept anything placed in your hand. Drop it and keep moving.',
+        anchor: 'The sprig has no price; the demand is usually €10–20 and there is nothing owed.'
+      },
+      {
+        t: 'Gran Vía and Sol pickpockets', c: 'pick',
+        how: 'Metro line 1 and the Sol interchange, plus terrace tables on Gran Vía where a bag on the back of a chair disappears.',
+        avoid: 'Bag on your lap or a strap round your leg. Nothing in back pockets.',
+        anchor: 'A 10-journey Metrobús ticket is about €6.10 — carry that, not a full wallet.'
+      },
+      {
+        t: 'Menu without prices', c: 'over',
+        how: 'A restaurant on a main square recites specials with no price, adds a cover charge, and bills paella by "portion" at double the menu rate.',
+        avoid: 'Only sit where a printed price list is visible. Ask the price of every special before ordering.',
+        anchor: 'A menú del día in Madrid is about €13–18 including a drink; a €40 lunch on a tourist square is the markup.'
+      }
+    ]
+  },
+  {
+    city: 'Paris', country: 'France', flag: '🇫🇷', region: 'europe',
+    scams: [
+      {
+        t: 'Clipboard petition', c: 'distract',
+        how: 'Young women with a "deaf charity" petition surround you near the Louvre, Sacré-Cœur or the Eiffel Tower. While you read and sign, hands are in your bag; then a donation is demanded.',
+        avoid: 'Say no without stopping. Real charities do not collect signatures from tourists at monuments.',
+        anchor: 'No registered French charity fundraises this way — every euro handed over is lost.'
+      },
+      {
+        t: 'Gold ring find', c: 'distract',
+        how: 'Someone picks a gold-coloured ring off the pavement in front of you, says it must be yours, then asks for money for the "favour" while an accomplice works your pockets.',
+        avoid: 'Do not take it, do not stop walking.',
+        anchor: 'The ring is brass worth a few cents; the ask is €10–50.'
+      },
+      {
+        t: 'Airport taxi tout', c: 'over',
+        how: 'A man in arrivals at CDG offers a "taxi" and charges €120 or more. Licensed taxis are only at the marked rank outside, and the Paris fare is fixed by decree.',
+        avoid: 'Ignore anyone who approaches you inside the terminal. Walk to the official rank.',
+        anchor: 'The regulated CDG flat fare is €56 to the Right Bank and €65 to the Left Bank, day or night, all luggage and up to four passengers included.'
+      },
+      {
+        t: 'Métro turnstile "help"', c: 'money',
+        how: 'A man at Gare du Nord or Châtelet offers to sell you a ticket or swipe you through, then hands over a used ticket or keeps the card.',
+        avoid: 'Buy only from a machine or the counter. Refuse all assistance.',
+        anchor: 'A t+ ticket is €2.50 and a Navigo Easy carnet works out around €1.99 a journey.'
+      }
+    ]
+  },
+  {
+    city: 'Prague', country: 'Czech Republic', flag: '🇨🇿', region: 'europe',
+    scams: [
+      {
+        t: 'Fake plainclothes police', c: 'official',
+        how: 'Two men flash a badge quickly, say they are checking for counterfeit currency or drugs, and ask to inspect your wallet and passport. Cash is gone when it is handed back. Often paired with a first man who asked to change money a minute earlier.',
+        avoid: 'Czech police in plain clothes do not check tourists\' cash. Refuse to hand over the wallet, ask to walk to a police station, and call 158.',
+        anchor: 'No legitimate currency check exists — this transaction has no honest version.'
+      },
+      {
+        t: 'Exchange booth small print', c: 'money',
+        how: 'A booth displays a strong rate that applies only above €500, or takes a 20–30% commission disclosed in tiny print. Czech law now gives a three-hour right of withdrawal, which the booths do not mention.',
+        avoid: 'Ask for the exact koruna amount you will receive, in writing, before handing over anything. Withdraw from a bank ATM instead.',
+        anchor: 'A fair rate lands within about 1–2% of mid-market; if €100 returns much under about 2,300 CZK, walk away.'
+      },
+      {
+        t: 'Unmetered taxi', c: 'over',
+        how: 'A driver waiting at Wenceslas Square or outside the airport quotes a flat fare, or runs a doctored meter at several times the legal maximum.',
+        avoid: 'Book through Bolt, Uber, Liftago or AAA Radiotaxi so the price is fixed before you get in.',
+        anchor: 'The Prague regulated maximum is about 36 CZK per kilometre; the airport to the centre is roughly 600–800 CZK.'
+      }
+    ]
+  },
+  {
+    city: 'Rome', country: 'Italy', flag: '🇮🇹', region: 'europe',
+    scams: [
+      {
+        t: 'Friendship bracelet', c: 'gift',
+        how: 'Men outside the Colosseum and on the Spanish Steps take your wrist, tie on a woven bracelet "for free", then demand €10–20 and follow you loudly if you refuse.',
+        avoid: 'Keep both hands occupied or in pockets when passing. Refuse contact and keep walking.',
+        anchor: 'The bracelet costs the seller a few cents; nothing is owed for something you did not ask for.'
+      },
+      {
+        t: 'Gladiator photo', c: 'over',
+        how: 'Costumed "centurions" pose beside you at the Colosseum and then demand €20–50 per person. Rome has banned them repeatedly and they keep returning.',
+        avoid: 'Do not pose and do not let them stand next to you. If a photo has been taken, walk away — no fee is enforceable.',
+        anchor: 'This is not a licensed service; there is no correct price to negotiate.'
+      },
+      {
+        t: 'Fiumicino taxi off the fixed fare', c: 'over',
+        how: 'A driver claims the fixed airport fare does not cover your hotel, or a Fiumicino-plated car runs the meter and arrives at €90 or more.',
+        avoid: 'Use only white taxis with a "Roma Capitale" plate at the official rank, and confirm the fixed fare before loading bags.',
+        anchor: 'The fixed FCO fare to anywhere inside the Aurelian walls is €55 total, both directions, regardless of passengers or luggage.'
+      },
+      {
+        t: 'Termini area pickpockets', c: 'pick',
+        how: 'Bus 64 to the Vatican and the Termini concourse are worked constantly by teams using bags and newspapers as cover.',
+        avoid: 'Nothing in back pockets, bags in front, be alert at every door opening.',
+        anchor: 'A 100-minute Roma ticket is €1.50 — carry that plus a little cash, not the whole wallet, on bus 64.'
+      }
+    ]
+  },
+  {
+    city: 'Venice', country: 'Italy', flag: '🇮🇹', region: 'europe',
+    scams: [
+      {
+        t: 'Gondola over the tariff', c: 'over',
+        how: 'A gondolier quotes a per-person price, or claims a "special" longer route, well above the rate the city sets for every station.',
+        avoid: 'Agree the price and the duration before stepping in, and use an official station.',
+        anchor: 'The city tariff is €90 for 30 minutes daytime and €110 from 19:00, per gondola for up to five people — €40 per extra 20 minutes.'
+      },
+      {
+        t: 'Fish priced by weight', c: 'over',
+        how: 'A canal-side restaurant lists fish "per 100 g" in small print; a shared branzino arrives at €90. Cover and service are added on top.',
+        avoid: 'Ask for the total price of the fish in euros before it is cooked, and check the coperto line.',
+        anchor: 'A fair Venetian coperto is €2–3.50 per head; a proper cicchetti-and-wine lunch runs about €15–20.'
+      },
+      {
+        t: 'St Mark\'s café bill', c: 'over',
+        how: 'The famous square cafés are legitimate but charge an orchestra supplement on top of very high drink prices — a surprise to anyone who sat down without reading the board.',
+        avoid: 'This one is disclosed, not dishonest: read the posted price list, or stand at the bar one street back.',
+        anchor: 'A coffee at a square café runs €10–15 plus about €6 music supplement; the same coffee standing at a bar off the square is €1.50.'
+      }
+    ]
+  },
+  {
+    city: 'Vienna', country: 'Austria', flag: '🇦🇹', region: 'europe',
+    scams: [
+      {
+        t: 'Costumed Mozart ticket tout', c: 'goods',
+        how: 'Men in wigs and period coats around Stephansplatz sell "Mozart concert" tickets at a large markup, sometimes for a tourist-grade ensemble in a hotel room rather than the venue implied.',
+        avoid: 'Buy from the venue box office or its own website. Ask exactly which hall and which ensemble.',
+        anchor: 'A real Musikverein or Konzerthaus seat starts around €30–50; street touts commonly ask €70–100 for a lesser show.'
+      },
+      {
+        t: 'Fake charity clipboard', c: 'distract',
+        how: 'Same petition pattern as Paris, worked around Stephansplatz and the Naschmarkt.',
+        avoid: 'Do not stop, do not sign, keep bags closed.',
+        anchor: 'Austrian registered charities do not solicit signatures and cash from tourists on the street.'
+      }
+    ]
+  },
+
+  /* ─────────────── ASIA ─────────────── */
+  {
+    city: 'Bali', country: 'Indonesia', flag: '🇮🇩', region: 'asia',
+    scams: [
+      {
+        t: '"Broken meter" taxi', c: 'over',
+        how: 'A driver in Kuta, Legian or at the airport says the meter is broken and names a flat price several times the real fare.',
+        avoid: 'Use Grab or Gojek so the price is fixed in the app, or insist on a metered Blue Bird booked through its own app.',
+        anchor: 'Airport to Kuta or Seminyak is roughly IDR 100,000–150,000; Ubud is about IDR 300,000–450,000.'
+      },
+      {
+        t: 'Ride-app red zones', c: 'over',
+        how: 'Local transport groups block app pickups in central Ubud, Bingin and Padang Padang. Drivers are intimidated into cancelling and a cash fare two or three times higher is offered instead.',
+        avoid: 'Walk a few hundred metres outside the zone before ordering, or agree a return fare with a driver you already used.',
+        anchor: 'A short Ubud hop is IDR 20,000–50,000 by app; IDR 150,000 for the same trip is the zone markup.'
+      },
+      {
+        t: 'Temple blessing donation', c: 'gift',
+        how: 'A man in white presents himself as a priest at a temple gate, performs a blessing on an unsuspecting visitor, and then produces a "donation book" showing previous foreigners giving large sums.',
+        avoid: 'Genuine ceremonies are not sold at the gate. Pay only the posted entry fee and sarong hire.',
+        anchor: 'Temple entry is typically IDR 30,000–75,000 including sarong; the donation books show IDR 500,000 entries for effect.'
+      },
+      {
+        t: 'Money-changer short count', c: 'money',
+        how: 'A shopfront with no licence displays an excellent rate, then counts the rupiah fast, folds notes back, or uses a calculator that has been tampered with.',
+        avoid: 'Use an authorised changer (PT-licensed, posted permit) or a bank ATM. Count the money yourself before letting go of your own.',
+        anchor: 'A licensed changer lands within about 1–2% of the mid-market rate; a rate several percent better is the bait.'
+      }
+    ]
+  },
+  {
+    city: 'Bangkok', country: 'Thailand', flag: '🇹🇭', region: 'asia',
+    scams: [
+      {
+        t: '"The palace is closed today"', c: 'official',
+        how: 'A well-spoken man outside the Grand Palace or Wat Pho — sometimes in a uniform-like shirt — says the site is shut for a Buddhist ceremony and offers a tuk-tuk tour instead. The palace is open; the tour ends in commission shops.',
+        avoid: 'Only the official ticket window can tell you the palace is closed. Walk to the gate and check.',
+        anchor: 'The Grand Palace is open daily 08:30–15:30 and entry is ฿500.'
+      },
+      {
+        t: 'Tuk-tuk gem tour', c: 'goods',
+        how: 'A tuk-tuk driver offers a whole-day tour for ฿20 or even free. Between temples he stops at gem and tailor shops running a "government export sale". The stones are worth a fraction of the price and he collects commission.',
+        avoid: 'Refuse any fare that is implausibly cheap, and never enter a shop you did not ask to visit.',
+        anchor: 'A legitimate short tuk-tuk hop is ฿50–100; a metered taxi starts at ฿35.'
+      },
+      {
+        t: 'Taxi refusing the meter', c: 'over',
+        how: 'A driver at a tourist site quotes a flat ฿300–500 for a trip the meter would price far lower, or claims traffic makes the meter impossible.',
+        avoid: 'Say "meter please" before getting in; if refused, take the next car or use Grab or Bolt.',
+        anchor: 'Sukhumvit to the Grand Palace on the meter is roughly ฿120–180 in normal traffic.'
+      }
+    ]
+  },
+  {
+    city: 'Beijing', country: 'China', flag: '🇨🇳', region: 'asia',
+    scams: [
+      {
+        t: 'Tea ceremony bill', c: 'over',
+        how: 'Friendly students practising English near Wangfujing or Tiananmen invite you to a traditional tea house. Several small cups later the bill is thousands of yuan and the door is watched.',
+        avoid: 'Decline invitations from strangers who approached you. If already inside, ask for the price list before drinking anything.',
+        anchor: 'A genuine tea house tasting is about ¥50–150 per person; the scam bill runs ¥2,000–5,000.'
+      },
+      {
+        t: '"Art student" gallery', c: 'goods',
+        how: 'Someone claiming to be an art student invites you to a graduation exhibition. The scrolls are mass-printed and sold at gallery prices with a story about supporting their studies.',
+        avoid: 'Real student shows are not marketed by touts on the street.',
+        anchor: 'The same printed scroll sells for ¥20–50 in a market; the gallery asks ¥800–3,000.'
+      },
+      {
+        t: 'Unlicensed airport car', c: 'over',
+        how: 'A driver approaches inside the terminal offering a fixed price several times the metered fare.',
+        avoid: 'Use the official taxi queue outside, or DiDi. Insist on the meter.',
+        anchor: 'Capital Airport to central Beijing on the meter is roughly ¥100–130 plus the expressway toll.'
+      }
+    ]
+  },
+  {
+    city: 'Hanoi', country: 'Vietnam', flag: '🇻🇳', region: 'asia',
+    scams: [
+      {
+        t: 'Rigged taxi meter', c: 'over',
+        how: 'A cab with a near-identical livery to a reputable firm runs a meter that climbs several times too fast, especially on the airport run.',
+        avoid: 'Use Grab, or only Mai Linh and Vinasun booked through their own apps. Check the company name and phone number on the door.',
+        anchor: 'Noi Bai airport to the Old Quarter is about 350,000–400,000 VND by app or metered taxi.'
+      },
+      {
+        t: 'Cyclo price change', c: 'over',
+        how: 'A cyclo driver agrees a low price, then at the end insists it was per person, per hour, or in dollars rather than dong.',
+        avoid: 'Write the total figure and the currency on your phone screen and have him confirm it before starting.',
+        anchor: 'An hour by cyclo around the Old Quarter is roughly 150,000–200,000 VND total.'
+      },
+      {
+        t: 'Shoeshine and repair', c: 'gift',
+        how: 'A man takes your shoe to "fix" a sole that is not broken, then demands a large fee while you stand there one shoe short.',
+        avoid: 'Do not hand over footwear. Keep walking.',
+        anchor: 'A real street shine is 20,000–50,000 VND; the demand is usually ten times that.'
+      }
+    ]
+  },
+  {
+    city: 'Phuket', country: 'Thailand', flag: '🇹🇭', region: 'asia',
+    scams: [
+      {
+        t: 'Jet-ski damage claim', c: 'over',
+        how: 'A rental jet ski is returned and the operator points to pre-existing scratches, demanding tens of thousands of baht. A "tourist police" contact often arrives to mediate at a still-high figure.',
+        avoid: 'Film the whole machine before and after, in front of the operator. Rent through your hotel, and never hand over your passport.',
+        anchor: 'A 30-minute jet ski is about ฿1,000–1,500; damage claims of ฿30,000–100,000 are the scam.'
+      },
+      {
+        t: 'Scooter rental with passport held', c: 'over',
+        how: 'The shop keeps your passport as deposit, then reports damage or a missing part on return and holds the document until you pay.',
+        avoid: 'Never leave a passport. Offer a cash deposit or a photocopy, and photograph every panel on collection.',
+        anchor: 'A daily scooter rental is about ฿200–300; a legitimate deposit is ฿2,000–3,000 in cash.'
+      },
+      {
+        t: 'Patong taxi cartel fare', c: 'over',
+        how: 'Local taxi and tuk-tuk groups enforce fixed prices far above the metered rate and discourage app pickups near the beach road.',
+        avoid: 'Use Grab or Bolt and walk a block back from the beach for the pickup.',
+        anchor: 'Patong to Kata is about ฿150–250 by app; the rank price is commonly ฿500–600.'
+      }
+    ]
+  },
+  {
+    city: 'Shanghai', country: 'China', flag: '🇨🇳', region: 'asia',
+    scams: [
+      {
+        t: 'Nanjing Road tea house', c: 'over',
+        how: 'The same tea-tasting pattern as Beijing, worked hard along East Nanjing Road and the Bund promenade.',
+        avoid: 'Decline all invitations from strangers who opened the conversation in English.',
+        anchor: 'A normal tea house tasting is ¥50–150 a head; the scam bill is ¥2,000 upward.'
+      },
+      {
+        t: 'Bar with a hidden tab', c: 'over',
+        how: 'A woman invites you for one drink at a bar she names. Drinks are priced at several hundred yuan each and staff block the exit until it is settled.',
+        avoid: 'Choose your own venue. Ask to see a menu with prices before the first order.',
+        anchor: 'A beer in a normal Shanghai bar is ¥40–70.'
+      },
+      {
+        t: 'Fake luxury market', c: 'goods',
+        how: 'Guides steer you to a "special" floor above a market with counterfeit watches and bags at prices near the real thing.',
+        avoid: 'Refuse guided detours. Buying counterfeits can be seized at your home border.',
+        anchor: 'Market counterfeits start at ¥100–300 after bargaining; anything sold at ¥2,000 as "genuine grade" is neither.'
+      }
+    ]
+  },
+  {
+    city: 'Tokyo', country: 'Japan', flag: '🇯🇵', region: 'asia',
+    scams: [
+      {
+        t: 'Kabukicho and Roppongi bar tout', c: 'over',
+        how: 'A tout offers cheap drinks at a nearby bar. The bill reaches six figures in yen, sometimes after a spiked drink, and a card is run for the full amount. Tokyo police post standing warnings about these blocks.',
+        avoid: 'Never follow a street tout in Kabukicho or Roppongi — touting is itself illegal there. Choose bars with visible pricing and a street-level entrance.',
+        anchor: 'A beer in a normal Tokyo izakaya is ¥500–800; a ¥100,000 bill for two people is the scam.'
+      },
+      {
+        t: 'Unrequested "seating charge"', c: 'over',
+        how: 'An izakaya adds an otōshi cover charge with a small appetiser. This one is legitimate and customary, but tourist-area venues inflate it well beyond the norm.',
+        avoid: 'Ask whether there is an otōshi and how much before sitting down.',
+        anchor: 'A normal otōshi is ¥300–500 per person; ¥2,000 is a tourist-district markup.'
+      }
+    ]
+  },
+
+  /* ─────────────── AFRICA & MIDDLE EAST ─────────────── */
+  {
+    city: 'Cairo', country: 'Egypt', flag: '🇪🇬', region: 'africa',
+    scams: [
+      {
+        t: 'Camel ride with no way down', c: 'over',
+        how: 'A handler at Giza offers a ride for "one dollar". Once you are up, the price changes — a fee per photo, a fee per step, and a fee to be let down.',
+        avoid: 'Agree the total price including the return and dismount, out loud, before mounting. Book through your hotel or a licensed operator instead.',
+        anchor: 'A fair short camel or horse ride at Giza is about EGP 300–600 total, agreed in advance.'
+      },
+      {
+        t: 'Papyrus "institute"', c: 'goods',
+        how: 'A driver or guide takes you to a papyrus museum that is a shop. The sheets are banana leaf, and the price is set for a commission split.',
+        avoid: 'Refuse unplanned stops. Real papyrus is stiff with a visible woven grain; the fake is flimsy and too even.',
+        anchor: 'A small genuine sheet is EGP 100–300; the shop version of the same item is quoted at USD 30–200.'
+      },
+      {
+        t: 'Baksheesh at every gate', c: 'gift',
+        how: 'A man in a djellaba waves you past a rope, opens a chamber, or takes your camera "to get the best angle", then demands payment. Some claim to be site staff.',
+        avoid: 'Do not accept help you did not ask for, and do not hand over a camera. Site staff do not solicit tips.',
+        anchor: 'A genuine small tip in Egypt is EGP 20–50; the demand after an unsolicited "favour" is usually USD 10–20.'
+      }
+    ]
+  },
+  {
+    city: 'Cape Town', country: 'South Africa', flag: '🇿🇦', region: 'africa',
+    scams: [
+      {
+        t: 'ATM card swap', c: 'money',
+        how: 'A stranger appears while you are at the machine, says the ATM is faulty, and offers help. The card is swapped or the PIN is watched, and the account is emptied within minutes.',
+        avoid: 'Only use ATMs inside banks or shopping centres. Accept no help; if a card is retained, call the bank before leaving the machine.',
+        anchor: 'A bank ATM never needs a bystander\'s assistance — the "help" is the scam in every case.'
+      },
+      {
+        t: 'Car guard escalation', c: 'over',
+        how: 'Informal car guards in reflective vests are a normal part of parking here, but some demand a set fee up front and imply the car is at risk if it is not paid.',
+        avoid: 'Pay on return, not in advance, and only for the vests issued by the city or a shopping centre.',
+        anchor: 'The customary tip is R5–10 on return; a demand of R50 up front is not the norm.'
+      },
+      {
+        t: 'Traffic-light smash and grab', c: 'pick',
+        how: 'A bag or phone visible on the passenger seat is taken through a broken window while stopped, particularly on the N2 and around Woodstock.',
+        avoid: 'Everything out of sight before you set off, windows up, doors locked, gaps left in front of you at lights.',
+        anchor: 'No transaction is involved — the whole defence is keeping valuables invisible.'
+      }
+    ]
+  },
+  {
+    city: 'Dubai', country: 'United Arab Emirates', flag: '🇦🇪', region: 'africa',
+    scams: [
+      {
+        t: 'Gold souk counterfeits', c: 'goods',
+        how: 'Touts steer you off the main lane to "wholesale" shops selling copy watches and under-karat gold, sometimes with a forged assay stamp.',
+        avoid: 'Buy from shops registered with the Dubai Gold and Jewellery Group; gold is sold by weight at the daily posted rate plus making charges.',
+        anchor: 'The day\'s gold rate is displayed publicly in the souk — a price well under it means the karat claim is false.'
+      },
+      {
+        t: 'Unlicensed airport car', c: 'over',
+        how: 'A driver approaches in arrivals and quotes a flat fare far above the metered price.',
+        avoid: 'Use the official RTA rank, Careem or Uber. Licensed taxis are cream with a coloured roof.',
+        anchor: 'DXB to Downtown on the meter is roughly AED 60–90 including the airport surcharge.'
+      },
+      {
+        t: 'Desert safari upsell', c: 'over',
+        how: 'A cheap safari is booked on the street, then quad bikes, camel rides and photos are charged separately at the camp, ending well above a proper package.',
+        avoid: 'Book a licensed operator with a written inclusion list before you go.',
+        anchor: 'A full evening desert safari with dinner is about AED 150–250 per person all in.'
+      }
+    ]
+  },
+  {
+    city: 'Marrakech', country: 'Morocco', flag: '🇲🇦', region: 'africa',
+    scams: [
+      {
+        t: 'Henna in the square', c: 'gift',
+        how: 'A woman in Jemaa el-Fna takes your hand and starts a henna design before you have agreed anything, then names a high price. Black henna used here can contain PPD and burn the skin.',
+        avoid: 'Keep hands away and refuse contact. If it starts, pull away immediately.',
+        anchor: 'A small agreed design from a proper salon is 50–150 MAD; the square demand is often 300–800 MAD.'
+      },
+      {
+        t: 'Fake guide to a closed street', c: 'distract',
+        how: 'A young man says the way ahead is closed for a festival, or that the tannery is "this way", walks you deep into the medina, then demands payment to lead you out.',
+        avoid: 'Use offline maps, decline all unsolicited directions, and never follow anyone who approached you.',
+        anchor: 'A licensed guide with a badge is about 300–400 MAD for a half-day; the street version asks 100–200 MAD for ten minutes of misdirection.'
+      },
+      {
+        t: 'Tannery mint sprig', c: 'gift',
+        how: 'A sprig of mint is handed to you "for the smell" at the tannery entrance, followed by a tour nobody asked for and a demand at the end.',
+        avoid: 'Refuse the mint and the tour.',
+        anchor: 'Tannery viewing from a terrace shop costs nothing beyond a small optional tip of 20–30 MAD.'
+      }
+    ]
+  },
+
+  /* ─────────────── AMERICAS ─────────────── */
+  {
+    city: 'Buenos Aires', country: 'Argentina', flag: '🇦🇷', region: 'americas',
+    scams: [
+      {
+        t: 'Mustard on the shoulder', c: 'distract',
+        how: 'Something is sprayed on your back in San Telmo or Recoleta and a helpful passer-by cleans it off while a second person takes the bag off your shoulder.',
+        avoid: 'Do not stop or set the bag down. Walk into a shop and clean it there.',
+        anchor: 'No service is being offered — the "help" is one half of a two-person team.'
+      },
+      {
+        t: 'Counterfeit notes in change', c: 'money',
+        how: 'A taxi driver or street changer returns a fake 1,000 or 2,000 peso note, or swaps your good note for a bad one while "checking" it.',
+        avoid: 'Learn the watermark and the raised print, pay by card or app where possible, and never let a note leave your sight.',
+        anchor: 'A real note has a clear watermark portrait and a raised-ink surface — a flat, smooth note is the fake.'
+      },
+      {
+        t: 'Unofficial airport transfer', c: 'over',
+        how: 'A driver in the Ezeiza arrivals hall offers a fare in dollars, well above the official remise desks just outside.',
+        avoid: 'Book at the official Tienda León or Manuel Tienda desk, or use Cabify or Uber.',
+        anchor: 'The official Ezeiza shuttle is roughly USD 15–20 and a licensed remise about USD 40–50.'
+      }
+    ]
+  },
+  {
+    city: 'Cancun', country: 'Mexico', flag: '🇲🇽', region: 'americas',
+    scams: [
+      {
+        t: 'Airport timeshare desk', c: 'goods',
+        how: 'Booths inside the arrivals hall look like official transport or tourism counters and offer a free transfer or tour in exchange for a "short presentation" that runs four hours.',
+        avoid: 'Walk straight past every booth in the hall. Pre-book a transfer online and look for your driver outside.',
+        anchor: 'A private airport transfer to the Hotel Zone is about USD 45–60 — the "free" one costs a day of your holiday.'
+      },
+      {
+        t: 'ATM skimming and DCC', c: 'money',
+        how: 'Standalone ATMs in the Hotel Zone carry skimmers, and the machine offers to bill in dollars at a rate several percent worse than your bank\'s.',
+        avoid: 'Use ATMs inside bank branches. Always choose to be charged in pesos, never in your home currency.',
+        anchor: 'Dynamic currency conversion typically costs 3–7% versus letting your own bank convert.'
+      },
+      {
+        t: 'Taxi without a rate card', c: 'over',
+        how: 'Cancún taxis are unmetered by zone, so a driver quotes whatever the moment allows, often in dollars.',
+        avoid: 'Agree the peso fare before getting in, or ask the hotel for the current zone card.',
+        anchor: 'A Hotel Zone hop is about MXN 100–200; downtown to the Hotel Zone is roughly MXN 250–350.'
+      }
+    ]
+  },
+  {
+    city: 'Cusco', country: 'Peru', flag: '🇵🇪', region: 'americas',
+    scams: [
+      {
+        t: 'Fake Machu Picchu tickets', c: 'goods',
+        how: 'An agency on a Cusco side street sells a package with an entry ticket and train that turn out not to exist, or a permit for the wrong circuit and date.',
+        avoid: 'Buy entry from the government portal and trains from PeruRail or IncaRail directly. Verify any agency\'s DIRCETUR registration.',
+        anchor: 'A standard Machu Picchu adult entry is about PEN 152, and a round-trip Expedition train from Ollantaytambo is roughly USD 120–160.'
+      },
+      {
+        t: 'Llama photo fee', c: 'gift',
+        how: 'Women in traditional dress with a llama pose beside you in the Plaza de Armas and then ask for a substantial sum per photo.',
+        avoid: 'Ask the price before raising the camera. It is a legitimate way to earn a living — just agree the number first.',
+        anchor: 'The going rate is PEN 5–10 per photo, not the PEN 50 sometimes requested afterwards.'
+      },
+      {
+        t: 'Unofficial taxi at night', c: 'over',
+        how: 'A car without company markings picks up outside a bar and charges several times the normal fare, or takes a long detour.',
+        avoid: 'Order through inDrive or Cabify, or have the venue call a registered taxi.',
+        anchor: 'A ride within central Cusco is PEN 5–10; the airport to the centre is about PEN 20–30.'
+      }
+    ]
+  },
+  {
+    city: 'Lima', country: 'Peru', flag: '🇵🇪', region: 'americas',
+    scams: [
+      {
+        t: 'Counterfeit soles in change', c: 'money',
+        how: 'Peru has a long-standing problem with forged 50, 100 and 200 sol notes handed back as change, especially by street changers and unofficial taxis.',
+        avoid: 'Check the watermark and the colour-shifting ink, refuse worn or greasy notes, and withdraw from bank ATMs.',
+        anchor: 'A genuine note has a raised-print value and a security thread; a soft, matt note with flat printing is the fake.'
+      },
+      {
+        t: 'Airport taxi tout', c: 'over',
+        how: 'A driver inside the Jorge Chávez terminal offers a fare that is double the authorised counters just past the exit.',
+        avoid: 'Use an authorised counter inside the arrivals hall, or an app ordered from the designated pickup area.',
+        anchor: 'The airport to Miraflores is roughly PEN 60–90 by app and PEN 90–120 from an authorised counter.'
+      },
+      {
+        t: 'Miraflores phone snatch', c: 'pick',
+        how: 'A phone held near a kerb in Miraflores or Barranco is taken by a passing rider or a cyclist.',
+        avoid: 'Use the phone away from the road, in a doorway or a café.',
+        anchor: 'No transaction involved — kerbside phone use is the entire exposure.'
+      }
+    ]
+  },
+  {
+    city: 'New York', country: 'United States', flag: '🇺🇸', region: 'americas',
+    scams: [
+      {
+        t: 'Times Square CD hustle', c: 'gift',
+        how: 'A man presses a CD into your hand, asks your name, signs it, and then demands USD 20 or more — sometimes with two associates closing in.',
+        avoid: 'Do not take anything handed to you. If you already hold it, put it down and walk on.',
+        anchor: 'Nothing is owed for an unsolicited item; the demand is typically USD 10–20 per person.'
+      },
+      {
+        t: 'Costumed character photo fee', c: 'gift',
+        how: 'Elmo, Spider-Man and the topless "desnudas" pose beside you and then insist on payment, occasionally aggressively. Tipping is voluntary and city signage says so.',
+        avoid: 'Do not pose. If you already did, a dollar or two is customary and nothing more is enforceable.',
+        anchor: 'Tips are voluntary — city rules require these performers to accept whatever is given, including nothing.'
+      },
+      {
+        t: 'Unlicensed airport "taxi"', c: 'over',
+        how: 'A man in the JFK or LGA arrivals hall offers a ride and charges USD 150–250. Licensed yellow cabs only pick up at the marked outdoor stand.',
+        avoid: 'Ignore anyone soliciting inside the terminal and walk to the official taxi line.',
+        anchor: 'The TLC flat fare between JFK and anywhere in Manhattan is USD 70, plus tolls and surcharges — typically USD 90–105 before tip.'
+      }
+    ]
+  },
+  {
+    city: 'Rio de Janeiro', country: 'Brazil', flag: '🇧🇷', region: 'americas',
+    scams: [
+      {
+        t: 'Beach distraction theft', c: 'distract',
+        how: 'A vendor or a group of children crowds your towel on Copacabana or Ipanema while a bag goes from under it.',
+        avoid: 'Take a beach wallet with the day\'s cash only. Leave the passport, cards and good phone in the hotel safe.',
+        anchor: 'A day at the beach needs about BRL 100–150 in cash; nothing else needs to be on the sand.'
+      },
+      {
+        t: 'Kiosk bill inflation', c: 'over',
+        how: 'A beach kiosk with no price list adds drinks nobody ordered, or charges per person for a shared item.',
+        avoid: 'Ask for prices before ordering and check the tab each round.',
+        anchor: 'A beach beer or coconut is about BRL 10–15; a caipirinha is BRL 20–30.'
+      },
+      {
+        t: 'Unofficial taxi from the airport', c: 'over',
+        how: 'A driver approaches inside Galeão and charges two or three times the normal fare, sometimes by a long route.',
+        avoid: 'Use Uber or 99, or the official taxi desk with a fixed-price voucher.',
+        anchor: 'Galeão to Copacabana is roughly BRL 90–140 by app.'
+      }
+    ]
+  }
+];
+
+(function () {
+  var listEl   = document.getElementById('list');
+  var emptyEl  = document.getElementById('empty');
+  var emptyTxt = document.getElementById('empty-text');
+  var searchEl = document.getElementById('page-search');
+  var legendEl = document.getElementById('sc-legend');
+
+  var activeType = null;
+
+  function esc(s) {
+    return String(s).replace(/&(?!(amp|lt|gt|quot|#39);)/g, '&amp;')
+                    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function scamHTML(s) {
+    return '<div class="scam" data-type="' + s.c + '">' +
+      '<div class="scam-head">' +
+        '<span class="sc-badge ' + s.c + '">' + TYPES[s.c] + '</span>' +
+        '<span class="scam-name">' + esc(s.t) + '</span>' +
+      '</div>' +
+      '<div class="scam-line"><span class="scam-label">How it works</span><span>' + esc(s.how) + '</span></div>' +
+      '<div class="scam-line"><span class="scam-label">How to avoid</span><span>' + esc(s.avoid) + '</span></div>' +
+      '<div class="scam-anchor"><strong>Price anchor</strong> — ' + esc(s.anchor) + '</div>' +
+    '</div>';
+  }
+
+  function cityHTML(c, scams) {
+    return '<div class="city-card" data-city="' + esc(c.city.toLowerCase()) + '">' +
+      '<div class="city-head">' +
+        '<span class="city-flag">' + c.flag + '</span>' +
+        '<span class="city-name">' + esc(c.city) + '</span>' +
+        '<span class="city-country">' + esc(c.country) + '</span>' +
+        '<span class="city-count">' + scams.length + (scams.length === 1 ? ' scam' : ' scams') + '</span>' +
+      '</div>' +
+      scams.map(scamHTML).join('') +
+    '</div>';
+  }
+
+  function matches(c, s, q) {
+    if (!q) return true;
+    var hay = (c.city + ' ' + c.country + ' ' + s.t + ' ' + s.how + ' ' + s.avoid + ' ' + TYPES[s.c]).toLowerCase();
+    return hay.indexOf(q) !== -1;
+  }
+
+  function render() {
+    var q = (searchEl.value || '').trim().toLowerCase();
+    var html = '';
+    var shown = 0;
+
+    REGIONS.forEach(function (r) {
+      var slug = r[0], label = r[1];
+      var block = '';
+      CITIES.filter(function (c) { return c.region === slug; }).forEach(function (c) {
+        var keep = c.scams.filter(function (s) {
+          if (activeType && s.c !== activeType) return false;
+          return matches(c, s, q);
+        });
+        if (!keep.length) return;
+        shown += keep.length;
+        block += cityHTML(c, keep);
+      });
+      if (block) html += '<div class="region-header">' + label + '</div>' + block;
+    });
+
+    listEl.innerHTML = html;
+    if (shown) {
+      emptyEl.hidden = true;
+    } else {
+      emptyEl.hidden = false;
+      emptyTxt.textContent = q
+        ? 'No city or scam matches “' + searchEl.value.trim() + '”.'
+        : 'No entries for that scam type.';
+    }
+  }
+
+  function toggleType(el) {
+    var t = el.getAttribute('data-filter');
+    var on = activeType === t;
+    activeType = on ? null : t;
+    legendEl.querySelectorAll('.sc-badge').forEach(function (b) {
+      b.classList.toggle('filter-on', !on && b === el);
+      b.setAttribute('aria-pressed', String(!on && b === el));
+    });
+    render();
+  }
+
+  /* Mobile legend grid — same orphan fix toolbar.js _fixPillGridOrphans applies
+     to the guide pill grids. 6 columns, each badge spanning 2 (3 per row); when
+     the count leaves a short final row, the trailing badges widen to span 3
+     (2 per row) so no badge dangles alone. Set INLINE, never via CSS
+     :nth-child — iOS Safari mis-applies :nth-child on this grid. Desktop uses
+     display:flex, which ignores gridColumn, so this is a no-op there. */
+  var narrow = window.matchMedia('(max-width: 359px)');
+
+  function fixLegendOrphans() {
+    var badges = [].slice.call(legendEl.querySelectorAll('.sc-badge'));
+    var n = badges.length;
+    if (!n) return;
+    /* 2 per row under 360px — at 320px a 3-across cell is ~92px and the longest
+       label ("FAKE OFFICIAL") overruns it. Widening to 2 across keeps the badge
+       at its locked 11px rather than dropping to the 10px last-resort size. */
+    var perRow  = narrow.matches ? 2 : 3;
+    var baseSpan = 6 / perRow;
+    badges.forEach(function (b) { b.style.gridColumn = 'span ' + baseSpan; });
+    if (n === 1) { badges[0].style.gridColumn = 'span 6'; return; }
+    var rem = n % perRow;
+    if (rem === 0) return;
+    if (perRow === 2) {
+      badges[n - 1].style.gridColumn = 'span 6';   /* lone trailing badge → full width */
+      return;
+    }
+    var widen = rem === 1 ? Math.min(4, n) : 2;    /* 3-across: last row → 2 across */
+    for (var i = n - widen; i < n; i++) badges[i].style.gridColumn = 'span 3';
+  }
+  fixLegendOrphans();
+  if (narrow.addEventListener) narrow.addEventListener('change', fixLegendOrphans);
+  else if (narrow.addListener) narrow.addListener(fixLegendOrphans);
+
+  legendEl.querySelectorAll('.sc-badge').forEach(function (b) {
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function () { toggleType(b); });
+    b.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleType(b); }
+    });
+  });
+
+  searchEl.addEventListener('input', render);
+  searchEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { searchEl.value = ''; render(); }
+  });
+
+  render();
+
+  if (window.TVESearch) {
+    var items = CITIES.map(function (c) { return { name: c.city, sub: c.country }; });
+    TVESearch.attach(searchEl, {
+      items: items,
+      onPick: function (it) { searchEl.value = it.name; render(); }
+    });
+  }
+}());
+</script>
+</body>
+</html>

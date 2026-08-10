@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Climate Finder</title>
+<style>/* Full-page reverse climate search. Pick a month + a daytime-high band; every
+   destination whose typical high lands inside the band is listed. Climate data
+   is the SAME baked set the Guides-index weather widget uses — sourced here from
+   window.TravelClimate (set by assets/weather.js), never a second copy. */
+.cf-wrap { max-width: none; margin: 8px auto 0; padding: 0 32px; }
+/* Date stamp: float out of vertical flow so the sibling pills tuck up under the banner (no blank line). */
+.cf-intro { color: var(--muted,#6a6660); font-size: var(--fs-sub,12px); margin: 2px 0 16px; }
+/* Controls card */
+.cf-controls { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 12px; padding: 16px 18px; box-shadow: 0 2px 12px rgba(92,61,17,0.07);
+  margin-bottom: 18px; }
+.cf-block { margin-top: 14px; }
+.cf-block:first-child { margin-top: 0; }
+.cf-label { font-size: var(--fs-label,11px); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted,#6a6660); margin-bottom: 7px; }
+/* Month pills */
+.cf-months { font-family: inherit; display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; }
+.cf-mon { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; cursor: pointer;
+  padding: 10px 0; font-family: inherit; font-size: 13px; font-weight: 400; color: var(--muted,#6a6660);
+  background: var(--surface,#fff); transition: background .12s,color .12s,border-color .12s; }
+.cf-mon:hover { font-family: inherit; border-color: var(--rust); color: #fff; background: var(--banner-gradient); font-weight: 600; }
+.cf-mon.on { font-family: inherit; background: var(--banner-gradient); color: #fff; border-color: var(--rust); }
+
+/* Desktop-only: canonical squared+touching for the two sibling-pill rows only
+   (Weather by city / When to go + Forecast & Research 6-link row). Scoped to
+   the Climate-Finder wrappers (.cf-sibling-row / .cf-research-row) so it
+   doesn't leak into Weather.html or Festival-Finder which use the same
+   .sibling-pill class. Left-aligned per owner ("leave where it is"). */
+@media (min-width: 601px) {
+  .cf-sibling-row, .cf-research-row { gap: 0 !important; }
+  .cf-sibling-row .sibling-pill, .cf-research-row .sibling-pill {
+    height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1;
+    color: var(--text, #3d3a32); background: var(--surface, #fff);
+    border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0;
+  }
+  .cf-sibling-row a.sibling-pill:hover, .cf-research-row a.sibling-pill:hover {
+    background: var(--bg, #f5f4f0); border-color: var(--rust);
+    box-shadow: none; transform: none; color: inherit;}
+}
+
+/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
+   Scoped to @media (min-width:601px) so mobile Form-B grid + base states stay
+   untouched. Only the .cf-months month row gets the canonical treatment —
+   sibling/research rows stay as-is (not enough pills to look right stretched
+   and squared). 12 month pills in a grid, gap:0 so borders touch; canonical
+   1.5px border, squared corners, black text, terracotta hover, muted-grey
+   #f0ede8 .on (pushed-down state — the .cf-mon convention uses .on, not
+   .active). */
+@media (min-width: 601px) {
+  .cf-months { gap: 0; }
+  .cf-mon { height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--text, #3d3a32); border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; background: var(--surface, #ffffff); }
+  .cf-mon:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); font-weight: 500; color: inherit;}
+  .cf-mon.on { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); }
+}
+/* Range row */
+.cf-rangerow { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.cf-rangerow .cf-to { color: var(--muted,#6a6660); }
+.cf-spacer { flex: 1; }
+/* Sliders */
+.cf-sliderrow { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.cf-sliderrow input[type=range] { width: 130px; cursor: pointer; accent-color: var(--rust); }
+.cf-tval { font-weight: 700; color: var(--rust); min-width: 52px; }
+/* °C/°F + sort */
+.cf-seg { display: inline-flex; border: 1px solid var(--border2,#e6e2da); border-radius: 6px; overflow: hidden; }
+.cf-seg button { border: none; cursor: pointer; padding: 8px 13px; font-family: var(--font);
+  font-size: var(--fs-sub,12px); font-weight: 600; background: var(--surface,#fff); color: var(--muted,#6a6660); }
+.cf-seg button.on { background: var(--banner-gradient); color: #fff; }
+.cf-sort { height: 36px; padding: 0 28px 0 10px; border: 1px solid var(--border2,#e6e2da); border-radius: 6px;
+  font-family: var(--font); font-size: var(--fs-sub,12px); color: var(--text,#1a1917); background-color: var(--surface,#ffffff); cursor: pointer; }
+/* Summary */
+.cf-summary { font-size: var(--fs-sub,12px); color: var(--muted,#6a6660); margin: 4px 2px 12px;
+  text-transform: uppercase; letter-spacing: .05em; }
+.cf-summary b { color: var(--rust); font-weight: 700; }
+/* Results grid */
+.cf-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.cf-card { background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da); border-radius: 11px;
+  padding: 14px 15px; box-shadow: 0 1px 6px rgba(92,61,17,0.05); }
+a.cf-card { display: block; color: inherit; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s; }
+a.cf-card:hover { border-color: var(--rust); box-shadow: 0 3px 10px rgba(184,92,42,.12); }
+.cf-city { font-size: var(--fs-body,14px); font-weight: 700; color: var(--text, #1a1917);
+  display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.cf-city-arrow { font-size: 11px; color: var(--muted,#6a6660); opacity: 0.55; flex-shrink: 0; }
+.cf-country { font-size: 9.5px; color: var(--muted,#6a6660); letter-spacing: .02em; text-align: right; line-height: 1.2; }
+a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
+.cf-temps { display: flex; align-items: baseline; gap: 14px; margin-top: 8px; }
+.cf-hi { font-size: 26px; font-weight: 700; color: var(--c-temp-hi); line-height: 1; }
+.cf-lo { font-size: 26px; font-weight: 700; color: var(--c-temp-lo); line-height: 1; }
+.cf-tlab { font-size: var(--fs-label,11px); text-transform: uppercase; letter-spacing: .05em; color: var(--muted,#6a6660); }
+.cf-strip { display: flex; align-items: flex-end; gap: 2px; height: 34px; margin-top: 12px; }
+.cf-bar { flex: 1; position: relative; height: 34px; }
+.cf-bar > span { position: absolute; left: 50%; transform: translateX(-50%); width: 4px; border-radius: 2px; }
+@media (max-width: 600px) {
+  .cf-wrap { padding: 0 12px; }
+  /* Month pills — Form B glued grid (Formatting.html#src-pills § Form B): 6-across,
+     gap:0, square corners, 46px tall, 12px font. Stretches the full page-wrap
+     content width like every other Form B tile row. */
+  .cf-months { font-family: inherit; grid-template-columns: repeat(6, 1fr) !important; gap: 0 !important; margin: 0 -18px !important; }
+  .cf-mon { font-family: inherit;
+    height: 46px !important; border-radius: 0 !important; font-size: 12px !important;
+    padding: 4px 6px !important; display: flex !important; align-items: center !important;
+    justify-content: center !important; text-align: center !important;
+    white-space: normal !important; line-height: 1.12 !important;
+  }
+  .cf-results { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .cf-sibling-row { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; width: 100%; margin: 12px 0 0 !important; }
+  .cf-research-row { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100%; }
+  .cf-sibling-row .sibling-pill, .cf-research-row .sibling-pill {
+    height: 46px !important; border-radius: 0 !important; font-size: 12px !important;
+    padding: 4px 6px !important; display: flex !important; align-items: center !important;
+    justify-content: center !important; text-align: center !important;
+    white-space: normal !important; line-height: 1.12 !important; gap: 3px !important;
+  }
+  /* Typical daytime high — the slider row was wrapping into a broken 3-line
+     layout on mobile with the Units toggle floating awkwardly on row 2.
+     Fix: stack the two slider rows + Units + Sort each on their own row.
+     Sliders take remaining width so the label ("From"/"to") + value pin to
+     the edges. */
+  .cf-sliderrow { display: grid !important; grid-template-columns: auto 1fr auto !important; column-gap: 10px !important; row-gap: 10px !important; align-items: center !important; }
+  .cf-sliderrow input[type=range] { width: 100% !important; min-width: 0 !important; }
+  .cf-sliderrow .cf-spacer { display: none !important; }
+  /* UNITS + SORT — stack label ABOVE control, matching how MONTH and
+     TYPICAL DAYTIME HIGH sit above the month grid / slider rows. */
+  .cf-sliderrow > div { grid-column: 1 / -1 !important; display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 6px !important; }
+  .cf-sliderrow > div .cf-label { margin: 0 !important; }
+  .cf-sliderrow .cf-seg, .cf-sliderrow .cf-sort { width: 100% !important; }
+}
+/* Presets */
+.cf-presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.cf-preset { padding: 5px 12px; border: 1px solid var(--border2); border-radius: 14px; background: var(--surface); font-size: 12px; cursor: pointer; color: var(--muted); font-family: inherit; transition: border-color .15s, color .15s; }
+.cf-preset:hover { border-color: var(--accent, #c8a44e); color: var(--text); }
+/* City search */
+.cf-city-search { width: 200px; padding: 7px 10px; border: 1.5px solid var(--border2); border-radius: 6px; font-family: inherit; font-size: 16px; color: var(--text); background: var(--bg); }
+.cf-city-search::placeholder { color: var(--muted); }
+@media (max-width: 600px) { .cf-city-search { width: 100%; } }
+/* Compare */
+.cf-card { position: relative; }
+.cf-compare-btn { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--surface); cursor: pointer; font-size: 11px; line-height: 20px; text-align: center; color: var(--muted); z-index: 1; transition: border-color .15s, background .15s; }
+.cf-compare-btn:hover { border-color: var(--accent, #c8a44e); }
+.cf-compare-btn.selected { border-color: var(--accent, #c8a44e); background: var(--accent, #c8a44e); color: #fff; }
+.cf-compare-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; padding: 16px; border: 1px solid var(--border2); border-radius: 10px; background: var(--surface); }
+.cf-compare-header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; }
+.cf-compare-header span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.cf-compare-clear { border: none; background: none; cursor: pointer; font-size: 12px; color: var(--muted); text-decoration: none; font-family: inherit; }
+.cf-compare-clear:hover { color: var(--text); }
+@media (max-width: 600px) { .cf-compare-panel { grid-template-columns: 1fr; } }
+/* Guide pill inside card */
+.cf-guide-pill { display: inline-block; font-size: 10px; padding: 2px 8px; margin-top: 6px; border: 1px solid var(--border2); border-radius: 4px; color: var(--muted); background: var(--bg); pointer-events: none; }</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="1040"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="cf-wrap">
+  <div class="site-header">
+    <h1 class="site-title">CLIMATE FINDER</h1>
+  </div>
+  <div class="cf-sibling-row" style="display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 8px;">
+    <a href="Weather.html" class="sibling-pill">🌤 Weather by city</a>
+    <a href="When-to-Go.html" class="sibling-pill">📅 When to go</a>
+    <a href="Festival-Finder.html" class="sibling-pill">🎉 Festival finder</a>
+    <a href="Sports-Calendar.html" class="sibling-pill">🏟️ Sports calendar</a>
+  </div>
+  <div style="margin:14px 0 14px;">
+    <div style="font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Forecast &amp; Research</div>
+    <div class="cf-research-row" style="display:flex;flex-wrap:wrap;gap:6px;">
+      <a href="https://forecast.weather.gov" target="_blank" rel="noopener" class="sibling-pill">Weather.gov</a>
+      <a href="https://www.accuweather.com" target="_blank" rel="noopener" class="sibling-pill">AccuWeather</a>
+      <a href="https://www.timeanddate.com/weather" target="_blank" rel="noopener" class="sibling-pill">Time and Date</a>
+      <a href="https://www.windy.com" target="_blank" rel="noopener" class="sibling-pill">Windy</a>
+      <a href="https://weather.com" target="_blank" rel="noopener" class="sibling-pill">Weather Channel</a>
+      <a href="https://www.weather25.com" target="_blank" rel="noopener" class="sibling-pill">Weather25</a>
+    </div>
+  </div>
+  <div class="cf-presets" id="cf-presets">
+    <button type="button" class="cf-preset" data-preset="beach">Beach weather</button>
+    <button type="button" class="cf-preset" data-preset="spring">Mild spring</button>
+    <button type="button" class="cf-preset" data-preset="winter">Winter escape</button>
+    <button type="button" class="cf-preset" data-preset="autumn">Cool autumn</button>
+  </div>
+<div class="cf-controls">
+    <div class="cf-block">
+      <div class="cf-label">Month</div>
+      <div id="cf-months" class="cf-months"></div>
+    </div>
+    <div class="cf-block">
+      <div class="cf-label">Search city</div>
+      <input type="text" id="cf-city-search" class="cf-city-search" placeholder="City name" autocomplete="off">
+    </div>
+    <div class="cf-block">
+      <div class="cf-label">Typical daytime high</div>
+      <div class="cf-sliderrow">
+        <span class="cf-to">From</span>
+        <input type="range" id="cf-min" min="-20" max="44" value="18" step="1" aria-label="Minimum temperature">
+        <span class="cf-tval" id="cf-min-val">18°C</span>
+        <span class="cf-to">to</span>
+        <input type="range" id="cf-max" min="-15" max="46" value="27" step="1" aria-label="Maximum temperature">
+        <span class="cf-tval" id="cf-max-val">27°C</span>
+        <div class="cf-spacer"></div>
+        <div>
+          <div class="cf-label">Units</div>
+          <div id="cf-unit" class="cf-seg">
+            <button type="button" data-u="C" aria-label="Celsius">°C</button>
+            <button type="button" data-u="F" aria-label="Fahrenheit">°F</button>
+          </div>
+        </div>
+        <div>
+          <div class="cf-label">Sort</div>
+          <select id="cf-sort" class="cf-sort">
+            <option value="cool">Coolest first</option>
+            <option value="warm">Warmest first</option>
+            <option value="az">A–Z</option>
+          </select>
+        </div>
+        <div>
+          <div class="cf-label">Rainfall</div>
+          <div id="cf-rain-filter" class="cf-seg">
+            <button type="button" data-rf="all">All</button>
+            <button type="button" data-rf="dry">☀️ Dry</button>
+            <button type="button" data-rf="wet">☔ Wet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cf-summary" class="cf-summary"></div>
+  <div id="cf-results" class="cf-results"></div>
+  <div id="cf-compare" class="cf-compare-panel" style="display:none;"></div>
+</div>
+
+<!-- weather.js sets window.TravelClimate (the shared baked climate normals),
+     then no-ops because this is not the Guides index. -->
+<script src="../assets/weather.js?v=4"></script>
+<script>
+(function () {
+  'use strict';
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MONTHS_LONG = ['January','February','March','April','May','June','July',
+                     'August','September','October','November','December'];
+
+  function start() {
+    var CLIM = window.TravelClimate || {};
+    var resultsEl = document.getElementById('cf-results');
+    var keys = Object.keys(CLIM).filter(function (k) { return k !== '_generated' && CLIM[k] && CLIM[k].hi; });
+
+    if (CLIM._generated) {
+      var gd = new Date(CLIM._generated + 'T00:00:00');
+      var MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var uel = document.getElementById('cf-updated');
+      if (uel) uel.textContent = 'Updated ' + MN[gd.getMonth()] + ' ' + gd.getFullYear();
+    }
+    if (!keys.length) {
+      resultsEl.innerHTML = '<div class="empty-state">Climate data didn’t load.<br>Open this page from the site (or alongside the assets folder).</div>';
+      document.getElementById('cf-summary').textContent = '';
+      return;
+    }
+
+    var q = new URLSearchParams(location.search);
+    function unit() { try { return localStorage.getItem('guideTempUnit') === 'F' ? 'F' : 'C'; } catch (e) { return 'C'; } }
+    function setUnit(u) { try { localStorage.setItem('guideTempUnit', u); } catch (e) {} }
+    function conv(c) { return unit() === 'F' ? Math.round(c * 9 / 5 + 32) : Math.round(c); }
+    function toC(v) { return unit() === 'F' ? (v - 32) * 5 / 9 : v; }
+
+    if (q.get('u') === 'F' || q.get('u') === 'C') setUnit(q.get('u'));
+
+    var month = parseInt(q.get('mon'), 10); if (isNaN(month) || month < 0 || month > 11) month = new Date().getMonth();
+    var minC = parseFloat(q.get('minc')); if (isNaN(minC)) minC = 18;
+    var maxC = parseFloat(q.get('maxc')); if (isNaN(maxC)) maxC = 27;
+    var sort = 'cool';
+    var rainFilter = 'all';
+    var citySearch = '';
+    var compareList = [];
+
+    /* Month pills */
+    var monthsEl = document.getElementById('cf-months');
+    monthsEl.innerHTML = MONTHS.map(function (m, i) {
+      return '<button type="button" class="cf-mon" data-m="' + i + '">' + m + '</button>';
+    }).join('');
+    function paintMonths() {
+      [].forEach.call(monthsEl.children, function (b, i) {
+        b.classList.toggle('on', i === month);
+      });
+    }
+    monthsEl.addEventListener('click', function (e) {
+      var b = e.target.closest('.cf-mon'); if (!b) return;
+      month = parseInt(b.dataset.m, 10); paintMonths(); renderResults();
+    });
+
+    /* Range sliders — always °C internally */
+    var minI = document.getElementById('cf-min'), maxI = document.getElementById('cf-max');
+    var minV = document.getElementById('cf-min-val'), maxV = document.getElementById('cf-max-val');
+    function fillInputs() {
+      minI.value = minC; maxI.value = maxC;
+      minV.textContent = conv(minC) + '°' + unit();
+      maxV.textContent = conv(maxC) + '°' + unit();
+    }
+    function readSlider(e) {
+      minC = parseFloat(minI.value); maxC = parseFloat(maxI.value);
+      if (minC > maxC) {
+        if (e && e.target === minI) { maxC = minC; maxI.value = maxC; }
+        else { minC = maxC; minI.value = minC; }
+      }
+      minV.textContent = conv(minC) + '°' + unit();
+      maxV.textContent = conv(maxC) + '°' + unit();
+      renderResults();
+    }
+    minI.addEventListener('input', readSlider);
+    maxI.addEventListener('input', readSlider);
+
+    /* Unit toggle */
+    var unitEl = document.getElementById('cf-unit');
+    function paintUnit() {
+      [].forEach.call(unitEl.children, function (b) { b.classList.toggle('on', b.dataset.u === unit()); });
+    }
+    unitEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      setUnit(b.dataset.u); paintUnit();
+      minV.textContent = conv(minC) + '°' + unit();
+      maxV.textContent = conv(maxC) + '°' + unit();
+      renderResults();
+    });
+
+    /* Sort */
+    var sortEl = document.getElementById('cf-sort');
+    sortEl.addEventListener('change', function () { sort = sortEl.value; renderResults(); });
+
+    /* Rainfall filter */
+    var rainFilterEl = document.getElementById('cf-rain-filter');
+    function paintRainFilter() {
+      [].forEach.call(rainFilterEl.children, function (b) { b.classList.toggle('on', b.dataset.rf === rainFilter); });
+    }
+    rainFilterEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      rainFilter = b.dataset.rf; paintRainFilter(); renderResults();
+    });
+
+    /* Presets */
+    var PRESETS = {
+      beach:  { minC: 25, maxC: 35, rain: 'dry' },
+      spring: { month: 3, minC: 15, maxC: 22, rain: 'all' },
+      winter: { month: 11, minC: 22, maxC: 30, rain: 'dry' },
+      autumn: { month: 8, minC: 10, maxC: 18, rain: 'all' }
+    };
+    document.getElementById('cf-presets').addEventListener('click', function (e) {
+      var btn = e.target.closest('.cf-preset');
+      if (!btn) return;
+      var p = PRESETS[btn.dataset.preset];
+      if (!p) return;
+      if (p.month !== undefined) month = p.month;
+      minC = p.minC; maxC = p.maxC;
+      rainFilter = p.rain;
+      paintMonths(); fillInputs(); paintRainFilter(); renderResults();
+    });
+
+    /* City name search */
+    var citySearchEl = document.getElementById('cf-city-search');
+    citySearchEl.addEventListener('input', function () {
+      citySearch = this.value.trim();
+      renderResults();
+    });
+
+    /* Compare — event delegation on results container */
+    resultsEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.cf-compare-btn');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var k = btn.dataset.cmp;
+      var idx = compareList.indexOf(k);
+      if (idx >= 0) compareList.splice(idx, 1);
+      else if (compareList.length < 2) compareList.push(k);
+      else { compareList.shift(); compareList.push(k); }
+      paintCompareButtons();
+      renderCompare();
+    });
+    function paintCompareButtons() {
+      [].forEach.call(resultsEl.querySelectorAll('.cf-compare-btn'), function (b) {
+        var sel = compareList.indexOf(b.dataset.cmp) >= 0;
+        b.classList.toggle('selected', sel);
+        b.textContent = sel ? '✓' : '+';
+      });
+    }
+    function renderCompare() {
+      var panel = document.getElementById('cf-compare');
+      if (compareList.length !== 2) { panel.style.display = 'none'; return; }
+      panel.style.display = 'grid';
+      var u = unit(), html = '';
+      compareList.forEach(function (k) {
+        var rec = CLIM[k];
+        if (!rec) return;
+        var mm = (rec.rain && rec.rain[month]) || 0;
+        var rd = (rec.rd && rec.rd[month]) || 0;
+        html += '<div style="text-align:center;">' +
+          '<div style="font-size:16px;font-weight:700;margin-bottom:10px;">' + (rec.city || k) + '</div>' +
+          '<div style="display:flex;justify-content:center;gap:20px;margin-bottom:8px;">' +
+            '<div><div style="font-size:28px;font-weight:700;color:var(--c-temp-hi);">' + conv(rec.hi[month]) + '°' + u + '</div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;">High</div></div>' +
+            '<div><div style="font-size:28px;font-weight:700;color:var(--c-temp-lo);">' + conv(rec.lo[month]) + '°' + u + '</div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;">Low</div></div>' +
+          '</div>' +
+          '<div style="font-size:13px;color:var(--muted);">' + mm + ' mm rain · ' + rd + ' rainy days</div>' +
+          '<div style="font-size:11px;color:var(--muted);margin-top:4px;">' + MONTHS_LONG[month] + '</div>' +
+          strip(rec) +
+        '</div>';
+      });
+      panel.innerHTML = '<div class="cf-compare-header">' +
+        '<span>Compare</span>' +
+        '<button type="button" class="cf-compare-clear" id="cf-compare-clear">Clear</button>' +
+        '</div>' + html;
+      document.getElementById('cf-compare-clear').addEventListener('click', function () {
+        compareList = [];
+        paintCompareButtons();
+        renderCompare();
+      });
+    }
+
+    /* Shareable URL — hash read/write */
+    function updateHash() {
+      var parts = [];
+      parts.push('month=' + month);
+      parts.push('min=' + minC);
+      parts.push('max=' + maxC);
+      if (rainFilter !== 'all') parts.push('rain=' + rainFilter);
+      if (sort !== 'cool') parts.push('sort=' + sort);
+      if (unit() !== 'C') parts.push('u=' + unit());
+      if (citySearch) parts.push('city=' + encodeURIComponent(citySearch));
+      history.replaceState(null, '', '#' + parts.join('&'));
+    }
+    function readHash() {
+      var h = location.hash.slice(1);
+      if (!h) return;
+      var params = {};
+      h.split('&').forEach(function (p) {
+        var kv = p.split('=');
+        if (kv.length === 2) params[kv[0]] = decodeURIComponent(kv[1]);
+      });
+      if (params.month !== undefined) { var m = parseInt(params.month, 10); if (m >= 0 && m <= 11) month = m; }
+      if (params.min !== undefined) { var mn = parseFloat(params.min); if (!isNaN(mn)) minC = mn; }
+      if (params.max !== undefined) { var mx = parseFloat(params.max); if (!isNaN(mx)) maxC = mx; }
+      if (params.rain === 'dry' || params.rain === 'wet') rainFilter = params.rain;
+      if (params.sort === 'warm' || params.sort === 'az' || params.sort === 'cool') sort = params.sort;
+      if (params.u === 'F' || params.u === 'C') setUnit(params.u);
+      if (params.city) { citySearch = params.city; citySearchEl.value = citySearch; }
+    }
+
+    /* Guide link map — keyed by climate folder key, path relative to Trip-Essentials/ */
+    var GUIDE_LINKS = {"Abu Dhabi":"../Guides/Abu-Dhabi/abu-dhabi_v1.html","Doha":"../Guides/Doha/doha_v1.html","Aix-en-Provence":"../Guides/Aix-en-Provence/aix-en-provence_v1.html","Alaska":"../Guides/Alaska/alaska_v1.html","Alesund":"../Guides/Alesund/alesund_v1.html","Amalfi":"../Guides/Amalfi/amalfi_v1.html","Amsterdam":"../Guides/Amsterdam/amsterdam_v1.html","Annecy":"../Guides/Annecy/annecy_v1.html","Arenal":"../Guides/Arenal/arenal_v1.html","Aruba":"../Guides/Aruba/aruba_v1.html","Manuel Antonio":"../Guides/Manuel-Antonio/manuel-antonio_v1.html","Athens":"../Guides/Athens/athens_v1.html","Atlanta":"../Guides/Atlanta/atlanta_v1.html","Austin":"../Guides/Austin/austin_v1.html","Azores":"../Guides/Azores/azores_v1.html","Bali":"../Guides/Bali/bali_v1.html","Banff":"../Guides/Banff/banff_v1.html","Bora Bora":"../Guides/Bora-Bora/bora-bora_v1.html","The Bahamas":"../Guides/Bahamas/bahamas_v1.html","Bangkok":"../Guides/Bangkok/bangkok_v1.html","Barbados":"../Guides/Barbados/barbados_v1.html","Barcelona":"../Guides/Barcelona/barcelona_v1.html","Bilbao":"../Guides/Bilbao/bilbao_v1.html","Beijing":"../Guides/Beijing/beijing_v1.html","Bend":"../Guides/Bend/bend_v2.html","Bergen":"../Guides/Bergen/bergen_v1.html","Berlin":"../Guides/Berlin/berlin_v1.html","Hamburg":"../Guides/Hamburg/hamburg_v1.html","Hanoi":"../Guides/Hanoi/hanoi_v1.html","Hoi An":"../Guides/Hoi-An/hoi-an_v1.html","Big Island":"../Guides/Big-Island/big-island_v1.html","Bologna":"../Guides/Bologna/bologna_v1.html","Bordeaux":"../Guides/Bordeaux/bordeaux_v1.html","Boston":"../Guides/Boston/boston_v1.html","Boulder":"../Guides/Boulder/boulder_v1.html","Cape Cod":"../Guides/Cape-Cod/cape-cod_v1.html","Bruges":"../Guides/Bruges/bruges_v1.html","Brussels":"../Guides/Brussels/brussels_v1.html","Buenos Aires":"../Guides/Buenos-Aires/buenos-aires_v1.html","Busan":"../Guides/Busan/busan_v1.html","Cambridge":"../Guides/Cambridge/cambridge_v1.html","Cannes":"../Guides/Cannes/cannes_v1.html","Capri":"../Guides/Capri/capri_v1.html","Cascais":"../Guides/Cascais/cascais_v2.html","Cayman Islands":"../Guides/Cayman-Islands/cayman-islands_v1.html","Charlotte":"../Guides/Charlotte/charlotte_v1.html","Chicago":"../Guides/Chicago/chicago_v2.html","Coeur dAlene":"../Guides/Coeur-dAlene/coeur-dalene_v1.html","Columbia":"../Guides/Columbia/columbia_v1.html","Chongqing":"../Guides/Chongqing/chongqing_v1.html","Cinque Terre":"../Guides/Cinque-Terre/cinque-terre_v1.html","Colmar":"../Guides/Colmar/colmar_v1.html","Cologne":"../Guides/Cologne/cologne_v1.html","San José CR":"../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html","Colombo":"../Guides/Colombo/colombo_v1.html","Copenhagen":"../Guides/Copenhagen/copenhagen_v1.html","Corfu":"../Guides/Corfu/corfu_v1.html","Curitiba":"../Guides/Curitiba/curitiba_v1.html","Cusco":"../Guides/Cusco/cusco_v1.html","Dallas":"../Guides/Dallas/dallas_v1.html","Denver":"../Guides/Denver/denver_v1.html","Dubai":"../Guides/Dubai/dubai_v1.html","Dublin":"../Guides/Dublin/dublin_v1.html","Dubrovnik":"../Guides/Dubrovnik/dubrovnik_v2.html","Edinburgh":"../Guides/Edinburgh/edinburgh_v1.html","Florence":"../Guides/Florence/florence_v1.html","Frankfurt":"../Guides/Frankfurt/frankfurt_v1.html","Geneva":"../Guides/Geneva/geneva_v1.html","Glacier National Park":"../Guides/Glacier-National-Park/glacier-national-park_v2.html","Glasgow":"../Guides/Glasgow/glasgow_v1.html","Gothenburg":"../Guides/Gothenburg/gothenburg_v1.html","Helsinki":"../Guides/Helsinki/helsinki_v1.html","Hilton Head Island":"../Guides/Hilton-Head-Island/hilton-head-island_v1.html","Hiroshima":"../Guides/Hiroshima/hiroshima_v1.html","Hong Kong":"../Guides/Hong-Kong/hong-kong_v1.html","Budapest":"../Guides/Budapest/budapest_v1.html","Reykjavik":"../Guides/Reykjavik/reykjavik_v2.html","Istanbul":"../Guides/Istanbul/istanbul_v2.html","Florida Keys":"../Guides/Florida-Keys/florida-keys_v1.html","Galapagos-Islands":"../Guides/Galapagos-Islands/galapagos-islands_v1.html","Kauai":"../Guides/Kauai/kauai_v1.html","Key West":"../Guides/KeyWest/keywest_v1.html","Kyoto":"../Guides/Kyoto/kyoto_v1.html","Lagos":"../Guides/Lagos/lagos_v1.html","Lake Como":"../Guides/Lake-Como/lake-como_v1.html","Lake Tahoe":"../Guides/Lake-Tahoe/lake-tahoe_v1.html","Lille":"../Guides/Lille/lille_v1.html","Lima":"../Guides/Lima/lima_v1.html","Lisbon":"../Guides/Lisbon/lisbon_v4.html","Ljubljana":"../Guides/Ljubljana/ljubljana_v1.html","London":"../Guides/London/london_v5.html","La Jolla":"../Guides/La-Jolla/la-jolla_v1.html","Los Angeles":"../Guides/Los-Angeles/los-angeles_v1.html","Los Cabos":"../Guides/Los-Cabos/los-cabos_v1.html","Lucerne":"../Guides/Lucerne/lucerne_v1.html","Luxembourg":"../Guides/Luxembourg/luxembourg_v1.html","Lyon":"../Guides/Lyon/lyon_v1.html","MachuPicchu":"../Guides/MachuPicchu/machupicchu_v1.html","Madeira":"../Guides/Madeira/madeira_v1.html","Madrid":"../Guides/Madrid/madrid_v1.html","Maldives":"../Guides/Maldives/maldives_v1.html","Malaga":"../Guides/Malaga/malaga_v1.html","Granada":"../Guides/Granada/granada_v1.html","Marktoberdorf":"../Guides/Marktoberdorf/marktoberdorf_v1.html","Marrakech":"../Guides/Marrakech/marrakech_v1.html","Marseille":"../Guides/Marseille/marseille_v1.html","Maui":"../Guides/Maui/maui_v1.html","Melbourne":"../Guides/Melbourne/melbourne_v1.html","Miami":"../Guides/Miami/miami_v1.html","Montevideo":"../Guides/Montevideo/montevideo_v1.html","Milan":"../Guides/Milan/milan_v1.html","Monaco":"../Guides/Monaco/monaco_v1.html","Montreal":"../Guides/Montreal/montreal_v1.html","Munich":"../Guides/Munich/munich_v2.html","Mykonos":"../Guides/Mykonos/mykonos_v1.html","Naples":"../Guides/Naples/naples_v1.html","Las Vegas":"../Guides/Las-Vegas/las-vegas_v1.html","Naples FL":"../Guides/Naples-Florida/naples-florida_v1.html","Nashville":"../Guides/Nashville/nashville_v1.html","New Orleans":"../Guides/New-Orleans/new-orleans_v1.html","New York":"../Guides/New-York/new-york_v1.html","Nice":"../Guides/Nice/nice_v1.html","Oahu":"../Guides/Oahu/oahu_v1.html","Orcas Island":"../Guides/Orcas-Island/orcas-island_v1.html","Orlando":"../Guides/Orlando/orlando_v1.html","Osaka":"../Guides/Osaka/osaka_v1.html","Oslo":"../Guides/Oslo/oslo_v1.html","Oxford":"../Guides/Oxford/oxford_v1.html","Palm Desert":"../Guides/Palm-Desert/palm-desert_v1.html","Palo Alto":"../Guides/Palo-Alto/palo-alto_v6.html","Chiang Mai":"../Guides/Chiang-Mai/chiang-mai_v1.html","Palawan":"../Guides/Palawan/palawan_v1.html","Paris":"../Guides/Paris/paris_v7.html","Pasadena":"../Guides/Pasadena/pasadena_v5.html","Pensacola":"../Guides/Pensacola/pensacola_v1.html","Philadelphia":"../Guides/Philadelphia/philadelphia_v1.html","Phoenix":"../Guides/Phoenix/phoenix_v1.html","Phuket":"../Guides/Phuket/phuket_v1.html","Pisa":"../Guides/Pisa/pisa_v1.html","Portland":"../Guides/Portland/portland_v1.html","Petra":"../Guides/Petra/petra_v1.html","Porto":"../Guides/Porto/porto_v2.html","Lecce":"../Guides/Lecce/lecce_v1.html","Prague":"../Guides/Prague/prague_v1.html","Puerto Rico":"../Guides/Puerto-Rico/puerto-rico_v1.html","Quebec City":"../Guides/Quebec-City/quebec-city_v1.html","Queenstown":"../Guides/Queenstown/queenstown_v1.html","Aracaju":"../Guides/Aracaju/aracaju_v1.html","Rio de Janeiro":"../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html","Fortaleza":"../Guides/Fortaleza/fortaleza_v1.html","Natal":"../Guides/Natal/natal_v1.html","Olinda":"../Guides/Olinda/olinda_v1.html","Recife":"../Guides/Recife/recife_v1.html","Porto Alegre":"../Guides/Porto-Alegre/porto-alegre_v1.html","Salvador":"../Guides/Salvador/salvador_v1.html","Rome":"../Guides/Rome/rome_v1.html","Rhodes":"../Guides/Rhodes/rhodes_v1.html","Rotterdam":"../Guides/Rotterdam/rotterdam_v1.html","Sardinia":"../Guides/Sardinia/sardinia_v1.html","Salzburg":"../Guides/Salzburg/salzburg_v1.html","San Diego":"../Guides/San-Diego/san-diego_v1.html","Sedona":"../Guides/Sedona/sedona_v1.html","San Francisco":"../Guides/San-Francisco/san-francisco_v3.html","San Jose":"../Guides/San-Jose/san-jose_v1.html","San Juan Island":"../Guides/San-Juan-Island/san-juan-island_v1.html","Santa Barbara":"../Guides/Santa-Barbara/santa-barbara_v1.html","Cairo":"../Guides/Cairo/cairo_v2.html","Carmel by the Sea":"../Guides/Carmel-by-the-Sea/carmel-by-the-sea_v1.html","Malibu":"../Guides/Malibu/malibu_v1.html","Marco Island":"../Guides/Marco-Island/marco-island_v1.html","Napa":"../Guides/Napa/napa_v1.html","Santa Cruz":"../Guides/Santa-Cruz/santa-cruz_v1.html","Santa Fe":"../Guides/Santa-Fe/santa-fe_v1.html","Santa Monica":"../Guides/Santa-Monica/santa-monica_v1.html","San Sebastian":"../Guides/San-Sebastian/san-sebastian_v1.html","Santiago":"../Guides/Santiago/santiago_v1.html","Santorini":"../Guides/Santorini/santorini_v1.html","Scottsdale":"../Guides/Scottsdale/scottsdale_v1.html","Sarasota":"../Guides/Sarasota/sarasota_v1.html","Seattle":"../Guides/Seattle/seattle_v1.html","Seoul":"../Guides/Seoul/seoul_v1.html","Seville":"../Guides/Seville/seville_v1.html","Shanghai":"../Guides/Shanghai/shanghai_v1.html","Sicily":"../Guides/Sicily/sicily_v1.html","Siena":"../Guides/Siena/siena_v1.html","Singapore":"../Guides/Singapore/singapore_v3.html","Sint Maarten":"../Guides/Sint-Maarten/sint-maarten_v1.html","Sintra":"../Guides/Sintra/sintra_v2.html","Sorrento":"../Guides/Sorrento/sorrento_v1.html","Split":"../Guides/Split/split_v1.html","Stockholm":"../Guides/Stockholm/stockholm_v1.html","Strasbourg":"../Guides/Strasbourg/strasbourg_v1.html","Stuttgart":"../Guides/Stuttgart/stuttgart_v1.html","Sydney":"../Guides/Sydney/sydney_v2.html","Taipei":"../Guides/Taipei/taipei_v1.html","Tallinn":"../Guides/Tallinn/tallinn_v1.html","Tokyo":"../Guides/Tokyo/tokyo_v1.html","Toledo":"../Guides/Toledo/toledo_v1.html","Toronto":"../Guides/Toronto/toronto_v1.html","Tromso":"../Guides/Tromso/tromso_v1.html","Turks and Caicos":"../Guides/Turks-and-Caicos/turks-and-caicos_v1.html","Turin":"../Guides/Turin/turin_v14.html","Vancouver":"../Guides/Vancouver/vancouver_v1.html","Victoria":"../Guides/Victoria/victoria_v1.html","Venice":"../Guides/Venice/venice_v1.html","Verona":"../Guides/Verona/verona_v1.html","Vienna":"../Guides/Vienna/vienna_v1.html","Virgin Islands":"../Guides/Virgin-Islands/virgin-islands_v1.html","Washington DC":"../Guides/Washington-DC/washington-dc_v1.html","Wellington":"../Guides/Wellington/wellington_v1.html","Whistler":"../Guides/Whistler/whistler_v1.html","Yellowstone":"../Guides/Yellowstone/yellowstone_v1.html","Zhangjiajie":"../Guides/Zhangjiajie/zhangjiajie_v1.html","Zurich":"../Guides/Zurich/zurich_v1.html","Curaçao":"../Guides/Curacao/curacao_v1.html","Florianópolis":"../Guides/Florianopolis/florianopolis_v1.html","Foz do Iguaçu":"../Guides/Foz-do-Igua%C3%A7u/foz-do-iguacu_v2.html","Bhutan":"../Guides/Bhutan/bhutan_v1.html","Pokhara":"../Guides/Pokhara/pokhara_v1.html","João Pessoa":"../Guides/Jo%C3%A3o-Pessoa/joao-pessoa_v1.html","Kraków":"../Guides/Krak%C3%B3w/krakow_v1.html","Maceió":"../Guides/Macei%C3%B3/maceio_v1.html","São Luís":"../Guides/S%C3%A3o-Lu%C3%ADs/sao-luis_v1.html","São Paulo":"../Guides/S%C3%A3o-Paulo/sao-paulo_v1.html","Puerto Vallarta":"../Guides/Puerto-Vallarta/puerto-vallarta_v1.html","Cancún":"../Guides/Cancun/cancun_v1.html","Oaxaca":"../Guides/Oaxaca/oaxaca_v1.html","Tbilisi":"../Guides/Tbilisi/tbilisi_v1.html","Tenerife":"../Guides/Tenerife/tenerife_v1.html","Valletta":"../Guides/Valletta/valletta_v1.html","Kotor":"../Guides/Kotor/kotor_v1.html","Luang Prabang":"../Guides/Luang-Prabang/luang-prabang_v1.html","Seychelles":"../Guides/Seychelles/seychelles_v1.html","Muscat":"../Guides/Muscat/muscat_v1.html","Zakynthos":"../Guides/Zakynthos/zakynthos_v1.html","Crete":"../Guides/Crete/crete_v1.html","Cape Town":"../Guides/Cape-Town/cape-town_v1.html"};
+
+    /* Country lookup — every key in GUIDE_LINKS must have an entry here */
+    var CITY_COUNTRIES = {
+      "Abu Dhabi":            "United Arab Emirates",
+      "Aix-en-Provence":      "France",
+      "Alaska":               "United States",
+      "Alesund":              "Norway",
+      "Amalfi":               "Italy",
+      "Amsterdam":            "Netherlands",
+      "Annecy":               "France",
+      "Aracaju":              "Brazil",
+      "Arenal":               "Costa Rica",
+      "Aruba":                "Aruba",
+      "Athens":               "Greece",
+      "Atlanta":              "United States",
+      "Austin":               "United States",
+      "Azores":               "Portugal",
+      "Bali":                 "Indonesia",
+      "Banff":                "Canada",
+      "Bangkok":              "Thailand",
+      "Barbados":             "Barbados",
+      "Barcelona":            "Spain",
+      "Bilbao":               "Spain",
+            "Beijing":              "China",
+      "Bend":                 "United States",
+      "Bergen":               "Norway",
+      "Berlin":               "Germany",
+      "Big Island":           "United States",
+      "Bologna":              "Italy",
+      "Bora Bora":            "French Polynesia",
+      "Bordeaux":             "France",
+      "Boston":               "United States",
+      "Boulder":              "United States",
+      "Bruges":               "Belgium",
+      "Brussels":             "Belgium",
+      "Budapest":             "Hungary",
+      "Buenos Aires":         "Argentina",
+      "Busan":                "South Korea",
+      "Cairo":                "Egypt",
+      "Cambridge":            "United Kingdom",
+      "Cannes":               "France",
+      "Cape Cod":             "United States",
+      "Capri":                "Italy",
+      "Carmel by the Sea":    "United States",
+      "Cascais":              "Portugal",
+      "Cayman Islands":       "Cayman Islands",
+      "Charlotte":            "United States",
+      "Chiang Mai":           "Thailand",
+      "Chicago":              "United States",
+      "Coeur dAlene":         "United States",
+      "Chongqing":            "China",
+      "Cinque Terre":         "Italy",
+      "Colmar":               "France",
+      "Cologne":              "Germany",
+      "Colombo":              "Sri Lanka",
+      "Columbia":             "United States",
+      "Copenhagen":           "Denmark",
+      "Corfu":                "Greece",
+      "Curaçao":              "Curaçao",
+      "Curitiba":             "Brazil",
+      "Cusco":                "Peru",
+      "Dallas":               "United States",
+      "Denver":               "United States",
+      "Doha":                 "Qatar",
+      "Dubai":                "United Arab Emirates",
+      "Dublin":               "Ireland",
+      "Dubrovnik":            "Croatia",
+      "Edinburgh":            "United Kingdom",
+      "Florence":             "Italy",
+      "Florida Keys":         "United States",
+      "Galapagos-Islands":      "Ecuador",
+      "Florianópolis":        "Brazil",
+      "Fortaleza":            "Brazil",
+      "Foz do Iguaçu":        "Brazil",
+      "Frankfurt":            "Germany",
+      "Geneva":               "Switzerland",
+      "Glacier National Park": "United States",
+      "Glasgow":              "United Kingdom",
+      "Gothenburg":           "Sweden",
+      "Hamburg":              "Germany",
+      "Hanoi":                "Vietnam",
+      "Helsinki":             "Finland",
+      "Hilton Head Island":   "United States",
+      "Hiroshima":            "Japan",
+      "Hoi An":               "Vietnam",
+      "Hong Kong":            "China",
+      "Istanbul":             "Turkey",
+      "João Pessoa":          "Brazil",
+      "Kauai":                "United States",
+      "Key West":             "United States",
+      "Kraków":               "Poland",
+      "Kyoto":                "Japan",
+      "La Jolla":             "United States",
+      "Lagos":                "Portugal",
+      "Lake Como":            "Italy",
+      "Lake Tahoe":           "United States",
+      "Las Vegas":            "United States",
+      "Lecce":                "Italy",
+      "Lille":                "France",
+      "Lima":                 "Peru",
+      "Lisbon":               "Portugal",
+      "Ljubljana":            "Slovenia",
+      "London":               "United Kingdom",
+      "Los Angeles":          "United States",
+      "Lucerne":              "Switzerland",
+      "Luxembourg":           "Luxembourg",
+      "Lyon":                 "France",
+      "MachuPicchu":          "Peru",
+      "Maceió":               "Brazil",
+      "Madeira":              "Portugal",
+      "Madrid":               "Spain",
+      "Malaga":               "Spain",
+      "Granada":              "Spain",
+      "Maldives":             "Maldives",
+      "Malibu":               "United States",
+      "Manuel Antonio":       "Costa Rica",
+      "Marktoberdorf":        "Germany",
+      "Marrakech":            "Morocco",
+      "Marseille":            "France",
+      "Maui":                 "United States",
+      "Melbourne":            "Australia",
+      "Miami":                "United States",
+      "Milan":                "Italy",
+      "Monaco":               "Monaco",
+      "Montevideo":           "Uruguay",
+      "Montreal":             "Canada",
+      "Munich":               "Germany",
+      "Mykonos":              "Greece",
+      "Napa":                 "United States",
+      "Naples":               "Italy",
+      "Naples FL":          "United States",
+      "Marco Island":         "United States",
+      "Nashville":            "United States",
+      "Natal":                "Brazil",
+      "New Orleans":          "United States",
+      "New York":             "United States",
+      "Nice":                 "France",
+      "Oahu":                 "United States",
+      "Olinda":               "Brazil",
+      "Orcas Island":         "United States",
+      "Orlando":              "United States",
+      "Osaka":                "Japan",
+      "Oslo":                 "Norway",
+      "Oxford":               "United Kingdom",
+      "Palawan":              "Philippines",
+      "Palm Desert":          "United States",
+      "Palo Alto":            "United States",
+      "Paris":                "France",
+      "Pasadena":             "United States",
+      "Pensacola":            "United States",
+      "Petra":                "Jordan",
+      "Philadelphia":         "United States",
+      "Phoenix":              "United States",
+      "Phuket":               "Thailand",
+      "Pisa":                 "Italy",
+      "Porto":                "Portugal",
+      "Porto Alegre":         "Brazil",
+      "Portland":             "United States",
+      "Prague":               "Czech Republic",
+      "Puerto Rico":          "United States",
+      "Quebec City":          "Canada",
+      "Queenstown":           "New Zealand",
+      "Recife":               "Brazil",
+      "Reykjavik":            "Iceland",
+      "Rio de Janeiro":       "Brazil",
+      "Rome":                 "Italy",
+      "Salvador":             "Brazil",
+      "Salzburg":             "Austria",
+      "San Diego":            "United States",
+      "San Francisco":        "United States",
+      "San Jose":             "United States",
+      "San José CR":          "Costa Rica",
+      "San Juan Island":      "United States",
+      "San Sebastian":        "Spain",
+      "Santa Barbara":        "United States",
+      "Santa Cruz":           "United States",
+      "Santa Fe":             "United States",
+      "Santa Monica":         "United States",
+      "Santiago":             "Chile",
+      "Santorini":            "Greece",
+      "São Luís":             "Brazil",
+      "São Paulo":            "Brazil",
+      "Sarasota":             "United States",
+      "Sardinia":             "Italy",
+      "Scottsdale":           "United States",
+      "Seattle":              "United States",
+      "Sedona":               "United States",
+      "Seoul":                "South Korea",
+      "Seville":              "Spain",
+      "Shanghai":             "China",
+      "Sicily":               "Italy",
+      "Siena":                "Italy",
+      "Singapore":            "Singapore",
+      "Sint Maarten":         "Sint Maarten",
+      "Sintra":               "Portugal",
+      "Sorrento":             "Italy",
+      "Split":                "Croatia",
+      "Stockholm":            "Sweden",
+      "Strasbourg":           "France",
+      "Stuttgart":            "Germany",
+      "Sydney":               "Australia",
+      "Taipei":               "Taiwan",
+      "Tallinn":              "Estonia",
+      "The Bahamas":          "Bahamas",
+      "Tokyo":                "Japan",
+      "Tenerife":             "Spain",
+      "Toledo":               "Spain",
+      "Toronto":              "Canada",
+      "Tromso":               "Norway",
+      "Turin":                "Italy",
+      "Turks and Caicos":     "Turks & Caicos",
+      "Vancouver":            "Canada",
+      "Venice":               "Italy",
+      "Verona":               "Italy",
+      "Victoria":             "Canada",
+      "Vienna":               "Austria",
+      "Virgin Islands":       "United States",
+      "Washington DC":        "United States",
+      "Wellington":           "New Zealand",
+      "Whistler":             "Canada",
+      "Yellowstone":          "United States",
+      "Zhangjiajie":          "China",
+      "Zurich":               "Switzerland",
+      "Cancún":               "Mexico",
+      "Oaxaca":               "Mexico",
+      "Puerto Vallarta":      "Mexico",
+      "Tbilisi":              "Georgia",
+      "Valletta":             "Malta",
+      "Kotor":                "Montenegro",
+      "Luang Prabang":        "Laos",
+      "Seychelles":           "Seychelles"
+    ,
+      "Muscat":               "Oman"
+    ,
+      "Bhutan":               "Bhutan"
+    ,
+      "Los Cabos":            "Mexico"
+    ,
+      "Pokhara":              "Nepal"
+    ,
+      "Zakynthos":            "Greece"
+    ,
+      "Crete":                "Greece"
+    ,
+      "Rhodes":               "Greece"
+    ,
+      "Rotterdam":            "Netherlands"
+    ,
+      "Cape Town":            "South Africa"
+    };
+
+    /* Mini 12-month strip for one record */
+    function strip(rec) {
+      var vals = rec.hi.concat(rec.lo);
+      var lo0 = Math.min.apply(null, vals), hi0 = Math.max.apply(null, vals);
+      var span = (hi0 - lo0) || 1, H = 34, out = '';
+      for (var j = 0; j < 12; j++) {
+        var sel = (j === month);
+        var top = (1 - (rec.hi[j] - lo0) / span) * H;
+        var bot = (1 - (rec.lo[j] - lo0) / span) * H;
+        var bh = Math.max(2, bot - top);
+        out += '<div class="cf-bar"><span style="top:' + top + 'px;height:' + bh + 'px;background:' +
+          (sel ? 'var(--rust)' : 'rgba(184,92,42,.28)') + ';"></span></div>';
+      }
+      return '<div class="cf-strip">' + out + '</div>';
+    }
+
+    function renderResults() {
+      var u = unit(), lo = conv(minC), hi = conv(maxC);
+      var hits = keys.filter(function (k) {
+        var rec = CLIM[k], v = rec.hi[month];
+        if (v == null || v < minC || v > maxC) return false;
+        var rd = (rec.rd && rec.rd[month]) || 0;
+        if (rainFilter === 'dry' && rd > 3) return false;
+        if (rainFilter === 'wet' && rd < 10) return false;
+        return true;
+      });
+      if (citySearch) {
+        var cs = citySearch.toLowerCase();
+        hits = hits.filter(function (k) {
+          return (CLIM[k].city || k).toLowerCase().indexOf(cs) >= 0;
+        });
+      }
+      if (sort === 'warm') hits.sort(function (a, b) { return CLIM[b].hi[month] - CLIM[a].hi[month]; });
+      else if (sort === 'az') hits.sort(function (a, b) { return (CLIM[a].city || a).localeCompare(CLIM[b].city || b); });
+      else hits.sort(function (a, b) { return CLIM[a].hi[month] - CLIM[b].hi[month]; });
+
+      document.getElementById('cf-summary').innerHTML =
+        hits.length ? ('<b>' + hits.length + '</b> place' + (hits.length > 1 ? 's' : '') +
+          ' · high ' + lo + '–' + hi + '°' + u + ' in ' + MONTHS_LONG[month])
+        : 'No matches';
+
+      if (!hits.length) {
+        resultsEl.innerHTML = '<div class="empty-state">No destinations have a typical high of ' +
+          lo + '–' + hi + '°' + u + ' in ' + MONTHS_LONG[month] + '.<br>Try widening the range.</div>';
+        updateHash();
+        renderCompare();
+        return;
+      }
+      resultsEl.innerHTML = hits.map(function (k) {
+        var rec = CLIM[k];
+        var href = GUIDE_LINKS[k];
+        var tag = href ? 'a' : 'div';
+        var attrs = href ? ' class="cf-card" href="' + href + '"' : ' class="cf-card"';
+        var arrow = href ? '<span class="cf-city-arrow">→</span>' : '';
+        var rainHtml = '';
+        if (rec.rain && rec.rd) {
+          var mm = rec.rain[month] || 0;
+          var rd = rec.rd[month] || 0;
+          var rainBadge = rd <= 3
+            ? '<span style="font-size:11px;background:#fffbe6;color:#7a6010;border:1px solid #e8d870;border-radius:4px;padding:1px 5px;margin-left:6px;">☀️ Dry</span>'
+            : rd >= 10
+            ? '<span style="font-size:11px;background:#e8f3fc;color:#2a5c7a;border:1px solid #b0d4ec;border-radius:4px;padding:1px 5px;margin-left:6px;">☔ Wet</span>'
+            : '';
+          rainHtml = '<div style="display:flex;align-items:center;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border2,#e6e2da);">' +
+            '<div><span style="font-size:14px;font-weight:700;color:var(--c-rain);">' + mm + '</span><span style="font-size:11px;color:var(--muted,#6a6660);"> mm</span></div>' +
+            '<div style="display:flex;align-items:center;"><span style="font-size:14px;font-weight:700;color:var(--c-rain);">' + rd + '</span><span style="font-size:11px;color:var(--muted,#6a6660);"> rainy days</span>' + rainBadge + '</div>' +
+          '</div>';
+        }
+        var countryLine = CITY_COUNTRIES[k] ? '<div class="cf-country">' + CITY_COUNTRIES[k] + '</div>' : '';
+        var rightSlot = '<span style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex-shrink:0;">' + countryLine + (arrow ? '<span class="cf-city-arrow" style="align-self:flex-end;">→</span>' : '') + '</span>';
+        var safeCmpKey = k.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        var cmpSel = compareList.indexOf(k) >= 0;
+        var cmpBtn = '<button type="button" class="cf-compare-btn' + (cmpSel ? ' selected' : '') + '" data-cmp="' + safeCmpKey + '">' + (cmpSel ? '✓' : '+') + '</button>';
+        var guidePill = href ? '<span class="cf-guide-pill">Guide available</span>' : '';
+        return '<' + tag + attrs + '>' + cmpBtn +
+          '<div class="cf-city"><span>' + (rec.city || k) + '</span>' + rightSlot + '</div>' +
+          '<div class="cf-temps">' +
+            '<div><div class="cf-hi">' + conv(rec.hi[month]) + '°</div><div class="cf-tlab">High</div></div>' +
+            '<div><div class="cf-lo">' + conv(rec.lo[month]) + '°</div><div class="cf-tlab">Low</div></div>' +
+          '</div>' + rainHtml + guidePill + strip(rec) +
+        '</' + tag + '>';
+      }).join('');
+      updateHash();
+      renderCompare();
+    }
+
+    readHash();
+    sortEl.value = sort;
+    paintMonths(); fillInputs(); paintUnit(); paintRainFilter(); renderResults();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+}());
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('cf-city-search'); if(!input) return;
+  var items=[];
+  var cards=document.querySelectorAll('.cf-card');
+  if(!cards.length){
+    var wrap=document.getElementById('cf-results');
+    if(wrap) cards=wrap.querySelectorAll('[class*="cf-card"]');
+  }
+  var seen={};
+  document.querySelectorAll('#cf-results .cf-card, #cf-results [class*="cf-card"]').forEach(function(c){
+    var span=c.querySelector('.cf-city span');
+    var nm=span?span.textContent.trim():'';
+    if(!nm||seen[nm.toLowerCase()]) return;
+    seen[nm.toLowerCase()]=1;
+    items.push({name:nm, sub:'Climate'});
+  });
+  if(!items.length){
+    var script=document.querySelector('script:not([src])');
+    if(script){
+      var m=script.textContent.match(/city\s*:\s*["']([^"']+)["']/g);
+      if(m) m.forEach(function(s){
+        var nm=s.replace(/city\s*:\s*["']/,'').replace(/["']$/,'');
+        if(!seen[nm.toLowerCase()]){seen[nm.toLowerCase()]=1;items.push({name:nm,sub:'Climate'});}
+      });
+    }
+  }
+  TVESearch.attach(input,{items:items, onPick:function(it){
+    input.value=it.name;
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+  }});
+}());
+</script>
+</body>
+</html>

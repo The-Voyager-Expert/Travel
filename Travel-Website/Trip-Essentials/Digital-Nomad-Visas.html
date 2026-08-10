@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Digital Nomad Visa Quick Reference</title>
+<style>
+
+.page-intro-sub a:hover { color: #7a3b1e; }
+
+.region-head { scroll-margin-top: 16px; }
+
+/* Region jump-nav */
+.dnv-jump { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px 0 18px; }
+.dnv-jump a { display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 400; color: var(--muted); padding: 5px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); white-space: nowrap; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.dnv-jump a:visited { color: #6a6660; }
+.dnv-jump a:hover { border-color: var(--rust); box-shadow: 0 2px 8px rgba(184,92,42,.12); }
+
+/* Owner rule 2026-07-29: jump-nav pills carry the same region badge colors
+   as the .etype tags below (PURPLE eu / GREEN am / YELLOW ap) instead of
+   plain white — deliberate exception to the neutral Form B jump-nav look. */
+.dnv-jump a.eu { background: #f3e8ff; border-color: rgba(124,58,237,0.4); color: #7c3aed; }
+.dnv-jump a.am { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+.dnv-jump a.ap { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+
+/* Desktop-only: canonical squared+touching strip (no space, square borders)
+   per Brain/Reference/Formatting/Formatting.html#src-desktoppill. */
+@media (min-width: 601px) {
+  .dnv-jump { gap: 0; justify-content: center; }
+  .dnv-jump a { padding: 6px 14px; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; background: #fff; color: #3d3a32; font-size: 13px; font-weight: 500; line-height: 1; margin-left: 0; }
+  .dnv-jump a.eu { background: #f3e8ff; border-color: rgba(124,58,237,0.4); color: #7c3aed; }
+  .dnv-jump a.am { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+  .dnv-jump a.ap { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+  /* Hover LAST — must follow family-color rules; equal specificity means last wins */
+  .dnv-jump a:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; }
+}
+
+/* Mobile: canonical Form B glued-grid jump-nav (Brain/Reference/Formatting/Formatting.html#src-desktoppill §9 +
+   project_mobile_two_pill_forms) — matches .stats-nav/.jump-nav elsewhere. Was previously
+   missing entirely, so mobile fell back to the loose/gapped/rounded base rule above. */
+@media (max-width: 600px) {
+  .dnv-jump { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; justify-content: unset; }
+  .dnv-jump a { height: 46px; padding: 4px 6px; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; background: #fff; color: #3d3a32; font-size: 12px; font-weight: 500; line-height: 1.12; white-space: normal; margin-left: 0; }
+  .dnv-jump a:visited { color: #3d3a32; }
+  .dnv-jump a.eu { background: #f3e8ff; border-color: rgba(124,58,237,0.4); color: #7c3aed; }
+  .dnv-jump a.am { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+  .dnv-jump a.ap { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+  /* Hover LAST — must follow family-color rules; equal specificity means last wins */
+  .dnv-jump a:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: var(--rust); color: #fff; box-shadow: none; }
+}
+
+@media (min-width: 601px) {
+  .guide-pills { gap: 0; }
+  .guide-pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--text, #3d3a32); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
+  .guide-pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust, #b85c2a); }
+}
+@media (max-width: 600px) {
+  .guide-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .guide-pill { height: 46px; padding: 4px 6px; border-radius: 0; font-size: 12px; white-space: normal; line-height: 1.12; display: flex; align-items: center; justify-content: center; text-align: center; }
+}
+
+/* Visa cards */
+.vcard {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 18px 20px; margin-bottom: 14px;
+  border-left: 4px solid var(--border2);
+}
+/* Vcard bars — canonical family sphere mid tones per Badge spec 2026-07-29. */
+.vcard.eu { border-left-color: #a05be8; }  /* 🟣 PURPLE sphere mid */
+.vcard.am { border-left-color: #5eb833; }  /* 🟢 GREEN sphere mid */
+.vcard.ap { border-left-color: #f5c518; }  /* 🟡 YELLOW sphere mid */
+:root[data-theme="dark"] .vcard.eu { border-left-color: #b880f5; }
+:root[data-theme="dark"] .vcard.am { border-left-color: #7cd050; }
+:root[data-theme="dark"] .vcard.ap { border-left-color: #f5d040; }
+:root[data-theme="light"] .vcard.eu { border-left-color: #a05be8; }
+:root[data-theme="light"] .vcard.am { border-left-color: #5eb833; }
+:root[data-theme="light"] .vcard.ap { border-left-color: #f5c518; }
+@media (prefers-color-scheme: dark) {
+  .vcard.eu { border-left-color: #b880f5; }
+  .vcard.am { border-left-color: #7cd050; }
+  .vcard.ap { border-left-color: #f5d040; }
+}
+
+.vcard-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 14px;
+}
+.vcard-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.vcard-sub  { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.etype {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+}
+.etype.eu { background: #f3e8ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+.etype.am { background: #e8f5e8; color: #1a5a1a; border: 1px solid #9ad09a; }
+.etype.ap { background: #fff8e0; color: #7a5800; border: 1px solid #e8c870; }
+
+@media (prefers-color-scheme: dark) {
+  .etype.eu { background: #2d1b5e; color: #c084fc; border-color: #5b21b6; }
+  .etype.am { background: #0d200d; color: #5aaa5e; border-color: #3a7a3a; }
+  .etype.ap { background: #281f00; color: #d4a830; border-color: #7a6010; }
+  .dnv-jump a.eu { background: #2d1b5e; color: #c084fc; border-color: #5b21b6; }
+  .dnv-jump a.am { background: #0d200d; color: #5aaa5e; border-color: #3a7a3a; }
+  .dnv-jump a.ap { background: #281f00; color: #d4a830; border-color: #7a6010; }
+}
+:root[data-theme="dark"] .etype.eu { background: #2d1b5e; color: #c084fc; border-color: #5b21b6; }
+:root[data-theme="dark"] .etype.am { background: #0d200d; color: #5aaa5e; border-color: #3a7a3a; }
+:root[data-theme="dark"] .etype.ap { background: #281f00; color: #d4a830; border-color: #7a6010; }
+:root[data-theme="light"] .etype.eu { background: #f3e8ff; color: #7c3aed; border-color: rgba(124,58,237,0.4); }
+:root[data-theme="light"] .etype.am { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.4); }
+:root[data-theme="light"] .etype.ap { background: #fff8e0; color: #7a5800; border-color: rgba(122,88,0,0.4); }
+:root[data-theme="dark"] .dnv-jump a.eu { background: #2d1b5e; color: #c084fc; border-color: #5b21b6; }
+:root[data-theme="dark"] .dnv-jump a.am { background: #0d200d; color: #5aaa5e; border-color: #3a7a3a; }
+:root[data-theme="dark"] .dnv-jump a.ap { background: #281f00; color: #d4a830; border-color: #7a6010; }
+:root[data-theme="light"] .dnv-jump a.eu { background: #f3e8ff; color: #7c3aed; border-color: rgba(124,58,237,0.4); }
+:root[data-theme="light"] .dnv-jump a.am { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.4); }
+:root[data-theme="light"] .dnv-jump a.ap { background: #fff8e0; color: #7a5800; border-color: rgba(122,88,0,0.4); }
+
+.vmeta {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px 16px; margin-bottom: 14px;
+}
+.vmeta-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 2px;
+}
+.vmeta-val { font-size: 13px; color: var(--text); line-height: 1.4; }
+
+.vnotes {
+  font-size: 12px; color: var(--muted); line-height: 1.65;
+  border-top: 1px solid var(--border2); padding-top: 12px; margin-bottom: 12px;
+}
+.vnotes strong { color: var(--text); font-weight: 600; }
+
+.apply-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  font-family: inherit; font-size: 12px; font-weight: 400; color: var(--muted, #6a6660);
+  border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px;
+  padding: 6px 14px; text-decoration: none;
+}
+a.apply-btn:visited { color: #6a6660; }
+.apply-btn:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+
+/* Footer note */
+.enote {
+  background: var(--warm); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 13px 16px; font-size: 12px; color: var(--muted); line-height: 1.6;
+  margin-top: 32px;
+}
+.enote strong { color: var(--text); }
+
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-08"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>DIGITAL NOMAD VISA QUICK REFERENCE</h1>
+  </div>
+  <div class="page-intro-card">
+    <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg></div>
+    <div>
+      <div class="page-intro-head">Digital nomad visa programs</div>
+      <div class="page-intro-sub">US passport holders. Income minimums, fees, and processing times are approximate and change frequently — verify at the official consulate or government site before applying. See also <a href="Visas.html">Visas</a> and <a href="Entry-Requirements.html">Entry Requirements</a>.</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:center;margin:16px 0 16px;">
+    <input type="search" class="search-input" id="dnv-search" placeholder="Country or program" aria-label="Search digital nomad visas by country or program" autocomplete="off" spellcheck="false">
+  </div>
+  <div id="dnv-noresult" class="empty-state" style="display:none;">No matches — clear the search to see everything.</div>
+
+<div class="alert-banner">
+  All programs below grant the right to live and work remotely for a foreign employer or clients. None authorize local employment. Requirements verified mid-2026; treat figures as a starting point, not a guarantee.
+</div>
+
+<nav class="dnv-jump" aria-label="Jump to region">
+  <a href="#europe" class="eu">Europe</a>
+  <a href="#americas" class="am">Americas</a>
+  <a href="#asia-pacific" class="ap">Asia-Pacific</a>
+</nav>
+
+<!-- ── EUROPE ── -->
+<div class="region-head" id="europe">Europe</div>
+
+<div class="region-guides">
+  <div class="region-guides-toggle"><span class="chev">&#8250;</span> Guides in this region (93)</div>
+  <div class="region-guides-body"><div class="guide-pills">
+      <a class="guide-pill" href="../Guides/Aix-en-Provence/aix-en-provence_v1.html">Aix-en-Provence<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Alesund/alesund_v1.html">Alesund<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Amalfi/amalfi_v1.html">Amalfi<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Amsterdam/amsterdam_v1.html">Amsterdam<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Annecy/annecy_v1.html">Annecy<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Athens/athens_v1.html">Athens<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Azores/azores_v1.html">Azores<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Barcelona/barcelona_v1.html">Barcelona<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bergen/bergen_v1.html">Bergen<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Berlin/berlin_v1.html">Berlin<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bilbao/bilbao_v1.html">Bilbao<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bologna/bologna_v1.html">Bologna<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bordeaux/bordeaux_v1.html">Bordeaux<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bruges/bruges_v1.html">Bruges<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Brussels/brussels_v1.html">Brussels<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Budapest/budapest_v1.html">Budapest<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cambridge/cambridge_v1.html">Cambridge<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cannes/cannes_v1.html">Cannes<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Capri/capri_v1.html">Capri<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cascais/cascais_v2.html">Cascais<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cinque-Terre/cinque-terre_v1.html">Cinque Terre<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Colmar/colmar_v1.html">Colmar<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cologne/cologne_v1.html">Cologne<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Copenhagen/copenhagen_v1.html">Copenhagen<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Corfu/corfu_v1.html">Corfu<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Crete/crete_v1.html">Crete<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Dublin/dublin_v1.html">Dublin<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Dubrovnik/dubrovnik_v2.html">Dubrovnik<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Edinburgh/edinburgh_v1.html">Edinburgh<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Florence/florence_v1.html">Florence<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Frankfurt/frankfurt_v1.html">Frankfurt<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Geneva/geneva_v1.html">Geneva<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Glasgow/glasgow_v1.html">Glasgow<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Gothenburg/gothenburg_v1.html">Gothenburg<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Hamburg/hamburg_v1.html">Hamburg<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Helsinki/helsinki_v1.html">Helsinki<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Kotor/kotor_v1.html">Kotor<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Krak%C3%B3w/krakow_v1.html">Kraków<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lagos/lagos_v1.html">Lagos<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lake-Como/lake-como_v1.html">Lake Como<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lecce/lecce_v1.html">Lecce<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lille/lille_v1.html">Lille<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lisbon/lisbon_v4.html">Lisbon<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Ljubljana/ljubljana_v1.html">Ljubljana<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/London/london_v5.html">London<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lucerne/lucerne_v1.html">Lucerne<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Luxembourg/luxembourg_v1.html">Luxembourg<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lyon/lyon_v1.html">Lyon<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Madeira/madeira_v1.html">Madeira<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Madrid/madrid_v1.html">Madrid<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Malaga/malaga_v1.html">Malaga<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Marktoberdorf/marktoberdorf_v1.html">Marktoberdorf<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Marseille/marseille_v1.html">Marseille<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Milan/milan_v1.html">Milan<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Monaco/monaco_v1.html">Monaco<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Munich/munich_v2.html">Munich<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Mykonos/mykonos_v1.html">Mykonos<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Naples/naples_v1.html">Naples<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Nice/nice_v1.html">Nice<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Oslo/oslo_v1.html">Oslo<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Oxford/oxford_v1.html">Oxford<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Paris/paris_v7.html">Paris<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Pisa/pisa_v1.html">Pisa<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Porto/porto_v2.html">Porto<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Prague/prague_v1.html">Prague<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Reykjavik/reykjavik_v2.html">Reykjavik<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Rhodes/rhodes_v1.html">Rhodes<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Rome/rome_v1.html">Rome<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Salzburg/salzburg_v1.html">Salzburg<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/San-Sebastian/san-sebastian_v1.html">San Sebastian<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Santorini/santorini_v1.html">Santorini<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Sardinia/sardinia_v1.html">Sardinia<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Seville/seville_v1.html">Seville<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Sicily/sicily_v1.html">Sicily<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Siena/siena_v1.html">Siena<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Sintra/sintra_v2.html">Sintra<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Sorrento/sorrento_v1.html">Sorrento<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Split/split_v1.html">Split<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Stockholm/stockholm_v1.html">Stockholm<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Strasbourg/strasbourg_v1.html">Strasbourg<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Stuttgart/stuttgart_v1.html">Stuttgart<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Tallinn/tallinn_v1.html">Tallinn<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Tbilisi/tbilisi_v1.html">Tbilisi<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Tenerife/tenerife_v1.html">Tenerife<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Toledo/toledo_v1.html">Toledo<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Tromso/tromso_v1.html">Tromso<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Turin/turin_v14.html">Turin<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Valletta/valletta_v1.html">Valletta<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Venice/venice_v1.html">Venice<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Verona/verona_v1.html">Verona<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Vienna/vienna_v1.html">Vienna<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Zakynthos/zakynthos_v1.html">Zakynthos<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Zurich/zurich_v1.html">Zurich<span class="guide-pill-chev">&#8250;</span></a>
+  </div></div>
+</div>
+
+<div class="vcard eu">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Portugal — D8 Digital Nomad Visa</div>
+      <div class="vcard-sub">Residency visa; pathway to long-term residence</div>
+    </div>
+    <span class="etype eu">Europe</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">~€3,040 / mo</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~€90</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">60–90 days</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">1–2 years (renewable)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Apply at the Portuguese consulate in your home country. You must show proof of employment or freelance income for the past 3 months. Health insurance with €30,000 coverage required. After 5 years, eligible for permanent residency or citizenship.
+  </div>
+  <a class="apply-btn" href="https://vistos.mne.gov.pt" target="_blank" rel="noopener">Official portal</a>
+</div>
+
+<div class="vcard eu">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Spain — Digital Nomad Visa</div>
+      <div class="vcard-sub">Part of the Startups Law; up to 5 years</div>
+    </div>
+    <span class="etype eu">Europe</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">~€2,646 / mo (200% SMI)</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~€74</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">~20 business days</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">1 year (extendable to 5)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Up to 20% of income may come from Spanish companies. Must be employed by a company for at least 3 months prior to application. Apply at the Spanish consulate in the US.
+  </div>
+  <a class="apply-btn" href="https://www.exteriores.gob.es" target="_blank" rel="noopener">Official portal</a>
+</div>
+
+<div class="vcard eu">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Croatia — Digital Nomad Residence Permit</div>
+      <div class="vcard-sub">Temporary residence; not an EU Schengen visa</div>
+    </div>
+    <span class="etype eu">Europe</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">~$2,300 / mo</div></div>
+    <div><div class="vmeta-label">Fee</div><div class="vmeta-val">~€55</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">Varies (weeks)</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">Up to 1 year</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Croatia is EU but not Schengen — time here does not count against Schengen 90/180 days. Apply in-country at the local police station (MUP) within 3 days of arrival. Health insurance required.
+  </div>
+  <a class="apply-btn" href="https://mup.gov.hr" target="_blank" rel="noopener">MUP portal</a>
+</div>
+
+<div class="vcard eu">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Estonia — Digital Nomad Visa</div>
+      <div class="vcard-sub">D visa; Schengen area</div>
+    </div>
+    <span class="etype eu">Europe</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">€3,504 / mo</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~€100</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">15–30 days</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">Up to 1 year</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> One of the original digital nomad visa programs. Apply at an Estonian embassy or online via the e-Residency portal. Counts toward Schengen 90/180 day limit for other Schengen countries — plan accordingly.
+  </div>
+  <a class="apply-btn" href="https://www.politsei.ee" target="_blank" rel="noopener">Police &amp; Border Guard</a>
+</div>
+
+<div class="vcard eu">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Germany — Freelance Visa (Freiberufler)</div>
+      <div class="vcard-sub">For freelancers and self-employed; not a nomad-specific program</div>
+    </div>
+    <span class="etype eu">Europe</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">No set minimum; must show sustainability</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~€75</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">6–12 weeks</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">1–3 years (renewable)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Requires a concrete client contract or letter of intent from a German client. Must register a local address (Anmeldung) within 2 weeks of arrival. The Ausländerbehörde (immigration office) has significant discretion — a detailed business plan helps. Health insurance mandatory.
+  </div>
+  <a class="apply-btn" href="https://www.make-it-in-germany.com" target="_blank" rel="noopener">Make It In Germany</a>
+</div>
+
+<div class="vcard eu">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Italy — Digital Nomad / Remote Worker Visa</div>
+      <div class="vcard-sub">National D visa; Schengen area; 1-year renewable</div>
+    </div>
+    <span class="etype eu">Europe</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">€28,000 / yr (~€2,333 / mo)</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~€116 (~$125 USD)</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">Varies by consulate</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">1 year (renewable annually)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Apply at the Italian consulate in your US state of residence via Prenot@mi (book appointment online). Must hold a university degree or have 6+ months of proven remote or freelance work experience. Health insurance with €30,000 minimum coverage required. Biometrics mandatory since January 2025. Consulates vary on exact document requirements — confirm directly before applying.
+  </div>
+  <a class="apply-btn" href="https://prenotami.esteri.it" target="_blank" rel="noopener">Prenot@mi</a>
+</div>
+
+<!-- ── AMERICAS ── -->
+<div class="region-head" id="americas">Americas</div>
+
+<div class="region-guides">
+  <div class="region-guides-toggle"><span class="chev">&#8250;</span> Guides in this region (37)</div>
+  <div class="region-guides-body"><div class="guide-pills">
+      <a class="guide-pill" href="../Guides/Aracaju/aracaju_v1.html">Aracaju<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Arenal/arenal_v1.html">Arenal<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Aruba/aruba_v1.html">Aruba<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Barbados/barbados_v1.html">Barbados<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Buenos-Aires/buenos-aires_v1.html">Buenos Aires<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cancun/cancun_v1.html">Cancún<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cayman-Islands/cayman-islands_v1.html">Cayman Islands<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Curacao/curacao_v1.html">Curaçao<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Curitiba/curitiba_v1.html">Curitiba<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Cusco/cusco_v1.html">Cusco<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Florianopolis/florianopolis_v1.html">Florianópolis<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Fortaleza/fortaleza_v1.html">Fortaleza<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Foz-do-Igua%C3%A7u/foz-do-iguacu_v2.html">Foz do Iguaçu<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Jo%C3%A3o-Pessoa/joao-pessoa_v1.html">João Pessoa<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Lima/lima_v1.html">Lima<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Los-Cabos/los-cabos_v1.html">Los Cabos<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Macei%C3%B3/maceio_v1.html">Maceió<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/MachuPicchu/machupicchu_v1.html">MachuPicchu<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Manuel-Antonio/manuel-antonio_v1.html">Manuel Antonio<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Montevideo/montevideo_v1.html">Montevideo<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Natal/natal_v1.html">Natal<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Oaxaca/oaxaca_v1.html">Oaxaca<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Olinda/olinda_v1.html">Olinda<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Porto-Alegre/porto-alegre_v1.html">Porto Alegre<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Puerto-Rico/puerto-rico_v1.html">Puerto Rico<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Puerto-Vallarta/puerto-vallarta_v1.html">Puerto Vallarta<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Recife/recife_v1.html">Recife<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">Rio de Janeiro<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Salvador/salvador_v1.html">Salvador<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html">San José CR<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Santiago/santiago_v1.html">Santiago<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Sint-Maarten/sint-maarten_v1.html">Sint Maarten<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/S%C3%A3o-Lu%C3%ADs/sao-luis_v1.html">São Luís<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/S%C3%A3o-Paulo/sao-paulo_v1.html">São Paulo<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bahamas/bahamas_v1.html">The Bahamas<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Turks-and-Caicos/turks-and-caicos_v1.html">Turks and Caicos<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Virgin-Islands/virgin-islands_v1.html">Virgin Islands<span class="guide-pill-chev">&#8250;</span></a>
+  </div></div>
+</div>
+
+<div class="vcard am">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Mexico — Temporary Resident Visa</div>
+      <div class="vcard-sub">Not a dedicated nomad visa, but commonly used</div>
+    </div>
+    <span class="etype am">Americas</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">~$1,620 / mo OR ~$27k in savings</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~$36</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">Varies by consulate</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">1–4 years</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Apply at a Mexican consulate in the US before traveling. You receive a temporary resident card (Tarjeta de Residente Temporal) on arrival. One of the most popular options for US-based remote workers due to proximity, cost of living, and time-zone alignment with US employers.
+  </div>
+  <a class="apply-btn" href="https://consulmex.sre.gob.mx" target="_blank" rel="noopener">Mexican Consulates</a>
+</div>
+
+<div class="vcard am">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Colombia — Digital Nomad / Digital Migrant Visa</div>
+      <div class="vcard-sub">Dedicated remote-work category (M visa)</div>
+    </div>
+    <span class="etype am">Americas</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">~$700–1,000 / mo</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~$54</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">3–15 business days (online)</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">Up to 2 years</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> One of the most affordable income thresholds globally. Apply entirely online through the Cancillería portal. Proof of health insurance and a clean criminal record required. Medellín and Bogotá are popular bases.
+  </div>
+  <a class="apply-btn" href="https://tramitesmre.cancilleria.gov.co" target="_blank" rel="noopener">Cancillería portal</a>
+</div>
+
+<div class="vcard am">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Barbados — Welcome Stamp</div>
+      <div class="vcard-sub">12-month remote work authorization</div>
+    </div>
+    <span class="etype am">Americas</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">$50,000 / yr (individual) · $100,000 (family)</div></div>
+    <div><div class="vmeta-label">Fee</div><div class="vmeta-val">$2,000 (individual) · $3,000 (family)</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">~5 business days</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">12 months</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> One of the first Caribbean digital nomad programs. The stamp allows you to work remotely while living in Barbados for a full year. Normal Barbados tax rules apply — consult a tax professional on residency implications.
+  </div>
+  <a class="apply-btn" href="https://www.visitbarbados.org/barbados-welcome-stamp" target="_blank" rel="noopener">Welcome Stamp</a>
+</div>
+
+<!-- ── ASIA-PACIFIC ── -->
+<div class="region-head" id="asia-pacific">Asia-Pacific</div>
+
+<div class="region-guides">
+  <div class="region-guides-toggle"><span class="chev">&#8250;</span> Guides in this region (29)</div>
+  <div class="region-guides-body"><div class="guide-pills">
+      <a class="guide-pill" href="../Guides/Bali/bali_v1.html">Bali<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bangkok/bangkok_v1.html">Bangkok<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Beijing/beijing_v1.html">Beijing<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bhutan/bhutan_v1.html">Bhutan<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Bora-Bora/bora-bora_v1.html">Bora Bora<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Chiang-Mai/chiang-mai_v1.html">Chiang Mai<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Chongqing/chongqing_v1.html">Chongqing<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Colombo/colombo_v1.html">Colombo<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Hanoi/hanoi_v1.html">Hanoi<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Hoi-An/hoi-an_v1.html">Hoi An<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Hong-Kong/hong-kong_v1.html">Hong Kong<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Kyoto/kyoto_v1.html">Kyoto<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Luang-Prabang/luang-prabang_v1.html">Luang Prabang<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Maldives/maldives_v1.html">Maldives<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Melbourne/melbourne_v1.html">Melbourne<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Osaka/osaka_v1.html">Osaka<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Palawan/palawan_v1.html">Palawan<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Phuket/phuket_v1.html">Phuket<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Pokhara/pokhara_v1.html">Pokhara<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Queenstown/queenstown_v1.html">Queenstown<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Seoul/seoul_v1.html">Seoul<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Shanghai/shanghai_v1.html">Shanghai<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Singapore/singapore_v3.html">Singapore<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Sydney/sydney_v2.html">Sydney<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Taipei/taipei_v1.html">Taipei<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Tbilisi/tbilisi_v1.html">Tbilisi<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Tokyo/tokyo_v1.html">Tokyo<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Wellington/wellington_v1.html">Wellington<span class="guide-pill-chev">&#8250;</span></a>
+      <a class="guide-pill" href="../Guides/Zhangjiajie/zhangjiajie_v1.html">Zhangjiajie<span class="guide-pill-chev">&#8250;</span></a>
+  </div></div>
+</div>
+
+<div class="vcard ap">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Georgia — Remotely from Georgia Program</div>
+      <div class="vcard-sub">No visa required for US passport holders (365 days)</div>
+    </div>
+    <span class="etype ap">Asia-Pacific</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">None</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">Free</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">Arrive and stay</div></div>
+    <div><div class="vmeta-label">Allowed stay</div><div class="vmeta-val">365 days visa-free</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> US passport holders can stay up to 365 days with no visa. The "Remotely from Georgia" program formalizes this for nomads, but entry itself requires no paperwork. Tbilisi has a large and established expat/nomad community. See <a href="Visas.html">Visas</a> for general Georgia entry notes.
+  </div>
+</div>
+
+<div class="vcard ap">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Indonesia — B211A Visa On Arrival Extension</div>
+      <div class="vcard-sub">Tourist/social visa extended for remote workers; not an official nomad visa</div>
+    </div>
+    <span class="etype ap">Asia-Pacific</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">Not specified</div></div>
+    <div><div class="vmeta-label">Fee</div><div class="vmeta-val">~$150–200 (visa + extensions)</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">On arrival + in-country extensions</div></div>
+    <div><div class="vmeta-label">Max stay</div><div class="vmeta-val">Up to ~6 months with extensions</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Bali is the de-facto hub. Indonesia has announced a dedicated "Digital Nomad Visa" (E33G) but availability has been inconsistent — check current status at imigrasi.go.id before traveling. The B211A extension route is the most reliable path as of mid-2026. Cannot work for Indonesian companies.
+  </div>
+  <a class="apply-btn" href="https://imigrasi.go.id" target="_blank" rel="noopener">Imigrasi portal</a>
+</div>
+
+<div class="vcard ap">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Thailand — Long-Term Resident (LTR) Visa</div>
+      <div class="vcard-sub">Wealthy Global Citizen category for remote workers</div>
+    </div>
+    <span class="etype ap">Asia-Pacific</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">$80,000 / yr for 2 consecutive years</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~$600</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">4–8 weeks</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">10 years (5+5)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> High bar but the most generous Southeast Asia long-stay option — 10-year visa, 17% flat income tax option, multiple re-entry permit included. Must have $500k assets OR $100k investment in Thailand. Apply through the Board of Investment (BOI) portal.
+  </div>
+  <a class="apply-btn" href="https://ltrthailand.boi.go.th" target="_blank" rel="noopener">BOI LTR portal</a>
+</div>
+
+<div class="vcard ap">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Japan — Digital Nomad Visa</div>
+      <div class="vcard-sub">Status of Residence: Designated Activities · launched April 2024</div>
+    </div>
+    <span class="etype ap">Asia-Pacific</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">~¥10M / yr (~$68k USD)</div></div>
+    <div><div class="vmeta-label">Visa fee</div><div class="vmeta-val">~¥3,000 (~$20 USD)</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">Varies by consulate</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">Up to 6 months (not renewable)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Available to US citizens (Japan has a tax treaty with the US). Must show proof of remote work, health insurance covering ¥10M (~$68k), and income from outside Japan. Non-renewable — must leave Japan for 6 months before reapplying. Apply at a Japanese consulate in the US before departure.
+  </div>
+  <a class="apply-btn" href="https://www.mofa.go.jp/j_info/visit/visa/long/index.html" target="_blank" rel="noopener">Japan MOFA</a>
+</div>
+
+<div class="vcard ap">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">UAE — Virtual Work Programme</div>
+      <div class="vcard-sub">1-year remote work visa · Dubai / Abu Dhabi</div>
+    </div>
+    <span class="etype ap">Asia-Pacific</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">$3,500 / mo (employee) · $5,000 / mo (owner)</div></div>
+    <div><div class="vmeta-label">Fee</div><div class="vmeta-val">~AED 1,535 (~$420 USD, incl. Emirates ID)</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">1–5 business days</div></div>
+    <div><div class="vmeta-label">Initial stay</div><div class="vmeta-val">1 year (renewable)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Must provide 6 consecutive months of bank statements showing the income minimum (updated Jan 2026). Business owners must show company ownership for at least 1 year. No UAE income tax. US citizens remain subject to US federal tax on worldwide income regardless of UAE residency — consult a tax advisor.
+  </div>
+  <a class="apply-btn" href="https://gdrfad.gov.ae" target="_blank" rel="noopener">GDRFA Dubai</a>
+</div>
+
+<div class="vcard ap">
+  <div class="vcard-head">
+    <div>
+      <div class="vcard-name">Malaysia — DE Rantau Nomad Pass</div>
+      <div class="vcard-sub">Professional Visit Pass for remote workers; up to 24 months</div>
+    </div>
+    <span class="etype ap">Asia-Pacific</span>
+  </div>
+  <div class="vmeta">
+    <div><div class="vmeta-label">Income minimum</div><div class="vmeta-val">$24,000 / yr (tech) · $60,000 / yr (non-tech)</div></div>
+    <div><div class="vmeta-label">Fee</div><div class="vmeta-val">RM 1,080 + 8% SST (~$234 USD)</div></div>
+    <div><div class="vmeta-label">Processing</div><div class="vmeta-val">6–8 weeks (100% online)</div></div>
+    <div><div class="vmeta-label">Max stay</div><div class="vmeta-val">3–12 months; renewable once (24 months total)</div></div>
+  </div>
+  <div class="vnotes">
+    <strong>Key notes:</strong> Administered by Malaysia Digital Economy Corporation (MDEC). US citizens are already visa-free for 90 days; DE Rantau enables stays beyond that. Must work remotely for a company registered outside Malaysia. Multiple-entry pass. Kuala Lumpur is a major Southeast Asian nomad hub with low cost of living and fast internet. Dependents can be included (RM 540 + SST each).
+  </div>
+  <a class="apply-btn" href="https://mdec.my/derantau" target="_blank" rel="noopener">MDEC DE Rantau</a>
+</div>
+
+<div class="enote">
+  <strong>Verify before applying.</strong> Visa programs change frequently — income thresholds, fees, and processing times listed here are approximate as of mid-2026. Always confirm current requirements directly with the official consulate or government portal before submitting an application or booking travel.
+</div>
+
+
+</div><!-- /.wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Visas.html">🪪 Visas</a>
+    <a class="also-on-this-site-pill" href="Entry-Requirements.html">🪪 Entry requirements</a>
+    <a class="also-on-this-site-pill" href="Visa-Processing-Times.html">🪪 Visa processing times</a>
+    <a class="also-on-this-site-pill" href="Passport.html">📘 Passport</a>
+    <a class="also-on-this-site-pill" href="Trusted-Traveler.html">🛂 Global Entry &amp; CLEAR</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var inp = document.getElementById('dnv-search');
+  var noRes = document.getElementById('dnv-noresult');
+  if (!inp) return;
+  var cards = [].slice.call(document.querySelectorAll('.vcard'));
+  var regions = [], cur = null;
+  [].slice.call(document.querySelectorAll('.region-head, .vcard')).forEach(function (el) {
+    if (el.classList.contains('region-head')) { cur = { head: el, cards: [] }; regions.push(cur); }
+    else if (cur) { cur.cards.push(el); }
+  });
+  inp.addEventListener('input', function () {
+    var q = inp.value.trim().toLowerCase();
+    var vis = 0;
+    cards.forEach(function (c) {
+      var show = !q || c.textContent.toLowerCase().indexOf(q) >= 0;
+      c.style.display = show ? '' : 'none';
+      if (show && q) vis++;
+    });
+    regions.forEach(function (r) {
+      var any = r.cards.some(function (c) { return c.style.display !== 'none'; });
+      r.head.style.display = (q && !any) ? 'none' : '';
+    });
+    if (noRes) noRes.style.display = (q && vis === 0) ? '' : 'none';
+  });
+
+  document.addEventListener('click', function (e) {
+    var toggle = e.target.closest('.region-guides-toggle');
+    if (!toggle) return;
+    toggle.classList.toggle('open');
+    toggle.nextElementSibling.classList.toggle('open');
+  });
+})();
+</script>
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if (!window.TVESearch) return;
+  var input = document.getElementById('dnv-search'); if (!input) return;
+  var items = [], seen = {};
+  function add(name, sub) {
+    if (!name || seen[name.toLowerCase()]) return; seen[name.toLowerCase()] = 1;
+    items.push(sub ? {name: name, sub: sub} : {name: name});
+  }
+  document.querySelectorAll('.vcard-name').forEach(function (el) {
+    var sub = (el.closest('.vcard').querySelector('.vcard-sub') || {}).textContent || '';
+    add(el.textContent.trim(), sub.trim());
+  });
+  document.querySelectorAll('.region-head').forEach(function (el) { add(el.textContent.trim()); });
+  TVESearch.attach(input, {items: items});
+}());</script>
+</body>
+</html>

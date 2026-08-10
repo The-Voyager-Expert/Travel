@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — prefers-reduced-motion</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660;
+    --accent: #c8a44a; --rust: #b85c2a; --border: #dedad4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Roboto', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; padding: 24px; }
+  h1 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
+  .panel h2 span { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+  .before-label { background: #fde8e2; color: #b85c2a; }
+  .after-label { background: #e2f3e6; color: #2a7a3b; }
+
+  /* Card used in both panels */
+  .demo-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; padding: 0;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .demo-card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+  .demo-photo { height: 100px; overflow: hidden; }
+  .demo-photo img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .3s ease;
+  }
+  .demo-card:hover .demo-photo img { transform: scale(1.04); }
+  .demo-body { padding: 10px 12px; font-size: 14px; font-weight: 600; }
+
+  /* BEFORE: no prefers-reduced-motion override — transitions always fire */
+  /* (simulated by doing nothing extra) */
+
+  /* AFTER: override — transitions suppressed */
+  .after-zone .demo-card { transition-duration: 0.01ms !important; }
+  .after-zone .demo-card:hover { transform: none; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .after-zone .demo-photo img { transition-duration: 0.01ms !important; }
+  .after-zone .demo-card:hover .demo-photo img { transform: none; }
+
+  .note { font-size: 12px; color: var(--muted); margin-top: 10px; font-style: italic; }
+  .callout { margin-top: 14px; background: #f0ede8; border-left: 3px solid var(--rust); padding: 8px 12px; border-radius: 0 4px 4px 0; font-size: 12px; color: var(--text); }
+
+  .fix { margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+  .fix h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .fix code { display: block; font-size: 11px; background: #f0ede8; padding: 10px 12px; border-radius: 4px; color: var(--rust); white-space: pre; line-height: 1.7; }
+</style>
+</head>
+<body>
+<h1>Add <code>prefers-reduced-motion</code> media query</h1>
+<p class="meta">Finding logged 2026-08-08 · Target: append to <code>web-travel-style.css</code> · Effort: S · WCAG 2.3.3 (AAA)</p>
+
+<div class="panels">
+  <div class="panel">
+    <h2><span class="before-label">BEFORE</span> Transitions fire for all users</h2>
+    <div class="before-zone">
+      <div class="demo-card">
+        <div class="demo-photo">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect width='200' height='100' fill='%23b0a490'/%3E%3Ctext x='100' y='55' text-anchor='middle' font-family='Arial' font-size='13' fill='%23f5f3ef'%3EHover me%3C/text%3E%3C/svg%3E" alt="">
+        </div>
+        <div class="demo-body">Kyoto</div>
+      </div>
+    </div>
+    <p class="note">Users with vestibular disorders who set "Reduce Motion" in their OS still see the card lift, image zoom, and all CSS transitions. Zero <code>prefers-reduced-motion</code> rules exist in the site CSS.</p>
+  </div>
+
+  <div class="panel">
+    <h2><span class="after-label">AFTER</span> Transitions suppressed for reduced-motion users</h2>
+    <div class="after-zone">
+      <div class="demo-card">
+        <div class="demo-photo">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect width='200' height='100' fill='%23b0a490'/%3E%3Ctext x='100' y='55' text-anchor='middle' font-family='Arial' font-size='13' fill='%23f5f3ef'%3EHover me%3C/text%3E%3C/svg%3E" alt="">
+        </div>
+        <div class="demo-body">Kyoto</div>
+      </div>
+    </div>
+    <p class="note">This panel simulates what reduced-motion users see: hover state is immediate (no animation), image does not zoom. Content remains fully accessible.</p>
+    <div class="callout">The fix is a single media query. For normal users, nothing changes — all transitions still fire.</div>
+  </div>
+</div>
+
+<div class="fix">
+  <h3>Fix — append at bottom of <code>web-travel-style.css</code></h3>
+  <code>@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}</code>
+</div>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+<title>London — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="London — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+  <button class="day-btn" data-day="7" style="--dc:#e74c3c">Day 7</button>
+  <button class="day-btn" data-day="8" style="--dc:#f39c12">Day 8</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+    {
+        "day": 1,
+        "name": "St Paul's Cathedral",
+        "query": "St Paul's Churchyard EC4M 8AD",
+        "lat": 51.5132929,
+        "lng": -0.0990925
+    },
+    {
+        "day": 1,
+        "name": "Monument to the Great Fire",
+        "query": "Monument Street EC3R 8AH",
+        "lat": 51.5100705,
+        "lng": -0.0861
+    },
+    {
+        "day": 1,
+        "name": "Sky Garden",
+        "query": "20 Fenchurch Street EC3M 3BY",
+        "lat": 51.51127,
+        "lng": -0.0835396
+    },
+    {
+        "day": 6,
+        "name": "Tower of London",
+        "query": "Tower of London EC3N 4AB",
+        "lat": 51.508217,
+        "lng": -0.0761879
+    },
+    {
+        "day": 4,
+        "name": "Westminster Abbey",
+        "query": "Westminster Abbey Dean's Yard SW1P 3PA",
+        "lat": 51.499399,
+        "lng": -0.127391
+    },
+    {
+        "day": 2,
+        "name": "Houses of Parliament",
+        "query": "Houses of Parliament Westminster SW1A 0AA",
+        "lat": 51.499387,
+        "lng": -0.1244812
+    },
+    {
+        "day": 4,
+        "name": "St James's Park",
+        "query": "St James's Park Horse Guards Road SW1A 2BJ",
+        "lat": 51.5031295,
+        "lng": -0.133165
+    },
+    {
+        "day": 3,
+        "name": "Buckingham Palace",
+        "query": "Buckingham Palace SW1A 1AA",
+        "lat": 51.5008349,
+        "lng": -0.1430045
+    },
+    {
+        "day": 6,
+        "name": "Sir John Soane's Museum",
+        "query": "13 Lincoln's Inn Fields WC2A 3BP",
+        "lat": 51.5170754,
+        "lng": -0.1174953
+    },
+    {
+        "day": 2,
+        "name": "British Museum",
+        "query": "Great Russell Street WC1B 3DG",
+        "lat": 51.5181106,
+        "lng": -0.1264428
+    },
+    {
+        "day": 3,
+        "name": "Wallace Collection",
+        "query": "Hertford House Manchester Square W1U 3BN",
+        "lat": 51.5175166,
+        "lng": -0.1530436
+    },
+    {
+        "day": 3,
+        "name": "Sherlock Holmes Museum",
+        "query": "235-237 Baker Street NW1 6XE",
+        "lat": 51.5237037,
+        "lng": -0.1584786
+    },
+    {
+        "day": 4,
+        "name": "National Gallery",
+        "query": "Trafalgar Square Westminster WC2N 5DN",
+        "lat": 51.5074374,
+        "lng": -0.1285481
+    },
+    {
+        "day": 2,
+        "name": "National Portrait Gallery",
+        "query": "St Martin's Place WC2H 0HE",
+        "lat": 51.5094664,
+        "lng": -0.1274049
+    },
+    {
+        "day": 4,
+        "name": "Banqueting House",
+        "query": "Whitehall SW1A 2ER",
+        "lat": 51.5047765,
+        "lng": -0.126325
+    },
+    {
+        "day": 4,
+        "name": "Churchill War Rooms",
+        "query": "Clive Steps King Charles Street SW1A 2AQ",
+        "lat": 51.5022101,
+        "lng": -0.129252
+    },
+    {
+        "day": 5,
+        "name": "Leighton House",
+        "query": "12 Holland Park Road W14 8LZ",
+        "lat": 51.4986135,
+        "lng": -0.2031609
+    },
+    {
+        "day": 5,
+        "name": "Holland Park &amp; Kyoto Garden",
+        "query": "Ilchester Place W8 6LU",
+        "lat": 51.5003923,
+        "lng": -0.2037908
+    },
+    {
+        "day": 5,
+        "name": "Victoria and Albert Museum",
+        "query": "Cromwell Road South Kensington SW7 2RL",
+        "lat": 51.4957205,
+        "lng": -0.1743942
+    },
+    {
+        "day": 5,
+        "name": "Natural History Museum",
+        "query": "Cromwell Road South Kensington SW7 5BD",
+        "lat": 51.4955634,
+        "lng": -0.1763661
+    },
+    {
+        "day": 1,
+        "name": "Tate Modern",
+        "query": "Bankside SE1 9TG",
+        "lat": 51.508176,
+        "lng": -0.0991338
+    },
+    {
+        "day": 1,
+        "name": "Shakespeare's Globe",
+        "query": "21 New Globe Walk SE1 9DT",
+        "lat": 51.5081214,
+        "lng": -0.0971864
+    },
+    {
+        "day": 6,
+        "name": "Tower Bridge",
+        "query": "Tower Bridge Road SE1 2UP",
+        "lat": 51.503588,
+        "lng": -0.0766601
+    },
+    {
+        "day": 2,
+        "name": "HMS Belfast",
+        "query": "The Queen's Walk SE1 2JH",
+        "lat": 51.5010549,
+        "lng": -0.1198433
+    },
+    {
+        "day": 7,
+        "name": "Cutty Sark",
+        "query": "King William Walk Greenwich SE10 9HT",
+        "lat": 51.4818405,
+        "lng": -0.0085763
+    },
+    {
+        "day": 7,
+        "name": "Painted Hall",
+        "query": "King William Walk Greenwich SE10 9NN",
+        "lat": 51.4818405,
+        "lng": -0.0085763
+    },
+    {
+        "day": 7,
+        "name": "National Maritime Museum",
+        "query": "Romney Road Greenwich SE10 9NF",
+        "lat": 51.4821549,
+        "lng": -0.0051874
+    },
+    {
+        "day": 7,
+        "name": "Royal Observatory",
+        "query": "Blackheath Ave Greenwich SE10 8XJ",
+        "lat": 51.4768256,
+        "lng": 6.11e-05
+    },
+    {
+        "day": 8,
+        "name": "King's College Chapel",
+        "query": "King's Parade Cambridge CB2 1ST",
+        "lat": 52.2044485,
+        "lng": 0.1176439
+    },
+    {
+        "day": 8,
+        "name": "The Backs",
+        "query": "The Backs Cambridge CB2 1TN",
+        "lat": null,
+        "lng": null
+    },
+    {
+        "day": 8,
+        "name": "Fitzwilliam Museum",
+        "query": "Trumpington Street Cambridge CB2 1RB",
+        "lat": 52.2003345,
+        "lng": 0.1199871
+    },
+    {
+        "day": 8,
+        "name": "Great St Mary's Church",
+        "query": "Senate House Hill Cambridge CB2 3PQ",
+        "lat": 52.2053186,
+        "lng": 0.1178272
+    }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085", "7": "#e74c3c", "8": "#f39c12"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

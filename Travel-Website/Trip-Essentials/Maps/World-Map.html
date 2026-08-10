@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<title>World Map</title>
+<link rel="stylesheet" href="vendor/leaflet.min.css">
+<link rel="stylesheet" href="vendor/MarkerCluster.min.css">
+<style>
+  .tb { margin-bottom: 0 !important; }   /* maps are full-bleed — toolbar sits flush */
+  html, body.map-page { height: 100vh; height: 100dvh; }
+  body.map-page { display: flex; flex-direction: column; padding-bottom: 0; }
+  #wrap { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; border-radius: 10px; }
+  #map { position: absolute; inset: 0; background: #cfe0e4; }
+
+  /* ── Leaflet surface: kill default chrome so it reads as our warm map ── */
+  .leaflet-container { background: #cfe0e4; font-family: Arial, Helvetica, sans-serif; outline: none; }
+  .leaflet-control-zoom a { color: #6b4422; border-color: var(--border, #d8d4cc); }
+  .leaflet-bar a:hover { background: var(--surface, #ffffff); border-color: var(--rust); }
+
+  /* ── Country polygons ── */
+  .country-label-tip { background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 9px; font-weight: 700; color: #6b5a45; }
+  .country-label-tip::before { display: none; }
+  /* US state names — only shown when zoomed into the US (see stateLabels pane toggle) */
+  .state-label-tip { background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 10px; font-weight: 600; color: #5a3f22; letter-spacing: 0.02em; }
+  .state-label-tip::before { display: none; }
+  /* Smaller countries (everything outside the always-on major set) — revealed once
+     you zoom into a region (see minorLabels pane toggle), so the world view stays clean. */
+  .minor-label-tip { background: none; border: none; box-shadow: none; padding: 0;
+    font-size: 7px; font-weight: 600; color: #6b5a45; letter-spacing: 0.01em; }
+  .minor-label-tip::before { display: none; }
+  /* Zoom-responsive country label scaling via zcl-N class on #map */
+  #map.zcl-3 .country-label-tip { font-size: 10px; }
+  #map.zcl-3 .minor-label-tip   { font-size:  8px; }
+  #map.zcl-4 .country-label-tip { font-size: 11px; }
+  #map.zcl-4 .minor-label-tip   { font-size:  9px; }
+  #map.zcl-5 .country-label-tip { font-size: 12px; }
+  #map.zcl-5 .minor-label-tip   { font-size: 10px; }
+  #map.zcl-6 .country-label-tip { font-size: 13px; }
+  #map.zcl-6 .minor-label-tip   { font-size: 11px; }
+  #map.zcl-7 .country-label-tip { font-size: 14px; }
+  #map.zcl-7 .minor-label-tip   { font-size: 12px; }
+  /* Major world cities (non-guide) — name only (no dot marker), revealed by
+     population as you zoom in (tier gating via the .ctier-N class on #map). */
+  .city-name-tip { background: none; border: none; box-shadow: none; padding: 0; margin: 0;
+    font-size: 11px; font-weight: 600; color: #2a1d0f; letter-spacing: 0.01em; }
+  .city-name-tip::before { display: none; }
+
+  /* ── Pin markers ── */
+  .city-pin { background: var(--rust); border: 1.8px solid #fdf8f0; border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.30); transition: transform 0.12s, background 0.12s; }
+  .city-pin:hover { background: #7a3b1e; transform: scale(1.45); }
+  .pin-name-tip { background: none; border: none; box-shadow: none; padding: 0; margin: 0;
+    font-size: 12px; font-weight: 700; color: #4a2810; }
+  .pin-name-tip::before { display: none; }
+
+  /* ── Cluster bubbles (warm palette to match) ── */
+  .city-cluster { background: none; }
+  .city-cluster div { width: 36px; height: 36px; margin-left: 2px; margin-top: 2px;
+    border-radius: 50%; text-align: center; line-height: 36px;
+    color: var(--warm, #fdf8f0); font-weight: 700; font-size: 13px;
+    background: radial-gradient(circle at 35% 30%, #c9743a 0%, #b85c2a 55%, #7a3b1e 100%);
+    border: 2px solid #fdf8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
+  .city-cluster.small div { width: 30px; height: 30px; line-height: 30px; font-size: 12px; }
+  .city-cluster.large div { width: 44px; height: 44px; line-height: 44px; font-size: 14px; }
+
+  #map-left-stack { position:absolute; left:10px; top:16px; display:flex; flex-direction:column; gap:7px; align-items:flex-start; z-index:600; }
+  #left-panel { display:flex; flex-direction:column; background:rgba(247,244,238,0.97); border-radius:10px; padding:7px 6px; box-shadow:0 2px 12px rgba(0,0,0,0.13); backdrop-filter:blur(4px); gap:3px; }
+  #visited-pill-mobile { display:flex !important; }
+
+  .panel-section-label { font-size: 10px; font-weight:700; color:#9a8870; letter-spacing:0.06em; text-transform:uppercase; padding:1px 3px 2px; }
+
+  #region-nav { display:flex; flex-direction:column; gap:4px; }
+  .rn { padding:5px 14px; border-radius:20px; border:1.5px solid #d8d4cc; background:var(--bg, #f5f4f0); color:#6b4422; font-size: 12px; font-weight:600; text-decoration:none; white-space:nowrap; display:flex; align-items:center; gap:5px; transition:background .12s,border-color .12s; cursor:pointer; }
+  .rn::before { content:''; width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .rn:hover { background:var(--surface,#ffffff); border-color:var(--rust); }
+  .rn-wd  { background:#eee9e2 !important; border-color:#c4bcae !important; color:#5a5446 !important; }
+  .rn-wd::before  { background:#8a8270; }
+  .rn-eu  { background:#fde8e8 !important; border-color:#f0a0a0 !important; color:var(--red, #a02020) !important; }
+  .rn-eu::before  { background:#dc4444; }
+  .rn-na  { background:#fdf0e4 !important; border-color:#f0b878 !important; color:#8a3a08 !important; }
+  .rn-na::before  { background:#e87830; }
+  .rn-cb  { background:#d8efe9 !important; border-color:#7fcabd !important; color:#0c6b5d !important; }
+  .rn-cb::before  { background:#14a18d; }
+  .rn-as  { background:#fdf5d8 !important; border-color:#e8d060 !important; color:#7a5000 !important; }
+  .rn-as::before  { background:#c8940a; }
+  .rn-af  { background:#e4f5e8 !important; border-color:#90d0a0 !important; color:#1a6030 !important; }
+  .rn-af::before  { background:#2ea84e; }
+  .rn-sa  { background:#e4eef8 !important; border-color:#90b8e8 !important; color:var(--navy, #1a3a8b) !important; }
+  .rn-sa::before  { background:#3a74d4; }
+  .rn-oc  { background:#f0e8f8 !important; border-color:#c090e0 !important; color:#4a1880 !important; }
+  .rn-oc::before  { background:#8050d0; }
+  .rn-vs  { background:#fdf5d8 !important; border-color:#d8c87a !important; color:#7a6000 !important; -webkit-appearance:none; appearance:none; box-sizing:border-box; line-height:19.2px; }
+  .rn-vs::before  { background:#c8940a; }
+  .rn-vs.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:#fff !important; border-color:var(--rust) !important; }
+  .rn.rn-on { background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color:var(--warm, #fdf8f0) !important; border-color:var(--rust) !important; }
+  .rn.rn-on::before { background:rgba(255,255,255,0.55); }
+
+  /* Uniform pill width so no label sizes the panel differently. */
+  #left-panel .rn { width: 100%; }
+  /* No focus ring on click — keep it only for keyboard nav */
+  .rn:focus { text-decoration: none; }
+  .rn:focus:not(:focus-visible) { outline: none; }
+  .rn:focus-visible { outline: 2px solid #b85c2a; outline-offset: 2px; border-radius: 20px; }
+
+@media (max-width: 640px) {
+  /* ── Mobile (2026-07-19): the on-page region-nav bottom bar is gone —
+     Dani asked for it removed from the map and moved into the site's
+     hamburger menu instead (a "Region" section, see toolbar.js). The hash
+     router below (World-Map.html#eu etc.) is what makes that work: the
+     menu links just navigate to a hash, no new JS needed on this page.
+     Was previously docked as a scrollable bottom bar (see git history for
+     that CSS if ever wanted back) — replaced, not just visually tweaked,
+     because the region-nav's job is now done by the hamburger menu. ── */
+  #map-left-stack { display: none; }
+  #visited-pill-mobile { display:flex !important; }
+  /* Pinch/tap-to-zoom already works on touch devices — the +/- widget just
+     eats screen space here (same reasoning as stops-map-style.css). Desktop
+     keeps it. */
+  .leaflet-control-zoom { display: none; }
+}
+</style>
+<link rel="stylesheet" href="../../assets/mobile.css?v=53">
+<script>if(location.search.includes('embed=1')){document.write('<style>.tb{display:none!important}#visited-pill-mobile{display:none!important}</style>');}</script>
+</head>
+<body class="map-page">
+<div id="toolbar-mount" data-depth="2" data-maxwidth="1400" data-updated="2026-06-18"></div>
+<script src="../../assets/toolbar.js?v=127"></script>
+<script>
+if(location.search.includes('embed=1')){
+}
+
+function toggleVisited(btn) {
+  var on = btn.getAttribute('data-on') !== '1';
+  btn.setAttribute('data-on', on ? '1' : '0');
+  btn.classList.toggle('rn-on', on);
+  if (window.applyVisitedFilter) window.applyVisitedFilter(on);
+}
+function toggleVisitedMobile(btn) {
+  var on = btn.getAttribute('data-on') !== '1';
+  btn.setAttribute('data-on', on ? '1' : '0');
+  btn.style.background = on ? '#c8940a' : '#fdf5d8';
+  btn.style.color = on ? '#fff' : '#7a6000';
+  btn.style.borderColor = on ? '#a07000' : '#d8c87a';
+  btn.querySelector('span').style.background = on ? 'rgba(255,255,255,0.7)' : '#c8940a';
+  if (window.applyVisitedFilter) window.applyVisitedFilter(on);
+}
+</script>
+
+<div id="wrap">
+  <div id="map" role="application" aria-label="Interactive world map of guide destinations"></div>
+  <button id="visited-pill-mobile" onclick="toggleVisitedMobile(this)" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:1100;background:#fdf5d8;border:1.5px solid #d8c87a;border-radius:20px;height:28px;padding:0 16px;font-size:12px;font-weight:600;color:#7a6000;cursor:pointer;font-family:inherit;align-items:center;gap:7px;box-shadow:0 2px 10px rgba(0,0,0,0.15);white-space:nowrap;" aria-label="Toggle visited cities">
+    <span style="width:8px;height:8px;border-radius:50%;background:#c8940a;flex-shrink:0;display:inline-block;"></span> Visited
+  </button>
+  <button id="map-back-btn" onclick="history.back()" style="display:none;position:fixed;top:72px;right:16px;z-index:1100;background:#ffffff;border:1.5px solid #b85c2a;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:700;color:#b85c2a;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.10);align-items:center;gap:6px;" aria-label="Go back">← Back</button>
+  <script>
+    if(new URLSearchParams(location.search).get('from')==='stats'){
+      var b=document.getElementById('map-back-btn');if(b)b.style.display='flex';
+      // auto-activate Visited filter so map opens showing been cities in gold
+      window.addEventListener('load',function(){
+        setTimeout(function(){
+          var vm=document.getElementById('visited-pill-mobile');
+          if(vm) toggleVisitedMobile(vm);
+        },800);
+      });
+    }
+    // Hide Visited pill when hamburger menu opens
+    var _vpm = document.getElementById('visited-pill-mobile');
+    if (_vpm) {
+      new MutationObserver(function() {
+        var hamOpen = !!document.querySelector('.tb-ham-menu.tb-ham-open');
+        _vpm.style.visibility = hamOpen ? 'hidden' : '';
+      }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+    }
+  </script>
+  <div id="map-left-stack">
+    <div id="left-panel">
+      <span class="panel-section-label">Region</span>
+      <div id="region-nav">
+        <a class="rn rn-wd rn-on" data-region="world" href="#">World</a>
+        <a class="rn rn-eu" data-region="eu" href="#">Europe</a>
+        <a class="rn rn-na" data-region="na" href="#">N. America</a>
+        <a class="rn rn-cb" data-region="cb" href="#">Caribbean</a>
+        <a class="rn rn-as" data-region="as" href="#">Asia</a>
+        <a class="rn rn-af" data-region="af" href="#">Africa</a>
+        <a class="rn rn-sa" data-region="sa" href="#">S. America</a>
+        <a class="rn rn-oc" data-region="oc" href="#">Oceania</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="vendor/leaflet.min.js"></script>
+<script src="vendor/markercluster.min.js"></script>
+<script src="vendor/topojson.min.js"></script>
+<script>
+/* ── Resilient JSON loader: retry a stumbled request instead of giving up.
+   A single slow/failed fetch used to paint the "could not load map data"
+   banner permanently (no retry); now each request self-heals with a short
+   backoff before the catch is ever reached. ── */
+function getJSON(url, tries = 3) {
+  return fetch(url)
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .catch(err => {
+      if (tries <= 1) throw err;
+      return new Promise(res => setTimeout(res, 400 * (4 - tries)))
+        .then(() => getJSON(url, tries - 1));
+    });
+}
+
+/* ── Country labels: curated major countries get the bigger/bolder style
+   (.country-label-tip); everyone else gets .minor-label-tip.
+   FIXED (2026-07-19) — this used to be keyed by numeric ISO 3166-1 id, and 2
+   of the 45 ids were simply wrong in the source data: id 36 (meant for
+   Australia) actually resolves to "Ashmore and Cartier Is.", and id 430
+   (meant for Libya) actually resolves to Liberia — so Liberia was silently
+   showing "Libya" as its bold label while the real Libya fell through to the
+   small font. Keyed by the country's actual name now (same properties.name
+   already proven reliable for COUNTRY_COLOR_IDX/LABEL_CENTERS above), which
+   can't have this class of bug. ── */
+const MAJOR_COUNTRIES = new Set(['United States of America','Canada','Mexico','Brazil','Argentina',
+  'Chile','Peru','Colombia','Venezuela','Russia',
+  'China','India','Japan','Iran','Saudi Arabia',
+  'Indonesia','Thailand','Vietnam','Philippines','Pakistan',
+  'Australia','New Zealand','South Africa','Egypt','Morocco',
+  'Ethiopia','Nigeria','Kenya','Algeria','Sudan',
+  'France','Germany','Spain','Italy','United Kingdom',
+  'Sweden','Norway','Poland','Ukraine','Turkey',
+  'Kazakhstan','Libya','Mali','Niger','Chad',
+  'Greenland','Iceland','Finland','Belarus']);
+/* FIXED (2026-07-19) — Dani flagged Somalia/Nigeria/Uganda labels landing
+   near borders/oceans instead of inside the country. The old approach used
+   getBounds().getCenter() (bounding-box center) for every country except 5
+   hand-placed exceptions — bbox-center lands outside the shape for concave/
+   horn/ribbon countries (Somalia's horn, Chile's ribbon, Norway's coast).
+   Replaced with a computed "pole of inaccessibility" (same technique as
+   Mapbox's polylabel) for all 241 countries: the point deepest inside the
+   largest landmass, guaranteed to be inside the shape. Keyed by country
+   NAME now (stable across topojson id changes), not numeric ISO id. See
+   scratchpad/compute_label_centers.py from the 2026-07-19 conversation. */
+const LABEL_CENTERS = {"Zimbabwe":[-18.996,29.95],"Zambia":[-14.772,26.096],"Yemen":[15.303,44.954],"Vietnam":[21.677,105.387],"Venezuela":[7.196,-64.255],"Vatican":[41.902,12.434],"Vanuatu":[-15.371,166.874],"Uzbekistan":[41.56,64.031],"Uruguay":[-32.942,-56.05],"Micronesia":[6.887,158.243],"Marshall Is.":[7.125,171.106],"N. Mariana Is.":[15.181,145.744],"U.S. Virgin Is.":[17.741,-64.772],"Guam":[13.393,144.711],"American Samoa":[-14.321,-170.756],"Puerto Rico":[18.226,-66.897],"United States of America":[39.144,-97.823],"S. Geo. and the Is.":[-54.522,-36.265],"Br. Indian Ocean Ter.":[-7.312,72.414],"Saint Helena":[-15.959,-5.717],"Pitcairn Is.":[-24.365,-128.317],"Anguilla":[18.233,-63.05],"Falkland Is.":[-51.635,-58.767],"Cayman Is.":[19.314,-81.378],"Bermuda":[32.339,-64.719],"British Virgin Is.":[18.422,-64.624],"Turks and Caicos Is.":[21.814,-71.709],"Montserrat":[16.746,-62.188],"Jersey":[49.218,-2.189],"Guernsey":[49.468,-2.573],"Isle of Man":[54.243,-4.492],"United Kingdom":[52.5,-1.284],"United Arab Emirates":[23.496,54.545],"Ukraine":[48.849,33.645],"Uganda":[1.98,33.011],"Turkmenistan":[39.837,58.646],"Turkey":[39.191,33.35],"Tunisia":[35.326,9.564],"Trinidad and Tobago":[10.331,-61.25],"Tonga":[-21.153,-175.253],"Togo":[8.862,1.047],"Timor-Leste":[-8.905,125.467],"Thailand":[15.485,101.412],"Tanzania":[-5.559,34.057],"Tajikistan":[38.248,72.585],"Taiwan":[23.496,120.805],"Syria":[35.041,38.176],"Switzerland":[46.711,7.461],"Sweden":[65.838,18.997],"eSwatini":[-26.567,31.447],"Suriname":[4.121,-55.952],"S. Sudan":[7.106,30.493],"Sudan":[16.65,29.387],"Sri Lanka":[7.12,80.843],"Spain":[39.986,-3.462],"South Korea":[36.314,128.108],"South Africa":[-30.243,23.359],"Somalia":[2.581,43.04],"Somaliland":[9.461,47.212],"Solomon Is.":[-9.619,160.205],"Slovakia":[48.724,18.714],"Slovenia":[46.023,14.894],"Singapore":[1.359,103.817],"Sierra Leone":[8.658,-11.777],"Seychelles":[-4.617,55.434],"Serbia":[44.245,20.551],"Senegal":[15.2,-14.934],"Saudi Arabia":[23.448,45.016],"São Tomé and Principe":[0.249,6.599],"San Marino":[43.942,12.459],"Samoa":[-13.631,-172.437],"St. Vin. and Gren.":[13.249,-61.201],"Saint Lucia":[13.891,-60.98],"St. Kitts and Nevis":[17.358,-62.796],"Rwanda":[-1.95,29.633],"Russia":[57.182,41.041],"Romania":[45.716,25.156],"Qatar":[25.138,51.195],"Portugal":[40.695,-7.782],"Poland":[51.906,20.423],"Philippines":[16.966,121.386],"Peru":[-12.959,-73.085],"Paraguay":[-21.628,-60.147],"Papua New Guinea":[-5.533,143.032],"Panama":[8.353,-80.928],"Palau":[7.506,134.574],"Pakistan":[31.329,71.532],"Oman":[22.098,57.336],"Norway":[61.34,9.657],"North Korea":[39.884,126.43],"Nigeria":[9.338,7.223],"Niger":[17.653,10.462],"Nicaragua":[12.547,-85.175],"New Zealand":[-45.263,169.141],"Niue":[-19.049,-169.87],"Cook Is.":[-21.219,-159.789],"Netherlands":[52.233,5.311],"Aruba":[12.54,-69.992],"Curaçao":[12.118,-68.855],"Nepal":[28.972,82.034],"Nauru":[-0.52,166.931],"Namibia":[-20.568,17.098],"Mozambique":[-14.039,38.147],"Morocco":[31.935,-6.378],"W. Sahara":[21.957,-13.7],"Montenegro":[42.772,19.078],"Mongolia":[46.034,104.676],"Moldova":[47.461,28.489],"Monaco":[43.753,7.407],"Mexico":[23.417,-101.726],"Mauritius":[-20.313,57.548],"Mauritania":[19.478,-9.747],"Malta":[35.889,14.44],"Mali":[18.672,-2.013],"Maldives":[4.184,73.5],"Malaysia":[2.466,113.777],"Malawi":[-13.38,33.755],"Madagascar":[-18.402,46.7],"Macedonia":[41.522,21.474],"Luxembourg":[49.705,6.098],"Lithuania":[55.112,24.233],"Liechtenstein":[47.113,9.537],"Libya":[26.072,20.592],"Liberia":[6.974,-10.184],"Lesotho":[-29.41,28.445],"Lebanon":[34.159,36.009],"Latvia":[56.641,26.63],"Laos":[19.605,102.559],"Kyrgyzstan":[41.697,74.555],"Kuwait":[29.475,47.327],"Kosovo":[42.602,20.865],"Kiribati":[1.834,-157.383],"Kenya":[0.455,37.861],"Kazakhstan":[48.577,68.663],"Jordan":[30.75,36.331],"Japan":[36.713,139.439],"Jamaica":[18.144,-77.304],"Italy":[45.118,10.88],"Israel":[30.91,34.844],"Palestine":[32.152,35.256],"Ireland":[53.1,-7.822],"Iraq":[33.25,43.091],"Iran":[32.149,55.654],"Indonesia":[-0.934,114.21],"India":[22.323,79.197],"Iceland":[64.674,-18.918],"Hungary":[47.219,20.404],"Honduras":[14.739,-87.126],"Haiti":[19.227,-72.244],"Guyana":[2.774,-58.668],"Guinea-Bissau":[12.123,-14.552],"Guinea":[10.691,-9.997],"Guatemala":[14.996,-90.474],"Grenada":[12.108,-61.683],"Greece":[39.82,21.676],"Ghana":[6.996,-1.22],"Germany":[51.032,9.612],"Georgia":[42.359,42.514],"Gambia":[13.614,-15.317],"Gabon":[-0.632,11.423],"France":[46.684,2.456],"St. Pierre and Miquelon":[46.859,-56.321],"Wallis and Futuna Is.":[-14.278,-178.146],"St-Martin":[18.092,-63.055],"St-Barthélemy":[17.899,-62.841],"Fr. Polynesia":[-17.622,-149.485],"New Caledonia":[-21.059,165.093],"Fr. S. Antarctic Lands":[-49.323,69.074],"Åland":[60.254,19.967],"Finland":[63.319,27.408],"Fiji":[-16.515,-179.874],"Ethiopia":[8.53,38.431],"Estonia":[58.615,26.503],"Eritrea":[16.026,38.054],"Eq. Guinea":[1.58,10.741],"El Salvador":[13.906,-89.267],"Egypt":[26.258,29.268],"Ecuador":[-1.196,-78.24],"Dominican Rep.":[19.086,-70.904],"Dominica":[15.475,-61.359],"Djibouti":[11.391,42.164],"Greenland":[73.565,-42.717],"Faeroe Is.":[62.191,-6.934],"Denmark":[55.936,9.074],"Czechia":[49.787,14.302],"N. Cyprus":[35.186,33.642],"Cyprus":[34.914,32.646],"Cuba":[20.611,-76.472],"Croatia":[45.818,16.508],"Côte d'Ivoire":[7.541,-5.507],"Costa Rica":[10.081,-83.997],"Dem. Rep. Congo":[-1.651,23.282],"Congo":[0.088,15.987],"Comoros":[-11.726,43.334],"Colombia":[3.406,-73.283],"China":[32.488,109.242],"Macao":[22.223,113.509],"Hong Kong":[22.456,114.174],"Chile":[-23.373,-69.116],"Chad":[17.228,19.414],"Central African Rep.":[7.008,21.76],"Cabo Verde":[15.054,-23.625],"Canada":[58.963,-119.451],"Cameroon":[4.515,12.449],"Cambodia":[12.608,104.448],"Myanmar":[21.63,95.929],"Burundi":[-3.417,29.828],"Burkina Faso":[12.804,-0.954],"Bulgaria":[42.506,25.198],"Brunei":[4.462,114.549],"Brazil":[-12.643,-49.093],"Botswana":[-22.055,24.175],"Bosnia and Herz.":[44.078,18.083],"Bolivia":[-16.708,-64.685],"Bhutan":[27.494,89.933],"Benin":[10.38,2.384],"Belize":[16.969,-88.732],"Belgium":[50.779,4.659],"Belarus":[53.782,28.438],"Barbados":[13.158,-59.551],"Bangladesh":[24.301,89.733],"Bahrain":[25.982,50.546],"Bahamas":[24.605,-77.964],"Azerbaijan":[40.349,47.116],"Austria":[47.741,15.334],"Australia":[-23.26,132.846],"Indian Ocean Ter.":[-10.493,105.662],"Heard I. and McDonald Is.":[-53.103,73.498],"Norfolk Island":[-29.052,167.95],"Ashmore and Cartier Is.":[-12.43,123.584],"Armenia":[40.582,44.566],"Argentina":[-31.127,-64.01],"Antigua and Barb.":[17.078,-61.79],"Angola":[-13.125,17.776],"Andorra":[42.538,1.521],"Algeria":[27.474,3.196],"Albania":[40.678,20.086],"Afghanistan":[34.313,66.612],"Siachen Glacier":[35.36,77.136],"Antarctica":[-79.182,-47.673],"Sint Maarten":[18.051,-63.057]};
+/* PROTOTYPE — colors countries by been/want status instead of decorative
+   variety. Derived from Guides-Index.html's country groups + dest-card
+   data-status (any "been" guide in the country → "been"), matched by name
+   against countries-50m.json's properties.name (71/71 matched, no aliasing
+   gaps as of 2026-07-19). Keys are the topojson country names, not ISO ids —
+   country name is stable across topojson rebuilds; ISO id is not always. */
+/* REVISED 2026-07-19 — Dani: "the colors should not have anything to do with
+   the places i have been." Dropped the been/want data tie-in entirely. This is
+   now purely decorative — the same 4-pastel palette from nicoledemoura.com/map
+   (the reference page that started this comparison), assigned per country by
+   a stable name hash so it's just visual contrast between neighbors, nothing
+   more. No relation to Guides-Index.html or travel status. */
+/* Adjacency-safe coloring (added after Dani asked: "not others country around
+   that touches has the same color"). Computed once from the actual shared
+   topojson arcs in THIS exact data file (two countries are neighbors iff they
+   reference the same arc — that's literally how shared borders are encoded),
+   then 4-colored via DSATUR greedy graph coloring so no two touching countries
+   ever share a color. 241 countries, 166 have >=1 land neighbor, 4 colors
+   sufficient with zero conflicts (matches the four-color map theorem).
+   See scratchpad/compute_adjacency.py from the 2026-07-19 conversation for the
+   generator; hashStr is now only a fallback for a name this map doesn't cover. */
+const PALETTE = ['#E4DCD1', '#D9CBF2', '#F7B8CE', '#E5638A', '#B8E0F5', '#C8E8D0', '#F2E6B8'];
+const COUNTRY_COLOR_IDX = {"China":0,"Russia":1,"Kazakhstan":6,"Kyrgyzstan":2,"Uzbekistan":5,"Tajikistan":4,"Afghanistan":1,"Turkmenistan":4,"Iran":6,"Pakistan":2,"India":5,"Siachen Glacier":1,"Myanmar":6,"Laos":5,"Azerbaijan":2,"Turkey":5,"Georgia":4,"Armenia":0,"Iraq":2,"Syria":0,"Jordan":6,"Saudi Arabia":5,"Israel":5,"Thailand":0,"Vietnam":1,"Cambodia":2,"Palestine":4,"Egypt":1,"North Korea":4,"Nepal":2,"Mongolia":2,"Lebanon":4,"Kuwait":6,"Bhutan":1,"Bangladesh":1,"Ukraine":6,"Poland":2,"Belarus":0,"Lithuania":4,"Latvia":6,"Slovakia":4,"Hungary":5,"Austria":0,"Czechia":6,"Germany":5,"Switzerland":4,"France":1,"Italy":6,"Slovenia":2,"Romania":4,"Serbia":2,"Croatia":6,"Bulgaria":6,"Montenegro":5,"Bosnia and Herz.":0,"Macedonia":5,"Kosovo":1,"Greece":2,"Albania":0,"Belgium":0,"Luxembourg":4,"Netherlands":4,"Moldova":1,"Liechtenstein":6,"Estonia":4,"Brazil":0,"Suriname":2,"Guyana":5,"Venezuela":1,"Colombia":6,"Peru":5,"Bolivia":2,"Argentina":4,"Paraguay":5,"Chile":1,"Uruguay":2,"Ecuador":4,"Sudan":4,"Libya":2,"Chad":5,"Niger":1,"Algeria":6,"Mali":0,"Central African Rep.":0,"S. Sudan":2,"Dem. Rep. Congo":1,"Ethiopia":5,"Cameroon":1,"Burkina Faso":6,"Uganda":4,"Kenya":0,"Tanzania":5,"Rwanda":6,"Burundi":2,"Zambia":2,"Mozambique":0,"Malawi":6,"Côte d'Ivoire":4,"Guinea":1,"Senegal":2,"Mauritania":1,"Congo":4,"Angola":5,"Zimbabwe":6,"South Africa":4,"Namibia":6,"Nigeria":4,"Benin":0,"W. Sahara":5,"Togo":5,"Ghana":0,"Somalia":4,"Somaliland":0,"Liberia":0,"Gabon":0,"Eritrea":1,"Djibouti":4,"Botswana":0,"eSwatini":2,"Tunisia":0,"Sierra Leone":4,"Morocco":1,"Guinea-Bissau":4,"Eq. Guinea":6,"Spain":4,"Andorra":3,"Oman":6,"Yemen":0,"United Arab Emirates":1,"Norway":5,"Finland":0,"Sweden":6,"Malaysia":4,"Indonesia":5,"Panama":2,"Costa Rica":4,"Nicaragua":1,"Honduras":5,"Guatemala":0,"El Salvador":1,"Mexico":1,"Belize":5,"United States of America":0,"Vatican":2,"Timor-Leste":1,"South Korea":1,"San Marino":4,"Qatar":1,"Portugal":5,"Papua New Guinea":4,"Monaco":6,"Macao":1,"Lesotho":5,"Hong Kong":4,"Gambia":1,"Denmark":2,"Canada":5,"Brunei":1,"United Kingdom":2,"Ireland":1,"St-Martin":6,"Sint Maarten":2,"N. Cyprus":6,"Cyprus":4,"Haiti":0,"Dominican Rep.":6,"Åland":2,"Wallis and Futuna Is.":1,"Vanuatu":4,"U.S. Virgin Is.":3,"Turks and Caicos Is.":5,"Trinidad and Tobago":0,"Tonga":4,"Taiwan":5,"São Tomé and Principe":2,"St. Vin. and Gren.":6,"St. Pierre and Miquelon":5,"St. Kitts and Nevis":0,"St-Barthélemy":6,"Sri Lanka":1,"Solomon Is.":1,"Singapore":3,"Seychelles":5,"Samoa":1,"Saint Lucia":5,"Saint Helena":4,"S. Geo. and the Is.":5,"Puerto Rico":3,"Pitcairn Is.":2,"Philippines":5,"Palau":0,"Norfolk Island":1,"Niue":3,"New Zealand":4,"New Caledonia":3,"Nauru":5,"N. Mariana Is.":5,"Montserrat":3,"Micronesia":4,"Mauritius":3,"Marshall Is.":3,"Malta":4,"Maldives":6,"Madagascar":6,"Kiribati":1,"Jersey":5,"Japan":5,"Jamaica":0,"Isle of Man":6,"Indian Ocean Ter.":1,"Iceland":0,"Heard I. and McDonald Is.":4,"Guernsey":3,"Guam":3,"Grenada":3,"Greenland":4,"Fr. S. Antarctic Lands":0,"Fr. Polynesia":2,"Fiji":3,"Falkland Is.":0,"Faeroe Is.":6,"Dominica":1,"Curaçao":6,"Cuba":5,"Cook Is.":6,"Comoros":6,"Cayman Is.":6,"Cabo Verde":3,"British Virgin Is.":2,"Br. Indian Ocean Ter.":0,"Bermuda":2,"Barbados":1,"Bahrain":2,"Bahamas":3,"Australia":2,"Ashmore and Cartier Is.":1,"Aruba":1,"Antigua and Barb.":4,"Antarctica":3,"Anguilla":1,"American Samoa":1};
+function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+const colorFor = name => PALETTE[(name in COUNTRY_COLOR_IDX) ? COUNTRY_COLOR_IDX[name] : (hashStr(name || '') % PALETTE.length)];
+// FIXED (2026-07-19): channels were never clamped to 0-255, so multiplying an
+// already-bright pastel channel by a >1 factor overflowed and bit-corrupted
+// the result — e.g. darken('#D9CBF2', 1.12) produced '#f3e40f' (bright
+// yellow-green, a totally different hue) instead of a subtle lighten. That's
+// what made hovering a country flip to an unreadable dark/wrong color.
+function darken(hex,f){var n=parseInt(hex.slice(1),16);var r=Math.min(255,Math.max(0,Math.round(((n>>16)&255)*f))),g=Math.min(255,Math.max(0,Math.round(((n>>8)&255)*f))),b=Math.min(255,Math.max(0,Math.round((n&255)*f)));return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);}
+
+/* ══════════════════════════════════════════════════════════════
+ * PINS — every shipped guide, all regions. Format: [name, lon, lat, href].
+ * Map sits at depth-2, so hrefs climb two levels to Guides/.
+ * Ship adds the new city's pin here (one unified map, no per-region files).
+ * ══════════════════════════════════════════════════════════════ */
+const PINS = [
+  /* ── Europe ── */
+  ['Amsterdam',      4.90, 52.37, '../../Guides/Amsterdam/amsterdam_v1.html'],
+  ['Rotterdam',      4.4777, 51.9244, '../../Guides/Rotterdam/rotterdam_v1.html'],
+  ['Athens',        23.73, 37.98, '../../Guides/Athens/athens_v1.html'],
+  ['Istanbul',      28.98, 41.01, '../../Guides/Istanbul/istanbul_v2.html'],
+  ['Hamburg',       9.99, 53.55, '../../Guides/Hamburg/hamburg_v1.html'],
+  ['Bologna',       11.34, 44.49, '../../Guides/Bologna/bologna_v1.html'],
+  ['Bruges',         3.22, 51.21, '../../Guides/Bruges/bruges_v1.html'],
+  ['Brussels',       4.35, 50.85, '../../Guides/Brussels/brussels_v1.html'],
+  ['Amalfi',         14.6027, 40.6340, '../../Guides/Amalfi/amalfi_v1.html'],
+  ['Cambridge',      0.1218, 52.2053, '../../Guides/Cambridge/cambridge_v1.html'],
+  ['Cannes',         7.0174, 43.5528, '../../Guides/Cannes/cannes_v1.html'],
+  ['Capri',          14.24,  40.55,   '../../Guides/Capri/capri_v1.html'],
+  ['Cascais',       -9.55, 38.70, '../../Guides/Cascais/cascais_v2.html'],
+  ['Cinque Terre',   9.68, 44.13, '../../Guides/Cinque-Terre/cinque-terre_v1.html'],
+  ['Copenhagen',    12.57, 55.68, '../../Guides/Copenhagen/copenhagen_v1.html'],
+  ['Corfu',         19.92, 39.62, '../../Guides/Corfu/corfu_v1.html'],
+  ['Crete',         25.14, 35.34, '../../Guides/Crete/crete_v1.html'],
+  ['Edinburgh',     -3.19, 55.95, '../../Guides/Edinburgh/edinburgh_v1.html'],
+  ['Florence',      11.26, 43.77, '../../Guides/Florence/florence_v1.html'],
+  ['Geneva',         6.14, 46.20, '../../Guides/Geneva/geneva_v1.html'],
+  ['Frankfurt',      8.68, 50.11, '../../Guides/Frankfurt/frankfurt_v1.html'],
+  ['Gothenburg',    11.97, 57.70, '../../Guides/Gothenburg/gothenburg_v1.html'],
+  ['Lagos',        -8.67, 37.10, '../../Guides/Lagos/lagos_v1.html'],
+  ['London',        -0.13, 51.51, '../../Guides/London/london_v5.html'],
+  ['Luxembourg',     6.13, 49.61, '../../Guides/Luxembourg/luxembourg_v1.html'],
+  ['Madrid',        -3.70, 40.42, '../../Guides/Madrid/madrid_v1.html'],
+  ['San Sebastian', -1.9812, 43.3183, '../../Guides/San-Sebastian/san-sebastian_v1.html'],
+  ['Toledo',        -4.025, 39.856, '../../Guides/Toledo/toledo_v1.html'],
+  ['Marktoberdorf', 10.62, 47.78, '../../Guides/Marktoberdorf/marktoberdorf_v1.html'],
+  ['Monaco',        7.42, 43.74, '../../Guides/Monaco/monaco_v1.html'],
+  ['Munich',        11.58, 48.14, '../../Guides/Munich/munich_v2.html'],
+  ['Oxford',        -1.26, 51.75, '../../Guides/Oxford/oxford_v1.html'],
+  ['Paris',          2.35, 48.85, '../../Guides/Paris/paris_v7.html'],
+  ['Nice',           7.27, 43.70, '../../Guides/Nice/nice_v1.html'],
+  ['Pisa',           10.40, 43.72, '../../Guides/Pisa/pisa_v1.html'],
+  ['Porto',         -8.61, 41.15, '../../Guides/Porto/porto_v2.html'],
+  ['Rome',          12.50, 41.90, '../../Guides/Rome/rome_v1.html'],
+  ['Sintra',        -9.39, 38.95, '../../Guides/Sintra/sintra_v2.html'],
+  ['Sorrento',      14.375, 40.626, '../../Guides/Sorrento/sorrento_v1.html'],
+  ['Strasbourg',     7.75, 48.58, '../../Guides/Strasbourg/strasbourg_v1.html'],
+  ['Stuttgart',      9.18, 48.78, '../../Guides/Stuttgart/stuttgart_v1.html'],
+  ['Turin',          7.69, 45.07, '../../Guides/Turin/turin_v14.html'],
+  ['Venice',        12.34, 45.44, '../../Guides/Venice/venice_v1.html'],
+  ['Vienna',        16.37, 48.21, '../../Guides/Vienna/vienna_v1.html'],
+  ['Bilbao',        -2.9253,  43.2627, '../../Guides/Bilbao/bilbao_v1.html'],
+  ['Barcelona',      2.17,    41.39,  '../../Guides/Barcelona/barcelona_v1.html'],
+  ['Seville',       -5.9845,  37.3891,'../../Guides/Seville/seville_v1.html'],
+  ['Malaga',        -4.4214,  36.7213,'../../Guides/Malaga/malaga_v1.html'],
+  ['Granada',       -3.5986,  37.1773,'../../Guides/Granada/granada_v1.html'],
+  ['Tenerife',     -16.55,   28.29,  '../../Guides/Tenerife/tenerife_v1.html'],
+  ['Berlin',        13.40,    52.52,  '../../Guides/Berlin/berlin_v1.html'],
+  ['Cologne',        6.96,    50.94,  '../../Guides/Cologne/cologne_v1.html'],
+  ['Budapest',      19.04,    47.50,  '../../Guides/Budapest/budapest_v1.html'],
+  ['Prague',        14.42,    50.09,  '../../Guides/Prague/prague_v1.html'],
+  ['Kraków',        19.9449,  50.0647,'../../Guides/Kraków/krakow_v1.html'],
+  ['Dublin',        -6.27,    53.33,  '../../Guides/Dublin/dublin_v1.html'],
+  ['Glasgow',       -4.25,    55.86,  '../../Guides/Glasgow/glasgow_v1.html'],
+  ['Helsinki',      25.00,    60.17,  '../../Guides/Helsinki/helsinki_v1.html'],
+  ['Oslo',          10.75,    59.91,  '../../Guides/Oslo/oslo_v1.html'],
+  ['Tromso',        18.96,    69.65,  '../../Guides/Tromso/tromso_v1.html'],
+  ['Alesund',        6.15,    62.47,  '../../Guides/Alesund/alesund_v1.html'],
+  ['Bergen',         5.32,    60.39,  '../../Guides/Bergen/bergen_v1.html'],
+  ['Stockholm',     18.07,    59.33,  '../../Guides/Stockholm/stockholm_v1.html'],
+  ['Tallinn',       24.75,    59.44,  '../../Guides/Tallinn/tallinn_v1.html'],
+  ['Reykjavik',    -21.8277,  64.1265,'../../Guides/Reykjavik/reykjavik_v2.html'],
+  ['Lisbon',        -9.14,    38.72,  '../../Guides/Lisbon/lisbon_v4.html'],
+  ['Madeira',      -16.92,    32.67,  '../../Guides/Madeira/madeira_v1.html'],
+  ['Azores',       -25.67,    37.74,  '../../Guides/Azores/azores_v1.html'],
+  ['Lyon',           4.8357,  45.7640,'../../Guides/Lyon/lyon_v1.html'],
+  ['Marseille',      5.37,    43.30,  '../../Guides/Marseille/marseille_v1.html'],
+  ['Bordeaux',      -0.5792,  44.8378,'../../Guides/Bordeaux/bordeaux_v1.html'],
+  ['Aix-en-Provence',5.4474,  43.5297,'../../Guides/Aix-en-Provence/aix-en-provence_v1.html'],
+  ['Annecy',         6.13,    45.90,  '../../Guides/Annecy/annecy_v1.html'],
+  ['Colmar',         7.36,    48.08,  '../../Guides/Colmar/colmar_v1.html'],
+  ['Lille',          3.06,    50.63,  '../../Guides/Lille/lille_v1.html'],
+  ['Lucerne',        8.31,    47.05,  '../../Guides/Lucerne/lucerne_v1.html'],
+  ['Zurich',         8.54,    47.37,  '../../Guides/Zurich/zurich_v1.html'],
+  ['Milan',          9.19,    45.46,  '../../Guides/Milan/milan_v1.html'],
+  ['Naples',        14.2681,  40.8518,'../../Guides/Naples/naples_v1.html'],
+  ['Siena',         11.3328,  43.3188,'../../Guides/Siena/siena_v1.html'],
+  ['Verona',        10.99,    45.44,  '../../Guides/Verona/verona_v1.html'],
+  ['Lecce',         18.1718,  40.3521,'../../Guides/Lecce/lecce_v1.html'],
+  ['Sardinia',       8.6667,  40.00,  '../../Guides/Sardinia/sardinia_v1.html'],
+  ['Sicily',        14.0154,  37.5994,'../../Guides/Sicily/sicily_v1.html'],
+  ['Dubrovnik',     18.0944,  42.6507,'../../Guides/Dubrovnik/dubrovnik_v2.html'],
+  ['Split',         16.4402,  43.5081,'../../Guides/Split/split_v1.html'],
+  ['Kotor',         18.7714,  42.4247,'../../Guides/Kotor/kotor_v1.html'],
+  ['Ljubljana',     14.51,    46.05,  '../../Guides/Ljubljana/ljubljana_v1.html'],
+  ['Santorini',     25.4615,  36.3932,'../../Guides/Santorini/santorini_v1.html'],
+  ['Mykonos',       25.3289,  37.4467,'../../Guides/Mykonos/mykonos_v1.html'],
+  ['Zakynthos',     20.89,    37.79,  '../../Guides/Zakynthos/zakynthos_v1.html'],
+  ['Rhodes',        28.2278,  36.4341,'../../Guides/Rhodes/rhodes_v1.html'],
+  ['Salzburg',      13.05,    47.80,  '../../Guides/Salzburg/salzburg_v1.html'],
+  ['Lake Como',      9.08,    45.81,  '../../Guides/Lake-Como/lake-como_v1.html'],
+  ['Valletta',      14.5146,  35.8997,'../../Guides/Valletta/valletta_v1.html'],
+  /* ── North America ── */
+  ['Banff', -115.57, 51.18, '../../Guides/Banff/banff_v1.html'],
+  ["Coeur d'Alene", -116.78, 47.68, "../../Guides/Coeur-dAlene/coeur-dalene_v1.html"],
+  ['Atlanta',      -84.39, 33.77, '../../Guides/Atlanta/atlanta_v1.html'],
+  ['Austin',       -97.74, 30.27, '../../Guides/Austin/austin_v1.html'],
+  ['Big Island',   -155.50, 19.60, '../../Guides/Big-Island/big-island_v1.html'],
+  ['Maui',         -156.33, 20.80, '../../Guides/Maui/maui_v1.html'],
+  ['Kauai',        -159.50, 22.05, '../../Guides/Kauai/kauai_v1.html'],
+  ['Oahu',         -157.85, 21.30, '../../Guides/Oahu/oahu_v1.html'],
+  ['Chicago',       -87.63, 41.88, '../../Guides/Chicago/chicago_v2.html'],
+  ['Miami',         -80.19, 25.77, '../../Guides/Miami/miami_v1.html'],
+  ['Nashville',     -86.78, 36.16, '../../Guides/Nashville/nashville_v1.html'],
+  ['New York',      -74.00, 40.71, '../../Guides/New-York/new-york_v1.html'],
+  ['Orlando',       -81.38, 28.54, '../../Guides/Orlando/orlando_v1.html'],
+  ['Palo Alto',    -122.14, 37.44, '../../Guides/Palo-Alto/palo-alto_v6.html'],
+  ['Pasadena',     -118.14, 34.15, '../../Guides/Pasadena/pasadena_v5.html'],
+  ['Las Vegas',    -115.14, 36.17, '../../Guides/Las-Vegas/las-vegas_v1.html'],
+  ['La Jolla',     -117.27, 32.84, '../../Guides/La-Jolla/la-jolla_v1.html'],
+  ['San Diego',    -117.16, 32.72, '../../Guides/San-Diego/san-diego_v1.html'],
+  ['San Francisco',-122.42, 37.77, '../../Guides/San-Francisco/san-francisco_v3.html'],
+  ['San Juan Island', -123.08, 48.53, '../../Guides/San-Juan-Island/san-juan-island_v1.html'],
+  ['Scottsdale',   -111.93, 33.49, '../../Guides/Scottsdale/scottsdale_v1.html'],
+  ['Sedona',       -111.76, 34.86, '../../Guides/Sedona/sedona_v1.html'],
+  ['Seattle',      -122.33, 47.61, '../../Guides/Seattle/seattle_v1.html'],
+  ['Toronto',    -79.38, 43.65, '../../Guides/Toronto/toronto_v1.html'],
+  ['Vancouver',  -123.12, 49.28, '../../Guides/Vancouver/vancouver_v1.html'],
+  ['Victoria',   -123.37, 48.43, '../../Guides/Victoria/victoria_v1.html'],
+  ['Whistler', -122.96, 50.12, '../../Guides/Whistler/whistler_v1.html'],
+  ['Alaska',         -153.37, 61.02, '../../Guides/Alaska/alaska_v1.html'],
+  ['Boston',          -71.06, 42.36, '../../Guides/Boston/boston_v1.html'],
+  ['Los Angeles',    -118.24, 34.05, '../../Guides/Los-Angeles/los-angeles_v1.html'],
+  ['Montreal',        -73.57, 45.51, '../../Guides/Montreal/montreal_v1.html'],
+  ['Quebec City',     -71.21, 46.81, '../../Guides/Quebec-City/quebec-city_v1.html'],
+  ['Boulder',        -105.27, 40.01, '../../Guides/Boulder/boulder_v1.html'],
+  ['Cape Cod',        -70.07, 41.71, '../../Guides/Cape-Cod/cape-cod_v1.html'],
+  ['Carmel by the Sea',-121.92,36.56,'../../Guides/Carmel-by-the-Sea/carmel-by-the-sea_v1.html'],
+  ['Charlotte',       -80.84, 35.23, '../../Guides/Charlotte/charlotte_v1.html'],
+  ['Dallas',          -96.80, 32.78, '../../Guides/Dallas/dallas_v1.html'],
+  ['Denver',         -104.99, 39.74, '../../Guides/Denver/denver_v1.html'],
+  ['Florida Keys',    -81.18, 24.66, '../../Guides/Florida-Keys/florida-keys_v1.html'],
+  ['Hilton Head Island',-80.74,32.18,'../../Guides/Hilton-Head-Island/hilton-head-island_v1.html'],
+  ['Key West',        -81.79, 24.56, '../../Guides/KeyWest/keywest_v1.html'],
+  ['Columbia',        -81.03, 34.00, '../../Guides/Columbia/columbia_v1.html'],
+  ['Glacier National Park',-113.80,48.70,'../../Guides/Glacier-National-Park/glacier-national-park_v2.html'],
+  ['Lake Tahoe',     -120.03, 39.09, '../../Guides/Lake-Tahoe/lake-tahoe_v1.html'],
+  ['Malibu',         -118.78, 34.03, '../../Guides/Malibu/malibu_v1.html'],
+  ['Marco Island',    -81.72, 25.94, '../../Guides/Marco-Island/marco-island_v1.html'],
+  ['Napa',           -122.29, 38.30, '../../Guides/Napa/napa_v1.html'],
+  ['Naples FL',       -81.80, 26.14, '../../Guides/Naples-Florida/naples-florida_v1.html'],
+  ['New Orleans',     -90.07, 29.95, '../../Guides/New-Orleans/new-orleans_v1.html'],
+  ['Oaxaca',          -96.72, 17.07, '../../Guides/Oaxaca/oaxaca_v1.html'],
+  ['Orcas Island',   -122.94, 48.70, '../../Guides/Orcas-Island/orcas-island_v1.html'],
+  ['Pensacola',       -87.22, 30.42, '../../Guides/Pensacola/pensacola_v1.html'],
+  ['Philadelphia',    -75.16, 39.95, '../../Guides/Philadelphia/philadelphia_v1.html'],
+  ['Phoenix',        -112.07, 33.45, '../../Guides/Phoenix/phoenix_v1.html'],
+  ['Portland',       -122.68, 45.52, '../../Guides/Portland/portland_v1.html'],
+  ['Santa Barbara',  -119.70, 34.42, '../../Guides/Santa-Barbara/santa-barbara_v1.html'],
+  ['Santa Cruz',     -122.03, 36.97, '../../Guides/Santa-Cruz/santa-cruz_v1.html'],
+  ['Santa Fe',       -105.94, 35.69, '../../Guides/Santa-Fe/santa-fe_v1.html'],
+  ['Santa Monica',   -118.49, 34.02, '../../Guides/Santa-Monica/santa-monica_v1.html'],
+  ['Sarasota',        -82.53, 27.34, '../../Guides/Sarasota/sarasota_v1.html'],
+  ['Washington DC',   -77.04, 38.91, '../../Guides/Washington-DC/washington-dc_v1.html'],
+  ['Yellowstone',    -110.59, 44.43, '../../Guides/Yellowstone/yellowstone_v1.html'],
+  ['San Jose',       -121.89, 37.34, '../../Guides/San-Jose/san-jose_v1.html'],
+  ['Bend',           -121.31, 44.06, '../../Guides/Bend/bend_v2.html'],
+  ['Palm Desert',    -116.37, 33.72, '../../Guides/Palm-Desert/palm-desert_v1.html'],
+  /* ── Caribbean ── */
+  ['Los Cabos', -109.9167, 22.8905, '../../Guides/Los-Cabos/los-cabos_v1.html'],
+  ['The Bahamas',    -77.35, 25.05, '../../Guides/Bahamas/bahamas_v1.html'],
+  ['Cancún',          -86.8515, 21.1619, '../../Guides/Cancun/cancun_v1.html'],
+  ['Puerto Vallarta', -105.2253, 20.6534, '../../Guides/Puerto-Vallarta/puerto-vallarta_v1.html'],
+  ['Virgin Islands', -64.90, 18.34, '../../Guides/Virgin-Islands/virgin-islands_v1.html'],
+  ['Sint Maarten',   -63.05, 18.04, '../../Guides/Sint-Maarten/sint-maarten_v1.html'],
+  ['Aruba',          -70.02, 12.52, '../../Guides/Aruba/aruba_v1.html'],
+  ['Curaçao',        -68.97, 12.11, '../../Guides/Curacao/curacao_v1.html'],
+  ['Cayman Islands', -81.25, 19.31, '../../Guides/Cayman-Islands/cayman-islands_v1.html'],
+  ['Puerto Rico',    -66.59, 18.20, '../../Guides/Puerto-Rico/puerto-rico_v1.html'],
+  ['Barbados',       -59.57, 13.19, '../../Guides/Barbados/barbados_v1.html'],
+  ['Turks and Caicos',-71.80, 21.82,'../../Guides/Turks-and-Caicos/turks-and-caicos_v1.html'],
+  /* ── Central America ── */
+  /* ── Asia ── */
+  ['Beijing', 116.40, 39.90, '../../Guides/Beijing/beijing_v1.html'],
+  ['Chongqing', 106.55, 29.56, '../../Guides/Chongqing/chongqing_v1.html'],
+  ['Seoul', 126.98, 37.57, '../../Guides/Seoul/seoul_v1.html'],
+  ['Busan', 129.0756, 35.1796, '../../Guides/Busan/busan_v1.html'],
+  ['Shanghai', 121.47, 31.23, '../../Guides/Shanghai/shanghai_v1.html'],
+  ['Zhangjiajie', 110.54, 29.34, '../../Guides/Zhangjiajie/zhangjiajie_v1.html'],
+  ['Taipei', 121.5654, 25.0330, '../../Guides/Taipei/taipei_v1.html'],
+  ['Hiroshima',    132.4553,  34.3963, '../../Guides/Hiroshima/hiroshima_v1.html'],
+  ['Kyoto',        135.7681,  35.0116, '../../Guides/Kyoto/kyoto_v1.html'],
+  ['Tokyo',        139.6917,  35.6895, '../../Guides/Tokyo/tokyo_v1.html'],
+  ['Bangkok',      100.5018,  13.7563, '../../Guides/Bangkok/bangkok_v1.html'],
+  ['Phuket',        98.3923,   7.8804, '../../Guides/Phuket/phuket_v1.html'],
+  ['Chiang Mai',    98.9853,  18.7883, '../../Guides/Chiang-Mai/chiang-mai_v1.html'],
+  ['Hoi An',       108.3280,  15.8801, '../../Guides/Hoi-An/hoi-an_v1.html'],
+  ['Hanoi',        105.8342,  21.0278, '../../Guides/Hanoi/hanoi_v1.html'],
+  ['Bali',         115.1889,  -8.4095, '../../Guides/Bali/bali_v1.html'],
+  ['Palawan',      118.7384,   9.8349, '../../Guides/Palawan/palawan_v1.html'],
+  ['Luang Prabang',102.1370,  19.8845, '../../Guides/Luang-Prabang/luang-prabang_v1.html'],
+  ['Dubai',         55.2708,  25.2048, '../../Guides/Dubai/dubai_v1.html'],
+  ['Abu Dhabi',     54.3773,  24.4539, '../../Guides/Abu-Dhabi/abu-dhabi_v1.html'],
+  ['Doha',          51.5310,  25.2854, '../../Guides/Doha/doha_v1.html'],
+  ['Muscat',        58.5930,  23.5880, '../../Guides/Muscat/muscat_v1.html'],
+  ['Petra',         35.4444,  30.3285, '../../Guides/Petra/petra_v1.html'],
+  ['Bhutan',        89.6390,  27.5142, '../../Guides/Bhutan/bhutan_v1.html'],
+  ['Colombo',       79.8612,   6.9271, '../../Guides/Colombo/colombo_v1.html'],
+  ['Pokhara',       83.9856,  28.2096, '../../Guides/Pokhara/pokhara_v1.html'],
+  ['Maldives',      73.5093,   3.2028, '../../Guides/Maldives/maldives_v1.html'],
+  ['Osaka',        135.5022,  34.6937, '../../Guides/Osaka/osaka_v1.html'],
+  ['Tbilisi',       44.8015,  41.6938, '../../Guides/Tbilisi/tbilisi_v1.html'],
+  ['Singapore',    103.82,     1.35,   '../../Guides/Singapore/singapore_v3.html'],
+  ['Hong Kong',    114.16,    22.30,   '../../Guides/Hong-Kong/hong-kong_v1.html'],
+  /* ── Africa ── */
+  ['Cairo',      31.2357,  30.0444, '../../Guides/Cairo/cairo_v2.html'],
+  ['Marrakech',  -7.99,    31.63,   '../../Guides/Marrakech/marrakech_v1.html'],
+  ['Seychelles', 55.4921,  -4.6796, '../../Guides/Seychelles/seychelles_v1.html'],
+  ['Cape Town',  18.42,   -33.92,   '../../Guides/Cape-Town/cape-town_v1.html'],
+  /* ── South America ── */
+  ['Buenos Aires', -58.38,   -34.61,  '../../Guides/Buenos-Aires/buenos-aires_v1.html'],
+  ['Cusco',        -71.978,  -13.525, '../../Guides/Cusco/cusco_v1.html'],
+  ['MachuPicchu',  -72.545,  -13.163, '../../Guides/MachuPicchu/machupicchu_v1.html'],
+  ['Lima',         -77.0428, -12.0464,'../../Guides/Lima/lima_v1.html'],
+  ['Rio de Janeiro',-43.1729,-22.9068,'../../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html'],
+  ['Santiago',     -70.6693, -33.4489,'../../Guides/Santiago/santiago_v1.html'],
+  ['Montevideo',   -56.1645, -34.9011,'../../Guides/Montevideo/montevideo_v1.html'],
+  ['São Paulo',    -46.6333, -23.5505,'../../Guides/São-Paulo/sao-paulo_v1.html'],
+  ['Porto Alegre', -51.2330, -30.0346,'../../Guides/Porto-Alegre/porto-alegre_v1.html'],
+  ['Florianópolis',-48.5482, -27.5954,'../../Guides/Florianopolis/florianopolis_v1.html'],
+  ['Curitiba',     -49.2733, -25.4195,'../../Guides/Curitiba/curitiba_v1.html'],
+  ['Foz do Iguaçu',-54.5855, -25.5478,'../../Guides/Foz-do-Iguaçu/foz-do-iguacu_v2.html'],
+  ['Galapagos-Islands',-90.3138, -0.7464, '../../Guides/Galapagos-Islands/galapagos-islands_v1.html'],
+  ['Salvador',     -38.5016, -12.9714,'../../Guides/Salvador/salvador_v1.html'],
+  ['Recife',       -34.8770,  -8.0476,'../../Guides/Recife/recife_v1.html'],
+  ['Olinda',       -34.8560,  -8.0089,'../../Guides/Olinda/olinda_v1.html'],
+  ['Fortaleza',    -38.5434,  -3.7172,'../../Guides/Fortaleza/fortaleza_v1.html'],
+  ['Natal',        -35.2094,  -5.7945,'../../Guides/Natal/natal_v1.html'],
+  ['João Pessoa',  -34.8630,  -7.1195,'../../Guides/João-Pessoa/joao-pessoa_v1.html'],
+  ['Maceió',       -35.7353,  -9.6658,'../../Guides/Maceió/maceio_v1.html'],
+  ['Aracaju',      -37.0731, -10.9472,'../../Guides/Aracaju/aracaju_v1.html'],
+  ['São Luís',     -44.3029,  -2.5307,'../../Guides/São-Luís/sao-luis_v1.html'],
+  /* ── Central America ── */
+  ['Manuel Antonio',-84.1538,  9.3896,'../../Guides/Manuel-Antonio/manuel-antonio_v1.html'],
+  ['Arenal',       -84.7036,  10.4630,'../../Guides/Arenal/arenal_v1.html'],
+  ['San José CR',  -84.0907,   9.9281,'../../Guides/San-Jose-Costa-Rica/san-jose-costa-rica_v1.html'],
+  /* ── Oceania ── */
+  ['Sydney',      151.21,  -33.87, '../../Guides/Sydney/sydney_v2.html'],
+  ['Melbourne',   144.96,  -37.81, '../../Guides/Melbourne/melbourne_v1.html'],
+  ['Queenstown',  168.66,  -45.03, '../../Guides/Queenstown/queenstown_v1.html'],
+  ['Wellington',  174.78,  -41.29, '../../Guides/Wellington/wellington_v1.html'],
+  ['Bora Bora',  -151.7415,-16.5004,'../../Guides/Bora-Bora/bora-bora_v1.html'],
+];
+
+const embedMode = new URLSearchParams(location.search).has('embed');
+
+/* ── Region bounds in Leaflet order [[south,west],[north,east]] ── */
+const REGIONS = {
+  world: [[-50, -160], [72, 178]],
+  eu:    [[35, -25], [67, 42]],
+  na:    [[17, -162], [66, -66]],
+  cb:    [[11, -85], [27, -58]],
+  as:    [[-12, 48], [44, 146]],
+  af:    [[-36, -19], [38, 52]],
+  sa:    [[-56, -82], [13, -34]],
+  oc:    [[-48, 140], [-31, 177]],
+};
+
+/* ── Map init ── */
+// maxBoundsViscosity: 0 (hard boundary, no elastic resistance) — the prior 0.7
+// viscosity fought Leaflet's CSS-transition zoom animation and caused animated
+// zoom (scroll wheel, pinch, +/-, fitBounds, flyToBounds) to freeze indefinitely.
+// With viscosity 0 the bounds are still enforced as a hard clamp; zoomAnimation
+// can be true and all animated zoom/pan paths work normally.
+const map = L.map('map', {
+  zoomControl: false,
+  attributionControl: false,
+  minZoom: 1,
+  maxZoom: 11,
+  worldCopyJump: false,
+  zoomSnap: 0.25,
+  zoomDelta: 0.5,
+  maxBounds: [[-85, -200], [85, 200]],
+  maxBoundsViscosity: 0,
+});
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+map.createPane('countryLabels');
+map.getPane('countryLabels').style.zIndex = 590;
+map.getPane('countryLabels').style.pointerEvents = 'none';
+map.createPane('stateLabels');
+map.getPane('stateLabels').style.zIndex = 591;
+map.getPane('stateLabels').style.pointerEvents = 'none';
+map.createPane('minorLabels');           // all non-major country names
+map.getPane('minorLabels').style.zIndex = 589;
+map.getPane('minorLabels').style.pointerEvents = 'none';
+// State/province names smear across the US/Canada at world zoom — reveal them only
+// when zoomed into the country. Minor country names reveal one level earlier, at
+// continent zoom, so the region buttons (Africa, S. America, Caribbean) show every
+// country. The ~45 major countries stay labelled at world zoom (countryLabels).
+map.createPane('cityDots');              // major non-guide world cities
+map.getPane('cityDots').style.zIndex = 585;
+map.getPane('cityDots').style.pointerEvents = 'none';
+map.createPane('cityLabels');
+map.getPane('cityLabels').style.zIndex = 586;
+map.getPane('cityLabels').style.pointerEvents = 'none';
+// Slow staged reveal: WORLD (major countries only — ~45 curated, always on)
+// → CONTINENTS (minor countries too, z>=3 — every country gets a name
+// eventually, but the raw world view doesn't cram all ~196 of them into a
+// tiny visible area at once) → COUNTRIES (states/provinces, z>=4.5) →
+// CITIES (dots z>=4.5, names z>=6).
+function toggleStateLabels() {
+  map.getPane('stateLabels').style.display = (map.getZoom() >= 4.5) ? '' : 'none';
+}
+function toggleMinorLabels() {
+  // REVERTED (2026-07-19): "always show" made the raw world view cram all
+  // ~196 minor-country names into a tiny visible area — unreadable clutter
+  // (Caribbean, Balkans, Middle East all overlapping). Every country still
+  // gets its name eventually — this just waits for continent zoom (z>=3),
+  // same threshold as the original design, so "all countries show a name"
+  // and "world view isn't cluttered" both hold.
+  map.getPane('minorLabels').style.display = (map.getZoom() >= 3) ? '' : 'none';
+}
+function updateZoomClasses() {
+  const z = Math.min(Math.floor(map.getZoom()), 7);
+  const el = map.getContainer();
+  el.className = el.className.replace(/\bzcl-\d+\b/g, '');
+  if (z >= 3) el.classList.add('zcl-' + z);
+}
+map.on('zoomend', () => { updateZoomClasses(); toggleStateLabels(); toggleMinorLabels(); });
+// Major cities: render only the ones IN VIEW, biggest-first, up to a per-zoom
+// population tier — so we can carry 12k cities without lag. Declared here (before
+// the handler) so an early moveend can't hit them in the temporal dead zone;
+// CITY_DATA is filled by the fetch below, renderCities() is hoisted.
+let CITY_DATA = [];
+const cityIcon = L.divIcon({ className: 'city-anchor', iconSize: [0, 0] });
+const cityLayer = L.layerGroup().addTo(map);
+// Guide-pin name labels are permanent (always shown when the pin itself is
+// visible) and take priority over world-city names in the collision pass —
+// pinMarkers/labelPlacedRects declared here, before the initial fitBounds, for
+// the same TDZ reason as CITY_DATA above. labelPlacedRects is reset and re-
+// filled by renderPinLabels() first, then renderCities() builds on top of it
+// so a city name never lands on top of a guide pin's name.
+let pinMarkers = [];
+let labelPlacedRects = [];
+let pinCluster = null;
+// Minor country name labels (added 2026-07-19, Dani: "so many problems" —
+// dense clusters like the Eastern Caribbean had every tiny nation's name
+// piled on top of each other AND on top of guide pin names, since country
+// labels were permanent tooltips with zero collision checking, unlike
+// pins/cities/regions which already run the labelPlacedRects pass below).
+// Populated in onEachFeature, checked in renderCountryLabelVisibility().
+let countryLabelEntries = [];
+// Countries whose name is essentially a guide pin's name AND that pin sits
+// inside the country's polygon — e.g. Cayman Islands (guide) covers Cayman Is.
+// (country), Turks and Caicos (guide) covers Turks and Caicos Is. (country),
+// The Bahamas → Bahamas, Virgin Islands → both British/U.S. Virgin Is., etc.
+// In those cases the pin's own permanent tooltip already labels the island,
+// so drawing the country name too was a visual duplicate (screenshot flagged
+// 2026-07-28 — "Cayman Islands" above pin, "Cayman Is." right at pin center).
+// Computed once, right after buildPins() populates pinMarkers; consulted at
+// the top of renderCountryLabelVisibility() to unconditionally hide those
+// country labels.
+const pinCoveredCountries = new Set();
+function _normalizeCountryName(s) {
+  s = s.toLowerCase().trim();
+  if (s.startsWith('the ')) s = s.slice(4);
+  const sfx = [' islands', ' island', ' is.', ' republic', ' rep.'];
+  for (const t of sfx) { if (s.endsWith(t)) { s = s.slice(0, -t.length); break; } }
+  return s.trim();
+}
+// Admin-1 regions for continents too large to overlay eagerly (every continent
+// besides North America, which gets US states + Canada provinces above): each is
+// lazy-loaded the first time you zoom toward it, drawn as filled canvas polygons
+// (same look as the US/Canada overlay) with viewport-culled, collision-avoided
+// names — same idea as the cities.
+const euRegionLayer = L.layerGroup().addTo(map);
+const euCanvas = L.canvas({ padding: 0.4 });
+const blankIcon = L.divIcon({ className: 'eu-region-anchor', iconSize: [0, 0] });
+const REGION_SOURCES = {
+  eu: { bbox: L.latLngBounds([34, -25], [72, 45]), file: 'data/europe-regions.json' },
+  sa: { bbox: L.latLngBounds([-56, -82], [13, -34]), file: 'data/south-america-regions.json' },
+  af: { bbox: L.latLngBounds([-36, -19], [38, 52]), file: 'data/africa-regions.json' },
+  as: { bbox: L.latLngBounds([-12, 48], [44, 146]), file: 'data/asia-regions.json' },
+  oc: { bbox: L.latLngBounds([-48, 140], [-31, 177]), file: 'data/oceania-regions.json' },
+  cb: { bbox: L.latLngBounds([11, -85], [27, -58]), file: 'data/caribbean-regions.json' },
+};
+const regionState = {};
+Object.keys(REGION_SOURCES).forEach(k => { regionState[k] = { loaded: false, lines: null, regions: [] }; });
+map.on('moveend', () => { updateZoomClasses(); renderPinLabels(); renderCountryLabelVisibility(); renderCities(); maybeLoadRegions(); toggleRegionLines(); renderRegions(); });
+
+/* ── Minor country name collision pass — runs after renderPinLabels() (pins
+   keep priority, same as renderCities() below) and before renderCities(), so
+   a country name never displaces a guide pin's name, but DOES compete fairly
+   with world-city names for the same space. Majors (~45) are always shown
+   unconditionally — spread across the globe, collisions between them are
+   negligible; this only needed to matter for the ~196 minors, which cluster
+   densely in places like the Caribbean, Persian Gulf, and Balkans. Two
+   independent checks: (1) is this country's on-screen shape even big enough
+   to hold a label without spilling into neighbors, (2) does the label rect
+   clash with anything already placed this frame. ── */
+function renderCountryLabelVisibility() {
+  const b = map.getBounds();
+  const z = map.getZoom();
+  const cw = z < 3 ? 4.2 : z < 5 ? 5.2 : 6.2;
+  const ch = z < 3 ? 10  : z < 5 ? 12  : 14;
+  // Zoom-scaled min-size gate: at world/continent zoom, only countries whose
+  // on-screen bbox can hold a label without spilling into neighbors are drawn;
+  // as the user zooms in, allow smaller countries (Lesotho, Luxembourg, small
+  // Caribbean nations) to attempt. Majors are exempt — per Maps-Layout §6b,
+  // majors always attempt. Fixes small-country dropouts flagged 2026-07-28.
+  const minW = z < 3 ? 28 : z < 4 ? 20 : z < 5 ? 12 : 8;
+  const minH = z < 3 ? 14 : z < 4 ? 10 : z < 5 ?  6 : 4;
+  const sorted = [...countryLabelEntries].sort((a, b) => {
+    const ab = a.lyr._voyagerBounds, bb = b.lyr._voyagerBounds;
+    const aA = (ab.getNorth() - ab.getSouth()) * (ab.getEast() - ab.getWest());
+    const bA = (bb.getNorth() - bb.getSouth()) * (bb.getEast() - bb.getWest());
+    return bA - aA;
+  });
+  // Seeded with pin (and any already-placed) rects so a country label never
+  // lands on a guide pin's name. renderPinLabels() runs first this frame and
+  // fills labelPlacedRects; without this seed, countries were only checked
+  // against other countries and pin-vs-country overlaps slipped through
+  // (Vietnam↔Hanoi, UK↔Cambridge, Peru↔Cusco, Luxembourg, Puerto Rico, etc.
+  // — fix 2026-07-28).
+  const placedRects = [...labelPlacedRects];
+  for (const { lyr, isMinor } of sorted) {
+    const tt = lyr.getTooltip();
+    if (!tt) continue;
+    const cname = lyr.feature && lyr.feature.properties && lyr.feature.properties.name;
+    // Guide pin already labels this country by name — don't double-print it.
+    if (cname && pinCoveredCountries.has(cname)) { lyr.closeTooltip(); continue; }
+    const center = lyr._voyagerLabelCenter;
+    if (!b.contains(center)) { lyr.closeTooltip(); continue; }
+    if (isMinor) {
+      const cb = lyr._voyagerBounds;
+      const p1 = map.latLngToContainerPoint(cb.getNorthWest());
+      const p2 = map.latLngToContainerPoint(cb.getSouthEast());
+      if (Math.abs(p2.x - p1.x) < minW || Math.abs(p2.y - p1.y) < minH) { lyr.closeTooltip(); continue; }
+    }
+    const name = tt.getContent();
+    const p = map.latLngToContainerPoint(center);
+    const rw = name.length * cw + 4;
+    const rh = ch + 2;
+    const rect = { x: p.x - rw / 2, y: p.y - rh / 2, w: rw, h: rh };
+    let clash = false;
+    for (const q of placedRects) {
+      if (rect.x < q.x + q.w && rect.x + rect.w > q.x && rect.y < q.y + q.h && rect.y + rect.h > q.y) { clash = true; break; }
+    }
+    if (clash) { lyr.closeTooltip(); continue; }
+    placedRects.push(rect);
+    lyr.openTooltip(center);
+    labelPlacedRects.push(rect);
+  }
+}
+
+// Keep the framed region clear of the overlay controls: pad left for the
+// desktop panel; no other controls overlay the map on mobile.
+function fitOpts(animated) {
+  const base = (embedMode || window.innerWidth <= 640)
+    ? { paddingTopLeft: [12, 12], paddingBottomRight: [12, 12] }
+    : { paddingTopLeft: [150, 14], paddingBottomRight: [14, 14] };
+  if (!animated) base.animate = false;
+  return base;
+}
+map.fitBounds(REGIONS.world, fitOpts(false));
+
+/* ── Country polygons from world-atlas TopoJSON (GeoJSON-only, no tiles) ── */
+getJSON('data/countries-50m.json')
+  .then(world => {
+    const fc = topojson.feature(world, world.objects.countries);
+    // Antarctica: no guide will ever be built there, and Web Mercator smears
+    // it into a huge distorted band across the entire bottom of the world
+    // view (the projection stretches toward infinity near the poles) — reads
+    // as a giant stray colored blob, not a country. Drop it before the layer
+    // is built so it never renders (fill, border, or label).
+    fc.features = fc.features.filter(f => (f.properties && f.properties.name) !== 'Antarctica');
+    // Antimeridian guard: Russia and Fiji have rings that wrap past ±180°
+    // (Chukotka, the Fiji group), which Mercator smears into a horizontal
+    // band across the whole map. Pin any wrapped (far-negative) vertex to the
+    // right edge so the polygon crops cleanly instead of streaking.
+    const clampWrap = lon => (lon < -100) ? 179.9 : lon;
+    const fixCoords = c => (typeof c[0] === 'number') ? [clampWrap(c[0]), c[1]] : c.map(fixCoords);
+    const clampUS = lon => (lon > 0) ? -179.9 : lon;
+    const fixCoordsUS = c => (typeof c[0] === 'number') ? [clampUS(c[0]), c[1]] : c.map(fixCoordsUS);
+    fc.features.forEach(f => {
+      if (+f.id === 643 || +f.id === 242 || +f.id === 554) f.geometry.coordinates = fixCoords(f.geometry.coordinates);
+      if (+f.id === 840) f.geometry.coordinates = fixCoordsUS(f.geometry.coordinates);
+    });
+    const layer = L.geoJSON(fc, {
+      style: f => {
+        const nm = f.properties && f.properties.name;
+        return {
+          fillColor: colorFor(nm),
+          fillOpacity: 1,
+          color: darken(colorFor(nm), 0.6),
+          weight: 0.6,
+        };
+      },
+      onEachFeature: (f, lyr) => {
+        const nm = f.properties && f.properties.name;
+        lyr.on('mouseover', () => lyr.setStyle({ fillColor: darken(colorFor(nm), 1.12) }));
+        lyr.on('mouseout',  () => lyr.setStyle({ fillColor: colorFor(nm) }));
+        const labelCenter = LABEL_CENTERS[nm];
+        // PERF FIX (2026-07-19): getBounds() walks every vertex of a polygon
+        // (thousands for a complex coastline like Norway/Indonesia/Russia) —
+        // computed and cached ONCE here rather than re-called inside
+        // renderCountryLabelVisibility() on every single pan/zoom, which was
+        // costing 4+ SECONDS per moveend across 241 countries (found via
+        // direct performance.now() measurement, not a guess).
+        const bounds = lyr.getBounds();
+        lyr._voyagerBounds = bounds;
+        const c = labelCenter ? L.latLng(labelCenter[0], labelCenter[1]) : bounds.getCenter();
+        // Stashed for re-application after .addTo(map) below — Leaflet's own
+        // _openTooltip() recomputes a permanent tooltip's position from
+        // layer.getCenter() (bbox-center) the moment the layer is added to the
+        // map, silently overwriting any setLatLng() called before that point.
+        // That's why this was landing on borders/oceans for Somalia etc. even
+        // though the "right" coordinate was being set right here.
+        lyr._voyagerLabelCenter = c;
+        if (nm) {
+          const isMajor = MAJOR_COUNTRIES.has(nm);
+          lyr.bindTooltip(nm, {
+            permanent: true, direction: 'center',
+            className: isMajor ? 'country-label-tip' : 'minor-label-tip',
+            pane: isMajor ? 'countryLabels' : 'minorLabels',
+            interactive: false,
+          });
+          countryLabelEntries.push({ lyr, isMinor: !isMajor });
+        }
+      },
+    }).addTo(map);
+    // Re-apply every tooltip's real position now that the layer is on the map
+    // — see the _voyagerLabelCenter comment above for why this has to happen
+    // AFTER addTo(map), not during onEachFeature.
+    const BOUNDS_OVERRIDE = {
+      'France': L.latLngBounds([41, -5.5], [51.5, 10]),
+      'Kiribati': L.latLngBounds([-4, 169], [5, 177]),
+      'Netherlands': L.latLngBounds([50.5, 3], [54, 7.5]),
+      'Chile': L.latLngBounds([-56, -79], [-17, -66]),
+      'Ecuador': L.latLngBounds([-5, -81.5], [2, -75]),
+      'Portugal': L.latLngBounds([32, -18], [42.5, -6]),
+      'Australia': L.latLngBounds([-45, 112], [-10, 155]),
+    };
+    layer.eachLayer(lyr => {
+      if (lyr._voyagerLabelCenter && lyr.getTooltip()) {
+        lyr.getTooltip().setLatLng(lyr._voyagerLabelCenter);
+      }
+      const nm = lyr.feature && lyr.feature.properties && lyr.feature.properties.name;
+      if (nm && BOUNDS_OVERRIDE[nm]) lyr._voyagerBounds = BOUNDS_OVERRIDE[nm];
+    });
+    layer.bringToBack();
+    toggleMinorLabels();   // respect current zoom (hidden until continent zoom)
+    buildPins();           // seeds labelPlacedRects via its internal renderPinLabels() call
+    // For each country whose polygon contains a guide pin with essentially the
+    // same name, mark it — renderCountryLabelVisibility() will hide it so the
+    // pin's own name isn't shadowed by the country's label. Two guards keep
+    // this from false-suppressing: (1) the pin must be geographically inside
+    // the country's bounds (kills e.g. Malibu pin vs Mali country — the name
+    // normalizes overlap but Malibu isn't in Mali), (2) substring matches
+    // require a 4+ char root (kills tiny fragment collisions).
+    layer.eachLayer(lyr => {
+      const cname = lyr.feature && lyr.feature.properties && lyr.feature.properties.name;
+      if (!cname || !lyr._voyagerBounds) return;
+      const cn = _normalizeCountryName(cname);
+      if (!cn) return;
+      for (const m of pinMarkers) {
+        const pn = _normalizeCountryName(m.options.title || '');
+        if (!pn) continue;
+        if (!lyr._voyagerBounds.contains(m.getLatLng())) continue;
+        const hit = pn === cn
+          || (pn.length >= 4 && cn.includes(pn))
+          || (cn.length >= 4 && pn.includes(cn));
+        if (hit) { pinCoveredCountries.add(cname); break; }
+      }
+    });
+    renderCountryLabelVisibility();
+  })
+  .catch(() => {
+    document.getElementById('map').insertAdjacentHTML('beforeend',
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;color:#6b4422;font-size:15px;text-align:center;padding:20px;">Could not load map data.<button onclick="location.reload()" style="padding:8px 18px;background:#b85c2a;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;">Retry</button></div>');
+  });
+
+/* ── US state boundaries ── world-atlas is country-level (the US is one polygon),
+   so overlay all 50 states + DC (lat/lon GeoJSON) on top of the US country so
+   every state is visible — guide or not. Non-interactive, lands in the overlay
+   pane (below the pins). No antimeridian clamp here: the country clamp pins
+   lon < -100° to the right edge, which would destroy the whole western US.
+   Names feed the same renderRegions() collision pass as every other continent
+   (regionState.us, registered outside REGION_SOURCES since it's loaded eagerly,
+   not lazily) — found via mobile testing: Connecticut/Rhode Island and
+   Delaware/DC always overlapped because this used a permanent, unculled
+   tooltip with zero collision checking. ── */
+regionState.us = { loaded: true, lines: null, regions: [] };
+getJSON('data/us-states.json')
+  .then(us => {
+    // RE-ENABLED (2026-07-19) — Dani: US keeps state-level names + borders;
+    // it's only the rest-of-world admin-1 subdivisions (Africa/Europe/etc,
+    // via maybeLoadRegions() below, still disabled) that were the clutter.
+    L.geoJSON(us, {
+      interactive: false,
+      style: { fillOpacity: 0, color: darken(colorFor('United States of America'), 0.55), weight: 0.7 },
+    }).addTo(map);
+    us.features.forEach(f => {
+      const nm = f.properties && f.properties.name;
+      if (!nm) return;
+      const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+      const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+      regionState.us.regions.push({ name: nm, lat: c.lat, lon: c.lng, sz });
+    });
+    regionState.us.regions.sort((a, b) => b.sz - a.sz);
+    toggleStateLabels(); renderRegions();   // respect current zoom (hidden until zoomed into the US)
+  })
+  .catch(() => {});
+
+/* ── Canada province/territory boundaries ── same treatment as US states: overlay
+   all 13 provinces + territories on top of the single Canada polygon so every one
+   is visible, with names revealed at the same zoom gate. ── */
+regionState.ca = { loaded: true, lines: null, regions: [] };
+getJSON('data/canada-provinces.json')
+  .then(ca => {
+    // RE-ENABLED (2026-07-19) — grouped with US as North America; never part
+    // of the admin-1 clutter complaint (that was Africa/Europe specifically).
+    L.geoJSON(ca, {
+      interactive: false,
+      style: { fillOpacity: 0, color: darken(colorFor('Canada'), 0.55), weight: 0.7 },
+    }).addTo(map);
+    ca.features.forEach(f => {
+      const nm = f.properties && f.properties.name;
+      if (!nm) return;
+      const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+      const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+      regionState.ca.regions.push({ name: nm, lat: c.lat, lon: c.lng, sz });
+    });
+    regionState.ca.regions.sort((a, b) => b.sz - a.sz);
+    toggleStateLabels(); renderRegions();
+  })
+  .catch(() => {});
+
+/* ── Mexico state boundaries ── same treatment as US/Canada: overlay the 31 states
+   + CDMX on top of the Mexico polygon, borders only (fillOpacity: 0), names
+   revealed at the same z>=4.5 gate as US states and Canadian provinces. ── */
+regionState.mx = { loaded: true, lines: null, regions: [] };
+getJSON('data/mexico-states.json')
+  .then(mx => {
+    L.geoJSON(mx, {
+      interactive: false,
+      style: { fillOpacity: 0, color: darken(colorFor('Mexico'), 0.55), weight: 0.7 },
+    }).addTo(map);
+    mx.features.forEach(f => {
+      const nm = f.properties && f.properties.name;
+      if (!nm) return;
+      const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+      const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+      regionState.mx.regions.push({ name: nm, lat: c.lat, lon: c.lng, sz });
+    });
+    regionState.mx.regions.sort((a, b) => b.sz - a.sz);
+    toggleStateLabels(); renderRegions();
+  })
+  .catch(() => {});
+
+/* ── Admin-1 regions (Europe, South America, Africa, Asia, Oceania, Caribbean) ──
+   same idea as US states: subdivide every country in these continents with
+   filled polygons + names, same look as the US/Canada overlay. Each set is up to
+   ~1500 regions / under 1MB (mapshaper-simplified), so each is lazy-loaded the
+   first time you zoom toward that continent, drawn on a canvas (filled, not SVG,
+   to keep thousands of polygons cheap), with names viewport-culled + collision-
+   avoided (biggest region first) like the cities.
+   (REGION_SOURCES / regionState declared earlier, before the initial fitBounds —
+   that call fires 'moveend' synchronously, which would otherwise hit these in
+   their temporal dead zone.) ── */
+function maybeLoadRegions() {
+  // RE-ENABLED (2026-07-22) — Dani: extend subdivisions to all continents,
+  // matching the US/Canada/Mexico treatment. Lazy-loads per bounding-box
+  // intersection so only the visible continent's data is fetched at any time.
+  if (map.getZoom() < 4) return;
+  Object.entries(REGION_SOURCES).forEach(([key, src]) => {
+    const st = regionState[key];
+    if (st.loaded || !map.getBounds().intersects(src.bbox)) return;
+    st.loaded = true;
+    getJSON(src.file)
+      .then(geo => {
+        // FIXED (was: flat neutral fill on top of the status-colored country layer
+        // below — since this loads lazily at z>=4, it made "been" countries in
+        // Europe/Asia/Africa/S.America/Oceania/Caribbean flip to neutral the moment
+        // you zoomed in, while North America (recolored separately, see US/Canada
+        // above) stayed correct — the exact inconsistency Dani flagged as "does not
+        // make sense" 2026-07-19. fillOpacity: 0 makes every subdivision layer
+        // boundary-lines-only, so the country-level fill is always what's visible,
+        // consistently, regardless of zoom or which continent.
+        // BUG FIX (2026-07-19): this referenced NO_GUIDE_COLOR, a variable that
+        // no longer exists after the been/want-color removal — it threw a
+        // ReferenceError on every call, silently swallowed by the .catch()
+        // below (which just reset st.loaded so it would quietly retry-and-fail
+        // forever). That's why Europe/Asia/Africa/S.America/Oceania/Caribbean
+        // never showed ANY subdivision lines, while US/Canada (fixed correctly
+        // earlier) did. Fixed border color to a plain neutral tone.
+        st.lines = L.geoJSON(geo, {
+          interactive: false, renderer: euCanvas,
+          style: { fillOpacity: 0, color: '#8a8070', weight: 0.7 },
+        });
+        geo.features.forEach(f => {
+          const bb = L.geoJSON(f).getBounds(); const c = bb.getCenter();
+          const sz = (bb.getEast() - bb.getWest()) * (bb.getNorth() - bb.getSouth());
+          st.regions.push({ name: f.properties.name, lat: c.lat, lon: c.lng, sz });
+        });
+        st.regions.sort((a, b) => b.sz - a.sz);   // biggest region first
+        toggleRegionLines(); renderRegions();
+      })
+      .catch(() => { st.loaded = false; });
+  });
+}
+function toggleRegionLines() {
+  const on = map.getZoom() >= 4;
+  Object.values(regionState).forEach(st => {
+    if (!st.lines) return;
+    if (on && !map.hasLayer(st.lines)) st.lines.addTo(map);
+    else if (!on && map.hasLayer(st.lines)) map.removeLayer(st.lines);
+  });
+}
+function renderRegions() {
+  // Labels only for NA (US/Canada/Mexico) — their states/provinces are large
+  // enough to read cleanly. Rest-of-world admin-1 regions still get boundary
+  // lines (via toggleRegionLines) for map texture but no text labels, since
+  // European/Asian/etc. subdivisions are too small and create a cluttered mess.
+  euRegionLayer.clearLayers();
+  if (map.getZoom() < 4.5) return;
+  const all = ['us', 'ca', 'mx'].flatMap(k => (regionState[k] || { regions: [] }).regions);
+  if (!all.length) return;
+  const b = map.getBounds();
+  // Seeded with guide-pin + city label rects (placed earlier this moveend, see
+  // renderPinLabels/renderCities) so a region name never lands on a guide pin's
+  // name — found via mobile testing: "Foz do Iguaçu"/"Buenos Aires" pins were
+  // overlapping "Caaguazú"/"Colonia" province names at the zoom guides sit at.
+  const placed = labelPlacedRects;
+  let shown = 0;
+  for (const r of all) {                         // biggest region first (within each set)
+    if (!b.contains([r.lat, r.lon])) continue;
+    const p = map.latLngToContainerPoint([r.lat, r.lon]);
+    const w = r.name.length * 6 + 8, h = 14;
+    const rect = { x: p.x - w / 2, y: p.y - h / 2, w, h };
+    let clash = false;
+    for (const q of placed) {
+      if (rect.x < q.x + q.w && rect.x + rect.w > q.x && rect.y < q.y + q.h && rect.y + rect.h > q.y) { clash = true; break; }
+    }
+    if (clash) continue;
+    L.marker([r.lat, r.lon], { icon: blankIcon, pane: 'stateLabels', interactive: false, keyboard: false })
+      .bindTooltip(r.name, { permanent: true, direction: 'center', className: 'state-label-tip', pane: 'stateLabels', interactive: false })
+      .addTo(euRegionLayer);
+    placed.push(rect);
+    if (++shown >= 90) break;
+  }
+}
+
+/* ── Major world cities (non-guide) ── 12k cities (pop >= 50k, tiered 0=>1M …
+   4=>50k). To carry that many without lag we render ONLY the cities currently in
+   view, biggest-first, capped — re-running on every pan/zoom. Guide cities already
+   have their own orange pins, so they're filtered out to avoid doubles.
+   (CITY_DATA / cityLayer / cityIcon are declared up by the move handler.) */
+getJSON('data/world-cities.json')
+  .then(cities => {
+    const guideNames = new Set(PINS.map(p => p[0].toLowerCase()));
+    CITY_DATA = cities.filter(c => !guideNames.has(c[0].toLowerCase()));  // pre-sorted by tier (biggest first)
+    renderCities();
+  })
+  .catch(() => {});
+
+// Progressive disclosure, tier 0=>1M … 4=>50k:
+//  DOTS appear first (from continent zoom), NAMES fade in a couple levels later, so
+//  the Europe/continent view shows just dots like before, then fills in as you zoom.
+function dotTier(z) {            // which cities show as a dot — COUNTRY stage onward
+  if (z >= 6.5) return 4;
+  if (z >= 6) return 3;
+  if (z >= 5.5) return 2;
+  if (z >= 5) return 1;
+  if (z >= 4.5) return 0;
+  return -1;                     // < 4.5 → NO city dots (world/continent stays clean)
+}
+function nameTier(z) {           // which dots also get a name — CITY stage onward
+  if (z >= 8) return 4;
+  if (z >= 7.5) return 3;
+  if (z >= 7) return 2;
+  if (z >= 6.5) return 1;
+  if (z >= 6) return 0;
+  return -1;                     // < 6 → dots only, no names
+}
+function renderCities() {
+  cityLayer.clearLayers();
+  return; // DISABLED (2026-07-19) — Dani: "pin only where we have a guide
+  // period". Non-guide "major world city" name labels are gone; the only
+  // markers on the map now are actual guide destinations (PINS array).
+  const z = map.getZoom();
+  const dt = dotTier(z), nt = nameTier(z);
+  if (dt < 0 || !CITY_DATA.length) return;
+  const b = map.getBounds();
+  const CAP = 260;
+  let shown = 0;
+  // Seeded with guide-pin label rects (placed first, see renderPinLabels) so a
+  // city name never lands on top of a guide pin's permanent name.
+  const placed = labelPlacedRects;
+  for (const c of CITY_DATA) {        // sorted by tier → biggest cities first
+    if (c[3] > dt) break;             // past the dot tier: nothing smaller qualifies
+    if (!b.contains([c[2], c[1]])) continue;
+    const m = L.marker([c[2], c[1]], { icon: cityIcon, pane: 'cityDots', interactive: false, keyboard: false });
+    if (nt >= 0 && c[3] <= nt) {       // big enough to also show its name at this zoom…
+      const p = map.latLngToContainerPoint([c[2], c[1]]);
+      const w = c[0].length * 6.4 + 8, h = 19;          // est. label box (padded), sits to the right of the dot
+      const r = { x: p.x + 4, y: p.y - h / 2, w, h };
+      let clash = false;
+      for (const q of placed) {
+        if (r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y) { clash = true; break; }
+      }
+      if (!clash) {                    // …and only if it doesn't collide with a guide pin's or bigger city's label
+        m.bindTooltip(c[0], {
+          permanent: true, direction: 'right', offset: [3, 0],
+          className: 'city-name-tip', pane: 'cityLabels', interactive: false,
+        });
+        placed.push(r);
+      }
+    }
+    cityLayer.addLayer(m);
+    if (++shown >= CAP) break;
+  }
+}
+
+/* ── Pins + clustering ── */
+function buildPins() {
+  pinCluster = L.markerClusterGroup({
+    maxClusterRadius: 20,
+    spiderfyOnMaxZoom: true,
+    showCoverageOnHover: false,
+    disableClusteringAtZoom: 4,   // un-cluster at sub-region zoom so guide-city names show sooner
+    iconCreateFunction: c => {
+      const n = c.getChildCount();
+      const cls = n < 5 ? 'small' : (n < 12 ? '' : 'large');
+      return L.divIcon({
+        html: '<div>' + n + '</div>',
+        className: 'city-cluster ' + cls,
+        iconSize: [40, 40],
+      });
+    },
+  });
+
+  const pinIcon = L.divIcon({
+    className: '',
+    html: '<div class="city-pin" style="width:13px;height:13px;"></div>',
+    iconSize: [13, 13],
+    iconAnchor: [6.5, 6.5],
+  });
+
+  const BEEN_CITIES = new Set(['Amalfi','Amsterdam','Bologna','Bruges','Brussels','Cambridge','Cannes','Capri','Cascais','Cinque Terre','Copenhagen','Corfu','Edinburgh','Florence','Geneva','Gothenburg','Hamburg','London','Luxembourg','Madrid','Marktoberdorf','Monaco','Munich','Nice','Oxford','Paris','Pisa','Porto','Rome','San Sebastian','Sintra','Sorrento','Strasbourg','Stuttgart','Toledo','Turin','Venice','Vienna','Lagos','Chongqing','Atlanta','Austin','Big Island','Chicago','Kauai','La Jolla','Las Vegas','Los Cabos','Maui','Miami','Nashville','New York','Oahu','Orlando','Palo Alto','Pasadena','Puerto Vallarta','San Diego','San Francisco','San Juan Island','Scottsdale','Seattle','Sedona','Toronto','Vancouver','Victoria','Whistler','Athens','Beijing','Hiroshima','Kyoto','Seoul','Shanghai','Taipei','Tokyo','Zhangjiajie','Aruba','Cancún','Curaçao','Sint Maarten','Virgin Islands','The Bahamas','Rio de Janeiro']);
+
+  const beenIcon = L.divIcon({
+    className: '',
+    html: '<div class="city-pin" style="width:13px;height:13px;background:radial-gradient(circle at 35% 30%,#f5c842 0%,#d4a017 55%,#9a6f00 100%);box-shadow:0 0 0 2px rgba(212,160,23,0.35);"></div>',
+    iconSize: [13, 13],
+    iconAnchor: [6.5, 6.5],
+  });
+
+  const markersByName = {};
+  PINS.forEach(p => {
+    const m = L.marker([p[2], p[1]], { icon: pinIcon, title: p[0] });
+    m.bindTooltip(p[0], {
+      permanent: true, direction: 'top', offset: [0, -8],
+      className: 'pin-name-tip', interactive: false,
+    });
+    const href = p[3];
+    m.on('click', () => { (window.top || window).location.href = href; });
+    pinCluster.addLayer(m);
+    pinMarkers.push(m);
+    markersByName[p[0]] = m;
+  });
+
+  let visitedFilterOn = false;
+  window.applyVisitedFilter = function(on) {
+    visitedFilterOn = on;
+    PINS.forEach(p => {
+      const m = markersByName[p[0]];
+      if (!m) return;
+      m.setIcon(on && BEEN_CITIES.has(p[0]) ? beenIcon : pinIcon);
+    });
+    renderPinLabels();
+  };
+
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.action === 'filterBeen') window.applyVisitedFilter && window.applyVisitedFilter(e.data.on);
+  });
+
+  map.addLayer(pinCluster);
+  // Re-run the label collision pass on every event that can change which pins
+  // sit at their own screen position (zoom/pan covered by 'moveend'; these two
+  // cover spiderfying a tight cluster, which doesn't move the map).
+  pinCluster.on('spiderfied unspiderfied animationend', renderPinLabels);
+  renderPinLabels();
+}
+
+/* ── Guide-pin name collision pass ── runs before renderCities() each moveend
+   so guide names always win the spot; a pin hidden inside a cluster bubble has
+   no individual marker on screen, so it's skipped (its tooltip stays closed —
+   Leaflet never opens a permanent tooltip for a layer that isn't added to the
+   map directly). ── */
+function renderPinLabels() {
+  labelPlacedRects = [];
+  if (!pinCluster) return;
+  const b = map.getBounds();
+  for (const m of pinMarkers) {
+    const visible = pinCluster.getVisibleParent(m) === m && b.contains(m.getLatLng());
+    if (!visible) { m.closeTooltip(); continue; }
+    const name = m.options.title;
+    const p = map.latLngToContainerPoint(m.getLatLng());
+    const w = name.length * 6.6 + 8, h = 19;   // est. label box (padded), centered above the pin
+    const r = { x: p.x - w / 2, y: p.y - 8 - h, w, h };
+    let clash = false;
+    for (const q of labelPlacedRects) {
+      if (r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y) { clash = true; break; }
+    }
+    if (clash) { m.closeTooltip(); continue; }
+    m.openTooltip();
+    labelPlacedRects.push(r);
+  }
+}
+
+/* ── Region jump buttons — switch region in place, no page reload.
+   flyToBounds() animates a smooth pan+zoom to the target region now that
+   maxBoundsViscosity is 0 (the prior 0.7 caused flyTo to freeze indefinitely). ── */
+document.querySelectorAll('.rn[data-region]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    // only reset region pills — never touch the Visited pill
+    document.querySelectorAll('.rn[data-region]').forEach(r => r.classList.remove('rn-on'));
+    el.classList.add('rn-on');
+    map.flyToBounds(REGIONS[el.dataset.region], { ...fitOpts(true), duration: 1.2 });
+    // re-apply visited icon state in case flying resets anything
+    if (visitedFilterOn && window.applyVisitedFilter) window.applyVisitedFilter(true);
+  });
+});
+
+/* Hash-based region activation — World-Map.html#eu flies to Europe, etc.
+   Also fires on in-page hash changes (2026-07-19), not just initial load —
+   the hamburger menu's new "Region" section (toolbar.js) links to
+   World-Map.html#eu from ANY page, but clicking that same link while
+   ALREADY on World-Map.html is a same-document hash navigation (no page
+   reload), which the original load-once IIFE would silently miss. */
+function activateRegionFromHash() {
+  var hashRegion = (location.hash || '').replace('#', '').toLowerCase();
+  if (hashRegion && REGIONS[hashRegion]) {
+    var btn = document.querySelector('.rn[data-region="' + hashRegion + '"]');
+    if (btn) {
+      document.querySelectorAll('.rn').forEach(function (r) { r.classList.remove('rn-on'); });
+      btn.classList.add('rn-on');
+    }
+    // FIXED (2026-07-20): reported live as clicking a region link "flicks and
+    // disappears" — animated flyToBounds() + marker clustering has a known
+    // Leaflet bug where cluster bubbles can flicker/vanish mid-zoom, since
+    // clustering recalculates on different timing than the CSS zoom
+    // animation. Couldn't reproduce it visually myself, but instant
+    // fitBounds() (no animation, same non-animated call used for the
+    // initial world view on page load) removes the whole class of
+    // animation-timing glitches rather than patching around one symptom.
+    setTimeout(function () {
+      map.fitBounds(REGIONS[hashRegion], fitOpts(false));
+    }, 300);
+  }
+}
+activateRegionFromHash();
+window.addEventListener('hashchange', activateRegionFromHash);
+</script>
+</body>
+</html>

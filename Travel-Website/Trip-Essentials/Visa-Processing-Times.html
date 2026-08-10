@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Visa Processing Times</title>
+<style>
+
+
+.alert-banner { margin-bottom: 22px; }
+.alert-banner strong { color: var(--text); }
+
+/* ── Processing speed badges — canonical badge families ── */
+.spd {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
+  white-space: nowrap; border: 1px solid;
+}
+/* GREY — not required */
+.spd-free   { background: rgba(138,108,26,0.07); border-color: rgba(106,102,96,0.4); color: var(--muted); }
+/* GREEN — e-visa / on arrival, fast */
+.spd-fast   { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+/* YELLOW — 1–2 weeks lead time */
+.spd-std    { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+/* ORANGE — consulate, 3+ weeks */
+.spd-slow   { background: var(--warm); border-color: rgba(184,134,90,0.4); color: #8a4a10; }
+
+@media (prefers-color-scheme: dark) {
+  .spd-free { background: rgba(138,108,26,0.12); border-color: rgba(106,102,96,0.5); color: #9a9690; }
+  .spd-fast { background: #0d200d; border-color: rgba(90,170,94,0.4); color: #5aaa5e; }
+  .spd-std  { background: #281f00; border-color: rgba(212,168,48,0.4); color: #d4a830; }
+  .spd-slow { background: #1e1008; border-color: rgba(184,134,90,0.4); color: #c08050; }
+}
+:root[data-theme="dark"] .spd-free { background: rgba(138,108,26,0.12); border-color: rgba(106,102,96,0.5); color: #9a9690; }
+:root[data-theme="dark"] .spd-fast { background: #0d200d; border-color: rgba(90,170,94,0.4); color: #5aaa5e; }
+:root[data-theme="dark"] .spd-std  { background: #281f00; border-color: rgba(212,168,48,0.4); color: #d4a830; }
+:root[data-theme="dark"] .spd-slow { background: #1e1008; border-color: rgba(184,134,90,0.4); color: #c08050; }
+:root[data-theme="light"] .spd-free { background: rgba(138,108,26,0.07); border-color: rgba(106,102,96,0.4); color: var(--muted); }
+:root[data-theme="light"] .spd-fast { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+:root[data-theme="light"] .spd-std  { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+:root[data-theme="light"] .spd-slow { background: var(--warm); border-color: rgba(184,134,90,0.4); color: #8a4a10; }
+
+/* ── Speed legend strip ── */
+.legend-strip {
+  display: flex; flex-wrap: wrap; gap: 10px 20px;
+  margin-bottom: 22px; align-items: center;
+}
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--muted); }
+.legend-label { font-size: 12.5px; color: var(--text); }
+
+/* ── Jump nav ── */
+.region-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.region-jump a {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  padding: 5px 14px; border: 1px solid; border-radius: 6px;
+  white-space: nowrap; transition: border-color .15s, color .15s;
+}
+/* Each region pill uses its matched badge family */
+.region-jump a[href="#americas"]           { background: rgba(138,108,26,0.07); border-color: rgba(106,102,96,0.4); color: var(--muted); }
+.region-jump a[href="#europe"]             { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+.region-jump a[href="#middle-east-africa"] { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+.region-jump a[href="#asia-pacific"]       { background: var(--warm); border-color: rgba(184,134,90,0.4); color: #8a4a10; }
+/* :visited — literal hex (browser blocks var() in :visited) */
+.region-jump a[href="#americas"]:visited           { color: #6a6660; }
+.region-jump a[href="#europe"]:visited             { color: #1a5a1a; }
+.region-jump a[href="#middle-east-africa"]:visited { color: #7a5800; }
+.region-jump a[href="#asia-pacific"]:visited       { color: #8a4a10; }
+/* Mobile hover: terracotta gradient (pills-to-badge spec) */
+.region-jump a:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: var(--rust); color: #fff; }
+@media (min-width: 601px) {
+  .region-jump a { font-size: 13px; padding: 6px 16px; }
+  /* Desktop hover: page bg (pills-to-badge spec — Option B) */
+  .region-jump a:hover { background: var(--bg, #f5f4f0) !important; border-color: var(--rust) !important; box-shadow: none; color: inherit !important;}
+}
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .region-jump a[href="#americas"]           { background: rgba(138,108,26,0.12); border-color: rgba(106,102,96,0.5); color: #9a9690; }
+  .region-jump a[href="#europe"]             { background: #0d200d; border-color: rgba(90,170,94,0.4); color: #5aaa5e; }
+  .region-jump a[href="#middle-east-africa"] { background: #281f00; border-color: rgba(212,168,48,0.4); color: #d4a830; }
+  .region-jump a[href="#asia-pacific"]       { background: #1e1008; border-color: rgba(184,134,90,0.4); color: #c08050; }
+  .region-jump a[href="#americas"]:visited           { color: #9a9690; }
+  .region-jump a[href="#europe"]:visited             { color: #5aaa5e; }
+  .region-jump a[href="#middle-east-africa"]:visited { color: #d4a830; }
+  .region-jump a[href="#asia-pacific"]:visited       { color: #c08050; }
+}
+:root[data-theme="dark"] .region-jump a[href="#americas"]           { background: rgba(138,108,26,0.12); border-color: rgba(106,102,96,0.5); color: #9a9690; }
+:root[data-theme="dark"] .region-jump a[href="#europe"]             { background: #0d200d; border-color: rgba(90,170,94,0.4); color: #5aaa5e; }
+:root[data-theme="dark"] .region-jump a[href="#middle-east-africa"] { background: #281f00; border-color: rgba(212,168,48,0.4); color: #d4a830; }
+:root[data-theme="dark"] .region-jump a[href="#asia-pacific"]       { background: #1e1008; border-color: rgba(184,134,90,0.4); color: #c08050; }
+:root[data-theme="dark"] .region-jump a[href="#americas"]:visited           { color: #9a9690; }
+:root[data-theme="dark"] .region-jump a[href="#europe"]:visited             { color: #5aaa5e; }
+:root[data-theme="dark"] .region-jump a[href="#middle-east-africa"]:visited { color: #d4a830; }
+:root[data-theme="dark"] .region-jump a[href="#asia-pacific"]:visited       { color: #c08050; }
+:root[data-theme="light"] .region-jump a[href="#americas"]           { background: rgba(138,108,26,0.07); border-color: rgba(106,102,96,0.4); color: var(--muted); }
+:root[data-theme="light"] .region-jump a[href="#europe"]             { background: #e8f5e8; border-color: rgba(26,90,26,0.4); color: #1a5a1a; }
+:root[data-theme="light"] .region-jump a[href="#middle-east-africa"] { background: #fff8e0; border-color: rgba(122,88,0,0.4); color: #7a5800; }
+:root[data-theme="light"] .region-jump a[href="#asia-pacific"]       { background: var(--warm); border-color: rgba(184,134,90,0.4); color: #8a4a10; }
+:root[data-theme="light"] .region-jump a[href="#americas"]:visited           { color: #6a6660; }
+:root[data-theme="light"] .region-jump a[href="#europe"]:visited             { color: #1a5a1a; }
+:root[data-theme="light"] .region-jump a[href="#middle-east-africa"]:visited { color: #7a5800; }
+:root[data-theme="light"] .region-jump a[href="#asia-pacific"]:visited       { color: #8a4a10; }
+
+.region-head { scroll-margin-top: 80px; }
+
+/* ── Country rows ── */
+.country-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+.country-row {
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: start; gap: 10px 16px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 12px 14px;
+}
+.country-main { min-width: 0; }
+.country-name {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  line-height: 1.3; margin-bottom: 3px;
+}
+.country-entry { font-size: 12px; color: var(--muted); margin-bottom: 5px; line-height: 1.4; }
+.country-detail {
+  font-size: 12px; color: var(--text); line-height: 1.55;
+  border-top: 1px solid var(--border2); padding-top: 8px; margin-top: 6px;
+}
+.country-detail strong { font-weight: 600; }
+.country-badge-col { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+
+/* Apply link */
+a.apply-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 6px; font-family: inherit;
+  font-size: 11px; font-weight: 400; color: var(--muted);
+  background: var(--surface2); border: 1px solid var(--border2);
+  white-space: nowrap; transition: border-color .15s, color .15s;
+}
+a.apply-btn:hover { border-color: var(--rust); }
+a.apply-btn:visited { color: #6a6660; }
+a.apply-btn::after { content: ' ›'; }
+
+/* ── Lead-time callout ── */
+.lead-callout {
+  font-size: 12px; font-weight: 600; color: var(--text);
+  background: var(--surface2); border-radius: 4px;
+  padding: 2px 8px; white-space: nowrap; align-self: start;
+}
+
+/* ── Tips box ── */
+.tips-box {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 16px 18px; margin-top: 32px; margin-bottom: 10px;
+}
+.tips-head { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.tips-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.tips-list li { font-size: 13px; color: var(--text); line-height: 1.55; padding-left: 20px; position: relative; }
+.tips-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+
+/* ── Badge filter ── */
+.legend-filter { cursor: pointer; user-select: none; }
+.legend-filter.filter-on { outline: 2.5px solid currentColor; outline-offset: 2px; }
+.country-row.row-hidden { display: none; }
+.region-head.sect-hidden, .country-list.sect-hidden { display: none; }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .country-row { grid-template-columns: 1fr; }
+  .country-badge-col { flex-direction: row; align-items: center; flex-wrap: wrap; }
+  .page-intro-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-08"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>VISA PROCESSING TIMES</h1>
+  </div>
+  <div class="page-intro-card">
+    <div class="page-intro-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+    </div>
+    <div>
+      <p class="page-intro-head">Apply-by windows for US passport holders</p>
+      <p class="page-intro-sub">
+        How far in advance US passport holders need to apply for each major destination —
+        from instant e-visas to multi-week consulate appointments.
+        See <a href="Visas.html">Visas</a> for the full visa-check tool and
+        <a href="Entry-Requirements.html">Entry Requirements</a> for eTA, ETA, and biometric systems.
+      </p>
+    </div>
+  </div>
+
+  <div class="alert-banner">
+    <strong>Always verify before travel.</strong> Processing times, e-visa availability, and fee amounts
+    change frequently — sometimes with 30 days' notice. Confirm at the official government portal for your
+    destination and check your country's embassy page before applying. Times below reflect typical
+    windows for US passport holders applying online during standard (non-peak) periods.
+  </div>
+
+  <!-- Speed legend — each badge is a filter button -->
+  <div class="legend-strip">
+    <span class="legend-item"><span class="spd spd-free legend-filter" data-filter="spd-free" role="button" tabindex="0" aria-pressed="false">NOT REQUIRED</span> <span class="legend-label">No visa for US citizens</span></span>
+    <span class="legend-item"><span class="spd spd-fast legend-filter" data-filter="spd-fast" role="button" tabindex="0" aria-pressed="false">E-VISA / FAST</span> <span class="legend-label">Hours to 3 days</span></span>
+    <span class="legend-item"><span class="spd spd-std legend-filter" data-filter="spd-std" role="button" tabindex="0" aria-pressed="false">1–2 WEEKS</span> <span class="legend-label">Apply 2+ weeks ahead</span></span>
+    <span class="legend-item"><span class="spd spd-slow legend-filter" data-filter="spd-slow" role="button" tabindex="0" aria-pressed="false">3+ WEEKS</span> <span class="legend-label">Consulate or appointment required</span></span>
+  </div>
+
+  <!-- Region jump nav -->
+  <nav class="region-jump" aria-label="Jump to region">
+    <a href="#americas">🌎 Americas</a>
+    <a href="#europe">🌍 Europe</a>
+    <a href="#middle-east-africa">🌍 Middle East &amp; Africa</a>
+    <a href="#asia-pacific">🌏 Asia-Pacific</a>
+  </nav>
+
+  <!-- ════════════════ AMERICAS ════════════════ -->
+  <h2 class="region-head" id="americas">Americas</h2>
+  <div class="country-list">
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇲🇽 Mexico</div>
+        <div class="country-entry">No visa required · Up to 180 days on a tourist card (FMM) issued on arrival</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇨🇦 Canada</div>
+        <div class="country-entry">No visa required · Up to 6 months per visit</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇨🇴 Colombia</div>
+        <div class="country-entry">No visa required · Up to 90 days per entry (180 days per year)</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇵🇪 Peru</div>
+        <div class="country-entry">No visa required · Up to 183 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇦🇷 Argentina</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇨🇺 Cuba</div>
+        <div class="country-entry">Tourist card required (not a traditional visa) · Many US carriers include it in the ticket price or sell it at departure</div>
+        <div class="country-detail">
+          Apply online ahead of time or purchase at the check-in desk. <strong>Note:</strong> US citizens must travel under one of 12 authorized categories (General License) and are subject to OFAC regulations.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">At check-in</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇧🇷 Brazil</div>
+        <div class="country-entry">e-Visa required · Single or multiple entry, up to 90 days · Apply at brazil.vfsevisa.com</div>
+        <div class="country-detail">
+          Official processing: <strong>up to 10 business days.</strong> During summer and Carnival peak periods, allow longer. If your e-Visa isn't approved in time, the consulate visa takes 3+ weeks to schedule plus processing time.
+          <strong>Recommendation: apply at least 4 weeks before travel.</strong>
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-std">1–2 WEEKS</span>
+        <span class="lead-callout">4 weeks ahead</span>
+        <a class="apply-btn" href="https://brazil.vfsevisa.com" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════ EUROPE ════════════════ -->
+  <h2 class="region-head" id="europe">Europe</h2>
+  <div class="country-list">
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇪🇺 Schengen Zone (27 countries)</div>
+        <div class="country-entry">No visa required for US passport holders · 90 days within any 180-day period</div>
+        <div class="country-detail">
+          Includes Austria, Belgium, Czech Republic, Denmark, Finland, France, Germany, Greece, Hungary, Iceland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Norway, Poland, Portugal, Slovakia, Slovenia, Spain, Sweden, and others.
+          <strong>ETIAS</strong> (European Travel Information and Authorisation System) has been delayed to 2027 or later — a pre-clearance authorization similar to the US ESTA. No action needed until a confirmed launch date is announced.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇬🇧 United Kingdom</div>
+        <div class="country-entry">ETA (Electronic Travel Authorisation) required since February 25, 2026 for US citizens · Up to 6 months per visit</div>
+        <div class="country-detail">
+          Apply via the official UKVI app. Most applications are approved <strong>within hours;</strong> some take up to 3 business days. Valid for 2 years or until passport expiry (multiple entries). <strong>Recommendation: apply at least 1 week before departure.</strong> Cost: £20.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://www.gov.uk/eta/apply" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇦🇱 Albania</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇧🇦 Bosnia &amp; Herzegovina</div>
+        <div class="country-entry">No visa required · Up to 90 days within 180 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇲🇪 Montenegro</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇷🇸 Serbia</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇹🇷 Turkey</div>
+        <div class="country-entry">No visa required · Up to 90 days within any 180-day period · Visa-free since Jan 1, 2024</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════ MIDDLE EAST & AFRICA ════════════════ -->
+  <h2 class="region-head" id="middle-east-africa">Middle East &amp; Africa</h2>
+  <div class="country-list">
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇮🇱 Israel</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇯🇴 Jordan</div>
+        <div class="country-entry">Visa on arrival (most air/land ports) · 30 days, extendable · Or e-Visa via MENA Tourism portal</div>
+        <div class="country-detail">
+          Visa on arrival at Queen Alia International Airport and Aqaba is standard and takes minutes. e-Visa approved in minutes to a few hours. The <strong>Jordan Pass</strong> (bundling entry visa + major attraction tickets) is a strong value for most visitors — purchased online, usually approved the same day.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">On arrival OK</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇦🇪 United Arab Emirates</div>
+        <div class="country-entry">Visa on arrival · 30 days (extendable once to 60 days) · No pre-registration required</div>
+        <div class="country-detail">
+          US passport holders receive a visa stamp on arrival at Dubai, Abu Dhabi, and other UAE airports. No pre-application needed. If you prefer to pre-register, e-Visas are available through ICA (Federal Authority for Identity and Citizenship) — typically approved within 1 business day.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">On arrival OK</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇸🇦 Saudi Arabia</div>
+        <div class="country-entry">e-Visa for tourism · Up to 90 days (multiple entry, 1 year validity) · Apply at visitsaudi.com</div>
+        <div class="country-detail">
+          Processing typically <strong>within 24 hours,</strong> often within minutes. Saudi tourism e-Visa opened to US citizens in 2019. Cost: ~$134 (includes medical insurance). <strong>Recommendation: apply at least 3 days before departure.</strong>
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">3 days ahead</span>
+        <a class="apply-btn" href="https://www.visitsaudi.com/en/plan-your-trip/visa-regulations" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇴🇲 Oman</div>
+        <div class="country-entry">e-Visa required · 30 days single entry or multiple entry options · Apply via visa.rop.gov.om</div>
+        <div class="country-detail">
+          Processing typically <strong>within 24 hours.</strong> Visa on arrival also available at Muscat airport, but e-Visa recommended to avoid queues. Cost: OMR 5–20 (~$13–52) depending on entry type.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">3 days ahead</span>
+        <a class="apply-btn" href="https://evisa.rop.gov.om/" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇲🇦 Morocco</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇪🇬 Egypt</div>
+        <div class="country-entry">e-Visa required · 30 days single or multiple entry · Apply at visa2egypt.gov.eg · Or on arrival at Cairo airport</div>
+        <div class="country-detail">
+          e-Visa processing typically <strong>24–72 hours.</strong> Visa on arrival ($30 cash, increased March 2026) is available at Cairo, Alexandria, Luxor, and Sharm el-Sheikh airports — faster if you're comfortable with the queue. <strong>Recommendation: pre-apply e-Visa at least 1 week before departure.</strong>
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://visa2egypt.gov.eg" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇿🇦 South Africa</div>
+        <div class="country-entry">No visa required · Up to 30 days · Extensions available at Home Affairs offices</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇰🇪 Kenya</div>
+        <div class="country-entry">eTA (Electronic Travel Authorisation) required · 90 days · Apply at etakenya.go.ke</div>
+        <div class="country-detail">
+          Processing typically <strong>within 3 business days,</strong> sometimes faster. Kenya replaced the e-Visa with the ETA system in 2024. Cost: $32.50. <strong>Recommendation: apply at least 1 week before departure.</strong>
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://www.etakenya.go.ke" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇷🇼 Rwanda</div>
+        <div class="country-entry">e-Visa required · 30 days single or multiple entry · Apply at irembo.gov.rw · Or visa on arrival</div>
+        <div class="country-detail">
+          Processing typically <strong>3 business days.</strong> Online application strongly recommended over on-arrival to speed through immigration. Cost: $50 (single) / $70 (multiple entry).
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://irembo.gov.rw" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇹🇿 Tanzania</div>
+        <div class="country-entry">eVisa required · 90 days single entry · Apply at eservices.immigration.go.tz</div>
+        <div class="country-detail">
+          Processing typically <strong>3–5 business days.</strong> Cost: $50. <strong>Recommendation: apply at least 2 weeks before departure.</strong>
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">2 weeks ahead</span>
+        <a class="apply-btn" href="https://eservices.immigration.go.tz" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇪🇹 Ethiopia</div>
+        <div class="country-entry">e-Visa required · 30 days single entry, extendable · Apply at ethiopiaonlineservices.gov.et</div>
+        <div class="country-detail">
+          Processing typically <strong>3 business days.</strong> Cost: $52. <strong>Recommendation: apply at least 1 week before departure.</strong>
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://www.ethiopiaonlineservices.gov.et" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════ ASIA-PACIFIC ════════════════ -->
+  <h2 class="region-head" id="asia-pacific">Asia-Pacific</h2>
+  <div class="country-list">
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇯🇵 Japan</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇰🇷 South Korea</div>
+        <div class="country-entry">No visa required · Up to 90 days · K-ETA waived for US citizens through December 31, 2026</div>
+        <div class="country-detail">
+          The K-ETA (Korea Electronic Travel Authorisation) is waived for US citizens through December 31, 2026. From January 1, 2027, the K-ETA becomes mandatory — confirm current status at the Korea Immigration Service before travel.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇨🇳 China</div>
+        <div class="country-entry">Visa required · Apply at Chinese Visa Application Service Center (CVASC) or consulate</div>
+        <div class="country-detail">
+          Official processing: <strong>4 business days</strong> (regular) / 2–3 days (express) / 1 day (rush, at premium fee). Scheduling a CVASC appointment adds 1–3 weeks depending on city and season. <strong>Recommendation: begin the process at least 4–6 weeks before departure.</strong>
+          <br>Note: 144-hour and 240-hour visa-free transit policies apply at select ports of entry for qualifying itineraries — check the CGVISA portal for current rules.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-slow">3+ WEEKS</span>
+        <span class="lead-callout">4–6 weeks ahead</span>
+        <a class="apply-btn" href="https://www.visaforchina.cn" target="_blank" rel="noopener">CVASC portal</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇹🇼 Taiwan</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇭🇰 Hong Kong</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇸🇬 Singapore</div>
+        <div class="country-entry">No visa required · Up to 90 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇹🇭 Thailand</div>
+        <div class="country-entry">No visa required · 30 days (reduced from 60 as of July 2026 — verify current rules before travel)</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇵🇭 Philippines</div>
+        <div class="country-entry">No visa required · 30 days on arrival, extendable at Bureau of Immigration</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇻🇳 Vietnam</div>
+        <div class="country-entry">e-Visa required · Up to 90 days single or multiple entry · Apply at evisa.gov.vn</div>
+        <div class="country-detail">
+          Processing typically <strong>3 business days.</strong> Cost: $25 (single) / $50 (multiple). <strong>Recommendation: apply at least 2 weeks before departure</strong> to allow a buffer if there are system issues. The official portal can be slow during peak periods.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">2 weeks ahead</span>
+        <a class="apply-btn" href="https://evisa.gov.vn" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇮🇩 Indonesia</div>
+        <div class="country-entry">e-VOA (electronic Visa on Arrival) or Visa on Arrival at major airports · 30 days, extendable once</div>
+        <div class="country-detail">
+          e-VOA available online at molina.imigrasi.go.id — approved typically <strong>within 24 hours;</strong> apply up to 4 days before departure. Cost: ~$35. Physical visa on arrival available at Bali, Jakarta, and other major airports for the same fee if you prefer not to pre-register.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">Day before OK</span>
+        <a class="apply-btn" href="https://molina.imigrasi.go.id" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇰🇭 Cambodia</div>
+        <div class="country-entry">e-Visa or Visa on Arrival · 30 days · Apply at evisa.gov.kh</div>
+        <div class="country-detail">
+          e-Visa processing typically <strong>3 business days.</strong> Cost: $36. Visa on arrival ($30 cash) available at Phnom Penh, Siem Reap, and Sihanoukville airports. Pre-apply online to skip the on-arrival queue.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://www.evisa.gov.kh" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇱🇦 Laos</div>
+        <div class="country-entry">e-Visa or Visa on Arrival · 30 days · Apply at laoevisa.gov.la</div>
+        <div class="country-detail">
+          e-Visa processing typically <strong>3 business days.</strong> Cost: $35–50. Visa on arrival available at Vientiane Wattay International and other major airports.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://laoevisa.gov.la" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇱🇰 Sri Lanka</div>
+        <div class="country-entry">ETA (Electronic Travel Authorisation) required · 30 days, extendable · Apply at eta.gov.lk · Free since May 25, 2026</div>
+        <div class="country-detail">
+          Typically approved <strong>within minutes to hours</strong> — the ETA arrives by email almost immediately. Cost: <strong>Free</strong> (ETA fee waived as of May 25, 2026). Apply any time before departure, including the day of travel — though applying a day or two early is safer.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">Day before OK</span>
+        <a class="apply-btn" href="https://www.eta.gov.lk" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇮🇳 India</div>
+        <div class="country-entry">e-Visa required (tourist, business, medical) · 30 or 90 day stay, 1-year or 5-year validity · Apply at indianvisaonline.gov.in</div>
+        <div class="country-detail">
+          Official processing: <strong>48–72 hours.</strong> However, the minimum lead time required by the system is 4 days before departure. <strong>Recommendation: apply at least 2 weeks before travel</strong> — rejections can occur and the re-application process takes time. Cost: ~$25–40 depending on nationality and type.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">2 weeks ahead</span>
+        <a class="apply-btn" href="https://indianvisaonline.gov.in/evisa/tvoa.html" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇳🇵 Nepal</div>
+        <div class="country-entry">Visa on arrival at Tribhuvan International Airport and land borders · 15, 30, or 90 days</div>
+        <div class="country-detail">
+          No pre-registration required. Visa on arrival takes 15–30 minutes at the airport counter (arrive early if on a busy flight). Online pre-arrival registration at nepalimmigration.gov.np can speed up the queue. Cost: $30 (15 days), $50 (30 days), $125 (90 days).
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">On arrival OK</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇲🇻 Maldives</div>
+        <div class="country-entry">No visa required · Visitor permit issued on arrival · Up to 30 days</div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-free">NOT REQUIRED</span>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇦🇺 Australia</div>
+        <div class="country-entry">ETA (subclass 601) or eVisitor (subclass 651) required · Up to 12 months, 90-day stays · Apply via Australian ETA app or registered agents</div>
+        <div class="country-detail">
+          Most ETAs are approved <strong>within 24 hours,</strong> but some take up to 72 hours or are referred for further processing (rare). <strong>Recommendation: apply at least 1–2 weeks before departure</strong> — if additional documents are requested, you need time to respond. Cost: $20 AUD for ETA; eVisitor is free. American citizens qualify for both.
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1–2 weeks ahead</span>
+        <a class="apply-btn" href="https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+    <div class="country-row">
+      <div class="country-main">
+        <div class="country-name">🇳🇿 New Zealand</div>
+        <div class="country-entry">NZeTA (New Zealand Electronic Travel Authority) required since 2019 · Valid 2 years, multiple entries</div>
+        <div class="country-detail">
+          Most applications approved <strong>within 72 hours,</strong> many within minutes. Also requires an International Visitor Conservation and Tourism Levy (IVL, NZD $100 since Oct 2024). Apply via the NZeTA app or Immigration New Zealand website. Cost: NZD $17 (app) / NZD $23 (website). <strong>Recommendation: apply at least 1 week before departure.</strong>
+        </div>
+      </div>
+      <div class="country-badge-col">
+        <span class="spd spd-fast">E-VISA / FAST</span>
+        <span class="lead-callout">1 week ahead</span>
+        <a class="apply-btn" href="https://www.immigration.govt.nz/new-zealand-visas/apply-for-a-visa/about-visa/nzeta" target="_blank" rel="noopener">Apply online</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════ TIPS ════════════════ -->
+  <div class="tips-box">
+    <div class="tips-head">Planning tips</div>
+    <ul class="tips-list">
+      <li><strong>Build in buffer.</strong> "3 business days" assumes normal volume and no system issues. During summer, holiday season, or after a major policy change, processing can double. The listed times are typical minimums, not guarantees.</li>
+      <li><strong>One passport photo can block everything.</strong> e-Visa rejections frequently stem from the wrong photo dimensions, poor lighting, or a recent photo that doesn't match the passport. Read the photo spec carefully before uploading.</li>
+      <li><strong>Double-check your passport validity.</strong> Most countries require 6 months of validity beyond your travel dates. Some (South Africa, Brazil) require 2 blank visa pages. Check this before you apply — a short-validity passport may require renewal first.</li>
+      <li><strong>Use official portals only.</strong> Third-party "visa assistance" sites often charge 2–4× the official fee for the same e-Visa. Always start from the government portal linked above or from your destination's official embassy website.</li>
+      <li><strong>Save the approval email offline.</strong> Download and screenshot your e-Visa or ETA approval before departure. Some border agents require the document even when your passport has been flagged as pre-approved in their system.</li>
+      <li><strong>ETIAS has been delayed past 2026.</strong> The EU's ETIAS authorization (similar to ESTA) was postponed after technical issues with the EES border system — earliest 2027. No action needed until a confirmed launch date is announced.</li>
+    </ul>
+  </div>
+
+  <!-- ════════════════ ALSO ON THIS SITE ════════════════ -->
+  <div class="also-strip" id="also-on-this-site">
+    <div class="also-strip-head">Also on this site</div>
+    <div class="also-links">
+      <a class="also-on-this-site-pill" href="Visas.html">🪪 Visas</a>
+      <a class="also-on-this-site-pill" href="Entry-Requirements.html">🪪 Entry requirements</a>
+      <a class="also-on-this-site-pill" href="Digital-Nomad-Visas.html">🪪 Digital nomad visas</a>
+      <a class="also-on-this-site-pill" href="Passport.html">📘 Passport</a>
+      <a class="also-on-this-site-pill" href="Trusted-Traveler.html">🛂 Global Entry &amp; CLEAR</a>
+      <a class="also-on-this-site-pill" href="Travel-Insurance.html">🛟 Travel insurance</a>
+      <a class="also-on-this-site-pill" href="Before-You-Go.html">✅ Before you go</a>
+    </div>
+  </div>
+
+</div><!-- /.wrap -->
+
+<script>
+(function() {
+  var active = null;
+  var filters = document.querySelectorAll('.legend-filter');
+
+  function updateSections() {
+    document.querySelectorAll('.country-list').forEach(function(list) {
+      var hasVisible = !!list.querySelector('.country-row:not(.row-hidden)');
+      list.classList.toggle('sect-hidden', !hasVisible);
+      var prev = list.previousElementSibling;
+      if (prev && prev.classList.contains('region-head')) {
+        prev.classList.toggle('sect-hidden', !hasVisible);
+      }
+    });
+  }
+
+  function showAll() {
+    document.querySelectorAll('.country-row').forEach(function(r) { r.classList.remove('row-hidden'); });
+    document.querySelectorAll('.region-head, .country-list').forEach(function(el) { el.classList.remove('sect-hidden'); });
+  }
+
+  filters.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var cls = btn.dataset.filter;
+      if (active === cls) {
+        active = null;
+        filters.forEach(function(b) { b.classList.remove('filter-on'); b.setAttribute('aria-pressed','false'); });
+        showAll();
+      } else {
+        active = cls;
+        filters.forEach(function(b) { b.classList.remove('filter-on'); b.setAttribute('aria-pressed','false'); });
+        btn.classList.add('filter-on');
+        btn.setAttribute('aria-pressed','true');
+        document.querySelectorAll('.country-row').forEach(function(row) {
+          row.classList.toggle('row-hidden', !row.querySelector('.' + cls));
+        });
+        updateSections();
+      }
+    });
+    btn.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

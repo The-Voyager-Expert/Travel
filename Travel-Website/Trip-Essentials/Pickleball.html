@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Pickleball</title>
+<style>
+.header-desc { display: none !important; }
+.section-title {
+  font-size: var(--fs-label,11px); letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; margin: 24px 0 12px; scroll-margin-top: 55px;
+}
+/* NAV */
+.pkl-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  padding: 10px 0 12px; margin: 0 0 18px;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg); }
+.pkl-nav a { display: inline-flex; align-items: center; justify-content: center; font-family: inherit; font-size: 14px; font-weight: 400; line-height: 1; color: var(--muted, #6a6660); padding: 6px 16px; border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px; background: var(--surface); white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
+.pkl-nav a:visited { color: #6a6660; }
+.pkl-nav a:hover { border-color: var(--rust); color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+.pkl-nav a.active { border-color: var(--rust); color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+
+/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
+   4 nav links → natural-width centered strip, squared corners, touching borders,
+   black text, terracotta hover, muted-grey #f0ede8 .active (with .active:hover/
+   :focus chain so scroll-spy state can't flip). Mobile grid untouched. */
+@media (min-width: 601px) {
+  .pkl-nav { gap: 0; justify-content: center; }
+  .pkl-nav a { height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--text, #3d3a32); border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); }
+  .pkl-nav a:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: inherit;color: inherit;}
+  .pkl-nav a.active,
+  .pkl-nav a.active:hover,
+  .pkl-nav a.active:focus { background: #f0ede8; border: 1.5px solid var(--border); color: var(--muted); }
+  .pkl-filter-row { gap: 0; justify-content: center; }
+  .pkl-chip { height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: var(--text, #3d3a32); border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); }
+  .pkl-chip:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+  .pkl-chip.on,
+  .pkl-chip.on:hover,
+  .pkl-chip.on:focus { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+}
+/* STAT PILLS */
+.pkl-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.pkl-strip-6 { grid-template-columns: repeat(3, 1fr); }
+.pkl-pill { background: var(--surface); border: 1px solid var(--border2); border-radius: 9px; padding: 18px 14px; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+.pkl-pill-icon { font-size: 15px; line-height: 1; margin-bottom: 4px; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(184,92,42,.09); }
+.pkl-pill-val { font-size: 20px; font-weight: 700; color: var(--rust); letter-spacing: -0.02em; }
+.pkl-pill-label { font-size: 9.5px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); }
+/* MAP */
+.pkl-map-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 16px 10px; margin-bottom: 14px; overflow-x: auto; }
+.pkl-map-wrap svg { display: block; width: 100%; max-width: 700px; margin: 0 auto; }
+.pkl-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; justify-content: center; }
+.pkl-leg { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--muted); }
+.pkl-leg-box { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+.pkl-leg-box.pkl-heat-1 { background: var(--rust, #b85c2a); }
+.pkl-leg-box.pkl-heat-2 { background: #d4874a; }
+.pkl-leg-box.pkl-heat-3 { background: #e8b87a; }
+.pkl-leg-box.pkl-heat-4 { background: var(--border2, #ece6dd); }
+.pkl-leg-box.pkl-heat-5 { background: var(--surface2, #f5f2ee); }
+/* US MAP tooltip */
+.pkl-us-svg .state-path { cursor: pointer; transition: opacity .12s; }
+.pkl-us-svg .state-path:hover { opacity: 0.75; }
+.pkl-map-tooltip { position: fixed; background: #3d3a32; color: #fff; font-size: 12px; padding: 6px 10px; border-radius: 6px; pointer-events: none; display: none; z-index: 9999; white-space: nowrap; line-height: 1.4; }
+/* SEARCH + FILTER */
+.pkl-search-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
+.pkl-search-box { flex: none; width: 360px; max-width: 100%; position: relative; }
+.pkl-search-box input { width: 100%; box-sizing: border-box; padding: 11px 18px 11px 36px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface) var(--search-icon) no-repeat 13px center; font-size: 16px; color: var(--text); outline: none; transition: border-color .15s; }
+.pkl-search-box input::placeholder { color: var(--c-search-placeholder); }
+.pkl-search-box input:focus { border-color: var(--c-search-focus-border); outline: none; }
+.pkl-filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.pkl-chip { display: inline-flex; align-items: center; justify-content: center; font-family: inherit; font-size: 11px; font-weight: 400; padding: 4px 10px; border-radius: 6px; border: 1.5px solid var(--border2, #e6e2da); background: var(--surface); color: var(--muted, #6a6660); cursor: pointer; transition: all .15s; white-space: nowrap; user-select: none; }
+.pkl-chip:hover { border-color: var(--rust); }
+.pkl-chip.on { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+/* CITY CARDS */
+.pkl-city-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.pkl-city { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; transition: box-shadow .15s, transform .15s; }
+.pkl-city:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
+.pkl-city.has-guide { border-left: 3px solid var(--rust); }
+.pkl-city-header { display: flex; align-items: flex-start; gap: 9px; }
+.pkl-rank { width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+.pkl-city-body { flex: 1; min-width: 0; }
+.pkl-city-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.pkl-city-sub { font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+/* Canonical YELLOW family per Badge spec 2026-07-29 (was rust custom palette). */
+.pkl-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 1px 6px; border-radius: 10px; background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); margin-left: 4px; vertical-align: middle; }
+.pkl-guide-link { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; color: #7a5800; text-decoration: none; margin-left: 7px; padding: 1px 6px; border: 1px solid rgba(122,88,0,0.4); border-radius: 4px; background: #fff8e0; vertical-align: middle; white-space: nowrap; transition: all .15s; }
+.pkl-guide-link:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
+/* COURTS TABLE */
+.pkl-courts { margin-top: 8px; border-top: 1px solid var(--border2); padding-top: 10px; margin-top: 10px; border-top-color: var(--border2); display: none; }
+.pkl-courts.open { display: block; }
+.pkl-court-row { display: flex; align-items: flex-start; gap: 5px; padding: 5px 0 3px; border-bottom: none; font-size: 11px; }
+.pkl-court-row:first-child { padding-top: 3px; }
+.pkl-court-type { flex-shrink: 0; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; margin-top: 1px; display: none; }
+/* Canonical GREEN / BLUE per Badge spec 2026-07-29. */
+.ct-outdoor { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }
+.ct-indoor  { background: #e8f0fb; color: var(--navy); border: 1px solid rgba(26,58,139,0.4); }
+.pkl-court-name { font-weight: 600; color: var(--text); }
+.pkl-court-detail { color: var(--muted); font-size: 11.5px; line-height: 1.45; }
+/* TOGGLE BUTTON */
+.pkl-toggle-btn { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 10.5px; color: var(--muted); cursor: pointer; border: none; background: none; padding: 0; font-family: inherit; transition: color .12s; user-select: none; }
+.pkl-toggle-btn:hover { color: var(--rust); }
+/* BADGES row */
+.pkl-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+.pkl-tag { font-size: 9.5px; padding: 1px 7px; border-radius: 10px; font-weight: 600; }
+/* Canonical family trios per Badge spec 2026-07-29 (was hand-mixed palette). */
+.tag-west  { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); display: none; }    /* YELLOW */
+.tag-south { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); display: none; }    /* YELLOW */
+.tag-mw    { background: #f3e8ff; color: #7c3aed; border: 1px solid rgba(124,58,237,0.4); display: none; }  /* PURPLE */
+.tag-ne    { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); display: none; }    /* GREEN */
+.tag-out   { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); display: none; }    /* GREEN */
+.tag-in    { background: #e8f0fb; color: var(--navy); border: 1px solid rgba(26,58,139,0.4); display: none; }   /* BLUE */
+.tag-both  { background: #f3e8ff; color: #7c3aed; border: 1px solid rgba(124,58,237,0.4); display: none; }  /* PURPLE */
+.tag-pro   { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); }                    /* YELLOW */
+.tag-rec   { background: rgba(138,108,26,0.07); color: var(--muted); border: 1px solid rgba(106,102,96,0.4); }    /* GREY */
+.tag-comp  { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); }                    /* YELLOW */
+/* DIVIDER */
+.pkl-divider { border: none; border-top: 1px solid var(--border2); margin: 28px 0 0; }
+/* WORLD CARDS */
+.pkl-world-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.pkl-world-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; transition: box-shadow .15s, transform .15s; }
+.pkl-world-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.07); transform: translateY(-1px); }
+.pkl-world-rank { width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--muted); flex-shrink: 0; }
+.pkl-world-flag { font-size: 26px; line-height: 1; flex-shrink: 0; }
+.pkl-world-body { flex: 1; min-width: 0; }
+.pkl-world-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.pkl-world-sub { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.4; }
+.pkl-level { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 7px; border-radius: 10px; border: 1px solid; white-space: nowrap; flex-shrink: 0; }
+/* Canonical family trios per Badge spec 2026-07-29 (was rust/warm-brown drift). */
+.pkl-level-3 { background: #fff8e0; color: #7a5800; border-color: rgba(122,88,0,0.4); }                     /* YELLOW */
+.pkl-level-2 { background: #fff8e0; color: #7a5800; border-color: rgba(122,88,0,0.4); }                     /* YELLOW */
+.pkl-level-1 { background: rgba(138,108,26,0.07); color: var(--muted); border-color: rgba(106,102,96,0.4); }     /* GREY */
+.pkl-level-0 { background: rgba(138,108,26,0.07); color: var(--muted); border-color: rgba(106,102,96,0.4); }     /* GREY */
+/* WORLD TABLE */
+.pkl-world-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 4px; }
+.pkl-world-table th { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border2); }
+.pkl-world-table td { padding: 7px 8px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+.pkl-world-table tr:last-child td { border-bottom: none; }
+.pkl-world-table tr:hover td { background: var(--warm); }
+.pkl-world-table tr.hidden { display: none !important; }
+/* CHART SECTION */
+.pkl-chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.pkl-chart-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.pkl-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.pkl-bar-label { font-size: 11px; color: var(--text); font-weight: 600; width: 80px; flex-shrink: 0; text-align: right; }
+.pkl-bar-track { flex: 1; background: var(--track); border-radius: 4px; height: 14px; overflow: hidden; position: relative; }
+.pkl-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#c8960c,#e8c020); transition: width .6s cubic-bezier(.4,0,.2,1); }
+.pkl-bar-val { font-size: 11px; color: var(--muted); width: 46px; flex-shrink: 0; }
+/* COURT FINDER */
+.pkl-finder-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.pkl-finder-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.pkl-finder-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.pkl-finder-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.pkl-finder-btn { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--border2); border-radius: 8px; background: var(--surface); text-decoration: none; color: var(--text); font-size: 12px; font-weight: 600; transition: all .15s; }
+.pkl-finder-btn:hover { border-color: var(--rust); }
+.pkl-finder-icon { font-size: 18px; flex-shrink: 0; }
+.pkl-finder-sub { font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+/* TABLE SCROLL WRAPPER */
+.pkl-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* STATE TABLE */
+.pkl-state-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 4px; }
+.pkl-state-table th { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border2); }
+.pkl-state-table td { padding: 7px 8px; border-bottom: 1px solid var(--border2); vertical-align: top; }
+.pkl-state-table tr:last-child td { border-bottom: none; }
+.pkl-state-table tr:hover td { background: var(--warm); }
+.pkl-state-name { font-weight: 700; color: var(--text); }
+.pkl-state-courts { font-weight: 600; color: var(--rust); }
+.pkl-state-bar { height: 6px; border-radius: 3px; background: var(--track); margin-top: 4px; }
+.pkl-state-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg,#c8960c,#e8c020); }
+/* TIPS SECTION */
+.pkl-tips-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.pkl-tip-card { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; }
+.pkl-tip-icon { font-size: 20px; margin-bottom: 6px; display: block; }
+.pkl-tip-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.pkl-tip-body { font-size: 11px; color: var(--muted); line-height: 1.5; }
+/* DEMO SECTION */
+.pkl-demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+/* TOURNAMENT TABLE */
+.pkl-tour-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 0; }
+.pkl-tour-table th { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border2); }
+.pkl-tour-table td { padding: 7px 8px; border-bottom: 1px solid var(--border2); vertical-align: middle; font-size: 11px; }
+.pkl-tour-table tr:last-child td { border-bottom: none; }
+.pkl-tour-name { font-weight: 700; color: var(--text); }
+.pkl-tour-loc  { color: var(--muted); font-size: 10.5px; }
+.pkl-tier { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 1px 6px; border-radius: 10px; white-space: nowrap; }
+/* Canonical YELLOW / BLUE / GREEN trios per Badge spec 2026-07-29. */
+.tier-major { background: #fff8e0; color: #7a5800; border: 1px solid rgba(122,88,0,0.4); }
+.tier-atp   { background: #e8f0fb; color: var(--navy); border: 1px solid rgba(26,58,139,0.4); }
+.tier-ppa   { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }
+@media (prefers-color-scheme: dark) {
+  .ct-outdoor,.tag-ne,.tag-out,.tier-ppa { background:#1a3025; color:#70d480; border-color:#2a5040; }
+  .ct-indoor,.tag-in,.tier-atp           { background:#152035; color:#70aadc; border-color:#1e3855; }
+  .tag-west                              { background:#302010; color:#d8a050; border-color:#504020; }
+  .tag-mw                                { background:#201530; color:#b080e0; border-color:#382060; }
+  .tag-comp                              { background:#301a08; color:#d09050; border-color:#502808; }
+}
+:root[data-theme="dark"] {
+  .ct-outdoor,.tag-ne,.tag-out,.tier-ppa { background:#1a3025; color:#70d480; border-color:#2a5040; }
+  .ct-indoor,.tag-in,.tier-atp           { background:#152035; color:#70aadc; border-color:#1e3855; }
+  .tag-west                              { background:#302010; color:#d8a050; border-color:#504020; }
+  .tag-mw                                { background:#201530; color:#b080e0; border-color:#382060; }
+  .tag-comp                              { background:#301a08; color:#d09050; border-color:#502808; }
+}
+/* SKILL QUIZ */
+.pkl-quiz-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+.pkl-quiz-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.pkl-quiz-q { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.pkl-quiz-opts { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.pkl-quiz-opt { font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border2); background: var(--surface); color: var(--muted); cursor: pointer; transition: all .12s; user-select: none; }
+.pkl-quiz-opt:hover { border-color: var(--rust); color: var(--rust); }
+.pkl-quiz-opt.selected { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+.pkl-quiz-result { display: none; background: var(--c-rust-tint); border: 1px solid #e6c3a8; border-radius: 8px; padding: 12px 14px; margin-top: 4px; }
+.pkl-quiz-result.show { display: block; }
+.pkl-quiz-result-level { font-size: 22px; font-weight: 800; color: var(--rust); }
+.pkl-quiz-result-label { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 1px; }
+.pkl-quiz-result-desc { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+.pkl-quiz-reset { display: inline-block; margin-top: 8px; font-size: 10.5px; color: var(--rust); cursor: pointer; text-decoration: none; }
+/* SKILL LEVELS */
+.pkl-skill-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 20px; }
+.pkl-skill-card { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; }
+.pkl-skill-level { font-size: 16px; font-weight: 800; color: var(--rust); margin-bottom: 3px; }
+.pkl-skill-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.pkl-skill-body { font-size: 10.5px; color: var(--muted); line-height: 1.4; }
+/* HIDDEN/FILTERED */
+.pkl-city.hidden { display: none !important; }
+.pkl-world-card.hidden { display: none !important; }
+/* EMPTY STATE */
+.pkl-empty { display: none; text-align: center; padding: 48px 24px 40px; color: var(--muted); }
+.pkl-empty-icon { font-size: 36px; margin-bottom: 10px; }
+.pkl-empty-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.pkl-empty-body { font-size: 12px; line-height: 1.55; }
+.pkl-empty-reset { display: inline-block; margin-top: 10px; font-size: 11.5px; font-weight: 600; color: var(--rust); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; background: none; border: none; font-family: inherit; padding: 0; }
+.pkl-empty-reset:hover { opacity: 0.8; }
+@media (max-width: 600px) {
+  .pkl-strip { grid-template-columns: repeat(2, 1fr); }
+  .pkl-strip-6 { grid-template-columns: repeat(2, 1fr); }
+  .pkl-city-grid { grid-template-columns: 1fr; }
+  .pkl-world-grid { grid-template-columns: 1fr; }
+  .pkl-finder-grid { grid-template-columns: 1fr; }
+  .pkl-tips-grid { grid-template-columns: 1fr; }
+  .pkl-skill-grid { grid-template-columns: 1fr 1fr; }
+  .pkl-demo-grid { grid-template-columns: 1fr; }
+  .pkl-state-table .col-hide-mobile,
+  .pkl-tour-table .col-hide-mobile,
+  .pkl-world-table .col-hide-mobile { display: none; }
+  .pkl-hero-img-col { display: none !important; }
+  .pkl-hero-mobile { display: block !important; }
+  /* Canonical Form B glued-grid jump-nav (Brain/Reference/Formatting/Formatting.html#src-desktoppill §9 +
+     project_mobile_two_pill_forms) — matches .stats-nav/.jump-nav elsewhere (Destination
+     Records, Travel-Stats, etc.): 2-col grid, gap:0 so borders touch, 46px tiles, radius 0. */
+  .pkl-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; flex-wrap: unset; justify-content: unset; position: static; padding: 0 0 12px; }
+  .pkl-nav a { height: 46px; padding: 4px 6px; border-radius: 0; line-height: 1.12; white-space: normal; text-align: center; }
+  #city-filters { display: grid; grid-template-columns: repeat(4, 1fr); }
+  #world-filters { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .pkl-chip { white-space: normal; text-align: center; }
+}
+html { scroll-behavior: smooth; }</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+
+<div id="toolbar-mount" data-depth="1" data-maxwidth="940" data-updated="2026-08-09"></div>
+<script src="../assets/toolbar.js?v=127"></script>
+
+<div id="pkl-map-tooltip" class="pkl-map-tooltip"></div>
+
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>PICKLEBALL HOTSPOTS</h1>
+  </div>
+  <div class="pkl-search-row" style="margin-top:16px;">
+    <div class="pkl-search-box">
+      <input type="search" class="search-input" id="city-search" placeholder="City" aria-label="Search by city" autocomplete="off">
+    </div>
+  </div>
+  <img loading="lazy" src="../Images/summer vibes.png" alt="" aria-hidden="true" width="1200" height="1200" class="pkl-hero-mobile" style="display:none;width:180px;height:auto;margin:0 auto 12px;display:none;">
+  <table class="pkl-hero-table" style="width:100%;border:none;border-collapse:collapse;margin-bottom:4px;"><tr>
+    <td style="vertical-align:top;padding:0;border:none;">
+      <nav class="pkl-nav" aria-label="Jump to section" style="position:static;justify-content:flex-start;padding-top:0;">
+        <a href="#sec-finder">Find Courts</a>
+        <a href="#sec-us">US Hotspots</a>
+        <a href="#sec-world">World Hotspots</a>
+        <a href="#sec-growth">Stats &amp; Growth</a>
+      </nav>
+      <!-- HERO STATS -->
+      <div class="pkl-strip pkl-strip-6">
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🎾</div>
+      <div class="pkl-pill-val">24.3M</div>
+      <div class="pkl-pill-label">US players (2025)</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🏟️</div>
+      <div class="pkl-pill-val">82,000+</div>
+      <div class="pkl-pill-label">US pickleball courts</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🚀</div>
+      <div class="pkl-pill-val">#1</div>
+      <div class="pkl-pill-label">fastest-growing US sport · 5 yrs running</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">📈</div>
+      <div class="pkl-pill-val">172%</div>
+      <div class="pkl-pill-label">player growth · past 3 yrs</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🌍</div>
+      <div class="pkl-pill-val">80+</div>
+      <div class="pkl-pill-label">countries playing</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🏆</div>
+      <div class="pkl-pill-val">$31M+</div>
+      <div class="pkl-pill-label">pro prize money (2026 PPA+MLP)</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">⭐</div>
+      <div class="pkl-pill-val">10M+</div>
+      <div class="pkl-pill-label">DUPR rated players worldwide</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">📍</div>
+      <div class="pkl-pill-val">18,258</div>
+      <div class="pkl-pill-label">US court locations (venues)</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🗓️</div>
+      <div class="pkl-pill-val">1976</div>
+      <div class="pkl-pill-label">first official tournament · Tukwila, WA</div>
+    </div>
+      </div>
+    </td>
+    <td class="pkl-hero-img-col" style="width:240px;vertical-align:middle;padding:0 0 0 16px;border:none;">
+      <img loading="lazy" src="../Images/summer vibes.png" alt="" aria-hidden="true" width="1200" height="1200" style="width:230px;height:auto;display:block;">
+    </td>
+  </tr></table>
+
+  <!-- FIND A COURT -->
+  <div class="section-title" id="sec-finder">Find a Court Near You</div>
+  <div class="pkl-finder-wrap">
+    <div class="pkl-finder-title">Court Finders &amp; Resources</div>
+    <div class="pkl-finder-desc">These tools locate courts worldwide. USA Pickleball's Places2Play (powered by Pickleheads) is the most comprehensive US database, with 82,000+ courts across 18,000+ locations.</div>
+    <div class="pkl-finder-grid">
+      <a class="pkl-finder-btn" href="https://usapickleball.org/places-to-play/" target="_blank" rel="noopener">
+        <span class="pkl-finder-icon">📍</span>
+        <div>
+          <div>USA Pickleball Places2Play</div>
+          <div class="pkl-finder-sub">Official US database · 82,000+ courts · filter indoor/outdoor</div>
+        </div>
+      </a>
+      <a class="pkl-finder-btn" href="https://www.google.com/maps/search/pickleball+courts+near+me/" target="_blank" rel="noopener">
+        <span class="pkl-finder-icon">🗺️</span>
+        <div>
+          <div>Google Maps</div>
+          <div class="pkl-finder-sub">Fastest search · hours, reviews &amp; directions</div>
+        </div>
+      </a>
+      <a class="pkl-finder-btn" href="https://www.globalpickleball.network/pickleball-courts/courts" target="_blank" rel="noopener">
+        <span class="pkl-finder-icon">🌐</span>
+        <div>
+          <div>Global Pickleball Network</div>
+          <div class="pkl-finder-sub">International community directory · courts worldwide</div>
+        </div>
+      </a>
+      <a class="pkl-finder-btn" href="https://www.pickleheads.com/courts" target="_blank" rel="noopener">
+        <span class="pkl-finder-icon">🏓</span>
+        <div>
+          <div>Pickleheads</div>
+          <div class="pkl-finder-sub">Courts + open play sessions near you</div>
+        </div>
+      </a>
+      <a class="pkl-finder-btn" href="https://globalpickleballfederation.org/court-locator/" target="_blank" rel="noopener">
+        <span class="pkl-finder-icon">🔎</span>
+        <div>
+          <div>Global Pickleball Federation</div>
+          <div class="pkl-finder-sub">Worldwide court locator · 18,700+ places</div>
+        </div>
+      </a>
+      <a class="pkl-finder-btn" href="https://www.worldpickleballfederation.org" target="_blank" rel="noopener">
+        <span class="pkl-finder-icon">🌐</span>
+        <div>
+          <div>World Pickleball Federation</div>
+          <div class="pkl-finder-sub">Global governing body · rules &amp; rankings · est. 2025 merger</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- US HOTSPOTS -->
+  <div class="section-title" id="sec-us">Pickleball — US Hotspots</div>
+
+  <!-- Filter -->
+  <div class="pkl-filter-row" id="city-filters">
+    <span class="pkl-chip on" data-f="all">All Cities</span>
+    <span class="pkl-chip" data-f="west">West</span>
+    <span class="pkl-chip" data-f="south">South</span>
+    <span class="pkl-chip" data-f="mw">Midwest</span>
+    <span class="pkl-chip" data-f="ne">Northeast</span>
+    <span class="pkl-chip" data-f="outdoor">Outdoor courts</span>
+    <span class="pkl-chip" data-f="indoor">Indoor courts</span>
+    <span class="pkl-chip" data-f="pro">Pro/Tournament</span>
+  </div>
+
+  <!-- US TILE MAP (improved) -->
+  <div class="pkl-map-wrap">
+    <div id="pkl-us-map"></div>
+    <div class="pkl-legend">
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-1"></div> Hottest</div>
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-2"></div> Very active</div>
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-3"></div> Growing fast</div>
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-4"></div> Emerging</div>
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-5"></div> Developing</div>
+    </div>
+  </div>
+
+  <div class="pkl-city-grid" id="city-grid">
+
+    <!-- 1 Naples -->
+    <div class="pkl-city" data-region="south" data-type="outdoor" data-pro="1" data-name="Naples FL">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">1</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Naples, FL <span class="pkl-badge">World Capital</span><a class="pkl-guide-link" href="../Guides/Naples/naples_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Highest per-capita court density in the US · 80+ public courts · year-round outdoor season</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+            <span class="pkl-tag tag-pro">Tournament hub</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-1">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-1">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">East Naples Community Park</div><div class="pkl-court-detail">64 courts · lighted · open play daily 8am–6pm · 3500 Thomasson Dr</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">North Collier Regional Park</div><div class="pkl-court-detail">16 courts · lighted · 15000 Livingston Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Sugden Regional Park</div><div class="pkl-court-detail">8 courts · open access · 4284 Avalon Dr</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 Scottsdale -->
+    <div class="pkl-city" data-region="west" data-type="outdoor" data-pro="1" data-name="Scottsdale AZ">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">2</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Scottsdale, AZ<a class="pkl-guide-link" href="../Guides/Scottsdale/scottsdale_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">150+ courts metro-wide · APP Tour home base · year-round desert outdoor play</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+            <span class="pkl-tag tag-pro">APP Tour</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-2">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-2">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">WestWorld of Scottsdale</div><div class="pkl-court-detail">Tournament-grade · APP Tour venue · 16601 N Pima Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">McCormick Ranch Tennis Center</div><div class="pkl-court-detail">10 dedicated pickleball courts · 7615 E Indian Bend Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Chaparral Park</div><div class="pkl-court-detail">8 lighted courts · open play mornings · 5401 N Hayden Rd</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Palm Desert -->
+    <div class="pkl-city" data-region="west" data-type="outdoor" data-pro="1" data-name="Palm Desert CA">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">3</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Palm Desert, CA<a class="pkl-guide-link" href="../Guides/Palm-Desert/palm-desert_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Indian Wells resort corridor · tournament-grade facilities · luxury pickleball culture</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+            <span class="pkl-tag tag-pro">Pro venue</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-3">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-3">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Indian Wells Tennis Garden</div><div class="pkl-court-detail">Pro tournament venue · dedicated pickleball complex · 78-200 Miles Ave</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Freedom Park</div><div class="pkl-court-detail">12 courts · lighted · 77-400 Country Club Dr, Palm Desert</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Desert Willow Golf Resort Courts</div><div class="pkl-court-detail">4 resort courts · open to public · 38-995 Desert Willow Dr</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Bainbridge Island -->
+    <div class="pkl-city" data-region="west" data-type="outdoor" data-pro="0" data-name="Bainbridge Island WA">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">4</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Bainbridge Island, WA <span class="pkl-badge">Birthplace</span></div>
+          <div class="pkl-city-sub">Invented here in 1965 · the original Pritchard Park courts where the sport began</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-4">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-4">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Pritchard Park — The Original Courts</div><div class="pkl-court-detail">Historic first courts · open access · 8601 Madison Ave NE</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Battle Point Park</div><div class="pkl-court-detail">6 courts · lighted · 499 Tolo Rd NE</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Bainbridge Island Aquatic Center</div><div class="pkl-court-detail">Indoor courts · year-round · 400 Madison Ave N</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 St. George -->
+    <div class="pkl-city" data-region="west" data-type="outdoor" data-pro="1" data-name="St George UT">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">5</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">St. George, UT</div>
+          <div class="pkl-city-sub">Highest courts per capita in the US · Huntsman World Senior Games hub · 100+ courts</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+            <span class="pkl-tag tag-comp">Senior Games</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-5">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-5">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Brooks Nature Park</div><div class="pkl-court-detail">26 courts · the largest dedicated facility in Utah · 1100 S 700 W</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Cottonwood Park</div><div class="pkl-court-detail">12 lighted courts · open play · 2100 W Tonaquint Dr</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Dixie Center Sports Complex</div><div class="pkl-court-detail">Huntsman Games venue · 1835 Convention Center Dr</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 Austin -->
+    <div class="pkl-city" data-region="south" data-type="both" data-pro="0" data-name="Austin TX">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">6</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Austin, TX<a class="pkl-guide-link" href="../Guides/Austin/austin_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Fastest-growing metro scene · 100+ courts · youngest player demographic in the top 10</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-6">▾ 2 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-6">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Austin Pickle Ranch</div><div class="pkl-court-detail">16 indoor courts · open play + leagues · 11000 Middle Fiskville Rd, Bldg B</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Onion Creek District Park</div><div class="pkl-court-detail">12 courts · lighted · free open play · 6900 Onion Creek Dr</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 Atlanta -->
+    <div class="pkl-city" data-region="south" data-type="both" data-pro="0" data-name="Atlanta GA">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">7</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Atlanta, GA<a class="pkl-guide-link" href="../Guides/Atlanta/atlanta_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Southeast's largest scene · strong league culture · 150+ metro courts</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-7">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-7">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Chicken Wire Courts at Ponce City Market</div><div class="pkl-court-detail">6 rooftop courts · urban setting · 675 Ponce De Leon Ave NE</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Blackburn Park</div><div class="pkl-court-detail">10 lighted courts · open play Tue/Thu/Sat · 3493 Ashford Dunwoody Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Atlanta Pickleball Club</div><div class="pkl-court-detail">Private club · 8 courts · 6700 Sugarloaf Pkwy, Duluth</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 Charlotte -->
+    <div class="pkl-city" data-region="south" data-type="both" data-pro="0" data-name="Charlotte NC">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">8</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Charlotte, NC<a class="pkl-guide-link" href="../Guides/Charlotte/charlotte_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">200+ metro courts · booming amateur circuit · strong club scene</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-8">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-8">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Carolina Pickleball Club</div><div class="pkl-court-detail">12 indoor courts · leagues + clinics · 6401 Idlewild Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Freedom Park</div><div class="pkl-court-detail">8 lighted courts · busy open-play mornings · 1900 East Blvd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Renaissance Park</div><div class="pkl-court-detail">10 courts · one of Charlotte's largest public sites · 1100 W Tyvola Rd</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 Portland -->
+    <div class="pkl-city" data-region="west" data-type="both" data-pro="0" data-name="Portland OR">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">9</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Portland, OR<a class="pkl-guide-link" href="../Guides/Portland/portland_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Pacific Northwest hub · strong 30s–40s demographic · indoor scene handles rain season</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-9">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-9">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Peninsula Park</div><div class="pkl-court-detail">8 courts · lighted · one of Portland's most active open-play sites · N Ainsworth St</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Woodstock Park</div><div class="pkl-court-detail">6 courts · SE Portland · popular with younger crowd · SE 47th Ave</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Portland Pickleball Club</div><div class="pkl-court-detail">10 indoor courts · year-round · 503 SE 11th Ave</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 Nashville -->
+    <div class="pkl-city" data-region="south" data-type="both" data-pro="0" data-name="Nashville TN">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">10</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Nashville, TN<a class="pkl-guide-link" href="../Guides/Nashville/nashville_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Fastest-growing in the South · Shelby Park expansion · DUPR-ranked leagues</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-10">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-10">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Shelby Park</div><div class="pkl-court-detail">8 courts · free open play · most popular site in the city · 2500 Shelby Ave</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">PB Nashville</div><div class="pkl-court-detail">12 indoor courts · clinics + open play · 308 Gallatin Ave</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Percy Warner Park</div><div class="pkl-court-detail">8 courts · lighted · Belle Meade area · 50 Vaughn Rd</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 Phoenix -->
+    <div class="pkl-city" data-region="west" data-type="outdoor" data-pro="1" data-name="Phoenix AZ">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">11</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Phoenix, AZ<a class="pkl-guide-link" href="../Guides/Phoenix/phoenix_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">300+ courts metro-wide · massive retirement community scene · PPA Tour presence</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+            <span class="pkl-tag tag-pro">PPA Tour</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-11">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-11">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Pecos Park</div><div class="pkl-court-detail">24 courts · the largest public complex in Phoenix · 17010 S 48th St</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Rose Mofford Sports Complex</div><div class="pkl-court-detail">12 dedicated courts · open play mornings · 9833 N 25th Ave</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Pickleball Kingdom Chandler</div><div class="pkl-court-detail">30 indoor courts · largest indoor club in AZ · 1375 W Elliot Rd</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 Denver -->
+    <div class="pkl-city" data-region="west" data-type="both" data-pro="0" data-name="Denver CO">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">12</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Denver, CO<a class="pkl-guide-link" href="../Guides/Denver/denver_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Mile High outdoor play · 120+ courts · summer season dominant · strong young-pro scene</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-12">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-12">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Eisenhower Park</div><div class="pkl-court-detail">16 courts · lighted · Aurora · one of metro's busiest · 8051 E Hampden Ave</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Volo Sports Arena</div><div class="pkl-court-detail">16 indoor courts · leagues + open play · 3600 Wynkoop St</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Sloan's Lake Park</div><div class="pkl-court-detail">8 courts · NW Denver · morning open play popular · W 17th Ave</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 Houston -->
+    <div class="pkl-city" data-region="south" data-type="both" data-pro="1" data-name="Houston TX">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">13</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Houston, TX</div>
+          <div class="pkl-city-sub">400+ courts metro-wide · APP Tour host · mild winters allow near year-round outdoor play</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+            <span class="pkl-tag tag-pro">APP Tour</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-13">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-13">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Memorial Park Tennis Center</div><div class="pkl-court-detail">12 courts · lighted · one of the city's busiest public sites · 6501 Memorial Dr</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Discovery Green</div><div class="pkl-court-detail">8 courts · downtown · free open play · 1500 McKinney St</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Houston Pickleball Club</div><div class="pkl-court-detail">20 indoor courts · leagues + clinics · 9625 Katy Fwy</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14 New York City -->
+    <div class="pkl-city" data-region="ne" data-type="outdoor" data-pro="0" data-name="New York City NY">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">14</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">New York City, NY<a class="pkl-guide-link" href="../Guides/New-York/new-york_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">460+ courts · most total courts of any US city · massive and fast-growing urban scene</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-ne">Northeast</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-14">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-14">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Randalls Island</div><div class="pkl-court-detail">44 courts · largest public pickleball complex in NYC · Randalls Island Park</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Central Park Courts</div><div class="pkl-court-detail">Multiple courts · iconic midtown setting · Central Park West</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Brooklyn Bridge Park</div><div class="pkl-court-detail">4 courts · scenic waterfront · Pier 2, Brooklyn</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15 Las Vegas -->
+    <div class="pkl-city" data-region="west" data-type="both" data-pro="1" data-name="Las Vegas NV">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">15</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Las Vegas, NV<a class="pkl-guide-link" href="../Guides/Las-Vegas/las-vegas_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Year-round desert climate · resort-integrated courts · PPA Tour events · rapidly expanding scene</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+            <span class="pkl-tag tag-pro">PPA Tour</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-15">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-15">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Darling Tennis Center</div><div class="pkl-court-detail">24 courts · lighted · open play daily · 7901 W Washington Ave</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Sunset Park</div><div class="pkl-court-detail">8 courts · busy open-play mornings · 2601 E Sunset Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Life Time Las Vegas</div><div class="pkl-court-detail">Premium club courts · coaching + leagues · multiple Strip-area locations</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16 San Diego -->
+    <div class="pkl-city" data-region="west" data-type="outdoor" data-pro="0" data-name="San Diego CA">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">16</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">San Diego, CA<a class="pkl-guide-link" href="../Guides/San-Diego/san-diego_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Year-round beach climate · 200+ courts · one of SoCal's fastest-growing scenes</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-16">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-16">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Morley Field Sports Complex</div><div class="pkl-court-detail">25 courts · one of the largest public sites in California · 2221 Morley Field Dr</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Balboa Park Courts</div><div class="pkl-court-detail">12 courts · iconic park setting · 2221 Pan American Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">La Jolla Recreation Center</div><div class="pkl-court-detail">6 courts · coastal hillside setting · 615 Prospect St</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17 Seattle -->
+    <div class="pkl-city" data-region="west" data-type="both" data-pro="0" data-name="Seattle WA">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">17</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Seattle, WA<a class="pkl-guide-link" href="../Guides/Seattle/seattle_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">Strong indoor scene handles the rainy season · 150+ metro courts · growing 30s–40s demographic</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-west">West</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-17">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-17">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Lower Woodland Park</div><div class="pkl-court-detail">8 courts · popular summer open-play spot · N 50th St</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Rainier Community Center</div><div class="pkl-court-detail">6 courts · South Seattle · active open-play sessions · 4600 38th Ave S</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Seattle Pickleball Club</div><div class="pkl-court-detail">12 indoor courts · year-round leagues + open play · multiple locations</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18 Tampa / St. Pete -->
+    <div class="pkl-city" data-region="south" data-type="outdoor" data-pro="0" data-name="Tampa St Pete FL">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">18</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Tampa / St. Pete, FL</div>
+          <div class="pkl-city-sub">Year-round sunshine · 200+ courts · large retirement community and snowbird scene</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-out">Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-18">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-18">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Azalea Park</div><div class="pkl-court-detail">12 courts · St. Petersburg · one of the region's busiest public sites · 1851 72nd St N</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Rowlett Park</div><div class="pkl-court-detail">8 courts · lighted · popular morning open play · 2401 E Yukon St, Tampa</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">The Pickleball Palace</div><div class="pkl-court-detail">18 indoor courts · St. Petersburg · leagues + drop-in</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19 Dallas -->
+    <div class="pkl-city" data-region="south" data-type="both" data-pro="0" data-name="Dallas TX">
+      <div class="pkl-city-header">
+        <div class="pkl-rank">19</div>
+        <div class="pkl-city-body">
+          <div class="pkl-city-name">Dallas, TX<a class="pkl-guide-link" href="../Guides/Dallas/dallas_v1.html">Guide</a></div>
+          <div class="pkl-city-sub">300+ courts metro-wide · fast-growing young demographic · strong league and club culture</div>
+          <div class="pkl-tags">
+            <span class="pkl-tag tag-south">South</span>
+            <span class="pkl-tag tag-both">Indoor + Outdoor</span>
+          </div>
+          <button class="pkl-toggle-btn" data-courts="courts-19">▾ 3 courts</button>
+        </div>
+      </div>
+      <div class="pkl-courts" id="courts-19">
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">Fretz Park</div><div class="pkl-court-detail">12 courts · lighted · busy open-play mornings · 6950 Belt Line Rd</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-outdoor">Outdoor</span>
+          <div><div class="pkl-court-name">White Rock Lake</div><div class="pkl-court-detail">8 courts · scenic lakeside setting · 8300 E Lawther Dr</div></div>
+        </div>
+        <div class="pkl-court-row">
+          <span class="pkl-court-type ct-indoor">Indoor</span>
+          <div><div class="pkl-court-name">Chicken N Pickle</div><div class="pkl-court-detail">Indoor/outdoor complex · food + bar on-site · 2571 Glenfield Ave</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pkl-empty" id="city-empty-state">
+    <div class="pkl-empty-icon">🏓</div>
+    <div class="pkl-empty-title">No cities match</div>
+    <div class="pkl-empty-body">No hotspots match your search or filter.<br>
+    <button class="pkl-empty-reset" id="city-empty-reset">Clear and show all cities</button></div>
+  </div>
+
+<div id="below-us-grid">
+  <hr class="pkl-divider">
+
+  <!-- COURTS BY STATE -->
+  <div class="section-title" id="sec-states">Courts by State — Top 15</div>
+  <div class="pkl-chart-wrap">
+    <div class="pkl-chart-title">Estimated Public Courts per State (2024)</div>
+    <div id="state-bars"></div>
+  </div>
+
+  <div class="pkl-finder-wrap" style="margin-top:0">
+    <div class="pkl-chart-title">State-by-State Highlights</div>
+    <div class="pkl-table-scroll">
+      <table class="pkl-state-table">
+        <thead>
+          <tr>
+            <th>State</th>
+            <th>Courts (est.)</th>
+            <th class="col-hide-mobile">Players (est.)</th>
+            <th>Top City</th>
+            <th class="col-hide-mobile" style="width:120px"></th>
+          </tr>
+        </thead>
+        <tbody id="state-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="pkl-divider">
+
+  <!-- STATS & GROWTH -->
+  <div class="section-title" id="sec-growth">Stats &amp; Growth</div>
+  <div class="pkl-demo-grid">
+    <div class="pkl-chart-wrap" style="margin-bottom:0">
+      <div class="pkl-chart-title">US Player Growth (millions)</div>
+      <div id="growth-chart"></div>
+    </div>
+    <div class="pkl-chart-wrap" style="margin-bottom:0">
+      <div class="pkl-chart-title">Player Demographics by Age</div>
+      <div id="age-chart"></div>
+    </div>
+  </div>
+
+  <div style="height:12px"></div>
+  <div class="pkl-strip pkl-strip-6">
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">📅</div>
+      <div class="pkl-pill-val">1965</div>
+      <div class="pkl-pill-label">year invented · Bainbridge Island, WA</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">⏱️</div>
+      <div class="pkl-pill-val">11 min</div>
+      <div class="pkl-pill-label">avg game time · beginner level</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🔥</div>
+      <div class="pkl-pill-val">39</div>
+      <div class="pkl-pill-label">new courts per day · 2025 peak</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🎓</div>
+      <div class="pkl-pill-val">31%</div>
+      <div class="pkl-pill-label">players under age 35</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">💪</div>
+      <div class="pkl-pill-val">7.5M</div>
+      <div class="pkl-pill-label">core players · 8+ games/yr</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🆕</div>
+      <div class="pkl-pill-val">4.5M</div>
+      <div class="pkl-pill-label">new players joined in 2025</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🎂</div>
+      <div class="pkl-pill-val">~48 yrs</div>
+      <div class="pkl-pill-label">median player age (US, 2025)</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🔁</div>
+      <div class="pkl-pill-val">25+</div>
+      <div class="pkl-pill-label">avg sessions/yr · core players</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🧮</div>
+      <div class="pkl-pill-val">1,330</div>
+      <div class="pkl-pill-label">US players per court venue</div>
+    </div>
+  </div>
+
+  <hr class="pkl-divider">
+
+  <!-- TOURNAMENTS -->
+  <div class="section-title" id="sec-tournaments">Major Tournaments &amp; Pro Tours</div>
+  <div class="pkl-chart-wrap">
+    <div class="pkl-chart-title">2025 Pro Tour Calendar — Key Events</div>
+    <div class="pkl-table-scroll">
+      <table class="pkl-tour-table">
+        <thead>
+          <tr>
+            <th>Tournament</th>
+            <th class="col-hide-mobile">Location</th>
+            <th class="col-hide-mobile">Date</th>
+            <th>Tour</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="pkl-tour-name">US Open Pickleball Championships</div><div class="pkl-tour-loc">Naples, FL · April</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">Naples, FL</div></td>
+            <td class="col-hide-mobile">April</td>
+            <td><span class="pkl-tier tier-major">Major</span></td>
+          </tr>
+          <tr>
+            <td><div class="pkl-tour-name">PPA Masters — Indian Wells</div><div class="pkl-tour-loc">Palm Desert, CA · March</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">Palm Desert, CA</div></td>
+            <td class="col-hide-mobile">March</td>
+            <td><span class="pkl-tier tier-ppa">PPA</span></td>
+          </tr>
+          <tr>
+            <td><div class="pkl-tour-name">APP Slam at WestWorld</div><div class="pkl-tour-loc">Scottsdale, AZ · January</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">Scottsdale, AZ</div></td>
+            <td class="col-hide-mobile">January</td>
+            <td><span class="pkl-tier tier-atp">APP</span></td>
+          </tr>
+          <tr>
+            <td><div class="pkl-tour-name">National Pickleball Championships</div><div class="pkl-tour-loc">Mesa, AZ · November</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">Mesa, AZ</div></td>
+            <td class="col-hide-mobile">November</td>
+            <td><span class="pkl-tier tier-major">Major</span></td>
+          </tr>
+          <tr>
+            <td><div class="pkl-tour-name">Huntsman World Senior Games</div><div class="pkl-tour-loc">St. George, UT · October</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">St. George, UT</div></td>
+            <td class="col-hide-mobile">October</td>
+            <td><span class="pkl-tier tier-major">Major</span></td>
+          </tr>
+          <tr>
+            <td><div class="pkl-tour-name">PPA ATX Slam</div><div class="pkl-tour-loc">Austin, TX · February</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">Austin, TX</div></td>
+            <td class="col-hide-mobile">February</td>
+            <td><span class="pkl-tier tier-ppa">PPA</span></td>
+          </tr>
+          <tr>
+            <td><div class="pkl-tour-name">APP Houston Open</div><div class="pkl-tour-loc">Houston, TX · May</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">Houston, TX</div></td>
+            <td class="col-hide-mobile">May</td>
+            <td><span class="pkl-tier tier-atp">APP</span></td>
+          </tr>
+          <tr>
+            <td><div class="pkl-tour-name">US Pickleball National Championships</div><div class="pkl-tour-loc">Surprise, AZ · November</div></td>
+            <td class="col-hide-mobile"><div class="pkl-tour-loc">Surprise, AZ</div></td>
+            <td class="col-hide-mobile">November</td>
+            <td><span class="pkl-tier tier-major">Major</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="pkl-divider">
+
+  <div class="pkl-tips-grid">
+    <div class="pkl-tip-card">
+      <span class="pkl-tip-icon">🕐</span>
+      <div class="pkl-tip-title">Best Times for Open Play</div>
+      <div class="pkl-tip-body">Weekday mornings 8–11am are typically the busiest at public parks (retirees dominate). Evenings 5–8pm attract younger working players. Weekends are hit-or-miss — arrive early or expect waits.</div>
+    </div>
+    <div class="pkl-tip-card">
+      <span class="pkl-tip-icon">📱</span>
+      <div class="pkl-tip-title">Apps to Find Games</div>
+      <div class="pkl-tip-body"><strong>Pickleheads</strong> shows open-play sessions near you. <strong>DUPR</strong> (dupr.gg) is the universal rating system — scale 2.0–8.0, average recreational player around 3.5. Create a free account to log games and get matched with players at your level. <strong>Meetup</strong> often has local pickleball groups for travelers.</div>
+    </div>
+    <div class="pkl-tip-card">
+      <span class="pkl-tip-icon">🧳</span>
+      <div class="pkl-tip-title">Travel Tips</div>
+      <div class="pkl-tip-body">A pickleball paddle fits in a carry-on backpack. Most courts rent balls for free or sell them at reception. Announce your DUPR rating when joining open play so you're matched well. Arrive with a loaner paddle story if needed.</div>
+    </div>
+  </div>
+
+  <hr class="pkl-divider">
+
+  <!-- WORLD HOTSPOTS -->
+  <div class="section-title" id="sec-world">Pickleball — Where in the World</div>
+
+  <div class="pkl-strip">
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🌍</div>
+      <div class="pkl-pill-val">80+</div>
+      <div class="pkl-pill-label">countries playing</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">👥</div>
+      <div class="pkl-pill-val">50M+</div>
+      <div class="pkl-pill-label">global players (APP est.)</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">📈</div>
+      <div class="pkl-pill-val">2×</div>
+      <div class="pkl-pill-label">global growth · 3 years</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🏛️</div>
+      <div class="pkl-pill-val">21</div>
+      <div class="pkl-pill-label">national federations · World Pickleball Federation</div>
+    </div>
+    <div class="pkl-pill">
+      <div class="pkl-pill-icon">🌐</div>
+      <div class="pkl-pill-val">6</div>
+      <div class="pkl-pill-label">continents with organized play</div>
+    </div>
+  </div>
+
+  <div class="pkl-map-wrap">
+    <div id="pkl-world-map"></div>
+    <div class="pkl-legend">
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-1"></div> Dominant</div>
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-2"></div> Established</div>
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-3"></div> Growing</div>
+      <div class="pkl-leg"><div class="pkl-leg-box pkl-heat-4"></div> Emerging</div>
+    </div>
+  </div>
+
+  <!-- World filter -->
+  <div class="pkl-filter-row" id="world-filters">
+    <span class="pkl-chip on" data-wf="all">All Countries</span>
+    <span class="pkl-chip" data-wf="dominant">Dominant</span>
+    <span class="pkl-chip" data-wf="established">Established</span>
+    <span class="pkl-chip" data-wf="growing">Growing</span>
+    <span class="pkl-chip" data-wf="emerging">Emerging</span>
+  </div>
+
+  <!-- Ranks 1-4: full cards -->
+  <div class="pkl-world-grid" id="world-grid">
+    <div class="pkl-world-card" data-wlevel="dominant">
+      <div class="pkl-world-rank">1</div>
+      <div class="pkl-world-flag">🇺🇸</div>
+      <div class="pkl-world-body">
+        <div class="pkl-world-name">United States</div>
+        <div class="pkl-world-sub">24.3M players · origin of the sport · 82,000+ courts · PPA + APP pro tours</div>
+      </div>
+      <span class="pkl-level pkl-level-3">Dominant</span>
+    </div>
+    <div class="pkl-world-card" data-wlevel="established">
+      <div class="pkl-world-rank">2</div>
+      <div class="pkl-world-flag">🇮🇳</div>
+      <div class="pkl-world-body">
+        <div class="pkl-world-name">India</div>
+        <div class="pkl-world-sub">3M+ players · explosive 2024 growth · Mumbai, Delhi &amp; Bengaluru hubs · national federation active</div>
+      </div>
+      <span class="pkl-level pkl-level-2">Established</span>
+    </div>
+    <div class="pkl-world-card" data-wlevel="established">
+      <div class="pkl-world-rank">3</div>
+      <div class="pkl-world-flag">🇨🇦</div>
+      <div class="pkl-world-body">
+        <div class="pkl-world-name">Canada<a class="pkl-guide-link" href="../Guides/Toronto/toronto_v1.html">Toronto</a><a class="pkl-guide-link" href="../Guides/Vancouver/vancouver_v1.html">Vancouver</a></div>
+        <div class="pkl-world-sub">3.6M players · Ontario &amp; BC · Pickleball Canada federation · strong amateur circuit</div>
+      </div>
+      <span class="pkl-level pkl-level-2">Established</span>
+    </div>
+    <div class="pkl-world-card" data-wlevel="growing">
+      <div class="pkl-world-rank">4</div>
+      <div class="pkl-world-flag">🇬🇧</div>
+      <div class="pkl-world-body">
+        <div class="pkl-world-name">United Kingdom<a class="pkl-guide-link" href="../Guides/Edinburgh/edinburgh_v1.html">Edinburgh</a></div>
+        <div class="pkl-world-sub">500K players · London leisure centers + Edinburgh · fastest-growing in Europe · UK federation est. 2019</div>
+      </div>
+      <span class="pkl-level pkl-level-1">Growing</span>
+    </div>
+  </div>
+
+  <!-- Ranks 5-12: compact table -->
+  <div class="pkl-chart-wrap" style="margin-top:8px">
+    <div class="pkl-table-scroll">
+      <table class="pkl-world-table" id="world-table">
+        <thead>
+          <tr>
+            <th style="width:28px">#</th>
+            <th style="width:32px"></th>
+            <th>Country</th>
+            <th class="col-hide-mobile">Players</th>
+            <th>Level</th>
+            <th>Guides</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-wlevel="growing">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">5</td>
+            <td style="font-size:18px;line-height:1">🇪🇸</td>
+            <td><strong>Spain</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">500K</td>
+            <td><span class="pkl-level pkl-level-1">Growing</span></td>
+            <td><a class="pkl-guide-link" href="../Guides/Barcelona/barcelona_v1.html">Barcelona</a></td>
+          </tr>
+          <tr data-wlevel="growing">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">6</td>
+            <td style="font-size:18px;line-height:1">🇦🇺</td>
+            <td><strong>Australia</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">400K</td>
+            <td><span class="pkl-level pkl-level-1">Growing</span></td>
+            <td><a class="pkl-guide-link" href="../Guides/Melbourne/melbourne_v1.html">Melbourne</a></td>
+          </tr>
+          <tr data-wlevel="growing">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">7</td>
+            <td style="font-size:18px;line-height:1">🇫🇷</td>
+            <td><strong>France</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">300K</td>
+            <td><span class="pkl-level pkl-level-1">Growing</span></td>
+            <td style="color:var(--muted);font-size:11px">—</td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">8</td>
+            <td style="font-size:18px;line-height:1">🇧🇷</td>
+            <td><strong>Brazil</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">250K</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td><a class="pkl-guide-link" href="../Guides/Rio-de-Janeiro/rio-de-janeiro_v1.html">Rio</a></td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">9</td>
+            <td style="font-size:18px;line-height:1">🇳🇱</td>
+            <td><strong>Netherlands</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">200K</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td><a class="pkl-guide-link" href="../Guides/Amsterdam/amsterdam_v1.html">Amsterdam</a></td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">10</td>
+            <td style="font-size:18px;line-height:1">🇩🇪</td>
+            <td><strong>Germany</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">150K</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td><a class="pkl-guide-link" href="../Guides/Berlin/berlin_v1.html">Berlin</a></td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">11</td>
+            <td style="font-size:18px;line-height:1">🇯🇵</td>
+            <td><strong>Japan</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">120K</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td style="color:var(--muted);font-size:11px">—</td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">12</td>
+            <td style="font-size:18px;line-height:1">🇲🇽</td>
+            <td><strong>Mexico</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">100K</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td style="color:var(--muted);font-size:11px">—</td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">13</td>
+            <td style="font-size:18px;line-height:1">🇮🇹</td>
+            <td><strong>Italy</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">80K est.</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td style="color:var(--muted);font-size:11px">—</td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">14</td>
+            <td style="font-size:18px;line-height:1">🇰🇷</td>
+            <td><strong>South Korea</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">70K est.</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td style="color:var(--muted);font-size:11px">—</td>
+          </tr>
+          <tr data-wlevel="emerging">
+            <td style="color:var(--muted);font-size:11px;font-weight:700">15</td>
+            <td style="font-size:18px;line-height:1">🇵🇭</td>
+            <td><strong>Philippines</strong></td>
+            <td class="col-hide-mobile" style="color:var(--muted);font-size:11px">50K est.</td>
+            <td><span class="pkl-level pkl-level-0">Emerging</span></td>
+            <td style="color:var(--muted);font-size:11px">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Sports-Calendar.html">🏟️ Sports calendar</a>
+    <a class="also-on-this-site-pill" href="Festival-Finder.html">🎭 Festival finder</a>
+    <a class="also-on-this-site-pill" href="Destination-Records.html">📊 Destination records</a>
+    <a class="also-on-this-site-pill" href="Before-You-Go.html">✅ Before you go</a>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   US MAP (improved tile grid — larger cells, tooltips, court counts)
+   ============================================================ */
+(function(){
+  var CW=60,CH=45,GAP=4;
+  var FILL=['#f5f2ee','#ece6dd','#e8b87a','#d4874a','#b85c2a'];
+  var TC   =['#9a9490','#6a6660','#7a3b1e','#ffffff','#ffffff'];
+  // [abbr, row, col, level, fullname, courts]
+  var S=[
+    ['AK',0,0,0,'Alaska','—'],['ME',0,10,0,'Maine','—'],
+    ['WA',1,1,3,'Washington','600'],['MT',1,2,0,'Montana','—'],['ND',1,3,0,'North Dakota','—'],['MN',1,4,1,'Minnesota','—'],['WI',1,5,1,'Wisconsin','—'],['VT',1,8,0,'Vermont','—'],['NH',1,9,0,'New Hampshire','—'],
+    ['OR',2,1,2,'Oregon','390'],['ID',2,2,0,'Idaho','—'],['SD',2,3,0,'South Dakota','—'],['IA',2,4,0,'Iowa','—'],['IL',2,5,1,'Illinois','—'],['MI',2,6,1,'Michigan','300'],['NY',2,8,2,'New York','320'],['MA',2,9,1,'Massachusetts','—'],
+    ['CA',3,1,4,'California','1,200'],['NV',3,2,2,'Nevada','360'],['WY',3,3,0,'Wyoming','—'],['NE',3,4,0,'Nebraska','—'],['IN',3,5,0,'Indiana','—'],['OH',3,6,1,'Ohio','—'],['PA',3,7,2,'Pennsylvania','340'],['NJ',3,8,1,'New Jersey','—'],['CT',3,9,0,'Connecticut','—'],['RI',3,10,0,'Rhode Island','—'],
+    ['UT',4,2,3,'Utah','500'],['CO',4,3,2,'Colorado','560'],['KS',4,4,0,'Kansas','—'],['MO',4,5,0,'Missouri','—'],['KY',4,6,0,'Kentucky','—'],['WV',4,7,0,'West Virginia','—'],['VA',4,8,1,'Virginia','—'],['DE',4,9,0,'Delaware','—'],['MD',4,10,0,'Maryland','—'],
+    ['AZ',5,2,4,'Arizona','980'],['NM',5,3,0,'New Mexico','—'],['OK',5,4,0,'Oklahoma','—'],['AR',5,5,0,'Arkansas','—'],['TN',5,6,2,'Tennessee','440'],['NC',5,7,3,'North Carolina','650'],['SC',5,8,2,'South Carolina','—'],
+    ['HI',6,0,2,'Hawaii','—'],['TX',6,3,3,'Texas','870'],['LA',6,4,0,'Louisiana','—'],['MS',6,5,0,'Mississippi','—'],['AL',6,6,0,'Alabama','—'],['GA',6,7,3,'Georgia','520'],
+    ['FL',7,8,4,'Florida','1,400']
+  ];
+  var STEP=CW+GAP,VSTEP=CH+GAP,COLS=11,ROWS=8;
+  var W=COLS*STEP+GAP,H=ROWS*VSTEP+GAP;
+  var p=['<svg class="pkl-us-svg" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'];
+  p.push('<rect width="'+W+'" height="'+H+'" fill="#f0ede8" rx="8"/>');
+  S.forEach(function(s){
+    var a=s[0],r=s[1],c=s[2],lv=s[3],nm=s[4],cts=s[5];
+    var x=c*STEP+GAP,y=r*VSTEP+GAP;
+    var tip=nm+(cts!=='—'?' · '+cts+' courts':'');
+    p.push('<rect class="state-path" x="'+x+'" y="'+y+'" width="'+CW+'" height="'+CH+'" rx="5" fill="'+FILL[lv]+'" data-name="'+tip+'"/>');
+    p.push('<text x="'+(x+CW/2)+'" y="'+(y+CH/2-(cts!=='—'?7:4))+'" text-anchor="middle" dominant-baseline="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="11" font-weight="700" fill="'+TC[lv]+'" pointer-events="none">'+a+'</text>');
+    if(cts!=='—'){
+      p.push('<text x="'+(x+CW/2)+'" y="'+(y+CH/2+9)+'" text-anchor="middle" dominant-baseline="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="9" font-weight="600" fill="'+TC[lv]+'" opacity="0.75" pointer-events="none">'+cts+'</text>');
+    }
+  });
+  p.push('</svg>');
+  var el=document.getElementById('pkl-us-map');
+  if(el) el.innerHTML=p.join('');
+
+  // Tooltip
+  var tip=document.getElementById('pkl-map-tooltip');
+  if(tip && el){
+    el.addEventListener('mousemove',function(e){
+      var t=e.target;
+      var nm=t.getAttribute('data-name');
+      if(nm){
+        tip.textContent=nm;
+        tip.style.display='block';
+        tip.style.left=(e.clientX+14)+'px';
+        tip.style.top=(e.clientY-10)+'px';
+      } else {
+        tip.style.display='none';
+      }
+    });
+    el.addEventListener('mouseleave',function(){ tip.style.display='none'; });
+  }
+})();
+
+/* ============================================================
+   WORLD MAP (tile grid — countries grouped by region)
+   ============================================================ */
+(function(){
+  var CW=68,CH=66,GAP=6;
+  var FILL=['#ece6dd','#e8b87a','#d4874a','#b85c2a'];
+  var TC  =['#6a6660','#7a3b1e','#ffffff','#ffffff'];
+  // [abbr, flag, row, col, level, tooltip, count]
+  // Cols 0-1=Americas | gap col2 | cols 3-5=Europe | gap col6 | cols 7-8=Asia·Pacific
+  var TILES=[
+    ['CAN','🇨🇦',0,1,2,'Canada · 3.6M players','3.6M'],
+    ['USA','🇺🇸',1,0,3,'United States · 24.3M players','24.3M'],
+    ['MEX','🇲🇽',2,1,0,'Mexico · 100K players','100K'],
+    ['BRA','🇧🇷',3,0,0,'Brazil · 250K players','250K'],
+    ['UK', '🇬🇧',0,3,1,'United Kingdom · 500K players','500K'],
+    ['NL', '🇳🇱',0,4,0,'Netherlands · 200K players','200K'],
+    ['DE', '🇩🇪',0,5,0,'Germany · 150K players','150K'],
+    ['ES', '🇪🇸',1,3,1,'Spain · 500K players','500K'],
+    ['FR', '🇫🇷',1,4,1,'France · 300K players','300K'],
+    ['IND','🇮🇳',1,7,2,'India · 3M+ players','3M+'],
+    ['JPN','🇯🇵',0,8,0,'Japan · 120K players','120K'],
+    ['AUS','🇦🇺',2,7,1,'Australia · 400K players','400K']
+  ];
+  var COLS=9,ROWS=4,SX=CW+GAP,SY=CH+GAP;
+  var W=COLS*SX+GAP,H=ROWS*SY+GAP+22;
+  var p=['<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'];
+  p.push('<rect width="'+W+'" height="'+H+'" fill="#e8f0f7" rx="8"/>');
+  var BANDS=[
+    {c0:0,c1:1,label:'AMERICAS'},
+    {c0:3,c1:5,label:'EUROPE'},
+    {c0:7,c1:8,label:'ASIA · PACIFIC'}
+  ];
+  BANDS.forEach(function(b){
+    var bx=b.c0*SX+GAP-2,bw=(b.c1-b.c0+1)*SX,lx=bx+bw/2;
+    p.push('<rect x="'+bx+'" y="'+GAP+'" width="'+bw+'" height="'+(ROWS*SY-GAP/2)+'" fill="rgba(0,0,0,0.022)" rx="6"/>');
+    p.push('<text x="'+lx+'" y="'+(H-6)+'" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="8.5" font-weight="700" letter-spacing="0.09em" fill="#9a9490">'+b.label+'</text>');
+  });
+  TILES.forEach(function(t){
+    var abbr=t[0],flag=t[1],row=t[2],col=t[3],lv=t[4],tip=t[5],cnt=t[6];
+    var x=col*SX+GAP,y=row*SY+GAP,mid=y+CH/2;
+    p.push('<rect class="state-path" x="'+x+'" y="'+y+'" width="'+CW+'" height="'+CH+'" rx="5" fill="'+FILL[lv]+'" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" data-name="'+tip+'"/>');
+    p.push('<text x="'+(x+CW/2)+'" y="'+(mid-14)+'" text-anchor="middle" dominant-baseline="middle" font-size="17" pointer-events="none">'+flag+'</text>');
+    p.push('<text x="'+(x+CW/2)+'" y="'+(mid+2)+'" text-anchor="middle" dominant-baseline="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="9.5" font-weight="700" fill="'+TC[lv]+'" pointer-events="none">'+abbr+'</text>');
+    p.push('<text x="'+(x+CW/2)+'" y="'+(mid+17)+'" text-anchor="middle" dominant-baseline="middle" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="8" font-weight="600" fill="'+TC[lv]+'" opacity="0.8" pointer-events="none">'+cnt+'</text>');
+  });
+  p.push('</svg>');
+  var el=document.getElementById('pkl-world-map');
+  if(el) el.innerHTML=p.join('');
+  var tip=document.getElementById('pkl-map-tooltip');
+  if(tip&&el){
+    el.addEventListener('mousemove',function(e){var t=e.target,nm=t.getAttribute('data-name');if(nm){tip.textContent=nm;tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';}else{tip.style.display='none';}});
+    el.addEventListener('mouseleave',function(){tip.style.display='none';});
+  }
+})();
+
+/* ============================================================
+   STATE BARS + TABLE
+   ============================================================ */
+(function(){
+  var STATES=[
+    {st:'Florida',        courts:1400, players:'4.2M', top:'Naples'},
+    {st:'California',     courts:1200, players:'3.8M', top:'Palm Desert'},
+    {st:'Arizona',        courts:980,  players:'3.1M', top:'Scottsdale'},
+    {st:'Texas',          courts:870,  players:'2.9M', top:'Austin'},
+    {st:'North Carolina', courts:650,  players:'2.0M', top:'Charlotte'},
+    {st:'Washington',     courts:600,  players:'1.8M', top:'Seattle/Bainbridge'},
+    {st:'Colorado',       courts:560,  players:'1.6M', top:'Denver'},
+    {st:'Georgia',        courts:520,  players:'1.5M', top:'Atlanta'},
+    {st:'Utah',           courts:500,  players:'1.4M', top:'St. George'},
+    {st:'Tennessee',      courts:440,  players:'1.2M', top:'Nashville'},
+    {st:'Oregon',         courts:390,  players:'1.1M', top:'Portland'},
+    {st:'Nevada',         courts:360,  players:'1.0M', top:'Las Vegas'},
+    {st:'Pennsylvania',   courts:340,  players:'0.9M', top:'Philadelphia'},
+    {st:'New York',       courts:320,  players:'0.9M', top:'New York City'},
+    {st:'Michigan',       courts:300,  players:'0.8M', top:'Grand Rapids'}
+  ];
+  var MAX=STATES[0].courts;
+
+  // Bar chart
+  var bc=document.getElementById('state-bars');
+  if(bc){
+    var html='';
+    STATES.slice(0,10).forEach(function(s){
+      var pct=(s.courts/MAX*100).toFixed(1);
+      html+='<div class="pkl-bar-row">';
+      html+='<div class="pkl-bar-label">'+s.st.split(' ')[0]+'</div>';
+      html+='<div class="pkl-bar-track"><div class="pkl-bar-fill" style="width:'+pct+'%"></div></div>';
+      html+='<div class="pkl-bar-val">'+s.courts.toLocaleString()+'</div>';
+      html+='</div>';
+    });
+    bc.innerHTML=html;
+  }
+
+  // Table
+  var tb=document.getElementById('state-table-body');
+  if(tb){
+    var html2='';
+    STATES.forEach(function(s){
+      var pct=(s.courts/MAX*100).toFixed(1);
+      html2+='<tr>';
+      html2+='<td><div class="pkl-state-name">'+s.st+'</div></td>';
+      html2+='<td><div class="pkl-state-courts">'+s.courts.toLocaleString()+'</div><div class="pkl-state-bar"><div class="pkl-state-bar-fill" style="width:'+pct+'%"></div></div></td>';
+      html2+='<td class="col-hide-mobile">'+s.players+'</td>';
+      html2+='<td style="color:var(--muted);font-size:11px">'+s.top+'</td>';
+      html2+='<td class="col-hide-mobile"></td>';
+      html2+='</tr>';
+    });
+    tb.innerHTML=html2;
+  }
+})();
+
+/* ============================================================
+   GROWTH CHART
+   ============================================================ */
+(function(){
+  var DATA=[
+    {y:'2020',v:4.2},{y:'2021',v:4.8},{y:'2022',v:8.9},{y:'2023',v:13.6},{y:'2024',v:19.8},{y:'2025',v:24.3}
+  ];
+  var MAX=DATA[DATA.length-1].v;
+  var el=document.getElementById('growth-chart');
+  if(!el) return;
+  var html='';
+  DATA.forEach(function(d){
+    var pct=(d.v/MAX*100).toFixed(1);
+    html+='<div class="pkl-bar-row">';
+    html+='<div class="pkl-bar-label">'+d.y+'</div>';
+    html+='<div class="pkl-bar-track"><div class="pkl-bar-fill" style="width:'+pct+'%"></div></div>';
+    html+='<div class="pkl-bar-val">'+d.v+'M</div>';
+    html+='</div>';
+  });
+  el.innerHTML=html;
+})();
+
+/* ============================================================
+   AGE DEMOGRAPHICS CHART
+   ============================================================ */
+(function(){
+  var DATA=[
+    {g:'18–34',pct:28},{g:'35–49',pct:22},{g:'50–64',pct:33},{g:'65+',pct:17}
+  ];
+  var el=document.getElementById('age-chart');
+  if(!el) return;
+  var html='';
+  DATA.forEach(function(d){
+    html+='<div class="pkl-bar-row">';
+    html+='<div class="pkl-bar-label">'+d.g+'</div>';
+    html+='<div class="pkl-bar-track"><div class="pkl-bar-fill" style="width:'+d.pct+'%"></div></div>';
+    html+='<div class="pkl-bar-val">'+d.pct+'%</div>';
+    html+='</div>';
+  });
+  el.innerHTML=html;
+})();
+
+/* ============================================================
+   CITY SEARCH + FILTER
+   ============================================================ */
+(function(){
+  var searchInput=document.getElementById('city-search');
+  var chips=[].slice.call(document.querySelectorAll('#city-filters .pkl-chip'));
+  var cards=[].slice.call(document.querySelectorAll('#city-grid .pkl-city'));
+  var activeFilter='all';
+  var searchTerm='';
+
+  function applyFilters(){
+    var visible=0;
+    cards.forEach(function(card){
+      var name=(card.getAttribute('data-name')||'').toLowerCase();
+      var region=card.getAttribute('data-region')||'';
+      var type=card.getAttribute('data-type')||'';
+      var pro=card.getAttribute('data-pro')||'0';
+      var matchSearch=!searchTerm || name.indexOf(searchTerm)>-1;
+      var matchFilter=true;
+      if(activeFilter==='west')    matchFilter=region==='west';
+      if(activeFilter==='south')   matchFilter=region==='south';
+      if(activeFilter==='mw')      matchFilter=region==='mw';
+      if(activeFilter==='ne')      matchFilter=region==='ne';
+      if(activeFilter==='outdoor') matchFilter=type==='outdoor'||type==='both';
+      if(activeFilter==='indoor')  matchFilter=type==='indoor'||type==='both';
+      if(activeFilter==='pro')     matchFilter=pro==='1';
+      var show=matchSearch&&matchFilter;
+      card.classList.toggle('hidden', !show);
+      if(show) visible++;
+    });
+    var emptyEl=document.getElementById('city-empty-state');
+    if(emptyEl) emptyEl.style.display=visible===0?'block':'none';
+    var belowGrid=document.getElementById('below-us-grid');
+    if(belowGrid) belowGrid.style.display=searchTerm?'none':'';
+  }
+
+  chips.forEach(function(chip){ chip.setAttribute('aria-pressed','false'); });
+  chips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      chips.forEach(function(c){c.classList.remove('on'); c.setAttribute('aria-pressed','false');});
+      chip.classList.add('on');
+      chip.setAttribute('aria-pressed','true');
+      activeFilter=chip.getAttribute('data-f');
+      applyFilters();
+    });
+  });
+  if(chips.length) chips[0].setAttribute('aria-pressed','true');
+  if(searchInput){
+    searchInput.addEventListener('input',function(){
+      searchTerm=searchInput.value.toLowerCase().trim();
+      applyFilters();
+    });
+  }
+  var emptyReset=document.getElementById('city-empty-reset');
+  if(emptyReset){
+    emptyReset.addEventListener('click',function(){
+      searchTerm='';
+      if(searchInput) searchInput.value='';
+      activeFilter='all';
+      chips.forEach(function(c){c.classList.toggle('on',c.getAttribute('data-f')==='all');});
+      applyFilters();
+    });
+  }
+})();
+
+/* ============================================================
+   COLLAPSIBLE COURT ROWS
+   ============================================================ */
+(function(){
+  var btns=[].slice.call(document.querySelectorAll('.pkl-toggle-btn'));
+  btns.forEach(function(btn){ btn.setAttribute('aria-expanded','false'); });
+  btns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var id=btn.getAttribute('data-courts');
+      var courts=document.getElementById(id);
+      if(!courts) return;
+      var open=courts.classList.toggle('open');
+      var count=courts.querySelectorAll('.pkl-court-row').length;
+      btn.textContent=open?('▴ hide courts'):('▾ '+count+' court'+(count!==1?'s':''));
+      btn.setAttribute('aria-expanded', open?'true':'false');
+    });
+  });
+})();
+
+/* ============================================================
+   GUIDE INDICATOR — add has-guide class if card has a guide link
+   ============================================================ */
+(function(){
+  var cards=[].slice.call(document.querySelectorAll('#city-grid .pkl-city'));
+  cards.forEach(function(card){
+    if(card.querySelector('.pkl-guide-link')){
+      card.classList.add('has-guide');
+    }
+  });
+})();
+
+/* ============================================================
+   WORLD FILTER — cards + table rows
+   ============================================================ */
+(function(){
+  var chips=[].slice.call(document.querySelectorAll('#world-filters .pkl-chip'));
+  var cards=[].slice.call(document.querySelectorAll('#world-grid .pkl-world-card'));
+  var rows=[].slice.call(document.querySelectorAll('#world-table tbody tr'));
+  chips.forEach(function(chip){ chip.setAttribute('aria-pressed','false'); });
+  if(chips.length) chips[0].setAttribute('aria-pressed','true');
+  chips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      chips.forEach(function(c){c.classList.remove('on'); c.setAttribute('aria-pressed','false');});
+      chip.classList.add('on');
+      chip.setAttribute('aria-pressed','true');
+      var f=chip.getAttribute('data-wf');
+      cards.forEach(function(card){
+        var lv=card.getAttribute('data-wlevel')||'';
+        card.classList.toggle('hidden', f!=='all' && lv!==f);
+      });
+      rows.forEach(function(row){
+        var lv=row.getAttribute('data-wlevel')||'';
+        row.classList.toggle('hidden', f!=='all' && lv!==f);
+      });
+    });
+  });
+})();
+
+/* ============================================================
+   SKILL QUIZ
+   ============================================================ */
+(function(){
+  var answers={1:null,2:null,3:null};
+  var opts=[].slice.call(document.querySelectorAll('.pkl-quiz-opt'));
+  var resultEl=document.getElementById('quiz-result');
+  var levelEl=document.getElementById('quiz-level');
+  var labelEl=document.getElementById('quiz-label');
+  var descEl=document.getElementById('quiz-desc');
+  var resetEl=document.getElementById('quiz-reset');
+
+  var RESULTS=[
+    {min:0,max:1,  level:'2.0–2.5',name:'Beginner',    desc:'You\'re just getting started. Focus on consistent serves and basic rallies. Jump into open-play sessions — most parks welcome all levels and it\'s the fastest way to improve.'},
+    {min:2,max:3,  level:'2.5–3.0',name:'Developing',   desc:'You\'ve got the basics but are still building consistency. Work on your third-shot drop and staying at the kitchen line. Most open-play sessions at this level are very welcoming.'},
+    {min:4,max:4,  level:'3.0–3.5',name:'Intermediate', desc:'You can hold your own in most open-play settings. You\'re learning to dink and understand court positioning. This is the most common level at US public courts.'},
+    {min:5,max:5,  level:'3.5–4.0',name:'Solid Player', desc:'Consistent serve, rally, and kitchen game. You\'re ready for organized leagues and local tournaments. Start tracking your DUPR rating if you haven\'t already.'},
+    {min:6,max:6,  level:'4.0+',   name:'Advanced',     desc:'You play competitively and have a strong all-around game. Third-shot drops, resets, and speed-ups are in your arsenal. Tournament play is the right next challenge.'}
+  ];
+
+  function checkAnswers(){
+    if(answers[1]===null||answers[2]===null||answers[3]===null) return;
+    var total=answers[1]+answers[2]+answers[3];
+    var res=RESULTS[RESULTS.length-1];
+    for(var i=0;i<RESULTS.length;i++){
+      if(total>=RESULTS[i].min&&total<=RESULTS[i].max){res=RESULTS[i];break;}
+    }
+    levelEl.textContent=res.level;
+    labelEl.textContent=res.name;
+    descEl.textContent=res.desc;
+    resultEl.classList.add('show');
+  }
+
+  opts.forEach(function(opt){
+    opt.addEventListener('click',function(){
+      var q=parseInt(opt.getAttribute('data-q'));
+      var v=parseInt(opt.getAttribute('data-v'));
+      // deselect others in same group
+      document.querySelectorAll('.pkl-quiz-opt[data-q="'+q+'"]').forEach(function(o){o.classList.remove('selected');});
+      opt.classList.add('selected');
+      answers[q]=v;
+      checkAnswers();
+    });
+  });
+
+  if(resetEl){
+    resetEl.addEventListener('click',function(){
+      answers={1:null,2:null,3:null};
+      opts.forEach(function(o){o.classList.remove('selected');});
+      resultEl.classList.remove('show');
+    });
+  }
+})();
+
+/* ============================================================
+   NAV ACTIVE STATE
+   ============================================================ */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.pkl-nav a'));
+  if(!links.length||!('IntersectionObserver' in window))return;
+  var map={};
+  links.forEach(function(a){var id=(a.getAttribute('href')||'').replace('#','');if(id)map[id]=a;});
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){links.forEach(function(a){a.classList.toggle('active',a===map[en.target.id]);});}
+    });
+  },{rootMargin:'-12% 0px -78% 0px',threshold:0});
+  Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el);});
+})();
+</script>
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>(function(){
+  if(!window.TVESearch) return;
+  var input=document.getElementById('city-search');
+  if(!input) return;
+  var cards=[].slice.call(document.querySelectorAll('#city-grid .pkl-city'));
+  var items=cards.map(function(card){
+    var raw=(card.getAttribute('data-name')||'').trim();
+    var m=raw.match(/^(.*)\s+([A-Z]{2})$/);
+    return m ? {name:m[1], sub:m[2]} : {name:raw};
+  }).filter(function(it){ return it.name; });
+  TVESearch.attach(input,{items:items});
+}());</script>
+</body>
+</html>

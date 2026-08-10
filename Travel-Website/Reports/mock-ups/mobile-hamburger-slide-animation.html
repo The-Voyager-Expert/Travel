@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mobile Hamburger Slide Animation — Mockup</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32;
+    --muted: #6a6660; --accent: #c8a44a; --rust: #b85c2a;
+    --font: 'Roboto', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); padding: 20px; }
+  h1 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--rust); margin-bottom: 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .change { font-size: 11px; font-weight: 700; background: #fff3e0; border: 1px solid #f0c060; border-radius: 4px; padding: 4px 8px; display: inline-block; margin-bottom: 20px; color: #7a4400; }
+  .panels { display: flex; gap: 20px; flex-wrap: wrap; }
+  .panel { flex: 1 1 320px; background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+  .panel-label { padding: 8px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .before .panel-label { background: #fde8e8; color: #a00; }
+  .after .panel-label  { background: #e8f5e9; color: #2a7a00; }
+  .phone { width: 100%; max-width: 393px; margin: 0 auto; }
+  /* Toolbar */
+  .tb { height: 56px; background: var(--rust); display: flex; align-items: center; padding: 0 16px; position: relative; }
+  .tb-title { color: #fff; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; flex: 1; text-align: center; }
+  .tb-ham-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 4px 8px; }
+  /* Page content behind */
+  .page-content { padding: 16px; }
+  .page-content p { font-size: 15px; line-height: 1.65; color: var(--text); }
+  /* BEFORE: hard display toggle */
+  .menu-before {
+    position: absolute; top: 56px; left: 0; right: 0;
+    background: #fff; border-top: 1px solid #e6e2da;
+    padding: 4px 0 16px; z-index: 10;
+  }
+  .menu-before.hidden { display: none; }
+  /* AFTER: animated with visibility+opacity+transform */
+  .menu-after {
+    position: absolute; top: 56px; left: 0; right: 0;
+    background: #fff; border-top: 1px solid #e6e2da;
+    padding: 4px 0 16px; z-index: 10;
+    transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
+  }
+  .menu-after.hidden { opacity: 0; transform: translateY(-10px); visibility: hidden; pointer-events: none; }
+  .menu-after.visible { opacity: 1; transform: translateY(0); visibility: visible; pointer-events: auto; }
+  .menu-item { display: block; padding: 10px 24px; font-size: 14px; color: var(--text); border-bottom: none; }
+  .menu-sep { height: 1px; background: #e6e2da; margin: 4px 24px; }
+  .menu-hdr { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 6px 24px 2px; }
+  .demo-phone { position: relative; border: 2px solid #ddd; border-radius: 12px; overflow: hidden; height: 320px; margin: 0; }
+  .demo-btn { background: var(--rust); color: #fff; border: none; border-radius: 4px; padding: 6px 14px; font-size: 12px; cursor: pointer; margin: 8px 14px; display: block; font-family: var(--font); }
+  .state-label { font-size: 10px; color: var(--muted); padding: 0 16px 4px; font-style: italic; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1e1c18; --surface: #2a2722; --text: #e8e4dc; --muted: #a09a90; } }
+  :root[data-theme="dark"] { --bg: #1e1c18; --surface: #2a2722; --text: #e8e4dc; --muted: #a09a90; }
+  :root[data-theme="light"] { --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660; }
+</style>
+</head>
+<body>
+<h1>Mobile Hamburger Menu — Add Slide-In Animation</h1>
+<p class="meta">2026-08-09 · toolbar.js ~line 507: .tb-ham-menu.tb-ham-open{display:block} · Effort M · Confidence high</p>
+<span class="change">toolbar.js: replace display:none/block toggle with visibility+opacity+transform transition (0.22s ease)</span>
+
+<div class="panels">
+  <div class="panel before">
+    <div class="panel-label">BEFORE — Hard display toggle (current)</div>
+    <div class="phone">
+      <div class="demo-phone">
+        <div class="tb">
+          <div class="tb-title">THE VOYAGER EXPERT</div>
+          <button class="tb-ham-btn" onclick="
+            var m=document.getElementById('mb');
+            m.classList.toggle('hidden');
+          ">☰</button>
+        </div>
+        <div id="mb" class="menu-before hidden">
+          <div class="menu-hdr">Destinations</div>
+          <a class="menu-item" href="#">Guides Index</a>
+          <a class="menu-item" href="#">Best Of</a>
+          <div class="menu-sep"></div>
+          <div class="menu-hdr">Tools</div>
+          <a class="menu-item" href="#">Safety Guide</a>
+          <a class="menu-item" href="#">Travel Insurance</a>
+          <a class="menu-item" href="#">Visas &amp; Entry</a>
+        </div>
+        <div class="page-content">
+          <p style="font-size:12px;color:#6a6660;">Tap ☰ — menu appears instantly with no animation. Abrupt visual pop.</p>
+        </div>
+      </div>
+      <div class="state-label">Current: display:none → display:block (no transition)</div>
+    </div>
+  </div>
+
+  <div class="panel after">
+    <div class="panel-label">AFTER — Animated slide + fade (proposed)</div>
+    <div class="phone">
+      <div class="demo-phone">
+        <div class="tb">
+          <div class="tb-title">THE VOYAGER EXPERT</div>
+          <button class="tb-ham-btn" onclick="
+            var m=document.getElementById('ma');
+            m.classList.toggle('hidden');
+            m.classList.toggle('visible');
+          ">☰</button>
+        </div>
+        <div id="ma" class="menu-after hidden">
+          <div class="menu-hdr">Destinations</div>
+          <a class="menu-item" href="#">Guides Index</a>
+          <a class="menu-item" href="#">Best Of</a>
+          <div class="menu-sep"></div>
+          <div class="menu-hdr">Tools</div>
+          <a class="menu-item" href="#">Safety Guide</a>
+          <a class="menu-item" href="#">Travel Insurance</a>
+          <a class="menu-item" href="#">Visas &amp; Entry</a>
+        </div>
+        <div class="page-content">
+          <p style="font-size:12px;color:#6a6660;">Tap ☰ — menu slides down and fades in smoothly (0.22s ease). Closing also animates.</p>
+        </div>
+      </div>
+      <div class="state-label">Proposed: opacity 0→1 + translateY(-10px→0) at 0.22s ease</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

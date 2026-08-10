@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../assets/web-travel-style.css">
+<link rel="stylesheet" href="../../assets/mobile.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/leaflet.min.css">
+<link rel="stylesheet" href="../../Trip-Essentials/Maps/vendor/MarkerCluster.min.css">
+<link rel="stylesheet" href="../../assets/stops-map-style.css">
+<title>Porto-Alegre — All Stops Map</title>
+</head>
+<body>
+<div data-toolbar data-depth="2" data-maxwidth="1400" data-title="Porto-Alegre — All Stops"></div>
+<div id="filter-row">
+  <button class="day-btn active" data-day="all">All days</button>
+  <button class="day-btn" data-day="1" style="--dc:#b85c2a">Day 1</button>
+  <button class="day-btn" data-day="2" style="--dc:#4a90d9">Day 2</button>
+  <button class="day-btn" data-day="3" style="--dc:#7ab648">Day 3</button>
+  <button class="day-btn" data-day="4" style="--dc:#9b59b6">Day 4</button>
+  <button class="day-btn" data-day="5" style="--dc:#e67e22">Day 5</button>
+  <button class="day-btn" data-day="6" style="--dc:#16a085">Day 6</button>
+</div>
+<div id="map-wrap"><div id="map"></div></div>
+<script src="../../Trip-Essentials/Maps/vendor/leaflet.min.js"></script>
+<script src="../../Trip-Essentials/Maps/vendor/markercluster.min.js"></script>
+<script src="../../assets/toolbar.js?v=100"></script>
+<script>
+const STOPS = [
+  {
+    "day": 1,
+    "name": "Parque Marinha do Brasil",
+    "query": "Parque Marinha do Brasil, Porto Alegre, RS, Brazil",
+    "lat": -30.055814,
+    "lng": -51.2323209
+  },
+  {
+    "day": 1,
+    "name": "Palácio Piratini",
+    "query": "Praca Marechal Deodoro, Centro, Porto Alegre",
+    "lat": -30.0328553,
+    "lng": -51.2301234
+  },
+  {
+    "day": 1,
+    "name": "MARGS",
+    "query": "Praca da Alfandega, Centro, Porto Alegre",
+    "lat": -30.0295928,
+    "lng": -51.2310154
+  },
+  {
+    "day": 1,
+    "name": "Memorial do Rio Grande do Sul",
+    "query": "Rua Sete de Setembro 1020, Centro, Porto Alegre",
+    "lat": -30.0287699,
+    "lng": -51.2309998
+  },
+  {
+    "day": 2,
+    "name": "Praça da Alfândega",
+    "query": "Praça da Alfândega, Porto Alegre, RS, Brazil",
+    "lat": -30.0295928,
+    "lng": -51.2310154
+  },
+  {
+    "day": 2,
+    "name": "Catedral Metropolitana de Porto Alegre",
+    "query": "Praca Marechal Deodoro, Centro, Porto Alegre",
+    "lat": -30.0328553,
+    "lng": -51.2301234
+  },
+  {
+    "day": 2,
+    "name": "Casa de Cultura Mário Quintana",
+    "query": "Rua dos Andradas 736, Centro, Porto Alegre",
+    "lat": -30.0310943,
+    "lng": -51.2344781
+  },
+  {
+    "day": 2,
+    "name": "Fundação Iberê Camargo",
+    "query": "Av. Padre Cacique 2000, Cristal, Porto Alegre",
+    "lat": -30.077732,
+    "lng": -51.2453919
+  },
+  {
+    "day": 3,
+    "name": "Farol Santander Porto Alegre",
+    "query": "Farol Santander, Rua Sete de Setembro 1028, Centro Histórico, Porto Alegre, RS, Brazil",
+    "lat": -30.0287413,
+    "lng": -51.2304012
+  },
+  {
+    "day": 3,
+    "name": "Itapuã State Park",
+    "query": "Parque Estadual de Itapua, RS-786, Viamao",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "day": 3,
+    "name": "Usina do Gasômetro",
+    "query": "Av. Presidente Joao Goulart 551, Centro, Porto Alegre",
+    "lat": -30.0340842,
+    "lng": -51.2410902
+  },
+  {
+    "day": 3,
+    "name": "MCT-PUCRS",
+    "query": "Av. Ipiranga 6681, Partenon, Porto Alegre",
+    "lat": -30.0567564,
+    "lng": -51.1725157
+  },
+  {
+    "day": 4,
+    "name": "Theatro São Pedro",
+    "query": "Theatro São Pedro, Praça da Matriz, Porto Alegre, RS, Brazil",
+    "lat": -30.0319539,
+    "lng": -51.2303757
+  },
+  {
+    "day": 5,
+    "name": "Moinhos de Vento Park",
+    "query": "Parque Moinhos de Vento, Porto Alegre, RS, Brazil",
+    "lat": -30.0266084,
+    "lng": -51.2003832
+  },
+  {
+    "day": 5,
+    "name": "Farroupilha Park",
+    "query": "Farroupilha Park, Porto Alegre, RS, Brazil",
+    "lat": -30.0370315,
+    "lng": -51.2155872
+  },
+  {
+    "day": 6,
+    "name": "Jardim Botânico de Porto Alegre",
+    "query": "Jardim Botânico de Porto Alegre, Av. Sal vador França 1427, Porto Alegre, RS, Brazil",
+    "lat": -30.0529737,
+    "lng": -51.185073
+  },
+  {
+    "day": 6,
+    "name": "Solar dos Câmara",
+    "query": "Solar dos Câmara, Rua Duque de Caxias 1231, Porto Alegre, RS, Brazil",
+    "lat": -30.0331231,
+    "lng": -51.2317697
+  },
+  {
+    "day": 6,
+    "name": "Viaduto Otávio Rocha",
+    "query": "Viaduto Otávio Rocha, Porto Alegre, RS, Brazil",
+    "lat": -30.0336324,
+    "lng": -51.2279313
+  }
+];
+const DAY_COLORS = {"1": "#b85c2a", "2": "#4a90d9", "3": "#7ab648", "4": "#9b59b6", "5": "#e67e22", "6": "#16a085"};
+
+const map = L.map('map', {zoomControl: true});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '\u00a9 <a href="https://www.openstreetmap.org/copyright">OSM</a> \u00a9 <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+const cluster = L.markerClusterGroup({maxClusterRadius: 40, showCoverageOnHover: false});
+const markers = [];
+
+function pinIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:14px;height:14px;background:${color};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,0.35)"></div>`,
+    iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -12]
+  });
+}
+
+STOPS.filter(s => s.lat != null && s.lng != null).forEach(s => {
+  const color = DAY_COLORS[String(s.day)] || '#b85c2a';
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.query);
+  const marker = L.marker([s.lat, s.lng], {icon: pinIcon(color)});
+  marker.bindPopup(
+    '<div class="stop-popup">' +
+    '<strong>' + s.name + '</strong>' +
+    '<span class="day-tag" style="background:' + color + '">Day ' + s.day + '</span><br>' +
+    '<a href="' + mapsUrl + '" target="_blank">Open in Google Maps</a>' +
+    '</div>'
+  );
+  marker._day = s.day;
+  markers.push(marker);
+  cluster.addLayer(marker);
+});
+map.addLayer(cluster);
+
+function fitVisible(list) {
+  if (!list.length) return;
+  map.fitBounds(L.latLngBounds(list.map(m => m.getLatLng())), {padding: [44, 44]});
+}
+fitVisible(markers);
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const day = btn.dataset.day;
+    cluster.clearLayers();
+    const visible = day === 'all' ? markers : markers.filter(m => String(m._day) === day);
+    visible.forEach(m => cluster.addLayer(m));
+    fitVisible(visible);
+  });
+});
+</script>
+</body>
+</html>

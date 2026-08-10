@@ -1,0 +1,506 @@
+<title>Site Skeleton — The Voyager Expert</title>
+<style>
+:root{
+  --bg:#0f0e0c;--sf:#181613;--card:#1c1a16;--bd:#2a2720;--ln:#3d3830;
+  --tx:#e0dbd0;--mu:#7a7268;--dm:#4a4540;
+}
+@media(prefers-color-scheme:light){:root{
+  --bg:#f6f4f0;--sf:#eae7e1;--card:#fff;--bd:#d4d0c8;--ln:#b8b2a8;
+  --tx:#1a1816;--mu:#6e6860;--dm:#c0bbb2;
+}}
+:root[data-theme=dark]{--bg:#0f0e0c;--sf:#181613;--card:#1c1a16;--bd:#2a2720;--ln:#3d3830;--tx:#e0dbd0;--mu:#7a7268;--dm:#4a4540;}
+:root[data-theme=light]{--bg:#f6f4f0;--sf:#eae7e1;--card:#fff;--bd:#d4d0c8;--ln:#b8b2a8;--tx:#1a1816;--mu:#6e6860;--dm:#c0bbb2;}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+a{color:inherit;text-decoration:none;}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:12px;line-height:1.4;min-height:100vh;}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0;max-width:960px;margin:0 auto;}
+.hdr h1{font-family:Georgia,'Times New Roman',serif;font-size:17px;font-weight:400;color:var(--gold,#c8961a);}
+.hdr small{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--mu);margin-top:2px;font-family:inherit;}
+.tb{background:var(--sf);border:1px solid var(--bd);color:var(--mu);padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;font-family:inherit;}
+.tb:hover{color:var(--tx);border-color:#c8a44a;}
+.bm-wrap{position:relative;display:inline-flex;}
+.bm-tip{
+  display:none;position:absolute;top:calc(100% + 6px);right:0;
+  background:var(--card);border:1px solid var(--bd);border-radius:5px;
+  padding:6px 10px;font-size:10.5px;color:var(--tx);white-space:nowrap;
+  box-shadow:0 4px 12px rgba(0,0,0,.18);z-index:10;
+  pointer-events:none;
+}
+.bm-tip::before{
+  content:'';position:absolute;bottom:100%;right:12px;
+  border:5px solid transparent;border-bottom-color:var(--bd);
+}
+.bm-wrap.open .bm-tip{display:block;}
+
+.diagram{display:flex;flex-direction:column;align-items:center;padding:28px 0 60px;}
+
+.root{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--card);border:2px solid #c8a44a;border-radius:5px;
+  padding:10px 20px;font-size:13px;font-weight:600;color:var(--gold,#c8961a);
+  transition:background .12s;
+}
+.root:hover{background:var(--sf);}
+.root .ico{font-size:15px;}
+
+.trunk{width:1.5px;height:28px;background:var(--ln);}
+
+.scroll{overflow-x:auto;width:100%;padding:0 16px 20px;}
+.scroll::-webkit-scrollbar{height:6px;}
+.scroll::-webkit-scrollbar-track{background:var(--sf);border-radius:3px;}
+.scroll::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px;}
+.scroll::-webkit-scrollbar-thumb:hover{background:var(--mu);}
+
+.branches{display:inline-flex;align-items:flex-start;margin:0 auto;}
+
+.branch{
+  position:relative;padding:30px 5px 0;
+  display:flex;flex-direction:column;align-items:center;flex-shrink:0;
+}
+.branch::before{
+  content:'';position:absolute;top:0;left:0;right:0;
+  border-top:1.5px solid var(--ln);
+}
+.branch:first-child::before{left:50%;}
+.branch:last-child::before{right:50%;}
+.branch::after{
+  content:'';position:absolute;top:0;left:50%;
+  transform:translateX(-50%);width:1.5px;height:24px;background:var(--ln);
+}
+.arr{
+  position:absolute;top:22px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid var(--ln);z-index:1;
+}
+
+.card{
+  background:var(--card);border:1px solid var(--bd);
+  border-top:2.5px solid var(--c,var(--mu));
+  border-radius:4px;min-width:126px;overflow:hidden;
+}
+.card-h{
+  background:var(--sf);padding:7px 10px;
+  display:flex;align-items:center;gap:5px;
+  border-bottom:1px solid var(--bd);cursor:default;
+}
+.card-h .ico{font-size:13px;flex-shrink:0;}
+.card-h .nm{
+  font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--c,var(--mu));white-space:nowrap;
+}
+.card-h .ct{font-size:9px;color:var(--mu);margin-left:auto;white-space:nowrap;}
+
+.card-b a{
+  display:block;padding:3px 10px;font-size:11px;
+  border-top:1px solid var(--bd);color:var(--tx);
+  transition:background .1s,color .1s;white-space:nowrap;
+}
+.card-b a:first-child{border-top:none;}
+.card-b a:hover{background:var(--sf);color:var(--c,var(--tx));}
+.card-b a.hub{font-weight:600;font-style:italic;}
+
+/* ── SEPARATOR ── */
+.sep{
+  display:flex;align-items:center;gap:12px;
+  width:100%;max-width:700px;margin:32px auto 24px;padding:0 20px;
+}
+.sep-line{flex:1;height:1px;background:var(--bd);}
+.sep-label{
+  font-size:9px;text-transform:uppercase;letter-spacing:.16em;
+  color:var(--mu);white-space:nowrap;
+}
+
+/* ── BOTTOM SECTIONS ── */
+.bottom-sections{
+  display:flex;gap:16px;justify-content:center;
+  flex-wrap:wrap;padding:0 20px;align-items:flex-start;
+}
+.bottom-card{
+  background:var(--card);border:1px solid var(--bd);
+  border-top:2.5px solid var(--c,var(--mu));
+  border-radius:4px;overflow:hidden;
+}
+.bottom-card .card-h{cursor:default;}
+.bottom-card .card-b a{
+  display:block;padding:3px 10px;font-size:11px;
+  border-top:1px solid var(--bd);color:var(--tx);
+  transition:background .1s,color .1s;white-space:nowrap;
+}
+.bottom-card .card-b a:first-child{border-top:none;}
+.bottom-card .card-b a:hover{background:var(--sf);color:var(--c,var(--tx));}
+.bottom-card .card-b a.hub{font-weight:600;font-style:italic;}
+
+.best-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+}
+.best-grid a{
+  border-top:none!important;
+  border-bottom:1px solid var(--bd);
+  border-right:1px solid var(--bd);
+  font-size:10.5px!important;padding:3px 8px!important;
+}
+.best-grid a:nth-child(3n){border-right:none;}
+.best-grid a:nth-last-child(-n+3){border-bottom:none;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .branches{flex-direction:column;align-items:stretch;gap:0;width:100%;max-width:320px;}
+  .branch{padding:0 0 0 20px;border-left:1.5px solid var(--ln);margin-left:12px;flex-direction:row;}
+  .branch:last-child{border-left-color:transparent;}
+  .branch::before,.branch::after,.arr{display:none;}
+  .card{min-width:0;width:100%;margin:6px 0;}
+  .scroll{padding:0 12px 20px;}
+  .best-grid{grid-template-columns:1fr 1fr;}
+  .bottom-sections{flex-direction:column;align-items:center;}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+
+<div class="hdr">
+  <div>
+    <h1>The Voyager Expert</h1>
+    <small>Site Skeleton · Add every new page here the moment it ships</small>
+  </div>
+  <div style="display:flex;gap:6px;align-items:center;">
+    <div class="bm-wrap" id="bmw">
+      <button class="tb" id="bm">⭐ Bookmark</button>
+      <div class="bm-tip" id="bmt">Press <kbd style="font-family:inherit;font-size:10px;background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:1px 4px;">⌘D</kbd> (Mac) or <kbd style="font-family:inherit;font-size:10px;background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:1px 4px;">Ctrl+D</kbd> (Win)</div>
+    </div>
+    <button class="tb" id="tb">☀ Light</button>
+  </div>
+</div>
+
+<div class="diagram">
+
+  <!-- ROOT -->
+  <a class="root" href="index.html">
+    <span class="ico">🏠</span> index.html
+  </a>
+
+  <div class="trunk"></div>
+
+  <div class="scroll">
+    <div class="branches">
+
+      <!-- GUIDES -->
+      <div class="branch" style="--c:#5a9fd4">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🌐</span><span class="nm">Guides</span><span class="ct">233</span></div>
+          <div class="card-b">
+            <a class="hub" href="index.html">All 233 Guides</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEFORE YOU GO — Packing and Plug Adapters became children here 2026-08-09 -->
+      <div class="branch" style="--c:#7cba8c">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🧳</span><span class="nm">Before You Go</span><span class="ct">3</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Before-You-Go.html">Before You Go</a>
+            <a href="Trip-Essentials/Travel-Packing.html">Packing Checklist</a>
+            <a href="Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html">Plug Adapter Guide</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHERE TO STAY — new toolbar tab 2026-08-09 -->
+      <div class="branch" style="--c:#b07ab8">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🏨</span><span class="nm">Where to Stay</span><span class="ct">6</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Neighborhoods.html">Neighborhoods</a>
+            <a href="Trip-Essentials/Hotels-Stays.html">Hotels &amp; Stays</a>
+            <a href="Trip-Essentials/Best-Most-Luxurious-Hotels.html">Most Luxurious Hotels</a>
+            <a href="Trip-Essentials/Best-Unique-Hotels.html">Unique Hotels</a>
+            <a href="Trip-Essentials/Best-Resorts.html">Resorts</a>
+            <a href="Trip-Essentials/Best-Ultra-Luxurious-Resorts.html">Ultra-Luxurious Resorts</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAPS -->
+      <div class="branch" style="--c:#8aba70">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🗺️</span><span class="nm">Maps</span><span class="ct">1</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Maps/World-Map.html">World Map</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="branch" style="--c:#5ab89a">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">📊</span><span class="nm">Stats</span><span class="ct">9</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Destination-Records.html">Destination Records</a>
+            <a href="Trip-Essentials/Stats-Across-US.html">Stats Across US</a>
+            <a href="Trip-Essentials/Stats-Across-Canada.html">Stats Across Canada</a>
+            <a href="Trip-Essentials/Europe-Stats.html">Stats Across Europe</a>
+            <a href="Trip-Essentials/Asia-Stats.html">Stats Across Asia</a>
+            <a href="Trip-Essentials/South-America-Stats.html">Stats Across South America</a>
+            <a href="Trip-Essentials/Caribbean-Stats.html">Stats Across Caribbean</a>
+            <a href="Trip-Essentials/Africa-Stats.html">Stats Across Africa</a>
+            <a href="Trip-Essentials/Oceania-Stats.html">Stats Across Oceania</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIGHTS -->
+      <div class="branch" style="--c:#9b7dd4">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">✈️</span><span class="nm">Flights</span><span class="ct">11</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Airlines-of-the-World.html">Airlines of the World</a>
+            <a href="Trip-Essentials/Airport-Connection-Times.html">Airport Connection Times</a>
+            <a href="Trip-Essentials/Delta-Routes-SEA.html">Delta Seattle Hub</a>
+            <a href="Trip-Essentials/Delta-Routes-Full.html">Delta Full Network</a>
+            <a href="Trip-Essentials/Lounges-US.html">US Lounges</a>
+            <a href="Trip-Essentials/Lounges-Europe.html">EU Lounges</a>
+            <a href="Trip-Essentials/Baggage.html">Baggage</a>
+            <a href="Trip-Essentials/Luggage-Storage.html">Luggage Storage</a>
+            <a href="Trip-Essentials/Cruise-Ships.html">Cruise Lines</a>
+            <a href="Trip-Essentials/Trusted-Traveler.html">Global Entry &amp; CLEAR</a>
+            <a href="Trip-Essentials/Passport.html">Passport</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRAINS -->
+      <div class="branch" style="--c:#d4805a">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🚆</span><span class="nm">Trains</span><span class="ct">4</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/European-Train-Guide.html">European Train Guide</a>
+            <a href="Trip-Essentials/Day-Trips.html">Day Trips by Train</a>
+            <a href="Trip-Essentials/Scenic-Train-Journeys.html">Scenic Train Journeys</a>
+            <a href="Trip-Essentials/Train-Passes.html">Regional Train Pass Comparison</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CURRENCY -->
+      <div class="branch" style="--c:#c8a44a">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">💰</span><span class="nm">Currency</span><span class="ct">1</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Currency-Guide.html">Currency Guide</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIME ZONES -->
+      <div class="branch" style="--c:#78b4d4">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🕐</span><span class="nm">Time Zones</span><span class="ct">2</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Time-Zones.html">Time Zones</a>
+            <a href="Trip-Essentials/Sunrise-Sunset.html">Sunrise &amp; Sunset</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEATHER -->
+      <div class="branch" style="--c:#d07878">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🌤️</span><span class="nm">Weather</span><span class="ct">3</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Climate-Finder.html">Browse by Climate</a>
+            <a href="Trip-Essentials/Weather.html">Browse by City</a>
+            <a href="Trip-Essentials/When-to-Go.html">When to Go</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAFETY -->
+      <div class="branch" style="--c:#d4805a">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🛡️</span><span class="nm">Safety</span><span class="ct">6</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Safety-Guide.html">Safety Guide</a>
+            <a href="Trip-Essentials/Vaccines.html">Vaccines</a>
+            <a href="Trip-Essentials/Tap-Water.html">Tap Water</a>
+            <a href="Trip-Essentials/Travel-Insurance.html">Travel Insurance</a>
+            <a href="Trip-Essentials/First-Timer-Mistakes.html">First-Timer Mistakes</a>
+            <a href="Trip-Essentials/Scams-By-City.html">Scams &amp; Traps</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISAS -->
+      <div class="branch" style="--c:#8898b0">
+        <span class="arr"></span>
+        <div class="card">
+          <div class="card-h"><span class="ico">🪪</span><span class="nm">Visas</span><span class="ct">4</span></div>
+          <div class="card-b">
+            <a href="Trip-Essentials/Visas.html">Visas</a>
+            <a href="Trip-Essentials/Entry-Requirements.html">Entry Requirements</a>
+            <a href="Trip-Essentials/Digital-Nomad-Visas.html">Digital Nomad Visas</a>
+            <a href="Trip-Essentials/Visa-Processing-Times.html">Visa Processing Times</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── HAMBURGER-ONLY ── -->
+  <div class="sep">
+    <div class="sep-line"></div>
+    <span class="sep-label">Hamburger menu only</span>
+    <div class="sep-line"></div>
+  </div>
+
+  <div class="bottom-sections">
+    <div class="bottom-card" style="--c:#d4805a">
+      <div class="card-h"><span class="ico">✈️</span><span class="nm">My Trips</span><span class="ct">1</span></div>
+      <div class="card-b">
+        <a href="Trip-Essentials/Trips.html">Trips</a>
+      </div>
+    </div>
+    <div class="bottom-card" style="--c:#5ab89a">
+      <div class="card-h"><span class="ico">📊</span><span class="nm">Travel Stats</span><span class="ct">1</span></div>
+      <div class="card-b">
+        <a href="Trip-Essentials/Travel-Stats.html">Travel Stats</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BEST OF ── -->
+  <div class="sep">
+    <div class="sep-line"></div>
+    <span class="sep-label">Best Of — 🏆 toolbar tab since 2026-08-09</span>
+    <div class="sep-line"></div>
+  </div>
+
+  <div class="bottom-sections">
+    <div class="bottom-card" style="--c:#c8a44a">
+      <div class="card-h"><span class="ico">🌟</span><span class="nm">Best Of</span><span class="ct">35</span></div>
+      <div class="card-b best-grid">
+        <a class="hub" href="Trip-Essentials/Best-Of-Index.html">Best Of Index</a>
+        <a href="Trip-Essentials/Best-Beaches.html">Beaches</a>
+        <a href="Trip-Essentials/Best-Museums.html">Museums</a>
+        <a href="Trip-Essentials/Best-Art-Museums.html">Art Museums</a>
+        <a href="Trip-Essentials/Best-Unique-Museums.html">Unique Museums</a>
+        <a href="Trip-Essentials/Best-Kids-Museums.html">Kids Museums</a>
+        <a href="Trip-Essentials/Best-Islands.html">Islands</a>
+        <a href="Trip-Essentials/Best-National-Parks-by-Country.html">National Parks</a>
+        <a href="Trip-Essentials/Best-Architecture.html">Architecture</a>
+        <a href="Trip-Essentials/Best-Castles.html">Castles</a>
+        <a href="Trip-Essentials/Best-Cathedrals.html">Cathedrals</a>
+        <a href="Trip-Essentials/Best-Caves.html">Caves</a>
+        <a href="Trip-Essentials/Best-Gardens.html">Gardens</a>
+        <a href="Trip-Essentials/Best-Hard-to-Reach-Places.html">Hard to Reach</a>
+        <a href="Trip-Essentials/Best-Hot-Springs.html">Hot Springs</a>
+        <a href="Trip-Essentials/Best-Observation-Decks.html">Observation Decks</a>
+        <a href="Trip-Essentials/Best-Wonders-of-the-World.html">Wonders</a>
+        <a href="Trip-Essentials/Best-Natural-Phenomena.html">Natural Phenomena</a>
+        <a href="Trip-Essentials/Best-Volcanoes.html">Volcanoes</a>
+        <a href="Trip-Essentials/Best-Lakes.html">Lakes</a>
+        <a href="Trip-Essentials/Best-Mountains-and-Rock-Formations.html">Mountains</a>
+        <a href="Trip-Essentials/Best-Amusement-Parks.html">Amusement Parks</a>
+        <a href="Trip-Essentials/Best-Aquariums.html">Aquariums</a>
+        <a href="Trip-Essentials/Best-Animal-Encounters.html">Animal Encounters</a>
+        <a href="Trip-Essentials/Best-Kids-Friendly-Places.html">Kids Friendly</a>
+        <a href="Trip-Essentials/Best-Scuba-Diving.html">Scuba Diving</a>
+        <a href="Trip-Essentials/Best-Surfing.html">Surfing</a>
+        <a href="Trip-Essentials/Best-Ski-Resorts.html">Ski Resorts</a>
+        <a href="Trip-Essentials/Best-Wine-Regions.html">Wine Regions</a>
+        <a href="Trip-Essentials/Best-Safari.html">Safari</a>
+        <a href="Trip-Essentials/Best-Resorts.html">Resorts</a>
+        <a href="Trip-Essentials/Best-Most-Luxurious-Hotels.html">Luxury Hotels</a>
+        <a href="Trip-Essentials/Best-Ultra-Luxurious-Resorts.html">Ultra Lux Resorts</a>
+        <a href="Trip-Essentials/Best-Unique-Hotels.html">Unique Hotels</a>
+        <a href="Trip-Essentials/Best-UNESCO-Sites.html">UNESCO Sites</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WE RECOMMEND ── -->
+  <div class="sep">
+    <div class="sep-line"></div>
+    <span class="sep-label">We Recommend — not in toolbar</span>
+    <div class="sep-line"></div>
+  </div>
+
+  <div class="bottom-sections">
+    <div class="bottom-card" style="--c:#c8a44a">
+      <div class="card-h"><span class="ico">⭐</span><span class="nm">We Recommend</span><span class="ct">1</span></div>
+      <div class="card-b">
+        <a href="Trip-Essentials/Pickleball.html">Pickleball</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ALSO RECOMMENDED ── -->
+  <div class="sep">
+    <div class="sep-line"></div>
+    <span class="sep-label">Also Recommended — not in toolbar</span>
+    <div class="sep-line"></div>
+  </div>
+
+  <div class="bottom-sections">
+    <div class="bottom-card" style="--c:#8898b0">
+      <div class="card-h"><span class="ico">📋</span><span class="nm">Also Recommended</span><span class="ct">22</span></div>
+      <div class="card-b">
+        <a href="Trip-Essentials/Neighborhoods.html">Neighborhoods</a>
+        <a href="Trip-Essentials/Budget-Guide.html">Budget</a>
+        <a href="Trip-Essentials/Rental-Cars.html">Car Rental &amp; Private</a>
+        <a href="Trip-Essentials/Cards-ATM.html">Cards &amp; ATM</a>
+        <a href="Trip-Essentials/City-Transit-Cards.html">City Transit Cards</a>
+        <a href="Trip-Essentials/Disney-Parks.html">Disney Parks</a>
+        <a href="Trip-Essentials/Festival-Finder.html">Festival Finder</a>
+        <a href="Trip-Essentials/Hotels-Stays.html">Hotels &amp; Stays</a>
+        <a href="Trip-Essentials/More-Resources.html">More Resources</a>
+        <a href="Trip-Essentials/Restaurants.html">Restaurants</a>
+        <a href="Trip-Essentials/SIM-Cards.html">SIM Cards</a>
+        <a href="Trip-Essentials/Tipping-Guide.html">Tipping</a>
+        <a href="Trip-Essentials/Tours-Tickets.html">Tours &amp; Tickets</a>
+        <a href="Trip-Essentials/Travel-Apps.html">Travel Apps</a>
+        <a href="Trip-Essentials/Maps/Europe-Map.html">Europe Map</a>
+        <a href="Trip-Essentials/Maps/Asia-Map.html">Asia Map</a>
+        <a href="Trip-Essentials/Maps/US-Map.html">US Map</a>
+        <a href="Trip-Essentials/Maps/Africa-Map.html">Africa Map</a>
+        <a href="Trip-Essentials/Maps/Caribbean-Map.html">Caribbean Map</a>
+        <a href="Trip-Essentials/Maps/Oceania-Map.html">Oceania Map</a>
+        <a href="Trip-Essentials/Maps/South-America-Map.html">South America Map</a>
+        <a href="Reports/Reports.html">Open Recommendations</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const b=document.getElementById('tb'),mq=matchMedia('(prefers-color-scheme:dark)');
+let d=mq.matches;
+document.documentElement.dataset.theme=d?'dark':'light';
+b.textContent=d?'☀ Light':'☾ Dark';
+b.onclick=()=>{d=!d;document.documentElement.dataset.theme=d?'dark':'light';b.textContent=d?'☀ Light':'☾ Dark';};
+
+// Bookmark button
+const bmw=document.getElementById('bmw'),bmbtn=document.getElementById('bm');
+let bmTimer;
+bmbtn.onclick=(e)=>{
+  e.stopPropagation();
+  bmw.classList.toggle('open');
+  clearTimeout(bmTimer);
+  if(bmw.classList.contains('open')) bmTimer=setTimeout(()=>bmw.classList.remove('open'),3000);
+};
+document.addEventListener('click',()=>{clearTimeout(bmTimer);bmw.classList.remove('open');});
+</script>

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hotel &amp; Flight Search Widget on Guide Pages — Mockup</title>
+<style>
+  /* Tokens copied verbatim from the real light/dark blocks toolbar.js injects
+     (toolbar.js lines 635–693) so the mockup cannot drift from the live palette. */
+  :root {
+    --c-page-bg:#f5f4f0; --c-card-bg:#fff;
+    --c-warm-bg:#fdf8f0;
+    --c-pill-bg:#fdf8f0; --c-pill-hover:#faefd8; --c-pill-text:#8a6c1a; --c-pill-bd:rgba(138,108,26,.25);
+    --c-action-text:#5a3c0e; --c-action-press:#e5ddc8;
+    --c-text-primary:#3d3a32; --c-text-muted:#555;
+    --c-next-bg:#f5f0e6; --c-next-border:#bba070;
+    --c-index-accent:#7a5c0e;
+    --rust:#b85c2a;
+    --font:'Roboto', Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --c-page-bg:#1a1917; --c-card-bg:#2a2825;
+      --c-warm-bg:#242220;
+      --c-pill-bg:#2a2825; --c-pill-hover:#332f2a; --c-pill-text:#c8a060; --c-pill-bd:rgba(200,160,96,.30);
+      --c-action-text:#c8a060; --c-action-press:#3d3830;
+      --c-text-primary:#e8e5e0; --c-text-muted:#999;
+      --c-next-bg:#222120; --c-next-border:#444;
+      --c-index-accent:#c8a040;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-page-bg:#1a1917; --c-card-bg:#2a2825; --c-warm-bg:#242220;
+    --c-pill-bg:#2a2825; --c-pill-hover:#332f2a; --c-pill-text:#c8a060; --c-pill-bd:rgba(200,160,96,.30);
+    --c-action-text:#c8a060; --c-action-press:#3d3830;
+    --c-text-primary:#e8e5e0; --c-text-muted:#999;
+    --c-next-bg:#222120; --c-next-border:#444; --c-index-accent:#c8a040;
+  }
+  :root[data-theme="light"] {
+    --c-page-bg:#f5f4f0; --c-card-bg:#fff; --c-warm-bg:#fdf8f0;
+    --c-pill-bg:#fdf8f0; --c-pill-hover:#faefd8; --c-pill-text:#8a6c1a; --c-pill-bd:rgba(138,108,26,.25);
+    --c-action-text:#5a3c0e; --c-action-press:#e5ddc8;
+    --c-text-primary:#3d3a32; --c-text-muted:#555;
+    --c-next-bg:#f5f0e6; --c-next-border:#bba070; --c-index-accent:#7a5c0e;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--c-page-bg);color:var(--c-text-primary);padding:20px;line-height:1.5}
+  h1{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--rust);margin-bottom:4px}
+  h2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-text-muted);margin:26px 0 10px}
+  .meta{font-size:12px;color:var(--c-text-muted);margin-bottom:6px}
+  .change{font-size:11px;font-weight:700;background:#fff3e0;border:1px solid #f0c060;border-radius:4px;padding:4px 8px;display:inline-block;margin-bottom:6px;color:#7a4400}
+  .panels{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+  .panel{flex:1 1 420px;background:var(--c-card-bg);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .panel-label{padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .before .panel-label{background:#fde8e8;color:#a00}
+  .after  .panel-label{background:#e8f5e9;color:#2a7a00}
+  .opt    .panel-label{background:#eef2fb;color:#31508f}
+  .stage{padding:18px 16px 20px}
+  .note{font-size:11.5px;color:var(--c-text-muted);margin-top:10px;font-style:italic}
+
+  /* ── Real guide chrome, replicated from guide-style.css ───────────────────── */
+  .overview-extras{display:flex;flex-wrap:wrap;gap:8px}
+  #ics-pill-row,.ics-pill-row{gap:0;margin:0 0 14px}
+  .ics-pill-row .overview-extra-link{
+    display:inline-flex;align-items:center;gap:6px;justify-content:center;
+    border:1px solid var(--c-next-border);background:var(--c-next-bg);
+    color:var(--c-action-text);letter-spacing:.01em;font-weight:700;
+    font-size:13px;padding:10px 13px;min-height:46px;line-height:1.25;
+    text-decoration:none;cursor:pointer;flex:1 1 0;min-width:0;text-align:center;
+    font-family:inherit;
+  }
+  .ics-pill-row .overview-extra-link:not(:first-child){border-left-width:0;border-radius:0}
+  .ics-pill-row .overview-extra-link:first-child{border-radius:6px 0 0 6px}
+  .ics-pill-row .overview-extra-link:last-child{border-radius:0 6px 6px 0}
+  @media (hover:hover){.ics-pill-row .overview-extra-link:hover{background:var(--c-pill-hover);border-color:rgba(138,108,26,.45)}}
+  /* toggled-on state — identical treatment to .tve-been / .tve-saved / .tve-cur-on */
+  .ics-pill-row .overview-extra-link.on{
+    background:var(--c-next-bg);border-color:var(--rust);color:var(--rust);
+    font-weight:700;border-left-width:1px;margin-left:-1px}
+
+  /* ── Proposed panel — geometry cloned from .tve-cur-panel ─────────────────── */
+  .bk-panel{
+    display:flex;flex-direction:column;align-items:stretch;gap:10px;
+    margin:-8px 0 16px;padding:12px 14px;
+    background:var(--c-warm-bg);border:1px solid var(--c-next-border);border-radius:6px}
+  .bk-panel[hidden]{display:none}
+  .bk-tabs{display:flex;gap:0}
+  .bk-tab{
+    flex:1 1 0;padding:7px 10px;font:inherit;font-size:12.5px;font-weight:700;
+    background:var(--c-card-bg);color:var(--c-action-text);
+    border:1px solid var(--c-next-border);cursor:pointer;text-align:center}
+  .bk-tab:first-child{border-radius:5px 0 0 5px}
+  .bk-tab:last-child{border-radius:0 5px 5px 0;border-left-width:0}
+  .bk-tab[aria-selected="true"]{background:var(--c-next-bg);color:var(--rust);border-color:var(--rust);position:relative;z-index:1}
+  .bk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px}
+  .bk-field{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .bk-lab{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-action-text)}
+  .bk-in{
+    width:100%;padding:6px 9px;border:1px solid var(--c-next-border);border-radius:4px;
+    background:var(--c-card-bg);color:var(--c-text-primary);-webkit-text-fill-color:var(--c-text-primary);
+    font-family:inherit;font-size:16px;font-weight:600}   /* 16px — iOS focus-zoom rule */
+  .bk-in:focus{outline:none;border-color:var(--rust)}
+  .bk-in[readonly]{background:var(--c-next-bg);cursor:default}
+  .bk-go{
+    align-self:flex-start;padding:8px 14px;border-radius:6px;border:1px solid var(--rust);
+    background:var(--rust);color:#fff;font:inherit;font-size:13px;font-weight:700;
+    text-decoration:none;cursor:pointer;display:inline-block}
+  .bk-go:hover{background:#a04d20}
+  .bk-note{font-size:11px;line-height:1.5;color:var(--c-text-muted)}
+  .bk-more{color:var(--c-index-accent);text-decoration:none;font-weight:600}
+  .bk-more:hover{text-decoration:underline}
+  .bk-url{
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;line-height:1.5;
+    color:var(--c-text-muted);background:var(--c-card-bg);border:1px dashed var(--c-next-border);
+    border-radius:4px;padding:6px 8px;word-break:break-all}
+
+  /* ── Optional Upcoming Trips strip ────────────────────────────────────────── */
+  .bk-trips{display:flex;gap:6px;flex-wrap:wrap;padding-top:2px}
+  .bk-trip{
+    font-size:11.5px;font-weight:600;background:var(--c-pill-bg);color:var(--c-pill-text);
+    border:1px solid var(--c-pill-bd);border-radius:20px;padding:4px 11px;cursor:pointer;font-family:inherit}
+  .bk-trip[aria-pressed="true"]{background:var(--c-next-bg);border-color:var(--rust);color:var(--rust)}
+
+  /* ── Mobile frame ─────────────────────────────────────────────────────────── */
+  .phone{width:393px;max-width:100%;margin:0 auto;padding:12px;background:var(--c-page-bg);
+         border:1px solid var(--c-next-border);border-radius:10px}
+  .phone .ics-pill-row{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .phone .ics-pill-row .overview-extra-link{border-radius:0;border-left-width:1px;white-space:normal;flex:none}
+
+  /* ── Decision notes ───────────────────────────────────────────────────────── */
+  .facts{background:var(--c-card-bg);border:1px solid var(--c-next-border);border-radius:8px;padding:14px 16px;margin-top:14px}
+  .facts li{font-size:12.5px;margin:0 0 7px 18px;color:var(--c-text-primary)}
+  .facts li:last-child{margin-bottom:0}
+  .facts b{color:var(--c-action-text)}
+  .q{font-size:12.5px;margin:0 0 7px 18px;color:var(--c-text-primary)}
+</style>
+</head>
+<body>
+
+<h1>Hotel &amp; Flight Search Widget on Guide Pages</h1>
+<p class="meta">2026-08-10 · rec <code>guide-hotel-flight-search-widget</code> · Travel-Website/assets/toolbar.js · Effort M · Confidence medium</p>
+<span class="change">toolbar.js: append a 6th pill to #ics-pill-row that expands, in place, into a two-tab deep-link search panel — same pill+panel pattern as 💱 Currency (toolbar.js 6384–6612)</span>
+
+<h2>1 · The action row, today vs proposed</h2>
+<div class="panels">
+
+  <div class="panel before">
+    <div class="panel-label">TODAY — #ics-pill-row, 5 pills</div>
+    <div class="stage">
+      <div class="overview-extras ics-pill-row">
+        <a class="overview-extra-link">📅 Export to Calendar</a>
+        <a class="overview-extra-link">🗺 All Stops Map</a>
+        <a class="overview-extra-link">⏬ Save for Offline</a>
+        <a class="overview-extra-link">📍 I’ve Been</a>
+        <a class="overview-extra-link">💱 Currency</a>
+      </div>
+      <p class="note">A reader who decides mid-guide that they want to go has nowhere on the page to act on it — they leave the site to a search engine and re-type the city by hand.</p>
+    </div>
+  </div>
+
+  <div class="panel after">
+    <div class="panel-label">PROPOSED — 6th pill, panel open</div>
+    <div class="stage">
+      <div class="overview-extras ics-pill-row">
+        <a class="overview-extra-link">📅 Export to Calendar</a>
+        <a class="overview-extra-link">🗺 All Stops Map</a>
+        <a class="overview-extra-link">⏬ Save for Offline</a>
+        <a class="overview-extra-link">📍 I’ve Been</a>
+        <a class="overview-extra-link">💱 Currency</a>
+        <a class="overview-extra-link on" id="bk-pill" aria-expanded="true" aria-controls="bk-panel">🔎 Hotels &amp; Flights</a>
+      </div>
+
+      <div class="bk-panel" id="bk-panel">
+        <div class="bk-tabs" role="tablist">
+          <button class="bk-tab" role="tab" aria-selected="true"  data-tab="hotels">🏨 Hotels</button>
+          <button class="bk-tab" role="tab" aria-selected="false" data-tab="flights">✈️ Flights</button>
+        </div>
+
+        <div class="bk-grid" id="bk-hotels">
+          <label class="bk-field"><span class="bk-lab">Destination</span>
+            <input class="bk-in" id="h-dest" value="Kyoto, Japan" readonly></label>
+          <label class="bk-field"><span class="bk-lab">Check-in</span>
+            <input class="bk-in" id="h-in" type="date" value="2026-09-12"></label>
+          <label class="bk-field"><span class="bk-lab">Check-out</span>
+            <input class="bk-in" id="h-out" type="date" value="2026-09-15"></label>
+          <label class="bk-field"><span class="bk-lab">Guests</span>
+            <input class="bk-in" id="h-pax" type="number" min="1" max="8" value="2"></label>
+        </div>
+
+        <div class="bk-grid" id="bk-flights" hidden>
+          <label class="bk-field"><span class="bk-lab">From</span>
+            <input class="bk-in" id="f-from" value="SEA" placeholder="SEA"></label>
+          <label class="bk-field"><span class="bk-lab">To</span>
+            <input class="bk-in" id="f-to" value="KIX" readonly></label>
+          <label class="bk-field"><span class="bk-lab">Depart</span>
+            <input class="bk-in" id="f-dep" type="date" value="2026-09-12"></label>
+          <label class="bk-field"><span class="bk-lab">Return</span>
+            <input class="bk-in" id="f-ret" type="date" value="2026-09-15"></label>
+        </div>
+
+        <a class="bk-go" id="bk-go" href="#" target="_blank" rel="noopener">Search on Google Hotels ›</a>
+        <div class="bk-url" id="bk-url"></div>
+        <div class="bk-note" id="bk-note"></div>
+      </div>
+
+      <p class="note">Live in this mockup — switch tabs, change a date, watch the deep link rebuild. Nothing is fetched: the button is an <code>&lt;a target="_blank"&gt;</code> and every result lives on Google.</p>
+    </div>
+  </div>
+</div>
+
+<h2>2 · Mobile — 393px, where the row is a 2-column grid</h2>
+<div class="panel after" style="max-width:520px">
+  <div class="panel-label">Proposed · @393px</div>
+  <div class="stage">
+    <div class="phone">
+      <div class="overview-extras ics-pill-row">
+        <a class="overview-extra-link">📅 Export to Calendar</a>
+        <a class="overview-extra-link">🗺 All Stops Map</a>
+        <a class="overview-extra-link">⏬ Save for Offline</a>
+        <a class="overview-extra-link">📍 I’ve Been</a>
+        <a class="overview-extra-link">💱 Currency</a>
+        <a class="overview-extra-link on">🔎 Hotels &amp; Flights</a>
+      </div>
+      <div class="bk-panel">
+        <div class="bk-tabs" role="tablist">
+          <button class="bk-tab" aria-selected="true">🏨 Hotels</button>
+          <button class="bk-tab" aria-selected="false">✈️ Flights</button>
+        </div>
+        <div class="bk-grid">
+          <label class="bk-field"><span class="bk-lab">Destination</span><input class="bk-in" value="Kyoto, Japan" readonly></label>
+          <label class="bk-field"><span class="bk-lab">Guests</span><input class="bk-in" type="number" value="2"></label>
+          <label class="bk-field"><span class="bk-lab">Check-in</span><input class="bk-in" type="date" value="2026-09-12"></label>
+          <label class="bk-field"><span class="bk-lab">Check-out</span><input class="bk-in" type="date" value="2026-09-15"></label>
+        </div>
+        <a class="bk-go" href="#" onclick="return false">Search on Google Hotels ›</a>
+        <div class="bk-note">Opens in a new tab · <a class="bk-more" href="#" onclick="return false">Hotels &amp; Stays ›</a></div>
+      </div>
+    </div>
+    <p class="note">The 6th pill makes the grid an even 3×2 — today’s 5 pills leave one orphan cell in the bottom row, which the pill-grid orphan fixer (toolbar.js 5912) currently has to stretch.</p>
+  </div>
+</div>
+
+<h2>3 · Optional add-on — the “Upcoming Trips” strip (separate decision)</h2>
+<div class="panel opt" style="max-width:620px">
+  <div class="panel-label">OPTIONAL — costs a Trips.html fetch + a parser</div>
+  <div class="stage">
+    <div class="bk-panel" style="margin:0">
+      <div class="bk-note" style="font-weight:700;color:var(--c-action-text)">Prefill dates from a planned trip</div>
+      <div class="bk-trips">
+        <button class="bk-trip" aria-pressed="true">Sep 12–15 · Kyoto</button>
+        <button class="bk-trip">Nov 3–9 · Lisbon</button>
+        <button class="bk-trip">Feb 20–27 · Cape Town</button>
+      </div>
+      <div class="bk-note">Tapping a chip fills check-in/check-out above. Requires fetching <code>Trip-Essentials/Trips.html</code> and parsing its month-block structure at read time.</div>
+    </div>
+    <p class="note">Recommend deciding this one separately. It is the only part of the proposal that adds a data dependency, and it couples the widget to Trips.html’s markup — so a future edit to that page can silently break the strip. The two search tabs above have no dependency at all.</p>
+  </div>
+</div>
+
+<h2>4 · What it would actually cost to build</h2>
+<div class="facts">
+  <ul>
+    <li><b>One block in toolbar.js</b>, guarded by <code>isRealGuide</code>, appended to <code>#ics-pill-row</code> — structurally identical to the 💱 Currency block, including the terracotta “on” state and the iOS <code>touchstart</code> press shim.</li>
+    <li><b>No new data pipeline, no API key, no network call.</b> City name comes from the guide slug the toolbar already resolves; the panel builds a URL and opens it.</li>
+    <li><b>New CSS lives in guide-style.css</b> beside the <code>.tve-cur-panel</code> rules, reusing <code>--c-warm-bg</code> / <code>--c-next-border</code> / <code>--c-card-bg</code> so dark mode is free. The <code>#bk-panel[hidden]{display:none}</code> companion rule is mandatory — same <code>[hidden]</code> specificity trap the currency panel documents.</li>
+    <li><b>Inputs must be 16px</b> or iOS Safari zooms the page on focus and throws the reader out of the guide — the constraint already written into <code>.tve-cur-in</code>.</li>
+    <li><b>Airport code</b> is the one piece of per-guide data that does not exist yet. Either add an <code>data-airport</code> attribute on <code>toolbar-mount</code>, or ship Hotels only and drop the Flights tab.</li>
+    <li><b>The reader’s origin airport</b> would sit in <code>localStorage</code> so it is typed once, not once per guide.</li>
+  </ul>
+</div>
+
+<h2>5 · Open questions for the owner</h2>
+<div class="facts">
+  <p class="q">1 · <b>Is a deep link worth a pill?</b> The widget saves typing a city into Google, nothing more — no prices, no availability, no comparison. That is the honest ceiling of the feature.</p>
+  <p class="q">2 · <b>Six pills in the action row.</b> The desktop row gets tighter and every pill loses width. Acceptable, or does something have to leave first?</p>
+  <p class="q">3 · <b>Flights tab in or out?</b> It needs a new per-guide airport field on every shipped guide. Hotels-only ships with zero new data.</p>
+  <p class="q">4 · <b>Upcoming Trips strip — yes or no?</b> Section 3 above; it is the only piece that adds a fetch and a coupling to Trips.html.</p>
+  <p class="q">5 · <b>Google, or a choice of provider?</b> One button per tab is cleanest; two (Google + Booking) doubles the row height and starts to read as advertising.</p>
+</div>
+
+<script>
+(function () {
+  var tabs   = document.querySelectorAll('#bk-panel .bk-tab');
+  var hotels = document.getElementById('bk-hotels');
+  var flights= document.getElementById('bk-flights');
+  var go     = document.getElementById('bk-go');
+  var url    = document.getElementById('bk-url');
+  var note   = document.getElementById('bk-note');
+  var mode   = 'hotels';
+
+  function v(id) { return document.getElementById(id).value; }
+
+  function build() {
+    var href, label, tail;
+    if (mode === 'hotels') {
+      href = 'https://www.google.com/travel/search?q=' +
+             encodeURIComponent(v('h-dest')) +
+             '&checkin=' + v('h-in') + '&checkout=' + v('h-out') +
+             '&adults=' + v('h-pax');
+      label = 'Search on Google Hotels ›';
+      tail  = 'Opens Google Hotels in a new tab — this site stores nothing and shows no prices. · ' +
+              '<a class="bk-more" href="#" onclick="return false">Hotels &amp; Stays ›</a>';
+    } else {
+      href = 'https://www.google.com/travel/flights?q=' +
+             encodeURIComponent('Flights to ' + v('f-to') + ' from ' + v('f-from') +
+                                ' on ' + v('f-dep') + ' through ' + v('f-ret'));
+      label = 'Search on Google Flights ›';
+      tail  = 'Origin is remembered in localStorage so it is typed once, not once per guide. · ' +
+              '<a class="bk-more" href="#" onclick="return false">Airlines of the World ›</a>';
+    }
+    go.href = href;
+    go.textContent = label;
+    url.textContent = href;
+    note.innerHTML = tail;
+  }
+
+  Array.prototype.forEach.call(tabs, function (t) {
+    t.addEventListener('click', function () {
+      mode = t.dataset.tab;
+      Array.prototype.forEach.call(tabs, function (o) {
+        o.setAttribute('aria-selected', o === t ? 'true' : 'false');
+      });
+      hotels.hidden  = (mode !== 'hotels');
+      flights.hidden = (mode !== 'flights');
+      build();
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('#bk-panel .bk-in'), function (i) {
+    i.addEventListener('input', build);
+    i.addEventListener('change', build);
+  });
+
+  document.getElementById('bk-pill').addEventListener('click', function (e) {
+    e.preventDefault();
+    var p = document.getElementById('bk-panel');
+    p.hidden = !p.hidden;
+    this.classList.toggle('on', !p.hidden);
+    this.setAttribute('aria-expanded', p.hidden ? 'false' : 'true');
+  });
+
+  build();
+})();
+</script>
+</body>
+</html>

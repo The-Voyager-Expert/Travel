@@ -1,0 +1,1491 @@
+/* Font loaded non-blocking via toolbar.js */
+
+/* ══════════════════════════════════════════════════════════════
+ * TRAVEL SITE — shared stylesheet
+ * All Trip-Essentials pages link to this file.
+ * Edit here — all pages update instantly.
+ *
+ * Guide stylesheet (for guide pages): ../../assets/guide-style.css
+ * ══════════════════════════════════════════════════════════════ */
+
+/* Anti-FOUC: hide body until toolbar.js reveals it (opacity:1 inline style).
+   On first/uncached loads, toolbar.js takes time to download — this ensures
+   the body stays hidden from the very first paint (CSS is render-blocking in
+   <head>, no JS download needed). toolbar.js's 2 s safety always restores it. */
+body { opacity: 0; transition: none; }
+
+:root {
+  /* ── Colors ── */
+  --bg:       #f5f4f0;
+  --warm:     #fdf8f0;
+  --surface:  #ffffff;
+  --surface2: #f0ede8;
+  --border:   #d8d4cc;
+  --border2:  #e6e2da;
+  --text:     #3d3a32;
+  --muted:    #6a6660;
+  --accent:   #8a6c1a;
+  --hover:    #faefd8;
+  --navy:     #1a3a8b;
+  --green:    #1a5a1a;   /* canonical GREEN family text — Badge spec 2026-07-29 */
+  --gold:     #c8961a;
+  --red:      #a02020;
+  /* Floating controls (scroll-to-top FAB) — see guide-style.css --c-float-* */
+  --c-float-bg:   #ffffff;
+  --c-float-bd:   #c8a44a;
+  --c-float-text: #8a6c1a;
+  --c-navbtn-bd:   #c4b896;
+  --c-navbtn-text: #6b6860;   /* prev/next chevron buttons */
+
+  /* Shared search magnifier icon — reference as background-image on any search box */
+  --search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 13 13' fill='none'%3E%3Ccircle cx='5.5' cy='5.5' r='4.5' stroke='%23a8895a' stroke-width='1.5'/%3E%3Cline x1='9.35' y1='9.35' x2='12' y2='12' stroke='%23a8895a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* ── Banner (matches guide hotel banner) ── */
+  --banner-gradient: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  --banner-text:     #ffffff;
+  --banner-sub:      rgba(255, 255, 255, 0.72);
+
+  /* ── Typography ── */
+  --font:     'Public Sans', sans-serif;
+  --fs-body:  15px;
+  --fs-title: 18px;   /* page title size */
+  --fs-h2:    18px;   /* section heading */
+  --fs-h3:    16px;   /* sub-section heading */
+  --fs-sub:   12px;   /* sub-lines, descriptions */
+  --fs-label: 11px;   /* decorative uppercase labels */
+
+  /* ── Timing & Spacing ── */
+  --transition-fast:   0.15s;
+  --transition-normal: 0.2s;
+  --border-thin:       0.5px;
+  --border-normal:     1px;
+
+  /* ── Delta routing tier colors (nonstop=green / 1-stop=blue / 2-stop=amber) ── */
+  --c0: #1a5a1a; --c0bg: #e8f5e8; --c0bd: #a0d8a0;
+  --c1: #1a3a8b; --c1bg: #e8f0fb; --c1bd: #a0b8e8;
+  --c2: #8a5a10; --c2bg: rgba(200,164,74,.10); --c2bd: rgba(122,88,0,0.4);
+
+  /* ── Discontinued service tag colors (Delta routes pages) ── */
+  --c-disc-bg: #f8e8e8; --c-disc: #7a1010;
+  /* ── Terracotta / rust (Pickleball highlights, Travel-Stats sr-val) ── */
+  --rust: #b85c2a;
+  /* ── Light terracotta tint (Pickleball tags / badges) ── */
+  --c-rust-tint: #fbeee4;
+  /* ── Vaccine tier solid colors (dot fill + badge background) ── */
+  --tier-req: #f0c040; --tier-req-text: #5a3a00;
+  --tier-rec: #6db96d; --tier-rec-text: #ffffff;
+  --tier-con: #93a8d8; --tier-con-text: #ffffff;
+  --tier-med: #e08080; --tier-med-text: #ffffff;
+  /* ── Warm border (Weather.html panel borders) ── */
+  --border-warm: #c4b896;
+  /* ── Bar track background (bar-row/bar-track used in stats pages) ── */
+  --track: #ece6dd;
+  /* ── Weather data semantic colors ── */
+  --c-temp-hi: #a61c00;
+  --c-temp-lo: #3d5282;
+  --c-rain: #4a7c9b;
+
+  /* ── Vaccine tier colors (Vaccines.html) ── */
+  --req-bg: #fef9e5; --req-bd: #d4a010;
+  --rec-bg: #f0faf0; --rec-bd: #4a9a4a;
+  --con-bg: #eef1f8; --con-bd: #6b7fb8;
+  --med-bg: #fdf0f0; --med-bd: #c06060;
+
+  /* ── Semantic tag colors (Travel-Insurance.html) — canonical GREEN + YELLOW trios per Badge spec ── */
+  --c-tag-good-bg:     #e8f5e8;
+  --c-tag-good-border: rgba(26,90,26,0.4);
+  --c-tag-ok-bg:       #fff8e0;
+  --c-tag-ok-text:     #7a5800;
+  --c-tag-ok-border:   rgba(122,88,0,0.4);
+
+  /* ── Search bar standard tokens (§ 14 Formatting.html#sec-colors) ── */
+  --c-search-focus-border: #c8b99a;
+  --c-search-placeholder:  #A8895A;
+
+  /* ── Section head + badge colors (Cards-ATM.html) ── */
+  --c-section-head:  #5C3D11;
+  --c-terracotta:    #b85c2a;
+  --badge-top-bg:    #fdecc8;
+  --badge-top-text:  #7a4d00;
+  --badge-top-bd:    #e8c97a;
+  --badge-warn-bg:   #fdf0e8;                    /* canonical RED bg */
+  --badge-warn-text: #7a3a1a;                    /* canonical RED text */
+  --badge-warn-bd:   rgba(122,58,26,0.4);        /* canonical RED border */
+  --badge-ok-bg:     #e4f5e4;
+  --badge-ok-text:   #1a5c1a;
+  --badge-ok-bd:     #90cc90;
+}
+
+/* ── Dark mode (auto — follows OS preference) ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:       #1a1917;
+    --warm:     #242220;
+    --surface:  #2a2825;
+    --surface2: #1e1c1a;
+    --border:   #3a3730;
+    --border2:  #332f2a;
+    --text:     #e8e5e0;
+    --muted:    #9a9690;
+    --accent:   #c8a040;
+    --hover:    #2e2a1e;
+    --navy:     #5a8adb;
+    --green:    #5aaa5e;   /* canonical dark GREEN family text */
+    --gold:     #d4a830;
+    --red:      #d44040;
+    --c-float-bg:   #2a2825;
+    --c-float-bd:   #7a6430;
+    --c-float-text: #c8a060;
+    --c-navbtn-bd:   #5a5040;
+    --c-navbtn-text: #b0aca4;
+    --req-bg: #2a2510; --req-bd: #c8a020;
+    --rec-bg: #0e200e; --rec-bd: #4a9a4a;
+    --con-bg: #101525; --con-bd: #7080b0;
+    --med-bg: #250e0e; --med-bd: #c06060;
+    --c-tag-good-bg:     #0d200d;
+    --c-tag-good-border: rgba(90,170,94,0.4);   /* canonical dark GREEN border */
+    --c-tag-ok-bg:       #281f00;
+    --c-tag-ok-text:     #d4a830;
+    --c-tag-ok-border:   #7a6010;
+    --c0: #4aaa70; --c0bg: #0e2415; --c0bd: #285e3a;
+    --c1: #6090d8; --c1bg: #0e1525; --c1bd: #304878;
+    --c2: #c8a44a; --c2bg: rgba(200,164,74,.12); --c2bd: #9a7830;
+    --c-disc-bg: #280e0e; --c-disc: #e07070;
+    --c-rust-tint: #2a1a12;
+    --tier-req: #c8a020; --tier-req-text: #1a1200;
+    --tier-rec: #4a9a4a; --tier-rec-text: #ffffff;
+    --tier-con: #6080c0; --tier-con-text: #ffffff;
+    --tier-med: #c07070; --tier-med-text: #ffffff;
+    --rust: #d4784a;
+    --border-warm: #5a5040;
+    --track: #3a3530;
+    --c-temp-hi: #e05030;
+    --c-temp-lo: #6090e0;
+    --c-rain: #6090b0;
+    --c-search-focus-border: #7a6a5a;
+    --c-search-placeholder:  #7a6a50;
+    --c-section-head:  #c8a060;
+    --c-terracotta:    #d4784a;
+    --badge-top-bg:    #2a1e00;
+    --badge-top-text:  #e8b060;
+    --badge-top-bd:    #7a5810;
+    --badge-warn-bg:   #2a1408;                 /* canonical dark RED bg */
+    --badge-warn-text: #e8a880;                 /* canonical dark RED text */
+    --badge-warn-bd:   rgba(232,168,128,0.4);   /* canonical dark RED border */
+    --badge-ok-bg:     #0a200a;
+    --badge-ok-text:   #80cc80;
+    --badge-ok-bd:     #306030;
+  }
+  ::selection { background: rgba(200,160,64,.35); }
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Text selection ── */
+::selection { background: rgba(122,59,30,.35); color: inherit; }
+
+/* ── Base ── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  min-height: 100dvh;
+  --pb: 80px;
+  padding-bottom: var(--pb);
+}
+
+/* ── Layout ── */
+.wrap { max-width: none; margin: 0 auto; padding: 0 32px; }
+.reading-col { max-width: 720px; margin-left: auto; margin-right: auto; }
+
+/* ── Heading scale — wired to CSS vars so the 3-step hierarchy is consistent.
+   body=15px (--fs-body) · h3=16px (--fs-h3) · h2=18px (--fs-h2).
+   Guide pages do not load this stylesheet so guide .extras-title is unaffected. ── */
+h2 { font-size: var(--fs-h2); font-weight: 700; }
+h3 { font-size: var(--fs-h3); font-weight: 600; }
+/* Non-guide pages: JS injects .title-updated as a direct body child so the stamp
+   always lands at the true visual bottom. padding-left matches .wrap gutter. */
+body > .title-updated { padding-left: 32px; }
+
+/* ── Page banner (desktop only) — gradient block with centered title.
+   Mobile overrides live in mobile.css (text-only left-accent strip).
+   Scoped to min-width:601px so mobile.css never has to fight !important. ── */
+@media (min-width: 601px) {
+  .page-header,
+  .header,
+  .site-header {
+    background: none !important;
+    padding: 10px 0 2px !important;
+    min-height: unset !important;
+    width: auto !important;
+    min-width: unset !important;
+    display: flex !important;
+    align-items: baseline !important;
+    justify-content: space-between !important;
+    border-radius: 0 !important;
+    border-bottom: 3px solid transparent !important;
+    border-image: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) 1 !important;
+    margin: 8px 0 20px !important;
+  }
+  .page-header .src-link,
+  .header .src-link,
+  .page-header .visa-src-link,
+  .header .visa-src-link {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+    padding-left: 16px;
+    align-self: flex-end;
+  }
+  .page-header .src-link:hover,
+  .header .src-link:hover,
+  .page-header .visa-src-link:hover,
+  .header .visa-src-link:hover { text-decoration: underline; }
+  .page-header h1,
+  .header h1,
+  .site-header h1 {
+    font-size: var(--fs-title) !important;   /* 18px desktop (--fs-title: 18px) / 14px mobile (mobile.css override). Deliberate: desktop banners render at 18px, mobile at 14px. Use var(--fs-title) — never hardcode px here. */
+    font-weight: 700 !important;
+    color: #3d3a32 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+  .page-header p,
+  .header p,
+  .header-desc {
+    font-size: var(--fs-sub) !important;
+    color: var(--muted) !important;
+    margin-top: 4px !important;
+    line-height: 1.5 !important;
+  }
+}
+/* ── Country/state group header — shared across every country-listing page
+   (Currency-Guide, Plug-Adapter-Guide, European-Train-Guide, Lounges-Europe,
+   Tipping-Guide, Trusted-Traveler). One canonical place/color/size/font, desktop
+   AND mobile (mobile override below in mobile.css) — owner rule 2026-07-29
+   (final): gradient on the font, no box/button. Same technique as the title. */
+.country-header {
+  border-bottom: 2px solid #E8D9BC;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.country-name {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  color: #3d3a32;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Updated stamp — sits just below the banner, discrete right-aligned timestamp */
+.updated-stamp {
+  display: block;
+  font-size: 11px;
+  color: var(--muted, #6a6660);
+  text-align: right;
+  margin: -11px 0 14px;
+  letter-spacing: 0.01em;
+}
+
+/* Decorative illustration beside page title banners — sits outside .page-header */
+.page-header-illus {
+  display: block;
+  height: 180px;
+  width: auto;
+  opacity: 0.92;
+  pointer-events: none;
+  margin: 10px 0 0 auto;
+}
+@media (max-width: 600px) { .page-header-illus { display: none; } }
+
+/* Hide eyebrow labels + subtitles inside banner — banner must contain only h1 */
+.page-header-eyebrow,
+.header-label,
+.header-eyebrow,
+.header-desc,
+.eyebrow { display: none !important; }
+
+/* ── Links ── */
+/* a:visited is intentionally NOT set here — pill-style anchors must control their
+   own visited color. Setting a global a:visited { color: #8a6c1a } bleeds
+   gold onto every visited pill, jump-btn, and nav chip. Individual pill classes
+   that need a specific visited color carry their own a.class:visited rule. */
+a { color: #8a6c1a; text-decoration: none; }
+a:hover { text-decoration: none; }
+/* Pills, nav-chips, cards, and styled-button anchors — never underline */
+.nav-link, .nav-link:hover, .nav-link.active,
+.pill, .pill:hover, .pill.active, a.pill:hover,
+a.badge, a.badge:hover,
+.jump-btn, .jump-btn:hover, .jump-btn.active,
+.stab, .stab:hover, .stab.on,
+.stats-nav a, .stats-nav a:hover, .stats-nav a.active,
+.sibling-pill:hover, .sibling-pill:focus,
+.also-on-this-site-pill:hover, .also-on-this-site-pill:focus,
+.filter-btn, .filter-btn:hover, .filter-btn.active,
+a.wtg-card, a.wtg-card:hover,
+a.sc-card, a.sc-card:hover,
+a.ff-card, a.ff-card:hover,
+a.cf-card, a.cf-card:hover,
+a.city-row, a.city-row:hover,
+a.stat-tile, a.stat-tile:hover,
+a.jump-pill, a.jump-pill:visited, a.jump-pill:hover,
+a.rank-city, a.rank-city:visited, a.rank-city:hover,
+a.chip-link, a.chip-link:hover,
+a.apply-link, a.apply-link:hover,
+a.apply-btn, a.apply-btn:hover, .apply-btn, .apply-btn:hover,
+.book-link, .book-link:hover, .book-link:focus,
+.byg-link, .byg-link:hover,
+.program-link, .program-link:hover,
+.prov-link, .prov-link:hover,
+.card-link:hover, .card-link:active,
+.lounge-region-nav a, .lounge-region-nav a:hover,
+.section-nav a, .section-nav a:hover,
+.pkl-nav a, .pkl-nav a:hover,
+.region-jump a, .region-jump a:hover,
+.region-cities a, .region-cities a:hover,
+.dnv-jump a, .dnv-jump a:hover,
+.cty-guides a, .cty-guides a:hover { font-family: inherit; text-decoration: none; }
+
+/* ── Sibling pills (cross-links between Climate Finder / Weather / When to Go) ── */
+.sibling-pill { font-family: inherit;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; font-weight: 400; color: var(--muted, #6a6660); padding: 6px 12px;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--surface);
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s, transform .08s;
+}
+a.sibling-pill:visited { color: #6a6660; }  /* literal hex — Chrome doesn't resolve var() in :visited */
+
+/* ── Also-on-this-site strip (Trip-Essentials cross-link cluster) ── */
+.also-strip { margin-top: 30px; padding: 16px 32px 0; border-top: 1px solid var(--border2,#e6e2da); }
+.also-strip-head { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.also-links { display: flex; flex-wrap: wrap; gap: 6px; }
+a.also-on-this-site-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; color: #8a6c1a; background: #ffffff;
+  border: 0.5px solid #c8a44a; border-radius: 6px;
+  padding: 6px 12px; text-decoration: none;
+  transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
+}
+@media (hover:hover) {
+  a.also-on-this-site-pill:hover {
+    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+    color: #fff !important; border-color: #b85c2a;
+    box-shadow: 0 3px 10px rgba(184,92,42,.18);
+  }
+}
+a.also-on-this-site-pill:active {
+  background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);
+  color: #fff !important; border-color: #b85c2a;
+  box-shadow: 0 1px 3px rgba(184,92,42,.12); transform: scale(.97) translateY(1px);
+}
+
+/* ── Visited-color lock for pill/link classes shared across the site ────────
+   Every non-guide Form B pill (rest color = var(--muted)) plus a few other
+   colored link classes carry a :visited override so browsers don't paint them
+   purple/blue after the user visits the target. Class-scoped, not a bare
+   `a:visited` (which would trip check_no_visited_color_bleed). If you add a
+   new link-pill class, add its :visited here. */
+a.jump-pill:visited, a.jump-btn:visited { color: #6a6660; }
+/* byg-guide-pill stays gold after visit — matches the pill's rest color (#c8961a = --gold).
+   var() is banned in :visited (Chrome privacy restriction), so literal hex is required. */
+a.byg-guide-pill:visited { color: #c8961a; }
+/* Stats-page guide links (Destination-Records, Travel-Stats, Stats-Across-US,
+   5 regional stats pages) — visited MUST render identical to rest. CRITICAL:
+   Chrome (and other browsers) DO NOT resolve CSS custom properties in
+   :visited rules — a privacy restriction to prevent history-sniffing. Using
+   var(--text) here caused visited links to fall back to `a { color:
+   #8a6c1a }` (gold), rendering countries in muted orange. Literal hex
+   `#3d3a32` (value of --text in light mode, per web-travel-style.css :root)
+   works because Chrome accepts plain color keywords/hex in :visited. Updated
+   from #1a1917 (stale value) to #3d3a32 (2026-08-08). Owner rule 2026-07-28:
+   "no font should change to a different color after visited". Locked by
+   check_universal_visited_color_match. */
+a.rank-city:visited, a.city-link:visited,
+a.bucket-name:visited, a.bar-country:visited { color: #3d3a32; }
+/* .stats-nav a is a descendant selector, needs its own line */
+.stats-nav a:visited { color: #6a6660; }
+/* Site-resource pill exception (gold) — inherits the rest gold color */
+a.also-on-this-site-pill:visited, a.nearby-guide-pill:visited { color: #8a6c1a; }
+/* Overview extras link (guide Trip Overview extras row) — brand color */
+a.overview-extra-link:visited { color: #8a6c1a; }  /* literal hex — Chrome doesn't resolve var() in :visited */
+/* Colored inline link classes on essentials pages */
+a.src-link:visited, a.visa-src-link:visited, a.agg-link:visited { color: #8a6c1a; }
+/* Belt-and-suspenders visited locks: individual pages define their own
+   local `a.chip-link:visited` matching their rest color; this shared rule
+   is the fallback. `.best-of-link` inherits rest color var(--muted) from
+   `.best-of-links a` — chevron-link-pill treatment, 2026-07-29 — so
+   visited locks to the same muted grey, not the old gold. */
+a.chip-link:visited { color: #3d3a32; }
+a.best-of-link:visited { color: #6a6660; }
+/* ── Inline-style anchor classes: visited locks added 2026-08-07 ── */
+/* var() forbidden in :visited (Chrome privacy); all values are literal hex. */
+a.byg-link:visited      { color: #3d3a32; }  /* BYG internal link — rest is #3d3a32 */
+a.tc-guide:visited      { color: #8a6c1a; }  /* City-Transit-Cards guide link — rest is var(--accent) */
+a.evisa-link:visited    { color: #8a6c1a; }  /* Entry-Requirements eVisa link — rest is var(--accent) */
+a.pkl-finder-btn:visited { color: #3d3a32; }  /* Pickleball finder — rest is var(--text) */
+a.pkl-guide-link:visited { color: #7a5800; }  /* Pickleball guide link — rest is #7a5800 */
+a.tsa-link:visited      { color: #6a6660; }  /* Trips page link — rest is var(--muted) */
+/* Visas.html type-legend jump pills — each keeps its rest badge color */
+a.pill:visited      { color: #3d3a32; }  /* base pill text — rest is var(--text) */
+a.pill-vf:visited   { color: #1a5a1a; }  /* green — visa-free */
+a.pill-card:visited { color: #1a3a8b; }  /* blue/navy — arrival card (--navy) */
+a.pill-eta:visited  { color: #7a5800; }  /* amber — ETA */
+a.pill-evisa:visited { color: #7c3aed; } /* purple — eVisa */
+a.pill-visa:visited { color: #7a3a1a; }  /* red-brown — visa required */
+a.pill-voa:visited  { color: #8a4a10; }  /* orange — visa on arrival */
+.sibling-pill:hover { font-family: inherit; border-color: #b85c2a; box-shadow: 0 3px 10px rgba(184,92,42,.12); transform: translateY(-1px); }
+.sibling-pill:active { font-family: inherit; transform: scale(.97) translateY(1px); box-shadow: 0 1px 3px rgba(184,92,42,.10); }
+
+/* ── Best-Of-Index inline-style extraction (moved out of Best-Of-Index.html to
+   comply with brain_check.check_best_of_css_standard 2026-07-29) ── */
+.best-of-search-input { width:100%; max-width:360px; margin:6px auto 14px; display:block; }
+.best-of-region-filters { text-align:center; margin:0 0 14px; display:flex; flex-wrap:wrap; justify-content:center; gap:5px; position:sticky; top:56px; z-index:10; background:var(--bg); padding:8px 0; border-bottom:1px solid var(--border2); }
+
+/* ── Page source footnote (Passport, info pages) ── */
+.page-source { font-size: 12px; color: var(--muted); margin: 0 0 32px; line-height: 1.6; }
+.page-source a { color: var(--accent); text-decoration: none; }
+.page-source a:hover { text-decoration: underline; }
+
+/* Map region nav: the current region (.rn-on) is the page you're on — not a link. */
+.rn.rn-on { pointer-events: none; cursor: default; text-decoration: none; }
+
+/* ── Back link ── */
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--fs-sub); color: var(--muted); margin-top: 16px;
+}
+.back-link:hover { color: var(--accent); }
+
+/* ── Search inputs (§ 14 standard — matches guides_index) ── */
+input[type="search"],
+input[type="text"],
+.search-input {
+  width: 360px; box-sizing: border-box; padding: 11px 18px; padding-left: 36px; margin-bottom: 14px;
+  font-size: 16px; font-family: var(--font); line-height: 1;
+  border: 1.5px solid #e6e2da; border-radius: 6px;
+  /* Shared magnifier icon (matches guides_index) — one place, every search box gets it.
+     Pages that put a literal 🔍 in the placeholder should drop it (this replaces it). */
+  background: #ffffff var(--search-icon) no-repeat 13px center;
+  color: #1a1917;
+  -webkit-appearance: none; appearance: none;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+input[type="search"]:focus,
+input[type="text"]:focus,
+.search-input:focus { border-color: #c8b99a; box-shadow: none; }
+
+/* ── Shared search autocomplete dropdown (TVESearch, search-autocomplete.js) ──
+   Floating "City · Country" typeahead card. One definition; every page that
+   calls TVESearch.attach() gets this look — never restyle per page. */
+.sa-suggest {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 60;
+  background: #fff; border: 1px solid var(--border2, #e6e2da); border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(92, 61, 17, .16);
+  max-height: 340px; overflow-y: auto; padding: 4px;
+}
+.sa-suggest[hidden] { display: none; }
+.sa-row {
+  display: block; width: 100%; text-align: left; box-sizing: border-box;
+  padding: 9px 14px; border: none; background: transparent; border-radius: 6px;
+  cursor: pointer; font-family: var(--font); font-size: 14px; font-weight: 600;
+  color: var(--text, #1a1917);
+}
+.sa-row .sa-sub { font-weight: 400; color: var(--muted, #6a6660); }
+.sa-row:hover, .sa-row.active { background: var(--bg, #f5f3ef); }
+.sa-empty { padding: 12px; font-size: 13px; color: var(--muted, #6a6660); text-align: center; }
+
+/* Gold clear (✕) button on every search box — replaces the browser's default
+   blue macOS cancel button. One place; every input[type=search] gets it. */
+input[type="search"]::-webkit-search-cancel-button,
+.search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none; appearance: none;
+  width: 13px; height: 13px; cursor: pointer;
+  background-color: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 3l8 8M11 3l-8 8' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 3l8 8M11 3l-8 8' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* Zero out margin when search sits inside a flex pill/tab row (search + text inputs) */
+.legend input[type="search"], .legend input[type="text"],
+.controls input[type="search"], .controls input[type="text"],
+.filter-bar input[type="search"], .filter-bar input[type="text"],
+.controls-row input[type="search"], .controls-row input[type="text"],
+.nav-inner input[type="search"], .nav-inner input[type="text"] { margin: 0; }
+input[type="search"]::placeholder,
+input[type="text"]::placeholder,
+.search-input::placeholder { color: var(--c-search-placeholder); }
+/* ── Search wrapper — Best-of pages ── */
+.search-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 6px 0; }
+
+/* ── Cards / surfaces ── */
+.card,
+.airport-card,
+.lounge-card,
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+/* ── Section group headers ── */
+.group-header {
+  display: flex; align-items: center; gap: 12px;
+  margin: 24px 0 12px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.group-title { font-size: var(--fs-body); font-weight: 600; color: var(--accent); }
+.group-sub   { font-size: var(--fs-label); color: var(--muted); letter-spacing: 0.06em; margin-left: auto; }
+.cur-iso     { color: var(--accent); }
+
+/* ── Uppercase section labels ── */
+.section-label,
+.region-label,
+.legend-group-label,
+.month-label {
+  font-size: var(--fs-label);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .wrap { padding: 0 14px; }
+  body  { --pb: 40px; padding-bottom: var(--pb); }
+  /* Source links inside page-header must not inherit the 40px tap-target min-height */
+  .page-header .src-link,
+  .header .src-link,
+  .page-header .visa-src-link,
+  .header .visa-src-link {
+    min-height: auto !important;
+    display: block;
+    text-align: right;
+    padding-left: 0;
+    line-height: 1.4;
+    padding-top: 2px;
+  }
+}
+
+/* ── Best-of pages (shared across all 29 Best-*.html "The Best of" pages) ──
+   ONE uniform card on every page: .best-of-name (plain text) / .best-of-tag /
+   .best-of-desc (a 2-line summary of the place) / .best-of-meta /
+   .best-of-links (a row of .best-of-link pills). No tiers, no exceptions —
+   all 29 are the same type of guide, all named Best-*.html.
+   .best-of-desc restored 2026-07-05 — every place card carries a short summary.
+   Locked spec: Trip-Essentials/Essentials-Pages-Rules.md § Best-of pages.
+   Enforced: Brain/scripts/brain_check.py check_best_of_css_standard. ── */
+.best-of-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+.best-of-section-label {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 20px 0 8px;
+  margin-top: 6px;
+}
+.best-of-section-label:first-child { margin-top: 0; padding-top: 0; }
+.best-of-subsection-label {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 10px 0 6px;
+  margin-top: 4px;
+  opacity: 0.75;
+}
+.best-of-section-label + .best-of-subsection-label { margin-top: 0; padding-top: 0; }
+.best-of-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .15s, border-color .15s, transform .15s;
+}
+.best-of-card:hover {
+  box-shadow: 0 3px 10px rgba(92,61,17,.10);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.best-of-card:active {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+.best-of-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.best-of-tag {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.best-of-desc {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  margin-top: 8px;
+  padding-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.best-of-meta {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--text);
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.best-of-meta span { white-space: nowrap; }
+.best-of-links {
+  margin-top: 10px;
+  padding-top: 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+/* Card links + See-also pills — chevron-link-pill treatment, smaller size
+   (owner rule 2026-07-29 — see Formatting.html#src-pills § Behavior 4) */
+.best-of-links a,
+.best-of-related a {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  background: var(--surface);
+  white-space: nowrap;
+  display: inline-block;
+}
+.best-of-links a::after,
+.best-of-related a::after { content: ' \203A'; font-size: 14px; vertical-align: -1px; }
+.best-of-links a:hover,
+.best-of-related a:hover { text-decoration: none; border-color: #b85c2a; }
+
+/* Best-Of-Index region-filter chips — desktop canonical pill treatment.
+   Overrides the inline JS styles via !important. .bo-active toggled by JS. */
+@media (min-width: 601px) {
+  #region-filters { gap: 0 !important; justify-content: center !important; }
+  #region-filters > span {
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    color: #3d3a32 !important;
+    border: 1.5px solid var(--border2, #e6e2da) !important;
+    border-radius: 0 !important;
+    background: var(--surface, #ffffff) !important;
+    margin-left: 0 !important;
+    flex: 1 1 auto;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  #region-filters > span:hover {
+    background: var(--surface, #ffffff) !important;
+    border-color: #b85c2a !important;
+    color: #b85c2a !important;
+  }
+  #region-filters > span.bo-active,
+  #region-filters > span.bo-active:hover,
+  #region-filters > span.bo-active:focus {
+    background: #b85c2a !important;
+    border: 1.5px solid #b85c2a !important;
+    color: #fff !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .best-of-grid { grid-template-columns: 1fr; gap: 8px; }
+  .best-of-card { min-height: 0; }
+  .best-of-section-label { font-size: 13px; }
+  /* Best-Of-Index region-filter chips — mobile Form B glued grid (owner report
+     2026-07-29). .filter-chip-row (mobile.css) already grids the container but
+     leaves a 6px gap and lets the inline JS styles show through — those set a
+     strong solid terracotta fill + white text on .bo-active. Override gap and
+     every child (ID beats the shared .filter-chip-row class even against
+     !important). Active state uses terracotta border + text on white bg for
+     mobile readability (fixed 2026-08-03, was inverted muted-beige). */
+  #region-filters { gap: 0 !important; }
+  #region-filters > span {
+    height: 40px !important;
+    padding: 4px 6px !important;
+    font-size: 11.5px !important;
+    border-radius: 0 !important;
+    line-height: 1.12 !important;
+    color: var(--muted, #6a6660) !important;
+    border: 1.5px solid var(--border2, #e6e2da) !important;
+    background: var(--surface, #ffffff) !important;
+  }
+  #region-filters > span.bo-active,
+  #region-filters > span.bo-active:hover,
+  #region-filters > span.bo-active:focus {
+    background: var(--surface, #ffffff) !important;
+    border: 1.5px solid #b85c2a !important;
+    color: #b85c2a !important;
+  }
+}
+
+/* ── Best-Of-Index CROSS-CATEGORY FINDER — pick 2+ Best-of categories, see
+   every country that appears in all of them (the 34 Best-of pages are
+   otherwise siloed). Markup + behaviour live in Best-Of-Index.html; the
+   country data is generated into assets/best-of-cross-data.js by
+   Brain/scripts/build/build_best_of_cross.py. CSS lives here because
+   check_best_of_css_standard forbids an inline <style> block on any
+   Best-of page. Chip treatment mirrors #region-filters above: glued
+   squared strip on desktop, Form B glued grid on mobile, terracotta
+   active fill. Hover follows Option B — bg var(--bg), terracotta border,
+   font unchanged (owner rule 2026-07-30). Added 2026-08-08. */
+.bo-x { margin: 14px 0 4px; }
+.bo-x-bar { text-align: center; }
+.bo-x-panel { display: none; margin-top: 12px; }
+.bo-x.open .bo-x-panel { display: block; }
+.bo-x.open .disc-caret { transform: rotate(180deg); }
+.bo-x-lead {
+  font-size: 12.5px;
+  color: var(--muted, #6a6660);
+  line-height: 1.55;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.bo-x-chips { display: flex; flex-wrap: wrap; gap: 0; justify-content: center; }
+.bo-x-chip {
+  flex: 1 1 auto;
+  min-width: 124px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  color: var(--text, #3d3a32);
+  border: 1.5px solid var(--border2, #e6e2da);
+  border-radius: 0;
+  background: var(--surface, #ffffff);
+  cursor: pointer;
+  transition: all .15s;
+}
+.bo-x-chip:hover { background: var(--bg, #f5f4f0); border-color: var(--rust, #b85c2a); }
+.bo-x-chip.on { background: var(--rust, #b85c2a); border-color: var(--rust, #b85c2a); color: #ffffff; }
+.bo-x-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--muted, #6a6660);
+}
+#bo-x-actions[hidden] { display: none; }
+.bo-x-clear {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent, #8a6c1a);
+  padding: 5px 12px;
+  border: 1px solid var(--border2, #e6e2da);
+  border-radius: 8px;
+  background: var(--surface, #ffffff);
+  cursor: pointer;
+}
+.bo-x-clear:hover { background: var(--bg, #f5f4f0); border-color: var(--rust, #b85c2a); }
+.bo-x-results { margin-top: 12px; }
+.bo-x-hit {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border2, #e6e2da);
+  border-left: 3px solid var(--accent, #8a6c1a);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+}
+.bo-x-hit-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.bo-x-hit-name { font-size: 15px; font-weight: 700; color: var(--text, #3d3a32); }
+.bo-x-hit-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, #6a6660);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.bo-x-hit-row { margin-top: 8px; font-size: 13px; line-height: 1.6; }
+a.bo-x-hit-cat {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted, #6a6660);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+a.bo-x-hit-cat:visited { color: #6a6660; }
+a.bo-x-hit-cat:hover { border-color: var(--rust, #b85c2a); text-decoration: none; }
+.bo-x-hit-items { display: block; color: var(--text, #3d3a32); }
+
+@media (max-width: 600px) {
+  /* min-height, not height — several category labels ("Mountains & Rock
+     Formations", "Ultra Luxurious Resorts") wrap to 3 lines at 3 columns,
+     and a fixed 40px clipped them. Rows equalise via the container's
+     default align-items:stretch. */
+  .bo-x-chip {
+    flex: 1 1 30%;
+    min-width: 0;
+    min-height: 40px;
+    padding: 6px;
+    font-size: 11.5px;
+    line-height: 1.15;
+    color: var(--muted, #6a6660);
+  }
+  .bo-x-chip.on { background: var(--surface, #ffffff); border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+  .bo-x-hit-head { flex-direction: column; gap: 2px; }
+}
+
+/* ── SHOWCASE CARD — the standard photo-card format for ALL Best-*.html
+   pages (LOCKED 2026-07-12, supersedes the old .best-of-* uniform spec).
+   Started as two one-off experiments — .safari-* (Best-Safari.html) and
+   .luxe-* (Best-Ultra-Luxurious-Hotels.html) — proved the pattern twice,
+   then consolidated into this single shared .showcase-* family so every
+   Best-of page reads from ONE block instead of duplicating near-identical
+   CSS per page. Every Best-of page is being migrated to this format; a
+   page still on the legacy `.best-of-card` layout just hasn't been
+   converted yet — see Essentials-Pages-Rules.md § Best-of pages.
+   One real Commons-sourced photo per entry — usually the surrounding
+   destination/landmark rather than the exact venue/property itself,
+   since venue-specific photography is nearly always copyrighted brand
+   material Commons doesn't carry. Consolidated 2026-07-12. */
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 22px;
+}
+.showcase-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .15s, transform .15s;
+}
+.showcase-card:hover {
+  box-shadow: 0 8px 22px rgba(92,61,17,.15);
+  transform: translateY(-2px);
+}
+.showcase-card:active {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+.showcase-photo { width: 100%; aspect-ratio: 4/3; height: auto; background: var(--hover); overflow: hidden; }
+.showcase-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.showcase-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.showcase-name { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.showcase-tag { font-size: 12.5px; color: var(--muted); }
+.showcase-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.showcase-meta span {
+  font-size: 11.5px; font-weight: 600; color: var(--accent);
+  background: var(--surface); border: 1.5px solid var(--border2);
+  border-radius: 6px; padding: 4px 11px; white-space: nowrap;
+}
+.showcase-desc { font-size: 13px; line-height: 1.6; color: var(--text); }
+.showcase-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.showcase-links a {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11.5px; font-weight: 500; color: var(--accent); text-decoration: none;
+  padding: 5px 12px; border: 1.5px solid var(--border2); border-radius: 6px;
+  background: var(--surface); white-space: nowrap;
+}
+.showcase-links a:hover { border-color: #b85c2a; }
+@media (max-width: 600px) {
+  .showcase-grid { grid-template-columns: 1fr; gap: 18px; }
+}
+
+/* ── Disclosure dropdown (disc-btn + days-jump pattern)
+   Used on Guides-Index for Trip Length / Country / Best of, and on Best-Of
+   pages for the section filter. ── */
+.days-jump { position: relative; display: inline-flex; }
+.days-jump.open .disc-caret { transform: rotate(180deg); }
+.days-jump-list {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  min-width: 160px;
+  background: var(--warm);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 58vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12);
+}
+.days-jump.open .days-jump-list { display: block; }
+.days-jump-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border2, #e6e2da);
+  padding: 9px 14px;
+  font-size: 13px;
+  color: #3d3a32;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.days-jump-item:last-child { border-bottom: none; }
+.days-jump-item:hover { background: rgba(184,134,11,.06); }
+.days-jump-item.on { background: rgba(184,134,11,.1); color: #7a3b1e; font-weight: 600; }
+.disc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 14px;
+  border: 1.5px solid var(--border2, #e6e2da);
+  border-radius: 6px;
+  background: var(--surface, #ffffff);
+  color: #8a6c1a;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.disc-btn:hover { text-decoration: none; }
+.disc-btn .disc-caret { font-size: 10px; transition: transform .15s; }
+.disc-btn.has-active { position: relative; }
+.disc-btn.has-active::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #b85c2a;
+}
+
+/* Best of dropdown on Guides-Index: right-align so it doesn't clip off-screen */
+#bestofJump .days-jump-list { left: auto; right: 0; }
+
+/* ── Best-of country labels (shared across Best-*.html pages) ── */
+.best-of-country-label {
+  grid-column: 1 / -1;
+  font-size: 14px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--muted);
+  padding: 20px 0 8px; margin-top: 6px;
+}
+/* sub-item in jump nav (Best-Museums) */
+.days-jump-city { padding-left: 22px !important; font-size: 12px !important; opacity: 0.82; }
+/* sub-label within a Best-of section (Best-Surfing) */
+.best-of-sub-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 3px 0 2px; margin: 10px 0 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Native <select> appearance reset ─────────────────────────────────────
+   macOS Safari ignores border-radius on <select> unless appearance is reset.
+   Without this, every select renders as the OS pill shape regardless of CSS. */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a6660' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px 6px;
+}
+
+/* ── Keyboard focus indicators ── */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+.pill:focus-visible,
+.filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ── Filter-pill count badge ──────────────────────────────────────────────
+   The small tally inside a filter pill ("🟢 Safe 12"). Byte-identical inline
+   copies shipped on Airport-Connection-Times, First-Timer-Mistakes and
+   Tap-Water; hoisted here 2026-08-08 per the SHARED CSS ONLY rule.
+   The desktop rule that hides these counts at >=601px stays inline on each
+   page — it lives inside that page's own @media block alongside the rest of
+   its desktop pill treatment. */
+.pill-count {
+  font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+  background: rgba(0,0,0,.07); color: inherit;
+}
+.pill.active .pill-count { background: rgba(255,255,255,.25); }
+
+/* ── Active (selected) filter chip — inverted terracotta state ── */
+.filter-btn.active {
+  background: var(--surface);
+  border: 2px solid #b85c2a;
+  color: #b85c2a;
+  font-weight: 700;
+}
+/* Search/text inputs use border-color on :focus — no extra outline ring */
+input[type="search"]:focus-visible,
+input[type="text"]:focus-visible,
+.search-input:focus-visible { outline: none; }
+
+/* ── No-JS fallback ── */
+#toolbar-mount:empty::after {
+  content: 'Navigation requires JavaScript.';
+  display: block; text-align: center; padding: 12px;
+  font-size: var(--fs-sub); color: var(--muted);
+}
+
+/* ── Dark mode overrides for hardcoded colors ── */
+@media (prefers-color-scheme: dark) {
+  /* Title banner uses var(--rust) which auto-shifts to #d4784a in dark mode — no override needed here. */
+  input[type="text"],
+  input[type="search"],
+  select { background: var(--surface); color: var(--text); border-color: var(--border); }
+  .banner-title, .banner-sub { color: var(--banner-text); }
+}
+
+/* ─── Lounges airport "Guide →" inline link — same chevron treatment as
+   .chevron-link-pill, no box (inline text link next to airport name).
+   Owner rule 2026-07-29. Spec: Formatting.html#src-pills § Behavior 4. */
+.lounge-guide-link {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+}
+.lounge-guide-link::after { content: ' \203A'; font-size: 14px; vertical-align: -1px; }
+.lounge-guide-link:hover { color: #b85c2a; }
+a.lounge-guide-link:visited { color: #6a6660; }  /* literal hex — browsers don't resolve var() in :visited */
+
+/* ─── Chevron link pill — outbound-source card link (new standard 2026-07-29) ──
+   Bordered box around just the label + trailing › chevron. Rest = muted grey
+   border/text; hover = terracotta border/text. Uses a plain "›" (U+203A)
+   character, not the banned ↗ glyph — text punctuation, not an emoji, so it
+   always renders in currentColor on every platform. Spec + history:
+   Brain/Reference/Formatting/Formatting.html#src-pills § Behavior 4. */
+.chevron-link-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-weight: 400;
+  font-size: 14px;
+  transition: border-color .15s, color .15s;
+}
+.chevron-link-pill::after { content: '\203A'; font-size: 17px; vertical-align: -1px; margin-left: 5px; }
+.chevron-link-pill:hover { border-color: #b85c2a; }
+a.chevron-link-pill:visited { color: #6a6660; }  /* literal hex — browsers don't resolve var() in :visited */
+
+/* ─── External-link arrow icon ────────────────────────────────────────────
+   Every "site.com ↗"-style label used to end in a literal Unicode ↗
+   character. Apple platforms (iOS/macOS Safari) render that glyph via
+   Apple Color Emoji — a fixed blue icon that ignores the link's own text
+   colour — so every external link looked off-palette on iPhone/iPad/Mac.
+   A pure CSS border-arrow has no font/emoji dependency and always matches
+   currentColor, i.e. whatever colour the link already uses (including its
+   own :hover colour, automatically). .ext-arrow is the fallback class for
+   an anchor with no dedicated component class of its own. */
+.agg-link::after,
+.prov-link::after,
+.tc-site::after,
+.evisa-link::after,
+.apply-btn::after,
+.program-link::after,
+.visa-src-link::after,
+.src-link::after,
+.apply-link::after,
+.ext-arrow::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 5px;
+  margin-bottom: 1px;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  vertical-align: middle;
+}
+
+
+/* ── Consolidated from Trip-Essentials inline <style> — identical across pages, SHARED CSS ONLY rule (2026-07-13) ── */
+.airport-card-body { transition:max-height .25s ease, opacity .25s ease; overflow:hidden; }
+.airport-card-header { display: flex; align-items: baseline; gap: 14px; padding: 14px 20px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); }
+.airport-code { font-size: var(--fs-body,14px); }
+.airport-name { font-size: var(--fs-body,14px); color: var(--muted); }
+.airport-note { font-size: var(--fs-sub,12px); color: var(--muted); font-style: italic; padding: 7px 20px 9px; background: var(--surface2); border-bottom: 1px solid var(--border); line-height: 1.5; }
+.bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #c88a1a, #e6ab30); }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; padding: 0 18px; }
+.bar-track { flex: 1; height: 5px; background: var(--track); border-radius: 3px; overflow: hidden; }
+.controls-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 14px; }
+.country-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 5px 11px; font-size: 12px; color: var(--text); cursor: pointer; white-space: nowrap; transition: border-color .15s, background .15s, color .15s; }
+.country-chips { display: none !important; }
+.country-select-wrap { display: block !important; }
+.decision-table { width: 100%; border-collapse: collapse; }
+.dest-city { font-size: var(--fs-body,14px); font-weight: 500; }
+.dest-code { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', Arial, sans-serif; font-size: var(--fs-body,14px); color: var(--muted); margin: 2px 0; }
+.dest-meta { font-size: var(--fs-body,14px); color: var(--muted); }
+.dot-gold { background: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.dot-green { background: var(--green); box-shadow: 0 0 0 1px var(--green); }
+.dot-navy { background: var(--navy); box-shadow: 0 0 0 1px var(--navy); }
+.filter-clear { padding: 7px 10px;font-size: var(--fs-body,14px);border:1.5px solid var(--border2, #e6e2da);border-radius:8px;background:#fff;color:#7A5C2E;cursor:pointer;white-space:nowrap; }
+.filter-count { font-size: var(--fs-sub,12px);color:#7A5C2E;white-space:nowrap; }
+.hub-top { display:none; }
+.index-table { width: 100%; border-collapse: collapse; border-radius: 0 0 6px 6px; overflow: hidden; box-shadow: 0 2px 12px rgba(92,61,17,0.10); }
+.legend-group { display: flex; flex-direction: column; gap: 7px; }
+.legend-items { display: flex; flex-wrap: wrap; gap: 10px; }
+.lounge-count { font-size:13px;color:#7A5C2E;margin-left:8px;white-space:nowrap; }
+.lounge-header { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; flex-wrap: wrap; }
+.lounge-item { padding: 13px 20px; border-bottom: 1px solid var(--border2, #e6e2da); transition: background .15s; }
+.lounge-name { font-size: var(--fs-body,14px); font-weight: 600; color: var(--text, #1a1917); }
+.lounge-region-nav { display:flex;gap:6px;margin-bottom:14px;justify-content:center; }
+.meta { flex-direction: column; }
+.meta-row { display: flex; gap: 10px; align-items: baseline; }
+.region-section { margin-top: 20px; margin-bottom: 20px; }
+.sections-grid { grid-template-columns: 1fr; gap: 0; }
+.sr-none { color: var(--muted); font-size: 13px; font-style: italic; }
+.sr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sr-title { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+.sun-c1 { background: #fff8f0; color: #7a3b1e; }
+.sun-c2 { background: #ffe8cc; color: #7a3b1e; }
+.sun-c3 { background: #ffc970; color: #5a2e0e; }
+.sun-c4 { background: #ffa020; color: #3a1a00; }
+.sun-c5 { background: #ff7700; color: #fff; }
+.sun-c6 { background: #e85d00; color: #fff; }
+.sun-table { border-collapse: collapse; width: 100%; font-size: 11px; }
+.sun-table-wrap { overflow-x: auto; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tip-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+.toggle-all { margin:0;padding:6px 12px;font-size:12px;font-weight:400;border:1px solid var(--border2,#e6e2da);border-radius:6px;background:var(--surface,#fff);color:var(--muted,#6a6660);cursor:pointer;white-space:nowrap;transition:all .15s; }
+
+
+/* ── Consolidated top-level rules (identical across sibling pages; @media overrides stay inline) — 2026-07-13 stage 2 ── */
+.cat-sec-icon { font-size: 20px; }
+.cat-sec-name { font-size: 15px; font-weight: 700; flex: 1; }
+.footnotes { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 28px; font-size: 11px; color: var(--muted); line-height: 1.7; }
+.cat-sec-src { font-size: 11px; color: var(--muted); }
+.search-hint { font-size: 12px; color: var(--muted); margin-top: 6px; min-height: 18px; }
+
+/* ── Consolidated from inline page styles (stats-pages) ── */
+.sections-grid .bar-section { margin-bottom: 0; }
+.cat-sec-head + .bar-row { margin-top: 14px; }
+.bar-section > .bar-row:last-child { margin-bottom: 14px; }
+.cat-sec-head ~.cat-sec-head ~ .sun-table-wrap + div { padding: 8px 18px 14px; }
+.bar-fill.alt { background: linear-gradient(90deg, #c88a1a, #e6ab30); }
+/* Stats-page country-guide links (JS-generated .cgl) — must render as body
+   text before AND after clicking, no terracotta drift. Owner rule 2026-07-28.
+   Literal hex on :visited because Chrome doesn't resolve var() in :visited. */
+.bar-country a.cgl { color: var(--text); text-decoration: none; }
+.bar-country a.cgl:visited { color: #1a1917; }
+.sun-table th { background: var(--surface2); color: var(--muted); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 7px 8px; border: 1px solid var(--border2); text-align: center; white-space: nowrap; }
+.sun-table td { padding: 6px 8px; border: 1px solid var(--border2); text-align: center; font-weight: 600; font-size: 11px; white-space: nowrap; }
+.fact-table td.fact-left { text-align: left; font-weight: 600; }
+#country-select { width: 100%; box-sizing: border-box; font-family: inherit; font-size: 16px; color: #3d3a32; background: var(--surface, #ffffff); border: 1px solid #c8a44a; border-radius: 6px; padding: 11px 28px 11px 14px; cursor: pointer; }
+#country-select:focus, #country-select:focus-visible { outline: none; border-color: var(--accent); }
+.country-chip:hover { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+.country-chip.active { border-color: #b85c2a; color: #fff; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+#search-results { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+#search-results.active { display: block; }
+.sr-table thead th { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 6px 7px; border-bottom: 1px solid var(--border2); text-align: left; }
+.sr-table td.sr-val { font-weight: 700; color: var(--rust); text-align: right; white-space: nowrap; }
+@media (max-width: 700px) {
+  .sections-grid { grid-template-columns: 1fr; gap: 0; }
+}
+@media (max-width: 600px) {
+  .country-chips { display: none !important; }
+  .country-select-wrap { display: block !important; }
+}
+
+/* ── Consolidated from inline page styles (lounges) ── */
+.section-label.skyteam { color: var(--navy); background: #eef0f7; }
+.section-label.pp { color: var(--green); background: #eef5ee; }
+.lounge-item:last-child { border-bottom: none; }
+.airport-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.airport-card-header::after { content:'▾'; margin-left:auto; font-size: var(--fs-sub,12px); color:var(--muted); transition:transform .2s; }
+.airport-card.collapsed .airport-card-header::after { transform:rotate(-90deg); }
+.airport-card.collapsed .airport-card-body { max-height:0!important; opacity:0; }
+.toggle-all:hover { color:#fff;border-color:#b85c2a;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+a.nav-link:visited { color: #3d3a32; }
+.nav .nav-link.active { color:#fff;border-color:#b85c2a;background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); }
+.section-label.amex { color:var(--gold, #8a6c1a);background:#f7f3e8; }
+
+/* ── Consolidated from inline page styles (delta-routes) ── */
+.dest-card.t0 { border-left-color: var(--c0); }
+.dest-card.t1 { border-left-color: var(--c1); }
+.dest-card.t2 { border-left-color: var(--c2); }
+.tag.seasonal { background: #fff8e8; color: var(--warn); }
+.tag.partner { background: var(--c1bg); color: var(--c1); }
+.filter-clear:hover { border-color:#B8860B;color:var(--accent, #8a6c1a); }
+body.is-searching #route-nav { display:none !important; }
+body.is-searching .tier-legend { display:none !important; }
+body.is-searching .hub-strength { display:none !important; }
+body.is-searching .hub-header { display:none !important; }
+body.is-searching .hub-jump { display:none!important; }
+body.is-searching .hub-top { display:none!important; }
+
+/* ── Consolidated from inline page styles (hub-jump) ── */
+.hub-jump { display:none; }
+.hub-jump-toggle { width:100%;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#3d3a32;background:var(--surface, #ffffff);border:1px solid #b8b3a8;border-radius:6px;padding:10px 14px;cursor:pointer;font-family:inherit; }
+.hub-jump-toggle .chev { transition:transform .2s;font-size: var(--fs-label,11px);color:var(--muted); }
+.hub-jump.open .hub-jump-toggle .chev { transform:rotate(180deg); }
+.hub-jump.open .hub-jump-list { display:block; }
+.hub-jump-item:last-child { border-bottom:none; }
+
+/* ── Two-column comparison grids (Destination-Records, Travel-Insurance) ── */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rank-grid    { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 700px) {
+  .compare-grid, .rank-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Scroll-to-top FAB (non-guide pages) ─────────────────────────────── */
+.tve-scroll-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1400;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-float-bg);
+  border: 1.5px solid var(--c-float-bd);
+  color: var(--c-float-text);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, border-color .15s, color .15s, box-shadow .15s;
+  padding: 0;
+  font-family: inherit;
+}
+.tve-scroll-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.tve-scroll-top:hover {
+  border-color: #b85c2a;
+  color: #b85c2a;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+@media (max-width: 600px) {
+  /* 30px on mobile — the whole floating family dropped a size on 2026-08-09
+     (owner: "all these pills are too big"). The pills went 34 → 28px and this
+     FAB 36 → 30px so it still reads as the same control beside them. Desktop
+     keeps the 36px base rule above. Mirrored in guide-style.css. */
+  .tve-scroll-top { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 16px; width: 30px; height: 30px; }
+}
+
+/* ── Screen-reader-only utility (a11y labels for search inputs) ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ── Guide navigation pills (DNV, Travel-Stats, Vaccines, …) ── */
+.guide-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.guide-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: inherit; padding: 6px 14px; border-radius: 6px; border: 1.5px solid var(--border);
+  background: var(--surface); font-size: 13px; font-weight: 400; color: var(--muted, #6a6660);
+  text-decoration: none; cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.guide-pill:hover { border-color: var(--rust, #b85c2a); }
+.guide-pill:visited { color: #6a6660; }  /* literal hex — browsers don't resolve var() in :visited */
+.guide-pill-chev { margin-left: 4px; color: currentColor; font-weight: 700; }
+
+/* ── Alert banner (DNV, Entry-Requirements, Visa-Processing-Times, …) ── */
+.alert-banner {
+  background: var(--warm); border: 1px solid var(--border2);
+  border-left: 4px solid var(--accent); border-radius: 8px;
+  padding: 13px 16px; font-size: 13px; color: var(--text);
+  line-height: 1.55; margin-bottom: 24px;
+}
+
+/* ── Region section heading (DNV, Visa-Processing-Times, …) ── */
+.region-head {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); border-bottom: 1px solid var(--border2);
+  padding-bottom: 7px; margin: 32px 0 14px;
+}
+
+/* ── Region guide-expander (DNV, Vaccines) ── */
+.region-guides { margin: -6px 0 18px; }
+.region-guides-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+  cursor: pointer; user-select: none; padding: 2px 0;
+}
+.region-guides-toggle .chev { display: inline-block; font-size: 9px; transition: transform .15s; }
+.region-guides-toggle.open .chev { transform: rotate(90deg); }
+.region-guides-toggle:hover { color: var(--rust, #b85c2a); }
+.region-guides-body { display: none; margin-top: 10px; }
+.region-guides-body.open { display: block; }
+
+/* ── Lounge legend color modifiers (Lounges-Europe, Lounges-US) ── */
+.legend-item.li-navy  { background: #e8f0fb; color: #1a3a8b; border-color: #c5d5ee; }
+.legend-item.li-green { background: #e8f5e8; color: #1a5a1a; border-color: #9ad09a; }
+.legend-item.li-gold  { background: var(--warm); color: #a67b5b; border-color: rgba(166,123,91,0.45); }
+
+/* ── Empty / no-results state (Time-Zones, Tipping-Guide, Vaccines, …) ──
+      Identical across sibling pages → SHARED CSS ONLY rule. Pages keep only
+      their own layout override (e.g. Time-Zones' grid-column span). */
+.empty-state {
+  text-align: center; padding: 48px 24px;
+  background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 11px; color: var(--muted,#6a6660);
+  box-shadow: 0 1px 6px rgba(92,61,17,.05); margin-top: 8px;
+}
+.empty-state-icon { font-size: 40px; display: block; margin-bottom: 14px; }
+.empty-state-text { font-size: 14px; line-height: 1.7; }
+
+/* ── Trip-Essentials page-intro card (Day-Trips, DNV, Entry-Requirements,
+      Festival-Finder, Passport, Sports-Calendar, Travel-Apps, VPT, …) ── */
+.page-intro-card {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--surface,#fff); border: 1px solid var(--border2,#e6e2da);
+  border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;
+  box-shadow: 0 1px 6px rgba(92,61,17,.05);
+}
+.page-intro-icon { flex-shrink: 0; display: flex; align-items: center; }
+.page-intro-head { font-size: 16px; font-weight: 800; color: var(--text,#3d3a32); margin: 0 0 4px; letter-spacing: -0.01em; }
+.page-intro-sub  { font-size: 12.5px; color: var(--muted,#6a6660); line-height: 1.55; margin: 0; }
+.page-intro-sub a { color: var(--accent); text-decoration: none; }
+
+/* ── Best-Of Features (best-of-features.js) ── 2026-08-03 ── */
+.showcase-card { position: relative; }
+.bo-feat-toolbar { margin: 8px 0 14px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.bo-continent-chips { display: contents; }
+.bo-chip { display: inline-block; padding: 4px 13px; border-radius: 20px; font-size: 12.5px; font-weight: 600; cursor: pointer; background: var(--surface2,#f2ede7); color: var(--muted,#6a6660); border: 1.5px solid transparent; transition: background .15s, color .15s, border-color .15s; }
+.bo-chip.bo-active { background: #fff; color: #b85c2a; border-color: #b85c2a; }
+.bo-chip:hover { background: var(--bg,#f5f4f0); border-color: #b85c2a; }
+.bo-controls-row { display: contents; }
+.bo-sort-select { padding: 4px 13px; border-radius: 20px; border: 1.5px solid transparent; font-size: 12.5px; font-weight: 600; background: var(--surface2,#f2ede7); color: var(--muted,#6a6660); cursor: pointer; -webkit-appearance: none; appearance: none; }
+.bo-favs-pill { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--surface2,#f2ede7); color: var(--muted,#6a6660); border: 1.5px solid transparent; transition: background .15s, color .15s, border-color .15s; }
+.bo-favs-pill.bo-active { background: #fff5f5; color: #c0392b; border-color: #c0392b; }
+.bo-card-overlay { position: absolute; top: 8px; right: 8px; display: flex; gap: 5px; z-index: 2; }
+.bo-fav-btn, .bo-cmp-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: rgba(255,255,255,.88); color: var(--muted,#6a6660); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s; }
+.bo-fav-btn.bo-active { color: #c0392b; }
+.bo-cmp-btn.bo-active { color: #b85c2a; background: #fff3ec; }
+.bo-fav-btn:hover { background: var(--bg,#f5f4f0); border-color: #b85c2a; }
+.bo-cmp-btn:hover { background: var(--bg,#f5f4f0); border-color: #b85c2a; }
+.bo-stars { display: flex; gap: 2px; margin: 2px 0 0; }
+.bo-star { font-size: 15px; color: var(--muted,#aaa); cursor: pointer; transition: color .1s; }
+.bo-star.bo-active { color: #e8a000; }
+.bo-no-favs { text-align: center; padding: 32px 20px; color: var(--muted,#6a6660); font-size: 14px; }
+.bo-compare-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #3d3a32; color: #fff; padding: 10px 20px; display: none; align-items: center; gap: 10px; z-index: 200; box-shadow: 0 -2px 12px rgba(0,0,0,.18); }
+.bo-compare-bar.bo-show { display: flex; }
+.bo-compare-label { font-size: 13px; font-weight: 700; white-space: nowrap; }
+.bo-compare-names { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+.bo-compare-name-tag { background: rgba(255,255,255,.15); border-radius: 12px; padding: 3px 10px; font-size: 12px; }
+.bo-compare-go, .bo-compare-clr { padding: 6px 14px; border-radius: 8px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; }
+.bo-compare-go { background: #b85c2a; color: #fff; }
+.bo-compare-go:hover { background: #a34e22; }
+.bo-compare-clr { background: rgba(255,255,255,.18); color: #fff; }
+.bo-compare-clr:hover { background: rgba(255,255,255,.28); }
+.bo-modal { display: none; position: fixed; inset: 0; z-index: 300; align-items: center; justify-content: center; }
+.bo-modal.bo-open { display: flex; }
+.bo-modal-bg { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+.bo-modal-box { position: relative; background: var(--surface,#fff); border-radius: 14px; max-width: 900px; width: 94%; max-height: 86vh; display: flex; flex-direction: column; overflow: hidden; }
+.bo-modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border2,#e6e2da); }
+.bo-modal-title { font-size: 16px; font-weight: 800; color: var(--text,#3d3a32); }
+.bo-modal-cls { background: none; border: none; font-size: 22px; color: var(--muted,#6a6660); cursor: pointer; line-height: 1; }
+.bo-modal-grid { display: flex; gap: 16px; overflow-x: auto; padding: 18px; }
+.bo-compare-col { min-width: 200px; max-width: 260px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.bo-compare-col-photo { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
+.bo-compare-col-name { font-size: 15px; font-weight: 800; color: var(--text,#3d3a32); }
+.bo-compare-col-tag { font-size: 12px; color: var(--muted,#6a6660); font-style: italic; }
+.bo-compare-col-stars { display: flex; gap: 2px; }
+.bo-compare-col-star { font-size: 14px; color: var(--muted,#ccc); }
+.bo-compare-col-star.bo-active { color: #e8a000; }
+.bo-compare-col-desc { font-size: 13px; color: var(--muted,#6a6660); line-height: 1.5; }
+.bo-compare-col-links { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.bo-compare-col-links a { font-size: 13px; color: #b85c2a; text-decoration: none; }
+.bo-compare-col-links a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .bo-chip { padding: 3px 10px; font-size: 12px; }
+  .bo-compare-bar { padding: 8px 12px; }
+  .bo-modal-box { max-height: 90vh; }
+}
+/* Cross-reference link — shared across Trip-Essentials pages */
+.xref { color: var(--accent); text-decoration: none; }
+.xref:hover { text-decoration: underline; }
+/* Delta airline family dot — color sphere for route family indicators */
+.family-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: -2px; margin-right: 5px; box-shadow: inset -1px -1px 2px rgba(0,0,0,0.15); }
+.family-dot.green  { background: radial-gradient(circle at 30% 30%, #a8f0a0 0%, #4caf50 55%, #1b6e1b 100%); }
+.family-dot.blue   { background: radial-gradient(circle at 30% 30%, #a0c8f0 0%, #3b7ddd 55%, #1a3a8b 100%); }
+.family-dot.black  { background: radial-gradient(circle at 30% 30%, #666 0%, #333 55%, #000 100%); }
+.family-dot.red    { background: radial-gradient(circle at 30% 30%, #f0a8a0 0%, #dd3b3b 55%, #8b1a1a 100%); }
+.family-dot.purple { background: radial-gradient(circle at 30% 30%, #d8b4fe 0%, #9b5de5 55%, #6a1fcf 100%); }
+.family-dot.yellow { background: radial-gradient(circle at 30% 30%, #fff4a0 0%, #e6c619 55%, #9a7e00 100%); }
+.family-dot.orange { background: radial-gradient(circle at 30% 30%, #ffd4a0 0%, #e68a2e 55%, #8a4a10 100%); }
+.family-dot.pink   { background: radial-gradient(circle at 30% 30%, #ffcce0 0%, #f688b8 55%, #c02870 100%); }
+
+/* ── Train pages — shared card components (European-Train-Guide, Scenic-Train-Journeys, Train-Passes) ── */
+.filter-label { font-size: var(--fs-sub,12px); letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.type-badge { flex-shrink: 0; font-size: var(--fs-sub,12px); letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; font-weight: 700; }
+.info-icon { font-size: var(--fs-sub,12px); flex-shrink: 0; margin-top: 1px; width: 18px; text-align: center; }
+.info-content { flex: 1; font-size: var(--fs-body,14px); color: var(--text,#1a1917); }
+.info-label { font-size: var(--fs-sub,12px); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; display: block; margin-bottom: 2px; }
+.country-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.ctag { font-family: inherit; font-size: var(--fs-sub,12px); font-weight: 400; background: var(--tag-bg); border: 1.5px solid var(--border2,#e6e2da); color: var(--text,#1a1917); padding: 2px 7px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.booking-section { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
+.booking-label { font-size: var(--fs-sub,12px); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 7px; display: block; }
+.booking-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.book-link.primary { background: var(--surface,#fff); color: var(--text,#1a1917); border-color: var(--border); }
+.book-link.primary:hover, .book-link.primary:focus { background: var(--bg,#f5f4f0); border-color: var(--rust); color: var(--text,#1a1917); }
+.book-link.primary:visited { color: #3d3a32; }
+.book-link.secondary { background: var(--surface,#fff); color: var(--muted); border-color: var(--border); }
+.book-link.secondary:hover, .book-link.secondary:focus { color: var(--text,#1a1917); border-color: var(--rust); }
+.book-link.secondary:visited { color: #6a6660; }
+.all-hidden { display: none; }

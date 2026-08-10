@@ -1,0 +1,70 @@
+name: Deploy site (publish only — validation is local)
+
+# The deploy just PUBLISHES. It does not validate, re-validate, quarantine, or
+# hold anything back.
+#
+# Validation is purely LOCAL: a crib runs Brain/scripts/validate_itinerary.py,
+# and only on a clean pass does it earn a content-bound SIGNED stamp
+# (Brain/scripts/validation_stamp.py). A guide that fails stays untracked on the
+# Drive and never reaches the repo — the local pre-push hook (pre_push_guard.py)
+# blocks any push that adds/modifies a guide lacking a valid signed stamp.
+#
+# So the repo only ever contains guides that passed locally. There is nothing to
+# check at deploy time — this workflow stages Travel-Website/ and publishes it.
+# No placeholders, no all-or-nothing block, no CI validation.
+#
+# Serving: the CONTENTS of Travel-Website/ are staged at the artifact root +
+# .nojekyll, so the site is served at https://guidemydays.com/… — a page at
+# Travel-Website/Guides/X/y.html is live at https://guidemydays.com/Guides/X/y.html.
+# The custom domain comes from Travel-Website/CNAME, which lands at the artifact
+# root alongside the pages. (.github/ and .git are NOT published.)
+#
+# 2026-08-10: cut over from the-voyager-expert.github.io/Travel/Travel-Website/ to
+# the guidemydays.com apex, dropping the /Travel-Website/ path segment. Staging
+# changed from `cp -r Travel-Website _site/…` to `cp -r Travel-Website/. _site/`.
+# Safe because the site carries ZERO root-absolute links — every href/src is
+# relative, and toolbar.js derives its base from each page's data-depth, which is
+# measured to the site root and so is unchanged by the flatten.
+#
+# Rollback: set Pages build type back to "legacy" (Settings → Pages → Source →
+# Deploy from a branch).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage site (publish as-is — validation is enforced locally)
+        run: |
+          mkdir -p _site
+          cp -r Travel-Website/. _site/
+          if [ -f .nojekyll ]; then cp .nojekyll _site/.nojekyll; else touch _site/.nojekyll; fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

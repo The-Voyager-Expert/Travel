@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mobile Scroll-Snap Pills — Mockup</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32;
+    --muted: #6a6660; --accent: #c8a44a; --rust: #b85c2a;
+    --font: 'Roboto', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); padding: 20px; }
+  h1 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--rust); margin-bottom: 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .change { font-size: 11px; font-weight: 700; background: #fff3e0; border: 1px solid #f0c060; border-radius: 4px; padding: 4px 8px; display: inline-block; margin-bottom: 20px; color: #7a4400; }
+  .panels { display: flex; gap: 20px; flex-wrap: wrap; }
+  .panel { flex: 1 1 320px; background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+  .panel-label { padding: 8px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .before .panel-label { background: #fde8e8; color: #a00; }
+  .after .panel-label  { background: #e8f5e9; color: #2a7a00; }
+  .phone { width: 100%; max-width: 393px; margin: 0 auto; padding: 14px; }
+  .strip-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  /* BEFORE: plain overflow-x scroll, no snap */
+  .strip-before {
+    display: flex; flex-wrap: nowrap; gap: 6px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: 2px;
+  }
+  .strip-before::-webkit-scrollbar { display: none; }
+  /* AFTER: with scroll-snap */
+  .strip-after {
+    display: flex; flex-wrap: nowrap; gap: 6px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: 2px;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 14px;
+  }
+  .strip-after::-webkit-scrollbar { display: none; }
+  .pill-item {
+    flex-shrink: 0;
+    padding: 10px 14px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; white-space: nowrap;
+    background: var(--bg); border: 1px solid #d6d0c8; color: var(--text);
+    cursor: pointer;
+  }
+  .pill-item.active { background: var(--rust); color: #fff; border-color: var(--rust); }
+  .strip-after .pill-item { scroll-snap-align: start; }
+  .note { font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; line-height: 1.4; }
+  .snap-indicator { display: flex; gap: 4px; margin-top: 10px; }
+  .snap-dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; }
+  .snap-dot.active { background: var(--rust); }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1e1c18; --surface: #2a2722; --text: #e8e4dc; --muted: #a09a90; } }
+  :root[data-theme="dark"] { --bg: #1e1c18; --surface: #2a2722; --text: #e8e4dc; --muted: #a09a90; }
+  :root[data-theme="light"] { --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660; }
+</style>
+</head>
+<body>
+<h1>Scroll-Snap on .best-of-region-filters Horizontal Pill Strip</h1>
+<p class="meta">2026-08-09 · mobile.css lines 253–261: .best-of-region-filters · Effort S · Confidence medium</p>
+<span class="change">mobile.css: add scroll-snap-type: x mandatory + scroll-padding to container; scroll-snap-align: start to children</span>
+
+<div class="panels">
+  <div class="panel before">
+    <div class="panel-label">BEFORE — overflow-x: auto, no snap (current)</div>
+    <div class="phone">
+      <p class="strip-label">Region filter strip (swipe to scroll)</p>
+      <div class="strip-before">
+        <button class="pill-item active">All</button>
+        <button class="pill-item">Europe</button>
+        <button class="pill-item">Asia Pacific</button>
+        <button class="pill-item">Americas</button>
+        <button class="pill-item">Africa &amp; ME</button>
+        <button class="pill-item">Caribbean</button>
+      </div>
+      <p class="note">Strip stops mid-pill on swipe release — the label of the next pill is cut off, inviting an extra nudge swipe. No alignment cue.</p>
+    </div>
+  </div>
+
+  <div class="panel after">
+    <div class="panel-label">AFTER — scroll-snap-type: x mandatory (proposed)</div>
+    <div class="phone">
+      <p class="strip-label">Region filter strip (swipe to scroll)</p>
+      <div class="strip-after">
+        <button class="pill-item active">All</button>
+        <button class="pill-item">Europe</button>
+        <button class="pill-item">Asia Pacific</button>
+        <button class="pill-item">Americas</button>
+        <button class="pill-item">Africa &amp; ME</button>
+        <button class="pill-item">Caribbean</button>
+      </div>
+      <p class="note">Strip snaps to the start of each pill after a swipe — the first visible pill always sits cleanly at the left margin. Feels intentional, reduces double-swipe frustration.</p>
+      <div class="snap-indicator">
+        <div class="snap-dot active"></div>
+        <div class="snap-dot"></div><div class="snap-dot"></div>
+        <div class="snap-dot"></div><div class="snap-dot"></div>
+        <div class="snap-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

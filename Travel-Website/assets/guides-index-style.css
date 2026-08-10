@@ -1,0 +1,1007 @@
+/* Guides-Index.html — extracted page-specific styles (cacheable) */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PILL/CHIP STANDARD — two canonical behaviors for this page.
+   All new pills MUST follow one of these two patterns:
+   1. FILTER PILL (for filtering/toggling content)
+      - padding: 6px 12px
+      - border-radius: 6px
+      - font-size: 13px
+      - Applied to: .mchip, .tchip, .fchip, .lchip
+   2. CONTROL BUTTON (for navigation/mode switching)
+      - height: 32px or 40px
+      - padding: 0 12px or 0 14px
+      - font-size: 12px or 13px
+      - Applied to: .disc-btn, .seg-btn, .stab
+   COLORS/EFFECTS: Only two approved visual states
+      - FILLED: terracotta gradient (linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%))
+      - OUTLINED: terracotta border (#b85c2a)
+   Special cases (stat pills, compare chips, etc.) are intentionally different
+   for visual/functional reasons and are exempt from this standard.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* .wrap + banner — from web-travel-style.css */
+/* ── Mosaic — country panels pack into balanced columns ── */
+.mosaic-wrap { display: flex; gap: 16px; margin-top: 22px; }
+.mosaic { columns: 3; column-gap: 16px; flex: 3; min-width: 0; }
+.mosaic-sidebar { flex: 1; min-width: 0; align-self: flex-start; }
+.country {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  background: var(--warm);
+  border: 1px solid var(--border2, #e6e2da);
+  border-radius: 8px;
+  padding: 9px 14px 12px;
+  margin-bottom: 10px;
+}
+.country-label {
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border2, #e6e2da);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.country-label .country-count { letter-spacing: 0.06em; }
+/* ── Best-of panel — same beige as country panels ── */
+/* ── Sub-group header — a region nested inside a country panel (e.g. Hawaii under US) ── */
+.country-sub {
+  font-size: var(--fs-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 11px 0 7px;
+  padding: 4px 0 5px 8px;
+  border-left: 2px solid var(--accent);
+  border-bottom: 1px solid var(--border2, #e6e2da);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.country-sub .country-count { letter-spacing: 0.06em; }
+/* ── Destination cards — stacked inside each panel ── */
+.dest-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+.dest-card {
+  position: relative;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 5px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .15s, border-color .15s, background .12s, color .12s, transform .08s;
+}
+/* Guard with hover:hover so touch devices don't get the terracotta fill stuck
+   on a card after a tap — :active below handles the touch press feedback. */
+@media (hover:hover) {
+  .dest-card:hover { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: #b85c2a; box-shadow: 0 3px 10px rgba(184,92,42,.18); color: #fff; text-decoration: none; }
+  .dest-card:hover .dest-name,
+  .dest-card:hover .dest-sub { color: #fff !important; }
+  .dest-card:hover::after { background: rgba(255,255,255,0.7) !important; }
+}
+.dest-card:active { background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%); border-color: #b85c2a; box-shadow: 0 1px 3px rgba(184,92,42,.12); color: #fff; transform: scale(.97) translateY(1px); text-decoration: none; }
+/* ── "New" badge — shown on guides shipped within the last 21 days ── */
+.dest-new-badge {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 12px;
+  border: 1.5px solid #e8c97a;
+  background: #fdecc8;
+  color: #7a4d00;
+  pointer-events: none;
+}
+@media (hover:hover) {
+  .dest-card:hover .dest-new-badge { border-color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.15); color: #fff; }
+}
+.dest-card:active .dest-new-badge { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); color: #fff; }
+/* ── Card subtitle — marquee day-trips for cluster guides (a city base that holds big excursions) ── */
+.dest-sub {
+  flex-basis: 100%;
+  margin-left: 22px;
+  margin-top: -2px;
+  font-size: var(--fs-sub);
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.2;
+}
+/* ── Status legend / stats strip ── */
+.stat-pill { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 12px; background: var(--warm); border: 1px solid var(--border2, #e6e2da); border-radius: 18px; font-size: 12px; color: var(--muted); line-height: 1; }
+.stat-pill b { font-weight: 600; font-size: 13px; color: var(--text, #1a1917); font-variant-numeric: tabular-nums; }
+.stat-pill .dot { width: 6px; height: 6px; border-radius: 50%; align-self: center; }
+/* ── Small stat line — place stats (top) and country summary (by mosaic) ── */
+.stat-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: -6px 0 24px; }
+.stat-line { font-size: 12px; color: var(--muted); margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+.stat-line b { color: var(--text, #1a1917); font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat-line--right { justify-content: flex-end; }
+.dest-flag { font-size: 15px; line-height: 1; flex-shrink: 0; }
+.dest-name { font-size: var(--fs-card-name); font-weight: 600; color: var(--text, #1a1917); }
+/* ── Search ── */
+#guide-search{width:360px;height:40px;box-sizing:border-box;padding:0 18px 0 36px;margin:0;font-size:16px;border:1.5px solid var(--border2, #e6e2da);border-radius:6px;background:var(--surface, #ffffff);color:var(--text, #1a1917);outline:none;transition:border-color .15s,box-shadow .15s;}
+#guide-search:focus{border-color:#c8b99a;box-shadow:none;}
+#guide-search::placeholder{color:var(--c-search-placeholder);}
+#guide-search::-webkit-search-decoration{-webkit-appearance:none;}
+#guide-pick-search::-webkit-search-decoration{-webkit-appearance:none;}
+/* Smart-input: keyboard-active card (↑/↓ nav) + alias/fuzzy hit ring */
+.mosaic-wrap .dest-card.kbd-active{outline:2px solid #B8860B;outline-offset:1px;background:var(--surface, #ffffff);}
+.mosaic-wrap .dest-card.match-alias{box-shadow:inset 0 0 0 1.5px rgba(184,134,11,.55);border-radius:8px;}
+#guide-noresult{display:none;padding:8px 4px;font-size:13px;color:var(--muted);}
+/* ── Seasonal month filter ── */
+#season-filter { display:grid; grid-template-columns:auto repeat(12, 1fr); gap:0; align-items:stretch; margin:0; }
+#season-filter .sfl { display:flex; align-items:center; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; margin-right:0; padding-right:8px; }
+.mchip { display:inline-flex; align-items:center; justify-content:center; font-family: inherit; font-size:13px; font-weight: 400; line-height:1; padding:6px 12px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fff; color: #8a6c1a; cursor:pointer; white-space:nowrap; transition:all .12s; }
+#season-filter .mchip { border-radius:0; height:32px; display:flex; align-items:center; justify-content:center; }
+.mchip.on, .mchip:hover { font-family: inherit; position:relative; z-index:1; }
+.mchip:not(.on):hover { font-family: inherit; border-color:#b85c2a; color:var(--accent); }
+.mchip.on { font-family: inherit; background:var(--surface, #ffffff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+.dest-card.season-hide { display:none !important; }
+.dest-card.theme-hide { display:none !important; }
+.dest-card.days-hide  { display:none !important; }
+.dest-card.country-hide { display:none !important; }
+.dest-card.continent-hide { display:none !important; }
+.dest-card.new-hide   { display:none !important; }
+/* hide whole pin-wrap (including bookmark btn) when card is filtered out */
+.pin-wrap:has(.dest-card.season-hide),
+.pin-wrap:has(.dest-card.theme-hide),
+.pin-wrap:has(.dest-card.days-hide),
+.pin-wrap:has(.dest-card.country-hide),
+.pin-wrap:has(.dest-card.continent-hide),
+.pin-wrap:has(.dest-card.new-hide),
+.pin-wrap:has(.dest-card.lang-hide) { display:none !important; }
+/* ── Trip-length filter — compact disc-btn toggle (Type-button size) in the
+   toolbar, with an absolutely-positioned dropdown list ── */
+.days-jump { position:relative; display:inline-flex; }
+/* toggle borrows .disc-btn for its size; caret rotation handled by .disc-btn[aria-expanded] */
+.days-jump-list { display:none; position:absolute; top:calc(100% + 6px); left:0; z-index:50; min-width:150px; background:var(--warm); border:1px solid var(--border); border-radius:8px; overflow:hidden; max-height:58vh; overflow-y:auto; -webkit-overflow-scrolling:touch; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+.days-jump.open .days-jump-list { display:block; }
+.days-jump-item { display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--border2, #e6e2da); padding:9px 14px; font-size:13px; color:#3d3a32; cursor:pointer; font-family:inherit; white-space:nowrap; text-decoration:none; }
+.days-jump-item:last-child { border-bottom:none; }
+a.days-jump-item, a.days-jump-item:visited, a.days-jump-item:hover { text-decoration:none; color:#3d3a32; }
+a.days-jump-header, a.days-jump-header:visited, a.days-jump-header:hover, .days-jump-header { color:#7a3b1e; font-weight:600; background:rgba(184,134,11,.1); }
+.days-jump-item:hover { background:rgba(184,134,11,.06); border-color:#b85c2a; color:var(--accent); }
+.days-jump-item:active { background:rgba(138,108,26,.08); }
+.days-jump-item.on { background:var(--surface, #ffffff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+/* ── Trip-type (theme) filter ── */
+.tchip { display:inline-flex; align-items:center; justify-content:center; font-family: inherit; font-size:13px; font-weight: 400; line-height:1; padding:6px 12px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fff; color: #8a6c1a; cursor:pointer; white-space:nowrap; transition:all .12s; }
+@media (hover:hover){ .tchip:not(.on):hover { border-color:#b85c2a; } }
+.tchip.on { font-family: inherit; background:var(--surface, #ffffff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+#theme-panel { display:grid; grid-template-columns:repeat(6, 1fr); gap:0; margin:16px 0 26px; padding:16px 18px 18px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); }
+#theme-panel .tchip { padding:6px 12px; font-size:13px; border-radius:0; height:32px; display:flex; align-items:center; justify-content:center; }
+#theme-panel .tchip.on, #theme-panel .tchip:hover { position:relative; z-index:1; }
+.theme-standalone { display:contents; }
+#theme-panel[hidden] { display:none; }
+#theme-panel .sfl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+#theme-badge { cursor:pointer; font-size:12px; color:#A8895A; padding:4px 8px; white-space:nowrap; }
+#theme-badge:hover { color:var(--accent); }
+.theme-divider { width:1px; height:22px; background:var(--border2,#e6e2da); margin:0 2px; flex-shrink:0; }
+.tdiv { width:1px; height:22px; background:var(--border2,#e6e2da); margin:0 2px; align-self:center; }
+#season-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:2px 8px; cursor:pointer; }
+#season-badge.visible { display:inline-block; }
+/* temp range sliders */
+#temp-range { display:flex; align-items:center; gap:10px; margin:14px 0 0; padding-top:14px; border-top:1px solid var(--border2, #e6e2da); flex-wrap:wrap; }
+#temp-range .sfl { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+#temp-range .sfl-end { font-size:12px; color:var(--muted,#6a6660); white-space:nowrap; }
+#temp-range input[type=range] { width:90px; accent-color:#b85c2a; cursor:pointer; }
+#temp-range .temp-val { font-size:14px; font-weight:600; color:#7a3b1e; min-width:46px; text-align:left; white-space:nowrap; }
+#temp-range .temp-sep { font-size:13px; color:var(--muted); }
+#unit-toggle { display:inline-flex; border:1px solid var(--border2, #e6e2da); border-radius:0; overflow:hidden; margin-left:16px; }
+.utab { font-family:inherit; font-size:13px; font-weight:600; line-height:1; padding:6px 10px; border:none; border-right:1px solid var(--border2, #e6e2da); background:var(--surface, #ffffff); color:#8a6c1a; cursor:pointer; transition:background .12s, color .12s; }
+.utab:last-child { border-right:none; }
+.utab:hover { background:var(--warm); color:var(--accent); }
+.utab.on { background:var(--surface, #ffffff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+/* ── Responsive — fewer mosaic columns on narrow screens ── */
+@media (max-width: 1100px) {
+  .mosaic { columns: 2; }
+}
+@media (max-width: 860px) {
+  .mosaic { columns: 2; flex: 2; }
+}
+@media (max-width: 600px) {
+  .mosaic-wrap { flex-direction: column; }
+  .mosaic { columns: 1; }
+  #guide-search { margin-left:0; max-width:100%; }
+  /* Filter chips + view-toggle — handled by mobile.css universal pill standard
+     (font-size: 13px, padding: 8px 14px, border-radius: 6px). No page-specific
+     override needed. */
+  .view-toggle button { font-size: 13px; }
+  /* OWNER-DIRECTED 2026-07-20: hidden on mobile — Trips is in the hamburger menu */
+  #btn-my-trips { display: none !important; }
+  #fnoresult button { font-size: 13px; }
+  /* Flight-time view — several text elements are set below 11px and don't
+     benefit from mobile.css?v=50's min-height rule (they're <span>s, not links).
+     Raise to 12px minimum so they're legible on a phone. */
+  .fdl  { font-size: 12px; }
+  .fgl  { font-size: 12px; }
+  .fiata { font-size: 12px; }
+  .fonward { font-size: 12px; }
+  .flegend { font-size: 12px; }
+  /* Stat row — fold guide count + country count onto ONE subtle line on mobile
+     (fits ~340px in the 361px rail), separated by a middot. Saves a row. */
+  .stat-row { flex-direction: row !important; flex-wrap: wrap !important; justify-content: flex-start !important; column-gap: 6px !important; row-gap: 2px !important; align-items: baseline !important; margin-bottom: 14px !important; }
+  .stat-line--right { justify-content: flex-start !important; }
+  #country-count::before { content: '·'; color: var(--muted); }
+  /* Compact topbar controls — extra breathing room above search & below filters */
+  .topbar { flex-wrap: wrap !important; gap: 6px !important; padding-top: 6px !important; margin-bottom: 22px !important; }
+  /* Search bar full-width on its own row; un-absolute the status toggle */
+  #search-wrap { flex: 0 0 100% !important; flex-wrap: wrap !important; justify-content: flex-start !important; gap: 8px !important; }
+  #guide-search { width: 100% !important; min-width: 0 !important; }
+  #search-wrap { margin-bottom: 14px !important; }
+  /* Filter pills keep the 40px height */
+  .disc-btn { height: 40px !important; font-size: 13px !important; padding: 0 12px !important; min-height: auto !important; }
+  #guide-search { height: 48px !important; min-height: 48px !important; font-size: 16px !important; padding: 0 18px 0 36px !important; }
+  #guide-search-wrap { width: 100% !important; display: block !important; }
+  /* Search-inside-guides button retired 2026-07-14 (replaced by TVESearch). */
+  #view-compare.on { background: #f0ede8 !important; border-color: var(--border) !important; color: #6a6660 !important; }
+  /* Filter pills — uniform grid: three across, every pill the SAME width
+     (each fills an equal 1fr cell, so all match the "When to go" size),
+     glued edge-to-edge. #browse-seg is display:contents so its Flight time
+     button is a grid item too. */
+  .topbar { justify-content: flex-start !important; }
+  .pill-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+  #browse-seg { display: contents !important; }
+  .pill-row > .disc-btn,
+  .pill-row > .lang-jump,
+  #browse-seg > .seg-btn,
+  .pill-row > .days-jump { min-width: 0 !important; }
+  .pill-div { display: none !important; }
+  .pill-row > .lang-jump { position: relative !important; display: flex !important; }
+  /* Every pill fills its equal grid cell → all identical size. */
+  .topbar .disc-btn {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 46px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+    gap: 4px !important;
+    white-space: normal !important;
+    line-height: 1.12 !important;
+    border-radius: 0 !important;
+  }
+  /* Explicit pill order (three per row):
+     Row 1 — Trip Length · When to go · Language
+     Row 2 — Continent · Country · Type
+     Row 3 — Best of · Flight time */
+  #daysJump          { order: 1 !important; }
+  #btn-filters-toggle { order: 2 !important; }
+  #langJump          { order: 3 !important; }
+  #continentJump     { order: 4 !important; }
+  #countryJump       { order: 5 !important; }
+  #btn-theme-toggle  { order: 6 !important; }
+  #bestofJump        { order: 7 !important; }
+  #view-flights      { order: 8 !important; }
+  #view-compare      { order: 9 !important; }
+  #btn-trip-twin     { order: 10 !important; }
+  #btn-new-filter    { order: 11 !important; }
+  .pill-row #lang-panel { position: absolute !important; top: calc(100% + 6px) !important; left: 0 !important; width: max-content !important; max-width: 80vw !important; margin: 0 !important; box-shadow: 0 6px 18px rgba(0,0,0,.14) !important; }
+  /* Dropdown menu items — one size for ALL of them. mobile.css bumps every
+     <button> to 16px (iOS auto-zoom guard), but Best of items are <a>, so the
+     lists drifted (buttons 16px, links 13px). Menu items never trigger iOS
+     zoom, so pin them all to the design's 13px — Country / Trip Length / Best
+     of / Language now match. */
+  .days-jump-item, .lang-menu-item { font-size: 13px !important; }
+  /* Flight-time filter chips — same idea as the pill grid: each group's chips
+     become a uniform 3-across grid, equal width, glued edge-to-edge. The group
+     label sits on its own line above its chips. */
+  .fcg {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+    margin-bottom: 10px !important;
+  }
+  .fgl {
+    grid-column: 1 / -1 !important;
+    flex: none !important;
+    text-align: left !important;
+    margin: 2px 0 5px !important;
+  }
+  /* Stops group is 2-across so "1 connection" / "2 connections" fit on one
+     line with their colour dot in front (instead of wrapping at 3-across). */
+  #fstops { grid-template-columns: repeat(2, 1fr) !important; }
+  .fchip { font-family: inherit;
+    width: 100% !important;
+    height: 46px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-radius: 0 !important;
+    white-space: normal !important;
+    line-height: 1.12 !important;
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+  }
+  /* Type (theme) panel chips — same idea: uniform 3-across glued grid.
+     .theme-standalone is display:contents, so the .tchip buttons are the
+     grid items; the ✕ clear badge spans its own row. */
+  /* :not([hidden]) so the grid never overrides the panel's hidden state —
+     otherwise the !important display:grid would keep Type open when another
+     filter is selected. */
+  #theme-panel:not([hidden]) {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+  }
+  #theme-badge { grid-column: 1 / -1 !important; text-align: center !important; }
+  .tchip { font-family: inherit;
+    width: 100% !important;
+    height: 46px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-radius: 0 !important;
+    white-space: normal !important;
+    line-height: 1.12 !important;
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+  }
+  /* Language chips — same idea: full-width panel, uniform 3-across glued grid
+     (All + 17 languages = 6 even rows), fixed height. The little divider after
+     "All" is dropped on mobile so the grid stays even. */
+  #lang-content { width: 100% !important; max-width: 100% !important; }
+  #lang-content.show { display: block !important; }
+  .ll-chips {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+    /* .ll-head is flex; make the grid fill it so there's no dead space right */
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  .ll-div { display: none !important; }
+  .lchip { font-family: inherit;
+    width: 100% !important;
+    height: 46px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-radius: 0 !important;
+    white-space: normal !important;
+    line-height: 1.12 !important;
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+    gap: 4px !important;
+  }
+  /* Dropdown menus — keep inside viewport on mobile. left:0 overflows
+     off-screen for pills near the left edge; right:0 keeps it anchored. */
+  .days-jump-list { left: auto !important; right: 0 !important; min-width: 0 !important; max-width: 90vw !important; }
+  .days-jump-item { white-space: normal !important; }
+  /* (When-to-go month chips are gridded in mobile.css §8, which owns the
+     mobile #season-filter tap-target rule and loads after this file.) */
+  /* Temperature range — tidy grid: each slider on its own row as
+     LABEL [——slider——] VALUE, then the °C/°F toggle centered on its own row.
+     Replaces the ragged flex-wrap. */
+  #temp-range {
+    display: grid !important;
+    grid-template-columns: auto 1fr auto !important;
+    align-items: center !important;
+    gap: 12px 12px !important;
+  }
+  #temp-range .temp-sep { display: none !important; }
+  #temp-range input[type=range] { width: 100% !important; }
+  #temp-range .temp-val { text-align: right !important; min-width: 0 !important; }
+  #unit-toggle { grid-column: 1 / -1 !important; justify-self: center !important; margin: 4px 0 0 !important; }
+  /* Banner — use the SHARED mobile banner (underline, matching desktop + every
+     other page) from assets/mobile.css. The old left-accent-strip override was
+     removed 2026-06-20: it made the Guides index top look broken/different from
+     the rest of the site on mobile. */
+}
+/* ══ View toggle + Flight-time mode (Getting There from Seattle) ══ */
+.topbar { display: flex; justify-content: center; align-items: center; gap: 18px 0; flex-wrap: wrap; margin: 0 0 14px; position: relative; }
+#search-wrap { flex-basis: 100%; justify-content: center; }
+.view-toggle { display: contents; }
+/* OWNER-DIRECTED 2026-07-20: #btn-my-trips shares identical styles with .view-toggle button.
+   DO NOT REMOVE. brain_check hard-fails if #btn-my-trips is missing from Guides-Index.html.
+   See Navigation.html § 8 + Cleanliness Checks Rule 570. */
+.view-toggle button,
+#btn-my-trips { display: inline-flex; align-items: center; gap: 6px; height: 36px; font-family: inherit; font-size: 13px; font-weight: 500; padding: 0 14px; border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px; background: var(--surface, #ffffff); color: #8a6c1a; cursor: pointer; transition: all .15s; white-space: nowrap; box-sizing: border-box; line-height: 1; margin-left: -1.5px; }
+#btn-my-trips { text-decoration: none !important; border: 1.5px solid var(--border2, #e6e2da) !important; background: var(--surface, #ffffff) !important; color: #8a6c1a !important; }
+.view-toggle button:hover,
+#btn-my-trips:hover { background: var(--bg, #f5f4f0) !important; border-color: #b85c2a !important; color: #8a6c1a !important; position: relative; z-index: 1; }
+#btn-my-trips:active { border-color: #b85c2a !important; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important; color: #fff !important; }
+#view-compare.on,
+#view-flights.on,
+.view-toggle button.on { background: #f0ede8; border: 1.5px solid var(--border); color: #6a6660; position: relative; z-index: 1; }
+/* pill-row is transparent on desktop (children sit directly in .topbar);
+   on mobile it becomes the single no-wrap filter row (see 600px media query). */
+.pill-row { display: contents; }
+/* Subtle divider between filter pills (Type / When / Language / Flight time) and
+   jump menus (Continent / Trip Length / Country / Best of) — visual grouping only */
+.pill-div { display: none; }
+/* ── Progressive-disclosure toggles (Filters / Views) ── */
+.disc-btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; font-family: inherit; font-size: 13px; font-weight: 500; padding: 0 14px; border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px; background: var(--surface, #ffffff); color: #8a6c1a; cursor: pointer; white-space: nowrap; transition: all .15s; }
+.topbar .disc-btn { margin-left: -1.5px; }
+.disc-btn:hover { background: var(--bg, #f5f4f0); border-color: #b85c2a; color: #8a6c1a; position: relative; z-index: 1; }
+/* Open (panel showing) is a QUIET state — neutral grey, not the orange a
+   selected filter uses, so an open toggle doesn't read as a second active
+   filter next to Been/Want. The rotated caret + the has-active dot signal
+   open / engaged. */
+.disc-btn[aria-expanded="true"] { background: #f0ede8; border-color: var(--border); color: #6a6660; position: relative; z-index: 1; }
+.disc-btn .disc-caret { font-size: 10px; transition: transform .15s; }
+.disc-btn[aria-expanded="true"] .disc-caret { transform: rotate(180deg); }
+.disc-btn.has-active { position: relative; }
+.disc-btn.has-active::after { content: ""; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #b85c2a; }
+/* Guide filter pill — new badge left-anchored (overrides card's margin-left:auto); active state matches other selected filters */
+#btn-new-filter .dest-new-badge { margin-left: 0; margin-right: 3px; }
+#btn-new-filter[aria-pressed="true"] { background: #f0ede8; border-color: var(--border); color: #6a6660; position: relative; z-index: 1; }
+/* Desktop-only: stretch strip full-width with CONTENT-PROPORTIONAL sizing —
+   flex:1 1 auto means each button starts at its intrinsic content width, then
+   all 11 grow equally to fill the row. Trip Length stays narrower than
+   Compare cities, but the strip still spans full width. Same base padding
+   (0 14px) throughout. Corners squared + every pair touches (margin-left:0). */
+@media (min-width: 601px) {
+  /* 14 pills → balanced 7+7 GRID via flex:0 0 calc(100%/7). Every pill is
+     EXACTLY 1/7 of the row width regardless of which row it lands on — so
+     both rows align perfectly as a grid. .topbar's justify-content:center
+     centres any partial row. Base .topbar rule carries an 18px row-gap for
+     the mobile/tablet wrap — zero it here so rows touch. */
+  .topbar { gap: 0; }
+  /* ...but the search bar must NOT sit flush on the glued pill grid. gap:0
+     above glues row 1 + row 2 together (correct); this lifts the search line
+     off the pills without disturbing the pill rows (owner report 2026-07-29). */
+  .topbar > #search-wrap { margin-bottom: 20px; }
+  .topbar > .view-toggle > #btn-my-trips,
+  .topbar > .view-toggle > #lsp-topbar,
+  .topbar > .view-toggle > #view-compare,
+  .topbar > .pill-row > .disc-btn,
+  .topbar > .pill-row > .lang-jump,
+  .topbar > .pill-row > .seg-toggle > .disc-btn,
+  .topbar > .pill-row > .days-jump {
+    flex: 0 0 calc(100% / 7 - 0.01px);
+  }
+  /* Inner buttons in wrappers fill the stretched wrapper (otherwise the
+     visible button is narrower than the wrapper's flex-computed slot). */
+  .topbar > .pill-row > .lang-jump > .disc-btn,
+  .topbar > .pill-row > .days-jump > .days-jump-toggle {
+    width: 100%;
+  }
+  .topbar > .view-toggle > #btn-my-trips,
+  .topbar > .view-toggle > #lsp-topbar,
+  .topbar > .view-toggle > #view-compare,
+  .topbar > .pill-row .disc-btn {
+    justify-content: center;
+    border-radius: 0;
+  }
+  /* Kill EVERY margin-left overlap in the strip so every adjacent pair
+     touches (no overlap, no gap). Includes direct buttons AND the buttons
+     inside .lang-jump / .days-jump wrappers — otherwise mixed pairs
+     (wrapper→direct or direct→wrapper) show a 1.5px page-bg gap. */
+  .topbar > .view-toggle > #btn-my-trips,
+  .topbar > .view-toggle > #lsp-topbar,
+  .topbar > .view-toggle > #view-compare,
+  .topbar > .pill-row > .disc-btn,
+  .topbar > .pill-row > .seg-toggle > .disc-btn,
+  .topbar > .pill-row > .lang-jump > .disc-btn,
+  .topbar > .pill-row > .days-jump > .days-jump-toggle {
+    margin-left: 0;
+  }
+}
+/* Filter-active clear button — sits just above mosaic results when any filter is engaged */
+#filter-active-bar { display: none; justify-content: flex-start; margin: 0 0 8px; }
+#filter-active-bar.visible { display: flex; }
+#clear-all-filters { font: inherit; font-size: 11px; color: #7a3b1e; background: rgba(184,134,11,.1); border: 1px solid rgba(184,134,11,.25); border-radius: 10px; padding: 2px 10px; cursor: pointer; white-space: nowrap; }
+#clear-all-filters:hover { background: rgba(184,134,11,.18); }
+/* Browse-by view pills sit directly in the pill-row as standard disc-btn pills;
+   the wrapper only carries the group semantics (role/aria-label). */
+.seg-toggle { display: contents; }
+.seg-btn.on, .seg-btn.on:hover { background: #f0ede8; border: 1.5px solid var(--border); color: #6a6660; position: relative; z-index: 1; }
+#filters-panel { margin: 16px 0 26px; padding: 16px 18px 18px; background: var(--warm); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 16px rgba(122,59,30,.08); }
+#filters-panel[hidden] { display: none; }
+/* Flight-view filter bar — Form B glued-grid tiles on ALL viewports (matches
+   mobile). Label stacked above each group; chips are square, border-radius 0,
+   glued edge-to-edge in an auto-fit grid so each group forms clean full-width
+   rows. .fchip is exclusively this bar, so the desktop base rule IS Form B and
+   is exempt from check_pill_rest_state (the rounded-6px desktop pill standard). */
+.flt-controls { display: none; flex-direction: column; gap: 14px; align-items: stretch; margin: 0 0 14px; padding: 16px 18px 18px; background: var(--warm); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 16px rgba(122,59,30,.08); overflow: hidden; box-sizing: border-box; }
+body.mode-flights .flt-controls { display: flex; }
+.fcg { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 0; align-items: stretch; max-width: 100%; box-sizing: border-box; }
+#fstops { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.fgl { grid-column: 1 / -1; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-align: left; margin: 0 0 5px; }
+.fchip { font-family: inherit; font-size: 12px; font-weight: 400; height: 32px; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.12; padding: 4px 10px; border: 1px solid var(--border2, #e6e2da); border-radius: 0; background: var(--surface, #ffffff); color: #8a6c1a; cursor: pointer; transition: all .12s; }
+.fchip:hover { font-family: inherit; border-color: #b85c2a; color: var(--accent); }
+.fchip.on { font-family: inherit; background: var(--surface, #ffffff); border-color: #b85c2a; color: #7a3b1e; font-weight: 600; }
+#flight-view { display: none; }
+body.mode-flights #flight-view { display: block; }
+body.mode-flights .mosaic-wrap { display: none; }
+body.mode-flights #guide-noresult { display: none !important; }
+.fcount { font-size: 11px; color: var(--muted); margin: 2px 0 10px; }
+#fnoresult { display: none; padding: 18px 4px; font-size: 13px; color: var(--muted); }
+#fnoresult button { font-family: inherit; font-size: 12px; margin-left: 8px; padding: 4px 12px; border: 1px solid #b85c2a; border-radius: 6px; background: var(--surface, #ffffff); color: var(--accent); cursor: pointer; }
+#fnoresult button:hover { background: var(--banner-gradient); border-color: #b85c2a; color: #fdf8f0; }
+.flt-grid { column-width: 212px; column-gap: 4px; }
+.flt-grid .dest-card { border-radius: 8px; padding: 9px 12px; align-items: baseline; border-left-width: 5px; break-inside: avoid; -webkit-column-break-inside: avoid; margin: 0 0 4px; }
+/* In flight view the day-trip subtitle is irrelevant and only adds random height */
+.flt-grid .dest-sub { display: none; }
+/* Pin the airport code to a fixed top-right spot so it doesn't drift with card content */
+.flt-grid .fiata { position: absolute; top: 9px; right: 12px; margin-left: 0; }
+.flt { flex-basis: 100%; display: flex; align-items: center; gap: 6px; margin-top: 5px; font-size: 12px; color: var(--muted); }
+.fdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.fdot.r-nonstop { background: #AF52DE; }
+.fdot.r-1stop { background: #46C24E; }
+.fdot.r-2stop { background: #2E90FA; }
+.fdot.r-seasonal { background: #fff; border: 2px solid #AF52DE; width: 6px; height: 6px; }
+.fdot.r-home { background: var(--accent); }
+.ftime { font-size: 12px; font-weight: 600; color: var(--text, #1a1917); }
+.fdl { font-size: 9.5px; font-weight: 700; color: #fff; background: #b01028; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.03em; }
+.fiata { margin-left: auto; font-size: 12px; color: #8a857c; letter-spacing: 0.04em; }
+.fonward { flex-basis: 100%; font-size: 11px; color: #8a857c; margin-top: 3px; }
+.fbreak { flex-basis: 100%; font-size: 11px; color: #8a857c; margin-top: 3px; line-height: 1.5; letter-spacing: 0.01em; }
+/* Flight-card hover — guarded with hover:hover so touch doesn't get stuck state */
+@media (hover:hover) {
+  .flt-grid .dest-card:hover .ftime,
+  .flt-grid .dest-card:hover .flt,
+  .flt-grid .dest-card:hover .fonward,
+  .flt-grid .dest-card:hover .fbreak,
+  .flt-grid .dest-card:hover .fiata { color: #fff !important; }
+}
+.flegend { display: none; flex-wrap: wrap; gap: 14px; margin: 16px 0 4px; font-size: 11.5px; color: var(--muted); }
+body.mode-flights .flegend { display: flex; }
+.flegend span { display: flex; align-items: center; gap: 6px; }
+.fnote { font-size: 11px; color: #8a857c; line-height: 1.7; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border2, #e6e2da); max-width: 680px; display: none; }
+body.mode-flights .fnote { display: block; }
+/* ── Language filter ── */
+.dest-card.lang-hide { display: none !important; }
+.lang-jump { position:relative; display:inline-flex; }
+#lang-content { display:none; margin:10px 0 16px; padding:16px 18px 18px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); width:100%; }
+#lang-content.show { display:block; }
+#lang-panel { position:absolute; top:calc(100% + 6px); left:0; z-index:50; width:max-content; margin:0; }
+@media (max-width:640px){
+  .lang-jump { position:static; display:block; flex-basis:100%; }
+  #lang-panel { position:static; width:auto; max-width:none; margin:10px 0 0; box-shadow:none; }
+}
+#lang-panel[hidden] { display: none; }
+.lchip { display:inline-flex; align-items:center; gap:6px; font-family: inherit; font-size:13px; font-weight: 400; line-height:1; padding:6px 12px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:#fff; color: #8a6c1a; cursor:pointer; white-space:nowrap; transition:all .12s; }
+.lchip .lflag { font-family: inherit; font-size:13px; line-height:1; }
+@media (hover:hover){ .lchip:not(.on):hover { border-color:#b85c2a; color:var(--accent); } }
+.lchip.on { font-family: inherit; background:var(--surface, #ffffff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+.lchip[data-l="all"] { font-family: inherit; font-weight:600; }
+.ll-head { display:block; }
+.ll-lbl { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 5px; }
+.ll-chips { display:grid; grid-template-columns:repeat(auto-fit, minmax(112px, 1fr)); gap:0; align-items:stretch; }
+#lang-chips .lchip { border-radius:0; height:32px; display:flex; align-items:center; justify-content:center; }
+.lchip.on, .lchip:hover { font-family: inherit; position:relative; z-index:1; }
+.ll-div { width:1px; align-self:stretch; min-height:20px; background:var(--border2, #e6e2da); margin:0 2px; }
+.ll-foot { display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:4px; }
+.ll-foot:has(#lang-badge:not(.visible)) { display:none; }
+.ll-count { font-size:12px; color:var(--muted); }
+.ll-count strong { color:#7a3b1e; font-weight:700; }
+#lang-badge { display:none; font-size:11px; color:#7a3b1e; background:rgba(184,134,11,.1); border:1px solid rgba(184,134,11,.25); border-radius:10px; padding:3px 10px; cursor:pointer; font-family:inherit; }
+#lang-badge.visible { display:inline-block; }
+/* ── Language view menu (By Language / By Guide) ── */
+.lang-menu { display:block; min-width:170px; background:var(--warm); border:1px solid var(--border); border-radius:8px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.14); }
+.lang-menu-item { display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--border2, #e6e2da); padding:9px 14px; font-size:13px; font-weight:500; color:#3d3a32; cursor:pointer; font-family:inherit; }
+.lang-menu-item:last-child { border-bottom:none; }
+.lang-menu-item:hover:not(.on) { background:var(--warm); }
+.lang-menu-item.on { background:none; color:#3d3a32; }
+#lang-pane-lang { margin-top:0; }
+#lang-pane-guide { display:block; }
+#lang-pane-guide[hidden] { display:none; }
+#lang-pane-guide.has-pick { display:grid; grid-template-columns:240px minmax(0,200px); gap:14px; align-items:start; justify-content:start; }
+@media (max-width:640px){ #lang-pane-guide.has-pick { grid-template-columns:1fr; } }
+.gp-left { display:flex; flex-direction:column; min-width:0; max-width:380px; }
+#lang-pane-guide.has-pick .gp-left { max-width:none; }
+.gp-search-wrap { margin-bottom:5px; }
+#guide-pick-search { width:100%; box-sizing:border-box; font-family:inherit; font-size:16px; padding:7px 10px; border:1px solid #b8b3a8; border-radius:6px; background:var(--surface, #ffffff); color:#3d3a32; outline:none; }
+#guide-pick-search:focus { border-color:#b85c2a; }
+#guide-pick-search::placeholder { color:var(--c-search-placeholder); }
+#guide-pick-list { max-height:120px; overflow-y:auto; overflow-x:hidden; border:1px solid var(--border); border-radius:6px; background:var(--surface, #ffffff); }
+.gp-row { display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; font-family:inherit; font-size:12px; text-align:left; padding:8px 12px; border:0; border-bottom:1px solid var(--border2, #e6e2da); background:none; color:#3d3a32; cursor:pointer; }
+.gp-row:last-child { border-bottom:none; }
+.gp-row.hide { display:none; }
+.gp-row .gp-name { flex:1; }
+.gp-row .gp-country { color:var(--muted); text-transform:capitalize; }
+@media (hover:hover){ .gp-row:not(.on):hover { background:var(--warm); } }
+.gp-row.on { background:var(--surface, #ffffff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+.gp-row.on .gp-name { color:#fff; }
+.gp-row.on .gp-country { color:rgba(255,255,255,.8); }
+#gp-empty { display:none; padding:14px; font-size:12px; color:var(--muted); }
+#guide-pick-result { align-self:start; padding:8px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface, #ffffff); max-width:200px; }
+#guide-pick-result[hidden] { display:none; }
+@media (max-width:640px){ #guide-pick-result { margin-top:10px; } }
+.gpr-top { display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:8px; }
+.gpr-name { font-size:12px; font-weight:700; color:#3d3a32; text-transform:uppercase; letter-spacing:0.06em; flex-shrink:0; }
+.gpr-name a { color:inherit; text-decoration:none; }
+.gpr-name a:hover { color:#7a3b1e; }
+.gpr-country { font-size:12px; color:#3d3a32; text-transform:capitalize; line-height:1.3; font-weight:500; text-align:right; }
+.gpr-label { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.gpr-langs { display:flex; flex-wrap:wrap; gap:5px; }
+.gtag { display:inline-flex; align-items:center; font-size:13px; line-height:1; padding:4px 10px; border:1px solid var(--border2, #e6e2da); border-radius:5px; background:#fff; color:#3d3a32; }
+/* ══ Compare mode ══ */
+body.mode-compare .mosaic-wrap .dest-card:not([data-special]) { cursor: pointer; user-select: none; }
+body.mode-compare .mosaic-wrap .dest-card[data-special] { opacity: .55; pointer-events: none; cursor: default; }
+body.mode-compare .mosaic-wrap .dest-card.cmp-sel {
+  background: rgba(138,108,26,.13);
+  border-left-color: var(--accent);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+body.mode-compare .mosaic-wrap .dest-card.cmp-sel .dest-name { color: var(--accent); }
+body.mode-compare .mosaic-wrap .dest-card.cmp-sel::after {
+  content: "✓"; position: absolute; right: 38px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  width: auto; height: auto; border-radius: 0; background: none;
+}
+/* Dim non-selected cards once 5 are chosen */
+body.mode-compare.cmp-full .mosaic-wrap .dest-card:not(.cmp-sel) { opacity: .45; }
+/* Compare selection panel — sits in the same band as the When-to-go panel */
+.cmp-sel-bar {
+  margin: 6px auto 10px; padding: 12px 16px;
+  background: var(--surface, #ffffff); border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  display: none; align-items: center; gap: 10px; flex-wrap: wrap;
+  width: fit-content; max-width: 90%;
+}
+.cmp-sel-bar.cmp-visible { display: flex; }
+.cmp-sel-chips { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; align-items: center; }
+.cmp-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--surface, #ffffff); border: 1px solid var(--border2, #e6e2da);
+  border-radius: 6px; padding: 3px 8px 3px 10px;
+  font-size: 12px; color: var(--text, #1a1917); white-space: nowrap;
+}
+.cmp-chip-x {
+  background: none; border: none; cursor: pointer; color: #7a7068;
+  font-size: 13px; line-height: 1; padding: 0 1px; font-family: inherit;
+}
+.cmp-chip-x:hover { color: #3d3a32; }
+.cmp-hint { font-size: 11px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+.cmp-count { font-size: 11px; color: var(--muted); flex-shrink: 0; white-space: nowrap; font-weight: 600; }
+.cmp-go-btn {
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 16px; border-radius: 6px;
+  background: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%);
+  color: #fff; border: none; cursor: pointer; flex-shrink: 0;
+  transition: opacity .15s; white-space: nowrap;
+}
+.cmp-go-btn:disabled { opacity: .35; cursor: default; }
+.cmp-exit-btn {
+  font-family: inherit; font-size: 12px; padding: 8px 14px; border-radius: 6px;
+  background: var(--surface, #ffffff); border: 1px solid var(--border2, #e6e2da);
+  color: var(--muted); cursor: pointer; flex-shrink: 0; white-space: nowrap;
+}
+.cmp-exit-btn:hover { border-color: #b85c2a; color: var(--accent); }
+/* Compare panel */
+#compare-view { padding-bottom: 100px; }
+.cmp-table-wrap { overflow-x: auto; }
+.cmp-table { border-collapse: separate; border-spacing: 0; min-width: 420px; }
+.cmp-table td { padding: 10px 14px; border-bottom: 1px solid var(--border2, #e6e2da); font-size: 13px; vertical-align: middle; }
+.cmp-row-label {
+  font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600; white-space: nowrap;
+  text-align: left; padding-right: 14px; min-width: 92px;
+}
+/* Unified value type scale — one primary size, one sub size, one muted-sub */
+.cmp-v    { font-size: 13px; font-weight: 400; color: var(--text, #1a1917); }
+.cmp-sub  { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.cmp-list { display: inline-block; max-width: 170px; font-size: 13px; color: var(--text, #1a1917); line-height: 1.6; }
+.cmp-good { color: #2a7a2a; }
+.cmp-mid  { color: #8a6c1a; }
+.cmp-warn { color: #c06000; }
+.cmp-bad  { color: #b00000; }
+/* Best-value badge (shortest flight / most affordable / safest) */
+.cmp-badge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  color: #2a7a2a; border: 1px solid rgba(42,122,42,.45);
+  border-radius: 10px; padding: 1px 8px; margin-top: 4px;
+  white-space: nowrap; letter-spacing: .02em;
+}
+/* Trip-type tag pills */
+.cmp-tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 170px; margin: 0 auto; }
+.cmp-tag {
+  display: inline-flex; align-items: center; font-size: 10px;
+  padding: 2px 7px; border: 1px solid var(--border2, #e6e2da);
+  border-radius: 9px; background: var(--warm); color: #3d3a32; white-space: nowrap;
+}
+.cmp-col {
+  text-align: center; min-width: 140px;
+  border-left: 1px solid var(--border2, #e6e2da); border-right: 1px solid var(--border2, #e6e2da);
+}
+.cmp-col:last-child { border-right: 1px solid var(--border2, #e6e2da); }
+.cmp-city-cell {
+  border-top: 1px solid var(--border2, #e6e2da) !important;
+  padding: 10px 10px 8px !important;
+}
+/* Close bottom border on last row */
+.cmp-table tr:last-child td { border-bottom: 1px solid var(--border2, #e6e2da); border-radius: 0 0 4px 4px; }
+/* Section group dividers */
+.cmp-group-start td { border-top: 2px solid var(--border, #d9d5cc) !important; }
+/* Safety dot */
+.cmp-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: middle; flex-shrink: 0; }
+/* Climate bars */
+.cmp-bars { display: flex; gap: 3px; align-items: flex-end; height: 66px; justify-content: center; margin: 6px auto 3px; }
+.cmp-bar-col { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.cmp-bar { width: 12px; border-radius: 2px 2px 0 0; min-height: 3px; }
+.cmp-bar.cmp-cur { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 2px 2px 0 0; }
+.cmp-bar-lbl { font-size: 10px; color: var(--muted); line-height: 1; }
+.cmp-temp-now { font-size: 12px; color: var(--muted); margin-top: 2px; }
+/* Guide link */
+.cmp-guide-link {
+  display: inline-flex; align-items: center; height: 32px;
+  font-family: inherit; font-size: 12px; font-weight: 500;
+  color: #8a6c1a; text-decoration: none; background: var(--surface, #ffffff);
+  padding: 0 12px; border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px;
+  white-space: nowrap; transition: all .15s;
+}
+a.cmp-guide-link:visited { color: #8a6c1a; }
+.cmp-guide-link:hover {
+  border-color: #b85c2a; color: var(--accent); text-decoration: none;
+}
+.cmp-legend-footnote {
+  margin: 6px 0 0; padding-left: 124px;
+  display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: flex-start;
+}
+@media (max-width: 600px) {
+  .cmp-sel-bar { padding: 8px 12px; gap: 7px; width: auto; margin-left: 0; max-width: 100%; }
+  .cmp-table td { padding: 8px 10px; }
+  .cmp-col { min-width: 110px; }
+  .cmp-bar { width: 9px; }
+  .cmp-bar-lbl { font-size: 9px; }
+  /* Safety legend — drop the desktop first-column indent so it aligns left */
+  .cmp-legend-footnote { padding-left: 0; }
+}
+
+/* (Removed 2026-06-20: a duplicate mobile banner override that forced the
+   left-accent-strip look — the Guides index now uses the shared underline
+   banner from assets/mobile.css, matching desktop and every other page.) */
+/* ── Global content search (in-guide matches) ── */
+#content-search{margin:10px 0 4px;border:1px solid var(--border2, #e6e2da);border-radius:10px;background:var(--surface, #ffffff);padding:6px;max-height:62vh;overflow:auto;box-shadow:0 6px 18px rgba(0,0,0,.06);}
+#content-search[hidden]{display:none;}
+.cs-head{font-size:12px;color:#A8895A;padding:6px 8px 8px;font-weight:600;}
+.cs-guide{padding:6px 8px;border-top:1px solid var(--border2, #e6e2da);}
+.cs-guide:first-of-type{border-top:none;}
+.cs-city{display:inline-block;font-weight:700;font-size:13.5px;color:#8a6c1a;text-decoration:none;margin-bottom:3px;}
+.cs-city:hover{text-decoration:underline;}
+.cs-items{display:flex;flex-direction:column;gap:2px;}
+.cs-item{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;line-height:1.35;color:var(--text, #1a1917);text-decoration:none;padding:4px 6px;border-radius:6px;min-height:32px;}
+.cs-item:hover{background:rgba(184,134,11,.08);}
+.cs-item mark{background:rgba(184,134,11,.28);color:inherit;border-radius:2px;padding:0 1px;}
+.cs-sec{flex:none;font-size:11px;color:#A8895A;white-space:nowrap;}
+.cs-empty,.cs-more{font-size:12px;color:#A8895A;padding:10px 8px;text-align:center;}
+@media(max-width:600px){.cs-item{min-height:40px;}}
+
+/* ── Stats link — topbar ── */
+#lsp-topbar { display: inline-flex; align-items: center; height: 36px; padding: 0 14px; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px; text-decoration: none !important; font-size: 13px; font-family: inherit; color: #8a6c1a; white-space: nowrap; transition: border-color .15s, color .15s; margin-left: -1.5px; }
+#lsp-topbar:hover { background: var(--bg, #f5f4f0); border-color: #b85c2a; position: relative; z-index: 1; }
+@media (max-width: 600px) { #lsp-topbar { display: none; } }
+@media (max-width: 600px) { #alsoRecJump { display: none; } }
+/* ── Guide pin — bookmark up to 3 guides ── */
+.pin-wrap { position: relative; }
+.pin-wrap .dest-card { padding-right: 40px; }
+.pin-btn {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 40px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted, #b0aa9f);
+  padding: 0;
+  z-index: 1;
+  transition: color .12s;
+}
+.pin-btn:hover { color: #b85c2a; }
+.pin-btn.is-pinned { color: #b85c2a; }
+.dest-card--pinned { border-left-color: var(--accent) !important; }
+@media (max-width: 600px) {
+  /* iOS Safari swallows touch events on position:absolute inside CSS columns.
+     Switch to flex so the button is in normal flow and receives touches. */
+  .pin-wrap { display: flex; align-items: stretch; }
+  .pin-wrap .dest-card { flex: 1; min-width: 0; padding-right: 10px; }
+  .pin-btn { position: static; width: 44px; flex-shrink: 0; }
+}
+#pinned-strip[hidden] { display: none; }
+#pinned-strip {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: fit-content;
+}
+.pinned-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fdf6e8;
+  border: 1px solid #e8c97a;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+}
+.pt-city-pill {
+  font-size: 12px;
+  font-weight: 400;
+  font-family: var(--font, inherit);
+  color: #8a6c1a;
+  text-decoration: none;
+  border: 1.5px solid #c8a44a;
+  border-radius: 6px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface, #ffffff);
+  min-width: 150px;
+}
+.pt-city-pill:hover { background: #fdf6e8; text-decoration: none; }
+a.pt-city-pill:visited { color: #8a6c1a; }
+.pt-open {
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font, inherit);
+  color: #8a6c1a;
+  text-decoration: none;
+  border: 1.5px solid var(--border2, #e6e2da);
+  border-radius: 6px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface, #ffffff);
+}
+.pt-open:hover { background: var(--bg, #f5f4f0); border-color: #c8a44a; text-decoration: none; }
+a.pt-open:visited { color: #8a6c1a; }
+.pt-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7a7068;
+  font-size: 13px;
+  padding: 2px 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  font-family: inherit;
+  margin-left: auto;
+}
+.pt-clear:hover { color: #3d3a32; }
+@media (max-width: 600px) {
+  #pinned-strip { gap: 8px; width: 100%; }
+  .pinned-card { flex-wrap: wrap; width: 100%; box-sizing: border-box; }
+  .pt-city-pill, .pt-open { flex: 1; justify-content: center; padding: 7px 12px; font-size: 14px; }
+}
+/* ── Dark mode — hardcoded color overrides ── */
+@media (prefers-color-scheme: dark) {
+  .mchip, .tchip, .fchip, .lchip, .stab, .gtag { font-family: inherit; background: var(--surface, #2a2825); color: var(--text, #e8e5e0); }
+  .stab:not(.on) { color: var(--accent, #c8a040); }
+  .days-jump-item, .lang-menu-item, .gp-row, #guide-pick-search { color: var(--text, #e8e5e0); }
+  a.days-jump-item, a.days-jump-item:visited, a.days-jump-item:hover { color: var(--text, #e8e5e0); }
+  .lang-menu { background: var(--surface, #2a2825); border-color: var(--border, #3a3730); }
+  .lang-menu-item:hover:not(.on) { background: var(--warm, #242220); }
+  #guide-search { background: var(--surface, #2a2825); color: var(--text, #e8e5e0); }
+  .disc-btn { background: var(--surface, #2a2825); color: var(--accent, #c8a040); }
+  .view-toggle button,
+  #btn-my-trips { background: var(--surface, #2a2825); color: var(--accent, #c8a040); }
+  .dest-name { color: var(--text, #e8e5e0); }
+  .cmp-v, .cmp-list { color: var(--text, #e8e5e0); }
+  .cmp-tag { background: var(--warm, #242220); color: var(--text, #e8e5e0); }
+  .cmp-chip { background: var(--surface, #2a2825); color: var(--text, #e8e5e0); }
+  .cmp-guide-link, a.cmp-guide-link:visited { background: var(--surface, #2a2825); color: var(--accent, #c8a040); }
+  .ftime { color: var(--text, #e8e5e0); }
+  .gpr-name, .gpr-country { color: var(--text, #e8e5e0); }
+  .stat-pill b, .stat-line b { color: var(--text, #e8e5e0); }
+  #guide-pick-search { background: var(--surface, #2a2825); }
+  #guide-pick-list { background: var(--surface, #2a2825); }
+  #guide-pick-result { background: var(--surface, #2a2825); }
+  .cmp-exit-btn { background: var(--surface, #2a2825); color: var(--muted, #9a9690); }
+  #fnoresult button { background: var(--surface, #2a2825); }
+  #content-search { background: var(--surface, #2a2825); }
+  .pinned-card { background: #2a2210; border-color: #6a5420; }
+  .pt-city-pill, a.pt-city-pill:visited { color: #d4874a; border-color: #d4874a; background: transparent; }
+  .pt-clear:hover { color: #f5f3ef; background: none; }
+}
+
+/* ── Trip Twin ──────────────────────────────────────────────────────── */
+#trip-twin-panel { margin:8px 0 20px; padding:20px 22px 22px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); }
+#trip-twin-panel[hidden],#tt-inner[hidden],#tt-results[hidden],#tt-suggest-list[hidden],#tt-city-badge[hidden],#tt-err[hidden] { display:none !important; }
+.tt-tagline { font-size:13px; color:var(--muted); margin:0 0 18px; line-height:1.5; }
+.tt-label { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 7px; }
+.tt-or { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:16px 0 12px; display:flex; align-items:center; gap:10px; }
+.tt-or::before,.tt-or::after { content:''; flex:1; height:1px; background:var(--border2,#e6e2da); }
+.tt-section { margin-bottom:14px; }
+.ttchip-row { display:flex; flex-wrap:wrap; gap:6px; }
+.ttchip { font-family:inherit; font-size:12px; font-weight:400; height:32px; padding:0 11px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:var(--surface,#fff); color:#8a6c1a; cursor:pointer; white-space:nowrap; transition:all .12s; }
+.ttchip:hover { border-color:#b85c2a; color:#7a3b1e; }
+.ttchip.on { background:var(--surface,#fff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+#tt-city-row { margin-bottom:4px; }
+#tt-city { width:280px; height:36px; box-sizing:border-box; padding:0 12px; font-size:13px; font-family:inherit; border:1.5px solid var(--border2,#e6e2da); border-radius:6px; background:var(--surface,#fff); color:var(--text,#1a1917); outline:none; transition:border-color .15s; }
+#tt-city:focus { border-color:#b85c2a; }
+#tt-city-wrap { position:relative; display:inline-block; }
+#tt-suggest-list { position:absolute; top:calc(100% + 4px); left:0; z-index:60; min-width:200px; background:var(--warm); border:1px solid var(--border); border-radius:8px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+.tt-sug-item { display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--border2,#e6e2da); padding:9px 14px; font-size:13px; color:var(--text,#1a1917); cursor:pointer; font-family:inherit; white-space:nowrap; }
+.tt-sug-item:last-child { border-bottom:0; }
+.tt-sug-item:hover { background:rgba(184,134,11,.06); color:#7a3b1e; }
+#tt-city-badge { display:inline-block; margin-left:10px; font-size:12px; color:#7a3b1e; font-weight:500; vertical-align:middle; }
+.tt-safe-row { margin:14px 0 16px; display:flex; align-items:center; }
+.tt-check-lbl { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text,#1a1917); cursor:pointer; }
+.tt-check-lbl input[type="checkbox"] { width:14px; height:14px; accent-color:#b85c2a; cursor:pointer; }
+#tt-go { height:38px; padding:0 20px; font-family:inherit; font-size:13px; font-weight:600; background:#b85c2a; border:1.5px solid #b85c2a; border-radius:6px; color:#fff; cursor:pointer; transition:background .15s,border-color .15s; }
+#tt-go::after { content:' ›'; font-size:15px; font-weight:400; }
+#tt-go:hover:not(:disabled) { background:#7a3b1e; border-color:#7a3b1e; }
+#tt-go:disabled { background:var(--border2,#e6e2da); border-color:var(--border2,#e6e2da); color:var(--muted); cursor:default; }
+#tt-err { font-size:12px; color:#b85c2a; margin:8px 0 0; }
+.tt-res-head { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 14px; }
+#tt-res-cards { display:flex; flex-direction:column; gap:10px; }
+.tt-res-card { display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--surface,#fff); border:1px solid var(--border); border-radius:10px; text-decoration:none; transition:border-color .15s,box-shadow .15s; }
+.tt-res-card:hover { border-color:#b85c2a; box-shadow:0 3px 10px rgba(184,92,42,.15); }
+.tt-res-flag { font-size:26px; flex-shrink:0; line-height:1; }
+.tt-res-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
+.tt-res-name { font-size:14px; font-weight:600; color:var(--text,#1a1917); }
+.tt-res-reasons { display:flex; flex-wrap:wrap; gap:5px; }
+.tt-res-pill { font-size:11px; font-weight:500; padding:2px 8px; border-radius:12px; background:#f0ede8; color:#7a3b1e; border:1px solid rgba(122,59,30,.2); }
+.tt-res-score { flex-shrink:0; text-align:right; }
+.tt-res-pct { display:block; font-size:20px; font-weight:700; color:#b85c2a; font-variant-numeric:tabular-nums; line-height:1.1; }
+.tt-res-pct-lbl { font-size:10px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+.tt-back-btn { display:inline-block; margin-top:16px; font-family:inherit; font-size:12px; background:none; border:none; color:#8a6c1a; cursor:pointer; padding:0; text-decoration:underline; }
+.tt-back-btn:hover { color:#7a3b1e; }
+@media (max-width:600px) {
+  #tt-city { width:100%; }
+  #tt-city-row { width:100%; }
+  #tt-city-wrap { display:block; width:100%; }
+}
+/* ── Help Me Choose wizard ── */
+#help-choose-panel { margin:8px 0 20px; padding:20px 22px 22px; background:var(--warm); border:1px solid var(--border); border-radius:12px; box-shadow:0 4px 16px rgba(122,59,30,.08); }
+#help-choose-panel[hidden],#hc-inner[hidden],#hc-results[hidden] { display:none !important; }
+.hc-progress { display:flex; align-items:center; gap:0; margin:0 0 20px; }
+.hc-step-dot { width:24px; height:24px; border-radius:50%; border:1.5px solid var(--border2,#e6e2da); background:var(--surface,#fff); color:var(--muted); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
+.hc-step-dot.on { background:#b85c2a; border-color:#b85c2a; color:#fff; }
+.hc-step-dot.done { background:#f0ede8; border-color:#b85c2a; color:#7a3b1e; }
+.hc-step-line { flex:1; height:1.5px; background:var(--border2,#e6e2da); }
+.hcchip { font-family:inherit; font-size:12px; font-weight:400; height:32px; padding:0 11px; border:1px solid var(--border2,#e6e2da); border-radius:6px; background:var(--surface,#fff); color:#8a6c1a; cursor:pointer; white-space:nowrap; transition:all .12s; }
+.hcchip:hover { border-color:#b85c2a; color:#7a3b1e; }
+.hcchip.on { background:var(--surface,#fff); border-color:#b85c2a; color:#7a3b1e; font-weight:600; }
+.hc-month-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:10px; }
+.hc-month-grid .hcchip { text-align:center; padding:0 4px; }
+.hc-activity-grid { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.hc-nav { margin-top:16px; display:flex; align-items:center; gap:14px; }
+#hc-back { font-family:inherit; font-size:12px; background:none; border:none; color:#8a6c1a; cursor:pointer; padding:0; text-decoration:underline; }
+#hc-back:hover { color:#7a3b1e; }
+#hc-go { height:38px; padding:0 20px; font-family:inherit; font-size:13px; font-weight:600; background:#b85c2a; border:1.5px solid #b85c2a; border-radius:6px; color:#fff; cursor:pointer; transition:background .15s,border-color .15s; }
+#hc-go::after { content:' ›'; font-size:15px; font-weight:400; }
+#hc-go:hover:not(:disabled) { background:#7a3b1e; border-color:#7a3b1e; }
+#hc-go:disabled { background:var(--border2,#e6e2da); border-color:var(--border2,#e6e2da); color:var(--muted); cursor:default; }
+#hc-res-cards { display:flex; flex-direction:column; gap:10px; }
+@media (max-width:600px) {
+  #btn-help-choose { order:12 !important; }
+  .hc-month-grid { grid-template-columns:repeat(4,1fr); }
+}

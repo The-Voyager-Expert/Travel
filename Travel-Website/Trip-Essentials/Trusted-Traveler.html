@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../assets/web-travel-style.css">
+<title>Trusted Traveler Programs</title>
+<style>
+/* ── Program explainer cards ── */
+.programs-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+}
+@media (max-width: 600px) { .programs-grid { grid-template-columns: 1fr; } }
+.program-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden;
+}
+.program-card-head {
+  padding: 13px 18px 11px; border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; gap: 10px;
+}
+.program-icon { font-size: 22px; line-height: 1; }
+.program-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.program-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 3px; margin-left: auto;
+}
+.program-tag.ge  { background: #e8f0fb; color: var(--navy, #1a3a8b); border: 1px solid rgba(26,58,139,0.4); }
+.program-tag.clr { background: #fdf0e8; color: #7a3a1a; border: 1px solid rgba(122,58,26,0.4); }
+.program-body { padding: 13px 18px; display: flex; flex-direction: column; gap: 8px; }
+.program-row { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text); line-height: 1.5; }
+.program-row-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); flex-shrink: 0; padding-top: 2px; min-width: 60px;
+}
+.program-row-val { color: var(--text); }
+.program-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-top: 4px; font-family: inherit; font-size: 12px; font-weight: 400;
+  color: var(--muted, #6a6660); border: 1.5px solid var(--border2, #e6e2da);
+  border-radius: 6px; padding: 4px 10px; background: var(--surface);
+  transition: border-color .15s, background .15s;
+}
+a.program-link:visited { color: #6a6660; }
+.program-link:hover { border-color: var(--rust); background: var(--bg, #f5f4f0); }
+
+/* ── Controls ── */
+.controls {
+  display: flex; flex-direction: column; gap: 10px; align-items: center; margin-bottom: 14px;
+}
+#tt-search {
+  width: 360px; max-width: 100%; padding: 11px 18px; padding-left: 36px;
+  border: 1.5px solid var(--border2, #e6e2da); border-radius: 6px;
+  font-family: inherit; font-size: 16px; color: var(--text, #1a1917);
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+#tt-search::placeholder { color: var(--c-search-placeholder); }
+#tt-search:focus { border-color: var(--c-search-focus-border); box-shadow: none; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+.fpill {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border2);
+  background: var(--surface); color: var(--muted, #6a6660); font-size: 12px; font-weight: 400;
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.fpill:hover { border-color: var(--rust); background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; }
+.fpill.active { font-family: inherit; background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: var(--rust); color: #fff; }
+/* pills-to-badge: rest-state badge family colors */
+.fpill[data-filter="ge"]    { background: #e8f0fb; color: var(--navy); border-color: rgba(26,58,139,0.4); }
+.fpill[data-filter="eoa"]   { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.4); }
+.fpill[data-filter="clear"] { background: #fdf0e8; color: #7a3a1a; border-color: rgba(122,58,26,0.4); }
+.fpill[data-filter="both"]  { background: #e8f0fb; color: var(--navy); border-color: rgba(26,58,139,0.4); }
+.fpill[data-filter].active  { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); border-color: var(--rust); color: #fff; }
+
+/* Desktop-only FORMATTING + BEHAVIOR per Brain/Reference/Formatting/Formatting.html#src-desktoppill.
+   .pill-row (5 filter pills) — full-width proportional stretch, squared corners,
+   touching borders, black text, terracotta hover, terracotta-border var(--bg) .active
+   (kills the terracotta gradient .active). Mobile grid + base states untouched. */
+@media (min-width: 601px) {
+  .pill-row { gap: 0; }
+  .fpill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border: 1.5px solid var(--border2, #e6e2da); border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); }
+  .fpill.active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+  .fpill[data-filter="ge"]    { background: #e8f0fb; color: var(--navy); border-color: rgba(26,58,139,0.4); }
+  .fpill[data-filter="eoa"]   { background: #e8f5e8; color: #1a5a1a; border-color: rgba(26,90,26,0.4); }
+  .fpill[data-filter="clear"] { background: #fdf0e8; color: #7a3a1a; border-color: rgba(122,58,26,0.4); }
+  .fpill[data-filter="both"]  { background: #e8f0fb; color: var(--navy); border-color: rgba(26,58,139,0.4); }
+  /* Hover LAST — must follow family-color rules; equal specificity means last wins */
+  .fpill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); color: inherit;}
+  .fpill[data-filter].active  { background: var(--bg, #f5f4f0); border-color: var(--rust); color: #3d3a32; }
+}
+
+/* ── Airport list ── */
+.state-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  overflow: hidden; margin-bottom: 8px;
+  transition: box-shadow .18s, transform .18s;
+}
+.state-block:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.state-block.hidden { display: none; }
+
+.state-header {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 14px 20px 12px; background: var(--surface2); border-bottom: 1px solid var(--border);
+  font-size: 14px; font-weight: 600; color: var(--text);
+}
+
+.apt-list { display: flex; flex-direction: column; }
+.apt-row {
+  display: flex; align-items: center; gap: 14px; padding: 12px 20px;
+  border-bottom: 1px solid var(--border2); transition: background .12s;
+}
+.apt-row:last-child { border-bottom: none; }
+.apt-row:hover { background: var(--surface); }
+.apt-row.hidden { display: none; }
+.apt-code { font-size: 14px; font-weight: 700; color: var(--accent); width: 44px; flex-shrink: 0; letter-spacing: 0.02em; }
+.apt-info { flex: 1; min-width: 0; }
+.apt-city { display: block; font-size: 14px; color: var(--text); }
+.apt-name { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+.apt-loc { display: block; font-size: 11px; color: var(--muted); line-height: 1.55; margin-top: 5px; }.badge-wrap { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+.badge {
+  display: inline-block;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+}
+.badge-ge   { background: #e8f0fb; color: var(--navy, #1a3a8b); border: 1px solid rgba(26,58,139,0.4); }
+.badge-eoa  { background: #e8f5e8; color: #1a5a1a; border: 1px solid rgba(26,90,26,0.4); }
+.badge-clear { background: #fdf0e8; color: #7a3a1a; border: 1px solid rgba(122,58,26,0.4); }
+.badge-pre  { background: var(--warm); color: #8a4a10; border: 1px solid rgba(184,134,90,0.4); }
+
+/* ── International section ── */
+.section-divider {
+  margin: 28px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  font-size: 14px; font-weight: 700; color: var(--text);
+}
+.intl-note {
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+  padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 6px; margin-bottom: 14px;
+}
+.country-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  overflow: hidden; margin-bottom: 8px;
+  transition: box-shadow .18s, transform .18s;
+}
+.country-block:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
+/* .country-name canonical color+size+font now shared in web-travel-style.css + mobile.css (owner rule 2026-07-29); .country-header keeps only its own card-padding layout, border replaced by the canonical 2px #E8D9BC underline */
+.country-header {
+  padding: 14px 20px 12px;
+}
+
+/* ── No results ── */
+#no-results { display: none; }
+
+@media (max-width: 600px) {
+  #tt-search { width: 100%; }
+  /* Row was flex code|info|badges; the fixed-width badges crushed the info to
+     one word per line. Wrap so code+info take the first line (info full width)
+     and the badges drop to their own line below. */
+  .apt-row { padding: 10px 14px; gap: 6px 10px; flex-wrap: wrap; align-items: flex-start; }
+  .badge-wrap { flex-basis: 100%; justify-content: flex-start; }
+  /* Filter pills — uniform 3-across glued grid, matching the other panels.
+     margin-top gap keeps them off the search bar directly above (owner rule
+     2026-07-28: pills always need breathing room from search inputs). */
+  .pill-row { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; align-items: stretch !important; margin-top: 12px !important; }
+  .fpill { font-family: inherit;
+    width: 100% !important; height: 46px !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    text-align: center !important; white-space: normal !important; line-height: 1.12 !important;
+    border-radius: 0 !important; font-size: 12px !important; padding: 4px 6px !important;
+  }
+  .state-header, .country-header { padding: 11px 14px 9px; }
+}
+</style>
+<link rel="stylesheet" href="../assets/mobile.css?v=53">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="toolbar-mount" data-depth="1" data-maxwidth="760" data-updated="2026-08-08"></div>
+  <script src="../assets/toolbar.js?v=127"></script>
+
+  <div class="page-header"><h1>TRUSTED TRAVELER PROGRAMS</h1></div>
+
+  <div class="controls" style="margin-top:35px;">
+    <input type="search" class="search-input" id="tt-search" placeholder="Airport or city" aria-label="Search by airport or city" autocomplete="off" spellcheck="false">
+    <div class="pill-row">
+      <button class="fpill active" data-filter="all">All airports</button>
+      <button class="fpill" data-filter="both">GE + CLEAR</button>
+      <button class="fpill" data-filter="ge">Global Entry</button>
+      <button class="fpill" data-filter="clear">CLEAR</button>
+      <button class="fpill" data-filter="eoa">Enrollment on arrival</button>
+    </div>
+  </div>
+
+
+  <div id="airport-list">
+
+    <!-- Alabama -->
+    <div class="state-block" data-state="AL">
+      <div class="state-header">Alabama</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="bhm birmingham alabama">
+          <span class="apt-code">BHM</span>
+          <span class="apt-info"><span class="apt-city">Birmingham, AL</span><span class="apt-name">Birmingham-Shuttlesworth International</span><span class="apt-loc">T1 — departures level, front of security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alaska -->
+    <div class="state-block" data-state="AK">
+      <div class="state-header">Alaska</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="1" data-text="anc anchorage alaska">
+          <span class="apt-code">ANC</span>
+          <span class="apt-info"><span class="apt-city">Anchorage, AK</span><span class="apt-name">Ted Stevens Anchorage International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="1" data-text="fai fairbanks alaska">
+          <span class="apt-code">FAI</span>
+          <span class="apt-info"><span class="apt-city">Fairbanks, AK</span><span class="apt-name">Fairbanks International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arizona -->
+    <div class="state-block" data-state="AZ">
+      <div class="state-header">Arizona</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="phx phoenix arizona">
+          <span class="apt-code">PHX</span>
+          <span class="apt-info"><span class="apt-city">Phoenix, AZ</span><span class="apt-name">Phoenix Sky Harbor International</span><span class="apt-loc">T3 (checkpoint B) · T4 (checkpoints A, B, C, D — Level 2)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arkansas -->
+    <div class="state-block" data-state="AR">
+      <div class="state-header">Arkansas</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="xna bentonville fayetteville northwest arkansas">
+          <span class="apt-code">XNA</span>
+          <span class="apt-info"><span class="apt-city">Bentonville, AR</span><span class="apt-name">Northwest Arkansas National Airport</span><span class="apt-loc">Main Terminal — security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- California -->
+    <div class="state-block" data-state="CA">
+      <div class="state-header">California</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="lax los angeles california">
+          <span class="apt-code">LAX</span>
+          <span class="apt-info"><span class="apt-city">Los Angeles, CA</span><span class="apt-name">Los Angeles International</span><span class="apt-loc">T1 · T3 · T4 · T6 · T7 · TBIT — security checkpoint entrances<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="lgb long beach california">
+          <span class="apt-code">LGB</span>
+          <span class="apt-info"><span class="apt-city">Long Beach, CA</span><span class="apt-name">Long Beach Airport</span><span class="apt-loc">Main Terminal — security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="oak oakland california">
+          <span class="apt-code">OAK</span>
+          <span class="apt-info"><span class="apt-city">Oakland, CA</span><span class="apt-name">Oakland International</span><span class="apt-loc">T2 — left of security checkpoint entrance<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="ont ontario california">
+          <span class="apt-code">ONT</span>
+          <span class="apt-info"><span class="apt-city">Ontario, CA</span><span class="apt-name">Ontario International</span><span class="apt-loc">T2 ground floor (near Alaska) · T4 ground floor (near Southwest)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="psp palm springs california">
+          <span class="apt-code">PSP</span>
+          <span class="apt-info"><span class="apt-city">Palm Springs, CA</span><span class="apt-name">Palm Springs International</span><span class="apt-loc">Main Terminal — right of main entrance</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="smf sacramento california">
+          <span class="apt-code">SMF</span>
+          <span class="apt-info"><span class="apt-city">Sacramento, CA</span><span class="apt-name">Sacramento International</span><span class="apt-loc">T-A Level 2, front of checkpoint · T-B right of AirTrain entrance<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="san san diego california">
+          <span class="apt-code">SAN</span>
+          <span class="apt-info"><span class="apt-city">San Diego, CA</span><span class="apt-name">San Diego International</span><span class="apt-loc">T1 + T2 — T2: Level 2, left of security entrance<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sfo san francisco california">
+          <span class="apt-code">SFO</span>
+          <span class="apt-info"><span class="apt-city">San Francisco, CA</span><span class="apt-name">San Francisco International</span><span class="apt-loc">ITL (checkpoints A &amp; G) · T1 (B) · T2 (D) · T3 (F)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sjc san jose california">
+          <span class="apt-code">SJC</span>
+          <span class="apt-info"><span class="apt-city">San Jose, CA</span><span class="apt-name">Norman Y. Mineta San Jose International</span><span class="apt-loc">T-A &amp; T-B — departures level, left of standard security<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sna santa ana orange county california">
+          <span class="apt-code">SNA</span>
+          <span class="apt-info"><span class="apt-city">Santa Ana, CA</span><span class="apt-name">John Wayne Airport — Orange County</span><span class="apt-loc">T-B — security checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colorado -->
+    <div class="state-block" data-state="CO">
+      <div class="state-header">Colorado</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="den denver colorado">
+          <span class="apt-code">DEN</span>
+          <span class="apt-info"><span class="apt-city">Denver, CO</span><span class="apt-name">Denver International</span><span class="apt-loc">East Checkpoint (Level 6) · West Checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connecticut -->
+    <div class="state-block" data-state="CT">
+      <div class="state-header">Connecticut</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="bdl hartford connecticut">
+          <span class="apt-code">BDL</span>
+          <span class="apt-info"><span class="apt-city">Hartford, CT</span><span class="apt-name">Bradley International</span><span class="apt-loc">T-A — departures level, Door 3<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DC -->
+    <div class="state-block" data-state="DC">
+      <div class="state-header">DC / Washington Area</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="dca reagan washington dc virginia">
+          <span class="apt-code">DCA</span>
+          <span class="apt-info"><span class="apt-city">Washington, DC</span><span class="apt-name">Ronald Reagan Washington National</span><span class="apt-loc">T1 (near Gates 1–9) · T2 North (D35–D45) · T2 South (B10–B22)</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="iad dulles washington dc virginia">
+          <span class="apt-code">IAD</span>
+          <span class="apt-info"><span class="apt-city">Washington, DC</span><span class="apt-name">Washington Dulles International</span><span class="apt-loc">East Mezzanine · Main Terminal — departures level<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Florida -->
+    <div class="state-block" data-state="FL">
+      <div class="state-header">Florida</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="fll fort lauderdale florida">
+          <span class="apt-code">FLL</span>
+          <span class="apt-info"><span class="apt-city">Fort Lauderdale, FL</span><span class="apt-name">Fort Lauderdale-Hollywood International</span><span class="apt-loc">T1 · T2 · T3 (Gate F) · T4 — departures level<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="rsw fort myers florida">
+          <span class="apt-code">RSW</span>
+          <span class="apt-info"><span class="apt-city">Fort Myers, FL</span><span class="apt-name">Southwest Florida International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="pie clearwater st pete florida">
+          <span class="apt-code">PIE</span>
+          <span class="apt-info"><span class="apt-city">St. Pete-Clearwater, FL</span><span class="apt-name">St. Pete-Clearwater International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="mlb melbourne florida">
+          <span class="apt-code">MLB</span>
+          <span class="apt-info"><span class="apt-city">Melbourne, FL</span><span class="apt-name">Melbourne Orlando International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="mia miami florida">
+          <span class="apt-code">MIA</span>
+          <span class="apt-info"><span class="apt-city">Miami, FL</span><span class="apt-name">Miami International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="mco orlando florida">
+          <span class="apt-code">MCO</span>
+          <span class="apt-info"><span class="apt-city">Orlando, FL</span><span class="apt-name">Orlando International</span><span class="apt-loc">T-C (Gates 230–249) · A/B East (70–129) · A/B West (Gates 1–59)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="1" data-text="sfb sanford orlando florida">
+          <span class="apt-code">SFB</span>
+          <span class="apt-info"><span class="apt-city">Sanford, FL</span><span class="apt-name">Orlando Sanford International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="srq sarasota florida">
+          <span class="apt-code">SRQ</span>
+          <span class="apt-info"><span class="apt-city">Sarasota, FL</span><span class="apt-name">Sarasota Bradenton International</span><span class="apt-loc">T-B — Level 2, near arrivals area entrance</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="1" data-text="tpa tampa florida">
+          <span class="apt-code">TPA</span>
+          <span class="apt-info"><span class="apt-city">Tampa, FL</span><span class="apt-name">Tampa International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="pbi west palm beach florida">
+          <span class="apt-code">PBI</span>
+          <span class="apt-info"><span class="apt-city">West Palm Beach, FL</span><span class="apt-name">Palm Beach International</span><span class="apt-loc">T-A/B &amp; T-C — departures level, across from security</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Georgia -->
+    <div class="state-block" data-state="GA">
+      <div class="state-header">Georgia</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="atl atlanta georgia">
+          <span class="apt-code">ATL</span>
+          <span class="apt-info"><span class="apt-city">Atlanta, GA</span><span class="apt-name">Hartsfield-Jackson Atlanta International</span><span class="apt-loc">Domestic Terminal (North &amp; South checkpoints) · International Terminal<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="sav savannah georgia">
+          <span class="apt-code">SAV</span>
+          <span class="apt-info"><span class="apt-city">Savannah, GA</span><span class="apt-name">Savannah/Hilton Head International</span><span class="apt-loc">Main Terminal — Level 2, left of security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guam -->
+    <div class="state-block" data-state="GU">
+      <div class="state-header">Guam</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="gum guam">
+          <span class="apt-code">GUM</span>
+          <span class="apt-info"><span class="apt-city">Hagatna, GU</span><span class="apt-name">A.B. Won Pat International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hawaii -->
+    <div class="state-block" data-state="HI">
+      <div class="state-header">Hawaii</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="hnl honolulu hawaii">
+          <span class="apt-code">HNL</span>
+          <span class="apt-info"><span class="apt-city">Honolulu, HI</span><span class="apt-name">Daniel K. Inouye International</span><span class="apt-loc">T1 (Checkpoint 1B) · T2 (Checkpoint 3)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="ogg kahului maui hawaii">
+          <span class="apt-code">OGG</span>
+          <span class="apt-info"><span class="apt-city">Kahului (Maui), HI</span><span class="apt-name">Kahului Airport</span><span class="apt-loc">Main Terminal — near airline ticketing counters, security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Idaho -->
+    <div class="state-block" data-state="ID">
+      <div class="state-header">Idaho</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="boi boise idaho">
+          <span class="apt-code">BOI</span>
+          <span class="apt-info"><span class="apt-city">Boise, ID</span><span class="apt-name">Boise Airport</span><span class="apt-loc">Main Terminal — right side of PreCheck lane</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Illinois -->
+    <div class="state-block" data-state="IL">
+      <div class="state-header">Illinois</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="mdw chicago midway illinois">
+          <span class="apt-code">MDW</span>
+          <span class="apt-info"><span class="apt-city">Chicago, IL</span><span class="apt-name">Chicago Midway International</span><span class="apt-loc">Main Terminal — Mezzanine Level, near North security checkpoint bridge<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="ord chicago ohare illinois">
+          <span class="apt-code">ORD</span>
+          <span class="apt-info"><span class="apt-city">Chicago, IL</span><span class="apt-name">Chicago O'Hare International</span><span class="apt-loc">T1 (Checkpoint 3) · T2 · T5 — departures level<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indiana -->
+    <div class="state-block" data-state="IN">
+      <div class="state-header">Indiana</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="ind indianapolis indiana">
+          <span class="apt-code">IND</span>
+          <span class="apt-info"><span class="apt-city">Indianapolis, IN</span><span class="apt-name">Indianapolis International</span><span class="apt-loc">Main Terminal — departures level, front of security checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="sbn south bend indiana">
+          <span class="apt-code">SBN</span>
+          <span class="apt-info"><span class="apt-city">South Bend, IN</span><span class="apt-name">South Bend International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kentucky -->
+    <div class="state-block" data-state="KY">
+      <div class="state-header">Kentucky</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="sdf louisville kentucky">
+          <span class="apt-code">SDF</span>
+          <span class="apt-info"><span class="apt-city">Louisville, KY</span><span class="apt-name">Louisville Muhammad Ali International</span><span class="apt-loc">Main Terminal — Level 2, near American Airlines check-in</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Louisiana -->
+    <div class="state-block" data-state="LA">
+      <div class="state-header">Louisiana</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="msy new orleans louisiana">
+          <span class="apt-code">MSY</span>
+          <span class="apt-info"><span class="apt-city">New Orleans, LA</span><span class="apt-name">Louis Armstrong New Orleans International</span><span class="apt-loc">Main Terminal — 2nd floor, right of security checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maryland -->
+    <div class="state-block" data-state="MD">
+      <div class="state-header">Maryland</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="bwi baltimore maryland">
+          <span class="apt-code">BWI</span>
+          <span class="apt-info"><span class="apt-city">Baltimore, MD</span><span class="apt-name">Baltimore/Washington International Thurgood Marshall</span><span class="apt-loc">Checkpoints A, B, C, D/E — departures level<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Massachusetts -->
+    <div class="state-block" data-state="MA">
+      <div class="state-header">Massachusetts</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="bos boston massachusetts">
+          <span class="apt-code">BOS</span>
+          <span class="apt-info"><span class="apt-city">Boston, MA</span><span class="apt-name">Boston Logan International</span><span class="apt-loc">T-A · T-B · T-E — security checkpoint entrances<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Michigan -->
+    <div class="state-block" data-state="MI">
+      <div class="state-header">Michigan</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="dtw detroit michigan">
+          <span class="apt-code">DTW</span>
+          <span class="apt-info"><span class="apt-city">Detroit, MI</span><span class="apt-name">Detroit Metropolitan Wayne County</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="grr grand rapids michigan">
+          <span class="apt-code">GRR</span>
+          <span class="apt-info"><span class="apt-city">Grand Rapids, MI</span><span class="apt-name">Gerald R. Ford International</span><span class="apt-loc">Main Terminal — Level 1, near baggage claim</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Minnesota -->
+    <div class="state-block" data-state="MN">
+      <div class="state-header">Minnesota</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="msp minneapolis minnesota">
+          <span class="apt-code">MSP</span>
+          <span class="apt-info"><span class="apt-city">Minneapolis, MN</span><span class="apt-name">Minneapolis-Saint Paul International</span><span class="apt-loc">North Checkpoint (left of Door 1, near American) · South Checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Missouri -->
+    <div class="state-block" data-state="MO">
+      <div class="state-header">Missouri</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="mci kansas city missouri">
+          <span class="apt-code">MCI</span>
+          <span class="apt-info"><span class="apt-city">Kansas City, MO</span><span class="apt-name">Kansas City International</span><span class="apt-loc">North Checkpoint — departures level, near Southwest ticketing<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="stl st louis missouri">
+          <span class="apt-code">STL</span>
+          <span class="apt-info"><span class="apt-city">St. Louis, MO</span><span class="apt-name">St. Louis Lambert International</span><span class="apt-loc">T1 (checkpoints A &amp; C) · T2 (checkpoints E &amp; F)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nevada -->
+    <div class="state-block" data-state="NV">
+      <div class="state-header">Nevada</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="las las vegas nevada">
+          <span class="apt-code">LAS</span>
+          <span class="apt-info"><span class="apt-city">Las Vegas, NV</span><span class="apt-name">Harry Reid International</span><span class="apt-loc">T1 (A/B gates, C/D gates, C Annex) · T3 (D/E gates)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Jersey -->
+    <div class="state-block" data-state="NJ">
+      <div class="state-header">New Jersey</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="ewr newark new jersey">
+          <span class="apt-code">EWR</span>
+          <span class="apt-info"><span class="apt-city">Newark, NJ</span><span class="apt-name">Newark Liberty International</span><span class="apt-loc">T-A (departures, right of checkpoint) · T-B · T-C (Level 3, Door 2)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- New York -->
+    <div class="state-block" data-state="NY">
+      <div class="state-header">New York</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="buf buffalo new york">
+          <span class="apt-code">BUF</span>
+          <span class="apt-info"><span class="apt-city">Buffalo, NY</span><span class="apt-name">Buffalo Niagara International</span><span class="apt-loc">Main Terminal — departures level, front of security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="jfk new york new york">
+          <span class="apt-code">JFK</span>
+          <span class="apt-info"><span class="apt-city">New York, NY</span><span class="apt-name">John F. Kennedy International</span><span class="apt-loc">T4 — departures level, right of checkpoint near Row 1 (Delta Priority)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="lga laguardia new york">
+          <span class="apt-code">LGA</span>
+          <span class="apt-info"><span class="apt-city">New York, NY</span><span class="apt-name">LaGuardia</span><span class="apt-loc">T-B (Level 2, between Baggage Claim 4–5) · T-C (Level 3, front of security)</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="swf newburgh stewart new york">
+          <span class="apt-code">SWF</span>
+          <span class="apt-info"><span class="apt-city">Newburgh, NY</span><span class="apt-name">New York Stewart International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="hpn white plains westchester new york">
+          <span class="apt-code">HPN</span>
+          <span class="apt-info"><span class="apt-city">White Plains, NY</span><span class="apt-name">Westchester County Airport</span><span class="apt-loc">Main Terminal — ground floor, near baggage claim</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- North Carolina -->
+    <div class="state-block" data-state="NC">
+      <div class="state-header">North Carolina</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="1" data-text="clt charlotte north carolina">
+          <span class="apt-code">CLT</span>
+          <span class="apt-info"><span class="apt-city">Charlotte, NC</span><span class="apt-name">Charlotte Douglas International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="rdu raleigh durham north carolina">
+          <span class="apt-code">RDU</span>
+          <span class="apt-info"><span class="apt-city">Raleigh-Durham, NC</span><span class="apt-name">Raleigh-Durham International</span><span class="apt-loc">T1 · T2 (across from Delta ticketing)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ohio -->
+    <div class="state-block" data-state="OH">
+      <div class="state-header">Ohio</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="cle cleveland ohio">
+          <span class="apt-code">CLE</span>
+          <span class="apt-info"><span class="apt-city">Cleveland, OH</span><span class="apt-name">Cleveland Hopkins International</span><span class="apt-loc">Central Checkpoint (departures between Door 3–4) · South Checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="cmh columbus ohio">
+          <span class="apt-code">CMH</span>
+          <span class="apt-info"><span class="apt-city">Columbus, OH</span><span class="apt-name">John Glenn Columbus International</span><span class="apt-loc">Checkpoints A, B (center of landside terminal), C</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="cvg cincinnati ohio">
+          <span class="apt-code">CVG</span>
+          <span class="apt-info"><span class="apt-city">Cincinnati, OH</span><span class="apt-name">Cincinnati/Northern Kentucky International</span><span class="apt-loc">Main Terminal — departures level, near security checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="tol toledo ohio">
+          <span class="apt-code">TOL</span>
+          <span class="apt-info"><span class="apt-city">Toledo, OH</span><span class="apt-name">Toledo Express</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Oklahoma -->
+    <div class="state-block" data-state="OK">
+      <div class="state-header">Oklahoma</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="okc oklahoma city oklahoma">
+          <span class="apt-code">OKC</span>
+          <span class="apt-info"><span class="apt-city">Oklahoma City, OK</span><span class="apt-name">Will Rogers World</span><span class="apt-loc">T1 Main Checkpoint — departures level, next to Delta ticketing</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="tul tulsa oklahoma">
+          <span class="apt-code">TUL</span>
+          <span class="apt-info"><span class="apt-city">Tulsa, OK</span><span class="apt-name">Tulsa International</span><span class="apt-loc">Main Terminal — Schaub Hall, security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Oregon -->
+    <div class="state-block" data-state="OR">
+      <div class="state-header">Oregon</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="pdx portland oregon">
+          <span class="apt-code">PDX</span>
+          <span class="apt-info"><span class="apt-city">Portland, OR</span><span class="apt-name">Portland International</span><span class="apt-loc">North Security Checkpoint · South Security Checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pennsylvania -->
+    <div class="state-block" data-state="PA">
+      <div class="state-header">Pennsylvania</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="1" data-text="phl philadelphia pennsylvania">
+          <span class="apt-code">PHL</span>
+          <span class="apt-info"><span class="apt-city">Philadelphia, PA</span><span class="apt-name">Philadelphia International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="pit pittsburgh pennsylvania">
+          <span class="apt-code">PIT</span>
+          <span class="apt-info"><span class="apt-city">Pittsburgh, PA</span><span class="apt-name">Pittsburgh International</span><span class="apt-loc">Landside Terminal — Floor 2, near escalator from ticketing<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Puerto Rico -->
+    <div class="state-block" data-state="PR">
+      <div class="state-header">Puerto Rico</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sju san juan puerto rico">
+          <span class="apt-code">SJU</span>
+          <span class="apt-info"><span class="apt-city">San Juan, PR</span><span class="apt-name">Luis Muñoz Marín International</span><span class="apt-loc">T-A · T-B/C (departures level, near Door 1 &amp; 2)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rhode Island -->
+    <div class="state-block" data-state="RI">
+      <div class="state-header">Rhode Island</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="pvd providence rhode island">
+          <span class="apt-code">PVD</span>
+          <span class="apt-info"><span class="apt-city">Providence, RI</span><span class="apt-name">Rhode Island T.F. Green International</span><span class="apt-loc">Main Terminal — Level 2 departures, front of security checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- South Carolina -->
+    <div class="state-block" data-state="SC">
+      <div class="state-header">South Carolina</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="chs charleston south carolina">
+          <span class="apt-code">CHS</span>
+          <span class="apt-info"><span class="apt-city">Charleston, SC</span><span class="apt-name">Charleston International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="gsp greenville spartanburg south carolina">
+          <span class="apt-code">GSP</span>
+          <span class="apt-info"><span class="apt-city">Greenville-Spartanburg, SC</span><span class="apt-name">Greenville-Spartanburg International</span><span class="apt-loc">T1 Main Checkpoint — right of checkpoint, near escalators</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tennessee -->
+    <div class="state-block" data-state="TN">
+      <div class="state-header">Tennessee</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="0" data-text="bna nashville tennessee">
+          <span class="apt-code">BNA</span>
+          <span class="apt-info"><span class="apt-city">Nashville, TN</span><span class="apt-name">Nashville International</span><span class="apt-loc">T1 Central/North Checkpoint — near Delta and United check-in<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Texas -->
+    <div class="state-block" data-state="TX">
+      <div class="state-header">Texas</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="aus austin texas">
+          <span class="apt-code">AUS</span>
+          <span class="apt-info"><span class="apt-city">Austin, TX</span><span class="apt-name">Austin-Bergstrom International</span><span class="apt-loc">Checkpoint 1 (left of PreCheck) · Checkpoint 2<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="0" data-clear="1" data-eoa="0" data-text="dal dallas love field texas">
+          <span class="apt-code">DAL</span>
+          <span class="apt-info"><span class="apt-city">Dallas, TX</span><span class="apt-name">Dallas Love Field</span><span class="apt-loc">T1 — west side of security checkpoint</span></span>
+          <span class="badge-wrap"><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="dfw dallas fort worth texas">
+          <span class="apt-code">DFW</span>
+          <span class="apt-info"><span class="apt-city">Dallas/Fort Worth, TX</span><span class="apt-name">Dallas/Fort Worth International</span><span class="apt-loc">T-E — Level 1, Door E20 (checkpoints E-8, E-16, E-18)<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="hou houston hobby texas">
+          <span class="apt-code">HOU</span>
+          <span class="apt-info"><span class="apt-city">Houston, TX</span><span class="apt-name">William P. Hobby</span><span class="apt-loc">Main Terminal — front of main security checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="iah houston intercontinental texas">
+          <span class="apt-code">IAH</span>
+          <span class="apt-info"><span class="apt-city">Houston, TX</span><span class="apt-name">George Bush Intercontinental</span><span class="apt-loc">T-A North (Level 2, between Southwest &amp; Delta) · T-A South · T-C (Level 2, United) · T-E<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sat san antonio texas">
+          <span class="apt-code">SAT</span>
+          <span class="apt-info"><span class="apt-city">San Antonio, TX</span><span class="apt-name">San Antonio International</span><span class="apt-loc">T-A (near security checkpoint) · T-B<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Utah -->
+    <div class="state-block" data-state="UT">
+      <div class="state-header">Utah</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="slc salt lake city utah">
+          <span class="apt-code">SLC</span>
+          <span class="apt-info"><span class="apt-city">Salt Lake City, UT</span><span class="apt-name">Salt Lake City International</span><span class="apt-loc">Main Terminal — left side of main security checkpoint<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vermont -->
+    <div class="state-block" data-state="VT">
+      <div class="state-header">Vermont</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="btv burlington vermont">
+          <span class="apt-code">BTV</span>
+          <span class="apt-info"><span class="apt-city">Burlington, VT</span><span class="apt-name">Burlington International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Washington -->
+    <div class="state-block" data-state="WA">
+      <div class="state-header">Washington</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="sea seattle washington">
+          <span class="apt-code">SEA</span>
+          <span class="apt-info"><span class="apt-city">Seattle, WA</span><span class="apt-name">Seattle-Tacoma International</span><span class="apt-loc">Checkpoint 1 · Checkpoint 6<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wisconsin -->
+    <div class="state-block" data-state="WI">
+      <div class="state-header">Wisconsin</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="1" data-eoa="1" data-text="mke milwaukee wisconsin">
+          <span class="apt-code">MKE</span>
+          <span class="apt-info"><span class="apt-city">Milwaukee, WI</span><span class="apt-name">Milwaukee Mitchell International</span><span class="apt-loc">Checkpoints C &amp; D<br>Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-clear">CLEAR</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Northern Mariana Islands -->
+    <div class="state-block" data-state="MP">
+      <div class="state-header">Northern Mariana Islands</div>
+      <div class="apt-list">
+        <div class="apt-row" data-ge="1" data-clear="0" data-eoa="0" data-text="spn saipan northern mariana islands">
+          <span class="apt-code">SPN</span>
+          <span class="apt-info"><span class="apt-city">Saipan, MP</span><span class="apt-name">Saipan International</span><span class="apt-loc">Arrivals level — follow signs to US Customs / Federal Inspection, before CBP officer booths</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span></span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /airport-list -->
+
+  <div id="no-results" class="empty-state">No airports match your search.</div>
+
+  <!-- International Preclearance -->
+  <div id="intl-section">
+    <div class="section-divider">🌐 International Preclearance — Global Entry Kiosks</div>
+    <div class="intl-note">
+      These airports have US Customs preclearance facilities where travelers clear US customs before departure.
+      Global Entry kiosks are available at the preclearance area — use them the same way as in the US.
+      Enrollment on Arrival is available at all preclearance locations listed below.
+    </div>
+
+    <div class="country-block">
+      <div class="country-header"><span class="country-name">Aruba</span></div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">AUA</span>
+          <span class="apt-info"><span class="apt-city">Oranjestad</span><span class="apt-name">Queen Beatrix International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header"><span class="country-name">Bahamas</span></div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">NAS</span>
+          <span class="apt-info"><span class="apt-city">Nassau</span><span class="apt-name">Lynden Pindling International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header"><span class="country-name">Bermuda</span></div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">BDA</span>
+          <span class="apt-info"><span class="apt-city">Hamilton</span><span class="apt-name">L.F. Wade International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header"><span class="country-name">Canada</span></div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">YYC</span>
+          <span class="apt-info"><span class="apt-city">Calgary, AB</span><span class="apt-name">Calgary International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YEG</span>
+          <span class="apt-info"><span class="apt-city">Edmonton, AB</span><span class="apt-name">Edmonton International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YHZ</span>
+          <span class="apt-info"><span class="apt-city">Halifax, NS</span><span class="apt-name">Halifax Stanfield International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YUL</span>
+          <span class="apt-info"><span class="apt-city">Montreal, QC</span><span class="apt-name">Montréal-Trudeau International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YOW</span>
+          <span class="apt-info"><span class="apt-city">Ottawa, ON</span><span class="apt-name">Ottawa Macdonald-Cartier International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YYZ</span>
+          <span class="apt-info"><span class="apt-city">Toronto, ON</span><span class="apt-name">Toronto Pearson International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YVR</span>
+          <span class="apt-info"><span class="apt-city">Vancouver, BC</span><span class="apt-name">Vancouver International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">YWG</span>
+          <span class="apt-info"><span class="apt-city">Winnipeg, MB</span><span class="apt-name">Winnipeg Richardson International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header"><span class="country-name">Ireland</span></div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">DUB</span>
+          <span class="apt-info"><span class="apt-city">Dublin</span><span class="apt-name">Dublin Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+        <div class="apt-row">
+          <span class="apt-code">SNN</span>
+          <span class="apt-info"><span class="apt-city">Shannon</span><span class="apt-name">Shannon Airport</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="country-block">
+      <div class="country-header"><span class="country-name">United Arab Emirates</span></div>
+      <div class="apt-list">
+        <div class="apt-row">
+          <span class="apt-code">AUH</span>
+          <span class="apt-info"><span class="apt-city">Abu Dhabi</span><span class="apt-name">Zayed International</span></span>
+          <span class="badge-wrap"><span class="badge badge-ge">Global Entry</span><span class="badge badge-eoa">Enrollment on Arrival</span><span class="badge badge-pre">Preclearance</span></span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /intl-section -->
+
+  <!-- Program explainer cards — moved to bottom -->
+  <div class="section-divider" style="margin-top:36px;">About These Programs</div>
+  <div class="programs-grid">
+
+    <div class="program-card">
+      <div class="program-card-head">
+        <span class="program-icon">🛂</span>
+        <span class="program-name">Global Entry</span>
+      </div>
+      <div class="program-body">
+        <div class="program-row">
+          <span class="program-row-label">What</span>
+          <span class="program-row-val">Expedited US Customs clearance when returning from international trips. Includes TSA PreCheck.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Where</span>
+          <span class="program-row-val">After landing, follow signs to <strong>US Customs / Federal Inspection</strong> — usually the arrivals level. Look for the Global Entry kiosk bank before the CBP officer booths. Scan passport, fingerprints, done.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Enroll</span>
+          <span class="program-row-val">Apply online at ttp.cbp.dhs.gov, then schedule an interview at a CBP enrollment center — or use Enrollment on Arrival (EoA) after your next international flight at a participating airport.</span>
+        </div>
+        <a class="program-link" href="https://www.cbp.gov/travel/trusted-traveler-programs/global-entry" target="_blank" rel="noopener">cbp.gov/global-entry</a>
+      </div>
+    </div>
+
+    <div class="program-card">
+      <div class="program-card-head">
+        <span class="program-icon">🔵</span>
+        <span class="program-name">CLEAR</span>
+      </div>
+      <div class="program-body">
+        <div class="program-row">
+          <span class="program-row-label">What</span>
+          <span class="program-row-val">Biometric identity check at TSA security — replaces showing your ID. Doesn't skip the X-ray belt.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Where</span>
+          <span class="program-row-val">At the <strong>entrance to TSA security lanes</strong> — look for the blue CLEAR podium/kiosk near the ID-check area. A CLEAR ambassador scans your eyes or fingerprints, then walks you to the front of the PreCheck or regular X-ray lane.</span>
+        </div>
+        <div class="program-row">
+          <span class="program-row-label">Enroll</span>
+          <span class="program-row-val">Sign up online or walk up to any CLEAR location. Biometrics are captured on-site in under 5 minutes — no appointment needed.</span>
+        </div>
+        <a class="program-link" href="https://www.clearme.com/" target="_blank" rel="noopener">clearme.com</a>
+      </div>
+    </div>
+
+  </div>
+
+
+</div><!-- /wrap -->
+
+<div class="also-strip" id="also-on-this-site">
+  <div class="also-strip-head">Also on this site</div>
+  <div class="also-links">
+    <a class="also-on-this-site-pill" href="Visas.html">🪪 Visas</a>
+    <a class="also-on-this-site-pill" href="Entry-Requirements.html">🪪 Entry requirements</a>
+    <a class="also-on-this-site-pill" href="Digital-Nomad-Visas.html">🪪 Digital nomad visas</a>
+    <a class="also-on-this-site-pill" href="Visa-Processing-Times.html">🪪 Visa processing times</a>
+    <a class="also-on-this-site-pill" href="Passport.html">📘 Passport</a>
+    <a class="also-on-this-site-pill" href="Airport-Connection-Times.html">✈️ Connection times</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var pills   = document.querySelectorAll('.fpill');
+  var rows    = document.querySelectorAll('#airport-list .apt-row');
+  var blocks  = document.querySelectorAll('#airport-list .state-block');
+  var search  = document.getElementById('tt-search');
+  var noRes   = document.getElementById('no-results');
+  var active  = 'all';
+
+  function applyFilters() {
+    var q = search.value.trim().toLowerCase();
+    var visible = 0;
+
+    rows.forEach(function (r) {
+      var ge   = r.dataset.ge  === '1';
+      var clr  = r.dataset.clear === '1';
+      var eoa  = r.dataset.eoa === '1';
+      var txt  = r.dataset.text || '';
+
+      var matchFilter =
+        active === 'all'  ||
+        (active === 'ge'   && ge)   ||
+        (active === 'clear' && clr) ||
+        (active === 'both' && ge && clr) ||
+        (active === 'eoa'  && eoa);
+
+      var matchSearch = !q || txt.indexOf(q) !== -1 ||
+        r.textContent.toLowerCase().indexOf(q) !== -1;
+
+      var show = matchFilter && matchSearch;
+      r.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+
+    /* hide state headers when all their rows are hidden */
+    blocks.forEach(function (b) {
+      var anyVisible = false;
+      b.querySelectorAll('.apt-row').forEach(function (r) {
+        if (!r.classList.contains('hidden')) anyVisible = true;
+      });
+      b.classList.toggle('hidden', !anyVisible);
+    });
+
+    /* International preclearance section: the GE/CLEAR/EoA pills are US-airport
+       programs and don't apply to preclearance, so pills leave it alone — but the
+       SEARCH filters it too (by row text; these rows carry no data-text). */
+    var intl = document.getElementById('intl-section');
+    if (intl) {
+      var intlVisible = 0;
+      intl.querySelectorAll('.apt-row').forEach(function (r) {
+        var show = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+        r.classList.toggle('hidden', !show);
+        if (show) intlVisible++;
+      });
+      intl.querySelectorAll('.country-block').forEach(function (cb) {
+        var any = false;
+        cb.querySelectorAll('.apt-row').forEach(function (r) { if (!r.classList.contains('hidden')) any = true; });
+        cb.style.display = any ? '' : 'none';
+      });
+      intl.style.display = (q && intlVisible === 0) ? 'none' : '';
+      visible += intlVisible;
+    }
+
+    noRes.style.display = visible === 0 ? '' : 'none';
+  }
+
+  pills.forEach(function (p) {
+    p.addEventListener('click', function () {
+      pills.forEach(function (x) { x.classList.remove('active'); });
+      p.classList.add('active');
+      active = p.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  search.addEventListener('input', applyFilters);
+})();
+</script>
+
+<script src="../assets/search-autocomplete.js?v=8"></script>
+<script>
+(function () {
+  if (!window.TVESearch) return;
+  var input = document.getElementById('tt-search');
+  if (!input) return;
+  var items = [];
+  document.querySelectorAll('#airport-list .apt-row').forEach(function (r) {
+    var cityEl = r.querySelector('.apt-city');
+    if (!cityEl) return;
+    var codeEl = r.querySelector('.apt-code');
+    items.push({
+      name: cityEl.textContent.trim(),
+      sub: codeEl ? codeEl.textContent.trim() : '',
+      text: r.getAttribute('data-text') || ''
+    });
+  });
+  TVESearch.attach(input, { items: items });
+}());
+</script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search).get('q');
+  if (!q) return;
+  var el = document.getElementById('tt-search');
+  if (!el) return;
+  el.value = q;
+  el.dispatchEvent(new Event('input'));
+}());
+</script>
+</body>
+</html>

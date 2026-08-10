@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Underline prose links in reading-col</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660;
+    --accent: #c8a44a; --rust: #b85c2a; --border: #dedad4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Roboto', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; padding: 24px; }
+  h1 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
+  .panel h2 span { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+  .before-label { background: #fde8e2; color: #b85c2a; }
+  .after-label { background: #e2f3e6; color: #2a7a3b; }
+
+  .reading-block { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; max-width: 360px; }
+  .reading-block p { font-size: 14px; line-height: 1.7; color: var(--text); }
+
+  /* BEFORE: global no-underline */
+  .before-zone a { color: #8a6c1a; text-decoration: none; }
+  .before-zone a:hover { text-decoration: underline; }
+
+  /* AFTER: prose links underlined */
+  .after-zone a { color: #8a6c1a; text-decoration: none; }
+  .after-zone a:hover { text-decoration: underline; }
+  .after-zone .reading-col a:not([class]) {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--accent);
+  }
+
+  .note { font-size: 12px; color: var(--muted); margin-top: 10px; font-style: italic; }
+
+  .fix { margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+  .fix h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .fix code { display: block; font-size: 11px; background: #f0ede8; padding: 10px 12px; border-radius: 4px; color: var(--rust); white-space: pre; line-height: 1.7; }
+</style>
+</head>
+<body>
+<h1>Underline prose links inside <code>.reading-col</code></h1>
+<p class="meta">Finding logged 2026-08-08 · Target: <code>web-travel-style.css</code> after line 323 · Effort: S</p>
+
+<div class="panels">
+  <div class="panel">
+    <h2><span class="before-label">BEFORE</span> All links undecorated — invisible in prose</h2>
+    <div class="before-zone">
+      <div class="reading-block reading-col">
+        <p>
+          Before travelling, check the <a href="#">FCDO travel advisory</a> for your destination.
+          Comprehensive <a href="#">travel insurance</a> is essential — ensure it covers
+          medical evacuation, since local hospitals vary widely in quality.
+          Most travellers also benefit from registering with their
+          <a href="#">embassy's traveller registration service</a> before departure.
+        </p>
+      </div>
+    </div>
+    <p class="note">The three links are coloured gold but otherwise invisible unless the user happens to hover. Readers scanning the paragraph cannot identify which words are clickable.</p>
+  </div>
+
+  <div class="panel">
+    <h2><span class="after-label">AFTER</span> Gold underline on raw prose anchors only</h2>
+    <div class="after-zone">
+      <div class="reading-block reading-col">
+        <p>
+          Before travelling, check the <a href="#">FCDO travel advisory</a> for your destination.
+          Comprehensive <a href="#">travel insurance</a> is essential — ensure it covers
+          medical evacuation, since local hospitals vary widely in quality.
+          Most travellers also benefit from registering with their
+          <a href="#">embassy's traveller registration service</a> before departure.
+        </p>
+      </div>
+    </div>
+    <p class="note">Links are now scannable without hovering. The gold underline matches <code>var(--accent)</code> and <code>:not([class])</code> ensures pills and icon links are unaffected.</p>
+  </div>
+</div>
+
+<div class="fix">
+  <h3>Fix — one rule added after line 323 in <code>web-travel-style.css</code></h3>
+  <code>/* existing */
+a { color: #8a6c1a; text-decoration: none; }
+
+/* ADD — prose links inside reading columns only */
+.reading-col a:not([class]) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--accent);
+}</code>
+</div>
+</body>
+</html>

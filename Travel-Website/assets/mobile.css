@@ -1,0 +1,638 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   mobile.css — UNIVERSAL MOBILE BASELINE  (served asset, lives in Travel Website/assets/)
+   ───────────────────────────────────────────────────────────────────────────
+   ONE line fixes mobile on any page. Add to <head> AFTER the page's own
+   stylesheet/<style> so these guards win:
+
+     depth                          link
+     index.html (site root)         <link rel="stylesheet" href="assets/mobile.css">
+     Guides/Guides-Index.html       <link rel="stylesheet" href="../assets/mobile.css">
+     Guides/{City}/guide.html       <link rel="stylesheet" href="../../assets/mobile.css">
+     Trip-Essentials/X.html         <link rel="stylesheet" href="../assets/mobile.css">
+     Trip-Essentials/Maps/X.html    <link rel="stylesheet" href="../../assets/mobile.css">
+
+   `Brain/scripts/mobile_check.py --apply` injects the correct line automatically.
+
+   DESIGN RULES
+   - Purely DEFENSIVE and ADDITIVE. Nothing here changes desktop layout.
+   - The universal guards (box-sizing, max-width:100% on media) are safe at any
+     width. Everything layout-shifting is inside @media (max-width:600px) so it
+     only fires on phones.
+   - 600px breakpoint — matches guide-style.css. One breakpoint across the site.
+   - This is the single source of truth for cross-page mobile behavior. Edit
+     here; every page that links it updates at once. (created 2026-06-12)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 0. Text-size-adjust — prevent iOS/Android landscape auto-inflation. ── */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* ── 1. Universal box model — width includes padding/border everywhere.
+      The #1 cause of "my padding pushes the box past the screen edge". ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── 2. Media can never be wider than its container. Stops images, video,
+      inline SVG maps, iframes, and embeds from forcing a horizontal scrollbar. ── */
+img, svg, video, canvas, iframe, embed, object {
+  max-width: 100%;
+  height: auto;
+}
+/* SVG maps set explicit height via viewBox/JS — don't force height:auto on those. */
+svg[viewBox] { height: revert; }
+
+/* ── 3. Long unbreakable strings (URLs, long place names) wrap instead of
+      stretching the page. ── */
+a, code, pre { overflow-wrap: break-word; word-break: break-word; }
+pre { white-space: pre-wrap; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHONE ONLY — everything below fires at ≤600px and is invisible on desktop.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* 4. HARD STOP on horizontal scroll. Belt-and-suspenders: even if one
+        element misbehaves, the page itself never scrolls sideways. */
+  body { max-width: 100%; overscroll-behavior-x: contain; }
+
+  /* 5. Wide fixed-width wrappers (the common 940px / 760px / 600px content
+        rails used across the essentials pages) collapse to the viewport with
+        comfortable gutters instead of overflowing. Targets the usual wrapper
+        class names; harmless if a page doesn't use them. */
+  .wrap, .nav-inner, .container, .content, .page, .main, .header,
+  .card, .panel, .section, .box {
+    max-width: 100% !important;
+  }
+  /* .container REMOVED from this list 2026-07-28 — it was overriding guide-style.css's
+     14px .container gutter with 16px !important on the 23 legacy guides that still load
+     mobile.css (Cairo, Maceió, Bergen, …), so their hotel banner + weather strip + Trip
+     Overview rendered 4px narrower than the other 207 guides. .container is guide-only;
+     non-guide pages use .wrap / .page / .content instead, which still get 16px here.
+     Guarded by brain_check.check_mobile_css_container_gutter — do NOT re-add. */
+  .wrap, .nav-inner, .page, .content, .content-wrap, .main, main, .cf-wrap, .agg-inner, .jump-nav, .index-section { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* 6. Tables — the worst mobile offender. Let the table scroll inside its own
+        track rather than blowing out the whole page. Pair with an optional
+        .table-scroll wrapper; this also catches bare <table>s. */
+  table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  /* index-table uses table-layout:fixed + colgroup — display:block breaks column widths */
+  table.index-table { display: table; }
+  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* 7. Tap targets — links/buttons/inputs get a comfortable hit area so the
+        page is actually usable with a thumb. */
+  a, button, select, textarea, .btn, [role="button"] {
+    min-height: 40px;
+  }
+  /* Checkboxes and radio buttons must NOT inherit the 40px tap target — they are
+     always paired with a <label> that provides the hit area. Forcing min-height
+     on the input itself stretches it into a tall rectangle. */
+  input[type="checkbox"], input[type="radio"] { min-height: auto !important; }
+  button, input, select, textarea { font-size: 16px !important; } /* 16px stops iOS auto-zoom on focus; !important beats per-page class selectors (.filter-input etc.) */
+
+  /* 8. Multi-column flex/grid rows stack vertically. Only applies to elements
+        explicitly opted-in with .stack-mobile, so it never surprises a layout. */
+  .stack-mobile { flex-direction: column !important; }
+  .stack-mobile > * { width: 100% !important; }
+
+  /* 9. Comfortable reading defaults if the page set nothing. */
+  body { line-height: 1.65; }
+
+  /* 10. Banner — underline style on mobile, matching desktop. Gradient ON THE FONT
+     (owner rule 2026-07-29, final): no box, no button — same as desktop. */
+  .header, .page-header, .site-header {
+    background: none !important;
+    padding: 8px 0 2px !important;
+    min-height: auto !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    border-image: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) 1 !important;
+    border-radius: 0 !important;
+    margin: 0 0 16px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+  }
+  .header h1, .page-header h1, .site-header h1, .site-title {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #3d3a32 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+  .header p, .page-header p, .header-desc { display: none !important; }
+  .header-label, .header-eyebrow { display: none !important; }
+
+  /* Country/state group header — 14px on mobile; gradient on the font (owner
+     rule 2026-07-29, final). */
+  .country-name { font-size: 14px; }
+
+  /* Source link (travel.state.gov ↗, etc.) — drop to the bottom of the banner,
+     sitting right above the underline like desktop (not riding up on the title
+     baseline). */
+  .header .src-link, .page-header .src-link,
+  .header .visa-src-link, .page-header .visa-src-link {
+    align-self: flex-end !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+  }
+
+  /* Non-guide updated stamp — match .wrap mobile gutter (14px). */
+  body > .title-updated { padding-left: 14px !important; }
+  /* Also-strip — match .wrap mobile gutter (14px). Desktop sets 32px. */
+  .also-strip { padding-left: 14px !important; padding-right: 14px !important; }
+
+  /* Updated stamp — snug it against the bar underline on mobile. */
+  .updated-stamp { margin: -8px 0 12px !important; }
+  /* On Best-Of pages toolbar.js moves the stamp inside .page-header (flex row);
+     the negative margin doesn't apply there — reset it so it doesn't overlap the arrow row. */
+  .page-header .updated-stamp { margin: 0 !important; }
+
+  /* Legend containers keep their layout on mobile; per-page inline @media
+     handles pill sizing (Form B grid on Safety-Guide/Tap-Water, single-
+     column column on Lounges, etc.). The prior blanket rule that stripped
+     .legend .pill / .legend .badge bg + border on mobile was retired
+     2026-07-28 — it wiped the new family-pill standard (Formatting.html#src-pills
+     § Behavior 3) on all 5 pages using .legend. */
+  .legend {
+    justify-content: flex-start !important;
+    gap: 4px 12px !important;
+  }
+
+  /* Small utility buttons (reset/print in Packing) — exempt from 40px tap target,
+     the surrounding row provides enough touch area. */
+  button.reset-btn, button.print-btn,
+  .reset-btn, .print-btn {
+    min-height: auto !important;
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+  }
+
+  /* FLOATING CONTROL FAMILY — one size on every page (owner rule 2026-08-09).
+     Eight controls float over the foot of the viewport, and each declares its
+     own fixed height at its own source: the back pills (#tve-back-to-guide,
+     #tve-back-to-byg, #tve-map-back), the history back pill (#tve-nav-back),
+     the two jump pills (.day-jump-btn, #tve-bo-jump) and the World-Map Visited
+     toggle (#visited-pill-mobile) at 28px, the round scroll-top FAB
+     (.tve-scroll-top) at 30px. The family ran at 34px / 36px until the owner
+     cut it a size on 2026-08-09 ("all these pills are too big"); the same call
+     removed the ninth control, the Forward history pill (#tve-nav-fwd).
+     `min-height` ALWAYS beats `height` in the box model regardless of
+     specificity — an ID selector does not save you — so § 7's blanket 40px tap
+     target silently overrode every one of them on each page that loads
+     mobile.css. Guides do NOT load mobile.css and all 104 non-guide pages do,
+     which is exactly why the size tracked the page: the back pill rendered 34px
+     inside a guide and 40px on Trip-Essentials / Best-Of / maps. It also
+     stretched the 36px round FAB into a 36×40 oval, and it hid a real drift —
+     #tve-bo-jump had been authored at 36px against the family's 34px, and
+     #visited-pill-mobile carried no height at all, both invisible while the
+     floor flattened everything to 40 (corrected in the same pass).
+     These controls float clear of page content and are deliberately quieter
+     than a primary button, so the tap target stays comfortable without the
+     override.
+     Do NOT add a height here — each control owns its own; this rule only
+     removes the floor. Change a height at its source (toolbar.js for the five
+     injected pills, guide-style.css + web-travel-style.css for .day-jump-btn /
+     .tve-scroll-top, World-Map.html's own inline style for
+     #visited-pill-mobile) and keep the guide row on its shared optical line
+     20px above the viewport floor. Locked by
+     brain_check.check_mobile_floating_controls_tap_target_exempt
+     (Cleanliness rule 738) — restoring the exemption is the fix, never raising
+     a control to 40px. */
+  #tve-back-to-guide, #tve-back-to-byg, #tve-map-back, #tve-nav-back,
+  .day-jump-btn, #tve-bo-jump, #visited-pill-mobile, .tve-scroll-top {
+    min-height: auto !important;
+  }
+  /* Same story one property over: § 7 also sets `button, input, select,
+     textarea { font-size: 16px !important }` to stop iOS zooming a focused
+     text INPUT — which a floating pill is not. It reached only the two <button>
+     members of the family (#tve-bo-jump, #visited-pill-mobile); the back pills
+     are <a> and were never caught, so the Visited toggle rendered 16px text
+     beside a 12px "‹ All Guides" pill on the same World-Map row. Uncovered when
+     the family dropped to 28px on 2026-08-09 and the oversized text no longer
+     had the height to hide in. .tve-scroll-top is a <button> too but its arrow
+     is a fixed 13×13 SVG, so font-size never reaches it. */
+  #tve-bo-jump, #visited-pill-mobile {
+    font-size: 12px !important;
+  }
+
+  /* Inline guide/nav link chips — small decorative links that should NOT stretch
+     to 40px. They're in scrollable strips or inside cards where the parent
+     provides the tap area. */
+  /* Back-guides pills + weather strip + nav pills injected by toolbar.js —
+     inline heights (28–57px); 40px tap-target bloats them on the 23 legacy
+     guides that load mobile.css. */
+  #tve-back-guides a, #tve-back-guides button,
+  #tve-wx-strip,
+  .also-on-this-site-pill, .nearby-guide-pill,
+  .guide-link, .nav-link, .essentials-link, .overview-extra-link,
+  .best-of-related a, .best-of-links a, .safari-links a, .luxe-links a,
+  .overview-day, .ps-been-cities a,
+  /* Stats-page rank/link cells — each row is a ~30px flex row on desktop; the
+     40px tap-target rule stretches the anchor and bloats the row to ~52px on
+     mobile, opening a huge gap between numbers. The tap area is the whole
+     rank row (padding + border-bottom is >36px combined). Registered
+     selectors: Destination-Records .rank-city, Travel-Stats .bucket-name,
+     Stats-Across-US .city-link. Locked by validate_stats_link_format.py + brain_check
+     check_stats_link_format (2026-07-28). Memory: feedback_stats_link_regular_plus_arrow. */
+  .rank-city, .bucket-name, .city-link {
+    min-height: auto !important;
+  }
+
+  /* Segmented control buttons (Browse-by: Country/Region/Flight time) — compact
+     by design; the enclosing panel provides touch context. */
+  .seg-btn, .stab, .disc-btn { min-height: auto !important; font-size: 12px !important; }
+
+  /* 10b. FILTER-PILL STANDARD — Form A: the compact rounded chip for short pill
+     rows (Before You Go, SIM, City Transit, Delta, Visas, etc.). This is the
+     DEFAULT. Full filter PANELS and section-nav grids instead use Form B — the
+     full-width glued-grid tile (46px / 12px / border-radius 0) — set per-page in
+     guides-index-style.css (.fchip/.tchip/.lchip), European-Train-Guide.html
+     (.controls .filter-btn), and the .stats-nav/.jump-nav grid rule below. Both
+     forms are documented in Formatting.html#sec-colors § 17 + Formatting.html#src-pills.
+     Filter pills are buttons/links, so they inherited the 16px iOS-zoom guard +
+     40px tap target above — that bloated them and made each page a different
+     size. Pills don't trigger iOS zoom, so reset to the shared chip size and
+     center their rows. */
+  .pill, .filter-btn, .filter-pill, .tier-pill, .fchip, .mchip, .tchip, .stab, .stats-nav a {
+    font-size: 13px !important;
+    min-height: auto !important;
+    padding: 12px 14px !important;
+    border-radius: 6px !important;
+    line-height: 1 !important;
+  }
+  /* ── Horizontal-scroll filter strip — .best-of-region-filters wraps to multiple
+     lines on mobile (web-travel-style.css: flex-wrap:wrap). Override to a single
+     scrollable row so region chips stay one line and vertical space is preserved.
+     scrollbar-width:none + ::-webkit-scrollbar hide the track on all browsers. */
+  .best-of-region-filters {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    justify-content: flex-start !important;
+    padding-bottom: 2px !important;
+  }
+  .best-of-region-filters::-webkit-scrollbar { display: none; }
+
+  /* Pill rows + controls blocks — centered, GAP:0 so every pill row on
+     mobile follows the Form B glued-tile pattern (owner rule 2026-07-28;
+     was 8px until 2026-07-28, which created visible spacing between
+     .pills / .tier-legend siblings even after per-page overrides tried
+     to set gap:0 — this shared !important won because it loads last). */
+  .pills, .tier-legend, .stats-nav, .filter-bar, .filter-row, .controls {
+    justify-content: center !important;
+    gap: 0 !important;
+  }
+  /* Section-nav rows (stats-page .stats-nav + jump-nav pages like Destination
+     Records / European Train Guide) — uniform 3-across glued grid, matching the
+     guides index filter panels. Scoped to those nav classes; loads after each
+     page's inline styles, so no builder edit is needed and it's rebuild-safe. */
+  /* Region/sort filter grids (Time Zones, Tipping Guide, etc.) — glued Form B tiles.
+     #region-pills has 6 items → 3-across; #sort-pills has 2 → 2-across. */
+  #region-pills {
+    display: grid !important; grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important; width: 100% !important;
+  }
+  #sort-pills {
+    display: grid !important; grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0 !important; width: 100% !important;
+  }
+  #region-pills .pill, #sort-pills .pill {
+    height: 46px !important; border-radius: 0 !important;
+    font-size: 12px !important; line-height: 1.12 !important;
+    white-space: normal !important; text-align: center !important;
+    padding: 4px 6px !important; display: flex !important;
+    align-items: center !important; justify-content: center !important;
+    width: 100% !important;
+  }
+
+  /* ── "Also on this site" strip (Trip-Essentials) — Form B glued row ─────────
+     The desktop rule in web-travel-style.css is `flex-wrap:wrap; gap:6px`, which
+     on a 393px phone leaves a ragged right edge and strands the last pill alone
+     at a third of the width. Form B (owner rule 2026-07-28) wants glued tiles
+     that reach both margins, so mobile re-lays the same markup out here.
+
+     flex-grow (not a 6-col grid) is deliberate. The guide-side twin —
+     .also-on-this-site-pills in guide-style.css — now uses the same `flex: 1 1 28%`
+     form (ported 2026-08-08; the old 6-col grid was dropped because grid-column
+     set via CSS :nth-child is silently ignored on iOS Safari, requiring JS to fix
+     orphan rows — that workaround is gone). flex-basis 28% keeps 3 pills per row
+     at typical label lengths and lets a long label take a row to itself rather than
+     truncating.
+
+     Trip-Essentials pages load web-travel-style.css + mobile.css and never
+     guide-style.css, so stating the treatment in both files is a consequence of
+     the stylesheet split, not duplication that check_css_duplication would flag
+     (that validator compares page-level inline CSS, not shared files). */
+  .also-links {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0 !important;
+    width: 100% !important;
+  }
+  .also-links .also-on-this-site-pill {
+    flex: 1 1 28% !important;
+    height: 46px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+    white-space: normal !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ── filter-chip-row — the universal "stretch my chips to full width" class ──
+     Add this class to ANY filter container (div, nav, etc.) whose chips should
+     fill the full width on mobile instead of wrapping as content-sized blobs.
+     Children (buttons, spans, a, or any tag) automatically become equal-width
+     grid cells. Column count auto-fits: 2–3 across on a 390px phone depending
+     on the number of chips. No per-page CSS needed — just add the class.
+     Existing per-ID rules (#region-pills, #sort-pills) keep their explicit
+     column counts via ID-selector specificity (wins over .filter-chip-row).
+     Added 2026-07-21. */
+  .filter-chip-row {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    justify-content: unset !important;
+    text-align: unset !important;
+  }
+  .filter-chip-row > * {
+    width: 100% !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .stats-nav, .jump-nav {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important;
+    /* Not sticky on mobile — as a multi-row grid it would pin half the screen.
+       Let it scroll away with the page (desktop keeps its own sticky). */
+    position: static !important;
+  }
+  /* Stretch .jump-nav pills across the full page-wrap width on mobile —
+     override the site-wide 16px inner nav padding so the 3-col grid fills
+     the content area rather than sitting in a 330px box. */
+  .jump-nav { padding-left: 0 !important; padding-right: 0 !important; }
+  /* Stats-Across-US uses .stat-jump for its mobile section nav — un-stick it too
+     (not gridded, just must scroll with the page). */
+  .stat-jump { position: static !important; }
+  .stats-nav a, .jump-pill, .jump-btn {
+    height: 46px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: normal !important;
+    line-height: 1.12 !important;
+    border-radius: 0 !important;
+    padding: 4px 6px !important;
+  }
+
+  /* Guides "When to go" month buttons — uniform 3-across grid, matching the
+     other filter chip panels: 12 months = 4 even rows, glued edge-to-edge.
+     Label and clear badge each span their own row. */
+  #season-filter { display: grid !important; grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0 !important; align-items: stretch !important; }
+  #season-filter .sfl { grid-column: 1 / -1 !important; text-align: left !important; margin: 2px 0 5px !important; }
+  #season-badge { grid-column: 1 / -1 !important; text-align: center !important; }
+  #season-filter .mchip {
+    height: 46px !important;
+    width: 100% !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    text-align: center !important; border-radius: 0 !important;
+    white-space: normal !important; line-height: 1.12 !important;
+    padding: 4px 6px !important; font-size: 12px !important;
+  }
+
+  /* Delta Routes hub-jump toggle and list items — these are styled buttons that
+     should keep their own padding, not expand to 40px. */
+  .hub-jump-toggle, .hub-jump-item { min-height: auto !important; }
+
+  /* Index-table country cells (Currency, Plug) hold a clickable <a>. The 40px
+     tap-target rule above would stretch it tall and pin its text to the TOP —
+     out of line with the middle-aligned cells beside it AND bloating each row to
+     ~49px. Exempt it: the anchor shrinks to text height, the cell's
+     vertical-align:middle centers it, and rows stay compact (~32px). The whole
+     row is the tap target, so usability holds. */
+  .index-table tbody td a { min-height: auto !important; }
+  /* Compact, consistent row height on both index pages (Currency uses 4px,
+     Plug 2px in their own CSS — normalize to one tight value). */
+  .index-table td { padding-top: 4px !important; padding-bottom: 4px !important; }
+
+  /* 11b. Search inputs — cap at 100% so they never overflow, but don't force full-width. */
+  .filter-input, #lounge-search, #guide-search,
+  #train-search, #city-search, #visa-search, #cur-search,
+  #plug-search, #best-of-search, input[type="search"], input.search {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 11b-2. Uniform search-bar HEIGHT on every page. One value site-wide, and a bit
+     taller than the filter pills below it (~40px) so the bar is never shorter than
+     the pills — that mismatch looked unbalanced/odd. ID selectors (loaded after each
+     page's inline <style>) so this wins over per-page height rules. */
+  #guide-search, #train-search, #lounge-search, #cur-search, #plug-search,
+  #visa-search, #city-search, #byg-search, #sim-search, #tc-search,
+  #guide-pick-search, #citySearch, #country-search, #place-search,
+  #destFilter, #search, #best-of-search,
+  input[type="search"], .filter-input, input.search {
+    height: 48px !important;
+    min-height: 48px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 11c. Hide iOS Safari's native magnifying glass on search inputs — it doubles
+          up with the 🔍 emoji placeholder. */
+  input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
+
+  /* 11. Mobile "Choose …" jump menu — it sits as a full-bleed child of <body>
+        while page content lives inside .wrap (16px gutter), so its rounded box
+        touched both screen edges and looked misaligned. Inset it to match. */
+  .hub-jump { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* 12. Toolbar bar — orange gradient banner, matching desktop.
+        Note: .tb min-height is set to 56px by toolbar.js @media query;
+        mobile.css should NOT override it down to 44px — the 56px provides
+        better touch targets. Let toolbar.js handle the height. */
+  .tb {
+    background: #b85c2a !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    /* min-height: removed — toolbar.js sets this to 56px via @media (max-width:600px) */
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* 13. Toolbar chip hover — disable on touch so iOS doesn't leave chips stuck highlighted */
+  .tb a:hover, .tb a:focus {
+    color: #3d3a32 !important;
+    background: transparent !important;
+  }
+  .tb-ddbtn:hover, .tb-ddbtn:focus {
+    color: #3d3a32 !important;
+    background: transparent !important;
+  }
+
+  /* 14. Hamburger MENU button — strip ALL native button appearance so iOS doesn't
+        render a gray rounded-rect box around it. */
+  .tb-ham {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    min-height: auto !important;
+  }
+  .tb-ham:hover, .tb-ham:focus, .tb-ham:active {
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .tb-ham:focus-visible, .tb a:focus-visible {
+    outline: 2px solid rgba(184,92,42,.6) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Strip any residual chip appearance from hamburger menu links.
+     Menu is appended to body (not .tb), so selectors must NOT use .tb ancestor.
+     Toolbar.js already sets color:#3d3a32 and background defaults to transparent;
+     these rules are belt-and-suspenders for iOS repaint edge cases. */
+  .tb-ham-menu a {
+    background: transparent !important;
+    white-space: normal !important;
+  }
+  /* LOCKED (superseded 2026-07-29) — pill matches desktop .tb-active chip shape:
+     border-radius:14px, padding:4px 12px, sized to hug the word, not full row width.
+     Text stays the normal row color — only the border marks it active.
+     margin-left:12px so icon at 12+12=24px aligns with inactive item text at 24px.
+     Memory: feedback_hamburger_active_pill (supersedes feedback_hamburger_active_no_border). */
+  .tb-ham-menu a.tb-active {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #3d3a32 !important;
+    -webkit-text-fill-color: #3d3a32 !important;
+    background: transparent !important;
+    border: 1.5px solid #b85c2a;
+    border-radius: 14px;
+    margin: 6px 12px;
+    padding: 4px 12px;
+    font-weight: 600;
+  }
+
+
+}
+
+@media (max-width: 600px) {
+  /* Best-of pages — lay the top controls (See also · search · Filter by country)
+     into ONE clean centered lane that sits between the ‹ › page-nav arrows
+     without touching them. The arrows themselves are left untouched. Targets the
+     anonymous inline-styled control divs via :has() so it covers all Best-of
+     pages from shared CSS. */
+  .best-of-related { max-width: 285px !important; margin: 6px auto 8px !important; justify-content: center !important; row-gap: 6px; }
+  .wrap > div:has(> #best-of-search) { max-width: 285px !important; margin: 12px auto !important; flex-wrap: wrap !important; gap: 3px 8px !important; }
+  #best-of-search { width: 100% !important; flex: 1 1 100% !important; min-width: 0 !important; }
+  .wrap > div:has(> #best-of-search) > span { flex: 1 1 100% !important; text-align: right !important; }
+  .wrap > div:has(#regionJump) { max-width: 285px !important; margin: 8px auto 14px !important; }
+  /* Best-of card link pills — same clean 2-across grid as the guide "Also on this
+     site" pills, so they fill the card width instead of ragged left-packing. */
+  .best-of-links { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+  .best-of-links .best-of-link { display: flex !important; width: auto !important; justify-content: center; text-align: center; }
+  /* Odd pill count — center the lone last pill across both columns instead of
+     leaving a lopsided empty cell on the right. */
+  .best-of-links .best-of-link:last-child:nth-child(odd) { grid-column: 1 / -1 !important; justify-self: center !important; min-width: 48% !important; }
+}
+
+@media (max-width: 600px) {
+  /* Guide-Days-Coverage tier pills — grow to fill each row (justified) so the
+     city pills form clean full-width rows instead of ragged left-packing with
+     empty gaps on the right. flex-grow respects each pill's nowrap width, so no
+     long name (e.g. "Glacier National Park") overflows or wraps. */
+  .city-grid .city-pill { flex: 1 1 auto !important; justify-content: center; text-align: center; }
+}
+
+@media (max-width: 600px) {
+  /* A tier with a single city — don't stretch that lone pill to full width;
+     center it at its natural size. (:only-child ignores search-hidden pills as
+     they remain in the DOM, so this only fires on genuinely one-city tiers.) */
+  .city-grid:has(> .city-pill:only-child) { justify-content: center !important; }
+  .city-grid .city-pill:only-child { flex: 0 0 auto !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION — users who opted out of animations.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LANDSCAPE — adjusted gutters and tile sizing for the rotated phone viewport.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (orientation: landscape) and (max-height: 500px) {
+  body { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+  .wrap, .container, .content, .page, .main { padding-left: 24px; padding-right: 24px; }
+  .stats-nav a, .jump-pill, .jump-btn { height: 38px; }
+  .fchip, .tchip, .lchip { height: 38px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SAFE AREA — notch / Dynamic Island insets for edge-to-edge displays.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@supports (padding: env(safe-area-inset-top)) {
+  .tb { padding-top: env(safe-area-inset-top); }
+  /* Add the notch inset ON TOP of the base bottom padding (--pb: 80px desktop / 40px mobile).
+     Was `padding-bottom: env(...)` alone, which reset the base 80px to 0 on desktop and made
+     every page's last card look cut off. */
+  body { padding-bottom: calc(var(--pb, 80px) + env(safe-area-inset-bottom, 0px)); }
+  /* auto-added by audit_mobile.py — centering for off-center pills */
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* auto-added by audit_mobile.py — centering for off-center pills */
+  .dt-guide-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* auto-added by audit_mobile.py — centering for off-center pills */
+  .sibling-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+}
+
+/* Day-jump pill must be hidden when the hamburger overlay is open.
+   Both .tb-ham-menu and .day-jump-btn are appended to <body>, so the
+   general sibling selector works regardless of which toolbar.js version
+   the guide page loaded. */
+.tb-ham-open ~ .day-jump-btn { display: none !important; }
+
+/* Sunrise-Sunset: mobile city search fills the pickers row */
+#sun-city-search { width: 100% !important; max-width: 100% !important; margin-bottom: 0 !important; }
+
+/* Best-of / showcase card tap feedback — :hover doesn't fire on touch; :active gives the press response */
+.best-of-card:active, .showcase-card:active { opacity: 0.88; transform: scale(0.99); }

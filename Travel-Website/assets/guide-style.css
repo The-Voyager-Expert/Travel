@@ -1,0 +1,3982 @@
+/* Google Fonts loaded via toolbar.js <link rel="preload"> — no @import block */
+
+/* ════════════════════════════════════════════════════════════════
+ * TRAVEL GUIDE STYLESHEET — Brain/Reference source of truth.
+ *
+ * This file is the source of truth. The deployed copy lives at:
+ *   assets/guide-style.css  (GitHub Pages — what every guide reads)
+ *
+ * Workflow: edit this file → copy to assets/guide-style.css.
+ * Never edit assets/guide-style.css directly.
+ *
+ * Link from every guide HTML's <head>:
+ *   <link rel="stylesheet" href="../../assets/guide-style.css">
+ *
+ * Anchored at:
+ *   • Brain/CORE RULES/*.html — locked content rules
+ *   • Brain/scripts/validate/validate_itinerary.py — runtime enforcer
+ *   • Brain/Reference/Formatting/Formatting.html#sec-colors — color reference
+ *
+ * Synced from guide-style.css: 2026-06-11
+ * (guide_v2.css retired — all 37 guides migrated to guide-style.css)
+ * Pre-sync snapshot: Travel/archive/guide_v2_pre_v3_rebuild_2026-04-26.css
+ * ════════════════════════════════════════════════════════════════ */
+
+/* Anti-FOUC: hide body until toolbar.js reveals it (opacity:1 inline style).
+   On first/uncached loads, toolbar.js takes time to download — this ensures
+   the body stays hidden from the very first paint (CSS is render-blocking in
+   <head>, no JS download needed). toolbar.js's 2 s safety always restores it. */
+body { opacity: 0; transition: none; }
+
+:root {
+  /* Primary brand color — section titles, day headers, overview card accents */
+  --c-warm-bg:       #fdf8f0;        /* single shared background — all section cards, boxes, banners */
+  --c-brand:         #8a6c1a;
+  --c-brand-pale:    var(--c-warm-bg);
+  --c-brand-hover:   #faefd8;
+
+  /* ── Pill palette (2026-08-07) — the Trip Overview chip family: section-nav
+     pills, READ ABOUT, the ICS action row, the collapse toggle, stop-duration
+     and open-now chips. These were hardcoded cream (#fdf8f0) + dark-gold text,
+     so in dark mode the whole pill grid stayed near-white on a black page —
+     the brightest thing on screen. Routing them through tokens lets the dark
+     block below flip fill and text together; the light values here are the
+     exact hexes they replaced, so light mode is unchanged.
+     Dark text is #c8a060 (the palette's existing --c-section-head gold):
+     6.1:1 on the dark pill fill, 6.6:1 on --c-next-bg — both clear AA. ── */
+  --c-pill-bg:        #fdf8f0;
+  --c-pill-hover:     #faefd8;
+  --c-pill-active:    #f5e8c8;
+  --c-pill-text:      #8a6c1a;
+  --c-pill-bd:        rgba(138,108,26,.25);
+  --c-pill-bd-hover:  rgba(138,108,26,.45);
+  --c-pill-bd-active: rgba(138,108,26,.6);
+  --c-action-text:    #5a3c0e;   /* ICS action row / toggle / duration chips — bolder than pill text */
+  --c-action-press:   #e5ddc8;
+
+  /* Floating controls — day-jump ("8 days"), scroll-to-top, prev/next nav pills.
+     Same story as the pills: hardcoded #fff, so they stayed white blobs on the
+     dark page. Kept separate from --c-pill-* because their light fill is pure
+     white and their border is solid #c8a44a, not a gold tint. */
+  --c-float-bg:       #ffffff;
+  --c-float-bd:       #c8a44a;
+  --c-float-text:     #8a6c1a;
+  --c-navbtn-bd:   #c4b896;
+  --c-navbtn-text: #6b6860;   /* prev/next chevron buttons */
+
+  /* ── Extras-section box palettes — each section has its own tokens so any
+     one can be recolored independently. Change bg + border here; the
+     ID-scoped rules below pick them up automatically. (2026-05-06) ── */
+  --c-tours-bg:          var(--c-warm-bg);   /* 📅 Tours — burnt red (chosen 2026-06-01) */
+  --c-tours-border:      #a61c00;
+  --c-cappuccino-bg:     var(--c-warm-bg);   /* ☕ Cappuccino — purple */
+  --c-cappuccino-border: #7030A0;
+  --c-nearhotel-bg:      var(--c-warm-bg);   /* 🫕 Restaurants Near Hotel — deep rose (chosen 2026-05-09) */
+  --c-nearhotel-border:  #700f31;
+  --c-downtown-bg:       var(--c-warm-bg);   /* 🍽️ Downtown — blush plum (chosen 2026-05-09) */
+  --c-downtown-border:   #5c036d;
+  --c-shows-bg:          var(--c-warm-bg);   /* 🎭 Shows, Performances & Concerts — periwinkle (chosen 2026-05-09) */
+  --c-shows-border:      #5a74c4;
+  --c-closures-bg:       var(--c-warm-bg);   /* 🗓️ Weekly Closures */
+  --c-closures-border:   #8b3520;   /* warm brick red — distinct from all other sections (chosen 2026-05-09) */
+  --c-stations-bg:       var(--c-warm-bg);   /* 🚆 Train Stations Near Hotel — soft navy (chosen 2026-05-12) */
+  --c-stations-border:   #3d5282;
+  --c-gettingaround-bg:  var(--c-warm-bg);   /* 🚌 Getting Around — teal (chosen 2026-06-01) */
+  --c-gettingaround-border: #1c8a99;
+  --c-daytrips-bg:       var(--c-warm-bg);   /* ⛲️ Day Trips — deep teal-green (chosen 2026-06-01) */
+  --c-daytrips-border:   #0d6b7a;
+  --c-extras-border:     #BA7517;             /* unified border — all extras sections (2026-08-04) */
+  --c-michelin-bg:       var(--c-warm-bg);   /* ⭐ Michelin — champagne cream (lightened 2026-05-19; was #fff0d6 too heavy) */
+  --c-michelin-border:   var(--c-extras-border);
+  --c-pickleball-bg:     var(--c-warm-bg);   /* 🏓 Pickleball — dusty rose (chosen 2026-06-01) */
+  --c-pickleball-border: #792a45;
+  --c-headsup-bg:        var(--c-warm-bg);               /* ❗️ Heads Up */
+  --c-headsup-border:    #b91c1c;               /* ❗️ Heads Up — signal red (chosen 2026-06-01) */
+  --c-headsup-text:      #3a1a1a;               /* ❗️ Heads Up — dark text */
+  --c-headsup-link:      #a61c00;               /* ❗️ Heads Up — link matches tours border */
+
+  /* Altitude Advisory Banner (#ams-advisory) — slate-blue; own semantic territory */
+  --c-alt-bg:            #e8eef5;
+  --c-alt-border:        #4a7fa8;
+  --c-alt-text:          #1e3a50;
+
+  --c-delivery-bg:       var(--c-warm-bg);              /* 🚗 Food Delivery — crimson (chosen 2026-06-01) */
+  --c-delivery-border:   #9b2335;
+
+  /* ── Theme tokens — used by .worth-knowing, .guide-toolbar, .essentials-toolbar ── */
+  --c-sage-border:   #448088;   /* teal-sage — matches .worth-knowing.theme-sage */
+  --c-coral-border:  #c85a54;   /* coral-red — matches .guide-toolbar.theme-coral */
+
+
+  /* Tour-meet sub-card — RETIRED 2026-04-26. After multiple iterations
+     to tune contrast (white-bleed → too-subtle → too-heavy), Wifey's
+     final ruling: ZERO color change from parent .tour-box. The
+     `.tour-meet` element ships indent-only, no background tokens
+     needed. Tokens preserved as Rule-11 markers in case a future
+     rebuild thinks distinct meet-bg should return — it shouldn't.
+     --c-meet-bg / --c-meet-border / --c-meet-text retired. */
+
+  /* Warning callout (⚠️) */
+  --c-warn-bg:       var(--c-warm-bg);   /* matches all section backgrounds */
+  --c-warn-border:   #e08a1f;
+  --c-warn-text:     #5a3a05;
+  --c-warn-link:     #a36009;
+
+  /* Local Tastes (warm parchment palette) */
+  --c-tastes-bg:     var(--c-warm-bg);
+  --c-tastes-border: #e08a1f;
+  --c-tastes-text:   #3a2a05;
+
+  /* Transit banners — between stops, end-of-day return */
+  --c-next-bg:       #f5f0e6;
+  --c-next-border:   #bba070;
+
+  /* Page chrome */
+  --c-page-bg:       #f5f4f0;
+  --c-card-bg:       #fff;
+  --c-card-shadow:   0 2px 8px rgba(0, 0, 0, 0.07);
+
+  /* Title page */
+  --c-title-bg:      #6b4422;
+  --c-title-text:    #ffffff;
+  --c-title-address: #ffffff;
+
+  /* Type — two text colors only */
+  --c-text-primary:  #3d3a32;        /* all body text — single token everywhere */
+  --c-text-muted:    #555;           /* empty states, captions */
+
+  /* Trip Overview day rail — the stop list's warm grey and the zebra tint that
+     replaced the gold hairline between rows. Both shipped as bare hex inside
+     their rules, so dark mode never reached them: the stop names stayed #6f695d
+     on the #2a2825 card (2.4:1, barely legible) and every even row painted a
+     cream #fbf8f2 band across the dark table. Tokenised 2026-08-09 so the pair
+     flips with the card. The dark stop grey holds 6.4:1; the dark zebra is one
+     step up from --c-card-bg, the same lift the light tint gives on white.
+     toolbar.js's injected "ALSO" row reads --c-ovd-stops too, so the appended
+     row and the day rows above it can never drift apart. */
+  --c-ovd-stops:     #6f695d;
+  --c-ovd-zebra:     #fbf8f2;
+
+  /* Links — global single token. Allowlist for overrides documented inline. */
+  --c-link:          #2867c4;   /* blue — restored 2026-06-01; matches guide_v2.css */
+
+  /* Skip list */
+  --c-skip-note:     #999;
+
+  /* Layout */
+  --content-max:     none;
+
+  /* ── Typography ───────────────────────────────────────────────────────────── */
+  --font-family:     'Public Sans', sans-serif;
+
+  /* Font sizes — single scale (base 15px, matching Trip Overview day card text) */
+  --fs-base:         15px;   /* body, box rows, warn, transit — matches trip overview */
+  --fs-small:        12px;   /* captions, address, photo empty state */
+  --fs-overview-day:   15px;   /* mobile .tours-group size — same as base */
+  --fs-overview-stops: 13px;   /* day card stop list */
+  --fs-overview-pills: 15px;   /* extras nav pills */
+  --fs-stop-row:     15px;   /* stop row (icons + text) */
+  --fs-extras-title: var(--fs-h2);   /* extra section title (mobile review-link) */
+  --fs-overview-day-title: 15px; /* day card city title, guide-nav, index cards */
+
+  /* Print scale — @media print */
+  --fs-print:        11px;
+
+  /* Section headers — day headers, overview title, extras section titles */
+  --fs-header:       15px;
+
+  /* Index page */
+  --fs-index-title:  15px;
+
+  /* Index page chrome */
+  --c-index-bg:        #f0ede8;
+  --c-index-border:    #d8d4cc;
+  --c-index-text-muted: #6a6660;
+  --c-index-accent:    #7a5c0e;
+  --c-index-muted-2:   #9a9890;
+  --c-index-muted-3:   #b8ad9e;
+  --c-index-muted-4:   #c4b49a;
+  --c-index-muted-5:   #aaa;
+}
+
+
+/* ─── BASE ─────────────────────────────────────────────────────────────────── */
+
+html { scroll-behavior: smooth; }
+*    { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Focus indicators (accessibility) ── */
+:focus-visible {
+  outline: 2px solid var(--c-brand);
+  outline-offset: 2px;
+}
+.overview-day:focus-visible,
+.overview-extra-link:focus-visible,
+.toolbar-nav a:focus-visible,
+.toolbar-essentials a:focus-visible,
+.also-on-this-site-pill:focus-visible {
+  outline: 2px solid var(--c-brand);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(138,108,26,.15);
+}
+::selection { background: rgba(122,59,30,.35); color: inherit; }
+
+body {
+  background: var(--c-page-bg);
+  color: var(--c-text-primary);
+  font-family: var(--font-family);
+  /* Desktop body 14px — 2026-06-03 per owner: match Trip Overview day card text.
+     Mobile matches desktop (no scale-up). */
+  font-size: var(--fs-base);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 32px 48px;
+}
+
+/* Spacers — used inline as visual breathing room when margin alone won't do. */
+.sp    { height: 10px; }
+.sp-xs { height: 5px; }
+
+
+/* ─── GLOBAL LINK ──────────────────────────────────────────────────────────── */
+/* Single link token. Every link inherits this blue unless explicitly overridden.
+   Visited-link color pinned to the same value so the browser default purple
+   never bleeds in after owner clicks a booking link.
+   Override allowlist (validator-enforced — anything else fails the ship-gate):
+     .warn a              amber — warning callout (intentional contrast)
+   Retired overrides (Rule 11 markers, kept for re-invention prevention):
+     .title-links a       — retired 2026-04-22; address is now the only title
+                            link, via .title-address
+     #michelin .extras-sub a — retired 2026-04-22; Michelin restaurant names
+                               are plain text per core rules/Michelin
+                               Restaurants.html (NOT linked) */
+/* The global link rule hardcoded #2867c4, so --c-link's dark value (#5a9aee) never
+   reached anything — body links stayed light blue at 2.7:1 on the dark card. The token
+   resolves to the same #2867c4 in light mode, so light is unchanged. (2026-08-07) */
+a, a:visited { color: var(--c-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+
+/* ─── TITLE PAGE ───────────────────────────────────────────────────────────── */
+/* Per core rules/Hotel Banner.html: four items exactly.
+   Expected children of .title-page, in order:
+     1× .title-city    — uppercase city name (CSS handles the case transform)
+     1× .title-hotel   — hotel full name (bold). Appears EXACTLY ONCE in the
+                         entire guide; every other reference is generic
+                         `hotel`/`HOTEL`. Validator enforces uniqueness.
+     1× .title-address — address as a Google Maps anchor; format
+                         `Street · Postal+City` (no country)
+     1× .title-country — country name, right-aligned absolute; plain text,
+                         no link. Validator hard-fails if absent.
+   Nothing else: no price, no flight info, no separate Maps row, no Hotel
+   Website link.
+   Lineage: .title-links retired 2026-04-22 — see retirement marker in
+   §GLOBAL LINK above. */
+.title-page {
+  background: none;
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  padding: 10px 0 0;
+  border-radius: 0;
+  margin-bottom: 16px;
+}
+/* full-width gradient line between top row and hotel/address */
+.title-page::after {
+  content: ''; order: 3; display: block; width: 100%;
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(135deg, #7a3b1e 0%, #b85c2a 55%, #d4874a 100%) 1;
+  margin: 2px 0 2px;
+}
+.title-city {
+  order: 1; flex: 1; min-width: 0;
+  font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: #b85c2a;   /* terracotta — ties the title to the gradient underline + brand accent (dark-mode override keeps it light) */
+}
+.title-country {
+  order: 2; flex-shrink: 0; padding-left: 16px;
+  font-size: 14px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; white-space: nowrap;
+  margin-bottom: 0;
+  color: #3d3a32;
+}
+.title-updated { order: 4; flex-shrink: 0; margin-left: auto; font-size: 11px; color: #9a948a; align-self: flex-start; margin-top: 2px; }
+.title-no-entries { display: none; }
+.title-hotel   { order: 4; flex-shrink: 0; font-size: 14px; font-weight: 500; margin-top: 1px; color: #3d3a32; text-align: left; align-self: flex-start; }
+.title-address { order: 4; flex-shrink: 0; font-size: 14px; font-weight: 500; color: #3d3a32; text-align: left; margin-top: 1px; align-self: flex-start; }
+.title-address::before { content: '·'; color: #3d3a32; display: inline-block; margin: 0 6px; vertical-align: middle; }
+.title-page .title-address a,
+.title-page .title-address a:visited,
+.title-page .title-address a:hover { color: #3d3a32; }
+
+
+/* ─── TRIP OVERVIEW ─────────────────────────────────────────────────────── */
+/* Per core rules/Trip Overview.html and core rules/Guide Structure.html.
+   Expected children of .overview-section, in order:
+     1× overview-title             — literal title `Trip Overview` (CSS text-transform: uppercase handles the display casing;
+                                   + exact phrase, no variation)
+     1+× <a class="overview-day"> — exactly one per real touring day
+                                   (arrival/departure days excluded — see
+                                   core rules/Guide Structure.html
+                                   "Day 1 = first full touring day")
+   .overview-day is an <a>, rendered as a block-level card.
+     href="#day{N}" — symmetric with the day-block's id="day{N}". Broken
+                       anchors fail the ship-gate (validator: section-anchor
+                       verification check).
+     Expected children:
+       1. .overview-day-title (required) — an in-city day is `Day N – Stop1 · Stop2 · …`,
+                              en dash, NO type icon and NO type label. A train day is
+                              `Day N · 🚆 Train Day — City`.
+                              The backpack (U+1F392) was RETIRED 2026-06-16 and is
+                              banned from guide HTML (validator hard-fail). Do not
+                              reintroduce it here or in any label, mockup, or example.
+          Stop names are embedded in the title string, joined by ` · `, rather than
+          placed in a separate div.
+       2. .overview-day-stops (optional / unused in current guides) — if present,
+                              stop names joined by ` · ` (middle dot, spaces) */
+.overview-section {
+  background: var(--c-card-bg);
+  box-shadow: var(--c-card-shadow);
+  border-radius: 12px;
+  padding: 16px 16px 8px;
+  margin-bottom: 8px;
+}
+.overview-title {
+  color: var(--c-brand);
+  font-size: var(--fs-base);
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--c-brand);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+.overview-day {
+  display: block;
+  background: var(--c-card-bg);
+  border: none;
+  border-bottom: 0.5px solid #c8a44a;
+  border-radius: 0;
+  padding: 10px 16px;
+  margin-bottom: 0;
+  box-shadow: none;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .18s, transform .14s;
+}
+.overview-day:first-child { border-radius: 0; }
+.overview-day:last-child  { border-radius: 0; border-bottom: none; }
+/* Subtle lift on hover — no fill change, no border change, card rises 2px
+   with a soft shadow. `hover: hover` keeps it off touch devices. */
+@media (hover: hover) {
+  .overview-day:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+}
+.overview-day:active {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transform: scale(.97) translateY(1px);
+}
+.overview-day-title      { color: var(--c-text-primary); font-weight: normal; font-size: var(--fs-overview-day-title); }
+/* Day-row rail — structure injected at runtime by toolbar.js _dayRowRail; the
+   guide HTML keeps its single-string "Day N · stop · stop" title, so every static
+   check that reads .overview-day-title is unaffected. Rows the script does not
+   recognise never get .tve-railed and keep the original rendering untouched.
+   The fixed-width rail is what gives five rows of different lengths one shared
+   left edge, and the right-aligned count gives them a shared right edge — the
+   pair is what turns the block from five sentences into a table. */
+.overview-day.tve-railed .overview-day-title {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.ovd-num {
+  flex: 0 0 58px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--c-brand);
+  white-space: nowrap;
+}
+.ovd-stops { flex: 1 1 auto; min-width: 0; color: var(--c-ovd-stops); }
+.ovd-count {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: #9a9284;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Zebra replaces the gold hairline: five gold underlines read as five separate
+   links, a faint alternating tint reads as one table. */
+.overview-day.tve-railed { border-bottom: none; }
+.overview-day.tve-railed:nth-of-type(even) { background: var(--c-ovd-zebra); }
+.overview-day-num        { color: var(--c-text-primary); font-weight: normal; }
+.overview-day-stops      { color: var(--c-text-primary); font-size: var(--fs-overview-stops); line-height: 1.5; }
+/* Collapse/expand toggle — sits between TRIP OVERVIEW and Day 1 as its own row */
+.overview-toggle-btn {
+  display: block;
+  width: max-content;
+  margin: 32px auto 8px;   /* centred; more gap above (separates it from the nav pills) + small gap below so it reads as the control for the day blocks it collapses */
+  background: var(--c-next-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 6px;
+  color: var(--c-action-text);
+  font-size: 15px;
+  font-weight: normal;
+  letter-spacing: 0.01em;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, transform .08s;
+}
+@media (hover: hover) {
+  .overview-toggle-btn:hover {
+    background: var(--c-pill-hover);
+    border-color: var(--c-pill-bd-hover);
+  }
+}
+/* § 6 extras navigation pills — Trip Overview.html § 6, Formatting.html#sec-colors § 17.
+   Desktop renders these as rounded chips, reusing the exact visual language of
+   .also-on-this-site-pill (§ "Trip resources pills" below) — locked 2026-07-12.
+   The bare .overview-extra-link rule stays a plain underline-on-hover link: it
+   is reused by the injected READ ABOUT {CITY} link in .overview-title, which
+   must NOT become a chip. The chip look is scoped to .overview-extras
+   .overview-extra-link only. Mobile overrides both to the glued-grid tile at
+   @media (max-width:600px) below — untouched by this change, do not remove it. */
+.overview-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 0;
+}
+.overview-extras > span { display: none; } /* legacy leading "|" markup — chips need no separator */
+.overview-extra-link {
+  display: inline-block;
+  color: var(--c-pill-text);
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 2px 0;
+  font-size: var(--fs-overview-pills);
+  font-weight: normal;
+  text-decoration: none;
+  white-space: nowrap;
+  width: auto;
+}
+.overview-extra-link:visited { color: #8a6c1a; }  /* literal hex — browsers don't resolve var() in :visited */
+.overview-extra-link:active  { color: var(--c-pill-text); }
+.overview-extra-link:focus   { outline: none; }
+.overview-extra-link:hover   { text-decoration: underline; }
+.overview-extras .overview-extra-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--c-pill-text);
+  background: var(--c-pill-bg);
+  border: 1px solid var(--c-pill-bd);
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, transform .08s;
+}
+/* Desktop: section nav chips slightly smaller than ICS action row (owner rule 2026-08-05; 13→14px 2026-08-05 for readability, still under the 15px action row) */
+@media (min-width: 601px) {
+  .overview-extras:not(#ics-pill-row) .overview-extra-link {
+    font-size: 14px;
+    padding: 4px 10px;
+  }
+}
+.overview-extras .overview-extra-link:visited { color: #8a6c1a; }  /* literal hex — browsers don't resolve var() in :visited */
+.overview-extras .overview-extra-link:hover   { text-decoration: none; }
+@media (hover: hover) {
+  .overview-extras .overview-extra-link:hover {
+    background: var(--c-pill-hover);
+    border-color: var(--c-pill-bd-hover);
+  }
+}
+.overview-extras .overview-extra-link:active {
+  background: var(--c-pill-active);
+  border-color: var(--c-pill-bd-active);
+  transform: scale(.97) translateY(1px);
+}
+/* Section-nav chips — even 3-column grid + a section-colour dot.
+   The grid is what squares the row's right edge against the flush action bar
+   directly above it; a flex wrap left 13-17 chips ending on a ragged third row,
+   which is the single strongest "unfinished" cue on the page.
+   Chip colours are otherwise untouched: the beige fill, gold border and text all
+   still come from the .overview-extras .overview-extra-link rules above. Only the
+   corner radius softens from a 20px pill to an 8px tile, because a pill stretched
+   to a fixed grid column reads as a pill that got pulled. */
+.overview-extras:not(#ics-pill-row) {
+  display: grid;
+  /* auto-fill + a min track, NOT a fixed column count: a fixed repeat(3, 1fr)
+     hands every chip a third of the guide width, so on a wide screen a two-word
+     label like "Tours" sits alone in a ~440px box. The min track keeps a cell
+     near the width a chip actually wants and lets the column COUNT grow with the
+     viewport instead. */
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 8px;
+  /* Every row the same height (owner rule 2026-08-08). min-height alone only
+     equalised chips WITHIN a row — grid stretches items to their row, so a row
+     holding a two-line label ("Restaurants Near Hotel") sat visibly taller than
+     an all-one-line row below it. 1fr auto-rows in an indefinite-height grid
+     resolve to the tallest row and hand that same height to every other row, so
+     all chips end up one identical size regardless of label length. */
+  grid-auto-rows: 1fr;
+}
+.overview-extras:not(#ics-pill-row) .overview-extra-link {
+  border-radius: 8px;
+  /* Label centred on both axes (owner rule 2026-08-08) — justify-content centres
+     the icon+text flex line horizontally, text-align centres the second line of a
+     wrapped label under the first, align-items centres the line box vertically in
+     the stretched grid cell. */
+  justify-content: center;
+  text-align: center;
+  /* Button proportions: a narrow track plus a floor on height, so a one-line and
+     a two-line chip are the same size and the row reads as a set of buttons
+     rather than a set of text links that happen to have borders. */
+  padding: 10px 13px;
+  min-height: 46px;
+  /* The base chip rule is white-space: nowrap, which was right for a shrink-to-fit
+     pill but overflows a fixed grid track — "Restaurants Near Hotel" spilled past
+     its tile. Wrap instead; min-height keeps a one-line and a two-line chip the
+     same size, so the row stays a grid of equal buttons. */
+  white-space: normal;
+  line-height: 1.25;
+  align-items: center;
+}
+/* Export to Calendar + All Stops Map — match Read About pill visually:
+   gold text, same border style/weight, same radius. The scoped
+   .overview-extras .overview-extra-link rule would otherwise win with dark
+   text + thin gold border; ID overrides beat that specificity. */
+
+/* Button-group join: collapse double borders and square inner corners when
+   pills sit flush (gap:0) in #ics-pill-row.
+   Also restores the gold border + white bg the action bar had before the
+   section-chip borderless fill was introduced — both rows share overview-extras
+   so the base rule hits both; these overrides scope the action bar back. */
+#ics-pill-row { margin-top: 36px; margin-bottom: 14px; }   /* extra separation from the Trip Overview card so the toolbar doesn't overshadow it */
+#ics-pill-row > .overview-extra-link {
+  border: 1px solid var(--c-next-border);
+  background: var(--c-next-bg);
+  color: var(--c-action-text);
+  letter-spacing: 0.01em;
+  /* 700 — the weight of the two chips this row already shares its palette with
+     (.stop-dur "~45 min" and the "📖 Read more" chip). All three were already
+     byte-identical on fill, border and ink; this row inherited font-weight:normal
+     from .overview-extra-link, and 400 strokes of #5a3c0e simply READ lighter
+     than the same hex at 700 — which is what the owner saw as a colour mismatch
+     (2026-08-08, the same diagnosis as the Read more chip and the open-now label).
+     Note this does not weaken the toggled-on state: #tve-visited-btn.tve-been and
+     #tve-offline-btn.tve-saved signal "on" with terracotta fill-ink AND border,
+     not with weight alone. */
+  font-weight: 700;
+}
+#ics-pill-row > .overview-extra-link:not(:first-child) {
+  border-left-width: 0;
+  border-radius: 0;
+}
+#ics-pill-row > .overview-extra-link:first-child {
+  border-radius: 6px 0 0 6px;
+}
+#ics-pill-row > .overview-extra-link:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+#ams-advisory { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:var(--c-alt-bg); border-top:1px solid var(--c-alt-border); border-bottom:1px solid var(--c-alt-border); }
+#ams-advisory .ams-icon  { font-size:16px; line-height:1.5; flex-shrink:0; }
+#ams-advisory .ams-body  { flex:1; min-width:0; }
+#ams-advisory .ams-label { display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--c-alt-border); margin-bottom:3px; }
+#ams-advisory .ams-elev  { font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:0; text-transform:none; background:rgba(74,127,168,.12); border-radius:3px; padding:1px 5px; }
+#ams-advisory .ams-text          { font-size:13px; color:var(--c-alt-text); line-height:1.45; }
+#ams-advisory .ams-read-more         { color:var(--c-alt-border); font-weight:600; text-decoration:none; }
+#ams-advisory .ams-read-more:visited { color:#4a7fa8; }  /* literal hex — browsers don't resolve var() in :visited */
+#ams-advisory .ams-read-more:hover   { text-decoration:underline; }
+
+#ics-cal-pill, #ics-map-pill, #tve-offline-btn, #tve-visited-btn, #tve-preview-btn { color: var(--c-action-text); }
+#ics-cal-pill:visited, #ics-map-pill:visited, #tve-offline-btn:visited, #tve-visited-btn:visited { color: #5a3c0e; }  /* literal hex — browsers don't resolve var() in :visited */
+#ics-cal-pill:active, #ics-map-pill:active, #tve-offline-btn:active, #tve-visited-btn:active, #tve-preview-btn:active,
+#ics-cal-pill.tve-pressed, #ics-map-pill.tve-pressed, #tve-offline-btn.tve-pressed, #tve-visited-btn.tve-pressed { background: var(--c-action-press); }
+/* "Toggled-on" states — I've Been (visited) and Save-for-offline (saved) share the
+   same terracotta-bold treatment so the row reads one consistent "this is on" language. */
+#tve-visited-btn.tve-been, #tve-offline-btn.tve-saved { background: var(--c-next-bg); border-color: #b85c2a; color: #b85c2a; font-weight: 700; }
+#tve-visited-btn.tve-been:visited, #tve-offline-btn.tve-saved:visited { color: #b85c2a; }
+/* Restore the collapsed left border (the button-group :not(:first-child) rule zeroes
+   it) so all four sides are uniformly terracotta; -1px margin overlaps the neighbour's
+   right border so there's no double seam or layout shift. Needs the
+   #ics-pill-row > id.class specificity to beat the (1,2,0) button-group rule. */
+#ics-pill-row > #tve-visited-btn.tve-been,
+#ics-pill-row > #tve-offline-btn.tve-saved { border-left-width: 1px; margin-left: -1px; }
+@media (hover: hover) {
+  #ics-cal-pill:hover, #ics-map-pill:hover, #tve-offline-btn:hover, #tve-visited-btn:hover, #tve-preview-btn:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
+}
+
+/* ── In-guide currency converter — 💱 Currency pill + expanded panel ─────────
+   The pill is the sixth member of #ics-pill-row and inherits the row's chrome
+   from the rules above; only the states it adds are declared here. Open reuses
+   the exact terracotta treatment I've Been / Save-for-offline use for "this is
+   on", so the row speaks one state language rather than three.
+   Every colour resolves through a theme token: the panel is injected by
+   toolbar.js, which also injects the html[data-theme="dark"] token block, so a
+   bare hex here would look correct in light mode and be invisible in dark. */
+#tve-cur-pill { color: var(--c-action-text); }
+#tve-cur-pill:visited { color: #5a3c0e; }  /* literal hex — browsers don't resolve var() in :visited */
+#tve-cur-pill:active, #tve-cur-pill.tve-pressed { background: var(--c-action-press); }
+#tve-cur-pill.tve-cur-on { background: var(--c-next-bg); border-color: #b85c2a; color: #b85c2a; font-weight: 700; }
+#tve-cur-pill.tve-cur-on:visited { color: #b85c2a; }
+/* Same collapsed-left-border restore the other two toggled-on pills need — the
+   button-group :not(:first-child) rule zeroes it; -1px margin hides the seam. */
+#ics-pill-row > #tve-cur-pill.tve-cur-on { border-left-width: 1px; margin-left: -1px; }
+@media (hover: hover) {
+  #tve-cur-pill:hover { background: var(--c-pill-hover); border-color: var(--c-pill-bd-hover); }
+}
+
+.tve-cur-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  /* -8px pulls the panel up through #ics-pill-row's 14px bottom margin so it
+     reads as the pill expanding rather than as a separate card below it. */
+  margin: -8px 0 16px;
+  padding: 12px 14px;
+  background: var(--c-warm-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 6px;
+}
+/* [hidden] is (0,1,0) and loses to the .tve-cur-panel display above — without
+   this the panel would ship permanently open. Same trap as every other
+   display-carrying class in this file. */
+#tve-cur-panel[hidden] { display: none; }
+.tve-cur-row { display: flex; align-items: center; gap: 8px; width: 100%; }
+.tve-cur-field { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.tve-cur-sym { font-size: 13px; font-weight: 700; color: var(--c-action-text); white-space: nowrap; }
+.tve-cur-eq { font-size: 14px; color: var(--c-text-muted); }
+.tve-cur-in {
+  width: 96px;
+  padding: 6px 9px;
+  border: 1px solid var(--c-next-border);
+  border-radius: 4px;
+  background: var(--c-card-bg);
+  color: var(--c-text-primary);
+  -webkit-text-fill-color: var(--c-text-primary);   /* iOS greys the value without this */
+  font-family: inherit;
+  /* 16px is load-bearing, not a taste call: iOS Safari zooms the whole page on
+     focus for any input under 16px, which throws the reader out of the guide. */
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+  -moz-appearance: textfield;
+}
+.tve-cur-in::-webkit-outer-spin-button,
+.tve-cur-in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.tve-cur-in:focus { outline: none; border-color: #b85c2a; }
+.tve-cur-note { font-size: 11px; line-height: 1.5; color: var(--c-text-muted); }
+.tve-cur-more { color: var(--c-index-accent); text-decoration: none; font-weight: 600; }
+.tve-cur-more:visited { color: #7a5c0e; }  /* literal hex — browsers don't resolve var() in :visited */
+.tve-cur-more:hover { text-decoration: underline; }
+/* Fixed 96px fields overflow the row at 320px (2 × 96 + labels + gaps > the
+   264px of content a 320px viewport leaves once page and panel padding are
+   taken). Letting both fields share the row instead keeps the converter on one
+   line at every width the site supports, down to 320px. */
+@media (max-width: 600px) {
+  .tve-cur-field { flex: 1 1 0; }
+  .tve-cur-in { width: auto; flex: 1 1 0; min-width: 0; }
+}
+/* Transient confirmation toast (Save for offline). Fixed bottom-centre, fades in,
+   auto-dismisses. Dark warm bg reads in both light and dark mode. */
+.tve-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(12px);
+  background: #3d3a32;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity .28s ease, transform .28s ease;
+  pointer-events: none;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+.tve-toast-in { opacity: 1; transform: translateX(-50%) translateY(0); }
+.overview-sep {
+  color: #d4b896;
+  font-weight: normal;
+  pointer-events: none;
+  padding: 0 6px;
+}
+
+
+
+
+/* ─── DAY BLOCK ────────────────────────────────────────────────────────────── */
+/* Per Brain/CORE RULES/Day Structure.html. id="day{N}" — symmetric with
+   .overview-day's href="#day{N}". scroll-margin-top reserves room for the
+   in-page jump so the day header doesn't land flush against the viewport edge. */
+/* ── WHITE CARD — .day-block wraps each day's stops. Owner calls this the
+   "white card". To resize: adjust padding / border-radius / margin-bottom here. */
+.day-block {
+  background: var(--c-warm-bg);
+  box-shadow: var(--c-card-shadow);
+  border-radius: 12px;
+  padding: 10px 20px 14px;
+  margin-bottom: 8px;
+  scroll-margin-top: 20px;
+}
+.day-header {
+  color: var(--c-brand);
+  font-size: 17px;
+  font-weight: bold;
+  background: var(--c-card-bg);
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-bottom: 2px solid var(--c-brand);
+  border-radius: 14px;
+  padding: 13px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow .18s, transform .14s;
+}
+@media (hover: hover) {
+  .day-header:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+    transform: translateY(-2px);
+  }
+}
+.day-header:active {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transform: scale(.97) translateY(1px);
+}
+.day-header::after {
+  content: '›';
+  font-size: 20px;
+  color: #a49b8c;
+  transition: transform 0.15s ease;
+  display: inline-block;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-left: auto;
+}
+.day-block:not(.collapsed) > .day-header::after {
+  transform: rotate(90deg);
+}
+.day-block.collapsed > .day-header {
+  margin-bottom: 0;
+}
+.day-block.collapsed > *:not(.day-header) {
+  display: none;
+}
+.day-block.collapsed {
+  padding-bottom: 14px;
+}
+
+
+/* ─── DAY OPENER + INTER-STOP BANNERS ──────────────────────────────────────── */
+/* Per Brain/CORE RULES/Day Structure.html § Transit banners (standardized 2026-04-25).
+     .hotel-first  → From Hotel day opener (regular day or train-day variant)
+     .arrive-first → ARRIVE {station} train-day arrival banner
+     .next         → between-stops banner + end-of-day return to hotel
+     .next-tram    → optional tram sub-line under any of the above
+   MOTION BANNERS LEAD WITH WORDS, NEVER A GLYPH. Both leading icons these two
+   banners once carried are now BANNED site-wide and hard-failed by the
+   validators: the hotel glyph U+1F3E8 (owner rule 2026-08-08) and the station
+   glyph U+1F689 (owner rule 2026-08-09). Do not reintroduce either one here —
+   a stale comment describing a retired glyph as current is how it walks back
+   into new pages (the U+1F392 backpack precedent, 2026-08-08).
+   `DEPART HOTEL` wording retired 2026-04-25 — use `From Hotel:` everywhere.
+   Validator's From Hotel banner check hard-fails any retired `DEPART HOTEL`.
+   Lineage: legacy `.depart` class retired 2026-04-26 in the v2 rebuild — was
+   the yellow "departure day" banner from when arrival/departure days had
+   their own blocks. With "Day 1 = first full touring day" (Guide Structure.html)
+   there is no departure day in the guide; the class had no remaining trigger. */
+/* Palette (owner change 2026-08-08): STONE NEUTRAL, shared by all five motion
+   banners — .hotel-first / .arrive-first above and .next / .next-tram /
+   .next-metro below. They were warm beige (#f5f0e6 on #7a5c1e), the same
+   family as the stop cards' own furniture, so a walking time read with the
+   same weight as the places it connects. Transit is plumbing between stops,
+   not content: pulling it onto a grey removes it from the warm palette
+   entirely and lets the eye skip banner→banner to the next stop. Fill #f2f1ec,
+   ink #5a564a. Backgrounds MUST stay identical across all five — the
+   :has(+ .next-tram) glue below collapses the radius and margin between a
+   banner and its tram sub-line and relies on there being no visible seam. */
+.hotel-first,
+.arrive-first {
+  background: #f2f1ec;
+  border: 1.5px solid transparent;
+  padding: 8px 12px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  color: #5a564a;
+}
+.hotel-first,
+.arrive-first { border-left: none; }
+/* Glue adjacent motion banners into one visual block (owner rule 2026-08-05).
+   When a .next-tram sub-line sits immediately below its parent banner, zero
+   the touching radii and collapse the margin so they read as a single box.
+   Backgrounds are identical (#f5f0e6) so no seam is visible. */
+.hotel-first:has(+ .next-tram),
+.arrive-first:has(+ .next-tram),
+.next:has(+ .next-tram) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-width: 0;
+  margin-bottom: 0;
+  padding-bottom: 2px;
+}
+.hotel-first + .next-tram,
+.arrive-first + .next-tram,
+.next + .next-tram {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 0;
+  padding-top: 2px;
+}
+/* .next — between-stop transition + end-of-day return banner.
+   Expected text shape: `🚶 {N} · 🚕 {M} → {next stop}` between stops or
+   `🚶 {N} · 🚕 {M} → hotel` for end-of-day return.
+   .next-tram — optional sub-line, sits IMMEDIATELY below its parent banner
+   (.next / .hotel-first / .arrive-first) only when a tram actually runs the
+   route. Same palette so the tram reads as a peer of the parent banner.
+   Expected children: plain text + exactly THREE inline <a> elements:
+     [BOARD STOP]   → Google Maps anchor
+     [tram to END]  → operator's route page
+     [ALIGHT STOP]  → Google Maps anchor
+   Brackets are plain text; tram glyph is 🚎 (never 🚊). See core rules/
+   Getting Around.html for the canonical tram sub-line shape. */
+.next,
+.next-tram,
+.next-metro {
+  background: #f2f1ec;
+  border: 1.5px solid transparent;
+  padding: 8px 12px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  color: #5a564a;
+  margin: 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* 2026-05-07: removed word-spacing: -0.08em — it over-compressed narrow
+     emoji like 🚌 to near-zero gap while 🚶/🚕 still showed visible gaps.
+     Consistent spacing is enforced via the HTML template instead: always
+     one regular space between emoji and the following digit, no double-spaces
+     to compensate for any individual emoji's advance-width. */
+}
+.next a,
+.next-tram a,
+.next-metro a       { color: inherit; text-decoration: none; }
+.next a:hover,
+.next-tram a:hover,
+.next-metro a:hover { text-decoration: underline; }
+/* End-of-day return-to-hotel banner — last .next inside its .day-block —
+   gets a larger margin-bottom than a same-day between-stop transition
+   (8px), to read as a heavier break before the next day starts. (2026-07-12) */
+.day-block > .next:last-child { margin-bottom: 12px; }
+
+
+/* ─── LOUNGE ARRIVAL CHIP ──────────────────────────────────────────────────── */
+/* Injected by toolbar.js at the top of Day 1.
+   Same shape as .hotel-first (padding, radius, margin-bottom).
+   Palette (owner change 2026-08-08): TERRACOTTA, the site accent — not the
+   Getting Around teal it shipped in. The teal was the only cool element on a
+   warm cream page: it broke the day card's colour system to signal
+   "transport", a signal the ✈ glyph and the IATA code already carry. #b85c2a
+   is the accent already used for the guide's own links and marks, so the chip
+   now reads as the one actionable thing at the top of Day 1 rather than as a
+   foreign object. Deliberately NOT the same family as the stone motion
+   banners below it — the chip is a link out, they are plumbing.
+   Literal hexes, not tokens: the accent has no fill/ink token pair, so the
+   dark twins are declared explicitly in both dark blocks further down. */
+.lounge-arrival-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fbf0ea;
+  border-left: 3px solid #b85c2a;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: var(--fs-base);
+  color: #7a3b1e;
+  margin-bottom: 10px;
+  text-decoration: none;
+}
+.lounge-arrival-chip:hover { background: #f6e4d9; }
+/* Visited lock. The chip is an <a>, and the global `a, a:visited { color:
+   var(--c-link) }` at the top of this file is specificity 0-1-1 — it outranks
+   the 0-1-0 `.lounge-arrival-chip` rule above, so after the reader clicks
+   through to the lounges page the IATA code and airport name repaint link-blue
+   while the fill and rail stay put — exactly what the owner reported on
+   2026-08-08. The `a.` prefix takes this to 0-2-1 so it wins. Same lock the
+   other three anchor pills carry (also-on-this-site, nearby-guide,
+   also-in-country) — see the 2026-07-28 sw.js entry for the original bug.
+   Now enforced for JS-built anchors too: brain_check's
+   _anchor_classes_from_js pairs each document.createElement('a') with the
+   className set on it, so check_universal_visited_color_match sees classes
+   like this one that the CSS never writes with an `a.` prefix.
+   Owner rule 2026-07-28: no font-color change after visit. */
+a.lounge-arrival-chip:visited { color: #7a3b1e; }
+.lac-iata {
+  font-weight: 700;
+  letter-spacing: .04em;
+  flex-shrink: 0;
+}
+.lac-div  { opacity: .4; flex-shrink: 0; }
+.lac-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The trailing "Before You Go ›" / "EU Lounges ›" label matches the rest of
+   the chip exactly (owner rule 2026-08-08): same colour, same 15px, same
+   regular weight. It shipped 12px/600 in its own #b85c2a, which made one
+   short phrase smaller, bolder AND a different colour than the airport name
+   beside it — three deviations in a row that is four words long. `inherit`
+   rather than a literal so the label follows the chip into dark mode with no
+   override of its own; only layout properties stay. */
+.lac-link {
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: inherit;
+}
+.lac-link::after { content: ' ›'; opacity: .7; }
+
+/* ─── STOP BLOCK ───────────────────────────────────────────────────────────── */
+/* Per core rules/Types of Days and Stops.html (re-locked 2026-04-25). Expected
+   children of .stop-block, in order:
+     1× .stop-header                 — wraps .stop-num + .stop-name
+     1× .stop-row — prose summary (plain text, no prefix)
+     1× .stop-row holding one anchor — `<a href="…en.wikipedia.org…">📖 Read
+                                       more</a>` (emoji inside the <a>;
+                                       renders as a muted chip — see below)
+     1+× booking boxes               — combination depends on the stop type:
+                                        Type 1 (guided)   → 1+ .tour-box (📅)
+                                        Type 2 (self)     → 1 .tour-box (📍)
+                                                            OR 1 .ticket-box
+                                                            (🎟️) — XOR
+                                        Type 3 (alternation) → 1+ .tour-box
+                                                                + 1 .ticket-box
+                                                                (CSS auto-flip
+                                                                title icon)
+                                        Type 4 (train day) → any combination
+     1× .stop-photos                 — last child (see §STOP PHOTOS)
+   .stop-header expects:
+     1× .stop-num                    — `{N}.` (digit + period)
+     1× .stop-name                   — with EXACTLY ONE type modifier
+                                        (.guided / .self / .train) */
+.stop-block            { margin-bottom: 8px; scroll-margin-top: 20px; padding-top: 12px; }
+.stop-block:last-child { margin-bottom: 0; }
+/* Inset the white content card (all stop-block children except the title header)
+   so it reads as a card floating inside the beige day-block section — beige frames
+   it left + right. Desktop only; mobile cards stay full-width to use the narrow
+   screen. The .stop-header (title + duration chip) stays full stop-width as the
+   label above the card. */
+@media (min-width: 601px) {
+  .stop-block > :not(.stop-header) {
+    margin-left: 28px;
+    margin-right: 28px;
+  }
+}
+/* When a stop follows a transit banner, add margin-top so the gap above
+   the stop title equals the gap below it (both 16px total: banner's own
+   8px bottom + 8px here = title-to-description 16px). Covers all three
+   banner variants. */
+.next       + .stop-block,
+.next-tram  + .stop-block,
+.next-metro + .stop-block { margin-top: 8px; }
+/* Attach the transit banner to the stop ABOVE it (the stop it departs from),
+   not the stop below. The card ends with the photo strip, whose 14px bottom
+   margin left the banner 14px below the card but only 8px above the next stop —
+   so it read as belonging to the wrong stop.
+   The banner now sits FLUSH against the card it departs from (owner rule
+   2026-08-08): the −10px pull left a 4px sliver of the day-block's beige showing
+   between the card's sealed white bottom edge and the banner, which read as a
+   stray background stripe rather than a join. Zero is set at the SOURCE — the
+   photo strip's bottom margin, the stop card's own bottom margin, and the
+   banner's top margin are each zeroed on a stop that carries a banner — rather
+   than by cancelling 14px with a negative pull, so the join stays at 0 even if
+   one of those spacings is ever re-tuned. The 8px above the NEXT stop
+   (.next + .stop-block) is unchanged, so the banner still groups upward.
+   Locked: brain_check check_card_in_section_layout. */
+.stop-block:has(+ .next) > .stop-photos,
+.stop-block:has(+ .next-tram) > .stop-photos,
+.stop-block:has(+ .next-metro) > .stop-photos { margin-bottom: 0; }
+.stop-block:has(+ .next),
+.stop-block:has(+ .next-tram),
+.stop-block:has(+ .next-metro) { margin-bottom: 0; }
+.stop-block + .next,
+.stop-block + .next-tram,
+.stop-block + .next-metro { margin-top: 0; }
+/* Inset the transit banner to align with the inset stop cards (same 28px each
+   side) so it sits in the same column as the card above it. Desktop only —
+   mobile cards + banners stay full-width. */
+@media (min-width: 601px) {
+  .day-block > .next,
+  .day-block > .next-tram,
+  .day-block > .next-metro {
+    margin-left: 28px;
+    margin-right: 28px;
+  }
+}
+/* Prose summary row — 2nd child of every .stop-block per the documented
+   contract above. Targeted by POSITION, not the .stop-row class, because
+   a large share of shipped guides never applied that class to this exact
+   row — a class-based fix would silently miss those. (2026-07-12) */
+.stop-block > :nth-child(2) {
+  margin-top: 16px;   /* title→content gap; matches the 16px used by every extras section (consistent across the board, owner rule 2026-08-06) */
+  margin-bottom: 0;
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 8px 14px;
+}
+/* Zero prose bottom padding when a booking box follows so the join uses only
+   the first child's 6px margin as spacing. */
+.stop-block > :nth-child(2):has(+ .tour-box),
+.stop-block > :nth-child(2):has(+ .ticket-box) {
+  padding-bottom: 0;
+}
+/* ...but when the Read more row follows, the prose keeps real bottom padding.
+   Everything below the prose is now a tinted panel (see below), so the
+   description must not sit flush on a colour boundary. (owner 2026-08-08) */
+.stop-block > :nth-child(2):has(+ .stop-row) {
+  padding-bottom: 14px;
+}
+/* Card directly after prose (no Wikipedia row) — glue to the white prose block.
+   padding-top: 0 so the 6px div margin inside the box is the only gap. */
+.stop-block > :nth-child(2) + .tour-box,
+.stop-block > :nth-child(2) + .ticket-box {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+.stop-num              { font-weight: bold; font-size: 17px; color: var(--c-text-primary); margin-right: 5px; }
+.stop-name             { font-weight: bold; font-size: 17px; color: var(--c-text-primary); }
+/* Duration chip — injected by toolbar.js into .stop-header when a ⏰ row is found.
+   toolbar.js sets display:flex on .stop-header at inject time; margin-left:auto
+   pushes the chip to the far right. Source ⏰ row is removed from the box. */
+.stop-dur {
+  display: inline-flex;
+  align-items: center;
+  background: var(--c-next-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 20px;
+  padding: 2px 10px 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-action-text);
+  letter-spacing: 0.01em;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* ── Mark Stop — checkbox injected by toolbar.js directly after .stop-name,
+   so it sits against the title rather than out on the right rail with the
+   share and star. Two states, and they swap places rather than stacking:
+   unchecked is a small ring with a faint ✓ inside; checked replaces that ring
+   entirely with the plain brown word "Visited" — no fill, no border, no
+   glyph. The earlier solid-terracotta pill read far too loud sitting next to
+   every marked stop, which is the whole reason this is text now. ─── */
+.stop-mark-btn {
+  flex-shrink: 0;
+  margin-left: 8px;
+  /* The spacer for the whole header — see toolbar.js _injectMarkStops. The
+     name sizes to its content, so this is what pushes chip/share/star right. */
+  margin-right: auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  /* Same palette as the .stop-dur chip and as the checked state — the earlier
+     #c8baa8-on-transparent ring was so faint it was barely visible against
+     the page. Tokens, not literals: all three carry dark-mode values. */
+  border: 1px solid var(--c-next-border);
+  background: var(--c-next-bg);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-action-text);
+  transition: border-color .15s, background .15s, color .15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
+/* The chip's own margin-left:auto would split the free space with the
+   button's margin-right:auto and strand the chip mid-row — the button is the
+   only spacer. A fixed 8px keeps a gap on a full row, where the auto margin
+   collapses to nothing and "Visited" would otherwise touch the chip. */
+.stop-header .stop-mark-btn ~ .stop-dur { margin-left: 8px; }
+/* Checked: the ring is gone and the word stands in its place, wearing the
+   EXACT treatment of the .stop-dur chip it shares the row with — same
+   --c-next-bg fill, --c-next-border hairline, --c-action-text ink, 20px
+   radius, 12px/700 — so a marked stop reads as one uniform line rather than
+   two competing styles. Any change to the chip must be mirrored here.
+   Deliberately token-based, not literal: all three tokens already carry
+   dark-mode values, so this state follows the theme for free.
+   font-size:0 suppresses the ✓ text node; ::after restores a size for the
+   label, so the swap needs no second element and no JS beyond the class
+   toggle. Height is padding-driven, matching the chip exactly. */
+.stop-block.stop-done .stop-mark-btn {
+  background: var(--c-next-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 20px;
+  width: auto;
+  height: auto;
+  padding: 2px 10px;
+  font-size: 0;
+  color: var(--c-action-text);
+  white-space: nowrap;
+}
+.stop-block.stop-done .stop-mark-btn::after {
+  content: "Visited";
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.stop-block.stop-done .stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
+.stop-block.stop-done .stop-header .stop-num,
+.stop-block.stop-done .stop-header .stop-name,
+.stop-block.stop-done .stop-header .stop-dur { opacity: 0.4; }
+/* .stop-row matches body weight (17px desktop / 21px mobile) — the prose
+   summary and 📖 Wikipedia row are PRIMARY content under each stop name,
+   not "support content," so they should read at body size, not at the
+   smaller booking-box-internal size. Bumped 2026-04-26 after owner flagged
+   the Wikipedia row as feeling small + the desktop body bump (15→17). */
+.stop-row              { margin: 10px 0; font-size: var(--fs-stop-row); color: var(--c-text-primary); }
+.stop-subtitle         { font-size: 0.88em; color: #666; margin-bottom: 8px; }
+
+/* 📖 Wikipedia reading row — continuation of the white prose block (2026-08-05).
+   No top margin or top radius; glued flush below prose. Scoped via :has()
+   to the exact en.wikipedia.org anchor. Browser support: Chromium 105+.
+   Owner 2026-08-08: the description keeps the white block at the top of the
+   card; EVERYTHING below it -- this row, the booking box, and the photo area --
+   sits on a tinted panel that runs to the bottom of the card and wraps around
+   the photo on all four sides. The tone is COPIED, not invented: it is the
+   Open-Recommendations report card body, verbatim from Reports.html
+   The panel STRUCTURE came from the Open-Recommendations report card body
+   (Reports.html line 65: .tbody{ border-top:1px solid var(--line);
+   background:var(--surface2) }), but the report's own #f1ece3 read flat and
+   grey once it filled two thirds of every stop card rather than a small tile.
+   Owner 2026-08-08 picked --c-next-bg instead: #f5f0e6 light / #222120 dark,
+   the guide's own warm token, already the fill of the .stop-dur duration chip
+   and the transit banners. Using the token rather than the hex means the dark
+   block themes the panel with the rest of the guide and needs no override. */
+.stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) {
+  margin-top: 0;
+  margin-bottom: 0;
+  background: var(--c-next-bg);
+  border-top: 1px solid #e4ddd0;
+  border-radius: 0;
+  /* 9.125px bottom, not 12: from the Read more pill down to the photo every
+     gap is ONE constant, 12.25px ink-edge to ink-edge (owner rule 2026-08-08,
+     "ALL the same from READ MORE TO THE PICTURE ALWAYS"). A text row carries
+     3.125px of half-leading inside its line box, so the padding either side of
+     it supplies 12.25 - 3.125 = 9.125. The box below adds nothing (its
+     padding-top is zeroed in the next rule) — the two blocks share one fill,
+     so splitting the gap across them would be invisible and only make the
+     arithmetic harder to check. Locked by check_stop_card_gap_constant. */
+  /* 6px bottom + the box's 3.125 top = the 9.125 outer half of the 12.25
+     constant. Split across both blocks so NEITHER is zero — see the box rule. */
+  padding: 12px 15px 6px;
+}
+/* Card below Wikipedia row — continues the panel rather than reverting to
+   white, and takes enough top padding to clear the colour boundary. */
+.stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .tour-box,
+.stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) + .ticket-box {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 0;
+  /* !important so it beats the unscoped 8px rule further down. */
+  /* NON-ZERO on purpose. Padding is what BLOCKS margin collapsing: with 0 here,
+     the inner margin-bottom:10px on .tour-meet's last child collapses out
+     through the box and reappears as a phantom 10px between the card and the
+     photo (measured on Götaplatsen, 22.38px against the 12.25 constant). Split
+     the 9.125 across both blocks rather than giving it all to one. */
+  padding-top: 3.125px !important;
+}
+/* Every box and the photo strip inside a stop that has a Read more row share
+   the panel, so the card seals on the panel instead of on white. */
+.stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .tour-box,
+.stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .ticket-box,
+.stop-block:has(> .stop-row > a[href*="en.wikipedia.org"]) > .stop-photos {
+  background: var(--c-next-bg);
+}
+/* Wikipedia link → "📖 Read more" chip (2026-08-07, recoloured 2026-08-08).
+   Terracotta text + border on hover. No chevron. The 📖 emoji lives inside
+   the <a> in the guide HTML. Overrides the base a { color: #2867c4 } rule
+   via higher specificity (class + attribute). */
+.stop-row a[href*="en.wikipedia.org"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  /* Colours copied verbatim from the .stop-dur duration chip above (the
+     "~45 min" pill this sits under) — same three tokens, not an approximation:
+       background var(--c-next-bg)     · #f5f0e6 light / #222120 dark
+       border     var(--c-next-border) · #bba070 light / #444    dark
+       colour     var(--c-action-text) · #5a3c0e light / #c8a060 dark
+     Owner 2026-08-08: the earlier grey-badge recipe (rgba(138,108,26,.07) fill,
+     rgba(106,102,96,.4) border, #6a6660 ink) was a different family and read
+     visibly cooler than the duration pill. Using the tokens rather than the
+     hexes also means the dark block themes both chips together. Shape stays
+     as approved (4px radius, 14px, sentence case) — only the colour changed. */
+  /* Fill is the ONE value that does not come from the duration pill. The chip
+     now sits ON the panel, and the panel is itself --c-next-bg (#f5f0e6) — so a
+     --c-next-bg fill would be the chip's own background, i.e. no chip at all.
+     #fffdf9 lifts it off the panel: it is Reports.html's --surface, the white
+     that file's badges sit on over their tinted body, which is the same
+     figure-on-panel relationship. Border and ink stay on the duration-pill
+     tokens. If the panel is ever darkened further, this fill and the #5a3c0e
+     ink both need re-checking for contrast. (owner 2026-08-08) */
+  background: #fffdf9;
+  border: 1px solid var(--c-next-border);
+  border-radius: 4px;
+  /* Vertical padding 5px (was 3px, owner 2026-08-08) — the chip read too
+     shallow on mobile against the 14px/700 label. Horizontal stays 9px. */
+  padding: 5px 9px;
+  color: var(--c-action-text);
+  font-size: 14px;
+  line-height: 1.2;
+  /* 700 — the duration chip's own weight. */
+  font-weight: 700;
+  letter-spacing: .01em;
+  /* "Read more" → "Read More" (owner 2026-08-08). Done in CSS, not in the
+     guide HTML: the literal string sits inside the <a> in all 236 shipped
+     guides, and rewriting it there would mean a 236-file sweep that
+     pre_commit_guard blocks (versioned guides from more than one folder) and
+     that re-stamps every guide for a caption change. capitalize touches only
+     the word's first letter, so the 📖 leading the anchor is unaffected, and
+     new guides emitted by guide_tools.py stub inherit the casing for free. */
+  text-transform: capitalize;
+  text-decoration: none;
+  transition: color .15s, border-color .15s;
+}
+.stop-row a[href*="en.wikipedia.org"]:hover {
+  color: #b85c2a;
+  border-color: #b85c2a;
+  text-decoration: none;
+}
+
+/* Stop photo — included in the white merged card (2026-08-05).
+   The booking box above loses its bottom radius when a photo follows so
+   the card seals cleanly; the photo container carries the bottom rounding. */
+.stop-block > .tour-box:has(+ .stop-photos),
+.stop-block > .ticket-box:has(+ .stop-photos) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
+  /* Mirror of the Read-more rule: the photo strip below pays the whole gap, so
+     the box adds nothing. !important beats the unscoped padding-bottom:8px. */
+  /* NON-ZERO on purpose. Padding is what BLOCKS margin collapsing: with 0 here,
+     the inner margin-bottom:10px on .tour-meet's last child collapses out
+     through the box and reappears as a phantom 10px between the card and the
+     photo (measured on Götaplatsen, 22.38px against the 12.25 constant). Split
+     the 9.125 across both blocks rather than giving it all to one. */
+  padding-bottom: 3.125px !important;
+}
+.stop-block > .stop-photos {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  /* 9.125px above the image = 12.25 minus the 3.125 half-leading of the text
+     row that precedes it. Same constant as the Read-more end of the card. */
+  /* 6px above the image + the box's 3.125 bottom = 9.125; plus the 3.125
+     half-leading of the text row above = the 12.25 constant. */
+  padding: 6px 14px 12px;
+  margin-top: 0;
+}
+
+
+/* ─── STOP-NAME TYPE MODIFIERS ─────────────────────────────────────────────── */
+/* Per core rules/Types of Days and Stops.html (re-locked 2026-04-25). Every
+   .stop-name carries EXACTLY ONE type-modifier class. CSS renders the
+   stop-type icon via ::before so the author never types the icon into
+   the title — no forgotten icons, no wrong icons, no drift.
+
+   ⚠️ THE BACKPACK IS RETIRED. U+1F392 was removed 2026-06-16 and is BANNED
+   from guide HTML — validate_itinerary.py hard-fails on the character, and
+   brain_check.check_no_backpack_in_shared_assets bans it from THIS file so the
+   glyph cannot live on in a comment. A self-guided stop renders NO title icon
+   at all: `.stop-name.self::before { content: "" }`, below. This note exists
+   because the retired icon kept being read back out of this very comment block
+   and re-added to mockups and examples. The code below is the truth — never a
+   glyph you find in prose.
+
+   Three modifier classes ↔ four locked stop types:
+     .stop-name.guided  → 🚩         — Type 1 Guided Tour Stop
+                        → 🚩         — Type 3 Alternation Stop (both boxes ship)
+     .stop-name.self    → (no icon)  — Type 2 Self-Guided Stop
+                                       (Option 1 .tour-box led by 📍 OR
+                                        Option 2 .ticket-box led by 🎟️ —
+                                        XOR; alternation uses `guided`,
+                                        not `self`)
+     .stop-name.train   → 🚆         — Type 4 Train Day stop
+
+   📅 / 🎟️ are NEVER stop-title icons — they live only inside .tour-box /
+   .ticket-box rows. 🚆 (train face) is the stop/day icon; 🚄 (high-speed
+   train) is the legacy section glyph for the train-day-trips slice (the
+   section is now "Day Trips - Extra Section" with ⛲️) — different glyphs,
+   different surfaces.
+
+   Type 3 Alternation — re-locked 2026-04-25, icon simplified 2026-06-16.
+   When a .stop-block carries both a .tour-box AND a .ticket-box the stop is
+   still 🚩; the old "auto-flip to a second icon" behaviour went away with the
+   backpack on 2026-06-16, so the :has() rule below simply restates "🚩 ".
+   owner 2026-04-25: *"yes, this is all right... should not be retired
+   ... we just created"*. The 2026-04-24 retirement was reversed; the
+   validator's mutual-exclusion hard-fail was removed in lockstep. */
+.stop-name.guided::before { content: "🚩 "; }
+.stop-name.self::before   { content: ""; }
+
+/* .stop-name.train modifier RETIRED 2026-04-26.
+   Rule 11 marker preserved. Earlier interpretation treated Train Day
+   (Type 4) as a stop type with .stop-name.train; owner re-locked it
+   as a day-level pattern: *"yes the day is a train day but when we
+   get at the stop is either a self guide etc.. the train just wrapps
+   around any other regular da[y]."* The day-block header carries the
+   "Day N — Train Day to {City}" label; the train ride is a sibling
+   `div.train` block at day-level; inner stops are normal Type 1/2/3
+   with .stop-name.guided or .stop-name.self. The .train stop
+   modifier has no remaining trigger.
+   Both the ::before icon rule and the text-transform: uppercase
+   rule are retired. Validator no longer accepts `train` as a
+   stop-name modifier — see core rules/Types of Days and Stops.html
+   § Type of Day 4 for the locked architecture. */
+
+/* Type 3 Alternation Stop — auto-flip the title icon when both boxes ship. */
+.stop-block:has(.tour-box):has(.ticket-box) .stop-name.guided::before {
+  content: "🚩 ";
+}
+
+
+/* ─── TOUR BOX (📅 guided tour booking · or 📍 self-walk logistics) ─────────── */
+/* Per core rules/Tour Rules.html and core rules/Types of Days and Stops.html.
+   .tour-box expected children, in order:
+     1× lead row `📅 <a>{Tour Name}</a> — {Platform} · {rating}★ · {count}+ reviews`
+                                     — booking anchor + platform + rating
+        OR `📍 <a>{Address}</a>` for Type 2 Option 1 self-walk variant
+     0-1× highlights row             — only when highlights differ across
+                                        sibling tour-boxes in the same stop
+     1× time row `🕐 {start} · ⏳ {duration} · 👥 max {N}`
+                                     — concatenated with ` · `, single line
+     1× .tour-meet                   — last child, wraps the 📍 meeting-point
+                                        address (every 📅 box carries its own
+                                        meeting point per Tour Rules.html)
+   Multiple .tour-box siblings live inside the same .stop-block when the
+   stop offers multiple tour options.
+
+   .tour-meet structural contract:
+     - Last child of .tour-box (never bare in .stop-block).
+     - Optional first child: HTML comment
+       `<!-- meeting-point-unreachable: {channels-tried} on {date} -->`
+       documenting WebFetch/DDG/Bing/Chrome fetch failures.
+     - Then 1× <div> carrying `📍 <a>{Address}</a>` (the address itself is
+       the Google Maps anchor — no separate map-link row).
+     - Renders as an indented sub-card under .tour-box. */
+.tour-box {
+  background: var(--c-card-bg);
+  padding: 10px 14px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  margin: 4px 0;
+}
+/* ── NO-TICKET ROW ICON (2026-08-08) ────────────────────────────────────
+   Replaces `🆓 Free` on the free-entry row of a .tour-box / .ticket-box.
+   🆓 was the odd one out in the icon row: every sibling (🏛️ ⏰ 🚫 📍 💵) is a
+   pictogram, while 🆓 is Latin text inside a blue-grey iOS badge that
+   ignores CSS color — the same defect that retired the up-right arrow site-wide
+   (CLAUDE.md sixth non-negotiable). This is a torn ticket stub drawn as a
+   CSS mask, so it takes the guide's warm accent as a background-color and
+   retints in dark mode like every other guide foreground.
+
+   Markup:  <div><span class="free-flag">Free</span></div>
+   The word is "Free", nothing else. It inks the same terracotta as the stub
+   and carries weight 700, so icon and label read as one mark rather than a
+   glyph with a grey caption beside it, and the row holds its own against the
+   full-colour emoji above and below it. Timed entry lives in a ticket box.
+
+   Swapping the artwork later is ONE line: replace the data-URI below.
+   The 505 guide rows carry only the class, never the drawing. ── */
+.free-flag {
+  color: #b85c2a;
+  font-weight: 700;
+}
+.free-flag::before {
+  content: "";
+  display: inline-block;
+  width: 1.45em;
+  height: 0.86em;   /* 22:13 — the ticket's own aspect ratio */
+  margin-right: 0.3em;
+  vertical-align: -0.06em;
+  background-color: #b85c2a;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13' fill='none' stroke='%23000' stroke-width='1.9' stroke-linejoin='round'%3E%3Cpath d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5Z'/%3E%3Cpath d='M12 6.5l0.9 2.2-1.8 2.2 1.8 2.2-1.8 2.2 0.9 2.2' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13' fill='none' stroke='%23000' stroke-width='1.9' stroke-linejoin='round'%3E%3Cpath d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5Z'/%3E%3Cpath d='M12 6.5l0.9 2.2-1.8 2.2 1.8 2.2-1.8 2.2 0.9 2.2' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* ── BOOKING ROW ICON (2026-08-08) ───────────────────────────────────────
+   The solid twin of .free-flag above, and deliberately the same silhouette:
+   a whole ticket with its stub still attached means "you need one", the torn
+   hollow stub means "you don't". Reading the two rows side by side, the only
+   difference is weight, which is the entire message.
+
+   Replaces 🎟️ on the booking row of a .ticket-box. Same reason as 🆓: the
+   Apple glyph is a fixed-colour platform drawing that ignores CSS, so it could
+   never join the guide's warm palette or flip for dark mode.
+
+   Markup:  <div><span class="ticket-flag"></span><a href="…">{domain}</a></div>
+   The span is empty — the row is the symbol and the link, nothing else.
+
+   Swapping the artwork later is ONE line: replace the data-URI below. ── */
+.ticket-flag::before {
+  content: "";
+  display: inline-block;
+  width: 1.45em;
+  height: 0.86em;   /* 22:13 — same ticket aspect ratio as .free-flag */
+  margin-right: 0.3em;
+  vertical-align: -0.06em;
+  background-color: #b85c2a;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13'%3E%3Cpath fill-rule='evenodd' fill='%23000' d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13'%3E%3Cpath fill-rule='evenodd' fill='%23000' d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* ── STOPS — CONTINUOUS RUN (added 2026-07-12, same defect class as the
+   Extras-section Style A continuity fix: a stop that carries multiple
+   .tour-box siblings, or a .tour-box + .ticket-box pair (per Guide
+   Structure Type 3 alternation), rendered as separate floating cards
+   with a 4px gap between them — "Multiple .tour-box siblings live
+   inside the same .stop-block" is explicitly documented above as a
+   normal, expected shape, not an edge case. A consecutive box glues
+   flush to the one before it — zero gap, no rounded seam at the join.
+   Both classes share the identical blue palette (unified 2026-04-23),
+   so any combination merges the same way. Unscoped — beats nothing else
+   targets .tour-box/.ticket-box margin or border-radius, so this wins
+   on specificity alone (2 classes > 1) without needing ID-scoping. ── */
+.tour-box + .tour-box,
+.tour-box + .ticket-box,
+.ticket-box + .tour-box,
+.ticket-box + .ticket-box {
+  margin-top: 0;
+  /* 3px each side + the two 3.125 half-leadings = the 12.25 constant. Both
+     stay non-zero so the rows' margins cannot collapse across the seam. */
+  padding-top: 3px !important;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.tour-box:has(+ .tour-box),
+.tour-box:has(+ .ticket-box),
+.ticket-box:has(+ .tour-box),
+.ticket-box:has(+ .ticket-box) {
+  margin-bottom: 0;
+  padding-bottom: 3px !important;   /* pairs with the padding-top above */
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+/* Row-to-row rhythm inside the box — was inconsistent (only the trailing
+   .stop-row-classed row carried a margin, every other row was a bare div
+   sitting flush against its neighbor). Targets every direct-child row by
+   POSITION so it's uniform regardless of which rows happen to carry
+   .stop-row. Shared with .ticket-box below. (2026-07-12) */
+.tour-box > div,
+.ticket-box > div { margin-top: 6px !important; margin-bottom: 0 !important; line-height: 1.55 !important; }
+.tour-box > div:first-child,
+.ticket-box > div:first-child { margin-top: 0 !important; }
+.tour-box,
+.ticket-box { padding-top: 8px !important; padding-bottom: 8px !important; }
+/* Uniform row spacing inside card body containers — 8px between rows, 0 on first child.
+   .stop-row has its own base margin:10px 0 which is overridden here to stay consistent. */
+.entry-body > div,
+.station-box > div,
+.shows-box > div,
+.transit-box > div { margin-top: 8px; margin-bottom: 0; }
+.entry-body > div:first-child,
+.station-box > div:first-child,
+.shows-box > div:first-child,
+.transit-box > div:first-child { margin-top: 0; }
+.entry-body > .stop-row,
+.station-box > .stop-row,
+.shows-box > .stop-row,
+.transit-box > .stop-row { margin: 8px 0 0; }
+.tour-box a { font-weight: normal; }
+.tour-box a strong { font-weight: normal !important; }
+#tours .entry-body a strong,
+#tours .extras-sub a strong { font-weight: normal !important; }
+
+
+/* Only the tour/ticket name (wrapped in <strong>) is bold.
+   All other links inside .tour-box — including 📍 address and 📅 booking — are normal weight.
+   Updated 2026-05-19 (was: bold on booking link; now: bold on <strong> name only). */
+
+/* .tour-meet — visually IDENTICAL to other rows inside .tour-box.
+   No indent, no color change, no border, no extra spacing. The element
+   exists structurally (validator requires it as the meeting-point
+   wrapper, last child of .tour-box) but renders as just-another-row.
+   Re-locked 2026-04-26 after Wifey's final ruling: *"no indentation,
+   they are all one block."* The 📍 address line reads exactly like
+   the 🕐/⏳/👥 time row above it — same color, same alignment, same
+   weight. Structural distinction (the wrapper) survives for validator
+   enforcement; visual distinction is GONE. */
+.tour-meet {
+  font-size: var(--fs-base);
+  line-height: 1.55;
+}
+/* The rows INSIDE .tour-meet keep the base `.stop-row { margin: 10px 0 }`,
+   because the `.tour-box > div` override reaches direct children only. With no
+   padding on .tour-meet those 10px collapse straight out of it — 10px above,
+   pushing the meeting point off the card's 12.25px constant, and 10px below,
+   escaping through the box and landing between the card and the photo (22.38px
+   measured on Götaplatsen, against 12.25 everywhere else). The gap belongs to
+   .tour-meet's own margin, not to a row nested inside it. */
+.tour-meet > div       { margin-top: 0; margin-bottom: 0; }
+.tour-meet > div + div { margin-top: 2px; }
+.tour-meet a           { text-decoration: none; }
+.tour-meet a:hover     { text-decoration: underline; }
+
+
+/* ─── TICKET BOX (🎟️ ticket — any category) ────────────────────────────────── */
+/* Per core rules/Types of Days and Stops.html § Type of Day 2 Option 2 + § Type
+   of Day 3. .ticket-box wraps any ticket-gated stop (timed-entry, fast-track,
+   admission, rooftop pass, etc.). Shares the unified blue palette with
+   .tour-box — scan signal is GLYPH (📅 vs 📍 vs 🎟️), class separation is
+   structural for validator enforcement.
+
+   Expected children of .ticket-box, in order:
+     1× lead row `🎟️ <a>{venue-domain}</a> · {details}`
+                                    — ticket anchor + one-line extras
+                                      (timed entry / fast-track / etc.).
+                                      NEVER carries price, platform, or
+                                      rating. The venue entrance IS the
+                                      meeting point — no .tour-meet here.
+     1× <div> `📍 <a>{Address}</a>` — Google Maps anchor.
+     1× <div> `🏛️ {opening hours}` — venue hours.
+     0-1× <div> `⚠️ {flag}`         — between hours and visit time, only
+                                      when a Stop Flag applies (per
+                                      Types of Days and Stops.html § Stop
+                                      Flags). Order of multiple flags:
+                                      🚫 → .free-flag → 💵 → ⚠️.
+     1× <div> `⏰ ~{duration} typical visit`
+
+   No 🕐 / ⏳ / 👥 inside .ticket-box — those glyphs only fire when someone
+   else controls the schedule (i.e., guided tours).
+
+   Lineage: red palette (#fdf2f2 / #c0392b) retired 2026-04-23 — read as
+   "error/warning" stacked next to blue tour rows. Glyph alone carries the
+   scan signal now; booking boxes are a unified blue family. */
+.ticket-box {
+  background: var(--c-card-bg);
+  padding: 10px 14px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  margin: 4px 0;
+}
+.ticket-box a { font-weight: normal; }
+.ticket-box a strong { font-weight: normal !important; }
+/* Mirrors .tour-box: only <strong> name is bold; all other links are normal weight. */
+
+
+/* ─── WARNING CALLOUT (⚠️) ─────────────────────────────────────────────────── */
+/* Used inline as a free-floating callout (not a stop flag — those live inside
+   .ticket-box / .tour-box). Amber palette by intentional contrast against
+   the booking-box blue family. Link override is the only place a non-blue
+   link is allowed (validator allowlist — see §GLOBAL LINK). */
+.warn {
+  background: var(--c-card-bg);
+  border-left: 3px solid var(--c-warn-border);
+  color: var(--c-warn-text);
+  padding: 10px 14px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  margin: 6px 0;
+}
+.warn a { color: var(--c-warn-link); font-weight: bold; }
+
+
+/* ─── STOP PHOTOS ──────────────────────────────────────────────────────────── */
+/* Per core rules/Photos.html. .stop-photos is always the LAST child of
+   .stop-block, regardless of stop type. Expected children: one or more
+   <img> elements — nothing else (no captions, no <figure>/<figcaption>,
+   no nested wrappers, no inline styles).
+   Each <img>:
+     src="_build/assets/800px-{Filename}.jpg"   — local Wikimedia 800px thumb
+     alt="{plain subject name}"          — short, no "photo of" prefix
+
+   Source images: ~800×600 JPEG, quality 80, ~60-90 KB each (Retina-crisp at
+   ~370×220 CSS px slot desktop / 390×290 mobile). `max-width: 370px` caps
+   each image at the phone-card slot — a single photo stays phone-card-sized
+   instead of stretching to the full row width (~730px), while 2+ photos
+   sit side-by-side at the same ~370px slot. Without this cap, `flex: 1` on
+   a lone child stretches the image to a wide letterbox strip on desktop. */
+.stop-photos {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.stop-photos img {
+  flex: 1 1 0%;
+  min-width: 0;
+  max-width: 370px;
+  height: 220px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+/* Empty-photo state (Photos Rules.html § Negative finding HTML format, 2026-04-26).
+   Applied when no Wikimedia image was found after exhausting the fallback chain.
+   HTML shape: <div class="stop-photos stop-photos-empty"><em>No pictures found.</em></div>
+   Override the flex row to block so the lone <em> sits as a normal text line,
+   not a stretched flex item. Subdued italic keeps it visually subordinate. */
+/* The empty state is a PAINTED block, so its own top edge is what the reader
+   sees — there is no image inset below a transparent strip. It therefore needs
+   the 6px the photo strip's padding-top supplies in the normal case, as margin. */
+.stop-photos.stop-photos-empty { margin-top: 6px; }
+.stop-photos.stop-photos-empty {
+  display: block;
+  font-style: italic;
+  color: var(--c-text-muted);
+  font-size: var(--fs-small);
+}
+
+
+/* ─── PAGE-BREAK CONTROL (screen + print, both fire) ───────────────────────── */
+/* render_pdf.py uses page.emulate_media(media="screen"), so page-break rules
+   listed only under @media print never fire. These rules live at the base
+   so Chromium honors them during the PDF pagination pass regardless of
+   media mode. Without them, a stop header can land on one page with its
+   photos orphaned on the next — reads as "this stop has no picture."
+   Both legacy (`page-break-inside`) and modern (`break-inside`) names kept
+   for cross-engine safety. */
+.day-block,
+.extras-section,
+.worth-knowing,
+.overview-section,
+.stop-block,
+.stop-photos {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+
+/* ─── TRAIN BLOCK (round-trip train booking on Type 4 Train Day stops) ─────── */
+/* Per Brain/CORE RULES/Day Trips - Extra Section.html and Brain/CORE RULES/Types of Days and Stops.html
+   § Type of Day 4. The train block carries 3-6 outbound + return departures
+   on a Train Day stop. Light-blue tinted to differentiate from the booking-
+   box blue family while staying in the same color story.
+
+   Selector scoping — IMPORTANT.
+   Bare `.train` collides with `.stop-name.train` (the train modifier class
+   on a Type 4 stop's name span — the CSS that prepends 🚆 via ::before).
+   Past Claude shipped a guide where .stop-name.train inherited the train-
+   block's blue background + border + padding because both selectors
+   matched the same element (an element can carry multiple classes;
+   `<span class="stop-name train">` matched both `.stop-name` AND `.train`),
+   and the stop name rendered as a boxed callout instead of plain bold text.
+   owner 2026-04-26: *"this is a bug... if you open paris or turin this part
+   is right there"* — confirming the regression by pointing at past guides
+   that rendered the stop name correctly because they had no train-day
+   stops to expose the collision.
+
+   Fix: scope every train-block selector to `div.train` (and its descendants)
+   so spans with the `.train` modifier never inherit the box treatment. The
+   structural contract says train blocks are <div>, never <span>; this
+   constraint is now enforced by the selector itself. Do NOT relax back
+   to bare `.train` — the modifier collision will return immediately. */
+div.train {
+  background: var(--c-card-bg);
+  border: 1.5px solid var(--c-title-bg);
+  padding: 10px 14px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+div.train .train-header { font-weight: bold; color: var(--c-text-primary); margin-bottom: 6px; }
+div.train .train-time   { padding: 2px 0; }
+
+
+
+/* ─── END-OF-ITINERARY EXTRAS ──────────────────────────────────────────────── */
+/* Per Brain/CORE RULES/Guide Structure.html § End-of-Itinerary order (updated 2026-05-03 — 12 sections):
+     🗓️ Weekly Closures · ☕ Cappuccino · 🫕 Restaurants Near Hotel · 🍽️ Downtown · 🍮 Local Tastes ·
+     🎭 Shows · 🚌 Getting Around · 🚆 Train Stations Near Hotel · ⛲️ Day Trips · 🏓 Pickleball (CA+AZ only) · ⭐ Michelin Restaurants · ❗️ Heads Up (conditional)
+
+   .extras-section is a top-level card per surface. id="..." attribute is
+   REQUIRED and matches the locked surface anchor (validator: section-anchor
+   verification check):
+     id="weekly-closures"     — Brain/CORE RULES/Extra-Sections/Weekly Closures - Extra Section.html
+     id="tours"               — Brain/CORE RULES/Extra-Sections/Tours - Extra Section.html (added 2026-05-20; position 2 after weekly-closures)
+     id="cappuccino"          — Brain/CORE RULES/Extra-Sections/Cappuccino - Extra Section.html
+     id="restaurants"         — Brain/CORE RULES/Extra-Sections/Restaurants Near Hotel - Extra Section.html
+     id="downtown"            — Brain/CORE RULES/Extra-Sections/Downtown Restaurants - Extra Section.html
+     id="local-tastes"        — Brain/CORE RULES/Extra-Sections/Local Tastes - Extra Section.html
+     id="food-delivery"       — Brain/CORE RULES/Extra-Sections/Food Delivery - Extra Section.html (added 2026-05-20; between local-tastes and shows)
+     id="shows"               — Brain/CORE RULES/Extra-Sections/Shows, Performances & Concerts - Extra Section.html
+     id="getting-around"      — Brain/CORE RULES/Extra-Sections/Getting Around - Extra Section.html
+     id="stations-near-hotel" — Brain/CORE RULES/Extra-Sections/Train Stations Near Hotel - Extra Section.html
+     id="day-trips-by-train"  — Brain/CORE RULES/Extra-Sections/Day Trips by Train - Extra Section.html (canonical 2026-05-26; id="day-trips" is legacy backward-compat selector kept below)
+     id="pickleball"          — Brain/CORE RULES/Extra-Sections/Pickleball - Extra Section.html (ships CA+AZ+OR only; silently omitted elsewhere)
+     id="michelin"            — Brain/CORE RULES/Extra-Sections/Michelin Restaurants - Extra Section.html
+     id="heads-up"            — Brain/mds/Brain.md (Part 3 — Heads Up) (ships only when city has a ## heading in that file)
+     id="skip-list"           — Brain/mds/Brain.md (Part 4 — Cities Skip List) (added 2026-05-21; conditional footnote, very last element)
+
+   Expected children of .extras-section, in order:
+     1× .extras-title           — literal section title with leading glyph,
+                                  per the Guide Structure list above
+                                  (e.g. `⭐ Michelin Restaurants`,
+                                  `🎭 Shows & Performances`)
+     1+× entry groups           — per-surface shape; Michelin alternates
+                                  .extras-sub heading + .entry-body body;
+                                  Shows alternates .extras-sub heading +
+                                  .ride-apps prose + .shows-box logistics;
+                                  Ride Apps single .transit-box.
+     0-1× .extras-empty         — italic negative-finding line, only when
+                                  the surface ships zero entries
+                                  (e.g. "No Michelin-starred restaurants
+                                  in {City}." per Michelin Restaurants.html) */
+.extras-section {
+  background: var(--c-warm-bg);
+  box-shadow: var(--c-card-shadow);
+  border-radius: 12px;
+  padding: 14px 28px 28px;
+  margin-bottom: 24px;
+  scroll-margin-top: 20px;
+}
+/* Card-in-section: inset every section's inner content to the SAME width as the
+   inset stop card (80–1330 on a 1410 viewport) so all sections read as a white
+   card framed by beige — one consistent look. Desktop only; mobile stays
+   full-width to use the narrow screen. (Full class consolidation comes later.) */
+@media (min-width: 601px) {
+  .extras-section,
+  .worth-knowing,
+  #hotel-alternatives {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+  /* …but pull the section TITLE back out of that inset (−28px) so it stays wider
+     than the content cards, mirroring the stops (title full-width label above an
+     inset card). Only the content moves inside; the title does not. */
+  .extras-section > .extras-title,
+  .worth-knowing > .extras-title,
+  #hotel-alternatives > .extras-title {
+    margin-left: -28px;
+    margin-right: -28px;
+  }
+}
+/* ── Worth Knowing (class stays .worth-knowing) — same card shape as .extras-section.
+   <p> entries get breathing room; last <p> strips its bottom margin
+   so the card padding is the only space at the foot. */
+/* ── Worth Knowing color themes ─────────────────────────────────────────
+   Claude picks a theme class, an emoji, and a title for each guide.
+   No inline styles needed — just add one theme class to the div.
+   Available themes (one per guide, chosen to match the city's personality):
+     theme-purple · theme-teal · theme-coral · theme-pink · theme-sage
+     theme-amber  · theme-indigo · theme-green · theme-yellow
+   Default (no theme class) falls back to white card + brand-color title.      */
+.worth-knowing.theme-purple { --ci-bg: var(--c-cappuccino-bg);    --ci-border: var(--c-cappuccino-border); }
+.worth-knowing.theme-teal   { --ci-bg: var(--c-gettingaround-bg); --ci-border: var(--c-gettingaround-border); }   /* teal — matches guide-toolbar.theme-teal */
+.worth-knowing.theme-coral  { --ci-bg: var(--c-warm-bg);          --ci-border: var(--c-coral-border); }            /* coral — matches guide-toolbar.theme-coral */
+.worth-knowing.theme-pink   { --ci-bg: var(--c-nearhotel-bg);     --ci-border: var(--c-nearhotel-border); }        /* rose — matches guide-toolbar.theme-pink */
+.worth-knowing.theme-sage   { --ci-bg: #f0f7f4;                   --ci-border: #448088; }   /* own sage tokens — not tied to closures */
+.worth-knowing.theme-amber  { --ci-bg: var(--c-michelin-bg);      --ci-border: var(--c-michelin-border); }
+.worth-knowing.theme-indigo { --ci-bg: var(--c-stations-bg);      --ci-border: var(--c-stations-border); }
+.worth-knowing.theme-green  { --ci-bg: var(--c-shows-bg);         --ci-border: var(--c-shows-border); }
+.worth-knowing.theme-yellow { --ci-bg: var(--c-pickleball-bg);    --ci-border: var(--c-pickleball-border); }
+
+.worth-knowing {
+  background: var(--ci-bg, var(--c-warm-bg));
+  box-shadow: var(--c-card-shadow);
+  border-radius: 12px;
+  padding: 14px 28px 28px;
+  margin-bottom: 24px;
+  scroll-margin-top: 20px;
+}
+.worth-knowing .extras-title {
+  color: var(--ci-border, var(--c-brand));
+  border-bottom-color: var(--ci-border, var(--c-brand));
+}
+.worth-knowing p {
+  font-size: var(--fs-base);
+  color: var(--c-text-primary);
+  line-height: 1.7;
+  margin: 0;
+  background: var(--c-card-bg);
+  border-radius: 0;
+  padding: 10px 14px;
+}
+/* Worth Knowing headline — the per-guide creative title. The section title
+   itself is fixed ("✨ Worth Knowing", injected by the :empty::before rule
+   below) so the pill and the heading always match; the guide's own line moves
+   down here as the first row of the white card, where it reads as a headline
+   over the prose rather than as a second section name. (2026-08-07) */
+.worth-knowing .wk-headline {
+  font-weight: 700;
+  font-size: var(--fs-lead, 16px);
+  line-height: 1.4;
+  color: var(--c-text-primary);
+  padding-bottom: 2px;
+}
+.worth-knowing p:first-of-type { border-radius: 4px 4px 0 0; padding-top: 12px; }
+.worth-knowing p:last-of-type  { border-radius: 0 0 4px 4px; padding-bottom: 12px; }
+.worth-knowing p:only-of-type  { border-radius: 4px; }
+
+.extras-title {
+  color: var(--c-brand);
+  font-size: var(--fs-header);
+  font-weight: bold;
+  background: var(--c-card-bg);
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-bottom: 2px solid var(--c-brand);
+  border-radius: 14px;
+  padding: 13px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+/* Uniform gap between a section title and its first content element, across every
+   section. The old system set this per-section-ID for `.extras-title + .extras-sub`
+   (12px), but any section whose first child isn't `.extras-sub` (e.g. Tours →
+   `.tours-group`) escaped it and got a different gap (20px). This single rule pins
+   the first child's top margin regardless of its class or section, with !important
+   so it wins over the per-ID overrides below (the redundant per-ID list will be
+   removed in the deferred consolidation). */
+.extras-section > .extras-title + *,
+.worth-knowing > .extras-title + *,
+#hotel-alternatives > .extras-title + * {
+  margin-top: 16px !important;
+}
+/* Collapse chevron via ::after so :empty::before title text is never broken */
+.extras-section > .extras-title::after,
+.worth-knowing > .extras-title::after,
+#hotel-alternatives > .extras-title::after {
+  content: '›';
+  font-size: 20px;
+  color: #a49b8c;
+  transition: transform 0.15s ease;
+  display: inline-block;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-left: auto;
+}
+.extras-section:not(.collapsed) > .extras-title::after,
+.worth-knowing:not(.collapsed) > .extras-title::after,
+#hotel-alternatives:not(.collapsed) > .extras-title::after {
+  transform: rotate(90deg);
+}
+.extras-section.collapsed .extras-title,
+.worth-knowing.collapsed .extras-title,
+#hotel-alternatives.collapsed .extras-title {
+  margin-bottom: 0 !important;
+}
+.extras-section.collapsed > *:not(.extras-title),
+.worth-knowing.collapsed > *:not(.extras-title),
+#hotel-alternatives.collapsed > *:not(.extras-title) {
+  display: none !important;
+}
+.extras-section.collapsed,
+.worth-knowing.collapsed,
+#hotel-alternatives.collapsed {
+  padding-bottom: 14px !important;
+}
+
+/* .section-icon — legacy class, no longer used. All section heading icons
+   are Unicode emoji. The 1em sizing kept icons proportional to section
+   heading text; vertical-align: middle aligned to the capital-letter baseline. */
+.extras-title .section-icon,
+.overview-extra-link .section-icon {
+  height: 1em;
+  width: 1em;
+  vertical-align: middle;
+  border-radius: 4px;
+  margin-right: 6px;
+}
+.extras-sub {
+  color: var(--c-text-primary);
+  font-size: var(--fs-stop-row);
+  font-weight: bold;
+  margin: 20px 0 8px;
+}
+/* If an extras-sub title is also a link (e.g. pickleball venue linking to
+   courts page), strip the link styling so it visually matches a plain
+   brand-color heading — same look as Michelin restaurant names. The link
+   remains functional; it just doesn't turn blue/underlined. (2026-05-07) */
+.extras-sub a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+/* Review-rating link in extras-sub headings (Cappuccino, Restaurants Near Hotel, Downtown).
+   Restaurant/cafe NAME stays plain in section's bold heading color — the rating
+   text after it becomes the clickable Yelp/Google-Reviews link, sized + colored
+   like a normal body link so it reads as a small-print review badge instead of
+   another heading. (Experiment 2026-05-18, scoped to Paris first.) */
+.extras-sub a.review-link {
+  color: var(--c-link);
+  font-size: var(--fs-stop-row);
+  font-weight: normal;
+  text-decoration: none;
+}
+.extras-sub a.review-link:hover { text-decoration: underline; }
+/* Mobile parity with .entry-body maps-link size — 19px at ≤600px viewport. */
+@media (max-width: 600px) {
+  .extras-sub a.review-link { font-size: var(--fs-extras-title); }
+}
+
+/* Tours section — booking link blue + normal weight, same visual as .ticket-box a.
+   The tour name is the clickable link; platform · rating · reviews sit after it as
+   plain text. Override the .extras-sub a { color: inherit } rule so the name reads
+   as a normal body link instead of a bold heading fragment. (2026-05-26) */
+#tours .extras-sub a {
+  color: var(--c-link);
+  font-weight: normal;
+  text-decoration: none;
+}
+#tours .extras-sub a:hover { text-decoration: underline; }
+
+
+/* ── extras-title :empty::before — CSS-injected section titles.
+   Color is set once on the base .extras-title rule (var(--c-extras-border) — unified gold 2026-08-04).
+   No per-section color overrides; all sections share the same gold. ── */
+#tours              .extras-title:empty::before { content: "📅 Tours"; }
+#weekly-closures    .extras-title:empty::before { content: "🗓️ Weekly Closures"; }
+#cappuccino         .extras-title:empty::before { content: "☕ Cappuccino"; }
+#restaurants        .extras-title:empty::before { content: "🫕 Restaurants Near Hotel"; }
+#downtown           .extras-title:empty::before { content: "🍽️ Downtown Restaurants"; }
+#local-tastes       .extras-title:empty::before { content: "🍮 Local Tastes"; }
+#shows              .extras-title:empty::before { content: "🎭 Shows, Performances & Concerts"; }
+#getting-around     .extras-title:empty::before { content: "🚌 Getting Around"; }
+#stations-near-hotel .extras-title:empty::before { content: "🚆 Train Stations Near Hotel"; }
+#day-trips-by-train .extras-title:empty::before { content: "⛲️ Day Trips by Train"; }
+#michelin           .extras-title:empty::before { content: "⭐ Michelin Restaurants"; }
+#pickleball         .extras-title:empty::before { content: "🏓 Pickleball"; }
+#heads-up           .extras-title:empty::before { content: "❗️ Heads Up"; }
+#food-delivery      .extras-title:empty::before { content: "🚗 Food Delivery"; }
+#also-on-this-site  .extras-title:empty::before { content: "💥 Also on this site"; }
+#worth-knowing .extras-title:empty::before { content: "✨ Worth Knowing"; }
+
+/* ── extras-sub title color — matches each section's border token.
+   Same token drives the left stripe, the big title, and the sub-titles.
+   Font-size overrides (#michelin, #pickleball) are additive. (2026-05-09) ── */
+/* Universal first-entry top-margin reset (locked 2026-05-19). Without this,
+   every section had `section-padding-top (28px) + first-entry top-margin (14px)`
+   above the first entry but only `section-padding-bottom (28px)` below the last
+   entry. The reset removes the 14px from the first .extras-sub so top and
+   bottom breathing match across every Extras section. */
+.extras-section .extras-title + .extras-sub {
+  margin-top: 0;
+}
+/* ID-scoped overrides (specificity 1,2,0) — beat the per-section #id .extras-sub margin rules (1,1,0)
+   that otherwise win against the general reset above (0,2,0). 12px gives breathing room between
+   the title underline and the first colored entry. Updated 2026-08-04 from 0→12px. */
+#heads-up            .extras-title + .extras-sub { margin-top: 12px; }
+#stations-near-hotel .extras-title + .extras-sub { margin-top: 12px; }
+#day-trips-by-train  .extras-title + .extras-sub { margin-top: 12px; }
+#michelin            .extras-title + .extras-sub { margin-top: 12px; }
+#pickleball          .extras-title + .extras-sub { margin-top: 12px; }
+#getting-around      .extras-title + .extras-sub { margin-top: 12px; }
+#food-delivery       .extras-title + .extras-sub { margin-top: 12px; }
+#local-tastes        .extras-title + .extras-sub { margin-top: 12px; }
+#shows               .extras-title + .extras-sub { margin-top: 12px; }
+#restaurants-near-hotel .extras-title + .extras-sub { margin-top: 12px; }
+#downtown-restaurants   .extras-title + .extras-sub { margin-top: 12px; }
+#cappuccino             .extras-title + .extras-sub { margin-top: 12px; }
+#restaurants            .extras-title + .extras-sub { margin-top: 12px; }
+#downtown               .extras-title + .extras-sub { margin-top: 12px; }
+/* Close the second gap source: .extras-title has margin-bottom: 16px which
+   still creates a 16px white gap above the first colored entry even after the
+   margin-top reset above. When .extras-title is immediately followed by
+   .extras-sub, collapse that margin-bottom to 0. The :has(+ .extras-sub)
+   guard preserves the 16px breathing room for .extras-empty sections.
+   Enforced: brain_check check_extras_title_gap (HARD-FAIL). (2026-07-19) */
+.extras-section .extras-title:has(+ .extras-sub) {
+  margin-bottom: 0;
+}
+
+#tours               .extras-sub { color: var(--c-text-primary); }
+/* 📅 Tours — platform group sub-heading (Viator / GetYourGuide / TripAdvisor).
+   Tours - Extra Section.html § 3: tours ship grouped by source under a sub-heading. */
+#tours .tours-group {
+  font-weight: bold;
+  font-size: var(--fs-stop-row);
+  color: var(--c-brand);
+  letter-spacing: 0.3px;
+  margin: 20px 0 6px;
+}
+#tours .tours-group:first-of-type { margin-top: 8px; }
+@media (max-width: 600px) { #tours .tours-group { font-size: var(--fs-overview-day); } }
+#weekly-closures     .extras-sub { color: var(--c-text-primary); }
+#cappuccino          .extras-sub { color: var(--c-text-primary); }
+#restaurants         .extras-sub { color: var(--c-text-primary); }
+#downtown            .extras-sub { color: var(--c-text-primary); }
+#local-tastes        .extras-sub { color: var(--c-text-primary); }
+#shows               .extras-sub { color: var(--c-text-primary); }
+#getting-around      .extras-sub { color: var(--c-text-primary); }
+#stations-near-hotel .extras-sub { color: var(--c-text-primary); }
+#day-trips           .extras-sub { color: var(--c-text-primary); }
+#day-trips-by-train  .extras-sub { color: var(--c-text-primary); }
+#michelin            .extras-sub { color: var(--c-text-primary); }
+#pickleball          .extras-sub { color: var(--c-text-primary); }
+#heads-up      .extras-sub { color: var(--c-text-primary); }
+#food-delivery       .extras-sub { color: var(--c-text-primary); }
+
+/* ❗️ Heads Up — text colors from dedicated tokens; border unified to extras gold */
+#heads-up .transit-box {
+  background: var(--c-card-bg);
+  border-color: transparent;
+  color: var(--c-headsup-text);
+}
+#heads-up .transit-box a { color: var(--c-headsup-link); }
+
+/* Negative-finding line — italic, muted. Used per the locked rule for
+   Michelin / Local Tastes / Weekly Closures when nothing qualifies. */
+.extras-empty {
+  font-size: var(--fs-base);
+  color: var(--c-text-muted);
+  margin-top: 4px;
+  /* Per-section palette block — when a section has only a negative-finding line,
+     the line itself carries the section's color so the section still shows visual
+     presence on the page. Added 2026-05-18 — fixes Singapore Day Trips + Weekly Closures
+     (and same shape in every guide where a section has zero qualifying entries). */
+  padding: 8px 14px;
+  border-radius: 4px;
+}
+#weekly-closures     .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#cappuccino          .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#restaurants         .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#downtown            .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#local-tastes        .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#shows               .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#getting-around      .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#stations-near-hotel .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#day-trips           .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#day-trips-by-train  .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; color: var(--c-text-muted) !important; }
+#pickleball          .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#michelin            .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#food-delivery       .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#heads-up            .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+#tours               .extras-empty { background: var(--c-warm-bg); border: 1.5px solid transparent; }
+
+/* Lavender extras-box — Michelin and Shows both use this palette (matches
+   .overview-day / Trip Overview). One box per entry; sits directly below
+   each .extras-sub title; holds logistical rows only.
+   Per core rules/Michelin Restaurants.html: restaurant name is plain text
+   (NOT linked) — inherits brand color via .extras-sub. Validator's
+   Michelin name-not-linked check is the runtime enforcer. */
+/* ── Extras-section boxes — shared structure, individual color tokens.
+   Each section has its own ID-scoped rule so any palette can be changed
+   independently by editing its tokens in :root above. (2026-05-06) ── */
+/* Unscoped fallback — brand palette. Fires only if .entry-body/.shows-box appears
+   outside any known section ID. */
+.entry-body,
+.shows-box {
+  background: var(--c-brand-pale);
+  border: 1.5px solid transparent;
+  padding: 10px 14px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  margin: 8px 0 16px;
+}
+.entry-body a { font-weight: bold; }
+/* Maps links inside .entry-body must NOT be bold — same rule as tour-box/ticket-box.
+   The bold rule above makes booking/website links bold (correct), but 📍 address
+   links should always render normal weight. (2026-05-07) */
+.entry-body a[href*="google.com/maps"] { font-weight: normal; }
+/* .shows-box links stay plain weight — no name text rides inside the 🎟 link to
+   justify bolding it (unlike .entry-body's Tours/Michelin rows), so a blanket bold
+   just made every venue's booking/website link (and, before the 2026-05-07 maps
+   exemption, the 📍 address too) render bold. Locked 2026-07-12 — see validate_itinerary.py
+   Check X + Formatting.html#sec-colors § 3 (Body links, #2867c4, normal weight). */
+.shows-box a { font-weight: normal; }
+/* Retired 2026-05-19 — the `#michelin .entry-body > div:first-child`
+   rule was bolding + amber-tinting the first row of the entry-body. Pre
+   Style-A that row was the restaurant name; post Style-A (2026-05-19) the
+   restaurant name lives on the .extras-sub heading and the first row in
+   the body box is the CUISINE description — which should read as plain
+   body text, not the section's title color. Removed so descriptions render
+   the same as every other body box. */
+
+/* ── Per-section Style A blocks — each section fully self-contained.
+   Heading: border on top/left/right, no bottom (so heading + body share the
+   left/right border as one continuous line). Body: border on left/right/bottom,
+   no top. Together they form one clean bordered card per entry.
+   Padding/radius locked: heading 10px 14px 0 14px / 4px 4px 0 0;
+   body 0 14px 8px 14px / 0 0 4px 4px. ── */
+
+/* 📅 Tours — 12px bottom padding = title→desc gap larger than 8px row gap */
+#tours .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#tours .entry-body {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* ☕ Cappuccino */
+#cappuccino .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#cappuccino .entry-body {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* 🫕 Restaurants Near Hotel */
+#restaurants .extras-sub,
+#restaurants-near-hotel .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#restaurants .entry-body,
+#restaurants-near-hotel .entry-body {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* 🍽️ Downtown Restaurants */
+#downtown .extras-sub,
+#downtown-restaurants .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#downtown .entry-body,
+#downtown-restaurants .entry-body {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* ❗️ Heads Up */
+#heads-up .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+  color: var(--c-text-primary);
+}
+#heads-up .transit-box {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+  color: var(--c-headsup-text);
+}
+
+/* ── STYLE A — CONTINUOUS RUN — RETIRED 2026-08-04 (owner: each entry
+   is its own individual box, not merged). The adjacent-sibling merge rules
+   that removed border-radius + margin between consecutive entries are removed
+   here. Each entry keeps its own 4px full radius and 14px top margin so
+   entries always render as separate cards. ── */
+
+/* Retired 2026-07-12 — the CSS-only "#tours .tours-group + .entry-body"
+   padding patch fixed the RENDERED result but not the underlying markup:
+   the validator's structural check flags .entry-body sitting directly under
+   .tours-group at all (that combination only ever occurs for a single-
+   platform negative-finding line — a real tour entry always has .extras-sub
+   between them). Superseded by the correct fix: every guide's negative-
+   finding box under .tours-group now uses class="extras-empty" (the same
+   self-contained negative-finding class used everywhere else in a guide —
+   #tours .extras-empty below supplies the matching background/border-left).
+   No .entry-body ever sits directly under .tours-group anymore, so this
+   patch has nothing left to match. */
+
+/* Retired 2026-05-19 — the intermediate description div between .extras-sub
+   and .transit-box in #day-trips and #getting-around was the pre-2-row Day
+   Trips and Ride App shape. Every guide now ships description AND link
+   INSIDE the .transit-box (two child divs) — same 2-row shape as every
+   other Extras section (heading + body box). Do not reintroduce. */
+
+/* Section color tokens block removed 2026-08-03 — each section now has its own
+   self-contained heading + body block with border: 1.5px solid and complete colors. */
+
+/* Local Tastes — dish name color override (the heading color carries the
+   parchment hue, not the section border color, per the existing palette). */
+#local-tastes .extras-sub           { color: var(--c-text-primary); }
+#local-tastes .entry-body         { color: var(--c-tastes-text); }
+
+/* 🗓️ Weekly Closures — each closure row is its own individual bordered box with gap below. (2026-08-04) */
+/* Top/bottom only — NEVER a `padding` shorthand here. The shared card-in-section
+   rule (~line 1534) sets padding-left/right: 48px on desktop; a shorthand on this
+   ID resets both sides, so the section's content un-insets while its `.extras-title`
+   keeps its −28px pull-out and hangs off the left edge of the beige card. Locked by
+   brain_check.check_extras_section_inset (2026-08-08). */
+#weekly-closures {
+  padding-top: 20px;
+  padding-bottom: 28px;
+}
+#weekly-closures .extras-title {
+  margin-bottom: 10px;
+}
+#weekly-closures .stop-row {
+  background: var(--c-card-bg) !important;
+  border: 1.5px solid transparent;
+  padding: 5px 14px !important;
+  margin: 0 !important;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  border-radius: 0 !important;
+  color: var(--c-text-primary);
+}
+/* First entry — top corners rounded, space below the section title.
+   16px matches the universal title-to-content gap (all sections consistent). */
+#weekly-closures .extras-title + .stop-row {
+  margin-top: 16px !important;
+  border-radius: 4px 4px 0 0 !important;
+}
+/* Last entry — bottom corners rounded, no separator line */
+#weekly-closures .stop-row:last-child {
+  border-radius: 0 0 4px 4px !important;
+  border-bottom: 1.5px solid transparent !important;
+}
+/* Single entry (only child) — all corners rounded */
+#weekly-closures .extras-title + .stop-row:last-child {
+  border-radius: 4px !important;
+}
+#weekly-closures .stop-row strong { color: var(--c-text-primary); }
+
+/* 🚆 Train Stations Near Hotel — per-entry continuous block (Local Tastes pattern).
+   Station-name heading + station-box body merged into one colored block per station.
+   (Restructured 2026-05-19 per owner: "color is the entire entry... like local
+   tastes have always been".) */
+#stations-near-hotel .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 8px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+/* Scoped override — 12px breathing room (see primary rule block above). (2026-07-16, updated 2026-08-04) */
+#stations-near-hotel .extras-title + .extras-sub { margin-top: 12px; }
+#stations-near-hotel .station-box {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  margin: 0;
+  padding: 0 14px 6px 14px;
+  line-height: 1.6;
+}
+/* Zero bottom margin on station rows — matches .entry-body > .stop-row behaviour.
+   Zero top margin on first-child to prevent margin-collapse through station-box
+   (padding-top:0 + no border-top lets margin-top collapse outside, creating a white gap). */
+#stations-near-hotel .station-box > .stop-row { margin-bottom: 0; }
+#stations-near-hotel .station-box > .stop-row:first-child { margin-top: 0; }
+
+/* ⛲️ Day Trips — pink, one solid block per city entry (chosen 2026-05-09)
+   Colors BOTH the 🗞️ summary div AND the .transit-box as a unified block.
+   🗞️ div = first row after .extras-sub → top corners + top gap.
+   .transit-box = bottom of the block → no top radius, bottom corners + bottom gap.
+   Seam padding zeroed 2026-05-14 — the description's padding-bottom +
+   transit-box's padding-top were adding 18px of internal whitespace at
+   the boundary, breaking the "one continuous block" intent. */
+/* ⛲️ Day Trips — Style A per-entry block (heading + description + transit-box
+   merged into one colored card per destination). (2026-05-19) */
+#day-trips .extras-sub,
+#day-trips-by-train .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#day-trips .transit-box,
+#day-trips-by-train .transit-box {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* ⭐ Michelin — Style A per-entry block (2026-05-19, locked).
+   Each restaurant: `<div class="extras-sub">⭐⭐⭐ Name</div>` heading +
+   `<div class="entry-body">` body (cuisine row + 📍 address row). Heading
+   gets amber bg + top-rounded corners; entry-body gets bottom-rounded
+   corners with no top margin — they merge flush into one card per restaurant. */
+#michelin .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#michelin .entry-body {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* 🏓 Pickleball — Style A per-entry block (2026-05-19, fixed).
+   Court name heading + detail body merge flush into one yellow card,
+   matching Day Trips / Michelin / Getting Around / Food Delivery shape. */
+#pickleball .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#pickleball .entry-body {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* 🚌 Getting Around · 🚗 Food Delivery — SIDE-BY-SIDE entry rows
+   (owner rule 2026-08-08; replaces the 2026-05-19 stacked heading-over-body
+   block). Every entry in these two sections is ONE row of a single white card:
+   the entry name (.extras-sub) in the left column, its body (.transit-box —
+   the operator link, plus the description lines a transit mode carries) in the
+   right column. The section itself is the 2-column grid, so the name column is
+   one width down the whole section and every name/link pair lines up. The
+   .extras-title spans both columns and keeps its own card shape.
+   Enforced: brain_check check_getting_around_side_by_side (HARD-FAIL) — both
+   the CSS below and the per-guide alternating .extras-sub/.transit-box pairs
+   the grid depends on. Do NOT restore the stacked shape. */
+#getting-around,
+#food-delivery {
+  display: grid;
+  /* Name column sizes to the longest name in the section so every link lines up,
+     but is capped at 38% of the section so a long transit-mode name (e.g.
+     "🚢 Chao Phraya Express Boat") can never squeeze its description column to a
+     word per line on a phone. */
+  grid-template-columns: fit-content(38%) minmax(0, 1fr);
+  align-items: stretch;
+}
+#getting-around > .extras-title,
+#food-delivery  > .extras-title {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+#getting-around > .extras-sub,
+#food-delivery  > .extras-sub {
+  grid-column: 1;
+  background: var(--c-card-bg);
+  border: 1.5px solid transparent;
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+  padding: 10px 14px;
+  margin: 14px 0 0 !important;
+}
+#getting-around > .transit-box,
+#food-delivery  > .transit-box {
+  grid-column: 2;
+  background: var(--c-card-bg);
+  border-left: 0;
+  border-radius: 0 4px 4px 0;
+  padding: 10px 14px 10px 0;
+  margin: 14px 0 0 !important;
+}
+/* First entry row takes the uniform 16px title→content gap on BOTH halves so the
+   card's top edge is level across the two columns (the shared
+   `.extras-title + *` rule only reaches the left one). */
+#getting-around > .extras-title + .extras-sub,
+#getting-around > .extras-title + .extras-sub + .transit-box,
+#food-delivery  > .extras-title + .extras-sub,
+#food-delivery  > .extras-title + .extras-sub + .transit-box {
+  margin-top: 16px !important;
+}
+
+/* Retired 2026-05-19 — .ride-apps was a pre-Style-A wrapper for the Getting
+   Around section. Replaced by .extras-sub heading + .transit-box body per
+   the Style-A canonical block. Validator hard-fails any reappearance.
+   Do not reintroduce. */
+
+/* Michelin "Not shown" count line — sits at the bottom of #michelin,
+   summarises star tiers not included in the guide. Styled as a quiet
+   footnote: smaller text, muted colour, left-ruled amber line so it
+   reads as meta-information rather than a venue entry. */
+/* Michelin "Not shown" footnote — same 15px body baseline as the rest of the
+   section's text content (body boxes, extras-empty, stop-rows). Locked
+   2026-05-19 per owner: every in-body row reads at the same size so the
+   section doesn't look like a patchwork of sizes. */
+.michelin-count {
+  font-size: var(--fs-base);
+  color: var(--c-text-muted);
+  margin-top: 14px;
+  padding: 7px 14px;
+  border: 1.5px solid transparent;
+  background: var(--c-card-bg);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Transit-prose box — wraps the Ride Apps / Tram paragraph in the unified
+   booking-box blue tint so those sections don't feel bare next to Michelin
+   / Shows / Local Tastes. Same palette as .tour-box / .ticket-box. */
+.transit-box {
+  background: var(--c-card-bg);
+  border: 1.5px solid transparent;
+  color: var(--c-text-primary);
+  padding: 10px 14px;
+  font-size: var(--fs-base);
+  border-radius: 4px;
+  margin: 8px 0;
+}
+.transit-box strong { color: var(--c-text-primary); }
+
+/* Getting Around — ride-app name: bold + extras gold. (2026-05-19, unified 2026-08-04) */
+#getting-around .ride-app,
+#getting-around .ride-app strong {
+  color: var(--c-extras-border);
+  font-weight: bold;
+}
+
+/* Getting Around — per-entry blocks (2026-05-19, 2-row shape).
+   Each ride app and the tram entry is its own .extras-sub heading + a
+   .transit-box body that contains TWO child divs: description on the
+   first row, operator link on the second row. Same 2-row shape used
+   in every Extras section. */
+
+/* Retired 2026-05-19 — the `#day-trips .extras-title + .ride-apps` margin
+   rule lifted a single booking-operator note that sat between Day Trips
+   section title and first entry. That intermediate note shape was removed
+   when Day Trips moved to the 2-row shape (description + booking now ship
+   inside the .transit-box). .ride-apps class is no longer emitted by any
+   guide. Do not reintroduce. */
+/* Day Trips city headings: colour override removed 2026-05-08 — extras-sub uses brand color like all other sections */
+
+/* Retired 2026-05-19 — the .local-tastes / .local-tastes-title / .local-tastes-list
+   wrapper classes were the pre-Style-A Local Tastes shape. Every guide now
+   uses `.extras-sub` (heading) + `.entry-body` (body) per the Style-A spec
+   below — same shape as Cappuccino / Restaurants Near Hotel / Downtown. Do not
+   reintroduce the wrapper classes. */
+
+/* Local Tastes — Style A per-entry block (heading + entry-body body)
+   (2026-05-19, locked). Each dish ships as `.extras-sub` heading + `.entry-body`
+   body — same shape as Cappuccino / Restaurants Near Hotel / Downtown. The old
+   `.local-tastes` / `.local-tastes-title` / `.local-tastes-list` wrapper classes
+   retired; rules below pull the existing parchment tokens onto the standard
+   Style-A skeleton. */
+#local-tastes .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+  color: var(--c-text-primary);
+}
+#local-tastes .entry-body {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+  color: var(--c-tastes-text);
+}
+
+
+
+/* ─── DARK MODE ────────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-page-bg:       #1a1917;
+    --c-card-bg:       #2a2825;
+    --c-card-shadow:   0 2px 8px rgba(0, 0, 0, 0.25);
+    --c-warm-bg:       #242220;
+    /* The guide's primary accent — TRIP OVERVIEW, day headers, section titles, the
+       hotel name, section left-borders and focus rings. It had no dark value, so it
+       stayed the light gold #8a6c1a at 2.97:1 on the dark card. #c8a060 is the same
+       gold the pills use, so the guide reads as one system: 6.1:1 on --c-card-bg.
+       Only ever a foreground (text / border / outline) — never a fill. (2026-08-07) */
+    --c-brand:         #c8a060;
+    --c-brand-hover:   #2e2a1e;
+    /* Pill palette — dark. Fill is --c-card-bg so a pill reads as a raised tile
+       on the #1a1917 page, the same elevation language the section cards use.
+       Text/border are the warm gold already in this palette (--c-section-head),
+       not the light-mode #8a6c1a, which sits at 3.0:1 on this fill. */
+    --c-pill-bg:        #2a2825;
+    --c-pill-hover:     #332f2a;
+    --c-pill-active:    #3d3830;
+    --c-pill-text:      #c8a060;
+    --c-pill-bd:        rgba(200,160,96,.30);
+    --c-pill-bd-hover:  rgba(200,160,96,.50);
+    --c-pill-bd-active: rgba(200,160,96,.65);
+    --c-action-text:    #c8a060;
+    --c-action-press:   #3d3830;
+    --c-float-bg:       #2a2825;
+    --c-float-bd:       #7a6430;
+    --c-float-text:     #c8a060;
+    --c-navbtn-bd:   #5a5040;
+    --c-navbtn-text: #b0aca4;
+    --c-text-primary:  #e8e5e0;
+    --c-text-muted:    #999;
+    /* Day rail — the light values (#6f695d text, #fbf8f2 zebra) were hardcoded
+       in their rules until 2026-08-09, so this whole table was unthemed: the
+       stop names ran at 2.4:1 on --c-card-bg and the zebra painted a cream band
+       through the dark card. #b0aaa0 is 6.4:1 there, a touch above the 5.5:1 the
+       light pair gives on white; the zebra is one step up from #2a2825, matching
+       --c-pill-hover's lift rather than inverting to a darker stripe (a table
+       reads as one surface with a raised alternate row, not a punched-out one). */
+    --c-ovd-stops:     #b0aaa0;
+    --c-ovd-zebra:     #322f2b;
+    --c-link:          #5a9aee;
+    --c-next-bg:       #222120;
+    --c-next-border:   #444;
+    --c-skip-note:     #777;
+    --c-index-bg:      #1e1c1a;
+    --c-index-border:  #3a3730;
+    --c-index-text-muted: #9a9690;
+    --c-index-accent:  #c8a040;
+    --c-index-muted-2: #8a8680;
+    --c-index-muted-3: #6a6660;
+    --c-index-muted-4: #7a7670;
+    --c-index-muted-5: #666;
+    --c-title-bg:      #b88a55;
+    --c-title-text:    #ffffff;
+    --c-warn-text:     #e0c080;
+    --c-warn-link:     #d4a030;
+    --c-tastes-text:   #e0d0a0;
+    --c-headsup-text:  #e0a0a0;
+    --c-headsup-link:  #d06040;
+    --c-alt-bg:        #1a2838;
+    --c-alt-border:    #4a7fa8;
+    --c-alt-text:      #a8cce0;
+  }
+  ::selection { background: rgba(200,160,64,.3); }
+  /* .stop-mark-btn needs no dark override — it is built from --c-next-bg /
+     --c-next-border / --c-action-text, which are all themed above. */
+  .title-city, .title-country { color: #e8e5e0; }
+  .title-hotel, .title-address { color: #ccc8c0; }
+  .title-address::before { color: #ccc8c0; }
+  .title-page .title-address a,
+  .title-page .title-address a:visited,
+  .title-page .title-address a:hover { color: #ccc8c0; }
+  .title-updated { color: #7a7670; }
+  .title-updated + .title-no-entries { color: #615e5a !important; }
+  .stop-num, .stop-name { color: var(--c-text-primary); }
+  .stop-subtitle { color: #999; }
+  /* "📖 Read more" needs no dark fill/border/ink override — it is built from
+     --c-next-bg / --c-next-border / --c-action-text, all themed above, exactly
+     like the .stop-dur duration chip. Only the hover terracotta lightens. */
+  /* Panel fill needs no dark override — it is var(--c-next-bg), themed to
+     #222120 above. Only the hairline (a light literal) and the chip fill do. */
+  .stop-block > .stop-row:has(> a[href*="en.wikipedia.org"]) { border-top-color: #38322a; }
+  .stop-row a[href*="en.wikipedia.org"] { background: #221e18; }
+  .stop-row a[href*="en.wikipedia.org"]:hover { color: #d4784a; border-color: #d4784a; }
+  /* Motion banners — dark twin of the 2026-08-08 stone repaint. They were
+     #222120/#c8a060, the warm gold every other guide foreground uses; the
+     light side deliberately left that family, so the dark side does too or
+     the two modes stop agreeing about what transit is. Neutral grey ink on
+     the same near-black fill: #9d988c is 5.6:1 on #232221, clear AA. */
+  .hotel-first,
+  .arrive-first,
+  .next,
+  .next-tram,
+  .next-metro { background: #232221; color: #9d988c; }
+  .also-on-this-site-pill,
+  .nearby-guide-pill { background: var(--c-card-bg); color: #b8962a; border-color: #8a7a40; }
+  .guide-nav a { color: var(--c-title-bg); }
+  .toolbar-nav a,
+  .toolbar-essentials a { background-color: var(--c-card-bg); color: var(--c-title-bg); }
+  .essentials-link:hover { background: rgba(200,160,64,.08); }
+  .worth-knowing.theme-sage { --ci-bg: #1e2a26; }
+  /* Lounge chip — dark twin of the 2026-08-08 terracotta repaint. #d4874a is
+     the palette's established dark lift of #b85c2a (same one .free-flag and
+     the pullquote border use), so the accent stays one colour across modes. */
+  .lounge-arrival-chip { background: #2a211c; color: #d4874a; border-left-color: #a05a2e; }
+  .lounge-arrival-chip:hover { background: #33281f; }
+  a.lounge-arrival-chip:visited { color: #d4874a; }
+}
+
+/* ─── RETIRED SELECTORS (Rule 11 markers — preserved for re-invention prevention) */
+/* These class names appeared in earlier guides; their CSS rules were removed
+   when the corresponding rule retired. New guides MUST NOT emit any of them.
+   Listed here so a future Claude searching for one finds the retirement
+   pointer instead of an empty result.
+     .extras-maps                          — retired 2026-04-22; replaced by
+                                             .stop-row for Michelin address.
+     .michelin-tier .michelin-card
+     .m-3star .m-2star .m-1star            — retired 2026-04-22; Michelin
+                                             simplified to .extras-sub +
+                                             .entry-body.
+     .m-book .m-seafood
+     .show-card .show-book                 — retired 2026-04-22; Shows
+                                             simplified to .extras-sub +
+                                             .ride-apps + .shows-box.
+     .title-links                          — retired 2026-04-22; address
+                                             links via .title-address.
+     .ticket-box {red palette}             — retired 2026-04-23; unified
+                                             blue family + glyph-as-scan-
+                                             signal.
+     .stop-name.ticket .stop-name.mixed    — retired 2026-04-23; replaced by
+                                             three modifiers (guided/self/train)
+                                             with Type 3 alternation handled
+                                             via :has() auto-flip on `.guided`.
+     .depart                               — retired 2026-04-26 (v2 rebuild);
+                                             yellow "departure day" banner
+                                             from when arrival/departure
+                                             days had their own blocks. Per
+                                             core rules/Guide Structure.html
+                                             "Day 1 = first full touring day"
+                                             there is no departure day in the
+                                             guide; the class had no remaining
+                                             trigger. End-of-day return
+                                             banner lives on .next (grey,
+                                             matches between-stops).
+     .local-tastes
+     .local-tastes-title
+     .local-tastes-list                    — retired 2026-05-19; Local
+                                             Tastes uses .extras-sub +
+                                             .entry-body (Style A) like
+                                             every other Extras section.
+     .restaurant-box                       — retired 2026-05-19; migrated
+                                             to .entry-body across all
+                                             food sections (Cascais / Porto /
+                                             San Francisco / Sintra were
+                                             the last holdouts).
+     .ride-apps                            — retired 2026-05-19; Getting
+                                             Around now ships .extras-sub
+                                             heading + .transit-box body
+                                             (2-row Style-A shape). Each
+                                             ride app is its own entry.
+     intermediate description div          — retired 2026-05-19 (Day Trips
+     between .extras-sub and a               and Getting Around); pre-2-row
+     body box                                shape where the 🗞️/description
+                                             div sat OUTSIDE the body box.
+                                             Description now lives INSIDE
+                                             the body box as a child div.
+     #michelin .entry-body >             — retired 2026-05-19; pre-Style-A
+       div:first-child bold+amber            this bolded/amber-tinted the
+                                             restaurant-name row when it
+                                             was inside the body box. After
+                                             Style A the name lives in
+                                             .extras-sub; the first row in
+                                             the body box is the cuisine
+                                             description, which must read
+                                             as plain body text. */
+
+
+/* ─── RESPONSIVE (mobile — owner reads on her iPhone) ───────────────────────── */
+/* Font size matches desktop (14px) — Trip Overview target size. 2026-06-03.
+   Mobile block adjusts padding/layout only. No font-size overrides — everything
+   inherits body. Pills, spacing, titles, boxes all identical to desktop. */
+@media (max-width: 600px) {
+  body         { font-size: var(--fs-base); line-height: 1.55; }
+  /* Bottom padding reserves the floating-control band. On mobile the container
+     is nearly full-width, so with the old 32px the fixed controls landed ON TOP
+     of the final card once the reader hit the end of the page — a round gold
+     FAB overlapping a .extras-title / .nearby-guide-pill reads as a doubled
+     pill in the corner. The band is now ONE row (back · days · arrow, all at
+     bottom: 23px, 36px tall) = the last 59px of the viewport; 72px = 59 + 13px
+     gap. Re-tune together with MOBILE_FLOAT_BAND_PX in brain_check.py. */
+  .container   { padding: 0 14px 72px; }
+
+  /* Hotel banner on mobile: below the gradient line (order 3) the "Updated" stamp
+     sits on its own row (right-aligned), then ONE white card holds the hotel name
+     on top of the address. The card is built from two flush elements — .title-hotel
+     is the card top (rounded top, no bottom border), .title-address the card bottom
+     (rounded bottom, no top border) — so they read as a single card. The address is
+     the tappable Google Maps link with a ↗︎ cue; both lines stay single-line
+     (ellipsis) so the banner is a fixed height and TRIP OVERVIEW lands consistently. */
+  /* Card glues directly under the gradient line (order 3 → hotel order 5, nothing
+     at order 4). "Updated" tucks below the card, right-aligned, out of the way —
+     placement still TBD. */
+  .title-updated { order: 7 !important; flex-basis: 100% !important; margin: 5px 0 0 !important; margin-left: auto !important; text-align: right !important; }
+  .title-hotel { order: 5 !important; flex-basis: 100% !important; margin: 0 !important;
+    background: var(--c-card-bg); border: 1px solid var(--c-index-border); border-bottom: none;
+    border-radius: 8px 8px 0 0; padding: 6px 11px 0 11px !important;
+    font-size: 14px !important; font-weight: 600 !important; color: var(--c-pill-text) !important;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .title-address { order: 6 !important; flex-basis: 100% !important; min-width: 0; margin-top: 0 !important; }
+  .title-address::before { display: none !important; }
+  /* min-height:0 overrides the 40px tap-target `a{}` rule in mobile.css that the
+     ~22 legacy guides still loading mobile.css pick up — it inflated this card
+     by ~8px (empty space at the bottom). `.title-address a` (0,1,1) beats `a`
+     (0,0,1) by specificity, so this wins wherever both sheets load. */
+  .title-address a { display: block !important; position: relative; min-height: 0 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    background: var(--c-card-bg) !important; border: 1px solid var(--c-index-border); border-top: none;
+    border-radius: 0 0 8px 8px; padding: 0 32px 6px 11px !important; color: var(--c-pill-text) !important; }
+  /* Border-drawn arrow, not a Unicode glyph — Apple platforms render ↗ via Apple Color Emoji
+     (a fixed blue icon that ignores `color`), so the CSS shape is the only way to get terracotta. */
+  .title-address a::after { content: ''; position: absolute; right: 13px; top: 50%; width: 7px; height: 7px; border-top: 1.5px solid #b85c2a; border-right: 1.5px solid #b85c2a; transform: translateY(-50%) rotate(45deg); }
+
+  /* ── Defensive mobile guards (added 2026-06-12) — belt-and-suspenders so a
+     single wide element can never make the whole guide scroll sideways. Mirrors
+     assets/mobile.css; lives here too so guides are protected via the shared
+     guide-style.css without editing any (frozen) guide file. Purely additive. ── */
+  html, body { overflow-x: hidden; max-width: 100%; }
+  img, svg, video, iframe, table, pre { max-width: 100%; }
+  pre { white-space: pre-wrap; }
+  a { overflow-wrap: break-word; word-break: break-word; }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  .title-page    { padding: 8px 0 2px; border-radius: 0; margin-bottom: 4px; }
+  /* Match desktop: no bottom padding/margin on the city, so the city name and
+     country bottom-align to the same baseline sitting just above the line
+     (the 6px margin here used to drop the country lower than the city). */
+  .title-city    { padding-bottom: 0; margin-bottom: 0; }
+
+  .overview-section,
+  .day-block,
+  .extras-section,
+  .worth-knowing { padding: 12px 18px 20px; margin-bottom: 16px; }
+
+  .overview-day        { padding: 9px 14px; }
+  /* Day rail on mobile: the desktop three-column form leaves the stop list only
+     ~155px of a 390px screen, so a 5-stop day wraps to six lines. Stack instead —
+     "DAY 4 … 5 stops" on its own header row, stop names full width beneath. */
+  .overview-day.tve-railed .overview-day-title {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 3px 8px;
+  }
+  .ovd-num   { flex: none; grid-column: 1; grid-row: 1; }
+  .ovd-count { grid-column: 2; grid-row: 1; align-self: center; }
+  .ovd-stops { grid-column: 1 / -1; grid-row: 2; }
+
+  .stop-photos { flex-direction: column; }
+  /* `flex: none` RESETS the desktop `flex: 1 1 0%`. Without this reset, tall
+     portrait images render at their natural aspect ratio and the explicit
+     `height` is silently ignored — `flex-basis: 0%` on a flex item overrides
+     `height` in Chromium. Do not remove `flex: none`.
+     Explicit height (not max-height) so object-fit: cover has a fixed box.
+     290px = iPhone 4:3 landscape proportions (390px wide × 0.75 = 292 → 290px). */
+  .stop-photos img { flex: none; width: 100%; height: 290px; object-fit: cover; }
+
+  /* Booking boxes must never be narrower than the photos above them (mobile only —
+     on desktop fit-content is the right default). */
+  .tour-box,
+  .ticket-box,
+  .tour-meet,
+  .entry-body,
+  .shows-box,
+  .transit-box,
+  .hotel-first,
+  .arrive-first,
+  div.train,
+  .next,
+  .next-tram,
+  .next-metro,
+  .warn { padding: 10px 12px; }
+  /* .tour-meet is in that list for its horizontal padding only. Its 10px of
+     VERTICAL padding pushed the meeting-point text 10px inside its own box, so
+     on mobile every gap touching it measured 22.13 / 22.38 against the card's
+     12.25 constant. It is also the one element in the list that is not a box:
+     its own spec (see .tour-meet above) says it "renders as just-another-row",
+     and a row has no vertical padding. */
+  .tour-meet { padding-top: 0; padding-bottom: 0; }
+  /* On mobile, allow transit banners to wrap naturally — desktop enforces nowrap. */
+  .next,
+  .next-tram,
+  .next-metro { white-space: normal; overflow: visible; text-overflow: clip; }
+  /* .tour-meet intentionally NOT indented — "no indentation, they are all one block"
+     (owner, re-locked 2026-04-26). No margin-left override on mobile. */
+
+  /* Extras nav — uniform 3-across glued grid tiles (matches the site's mobile
+     filter panels): equal-width cells, ~46px tall, centred, separators dropped. */
+  .overview-extras { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
+  /* Every tile is one identical size (owner rule 2026-08-08) — the old orphan fix
+     stretched a lone trailing chip across all 3 columns, so "Alt. Hotels" rendered
+     ~3× wider than every other chip. A lone tile at normal width now simply sits
+     at the left of its row, matching desktop, where a lone last chip is also left
+     at track width. Do not reinstate the span. */
+  /* Chips are direct children of .overview-extras again (the grouped-run
+     wrappers were retired 2026-08-08), so the glued 3-across grid and its
+     nth-child orphan rule above apply unchanged. The desktop 3-column grid is
+     overridden back to the mobile 3-across by the !important rule above; only
+     the dot needs sizing down here. */
+  .overview-extra-link {
+    width: auto !important; height: 46px !important;
+    display: flex !important; align-items: center; justify-content: center;
+    text-align: center; white-space: normal !important; line-height: 1.15;
+    padding: 4px 6px !important;
+    background: var(--c-pill-bg);
+    border: 1px solid var(--c-pill-bd);
+    border-radius: 20px;
+  }
+  /* Press feedback. :active is the touch-correct half and stays unconditional;
+     :hover is gated behind (hover: hover) because iOS Safari LATCHES :hover on
+     the last element tapped and holds it until you tap somewhere else. With the
+     two selectors sharing one !important block, tapping a pill repainted its
+     label #8a6c1a and left it there — so the 💱 Currency pill (the one pill you
+     tap and then keep looking at, because its panel opens in place) sat gold
+     while its five neighbours sat #5a3c0e, and the terracotta .tve-cur-on /
+     .tve-been "on" ink lost to the !important as well. Splitting the rule keeps
+     the press state on touch and hands the resting state back to the row
+     (owner report 2026-08-08: "currency pill font not matching the rest"). */
+  .overview-extra-link:active {
+    background: var(--c-pill-hover) !important;
+    border-color: var(--c-pill-bd-hover) !important; color: var(--c-pill-text) !important; text-decoration: none !important;
+  }
+  @media (hover: hover) {
+    .overview-extra-link:hover {
+      background: var(--c-pill-hover) !important;
+      border-color: var(--c-pill-bd-hover) !important; color: var(--c-pill-text) !important; text-decoration: none !important;
+    }
+  }
+  /* Pipe separator (::before content:'|') and the leading <span>|</span> markup
+     were retired site-wide (desktop chips need no separator) — the base rule
+     above (line ~309) now hides/omits both unconditionally, so no mobile
+     override is needed here. */
+  /* READ ABOUT link is a standalone .overview-extra-link crammed under the
+     title; on mobile flex the overview section and push it to the bottom as a
+     full-width button, out of the title area. */
+  .overview-section { display: flex !important; flex-direction: column !important; }
+  .overview-section > .overview-extra-link { order: 10 !important; margin-top: 10px; width: 100% !important; }
+
+  /* Export to Calendar + All Stops Map — on mobile match Read About exactly:
+     same 1.5px border and 0 radius (Read About gets these from the base
+     .overview-extra-link mobile rule; cal/map are inside .overview-extras so
+     the scoped desktop rule would otherwise win with 0.5px gold + 6px radius). */
+  /* Pill row (cal + map + offline) — 2×2 seamless grid on mobile
+     (owner rule 2026-07-28). */
+  #ics-pill-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0 !important;
+  }
+  #ics-pill-row > .overview-extra-link {
+    border: 1.5px solid var(--c-index-border) !important;
+    border-radius: 0 !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+  }
+  #ics-pill-row > .overview-extra-link:nth-child(even) {
+    border-left: none !important;
+  }
+  #ics-pill-row > .overview-extra-link:nth-child(n+3) {
+    border-top: none !important;
+  }
+  #ics-pill-row > .overview-extra-link:active,
+  #ics-pill-row > .overview-extra-link.tve-pressed {
+    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%) !important;
+    border-color: #b85c2a !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  /* The "Updated {Month}" stamp on mobile:
+     Always inserted as a sibling AFTER the last section — #tve-best-of-crosslinks
+     when Best Of exists, then #also-in-country, #nearby-guides, or #also-on-this-site.
+     Never inside any pill grid. */
+  #tve-best-of-crosslinks + .title-updated,
+  #also-in-country + .title-updated,
+  #also-nearby-wrap + .title-updated,
+  #nearby-guides + .title-updated,
+  #also-on-this-site + .title-updated { display: block !important; width: 100% !important; text-align: left !important; margin: -10px 0 16px !important; font-size: 11px !important; color: #9a948a !important; }
+  .title-updated + .title-no-entries { display: block !important; width: 100% !important; text-align: left !important; margin: -12px 0 16px !important; font-size: 10px !important; color: #c0bbb5 !important; }
+  /* Mobile: updated stamp on its own line, no-entries below it. Override
+     title-page mobile leaks (flex-basis:100%, text-align:right). */
+  .tve-stamp-row { display: flex !important; flex-wrap: wrap !important; align-items: baseline !important; margin: -10px 0 16px !important; padding-right: 0 !important; }
+  .tve-stamp-row > .title-updated { order: 0 !important; flex-basis: 100% !important; margin-left: 0 !important; margin-top: 0 !important; width: 100% !important; flex-shrink: 0 !important; font-size: 11px !important; color: #9a948a !important; text-align: left !important; }
+  .tve-stamp-row > .title-no-entries { display: block !important; flex: 1 1 0 !important; min-width: 0 !important; text-align: left !important; margin: 2px 0 0 !important; font-size: 10px !important; color: #c0bbb5 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+}
+
+/* Updated stamp repositioned after last guide card (all viewports): absorb the
+   card's 24px margin-bottom so the stamp sits flush just below the card. The
+   mobile !important rule above overrides this on ≤600px viewports. */
+#tve-best-of-crosslinks + .title-updated,
+#also-in-country + .title-updated,
+#also-nearby-wrap + .title-updated,
+#nearby-guides + .title-updated,
+#also-on-this-site + .title-updated {
+  display: block;
+  width: 100%;
+  margin: -20px 0 12px;
+  font-size: 11px;
+  color: #9a948a;
+}
+
+/* No-entries footnote immediately following the Updated stamp:
+   lists section names omitted for having no qualifying content.
+   Source: data-no-entries on toolbar-mount (comma-separated). */
+.title-updated + .title-no-entries {
+  display: block;
+  width: 100%;
+  margin: -8px 0 12px;
+  font-size: 10.5px;
+  color: #c0bbb5;
+}
+
+/* Stamp left · no-entries right on same row (data-no-entries present).
+   .title-updated base rule has margin-left:auto — reset it so the stamp
+   stays left; give auto margin to .title-no-entries to push it right.
+   Must appear after .title-updated + .title-no-entries to win same-specificity. */
+.tve-stamp-row {
+  display: flex;
+  align-items: baseline;
+  margin: -20px 0 12px;
+}
+/* Reserve the bottom-right corner for the fixed day-jump ("N days") + scroll-top
+   pills so the right-aligned no-entries footnote always ends before them, no
+   matter how long the list of absent sections is. DESKTOP ONLY — mobile uses
+   90px (set in the ≤600px block above) with flex:1 1 0 + ellipsis on no-entries. */
+@media (min-width: 601px) {
+  .tve-stamp-row { padding-right: 120px; }
+}
+.tve-stamp-row > .title-updated {
+  order: 0;
+  margin-left: 0;
+  margin-top: 0;
+  align-self: baseline;
+  font-size: 11px;
+  color: #9a948a;
+}
+.tve-stamp-row > .title-no-entries {
+  display: block;
+  width: auto;
+  margin: 0 0 0 auto;
+  font-size: 10.5px;
+  color: #c0bbb5;
+}
+
+
+/* ─── PRINT (offline PDF — fallback for non-screen renders) ────────────────── */
+/* render_pdf.py uses screen media, so this block is mainly for direct
+   print-from-browser. Strips backgrounds, switches to monochrome links,
+   ensures transit banners stay glued to their following stop. */
+@media print {
+  body            { background: #fff; color: #000; font-size: var(--fs-print); }
+  .container      { max-width: 100%; padding: 0; }
+  .title-page     { background: #fff; color: #000; border: 1px solid #ccc; }
+  .title-address  { color: #444; }
+  .overview-section,
+  .day-block,
+  .extras-section,
+  .worth-knowing { box-shadow: none; border: 1px solid #ddd; }
+  /* break-inside: avoid lives at the base (see §PAGE-BREAK CONTROL). */
+  a               { color: #000; text-decoration: underline; }
+  .next,
+  .next-tram,
+  .next-metro     { break-after: avoid; page-break-after: avoid; }
+}
+
+
+/* Shows — Style A per-entry block (heading + shows-box body) (2026-05-19).
+   Each show ships as `.extras-sub` heading + `.shows-box` body; the heading
+   gets the shows-section periwinkle bg with top-rounded corners and the
+   shows-box gets bottom-rounded corners — they merge into one card per show.
+   Description, booking link, address, walk time all live INSIDE shows-box. */
+#shows .extras-sub {
+  background: var(--c-card-bg);
+  border-radius: 4px 4px 0 0;
+  padding: 10px 14px 12px 14px;
+  margin: 14px 0 0;
+}
+#shows .shows-box {
+  background: var(--c-card-bg);
+  border-radius: 0 0 4px 4px;
+  padding: 0 14px 8px 14px;
+  margin: 0;
+}
+
+/* Skip List — footnote at the very bottom of the guide. Small italic grey, no banner. */
+#skip-list { background: none; border: none; box-shadow: none; padding: 0; margin: 36px 0 0 0; }
+#skip-list .skip-list-note, .skip-list-note { font-size: var(--fs-overview-stops); font-style: italic; color: var(--c-skip-note); line-height: 1.6; }
+
+
+/* ─── GUIDE TOOLBAR (top navigation) ───────────────────────────────────────── */
+/* Top-of-page toolbar with guide navigation (Index/Previous/Next) and Trip
+   Essentials quick links. Two-section layout: navigation links on left,
+   essentials on right. Theme colors inherited from guide's color scheme. */
+.guide-toolbar {
+  background: transparent;
+  border-bottom: 1px solid var(--c-next-border);
+  padding: 6px 0;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toolbar-nav,
+.toolbar-essentials {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar-nav a,
+.toolbar-essentials a {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: var(--fs-overview-stops);
+  font-weight: 500;
+  border: 1px solid var(--c-title-bg);
+  color: var(--c-title-bg);
+  transition: all 0.15s ease;
+  background-color: var(--c-page-bg);
+  white-space: nowrap;
+}
+
+.toolbar-nav a:hover,
+.toolbar-essentials a:hover {
+  background-color: rgba(107, 68, 34, 0.1);   /* matches --c-title-bg: #6b4422 */
+  color: var(--c-title-bg);
+  border-color: var(--c-title-bg);
+}
+
+/* Theme-specific toolbar border + button colors */
+.guide-toolbar.theme-purple   { border-bottom-color: var(--c-cappuccino-border); }
+.guide-toolbar.theme-purple .toolbar-nav a,
+.guide-toolbar.theme-purple .toolbar-essentials a { color: var(--c-cappuccino-border); border-color: var(--c-cappuccino-border); }
+.guide-toolbar.theme-purple .toolbar-nav a:hover,
+.guide-toolbar.theme-purple .toolbar-essentials a:hover { background-color: rgba(112, 48, 160, 0.08); }
+
+.guide-toolbar.theme-teal     { border-bottom-color: var(--c-gettingaround-border); }
+.guide-toolbar.theme-teal .toolbar-nav a,
+.guide-toolbar.theme-teal .toolbar-essentials a { color: var(--c-gettingaround-border); border-color: var(--c-gettingaround-border); }
+.guide-toolbar.theme-teal .toolbar-nav a:hover,
+.guide-toolbar.theme-teal .toolbar-essentials a:hover { background-color: rgba(28, 138, 153, 0.08); }
+
+.guide-toolbar.theme-coral    { border-bottom-color: var(--c-coral-border); }
+.guide-toolbar.theme-coral .toolbar-nav a,
+.guide-toolbar.theme-coral .toolbar-essentials a { color: var(--c-coral-border); border-color: var(--c-coral-border); }
+.guide-toolbar.theme-coral .toolbar-nav a:hover,
+.guide-toolbar.theme-coral .toolbar-essentials a:hover { background-color: rgba(200, 90, 84, 0.08); }
+
+.guide-toolbar.theme-pink     { border-bottom-color: var(--c-nearhotel-border); }
+.guide-toolbar.theme-pink .toolbar-nav a,
+.guide-toolbar.theme-pink .toolbar-essentials a { color: var(--c-nearhotel-border); border-color: var(--c-nearhotel-border); }
+.guide-toolbar.theme-pink .toolbar-nav a:hover,
+.guide-toolbar.theme-pink .toolbar-essentials a:hover { background-color: rgba(112, 15, 49, 0.08); }   /* matches --c-nearhotel-border: #700f31 */
+
+.guide-toolbar.theme-sage     { border-bottom-color: var(--c-sage-border); }
+.guide-toolbar.theme-sage .toolbar-nav a,
+.guide-toolbar.theme-sage .toolbar-essentials a { color: var(--c-sage-border); border-color: var(--c-sage-border); }
+.guide-toolbar.theme-sage .toolbar-nav a:hover,
+.guide-toolbar.theme-sage .toolbar-essentials a:hover { background-color: rgba(68, 128, 136, 0.08); }
+
+.guide-toolbar.theme-amber    { border-bottom-color: var(--c-michelin-border); }
+.guide-toolbar.theme-amber .toolbar-nav a,
+.guide-toolbar.theme-amber .toolbar-essentials a { color: var(--c-michelin-border); border-color: var(--c-michelin-border); }
+.guide-toolbar.theme-amber .toolbar-nav a:hover,
+.guide-toolbar.theme-amber .toolbar-essentials a:hover { background-color: rgba(186, 117, 23, 0.08); }   /* matches --c-michelin-border: #BA7517 */
+
+.guide-toolbar.theme-indigo   { border-bottom-color: var(--c-stations-border); }
+.guide-toolbar.theme-indigo .toolbar-nav a,
+.guide-toolbar.theme-indigo .toolbar-essentials a { color: var(--c-stations-border); border-color: var(--c-stations-border); }
+.guide-toolbar.theme-indigo .toolbar-nav a:hover,
+.guide-toolbar.theme-indigo .toolbar-essentials a:hover { background-color: rgba(61, 82, 130, 0.08); }   /* matches --c-stations-border: #3d5282 */
+
+.guide-toolbar.theme-green    { border-bottom-color: var(--c-shows-border); }
+.guide-toolbar.theme-green .toolbar-nav a,
+.guide-toolbar.theme-green .toolbar-essentials a { color: var(--c-shows-border); border-color: var(--c-shows-border); }
+.guide-toolbar.theme-green .toolbar-nav a:hover,
+.guide-toolbar.theme-green .toolbar-essentials a:hover { background-color: rgba(90, 116, 196, 0.08); }
+
+.guide-toolbar.theme-yellow   { border-bottom-color: var(--c-pickleball-border); }
+.guide-toolbar.theme-yellow .toolbar-nav a,
+.guide-toolbar.theme-yellow .toolbar-essentials a { color: var(--c-pickleball-border); border-color: var(--c-pickleball-border); }
+.guide-toolbar.theme-yellow .toolbar-nav a:hover,
+.guide-toolbar.theme-yellow .toolbar-essentials a:hover { background-color: rgba(121, 42, 69, 0.08); }   /* matches --c-pickleball-border: #792a45 */
+
+
+/* Navigation arrows — white background */
+.toolbar-nav a {
+  background: #fff;
+  border-color: transparent;
+  color: var(--c-title-bg);
+}
+/* Mobile toolbar */
+@media (max-width: 600px) {
+  .guide-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0 6px;
+  }
+  .toolbar-nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .toolbar-essentials {
+    gap: 8px;
+  }
+  .toolbar-nav a,
+  .toolbar-essentials a {
+    padding: 6px 10px;
+    font-size: var(--fs-overview-stops);
+  }
+  /* Extras nav pills — lift off the 11.5px floor to a 12px minimum on phones.
+     (Live toolbar tap-target sizing lives in assets/toolbar.js .tb a @600px.) */
+  .overview-extra-link { font-size: var(--fs-small); }
+}
+
+
+/* ─── GUIDE NAVIGATION FOOTER ─────────────────────────────────────────────── */
+/* Sequential navigation footer across all 18 guides. Sits at the bottom before
+   page closing tags, providing previous/index/next links for guide traversal.
+   Design: unified card with top border, flexbox layout, links styled to match
+   the guide's overall link palette. */
+.guide-nav {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-next-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--fs-overview-day-title);
+}
+.guide-nav a {
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--c-title-bg);
+}
+.guide-nav a:hover {
+  text-decoration: underline;
+}
+
+
+/* ─── TRAVEL ESSENTIALS TOOLBAR ─────────────────────────────────────────────── */
+/* Quick access links to trip essentials: Trips, Lounges, Delta Routes, Packing.
+   Styled with theme-colored border matching guide's inspiration section theme.
+   Appears just before the guide navigation footer. */
+.essentials-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 40px;
+  padding: 16px 0;
+  border-top: 2px solid var(--c-next-border);
+  border-bottom: none;
+  align-items: center;
+  font-size: var(--fs-overview-stops);
+}
+.essentials-toolbar a {
+  padding: 6px 12px;
+  background-color: transparent;
+  border: 1px solid var(--c-text-muted);
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.essentials-toolbar a:hover {
+  border-color: #b85c2a;
+}
+
+/* Theme-specific toolbar styling — border color matches guide theme */
+.essentials-toolbar.theme-purple   { border-top-color: var(--c-cappuccino-border); }
+.essentials-toolbar.theme-teal     { border-top-color: var(--c-gettingaround-border); }
+.essentials-toolbar.theme-coral    { border-top-color: var(--c-coral-border); }
+.essentials-toolbar.theme-pink     { border-top-color: var(--c-nearhotel-border); }
+.essentials-toolbar.theme-sage     { border-top-color: var(--c-sage-border); }
+.essentials-toolbar.theme-amber    { border-top-color: var(--c-michelin-border); }
+.essentials-toolbar.theme-indigo   { border-top-color: var(--c-stations-border); }
+.essentials-toolbar.theme-green    { border-top-color: var(--c-shows-border); }
+.essentials-toolbar.theme-yellow   { border-top-color: var(--c-pickleball-border); }
+
+/* Back to top button */
+.back-to-top {
+  padding: 6px 12px;
+  background-color: transparent;
+  border: 1px solid var(--c-text-muted);
+  border-radius: 4px;
+  color: var(--c-text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s ease;
+}
+.back-to-top:hover {
+  border-color: #b85c2a;
+}
+
+/* Essentials toolbar — shared across all guides */
+.essentials {
+  background: var(--c-index-bg);
+  border-bottom: 1px solid var(--c-index-border);
+  padding: 6px 0;
+}
+.essentials-inner {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.essentials-link {
+  font-size: var(--fs-small);
+  color: var(--c-index-text-muted);
+  text-decoration: none;
+  padding: 3px 9px;
+  border: 1px solid var(--c-index-border);
+  border-radius: 3px;
+  background: none;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.essentials-link:hover {
+  color: var(--c-index-accent);
+  border-color: var(--c-index-accent);
+  background: rgba(138, 108, 26, 0.06);
+}
+
+/* ─── Guides-Index.html: warm-palette override (matches Trip Essentials) ── */
+/* Apply class="index-page" to <body> in Guides-Index.html */
+body.index-page {
+  background: var(--c-page-bg);
+}
+body.index-page .container { padding-bottom: 0; }
+
+/* ─── Guides-Index.html: Banner ─────────────────────────────────────────── */
+.index-banner {
+  color: var(--c-brand);
+  padding: 10px 0 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(138,108,26,0.18);
+}
+.index-banner-title {
+  font-size: var(--fs-index-title);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+.index-banner-sub {
+  font-size: var(--fs-overview-stops);
+  color: var(--c-index-muted-2);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  margin-top: 4px;
+}
+
+/* ─── Guides-Index.html: Region sections ────────────────────────────────── */
+body.index-page .overview-section {
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+body.index-page .overview-title {
+  font-size: var(--fs-print);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 16px 6px;
+  margin-bottom: 0;
+  border-bottom: 1px solid rgba(138,108,26,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.idx-count {
+  font-size: var(--fs-print);
+  color: var(--c-index-muted-3);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ─── Guides-Index.html: Guide cards ────────────────────────────────────── */
+body.index-page .overview-day {
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  border-radius: 0;
+  padding: 6px 16px;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+body.index-page .overview-day:last-child { border-bottom: none; }
+body.index-page .overview-day:hover { background: var(--c-brand-hover); }
+body.index-page .overview-day-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: normal;
+  font-size: var(--fs-overview-day-title);
+}
+.idx-num {
+  font-size: var(--fs-print);
+  font-weight: 600;
+  color: var(--c-index-muted-4);
+  min-width: 22px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.idx-city {
+  font-size: var(--fs-overview-day-title);
+  font-weight: 500;
+  color: var(--c-brand);
+  transition: color .15s;
+}
+body.index-page .overview-day:hover .idx-city { color: var(--c-brand); }
+.index-banner-sub a { color: var(--c-brand); text-decoration: none; }
+.index-footer {
+  text-align: center;
+  padding: 8px 0 40px;
+  font-size: var(--fs-small);
+  color: var(--c-index-muted-5);
+}
+
+/* ─── Trip resources pills ("Also on this site" section) ──────────────────── */
+.also-on-this-site-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+.also-on-this-site-pill {
+  display: inline-flex;
+  font-family: var(--font-family);
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--c-float-text);
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  border-radius: 6px;
+  padding: 6px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
+}
+/* Prevent visited color-drift: browser default turns visited links purple/blue.
+   Pin visited to the rest-state gold so nothing changes after a click.
+   (Owner rule 2026-07-28 — pill visited-color audit.) */
+a.also-on-this-site-pill:visited { color: #8a6c1a; }  /* literal hex — browsers don't resolve var() in :visited */
+@media (hover:hover) {
+  a.also-on-this-site-pill:hover {
+    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+    color: #fff !important;
+    border-color: #b85c2a;
+    box-shadow: 0 3px 10px rgba(184,92,42,.18);
+  }
+}
+a.also-on-this-site-pill:active {
+  background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);
+  color: #fff !important;
+  border-color: #b85c2a;
+  box-shadow: 0 1px 3px rgba(184,92,42,.12);
+  transform: scale(.97) translateY(1px);
+}
+/* Override the .extras-section fit-content(720px) cap for the also-on-this-site card
+   so the pill row gets the full container width — prevents European guides (6 pills)
+   from wrapping the last pill onto a lonely second row. */
+#also-on-this-site { grid-template-columns: 1fr; }
+/* Owner rule 2026-08-04: the Time Zones · Plug Adapter · Currency pills in the
+   "Also on this site" strip are MOBILE-ONLY. They stay in the guide HTML so mobile
+   still shows them, but are hidden on desktop (≥601px), where the toolbar and
+   hamburger already surface these three references. Matched by destination href so
+   no per-guide edit is needed across the 233-guide fleet; the mobile grid
+   (@media max-width:600px) is untouched. */
+@media (min-width: 601px) {
+  .also-on-this-site-pill[href*="Time-Zones.html"],
+  .also-on-this-site-pill[href*="Plug-Adapter-Guide.html"],
+  .also-on-this-site-pill[href*="Currency-Guide.html"] {
+    display: none;
+  }
+}
+/* Stats Across US and European Train Guide: full-row on mobile is handled by
+   grid-column: span 6 !important inside the @media (max-width:600px) block below.
+   No desktop rule — these pills share rows with the others on desktop. */
+
+/* ── Nearby guides (build_nearby_guides.py) ─────────────────────────────────
+   Separate card rendered below #also-on-this-site.  Title and left-stripe use
+   the same gold as #also-on-this-site.  Pills match .also-on-this-site-pill
+   exactly — class="nearby-guide-pill" so validator also-on-site checks skip. */
+#nearby-guides .extras-title:empty::before { content: "🗺️ Nearby Guides"; }
+#nearby-guides { border-left-color: var(--c-brand); }
+/* Nearby Guides is now collapsible — cursor and chevron match other sections */
+#nearby-guides > .extras-title { cursor: pointer; }
+.nearby-guides-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+.nearby-guide-pill {
+  display: inline-flex;
+  font-family: var(--font-family);
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--c-float-text);
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  border-radius: 6px;
+  padding: 6px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
+}
+/* Visited-color lock — pin to rest gold so nothing turns purple/blue. */
+a.nearby-guide-pill:visited { color: #8a6c1a; }  /* literal hex — browsers don't resolve var() in :visited */
+@media (hover:hover) {
+  a.nearby-guide-pill:hover {
+    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+    color: #fff !important;
+    border-color: #b85c2a;
+    box-shadow: 0 3px 10px rgba(184,92,42,.18);
+  }
+}
+a.nearby-guide-pill:active {
+  background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);
+  color: #fff !important;
+  border-color: #b85c2a;
+  box-shadow: 0 1px 3px rgba(184,92,42,.12);
+  transform: scale(.97) translateY(1px);
+}
+/* Mobile: Also on this site pills — flex row (mirrors Trip-Essentials .also-links).
+   flex: 1 1 28% keeps 3 pills per row at typical label lengths; a lone last pill
+   grows full-width in CSS with no JS needed. Replaces the 6-col grid + JS orphan
+   fix (2026-08-08 — iOS Safari silently drops CSS :nth-child grid-column). */
+@media (max-width: 600px) {
+  .also-on-this-site-pills { display: flex; flex-wrap: wrap; gap: 0; width: 100%; }
+  .also-on-this-site-pill { flex: 1 1 28%; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; box-sizing: border-box; }
+  /* Nearby Guides: same flex row as also-on-this-site. */
+  .nearby-guides-pills { display: flex; flex-wrap: wrap; gap: 0; width: 100%; }
+  .nearby-guide-pill { flex: 1 1 28%; height: 46px; padding: 4px 6px; border: 0.5px solid #c8a44a; border-radius: 6px; background: var(--c-float-bg); font-size: 12px; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; line-height: 1.15; box-sizing: border-box; }
+}
+
+/* ── Also in [Country] — injected by toolbar.js after #nearby-guides ─────────────
+   Data built by Brain/scripts/build/build_country_guides.py → assets/country_guides.json.
+   Pills match .nearby-guide-pill exactly; separate class keeps validator checks clear. */
+#also-in-country { border-left-color: var(--c-brand); }
+.also-in-country-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
+.also-in-country-pill {
+  display: inline-flex; font-family: var(--font-family); align-items: center;
+  gap: 4px; font-size: 13px; color: var(--c-float-text); background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd); border-radius: 6px; padding: 6px 12px;
+  text-decoration: none; cursor: pointer;
+  transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .08s;
+}
+/* Visited-color lock — pin to rest gold so nothing turns purple/blue. */
+a.also-in-country-pill:visited { color: #8a6c1a; }  /* literal hex — browsers don't resolve var() in :visited */
+@media (hover:hover) {
+  a.also-in-country-pill:hover {
+    background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);
+    color: #fff !important; border-color: #b85c2a;
+    box-shadow: 0 3px 10px rgba(184,92,42,.18);
+  }
+}
+a.also-in-country-pill:active {
+  background: linear-gradient(135deg,#5a2a10 0%,#8a3f18 55%,#a85e28 100%);
+  color: #fff !important; border-color: #b85c2a;
+  box-shadow: 0 1px 3px rgba(184,92,42,.12);
+  transform: scale(.97) translateY(1px);
+}
+@media (max-width: 600px) {
+  .also-in-country-pills { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
+  .also-in-country-pill { display: flex; align-items: center; justify-content: center;
+    text-align: center; white-space: normal; line-height: 1.15; height: 46px;
+    padding: 4px 6px; border: 0.5px solid var(--c-float-bd); border-radius: 6px;
+    background: var(--c-float-bg); font-size: 12px; grid-column: span 2; }
+  /* Orphan layout: JS-driven via _fixPillGridOrphans (toolbar.js) — same as also-on-this-site. */
+}
+
+/* ── Alternative hotel recommendations — injected by toolbar.js before
+   #also-on-this-site. Only appears on guides with a HOTEL_ALT_DATA entry. */
+#hotel-alternatives {
+  background: var(--c-warm-bg);
+  box-shadow: var(--c-card-shadow);
+  border-radius: 12px;
+  padding: 14px 28px 28px;
+  margin-bottom: 24px;
+}
+#hotel-alternatives .extras-title {
+  color: var(--c-brand);
+  border-bottom-color: var(--c-brand);
+}
+/* Re-apply desktop inset: the base .worth-knowing (line ~1234) and
+   #hotel-alternatives (line above) both declare padding AFTER the shared
+   @media block that sets padding-left:48px, so the shorthand resets it to
+   28px. This block re-pins 48px after both base declarations. */
+@media (min-width: 601px) {
+  .worth-knowing,
+  #hotel-alternatives {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+.neigh-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.neigh-card {
+  background: var(--c-card-bg);
+  border: 0.5px solid rgba(0,0,0,0.10);
+  border-radius: 8px;
+  padding: 12px 14px 14px;
+}
+.neigh-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--c-text-primary);
+  margin-bottom: 5px;
+}
+.neigh-why {
+  font-size: 13px;
+  color: var(--c-text-muted);
+  line-height: 1.5;
+}
+/* Neighborhood cross-link row under the grid — only on the guides
+   Neighborhoods.html covers (toolbar.js AN_NEIGHBORHOOD_CITIES).
+   Shares .also-on-this-site-pills so the pill matches every other cross-link
+   pill in the guide; this class only supplies the gap below the card grid. */
+.neigh-more { margin-top: 12px; }
+@media (max-width: 600px) {
+  #hotel-alternatives { padding: 14px 16px 20px; }
+  .neigh-grid { grid-template-columns: 1fr; gap: 7px; }
+  .neigh-more { margin-top: 10px; }
+}
+
+/* ── Address copy button — injected by toolbar.js on 📍 stop rows ──────── */
+.addr-copy {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-left: 5px;
+  padding: 2px 3px;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--c-text-secondary);
+  opacity: 0.55;
+  transition: opacity .15s, color .15s;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.addr-copy svg { width: 13px; height: 13px; display: block; }
+.addr-copy:hover,
+.addr-copy:focus { color: var(--c-terra); opacity: 1; outline: none; }
+
+/* Shared copy popover */
+.addr-copy-pop {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #e6e2da;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.14);
+  z-index: 600;
+  padding: 4px;
+  min-width: 172px;
+  display: none;
+}
+.addr-copy-pop.open { display: block; }
+.addr-copy-pop .acp-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 8px 11px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #3d3a32;
+  cursor: pointer;
+  border-radius: 5px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.addr-copy-pop .acp-btn:hover { background: rgba(184,92,42,.07); color: #b85c2a; }
+.addr-copy-done {
+  font-size: 12px;
+  color: #4a7a25;
+  padding: 4px 11px 5px;
+  display: none;
+}
+
+/* ── Day Jump — floating trigger + overlay ──────────────────────────────── */
+.day-jump-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+  padding: 0 14px;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  border-radius: 18px;
+  color: var(--c-float-text);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.14);
+  transition: border-color .15s, color .15s, box-shadow .15s;
+  white-space: nowrap;
+  letter-spacing: .01em;
+}
+.day-jump-btn:hover {
+  border-color: #b85c2a;
+  color: #b85c2a;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+.day-jump-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0,0,0,.48);
+  align-items: center;
+  justify-content: center;
+}
+.day-jump-overlay.open { display: flex; }
+.day-jump-card {
+  position: relative;
+  background: var(--c-pill-bg);
+  border-radius: 14px;
+  width: 300px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 16px 50px rgba(0,0,0,.28);
+  font-family: var(--font-family);
+}
+.day-jump-head {
+  padding: 18px 48px 14px 20px;
+  border-bottom: 1px solid #ece6dd;
+  position: relative;
+}
+.day-jump-city {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #b85c2a;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.day-jump-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #2a2620;
+  letter-spacing: -.01em;
+}
+.day-jump-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  color: #7a7068;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  font-family: inherit;
+}
+.day-jump-x:hover { color: #3d3a32; }
+.day-jump-row {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background .12s;
+  border-bottom: 1px solid #ece6dd;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.day-jump-row:last-child { border-bottom: none; border-radius: 0 0 14px 14px; }
+.day-jump-row:hover,
+.day-jump-row--active { background: rgba(200,164,74,.07); }
+.day-jump-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  color: var(--c-float-text);
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.day-jump-row--active .day-jump-num {
+  box-shadow: 0 0 0 3px rgba(200,164,74,.22);
+}
+.day-jump-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.day-jump-lbl {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-float-text);
+  line-height: 1.2;
+}
+.day-jump-preview {
+  font-size: 11px;
+  color: #9a9088;
+  line-height: 1.4;
+  white-space: normal;
+}
+@media (max-width: 600px) {
+  /* ONE row of floating controls across the foot of the guide (owner rule
+     2026-08-08): "← Back" left, "N days" centred, scroll-top arrow right.
+     The days pill used to sit bottom-right with the arrow stacked directly
+     above it; centring the pill frees the right corner so the arrow drops
+     into the same row instead of on top of it.
+     The row now sits as low as the viewport allows (owner rule 2026-08-08):
+     the 28px controls seat at bottom: 6px, so their centre is 20px above the
+     floor; the 30px arrow seats at bottom: 5px to land on that same line.
+     Change all three `bottom` values together.
+     Size: the days pill matches #tve-nav-back exactly on mobile (owner rule
+     2026-08-08) — 1.5px border, .03em tracking — instead of the 0.5px desktop
+     shell it inherits from the base rule. The whole floating family dropped a
+     size on 2026-08-09 (owner: "all these pills are too big"): 34px/13px/17px
+     radius → 28px/12px/14px radius. Desktop keeps the 36px base rule. */
+  .day-jump-btn {
+    bottom: 6px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 28px;
+    padding: 0 11px;
+    border-width: 1.5px;
+    border-radius: 14px;
+    font-size: 12px;
+    letter-spacing: .03em;
+  }
+  .day-jump-card { width: 92vw; max-height: 70vh; }
+}
+
+/* ── Scroll-to-top FAB ──────────────────────────────────────────────────── */
+.tve-scroll-top {
+  position: fixed;
+  bottom: 68px;
+  right: 24px;
+  z-index: 1400;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  color: var(--c-float-text);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, border-color .15s, color .15s, box-shadow .15s;
+  padding: 0;
+  font-family: inherit;
+}
+.tve-scroll-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.tve-scroll-top:hover {
+  border-color: #b85c2a;
+  color: #b85c2a;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+
+/* ── Back-to-guides pill + Before-You-Go pill — wrapper positions both ───── */
+.tve-mobile-back-wrap {
+  position: fixed;
+  bottom: 24px;
+  right: 120px; /* clears .day-jump-btn (≈88px wide) at right:24 + 8px gap */
+  z-index: 1400;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.tve-back-index,
+.tve-back-index:link,
+.tve-back-index:visited {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+  padding: 0 14px;
+  background: var(--c-float-bg);
+  border: 0.5px solid var(--c-float-bd);
+  border-radius: 18px;
+  color: var(--c-float-text);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,.14);
+  transition: border-color .15s, color .15s, box-shadow .15s;
+  white-space: nowrap;
+  letter-spacing: .01em;
+}
+.tve-back-index:hover {
+  border-color: #b85c2a;
+  color: #b85c2a;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+
+@media (max-width: 600px) {
+  /* Same row as the centred .day-jump-btn — see the note on that rule. The FAB
+     used to be lifted to bottom: 62px to clear the days pill stacked beneath it;
+     the pill now sits centre-stage, so the right corner is free and the arrow
+     drops to the shared line. bottom: 5px on a 30px control puts its centre 20px
+     above the floor, matching the 28px pills at bottom: 6px. The FAB shrank
+     36 → 30px with the rest of the family on 2026-08-09 (owner call); the base
+     rule above keeps 36px, which is the desktop size. */
+  .tve-scroll-top { bottom: 5px; right: 16px; width: 30px; height: 30px; }
+  .tve-mobile-back-wrap { bottom: 18px; right: 112px; } /* clears the right-corner .tve-scroll-top (36px at right:16) + gap */
+}
+
+/* ── Open-now stop status (toolbar.js) ────────────────────────────────────
+   Row injected at the bottom of .overview-section (stays inside the white
+   card; _extrasOutOfCard only moves .overview-extras / #ics-pill-row). It
+   carries the destination clock only.
+   Open/closed is a per-stop .open-now-status badge in .stop-header, shown
+   whenever the hours parse — never a toggle (owner rule 2026-08-09). The
+   toggle pill, the dimmed-stop state it drove and the auto-collapse day-header
+   note were all removed with it. */
+.open-now-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Top padding is deliberately the deepest side: the row is the last thing in
+     the card, so the extra space seats the clock near the bottom edge instead
+     of tight under the divider. */
+  padding: 22px 16px 12px;
+  border-top: 0.5px solid rgba(200,164,74,0.35);
+}
+.open-now-local-time {
+  /* Beige rectangle pill — same shell as the Quick Facts chips built in
+     toolbar.js (5px 10px / 6px radius / --c-warm-bg on --c-index-border), so
+     the row reads as two pills rather than loose text beside one. Empty when
+     the guide has no timezone, so :empty drops the shell too. */
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: var(--c-warm-bg, #f3efe6);
+  border: 1px solid var(--c-index-border, #e3dccd);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--c-text-primary, #3d3a32);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.open-now-local-time:empty { display: none; }
+/* Open / Closed status in .stop-header, between the stop name and the
+   duration chip. Present whenever the stop's hours parse and the guide knows
+   its timezone — the reader never switches it on.
+
+   Deliberately NOT a pill (owner pick D, 2026-08-09). It first shipped as a
+   filled 10px badge and sat directly beside the .stop-dur chip — same shape,
+   same weight, so it read as a second control in a row that already has one,
+   which is the exact confusion the retired toggle caused. A statement is not
+   a button and should not be shaped like one: no fill, no border, no padding.
+   Colour alone carries the state, and .stop-dur stays the only pill in the
+   row. Contrast on the card: 6.21:1 (open) and 7.71:1 (closed) in light,
+   9.22:1 and 7.74:1 in dark — all AA, every value already in the palette. */
+.open-now-status {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-left: 8px;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+.open-now-status.is-open {
+  color: #1a6b35;
+}
+.open-now-status.is-closed {
+  color: #9b1c1c;
+}
+
+/* Mobile: .stop-header is flex-wrap:nowrap and .stop-name is `flex: 0 1 auto;
+   min-width: 0`, so every chip in the row shrinks the NAME rather than the row.
+   At 393px the badge cost the name 59 of its 130px and re-wrapped it character
+   by character — headers grew up to 79px taller (measured on Bologna). Giving
+   the badge its own line returns the name its full width and costs one uniform
+   short row instead. flex-basis:100% only breaks the line for this one item;
+   every other chip keeps its place on the first row. */
+@media (max-width: 600px) {
+  .stop-header { flex-wrap: wrap; }
+  /* Zero-height full-width flex item that forces the wrap, ordered between
+     the first-row chips and the badge so only the badge falls below. On a stop
+     with no badge it still creates a flex line, but a 0-height one with no
+     gap, so those headers are untouched.
+     Do NOT instead put flex-basis:100% on the badge: as a flex item it then
+     stretches to fill the row.
+     Enabling wrap here does more than seat the badge — it lets .stop-name take
+     its natural width instead of being crushed by `flex: 0 1 auto; min-width:0`
+     against a nowrap row. Measured at 393px against the pre-badge original,
+     per-header delta runs -33px to +21px: long names come out SHORTER than
+     they were (Bologna's "MAMbo – Museo d'Arte Moderna di Bologna" went from
+     4 wrapped lines to 2). Desktop is untouched at exactly 0px. */
+  .stop-header::after {
+    content: '';
+    flex-basis: 100%;
+    height: 0;
+    order: 9;
+  }
+  .open-now-status {
+    order: 10;
+    margin-left: 0;
+    margin-top: 5px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Bare text on the dark card, so the on-tint #6dff9e would read neon.
+     #a8d8b8 is the same palette green one step calmer, at 9.22:1. */
+  .open-now-status.is-open { color: #a8d8b8; }
+  .open-now-status.is-closed { color: #fca5a5; }
+  /* No-ticket stub — #b85c2a sits at 2.6:1 on the #2a2825 card. Same lift the
+     pullquote border uses, so the warm family stays one system. (2026-08-08) */
+  .free-flag { color: #d4874a; }
+  .ticket-flag::before { background-color: #d4874a; }
+  .free-flag::before { background-color: #d4874a; }
+}
+:root[data-theme="dark"] .lounge-arrival-chip { background: #2a211c; color: #d4874a; border-left-color: #a05a2e; }
+:root[data-theme="dark"] .lounge-arrival-chip:hover { background: #33281f; }
+:root[data-theme="dark"] a.lounge-arrival-chip:visited { color: #d4874a; }
+:root[data-theme="dark"] .hotel-first,
+:root[data-theme="dark"] .arrive-first,
+:root[data-theme="dark"] .next,
+:root[data-theme="dark"] .next-tram,
+:root[data-theme="dark"] .next-metro { background: #232221; color: #9d988c; }
+:root[data-theme="dark"] .open-now-status.is-open { color: #a8d8b8; }
+:root[data-theme="dark"] .open-now-status.is-closed { color: #fca5a5; }
+:root[data-theme="dark"] .free-flag { color: #d4874a; }
+:root[data-theme="dark"] .ticket-flag::before { background-color: #d4874a; }
+:root[data-theme="dark"] .free-flag::before { background-color: #d4874a; }
