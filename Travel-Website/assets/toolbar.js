@@ -509,7 +509,7 @@
     '.tb{padding:8px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
       'background:transparent;' +
       'border-bottom:1px solid rgba(184,92,42,0.35);box-shadow:none;' +
-      'display:flex;align-items:center}' +
+      'display:flex;flex-wrap:wrap;align-items:center}' +
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
     /* (owner 2026-08-10) .tb-site-title rules removed with the element itself —
@@ -537,10 +537,12 @@
        tab gap); if that pill's label, padding or font-size changes, re-measure it.
        Mobile keeps the plain 10px gutter — the pill row is replaced by the
        hamburger there, so there is nothing to clear. */
-    '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:4px 10px 4px 120px;background:transparent;' +
-      'width:100%;box-sizing:border-box}' +
+    '.tb-brand-logo{display:block;flex:0 0 100%;line-height:0;text-decoration:none;' +
+      'padding:4px 10px 4px 120px;background:transparent;width:100%;box-sizing:border-box}' +
     '.tb-brand-logo img{display:block;width:100%;max-width:196px;height:auto;margin:0 auto 0 0}' +
-    '@media(max-width:600px){.tb-brand-logo{padding:4px 10px 4px 10px}.tb-brand-logo img{max-width:150px}}' +
+    '@media(max-width:1260px){.tb-brand-logo{flex:0 1 auto;width:auto;padding:0 10px 0 4px}' +
+      '.tb-brand-logo img{max-width:132px;margin:0}}' +
+    '@media(max-width:600px){.tb-brand-logo img{max-width:112px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
    in the bar the same) — both use the SAME clamp() so they stay equal at every
@@ -1327,6 +1329,14 @@
   _bImg.width = 630; _bImg.height = 154;
   tveBrandLogo.appendChild(_bImg);
 
+  /* Wordmark lives INSIDE the bar. Desktop is unchanged: .tb wraps and the logo
+     takes a full-width first line, so it still sits above the tabs. MOBILE puts
+     it inline with the hamburger — on mobile every nav item is inside the menu,
+     so the bar was holding nothing but a ☰ and was pure decoration. One row now:
+     brand left, menu right. Inserted here, not at bar assembly: tveBrandLogo is
+     declared with var below, so an append there is a silent no-op. */
+  if (tveBrandLogo) bar.insertBefore(tveBrandLogo, bar.firstChild);
+
   /* ── Insert toolbar ──────────────────────────────────────────────────────── */
   if (mount) {
     var hoistTarget = mount;
@@ -1334,11 +1344,9 @@
       hoistTarget = hoistTarget.parentNode;
     }
     document.body.insertBefore(bar, hoistTarget);
-    if (tveBrandLogo) document.body.insertBefore(tveBrandLogo, bar);
     mount.parentNode.removeChild(mount);
   } else {
     document.body.insertBefore(bar, document.body.firstChild);
-    if (tveBrandLogo) document.body.insertBefore(tveBrandLogo, bar);
   }
 
   /* ── Guide-page back-link — pill strip below toolbar (above country name) ── */
