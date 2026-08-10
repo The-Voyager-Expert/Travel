@@ -225,7 +225,7 @@
       if (!isIOS) {
         var addBtn = document.createElement('button');
         addBtn.textContent = 'Add';
-        addBtn.style.cssText = 'background:#b85c2a;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;';
+        addBtn.style.cssText = 'background:#b85c2a;color:#7a3b1e;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;';
         addBtn.onclick = function () {
           if (_deferredPrompt) {
             _deferredPrompt.prompt();
@@ -507,8 +507,8 @@
        padding was cut 4px -> 2px in the same pass, so the taller text is fully
        absorbed and the bar is no thicker than before. */
     '.tb{padding:8px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
-      'background:#b85c2a;' +
-      'border-bottom:1px solid rgba(184,92,42,0.35);box-shadow:none;' +
+      'background:transparent;' +
+      'border-bottom:none;box-shadow:none;' +
       'display:flex;flex-wrap:wrap;align-items:center}' +
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
@@ -542,7 +542,7 @@
    orange and is unreadable on #b85c2a. Mobile overrides this to transparent,
    where the whole bar is beige anyway. */
     '.tb-brand-logo{display:block;flex:0 0 100%;line-height:0;text-decoration:none;' +
-      'padding:4px 10px 4px 120px;background:#f5f4f0;width:100%;box-sizing:border-box}' +
+      'padding:16px 10px 10px 34px;background:transparent;width:100%;box-sizing:border-box}' +
     '.tb-brand-logo img{display:block;width:100%;max-width:196px;height:auto;margin:0 auto 0 0}' +
     /* MOBILE ONLY (owner 2026-08-10): the bar turns beige with dark-terracotta
    traces, and the wordmark is CENTRED in the row. Everything else keeps its
@@ -582,19 +582,19 @@
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#fff!important;text-decoration:none;padding:2px 2px;' +
+    '.tb a,.tb a:visited{font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#7a3b1e!important;text-decoration:none;padding:2px 2px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
-    '.tb a:hover{color:#fff!important;background:transparent}' +
-    '.tb a.tb-active{color:#fff!important;background:transparent;border:1.5px solid rgba(255,255,255,0.7);border-radius:14px;padding:4px 12px;font-weight:600}' +
+    '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
+    '.tb a.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#fff!important;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#7a3b1e!important;' +
       'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
-    '.tb-ddbtn:hover{color:#fff!important;background:transparent}' +
-    '.tb-ddbtn.tb-active{color:#fff!important;background:transparent;border:1.5px solid rgba(255,255,255,0.7);border-radius:14px;padding:4px 12px;font-weight:600}' +
-    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#fff!important;background:transparent}' +
+    '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
+    '.tb-ddbtn.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
+    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#7a3b1e!important;background:transparent}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
@@ -638,14 +638,14 @@
        The row must be made to FIT 1260px instead — hence the tab gap cut from
        18px to 10px in the same pass. */
     '@media(max-width:1260px){' +
-      '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:1px solid rgba(184,92,42,0.35);background:transparent;box-shadow:none}' +
+      '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:transparent;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
       '.tb::after{display:none}' +
       '.tb-ham{display:flex;align-items:center;gap:3px;cursor:pointer;' +
         'border:none;-webkit-appearance:none;appearance:none;box-shadow:none;outline:none;' +
         '-webkit-tap-highlight-color:transparent;' +
-        'padding:10px 14px 10px 8px;font-size:13px;color:#fff;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
+        'padding:10px 14px 10px 8px;font-size:13px;color:#7a3b1e;flex-shrink:0;margin-left:auto;line-height:1;min-height:44px}' +
       '.tb-ham:hover,.tb-ham:focus,.tb-ham:active{box-shadow:none !important;outline:none !important}' +
       /* min-height:0 overrides mobile.css's universal 40px tap-target `a{}` rule — this
          is an <a> linking to Guides-Index.html, and without the override the inflated
@@ -693,11 +693,11 @@
     '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
-      'border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);' +
+      'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#7a3b1e;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'transition:background .15s,border-color .15s;outline:none;padding:0;' +
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
-    '.tb-theme-toggle:hover{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.8)}' +
+    '.tb-theme-toggle:hover{background:transparent;border-color:rgba(122,59,30,.85)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
     '@media(max-width:1260px){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
@@ -1008,7 +1008,7 @@
   hamLabel.className = 'tb-ham-label';
   hamLabel.textContent = 'GUIDE MY DAYS';
   hamLabel.href = base + 'index.html';
-  hamLabel.style.cssText = 'text-decoration:none;color:#fff;';
+  hamLabel.style.cssText = 'text-decoration:none;color:#7a3b1e;';
   bar.appendChild(hamLabel);
 
   var hamBtn = document.createElement('div');
@@ -1017,26 +1017,26 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#fff;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#7a3b1e;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="white"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="white"/></svg>';
   bar.appendChild(hamBtn);
 
   /* ── Theme toggle ───────────────────────────────────────────────────────── */
   (function () {
     var SVG_SUN  = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-      '<circle cx="8" cy="8" r="3.5" fill="white"/>' +
-      '<line x1="8" y1="1" x2="8" y2="3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="8" y1="13" x2="8" y2="15" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="1" y1="8" x2="3" y2="8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="13" y1="8" x2="15" y2="8" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="2.93" y1="2.93" x2="4.34" y2="4.34" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="11.66" y1="11.66" x2="13.07" y2="13.07" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="13.07" y1="2.93" x2="11.66" y2="4.34" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<line x1="4.34" y1="11.66" x2="2.93" y2="13.07" stroke="white" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<circle cx="8" cy="8" r="3.5" fill="currentColor"/>' +
+      '<line x1="8" y1="1" x2="8" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="8" y1="13" x2="8" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="1" y1="8" x2="3" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="13" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="2.93" y1="2.93" x2="4.34" y2="4.34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="11.66" y1="11.66" x2="13.07" y2="13.07" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="13.07" y1="2.93" x2="11.66" y2="4.34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="4.34" y1="11.66" x2="2.93" y2="13.07" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
       '</svg>';
     var SVG_MOON = '<svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">' +
       '<path d="M13 8.5A5.5 5.5 0 0 1 6.5 2c0-.18.01-.35.03-.52A6.5 6.5 0 1 0 13.52 8.47' +
-      'C13.35 8.49 13.18 8.5 13 8.5z" fill="white"/>' +
+      'C13.35 8.49 13.18 8.5 13 8.5z" fill="currentColor"/>' +
       '</svg>';
 
     var themeBtn = document.createElement('button');
@@ -2102,7 +2102,7 @@
         /* Floating notice */
         var notice = document.createElement('div');
         notice.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);' +
-          'background:#2c2c2c;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;' +
+          'background:#2c2c2c;color:#7a3b1e;padding:10px 18px;border-radius:8px;font-size:13px;' +
           'z-index:9999;display:flex;align-items:center;gap:14px;' +
           'box-shadow:0 2px 12px rgba(0,0,0,.35);max-width:90vw;white-space:nowrap;';
         notice.innerHTML = '<span>🔀 Preview only — run <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px;">optimize_route.py</code> to commit</span>';
@@ -2680,7 +2680,7 @@
     dlBtn.style.cssText =
       'flex:1;padding:8px 16px;border:none;border-radius:6px;' +
       'background:#b85c2a;' +
-      'font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;';
+      'font-size:13px;font-weight:700;color:#7a3b1e;cursor:pointer;font-family:inherit;';
 
     function _closeICS() { overlay.style.display = 'none'; document.body.style.overflow = ''; }
     /* No click-outside-to-close: on iOS the native date picker dismissal
@@ -3177,7 +3177,7 @@
            instead of stopping at the card edge. The hairline closes it. Same
            tint as .tve-ph-hr so the band, its divider and its panel agree. */
         '.tve-ph{border-left:2.5px solid #b85c2a;' +
-        'border-right:1px solid rgba(187,160,112,.45);background:transparent;color:#fff;' +
+        'border-right:1px solid rgba(187,160,112,.45);background:transparent;color:#7a3b1e;' +
         'font-weight:500;padding:0 14px 0 11.5px;border-radius:0;' +
         'margin:6px -14px 0;line-height:1.55;font-size:inherit;}' +
         /* Scoping to the card is what wins the specificity fight —
@@ -3220,7 +3220,7 @@
            because the class is still stamped in JS and
            check_stop_hours_contract hard-fails a tve-ph-* class with no CSS. */
         '.tve-ph-24{border-left-color:#b85c2a!important;background:transparent!important;' +
-        'border-right-color:rgba(187,160,112,.45)!important;color:#fff!important;}' +
+        'border-right-color:rgba(187,160,112,.45)!important;color:#7a3b1e!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
                 /* DESKTOP WIDTH — the band stops at the horizontal centre of the screen
@@ -3260,7 +3260,7 @@
            accent colour in a row whose rail is already the band's accent; tan is
            the same family as the rail, so the chip reads as part of the band
            rather than as a competing mark. Hover deepens the fill to #f5f0e6. */
-        '.tve-ph-chv{font-size:15px;font-weight:700;color:#fff;line-height:1;' +
+        '.tve-ph-chv{font-size:15px;font-weight:700;color:#7a3b1e;line-height:1;' +
         'display:inline-flex;align-items:center;justify-content:center;flex:none;' +
         'width:22px;height:22px;border-radius:50%;' +
         'border:1px solid #b85c2a;background:transparent;' +
@@ -7160,7 +7160,7 @@
       'font-size:14px;color:#3d3a32;font-family:inherit;cursor:pointer;' +
       '-webkit-appearance:none}' +
       '.tve-bo-row:last-child{border-bottom:none}' +
-      '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#fff;font-weight:700}' +
+      '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#7a3b1e;font-weight:700}' +
       'body.tve-ham-open #tve-bo-jump{display:none!important}' +
       '@media(min-width:601px){#tve-bo-jump,#tve-bo-ov{display:none!important}}';
     document.head.appendChild(css);
@@ -7488,7 +7488,7 @@
       'transition:transform .12s,box-shadow .12s;}' +
       '#tve-wl-fab:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.28);}' +
       '#tve-wl-fab.tve-wl-fab-on{display:inline-flex;}' +
-      '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#fff;border-radius:10px;' +
+      '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#7a3b1e;border-radius:10px;' +
       'font-size:11px;font-weight:700;padding:0 6px;min-width:18px;text-align:center;line-height:18px;}' +
 
       /* Panel — anchored above the FAB */
@@ -7525,7 +7525,7 @@
       '.tve-wl-copy{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
       'border:1px solid #b85c2a;border-radius:5px;padding:4px 11px;cursor:pointer;' +
       'font-family:inherit;transition:background .12s,color .12s;}' +
-      '.tve-wl-copy:hover{background:#b85c2a;color:#fff;}' +
+      '.tve-wl-copy:hover{background:#b85c2a;color:#7a3b1e;}' +
       '.tve-wl-empty{padding:24px 14px;text-align:center;color:#a8a09a;' +
       'font-size:13px;line-height:1.6;font-family:inherit;}' +
       /* Mobile: align with scroll-top FAB (bottom:62px+36px+10px=108px) */
@@ -7895,7 +7895,7 @@
       '.tve-note-save{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
       'border:1px solid #b85c2a;border-radius:5px;padding:5px 12px;cursor:pointer;' +
       'font-family:inherit;flex-shrink:0;transition:background .12s,color .12s;}' +
-      '.tve-note-save:hover{background:#b85c2a;color:#fff;}' +
+      '.tve-note-save:hover{background:#b85c2a;color:#7a3b1e;}' +
 
       /* MY TRIP NOTES card — mirrors .overview-section / .overview-title */
       '#tve-notes-card{display:none;background:var(--c-card-bg,#fff);' +
@@ -9828,7 +9828,7 @@
         'border-color:var(--c-pill-bd-hover);}}' +
         '.tve-stf-chip:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;}' +
         '.tve-stf-chip.is-on{background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
-        'border-color:#b85c2a;color:#fff;}' +
+        'border-color:#b85c2a;color:#7a3b1e;}' +
         '.tve-stf-chip.is-on .tve-stf-n{opacity:.85;}' +
         '@media (hover:hover){.tve-stf-chip.is-on:hover{' +
         'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
