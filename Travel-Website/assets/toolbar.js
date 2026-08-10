@@ -462,6 +462,34 @@
         { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                        text: '🪪 Digital Nomad Visas' },
         { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: '🪪 Visa Processing Times' },
       ] },
+    null,
+    /* OWNER-DIRECTED 2026-08-10: new group, built from the width freed by
+       removing the desktop site title. These 15 pages previously lived ONLY in
+       the "Also Recommended" and "We Recommend" panels on index.html, so they
+       were reachable from the homepage and nowhere else; they are now in the nav
+       on every page. Both panels were deleted from index.html in the same
+       commit — a page in the toolbar must never also sit in Also Recommended
+       (CLAUDE.md corollary; check_also_recommended_excludes_toolbar_pages
+       hard-fails otherwise, and the fix is always to drop the panel card).
+       Children carry their own icons, so this group belongs in
+       check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
+    { group: '📋 Also Recommended', children: [
+        { href: base + 'Trip-Essentials/Budget-Guide.html',       text: '💰 Budget' },
+        { href: base + 'Trip-Essentials/Rental-Cars.html',        text: '🚗 Car Rental & Private' },
+        { href: base + 'Trip-Essentials/Cards-ATM.html',          text: '💳 Cards & ATM' },
+        { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: '🎫 City Transit Cards' },
+        { href: base + 'Trip-Essentials/Cruise-Ships.html',       text: '🚢 Cruise Lines', newSince: '2026-08-09' },
+        { href: base + 'Trip-Essentials/Disney-Parks.html',       text: '🏰 Disney Parks', newSince: '2026-08-08' },
+        { href: base + 'Trip-Essentials/Festival-Finder.html',    text: '🎉 Festival Finder' },
+        { href: base + 'Trip-Essentials/More-Resources.html',     text: '📚 More Resources' },
+        { href: base + 'Trip-Essentials/Pickleball.html',         text: '🏓 Pickleball' },
+        { href: base + 'Trip-Essentials/Restaurants.html',        text: '🍽️ Restaurants' },
+        { href: base + 'Trip-Essentials/SIM-Cards.html',          text: '📱 SIM Cards' },
+        { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: '🏟️ Sports Calendar' },
+        { href: base + 'Trip-Essentials/Tipping-Guide.html',      text: '💵 Tipping' },
+        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: '🎟️ Tours & Tickets' },
+        { href: base + 'Trip-Essentials/Travel-Apps.html',        text: '📲 Travel Apps' },
+      ] },
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
@@ -480,17 +508,30 @@
       'display:flex;align-items:center}' +
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
-    /* Title shrunk 14px -> 12px and its fixed lane 184px -> 156px (owner
-       2026-08-09) to buy the tab row 28px. The width is what actually frees
-       space — the lane is fixed, so a smaller font alone would have reserved
-       exactly as much room as before. */
-    '.tb-site-title,.tb a.tb-site-title,.tb a.tb-site-title:visited,.tb a.tb-site-title:hover{flex-shrink:0;font-size:12px;font-weight:700;color:#fff!important;' +
-      'letter-spacing:.06em;text-transform:uppercase;padding:5px 0;white-space:nowrap;margin-left:0;background:transparent!important;text-decoration:none!important}' +
+    /* (owner 2026-08-10) .tb-site-title rules removed with the element itself —
+       the desktop title no longer exists, so the whole bar width is the tab row's. */
+    /* Site-wide wordmark above the bar. Smaller than the index.html copy on
+       purpose (170px vs 300px): it repeats on every page. width/height on the
+       <img> reserve the box so the toolbar never jumps as the PNG loads. */
+    /* Right-aligned (owner 2026-08-10), and constrained to the same max-width
+       lane as the page content so it lands over the right edge of the tiles
+       rather than flush to the viewport. The bottom padding is what pushes the
+       content below it down and stops the wordmark crowding the first tile. */
+    '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 16px 14px;background:transparent;' +
+      'max-width:940px;margin:0 auto;box-sizing:border-box}' +
+    '.tb-brand-logo img{display:block;width:100%;max-width:170px;height:auto;margin:0 0 0 auto}' +
+    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:140px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     '.tb-inner{flex:1;padding-left:16px;padding-right:16px}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
-    '.tb-links{display:flex;flex-wrap:nowrap;width:100%;margin:0;' +
-      'gap:0;align-items:center;justify-content:space-between}' +
+    /* OWNER 2026-08-10: tabs pushed LEFT with one EQUAL gap between every pair.
+       Was justify-content:space-between + gap:0, which spread the row edge to
+       edge and made each gap a different width (they absorbed the leftover
+       space in proportion to nothing). With the site title gone the row no
+       longer needs to fill the bar, so: flex-start + a fixed gap, and
+       width:auto so the row is exactly as wide as its tabs. */
+    '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
+      'gap:18px;align-items:center;justify-content:flex-start}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
@@ -542,12 +583,9 @@
     '@media(max-width:1260px){.tb-progress{display:none}}' +
     /* Hide ham elements on desktop — mobile @media shows them */
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
-    /* Hide desktop title on mobile — hamLabel covers it there */
-    '.tb-site-title{display:block}' +
     /* Mobile/tablet: hamburger menu replaces the chip row when viewport < 1350px
        (the full tab row needs ~1322px; below that it overflows and clips tabs) */
     '@media(max-width:1260px){' +
-      '.tb-site-title{display:none}' +
       '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:#b85c2a;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
@@ -845,17 +883,14 @@
   var bar = document.createElement('div');
   bar.className = 'tb';
 
-  var siteTitle = document.createElement('a');
-  siteTitle.className = 'tb-site-title';
-  siteTitle.textContent = 'Guide My Days';
-  siteTitle.href = base + 'index.html';
-  siteTitle.style.textDecoration = 'none';
-  /* OWNER 2026-08-09: the title joins .tb-links as its first flex item instead
-     of sitting beside the row in a fixed lane. justify-content:space-between
-     then distributes ONE equal gap across every pair — title→Guides included —
-     so the spacing starts at the end of the title rather than Guides hugging
-     it. Hidden below 1260px along with the whole row, so mobile is unaffected. */
-  inner.insertBefore(siteTitle, inner.firstChild);
+  /* OWNER 2026-08-10: the desktop site title ("GUIDE MY DAYS") was REMOVED from
+     the bar to free its width for more tabs. Do not re-add it — the branding
+     now lives in the wordmark on index.html, and this space is reserved for
+     nav. The .tb-site-title element and all its CSS went with it; the earlier
+     2026-08-09 note about the title being .tb-links' first flex item is moot,
+     since space-between now distributes gaps across the tabs alone.
+     The MOBILE label (.tb-ham-label) is untouched — mobile has no tab row, so
+     removing it there would leave the hamburger bar with no branding at all. */
 
   bar.appendChild(scroller);
 
@@ -1227,6 +1262,30 @@
     if (e.target.closest('a')) closeHamMenu();
   });
 
+  /* ── Site-wide brand wordmark ─────────────────────────────────────────────
+     OWNER 2026-08-10: goes on EVERY page, ABOVE the toolbar. Removing the
+     desktop site title left every page except index.html with no branding at
+     all — this puts it back once, site-wide, instead of editing 800+ files.
+     Above the bar (not inside it) for two reasons: the bar is solid terracotta
+     #b85c2a and would swallow the wordmark's orange script, and sitting above
+     means it scrolls away while the sticky nav stays put.
+     Deliberately SMALLER than the index.html copy (170px vs 300px) — this one
+     repeats on every page, so it identifies without taking over the fold.
+     index.html renders its own larger <a class="site-logo"> inside .wrap; this
+     skips that page to avoid showing the wordmark twice. */
+  var tveBrandLogo = null;
+  if (!document.querySelector('.site-logo')) {
+    tveBrandLogo = document.createElement('a');
+    tveBrandLogo.className = 'tb-brand-logo';
+    tveBrandLogo.href = base + 'index.html';
+    tveBrandLogo.setAttribute('aria-label', 'Guide My Days — home');
+    var _bImg = document.createElement('img');
+    _bImg.src = base + 'Images/Logos/guidemydays-wordmark-serif-script-swoosh.png';
+    _bImg.alt = 'Guide My Days';
+    _bImg.width = 630; _bImg.height = 154;
+    tveBrandLogo.appendChild(_bImg);
+  }
+
   /* ── Insert toolbar ──────────────────────────────────────────────────────── */
   if (mount) {
     var hoistTarget = mount;
@@ -1234,9 +1293,11 @@
       hoistTarget = hoistTarget.parentNode;
     }
     document.body.insertBefore(bar, hoistTarget);
+    if (tveBrandLogo) document.body.insertBefore(tveBrandLogo, bar);
     mount.parentNode.removeChild(mount);
   } else {
     document.body.insertBefore(bar, document.body.firstChild);
+    if (tveBrandLogo) document.body.insertBefore(tveBrandLogo, bar);
   }
 
   /* ── Guide-page back-link — pill strip below toolbar (above country name) ── */
