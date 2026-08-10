@@ -513,14 +513,19 @@
     /* Site-wide wordmark above the bar. Smaller than the index.html copy on
        purpose (170px vs 300px): it repeats on every page. width/height on the
        <img> reserve the box so the toolbar never jumps as the PNG loads. */
-    /* Right-aligned (owner 2026-08-10), and constrained to the same max-width
-       lane as the page content so it lands over the right edge of the tiles
-       rather than flush to the viewport. The bottom padding is what pushes the
-       content below it down and stops the wordmark crowding the first tile. */
+    /* LEFT-aligned, always, on every page (owner 2026-08-10: "always in the same
+       place left or middle but not right"). Constrained to the same max-width
+       lane as the page content so it lines up with the content's left edge
+       rather than the viewport's. Only the SIZE varies: the home page is the
+       masthead (300px), every other page a smaller repeat (170px). The bottom
+       padding is what pushes the content below it down. */
     '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 16px 14px;background:transparent;' +
       'max-width:940px;margin:0 auto;box-sizing:border-box}' +
-    '.tb-brand-logo img{display:block;width:100%;max-width:170px;height:auto;margin:0 0 0 auto}' +
-    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:140px}}' +
+    '.tb-brand-logo img{display:block;width:100%;max-width:170px;height:auto;margin:0 auto 0 0}' +
+    '.tb-brand-logo--home{padding-top:14px;padding-bottom:18px}' +
+    '.tb-brand-logo--home img{max-width:300px}' +
+    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:140px}' +
+      '.tb-brand-logo--home img{max-width:210px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     '.tb-inner{flex:1;padding-left:16px;padding-right:16px}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
@@ -1269,22 +1274,28 @@
      Above the bar (not inside it) for two reasons: the bar is solid terracotta
      #b85c2a and would swallow the wordmark's orange script, and sitting above
      means it scrolls away while the sticky nav stays put.
-     Deliberately SMALLER than the index.html copy (170px vs 300px) — this one
-     repeats on every page, so it identifies without taking over the fold.
-     index.html renders its own larger <a class="site-logo"> inside .wrap; this
-     skips that page to avoid showing the wordmark twice. */
-  var tveBrandLogo = null;
-  if (!document.querySelector('.site-logo')) {
-    tveBrandLogo = document.createElement('a');
-    tveBrandLogo.className = 'tb-brand-logo';
-    tveBrandLogo.href = base + 'index.html';
-    tveBrandLogo.setAttribute('aria-label', 'Guide My Days — home');
-    var _bImg = document.createElement('img');
-    _bImg.src = base + 'Images/Logos/guidemydays-wordmark-serif-script-swoosh.png';
-    _bImg.alt = 'Guide My Days';
-    _bImg.width = 630; _bImg.height = 154;
-    tveBrandLogo.appendChild(_bImg);
-  }
+     ONE copy, every page, index included. index.html briefly had its own larger
+     <a class="site-logo"> as well, which rendered the wordmark twice there — the
+     guard that was meant to skip it queried for '.site-logo' from a <script>
+     that runs BEFORE that element exists in the DOM, so it never matched. The
+     index copy is gone; this is the only wordmark on the site. */
+  /* OWNER 2026-08-10: the HOME page gets a bigger wordmark, left-aligned — it is
+     the masthead there, not a repeat. Every other page keeps the small
+     right-aligned mark. Home = the root index.html at depth 0; the depth guard
+     matters because a bare '/index.html' test would also match a page reached
+     through a directory URL deeper in the tree. */
+  var _isHome = (depth === 0) &&
+    (/(^|\/)index\.html$/.test(location.pathname) || /\/$/.test(location.pathname));
+
+  var tveBrandLogo = document.createElement('a');
+  tveBrandLogo.className = 'tb-brand-logo' + (_isHome ? ' tb-brand-logo--home' : '');
+  tveBrandLogo.href = base + 'index.html';
+  tveBrandLogo.setAttribute('aria-label', 'Guide My Days — home');
+  var _bImg = document.createElement('img');
+  _bImg.src = base + 'Images/Logos/guidemydays-wordmark-serif-script-swoosh.png';
+  _bImg.alt = 'Guide My Days';
+  _bImg.width = 630; _bImg.height = 154;
+  tveBrandLogo.appendChild(_bImg);
 
   /* ── Insert toolbar ──────────────────────────────────────────────────────── */
   if (mount) {
