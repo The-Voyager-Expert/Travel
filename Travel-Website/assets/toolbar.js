@@ -108,7 +108,10 @@
     link('manifest', b + 'manifest.webmanifest');
     link('apple-touch-icon', b + 'assets/icons/apple-touch-icon.png');
     link('icon', b + 'assets/icons/favicon-32.png', { sizes: '32x32', type: 'image/png' });
-    meta('theme-color', '#b85c2a');
+    /* Beige, matching the page and the toolbar (owner 2026-08-10). Was #b85c2a,
+       which painted the phone's status-bar band terracotta above a bar that no
+       longer is. */
+    meta('theme-color', '#f5f4f0');
     meta('apple-mobile-web-app-capable', 'yes');
     meta('mobile-web-app-capable', 'yes');
     meta('apple-mobile-web-app-status-bar-style', 'default');
@@ -225,7 +228,7 @@
       if (!isIOS) {
         var addBtn = document.createElement('button');
         addBtn.textContent = 'Add';
-        addBtn.style.cssText = 'background:#b85c2a;color:#7a3b1e;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;';
+        addBtn.style.cssText = 'background:#b85c2a;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;';
         addBtn.onclick = function () {
           if (_deferredPrompt) {
             _deferredPrompt.prompt();
