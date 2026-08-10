@@ -547,7 +547,12 @@
    width while shrinking together as the viewport narrows. Left edge -> first tab, tab -> tab, and last tab ->
    theme toggle are all 10px; the toggle's own margin-left is 0 so this padding
    is the only thing between them, otherwise the two would stack to 20px. */
-    '.tb-inner{flex:1;padding-left:clamp(6px,0.78vw,10px);padding-right:clamp(6px,0.78vw,10px)}' +
+    /* min-width:0 is load-bearing: .tb-inner is a flex item whose default
+   min-width:auto refuses to shrink below the nowrap tab row's intrinsic
+   width. Without it the bar overflows to the right and pushes the theme
+   toggle off the edge — the toggle's own flex-shrink:0 cannot help,
+   because the overflow happens upstream of it. */
+    '.tb-inner{flex:1;min-width:0;padding-left:clamp(6px,0.78vw,10px);padding-right:clamp(6px,0.78vw,10px)}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     /* OWNER 2026-08-10: tabs pushed LEFT with one EQUAL gap between every pair.
        Was justify-content:space-between + gap:0, which spread the row edge to
@@ -556,7 +561,7 @@
        longer needs to fill the bar, so: flex-start + a fixed gap, and
        width:auto so the row is exactly as wide as its tabs. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:clamp(6px,0.78vw,10px);align-items:center;justify-content:flex-start}' +
+      'gap:clamp(6px,0.78vw,10px);align-items:center;justify-content:flex-start;min-width:0}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
