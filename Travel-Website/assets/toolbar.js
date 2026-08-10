@@ -541,9 +541,13 @@
    paint the page background over the bar's terracotta — the mark is navy and
    orange and is unreadable on #b85c2a. Mobile overrides this to transparent,
    where the whole bar is beige anyway. */
-    '.tb-brand-logo{display:block;flex:0 0 100%;line-height:0;text-decoration:none;' +
-      'padding:16px 10px 10px 34px;background:transparent;width:100%;box-sizing:border-box}' +
-    '.tb-brand-logo img{display:block;width:100%;max-width:196px;height:auto;margin:0 auto 0 0}' +
+    /* Scoped under `.tb a` deliberately. The wordmark is an <a> inside .tb, so
+   `.tb a{padding:2px 2px}` (class+element) outranks a bare `.tb-brand-logo`
+   (class only) and silently ate every padding value set here — computed
+   padding was 2px on all sides no matter what this rule said. */
+    '.tb a.tb-brand-logo{display:block;flex:0 0 100%;line-height:0;text-decoration:none;' +
+      'padding:8px 10px 30px 64px;background:transparent;width:100%;box-sizing:border-box}' +
+    '.tb a.tb-brand-logo img{display:block;width:100%;max-width:196px;height:auto;margin:0 auto 0 0}' +
     /* MOBILE ONLY (owner 2026-08-10): the bar turns beige with dark-terracotta
    traces, and the wordmark is CENTRED in the row. Everything else keeps its
    position — hamburger left, theme toggle right — so the logo is absolutely
@@ -554,10 +558,10 @@
       '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#7a3b1e!important}' +
       '.tb-theme-toggle{border-color:rgba(122,59,30,.55)!important;background:transparent!important}' +
       '.tb-theme-toggle:hover{border-color:rgba(122,59,30,.85)!important;background:transparent!important}' +
-      '.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:0;flex:none;pointer-events:none;text-align:center}' +
-      '.tb-brand-logo img{max-width:132px;margin:0 auto;display:inline-block;pointer-events:auto}' +
+      '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:0;flex:none;pointer-events:none;text-align:center}' +
+      '.tb a.tb-brand-logo img{max-width:168px;margin:0 auto;display:inline-block;pointer-events:auto}' +
     '}' +
-    '@media(max-width:600px){.tb-brand-logo img{max-width:112px}}' +
+    '@media(max-width:600px){.tb a.tb-brand-logo img{max-width:150px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
    in the bar the same) — both use the SAME clamp() so they stay equal at every
