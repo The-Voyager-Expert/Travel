@@ -473,7 +473,7 @@
        hard-fails otherwise, and the fix is always to drop the panel card).
        Children carry their own icons, so this group belongs in
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
-    { group: '📋 Also Recommended', children: [
+    { group: '📋 Also Recommended', groupShort: '📋 Recommended', children: [
         { href: base + 'Trip-Essentials/Budget-Guide.html',       text: '💰 Budget' },
         { href: base + 'Trip-Essentials/Rental-Cars.html',        text: '🚗 Car Rental & Private' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',          text: '💳 Cards & ATM' },
@@ -806,7 +806,10 @@
       btn.setAttribute('aria-haspopup', 'true');
       btn.setAttribute('aria-expanded', 'false');
       var lab = document.createElement('span');
-      lab.textContent = item.group;
+      /* groupShort (2026-08-10): top-strip label may be shorter than the group's
+         canonical name — the bar has no spare width, while the dropdown header,
+         the hamburger and TOOLBAR_ITEMS_LOCK all keep the full name. */
+      lab.textContent = item.groupShort || item.group;
       var car = document.createElement('span');
       car.className = 'tb-caret';
       car.textContent = '▾';
