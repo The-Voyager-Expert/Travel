@@ -502,7 +502,10 @@
   var styleEl = document.createElement('style');
   styleEl.textContent =
     /* Toolbar outer — flex row so title + nav sit side by side */
-    '.tb{padding:16px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
+    /* Bar height: padding 16px -> 9px (owner 2026-08-10, "less thicker"). The
+       tabs set their own 4px padding, so this is pure bar chrome above and
+       below them and trims ~14px off every page's fold. */
+    '.tb{padding:9px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
       'background:#b85c2a;' +
       'border-bottom:none;box-shadow:none;' +
       'display:flex;align-items:center}' +
@@ -519,13 +522,18 @@
        rather than the viewport's. Only the SIZE varies: the home page is the
        masthead (300px), every other page a smaller repeat (170px). The bottom
        padding is what pushes the content below it down. */
+    /* Nudged left (owner 2026-08-10, "just a bit more to the left" — not flush).
+       Done by widening this element's lane past the content's 940px rather than
+       by a negative margin: the wordmark sits ~70px left of the content edge but
+       still inside a centred lane, so it holds that relationship at every
+       viewport instead of drifting or clipping on narrow screens. */
     '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 16px 14px;background:transparent;' +
-      'max-width:940px;margin:0 auto;box-sizing:border-box}' +
-    '.tb-brand-logo img{display:block;width:100%;max-width:170px;height:auto;margin:0 auto 0 0}' +
+      'max-width:1080px;margin:0 auto;box-sizing:border-box}' +
+    '.tb-brand-logo img{display:block;width:100%;max-width:132px;height:auto;margin:0 auto 0 0}' +
     '.tb-brand-logo--home{padding-top:14px;padding-bottom:18px}' +
-    '.tb-brand-logo--home img{max-width:300px}' +
-    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:140px}' +
-      '.tb-brand-logo--home img{max-width:210px}}' +
+    '.tb-brand-logo--home img{max-width:210px}' +
+    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:112px}' +
+      '.tb-brand-logo--home img{max-width:160px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     '.tb-inner{flex:1;padding-left:16px;padding-right:16px}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
@@ -536,7 +544,7 @@
        longer needs to fill the bar, so: flex-start + a fixed gap, and
        width:auto so the row is exactly as wide as its tabs. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:18px;align-items:center;justify-content:flex-start}' +
+      'gap:10px;align-items:center;justify-content:flex-start}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
@@ -588,8 +596,13 @@
     '@media(max-width:1260px){.tb-progress{display:none}}' +
     /* Hide ham elements on desktop — mobile @media shows them */
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
-    /* Mobile/tablet: hamburger menu replaces the chip row when viewport < 1350px
-       (the full tab row needs ~1322px; below that it overflows and clips tabs) */
+    /* Mobile/tablet: hamburger menu replaces the chip row below this width.
+       LOCKED AT 1260px — do not raise it. A MacBook Air 13" is a 1280px CSS
+       viewport, so anything above 1260 hides the desktop nav on that machine
+       (check_toolbar_font_size_unified hard-fails; Rule 582). Raising it to
+       1400px for the 14th tab was tried on 2026-08-10 and the check caught it.
+       The row must be made to FIT 1260px instead — hence the tab gap cut from
+       18px to 10px in the same pass. */
     '@media(max-width:1260px){' +
       '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:#b85c2a;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
