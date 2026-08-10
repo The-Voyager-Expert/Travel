@@ -522,15 +522,18 @@
        rather than the viewport's. Only the SIZE varies: the home page is the
        masthead (300px), every other page a smaller repeat (170px). The bottom
        padding is what pushes the content below it down. */
-    /* Nudged left (owner 2026-08-10, "just a bit more to the left" — not flush).
-       Done by widening this element's lane past the content's 940px rather than
-       by a negative margin: the wordmark sits ~70px left of the content edge but
-       still inside a centred lane, so it holds that relationship at every
-       viewport instead of drifting or clipping on narrow screens. */
-    '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 16px 14px;background:transparent;' +
-      'max-width:1080px;margin:0 auto;box-sizing:border-box}' +
-    '.tb-brand-logo img{display:block;width:100%;max-width:132px;height:auto;margin:0 auto 0 0}' +
-    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:112px}}' +
+    /* Aligned to the TOOLBAR's gutter, not to a content lane (owner 2026-08-10 —
+       it must sit in the same place on every page). It used to live in a fixed
+       1080px centred lane, which lines up on pages whose content is capped at
+       that width but floats to the middle on full-width pages — the Maps pages
+       set no data-maxwidth, so the wordmark appeared centred there and left
+       everywhere else. Using the same 10px inset as .tb-inner puts the wordmark's
+       left edge directly above the first tab on every page, whatever the content
+       below it does. */
+    '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 10px 14px 4px;background:transparent;' +
+      'width:100%;box-sizing:border-box}' +
+    '.tb-brand-logo img{display:block;width:100%;max-width:162px;height:auto;margin:0 auto 0 0}' +
+    '@media(max-width:600px){.tb-brand-logo{padding:8px 10px 10px 4px}.tb-brand-logo img{max-width:132px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
    in the bar the same). Left edge -> first tab, tab -> tab, and last tab ->
