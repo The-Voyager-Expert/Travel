@@ -527,13 +527,19 @@
        1080px centred lane, which lines up on pages whose content is capped at
        that width but floats to the middle on full-width pages — the Maps pages
        set no data-maxwidth, so the wordmark appeared centred there and left
-       everywhere else. Using the same 10px inset as .tb-inner puts the wordmark's
-       left edge directly above the first tab on every page, whatever the content
-       below it does. */
-    '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 10px 14px 4px;background:transparent;' +
+       everywhere else. Anchoring to the toolbar's own gutter keeps it in the same
+       place on every page, whatever the content below it does.
+       The 120px left inset is deliberate (owner 2026-08-10: "start about there
+       before you go start") — it clears the 🌐 Guides pill so the wordmark's left
+       edge lines up with the SECOND tab rather than the first. That number tracks
+       the rendered width of the Guides pill (~100px + the 10px gutter + the 10px
+       tab gap); if that pill's label, padding or font-size changes, re-measure it.
+       Mobile keeps the plain 10px gutter — the pill row is replaced by the
+       hamburger there, so there is nothing to clear. */
+    '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 10px 14px 120px;background:transparent;' +
       'width:100%;box-sizing:border-box}' +
     '.tb-brand-logo img{display:block;width:100%;max-width:162px;height:auto;margin:0 auto 0 0}' +
-    '@media(max-width:600px){.tb-brand-logo{padding:8px 10px 10px 4px}.tb-brand-logo img{max-width:132px}}' +
+    '@media(max-width:600px){.tb-brand-logo{padding:8px 10px 10px 10px}.tb-brand-logo img{max-width:132px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
    in the bar the same). Left edge -> first tab, tab -> tab, and last tab ->
