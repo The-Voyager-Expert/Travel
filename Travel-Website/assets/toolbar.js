@@ -558,9 +558,9 @@
    centred text label worked. Desktop keeps the terracotta bar untouched. */
     '@media(max-width:1260px){' +
       '.tb{background:transparent!important}' +
-      '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#7a3b1e!important}' +
-      '.tb-theme-toggle{border-color:rgba(122,59,30,.55)!important;background:transparent!important}' +
-      '.tb-theme-toggle:hover{border-color:rgba(122,59,30,.85)!important;background:transparent!important}' +
+      '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#b85c2a!important}' +
+      '.tb-theme-toggle{border-color:rgba(184,92,42,.55)!important;background:transparent!important;color:#b85c2a!important}' +
+      '.tb-theme-toggle:hover{border-color:rgba(184,92,42,.85)!important;background:transparent!important}' +
       '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:0;flex:none;pointer-events:none;text-align:center}' +
       '.tb a.tb-brand-logo img{max-width:168px;margin:0 auto;display:inline-block;pointer-events:auto}' +
     '}' +
@@ -593,14 +593,14 @@
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
-    '.tb a.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(122,59,30,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
+    '.tb a.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
     '.tb-ddbtn{display:inline-flex;align-items:center;gap:3px;font-size:clamp(13px,1.02vw,14px);font-weight:700;color:#7a3b1e!important;' +
       'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
-    '.tb-ddbtn.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(122,59,30,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
+    '.tb-ddbtn.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
     '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#7a3b1e!important;background:transparent}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
@@ -798,7 +798,7 @@
       '--c-title-bg:#6b4422;--c-title-text:#ffffff;' +
       '--c-warn-text:#5a3a05;--c-warn-link:#a36009;' +
       '--c-tastes-text:#3a2a05;--c-headsup-text:#3a1a1a;--c-headsup-link:#a61c00}' +
-    'html[data-theme="light"] ::selection{background:rgba(184,92,42,.35);color:inherit}' +
+    'html[data-theme="light"] ::selection{background:rgba(122,59,30,.35);color:inherit}' +
     'html[data-theme="light"] .also-on-this-site-pill,' +
     'html[data-theme="light"] .nearby-guide-pill{background:#ffffff;color:#8a6c1a;border-color:#c8a44a}'
     ;
@@ -1170,7 +1170,7 @@
     var browseLink = document.createElement('a');
     browseLink.href = base + 'Trip-Essentials/Best-Of-Index.html';
     browseLink.textContent = 'Browse by category';
-    browseLink.style.cssText = 'color:#7a3b1e;font-weight:500;background:#fdf8f4;';
+    browseLink.style.cssText = 'color:#b85c2a;font-weight:500;background:#fdf8f4;';
     if ('Best-Of-Index.html' === curr) browseLink.classList.add('tb-active');
     hamMenu.appendChild(browseLink);
     var bestOfPages = [
@@ -1344,10 +1344,8 @@
   var tveBrandLogo = document.createElement('a');
   tveBrandLogo.className = 'tb-brand-logo';
   /* Links to the site ROOT, not to index.html — the address bar should read
-     https://guidemydays.com, not .../index.html. `base` is already the
-     relative hop to the root ('../../' at depth 2), which resolves to '/';
-     at depth 0 it is empty, and an empty href would re-point at the current
-     page, so './' is used there. Pages serves index.html at '/' either way. */
+     https://guidemydays.com. base is the relative hop to the root; at depth 0
+     it is empty and an empty href re-points at the current page, so './'. */
   tveBrandLogo.href = base || './';
   tveBrandLogo.setAttribute('aria-label', 'Guide My Days — home');
   var _bImg = document.createElement('img');
@@ -1605,7 +1603,7 @@
         'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
         'transition:color .15s,border-color .15s,box-shadow .15s;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
-        '#tve-back-to-guide:hover{color:#7a3b1e;border-color:#7a3b1e;' +
+        '#tve-back-to-guide:hover{color:#b85c2a;border-color:#b85c2a;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
         '@media(min-width:601px){#tve-back-to-guide{display:none}}';
       document.head.appendChild(css);
@@ -1673,7 +1671,7 @@
         'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
         'transition:color .15s,border-color .15s,box-shadow .15s;' +
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
-        '#tve-back-to-byg:hover{color:#7a3b1e;border-color:#7a3b1e;' +
+        '#tve-back-to-byg:hover{color:#b85c2a;border-color:#b85c2a;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
         '@media(min-width:601px){#tve-back-to-byg{display:none}}';
       document.head.appendChild(css);
@@ -1719,7 +1717,7 @@
         'box-shadow:0 2px 10px rgba(0,0,0,.14);cursor:pointer;' +
         'font-family:inherit;-webkit-appearance:none;' +
         'transition:color .15s,border-color .15s,box-shadow .15s}' +
-        '#tve-nav-back:hover{color:#7a3b1e;border-color:#7a3b1e;' +
+        '#tve-nav-back:hover{color:#b85c2a;border-color:#b85c2a;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
         'body.tve-ham-open #tve-nav-back{display:none!important}' +
         '@media(min-width:601px){#tve-nav-back{display:none!important}}';
@@ -3231,7 +3229,7 @@
            which already says "Open 24h". The rule is kept rather than deleted
            because the class is still stamped in JS and
            check_stop_hours_contract hard-fails a tve-ph-* class with no CSS. */
-        '.tve-ph-24{border-left-color:#7a3b1e!important;background:transparent!important;' +
+        '.tve-ph-24{border-left-color:#b85c2a!important;background:transparent!important;' +
         'border-right-color:rgba(187,160,112,.45)!important;color:#7a3b1e!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
@@ -6154,7 +6152,7 @@
            :visited needs no rule: this is a class-specificity author selector,
            so it already outranks the UA visited style in every state. */
         '.tve-adtf a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;}' +
-        '.tve-adtf a:hover{color:#7a3b1e;border-bottom-color:#7a3b1e;text-decoration:none;}' +
+        '.tve-adtf a:hover{color:#b85c2a;border-bottom-color:#b85c2a;text-decoration:none;}' +
         /* Mobile mirrors the day row's stacked form: label on its own line, body full width. */
         '@media (max-width:600px){.tve-adtf{display:grid;grid-template-columns:1fr;' +
         'gap:3px 8px;padding:9px 14px;}.tve-adtf-label{flex:none;}}';
@@ -7141,7 +7139,7 @@
       'box-shadow:0 2px 10px rgba(0,0,0,.14);max-width:64vw;white-space:nowrap;' +
       'overflow:hidden;text-overflow:ellipsis;' +
       'transition:color .15s,border-color .15s,box-shadow .15s}' +
-      '#tve-bo-jump:hover{color:#7a3b1e;border-color:#7a3b1e;' +
+      '#tve-bo-jump:hover{color:#b85c2a;border-color:#b85c2a;' +
       'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
       /* Lift the scroll-top FAB clear of the pill, same as guide pages do for
          .day-jump-btn (guide-style.css). 20 (the pill's own bottom) + 28 (its
@@ -7342,7 +7340,7 @@
       'font-size:12px;font-weight:700;letter-spacing:.03em;color:#8a6c1a;' +
       'text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.14);' +
       'white-space:nowrap;transition:color .15s,border-color .15s,box-shadow .15s}' +
-      '#tve-map-back:hover{color:#7a3b1e;border-color:#7a3b1e;' +
+      '#tve-map-back:hover{color:#b85c2a;border-color:#b85c2a;' +
       'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
       'body.tve-ham-open #tve-map-back{display:none!important}' +
       '@media(min-width:601px){#tve-map-back{display:none!important}}';
@@ -7388,7 +7386,7 @@
       '.tve-share-stop-btn{background:none;border:none;cursor:pointer;' +
       'color:#a8a09a;padding:0;margin-left:12px;line-height:1;vertical-align:middle;' +
       'display:inline-flex;align-items:center;flex-shrink:0;}' +
-      '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#7a3b1e;}' +
+      '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#b85c2a;}' +
       '.tve-share-stop-btn:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:2px;border-radius:3px;}';
     (document.head || document.documentElement).appendChild(_ssCss);
@@ -7513,7 +7511,7 @@
       '.tve-wl-ptitle{font-size:13px;font-weight:700;color:#231f1b;flex:1;font-family:inherit;}' +
       '.tve-wl-pclear{font-size:11px;color:#a8a09a;background:none;border:none;cursor:pointer;' +
       'padding:2px 4px;border-radius:3px;font-family:inherit;transition:color .12s;}' +
-      '.tve-wl-pclear:hover{color:#7a3b1e;}' +
+      '.tve-wl-pclear:hover{color:#b85c2a;}' +
       '.tve-wl-pclose{background:none;border:none;cursor:pointer;color:#a8a09a;' +
       'display:flex;align-items:center;padding:2px;margin-left:2px;border-radius:3px;}' +
       '.tve-wl-pclose:hover{color:#231f1b;}' +
@@ -7531,10 +7529,10 @@
       '.tve-wl-prow-meta{font-size:11px;color:#9a908a;margin-top:1px;font-family:inherit;}' +
       '.tve-wl-prow-rm{background:none;border:none;cursor:pointer;color:#c0b8b0;' +
       'display:flex;align-items:center;padding:2px;flex-shrink:0;border-radius:3px;transition:color .12s;}' +
-      '.tve-wl-prow-rm:hover{color:#7a3b1e;}' +
+      '.tve-wl-prow-rm:hover{color:#b85c2a;}' +
       '.tve-wl-pfooter{display:flex;align-items:center;gap:8px;padding:9px 14px;' +
       'border-top:1px solid #e4ddd4;background:#f9f5ef;}' +
-      '.tve-wl-copy{font-size:12px;font-weight:600;color:#7a3b1e;background:none;' +
+      '.tve-wl-copy{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
       'border:1px solid #b85c2a;border-radius:5px;padding:4px 11px;cursor:pointer;' +
       'font-family:inherit;transition:background .12s,color .12s;}' +
       '.tve-wl-copy:hover{background:#b85c2a;color:#7a3b1e;}' +
@@ -7880,8 +7878,8 @@
       '.tve-note-btn{background:none;border:none;cursor:pointer;color:#a8a09a;padding:0;' +
       'margin-left:8px;line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
       'transition:color .15s;font-family:inherit;}' +
-      '.tve-note-btn:hover{color:#7a3b1e;}' +
-      '.tve-note-btn.tve-note-has{color:#7a3b1e;}' +
+      '.tve-note-btn:hover{color:#b85c2a;}' +
+      '.tve-note-btn.tve-note-has{color:#b85c2a;}' +
       '.tve-note-btn:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;border-radius:3px;}' +
 
       /* Saved note line under the stop header */
@@ -7894,7 +7892,7 @@
       '.tve-note-saved:hover{background:var(--c-warm-bg,#fdf8f0);}' +
       '.tve-note-saved-txt{flex:1;min-width:0;overflow-wrap:anywhere;}' +
       '.tve-note-saved-tag{font-size:10px;font-weight:700;letter-spacing:.09em;' +
-      'text-transform:uppercase;color:#7a3b1e;flex-shrink:0;padding-top:2px;}' +
+      'text-transform:uppercase;color:#b85c2a;flex-shrink:0;padding-top:2px;}' +
 
       /* Inline editor */
       '.tve-note-edit{display:none;align-items:center;gap:7px;margin:8px 0 0;}' +
@@ -7903,8 +7901,8 @@
       'color:var(--c-text-primary,#3d3a32);background:var(--c-card-bg,#fff);' +
       'border:1px solid var(--c-next-border,#bba070);border-radius:5px;padding:6px 9px;' +
       '-webkit-appearance:none;box-sizing:border-box;}' +
-      '.tve-note-input:focus{outline:none;border-color:#7a3b1e;box-shadow:0 0 0 2px rgba(184,92,42,.15);}' +
-      '.tve-note-save{font-size:12px;font-weight:600;color:#7a3b1e;background:none;' +
+      '.tve-note-input:focus{outline:none;border-color:#b85c2a;box-shadow:0 0 0 2px rgba(184,92,42,.15);}' +
+      '.tve-note-save{font-size:12px;font-weight:600;color:#b85c2a;background:none;' +
       'border:1px solid #b85c2a;border-radius:5px;padding:5px 12px;cursor:pointer;' +
       'font-family:inherit;flex-shrink:0;transition:background .12s,color .12s;}' +
       '.tve-note-save:hover{background:#b85c2a;color:#7a3b1e;}' +
@@ -7922,7 +7920,7 @@
       '.tve-notes-act{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;' +
       'color:var(--c-brand,#8a6c1a);background:none;border:none;cursor:pointer;padding:2px 4px;' +
       'border-radius:3px;font-family:inherit;transition:color .12s;flex-shrink:0;}' +
-      '.tve-notes-act:hover{color:#7a3b1e;}' +
+      '.tve-notes-act:hover{color:#b85c2a;}' +
       '.tve-notes-row{display:flex;gap:10px;padding:9px 4px;border-bottom:0.5px solid #c8a44a;' +
       'text-decoration:none;color:inherit;}' +
       '.tve-notes-row:last-child{border-bottom:none;}' +
@@ -9206,10 +9204,10 @@
       'color:#a8a09a;padding:0;margin-left:14px;line-height:1;' +
       'display:inline-flex;align-items:center;gap:5px;flex-shrink:0;' +
       'font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.01em;}' +
-      '.tve-copy-day-btn:hover,.tve-copy-day-btn:focus-visible{color:#7a3b1e;}' +
+      '.tve-copy-day-btn:hover,.tve-copy-day-btn:focus-visible{color:#b85c2a;}' +
       '.tve-copy-day-btn:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:3px;border-radius:4px;}' +
-      '.tve-copy-day-btn.copied{color:#7a3b1e;}';
+      '.tve-copy-day-btn.copied{color:#b85c2a;}';
     (document.head || document.documentElement).appendChild(_cdCss);
 
     /* Header label without anything injected into it — the mark-stops badge,
@@ -9434,7 +9432,7 @@
       'color:#a8a09a;padding:0;margin-left:14px;line-height:1;' +
       'display:inline-flex;align-items:center;gap:5px;flex-shrink:0;' +
       'font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.01em;}' +
-      '.tve-map-day-link:hover,.tve-map-day-link:focus-visible{color:#7a3b1e;}' +
+      '.tve-map-day-link:hover,.tve-map-day-link:focus-visible{color:#b85c2a;}' +
       '.tve-map-day-link:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:3px;border-radius:4px;}' +
       '@media (max-width:480px){.tve-map-day-link span{display:none;}' +
@@ -9840,11 +9838,11 @@
         'border-color:var(--c-pill-bd-hover);}}' +
         '.tve-stf-chip:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;}' +
         '.tve-stf-chip.is-on{background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
-        'border-color:#7a3b1e;color:#7a3b1e;}' +
+        'border-color:#b85c2a;color:#7a3b1e;}' +
         '.tve-stf-chip.is-on .tve-stf-n{opacity:.85;}' +
         '@media (hover:hover){.tve-stf-chip.is-on:hover{' +
         'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
-        'border-color:#7a3b1e;}}' +
+        'border-color:#b85c2a;}}' +
         '.overview-day.tve-stf-dim{opacity:.35;pointer-events:none;}' +
         ':root[data-theme="dark"] #tve-stf{border-top-color:rgba(212,184,150,.16);}' +
         ':root[data-theme="dark"] #tve-stf .tve-stf-lead{color:#8a827a;}' +
