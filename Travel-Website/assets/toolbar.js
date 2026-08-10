@@ -532,7 +532,11 @@
     '.tb-brand-logo img{display:block;width:100%;max-width:132px;height:auto;margin:0 auto 0 0}' +
     '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:112px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
-    '.tb-inner{flex:1;padding-left:16px;padding-right:16px}' +
+    /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
+   in the bar the same). Left edge -> first tab, tab -> tab, and last tab ->
+   theme toggle are all 10px; the toggle's own margin-left is 0 so this padding
+   is the only thing between them, otherwise the two would stack to 20px. */
+    '.tb-inner{flex:1;padding-left:10px;padding-right:10px}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     /* OWNER 2026-08-10: tabs pushed LEFT with one EQUAL gap between every pair.
        Was justify-content:space-between + gap:0, which spread the row edge to
@@ -650,7 +654,7 @@
     '}' +
     '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
-    '.tb-theme-toggle{flex-shrink:0;margin-left:4px;margin-right:8px;width:40px;height:40px;border-radius:50%;' +
+    '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
       'border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'transition:background .15s,border-color .15s;outline:none;padding:0;' +
