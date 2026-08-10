@@ -530,10 +530,7 @@
     '.tb-brand-logo{display:block;line-height:0;text-decoration:none;padding:10px 16px 14px;background:transparent;' +
       'max-width:1080px;margin:0 auto;box-sizing:border-box}' +
     '.tb-brand-logo img{display:block;width:100%;max-width:132px;height:auto;margin:0 auto 0 0}' +
-    '.tb-brand-logo--home{padding-top:14px;padding-bottom:18px}' +
-    '.tb-brand-logo--home img{max-width:210px}' +
-    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:112px}' +
-      '.tb-brand-logo--home img{max-width:160px}}' +
+    '@media(max-width:600px){.tb-brand-logo{padding:8px 12px 10px}.tb-brand-logo img{max-width:112px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     '.tb-inner{flex:1;padding-left:16px;padding-right:16px}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
@@ -1292,16 +1289,8 @@
      guard that was meant to skip it queried for '.site-logo' from a <script>
      that runs BEFORE that element exists in the DOM, so it never matched. The
      index copy is gone; this is the only wordmark on the site. */
-  /* OWNER 2026-08-10: the HOME page gets a bigger wordmark, left-aligned — it is
-     the masthead there, not a repeat. Every other page keeps the small
-     right-aligned mark. Home = the root index.html at depth 0; the depth guard
-     matters because a bare '/index.html' test would also match a page reached
-     through a directory URL deeper in the tree. */
-  var _isHome = (depth === 0) &&
-    (/(^|\/)index\.html$/.test(location.pathname) || /\/$/.test(location.pathname));
-
   var tveBrandLogo = document.createElement('a');
-  tveBrandLogo.className = 'tb-brand-logo' + (_isHome ? ' tb-brand-logo--home' : '');
+  tveBrandLogo.className = 'tb-brand-logo';
   tveBrandLogo.href = base + 'index.html';
   tveBrandLogo.setAttribute('aria-label', 'Guide My Days — home');
   var _bImg = document.createElement('img');
