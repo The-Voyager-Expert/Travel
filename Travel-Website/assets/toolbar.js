@@ -5540,7 +5540,7 @@ window.TVE.isPhone = function () {
       { name: 'Keemala Phuket', note: 'Small Luxury Hotels — Kamala rainforest, pool-villa-only property, Mala restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/keemala.html' }
     ] },
     'pisa': { h: [
-      { name: 'Hotel Duomo Pisa', note: 'Independent boutique — steps from Piazza dei Miracoli, rooftop terrace with Leaning Tower and Baptistery views · 9.0 Booking.com' },
+      { name: 'Grand Hotel Duomo', note: 'Independent — steps from Piazza dei Miracoli, rooftop terrace with Leaning Tower and Baptistery views, bar · 8.1 Booking.com', url: 'https://www.booking.com/hotel/it/grandhotelduomopisa.html' },
       { name: 'NH Pisa', note: 'NH Hotels — Piazza della Stazione, 5-min walk from the Campo dei Miracoli, restaurant and bar · 8.3 Booking.com', url: 'https://www.booking.com/hotel/it/nh-pisa.html' },
       { name: 'Grand Hotel Bonanno', note: 'Independent — near Cathedral Square, neoclassical palazzo, free bikes, garden · 8.8 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-bonanno.html' },
       { name: 'Hotel Minerva Pisa', note: 'Independent — Art Nouveau building, panoramic roof terrace, 3-min walk from the Leaning Tower · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-minerva-pisa.html' }
