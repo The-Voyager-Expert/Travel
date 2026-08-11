@@ -653,7 +653,13 @@
    a bug when we about to clicks it flashes terracota only one with this bug there"). :active now
    matches :hover, and matches the outlined chip treatment the rest of the site moved to earlier
    today. guides-index-style.css -> v3. CACHE v538. */
-var CACHE = 'travel-cache-v538';
+/* 2026-08-11: Second gradient form swept — the 2026-08-11 chip restyle matched only the literal
+   linear-gradient(135deg,#7a3b1e ...), so month and unit chips written as var(--banner-gradient)
+   kept their filled selected state (owner: "are these done too?"). 7 rules in Cards-ATM,
+   Climate-Finder and Weather. .wx-bar.on is deliberately NOT swept — that is a chart bar, and a
+   data bar is meant to be filled. Real page banners keep the variable too; the sweep is scoped to
+   chip selectors, not to the variable. CACHE v539. */
+var CACHE = 'travel-cache-v539';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
