@@ -512,7 +512,7 @@
     '.tb{padding:8px 0;position:relative;top:auto;z-index:auto;margin-bottom:18px;' +
       'background:transparent;' +
       'border-bottom:none;box-shadow:none;' +
-      'display:flex;flex-wrap:wrap;align-items:center}' +
+      'display:flex;flex-wrap:wrap;align-items:center;justify-content:center}' +
     /* Site title — desktop only */
     '.tb-scroll-wrap{display:none!important}' +
     /* (owner 2026-08-10) .tb-site-title rules removed with the element itself —
@@ -1030,7 +1030,7 @@
   hamBtn.setAttribute('aria-label', 'Menu');
   hamBtn.setAttribute('aria-expanded', 'false');
   hamBtn.setAttribute('tabindex', '0');
-  hamBtn.style.cssText = 'background:#6e3117;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#7a3b1e;flex-shrink:0;';
+  hamBtn.style.cssText = 'background:transparent;border-radius:8px;border:none;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;padding:11px 13px;justify-content:center;margin:0 14px 0 0;min-height:auto;cursor:pointer;user-select:none;align-items:center;gap:8px;color:#7a3b1e;flex-shrink:0;';
   hamBtn.innerHTML = '<svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="5.25" width="18" height="2.5" rx="1.25" fill="currentColor"/><rect x="0" y="10.5" width="18" height="2.5" rx="1.25" fill="currentColor"/></svg>';
   bar.appendChild(hamBtn);
 
