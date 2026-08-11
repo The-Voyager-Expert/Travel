@@ -21,6 +21,32 @@
  * To update the toolbar for every page: edit ONLY this file.
  */
 
+/* ── What counts as a phone — ONE definition, shared by CSS and JS ──────────
+   Owner rule 2026-08-10: "somehow mobile got mixed with the desktop … needs to
+   hold". A DESKTOP BROWSER NARROWED BY THE USER IS NOT A PHONE. Width alone
+   cannot tell the two apart — the viewport reports 500px either way — so every
+   mobile gate on this site pairs the width with the pointer type:
+
+       CSS   @media (max-width: 600px) and (pointer: coarse)
+       JS    TVE.isPhone()            ← the exact same query, below
+
+   `pointer: coarse` is the PRIMARY input device: a finger on a phone or tablet,
+   never a mouse or trackpad. A touchscreen laptop still reports `fine`, because
+   its primary pointer is the trackpad. Resizing a desktop window changes the
+   width and nothing else, so the desktop layout now holds all the way down.
+
+   Desktop-only rules take the mirror form `(min-width: 601px), (pointer: fine)`
+   — an OR, so they keep applying in a narrow desktop window.
+
+   The nav's hamburger swap uses the same pairing at its own 1260px width.
+   Enforced by brain_check.check_mobile_breakpoints_gated_on_pointer: a bare
+   width-only 600/601/1260 query is a HARD FAIL. Spec: Toolbar.html § 42. */
+window.TVE = window.TVE || {};
+window.TVE.PHONE_MQ = '(max-width: 600px) and (pointer: coarse)';
+window.TVE.isPhone = function () {
+  return !!(window.matchMedia && window.matchMedia(window.TVE.PHONE_MQ).matches);
+};
+
 /* ── Pre-hide body immediately — prevents the page-background flash that occurs
    while the browser waits for this script to finish downloading. Injecting a
    <style> rule into <head> takes effect before the next paint; the inline
@@ -552,7 +578,7 @@
    position — hamburger left, theme toggle right — so the logo is absolutely
    positioned and pointer-events:none through its margins, exactly how the old
    centred text label worked. Desktop keeps the terracotta bar untouched. */
-    '@media(max-width:1260px){' +
+    '@media (max-width: 1260px) and (pointer: coarse) {' +
       '.tb{background:transparent!important}' +
       '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#b85c2a!important}' +
       '.tb-theme-toggle{border-color:#b85c2a!important;background:transparent!important;color:#b85c2a!important}' +
@@ -560,7 +586,7 @@
       '.tb a.tb-brand-logo{position:absolute;left:0;right:0;width:auto;padding:3px 0 0;flex:none;pointer-events:none;text-align:center}' +
       '.tb a.tb-brand-logo img{max-width:168px;margin:0 auto;display:inline-block;pointer-events:auto}' +
     '}' +
-    '@media(max-width:600px){.tb a.tb-brand-logo img{max-width:150px}}' +
+    '@media (max-width: 600px) and (pointer: coarse) {.tb a.tb-brand-logo img{max-width:150px}}' +
     /* Nav container — takes remaining space; width:100% on .tb-links fills it exactly */
     /* Gutter matches the .tb-links tab gap exactly (owner 2026-08-10: every space
    in the bar the same) — both use the SAME clamp() so they stay equal at every
@@ -579,6 +605,23 @@
    after the last tab, as if it were the next tab, and the gap matches the
    left margin exactly at every width. */
     '.tb-inner{flex:0 1 auto;min-width:0;padding-left:clamp(6px,0.78vw,10px);padding-right:clamp(6px,0.78vw,10px)}' +
+    /* NARROW DESKTOP ONLY — added 2026-08-10 with the desktop-holds change, and
+       deliberately NOT on the base .tb-inner rule, which Cleanliness Rule 582
+       keeps free of overflow ("the old sliding toolbar"). Rule 582 is about the
+       row sliding at NORMAL desktop width; at ≥1260px it still fits exactly as
+       before and nothing here applies. Below that the state is new: the row is
+       built for 1260px and the hamburger used to take over, so nothing had ever
+       asked what happens at 700px on a mouse — measured answer, it pushed the
+       whole PAGE sideways by ~870px (content fit fine, the bar did not). Here it
+       scrolls inside itself instead. Safe for the flyouts: .tb-menu is appended
+       to <body> and position:fixed precisely so an overflow clip on this row
+       cannot cut it off (see the .tb-menu note below). Scrollbar hidden — a
+       visible bar under the tabs reads as a rule line. */
+    '@media (max-width: 1259px) and (pointer: fine){' +
+      '.tb-inner{max-width:100%;overflow-x:auto;overflow-y:hidden;' +
+        'scrollbar-width:none;-ms-overflow-style:none}' +
+      '.tb-inner::-webkit-scrollbar{display:none}' +
+    '}' +
     /* Flex row — fills full width, edge-to-edge. No scrolling, no gap. */
     /* OWNER 2026-08-10: tabs pushed LEFT with one EQUAL gap between every pair.
        Was justify-content:space-between + gap:0, which spread the row edge to
@@ -636,7 +679,7 @@
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
-    '@media(max-width:1260px){.tb-progress{display:none}}' +
+    '@media (max-width: 1260px) and (pointer: coarse) {.tb-progress{display:none}}' +
     /* Hide ham elements on desktop — mobile @media shows them */
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
     /* Mobile/tablet: hamburger menu replaces the chip row below this width.
@@ -646,7 +689,7 @@
        1400px for the 14th tab was tried on 2026-08-10 and the check caught it.
        The row must be made to FIT 1260px instead — hence the tab gap cut from
        18px to 10px in the same pass. */
-    '@media(max-width:1260px){' +
+    '@media (max-width: 1260px) and (pointer: coarse) {' +
       '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:transparent;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
@@ -699,7 +742,7 @@
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
     '}' +
-    '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
+    '@media (max-width: 600px) and (pointer: coarse) {#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
     /* OWNER RULE 2026-08-10: the back-strip pills are MOBILE-ONLY, same call that
        made the floating family mobile-only — "they should be only in mobile!".
        This hides all three at once (🖨 Print Guide, Before You Go, ‹ All Guides)
@@ -707,7 +750,7 @@
        strip carries display:flex as an inline style, so the hide needs
        !important to win. Desktop keeps the toolbar for every one of these
        destinations; print is reachable from the browser's own Print. */
-    '@media(min-width:601px){#tve-back-guides{display:none!important}}' +
+    '@media (min-width: 601px), (pointer: fine) {#tve-back-guides{display:none!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
       'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#7a3b1e;' +
@@ -716,7 +759,7 @@
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
     '.tb-theme-toggle:hover{background:transparent;border-color:rgba(122,59,30,.85)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
-    '@media(max-width:1260px){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
+    '@media (max-width: 1260px) and (pointer: coarse) {.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
     /* Covers all tokens from web-travel-style.css + guide-style.css dark blocks. */
     /* html[data-theme="dark"] specificity (0,1,1) > :root (0,1,0) — always wins. */
@@ -1611,7 +1654,7 @@
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
         '#tve-back-to-guide:hover{color:#b85c2a;border-color:#b85c2a;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
-        '@media(min-width:601px){#tve-back-to-guide{display:none}}';
+        '@media (min-width: 601px), (pointer: fine) {#tve-back-to-guide{display:none}}';
       document.head.appendChild(css);
       var pill = document.createElement('a');
       pill.id = 'tve-back-to-guide';
@@ -1679,7 +1722,7 @@
         'transform:translateZ(0);-webkit-transform:translateZ(0)}' +
         '#tve-back-to-byg:hover{color:#b85c2a;border-color:#b85c2a;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
-        '@media(min-width:601px){#tve-back-to-byg{display:none}}';
+        '@media (min-width: 601px), (pointer: fine) {#tve-back-to-byg{display:none}}';
       document.head.appendChild(css);
       var pill = document.createElement('a');
       pill.id = 'tve-back-to-byg';
@@ -1726,7 +1769,7 @@
         '#tve-nav-back:hover{color:#b85c2a;border-color:#b85c2a;' +
         'box-shadow:0 4px 16px rgba(0,0,0,.18)}' +
         'body.tve-ham-open #tve-nav-back{display:none!important}' +
-        '@media(min-width:601px){#tve-nav-back{display:none!important}}';
+        '@media (min-width: 601px), (pointer: fine) {#tve-nav-back{display:none!important}}';
       document.head.appendChild(css);
 
       var backPill = document.createElement('button');
@@ -1794,7 +1837,7 @@
        runs AFTER these arrows, so we relocate once everything has settled.
        Desktop keeps it in the title bar. */
     function repositionReadAbout() {
-      if (!(window.matchMedia && window.matchMedia('(max-width: 600px)').matches)) return;
+      if (!window.TVE.isPhone()) return;
       var ovSec = document.querySelector('.overview-section');
       if (!ovSec) return;
       var raLink = [].slice.call(ovSec.querySelectorAll('.overview-extra-link')).filter(function (a) {
@@ -2453,7 +2496,7 @@
     return btn;
   }
 
-  if (window.innerWidth > 600) {
+  if (!window.TVE.isPhone()) {
     var btnUp   = makeScrollBtn('up');
     var btnDown = makeScrollBtn('down');
     scrollWrap.appendChild(btnUp);
@@ -2463,7 +2506,7 @@
 
   /* Hide entirely on non-scrollable pages (e.g. maps); dim individual buttons at limits */
   function updateScrollBtns() {
-    if (window.innerWidth <= 600 || !scrollWrap.parentNode) { return; }
+    if (window.TVE.isPhone() || !scrollWrap.parentNode) { return; }
     var scrollY   = window.scrollY;
     var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     var canScroll = maxScroll > 1;
@@ -2546,7 +2589,7 @@
         if (!document.getElementById('tve-stamp-mobile-style')) {
           var mst = document.createElement('style');
           mst.id = 'tve-stamp-mobile-style';
-          mst.textContent = '@media (max-width:600px){body>.title-updated{padding-left:14px!important}}';
+          mst.textContent = '@media (max-width: 600px) and (pointer: coarse) {body>.title-updated{padding-left:14px!important}}';
           document.head.appendChild(mst);
         }
       }
@@ -2566,7 +2609,7 @@
           if (!document.getElementById('tve-no-entries-mobile-style')) {
             var _nmst = document.createElement('style');
             _nmst.id = 'tve-no-entries-mobile-style';
-            _nmst.textContent = '@media (max-width:600px){body>.title-no-entries{padding-left:14px!important}}';
+            _nmst.textContent = '@media (max-width: 600px) and (pointer: coarse) {body>.title-no-entries{padding-left:14px!important}}';
             document.head.appendChild(_nmst);
           }
         }
@@ -3266,7 +3309,7 @@
            gutter, but this rule is desktop-only, where the gutter is 14.
            Mobile keeps the full-bleed strip: at 393px half the screen cannot
            hold "Today · 10:00am - 8:00pm" and the chevron. */
-        '@media(min-width:601px){' +
+        '@media (min-width: 601px), (pointer: fine) {' +
         '.tour-box > .tve-ph,.ticket-box > .tve-ph,' +
         '.tour-box > .tve-ph-wrap,.ticket-box > .tve-ph-wrap{width:calc(50% + 14px);}' +
         '}' +
@@ -4557,9 +4600,9 @@
       { name: 'Hotel Villa Steno', note: 'Independent — Monterosso hillside, garden terraces with Gulf of Genoa views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/villa-steno.html' }
     ] },
     'coeur-dalene': { h: [
-      { name: 'The Coeur d\'Alene Resort', note: 'Independent — lakefront resort on Lake Coeur d\'Alene, floating green golf course, Beverly\'s 7th-floor restaurant with panoramic lake views, full-service spa · 8.9 Booking.com' },
+      { name: 'SpringHill Suites Coeur d\'Alene', note: 'Marriott SpringHill brand — 2250 West Seltice Way beside the Riverstone district, indoor pool, all-suite rooms, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/springhill-suites-coeur-d-alene.html' },
       { name: 'Best Western Plus Coeur d\'Alene Inn', note: 'Best Western Plus — indoor pool and hot tub, on-site dining, minutes from downtown and the lake · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/coeur-d-alene-inn.html' },
-      { name: 'Hampton Inn & Suites Coeur d\'Alene', note: 'Hilton Hampton brand — near McEuen Park, indoor pool, free hot breakfast · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/riverstone-drive-coeur-d-alene.html' },
+      { name: 'Hampton Inn & Suites Coeur d\'Alene', note: 'Hilton Hampton brand — 1500 Riverstone Drive, indoor pool, free hot breakfast, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/riverstone-drive-coeur-d-alene.html' },
       { name: 'Holiday Inn Express Coeur d\'Alene', note: 'IHG brand — central location, indoor pool, free breakfast bar, mountain-and-lake views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/holiday-inn-express-suites-coeur-d-alene-i-90-exit-11.html' }
     ] },
     'colmar': { h: [
@@ -4662,8 +4705,8 @@
       { name: 'Bellevue Hotel Dubrovnik', note: 'Independent — clifftop above a private cove, sea-view rooms, outdoor pool, Vapor restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/hr/bellevue-dubrovnik.html' }
     ] },
     'edinburgh': { h: [
-      { name: 'The Balmoral', note: 'Rocco Forte brand — 1902 Waverley Station clock-tower landmark, Number One Michelin-starred restaurant, indoor pool and spa, Castle-view suites · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-balmoral.html' },
-      { name: 'InterContinental Edinburgh The George', note: 'IHG first-tier — Georgian townhouses on George Street, Tempus Restaurant and Bar, spa · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/gb/intercontinental-edinburgh-the-george.html' },
+      { name: 'The Balmoral Hotel', note: 'Rocco Forte brand — 1902 Waverley clock-tower landmark on Princes Street, Number One Michelin-starred restaurant, indoor pool and spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-balmoral-edinburgh.html' },
+      { name: 'InterContinental Edinburgh The George', note: 'IHG first-tier — Georgian townhouses at 19-21 George Street, Tempus Restaurant and Bar, 24h reception · 8.1 Booking.com' , url: 'https://www.booking.com/hotel/gb/georgehotel-edinburgh.html' },
       { name: 'The Scotsman Hotel', note: 'Independent — converted 1905 Scotsman newspaper HQ on North Bridge, Vermilion restaurant, rooftop Scottish hot tub suite · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/gb/the-scotsman.html' },
       { name: 'G&V Royal Mile Hotel Edinburgh', note: 'G&V Hotels — Royal Mile Gothic building, Cucina restaurant, rooftop suites with castle views, boutique design interiors · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/gb/gv-royal-mile-hotel-edinburgh.html' }
     ] },
@@ -4855,10 +4898,10 @@
       { name: 'Togo Suites Lecce', note: 'Independent boutique — historic centro, 14 rooms in a restored 17th-century palazzo, stone vaults · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/togo-suites.html' }
     ] },
     'lille': { h: [
-      { name: 'Hermitage Gantois', note: 'MGallery by Sofitel — 15th-century Vieux-Lille hospice conversion, indoor pool and spa, Chapel Café, 90 rooms spanning historic and contemporary wings · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/hermitagegantois.html' },
+      { name: 'galerie jacqueline storme', note: 'Independent — 37 Avenue du Peuple Belge in Vieux-Lille, soundproof rooms, in-house art gallery, EV charging and garage parking · 9.4 Booking.com', url: 'https://www.booking.com/hotel/fr/galerie-jacqueline-storme.html' },
+      { name: 'Au Cœur De Lille', note: 'Independent — 1 Rue Boileux a few minutes off the Grand Place, family rooms, private on-site parking · 9.3 Booking.com', url: 'https://www.booking.com/hotel/fr/au-coeur-de-lille.html' },
       { name: 'Barrière Lille', note: 'Barrière group — L\'Alliance hotel connected to Grand Casino Barrière, spa with pool and hammam, rooftop terrace, central Lille location · 8.7 Booking.com', url: 'https://www.booking.com/hotel/fr/barriere-lille.html' },
-      { name: 'Crowne Plaza Lille', note: 'IHG Crowne Plaza — Euralille district, indoor pool, spa, close to Lille-Europe Eurostar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/fr/crowne-plaza-lille.html' },
-      { name: 'Barrière Lille', note: 'Barrière Hotels — Euralille, casino, spa, contemporary rooms, steps from the Grand Palais · 8.7 Booking.com', url: 'https://www.booking.com/hotel/fr/barrierede-lille.html' }
+      { name: 'Crowne Plaza Lille', note: 'IHG Crowne Plaza — Euralille district, indoor pool, spa, close to Lille-Europe Eurostar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/fr/crowne-plaza-lille.html' }
     ] },
     'lima': { h: [
       { name: 'Belmond Miraflores Park', note: 'Belmond brand — Miraflores clifftop overlooking the Pacific, rooftop heated pool with ocean views, full-service spa, 81 rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pe/miraflores-park.html' },
@@ -5454,8 +5497,8 @@
       { name: 'Divi Little Bay Beach Resort', note: 'Divi Resorts — Little Bay peninsula, three pools, private beach, dive centre, Aquamarine restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/sx/divi-little-bay-beach-resort.html' }
     ] },
     'sintra': { h: [
-      { name: 'Tivoli Palácio de Seteais', note: 'Minor Hotels — 18th-century neoclassical palace, manicured gardens, pool, mountain and valley views · 9.3 Booking.com' },
-      { name: 'Penha Longa Resort', note: 'Marriott — Sintra hills estate, two golf courses, Michelin-starred LAB restaurant, spa · 9.1 Booking.com' },
+      { name: 'Valverde Sintra Palácio de Seteais', note: 'Leading Hotels of the World — 18th-century neoclassical palace on Rua Barbosa do Bocage, gardens, outdoor pool, valley views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pt/valverdesintrapalaciodeseteais.html' },
+      { name: 'Penha Longa Resort', note: 'Marriott — Sintra hills estate on Estrada da Lagoa Azul, two golf courses, Michelin-starred LAB restaurant, spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pt/caesarparkhotel.html' },
       { name: 'Lawrence\'s Hotel', note: 'Independent — Rua Consiglieri Pedroso in Sintra town, oldest hotel on the Iberian Peninsula (1764), garden, restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pt/lawrence-s.html' },
       { name: 'Tivoli Sintra Hotel', note: 'Tivoli Hotels — Praça da República facing the National Palace, valley and sea views, terrace · 8.8 Booking.com', url: 'https://www.booking.com/hotel/pt/tivoli-sintra.html' }
     ] },
@@ -6175,7 +6218,7 @@
         '.tve-adtf a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;}' +
         '.tve-adtf a:hover{color:#b85c2a;border-bottom-color:#b85c2a;text-decoration:none;}' +
         /* Mobile mirrors the day row's stacked form: label on its own line, body full width. */
-        '@media (max-width:600px){.tve-adtf{display:grid;grid-template-columns:1fr;' +
+        '@media (max-width: 600px) and (pointer: coarse) {.tve-adtf{display:grid;grid-template-columns:1fr;' +
         'gap:3px 8px;padding:9px 14px;}.tve-adtf-label{flex:none;}}';
       document.head.appendChild(s);
     }
@@ -6482,7 +6525,7 @@
       if (facts.months) items.push(['🌤️', 'Best months', facts.months]);
       if (!items.length) return;
 
-      var isMobile = window.innerWidth <= 600;
+      var isMobile = window.TVE.isPhone();
       var strip = document.createElement('div');
       strip.id = 'tve-quick-facts';
       /* Matches the weather strip's own margins so the two stack evenly. */
@@ -7283,7 +7326,7 @@
       if (!daily || !daily.time || !daily.time.length) return;
 
       var u = _wxUnit();
-      var isMobile = window.innerWidth <= 600;
+      var isMobile = window.TVE.isPhone();
 
       /* ── Outer strip — clickable link to Google Weather ── */
       var strip = document.createElement('a');
@@ -7576,7 +7619,7 @@
       '.tve-bo-row:last-child{border-bottom:none}' +
       '.tve-bo-row--on{background:rgba(200,164,74,.10);color:#7a3b1e;font-weight:700}' +
       'body.tve-ham-open #tve-bo-jump{display:none!important}' +
-      '@media(min-width:601px){#tve-bo-jump,#tve-bo-ov{display:none!important}}';
+      '@media (min-width: 601px), (pointer: fine) {#tve-bo-jump,#tve-bo-ov{display:none!important}}';
     document.head.appendChild(css);
 
     var pill = document.createElement('button');
@@ -7747,7 +7790,7 @@
       '#tve-map-back:hover{color:#b85c2a;border-color:#b85c2a;' +
       'box-shadow:0 4px 16px rgba(0,0,0,.18);text-decoration:none}' +
       'body.tve-ham-open #tve-map-back{display:none!important}' +
-      '@media(min-width:601px){#tve-map-back{display:none!important}}';
+      '@media (min-width: 601px), (pointer: fine) {#tve-map-back{display:none!important}}';
     document.head.appendChild(css);
 
     var pill = document.createElement('a');
@@ -7947,7 +7990,7 @@
       '.tve-wl-empty{padding:24px 14px;text-align:center;color:#a8a09a;' +
       'font-size:13px;line-height:1.6;font-family:inherit;}' +
       /* Mobile: align with scroll-top FAB (bottom:62px+36px+10px=108px) */
-      '@media(max-width:600px){' +
+      '@media (max-width: 600px) and (pointer: coarse) {' +
       '#tve-wl-fab{bottom:108px;right:16px;}' +
       '#tve-wl-panel{bottom:160px;right:16px;}' +
       '}' +
@@ -7956,7 +7999,7 @@
          guide-style.css). The star buttons in the stop headers are unaffected,
          so saving still works at any width; only the floating review panel is
          mobile-only. */
-      '@media(min-width:601px){#tve-wl-fab,#tve-wl-panel{display:none!important;}}';
+      '@media (min-width: 601px), (pointer: fine) {#tve-wl-fab,#tve-wl-panel{display:none!important;}}';
     (document.head || document.documentElement).appendChild(_wlCss);
 
     /* ── SVG templates ───────────────────────────────────────────────────── */
@@ -9461,7 +9504,7 @@
       '.tve-lb-arrow:hover{opacity:1}' +
       '#tve-lb-prev{left:12px}' +
       '#tve-lb-next{right:12px}' +
-      '@media(max-width:600px){' +
+      '@media (max-width: 600px) and (pointer: coarse) {' +
         '.tve-lb-arrow{font-size:24px;padding:8px 10px}' +
         '#tve-lb-prev{left:4px}#tve-lb-next{right:4px}' +
       '}' +

@@ -16,9 +16,21 @@
    DESIGN RULES
    - Purely DEFENSIVE and ADDITIVE. Nothing here changes desktop layout.
    - The universal guards (box-sizing, max-width:100% on media) are safe at any
-     width. Everything layout-shifting is inside @media (max-width:600px) so it
-     only fires on phones.
+     width and stay outside every media query.
+   - Everything layout-shifting is inside
+       @media (max-width: 600px) and (pointer: coarse)
+     — width AND primary input device, never width alone. A desktop browser the
+     user narrowed reports 500px exactly like a phone does, so width on its own
+     cannot tell them apart and the desktop layout used to collapse into the
+     mobile one mid-resize. `pointer: coarse` means the primary input is a
+     finger; a trackpad or mouse reports `fine` at ANY window width, so the
+     desktop layout now holds all the way down. Owner rule 2026-08-10:
+     "somehow mobile got mixed with the desktop … needs to hold".
+   - Desktop-only rules take the mirror form `(min-width: 601px), (pointer: fine)`
+     — a comma is OR, so they keep applying in a narrow desktop window.
    - 600px breakpoint — matches guide-style.css. One breakpoint across the site.
+     A bare width-only 600/601 query HARD-FAILS
+     brain_check.check_mobile_breakpoints_gated_on_pointer. Spec: Toolbar.html § 42.
    - This is the single source of truth for cross-page mobile behavior. Edit
      here; every page that links it updates at once. (created 2026-06-12)
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -47,7 +59,7 @@ pre { white-space: pre-wrap; }
 /* ═══════════════════════════════════════════════════════════════════════════
    PHONE ONLY — everything below fires at ≤600px and is invisible on desktop.
    ═══════════════════════════════════════════════════════════════════════════ */
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
 
   /* 4. HARD STOP on horizontal scroll. Belt-and-suspenders: even if one
         element misbehaves, the page itself never scrolls sideways. */
@@ -528,7 +540,7 @@ pre { white-space: pre-wrap; }
 
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
   /* Best-of pages — lay the top controls (See also · search · Filter by country)
      into ONE clean centered lane that sits between the ‹ › page-nav arrows
      without touching them. The arrows themselves are left untouched. Targets the
@@ -548,7 +560,7 @@ pre { white-space: pre-wrap; }
   .best-of-links .best-of-link:last-child:nth-child(odd) { grid-column: 1 / -1 !important; justify-self: center !important; min-width: 48% !important; }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
   /* Guide-Days-Coverage tier pills — grow to fill each row (justified) so the
      city pills form clean full-width rows instead of ragged left-packing with
      empty gaps on the right. flex-grow respects each pill's nowrap width, so no
@@ -556,7 +568,7 @@ pre { white-space: pre-wrap; }
   .city-grid .city-pill { flex: 1 1 auto !important; justify-content: center; text-align: center; }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) and (pointer: coarse) {
   /* A tier with a single city — don't stretch that lone pill to full width;
      center it at its natural size. (:only-child ignores search-hidden pills as
      they remain in the DOM, so this only fires on genuinely one-city tiers.) */
