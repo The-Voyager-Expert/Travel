@@ -5282,7 +5282,7 @@ window.TVE.isPhone = function () {
       { name: 'Mandarin Oriental Ritz, Madrid', note: 'Mandarin Oriental brand — Paseo del Prado, meticulously restored 1910 palace, The Spa at Mandarin Oriental, Champagne Bar terrace · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/es/mandarin-oriental-ritz-madrid.html' }
     ] },
     'malaga': { h: [
-      { name: 'Parador de Málaga Gibralfaro', note: 'Paradores — inside Gibralfaro Castle walls, panoramic views of city and bay, pool · 9.2 Booking.com' },
+      { name: 'Parador de Málaga Gibralfaro', note: 'Paradores — inside Gibralfaro Castle walls, panoramic views of city and bay, seasonal pool, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/es/parador-de-malaga-gibralfaro.html' },
       { name: 'AC Hotel Málaga Palacio by Marriott', note: 'Marriott family — rooftop pool with Alcazaba and port panorama, heart of historic center · 8.7 Booking.com', url: 'https://www.booking.com/hotel/es/acmalagapalacio.html' },
       { name: 'Gran Hotel Miramar GL', note: 'Mandarin Oriental managed — Paseo de Reding 1930s palace, Miramar Beach Club, heated pools · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/gran-hotel-miramar-malaga.html' },
       { name: 'Vincci Posada del Patio', note: 'Vincci Hotels — historic centre, Arabo-Nasrid 16th-century building, rooftop pool with city views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/vincci-posada-del-patio.html' }
@@ -5414,10 +5414,10 @@ window.TVE.isPhone = function () {
       { name: 'Pestana Natal Beach Resort', note: 'Pestana brand — Via Costeira beachfront, outdoor pool, Atlantic views, all-inclusive option · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/pestana-natal.html' }
     ] },
     'new-orleans': { h: [
-      { name: 'The Ritz-Carlton, New Orleans', note: 'Ritz-Carlton brand — Canal Street landmark in 1907 Beaux-Arts building, spa, Club Lounge · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/nine-twenty-one-canal-street-new-orleans.html' },
-      { name: 'Windsor Court Hotel', note: 'Independent luxury — AAA Five Diamond, $8M art collection, afternoon tea, pool and spa · 9.2 Booking.com' },
-      { name: 'Hotel Monteleone', note: 'Independent — 1886 Royal Street icon, rotating Carousel Bar, rooftop pool, Hunt Room Grill · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/monteleone.html' },
-      { name: 'Pontchartrain Hotel', note: 'Independent — St. Charles Avenue Garden District, rooftop pool with city views, Caribbean Room · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-pontchartrain-hotel.html' }
+      { name: 'The Ritz-Carlton, New Orleans', note: 'Ritz-Carlton brand — Canal Street landmark in 1907 Beaux-Arts building, spa, Club Lounge · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/nine-twenty-one-canal-street-new-orleans.html' },
+      { name: 'Hotel Monteleone', note: 'Independent — 1886 Royal Street icon, rotating Carousel Bar, rooftop pool, Hunt Room Grill · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/monteleone.html' },
+      { name: 'French Market Inn', note: 'Independent — 509 Decatur Street in the French Quarter, courtyard saltwater pool, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/french-market-inn.html' },
+      { name: "Place D'Armes Hotel", note: 'Independent — 625 St Ann Street beside Jackson Square, courtyard saltwater pool, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/place-d-armes.html' }
     ] },
     'new-york': { h: [
       { name: 'The Mark Hotel', note: 'Independent luxury — 25 East 77th Street Upper East Side, largest suite in NYC, Jean-Georges Vongerichten restaurant · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/us/the-mark-new-york.html' },
