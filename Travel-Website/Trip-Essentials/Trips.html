@@ -65,7 +65,6 @@
   border-top: none;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
 }
 .trip-body > .sec:first-child { padding-top: 12px; }
@@ -272,28 +271,71 @@ a.nu-chip:visited { color: #6a6660; }
 .trip-jump-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--text); padding: 5px 13px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); text-decoration: none; white-space: nowrap; transition: border-color .15s, color .15s, background .15s; }
 a.trip-jump-pill:visited { color: #3d3a32; }
 .trip-jump-pill:hover { color: var(--accent); border-color: var(--accent); background: rgba(138,108,26,0.04); }
-/* ── Export-to-calendar button (Flights + Hotel section rows) ──
-   Reuses the page's own .nu-chip family — same 1.5px border, 6px radius,
-   surface2 fill — so the section rows carry no new pill shape. Sits at the
-   right end of the .sec row; .sec wraps, so on a narrow screen it drops to
-   its own line rather than squeezing the label. ── */
-.cal-btn {
-  margin-left: auto;
+/* ── Export to Calendar ──────────────────────────────────────────────────
+   The pill is the guide's action-bar pill, rebuilt here with literal values:
+   guide-style.css owns --c-next-bg / --c-next-border / --c-action-text and
+   this page does not load it. Keep these three hexes in step with that file
+   (#f5f0e6 fill · #bba070 border · #5a3c0e ink · 700 weight · 6px radius)
+   — see Brain/Reference/Page-Specs/Trips-Page-Structure.html § 5. ── */
+.cal-pill-row { padding: 14px 0 0; }
+.cal-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #5a3c0e;
+  background: #f5f0e6;
+  border: 1px solid #bba070;
+  border-radius: 6px;
+  padding: 6px 12px;
   cursor: pointer;
-  letter-spacing: 0;
-  text-transform: none;
-  line-height: 1.3;
   -webkit-appearance: none;
   appearance: none;
-  min-height: 30px;
+  transition: background .15s, border-color .15s;
 }
-.cal-btn:hover { color: var(--accent); }
-.cal-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.cal-btn.cal-done { border-color: #2e7d32; color: #2e7d32; background: rgba(46,125,50,0.07); }
+@media (hover: hover) { .cal-pill:hover { border-color: var(--rust); } }
+.cal-pill:active { border-color: var(--rust); }
+.cal-pill:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+/* ── The chooser panel ── */
+.cal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,.42); align-items: center; justify-content: center; padding: 16px;
+}
+.cal-overlay.open { display: flex; }
+.cal-box {
+  position: relative; background: #fff; border-radius: 12px; padding: 24px 24px 18px;
+  max-width: 420px; width: 100%; max-height: 86vh; overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0,0,0,.22);
+}
+.cal-x {
+  position: absolute; top: 12px; right: 14px; background: none; border: none;
+  font-size: 13px; color: #7a7068; cursor: pointer; line-height: 1; padding: 4px; font-family: inherit;
+}
+.cal-x:hover { color: #3d3a32; }
+.cal-title { font-size: 15px; font-weight: 700; color: #1b2531; padding-right: 28px; }
+.cal-sub { font-size: 13px; color: #5b636f; margin: 5px 0 16px; line-height: 1.45; }
+.cal-row {
+  display: block; width: 100%; text-align: left; font-family: inherit; cursor: pointer;
+  background: var(--warm); border: 1px solid rgba(138,108,26,.25); border-radius: 8px;
+  padding: 10px 13px; margin-bottom: 8px; min-height: 44px;
+  transition: background .15s, border-color .15s;
+}
+@media (hover: hover) { .cal-row:hover { border-color: var(--rust); } }
+.cal-row:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+.cal-row-name { font-size: 14px; font-weight: 700; color: #3d3a32; }
+.cal-row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.cal-row.cal-done { background: rgba(46,125,50,0.07); border-color: #2e7d32; }
+.cal-row.cal-done .cal-row-name { color: #2e7d32; }
+.cal-foot { font-size: 12px; color: var(--muted); line-height: 1.45; margin-top: 10px; }
 @media (max-width: 600px) and (pointer: coarse) {
   .nu-wx { margin-left: 0; width: 100%; }
   .nu-city { font-size: 15px; }
-  .cal-btn { font-size: 13px; padding: 9px 14px; min-height: 44px; }
+  .cal-pill { width: 100%; justify-content: center; min-height: 44px; }
+  .cal-box { padding: 20px 16px 14px; max-height: 90vh; }
+  .cal-row-name { font-size: 15px; }
 }</style>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
@@ -665,16 +707,22 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
 </script>
 
 <script>
-/* ── Export to calendar — one button per Flights / Hotel section ────────────
-   Owner rule 2026-08-11: every upcoming trip's flights and hotels carry an
-   export button so the bookings can be dropped into a calendar whenever there
-   is time. The .ics is built in the browser from the rows already on the page
-   — nothing is duplicated in JS, so a corrected flight time or hotel date is
-   picked up on the next click with no other edit.
+/* ── Export to Calendar ─────────────────────────────────────────────────────
+   Owner rule 2026-08-11. Every upcoming trip carries the guide's action-bar
+   pill; it opens a chooser listing **all flights as one export** and **each
+   stay as its own**, so the two of us can take only what we need, whenever we
+   have time. Nothing is ever written to a calendar automatically — an MCP
+   calendar write asks for approval on every event, which is what this replaces.
 
-   Scope: upcoming trips only (end date >= today) and never an unconfirmed one.
-   This is the per-booking manual export; the trip-level calendar event is
-   synced separately by the pre-trip-audit routine (Step 4).
+   The .ics is built in the browser from the rows already on the page, so a
+   corrected flight time or hotel date is picked up on the next click with no
+   other edit. Flight legs land on their real date and clock time with the
+   route, flight number and airports in the notes; a stay carries its hotel
+   name and address in the notes. Upcoming trips only, never an unconfirmed one.
+
+   The pre-trip-audit routine writes the same files to Trip-Exports/ on every
+   run, so they are already sitting there when you want them — this page is the
+   on-demand path to the identical exports.
 ── */
 (function(){
   var MONS='jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec';
@@ -716,21 +764,10 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
   function dStamp(d){ return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+pad(d.getUTCSeconds())+'Z'; }
   function esc(s){ return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n'); }
   function slug(s){ return String(s||'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').toLowerCase().slice(0,60)||'trip'; }
-  /* RFC 5545 line folding, never splitting a surrogate pair (emoji summaries). */
-  function fold(line){
-    var out=[], i=0, LIM=70;
-    while(line.length-i>LIM){
-      var n=LIM, c=line.charCodeAt(i+n-1);
-      if(c>=0xD800&&c<=0xDBFF) n--;
-      out.push((out.length?' ':'')+line.substr(i,n)); i+=n;
-    }
-    out.push((out.length?' ':'')+line.substr(i));
-    return out.join('\r\n');
-  }
   function calendar(events){
     if(!events.length) return '';
     var now=dStamp(new Date());
-    var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//GuideMyDays//Trips//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+    var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Guide My Days//Trips//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
     events.forEach(function(e){
       L.push('BEGIN:VEVENT');
       L.push('UID:'+e.uid);
@@ -742,23 +779,34 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
         L.push('DTSTART:'+dLocal(e.start));
         L.push('DTEND:'+dLocal(e.end));
       }
-      L.push(fold('SUMMARY:'+esc(e.summary)));
-      if(e.location) L.push(fold('LOCATION:'+esc(e.location)));
-      if(e.desc) L.push(fold('DESCRIPTION:'+esc(e.desc)));
+      L.push('SUMMARY:'+esc(e.summary));
+      if(e.location) L.push('LOCATION:'+esc(e.location));
+      if(e.desc) L.push('DESCRIPTION:'+esc(e.desc));
       L.push('END:VEVENT');
     });
     L.push('END:VCALENDAR');
     return L.join('\r\n')+'\r\n';
   }
+  /* Copied from the guide export in toolbar.js (_injectICSExport), which has
+     been through several rounds of fixes on real devices — do not "improve" it:
+       · iOS gets the blob URL by NAVIGATION, with no download attribute. Safari
+         reads the text/calendar MIME and routes to the Add to Calendar prompt.
+         A download attribute produces a share sheet instead, and a data: URI is
+         blocked outright by WebKit's navigation policy.
+       · The object URL is revoked after 1500ms, not immediately — revoking at
+         once can cancel the download that was just started. */
   function save(name,ics){
-    /* iOS opens a data: URI straight into the Calendar import sheet; every
-       other browser takes the blob download. */
-    var iOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-    if(iOS){ location.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics); return; }
+    var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
-    var a=document.createElement('a'); a.href=url; a.download=name;
+    if(isIOS){
+      closePanel();                 /* the navigation replaces this page context */
+      window.location.href=url;
+      return;
+    }
+    var a=document.createElement('a');
+    a.href=url; a.download=name;
     document.body.appendChild(a); a.click();
-    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },0);
+    setTimeout(function(){ URL.revokeObjectURL(url); if(a.parentNode) a.parentNode.removeChild(a); },1500);
   }
 
   /* ── Flights ── */
@@ -772,7 +820,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     });
     return map;
   }
-  function flightEvents(block,trip,who){
+  function flightEvents(block,trip,who,base){
     var ap=airportNames(block), evs=[], carried=null;
     [].slice.call(block.querySelectorAll('.ftable')).forEach(function(row,i){
       /* Join the cells with a separator — the .fc spans are adjacent in the
@@ -802,7 +850,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
       }
       var from=ap[route[1]]||route[1], to=ap[route[2]]||route[2];
       evs.push({
-        uid:slug(trip)+'-flight-'+slug(route[1]+route[2]+num)+'-'+dDate(dep)+'-'+i+'@guidemydays.com',
+        uid:base+'-flight-'+slug(route[1]+route[2]+num)+'-'+dDate(dep)+'-'+i+'@guidemydays.com',
         summary:'✈️ '+route[1]+' → '+route[2]+(num?' · '+num:''),
         location:from,
         allDay:allDay, start:start, end:end,
@@ -817,7 +865,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
   }
 
   /* ── Hotels ── */
-  function hotelEvent(card,trip,who,i){
+  function hotelEvent(card,trip,who,base,i){
     var metaEl=card.querySelector('.hotel-meta');
     var meta=metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():'';
     var parts=meta.split('·');
@@ -834,7 +882,8 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     var mapEl=card.querySelector('.hotel-name a');
     var siteEl=card.querySelector('p a');
     return {
-      uid:slug(trip)+'-stay-'+slug(name)+'-'+dDate(inD)+'-'+i+'@guidemydays.com',
+      hotel:name, city:city,
+      uid:base+'-stay-'+slug(name)+'-'+dDate(inD)+'-'+i+'@guidemydays.com',
       summary:'🏨 '+name+(city?' · '+city:''),
       location:addr||name,
       allDay:true, start:inD, end:addDays(outD,1),
@@ -847,52 +896,131 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     };
   }
 
-  /* ── Button ── */
-  function button(label,filename,build){
-    var b=document.createElement('button');
-    b.type='button';
-    b.className='nu-chip cal-btn';
-    b.setAttribute('aria-label',label);
-    b.innerHTML='<span aria-hidden="true">📅</span><span class="cal-t">Add to calendar</span>';
-    b.addEventListener('click',function(){
-      var ics=calendar(build());
-      if(!ics) return;
-      save(filename,ics);
-      var t=b.querySelector('.cal-t');
-      t.textContent='Downloaded'; b.classList.add('cal-done');
-      setTimeout(function(){ t.textContent='Add to calendar'; b.classList.remove('cal-done'); },1800);
+  /* ── The chooser panel — one overlay, reused by every trip's pill ── */
+  var overlay=null, titleEl=null, subEl=null, listEl=null, opener=null;
+
+  function closePanel(){
+    if(!overlay) return;
+    overlay.classList.remove('open');
+    document.body.style.overflow='';
+    if(opener) opener.focus();
+  }
+  function buildOverlay(){
+    if(overlay) return;
+    overlay=document.createElement('div');
+    overlay.className='cal-overlay';
+    overlay.setAttribute('role','dialog');
+    overlay.setAttribute('aria-modal','true');
+    overlay.setAttribute('aria-label','Export to calendar');
+    var box=document.createElement('div'); box.className='cal-box';
+    var xBtn=document.createElement('button');
+    xBtn.type='button'; xBtn.className='cal-x'; xBtn.textContent='✕';
+    xBtn.setAttribute('aria-label','Close');
+    titleEl=document.createElement('div'); titleEl.className='cal-title';
+    titleEl.textContent='📅 Export to Calendar';
+    subEl=document.createElement('div'); subEl.className='cal-sub';
+    listEl=document.createElement('div');
+    var foot=document.createElement('div'); foot.className='cal-foot';
+    foot.textContent='Each one downloads its own file — open it to add those events. '
+      +'Re-importing a file you already added corrects it rather than duplicating it. '
+      +'The same files are waiting in Trip-Exports/.';
+    box.appendChild(xBtn); box.appendChild(titleEl); box.appendChild(subEl);
+    box.appendChild(listEl); box.appendChild(foot);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    xBtn.addEventListener('click',closePanel);
+    overlay.addEventListener('click',function(e){ if(e.target===overlay) closePanel(); });
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape' && overlay.classList.contains('open')) closePanel();
     });
-    return b;
+  }
+  function openPanel(pill,trip,items){
+    buildOverlay();
+    opener=pill;
+    subEl.textContent=trip+' — flights come as one file, each stay as its own, '
+      +'so you can take just the ones you need.';
+    listEl.innerHTML='';
+    items.forEach(function(item){
+      var b=document.createElement('button');
+      b.type='button'; b.className='cal-row';
+      var n=document.createElement('div'); n.className='cal-row-name'; n.textContent=item.name;
+      var m=document.createElement('div'); m.className='cal-row-meta'; m.textContent=item.meta;
+      b.appendChild(n); b.appendChild(m);
+      b.addEventListener('click',function(){
+        var ics=calendar(item.build());
+        if(!ics) return;
+        save(item.file,ics);
+        b.classList.add('cal-done'); n.textContent='✓ '+item.name;
+        setTimeout(function(){ b.classList.remove('cal-done'); n.textContent=item.name; },2200);
+      });
+      listEl.appendChild(b);
+    });
+    overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+    var first=listEl.querySelector('.cal-row'); if(first) first.focus();
   }
 
+  /* ── One pill per upcoming trip, at the top of its card ── */
   [].slice.call(document.querySelectorAll('.trip')).forEach(function(card){
     if(card.querySelector('.unconfirmed')) return;
     var datesEl=card.querySelector('.trip-dates');
     var ds=monthDays(datesEl?datesEl.textContent:'');
     if(!ds.length || ds[ds.length-1]<today) return;          // past trip — no export
-    var titleEl=card.querySelector('.trip-title');
-    var trip=titleEl?titleEl.textContent.replace(/\s+/g,' ').trim():'Trip';
+    var body=card.querySelector('.trip-body'); if(!body) return;
+    var titleNode=card.querySelector('.trip-title');
+    var trip=titleNode?titleNode.textContent.replace(/\s+/g,' ').trim():'Trip';
     var base=slug(trip.replace(/[\u{1F1E6}-\u{1F1FF}]/gu,''));
 
-    [].slice.call(card.querySelectorAll('.trip-body > .sec')).forEach(function(sec){
-      var whoEl=sec.querySelector('.who');
-      var who=whoEl?whoEl.textContent.trim():'';
-      var flights=[], hotels=[], el=sec.nextElementSibling;
-      while(el && !el.classList.contains('sec')){
-        if(el.classList.contains('flights-block')) flights.push(el);
-        if(el.classList.contains('hotel')) hotels.push(el);
-        el=el.nextElementSibling;
-      }
-      if(flights.length){
-        sec.appendChild(button('Export these flights to your calendar',base+'-flights.ics',function(){
-          var out=[]; flights.forEach(function(f){ out=out.concat(flightEvents(f,trip,who)); }); return out;
-        }));
-      } else if(hotels.length){
-        sec.appendChild(button('Export these stays to your calendar',base+'-stay.ics',function(){
-          var out=[]; hotels.forEach(function(h,i){ var e=hotelEvent(h,trip,who,i); if(e) out.push(e); }); return out;
-        }));
+    /* Walk the body in order so each block inherits the Who of the .sec above it. */
+    var who='', flightBlocks=[], stays=[];
+    [].slice.call(body.children).forEach(function(el){
+      if(el.classList.contains('sec')){
+        var w=el.querySelector('.who'); who=w?w.textContent.trim():'';
+      } else if(el.classList.contains('flights-block')){
+        flightBlocks.push({el:el,who:who});
+      } else if(el.classList.contains('hotel')){
+        stays.push({el:el,who:who});
       }
     });
+
+    var items=[];
+    if(flightBlocks.length){
+      var legs=0;
+      flightBlocks.forEach(function(f){ legs+=f.el.querySelectorAll('.ftable').length; });
+      items.push({
+        name:'✈️ All flights',
+        meta:legs+' leg'+(legs===1?'':'s')+' · '+human(ds[0])+' → '+human(ds[ds.length-1]),
+        file:base+'-flights.ics',
+        build:function(){
+          var out=[];
+          flightBlocks.forEach(function(f){ out=out.concat(flightEvents(f.el,trip,f.who,base)); });
+          return out;
+        }
+      });
+    }
+    stays.forEach(function(s,i){
+      var ev=hotelEvent(s.el,trip,s.who,base,i);
+      if(!ev) return;
+      var metaEl=s.el.querySelector('.hotel-meta');
+      items.push({
+        name:'🏨 '+ev.hotel,
+        meta:(s.who?s.who+' · ':'')+(metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():''),
+        /* The check-in date is part of the name because the same hotel can be
+           booked twice on one trip (out and back) — without it they collide. */
+        file:base+'-'+slug((s.who||'')+'-'+ev.hotel)+'-'+dDate(ev.start)+'.ics',
+        build:function(){ return [ev]; }
+      });
+    });
+    if(!items.length) return;
+
+    var row=document.createElement('div'); row.className='cal-pill-row';
+    var pill=document.createElement('button');
+    pill.type='button'; pill.className='cal-pill';
+    pill.innerHTML='<span aria-hidden="true">📅</span><span>Export to Calendar</span>';
+    pill.setAttribute('aria-label','Export this trip’s flights and stays to your calendar');
+    pill.addEventListener('click',function(){ openPanel(pill,trip,items); });
+    row.appendChild(pill);
+    body.insertBefore(row,body.firstChild);
   });
 })();
 </script>
