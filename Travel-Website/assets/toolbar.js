@@ -8396,12 +8396,15 @@ window.TVE.isPhone = function () {
       '📍': 'pin',    /* 📍 */
       '🚶': 'walk',   /* 🚶 */
       '🚕': 'ride',   /* 🚕 */
-      '🚗': 'ride'    /* 🚗 — a few guides author the car, same mark */
+      '🚗': 'ride',   /* 🚗 — a few guides author the car, same mark */
+      '🚐': 'van',    /* 🚐 — tour hotel-pickup row, 548 fleet-wide */
+      '🏨': 'hotel'   /* 🏨 — the other half of that row */
     };
     /* Trailing ️ is swallowed into the match so the variation selector
        rides along inside the hidden span rather than being left behind to
-       render as a stray box. */
-    var RE = /(\uD83D[\uDCCD\uDEB6\uDE95\uDE97])️?/g;
+       render as a stray box. 🏨 is U+1F3E8, a \uD83C lead — hence two
+       alternatives rather than one character class. */
+    var RE = /(\uD83D[\uDCCD\uDEB6\uDE95\uDE97\uDE90]|🏨)️?/g;
 
     function markRow(row) {
       if (row.getAttribute('data-gm-marked')) return;
