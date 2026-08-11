@@ -5324,7 +5324,7 @@ window.TVE.isPhone = function () {
       { name: 'Kasbah Tamadot', note: 'Virgin Limited Edition — Atlas Mountain retreat, Berber tents, pool with mountain panorama · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ma/kasbah-tamadot.html' }
     ] },
     'marseille': { h: [
-      { name: 'InterContinental Marseille - Hotel Dieu', note: 'IHG brand — converted 18th-century hospital above the Vieux-Port, rooftop pool, panoramic Old Town views · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/fr/intercontinental-marseille-hotel-dieu.html' },
+      { name: 'Les Bords de Mer · Fontenille Collection', note: 'Independent — 52 Corniche Kennedy above the water, rooftop heated pool, spa and hammam, sea-facing rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/les-bords-de-mer.html' },
       { name: 'Sofitel Marseille Vieux-Port', note: 'Sofitel brand — Old Port frontage, terrace views, spa, Les Trois Forts gastronomic restaurant · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/fr/sofitel-marseille-vieux-port.html' },
       { name: 'Hôtel C2 Marseille', note: 'Independent boutique — 19th-century merchant mansion near the Old Port, heated outdoor pool, 20 rooms, Sushi Shop & Le Reflet restaurant · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/fr/hotel-c2-marseille.html' },
       { name: 'Grand Hôtel Beauvau Vieux-Port, Autograph Collection', note: 'Marriott Autograph — 1816 Vieux-Port landmark, panoramic harbour views, Brasserie Beauvau, historic Provençal character · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/fr/grand-hotel-beauvau-vieux-port.html' }
