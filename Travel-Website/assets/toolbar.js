@@ -5522,10 +5522,10 @@ window.TVE.isPhone = function () {
       { name: 'Petra Marriott Hotel', note: 'Marriott brand — beside the Petra visitors\' entrance, Al Iwan restaurant, outdoor pool · 8.5 Booking.com', url: 'https://www.booking.com/hotel/jo/petra-marriott.html' }
     ] },
     'philadelphia': { h: [
-      { name: 'The Logan Hotel, Curio Collection by Hilton', note: 'Hilton Curio — Logan Square, rooftop pool and urban garden terrace, Steps restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-logan-philadelphia.html' },
-      { name: 'Hotel Monaco Philadelphia, a Kimpton Hotel', note: 'Kimpton — Old City former Federal Customs House, curated social spaces, pet-friendly · 8.9 Booking.com' },
-      { name: 'Four Seasons Hotel Philadelphia at Comcast Center', note: 'Four Seasons — 60th-floor penthouse pool with panoramic views, Jean-Georges restaurant, spa · 9.5 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-philadelphia.html' },
-      { name: 'Loews Philadelphia Hotel', note: 'Loews Hotels — Art Deco PSFS Building, heated indoor pool, Bank + Bourbon restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/loews-philadelphia-hotel.html' }
+      { name: 'The Logan Philadelphia, Curio Collection by Hilton', note: 'Hilton Curio — One Logan Square on the Parkway, indoor pool, spa, Urban Farmer steakhouse · 8.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-logan-philadelphia.html' },
+      { name: 'Four Seasons Hotel Philadelphia at Comcast Center', note: 'Independent luxury — 60th-floor pool with panoramic views, Jean-Georges restaurant, spa · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-philadelphia-at-comcast-center.html' },
+      { name: 'Morris House Hotel', note: 'Independent — 1787 Georgian townhouse in Society Hill, walled garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/morris-house.html' },
+      { name: 'ROOST Midtown', note: 'Independent apart-hotel — 111 South 15th Street off Rittenhouse Row, full kitchens, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/idtown.html' }
     ] },
     'phoenix': { h: [
       { name: 'The Arizona Biltmore, A Waldorf Astoria Resort', note: 'Waldorf Astoria brand — 1929 Frank Lloyd Wright-influenced design, eight pools, lush landscaping, Esplanade spa · 9.0 Booking.com' },

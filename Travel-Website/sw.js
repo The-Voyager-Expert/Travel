@@ -787,7 +787,8 @@
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for florianopolis, florida-keys, foz-do-iguacu, geneva, glacier-national-park, lima, ljubljana, los-angeles, luang-prabang and lucerne: ten cities' alternatives rebuilt on Booking-verified properties, url-less and duplicate-of-the-primary entries cleared. toolbar.js -> v383. CACHE to v555. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for malaga (Parador Gibralfaro url + note) and new-orleans (Windsor Court + Pontchartrain replaced with French Market Inn + Place D'Armes; Ritz-Carlton and Hotel Monteleone scores updated). toolbar.js -> v384. CACHE to v556. */
 /* 2026-08-11: CITY_BEST_OF_MAP — auto_update_best_of_map.py run; rotterdam added, plus new Best-of page links for arenal, athens, budapest, hanoi, los-angeles, prague, santiago, tbilisi, tokyo. toolbar.js -> v385. CACHE to v557. */
-var CACHE = 'travel-cache-v557';
+/* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for philadelphia rebuilt on Booking-verified properties: Hotel Monaco (no Booking listing url) and Loews (8.7, below the § 5 non-brand bar) replaced with Morris House Hotel 9.2 and ROOST Midtown 9.0; The Logan corrected to 8.2 and Four Seasons to 9.6 with its live slug. toolbar.js -> v386. CACHE to v558. */
+var CACHE = 'travel-cache-v558';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -795,7 +796,7 @@ var CACHE = 'travel-cache-v557';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 385, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 386, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
