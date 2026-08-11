@@ -698,7 +698,16 @@
    than risk unpicking it from the shared autocomplete wiring.
    NOTE: v543 was consumed by commit 2e23cd74 and undone with it in the revert fa55255e — this is
    the next free number, not a skip. CACHE v543. */
-var CACHE = 'travel-cache-v543';
+/* 2026-08-11: Sunrise-Sunset was DEAD — one missing comma. The CITIES array had a new entry
+   appended after Cape Town without a trailing comma on the line above it (file line 473), a
+   SyntaxError that killed the whole 485-line inline <script>. Nothing in it ran: `var CITIES`
+   never defined, the city <select> stayed at 0 options, and the sky-arc banner never drew, so the
+   page rendered as a bare search box and month picker over empty space. No console error was
+   visible because a parse error fires before any listener attaches — it has to be caught by
+   syntax-checking the block, which is how this was found. 237 cities load again and the arc
+   renders. WORTH A GUARD: nothing validates inline page scripts, so the next stray comma does the
+   same thing silently. CACHE v544. */
+var CACHE = 'travel-cache-v544';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
