@@ -659,7 +659,17 @@
    Climate-Finder and Weather. .wx-bar.on is deliberately NOT swept — that is a chart bar, and a
    data bar is meant to be filled. Real page banners keep the variable too; the sweep is scoped to
    chip selectors, not to the variable. CACHE v539. */
-var CACHE = 'travel-cache-v539';
+/* 2026-08-11: Guides-Index pill icons restored, drawn (owner: "the website index pills lost its
+   icons too" · "under trip scape lost too" · "we have most of them"). Commit a4701fa3 was a
+   SECOND emoji sweep — separate from 043c9fe6, which did the Trip-Essentials pages — and it
+   stripped 76 lines of index.html: every pill, every Trip Escape option, and even the text of the
+   "LOCKED ICONS: Stats = 📊, Compare = 📶" comment that existed to prevent exactly this. That
+   hunk is reverted, so the glyph is the authored source of truth again and the comment means
+   something; it is never rendered, because _injectIndexPillIcons swaps each one for the matching
+   drawn icon. 45 glyphs mapped to NAV_ICONS; ✓ and ✕ deliberately excluded as text glyphs with
+   their own locked treatment. iconSVG not a .gm-mk mask — the mask classes live in
+   guide-style.css, which the index does not load. toolbar.js -> v373. CACHE v540. */
+var CACHE = 'travel-cache-v540';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -667,7 +677,7 @@ var CACHE = 'travel-cache-v539';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 372, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 373, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

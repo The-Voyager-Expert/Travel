@@ -8671,6 +8671,85 @@ window.TVE.isPhone = function () {
      iconSVG rather than a .gm-mk mask on purpose: the mask classes live in
      guide-style.css, which Trip-Essentials pages do not load. An inline SVG
      needs no stylesheet and works on every page this strip appears on. */
+  /* ── Guides-Index pill icons — drawn, from the authored glyph ─────────────
+     Owner 2026-08-11: "the website index pills lost its icons too" · "under
+     trip escape lost too" · "we have most of them". Commit a4701fa3 (a SECOND
+     emoji sweep, separate from 043c9fe6 which did the Trip-Essentials pages)
+     stripped 76 lines of index.html — every pill, every Trip Escape option,
+     and even the text of the "LOCKED ICONS: Stats = 📊, Compare = 📶" comment
+     that was there to stop exactly this.
+
+     The markup is restored, so the glyph is once again the authored source of
+     truth and that comment means something again. It is never rendered: this
+     pass swaps each one for the matching drawn icon, so the index chips draw
+     from the same set as the toolbar, the guides and the footer pills.
+
+     iconSVG rather than a .gm-mk mask, for the same reason as the footer
+     pills: the mask classes live in guide-style.css, which the index does not
+     load. ✓ and ✕ are deliberately absent — they are text glyphs with their
+     own locked treatment, not emoji. */
+  var INDEX_GLYPH_ICON = {
+    '✈': 'plane', '🛫': 'plane', '📊': 'chart', '📶': 'compare',
+    '🌆': 'triptype', '📅': 'calendar', '🗓': 'calendar', '🗣': 'language',
+    '📍': 'pin', '🌐': 'globe', '🌍': 'globe', '🌎': 'globe', '🌏': 'globe',
+    '🗺': 'map', '🏆': 'trophy', '📋': 'list', '💰': 'money', '💳': 'card',
+    '🏠': 'neighborhoods', '🛡': 'safety-guide', '✨': 'star',
+    '🚗': 'rental-cars', '🚕': 'rental-cars', '🚆': 'train', '🚄': 'train',
+    '🚌': 'transit', '🚢': 'ship', '⛴': 'ship',
+    '🏝': 'island', '🏖': 'beach', '🎿': 'ski', '🎨': 'artframe',
+    '🎢': 'ferris', '🛝': 'ferris', '🍽': 'restaurants', '🍷': 'wine',
+    '🌴': 'palm', '🌲': 'tree', '🍂': 'tree', '🏛': 'unesco',
+    '🌃': 'tower', '☀': 'sun', '🌤': 'sun', '❄': 'aurora', '🌡': 'sun'
+  };
+  function _injectIndexPillIcons() {
+    var isIndex = /\/(index\.html)?$/.test(location.pathname) ||
+                  document.querySelector('.pill-row, #btn-my-trips');
+    if (!isIndex) return;
+    var keys = Object.keys(INDEX_GLYPH_ICON);
+    var RE = new RegExp('(' + keys.map(function (k) {
+      return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }).join('|') + ')️?', 'g');
+
+    var scope = document.querySelectorAll(
+      '.pill-row a,.pill-row button,.disc-btn,.seg-btn,.lang-menu-item,' +
+      '#btn-my-trips,#lsp-topbar,#view-compare,#continentJumpLabel,' +
+      '.disc-panel button,.disc-panel a,.esc-opt,.esc-opt-label');
+    [].forEach.call(scope, function (el) {
+      if (el.getAttribute('data-gm-ico')) return;
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      var texts = [], n;
+      while ((n = walker.nextNode())) {
+        RE.lastIndex = 0;
+        if (RE.test(n.nodeValue)) texts.push(n);
+      }
+      if (!texts.length) return;
+      el.setAttribute('data-gm-ico', '1');
+      texts.forEach(function (tn) {
+        var s = tn.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+        RE.lastIndex = 0;
+        while ((m = RE.exec(s))) {
+          if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+          var key = INDEX_GLYPH_ICON[m[1]];
+          if (key && NAV_ICONS[key]) {
+            var sp = document.createElement('span');
+            sp.innerHTML = iconSVG(NAV_ICONS[key], 13, key);
+            sp.setAttribute('aria-hidden', 'true');
+            sp.style.cssText = 'display:inline-block;vertical-align:-0.14em;line-height:0;';
+            frag.appendChild(sp);
+          }
+          last = m.index + m[0].length;
+        }
+        if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+        tn.parentNode.replaceChild(frag, tn);
+      });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectIndexPillIcons);
+  } else {
+    _injectIndexPillIcons();
+  }
+
   function _injectAlsoOnSiteIcons() {
     var pills = document.querySelectorAll('.also-on-this-site-pill');
     if (!pills.length) return;
