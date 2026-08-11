@@ -4214,7 +4214,7 @@
       { name: 'Vincci Albayzín Hotel', note: '4-star, free cancellation, Albayzín — eco-friendly, regional cuisine', url: 'https://www.booking.com/hotel/es/vincci-albayzin.html' },
       { name: 'Shine Albayzín Hotel', note: 'Free cancellation, near Mirador de San Nicolás', url: 'https://www.booking.com/hotel/es/shine-darro.html' },
       { name: 'Hotel Palacio de Mariana Pineda', note: '17th-century palace facing the Alhambra, spa treatments', url: 'https://www.booking.com/hotel/es/museo-palacio-de-mariana-pineda.html' },
-      { name: 'AC Hotel Granada by Marriott', note: 'Marriott AC Hotels — Gran Vía de Colón, rooftop terrace with Alhambra views · 8.6 Booking.com', url: 'https://www.booking.com/hotel/es/ac-granada.html' }
+      { name: 'Palacio Gran Vía, a Royal Hideaway Hotel', note: 'Independent luxury — restored palace on Gran Vía de Colón, spa with hammam, rooftop terrace over the cathedral quarter · 9.5 Booking.com', url: 'https://www.booking.com/hotel/es/palacio-de-gran-via-a-royal-hideaway.html' }
     ] },
     'lisbon': { h: [
       { name: 'Sheraton Lisboa Hotel & Spa', note: 'Marriott family — pool, spa, central location near Marquês de Pombal · 8.6 Booking.com' , url: 'https://www.booking.com/hotel/pt/sheraton-lisboa-hotel-spa.html' },
