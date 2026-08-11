@@ -326,6 +326,8 @@ a.trip-jump-pill:visited { color: #3d3a32; }
 @media (hover: hover) { .cal-row:hover { border-color: var(--rust); } }
 .cal-row:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
 .cal-row-name { font-size: 14px; font-weight: 700; color: #3d3a32; }
+.cal-ic { display: inline-flex; vertical-align: -2px; margin-right: 6px; }
+.cal-ic svg { display: block; }
 .cal-row-meta { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
 .cal-row.cal-done { background: rgba(46,125,50,0.07); border-color: #2e7d32; }
 .cal-row.cal-done .cal-row-name { color: #2e7d32; }
@@ -851,7 +853,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
       var from=ap[route[1]]||route[1], to=ap[route[2]]||route[2];
       evs.push({
         uid:base+'-flight-'+slug(route[1]+route[2]+num)+'-'+dDate(dep)+'-'+i+'@guidemydays.com',
-        summary:'✈️ '+route[1]+' → '+route[2]+(num?' · '+num:''),
+        summary:route[1]+' → '+route[2]+(num?' · '+num:''),
         location:from,
         allDay:allDay, start:start, end:end,
         desc:trip
@@ -884,7 +886,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     return {
       hotel:name, city:city,
       uid:base+'-stay-'+slug(name)+'-'+dDate(inD)+'-'+i+'@guidemydays.com',
-      summary:'🏨 '+name+(city?' · '+city:''),
+      summary:name+(city?' · '+city:''),
       location:addr||name,
       allDay:true, start:inD, end:addDays(outD,1),
       desc:trip
@@ -894,6 +896,20 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
         +(mapEl?'\nMap: '+mapEl.href:'')
         +(siteEl?'\n'+siteEl.href:'')
     };
+  }
+
+  /* Drawn marks, never emoji — window.TVE.icon is the site's shared accessor
+     over NAV_ICONS, the same set the toolbar, the guides and the index chips
+     draw from. Returns '' if toolbar.js has not loaded, and the label alone
+     still reads correctly. */
+  function icon(key){
+    try { return (window.TVE && window.TVE.icon) ? window.TVE.icon(key,15) : ''; }
+    catch(e){ return ''; }
+  }
+  function escHTML(s){
+    return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
   }
 
   /* ── The chooser panel — one overlay, reused by every trip's pill ── */
@@ -917,7 +933,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     xBtn.type='button'; xBtn.className='cal-x'; xBtn.textContent='✕';
     xBtn.setAttribute('aria-label','Close');
     titleEl=document.createElement('div'); titleEl.className='cal-title';
-    titleEl.textContent='📅 Export to Calendar';
+    titleEl.innerHTML='<span class="cal-ic">'+icon('calendar')+'</span>Export to Calendar';
     subEl=document.createElement('div'); subEl.className='cal-sub';
     listEl=document.createElement('div');
     var foot=document.createElement('div'); foot.className='cal-foot';
@@ -943,15 +959,20 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     items.forEach(function(item){
       var b=document.createElement('button');
       b.type='button'; b.className='cal-row';
-      var n=document.createElement('div'); n.className='cal-row-name'; n.textContent=item.name;
+      var n=document.createElement('div'); n.className='cal-row-name';
+      n.innerHTML='<span class="cal-ic">'+icon(item.icon)+'</span>'+escHTML(item.name);
       var m=document.createElement('div'); m.className='cal-row-meta'; m.textContent=item.meta;
       b.appendChild(n); b.appendChild(m);
       b.addEventListener('click',function(){
         var ics=calendar(item.build());
         if(!ics) return;
         save(item.file,ics);
-        b.classList.add('cal-done'); n.textContent='✓ '+item.name;
-        setTimeout(function(){ b.classList.remove('cal-done'); n.textContent=item.name; },2200);
+        b.classList.add('cal-done');
+        n.innerHTML='<span class="cal-ic">'+icon('check')+'</span>'+escHTML(item.name);
+        setTimeout(function(){
+          b.classList.remove('cal-done');
+          n.innerHTML='<span class="cal-ic">'+icon(item.icon)+'</span>'+escHTML(item.name);
+        },2200);
       });
       listEl.appendChild(b);
     });
@@ -988,7 +1009,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
       var legs=0;
       flightBlocks.forEach(function(f){ legs+=f.el.querySelectorAll('.ftable').length; });
       items.push({
-        name:'✈️ All flights',
+        name:'All flights', icon:'plane',
         meta:legs+' leg'+(legs===1?'':'s')+' · '+human(ds[0])+' → '+human(ds[ds.length-1]),
         file:base+'-flights.ics',
         build:function(){
@@ -1003,7 +1024,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
       if(!ev) return;
       var metaEl=s.el.querySelector('.hotel-meta');
       items.push({
-        name:'🏨 '+ev.hotel,
+        name:ev.hotel, icon:'neighborhoods',
         meta:(s.who?s.who+' · ':'')+(metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():''),
         /* The check-in date is part of the name because the same hotel can be
            booked twice on one trip (out and back) — without it they collide. */
@@ -1016,7 +1037,7 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     var row=document.createElement('div'); row.className='cal-pill-row';
     var pill=document.createElement('button');
     pill.type='button'; pill.className='cal-pill';
-    pill.innerHTML='<span aria-hidden="true">📅</span><span>Export to Calendar</span>';
+    pill.innerHTML='<span class="cal-ic">'+icon('calendar')+'</span><span>Export to Calendar</span>';
     pill.setAttribute('aria-label','Export this trip’s flights and stays to your calendar');
     pill.addEventListener('click',function(){ openPanel(pill,trip,items); });
     row.appendChild(pill);
