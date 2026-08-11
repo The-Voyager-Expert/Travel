@@ -390,6 +390,87 @@ a.also-on-this-site-pill:active {
   box-shadow: 0 1px 3px rgba(184,92,42,.12); transform: scale(.97) translateY(1px);
 }
 
+/* ── Form B glued grid — `.tve-glue` ────────────────────────────────────────
+   THE one way to collapse adjacent cell borders into a single seam. Put
+   `.tve-glue` on the grid container; the cells need nothing. Never hand-roll
+   this with :nth-child / :first-child again — every such rule this site had
+   was wrong or one hidden child away from being wrong (see § Why below).
+
+   How it works: every cell pulls itself up and left by one border width, so it
+   sits on top of its top/left neighbour's border — one seam, not two. The
+   container's matching top/left padding hands that width back to row 1 and
+   column 1, so the grid still starts flush with everything above it. Cells
+   stretch (width:auto), so pulling the left edge out widens the cell and the
+   right edge stays on the column line.
+
+   Set the seam width with --glue-w when the cells' border isn't 1.5px:
+       .my-grid { --glue-w: 2px; }
+
+   Why not :nth-child — four ways it breaks, all of which have shipped here:
+     1. A hidden sibling still counts. A `display:none` filter label shifted
+        every column by one on Scenic-Train-Journeys; #train-count plus a label
+        shifted European-Train-Guide by two.
+     2. `:not(:first-child)` exempts only the very first cell, not each row's
+        column 1 — When-to-Go's row-2 pill hung outside the grid.
+     3. CSS `order` decouples DOM position from visual position entirely, so no
+        nth-* selector can address "column 1" (index.html's .pill-row).
+     4. iOS Safari silently ignores :nth-child-set grid-column (see mobile.css
+        § "Also on this site").
+   None of them can touch a rule that names no positions.
+
+   min-width:0 is part of the contract, not a nicety: a `1fr` column floors at
+   its content's min-content width, so one long label ("Copenhagen") pushes the
+   whole grid past its container — that is what made Neighborhoods, When-to-Go
+   and Climate-Finder scroll sideways. Zeroing the item's automatic minimum lets
+   the column shrink and the label wrap instead.
+
+   The compensation is PADDING, and it has to be padding: Chromium rounds
+   border-width down to a whole pixel, so a 1.5px transparent border compensates
+   a 1.5px margin by only 1px and every column-1 cell ends up hanging half a
+   pixel outside the strip. Padding keeps the fractional value exactly.
+
+   CONTRACT — a glued container owns its padding-left and padding-top (that
+   space IS the compensation) and states any spacing of its own as margin or as
+   padding-right/padding-bottom. Cells must stretch, so a glued cell carries no
+   fixed width.
+
+   Two flavours. `.tve-glue` glues at every width — use it when the container is
+   a grid at every width. `.tve-glue-m` glues only at ≤600px — use it for the
+   many strips that are a glued grid on mobile and a flex row on desktop, so the
+   desktop strip keeps whatever treatment it already has.
+
+   Enforced by brain_check.check_form_b_glue_is_shared (hard-fail). */
+.tve-glue.tve-glue.tve-glue {
+  padding-left: var(--glue-w, 1.5px) !important;
+  padding-top: var(--glue-w, 1.5px) !important;
+  box-sizing: border-box;
+}
+.tve-glue.tve-glue.tve-glue > * {   /* (0,3,0) — see the note on the -m twin below */
+  margin-top: calc(-1 * var(--glue-w, 1.5px)) !important;
+  margin-left: calc(-1 * var(--glue-w, 1.5px)) !important;
+  min-width: 0 !important;
+  width: auto !important;
+  align-self: stretch !important;
+}
+@media (max-width: 600px) {
+  .tve-glue-m.tve-glue-m.tve-glue-m {
+    padding-left: var(--glue-w, 1.5px) !important;
+    padding-top: var(--glue-w, 1.5px) !important;
+    box-sizing: border-box !important;
+  }
+  /* Tripled class = specificity (0,3,0). Not styling for its own sake: every
+     page's own strip rules live in an inline <style> that loads AFTER this
+     file, so a (0,2,0) selector like `.controls .filter-btn` would tie and win
+     on source order. The utility has to out-specify them, not match them. */
+  .tve-glue-m.tve-glue-m.tve-glue-m > * {
+    margin-top: calc(-1 * var(--glue-w, 1.5px)) !important;
+    margin-left: calc(-1 * var(--glue-w, 1.5px)) !important;
+    min-width: 0 !important;
+    width: auto !important;   /* cells must stretch — a fixed 100% leaves the seam uncollapsed */
+    align-self: stretch !important;
+}
+}
+
 /* ── Visited-color lock for pill/link classes shared across the site ────────
    Every non-guide Form B pill (rest color = var(--muted)) plus a few other
    colored link classes carry a :visited override so browsers don't paint them
