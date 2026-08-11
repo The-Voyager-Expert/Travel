@@ -451,7 +451,8 @@
 /* 2026-08-10: OWNER — the desktop rule widens from "no nav arrows" to the whole floating family: "all the pills are showing on desktop!" on a guide still carrying the 📅 N days pill. Hidden ≥601px now: .day-jump-btn + .day-jump-overlay and .tve-scroll-top (guide-style.css), and #tve-wl-fab + #tve-wl-panel (toolbar.js). Desktop keeps the scrollbar, Home, and the Trip Overview day list, so nothing floats over the content; the stop-header stars still save at any width, only the review panel is mobile-only. A desktop guide now has ZERO position:fixed controls. guide-style.css -> v161, toolbar.js -> v332. CACHE to v494. */
 /* 2026-08-10: OWNER — the #tve-back-guides strip goes mobile-only too ("they should be only in mobile!"), completing the same call: a desktop guide now shows no pill chrome at all, floating or in-flow. All three pills live in that one strip, so the hide takes 🖨 Print Guide, Before You Go and ‹ All Guides together, plus the stops-map "‹ {City}" variant. The strip carries display:flex inline, so the ≥601px rule needs !important. Print is still reachable on desktop through the browser's own Print (the @media print chrome-hiding rules are untouched and still fire). toolbar.js -> v333. CACHE to v495. */
 /* 2026-08-10: hotel-rehome — Annecy, Carmel-by-the-Sea, Dubrovnik, Key West, Krakow and Lille moved to a title-card hotel on the brand ladder (hotel_rules.html Sec 3); each guide re-ran optimize_route.py, so motion banners and stops-map day fields were regenerated with it. Old title-card properties demoted into HOTEL_ALT_DATA; alt-hotel entries for Cape Cod, Cape Town and Curitiba corrected in the same pass. toolbar.js -> v334. CACHE to v496. */
-var CACHE = 'travel-cache-v496';
+/* 2026-08-10: Hotels & Flights search — a sixth pill on the guide action row that expands into a two-tab Google Hotels / Google Flights deep-link panel. Destination airport comes from assets/airports.json (new), built by build_airports.py out of the FMAP block already on index.html - no new per-guide data authored. Destination and origin each accept a place name OR an IATA code; a code-shaped entry that is not one of the 3,270 real codes blocks the search rather than sending the reader to a dead query. No Upcoming Trips strip, one provider (owner, 2026-08-10). Toolbar.html Sec 41. toolbar.js -> v335, guide-style.css -> v162. CACHE to v497. */
+var CACHE = 'travel-cache-v497';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -459,7 +460,7 @@ var CACHE = 'travel-cache-v496';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 161, 'toolbar.js': 334, 'mobile.css': 74, 'web-travel-style.css': 22, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 162, 'toolbar.js': 335, 'mobile.css': 74, 'web-travel-style.css': 22, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -4525,7 +4525,7 @@
     ] },
     'carmel-by-the-sea': { h: [
       { name: 'L\'Auberge Carmel, Relais & Châteaux', note: 'Auberge Resorts/Relais & Châteaux — downtown Carmel, 20 rooms, Aubergine restaurant, wine cellar, garden courtyard · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/auberge-carmel-relais-chateaux.html' },
-      { name: 'Carmel Valley Ranch', note: 'Unbound Collection by Hyatt — Carmel Valley (9 mi inland), 181 suites, Pete Dye golf course, vineyard, full-service spa · 8.2 Booking.com' },
+      { name: 'La Playa Hotel', note: 'Independent — Camino Real at Eighth Avenue in Carmel village, 1905 mansion, ocean-view terraces, outdoor pool and garden courtyard · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/la-playa-carmel.html' },
       { name: 'Quail Lodge & Golf Club', note: 'Independent — Carmel Valley, 18-hole golf, Edgar\'s Restaurant, pool and hot tub · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/quail-lodge-golf-club.html' },
       { name: 'Tradewinds Carmel', note: 'Independent — Asian garden retreat in the village, koi pond, two outdoor hot tubs · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/tradewinds.html' }
     ] },
@@ -4543,7 +4543,7 @@
     ] },
     'charlotte': { h: [
       { name: 'The Ritz-Carlton, Charlotte', note: 'Ritz-Carlton — Uptown Charlotte, two-level spa, rooftop garden, signature dining, skyline views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/ritz-carlton-charlotte.html' },
-      { name: 'JW Marriott Charlotte', note: 'JW Marriott — Uptown near Convention Center, rooftop lounge, spa, indoor pool, panoramic city views · 9.0 Booking.com' },
+      { name: 'JW Marriott Charlotte', note: 'JW Marriott — 600 South College Street in Uptown near the Convention Center, rooftop lounge, spa, outdoor pool, panoramic city views · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/jw-marriott-charlotte.html' },
       { name: 'Omni Charlotte Hotel', note: 'Omni brand — Tryon Street in Uptown, indoor lap pool, Aria Italian restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/omni-charlotte.html' },
       { name: 'The Dunhill Hotel', note: 'Independent — 1929 Tryon Street landmark, boutique Asbury restaurant, old-world décor · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/dunhill.html' }
     ] },
@@ -6782,6 +6782,394 @@
       document.addEventListener('DOMContentLoaded', _run);
     } else {
       _run();
+    }
+  })();
+
+  /* ── Hotels & Flights search — collapsed pill on the action row ───────────
+     A 🔎 Hotels & Flights pill appended to #ics-pill-row that expands, in
+     place, into a two-tab deep-link panel: 🏨 Hotels and ✈️ Flights. Submitting
+     opens a pre-filled Google Hotels / Google Flights tab. Nothing is fetched
+     for results, nothing is priced here, and no booking state is stored — the
+     whole feature is a well-addressed link out. That ceiling was named to the
+     owner before it was built (Reports.html mockup, 2026-08-10) and accepted.
+
+     Owner decisions this implements (2026-08-10, from the mockup's § 5):
+       · one provider, Google — a second button per tab doubles the row height
+         and starts to read as advertising;
+       · NO "Upcoming Trips" strip — it was the only piece that added a fetch of
+         Trips.html and a coupling to that page's month-block markup;
+       · destination and origin each accept EITHER a place name OR an IATA code,
+         the reader's choice. Three uppercase letters is read as a code; anything
+         else is handed to Google as a place name and Google resolves it.
+       · a code that does not exist must not complete. See _bkValidCode.
+
+     Where the destination airport comes from: assets/airports.json, built by
+     Brain/scripts/build/build_airports.py out of the FMAP block on index.html —
+     the same 237 hand-picked codes behind the "By flight time from Seattle"
+     view. NO NEW PER-GUIDE DATA WAS AUTHORED. Those codes carry judgement a
+     generic city→airport lookup does not: Aix-en-Provence → MRS, Amalfi → NAP.
+     They are Delta routings from Seattle, so a few resolve to the hub you would
+     actually fly into rather than the nearest strip (Kyoto → HND, not KIX) —
+     which is exactly why the field stays editable.
+
+     Unlike the currency pill this renders on EVERY real guide: with no airport
+     match the Flights tab simply starts empty rather than the pill disappearing,
+     because the Hotels tab only ever needed the city name, which is on the page.
+     Fetch-backed, so invisible over file:// like every other such feature (§ 34). */
+  (function () {
+    if (!isRealGuide) return;
+
+    /* City name from <title>, not .title-city — the banner ships ALL CAPS
+       ("KYOTO") and no generic re-caser is safe ("Rio De Janeiro"). Same
+       reasoning, same source, as _cityName() in the share-day block. */
+    function _bkCity() {
+      var t = (document.title || '').replace(/\s+/g, ' ').trim();
+      if (t) return t;
+      var el = document.querySelector('.title-city');
+      return el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+    }
+
+    function _bkCountry() {
+      var el = document.querySelector('.title-country');
+      return el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+    }
+
+    /* A place string for Google: "Kyoto, Japan" beats "Kyoto" — it disambiguates
+       the ~40 duplicate city names in the fleet without the reader typing. */
+    function _bkPlace() {
+      var c = _bkCity(), k = _bkCountry();
+      return c && k ? c + ', ' + k : (c || k);
+    }
+
+    function _bkISO(d) {
+      return d.getFullYear() + '-' +
+        ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    }
+
+    /* Nights default to the guide's own length — a 6-day itinerary prefills 6
+       nights. Clamped: a 1-day guide still needs a 1-night stay to price. */
+    function _bkNights() {
+      var n = document.querySelectorAll('.day-block').length;
+      return Math.max(1, Math.min(n || 3, 30));
+    }
+
+    /* Three uppercase letters = the reader meant an airport code, so hold it to
+       one. Anything else is a place name and always passes: the point is to
+       catch a mistyped code, never to second-guess a city. */
+    function _bkIsCodeShaped(v) {
+      return /^[A-Za-z]{3}$/.test(String(v || '').trim());
+    }
+
+    function _bkValidCode(v, codes) {
+      return codes.indexOf(String(v).trim().toUpperCase()) !== -1;
+    }
+
+    /* Google Flights needs "SEA airport", not bare "SEA", to parse a code on the
+       destination side — see the long note at the query builder. Place names are
+       passed through untouched. */
+    function _bkForGoogle(v) {
+      v = String(v || '').trim();
+      return _bkIsCodeShaped(v) ? v.toUpperCase() + ' airport' : v;
+    }
+
+    function _bkJSON(key, file, cb) {
+      try {
+        var hit = sessionStorage.getItem(key);
+        /* Deferred by a macrotask for the reason § 36 documents at length: a
+           warm sessionStorage hit would otherwise resolve synchronously inside
+           this feature's own DOMContentLoaded handler, before _extrasOutOfCard
+           has lifted #ics-pill-row out of .overview-section — and the panel
+           would be inserted beside the row's old position, then stranded inside
+           the Trip Overview card when the row moved. Cold loads looked fine. */
+        if (hit) { var d = JSON.parse(hit); setTimeout(function () { cb(d); }, 0); return; }
+      } catch (e) {}
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', base + 'assets/' + file, true);
+      xhr.timeout = 6000;
+      xhr.onload = function () {
+        if (xhr.status < 200 || xhr.status >= 300) return;
+        try {
+          var data = JSON.parse(xhr.responseText);
+          try { sessionStorage.setItem(key, xhr.responseText); } catch (e) {}
+          cb(data);
+        } catch (e) {}
+      };
+      xhr.send();
+    }
+
+    function _bkBuild(ap) {
+      if (document.getElementById('tve-book-pill')) return;
+      var row = document.getElementById('ics-pill-row');
+      if (!row) return;
+
+      var codes = (ap && ap.codes) || [];
+      var destAir = (ap && ap._by_slug && ap._by_slug[curr]) || '';
+      var place = _bkPlace();
+      if (!place && !destAir) return;   /* nothing to search for */
+
+      var today = new Date();
+      var inD = new Date(today.getTime() + 30 * 864e5);
+      var outD = new Date(inD.getTime() + _bkNights() * 864e5);
+
+      /* ── Pill ── */
+      var pill = document.createElement('a');
+      pill.href = 'javascript:void(0)';
+      pill.className = 'overview-extra-link';
+      pill.id = 'tve-book-pill';
+      pill.textContent = '🔎 Hotels & Flights';
+      pill.setAttribute('aria-expanded', 'false');
+      pill.setAttribute('aria-controls', 'tve-book-panel');
+      pill.style.setProperty('flex', '1 1 0', 'important');
+      pill.style.setProperty('min-width', '0', 'important');
+      pill.style.setProperty('align-items', 'center', 'important');
+      pill.style.setProperty('justify-content', 'center', 'important');
+      pill.style.setProperty('text-align', 'center', 'important');
+
+      /* ── Panel ── */
+      var panel = document.createElement('div');
+      panel.className = 'tve-book-panel';
+      panel.id = 'tve-book-panel';
+      panel.hidden = true;
+
+      var tabs = document.createElement('div');
+      tabs.className = 'tve-book-tabs';
+      tabs.setAttribute('role', 'tablist');
+
+      function _tab(label, key) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'tve-book-tab';
+        b.textContent = label;
+        b.setAttribute('role', 'tab');
+        b.dataset.tab = key;
+        tabs.appendChild(b);
+        return b;
+      }
+      var tabH = _tab('🏨 Hotels', 'h');
+      var tabF = _tab('✈️ Flights', 'f');
+      panel.appendChild(tabs);
+
+      function _grid() {
+        var g = document.createElement('div');
+        g.className = 'tve-book-grid';
+        return g;
+      }
+
+      function _field(grid, label, value, type, aria) {
+        var wrap = document.createElement('label');
+        wrap.className = 'tve-book-field';
+        var tag = document.createElement('span');
+        tag.className = 'tve-book-lab';
+        tag.textContent = label;
+        var input = document.createElement('input');
+        input.className = 'tve-book-in';
+        input.type = type || 'text';
+        input.value = value || '';
+        input.setAttribute('aria-label', aria || label);
+        if (type === 'number') { input.min = '1'; input.max = '8'; }
+        wrap.appendChild(tag);
+        wrap.appendChild(input);
+        grid.appendChild(wrap);
+        return input;
+      }
+
+      var gH = _grid();
+      var hDest = _field(gH, 'Destination', place, 'text', 'Hotel destination — city or airport code');
+      var hIn = _field(gH, 'Check-in', _bkISO(inD), 'date', 'Check-in date');
+      var hOut = _field(gH, 'Check-out', _bkISO(outD), 'date', 'Check-out date');
+      var hPax = _field(gH, 'Guests', '2', 'number', 'Number of guests');
+      panel.appendChild(gH);
+
+      var gF = _grid();
+      var fFrom = _field(gF, 'From', '', 'text', 'Origin — city or airport code');
+      var fTo = _field(gF, 'To', destAir || place, 'text', 'Destination — city or airport code');
+      var fDep = _field(gF, 'Depart', _bkISO(inD), 'date', 'Departure date');
+      var fRet = _field(gF, 'Return', _bkISO(outD), 'date', 'Return date');
+      gF.hidden = true;
+      panel.appendChild(gF);
+
+      /* The reader's home airport is typed once, not once per guide. */
+      try {
+        var savedOrigin = localStorage.getItem('tve_book_origin');
+        if (savedOrigin) fFrom.value = savedOrigin;
+      } catch (e) {}
+
+      var go = document.createElement('a');
+      go.className = 'tve-book-go';
+      go.target = '_blank';
+      go.rel = 'noopener';
+      panel.appendChild(go);
+
+      var note = document.createElement('div');
+      note.className = 'tve-book-note';
+      panel.appendChild(note);
+
+      var mode = 'h';
+
+      /* Every field that can carry a code is checked, and the FIRST bad one is
+         named. Returning the offending input (not just a boolean) is what lets
+         the message say "LHX is not an airport code" instead of "check your
+         input" — the reader has to know WHICH box is wrong to fix it. */
+      function _firstBadCode() {
+        var checks = mode === 'h' ? [hDest] : [fFrom, fTo];
+        for (var i = 0; i < checks.length; i++) {
+          var v = checks[i].value.trim();
+          if (v && _bkIsCodeShaped(v) && !_bkValidCode(v, codes)) return checks[i];
+        }
+        return null;
+      }
+
+      function _render() {
+        var bad = _firstBadCode();
+        [hDest, fFrom, fTo].forEach(function (el) { el.classList.remove('tve-book-bad'); });
+
+        if (bad) {
+          bad.classList.add('tve-book-bad');
+          go.classList.add('tve-book-off');
+          go.removeAttribute('href');
+          go.textContent = mode === 'h' ? 'Search on Google Hotels ›' : 'Search on Google Flights ›';
+          note.textContent = '"' + bad.value.trim().toUpperCase() +
+            '" is not an airport code. Use a real code, or type the place name instead.';
+          return;
+        }
+
+        go.classList.remove('tve-book-off');
+        note.textContent = '';
+
+        if (mode === 'h') {
+          var dest = hDest.value.trim() || place;
+          go.href = 'https://www.google.com/travel/search?q=' + encodeURIComponent(dest) +
+            '&checkin=' + hIn.value + '&checkout=' + hOut.value +
+            '&adults=' + (parseInt(hPax.value, 10) || 2);
+          go.textContent = 'Search on Google Hotels ›';
+          note.appendChild(document.createTextNode('Opens Google Hotels in a new tab · '));
+          var mh = document.createElement('a');
+          mh.className = 'tve-book-more';
+          mh.href = base + 'Trip-Essentials/Hotels-Stays.html';
+          mh.textContent = 'Hotels & Stays ›';
+          note.appendChild(mh);
+        } else {
+          var to = fTo.value.trim() || destAir || place;
+          var from = fFrom.value.trim();
+          try { localStorage.setItem('tve_book_origin', from); } catch (e) {}
+          if (!from) {
+            go.classList.add('tve-book-off');
+            go.removeAttribute('href');
+            go.textContent = 'Search on Google Flights ›';
+            note.textContent = 'Add where you are flying from — a city or an airport code.';
+            return;
+          }
+          /* ⚠️ TWO THINGS HERE ARE LOAD-BEARING. Both were measured against the
+             live Google Flights on 2026-08-10, and both look like fussy string
+             formatting until you try the combination that breaks.
+
+             1. WORD ORDER — "from X to Y", never "to Y from X".
+                  "Flights from SEA to HND on … through …" → Seattle to Tokyo ✅
+                  "Flights to HND from SEA on … through …" → generic landing
+                                                page, destination dropped ❌
+                Place names survive either order, so the reversed form tests
+                clean right up until someone types a code.
+
+             2. THE WORD "airport" AFTER A CODE. A bare 3-letter code parses as
+                an origin but not always as a destination:
+                  "from SEA to Kyoto"          → generic landing page ❌
+                  "from SEA airport to Kyoto"  → Seattle to Kyoto      ✅
+                Suffixing every code-shaped token is uniform and verified across
+                all four combinations (code→code, city→city, code→city,
+                city→code), which a narrower "only when mixed" rule was not.
+
+             Both halves of the owner's "a city OR a code, reader's choice" rule
+             depend on these two lines staying exactly as they are. */
+          go.href = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(
+            'Flights from ' + _bkForGoogle(from) + ' to ' + _bkForGoogle(to) +
+            ' on ' + fDep.value + ' through ' + fRet.value);
+          go.textContent = 'Search on Google Flights ›';
+          note.appendChild(document.createTextNode('Opens Google Flights in a new tab · '));
+          var mf = document.createElement('a');
+          mf.className = 'tve-book-more';
+          mf.href = base + 'Trip-Essentials/Airlines-of-the-World.html';
+          mf.textContent = 'Airlines of the World ›';
+          note.appendChild(mf);
+        }
+      }
+
+      function _select(which) {
+        mode = which;
+        tabH.setAttribute('aria-selected', which === 'h' ? 'true' : 'false');
+        tabF.setAttribute('aria-selected', which === 'f' ? 'true' : 'false');
+        gH.hidden = which !== 'h';
+        gF.hidden = which !== 'f';
+        _render();
+      }
+      tabH.addEventListener('click', function () { _select('h'); });
+      tabF.addEventListener('click', function () { _select('f'); });
+
+      [hDest, hIn, hOut, hPax, fFrom, fTo, fDep, fRet].forEach(function (el) {
+        el.addEventListener('input', _render);
+        el.addEventListener('change', _render);
+      });
+
+      /* A disabled-looking <a> with no href is still clickable in some AT; kill
+         the activation outright rather than relying on the missing href. */
+      go.addEventListener('click', function (e) {
+        if (go.classList.contains('tve-book-off')) { e.preventDefault(); }
+      });
+
+      pill.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        /* Re-anchor at click time — same insurance § 36 added after the panel
+           was found stranded when the row moved on warm loads. */
+        if (pill.parentNode && pill.parentNode.nextSibling !== panel) {
+          pill.parentNode.parentNode.insertBefore(panel, pill.parentNode.nextSibling);
+        }
+        var open = panel.hidden;
+        panel.hidden = !open;
+        pill.classList.toggle('tve-book-on', open);
+        pill.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) (mode === 'h' ? hDest : fFrom).focus();
+      });
+
+      /* iOS does not reliably fire :active on <a>; same shim the rest of the row uses. */
+      pill.addEventListener('touchstart', function () {
+        pill.classList.add('tve-pressed');
+        pill.style.setProperty('color', '#fff', 'important');
+        pill.style.setProperty('-webkit-text-fill-color', '#fff', 'important');
+      }, { passive: true });
+      function _bkUnpress() {
+        pill.classList.remove('tve-pressed');
+        pill.style.removeProperty('color');
+        pill.style.removeProperty('-webkit-text-fill-color');
+      }
+      pill.addEventListener('touchend', function () { setTimeout(_bkUnpress, 300); }, { passive: true });
+      pill.addEventListener('touchcancel', _bkUnpress, { passive: true });
+
+      _select('h');
+
+      /* ⚠️ Pill ORDER must not depend on which fetch returns first. This pill
+         and 💱 Currency are both appended from async callbacks, so a plain
+         appendChild in each makes the row order a race — Currency sixth on one
+         load, seventh on the next, visibly reshuffling between page loads on
+         the same guide. Anchoring to Currency instead of appending pins the
+         order whichever way the race falls: if Currency is already there we go
+         before it, and if it arrives later it appends after us. */
+      var curPill = document.getElementById('tve-cur-pill');
+      if (curPill && curPill.parentNode === row) {
+        row.insertBefore(pill, curPill);
+      } else {
+        row.appendChild(pill);
+      }
+      /* SIBLING of the row, never a child: #ics-pill-row is a flex row on
+         desktop and a 2-column grid on mobile, so a block child would be laid
+         out as another pill in both. */
+      row.parentNode.insertBefore(panel, row.nextSibling);
+    }
+
+    function _bkRun() { _bkJSON('tveap', 'airports.json', _bkBuild); }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _bkRun);
+    } else {
+      _bkRun();
     }
   })();
 
