@@ -4581,7 +4581,7 @@ window.TVE.isPhone = function () {
     ] },
     'ljubljana': { h: [
       { name: 'Hotel Cubo', note: 'Independent boutique — design hotel in Old Town pedestrian zone, terrace bar · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/si/cubo.html' },
-      { name: 'InterContinental Ljubljana by IHG', note: 'IHG brand — panoramic spa with indoor pool, rooftop restaurant, city-centre location · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/si/intercontinental-ljubljana.html' },
+      { name: 'Zlata Ladjica Boutique Hotel', note: 'Independent boutique — Jurčičev trg on the river in the Old Town, spa, restaurant and bar, 24h reception · 9.7 Booking.com' , url: 'https://www.booking.com/hotel/si/zlata-ladjica-boutique-ljubljana.html' },
       { name: 'Grand Hotel Union Ljubljana', note: 'Independent — 1905 Art Nouveau landmark on Revolution Square, Congress restaurant, spa with indoor pool, landmark heritage building · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/si/grand-union.html' },
       { name: 'Hotel Vander Urbani Resort', note: 'Independent boutique — Old Town cobblestones, rooftop pool with castle views, Vander kitchen, 16 rooms · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/si/vander-urbani-resort.html' }
     ] },
@@ -5021,16 +5021,16 @@ window.TVE.isPhone = function () {
       { name: 'Four Seasons Hotel Firenze', note: 'Four Seasons — 15th-century Palazzo della Gherardesca, 11-acre private garden with pool, Il Palagio restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/four-seasons-firenze.html' }
     ] },
     'florianopolis': { h: [
-      { name: "Costão do Santinho Resort Golf & Spa", note: "Independent resort — northern Santinho beach, 4.5 km private beachfront, 14 pools, spa, golf, one of Brazil's largest beach resorts · 8.9 Booking.com" },
-      { name: 'Majestic Palace Hotel', note: 'Independent — Beira Mar Norte waterfront, rooftop pool with bay panorama, on-site restaurant, central Florianópolis · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/majestic-palace.html' },
-      { name: 'Blue Tree Premium Florianópolis', note: 'Blue Tree Hotels — Beira Mar Norte, indoor pool and fitness, Saveur restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/blue-tree-premium-florianopolis.html' },
-      { name: 'Costão do Santinho Resort Golf & Spa', note: 'Independent — Santinho Beach north coast, 18-hole golf, six pools, Costão Spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/costao-do-santinho-resort-golf-e-spa.html' }
+      { name: 'LK Design Hotel Florianópolis', note: 'Independent — Rua Bocaiúva above Beira-Mar Norte, rooftop infinity pool over the bay, spa, beachfront · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/lk-design-florianopolis.html' },
+      { name: 'Blue Tree Premium Florianópolis', note: 'Blue Tree Hotels — Rua Bocaiúva off Beira-Mar Norte, rooftop pool, sauna and fitness · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/blue-tree-towers-florianopolis.html' },
+      { name: 'Costão do Santinho Resort Golf & Spa', note: 'Independent — Santinho Beach north coast, 18-hole golf, six pools, Costão Spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/costao-do-santinho-resort-golf-e-spa.html' },
+      { name: 'Majestic Palace Hotel', note: 'Independent — Beira Mar Norte waterfront, rooftop pool with bay panorama, on-site restaurant, central Florianópolis · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/majestic-palace.html' }
     ] },
     'florida-keys': { h: [
-      { name: 'Casa Marina Key West, Curio Collection by Hilton', note: "Hilton Curio brand — 1920 Flagler oceanfront resort, Key West's largest, private beach, two pools, Atlantic-view rooms · 8.5 Booking.com", url: 'https://www.booking.com/hotel/us/casa-marina-resort-the-waldorf-astoria-collection.html' },
-      { name: 'Opal Key Resort & Marina', note: 'Independent luxury — Key West harbour and marina setting, free-form pool, sunset deck, private dock, tropical grounds · 8.6 Booking.com' },
-      { name: 'The Reach Key West, Curio Collection by Hilton', note: 'Hilton Curio brand — Simonton Beach, private beach on the Atlantic, full-service resort, three pools, at the quiet end of Duval Street · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/the-reach-resort-the-waldorf-astoria-colelction.html' },
-      { name: 'Southernmost Beach Resort', note: 'Independent boutique — Atlantic beachfront on South Beach, private beach access, two pools, five-minute walk to Duval Street · 8.3 Booking.com' }
+      { name: 'Simonton Court Historic Inn & Cottages', note: 'Independent — 1880s cigar-workers\u2019 cottages and a conch house off Simonton Street, four pools, adults only \u00b7 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/simonton-court.html' },
+      { name: 'Truman Hotel', note: 'Independent \u2014 Truman Avenue eight blocks off Duval, heated pool and sun deck, 24-hour front desk, on-site parking \u00b7 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/truman.html' },
+      { name: 'Casa Marina Key West, Curio Collection by Hilton', note: "Hilton Curio brand \u2014 1920 Flagler oceanfront resort, Key West's largest, private beach, two pools, Atlantic-view rooms \u00b7 7.8 Booking.com", url: 'https://www.booking.com/hotel/us/casa-marina-resort-the-waldorf-astoria-collection.html' },
+      { name: 'The Reach Key West, Curio Collection by Hilton', note: 'Hilton Curio brand \u2014 Simonton Beach, private beach on the Atlantic, full-service resort, three pools, at the quiet end of Duval Street \u00b7 7.4 Booking.com', url: 'https://www.booking.com/hotel/us/the-reach-resort-the-waldorf-astoria-colelction.html' }
     ] },
     'fortaleza': { h: [
       { name: 'Gran Marquise Hotel', note: 'Independent luxury — Meireles Av. Beira Mar beachfront, rooftop pool with Atlantic views, top-rated address in Fortaleza · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/gran-marquise.html' },
@@ -5039,10 +5039,10 @@ window.TVE.isPhone = function () {
       { name: 'Marina Park Hotel', note: 'Independent — Aldeota waterfront with Fortaleza Bay views, outdoor pool, rooftop bar · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/marina-park.html' }
     ] },
     'foz-do-iguacu': { h: [
-      { name: 'Mabu Thermas Grand Resort', note: 'Independent resort — Foz do Iguaçu city, thermal pool complex, spa, 5 pools, 3km from downtown · 8.8 Booking.com' },
-      { name: 'Bourbon Cataratas Convention & Spa Resort', note: 'Independent full-service resort — 7km from the falls, 3 pools, sports facilities, convention centre · 8.5 Booking.com' },
-      { name: 'Hotel Das Cataratas, A Belmond Hotel', note: 'Belmond brand — the only hotel inside Iguaçu National Park, 1,700m from the falls, outdoor pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/das-cataratas-a-belmond-hotel.html' },
-      { name: 'Rafain Palace Hotel & Convention', note: 'Independent — Porto Canoas zone, outdoor pool and water park, near falls access · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/rafain-palace.html' }
+      { name: 'JL Hotel by Bourbon', note: 'Bourbon Hotéis \u2014 Avenida Costa e Silva north of the centre, outdoor pool, fitness, soundproofed rooms \u00b7 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/bourbon-foz-do-iguacu-business.html' },
+      { name: 'San Rafael Comfort Class Hotel', note: 'Independent \u2014 Rua Almirante Barroso in the city centre, garden and outdoor pool, free parking, kids\u2019 club \u00b7 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/san-rafael-ltda.html' },
+      { name: 'Viale Tower Hotel', note: 'Independent \u2014 Avenida Jorge Schimmelpfeng in the centre, heated rooftop infinity pool over the city \u00b7 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/viale-tower.html' },
+      { name: 'Dom Pedro I Palace Hotel', note: 'Independent \u2014 Av. das Cataratas Km 3 on the road out to the falls, indoor and rooftop pools, tennis, gardens \u00b7 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/dom-pedro-palace.html' }
     ] },
     'frankfurt': { h: [
       { name: 'Steigenberger Frankfurter Hof', note: 'Steigenberger brand — 1876 Kaiserplatz landmark, Michelin-recognized The Faces restaurant, historic grand-hotel address · 8.7 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-frankfurter-hof.html' },
@@ -5059,14 +5059,14 @@ window.TVE.isPhone = function () {
     'geneva': { h: [
       { name: 'Beau-Rivage Geneva', note: 'Independent grand hotel — 1865 Quai du Mont-Blanc lakefront, indoor pool, Michelin-starred Chat Botté restaurant, panoramic lake views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ch/beaurivagegeneva.html' },
       { name: 'Four Seasons Hotel des Bergues Geneva', note: 'Four Seasons brand — 1834 lakeside founding address on the Rhône, private lake pier, spa, Mont Blanc views from upper floors · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ch/four-seasons-geneva.html' },
-      { name: 'Hotel President Wilson', note: 'Marriott Autograph Collection — 1962 Quai Wilson lakefront, largest standard suite in Europe, outdoor pool, panoramic lake and Alps views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ch/president-wilson.html' },
+      { name: 'Hotel President Wilson, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1962 Quai Wilson lakefront, largest standard suite in Europe, outdoor pool, panoramic lake and Alps views · 8.7 Booking.com', url: 'https://www.booking.com/hotel/ch/president-wilson.html' },
       { name: 'Mandarin Oriental Geneva', note: 'Mandarin Oriental brand — Quai Turrettini on the Rhône, spa, two restaurants, five-minute walk to the Old Town and Cathédrale Saint-Pierre · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ch/mandarin-oriental-geneva.html' }
     ] },
     'glacier-national-park': { h: [
       { name: 'Great Northern Resort', note: 'Independent — West Glacier, at the park entrance on US-2, log cabins and lodge rooms modeled after the Glacier Park Chalets, complimentary breakfast, 1 mile from the west gate', url: 'https://www.booking.com/hotel/us/great-northern-resort-lodge.html' },
       { name: 'Firebrand Hotel', note: 'Independent boutique — downtown Whitefish, 26 miles north of the park entrance, rooftop hot tub and terrace, walkable to restaurants and Amtrak station · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/firebrand.html' },
       { name: 'Grouse Mountain Lodge', note: 'Glacier Park Collection — Whitefish, 26 miles north of the park entrance, mountain lodge on the golf course, indoor pool, hot tub and sauna · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/grouse-mountain-lodge.html' },
-      { name: 'The Lodge at Whitefish Lake', note: 'Renaissance Hotels (Marriott family) — Whitefish, 26 miles north of the park, marina resort, outdoor pool, lakefront spa, year-round mountain access · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/lodge-at-whitefish-lake.html' }
+      { name: 'The Lodge at Whitefish Lake', note: 'Independent, Averill Hospitality — Whitefish, 26 miles north of the park, marina resort, outdoor pool, lakefront spa, year-round mountain access · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/lodge-at-whitefish-lake.html' }
     ] },
     'glasgow': { h: [
       { name: 'Kimpton Blythswood Square Hotel', note: 'IHG Kimpton brand — 1820 Georgian townhouse on Blythswood Square, indoor pool, Tempus spa, afternoon tea · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/blythswood-square.html' },
@@ -5211,6 +5211,7 @@ window.TVE.isPhone = function () {
       { name: 'Belmond Miraflores Park', note: 'Belmond brand — Miraflores clifftop overlooking the Pacific, rooftop heated pool with ocean views, full-service spa, 81 rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pe/miraflores-park.html' },
       { name: 'Hotel B', note: 'Small Luxury Hotels of the World — 1914 Republican mansion in Barranco arts district, 17 rooms, curated contemporary art collection, rooftop terrace · 9.5 Booking.com', url: 'https://www.booking.com/hotel/pe/arts-boutique-b.html' },
       { name: 'JW Marriott Hotel Lima', note: 'Marriott JW brand — Miraflores oceanfront tower, Pacific-view rooms, outdoor pool, Fishmar seafood restaurant, steps from Larcomar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pe/jw-marriott-lima.html' },
+      { name: 'SOUMA Hotel · Vignette Collection by IHG', note: 'IHG Vignette Collection — Malecón 28 de Julio in Miraflores, 5-star, rooftop heated pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pe/vignette-collection-souma-hotel.html' },
       { name: 'Country Club Lima Hotel', note: 'Leading Hotels of the World — 1927 San Isidro mansion, 83 rooms, 300+ art pieces from Pedro de Osma Museum, El Perroquet restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/pe/country-club-lima.html' }
     ] },
     'london': { h: [
@@ -5220,8 +5221,8 @@ window.TVE.isPhone = function () {
       { name: 'Mandarin Oriental Hyde Park, London', note: 'Mandarin Oriental brand — 66 Knightsbridge, Dinner by Heston Blumenthal, The Spa at Mandarin Oriental, Hyde Park views · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/gb/mandarin-oriental-hyde-park.html' }
     ] },
     'los-angeles': { h: [
-      { name: 'Pendry West Hollywood', note: 'Montage Hotels — Sunset Strip address, rooftop infinity pool, Chloe restaurant, valet parking · 9.2 Booking.com' },
-      { name: 'Hotel Bel-Air', note: 'Dorchester Collection — 12-acre Bel-Air canyon estate, Swan Lake gardens, spa, celebrity retreat · 9.5 Booking.com' },
+      { name: 'Shutters On The Beach', note: 'Independent — beachfront at 1 Pico Boulevard in Santa Monica, 5-star, spa, outdoor pool and direct sand access · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/shutters-on-the-beach.html' },
+      { name: 'Omni Los Angeles Hotel', note: 'Omni Hotels — 251 South Olive Street on Bunker Hill, rooftop pool, spa and 24h reception, walking distance to The Broad · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/omni-los-angeles.html' },
       { name: 'The Beverly Hills Hotel', note: 'Dorchester Collection — 1912 Pink Palace on Sunset Boulevard, Polo Lounge, bungalows, pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-beverly-hills-hotel.html' },
       { name: 'Sunset Tower Hotel', note: 'Independent — 1931 Art Deco landmark on the Sunset Strip, pool and terrace, Tower Bar restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/sunset-tower-hotel.html' }
     ] },
@@ -5232,14 +5233,15 @@ window.TVE.isPhone = function () {
       { name: 'Grand Velas Los Cabos', note: 'Velas Resorts — beachfront all-inclusive, six restaurants, Se Spa, infinity pool · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mx/grand-velas-los-cabos.html' }
     ] },
     'luang-prabang': { h: [
-      { name: 'Sofitel Luang Prabang', note: 'Sofitel brand — restored French governor\'s residence, two pools, jungle garden, spa · 9.4 Booking.com' },
-      { name: 'Amantaka', note: 'Aman brand — converted colonial compound, pool-equipped suites, complimentary tuk-tuk service into town · 9.6 Booking.com' },
+      { name: 'Le Sen Boutique Hotel', note: 'Independent — Manomai Road in Ban Mano, outdoor pool, spa and gym, 24h reception, airport shuttle · 9.7 Booking.com', url: 'https://www.booking.com/hotel/la/le-sen-boutique.html' },
+      { name: 'La Résidence Phou Vao', note: 'Belmond — hilltop above the town with Phousi views, infinity pool, spa, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/la/la-residence-phou-vao.html' },
       { name: 'Rosewood Luang Prabang', note: 'Rosewood brand — jungle tented resort, 23 elegant tents and villas, waterfall views · 9.5 Booking.com', url: 'https://www.booking.com/hotel/la/rosewood-luang-prabang.html' },
-      { name: 'Le Sen Boutique Hotel', note: 'Independent — Peninsula overlooking Nam Khan River, pool, spa, traditional Lao architecture · 9.3 Booking.com', url: 'https://www.booking.com/hotel/la/le-sen-boutique-hotel.html' }
+      { name: 'Sanctuary Hotel Luang Prabang', note: 'Independent — Kitsalat Road in Ban Aham, outdoor pool, spa and sauna, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/la/sanctuary-luang-prabang.html' },
+      { name: 'Villa Maly Boutique Hotel', note: 'Independent — Oupalath Khamboua Road in Ban That Luang, outdoor pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/la/villa-maly.html' }
     ] },
     'lucerne': { h: [
       { name: 'Palace Luzern', note: 'Independent luxury — 1906 Belle Époque lakefront palace, indoor and outdoor pools, spa, Pilatus and Rigi views · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ch/mandarin-oriental-palace-luzern.html' },
-      { name: 'Bürgenstock Resort Lake Lucerne', note: 'Independent luxury — clifftop above Lake Lucerne, panoramic Alpine spa, Alpine cliff walk, helicopter transfers · 9.2 Booking.com' },
+      { name: 'Hotel Schweizerhof Luzern', note: 'Independent — Schweizerhofquai 3a on the lakefront in the Old Town, spa and sauna, gym, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ch/schweizerhof-luzern.html' },
       { name: 'Art Deco Hotel Montana Luzern', note: 'Independent — hillside above old town, 1910 estate, lake panorama, funicular access · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ch/art-deco-montana.html' },
       { name: 'Hotel des Balances', note: 'Independent — 13th-century guildhall on the Reuss in the Old Town, river-view rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ch/desbalances.html' }
     ] },
