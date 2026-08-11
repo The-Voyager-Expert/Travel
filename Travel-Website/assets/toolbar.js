@@ -5299,7 +5299,7 @@ window.TVE.isPhone = function () {
     ] },
     'manuel-antonio': { h: [
       { name: 'Arenas del Mar Beachfront & Rainforest Resort', note: 'Independent — adults-focused, twin-beach location within national park buffer, infinity pool with forest canopy views · 9.4 Booking.com', url: 'https://www.booking.com/hotel/cr/arenas-del-mar-beachfront-amp-rainforest-resort.html' },
-      { name: 'Tulemar Bungalows & Villas', note: 'Independent boutique — tree-canopy bungalows, private beach within park buffer, jungle-to-sea setting · 9.2 Booking.com' },
+      { name: 'Tulemar Resort', note: 'Independent boutique — tree-canopy bungalows, private beach within park buffer, jungle-to-sea setting · 9.4 Booking.com', url: 'https://www.booking.com/hotel/cr/buena-vista-luxury-villas-and-tulemar-bungalows.html' },
       { name: 'La Mansion Inn', note: 'Independent — hilltop boutique, 20 suites with jungle canopy views, two pools · 9.2 Booking.com', url: 'https://www.booking.com/hotel/cr/la-mansion-inn.html' },
       { name: 'Si Como No Resort & Spa', note: 'Independent — private wildlife refuge, two pools, TreeTops Spa, Claro Que Si restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/cr/si-como-no-resort.html' }
     ] },
