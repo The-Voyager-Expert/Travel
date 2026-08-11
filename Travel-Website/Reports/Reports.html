@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports — Guide My Days Hub</title>
-<!-- built: 2026-08-11 20:28 UTC | backlog: 137 | scouting-open: 46 -->
+<!-- built: 2026-08-11 21:44 UTC | backlog: 137 | scouting-open: 46 -->
 <style>
   :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
     --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
@@ -2222,17 +2222,17 @@ Cost of NOT doing it: anyone who types www. out of habit hits a certificate warn
       <details class="tile">
         <summary>
           <span class="tstatus st-pending">PENDING</span>
-          <span class="ttitle">The venue day-coverage gate reads stop-blocks only — 814 extras entries across 183 guides declare open days with no closed day, and validate clean</span>
+          <span class="ttitle">The venue day-coverage gate still reads stop-blocks only — the 814 bad rows are fixed, but nothing stops the next guide reintroducing them</span>
           <span class="chev">&rsaquo;</span>
         </summary>
         <div class="tbody">
-          <p class="tdetail">Found while restoring closed-day rows on Lima (2026-08-11). The check &#x27;Venue days fully covered — 🏛 open days + 🚫 closed days must account for all 7 days&#x27; only walks stop-block .ticket-box / .tour-box divs. It does not walk .entry-body, which is what every extras section uses — Cappuccino, Restaurants Near Hotel, Downtown, Michelin, Shows, Tours.
+          <p class="tdetail">STATUS 2026-08-11: the DATA is fixed. Commit 1566a192 swept missing closed-day rows into 199 guides, and a fleet re-check over all 1,437 boxes that now carry both a 🏛 and a 🚫 row finds zero with a day on both sides and zero with a gap. Turin&#x27;s Costadoro — the hard case, an entry splitting weekday and weekend hours across two 🏛 rows — is correctly left with no closed row.
 
-CONCRETE CASE: Lima commit e4b3a41d deleted the &#x27;🚫 Closed Sunday&#x27; row from L&#x27;Eau Vive, Bolívar Restobar, R18, Rafael and Maido while leaving each one&#x27;s &#x27;Monday - Saturday …&#x27; hours row standing. The guide validated 892 passed / 0 failed before and after. A reader is told the restaurant&#x27;s hours and never told which day it is shut. The same class of defect DID hard-fail on Fortaleza and Geneva in the same session — because there it happened to land in stop-blocks, where the gate looks.
+WHAT IS STILL OPEN, and it is the part that matters: the gate itself is unchanged. &#x27;Venue days fully covered&#x27; walks stop-block .ticket-box / .tour-box divs and does not walk .entry-body, which is what every extras section uses. So the 814 entries were only ever found by hand, and nothing prevents the next guide build — or the next crib editing an hours row — from reintroducing the defect silently. Lima proved that: commit e4b3a41d deleted the closed-day row from five restaurants and the guide validated 892/0 before and after.
 
-FLEET SCALE, measured over all 237 shipped guides: 183 guides carry at least one extras entry whose 🏛 row names a partial week and which has no 🚫 row at all — 814 entries in total. Worst: Maceió, Salvador, Sydney and Turin at 11 each. (Heuristic scan, so treat 814 as the upper bound; a manual read of a sample would firm it up.)
+THE DECISION: extend the gate to .entry-body, or don&#x27;t. Now that the fleet is clean the cost objection is gone — the sweep that would have turned 183 guides red has already run, so turning the check on should be close to a no-op. The remaining question is whether a closed-day row is genuinely REQUIRED in extras sections or merely conventional; if it is conventional, the Extra Section specs should say so and this can be closed instead.
 
-WHY THIS IS AN OWNER DECISION AND NOT A CRIB FIX: extending the gate to .entry-body would turn ~183 of 237 shipped guides red at once. That strands every crib mid-flight, which is exactly the livelock the 2026-08-09 rule about shared-state checks exists to prevent. The options are (a) add it as a WARN now and promote to hard-fail after a sweep, (b) run a dedicated content sweep first and add the hard-fail behind it, or (c) decide the closed-day row is genuinely optional in extras sections, in which case the Extra Section specs should say so and this is not a defect at all.</p>
+Brain/scripts/fill_closed_day_rows.py exists either way — it derives the row from the hours already on the page, never researches one, and is what verified the fleet above.</p>
           <div class="tmeta"></div>
         </div>
       </details><p class="rules-hint">Scope: CORE RULES edits &middot; toolbar structural changes &middot; new design decisions &middot; stray-file delete approvals. Everything else goes to the To&nbsp;Do&nbsp;List for cribs to resolve. To propose: add an entry to <code>Brain/scripts/open_recs/rules_changes.json</code> and rebuild.</p></div>
