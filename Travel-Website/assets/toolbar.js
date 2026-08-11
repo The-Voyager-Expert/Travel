@@ -5487,9 +5487,9 @@ window.TVE.isPhone = function () {
     ] },
     'palm-desert': { h: [
       { name: 'The Ritz-Carlton, Rancho Mirage', note: 'Ritz-Carlton brand — Coachella Valley hillside, outdoor pools, spa, panoramic desert valley views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-rancho-mirage.html' },
+      { name: 'HOTEL PASEO, Autograph Collection', note: 'Marriott Autograph — on El Paseo in Palm Desert itself, rooftop pool, spa, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/paseo-autograph-collection.html' },
       { name: 'Parker Palm Springs', note: 'Parker brand — 144 acres of vintage desert resort, two pools, Gene Autry\'s former home, Palm Springs style · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/parker-palm-springs.html' },
-      { name: 'JW Marriott Desert Springs Resort & Spa', note: 'Marriott JW brand — Palm Desert resort, five outdoor pools, two golf courses, gondola rides through tropical waterways, full-service spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/jw-marriott-desert-springs-resort.html' },
-      { name: 'La Quinta Resort & Club, Curio Collection by Hilton', note: 'Hilton Curio Collection — 1926 historic resort in La Quinta, 5 championship golf courses, 41 pools, 21 tennis courts, Spanish Colonial Revival architecture · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/la-quinta-resort-club.html' }
+      { name: 'JW Marriott Desert Springs Resort & Spa', note: 'Marriott JW brand — Palm Desert resort, five outdoor pools, two golf courses, gondola rides through tropical waterways, full-service spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/jw-marriott-desert-springs-resort.html' }
     ] },
     'palo-alto': { h: [
       { name: 'Rosewood Sand Hill', note: 'Rosewood brand — 16-acre Menlo Park estate, two outdoor pools, Sense spa, Madera restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-sand-hill-94025.html' },
