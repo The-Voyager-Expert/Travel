@@ -440,7 +440,8 @@
 /* 2026-08-10: REBRAND — The Voyager Expert -> Guide My Days. Site title, mobile hamburger label, PWA apple-mobile-web-app-title and the .ics PRODID all renamed in toolbar.js; manifest name/short_name renamed; 239 pages swept for the old brand string. The wordmark PNG was added to index.html only (above .header, on the page's light background) — deliberately NOT in the toolbar, which is solid terracotta #b85c2a and would swallow the logo's orange script. toolbar.js -> v293. CACHE to v453. */
 /* 2026-08-10: OWNER — desktop site title REMOVED from the bar (its width goes to tabs); tabs now flex-start with an equal 18px gap instead of space-between (which made every gap a different width). New 📋 Also Recommended dropdown carries the 15 pages that previously lived only in the index.html panels — they stay in BOTH surfaces per owner rule, which retires check_also_recommended_excludes_toolbar_pages. Site-wide wordmark injected above the toolbar on every page (170px, right-aligned) since removing the title left every non-index page unbranded. toolbar.js -> v294. CACHE to v454. */
 /* 2026-08-10: OWNER — 🚌 Getting Around + 🚗 Food Delivery render as ONE white card on mobile (<=600px): section background goes white, the title becomes the card header, entry rows sit flush with a hairline instead of a beige gap. Desktop keeps the card-in-a-section side-by-side rows. Same pass, two spacing defects the owner spotted: #hotel-alternatives kept its desktop 24px margin-bottom (it is not in the shared mobile margin rule) and sat 8px lower than every other section; #skip-list sat flush against the card below it. guide-style.css -> v159. CACHE to v485. */
-var CACHE = 'travel-cache-v485';
+/* 2026-08-10: OWNER — ✈️ Flights dropdown re-ordered to documents first (Passport · Global Entry & CLEAR), then the airlines, then Connection Times, then bags, then Lounges; Connection Times moved directly under the flight pages at the owner's call. 🏟️ Sports Calendar -> 🏆: Apple draws U+1F3DF as a tiered arena with a red canopy, which reads as a circus tent at 16px. Scenic Train Journeys and Train Pass Comparison both shipped 2026-08-07 and never carried newSince, so neither rendered the gold NEW badge — added. toolbar.js -> v325. CACHE to v486. */
+var CACHE = 'travel-cache-v486';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -448,7 +449,7 @@ var CACHE = 'travel-cache-v485';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 159, 'toolbar.js': 324, 'mobile.css': 73, 'web-travel-style.css': 20, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 159, 'toolbar.js': 325, 'mobile.css': 73, 'web-travel-style.css': 20, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
