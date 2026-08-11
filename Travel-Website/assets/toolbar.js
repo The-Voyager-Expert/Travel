@@ -5143,7 +5143,7 @@ window.TVE.isPhone = function () {
     ] },
     'keywest': { h: [
       { name: 'Ocean Key Resort & Spa', note: 'Curio Collection by Hilton — Sunset Key views at Zero Duval, rooftop pool, private dock access, steps from Mallory Square sunset · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/ocean-key-resort-spa-key-west-florida.html' },
-      { name: 'The Marker Key West Harbor Resort', note: 'Autograph Collection by Marriott — Old Town historic district, three pools including adults-only, marina access, tropical gardens · 9.0 Booking.com' },
+      { name: 'The Marker Key West Harbor Resort', note: 'Autograph Collection by Marriott — Old Town historic district, three pools including adults-only, marina access, tropical gardens · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/po-the-marker-key-west-harbor-resort.html' },
       { name: 'The Gardens Hotel', note: 'Independent — 1875 Old Town estate, lush tropical gardens, pool, afternoon wine included · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/gardens-hotel.html' },
       { name: 'Pier House Resort & Spa', note: 'Independent — Duval Street waterfront, sunset cruise access, spa, Chart Room bar · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/pier-house-resort-spa.html' }
     ] },
