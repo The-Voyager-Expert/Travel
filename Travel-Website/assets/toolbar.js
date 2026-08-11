@@ -5160,10 +5160,10 @@ window.TVE.isPhone = function () {
       { name: 'Qubus Hotel Kraków', note: 'Qubus Hotels — Wisła Riverfront opposite Wawel Castle, riverside views, outdoor terrace, modern amenities · 8.7 Booking.com' , url: 'https://www.booking.com/hotel/pl/qubus-krakow.html' }
     ] },
     'kyoto': { h: [
-      { name: 'The Ritz-Carlton, Kyoto', note: 'Ritz-Carlton brand — Nakagyo District on the Kamogawa River, indoor infinity pool with garden views, full-service spa, Michelin-recognized MIZUKI restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/jp/the-ritz-carlton-kyoto.html' },
-      { name: 'Aman Kyoto', note: 'Aman brand — private forested hillside north of Kinkaku-ji, 26 pavilion-style rooms, onsen bath circuit, garden-set outdoor pool · 9.7 Booking.com' },
-      { name: 'Hyatt Regency Kyoto', note: 'Hyatt brand — Higashiyama district, Touzan Bar, all-day dining, traditional garden · 9.1 Booking.com', url: 'https://www.booking.com/hotel/jp/hyatt-regency-kyoto.html' },
-      { name: 'Tawaraya Ryokan', note: 'Independent — the city\'s most historic ryokan (1717), kaiseki dinner served in room, private garden · 9.6 Booking.com' }
+      { name: 'THE THOUSAND KYOTO', note: 'Independent — Shimogyo Ward beside Kyoto Station, 5-star, spa and wellness centre, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/jp/the-thousand-kyoto.html' },
+      { name: 'The Royal Park Hotel Iconic Kyoto', note: 'Royal Park Hotels — Nakagyo Ward on Kawaramachi, 5-star, public bath, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/jp/za-roirupakuhoteru-aikonitukujing-du.html' },
+      { name: 'Hotel The Celestine Kyoto Gion', note: 'Celestine Hotels — Higashiyama Ward in Gion, 5-star, machiya-style courtyard, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/jp/the-celestine-kyoto-gion.html' },
+      { name: 'Hyatt Regency Kyoto', note: 'Hyatt brand — Higashiyama Ward by Sanjusangendo, 5-star, spa and wellness centre, 24h reception · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jp/hyatt-regency-kyoto.html' }
     ] },
     'la-jolla': { h: [
       { name: 'Lodge at Torrey Pines', note: 'Independent AAA Five Diamond — clifftop Arts & Crafts lodge above Torrey Pines State Reserve, two pools, A.R. Valentien restaurant, direct Torrey Pines golf access · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/us/the-lodge-at-torrey-pines.html' },
