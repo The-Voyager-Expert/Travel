@@ -781,8 +781,19 @@ window.TVE.isPhone = function () {
        space in proportion to nothing). With the site title gone the row no
        longer needs to fill the bar, so: flex-start + a fixed gap, and
        width:auto so the row is exactly as wide as its tabs. */
+    /* GAP — owner 2026-08-11, "these need to spread out more". Raised from
+       clamp(4px,0.42vw,6px), which was itself shaved on 2026-08-09 to stop
+       Recommended wrapping. The shave was aimed at the wrong constraint: the
+       row is shrink-to-fit (.tb-inner is flex:0 1 auto) inside a .tb that is
+       justify-content:center, so the leftover space is not the row's to run
+       out of — at 1439px the tabs measured 1317.5px inside a 1439px bar, 121px
+       of it unused. The gap grows into that instead of the tabs shrinking.
+       Ceiling checked against the tightest one-line case, 1500px (below that
+       the max-width:1499px rule lets the row wrap by design): 14 tabs measure
+       1219.5px, plus 13 x 14px of gap = 1401.5px against 1480px available.
+       Do not raise the 14px cap without re-measuring at 1500px. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:clamp(4px,0.42vw,6px);align-items:center;justify-content:flex-start;min-width:0}' +
+      'gap:clamp(6px,0.9vw,14px);align-items:center;justify-content:flex-start;min-width:0}' +
     /* Between the hamburger (<=1260px) and ~1500px the desktop tab row does not
        fit: it measures 1414px, plus the theme toggle that is now its last tab.
        Let it wrap. The toggle is inside .tb-links, so it wraps WITH the tabs

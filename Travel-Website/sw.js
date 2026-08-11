@@ -510,7 +510,14 @@
    column now the 2.5px border is not paying for it, and the 15px clock <svg> gained
    vertical-align:-0.16em — it was on the baseline, riding high against its own label.
    toolbar.js -> v360. CACHE v524. */
-var CACHE = 'travel-cache-v524';
+/* 2026-08-11: Toolbar tab row — gap clamp(4px,0.42vw,6px) -> clamp(6px,0.9vw,14px) (owner:
+   "these need to spread out more give more space between this tabs"). The 2026-08-09 shave
+   targeted the wrong constraint: .tb-links is shrink-to-fit inside a centred .tb, so the
+   leftover bar width was never the row's to run out of — 121px sat unused at 1439px. The gap
+   grows into that rather than the tabs shrinking, so icons and padding are untouched. Ceiling
+   set by the tightest one-line case, 1500px: 1421.5px needed against 1480px available.
+   toolbar.js -> v361. CACHE v525. */
+var CACHE = 'travel-cache-v525';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -518,7 +525,7 @@ var CACHE = 'travel-cache-v524';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 360, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 361, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
