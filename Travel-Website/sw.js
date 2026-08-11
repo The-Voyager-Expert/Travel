@@ -448,7 +448,8 @@
 /* 2026-08-10: OWNER — ✈️ Flights dropdown re-ordered again: Airlines · Delta Seattle Hub · Delta Full Network · Connection Times · US Lounges · EU Lounges · Global Entry & CLEAR · Baggage · Luggage Storage · Passport. The lounges now follow Connection Times (both are what you do between flights), and the documents drop to the end. toolbar.js -> v329. CACHE to v491. */
 /* 2026-08-10: OWNER — the "Updated {date}" stamp on non-guide pages goes back to the top on DESKTOP: a right-aligned line just under the banner, styled by the shared .updated-stamp rule (the documented pattern, still hand-coded on Currency-Guide and Lounges-Europe). End-of-page is the MOBILE treatment and stays exactly as it was ≤600px — on desktop it landed inside the "Also on this site" strip, under that strip's own top border and a few pixels below the pill row, so a page-level date read as a caption of the last pill. Guides are untouched: their bottom stamp is a real desktop design (.tve-stamp-row reserves 120px for the day-jump pills). toolbar.js -> v330. CACHE to v492. */
 /* 2026-08-10: OWNER — no nav arrows on desktop. The floating ↑ scroll-top FAB is now MOBILE-ONLY (hidden ≥601px in both guide-style.css and web-travel-style.css) — a desktop reader has a scrollbar, a wheel and Home, so the button only floated over the content. Same treatment #tve-bo-jump already had. The guide wishlist FAB was stacked on top of it at bottom:116px and would have been left hanging with a 56px hole under it, so it re-seats onto the day-jump pill at 68px (panel 168 -> 120). guide-style.css -> v160, web-travel-style.css -> v22, toolbar.js -> v331. CACHE to v493. */
-var CACHE = 'travel-cache-v493';
+/* 2026-08-10: OWNER — the desktop rule widens from "no nav arrows" to the whole floating family: "all the pills are showing on desktop!" on a guide still carrying the 📅 N days pill. Hidden ≥601px now: .day-jump-btn + .day-jump-overlay and .tve-scroll-top (guide-style.css), and #tve-wl-fab + #tve-wl-panel (toolbar.js). Desktop keeps the scrollbar, Home, and the Trip Overview day list, so nothing floats over the content; the stop-header stars still save at any width, only the review panel is mobile-only. A desktop guide now has ZERO position:fixed controls. guide-style.css -> v161, toolbar.js -> v332. CACHE to v494. */
+var CACHE = 'travel-cache-v494';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -456,7 +457,7 @@ var CACHE = 'travel-cache-v493';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 160, 'toolbar.js': 331, 'mobile.css': 74, 'web-travel-style.css': 22, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 161, 'toolbar.js': 332, 'mobile.css': 74, 'web-travel-style.css': 22, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

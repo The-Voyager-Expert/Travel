@@ -7573,7 +7573,13 @@
       '@media(max-width:600px){' +
       '#tve-wl-fab{bottom:108px;right:16px;}' +
       '#tve-wl-panel{bottom:160px;right:16px;}' +
-      '}';
+      '}' +
+      /* OWNER RULE 2026-08-10: no floating pill shows on desktop — this one goes
+         with the ↑ FAB and the day-jump pill (both hidden ≥601px in
+         guide-style.css). The star buttons in the stop headers are unaffected,
+         so saving still works at any width; only the floating review panel is
+         mobile-only. */
+      '@media(min-width:601px){#tve-wl-fab,#tve-wl-panel{display:none!important;}}';
     (document.head || document.documentElement).appendChild(_wlCss);
 
     /* ── SVG templates ───────────────────────────────────────────────────── */
