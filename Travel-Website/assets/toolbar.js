@@ -8393,18 +8393,34 @@ window.TVE.isPhone = function () {
   function _injectRowMarks() {
     if (!isRealGuide) return;
     var MARKS = {
-      '📍': 'pin',    /* 📍 */
-      '🚶': 'walk',   /* 🚶 */
-      '🚕': 'ride',   /* 🚕 */
-      '🚗': 'ride',   /* 🚗 — a few guides author the car, same mark */
-      '🚐': 'van',    /* 🚐 — tour hotel-pickup row, 548 fleet-wide */
-      '🏨': 'hotel'   /* 🏨 — the other half of that row */
+      '📍': 'pin',
+      '🚶': 'walk',
+      '🚕': 'ride',
+      '🚗': 'ride',       /* a few guides author the car — same mark */
+      '🚐': 'van',        /* tour hotel-pickup row, 548 fleet-wide */
+      '🏨': 'hotel',      /* the other half of that row */
+      /* extras-sub rows. The survey is closed: across the fleet these rows
+         lead with exactly six glyphs — 📅 2342 · 🚕 375 · 🚊 148 · 🚄 56 ·
+         🚢 29 · 🚎 17 — so covering them leaves no mixed state in that band. */
+      '📅': 'calendar',
+      '🚊': 'van',        /* tram — the van shape is a boxy vehicle front and */
+      '🚎': 'van',        /* trolleybus — reads for all three at 15px */
+      '🚄': 'train',
+      '🚢': 'ship',
+      /* Tour/Day-Trip stat row: "⏳ 5 hr 30 min · 👥 Small group". */
+      '⏳': 'hourglass',
+      '👥': 'people'
     };
-    /* Trailing ️ is swallowed into the match so the variation selector
-       rides along inside the hidden span rather than being left behind to
-       render as a stray box. 🏨 is U+1F3E8, a \uD83C lead — hence two
-       alternatives rather than one character class. */
-    var RE = /(\uD83D[\uDCCD\uDEB6\uDE95\uDE97\uDE90]|🏨)️?/g;
+    /* Built FROM MARKS rather than hand-written. The previous hand-kept
+       pattern had to be edited in lockstep with the table and the two leads
+       differ (📍 is \uD83D, 🏨 is \uD83C, ⏳ is BMP), which is exactly the kind
+       of edit that silently half-lands. Add a row to MARKS and the matcher
+       follows. Trailing ️ is swallowed into the match so the variation
+       selector rides inside the hidden span instead of being left behind to
+       render as a stray box. */
+    var RE = new RegExp('(' + Object.keys(MARKS).map(function (k) {
+      return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }).join('|') + ')️?', 'g');
 
     function markRow(row) {
       if (row.getAttribute('data-gm-marked')) return;
@@ -8451,13 +8467,22 @@ window.TVE.isPhone = function () {
        what keeps prose out: a .stop-row of description text is not a direct
        child of any of them.
 
-       NOT included, deliberately: .extras-title / .extras-sub section headings,
-       where a glyph is the section's own icon under Icon Order and Format.html
-       and not a row mark, and the floating "currently reading" strip, which
-       builds its own '📍 ' text in _injectStopStrip. */
+       .extras-sub IS a row and is included — it is the per-entry heading that
+       carries "🚕 Uber", "📅 1. {tour name}", "🚊 {tram line}". Its glyph is a
+       row mark in every sense: it labels one entry, not a section.
+
+       NOT included, deliberately: .extras-title, and the floating "currently
+       reading" strip which builds its own '📍 ' text in _injectStopStrip. An
+       .extras-title glyph is the SECTION's identity — and that set is mixed
+       food/transport/misc (🍮 🚌 🫕 📅 🚗 🍽 ☕ 🗓 🚆 🎭 ⛲ 🏓 ❗), of which only
+       the vehicles have marks. Drawing that subset would leave a drawn bus
+       beside an emoji fork, which reads worse than leaving the band alone; the
+       titles also pair with the section pills at the top of the guide, so the
+       two surfaces have to move together or not at all. */
     [].forEach.call(
       document.querySelectorAll('.tour-box > div,.ticket-box > div,' +
-                                '.entry-body > div,.station-box > div,.shows-box > div'),
+                                '.entry-body > div,.station-box > div,.shows-box > div,' +
+                                '.extras-sub'),
       function (row) {
         var t = row.textContent.trimStart(), m;
         RE.lastIndex = 0;

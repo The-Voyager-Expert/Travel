@@ -544,7 +544,20 @@
    swapped from a hand-drawn bed to the toolbar's own `neighborhoods` shape (owner: "we have a
    hotel! go top toolbar") — it is the Where to Stay tab icon, so lodging reads the same
    everywhere. guide-style.css -> v169. CACHE v528. */
-var CACHE = 'travel-cache-v528';
+/* 2026-08-11: Row marks extended to the extras rows (owner: "next one do the calendar for the
+   tours" + "here we also have cars for getting around and food delivery" + the tour stat row).
+   Five new masks — calendar, hourglass, people, train, ship — and .extras-sub joins the scanned
+   rows: it is a per-entry heading ("🚕 Uber", "📅 1. {tour}", "🚊 {line}"), a row mark in every
+   sense. That band is a CLOSED set fleet-wide — 📅 2342 · 🚕 375 · 🚊 148 · 🚄 56 · 🚢 29 · 🚎 17
+   — so all six are covered and nothing mixed is left in it. Tram and trolleybus reuse the van
+   shape, a boxy vehicle front that reads for all three at 15px. .extras-title stays on emoji by
+   design: that set is mixed food/transport/misc and only its vehicles have marks, so drawing the
+   subset would put a drawn bus beside an emoji fork — and the titles pair with the section pills,
+   which have to move with them or not at all. RE is now built FROM the MARKS table instead of
+   hand-kept; the leads differ (\uD83D, \uD83C, BMP) and the hand-written pattern was one
+   lockstep edit away from silently half-landing. 177 marks on Buenos Aires, no unresolved masks.
+   guide-style.css -> v170. toolbar.js -> v364. CACHE v529. */
+var CACHE = 'travel-cache-v529';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -552,7 +565,7 @@ var CACHE = 'travel-cache-v528';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 169, 'toolbar.js': 363, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 170, 'toolbar.js': 364, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
