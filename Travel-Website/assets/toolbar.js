@@ -601,10 +601,17 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: 'Sunrise & Sunset', full: 'Sunrise & Sunset', icon: 'sunset' },
       ] },
     null,
+    /* Icons added 2026-08-11 (owner: "climate finder and when to go also need
+       their icons back") — this was the one dropdown whose children rendered
+       bare while every sibling group drew one. NOT a structural change: no
+       entry added, removed, renamed, reordered or re-nested, and
+       TOOLBAR_ITEMS_LOCK records depth|href only, so the lock is untouched and
+       still enforced. The same icons now flow to the "Also on this site"
+       footer pills, which resolve from ITEMS first. */
     { group: '🌤️ Weather', groupIcon: 'sun', children: [
-        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate' },
-        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City' },
-        { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go' },
+        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'globe' },
+        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'sun' },
+        { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
       ] },
     null,
     { group: '🛡️ Safety', groupIcon: 'insurance', children: [

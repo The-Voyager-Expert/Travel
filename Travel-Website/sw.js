@@ -639,7 +639,15 @@
    gold Apple star mid-sentence. New sweep restricted to ⭐. (4) Sparkle much fatter and taller —
    it was nearly invisible at 15px. (5) The three flat cards drop 28px of bottom padding to 16px.
    guide-style.css -> v176. toolbar.js -> v371. CACHE v536. */
-var CACHE = 'travel-cache-v536';
+/* 2026-08-11: Weather dropdown children draw icons — Browse by Climate (globe), Browse by City
+   (sun), When to Go (calendar). Owner: "climate finder and when to go also need their icons
+   back". It was the one group whose children rendered bare while every sibling group drew one,
+   because those three ITEMS entries carry no `icon` field. NOT a structural toolbar change: no
+   entry added, removed, renamed, reordered or re-nested, and TOOLBAR_ITEMS_LOCK records
+   depth|href only — the lock is untouched and still enforced. The same icons now also reach the
+   "Also on this site" footer pills, which resolve from ITEMS first.
+   toolbar.js -> v372. CACHE v537. */
+var CACHE = 'travel-cache-v537';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -647,7 +655,7 @@ var CACHE = 'travel-cache-v536';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 371, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 372, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
