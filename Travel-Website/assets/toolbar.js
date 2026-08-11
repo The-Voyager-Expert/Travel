@@ -357,6 +357,7 @@ window.TVE.isPhone = function () {
      glance; these are not. Adding an `icon:` key also exempts the child from
      check_toolbar_group_icon_consistency's shared-emoji rule — the SVG IS the
      icon, so there is no leading emoji left to match against. */
+  var NAV_VIEWBOX = {"chart": "2.48 2.48 19.05 19.05","clock": "0.10 0.10 23.81 23.81","disney-parks": "-0.20 -0.45 24.40 24.40","entry-req": "0.10 0.10 23.81 23.81","festival-finder": "0.10 -0.90 23.81 23.81","first-timer": "-1.10 -1.60 26.19 26.19","globe": "0.10 0.10 23.81 23.81","insurance": "-1.21 -1.11 26.43 26.43","laptop": "-2.29 -2.29 28.57 28.57","list": "0.14 -0.82 23.71 23.71","luggage": "0.10 -0.40 23.81 23.81","map": "1.29 1.29 21.43 21.43","money": "0.10 0.10 23.81 23.81","neighborhoods": "1.02 1.72 20.95 20.95","passport": "0.10 0.10 23.81 23.81","plane": "-0.32 0.03 24.64 24.64","rental-cars": "1.29 2.29 21.43 21.43","restaurants": "0.10 0.10 23.81 23.81","safety-guide": "-1.21 -1.11 26.43 26.43","scams": "0.10 0.10 23.81 23.81","sun": "-1.10 -1.10 26.19 26.19","sunset": "-1.04 -1.54 26.07 26.07","tap-water": "0.51 0.26 22.98 22.98","tours-tickets": "0.10 0.10 23.81 23.81","travel-apps": "-1.10 -1.10 26.19 26.19","trophy": "1.29 0.79 21.43 21.43","vaccines": "-0.20 -1.10 23.81 23.81","visas": "0.10 0.10 23.81 23.81","train": "0.10 -0.90 23.81 23.81","hotel": "1.79 1.29 21.43 21.43"};
   var NAV_ICONS = {
     'safety-guide': '<path d="M12 1 3 5v6.1c0 5.6 3.8 10.8 9 12.1 5.2-1.3 9-6.5 9-12.1V5l-9-4zm0 2.2 7 3.1v4.8c0 4.5-3 8.8-7 10-4-1.2-7-5.5-7-10V6.3l7-3.1z"/><path d="M11 6.8h2v6.4h-2zM11 15h2v2h-2z"/>',
     'vaccines':     '<path d="M16.3 1.3 15 2.6l1.6 1.6-2 2-2.6-2.6-1.3 1.3 1 1-6.6 6.6a3 3 0 0 0-.8 1.5l-.7 3.1-1.9 1.9 1.3 1.3 1.9-1.9 3.1-.7a3 3 0 0 0 1.5-.8l6.6-6.6 1 1 1.3-1.3-2.6-2.6 2-2L20.4 6l1.3-1.3-5.4-3.4zm-1.7 8.3-2.2 2.2-1.4-1.4-1.2 1.2 1.4 1.4-1.3 1.3-1.4-1.4-1.2 1.2 1.4 1.4-.6.6a1.2 1.2 0 0 1-.6.3l-2.2.5.5-2.2a1.2 1.2 0 0 1 .3-.6l6.3-6.3 2.2 2.2z"/>',
@@ -396,13 +397,13 @@ window.TVE.isPhone = function () {
   /* Build the inline SVG for a NAV_ICONS entry. A plain string is filled
      markup; { stroke:true, m } is a stroked icon and needs the opposite
      wrapper (fill:none + a stroke colour) or it renders as a solid blob. */
-  function iconSVG(entry, size) {
+  function iconSVG(entry, size, key) {
     var stroked = entry && typeof entry === 'object' && entry.stroke;
     var markup  = stroked ? entry.m : entry;
     var attrs   = stroked
       ? 'fill="none" stroke="var(--rust,#b85c2a)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"'
       : 'fill="var(--rust,#b85c2a)"';
-    return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" ' + attrs +
+    return '<svg viewBox="' + (NAV_VIEWBOX[key] || '0 0 24 24') + '" width="' + size + '" height="' + size + '" ' + attrs +
            ' aria-hidden="true">' + markup + '</svg>';
   }
 
@@ -416,7 +417,7 @@ window.TVE.isPhone = function () {
       el.classList.add('tb-has-ico');
       var is = document.createElement('span');
       is.className = 'tb-ico';
-      is.innerHTML = iconSVG(ico, 15);
+      is.innerHTML = iconSVG(ico, 15, entry.icon);
       el.appendChild(is);
     }
     var lb = document.createElement('span');
@@ -513,9 +514,9 @@ window.TVE.isPhone = function () {
       ]},
     null,
     { group: '✈️ Flights', groupIcon: 'plane', children: [
-        { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: 'Airlines', newSince: '2026-08-09' },
-        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: 'Delta Seattle Hub' },
-        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: 'Delta Full Network' },
+        { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: 'Airlines', icon: 'plane', newSince: '2026-08-09' },
+        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: 'Delta Seattle Hub', icon: 'plane' },
+        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: 'Delta Full Network', icon: 'plane' },
         { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'clock', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: 'EU Lounges',        icon: 'laptop' },
@@ -787,7 +788,7 @@ window.TVE.isPhone = function () {
        flex:1 is what pushes the badge to the right edge, not space-between. */
     '.tb-menu a.tb-has-ico.tb-has-new{gap:9px;justify-content:flex-start}' +
     '.tb a.tb-has-ico{display:inline-flex;align-items:center;gap:5px}' +
-    '.tb-ico{flex-shrink:0;display:inline-flex;align-items:center;line-height:0;transform:translateY(-1px)}' +
+    '.tb-ico{flex-shrink:0;display:inline-flex;align-items:center;line-height:0}' +
     '.tb-menu a.tb-has-new{display:flex;align-items:center;justify-content:space-between;gap:12px}' +
     '.tb-new,.tb-ham-new{flex-shrink:0;font-size:7.5px;font-weight:700;letter-spacing:.07em;' +
       'text-transform:uppercase;padding:1px 4px;border-radius:3px;line-height:12px;' +
@@ -873,6 +874,7 @@ window.TVE.isPhone = function () {
        destinations; print is reachable from the browser's own Print. */
     '@media (min-width: 601px), (pointer: fine) {#tve-back-guides{display:none!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
+    '@media (pointer: fine){.tb-theme-toggle{position:absolute;top:10px;right:16px;margin-right:0}}' +
     '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
       'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#7a3b1e;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
@@ -1029,7 +1031,7 @@ window.TVE.isPhone = function () {
         labelText = labelText.replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || labelText;
         var gs = document.createElement('span');
         gs.className = 'tb-ico';
-        gs.innerHTML = iconSVG(gico, 15);
+        gs.innerHTML = iconSVG(gico, 15, item.groupIcon);
         btn.appendChild(gs);
       }
       lab.textContent = labelText;
@@ -1107,7 +1109,7 @@ window.TVE.isPhone = function () {
       a.classList.add('tb-has-ico');
       var fs = document.createElement('span');
       fs.className = 'tb-ico';
-      fs.innerHTML = iconSVG(fico, 15);
+      fs.innerHTML = iconSVG(fico, 15, item.icon);
       a.appendChild(fs);
       var fl = document.createElement('span');
       fl.textContent = (item.text || '').replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || item.text;
@@ -1298,7 +1300,7 @@ window.TVE.isPhone = function () {
        appears — the toggle ended up back beside a wordmark with no menu. */
     var _navMq = window.matchMedia('(max-width: 1260px) and (pointer: coarse)');
     function placeThemeToggle() {
-      var host = _navMq.matches ? bar : (bar.querySelector('.tb-links') || bar);
+      var host = bar;   /* always the bar — pinned top-right on desktop by CSS */
       if (themeBtn.parentNode !== host) host.appendChild(themeBtn);
     }
     bar.appendChild(themeBtn);
@@ -1355,7 +1357,7 @@ window.TVE.isPhone = function () {
       var a2 = document.createElement('a');
       a2.href = item.href;
       a2.textContent = item.full || item.text;
-      if (item.href.split('/').pop() === curr) a2.className = 'tb-active';
+      if (item.href.split('/').pop() === curr) a2.classList.add('tb-active');
       hamMenu.appendChild(a2);
       /* OWNER-DIRECTED 2026-07-20: My Trips — injected mobile-only, right under Guides.
          DO NOT REMOVE. brain_check hard-fails if this injection is missing. See Toolbar.html § 18b + Cleanliness Checks Rule 569. */
@@ -1364,13 +1366,13 @@ window.TVE.isPhone = function () {
         var sepTrips = document.createElement('div'); sepTrips.className = 'tb-ham-sep'; hamMenu.appendChild(sepTrips);
         aTrips.href = base + 'Trip-Essentials/Trips.html';
         aTrips.textContent = '✈️ My Trips';
-        if ('Trips.html' === curr) aTrips.className = 'tb-active';
+        if ('Trips.html' === curr) aTrips.classList.add('tb-active');
         hamMenu.appendChild(aTrips);
         /* OWNER-DIRECTED 2026-07-20: Travel Stats — mobile-only, right under My Trips. (File was Personal-Stats.html until 2026-07-28.) */
         var aPS = document.createElement('a');
         aPS.href = base + 'Trip-Essentials/Travel-Stats.html';
         aPS.textContent = '📊 Travel Stats';
-        if ('Travel-Stats.html' === curr) aPS.className = 'tb-active';
+        if ('Travel-Stats.html' === curr) aPS.classList.add('tb-active');
         hamMenu.appendChild(aPS);
       }
       firstItem = false;
@@ -1445,7 +1447,7 @@ window.TVE.isPhone = function () {
       var a = document.createElement('a');
       a.href = base + 'Trip-Essentials/' + p[1];
       a.textContent = p[0];
-      if (p[1] === curr) a.className = 'tb-active';
+      if (p[1] === curr) a.classList.add('tb-active');
       hamMenu.appendChild(a);
     });
   }());
@@ -1473,7 +1475,7 @@ window.TVE.isPhone = function () {
       var a = document.createElement('a');
       a.href = base + 'Trip-Essentials/' + p[1];
       a.textContent = p[0];
-      if (p[1] === curr) a.className = 'tb-active';
+      if (p[1] === curr) a.classList.add('tb-active');
       hamMenu.appendChild(a);
     });
   }());
