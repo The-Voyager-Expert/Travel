@@ -1363,7 +1363,7 @@
   /* Wordmark lives INSIDE the bar. Desktop is unchanged: .tb wraps and the logo
      takes a full-width first line, so it still sits above the tabs. MOBILE puts
      it inline with the hamburger — on mobile every nav item is inside the menu,
-     so the bar was holding nothing but a ☰ and was pure decoration. One row now:
+     so the bar was holding nothing but the menu icon and was pure decoration.
      brand left, menu right. Inserted here, not at bar assembly: tveBrandLogo is
      declared with var below, so an append there is a silent no-op. */
   if (tveBrandLogo) bar.insertBefore(tveBrandLogo, bar.firstChild);
@@ -6347,7 +6347,8 @@
         var a = document.createElement('a');
         a.className = 'also-in-country-pill';
         a.href = '../' + g.dir + '/' + g.slug;
-        a.textContent = '🗺️ ' + g.city;
+        /* City name ONLY — no map glyph (owner rule 2026-08-10, Rule 815). */
+        a.textContent = g.city;
         pills.appendChild(a);
       });
       wrap.appendChild(h);
