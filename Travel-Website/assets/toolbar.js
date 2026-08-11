@@ -383,20 +383,16 @@
         { href: base + 'Trip-Essentials/Best-Kids-Friendly-Places.html',          text: '🏆 Kid-Friendly Destinations' },
         { href: base + 'Trip-Essentials/Best-Kids-Museums.html',                  text: "🏆 Kids' Museums" },
         { href: base + 'Trip-Essentials/Best-Lakes.html',                         text: '🏆 Lakes' },
-        { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',         text: '🏆 Luxurious Hotels' },
         { href: base + 'Trip-Essentials/Best-Mountains-and-Rock-Formations.html', text: '🏆 Mountains & Rock Formations' },
         { href: base + 'Trip-Essentials/Best-Museums.html',                       text: '🏆 Museums' },
         { href: base + 'Trip-Essentials/Best-National-Parks-by-Country.html',     text: '🏆 National Parks' },
         { href: base + 'Trip-Essentials/Best-Natural-Phenomena.html',             text: '🏆 Natural Phenomena' },
         { href: base + 'Trip-Essentials/Best-Observation-Decks.html',             text: '🏆 Observation Decks' },
-        { href: base + 'Trip-Essentials/Best-Resorts.html',                       text: '🏆 Resorts' },
         { href: base + 'Trip-Essentials/Best-Safari.html',                        text: '🏆 Safari' },
         { href: base + 'Trip-Essentials/Best-Scuba-Diving.html',                  text: '🏆 Scuba Diving' },
         { href: base + 'Trip-Essentials/Best-Ski-Resorts.html',                   text: '🏆 Ski Resorts' },
         { href: base + 'Trip-Essentials/Best-Surfing.html',                       text: '🏆 Surfing' },
-        { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html',       text: '🏆 Ultra Luxurious Resorts' },
         { href: base + 'Trip-Essentials/Best-UNESCO-Sites.html',                  text: '🏆 UNESCO Sites' },
-        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',                 text: '🏆 Unique Hotels' },
         { href: base + 'Trip-Essentials/Best-Unique-Museums.html',                text: '🏆 Unique Museums' },
         { href: base + 'Trip-Essentials/Best-Volcanoes.html',                     text: '🏆 Volcanoes' },
         { href: base + 'Trip-Essentials/Best-Wine-Regions.html',                  text: '🏆 Wine Regions' },
@@ -1196,20 +1192,16 @@
       ['Kid-Friendly Destinations', 'Best-Kids-Friendly-Places.html'],
       ["Kids' Museums",             'Best-Kids-Museums.html'],
       ['Lakes',                     'Best-Lakes.html'],
-      ['Luxurious Hotels',          'Best-Most-Luxurious-Hotels.html'],
       ['Mountains & Rock Formations','Best-Mountains-and-Rock-Formations.html'],
       ['Museums',                   'Best-Museums.html'],
       ['National Parks',            'Best-National-Parks-by-Country.html'],
       ['Natural Phenomena',         'Best-Natural-Phenomena.html'],
       ['Observation Decks',         'Best-Observation-Decks.html'],
-      ['Resorts',                   'Best-Resorts.html'],
       ['Safari',                    'Best-Safari.html'],
       ['Scuba Diving',              'Best-Scuba-Diving.html'],
       ['Ski Resorts',               'Best-Ski-Resorts.html'],
       ['Surfing',                   'Best-Surfing.html'],
-      ['Ultra Luxurious Resorts',   'Best-Ultra-Luxurious-Resorts.html'],
       ['UNESCO Sites',              'Best-UNESCO-Sites.html'],
-      ['Unique Hotels',             'Best-Unique-Hotels.html'],
       ['Unique Museums',            'Best-Unique-Museums.html'],
       ['Volcanoes',                 'Best-Volcanoes.html'],
       ['Wine Regions',              'Best-Wine-Regions.html'],
@@ -2181,10 +2173,21 @@
       btn.type = 'button';
       btn.className = 'overview-toggle-btn';
       var expanded = true;
+      /* Only a section that carries its OWN control can be collapsed — a
+         `> .extras-title` (extras / Worth Knowing / hotel alternatives) or a
+         `> .day-header` (day block). Without one there is nothing to click to
+         bring the content back. #skip-list is exactly that case: a title-less
+         italic footnote. Collapsing it hid its "Skipping: …" line permanently
+         and left the section's 36px top margin + 14px collapsed padding behind
+         as ~50px of blank space (owner spotted it 2026-08-10). Same gate as the
+         mobile auto-collapse in _sectionCollapse. */
+      function _hasCollapseControl(el) {
+        return !!el.querySelector(':scope > .extras-title, :scope > .day-header');
+      }
       function getTargets() {
         return Array.from(document.querySelectorAll(
           '.day-block, .extras-section, .worth-knowing, #hotel-alternatives'
-        ));
+        )).filter(_hasCollapseControl);
       }
       function render() {
         btn.textContent = expanded ? '▲ Collapse' : '▼ Expand';
@@ -8224,10 +8227,21 @@
         });
       });
       /* Collapse all extras sections by default on mobile (≤768px).
-         guide-style.css already defines .extras-section.collapsed (lines 1062-1069). */
+         guide-style.css already defines .extras-section.collapsed (lines 1062-1069).
+
+         ONLY sections that got a collapse control above (dataset.collapseInited)
+         may be collapsed — a section with no `> .extras-title` has nothing to
+         click, so collapsing it hides its content with no way to bring it back.
+         #skip-list is exactly that: a title-less italic footnote. It was being
+         collapsed here, so on every guide its "Skipping: …" line was invisible on
+         mobile while the section still occupied its 36px top margin and the 14px
+         collapsed padding — ~50px of blank space between Worth Knowing and
+         Alternative Hotel Recommendations, which is what the owner spotted
+         2026-08-10. Gate on the control, not on an ID blacklist, so the next
+         title-less section can't reintroduce it. */
       if (window.innerWidth <= 768) {
         document.querySelectorAll('.extras-section').forEach(function (sec) {
-          if (sec.id !== 'nearby-guides') sec.classList.add('collapsed');
+          if (sec.dataset.collapseInited && sec.id !== 'nearby-guides') sec.classList.add('collapsed');
         });
       }
 
@@ -9844,8 +9858,15 @@
         '@media (hover:hover){.tve-stf-chip:hover{background:var(--c-pill-hover);' +
         'border-color:var(--c-pill-bd-hover);}}' +
         '.tve-stf-chip:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;}' +
+        /* #fff, not #b85c2a — the gradient's own midpoint IS #b85c2a, so terracotta
+           text on it renders at ~1:1 contrast and the selected chip's label
+           disappears (owner spotted "All 24" unreadable on Buenos Aires,
+           2026-08-10). Every other element on the site that takes this fill pairs
+           it with white: .pkl-chip.on, .pkl-nav a.active, .country-chip.active,
+           .dest-card:hover, #btn-my-trips:active. The dark-theme variant below
+           already got this right (#f5efe6). */
         '.tve-stf-chip.is-on{background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
-        'border-color:#b85c2a;color:#7a3b1e;}' +
+        'border-color:#b85c2a;color:#fff;}' +
         '.tve-stf-chip.is-on .tve-stf-n{opacity:.85;}' +
         '@media (hover:hover){.tve-stf-chip.is-on:hover{' +
         'background:linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%);' +
