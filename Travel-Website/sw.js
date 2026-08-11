@@ -442,7 +442,8 @@
 /* 2026-08-10: OWNER — 🚌 Getting Around + 🚗 Food Delivery render as ONE white card on mobile (<=600px): section background goes white, the title becomes the card header, entry rows sit flush with a hairline instead of a beige gap. Desktop keeps the card-in-a-section side-by-side rows. Same pass, two spacing defects the owner spotted: #hotel-alternatives kept its desktop 24px margin-bottom (it is not in the shared mobile margin rule) and sat 8px lower than every other section; #skip-list sat flush against the card below it. guide-style.css -> v159. CACHE to v485. */
 /* 2026-08-10: OWNER — ✈️ Flights dropdown re-ordered to documents first (Passport · Global Entry & CLEAR), then the airlines, then Connection Times, then bags, then Lounges; Connection Times moved directly under the flight pages at the owner's call. 🏟️ Sports Calendar -> 🏆: Apple draws U+1F3DF as a tiered arena with a red canopy, which reads as a circus tent at 16px. Scenic Train Journeys and Train Pass Comparison both shipped 2026-08-07 and never carried newSince, so neither rendered the gold NEW badge — added. toolbar.js -> v325. CACHE to v486. */
 /* 2026-08-10: land three finished-but-never-committed toolbar changes that were stranded in the working tree on a copy of toolbar.js predating five shipped commits — committing that file whole would have reverted them, so this is a 3-way merge of the stranded work onto HEAD. (1) The four lodging pages (Luxurious Hotels, Unique Hotels, Resorts, Ultra Luxurious Resorts) leave the 🏆 Best Of dropdown and its BEST_OF list — they moved to 🏨 Where to Stay yesterday and were listed twice. (2) Section collapse is gated on the section owning a control (`> .extras-title` or `> .day-header`): #skip-list is a title-less footnote, so collapsing it hid its "Skipping: …" line with nothing to click to bring it back, leaving ~50px of blank space on mobile. Both the Collapse-all button and the mobile auto-collapse now gate on it. (3) .tve-stf-chip.is-on takes color:#fff — the gradient's own midpoint is #b85c2a, so the terracotta label sat at ~1:1 on its own background and vanished ("All 24" unreadable on Buenos Aires). toolbar.js -> v326. CACHE to v487. */
-var CACHE = 'travel-cache-v487';
+/* 2026-08-10: OWNER — the mobile floating back pill drops its arrow and reads plain "Back" (the ← duplicated what the button already means). ✈️ Airlines of the World renamed to ✈️ Airlines everywhere the label shows: the Flights dropdown row, the page <h1> and <title>, the diagram-tree link and its two search-index titles. The filename stays Airlines-of-the-World.html — renaming it would break every existing link and the search-index URLs. toolbar.js -> v327. CACHE to v488. */
+var CACHE = 'travel-cache-v488';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -450,7 +451,7 @@ var CACHE = 'travel-cache-v487';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 159, 'toolbar.js': 326, 'mobile.css': 73, 'web-travel-style.css': 20, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 159, 'toolbar.js': 327, 'mobile.css': 73, 'web-travel-style.css': 20, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

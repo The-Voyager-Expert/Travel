@@ -416,7 +416,7 @@
     { group: '✈️ Flights', children: [
         { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: '🛂 Global Entry & CLEAR' },
-        { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: '✈️ Airlines of the World', newSince: '2026-08-09' },
+        { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: '✈️ Airlines', newSince: '2026-08-09' },
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
         { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: '⏱️ Connection Times', newSince: '2026-08-07' },
@@ -1723,7 +1723,7 @@
 
       var backPill = document.createElement('button');
       backPill.id = 'tve-nav-back';
-      backPill.textContent = '← Back';
+      backPill.textContent = 'Back';
       backPill.addEventListener('click', function () { history.back(); });
 
       document.body.appendChild(backPill);
