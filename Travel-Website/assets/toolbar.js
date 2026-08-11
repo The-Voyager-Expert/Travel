@@ -1809,9 +1809,6 @@
     function repositionUpdatedStamp() {
       var upd = document.querySelector('.title-page .title-updated') || document.querySelector('.title-updated');
       if (!upd) return;
-      /* Already anchored under the banner (non-guide desktop, see _injectUpdated) —
-         leave it there; the bottom-of-page move is the mobile treatment. */
-      if (upd.classList.contains('updated-stamp')) return;
       var ids = ['tve-best-of-crosslinks', 'also-in-country', 'nearby-guides', 'also-on-this-site'];
       var last = null;
       ids.forEach(function(id) {
@@ -2363,23 +2360,16 @@
     else document.addEventListener('DOMContentLoaded', injectAltitudeBanner);
   }
 
-  /* ── Best Of pages: stamp above terracotta line, arrows below it ─────────── */
+  /* ── Best Of pages: prev/next arrows below the terracotta line ───────────── */
   var isBestOf = /\/Trip-Essentials\/Best-/.test(location.pathname) && (prevHref || nextHref);
   if (isBestOf) {
     function injectBestOfArrows() {
       var header = document.querySelector('.page-header');
       if (!header) return;
 
-      /* Move .updated-stamp inside .page-header so it sits right of the h1,
-         above the terracotta border-bottom line */
-      var stamp = document.querySelector('.updated-stamp');
-      if (stamp) {
-        stamp.style.cssText = 'font-size:11px;color:var(--muted);margin:0;' +
-          'flex-shrink:0;padding-left:16px;align-self:flex-end;letter-spacing:0.01em;';
-        header.appendChild(stamp);
-      }
-
-      /* Arrow row injected AFTER .page-header — visually below the terracotta line. */
+      /* Arrow row injected AFTER .page-header — visually below the terracotta line.
+         The "Updated {date}" stamp used to be moved into the header here; it now
+         lives at the bottom-left of every page (owner rule 2026-08-10). */
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;' +
         'gap:12px;margin:6px 0 4px;';
@@ -2516,6 +2506,9 @@
      Non-guide pages: injects .title-updated at the END of body — always the
        true visual bottom even on stats pages where .wrap closes early. Style
        and mobile padding are set inline; no separate repositioning needed.
+     Bottom-left on EVERY page and EVERY viewport (owner rule 2026-08-10) — there
+       is no desktop under-the-banner variant, and the class that marked one is
+       retired. Spec: Brain/Reference/Toolbar-Nav/Toolbar.html Sec 10.
      No attribute → no stamp (silent). Spec: Brain/Reference/Toolbar.html § 10. */
   var _updated = mount ? (mount.dataset.updated || '') : '';
   if (_updated) {
@@ -2535,27 +2528,19 @@
         ? 'Updated ' + _MONTHS[mo - 1] + ' ' + dy + ', ' + yr
         : 'Updated ' + _MONTHS[mo - 1] + ' ' + yr;
       var tp = document.querySelector('.title-page');
-      var _hdr = tp ? null : document.querySelector('.page-header');
-      var _wide = !(window.matchMedia && window.matchMedia('(max-width: 600px)').matches);
       if (tp) {
         tp.appendChild(el);
-      } else if (_wide && _hdr && _hdr.parentNode) {
-        /* Non-guide pages, DESKTOP: the documented site pattern — a discrete
-           right-aligned stamp just under the banner, styled entirely by the
-           shared .updated-stamp rule in web-travel-style.css (no inline styles).
-           End-of-page placement is a MOBILE idea: on desktop the stamp landed
-           inside the "Also on this site" strip, below its top border and a few
-           pixels under the pill row, so it read as a caption of the last pill
-           instead of page metadata. The .updated-stamp class also tells
-           repositionUpdatedStamp() to leave it where it is. */
-        el.className = 'title-updated updated-stamp';
-        _hdr.parentNode.insertBefore(el, _hdr.nextSibling);
       } else {
-        /* Non-guide pages, MOBILE (or no .page-header): inject at end of body so
-           the stamp always lands at the true visual bottom (stats pages close
-           .wrap early). padding-left is set via inline style; mobile override
-           injected as a <style> tag. */
-        el.style.cssText = 'display:block;font-size:11px;color:#9a948a;margin:0 0 20px;padding-left:32px;text-align:left;';
+        /* Non-guide pages, ALL viewports: inject at end of body so the stamp
+           always lands at the true visual bottom, left-aligned (stats pages
+           close .wrap early). Matches the guide treatment, where the stamp
+           sits after the last section. padding-left is set via inline style;
+           mobile override injected as a <style> tag. */
+        /* margin-top clears the "Also on this site" strip: that strip has no
+           bottom padding, so a zero-margin stamp butts straight onto its last
+           pill row and reads as a caption of the last pill rather than page
+           metadata. */
+        el.style.cssText = 'display:block;font-size:11px;color:#9a948a;margin:18px 0 20px;padding-left:32px;text-align:left;';
         document.body.appendChild(el);
         /* Mobile: shrink padding-left to match .wrap mobile gutter (14px). */
         if (!document.getElementById('tve-stamp-mobile-style')) {
