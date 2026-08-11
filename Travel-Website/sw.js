@@ -669,7 +669,14 @@
    drawn icon. 45 glyphs mapped to NAV_ICONS; ✓ and ✕ deliberately excluded as text glyphs with
    their own locked treatment. iconSVG not a .gm-mk mask — the mask classes live in
    guide-style.css, which the index does not load. toolbar.js -> v373. CACHE v540. */
-var CACHE = 'travel-cache-v540';
+/* 2026-08-11: .sibling-pill joins the href-resolved icon pass — the cross-links a Trip-Essentials
+   page carries to its siblings ("Weather by city", "When to go", "Festival finder", "Sports
+   calendar"), 17 pages. Unlike the footer pills these were never stripped by either emoji sweep;
+   they simply never had an icon and sat bare beside rows that now draw one (owner: "these lost
+   icons too"). Same href resolution as the footer pills, so there is no second mapping to keep in
+   sync, and external targets (weather.com, windy.com …) resolve to nothing and stay text.
+   toolbar.js -> v374. CACHE v541. */
+var CACHE = 'travel-cache-v541';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -677,7 +684,7 @@ var CACHE = 'travel-cache-v540';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 373, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

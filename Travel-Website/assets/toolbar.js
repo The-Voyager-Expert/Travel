@@ -8751,7 +8751,15 @@ window.TVE.isPhone = function () {
   }
 
   function _injectAlsoOnSiteIcons() {
-    var pills = document.querySelectorAll('.also-on-this-site-pill');
+    /* .sibling-pill is the same idea under another class — the cross-links a
+       Trip-Essentials page carries to its siblings ("Weather by city", "When to
+       go", "Festival finder", "Sports calendar") across 17 pages. Neither emoji
+       sweep touched those files, so unlike the footer pills these were never
+       stripped; they simply never had an icon, and sat bare next to rows that
+       now draw one (owner 2026-08-11: "these lost icons too"). Same href
+       resolution, so no second mapping to keep in sync. External targets
+       (weather.com, windy.com …) resolve to nothing and stay text. */
+    var pills = document.querySelectorAll('.also-on-this-site-pill,.sibling-pill');
     if (!pills.length) return;
 
     /* ITEMS is the first source, but most of its entries carry no `icon` field
@@ -8793,6 +8801,8 @@ window.TVE.isPhone = function () {
       'Travel-Apps.html': 'travel-apps', 'Travel-Insurance.html': 'insurance',
       'Travel-Packing.html': 'packing', 'Trusted-Traveler.html': 'trusted',
       'Vaccines.html': 'vaccines', 'World-Map.html': 'globe',
+      'Africa-Stats.html': 'chart',
+      'Oceania-Stats.html': 'chart',
       'Before-You-Go.html': 'luggage'
     };
     /* ITEMS wins where it has an opinion, so a nav icon change follows here. */
