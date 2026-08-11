@@ -676,6 +676,11 @@
    icons too"). Same href resolution as the footer pills, so there is no second mapping to keep in
    sync, and external targets (weather.com, windy.com …) resolve to nothing and stay text.
    toolbar.js -> v374. CACHE v541. */
+/* 2026-08-11: the guide calendar export stamped the retired brand into every event id
+   (UID:…-day1@voyager-expert). Now @guidemydays.com — the last old-brand string in shipped
+   output after the domain migration. Cosmetic: the UID already carries a timestamp, so each
+   export is unique either way and no previously-imported event is affected.
+   toolbar.js -> v375. CACHE v547. */
 /* 2026-08-11: THIRD pass on the filled chips, and the first two were mine to get wrong. Both
    earlier sweeps matched LINE BY LINE, so any rule written across multiple lines — selector on
    one line, `background: linear-gradient(...)` on the next — was never seen. The first dry run
@@ -741,7 +746,7 @@
    asked for; flattening it would merge the categories. Destination-Records is already uniform at
    40px. Verified no horizontal overflow and side margins unchanged on every page touched.
    web-travel-style.css -> v27. CACHE v546. */
-var CACHE = 'travel-cache-v546';
+var CACHE = 'travel-cache-v547';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -749,7 +754,7 @@ var CACHE = 'travel-cache-v546';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 27, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 375, 'mobile.css': 76, 'web-travel-style.css': 27, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

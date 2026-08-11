@@ -3079,7 +3079,7 @@ window.TVE.isPhone = function () {
         });
         var desc = descParts.length ? _esc(descParts.join('\n\n')) : '';
         out.push('BEGIN:VEVENT');
-        out.push('UID:' + _ts + '-day' + day.num + '@voyager-expert');
+        out.push('UID:' + _ts + '-day' + day.num + '@guidemydays.com');
         out.push('DTSTART;VALUE=DATE:' + _fmtDate(d0));
         out.push('DTEND;VALUE=DATE:' + _fmtDate(d1));
         out.push('SUMMARY:' + summary);
