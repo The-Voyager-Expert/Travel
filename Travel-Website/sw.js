@@ -791,7 +791,8 @@
 /* 2026-08-11: hotel-rehome — palm-desert HOTEL_ALT_DATA: the guide's own hotel was listed as an alternative to itself (La Quinta Resort & Club, Curio Collection by Hilton). Removed and replaced with HOTEL PASEO, Autograph Collection 9.3. toolbar.js -> v387. CACHE to v559. */
 /* 2026-08-11: hotel-rehome — phuket HOTEL_ALT_DATA: Amanpuri carried a 9.5 Booking score with no url and has no Booking.com listing (the name resolves to an unrelated Bali guesthouse). Replaced with Arco Phuket Town 9.5, which is in Phuket Town beside the guide's new base. toolbar.js -> v388. CACHE to v560. */
 /* 2026-08-11: hotel-rehome — palawan HOTEL_ALT_DATA: three of four entries had no url and no resolvable Booking listing (Amanpulo, El Nido Miniloc, Two Seasons Coron). Rebuilt on Puerto Princesa properties that do resolve — The Funny Lion 9.3, Mongki's 9.2, Carpe Diem 9.0 — with El Nido Pangulasian kept. toolbar.js -> v389. CACHE to v561. */
-var CACHE = 'travel-cache-v561';
+/* 2026-08-11: hotel-rehome — malibu HOTEL_ALT_DATA: Nobu Hotel Malibu had no url (no Booking listing found). Replaced with The Surfrider Malibu 9.0 which has a valid url. marrakech HOTEL_ALT_DATA: La Mamounia had no url (not on Booking). Replaced with Mandarin Oriental, Marrakech 9.1. toolbar.js -> v390. CACHE to v562. */
+var CACHE = 'travel-cache-v562';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -799,7 +800,7 @@ var CACHE = 'travel-cache-v561';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 389, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 390, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

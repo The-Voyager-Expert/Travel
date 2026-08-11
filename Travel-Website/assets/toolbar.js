@@ -5294,7 +5294,7 @@ window.TVE.isPhone = function () {
       { name: 'Velaa Private Island', note: 'Independent — Noonu Atoll, 45 residences with private pools, Aragu restaurant · 9.6 Booking.com', url: 'https://www.booking.com/hotel/mv/velaa-private-island.html' }
     ] },
     'malibu': { h: [
-      { name: 'Nobu Hotel Malibu', note: 'Nobu Hospitality — Pacific Coast Highway beachfront, Nobu Restaurant on-site, rooftop pool · 9.0 Booking.com' },
+      { name: 'The Surfrider Malibu', note: 'Independent boutique — 23033 Pacific Coast Highway opposite Malibu Pier, rooftop deck and restaurant, ocean-view rooms, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-surfrider-malibu.html' },
       { name: 'Malibu Beach Inn', note: 'Independent boutique — Carbon Beach ("Billionaire\'s Beach"), 47 rooms each with ocean-view private balcony · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/malibu-beach-inn.html' },
       { name: 'Calamigos Guest Ranch and Beach Club', note: 'Independent — Malibu Canyon 5 acres, pool, horseback riding, farm-to-table dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/calamigos-guest-ranch.html' },
       { name: 'Malibu Country Inn', note: 'Independent — Point Dume area, ocean view from pool deck, fire pits, romantic 16-room inn · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/malibu-country-inn.html' }
@@ -5318,7 +5318,7 @@ window.TVE.isPhone = function () {
       { name: 'Landhotel Zur Post Marktoberdorf', note: 'Independent — Marktoberdorf centre, classic Allgäu country hotel, good base for Neuschwanstein and Füssen day trips · 8.1 Booking.com' , url: 'https://www.booking.com/hotel/de/landhotel-zur-post.html' }
     ] },
     'marrakech': { h: [
-      { name: 'La Mamounia', note: 'Independent luxury — 1923 legend on 17 acres of palace gardens, three pools, six restaurants, hammam · 9.4 Booking.com' },
+      { name: 'Mandarin Oriental, Marrakech', note: 'Independent luxury — 20 acres of olive groves and rose gardens off the Route du Golf Royal, private-pool villas, indoor and outdoor pools, spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ma/mandarin-oriental-marrakech.html' },
       { name: 'Royal Mansour Marrakech', note: 'Independent ultra-luxury — private riads with plunge pools, 2,500 sq m spa, three restaurants · 9.7 Booking.com', url: 'https://www.booking.com/hotel/ma/royal-mansour-marrakech.html' },
       { name: 'Amanjena', note: 'Aman brand — Route de Ouarzazate rose-pink pavilions, two pools, hammam, golf access · 9.5 Booking.com', url: 'https://www.booking.com/hotel/ma/amanjena.html' },
       { name: 'Kasbah Tamadot', note: 'Virgin Limited Edition — Atlas Mountain retreat, Berber tents, pool with mountain panorama · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ma/kasbah-tamadot.html' }
