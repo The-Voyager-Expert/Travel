@@ -594,7 +594,23 @@
    started taking the brand terracotta. Base rule, the 24h variant and the chevron all move to
    #b85c2a; verified text and clock both compute to rgb(184,92,42). Dark mode already overrode
    both to its own pair and is untouched. toolbar.js -> v368. CACHE v533. */
-var CACHE = 'travel-cache-v533';
+/* 2026-08-11: Three follow-ups on the drawn marks. (1) CSS-INJECTED TITLES — fifteen section
+   titles are written by guide-style.css as `#tours .extras-title:empty::before { content: "📅
+   Tours" }`. Pseudo-element content is not in the DOM, so the walker could never see those
+   glyphs and those headers were the last ones still on emoji. materialiseTitle() reads the
+   computed ::before and writes it back as real text; the element stops being :empty, the rule
+   stops applying, and the normal mark path takes over. (2) NO REPEATED ICON — an .extras-sub in
+   a section whose header carries a mark now hides its glyph and draws nothing (owner: "lets not
+   repeat the icon below only in the header" · "same for the train station"). Test is ANY header
+   mark, not an identical one: Train Stations pairs 🚆 with 🚊 and Getting Around 🚌 with 🚕, so a
+   same-glyph test left both repeating. (3) ONE WHITE CARD, three sections only — owner scoped it
+   to "weekly, food delivery, getting around", the ones whose entries are a single line. Every
+   multi-line section keeps the 2026-08-06 card-in-a-section design, so
+   check_card_in_section_layout's invariants are untouched and still enforced. Also: eight pill
+   masks (sun, sunset, plug, money, safety-guide, visas, chart, language) reusing the toolbar
+   icons of the pages they link to, 🏘 → the neighbourhoods house, and a much heavier ❗.
+   guide-style.css -> v174. toolbar.js -> v369. CACHE v534. */
+var CACHE = 'travel-cache-v534';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -602,7 +618,7 @@ var CACHE = 'travel-cache-v533';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 173, 'toolbar.js': 368, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 174, 'toolbar.js': 369, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

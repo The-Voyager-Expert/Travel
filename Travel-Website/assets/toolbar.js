@@ -8452,7 +8452,23 @@ window.TVE.isPhone = function () {
       '🎭': 'theatre',      /* Shows */
       '❗': 'bang',          /* Heads Up */
       '✨': 'sparkle',      /* Worth Knowing */
-      '💥': 'burst'         /* Also on this site */
+      '💥': 'burst',        /* Also on this site */
+      /* "Also on this site" pills + the title-card facts. Every one of these
+         links to a Trip-Essentials page that ALREADY has a toolbar icon, so
+         they reuse it verbatim — the pill and the nav entry for the same page
+         now draw the same shape. 🏘 takes the neighbourhoods house (owner
+         2026-08-11: "no idea what this icon is i cant see it" — the Apple
+         glyph is three tiny houses, illegible at 15px). */
+      '🌤': 'sun',
+      '🌅': 'sunset',
+      '🔌': 'plug',
+      '💰': 'money',
+      '🛡': 'safety-guide',
+      '🪪': 'visas',
+      '📊': 'chart',
+      '🗣': 'language',
+      '🕐': 'clock',        /* Time Zones pill · the local-time chip */
+      '🏘': 'hotel'         /* Which neighborhood to stay in */
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
        pattern had to be edited in lockstep with the table and the two leads
@@ -8465,7 +8481,35 @@ window.TVE.isPhone = function () {
       return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }).join('|') + ')️?', 'g');
 
-    function markRow(row) {
+    /* CSS-INJECTED TITLES. Fifteen section titles are not DOM text at all —
+       guide-style.css writes them with `#tours .extras-title:empty::before {
+       content: "📅 Tours" }`. Pseudo-element content is not in the DOM, so the
+       walker below cannot see those glyphs and those headers were the ones
+       still showing emoji after every other surface was drawn.
+
+       Reading the computed content and writing it back as real text fixes it in
+       one move: the element stops being :empty, so the ::before rule stops
+       applying, and the normal mark path then treats it like any other title.
+       The collapse chevron is ::after and is unaffected. */
+    function materialiseTitle(t) {
+      if (t.childNodes.length) return;                 /* already real text */
+      var c = getComputedStyle(t, '::before').content;
+      if (!c || c === 'none' || c === 'normal') return;
+      c = c.replace(/^"|"$/g, '').replace(/\\([0-9a-f]{1,6}) ?/gi, function (_, h) {
+        return String.fromCodePoint(parseInt(h, 16));
+      });
+      if (c.trim()) t.textContent = c;
+    }
+
+    /* `bare` hides the glyph WITHOUT drawing a mark in its place. Used for an
+       .extras-sub whose section header already carries the same mark: Train
+       Stations repeated the train on every station and Getting Around the car
+       on every ride app, so the column read as one icon stamped down the page
+       (owner 2026-08-11: "lets not repeat the icon below only in the header" ·
+       "same for the train station leave the icon only on the tile"). The glyph
+       still stays in the DOM inside .gm-mk-src — textContent is unchanged here
+       for exactly the same reasons as everywhere else. */
+    function markRow(row, bare) {
       if (row.getAttribute('data-gm-marked')) return;
       /* The band's own source rows are display:none and _upgradeStopHours
          parses them — leave them exactly as authored. Marking them would gain
@@ -8485,10 +8529,12 @@ window.TVE.isPhone = function () {
         RE.lastIndex = 0;
         while ((m = RE.exec(s))) {
           if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
-          var mk = document.createElement('span');
-          mk.className = 'gm-mk gm-mk-' + MARKS[m[1]];
-          mk.setAttribute('aria-hidden', 'true');
-          frag.appendChild(mk);
+          if (!bare) {
+            var mk = document.createElement('span');
+            mk.className = 'gm-mk gm-mk-' + MARKS[m[1]];
+            mk.setAttribute('aria-hidden', 'true');
+            frag.appendChild(mk);
+          }
           var src = document.createElement('span');
           src.className = 'gm-mk-src';
           src.textContent = m[0];          /* keeps textContent identical */
@@ -8532,12 +8578,37 @@ window.TVE.isPhone = function () {
     [].forEach.call(
       document.querySelectorAll('.tour-box > div,.ticket-box > div,' +
                                 '.entry-body > div,.station-box > div,.shows-box > div,' +
-                                '.extras-sub,.overview-extra-link,.extras-title'),
+                                '.extras-sub,.overview-extra-link,.extras-title,' +
+                                '.also-on-this-site-pill,.open-now-local-time'),
       function (row) {
+        /* CSS-injected titles carry their glyph in a ::before, invisible to the
+           walker — turn them into real text before testing. No-op elsewhere. */
+        if (row.classList.contains('extras-title')) materialiseTitle(row);
         var t = row.textContent.trimStart(), m;
         RE.lastIndex = 0;
         m = RE.exec(t);
-        if (m && m.index === 0) markRow(row);
+        if (!m || m.index !== 0) return;
+        /* An .extras-sub repeating its own section header's mark is noise: the
+           column reads as one icon stamped down the page. Hide the glyph and
+           draw nothing (owner 2026-08-11). Different mark = genuinely different
+           information, so it stays. */
+        var bare = false;
+        if (row.classList.contains('extras-sub')) {
+          var sec = row.closest('.extras-section,.worth-knowing');
+          var title = sec && sec.querySelector('.extras-title');
+          if (title) {
+            materialiseTitle(title);
+            var ht = title.textContent.trimStart(), hm;
+            RE.lastIndex = 0;
+            hm = RE.exec(ht);
+            /* ANY mark on the header is enough — not just an identical one.
+               Train Stations pairs a 🚆 header with 🚊 entries and Getting
+               Around a 🚌 header with 🚕 entries, so a same-glyph test left both
+               repeating down the column, which is the thing being removed. */
+            if (hm && hm.index === 0) bare = true;
+          }
+        }
+        markRow(row, bare);
       });
   }
   if (document.readyState === 'loading') {
