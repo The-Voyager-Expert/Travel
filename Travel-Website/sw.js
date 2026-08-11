@@ -797,7 +797,8 @@
 /* 2026-08-11: hotel-rehome — pokhara HOTEL_ALT_DATA: Pavilions Himalayas quoted 9.3 Booking.com with no url and its Booking listing shows no review score at all; replaced with Temple Himalaya Hotel & Spa 9.2. Fish Tail Lodge's url was a dead slug (fishtail-lodge) and its 8.9 was not the listing's number — corrected to fish-tail-lodge and 8.3. toolbar.js -> v393. CACHE to v565. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['marseille'] offered the InterContinental Hotel Dieu as an alternative to itself once the title card moved there; replaced by Les Bords de Mer, 9.1 on Booking, independent, on the Corniche. toolbar.js -> v394. CACHE to v566. */
 /* 2026-08-11: hotel-rehome — portland HOTEL_ALT_DATA rebuilt on Booking-verified properties: The Benson Hotel and The Heathman have no Booking.com listing at all (both quoted a score with no url; the Heathman's was an Expedia number), and Hotel deLuxe's 8.7 is actually 7.9. Replaced with Inn at Northrup Station 9.1, Cambria Pearl District 9.0 and Silver Cloud 9.0; The Nines corrected from a TripAdvisor 4.4 to its Booking 9.0. toolbar.js -> v395. CACHE to v567. */
-var CACHE = 'travel-cache-v567';
+/* 2026-08-11: hotel-rehome — aracaju HOTEL_ALT_DATA offered the Vidam, its own title-card hotel, as an alternative to itself, and that entry's url pointed at a Radisson listing that does not resolve on Booking; replaced with Del Mar Hotel 9.0. Quality Hotel Aracaju's quoted 8.8 corrected to the 9.0 on its live listing. toolbar.js -> v396. CACHE to v568. */
+var CACHE = 'travel-cache-v568';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -805,7 +806,7 @@ var CACHE = 'travel-cache-v567';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 395, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 396, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
