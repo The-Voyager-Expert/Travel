@@ -5546,10 +5546,10 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Minerva Pisa', note: 'Independent — Art Nouveau building, panoramic roof terrace, 3-min walk from the Leaning Tower · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-minerva-pisa.html' }
     ] },
     'pokhara': { h: [
-      { name: 'Pavilions Himalayas', note: 'Independent boutique — eco-luxury farm retreat on Annapurna foothills, Phewa Lake views, organic farm produce · 9.3 Booking.com' },
+      { name: 'Temple Himalaya Hotel & Spa', note: 'Independent — Street No. 13 in Lakeside, outdoor pool, sauna, 24h reception, free airport shuttle · 9.2 Booking.com', url: 'https://www.booking.com/hotel/np/temple-himalaya-amp-spa.html' },
       { name: 'Temple Tree Resort & Spa', note: 'Independent — Lakeside district, Phewa Lake views, pool, Himalayan spa treatments · 8.8 Booking.com', url: 'https://www.booking.com/hotel/np/temple-tree-resort.html' },
       { name: 'Tiger Mountain Pokhara Lodge', note: 'Tiger Mountain — hillside eco-lodge, panoramic Annapurna and Machhapuchhre views, trekking base · 9.3 Booking.com', url: 'https://www.booking.com/hotel/np/tiger-mountain-pokhara-lodge.html' },
-      { name: 'Fish Tail Lodge', note: 'Independent — private island in Phewa Lake reached by rope ferry, gardens, pool with Fishtail Mountain views · 8.9 Booking.com', url: 'https://www.booking.com/hotel/np/fishtail-lodge.html' }
+      { name: 'Fish Tail Lodge', note: 'Independent — peninsula in Phewa Lake reached by rope ferry, gardens, pool with Fishtail Mountain views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/np/fish-tail-lodge.html' }
     ] },
     'portland': { h: [
       { name: 'The Benson Hotel, Autograph Collection', note: 'Marriott Autograph Collection — 1912 downtown landmark, Circassian walnut-paneled lobby, The London Grill · 8.9 Booking.com' },
