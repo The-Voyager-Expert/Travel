@@ -357,7 +357,7 @@ window.TVE.isPhone = function () {
      glance; these are not. Adding an `icon:` key also exempts the child from
      check_toolbar_group_icon_consistency's shared-emoji rule — the SVG IS the
      icon, so there is no leading emoji left to match against. */
-  var NAV_VIEWBOX = {"chart": "2.48 2.48 19.05 19.05","clock": "0.10 0.10 23.81 23.81","disney-parks": "-0.20 -0.45 24.40 24.40","entry-req": "0.10 0.10 23.81 23.81","festival-finder": "0.10 -0.90 23.81 23.81","first-timer": "-1.10 -1.60 26.19 26.19","globe": "0.10 0.10 23.81 23.81","insurance": "-1.21 -1.11 26.43 26.43","laptop": "-2.29 -2.29 28.57 28.57","list": "0.14 -0.82 23.71 23.71","luggage": "0.10 -0.40 23.81 23.81","map": "1.29 1.29 21.43 21.43","money": "0.10 0.10 23.81 23.81","neighborhoods": "1.02 1.72 20.95 20.95","passport": "0.10 0.10 23.81 23.81","plane": "-0.32 0.03 24.64 24.64","rental-cars": "1.29 2.29 21.43 21.43","restaurants": "0.10 0.10 23.81 23.81","safety-guide": "-1.21 -1.11 26.43 26.43","scams": "0.10 0.10 23.81 23.81","sun": "-1.10 -1.10 26.19 26.19","sunset": "-1.04 -1.54 26.07 26.07","tap-water": "0.51 0.26 22.98 22.98","tours-tickets": "0.10 0.10 23.81 23.81","travel-apps": "-1.10 -1.10 26.19 26.19","trophy": "1.29 0.79 21.43 21.43","vaccines": "-0.20 -1.10 23.81 23.81","visas": "0.10 0.10 23.81 23.81","train": "0.10 -0.90 23.81 23.81","hotel": "1.79 1.29 21.43 21.43"};
+  var NAV_VIEWBOX = {"chart": "2.48 2.48 19.05 19.05", "clock": "0.10 0.10 23.81 23.81", "disney-parks": "-0.20 -0.45 24.40 24.40", "entry-req": "0.10 0.10 23.81 23.81", "calendar": "0.10 -0.90 23.81 23.81", "first-timer": "-1.10 -1.60 26.19 26.19", "globe": "0.10 0.10 23.81 23.81", "insurance": "-1.21 -1.11 26.43 26.43", "laptop": "-2.29 -2.29 28.57 28.57", "list": "0.14 -0.82 23.71 23.71", "luggage": "0.10 -0.40 23.81 23.81", "map": "1.29 1.29 21.43 21.43", "money": "0.10 0.10 23.81 23.81", "neighborhoods": "1.02 1.72 20.95 20.95", "passport": "0.10 0.10 23.81 23.81", "plane": "-0.32 0.03 24.64 24.64", "rental-cars": "1.29 2.29 21.43 21.43", "restaurants": "0.10 0.10 23.81 23.81", "safety-guide": "-1.21 -1.11 26.43 26.43", "scams": "0.10 0.10 23.81 23.81", "sun": "-1.10 -1.10 26.19 26.19", "sunset": "-1.04 -1.54 26.07 26.07", "tap-water": "0.51 0.26 22.98 22.98", "tours-tickets": "0.10 0.10 23.81 23.81", "travel-apps": "-1.10 -1.10 26.19 26.19", "trophy": "1.29 0.79 21.43 21.43", "vaccines": "-0.20 -1.10 23.81 23.81", "visas": "0.10 0.10 23.81 23.81", "train": "0.10 -0.90 23.81 23.81", "hotel": "1.79 1.29 21.43 21.43", "trusted": "1.19 1.89 22.62 22.62", "plug": "0.69 1.19 22.62 22.62", "packing": "-0.29 2.11 21.07 21.07"};
   var NAV_ICONS = {
     'safety-guide': '<path d="M12 1 3 5v6.1c0 5.6 3.8 10.8 9 12.1 5.2-1.3 9-6.5 9-12.1V5l-9-4zm0 2.2 7 3.1v4.8c0 4.5-3 8.8-7 10-4-1.2-7-5.5-7-10V6.3l7-3.1z"/><path d="M11 6.8h2v6.4h-2zM11 15h2v2h-2z"/>',
     'vaccines':     '<path d="M16.3 1.3 15 2.6l1.6 1.6-2 2-2.6-2.6-1.3 1.3 1 1-6.6 6.6a3 3 0 0 0-.8 1.5l-.7 3.1-1.9 1.9 1.3 1.3 1.9-1.9 3.1-.7a3 3 0 0 0 1.5-.8l6.6-6.6 1 1 1.3-1.3-2.6-2.6 2-2L20.4 6l1.3-1.3-5.4-3.4zm-1.7 8.3-2.2 2.2-1.4-1.4-1.2 1.2 1.4 1.4-1.3 1.3-1.4-1.4-1.2 1.2 1.4 1.4-.6.6a1.2 1.2 0 0 1-.6.3l-2.2.5.5-2.2a1.2 1.2 0 0 1 .3-.6l6.3-6.3 2.2 2.2z"/>',
@@ -369,7 +369,10 @@ window.TVE.isPhone = function () {
     'entry-req':    '<path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H5v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>',
     'laptop':       '<path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>',
     'disney-parks': '<path d="M12 1.5 9.5 6H7.2v3.4L4 12.3V22h6v-4.2a2 2 0 1 1 4 0V22h6v-9.7l-3.2-2.9V6h-2.3L12 1.5zm0 3.1L13.3 7h-2.6L12 4.6zM9.2 8h5.6v2.2l3.2 2.9V20h-2v-2.2a4 4 0 0 0-8 0V20H6v-6.9l3.2-2.9V8z"/>',
-    'festival-finder': '<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>',
+    'trusted': '<path d="M10 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 1.8c-3.9 0-7 1.9-7 4.3V21h8.6a6.4 6.4 0 0 1 2.2-6.6 12.6 12.6 0 0 0-3.8-.6z"/><path d="M17.2 12.8a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm-.7 7-2.1-2.1 1-1 1.1 1.1 2.6-2.6 1 1-3.6 3.6z"/>',
+    'plug': '<path d="M16 7V3h-2v4h-4V3H8v4H6v5a6 6 0 0 0 5 5.92V22h2v-4.08A6 6 0 0 0 18 12V7h-2zm0 5a4 4 0 0 1-8 0V9h8v3z"/>',
+    'packing': '<path d="M10 4h9v2h-9zM10 11h9v2h-9zM10 18h9v2h-9z"/><path d="m4.3 6.4-1.7-1.7-1.1 1.1L4.3 8.6 8 4.9 6.9 3.8zm0 7-1.7-1.7-1.1 1.1 2.8 2.8L8 11.9l-1.1-1.1zm0 7-1.7-1.7-1.1 1.1 2.8 2.8L8 18.9l-1.1-1.1z"/>',
+    'calendar': '<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>',
     'neighborhoods': '<path d="M4 21V9.2l6-4.2 6 4.2V21h-4v-5h-4v5H4zm14 0V10.6l2 1.4V21h-2zM11.5 3.4 20 9.35V11l-8.5-5.95L3 11V9.35l8.5-5.95z"/>',
     'rental-cars': '<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>',
     'restaurants': '<path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>',
@@ -448,8 +451,8 @@ window.TVE.isPhone = function () {
        Flights / Safety / Time Zones. */
     { group: '🧳 Before You Go', groupIcon: 'luggage', children: [
         { href: base + 'Trip-Essentials/Before-You-Go.html',                   text: 'Before You Go' },
-        { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: 'Packing Checklist' },
-        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters' },
+        { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: 'Packing Checklist', icon: 'packing' },
+        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters', icon: 'plug' },
       ] },
     null,
     { group: '🏨 Where to Stay', groupIcon: 'neighborhoods', children: [
@@ -520,7 +523,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'clock', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: 'EU Lounges',        icon: 'laptop' },
-        { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: 'Global Entry & CLEAR' },
+        { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: 'Global Entry & CLEAR', icon: 'trusted' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: 'Baggage', icon: 'luggage' },
         { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: 'Luggage Storage', icon: 'luggage', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Passport.html',          text: 'Passport',          icon: 'passport' },
@@ -587,14 +590,14 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: 'City Transit Cards' },
         { href: base + 'Trip-Essentials/Cruise-Ships.html',       text: 'Cruise Lines', newSince: '2026-08-09' },
         { href: base + 'Trip-Essentials/Disney-Parks.html',       text: 'Disney Parks', icon: 'disney-parks', newSince: '2026-08-08' },
-        { href: base + 'Trip-Essentials/Festival-Finder.html',    text: 'Festival Finder', icon: 'festival-finder' },
+        { href: base + 'Trip-Essentials/Festival-Finder.html',    text: 'Festival Finder', icon: 'calendar' },
         { href: base + 'Trip-Essentials/More-Resources.html',     text: 'More Resources' },
         { href: base + 'Trip-Essentials/Pickleball.html',         text: 'Pickleball' },
         { href: base + 'Trip-Essentials/Restaurants.html',        text: 'Restaurants', icon: 'restaurants' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',          text: 'SIM Cards' },
         { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: 'Sports Calendar' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',      text: 'Tipping' },
-        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: 'Tours & Tickets', icon: 'tours-tickets' },
+        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: 'Tours & Tickets', icon: 'calendar' },
         { href: base + 'Trip-Essentials/Travel-Apps.html',        text: 'Travel Apps', icon: 'travel-apps' },
       ] },
   ];
@@ -2895,7 +2898,7 @@ window.TVE.isPhone = function () {
     var bTitle = document.createElement('div');
     bTitle.style.cssText = 'margin-bottom:5px;padding-right:28px;';
     var bTitleText = document.createElement('span');
-    bTitleText.textContent = '📅 Export to Calendar';
+    bTitleText.innerHTML = iconSVG(NAV_ICONS['calendar'], 15, 'calendar') + ' Export to Calendar';
     bTitleText.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;';
     bTitle.appendChild(bTitleText);
 
@@ -3025,7 +3028,7 @@ window.TVE.isPhone = function () {
     /* ── Trigger link — <a> matches the other pills exactly, terracotta border only ── */
     var trigBtn = document.createElement('a');
     trigBtn.href = 'javascript:void(0)';
-    trigBtn.textContent = '📅 Export to Calendar';
+    trigBtn.innerHTML = iconSVG(NAV_ICONS['calendar'], 15, 'calendar') + ' Export to Calendar';
     trigBtn.className = 'overview-extra-link';
     trigBtn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
