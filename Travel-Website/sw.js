@@ -491,7 +491,11 @@
    Every Best-Of category gets its OWN mark rather than the shared generic glyph its page
    carries (8 pages shared one museum, 7 one droplet), which is what had kept them on emoji.
    Adds book + pin for the stop rows. toolbar.js -> v350. CACHE to v514. */
-var CACHE = 'travel-cache-v514';
+/* 2026-08-11: Active FLAT tab kept losing its icon gap — a.className = cls.join() rebuilt the
+   class list and wiped tb-has-ico set a few lines above (the earlier classList fix missed this
+   second assignment). Adds compare/trip-type/language/palm/bulb marks and exposes TVE.icon so
+   the Guides-Index chips and the guides can draw the same set. toolbar.js -> v351. CACHE v515. */
+var CACHE = 'travel-cache-v515';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -499,7 +503,7 @@ var CACHE = 'travel-cache-v514';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 350, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 351, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

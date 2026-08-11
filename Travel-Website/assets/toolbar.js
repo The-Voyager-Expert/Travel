@@ -413,6 +413,11 @@ window.TVE.isPhone = function () {
     'tipping': '<path d="M12 1.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm.6 8.6v.9h-1.2v-.9c-1-.2-1.7-.8-1.8-1.8h1.3c.1.5.5.8 1.1.8.6 0 1-.3 1-.7 0-.4-.3-.6-1.2-.9-1.3-.3-2-.8-2-1.8 0-.9.6-1.5 1.6-1.7v-.9h1.2V4c1 .2 1.6.8 1.7 1.7h-1.3c-.1-.4-.4-.7-.9-.7-.6 0-.9.3-.9.6 0 .4.3.6 1.2.8 1.3.3 2 .8 2 1.9 0 .9-.6 1.6-1.8 1.8zM4 15h4.6l2.2 1.6h2.9c.9 0 1.6.7 1.6 1.6H11v1.4h4.6l4.4-2.3 1 1.7-5 3.5H4v-7.5z"/>',
     'book': '<path d="M12 6.3A9.6 9.6 0 0 0 6 4.3c-1.5 0-3 .3-4.2.8v13.4c1.2-.5 2.7-.8 4.2-.8 2.3 0 4.4.7 6 2 1.6-1.3 3.7-2 6-2 1.5 0 3 .3 4.2.8V5.1c-1.2-.5-2.7-.8-4.2-.8-2.3 0-4.4.7-6 2zm-1.5 12.2A8.9 8.9 0 0 0 6 16.9c-1 0-1.9.1-2.7.3V6.6c.8-.2 1.7-.3 2.7-.3 1.7 0 3.3.4 4.5 1.2v11zm3 0v-11c1.2-.8 2.8-1.2 4.5-1.2 1 0 1.9.1 2.7.3v10.6c-.8-.2-1.7-.3-2.7-.3-1.7 0-3.3.5-4.5 1.6z"/>',
     'pin': '<path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>',
+    'compare': '<path d="M4 3h7v18H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm9 0h7a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-7V3zM5 7h5V5H5v2zm10 0h4V5h-4v2z"/>',
+    'triptype': '<path d="M10.4 2.6H4a1.4 1.4 0 0 0-1.4 1.4v6.4c0 .4.1.7.4 1l9.6 9.6c.5.5 1.4.5 2 0l6.4-6.4c.5-.6.5-1.5 0-2L11.4 3a1.4 1.4 0 0 0-1-.4zM6.5 8.4a1.9 1.9 0 1 1 0-3.8 1.9 1.9 0 0 1 0 3.8z"/>',
+    'language': '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM6.6 7.5h2.6a15 15 0 0 1 1.1-2.9 8 8 0 0 0-3.7 2.9zM12 4.2c.6.9 1.1 1.9 1.4 3.3h-2.8c.3-1.4.8-2.4 1.4-3.3zm-7.7 8.3a8 8 0 0 1 .2-3h3a17 17 0 0 0 0 3h-3.2zm5.2 0a15 15 0 0 1 0-3h5a15 15 0 0 1 0 3h-5zm-3.5 2h2.7c.3 1.1.6 2.1 1 2.9a8 8 0 0 1-3.7-2.9zm5.9 3.3c-.6-.9-1.1-1.9-1.4-3.3h2.8c-.3 1.4-.8 2.4-1.4 3.3zm2.6-.4c.4-.8.8-1.8 1-2.9h2.7a8 8 0 0 1-3.7 2.9zm1.3-4.9a17 17 0 0 0 0-3h3a8 8 0 0 1 0 3h-3zm2.2-5h-2.6a15 15 0 0 0-1.1-2.9 8 8 0 0 1 3.7 2.9z"/>',
+    'palm': '<path d="M12 4.2c2 0 3.7 1 4.6 2.4-1-.6-2.2-.9-3.4-.9v.6c2.9 0 5.4 1.6 6.6 3.9-1.3-1-2.9-1.6-4.7-1.6-.6 0-1.2.1-1.8.2l.3.6c3 .5 5.4 2.7 6.2 5.5-1.5-1.7-3.6-2.9-6-3.2l-.8 12.1h-2l.8-12.1c-2.4.3-4.5 1.5-6 3.2.8-2.8 3.2-5 6.2-5.5l.3-.6c-.6-.1-1.2-.2-1.8-.2-1.8 0-3.4.6-4.7 1.6C7 8.4 9.5 6.8 12.4 6.8v-.6c-1.2 0-2.4.3-3.4.9C9.9 5.2 11.6 4.2 12 4.2z"/>',
+    'bulb': '<path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zm-2 17.5h4V21a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1.5z"/>',
     'calendar': '<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>',
     'neighborhoods': '<path d="M4 21V9.2l6-4.2 6 4.2V21h-4v-5h-4v5H4zm14 0V10.6l2 1.4V21h-2zM11.5 3.4 20 9.35V11l-8.5-5.95L3 11V9.35l8.5-5.95z"/>',
     'rental-cars': '<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>',
@@ -1164,7 +1169,9 @@ window.TVE.isPhone = function () {
     var cls = [];
     if (item.guides) cls.push('tb-guides');
     if (item.href.split('/').pop() === curr) cls.push('tb-active');
-    if (cls.length) a.className = cls.join(' ');
+    /* add, never assign — a.className would wipe tb-has-ico set above and
+       the icon would lose its flex+gap on exactly the ACTIVE tab */
+    cls.forEach(function (c) { a.classList.add(c); });
     a.addEventListener('click', function () {
       var menus = document.querySelectorAll('.tb-menu.tb-menu-open');
       for (var i = 0; i < menus.length; i++) menus[i].classList.remove('tb-menu-open');
@@ -1352,6 +1359,11 @@ window.TVE.isPhone = function () {
     if (_navMq.addEventListener) _navMq.addEventListener('change', placeThemeToggle);
     else if (_navMq.addListener) _navMq.addListener(placeThemeToggle);
     window.TVE = window.TVE || {};
+  /* Shared with index.html's filter chips (and, next, the guides) so one mark
+     never has two drawings. */
+  window.TVE.icon = function (key, size) {
+    var e = NAV_ICONS[key]; return e ? iconSVG(e, size || 15, key) : '';
+  };
     window.TVE.placeThemeToggle = placeThemeToggle;
   })();
 
