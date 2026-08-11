@@ -1333,9 +1333,25 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   letter-spacing: 0.01em;
 }
 .stop-block.stop-done .stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
+/* A visited stop fades its whole title group. */
 .stop-block.stop-done .stop-header .stop-num,
 .stop-block.stop-done .stop-header .stop-name,
 .stop-block.stop-done .stop-header .stop-dur { opacity: 0.4; }
+/* …but the open/closed status is REMOVED, not faded (owner 2026-08-10).
+   Fading was the first attempt and it was the wrong question: whether the
+   place is open right now is live information for a stop you are deciding to
+   walk to, and it means nothing at all for one you have already been to. A
+   faded "OPEN" is still a claim the reader has to read and dismiss. It also
+   dates badly — the badge keeps updating on the hour against a stop nobody is
+   going back to. .stop-dur stays, faded, because how long the stop took is
+   still true after the fact; the status is not. */
+.stop-block.stop-done .stop-header .open-now-status { display: none; }
+/* Hiding it takes its box out of the row, so it can no longer be the spacer
+   the auto-margin chain handed it — a display:none element generates none.
+   Hand the job back down: to the chip if there is one, otherwise to the mark
+   button. Both selectors outrank the chain above on specificity. */
+.stop-block.stop-done .stop-header .stop-dur { margin-right: auto; }
+.stop-block.stop-done .stop-header:not(:has(.stop-dur)) .stop-mark-btn { margin-right: auto; }
 /* .stop-row matches body weight (17px desktop / 21px mobile) — the prose
    summary and 📖 Wikipedia row are PRIMARY content under each stop name,
    not "support content," so they should read at body size, not at the
@@ -4145,25 +4161,40 @@ a.also-in-country-pill:active {
 }
 .open-now-local-time:empty { display: none; }
 /* Open / Closed status in .stop-header, LAST in the title group — after the
-   duration chip (owner 2026-08-10). Present whenever the stop's hours parse and
-   the guide knows its timezone — the reader never switches it on.
+   duration chip. Present whenever the stop's hours parse and the guide knows
+   its timezone — the reader never switches it on.
 
-   Deliberately NOT a pill (owner pick D, 2026-08-09). It first shipped as a
-   filled 10px badge and sat directly beside the .stop-dur chip — same shape,
-   same weight, so it read as a second control in a row that already has one,
-   which is the exact confusion the retired toggle caused. A statement is not
-   a button and should not be shaped like one: no fill, no border, no padding.
-   Colour alone carries the state, and .stop-dur stays the only pill in the
-   row. Contrast on the card: 6.21:1 (open) and 7.71:1 (closed) in light,
-   9.22:1 and 7.74:1 in dark — all AA, every value already in the palette.
+   ── A STATE-COLOURED PILL, owner pick C of 2026-08-10. ──
+   This REVERSES pick D of 2026-08-09, which made it bare text on the grounds
+   that "a statement is not a button and should not be shaped like one". What
+   pick D did not survive was the move of .stop-dur off the right rail and up
+   against the title on 2026-08-10: bare text then sat between the round ✓
+   control and the round chip, and text with no silhouette of its own between
+   two pill shapes reads as compressed filler rather than as a statement. Six
+   treatments were mocked up and compared side by side at real size; the owner
+   picked the pill. Order was fixed in the same pass — chip first, status
+   second — so the row runs name → ✓ → duration → state.
 
-   Order matters BECAUSE it is bare text. It sat between the round ✓ control
-   and the round chip until 2026-08-10, and squeezed between two pill shapes it
-   read as compressed — the alternative on the table was giving it a pill of
-   its own, which would have undone the 2026-08-09 pick. Moving it behind the
-   chip keeps the two rounded shapes together and lets the text close the
-   group, so the statement stays a statement. */
+   Each state keeps its own colour family rather than borrowing the chip's warm
+   one, so the two pills are never mistaken for each other. Fill and hairline
+   are the state colour itself at 9% and 45%, which is why they are rgba and
+   not tokens: transparency means the tint composites over whatever card the
+   header sits on and needs no per-surface variant. The ink is unchanged from
+   the bare-text version, so the documented contrast still holds — 6.21:1
+   (open) and 7.71:1 (closed) in light, 9.22:1 and 7.74:1 in dark, all AA.
+
+   line-height is 1.92 so the two pills are EXACTLY the same height, which is
+   the one thing that makes or breaks a row with two of them. The chip is 12px
+   inheriting body's 1.6 = 19.2px of content; this is 10px, so it needs
+   19.2 / 10 = 1.92 to reach the same content box, and both then add the same
+   2px padding + 1px hairline for 25.2px. Measured, not estimated. Retune
+   either pill's font-size, padding or body line-height and this number is
+   wrong — recompute it, don't eyeball it. */
 .open-now-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 20px;
+  padding: 2px 10px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -4171,13 +4202,18 @@ a.also-in-country-pill:active {
   margin-left: 8px;
   margin-right: auto;
   flex-shrink: 0;
-  line-height: 1.6;
+  line-height: 1.92;
+  white-space: nowrap;
 }
 .open-now-status.is-open {
   color: #1a6b35;
+  background: rgba(26, 107, 53, 0.09);
+  border: 1px solid rgba(26, 107, 53, 0.45);
 }
 .open-now-status.is-closed {
   color: #9b1c1c;
+  background: rgba(155, 28, 28, 0.09);
+  border: 1px solid rgba(155, 28, 28, 0.45);
 }
 
 /* Mobile: .stop-header is flex-wrap:nowrap and .stop-name is `flex: 0 1 auto;
@@ -4238,10 +4274,21 @@ a.also-in-country-pill:active {
 }
 
 @media (prefers-color-scheme: dark) {
-  /* Bare text on the dark card, so the on-tint #6dff9e would read neon.
-     #a8d8b8 is the same palette green one step calmer, at 9.22:1. */
-  .open-now-status.is-open { color: #a8d8b8; }
-  .open-now-status.is-closed { color: #fca5a5; }
+  /* #6dff9e would read neon on the dark card; #a8d8b8 is the same palette
+     green one step calmer, at 9.22:1. The tint runs a little richer than
+     light's 9%/45% because a PALE ink over a dark card composites to far less
+     separation than a dark ink over a light one — at 9% the pill was
+     indistinguishable from the card. */
+  .open-now-status.is-open {
+    color: #a8d8b8;
+    background: rgba(168, 216, 184, 0.13);
+    border-color: rgba(168, 216, 184, 0.40);
+  }
+  .open-now-status.is-closed {
+    color: #fca5a5;
+    background: rgba(252, 165, 165, 0.13);
+    border-color: rgba(252, 165, 165, 0.40);
+  }
   /* No-ticket stub — #b85c2a sits at 2.6:1 on the #2a2825 card. Same lift the
      pullquote border uses, so the warm family stays one system. (2026-08-08) */
   .free-flag { color: #d4874a; }
