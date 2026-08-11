@@ -785,7 +785,8 @@
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['kyoto'] listed The Ritz-Carlton Kyoto, which is now the guide's own title-card hotel, as an alternative to itself, and two of its four entries (Aman Kyoto, Tawaraya Ryokan) had no url at all — Tawaraya books by fax and has no Booking listing, so its quoted 9.6 was never readable anywhere. Rebuilt on four properties confirmed in Booking inventory with their current scores: THE THOUSAND KYOTO 9.4, The Royal Park Hotel Iconic Kyoto 9.2, Hotel The Celestine Kyoto Gion 9.2, Hyatt Regency Kyoto 8.8. toolbar.js -> v381. CACHE to v553. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['manuel-antonio'] shipped Tulemar with no url at all, which the FINAL GATE hard-fails on; Booking resolves the property as Tulemar Resort at buena-vista-luxury-villas-and-tulemar-bungalows.html, 9.4 on the listing, so name, score and url now all match the page they link to. toolbar.js -> v382. CACHE to v554. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for florianopolis, florida-keys, foz-do-iguacu, geneva, glacier-national-park, lima, ljubljana, los-angeles, luang-prabang and lucerne: ten cities' alternatives rebuilt on Booking-verified properties, url-less and duplicate-of-the-primary entries cleared. toolbar.js -> v383. CACHE to v555. */
-var CACHE = 'travel-cache-v555';
+/* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for malaga (Parador Gibralfaro url + note) and new-orleans (Windsor Court + Pontchartrain replaced with French Market Inn + Place D'Armes; Ritz-Carlton and Hotel Monteleone scores updated). toolbar.js -> v384. CACHE to v556. */
+var CACHE = 'travel-cache-v556';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -793,7 +794,7 @@ var CACHE = 'travel-cache-v555';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 383, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 384, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
