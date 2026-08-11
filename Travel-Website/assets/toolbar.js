@@ -4297,7 +4297,7 @@
     ] },
     'annecy': { h: [
       { name: 'Impérial Palace Annecy', note: 'Independent — lakefront property in central Annecy, La Voile gastronomic restaurant with terrace, spa with pool and hammam · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/imperial-palace.html' },
-      { name: 'Le Clos des Sens', note: 'Independent boutique — 19th-century mansion in Annecy-le-Vieux, home to a three-Michelin-star restaurant (Laurent Petit) · 8.9 Booking.com' },
+      { name: 'Hôtel La Cour du 6', note: 'Independent — 6 bis Rue Royale in the Annecy city centre, 24h reception, air conditioning, on-site restaurant and coffee house · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/la-cour-du-6.html' },
       { name: 'Rivage Hôtel & Spa Annecy', note: 'Independent — Avenue du Petit Port by the lake, year-round indoor pool, spa with steam room, sauna · 8.9 Booking.com', url: 'https://www.booking.com/hotel/fr/rivage-amp-spa-annecy.html' },
       { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html' }
     ] },
@@ -4508,8 +4508,8 @@
     'cape-cod': { h: [
       { name: 'The Wequassett Resort and Golf Club', note: 'Independent luxury — Pleasant Bay waterfront in Harwich, 18-hole championship golf, 4 pools, spa with Cape Cod salt-air treatments · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/wequassett-resort-and-golf-club.html' },
       { name: 'Ocean Edge Resort & Golf Club', note: 'Independent resort — Brewster beachfront, 6 pools, oceanfront private beach, 18-hole golf, tennis and spa complex · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/the-mansion-at-ocean-edge-resort-amp-golf-club.html' },
-      { name: 'Chatham Inn Relais & Châteaux', note: 'Independent Relais & Châteaux — Cape Cod\'s only R&C property, 18 rooms in 1839 historic inn, Cuvée restaurant rated top Cape Cod dining, Forbes Five-Star 2024 · Forbes Five-Star' },
-      { name: 'Land\'s End Inn', note: 'Independent adults-only B&B — Victorian-era hilltop inn in Provincetown West End, panoramic bay views from Gull Hill, wine and cheese hour daily · 9.5 Kayak' }
+      { name: 'Old Harbor Inn', note: 'Independent adults-only inn — 22 Old Harbor Road in Chatham village, garden terrace, fitness room and tennis, breakfast in the room · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/old-harbor-inn.html' },
+      { name: "Captain's House Inn", note: 'Independent adults-only inn — 369 Old Harbor Road in Chatham, 4-star, on-site restaurant and massage, gardens and shared lounge · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/captain-39-s-house-inn.html' }
     ] },
     'cape-town': { h: [
       { name: 'One&Only Cape Town', url: 'https://www.booking.com/hotel/za/one-and-only-cape-town.html', note: 'One&Only Resorts — V&A Waterfront, two-island resort layout, overwater spa, NOBU restaurant, two pools · 9.4 Booking.com' },
@@ -4626,16 +4626,18 @@
       { name: 'Renaissance Wind Creek Curaçao Resort', note: 'Renaissance brand — Punda waterfront, casino, full-service spa, harbour location · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/renaissance-curacao-resort-casino.html' }
     ] },
     'curitiba': { h: [
-      { name: 'QOYA Hotel Curitiba, Curio Collection by Hilton', note: 'Hilton Curio — upscale Batel district, heated indoor pool, saunas, 7-min walk to Arena da Baixada, contemporary Brazilian design · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/qoya-curitiba-curitiba.html' },
-      { name: 'Nomaa Hotel', note: 'Independent boutique — Batel, 5-star, Nomade Restaurant with seasonal Brazilian tasting menu, intimate rooftop deck · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/nomaa.html' },
+      { name: 'Nomaa Hotel', note: 'Independent boutique — Batel, 5-star, Nomade Restaurant with seasonal Brazilian tasting menu, intimate rooftop deck · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/nomaa.html' },
+      { name: 'Full Jazz by Slaviero Hotéis', note: 'Slaviero Hotéis — Batel, 5-star, 24h reception, fitness centre, walking distance to the Batel restaurant strip · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/slaviero-full-jazz.html' },
+      { name: 'Hotel Deville Curitiba', note: 'Deville Hotéis — Rua Comendador Araújo in the city centre, 4-star, 24h reception, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/deville-curitiba.html' },
       { name: 'Grand Mercure Curitiba', note: 'Accor Grand Mercure — Batel district, outdoor pool, Armazém do Chef restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/grand-mercure-curitiba.html' },
       { name: 'Hotel Slaviero Conceptual Palace', note: 'Slaviero Hotels — near Passeio Público park, art-deco architecture, spa with sauna · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/slaviero-palace.html' }
     ] },
     'cusco': { h: [
-      { name: 'Belmond Hotel Monasterio', note: 'Belmond brand — converted 16th-century monastery in San Blas, oxygen-enriched rooms for altitude, courtyard chapel, 122 rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/pe/monasterio-cusco.html' },
-      { name: 'Inkaterra La Casona', note: 'Preferred Hotels & Resorts — 16th-century colonial manor on Plaza de las Nazarenas, 11 suites with original Inca stonework, butler service · 9.2 Booking.com' },
-      { name: 'Palacio del Inka, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — Inca palace foundations on Plazoleta Santo Domingo, spa, Inti Raymi restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pe/palacio-del-inka.html' },
-      { name: 'Hotel Monasterio Cuzco', note: 'Belmond managed — 16th-century San Antonio Abad seminary, baroque chapel, altitude oxygen service · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pe/hotel-monasterio.html' }
+      { name: 'Monasterio, A Belmond Hotel, Cusco', note: 'Belmond brand — 16th-century San Antonio Abad seminary on Plazoleta Nazarenas, baroque chapel, altitude oxygen service · 9.8 Booking.com', url: 'https://www.booking.com/hotel/pe/monasterio-cusco.html' },
+      { name: 'Casa Cartagena Boutique Hotel & Spa', note: 'Independent boutique — Calle Pumacurco in the Centro Histórico, spa with sauna and steam bath, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/pe/casa-cartagena-boutique-spa.html' },
+      { name: 'Aranwa Cusco Boutique Hotel', note: 'Aranwa Hotels — Calle San Juan de Dios, colonial mansion, 24h reception, air conditioning · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pe/aranwa-cusco-boutique.html' },
+      { name: 'JW Marriott El Convento Cusco', note: 'Marriott JW brand — 16th-century convent on Calle Ruinas, indoor pool, spa, altitude oxygen enrichment · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pe/jw-marriott-cusco.html' },
+      { name: 'Inkaterra La Casona Relais & Chateaux', note: 'Relais & Châteaux — 16th-century colonial manor on Plaza de las Nazarenas, 11 suites with original Inca stonework · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pe/inkaterra-la-casona.html' }
     ] },
     'dallas': { h: [
       { name: 'Rosewood Mansion on Turtle Creek', note: 'Rosewood brand — 1925 Tudor mansion in Uptown, outdoor heated pool and terrace, acclaimed Restaurant at Rosewood Mansion, full-service spa · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/rosewood-mansion-on-turtle-creek.html' },
@@ -4645,10 +4647,10 @@
       { name: 'Hotel ZaZa Dallas', note: 'Independent boutique — Uptown near McKinney Avenue, resort pool, Dragonfly restaurant, ZaSpa, themed suites · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-zaza-dallas.html' }
     ] },
     'denver': { h: [
-      { name: 'The Brown Palace Hotel and Spa, Autograph Collection', note: 'Marriott Autograph — 1892 triangular-atrium landmark in downtown Denver, Ship Tavern, three-level spa, indoor pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-brown-palace-and-spa-autograph-collection.html' },
-      { name: 'Four Seasons Hotel Denver', note: 'Four Seasons brand — LoDo district, rooftop heated outdoor pool with mountain views, EDGE Restaurant & Bar, spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-denver.html' },
-      { name: 'The Oxford Hotel', note: "Independent boutique — LoDo's oldest hotel (1891), private health club and spa, McCormick's Fish House, historic Cruise Room cocktail bar · 8.9 Booking.com", url: 'https://www.booking.com/hotel/us/the-oxford-downtown-denver.html' },
-      { name: 'The Crawford Hotel', note: 'Independent boutique — inside Denver Union Station, 122 rooms, Tesla car service, spa access, Union Station dining and bars steps away · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-crawford-at-union-station-denver.html' }
+      { name: 'Four Seasons Hotel Denver', note: 'Four Seasons brand — 14th Street downtown, rooftop heated outdoor pool with mountain views, EDGE Restaurant & Bar, spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-denver.html' },
+      { name: 'The Crawford Hotel', note: 'Independent boutique — inside Denver Union Station on Wynkoop Street, spa access, Union Station dining and bars steps away · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-crawford-at-union-station-denver.html' },
+      { name: 'The Oxford Hotel', note: "Independent boutique — LoDo's oldest hotel (1891) on 17th Street, private health club and spa, historic Cruise Room cocktail bar · 9.0 Booking.com", url: 'https://www.booking.com/hotel/us/the-oxford-downtown-denver.html' },
+      { name: 'The Brown Palace Hotel and Spa, Autograph Collection', note: 'Marriott Autograph — 1892 triangular-atrium landmark on 17th Street, Ship Tavern, three-level spa · 7.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-brown-palace-and-spa-autograph-collection.html' }
     ] },
     'doha': { h: [
       { name: 'Four Seasons Hotel Doha', note: 'Four Seasons brand — private beach on the West Bay Corniche, 3 outdoor pools, Nobu Doha restaurant, spa and wellness centre · 9.3 Booking.com', url: 'https://www.booking.com/hotel/qa/four-seasons-doha.html' },
@@ -4658,13 +4660,13 @@
     ] },
     'dubai': { h: [
       { name: 'Atlantis The Palm', note: 'Independent — Palm Jumeirah iconic resort, 1.5 km private beach, Aquaventure waterpark, 17 restaurants including Nobu, full-service spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ae/atlantis-the-palm.html' },
-      { name: 'Burj Al Arab Jumeirah', note: 'Jumeirah brand — sail-shaped island icon, all-suite, private beach, Al Muntaha sky-high restaurant, 24-hour butler · 9.5 Booking.com' },
+      { name: 'DAMAC Maison Mall Street', note: 'DAMAC Maison — serviced apartments on Mohammed Bin Rashid Boulevard in Downtown Dubai, rooftop pool, spa and sauna, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ae/damac-maison-the-summit.html' },
       { name: 'One&Only The Palm', note: 'One&Only — adults-only on Palm Jumeirah, private beach, three pools, Guerlain Spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ae/one-and-only-the-palm.html' },
       { name: 'Jumeirah Beach Hotel', note: 'Jumeirah brand — 26-story wave-shaped tower, 20 restaurants and bars, Wild Wadi Waterpark access · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ae/jumeirah-beach-hotel.html' }
     ] },
     'dublin': { h: [
       { name: 'The Merrion Hotel', note: 'Leading Hotels of the World — four Georgian townhouses on Merrion Street Upper, National Gallery adjacent, indoor pool and spa, Cellar Restaurant · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/ie/merrion-dublin.html' },
-      { name: 'The Shelbourne, Autograph Collection', note: "Marriott Autograph — 1824 landmark on St Stephen's Green, Lord Mayor's Lounge afternoon tea, Saddle Room restaurant, spa · 8.9 Booking.com" , url: 'https://www.booking.com/hotel/ie/the-shelbourne.html' },
+      { name: 'Conrad Dublin', note: 'Hilton Conrad brand — Earlsfort Terrace beside the National Concert Hall, 24h reception, fitness centre, a block off St Stephen\'s Green · 8.5 Booking.com' , url: 'https://www.booking.com/hotel/ie/conrad-dublin.html' },
       { name: 'InterContinental Dublin', note: 'IHG brand — Ballsbridge, indoor pool, Spa InterContinental, Number 23 restaurant, leafy residential quarter 2km from city centre · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/ie/intercontinental-dublin.html' },
       { name: 'The Westbury Dublin', note: 'Doyle Collection — Grafton Street shopping district, Balfes restaurant and Wilde bar, central city heart location · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/ie/westbury.html' }
     ] },
@@ -4748,12 +4750,12 @@
     ] },
     'hamburg': { h: [
       { name: 'The Fontenay Hamburg', note: "Independent luxury — 2018 Alster lake-view tower, rooftop pool, Lakeside spa, Mabühle restaurant, Hamburg's premier new-build address · 9.4 Booking.com", url: 'https://www.booking.com/hotel/de/the-fontenay.html' },
-      { name: 'Hotel Atlantic Kempinski Hamburg', note: 'Kempinski brand — 1909 Außenalster lakefront landmark, historic grand hotel, waterfront dining, near Hauptbahnhof · 8.7 Booking.com', url: 'https://www.booking.com/hotel/de/hotel-atlantic-hamburg-autograph-collection.html' },
+      { name: 'Hotel Atlantic Hamburg, Autograph Collection', note: 'Marriott Autograph Collection — 1909 Außenalster lakefront landmark, historic grand hotel, waterfront dining, near Hauptbahnhof · 9.2 Booking.com', url: 'https://www.booking.com/hotel/de/hotel-atlantic-hamburg-autograph-collection.html' },
       { name: 'Vier Jahreszeiten Hamburg', note: 'Independent — Alster lakefront landmark since 1897, Jahreszeiten Grill, spa with indoor pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/hotel-vier-jahreszeiten.html' },
-      { name: 'Sofitel Hamburg Alter Wall', note: 'Sofitel brand — historic Alter Wall, spa with pool, Le Bar and Divan restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/de/sofitel-hamburg-alter-wall.html' }
+      { name: 'Fraser Suites Hamburg', note: 'Independent — serviced-apartment suites on Rödingsmarkt in the Altstadt, sauna and steam room, kitchens in every unit · 9.1 Booking.com', url: 'https://www.booking.com/hotel/de/fraser-suites-hamburg.html' }
     ] },
     'hanoi': { h: [
-      { name: 'Sofitel Legend Metropole Hanoi', note: 'Accor Sofitel Legend brand — 1901 French colonial icon in the French Quarter, Le Spa du Métropole, Michelin-recognized Le Beaulieu restaurant · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/vn/sofitel-legend-metropole-hanoi.html' },
+      { name: 'The Oriental Jade Hotel', note: 'Independent — 92-94 Hang Trong in Hoan Kiem, rooftop infinity pool over the Old Quarter, spa and steam room, 24h reception · 9.6 Booking.com' , url: 'https://www.booking.com/hotel/vn/the-oriental-jade-amp-spa.html' },
       { name: 'JW Marriott Hotel Hanoi', note: 'Marriott brand — award-winning curved tower by Carlos Zapata Studio, outdoor pool, full-service spa, largest luxury hotel in Hanoi · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/vn/jw-marriott-hotel-hanoi.html' },
     
       { name: 'Lotte Hotel Hanoi', note: 'Lotte brand — Ba Dinh District, Top of Hanoi observation deck on 65th floor, indoor pool, La Seine French restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/vn/lotte-hotel-hanoi.html' },
@@ -4784,7 +4786,7 @@
       { name: 'La Siesta Hoi An Resort & Spa', note: 'Independent — Cam Nam Island, river-view pool, La Plage Spa, shuttle to beach · 9.3 Booking.com', url: 'https://www.booking.com/hotel/vn/la-siesta-hoi-an-resort-spa.html' }
     ] },
     'hong-kong': { h: [
-      { name: 'The Ritz-Carlton Hong Kong', note: "Ritz-Carlton brand — world's highest hotel (floors 102–118, ICC Tower), Tin Lung Heen for dim sum, rooftop infinity pool · 9.3 Booking.com", url: 'https://www.booking.com/hotel/hk/the-ritz-carlton-hong-kong.html' },
+      { name: 'Mondrian Hong Kong', note: 'Independent — 8A Hart Avenue in Tsim Sha Tsui, 5-star, 24h reception, fitness centre, walking distance to the harbourfront promenade · 9.1 Booking.com', url: 'https://www.booking.com/hotel/hk/mondrian-hong-kong.html' },
       { name: 'Four Seasons Hotel Hong Kong', note: 'Four Seasons brand — Central harbourfront, panoramic Victoria Harbour views, two outdoor infinity pools, Michelin-starred Lung King Heen · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hk/four-seasons-hong-kong.html' },
       { name: 'The Peninsula Hong Kong', note: 'Peninsula Hotels — Tsim Sha Tsui flagship since 1928, rooftop helicopter transfers, ESPA spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/hk/the-peninsula.html' },
       { name: 'Mandarin Oriental Hong Kong', note: 'Mandarin Oriental — Central waterfront, Man Wah Cantonese restaurant, iconic harbour views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/hk/mandarin-oriental.html' }
@@ -4862,8 +4864,8 @@
       { name: 'The Cosmopolitan of Las Vegas', note: 'Independent — Strip, Marquee Nightclub, all rooms with terraces, Rose. Rabbit. Lie. dining · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-cosmopolitan-las-vegas.html' }
     ] },
     'lecce': { h: [
-      { name: 'Risorgimento Resort', note: 'Leading Hotels of the World — Lecce historic centre palazzo conversion, rooftop terrace and pool, Michelin-recognized restaurant · 9.0 Booking.com' },
-      { name: 'Il Convento di Santa Teresa', note: 'Independent boutique — converted 17th-century convent steps from Piazza Sant\'Oronzo, original stone arches, courtyard garden, 10 rooms · 9.4 Booking.com' },
+      { name: 'Palazzo Rollo', note: 'Independent — 17th-century palazzo on Via Vittorio Emanuele II in the Old Town, roof garden over the centro storico, 24h security · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/palazzo-rollo.html' },
+      { name: 'Dimora Storica Muratore', note: 'Independent historic residence — Via Luigi Scarambone in the Old Town, rooftop infinity pool, steam room, garden terrace · 9.6 Booking.com', url: 'https://www.booking.com/hotel/it/dimora-storica-muratore.html' },
       { name: 'Patria Palace Hotel Lecce', note: 'Independent — 18th-century palazzo facing the Basilica di Santa Croce, rooftop pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/it/patria-palace.html' },
       { name: 'Togo Suites Lecce', note: 'Independent boutique — historic centro, 14 rooms in a restored 17th-century palazzo, stone vaults · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/togo-suites.html' }
     ] },

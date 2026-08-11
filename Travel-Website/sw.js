@@ -450,7 +450,8 @@
 /* 2026-08-10: OWNER — no nav arrows on desktop. The floating ↑ scroll-top FAB is now MOBILE-ONLY (hidden ≥601px in both guide-style.css and web-travel-style.css) — a desktop reader has a scrollbar, a wheel and Home, so the button only floated over the content. Same treatment #tve-bo-jump already had. The guide wishlist FAB was stacked on top of it at bottom:116px and would have been left hanging with a 56px hole under it, so it re-seats onto the day-jump pill at 68px (panel 168 -> 120). guide-style.css -> v160, web-travel-style.css -> v22, toolbar.js -> v331. CACHE to v493. */
 /* 2026-08-10: OWNER — the desktop rule widens from "no nav arrows" to the whole floating family: "all the pills are showing on desktop!" on a guide still carrying the 📅 N days pill. Hidden ≥601px now: .day-jump-btn + .day-jump-overlay and .tve-scroll-top (guide-style.css), and #tve-wl-fab + #tve-wl-panel (toolbar.js). Desktop keeps the scrollbar, Home, and the Trip Overview day list, so nothing floats over the content; the stop-header stars still save at any width, only the review panel is mobile-only. A desktop guide now has ZERO position:fixed controls. guide-style.css -> v161, toolbar.js -> v332. CACHE to v494. */
 /* 2026-08-10: OWNER — the #tve-back-guides strip goes mobile-only too ("they should be only in mobile!"), completing the same call: a desktop guide now shows no pill chrome at all, floating or in-flow. All three pills live in that one strip, so the hide takes 🖨 Print Guide, Before You Go and ‹ All Guides together, plus the stops-map "‹ {City}" variant. The strip carries display:flex inline, so the ≥601px rule needs !important. Print is still reachable on desktop through the browser's own Print (the @media print chrome-hiding rules are untouched and still fire). toolbar.js -> v333. CACHE to v495. */
-var CACHE = 'travel-cache-v495';
+/* 2026-08-10: hotel-rehome — Annecy, Carmel-by-the-Sea, Dubrovnik, Key West, Krakow and Lille moved to a title-card hotel on the brand ladder (hotel_rules.html Sec 3); each guide re-ran optimize_route.py, so motion banners and stops-map day fields were regenerated with it. Old title-card properties demoted into HOTEL_ALT_DATA; alt-hotel entries for Cape Cod, Cape Town and Curitiba corrected in the same pass. toolbar.js -> v334. CACHE to v496. */
+var CACHE = 'travel-cache-v496';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -458,7 +459,7 @@ var CACHE = 'travel-cache-v495';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 161, 'toolbar.js': 333, 'mobile.css': 74, 'web-travel-style.css': 22, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 161, 'toolbar.js': 334, 'mobile.css': 74, 'web-travel-style.css': 22, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
