@@ -5552,10 +5552,10 @@ window.TVE.isPhone = function () {
       { name: 'Fish Tail Lodge', note: 'Independent — peninsula in Phewa Lake reached by rope ferry, gardens, pool with Fishtail Mountain views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/np/fish-tail-lodge.html' }
     ] },
     'portland': { h: [
-      { name: 'The Benson Hotel, Autograph Collection', note: 'Marriott Autograph Collection — 1912 downtown landmark, Circassian walnut-paneled lobby, The London Grill · 8.9 Booking.com' },
-      { name: 'Hotel deLuxe', note: 'Independent boutique — Hollywood-themed vintage design, Driftwood Room bar, Pearl District adjacent · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/729-six-15th-avenue.html' },
-      { name: 'The Heathman Hotel', note: 'Independent historic — 1927 arts district landmark adjacent to Arlene Schnitzer Concert Hall, Tea Court lobby, literary guest book collection · 9.2 Expedia' },
-      { name: 'The Nines, A Luxury Collection Hotel', note: 'Marriott Luxury Collection — upper floors of the 1909 Meier & Frank Building on National Register, atrium lobby, Urban Farmer restaurant · 4.4 TripAdvisor', url: 'https://www.booking.com/hotel/us/the-nines.html' }
+      { name: 'Inn at Northrup Station', note: 'Independent — 2025 NW Northrup in the Nob Hill streetcar district, suites with kitchens, rooftop garden, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-inn-at-northrup-station.html' },
+      { name: 'Cambria Hotel Portland - Pearl District', note: 'Independent-operated Cambria — 165 NW Park Avenue on the Park Blocks, rooftop bar, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/cambria-portland-pearl-district.html' },
+      { name: 'Silver Cloud Hotel - Portland', note: 'Independent — 2426 NW Vaughn Street in the Northwest District, free parking, 24h reception, 921 reviews · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/silver-cloud-inn-portland.html' },
+      { name: 'The Nines, A Luxury Collection Hotel', note: 'Marriott Luxury Collection — upper floors of the 1909 Meier & Frank Building on National Register, atrium lobby, Urban Farmer restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-nines.html' }
     ] },
     'porto': { h: [
       { name: 'The Yeatman Hotel', note: 'Independent luxury — Taylor\'s Port wine cellars hilltop, infinity pool, two-Michelin-star Yeatman Restaurant, Douro panorama · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/pt/the-yeatman.html' },
