@@ -647,7 +647,13 @@
    depth|href only — the lock is untouched and still enforced. The same icons now also reach the
    "Also on this site" footer pills, which resolve from ITEMS first.
    toolbar.js -> v372. CACHE v537. */
-var CACHE = 'travel-cache-v537';
+/* 2026-08-11: Trips pill stops flashing terracotta on press. #btn-my-trips is the only <a> in
+   that row — every sibling is a <button> — so it was the only pill carrying an :active rule that
+   painted the full gradient, which reads as a glitch rather than feedback (owner: "trips pill has
+   a bug when we about to clicks it flashes terracota only one with this bug there"). :active now
+   matches :hover, and matches the outlined chip treatment the rest of the site moved to earlier
+   today. guides-index-style.css -> v3. CACHE v538. */
+var CACHE = 'travel-cache-v538';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -655,7 +661,7 @@ var CACHE = 'travel-cache-v537';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 372, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 372, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
