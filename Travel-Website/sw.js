@@ -470,7 +470,12 @@
    (globe, luggage, hotel building, trophy, map, chart, plane, train, coin, clock, sun,
    shield, ID card, clipboard). iconSVG() now also renders stroke-based marks, so the
    Sunrise & Sunset row uses that page's own stroked icon. toolbar.js -> v345. CACHE to v509. */
-var CACHE = 'travel-cache-v509';
+/* 2026-08-11: Dropdown rows lose their emoji entirely — 57 child labels plus the built
+   Maps region rows are now plain text, and the tab's mark is the group's identity. Where
+   to Stay takes the Neighborhoods house as the hotel mark (not a bed), and that row drops
+   its own copy. Flat top-strip tabs gained the flex+gap rule they never had, so the globe
+   stops sitting glued to 'Guides'. toolbar.js -> v346. CACHE to v510. */
+var CACHE = 'travel-cache-v510';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -478,7 +483,7 @@ var CACHE = 'travel-cache-v509';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 345, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 346, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

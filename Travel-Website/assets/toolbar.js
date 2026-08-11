@@ -374,8 +374,6 @@ window.TVE.isPhone = function () {
     'restaurants': '<path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>',
     'tours-tickets': '<path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-1.99.9-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 7.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z"/>',
     'travel-apps': '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>',
-    /* a hotel BUILDING, not a bed — owner rule 2026-08-11 */
-    'hotel': '<path d="M4 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6h4a1 1 0 0 1 1 1v10h-6v-4h-2v4H4zm2-2h2v-2H6v2zm0-4h2v-2H6v2zm0-4h2V9H6v2zm0-4h2V5H6v2zm4 12h2v-2h-2v2zm0-4h2v-2h-2v2zm0-4h2V9h-2v2zm0-4h2V5h-2v2zm8 12h2v-2h-2v2zm0-4h2v-2h-2v2z"/>',
     'globe': '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4zM4.3 14A8 8 0 0 1 4 12c0-.7.1-1.4.3-2h3.4a16.5 16.5 0 0 0 0 4H4.3zm.8 2h2.9c.3 1.3.8 2.5 1.4 3.6A8 8 0 0 1 5.1 16zm2.9-8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zM12 20c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4zm2.2-6H9.8a14.7 14.7 0 0 1 0-4h4.4a14.7 14.7 0 0 1 0 4zm.3 5.6c.6-1.1 1.1-2.3 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.8-5.6a16.5 16.5 0 0 0 0-4h3.4c.2.6.3 1.3.3 2s-.1 1.4-.3 2h-3.4z"/>',
     'map': '<path d="M20.5 3h-.2L15 5.1 9 3 3.4 4.9a.5.5 0 0 0-.4.5v15.1a.5.5 0 0 0 .5.5h.2L9 18.9l6 2.1 5.6-1.9a.5.5 0 0 0 .4-.5V3.5a.5.5 0 0 0-.5-.5zM10 5.5l4 1.4v11.6l-4-1.4V5.5zM5 6.5l3-1v11.6l-3 1.1V6.5zm14 11-3 1V6.9l3-1.1v11.7z"/>',
     /* stroke-based, straight off Trip-Essentials/Sunrise-Sunset.html */
@@ -448,13 +446,13 @@ window.TVE.isPhone = function () {
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS alongside
        Flights / Safety / Time Zones. */
     { group: '🧳 Before You Go', groupIcon: 'luggage', children: [
-        { href: base + 'Trip-Essentials/Before-You-Go.html',                   text: '🧳 Before You Go' },
-        { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: '👕 Packing Checklist' },
-        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
+        { href: base + 'Trip-Essentials/Before-You-Go.html',                   text: 'Before You Go' },
+        { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: 'Packing Checklist' },
+        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters' },
       ] },
     null,
-    { group: '🏨 Where to Stay', groupIcon: 'hotel', children: [
-        { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods', icon: 'neighborhoods' },
+    { group: '🏨 Where to Stay', groupIcon: 'neighborhoods', children: [
+        { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods' },
         { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: 'Hotels & Stays' },
         { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: 'Most Luxurious Hotels' },
         { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: 'Unique Hotels' },
@@ -467,51 +465,51 @@ window.TVE.isPhone = function () {
        list). Browse by category leads, then A–Z. 35 rows is far taller than a
        viewport, so .tb-menu carries a max-height + scroll — see the styleEl. */
     { group: '🏆 Best Of', groupIcon: 'trophy', children: [
-        { href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: '🏆 Browse by category' },
-        { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: '🏆 Amusement Parks' },
-        { href: base + 'Trip-Essentials/Best-Animal-Encounters.html',             text: '🏆 Animal Encounters' },
-        { href: base + 'Trip-Essentials/Best-Aquariums.html',                     text: '🏆 Aquariums' },
-        { href: base + 'Trip-Essentials/Best-Architecture.html',                  text: '🏆 Architecture' },
-        { href: base + 'Trip-Essentials/Best-Art-Museums.html',                   text: '🏆 Art Museums' },
-        { href: base + 'Trip-Essentials/Best-Beaches.html',                       text: '🏆 Beaches' },
-        { href: base + 'Trip-Essentials/Best-Castles.html',                       text: '🏆 Castles' },
-        { href: base + 'Trip-Essentials/Best-Cathedrals.html',                    text: '🏆 Cathedrals' },
-        { href: base + 'Trip-Essentials/Best-Caves.html',                         text: '🏆 Caves' },
-        { href: base + 'Trip-Essentials/Best-Gardens.html',                       text: '🏆 Gardens' },
-        { href: base + 'Trip-Essentials/Best-Hard-to-Reach-Places.html',          text: '🏆 Hard-to-Reach Places' },
-        { href: base + 'Trip-Essentials/Best-Hot-Springs.html',                   text: '🏆 Hot Springs' },
-        { href: base + 'Trip-Essentials/Best-Islands.html',                       text: '🏆 Islands' },
-        { href: base + 'Trip-Essentials/Best-Kids-Friendly-Places.html',          text: '🏆 Kid-Friendly Destinations' },
-        { href: base + 'Trip-Essentials/Best-Kids-Museums.html',                  text: "🏆 Kids' Museums" },
-        { href: base + 'Trip-Essentials/Best-Lakes.html',                         text: '🏆 Lakes' },
-        { href: base + 'Trip-Essentials/Best-Mountains-and-Rock-Formations.html', text: '🏆 Mountains & Rock Formations' },
-        { href: base + 'Trip-Essentials/Best-Museums.html',                       text: '🏆 Museums' },
-        { href: base + 'Trip-Essentials/Best-National-Parks-by-Country.html',     text: '🏆 National Parks' },
-        { href: base + 'Trip-Essentials/Best-Natural-Phenomena.html',             text: '🏆 Natural Phenomena' },
-        { href: base + 'Trip-Essentials/Best-Observation-Decks.html',             text: '🏆 Observation Decks' },
-        { href: base + 'Trip-Essentials/Best-Safari.html',                        text: '🏆 Safari' },
-        { href: base + 'Trip-Essentials/Best-Scuba-Diving.html',                  text: '🏆 Scuba Diving' },
-        { href: base + 'Trip-Essentials/Best-Ski-Resorts.html',                   text: '🏆 Ski Resorts' },
-        { href: base + 'Trip-Essentials/Best-Surfing.html',                       text: '🏆 Surfing' },
-        { href: base + 'Trip-Essentials/Best-UNESCO-Sites.html',                  text: '🏆 UNESCO Sites' },
-        { href: base + 'Trip-Essentials/Best-Unique-Museums.html',                text: '🏆 Unique Museums' },
-        { href: base + 'Trip-Essentials/Best-Volcanoes.html',                     text: '🏆 Volcanoes' },
-        { href: base + 'Trip-Essentials/Best-Wine-Regions.html',                  text: '🏆 Wine Regions' },
-        { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: '🏆 Wonders of the World' },
+        { href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: 'Browse by category' },
+        { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: 'Amusement Parks' },
+        { href: base + 'Trip-Essentials/Best-Animal-Encounters.html',             text: 'Animal Encounters' },
+        { href: base + 'Trip-Essentials/Best-Aquariums.html',                     text: 'Aquariums' },
+        { href: base + 'Trip-Essentials/Best-Architecture.html',                  text: 'Architecture' },
+        { href: base + 'Trip-Essentials/Best-Art-Museums.html',                   text: 'Art Museums' },
+        { href: base + 'Trip-Essentials/Best-Beaches.html',                       text: 'Beaches' },
+        { href: base + 'Trip-Essentials/Best-Castles.html',                       text: 'Castles' },
+        { href: base + 'Trip-Essentials/Best-Cathedrals.html',                    text: 'Cathedrals' },
+        { href: base + 'Trip-Essentials/Best-Caves.html',                         text: 'Caves' },
+        { href: base + 'Trip-Essentials/Best-Gardens.html',                       text: 'Gardens' },
+        { href: base + 'Trip-Essentials/Best-Hard-to-Reach-Places.html',          text: 'Hard-to-Reach Places' },
+        { href: base + 'Trip-Essentials/Best-Hot-Springs.html',                   text: 'Hot Springs' },
+        { href: base + 'Trip-Essentials/Best-Islands.html',                       text: 'Islands' },
+        { href: base + 'Trip-Essentials/Best-Kids-Friendly-Places.html',          text: 'Kid-Friendly Destinations' },
+        { href: base + 'Trip-Essentials/Best-Kids-Museums.html',                  text: "Kids' Museums" },
+        { href: base + 'Trip-Essentials/Best-Lakes.html',                         text: 'Lakes' },
+        { href: base + 'Trip-Essentials/Best-Mountains-and-Rock-Formations.html', text: 'Mountains & Rock Formations' },
+        { href: base + 'Trip-Essentials/Best-Museums.html',                       text: 'Museums' },
+        { href: base + 'Trip-Essentials/Best-National-Parks-by-Country.html',     text: 'National Parks' },
+        { href: base + 'Trip-Essentials/Best-Natural-Phenomena.html',             text: 'Natural Phenomena' },
+        { href: base + 'Trip-Essentials/Best-Observation-Decks.html',             text: 'Observation Decks' },
+        { href: base + 'Trip-Essentials/Best-Safari.html',                        text: 'Safari' },
+        { href: base + 'Trip-Essentials/Best-Scuba-Diving.html',                  text: 'Scuba Diving' },
+        { href: base + 'Trip-Essentials/Best-Ski-Resorts.html',                   text: 'Ski Resorts' },
+        { href: base + 'Trip-Essentials/Best-Surfing.html',                       text: 'Surfing' },
+        { href: base + 'Trip-Essentials/Best-UNESCO-Sites.html',                  text: 'UNESCO Sites' },
+        { href: base + 'Trip-Essentials/Best-Unique-Museums.html',                text: 'Unique Museums' },
+        { href: base + 'Trip-Essentials/Best-Volcanoes.html',                     text: 'Volcanoes' },
+        { href: base + 'Trip-Essentials/Best-Wine-Regions.html',                  text: 'Wine Regions' },
+        { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', full: 'World Map', icon: 'map' },
     null,
     { group: '📊 Stats', groupIcon: 'chart', children: [
-        { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
-        { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: '📊 Stats Across US' },
-        { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: '📊 Stats Across Canada' },
-        { href: base + 'Trip-Essentials/Europe-Stats.html',               text: '📊 Stats Across Europe' },
-        { href: base + 'Trip-Essentials/Asia-Stats.html',                 text: '📊 Stats Across Asia' },
-        { href: base + 'Trip-Essentials/Africa-Stats.html',              text: '📊 Stats Across Africa' },
-        { href: base + 'Trip-Essentials/South-America-Stats.html',        text: '📊 Stats Across South America' },
-        { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: '📊 Stats Across the Caribbean' },
-        { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: '📊 Stats Across Oceania' },
+        { href: base + 'Trip-Essentials/Destination-Records.html',        text: 'Destination Records' },
+        { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: 'Stats Across US' },
+        { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: 'Stats Across Canada' },
+        { href: base + 'Trip-Essentials/Europe-Stats.html',               text: 'Stats Across Europe' },
+        { href: base + 'Trip-Essentials/Asia-Stats.html',                 text: 'Stats Across Asia' },
+        { href: base + 'Trip-Essentials/Africa-Stats.html',              text: 'Stats Across Africa' },
+        { href: base + 'Trip-Essentials/South-America-Stats.html',        text: 'Stats Across South America' },
+        { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: 'Stats Across the Caribbean' },
+        { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: 'Stats Across Oceania' },
       ]},
     null,
     { group: '✈️ Flights', groupIcon: 'plane', children: [
@@ -521,9 +519,9 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'clock', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: 'EU Lounges',        icon: 'laptop' },
-        { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: '🛂 Global Entry & CLEAR' },
-        { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
-        { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: '🧳 Luggage Storage', newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: 'Global Entry & CLEAR' },
+        { href: base + 'Trip-Essentials/Baggage.html',           text: 'Baggage' },
+        { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: 'Luggage Storage', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Passport.html',          text: 'Passport',          icon: 'passport' },
       ] },
     null,
@@ -546,9 +544,9 @@ window.TVE.isPhone = function () {
       ] },
     null,
     { group: '🌤️ Weather', groupIcon: 'sun', children: [
-        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: '🌤️ Browse by Climate' },
-        { href: base + 'Trip-Essentials/Weather.html',           text: '🌤️ Browse by City' },
-        { href: base + 'Trip-Essentials/When-to-Go.html',        text: '🌤️ When to Go' },
+        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate' },
+        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City' },
+        { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go' },
       ] },
     null,
     { group: '🛡️ Safety', groupIcon: 'insurance', children: [
@@ -582,19 +580,19 @@ window.TVE.isPhone = function () {
        Children carry their own icons, so this group belongs in
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
     { group: '📋 Also Recommended', groupShort: '📋 Recommended', groupIcon: 'list', children: [
-        { href: base + 'Trip-Essentials/Budget-Guide.html',       text: '💰 Budget' },
+        { href: base + 'Trip-Essentials/Budget-Guide.html',       text: 'Budget' },
         { href: base + 'Trip-Essentials/Rental-Cars.html',        text: 'Car Rental & Private', icon: 'rental-cars' },
-        { href: base + 'Trip-Essentials/Cards-ATM.html',          text: '💳 Cards & ATM' },
-        { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: '🎫 City Transit Cards' },
-        { href: base + 'Trip-Essentials/Cruise-Ships.html',       text: '🚢 Cruise Lines', newSince: '2026-08-09' },
+        { href: base + 'Trip-Essentials/Cards-ATM.html',          text: 'Cards & ATM' },
+        { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: 'City Transit Cards' },
+        { href: base + 'Trip-Essentials/Cruise-Ships.html',       text: 'Cruise Lines', newSince: '2026-08-09' },
         { href: base + 'Trip-Essentials/Disney-Parks.html',       text: 'Disney Parks', icon: 'disney-parks', newSince: '2026-08-08' },
         { href: base + 'Trip-Essentials/Festival-Finder.html',    text: 'Festival Finder', icon: 'festival-finder' },
-        { href: base + 'Trip-Essentials/More-Resources.html',     text: '📚 More Resources' },
-        { href: base + 'Trip-Essentials/Pickleball.html',         text: '🏓 Pickleball' },
+        { href: base + 'Trip-Essentials/More-Resources.html',     text: 'More Resources' },
+        { href: base + 'Trip-Essentials/Pickleball.html',         text: 'Pickleball' },
         { href: base + 'Trip-Essentials/Restaurants.html',        text: 'Restaurants', icon: 'restaurants' },
-        { href: base + 'Trip-Essentials/SIM-Cards.html',          text: '📱 SIM Cards' },
-        { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: '🏆 Sports Calendar' },
-        { href: base + 'Trip-Essentials/Tipping-Guide.html',      text: '💵 Tipping' },
+        { href: base + 'Trip-Essentials/SIM-Cards.html',          text: 'SIM Cards' },
+        { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: 'Sports Calendar' },
+        { href: base + 'Trip-Essentials/Tipping-Guide.html',      text: 'Tipping' },
         { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: 'Tours & Tickets', icon: 'tours-tickets' },
         { href: base + 'Trip-Essentials/Travel-Apps.html',        text: 'Travel Apps', icon: 'travel-apps' },
       ] },
@@ -788,6 +786,7 @@ window.TVE.isPhone = function () {
        win on source order and step those two labels to the right. The label's
        flex:1 is what pushes the badge to the right edge, not space-between. */
     '.tb-menu a.tb-has-ico.tb-has-new{gap:9px;justify-content:flex-start}' +
+    '.tb a.tb-has-ico{display:inline-flex;align-items:center;gap:5px}' +
     '.tb-ico{flex-shrink:0;display:inline-flex;align-items:center;line-height:0;transform:translateY(-1px)}' +
     '.tb-menu a.tb-has-new{display:flex;align-items:center;justify-content:space-between;gap:12px}' +
     '.tb-new,.tb-ham-new{flex-shrink:0;font-size:7.5px;font-weight:700;letter-spacing:.07em;' +
@@ -1393,7 +1392,7 @@ window.TVE.isPhone = function () {
         regionLinks.forEach(function (r) {
           var a = document.createElement('a');
           a.href = base + 'Trip-Essentials/Maps/World-Map.html#' + r[1];
-          a.textContent = '🗺️ ' + r[0];
+          a.textContent = r[0];
           hamMenu.appendChild(a);
         });
       }
