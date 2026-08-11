@@ -5342,10 +5342,10 @@ window.TVE.isPhone = function () {
       { name: 'Four Seasons Hotel Miami', note: 'Four Seasons — Brickell Avenue, rooftop pool with Biscayne Bay views, Acqua restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-miami.html' }
     ] },
     'milan': { h: [
-      { name: 'Bulgari Hotel Milano', note: 'Bulgari Hotels — private 4,000 sq m garden, golden onyx pool, Bulgari Spa, Brera neighborhood adjacency · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/it/bulgari-hotel-milan.html' },
-      { name: 'Four Seasons Hotel Milano', note: 'Four Seasons brand — 15th-century convent, Via Gesù courtyard garden, La Veranda restaurant · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/it/four-seasons-hotel-milano.html' },
-      { name: 'Mandarin Oriental, Milan', note: 'Mandarin Oriental brand — five historic palazzi in Brera, Mandarin Bar & Bistrot, The Spa at Mandarin Oriental, design interiors · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/it/mandarin-oriental-milan.html' },
-      { name: 'NH Collection Milano Porta Nuova', note: 'NH Collection — Porta Nuova business district, outdoor pool, La Forchetta restaurant, Unicredit Tower adjacent, modern design · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/it/nh-collection-milano-porta-nuova.html' }
+      { name: 'Portrait Milano', note: 'Lungarno Collection — Corso Venezia 11 in the Quadrilatero, 5-star, indoor pool, spa, 24h reception · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/portrait-milano-lungarno-collection.html' },
+      { name: 'Mandarin Oriental, Milan', note: 'Mandarin Oriental brand — five palazzi on Via Andegari off Via Montenapoleone, 5-star, indoor pool, The Spa, 24h reception · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/mandarin-oriental-milan.html' },
+      { name: 'Four Seasons Hotel Milano', note: 'Four Seasons brand — 15th-century convent on Via Gesù, 5-star, indoor pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/four-seasons-milano.html' },
+      { name: 'Hotel Principe di Savoia · Dorchester Collection', note: 'Dorchester Collection — Piazza della Repubblica 17, 5-star, indoor pool, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/principe-di-savoia.html' }
     ] },
     'monaco': { h: [
       { name: 'Hotel de Paris Monte-Carlo', note: 'SBM brand — 1864 Place du Casino landmark, outdoor pool, Louis XV three-Michelin-star dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mc/ha-tel-de-paris.html' },
