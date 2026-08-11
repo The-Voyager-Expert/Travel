@@ -4431,7 +4431,7 @@
       { name: 'InterContinental Boston', note: 'IHG brand — 510 Atlantic Avenue on the Fort Point Channel waterfront, indoor pool, spa with steam room · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/intercontinental-boston.html' }
     ] },
     'boulder': { h: [
-      { name: 'St Julien Hotel & Spa', note: 'Independent boutique — Ninth and Pearl Street, heated outdoor pool and terrace, spa, panoramic Flatirons mountain views · 9.0 Booking.com' },
+      { name: 'Hilton Garden Inn Boulder', note: 'Hilton brand — 2701 Canyon Boulevard, rooftop heated pool, Boulder Creek Path at the door, 10-min walk to Pearl Street · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-garden-inn-boulder-co.html' },
       { name: 'Marriott Boulder', note: 'Marriott brand — Village Shopping Center at 28th and Canyon, outdoor pool, 10-min walk to Pearl Street · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/boulder-marriott.html' },
       { name: 'Hotel Boulderado', note: '1909 Pearl Street Mall landmark, atrium lobby, Q\'s restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/boulderado.html' },
       { name: 'Basecamp Boulder', note: 'Independent mountain-contemporary — downtown Pearl Street, fire pits, bike storage · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-arapahoe-ave-boulder.html' }
