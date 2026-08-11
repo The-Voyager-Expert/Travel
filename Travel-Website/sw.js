@@ -502,7 +502,15 @@
 /* 2026-08-11: An OPEN dropdown tab now carries the same terracotta ring as the active tab, so
    the flyout is visibly attached to the tab it came from — it only changed text colour before,
    which read as no state at all. Stop hours band draws the clock. toolbar.js -> v353. CACHE v517. */
-var CACHE = 'travel-cache-v523';
+/* 2026-08-11: Stop hours band — terracotta left rail REMOVED (owner: "the hours time no
+   terracota bar on the left"). The rail spanned the band's full row box while a text row's ink
+   stops 3.125px short of its own box, so the band read 3.125px tighter than every other row on
+   both sides and broke the 12.25px ink-to-ink constant the card is built on. With the rail gone
+   the band measures by its text like its neighbours. Left padding 11.5 -> 14px to hold the
+   column now the 2.5px border is not paying for it, and the 15px clock <svg> gained
+   vertical-align:-0.16em — it was on the baseline, riding high against its own label.
+   toolbar.js -> v360. CACHE v524. */
+var CACHE = 'travel-cache-v524';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -510,7 +518,7 @@ var CACHE = 'travel-cache-v523';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 359, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 360, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -3497,21 +3497,33 @@ window.TVE.isPhone = function () {
            hole cut through the card, which is why every earlier attempt to fix
            this by changing the RAIL colour felt wrong: the rail was never the
            problem. Dropping the fill sidesteps the collision entirely and the
-           row reads as a marked row rather than a strip. The rail moves to brand
-           terracotta #b85c2a and the ink to #7a3b1e, which is what the option
-           sheet showed; the chevron follows the same pair with a transparent
-           chip. Do not restore a background here without re-checking it against
+           row reads as a marked row rather than a strip. The ink is #7a3b1e and
+           the chevron follows with a transparent chip. The terracotta left rail
+           this comment used to describe was REMOVED on 2026-08-11 (owner: "the
+           hours time no terracota bar on the left") — the band's only edge mark
+           is now the right hairline. Do not reinstate a border-left here. Do not
+           restore a background either without re-checking it against
            BOTH #f5f0e6 and #fdf8f0 — the two layers it sits between. */
-        /* RIGHT EDGE — with no fill this hairline and the rail are the only
-           marks of where the band ends, which is what shows it stopping at the
-           background (#faf7f2), so with only a left rail the slab had no visible
-           end: on desktop it read as trailing off into the middle of the page
-           instead of stopping at the card edge. The hairline closes it. Same
-           tint as .tve-ph-hr so the band, its divider and its panel agree. */
-        '.tve-ph{border-left:2.5px solid #b85c2a;' +
+        /* RIGHT EDGE — with no fill and (since 2026-08-11) no left rail, this
+           hairline is the ONLY mark of where the band ends, which is what shows
+           it stopping at the background (#faf7f2): on desktop the slab otherwise
+           reads as trailing off into the middle of the page instead of stopping
+           at the card edge. The hairline closes it, so it carries more weight now
+           than when it shipped and must not be dropped as "matching" the left
+           side. Same tint as .tve-ph-hr so the band, its divider and its panel
+           agree. */
+        '.tve-ph{' +
         'border-right:1px solid rgba(187,160,112,.45);background:transparent;color:#7a3b1e;' +
-        'font-weight:500;padding:0 14px 0 11.5px;border-radius:0;' +
+        'font-weight:500;padding:0 14px;border-radius:0;' +
         'margin:6px -14px 0;line-height:1.55;font-size:inherit;}' +
+        /* CLOCK ALIGNMENT — the label is inline, so the 15px <svg> iconSVG()
+           emits defaults to vertical-align:baseline: its BOX bottom sits on the
+           baseline, which puts the glyph's centre ~0.5em up while the text's
+           optical centre is ~0.35em up. The clock therefore rode high against
+           its own label. -0.16em drops it onto the text centre. The expandable
+           variant never had this — .tve-ph-toggle is flex with
+           align-items:center, which centres the icon for free. */
+        '.tve-ph > svg{vertical-align:-0.16em;}' +
         /* Scoping to the card is what wins the specificity fight —
            .tour-box > div (0,1,1) outranks .tve-ph (0,1,0). */
         /* 3px above the tint — the outer half of the 6px gap (see the base rule).
@@ -3551,7 +3563,7 @@ window.TVE.isPhone = function () {
            which already says "Open 24h". The rule is kept rather than deleted
            because the class is still stamped in JS and
            check_stop_hours_contract hard-fails a tve-ph-* class with no CSS. */
-        '.tve-ph-24{border-left-color:#b85c2a!important;background:transparent!important;' +
+        '.tve-ph-24{background:transparent!important;' +
         'border-right-color:rgba(187,160,112,.45)!important;color:#7a3b1e!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
