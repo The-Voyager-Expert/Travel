@@ -4634,10 +4634,10 @@ window.TVE.isPhone = function () {
       { name: 'Les Trésoms Lake and Spa Resort', note: 'Independent — hillside on Boulevard de la Corniche with lake views, seasonal outdoor pool, spa, tennis court · 8.1 Booking.com', url: 'https://www.booking.com/hotel/fr/lestresomsannecy.html' }
     ] },
     'aracaju': { h: [
-      { name: 'Vidam Hotel Aracaju - Transamerica Collection', note: 'Transamerica brand — full-service spa, outdoor pool, near Aracaju Oceanarium on Orla de Atalaia · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/radisson-aracaju.html' },
+      { name: 'Del Mar Hotel', note: 'Independent — beachfront on Av. Santos Dumont in Atalaia, year-round outdoor pool, 24h reception, fitness centre · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/mercure-aracaju-del-mar.html' },
       { name: 'Hotel da Costa by Nobile', note: 'Nobile Hotels — beachfront on Orla de Atalaia, outdoor pool with sea view, breakfast highly rated · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/da-costa.html' },
       { name: 'Celi Hotel Aracaju', note: 'Independent — Orla de Atalaia beachfront, Atlantic Ocean views, Maramar Restaurant, rooftop pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/celi-aracaju.html' },
-      { name: 'Quality Hotel Aracaju', note: 'Choice Hotels brand — semi-Olympic pool and spa, near Sergipe River and Beira-Mar Avenue · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/quality-aracaju.html' }
+      { name: 'Quality Hotel Aracaju', note: 'Choice Hotels brand — semi-Olympic pool and spa, near Sergipe River and Beira-Mar Avenue · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/quality-aracaju.html' }
     ] },
     'arenal': { h: [
       { name: 'Nayara Springs', note: 'Small Luxury Hotels — adults-only, 35 private villas each with volcanic hot-spring plunge pool, Arenal Volcano views, 24-hour butler', url: 'https://www.booking.com/hotel/cr/nayara-springs.html' },
