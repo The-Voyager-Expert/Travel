@@ -569,7 +569,13 @@
    and ride masks to their NAV_VIEWBOX crops so each mark matches its toolbar twin in size
    rather than sitting smaller inside a default 0 0 24 24 box. 183 marks on Buenos Aires, zero
    visible 🏛 left. guide-style.css -> v171. toolbar.js -> v365. CACHE v530. */
-var CACHE = 'travel-cache-v530';
+/* 2026-08-11: ⚠ caveat rows draw a warning triangle — 691 fleet-wide, and the last emoji left
+   inside the stop box, sitting between the drawn free flag above it and the drawn pin below. No
+   triangle existed in NAV_ICONS (scams is a circle-slash), so this one is authored. fill-rule
+   evenodd turns the triangle body into a hole, so it renders OUTLINED with a solid exclamation —
+   which lands at the same weight as the clock rather than as a heavy terracotta slab.
+   guide-style.css -> v172. toolbar.js -> v366. CACHE v531. */
+var CACHE = 'travel-cache-v531';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -577,7 +583,7 @@ var CACHE = 'travel-cache-v530';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 171, 'toolbar.js': 365, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 172, 'toolbar.js': 366, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

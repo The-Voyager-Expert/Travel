@@ -8417,7 +8417,13 @@ window.TVE.isPhone = function () {
          a drawn pin. Mapping it to the SAME clock is what makes those rows
          match a stop (owner: "we are not using emojis on these anymore we need
          to match he stops look"). */
-      '🏛': 'clock'
+      '🏛': 'clock',
+      /* Caveat row, position 6 — 691 fleet-wide. It sat between the drawn free
+         flag above it and the drawn pin below, the last emoji in the box. No
+         warning triangle existed in NAV_ICONS (scams is a circle-slash), so
+         this one is authored: a solid triangle with the bar and dot cut out by
+         fill-rule evenodd, weighted to match the pin and the ticket flag. */
+      '⚠': 'warn'
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
        pattern had to be edited in lockstep with the table and the two leads
