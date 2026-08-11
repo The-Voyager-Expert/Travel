@@ -363,7 +363,7 @@ window.TVE.isPhone = function () {
     'tap-water':    '<path d="M12 2.1 11.3 3C10.6 3.8 5 10.5 5 14.4a7 7 0 0 0 14 0c0-3.9-5.6-10.6-6.3-11.4l-.7-.9zm0 3.2c2.1 2.6 5 6.7 5 9.1a5 5 0 0 1-10 0c0-2.4 2.9-6.5 5-9.1z"/><path d="M13.4 11.6a3.2 3.2 0 0 1-2.9 4.9 2.4 2.4 0 0 0 4.1-2.4 6 6 0 0 0-1.2-2.5z"/>',
     'insurance':    '<path d="M12 1 3 5v6.1c0 5.6 3.8 10.8 9 12.1 5.2-1.3 9-6.5 9-12.1V5l-9-4zm0 2.2 7 3.1v4.8c0 4.5-3 8.8-7 10-4-1.2-7-5.5-7-10V6.3l7-3.1z"/><path d="m10.9 14.2-2.1-2.1-1.4 1.4 3.5 3.6 6-6.1-1.4-1.4-4.6 4.6z"/>',
     'first-timer':  '<path d="M12 2 1 21h22L12 2zm0 4.6L19.5 19h-15L12 6.6zM11 10v5h2v-5h-2zm0 6.5v2h2v-2h-2z"/>',
-    'scams':        '<path d="M16.2 10.1V7.6C16.2 5.1 14.3 3 12 3S7.8 5.1 7.8 7.6v2.5C4.5 10.8 2.2 12.2 2.2 14c0 2.3 4.4 4.1 9.8 4.1s9.8-1.8 9.8-4.1c0-1.8-2.3-3.2-5.6-3.9zm-6.3-2.5C9.9 6.2 10.8 5 12 5s2.1 1.2 2.1 2.6v2.2c-.7-.1-1.4-.1-2.1-.1s-1.4 0-2.1.1V7.6zM12 16.3c-4.8 0-8-1.5-8-2.3 0-.5 1.3-1.4 3.8-1.9v1.3h1.9v-1.6c.7-.1 1.5-.1 2.3-.1s1.6 0 2.3.1v1.6h1.9v-1.3c2.5.5 3.8 1.4 3.8 1.9 0 .8-3.2 2.3-8 2.3z"/>',
+    'scams':        '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2c1.9 0 3.6.6 5 1.7L5.7 17A8 8 0 0 1 12 4zm0 16c-1.9 0-3.6-.6-5-1.7L18.3 7A8 8 0 0 1 12 20z"/>',
     'visas':        '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>',
     'entry-req':    '<path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H5v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>',
     'laptop':       '<path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>',
@@ -374,13 +374,39 @@ window.TVE.isPhone = function () {
     'restaurants': '<path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>',
     'tours-tickets': '<path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-1.99.9-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 7.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z"/>',
     'travel-apps': '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>',
-    'hotel': '<path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/>',
+    /* a hotel BUILDING, not a bed — owner rule 2026-08-11 */
+    'hotel': '<path d="M4 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6h4a1 1 0 0 1 1 1v10h-6v-4h-2v4H4zm2-2h2v-2H6v2zm0-4h2v-2H6v2zm0-4h2V9H6v2zm0-4h2V5H6v2zm4 12h2v-2h-2v2zm0-4h2v-2h-2v2zm0-4h2V9h-2v2zm0-4h2V5h-2v2zm8 12h2v-2h-2v2zm0-4h2v-2h-2v2z"/>',
+    'globe': '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4zM4.3 14A8 8 0 0 1 4 12c0-.7.1-1.4.3-2h3.4a16.5 16.5 0 0 0 0 4H4.3zm.8 2h2.9c.3 1.3.8 2.5 1.4 3.6A8 8 0 0 1 5.1 16zm2.9-8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zM12 20c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4zm2.2-6H9.8a14.7 14.7 0 0 1 0-4h4.4a14.7 14.7 0 0 1 0 4zm.3 5.6c.6-1.1 1.1-2.3 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.8-5.6a16.5 16.5 0 0 0 0-4h3.4c.2.6.3 1.3.3 2s-.1 1.4-.3 2h-3.4z"/>',
+    'map': '<path d="M20.5 3h-.2L15 5.1 9 3 3.4 4.9a.5.5 0 0 0-.4.5v15.1a.5.5 0 0 0 .5.5h.2L9 18.9l6 2.1 5.6-1.9a.5.5 0 0 0 .4-.5V3.5a.5.5 0 0 0-.5-.5zM10 5.5l4 1.4v11.6l-4-1.4V5.5zM5 6.5l3-1v11.6l-3 1.1V6.5zm14 11-3 1V6.9l3-1.1v11.7z"/>',
+    /* stroke-based, straight off Trip-Essentials/Sunrise-Sunset.html */
+    'sunset': { stroke: true, m: '<circle cx="12" cy="10" r="4"/><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 4.93-1.41 1.41"/><path d="M2 10h2"/><path d="M20 10h2"/><path d="M5 17h14"/><path d="M3 21h18"/>' },
+    'luggage': '<path d="M20 6h-3V4c0-1.1-.9-2-2-2h-6c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-5 0H9V4h6v2z"/>',
+    'trophy': '<path d="M19 5h-2V3H7v2H5a2 2 0 0 0-2 2v1a4 4 0 0 0 4 4h.3A5 5 0 0 0 11 15.9V18H8v2h8v-2h-3v-2.1A5 5 0 0 0 16.7 12H17a4 4 0 0 0 4-4V7a2 2 0 0 0-2-2zM7 10a2 2 0 0 1-2-2V7h2v3zm12-2a2 2 0 0 1-2 2V7h2v1z"/>',
+    'chart': '<path d="M4 20h3.5V10H4v10zm6.2 0h3.6V4h-3.6v16zM16.5 20H20v-7h-3.5v7z"/>',
+    'money': '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.6-8.7c-1.7-.5-2.2-.9-2.2-1.5 0-.7.7-1.2 1.8-1.2 1.2 0 1.7.6 1.7 1.4h1.6c0-1.2-.8-2.3-2.2-2.6V6h-2.2v1.4c-1.3.3-2.3 1.2-2.3 2.5 0 1.5 1.3 2.3 3.2 2.8 1.7.4 2 1 2 1.6 0 .5-.3 1.2-1.8 1.2-1.4 0-1.9-.6-2-1.4H8.6c.1 1.5 1.2 2.4 2.5 2.7V18h2.2v-1.4c1.4-.3 2.4-1.1 2.4-2.5 0-1.8-1.6-2.5-3.1-2.8z"/>',
+    'sun': '<path d="M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 10a4 4 0 1 1 0-8 4 4 0 0 1 0 8zM11 1h2v3h-2zm0 19h2v3h-2zM1 11h3v2H1zm19 0h3v2h-3zM4.2 5.6l1.4-1.4 2.1 2.1-1.4 1.4zm12.1 12.1 1.4-1.4 2.1 2.1-1.4 1.4zM17.7 6.3l-1.4-1.4 2.1-2.1 1.4 1.4zM5.6 19.8l-1.4-1.4 2.1-2.1 1.4 1.4z"/>',
+    'list': '<path d="M19 3h-4.2a3 3 0 0 0-5.6 0H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 16H5V5h2v2h10V5h2v14zM7 10h10v2H7zm0 4h7v2H7z"/>',
+    'plane': '<path d="M12 2a1.4 1.4 0 0 1 1.4 1.4v6.1l8.1 4.8v2.2l-8.1-2.6v5.2l2.6 1.9v1.7L12 21.4l-4 1.3v-1.7l2.6-1.9v-5.2L2.5 16.5v-2.2l8.1-4.8V3.4A1.4 1.4 0 0 1 12 2z"/>',
     'clock':        '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>',
     /* the train already drawn on Trip-Essentials/Train-Passes.html — same rule
        as every other key here: the menu wears the page's own icon */
     'passport':     '<path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h12v2H6zm4-4h8v2h-8z"/>',
     'train':        '<path d="M4 15.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V5c0-3.5-3.58-4-8-4S4 1.5 4 5v10.5zm8 1.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-7H6V5h12v5z"/>'
   };
+
+
+  /* Build the inline SVG for a NAV_ICONS entry. A plain string is filled
+     markup; { stroke:true, m } is a stroked icon and needs the opposite
+     wrapper (fill:none + a stroke colour) or it renders as a solid blob. */
+  function iconSVG(entry, size) {
+    var stroked = entry && typeof entry === 'object' && entry.stroke;
+    var markup  = stroked ? entry.m : entry;
+    var attrs   = stroked
+      ? 'fill="none" stroke="var(--rust,#b85c2a)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"'
+      : 'fill="var(--rust,#b85c2a)"';
+    return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" ' + attrs +
+           ' aria-hidden="true">' + markup + '</svg>';
+  }
 
   /* Write `text` into `el` as a label span, plus the row's SVG icon when the
      entry carries one and a NEW badge when in-window. */
@@ -392,7 +418,7 @@ window.TVE.isPhone = function () {
       el.classList.add('tb-has-ico');
       var is = document.createElement('span');
       is.className = 'tb-ico';
-      is.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="var(--rust,#b85c2a)" aria-hidden="true">' + ico + '</svg>';
+      is.innerHTML = iconSVG(ico, 15);
       el.appendChild(is);
     }
     var lb = document.createElement('span');
@@ -411,7 +437,7 @@ window.TVE.isPhone = function () {
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     null,
-    { href: base + 'index.html', text: '🌐 Guides', full: '🌐 Travel Guides' },
+    { href: base + 'index.html', text: 'Guides', full: 'Travel Guides', icon: 'globe' },
     null,
     /* OWNER-DIRECTED 2026-08-09: 👕 Packing and 🔌 Plug Adapters were standalone
        top-strip tabs; both are now children here, Packing first. Before You Go
@@ -421,7 +447,7 @@ window.TVE.isPhone = function () {
        Children keep their own icons, so '🧳 Before You Go' is in
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS alongside
        Flights / Safety / Time Zones. */
-    { group: '🧳 Before You Go', children: [
+    { group: '🧳 Before You Go', groupIcon: 'luggage', children: [
         { href: base + 'Trip-Essentials/Before-You-Go.html',                   text: '🧳 Before You Go' },
         { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: '👕 Packing Checklist' },
         { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
@@ -440,7 +466,7 @@ window.TVE.isPhone = function () {
        the hamburger's Best Of section (which stays the source for the mobile
        list). Browse by category leads, then A–Z. 35 rows is far taller than a
        viewport, so .tb-menu carries a max-height + scroll — see the styleEl. */
-    { group: '🏆 Best Of', children: [
+    { group: '🏆 Best Of', groupIcon: 'trophy', children: [
         { href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: '🏆 Browse by category' },
         { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: '🏆 Amusement Parks' },
         { href: base + 'Trip-Essentials/Best-Animal-Encounters.html',             text: '🏆 Animal Encounters' },
@@ -474,9 +500,9 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: '🏆 Wonders of the World' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: '🗺️ Maps', full: '🗺️ World Map' },
+    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', full: 'World Map', icon: 'map' },
     null,
-    { group: '📊 Stats', children: [
+    { group: '📊 Stats', groupIcon: 'chart', children: [
         { href: base + 'Trip-Essentials/Destination-Records.html',        text: '📊 Destination Records' },
         { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: '📊 Stats Across US' },
         { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: '📊 Stats Across Canada' },
@@ -488,10 +514,10 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: '📊 Stats Across Oceania' },
       ]},
     null,
-    { group: '✈️ Flights', children: [
-        { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: '✈️ Airlines', newSince: '2026-08-09' },
-        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
-        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
+    { group: '✈️ Flights', groupIcon: 'plane', children: [
+        { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: 'Airlines', newSince: '2026-08-09' },
+        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: 'Delta Seattle Hub' },
+        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: 'Delta Full Network' },
         { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'clock', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: 'EU Lounges',        icon: 'laptop' },
@@ -512,14 +538,14 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Train-Passes.html',           text: 'Train Pass Comparison',    full: 'Train Pass Comparison',    newSince: '2026-08-07' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency', full: '💰 Currency' },
+    { href: base + 'Trip-Essentials/Currency-Guide.html', text: 'Currency', full: 'Currency', icon: 'money' },
     null,
     { group: '🕐 Time Zones', groupIcon: 'clock', children: [
         { href: base + 'Trip-Essentials/Time-Zones.html',        text: 'Time Zones',       full: 'Time Zones',       icon: 'clock' },
-        { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: '🌅 Sunrise & Sunset', full: '🌅 Sunrise & Sunset' },
+        { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: 'Sunrise & Sunset', full: 'Sunrise & Sunset', icon: 'sunset' },
       ] },
     null,
-    { group: '🌤️ Weather', children: [
+    { group: '🌤️ Weather', groupIcon: 'sun', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html',    text: '🌤️ Browse by Climate' },
         { href: base + 'Trip-Essentials/Weather.html',           text: '🌤️ Browse by City' },
         { href: base + 'Trip-Essentials/When-to-Go.html',        text: '🌤️ When to Go' },
@@ -555,7 +581,7 @@ window.TVE.isPhone = function () {
        hard-fails otherwise, and the fix is always to drop the panel card).
        Children carry their own icons, so this group belongs in
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
-    { group: '📋 Also Recommended', groupShort: '📋 Recommended', children: [
+    { group: '📋 Also Recommended', groupShort: '📋 Recommended', groupIcon: 'list', children: [
         { href: base + 'Trip-Essentials/Budget-Guide.html',       text: '💰 Budget' },
         { href: base + 'Trip-Essentials/Rental-Cars.html',        text: 'Car Rental & Private', icon: 'rental-cars' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',          text: '💳 Cards & ATM' },
@@ -762,7 +788,7 @@ window.TVE.isPhone = function () {
        win on source order and step those two labels to the right. The label's
        flex:1 is what pushes the badge to the right edge, not space-between. */
     '.tb-menu a.tb-has-ico.tb-has-new{gap:9px;justify-content:flex-start}' +
-    '.tb-ico{flex-shrink:0;display:inline-flex;align-items:center;line-height:0}' +
+    '.tb-ico{flex-shrink:0;display:inline-flex;align-items:center;line-height:0;transform:translateY(-1px)}' +
     '.tb-menu a.tb-has-new{display:flex;align-items:center;justify-content:space-between;gap:12px}' +
     '.tb-new,.tb-ham-new{flex-shrink:0;font-size:7.5px;font-weight:700;letter-spacing:.07em;' +
       'text-transform:uppercase;padding:1px 4px;border-radius:3px;line-height:12px;' +
@@ -1004,7 +1030,7 @@ window.TVE.isPhone = function () {
         labelText = labelText.replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || labelText;
         var gs = document.createElement('span');
         gs.className = 'tb-ico';
-        gs.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="var(--rust,#b85c2a)" aria-hidden="true">' + gico + '</svg>';
+        gs.innerHTML = iconSVG(gico, 15);
         btn.appendChild(gs);
       }
       lab.textContent = labelText;
@@ -1074,7 +1100,22 @@ window.TVE.isPhone = function () {
     }
     var a = document.createElement('a');
     a.href = item.href;
-    a.textContent = item.text;
+    /* A flat top-strip tab (no dropdown) carries its mark the same way a group
+       does — icon: resolves through NAV_ICONS and the emoji is stripped from
+       the rendered label, never from the data. */
+    var fico = item.icon && NAV_ICONS[item.icon];
+    if (fico) {
+      a.classList.add('tb-has-ico');
+      var fs = document.createElement('span');
+      fs.className = 'tb-ico';
+      fs.innerHTML = iconSVG(fico, 15);
+      a.appendChild(fs);
+      var fl = document.createElement('span');
+      fl.textContent = (item.text || '').replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || item.text;
+      a.appendChild(fl);
+    } else {
+      a.textContent = item.text;
+    }
     var cls = [];
     if (item.guides) cls.push('tb-guides');
     if (item.href.split('/').pop() === curr) cls.push('tb-active');

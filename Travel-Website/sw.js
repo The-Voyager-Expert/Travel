@@ -466,7 +466,11 @@
    .page-intro-icon SVG instead of a repeated emoji (four identical passport glyphs in Visas,
    four trains, five hotels). New NAV_ICONS map plus icon: / groupIcon: fields in ITEMS.
    toolbar.js -> v344. CACHE to v508. */
-var CACHE = 'travel-cache-v508';
+/* 2026-08-11: Top strip is fully drawn — all 14 tabs carry an SVG instead of an emoji
+   (globe, luggage, hotel building, trophy, map, chart, plane, train, coin, clock, sun,
+   shield, ID card, clipboard). iconSVG() now also renders stroke-based marks, so the
+   Sunrise & Sunset row uses that page's own stroked icon. toolbar.js -> v345. CACHE to v509. */
+var CACHE = 'travel-cache-v509';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -474,7 +478,7 @@ var CACHE = 'travel-cache-v508';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 344, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 345, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
