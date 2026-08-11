@@ -8,41 +8,39 @@
 <style>/* ── Search ── */
 .search-wrap { display: flex; justify-content: center; margin: 35px 0 16px; }
 .search-wrap input { margin-bottom: 0; }
-/* ── Legend (dot-inside-family-pill standard) ── */
-.tier-legend {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  justify-content: center; margin-bottom: 18px;
+/* ── Tier filter pills ──────────────────────────────────────────────────────
+   OWNER-DIRECTED 2026-08-10: these four were a static `.tier-legend` strip —
+   they explained the colours and did nothing else, the only inert control on
+   the page. They are now the site's standard filter pills, identical in markup,
+   colour and behaviour to Disney-Parks (When to go / Book ahead / …) and
+   Tap-Water (Safe / Varies / Avoid): emoji dot, label, count, click to filter,
+   click again to clear. Family bg + family text on rest, border neutral. */
+.controls {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  padding: 12px 0 14px; margin: 0 0 20px;
 }
-.tleg {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.5;
-  text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
-  border: 1px solid; white-space: nowrap;
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pill {
+  font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; padding: 6px 12px;
+  border: 1px solid var(--border2); border-radius: 6px; background: var(--surface);
+  color: var(--muted, #6a6660); cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
 }
-.tleg-lbl { display: inline-flex; align-items: center; gap: 6px; }
-.tleg-lbl::before {
-  content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  background: currentColor;
-}
-/* Legend dots use canonical sphere mid tones per Badge spec 2026-07-29. */
-.tleg.req { background: #fdf0e8; color: #7a3a1a; border-color: #e8c0a0; }
-.tleg.req .tleg-lbl::before { background: #e01818; }  /* 🔴 sphere mid */
-.tleg.rec { background: #e8f5e8; color: #1a5a1a; border-color: #9ad09a; }
-.tleg.rec .tleg-lbl::before { background: #5eb833; }  /* 🟢 sphere mid */
-.tleg.con { background: #e8f0fb; color: var(--navy); border-color: #c5d5ee; }
-.tleg.con .tleg-lbl::before { background: #4a90e2; }  /* 🔵 sphere mid */
-.tleg.med { background: #fff8e0; color: #7a5800; border-color: #e8c870; }
-.tleg.med .tleg-lbl::before { background: #f5c518; }  /* 🟡 sphere mid */
-@media (prefers-color-scheme: dark) {
-  .tleg.req { background: #2a1408; color: #e8a880; border-color: #7a4020; }
-  .tleg.req .tleg-lbl::before { background: #e8a880; }
-  .tleg.rec { background: #0d200d; color: #5aaa5e; border-color: #3a7a3a; }
-  .tleg.rec .tleg-lbl::before { background: #5aaa5e; }
-  .tleg.con { background: #0a1a3a; color: #93b4ff; border-color: #3a5a9a; }
-  .tleg.con .tleg-lbl::before { background: #93b4ff; }
-  .tleg.med { background: #281f00; color: #d4a830; border-color: #7a6010; }
-  .tleg.med .tleg-lbl::before { background: #d4a830; }
-}
+.pill:hover { border-color: var(--rust); background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; }
+.pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+/* Family-colored rest state — bg + text carry the family; border stays neutral. */
+.pill[data-filter="req"] { background:#fdf0e8; color:#7a3a1a; }
+.pill[data-filter="rec"] { background:#e8f5e8; color:#1a5a1a; }
+.pill[data-filter="con"] { background:#e8f0fb; color:var(--navy); }
+.pill[data-filter="med"] { background:#fff8e0; color:#7a5800; }
+.pill[data-filter="req"].active,
+.pill[data-filter="rec"].active,
+.pill[data-filter="con"].active,
+.pill[data-filter="med"].active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+/* Hidden by the tier filter — cards, their grids, and any section label or
+   block that has nothing left to show. */
+.tier-off { display: none !important; }
 /* ── Region pills ── */
 .region-bar {
   display: flex; flex-wrap: wrap; gap: 6px;
@@ -70,8 +68,19 @@
   .rpill { flex: 1 1 calc(100% / 8 - 0.01px); height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; color: #3d3a32; border-radius: 0; margin-left: 0; background: var(--surface, #ffffff); border: 1.5px solid var(--border2, #e6e2da); }
   .rpill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); }
   .rpill.active { background: #f0ede8; border: 1.5px solid var(--border2, #e6e2da); color: var(--muted); font-weight: 500; }
-  .tier-legend { gap: 0; justify-content: center; }
-  .tleg { height: 36px; padding: 0 14px; font-size: 11px; font-weight: 700; line-height: 1; border-width: 1.5px; border-radius: 0; margin-left: 0; }
+  /* Tier pills — identical desktop treatment to Disney-Parks and Tap-Water:
+     36px, squared, touching, counts hidden, family bg on rest, and an .active
+     state that is page-bg + a terracotta BORDER. The terracotta gradient is
+     deliberately killed here — it belongs to mobile only. */
+  .pills { gap: 0; }
+  .pills .pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; border-width: 1.5px; border-radius: 0; margin-left: 0; }
+  .pills .pill-count { display: none; }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; color: inherit; }
+  .pills .pill.active,
+  .pills .pill[data-filter="req"].active,
+  .pills .pill[data-filter="rec"].active,
+  .pills .pill[data-filter="con"].active,
+  .pills .pill[data-filter="med"].active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
 }
 /* ── Destination panel ── */
 #dest-panel { margin-bottom: 28px; }
@@ -158,14 +167,11 @@
 @media (max-width: 600px) and (pointer: coarse) {
   .search-wrap input { width: 100%; }
   .vc-card { grid-template-columns: 1fr; gap: 4px 0; }
-  /* Tier legend — Form B glued 2×2 grid on mobile so all 4 legend items
-     stretch full-width with matching height. Family bg/text/border colors
-     preserved (they encode meaning). */
-  .tier-legend { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; width: 100% !important; }
-  .tleg { min-height: 46px !important; height: auto !important; padding: 6px 4px !important; border-radius: 0 !important; font-size: 10px !important;
-    border: 2px solid var(--border, #d8d4cc) !important;
-    line-height: 1.15 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; letter-spacing: 0.03em !important; }
-  .tleg .tleg-lbl { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  /* Tier pills — Form B glued 2×2 grid on mobile so all 4 stretch full-width
+     with matching height. Family bg/text preserved (they encode meaning). */
+  .pills { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .pill { min-height: 46px !important; height: auto !important; padding: 6px 4px !important; border-radius: 0 !important; font-size: 11px !important;
+    line-height: 1.15 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
   /* Form B glued 3-across grid — full width, no gaps, square corners, 46px. */
   .region-bar { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; width: 100% !important; }
   .rpill { height: 46px !important; padding: 4px 6px !important; border-radius: 0 !important; font-size: 12px !important; white-space: normal !important; line-height: 1.12 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; }
@@ -179,22 +185,34 @@
 <script src="../assets/toolbar.js?v=127"></script>
   <div class="page-header"><h1>VACCINES</h1></div>
 
-  <div class="search-wrap">
-    <input type="search" id="vc-search" class="search-input" placeholder="Vaccine or destination" aria-label="Search by vaccine or destination" autocomplete="off">
+  <div class="page-intro-card">
+    <div class="page-intro-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true">
+        <path d="M16.3 1.3 15 2.6l1.6 1.6-2 2-2.6-2.6-1.3 1.3 1 1-6.6 6.6a3 3 0 0 0-.8 1.5l-.7 3.1-1.9 1.9 1.3 1.3 1.9-1.9 3.1-.7a3 3 0 0 0 1.5-.8l6.6-6.6 1 1 1.3-1.3-2.6-2.6 2-2L20.4 6l1.3-1.3-5.4-3.4zm-1.7 8.3-2.2 2.2-1.4-1.4-1.2 1.2 1.4 1.4-1.3 1.3-1.4-1.4-1.2 1.2 1.4 1.4-.6.6a1.2 1.2 0 0 1-.6.3l-2.2.5.5-2.2a1.2 1.2 0 0 1 .3-.6l6.3-6.3 2.2 2.2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="page-intro-head">Which shots you need, region by region</div>
+      <div class="page-intro-sub">Vaccine guidance for 15 travel regions, split into required for entry, recommended, worth considering for your itinerary, and prescription-only medication — with dose schedules and how far ahead of departure to start each one. Written for US travellers following CDC guidance. Requirements and outbreak notices change, and what you personally need depends on your itinerary, season, and health history — confirm with a travel clinic before you book the appointment.</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="search" id="vc-search" class="search-input" placeholder="Vaccine or destination" aria-label="Search by vaccine or destination" autocomplete="off">
+    </div>
+    <div class="pills tve-glue-m" id="tier-pills">
+      <button class="pill" data-filter="req" onclick="filterTier(this,'req')">🔴 Required for entry <span class="pill-count" id="cnt-req"></span></button>
+      <button class="pill" data-filter="rec" onclick="filterTier(this,'rec')">🟢 Recommended <span class="pill-count" id="cnt-rec"></span></button>
+      <button class="pill" data-filter="con" onclick="filterTier(this,'con')">🔵 Consider based on activities <span class="pill-count" id="cnt-con"></span></button>
+      <button class="pill" data-filter="med" onclick="filterTier(this,'med')">🟡 Prescription medication <span class="pill-count" id="cnt-med"></span></button>
+    </div>
   </div>
   <div class="empty-state" id="no-results"><span class="empty-state-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span><div class="empty-state-text">Nothing matches your search.</div></div>
 
   <div id="search-panel"><div id="search-rows"></div></div>
 
   <div id="main-ui">
-
-    <!-- Legend -->
-    <div class="tier-legend tve-glue-m" style="--glue-w:2px">
-      <div class="tleg req"><span class="tleg-lbl">Required for entry</span></div>
-      <div class="tleg rec"><span class="tleg-lbl">Recommended</span></div>
-      <div class="tleg con"><span class="tleg-lbl">Consider based on activities</span></div>
-      <div class="tleg med"><span class="tleg-lbl">Prescription medication</span></div>
-    </div>
 
     <!-- Region pills -->
     <div class="region-bar" id="region-bar">
@@ -670,6 +688,54 @@ var allPanel = document.getElementById('all-panel');
 var destPanel = document.getElementById('dest-panel');
 allPanel.innerHTML = renderAll();
 
+/* ── Tier filter ─────────────────────────────────────────────────────────────
+   Same contract as Disney-Parks' filterCat and Tap-Water's filterStatus: one
+   tier at a time, clicking the active pill clears it, and picking a tier clears
+   the text search. Counts are recomputed whenever the visible set changes — a
+   region selection adds that region's cards, so the numbers follow. */
+var activeTier = null;
+
+function tierCounts() {
+  ['req', 'rec', 'con', 'med'].forEach(function (t) {
+    var el = document.getElementById('cnt-' + t);
+    if (el) el.textContent = document.querySelectorAll('#main-ui .vc-card.' + t).length;
+  });
+}
+
+function applyTier() {
+  document.querySelectorAll('#main-ui .vc-card').forEach(function (c) {
+    c.classList.toggle('tier-off', !!activeTier && !c.classList.contains(activeTier));
+  });
+  /* A grid with nothing left to show goes, and so does the section label above
+     it — otherwise the page fills with headings over empty space. */
+  document.querySelectorAll('#main-ui .vc-grid').forEach(function (g) {
+    var empty = !g.querySelector('.vc-card:not(.tier-off)');
+    g.classList.toggle('tier-off', empty);
+    var lbl = g.previousElementSibling;
+    if (lbl && lbl.classList.contains('section-label')) lbl.classList.toggle('tier-off', empty);
+  });
+  /* Routine vaccines carry no tier — they are not one of the four, so they are
+     out of scope while a tier is selected. */
+  var rg = document.querySelector('#main-ui .routine-grid');
+  if (rg) {
+    rg.classList.toggle('tier-off', !!activeTier);
+    var rl = rg.previousElementSibling;
+    if (rl && rl.classList.contains('section-label')) rl.classList.toggle('tier-off', !!activeTier);
+  }
+}
+
+function filterTier(btn, tier) {
+  var input = document.getElementById('vc-search');
+  if (input && input.value) { input.value = ''; input.dispatchEvent(new Event('input')); }
+  activeTier = (activeTier === tier) ? null : tier;
+  document.querySelectorAll('#tier-pills .pill').forEach(function (p) {
+    p.classList.toggle('active', p.dataset.filter === activeTier);
+  });
+  applyTier();
+}
+
+tierCounts();
+
 document.getElementById('region-bar').addEventListener('click', function(e) {
   var pill = e.target.closest('.rpill');
   if (!pill) return;
@@ -684,6 +750,8 @@ document.getElementById('region-bar').addEventListener('click', function(e) {
     destPanel.classList.remove('hidden');
     destPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
+  tierCounts();
+  applyTier();
 });
 
 destPanel.addEventListener('click', function(e) {
@@ -720,12 +788,21 @@ var searchRows = document.getElementById('search-rows');
 
 searchInput.addEventListener('input', function() {
   var q = searchInput.value.trim().toLowerCase();
+  var pillRow = document.getElementById('tier-pills');
   if (!q) {
     searchPanel.classList.remove('active');
     mainUI.classList.remove('hidden');
     noResults.style.display = 'none';
+    if (pillRow) pillRow.classList.remove('tier-off');
     return;
   }
+  /* Searching replaces the whole tiered list with flat result rows, so a tier
+     filter has nothing to act on — drop it and hide the row while search is on
+     (same mutual exclusion Disney-Parks uses between its search and pills). */
+  activeTier = null;
+  document.querySelectorAll('#tier-pills .pill').forEach(function (p) { p.classList.remove('active'); });
+  applyTier();
+  if (pillRow) pillRow.classList.add('tier-off');
   searchPanel.classList.add('active');
   mainUI.classList.add('hidden');
   var matches = ALL_SEARCH.filter(function(r) {

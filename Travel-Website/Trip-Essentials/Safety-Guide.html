@@ -23,7 +23,44 @@
   position: sticky; top: 0; z-index: 10;
   background: var(--bg); border-bottom: 1px solid var(--border2);
 }
-.legend-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+/* ── Level filter pills ──────────────────────────────────────────────────────
+   OWNER-DIRECTED 2026-08-10: these four were `a.badge` jump-links with their
+   own hover treatment — a full terracotta gradient, a drop shadow and a scale
+   transform on :active, none of which the site's pill standard does. They are
+   now the standard filter pills, identical to Disney-Parks, Tap-Water and
+   Vaccines: emoji dot, label, count, click to filter to that level, click again
+   to clear. Family bg + neutral border at rest; on desktop the strip is glued
+   and .active is page-bg with a terracotta BORDER, never the gradient. */
+.pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pill {
+  font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1; padding: 6px 12px;
+  border: 1px solid var(--border2); border-radius: 6px; background: var(--surface);
+  color: var(--muted, #6a6660); cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s;
+  text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+}
+.pill:hover { border-color: var(--rust); background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; }
+.pill.active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+.pill[data-filter="l1"] { background:#e8f5e8; color:#1a5a1a; }
+.pill[data-filter="l2"] { background:#fff8e0; color:#7a5800; }
+.pill[data-filter="l3"] { background:#fdf0e8; color:#7a3a1a; }
+.pill[data-filter="l4"] { background:var(--surface2); color:var(--muted); }
+.pill[data-filter="l1"].active,
+.pill[data-filter="l2"].active,
+.pill[data-filter="l3"].active,
+.pill[data-filter="l4"].active { background: linear-gradient(135deg,#7a3b1e 0%,#b85c2a 55%,#d4874a 100%); color: #fff; border-color: var(--rust); }
+@media (min-width: 601px), (pointer: fine) {
+  .pills { gap: 0; }
+  .pills .pill { flex: 1 1 auto; height: 36px; padding: 0 14px; font-size: 13px; font-weight: 500; line-height: 1; border-width: 1.5px; border-radius: 0; margin-left: 0; }
+  .pills .pill-count { display: none; }
+  .pills .pill:hover { background: var(--bg, #f5f4f0); border-color: var(--rust); box-shadow: none; color: inherit; }
+  .pills .pill.active,
+  .pills .pill[data-filter="l1"].active,
+  .pills .pill[data-filter="l2"].active,
+  .pills .pill[data-filter="l3"].active,
+  .pills .pill[data-filter="l4"].active { background: var(--bg, #f5f4f0); border: 1.5px solid #b85c2a; color: #3d3a32; }
+}
+.level-section.hidden { display: none; }
 .badge {
   display: inline-flex;
   align-items: center;
@@ -137,9 +174,13 @@ a.city-row.hidden { display: none; }
 .note strong { color: var(--text); }
 @media (max-width: 600px) and (pointer: coarse) {
   .city-grid { grid-template-columns: 1fr 1fr; }
-  /* Legend — single column, no pill styling */
-  .legend { display: flex !important; flex-direction: column !important; gap: 8px !important; padding: 10px 0 12px !important; margin: 0 0 12px !important; justify-content: flex-start !important; align-items: center !important; }
-  .badge { background: none !important; border: none !important; border-bottom: 1px solid currentColor !important; padding: 2px 0 !important; font-size: 12px !important; gap: 5px !important; min-height: auto !important; height: auto !important; line-height: 1.3 !important; display: inline-flex !important; }
+  .legend { display: flex !important; flex-direction: column !important; gap: 10px !important; padding: 10px 0 12px !important; margin: 0 0 12px !important; justify-content: flex-start !important; align-items: center !important; }
+  /* Level pills — Form B glued 2×2 grid, matching Vaccines and Tap-Water. */
+  .pills { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; width: 100% !important; }
+  .pill { min-height: 46px !important; height: auto !important; padding: 6px 6px !important; border-radius: 0 !important; font-size: 11px !important;
+    line-height: 1.15 !important; display: flex !important; align-items: center !important; justify-content: center !important; text-align: center !important; white-space: normal !important; }
+  /* The level-heading badges keep the old flat treatment — they are labels, not controls. */
+  .level-heading .badge { background: none !important; border: none !important; border-bottom: 1px solid currentColor !important; padding: 2px 0 !important; font-size: 12px !important; gap: 5px !important; min-height: auto !important; height: auto !important; line-height: 1.3 !important; display: inline-flex !important; }
   #city-search { width: 100%; }
   .level-heading { flex-wrap: wrap; gap: 6px; }
   .level-count { margin-left: 0; }
@@ -158,13 +199,26 @@ a.city-row.hidden { display: none; }
     <a class="src-link" href="https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html" target="_blank" rel="noopener">travel.state.gov</a>
   </div>
 
+  <div class="page-intro-card">
+    <div class="page-intro-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--rust,#b85c2a)" aria-hidden="true">
+        <path d="M12 1 3 5v6.1c0 5.6 3.8 10.8 9 12.1 5.2-1.3 9-6.5 9-12.1V5l-9-4zm0 2.2 7 3.1v4.8c0 4.5-3 8.8-7 10-4-1.2-7-5.5-7-10V6.3l7-3.1z"/>
+        <path d="M11 6.8h2v6.4h-2zM11 15h2v2h-2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="page-intro-head">Every destination we cover, sorted by State Department advisory level</div>
+      <div class="page-intro-sub">All 237 cities and islands with a guide on this site, placed in the four US State Department advisory levels — normal precautions, increased caution, reconsider travel, do not travel — with the current standing notices called out above the list. Advisory levels move with events and can be raised or lowered without warning; check the live advisory on travel.state.gov before you book or fly.</div>
+    </div>
+  </div>
+
   <div class="legend">
     <input type="search" id="city-search" class="search-input" placeholder="City or country" aria-label="Filter cities">
-    <div class="legend-pills">
-    <a href="#section-l1" class="badge badge-l1">🟢 Level 1 — Normal precautions</a>
-    <a href="#section-l2" class="badge badge-l2">🟡 Level 2 — Increased caution</a>
-    <a href="#section-l3" class="badge badge-l3">🔴 Level 3 — Reconsider travel</a>
-    <a href="#section-l4" class="badge badge-l4">⚫ Level 4 — Do not travel</a>
+    <div class="pills tve-glue-m" id="level-pills">
+      <button class="pill" data-filter="l1" onclick="filterLevel(this,'l1')">🟢 Level 1 — Normal precautions <span class="pill-count" id="pcnt-l1"></span></button>
+      <button class="pill" data-filter="l2" onclick="filterLevel(this,'l2')">🟡 Level 2 — Increased caution <span class="pill-count" id="pcnt-l2"></span></button>
+      <button class="pill" data-filter="l3" onclick="filterLevel(this,'l3')">🔴 Level 3 — Reconsider travel <span class="pill-count" id="pcnt-l3"></span></button>
+      <button class="pill" data-filter="l4" onclick="filterLevel(this,'l4')">⚫ Level 4 — Do not travel <span class="pill-count" id="pcnt-l4"></span></button>
     </div>
   </div>
 
@@ -465,17 +519,38 @@ a.city-row.hidden { display: none; }
   const searchInput = document.getElementById('city-search');
   const noResults = document.getElementById('no-results');
 
-  // Update level counts
+  // Update level counts — section heading and filter pill read the same number
   ['l1', 'l2', 'l3', 'l4'].forEach(level => {
     const grid = document.getElementById(`grid-${level}`);
     const count = document.getElementById(`count-${level}`);
     const rows = grid.querySelectorAll('.city-row');
     count.textContent = `(${rows.length})`;
+    const pc = document.getElementById(`pcnt-${level}`);
+    if (pc) pc.textContent = rows.length;
   });
+
+  /* Level filter — same contract as Disney-Parks' filterCat, Tap-Water's
+     filterStatus and Vaccines' filterTier: one level at a time, clicking the
+     active pill clears it, and picking a level clears the text search. */
+  window.filterLevel = function (btn, level) {
+    if (searchInput.value) { searchInput.value = ''; searchInput.dispatchEvent(new Event('input')); }
+    const on = btn.classList.contains('active');
+    document.querySelectorAll('#level-pills .pill').forEach(p => p.classList.remove('active'));
+    if (!on) btn.classList.add('active');
+    document.querySelectorAll('.level-section').forEach(s => {
+      s.classList.toggle('hidden', !on && s.id !== 'section-' + level);
+    });
+  };
 
   // Search filter
   searchInput.addEventListener('input', function() {
     const query = this.value.toLowerCase();
+    /* A search spans every level, so it clears the level filter and brings all
+       four sections back (same mutual exclusion the other pages use). */
+    if (query) {
+      document.querySelectorAll('#level-pills .pill').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.level-section').forEach(s => s.classList.remove('hidden'));
+    }
     let visibleCount = 0;
 
     allRows.forEach(row => {

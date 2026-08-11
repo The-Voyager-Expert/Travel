@@ -345,18 +345,55 @@ window.TVE.isPhone = function () {
     if (isNaN(d.getTime())) return false;
     return (Date.now() - d.getTime()) <= NEW_WINDOW_DAYS * 86400000;
   }
-  /* Write `text` into `el` as a label span, plus a NEW badge when in-window. */
+  /* ── Dropdown row icons (OWNER-DIRECTED 2026-08-10) ──────────────────────
+     A dropdown child may carry `icon: '<key>'` instead of a leading emoji.
+     The key resolves here to the SAME SVG path the page itself draws in its
+     .page-intro-icon, so the menu row and the page it opens wear one icon.
+     fill="var(--rust,#b85c2a)" — the SAME terracotta the page draws it in, so a
+     row and the page it opens are visibly one thing. (Do not switch this to
+     currentColor: the glyph then takes the row's near-black label colour and
+     the icons go grey — owner caught exactly that on 2026-08-10.)
+     Two flat Apple-emoji rows (🪪 Visas ×4) were indistinguishable at a
+     glance; these are not. Adding an `icon:` key also exempts the child from
+     check_toolbar_group_icon_consistency's shared-emoji rule — the SVG IS the
+     icon, so there is no leading emoji left to match against. */
+  var NAV_ICONS = {
+    'safety-guide': '<path d="M12 1 3 5v6.1c0 5.6 3.8 10.8 9 12.1 5.2-1.3 9-6.5 9-12.1V5l-9-4zm0 2.2 7 3.1v4.8c0 4.5-3 8.8-7 10-4-1.2-7-5.5-7-10V6.3l7-3.1z"/><path d="M11 6.8h2v6.4h-2zM11 15h2v2h-2z"/>',
+    'vaccines':     '<path d="M16.3 1.3 15 2.6l1.6 1.6-2 2-2.6-2.6-1.3 1.3 1 1-6.6 6.6a3 3 0 0 0-.8 1.5l-.7 3.1-1.9 1.9 1.3 1.3 1.9-1.9 3.1-.7a3 3 0 0 0 1.5-.8l6.6-6.6 1 1 1.3-1.3-2.6-2.6 2-2L20.4 6l1.3-1.3-5.4-3.4zm-1.7 8.3-2.2 2.2-1.4-1.4-1.2 1.2 1.4 1.4-1.3 1.3-1.4-1.4-1.2 1.2 1.4 1.4-.6.6a1.2 1.2 0 0 1-.6.3l-2.2.5.5-2.2a1.2 1.2 0 0 1 .3-.6l6.3-6.3 2.2 2.2z"/>',
+    'tap-water':    '<path d="M12 2.1 11.3 3C10.6 3.8 5 10.5 5 14.4a7 7 0 0 0 14 0c0-3.9-5.6-10.6-6.3-11.4l-.7-.9zm0 3.2c2.1 2.6 5 6.7 5 9.1a5 5 0 0 1-10 0c0-2.4 2.9-6.5 5-9.1z"/><path d="M13.4 11.6a3.2 3.2 0 0 1-2.9 4.9 2.4 2.4 0 0 0 4.1-2.4 6 6 0 0 0-1.2-2.5z"/>',
+    'insurance':    '<path d="M12 1 3 5v6.1c0 5.6 3.8 10.8 9 12.1 5.2-1.3 9-6.5 9-12.1V5l-9-4zm0 2.2 7 3.1v4.8c0 4.5-3 8.8-7 10-4-1.2-7-5.5-7-10V6.3l7-3.1z"/><path d="m10.9 14.2-2.1-2.1-1.4 1.4 3.5 3.6 6-6.1-1.4-1.4-4.6 4.6z"/>',
+    'first-timer':  '<path d="M12 2 1 21h22L12 2zm0 4.6L19.5 19h-15L12 6.6zM11 10v5h2v-5h-2zm0 6.5v2h2v-2h-2z"/>',
+    'scams':        '<path d="M12 6.5c-3.4 0-6.4.8-8.5 2.1a1.9 1.9 0 0 0-.9 1.9l.5 2.9A3.4 3.4 0 0 0 6.4 16h1.2a3.4 3.4 0 0 0 3-1.8l.5-1h1.8l.5 1a3.4 3.4 0 0 0 3 1.8h1.2a3.4 3.4 0 0 0 3.3-2.6l.5-2.9a1.9 1.9 0 0 0-.9-1.9C18.4 7.3 15.4 6.5 12 6.5zm-4.4 7.6a1.4 1.4 0 0 1-1.4-1.1l-.4-2.2A16.6 16.6 0 0 1 12 9.4c2.5 0 4.6.5 6.2 1.4l-.4 2.2a1.4 1.4 0 0 1-1.4 1.1h-1.2a1.4 1.4 0 0 1-1.2-.7l-.8-1.5a1.3 1.3 0 0 0-1.1-.7h-2.2a1.3 1.3 0 0 0-1.1.7l-.8 1.5a1.4 1.4 0 0 1-1.2.7z"/>',
+    'visas':        '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>',
+    'entry-req':    '<path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H5v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>',
+    'nomad':        '<path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>',
+    'processing':   '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>'
+  };
+
+  /* Write `text` into `el` as a label span, plus the row's SVG icon when the
+     entry carries one and a NEW badge when in-window. */
   function setEntryLabel(el, text, entry, badgeClass) {
-    if (!isNewEntry(entry)) { el.textContent = text; return; }
-    el.classList.add('tb-has-new');
+    var ico   = entry && entry.icon && NAV_ICONS[entry.icon];
+    var isNew = isNewEntry(entry);
+    if (!ico && !isNew) { el.textContent = text; return; }
+    if (ico) {
+      el.classList.add('tb-has-ico');
+      var is = document.createElement('span');
+      is.className = 'tb-ico';
+      is.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="var(--rust,#b85c2a)" aria-hidden="true">' + ico + '</svg>';
+      el.appendChild(is);
+    }
     var lb = document.createElement('span');
     lb.className = 'tb-entry-label';
     lb.textContent = text;
-    var nb = document.createElement('span');
-    nb.className = badgeClass;
-    nb.textContent = 'new';
     el.appendChild(lb);
-    el.appendChild(nb);
+    if (isNew) {
+      el.classList.add('tb-has-new');
+      var nb = document.createElement('span');
+      nb.className = badgeClass;
+      nb.textContent = 'new';
+      el.appendChild(nb);
+    }
   }
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
@@ -473,19 +510,23 @@ window.TVE.isPhone = function () {
       ] },
     null,
     { group: '🛡️ Safety', children: [
-        { href: base + 'Trip-Essentials/Safety-Guide.html',      text: '🛡️ Safety Guide' },
-        { href: base + 'Trip-Essentials/Vaccines.html',          text: '💉 Vaccines' },
-        { href: base + 'Trip-Essentials/Tap-Water.html',         text: '🚰 Tap Water' },
-        { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: '🛟 Travel Insurance' },
-        { href: base + 'Trip-Essentials/First-Timer-Mistakes.html', text: '⚠️ First-Timer Mistakes', newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: '🕵️ Scams & Traps', newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Safety-Guide.html',      text: 'Safety Guide',      icon: 'safety-guide' },
+        { href: base + 'Trip-Essentials/Vaccines.html',          text: 'Vaccines',          icon: 'vaccines' },
+        { href: base + 'Trip-Essentials/Tap-Water.html',         text: 'Tap Water',         icon: 'tap-water' },
+        { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: 'Travel Insurance',  icon: 'insurance' },
+        { href: base + 'Trip-Essentials/First-Timer-Mistakes.html', text: 'First-Timer Mistakes', icon: 'first-timer', newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: 'Scams & Traps',     icon: 'scams', newSince: '2026-08-07' },
       ] },
     null,
+    /* OWNER-DIRECTED 2026-08-10: all four children carried the SAME 🪪 emoji —
+       four identical glyphs stacked in one flyout, which told the reader
+       nothing. Each row now draws its own page's .page-intro-icon SVG instead
+       (globe · ID card · laptop · clock). See NAV_ICONS above. */
     { group: '🪪 Visas', children: [
-        { href: base + 'Trip-Essentials/Visas.html',                                    text: '🪪 Visas' },
-        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: '🪪 Entry Requirements' },
-        { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                        text: '🪪 Digital Nomad Visas' },
-        { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: '🪪 Visa Processing Times' },
+        { href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
+        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'entry-req' },
+        { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'nomad' },
+        { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: 'Visa Processing Times', icon: 'processing' },
       ] },
     null,
     /* OWNER-DIRECTED 2026-08-10: new group, built from the width freed by
@@ -695,6 +736,17 @@ window.TVE.isPhone = function () {
        Colours are the site's NEW badge exactly (.dest-new-badge in
        guides-index-style.css): 1.5px #e8c97a border, #fdecc8 fill, #7a4d00 text.
        Keep the two in sync — it is one badge appearing on two surfaces. */
+    /* Row carrying an SVG icon (NAV_ICONS) — icon, then label, then any NEW
+       badge. The label takes the free space so the badge stays hard right,
+       exactly as it does on an icon-less row. */
+    '.tb-menu a.tb-has-ico{display:flex;align-items:center;gap:9px}' +
+    '.tb-menu a.tb-has-ico .tb-entry-label{flex:1 1 auto;min-width:0}' +
+    /* A row with BOTH an icon and a NEW badge must keep the icon→label gap at
+       9px like every other row — .tb-has-new's own gap:12px would otherwise
+       win on source order and step those two labels to the right. The label's
+       flex:1 is what pushes the badge to the right edge, not space-between. */
+    '.tb-menu a.tb-has-ico.tb-has-new{gap:9px;justify-content:flex-start}' +
+    '.tb-ico{flex-shrink:0;display:inline-flex;align-items:center;line-height:0}' +
     '.tb-menu a.tb-has-new{display:flex;align-items:center;justify-content:space-between;gap:12px}' +
     '.tb-new,.tb-ham-new{flex-shrink:0;font-size:7.5px;font-weight:700;letter-spacing:.07em;' +
       'text-transform:uppercase;padding:1px 4px;border-radius:3px;line-height:12px;' +
@@ -764,6 +816,8 @@ window.TVE.isPhone = function () {
          label rather than wrapping. Placed after the .tb-active rule above so an
          item that is both active and new keeps the pill AND shows the badge. */
       '.tb-ham-menu a.tb-has-new{display:inline-flex;align-items:center;gap:8px}' +
+      '.tb-ham-menu a.tb-has-ico{display:flex;align-items:center;gap:10px}' +
+      '.tb-ham-menu a.tb-has-ico .tb-entry-label{flex:1 1 auto;min-width:0}' +
       '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
@@ -8067,17 +8121,22 @@ window.TVE.isPhone = function () {
       /* Terracotta, not grey (owner 2026-08-10). #a8a09a was quiet enough that
          readers were missing that the three stop actions exist at all; the
          brand terracotta reads as "there is something here" without shouting.
-         Hover darkens to #7a3b1e — with the resting state already coloured,
-         hover has to move DOWN in lightness to still register as feedback.
          Dark mode lifts to #d4874a: #b85c2a sits at 2.6:1 on the #2a2825 card,
-         the same lift the pullquote border and .free-flag already take. */
+         the same lift the pullquote border and .free-flag already take.
+
+         ONE LANGUAGE ACROSS ALL THREE ICONS: outline = off, SOLID = on, and
+         hover fills solid to show you what clicking would give you (owner:
+         "when selecting should hover full terracotta like the bookmark so we
+         know we selected"). Hover used to just darken the stroke to #7a3b1e,
+         which is a 1px colour shift on a 14px outline — invisible in practice.
+         Filling the glyph changes its whole silhouette, so it reads instantly
+         and it reads without colour vision. */
       '.tve-share-stop-btn{background:none;border:none;cursor:pointer;' +
       'color:#b85c2a;padding:0;margin-left:12px;line-height:1;vertical-align:middle;' +
       'display:inline-flex;align-items:center;flex-shrink:0;transition:color .15s;}' +
-      '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#7a3b1e;}' +
-      '@media (prefers-color-scheme:dark){' +
-        '.tve-share-stop-btn{color:#d4874a;}' +
-        '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#e8a468;}}' +
+      '.tve-share-stop-btn svg{transition:fill .15s;}' +
+      '.tve-share-stop-btn:hover svg,.tve-share-stop-btn:focus-visible svg{fill:currentColor;}' +
+      '@media (prefers-color-scheme:dark){.tve-share-stop-btn{color:#d4874a;}}' +
       '.tve-share-stop-btn:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:2px;border-radius:3px;}';
     (document.head || document.documentElement).appendChild(_ssCss);
@@ -8179,16 +8238,29 @@ window.TVE.isPhone = function () {
          state is coloured too: gold-vs-terracotta at 14px is a hue difference
          most readers would not register. So saved FILLS the star as well —
          outline means off, solid means on, which needs no colour vision at
-         all. Same reason the note pencil fills below. */
+         all. Same reason the note pencil fills below.
+
+         The star is the ONE true toggle of the three, so hover previews the
+         state you would land in rather than just lighting up: unsaved + hover
+         fills solid (this is what saving looks like), saved + hover EMPTIES
+         back to an outline (this is what removing looks like). Without the
+         inverse, a saved star and a hovered star were the same solid shape and
+         there was no way to tell "already on my list" from "about to be". The
+         share icon has no persistent state and the pencil opens an editor
+         rather than toggling, so both simply fill on hover. */
       '.tve-wl-btn{background:none;border:none;cursor:pointer;color:#b85c2a;padding:0;margin-left:8px;' +
       'line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
       'transition:color .15s;font-family:inherit;}' +
-      '.tve-wl-btn:hover{color:#7a3b1e;}' +
+      '.tve-wl-btn svg{transition:fill .15s;}' +
+      '.tve-wl-btn:hover svg,.tve-wl-btn:focus-visible svg{fill:currentColor;}' +
       '.tve-wl-btn.tve-wl-saved{color:' + STAR_COLOR + ';}' +
-      '.tve-wl-btn.tve-wl-saved svg{fill:currentColor;}' +
-      '@media (prefers-color-scheme:dark){' +
-        '.tve-wl-btn{color:#d4874a;}' +
-        '.tve-wl-btn:hover{color:#e8a468;}}' +
+      /* The saved star is a DIFFERENT svg (_starFill), whose <path> carries its
+         own fill="currentColor" presentation attribute. Inheriting a fill from
+         the <svg> element — which is what every other rule here does — cannot
+         reach it, so the un-fill has to name the path. A CSS rule outranks a
+         presentation attribute, so no !important is needed. */
+      '.tve-wl-btn.tve-wl-saved:hover svg path{fill:none;}' +
+      '@media (prefers-color-scheme:dark){.tve-wl-btn{color:#d4874a;}}' +
       '.tve-wl-btn:focus-visible{outline:2px solid ' + STAR_COLOR + ';outline-offset:2px;border-radius:3px;}' +
 
       /* Floating FAB — sits directly above the day-jump pill (bottom:24px+36px+8px=68px).
@@ -8590,16 +8662,22 @@ window.TVE.isPhone = function () {
          .tve-note-has USED to be #b85c2a, which is now the resting colour —
          the has-a-note state would have become completely invisible. It keeps
          the colour and gains the fill instead, matching the saved star:
-         outline off, solid on. */
+         outline off, solid on. Hover fills too — the pencil is not a toggle,
+         it opens an editor, so there is no opposite state to preview and it
+         simply lights up. A stop that already HAS a note is solid at rest, so
+         hover there darkens instead of filling, which is the only way to give
+         feedback on a glyph that is already full. */
       '.tve-note-btn{background:none;border:none;cursor:pointer;color:#b85c2a;padding:0;' +
       'margin-left:8px;line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
       'transition:color .15s;font-family:inherit;}' +
-      '.tve-note-btn:hover{color:#7a3b1e;}' +
+      '.tve-note-btn svg{transition:fill .15s;}' +
+      '.tve-note-btn:hover svg,.tve-note-btn:focus-visible svg{fill:currentColor;}' +
       '.tve-note-btn.tve-note-has{color:#b85c2a;}' +
       '.tve-note-btn.tve-note-has svg{fill:currentColor;}' +
+      '.tve-note-btn.tve-note-has:hover{color:#7a3b1e;}' +
       '@media (prefers-color-scheme:dark){' +
         '.tve-note-btn,.tve-note-btn.tve-note-has{color:#d4874a;}' +
-        '.tve-note-btn:hover{color:#e8a468;}}' +
+        '.tve-note-btn.tve-note-has:hover{color:#e8a468;}}' +
       '.tve-note-btn:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;border-radius:3px;}' +
 
       /* Saved note line under the stop header */
