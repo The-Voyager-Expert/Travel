@@ -780,7 +780,8 @@
    absent family was enough to block every crib on another page's edit).
    web-travel-style.css -> v28. guide-style.css -> v177. toolbar.js -> v377. CACHE v549. */
 /* 2026-08-11: hotel-rehome — The Marker Key West in HOTEL_ALT_DATA was missing its url field, which hard-fails the FINAL GATE 'every HOTEL_ALT_DATA entry has a Booking.com url' and blocked the Key West rehome from committing. Added the verified Booking property URL. toolbar.js -> v378. CACHE to v550. */
-var CACHE = 'travel-cache-v550';
+/* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['lake-como'] carried Villa d'Este twice, once with no url (a FINAL GATE hard-fail) and once on a Booking slug that redirects to the generic search page, so the property could not be verified either way. The block is rebuilt on four properties confirmed present in Booking inventory: Palazzo San Gottardo (Radisson Collection, Como centre), Mandarin Oriental Lago di Como, Il Sereno and Palazzo Venezia. toolbar.js -> v379. CACHE to v551. */
+var CACHE = 'travel-cache-v551';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -788,7 +789,7 @@ var CACHE = 'travel-cache-v550';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 378, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 379, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

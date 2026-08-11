@@ -5178,10 +5178,10 @@ window.TVE.isPhone = function () {
       { name: 'Vila Vita Parc', note: 'Leading Hotels of the World — clifftop resort in Armação de Pêra (50 km east), 12 restaurants, multiple pools, spa, Michelin-starred Ocean restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pt/vila-vita-parc-resort-spa.html' }
     ] },
     'lake-como': { h: [
-      { name: "Villa d'Este", note: 'Leading Hotels of the World — 16th-century Renaissance villa in Cernobbio, floating 40 m lake pool, private beach, spa, celebrated Como Grill dining · 9.5 Booking.com' },
-      { name: 'Mandarin Oriental, Lake Como', note: 'Mandarin Oriental brand — 19th-century lakeside estate in Blevio, 38 rooms with private terraces, lake-view infinity pool, The Spa at Mandarin Oriental · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/mandarin-oriental-lago-di-como.html' },
-      { name: 'Grand Hotel Tremezzo', note: 'Independent — 1910 Liberty-style palace in Tremezzo, floating pool on the lake, T Spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/grand-tremezzo.html' },
-      { name: 'Villa d\'Este Cernobbio', note: 'Independent — 1568 cardinal\'s villa, 25-acre park, floating pool on the lake · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/villa-d-este-cernobbio.html' }
+      { name: 'Palazzo San Gottardo Lake Como, a Radisson Collection Hotel', note: 'Radisson Collection — Via Cairoli in Como city centre, 5-star, indoor pool, spa and wellness centre, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/palazzo-san-gottardo-lake-como-a-radisson-collection.html' },
+      { name: 'Mandarin Oriental, Lago di Como', note: 'Mandarin Oriental brand — 19th-century lakeside estate in Blevio, indoor and outdoor pools, The Spa at Mandarin Oriental, 24h reception · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/mandarin-oriental-lago-di-como.html' },
+      { name: 'Il Sereno Lago di Como', note: 'Independent — Patricia Urquiola-designed lakefront in Torno, infinity pool over the water, private beach area, 24h reception · 9.7 Booking.com', url: 'https://www.booking.com/hotel/it/il-sereno-lago-di-como.html' },
+      { name: 'Palazzo Venezia', note: 'Independent — Piazza Cavour on the Como waterfront, 5-star, restaurant and bar, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/vista-lago-di-como.html' }
     ] },
     'lake-tahoe': { h: [
       { name: 'The Ritz-Carlton, Lake Tahoe', note: 'Ritz-Carlton brand — Northstar California ski-in/ski-out resort, heated outdoor pool, full-service spa, mountain-view dining, year-round alpine access · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-highlands-lake-tahoe.html' },
