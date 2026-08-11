@@ -700,6 +700,14 @@
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
     '}' +
     '@media(max-width:600px){#tve-back-guides{padding-left:14px!important;padding-right:14px!important}}' +
+    /* OWNER RULE 2026-08-10: the back-strip pills are MOBILE-ONLY, same call that
+       made the floating family mobile-only — "they should be only in mobile!".
+       This hides all three at once (🖨 Print Guide, Before You Go, ‹ All Guides)
+       plus the stops-map "‹ {City}" variant, since they share the strip. The
+       strip carries display:flex as an inline style, so the hide needs
+       !important to win. Desktop keeps the toolbar for every one of these
+       destinations; print is reachable from the browser's own Print. */
+    '@media(min-width:601px){#tve-back-guides{display:none!important}}' +
     /* ── Theme toggle button ─────────────────────────────────────────────── */
     '.tb-theme-toggle{flex-shrink:0;margin-left:0;margin-right:10px;width:40px;height:40px;border-radius:50%;' +
       'border:1.5px solid rgba(122,59,30,.55);background:transparent;color:#7a3b1e;' +
