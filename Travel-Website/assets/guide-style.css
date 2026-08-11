@@ -4308,3 +4308,43 @@ a.also-in-country-pill:active {
 :root[data-theme="dark"] .free-flag { color: #d4874a; }
 :root[data-theme="dark"] .ticket-flag::before { background-color: #d4874a; }
 :root[data-theme="dark"] .free-flag::before { background-color: #d4874a; }
+
+/* ── ROW MARKS — 📍 address · 🚶 walk · 🚕 ride, drawn (owner rule 2026-08-11) ──
+   Same defect that retired 🆓 and 🎟 on 2026-08-08: an Apple emoji is a
+   fixed-colour platform drawing that ignores CSS and cannot flip for dark mode.
+   These three are the last high-traffic ones — 4,598 ride and 2,716 walk marks
+   in the motion rows, plus the address row on every stop. They are now CSS
+   masks taking currentColor, so each mark is the ink of the row it leads.
+
+   THE EMOJI IS NOT REMOVED. toolbar.js wraps it in .gm-mk-src{display:none} and
+   inserts the mark beside it, so the row's textContent is byte-identical to
+   what it was. That matters: the address-copy popover keys on textContent
+   starting with 📍 (_injectAddrCopy), the share-stop button on indexOf('📍'),
+   and the ICS and clipboard exports rebuild the same strings. Same trick as
+   .tve-ph-src on the authored 🏛 rows. NEVER "tidy away" the hidden span — it
+   is load-bearing, and deleting it silently breaks copy, share and export.
+
+   Guide HTML is untouched by design. The glyphs stay authored in all 245
+   guides, where Motion Rule.html and Icon Order and Format.html still govern
+   them and the validators still read them off disk. This is a render-time
+   treatment only, exactly like the ⏰ duration chip and the 🏛 hours band. */
+.gm-mk-src { display: none; }
+.gm-mk {
+  display: inline-block; width: 1em; height: 1em; vertical-align: -0.15em;
+  background-color: currentColor;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+}
+.gm-mk-pin {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E");
+}
+.gm-mk-ride {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z'/%3E%3C/svg%3E");
+}
+.gm-mk-walk {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='13.2' cy='3.7' r='2.3' fill='black' stroke='none'/%3E%3Cpath d='M13.2 7.6 11.6 12.8'/%3E%3Cpath d='M11.6 12.8 13.9 16.2 13.4 20.9'/%3E%3Cpath d='M11.6 12.8 9.4 16.4 7.9 20.4'/%3E%3Cpath d='M12.4 9.2 15.8 11.4'/%3E%3Cpath d='M12.6 8.9 9.4 11.2'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='13.2' cy='3.7' r='2.3' fill='black' stroke='none'/%3E%3Cpath d='M13.2 7.6 11.6 12.8'/%3E%3Cpath d='M11.6 12.8 13.9 16.2 13.4 20.9'/%3E%3Cpath d='M11.6 12.8 9.4 16.4 7.9 20.4'/%3E%3Cpath d='M12.4 9.2 15.8 11.4'/%3E%3Cpath d='M12.6 8.9 9.4 11.2'/%3E%3C/svg%3E");
+}

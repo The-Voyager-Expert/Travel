@@ -8368,6 +8368,106 @@ window.TVE.isPhone = function () {
   }
   _injectShareStopButtons();
 
+  /* ── Row marks — 📍 / 🚶 / 🚕 drawn instead of Apple emoji (owner 2026-08-11) ─
+     Owner, on the motion row: "do this rows … has the walk and car time from
+     stops to stops", and on the address row: "pin needs to get done too".
+
+     The emoji is WRAPPED, never replaced. Each glyph gets a hidden
+     .gm-mk-src span next to a .gm-mk mark, so the row's textContent comes out
+     byte-identical. That is deliberate and load-bearing — three consumers read
+     these rows as text and would break on a substitution:
+       · _injectAddrCopy  — `textContent.trimStart().startsWith('📍')`
+       · _injectShareStopButtons — `textContent.indexOf('📍') >= 0`
+       · the ICS + clipboard exports, which rebuild '📍 ' + addr
+     Registering last is belt-and-braces on top of that, not the mechanism.
+
+     Guide HTML is untouched. The glyphs stay authored in all 245 guides where
+     Motion Rule.html and Icon Order and Format.html govern them and the
+     validators read them off disk — this is render-time only, exactly like the
+     ⏰ duration chip and the 🏛 hours band. Marks are drawn in guide-style.css.
+
+     Scope is deliberately narrow: motion rows, and box rows that LEAD with 📍.
+     A .stop-row of prose can legitimately contain any of these glyphs and is
+     left alone. 🚤 🚢 🚊 🚝 🚆 🚡 (about 50 rows, car-free and rail cities) have
+     no mask yet and still render as emoji — they are not in MARKS. */
+  function _injectRowMarks() {
+    if (!isRealGuide) return;
+    var MARKS = {
+      '📍': 'pin',    /* 📍 */
+      '🚶': 'walk',   /* 🚶 */
+      '🚕': 'ride',   /* 🚕 */
+      '🚗': 'ride'    /* 🚗 — a few guides author the car, same mark */
+    };
+    /* Trailing ️ is swallowed into the match so the variation selector
+       rides along inside the hidden span rather than being left behind to
+       render as a stray box. */
+    var RE = /(\uD83D[\uDCCD\uDEB6\uDE95\uDE97])️?/g;
+
+    function markRow(row) {
+      if (row.getAttribute('data-gm-marked')) return;
+      row.setAttribute('data-gm-marked', '1');
+      var walker = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, null);
+      var texts = [], n;
+      while ((n = walker.nextNode())) {
+        RE.lastIndex = 0;
+        if (RE.test(n.nodeValue)) texts.push(n);
+      }
+      texts.forEach(function (tn) {
+        var s = tn.nodeValue, frag = document.createDocumentFragment();
+        var last = 0, m;
+        RE.lastIndex = 0;
+        while ((m = RE.exec(s))) {
+          if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+          var mk = document.createElement('span');
+          mk.className = 'gm-mk gm-mk-' + MARKS[m[1]];
+          mk.setAttribute('aria-hidden', 'true');
+          frag.appendChild(mk);
+          var src = document.createElement('span');
+          src.className = 'gm-mk-src';
+          src.textContent = m[0];          /* keeps textContent identical */
+          frag.appendChild(src);
+          last = m.index + m[0].length;
+        }
+        if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+        tn.parentNode.replaceChild(frag, tn);
+      });
+    }
+
+    /* Motion rows — every glyph in them is a mark by definition. */
+    [].forEach.call(
+      document.querySelectorAll('.next,.next-tram,.next-metro,.hotel-first,.arrive-first'),
+      markRow);
+    /* Box rows — only where the glyph LEADS the row, matching _injectAddrCopy's
+       own test, so a description that happens to mention a pin or a taxi is
+       untouched. Covers the 📍 address row and the 🚶/🚕 rows that Tours, Day
+       Trips, Shows and Train Stations entries carry.
+
+       The four box families are the ones guide-style.css already groups as one
+       (`.tour-box > div, .ticket-box > div, .entry-body > div, .station-box >
+       div, .shows-box > div` share the row-spacing rule). Scoping to them is
+       what keeps prose out: a .stop-row of description text is not a direct
+       child of any of them.
+
+       NOT included, deliberately: .extras-title / .extras-sub section headings,
+       where a glyph is the section's own icon under Icon Order and Format.html
+       and not a row mark, and the floating "currently reading" strip, which
+       builds its own '📍 ' text in _injectStopStrip. */
+    [].forEach.call(
+      document.querySelectorAll('.tour-box > div,.ticket-box > div,' +
+                                '.entry-body > div,.station-box > div,.shows-box > div'),
+      function (row) {
+        var t = row.textContent.trimStart(), m;
+        RE.lastIndex = 0;
+        m = RE.exec(t);
+        if (m && m.index === 0) markRow(row);
+      });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectRowMarks);
+  } else {
+    _injectRowMarks();
+  }
+
   /* ── Stop wishlist — cross-guide bookmark feature ────────────────────────
      Injects a ★ star button into each .stop-header (appended after the share
      button). Saved stops persist to localStorage['tve_wishlist'] as an array
