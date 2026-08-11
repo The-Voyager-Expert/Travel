@@ -8409,7 +8409,15 @@ window.TVE.isPhone = function () {
       '🚢': 'ship',
       /* Tour/Day-Trip stat row: "⏳ 5 hr 30 min · 👥 Small group". */
       '⏳': 'hourglass',
-      '👥': 'people'
+      '👥': 'people',
+      /* Hours. On a STOP the authored 🏛 row is hidden and _upgradeStopHours
+         redraws it as the .tve-ph band, which leads with the clock — so the
+         restaurant, cafe and bar entries, which get no band, were the one
+         place hours still showed the classical-building emoji, directly above
+         a drawn pin. Mapping it to the SAME clock is what makes those rows
+         match a stop (owner: "we are not using emojis on these anymore we need
+         to match he stops look"). */
+      '🏛': 'clock'
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
        pattern had to be edited in lockstep with the table and the two leads
@@ -8424,6 +8432,11 @@ window.TVE.isPhone = function () {
 
     function markRow(row) {
       if (row.getAttribute('data-gm-marked')) return;
+      /* The band's own source rows are display:none and _upgradeStopHours
+         parses them — leave them exactly as authored. Marking them would gain
+         nothing visible and would put wrapper spans inside markup another
+         injector reads. */
+      if (row.classList.contains('tve-ph-src')) return;
       row.setAttribute('data-gm-marked', '1');
       var walker = document.createTreeWalker(row, NodeFilter.SHOW_TEXT, null);
       var texts = [], n;
