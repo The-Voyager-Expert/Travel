@@ -770,7 +770,8 @@
    clamp, and every space in the bar must be identical — gutter matched to the gap; (c) the stats
    grid used a bare @media (min-width:601px), which turns a narrowed desktop into the mobile site
    — now paired with (pointer: fine) per Toolbar.html § 42; (d) my own comments in toolbar.js and
-   sw.js contained 🚉, which is banned site-wide including in comments.
+   sw.js contained the station glyph (U+1F689), which is banned site-wide INCLUDING in
+   comments — as this very line proves, since writing it out tripped the check again.
    Two stale checks repaired rather than worked around: check_toolbar_safety_order's regex required
    `children` immediately after the group name, but entries carry a groupIcon between them, so it
    had been reporting "Safety group not found" instead of ever testing the order — a vacuous
