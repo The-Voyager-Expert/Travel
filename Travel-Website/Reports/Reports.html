@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports — Guide My Days Hub</title>
-<!-- built: 2026-08-10 18:49 UTC | backlog: 138 | scouting-open: 46 -->
+<!-- built: 2026-08-11 00:40 UTC | backlog: 138 | scouting-open: 46 -->
 <style>
   :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
     --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
@@ -238,14 +238,14 @@
     <div class="stat s-open"><b>136</b><span>Open</span></div>
     <div class="stat s-partial"><b>2</b><span>Partial</span></div>
     <div class="stat s-unsure"><b>0</b><span>Unsure</span></div>
-    <div class="stat s-pending"><b>4</b><span>Pending approval</span></div>
+    <div class="stat s-pending"><b>5</b><span>Pending approval</span></div>
   </div>
   <div class="controls">
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=true)">Expand all tiles</button>
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=false)">Collapse all tiles</button>
   </div>
 </header>
-<nav class="nav"><a href="#mobile-ux" class="navchip">📱 Mobile UX <span class="navcount">7</span></a><a href="#ux-desktop" class="navchip">🖥️ UX/Desktop <span class="navcount">1</span></a><a href="#layout" class="navchip">📐 Layout <span class="navcount">5</span></a><a href="#new-features" class="navchip">🆕 New Features <span class="navcount">57</span></a><a href="#new-pages" class="navchip">📄 New Pages <span class="navcount">68</span></a><a href="#rules-change-approval" class="navchip">⚖️ Rules Change Approval <span class="navcount">4</span></a><a href="#new-guides" class="navchip">🗺️ New Guides <span class="navcount">46</span></a><a href="#guide-drift-log" class="navchip">🔍 Guide Drift Log</a><a href="#photo-audit-log" class="navchip">📸 Photo Audit Log</a><a href="#ux-research-log" class="navchip">🎨 UX Research Log</a><a href="#validator-audit" class="navchip">✅ Validator Audit</a><a href="#section-coverage" class="navchip">📊 Section Coverage</a></nav>
+<nav class="nav"><a href="#mobile-ux" class="navchip">📱 Mobile UX <span class="navcount">7</span></a><a href="#ux-desktop" class="navchip">🖥️ UX/Desktop <span class="navcount">1</span></a><a href="#layout" class="navchip">📐 Layout <span class="navcount">5</span></a><a href="#new-features" class="navchip">🆕 New Features <span class="navcount">57</span></a><a href="#new-pages" class="navchip">📄 New Pages <span class="navcount">68</span></a><a href="#rules-change-approval" class="navchip">⚖️ Rules Change Approval <span class="navcount">5</span></a><a href="#new-guides" class="navchip">🗺️ New Guides <span class="navcount">46</span></a><a href="#guide-drift-log" class="navchip">🔍 Guide Drift Log</a><a href="#photo-audit-log" class="navchip">📸 Photo Audit Log</a><a href="#ux-research-log" class="navchip">🎨 UX Research Log</a><a href="#validator-audit" class="navchip">✅ Validator Audit</a><a href="#section-coverage" class="navchip">📊 Section Coverage</a></nav>
 
   <section class="cat" id="mobile-ux">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -2084,7 +2084,7 @@
   <section class="cat" id="rules-change-approval">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
       <span class="catname">⚖️ Rules Change Approval</span>
-      <span class="catcount">4</span>
+      <span class="catcount">5</span>
       <span class="catchev">&rsaquo;</span>
     </button>
     <div class="catbody">
@@ -2141,6 +2141,29 @@ THREE WAYS OUT, all owner calls:
 
 A crib cannot pick between these: option 1 and 2 are CORE RULES edits and option 3 changes what a title card means. Until it is decided, hotel-rehome will log each such city to the To Do List under ### hotel-alts and leave the guide on its existing hotel.</p>
           <div class="tmeta"><span class="badge tgt">Brain/CORE RULES/hotel_rules.html § 3 and § 4 + brain_check.check_guide_primary_hotel_on_brand_ladder (Rule 811) + Travel-Website/Guides/Alesund/</span><span class="badge src">hotel-rehome guides 1-20, 2026-08-10</span></div>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-pending">PENDING</span>
+          <span class="ttitle">www.guidemydays.com is not on the TLS certificate — one Cloudflare record fixes it</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">The apex works perfectly: https://guidemydays.com serves with a valid Let&#x27;s Encrypt certificate and Enforce HTTPS on. But the certificate covers guidemydays.com ONLY — there is no www entry — so https://www.guidemydays.com shows a browser certificate warning before it redirects. Plain http://www... redirects correctly, so this only affects the https form.
+
+Cause: the www CNAME points at the apex (guidemydays.com) rather than at guidemydays.github.io. That was a deliberate choice on 2026-08-10 — it makes the record independent of the GitHub account name, which paid off the same day when the account was renamed The-Voyager-Expert -&gt; guidemydays. The trade-off is that GitHub&#x27;s certificate automation validates www by following it to a Pages host it recognises, and a CNAME to your own apex does not give it that. Waited ~3 hours and re-triggered provisioning once by removing and re-saving the custom domain; still apex-only.
+
+FIX (about 2 minutes, owner-only — needs the Cloudflare dashboard):
+1. Cloudflare -&gt; guidemydays.com -&gt; DNS -&gt; Records
+2. Edit the www CNAME: change the target from &#x27;guidemydays.com&#x27; to &#x27;guidemydays.github.io&#x27;
+3. Leave Proxy status as DNS only (grey cloud) — proxying blocks certificate issuance
+4. GitHub re-provisions within minutes to a few hours; verify with:
+   echo | openssl s_client -connect guidemydays.com:443 -servername guidemydays.com 2&gt;/dev/null | openssl x509 -noout -text | grep -A1 &#x27;Subject Alternative Name&#x27;
+   Success looks like: DNS:guidemydays.com, DNS:www.guidemydays.com
+
+Cost of NOT doing it: anyone who types www. out of habit hits a certificate warning. Nothing the site links to uses the www prefix, so it is a rough edge rather than an outage. Re-introduces a dependency on the GitHub account name, which matters only if the account is renamed again.</p>
+          <div class="tmeta"><span class="badge tgt">Cloudflare DNS (www CNAME) + GitHub Pages certificate. No repo change; nothing for a crib to do.</span><span class="badge src">domain cutover, 2026-08-10</span></div>
         </div>
       </details><p class="rules-hint">Scope: CORE RULES edits &middot; toolbar structural changes &middot; new design decisions &middot; stray-file delete approvals. Everything else goes to the To&nbsp;Do&nbsp;List for cribs to resolve. To propose: add an entry to <code>Brain/scripts/open_recs/rules_changes.json</code> and rebuild.</p></div>
   </section>
