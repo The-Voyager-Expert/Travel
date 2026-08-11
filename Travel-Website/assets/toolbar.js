@@ -7012,7 +7012,7 @@
           bad.classList.add('tve-book-bad');
           go.classList.add('tve-book-off');
           go.removeAttribute('href');
-          go.textContent = mode === 'h' ? 'Search on Google Hotels ›' : 'Search on Google Flights ›';
+          go.textContent = mode === 'h' ? 'Search Hotels ›' : 'Search Flights ›';
           note.textContent = '"' + bad.value.trim().toUpperCase() +
             '" is not an airport code. Use a real code, or type the place name instead.';
           return;
@@ -7026,13 +7026,13 @@
           go.href = 'https://www.google.com/travel/search?q=' + encodeURIComponent(dest) +
             '&checkin=' + hIn.value + '&checkout=' + hOut.value +
             '&adults=' + (parseInt(hPax.value, 10) || 2);
-          go.textContent = 'Search on Google Hotels ›';
-          note.appendChild(document.createTextNode('Opens Google Hotels in a new tab · '));
-          var mh = document.createElement('a');
-          mh.className = 'tve-book-more';
-          mh.href = base + 'Trip-Essentials/Hotels-Stays.html';
-          mh.textContent = 'Hotels & Stays ›';
-          note.appendChild(mh);
+          go.textContent = 'Search Hotels ›';
+          /* No standing caption. The note line carries ONLY the two blocking
+             messages now (bad code / missing origin) — owner, 2026-08-10. Any
+             text under the button now means something needs fixing, rather than
+             sharing a voice with boilerplate the reader has learned to skip.
+             .tve-book-note:empty collapses the panel gap so removing the
+             sentence leaves no dead band. */
         } else {
           var to = fTo.value.trim() || destAir || place;
           var from = fFrom.value.trim();
@@ -7040,7 +7040,7 @@
           if (!from) {
             go.classList.add('tve-book-off');
             go.removeAttribute('href');
-            go.textContent = 'Search on Google Flights ›';
+            go.textContent = 'Search Flights ›';
             note.textContent = 'Add where you are flying from — a city or an airport code.';
             return;
           }
@@ -7068,13 +7068,7 @@
           go.href = 'https://www.google.com/travel/flights?q=' + encodeURIComponent(
             'Flights from ' + _bkForGoogle(from) + ' to ' + _bkForGoogle(to) +
             ' on ' + fDep.value + ' through ' + fRet.value);
-          go.textContent = 'Search on Google Flights ›';
-          note.appendChild(document.createTextNode('Opens Google Flights in a new tab · '));
-          var mf = document.createElement('a');
-          mf.className = 'tve-book-more';
-          mf.href = base + 'Trip-Essentials/Airlines-of-the-World.html';
-          mf.textContent = 'Airlines of the World ›';
-          note.appendChild(mf);
+          go.textContent = 'Search Flights ›';
         }
       }
 
