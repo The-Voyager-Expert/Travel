@@ -481,7 +481,9 @@
    which killed the flex+gap on any active tab with an icon. Theme toggle moves out of
    .tb-links to pinned top-right — the drawn tabs are wider than the emoji ones, so as the
    row's last tab it wrapped to a line of its own. toolbar.js -> v347. CACHE to v511. */
-var CACHE = 'travel-cache-v511';
+/* 2026-08-11: Baggage and Luggage Storage take the same suitcase as Before You Go.
+   toolbar.js -> v348. CACHE to v512. */
+var CACHE = 'travel-cache-v512';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -489,7 +491,7 @@ var CACHE = 'travel-cache-v511';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 347, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 348, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
