@@ -763,7 +763,11 @@ window.TVE.isPhone = function () {
    viewport. Shrink-to-fit removes that slack so the toggle sits one gutter
    after the last tab, as if it were the next tab, and the gap matches the
    left margin exactly at every width. */
-    '.tb-inner{flex:0 1 auto;min-width:0;padding-left:clamp(6px,0.78vw,10px);padding-right:clamp(6px,0.78vw,10px)}' +
+    /* The gutter MUST equal the .tb-links tab gap — Cleanliness rule: every space
+   in the bar is identical (edge to first tab, tab to tab, last tab to the
+   theme toggle). Changed with the gap on 2026-08-11; if you retune one,
+   retune both or check_toolbar_font_size_unified hard-fails. */
+    '.tb-inner{flex:0 1 auto;min-width:0;padding-left:clamp(6px,0.72vw,11px);padding-right:clamp(6px,0.72vw,11px)}' +
     /* NARROW DESKTOP ONLY — added 2026-08-10 with the desktop-holds change, and
        deliberately NOT on the base .tb-inner rule, which Cleanliness Rule 582
        keeps free of overflow ("the old sliding toolbar"). Rule 582 is about the
@@ -8462,7 +8466,7 @@ window.TVE.isPhone = function () {
          change pills after and match the sections?"). Both surfaces move on the
          same table, so a pill and the section it jumps to can never drift apart.
          Six reuse shapes already in the set; six are authored because the
-         toolbar had no equivalent. 🚉 is deliberately absent — it is banned
+         toolbar had no equivalent. the station glyph is deliberately absent — it is banned
          site-wide (CLAUDE.md twentieth non-negotiable) and the Train Stations
          pill correctly authors 🚆. */
       '🚌': 'van',          /* Getting Around */

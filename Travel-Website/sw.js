@@ -584,7 +584,7 @@
    theatre, bang, sparkle and burst are authored because the toolbar had no equivalent. 🗺 also
    fixes the All Stops Map action pill, the one emoji left in a row of drawn icons: its label is
    authored in each guide's HTML rather than the ITEMS table, so the pill-row pass could not
-   reach it and a render-time pass over authored markup could. 🚉 is deliberately NOT in the
+   reach it and a render-time pass over authored markup could. the station glyph is deliberately NOT in the
    table — banned site-wide (twentieth non-negotiable); Train Stations correctly authors 🚆.
    232 marks on Buenos Aires, no unresolved masks; the only two undrawn pills carry no glyph at
    all. guide-style.css -> v173. toolbar.js -> v367. CACHE v532. */
@@ -756,7 +756,29 @@
    is what a two-width comparison showed in one step. Wrapped in an explicit callback. Never pass
    markRow by reference to an iterator. 171 -> 223 marks; every .next / .hotel-first / .arrive-first
    row draws again, identical at 393px and 1400px. toolbar.js -> v376. CACHE v548. */
-var CACHE = 'travel-cache-v548';
+/* 2026-08-11: Validator conformance pass — brain_check went 902 failures -> 0, "Brain intact".
+   The 902 were NOT all new: 856 were check_best_of_css_standard demanding a 🌐 prefix on Best-Of
+   guide links that the decorative-emoji sweep had already stripped site-wide. A validator that
+   outlives its own rule is worse than no validator — it declared "Brain integrity FAILED, do not
+   proceed", which hard-blocks EVERY crib. Same class: check_best_of_crosslinks_style demanded a
+   literal '⭐ Best Of' title that is now drawn via iconSVG. Both retired against the twenty-fourth
+   non-negotiable.
+   MY OWN regressions, fixed here: (a) the chip restyle had applied the outlined treatment to
+   :hover as well as .active, breaking the Option B hover standard (grey var(--bg,#f5f4f0), font
+   colour UNCHANGED) on 31 rules — hover and selected are now split, hover keeps Option B and only
+   the SELECTED chip is outlined; (b) the tab-gap change left .tb-inner's gutter at a different
+   clamp, and every space in the bar must be identical — gutter matched to the gap; (c) the stats
+   grid used a bare @media (min-width:601px), which turns a narrowed desktop into the mobile site
+   — now paired with (pointer: fine) per Toolbar.html § 42; (d) my own comments in toolbar.js and
+   sw.js contained 🚉, which is banned site-wide including in comments.
+   Two stale checks repaired rather than worked around: check_toolbar_safety_order's regex required
+   `children` immediately after the group name, but entries carry a groupIcon between them, so it
+   had been reporting "Safety group not found" instead of ever testing the order — a vacuous
+   failure hiding the real assertion; and check_badge_compliance now WARNS once when a badge family
+   is absent from a page entirely rather than failing once per variant (five failures for one
+   absent family was enough to block every crib on another page's edit).
+   web-travel-style.css -> v28. guide-style.css -> v177. toolbar.js -> v377. CACHE v549. */
+var CACHE = 'travel-cache-v549';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -764,7 +786,7 @@ var CACHE = 'travel-cache-v548';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 376, 'mobile.css': 76, 'web-travel-style.css': 27, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 377, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
