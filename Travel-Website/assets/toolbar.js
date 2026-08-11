@@ -782,7 +782,7 @@ window.TVE.isPhone = function () {
        longer needs to fill the bar, so: flex-start + a fixed gap, and
        width:auto so the row is exactly as wide as its tabs. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:clamp(6px,0.78vw,10px);align-items:center;justify-content:flex-start;min-width:0}' +
+      'gap:clamp(4px,0.42vw,6px);align-items:center;justify-content:flex-start;min-width:0}' +
     /* Between the hamburger (<=1260px) and ~1500px the desktop tab row does not
        fit: it measures 1414px, plus the theme toggle that is now its last tab.
        Let it wrap. The toggle is inside .tb-links, so it wraps WITH the tabs
@@ -1092,7 +1092,7 @@ window.TVE.isPhone = function () {
         labelText = labelText.replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || labelText;
         var gs = document.createElement('span');
         gs.className = 'tb-ico';
-        gs.innerHTML = iconSVG(gico, 15, item.groupIcon);
+        gs.innerHTML = iconSVG(gico, 13, item.groupIcon);
         btn.appendChild(gs);
       }
       lab.textContent = labelText;
@@ -1170,7 +1170,7 @@ window.TVE.isPhone = function () {
       a.classList.add('tb-has-ico');
       var fs = document.createElement('span');
       fs.className = 'tb-ico';
-      fs.innerHTML = iconSVG(fico, 15, item.icon);
+      fs.innerHTML = iconSVG(fico, 13, item.icon);
       a.appendChild(fs);
       var fl = document.createElement('span');
       fl.textContent = (item.text || '').replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || item.text;
