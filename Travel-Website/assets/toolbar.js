@@ -3524,7 +3524,7 @@ window.TVE.isPhone = function () {
            side. Same tint as .tve-ph-hr so the band, its divider and its panel
            agree. */
         '.tve-ph{' +
-        'border-right:1px solid rgba(187,160,112,.45);background:transparent;color:#7a3b1e;' +
+        'border-right:1px solid rgba(187,160,112,.45);background:transparent;color:#b85c2a;' +
         'font-weight:500;padding:0 14px;border-radius:0;' +
         'margin:6px -14px 0;line-height:1.55;font-size:inherit;}' +
         /* CLOCK ALIGNMENT — the label is inline, so the 15px <svg> iconSVG()
@@ -3575,7 +3575,7 @@ window.TVE.isPhone = function () {
            because the class is still stamped in JS and
            check_stop_hours_contract hard-fails a tve-ph-* class with no CSS. */
         '.tve-ph-24{background:transparent!important;' +
-        'border-right-color:rgba(187,160,112,.45)!important;color:#7a3b1e!important;}' +
+        'border-right-color:rgba(187,160,112,.45)!important;color:#b85c2a!important;}' +
         /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
                 /* DESKTOP WIDTH — the band stops at the horizontal centre of the screen
@@ -3615,7 +3615,7 @@ window.TVE.isPhone = function () {
            accent colour in a row whose rail is already the band's accent; tan is
            the same family as the rail, so the chip reads as part of the band
            rather than as a competing mark. Hover deepens the fill to #f5f0e6. */
-        '.tve-ph-chv{font-size:15px;font-weight:700;color:#7a3b1e;line-height:1;' +
+        '.tve-ph-chv{font-size:15px;font-weight:700;color:#b85c2a;line-height:1;' +
         'display:inline-flex;align-items:center;justify-content:center;flex:none;' +
         'width:22px;height:22px;border-radius:50%;' +
         'border:1px solid #b85c2a;background:transparent;' +

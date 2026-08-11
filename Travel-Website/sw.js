@@ -588,7 +588,13 @@
    table — banned site-wide (twentieth non-negotiable); Train Stations correctly authors 🚆.
    232 marks on Buenos Aires, no unresolved masks; the only two undrawn pills carry no glyph at
    all. guide-style.css -> v173. toolbar.js -> v367. CACHE v532. */
-var CACHE = 'travel-cache-v532';
+/* 2026-08-11: Hours band ink matches its own clock (owner: "this font color should match the
+   icons color"). The band drew the clock in var(--rust,#b85c2a) but set its text to #7a3b1e, so
+   the row was two browns — visible the moment the clock stopped being a fixed-colour emoji and
+   started taking the brand terracotta. Base rule, the 24h variant and the chevron all move to
+   #b85c2a; verified text and clock both compute to rgb(184,92,42). Dark mode already overrode
+   both to its own pair and is untouched. toolbar.js -> v368. CACHE v533. */
+var CACHE = 'travel-cache-v533';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -596,7 +602,7 @@ var CACHE = 'travel-cache-v532';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 173, 'toolbar.js': 367, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 173, 'toolbar.js': 368, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
