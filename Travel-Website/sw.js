@@ -487,7 +487,11 @@
    (Global Entry & CLEAR) and one shared calendar. Festival Finder's calendar is now THE
    calendar: Tours & Tickets takes it, and both Export to Calendar buttons draw it instead
    of the emoji. toolbar.js -> v349. CACHE to v513. */
-var CACHE = 'travel-cache-v513';
+/* 2026-08-11: Best Of (31 rows) and Also Recommended (9 rows) drawn — the last emoji menus.
+   Every Best-Of category gets its OWN mark rather than the shared generic glyph its page
+   carries (8 pages shared one museum, 7 one droplet), which is what had kept them on emoji.
+   Adds book + pin for the stop rows. toolbar.js -> v350. CACHE to v514. */
+var CACHE = 'travel-cache-v514';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -495,7 +499,7 @@ var CACHE = 'travel-cache-v513';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 349, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 350, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
