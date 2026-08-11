@@ -623,7 +623,23 @@
    unclassed spans). The emoji is named at the source instead and dropped outright rather than
    hidden, because nothing reads that strip's textContent.
    guide-style.css -> v175. toolbar.js -> v370. CACHE v535. */
-var CACHE = 'travel-cache-v535';
+/* 2026-08-11: (1) REGRESSION FIX — tab gap 14px -> 11px. The 14px cap was budgeted from the
+   CLOSED row and fit with 31px spare, but a tab whose dropdown is open gains the active ring
+   (padding 4px 12px against the base 2px 2px, plus a 1.5px border) = +23px, which wrapped
+   Recommended onto a second line the moment its flyout opened — the same wrap the 2026-08-09
+   shave was chasing (owner: "when i select this recommended moves below"). Measured at 1439px:
+   1242px closed, 1265px open, 1419px usable; 1265 + 13 x 11 = 1408 clears it OPEN. Re-measure
+   with a dropdown open before touching the cap. (2) "Also on this site" footer pills get their
+   icons back, as drawings — 043c9fe6 stripped the glyph from all 286 pages carrying that strip.
+   Icon is resolved from the target page's filename, ITEMS first and then an explicit map for the
+   ~55 targets whose ITEMS entry has no icon field; unknown targets stay text. iconSVG not a
+   .gm-mk mask, because the mask classes live in guide-style.css and Trip-Essentials pages do not
+   load it. (3) Rating stars mid-line: a row LEADING with a glyph already had its star drawn, but
+   restaurant and Michelin entries lead with the venue name, so the row was skipped and kept the
+   gold Apple star mid-sentence. New sweep restricted to ⭐. (4) Sparkle much fatter and taller —
+   it was nearly invisible at 15px. (5) The three flat cards drop 28px of bottom padding to 16px.
+   guide-style.css -> v176. toolbar.js -> v371. CACHE v536. */
+var CACHE = 'travel-cache-v536';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -631,7 +647,7 @@ var CACHE = 'travel-cache-v535';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 175, 'toolbar.js': 370, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 371, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -788,12 +788,18 @@ window.TVE.isPhone = function () {
        justify-content:center, so the leftover space is not the row's to run
        out of — at 1439px the tabs measured 1317.5px inside a 1439px bar, 121px
        of it unused. The gap grows into that instead of the tabs shrinking.
-       Ceiling checked against the tightest one-line case, 1500px (below that
-       the max-width:1499px rule lets the row wrap by design): 14 tabs measure
-       1219.5px, plus 13 x 14px of gap = 1401.5px against 1480px available.
-       Do not raise the 14px cap without re-measuring at 1500px. */
+       CEILING IS SET BY THE **OPEN** STATE, NOT THE CLOSED ONE. A tab whose
+       dropdown is open gains the active ring — padding 4px 12px against the
+       base 2px 2px, plus a 1.5px border — which measures +23px on the row. The
+       first cut of this rule budgeted 14px of gap from the closed width, fit
+       with 31px to spare, and then wrapped Recommended onto a second line the
+       moment its own flyout opened (owner: "when i select this recommended
+       moves below"). That is the same wrap the 2026-08-09 shave was chasing.
+       Measured at 1439px: tabs 1242px closed, 1265px open, against 1419px of
+       usable bar. 1265 + 13 x 11 = 1408, which clears it with the flyout open.
+       Re-measure WITH A DROPDOWN OPEN before touching the 11px cap. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:clamp(6px,0.9vw,14px);align-items:center;justify-content:flex-start;min-width:0}' +
+      'gap:clamp(6px,0.72vw,11px);align-items:center;justify-content:flex-start;min-width:0}' +
     /* Between the hamburger (<=1260px) and ~1500px the desktop tab row does not
        fit: it measures 1414px, plus the theme toggle that is now its last tab.
        Let it wrap. The toggle is inside .tb-links, so it wraps WITH the tabs
@@ -8520,7 +8526,7 @@ window.TVE.isPhone = function () {
        "same for the train station leave the icon only on the tile"). The glyph
        still stays in the DOM inside .gm-mk-src — textContent is unchanged here
        for exactly the same reasons as everywhere else. */
-    function markRow(row, bare) {
+    function markRow(row, bare, only) {
       if (row.getAttribute('data-gm-marked')) return;
       /* The band's own source rows are display:none and _upgradeStopHours
          parses them — leave them exactly as authored. Marking them would gain
@@ -8539,6 +8545,10 @@ window.TVE.isPhone = function () {
         var last = 0, m;
         RE.lastIndex = 0;
         while ((m = RE.exec(s))) {
+          /* `only` restricts a pass to one glyph, so an inline sweep can pick
+             up a rating star mid-sentence without also redrawing whatever else
+             the line happens to mention. */
+          if (only && m[1] !== only) continue;
           if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
           if (!bare) {
             var mk = document.createElement('span');
@@ -8621,11 +8631,111 @@ window.TVE.isPhone = function () {
         }
         markRow(row, bare);
       });
+    /* RATING STARS MID-LINE. A row that LEADS with a glyph already has its
+       star drawn, because markRow converts every mark in the row — that is why
+       Tours entries came out right. Restaurant and Michelin entries lead with
+       the venue name instead ("ALMA Buenos Aires · 4.4⭐ · 640+ reviews"), so
+       the whole row was skipped and kept the gold Apple star mid-sentence
+       (owner 2026-08-11: "the starts in the middle is a emoji"). This sweep
+       picks those up, restricted to ⭐ so a description that mentions anything
+       else is untouched. */
+    [].forEach.call(
+      document.querySelectorAll('.extras-sub,.entry-body > div,.shows-box > div'),
+      function (row) { if (row.textContent.indexOf('⭐') >= 0) markRow(row, false, '⭐'); });
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectRowMarks);
   } else {
     _injectRowMarks();
+  }
+
+  /* ── "Also on this site" footer pills — icons restored as drawings ────────
+     Owner 2026-08-11: "we have these toolbars everywhere that the previous crib
+     by mistake removed" · "bottom for a lot of pages" · "this is the pill i was
+     looking for". Commit 043c9fe6 ("decorative emoji removed site-wide") took
+     the glyph off every one of these pills across 286 pages, leaving bare text.
+
+     They are NOT restored as emoji. Each pill links to a Trip-Essentials page
+     that already has a toolbar icon, so the icon is looked up from ITEMS by the
+     target's filename — one source of truth, and it stays correct on its own
+     when a nav icon changes. A pill whose target has no ITEMS entry simply
+     stays text.
+
+     iconSVG rather than a .gm-mk mask on purpose: the mask classes live in
+     guide-style.css, which Trip-Essentials pages do not load. An inline SVG
+     needs no stylesheet and works on every page this strip appears on. */
+  function _injectAlsoOnSiteIcons() {
+    var pills = document.querySelectorAll('.also-on-this-site-pill');
+    if (!pills.length) return;
+
+    /* ITEMS is the first source, but most of its entries carry no `icon` field
+       at all — only the ones that needed one for the nav. These are the
+       remaining pill targets, mapped to shapes that already exist in
+       NAV_ICONS. Survey of every distinct target across the 286 pages that
+       carry this strip; anything not listed simply stays text. */
+    var PAGE_ICON = {
+      'Airport-Connection-Times.html': 'plane', 'Lounges-US.html': 'plane',
+      'Lounges-Europe.html': 'plane', 'Delta-Routes-Full.html': 'plane',
+      'Delta-Routes-SEA.html': 'plane',
+      'Asia-Stats.html': 'chart', 'Caribbean-Stats.html': 'chart',
+      'Europe-Stats.html': 'chart', 'South-America-Stats.html': 'chart',
+      'Stats-Across-Canada.html': 'chart', 'Stats-Across-US.html': 'chart',
+      'Travel-Stats.html': 'chart',
+      'Baggage.html': 'luggage', 'Luggage-Storage.html': 'luggage',
+      'Best-Most-Luxurious-Hotels.html': 'neighborhoods',
+      'Best-Ultra-Luxurious-Resorts.html': 'neighborhoods',
+      'Best-Unique-Hotels.html': 'neighborhoods', 'Best-Resorts.html': 'neighborhoods',
+      'Hotels-Stays.html': 'neighborhoods', 'Neighborhoods.html': 'neighborhoods',
+      'European-Train-Guide.html': 'train', 'Scenic-Train-Journeys.html': 'train',
+      'Train-Passes.html': 'train',
+      'Visas.html': 'visas', 'Visa-Processing-Times.html': 'visas',
+      'Weather.html': 'sun', 'Climate-Finder.html': 'sun',
+      'When-to-Go.html': 'calendar', 'Sports-Calendar.html': 'calendar',
+      'Sunrise-Sunset.html': 'sunset', 'Time-Zones.html': 'clock',
+      'Best-Amusement-Parks.html': 'ferris', 'Best-Kids-Friendly-Places.html': 'ferris',
+      'Best-Islands.html': 'island', 'Budget-Guide.html': 'budget',
+      'Cards-ATM.html': 'card', 'City-Transit-Cards.html': 'transit',
+      'Cruise-Ships.html': 'ship', 'Currency-Guide.html': 'money',
+      'Day-Trips.html': 'compass', 'Destination-Records.html': 'trophy',
+      'Digital-Nomad-Visas.html': 'laptop', 'Entry-Requirements.html': 'entry-req',
+      'Festival-Finder.html': 'pennant', 'First-Timer-Mistakes.html': 'first-timer',
+      'Passport.html': 'passport', 'Plug-Adapter-Guide.html': 'plug',
+      'Rental-Cars.html': 'rental-cars', 'Restaurants.html': 'restaurants',
+      'SIM-Cards.html': 'sim', 'Safety-Guide.html': 'safety-guide',
+      'Scams-By-City.html': 'scams', 'Tap-Water.html': 'tap-water',
+      'Tipping-Guide.html': 'tipping', 'Tours-Tickets.html': 'tours-tickets',
+      'Travel-Apps.html': 'travel-apps', 'Travel-Insurance.html': 'insurance',
+      'Travel-Packing.html': 'packing', 'Trusted-Traveler.html': 'trusted',
+      'Vaccines.html': 'vaccines', 'World-Map.html': 'globe',
+      'Before-You-Go.html': 'luggage'
+    };
+    /* ITEMS wins where it has an opinion, so a nav icon change follows here. */
+    (function walk(list) {
+      [].forEach.call(list || [], function (it) {
+        if (!it) return;
+        if (it.children) walk(it.children);
+        if (it.href && it.icon) {
+          PAGE_ICON[it.href.split('/').pop().split('#')[0]] = it.icon;
+        }
+      });
+    })(ITEMS);
+
+    [].forEach.call(pills, function (a) {
+      if (a.querySelector('svg')) return;                 /* already drawn */
+      var file = (a.getAttribute('href') || '').split('/').pop().split('#')[0];
+      var key  = PAGE_ICON[file];
+      if (!key || !NAV_ICONS[key]) return;
+      var span = document.createElement('span');
+      span.innerHTML = iconSVG(NAV_ICONS[key], 13, key);
+      span.setAttribute('aria-hidden', 'true');
+      span.style.cssText = 'display:inline-block;vertical-align:-0.14em;margin-right:6px;line-height:0;';
+      a.insertBefore(span, a.firstChild);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectAlsoOnSiteIcons);
+  } else {
+    _injectAlsoOnSiteIcons();
   }
 
   /* ── Stop wishlist — cross-guide bookmark feature ────────────────────────
