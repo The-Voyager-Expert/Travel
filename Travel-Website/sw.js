@@ -746,7 +746,17 @@
    asked for; flattening it would merge the categories. Destination-Records is already uniform at
    40px. Verified no horizontal overflow and side margins unchanged on every page touched.
    web-travel-style.css -> v27. CACHE v546. */
-var CACHE = 'travel-cache-v547';
+/* 2026-08-11: REGRESSION FIX — motion rows lost their drawn marks entirely. `[].forEach.call(
+   list, markRow)` passes (element, index, array). That was harmless until markRow grew `bare` and
+   `only` parameters earlier today: from then on every row after the first got bare=index and
+   only=the NodeList, and a truthy `only` makes every match hit `continue` — so the row was
+   rebuilt as BYTE-IDENTICAL plain text. No mark, no hidden span, emoji left visible, and the
+   element still stamped data-gm-marked so nothing retried it. It surfaced during a mobile audit
+   and looked like a mobile bug; it was neither mobile nor CSS — desktop was equally broken, which
+   is what a two-width comparison showed in one step. Wrapped in an explicit callback. Never pass
+   markRow by reference to an iterator. 171 -> 223 marks; every .next / .hotel-first / .arrive-first
+   row draws again, identical at 393px and 1400px. toolbar.js -> v376. CACHE v548. */
+var CACHE = 'travel-cache-v548';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -754,7 +764,7 @@ var CACHE = 'travel-cache-v547';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 375, 'mobile.css': 76, 'web-travel-style.css': 27, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 376, 'mobile.css': 76, 'web-travel-style.css': 27, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -8574,10 +8574,18 @@ window.TVE.isPhone = function () {
       });
     }
 
-    /* Motion rows — every glyph in them is a mark by definition. */
+    /* Motion rows — every glyph in them is a mark by definition.
+       NOTE the explicit wrapper. Passing `markRow` straight to forEach hands it
+       (element, index, array) — which was harmless until markRow grew `bare`
+       and `only` parameters, at which point every row after the first received
+       bare=index and only=the NodeList. A truthy `only` makes every match hit
+       `continue`, so the row was rebuilt as byte-identical plain text: no mark,
+       no hidden span, and the emoji left visible. It looked like a mobile bug
+       and was neither mobile nor a CSS problem. Never pass markRow by
+       reference to an iterator. */
     [].forEach.call(
       document.querySelectorAll('.next,.next-tram,.next-metro,.hotel-first,.arrive-first'),
-      markRow);
+      function (row) { markRow(row); });
     /* Box rows — only where the glyph LEADS the row, matching _injectAddrCopy's
        own test, so a description that happens to mention a pin or a taxi is
        untouched. Covers the 📍 address row and the 🚶/🚕 rows that Tours, Day
