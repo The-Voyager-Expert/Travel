@@ -2398,6 +2398,48 @@ div.train .train-time   { padding: 2px 0; }
   margin-top: 16px !important;
 }
 
+/* MOBILE — the section itself IS one white card (owner rule 2026-08-10).
+   Desktop is unchanged: side-by-side rows as inset white cards framed by beige,
+   per the card-in-a-section design. On a phone that frame plus a 14px beige gap
+   under every row made three ride-app links read as three separate cards inside
+   a beige box. Below 601px the beige goes away — the section background turns
+   white, the title drops its own card ring and becomes the card's header (gold
+   rule underneath), and the entry rows sit flush, divided by a hairline. The
+   side-by-side name/link grid is untouched on both breakpoints. */
+@media (max-width: 600px) {
+  #getting-around,
+  #food-delivery {
+    background: var(--c-card-bg);
+  }
+  #getting-around > .extras-title,
+  #food-delivery  > .extras-title {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid var(--c-brand);
+    border-radius: 0;
+    padding: 4px 14px 12px;
+    margin-bottom: 0;
+  }
+  /* Rows sit flush — a hairline replaces the beige gap. Only the COLOR of the
+     already-present 1.5px transparent border moves, so no row shifts by 0.5px. */
+  #getting-around > .extras-sub,
+  #food-delivery  > .extras-sub,
+  #getting-around > .transit-box,
+  #food-delivery  > .transit-box {
+    margin-top: 0 !important;
+    border-top-color: rgba(0, 0, 0, 0.07);
+  }
+  /* First row keeps the uniform 16px title→content gap and takes no rule above
+     it — the gold title border is already the divider there. */
+  #getting-around > .extras-title + .extras-sub,
+  #getting-around > .extras-title + .extras-sub + .transit-box,
+  #food-delivery  > .extras-title + .extras-sub,
+  #food-delivery  > .extras-title + .extras-sub + .transit-box {
+    margin-top: 16px !important;
+    border-top-color: transparent;
+  }
+}
+
 /* Retired 2026-05-19 — .ride-apps was a pre-Style-A wrapper for the Getting
    Around section. Replaced by .extras-sub heading + .transit-box body per
    the Style-A canonical block. Validator hard-fails any reappearance.
@@ -2978,8 +3020,11 @@ div.train .train-time   { padding: 2px 0; }
   margin: 0;
 }
 
-/* Skip List — footnote at the very bottom of the guide. Small italic grey, no banner. */
-#skip-list { background: none; border: none; box-shadow: none; padding: 0; margin: 36px 0 0 0; }
+/* Skip List — footnote at the very bottom of the guide. Small italic grey, no banner.
+   Not last in practice: toolbar.js injects #hotel-alternatives / #also-on-this-site
+   after it, so the footnote needs the standard 16px section gap below it as well as
+   its own 36px separation above (it sat flush against the next card until 2026-08-10). */
+#skip-list { background: none; border: none; box-shadow: none; padding: 0; margin: 36px 0 16px 0; }
 #skip-list .skip-list-note, .skip-list-note { font-size: var(--fs-overview-stops); font-style: italic; color: var(--c-skip-note); line-height: 1.6; }
 
 
@@ -3536,7 +3581,12 @@ a.also-in-country-pill:active {
    pill in the guide; this class only supplies the gap below the card grid. */
 .neigh-more { margin-top: 12px; }
 @media (max-width: 600px) {
-  #hotel-alternatives { padding: 14px 16px 20px; }
+  /* margin-bottom matches every other top-level section on mobile (16px, set by
+     the shared `.overview-section, .day-block, .extras-section, .worth-knowing`
+     rule). #hotel-alternatives is NOT in that selector list, so it kept its
+     desktop 24px and sat 8px lower than its neighbours — owner spotted the
+     uneven gap 2026-08-10. */
+  #hotel-alternatives { padding: 14px 16px 20px; margin-bottom: 16px; }
   .neigh-grid { grid-template-columns: 1fr; gap: 7px; }
   .neigh-more { margin-top: 10px; }
 }
