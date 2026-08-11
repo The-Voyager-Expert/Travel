@@ -7517,8 +7517,12 @@
       '.tve-wl-btn.tve-wl-saved{color:' + STAR_COLOR + ';}' +
       '.tve-wl-btn:focus-visible{outline:2px solid ' + STAR_COLOR + ';outline-offset:2px;border-radius:3px;}' +
 
-      /* Floating FAB — sits above the scroll-top FAB (bottom:68px+36px+12px=116px) */
-      '#tve-wl-fab{position:fixed;bottom:116px;right:24px;z-index:1398;display:none;align-items:center;' +
+      /* Floating FAB — sits directly above the day-jump pill (bottom:24px+36px+8px=68px).
+         It used to clear the scroll-top FAB at 116px; that FAB is mobile-only from
+         2026-08-10 (owner: no nav arrows on desktop), so 116px left this button
+         hanging in mid-air with a 56px hole under it. Mobile keeps its own stack
+         below — the FAB is still there at ≤600px. */
+      '#tve-wl-fab{position:fixed;bottom:68px;right:24px;z-index:1398;display:none;align-items:center;' +
       'gap:6px;background:#231f1b;color:#f6f2ec;border:none;border-radius:20px;' +
       'padding:8px 13px 8px 10px;font-size:13px;font-weight:600;cursor:pointer;' +
       'box-shadow:0 4px 16px rgba(0,0,0,.22);font-family:inherit;white-space:nowrap;' +
@@ -7528,8 +7532,8 @@
       '#tve-wl-fab-cnt{background:' + STAR_COLOR + ';color:#7a3b1e;border-radius:10px;' +
       'font-size:11px;font-weight:700;padding:0 6px;min-width:18px;text-align:center;line-height:18px;}' +
 
-      /* Panel — anchored above the FAB */
-      '#tve-wl-panel{position:fixed;bottom:168px;right:24px;z-index:1397;width:296px;' +
+      /* Panel — anchored above the FAB (68px + 36px FAB + 16px gap) */
+      '#tve-wl-panel{position:fixed;bottom:120px;right:24px;z-index:1397;width:296px;' +
       'max-width:calc(100vw - 32px);background:#fff;border:1px solid #e4ddd4;border-radius:10px;' +
       'box-shadow:0 8px 32px rgba(0,0,0,.16);overflow:hidden;display:none;}' +
       '#tve-wl-panel.tve-wl-open{display:block;}' +
