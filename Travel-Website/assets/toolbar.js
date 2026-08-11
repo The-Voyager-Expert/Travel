@@ -5184,10 +5184,10 @@ window.TVE.isPhone = function () {
       { name: 'Palazzo Venezia', note: 'Independent — Piazza Cavour on the Como waterfront, 5-star, restaurant and bar, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/vista-lago-di-como.html' }
     ] },
     'lake-tahoe': { h: [
-      { name: 'The Ritz-Carlton, Lake Tahoe', note: 'Ritz-Carlton brand — Northstar California ski-in/ski-out resort, heated outdoor pool, full-service spa, mountain-view dining, year-round alpine access · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-highlands-lake-tahoe.html' },
-      { name: 'Edgewood Tahoe Resort', note: 'Forbes Five Star independent — South Lake Tahoe lakefront, championship golf, heated outdoor pool, spa, private beach, panoramic lake views · 9.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-lodge-at-edgewood-tahoe.html' },
-      { name: 'Hyatt Regency Lake Tahoe Resort, Spa and Casino', note: 'Hyatt brand — Incline Village private beach, Sierra Spa, casino, Lone Eagle Grille · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-lake-tahoe.html' },
-      { name: 'Sunnyside Resort and Lodge', note: 'Independent — West Shore waterfront, boathouse marina, Sunnyside Restaurant deck · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/sunnyside-resort-and-lodge.html' }
+      { name: 'Edgewood Tahoe Resort', note: 'Forbes Five Star independent — Lake Parkway on the Stateline lakefront, championship golf, heated year-round outdoor pool, spa, private beach, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-lodge-at-edgewood-tahoe.html' },
+      { name: 'Hyatt Regency Lake Tahoe Resort, Spa and Casino', note: 'Hyatt brand — Incline Village private beach, Stillwater Spa, casino, Lone Eagle Grille, 24h reception · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-lake-tahoe-resort-spa-and-casino.html' },
+      { name: 'The Landing Resort and Spa', note: 'Independent — Lakeshore Boulevard beachfront in South Lake Tahoe, 5-star, heated year-round pool, spa, 24h reception · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/the-landing-resort-and-spa.html' },
+      { name: 'The Ritz-Carlton, Lake Tahoe', note: 'Ritz-Carlton brand — Northstar California ski-in/ski-out above Truckee, heated outdoor pool, full-service spa, 24h reception · 8.0 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-highlands-lake-tahoe.html' }
     ] },
     'las-vegas': { h: [
       { name: 'Wynn Las Vegas', note: 'Forbes Five Star independent — single-tower luxury resort, 3 pools, Wynn Spa, Michelin-starred Restaurant Guy Savoy and SW Steakhouse · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/wynn-las-vegas-boulevard.html' },
