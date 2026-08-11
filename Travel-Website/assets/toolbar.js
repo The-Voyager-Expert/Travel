@@ -6802,14 +6802,22 @@ window.TVE.isPhone = function () {
       var titlePage = document.querySelector('.title-page');
       if (!anchor && !titlePage) return;
 
-      /* [emoji, title-attribute label, value] — order is the reading order the
-         feature was specified with; a missing fact drops its pill entirely. */
+      /* [mark name, title-attribute label, value] — order is the reading order
+         the feature was specified with; a missing fact drops its pill entirely.
+         These were 🗣️ 💰 🔌 🌤️ as literal emoji until 2026-08-11. The strip is
+         BUILT here rather than authored in the guide, so the render-time mark
+         pass could not reach it — it has no markup to walk and the pills are
+         unclassed spans. Naming the mark at the source is the fix, and it drops
+         the emoji entirely rather than hiding it, because nothing reads this
+         strip's textContent. Shapes come from the same guide-style.css set as
+         every other mark, and from the toolbar icons of the very pages these
+         facts are sourced from (Budget-Guide, Plug-Adapter-Guide, When-to-Go). */
       var items = [];
-      if (facts.lang)   items.push(['🗣️', 'Language', facts.lang]);
-      if (facts.cost)   items.push(['💰', 'Cost tier',
+      if (facts.lang)   items.push(['language', 'Language', facts.lang]);
+      if (facts.cost)   items.push(['money', 'Cost tier',
                                     facts.cost + (facts.cost_detail ? ' · ' + facts.cost_detail : '')]);
-      if (facts.plug)   items.push(['🔌', 'Plug type', facts.plug]);
-      if (facts.months) items.push(['🌤️', 'Best months', facts.months]);
+      if (facts.plug)   items.push(['plug', 'Plug type', facts.plug]);
+      if (facts.months) items.push(['sun', 'Best months', facts.months]);
       if (!items.length) return;
 
       var isMobile = window.TVE.isPhone();
@@ -6831,8 +6839,11 @@ window.TVE.isPhone = function () {
           'font-size:12px;font-weight:500;line-height:1.35;' +
           'color:var(--c-text-primary,#3d3a32);white-space:nowrap;';
         var ico = document.createElement('span');
-        ico.textContent = it[0];
-        ico.style.cssText = 'font-size:12px;line-height:1;';
+        ico.className = 'gm-mk gm-mk-' + it[0];
+        ico.setAttribute('aria-hidden', 'true');
+        /* .gm-mk sizes itself at 1em; the pill's own font-size is 12px, so the
+           mark lands at 12px without a second source of truth for the size. */
+        ico.style.cssText = 'line-height:1;flex-shrink:0;';
         pill.appendChild(ico);
         pill.appendChild(document.createTextNode(it[2]));
         strip.appendChild(pill);

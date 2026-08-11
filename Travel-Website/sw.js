@@ -610,7 +610,20 @@
    masks (sun, sunset, plug, money, safety-guide, visas, chart, language) reusing the toolbar
    icons of the pages they link to, 🏘 → the neighbourhoods house, and a much heavier ❗.
    guide-style.css -> v174. toolbar.js -> v369. CACHE v534. */
-var CACHE = 'travel-cache-v534';
+/* 2026-08-11: (1) The three single-line sections flow ACROSS on desktop (owner: "these on
+   desktop put the results side by side" · "these 3 tons of space seems waste in desktop"). One
+   entry per row left most of a 1330px card empty. No JS and no wrappers: Getting Around and Food
+   Delivery alternate .extras-sub and .transit-box, so `repeat(3, max-content 1fr)` puts a name in
+   columns 1/3/5 and its link in 2/4/6, three entries per row. The catch was the EXISTING design
+   at ~line 2575, which pins .extras-sub to grid-column 1 and .transit-box to 2 — that pinning is
+   what forced one entry per row, since every pair restarted at column 1; released to auto on
+   desktop only. Weekly Closures is one .stop-row per entry and just takes two columns. Mobile
+   stays stacked. (2) Quick Facts strip drawn — it is BUILT in toolbar.js from quick_facts.json,
+   not authored in the guide, so the render-time pass could never reach it (no markup to walk,
+   unclassed spans). The emoji is named at the source instead and dropped outright rather than
+   hidden, because nothing reads that strip's textContent.
+   guide-style.css -> v175. toolbar.js -> v370. CACHE v535. */
+var CACHE = 'travel-cache-v535';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -618,7 +631,7 @@ var CACHE = 'travel-cache-v534';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 174, 'toolbar.js': 369, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 175, 'toolbar.js': 370, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
