@@ -5480,10 +5480,10 @@ window.TVE.isPhone = function () {
       { name: 'Old Bank Hotel', note: 'Independent boutique 5-star — Oxford High Street, views of university spires, Quod restaurant and terrace, 43 rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gb/the-old-bank.html' }
     ] },
     'palawan': { h: [
-      { name: 'Amanpulo', note: 'Aman brand — Pamalican private island, 40 casitas, crystal-clear lagoon, seaplane or charter access · 9.7 Booking.com' },
-      { name: 'El Nido Resorts Miniloc Island', note: 'Independent — island resort in Bacuit Archipelago, overwater cottages, snorkeling straight off the deck · 9.1 Booking.com' },
+      { name: 'The Funny Lion - Puerto Princesa', note: 'Independent — F. Ponce de Leon Road, outdoor pool, 24h reception, airport shuttle · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/the-funny-lion-puerto-princesa.html' },
       { name: 'El Nido Resorts Pangulasian Island', note: 'El Nido Resorts — solar-powered adults-preferred island resort, white sand beach, three pools · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/el-nido-resorts-pangulasian-island.html' },
-      { name: 'Two Seasons Coron Island Resort & Spa', note: 'Independent — private Coron Island, overwater villas, PADI dive centre, wreck dives · 9.1 Booking.com' }
+      { name: "Mongki's Pension House", note: 'Independent — Wescom Road in San Pedro, 24h reception, AC, airport transfers · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ph/mongkis-pensionhouse.html' },
+      { name: 'Carpe Diem Villas & Resort', note: 'Independent — F. Ponce de Leon Road, outdoor pool, spa, dive desk · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ph/carpe-diem-villas-amp-resort-puerto-princesa.html' }
     ] },
     'palm-desert': { h: [
       { name: 'The Ritz-Carlton, Rancho Mirage', note: 'Ritz-Carlton brand — Coachella Valley hillside, outdoor pools, spa, panoramic desert valley views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-rancho-mirage.html' },
@@ -5534,7 +5534,7 @@ window.TVE.isPhone = function () {
       { name: 'Hyatt Regency Phoenix Downtown', note: 'Hyatt brand — 122 North 2nd Street, downtown Phoenix, revolving Compass Arizona Grill restaurant, outdoor pool, Phoenix Convention Center adjacent · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/phoenix-north-second-street.html' }
     ] },
     'phuket': { h: [
-      { name: 'Amanpuri', note: 'Aman brand — Phuket\'s original luxury resort since 1988, private beach, 30 pavilions and villas, two pools · 9.5 Booking.com' },
+      { name: 'Arco Phuket Town', note: 'Independent — Thaling Chan Road in Phuket Town, saltwater pool, rooftop restaurant, 10-min walk to the Old Town shophouses · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/arco-phuket-town.html' },
       { name: 'Trisara', note: 'Independent luxury — private pool villas on Nai Thon Bay, Pru restaurant (Asia\'s 50 Best), beachfront setting · 9.6 Booking.com', url: 'https://www.booking.com/hotel/th/trisara.html' },
       { name: 'Paresa Resort Phuket', note: 'Independent — Kamala cliff-edge, adults-only, eight pool villas, Aspara spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/th/paresa-resort-phuket.html' },
       { name: 'Keemala Phuket', note: 'Small Luxury Hotels — Kamala rainforest, pool-villa-only property, Mala restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/th/keemala.html' }
