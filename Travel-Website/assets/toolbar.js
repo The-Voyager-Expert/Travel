@@ -591,7 +591,7 @@ window.TVE.isPhone = function () {
        min-content, one tab per line, a 476px-tall wall of tabs at every width
        below 1260. So the hamburger stays here on a narrow desktop window. It is
        responsive nav, not the mobile site: the page around it is still desktop. */
-    '@media (max-width: 1260px){' +
+    '@media (max-width: 1260px) and (pointer: coarse){' +
       '.tb{background:transparent!important}' +
       '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#b85c2a!important}' +
       '.tb-theme-toggle{border-color:#b85c2a!important;background:transparent!important;color:#b85c2a!important}' +
@@ -655,7 +655,7 @@ window.TVE.isPhone = function () {
        here applies at >=1500px, where the row still sits on one line as shipped,
        and .tb-inner keeps no overflow, so Cleanliness Rule 582 is untouched. */
     '@media (max-width: 1499px) and (pointer: fine){' +
-      '.tb-links{flex-wrap:wrap;row-gap:6px}' +
+      '.tb-links{flex-wrap:wrap;row-gap:6px;justify-content:center}' +
     '}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
@@ -705,7 +705,7 @@ window.TVE.isPhone = function () {
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
-    '@media (max-width: 1260px){.tb-progress{display:none}}' +
+    '@media (max-width: 1260px) and (pointer: coarse){.tb-progress{display:none}}' +
     /* Hide ham elements on desktop — mobile @media shows them */
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
     /* Mobile/tablet: hamburger menu replaces the chip row below this width.
@@ -715,7 +715,7 @@ window.TVE.isPhone = function () {
        1400px for the 14th tab was tried on 2026-08-10 and the check caught it.
        The row must be made to FIT 1260px instead — hence the tab gap cut from
        18px to 10px in the same pass. */
-    '@media (max-width: 1260px){' +
+    '@media (max-width: 1260px) and (pointer: coarse){' +
       '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:transparent;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
@@ -785,7 +785,7 @@ window.TVE.isPhone = function () {
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
     '.tb-theme-toggle:hover{background:transparent;border-color:rgba(122,59,30,.85)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
-    '@media (max-width: 1260px){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
+    '@media (max-width: 1260px) and (pointer: coarse){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
     /* Covers all tokens from web-travel-style.css + guide-style.css dark blocks. */
     /* html[data-theme="dark"] specificity (0,1,1) > :root (0,1,0) — always wins. */
@@ -1167,7 +1167,11 @@ window.TVE.isPhone = function () {
 
        Re-parented live on a matchMedia change so dragging a window across the
        breakpoint lands it in the right place without a reload. */
-    var _navMq = window.matchMedia('(max-width: 1260px)');
+    /* Must mirror the CSS nav-swap query EXACTLY, pointer condition included.
+       Without `and (pointer: coarse)` this re-parented the toggle out of the
+       tab row on a narrow DESKTOP window, where the hamburger no longer
+       appears — the toggle ended up back beside a wordmark with no menu. */
+    var _navMq = window.matchMedia('(max-width: 1260px) and (pointer: coarse)');
     function placeThemeToggle() {
       var host = _navMq.matches ? bar : (bar.querySelector('.tb-links') || bar);
       if (themeBtn.parentNode !== host) host.appendChild(themeBtn);
