@@ -727,7 +727,21 @@
    Verified: Asia-Stats 19 sections, every gap 36px, 0 strays; Europe-Stats 36px throughout apart
    from one genuine 325px content block between two cards.
    web-travel-style.css -> v26. CACHE v545. */
-var CACHE = 'travel-cache-v545';
+/* 2026-08-11: Stats spacing audit completed across the remaining pages, plus the last filled
+   chip family. (1) .country-chip:hover/.active still painted the terracotta gradient — that class
+   was not in any of the three earlier chip sweeps. Now outlined like every other chip. (2)
+   Travel-Stats: every content section carries margin-bottom:8px and gets the rest of its 32px from
+   the section heading above it — .quickfacts is the one block with NO heading, so it sat 8px under
+   the hero row and the two read as one group. margin-top is the FULL 32px, not the 24px
+   difference, because adjacent sibling margins COLLAPSE (max, not sum) — the 24px first attempt
+   measured 24. Fixed in build_travel_stats.py AND the generated page, because that page is
+   generated and a hand edit alone would be wiped on the next build. (3) AUDITED, DELIBERATELY
+   UNCHANGED: Stats-Across-US already runs a considered hierarchy — 10px heading→card, 20px
+   card→card, 34px group→group — which is internally consistent and is exactly the grouping being
+   asked for; flattening it would merge the categories. Destination-Records is already uniform at
+   40px. Verified no horizontal overflow and side margins unchanged on every page touched.
+   web-travel-style.css -> v27. CACHE v546. */
+var CACHE = 'travel-cache-v546';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -735,7 +749,7 @@ var CACHE = 'travel-cache-v545';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 26, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 27, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
