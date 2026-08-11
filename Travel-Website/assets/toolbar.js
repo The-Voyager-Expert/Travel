@@ -8423,7 +8423,36 @@ window.TVE.isPhone = function () {
          warning triangle existed in NAV_ICONS (scams is a circle-slash), so
          this one is authored: a solid triangle with the bar and dot cut out by
          fill-rule evenodd, weighted to match the pin and the ticket flag. */
-      '⚠': 'warn'
+      '⚠': 'warn',
+      /* 🗺 U+1F5FA — the All Stops Map action pill. Every other pill in that
+         row (Export to Calendar, Preview Optimized, Save for Offline, I've
+         Been, Hotels & Flights, Currency) is drawn by toolbar.js, but this one
+         could not be: its label is authored in each guide's HTML, not in the
+         ITEMS table, so the 2026-08-11 pill-row pass had to skip it and it was
+         left as the one emoji in a row of drawn icons. Reaching it from here
+         is exactly what a render-time pass over authored markup is for. Same
+         `map` shape and viewBox the toolbar uses. Also covers the Nearby
+         Guides pill, which leads with the same glyph. */
+      '🗺': 'map',
+      /* Section pills + their matching .extras-title headings (owner: "can you
+         change pills after and match the sections?"). Both surfaces move on the
+         same table, so a pill and the section it jumps to can never drift apart.
+         Six reuse shapes already in the set; six are authored because the
+         toolbar had no equivalent. 🚉 is deliberately absent — it is banned
+         site-wide (CLAUDE.md twentieth non-negotiable) and the Train Stations
+         pill correctly authors 🚆. */
+      '🚌': 'van',          /* Getting Around */
+      '🚆': 'train',        /* Train Stations */
+      '🗓': 'calendar',     /* Weekly Closures */
+      '⭐': 'star',          /* Michelin · Best Of */
+      '🫕': 'restaurants',  /* Restaurants Near Hotel */
+      '🍽': 'restaurants',  /* Downtown Restaurants — same shape, same thing */
+      '☕': 'coffee',        /* Cappuccino */
+      '🍮': 'dessert',      /* Local Tastes */
+      '🎭': 'theatre',      /* Shows */
+      '❗': 'bang',          /* Heads Up */
+      '✨': 'sparkle',      /* Worth Knowing */
+      '💥': 'burst'         /* Also on this site */
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
        pattern had to be edited in lockstep with the table and the two leads
@@ -8490,18 +8519,20 @@ window.TVE.isPhone = function () {
        carries "🚕 Uber", "📅 1. {tour name}", "🚊 {tram line}". Its glyph is a
        row mark in every sense: it labels one entry, not a section.
 
-       NOT included, deliberately: .extras-title, and the floating "currently
-       reading" strip which builds its own '📍 ' text in _injectStopStrip. An
-       .extras-title glyph is the SECTION's identity — and that set is mixed
-       food/transport/misc (🍮 🚌 🫕 📅 🚗 🍽 ☕ 🗓 🚆 🎭 ⛲ 🏓 ❗), of which only
-       the vehicles have marks. Drawing that subset would leave a drawn bus
-       beside an emoji fork, which reads worse than leaving the band alone; the
-       titles also pair with the section pills at the top of the guide, so the
-       two surfaces have to move together or not at all. */
+       .extras-title and .overview-extra-link are BOTH included — the section
+       heading and the pill that jumps to it (owner 2026-08-11, "can you change
+       pills after and match the sections?"). They were held back at first
+       precisely because they move together: the title set is mixed
+       food/transport/misc, so drawing only the vehicles would have left a drawn
+       bus beside an emoji fork. They ship together now, off ONE table, which is
+       what keeps a pill and its section from ever drifting apart.
+
+       NOT included: the floating "currently reading" strip, which builds its
+       own '📍 ' text in _injectStopStrip rather than carrying authored markup. */
     [].forEach.call(
       document.querySelectorAll('.tour-box > div,.ticket-box > div,' +
                                 '.entry-body > div,.station-box > div,.shows-box > div,' +
-                                '.extras-sub'),
+                                '.extras-sub,.overview-extra-link,.extras-title'),
       function (row) {
         var t = row.textContent.trimStart(), m;
         RE.lastIndex = 0;
