@@ -815,6 +815,50 @@ a:hover { text-decoration: underline; }
   .tve-book-go { align-self: stretch; text-align: center; }
 }
 
+/* ── Airport picker dropdown (Flights tab only) ────────────────────────────
+   The field wrapper becomes the positioning context so the list hangs directly
+   under its own input rather than off the panel — the two Flights fields sit
+   side by side on desktop, and a panel-anchored list would open under the wrong
+   one. z-index clears the sibling inputs, which paint over it otherwise. */
+.tve-book-pick { position: relative; }
+.tve-book-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  max-height: 208px;          /* ~5.5 rows — the half row signals "scroll me" */
+  overflow-y: auto;
+  background: var(--c-card-bg);
+  border: 1px solid var(--c-next-border);
+  border-radius: 5px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .14);
+}
+.tve-book-list[hidden] { display: none; }
+.tve-book-opt {
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--c-text-primary);
+  cursor: pointer;
+  border-bottom: 1px solid var(--c-next-bg);
+}
+.tve-book-opt:last-child { border-bottom: 0; }
+/* One class for both hover and keyboard focus so mouse and arrow-key users see
+   the identical highlight — two different affordances for "this is the one you
+   are about to choose" is how a picker starts feeling unpredictable. */
+.tve-book-opt-on, .tve-book-opt:hover { background: var(--c-next-bg); color: #b85c2a; font-weight: 600; }
+/* At 320–393px auto-fit collapses to one column and the panel grows tall enough
+   to push the first day off-screen. Two fixed columns keep it four short rows:
+   the date pair sits side by side, which is how a reader reads a stay. */
+@media (max-width: 600px) and (pointer: coarse) {
+  .tve-book-grid { grid-template-columns: 1fr 1fr; }
+  .tve-book-go { align-self: stretch; text-align: center; }
+}
+
 /* Transient confirmation toast (Save for offline). Fixed bottom-centre, fades in,
    auto-dismisses. Dark warm bg reads in both light and dark mode. */
 .tve-toast {
@@ -1190,8 +1234,18 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
 .stop-num              { font-weight: bold; font-size: 17px; color: var(--c-text-primary); margin-right: 5px; }
 .stop-name             { font-weight: bold; font-size: 17px; color: var(--c-text-primary); }
 /* Duration chip — injected by toolbar.js into .stop-header when a ⏰ row is found.
-   toolbar.js sets display:flex on .stop-header at inject time; margin-left:auto
-   pushes the chip to the far right. Source ⏰ row is removed from the box. */
+   toolbar.js sets display:flex on .stop-header at inject time. Source ⏰ row is
+   removed from the box.
+
+   The chip sits LEFT, against the title and directly after the open/closed
+   status — not out on the right rail (owner 2026-08-10). It used to carry
+   margin-left:auto and float to the far edge, which put five things on the
+   right of every header: status, duration, share, star and notes. How long a
+   stop takes is a fact ABOUT the stop, like its name; share/star/notes are
+   controls. Grouping the fact with the title and leaving the rail to the
+   controls splits the row into two readable halves instead of one crowded
+   edge. margin-right:auto makes the chip the row's spacer — everything after
+   it still lands hard right. */
 .stop-dur {
   display: inline-flex;
   align-items: center;
@@ -1203,7 +1257,8 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   font-weight: 700;
   color: var(--c-action-text);
   letter-spacing: 0.01em;
-  margin-left: auto;
+  margin-left: 8px;
+  margin-right: auto;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -1241,11 +1296,15 @@ a.lounge-arrival-chip:visited { color: #7a3b1e; }
   -webkit-user-select: none;
 }
 .stop-mark-btn:hover { border-color: #b85c2a; color: #b85c2a; }
-/* The chip's own margin-left:auto would split the free space with the
-   button's margin-right:auto and strand the chip mid-row — the button is the
-   only spacer. A fixed 8px keeps a gap on a full row, where the auto margin
-   collapses to nothing and "Visited" would otherwise touch the chip. */
-.stop-header .stop-mark-btn ~ .stop-dur { margin-left: 8px; }
+/* Exactly ONE element in the header may carry the auto margin, or the free
+   space is split between them and the left group is stranded mid-row. The
+   spacer is the LAST item of the left group, which is whichever of these three
+   is present: open/closed status → duration chip → mark button. Each rule
+   below hands the job down the chain and cancels it on the one above.
+   (Re-homed 2026-08-10 when the chip moved off the right rail.) */
+.stop-header:has(.stop-dur) .stop-mark-btn,
+.stop-header:has(.open-now-status) .stop-mark-btn { margin-right: 0; }
+.stop-header:has(.open-now-status) .stop-dur { margin-right: 0; }
 /* Checked: the ring is gone and the word stands in its place, wearing the
    EXACT treatment of the .stop-dur chip it shares the row with — same
    --c-next-bg fill, --c-next-border hairline, --c-action-text ink, 20px
@@ -4085,9 +4144,9 @@ a.also-in-country-pill:active {
   font-variant-numeric: tabular-nums;
 }
 .open-now-local-time:empty { display: none; }
-/* Open / Closed status in .stop-header, between the stop name and the
-   duration chip. Present whenever the stop's hours parse and the guide knows
-   its timezone — the reader never switches it on.
+/* Open / Closed status in .stop-header, LAST in the title group — after the
+   duration chip (owner 2026-08-10). Present whenever the stop's hours parse and
+   the guide knows its timezone — the reader never switches it on.
 
    Deliberately NOT a pill (owner pick D, 2026-08-09). It first shipped as a
    filled 10px badge and sat directly beside the .stop-dur chip — same shape,
@@ -4096,13 +4155,21 @@ a.also-in-country-pill:active {
    a button and should not be shaped like one: no fill, no border, no padding.
    Colour alone carries the state, and .stop-dur stays the only pill in the
    row. Contrast on the card: 6.21:1 (open) and 7.71:1 (closed) in light,
-   9.22:1 and 7.74:1 in dark — all AA, every value already in the palette. */
+   9.22:1 and 7.74:1 in dark — all AA, every value already in the palette.
+
+   Order matters BECAUSE it is bare text. It sat between the round ✓ control
+   and the round chip until 2026-08-10, and squeezed between two pill shapes it
+   read as compressed — the alternative on the table was giving it a pill of
+   its own, which would have undone the 2026-08-09 pick. Moving it behind the
+   chip keeps the two rounded shapes together and lets the text close the
+   group, so the statement stays a statement. */
 .open-now-status {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-left: 8px;
+  margin-right: auto;
   flex-shrink: 0;
   line-height: 1.6;
 }
@@ -4140,11 +4207,34 @@ a.also-in-country-pill:active {
     height: 0;
     order: 9;
   }
-  .open-now-status {
+  /* The duration chip and the status travel together to the second line, chip
+     first — the same pairing, in the same order, that desktop shows beside the
+     title (owner 2026-08-10). Leaving the chip on the first row cost a third line on any
+     long name: the name filled row 1, the chip was pushed down among the
+     share/star/notes icons, and the status fell below that again. Both facts
+     on one short row under the name is two lines, and it keeps the fact/control
+     split the desktop row has. */
+  .stop-dur {
     order: 10;
     margin-left: 0;
+    margin-right: 0;
     margin-top: 5px;
   }
+  .open-now-status {
+    order: 11;
+    margin-left: 8px;
+    margin-right: 0;
+    margin-top: 5px;
+  }
+  .stop-header:not(:has(.stop-dur)) .open-now-status { margin-left: 0; }
+  /* Neither is on the first row any more, so the mark button is its spacer
+     again — otherwise share/star/notes collapse onto the end of the name.
+     Both selectors are repeated verbatim from the desktop hand-down chain
+     above: `:has()` takes the specificity of its argument, so a plain
+     `.stop-header .stop-mark-btn` here would lose to them and the override
+     would silently do nothing. */
+  .stop-header:has(.stop-dur) .stop-mark-btn,
+  .stop-header:has(.open-now-status) .stop-mark-btn { margin-right: auto; }
 }
 
 @media (prefers-color-scheme: dark) {

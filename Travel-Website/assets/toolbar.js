@@ -2923,8 +2923,9 @@ window.TVE.isPhone = function () {
      For every .stop-block on a real guide page:
        1. Find the ⏰ ~XX div inside .tour-box or .ticket-box
        2. Extract the duration string (e.g. "~30 min", "~1.5 h")
-       3. Set display:flex on .stop-header so margin-left:auto can right-align the chip
-       4. Append <span class="stop-dur"> with the value
+       3. Set display:flex on .stop-header
+       4. Append <span class="stop-dur"> with the value — the open/closed status
+          is inserted BEFORE it later, so the chip reads title → status → chip
        5. Remove the source ⏰ div (cosmetic — the data was read first)
      Stops without a ⏰ row are silently skipped (no chip, no layout change).
      CSS for .stop-dur lives in guide-style.css. */
@@ -2948,8 +2949,14 @@ window.TVE.isPhone = function () {
       if (!header) return;
       header.style.display = 'flex';
       header.style.alignItems = 'center';
+      /* The name sizes to its content so the chip can sit against it, which is
+         the whole point of the 2026-08-10 layout. This used to set flex:1 —
+         name eats every spare pixel, chip lands on the right edge — and was
+         already being overwritten with these exact values a moment later by
+         _injectMarkStops, which needs the same thing for the ✓ control. The two
+         now agree instead of one silently undoing the other. */
       var nameEl = header.querySelector('.stop-name');
-      if (nameEl) nameEl.style.flex = '1';
+      if (nameEl) { nameEl.style.flex = '0 1 auto'; nameEl.style.minWidth = '0'; }
       var chip = document.createElement('span');
       chip.className = 'stop-dur';
       chip.textContent = durText;
@@ -7009,18 +7016,172 @@ window.TVE.isPhone = function () {
       panel.appendChild(gH);
 
       var gF = _grid();
-      var fFrom = _field(gF, 'From', '', 'text', 'Origin — city or airport code');
-      var fTo = _field(gF, 'To', destAir || place, 'text', 'Destination — city or airport code');
+      var fFrom = _field(gF, 'From', '', 'text', 'Origin airport — type a city or a code');
+      var fTo = _field(gF, 'To', destAir || '', 'text', 'Destination airport — type a city or a code');
       var fDep = _field(gF, 'Depart', _bkISO(inD), 'date', 'Departure date');
       var fRet = _field(gF, 'Return', _bkISO(outD), 'date', 'Return date');
       gF.hidden = true;
       panel.appendChild(gF);
 
       /* The reader's home airport is typed once, not once per guide. */
-      try {
-        var savedOrigin = localStorage.getItem('tve_book_origin');
-        if (savedOrigin) fFrom.value = savedOrigin;
-      } catch (e) {}
+      var savedOrigin = '';
+      try { savedOrigin = localStorage.getItem('tve_book_origin') || ''; } catch (e) {}
+
+      /* ── Airport picker ───────────────────────────────────────────────────
+         Owner, 2026-08-10, after typing "bahia" into From and watching it sail
+         through: a free-typed place name was never validated at all, so the
+         "a code that does not exist wont complete" rule only ever covered
+         code-shaped input. The hole is closed by RESOLUTION rather than by
+         restriction — the owner's first instinct was to accept codes only, and
+         that would have shut out every reader who knows "Seattle" but not SEA,
+         which is most of them.
+
+         So both Flights fields now resolve to a real airport before the search
+         can run: type anything, pick from the list, and the field holds a code.
+         Nothing else is accepted. The Hotels destination is deliberately NOT a
+         picker — a hotel search wants a place, and "Kyoto, Japan" is exactly
+         right there; forcing it through an airport list would be worse.
+
+         airport_names.json is fetched on FIRST KEYSTROKE in one of these two
+         fields, never on page load: it is 152 KB against airports.json's 25 KB,
+         and the overwhelming majority of readers never open the Flights tab. */
+      var namesRows = null, namesPending = false;
+      /* The 198 airports the site itself uses — see major_codes() in
+         build_airports.py. Boosted in the picker because neither OurAirports'
+         size tier nor alphabetical order knows that CDG matters more than Le
+         Bourget, or Heathrow more than Gatwick. */
+      var majorSet = {};
+      ((ap && ap.major) || []).forEach(function (c) { majorSet[c] = 1; });
+
+      function _bkLoadNames(then) {
+        if (namesRows) { then(); return; }
+        if (namesPending) return;
+        namesPending = true;
+        _bkJSON('tveapn', 'airport_names.json', function (d) {
+          namesRows = (d && d.a) || [];
+          namesPending = false;
+          then();
+        });
+      }
+
+      /* Accent-fold so "Malaga" finds "Málaga" and "Dusseldorf" finds
+         "Düsseldorf" — the reader is typing on a plain keyboard. */
+      function _bkFold(s) {
+        return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+      }
+
+      /* Ranked so the obvious answer is first: an exact code beats a city that
+         starts with the query, which beats a city containing it, which beats
+         the airport's formal name. Typing "sea" must surface SEA, not Seahawk
+         Regional; typing "bahia" must surface the Bahía airports rather than
+         nothing at all. */
+      function _bkMatches(q) {
+        q = _bkFold(q).trim();
+        if (!q || !namesRows) return [];
+        var out = [];
+        for (var i = 0; i < namesRows.length && out.length < 400; i++) {
+          var r = namesRows[i], code = r[0], city = _bkFold(r[1]), name = _bkFold(r[3]);
+          var rank = -1;
+          if (_bkFold(code) === q) rank = 0;
+          else if (city.indexOf(q) === 0) rank = 1;
+          else if (_bkFold(code).indexOf(q) === 0) rank = 2;
+          else if (city.indexOf(q) > 0) rank = 3;
+          else if (name.indexOf(q) >= 0) rank = 4;
+          if (rank >= 0) out.push([rank, r]);
+        }
+        /* rank, then SIZE TIER, then city. The tier is why "seattle" surfaces
+           SEA above Boeing Field: same city, same rank, and alphabetical order
+           alone put the regional field first. */
+        /* rank, then the site's own major list, then OurAirports' size tier,
+           then city. Each tier-break exists because the one above it left a
+           real case wrong: "paris" put Le Bourget first, "seattle" put Boeing
+           Field first. */
+        out.sort(function (a, b) {
+          return a[0] - b[0] ||
+                 ((majorSet[b[1][0]] ? 1 : 0) - (majorSet[a[1][0]] ? 1 : 0)) ||
+                 (a[1][4] || '1').localeCompare(b[1][4] || '1') ||
+                 (a[1][1] < b[1][1] ? -1 : 1);
+        });
+        return out.slice(0, 8).map(function (x) { return x[1]; });
+      }
+
+      /* Attach a dropdown to one field. Returns a handle carrying the resolved
+         code, which is the ONLY thing the query builder is allowed to use. */
+      function _bkPicker(input, initialCode) {
+        var wrap = input.parentNode;             /* .tve-book-field */
+        wrap.classList.add('tve-book-pick');
+        var list = document.createElement('ul');
+        list.className = 'tve-book-list';
+        list.hidden = true;
+        list.setAttribute('role', 'listbox');
+        wrap.appendChild(list);
+
+        var h = { code: initialCode || '', input: input };
+        var rows = [], active = -1;
+
+        function _label(r) { return r[1] + ' (' + r[0] + ') · ' + r[2]; }
+
+        function _close() { list.hidden = true; active = -1; }
+
+        function _choose(r) {
+          h.code = r[0];
+          input.value = _label(r);
+          _close();
+          _render();
+        }
+
+        function _paint() {
+          list.textContent = '';
+          rows.forEach(function (r, i) {
+            var li = document.createElement('li');
+            li.className = 'tve-book-opt' + (i === active ? ' tve-book-opt-on' : '');
+            li.setAttribute('role', 'option');
+            li.textContent = _label(r);
+            /* mousedown, not click: blur fires first on click and would close
+               the list before the selection ever lands. */
+            li.addEventListener('mousedown', function (e) { e.preventDefault(); _choose(r); });
+            list.appendChild(li);
+          });
+          list.hidden = rows.length === 0;
+        }
+
+        function _search() {
+          h.code = '';                 /* typing invalidates any prior pick */
+          var q = input.value.trim();
+          if (!q) { rows = []; _paint(); _render(); return; }
+          _bkLoadNames(function () {
+            rows = _bkMatches(q);
+            active = rows.length ? 0 : -1;
+            _paint();
+            _render();
+          });
+          _render();
+        }
+
+        input.addEventListener('input', _search);
+        input.addEventListener('focus', function () { if (rows.length) list.hidden = false; });
+        input.addEventListener('blur', function () { setTimeout(_close, 120); });
+        input.addEventListener('keydown', function (e) {
+          if (list.hidden || !rows.length) return;
+          if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % rows.length; _paint(); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + rows.length) % rows.length; _paint(); }
+          else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); _choose(rows[active]); }
+          else if (e.key === 'Escape') { _close(); }
+        });
+
+        h.reset = function (code) {
+          h.code = code || '';
+          input.value = code || '';
+          _close();
+        };
+        return h;
+      }
+
+      /* A saved origin is a CODE, so it is restored as an already-resolved pick
+         rather than as text the reader would have to re-choose every guide. */
+      if (savedOrigin && _bkValidCode(savedOrigin, codes)) fFrom.value = savedOrigin;
+      var pFrom = _bkPicker(fFrom, _bkValidCode(savedOrigin, codes) ? savedOrigin : '');
+      var pTo = _bkPicker(fTo, destAir || '');
 
       var go = document.createElement('a');
       go.className = 'tve-book-go';
@@ -7039,10 +7200,20 @@ window.TVE.isPhone = function () {
          the message say "LHX is not an airport code" instead of "check your
          input" — the reader has to know WHICH box is wrong to fix it. */
       function _firstBadCode() {
-        var checks = mode === 'h' ? [hDest] : [fFrom, fTo];
-        for (var i = 0; i < checks.length; i++) {
-          var v = checks[i].value.trim();
-          if (v && _bkIsCodeShaped(v) && !_bkValidCode(v, codes)) return checks[i];
+        if (mode === 'h') {
+          var v = hDest.value.trim();
+          return (v && _bkIsCodeShaped(v) && !_bkValidCode(v, codes)) ? hDest : null;
+        }
+        /* Flights: a field is good only when the picker RESOLVED it, or when the
+           reader typed a bare code that is genuinely on the list. Free text no
+           longer passes — that was the "bahia" hole. */
+        var pairs = [[fFrom, pFrom], [fTo, pTo]];
+        for (var i = 0; i < pairs.length; i++) {
+          var el = pairs[i][0], pk = pairs[i][1], val = el.value.trim();
+          if (!val) continue;
+          if (pk.code) continue;
+          if (_bkIsCodeShaped(val) && _bkValidCode(val, codes)) { pk.code = val.toUpperCase(); continue; }
+          return el;
         }
         return null;
       }
@@ -7056,8 +7227,10 @@ window.TVE.isPhone = function () {
           go.classList.add('tve-book-off');
           go.removeAttribute('href');
           go.textContent = mode === 'h' ? 'Search Hotels ›' : 'Search Flights ›';
-          note.textContent = '"' + bad.value.trim().toUpperCase() +
-            '" is not an airport code. Use a real code, or type the place name instead.';
+          var badVal = bad.value.trim();
+          note.textContent = _bkIsCodeShaped(badVal)
+            ? '"' + badVal.toUpperCase() + '" is not an airport code. Try a city name instead.'
+            : 'Pick an airport from the list for "' + badVal + '".';
           return;
         }
 
@@ -7077,10 +7250,13 @@ window.TVE.isPhone = function () {
              .tve-book-note:empty collapses the panel gap so removing the
              sentence leaves no dead band. */
         } else {
-          var to = fTo.value.trim() || destAir || place;
-          var from = fFrom.value.trim();
-          try { localStorage.setItem('tve_book_origin', from); } catch (e) {}
-          if (!from) {
+          /* The visible value is a human label ("Seattle (SEA) · US"); the code
+             is what Google gets. Never send the label — it reintroduces exactly
+             the ambiguity the picker exists to remove. */
+          var to = pTo.code || destAir;
+          var from = pFrom.code;
+          try { if (from) localStorage.setItem('tve_book_origin', from); } catch (e) {}
+          if (!fFrom.value.trim()) {
             go.classList.add('tve-book-off');
             go.removeAttribute('href');
             go.textContent = 'Search Flights ›';
@@ -8968,8 +9144,17 @@ window.TVE.isPhone = function () {
             if (!hdr) return;
             badge = document.createElement('span');
             badge.className = 'open-now-status';
+            /* AFTER the duration chip, not before it (owner 2026-08-10). The
+               status is bare text by design; sandwiched between the round ✓
+               control and the round chip it read as compressed, so the two
+               pill shapes now sit together and the text closes the group.
+               With no chip, it goes ahead of the share button so it still
+               lands with the title rather than out on the control rail. */
             var dur = hdr.querySelector('.stop-dur');
-            if (dur) hdr.insertBefore(badge, dur); else hdr.appendChild(badge);
+            var share = hdr.querySelector('.tve-share-stop-btn');
+            if (dur) hdr.insertBefore(badge, dur.nextSibling);
+            else if (share) hdr.insertBefore(badge, share);
+            else hdr.appendChild(badge);
           }
           badge.classList.toggle('is-open', status === true);
           badge.classList.toggle('is-closed', status === false);
