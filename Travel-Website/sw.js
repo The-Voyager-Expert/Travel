@@ -707,7 +707,27 @@
    syntax-checking the block, which is how this was found. 237 cities load again and the arc
    renders. WORTH A GUARD: nothing validates inline page scripts, so the next stray comma does the
    same thing silently. CACHE v544. */
-var CACHE = 'travel-cache-v544';
+/* 2026-08-11: Stats card spacing audited and normalised to ONE rhythm — 36px card-to-card
+   (owner: "some have very small space and some when the space was give broke the margins ... these
+   pages need to be audited"). Two root causes, both long-standing:
+   (1) .sections-grid DECLARED grid-template-columns and gap but never `display: grid`, so it
+       rendered as a plain block and BOTH were inert — the class was aspirational since it shipped.
+       Meanwhile `.sections-grid .bar-section { margin-bottom: 0 }` zeroed the card's own 36px on
+       the assumption the grid gap replaced it. Nothing did, so a grid-wrapped card sat 24px from
+       its neighbour while a standalone card kept 60px: same page, two rhythms. Added display:grid
+       (making the declared 1fr/gap real) and margin-bottom:36px, because a grid's gap applies only
+       BETWEEN its own items — with none, the last card in a grid butted against the next card
+       outside it at 0px.
+   (2) Asia-Stats carried 17 ORPHAN <span class="bar-val"> nodes emitted after the section's
+       closing tag — each a duplicate of that chart's last row value, rendering as a stray number
+       floating between cards (the loose "0.13M" in the owner's screenshot). Only Asia-Stats is
+       affected; the other stats pages are clean. NOTE for anyone re-running this: the naive
+       pattern `</div></div><span class="bar-val">…` matches EVERY legitimate row (track+fill close
+       the same way) — 1677 false hits. Anchor on `</span></div></div>` instead: 17, exact.
+   Verified: Asia-Stats 19 sections, every gap 36px, 0 strays; Europe-Stats 36px throughout apart
+   from one genuine 325px content block between two cards.
+   web-travel-style.css -> v26. CACHE v545. */
+var CACHE = 'travel-cache-v545';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -715,7 +735,7 @@ var CACHE = 'travel-cache-v544';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 25, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 26, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -1262,7 +1262,21 @@ a.chevron-link-pill:visited { color: #6a6660; }  /* literal hex — browsers don
 .meta { flex-direction: column; }
 .meta-row { display: flex; gap: 10px; align-items: baseline; }
 .region-section { margin-top: 20px; margin-bottom: 20px; }
-.sections-grid { grid-template-columns: 1fr; gap: 0; }
+/* gap 36px, not 0 — this is the card-to-card rhythm inside a stats grid.
+   `.sections-grid .bar-section { margin-bottom: 0 }` below deliberately zeroes
+   the card's own 36px so the grid owns the spacing (two sources would double
+   it). With gap:0 nothing replaced it, so a grid-wrapped card sat 24px from
+   its neighbour — the card's intrinsic trailing space — while a standalone
+   card kept 36+24=60px. Same page, two rhythms, which is what read as "some
+   have very small space" (owner 2026-08-11).
+   AND THE GAP NEVER APPLIED: this rule declared grid-template-columns and
+   gap but never `display: grid`, so the element rendered as a plain block
+   and BOTH properties were inert — the class has been aspirational since it
+   shipped. Adding display:grid is what makes the declared 1fr/gap real.
+   margin-bottom matches the gap because a grid's gap applies only BETWEEN its
+   own items: with none, the last card in a grid butted straight against the
+   next card outside it at 0px. Three sources, one rhythm — 36px everywhere. */
+.sections-grid { display: grid; grid-template-columns: 1fr; gap: 36px; margin-bottom: 36px; }
 .sr-none { color: var(--muted); font-size: 13px; font-style: italic; }
 .sr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .sr-title { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
@@ -1309,7 +1323,7 @@ a.chevron-link-pill:visited { color: #6a6660; }  /* literal hex — browsers don
 .sr-table thead th { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 6px 7px; border-bottom: 1px solid var(--border2); text-align: left; }
 .sr-table td.sr-val { font-weight: 700; color: var(--rust); text-align: right; white-space: nowrap; }
 @media (max-width: 700px) {
-  .sections-grid { grid-template-columns: 1fr; gap: 0; }
+  .sections-grid { display: grid; grid-template-columns: 1fr; gap: 36px; margin-bottom: 36px; }
 }
 @media (max-width: 600px) and (pointer: coarse) {
   .country-chips { display: none !important; }
