@@ -676,7 +676,17 @@
    icons too"). Same href resolution as the footer pills, so there is no second mapping to keep in
    sync, and external targets (weather.com, windy.com …) resolve to nothing and stay text.
    toolbar.js -> v374. CACHE v541. */
-var CACHE = 'travel-cache-v541';
+/* 2026-08-11: THIRD pass on the filled chips, and the first two were mine to get wrong. Both
+   earlier sweeps matched LINE BY LINE, so any rule written across multiple lines — selector on
+   one line, `background: linear-gradient(...)` on the next — was never seen. The first dry run
+   even reported 5 bare gradient lines under "not a chip family" and I did not follow it up.
+   Rewritten to walk back from each gradient to its owning selector, which finds them regardless
+   of formatting. Six rules: 5 inline blocks plus `.nav .nav-link.active` in web-travel-style.css,
+   which is why the Lounges region chips stayed filled on every lounge page (owner: "same thing
+   with the terracota pill" · "same thing"). A regex over CSS blocks was tried first and
+   backtracked catastrophically on these files — the linear scan is the one to keep.
+   web-travel-style.css -> v25. CACHE v542. */
+var CACHE = 'travel-cache-v542';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -684,7 +694,7 @@ var CACHE = 'travel-cache-v541';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 176, 'toolbar.js': 374, 'mobile.css': 76, 'web-travel-style.css': 25, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
