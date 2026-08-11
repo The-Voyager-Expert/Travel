@@ -5475,9 +5475,9 @@ window.TVE.isPhone = function () {
     ] },
     'oxford': { h: [
       { name: 'Le Manoir aux Quat\'Saisons, A Belmond Hotel', note: 'Belmond brand — Raymond Blanc\'s two-Michelin-star retreat in Great Milton, 32 rooms, kitchen garden · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gb/belmond-le-manoir-aux-quat-39-saisons.html' },
-      { name: 'The Randolph Hotel Oxford, a Graduate by Hilton', note: 'Hilton Graduate brand — 1866 Neo-Gothic landmark facing the Ashmolean, Spires spa, afternoon tea tradition · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gb/randolph-hotel.html' },
-      { name: 'Malmaison Oxford', note: 'Independent boutique — converted 19th-century prison, distinctive Grade II listed architecture, Brasserie and bar in the castle courtyard · 8.3 Booking.com', url: 'https://www.booking.com/hotel/gb/malmaison-oxford.html' },
-      { name: 'Old Bank Hotel', note: 'Independent boutique 5-star — Oxford High Street, views of university spires, Quod restaurant and terrace, 43 rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gb/the-old-bank.html' }
+      { name: 'Old Bank Hotel', note: 'Independent boutique 5-star — Oxford High Street, views of university spires, Quod restaurant and terrace, 43 rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gb/the-old-bank.html' },
+      { name: 'Old Parsonage Hotel', note: 'Independent 5-star — 1660 stone house at 1 Banbury Road, walled roof terrace, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gb/old-parsonage.html' },
+      { name: 'Courtyard by Marriott Oxford City Centre', note: 'Marriott brand — 15 Paradise Street by the Castle quarter, AC, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/gb/courtyard-by-marriott-oxford-city-centre.html' }
     ] },
     'palawan': { h: [
       { name: 'The Funny Lion - Puerto Princesa', note: 'Independent — F. Ponce de Leon Road, outdoor pool, 24h reception, airport shuttle · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ph/the-funny-lion-puerto-princesa.html' },
