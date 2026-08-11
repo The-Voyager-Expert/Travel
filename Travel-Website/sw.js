@@ -686,7 +686,16 @@
    with the terracota pill" · "same thing"). A regex over CSS blocks was tried first and
    backtracked catastrophically on these files — the linear scan is the one to keep.
    web-travel-style.css -> v25. CACHE v542. */
-var CACHE = 'travel-cache-v542';
+/* 2026-08-11: Mid-page cross-page pill rows deleted from Weather, Climate-Finder and When-to-Go
+   (owner: "that was a cross page that made no sense" · "we only needed the pills on top to go to
+   the other page and link" · "delete that for the end of the page we have a dedicated one"). The
+   toolbar already carries this navigation at the top, and the dedicated place for cross-links is
+   the end-of-page .also-strip. Removed: .wx-sib-row-top (2 pills), .cf-sibling-row (4),
+   .wtg-sibling-row (4). KEPT: .wx-sib-row-links and .cf-research-row — those are external
+   forecast tools, page content rather than site navigation. Sunrise-Sunset deliberately untouched
+   (owner: "keep the sunset page"); it carries the dedicated footer strip. Div counts verified
+   balanced on all three. CACHE v543. */
+var CACHE = 'travel-cache-v543';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
