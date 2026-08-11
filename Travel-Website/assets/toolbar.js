@@ -578,7 +578,20 @@ window.TVE.isPhone = function () {
    position — hamburger left, theme toggle right — so the logo is absolutely
    positioned and pointer-events:none through its margins, exactly how the old
    centred text label worked. Desktop keeps the terracotta bar untouched. */
-    '@media (max-width: 1260px) and (pointer: coarse) {' +
+    /* NAV SWAP IS WIDTH-ONLY — and deliberately so, unlike every other
+       breakpoint on this site (owner rule 2026-08-10, § 42). The page LAYOUT
+       holds on a narrowed desktop window because a card or a paragraph can
+       simply be narrower. The tab row cannot: 14 tabs need ~1300px, which is
+       exactly why this breakpoint is pinned at 1260 for the 1280px MacBook Air.
+       Three ways of keeping the tabs below that were measured and all were worse
+       than the hamburger — (1) letting .tb wrap drops the theme toggle to a
+       centred second line under the tabs; (2) scrolling the row horizontally
+       works until the active-tab scrollLeft centering runs and the bar shows a
+       two-letter fragment of one tab; (3) wrapping .tb-links resolves the row to
+       min-content, one tab per line, a 476px-tall wall of tabs at every width
+       below 1260. So the hamburger stays here on a narrow desktop window. It is
+       responsive nav, not the mobile site: the page around it is still desktop. */
+    '@media (max-width: 1260px){' +
       '.tb{background:transparent!important}' +
       '.tb a,.tb a:visited,.tb-ddbtn,.tb-ham{color:#b85c2a!important}' +
       '.tb-theme-toggle{border-color:#b85c2a!important;background:transparent!important;color:#b85c2a!important}' +
@@ -631,6 +644,19 @@ window.TVE.isPhone = function () {
        width:auto so the row is exactly as wide as its tabs. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
       'gap:clamp(6px,0.78vw,10px);align-items:center;justify-content:flex-start;min-width:0}' +
+    /* Between the hamburger (<=1260px) and ~1500px the desktop tab row does not
+       fit: it measures 1414px, plus the theme toggle that is now its last tab.
+       Let it wrap. The toggle is inside .tb-links, so it wraps WITH the tabs
+       rather than dropping to a line of its own — owner rule 2026-08-10, "pin
+       in the page as if it was the last tab and when we reduce it will behave
+       like the rest". Two lines of tabs beats a row that pushes the whole page
+       sideways, and beats a horizontal scroller (the active-tab scrollLeft
+       centering then shows a fragment of one tab and nothing else). Nothing
+       here applies at >=1500px, where the row still sits on one line as shipped,
+       and .tb-inner keeps no overflow, so Cleanliness Rule 582 is untouched. */
+    '@media (max-width: 1499px) and (pointer: fine){' +
+      '.tb-links{flex-wrap:wrap;row-gap:6px}' +
+    '}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
@@ -679,7 +705,7 @@ window.TVE.isPhone = function () {
     '.tb-progress{position:fixed;top:0;left:0;height:2px;width:0%;' +
       'background:' + accent + ';z-index:200;pointer-events:none;' +
       'transition:width .08s linear}' +
-    '@media (max-width: 1260px) and (pointer: coarse) {.tb-progress{display:none}}' +
+    '@media (max-width: 1260px){.tb-progress{display:none}}' +
     /* Hide ham elements on desktop — mobile @media shows them */
     '.tb-ham{display:none}.tb-ham-label{display:none}.tb-ham-menu{display:none}' +
     /* Mobile/tablet: hamburger menu replaces the chip row below this width.
@@ -689,7 +715,7 @@ window.TVE.isPhone = function () {
        1400px for the 14th tab was tried on 2026-08-10 and the check caught it.
        The row must be made to FIT 1260px instead — hence the tab gap cut from
        18px to 10px in the same pass. */
-    '@media (max-width: 1260px) and (pointer: coarse) {' +
+    '@media (max-width: 1260px){' +
       '.tb{position:relative;z-index:1002;padding:15px 0 14px;display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:none;background:transparent;box-shadow:none}' +
       '.tb-inner{display:none !important}' +
       '.tb-scroll-wrap{display:none !important}' +
@@ -759,7 +785,7 @@ window.TVE.isPhone = function () {
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
     '.tb-theme-toggle:hover{background:transparent;border-color:rgba(122,59,30,.85)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
-    '@media (max-width: 1260px) and (pointer: coarse) {.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
+    '@media (max-width: 1260px){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
     /* Covers all tokens from web-travel-style.css + guide-style.css dark blocks. */
     /* html[data-theme="dark"] specificity (0,1,1) > :root (0,1,0) — always wins. */
@@ -1123,7 +1149,35 @@ window.TVE.isPhone = function () {
       updateIcon();
     });
 
+    /* WHERE THE TOGGLE LIVES — owner rule 2026-08-10: "pin in the page as if it
+       was the last tab and when we reduce it will behave like the rest."
+
+       Desktop nav showing: the toggle is the LAST CHILD OF .tb-links, i.e. a tab.
+       It was previously a sibling of .tb-inner, which put it in .tb's wrap
+       context on its own. The tab row's natural width is 1414px (measured), so
+       on any window under ~1500px the row filled line 1 and the toggle dropped
+       to a centred second line beneath it — the jump the owner saw, and it was
+       reachable on every ordinary laptop, not just a narrowed window. As a tab
+       it wraps, scrolls and reflows with the others and can never separate.
+
+       Hamburger showing (<=1260px): moved back to a direct child of .tb, because
+       .tb-inner is display:none there and the toggle would vanish with it. That
+       is also the shipped mobile design — sun far left, wordmark centre,
+       hamburger right (.tb-theme-toggle{order:-1} in the 1260 block).
+
+       Re-parented live on a matchMedia change so dragging a window across the
+       breakpoint lands it in the right place without a reload. */
+    var _navMq = window.matchMedia('(max-width: 1260px)');
+    function placeThemeToggle() {
+      var host = _navMq.matches ? bar : (bar.querySelector('.tb-links') || bar);
+      if (themeBtn.parentNode !== host) host.appendChild(themeBtn);
+    }
     bar.appendChild(themeBtn);
+    placeThemeToggle();          /* .tb-links is already in the DOM by now */
+    if (_navMq.addEventListener) _navMq.addEventListener('change', placeThemeToggle);
+    else if (_navMq.addListener) _navMq.addListener(placeThemeToggle);
+    window.TVE = window.TVE || {};
+    window.TVE.placeThemeToggle = placeThemeToggle;
   })();
 
   var hamMenu = document.createElement('div');
@@ -8006,10 +8060,20 @@ window.TVE.isPhone = function () {
     var _ssCss = document.createElement('style');
     _ssCss.id = 'tve-share-stop-css';
     _ssCss.textContent =
+      /* Terracotta, not grey (owner 2026-08-10). #a8a09a was quiet enough that
+         readers were missing that the three stop actions exist at all; the
+         brand terracotta reads as "there is something here" without shouting.
+         Hover darkens to #7a3b1e — with the resting state already coloured,
+         hover has to move DOWN in lightness to still register as feedback.
+         Dark mode lifts to #d4874a: #b85c2a sits at 2.6:1 on the #2a2825 card,
+         the same lift the pullquote border and .free-flag already take. */
       '.tve-share-stop-btn{background:none;border:none;cursor:pointer;' +
-      'color:#a8a09a;padding:0;margin-left:12px;line-height:1;vertical-align:middle;' +
-      'display:inline-flex;align-items:center;flex-shrink:0;}' +
-      '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#b85c2a;}' +
+      'color:#b85c2a;padding:0;margin-left:12px;line-height:1;vertical-align:middle;' +
+      'display:inline-flex;align-items:center;flex-shrink:0;transition:color .15s;}' +
+      '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#7a3b1e;}' +
+      '@media (prefers-color-scheme:dark){' +
+        '.tve-share-stop-btn{color:#d4874a;}' +
+        '.tve-share-stop-btn:hover,.tve-share-stop-btn:focus-visible{color:#e8a468;}}' +
       '.tve-share-stop-btn:focus-visible{outline:2px solid #b85c2a;' +
       'outline-offset:2px;border-radius:3px;}';
     (document.head || document.documentElement).appendChild(_ssCss);
@@ -8105,12 +8169,22 @@ window.TVE.isPhone = function () {
     var _wlCss = document.createElement('style');
     _wlCss.id  = 'tve-wishlist-css';
     _wlCss.textContent =
-      /* Star button in stop-header */
-      '.tve-wl-btn{background:none;border:none;cursor:pointer;color:#a8a09a;padding:0;margin-left:8px;' +
+      /* Star button in stop-header — terracotta at rest (owner 2026-08-10, same
+         pass as the share and note icons; see the note on .tve-share-stop-btn).
+         The saved state can no longer lean on colour ALONE now that the resting
+         state is coloured too: gold-vs-terracotta at 14px is a hue difference
+         most readers would not register. So saved FILLS the star as well —
+         outline means off, solid means on, which needs no colour vision at
+         all. Same reason the note pencil fills below. */
+      '.tve-wl-btn{background:none;border:none;cursor:pointer;color:#b85c2a;padding:0;margin-left:8px;' +
       'line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
       'transition:color .15s;font-family:inherit;}' +
-      '.tve-wl-btn:hover{color:' + STAR_COLOR + ';}' +
+      '.tve-wl-btn:hover{color:#7a3b1e;}' +
       '.tve-wl-btn.tve-wl-saved{color:' + STAR_COLOR + ';}' +
+      '.tve-wl-btn.tve-wl-saved svg{fill:currentColor;}' +
+      '@media (prefers-color-scheme:dark){' +
+        '.tve-wl-btn{color:#d4874a;}' +
+        '.tve-wl-btn:hover{color:#e8a468;}}' +
       '.tve-wl-btn:focus-visible{outline:2px solid ' + STAR_COLOR + ';outline-offset:2px;border-radius:3px;}' +
 
       /* Floating FAB — sits directly above the day-jump pill (bottom:24px+36px+8px=68px).
@@ -8507,12 +8581,21 @@ window.TVE.isPhone = function () {
     var _nCss = document.createElement('style');
     _nCss.id  = 'tve-notes-css';
     _nCss.textContent =
-      /* Pencil button in stop-header — sits last, after share and ★ */
-      '.tve-note-btn{background:none;border:none;cursor:pointer;color:#a8a09a;padding:0;' +
+      /* Pencil button in stop-header — sits last, after share and ★.
+         Terracotta at rest (owner 2026-08-10, same pass as share and ★).
+         .tve-note-has USED to be #b85c2a, which is now the resting colour —
+         the has-a-note state would have become completely invisible. It keeps
+         the colour and gains the fill instead, matching the saved star:
+         outline off, solid on. */
+      '.tve-note-btn{background:none;border:none;cursor:pointer;color:#b85c2a;padding:0;' +
       'margin-left:8px;line-height:1;display:inline-flex;align-items:center;flex-shrink:0;' +
       'transition:color .15s;font-family:inherit;}' +
-      '.tve-note-btn:hover{color:#b85c2a;}' +
+      '.tve-note-btn:hover{color:#7a3b1e;}' +
       '.tve-note-btn.tve-note-has{color:#b85c2a;}' +
+      '.tve-note-btn.tve-note-has svg{fill:currentColor;}' +
+      '@media (prefers-color-scheme:dark){' +
+        '.tve-note-btn,.tve-note-btn.tve-note-has{color:#d4874a;}' +
+        '.tve-note-btn:hover{color:#e8a468;}}' +
       '.tve-note-btn:focus-visible{outline:2px solid #b85c2a;outline-offset:2px;border-radius:3px;}' +
 
       /* Saved note line under the stop header */
