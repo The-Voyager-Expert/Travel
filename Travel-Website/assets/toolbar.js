@@ -418,6 +418,14 @@ window.TVE.isPhone = function () {
     'language': '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM6.6 7.5h2.6a15 15 0 0 1 1.1-2.9 8 8 0 0 0-3.7 2.9zM12 4.2c.6.9 1.1 1.9 1.4 3.3h-2.8c.3-1.4.8-2.4 1.4-3.3zm-7.7 8.3a8 8 0 0 1 .2-3h3a17 17 0 0 0 0 3h-3.2zm5.2 0a15 15 0 0 1 0-3h5a15 15 0 0 1 0 3h-5zm-3.5 2h2.7c.3 1.1.6 2.1 1 2.9a8 8 0 0 1-3.7-2.9zm5.9 3.3c-.6-.9-1.1-1.9-1.4-3.3h2.8c-.3 1.4-.8 2.4-1.4 3.3zm2.6-.4c.4-.8.8-1.8 1-2.9h2.7a8 8 0 0 1-3.7 2.9zm1.3-4.9a17 17 0 0 0 0-3h3a8 8 0 0 1 0 3h-3zm2.2-5h-2.6a15 15 0 0 0-1.1-2.9 8 8 0 0 1 3.7 2.9z"/>',
     'palm': '<path d="M12 4.2c2 0 3.7 1 4.6 2.4-1-.6-2.2-.9-3.4-.9v.6c2.9 0 5.4 1.6 6.6 3.9-1.3-1-2.9-1.6-4.7-1.6-.6 0-1.2.1-1.8.2l.3.6c3 .5 5.4 2.7 6.2 5.5-1.5-1.7-3.6-2.9-6-3.2l-.8 12.1h-2l.8-12.1c-2.4.3-4.5 1.5-6 3.2.8-2.8 3.2-5 6.2-5.5l.3-.6c-.6-.1-1.2-.2-1.8-.2-1.8 0-3.4.6-4.7 1.6C7 8.4 9.5 6.8 12.4 6.8v-.6c-1.2 0-2.4.3-3.4.9C9.9 5.2 11.6 4.2 12 4.2z"/>',
     'bulb': '<path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zm-2 17.5h4V21a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1.5z"/>',
+    'shuffle': '<path d="M17 3v3h-2.1l-2.4 3.2 1.3 1.7L16 8h1v3l4-4-4-4zM3 6v2h4.2l1.6 2.1 1.3-1.7L8 6H3zm14 9v-3l-2.2 2.9L13.5 13l-1.3 1.7L14.9 18H17v3l4-4-4-4zM3 16v2h5l6.5-8.6-1.3-1.7L7 16H3z"/>',
+    'download': '<path d="M12 3v9.6l3.3-3.3 1.4 1.4L12 16.4 7.3 10.7l1.4-1.4L12 12.6V3h0zM4 18h16v3H4v-3z"/>',
+    'check': '<path d="M9.2 16.6 4.6 12l-1.5 1.4 6.1 6.2L21 8l-1.4-1.4-10.4 10z"/>',
+    'search': '<path d="M10.5 3a7.5 7.5 0 1 0 4.4 13.6l4.8 4.8 1.4-1.4-4.8-4.8A7.5 7.5 0 0 0 10.5 3zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11z"/>',
+    'exchange': '<path d="M7 5.5 3 9.5l4 4V11h8V8H7V5.5zM17 10.5l4 4-4 4V16H9v-3h8v-2.5z"/>',
+    'star': '<path d="M12 2.4l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.3l-5.9 3.1 1.2-6.5L2.5 9.3l6.6-.9 2.9-6z"/>',
+    'printer': '<path d="M7 3h10v4H7V3zm-3 6h16a2 2 0 0 1 2 2v6h-4v4H6v-4H2v-6a2 2 0 0 1 2-2zm4 8v3h8v-3H8zm10-5.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>',
+    'close': '<path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7l1.4-1.4L10.6 10.6l6.3-6.3 1.4 1.4z"/>',
     'calendar': '<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>',
     'neighborhoods': '<path d="M4 21V9.2l6-4.2 6 4.2V21h-4v-5h-4v5H4zm14 0V10.6l2 1.4V21h-2zM11.5 3.4 20 9.35V11l-8.5-5.95L3 11V9.35l8.5-5.95z"/>',
     'rental-cars': '<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>',
@@ -496,7 +504,7 @@ window.TVE.isPhone = function () {
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS alongside
        Flights / Safety / Time Zones. */
     { group: '🧳 Before You Go', groupIcon: 'luggage', children: [
-        { href: base + 'Trip-Essentials/Before-You-Go.html',                   text: 'Before You Go' },
+        { href: base + 'Trip-Essentials/Before-You-Go.html',                   text: 'Before You Go', icon: 'luggage' },
         { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: 'Packing Checklist', icon: 'packing' },
         { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters', icon: 'plug' },
       ] },
@@ -1744,7 +1752,7 @@ window.TVE.isPhone = function () {
        second click before printing also removes the style tag. */
     var printBtn = document.createElement('button');
     printBtn.type = 'button';
-    printBtn.textContent = '🖨 Print Guide';
+    printBtn.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print Guide';
     printBtn.style.cssText = 'display:inline-flex;align-items:center;height:28px;padding:0 12px;' +
       'background:var(--c-float-bg,#fff);border:1.5px solid var(--c-float-bd,#c8a44a);border-radius:14px;' +
       'font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--c-float-text,#8a6c1a);' +
@@ -1762,7 +1770,7 @@ window.TVE.isPhone = function () {
       var existing = document.getElementById('tve-print-mode');
       if (existing) {
         existing.parentNode.removeChild(existing);
-        printBtn.textContent = '🖨 Print Guide';
+        printBtn.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print Guide';
         printBtn.style.color = 'var(--c-float-text,#8a6c1a)';
         printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
       } else {
@@ -1778,13 +1786,13 @@ window.TVE.isPhone = function () {
             '.container{max-width:100%!important}' +
           '}';
         document.head.appendChild(css);
-        printBtn.textContent = '✕ Exit Print Mode';
+        printBtn.innerHTML = iconSVG(NAV_ICONS['close'], 15, 'close') + ' Exit Print Mode';
         printBtn.style.color = '#b85c2a';
         printBtn.style.borderColor = '#b85c2a';
         window.addEventListener('afterprint', function onAP() {
           var st = document.getElementById('tve-print-mode');
           if (st) { st.parentNode.removeChild(st); }
-          printBtn.textContent = '🖨 Print Guide';
+          printBtn.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print Guide';
           printBtn.style.color = 'var(--c-float-text,#8a6c1a)';
           printBtn.style.borderColor = 'var(--c-float-bd,#c8a44a)';
           window.removeEventListener('afterprint', onAP);
@@ -2151,7 +2159,7 @@ window.TVE.isPhone = function () {
           var pill = document.createElement('a');
           pill.className = 'overview-extra-link';
           pill.href = mapHref;
-          pill.textContent = '🗺 All Stops Map';
+          pill.innerHTML = iconSVG(NAV_ICONS['map'], 15, 'map') + ' All Stops Map';
           gelRow.appendChild(pill);
         }
       };
@@ -2179,7 +2187,7 @@ window.TVE.isPhone = function () {
         optBtn.className = 'overview-extra-link';
         optBtn.id = 'tve-preview-btn';
         optBtn.href = '#';
-        optBtn.textContent = '🔀 Preview Optimized';
+        optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized';
         optBtn.style.cssText = 'cursor:pointer;';
 
         optBtn.addEventListener('click', function (e) {
@@ -2192,18 +2200,18 @@ window.TVE.isPhone = function () {
           fetchXhr.open('GET', mapHref, true);
           fetchXhr.onload = function () {
             if (fetchXhr.status < 200 || fetchXhr.status >= 300) {
-              optBtn.textContent = '🔀 Preview Optimized';
+              optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized';
               optBtn.removeAttribute('data-busy');
               return;
             }
             var m = fetchXhr.responseText.match(/(?:var|const|let)\s+STOPS\s*=\s*(\[[\s\S]*?\]);/);
-            if (!m) { optBtn.textContent = '🔀 Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
+            if (!m) { optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
             var stops;
-            try { stops = JSON.parse(m[1]); } catch (ex) { optBtn.textContent = '🔀 Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
+            try { stops = JSON.parse(m[1]); } catch (ex) { optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized'; optBtn.removeAttribute('data-busy'); return; }
             runPreview(stops);
-            optBtn.textContent = '✅ Optimized (preview)';
+            optBtn.innerHTML = iconSVG(NAV_ICONS['check'], 15, 'check') + ' Optimized (preview)';
           };
-          fetchXhr.onerror = function () { optBtn.textContent = '🔀 Preview Optimized'; optBtn.removeAttribute('data-busy'); };
+          fetchXhr.onerror = function () { optBtn.innerHTML = iconSVG(NAV_ICONS['shuffle'], 15, 'shuffle') + ' Preview Optimized'; optBtn.removeAttribute('data-busy'); };
           fetchXhr.send();
         });
 
@@ -4221,7 +4229,9 @@ window.TVE.isPhone = function () {
     btn.href = 'javascript:void(0)';
     btn.className = 'overview-extra-link';
     btn.id = 'tve-offline-btn';
-    btn.textContent = saved ? '✓ Saved for Offline' : '⏬ Save for Offline';
+    btn.innerHTML = saved
+      ? iconSVG(NAV_ICONS['check'], 15, 'check') + ' Saved for Offline'
+      : iconSVG(NAV_ICONS['download'], 15, 'download') + ' Save for Offline';
     if (saved) {
       btn.classList.add('tve-saved');
       btn.style.setProperty('cursor', 'default', 'important');
@@ -4252,7 +4262,7 @@ window.TVE.isPhone = function () {
       if (localStorage.getItem(storageKey)) {
         /* Already saved → toggle back to the resting state (mirrors I've Been). */
         localStorage.removeItem(storageKey);
-        btn.textContent = '⏬ Save for Offline';
+        btn.innerHTML = iconSVG(NAV_ICONS['download'], 15, 'download') + ' Save for Offline';
         btn.classList.remove('tve-saved');
         btn.style.setProperty('cursor', 'pointer', 'important');
         return;
@@ -4341,18 +4351,20 @@ window.TVE.isPhone = function () {
     btn.href = 'javascript:void(0)';
     btn.className = 'overview-extra-link' + (visited ? ' tve-been' : '');
     btn.id = 'tve-visited-btn';
-    btn.textContent = visited ? '✓ I’ve Been' : '📍 I’ve Been';
+    btn.innerHTML = visited
+      ? iconSVG(NAV_ICONS['check'], 15, 'check') + ' I’ve Been'
+      : iconSVG(NAV_ICONS['pin'], 15, 'pin') + ' I’ve Been';
 
     btn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
       var nowVisited = !!localStorage.getItem(storageKey);
       if (nowVisited) {
         localStorage.removeItem(storageKey);
-        btn.textContent = '📍 I’ve Been';
+        btn.innerHTML = iconSVG(NAV_ICONS['pin'], 15, 'pin') + ' I’ve Been';
         btn.classList.remove('tve-been');
       } else {
         localStorage.setItem(storageKey, '1');
-        btn.textContent = '✓ I’ve Been';
+        btn.innerHTML = iconSVG(NAV_ICONS['check'], 15, 'check') + ' I’ve Been';
         btn.classList.add('tve-been');
       }
     });
@@ -6390,7 +6402,7 @@ window.TVE.isPhone = function () {
     wrap.className = 'extras-section';
     var h = document.createElement('div');
     h.className = 'extras-title';
-    h.textContent = '⭐ Best Of';
+    h.innerHTML = iconSVG(NAV_ICONS['trophy'], 15, 'trophy') + ' Best Of';
     var pills = document.createElement('div');
     pills.className = 'also-on-this-site-pills';
     entries.forEach(function (entry) {
@@ -6920,7 +6932,7 @@ window.TVE.isPhone = function () {
       pill.href = 'javascript:void(0)';
       pill.className = 'overview-extra-link';
       pill.id = 'tve-cur-pill';
-      pill.textContent = '💱 Currency';
+      pill.innerHTML = iconSVG(NAV_ICONS['exchange'], 15, 'exchange') + ' Currency';
       pill.setAttribute('aria-expanded', 'false');
       pill.setAttribute('aria-controls', 'tve-cur-panel');
       pill.style.setProperty('flex', '1 1 0', 'important');
@@ -7192,7 +7204,7 @@ window.TVE.isPhone = function () {
       pill.href = 'javascript:void(0)';
       pill.className = 'overview-extra-link';
       pill.id = 'tve-book-pill';
-      pill.textContent = '🔎 Hotels & Flights';
+      pill.innerHTML = iconSVG(NAV_ICONS['search'], 15, 'search') + ' Hotels & Flights';
       pill.setAttribute('aria-expanded', 'false');
       pill.setAttribute('aria-controls', 'tve-book-panel');
       pill.style.setProperty('flex', '1 1 0', 'important');

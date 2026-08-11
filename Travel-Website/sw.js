@@ -495,7 +495,11 @@
    class list and wiped tb-has-ico set a few lines above (the earlier classList fix missed this
    second assignment). Adds compare/trip-type/language/palm/bulb marks and exposes TVE.icon so
    the Guides-Index chips and the guides can draw the same set. toolbar.js -> v351. CACHE v515. */
-var CACHE = 'travel-cache-v515';
+/* 2026-08-11: Guide pill row drawn — Export to Calendar, Preview Optimized, Save for Offline,
+   I've Been, Hotels & Flights, Currency, Best Of, Print Guide. Before You Go row takes the
+   suitcase. All Stops Map is NOT here: its label lives in each guide's HTML, not in toolbar.js.
+   toolbar.js -> v352. CACHE to v516. */
+var CACHE = 'travel-cache-v516';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -503,7 +507,7 @@ var CACHE = 'travel-cache-v515';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 351, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 166, 'toolbar.js': 352, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
