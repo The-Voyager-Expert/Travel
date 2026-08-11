@@ -65,6 +65,7 @@
   border-top: none;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 .trip-body > .sec:first-child { padding-top: 12px; }
@@ -271,9 +272,28 @@ a.nu-chip:visited { color: #6a6660; }
 .trip-jump-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--text); padding: 5px 13px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); text-decoration: none; white-space: nowrap; transition: border-color .15s, color .15s, background .15s; }
 a.trip-jump-pill:visited { color: #3d3a32; }
 .trip-jump-pill:hover { color: var(--accent); border-color: var(--accent); background: rgba(138,108,26,0.04); }
+/* ── Export-to-calendar button (Flights + Hotel section rows) ──
+   Reuses the page's own .nu-chip family — same 1.5px border, 6px radius,
+   surface2 fill — so the section rows carry no new pill shape. Sits at the
+   right end of the .sec row; .sec wraps, so on a narrow screen it drops to
+   its own line rather than squeezing the label. ── */
+.cal-btn {
+  margin-left: auto;
+  cursor: pointer;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.3;
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 30px;
+}
+.cal-btn:hover { color: var(--accent); }
+.cal-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cal-btn.cal-done { border-color: #2e7d32; color: #2e7d32; background: rgba(46,125,50,0.07); }
 @media (max-width: 600px) and (pointer: coarse) {
   .nu-wx { margin-left: 0; width: 100%; }
   .nu-city { font-size: 15px; }
+  .cal-btn { font-size: 13px; padding: 9px 14px; min-height: 44px; }
 }</style>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
@@ -640,6 +660,239 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     a.style.cssText='color:inherit;text-decoration:none;';
     firstText.textContent=firstText.textContent.replace(city,'');
     el.insertBefore(a,el.firstChild);
+  });
+})();
+</script>
+
+<script>
+/* ── Export to calendar — one button per Flights / Hotel section ────────────
+   Owner rule 2026-08-11: every upcoming trip's flights and hotels carry an
+   export button so the bookings can be dropped into a calendar whenever there
+   is time. The .ics is built in the browser from the rows already on the page
+   — nothing is duplicated in JS, so a corrected flight time or hotel date is
+   picked up on the next click with no other edit.
+
+   Scope: upcoming trips only (end date >= today) and never an unconfirmed one.
+   This is the per-booking manual export; the trip-level calendar event is
+   synced separately by the pre-trip-audit routine (Step 4).
+── */
+(function(){
+  var MONS='jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec';
+  var MN={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var today=new Date(); today.setHours(0,0,0,0);
+
+  /* ── Dates ── the page carries no year, so resolve to the nearest sensible
+     one: current year, unless that lands more than 6 months in the past (a
+     January trip read in December). ── */
+  function resolve(mon,day){
+    var d=new Date(today.getFullYear(),mon,day);
+    if((today-d)/864e5>180) d=new Date(today.getFullYear()+1,mon,day);
+    return d;
+  }
+  /* Every "Mon D" in a string, month carried forward when omitted ("Aug 15 → 16"). */
+  function monthDays(txt){
+    var re=new RegExp('(?:('+MONS+')[a-z]*\\s+)?(\\d{1,2})\\b','gi'), m, out=[], last=null;
+    while((m=re.exec(txt||''))){
+      if(m[1]) last=MN[m[1].toLowerCase()];
+      if(last==null) continue;
+      var day=parseInt(m[2],10);
+      if(day<1||day>31) continue;
+      out.push(resolve(last,day));
+    }
+    return out;
+  }
+  function timeOn(d,hh,mm,ap){
+    var h=parseInt(hh,10)%12; if(/pm/i.test(ap)) h+=12;
+    var x=new Date(d.getTime()); x.setHours(h,parseInt(mm,10),0,0); return x;
+  }
+  function human(d){ return MS[d.getMonth()]+' '+d.getDate(); }
+  function addDays(d,n){ var x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
+
+  /* ── ICS serialisation ── */
+  function pad(n){ return (n<10?'0':'')+n; }
+  function dDate(d){ return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate()); }
+  function dLocal(d){ return dDate(d)+'T'+pad(d.getHours())+pad(d.getMinutes())+'00'; }
+  function dStamp(d){ return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+pad(d.getUTCSeconds())+'Z'; }
+  function esc(s){ return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n'); }
+  function slug(s){ return String(s||'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').toLowerCase().slice(0,60)||'trip'; }
+  /* RFC 5545 line folding, never splitting a surrogate pair (emoji summaries). */
+  function fold(line){
+    var out=[], i=0, LIM=70;
+    while(line.length-i>LIM){
+      var n=LIM, c=line.charCodeAt(i+n-1);
+      if(c>=0xD800&&c<=0xDBFF) n--;
+      out.push((out.length?' ':'')+line.substr(i,n)); i+=n;
+    }
+    out.push((out.length?' ':'')+line.substr(i));
+    return out.join('\r\n');
+  }
+  function calendar(events){
+    if(!events.length) return '';
+    var now=dStamp(new Date());
+    var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//GuideMyDays//Trips//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+    events.forEach(function(e){
+      L.push('BEGIN:VEVENT');
+      L.push('UID:'+e.uid);
+      L.push('DTSTAMP:'+now);
+      if(e.allDay){
+        L.push('DTSTART;VALUE=DATE:'+dDate(e.start));
+        L.push('DTEND;VALUE=DATE:'+dDate(e.end));
+      } else {
+        L.push('DTSTART:'+dLocal(e.start));
+        L.push('DTEND:'+dLocal(e.end));
+      }
+      L.push(fold('SUMMARY:'+esc(e.summary)));
+      if(e.location) L.push(fold('LOCATION:'+esc(e.location)));
+      if(e.desc) L.push(fold('DESCRIPTION:'+esc(e.desc)));
+      L.push('END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    return L.join('\r\n')+'\r\n';
+  }
+  function save(name,ics){
+    /* iOS opens a data: URI straight into the Calendar import sheet; every
+       other browser takes the blob download. */
+    var iOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    if(iOS){ location.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics); return; }
+    var url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));
+    var a=document.createElement('a'); a.href=url; a.download=name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },0);
+  }
+
+  /* ── Flights ── */
+  function airportNames(block){
+    var map={};
+    [].slice.call(block.querySelectorAll('.airport-row')).forEach(function(r){
+      var code=r.querySelector('.ap-code'), name=r.querySelector('.ap-name');
+      if(!code) return;
+      var n=name?name.textContent.replace(/TSA\s*[^\s]*$/,'').replace(/\s+/g,' ').trim():'';
+      map[code.textContent.trim()]=n;
+    });
+    return map;
+  }
+  function flightEvents(block,trip,who){
+    var ap=airportNames(block), evs=[], carried=null;
+    [].slice.call(block.querySelectorAll('.ftable')).forEach(function(row,i){
+      /* Join the cells with a separator — the .fc spans are adjacent in the
+         markup, so raw textContent glues "7:16 AM" onto "SEA → ATL". */
+      var txt=[].slice.call(row.querySelectorAll('.fc')).map(function(c){
+        return c.textContent.replace(/\s+/g,' ').trim();
+      }).filter(Boolean).join(' | ');
+      var route=new RegExp('([A-Z]{3})\\s*→\\s*([A-Z]{3})').exec(txt);
+      if(!route) return;
+      var rest=txt.replace(route[0],' ');
+      var dep=monthDays(rest.split(/arrive/i)[0])[0]||carried;
+      if(!dep) return;
+      carried=dep;
+      var num=(new RegExp('\\b([A-Z]{2}\\d{1,4}[A-Z]?)\\b').exec(rest)||[])[1]||'';
+      var dt=/(\d{1,2}):(\d{2})\s*(AM|PM)/i.exec(rest);
+      var arrTxt=(rest.split(/arrive/i)[1]||'');
+      var at=/(\d{1,2}):(\d{2})\s*(AM|PM)/i.exec(arrTxt);
+      var arrDayM=new RegExp('on\\s+('+MONS+')[a-z]*\\s+(\\d{1,2})','i').exec(arrTxt);
+      var start,end,allDay=false;
+      if(dt){
+        start=timeOn(dep,dt[1],dt[2],dt[3]);
+        var arrDay=arrDayM?resolve(MN[arrDayM[1].toLowerCase()],parseInt(arrDayM[2],10)):dep;
+        end=at?timeOn(arrDay,at[1],at[2],at[3]):new Date(start.getTime()+3*36e5);
+        if(end<=start) end=new Date(start.getTime()+3*36e5);
+      } else {
+        allDay=true; start=dep; end=addDays(dep,1);
+      }
+      var from=ap[route[1]]||route[1], to=ap[route[2]]||route[2];
+      evs.push({
+        uid:slug(trip)+'-flight-'+slug(route[1]+route[2]+num)+'-'+dDate(dep)+'-'+i+'@guidemydays.com',
+        summary:'✈️ '+route[1]+' → '+route[2]+(num?' · '+num:''),
+        location:from,
+        allDay:allDay, start:start, end:end,
+        desc:trip
+          +'\nDepart '+from+(dt?' at '+dt[0].replace(/\s+/g,' ').toUpperCase():'')
+          +'\nArrive '+to+(at?' at '+at[0].replace(/\s+/g,' ').toUpperCase():'')
+          +(who?'\nWho: '+who:'')
+          +'\nTimes are local to each airport.'
+      });
+    });
+    return evs;
+  }
+
+  /* ── Hotels ── */
+  function hotelEvent(card,trip,who,i){
+    var metaEl=card.querySelector('.hotel-meta');
+    var meta=metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():'';
+    var parts=meta.split('·');
+    var city=parts.length>1?parts[0].trim():'';
+    var span=parts.length>1?parts.slice(1).join('·'):meta;
+    var ds=monthDays(span);
+    if(!ds.length) return null;
+    var inD=ds[0], outD=ds.length>1?ds[ds.length-1]:addDays(inD,1);
+    if(outD<inD) outD=addDays(inD,1);
+    var nameEl=card.querySelector('.hotel-name');
+    var name=nameEl?nameEl.textContent.replace(/\s+/g,' ').replace(/📍/g,'').trim():'Stay';
+    var addrEl=card.querySelector('.hotel-addr');
+    var addr=(addrEl&&addrEl.firstChild&&addrEl.firstChild.nodeType===3)?addrEl.firstChild.textContent.trim():'';
+    var mapEl=card.querySelector('.hotel-name a');
+    var siteEl=card.querySelector('p a');
+    return {
+      uid:slug(trip)+'-stay-'+slug(name)+'-'+dDate(inD)+'-'+i+'@guidemydays.com',
+      summary:'🏨 '+name+(city?' · '+city:''),
+      location:addr||name,
+      allDay:true, start:inD, end:addDays(outD,1),
+      desc:trip
+        +'\nCheck-in '+human(inD)+' · Check-out '+human(outD)
+        +(who?'\nWho: '+who:'')
+        +(addr?'\n'+addr:'')
+        +(mapEl?'\nMap: '+mapEl.href:'')
+        +(siteEl?'\n'+siteEl.href:'')
+    };
+  }
+
+  /* ── Button ── */
+  function button(label,filename,build){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='nu-chip cal-btn';
+    b.setAttribute('aria-label',label);
+    b.innerHTML='<span aria-hidden="true">📅</span><span class="cal-t">Add to calendar</span>';
+    b.addEventListener('click',function(){
+      var ics=calendar(build());
+      if(!ics) return;
+      save(filename,ics);
+      var t=b.querySelector('.cal-t');
+      t.textContent='Downloaded'; b.classList.add('cal-done');
+      setTimeout(function(){ t.textContent='Add to calendar'; b.classList.remove('cal-done'); },1800);
+    });
+    return b;
+  }
+
+  [].slice.call(document.querySelectorAll('.trip')).forEach(function(card){
+    if(card.querySelector('.unconfirmed')) return;
+    var datesEl=card.querySelector('.trip-dates');
+    var ds=monthDays(datesEl?datesEl.textContent:'');
+    if(!ds.length || ds[ds.length-1]<today) return;          // past trip — no export
+    var titleEl=card.querySelector('.trip-title');
+    var trip=titleEl?titleEl.textContent.replace(/\s+/g,' ').trim():'Trip';
+    var base=slug(trip.replace(/[\u{1F1E6}-\u{1F1FF}]/gu,''));
+
+    [].slice.call(card.querySelectorAll('.trip-body > .sec')).forEach(function(sec){
+      var whoEl=sec.querySelector('.who');
+      var who=whoEl?whoEl.textContent.trim():'';
+      var flights=[], hotels=[], el=sec.nextElementSibling;
+      while(el && !el.classList.contains('sec')){
+        if(el.classList.contains('flights-block')) flights.push(el);
+        if(el.classList.contains('hotel')) hotels.push(el);
+        el=el.nextElementSibling;
+      }
+      if(flights.length){
+        sec.appendChild(button('Export these flights to your calendar',base+'-flights.ics',function(){
+          var out=[]; flights.forEach(function(f){ out=out.concat(flightEvents(f,trip,who)); }); return out;
+        }));
+      } else if(hotels.length){
+        sec.appendChild(button('Export these stays to your calendar',base+'-stay.ics',function(){
+          var out=[]; hotels.forEach(function(h,i){ var e=hotelEvent(h,trip,who,i); if(e) out.push(e); }); return out;
+        }));
+      }
+    });
   });
 })();
 </script>
