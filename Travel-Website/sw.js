@@ -534,7 +534,17 @@
    U+1F3E8, a \uD83C lead, so the match regex gained an alternative rather than another entry in
    the \uD83D class. Emoji still wrapped, not replaced — textContent unchanged.
    guide-style.css -> v168. toolbar.js -> v363. CACHE v527. */
-var CACHE = 'travel-cache-v527';
+/* 2026-08-11: Row marks are terracotta, not currentColor (owner: "these icons should be the
+   same color as the rest … all icon have the same color"). currentColor made each mark take its
+   own row's ink — grey in the motion rows, dark in the address row — against the terracotta
+   clock and ticket/free flags beside them: one mark column in two colours. .ticket-flag and
+   .free-flag get away with currentColor because THEIR rows are already terracotta; these rows
+   are not. Now var(--rust,#b85c2a), verified identical to the clock, ticket and free marks at
+   rgb(184,92,42), with a #d4874a dark-mode override matching the other two. Hotel mark also
+   swapped from a hand-drawn bed to the toolbar's own `neighborhoods` shape (owner: "we have a
+   hotel! go top toolbar") — it is the Where to Stay tab icon, so lodging reads the same
+   everywhere. guide-style.css -> v169. CACHE v528. */
+var CACHE = 'travel-cache-v528';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -542,7 +552,7 @@ var CACHE = 'travel-cache-v527';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 168, 'toolbar.js': 363, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 169, 'toolbar.js': 363, 'mobile.css': 76, 'web-travel-style.css': 24, 'guides-index-style.css': 2, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
