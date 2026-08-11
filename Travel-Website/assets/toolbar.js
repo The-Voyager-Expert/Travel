@@ -811,7 +811,11 @@ window.TVE.isPhone = function () {
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
     '.tb-ddbtn.tb-active{color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600}' +
-    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#7a3b1e!important;background:transparent}' +
+    /* An OPEN dropdown gets the same terracotta ring as the active tab, so the
+   menu is visibly attached to the tab it came from. It only changed text
+   colour before, which was invisible against the other tabs. */
+    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#7a3b1e!important;background:transparent;'+
+      'border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
@@ -3791,7 +3795,7 @@ window.TVE.isPhone = function () {
       toggle.setAttribute('aria-expanded', 'false');
       var lbl = document.createElement('span');
       lbl.className = 'tve-ph-lbl';
-      lbl.textContent = '🕐 ' + txt; /* 🕐 */
+      lbl.innerHTML = iconSVG(NAV_ICONS['clock'], 15, 'clock') + ' ' + txt;
       var chv = document.createElement('span');
       chv.className = 'tve-ph-chv';
       chv.textContent = '›'; /* › */
@@ -3914,7 +3918,7 @@ window.TVE.isPhone = function () {
         if (v === 'closed') return;
         el = document.createElement('div');
         el.className = 'tve-ph' + (v === '24h' ? ' tve-ph-24' : '');
-        el.textContent = '🕐 ' + (v === '24h' ? 'Open 24h · every day' : 'Daily · ' + v); /* 🕐 */
+        el.innerHTML = iconSVG(NAV_ICONS['clock'], 15, 'clock') + ' ' + (v === '24h' ? 'Open 24h · every day' : 'Daily · ' + v);
       }
 
       grp.rows.forEach(function (r) { r.classList.add('tve-ph-src'); });
