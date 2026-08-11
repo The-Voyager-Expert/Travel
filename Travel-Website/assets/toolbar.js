@@ -363,11 +363,23 @@ window.TVE.isPhone = function () {
     'tap-water':    '<path d="M12 2.1 11.3 3C10.6 3.8 5 10.5 5 14.4a7 7 0 0 0 14 0c0-3.9-5.6-10.6-6.3-11.4l-.7-.9zm0 3.2c2.1 2.6 5 6.7 5 9.1a5 5 0 0 1-10 0c0-2.4 2.9-6.5 5-9.1z"/><path d="M13.4 11.6a3.2 3.2 0 0 1-2.9 4.9 2.4 2.4 0 0 0 4.1-2.4 6 6 0 0 0-1.2-2.5z"/>',
     'insurance':    '<path d="M12 1 3 5v6.1c0 5.6 3.8 10.8 9 12.1 5.2-1.3 9-6.5 9-12.1V5l-9-4zm0 2.2 7 3.1v4.8c0 4.5-3 8.8-7 10-4-1.2-7-5.5-7-10V6.3l7-3.1z"/><path d="m10.9 14.2-2.1-2.1-1.4 1.4 3.5 3.6 6-6.1-1.4-1.4-4.6 4.6z"/>',
     'first-timer':  '<path d="M12 2 1 21h22L12 2zm0 4.6L19.5 19h-15L12 6.6zM11 10v5h2v-5h-2zm0 6.5v2h2v-2h-2z"/>',
-    'scams':        '<path d="M12 6.5c-3.4 0-6.4.8-8.5 2.1a1.9 1.9 0 0 0-.9 1.9l.5 2.9A3.4 3.4 0 0 0 6.4 16h1.2a3.4 3.4 0 0 0 3-1.8l.5-1h1.8l.5 1a3.4 3.4 0 0 0 3 1.8h1.2a3.4 3.4 0 0 0 3.3-2.6l.5-2.9a1.9 1.9 0 0 0-.9-1.9C18.4 7.3 15.4 6.5 12 6.5zm-4.4 7.6a1.4 1.4 0 0 1-1.4-1.1l-.4-2.2A16.6 16.6 0 0 1 12 9.4c2.5 0 4.6.5 6.2 1.4l-.4 2.2a1.4 1.4 0 0 1-1.4 1.1h-1.2a1.4 1.4 0 0 1-1.2-.7l-.8-1.5a1.3 1.3 0 0 0-1.1-.7h-2.2a1.3 1.3 0 0 0-1.1.7l-.8 1.5a1.4 1.4 0 0 1-1.2.7z"/>',
+    'scams':        '<path d="M16.2 10.1V7.6C16.2 5.1 14.3 3 12 3S7.8 5.1 7.8 7.6v2.5C4.5 10.8 2.2 12.2 2.2 14c0 2.3 4.4 4.1 9.8 4.1s9.8-1.8 9.8-4.1c0-1.8-2.3-3.2-5.6-3.9zm-6.3-2.5C9.9 6.2 10.8 5 12 5s2.1 1.2 2.1 2.6v2.2c-.7-.1-1.4-.1-2.1-.1s-1.4 0-2.1.1V7.6zM12 16.3c-4.8 0-8-1.5-8-2.3 0-.5 1.3-1.4 3.8-1.9v1.3h1.9v-1.6c.7-.1 1.5-.1 2.3-.1s1.6 0 2.3.1v1.6h1.9v-1.3c2.5.5 3.8 1.4 3.8 1.9 0 .8-3.2 2.3-8 2.3z"/>',
     'visas':        '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>',
     'entry-req':    '<path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H5v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>',
-    'nomad':        '<path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>',
-    'processing':   '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>'
+    'laptop':       '<path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>',
+    'disney-parks': '<path d="M12 1.5 9.5 6H7.2v3.4L4 12.3V22h6v-4.2a2 2 0 1 1 4 0V22h6v-9.7l-3.2-2.9V6h-2.3L12 1.5zm0 3.1L13.3 7h-2.6L12 4.6zM9.2 8h5.6v2.2l3.2 2.9V20h-2v-2.2a4 4 0 0 0-8 0V20H6v-6.9l3.2-2.9V8z"/>',
+    'festival-finder': '<path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>',
+    'neighborhoods': '<path d="M4 21V9.2l6-4.2 6 4.2V21h-4v-5h-4v5H4zm14 0V10.6l2 1.4V21h-2zM11.5 3.4 20 9.35V11l-8.5-5.95L3 11V9.35l8.5-5.95z"/>',
+    'rental-cars': '<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>',
+    'restaurants': '<path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>',
+    'tours-tickets': '<path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-1.99.9-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-9 7.5h-2v-2h2v2zm0-4.5h-2v-2h2v2zm0-4.5h-2v-2h2v2z"/>',
+    'travel-apps': '<path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>',
+    'hotel': '<path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/>',
+    'clock':        '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>',
+    /* the train already drawn on Trip-Essentials/Train-Passes.html — same rule
+       as every other key here: the menu wears the page's own icon */
+    'passport':     '<path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h12v2H6zm4-4h8v2h-8z"/>',
+    'train':        '<path d="M4 15.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V5c0-3.5-3.58-4-8-4S4 1.5 4 5v10.5zm8 1.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-7H6V5h12v5z"/>'
   };
 
   /* Write `text` into `el` as a label span, plus the row's SVG icon when the
@@ -415,13 +427,13 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: '🔌 Plug Adapters' },
       ] },
     null,
-    { group: '🏨 Where to Stay', children: [
-        { href: base + 'Trip-Essentials/Neighborhoods.html',                text: '🏨 Neighborhoods' },
-        { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: '🏨 Hotels & Stays' },
-        { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: '🏨 Most Luxurious Hotels' },
-        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: '🏨 Unique Hotels' },
-        { href: base + 'Trip-Essentials/Best-Resorts.html',                 text: '🏨 Resorts' },
-        { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: '🏨 Ultra-Luxurious Resorts' },
+    { group: '🏨 Where to Stay', groupIcon: 'hotel', children: [
+        { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods', icon: 'neighborhoods' },
+        { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: 'Hotels & Stays' },
+        { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: 'Most Luxurious Hotels' },
+        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: 'Unique Hotels' },
+        { href: base + 'Trip-Essentials/Best-Resorts.html',                 text: 'Resorts' },
+        { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: 'Ultra-Luxurious Resorts' },
       ] },
     null,
     /* OWNER-DIRECTED 2026-08-09: every Best-Of page on the top strip, mirroring
@@ -480,26 +492,30 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: '✈️ Airlines', newSince: '2026-08-09' },
         { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: '✈️ Delta Seattle Hub' },
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: '✈️ Delta Full Network' },
-        { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: '⏱️ Connection Times', newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Lounges-US.html',        text: '💻 US Lounges' },
-        { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: '💻 EU Lounges' },
+        { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'clock', newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
+        { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: 'EU Lounges',        icon: 'laptop' },
         { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: '🛂 Global Entry & CLEAR' },
         { href: base + 'Trip-Essentials/Baggage.html',           text: '🛄 Baggage' },
         { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: '🧳 Luggage Storage', newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Passport.html',          text: '📘 Passport' },
+        { href: base + 'Trip-Essentials/Passport.html',          text: 'Passport',          icon: 'passport' },
       ] },
     null,
-    { group: '🚆 Trains', children: [
-        { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: '🚆 European Train Guide',      full: '🚆 European Train Guide'      },
-        { href: base + 'Trip-Essentials/Day-Trips.html',              text: '🚆 Day Trips by Train',        full: '🚆 Day Trips by Train'        },
-        { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: '🚆 Scenic Train Journeys',    full: '🚆 Scenic Train Journeys',    newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Train-Passes.html',           text: '🚆 Train Pass Comparison',    full: '🚆 Train Pass Comparison',    newSince: '2026-08-07' },
+    /* OWNER-DIRECTED 2026-08-11: the tab carries the drawn train; the four rows
+       do NOT repeat it. Four identical 🚆 stacked in one flyout told the reader
+       nothing — the same defect the Visas group had. The mark on the tab is the
+       group's identity, so a child inherits it by being in the menu. */
+    { group: '🚆 Trains', groupIcon: 'train', children: [
+        { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: 'European Train Guide',      full: 'European Train Guide'      },
+        { href: base + 'Trip-Essentials/Day-Trips.html',              text: 'Day Trips by Train',        full: 'Day Trips by Train'        },
+        { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: 'Scenic Train Journeys',    full: 'Scenic Train Journeys',    newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/Train-Passes.html',           text: 'Train Pass Comparison',    full: 'Train Pass Comparison',    newSince: '2026-08-07' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html', text: '💰 Currency', full: '💰 Currency' },
     null,
-    { group: '🕐 Time Zones', children: [
-        { href: base + 'Trip-Essentials/Time-Zones.html',        text: '🕐 Time Zones',       full: '🕐 Time Zones' },
+    { group: '🕐 Time Zones', groupIcon: 'clock', children: [
+        { href: base + 'Trip-Essentials/Time-Zones.html',        text: 'Time Zones',       full: 'Time Zones',       icon: 'clock' },
         { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: '🌅 Sunrise & Sunset', full: '🌅 Sunrise & Sunset' },
       ] },
     null,
@@ -509,7 +525,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/When-to-Go.html',        text: '🌤️ When to Go' },
       ] },
     null,
-    { group: '🛡️ Safety', children: [
+    { group: '🛡️ Safety', groupIcon: 'insurance', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',      text: 'Safety Guide',      icon: 'safety-guide' },
         { href: base + 'Trip-Essentials/Vaccines.html',          text: 'Vaccines',          icon: 'vaccines' },
         { href: base + 'Trip-Essentials/Tap-Water.html',         text: 'Tap Water',         icon: 'tap-water' },
@@ -522,11 +538,11 @@ window.TVE.isPhone = function () {
        four identical glyphs stacked in one flyout, which told the reader
        nothing. Each row now draws its own page's .page-intro-icon SVG instead
        (globe · ID card · laptop · clock). See NAV_ICONS above. */
-    { group: '🪪 Visas', children: [
+    { group: '🪪 Visas', groupIcon: 'entry-req', children: [
         { href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'entry-req' },
-        { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'nomad' },
-        { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: 'Visa Processing Times', icon: 'processing' },
+        { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'laptop' },
+        { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: 'Visa Processing Times', icon: 'clock' },
       ] },
     null,
     /* OWNER-DIRECTED 2026-08-10: new group, built from the width freed by
@@ -541,20 +557,20 @@ window.TVE.isPhone = function () {
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
     { group: '📋 Also Recommended', groupShort: '📋 Recommended', children: [
         { href: base + 'Trip-Essentials/Budget-Guide.html',       text: '💰 Budget' },
-        { href: base + 'Trip-Essentials/Rental-Cars.html',        text: '🚗 Car Rental & Private' },
+        { href: base + 'Trip-Essentials/Rental-Cars.html',        text: 'Car Rental & Private', icon: 'rental-cars' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',          text: '💳 Cards & ATM' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: '🎫 City Transit Cards' },
         { href: base + 'Trip-Essentials/Cruise-Ships.html',       text: '🚢 Cruise Lines', newSince: '2026-08-09' },
-        { href: base + 'Trip-Essentials/Disney-Parks.html',       text: '🏰 Disney Parks', newSince: '2026-08-08' },
-        { href: base + 'Trip-Essentials/Festival-Finder.html',    text: '🎉 Festival Finder' },
+        { href: base + 'Trip-Essentials/Disney-Parks.html',       text: 'Disney Parks', icon: 'disney-parks', newSince: '2026-08-08' },
+        { href: base + 'Trip-Essentials/Festival-Finder.html',    text: 'Festival Finder', icon: 'festival-finder' },
         { href: base + 'Trip-Essentials/More-Resources.html',     text: '📚 More Resources' },
         { href: base + 'Trip-Essentials/Pickleball.html',         text: '🏓 Pickleball' },
-        { href: base + 'Trip-Essentials/Restaurants.html',        text: '🍽️ Restaurants' },
+        { href: base + 'Trip-Essentials/Restaurants.html',        text: 'Restaurants', icon: 'restaurants' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',          text: '📱 SIM Cards' },
         { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: '🏆 Sports Calendar' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',      text: '💵 Tipping' },
-        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: '🎟️ Tours & Tickets' },
-        { href: base + 'Trip-Essentials/Travel-Apps.html',        text: '📲 Travel Apps' },
+        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: 'Tours & Tickets', icon: 'tours-tickets' },
+        { href: base + 'Trip-Essentials/Travel-Apps.html',        text: 'Travel Apps', icon: 'travel-apps' },
       ] },
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
@@ -976,7 +992,22 @@ window.TVE.isPhone = function () {
       /* groupShort (2026-08-10): top-strip label may be shorter than the group's
          canonical name — the bar has no spare width, while the dropdown header,
          the hamburger and TOOLBAR_ITEMS_LOCK all keep the full name. */
-      lab.textContent = item.groupShort || item.group;
+      var labelText = item.groupShort || item.group;
+      /* groupIcon (OWNER-DIRECTED 2026-08-11): the tab draws an SVG from
+         NAV_ICONS instead of its leading emoji. Deliberately a SEPARATE field
+         from `group` — the canonical group string keeps its emoji, so the
+         dropdown header, the hamburger and TOOLBAR_ITEMS_LOCK are all
+         untouched and only the visible top-strip button changes. The emoji is
+         stripped from the rendered label here, not from the data. */
+      var gico = item.groupIcon && NAV_ICONS[item.groupIcon];
+      if (gico) {
+        labelText = labelText.replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || labelText;
+        var gs = document.createElement('span');
+        gs.className = 'tb-ico';
+        gs.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="var(--rust,#b85c2a)" aria-hidden="true">' + gico + '</svg>';
+        btn.appendChild(gs);
+      }
+      lab.textContent = labelText;
       var car = document.createElement('span');
       car.className = 'tb-caret';
       car.textContent = '▾';
@@ -4830,10 +4861,10 @@ window.TVE.isPhone = function () {
       { name: 'G&V Royal Mile Hotel Edinburgh', note: 'G&V Hotels — Royal Mile Gothic building, Cucina restaurant, rooftop suites with castle views, boutique design interiors · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/gb/gv-royal-mile-hotel-edinburgh.html' }
     ] },
     'florence': { h: [
-      { name: 'Hotel Savoy Florence', note: "Rocco Forte brand — Piazza della Repubblica address, L'Incontro restaurant, rooftop terrace overlooking the Duomo and Campanile, spa · 9.1 Booking.com", url: 'https://www.booking.com/hotel/it/savoy-firenze.html' },
-      { name: 'The St. Regis Florence', note: 'Marriott Luxury Collection — 19th-century Palazzo Cerretani on Piazza Ognissanti, Arno views, Ineo Restaurant, butler service · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/grandhotelflorence.html' },
-      { name: 'Four Seasons Hotel Firenze', note: 'Four Seasons — 15th-century Palazzo della Gherardesca, 11-acre private garden with pool, Il Palagio restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/four-seasons-firenze.html' },
-      { name: 'Portrait Firenze', note: 'Lungarno Collection — 14 riverfront suites on the Arno above the Ponte Vecchio · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/portrait-firenze.html' }
+      { name: 'Hotel La Gemma', note: 'Independent — Via dei Cavalieri a block off Piazza del Duomo, rooftop Luca Ristorante, spa with hammam · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/la-gemma-firenze.html' },
+      { name: 'Portrait Firenze', note: 'Lungarno Collection — 14 riverfront suites on the Arno above the Ponte Vecchio · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/portrait-firenze.html' },
+      { name: 'Hotel Savoy Florence', note: "Rocco Forte brand — Piazza della Repubblica address, L'Incontro restaurant, rooftop terrace overlooking the Duomo and Campanile, spa · 9.4 Booking.com", url: 'https://www.booking.com/hotel/it/savoy-firenze.html' },
+      { name: 'Four Seasons Hotel Firenze', note: 'Four Seasons — 15th-century Palazzo della Gherardesca, 11-acre private garden with pool, Il Palagio restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/four-seasons-firenze.html' }
     ] },
     'florianopolis': { h: [
       { name: "Costão do Santinho Resort Golf & Spa", note: "Independent resort — northern Santinho beach, 4.5 km private beachfront, 14 pools, spa, golf, one of Brazil's largest beach resorts · 8.9 Booking.com" },
