@@ -455,7 +455,8 @@
 /* 2026-08-10: OWNER — the "Updated {date}" stamp is BOTTOM-LEFT on every page and every viewport, reversing the desktop top-right variant shipped earlier the same day ("move all this updates X month to the bottom of the page as other pages from the site … make sure they are ALL there bottom left"). The .updated-stamp class that marked that variant is retired outright: its rule is deleted from web-travel-style.css and mobile.css, toolbar.js no longer emits it, and the Best-Of code that moved it into .page-header is gone (the ‹ › arrow row is untouched). Non-guide pages now take the end-of-body placement at all widths, with an 18px top margin so the stamp clears the "Also on this site" strip instead of reading as a caption of its last pill — the defect that sent it to the top in the first place. Guides are untouched (.tve-stamp-row was already a real desktop design). Second half of the owner's ask, free: with the stamp out from under the banner, the white .page-intro-card sits directly below the terracotta bar at the standard 20px on all 53 pages that carry one. brain_check.check_hardcoded_updated_stamp extended to hard-fail on the retired class reappearing in any shared asset. Toolbar.html Sec 10. toolbar.js -> v336, web-travel-style.css -> v23, mobile.css -> v75. CACHE to v498. */
 /* 2026-08-10: hotel-rehome(boulder) — HOTEL_ALT_DATA['boulder'] listed St Julien Hotel & Spa with a 9.0 Booking.com score and no url, and Booking does not list the property at all, so the score was never read anywhere. Replaced with Hilton Garden Inn Boulder (8.0), carrying the url its score came from. toolbar.js -> v337. CACHE to v499. */
 /* 2026-08-10: Hotels & Flights pill — button reads 'Search Hotels' / 'Search Flights' (was 'Search on Google Hotels'), and the standing 'Opens ... in a new tab' caption plus its cross-link are removed (owner). The note line under the button is now a fault channel only: text there means a bad airport code or a missing origin. .tve-book-note:empty collapses the row so no dead band is left; .tve-book-more dropped as dead CSS. guide-style.css -> v163. CACHE to v500. */
-var CACHE = 'travel-cache-v500';
+/* 2026-08-10: Hotels & Flights pill — button reads 'Search Hotels' / 'Search Flights' (was 'Search on Google Hotels'), and the standing 'Opens ... in a new tab' caption plus its cross-link are removed (owner). The note line under the button is now a fault channel only: text there means a bad airport code or a missing origin. .tve-book-note:empty collapses the row so no dead band is left; .tve-book-more dropped as dead CSS. toolbar.js -> v338, guide-style.css -> v163. CACHE to v501. */
+var CACHE = 'travel-cache-v501';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -463,7 +464,7 @@ var CACHE = 'travel-cache-v500';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 163, 'toolbar.js': 337, 'mobile.css': 75, 'web-travel-style.css': 23, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 163, 'toolbar.js': 338, 'mobile.css': 75, 'web-travel-style.css': 23, 'guides-index-style.css': 1, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
