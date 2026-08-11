@@ -686,7 +686,19 @@
    with the terracota pill" · "same thing"). A regex over CSS blocks was tried first and
    backtracked catastrophically on these files — the linear scan is the one to keep.
    web-travel-style.css -> v25. CACHE v542. */
-var CACHE = 'travel-cache-v542';
+/* 2026-08-11: Time-Zones drops the embedded Sunrise & Sunset widget at the foot of the page
+   (owner: "bottom of this page makes no sense" · "i dont want this embedded ulgy thing at the
+   end" · "i dont want the search bar either"). It was a second, cramped copy of a page that
+   already exists — its own h2, city search and month select, right-aligned against an empty half
+   page — plus an in-page pill jumping down to it. The dedicated .also-strip at the foot already
+   links to Sunrise-Sunset.html, which is the whole point of that strip; the embedded copy was
+   pure duplication. Removed: the #sun-section block, the `href="#sun-section"` jump pill, and
+   2.2KB of now-orphan CSS. The .also-strip and its "Updated" stamp STAY (owner: "this stays").
+   The sunrise JS is null-guarded and logs no errors with the element gone; left in place rather
+   than risk unpicking it from the shared autocomplete wiring.
+   NOTE: v543 was consumed by commit 2e23cd74 and undone with it in the revert fa55255e — this is
+   the next free number, not a skip. CACHE v543. */
+var CACHE = 'travel-cache-v543';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
