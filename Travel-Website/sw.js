@@ -815,7 +815,8 @@
 /* 2026-08-11: toledo HOTEL_ALT_DATA rebuilt — two of the four entries carried no url at all (Parador de Toledo, Hotel Cigarral El Bosque), which hard-fails the FINAL GATE, and the two that did had drifted scores on dead slugs. The guide's title card moved to Eugenia de Montijo, Autograph Collection, so the outgoing Aurea Toledo by Eurostars takes an alternate slot (9.3, read off its own Booking listing); Posada Silleria replaces the other url-less entry (9.0, 24h reception, inside the walls). Palacio Buenavista corrected 9.1 -> 9.0 on its live slug, AC Ciudad de Toledo 8.7 -> 8.2 on its live slug. toolbar.js -> v411. CACHE to v583. */
 /* 2026-08-11: rio-de-janeiro HOTEL_ALT_DATA rebuilt — the title card moved to Hilton Copacabana and all four alternates were wrong. Hotel Nacional read 9.0 against a real 8.5 and Fairmont Copacabana 9.1 against a real 8.4 with no url at all; both are under the non-brand bar and are replaced by the two ladder runners-up, JW Marriott Rio and Novotel Leme. Copacabana Palace read 9.3 against a real 9.5 and Fasano 9.3 against a real 9.0 on a dead slug. toolbar.js -> v412. CACHE to v584. */
 /* 2026-08-11: rome HOTEL_ALT_DATA rebuilt — two of the four entries pointed at dead Booking slugs (hotel-eden-rome.html and jk-place-roma.html both redirect to the homepage) and three scores were wrong. Hotel Eden is 8.9 on its real listing, under the non-brand bar, so it is replaced by Singer Palace Hotel Roma at 9.5 — the guide's own former title-card hotel. Villa Spalletti is 9.6 not 9.5, J.K. Place 9.6 not 9.4, de Russie 9.0 not 9.1. toolbar.js -> v413. CACHE to v585. */
-var CACHE = 'travel-cache-v585';
+/* 2026-08-11: tokyo HOTEL_ALT_DATA — The Peninsula Tokyo quoted 9.4 and its own Booking listing reads 9.3 on 426 reviews (Rule 810: the score must be the one on the page linked). Read while re-picking the title card, which moves to The Tokyo EDITION, Ginza. toolbar.js -> v414. CACHE to v586. */
+var CACHE = 'travel-cache-v586';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -823,7 +824,7 @@ var CACHE = 'travel-cache-v585';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 413, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 414, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

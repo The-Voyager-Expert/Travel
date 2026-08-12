@@ -5960,7 +5960,7 @@ window.TVE.isPhone = function () {
     'tokyo': { h: [
       { name: 'Aman Tokyo', note: 'Aman brand — Otemachi forest tower, 33rd–35th floor rooms with Imperial Palace views, spa with indoor pool · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/jp/aman-tokyo.html' },
       { name: 'The Okura Tokyo', note: 'Independent luxury — 1962 mid-century Japanese modernism, restored heritage wing, Orchid Bar, spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-okura-tokyo.html' },
-      { name: 'The Peninsula Tokyo', note: 'Peninsula brand — Hibiya and Marunouchi, Peter restaurant on the 24th floor, Hei Fung Terrace dim sum, spa with indoor pool · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-peninsula-tokyo.html' },
+      { name: 'The Peninsula Tokyo', note: 'Peninsula brand — Hibiya and Marunouchi, Peter restaurant on the 24th floor, Hei Fung Terrace dim sum, spa with indoor pool · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/jp/the-peninsula-tokyo.html' },
       { name: 'Park Hyatt Tokyo', note: 'Hyatt brand — Shinjuku floors 41–52 of the Tokyo Park Tower, 14th-floor pool, New York Bar and Grill, full-service spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/jp/park-hyatt-tokyo.html' }
     ] },
     'toledo': { h: [
