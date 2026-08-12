@@ -826,7 +826,8 @@
 /* 2026-08-11: section chips + un-drawn glyphs. (a) The section nav chips were flex boxes, so a label that WRAPS ("Restaurants Near Hotel") shrank its text item to the full remaining track width and text-align then centred the lines inside that box — leaving the drawn mark pinned at the far left with ~30px of air, while a one-line chip showed the 6px gap it was supposed to. The chip is now a block box: the mark sits in the text flow and its distance from the first word is one margin that cannot vary (owner: "the icons should be close to the words and at the same distance. all pills should look right"). (b) Seven glyphs were still rendering as Apple emoji because they were simply absent from the MARKS table, which no check covered — 🚫 closed-day (1,436 rows, the one the owner screenshotted under a drawn clock), 🎫 booking (619), 💵 cash-only (35), 🚤 (2), ⛲ Day Trips (128 sections + pills), 🏓 Pickleball (54), 🌍 World Map. 🚫 reuses the circle-slash the toolbar already draws for Scams & Traps, 🌍 reuses NAV_ICONS.globe; ⛲ and 🏓 are authored. The mid-line ⭐ sweep also now covers the box families, whose booking row leads with a .ticket-flag span and so was skipped by the leading-glyph pass. New gate: brain_check.check_row_glyphs_are_drawn. guide-style.css -> v178, toolbar.js -> v422. CACHE to v594. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for three guides whose title card moved: azores swaps the Delta, now the title-card hotel, for the outgoing Octant Ponta Delgada 9.3; bali swaps Hyatt Regency Bali (Sanur, 90 min from the Ubud base) for the outgoing Kastara Resort 9.5; barbados drops Colony Club, which the guide was offering as an alternative to itself, plus Sandy Lane and Crystal Cove, which have no resolvable Booking listing, and rebuilds on five Booking-verified properties. toolbar.js -> v423. CACHE to v595. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for three guides whose title card moved: azores swaps the Delta, now the title-card hotel, for the outgoing Octant Ponta Delgada 9.3; bali swaps Hyatt Regency Bali (Sanur, 90 min from the Ubud base) for the outgoing Kastara Resort 9.5; barbados drops Colony Club, which the guide was offering as an alternative to itself, plus Sandy Lane and Crystal Cove, which have no resolvable Booking listing. toolbar.js -> v424. CACHE to v596. */
-var CACHE = 'travel-cache-v596';
+/* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['montevideo'] offered the Hyatt Centric as an alternative to itself once the title card moved there; replaced by the outgoing Alma Histórica, 9.4 on Booking, non-brand, 24h reception. toolbar.js -> v425. CACHE to v597. */
+var CACHE = 'travel-cache-v597';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -834,7 +835,7 @@ var CACHE = 'travel-cache-v596';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 178, 'toolbar.js': 424, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 178, 'toolbar.js': 425, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

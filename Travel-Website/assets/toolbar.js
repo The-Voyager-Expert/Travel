@@ -5433,7 +5433,7 @@ window.TVE.isPhone = function () {
     'montevideo': { h: [
       { name: 'Radisson Montevideo Victoria Plaza Hotel', note: 'Radisson brand — Plaza Independencia landmark tower, outdoor pool, panoramic city views · 8.3 Booking.com', url: 'https://www.booking.com/hotel/uy/radisson-montevideo-victoria-plaza.html' },
       { name: 'Cottage Hotel Montevideo', note: 'Independent boutique — Pocitos neighborhood, curated art, quiet residential atmosphere · 9.1 Booking.com', url: 'https://www.booking.com/hotel/uy/cottage-puerto-buceo.html' },
-      { name: 'Hyatt Centric Montevideo', note: 'Hyatt brand — La Rambla oceanfront boulevard, indoor pool, beachfront location · 8.9 Booking.com', url: 'https://www.booking.com/hotel/uy/hyatt-centric-montevideo.html' },
+      { name: 'Alma Histórica Boutique Hotel', note: 'Independent boutique — restored 1920s townhouse on Plaza Zabala in Ciudad Vieja, 24h reception, rooftop terrace, room-per-writer theming · 9.4 Booking.com', url: 'https://www.booking.com/hotel/uy/alma-historica-boutique.html' },
       { name: 'Esplendor by Wyndham Montevideo Cervantes', note: 'Wyndham brand — Art Deco landmark, rooftop terrace with city views, indoor pool · 8.1 Booking.com', url: 'https://www.booking.com/hotel/uy/esplendor-cervantes-montevideo.html' }
     ] },
     'montreal': { h: [
