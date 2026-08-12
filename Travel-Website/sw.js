@@ -850,7 +850,8 @@
 /* 2026-08-11: also-on-site pill SVG icon turns white on hover — fill was var(--rust)=#b85c2a (terracotta) which blended into the terracotta gradient hover background. Added a.also-on-this-site-pill:hover svg{fill:#fff} to guide-style.css and web-travel-style.css. guide-style.css -> v181. web-travel-style.css -> v29. CACHE to v618. */
 /* 2026-08-11: sibling + also-on-site pill hover: terracotta fill, white font/icon, underline on hover for both pill types. guide-style.css -> v182. web-travel-style.css -> v30. CACHE to v619. */
 /* 2026-08-11: pills: remove underline on hover — pills never underline. guide-style.css -> v183. web-travel-style.css -> v31. CACHE to v620. */
-var CACHE = 'travel-cache-v622';
+/* 2026-08-11: Also in Country nav pill — replace 🌍 Apple emoji with drawn globe via iconSVG; added brain_check globe-emoji-aic-pill hard-fail. toolbar.js -> v446. CACHE to v623. */
+var CACHE = 'travel-cache-v623';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -858,7 +859,7 @@ var CACHE = 'travel-cache-v622';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 183, 'toolbar.js': 445, 'mobile.css': 76, 'web-travel-style.css': 31, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 183, 'toolbar.js': 446, 'mobile.css': 76, 'web-travel-style.css': 31, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
