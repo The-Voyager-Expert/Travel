@@ -5887,8 +5887,7 @@ window.TVE.isPhone = function () {
       { name: 'Raffles Singapore', note: 'Accor Raffles — 1887 colonial landmark on Beach Road, butler for every suite, Long Bar Singapore Sling · 9.4 Booking.com', url: 'https://www.booking.com/hotel/sg/raffles-the-plaza.html' }
     ] },
     'sint-maarten': { h: [
-      { name: 'Belmond La Samanna', note: 'Belmond brand — Baie Longue private beach, three pools, spa, French West Indies elegance · 9.4 Booking.com' },
-      { name: 'Princess Heights Luxury Boutique Hotel', note: 'Independent boutique — Oyster Pond hilltop, panoramic Dutch-side ocean views, intimate retreat · 9.3 Booking.com' },
+      { name: 'Belmond La Samanna', note: 'Belmond brand — Baie Longue private beach, three pools, spa, French West Indies elegance · 9.4 Booking.com', url: 'https://www.booking.com/hotel/mf/la-samanna-french-west-indies.html' },
       { name: 'Sonesta Maho Beach Resort & Casino', note: 'Sonesta Hotels — Maho Beach, casino, pool, multiple bars · 8.5 Booking.com', url: 'https://www.booking.com/hotel/sx/sonesta-maho-beach-resort-casino-and-spa.html' },
       { name: 'Divi Little Bay Beach Resort', note: 'Divi Resorts — Little Bay peninsula, three pools, private beach, dive centre, Aquamarine restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/sx/divi-little-bay-beach-resort.html' },
       { name: 'JW Marriott St. Maarten Beach Resort & Spa', note: 'Marriott JW brand — Oyster Pond on Dawn Beach, pools, spa, private beach, views to St. Barths · 7.8 Booking.com', url: 'https://www.booking.com/hotel/sx/jw-marriott-st-maarten-beach-resort-spa.html' }
