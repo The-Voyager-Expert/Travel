@@ -5799,7 +5799,7 @@ window.TVE.isPhone = function () {
       { name: 'Chaminade Resort & Spa', note: 'Independent — hilltop eucalyptus-forest retreat above Monterey Bay, tennis courts, spa · 8.9 Booking.com' },
       { name: 'Babbling Brook Inn', note: 'Independent boutique — garden B&B with cascading creek, antiques, walking distance to downtown · 9.3 Booking.com' },
       { name: 'Dream Inn Santa Cruz', note: 'Independent — Cowell Beach waterfront, heated oceanfront pool, Aquarius restaurant · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/dream-inn.html' },
-      { name: 'Hotel Paradox, Autograph Collection', note: 'Marriott Autograph Collection — downtown, outdoor pool, Acme Coffee, five blocks from the Boardwalk · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-paradox.html' }
+      { name: 'West Cliff Inn, A Four Sisters Inn', note: 'Independent boutique — 1877 Victorian bluff B&B across from Cowell Beach, breakfast + afternoon wine hour · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/west-cliff-inn.html' }
     ] },
     'santa-fe': { h: [
       { name: 'Rosewood Inn of the Anasazi', note: 'Rosewood brand — kiva fireplaces, hand-woven rugs, steps from the historic Plaza · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-inn-of-the-anasazi.html' },
