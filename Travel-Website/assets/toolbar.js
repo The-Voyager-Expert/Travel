@@ -5788,12 +5788,12 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Paradox, Autograph Collection', note: 'Marriott Autograph Collection — downtown, outdoor pool, Acme Coffee, five blocks from the Boardwalk · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-paradox.html' }
     ] },
     'santa-fe': { h: [
-      { name: 'Rosewood Inn of the Anasazi', note: 'Rosewood brand — kiva fireplaces, hand-woven rugs, steps from the historic Plaza · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/us/rosewood-inn-of-the-anasazi.html' },
-      { name: 'La Fonda on the Plaza', note: 'Independent — 1922 Pueblo Revival landmark "Inn at the end of the Santa Fe Trail," rooftop cantina · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/la-fonda-on-the-plaza.html' },
+      { name: 'Rosewood Inn of the Anasazi', note: 'Rosewood brand — kiva fireplaces, hand-woven rugs, steps from the historic Plaza · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-inn-of-the-anasazi.html' },
+      { name: 'La Fonda on the Plaza', note: 'Independent — 1922 Pueblo Revival landmark "Inn at the end of the Santa Fe Trail," rooftop cantina · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/la-fonda-on-the-plaza.html' },
       { name: "Bishop\'s Lodge, Auberge Resorts Collection", note: 'Auberge Resorts — 4 miles north in the foothills, heated outdoor pool with Sangre de Cristo Mountain views, full-service spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/bishop-39-s-lodge.html' },
-      { name: 'The Inn and Spa at Loretto', note: 'Marriott Tribute Portfolio — adjacent to the Loretto Chapel downtown, outdoor pool, Luminaria restaurant, desert garden · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/us/inn-of-the-loretto.html' },
-    
-      { name: 'Four Seasons Resort Rancho Encantado Santa Fe', note: 'Four Seasons brand — Tesuque foothills 15 min from Plaza, casitas with kiva fireplaces, outdoor pool with Sangre de Cristo views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-resort-rancho-encantado.html' }
+      { name: 'The Inn and Spa at Loretto', note: 'Marriott Tribute Portfolio — adjacent to the Loretto Chapel downtown, outdoor pool, Luminaria restaurant, desert garden · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/inn-of-the-loretto.html' },
+      { name: 'Four Seasons Resort Rancho Encantado Santa Fe', note: 'Four Seasons brand — Tesuque foothills 15 min from Plaza, casitas with kiva fireplaces, outdoor pool with Sangre de Cristo views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-resort-rancho-encantado.html' },
+      { name: 'Inn on the Alameda', note: 'Independent boutique — 50-room adobe inn beside Canyon Road gallery district · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/inn-on-the-alameda.html' }
     ] },
     'santa-monica': { h: [
       { name: 'Hotel Shutters on the Beach', note: 'Independent luxury — directly on Santa Monica Beach, pool, 1 Pico restaurant, ocean-view rooms · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/shutters-on-the-beach.html' },
