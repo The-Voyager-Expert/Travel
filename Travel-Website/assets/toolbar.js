@@ -5802,8 +5802,8 @@ window.TVE.isPhone = function () {
       { name: 'Viceroy Santa Monica', note: 'Viceroy Hotels — Ocean Avenue, rooftop pool, Cameo Bar & Lounge, close to the Pier · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/viceroy-santa-monica.html' }
     ] },
     'santiago': { h: [
-      { name: 'W Santiago', note: 'Marriott W brand — Las Condes financial district, rooftop WET DECK pool, city skyline views · 8.8 Booking.com' },
-      { name: 'Hotel Bidasoa', note: 'Independent boutique — Vitacura residential neighborhood, 19 rooms, curated personal service · 9.2 Booking.com' },
+      { name: 'Mandarin Oriental, Santiago', note: 'Mandarin Oriental — Las Condes, lagoon pool and Andes views, Matsuri Nikkei restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/cl/hotel-santiago.html' },
+      { name: 'Hotel Eco Boutique Bidasoa', note: 'Independent boutique — Vitacura residential neighborhood, lagoon pool and gardens, curated personal service · 9.5 Booking.com', url: 'https://www.booking.com/hotel/cl/bidasoa.html' },
       { name: 'The Singular Santiago, Lastarria Hotel', note: 'Independent — Barrio Lastarria, rooftop pool overlooking Santa Lucía Hill, El Singular restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/cl/the-singular-santiago-lastarria.html' },
       { name: 'Hotel Cumbres Lastarria', note: 'Independent — Lastarria bohemian quarter, rooftop terrace, contemporary Chilean design · 9.2 Booking.com', url: 'https://www.booking.com/hotel/cl/cumbres-lastarria.html' }
     ] },
