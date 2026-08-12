@@ -827,7 +827,8 @@
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for three guides whose title card moved: azores swaps the Delta, now the title-card hotel, for the outgoing Octant Ponta Delgada 9.3; bali swaps Hyatt Regency Bali (Sanur, 90 min from the Ubud base) for the outgoing Kastara Resort 9.5; barbados drops Colony Club, which the guide was offering as an alternative to itself, plus Sandy Lane and Crystal Cove, which have no resolvable Booking listing, and rebuilds on five Booking-verified properties. toolbar.js -> v423. CACHE to v595. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA for three guides whose title card moved: azores swaps the Delta, now the title-card hotel, for the outgoing Octant Ponta Delgada 9.3; bali swaps Hyatt Regency Bali (Sanur, 90 min from the Ubud base) for the outgoing Kastara Resort 9.5; barbados drops Colony Club, which the guide was offering as an alternative to itself, plus Sandy Lane and Crystal Cove, which have no resolvable Booking listing. toolbar.js -> v424. CACHE to v596. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['montevideo'] offered the Hyatt Centric as an alternative to itself once the title card moved there; replaced by the outgoing Alma Histórica, 9.4 on Booking, non-brand, 24h reception. toolbar.js -> v425. CACHE to v597. */
-var CACHE = 'travel-cache-v597';
+/* 2026-08-11: section nav chips — the mark's distance from the first word is now identical on every chip. They were flex boxes, so a chip holds TWO flex items (the .gm-mk span and the anonymous run of label text) and a flex item's base size is its max-content width shrunk to whatever the track leaves. On a one-line label that shrink never happens, so justify-content centred mark+label together and the gap read as the 6px it was; on a label that WRAPS ("Restaurants Near Hotel", "Downtown Restaurants") the text item was shrunk to the FULL remaining track width, text-align then centred its lines inside that box, and the mark was left pinned at the far left with ~30px of air. One rule, two different gaps (owner: "the icons should be close to the words and at the same distance. all pills should look right"). No flex value makes a wrapped item hug its longest line — that is inline layout's job — so the chip is display:block + align-content:center and the mark carries one margin-right. Same switch on mobile. Also adds the .gm-mk-closed / -ticket / -globe / -fountain / -paddle masks the MARKS rows in the next commit use. Verified at 1280px and 393px pointer:coarse: uniform gap on all 17 chips, equal 46px tiles, no overflow. guide-style.css -> v179. CACHE to v598. */
+var CACHE = 'travel-cache-v598';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -835,7 +836,7 @@ var CACHE = 'travel-cache-v597';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 178, 'toolbar.js': 425, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 179, 'toolbar.js': 425, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

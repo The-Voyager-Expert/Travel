@@ -530,11 +530,33 @@ a:hover { text-decoration: underline; }
 }
 .overview-extras:not(#ics-pill-row) .overview-extra-link {
   border-radius: 8px;
-  /* Label centred on both axes (owner rule 2026-08-08) — justify-content centres
-     the icon+text flex line horizontally, text-align centres the second line of a
-     wrapped label under the first, align-items centres the line box vertically in
-     the stretched grid cell. */
-  justify-content: center;
+  /* INLINE FLOW, not flex — the mark must sit one fixed distance from the first
+     word on EVERY chip (owner rule 2026-08-11: "the icons should be close to the
+     words and at the same distance. all pills should look right").
+
+     Why flex was wrong here, and why it only showed on some chips: as a flex
+     container the chip holds TWO items — the .gm-mk span and the anonymous run
+     of label text. A flex item's base size is its max-content width, shrunk to
+     whatever the track leaves. On a one-line label that shrink never happens, so
+     justify-content:center centred mark+label together and the gap read as the
+     6px it was. On a label that WRAPS — "Restaurants Near Hotel", "Downtown
+     Restaurants" — the text item is shrunk to the FULL remaining track width,
+     text-align then centres its lines inside that full-width box, and the mark
+     is left pinned at the far left with ~30px of air after it. Same rule, two
+     different gaps, which is exactly what the row looked like.
+
+     There is no flex fix: no value of flex-basis/width makes a wrapped item hug
+     its longest line — that is inline layout's job, not flex's. So the chip
+     becomes a block box. The mark is then a normal inline element in the text
+     run: it wraps with the words, and its distance from the first word is a
+     margin (below) that cannot vary with label length.
+
+     align-content does the vertical centring the flex align-items used to do —
+     it applies to block containers as of Chrome 123 / Safari 17.6 / Firefox 125,
+     and it is what keeps a one-line chip centred in the 1fr-stretched grid cell
+     that grid-auto-rows hands it. */
+  display: block;
+  align-content: center;
   text-align: center;
   /* Button proportions: a narrow track plus a floor on height, so a one-line and
      a two-line chip are the same size and the row reads as a set of buttons
@@ -547,7 +569,13 @@ a:hover { text-decoration: underline; }
      same size, so the row stays a grid of equal buttons. */
   white-space: normal;
   line-height: 1.25;
-  align-items: center;
+}
+/* THE one gap between a chip's mark and its label. It replaces the flex `gap: 6px`
+   the rule above no longer has, and because it is a margin on an inline element it
+   is identical on a one-line and a wrapped chip — which is the whole point of the
+   block-flow switch. Change this value and every section chip moves together. */
+.overview-extras:not(#ics-pill-row) .overview-extra-link .gm-mk {
+  margin-right: 5px;
 }
 /* Export to Calendar + All Stops Map — match Read About pill visually:
    gold text, same border style/weight, same radius. The scoped
@@ -3048,6 +3076,18 @@ div.train .train-time   { padding: 2px 0; }
     border: 1px solid var(--c-pill-bd);
     border-radius: 20px;
   }
+  /* Section chips only — same block-flow switch as desktop, same reason: as a
+     flex box a wrapped label ("Restaurants Near Hotel") shrinks to the full
+     remaining cell width and strands the mark at the far left, so the icon-to-
+     word gap differed between one-line and two-line chips (owner rule
+     2026-08-11). The mark's distance is the single margin-right rule outside
+     this media query, so desktop and mobile cannot drift apart. #ics-pill-row
+     and the standalone READ ABOUT link keep the flex rule above — their labels
+     never wrap. */
+  .overview-extras:not(#ics-pill-row) .overview-extra-link {
+    display: block !important;
+    align-content: center;
+  }
   /* Press feedback. :active is the touch-correct half and stays unconditional;
      :hover is gated behind (hover: hover) because iOS Safari LATCHES :hover on
      the last element tapped and holds it until you tap somewhere else. With the
@@ -4458,6 +4498,58 @@ a.also-in-country-pill:active {
 .gm-mk-language {
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM6.6 7.5h2.6a15 15 0 0 1 1.1-2.9 8 8 0 0 0-3.7 2.9zM12 4.2c.6.9 1.1 1.9 1.4 3.3h-2.8c.3-1.4.8-2.4 1.4-3.3zm-7.7 8.3a8 8 0 0 1 .2-3h3a17 17 0 0 0 0 3h-3.2zm5.2 0a15 15 0 0 1 0-3h5a15 15 0 0 1 0 3h-5zm-3.5 2h2.7c.3 1.1.6 2.1 1 2.9a8 8 0 0 1-3.7-2.9zm5.9 3.3c-.6-.9-1.1-1.9-1.4-3.3h2.8c-.3 1.4-.8 2.4-1.4 3.3z'/%3E%3C/svg%3E");
           mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM6.6 7.5h2.6a15 15 0 0 1 1.1-2.9 8 8 0 0 0-3.7 2.9zM12 4.2c.6.9 1.1 1.9 1.4 3.3h-2.8c.3-1.4.8-2.4 1.4-3.3zm-7.7 8.3a8 8 0 0 1 .2-3h3a17 17 0 0 0 0 3h-3.2zm5.2 0a15 15 0 0 1 0-3h5a15 15 0 0 1 0 3h-5zm-3.5 2h2.7c.3 1.1.6 2.1 1 2.9a8 8 0 0 1-3.7-2.9zm5.9 3.3c-.6-.9-1.1-1.9-1.4-3.3h2.8c-.3 1.4-.8 2.4-1.4 3.3z'/%3E%3C/svg%3E");
+}
+/* CLOSED-DAY ROW — 🚫, 1,436 rows fleet-wide, position 3 of the icon column.
+   It was the loudest emoji left on a stop: an Apple 🚫 is a saturated red-and-
+   white sign sitting directly under the terracotta clock of the hours band, so
+   one two-row block rendered in two unrelated colour systems (owner 2026-08-11,
+   on a screenshot of exactly that pair: "this is an emoji … replace by the icon
+   drawing we are using now this is the one it should be there").
+
+   The artwork is NOT new — it is the circle-slash the toolbar already draws for
+   the Scams & Traps nav entry (NAV_ICONS.scams / NAV_VIEWBOX.scams), path and
+   viewBox copied verbatim. The owner picked it by pointing at that nav row, and
+   reusing it means the site has ONE prohibition mark rather than two drawings of
+   the same idea. If it is ever redrawn, both places move together. */
+.gm-mk-closed {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0.10 0.10 23.81 23.81'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2c1.9 0 3.6.6 5 1.7L5.7 17A8 8 0 0 1 12 4zm0 16c-1.9 0-3.6-.6-5-1.7L18.3 7A8 8 0 0 1 12 20z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0.10 0.10 23.81 23.81'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2c1.9 0 3.6.6 5 1.7L5.7 17A8 8 0 0 1 12 4zm0 16c-1.9 0-3.6-.6-5-1.7L18.3 7A8 8 0 0 1 12 20z'/%3E%3C/svg%3E");
+}
+/* BOOKING ROW — 🎫 U+1F3AB, 619 rows, "🎫 book at: {operator}" on train and
+   ferry entries. Not the same codepoint as the 🎟 that .ticket-flag retired in
+   2026-08, which is why it survived that pass and kept rendering as an emoji
+   beside drawn siblings. Same whole-ticket silhouette as .ticket-flag, so the
+   two booking surfaces read as one symbol; the 22:13 override is the ticket's
+   own aspect ratio and the reason this mark is not the usual 1em square. */
+.gm-mk-ticket {
+  width: 1.45em;
+  height: 0.86em;
+  vertical-align: -0.06em;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13'%3E%3Cpath fill-rule='evenodd' fill='%23000' d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1 5.5 22 13'%3E%3Cpath fill-rule='evenodd' fill='%23000' d='M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z'/%3E%3C/svg%3E");
+}
+/* 🌍 World Map — the "Also on this site" pill that links to the World Map page.
+   Reuses NAV_ICONS.globe verbatim, so the pill and the nav entry for the same
+   page draw the same shape, exactly like the other pills in that group. */
+.gm-mk-globe {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0.10 0.10 23.81 23.81'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4zM4.3 14A8 8 0 0 1 4 12c0-.7.1-1.4.3-2h3.4a16.5 16.5 0 0 0 0 4H4.3zm.8 2h2.9c.3 1.3.8 2.5 1.4 3.6A8 8 0 0 1 5.1 16zm2.9-8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zM12 20c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4zm2.2-6H9.8a14.7 14.7 0 0 1 0-4h4.4a14.7 14.7 0 0 1 0 4zm.3 5.6c.6-1.1 1.1-2.3 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.8-5.6a16.5 16.5 0 0 0 0-4h3.4c.2.6.3 1.3.3 2s-.1 1.4-.3 2h-3.4z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0.10 0.10 23.81 23.81'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8zM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4zM4.3 14A8 8 0 0 1 4 12c0-.7.1-1.4.3-2h3.4a16.5 16.5 0 0 0 0 4H4.3zm.8 2h2.9c.3 1.3.8 2.5 1.4 3.6A8 8 0 0 1 5.1 16zm2.9-8H5.1a8 8 0 0 1 4.3-3.6A15.7 15.7 0 0 0 8 8zM12 20c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4zm2.2-6H9.8a14.7 14.7 0 0 1 0-4h4.4a14.7 14.7 0 0 1 0 4zm.3 5.6c.6-1.1 1.1-2.3 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6zm1.8-5.6a16.5 16.5 0 0 0 0-4h3.4c.2.6.3 1.3.3 2s-.1 1.4-.3 2h-3.4z'/%3E%3C/svg%3E");
+}
+/* ⛲ Day Trips — 128 section titles and their 127 pills, the biggest un-drawn
+   surface left after the row marks. No NAV_ICONS shape fits (map is already the
+   Nearby Guides pill and reusing it would put one silhouette on two different
+   chips in the same row), so the fountain is authored: basin, column, jet head
+   and two sprays, weighted like the drawn bus and train beside it. */
+.gm-mk-fountain {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.2 13.8h17.6v1.6a5.6 5.6 0 0 1-5.6 5.6H8.8a5.6 5.6 0 0 1-5.6-5.6z'/%3E%3Cpath d='M10.9 7.6h2.2v6.2h-2.2z'/%3E%3Ccircle cx='12' cy='3.4' r='1.9'/%3E%3Cpath d='M10.6 5.2C8.2 6.3 6.7 8 6.2 10.4h2.1c.4-1.6 1.4-2.8 3-3.5zM13.4 5.2c2.4 1.1 3.9 2.8 4.4 5.2h-2.1c-.4-1.6-1.4-2.8-3-3.5z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.2 13.8h17.6v1.6a5.6 5.6 0 0 1-5.6 5.6H8.8a5.6 5.6 0 0 1-5.6-5.6z'/%3E%3Cpath d='M10.9 7.6h2.2v6.2h-2.2z'/%3E%3Ccircle cx='12' cy='3.4' r='1.9'/%3E%3Cpath d='M10.6 5.2C8.2 6.3 6.7 8 6.2 10.4h2.1c.4-1.6 1.4-2.8 3-3.5zM13.4 5.2c2.4 1.1 3.9 2.8 4.4 5.2h-2.1c-.4-1.6-1.4-2.8-3-3.5z'/%3E%3C/svg%3E");
+}
+/* 🏓 Pickleball — 54 section titles and pills, US guides. Paddle blade on the
+   diagonal with the handle running to the lower left and the ball clear of it,
+   which is what keeps the shape readable at the 15px a chip renders it. */
+.gm-mk-paddle {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16.9 4.1a6 6 0 0 0-8.5 0L4.9 7.6a6 6 0 0 0 8.5 8.5l3.5-3.5a6 6 0 0 0 0-8.5z'/%3E%3Cpath d='M7 15.6 3.4 19.2a1.8 1.8 0 0 0 2.5 2.5l3.6-3.6z'/%3E%3Ccircle cx='18.7' cy='18.2' r='2.6'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16.9 4.1a6 6 0 0 0-8.5 0L4.9 7.6a6 6 0 0 0 8.5 8.5l3.5-3.5a6 6 0 0 0 0-8.5z'/%3E%3Cpath d='M7 15.6 3.4 19.2a1.8 1.8 0 0 0 2.5 2.5l3.6-3.6z'/%3E%3Ccircle cx='18.7' cy='18.2' r='2.6'/%3E%3C/svg%3E");
 }
 :root[data-theme="dark"] .gm-mk { background-color: #d4874a; }
 
