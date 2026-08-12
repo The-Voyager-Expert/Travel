@@ -8736,6 +8736,12 @@ window.TVE.isPhone = function () {
            draw nothing (owner 2026-08-11). Different mark = genuinely different
            information, so it stays. */
         var bare = false;
+        /* NOTE — the "also on this site" pills are NOT de-duplicated here.
+           _injectAlsoOnSiteIcons runs AFTER this pass, so at this point the pill
+           carries no <svg> yet and there is nothing to test for; that injector
+           removes the mark itself before inserting the nav icon. Do not add a
+           "does the row already have an icon" test here — it reads correctly and
+           does nothing. */
         if (row.classList.contains('extras-sub')) {
           var sec = row.closest('.extras-section,.worth-knowing');
           var title = sec && sec.querySelector('.extras-title');
@@ -8944,6 +8950,28 @@ window.TVE.isPhone = function () {
       var file = (a.getAttribute('href') || '').split('/').pop().split('#')[0];
       var key  = PAGE_ICON[file];
       if (!key || !NAV_ICONS[key]) return;
+      /* THE PILL MAY ALREADY CARRY A DRAWN MARK — take it out before inserting.
+         The guard above only catches an <svg>, and a .gm-mk is a CSS mask on a
+         SPAN, so a pill whose authored glyph is in the MARKS table came through
+         it and ended up with both: the sun twice on Weather, the shield twice
+         on Safety Guide, the house twice on Which neighborhood (owner
+         2026-08-11: "we have double icons on these"). It could not happen
+         before 2026-08-11, when nothing drew marks on these pills.
+
+         The nav icon wins, and deliberately: a pill resolves its icon from the
+         TARGET PAGE via ITEMS, so the pill and the nav entry for the same page
+         always draw one shape and a nav icon change follows here automatically
+         (Icon Order and Format.html § 0). The drawn mark comes off the authored
+         glyph instead, which is per-guide and can drift from the nav.
+
+         Only the LEADING mark is removed, and only once we know an icon is
+         going in — a pill whose target has no PAGE_ICON entry returns above and
+         keeps its drawn mark, which is the right fallback. The hidden
+         .gm-mk-src span stays, so textContent is still byte-identical. */
+      var firstEl = a.firstElementChild;
+      if (firstEl && firstEl.classList && firstEl.classList.contains('gm-mk')) {
+        firstEl.parentNode.removeChild(firstEl);
+      }
       var span = document.createElement('span');
       span.innerHTML = iconSVG(NAV_ICONS[key], 13, key);
       span.setAttribute('aria-hidden', 'true');
