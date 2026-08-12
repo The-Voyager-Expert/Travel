@@ -5890,7 +5890,8 @@ window.TVE.isPhone = function () {
       { name: 'Belmond La Samanna', note: 'Belmond brand — Baie Longue private beach, three pools, spa, French West Indies elegance · 9.4 Booking.com' },
       { name: 'Princess Heights Luxury Boutique Hotel', note: 'Independent boutique — Oyster Pond hilltop, panoramic Dutch-side ocean views, intimate retreat · 9.3 Booking.com' },
       { name: 'Sonesta Maho Beach Resort & Casino', note: 'Sonesta Hotels — Maho Beach, casino, pool, multiple bars · 8.5 Booking.com', url: 'https://www.booking.com/hotel/sx/sonesta-maho-beach-resort-casino-and-spa.html' },
-      { name: 'Divi Little Bay Beach Resort', note: 'Divi Resorts — Little Bay peninsula, three pools, private beach, dive centre, Aquamarine restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/sx/divi-little-bay-beach-resort.html' }
+      { name: 'Divi Little Bay Beach Resort', note: 'Divi Resorts — Little Bay peninsula, three pools, private beach, dive centre, Aquamarine restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/sx/divi-little-bay-beach-resort.html' },
+      { name: 'JW Marriott St. Maarten Beach Resort & Spa', note: 'Marriott JW brand — Oyster Pond on Dawn Beach, pools, spa, private beach, views to St. Barths · 7.8 Booking.com', url: 'https://www.booking.com/hotel/sx/jw-marriott-st-maarten-beach-resort-spa.html' }
     ] },
     'sintra': { h: [
       { name: 'Valverde Sintra Palácio de Seteais', note: 'Leading Hotels of the World — 18th-century neoclassical palace on Rua Barbosa do Bocage, gardens, outdoor pool, valley views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pt/valverdesintrapalaciodeseteais.html' },
@@ -6004,7 +6005,8 @@ window.TVE.isPhone = function () {
       { name: 'Amanyara', note: 'Aman brand — Grace Bay, 40 pavilions and villas, coral reef snorkeling, beachfront spa · 9.6 Booking.com' },
       { name: 'Parrot Cay by COMO', note: 'COMO Hotels — private island, COMO Shambhala Retreat spa, white-sand beaches · 9.5 Booking.com' },
       { name: 'Grace Bay Club', note: 'Independent — Grace Bay beachfront on Providenciales, three properties, pool, Infiniti Bar & Grill · 9.6 Booking.com', url: 'https://www.booking.com/hotel/tc/grace-bay-club.html' },
-      { name: 'COMO Parrot Cay', note: 'COMO brand — private island 30 min by boat, COMO Shambhala spa, pool villas, dive centre · 9.5 Booking.com', url: 'https://www.booking.com/hotel/tc/como-parrot-cay.html' }
+      { name: 'COMO Parrot Cay', note: 'COMO brand — private island 30 min by boat, COMO Shambhala spa, pool villas, dive centre · 9.5 Booking.com', url: 'https://www.booking.com/hotel/tc/como-parrot-cay.html' },
+      { name: 'The Ritz-Carlton, Turks & Caicos', note: 'Marriott Ritz-Carlton — Grace Bay Road on Providenciales, 88 butler-service suites, private beach, Sugar Mill spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/tc/the-ritz-carlton-turks-caicos.html' }
     ] },
     'valletta': { h: [
       { name: 'The Phoenicia Malta', note: 'Small Luxury Hotels — 1947 landmark at city gate, outdoor pool in formal gardens, Malta\'s most storied hotel · 9.1 Booking.com', url: 'https://www.booking.com/hotel/mt/the-phoenicia-malta.html' },
@@ -6013,10 +6015,11 @@ window.TVE.isPhone = function () {
       { name: 'Grand Hotel Excelsior', note: 'Preferred Hotels & Resorts — outside Valletta city gate, views of Marsamxett Harbour, outdoor pool, full-service spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/mt/excelsior-grand-malta.html' }
     ] },
     'vancouver': { h: [
-      { name: 'Fairmont Hotel Vancouver', note: 'Fairmont brand — 1939 "Castle in the City," spa, Notch8 Restaurant & Bar, iconic copper roof · 8.9 Booking.com' },
-      { name: 'Rosewood Hotel Georgia', note: 'Rosewood brand — 1927 Georgian Revival downtown landmark, outdoor pool, Hawksworth Restaurant · 9.3 Booking.com' },
+      { name: 'Fairmont Hotel Vancouver', note: 'Fairmont brand — 1939 "Castle in the City," spa, Notch8 Restaurant & Bar, iconic copper roof · 8.9 Booking.com', url: 'https://www.booking.com/hotel/ca/fairmont-vancouver.html' },
+      { name: 'Rosewood Hotel Georgia', note: 'Rosewood brand — 1927 Georgian Revival downtown landmark, outdoor pool, Hawksworth Restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ca/rosewood-hotel-georgia.html' },
       { name: 'Wedgewood Hotel & Spa', note: 'Independent — Robson Square, intimate boutique, spa, Bacchus restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ca/wedgewood.html' },
-      { name: 'Four Seasons Hotel Vancouver', note: 'Four Seasons — Georgia Street connected to Pacific Centre, outdoor heated pool, Yew seafood + bar · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ca/four-seasons-vancouver.html' }
+      { name: 'Four Seasons Hotel Vancouver', note: 'Four Seasons — Georgia Street connected to Pacific Centre, outdoor heated pool, Yew seafood + bar · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ca/four-seasons-vancouver.html' },
+      { name: 'JW Marriott Parq Vancouver', note: 'Marriott JW brand — 39 Smithe Street in downtown Yaletown, rooftop pool, Pacific Rim views, connected to Parq casino · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ca/jw-marriott-parq-vancouver.html' }
     ] },
     'venice': { h: [
       { name: 'Belmond Hotel Cipriani', note: 'Belmond brand — Giudecca island, 7-minute private launch, Olympic-size pool, award-winning Oro Restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/cipriani-venezia.html' },
@@ -6034,7 +6037,8 @@ window.TVE.isPhone = function () {
       { name: 'The Fairmont Empress', note: 'Fairmont brand — 1908 Inner Harbour landmark, spa, Bengal Lounge, afternoon tea tradition · 9.0 Booking.com' },
       { name: 'Inn at Laurel Point', note: 'Independent boutique — waterfront on the Inner Harbour, adults-preferred, Japanese meditation garden · 9.2 Booking.com' },
       { name: 'Magnolia Hotel & Spa', note: 'Independent — Courtney Street heritage district, rooftop hot tub, Opus Restaurant, full spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ca/magnolia.html' },
-      { name: 'Hotel Grand Pacific Victoria', note: 'Independent — Inner Harbour, indoor pool, harbour views, Active Club fitness centre · 8.9 Booking.com', url: 'https://www.booking.com/hotel/ca/hotel-grand-pacific.html' }
+      { name: 'Hotel Grand Pacific Victoria', note: 'Independent — Inner Harbour, indoor pool, harbour views, Active Club fitness centre · 8.9 Booking.com', url: 'https://www.booking.com/hotel/ca/hotel-grand-pacific.html' },
+      { name: 'DoubleTree by Hilton Hotel & Suites Victoria', note: 'Hilton DoubleTree — 777 Douglas Street downtown, rooftop terrace, outdoor heated pool, steps from Empress and Inner Harbour · 8.3 Booking.com', url: 'https://www.booking.com/hotel/ca/doubletree-by-hilton-victoria.html' }
     ] },
     'vienna': { h: [
       { name: 'Hotel Imperial, a Luxury Collection Hotel, Vienna', note: 'Marriott Luxury Collection — 1863 Crown Prince Rudolf\'s palace on Ringstrasse, Café Imperial tradition · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/at/imperial.html' },
@@ -6076,7 +6080,8 @@ window.TVE.isPhone = function () {
       { name: 'Porto Zante Villas & Spa', note: 'Independent ultra-luxury — private white-sand beach, 8 beachfront villas, spa, Laganas Bay turtle sanctuary views · 9.7 Booking.com' },
       { name: 'Lesante Blu Exclusive Beach Resort', note: 'Independent boutique — adults-only on Tsilivi Bay, infinity pool, spa, Ionian Sea views · 9.4 Booking.com' },
       { name: 'Ionian Blue Bungalows & Spa Resort', note: 'Independent — Alykes beachfront, seafront pool, spa, Ionian Grill · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gr/ionian-blue-bungalows-spa-resort.html' },
-      { name: 'Lesante Blu Exclusive Beach Resort', note: 'Small Luxury Hotels — Tragaki beachfront adults-only, heated infinity pool, Blu Restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/gr/lesante-cape.html' }
+      { name: 'Lesante Blu Exclusive Beach Resort', note: 'Small Luxury Hotels — Tragaki beachfront adults-only, heated infinity pool, Blu Restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/gr/lesante-cape.html' },
+      { name: 'Domes Aulus Zante, Autograph Collection', note: 'Marriott Autograph Collection — all-inclusive on Laganas Bay in Kalamaki, private beach, thalassotherapy spa, Ionian Sea views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/gr/domesauluszante.html' }
     ] },
     'zhangjiajie': { h: [
       { name: 'Pullman Zhangjiajie', note: 'Accor Pullman brand — modern full-service hotel in Zhangjiajie city, pool, 30 minutes from Wulingyuan park gate · 8.8 Booking.com' },
