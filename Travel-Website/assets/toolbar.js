@@ -571,6 +571,20 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Castles.html',                       text: 'Castles', icon: 'castle' },
         { href: base + 'Trip-Essentials/Best-Cathedrals.html',                    text: 'Cathedrals', icon: 'church' },
         { href: base + 'Trip-Essentials/Best-Caves.html',                         text: 'Caves', icon: 'cave' },
+        /* OWNER-DIRECTED 2026-08-12: Cruise Lines, Disney Parks, Festival Finder
+           and Pickleball moved here out of 📋 Also Recommended. All four are
+           "the best X in the world" collections, not utilities, so they belong
+           with the rest of Best Of. Their FILES keep their existing names —
+           renaming them Best-*.html would sweep them into the country-ordered
+           Best-Of page validators (check_best_of_css_standard /
+           check_best_of_country_order), which govern a structure these four
+           pages do not use, and would break the sibling pills that link to
+           them from Climate-Finder, Sports-Calendar, When-to-Go, Hotels-Stays,
+           Rental-Cars, Airlines-of-the-World, Travel-Insurance,
+           Scenic-Train-Journeys and Tours-Tickets. */
+        { href: base + 'Trip-Essentials/Cruise-Ships.html',                       text: 'Cruise Lines', icon: 'ship' },
+        { href: base + 'Trip-Essentials/Disney-Parks.html',                       text: 'Disney Parks', icon: 'disney-parks' },
+        { href: base + 'Trip-Essentials/Festival-Finder.html',                    text: 'Festival Finder', icon: 'calendar' },
         { href: base + 'Trip-Essentials/Best-Gardens.html',                       text: 'Gardens', icon: 'flower' },
         { href: base + 'Trip-Essentials/Best-Hard-to-Reach-Places.html',          text: 'Hard-to-Reach Places', icon: 'compass' },
         { href: base + 'Trip-Essentials/Best-Hot-Springs.html',                   text: 'Hot Springs', icon: 'hotspring' },
@@ -583,6 +597,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-National-Parks-by-Country.html',     text: 'National Parks', icon: 'tree' },
         { href: base + 'Trip-Essentials/Best-Natural-Phenomena.html',             text: 'Natural Phenomena', icon: 'aurora' },
         { href: base + 'Trip-Essentials/Best-Observation-Decks.html',             text: 'Observation Decks', icon: 'tower' },
+        { href: base + 'Trip-Essentials/Pickleball.html',                         text: 'Pickleball', icon: 'paddle' },
         { href: base + 'Trip-Essentials/Best-Safari.html',                        text: 'Safari', icon: 'safari' },
         { href: base + 'Trip-Essentials/Best-Scuba-Diving.html',                  text: 'Scuba Diving', icon: 'scuba' },
         { href: base + 'Trip-Essentials/Best-Ski-Resorts.html',                   text: 'Ski Resorts', icon: 'ski' },
@@ -687,11 +702,10 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Rental-Cars.html',        text: 'Car Rental & Private', icon: 'rental-cars' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',          text: 'Cards & ATM', icon: 'card' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: 'City Transit Cards', icon: 'transit' },
-        { href: base + 'Trip-Essentials/Cruise-Ships.html',       text: 'Cruise Lines', icon: 'ship', newSince: '2026-08-09' },
-        { href: base + 'Trip-Essentials/Disney-Parks.html',       text: 'Disney Parks', icon: 'disney-parks', newSince: '2026-08-08' },
-        { href: base + 'Trip-Essentials/Festival-Finder.html',    text: 'Festival Finder', icon: 'calendar' },
+        /* Cruise Lines, Disney Parks, Festival Finder and Pickleball left this
+           group on 2026-08-12 (owner-directed) for 🏆 Best Of — see the comment
+           on the Cruise Lines row there. */
         { href: base + 'Trip-Essentials/More-Resources.html',     text: 'More Resources', icon: 'books' },
-        { href: base + 'Trip-Essentials/Pickleball.html',         text: 'Pickleball', icon: 'paddle' },
         { href: base + 'Trip-Essentials/Restaurants.html',        text: 'Restaurants', icon: 'restaurants' },
         { href: base + 'Trip-Essentials/SIM-Cards.html',          text: 'SIM Cards', icon: 'sim' },
         { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: 'Sports Calendar', icon: 'pennant' },
@@ -1569,6 +1583,13 @@ window.TVE.isPhone = function () {
       ['Castles',                   'Best-Castles.html'],
       ['Cathedrals',                'Best-Cathedrals.html'],
       ['Caves',                     'Best-Caves.html'],
+      /* OWNER-DIRECTED 2026-08-12 — mirrors the 🏆 Best Of group in ITEMS.
+         These four are the only rows here whose file is not Best-*.html;
+         check_best_of_toolbar_coverage matches on the Best- prefix, so they
+         are invisible to it in both directions. */
+      ['Cruise Lines',              'Cruise-Ships.html'],
+      ['Disney Parks',              'Disney-Parks.html'],
+      ['Festival Finder',           'Festival-Finder.html'],
       ['Gardens',                   'Best-Gardens.html'],
       ['Hard-to-Reach Places',      'Best-Hard-to-Reach-Places.html'],
       ['Hot Springs',               'Best-Hot-Springs.html'],
@@ -1581,6 +1602,7 @@ window.TVE.isPhone = function () {
       ['National Parks',            'Best-National-Parks-by-Country.html'],
       ['Natural Phenomena',         'Best-Natural-Phenomena.html'],
       ['Observation Decks',         'Best-Observation-Decks.html'],
+      ['Pickleball',                'Pickleball.html'],
       ['Safari',                    'Best-Safari.html'],
       ['Scuba Diving',              'Best-Scuba-Diving.html'],
       ['Ski Resorts',               'Best-Ski-Resorts.html'],
@@ -1609,10 +1631,10 @@ window.TVE.isPhone = function () {
       ['Car Rental & Private',  'Rental-Cars.html'],
       ['Cards & ATM',           'Cards-ATM.html'],
       ['City Transit Cards',    'City-Transit-Cards.html'],
-      ['Festival Finder',       'Festival-Finder.html'],
+      /* Festival Finder and Pickleball moved to the Best Of section above on
+         2026-08-12 (owner-directed). */
       ['Hotels & Stays',        'Hotels-Stays.html'],
       ['More Resources',        'More-Resources.html'],
-      ['Pickleball',            'Pickleball.html'],
       ['Restaurants',           'Restaurants.html'],
       ['SIM Cards',             'SIM-Cards.html'],
       ['Tipping',               'Tipping-Guide.html'],
