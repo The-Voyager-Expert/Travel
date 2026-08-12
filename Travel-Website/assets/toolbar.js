@@ -5909,8 +5909,8 @@ window.TVE.isPhone = function () {
       { name: 'Cour du Corbeau, Strasbourg', note: 'Small Luxury Hotels — 16th-century coaching inn in the historic center, courtyard, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/cour-du-corbeau.html' }
     ] },
     'stuttgart': { h: [
-      { name: 'Le Méridien Stuttgart', note: 'Marriott family — central location adjacent to Staatstheater, spa and pool, modern design · 8.8 Booking.com' },
-      { name: 'Steigenberger Graf Zeppelin Stuttgart', note: 'Steigenberger brand — opposite the main train station, classic grandeur, Zeppelin restaurant · 8.7 Booking.com' },
+      { name: 'EmiLu Design Hotel', note: 'Independent design hotel — Nadlerstraße 4 in Stuttgart-Mitte off Königstraße, sauna, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/emilu-gmbh-stuttgart.html' },
+      { name: 'Steigenberger Graf Zeppelin', note: 'Steigenberger brand — Arnulf-Klett-Platz opposite the Hauptbahnhof, spa, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-graf-zeppelin.html' },
       { name: 'Kronen Hotel Stuttgart', note: 'Independent — Kronenstraße pedestrian zone, 4-star design rooms, close to Schlossplatz · 8.8 Booking.com', url: 'https://www.booking.com/hotel/de/kronengmbh.html' },
       { name: 'Marquardt Stuttgart', note: 'Independent — Bolzstraße by the Kunstmuseum, design hotel with BASA Restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/de/marquardt.html' }
     ] },
