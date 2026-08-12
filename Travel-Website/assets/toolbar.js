@@ -5921,10 +5921,10 @@ window.TVE.isPhone = function () {
       { name: 'Shangri-La Sydney', note: 'Shangri-La brand — Millers Point with Bridge and Opera House views, outdoor infinity pool, CHI Spa, The Rocks district · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/au/shangri-la-sydney.html' }
     ] },
     'sao-luis': { h: [
-      { name: 'Pousada Portas da Amazônia', note: 'Independent boutique — renovated colonial mansion in Reviver historic district, São Luís UNESCO architecture · 9.0 Booking.com' },
-      { name: 'Grand São Luís Hotel', note: 'Independent — city center, rooftop pool, classic architecture, convenient for historic center access · 8.3 Booking.com' },
-      { name: 'Grand São Luís Hotel', note: 'Independent — Praia Grande historic center, pool, colonial architecture landmark · 8.5 Booking.com' },
-      { name: 'Hotel Brisamar São Luís', note: 'Independent — Calhau Beach, beachfront, outdoor pool, views of São Marcos Bay · 8.4 Booking.com' }
+      { name: 'Brisamar Hotel & SPA São Luís', note: 'Independent — Avenida São Marcos on Ponta da Areia beach, outdoor pool, spa, 24h reception, AC · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/brisamar.html' },
+      { name: 'Blue Tree Premium São Luís', note: 'Blue Tree — Avenida Avicênia on the Calhau beachfront, outdoor pool, tennis court, 24h reception, AC · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/pestana-sao-luis.html' },
+      { name: 'Stop Way Hotel São Luís', note: 'Independent — Avenida Mário Meirelles in the Renascença district, 24h reception, AC · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/stop-way.html' },
+      { name: 'Casa Lavinia', note: 'Independent boutique — Rua 28 de Julho inside the Praia Grande historic centre, garden, AC · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/casa-lavinia.html' }
     ] },
     'sao-paulo': { h: [
       { name: 'Rosewood São Paulo', note: 'Rosewood brand — Cidade Matarazzo on Rua Itapeva in Bela Vista, rooftop infinity pool, Evvai Michelin-starred dining, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/br/rosewood-sao-paulo.html' },
