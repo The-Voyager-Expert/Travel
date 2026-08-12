@@ -856,7 +856,8 @@
 /* 2026-08-12: revert #weekly-closures / #getting-around / #food-delivery CSS — removed the "ONE WHITE CARD" + desktop grid blocks added in commits 46bf5e72 and 5d090725 that broke all three sections site-wide. guide-style.css -> v184. CACHE to v627. */
 /* 2026-08-12: Siena HOTEL_ALT_DATA — added Booking.com url fields for Castello di Casole and Relais La Suvera; Siena guide gets hotel-ladder-exempt marker (NH Siena is plain NH, excluded). toolbar.js -> v450. CACHE to v628. */
 /* 2026-08-12: Kotor hotel rehome — HOTEL_ALT_DATA updated (Hyatt Regency becomes title card; HUMA Kotor Bay added as 4th alt). toolbar.js -> v451. CACHE to v629. */
-var CACHE = 'travel-cache-v629';
+/* 2026-08-12: Sicily HOTEL_ALT_DATA — added Booking.com url fields for San Domenico Palace and Belmond Grand Hotel Timeo. toolbar.js -> v452. CACHE to v630. */
+var CACHE = 'travel-cache-v630';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -864,7 +865,7 @@ var CACHE = 'travel-cache-v629';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 184, 'toolbar.js': 451, 'mobile.css': 76, 'web-travel-style.css': 31, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 184, 'toolbar.js': 452, 'mobile.css': 76, 'web-travel-style.css': 31, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
