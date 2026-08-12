@@ -5725,10 +5725,10 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Sacher Salzburg', note: 'Independent — Schwarzstrasse on the Salzach River, iconic Sacher Torte heritage, terrace and river views, spa · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/at/sacher-salzburg.html' }
     ] },
     'san-diego': { h: [
-      { name: 'The US Grant Hotel', note: 'IHG brand — 1910 downtown landmark, spa, Lobby Bar, Grant Grill, Gaslamp Quarter location · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/us/the-us-grant.html' },
-      { name: 'Pendry San Diego', note: 'Montage Hotels — Gaslamp Quarter, rooftop Pool & Cabana Club, Lionfish Modern Coastal Cuisine, spa, central downtown location · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/us/pendry-san-diego.html' },
-      { name: 'Manchester Grand Hyatt San Diego', note: 'Hyatt brand — One Market Place downtown, 40-story bay-view towers, Top of the Hyatt rooftop lounge, two pools, five restaurants · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/manchester-grand-hyatt-san-diego.html' },
-      { name: 'Marriott Marquis San Diego Marina', note: 'Marriott brand — 333 West Harbor Drive downtown waterfront, outdoor pool, Roy\'s restaurant, bay and marina views · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/san-diego-marriott.html' }
+      { name: 'The US Grant - a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 326 Broadway, 1910 downtown landmark, Grant Grill, 24h reception, AC · 8.0 Booking.com' , url: 'https://www.booking.com/hotel/us/the-us-grant.html' },
+      { name: 'Pendry San Diego', note: 'Montage Hotels — 550 J Street in the Gaslamp Quarter, rooftop pool and cabana club, spa, 24h reception · 8.3 Booking.com' , url: 'https://www.booking.com/hotel/us/pendry-san-diego.html' },
+      { name: 'Manchester Grand Hyatt San Diego', note: 'Hyatt brand — One Market Place downtown, 40-story bay-view towers, rooftop lounge, two pools, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/manchester-grand-hyatt-san-diego.html' },
+      { name: 'Marriott Marquis San Diego Marina', note: 'Marriott brand — 333 West Harbor Drive on the downtown waterfront, outdoor pool, marina views, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/san-diego-marriott.html' }
     ] },
     'san-francisco': { h: [
       { name: 'Fairmont San Francisco', note: 'Fairmont brand — 1907 Nob Hill landmark, spa, Tonga Room tiki bar, rooftop garden suite · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/the-fairmont-san-francisco-san-francisco-california.html' },
