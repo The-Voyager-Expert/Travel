@@ -5541,7 +5541,7 @@ window.TVE.isPhone = function () {
     'osaka': { h: [
       { name: 'InterContinental Osaka', note: 'IHG brand — Grand Front Osaka, 57th-floor Pierre restaurant panorama, spa and indoor pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jp/intercontinental-osaka.html' },
       { name: 'Conrad Osaka', note: 'Hilton family — Nakanoshima Festival City, sky infinity pool on 40th floor, harbor views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/jp/conrad-osaka.html' },
-      { name: 'Courtyard by Marriott Osaka Honmachi', note: 'Marriott family — 2-3-7 Minami-Honmachi in Chuo-ku, restaurant and bar, fitness centre, public bath, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jp/courtyard-by-marriott-osaka-honmachi.html' },
+      { name: 'Courtyard by Marriott Osaka Honmachi', note: 'Marriott family — 2-3-7 Minami-Honmachi in the Chuo business district, Japanese public bath on site, soundproofed rooms · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jp/courtyard-by-marriott-osaka-honmachi.html' },
       { name: 'The Ritz-Carlton Osaka', note: 'Ritz-Carlton brand — Umeda, indoor pool, Splendor spa, La Baie French restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/jp/the-ritz-carlton-osaka.html' }
     ] },
     'oslo': { h: [
@@ -6041,10 +6041,10 @@ window.TVE.isPhone = function () {
       { name: 'Waldorf Astoria Washington DC', note: 'Hilton brand — converted Old Post Office Building on Pennsylvania Avenue NW, indoor pool, Peacock Alley, central DC landmark · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/waldorf-astoria-washington-dc.html' }
     ] },
     'wellington': { h: [
-      { name: 'Sofitel Wellington', note: 'Sofitel brand — 11 Bolton Street in the CBD, restaurant and bar, fitness centre, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/sofitel-wellington.html' },
-      { name: 'DoubleTree by Hilton Wellington', note: 'Hilton family — 28 Grey Street on the corner of Lambton Quay, restaurant, fitness centre, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/doubletree-by-hilton-wellington.html' },
-      { name: 'Novotel Wellington', note: 'Novotel brand — 133-137 The Terrace, restaurant and bar, fitness centre, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/nz/capital-wellington.html' },
-      { name: 'Bolton Hotel', note: 'Independent — corner of Bolton and Mowbray Streets by the Botanic Garden, indoor pool, sauna, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/bolton.html' }
+      { name: 'Sofitel Wellington', note: 'Sofitel brand — 11 Bolton Street at the Parliament end of the CBD, valet parking and concierge, walk to the Botanic Garden · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/sofitel-wellington.html' },
+      { name: 'DoubleTree by Hilton Wellington', note: 'Hilton family — 28 Grey Street on the corner of Lambton Quay, in the middle of the shopping strip and two blocks off the waterfront · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/doubletree-by-hilton-wellington.html' },
+      { name: 'Novotel Wellington', note: 'Novotel brand — 133-137 The Terrace, one block above Lambton Quay and the cable car base · 8.1 Booking.com', url: 'https://www.booking.com/hotel/nz/capital-wellington.html' },
+      { name: 'Bolton Hotel', note: 'Independent — corner of Bolton and Mowbray Streets beside the Botanic Garden, year-round indoor pool, sauna and hot tub · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/bolton.html' }
     ] },
     'whistler': { h: [
       { name: 'Four Seasons Resort and Residences Whistler', note: 'Four Seasons brand — ski-in/ski-out base of Blackcomb, outdoor heated pool, spa · 9.3 Booking.com' },
