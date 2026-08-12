@@ -4746,7 +4746,7 @@ window.TVE.isPhone = function () {
       { name: 'W Austin', note: 'Marriott W brand — Downtown on Lavaca Street above ACL Live, rooftop pool with city views, AWAY spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/w-austin.html' }
     ] },
     'azores': { h: [
-      { name: 'Delta Hotels by Marriott Azores', note: 'Marriott family — ocean or mountain views, outdoor pool, 10-min from downtown Ponta Delgada · 9.2 Booking.com', url: 'https://www.booking.com/hotel/pt/delta-hotels-by-marriott-azores.html' },
+      { name: 'Octant Ponta Delgada', note: 'Independent — Av. João Bosco Mota Amaral by the marina, 5-star, 24h reception, rooftop pool, spa with steam room · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/octant-ponta-delgada.html' },
       { name: 'Grand Hotel Açores Atlântico', note: 'Independent — 5-star marina-facing landmark, heated indoor pool, 8 conference rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/acores-atlantico.html' },
       { name: 'Hotel Talisman', note: 'Independent boutique — historic center Ponta Delgada, rooftop pool, park views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/pt/talisman.html' },
       { name: 'Mercure Ponta Delgada Azores', note: 'Accor brand — central Ponta Delgada, modern amenities, highly rated WiFi and location · 9.1 Booking.com', url: 'https://www.booking.com/hotel/pt/mercure-ponta-delgada-azores.html' }
@@ -4758,7 +4758,7 @@ window.TVE.isPhone = function () {
       { name: 'Rosewood Baha Mar', note: 'Rosewood brand — Cable Beach, private beach, Sense spa, five pools, butlered bungalows · 9.1 Booking.com', url: 'https://www.booking.com/hotel/bs/rosewood-baha-mar.html' }
     ] },
     'bali': { h: [
-      { name: 'Hyatt Regency Bali', note: 'Hyatt family — private beach, 3 pools, tropical gardens, Sanur · 9.0 Booking.com', url: 'https://www.booking.com/hotel/id/hyatt-regency-bali.html' },
+      { name: 'Kastara Resort', note: 'Independent — Jalan Bangkiang Sidem in Keliki north of Ubud, 5-star, 24h reception, infinity pool over the rice terraces · 9.5 Booking.com', url: 'https://www.booking.com/hotel/id/kastara-resort.html' },
       { name: 'InterContinental Bali Resort by IHG', note: 'IHG first-tier — 6 pools, beachfront Jimbaran Bay, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/id/intercontinental-bali-resort.html' },
       { name: 'Four Seasons Resort Bali at Sayan', note: 'Four Seasons brand — Ubud jungle ridge above the Ayung River gorge, signature treetop restaurant, 2 pools, riverside spa · 9.5 Booking.com', url: 'https://www.booking.com/hotel/id/four-seasons-resort-bali-at-sayan.html' },
       { name: 'The St. Regis Bali Resort', note: 'Marriott Luxury Collection — Nusa Dua beachfront, private pool villas, 24-hr butler service, Kayuputi Pan-Asian dining · 9.7 Booking.com', url: 'https://www.booking.com/hotel/id/the-st-regis-bali-resort.html' }
@@ -4776,10 +4776,11 @@ window.TVE.isPhone = function () {
       { name: 'Rosewood Bangkok', note: 'Rosewood brand — Ploenchit CBD skyline tower, rooftop pool, Nan Bei Chinese restaurant, Sense, a Rosewood Spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/th/rosewood-bangkok.html' }
     ] },
     'barbados': { h: [
-      { name: 'Sandy Lane Hotel', note: 'Independent luxury — coral-stone manor on Sandy Lane Bay, 3 golf courses including the Tom Fazio Country Club, spa village · 9.6 Booking.com' },
-      { name: 'Coral Reef Club', note: 'Independent boutique — adults-focused west coast retreat, private beach, lush tropical gardens, suites and cottages · 9.5 Booking.com', url: 'https://www.booking.com/hotel/bb/coral-reef-club.html' },
-      { name: 'Colony Club by Elegant Hotels', note: 'Marriott Autograph Collection — Holetown beachfront, four pools with swim-up bar, water sports, Orchids restaurant' },
-      { name: 'Crystal Cove by Elegant Hotels', note: 'Marriott Autograph Collection — Holetown coral-stone cove, adults-only pool, reef snorkeling, island-cottage feel' }
+      { name: 'The Legend Garden Condos', note: 'Independent — Mullins Bay in Saint Peter, garden condos with year-round outdoor pool, 3 km north of Holetown · 9.6 Booking.com', url: 'https://www.booking.com/hotel/bb/the-legend-garden-condos.html' },
+      { name: 'The House, An Autograph Collection All-Inclusive Resort', note: 'Marriott Autograph — adults-only on Paynes Bay, 24h reception, beachfront pool, spa and jacuzzi · 8.6 Booking.com', url: 'https://www.booking.com/hotel/bb/the-house-by-elegant-hotels.html' },
+      { name: 'Treasure Beach Art Hotel, An Autograph Collection All-Inclusive Resort', note: 'Marriott Autograph — adults-only on Paynes Bay, 24h reception, beachfront, rotating Barbadian art collection · 7.7 Booking.com', url: 'https://www.booking.com/hotel/bb/treasure-beach-amp-spa.html' },
+      { name: 'Tamarind, Barbados, An Autograph Collection All-Inclusive Resort', note: 'Marriott Autograph — Paynes Bay Beach, 24h reception, two beachfront pools, kids club, water sports · 7.4 Booking.com', url: 'https://www.booking.com/hotel/bb/tamarind-by-elegant-hotels.html' },
+      { name: 'Coral Reef Club', note: 'Independent boutique — adults-focused west coast retreat, private beach, lush tropical gardens, suites and cottages', url: 'https://www.booking.com/hotel/bb/coral-reef-club.html' }
     ] },
     'barcelona': { h: [
       { name: 'Hotel Arts Barcelona', note: 'Ritz-Carlton brand — 44-floor beachfront tower at Port Olímpic, indoor and outdoor pools, sea-view rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/arts-barcelona.html' },
