@@ -809,7 +809,8 @@
 /* 2026-08-11: hotel-rehome — puerto-rico HOTEL_ALT_DATA corrected against the live listings. "El San Juan Hotel, Curio Collection by Hilton" no longer exists under that name — the same Booking listing is now Fairmont El San Juan and reads 7.6, not the 8.9 quoted. La Concha has rebranded from Renaissance to Autograph Collection and its url slug had changed; corrected, 8.8 -> 8.9. Caribe Hilton 8.7 -> its listing's 8.0. toolbar.js -> v405. CACHE to v577. */
 /* 2026-08-11: stop-hours band — every 🕐 hours row on every guide sat one full 14px gutter right of the 🎟 / 📍 rows above and below it. _phFit() measures the card's padding at DOMContentLoaded, but the CSS version guard swaps guide-style.css's ?v= by assigning link.href, which drops the loaded sheet and refetches — on Prague the replacement only landed at 619ms against DCL at 361ms, so the card measured 0 padding and the negative bleed was written as -0. _phFit now bails on a 0 gutter and re-runs on window load; its left pad also reads the element's own border-left instead of the hardcoded 2.5px rail that was removed on 2026-08-11, which had been hanging the flat band and the toggle 2.5px left of the column. toolbar.js -> v406. CACHE to v578. */
 /* 2026-08-11: re-bump for the stop-hours band fix described one line up. That bump (v406 / v578) was written into the worktree while uncommitted and was swept into 2f91ebce (puerto-rico) before the toolbar.js hunk it belonged to was committed, so the floor was already spent when the real change landed in c41387df. toolbar.js -> v407. CACHE to v579. */
-var CACHE = 'travel-cache-v579';
+/* 2026-08-11: CSS version guard no longer swaps guide-style.css by assigning link.href. Assigning href on an already-loaded stylesheet makes Chrome drop its sheet the same tick and refetch, so every page load of the site had a window with NO guide CSS at all — Prague measured sheet done 267ms, DOMContentLoaded 361ms (inside the gap), replacement 619ms. That is not just a FOUC: everything toolbar.js measures at DOMContentLoaded measured an unstyled document, which is what stepped every hours band one gutter right. The guard now appends a SECOND link and drops the loser — the old link on load, the new link on error, so a failed fetch leaves the page on the stale styles rather than on none. Verified: card paddingLeft at DOMContentLoaded reads 0px before and 14px after, with the refreshed fetch delayed 1.5s. toolbar.js -> v408. CACHE to v580. */
+var CACHE = 'travel-cache-v580';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -817,7 +818,7 @@ var CACHE = 'travel-cache-v579';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 407, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 408, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

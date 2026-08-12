@@ -89,25 +89,63 @@ window.TVE.isPhone = function () {
   } catch (e) {}
 })();
 
-/* ── CSS version guard — if guide-style.css is cached at v < CURRENT, swap the
-   link href so the browser re-fetches the latest styles. Transparent to HTML
-   (no guide re-stamp needed); runs before any other toolbar logic.
+/* ── CSS version guard — if guide-style.css is cached at v < CURRENT, load the
+   latest styles under a fresh ?v=. Transparent to HTML (no guide re-stamp
+   needed); runs before any other toolbar logic.
 
    CACHE-BUST ARCHITECTURE (2026-07-26):
-   • guide-style.css → this CURRENT guard rewrites ?v= at runtime
+   • guide-style.css → this CURRENT guard refreshes ?v= at runtime
    • toolbar.js itself → sw.js MIN_VERSIONS rewrites ?v= in the service worker
    • NEVER bump ?v= in any HTML file — it breaks HMAC stamps on guides
    • To deploy a toolbar.js or guide-style.css change:
      1. Bump CURRENT here (for CSS) or MIN_VERSIONS in sw.js (for toolbar.js)
      2. Bump CACHE version in sw.js
-     3. Done — one or two files, zero guide re-stamps */
+     3. Done — one or two files, zero guide re-stamps
+
+   🔒 ADD A SECOND LINK — NEVER ASSIGN link.href (owner-approved 2026-08-11).
+   Assigning `href` on a stylesheet that has ALREADY LOADED makes Chrome drop
+   its sheet the same tick and refetch, so from the swap until the replacement
+   arrives the document has NO guide CSS AT ALL. Every guide ships a ?v= below
+   CURRENT, so this fired on every page load of the site, and the window is
+   long: measured on Prague, the first sheet finished at 267ms, the swap fired,
+   DOMContentLoaded landed at 361ms — INSIDE the gap — and the replacement only
+   arrived at 619ms.
+
+   That is not just a flash of unstyled content. Everything toolbar.js measures
+   at DOMContentLoaded measures an UNSTYLED document: _phFit() read a
+   .ticket-box gutter of 0 and stepped every 🕐 hours band on every guide one
+   full 14px gutter right of the 🎟 / 📍 rows around it, for as long as the
+   feature had shipped (owner report 2026-08-11, "this is not aligned … look at
+   the time"). Any future pass that reads geometry early would inherit the same
+   trap silently.
+
+   Appending a SECOND link instead keeps the stale sheet applied and the page
+   fully styled while the fresh one is in flight, then drops the loser: the old
+   link on success, the new link on a failed fetch — so a 404 leaves the page
+   with the stale styles rather than none. The new link is inserted AFTER the
+   old one so that, for the ~300ms both are live, the fresh sheet wins the
+   cascade at equal specificity. Cost of the overlap is one stale rule surviving
+   a few hundred ms; cost of the old approach was no rules at all. */
 (function () {
   var CURRENT = 102;
   var link = document.querySelector('link[href*="guide-style.css"]');
-  if (!link) return;
+  if (!link || !link.parentNode) return;
   var m = link.href.match(/[?&]v=(\d+)/);
   if (m && parseInt(m[1], 10) >= CURRENT) return;
-  link.href = link.href.replace(/[?&]v=\d+/, '') + '?v=' + CURRENT;
+
+  var next = document.createElement('link');
+  next.rel = 'stylesheet';
+  next.href = link.href.replace(/[?&]v=\d+/, '') + '?v=' + CURRENT;
+  /* Same sheet under a new URL — carry whatever the page set, or the
+     replacement is a subtly different stylesheet from the one it replaces. */
+  if (link.media) next.media = link.media;
+  if (link.crossOrigin) next.crossOrigin = link.crossOrigin;
+
+  function drop(el) { if (el && el.parentNode) el.parentNode.removeChild(el); }
+  next.addEventListener('load', function () { drop(link); });
+  next.addEventListener('error', function () { drop(next); });
+
+  link.parentNode.insertBefore(next, link.nextSibling);
 })();
 
 /* ── PWA wiring — inject the web-app manifest + Apple home-screen tags and
