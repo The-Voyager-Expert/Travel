@@ -808,7 +808,8 @@
 /* 2026-08-11: hotel-rehome — corfu HOTEL_ALT_DATA rebuilt on Corfu Old Town properties read off their own listings: Albergo Botti 9.6, The Calliston 9.5, New York Luxury Suites 9.5, Bella Venezia 9.3. Kontokali Bay quoted 9.4 with no url; MarBella 8.7 and Grecotel Corfu Imperial 8.9 are under the § 5 non-brand bar; Domes Miramare is a ladder resort 20 km south at Moraitika and fails the § 3 walking gate for a guide whose every stop is inside the walled town, so it is not a usable alternative base either. toolbar.js -> v404. CACHE to v576. */
 /* 2026-08-11: hotel-rehome — puerto-rico HOTEL_ALT_DATA corrected against the live listings. "El San Juan Hotel, Curio Collection by Hilton" no longer exists under that name — the same Booking listing is now Fairmont El San Juan and reads 7.6, not the 8.9 quoted. La Concha has rebranded from Renaissance to Autograph Collection and its url slug had changed; corrected, 8.8 -> 8.9. Caribe Hilton 8.7 -> its listing's 8.0. toolbar.js -> v405. CACHE to v577. */
 /* 2026-08-11: stop-hours band — every 🕐 hours row on every guide sat one full 14px gutter right of the 🎟 / 📍 rows above and below it. _phFit() measures the card's padding at DOMContentLoaded, but the CSS version guard swaps guide-style.css's ?v= by assigning link.href, which drops the loaded sheet and refetches — on Prague the replacement only landed at 619ms against DCL at 361ms, so the card measured 0 padding and the negative bleed was written as -0. _phFit now bails on a 0 gutter and re-runs on window load; its left pad also reads the element's own border-left instead of the hardcoded 2.5px rail that was removed on 2026-08-11, which had been hanging the flat band and the toggle 2.5px left of the column. toolbar.js -> v406. CACHE to v578. */
-var CACHE = 'travel-cache-v578';
+/* 2026-08-11: re-bump for the stop-hours band fix described one line up. That bump (v406 / v578) was written into the worktree while uncommitted and was swept into 2f91ebce (puerto-rico) before the toolbar.js hunk it belonged to was committed, so the floor was already spent when the real change landed in c41387df. toolbar.js -> v407. CACHE to v579. */
+var CACHE = 'travel-cache-v579';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -816,7 +817,7 @@ var CACHE = 'travel-cache-v578';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 406, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 407, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
