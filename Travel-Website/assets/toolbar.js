@@ -5826,8 +5826,8 @@ window.TVE.isPhone = function () {
       { name: 'Cala di Volpe, A Luxury Collection Resort, Costa Smeralda', note: 'Marriott Luxury Collection — Porto Cervo fishing village design, private beach · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/cala-di-volpe.html' }
     ] },
     'scottsdale': { h: [
-      { name: 'The Phoenician, a Luxury Collection Resort', note: 'Marriott Luxury Collection — 250 acres on Camelback Mountain, three pools, spa, nine restaurants · 9.2 Booking.com' },
-      { name: 'Andaz Scottsdale Resort & Bungalows', note: 'Hyatt brand — desert rock-formation setting, Weft & Warp restaurant, desert-botanical spa treatments · 9.2 Booking.com' },
+      { name: 'Hotel Valley Ho', note: 'Independent — retro-modern midcentury landmark in Old Town Scottsdale, pool, Café ZuZu, walk to Waterfront · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-valley-ho-scottsdale-arizona.html' },
+      { name: 'Andaz Scottsdale Resort & Bungalows', note: 'Hyatt brand — desert rock-formation setting, Weft & Warp restaurant, desert-botanical spa treatments · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/andaz-scottsdale-resort-bungalows.html' },
       { name: 'Four Seasons Resort Scottsdale at Troon North', note: 'Four Seasons — Pinnacle Peak Desert, two pools, Talavera restaurant, Sonwai Spa · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-resort-scottsdale.html' },
       { name: 'Sanctuary Camelback Mountain Resort & Spa', note: 'Independent — Paradise Valley hillside, infinity pool and Mountain Spa, elements restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/sanctuary-camelback-mountain.html' }
     ] },
