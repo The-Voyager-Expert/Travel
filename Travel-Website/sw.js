@@ -907,7 +907,8 @@
 /* 2026-08-12: ga-grid card layout — stack name above URL (flex-direction:column) to prevent overflow in 3-col layout. guide-style.css -> v191. CACHE to v679. */
 /* 2026-08-12: weekly-closures card padding/radius fix + neigh-card min-width:0. guide-style.css -> v192. CACHE to v680. */
 /* 2026-08-12: Granada: expand 3→5 days (Days 4 Capilla Real/Madraza/Alcaicería/Corral + Day 5 Carmen de los Mártires/Fundación Rodríguez-Acosta/Huerta de San Vicente added). CACHE to v681. */
-var CACHE = 'travel-cache-v681';
+/* 2026-08-12: brain_check back to 0 fail — 28 pre-existing failures cleared as the baseline for the guide-filename de-versioning. 14 pill-hover: nine Trip-Essentials pages filled their dark-mode active chip with var(--surface2) (Travel-Packing with var(--hover)) instead of the outlined treatment; all now surface fill + terracotta border and label, the pattern Neighborhoods' .an-cbtn.on already used. 4 search-bar + 2 placeholder: Time-Zones and Before-You-Go used var(--search-icon) with no fallback and lacked the hardcoded gold ::placeholder — adopted Safety-Guide's var(--search-icon, none). 6 redundant overrides deleted, each already provided by the shared sheet: Time-Zones' two .page-header h1 dark rules (web-travel-style.css:1163), the two lounge pages' inline :root --navy (a SHARED var with a dark value at :132), and Trips' two body base resets (body already reads var(--bg)/var(--text), and toolbar.js:1030 injects the html[data-theme="dark"] palette). 1 shared rule: .country-name pinned to the literal #3d3a32 the validator requires, with the dark value moved to a proper dark override so the flat brown does not land on a dark ground. web-travel-style.css -> v43. CACHE to v682. */
+var CACHE = 'travel-cache-v682';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -915,7 +916,7 @@ var CACHE = 'travel-cache-v681';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 482, 'mobile.css': 77, 'web-travel-style.css': 42, 'guides-index-style.css': 4, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 482, 'mobile.css': 77, 'web-travel-style.css': 43, 'guides-index-style.css': 4, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
