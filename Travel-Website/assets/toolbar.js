@@ -1106,15 +1106,17 @@ window.TVE.isPhone = function () {
     'html[data-theme="light"] .nearby-guide-pill{background:#ffffff;color:#8a6c1a;border-color:#c8a44a}' +
     /* ── Dark-mode nav-link override — #7a3b1e (dark rust) is low-contrast on dark bg; shift to brand gold ── */
     '@media (prefers-color-scheme:dark){' +
-      '.tb a,.tb a:visited,.tb a:hover{color:#c8a060!important}' +
-      '.tb-ddbtn,.tb-ddbtn:hover{color:#c8a060!important}' +
+      '.tb a,.tb a:visited,.tb a:hover,.tb a.tb-active{color:#c8a060!important}' +
+      '.tb-ddbtn,.tb-ddbtn:hover,.tb-ddbtn.tb-active{color:#c8a060!important}' +
       '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}' +
     '}' +
     'html[data-theme="dark"] .tb a,' +
     'html[data-theme="dark"] .tb a:visited,' +
-    'html[data-theme="dark"] .tb a:hover{color:#c8a060!important}' +
+    'html[data-theme="dark"] .tb a:hover,' +
+    'html[data-theme="dark"] .tb a.tb-active{color:#c8a060!important}' +
     'html[data-theme="dark"] .tb-ddbtn,' +
-    'html[data-theme="dark"] .tb-ddbtn:hover{color:#c8a060!important}' +
+    'html[data-theme="dark"] .tb-ddbtn:hover,' +
+    'html[data-theme="dark"] .tb-ddbtn.tb-active{color:#c8a060!important}' +
     'html[data-theme="dark"] .tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}'
     ;
   document.head.appendChild(styleEl);
