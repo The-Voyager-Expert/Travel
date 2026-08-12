@@ -4898,10 +4898,10 @@ window.TVE.isPhone = function () {
       { name: 'W Chongqing', note: 'Marriott W brand — Jiefangbei nightlife district, WET rooftop pool deck, AWAY Spa, panoramic city-and-river views · 8.8 Booking.com' , url: 'https://www.booking.com/hotel/cn/w-chongqing.html' }
     ] },
     'cinque-terre': { h: [
-      { name: 'La Torretta Lodge', note: 'Independent boutique — Manarola (medieval tower conversion), 12 rooms, rooftop hot tub, sea-view terrace · 9.0 Booking.com' },
-      { name: 'Locanda Il Maestrale', note: 'Independent boutique — Monterosso al Mare old town, 18th-century palazzo, 6 rooms, frescoed ceilings, sea-view breakfast terrace · 9.4 Booking.com' },
-      { name: 'Hotel Pasquale', note: 'Independent — Monterosso al Mare, family-run since 1956, sea-view terraces, Ligurian cuisine · 9.2 Booking.com' },
-      { name: 'Hotel Villa Steno', note: 'Independent — Monterosso hillside, garden terraces with Gulf of Genoa views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/villa-steno.html' }
+      { name: 'Hotel Il colle di Monterosso', note: 'Independent — Colle di Gritta above Monterosso, garden terraces, free parking and a free shuttle down to the village · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/il-colle-di-monterosso.html' },
+      { name: 'Hotel Margherita', note: 'Independent — Via Roma in the Monterosso old town, AC, elevator, a few minutes from the station and the beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/margherita-monterosso.html' },
+      { name: 'Hotel La Spiaggia', note: 'Independent — Via Fegina, beachfront on the Monterosso seafront, AC, sea-facing rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/la-spiaggia.html' },
+      { name: 'Hotel Villa Adriana', note: 'Independent — Via IV Novembre, seasonal outdoor pool, garden and free parking, a level walk to Fegina beach · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/villa-adriana-monterosso-al-mare.html' }
     ] },
     'coeur-dalene': { h: [
       { name: 'SpringHill Suites Coeur d\'Alene', note: 'Marriott SpringHill brand — 2250 West Seltice Way beside the Riverstone district, indoor pool, all-suite rooms, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/springhill-suites-coeur-d-alene.html' },
