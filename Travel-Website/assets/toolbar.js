@@ -6063,8 +6063,8 @@ window.TVE.isPhone = function () {
       { name: 'Bolton Hotel', note: 'Independent — corner of Bolton and Mowbray Streets beside the Botanic Garden, year-round indoor pool, sauna and hot tub · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/bolton.html' }
     ] },
     'whistler': { h: [
-      { name: 'Four Seasons Resort and Residences Whistler', note: 'Four Seasons brand — ski-in/ski-out base of Blackcomb, outdoor heated pool, spa · 9.3 Booking.com' },
-      { name: 'Nita Lake Lodge', note: 'Independent boutique — Nita Lake waterfront, cross-country trail access, spa, quiet Creekside enclave · 9.4 Booking.com' },
+      { name: 'Four Seasons Resort and Residences Whistler', note: 'Four Seasons brand — ski-in/ski-out base of Blackcomb, outdoor heated pool, spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ca/four-seasons-whistler.html' },
+      { name: 'Nita Lake Lodge', note: 'Independent boutique — Nita Lake waterfront, cross-country trail access, spa, quiet Creekside enclave · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ca/nita-lake-lodge.html' },
       { name: 'Fairmont Chateau Whistler', note: 'Fairmont brand — ski-in/ski-out at Blackcomb, heated outdoor pool, Mallard Lounge, spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ca/fairmont-chateau-whistler.html' },
       { name: 'Westin Resort & Spa Whistler', note: 'Marriott Westin — Whistler Village, outdoor heated pool, Aubergine Grille, Heavenly Spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ca/westin-resort-and-spa-whistler.html' }
     ] },
