@@ -5461,8 +5461,8 @@ window.TVE.isPhone = function () {
       { name: 'Cavo Tagoo Mykonos', note: 'Independent — Tagoo hillside, infinity pool with floating bar, Cave restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/gr/cavo-tagoo.html' }
     ] },
     'napa': { h: [
-      { name: 'Meadowood Napa Valley', note: 'Independent luxury — 250 acres, croquet, pools, hiking trails, three-Michelin-star Restaurant at Meadowood · 9.4 Booking.com' },
-      { name: 'Auberge du Soleil', note: 'Auberge Resorts — hillside above Rutherford, outdoor pool with vineyard views, Michelin-starred restaurant · 9.3 Booking.com' },
+      { name: 'Bardessono Hotel and Spa', note: 'Independent — LEED Platinum cedar-and-stone lodge on Yount Street in Yountville, rooftop pool, in-room spa treatments · 9.8 Booking.com', url: 'https://www.booking.com/hotel/us/bardessono.html' },
+      { name: 'Archer Hotel Napa', note: 'Independent boutique — First Street in downtown Napa, rooftop pool and bar over the valley, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/archer-napa.html' },
       { name: 'Carneros Resort and Spa', note: 'Independent — 28-acre farm-like resort in Carneros wine region, four pools, full-service spa, FARM restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/carneros-inn.html' },
       { name: 'Meritage Resort and Spa', note: 'Independent — wine caves and spa, four pools, Estate Cave restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-meritage-resort-and-spa.html' }
     ] },

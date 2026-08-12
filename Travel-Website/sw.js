@@ -831,7 +831,8 @@
 /* 2026-08-11: pins — HOTEL_ALT_DATA['kauai'] offered the guide its own hotel. Grand Hyatt Kauai is the title-card hotel and was also first-listed as an alternative to itself; St. Regis Princeville had no url and is the property that became 1 Hotel Hanalei Bay, so the block listed one resort twice under two names; and Koloa Landing pointed at koloa-landing-resort.html when the real slug is wyndham-koloa-landing-at-poipu-beach.html. Rebuilt on four verified properties: 1 Hotel Hanalei Bay 9.1, Koloa Landing Autograph Collection 9.0, Sheraton Kauai 8.3, Marriott's Kaua'i Beach Club 7.8 — the last two are preferred-brand entries, which hotel_rules § 5 surfaces regardless of rating. toolbar.js -> v427. CACHE to v600. */
 /* 2026-08-11: sao-paulo HOTEL_ALT_DATA — Rosewood and L'Hotel PortoBay both carried no url (FINAL GATE hard-fail); both keep their slots with a verified Booking page and the score read off it (Rosewood 9.4 not 9.2, PortoBay 9.2 not 9.0). toolbar.js -> v428. CACHE to v601. */
 /* 2026-08-11: seven glyphs were still rendering as raw Apple emoji because they were simply absent from the MARKS table, and nothing checked coverage — the owner opened a stop showing a drawn terracotta clock directly above a red-and-white 🚫 and asked "why is it not failing". Nothing was. Now drawn: 🚫 closed-day (1,436 rows), 🎫 booking (619), 💵 cash-only (35), 🚤 (2), ⛲ Day Trips (128 sections + their pills), 🏓 Pickleball (54), 🌍 World Map. 🚫 reuses the circle-slash the toolbar already draws for Scams & Traps — the owner picked it by pointing at that nav row — and 🌍 reuses NAV_ICONS.globe, so one idea has one drawing; ⛲ and 🏓 are authored because no nav icon fits. The mid-line ⭐ sweep also now covers .ticket-box / .tour-box / .station-box rows: a booking row LEADS with a .ticket-flag span rather than a glyph, so the leading-glyph pass returned early and left a gold Apple star mid-sentence under a drawn ticket. Glyphs stay authored in all 245 guides — this is render-time only. New gate: brain_check.check_row_glyphs_are_drawn (hard-fail). toolbar.js -> v429. CACHE to v602. */
-var CACHE = 'travel-cache-v602';
+/* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['napa'] carried Meadowood and Auberge du Soleil with no url and neither resolves in Booking inventory; replaced by Bardessono (9.8, the outgoing title-card hotel) and Archer Hotel Napa (9.1), both with real listings. toolbar.js -> v430. CACHE to v603. */
+var CACHE = 'travel-cache-v603';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -839,7 +840,7 @@ var CACHE = 'travel-cache-v602';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 179, 'toolbar.js': 429, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 179, 'toolbar.js': 430, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
