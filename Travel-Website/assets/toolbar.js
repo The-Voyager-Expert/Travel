@@ -5945,8 +5945,8 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Viru', note: 'Independent — Viru Square, Old Town landmark from 1972, rooftop sauna, Viru bar lounge, KGB Museum on the 23rd floor · 8.5 Booking.com', url: 'https://www.booking.com/hotel/ee/viru.html' }
     ] },
     'tbilisi': { h: [
-      { name: 'Stamba Hotel', note: 'Independent — 1930s Soviet-era publishing house, 8-metre loft ceilings, courtyard pool, garden · 9.4 Booking.com' },
-      { name: 'Rooms Hotel Tbilisi', note: 'Independent — contemporary design in Vera neighborhood, rooftop bar, Rioni Restaurant · 9.2 Booking.com' },
+      { name: 'Qarvasla Hotel', note: 'Independent — 36 Kote Afkhazi Street in Sololaki, restored caravanserai walls, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ge/qarvasla-tbilisi.html' },
+      { name: 'Stamba Hotel', note: 'Independent — 1930s Soviet-era publishing house on Merab Kostava Street, 8-metre loft ceilings, garden, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ge/stamba-tbilisi.html' },
       { name: 'Biltmore Hotel Tbilisi', note: 'Marriott Autograph Collection — Rustaveli Avenue, outdoor pool, Salve restaurant, spa · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ge/biltmore-hotel-tbilisi.html' },
       { name: 'Radisson Blu Iveria Hotel Tbilisi', note: 'Radisson Blu — Rose Revolution Square, outdoor pool, Shavi Lomi restaurant, spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ge/radisson-sas-iveria-tbilisi.html' }
     ] },
