@@ -906,7 +906,8 @@
 /* 2026-08-12: Santorini: expand 3→5 days (Days 4 wine country + Day 5 volcano boat excursion added; Days 1–4 restructured into geographic groupings after optimizer correction). CACHE to v678. */
 /* 2026-08-12: ga-grid card layout — stack name above URL (flex-direction:column) to prevent overflow in 3-col layout. guide-style.css -> v191. CACHE to v679. */
 /* 2026-08-12: weekly-closures card padding/radius fix + neigh-card min-width:0. guide-style.css -> v192. CACHE to v680. */
-var CACHE = 'travel-cache-v680';
+/* 2026-08-12: Granada: expand 3→5 days (Days 4 Capilla Real/Madraza/Alcaicería/Corral + Day 5 Carmen de los Mártires/Fundación Rodríguez-Acosta/Huerta de San Vicente added). CACHE to v681. */
+var CACHE = 'travel-cache-v681';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
