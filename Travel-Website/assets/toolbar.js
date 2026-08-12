@@ -5206,10 +5206,10 @@ window.TVE.isPhone = function () {
       { name: 'The Ritz-Carlton Istanbul', note: 'Ritz-Carlton brand — Beşiktaş on the Bosphorus, Laveda restaurant, spa with indoor pool · 9.1 Booking.com', url: 'https://www.booking.com/hotel/tr/the-ritz-carlton-istanbul.html' }
     ] },
     'joao-pessoa': { h: [
-      { name: 'Summerville Beach Resort', note: 'Independent resort — Tambaú beachfront, outdoor pools, spa, direct beach access steps from the Tambaú promenade · 8.7 Booking.com' },
-      { name: 'Hotel Tambaú', note: 'Independent — iconic 1972 circular building on Tambaú Beach, João Pessoa landmark, pool terrace with ocean views, seafood restaurant · 8.2 Booking.com' },
-      { name: 'Tropical Tambaú Hotel', note: 'Tropical Hotels — Tambaú Beach, outdoor pool, Mangai restaurant with regional Northeastern cuisine · 8.3 Booking.com' },
-      { name: 'Manaíra Apart Hotel', note: 'Independent — Manaíra beachfront, kitchenette suites, outdoor pool, close to the shopping centre · 8.5 Booking.com' }
+      { name: 'Holanda Gold Hotel Praia de Tambaú', note: 'Independent — Av. Alm. Tamandaré on the Tambaú beachfront, 4-star, rooftop pool with sea view, 24h reception · 9.6 Booking.com', url: 'https://www.booking.com/hotel/br/holanda-gold.html' },
+      { name: 'HCM · Hotel Corais de Manaíra', note: 'Independent — Av. João Maurício on the Manaíra beachfront, 5-star, indoor and rooftop infinity pools, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/corais-de-manaira.html' },
+      { name: 'Place2You Hotel by Welkom', note: 'Welkom Hotéis — Av. Gen. Edson Ramalho in Manaíra, outdoor pool, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/place2you-by-welkom.html' },
+      { name: 'Kastel Jampa Hotel', note: 'Independent — Av. João Maurício beachfront, adults only, 4-star, year-round outdoor pool, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/kastel-jampa-joao-pessoa.html' }
     ] },
     'kauai': { h: [
       { name: 'St. Regis Princeville Resort', note: 'Marriott Luxury Collection — Princeville cliffside above Hanalei Bay, Halele\'a Spa, infinity pool, butler service, North Shore panorama · 9.0 Booking.com' },
@@ -5224,10 +5224,10 @@ window.TVE.isPhone = function () {
       { name: 'Pier House Resort & Spa', note: 'Independent — Duval Street waterfront, sunset cruise access, spa, Chart Room bar · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/pier-house-resort-spa.html' }
     ] },
     'kotor': { h: [
-      { name: 'Regent Porto Montenegro', note: 'Regent Hotels — superyacht marina in Tivat (20 min from Kotor), beachclub, full-service spa, private beach, Boka Bay setting · 8.9 Booking.com', url: 'https://www.booking.com/hotel/me/regent-porto-montenegro.html' },
-      { name: 'Palazzo Radomiri', note: 'Independent boutique — 18th-century Baroque palace in Dobrota village, 5km from Old Town, Boka Bay waterfront, private jetty · 9.2 Booking.com' },
-      { name: 'Cattaro Boutique Hotel', note: 'Independent — inside the Old Town walled city, 16th-century Grgurina Palace, rooftop terrace · 9.1 Booking.com', url: 'https://www.booking.com/hotel/me/cattaro.html' },
-      { name: 'Hotel Vardar', note: 'Independent — Old Town main square, balcony rooms overlooking St. Tryphon Square · 8.9 Booking.com', url: 'https://www.booking.com/hotel/me/vardar.html' }
+      { name: 'Hotel Alkima', note: 'Independent — Dobrota waterfront on the bay, 4-star, outdoor pool, spa, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/me/alkima.html' },
+      { name: 'Kerber-Graz 1860', note: 'Independent — Stari grad 381 inside the walled Old Town, 4-star, sauna and spa, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/me/kerber-graz-1860.html' },
+      { name: 'Historic Boutique Hotel Cattaro', note: 'Independent — 16th-century Grgurina Palace on the Old Town square, 4-star, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/me/hotel-cattaro.html' },
+      { name: 'Hyatt Regency Kotor Bay Resort', note: 'Hyatt brand — Vrmac peninsula on the bay, 5-star, indoor and infinity pools, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/me/blue-kotor-bay-premium-amp-gourmet-resort.html' }
     ] },
     'krakow': { h: [
       { name: 'Hotel Copernicus', note: 'Relais & Châteaux — 15th-century Renaissance house in Old Town, rooftop pool with Royal Castle and Wawel panorama, Copernicus restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/pl/copernicus.html' },
