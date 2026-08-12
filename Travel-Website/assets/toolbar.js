@@ -5529,8 +5529,8 @@ window.TVE.isPhone = function () {
       { name: 'Moana Surfrider, A Westin Resort & Spa, Waikiki Beach', note: 'Marriott Westin — 1901 "First Lady of Waikiki," beachfront, iconic banyan courtyard, historic character · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/moana-surfrider-a-westin-resort-spa-waikiki-beach.html' }
     ] },
     'oaxaca': { h: [
-      { name: 'Casa Oaxaca Hotel', note: 'Independent boutique — 6 suites around a colonial courtyard, rooftop pool, acclaimed El Restaurante, historic zone · 9.4 Booking.com' },
-      { name: 'Hotel Escondido', note: 'Independent boutique — Oaxaca coast, clifftop cabañas, ocean views, farm-to-table restaurant · 9.3 Booking.com' },
+      { name: 'Casa Oaxaca Hotel', note: 'Independent boutique — 6 suites around a colonial courtyard, rooftop pool, acclaimed El Restaurante, historic zone · 9.4 Booking.com', url: 'https://www.booking.com/hotel/mx/casa-oaxaca-oaxaca-de-juarez1.html' },
+      { name: 'Hotel Escondido', note: 'Independent boutique — Oaxaca coast, clifftop cabañas, ocean views, farm-to-table restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mx/escondido-oaxaca.html' },
       { name: 'Las Bugambilias Bed & Breakfast', note: 'Independent — colonial house in the historic center, Mexican garden courtyard · 9.6 Booking.com', url: 'https://www.booking.com/hotel/mx/las-bugambilias-bed-breakfast.html' },
       { name: 'Hotel Parador San Agustín', note: 'Independent — 18th-century Augustinian monastery, rooftop pool, spa, terrace with city views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/mx/parador-san-agustin.html' }
     ] },
@@ -5538,11 +5538,11 @@ window.TVE.isPhone = function () {
       { name: 'Pousada dos Quatro Cantos', note: 'Independent boutique — colonial mansion in historic center, pool, close to Carnaval festivities · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/pousada-dos-quatro-cantos.html' },
       { name: 'Pousada do Amparo', note: 'Independent — 16th-century colonial house in UNESCO World Heritage town, art-filled rooms, garden · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/pousada-do-amparo.html' },
       { name: 'Sete Colinas Hotel', note: 'Independent — hilltop colonial property in UNESCO historic core, pool with Recife panorama · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/sete-colinas.html' },
-      { name: 'Pousada Saudade', note: 'Independent — 18th-century house in the historic center, garden, hammocks, traditional breakfast · 9.2 Booking.com' }
+      { name: 'Pousada Convento da Conceição', note: 'Independent — 17th-century convent in Olinda UNESCO core, WiFi, A/C, traditional breakfast, garden · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/convento-da-conceicao.html' }
     ] },
     'orcas-island': { h: [
-      { name: 'Outlook Inn', note: 'Independent boutique — Eastsound village center, wraparound deck with water views, farm-fresh breakfast · 9.2 Booking.com' },
-      { name: 'Deer Harbor Inn', note: 'Independent — Deer Harbor overlook, cottage-style rooms, outdoor hot tub, kayak rentals · 9.1 Booking.com' },
+      { name: 'Outlook Inn', note: 'Independent boutique — Eastsound village center, wraparound deck with water views, farm-fresh breakfast · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/outlook-inn-eastsound.html' },
+      { name: 'Deer Harbor Inn', note: 'Independent — Deer Harbor overlook, cottage-style rooms, outdoor hot tub, kayak rentals · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/deer-harbor-inn.html' },
       { name: 'Rosario Resort & Spa', note: 'Independent — 1904 Moran estate on Cascade Bay, spa, pool, 40 acres of grounds · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/rosario-resort-spa.html' },
       { name: 'Orcas Hotel', note: 'Independent — 1904 Victorian at the Orcas ferry landing, wraparound porch, farm-to-table bistro · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/orcas-hotel.html' }
     ] },
@@ -5764,10 +5764,10 @@ window.TVE.isPhone = function () {
       { name: 'Hyatt Place San José - Pinares', note: 'Hyatt brand — Curridabat, rooftop pool and bar with volcano views, gallery kitchen restaurant · 8.9 Booking.com', url: 'https://www.booking.com/hotel/cr/hyatt-place-san-jose-pinares.html' }
     ] },
     'san-juan-island': { h: [
-      { name: 'Friday Harbor House Hotel', note: 'Independent boutique — above Friday Harbor Marina, harbor and Olympic Mountain views, Pacific Northwest design · 9.0 Booking.com' },
+      { name: 'Friday Harbor House Hotel', note: 'Independent boutique — above Friday Harbor Marina, harbor and Olympic Mountain views, Pacific Northwest design · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/friday-harbor-house.html' },
       { name: 'Tucker House Inn', note: 'Independent — Friday Harbor, 1898 Victorian B&B with garden hot tub, walk to ferry · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/tucker-house-inn.html' },
-      { name: 'Earthbox Inn & Spa', note: 'Independent — Friday Harbor, eco-minded inn, spa and hot tub, two blocks from the ferry · 8.8 Booking.com' },
-      { name: 'Trumpeter Inn', note: 'Independent — country-setting B&B, private pond with trumpeter swans, full gourmet breakfast · 9.7 Booking.com' }
+      { name: 'Earthbox Inn & Spa', note: 'Independent — Friday Harbor, eco-minded inn, spa and hot tub, two blocks from the ferry · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/earthbox-inn-amp-spa.html' },
+      { name: 'Trumpeter Inn', note: 'Independent — country-setting B&B, private pond with trumpeter swans, full gourmet breakfast · 9.7 Booking.com', url: 'https://www.booking.com/hotel/us/trumpeter-inn.html' }
     ] },
     'san-sebastian': { h: [
       { name: 'Hotel Maria Cristina, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1912 Belle Époque landmark on Urumea riverside, San Sebastián Film Festival HQ · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/maria-cristina-san-sebastian.html' },
@@ -5820,10 +5820,10 @@ window.TVE.isPhone = function () {
       { name: 'Hyatt Regency Sarasota', note: 'Hyatt brand — Sarasota Bay, marina, outdoor pool, Currents Waterfront Dining · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-sarasota.html' }
     ] },
     'sardinia': { h: [
-      { name: 'Hotel Pitrizza, a Luxury Collection Resort', note: 'Marriott Luxury Collection — Costa Smeralda private rocky bay, saltwater pool, adults-only enclave · 9.3 Booking.com' },
-      { name: 'Romazzino, A Belmond Hotel', note: 'Belmond brand — Costa Smeralda private beach, parasol-shaded white sand, boat excursions · 9.1 Booking.com' },
+      { name: 'Hotel Pitrizza, a Luxury Collection Resort', note: 'Marriott Luxury Collection — Costa Smeralda private rocky bay, saltwater pool, adults-only enclave · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-pitrizza-luxury-collection-resort-costa-smeralda.html' },
+      { name: 'Romazzino, A Belmond Hotel', note: 'Belmond brand — Costa Smeralda private beach, parasol-shaded white sand, boat excursions · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/romazzino.html' },
       { name: 'Forte Village Resort', note: 'Independent mega-resort — Pula, 12 pools, spa with hammam, 21 restaurants, sports facilities · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/forte-village-resort.html' },
-      { name: 'Cala di Volpe, A Luxury Collection Resort, Costa Smeralda', note: 'Marriott Luxury Collection — Porto Cervo fishing village design, private beach · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/cala-di-volpe.html' }
+      { name: 'Cervo Hotel · Costa Smeralda Resort', note: 'Independent — Porto Cervo hillside village, Cervo Tennis Club, 3 pools, panoramic sea views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/cervo.html' }
     ] },
     'scottsdale': { h: [
       { name: 'Hotel Valley Ho', note: 'Independent — retro-modern midcentury landmark in Old Town Scottsdale, pool, Café ZuZu, walk to Waterfront · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-valley-ho-scottsdale-arizona.html' },
@@ -6032,8 +6032,8 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Accademia', note: 'Independent — Via Scala near the Arena, garden courtyard, Il Carroarmato restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/it/accademia-verona.html' }
     ] },
     'victoria': { h: [
-      { name: 'The Fairmont Empress', note: 'Fairmont brand — 1908 Inner Harbour landmark, spa, Bengal Lounge, afternoon tea tradition · 9.0 Booking.com' },
-      { name: 'Inn at Laurel Point', note: 'Independent boutique — waterfront on the Inner Harbour, adults-preferred, Japanese meditation garden · 9.2 Booking.com' },
+      { name: 'The Fairmont Empress', note: 'Fairmont brand — 1908 Inner Harbour landmark, spa, Bengal Lounge, afternoon tea tradition · 9.0 Booking.com', url: 'https://www.booking.com/hotel/ca/fairmont-empress.html' },
+      { name: 'Inn at Laurel Point', note: 'Independent boutique — waterfront on the Inner Harbour, adults-preferred, Japanese meditation garden · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ca/inn-at-laurel-point.html' },
       { name: 'Magnolia Hotel & Spa', note: 'Independent — Courtney Street heritage district, rooftop hot tub, Opus Restaurant, full spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/ca/magnolia.html' },
       { name: 'Hotel Grand Pacific Victoria', note: 'Independent — Inner Harbour, indoor pool, harbour views, Active Club fitness centre · 8.9 Booking.com', url: 'https://www.booking.com/hotel/ca/hotel-grand-pacific.html' },
       { name: 'DoubleTree by Hilton Hotel & Suites Victoria', note: 'Hilton DoubleTree — 777 Douglas Street downtown, rooftop terrace, outdoor heated pool, steps from Empress and Inner Harbour · 8.3 Booking.com', url: 'https://www.booking.com/hotel/ca/doubletree-by-hilton-victoria.html' }
