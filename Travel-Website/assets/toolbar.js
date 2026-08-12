@@ -5713,10 +5713,10 @@ window.TVE.isPhone = function () {
       { name: 'Hilton Rotterdam', note: 'Hilton brand — Weena 10, central near Centraal, in-house Joelia Michelin-starred restaurant, 8.1 Booking.com · 2,403 reviews', url: 'https://www.booking.com/hotel/nl/hiltonrotterdam.html' }
     ] },
     'salvador': { h: [
-      { name: 'Pestana Convento do Carmo', note: 'Pestana brand — 16th-century Carmelite convent in Pelourinho UNESCO district, pool and spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/br/pestana-convento-do-carmo.html' },
-      { name: 'Zank by Toque Hotel', note: 'Independent boutique — adults-only, Santo Antônio neighborhood clifftop, pool with bay panorama · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/zank-boutique.html' },
-      { name: 'Fera Palace Hotel', note: 'Independent — historic Praça Castro Alves, colonial architecture, fine dining · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/fera-palace.html' },
-      { name: 'Hotel Bahia do Sol', note: 'Independent — Barra neighborhood, outdoor pool with bay views, near Farol da Barra lighthouse · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/bahia-do-sol.html' }
+      { name: 'Hotel Casa do Amarelindo', note: 'Independent boutique — Rua das Portas do Carmo in the Pelourinho, rooftop pool over the bay, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/br/casa-do-amarelindo.html' },
+      { name: 'Aram Yamí Boutique Hotel', note: 'Independent boutique — Direita de Santo Antônio above the historic centre, pool with bay panorama, 24h reception, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/aram-yami.html' },
+      { name: 'Hotel Fasano Salvador', note: 'Fasano brand — Praça Castro Alves in the historic centre, rooftop pool, spa, 24h reception, AC · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/fasano-salvador.html' },
+      { name: 'Novotel Salvador Rio Vermelho', note: 'Novotel — Rua Monte Conselho in Rio Vermelho, the only ladder-brand hotel in the city, outdoor pool, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/br/novotel-salvador-rio-vermelho.html' }
     ] },
     'salzburg': { h: [
       { name: 'Schloss Mönchstein', note: 'Independent luxury — 14th-century castle above the Old Town, spa, panoramic garden with city views · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/at/schloss-monchstein.html' },

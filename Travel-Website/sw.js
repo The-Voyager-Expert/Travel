@@ -817,7 +817,8 @@
 /* 2026-08-11: rome HOTEL_ALT_DATA rebuilt — two of the four entries pointed at dead Booking slugs (hotel-eden-rome.html and jk-place-roma.html both redirect to the homepage) and three scores were wrong. Hotel Eden is 8.9 on its real listing, under the non-brand bar, so it is replaced by Singer Palace Hotel Roma at 9.5 — the guide's own former title-card hotel. Villa Spalletti is 9.6 not 9.5, J.K. Place 9.6 not 9.4, de Russie 9.0 not 9.1. toolbar.js -> v413. CACHE to v585. */
 /* 2026-08-11: tokyo HOTEL_ALT_DATA — The Peninsula Tokyo quoted 9.4 and its own Booking listing reads 9.3 on 426 reviews (Rule 810: the score must be the one on the page linked). Read while re-picking the title card, which moves to The Tokyo EDITION, Ginza. toolbar.js -> v414. CACHE to v586. */
 /* 2026-08-11: rotterdam HOTEL_ALT_DATA — Rotterdam Marriott removed from its own alternates list, because the guide's title card just moved to it. The remaining four entries were left as found: their figures still match Booking, and the Hilton Rotterdam row reads 8.1 on 2,403 against a live 8.1 on 2,405. toolbar.js -> v415. CACHE to v587. */
-var CACHE = 'travel-cache-v587';
+/* 2026-08-11: salvador HOTEL_ALT_DATA rebuilt — three of the four entries were unusable. Pestana Convento do Carmo is delisted on Booking (its slug redirects to a closed-property search), Zank by Toque reads 8.1 against the 9.2 the guide quoted, and Fera Palace was listed as its own alternate now that the title card sits on it. Replaced with Casa do Amarelindo 9.4, Aram Yami 9.2, Fasano Salvador 9.1 and Novotel Rio Vermelho 8.1 — the only ladder-brand hotel in the city, too far out to hold the title card but worth naming. toolbar.js -> v416. CACHE to v588. */
+var CACHE = 'travel-cache-v588';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -825,7 +826,7 @@ var CACHE = 'travel-cache-v587';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 415, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 416, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
