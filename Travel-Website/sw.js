@@ -802,7 +802,8 @@
 /* 2026-08-11: hotel-rehome — porto title card moves to the InterContinental Porto · Palácio das Cardosas, so it is removed from that guide's own HOTEL_ALT_DATA (it was listed as an alternative to itself). NH Porto Jardim, the outgoing hotel, is 8.9 on Booking and does not clear the § 5 non-brand bar, so Timbre Virtudes 9.3 takes the slot. toolbar.js -> v398. CACHE to v570. */
 /* 2026-08-11: hotel-rehome — porto-alegre HOTEL_ALT_DATA rebuilt. The Sheraton Porto Alegre it led with is PERMANENTLY CLOSED (Google Maps says so outright; the property was rebranded Hilton Porto Alegre), and neither Intercity Iguatemi nor Lancaster resolves on Booking.com at all — all three carried a quoted score with no url. Replaced with Flat Avenida Independência 9.1, Intercity Aeroporto 9.1 and the outgoing ArtHotel Transamerica 8.6; Laghetto Stilo corrected 8.9 -> 9.0. toolbar.js -> v399. CACHE to v571. */
 /* 2026-08-11: hotel-rehome — cinque-terre HOTEL_ALT_DATA rebuilt. Three of its four entries carried a quoted Booking score with no url (La Torretta Lodge, Locanda Il Maestrale, Hotel Pasquale) and none of the three resolves on Booking.com; Villa Steno's 9.0 is not on the current listing either. Replaced with four properties read off their own live listings — Il colle di Monterosso 9.3, Margherita 9.2, La Spiaggia 9.1, Villa Adriana 9.0. toolbar.js -> v400. CACHE to v572. */
-var CACHE = 'travel-cache-v572';
+/* 2026-08-11: re-bump for the cinque-terre HOTEL_ALT_DATA rebuild described one line up. That bump (v400 / v572) was written into the worktree while uncommitted and was swept into aaa9b47a (porto-alegre) before the toolbar.js hunk it belonged to was committed, so the floor was already spent when the real change landed in 58287ade. toolbar.js -> v401. CACHE to v573. */
+var CACHE = 'travel-cache-v573';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -810,7 +811,7 @@ var CACHE = 'travel-cache-v572';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 400, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 401, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
