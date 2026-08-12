@@ -5486,7 +5486,7 @@ window.TVE.isPhone = function () {
     ] },
     'natal': { h: [
       { name: 'Rifóles Beach Hotel & Resort', note: 'Independent — beachfront on Ponta Negra, three pools, ocean views, close to Natal nightlife · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/rifoles-praia.html' },
-      { name: 'Ocean Palace Beach Resort & Bungalows', note: 'Independent — Ponta Negra Beach frontage, full resort with multiple pools and water park · 8.5 Booking.com' },
+      { name: 'Coral Plaza Apart Hotel', note: 'Independent — Rua Francisco Gurgel on the Ponta Negra beachfront, 24h reception, pool with kids' section, apartment-style rooms · 9.3 Booking.com', url: 'https://www.booking.com/hotel/br/coral-plaza-apart.html' },
       { name: 'Serhs Natal Grand Hotel', note: 'Serhs Hotels — Ponta Negra beachfront, outdoor pool, spa, large waterfront hotel · 8.7 Booking.com', url: 'https://www.booking.com/hotel/br/serhs-natal-grand.html' },
       { name: 'Pestana Natal Beach Resort', note: 'Pestana brand — Via Costeira beachfront, outdoor pool, Atlantic views, all-inclusive option · 8.5 Booking.com', url: 'https://www.booking.com/hotel/br/pestana-natal.html' }
     ] },
