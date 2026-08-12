@@ -2516,21 +2516,24 @@ window.TVE.isPhone = function () {
         var text = el.textContent || '';
         var m = /^Day\s+\d+/.exec(text);
         if (!m) return;
-        var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ').replace(/🚆\s+(?=Train Day)/, '🚆 · ');
+        var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ');
+        /* Strip any legacy 🚆 that may still be in guides during migration
+           (validator now hard-fails on 🚆 in overview-day-title; this keeps
+           the render correct while guides are being updated). */
+        rest = rest.replace(/🚆\s*(?:·\s*)?(?=Train\s+Day)/g, '');
         var num = document.createElement('span');
         num.className = 'overview-day-num';
         num.textContent = m[0];
         el.textContent = '';
         el.appendChild(num);
-        if (rest.indexOf('🚆') !== -1) {
-          rest.split('🚆').forEach(function (part, i) {
-            if (i) {
-              var mk = document.createElement('span');
-              mk.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train');
-              el.appendChild(mk);
-            }
-            el.appendChild(document.createTextNode(part));
-          });
+        if (rest.indexOf('Train Day') !== -1) {
+          /* Inject the drawn train icon immediately before the "Train Day" text. */
+          var _tdParts = rest.split('Train Day');
+          el.appendChild(document.createTextNode(_tdParts[0]));
+          var mk = document.createElement('span');
+          mk.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train');
+          el.appendChild(mk);
+          el.appendChild(document.createTextNode(' Train Day' + _tdParts[1]));
         } else {
           el.appendChild(document.createTextNode(rest));
         }
