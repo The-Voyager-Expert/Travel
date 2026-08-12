@@ -872,7 +872,8 @@
 /* 2026-08-12: ga-grid auto-scale — :has(> .neigh-card:nth-child(3/4)) bumps grid to 3/4 equal columns so all cards land on one row. guide-style.css -> v188. CACHE to v644. */
 /* 2026-08-12: toolbar.js HOTEL_ALT_DATA Verona Due Torri + Gabbia d'Oro urls toolbar.js -> v460. CACHE to v645. */
 /* 2026-08-12: Scottsdale: rehome to Phoenician Luxury Collection; toolbar v461, CACHE v644 toolbar.js -> v461. CACHE to v646. */
-var CACHE = 'travel-cache-v646';
+/* 2026-08-12: ga-grid card polish — center text (align-items+justify-content: center), white-space: nowrap prevents hyphen breaks in URLs like free-now.com. guide-style.css -> v189. CACHE to v647. */
+var CACHE = 'travel-cache-v647';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -880,7 +881,7 @@ var CACHE = 'travel-cache-v646';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 188, 'toolbar.js': 461, 'mobile.css': 77, 'web-travel-style.css': 33, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 461, 'mobile.css': 77, 'web-travel-style.css': 33, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
