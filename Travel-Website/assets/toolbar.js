@@ -5892,9 +5892,9 @@ window.TVE.isPhone = function () {
     ] },
     'split': { h: [
       { name: 'Hotel Vestibul Palace', note: 'Independent boutique — 7 suites inside the Roman Diocletian\'s Palace UNESCO walls, unrivalled historic setting · 9.4 Booking.com', url: 'https://www.booking.com/hotel/hr/vestibul-palace.html' },
-      { name: 'Radisson Blu Resort & Spa, Split', note: 'Radisson brand — Stobreč beach and marina, spa, infinity pool · 8.7 Booking.com', url: 'https://www.booking.com/hotel/hr/radisson-blu-resort-split.html' },
+      { name: 'Radisson Blu Resort & Spa, Split', note: 'Radisson brand — Stobreč beach and marina, spa, infinity pool · 8.4 Booking.com', url: 'https://www.booking.com/hotel/hr/radisson-blu-resort-split.html' },
       { name: 'Cornaro Hotel', note: 'Independent boutique — Diocletian\'s Palace Old Town edge, rooftop terrace with bar and hot tub · 9.1 Booking.com', url: 'https://www.booking.com/hotel/hr/cornaro.html' },
-      { name: 'AC Hotel by Marriott Split', note: 'Marriott brand — near Bačvice Beach, indoor pool and wellness centre, sea views · 9.5 Booking.com', url: 'https://www.booking.com/hotel/hr/ac-by-marriott-split.html' }
+      { name: 'Le Méridien Lav Split', note: 'Marriott brand — Podstrana beachfront 9 km south, indoor and outdoor pools, spa, tennis and kids\' club · 8.6 Booking.com', url: 'https://www.booking.com/hotel/hr/le-meridien-lav-split.html' }
     ] },
     'stockholm': { h: [
       { name: 'Nobis Hotel Stockholm', note: 'Independent boutique — Norrmalmstorg Square, 201 rooms, spa, celebrated Gold Bar and restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/se/nobis.html' },

@@ -843,7 +843,8 @@
 /* 2026-08-11: hotel-rehome — re-applying the naples-florida alt-data fix, which a parallel commit built from a stale toolbar.js baseline reverted off origin. toolbar.js -> v438. CACHE to v611. */
 /* 2026-08-11: wellington HOTEL_ALT_DATA — InterContinental Wellington becomes the title card so it leaves its own alternatives list; QT Wellington had no url and the 8.9 it quoted is not the live figure (Booking reads 8.0, under the 9.0 non-brand bar), and Museum Art Hotel does not resolve in Booking inventory under that name — both replaced. Sofitel keeps its slot with its real 8.8. Ohtel Wellington (9.2), The Cobbler Hotel (9.0, the outgoing title-card hotel) and The Intrepid Hotel (9.0) fill the list out to four, every entry with a verified Booking page. toolbar.js -> v439. CACHE to v612. */
 /* 2026-08-11: the last four emoji on a guide page, found by sweeping every rendered node for a visible emoji text run rather than by waiting for another screenshot. (1) Read more — 3,496 rows, one on EVERY stop of every guide and the most-repeated emoji left on the site; new .gm-mk-book mask, solid so it carries the same weight as the pin and ticket it shares a stop with, and scoped to .stop-row > a so prose is not swept. (2) book-at — 610 of its 619 rows sit in a .transit-box or a .train day block, neither of which was ever in the mark sweep's selector, so giving the glyph a mark this morning did nothing for them; a MARKS row cannot help a row the sweep never visits. (3) the open-now clock — built by toolbar.js with _updateLabel reassigning textContent on a timer, so any mark inserted from outside is wiped on the first tick; it now builds its own mark each tick, INSIDE the pill (the row is justify-content:space-between, so a sibling mark lands at the far left of the card) and removes everything when there is no timezone, because .open-now-local-time:empty is what hides the pill shell. (4) the lounge arrival chip plane — also toolbar-built, reuses NAV_ICONS.plane. Every glyph stays in a hidden .gm-mk-src span, so textContent is unchanged. Deliberately NOT converted: the check/caret/collapse text glyphs, the arrows in motion banners and between the drawn hotel and van marks (text connectors), and the Worth Knowing headline glyph, which is 92 different decorative emoji across 204 headlines — editorial, not an icon column. guide-style.css -> v180, toolbar.js -> v440. CACHE to v613. */
-var CACHE = 'travel-cache-v613';
+/* 2026-08-11: split HOTEL_ALT_DATA — the AC Hotel became the title-card hotel and was still listed as its own alternative; toolbar.js -> v441. CACHE to v614. */
+var CACHE = 'travel-cache-v614';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -851,7 +852,7 @@ var CACHE = 'travel-cache-v613';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 180, 'toolbar.js': 440, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 180, 'toolbar.js': 441, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
