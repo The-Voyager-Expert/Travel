@@ -5776,8 +5776,8 @@ window.TVE.isPhone = function () {
       { name: 'Hotel de Londres y de Inglaterra', note: 'Independent — Paseo de la Concha seafront, terrace with bay views, Brasserie restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/es/de-londres-y-de-inglaterra.html' }
     ] },
     'santa-barbara': { h: [
-      { name: 'El Encanto, A Belmond Hotel', note: 'Belmond brand — hilltop Spanish-Colonial bungalows, infinity pool, ocean and garden views · 9.2 Booking.com' },
-      { name: 'Rosewood Miramar Beach', note: 'Rosewood brand — Montecito oceanfront, 16 acres of gardens, pool, beachfront restaurant · 9.3 Booking.com' },
+      { name: 'El Encanto, A Belmond Hotel', note: 'Belmond brand — hilltop Spanish-Colonial bungalows, infinity pool, ocean and garden views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/el-encanto.html' },
+      { name: 'Rosewood Miramar Beach', note: 'Rosewood brand — Montecito oceanfront, 16 acres of gardens, pool, beachfront restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/rosewood-miramar-beach-montecito.html' },
       { name: 'Four Seasons Resort The Biltmore Santa Barbara', note: 'Four Seasons — Butterfly Beach Montecito, Spanish-Moorish landmark since 1927, Coral Casino club, two pools · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-santa-barbara.html' },
       { name: 'Kimpton Canary Hotel', note: 'IHG Kimpton — Anacapa Street downtown, rooftop pool with mountains-and-ocean views, Finch & Fork restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/canary.html' }
     ] },
