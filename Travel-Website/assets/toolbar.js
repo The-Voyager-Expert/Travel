@@ -6780,7 +6780,7 @@ window.TVE.isPhone = function () {
       wrap.className = 'extras-section';
       var h = document.createElement('div');
       h.className = 'extras-title';
-      h.textContent = 'Also in ' + country;
+      h.innerHTML = iconSVG(NAV_ICONS['globe'], 15, 'globe') + ' Also in ' + country;
       var pills = document.createElement('div');
       pills.className = 'also-in-country-pills';
       siblings.forEach(function (g) {
