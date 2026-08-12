@@ -904,7 +904,8 @@
 /* 2026-08-12: page-intro pass 2 — all 57 PRE-EXISTING intro cards rewritten to the same search-question standard as the new ones (head = the query as typed, first sentence = a standalone answer). The 34 Best-* pages were the weakest: editorial taglines ("Wildlife worth travelling for") where the query belongs ("Where can I see wild animals up close?"). Same pass: the intro-card CSS duplicated verbatim in 5 pages' <style> blocks was deleted — after the shared rule changed on 2026-08-12 those copies silently pinned those pages to the old centred/12.5px look — and the phone spacing 4 of them had each pasted locally moved into the shared sheet once, gated on pointer:coarse. web-travel-style.css -> v42. CACHE to v676. */
 /* 2026-08-12: ga-grid card layout — stack name above URL (flex-direction:column) to prevent overflow in 3-col layout. guide-style.css -> v191. CACHE to v677. */
 /* 2026-08-12: Santorini: expand 3→5 days (Days 4 wine country + Day 5 volcano boat excursion added; Days 1–4 restructured into geographic groupings after optimizer correction). CACHE to v678. */
-var CACHE = 'travel-cache-v678';
+/* 2026-08-12: ga-grid card layout — stack name above URL (flex-direction:column) to prevent overflow in 3-col layout. guide-style.css -> v191. CACHE to v679. */
+var CACHE = 'travel-cache-v679';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
