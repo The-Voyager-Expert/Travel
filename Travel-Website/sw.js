@@ -852,7 +852,8 @@
 /* 2026-08-11: pills: remove underline on hover — pills never underline. guide-style.css -> v183. web-travel-style.css -> v31. CACHE to v620. */
 /* 2026-08-11: Also in Country nav pill — replace 🌍 Apple emoji with drawn globe via iconSVG; added brain_check globe-emoji-aic-pill hard-fail. toolbar.js -> v446. CACHE to v623. */
 /* 2026-08-12: Trip Overview styleOverviewDayNumbers — detect "Train Day" text to inject drawn icon; no longer needs 🚆 in HTML. Validator hard-fails on 🚆 in .overview-day-title. toolbar.js -> v448. CACHE to v624. */
-var CACHE = 'travel-cache-v624';
+/* 2026-08-12: Airlines-of-the-World search input — align with TVESearch standard: removed per-page overrides (font-size 13px, wrong padding, no icon background); shared input[type=text] CSS now applies (16px, icon, correct padding). Wrapper top 14px → 35px. CACHE to v625. */
+var CACHE = 'travel-cache-v625';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
