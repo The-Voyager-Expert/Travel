@@ -5547,7 +5547,7 @@ window.TVE.isPhone = function () {
       { name: 'Orcas Hotel', note: 'Independent — 1904 Victorian at the Orcas ferry landing, wraparound porch, farm-to-table bistro · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/orcas-hotel.html' }
     ] },
     'orlando': { h: [
-      { name: 'Loews Portofino Bay Hotel at Universal Orlando', note: 'Loews brand — Italian Riviera theming, three pools, on-site Universal Express Pass access · 9.0 Booking.com' },
+      { name: 'Loews Portofino Bay Hotel at Universal Orlando', note: 'Loews brand — Italian Riviera theming, three pools, on-site Universal Express Pass access · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/loews-portofino-bay-at-universal-orlando.html' },
       { name: 'Walt Disney World Swan Reserve', note: 'Autograph Collection (Marriott) — on Disney property, multilevel pool, three restaurants, complimentary MagicBand · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/walt-disney-world-swan-reserve.html' },
       { name: 'Four Seasons Resort Orlando at Walt Disney World Resort', note: 'Four Seasons — on Disney property, Explorer Pool with lazy river, Capa steakhouse · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-resort-orlando.html' },
       { name: 'JW Marriott Orlando Grande Lakes', note: 'Marriott JW brand — Grande Lakes, lazy river, Greg Norman golf, Whisper Creek Farm-inspired dining · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/jw-marriott-grande-lakes.html' }
