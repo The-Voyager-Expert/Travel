@@ -5808,10 +5808,10 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Cumbres Lastarria', note: 'Independent — Lastarria bohemian quarter, rooftop terrace, contemporary Chilean design · 9.2 Booking.com', url: 'https://www.booking.com/hotel/cl/cumbres-lastarria.html' }
     ] },
     'santorini': { h: [
-      { name: 'Canaves Oia Suites', note: 'Independent luxury — Oia clifftop, infinity pools, Michelin Guide-listed restaurant, sunset-facing caldera view · 9.6 Booking.com' },
-      { name: 'Grace Hotel Santorini, Auberge Resorts Collection', note: 'Auberge Resorts — Imerovigli caldera cliff, adults-only, infinity pool with champagne service · 9.5 Booking.com' },
+      { name: 'Canaves Oia Suites', note: 'Independent luxury — Oia clifftop, infinity pools, Michelin Guide-listed restaurant, sunset-facing caldera view · 9.6 Booking.com', url: 'https://www.booking.com/hotel/gr/canaves-oia-suites.html' },
+      { name: 'Grace Hotel Santorini, Auberge Resorts Collection', note: 'Auberge Resorts — Imerovigli caldera cliff, adults-only, infinity pool with champagne service · 9.5 Booking.com', url: 'https://www.booking.com/hotel/gr/grace-hotel-santorini.html' },
       { name: 'Katikies Santorini', note: 'Small Luxury Hotels — Oia caldera edge, three infinity pools, Zeus restaurant, adults-only · 9.5 Booking.com', url: 'https://www.booking.com/hotel/gr/katikies.html' },
-      { name: 'Mystique, a Luxury Collection Hotel, Santorini', note: 'Marriott Luxury Collection — Oia volcanic cliff, Charisma pool above the caldera · 9.4 Booking.com', url: 'https://www.booking.com/hotel/gr/mystique-a-luxury-collection-hotel.html' }
+      { name: 'Olympic Villas', note: 'Independent boutique — Oia caldera-view villas with private pools, quiet location steps from main street · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gr/olympic-villas-oia-santorini.html' }
     ] },
     'sarasota': { h: [
       { name: 'The Westin Sarasota', note: 'Marriott family — downtown bayfront tower, outdoor rooftop pool, marina and Sarasota Bay views · 9.0 Booking.com' },
