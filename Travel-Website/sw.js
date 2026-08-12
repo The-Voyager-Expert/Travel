@@ -901,7 +901,8 @@
 /* 2026-08-12: OWNER-DIRECTED site-wide page intros — every non-guide page now opens with a banner plus an intro card written to answer the question the reader typed into Google (head = the query, first sentence = a standalone answer). .page-intro-card switched align-items center -> flex-start so a multi-sentence body sits against the heading instead of floating a centred icon mid-paragraph, .page-intro-sub 12.5px/1.55 -> 13px/1.65 (it stopped being a caption and became the paragraph the page is found by), and the intro-banner SIZE CAP was deleted from validate_intro_banner.py — owner: "no limit the banner can grow". web-travel-style.css -> v41. CACHE to v673. */
 /* 2026-08-12: Budget filter chips on index.html rendered Apple emoji (💰 💳 ✨) although money and sparkle have had marks for months. Root cause was NOT the missing selector: _injectRowMarks() opened with `if (!isRealGuide) return`, so it was a no-op on every non-guide page, and the .gm-mk masks live only in guide-style.css, which index.html does not load (240 KB). Gate moved below the shared machinery; a #tt-budget-chips sweep added above it; the four .gm-mk rules plus money/sparkle/card copied into guides-index-style.css; new 💳 → card mark in MARKS and in both stylesheets. Scoped to #tt-budget-chips deliberately — a bare .ttchip sweep blanked the 🌤 Mild climate chip, whose mask does not exist there. guides-index-style.css -> v4, guide-style.css -> v190, toolbar.js -> v481. CACHE to v674. */
 /* 2026-08-12: bend HOTEL_ALT_DATA — remove Sunriver Resort + Lara House Lodge, add Waypoint Hotel + Campfire Hotel (4 alts with Booking.com URLs). toolbar.js -> v482. CACHE to v675. */
-var CACHE = 'travel-cache-v675';
+/* 2026-08-12: page-intro pass 2 — all 57 PRE-EXISTING intro cards rewritten to the same search-question standard as the new ones (head = the query as typed, first sentence = a standalone answer). The 34 Best-* pages were the weakest: editorial taglines ("Wildlife worth travelling for") where the query belongs ("Where can I see wild animals up close?"). Same pass: the intro-card CSS duplicated verbatim in 5 pages' <style> blocks was deleted — after the shared rule changed on 2026-08-12 those copies silently pinned those pages to the old centred/12.5px look — and the phone spacing 4 of them had each pasted locally moved into the shared sheet once, gated on pointer:coarse. web-travel-style.css -> v42. CACHE to v676. */
+var CACHE = 'travel-cache-v676';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -909,7 +910,7 @@ var CACHE = 'travel-cache-v675';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 190, 'toolbar.js': 482, 'mobile.css': 77, 'web-travel-style.css': 41, 'guides-index-style.css': 4, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 190, 'toolbar.js': 482, 'mobile.css': 77, 'web-travel-style.css': 42, 'guides-index-style.css': 4, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
