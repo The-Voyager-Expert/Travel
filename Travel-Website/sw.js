@@ -805,7 +805,8 @@
 /* 2026-08-11: re-bump for the cinque-terre HOTEL_ALT_DATA rebuild described one line up. That bump (v400 / v572) was written into the worktree while uncommitted and was swept into aaa9b47a (porto-alegre) before the toolbar.js hunk it belonged to was committed, so the floor was already spent when the real change landed in 58287ade. toolbar.js -> v401. CACHE to v573. */
 /* 2026-08-11: hotel-rehome — colmar HOTEL_ALT_DATA rebuilt for the move to the Novotel Suites. Hostellerie Le Maréchal and La Maison des Têtes had no url, and their quoted 9.2 / 8.9 are 8.6 / 9.1 on the live listings; Le Colombier's 9.2 could not be read off any listing and Grand Hôtel Bristol is 8.5 or lower. Rebuilt on four verified properties: Au Grenier à Sel 9.3, L'Esquisse 9.2 (the outgoing title-card hotel), La Maison des Têtes 9.1, James Boutique 9.0. toolbar.js -> v402. CACHE to v574. */
 /* 2026-08-11: hotel-rehome — nice HOTEL_ALT_DATA rebuilt on verified Booking listings: the Hyatt Palais de la Méditerranée entry had no url and the wrong name, Beau Rivage 8.8 dropped as a sub-9.0 non-brand, Maison Albar - Le Victoria 9.1 added, Negresco corrected 9.0 -> 9.3. toolbar.js -> v403. CACHE to v575. */
-var CACHE = 'travel-cache-v575';
+/* 2026-08-11: hotel-rehome — corfu HOTEL_ALT_DATA rebuilt on Corfu Old Town properties read off their own listings: Albergo Botti 9.6, The Calliston 9.5, New York Luxury Suites 9.5, Bella Venezia 9.3. Kontokali Bay quoted 9.4 with no url; MarBella 8.7 and Grecotel Corfu Imperial 8.9 are under the § 5 non-brand bar; Domes Miramare is a ladder resort 20 km south at Moraitika and fails the § 3 walking gate for a guide whose every stop is inside the walled town, so it is not a usable alternative base either. toolbar.js -> v404. CACHE to v576. */
+var CACHE = 'travel-cache-v576';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -813,7 +814,7 @@ var CACHE = 'travel-cache-v575';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 403, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 404, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

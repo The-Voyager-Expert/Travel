@@ -4940,10 +4940,10 @@ window.TVE.isPhone = function () {
       { name: 'Villa Copenhagen', note: 'Design Hotels — converted 1909 Post & Telegraph headquarters opposite Tivoli, outdoor heated pool, BRASSERIE CENTRAL, spa · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/dk/villa-copenhagen.html' }
     ] },
     'corfu': { h: [
-      { name: 'Kontokali Bay Resort & Spa', note: 'Independent — beachfront north of Corfu Town, 11-treatment-room spa, water sports center, multiple pools and beach restaurants · 9.4 Booking.com' },
-      { name: 'Domes Miramare, a Luxury Collection Resort, Corfu', note: 'Marriott Luxury Collection — adults-only, Moraitika beachfront on the Ionian, overwater pool-bungalow suites, spa and infinity pool · 9.1 Booking.com', url: 'https://www.booking.com/hotel/gr/domes-miramare-corfu.html' },
-      { name: 'MarBella Corfu Hotel', note: 'Independent — Agios Ioannis Peristeron beach, multiple pools, thalassotherapy spa · 8.7 Booking.com', url: 'https://www.booking.com/hotel/gr/marbella-corfu.html' },
-      { name: 'Grecotel Corfu Imperial', note: 'Grecotel brand — private peninsula in Kommeno Bay, three beaches, thalasso spa · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gr/grecotel-corfu-imperial.html' }
+      { name: 'Albergo Botti', note: 'Independent — Irinis Dendrinou in the Old Town, a restored Venetian townhouse, AC, soundproofed rooms · 9.6 Booking.com', url: 'https://www.booking.com/hotel/gr/albergo-botti.html' },
+      { name: 'The Calliston', note: 'Independent — Arseniou by the sea wall at the north edge of the Old Town, AC, airport transfers · 9.5 Booking.com', url: 'https://www.booking.com/hotel/gr/the-calliston.html' },
+      { name: 'New York Luxury Suites', note: 'Independent — Donzelot on the old harbour front, suites with AC and a terrace over the Old Town roofs · 9.5 Booking.com', url: 'https://www.booking.com/hotel/gr/new-york-luxury-suites-kerkura5.html' },
+      { name: 'Bella Venezia', note: 'Independent — N. Zampeli a block off the Spianada, 4-star in a 19th-century neoclassical mansion, garden breakfast terrace, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gr/bella-venezia.html' }
     ] },
     'crete': { h: [
       { name: 'Galaxy Hotel Iraklio', note: 'Independent 5-star — Heraklion\'s central elegant district, two on-site restaurants, freshwater outdoor pool, wellness and fitness center · 8.6 Booking.com', url: 'https://www.booking.com/hotel/gr/galaxy-heraklion.html' },
