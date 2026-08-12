@@ -3868,18 +3868,51 @@ window.TVE.isPhone = function () {
        That padding is 14px on desktop and 12px at the mobile breakpoint, so the
        number cannot live in the stylesheet — it is read off the card here and
        re-read on resize, which is also what makes an orientation change land on
-       the right value instead of a 2px overhang. 2.5px is the rail width. */
+       the right value instead of a 2px overhang.
+
+       🔒 NEVER MEASURE A CARD THAT REPORTS NO GUTTER (fixed 2026-08-11).
+       A .tour-box / .ticket-box is `padding: 10px 14px` in guide-style.css and
+       `10px 12px` at the mobile breakpoint. It is NEVER 0 — a 0 reading means
+       the stylesheet is not applied at the moment we measured, and the whole
+       computation is then garbage: margin-left lands on -0, the negative bleed
+       never happens, `.tve-ph{padding:0 14px}` from the injected sheet survives,
+       and every hours band on the page sits ONE FULL 14px GUTTER right of the
+       🎟 / 📍 / ⚠️ rows above and below it (owner report 2026-08-11, on a Prague
+       stop card: "this is not aligned … look at the time" — all 19 bands on that
+       page were stepped in).
+
+       That window is real and it is OURS: the CSS version guard at the top of
+       this file rewrites the guide-style.css link's `?v=` when a guide ships an
+       older number (every guide does — they stamp v=29-ish against CURRENT).
+       Assigning `link.href` makes Chrome DROP the loaded sheet immediately and
+       refetch, so between the swap and the new sheet's arrival the document has
+       NO guide CSS at all. Measured on Prague: first sheet done at 267ms, swap
+       fires, DOMContentLoaded at 361ms — _phFit ran HERE, on an unstyled
+       document — and the replacement sheet only landed at 619ms.
+
+       So: bail on a 0 gutter rather than writing wrong values (the injected
+       CSS defaults of 14/-14 are already correct for desktop, so the band stays
+       aligned meanwhile), and re-run on `load`, which by definition waits for
+       every stylesheet. Do not "simplify" either half away.
+
+       The left pad is the gutter MINUS the element's own left border, read off
+       the element rather than hardcoded: .tve-ph-panel still carries a 2.5px
+       rail, while .tve-ph and .tve-ph-toggle lost theirs on 2026-08-11 (owner:
+       "the hours time no terracota bar on the left"). The constant 2.5 stayed
+       behind and hung both of those 2.5px LEFT of the icon column. */
     var _phBands = [];
     function _phFit() {
       _phBands.forEach(function (outer) {
         if (!outer.parentNode) return;
         var cs = getComputedStyle(outer.parentNode);
         var pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0;
+        if (!pl) return;   /* styles not applied yet — see the block above */
         outer.style.setProperty('margin-left', -pl + 'px', 'important');
         outer.style.setProperty('margin-right', -pr + 'px', 'important');
         var pad = function (n) {
           if (!n) return;
-          n.style.setProperty('padding-left', (pl - 2.5) + 'px', 'important');
+          var bl = parseFloat(getComputedStyle(n).borderLeftWidth) || 0;
+          n.style.setProperty('padding-left', Math.max(0, pl - bl) + 'px', 'important');
           n.style.setProperty('padding-right', pr + 'px', 'important');
         };
         /* Flat band paints itself; a wrap paints through its toggle + panel. */
@@ -3989,6 +4022,11 @@ window.TVE.isPhone = function () {
     });
 
     _phFit();
+    /* Second pass once every stylesheet has actually landed. At DOMContentLoaded
+       the guide sheet may still be in flight behind the version guard's href
+       swap (see the _phFit header) — `load` is the only event that guarantees it
+       is applied, and the first pass has bailed rather than written garbage. */
+    if (document.readyState !== 'complete') window.addEventListener('load', _phFit);
     var _phT;
     window.addEventListener('resize', function () {
       clearTimeout(_phT);
