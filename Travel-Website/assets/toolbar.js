@@ -6259,6 +6259,40 @@ window.TVE.isPhone = function () {
     _injectHotelAlternatives();
   }
 
+  /* ── Getting Around — 2-column card grid for guides with simple taxi-app pairs ──
+     Moves existing .extras-sub + .transit-box elements (not clones) into .neigh-card
+     wrappers inside a .ga-grid. Original elements are preserved intact so
+     _injectRowMarks still finds and marks .extras-sub wherever it now lives. */
+  function _injectGAGrid() {
+    var section = document.getElementById('getting-around');
+    if (!section) return;
+    var pairs = [], i, el, next;
+    for (i = 0; i < section.children.length; i++) {
+      el = section.children[i];
+      if (!el.classList.contains('extras-sub')) continue;
+      next = el.nextElementSibling;
+      if (!next || !next.classList.contains('transit-box')) return;
+      if (next.children.length !== 1 || next.querySelector('.stop-row')) return;
+      pairs.push([el, next]);
+    }
+    if (pairs.length < 2) return;
+    var grid = document.createElement('div');
+    grid.className = 'ga-grid';
+    pairs.forEach(function (pair) {
+      var card = document.createElement('div');
+      card.className = 'neigh-card';
+      card.appendChild(pair[0]);
+      card.appendChild(pair[1]);
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectGAGrid);
+  } else {
+    _injectGAGrid();
+  }
+
   /* ── Best-Of cross-links — injected before #also-on-this-site on guide pages
      that appear in one or more Best-Of collections. CITY_BEST_OF_MAP is generated
      by Brain/scripts/build/build_best_of_map.py — re-run after adding a new Best-Of
