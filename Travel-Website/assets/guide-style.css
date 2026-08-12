@@ -3836,16 +3836,29 @@ a.also-in-country-pill:active {
   .ga-grid { grid-template-columns: 1fr; gap: 7px; }
 }
 
-/* Getting Around — 2-column card grid; same card shape as hotel-alternatives.
-   Injected by toolbar.js _injectGAGrid — fires only when the section contains
-   exactly simple extras-sub + transit-box pairs (no stop-rows, 1 child only). */
+/* Getting Around / Food Delivery / Weekly Closures — compact card grids.
+   Injected by toolbar.js (_injectGAGrid, _injectWCGrid). */
 .ga-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;  /* fixed 2-col for 2-entry sections */
   gap: 10px;
 }
+.ga-grid.ga-auto {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));  /* adapts for 2-4 entries */
+}
 .extras-section .extras-title:has(+ .ga-grid) { margin-bottom: 0; }
-.neigh-card .extras-sub { margin: 0 0 5px; }
+/* extras-sub + transit-box cards: name and link on the same line */
+.ga-grid .neigh-card:has(.extras-sub) {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 14px;
+}
+.ga-grid .neigh-card .extras-sub { margin: 0; flex-shrink: 0; }
+.ga-grid .neigh-card .transit-box { margin: 0; }
+.ga-grid .neigh-card .transit-box > div { margin-top: 0; }
+/* stop-row cards (weekly closures): single text line, no margin */
+.ga-grid .neigh-card .stop-row { margin: 0; font-size: var(--fs-stop-row); }
 
 /* ── Address copy button — injected by toolbar.js on 📍 stop rows ──────── */
 .addr-copy {

@@ -6259,12 +6259,12 @@ window.TVE.isPhone = function () {
     _injectHotelAlternatives();
   }
 
-  /* ── Getting Around — 2-column card grid for guides with simple taxi-app pairs ──
-     Moves existing .extras-sub + .transit-box elements (not clones) into .neigh-card
-     wrappers inside a .ga-grid. Original elements are preserved intact so
-     _injectRowMarks still finds and marks .extras-sub wherever it now lives. */
-  function _injectGAGrid() {
-    var section = document.getElementById('getting-around');
+  /* ── Getting Around + Food Delivery — 2-column card grid ──────────────────
+     Moves .extras-sub + .transit-box pairs into .neigh-card wrappers inside
+     a .ga-grid. Elements are moved not cloned so _injectRowMarks still finds
+     and marks .extras-sub wherever it lives. Fires for both sections. */
+  function _injectGAGrid(sectionId) {
+    var section = document.getElementById(sectionId);
     if (!section) return;
     var pairs = [], i, el, next;
     for (i = 0; i < section.children.length; i++) {
@@ -6287,10 +6287,38 @@ window.TVE.isPhone = function () {
     });
     section.appendChild(grid);
   }
+  /* ── Weekly Closures — auto-fill card grid ─────────────────────────────────
+     Wraps each .stop-row in a .neigh-card inside a .ga-grid.ga-auto (auto-fill
+     columns that adapt from 2 to 4 entries). Only fires for 2+ stop-rows. */
+  function _injectWCGrid() {
+    var section = document.getElementById('weekly-closures');
+    if (!section) return;
+    var rows = [], i, el;
+    for (i = 0; i < section.children.length; i++) {
+      el = section.children[i];
+      if (el.classList.contains('stop-row')) rows.push(el);
+    }
+    if (rows.length < 2) return;
+    var grid = document.createElement('div');
+    grid.className = 'ga-grid ga-auto';
+    rows.forEach(function (row) {
+      var card = document.createElement('div');
+      card.className = 'neigh-card';
+      card.appendChild(row);
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+  }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _injectGAGrid);
+    document.addEventListener('DOMContentLoaded', function () {
+      _injectGAGrid('getting-around');
+      _injectGAGrid('food-delivery');
+      _injectWCGrid();
+    });
   } else {
-    _injectGAGrid();
+    _injectGAGrid('getting-around');
+    _injectGAGrid('food-delivery');
+    _injectWCGrid();
   }
 
   /* ── Best-Of cross-links — injected before #also-on-this-site on guide pages
