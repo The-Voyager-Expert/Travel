@@ -5848,7 +5848,7 @@ window.TVE.isPhone = function () {
       { name: 'The Shilla Seoul', note: 'Independent luxury — 23 acres of gardens on Namsan Hill, indoor pool, Korean contemporary luxury, flagship spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/kr/the-shilla.html' },
       { name: 'Park Hyatt Seoul', note: 'Hyatt brand — Gangnam CBD, 24th-floor heated indoor infinity pool, Lounge on the Park panoramic bar · 9.1 Booking.com', url: 'https://www.booking.com/hotel/kr/park-hyatt-seoul.html' },
       { name: 'Four Seasons Hotel Seoul', note: 'Four Seasons brand — Jongno-gu near Gyeongbokgung, indoor and outdoor pools, Boccalino restaurant, full-service spa · 9.3 Booking.com', url: 'https://www.booking.com/hotel/kr/four-seasons-seoul.html' },
-      { name: 'Josun Palace, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — Gangnam district, rooftop pool and bar, Dosa restaurant, spa, Korean contemporary design · 9.2 Booking.com', url: 'https://www.booking.com/hotel/kr/josun-palace-a-luxury-collection-seoul-gangnam.html' }
+      { name: 'JW Marriott Hotel Seoul', note: 'Marriott JW brand — Gangnam business district, rooftop outdoor pool, J Dining restaurant, spa, city views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/kr/jw-marriott-hotel-seoul.html' }
     ] },
     'seville': { h: [
       { name: 'Casa 1800 Sevilla', note: 'Independent boutique — 33 rooms in a 19th-century mansion near the Cathedral, rooftop terrace with tower views · 9.6 Booking.com' , url: 'https://www.booking.com/hotel/es/casa-1800-sevilla.html' },
