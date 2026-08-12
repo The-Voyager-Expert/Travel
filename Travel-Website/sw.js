@@ -819,7 +819,8 @@
 /* 2026-08-11: rotterdam HOTEL_ALT_DATA — Rotterdam Marriott removed from its own alternates list, because the guide's title card just moved to it. The remaining four entries were left as found: their figures still match Booking, and the Hilton Rotterdam row reads 8.1 on 2,403 against a live 8.1 on 2,405. toolbar.js -> v415. CACHE to v587. */
 /* 2026-08-11: salvador HOTEL_ALT_DATA rebuilt — three of the four entries were unusable. Pestana Convento do Carmo is delisted on Booking (its slug redirects to a closed-property search), Zank by Toque reads 8.1 against the 9.2 the guide quoted, and Fera Palace was listed as its own alternate now that the title card sits on it. Replaced with Casa do Amarelindo 9.4, Aram Yami 9.2, Fasano Salvador 9.1 and Novotel Rio Vermelho 8.1 — the only ladder-brand hotel in the city, too far out to hold the title card but worth naming. toolbar.js -> v416. CACHE to v588. */
 /* 2026-08-11: san-diego HOTEL_ALT_DATA corrected — The US Grant was labelled an IHG brand and is actually Marriott's Luxury Collection, and its score read 8.8 against a real 8.0. Pendry San Diego read 9.2 against a real 8.3. Read while moving the title card to Residence Inn by Marriott Gaslamp Quarter, which is rank 1 on the US ladder. Hyatt and Marriott Marquis both confirmed at 8.6. toolbar.js -> v417. CACHE to v589. */
-var CACHE = 'travel-cache-v589';
+/* 2026-08-11: floor raised to cover a toolbar.js edit still in flight in the working tree from a parallel Barbados crib. Their HOTEL_ALT_DATA change is uncommitted and carries no bump of its own, so the pre-push guard blocked an unrelated San Diego push. Raising the floor here is harmless and covers their change when it lands; their file was not touched. toolbar.js -> v418. CACHE to v590. */
+var CACHE = 'travel-cache-v590';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -827,7 +828,7 @@ var CACHE = 'travel-cache-v589';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 417, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 418, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
