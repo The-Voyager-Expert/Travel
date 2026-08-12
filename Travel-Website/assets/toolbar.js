@@ -5839,8 +5839,8 @@ window.TVE.isPhone = function () {
       { name: 'Hotel 1000', note: 'Independent boutique — downtown First Avenue, BOKA Kitchen + Bar, spa with indoor pool, virtual golf · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-1000.html' }
     ] },
     'sedona': { h: [
-      { name: 'Enchantment Resort', note: 'Independent luxury — canyon-floor 70-acre resort in Boynton Canyon, mii amo destination spa, red-rock surrounds · 9.3 Booking.com' },
-      { name: 'L\'Auberge de Sedona', note: 'Independent luxury — Oak Creek canyon setting, cottage suites, farm-to-table Cress restaurant · 9.2 Booking.com' },
+      { name: 'Enchantment Resort', note: 'Independent luxury — canyon-floor 70-acre resort in Boynton Canyon, mii amo destination spa, red-rock surrounds · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/enchantment-resort.html' },
+      { name: 'L\'Auberge de Sedona', note: 'Independent luxury — Oak Creek canyon setting, cottage suites, farm-to-table Cress restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/l-auberge-de-sedona.html' },
       { name: 'Amara Resort and Spa', note: 'Independent — Uptown Sedona on Oak Creek, adults-only pool, HARVEST restaurant, red-rock views · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/amara-resort-spa.html' },
       { name: 'Mii amo, A Destination Spa Resort', note: 'Enchantment Resort spa property — Boynton Canyon, all-inclusive spa retreat, crystal garden, yoga · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/mii-amo.html' }
     ] },
