@@ -853,7 +853,7 @@
 /* 2026-08-11: Also in Country nav pill — replace 🌍 Apple emoji with drawn globe via iconSVG; added brain_check globe-emoji-aic-pill hard-fail. toolbar.js -> v446. CACHE to v623. */
 /* 2026-08-12: Trip Overview styleOverviewDayNumbers — detect "Train Day" text to inject drawn icon; no longer needs 🚆 in HTML. Validator hard-fails on 🚆 in .overview-day-title. toolbar.js -> v448. CACHE to v624. */
 /* 2026-08-12: Airlines-of-the-World search input — align with TVESearch standard: removed per-page overrides (font-size 13px, wrong padding, no icon background); shared input[type=text] CSS now applies (16px, icon, correct padding). Wrapper top 14px → 35px. CACHE to v625. */
-var CACHE = 'travel-cache-v625';
+var CACHE = 'travel-cache-v626';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -861,7 +861,7 @@ var CACHE = 'travel-cache-v625';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 183, 'toolbar.js': 448, 'mobile.css': 76, 'web-travel-style.css': 31, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 183, 'toolbar.js': 449, 'mobile.css': 76, 'web-travel-style.css': 31, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

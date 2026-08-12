@@ -5770,8 +5770,8 @@ window.TVE.isPhone = function () {
       { name: 'Trumpeter Inn', note: 'Independent — country-setting B&B, private pond with trumpeter swans, full gourmet breakfast · 9.7 Booking.com' }
     ] },
     'san-sebastian': { h: [
-      { name: 'Hotel Maria Cristina, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1912 Belle Époque landmark on Urumea riverside, San Sebastián Film Festival HQ · 9.3 Booking.com' },
-      { name: 'Akelarre Hotel', note: 'Independent — Pedro Subijana three-Michelin-star restaurant, 22 rooms on Igeldo cliffs, Bay of Biscay panorama · 9.7 Booking.com' },
+      { name: 'Hotel Maria Cristina, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1912 Belle Époque landmark on Urumea riverside, San Sebastián Film Festival HQ · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/maria-cristina-san-sebastian.html' },
+      { name: 'Akelarre Hotel', note: 'Independent — Pedro Subijana three-Michelin-star restaurant, 22 rooms on Igeldo cliffs, Bay of Biscay panorama · 9.7 Booking.com', url: 'https://www.booking.com/hotel/es/akelarre-igueldo.html' },
       { name: 'Hotel Villa Soro', note: 'Independent — 1890s Edwardian mansion in Ondarreta, pool, garden, 10 min to La Concha beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/villa-soro.html' },
       { name: 'Hotel de Londres y de Inglaterra', note: 'Independent — Paseo de la Concha seafront, terrace with bay views, Brasserie restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/es/de-londres-y-de-inglaterra.html' }
     ] },
