@@ -5869,8 +5869,8 @@ window.TVE.isPhone = function () {
       { name: 'Capella Shanghai, Jian Ye Li', note: 'Capella brand — nine restored 1930s shikumen townhouses in Jing\'an, outdoor pool, Cassio restaurant, intimate 35-villa complex · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/cn/capella-shanghai-jian-ye-li.html' }
     ] },
     'sicily': { h: [
-      { name: 'San Domenico Palace, Taormina, A Four Seasons Hotel', note: 'Four Seasons brand — 14th-century Dominican monastery, cliffside garden, pool, Etna and Ionian Bay views · 9.3 Booking.com' },
-      { name: 'Belmond Grand Hotel Timeo', note: 'Belmond brand — 1873 hilltop above Taormina, pool, Teatro Greco views, La Terrazza restaurant · 9.4 Booking.com' },
+      { name: 'San Domenico Palace, Taormina, A Four Seasons Hotel', note: 'Four Seasons brand — 14th-century Dominican monastery, cliffside garden, pool, Etna and Ionian Bay views · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/san-domenico-palace-taormina.html' },
+      { name: 'Belmond Grand Hotel Timeo', note: 'Belmond brand — 1873 hilltop above Taormina, pool, Teatro Greco views, La Terrazza restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-timeo.html' },
       { name: 'Verdura Resort', note: 'Rocco Forte Hotels — Sciacca seafront, three 18-hole golf courses, spa, three pools · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/verdura-resort.html' },
       { name: 'Palazzo Failla Hotel', note: 'Independent — 18th-century Modica baroque palace, courtyard terrace, local cuisine restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/palazzo-failla.html' }
     ] },
