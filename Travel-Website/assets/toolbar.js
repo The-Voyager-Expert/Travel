@@ -1103,7 +1103,19 @@ window.TVE.isPhone = function () {
       '--c-tastes-text:#3a2a05;--c-headsup-text:#3a1a1a;--c-headsup-link:#a61c00}' +
     'html[data-theme="light"] ::selection{background:rgba(122,59,30,.35);color:inherit}' +
     'html[data-theme="light"] .also-on-this-site-pill,' +
-    'html[data-theme="light"] .nearby-guide-pill{background:#ffffff;color:#8a6c1a;border-color:#c8a44a}'
+    'html[data-theme="light"] .nearby-guide-pill{background:#ffffff;color:#8a6c1a;border-color:#c8a44a}' +
+    /* ── Dark-mode nav-link override — #7a3b1e (dark rust) is low-contrast on dark bg; shift to brand gold ── */
+    '@media (prefers-color-scheme:dark){' +
+      '.tb a,.tb a:visited,.tb a:hover{color:#c8a060!important}' +
+      '.tb-ddbtn,.tb-ddbtn:hover{color:#c8a060!important}' +
+      '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}' +
+    '}' +
+    'html[data-theme="dark"] .tb a,' +
+    'html[data-theme="dark"] .tb a:visited,' +
+    'html[data-theme="dark"] .tb a:hover{color:#c8a060!important}' +
+    'html[data-theme="dark"] .tb-ddbtn,' +
+    'html[data-theme="dark"] .tb-ddbtn:hover{color:#c8a060!important}' +
+    'html[data-theme="dark"] .tb-dd.tb-open>.tb-ddbtn:not(.tb-active){color:#c8a060!important}'
     ;
   document.head.appendChild(styleEl);
 
