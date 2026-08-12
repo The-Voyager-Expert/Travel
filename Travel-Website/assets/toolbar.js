@@ -5559,9 +5559,9 @@ window.TVE.isPhone = function () {
     ] },
     'porto': { h: [
       { name: 'The Yeatman Hotel', note: 'Independent luxury — Taylor\'s Port wine cellars hilltop, infinity pool, two-Michelin-star Yeatman Restaurant, Douro panorama · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/pt/the-yeatman.html' },
+      { name: 'Timbre Virtudes', note: 'Independent 5-star — Rua São Pedro de Miragaia above the Virtudes gardens, Douro-facing terrace, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/pt/das-virtudes.html' },
       { name: 'Torel Avantgarde', note: 'Independent boutique — adults-only, hilltop gardens with city and Douro panoramas, outdoor pool · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/pt/torel-avantgarde.html' },
-      { name: 'Infante Sagres Luxury Historic Hotel', note: 'Leading Hotels of the World — 1951 Art Deco building in central Porto, Portuense restaurant, curated antique interiors · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/pt/infante-de-sagres.html' },
-      { name: 'InterContinental Porto - Palácio das Cardosas', note: 'IHG brand — 18th-century convent on Praça da Liberdade, outdoor heated pool, Astoria restaurant, National Parliament adjacent · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/pt/intercontinental-porto-palacio-das-cardosas.html' }
+      { name: 'Infante Sagres Luxury Historic Hotel', note: 'Leading Hotels of the World — 1951 Art Deco building in central Porto, Portuense restaurant, curated antique interiors · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/pt/infante-de-sagres.html' }
     ] },
     'porto-alegre': { h: [
       { name: 'Sheraton Porto Alegre Hotel', note: 'Marriott family — Praia de Belas district, outdoor pool, business-class service, convention facilities · 8.4 Booking.com' },

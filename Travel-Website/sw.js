@@ -799,7 +799,8 @@
 /* 2026-08-11: hotel-rehome — portland HOTEL_ALT_DATA rebuilt on Booking-verified properties: The Benson Hotel and The Heathman have no Booking.com listing at all (both quoted a score with no url; the Heathman's was an Expedia number), and Hotel deLuxe's 8.7 is actually 7.9. Replaced with Inn at Northrup Station 9.1, Cambria Pearl District 9.0 and Silver Cloud 9.0; The Nines corrected from a TripAdvisor 4.4 to its Booking 9.0. toolbar.js -> v395. CACHE to v567. */
 /* 2026-08-11: hotel-rehome — aracaju HOTEL_ALT_DATA offered the Vidam, its own title-card hotel, as an alternative to itself, and that entry's url pointed at a Radisson listing that does not resolve on Booking; replaced with Del Mar Hotel 9.0. Quality Hotel Aracaju's quoted 8.8 corrected to the 9.0 on its live listing. toolbar.js -> v396. CACHE to v568. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['milan'] listed NH Collection Porta Nuova, which is now the guide's own title-card hotel, and two of its four Booking slugs were dead (bulgari-hotel-milan and four-seasons-hotel-milano both redirect to the generic search page). Rebuilt on four verified properties: Portrait Milano 9.5 (the outgoing title-card hotel), Mandarin Oriental 9.5, Four Seasons 9.1 on its real slug, Principe di Savoia 9.0. toolbar.js -> v397. CACHE to v569. */
-var CACHE = 'travel-cache-v569';
+/* 2026-08-11: hotel-rehome — porto title card moves to the InterContinental Porto · Palácio das Cardosas, so it is removed from that guide's own HOTEL_ALT_DATA (it was listed as an alternative to itself). NH Porto Jardim, the outgoing hotel, is 8.9 on Booking and does not clear the § 5 non-brand bar, so Timbre Virtudes 9.3 takes the slot. toolbar.js -> v398. CACHE to v570. */
+var CACHE = 'travel-cache-v570';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -807,7 +808,7 @@ var CACHE = 'travel-cache-v569';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 397, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 398, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
