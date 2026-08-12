@@ -848,7 +848,8 @@
 /* 2026-08-11: osaka HOTEL_ALT_DATA — The St. Regis Osaka became the title-card hotel in 086db065 and was still listed as its own alternative, the same defect fixed for kauai in 0ce77cb6 and wellington in 4e88252d. Replaced by Courtyard by Marriott Osaka Honmachi (8.8, 24h reception and AC confirmed on Booking), which is Marriott family and therefore first tier, and at 2-3-7 Minami-Honmachi is ~380 m from the new anchor — the closest ladder property to it. InterContinental, Conrad and The Ritz-Carlton keep their slots. toolbar.js -> v443. CACHE to v616. */
 /* 2026-08-11: the five HOTEL_ALT_DATA notes rewritten in the two commits above read as a facilities checklist rather than a description — "restaurant and bar, fitness centre, 24h reception, AC" is the § 3 compliance test, not something that helps a reader choose, and it is identical across four of the five. 24h reception and AC are build criteria and are already a brand standard for every first-tier property, so they carry no information on the page. Each note now gives where the hotel actually is and the two or three things that distinguish it: Sofitel the Parliament end of the CBD, DoubleTree the middle of the Lambton Quay shopping strip, Novotel the cable car base one block below, Bolton its year-round indoor pool and sauna beside the Botanic Garden, Courtyard Osaka its Japanese public bath and soundproofed rooms. Every claim is off the verified Booking facility list or the property address. toolbar.js -> v444. CACHE to v617. */
 /* 2026-08-11: also-on-site pill SVG icon turns white on hover — fill was var(--rust)=#b85c2a (terracotta) which blended into the terracotta gradient hover background. Added a.also-on-this-site-pill:hover svg{fill:#fff} to guide-style.css and web-travel-style.css. guide-style.css -> v181. web-travel-style.css -> v29. CACHE to v618. */
-var CACHE = 'travel-cache-v618';
+/* 2026-08-11: sibling + also-on-site pill hover: terracotta fill, white font/icon, underline on hover for both pill types. guide-style.css -> v182. web-travel-style.css -> v30. CACHE to v619. */
+var CACHE = 'travel-cache-v619';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -856,7 +857,7 @@ var CACHE = 'travel-cache-v618';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 181, 'toolbar.js': 444, 'mobile.css': 76, 'web-travel-style.css': 29, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 182, 'toolbar.js': 444, 'mobile.css': 76, 'web-travel-style.css': 30, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
