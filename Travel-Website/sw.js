@@ -863,7 +863,8 @@
 /* 2026-08-12: orlando HOTEL_ALT_DATA: add Booking.com url for Loews Portofino Bay Hotel — fix FINAL GATE failure toolbar.js -> v456. CACHE to v635. */
 /* 2026-08-12: mobile.css — center .also-on-this-site-pill in column flex; fix 7.7px offset on 18 Trip-Essentials pages. mobile.css -> v77. CACHE to v636. */
 /* 2026-08-12: guide-style.css — ga-grid v2: Getting Around, Food Delivery, Weekly Closures card grids. guide-style.css -> v186. CACHE to v637. */
-var CACHE = 'travel-cache-v637';
+/* 2026-08-12: mobile-ux-fix: also-on-this-site-pill dark mode — use CSS vars (--surface/--accent/--c-float-bd) for bg/color/border. web-travel-style.css -> v32. CACHE to v638. */
+var CACHE = 'travel-cache-v638';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -871,7 +872,7 @@ var CACHE = 'travel-cache-v637';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 186, 'toolbar.js': 456, 'mobile.css': 77, 'web-travel-style.css': 31, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 186, 'toolbar.js': 456, 'mobile.css': 77, 'web-travel-style.css': 32, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
