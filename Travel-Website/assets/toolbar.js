@@ -5468,7 +5468,7 @@ window.TVE.isPhone = function () {
     ] },
     'naples': { h: [
       { name: 'Grand Hotel Vesuvio', note: 'Independent luxury — Santa Lucia seafront, rooftop pool with Vesuvius views, 1882 heritage hotel · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/grand-vesuvio-napoli.html' },
-      { name: 'Hotel Romeo Napoli', note: 'Independent boutique — port-view suites, Michelin-starred Il Comandante, rooftop pool with bay panorama · 9.3 Booking.com' },
+      { name: 'Relais Della Porta', note: 'Independent — Via Toledo above the Quartieri Spagnoli, soundproofed rooms, breakfast served in the room · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/relais-della-porta.html' },
       { name: 'Hotel Romeo Napoli', note: 'Independent — Via Cristoforo Colombo on the waterfront, rooftop Il Comandante restaurant, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/hotel-romeo.html' },
       { name: 'Grand Hotel Parker\'s Napoli', note: 'Independent — Corso Vittorio Emanuele, panoramic views over the Gulf of Naples, George\'s restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-parker-s.html' }
     ] },
