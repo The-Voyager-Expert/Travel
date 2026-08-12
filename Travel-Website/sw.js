@@ -886,7 +886,8 @@
 /* 2026-08-12: mobile-ux-fix: bo-chip.bo-active background #fff → var(--surface) so active Best-Of chip flips dark mode. web-travel-style.css -> v34. CACHE to v658. */
 /* 2026-08-12: mobile-ux-fix: .country-name color #3d3a32 → var(--text) — fixes LOW CONTRAST 1.29:1 on Tipping-Guide + other country-name uses in dark mode. web-travel-style.css -> v35. CACHE to v659. */
 /* 2026-08-12: Santiago: rehome to W Santiago; fix 4 bad stop pins; HOTEL_ALT_DATA → Mandarin Oriental toolbar.js -> v472. CACHE to v660. */
-var CACHE = 'travel-cache-v660';
+/* 2026-08-12: Santa Monica HOTEL_ALT_DATA: add url fields to Shutters and Casa del Mar toolbar.js -> v473. CACHE to v661. */
+var CACHE = 'travel-cache-v661';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -894,7 +895,7 @@ var CACHE = 'travel-cache-v660';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 472, 'mobile.css': 77, 'web-travel-style.css': 35, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 473, 'mobile.css': 77, 'web-travel-style.css': 35, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
