@@ -5927,8 +5927,8 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Brisamar São Luís', note: 'Independent — Calhau Beach, beachfront, outdoor pool, views of São Marcos Bay · 8.4 Booking.com' }
     ] },
     'sao-paulo': { h: [
-      { name: 'Rosewood São Paulo', note: 'Rosewood brand — Cidade Matarazzo complex, pool, Evvai Michelin-starred dining, design landmark · 9.2 Booking.com' },
-      { name: 'L\'Hôtel Porto Bay São Paulo', note: 'Porto Bay brand — Jardins neighborhood, pool, Il Gattopardo Italian restaurant, boutique luxury · 9.0 Booking.com' },
+      { name: 'Rosewood São Paulo', note: 'Rosewood brand — Cidade Matarazzo on Rua Itapeva in Bela Vista, rooftop infinity pool, Evvai Michelin-starred dining, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/br/rosewood-sao-paulo.html' },
+      { name: 'L\'Hôtel PortoBay São Paulo', note: 'PortoBay brand — Alameda Campinas in Bela Vista off Avenida Paulista, rooftop pool, 24h reception, AC · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/porto-bay-lhotel.html' },
       { name: 'Fasano São Paulo', note: 'Fasano brand — Jardins, Fasano Grill Michelin-starred restaurant, rooftop pool · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/fasano-sao-paulo.html' },
       { name: 'Tivoli Mofarrej São Paulo', note: 'Tivoli Hotels — Jardim Paulista, Seen Restaurant & Rooftop bar, spa with pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/tivoli-mofarrej-sao-paulo.html' }
     ] },
