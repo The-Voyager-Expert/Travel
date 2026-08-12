@@ -5708,7 +5708,6 @@ window.TVE.isPhone = function () {
     ] },
     'rotterdam': { h: [
       { name: 'Haven Hotel Rotterdam, Curio Collection by Hilton', note: 'Hilton Curio Collection — Leuvehaven 77, waterfront location near ss Rotterdam, 8.6 Booking.com · 1,544 reviews', url: 'https://www.booking.com/hotel/nl/mainport-hotel.html' },
-      { name: 'Rotterdam Marriott Hotel', note: 'Marriott brand — Weena 686, central near Rotterdam Centraal, 8.5 Booking.com · 4,464 reviews', url: 'https://www.booking.com/hotel/nl/rotterdam-marriott-hotel.html' },
       { name: 'Morgan & Mees Rotterdam', note: 'Independent boutique — Mathenesserlaan 145, West Coolhaven neighbourhood, 8.9 Booking.com · 1,042 reviews', url: 'https://www.booking.com/hotel/nl/morgan-amp-mees-rotterdam.html' },
       { name: 'Room Mate Bruno, Rotterdam', note: 'Room Mate brand — Wilhelminakade 52, Kop van Zuid waterfront, 8.5 Booking.com · 10,690 reviews', url: 'https://www.booking.com/hotel/nl/room-mate-bruno.html' },
       { name: 'Hilton Rotterdam', note: 'Hilton brand — Weena 10, central near Centraal, in-house Joelia Michelin-starred restaurant, 8.1 Booking.com · 2,403 reviews', url: 'https://www.booking.com/hotel/nl/hiltonrotterdam.html' }
