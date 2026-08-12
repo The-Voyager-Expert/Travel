@@ -5426,10 +5426,10 @@ window.TVE.isPhone = function () {
       { name: 'Four Seasons Hotel New York Downtown', note: 'Four Seasons brand — Tribeca, private plunge pools in suites, CUT by Wolfgang Puck restaurant, spa, Hudson River proximity · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/us/four-seasons-hotel-new-york-downtown.html' }
     ] },
     'nice': { h: [
-      { name: 'Hôtel Le Negresco', note: 'Independent luxury — 1913 Promenade des Anglais landmark, Royal Suite, Michelin-starred Chantecler restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/negresco.html' },
-      { name: 'Hyatt Regency Nice Palais de la Méditerranée', note: 'Hyatt brand — 1929 Art Deco Promenade des Anglais façade, sea-view rooftop, spa · 8.7 Booking.com' },
-      { name: 'Hotel Beau Rivage Nice', note: 'Independent — Promenade des Anglais, private pebble beach, heated pool · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/beau-rivage-nice.html' },
-      { name: 'NH Collection Nice', note: 'NH Hotels — Place Masséna, rooftop pool with Baie des Anges views, Elixir Rooftop Bar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/nh-collection-nice.html' }
+      { name: 'Hôtel Le Negresco', note: 'Independent luxury — 1913 Promenade des Anglais landmark, Royal Suite, Michelin-starred Chantecler restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/fr/negresco.html' },
+      { name: 'Maison Albar - Le Victoria', note: 'Independent 5-star — Avenue de Suède off Place Masséna, rooftop infinity pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/maison-albar-le-victoria.html' },
+      { name: 'NH Collection Nice', note: 'NH Collection — Place Masséna, rooftop pool with Baie des Anges views, Elixir Rooftop Bar · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/nh-collection-nice.html' },
+      { name: 'Hotel Palais de la Mediterranee, in the Unbound Collection by Hyatt', note: 'Hyatt Unbound Collection — 1929 Art Deco façade at 13 Promenade des Anglais, beachfront, indoor and outdoor pools · 8.5 Booking.com', url: 'https://www.booking.com/hotel/fr/palais-de-la-mediterrannee.html' }
     ] },
     'oahu': { h: [
       { name: 'Royal Hawaiian, a Luxury Collection Resort', note: 'Marriott Luxury Collection — 1927 "Pink Palace of the Pacific," oceanfront on central Waikiki Beach, four pools · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/royal-hawaiian-a-luxury-collection-resort-honolulu.html' },
