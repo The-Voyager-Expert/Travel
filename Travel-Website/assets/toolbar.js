@@ -5933,8 +5933,8 @@ window.TVE.isPhone = function () {
       { name: 'Tivoli Mofarrej São Paulo', note: 'Tivoli Hotels — Jardim Paulista, Seen Restaurant & Rooftop bar, spa with pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/tivoli-mofarrej-sao-paulo.html' }
     ] },
     'taipei': { h: [
-      { name: 'Mandarin Oriental, Taipei', note: 'Mandarin Oriental brand — Zhongshan District, outdoor pool, Michelin-starred Ya Ge Cantonese restaurant · 9.3 Booking.com' },
-      { name: 'W Taipei', note: 'Marriott W brand — Xinyi Anhe area, WET rooftop pool, PURPLE cocktail lounge · 8.9 Booking.com' },
+      { name: 'Mandarin Oriental, Taipei', note: 'Mandarin Oriental brand — Dunhua North Road, outdoor pool, Michelin-starred Ya Ge Cantonese restaurant, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/tw/mandarin-oriental-taipei.html' },
+      { name: 'W Taipei', note: 'Marriott W brand — Zhongxiao East Road in Xinyi by Taipei 101, WET rooftop pool, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/tw/w-taipei.html' },
       { name: 'The Regent Taipei', note: 'IHG Regent brand — Zhongshan District, Crystal Jade restaurant, indoor pool · 8.9 Booking.com', url: 'https://www.booking.com/hotel/tw/regent-taipei.html' },
       { name: 'Palais de Chine Hotel', note: 'Independent — near Taipei Main Station, Art Deco design, Le Palais Cantonese restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/tw/palais-de-chine.html' }
     ] },
