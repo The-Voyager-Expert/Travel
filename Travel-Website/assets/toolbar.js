@@ -8513,9 +8513,25 @@ window.TVE.isPhone = function () {
       '🚎': 'van',        /* trolleybus — reads for all three at 15px */
       '🚄': 'train',
       '🚢': 'ship',
+      '🚤': 'ship',       /* island transfers — Maldives et al */
       /* Tour/Day-Trip stat row: "⏳ 5 hr 30 min · 👥 Small group". */
       '⏳': 'hourglass',
       '👥': 'people',
+      /* Closed-day row, position 3 — 1,436 fleet-wide and the loudest emoji
+         left on a stop: the Apple sign is saturated red-and-white and sat
+         directly under the terracotta clock of the hours band, so one two-row
+         block rendered in two unrelated colour systems. Draws the circle-slash
+         the toolbar already uses for the Scams & Traps nav entry — the owner
+         picked it by pointing at that row (2026-08-11: "replace by the icon
+         drawing we are using now this is the one it should be there"), so the
+         site has ONE prohibition mark, not two drawings of the same idea. */
+      '🚫': 'closed',
+      /* Booking row — "🎫 book at: {operator}", 619 fleet-wide. U+1F3AB, NOT
+         the U+1F39F 🎟 that .ticket-flag retired in 2026-08, which is exactly
+         why it survived that pass and kept showing an emoji next to drawn
+         siblings. Same whole-ticket silhouette as .ticket-flag. */
+      '🎫': 'ticket',
+      '💵': 'money',      /* "💵 Cash Only" — same shape the 💰 rows draw */
       /* Hours. On a STOP the authored 🏛 row is hidden and _upgradeStopHours
          redraws it as the .tve-ph band, which leads with the clock — so the
          restaurant, cafe and bar entries, which get no band, were the one
@@ -8574,7 +8590,16 @@ window.TVE.isPhone = function () {
       '📊': 'chart',
       '🗣': 'language',
       '🕐': 'clock',        /* Time Zones pill · the local-time chip */
-      '🏘': 'hotel'         /* Which neighborhood to stay in */
+      '🏘': 'hotel',        /* Which neighborhood to stay in */
+      /* The last three emoji left on a section chip — the row the owner was
+         looking at when they said "all pills should look right" (2026-08-11).
+         🌍 reuses NAV_ICONS.globe so the World Map pill and the World Map nav
+         entry draw the same shape; ⛲ and 🏓 are authored because no nav icon
+         fits and reusing `map` would have put one silhouette on two chips in
+         the same row. */
+      '🌍': 'globe',        /* World Map */
+      '⛲': 'fountain',     /* Day Trips — 128 sections */
+      '🏓': 'paddle'        /* Pickleball — 54 sections */
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
        pattern had to be edited in lockstep with the table and the two leads
@@ -8735,9 +8760,17 @@ window.TVE.isPhone = function () {
        the whole row was skipped and kept the gold Apple star mid-sentence
        (owner 2026-08-11: "the starts in the middle is a emoji"). This sweep
        picks those up, restricted to ⭐ so a description that mentions anything
-       else is untouched. */
+       else is untouched.
+
+       The box families are in this sweep for a second reason of their own: a
+       .ticket-box booking row LEADS with a .ticket-flag span, not a glyph, so
+       the leading-glyph pass above returns early on it and never reaches the
+       rating star at the end of the line — "… Skip-the-Line Access · 4.7⭐ ·
+       165+ reviews" kept a gold Apple star directly under a drawn ticket and a
+       drawn clock (owner 2026-08-11, on that exact row). */
     [].forEach.call(
-      document.querySelectorAll('.extras-sub,.entry-body > div,.shows-box > div'),
+      document.querySelectorAll('.extras-sub,.entry-body > div,.shows-box > div,' +
+                                '.ticket-box > div,.tour-box > div,.station-box > div'),
       function (row) { if (row.textContent.indexOf('⭐') >= 0) markRow(row, false, '⭐'); });
   }
   if (document.readyState === 'loading') {
