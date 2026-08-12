@@ -5851,10 +5851,10 @@ window.TVE.isPhone = function () {
       { name: 'Josun Palace, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — Gangnam district, rooftop pool and bar, Dosa restaurant, spa, Korean contemporary design · 9.2 Booking.com', url: 'https://www.booking.com/hotel/kr/josun-palace-a-luxury-collection-seoul-gangnam.html' }
     ] },
     'seville': { h: [
-      { name: 'Hotel Alfonso XIII, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1928 Mudéjar-style royal guest house, courtyard pool, heart of historic quarter · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/es/hotel-alfonso-xiii-seville.html' },
       { name: 'Casa 1800 Sevilla', note: 'Independent boutique — 33 rooms in a 19th-century mansion near the Cathedral, rooftop terrace with tower views · 9.6 Booking.com' , url: 'https://www.booking.com/hotel/es/casa-1800-sevilla.html' },
       { name: 'Gran Meliá Colón Sevilla', note: 'Meliá Red Level — Canalejas Street in the city centre, rooftop pool, El Burladero restaurant, 1929 Art Deco building · 8.9 Booking.com' , url: 'https://www.booking.com/hotel/es/gran-melia-colon.html' },
-      { name: 'Hotel Mercer Sevilla', note: 'Mercer Hotels — San Lorenzo neighbourhood, restored 18th-century mansion, small outdoor pool, terrace, curated art, 12 rooms · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/es/mercer-sevilla.html' }
+      { name: 'Hotel Mercer Sevilla', note: 'Mercer Hotels — San Lorenzo neighbourhood, restored 18th-century mansion, small outdoor pool, terrace, curated art, 12 rooms · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/es/mercer-sevilla.html' },
+      { name: 'Hotel Tayko Sevilla', note: 'Independent — converted 16th-century building in Triana barrio, rooftop pool and bar with Guadalquivir views · 8.8 Booking.com', url: 'https://www.booking.com/hotel/es/tayko-sevilla.html' }
     ] },
     'seychelles': { h: [
       { name: 'North Island Lodge', note: 'Independent ultra-luxury — private island, 11 villas, barefoot luxury philosophy, exclusive conservation reserve · 9.7 Booking.com', url: 'https://www.booking.com/hotel/sc/north-island.html' },
