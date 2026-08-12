@@ -8532,6 +8532,11 @@ window.TVE.isPhone = function () {
          siblings. Same whole-ticket silhouette as .ticket-flag. */
       '🎫': 'ticket',
       '💵': 'money',      /* "💵 Cash Only" — same shape the 💰 rows draw */
+      /* 3,496 rows — one on EVERY stop, the most-repeated emoji left on the
+         site. Lives on the Wikipedia link under the stop description, so it
+         appeared once per stop in full Apple colour against a terracotta
+         column. Reached through the .stop-row > a selector below. */
+      '📖': 'book',
       /* Hours. On a STOP the authored 🏛 row is hidden and _upgradeStopHours
          redraws it as the .tve-ph band, which leads with the clock — so the
          restaurant, cafe and bar entries, which get no band, were the one
@@ -8721,8 +8726,23 @@ window.TVE.isPhone = function () {
     [].forEach.call(
       document.querySelectorAll('.tour-box > div,.ticket-box > div,' +
                                 '.entry-body > div,.station-box > div,.shows-box > div,' +
+                                /* Train and ferry booking rows live in a .transit-box or a
+                                   .train day block, neither of which was ever in this list — so
+                                   610 of the 619 booking rows kept their emoji even after the
+                                   glyph was given a mark. The box families are not
+                                   interchangeable, and a MARKS row does nothing for a row this
+                                   sweep never visits. */
+                                '.transit-box > div,.train > div,' +
+                                /* The Read more link, one per stop. Scoped to the anchor
+                                   rather than .stop-row so a description that happens to open
+                                   with a glyph is not swept — prose is not a row. */
+                                '.stop-row > a,' +
                                 '.extras-sub,.overview-extra-link,.extras-title,' +
-                                '.also-on-this-site-pill,.open-now-local-time'),
+                                /* .open-now-local-time is NOT here: it is built by toolbar.js
+                                   and _updateLabel reassigns its textContent on a timer, which
+                                   wipes any mark this pass inserts. It carries its own mark,
+                                   built once beside the text span the timer updates. */
+                                '.also-on-this-site-pill'),
       function (row) {
         /* CSS-injected titles carry their glyph in a ::before, invisible to the
            walker — turn them into real text before testing. No-op elsewhere. */
@@ -10058,15 +10078,36 @@ window.TVE.isPhone = function () {
       var timeLabel = document.createElement('span');
       timeLabel.className = 'open-now-local-time';
       timeLabel.id = 'tve-open-now-time';
-
       row.appendChild(timeLabel);
       ovSec.appendChild(row);
 
       function _updateLabel() {
         var info = _destInfo();
-        timeLabel.textContent = info.hasTz
-          ? ('🕐 ' + info.city + ' \xb7 ' + info.timeStr)
-          : '';
+        /* Rebuilt every tick rather than marked once, because this label is the
+           one place _injectRowMarks cannot help: it reassigns its own content on
+           a timer and would wipe any mark inserted from outside — which is why
+           this clock stayed an emoji while every other clock on the page was
+           drawn. The mark goes INSIDE the pill, not beside it: .open-now-row is
+           justify-content:space-between, so a sibling mark lands against the far
+           left edge of the card with the pill still out on the right.
+
+           The glyph itself rides in a hidden .gm-mk-src span, so the label's
+           textContent is byte-identical to what it has always been. Everything is
+           REMOVED in the no-timezone case rather than blanked, because
+           .open-now-local-time:empty is what hides the pill shell — a mark left
+           behind would show an empty beige rectangle on every guide with no tz. */
+        while (timeLabel.firstChild) timeLabel.removeChild(timeLabel.firstChild);
+        if (!info.hasTz) return;
+        var _mk = document.createElement('span');
+        _mk.className = 'gm-mk gm-mk-clock';
+        _mk.setAttribute('aria-hidden', 'true');
+        _mk.style.marginRight = '5px';
+        var _src = document.createElement('span');
+        _src.className = 'gm-mk-src';
+        _src.textContent = '🕐 ';
+        timeLabel.appendChild(_mk);
+        timeLabel.appendChild(_src);
+        timeLabel.appendChild(document.createTextNode(info.city + ' \xb7 ' + info.timeStr));
       }
 
       /* Every stop whose hours line parses carries an Open / Closed badge in
@@ -10407,7 +10448,12 @@ window.TVE.isPhone = function () {
       chip.className = 'lounge-arrival-chip';
       chip.href = href;
       chip.innerHTML =
-        '<span class="lac-iata">✈ ' + info.iata + '</span>' +
+        /* Drawn plane, glyph kept hidden — same contract as every other mark.
+           This chip is built here rather than authored in a guide, so no MARKS
+           row can reach it; it inserts its own. */
+        '<span class="lac-iata"><span class="gm-mk gm-mk-plane" aria-hidden="true"' +
+        ' style="margin-right:4px"></span><span class="gm-mk-src">✈ </span>' +
+        info.iata + '</span>' +
         '<span class="lac-div">|</span>' +
         '<span class="lac-name">' + info.name + '</span>' +
         '<span class="lac-link">' + label + '</span>';
