@@ -6035,7 +6035,7 @@ window.TVE.isPhone = function () {
     ] },
     'venice': { h: [
       { name: 'Belmond Hotel Cipriani', note: 'Belmond brand — Giudecca island, 7-minute private launch, Olympic-size pool, award-winning Oro Restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/cipriani-venezia.html' },
-      { name: 'Aman Venice', note: 'Aman brand — 16th-century Palazzo Papadopoli on the Grand Canal, two private gardens, private dock · 9.7 Booking.com' },
+      { name: 'Aman Venice', note: 'Aman brand — 16th-century Palazzo Papadopoli on the Grand Canal, two private gardens, private dock · 9.7 Booking.com', url: 'https://www.aman.com/hotels/aman-venice' },
       { name: 'The Gritti Palace, a Luxury Collection Resort', note: 'Marriott Luxury Collection — 1475 Doge\'s palace on the Grand Canal, Club del Doge restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/the-gritti-palace.html' },
       { name: 'Hotel Danieli, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1350 Gothic palace near the Doge\'s Palace, rooftop Terrazza Danieli · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/danielivenezia.html' }
     ] },
@@ -6083,10 +6083,10 @@ window.TVE.isPhone = function () {
       { name: 'Westin Resort & Spa Whistler', note: 'Marriott Westin — Whistler Village, outdoor heated pool, Aubergine Grille, Heavenly Spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ca/westin-resort-and-spa-whistler.html' }
     ] },
     'yellowstone': { h: [
-      { name: 'Old Faithful Inn', note: 'Independent — 1904 historic log lodge beside Old Faithful geyser, National Historic Landmark · 9.0 Booking.com' },
-      { name: 'Lake Yellowstone Hotel', note: 'Independent — 1891 lakefront colonial structure, panoramic Yellowstone Lake views, inside the park · 8.8 Booking.com' },
-      { name: 'Canyon Lodge & Cabins', note: 'Independent — largest lodging complex inside Yellowstone, central location near Grand Canyon of the Yellowstone, cabin and motel room options · 8.2 Booking.com' },
-      { name: 'Roosevelt Lodge Cabins', note: 'Independent — rustic frontier cabins in the northeast quadrant near Lamar Valley, Old West cookouts, closest lodge to Tower Fall · 8.5 Expedia' }
+      { name: 'Old Faithful Inn', note: 'Independent — 1904 historic log lodge beside Old Faithful geyser, National Historic Landmark · 9.0 Booking.com', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/old-faithful-inn/' },
+      { name: 'Lake Yellowstone Hotel', note: 'Independent — 1891 lakefront colonial structure, panoramic Yellowstone Lake views, inside the park · 8.8 Booking.com', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/lake-yellowstone-hotel/' },
+      { name: 'Canyon Lodge & Cabins', note: 'Independent — largest lodging complex inside Yellowstone, central location near Grand Canyon of the Yellowstone, cabin and motel room options · 8.2 Booking.com', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/canyon-lodge-and-cabins/' },
+      { name: 'Roosevelt Lodge Cabins', note: 'Independent — rustic frontier cabins in the northeast quadrant near Lamar Valley, Old West cookouts, closest lodge to Tower Fall · 8.5 Expedia', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/roosevelt-lodge-cabins/' }
     ] },
     'zakynthos': { h: [
       { name: 'Lesante Blu Exclusive Beach Resort', note: 'Leading Hotels of the World — Tragaki beachfront adults-only, heated infinity pool, spa, Ionian Sea views · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gr/lesante-blu-exclusive-beach-resort.html' },
