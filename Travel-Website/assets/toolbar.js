@@ -2522,7 +2522,18 @@ window.TVE.isPhone = function () {
         num.textContent = m[0];
         el.textContent = '';
         el.appendChild(num);
-        el.appendChild(document.createTextNode(rest));
+        if (rest.indexOf('🚆') !== -1) {
+          rest.split('🚆').forEach(function (part, i) {
+            if (i) {
+              var mk = document.createElement('span');
+              mk.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train');
+              el.appendChild(mk);
+            }
+            el.appendChild(document.createTextNode(part));
+          });
+        } else {
+          el.appendChild(document.createTextNode(rest));
+        }
       });
     }
     if (document.readyState !== 'loading') styleOverviewDayNumbers();
@@ -6637,7 +6648,7 @@ window.TVE.isPhone = function () {
          this row is the INBOUND view, so "🚆 · Train Day · Vienna" would read as
          a train day TO Vienna and state the opposite of the truth. */
       var lead = document.createElement('span');
-      lead.textContent = '🚆 · Train Day from · ';
+      lead.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train') + ' · Train Day from · ';
       cities.appendChild(lead);
       from.forEach(function (g, i) {
         if (i) {
