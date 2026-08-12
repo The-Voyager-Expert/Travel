@@ -5564,10 +5564,10 @@ window.TVE.isPhone = function () {
       { name: 'Infante Sagres Luxury Historic Hotel', note: 'Leading Hotels of the World — 1951 Art Deco building in central Porto, Portuense restaurant, curated antique interiors · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/pt/infante-de-sagres.html' }
     ] },
     'porto-alegre': { h: [
-      { name: 'Sheraton Porto Alegre Hotel', note: 'Marriott family — Praia de Belas district, outdoor pool, business-class service, convention facilities · 8.4 Booking.com' },
-      { name: 'Intercity Porto Alegre Iguatemi', note: 'Intercity Hotels — Moinhos de Vento neighborhood, modern boutique, spa · 9.0 Booking.com' },
-      { name: 'Lancaster Hotel Porto Alegre', note: 'Independent — near the Gasômetro, classic rooms, business facilities, central location · 8.5 Booking.com' },
-      { name: 'Laghetto Stilo Higienópolis', note: 'Laghetto Hotels — Higienópolis district, rooftop pool with city views, fitness centre · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/laghetto-stilo-higienopolis.html' }
+      { name: 'Flat Avenida Independência', note: 'Independent — Avenida Independência 813 on the Centro edge, rooftop heated pool, sauna, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/flat-da-fatima.html' },
+      { name: 'Intercity Porto Alegre Aeroporto', note: 'Intercity Hotels — Navegantes beside Salgado Filho airport, outdoor pool, 24h reception; the pick for an early flight out · 9.1 Booking.com', url: 'https://www.booking.com/hotel/br/intercity-express-porto-alegre.html' },
+      { name: 'Hotel Laghetto Stilo Higienópolis', note: 'Laghetto Hotels — Avenida Inácio Vasconcelos in Higienópolis, rooftop pool, sauna, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/laghetto-stilo-higienopolis.html' },
+      { name: 'ArtHotel Transamerica Collection', note: 'Transamerica Collection — Rua Coronel Lucas de Oliveira in Bela Vista, outdoor pool, art collection through the public rooms, 24h reception · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/rua-coronel-lucas-de-oliveira-porto-alegre.html' }
     ] },
     'prague': { h: [
       { name: 'Four Seasons Hotel Prague', note: 'Four Seasons brand — Staré Město with Vltava views, spa with outdoor pool, CottoCrudo restaurant · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/cz/four-seasons-prague.html' },
