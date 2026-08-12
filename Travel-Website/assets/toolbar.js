@@ -5796,8 +5796,8 @@ window.TVE.isPhone = function () {
       { name: 'Kimpton Canary Hotel', note: 'IHG Kimpton — Anacapa Street downtown, rooftop pool with mountains-and-ocean views, Finch & Fork restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/canary.html' }
     ] },
     'santa-cruz': { h: [
-      { name: 'Chaminade Resort & Spa', note: 'Independent — hilltop eucalyptus-forest retreat above Monterey Bay, tennis courts, spa · 8.9 Booking.com' },
-      { name: 'Babbling Brook Inn', note: 'Independent boutique — garden B&B with cascading creek, antiques, walking distance to downtown · 9.3 Booking.com' },
+      { name: 'Chaminade Resort & Spa', note: 'Independent — hilltop eucalyptus-forest retreat above Monterey Bay, tennis courts, spa · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/chaminade-resort-amp-spa.html' },
+      { name: 'Babbling Brook Inn', note: 'Independent boutique — garden B&B with cascading creek, antiques, walking distance to downtown · 9.3 Booking.com', url: 'https://www.babblingbrookinn.com' },
       { name: 'Dream Inn Santa Cruz', note: 'Independent — Cowell Beach waterfront, heated oceanfront pool, Aquarius restaurant · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/dream-inn.html' },
       { name: 'West Cliff Inn, A Four Sisters Inn', note: 'Independent boutique — 1877 Victorian bluff B&B across from Cowell Beach, breakfast + afternoon wine hour · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/west-cliff-inn.html' }
     ] },
