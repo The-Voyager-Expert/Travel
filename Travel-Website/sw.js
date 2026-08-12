@@ -896,7 +896,8 @@
 /* 2026-08-12: Santa Cruz hotel-rehome: Hotel Paradox as title card; add West Cliff Inn to alt-data toolbar.js -> v479. CACHE to v668. */
 /* 2026-08-12: mobile-ux-fix: web-travel-style.css — .disc-btn color: var(--accent) + .bo-chip.bo-active dark mode override. web-travel-style.css -> v38. CACHE to v669. */
 /* 2026-08-12: mobile-ux-fix: web-travel-style.css — sun-c1–c6 dark mode overrides (sun chart on 7 stats pages). web-travel-style.css -> v39. CACHE to v670. */
-var CACHE = 'travel-cache-v670';
+/* 2026-08-12: mobile-ux-fix: web-travel-style.css — --c-rain dark mode #6090b0 → #70a0c0 (4.28→5.22:1 contrast on dark bg). web-travel-style.css -> v40. CACHE to v671. */
+var CACHE = 'travel-cache-v671';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -904,7 +905,7 @@ var CACHE = 'travel-cache-v670';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 479, 'mobile.css': 77, 'web-travel-style.css': 39, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 479, 'mobile.css': 77, 'web-travel-style.css': 40, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
