@@ -841,7 +841,8 @@
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['natal'] carried Ocean Palace with no url and it does not resolve in Booking inventory; replaced by Coral Plaza Apart Hotel, 9.3 across 1,093 reviews, on the same Ponta Negra street as the guide's own hotel. toolbar.js -> v436. CACHE to v609. */
 /* 2026-08-11: "Also on this site" pills were rendering TWO icons. The pills resolve their icon from the TARGET PAGE via ITEMS and _injectAlsoOnSiteIcons injects it as an <svg>, guarded by `if (a.querySelector('svg')) return`. That guard cannot see a drawn mark: a .gm-mk is a CSS mask on a SPAN, so once the 2026-08-11 pass started drawing these pills' authored glyphs, every pill whose glyph is in MARKS got both — the sun twice on Weather, the shield twice on Safety Guide, the house twice on Which neighborhood (owner: "we have double icons on these"). The injector now removes the leading mark before inserting, and only once it knows an icon is going in, so a pill whose target has no PAGE_ICON entry keeps its drawn mark as the fallback. The nav icon wins on purpose: it is the one that follows a nav icon change automatically, while the mark comes off the per-guide authored glyph. The hidden .gm-mk-src span is untouched, so textContent stays byte-identical. toolbar.js -> v437. CACHE to v610. */
 /* 2026-08-11: hotel-rehome — re-applying the naples-florida alt-data fix, which a parallel commit built from a stale toolbar.js baseline reverted off origin. toolbar.js -> v438. CACHE to v611. */
-var CACHE = 'travel-cache-v611';
+/* 2026-08-11: wellington HOTEL_ALT_DATA — InterContinental Wellington becomes the title card so it leaves its own alternatives list; QT Wellington had no url and the 8.9 it quoted is not the live figure (Booking reads 8.0, under the 9.0 non-brand bar), and Museum Art Hotel does not resolve in Booking inventory under that name — both replaced. Sofitel keeps its slot with its real 8.8. Ohtel Wellington (9.2), The Cobbler Hotel (9.0, the outgoing title-card hotel) and The Intrepid Hotel (9.0) fill the list out to four, every entry with a verified Booking page. toolbar.js -> v439. CACHE to v612. */
+var CACHE = 'travel-cache-v612';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -849,7 +850,7 @@ var CACHE = 'travel-cache-v611';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 179, 'toolbar.js': 438, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 179, 'toolbar.js': 439, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

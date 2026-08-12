@@ -6041,10 +6041,10 @@ window.TVE.isPhone = function () {
       { name: 'Waldorf Astoria Washington DC', note: 'Hilton brand — converted Old Post Office Building on Pennsylvania Avenue NW, indoor pool, Peacock Alley, central DC landmark · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/waldorf-astoria-washington-dc.html' }
     ] },
     'wellington': { h: [
-      { name: 'QT Wellington', note: 'QT Hotels — design hotel on The Terrace, Hippopotamus Restaurant, vibrant social public spaces · 8.9 Booking.com' },
-      { name: 'InterContinental Wellington', note: 'IHG brand — Lambton Quay, harbour views, spa, central to Te Papa and waterfront · 8.7 Booking.com' },
-      { name: 'Sofitel Wellington', note: 'Sofitel brand — Bolton Street, outdoor terrace pool, So SPA, Grill on the 11th floor · 9.1 Booking.com', url: 'https://www.booking.com/hotel/nz/sofitel-wellington.html' },
-      { name: 'Museum Art Hotel Wellington', note: 'Independent — Cable Street on the Te Papa waterfront, curated art, Palmer Restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/nz/museum-art-hotel.html' }
+      { name: 'Sofitel Wellington', note: 'Sofitel brand — Bolton Street, outdoor terrace pool, So SPA, Grill on the 11th floor · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/sofitel-wellington.html' },
+      { name: 'Ohtel Wellington', note: 'Independent boutique — 66 Oriental Parade facing the harbour, mid-century interiors, in-room breakfast · 9.2 Booking.com', url: 'https://www.booking.com/hotel/nz/ohtel.html' },
+      { name: 'The Cobbler Hotel', note: 'Independent — 3 Eva Street laneway off Cuba Street, AC, lift, family rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/nz/the-cobbler.html' },
+      { name: 'The Intrepid Hotel', note: 'Independent — 60 Ghuznee Street at the top of Cuba Street, AC, express check-in, pet friendly · 9.0 Booking.com', url: 'https://www.booking.com/hotel/nz/the-intrepid-wellington.html' }
     ] },
     'whistler': { h: [
       { name: 'Four Seasons Resort and Residences Whistler', note: 'Four Seasons brand — ski-in/ski-out base of Blackcomb, outdoor heated pool, spa · 9.3 Booking.com' },
