@@ -5903,8 +5903,8 @@ window.TVE.isPhone = function () {
       { name: 'Ett Hem', note: 'Independent — Sköldungagatan 2 in Östermalm, 12-room private house, two gardens, communal kitchen-dining, butler and chef service · 9.7 Booking.com' , url: 'https://www.booking.com/hotel/se/ett-hem.html' }
     ] },
     'strasbourg': { h: [
-      { name: 'Regent Petite France & Spa', note: 'Independent — 16th-century ice-house in Petite France canal district, spa, river views · 9.3 Booking.com' },
-      { name: 'Hôtel Hannong', note: 'Independent boutique — Art Deco interiors, central location, wine bar, Alsatian brasserie · 8.9 Booking.com' },
+      { name: 'HANNONG Hotel & Wine Bar', note: 'Independent boutique — rue du 22 Novembre on the Grande Île, Art Deco interiors, wine bar, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/tihannong.html' },
+      { name: 'Hotel Beaucour', note: 'Independent — 5 rue des Bouchers off the cathedral quarter, timbered courtyard, jacuzzi rooms, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/fr/beaucour.html' },
       { name: 'Hôtel Rohan Strasbourg', note: 'Independent — Place du Corbeau on the Ill River, Cathedral views, boutique 36 rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/rohan.html' },
       { name: 'Cour du Corbeau, Strasbourg', note: 'Small Luxury Hotels — 16th-century coaching inn in the historic center, courtyard, spa · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/cour-du-corbeau.html' }
     ] },

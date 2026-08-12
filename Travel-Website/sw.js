@@ -835,7 +835,8 @@
 /* 2026-08-11: sao-luis HOTEL_ALT_DATA rebuilt — all four entries carried no url and two were the same hotel listed twice under a name that does not resolve on Booking; replaced with four verified listings. toolbar.js -> v431. CACHE to v604. */
 /* 2026-08-11: stuttgart HOTEL_ALT_DATA — Le Meridien becomes the title card so it leaves its own alternatives list, EmiLu Design Hotel (9.0) takes the slot, and Steigenberger Graf Zeppelin gains the url it never had plus its real 8.1. toolbar.js -> v432. CACHE to v605. */
 /* 2026-08-11: hotel-rehome — HOTEL_ALT_DATA['naples'] listed Hotel Romeo Napoli twice, the second copy with no url at all; the duplicate is replaced by Relais Della Porta, 9.1 across 3,267 Booking reviews. toolbar.js -> v433. CACHE to v606. */
-var CACHE = 'travel-cache-v606';
+/* 2026-08-11: strasbourg HOTEL_ALT_DATA — Regent Petite France and Hotel Hannong both carried no url (FINAL GATE hard-fail); Hannong keeps its slot with a verified page and its real 8.8, and Regent, which does not resolve on Booking at all, is replaced by Hotel Beaucour (8.8). toolbar.js -> v434. CACHE to v607. */
+var CACHE = 'travel-cache-v607';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -843,7 +844,7 @@ var CACHE = 'travel-cache-v606';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 179, 'toolbar.js': 433, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 179, 'toolbar.js': 434, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
