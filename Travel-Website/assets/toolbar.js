@@ -5964,10 +5964,10 @@ window.TVE.isPhone = function () {
       { name: 'Park Hyatt Tokyo', note: 'Hyatt brand — Shinjuku floors 41–52 of the Tokyo Park Tower, 14th-floor pool, New York Bar and Grill, full-service spa · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/jp/park-hyatt-tokyo.html' }
     ] },
     'toledo': { h: [
-      { name: 'Parador de Toledo', note: 'Paradores — hilltop across the Tagus with the famous El Greco panorama, pool, medieval setting · 9.1 Booking.com' },
-      { name: 'Hotel Cigarral El Bosque', note: 'Independent boutique — hilltop olive grove estate with Toledo cityscape panorama, pool, gardens · 9.2 Booking.com' },
-      { name: 'Eurostars Palacio Buenavista', note: 'Eurostars Hotels — historic Buenavista Palace in the old city, pool, spa, city panoramas · 9.1 Booking.com', url: 'https://www.booking.com/hotel/es/eurostars-palacio-buenavista.html' },
-      { name: 'AC Hotel Ciudad de Toledo by Marriott', note: 'Marriott AC Hotels — rooftop pool, panoramic Toledo views, spa · 8.7 Booking.com', url: 'https://www.booking.com/hotel/es/ac-ciudad-de-toledo.html' }
+      { name: 'Áurea Toledo by Eurostars', note: 'Independent — Bajada Pozo Amargo below the cathedral, spa, 24h reception, AC · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/aurea-toledo.html' },
+      { name: 'Eurostars Palacio Buenavista', note: 'Eurostars Hotels — Buenavista Palace 3 km west of the walls, outdoor pool, spa, city panoramas · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/eurostars-buenavista.html' },
+      { name: 'Posada Sillería', note: 'Independent boutique — Calle Sillería inside the walls, 24h reception, restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/es/posada-de-la-silleria.html' },
+      { name: 'AC Hotel Ciudad de Toledo by Marriott', note: 'Marriott AC Hotels — Carretera de Circunvalación on the south rim with the El Greco panorama, restaurant, free parking · 8.2 Booking.com', url: 'https://www.booking.com/hotel/es/acciudaddetoledo.html' }
     ] },
     'toronto': { h: [
       { name: 'The Hazelton Hotel', note: 'Independent luxury — Yorkville, private cinema, ONE Restaurant by Mark McEwan, spa · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/ca/the-hazelton.html' },
