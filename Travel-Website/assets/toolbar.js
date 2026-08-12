@@ -5951,10 +5951,10 @@ window.TVE.isPhone = function () {
       { name: 'Radisson Blu Iveria Hotel Tbilisi', note: 'Radisson Blu — Rose Revolution Square, outdoor pool, Shavi Lomi restaurant, spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/ge/radisson-sas-iveria-tbilisi.html' }
     ] },
     'tenerife': { h: [
-      { name: 'Royal Garden Villas & Spa', note: 'Independent ultra-luxury — 36 private villas near Adeje, adults-only, each with private pool · 9.6 Booking.com' },
-      { name: 'Gran Hotel Bahía del Duque Resort', note: 'Independent luxury — Adeje beach resort, multiple pools, historic Canarian architecture, golf nearby · 9.1 Booking.com' },
-      { name: 'Abama Resort Tenerife', note: 'Abama — clifftop west coast, two Michelin-star MB restaurant, golf, private beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/abama-resort.html' },
-      { name: 'Iberostar Grand Hotel El Mirador', note: 'Iberostar Grand — adults-only Costa Adeje cliffside, infinity pool, Michelin-guide dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/iberostar-grand-hotel-el-mirador.html' }
+      { name: 'Hotel Botanico y Oriental Spa Garden', note: 'Independent luxury — Avenida Richard J. Yeoward in Puerto de la Cruz, Oriental Spa Garden, indoor and outdoor pools, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/botanico-y-oriental-spa-garden.html' },
+      { name: 'Iberostar Grand Hotel El Mirador', note: 'Iberostar Grand — adults-only Costa Adeje cliffside, infinity pool, Michelin-guide dining · 9.3 Booking.com', url: 'https://www.booking.com/hotel/es/iberostar-grand-hotel-el-mirador.html' },
+      { name: 'Hotel Tigaiga', note: 'Independent — Parque Taoro above Puerto de la Cruz, subtropical garden, outdoor pool with valley view, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/tigaiga.html' },
+      { name: 'Abama Resort Tenerife', note: 'Abama — clifftop west coast, two Michelin-star MB restaurant, golf, private beach · 9.2 Booking.com', url: 'https://www.booking.com/hotel/es/abama-resort.html' }
     ] },
     'tokyo': { h: [
       { name: 'Aman Tokyo', note: 'Aman brand — Otemachi forest tower, 33rd–35th floor rooms with Imperial Palace views, spa with indoor pool · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/jp/aman-tokyo.html' },
