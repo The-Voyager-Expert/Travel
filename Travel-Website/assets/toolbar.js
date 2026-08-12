@@ -6028,8 +6028,8 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Danieli, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1350 Gothic palace near the Doge\'s Palace, rooftop Terrazza Danieli · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/danielivenezia.html' }
     ] },
     'verona': { h: [
-      { name: 'Due Torri Hotel', note: 'Autograph Collection (Marriott) — 14th-century palazzo near Piazza Brà, antique-furnished rooms, Arena Opera views · 9.1 Booking.com' },
-      { name: 'Hotel Gabbia d\'Oro', note: 'Independent boutique — 17th-century noble palazzo near Piazza delle Erbe, antique beds, garden courtyard · 9.3 Booking.com' },
+      { name: 'Due Torri Hotel', note: 'Autograph Collection (Marriott) — 14th-century palazzo near Piazza Brà, antique-furnished rooms, Arena Opera views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/due-torri-hotel.html' },
+      { name: 'Hotel Gabbia d\'Oro', note: 'Independent boutique — 17th-century noble palazzo near Piazza delle Erbe, antique beds, garden courtyard · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/gabbia-d-oro.html' },
       { name: 'NH Collection Verona Grand Hotel Palazzo di Verona', note: 'NH Collection brand — 18th-century Palazzo on Piazza San Zeno, rooftop terrace, central location · 9.0 Booking.com', url: 'https://www.booking.com/hotel/it/nh-verona-due-torri.html' },
       { name: 'Hotel Accademia', note: 'Independent — Via Scala near the Arena, garden courtyard, Il Carroarmato restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/it/accademia-verona.html' }
     ] },
