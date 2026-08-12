@@ -5677,10 +5677,10 @@ window.TVE.isPhone = function () {
       { name: 'Hilton Queenstown Resort & Spa', note: 'Hilton brand — Peninsula Road lakefront, outdoor hot pool, spa, panoramic Lake Wakatipu views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/nz/hilton-queenstown.html' }
     ] },
     'recife': { h: [
-      { name: 'Sheraton Recife Hotel', note: 'Marriott family — Boa Viagem beach district, outdoor pool, multiple restaurants, business facilities · 8.4 Booking.com' },
-      { name: 'Hotel Boa Viagem by Nobile', note: 'Nobile Hotels — directly on Boa Viagem beach, rooftop pool, sea views · 8.7 Booking.com' },
-      { name: 'Ritz Suítes Hotel Recife', note: 'Independent — Boa Viagem beachfront, outdoor pool, Sky Bar rooftop terrace · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/ritz-suites-recife.html' },
-      { name: 'Hotel Atlante Plaza Recife', note: 'Independent — Boa Viagem beachfront, rooftop pool, full-service spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/br/atlante-plaza.html' }
+      { name: 'Hotel Atlante Plaza', note: 'Independent 5-star — Avenida Boa Viagem beachfront, rooftop pool, full-service spa, 24h reception · 9.2 Booking.com', url: 'https://www.booking.com/hotel/br/atlanta-plaza.html' },
+      { name: 'Bugan Recife Boa Viagem Hotel - by Atlantica', note: 'Atlantica Hotels — Avenida Engenheiro Domingos Ferreira in Boa Viagem, rooftop pool, sauna, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/bugan-recife-hotel-by-atlantica.html' },
+      { name: 'Mar Hotel Conventions', note: 'Independent — Rua Barão de Souza Leão in Boa Viagem, outdoor pool, kids club, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/marhotel-recife.html' },
+      { name: 'Ritz Suítes Hotel Recife', note: 'Independent — Boa Viagem beachfront, outdoor pool, Sky Bar rooftop terrace · 8.8 Booking.com', url: 'https://www.booking.com/hotel/br/ritz-suites-recife.html' }
     ] },
     'reykjavik': { h: [
       { name: 'Hotel Borg', note: 'Independent luxury — 1930 Art Deco landmark on Austurvöllur Square, Michelin Guide listed restaurant, timeless elegance · 9.1 Booking.com', url: 'https://www.booking.com/hotel/is/borg.html' },
