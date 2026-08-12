@@ -5701,10 +5701,10 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Fasano Rio de Janeiro', note: 'Fasano brand — Vieira Souto on Ipanema beachfront, rooftop pool, Fasano Al Mare restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/fasano-rio-de-janeiro.html' }
     ] },
     'rome': { h: [
-      { name: 'Hotel Eden, a Dorchester Collection Hotel', note: 'Dorchester Collection — Via Ludovisi, rooftop restaurant Il Giardino with seven-hill panorama, spa · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/it/hotel-eden-rome.html' },
-      { name: 'Villa Spalletti Trivelli', note: 'Independent boutique — 12 rooms in private noble villa near Quirinale, garden, pool, antique furnishings · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/it/villa-spalletti-trivelli.html' },
-      { name: 'Hotel de Russie', note: 'Rocco Forte brand — Via del Babuino near Piazza del Popolo, Secret Garden terrace, Stravinskij Bar, spa with pool · 9.1 Booking.com' , url: 'https://www.booking.com/hotel/it/de-russie.html' },
-      { name: 'J.K. Place Roma', note: 'Independent boutique — 30 rooms on Via Monte d\'Oro near the Pantheon, private palazzo feel, rooftop deck, curated art collection · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/it/jk-place-roma.html' }
+      { name: 'Villa Spalletti Trivelli - Small Luxury Hotels of the World', note: 'Independent boutique — 12 rooms in a private noble villa by the Quirinale, garden, spa, 24h reception · 9.6 Booking.com' , url: 'https://www.booking.com/hotel/it/villa-spalletti-trivelli.html' },
+      { name: 'J.K. Place Roma', note: 'Independent boutique — 30 rooms on Via Monte d\'Oro near the Pantheon, private palazzo feel, rooftop deck, 24h reception · 9.6 Booking.com' , url: 'https://www.booking.com/hotel/it/j-k-place-roma.html' },
+      { name: 'Singer Palace Hotel Roma', note: 'Independent boutique — Via Alessandro Specchi by the Pantheon, rooftop bar over the centro storico, 24h reception, AC · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/it/singer-palace.html' },
+      { name: 'Rocco Forte Hotel De Russie', note: 'Rocco Forte brand — Via del Babuino by Piazza del Popolo, Secret Garden terrace, spa with pool, 24h reception · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/it/de-russie.html' }
     ] },
     'rotterdam': { h: [
       { name: 'Haven Hotel Rotterdam, Curio Collection by Hilton', note: 'Hilton Curio Collection — Leuvehaven 77, waterfront location near ss Rotterdam, 8.6 Booking.com · 1,544 reviews', url: 'https://www.booking.com/hotel/nl/mainport-hotel.html' },
