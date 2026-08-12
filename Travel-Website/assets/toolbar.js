@@ -5796,8 +5796,8 @@ window.TVE.isPhone = function () {
       { name: 'Four Seasons Resort Rancho Encantado Santa Fe', note: 'Four Seasons brand — Tesuque foothills 15 min from Plaza, casitas with kiva fireplaces, outdoor pool with Sangre de Cristo views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-resort-rancho-encantado.html' }
     ] },
     'santa-monica': { h: [
-      { name: 'Hotel Shutters on the Beach', note: 'Independent luxury — directly on Santa Monica Beach, pool, 1 Pico restaurant, ocean-view rooms · 9.4 Booking.com' },
-      { name: 'Casa del Mar', note: 'InterContinental brand — Craftsman-style 1926 beachfront mansion, spa, oceanfront dining · 9.2 Booking.com' },
+      { name: 'Hotel Shutters on the Beach', note: 'Independent luxury — directly on Santa Monica Beach, pool, 1 Pico restaurant, ocean-view rooms · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/shutters-on-the-beach.html' },
+      { name: 'Casa del Mar', note: 'InterContinental brand — Craftsman-style 1926 beachfront mansion, spa, oceanfront dining · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/casa-del-mar.html' },
       { name: 'Fairmont Miramar Hotel & Bungalows', note: 'Fairmont brand — Ocean Avenue clifftop, fig tree gardens, FIG Restaurant, ocean-view pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/fairmont-miramar-hotel-bungalows.html' },
       { name: 'Viceroy Santa Monica', note: 'Viceroy Hotels — Ocean Avenue, rooftop pool, Cameo Bar & Lounge, close to the Pier · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/viceroy-santa-monica.html' }
     ] },
