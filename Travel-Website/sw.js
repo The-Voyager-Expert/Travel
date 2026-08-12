@@ -898,7 +898,8 @@
 /* 2026-08-12: mobile-ux-fix: web-travel-style.css — sun-c1–c6 dark mode overrides (sun chart on 7 stats pages). web-travel-style.css -> v39. CACHE to v670. */
 /* 2026-08-12: mobile-ux-fix: web-travel-style.css — --c-rain dark mode #6090b0 → #70a0c0 (4.28→5.22:1 contrast on dark bg). web-travel-style.css -> v40. CACHE to v671. */
 /* 2026-08-12: OWNER-DIRECTED — Cruise Lines, Disney Parks, Festival Finder and Pickleball moved out of the 📋 Also Recommended toolbar group into 🏆 Best Of (ITEMS + the hamburger bestOfPages array; removed from alsoPages). Files keep their existing names — a Best-*.html rename would sweep them into the country-ordered Best-Of validators, which govern a structure these four pages do not use, and would break nine sibling-pill crosslinks. Same pass: each page reframed as a Best-Of collection — new banner (BEST PLACES TO PLAY PICKLEBALL / BEST CRUISE LINES / BEST OF DISNEY PARKS / BEST FESTIVALS & HOLIDAYS) and an intro card on the two that had none. toolbar.js -> v480. CACHE to v672. */
-var CACHE = 'travel-cache-v672';
+/* 2026-08-12: OWNER-DIRECTED site-wide page intros — every non-guide page now opens with a banner plus an intro card written to answer the question the reader typed into Google (head = the query, first sentence = a standalone answer). .page-intro-card switched align-items center -> flex-start so a multi-sentence body sits against the heading instead of floating a centred icon mid-paragraph, .page-intro-sub 12.5px/1.55 -> 13px/1.65 (it stopped being a caption and became the paragraph the page is found by), and the intro-banner SIZE CAP was deleted from validate_intro_banner.py — owner: "no limit the banner can grow". web-travel-style.css -> v41. CACHE to v673. */
+var CACHE = 'travel-cache-v673';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -906,7 +907,7 @@ var CACHE = 'travel-cache-v672';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 480, 'mobile.css': 77, 'web-travel-style.css': 40, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 480, 'mobile.css': 77, 'web-travel-style.css': 41, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
