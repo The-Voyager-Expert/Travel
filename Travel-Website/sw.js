@@ -876,7 +876,8 @@
 /* 2026-08-12: Sint-Maarten HOTEL_ALT_DATA url fixes toolbar.js -> v462. CACHE to v648. */
 /* 2026-08-12: Turks-and-Caicos HOTEL_ALT_DATA url fixes and Shore Club addition toolbar.js -> v463. CACHE to v649. */
 /* 2026-08-12: Sardinia: rehome to Cala di Volpe (Luxury Collection); optimizer restructures days; ferry banner fix; HOTEL_ALT_DATA refresh toolbar.js -> v464. CACHE to v650. */
-var CACHE = 'travel-cache-v650';
+/* 2026-08-12: Sardinia: rehome to Cala di Volpe (Luxury Collection); optimizer restructures days; ferry banner fix; HOTEL_ALT_DATA refresh toolbar.js -> v465. CACHE to v651. */
+var CACHE = 'travel-cache-v651';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -884,7 +885,7 @@ var CACHE = 'travel-cache-v650';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 464, 'mobile.css': 77, 'web-travel-style.css': 33, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 189, 'toolbar.js': 465, 'mobile.css': 77, 'web-travel-style.css': 33, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
