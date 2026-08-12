@@ -4910,10 +4910,10 @@ window.TVE.isPhone = function () {
       { name: 'Holiday Inn Express Coeur d\'Alene', note: 'IHG brand — central location, indoor pool, free breakfast bar, mountain-and-lake views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/holiday-inn-express-suites-coeur-d-alene-i-90-exit-11.html' }
     ] },
     'colmar': { h: [
-      { name: 'Hostellerie Le Maréchal', note: 'Independent — Petite Venise canalside address on the Lauch River, Le Vier Poisson gastronomic restaurant, half-timbered canal-view rooms in the Little Venice quarter · 9.2 Booking.com' },
-      { name: 'La Maison des Têtes', note: 'Independent — 1609 Renaissance mansion in Colmar\'s Old Town, award-winning French-Alsatian dining, historic stone facade with 111 sculpted heads · 8.9 Booking.com' },
-      { name: 'Le Colombier Hôtel', note: 'Independent — 14th-century half-timbered house in Petite Venise, spa with hot tub and sauna · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/le-colombier.html' },
-      { name: 'Grand Hôtel Bristol Colmar', note: 'Independent — 19th-century grande dame on Place de la Gare, Rendez-Vous restaurant · 8.5 Booking.com', url: 'https://www.booking.com/hotel/fr/grand-bristol.html' }
+      { name: 'Au Grenier à Sel Colmar', note: 'Independent — 54 Grand Rue in the Old Town, 4-star suites in a converted salt loft a few doors from the Koïfhus · 9.3 Booking.com', url: 'https://www.booking.com/hotel/fr/au-grenier-a-sel-colmar.html' },
+      { name: "L'Esquisse Hotel & Spa Colmar · MGallery Collection", note: 'MGallery (Accor, off the § 3 ladder) — 2 Avenue de la Marne, 5-star with indoor pool, spa and 24h reception; the guide\'s previous title-card hotel · 9.2 Booking.com', url: 'https://www.booking.com/hotel/fr/colmar-champ-de-mars.html' },
+      { name: 'Relais & Châteaux La Maison des Têtes', note: 'Independent — 19 Rue des Têtes, the 1609 Renaissance mansion with the 111 sculpted heads, 5-star, Michelin dining · 9.1 Booking.com', url: 'https://www.booking.com/hotel/fr/la-maison-des-tetes.html' },
+      { name: 'James Boutique Hôtel Colmar centre', note: 'Independent — 15 rue Saint-Eloi, 4-star, AC, private parking, a short walk east of the Old Town · 9.0 Booking.com', url: 'https://www.booking.com/hotel/fr/james-boutique-hotel.html' }
     ] },
     'cologne': { h: [
       { name: 'Hyatt Regency Cologne', note: 'Hyatt brand — Rhine riverbank, 306 rooms and suites, Regency Executive Suite with Rhine and Cologne Cathedral panorama, Glashaus Restaurant & Bar · 8.5 Booking.com', url: 'https://www.booking.com/hotel/de/hyatt-regency-koln.html' },
