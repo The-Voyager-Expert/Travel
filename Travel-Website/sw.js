@@ -813,7 +813,8 @@
 /* 2026-08-11: recife HOTEL_ALT_DATA rebuilt — the guide's title card moved to Novotel Recife Marina, and two of the four alternates it shipped with were unusable: Sheraton Recife Hotel does not exist on Booking, Trivago or Google, and Hotel Boa Viagem by Nobile carried no url at all. Replaced with Hotel Atlante Plaza, Bugan Recife by Atlantica and Mar Hotel Conventions, each with a real Booking listing and its score read off that listing. toolbar.js -> v409. CACHE to v581. */
 /* 2026-08-11: rhodes HOTEL_ALT_DATA rebuilt — all four entries were wrong. Ixian Grand was listed at 9.1 on a dead slug and actually scores 8.6, below the non-brand bar, so it is replaced by Naillac Boutique Hotel (9.5, and unlike the others it is in Rhodes Town). Melenos shipped on a dead slug too; Lindos Blu read 9.4 against a real 9.7 and Atrium Prestige 8.9 against a real 9.7. toolbar.js -> v410. CACHE to v582. */
 /* 2026-08-11: toledo HOTEL_ALT_DATA rebuilt — two of the four entries carried no url at all (Parador de Toledo, Hotel Cigarral El Bosque), which hard-fails the FINAL GATE, and the two that did had drifted scores on dead slugs. The guide's title card moved to Eugenia de Montijo, Autograph Collection, so the outgoing Aurea Toledo by Eurostars takes an alternate slot (9.3, read off its own Booking listing); Posada Silleria replaces the other url-less entry (9.0, 24h reception, inside the walls). Palacio Buenavista corrected 9.1 -> 9.0 on its live slug, AC Ciudad de Toledo 8.7 -> 8.2 on its live slug. toolbar.js -> v411. CACHE to v583. */
-var CACHE = 'travel-cache-v583';
+/* 2026-08-11: rio-de-janeiro HOTEL_ALT_DATA rebuilt — the title card moved to Hilton Copacabana and all four alternates were wrong. Hotel Nacional read 9.0 against a real 8.5 and Fairmont Copacabana 9.1 against a real 8.4 with no url at all; both are under the non-brand bar and are replaced by the two ladder runners-up, JW Marriott Rio and Novotel Leme. Copacabana Palace read 9.3 against a real 9.5 and Fasano 9.3 against a real 9.0 on a dead slug. toolbar.js -> v412. CACHE to v584. */
+var CACHE = 'travel-cache-v584';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -821,7 +822,7 @@ var CACHE = 'travel-cache-v583';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 411, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 412, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

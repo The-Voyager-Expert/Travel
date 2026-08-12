@@ -5695,10 +5695,10 @@ window.TVE.isPhone = function () {
       { name: 'Atrium Prestige Thalasso Spa Resort & Villas', note: 'Independent — Lachania village, thalassotherapy centre, three pools, sea views · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gr/atrium-prestige-thalasso-spa-resort-villas.html' }
     ] },
     'rio-de-janeiro': { h: [
-      { name: 'Hotel Nacional Rio de Janeiro', note: 'Independent — Oscar Niemeyer-designed 1968 modernist cylinder, São Conrado beachfront, iconic architecture · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/hotel-nacional-rio-de-janeiro.html' },
-      { name: 'Fairmont Rio de Janeiro Copacabana', note: 'Fairmont brand — Copacabana beachfront, sky pool with Sugarloaf views, multiple restaurants · 9.1 Booking.com' },
-      { name: 'Belmond Copacabana Palace', note: 'Belmond — Copacabana beachfront since 1923, outdoor pool, Michelin-starred Cipriani · 9.3 Booking.com', url: 'https://www.booking.com/hotel/br/copacabana-palace.html' },
-      { name: 'Hotel Fasano Rio de Janeiro', note: 'Fasano brand — Vieira Souto on Ipanema beachfront, rooftop pool, Fasano Al Mare restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/br/fasano-rio.html' }
+      { name: 'JW Marriott Rio de Janeiro', note: 'Marriott family — Avenida Atlântica 2600 on Copacabana beach, rooftop pool, 24h reception, AC · 8.0 Booking.com', url: 'https://www.booking.com/hotel/br/jw-marriott-rio-de-janeiro.html' },
+      { name: 'Novotel Rio de Janeiro Leme', note: 'Novotel — Rua Gustavo Sampaio in Leme one block off the beach, rooftop pool, 24h reception, AC · 8.0 Booking.com', url: 'https://www.booking.com/hotel/br/novotel-rio-de-janeiro-leme.html' },
+      { name: 'Copacabana Palace - A Belmond Hotel', note: 'Belmond — Copacabana beachfront since 1923, outdoor pool, Michelin-starred Cipriani · 9.5 Booking.com', url: 'https://www.booking.com/hotel/br/copacabana-palace.html' },
+      { name: 'Hotel Fasano Rio de Janeiro', note: 'Fasano brand — Vieira Souto on Ipanema beachfront, rooftop pool, Fasano Al Mare restaurant · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/fasano-rio-de-janeiro.html' }
     ] },
     'rome': { h: [
       { name: 'Hotel Eden, a Dorchester Collection Hotel', note: 'Dorchester Collection — Via Ludovisi, rooftop restaurant Il Giardino with seven-hill panorama, spa · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/it/hotel-eden-rome.html' },
