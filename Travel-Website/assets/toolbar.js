@@ -5473,8 +5473,8 @@ window.TVE.isPhone = function () {
       { name: 'Grand Hotel Parker\'s Napoli', note: 'Independent — Corso Vittorio Emanuele, panoramic views over the Gulf of Naples, George\'s restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-parker-s.html' }
     ] },
     'naples-florida': { h: [
-      { name: 'Naples Grande Beach Resort', note: 'Independent — 3-mile private beach, three pools, nine tennis courts, Gulf sunset views · 9.0 Booking.com' },
-      { name: 'Inn on Fifth', note: 'Independent boutique — downtown Fifth Avenue South, rooftop pool and spa, Sunday Jazz brunch · 9.2 Booking.com' },
+      { name: 'Bellasera Resort', note: 'Independent — Tuscan-style suites on Ninth Street South, walkable to Fifth Avenue, courtyard pool and free beach shuttle · 9.4 Booking.com', url: 'https://www.booking.com/hotel/us/bellasera.html' },
+      { name: 'Inn at Pelican Bay', note: 'Independent — Vanderbilt Beach Road in Pelican Bay, 24h reception, heated pool, tennis, spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/inn-at-pelican-bay.html' },
       { name: 'LaPlaya Beach & Golf Resort', note: 'Noble House Hotels — Vanderbilt Beach, private beach, three pools, Baleen restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/laplaya-beach-golf-resort.html' },
       { name: 'The Ritz-Carlton Naples', note: 'Ritz-Carlton brand — Naples Beach, Artisan restaurant, beachfront terrace pools · 9.3 Booking.com', url: 'https://www.booking.com/hotel/us/ritz-carlton-naples.html' }
     ] },
