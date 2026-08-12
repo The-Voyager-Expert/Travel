@@ -4846,9 +4846,9 @@ window.TVE.isPhone = function () {
     ] },
     'bend': { h: [
       { name: 'Oxford Hotel Bend', note: 'Curio Collection by Hilton — boutique downtown Bend, rooftop terrace, walking distance to Old Mill District and Drake Park · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/oxford-bend.html' },
-      { name: 'Sunriver Resort', note: 'Independent full-service resort — 15 miles south of Bend, 4 golf courses, Sage Springs spa, outdoor pools, Deschutes River frontage · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/sun-river-resort.html' },
-      { name: 'Riverhouse on the Deschutes', note: 'Independent — on the Deschutes River, indoor pool and hot tub, private beach access · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/riverhouse-on-the-deschutes.html' },
-      { name: 'Lara House Lodge', note: 'Independent boutique — Drake Park, craftsman-style B&B on Mirror Pond, hot tub and sauna · 9.5 Booking.com' }
+      { name: 'Waypoint Hotel', note: 'Independent — Deschutes River corridor, downtown Bend, craft cocktail bar, bicycle lending, 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/red-lion-bend.html' },
+      { name: 'Campfire Hotel', note: 'Independent boutique — east Bend, outdoor pool and fire pits, in-room craft beer taps, walkable east-side dining · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/bend-campfire-hotel.html' },
+      { name: 'Riverhouse on the Deschutes', note: 'Independent — on the Deschutes River, indoor pool and hot tub, private beach access · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/riverhouse-on-the-deschutes.html' }
     ] },
     'bergen': { h: [
       { name: 'Hotel Norge by Scandic', note: 'Scandic brand — grand property on Ole Bulls plass, central Bergen, indoor pool and spa, celebrated Matbørsen restaurant · 8.8 Booking.com', url: 'https://www.booking.com/hotel/no/scandic-hotel-norge.html' },
