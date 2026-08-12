@@ -822,7 +822,8 @@
 /* 2026-08-11: floor raised to cover a toolbar.js edit still in flight in the working tree from a parallel Barbados crib. Their HOTEL_ALT_DATA change is uncommitted and carries no bump of its own, so the pre-push guard blocked an unrelated San Diego push. Raising the floor here is harmless and covers their change when it lands; their file was not touched. toolbar.js -> v418. CACHE to v590. */
 /* 2026-08-11: tbilisi HOTEL_ALT_DATA — Stamba kept with its real 9.2 (it quoted 9.4) and Rooms Hotel (8.5, under the non-brand bar) replaced by the outgoing Qarvasla at 9.4; both entries had no url, a FINAL GATE hard-fail. toolbar.js -> v419. CACHE to v591. */
 /* 2026-08-11: pins — HOTEL_ALT_DATA['joao-pessoa'] had NO url on any of its four entries, and HOTEL_ALT_DATA['kotor'] had none on Palazzo Radomiri while Cattaro pointed at me/cattaro.html when the real slug is me/hotel-cattaro.html. Both hard-fail the FINAL GATE and blocked their guides from committing. Rebuilt on properties confirmed in Booking inventory: Joao Pessoa on Holanda Gold 9.6, Corais de Manaira 9.2, Place2You 9.0 and Kastel Jampa 8.9; Kotor on Alkima 9.4, Kerber-Graz 1860 9.3, Historic Boutique Hotel Cattaro 9.0 and Hyatt Regency Kotor Bay 9.0. Palazzo Radomiri is not in Booking inventory under any name form, so it is replaced rather than given a guessed url. toolbar.js -> v420. CACHE to v592. */
-var CACHE = 'travel-cache-v592';
+/* 2026-08-11: tallinn HOTEL_ALT_DATA — Hotel Telegraaf becomes the title card so it comes out of its own alternatives list; the outgoing Nunne Boutique Hotel (9.4) takes the slot to keep the array at four. toolbar.js -> v421. CACHE to v593. */
+var CACHE = 'travel-cache-v593';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -830,7 +831,7 @@ var CACHE = 'travel-cache-v592';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 420, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 421, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

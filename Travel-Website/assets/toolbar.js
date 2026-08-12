@@ -5938,9 +5938,8 @@ window.TVE.isPhone = function () {
       { name: 'Palais de Chine Hotel', note: 'Independent — near Taipei Main Station, Art Deco design, Le Palais Cantonese restaurant · 9.2 Booking.com', url: 'https://www.booking.com/hotel/tw/palais-de-chine.html' }
     ] },
     'tallinn': { h: [
-      { name: 'Hotel Telegraaf, Autograph Collection', note: 'Marriott Autograph Collection — 1919 restored telegram palace in Old Town, spa, historic vaulted interiors · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/ee/telegraaf.html' },
+      { name: 'Nunne Boutique Hotel', note: 'Independent boutique — Nunne 14 against the Old Town wall, sauna and spa, 24h reception, AC · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/nunne-boutique.html' },
       { name: 'Schlössle Hotel', note: 'Small Luxury Hotels — 15th-century merchant house in medieval Old Town, oak-panelled rooms, intimate · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/ee/schlossle.html' },
-    
       { name: 'The Three Sisters Hotel', note: 'Independent boutique — Old Town UNESCO site, three 15th-century merchant houses, Bordoo restaurant, antique furnishings · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ee/the-three-sisters.html' },
       { name: 'Hotel Viru', note: 'Independent — Viru Square, Old Town landmark from 1972, rooftop sauna, Viru bar lounge, KGB Museum on the 23rd floor · 8.5 Booking.com', url: 'https://www.booking.com/hotel/ee/viru.html' }
     ] },
