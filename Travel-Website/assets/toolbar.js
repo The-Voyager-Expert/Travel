@@ -6041,10 +6041,10 @@ window.TVE.isPhone = function () {
       { name: 'Waldorf Astoria Washington DC', note: 'Hilton brand — converted Old Post Office Building on Pennsylvania Avenue NW, indoor pool, Peacock Alley, central DC landmark · 9.0 Booking.com' , url: 'https://www.booking.com/hotel/us/waldorf-astoria-washington-dc.html' }
     ] },
     'wellington': { h: [
-      { name: 'Sofitel Wellington', note: 'Sofitel brand — Bolton Street, outdoor terrace pool, So SPA, Grill on the 11th floor · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/sofitel-wellington.html' },
-      { name: 'Ohtel Wellington', note: 'Independent boutique — 66 Oriental Parade facing the harbour, mid-century interiors, in-room breakfast · 9.2 Booking.com', url: 'https://www.booking.com/hotel/nz/ohtel.html' },
-      { name: 'The Cobbler Hotel', note: 'Independent — 3 Eva Street laneway off Cuba Street, AC, lift, family rooms · 9.0 Booking.com', url: 'https://www.booking.com/hotel/nz/the-cobbler.html' },
-      { name: 'The Intrepid Hotel', note: 'Independent — 60 Ghuznee Street at the top of Cuba Street, AC, express check-in, pet friendly · 9.0 Booking.com', url: 'https://www.booking.com/hotel/nz/the-intrepid-wellington.html' }
+      { name: 'Sofitel Wellington', note: 'Sofitel brand — 11 Bolton Street in the CBD, restaurant and bar, fitness centre, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/sofitel-wellington.html' },
+      { name: 'DoubleTree by Hilton Wellington', note: 'Hilton family — 28 Grey Street on the corner of Lambton Quay, restaurant, fitness centre, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/doubletree-by-hilton-wellington.html' },
+      { name: 'Novotel Wellington', note: 'Novotel brand — 133-137 The Terrace, restaurant and bar, fitness centre, 24h reception, AC · 8.1 Booking.com', url: 'https://www.booking.com/hotel/nz/capital-wellington.html' },
+      { name: 'Bolton Hotel', note: 'Independent — corner of Bolton and Mowbray Streets by the Botanic Garden, indoor pool, sauna, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/nz/bolton.html' }
     ] },
     'whistler': { h: [
       { name: 'Four Seasons Resort and Residences Whistler', note: 'Four Seasons brand — ski-in/ski-out base of Blackcomb, outdoor heated pool, spa · 9.3 Booking.com' },
