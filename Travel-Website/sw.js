@@ -905,7 +905,8 @@
 /* 2026-08-12: ga-grid card layout — stack name above URL (flex-direction:column) to prevent overflow in 3-col layout. guide-style.css -> v191. CACHE to v677. */
 /* 2026-08-12: Santorini: expand 3→5 days (Days 4 wine country + Day 5 volcano boat excursion added; Days 1–4 restructured into geographic groupings after optimizer correction). CACHE to v678. */
 /* 2026-08-12: ga-grid card layout — stack name above URL (flex-direction:column) to prevent overflow in 3-col layout. guide-style.css -> v191. CACHE to v679. */
-var CACHE = 'travel-cache-v679';
+/* 2026-08-12: weekly-closures card padding/radius fix + neigh-card min-width:0. guide-style.css -> v192. CACHE to v680. */
+var CACHE = 'travel-cache-v680';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -913,7 +914,7 @@ var CACHE = 'travel-cache-v679';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 191, 'toolbar.js': 482, 'mobile.css': 77, 'web-travel-style.css': 42, 'guides-index-style.css': 4, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 482, 'mobile.css': 77, 'web-travel-style.css': 42, 'guides-index-style.css': 4, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
