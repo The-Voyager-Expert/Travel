@@ -5875,8 +5875,8 @@ window.TVE.isPhone = function () {
       { name: 'Palazzo Failla Hotel', note: 'Independent — 18th-century Modica baroque palace, courtyard terrace, local cuisine restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/palazzo-failla.html' }
     ] },
     'siena': { h: [
-      { name: 'Castello di Casole, A Belmond Hotel', note: 'Belmond brand — 11th-century hilltop estate, wine tower, two pools, 4,200 acres of Tuscan countryside · 9.4 Booking.com' },
-      { name: 'Relais La Suvera', note: 'Independent — 12th-century papal villa estate, vineyard, spa, antique-furnished rooms · 9.2 Booking.com' },
+      { name: 'Castello di Casole, A Belmond Hotel', note: 'Belmond brand — 11th-century hilltop estate, wine tower, two pools, 4,200 acres of Tuscan countryside · 9.4 Booking.com', url: 'https://www.booking.com/hotel/it/castello-di-casole.html' },
+      { name: 'Relais La Suvera', note: 'Independent — 12th-century papal villa estate, vineyard, spa, antique-furnished rooms · 9.2 Booking.com', url: 'https://www.booking.com/hotel/it/relais-la-suvera.html' },
       { name: 'Hotel Certosa di Maggiano', note: 'Independent — 14th-century Certosa monastery 1 km from Piazza del Campo, pool in the cloister garden · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/certosa-di-maggiano.html' },
       { name: 'Grand Hotel Continental Siena', note: 'Starhotels — Via Banchi di Sopra baroque palace in the heart of Siena, frescoed ceilings · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-continental.html' }
     ] },
