@@ -6075,11 +6075,10 @@ window.TVE.isPhone = function () {
       { name: 'Roosevelt Lodge Cabins', note: 'Independent — rustic frontier cabins in the northeast quadrant near Lamar Valley, Old West cookouts, closest lodge to Tower Fall · 8.5 Expedia' }
     ] },
     'zakynthos': { h: [
-      { name: 'Porto Zante Villas & Spa', note: 'Independent ultra-luxury — private white-sand beach, 8 beachfront villas, spa, Laganas Bay turtle sanctuary views · 9.7 Booking.com' },
-      { name: 'Lesante Blu Exclusive Beach Resort', note: 'Independent boutique — adults-only on Tsilivi Bay, infinity pool, spa, Ionian Sea views · 9.4 Booking.com' },
+      { name: 'Lesante Blu Exclusive Beach Resort', note: 'Leading Hotels of the World — Tragaki beachfront adults-only, heated infinity pool, spa, Ionian Sea views · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gr/lesante-blu-exclusive-beach-resort.html' },
+      { name: 'Contessina Hotel', note: 'Independent — Tsilivi beachfront, three pools, spa, three restaurants, swim-up suites · 9.4 Booking.com', url: 'https://www.booking.com/hotel/gr/contessina.html' },
       { name: 'Ionian Blue Bungalows & Spa Resort', note: 'Independent — Alykes beachfront, seafront pool, spa, Ionian Grill · 9.0 Booking.com', url: 'https://www.booking.com/hotel/gr/ionian-blue-bungalows-spa-resort.html' },
-      { name: 'Lesante Blu Exclusive Beach Resort', note: 'Small Luxury Hotels — Tragaki beachfront adults-only, heated infinity pool, Blu Restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/gr/lesante-cape.html' },
-      { name: 'Domes Aulus Zante, Autograph Collection', note: 'Marriott Autograph Collection — all-inclusive on Laganas Bay in Kalamaki, private beach, thalassotherapy spa, Ionian Sea views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/gr/domesauluszante.html' }
+      { name: 'Domes Aulus Zante · Autograph Collection', note: 'Marriott Autograph Collection — all-inclusive on Laganas Bay in Kalamaki, private beach, thalassotherapy spa, Ionian Sea views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/gr/domesauluszante.html' }
     ] },
     'zhangjiajie': { h: [
       { name: 'Pullman Zhangjiajie', note: 'Accor Pullman brand — modern full-service hotel in Zhangjiajie city, pool, 30 minutes from Wulingyuan park gate · 8.8 Booking.com' },
