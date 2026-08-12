@@ -5541,7 +5541,7 @@ window.TVE.isPhone = function () {
     'osaka': { h: [
       { name: 'InterContinental Osaka', note: 'IHG brand — Grand Front Osaka, 57th-floor Pierre restaurant panorama, spa and indoor pool · 9.0 Booking.com', url: 'https://www.booking.com/hotel/jp/intercontinental-osaka.html' },
       { name: 'Conrad Osaka', note: 'Hilton family — Nakanoshima Festival City, sky infinity pool on 40th floor, harbor views · 9.2 Booking.com', url: 'https://www.booking.com/hotel/jp/conrad-osaka.html' },
-      { name: 'St. Regis Osaka', note: 'Marriott St. Regis — Honmachi, Michelin-starred restaurant, butler service, modern tower · 9.4 Booking.com', url: 'https://www.booking.com/hotel/jp/the-st-regis-osaka.html' },
+      { name: 'Courtyard by Marriott Osaka Honmachi', note: 'Marriott family — 2-3-7 Minami-Honmachi in Chuo-ku, restaurant and bar, fitness centre, public bath, 24h reception, AC · 8.8 Booking.com', url: 'https://www.booking.com/hotel/jp/courtyard-by-marriott-osaka-honmachi.html' },
       { name: 'The Ritz-Carlton Osaka', note: 'Ritz-Carlton brand — Umeda, indoor pool, Splendor spa, La Baie French restaurant · 9.3 Booking.com', url: 'https://www.booking.com/hotel/jp/the-ritz-carlton-osaka.html' }
     ] },
     'oslo': { h: [
