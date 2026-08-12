@@ -5242,7 +5242,7 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Alkima', note: 'Independent — Dobrota waterfront on the bay, 4-star, outdoor pool, spa, 24h reception · 9.4 Booking.com', url: 'https://www.booking.com/hotel/me/alkima.html' },
       { name: 'Kerber-Graz 1860', note: 'Independent — Stari grad 381 inside the walled Old Town, 4-star, sauna and spa, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/me/kerber-graz-1860.html' },
       { name: 'Historic Boutique Hotel Cattaro', note: 'Independent — 16th-century Grgurina Palace on the Old Town square, 4-star, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/me/hotel-cattaro.html' },
-      { name: 'Hyatt Regency Kotor Bay Resort', note: 'Hyatt brand — Vrmac peninsula on the bay, 5-star, indoor and infinity pools, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/me/blue-kotor-bay-premium-amp-gourmet-resort.html' }
+      { name: 'HUMA Kotor Bay Hotel and Villas', note: 'Independent — Dobrota waterfront on the bay, 5-star, infinity pool, beach, spa, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/me/allure-palazzi-kotor-bay.html' }
     ] },
     'krakow': { h: [
       { name: 'Hotel Copernicus', note: 'Relais & Châteaux — 15th-century Renaissance house in Old Town, rooftop pool with Royal Castle and Wawel panorama, Copernicus restaurant · 9.2 Booking.com' , url: 'https://www.booking.com/hotel/pl/copernicus.html' },
