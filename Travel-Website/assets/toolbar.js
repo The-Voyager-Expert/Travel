@@ -5577,10 +5577,10 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Paris Prague', note: 'Independent — 1907 Art Nouveau landmark near Old Town, Sarah Bernhardt restaurant, belle époque décor · 9.0 Booking.com', url: 'https://www.booking.com/hotel/cz/hotel-paris-prague.html' }
     ] },
     'puerto-rico': { h: [
-      { name: 'El San Juan Hotel, Curio Collection by Hilton', note: 'Hilton Curio — Isla Verde beachfront, historic 1958 mahogany lobby, three pools · 8.9 Booking.com', url: 'https://www.booking.com/hotel/pr/el-san-juan-casino.html' },
       { name: 'Dorado Beach, a Ritz-Carlton Reserve', note: 'Ritz-Carlton Reserve — 1,400-acre beachfront estate, six pools, two golf courses · 9.4 Booking.com', url: 'https://www.booking.com/hotel/pr/dorado-beach-a-ritz-carlton-reserve.html' },
-      { name: 'La Concha Renaissance San Juan Resort', note: 'Marriott Renaissance — Condado Beach, 1950s concha-shell architecture, two pools, spa · 8.8 Booking.com', url: 'https://www.booking.com/hotel/pr/la-concha-a-renaissance-resort.html' },
-      { name: 'Caribe Hilton', note: 'Hilton brand — San Geronimo Grounds, site of the original Piña Colada, private beach · 8.7 Booking.com', url: 'https://www.booking.com/hotel/pr/caribe-hilton.html' }
+      { name: 'La Concha Resort, Puerto Rico, Autograph Collection', note: 'Marriott Autograph Collection — Condado Beach, 1950s concha-shell architecture, two pools, spa · 8.9 Booking.com', url: 'https://www.booking.com/hotel/pr/la-concha-renaissance-san-juan-resort.html' },
+      { name: 'Fairmont El San Juan Hotel', note: 'Fairmont brand — Isla Verde beachfront, historic 1958 mahogany lobby, three pools; rebranded from the Curio Collection · 7.6 Booking.com', url: 'https://www.booking.com/hotel/pr/el-san-juan-casino.html' },
+      { name: 'Caribe Hilton', note: 'Hilton brand — San Geronimo Grounds, site of the original Piña Colada, private beach · 8.0 Booking.com', url: 'https://www.booking.com/hotel/pr/caribe-hilton.html' }
     ] },
     'puerto-vallarta': { h: [
       { name: 'Garza Blanca Preserve Resort & Spa', note: 'Independent luxury — hillside jungle preserve with private white-sand beach, infinity pools, adults-only towers · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mx/garza-blanca-preserve-resort-spa.html' },
