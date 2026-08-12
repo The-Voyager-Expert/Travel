@@ -2252,7 +2252,7 @@ window.TVE.isPhone = function () {
       var gelRow = document.querySelector('.overview-extras');
       if (!gelRow) return;
       if (gelRow.querySelector('a[href$="-stops-map.html"]')) return; // already present in HTML
-      // Derive slug from the current page filename (e.g. lisbon_v4.html → lisbon)
+      // Derive slug from the current page filename (e.g. lisbon.html → lisbon)
       var pageName = location.pathname.split('/').pop() || '';
       var slugMatch = pageName.match(/^(.+?)(?:_v\d+)?\.html$/);
       if (!slugMatch) return;
@@ -10177,7 +10177,7 @@ window.TVE.isPhone = function () {
 
     /* ── Destination time ── */
     function _destInfo() {
-      /* Derive slug from URL path: …/Guides/Geneva/geneva_v1.html → "geneva" */
+      /* Derive slug from URL path: …/Guides/Geneva/geneva.html → "geneva" */
       var parts = location.pathname.split('/');
       var gi = parts.indexOf('Guides');
       var slug = gi >= 0 && parts[gi + 1] ? parts[gi + 1].toLowerCase() : '';

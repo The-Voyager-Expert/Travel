@@ -3,13 +3,13 @@
 > Auto-maintained by guide_tools.py ship (Rule 125).
 > Format: YYYY-MM-DD HH:MM — guide.html — PASS|FAIL — N checks
 
-2026-06-20 18:20 — philadelphia_v1.html — FAIL — 0 checks
-2026-07-08 01:11 — philadelphia_v1.html — FAIL — 0 checks
-2026-07-08 01:12 — philadelphia_v1.html — FAIL — 0 checks
-2026-07-08 01:13 — philadelphia_v1.html — FAIL — 0 checks
-2026-07-08 01:14 — philadelphia_v1.html — PASS — 0 checks
-2026-07-08 01:15 — philadelphia_v1.html — PASS — 0 checks
-2026-07-08 01:15 — philadelphia_v1.html — PASS — 0 checks
-2026-07-08 01:17 — philadelphia_v1.html — PASS — 0 checks
-2026-07-08 01:17 — philadelphia_v1.html — PASS — 0 checks
-2026-07-08 01:19 — philadelphia_v1.html — PASS — 0 checks
+2026-06-20 18:20 — philadelphia.html — FAIL — 0 checks
+2026-07-08 01:11 — philadelphia.html — FAIL — 0 checks
+2026-07-08 01:12 — philadelphia.html — FAIL — 0 checks
+2026-07-08 01:13 — philadelphia.html — FAIL — 0 checks
+2026-07-08 01:14 — philadelphia.html — PASS — 0 checks
+2026-07-08 01:15 — philadelphia.html — PASS — 0 checks
+2026-07-08 01:15 — philadelphia.html — PASS — 0 checks
+2026-07-08 01:17 — philadelphia.html — PASS — 0 checks
+2026-07-08 01:17 — philadelphia.html — PASS — 0 checks
+2026-07-08 01:19 — philadelphia.html — PASS — 0 checks
