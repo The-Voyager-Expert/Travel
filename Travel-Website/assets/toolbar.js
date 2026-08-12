@@ -6001,11 +6001,10 @@ window.TVE.isPhone = function () {
       { name: 'Le Méridien Turin Art + Tech', note: 'Marriott Le Méridien — Lingotto complex (converted FIAT factory), rooftop test track views, indoor pool, spa, design-forward interiors · 8.5 Booking.com' , url: 'https://www.booking.com/hotel/it/le-meridien-art-tech.html' }
     ] },
     'turks-and-caicos': { h: [
-      { name: 'Amanyara', note: 'Aman brand — Grace Bay, 40 pavilions and villas, coral reef snorkeling, beachfront spa · 9.6 Booking.com' },
-      { name: 'Parrot Cay by COMO', note: 'COMO Hotels — private island, COMO Shambhala Retreat spa, white-sand beaches · 9.5 Booking.com' },
       { name: 'Grace Bay Club', note: 'Independent — Grace Bay beachfront on Providenciales, three properties, pool, Infiniti Bar & Grill · 9.6 Booking.com', url: 'https://www.booking.com/hotel/tc/grace-bay-club.html' },
       { name: 'COMO Parrot Cay', note: 'COMO brand — private island 30 min by boat, COMO Shambhala spa, pool villas, dive centre · 9.5 Booking.com', url: 'https://www.booking.com/hotel/tc/como-parrot-cay.html' },
-      { name: 'The Ritz-Carlton, Turks & Caicos', note: 'Marriott Ritz-Carlton — Grace Bay Road on Providenciales, 88 butler-service suites, private beach, Sugar Mill spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/tc/the-ritz-carlton-turks-caicos.html' }
+      { name: 'The Shore Club · Turks & Caicos', note: 'Independent luxury — Grace Bay beachfront, 22-acre estate, three pools, private beach club, three restaurants · 9.2 Booking.com', url: 'https://www.booking.com/hotel/tc/the-shore-club-turks-amp-caicos.html' },
+      { name: 'The Ritz-Carlton · Turks & Caicos', note: 'Marriott Ritz-Carlton — Grace Bay Road on Providenciales, 88 butler-service suites, private beach, Sugar Mill spa · 8.6 Booking.com', url: 'https://www.booking.com/hotel/tc/the-ritz-carlton-turks-caicos.html' }
     ] },
     'valletta': { h: [
       { name: 'The Phoenicia Malta', note: 'Small Luxury Hotels — 1947 landmark at city gate, outdoor pool in formal gardens, Malta\'s most storied hotel · 9.1 Booking.com', url: 'https://www.booking.com/hotel/mt/the-phoenicia-malta.html' },
