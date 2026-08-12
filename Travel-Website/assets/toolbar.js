@@ -8611,8 +8611,24 @@ window.TVE.isPhone = function () {
      left alone. 🚤 🚢 🚊 🚝 🚆 🚡 (about 50 rows, car-free and rail cities) have
      no mask yet and still render as emoji — they are not in MARKS. */
   function _injectRowMarks() {
-    if (!isRealGuide) return;
+    /* The isRealGuide gate used to sit HERE, on the first line, so this whole
+       function was a no-op on every non-guide page. That is why the budget
+       chips on index.html still showed Apple emoji although 💰 and ✨ have had
+       marks for months (owner 2026-08-12) — the missing selector was the
+       obvious cause and not the real one. The gate now sits below, after the
+       shared machinery, so a non-guide surface can opt in explicitly by name.
+       It is NOT removed: every sweep below it targets guide structure
+       (.tour-box, .stop-row, .extras-*), and Trip-Essentials pages carry some
+       of those class names without loading guide-style.css — running them
+       there would replace visible emoji with 1em spans that have no
+       mask-image, i.e. blank. Add a surface here one selector at a time, and
+       only once its stylesheet carries the .gm-mk rules. */
     var MARKS = {
+      /* Mid-range budget chip on index.html — the only 💳 anywhere under
+         Travel-Website/. Mask lives in guides-index-style.css, and a copy sits
+         in guide-style.css so a guide that authors one later draws a card
+         instead of a blank span. */
+      '💳': 'card',
       '📍': 'pin',
       '🚶': 'walk',
       '🚕': 'ride',
@@ -8799,6 +8815,31 @@ window.TVE.isPhone = function () {
         tn.parentNode.replaceChild(frag, tn);
       });
     }
+
+    /* ── NON-GUIDE SURFACES ─────────────────────────────────────────────────
+       Runs on every page, above the guide gate. The Travel-budget filter chips
+       on index.html author "💰 Budget (under $100)", "💳 Mid-range", "✨
+       Premium" and were the last authored emoji on the Guides Index. Their
+       stylesheet (guides-index-style.css) carries its own copy of the .gm-mk
+       rules — without that this pass would blank them, so the two ship
+       together.
+
+       SCOPED TO #tt-budget-chips, NOT to .ttchip. There is a second chip row
+       above it — the climate filter: 🌴 Hot & humid · ☀️ Warm & sunny · 🌤 Mild
+       · 🍂 Cool · ❄️ Cold. Only 🌤 is in MARKS, and gm-mk-sun has no mask in
+       guides-index-style.css, so a bare `.ttchip` sweep BLANKED that chip and
+       left one drawn icon among four Apple emoji — measurably worse than the
+       all-emoji row it replaced. Drawing that row means four new marks (palm,
+       sun, leaf, snowflake) plus their masks; until those exist it stays
+       emoji, whole and consistent. Widen this selector only together with the
+       masks the widened set needs.
+
+       Explicit wrapper, never `forEach.call(list, markRow)` — see the note on
+       the motion sweep below for what that costs. */
+    [].forEach.call(document.querySelectorAll('#tt-budget-chips .ttchip'),
+      function (row) { markRow(row); });
+
+    if (!isRealGuide) return;
 
     /* Motion rows — every glyph in them is a mark by definition.
        NOTE the explicit wrapper. Passing `markRow` straight to forEach hands it
