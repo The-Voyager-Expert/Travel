@@ -5857,8 +5857,8 @@ window.TVE.isPhone = function () {
       { name: 'Hotel Mercer Sevilla', note: 'Mercer Hotels — San Lorenzo neighbourhood, restored 18th-century mansion, small outdoor pool, terrace, curated art, 12 rooms · 9.3 Booking.com' , url: 'https://www.booking.com/hotel/es/mercer-sevilla.html' }
     ] },
     'seychelles': { h: [
-      { name: 'North Island Lodge', note: 'Independent ultra-luxury — private island, 11 villas, barefoot luxury philosophy, exclusive conservation reserve · 9.7 Booking.com' },
-      { name: 'Six Senses Zil Pasyon', note: 'Six Senses brand — private island Félicité, overwater spa, hilltop villas, coral reef · 9.6 Booking.com' },
+      { name: 'North Island Lodge', note: 'Independent ultra-luxury — private island, 11 villas, barefoot luxury philosophy, exclusive conservation reserve · 9.7 Booking.com', url: 'https://www.booking.com/hotel/sc/north-island.html' },
+      { name: 'Six Senses Zil Pasyon', note: 'Six Senses brand — private island Félicité, overwater spa, hilltop villas, coral reef · 9.6 Booking.com', url: 'https://www.booking.com/hotel/sc/six-senses-zil-pasyon.html' },
       { name: 'Four Seasons Resort Seychelles', note: 'Four Seasons — Petite Anse on Mahé, 30 private-plunge-pool villas, Kannel restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/sc/four-seasons-seychelles.html' },
       { name: 'Maia Luxury Resort & Spa', note: 'Small Luxury Hotels — private cove on Mahé, 30 all-pool villas, butler service, sunset cliff bar · 9.5 Booking.com', url: 'https://www.booking.com/hotel/sc/maia.html' }
     ] },
