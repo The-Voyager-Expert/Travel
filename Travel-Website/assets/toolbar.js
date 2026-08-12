@@ -5689,10 +5689,10 @@ window.TVE.isPhone = function () {
       { name: 'Canopy by Hilton Reykjavik City Centre', note: 'Hilton Canopy brand — near Hallgrímskirkja, Geysir Bar, design-forward rooms · 9.1 Booking.com', url: 'https://www.booking.com/hotel/is/canopy-by-hilton-reykjavik.html' }
     ] },
     'rhodes': { h: [
-      { name: 'Lindos Blu Luxury Hotel & Suites', note: 'Independent boutique — adults-only clifftop above Lindos Bay, infinity pool, cave-style architecture · 9.4 Booking.com', url: 'https://www.booking.com/hotel/gr/lindos-blu.html' },
-      { name: 'Melenos Lindos Hotel', note: 'Independent boutique — above Lindos village, sea-view terraces, pool, ceramics-accented Aegean design · 9.5 Booking.com', url: 'https://www.booking.com/hotel/gr/melenos-lindos.html' },
-      { name: 'Ixian Grand & All Suites', note: 'Independent — Ixia beachfront, all-suite, adult-only pool, spa, Steps 1-6 restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/gr/ixian-grand.html' },
-      { name: 'Atrium Prestige Thalasso Spa Resort & Villas', note: 'Independent — Lachania village, thalassotherapy centre, three pools, sea views · 8.9 Booking.com', url: 'https://www.booking.com/hotel/gr/atrium-prestige-thalasso-spa-resort-villas.html' }
+      { name: 'Naillac Boutique Hotel', note: 'Independent boutique — adults-only in Rhodes Town a short walk north of the walls, infinity pool, 24h reception, AC · 9.5 Booking.com', url: 'https://www.booking.com/hotel/gr/naillac-boutique-rodos.html' },
+      { name: 'Lindos Blu Luxury Hotel - Adults only', note: 'Independent boutique — adults-only clifftop above Lindos Bay, infinity pool, cave-style architecture · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gr/lindos-blu.html' },
+      { name: 'Melenos Art Boutique Hotel', note: 'Independent boutique — above Lindos village, sea-view terraces, ceramics-accented Aegean design · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gr/melenos-lindos-exclusive-suites.html' },
+      { name: 'Atrium Prestige Thalasso Spa Resort & Villas', note: 'Independent — Lachania village, thalassotherapy centre, three pools, sea views · 9.7 Booking.com', url: 'https://www.booking.com/hotel/gr/atrium-prestige-thalasso-spa-resort-villas.html' }
     ] },
     'rio-de-janeiro': { h: [
       { name: 'Hotel Nacional Rio de Janeiro', note: 'Independent — Oscar Niemeyer-designed 1968 modernist cylinder, São Conrado beachfront, iconic architecture · 9.0 Booking.com', url: 'https://www.booking.com/hotel/br/hotel-nacional-rio-de-janeiro.html' },

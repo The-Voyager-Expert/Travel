@@ -811,7 +811,8 @@
 /* 2026-08-11: re-bump for the stop-hours band fix described one line up. That bump (v406 / v578) was written into the worktree while uncommitted and was swept into 2f91ebce (puerto-rico) before the toolbar.js hunk it belonged to was committed, so the floor was already spent when the real change landed in c41387df. toolbar.js -> v407. CACHE to v579. */
 /* 2026-08-11: CSS version guard no longer swaps guide-style.css by assigning link.href. Assigning href on an already-loaded stylesheet makes Chrome drop its sheet the same tick and refetch, so every page load of the site had a window with NO guide CSS at all — Prague measured sheet done 267ms, DOMContentLoaded 361ms (inside the gap), replacement 619ms. That is not just a FOUC: everything toolbar.js measures at DOMContentLoaded measured an unstyled document, which is what stepped every hours band one gutter right. The guard now appends a SECOND link and drops the loser — the old link on load, the new link on error, so a failed fetch leaves the page on the stale styles rather than on none. Verified: card paddingLeft at DOMContentLoaded reads 0px before and 14px after, with the refreshed fetch delayed 1.5s. toolbar.js -> v408. CACHE to v580. */
 /* 2026-08-11: recife HOTEL_ALT_DATA rebuilt — the guide's title card moved to Novotel Recife Marina, and two of the four alternates it shipped with were unusable: Sheraton Recife Hotel does not exist on Booking, Trivago or Google, and Hotel Boa Viagem by Nobile carried no url at all. Replaced with Hotel Atlante Plaza, Bugan Recife by Atlantica and Mar Hotel Conventions, each with a real Booking listing and its score read off that listing. toolbar.js -> v409. CACHE to v581. */
-var CACHE = 'travel-cache-v581';
+/* 2026-08-11: rhodes HOTEL_ALT_DATA rebuilt — all four entries were wrong. Ixian Grand was listed at 9.1 on a dead slug and actually scores 8.6, below the non-brand bar, so it is replaced by Naillac Boutique Hotel (9.5, and unlike the others it is in Rhodes Town). Melenos shipped on a dead slug too; Lindos Blu read 9.4 against a real 9.7 and Atrium Prestige 8.9 against a real 9.7. toolbar.js -> v410. CACHE to v582. */
+var CACHE = 'travel-cache-v582';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -819,7 +820,7 @@ var CACHE = 'travel-cache-v581';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 409, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
+var MIN_VERSIONS = { 'guide-style.css': 177, 'toolbar.js': 410, 'mobile.css': 76, 'web-travel-style.css': 28, 'guides-index-style.css': 3, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 5 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
