@@ -5213,10 +5213,10 @@ window.TVE.isPhone = function () {
       { name: 'Kastel Jampa Hotel', note: 'Independent — Av. João Maurício beachfront, adults only, 4-star, year-round outdoor pool, 24h reception · 8.9 Booking.com', url: 'https://www.booking.com/hotel/br/kastel-jampa-joao-pessoa.html' }
     ] },
     'kauai': { h: [
-      { name: 'St. Regis Princeville Resort', note: 'Marriott Luxury Collection — Princeville cliffside above Hanalei Bay, Halele\'a Spa, infinity pool, butler service, North Shore panorama · 9.0 Booking.com' },
-      { name: '1 Hotel Hanalei Bay', note: 'SH Hotels brand — Princeville cliffside, adults-preferred wing, two pools, farm-to-table restaurant, panoramic Hanalei Bay views · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/1hotel-hanalei-bay.html' },
-      { name: 'Grand Hyatt Kauai Resort and Spa', note: 'Hyatt brand — Poipu Beach, five saltwater pools, Anara Spa, Tidepools restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/grand-hyatt-kauai.html' },
-      { name: 'Koloa Landing Resort at Poipu, Autograph Collection', note: 'Marriott Autograph Collection — Poipu, largest resort on Kauai, four pools, Holoholo Grille · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/koloa-landing-resort.html' }
+      { name: '1 Hotel Hanalei Bay', note: 'SH Hotels — Ka Haku Road on the Princeville cliffs above Hanalei Bay, 5-star, year-round pool, spa, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/1hotel-hanalei-bay.html' },
+      { name: "Koloa Landing Resort at Po'ipu · Autograph Collection", note: 'Marriott Autograph Collection — Poipu Road, 4-star, five pools including a waterslide, spa, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/wyndham-koloa-landing-at-poipu-beach.html' },
+      { name: 'Sheraton Kauai Resort', note: 'Marriott Sheraton brand — Hoonani Road on Poipu Beach, beachfront, year-round pool, spa, 24h reception · 8.3 Booking.com', url: 'https://www.booking.com/hotel/us/sheraton-kauai-resort.html' },
+      { name: "Marriott's Kaua'i Beach Club", note: 'Marriott brand — Rice Street on Kalapaki Beach in Lihue, 4-star, beachfront, spa, 24h reception · 7.8 Booking.com', url: 'https://www.booking.com/hotel/us/marriott-s-kaua-i-beach-club.html' }
     ] },
     'keywest': { h: [
       { name: 'Ocean Key Resort & Spa', note: 'Curio Collection by Hilton — Sunset Key views at Zero Duval, rooftop pool, private dock access, steps from Mallory Square sunset · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/ocean-key-resort-spa-key-west-florida.html' },
