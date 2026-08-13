@@ -879,7 +879,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Beaches.html',                       text: 'Beaches', icon: 'beach' },
         { href: base + 'Trip-Essentials/Best-Castles.html',                       text: 'Castles', icon: 'castle' },
         { href: base + 'Trip-Essentials/Best-Cathedrals.html',                    text: 'Cathedrals', icon: 'cathedral' },
-        { href: base + 'Trip-Essentials/Best-Caves.html',                         text: 'Caves', icon: 'star-cup' },
+        { href: base + 'Trip-Essentials/Best-Caves.html',                         text: 'Caves', icon: 'cave' },
         /* OWNER-DIRECTED 2026-08-12: Cruise Lines, Disney Parks, Festival Finder
            and Pickleball moved here out of 📋 Also Recommended. All four are
            "the best X in the world" collections, not utilities, so they belong
