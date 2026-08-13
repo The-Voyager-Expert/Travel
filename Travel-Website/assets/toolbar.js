@@ -1124,7 +1124,7 @@ window.TVE.isPhone = function () {
        forces overflow-y to clip and the flyout gets cut off. */
     '.tb-menu{position:fixed;transform:translateX(-50%);' +
       'background:#fff;border:1px solid #e6e2da;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.13);' +
-      'padding:4px;display:none;flex-direction:column;gap:0;min-width:196px;z-index:1000;' +
+      'padding:4px 4px 12px;display:none;flex-direction:column;gap:0;min-width:196px;z-index:1000;' +
       /* 🏆 Best Of carries 35 rows — far taller than any viewport. Cap the
          flyout and let it scroll rather than running off the bottom of the
          screen. Every other group is well under the cap and is unaffected. */
