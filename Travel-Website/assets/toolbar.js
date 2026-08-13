@@ -529,6 +529,14 @@ window.TVE.isPhone = function () {
        for Time Zones. Separate key from 'clock' (specimen #62, the shipped
        shape), which stays on Connection Times and Visa Processing Times. */
     'wall-clock': ['0 0 24 24', '<circle cx="12" cy="12" r="10.4" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/><circle cx="12" cy="12" r="8.6" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/><g fill="none" stroke="var(--c-stone)" stroke-width="0.8" stroke-linecap="round"><path d="M12.00 4.95L12.00 3.74"/><path d="M15.53 5.89L16.13 4.85"/><path d="M18.11 8.47L19.15 7.87"/><path d="M19.05 12.00L20.26 12.00"/><path d="M18.11 15.53L19.15 16.13"/><path d="M15.53 18.11L16.13 19.15"/><path d="M12.00 19.05L12.00 20.26"/><path d="M8.47 18.11L7.87 19.15"/><path d="M5.89 15.53L4.85 16.13"/><path d="M4.95 12.00L3.74 12.00"/><path d="M5.89 8.47L4.85 7.87"/><path d="M8.47 5.89L7.87 4.85"/></g><g fill="none" stroke="var(--c-tire)" stroke-linecap="round"><path d="M12 12L9.57 10.30" stroke-width="1.90"/><path d="M12 12L15.83 9.79" stroke-width="1.50"/></g><circle cx="12" cy="12" r="1" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/>'],
+    /* Guide-Icons.html specimen #572, "Preview · wand" — owner pick 2026-08-13
+       for Unique Hotels, replacing the 'bulb'. 'bulb' is untouched and stays
+       wherever else it is drawn. */
+    'wand': ['0 0 24 24', '<path d="M14.4 2.2 15.9 6.1 19.8 7.6 15.9 9.1 14.4 13 12.9 9.1 9 7.6 12.9 6.1z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><path d="M12.2 11.4 3.4 20.2a1.9 1.9 0 0 0 2.7 2.7l8.8-8.8z" fill="url(#gm-plum)" stroke="var(--c-plum-rim)" stroke-width="0.5"/><circle cx="20.4" cy="13.4" r="1.5" fill="url(#gm-rose)" stroke="var(--c-rose-rim)" stroke-width="0.5"/><circle cx="6.6" cy="5.4" r="1.2" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/>'],
+    /* Guide-Icons.html specimen #324, "Sun · sun and palms" — owner pick
+       2026-08-13 for Browse by City, replacing the generic 'search' magnifier.
+       'search' itself stays: the Hotels & Flights pill still draws it. */
+    'sun-palms': ['0 0 24 24', '<circle cx="12.6" cy="10.2" r="5.4" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><rect x="1" y="19.4" width="22" height="2.4" rx="1.2" fill="url(#gm-tan)" stroke="var(--c-tan-rim)" stroke-width="0.5"/><path d="M5.4 19.4c-.4-3.6-.2-6.4.6-8.4l1.9.5c-.7 1.8-.9 4.4-.5 7.9z" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/><path d="M6.4 10.4c2.4-1.6 4.4-1.4 6 .6-1.8-.6-3.5-.4-5 .6zM6.4 10.4c-2.4-1.6-4.4-1.4-6 .6 1.8-.6 3.5-.4 5 .6zM6.4 10.4c.6-2.6 2-4 4.2-4.2-1.5 1-2.6 2.4-3.2 4.2z" fill="url(#gm-leaf)" stroke="var(--c-leaf-rim)" stroke-width="0.5"/><path d="M18.4 19.4c.3-3 .1-5.4-.5-7l1.8-.5c.7 1.7.9 4.2.6 7.5z" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/><path d="M19 12.2c2-1.3 3.7-1.1 5 .5-1.5-.5-2.9-.3-4.2.5zM19 12.2c-2-1.3-3.7-1.1-5 .5 1.5-.5 2.9-.3 4.2.5z" fill="url(#gm-leaf)" stroke="var(--c-leaf-rim)" stroke-width="0.5"/>'],
     /* Guide-Icons.html specimen #71, "Clock · clock and hourglass" — owner pick
        2026-08-13 for Visa Processing Times. Fourth distinct clock; 'clock' (#62)
        is now only the hours band and duration chip, which draw it directly. */
@@ -833,7 +841,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods',           icon: 'neighborhoods' },
         { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: 'Hotels & Stays',          icon: 'hotel' },
         { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: 'Most Luxurious Hotels',   icon: 'sparkle' },
-        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: 'Unique Hotels',           icon: 'bulb' },
+        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: 'Unique Hotels',           icon: 'wand' },
         { href: base + 'Trip-Essentials/Best-Resorts.html',                 text: 'Resorts',                 icon: 'beach' },
         { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: 'Ultra-Luxurious Resorts', icon: 'star' },
       ] },
@@ -952,7 +960,7 @@ window.TVE.isPhone = function () {
        footer pills, which resolve from ITEMS first. */
     { group: '🌤️ Weather', groupIcon: 'partly-cloudy', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'sun-clear' },
-        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'search' },
+        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'sun-palms' },
         { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
       ] },
     null,
