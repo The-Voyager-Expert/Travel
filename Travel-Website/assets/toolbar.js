@@ -634,7 +634,10 @@ window.TVE.isPhone = function () {
     '--c-sky:#66caff;--c-paper-shade:#d8cfc0;--c-cream-shade:#cbb894;' +
     '--c-rim-warm:#e0873f;--c-rim-cool:#a9bac8;--c-tire-shade:#4f453f;--c-tire-rim:#8d8480;--c-stone-shade:#847a6e;--c-stone-rim:#b8b0a6;--c-tan-shade:#db9e58;--c-tan-rim:#ffcd94;--c-cocoa-shade:#a55b1d;--c-cocoa-rim:#d39764;--c-rust-shade:#db721c;--c-rust-rim:#ffa963;--c-clay-shade:#db7140;--c-clay-rim:#ffa881;--c-red-shade:#db5b49;--c-red-rim:#ff9788;--c-rose-shade:#db5872;--c-rose-rim:#ff94aa;--c-plum-shade:#c23fc8;--c-plum-rim:#eb80ef;--c-sun-shade:#dbb242;--c-sun-rim:#ffdd82;--c-amber-shade:#db842d;--c-amber-rim:#ffb871;--c-green-shade:#64ce36;--c-green-rim:#9ef479;--c-leaf-shade:#52a424;--c-leaf-rim:#8fd26a;--c-teal-shade:#1cc8b3;--c-teal-rim:#64efde;--c-blue-shade:#3496da;--c-blue-rim:#76c6fe;--c-navy-shade:#286da9;--c-navy-rim:#6da5d6;--c-sky-shade:#58aedb;--c-sky-rim:#94daff}}' +
     '.gm-ic{display:inline-block;vertical-align:-0.15em}' +
-    '.gm-mk.gm-mk-c{background:none;-webkit-mask:none;mask:none;line-height:0}' +
+    '.gm-mk.gm-mk-c{background:none;-webkit-mask:none;mask:none;line-height:0;'
+    /* the svg inside is 1.2em; without matching the BOX to it the mark
+       overflows its own 1em width and sits on top of the text. */
+    + 'width:1.2em;height:1.2em;margin-right:0.2em;vertical-align:-0.22em}' +
     '.gm-mk.gm-mk-c svg{width:1.2em;height:1.2em;display:block}';
 
   /* One sprite and one style tag per page, inserted before anything asks for a
