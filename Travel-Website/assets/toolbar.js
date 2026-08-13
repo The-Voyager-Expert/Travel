@@ -512,6 +512,10 @@ window.TVE.isPhone = function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    'night-sky': ['0 0 24 24', '<rect x="2.4" y="3.6" width="19.2" height="16.8" rx="2.2" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/><path d="M15.6 6.2a4.6 4.6 0 1 0 4.2 6.5 5.2 5.2 0 0 1-4.2-6.5z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><g fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.4"><circle cx="6.2" cy="7.4" r="0.85"/><circle cx="9.4" cy="10.6" r="0.6"/><circle cx="5.4" cy="12.4" r="0.6"/></g><path d="M2.4 17.4c2.6-2.2 5-2.2 7.4 0 2.4-2.4 4.8-2.4 7.2 0 1.6-1.2 3.2-1.4 4.6-.6v1.4a2.2 2.2 0 0 1-2.2 2.2H4.6a2.2 2.2 0 0 1-2.2-2.2z" fill="url(#gm-grape)" stroke="var(--c-grape-rim)" stroke-width="0.5"/>'],
+    'leaf-autumn': ['0 0 24 24', '<path d="M12 21.4V12" fill="none" stroke="var(--c-cocoa)" stroke-width="1.5" stroke-linecap="round"/><path d="M12 12.6c-3.4-1-5.4-3.4-5.4-6.6 0-1 .2-2 .6-2.9 3.2.3 5.6 2.2 6.6 5.2z" fill="url(#gm-clay)" stroke="var(--c-clay-rim)" stroke-width="0.5"/><path d="M12 12.6c3.4-1 5.4-3.4 5.4-6.6 0-1-.2-2-.6-2.9-3.2.3-5.6 2.2-6.6 5.2z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><path d="M12 15.4c-2.6-.6-4.2-2.2-4.6-4.4 2.4-.2 4.2 1 5 3z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/>'],
+    'snowflake': ['0 0 24 24', '<g fill="none" stroke="var(--c-sky)" stroke-width="2" stroke-linecap="round"><path d="M12 2.6v18.8M4.1 7.1l15.8 9.8M19.9 7.1L4.1 16.9"/></g><g fill="none" stroke="var(--c-blue)" stroke-width="1.6" stroke-linecap="round"><path d="M12 6.2 9.4 4M12 6.2 14.6 4M12 17.8l-2.6 2.2M12 17.8l2.6 2.2M7.2 9.4 4 9.2M7.2 9.4 5.6 12M16.8 14.6l3.2.2M16.8 14.6l1.6-2.6M7.2 14.6 4 14.8M7.2 14.6 5.6 12M16.8 9.4 20 9.2M16.8 9.4l1.6 2.6"/></g><circle cx="12" cy="12" r="1.6" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/>'],
+
     'artframe': ['0 0 24 24', '<rect x="2.2" y="3.4" width="19.6" height="17.2" rx="1" fill="url(#gm-amber)" stroke="var(--c-amber-rim)" stroke-width="0.5"/> <rect x="4.4" y="5.6" width="15.2" height="12.8" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/> <circle cx="8.4" cy="9.2" r="1.7" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/> <path d="M4.4 18.4 9.6 11.6l3.2 4 2.6-3 4.2 5.8z" fill="url(#gm-green)" stroke="var(--c-green-rim)" stroke-width="0.5"/> <rect x="4.4" y="5.6" width="15.2" height="12.8" fill="none" stroke="var(--c-cocoa)" stroke-width="0.8" opacity="0.35"/>'],
     'aurora': ['0 0 24 24', '<rect x="1.4" y="1.6" width="21.2" height="20.8" rx="2" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/> <path d="M3 21c0-6.6 4-12 9-12s9 5.4 9 12h-2.2c0-5.4-3-10-6.8-10S5.2 15.6 5.2 21z" fill="url(#gm-green)" stroke="var(--c-green-rim)" stroke-width="0.5" opacity="0.85"/> <path d="M5.6 21c0-4.8 2.9-8.8 6.4-8.8s6.4 4 6.4 8.8h-2c0-3.7-2-6.8-4.4-6.8s-4.4 3.1-4.4 6.8z" fill="url(#gm-teal)" stroke="var(--c-teal-rim)" stroke-width="0.5" opacity="0.85"/> <path d="M8.2 21c0-3 1.7-5.4 3.8-5.4s3.8 2.4 3.8 5.4h-1.9c0-2-.9-3.6-1.9-3.6s-1.9 1.6-1.9 3.6z" fill="url(#gm-plum)" stroke="var(--c-plum-rim)" stroke-width="0.5" opacity="0.85"/> <g fill="url(#gm-cream)" stroke="var(--c-rim-warm)" stroke-width="0.6"><circle cx="4.6" cy="4.6" r="0.7"/><circle cx="19.4" cy="5.4" r="0.7"/><circle cx="15" cy="3.4" r="0.55"/></g>'],
     'balloon': ['0 0 24 24', '<path d="M12 1.6a7.4 7.4 0 0 0-7.4 7.4c0 4.1 3.7 8 6.2 9.2h2.4c2.5-1.2 6.2-5.1 6.2-9.2A7.4 7.4 0 0 0 12 1.6z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/> <path d="M12 1.6c-1.9 0-3.5 3.3-3.5 7.4 0 3.6 1.4 7 2.7 8.9h1.6c1.3-1.9 2.7-5.3 2.7-8.9 0-4.1-1.6-7.4-3.5-7.4z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/> <path d="M12 1.6c-.8 0-1.5 3.3-1.5 7.4 0 3.6.6 7 1.2 8.9h.6c.6-1.9 1.2-5.3 1.2-8.9 0-4.1-.7-7.4-1.5-7.4z" fill="url(#gm-teal)" stroke="var(--c-teal-rim)" stroke-width="0.5"/> <path d="M9.6 18.6h4.8l-.8 3.4a1 1 0 0 1-1 .8h-1.2a1 1 0 0 1-1-.8z" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/>'],
@@ -9034,6 +9038,26 @@ window.TVE.isPhone = function () {
        mask-image, i.e. blank. Add a surface here one selector at a time, and
        only once its stylesheet carries the .gm-mk rules. */
     var MARKS = {
+      /* Holiday-Chooser + climate filter chips on index.html — the last
+         emoji a reader actually saw. All of these resolve to GM_SPRITE keys,
+         so markRow draws <use href="#gm-i-KEY"> and NO css mask is needed;
+         that is what blocked the previous pass, which only had the mask path
+         in mind and would have blanked the row. */
+      '🏖': 'beach',  /* Beach chip */
+      '🌲': 'tree',  /* Nature chip */
+      '🎨': 'artframe',  /* Art & museums chip */
+      '🌃': 'night-sky',  /* Nightlife chip */
+      '🏝': 'island',  /* Islands chip */
+      '🎿': 'ski',  /* Snow / ski chip */
+      '🍷': 'wine',  /* Wine chip */
+      '🛝': 'blocks',  /* Kids friendly chip */
+      '🎢': 'ferris',  /* Amusement chip */
+      '🌴': 'palm',  /* Hot & humid chip */
+      '☀': 'sun-clear',  /* Warm & sunny chip */
+      '🌤': 'partly-cloudy',  /* Mild chip */
+      '🍂': 'leaf-autumn',  /* Cool chip */
+      '❄': 'snowflake',  /* Cold chip */
+
       /* Mid-range budget chip on index.html — the only 💳 anywhere under
          Travel-Website/. Mask lives in guides-index-style.css, and a copy sits
          in guide-style.css so a guide that authors one later draws a card
@@ -9255,7 +9279,7 @@ window.TVE.isPhone = function () {
 
        Explicit wrapper, never `forEach.call(list, markRow)` — see the note on
        the motion sweep below for what that costs. */
-    [].forEach.call(document.querySelectorAll('#tt-budget-chips .ttchip'),
+    [].forEach.call(document.querySelectorAll('#tt-budget-chips .ttchip,#tt-climate-chips .ttchip,.hcchip'),
       function (row) { markRow(row); });
 
     if (!isRealGuide) return;
