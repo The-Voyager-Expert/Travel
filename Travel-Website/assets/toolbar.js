@@ -890,7 +890,7 @@ window.TVE.isPhone = function () {
       'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
-    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;min-height:28px;color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600;line-height:1.2}' +
+    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:transparent;outline:1.5px solid rgba(184,92,42,0.85);outline-offset:5px;border-radius:14px;font-weight:600;line-height:1.2}' +
     /* An OPEN dropdown gets the same terracotta ring as the active tab, so the
    menu is visibly attached to the tab it came from. It only changed text
    colour before, which was invisible against the other tabs. */
