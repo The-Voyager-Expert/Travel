@@ -651,6 +651,48 @@ window.TVE.isPhone = function () {
     wrap.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
     wrap.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg">' + out.join('') + '</svg>';
     document.body.insertBefore(wrap, document.body.firstChild);
+
+    /* ── OPTICAL SIZE ───────────────────────────────────────────────────────
+       Owner, 2026-08-12: "they look smaller than emojis". Measured and true —
+       the symbols filled 0.70 to 1.02 of their own viewBox (median 0.85) while
+       Apple emoji fill 0.944 to 1.000 of the em box. Two icons at the same css
+       size therefore rendered at visibly different sizes, and all of them
+       smaller than the glyphs they replaced.
+
+       Fixed here rather than by hand-editing 102 viewBoxes: each symbol is
+       measured after insertion and its viewBox rewritten to a square centred
+       on its own ink, sized so the dominant axis fills TARGET. Scale stays
+       uniform, so nothing is stretched and a wide ticket stays wide. Doing it
+       at runtime means an icon added later is corrected automatically and
+       cannot drift back.
+
+       The wrapper is width:0/overflow:hidden rather than display:none on
+       purpose — a display:none subtree has no layout, so getBBox would return
+       zeros and this would silently do nothing. */
+    var TARGET = 0.96;
+    var syms = wrap.querySelectorAll('symbol');
+    for (var i = 0; i < syms.length; i++) {
+      var sy = syms[i], vb = sy.viewBox.baseVal;
+      if (!vb || !vb.width) continue;
+      var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, any = false;
+      var kids = sy.querySelectorAll('path,rect,circle,ellipse,line,polygon,polyline,text');
+      for (var j = 0; j < kids.length; j++) {
+        var b; try { b = kids[j].getBBox(); } catch (e) { continue; }
+        if (!b || (!b.width && !b.height)) continue;
+        any = true;
+        if (b.x < x0) x0 = b.x;
+        if (b.y < y0) y0 = b.y;
+        if (b.x + b.width  > x1) x1 = b.x + b.width;
+        if (b.y + b.height > y1) y1 = b.y + b.height;
+      }
+      if (!any) continue;
+      var side = Math.max(x1 - x0, y1 - y0) / TARGET;
+      if (!(side > 0)) continue;
+      var cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      sy.setAttribute('viewBox',
+        (cx - side / 2).toFixed(3) + ' ' + (cy - side / 2).toFixed(3) + ' ' +
+        side.toFixed(3) + ' ' + side.toFixed(3));
+    }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _gmSprite);
   else _gmSprite();
@@ -660,8 +702,11 @@ window.TVE.isPhone = function () {
        old fill="var(--rust)" because every shape inside the symbol carries its
        own fill — which is the whole point. */
     if (key && GM_SPRITE[key]) {
+      /* viewBox is a plain square, NOT the symbol's own box: the symbol carries
+         its normalised viewBox and maps itself into whatever viewport <use>
+         gets. A non-square outer box here would letterbox the icon. */
       return '<svg class="gm-ic" width="' + size + '" height="' + size +
-             '" viewBox="' + GM_SPRITE[key][0] + '" aria-hidden="true"><use href="#gm-i-' + key + '"/></svg>';
+             '" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-' + key + '"/></svg>';
     }
     var stroked = entry && typeof entry === 'object' && entry.stroke;
     var markup  = stroked ? entry.m : entry;
@@ -8976,7 +9021,7 @@ window.TVE.isPhone = function () {
                .gm-mk selectors other injectors rely on are unchanged. */
             if (GM_SPRITE[mkey]) {
               mk.className = 'gm-mk gm-mk-c';
-              mk.innerHTML = '<svg viewBox="' + GM_SPRITE[mkey][0] + '"><use href="#gm-i-' + mkey + '"/></svg>';
+              mk.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + mkey + '"/></svg>';
             } else {
               mk.className = 'gm-mk gm-mk-' + mkey;
             }
@@ -10437,7 +10482,7 @@ window.TVE.isPhone = function () {
            through the row sweep. */
         if (GM_SPRITE['clock']) {
           _mk.className = 'gm-mk gm-mk-c';
-          _mk.innerHTML = '<svg viewBox="' + GM_SPRITE['clock'][0] + '"><use href="#gm-i-clock"/></svg>';
+          _mk.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-clock"/></svg>';
         } else {
           _mk.className = 'gm-mk gm-mk-clock';
         }
@@ -10793,7 +10838,7 @@ window.TVE.isPhone = function () {
            This chip is built here rather than authored in a guide, so no MARKS
            row can reach it; it inserts its own. */
         '<span class="lac-iata"><span class="gm-mk gm-mk-c" aria-hidden="true">' +
-        '<svg viewBox="' + GM_SPRITE['plane'][0] + '"><use href="#gm-i-plane"/></svg></span><span' +
+        '<svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><span' +
         ' style="margin-right:4px"></span><span class="gm-mk-src">✈ </span>' +
         info.iata + '</span>' +
         '<span class="lac-div">|</span>' +
