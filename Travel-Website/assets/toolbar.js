@@ -5079,7 +5079,7 @@ window.TVE.isPhone = function () {
       { name: 'Olive Green Hotel', note: 'Independent eco-boutique — sustainable 4-star near the city port, bike-friendly, organic breakfast, 8-min walk to the Heraklion waterfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/gr/olive-green-hotel.html' }
     ] },
     'curacao': { h: [
-      { name: 'Baoase Luxury Resort', note: 'Independent boutique — adults-only, private beach on Piscadera Bay, Baoase Culinary Beach restaurant, full-service spa · 9.4 Booking.com' },
+      { name: 'Baoase Luxury Resort', note: 'Independent boutique — adults-only, private beach on Piscadera Bay, Baoase Culinary Beach restaurant, full-service spa' },
       { name: 'Mangrove Beach Corendon Curacao Resort, Curio Collection by Hilton', note: 'Hilton Curio — beachfront, aqua park, spa, multiple pools and dining, 10-min from Willemstad\'s historic waterfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/corendon-mangrove-beach-resort.html' },
       { name: 'Avila Beach Hotel', note: 'Independent — historic 1780 mansion on Penstraat beach, Blues Music Bar, diving centre · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cw/avila-beach-hotel.html' },
       { name: 'Renaissance Wind Creek Curaçao Resort', note: 'Renaissance brand — Punda waterfront, casino, full-service spa, harbour location · 8.7 Booking.com', url: 'https://www.booking.com/hotel/cw/renaissance-curacao-resort-casino.html' }
@@ -5173,9 +5173,9 @@ window.TVE.isPhone = function () {
     ] },
     'frankfurt': { h: [
       { name: 'Steigenberger Frankfurter Hof', note: 'Steigenberger brand — 1876 Kaiserplatz landmark, Michelin-recognized The Faces restaurant, historic grand-hotel address · 8.7 Booking.com', url: 'https://www.booking.com/hotel/de/steigenberger-frankfurter-hof.html' },
-      { name: 'Villa Kennedy', note: 'Rocco Forte brand — 1901 Sachsenhausen patrician villa, garden pool, Vigna restaurant, spa, 15-minute walk to Römer · 9.0 Booking.com' },
-      { name: 'Jumeirah Frankfurt', note: 'Jumeirah brand — Westend tower with panoramic city views, spa, pool, rooftop terrace, 10-minute walk to Alte Oper · 8.9 Booking.com' },
-      { name: 'Hotel Hessischer Hof', note: 'Independent grand hotel — 1952 address near Alte Oper and Messe, decorated with Hessian art collection, restaurant Sèvres · 8.6 Booking.com' }
+      { name: 'Villa Kennedy', note: 'Rocco Forte brand — 1901 Sachsenhausen patrician villa, garden pool, Vigna restaurant, spa, 15-minute walk to Römer' },
+      { name: 'Jumeirah Frankfurt', note: 'Jumeirah brand — Westend tower with panoramic city views, spa, pool, rooftop terrace, 10-minute walk to Alte Oper' },
+      { name: 'Hotel Hessischer Hof', note: 'Independent grand hotel — 1952 address near Alte Oper and Messe, decorated with Hessian art collection, restaurant Sèvres' }
     ] },
     'galapagos-islands': { h: [
       { name: 'Finch Bay Ecolodge', note: 'Relais & Châteaux eco-resort at Finch Bay — naturalist-guided excursions, pool, pier with direct water-taxi access to Las Grietas, most prestigious address on Santa Cruz · 9.2 Booking.com', url: 'https://www.booking.com/hotel/ec/finch-bay.html' },
@@ -5228,7 +5228,7 @@ window.TVE.isPhone = function () {
     ] },
     'hilton-head-island': { h: [
       { name: 'Sonesta Resort Hilton Head Island', note: 'Sonesta brand — North Forest Beach Drive oceanfront, two pools, beach access, on-site dining, family-friendly full-service resort · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/sonesta-resort-hilton-head-island.html' },
-      { name: 'The Inn at Harbour Town', note: 'Independent boutique — inside Sea Pines plantation, overlooking Heritage Golf Links, butler service, Sea Pines resort amenity access · 9.1 Booking.com' },
+      { name: 'The Inn at Harbour Town', note: 'Independent boutique — inside Sea Pines plantation, overlooking Heritage Golf Links, butler service, Sea Pines resort amenity access' },
       { name: 'The Sea Pines Resort', note: 'Independent — 5,200-acre plantation, four golf courses, beach club, Harbour Town lighthouse · 9.2 Booking.com', url: 'https://www.booking.com/hotel/us/sea-pines-resort.html' },
       { name: 'Westin Hilton Head Island Resort & Spa', note: 'Marriott Westin — Palmetto Dunes Oceanfront, three pools, Heavenly Spa, direct beach access · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/the-westin-hilton-head-island-resort-spa.html' }
     ] },
@@ -5354,7 +5354,7 @@ window.TVE.isPhone = function () {
       { name: 'Sunset Tower Hotel', note: 'Independent — 1931 Art Deco landmark on the Sunset Strip, pool and terrace, Tower Bar restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/sunset-tower-hotel.html' }
     ] },
     'los-cabos': { h: [
-      { name: 'Las Ventanas al Paraíso, A Rosewood Resort', note: 'Rosewood brand — beachfront estate, telescope observatory, three pools, Tequila & Ceviche Bar · 9.5 Booking.com' },
+      { name: 'Las Ventanas al Paraíso, A Rosewood Resort', note: 'Rosewood brand — beachfront estate, telescope observatory, three pools, Tequila & Ceviche Bar' },
       { name: 'One&Only Palmilla', note: 'One&Only brand — 27-acre oceanfront estate, Nobu on-site, infinity pools, private diving · 9.4 Booking.com', url: 'https://www.booking.com/hotel/mx/one-only-palmilla.html' },
       { name: 'Esperanza, Auberge Resorts Collection', note: 'Auberge Resorts — Punta Ballena, two ocean-view pools, Espacio spa, Cocina del Mar restaurant · 9.4 Booking.com', url: 'https://www.booking.com/hotel/mx/esperanza.html' },
       { name: 'Grand Velas Los Cabos', note: 'Velas Resorts — beachfront all-inclusive, six restaurants, Se Spa, infinity pool · 9.3 Booking.com', url: 'https://www.booking.com/hotel/mx/grand-velas-los-cabos.html' }
@@ -5434,7 +5434,7 @@ window.TVE.isPhone = function () {
     ] },
     'marco-island': { h: [
       { name: 'Hilton Marco Island Beach Resort & Spa', note: 'Hilton family — directly on Marco Island\'s main beach, pools, spa, sunset views over Gulf of Mexico · 8.4 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-marco-island-beach-resort.html' },
-      { name: 'Marco Beach Ocean Resort', note: 'Independent boutique — 58 suites on the Esplanade, rooftop pool, Gulf-view balconies · 9.0 Booking.com' },
+      { name: 'Marco Beach Ocean Resort', note: 'Independent boutique — 58 suites on the Esplanade, rooftop pool, Gulf-view balconies' },
       { name: 'JW Marriott Marco Island Beach Resort', note: 'Marriott JW brand — beachfront on South Beach, four pools, Spas of Celebration, eleven restaurants · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/jwmarriotmarco.html' },
       { name: 'Hilton Marco Island Beach Resort & Spa', note: 'Hilton brand — Collier Boulevard beachfront, three pools, spa, multiple dining options · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-marco-island-beach-resort-and-spa.html' }
     ] },
@@ -5638,7 +5638,7 @@ window.TVE.isPhone = function () {
     ] },
     'pensacola': { h: [
       { name: 'Portofino Island Resort', note: 'Independent — Santa Rosa Island, Gulf Spa, multiple pools, direct Gulf of Mexico beachfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/portofino-island-resort.html' },
-      { name: 'The Hotel Pensacola Beach, a Wyndham Hotel', note: 'Wyndham brand — Pensacola Beach, Gulf-view rooms, pool, casual beach dining · 8.3 Booking.com' },
+      { name: 'The Hotel Pensacola Beach, a Wyndham Hotel', note: 'Wyndham brand — Pensacola Beach, Gulf-view rooms, pool, casual beach dining' },
       { name: 'Margaritaville Beach Hotel', note: 'Margaritaville Hotels — Pensacola Beach waterfront, five pools, Landshark Bar & Grill · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/margaritaville-beach-hotel-pensacola-beach.html' },
       { name: 'Hilton Pensacola Beach', note: 'Hilton brand — Gulf Breeze Parkway beachfront, outdoor pool, Seafood & Grille restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-pensacola-beach.html' }
     ] },
@@ -5655,8 +5655,8 @@ window.TVE.isPhone = function () {
       { name: 'ROOST Midtown', note: 'Independent apart-hotel — 111 South 15th Street off Rittenhouse Row, full kitchens, 24h reception · 9.0 Booking.com', url: 'https://www.booking.com/hotel/us/idtown.html' }
     ] },
     'phoenix': { h: [
-      { name: 'The Arizona Biltmore, A Waldorf Astoria Resort', note: 'Waldorf Astoria brand — 1929 Frank Lloyd Wright-influenced design, eight pools, lush landscaping, Esplanade spa · 9.0 Booking.com' },
-      { name: 'Royal Palms Resort and Spa, A Tribute Portfolio Resort', note: 'Marriott Tribute — hacienda-style resort, T. Cook\'s restaurant, pool, Camelback Mountain backdrop · 8.9 Booking.com' },
+      { name: 'The Arizona Biltmore, A Waldorf Astoria Resort', note: 'Waldorf Astoria brand — 1929 Frank Lloyd Wright-influenced design, eight pools, lush landscaping, Esplanade spa' },
+      { name: 'Royal Palms Resort and Spa, A Tribute Portfolio Resort', note: 'Marriott Tribute — hacienda-style resort, T. Cook\'s restaurant, pool, Camelback Mountain backdrop' },
       { name: 'Kimpton Hotel Palomar Phoenix Cityscape by IHG', note: 'Kimpton by IHG — 2 East Jefferson Street, downtown Phoenix Cityscape, rooftop outdoor pool deck, bar, fitness centre · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/kimpton-hotel-palomar-phoenix.html' },
       { name: 'Hyatt Regency Phoenix Downtown', note: 'Hyatt brand — 122 North 2nd Street, downtown Phoenix, revolving Compass Arizona Grill restaurant, outdoor pool, Phoenix Convention Center adjacent · 8.5 Booking.com', url: 'https://www.booking.com/hotel/us/phoenix-north-second-street.html' }
     ] },
@@ -5788,7 +5788,7 @@ window.TVE.isPhone = function () {
       { name: 'Four Seasons Hotel San Francisco at Embarcadero', note: 'Four Seasons brand — Embarcadero Center, bay-view rooms, waterfront location, indoor pool, The Market restaurant · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/four-seasons-embarcadero.html' }
     ] },
     'san-jose': { h: [
-      { name: 'Fairmont San Jose', note: 'Fairmont brand — Almaden Valley, rooftop pool, multiple restaurants, convention center linked · 8.8 Booking.com' },
+      { name: 'Fairmont San Jose', note: 'Fairmont brand — Almaden Valley, rooftop pool, multiple restaurants, convention center linked' },
       { name: 'Hotel De Anza, a Tapestry Collection by Hilton', note: 'Hilton Tapestry — 1931 Art Deco landmark in downtown San Jose, La Pastaia Italian restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/de-anza.html' },
       { name: 'The Westin San Jose', note: 'Marriott Westin — North Market Street Silicon Valley, WestinWORKOUT, Enoteca restaurant · 8.6 Booking.com', url: 'https://www.booking.com/hotel/us/the-westin-san-jose.html' },
       { name: 'Hotel Valencia Santana Row', note: 'Independent — boutique on Santana Row shopping, Citrus restaurant, outdoor patio, rooftop lounge · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hotel-valencia-santana-row.html' }
@@ -5819,7 +5819,7 @@ window.TVE.isPhone = function () {
     ] },
     'santa-cruz': { h: [
       { name: 'Chaminade Resort & Spa', note: 'Independent — hilltop eucalyptus-forest retreat above Monterey Bay, tennis courts, spa · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/chaminade-resort-amp-spa.html' },
-      { name: 'Babbling Brook Inn', note: 'Independent boutique — garden B&B with cascading creek, antiques, walking distance to downtown · 9.3 Booking.com', url: 'https://www.babblingbrookinn.com' },
+      { name: 'Babbling Brook Inn', note: 'Independent boutique — garden B&B with cascading creek, antiques, walking distance to downtown', url: 'https://www.babblingbrookinn.com' },
       { name: 'Dream Inn Santa Cruz', note: 'Independent — Cowell Beach waterfront, heated oceanfront pool, Aquarius restaurant · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/dream-inn.html' },
       { name: 'West Cliff Inn, A Four Sisters Inn', note: 'Independent boutique — 1877 Victorian bluff B&B across from Cowell Beach, breakfast + afternoon wine hour · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/west-cliff-inn.html' }
     ] },
@@ -5850,8 +5850,8 @@ window.TVE.isPhone = function () {
       { name: 'Olympic Villas', note: 'Independent boutique — Oia caldera-view villas with private pools, quiet location steps from main street · 9.3 Booking.com', url: 'https://www.booking.com/hotel/gr/olympic-villas-oia-santorini.html' }
     ] },
     'sarasota': { h: [
-      { name: 'The Westin Sarasota', note: 'Marriott family — downtown bayfront tower, outdoor rooftop pool, marina and Sarasota Bay views · 9.0 Booking.com' },
-      { name: 'Hotel Ranola', note: 'Independent boutique — downtown historic district, 10 rooms, chef-driven breakfast, walkable arts scene · 9.4 Booking.com' },
+      { name: 'The Westin Sarasota', note: 'Marriott family — downtown bayfront tower, outdoor rooftop pool, marina and Sarasota Bay views' },
+      { name: 'Hotel Ranola', note: 'Independent boutique — downtown historic district, 10 rooms, chef-driven breakfast, walkable arts scene' },
       { name: 'The Ritz-Carlton, Sarasota', note: 'Ritz-Carlton brand — downtown waterfront, The Club by Ritz-Carlton beach access, Ristorante Primo · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/the-ritz-carlton-sarasota.html' },
       { name: 'Hyatt Regency Sarasota', note: 'Hyatt brand — Sarasota Bay, marina, outdoor pool, Currents Waterfront Dining · 8.8 Booking.com', url: 'https://www.booking.com/hotel/us/hyatt-regency-sarasota.html' }
     ] },
@@ -5917,8 +5917,8 @@ window.TVE.isPhone = function () {
       { name: 'Grand Hotel Continental Siena', note: 'Starhotels — Via Banchi di Sopra baroque palace in the heart of Siena, frescoed ceilings · 9.1 Booking.com', url: 'https://www.booking.com/hotel/it/grand-hotel-continental.html' }
     ] },
     'singapore': { h: [
-      { name: 'Capella Singapore', note: 'Capella Hotels — Sentosa Island estate, three pools, spa, two Michelin-starred restaurants, colonial architecture · 9.5 Booking.com' },
-      { name: 'The Fullerton Hotel Singapore', note: 'Independent luxury — 1928 Palladian General Post Office, heritage rooms, 25-metre outdoor pool · 9.2 Booking.com' },
+      { name: 'Capella Singapore', note: 'Capella Hotels — Sentosa Island estate, three pools, spa, two Michelin-starred restaurants, colonial architecture' },
+      { name: 'The Fullerton Hotel Singapore', note: 'Independent luxury — 1928 Palladian General Post Office, heritage rooms, 25-metre outdoor pool' },
       { name: 'Marina Bay Sands', note: 'Sands Hotels — three-tower complex on Marina Bay, infinity rooftop pool at 57 floors, celebrity chef restaurants · 9.0 Booking.com', url: 'https://www.booking.com/hotel/sg/marina-bay-sands.html' },
       { name: 'Raffles Singapore', note: 'Accor Raffles — 1887 colonial landmark on Beach Road, butler for every suite, Long Bar Singapore Sling · 9.4 Booking.com', url: 'https://www.booking.com/hotel/sg/raffles-the-plaza.html' }
     ] },
@@ -6025,8 +6025,8 @@ window.TVE.isPhone = function () {
       { name: 'Fairmont Royal York', note: 'Fairmont brand — 1929 Front Street landmark opposite Union Station, indoor pool, spa, Library Bar, city-centre heritage · 8.6 Booking.com' , url: 'https://www.booking.com/hotel/ca/fairmont-royal-york.html' }
     ] },
     'tromso': { h: [
-      { name: 'Scandic Ishavshotel', note: 'Scandic brand — Arctic Ocean waterfront, panoramic views of the fjord and Tromsø Cathedral · 8.8 Booking.com' },
-      { name: 'Clarion Hotel The Edge', note: 'Nordic Choice Hotels — waterfront, restaurants and bar overlooking the harbor and mountains · 8.7 Booking.com' },
+      { name: 'Scandic Ishavshotel', note: 'Scandic brand — Arctic Ocean waterfront, panoramic views of the fjord and Tromsø Cathedral' },
+      { name: 'Clarion Hotel The Edge', note: 'Nordic Choice Hotels — waterfront, restaurants and bar overlooking the harbor and mountains' },
       { name: 'Thon Hotel Tromsø', note: 'Thon Hotels — city centre, harbor views, rooftop Tromsø Bar with panorama · 8.7 Booking.com', url: 'https://www.booking.com/hotel/no/thon-hotel-tromso.html' },
       { name: 'Radisson Blu Hotel, Tromsø', note: 'Radisson Blu — Sentrum waterfront with fjord views, Nordic Grill, spa with sauna · 8.6 Booking.com', url: 'https://www.booking.com/hotel/no/radisson-sas-tromso.html' }
     ] },
@@ -6057,7 +6057,7 @@ window.TVE.isPhone = function () {
     ] },
     'venice': { h: [
       { name: 'Belmond Hotel Cipriani', note: 'Belmond brand — Giudecca island, 7-minute private launch, Olympic-size pool, award-winning Oro Restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/cipriani-venezia.html' },
-      { name: 'Aman Venice', note: 'Aman brand — 16th-century Palazzo Papadopoli on the Grand Canal, two private gardens, private dock · 9.7 Booking.com', url: 'https://www.aman.com/hotels/aman-venice' },
+      { name: 'Aman Venice', note: 'Aman brand — 16th-century Palazzo Papadopoli on the Grand Canal, two private gardens, private dock', url: 'https://www.aman.com/hotels/aman-venice' },
       { name: 'The Gritti Palace, a Luxury Collection Resort', note: 'Marriott Luxury Collection — 1475 Doge\'s palace on the Grand Canal, Club del Doge restaurant · 9.5 Booking.com', url: 'https://www.booking.com/hotel/it/the-gritti-palace.html' },
       { name: 'Hotel Danieli, a Luxury Collection Hotel', note: 'Marriott Luxury Collection — 1350 Gothic palace near the Doge\'s Palace, rooftop Terrazza Danieli · 9.3 Booking.com', url: 'https://www.booking.com/hotel/it/danielivenezia.html' }
     ] },
@@ -6081,10 +6081,10 @@ window.TVE.isPhone = function () {
       { name: 'Palais Coburg Residenz', note: 'Independent — 1845 Coburg Palace in the First District, suites only (35), wine cellar with 60,000 bottles, pool and spa · 9.5 Booking.com' , url: 'https://www.booking.com/hotel/at/palais-coburg-residenz.html' }
     ] },
     'virgin-islands': { h: [
-      { name: 'Sugar Bay Resort & Spa', note: 'IHG brand — Sugar Bay Beach, hillside pools and water slides, full-service spa, St. Thomas East End · 8.6 Booking.com' },
-      { name: 'Point Pleasant Resort', note: 'Independent boutique — Estate Smith Bay hilltop, studio apartments and suites with bay views, snorkel beach · 9.0 Booking.com' },
-      { name: 'Frenchman\'s Reef, a DoubleTree by Hilton Resort', note: 'Hilton DoubleTree — St. Thomas, panoramic St. Thomas Bay views, three pools, three beaches · 8.6 Booking.com' },
-      { name: 'Caneel Bay, A Rosewood Resort', note: 'Rosewood brand — St. John National Park, seven beaches, adults-only pool, tropical garden · 9.4 Booking.com' }
+      { name: 'Sugar Bay Resort & Spa', note: 'IHG brand — Sugar Bay Beach, hillside pools and water slides, full-service spa, St. Thomas East End' },
+      { name: 'Point Pleasant Resort', note: 'Independent boutique — Estate Smith Bay hilltop, studio apartments and suites with bay views, snorkel beach' },
+      { name: 'Frenchman\'s Reef, a DoubleTree by Hilton Resort', note: 'Hilton DoubleTree — St. Thomas, panoramic St. Thomas Bay views, three pools, three beaches' },
+      { name: 'Caneel Bay, A Rosewood Resort', note: 'Rosewood brand — St. John National Park, seven beaches, adults-only pool, tropical garden' }
     ] },
     'washington-dc': { h: [
       { name: 'Rosewood Washington D.C.', note: 'Rosewood brand — Georgetown neighborhood, outdoor pool, acclaimed Wyld restaurant, townhouse suites · 9.4 Booking.com' , url: 'https://www.booking.com/hotel/us/rosewood-washington-dc.html' },
@@ -6105,9 +6105,9 @@ window.TVE.isPhone = function () {
       { name: 'Westin Resort & Spa Whistler', note: 'Marriott Westin — Whistler Village, outdoor heated pool, Aubergine Grille, Heavenly Spa · 9.1 Booking.com', url: 'https://www.booking.com/hotel/ca/westin-resort-and-spa-whistler.html' }
     ] },
     'yellowstone': { h: [
-      { name: 'Old Faithful Inn', note: 'Independent — 1904 historic log lodge beside Old Faithful geyser, National Historic Landmark · 9.0 Booking.com', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/old-faithful-inn/' },
-      { name: 'Lake Yellowstone Hotel', note: 'Independent — 1891 lakefront colonial structure, panoramic Yellowstone Lake views, inside the park · 8.8 Booking.com', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/lake-yellowstone-hotel/' },
-      { name: 'Canyon Lodge & Cabins', note: 'Independent — largest lodging complex inside Yellowstone, central location near Grand Canyon of the Yellowstone, cabin and motel room options · 8.2 Booking.com', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/canyon-lodge-and-cabins/' },
+      { name: 'Old Faithful Inn', note: 'Independent — 1904 historic log lodge beside Old Faithful geyser, National Historic Landmark', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/old-faithful-inn/' },
+      { name: 'Lake Yellowstone Hotel', note: 'Independent — 1891 lakefront colonial structure, panoramic Yellowstone Lake views, inside the park', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/lake-yellowstone-hotel/' },
+      { name: 'Canyon Lodge & Cabins', note: 'Independent — largest lodging complex inside Yellowstone, central location near Grand Canyon of the Yellowstone, cabin and motel room options', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/canyon-lodge-and-cabins/' },
       { name: 'Roosevelt Lodge Cabins', note: 'Independent — rustic frontier cabins in the northeast quadrant near Lamar Valley, Old West cookouts, closest lodge to Tower Fall · 8.5 Expedia', url: 'https://www.yellowstonenationalparklodges.com/lodging/summer-lodges/roosevelt-lodge-cabins/' }
     ] },
     'zakynthos': { h: [
@@ -6117,10 +6117,10 @@ window.TVE.isPhone = function () {
       { name: 'Domes Aulus Zante · Autograph Collection', note: 'Marriott Autograph Collection — all-inclusive on Laganas Bay in Kalamaki, private beach, thalassotherapy spa, Ionian Sea views · 8.5 Booking.com', url: 'https://www.booking.com/hotel/gr/domesauluszante.html' }
     ] },
     'zhangjiajie': { h: [
-      { name: 'Pullman Zhangjiajie', note: 'Accor Pullman brand — modern full-service hotel in Zhangjiajie city, pool, 30 minutes from Wulingyuan park gate · 8.8 Booking.com' },
+      { name: 'Pullman Zhangjiajie', note: 'Accor Pullman brand — modern full-service hotel in Zhangjiajie city, pool, 30 minutes from Wulingyuan park gate' },
       { name: 'Wyndham Zhangjiajie', note: 'Wyndham brand — city center near the national park, outdoor pool, international restaurant · 8.3 Booking.com', url: 'https://www.booking.com/hotel/cn/wyndham-zhangjiajie.html' },
       { name: 'InterContinental Zhangjiajie', note: 'IHG brand — city center, outdoor pool, all-day dining, views of Tianmen Mountain · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cn/intercontinental-zhangjiajie.html' },
-      { name: 'Avic Hotel Zhangjiajie', note: 'Independent — close to the National Forest Park, mountain views, full-service restaurant · 8.5 Booking.com' }
+      { name: 'Avic Hotel Zhangjiajie', note: 'Independent — close to the National Forest Park, mountain views, full-service restaurant' }
     ] },
     'zurich': { h: [
       { name: 'The Dolder Grand', note: 'Independent luxury — 1899 hillside monument, two-Michelin-star The Restaurant, 4,000 sq m spa, ice rink · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ch/the-dolder-grand.html' },
