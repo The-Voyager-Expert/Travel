@@ -1,3 +1,4 @@
+/* 2026-08-13: index.html — remove Also Recommended pill from topbar. CACHE to v765. */
 /* 2026-08-13: index.html — remove Trips, Travel Stats, Best of pills from topbar; Trips.html — remove Back to site link. CACHE to v763. */
 /* 2026-08-13: icons: Baggage→luggage-colour, Luggage Storage→luggage-hardcase ITEMS fix toolbar.js -> v554. CACHE to v762. */
 /* 2026-08-13: Best Of: Scuba Diving->scuba toolbar.js -> v540. CACHE to v748. */
@@ -990,7 +991,8 @@
 /* 2026-08-13: Best Of: Kids' Museums→blocks toolbar.js -> v551. CACHE to v759. */
 /* 2026-08-13: icons: Best Of Caves icon → cave (match intro) toolbar.js -> v552. CACHE to v760. */
 /* 2026-08-13: icons: trip type + climate chips draw from GM_SPRITE toolbar.js -> v555. CACHE to v764. */
-var CACHE = 'travel-cache-v764';
+/* 2026-08-13: index.html — remove Also Recommended pill from topbar. CACHE to v765. */
+var CACHE = 'travel-cache-v765';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
