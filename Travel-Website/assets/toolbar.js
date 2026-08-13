@@ -754,7 +754,7 @@ window.TVE.isPhone = function () {
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     null,
-    { href: base + 'index.html', text: 'Guides', full: 'Travel Guides', icon: 'globe' },
+    { href: base + 'index.html', text: 'Guides', full: 'Travel Guides', icon: 'compass' },
     null,
     /* OWNER-DIRECTED 2026-08-09: 👕 Packing and 🔌 Plug Adapters were standalone
        top-strip tabs; both are now children here, Packing first. Before You Go
@@ -770,13 +770,13 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters', icon: 'plug' },
       ] },
     null,
-    { group: '🏨 Where to Stay', groupIcon: 'neighborhoods', children: [
-        { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods' },
-        { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: 'Hotels & Stays' },
-        { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: 'Most Luxurious Hotels' },
-        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: 'Unique Hotels' },
-        { href: base + 'Trip-Essentials/Best-Resorts.html',                 text: 'Resorts' },
-        { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: 'Ultra-Luxurious Resorts' },
+    { group: '🏨 Where to Stay', groupIcon: 'hotel', children: [
+        { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods',           icon: 'neighborhoods' },
+        { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: 'Hotels & Stays',          icon: 'hotel' },
+        { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: 'Most Luxurious Hotels',   icon: 'sparkle' },
+        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: 'Unique Hotels',           icon: 'bulb' },
+        { href: base + 'Trip-Essentials/Best-Resorts.html',                 text: 'Resorts',                 icon: 'beach' },
+        { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: 'Ultra-Luxurious Resorts', icon: 'star' },
       ] },
     null,
     /* OWNER-DIRECTED 2026-08-09: every Best-Of page on the top strip, mirroring
@@ -832,18 +832,18 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World', icon: 'pyramid' },
       ] },
     null,
-    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', full: 'World Map', icon: 'map' },
+    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', full: 'World Map', icon: 'pin' },
     null,
     { group: '📊 Stats', groupIcon: 'chart', children: [
-        { href: base + 'Trip-Essentials/Destination-Records.html',        text: 'Destination Records' },
-        { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: 'Stats Across US' },
-        { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: 'Stats Across Canada' },
-        { href: base + 'Trip-Essentials/Europe-Stats.html',               text: 'Stats Across Europe' },
-        { href: base + 'Trip-Essentials/Asia-Stats.html',                 text: 'Stats Across Asia' },
-        { href: base + 'Trip-Essentials/Africa-Stats.html',              text: 'Stats Across Africa' },
-        { href: base + 'Trip-Essentials/South-America-Stats.html',        text: 'Stats Across South America' },
-        { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: 'Stats Across the Caribbean' },
-        { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: 'Stats Across Oceania' },
+        { href: base + 'Trip-Essentials/Destination-Records.html',        text: 'Destination Records',        icon: 'trophy' },
+        { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: 'Stats Across US',            icon: 'pennant' },
+        { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: 'Stats Across Canada',        icon: 'tree' },
+        { href: base + 'Trip-Essentials/Europe-Stats.html',               text: 'Stats Across Europe',        icon: 'museumstar' },
+        { href: base + 'Trip-Essentials/Asia-Stats.html',                 text: 'Stats Across Asia',          icon: 'mountain' },
+        { href: base + 'Trip-Essentials/Africa-Stats.html',              text: 'Stats Across Africa',         icon: 'safari' },
+        { href: base + 'Trip-Essentials/South-America-Stats.html',        text: 'Stats Across South America', icon: 'volcano' },
+        { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: 'Stats Across the Caribbean', icon: 'palm' },
+        { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: 'Stats Across Oceania',        icon: 'waves' },
       ]},
     null,
     { group: '✈️ Flights', groupIcon: 'plane', children: [
@@ -869,10 +869,10 @@ window.TVE.isPhone = function () {
        nothing — the same defect the Visas group had. The mark on the tab is the
        group's identity, so a child inherits it by being in the menu. */
     { group: '🚆 Trains', groupIcon: 'train', children: [
-        { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: 'European Train Guide',      full: 'European Train Guide'      },
-        { href: base + 'Trip-Essentials/Day-Trips.html',              text: 'Day Trips by Train',        full: 'Day Trips by Train'        },
-        { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: 'Scenic Train Journeys',    full: 'Scenic Train Journeys',    newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Train-Passes.html',           text: 'Train Pass Comparison',    full: 'Train Pass Comparison',    newSince: '2026-08-07' },
+        { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: 'European Train Guide',      full: 'European Train Guide',      icon: 'map' },
+        { href: base + 'Trip-Essentials/Day-Trips.html',              text: 'Day Trips by Train',        full: 'Day Trips by Train',        icon: 'calendar' },
+        { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: 'Scenic Train Journeys',    full: 'Scenic Train Journeys',    newSince: '2026-08-07', icon: 'mountain' },
+        { href: base + 'Trip-Essentials/Train-Passes.html',           text: 'Train Pass Comparison',    full: 'Train Pass Comparison',    newSince: '2026-08-07', icon: 'card' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html', text: 'Currency', full: 'Currency', icon: 'money' },
@@ -890,8 +890,8 @@ window.TVE.isPhone = function () {
        still enforced. The same icons now flow to the "Also on this site"
        footer pills, which resolve from ITEMS first. */
     { group: '🌤️ Weather', groupIcon: 'sun', children: [
-        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'globe' },
-        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'sun' },
+        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'chart' },
+        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'search' },
         { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
       ] },
     null,
@@ -7058,32 +7058,32 @@ window.TVE.isPhone = function () {
     if (!isRealGuide) return;
     var row = document.querySelector('.overview-extras:not(#ics-pill-row)');
     if (!row) return;
-    function addPill(href, text) {
+    function addPill(href, text, icoKey) {
       var a = document.createElement('a');
       a.className = 'overview-extra-link';
       a.href = href;
-      a.textContent = text;
+      if (icoKey && NAV_ICONS[icoKey]) {
+        a.style.cssText = 'display:inline-flex;align-items:center;gap:6px';
+        var s = document.createElement('span');
+        s.style.cssText = 'display:inline-flex;flex-shrink:0';
+        s.innerHTML = iconSVG(NAV_ICONS[icoKey], 14, icoKey);
+        a.appendChild(s);
+        a.appendChild(document.createTextNode(text));
+      } else {
+        a.textContent = text;
+      }
       row.appendChild(a);
     }
     /* 1. Also on This Site — always present in real guides */
     if (document.getElementById('also-on-this-site')) {
-      addPill('#also-on-this-site', '💥 Also on this site');
-    }
-    /* 2. Best Of — only when this city appears in CITY_BEST_OF_MAP */
-    var _epParts = location.pathname.split('/');
-    var _epgi = _epParts.indexOf('Guides');
-    if (_epgi >= 0) {
-      var _epSlug = _epParts[_epgi + 1].toLowerCase();
-      if (CITY_BEST_OF_MAP[_epSlug] && CITY_BEST_OF_MAP[_epSlug].length) {
-        addPill('#tve-best-of-crosslinks', '⭐ Best Of');
-      }
+      addPill('#also-on-this-site', 'Also on this site', 'burst');
     }
     /* 3. Nearby Guides — only when the section has pills (build_nearby_guides populated it) */
     var _epng = document.getElementById('nearby-guides');
     if (_epng) {
       var _epngp = _epng.querySelector('.nearby-guides-pills');
       if (_epngp && _epngp.children.length > 0) {
-        addPill('#nearby-guides', '🗺️ Nearby Guides');
+        addPill('#nearby-guides', 'Nearby Guides', 'nearby-guides');
       }
     }
     /* 4. Alternative Hotel Recommendations — only when HOTEL_ALT_DATA has an entry for this guide */
@@ -7124,7 +7124,7 @@ window.TVE.isPhone = function () {
       wrap.className = 'extras-section';
       var h = document.createElement('div');
       h.className = 'extras-title';
-      h.innerHTML = iconSVG(NAV_ICONS['globe'], 15, 'globe') + ' Also in ' + country;
+      h.innerHTML = iconSVG(NAV_ICONS['map'], 15, 'map') + ' Also in ' + country;
       var pills = document.createElement('div');
       pills.className = 'also-in-country-pills';
       siblings.forEach(function (g) {
@@ -7709,18 +7709,27 @@ window.TVE.isPhone = function () {
       tabs.className = 'tve-book-tabs';
       tabs.setAttribute('role', 'tablist');
 
-      function _tab(label, key) {
+      function _tab(label, key, icoKey) {
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'tve-book-tab';
-        b.textContent = label;
+        if (icoKey && NAV_ICONS[icoKey]) {
+          b.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:5px';
+          var _ts = document.createElement('span');
+          _ts.style.cssText = 'display:inline-flex;flex-shrink:0';
+          _ts.innerHTML = iconSVG(NAV_ICONS[icoKey], 13, icoKey);
+          b.appendChild(_ts);
+          b.appendChild(document.createTextNode(label));
+        } else {
+          b.textContent = label;
+        }
         b.setAttribute('role', 'tab');
         b.dataset.tab = key;
         tabs.appendChild(b);
         return b;
       }
-      var tabH = _tab('🏨 Hotels', 'h');
-      var tabF = _tab('✈️ Flights', 'f');
+      var tabH = _tab('Hotels', 'h', 'hotel');
+      var tabF = _tab('Flights', 'f', 'plane');
       panel.appendChild(tabs);
 
       function _grid() {
