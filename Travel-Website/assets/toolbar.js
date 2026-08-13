@@ -9420,7 +9420,7 @@ window.TVE.isPhone = function () {
     '🚗': 'rental-cars', '🚕': 'rental-cars', '🚆': 'train', '🚄': 'train',
     '🚌': 'transit', '🚢': 'ship', '⛴': 'ship',
     '🏝': 'island', '🏖': 'beach', '🎿': 'ski', '🎨': 'artframe',
-    '🎢': 'ferris', '🛝': 'ferris', '🍽': 'restaurants', '🍷': 'wine',
+    '🎢': 'ferris', '🛝': 'blocks', '🍽': 'restaurants', '🍷': 'wine',
     '🌴': 'palm', '🌲': 'tree', '🍂': 'tree', '🏛': 'unesco',
     '🌃': 'tower', '☀': 'sun', '🌤': 'sun', '❄': 'aurora', '🌡': 'sun'
   };
@@ -9436,7 +9436,8 @@ window.TVE.isPhone = function () {
     var scope = document.querySelectorAll(
       '.pill-row a,.pill-row button,.disc-btn,.seg-btn,.lang-menu-item,' +
       '#btn-my-trips,#lsp-topbar,#view-compare,#continentJumpLabel,' +
-      '.disc-panel button,.disc-panel a,.esc-opt,.esc-opt-label');
+      '.disc-panel button,.disc-panel a,.esc-opt,.esc-opt-label,' +
+      '#theme-panel .tchip,#tt-climate-chips .ttchip');
     [].forEach.call(scope, function (el) {
       if (el.getAttribute('data-gm-ico')) return;
       var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
