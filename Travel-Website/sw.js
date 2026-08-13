@@ -1,3 +1,4 @@
+/* 2026-08-13: index.html — remove Trips, Travel Stats, Best of pills from topbar; Trips.html — remove Back to site link. CACHE to v763. */
 /* 2026-08-13: icons: Baggage→luggage-colour, Luggage Storage→luggage-hardcase ITEMS fix toolbar.js -> v554. CACHE to v762. */
 /* 2026-08-13: Best Of: Scuba Diving->scuba toolbar.js -> v540. CACHE to v748. */
 /* Travel — service worker. NETWORK-FIRST for everything: when you are online you
@@ -988,7 +989,7 @@
 /* 2026-08-13: Best Of: Wonders of the World→mosque (#215) toolbar.js -> v550. CACHE to v758. */
 /* 2026-08-13: Best Of: Kids' Museums→blocks toolbar.js -> v551. CACHE to v759. */
 /* 2026-08-13: icons: Best Of Caves icon → cave (match intro) toolbar.js -> v552. CACHE to v760. */
-var CACHE = 'travel-cache-v762';
+var CACHE = 'travel-cache-v763';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
