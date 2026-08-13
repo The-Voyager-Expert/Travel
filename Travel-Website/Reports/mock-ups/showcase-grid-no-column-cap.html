@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup: showcase-grid column cap</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32;
+    --muted: #6a6660; --accent: #c8a44a; --rust: #b85c2a;
+    --border: #d8d4cc; --border2: #e6e2da;
+    font-family: 'Public Sans', 'Roboto', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); padding: 24px; }
+  .meta { font-size: 11px; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 20px; }
+  .meta strong { color: var(--rust); }
+  .panels { display: flex; flex-direction: column; gap: 28px; }
+  .panel { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; }
+  .panel-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #fff; padding: 8px 16px; }
+  .before .panel-label { background: #6a6660; }
+  .after .panel-label { background: var(--rust); }
+  .panel-body { padding: 16px; }
+  /* BEFORE — no cap, shows 6-column behaviour at page-width */
+  .grid-before {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+  /* AFTER — max-width 1180px, effectively 4-column */
+  .grid-after {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 700px;
+  }
+  .mock-card { background: var(--bg); border: 1px solid var(--border2); border-radius: 8px; overflow: hidden; }
+  .mock-img { background: #d8d4cc; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--muted); }
+  .mock-body { padding: 8px; font-size: 10px; color: var(--text); font-weight: 600; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 10px; font-style: italic; }
+  .screen-label { font-size: 11px; color: var(--muted); font-style: italic; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="meta">
+  Mockup · <strong>showcase-grid-no-column-cap</strong> · 2026-08-13 ·
+  Fix: add <code>max-width: 1180px; margin: auto</code> to <code>.showcase-grid</code> in <code>web-travel-style.css</code> line 967
+</div>
+
+<div class="panels">
+  <div class="panel before">
+    <div class="panel-label">BEFORE — no column cap (simulates 6+ columns at 1920px)</div>
+    <div class="panel-body">
+      <div class="screen-label">At 1920px viewport: 6 columns × 289px cards. At 2560px: 8 columns × 312px cards.</div>
+      <div class="grid-before">
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Banzai Pipeline</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Gold Coast</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Nazaré</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Hossegor</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">J-Bay</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Uluwatu</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel after">
+    <div class="panel-label">AFTER — max-width 1180px → 4-column max at any viewport</div>
+    <div class="panel-body">
+      <div class="screen-label">4 columns at ~277px each — consistent with Lonely Planet, Fodor's, GetYourGuide card grids.</div>
+      <div class="grid-after">
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Banzai Pipeline</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Gold Coast</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Nazaré</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Hossegor</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">J-Bay</div></div>
+        <div class="mock-card"><div class="mock-img">photo</div><div class="mock-body">Uluwatu</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+  Evidence: web-travel-style.css line 969 <code>grid-template-columns: repeat(auto-fill, minmax(260px, 1fr))</code>.
+  toolbar.js line 348: "maxWidth… NO LONGER caps the content" — the prior 1100px guard is gone.
+  Fix: <code>.showcase-grid { max-width: 1180px; margin-left: auto; margin-right: auto; }</code>
+</p>
+</body>
+</html>

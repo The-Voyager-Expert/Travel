@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup: guide container max-width</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32;
+    --muted: #6a6660; --rust: #b85c2a; --border2: #e6e2da;
+    font-family: 'Public Sans', 'Roboto', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); padding: 24px; }
+  .meta { font-size: 11px; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 20px; }
+  .meta strong { color: var(--rust); }
+  .panels { display: flex; flex-direction: column; gap: 24px; }
+  .panel { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; }
+  .panel-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #fff; padding: 8px 16px; }
+  .before .panel-label { background: #6a6660; }
+  .after .panel-label { background: var(--rust); }
+  .panel-body { padding: 16px; }
+  /* BEFORE: full-width at 1400px viewport */
+  .viewport-mock { border: 1px dashed var(--muted); border-radius: 6px; padding: 8px; position: relative; }
+  .viewport-label { font-size: 9px; color: var(--muted); position: absolute; top: 4px; right: 8px; }
+  .container-before {
+    background: var(--bg);
+    padding: 16px 32px;
+    /* no max-width — text runs full width */
+  }
+  .container-after {
+    background: var(--bg);
+    padding: 16px 32px;
+    max-width: 920px;
+    margin: 0 auto;
+    border-left: 2px solid var(--border2);
+    border-right: 2px solid var(--border2);
+  }
+  .fake-stop-title { font-size: 15px; font-weight: 700; color: var(--rust); margin-bottom: 6px; }
+  .fake-body { font-size: 13px; line-height: 1.65; color: var(--text); }
+  .char-measure { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 6px; }
+  .gutters { background: #e6e2da; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 14px; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="meta">
+  Mockup · <strong>guide-container-no-max-width</strong> · 2026-08-13 ·
+  Change: <code>--content-max: none → 920px</code> in <code>guide-style.css</code> line 167
+</div>
+
+<div class="panels">
+  <div class="panel before">
+    <div class="panel-label">BEFORE — no max-width (guide text runs full viewport width)</div>
+    <div class="panel-body">
+      <div class="viewport-mock">
+        <span class="viewport-label">1400px viewport (common laptop/desktop)</span>
+        <div class="container-before">
+          <div class="fake-stop-title">📍 Uffizi Gallery</div>
+          <div class="fake-body">Home to Botticelli's Birth of Venus and Primavera, the Uffizi is the most-visited museum in Italy and one of the oldest in the world. Allow at least 2–3 hours inside. The queue outside can exceed 90 minutes on peak days — pre-book your timed-entry ticket in advance. The gallery spans two floors, U-shaped around a central courtyard. Start on the second floor with the Renaissance rooms (Rooms 2–15) before looping back to the first.</div>
+          <div class="char-measure">~160 chars per line at 1400px — optimum reading is 50–80 chars; this is 2× optimal and causes eye strain.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel after">
+    <div class="panel-label">AFTER — max-width 920px centered, gutters visible</div>
+    <div class="panel-body">
+      <div class="viewport-mock">
+        <span class="viewport-label">1400px viewport · 240px gutters each side</span>
+        <div style="background:#e6e2da; padding: 12px 0;">
+          <div class="container-after">
+            <div class="fake-stop-title">📍 Uffizi Gallery</div>
+            <div class="fake-body">Home to Botticelli's Birth of Venus and Primavera, the Uffizi is the most-visited museum in Italy and one of the oldest in the world. Allow at least 2–3 hours inside. The queue outside can exceed 90 minutes on peak days — pre-book your timed-entry ticket in advance. The gallery spans two floors, U-shaped around a central courtyard. Start on the second floor with the Renaissance rooms (Rooms 2–15) before looping back to the first.</div>
+            <div class="char-measure">~75 chars per line at 920px — within the 50–80 char optimal range for reading comfort.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+  Evidence: guide-style.css line 167 <code>--content-max: none</code>; line 234–237 <code>.container { max-width: var(--content-max); }</code>.
+  All benchmark travel guides (Rick Steves, Lonely Planet, Fodor's, Nomadic Matt) constrain prose at 800–960px.
+  Fix: <code>--content-max: 920px</code> — affects every guide page automatically via the cascade.
+</p>
+</body>
+</html>
