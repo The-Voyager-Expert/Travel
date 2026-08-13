@@ -4773,7 +4773,7 @@ window.TVE.isPhone = function () {
     ] },
     'aruba': { h: [
       { name: 'Bucuti & Tara Beach Resort', note: '' },
-      { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site' },
+      { name: 'Hyatt Regency Aruba Resort Spa & Casino', note: 'Hyatt brand — Palm Beach frontage, 8,000 sq ft pool complex with waterslide, adults-only pool, ZoiA Spa, casino on-site', url: 'https://www.booking.com/hotel/aw/hyatt-regency-aruba-resort-casino.html' },
       { name: 'Renaissance Wind Creek Aruba Resort', note: 'Marriott Renaissance brand — Oranjestad harbourfront, private beach area, rooftop and infinity pools, casino · 8.9 Booking.com', url: 'https://www.booking.com/hotel/aw/renaissance-aruba-resort-and-casino.html' },
       { name: 'Aruba Marriott Resort & Stellaris Casino', note: 'Marriott brand — beachfront on Palm Beach, heated pool with swim-up bar, spa, tennis court · 8.8 Booking.com', url: 'https://www.booking.com/hotel/aw/aruba-marriott-resort-stellaris-casino.html' }
     ] },
