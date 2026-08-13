@@ -1224,6 +1224,7 @@ window.TVE.isPhone = function () {
       '.tb-ham-menu a.tb-has-new{display:inline-flex;align-items:center;gap:8px}' +
       '.tb-ham-menu a.tb-has-ico{display:flex;align-items:center;gap:10px}' +
       '.tb-ham-menu a.tb-has-ico .tb-entry-label{flex:1 1 auto;min-width:0}' +
+      '.tb-ham-menu a.tb-has-ico.tb-has-new .tb-entry-label{flex:0 0 auto}' +
       '.tb-ham-menu a:active{background:rgba(0,0,0,.04)}' +
       '.tb-ham-menu .tb-ham-sep{height:1px;background:#e6e2da;margin:4px 24px}' +
       '.tb-ham-menu .tb-ham-hdr{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9e9688;padding:6px 24px 2px}' +
