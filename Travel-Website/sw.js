@@ -950,7 +950,8 @@
 /* 2026-08-12: coloured icons were rendering SMALLER than the emoji they replaced (owner). Measured: symbols filled 0.70-1.02 of their own viewBox, median 0.85, against Apple emoji at 0.944-1.000 of the em box — so icons at the same css size came out at different sizes, all of them small. _gmSprite() now measures each symbol's ink after insertion and rewrites its viewBox to a square centred on that ink at 0.96 fill, uniform scale, nothing stretched. Done at runtime rather than as 102 hand-edited viewBoxes so an icon added later is corrected automatically. The four call sites now emit a plain square outer viewBox, since the symbol carries its own and a non-square outer box would letterbox it. All 102 now sit at exactly 0.96, spread 0.00. toolbar.js -> v491, CACHE to v697. */
 /* 2026-08-12: Dropdown bottom padding 4px→12px — list reads as finished, not cut off. toolbar.js -> v505. CACHE to v711. */
 /* 2026-08-12: Dropdown max-height set dynamically from actual top position — no longer overflows viewport. toolbar.js -> v513. CACHE to v719. */
-var CACHE = 'travel-cache-v721';
+/* 2026-08-12: Three GM_SPRITE icons resolved to ONE family (owner: filled and outline are BOTH valid; the defect is the accidental middle). `walk` was the live bug — its five limb paths declared no fill, and SVG closes an open subpath implicitly when it fills, so the two three-point leg paths painted a solid BLACK WEDGE between the figure's legs; they also inherited the default stroke-width 1 instead of the 2.1 the reference doc carries on the root <svg>, which a sprite body has no root to inherit from. `book` and `nearby-guides` had their paper/cream rims at 1.0 against ornament also at 1.0, so nothing separated body from detail — rims taken down to their spec 0.6. The four deliberately-outline icons (download, exchange, search, waves) are UNCHANGED and must never be "fixed" by filling them in. toolbar.js -> v516. CACHE to v722. */
+var CACHE = 'travel-cache-v722';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -958,7 +959,7 @@ var CACHE = 'travel-cache-v721';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 515, 'mobile.css': 77, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 516, 'mobile.css': 77, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
