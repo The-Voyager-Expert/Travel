@@ -1098,7 +1098,21 @@ window.TVE.isPhone = function () {
        cannot cut it off (see the .tb-menu note below). Scrollbar hidden — a
        visible bar under the tabs reads as a rule line. */
     '@media (max-width: 1259px) and (pointer: fine){' +
+      /* THE VERTICAL PADDING IS WHAT KEEPS THE TERRACOTTA RING WHOLE — owner
+         2026-08-13: "terracota ring should never disappear."
+         `overflow-x:auto` FORCES overflow-y to compute as a non-visible value;
+         that is CSS, not a choice. An outline is painted OUTSIDE the border
+         box, so the moment this rule applied, the selected tab's ring got its
+         top and bottom sliced off and rendered as two side arcs — "( Guides )".
+         It only bit after the ring became an outline (it used to be a border,
+         which lives inside the box and cannot clip). Reproduced and fixed by
+         measurement: ring spans 6.5px beyond the tab (offset 5 + width 1.5)
+         against 2.8px of slack in the row, so the scroll box needs ~4px; 7px
+         is given. VERTICAL ONLY — it costs no horizontal width, so the
+         one-row fit above is untouched. Never remove this padding while the
+         ring is an outline, and never re-add overflow here without it. */
       '.tb-inner{max-width:100%;overflow-x:auto;overflow-y:hidden;' +
+        'padding-top:7px;padding-bottom:7px;' +
         'scrollbar-width:none;-ms-overflow-style:none}' +
       '.tb-inner::-webkit-scrollbar{display:none}' +
     '}' +
@@ -1149,7 +1163,11 @@ window.TVE.isPhone = function () {
        gap — the 14 tabs measure 1260.9px with the gaps at ZERO, so the fix
        there is narrower tabs, not less space between them. */
     '@media (max-width: 1365px) and (pointer: fine){' +
-      '.tb-links{flex-wrap:wrap;row-gap:6px;justify-content:center;' +
+      /* row-gap 6 -> 15: same ring, other axis. The selected tab's outline
+         reaches 6.5px above and below it, so two stacked rows only 6px apart
+         put one row's ring straight through the row beneath it. 15px clears
+         both rings with room to spare. Vertical only — no width cost. */
+      '.tb-links{flex-wrap:wrap;row-gap:15px;justify-content:center;' +
         'column-gap:clamp(6px,0.72vw,11px)}' +
       '.tb-inner{padding-left:clamp(6px,0.72vw,11px);padding-right:clamp(6px,0.72vw,11px)}' +
     '}' +
