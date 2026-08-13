@@ -915,7 +915,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Unique-Museums.html',                text: 'Unique Museums', icon: 'museum-amber' },
         { href: base + 'Trip-Essentials/Best-Volcanoes.html',                     text: 'Volcanoes', icon: 'volcano-erupting' },
         { href: base + 'Trip-Essentials/Best-Wine-Regions.html',                  text: 'Wine Regions', icon: 'wine' },
-        { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World', icon: 'star-cup' },
+        { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World', icon: 'mosque' },
       ] },
     null,
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', full: 'World Map', icon: 'folded-map' },
