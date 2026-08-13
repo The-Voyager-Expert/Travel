@@ -7267,7 +7267,16 @@ window.TVE.isPhone = function () {
           'font-size:12px;font-weight:500;line-height:1.35;' +
           'color:var(--c-text-primary,#3d3a32);white-space:nowrap;';
         var ico = document.createElement('span');
+        /* Coloured symbol wins when one exists — this strip builds its own mark
+         and so never passes through the row sweep, exactly like the hours-band
+         clock and the lounge chip. Without this branch the pill keeps the flat
+         single-colour CSS mask while the rest of the page is drawn. */
+      if (GM_SPRITE[it[0]]) {
+        ico.className = 'gm-mk gm-mk-c';
+        ico.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + it[0] + '"/></svg>';
+      } else {
         ico.className = 'gm-mk gm-mk-' + it[0];
+      }
         ico.setAttribute('aria-hidden', 'true');
         /* .gm-mk sizes itself at 1em; the pill's own font-size is 12px, so the
            mark lands at 12px without a second source of truth for the size. */
