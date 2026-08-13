@@ -853,6 +853,8 @@ window.TVE.isPhone = function () {
            at Trip-Essentials/Delta-Routes-SEA.html and the delta-audit routine
            still maintains it — it is simply no longer linked from anywhere. */
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: 'Delta Full Network', icon: 'plane' },
+        { href: base + 'Trip-Essentials/United-Routes-Full.html', text: 'United Full Network', icon: 'plane', newSince: '2026-08-13' },
+        { href: base + 'Trip-Essentials/American-Routes-Full.html', text: 'American Full Network', icon: 'plane', newSince: '2026-08-13' },
         { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'clock', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
         { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: 'EU Lounges',        icon: 'laptop' },
@@ -9320,6 +9322,7 @@ window.TVE.isPhone = function () {
     var PAGE_ICON = {
       'Airport-Connection-Times.html': 'plane', 'Lounges-US.html': 'plane',
       'Lounges-Europe.html': 'plane', 'Delta-Routes-Full.html': 'plane',
+      'United-Routes-Full.html': 'plane', 'American-Routes-Full.html': 'plane',
       'Asia-Stats.html': 'chart', 'Caribbean-Stats.html': 'chart',
       'Europe-Stats.html': 'chart', 'South-America-Stats.html': 'chart',
       'Stats-Across-Canada.html': 'chart', 'Stats-Across-US.html': 'chart',
