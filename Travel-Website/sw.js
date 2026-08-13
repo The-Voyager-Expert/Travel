@@ -955,7 +955,8 @@
 /* 2026-08-13: United Full Network and American Full Network added to the toolbar's Flights group directly under Delta Full Network, both with a NEW badge, plus their two PAGE_ICON rows so the also-on-this-site pills that point at them draw the plane mark. toolbar.js -> v519. CACHE to v726. */
 /* 2026-08-13: Icon updates: dropdown child icons, Guides/Maps/Weather tabs, Hotels/Flights panel, Best-Of pill removed toolbar.js -> v520. CACHE to v727. */
 /* 2026-08-13: Icon: restore 💥 in also-on-this-site addPill label (brain_check requires it) toolbar.js -> v521. CACHE to v728. */
-var CACHE = 'travel-cache-v728';
+/* 2026-08-13: mobile-ux-fix — When-to-Go sibling pills: 3-column → 2-column glued grid so icon + text fit in one line (124px content was narrower than the injected icon + "Sports calendar" text, pinning justify-content:center with no free space). mobile.css sibling-pill moved from @supports to @media (pointer:coarse), display:inline-flex → flex. mobile.css -> v78. CACHE to v729. */
+var CACHE = 'travel-cache-v729';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -963,7 +964,7 @@ var CACHE = 'travel-cache-v728';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 521, 'mobile.css': 77, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 521, 'mobile.css': 78, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
