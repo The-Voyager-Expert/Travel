@@ -902,7 +902,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Observation-Decks.html',             text: 'Observation Decks', icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Pickleball.html',                         text: 'Pickleball', icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Best-Safari.html',                        text: 'Safari', icon: 'lion' },
-        { href: base + 'Trip-Essentials/Best-Scuba-Diving.html',                  text: 'Scuba Diving', icon: 'star-cup' },
+        { href: base + 'Trip-Essentials/Best-Scuba-Diving.html',                  text: 'Scuba Diving', icon: 'scuba' },
         { href: base + 'Trip-Essentials/Best-Ski-Resorts.html',                   text: 'Ski Resorts', icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Best-Surfing.html',                       text: 'Surfing', icon: 'surf' },
         { href: base + 'Trip-Essentials/Best-UNESCO-Sites.html',                  text: 'UNESCO Sites', icon: 'star-cup' },

@@ -1,3 +1,4 @@
+/* 2026-08-13: Best Of: Scuba Diving->scuba toolbar.js -> v540. CACHE to v748. */
 /* Travel — service worker. NETWORK-FIRST for everything: when you are online you
    ALWAYS get the latest from the server (no stale cached pages/assets), so deploys
    go live immediately on the next load. The cache is only an offline fallback
@@ -974,7 +975,7 @@
 /* 2026-08-13: icon swaps: Beaches→beach, Castles→castle, Cathedrals→cathedral #210, Volcanoes→volcano-erupting #289, National Parks→pine-forest #280, Hot Springs→hot-pool #254, Wine Regions→wine, Cruise Lines→ship, Safari→lion #238, Lakes→lake-jetty #251 toolbar.js -> v537. CACHE to v745. */
 /* 2026-08-13: Best Of icons: Mountains→mountain, Surfing→surf, Museums→museumstar toolbar.js -> v538. CACHE to v746. */
 /* 2026-08-13: Best Of icons: Disney Parks→disney-parks toolbar.js -> v539. CACHE to v747. */
-var CACHE = 'travel-cache-v747';
+var CACHE = 'travel-cache-v748';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -982,7 +983,7 @@ var CACHE = 'travel-cache-v747';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 539, 'mobile.css': 78, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 540, 'mobile.css': 78, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
