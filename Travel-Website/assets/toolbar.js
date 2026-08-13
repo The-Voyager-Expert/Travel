@@ -7076,7 +7076,7 @@ window.TVE.isPhone = function () {
     }
     /* 1. Also on This Site — always present in real guides */
     if (document.getElementById('also-on-this-site')) {
-      addPill('#also-on-this-site', 'Also on this site', 'burst');
+      addPill('#also-on-this-site', '💥 Also on this site', 'burst');
     }
     /* 3. Nearby Guides — only when the section has pills (build_nearby_guides populated it) */
     var _epng = document.getElementById('nearby-guides');
