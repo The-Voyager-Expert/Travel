@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup: mobile-city-row-active-state</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660;
+    --accent: #c8a44a; --rust: #b85c2a;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+  body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  h1 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--rust); margin: 0 0 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .panels { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .panel { background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); width: 393px; max-width: 100%; }
+  .panel-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 8px 12px; border-bottom: 1px solid #e6e2da; }
+  .panel-label.before { background: #fef9f0; color: #9a6a20; }
+  .panel-label.after { background: #f0f5f0; color: #2a7a2a; }
+  .phone { background: var(--bg); padding: 16px; }
+
+  /* city-row — base style (shared) */
+  a.city-row {
+    display: flex; align-items: center; padding: 10px 14px;
+    background: var(--surface); border: 1px solid #e6e2da;
+    border-radius: 6px; text-decoration: none; color: var(--text);
+    margin-bottom: 8px; gap: 12px; cursor: pointer;
+  }
+  .city-flag { font-size: 22px; flex-shrink: 0; }
+  .city-info { flex: 1; }
+  .city-name { font-weight: 600; font-size: 14px; }
+  .city-sub { font-size: 12px; color: var(--muted); }
+
+  /* BEFORE: hover only, no :active on mobile */
+  .before-state a.city-row { /* no :active — nothing happens on tap */ }
+  .before-state .note { font-size: 11px; color: var(--muted); margin-top: 8px; padding: 8px; background: #fdf8f2; border-radius: 4px; }
+
+  /* AFTER: add :active state for touch feedback */
+  .simulated-active {
+    opacity: 0.84;
+    transform: scale(0.98);
+    transition: opacity 0.1s, transform 0.1s;
+    background: rgba(0,0,0,.02) !important;
+  }
+  .after-state .note { font-size: 11px; color: #2a7a2a; margin-top: 8px; padding: 8px; background: #f0f8f0; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>Mockup — Add :active tap feedback to a.city-row on mobile</h1>
+<div class="meta">2026-08-13 · mobile.css · @media (max-width:600px) and (pointer:coarse) · Finding: mobile-city-row-active-state</div>
+<div class="meta">Change: add <code>a.city-row:active { opacity: 0.84; transform: scale(0.98); background: rgba(0,0,0,.02); }</code> inside mobile breakpoint. On mobile, :hover never fires — :active is the only press feedback available on touch.</div>
+
+<div class="panels">
+  <!-- BEFORE -->
+  <div class="panel">
+    <div class="panel-label before">BEFORE — tap gives no visual response</div>
+    <div class="phone before-state">
+      <a class="city-row">
+        <span class="city-flag">🇫🇷</span>
+        <div class="city-info"><div class="city-name">Paris</div><div class="city-sub">France · 5 days</div></div>
+      </a>
+      <a class="city-row">
+        <span class="city-flag">🇯🇵</span>
+        <div class="city-info"><div class="city-name">Tokyo</div><div class="city-sub">Japan · 7 days</div></div>
+      </a>
+      <a class="city-row">
+        <span class="city-flag">🇮🇹</span>
+        <div class="city-info"><div class="city-name">Rome</div><div class="city-sub">Italy · 4 days</div></div>
+      </a>
+      <div class="note">⚠ Tapping any row gives zero visual feedback. :hover only fires on desktop with a mouse cursor — not on touch screens.</div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="panel">
+    <div class="panel-label after">AFTER — tap shows immediate visual press (opacity + scale)</div>
+    <div class="phone after-state">
+      <a class="city-row">
+        <span class="city-flag">🇫🇷</span>
+        <div class="city-info"><div class="city-name">Paris</div><div class="city-sub">France · 5 days</div></div>
+      </a>
+      <a class="city-row simulated-active">
+        <span class="city-flag">🇯🇵</span>
+        <div class="city-info"><div class="city-name">Tokyo — pressed</div><div class="city-sub">Japan · 7 days · (simulated active state)</div></div>
+      </a>
+      <a class="city-row">
+        <span class="city-flag">🇮🇹</span>
+        <div class="city-info"><div class="city-name">Rome</div><div class="city-sub">Italy · 4 days</div></div>
+      </a>
+      <div class="note">✓ The "Tokyo" row is shown in its active state: opacity 0.84 + scale(0.98). Fix is one CSS rule in mobile.css inside the @media breakpoint.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

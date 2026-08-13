@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup: mobile-horizontal-scroll-gradient-indicator</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660;
+    --accent: #c8a44a; --rust: #b85c2a;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+  body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  h1 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--rust); margin: 0 0 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .panels { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .panel { background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); width: 393px; max-width: 100%; }
+  .panel-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 8px 12px; border-bottom: 1px solid #e6e2da; }
+  .panel-label.before { background: #fef9f0; color: #9a6a20; }
+  .panel-label.after { background: #f0f5f0; color: #2a7a2a; }
+  .phone { background: var(--bg); padding: 16px; }
+
+  /* Shared pill strip styles */
+  .strip-wrap { position: relative; overflow: hidden; margin-bottom: 16px; }
+  .pill-strip {
+    display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; justify-content: flex-start;
+    padding-bottom: 2px;
+  }
+  .pill-strip::-webkit-scrollbar { display: none; }
+  .region-chip {
+    flex-shrink: 0; white-space: nowrap; padding: 10px 14px;
+    background: var(--surface); border: 1px solid #d8d4cc;
+    font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer;
+    font-family: inherit;
+  }
+  .region-chip.active { background: #fdf3e8; color: var(--rust); border-color: var(--rust); font-weight: 600; }
+
+  /* AFTER: gradient fade on right edge of wrapper */
+  .strip-wrap-after::after {
+    content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 40px;
+    background: linear-gradient(to right, transparent, var(--bg));
+    pointer-events: none; z-index: 1;
+  }
+
+  .page-content { background: var(--surface); border-radius: 6px; padding: 12px; font-size: 13px; border: 1px solid #e6e2da; }
+  .note { font-size: 11px; color: var(--muted); margin-top: 10px; padding: 8px; background: #fdf8f2; border-radius: 4px; }
+  .note-ok { font-size: 11px; color: #2a7a2a; margin-top: 10px; padding: 8px; background: #f0f8f0; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>Mockup — Add right-edge gradient fade to .best-of-region-filters horizontal scroll strip</h1>
+<div class="meta">2026-08-13 · mobile.css · @media (max-width:600px) and (pointer:coarse) · Finding: mobile-horizontal-scroll-gradient-indicator</div>
+<div class="meta">Change: add <code>position:relative; overflow:hidden</code> to the parent wrapper and <code>::after { position:absolute; right:0; top:0; bottom:0; width:40px; background:linear-gradient(to right,transparent,var(--bg)); pointer-events:none; }</code> on the wrapper. Scrollbar is already hidden via <code>scrollbar-width:none</code> — without this gradient the strip gives no visual affordance that more chips exist beyond the right edge.</div>
+
+<div class="panels">
+  <!-- BEFORE -->
+  <div class="panel">
+    <div class="panel-label before">BEFORE — hidden scrollbar, no affordance cue</div>
+    <div class="phone">
+      <div class="strip-wrap">
+        <div class="pill-strip">
+          <button class="region-chip active">All</button>
+          <button class="region-chip">Europe</button>
+          <button class="region-chip">Americas</button>
+          <button class="region-chip">Asia</button>
+          <button class="region-chip">Africa</button>
+          <button class="region-chip">Middle East</button>
+        </div>
+      </div>
+      <div class="page-content">Best-Of page content. The filter chips above can be scrolled sideways — but there is NO visual cue that more chips exist to the right. The scrollbar is hidden. Users don't know "Middle East" and further chips exist.</div>
+      <div class="note">⚠ No gradient. No scrollbar. Invisible scrollability — users may not discover all filter options.</div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="panel">
+    <div class="panel-label after">AFTER — gradient fade signals more content to the right</div>
+    <div class="phone">
+      <div class="strip-wrap strip-wrap-after">
+        <div class="pill-strip">
+          <button class="region-chip active">All</button>
+          <button class="region-chip">Europe</button>
+          <button class="region-chip">Americas</button>
+          <button class="region-chip">Asia</button>
+          <button class="region-chip">Africa</button>
+          <button class="region-chip">Middle East</button>
+        </div>
+      </div>
+      <div class="page-content">The gradient fade on the right edge tells users there are more chips to scroll to. Benchmark: Klook, Booking.com, GetYourGuide all use this gradient-fade pattern universally on horizontal pill strips.</div>
+      <div class="note-ok">✓ 40px gradient fade using <code>var(--bg)</code> (#f5f3ef). Pointer-events:none so chips beneath are still tappable. Only the wrapper div needs <code>position:relative; overflow:hidden</code>.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

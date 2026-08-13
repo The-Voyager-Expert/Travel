@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup: mobile-stats-nav-single-row-sticky</title>
+<style>
+  :root {
+    --bg: #f5f3ef; --surface: #ffffff; --text: #3d3a32; --muted: #6a6660;
+    --accent: #c8a44a; --rust: #b85c2a;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+  body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  h1 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--rust); margin: 0 0 4px; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .panels { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .panel { background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); width: 393px; max-width: 100%; }
+  .panel-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 8px 12px; border-bottom: 1px solid #e6e2da; }
+  .panel-label.before { background: #fef9f0; color: #9a6a20; }
+  .panel-label.after { background: #f0f5f0; color: #2a7a2a; }
+  .phone { background: var(--bg); min-height: 340px; overflow-y: auto; position: relative; }
+
+  /* Toolbar */
+  .toolbar { background: var(--rust); height: 56px; display: flex; align-items: center; padding: 0 16px; position: sticky; top: 0; z-index: 10; }
+  .toolbar span { color: #fff; font-size: 14px; font-weight: 600; }
+
+  /* BEFORE: 3-col grid, not sticky */
+  .stats-nav-before { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: var(--surface); border-bottom: 1px solid #e6e2da; }
+  .stats-nav-before a { display: flex; align-items: center; justify-content: center; height: 46px; font-size: 12px; font-weight: 600; color: var(--text); text-decoration: none; border-right: 1px solid #e6e2da; padding: 4px 6px; text-align: center; line-height: 1.12; border-radius: 0; white-space: normal; }
+  .stats-nav-before a:last-child { border-right: none; }
+  .stats-nav-before a.active { background: #f8f0e8; color: var(--rust); }
+
+  /* AFTER: single-row horizontal scroll, sticky */
+  .stats-nav-sticky-wrap { position: sticky; top: 56px; z-index: 9; background: var(--surface); border-bottom: 1px solid #e6e2da; }
+  .stats-nav-after { display: flex; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; gap: 0; padding: 0; }
+  .stats-nav-after::-webkit-scrollbar { display: none; }
+  .stats-nav-after a { display: flex; align-items: center; justify-content: center; height: 44px; font-size: 13px; font-weight: 600; color: var(--text); text-decoration: none; border-right: 1px solid #e6e2da; padding: 4px 16px; text-align: center; white-space: nowrap; flex-shrink: 0; border-radius: 0; }
+  .stats-nav-after a:last-child { border-right: none; }
+  .stats-nav-after a.active { color: var(--rust); border-bottom: 2px solid var(--rust); background: #fdf8f2; }
+
+  .page-content { padding: 16px; }
+  .content-block { background: var(--surface); border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 13px; border-left: 3px solid #e6e2da; }
+  .content-title { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 6px; }
+  .note { font-size: 11px; color: var(--muted); padding: 8px 12px; background: #fdf8f2; border-radius: 4px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<h1>Mockup — Convert .stats-nav / .jump-nav to sticky horizontal scroll on mobile</h1>
+<div class="meta">2026-08-13 · mobile.css · @media (max-width:600px) and (pointer:coarse) · Finding: mobile-stats-nav-single-row-sticky</div>
+<div class="meta">Change: remove <code>display:grid; grid-template-columns:repeat(3,1fr)</code> and <code>position:static !important</code> → replace with <code>display:flex; overflow-x:auto; position:sticky; top:56px</code></div>
+
+<div class="panels">
+  <!-- BEFORE -->
+  <div class="panel">
+    <div class="panel-label before">BEFORE — 3-col grid, not sticky (scrolls away)</div>
+    <div class="phone">
+      <div class="toolbar"><span>Guide My Days</span></div>
+      <div class="stats-nav-before">
+        <a class="active">Records</a>
+        <a>Countries</a>
+        <a>Distances</a>
+      </div>
+      <div class="page-content">
+        <div class="content-block"><div class="content-title">Top Records</div>Long page content — scroll down and the nav disappears entirely. User must scroll back to top to switch sections.</div>
+        <div class="content-block"><div class="content-title">More content</div>After scrolling past 340px the 3-col nav is gone. No way to switch between Records / Countries / Distances without scrolling back up.</div>
+        <div class="content-block"><div class="content-title">Even more content</div>The multi-row grid layout also prevents sticky positioning — pinning it would cover too much vertical space at 138px (3 rows × 46px).</div>
+        <div class="note">⚠ Nav scrolls away. To switch sections the user must scroll back to top.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="panel">
+    <div class="panel-label after">AFTER — horizontal scroll strip, sticky below toolbar</div>
+    <div class="phone">
+      <div class="toolbar"><span>Guide My Days</span></div>
+      <div class="stats-nav-sticky-wrap">
+        <div class="stats-nav-after">
+          <a class="active">Records</a>
+          <a>Countries</a>
+          <a>Distances</a>
+          <a>By Region</a>
+          <a>World Map</a>
+        </div>
+      </div>
+      <div class="page-content">
+        <div class="content-block"><div class="content-title">Top Records</div>Long page content — scroll down and the nav stays at the top (sticky below the toolbar at top:56px). One row, 44px height — does not pin too much vertical space.</div>
+        <div class="content-block"><div class="content-title">More content</div>Users can switch sections any time by tapping the sticky nav. Horizontal scroll handles overflow items — strip is scrollable when more tabs exist than can fit.</div>
+        <div class="content-block"><div class="content-title">Even more content</div>Active tab highlighted with terracotta bottom border. Benchmark: Intrepid Travel, G Adventures, Lonely Planet destination drill-down pages all keep section tabs sticky.</div>
+        <div class="note">✓ Nav stays visible. Tabs always reachable. Horizontal scroll handles 5+ items.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
