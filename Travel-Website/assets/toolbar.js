@@ -897,7 +897,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Hard-to-Reach-Places.html',          text: 'Hard-to-Reach Places', icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Best-Hot-Springs.html',                   text: 'Hot Springs', icon: 'hot-pool' },
         { href: base + 'Trip-Essentials/Best-Islands.html',                       text: 'Islands', icon: 'island' },
-        { href: base + 'Trip-Essentials/Best-Kids-Friendly-Places.html',          text: 'Kid-Friendly Destinations', icon: 'star-cup' },
+        { href: base + 'Trip-Essentials/Best-Kids-Friendly-Places.html',          text: 'Kid-Friendly Destinations', icon: 'pagoda' },
         { href: base + 'Trip-Essentials/Best-Kids-Museums.html',                  text: "Kids' Museums", icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Best-Lakes.html',                         text: 'Lakes', icon: 'lake-jetty' },
         { href: base + 'Trip-Essentials/Best-Mountains-and-Rock-Formations.html', text: 'Mountains & Rock Formations', icon: 'mountain' },
