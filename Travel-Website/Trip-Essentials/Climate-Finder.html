@@ -275,12 +275,15 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
     var resultsEl = document.getElementById('cf-results');
     var keys = Object.keys(CLIM).filter(function (k) { return k !== '_generated' && CLIM[k] && CLIM[k].hi; });
 
-    if (CLIM._generated) {
-      var gd = new Date(CLIM._generated + 'T00:00:00');
-      var MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      var uel = document.getElementById('cf-updated');
-      if (uel) uel.textContent = 'Updated ' + MN[gd.getMonth()] + ' ' + gd.getFullYear();
-    }
+    /* The 'Updated {month} {year}' branch that stood here wrote into #cf-updated, an
+       element that has never existed in any commit of this history. It was null-guarded
+       so it never errored — it simply never ran — and it actively misled: it was read as
+       evidence that an Updated stamp had been removed by mistake and cost a round of
+       investigation on 2026-08-11 to disprove. Climate-Finder is an aggregator page and
+       carries no stamp BY DESIGN (Fifth non-negotiable: index.html, Before-You-Go,
+       Climate-Finder and When-to-Go omit data-updated entirely, because they display data
+       that lives on other pages). So the element is not restored — the dead branch is
+       deleted. Removed 2026-08-12. */
     if (!keys.length) {
       resultsEl.innerHTML = '<div class="empty-state">Climate data didn’t load.<br>Open this page from the site (or alongside the assets folder).</div>';
       document.getElementById('cf-summary').textContent = '';
