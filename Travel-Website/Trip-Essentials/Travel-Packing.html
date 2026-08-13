@@ -30,6 +30,49 @@
  background: #fdf8ee;
 }
 .card-icon { font-size: 18px; line-height: 1; flex-shrink: 0; }
+/* ── PACKING CATEGORY ICONS ────────────────────────────────────────────────
+   Restores the icons stripped by 043c9fe6 ("decorative emoji removed
+   site-wide"), which removed 18 <span class="card-icon"> elements and the two
+   button glyphs and put nothing back — the .card-icon rule below survived, so
+   the slot was still here, empty, for a day.
+
+   Drawn, not emoji: these are inline SVG so they take the page's own palette
+   and flip for dark mode, which an Apple glyph cannot do. Each viewBox is
+   pre-normalised so every icon's artwork fills 0.96 of its box on the dominant
+   axis — that is what makes twenty different drawings look like one size. Do
+   not "tidy" a viewBox to 0 0 24 24; that is what the odd numbers are for. */
+:root {
+  --pk-tire:#3f3831; --pk-stone:#b0a294; --pk-paper:#ffffff; --pk-cream:#f6ecdb;
+  --pk-tan:#dfa877;  --pk-cocoa:#6b4326; --pk-rust:#b85c2a;  --pk-clay:#d97742;
+  --pk-red:#cc4433;  --pk-rose:#d97186;  --pk-sun:#f5b731;   --pk-amber:#df8c18;
+  --pk-green:#6d9e4e;--pk-teal:#2f9c8f;  --pk-blue:#3d7ea6;  --pk-navy:#24566f;
+  --pk-sky:#a8d4e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pk-tire:#5c5049; --pk-stone:#8d8175; --pk-paper:#f2ece2; --pk-cream:#e4d6bf;
+    --pk-tan:#e0ac7d;  --pk-cocoa:#8a5b39; --pk-rust:#d4874a;  --pk-clay:#e2915e;
+    --pk-red:#e35a48;  --pk-rose:#e2899b;  --pk-sun:#ffc94d;   --pk-amber:#efa02f;
+    --pk-green:#8bbd6a;--pk-teal:#4fbfb0;  --pk-blue:#5fa3c9;  --pk-navy:#3d7ea6;
+    --pk-sky:#bfe2f2;
+  }
+}
+:root[data-theme="dark"] {
+  --pk-tire:#5c5049; --pk-stone:#8d8175; --pk-paper:#f2ece2; --pk-cream:#e4d6bf;
+  --pk-tan:#e0ac7d;  --pk-cocoa:#8a5b39; --pk-rust:#d4874a;  --pk-clay:#e2915e;
+  --pk-red:#e35a48;  --pk-rose:#e2899b;  --pk-sun:#ffc94d;   --pk-amber:#efa02f;
+  --pk-green:#8bbd6a;--pk-teal:#4fbfb0;  --pk-blue:#5fa3c9;  --pk-navy:#3d7ea6;
+  --pk-sky:#bfe2f2;
+}
+:root[data-theme="light"] {
+  --pk-tire:#3f3831; --pk-stone:#b0a294; --pk-paper:#ffffff; --pk-cream:#f6ecdb;
+  --pk-tan:#dfa877;  --pk-cocoa:#6b4326; --pk-rust:#b85c2a;  --pk-clay:#d97742;
+  --pk-red:#cc4433;  --pk-rose:#d97186;  --pk-sun:#f5b731;   --pk-amber:#df8c18;
+  --pk-green:#6d9e4e;--pk-teal:#2f9c8f;  --pk-blue:#3d7ea6;  --pk-navy:#24566f;
+  --pk-sky:#a8d4e8;
+}
+.card-icon svg { width: 1em; height: 1em; display: block; overflow: visible; }
+.print-btn svg, .toggle-btn svg { width: 1em; height: 1em; vertical-align: -0.15em; margin-right: 2px; }
 .card-title {
  font-size: 12px;
  letter-spacing: 0.18em;
@@ -331,13 +374,13 @@ document.addEventListener('DOMContentLoaded',()=>{
  </div>
  <div class="action-row">
  <button class="reset-btn" onclick="resetAll()">↺ &nbsp;Reset all</button>
- <button class="print-btn" onclick="window.print()">&nbsp;Print list</button>
- <button class="toggle-btn" id="hide-toggle" onclick="toggleHidePacked()" aria-pressed="false">&nbsp;Hide packed</button>
+ <button class="print-btn" onclick="window.print()"><svg viewBox="2 2 20 20" aria-hidden="true" focusable="false"><rect x="6.4" y="2.4" width="11.2" height="5" rx="0.6" fill="var(--pk-cream)"/><rect x="2.4" y="7.4" width="19.2" height="9.2" rx="2" fill="var(--pk-navy)"/><rect x="4.4" y="9.6" width="3.4" height="1.8" rx="0.9" fill="var(--pk-sky)"/><circle cx="18.6" cy="10.4" r="1.2" fill="var(--pk-green)"/><rect x="6.4" y="14.4" width="11.2" height="7.2" rx="0.6" fill="var(--pk-paper)"/><g stroke="var(--pk-stone)" stroke-width="1" stroke-linecap="round" opacity="0.6"><path d="M8.4 16.8h7.2M8.4 19h4.6"/></g></svg>&nbsp;Print list</button>
+ <button class="toggle-btn" id="hide-toggle" onclick="toggleHidePacked()" aria-pressed="false"><svg viewBox="0.54 0.54 22.92 22.92" aria-hidden="true" focusable="false"><path d="M12 5.4c5 0 9.2 3.1 11 6.6-1.8 3.5-6 6.6-11 6.6S2.8 15.5 1 12c1.8-3.5 6-6.6 11-6.6z" fill="var(--pk-cream)"/><circle cx="12" cy="12" r="3.8" fill="var(--pk-blue)"/><circle cx="12" cy="12" r="1.6" fill="var(--pk-navy)"/><path d="M3.6 3.6 20.4 20.4" stroke="var(--ground)" stroke-width="4.4" stroke-linecap="round"/><path d="M3.9 3.9 20.1 20.1" stroke="var(--pk-red)" stroke-width="2.4" stroke-linecap="round"/></svg>&nbsp;Hide packed</button>
  </div>
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Pre-Trip Home Tasks</span>
+ <span class="card-icon"><svg viewBox="1.17 1.07 21.67 21.67" aria-hidden="true" focusable="false"><path d="M12 2.4 22.4 11h-3v10.4H4.6V11h-3z" fill="var(--pk-rust)"/><path d="M6.6 11 12 6.4 17.4 11v8.4H6.6z" fill="var(--pk-cream)"/><rect x="10.2" y="14.4" width="3.6" height="5" rx="0.5" fill="var(--pk-cocoa)"/><rect x="7.4" y="12.6" width="2.2" height="2.2" rx="0.4" fill="var(--pk-sky)"/></svg></span><span class="card-title">Pre-Trip Home Tasks</span>
  <span class="card-pill" id="pill-pretrip">0 / 3</span>
  </div>
  <div class="card-body">
@@ -349,7 +392,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Pre-Trip Charge</span>
+ <span class="card-icon"><svg viewBox="1.37 1.17 21.67 21.67" aria-hidden="true" focusable="false"><rect x="1.8" y="7" width="18" height="10" rx="2.2" fill="var(--pk-stone)"/><rect x="3.2" y="8.4" width="15.2" height="7.2" rx="1.4" fill="var(--pk-cream)"/><rect x="3.2" y="8.4" width="10.4" height="7.2" rx="1.4" fill="var(--pk-green)"/><rect x="20.4" y="10" width="2.2" height="4" rx="1" fill="var(--pk-stone)"/><path d="M9.6 8.8 6.8 13h2.2l-.8 2.6L11.4 11H9z" fill="var(--pk-sun)"/></svg></span><span class="card-title">Pre-Trip Charge</span>
  <span class="card-pill" id="pill-precharge">0 / 7</span>
  </div>
  <div class="card-body">
@@ -365,7 +408,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Pre-Trip Downloads</span>
+ <span class="card-icon"><svg viewBox="2.21 1.91 19.58 19.58" aria-hidden="true" focusable="false"><rect x="2.6" y="2.6" width="18.8" height="14" rx="2" fill="var(--pk-navy)"/><rect x="4.4" y="4.4" width="15.2" height="10" rx="1" fill="var(--pk-sky)"/><path d="M12 5.6v5.2" stroke="var(--pk-navy)" stroke-width="1.8" stroke-linecap="round"/><path d="M9.4 8.4 12 11l2.6-2.6" fill="none" stroke="var(--pk-navy)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="6.4" y="18.4" width="11.2" height="2.4" rx="1.2" fill="var(--pk-stone)"/><rect x="9.8" y="16.6" width="4.4" height="2" fill="var(--pk-stone)"/></svg></span><span class="card-title">Pre-Trip Downloads</span>
  <span class="card-pill" id="pill-predownloads">0 / 3</span>
  </div>
  <div class="card-body">
@@ -377,7 +420,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="critical-card">
  <div class="card-header">
- <span class="card-title">Documents — Domestic</span>
+ <span class="card-icon"><svg viewBox="1.37 1.38 21.25 21.25" aria-hidden="true" focusable="false"><rect x="1.8" y="4.6" width="20.4" height="14.8" rx="2.2" fill="var(--pk-cream)"/><rect x="1.8" y="4.6" width="20.4" height="3.4" rx="2.2" fill="var(--pk-blue)"/><rect x="1.8" y="6.6" width="20.4" height="1.4" fill="var(--pk-blue)"/><rect x="4" y="10" width="6" height="7" rx="1" fill="var(--pk-sky)"/><circle cx="7" cy="12.4" r="1.5" fill="var(--pk-cream)"/><path d="M4 16.4a3 3 0 0 1 6 0z" fill="var(--pk-cream)"/><g fill="var(--pk-stone)" opacity="0.6"><rect x="11.6" y="10.4" width="8.4" height="1.5" rx="0.75"/><rect x="11.6" y="13" width="8.4" height="1.5" rx="0.75"/><rect x="11.6" y="15.6" width="5.4" height="1.5" rx="0.75"/></g></svg></span><span class="card-title">Documents — Domestic</span>
  <span class="card-pill" id="pill-docsdomestic">0 / 3</span>
  </div>
  <div class="card-body">
@@ -389,7 +432,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="critical-card">
  <div class="card-header">
- <span class="card-title">Documents — International</span>
+ <span class="card-icon"><svg viewBox="2.2 2 20 20" aria-hidden="true" focusable="false"><rect x="4.2" y="2.4" width="15.4" height="19.2" rx="2" fill="var(--pk-navy)"/><rect x="5.6" y="2.4" width="1.6" height="19.2" fill="var(--pk-blue)"/><rect x="17.8" y="4.4" width="2.4" height="15.2" rx="1" fill="var(--pk-cream)"/><circle cx="12.4" cy="9.6" r="3.4" fill="none" stroke="var(--pk-sun)" stroke-width="1.3"/><path d="M12.4 6.2v6.8M9 9.6h6.8" stroke="var(--pk-sun)" stroke-width="0.9"/><rect x="8.6" y="15.6" width="7.6" height="1.7" rx="0.85" fill="var(--pk-sun)"/></svg></span><span class="card-title">Documents — International</span>
  <span class="card-pill" id="pill-docsintl">0 / 7</span>
  </div>
  <div class="card-body">
@@ -405,7 +448,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Electronics</span>
+ <span class="card-icon"><svg viewBox="1.17 1.67 21.67 21.67" aria-hidden="true" focusable="false"><path d="M3.6 15.4v-3a8.4 8.4 0 0 1 16.8 0v3" fill="none" stroke="var(--pk-navy)" stroke-width="2.2" stroke-linecap="round"/><rect x="1.6" y="13.6" width="4.6" height="7.4" rx="2.3" fill="var(--pk-blue)"/><rect x="17.8" y="13.6" width="4.6" height="7.4" rx="2.3" fill="var(--pk-blue)"/><rect x="2.8" y="15.2" width="2.2" height="4.2" rx="1.1" fill="var(--pk-sky)"/><rect x="19" y="15.2" width="2.2" height="4.2" rx="1.1" fill="var(--pk-sky)"/></svg></span><span class="card-title">Electronics</span>
  <span class="card-pill" id="pill-electronics">0 / 7</span>
  </div>
  <div class="card-body">
@@ -422,7 +465,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">International Plug Adapter</span>
+ <span class="card-icon"><svg viewBox="1.58 1.38 20.83 20.83" aria-hidden="true" focusable="false"><rect x="7.6" y="1.8" width="2.2" height="5.4" rx="1.1" fill="var(--pk-navy)"/><rect x="14.2" y="1.8" width="2.2" height="5.4" rx="1.1" fill="var(--pk-navy)"/><path d="M5.8 7h12.4v3.2a6.2 6.2 0 0 1-12.4 0z" fill="var(--pk-stone)"/><rect x="10.9" y="16" width="2.2" height="5.8" rx="1.1" fill="var(--pk-navy)"/><path d="M12.9 8.2 10.4 12.4h1.9l-1 3.2 3.4-4.4h-2z" fill="var(--pk-sun)"/></svg></span><span class="card-title">International Plug Adapter</span>
  <span class="card-pill" id="pill-power">0 / 1</span>
  </div>
  <div class="card-body">
@@ -432,7 +475,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Toiletries &amp; Personal Care</span>
+ <span class="card-icon"><svg viewBox="1.37 1.18 21.25 21.25" aria-hidden="true" focusable="false"><rect x="9.6" y="1.6" width="4.8" height="2.8" rx="0.8" fill="var(--pk-stone)"/><path d="M8.4 4.4h7.2a3.4 3.4 0 0 1 3.4 3.4v11.4a2.8 2.8 0 0 1-2.8 2.8H7.8A2.8 2.8 0 0 1 5 19.2V7.8a3.4 3.4 0 0 1 3.4-3.4z" fill="var(--pk-teal)"/><rect x="6.6" y="10.4" width="10.8" height="5.4" rx="0.8" fill="var(--pk-cream)"/><g stroke="var(--pk-teal)" stroke-width="0.9" opacity="0.6"><path d="M8.4 12.4h7.2M8.4 14h5"/></g></svg></span><span class="card-title">Toiletries &amp; Personal Care</span>
  <span class="card-pill" id="pill-toiletries">0 / 20</span>
  </div>
  <div class="card-body">
@@ -462,7 +505,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Health &amp; Wellness</span>
+ <span class="card-icon"><svg viewBox="1.58 1.38 20.83 20.83" aria-hidden="true" focusable="false"><circle cx="7.4" cy="16.4" r="5.4" fill="var(--pk-red)"/><path d="M7.4 11c1.4 0 2.8.5 3.8 1.6L3.6 20.2A5.4 5.4 0 0 1 7.4 11z" fill="var(--pk-cream)"/><rect x="10.6" y="1.8" width="11.4" height="6.4" rx="3.2" fill="var(--pk-blue)" transform="rotate(38 16.3 5)"/><path d="M13.6 3.4 18.4 8" stroke="var(--pk-cream)" stroke-width="1.4"/></svg></span><span class="card-title">Health &amp; Wellness</span>
  <span class="card-pill" id="pill-health">0 / 10</span>
  </div>
  <div class="card-body">
@@ -482,7 +525,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Shoes</span>
+ <span class="card-icon"><svg viewBox="1.35 4.65 22.5 22.5" aria-hidden="true" focusable="false"><path d="M1.8 17.8c0-1.6.6-2.8 1.6-3.6l3-2.4 2.4 1.6 2.8-2.6 2 1.2c2.6 1.6 5.6 2.6 8.4 3 .8.1 1.4.8 1.4 1.6v1.2c0 .9-.7 1.6-1.6 1.6H3.4c-.9 0-1.6-.7-1.6-1.6z" fill="var(--pk-paper)"/><path d="M1.8 18.6h20.4v0.8c0 .9-.7 1.6-1.6 1.6H3.4c-.9 0-1.6-.7-1.6-1.6z" fill="var(--pk-blue)"/><path d="M6.4 11.8 9.4 13.8M9.8 10.8l2.6 2.2" stroke="var(--pk-clay)" stroke-width="1.4" stroke-linecap="round"/></svg></span><span class="card-title">Shoes</span>
  <span class="card-pill" id="pill-shoes">0 / 4</span>
  </div>
  <div class="card-body">
@@ -495,7 +538,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Clothing</span>
+ <span class="card-icon"><svg viewBox="2.52 2.02 18.96 18.96" aria-hidden="true" focusable="false"><path d="M8.6 2.4 12 4.4l3.4-2 5.4 2.8-2 5-2.2-.9v11.3H7.4V9.3l-2.2.9-2-5z" fill="var(--pk-blue)"/><path d="M8.6 2.4 12 4.4l3.4-2c-.6 1.9-1.8 2.9-3.4 2.9S9.2 4.3 8.6 2.4z" fill="var(--pk-sky)"/></svg></span><span class="card-title">Clothing</span>
  <span class="card-pill" id="pill-clothes">0 / 29</span>
  </div>
  <div class="card-body">
@@ -546,7 +589,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Accessories</span>
+ <span class="card-icon"><svg viewBox="0.96 2.01 22.08 22.08" aria-hidden="true" focusable="false"><path d="M1.4 8.4h21.2v1.8H1.4z" fill="var(--pk-cocoa)"/><path d="M1.8 10h8.6v3.4a4.3 4.3 0 0 1-8.6 0zM13.6 10h8.6v3.4a4.3 4.3 0 0 1-8.6 0z" fill="var(--pk-navy)"/><path d="M10.4 10.6h3.2v1h-3.2z" fill="var(--pk-cocoa)"/><path d="M3.2 11.2h5.4v1.2a2.7 2.7 0 0 1-5.4 0z" fill="var(--pk-sky)" opacity="0.5"/></svg></span><span class="card-title">Accessories</span>
  <span class="card-pill" id="pill-wear">0 / 5</span>
  </div>
  <div class="card-body">
@@ -560,7 +603,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Bags &amp; Organization</span>
+ <span class="card-icon"><svg viewBox="1.79 1.79 20.42 20.42" aria-hidden="true" focusable="false"><path d="M7.6 8.4V6.6a4.4 4.4 0 0 1 8.8 0v1.8" fill="none" stroke="var(--pk-cocoa)" stroke-width="1.9"/><path d="M3.4 8h17.2l-1.4 12a2 2 0 0 1-2 1.8H6.8a2 2 0 0 1-2-1.8z" fill="var(--pk-clay)"/><rect x="3.9" y="11.4" width="16.2" height="2.2" fill="var(--pk-rust)" opacity="0.5"/></svg></span><span class="card-title">Bags &amp; Organization</span>
  <span class="card-pill" id="pill-luggage">0 / 10</span>
  </div>
  <div class="card-body">
@@ -582,7 +625,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">In-Flight</span>
+ <span class="card-icon"><svg viewBox="2.49 0.92 22.76 22.76" aria-hidden="true" focusable="false"><path d="M4.6 3.6h3.2c1 0 1.8.8 1.9 1.8l.8 8.4h6.9c1 0 1.8.8 1.8 1.8s-.8 1.8-1.8 1.8H8.8c-1 0-1.8-.8-1.9-1.8L6.1 6.9H4.6a1.65 1.65 0 0 1 0-3.3z" fill="var(--pk-blue)"/><rect x="4.6" y="19" width="15.4" height="2" rx="1" fill="var(--pk-stone)"/><path d="M20.4 4.2a1 1 0 0 1 1 1v3.6l3.4 2v1.2l-3.4-1v2.4l1.2.8v.9l-2.2-.7-2.2.7v-.9l1.2-.8v-2.4l-3.4 1v-1.2l3.4-2V5.2a1 1 0 0 1 1-1z" fill="var(--pk-sky)" transform="translate(-3.4 0) scale(0.82) translate(3 1)"/></svg></span><span class="card-title">In-Flight</span>
  <span class="card-pill" id="pill-downtime">0 / 7</span>
  </div>
  <div class="card-body">
@@ -599,7 +642,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="section-card">
  <div class="card-header">
- <span class="card-title">Baby &amp; Toddler</span>
+ <span class="card-icon"><svg viewBox="1.27 0.97 21.46 21.46" aria-hidden="true" focusable="false"><rect x="9.4" y="1.4" width="5.2" height="2.4" rx="1.2" fill="var(--pk-rose)"/><path d="M10.2 3.6h3.6v1.8h-3.6z" fill="var(--pk-stone)"/><path d="M8.2 5.4h7.6a2.4 2.4 0 0 1 2.4 2.4v11.4a2.8 2.8 0 0 1-2.8 2.8H8.6a2.8 2.8 0 0 1-2.8-2.8V7.8a2.4 2.4 0 0 1 2.4-2.4z" fill="var(--pk-paper)"/><path d="M6 12.4h12v6.8a2.8 2.8 0 0 1-2.8 2.8H8.8A2.8 2.8 0 0 1 6 19.2z" fill="var(--pk-sky)"/><g stroke="var(--pk-stone)" stroke-width="0.8" opacity="0.65"><path d="M6.4 9.4h2.4M6.4 11h2.4"/></g></svg></span><span class="card-title">Baby &amp; Toddler</span>
  <span class="card-pill" id="pill-baby">0 / 54</span>
  </div>
  <div class="card-body">
@@ -677,7 +720,18 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="collapsible-card" id="card-pickleball">
  <div class="card-header" onclick="toggleSection('pickleball')">
- <span class="card-title">Pickleball</span>
+ <span class="card-icon"><svg viewBox="2.05 0.95 22.29 22.29" aria-hidden="true" focusable="false"><rect x="5.6" y="1.6" width="12.8" height="14.4" rx="2.4" fill="var(--pk-navy)"/>
+              <rect x="7.2" y="3.2" width="9.6" height="11.2" rx="1.8" fill="var(--pk-blue)"/>
+              <rect x="10.6" y="15.8" width="2.8" height="2.2" fill="var(--pk-tire)"/>
+              <rect x="9.9" y="17.6" width="4.2" height="5.4" rx="1.7" fill="var(--pk-tire)"/>
+              <g stroke="var(--pk-stone)" stroke-width="0.7" opacity="0.55">
+                <path d="M10 19h4M10 20.4h4M10 21.8h4"/>
+              </g>
+              <circle cx="20.4" cy="19.6" r="3.2" fill="var(--pk-sun)"/>
+              <g fill="var(--pk-amber)">
+                <circle cx="19.4" cy="18.6" r="0.62"/><circle cx="21.4" cy="18.8" r="0.62"/>
+                <circle cx="19.8" cy="20.7" r="0.62"/><circle cx="21.5" cy="20.8" r="0.62"/>
+              </g></svg></span><span class="card-title">Pickleball</span>
  <span class="card-pill" id="pill-pickleball">0 / 13</span>
  <span class="collapsible-chevron">▼</span>
  </div>
@@ -703,7 +757,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="collapsible-card" id="card-hiking">
  <div class="card-header" onclick="toggleSection('hiking')">
- <span class="card-title">Hiking</span>
+ <span class="card-icon"><svg viewBox="2.22 3.17 18.96 18.96" aria-hidden="true" focusable="false"><path d="M4.2 3.6h4.4c.9 0 1.6.7 1.7 1.6l.5 5.4 6.8 3.2c2 .9 3.2 2.9 3.2 5.1v1.2c0 .9-.7 1.6-1.6 1.6H4.2c-.9 0-1.6-.7-1.6-1.6z" fill="var(--pk-cocoa)"/><path d="M2.6 18.4h18.2v1.4c0 .9-.7 1.6-1.6 1.6H4.2c-.9 0-1.6-.7-1.6-1.6z" fill="var(--pk-tan)"/><g stroke="var(--pk-tan)" stroke-width="1.2" stroke-linecap="round"><path d="M4.6 6.4h4M4.6 9h4M4.6 11.6h4.4"/></g></svg></span><span class="card-title">Hiking</span>
  <span class="card-pill" id="pill-hiking">0 / 14</span>
  <span class="collapsible-chevron">▼</span>
  </div>
@@ -731,7 +785,17 @@ document.addEventListener('DOMContentLoaded',()=>{
 
  <div class="collapsible-card" id="card-skiing">
  <div class="card-header" onclick="toggleSection('skiing')">
- <span class="card-title">Skiing</span>
+ <span class="card-icon"><svg viewBox="4.57 2.02 19.06 19.06" aria-hidden="true" focusable="false"><g transform="rotate(-12 12 12)">
+  <path d="M8.6 2.6c1.1 0 1.9.9 1.9 2v14.2a1.9 1.9 0 0 1-3.8 0V4.6c0-1.1.8-2 1.9-2z" fill="var(--pk-red)"/>
+  <path d="M8.6 2.6c1.1 0 1.9.9 1.9 2v2.2H6.7V4.6c0-1.1.8-2 1.9-2z" fill="var(--pk-cream)"/>
+  <path d="M15.4 2.6c1.1 0 1.9.9 1.9 2v14.2a1.9 1.9 0 0 1-3.8 0V4.6c0-1.1.8-2 1.9-2z" fill="var(--pk-blue)"/>
+  <path d="M15.4 2.6c1.1 0 1.9.9 1.9 2v2.2h-3.8V4.6c0-1.1.8-2 1.9-2z" fill="var(--pk-cream)"/>
+  <rect x="6.4" y="12.4" width="4.4" height="1.5" rx="0.7" fill="var(--pk-cocoa)"/>
+  <rect x="13.2" y="12.4" width="4.4" height="1.5" rx="0.7" fill="var(--pk-cocoa)"/>
+  <path d="M20.2 4.4v14.4" stroke="var(--pk-stone)" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M18.6 17.4h3.2" stroke="var(--pk-stone)" stroke-width="1.3" stroke-linecap="round"/>
+  <circle cx="20.2" cy="3.6" r="1.2" fill="var(--pk-cocoa)"/>
+</g></svg></span><span class="card-title">Skiing</span>
  <span class="card-pill" id="pill-skiing">0 / 15</span>
  <span class="collapsible-chevron">▼</span>
  </div>
