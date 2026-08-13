@@ -952,7 +952,7 @@ window.TVE.isPhone = function () {
        (globe · ID card · laptop · clock). See NAV_ICONS above. */
     { group: '🪪 Visas', groupIcon: 'passport', children: [
         { href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
-        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'visas' },
+        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'id-card-check' },
         { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'laptop' },
         { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: 'Visa Processing Times', icon: 'clock' },
       ] },
