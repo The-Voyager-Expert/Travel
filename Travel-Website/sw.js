@@ -923,7 +923,8 @@
 /* 2026-08-13: Pensacola HOTEL_ALT_DATA — swapped The Hotel Pensacola Beach (Wyndham, no inventory on any aggregator) for Fairfield by Marriott Inn & Suites Pensacola Beach (Marriott family, 9.1 Booking.com, beachfront). toolbar.js -> v488. CACHE to v693. */
 /* 2026-08-12: Corfu expanded 2→3 days — Day 3 Northwest Coast added (Paleokastritsa, Angelokastro, Peroulades). Guide and stops-map pages updated; PWA clients must drop stale 2-day cached copy. CACHE to v694. */
 /* 2026-08-12: Virgin-Islands, Zhangjiajie HOTEL_ALT_DATA swaps — Frenchman's Reef DoubleTree replaced with Buoy Haus Beach Resort Autograph Collection; Avic Hotel Zhangjiajie removed (no URL, not present in city). toolbar.js -> v489. CACHE to v695. */
-var CACHE = 'travel-cache-v695';
+/* 2026-08-12: EVERY TERRACOTTA ICON IS NOW COLOURED — owner rule: swap the icon inside the pill, leave the pill alone. A coloured icon cannot be a CSS mask (a mask is a stencil filled with ONE background-color, which is why the whole set was one colour), so the drawing has to be real SVG. Declaring it per occurrence would have put full artwork at 8,810 pins and 3,496 book rows, so every drawing is ONE <symbol> in a per-page sprite and each occurrence is a single <use> — about 40 bytes each. 102 symbols cover every NAV_ICONS key and every MARKS class; a key with no symbol falls back to its old mask, so this could be finished incrementally. Fills are palette vars injected by toolbar.js, so colour still flips for dark mode. Verified on a real guide: 0 terracotta, 0 legacy masks, 353 coloured marks, 198 coloured nav icons, 0 broken <use>, and the invariants hold — 389 .gm-mk-src spans, 58 pin rows still leading with the glyph in textContent, 60 addr-copy buttons still injecting. CACHE to v696. */
+var CACHE = 'travel-cache-v696';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
