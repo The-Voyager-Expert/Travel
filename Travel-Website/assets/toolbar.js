@@ -900,7 +900,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Mountains-and-Rock-Formations.html', text: 'Mountains & Rock Formations', icon: 'mountain' },
         { href: base + 'Trip-Essentials/Best-Museums.html',                       text: 'Museums', icon: 'museumstar' },
         { href: base + 'Trip-Essentials/Best-National-Parks-by-Country.html',     text: 'National Parks', icon: 'pine-forest' },
-        { href: base + 'Trip-Essentials/Best-Natural-Phenomena.html',             text: 'Natural Phenomena', icon: 'star-cup' },
+        { href: base + 'Trip-Essentials/Best-Natural-Phenomena.html',             text: 'Natural Phenomena', icon: 'aurora' },
         { href: base + 'Trip-Essentials/Best-Observation-Decks.html',             text: 'Observation Decks', icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Pickleball.html',                         text: 'Pickleball', icon: 'pickleball-clear' },
         { href: base + 'Trip-Essentials/Best-Safari.html',                        text: 'Safari', icon: 'lion' },
