@@ -1089,7 +1089,24 @@ window.TVE.isPhone = function () {
    in the bar is identical (edge to first tab, tab to tab, last tab to the
    theme toggle). Changed with the gap on 2026-08-11; if you retune one,
    retune both or check_toolbar_font_size_unified hard-fails. */
-    '.tb-inner{flex:0 1 auto;min-width:0;padding-left:clamp(5px,6.67vw - 88.7px,11px);padding-right:clamp(5px,6.67vw - 88.7px,11px)}' +
+    /* --tb-gap is THE ONE number for horizontal space in the bar, and
+       --tb-ring-off is DERIVED FROM IT so the selected ring can never be wider
+       than the space it has. Owner 2026-08-13, on the Guides ring intersecting
+       the open Before-You-Go ring: "are these supposed to overlap?" — no.
+       A ring stands (offset + 1.5px width) out from its tab, so two adjacent
+       rings need TWICE that between them. At a fixed 5px offset they needed
+       13px and the gap is 5-11px, so any active tab next to an open dropdown
+       drew two intersecting rings. offset = gap/2 - 1.75px makes the pair
+       always land 0.5px short of touching, at every width: gap 5 -> 0.75px
+       offset, 7.35 -> 1.9px, 11 -> 3.75px. The ring simply uses the room that
+       exists instead of a number picked at one width.
+       Both live on .tb-inner: it uses --tb-gap for its own gutter, .tb-links
+       inherits it for the column gap, and the tabs inherit --tb-ring-off. Keep
+       them here together — the gutter and the tab gap must stay equal
+       (check_toolbar_font_size_unified), and now the ring follows for free. */
+    '.tb-inner{flex:0 1 auto;min-width:0;' +
+      '--tb-gap:clamp(5px,6.67vw - 88.7px,11px);--tb-ring-off:calc(var(--tb-gap)/2 - 1.75px);' +
+      'padding-left:var(--tb-gap);padding-right:var(--tb-gap)}' +
     /* NARROW DESKTOP ONLY — added 2026-08-10 with the desktop-holds change, and
        deliberately NOT on the base .tb-inner rule, which Cleanliness Rule 582
        keeps free of overflow ("the old sliding toolbar"). Rule 582 is about the
@@ -1146,7 +1163,7 @@ window.TVE.isPhone = function () {
        usable bar. 1265 + 13 x 11 = 1408, which clears it with the flyout open.
        Re-measure WITH A DROPDOWN OPEN before touching the 11px cap. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:clamp(5px,6.67vw - 88.7px,11px);align-items:center;justify-content:flex-start;min-width:0}' +
+      'column-gap:var(--tb-gap);align-items:center;justify-content:flex-start;min-width:0}' +
     /* Between the hamburger (<=1260px) and ~1500px the desktop tab row does not
        fit: it measures 1414px, plus the theme toggle that is now its last tab.
        Let it wrap. The toggle is inside .tb-links, so it wraps WITH the tabs
@@ -1172,9 +1189,11 @@ window.TVE.isPhone = function () {
          reaches 6.5px above and below it, so two stacked rows only 6px apart
          put one row's ring straight through the row beneath it. 15px clears
          both rings with room to spare. Vertical only — no width cost. */
-      '.tb-links{flex-wrap:wrap;row-gap:15px;justify-content:center;' +
-        'column-gap:clamp(6px,0.72vw,11px)}' +
-      '.tb-inner{padding-left:clamp(6px,0.72vw,11px);padding-right:clamp(6px,0.72vw,11px)}' +
+      '.tb-links{flex-wrap:wrap;row-gap:15px;justify-content:center;column-gap:var(--tb-gap)}' +
+      /* Re-point --tb-gap rather than restating the value in three places: the
+         gutter, the column gap AND the ring offset all follow it, so the ring
+         widens back out with the roomier wrapped spacing automatically. */
+      '.tb-inner{--tb-gap:clamp(6px,0.72vw,11px);padding-left:var(--tb-gap);padding-right:var(--tb-gap)}' +
     '}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
