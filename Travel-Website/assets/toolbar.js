@@ -887,7 +887,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
       ] },
     null,
-    { group: '🛡️ Safety', groupIcon: 'insurance', children: [
+    { group: '🛡️ Safety', groupIcon: 'safety-guide', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',      text: 'Safety Guide',      icon: 'safety-guide' },
         { href: base + 'Trip-Essentials/Vaccines.html',          text: 'Vaccines',          icon: 'vaccines' },
         { href: base + 'Trip-Essentials/Tap-Water.html',         text: 'Tap Water',         icon: 'tap-water' },
@@ -900,7 +900,7 @@ window.TVE.isPhone = function () {
        four identical glyphs stacked in one flyout, which told the reader
        nothing. Each row now draws its own page's .page-intro-icon SVG instead
        (globe · ID card · laptop · clock). See NAV_ICONS above. */
-    { group: '🪪 Visas', groupIcon: 'entry-req', children: [
+    { group: '🪪 Visas', groupIcon: 'visas', children: [
         { href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'entry-req' },
         { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'laptop' },
