@@ -848,7 +848,10 @@ window.TVE.isPhone = function () {
     null,
     { group: '✈️ Flights', groupIcon: 'plane', children: [
         { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: 'Airlines', icon: 'plane', newSince: '2026-08-09' },
-        { href: base + 'Trip-Essentials/Delta-Routes-SEA.html',  text: 'Delta Seattle Hub', icon: 'plane' },
+        /* Delta Seattle Hub retired from the site 2026-08-13 (owner: "retire the
+           Delta Seattle hub from the site but i will still use"). The file stays
+           at Trip-Essentials/Delta-Routes-SEA.html and the delta-audit routine
+           still maintains it — it is simply no longer linked from anywhere. */
         { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: 'Delta Full Network', icon: 'plane' },
         { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'clock', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
@@ -9317,7 +9320,6 @@ window.TVE.isPhone = function () {
     var PAGE_ICON = {
       'Airport-Connection-Times.html': 'plane', 'Lounges-US.html': 'plane',
       'Lounges-Europe.html': 'plane', 'Delta-Routes-Full.html': 'plane',
-      'Delta-Routes-SEA.html': 'plane',
       'Asia-Stats.html': 'chart', 'Caribbean-Stats.html': 'chart',
       'Europe-Stats.html': 'chart', 'South-America-Stats.html': 'chart',
       'Stats-Across-Canada.html': 'chart', 'Stats-Across-US.html': 'chart',

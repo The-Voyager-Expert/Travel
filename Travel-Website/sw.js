@@ -953,7 +953,8 @@
 /* 2026-08-12: Three GM_SPRITE icons resolved to ONE family (owner: filled and outline are BOTH valid; the defect is the accidental middle). `walk` was the live bug — its five limb paths declared no fill, and SVG closes an open subpath implicitly when it fills, so the two three-point leg paths painted a solid BLACK WEDGE between the figure's legs; they also inherited the default stroke-width 1 instead of the 2.1 the reference doc carries on the root <svg>, which a sprite body has no root to inherit from. `book` and `nearby-guides` had their paper/cream rims at 1.0 against ornament also at 1.0, so nothing separated body from detail — rims taken down to their spec 0.6. The four deliberately-outline icons (download, exchange, search, waves) are UNCHANGED and must never be "fixed" by filling them in. toolbar.js -> v516. CACHE to v722. */
 /* 2026-08-12: FOUR NEW PALETTE TOKENS, purely additive — grape (dark purple), wine (dark red), pine (forest green) and slate (blue-grey), each with its -shade and -rim in BOTH theme blocks and its own <linearGradient> in GM_DEFS. Owner asked whether tokens can be added without touching what is already drawn: yes, because nothing existing references a new name — the destructive move would be changing an EXISTING token's value, which restyles every icon already using it. This is the same idea the palette already applies to blue (sky/blue/navy) and green (green/leaf); purple had only the bright plum, red only the bright red. No shipped icon changes colour. toolbar.js -> v517. CACHE to v723. */
 /* 2026-08-13: hamburger icons: Where to Stay + Stats + Maps; NEW badge position toolbar.js -> v518. CACHE to v724. */
-var CACHE = 'travel-cache-v724';
+/* 2026-08-13: Delta Seattle Hub retired from the site (owner: "retire the Delta Seattle hub from the site but i will still use"). Trip-Essentials/Delta-Routes-SEA.html stays on disk and delta-audit still maintains it — it is simply unlinked: toolbar ITEMS entry + PAGE_ICON row gone, diagram-tree leaf gone (Flights 10 -> 9), the four also-on-this-site pills that pointed at it gone, search_index.json rebuilt without it. The Full page stops pointing readers at it and stops framing its cross-hub table around SEA. toolbar.js -> v519. CACHE to v725. */
+var CACHE = 'travel-cache-v725';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -961,7 +962,7 @@ var CACHE = 'travel-cache-v724';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 518, 'mobile.css': 77, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 519, 'mobile.css': 77, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
