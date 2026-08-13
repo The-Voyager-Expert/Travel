@@ -1439,8 +1439,10 @@ window.TVE.isPhone = function () {
         if (hi < lo) hi = lo;
         if (cx < lo) cx = lo;
         if (cx > hi) cx = hi;
-        menu.style.left = Math.round(cx) + 'px';
-        menu.style.top  = Math.round(r.bottom + 6) + 'px';
+        var menuTop = Math.round(r.bottom + 6);
+        menu.style.left      = Math.round(cx) + 'px';
+        menu.style.top       = menuTop + 'px';
+        menu.style.maxHeight = Math.max(120, window.innerHeight - menuTop - 16) + 'px';
       }
       function openMenu()  {
         /* Only one dropdown open at a time — close any others first. */
