@@ -930,7 +930,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/SIM-Cards.html',          text: 'SIM Cards', icon: 'sim' },
         { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: 'Sports Calendar', icon: 'pennant' },
         { href: base + 'Trip-Essentials/Tipping-Guide.html',      text: 'Tipping', icon: 'tipping' },
-        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: 'Tours & Tickets', icon: 'calendar' },
+        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: 'Tours & Tickets', icon: 'tours-tickets' },
         { href: base + 'Trip-Essentials/Travel-Apps.html',        text: 'Travel Apps', icon: 'travel-apps' },
       ] },
   ];
