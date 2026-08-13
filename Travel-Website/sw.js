@@ -922,7 +922,8 @@
 /* 2026-08-12: Travel-Packing icons, second legibility pass. Owner: in-flight and medicine were unreadable, headphones too thin, plug too dark, "always focus in vibrant color … the brighter the easier to see, like the dots". Contrast was already fixed in v691 — this pass is SHAPE and SATURATION. Health & Wellness: capsule-plus-pill blob -> one bold two-tone capsule. In-Flight: seat-plus-plane -> neck pillow -> aircraft window (the pillow was a blue U with two ends, i.e. the headphones silhouette — caught before shipping). Electronics: band 2.2 -> 3.4, fatter cups. Skiing: skis -> the Ski-Resorts skier, which reads better at 18px (owner). Then the five least saturated icons had their structural GREYS AND BROWNS replaced with hues, since neutrals were what dulled them, not the palette: battery shell stone -> teal/green, monitor stand grey -> teal, window frame navy -> blue, boot cocoa-on-cocoa -> rust with gold laces, plug body navy -> blue. Mean ink saturation across the 18 is now 0.71. CACHE to v692. */
 /* 2026-08-13: Pensacola HOTEL_ALT_DATA — swapped The Hotel Pensacola Beach (Wyndham, no inventory on any aggregator) for Fairfield by Marriott Inn & Suites Pensacola Beach (Marriott family, 9.1 Booking.com, beachfront). toolbar.js -> v488. CACHE to v693. */
 /* 2026-08-12: Corfu expanded 2→3 days — Day 3 Northwest Coast added (Paleokastritsa, Angelokastro, Peroulades). Guide and stops-map pages updated; PWA clients must drop stale 2-day cached copy. CACHE to v694. */
-var CACHE = 'travel-cache-v694';
+/* 2026-08-12: Virgin-Islands, Zhangjiajie HOTEL_ALT_DATA swaps — Frenchman's Reef DoubleTree replaced with Buoy Haus Beach Resort Autograph Collection; Avic Hotel Zhangjiajie removed (no URL, not present in city). toolbar.js -> v489. CACHE to v695. */
+var CACHE = 'travel-cache-v695';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -930,7 +931,7 @@ var CACHE = 'travel-cache-v694';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 488, 'mobile.css': 77, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 489, 'mobile.css': 77, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 13, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
