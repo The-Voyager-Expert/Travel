@@ -1075,7 +1075,7 @@ window.TVE.isPhone = function () {
    in the bar is identical (edge to first tab, tab to tab, last tab to the
    theme toggle). Changed with the gap on 2026-08-11; if you retune one,
    retune both or check_toolbar_font_size_unified hard-fails. */
-    '.tb-inner{flex:0 1 auto;min-width:0;padding-left:clamp(6px,0.72vw,11px);padding-right:clamp(6px,0.72vw,11px)}' +
+    '.tb-inner{flex:0 1 auto;min-width:0;padding-left:clamp(5px,6.67vw - 88.7px,11px);padding-right:clamp(5px,6.67vw - 88.7px,11px)}' +
     /* NARROW DESKTOP ONLY — added 2026-08-10 with the desktop-holds change, and
        deliberately NOT on the base .tb-inner rule, which Cleanliness Rule 582
        keeps free of overflow ("the old sliding toolbar"). Rule 582 is about the
@@ -1118,7 +1118,7 @@ window.TVE.isPhone = function () {
        usable bar. 1265 + 13 x 11 = 1408, which clears it with the flyout open.
        Re-measure WITH A DROPDOWN OPEN before touching the 11px cap. */
     '.tb-links{display:flex;flex-wrap:nowrap;width:auto;margin:0;' +
-      'gap:clamp(6px,0.72vw,11px);align-items:center;justify-content:flex-start;min-width:0}' +
+      'gap:clamp(5px,6.67vw - 88.7px,11px);align-items:center;justify-content:flex-start;min-width:0}' +
     /* Between the hamburger (<=1260px) and ~1500px the desktop tab row does not
        fit: it measures 1414px, plus the theme toggle that is now its last tab.
        Let it wrap. The toggle is inside .tb-links, so it wraps WITH the tabs
@@ -1129,8 +1129,20 @@ window.TVE.isPhone = function () {
        centering then shows a fragment of one tab and nothing else). Nothing
        here applies at >=1500px, where the row still sits on one line as shipped,
        and .tb-inner keeps no overflow, so Cleanliness Rule 582 is untouched. */
-    '@media (max-width: 1499px) and (pointer: fine){' +
-      '.tb-links{flex-wrap:wrap;row-gap:6px;justify-content:center}' +
+    /* BREAKPOINT MOVED 1499 -> 1365 (owner 2026-08-13: "the toolbar need to
+       resize and fit in the screen of a regular notebook"). It fits now because
+       the row is 23px narrower and, crucially, NO LONGER CHANGES WIDTH WITH
+       STATE — see the two selected-state rules below. Measured one row, closed
+       AND with a dropdown open, at 1366 / 1440 / 1512 / 1600.
+       Below 1366 it still wraps, and the gap RELAXES BACK to the roomy clamp:
+       once the row has wrapped there is spare width by definition, so holding
+       it tight would look cramped for nothing. 1280 cannot be reached at any
+       gap — the 14 tabs measure 1260.9px with the gaps at ZERO, so the fix
+       there is narrower tabs, not less space between them. */
+    '@media (max-width: 1365px) and (pointer: fine){' +
+      '.tb-links{flex-wrap:wrap;row-gap:6px;justify-content:center;' +
+        'column-gap:clamp(6px,0.72vw,11px)}' +
+      '.tb-inner{padding-left:clamp(6px,0.72vw,11px);padding-right:clamp(6px,0.72vw,11px)}' +
     '}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
@@ -1139,7 +1151,18 @@ window.TVE.isPhone = function () {
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
-    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;min-height:28px;color:#7a3b1e!important;background:transparent;border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;font-weight:600;line-height:1.2}' +
+    /* SELECTED RING IS AN OUTLINE, NOT A BORDER — and that is a LAYOUT rule,
+       not a style one. A border plus padding:4px 12px against the base
+       padding:2px 2px makes the selected tab ~23px WIDER than the same tab
+       unselected, so the row's total width depended on WHICH PAGE YOU WERE ON
+       and, worse, changed the instant you opened a dropdown (see the matching
+       rule below). That is what pushed Recommended onto a second line, and it
+       is why re-tuning the gap kept "fixing" it and kept coming back — the gap
+       was never the variable. An outline is painted outside the box and takes
+       no space at all, so the row is now exactly one width in every state.
+       .tb-ddbtn.tb-active below already worked this way; these two now match
+       it. Never put this back to border+padding. */
+    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:transparent;outline:1.5px solid rgba(184,92,42,0.85);outline-offset:5px;border-radius:14px;font-weight:600;line-height:1.2}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
     '.tb-ddbtn{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:#7a3b1e!important;' +
@@ -1150,8 +1173,13 @@ window.TVE.isPhone = function () {
     /* An OPEN dropdown gets the same terracotta ring as the active tab, so the
    menu is visibly attached to the tab it came from. It only changed text
    colour before, which was invisible against the other tabs. */
-    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){box-sizing:border-box;display:inline-flex;align-items:center;min-height:28px;color:#7a3b1e!important;background:transparent;'+
-      'border:1.5px solid rgba(184,92,42,0.85);border-radius:14px;padding:4px 12px;line-height:1.2}' +
+    /* OUTLINE, for the same reason as .tb a.tb-active above — this one is the
+       direct cause of the owner's "when i select this recommended moves below".
+       Opening a dropdown grew its button by ~23px, which was enough to reflow
+       the whole row on the click. Measured: closed 1283.9px / open 1306.9px
+       before, 1260.9px / 1260.9px after. */
+    '.tb-dd.tb-open>.tb-ddbtn:not(.tb-active){box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:transparent;'+
+      'outline:1.5px solid rgba(184,92,42,0.85);outline-offset:5px;border-radius:14px}' +
     '.tb-caret{font-size:8px;line-height:1;transition:transform .15s}' +
     '.tb-dd.tb-open .tb-caret{transform:rotate(180deg)}' +
     /* Split dropdown — one-click link + small caret toggle */
