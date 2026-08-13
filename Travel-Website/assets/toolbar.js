@@ -5638,7 +5638,7 @@ window.TVE.isPhone = function () {
     ] },
     'pensacola': { h: [
       { name: 'Portofino Island Resort', note: 'Independent — Santa Rosa Island, Gulf Spa, multiple pools, direct Gulf of Mexico beachfront · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/portofino-island-resort.html' },
-      { name: 'The Hotel Pensacola Beach, a Wyndham Hotel', note: 'Wyndham brand — Pensacola Beach, Gulf-view rooms, pool, casual beach dining' },
+      { name: 'Fairfield by Marriott Inn & Suites Pensacola Beach', note: 'Marriott family — Pensacola Beach beachfront, two pools, lazy river, breakfast included · 9.1 Booking.com', url: 'https://www.booking.com/hotel/us/fairfield-by-marriott-inn-suites-pensacola-beach.html' },
       { name: 'Margaritaville Beach Hotel', note: 'Margaritaville Hotels — Pensacola Beach waterfront, five pools, Landshark Bar & Grill · 8.9 Booking.com', url: 'https://www.booking.com/hotel/us/margaritaville-beach-hotel-pensacola-beach.html' },
       { name: 'Hilton Pensacola Beach', note: 'Hilton brand — Gulf Breeze Parkway beachfront, outdoor pool, Seafood & Grille restaurant · 8.7 Booking.com', url: 'https://www.booking.com/hotel/us/hilton-pensacola-beach.html' }
     ] },
