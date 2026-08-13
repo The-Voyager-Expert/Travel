@@ -6083,7 +6083,7 @@ window.TVE.isPhone = function () {
     'virgin-islands': { h: [
       { name: 'Sugar Bay Resort & Spa', note: 'IHG brand — Sugar Bay Beach, hillside pools and water slides, full-service spa, St. Thomas East End', url: 'https://www.sugarbayresortandspa.com/' },
       { name: 'Point Pleasant Resort', note: 'Independent boutique — Estate Smith Bay hilltop, studio apartments and suites with bay views, snorkel beach', url: 'https://www.pointpleasantresort.com/' },
-      { name: 'Frenchman\'s Reef, a DoubleTree by Hilton Resort', note: 'Hilton DoubleTree — St. Thomas, panoramic St. Thomas Bay views, three pools, three beaches' },
+      { name: 'Buoy Haus Beach Resort St Thomas, Autograph Collection', note: 'Marriott Autograph Collection — Frenchman\'s Bay beachfront, St. Thomas, infinity pool, snorkel beach, 24h reception · 9.1 Booking.com', url: 'https://www.booking.com/hotel/vi/morningstar-buoy-haus-beach-resort-at-frenchmans-reef-autograph-collection.html' },
       { name: 'Caneel Bay, A Rosewood Resort', note: 'Rosewood brand — St. John National Park, seven beaches, adults-only pool, tropical garden', url: 'https://caneelbay.com/' }
     ] },
     'washington-dc': { h: [
@@ -6119,8 +6119,7 @@ window.TVE.isPhone = function () {
     'zhangjiajie': { h: [
       { name: 'Pullman Zhangjiajie', note: 'Accor Pullman brand — modern full-service hotel in Zhangjiajie city, pool, 30 minutes from Wulingyuan park gate', url: 'https://www.expedia.com/Zhangjiajie-Hotels-Pullman-Zhangjiajie.h3633242.Hotel-Information' },
       { name: 'Wyndham Zhangjiajie', note: 'Wyndham brand — city center near the national park, outdoor pool, international restaurant · 8.3 Booking.com', url: 'https://www.booking.com/hotel/cn/wyndham-zhangjiajie.html' },
-      { name: 'InterContinental Zhangjiajie', note: 'IHG brand — city center, outdoor pool, all-day dining, views of Tianmen Mountain · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cn/intercontinental-zhangjiajie.html' },
-      { name: 'Avic Hotel Zhangjiajie', note: 'Independent — close to the National Forest Park, mountain views, full-service restaurant' }
+      { name: 'InterContinental Zhangjiajie', note: 'IHG brand — city center, outdoor pool, all-day dining, views of Tianmen Mountain · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cn/intercontinental-zhangjiajie.html' }
     ] },
     'zurich': { h: [
       { name: 'The Dolder Grand', note: 'Independent luxury — 1899 hillside monument, two-Michelin-star The Restaurant, 4,000 sq m spa, ice rink · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ch/the-dolder-grand.html' },
