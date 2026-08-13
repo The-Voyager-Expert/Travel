@@ -886,7 +886,7 @@ window.TVE.isPhone = function () {
            Rental-Cars, Airlines-of-the-World, Travel-Insurance,
            Scenic-Train-Journeys and Tours-Tickets. */
         { href: base + 'Trip-Essentials/Cruise-Ships.html',                       text: 'Cruise Lines', icon: 'ship' },
-        { href: base + 'Trip-Essentials/Disney-Parks.html',                       text: 'Disney Parks', icon: 'star-cup' },
+        { href: base + 'Trip-Essentials/Disney-Parks.html',                       text: 'Disney Parks', icon: 'disney-parks' },
         { href: base + 'Trip-Essentials/Festival-Finder.html',                    text: 'Festival Finder', icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Best-Gardens.html',                       text: 'Gardens', icon: 'star-cup' },
         { href: base + 'Trip-Essentials/Best-Hard-to-Reach-Places.html',          text: 'Hard-to-Reach Places', icon: 'star-cup' },
