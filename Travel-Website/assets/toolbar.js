@@ -704,6 +704,32 @@ window.TVE.isPhone = function () {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _gmSprite);
   else _gmSprite();
 
+  /* ── THE ONE GATE FOR "does this icon key draw?" ────────────────────────────
+     Two registries hold icon art: NAV_ICONS (the original flat mask markup)
+     and GM_SPRITE (the coloured symbols). iconSVG() already prefers the
+     sprite and never reads `entry` when it hits — but every CALL SITE used to
+     gate on `NAV_ICONS[key]` alone, so a key that lives ONLY in the sprite
+     resolved falsy, no icon was appended, and the group label kept the raw
+     Apple emoji the icon was supposed to replace.
+
+     That is not hypothetical and it is why this function exists: c79854ea
+     (2026-08-13) added `groupIcon:'hotel'`, `icon:'hotel'` and `icon:'sparkle'`
+     — all three sprite-only — and 🏨 Where to Stay shipped to the live top
+     strip rendering the emoji, with the two dropdown rows drawing nothing.
+     Owner: "this has been fixed and came back several times." It comes back
+     because adding art to the sprite is the normal way to add an icon, and the
+     failure is SILENT — no error, no blank box, just the emoji showing through.
+
+     So: resolve through here, never through a bare NAV_ICONS[...] truthiness
+     test. A sprite-only key returns a truthy placeholder whose value is never
+     rendered (iconSVG returns the <use> before it looks at `entry`).
+     Enforced by brain_check.check_toolbar_icon_keys_resolve. */
+  var SPRITE_ONLY = '<!--sprite-->';
+  function navIcon(key) {
+    if (!key) return null;
+    return NAV_ICONS[key] || (GM_SPRITE[key] ? SPRITE_ONLY : null);
+  }
+
   function iconSVG(entry, size, key) {
     /* Coloured symbol wins when one exists. The <use> inherits nothing from the
        old fill="var(--rust)" because every shape inside the symbol carries its
@@ -728,7 +754,7 @@ window.TVE.isPhone = function () {
   /* Write `text` into `el` as a label span, plus the row's SVG icon when the
      entry carries one and a NEW badge when in-window. */
   function setEntryLabel(el, text, entry, badgeClass) {
-    var ico   = entry && entry.icon && NAV_ICONS[entry.icon];
+    var ico   = entry && navIcon(entry.icon);
     var isNew = isNewEntry(entry);
     if (!ico && !isNew) { el.textContent = text; return; }
     if (ico) {
@@ -1410,7 +1436,7 @@ window.TVE.isPhone = function () {
          dropdown header, the hamburger and TOOLBAR_ITEMS_LOCK are all
          untouched and only the visible top-strip button changes. The emoji is
          stripped from the rendered label here, not from the data. */
-      var gico = item.groupIcon && NAV_ICONS[item.groupIcon];
+      var gico = navIcon(item.groupIcon);
       if (gico) {
         labelText = labelText.replace(/^[^\x00-\x7E\s]+️?\s*/, '').trim() || labelText;
         var gs = document.createElement('span');
@@ -1490,7 +1516,7 @@ window.TVE.isPhone = function () {
     /* A flat top-strip tab (no dropdown) carries its mark the same way a group
        does — icon: resolves through NAV_ICONS and the emoji is stripped from
        the rendered label, never from the data. */
-    var fico = item.icon && NAV_ICONS[item.icon];
+    var fico = navIcon(item.icon);
     if (fico) {
       a.classList.add('tb-has-ico');
       var fs = document.createElement('span');
@@ -1699,7 +1725,7 @@ window.TVE.isPhone = function () {
   /* Shared with index.html's filter chips (and, next, the guides) so one mark
      never has two drawings. */
   window.TVE.icon = function (key, size) {
-    var e = NAV_ICONS[key]; return e ? iconSVG(e, size || 15, key) : '';
+    var e = navIcon(key); return e ? iconSVG(e, size || 15, key) : '';
   };
     window.TVE.placeThemeToggle = placeThemeToggle;
   })();
@@ -1758,13 +1784,20 @@ window.TVE.isPhone = function () {
         var aTrips = document.createElement('a');
         var sepTrips = document.createElement('div'); sepTrips.className = 'tb-ham-sep'; hamMenu.appendChild(sepTrips);
         aTrips.href = base + 'Trip-Essentials/Trips.html';
-        aTrips.textContent = '✈️ My Trips';
+        /* These two rows are hand-built rather than ITEMS-driven, and they were
+           the last two in the hamburger still carrying an AUTHORED EMOJI in
+           textContent ('✈️ My Trips' / '📊 Travel Stats') — every other row
+           draws an SVG. Routed through setEntryLabel so they take the same
+           drawn marks their own destinations already use in PAGE_ICON below
+           (plane / chart). The guard on this injection matches "My Trips", not
+           the glyph, so the label is free to drop it. */
+        setEntryLabel(aTrips, 'My Trips', { icon: 'plane' }, 'tb-ham-new');
         if ('Trips.html' === curr) aTrips.classList.add('tb-active');
         hamMenu.appendChild(aTrips);
         /* OWNER-DIRECTED 2026-07-20: Travel Stats — mobile-only, right under My Trips. (File was Personal-Stats.html until 2026-07-28.) */
         var aPS = document.createElement('a');
         aPS.href = base + 'Trip-Essentials/Travel-Stats.html';
-        aPS.textContent = '📊 Travel Stats';
+        setEntryLabel(aPS, 'Travel Stats', { icon: 'chart' }, 'tb-ham-new');
         if ('Travel-Stats.html' === curr) aPS.classList.add('tb-active');
         hamMenu.appendChild(aPS);
       }
@@ -7062,11 +7095,11 @@ window.TVE.isPhone = function () {
       var a = document.createElement('a');
       a.className = 'overview-extra-link';
       a.href = href;
-      if (icoKey && NAV_ICONS[icoKey]) {
+      if (navIcon(icoKey)) {
         a.style.cssText = 'display:inline-flex;align-items:center;gap:6px';
         var s = document.createElement('span');
         s.style.cssText = 'display:inline-flex;flex-shrink:0';
-        s.innerHTML = iconSVG(NAV_ICONS[icoKey], 14, icoKey);
+        s.innerHTML = iconSVG(navIcon(icoKey), 14, icoKey);
         a.appendChild(s);
         a.appendChild(document.createTextNode(text));
       } else {
@@ -7713,11 +7746,11 @@ window.TVE.isPhone = function () {
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'tve-book-tab';
-        if (icoKey && NAV_ICONS[icoKey]) {
+        if (navIcon(icoKey)) {
           b.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:5px';
           var _ts = document.createElement('span');
           _ts.style.cssText = 'display:inline-flex;flex-shrink:0';
-          _ts.innerHTML = iconSVG(NAV_ICONS[icoKey], 13, icoKey);
+          _ts.innerHTML = iconSVG(navIcon(icoKey), 13, icoKey);
           b.appendChild(_ts);
           b.appendChild(document.createTextNode(label));
         } else {
@@ -9291,9 +9324,9 @@ window.TVE.isPhone = function () {
         while ((m = RE.exec(s))) {
           if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
           var key = INDEX_GLYPH_ICON[m[1]];
-          if (key && NAV_ICONS[key]) {
+          if (navIcon(key)) {
             var sp = document.createElement('span');
-            sp.innerHTML = iconSVG(NAV_ICONS[key], 13, key);
+            sp.innerHTML = iconSVG(navIcon(key), 13, key);
             sp.setAttribute('aria-hidden', 'true');
             sp.style.cssText = 'display:inline-block;vertical-align:-0.14em;line-height:0;';
             frag.appendChild(sp);
@@ -9381,7 +9414,7 @@ window.TVE.isPhone = function () {
       if (a.querySelector('svg')) return;                 /* already drawn */
       var file = (a.getAttribute('href') || '').split('/').pop().split('#')[0];
       var key  = PAGE_ICON[file];
-      if (!key || !NAV_ICONS[key]) return;
+      if (!navIcon(key)) return;
       /* THE PILL MAY ALREADY CARRY A DRAWN MARK — take it out before inserting.
          The guard above only catches an <svg>, and a .gm-mk is a CSS mask on a
          SPAN, so a pill whose authored glyph is in the MARKS table came through
@@ -9405,7 +9438,7 @@ window.TVE.isPhone = function () {
         firstEl.parentNode.removeChild(firstEl);
       }
       var span = document.createElement('span');
-      span.innerHTML = iconSVG(NAV_ICONS[key], 13, key);
+      span.innerHTML = iconSVG(navIcon(key), 13, key);
       span.setAttribute('aria-hidden', 'true');
       span.style.cssText = 'display:inline-block;vertical-align:-0.14em;margin-right:6px;line-height:0;';
       a.insertBefore(span, a.firstChild);

@@ -956,7 +956,8 @@
 /* 2026-08-13: Icon updates: dropdown child icons, Guides/Maps/Weather tabs, Hotels/Flights panel, Best-Of pill removed toolbar.js -> v520. CACHE to v727. */
 /* 2026-08-13: Icon: restore 💥 in also-on-this-site addPill label (brain_check requires it) toolbar.js -> v521. CACHE to v728. */
 /* 2026-08-13: mobile-ux-fix — When-to-Go sibling pills: 3-column → 2-column glued grid so icon + text fit in one line (124px content was narrower than the injected icon + "Sports calendar" text, pinning justify-content:center with no free space). mobile.css sibling-pill moved from @supports to @media (pointer:coarse), display:inline-flex → flex. mobile.css -> v78. CACHE to v729. */
-var CACHE = 'travel-cache-v729';
+/* 2026-08-13: 🏨 Where to Stay was rendering its RAW APPLE EMOJI on the live top strip, and 'Hotels & Stays' / 'Most Luxurious Hotels' drew no icon at all. Icon art lives in two registries — NAV_ICONS (flat masks) and GM_SPRITE (the coloured symbols, where everything since 2026-08-12 goes) — and iconSVG() prefers the sprite, but every CALL SITE gated on `NAV_ICONS[key]` alone. A sprite-only key therefore resolved falsy, no icon was appended, and because the group label's emoji is stripped only inside `if (gico)`, the missing icon un-stripped the emoji too. Silent: no error, no blank box, the tab just looks almost right. c79854ea added groupIcon:'hotel', icon:'hotel' and icon:'sparkle', all sprite-only, and shipped it. Owner: "this has been fixed and came back several times." Fixed at the gate, not per key: new navIcon() falls through NAV_ICONS -> GM_SPRITE and all 9 dynamic call sites (incl. window.TVE.icon, the hamburger, the overview pills, the Hotels/Flights tabs and the also-on-this-site pills) resolve through it. Enforced by brain_check.check_toolbar_icon_keys_resolve. Same pass: the hamburger's two hand-built rows, '✈️ My Trips' and '📊 Travel Stats', were the last two nav rows still carrying an authored emoji in textContent — routed through setEntryLabel so they draw the plane/chart marks their own destinations already carry in PAGE_ICON. Zero emoji left in the top strip or the hamburger. toolbar.js -> v522. CACHE to v730. */
+var CACHE = 'travel-cache-v730';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -964,7 +965,7 @@ var CACHE = 'travel-cache-v729';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 521, 'mobile.css': 78, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 192, 'toolbar.js': 522, 'mobile.css': 78, 'web-travel-style.css': 44, 'guides-index-style.css': 5, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
