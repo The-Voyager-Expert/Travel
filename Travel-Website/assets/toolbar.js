@@ -9163,7 +9163,7 @@ window.TVE.isPhone = function () {
          is exactly what a render-time pass over authored markup is for. Same
          `map` shape and viewBox the toolbar uses. Also covers the Nearby
          Guides pill, which leads with the same glyph. */
-      '🗺': 'map',
+      '🗺': 'country-map',
       /* Section pills + their matching .extras-title headings (owner: "can you
          change pills after and match the sections?"). Both surfaces move on the
          same table, so a pill and the section it jumps to can never drift apart.
@@ -9477,7 +9477,7 @@ window.TVE.isPhone = function () {
     '✈': 'plane', '🛫': 'plane', '📊': 'chart', '📶': 'compare',
     '🌆': 'triptype', '📅': 'calendar', '🗓': 'calendar', '🗣': 'language',
     '📍': 'pin', '🌐': 'globe', '🌍': 'globe', '🌎': 'globe', '🌏': 'globe',
-    '🗺': 'map', '🏆': 'trophy', '📋': 'list', '💰': 'money', '💳': 'card',
+    '🗺': 'country-map', '🏆': 'trophy', '📋': 'list', '💰': 'money', '💳': 'card',
     '🏠': 'neighborhoods', '🛡': 'safety-guide', '✨': 'star',
     '🚗': 'rental-cars', '🚕': 'rental-cars', '🚆': 'train', '🚄': 'train',
     '🚌': 'transit', '🚢': 'ship', '⛴': 'ship',
