@@ -73,8 +73,45 @@
    behind it, then puts that filter's pills across the full width of the card.
    The pills ARE the guides-index controls: each href drives the real control on
    /guides/ via the deep-link handler there, so nothing is duplicated or faked. */
+/* ── Landing-page palette & type ────────────────────────────────────────────
+   Scoped to this page only (it does not follow the site's page format), so the
+   rest of the site is untouched and this is one revert away.
+
+   · Ink goes from #3d3a32 (warm brown-grey) to near-black. The old ink sits
+     softly on cream, but at display sizes it reads washed out, and low-contrast
+     headlines are the thing that dates a page fastest.
+   · Cards go pure white on a slightly cooler ground, so the card edge is carried
+     by contrast rather than a visible border.
+   · The accent deepens for buttons and stays pale for pill tints, so one hue
+     does both jobs without the pills shouting.
+   · Display type gets tighter tracking and a steeper scale — the jump from body
+     to headline is what makes a page feel designed rather than typed.
+   No webfont: the site ships no @font-face anywhere and runs offline as a PWA,
+   so the system stack stays and the modernising is done with scale and colour. */
+.lp {
+  --ink:        #17150f;
+  --ink-soft:   #55514a;
+  --card:       #ffffff;
+  --line:       #e8e4dc;
+  --brand:      #a94e1c;
+  --brand-soft: #fdf4ed;
+  --brand-rim:  #f0dccb;
+}
+.lp-hero h1, .lp-block h2 { color: var(--ink); }
+.lp-hero p, .lp-block p   { color: var(--ink-soft); }
+.lp-block      { background: var(--card); border-color: var(--line); }
+.lp-hero h1 em { color: var(--brand); }
+.lp-btn        { background: var(--brand); border-color: var(--brand); }
+.lp-btn:hover, .lp-btn:focus-visible { background: transparent; color: var(--brand); }
+.lp-pills a        { background: var(--brand-soft); border-color: var(--brand-rim); color: var(--brand); }
+.lp-pills a:visited{ color: #a94e1c; }
+.lp-pills a:hover  { background: var(--brand); border-color: var(--brand); color: #fff; }
+.lp-tiles a:hover  { border-color: var(--brand); }
+.lp-tiles a:hover span { color: var(--brand); }
+.lp-kicker     { color: var(--brand); }
+
 .lp-hero {
-  padding: clamp(2.25rem, 6vw, 4.5rem) 0 clamp(1.75rem, 4vw, 3rem);
+  padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(2.5rem, 6vw, 4.5rem);
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: clamp(1.5rem, 4vw, 3.5rem);
@@ -115,9 +152,9 @@
   background: linear-gradient(to top, rgba(0,0,0,0.55), transparent);
 }
 .lp-hero h1 {
-  font-size: clamp(2rem, 5.6vw, 3.75rem);
-  line-height: 1.05;
-  letter-spacing: -0.022em;
+  font-size: clamp(2.35rem, 6.4vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
   font-weight: 700;
   color: var(--text, #3d3a32);
   margin: 0 0 clamp(0.85rem, 2vw, 1.35rem);
@@ -158,13 +195,13 @@ a.lp-btn.ghost:visited { color: #3d3a32; }  /* literal: var() is inert in :visit
   background: var(--surface, #fff);
   border: 1px solid var(--border, #e3ddd2);
   border-radius: clamp(0.7rem, 1.4vw, 1.1rem);
-  padding: clamp(1.5rem, 3.6vw, 2.75rem) clamp(1.3rem, 3.2vw, 2.5rem);
-  margin: 0 0 clamp(1rem, 2.4vw, 1.75rem);
+  padding: clamp(2rem, 4.5vw, 3.5rem) clamp(1.5rem, 3.8vw, 3rem);
+  margin: 0 0 clamp(1.75rem, 4vw, 3rem);
 }
 .lp-block h2 {
-  font-size: clamp(1.3rem, 2.6vw, 1.95rem);
-  line-height: 1.16;
-  letter-spacing: -0.016em;
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  line-height: 1.08;
+  letter-spacing: -0.028em;
   font-weight: 700;
   color: var(--text, #3d3a32);
   margin: 0 0 clamp(0.6rem, 1.3vw, 0.9rem);
@@ -173,28 +210,31 @@ a.lp-btn.ghost:visited { color: #3d3a32; }  /* literal: var() is inert in :visit
 }
 .lp-block p {
   font-size: clamp(0.93rem, 1.1vw, 1.04rem);
-  line-height: 1.68;
+  line-height: 1.75;
   color: var(--muted, #6a6660);
-  max-width: 64ch;
-  margin: 0 0 0.85rem;
+  max-width: 62ch;
+  margin: 0 0 1.05rem;
 }
 .lp-block p strong { color: var(--text, #3d3a32); font-weight: 600; }
-.lp-block p:last-of-type { margin-bottom: clamp(1.1rem, 2.4vw, 1.6rem); }
+.lp-block p:last-of-type { margin-bottom: clamp(1.6rem, 3.2vw, 2.4rem); }
 
 /* The filter itself — full width of the card, fluid columns, never a ragged
    half-empty row. */
+/* Natural width, not equal-width grid cells. As a grid, a row of three pills
+   stretched each one to a third of the card — "World map" became a 400px
+   button. Flex-wrap sizes each pill to its own label. */
 .lp-pills {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(8.5rem, 100%), 1fr));
-  gap: clamp(0.4rem, 0.9vw, 0.6rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.45rem, 1vw, 0.65rem);
 }
 .lp-pills a {
-  display: flex; align-items: center; justify-content: center;
-  text-align: center;
+  display: inline-flex; align-items: center; justify-content: center;
   font-size: clamp(0.82rem, 0.95vw, 0.9rem);
   font-weight: 600;
-  padding: 0.72em 0.95em;
+  padding: 0.6em 1.15em;
   border-radius: 999px;
+  white-space: nowrap;
   /* Warm tint rather than a bare outline. The grey-on-white pill read as a
      disabled control; these are the primary action in every block, so they
      carry the site's terracotta at low saturation and fill on hover. Colours
@@ -208,7 +248,7 @@ a.lp-btn.ghost:visited { color: #3d3a32; }  /* literal: var() is inert in :visit
 .lp-pills a:visited { color: #a8501f; }
 .lp-pills a:hover, .lp-pills a:hover:visited,
 .lp-pills a:focus-visible {
-  border-color: #b85c2a;
+  border-color: var(--rust);
   background: #b85c2a;
   color: #fdf8f0;
 }
@@ -407,44 +447,50 @@ a.land-cta:hover:visited {
 }
 .bestof-cat:hover { color: var(--rust, #b85c2a); border-bottom-color: var(--rust, #b85c2a); }
 
-.contact-card {
-  margin: 6px 0 10px;
-  padding: 20px 22px 22px;
-  border: 0.5px solid var(--border, #e3ddd2);
-  border-radius: 6px;
-  background: var(--surface2, #faf7f2);
+/* Contact — a disclosure, not a panel. Closed it is one warm pill; open it is a
+   34rem form, because a message box does not need the width of the page. */
+.contact-d { margin: clamp(2.25rem, 5vw, 4rem) 0 0; padding-top: clamp(1.4rem, 3vw, 2rem);
+             border-top: 1px solid var(--border, #e3ddd2); max-width: 34rem; }
+.contact-d > summary {
+  list-style: none; cursor: pointer;
+  display: inline-flex; flex-direction: column; gap: 0.15rem;
+  padding: 0.7em 1.2em;
+  border: 1px solid #ecd9c9; background: #fdf6f0;
+  border-radius: 0.75rem;
+  transition: border-color .16s ease, background .16s ease;
 }
-.contact-head { font-size: 14px; font-weight: 700; color: #3d3a32; margin: 0 0 5px; text-align: center; }
-.contact-sub  { font-size: 13px; line-height: 1.55; color: var(--text2, #5b564c); margin: 0 0 16px; text-align: center; }
+.contact-d > summary::-webkit-details-marker { display: none; }
+.contact-d > summary:hover { border-color: #b85c2a; background: #fbeee4; }
+.contact-q { font-size: 0.95rem; font-weight: 700; color: #a8501f; }
+.contact-q::after { content: ' +'; }
+.contact-d[open] > summary .contact-q::after { content: ' –'; }
+.contact-hint { font-size: 0.82rem; line-height: 1.45; color: var(--muted, #6a6660); }
+.contact-d[open] > summary { margin-bottom: 0.9rem; }
 
-/* Contact form — Web3Forms. The access key is public by design (it identifies
-   the form, not the account) and is safe in client-side code. Submissions post
-   to api.web3forms.com and are emailed on; the page never handles the address.
-   The honeypot input below is Web3Forms' documented spam trap: real people
-   never see it, bots fill it, and a filled botcheck is silently discarded. */
-.cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 10px; }
-.cf-field { display: flex; flex-direction: column; gap: 4px; }
-.cf-field label { font-size: 12px; font-weight: 600; color: #3d3a32; }
-.cf-field input,
-.cf-field textarea {
-  font-family: inherit;
-  font-size: 13px;
-  padding: 8px 10px;
-  border: 0.5px solid var(--border, #e3ddd2);
-  border-radius: 6px;
-  background: var(--surface, #ffffff);
+.cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 0 0 0.8rem; }
+.cf-field { display: flex; flex-direction: column; gap: 0.25rem; }
+.cf-full { grid-column: 1 / -1; }
+.cf-field label { font-size: 0.78rem; font-weight: 600; color: #3d3a32; }
+.cf-field input, .cf-field textarea {
+  font: inherit; font-size: 0.88rem;
+  padding: 0.55em 0.7em;
+  border: 1px solid var(--border, #e3ddd2);
+  border-radius: 0.5rem;
+  background: var(--surface, #fff);
   color: var(--text, #3d3a32);
 }
-.cf-field input:focus,
-.cf-field textarea:focus { outline: none; border-color: var(--rust, #b85c2a); }
-.cf-field textarea { resize: vertical; min-height: 96px; }
-.cf-full { grid-column: 1 / -1; }
-.cf-actions { text-align: center; margin-top: 4px; }
-.cf-note { font-size: 12px; color: var(--text2, #5b564c); text-align: center; margin: 10px 0 0; }
-.cf-status { font-size: 13px; text-align: center; margin: 10px 0 0; }
-.cf-status.ok   { color: #2f6b3d; }
-.cf-status.err  { color: #a3372b; }
-@media (max-width: 560px) { .cf-grid { grid-template-columns: 1fr; } }
+.cf-field input:focus, .cf-field textarea:focus { outline: none; border-color: var(--rust, #b85c2a); }
+.cf-field textarea { resize: vertical; min-height: 4.5rem; }
+.cf-note { font-size: 0.8rem; color: var(--muted, #6a6660); margin: 0.9rem 0 0; }
+.cf-status { font-size: 0.85rem; margin: 0.6rem 0 0; }
+.cf-status.ok { color: #2f6b3d; }
+.cf-status.err { color: #a3372b; }
+@media (max-width: 34rem) { .cf-grid { grid-template-columns: 1fr; } }
+
+/* Single column throughout — owner call. Two columns were tried and put the
+   copy and the filter side by side; it read as a template rather than a page,
+   and the copy measure fought the pill row for width. One column, generous
+   space between blocks, pills sized to their own labels. */
 </style>
 <link rel="stylesheet" href="./assets/mobile.css?v=53">
 </head>
@@ -558,7 +604,7 @@ a.land-cta:hover:visited {
      against the pre-move backup (identical counts), so it predates the
      restructure. Until that is fixed, this card sends readers to the two
      pages that genuinely answer the question. -->
-<section class="lp-block">
+<section class="lp-block tint">
   <h2>Your dates are fixed. The destination isn't.</h2>
   <p>
     Most trips are decided by the fortnight you can actually take off, not by the place.
@@ -578,7 +624,7 @@ a.land-cta:hover:visited {
 </section>
 
 <!-- ═══ BLOCK 3 — trip length ══════════════════════════════════════════════ -->
-<section class="lp-block">
+<section class="lp-block bare">
   <h2>You know how many days you've got.</h2>
   <p>
     Length decides which cities are worth it at all. Three days suits one dense city and
@@ -619,7 +665,7 @@ a.land-cta:hover:visited {
 </section>
 
 <!-- ═══ BLOCK 5 — language ═════════════════════════════════════════════════ -->
-<section class="lp-block">
+<section class="lp-block tint">
   <h2>You'd rather not be lost in translation.</h2>
   <p>
     Travelling somewhere you can read the menu and ask for directions changes the trip —
@@ -670,47 +716,63 @@ a.land-cta:hover:visited {
     into that city's guide. Thirty-four categories, from the obvious to the ones nobody
     else bothers to rank.
   </p>
+  <!-- Eight tiles, not thirty-four. The full grid was a wall — it made the block
+       feel like a directory, which is the thing this block argues against. A
+       handful to show what the idea IS, and the dropdown for the rest. -->
   <nav class="lp-tiles">
-    <a href="./Trip-Essentials/Best-Amusement-Parks.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-ferris"/></svg><span>Amusement Parks</span></a>
-    <a href="./Trip-Essentials/Best-Animal-Encounters.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-giraffe"/></svg><span>Animal Encounters</span></a>
-    <a href="./Trip-Essentials/Best-Aquariums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-fish"/></svg><span>Aquariums</span></a>
-    <a href="./Trip-Essentials/Best-Architecture.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-mosque"/></svg><span>Architecture</span></a>
-    <a href="./Trip-Essentials/Best-Art-Museums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-artframe"/></svg><span>Art Museums</span></a>
-    <a href="./Trip-Essentials/Best-Beaches.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-beach"/></svg><span>Beaches</span></a>
     <a href="./Trip-Essentials/Best-Castles.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-castle"/></svg><span>Castles</span></a>
-    <a href="./Trip-Essentials/Best-Cathedrals.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-cathedral"/></svg><span>Cathedrals</span></a>
-    <a href="./Trip-Essentials/Best-Caves.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-cave"/></svg><span>Caves</span></a>
-    <a href="./Trip-Essentials/Cruise-Ships.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-ship"/></svg><span>Cruise Lines</span></a>
-    <a href="./Trip-Essentials/Disney-Parks.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-disney-parks"/></svg><span>Disney Parks</span></a>
-    <a href="./Trip-Essentials/Festival-Finder.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-bunting"/></svg><span>Festival Finder</span></a>
-    <a href="./Trip-Essentials/Best-Gardens.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-flower"/></svg><span>Gardens</span></a>
-    <a href="./Trip-Essentials/Best-Hard-to-Reach-Places.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-compass-classic"/></svg><span>Hard-to-Reach</span></a>
-    <a href="./Trip-Essentials/Best-Hot-Springs.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-hot-pool"/></svg><span>Hot Springs</span></a>
-    <a href="./Trip-Essentials/Best-Islands.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-island"/></svg><span>Islands</span></a>
-    <a href="./Trip-Essentials/Best-Kids-Friendly-Places.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pagoda"/></svg><span>Kid-Friendly</span></a>
-    <a href="./Trip-Essentials/Best-Lakes.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-lake-jetty"/></svg><span>Lakes</span></a>
-    <a href="./Trip-Essentials/Best-Mountains-and-Rock-Formations.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-mountain"/></svg><span>Mountains</span></a>
-    <a href="./Trip-Essentials/Best-Museums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-museumstar"/></svg><span>Museums</span></a>
+    <a href="./Trip-Essentials/Best-Beaches.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-beach"/></svg><span>Beaches</span></a>
     <a href="./Trip-Essentials/Best-National-Parks-by-Country.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pine-forest"/></svg><span>National Parks</span></a>
-    <a href="./Trip-Essentials/Best-Natural-Phenomena.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-aurora"/></svg><span>Natural Phenomena</span></a>
-    <a href="./Trip-Essentials/Best-Observation-Decks.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-tower"/></svg><span>Observation Decks</span></a>
-    <a href="./Trip-Essentials/Pickleball.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pickleball-clear"/></svg><span>Pickleball</span></a>
-    <a href="./Trip-Essentials/Best-Safari.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-lion"/></svg><span>Safari</span></a>
-    <a href="./Trip-Essentials/Best-Scuba-Diving.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-scuba"/></svg><span>Scuba Diving</span></a>
+    <a href="./Trip-Essentials/Best-Islands.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-island"/></svg><span>Islands</span></a>
     <a href="./Trip-Essentials/Best-Ski-Resorts.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-ski"/></svg><span>Ski Resorts</span></a>
-    <a href="./Trip-Essentials/Best-Surfing.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-surf"/></svg><span>Surfing</span></a>
-    <a href="./Trip-Essentials/Best-UNESCO-Sites.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pagoda"/></svg><span>UNESCO Sites</span></a>
-    <a href="./Trip-Essentials/Best-Unique-Museums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-museum-amber"/></svg><span>Unique Museums</span></a>
+    <a href="./Trip-Essentials/Best-Museums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-museumstar"/></svg><span>Museums</span></a>
+    <a href="./Trip-Essentials/Best-Safari.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-lion"/></svg><span>Safari</span></a>
     <a href="./Trip-Essentials/Best-Volcanoes.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-volcano-erupting"/></svg><span>Volcanoes</span></a>
-    <a href="./Trip-Essentials/Best-Wine-Regions.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-wine"/></svg><span>Wine Regions</span></a>
-    <a href="./Trip-Essentials/Best-Wonders-of-the-World.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-mosque"/></svg><span>Wonders</span></a>
-    <a href="./Trip-Essentials/Destination-Records.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-chart"/></svg><span>Records & Stats</span></a>
   </nav>
-  <a class="lp-btn" href="./Trip-Essentials/Best-Of-Index.html">Browse every category</a>
+  <div class="lp-jump">
+    <select id="bestof-pick" aria-label="All Best Of categories">
+      <option value="">All 34 categories…</option>
+      <option value="./Trip-Essentials/Best-Amusement-Parks.html">Amusement Parks</option>
+      <option value="./Trip-Essentials/Best-Animal-Encounters.html">Animal Encounters</option>
+      <option value="./Trip-Essentials/Best-Aquariums.html">Aquariums</option>
+      <option value="./Trip-Essentials/Best-Architecture.html">Architecture</option>
+      <option value="./Trip-Essentials/Best-Art-Museums.html">Art Museums</option>
+      <option value="./Trip-Essentials/Best-Beaches.html">Beaches</option>
+      <option value="./Trip-Essentials/Best-Castles.html">Castles</option>
+      <option value="./Trip-Essentials/Best-Cathedrals.html">Cathedrals</option>
+      <option value="./Trip-Essentials/Best-Caves.html">Caves</option>
+      <option value="./Trip-Essentials/Cruise-Ships.html">Cruise Lines</option>
+      <option value="./Trip-Essentials/Disney-Parks.html">Disney Parks</option>
+      <option value="./Trip-Essentials/Festival-Finder.html">Festival Finder</option>
+      <option value="./Trip-Essentials/Best-Gardens.html">Gardens</option>
+      <option value="./Trip-Essentials/Best-Hard-to-Reach-Places.html">Hard-to-Reach Places</option>
+      <option value="./Trip-Essentials/Best-Hot-Springs.html">Hot Springs</option>
+      <option value="./Trip-Essentials/Best-Islands.html">Islands</option>
+      <option value="./Trip-Essentials/Best-Kids-Friendly-Places.html">Kid-Friendly Destinations</option>
+      <option value="./Trip-Essentials/Best-Lakes.html">Lakes</option>
+      <option value="./Trip-Essentials/Best-Mountains-and-Rock-Formations.html">Mountains & Rock Formations</option>
+      <option value="./Trip-Essentials/Best-Museums.html">Museums</option>
+      <option value="./Trip-Essentials/Best-National-Parks-by-Country.html">National Parks</option>
+      <option value="./Trip-Essentials/Best-Natural-Phenomena.html">Natural Phenomena</option>
+      <option value="./Trip-Essentials/Best-Observation-Decks.html">Observation Decks</option>
+      <option value="./Trip-Essentials/Pickleball.html">Pickleball</option>
+      <option value="./Trip-Essentials/Best-Safari.html">Safari</option>
+      <option value="./Trip-Essentials/Best-Scuba-Diving.html">Scuba Diving</option>
+      <option value="./Trip-Essentials/Best-Ski-Resorts.html">Ski Resorts</option>
+      <option value="./Trip-Essentials/Best-Surfing.html">Surfing</option>
+      <option value="./Trip-Essentials/Best-UNESCO-Sites.html">UNESCO Sites</option>
+      <option value="./Trip-Essentials/Best-Unique-Museums.html">Unique Museums</option>
+      <option value="./Trip-Essentials/Best-Volcanoes.html">Volcanoes</option>
+      <option value="./Trip-Essentials/Best-Wine-Regions.html">Wine Regions</option>
+      <option value="./Trip-Essentials/Best-Wonders-of-the-World.html">Wonders of the World</option>
+      <option value="./Trip-Essentials/Destination-Records.html">Records & Stats</option>
+    </select>
+    <a class="lp-btn" href="./Trip-Essentials/Best-Of-Index.html">Browse every category</a>
+  </div>
 </section>
 
 <!-- ═══ BLOCK 7 — flights ══════════════════════════════════════════════════ -->
-<section class="lp-block">
+<section class="lp-block dark">
   <h2>Everything about the flight that isn't the price.</h2>
   <p>
     Which airline actually flies the route, how long a connection really needs at that
@@ -735,7 +797,7 @@ a.land-cta:hover:visited {
 </section>
 
 <!-- ═══ BLOCK 8 — trains ═══════════════════════════════════════════════════ -->
-<section class="lp-block">
+<section class="lp-block bare">
   <h2>On a lot of European routes, the train just wins.</h2>
   <p>
     Counted properly — the trip out to the airport, security, the wait, and the journey
@@ -752,8 +814,102 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
-<!-- ═══ BLOCK 9 — recommended (last, deliberately the least real estate) ════ -->
+
+<!-- ═══ BLOCK 10 — visas ═══════════════════════════════════════════════════ -->
 <section class="lp-block">
+  <h2>Can you actually get in?</h2>
+  <p>
+    The question that quietly decides the trip. Whether you need a visa at all, whether it
+    is on arrival or applied for in advance, how long the processing genuinely takes right
+    now, and the six-month passport-validity rule that turns a valid passport into a
+    refused boarding at the gate.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Visas.html">Visas</a>
+    <a href="./Trip-Essentials/Entry-Requirements.html">Entry requirements</a>
+    <a href="./Trip-Essentials/Visa-Processing-Times.html">Processing times</a>
+    <a href="./Trip-Essentials/Digital-Nomad-Visas.html">Digital nomad visas</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 11 — safety ══════════════════════════════════════════════════ -->
+<section class="lp-block tint">
+  <h2>Is it safe, and what should you watch for?</h2>
+  <p>
+    The current advisory level per destination, stated plainly rather than hedged — plus
+    the things that actually catch travellers out: whether the tap water is drinkable, which
+    vaccines are needed and how far ahead, whether your insurance covers what you plan to
+    do, and the specific scams run in each city.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Safety-Guide.html">Safety guide</a>
+    <a href="./Trip-Essentials/Scams-By-City.html">Scams by city</a>
+    <a href="./Trip-Essentials/Tap-Water.html">Tap water</a>
+    <a href="./Trip-Essentials/Vaccines.html">Vaccines</a>
+    <a href="./Trip-Essentials/Travel-Insurance.html">Travel insurance</a>
+    <a href="./Trip-Essentials/First-Timer-Mistakes.html">First-timer mistakes</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 12 — where to stay ═══════════════════════════════════════════ -->
+<section class="lp-block bare">
+  <h2>Pick the neighbourhood before the hotel.</h2>
+  <p>
+    The most common way to get a city wrong is to book a good hotel in the wrong part of it
+    — an hour from everything you came to see. Start with which area suits the trip, then
+    choose where to sleep inside it.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Neighborhoods.html">Neighbourhoods</a>
+    <a href="./Trip-Essentials/Hotels-Stays.html">Hotels & stays</a>
+    <a href="./Trip-Essentials/Best-Unique-Hotels.html">Unique hotels</a>
+    <a href="./Trip-Essentials/Best-Most-Luxurious-Hotels.html">Most luxurious</a>
+    <a href="./Trip-Essentials/Best-Resorts.html">Resorts</a>
+    <a href="./Trip-Essentials/Best-Ultra-Luxurious-Resorts.html">Ultra-luxurious resorts</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 13 — weather & time ══════════════════════════════════════════ -->
+<section class="lp-block">
+  <h2>Weather, daylight, and what time it is there.</h2>
+  <p>
+    Month-by-month climate for every destination, the daylight hours you will actually get
+    (which decides how much fits in a day), and the time difference — the thing that turns
+    a short trip into two days of jet lag if you plan it badly.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Climate-Finder.html">Browse by climate</a>
+    <a href="./Trip-Essentials/Weather.html">Weather by city</a>
+    <a href="./Trip-Essentials/When-to-Go.html">When to go</a>
+    <a href="./Trip-Essentials/Sunrise-Sunset.html">Sunrise & sunset</a>
+    <a href="./Trip-Essentials/Time-Zones.html">Time zones</a>
+    <a href="./Trip-Essentials/Currency-Guide.html">Currency</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 14 — maps & records ══════════════════════════════════════════ -->
+<section class="lp-block tint">
+  <h2>For when you're thinking in regions, not cities.</h2>
+  <p>
+    Every guide as a pin on a map, and the superlatives across all of them — the highest,
+    oldest, longest and largest, by continent.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Maps/World-Map.html">World map</a>
+    <a href="./Trip-Essentials/Destination-Records.html">Destination records</a>
+    <a href="./Trip-Essentials/Europe-Stats.html">Europe</a>
+    <a href="./Trip-Essentials/Asia-Stats.html">Asia</a>
+    <a href="./Trip-Essentials/Africa-Stats.html">Africa</a>
+    <a href="./Trip-Essentials/South-America-Stats.html">South America</a>
+    <a href="./Trip-Essentials/Caribbean-Stats.html">Caribbean</a>
+    <a href="./Trip-Essentials/Oceania-Stats.html">Oceania</a>
+    <a href="./Trip-Essentials/Stats-Across-US.html">United States</a>
+    <a href="./Trip-Essentials/Stats-Across-Canada.html">Canada</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 9 — recommended (last, deliberately the least real estate) ════ -->
+<section class="lp-block bare">
   <h2>And the rest of it.</h2>
   <p>
     Money, SIM cards, tipping, transit cards, car hire, booking windows — the practical
@@ -770,9 +926,15 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
-<div class="contact-card">
-  <div class="contact-head">Questions or suggestions?</div>
-  <div class="contact-sub">Corrections, a city you'd like covered, or anything that looks wrong.</div>
+<!-- Collapsed by default. A contact form is the least likely thing on this page
+     to be wanted, so it should not occupy a screen of height on the chance that
+     it is. <details> gives the disclosure natively — keyboard accessible, works
+     with scripting off, and the form still submits either way. -->
+<details class="contact-d">
+  <summary>
+    <span class="contact-q">Questions or suggestions?</span>
+    <span class="contact-hint">Corrections, a city you'd like covered, or anything that looks wrong.</span>
+  </summary>
 
   <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
     <input type="hidden" name="access_key" value="4fd280aa-38cd-4fca-b17e-ff07ba2a9bd1">
@@ -792,18 +954,16 @@ a.land-cta:hover:visited {
       </div>
       <div class="cf-field cf-full">
         <label for="cf-message">Message</label>
-        <textarea id="cf-message" name="message" required></textarea>
+        <textarea id="cf-message" name="message" required rows="4"></textarea>
       </div>
     </div>
 
-    <div class="cf-actions">
-      <button type="submit" class="land-cta" id="cf-submit">Send message</button>
-    </div>
+    <button type="submit" class="lp-btn" id="cf-submit">Send message</button>
     <p class="cf-status" id="cf-status" hidden></p>
   </form>
 
   <p class="cf-note">Prefer your own mail app? <a href="mailto:contact@guidemydays.com?subject=Guide%20My%20Days">contact@guidemydays.com</a></p>
-</div>
+</details>
 
 <script>
 /* ── The two jump menus ─────────────────────────────────────────────────────
