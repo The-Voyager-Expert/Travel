@@ -7332,6 +7332,30 @@ window.TVE.isPhone = function () {
     _injectEndSectionPills();
   }
 
+  /* ── Nearby Guides header icon ──────────────────────────────────────────
+     That title is not DOM text: guide-style.css writes it with
+     `#nearby-guides .extras-title:empty::before { content: "Nearby Guides" }`,
+     and a ::before string cannot carry a drawn mark. Every other bottom
+     section leads with one — "Also on this site" through the 💥 its fallback
+     pastes, "Also in Country" through iconSVG below — so this was the single
+     header on the page with nothing beside the words (owner 2026-08-14:
+     "missing icon"). Writing real text plus the sprite fixes it in one move:
+     the element stops being :empty, so the CSS fallback stops applying.
+     Same key the Nearby Guides pill draws, so header and pill match. */
+  function _injectNearbyGuidesTitle() {
+    var ng = document.getElementById('nearby-guides');
+    if (!ng) return;
+    var t = ng.querySelector(':scope > .extras-title');
+    if (!t || t.querySelector('svg')) return;
+    var label = (t.textContent || '').trim() || 'Nearby Guides';
+    t.innerHTML = iconSVG(navIcon('nearby-guides'), 15, 'nearby-guides') + ' ' + label;
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectNearbyGuidesTitle);
+  } else {
+    _injectNearbyGuidesTitle();
+  }
+
   /* ── "Also in [Country]" section — injected after #nearby-guides on
      guide pages that share a country with ≥1 other fleet guide. Fetches
      assets/country_guides.json (built by Brain/scripts/build/build_country_guides.py
