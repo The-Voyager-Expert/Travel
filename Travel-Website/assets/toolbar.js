@@ -1076,13 +1076,30 @@ window.TVE.isPhone = function () {
       ] },
     null,
     /* OWNER-DIRECTED 2026-08-10: new group, built from the width freed by
-       removing the desktop site title. These 15 pages previously lived ONLY in
-       the "Also Recommended" and "We Recommend" panels on index.html, so they
-       were reachable from the homepage and nowhere else; they are now in the nav
-       on every page. Both panels were deleted from index.html in the same
-       commit — a page in the toolbar must never also sit in Also Recommended
-       (CLAUDE.md corollary; check_also_recommended_excludes_toolbar_pages
-       hard-fails otherwise, and the fix is always to drop the panel card).
+       removing the desktop site title. These pages previously lived ONLY in the
+       "Also Recommended" and "We Recommend" panels on index.html, so they were
+       reachable from the homepage and nowhere else; they are now in the nav on
+       every page.
+
+       THEY ARE STILL IN THE PANELS TOO, AND THAT IS DELIBERATE. Owner, same day:
+       "yes we need to change all that they will be in both now" — the panel is a
+       browsable homepage grid, this dropdown is nav reachable from every page,
+       and the duplication is the point. So: never delete a homepage card because
+       its page is in this group. check_also_recommended_excludes_toolbar_pages,
+       which used to forbid exactly that, is a deliberate NO-OP; the live check is
+       check_also_rec_dropdown_matches_sidebar, which WARNS when this group and
+       the also-on-site panel stop matching, and whose fix is to add the missing
+       PANEL CARD — never to edit ITEMS (Nineteenth non-negotiable).
+
+       (This comment previously stated the opposite — that both panels had been
+       deleted and a toolbar page "must never also sit in Also Recommended", citing
+       a hard-fail that does not exist. It described the 2026-08-08 rule the owner
+       reversed on 2026-08-10, and following it would have deleted the 11 live
+       cards this group is supposed to mirror. Corrected 2026-08-14.)
+
+       Count moves with the group: 15 at creation, 11 now — Cruise Lines, Disney
+       Parks, Festival Finder and Pickleball moved to Best Of on 2026-08-12.
+
        Children carry their own icons, so this group belongs in
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
     { group: '📋 Also Recommended', groupShort: '📋 Recommended', groupIcon: 'rosette-award', children: [

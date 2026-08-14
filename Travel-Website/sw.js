@@ -1086,7 +1086,11 @@
 /* 2026-08-14: action pill row — 2-column grid under 600px on a mouse, not seven shredded pills. guide-style.css -> v205. CACHE to v857. */
 /* 2026-08-14: index.html — delete the Also Recommended dropdown wiring, dead since
    commit 5d6f1ce0 removed the pill markup it drives. Page HTML, no asset floor. CACHE to v858. */
-var CACHE = 'travel-cache-v858';
+/* 2026-08-14: toolbar.js — correct the 📋 Also Recommended comment, which described the
+   2026-08-08 'never both surfaces' rule the owner reversed on 2026-08-10 and pointed at a
+   hard-fail that is a no-op. Comment-only, but a changed shared asset still needs its floor
+   raised or no returning browser loads it. toolbar.js -> v633. CACHE to v859. */
+var CACHE = 'travel-cache-v859';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1094,7 +1098,7 @@ var CACHE = 'travel-cache-v858';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 632, 'mobile.css': 78, 'web-travel-style.css': 46, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 633, 'mobile.css': 78, 'web-travel-style.css': 46, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
