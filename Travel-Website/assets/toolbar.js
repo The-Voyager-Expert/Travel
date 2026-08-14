@@ -9187,7 +9187,6 @@ window.TVE.isPhone = function () {
          now draw the same shape. 🏘 takes the neighbourhoods house (owner
          2026-08-11: "no idea what this icon is i cant see it" — the Apple
          glyph is three tiny houses, illegible at 15px). */
-      '🌤': 'sun',
       '🌅': 'sunset',
       '🔌': 'plug',
       '💰': 'money',
