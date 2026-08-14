@@ -1536,6 +1536,17 @@ window.TVE.isPhone = function () {
       menu.className = 'tb-menu';
       var groupActive = false;
       item.children.forEach(function (ch) {
+        /* A null child is a SEPARATOR. `null` has meant a divider at the top
+           level of ITEMS since the bar was built, but neither child loop handled
+           it — both went straight to ch.href, so a single null threw here and
+           aborted the whole render, leaving #toolbar-mount empty and every page
+           showing the CSS no-JS fallback. */
+        if (ch === null) {
+          var hr = document.createElement('div');
+          hr.className = 'tb-menu-sep';
+          menu.appendChild(hr);
+          return;
+        }
         var ca = document.createElement('a');
         ca.href = ch.href;
         setEntryLabel(ca, ch.text, ch, 'tb-new');
@@ -1841,6 +1852,12 @@ window.TVE.isPhone = function () {
       hdrG.textContent = item.group.replace(/^[^\x00-\x7E\s]*\s*/, '').trim() || item.group;
       hamMenu.appendChild(hdrG);
       item.children.forEach(function (ch) {
+        if (ch === null) {          /* separator — see the desktop loop above */
+          var mhr = document.createElement('div');
+          mhr.className = 'tb-ham-sep';
+          hamMenu.appendChild(mhr);
+          return;
+        }
         var a = document.createElement('a');
         a.href = ch.href;
         setEntryLabel(a, ch.full || ch.text, ch, 'tb-ham-new');
@@ -2335,14 +2352,14 @@ window.TVE.isPhone = function () {
        'tve-nav-src' slot set by stashNavSource() (only when its kind is
        'guide', so the guide pill never fires when the reader came from BYG). */
     var ref = document.referrer || '';
-    if (!/\/guides\/[^\/i]+\/[^\/]+\.html/.test(ref)) {
+    if (!/\/guides\/[^\/]+\/[^\/]+\.html/i.test(ref)) {
       ref = '';
       try {
         var _nav = JSON.parse(sessionStorage.getItem('tve-nav-src') || 'null');
-        if (_nav && _nav.kind === 'guide' && /\/guides\/[^\/i]+\/[^\/]+\.html/.test(_nav.url)) ref = _nav.url;
+        if (_nav && _nav.kind === 'guide' && /\/guides\/[^\/]+\/[^\/]+\.html/i.test(_nav.url)) ref = _nav.url;
       } catch (e) {}
     }
-    var m = ref.match(/\/guides\/([^\/i]+)\/[^\/]+\.html(?:[?#].*)?$/);
+    var m = ref.match(/\/guides\/([^\/]+)\/[^\/]+\.html(?:[?#].*)?$/i);
     if (!m) return;
     var citySlug = m[1];
     var cityName = decodeURIComponent(citySlug).replace(/-/g, ' ');
@@ -2458,7 +2475,7 @@ window.TVE.isPhone = function () {
      row that only has 393px to work with. Do not re-add it.
      Only injected when history.length > 1 (something to go back to).        */
   (function injectHistoryBackPill() {
-    if (!/\/guides\/[^\/i]+\/[^\/]+\.html/.test(location.pathname)) return;
+    if (!/\/guides\/[^\/]+\/[^\/]+\.html/i.test(location.pathname)) return;
     if (history.length <= 1) return;
 
     function build() {
