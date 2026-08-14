@@ -1120,7 +1120,12 @@
    directed. Both dropdown child loops now render a `null` child as a divider;
    before this one null aborted the whole render. toolbar.js floor -> 636,
    CACHE v866 so returning browsers do not keep the 14-tab bar. */
-var CACHE = 'travel-cache-v866';
+/* 2026-08-14 URGENT: guide pages lost their weather strip, info pills, Trip
+   Overview carousel and SHOW ONLY chips. The Guides/ -> guides/ rename left a
+   regex literal and several indexOf('Guides') lookups untouched, so isRealGuide
+   was false on EVERY guide. All guide path tests are now case-insensitive.
+   toolbar.js floor -> 637, CACHE v867 so no browser keeps the broken build. */
+var CACHE = 'travel-cache-v867';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1128,7 +1133,7 @@ var CACHE = 'travel-cache-v866';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 636, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 637, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

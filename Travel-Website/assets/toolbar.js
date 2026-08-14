@@ -910,24 +910,19 @@ window.TVE.isPhone = function () {
   }
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
-    /* 2026-08-14 — OWNER-DIRECTED: the bar carries only what you need from deep
-     inside a guide. Everything else reaches through the home page, which now
-     carries a section for every area of the site.
+    /* 2026-08-14 — OWNER-DIRECTED: Guides · Before You Go · Best Of · Maps · Contact.
+     Everything else reaches through the home page, which carries a section for
+     every area of the site. Best Of keeps its dropdown (34 categories); the rest
+     are plain links.
 
-       Guides   — the product
-       Best Of  — the differentiator, 34 pages deep
-       Plan     — the mid-trip lookups: visas, safety, weather, money, time
-       Contact  — anchors to the form on the home page
-
-     Travel (flights/trains/maps), Stay and Recommended came off the bar; each has
-     its own section on the landing page, and check_best_of_toolbar_coverage now
-     accepts landing-page reachability so nothing can be stranded silently.
-
-     Separators inside a group are `null`, which BOTH child loops now render as a
-     divider — before this they went straight to ch.href, so a single null aborted
-     the whole render and every page printed the no-JS fallback. */
+     Guide path tests in this file are case-INSENSITIVE — see isRealGuide. The
+     Guides/ -> guides/ rename left a regex literal and several indexOf('Guides')
+     lookups behind, so isRealGuide was false on every guide page and silently
+     removed the weather strip, the info pills, the Trip Overview carousel and the
+     SHOW ONLY chips. Never re-pin these to one capitalisation. */
   var ITEMS = [
     { href: base + 'guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
+    { href: base + 'Trip-Essentials/Before-You-Go.html', text: 'Before You Go', icon: 'luggage' },
     { group: 'Best Of', groupIcon: 'star-cup', children: [
 { href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: 'Browse by category', icon: 'category' },
         { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: 'Amusement Parks', icon: 'ferris' },
@@ -986,34 +981,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: 'Stats Across the Caribbean', icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: 'Stats Across Oceania',        icon: 'bar-chart' },
     ] },
-    { group: 'Plan', groupIcon: 'luggage', children: [
-{ href: base + 'Trip-Essentials/Before-You-Go.html',                   text: 'Before You Go', icon: 'luggage' },
-        { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: 'Packing Checklist', icon: 'packing' },
-        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters', icon: 'live-plug' },
-        null,   /* ── */
-{ href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
-        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'id-card-check' },
-        { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'laptop' },
-        { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: 'Visa Processing Times', icon: 'clock-hourglass' },
-        null,   /* ── */
-{ href: base + 'Trip-Essentials/Safety-Guide.html',      text: 'Safety Guide',      icon: 'safety-guide' },
-        { href: base + 'Trip-Essentials/Vaccines.html',          text: 'Vaccines',          icon: 'syringe-colour' },
-        { href: base + 'Trip-Essentials/Tap-Water.html',         text: 'Tap Water',         icon: 'tap-water' },
-        { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: 'Travel Insurance',  icon: 'insurance' },
-        { href: base + 'Trip-Essentials/First-Timer-Mistakes.html', text: 'First-Timer Mistakes', icon: 'first-timer', newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Scams-By-City.html',     text: 'Scams & Traps',     icon: 'scams', newSince: '2026-08-07' },
-        null,   /* ── */
-{ href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'sun-clear' },
-        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'partly-cloudy' },
-        { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
-        null,   /* ── */
-/* Group icon and its same-named child must be the SAME mark
-           (check_toolbar_group_icon_consistency) — both move together. */
-        { href: base + 'Trip-Essentials/Time-Zones.html',        text: 'Time Zones',       full: 'Time Zones',       icon: 'wall-clock' },
-        { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: 'Sunrise & Sunset', full: 'Sunrise & Sunset', icon: 'horizon-sun' },
-        null,   /* ── */
-        { href: base + 'Trip-Essentials/Currency-Guide.html', text: 'Currency', icon: 'coin-circle' },
-    ] },
+    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', icon: 'folded-map' },
     { href: base + 'index.html#contact', text: 'Contact', icon: 'faq-book' }
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
@@ -1568,18 +1536,6 @@ window.TVE.isPhone = function () {
       menu.className = 'tb-menu';
       var groupActive = false;
       item.children.forEach(function (ch) {
-        /* A null child is a SEPARATOR. `null` has meant a divider at the top
-           level of ITEMS since the bar was built, but the two child loops never
-           handled it — they went straight to ch.href, so one null aborted the
-           whole render and #toolbar-mount:empty printed the no-JS fallback on
-           every page. Supporting it here is what lets a consolidated group hold
-           several former groups without the dropdown reading as one long list. */
-        if (ch === null) {
-          var hr = document.createElement('div');
-          hr.className = 'tb-menu-sep';
-          menu.appendChild(hr);
-          return;
-        }
         var ca = document.createElement('a');
         ca.href = ch.href;
         setEntryLabel(ca, ch.text, ch, 'tb-new');
@@ -1708,13 +1664,20 @@ window.TVE.isPhone = function () {
 
 
   /* ── Prev / Next sticky nav-bar — sits just below toolbar, sticks to top ── */
-  var isRealGuide = /\/Guides\//.test(location.pathname) && location.pathname.indexOf('guides_index') < 0;
+  /* 2026-08-14: case-INSENSITIVE. The folder was renamed Guides/ -> guides/ so
+     guidemydays.com/guides resolves, and the blanket path rewrite could not see
+     these — a regex literal and three indexOf('Guides') lookups. isRealGuide
+     therefore evaluated false on EVERY guide page, which silently removed the
+     weather strip, the language/cost/plug/season pills, the Trip Overview
+     carousel header and the SHOW ONLY chips. Matching either case means a
+     future rename cannot reintroduce this. */
+  var isRealGuide = /\/guides\//i.test(location.pathname) && location.pathname.indexOf('guides_index') < 0;
   var isReadAbout = /\-read-about\.html$/.test(location.pathname);
   var isStopsMap = /\-stops-map\.html$/.test(location.pathname);
   var _raCityName = '';
   if (isReadAbout) {
     var _raParts = location.pathname.split('/');
-    var _raGi = _raParts.indexOf('Guides');
+    var _raGi = _raParts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
     var _raCityFolder = _raGi >= 0 && _raParts[_raGi + 1] ? _raParts[_raGi + 1] : '';
     _raCityName = _raCityFolder.replace(/-/g, ' ');
   }
@@ -1727,7 +1690,7 @@ window.TVE.isPhone = function () {
       cityHash = '#' + encodeURIComponent(_dc);
     } else {
       var _pathParts = location.pathname.split('/');
-      var _gi = _pathParts.indexOf('Guides');
+      var _gi = _pathParts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
       if (_gi >= 0 && _pathParts[_gi + 1]) {
         cityHash = '#' + encodeURIComponent(_pathParts[_gi + 1].replace(/-/g, ' '));
       }
@@ -1878,12 +1841,6 @@ window.TVE.isPhone = function () {
       hdrG.textContent = item.group.replace(/^[^\x00-\x7E\s]*\s*/, '').trim() || item.group;
       hamMenu.appendChild(hdrG);
       item.children.forEach(function (ch) {
-        if (ch === null) {          /* separator — see the desktop loop above */
-          var mhr = document.createElement('div');
-          mhr.className = 'tb-ham-sep';
-          hamMenu.appendChild(mhr);
-          return;
-        }
         var a = document.createElement('a');
         a.href = ch.href;
         setEntryLabel(a, ch.full || ch.text, ch, 'tb-ham-new');
@@ -2189,7 +2146,7 @@ window.TVE.isPhone = function () {
       'white-space:nowrap;line-height:1;box-sizing:border-box;';
     if (isStopsMap) {
       var _smParts = location.pathname.split('/');
-      var _smGi = _smParts.indexOf('Guides');
+      var _smGi = _smParts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
       var _smCity = _smGi >= 0 && _smParts[_smGi + 1] ? _smParts[_smGi + 1].replace(/-/g, ' ') : 'Guide';
       var smPill = document.createElement('a');
       smPill.href = '#';
@@ -2340,7 +2297,7 @@ window.TVE.isPhone = function () {
   (function stashNavSource() {
     function _srcOfThisPage() {
       var p = location.pathname;
-      if (/\/Guides\//.test(p) && p.indexOf('guides_index') < 0 && p.indexOf('Guides-Index') < 0) {
+      if (/\/guides\//i.test(p) && p.indexOf('guides_index') < 0 && p.indexOf('Guides-Index') < 0) {
         return { kind: 'guide', url: location.href };
       }
       if (/\/Before-You-Go\.html/.test(p)) { return { kind: 'byg', url: location.href }; }
@@ -2364,7 +2321,7 @@ window.TVE.isPhone = function () {
     /* Owner rule 2026-07-28: never chain guide-to-guide — a reader who reached
        Guide B from Guide A's strip doesn't need a "back to Guide A" pill.
        Skip any page inside the Guides folder (real guide + stops-map + read-about). */
-    if (/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
+    if (/\/guides\/[^\/]+\/[^\/]+\.html/i.test(location.pathname)) return;
     /* Owner bug 2026-08-04: guide → Guides Index showed "← Amsterdam" on
        the index. The Guides Index is a pure-navigation hub — exclude it.
        Climate-Finder and When-to-Go were previously excluded here too, but
@@ -2378,14 +2335,14 @@ window.TVE.isPhone = function () {
        'tve-nav-src' slot set by stashNavSource() (only when its kind is
        'guide', so the guide pill never fires when the reader came from BYG). */
     var ref = document.referrer || '';
-    if (!/\/Guides\/[^\/]+\/[^\/]+\.html/.test(ref)) {
+    if (!/\/guides\/[^\/i]+\/[^\/]+\.html/.test(ref)) {
       ref = '';
       try {
         var _nav = JSON.parse(sessionStorage.getItem('tve-nav-src') || 'null');
-        if (_nav && _nav.kind === 'guide' && /\/Guides\/[^\/]+\/[^\/]+\.html/.test(_nav.url)) ref = _nav.url;
+        if (_nav && _nav.kind === 'guide' && /\/guides\/[^\/i]+\/[^\/]+\.html/.test(_nav.url)) ref = _nav.url;
       } catch (e) {}
     }
-    var m = ref.match(/\/Guides\/([^\/]+)\/[^\/]+\.html(?:[?#].*)?$/);
+    var m = ref.match(/\/guides\/([^\/i]+)\/[^\/]+\.html(?:[?#].*)?$/);
     if (!m) return;
     var citySlug = m[1];
     var cityName = decodeURIComponent(citySlug).replace(/-/g, ' ');
@@ -2501,7 +2458,7 @@ window.TVE.isPhone = function () {
      row that only has 393px to work with. Do not re-add it.
      Only injected when history.length > 1 (something to go back to).        */
   (function injectHistoryBackPill() {
-    if (!/\/Guides\/[^\/]+\/[^\/]+\.html/.test(location.pathname)) return;
+    if (!/\/guides\/[^\/i]+\/[^\/]+\.html/.test(location.pathname)) return;
     if (history.length <= 1) return;
 
     function build() {
@@ -3042,7 +2999,7 @@ window.TVE.isPhone = function () {
       var KEY  = 'tve_pinned_guides';
       var MAX  = 3;
       var name = document.title;
-      var pm   = location.pathname.match(/(\/Guides\/.+)$/);
+      var pm   = location.pathname.match(/(\/guides\/.+)$/i);
       var href = pm ? '.' + pm[1] : location.pathname;
 
       var SVG_OUT  = '<svg width="14" height="16" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 1h8a1 1 0 0 1 1 1v10.5l-5-3-5 3V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
@@ -3123,7 +3080,7 @@ window.TVE.isPhone = function () {
     };
     function injectAltitudeBanner() {
       var urlParts = location.pathname.split('/');
-      var gi       = urlParts.indexOf('Guides');
+      var gi       = urlParts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
       if (gi < 0 || !urlParts[gi + 1]) return;
       var cityData = ALTITUDE_CITIES[urlParts[gi + 1]];
       if (!cityData) return;
@@ -3889,7 +3846,7 @@ window.TVE.isPhone = function () {
      and the Open Now filter. */
   function _tveDestNow() {
     var parts = location.pathname.split('/');
-    var gi    = parts.indexOf('Guides');
+    var gi    = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
     var slug  = gi >= 0 && parts[gi + 1] ? parts[gi + 1].toLowerCase() : '';
     var tz    = (mount && mount.dataset && mount.dataset.timezone) || _TVE_TZ[slug] || '';
     var now   = new Date();
@@ -4910,7 +4867,7 @@ window.TVE.isPhone = function () {
     if (!isRealGuide) return;
 
     var parts = location.pathname.split('/');
-    var gi = parts.indexOf('Guides');
+    var gi = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
     if (gi < 0 || !parts[gi + 1]) return;
     var cityFolder = parts[gi + 1].toLowerCase();
     var storageKey = 'tve-visited-' + cityFolder;
@@ -4994,7 +4951,7 @@ window.TVE.isPhone = function () {
     if (!blocks.length) return;
 
     var parts = location.pathname.split('/');
-    var gi = parts.indexOf('Guides');
+    var gi = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
     if (gi < 0 || !parts[gi + 1]) return;
     var cityFolder = parts[gi + 1].toLowerCase();
     var storageKey = 'tve-stops-' + cityFolder;
@@ -7026,7 +6983,7 @@ window.TVE.isPhone = function () {
     var also = document.getElementById('also-on-this-site');
     if (!also) return;
     var parts = location.pathname.split('/');
-    var gi = parts.indexOf('Guides');
+    var gi = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
     if (gi < 0) return;
     var citySlug = parts[gi + 1].toLowerCase();
     var entries = CITY_BEST_OF_MAP[citySlug];
@@ -8336,7 +8293,7 @@ items.forEach(function (it) {
      answer to 'index.html' — this has to test the path or weather.js loads
      on the landing page, which has no cards for it to attach to. */
   var _isGuidesIndex = curr === 'Guides-Index.html' ||
-                       /\/Guides\/(index\.html)?$/.test(location.pathname);
+                       /\/guides\/(index\.html)?$/i.test(location.pathname);
   if (_isGuidesIndex) {
     var _wx = document.createElement('script');
     _wx.src = base + 'assets/weather.js?v=4';
@@ -10100,7 +10057,7 @@ items.forEach(function (it) {
     if (!isRealGuide) return;
 
     var parts = location.pathname.split('/');
-    var gi = parts.indexOf('Guides');
+    var gi = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
     if (gi < 0 || !parts[gi + 1]) return;
     var storageKey = 'tve-notes-' + parts[gi + 1].toLowerCase();
     var MAXLEN     = 140;
@@ -10453,7 +10410,7 @@ items.forEach(function (it) {
      AT THE CARD as fast as possible. Fire immediately on DOMContentLoaded,
      then every 250ms for 1.5s to catch late injections. Manual scroll
      restoration prevents the browser's stale initial scroll from winning. */
-  if (/\/Guides\//.test(location.pathname)
+  if (/\/guides\//i.test(location.pathname)
       && location.pathname.indexOf('guides_index') < 0
       && location.hash === '#also-on-this-site') {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -10697,7 +10654,7 @@ items.forEach(function (it) {
     function _destInfo() {
       /* Derive slug from URL path: …/guides/Geneva/geneva.html → "geneva" */
       var parts = location.pathname.split('/');
-      var gi = parts.indexOf('Guides');
+      var gi = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
       var slug = gi >= 0 && parts[gi + 1] ? parts[gi + 1].toLowerCase() : '';
       var tz = (mount && mount.dataset.timezone) || _TZ[slug] || '';
       var now = new Date();
@@ -10850,7 +10807,7 @@ items.forEach(function (it) {
      based on which page covers that airport. Chip sits immediately after the
      .day-header (above .hotel-first). CSS: guide-style.css .lounge-arrival-chip */
   (function _loungeChipInject() {
-    if (!/\/Guides\//.test(location.pathname)
+    if (!/\/guides\//i.test(location.pathname)
         || /-read-about\.html$/.test(location.pathname)
         || /-stops-map\.html$/.test(location.pathname)) return;
 
@@ -11099,7 +11056,7 @@ items.forEach(function (it) {
 
     function _inject() {
       var parts = location.pathname.split('/');
-      var gi = parts.indexOf('Guides');
+      var gi = parts.findIndex(function (x) { return x.toLowerCase() === 'guides'; });
       if (gi < 0) return;
       var slug = parts[gi + 1] || '';
       var info = CHIP_DATA[slug];
