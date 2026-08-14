@@ -798,10 +798,24 @@ window.TVE.isPhone = function () {
         var b; try { b = kids[j].getBBox(); } catch (e) { continue; }
         if (!b || (!b.width && !b.height)) continue;
         any = true;
-        if (b.x < x0) x0 = b.x;
-        if (b.y < y0) y0 = b.y;
-        if (b.x + b.width  > x1) x1 = b.x + b.width;
-        if (b.y + b.height > y1) y1 = b.y + b.height;
+        /* getBBox is the GEOMETRY box and excludes stroke, but a stroke paints
+           strokeWidth/2 OUTSIDE it on every side. Without this the viewBox is
+           sized to the centreline and the outer half of every outline icon is
+           cropped — `search` lost its rim and the tip of its handle. Computed
+           style, not the attribute, so a width inherited from a parent <g>
+           counts. */
+        var pad = 0;
+        try {
+          var cs2 = getComputedStyle(kids[j]);
+          if (cs2.stroke && cs2.stroke !== 'none') {
+            var sw = parseFloat(cs2.strokeWidth);
+            if (sw > 0) pad = sw / 2;
+          }
+        } catch (e) {}
+        if (b.x - pad < x0) x0 = b.x - pad;
+        if (b.y - pad < y0) y0 = b.y - pad;
+        if (b.x + b.width  + pad > x1) x1 = b.x + b.width  + pad;
+        if (b.y + b.height + pad > y1) y1 = b.y + b.height + pad;
       }
       if (!any) continue;
       var side = Math.max(x1 - x0, y1 - y0) / TARGET;
