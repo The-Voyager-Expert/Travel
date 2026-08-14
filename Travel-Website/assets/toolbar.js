@@ -1079,7 +1079,7 @@ window.TVE.isPhone = function () {
        Children carry their own icons, so this group belongs in
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
     { group: '📋 Also Recommended', groupShort: '📋 Recommended', groupIcon: 'rosette-award', children: [
-        { href: base + 'Trip-Essentials/Budget-Guide.html',       text: 'Budget', icon: 'phone-payment' },
+        { href: base + 'Trip-Essentials/Budget-Guide.html',       text: 'Budget', icon: 'budget' },
         { href: base + 'Trip-Essentials/Rental-Cars.html',        text: 'Car Rental & Private', icon: 'app-car' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',          text: 'Cards & ATM', icon: 'card' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: 'City Transit Cards', icon: 'transit' },
