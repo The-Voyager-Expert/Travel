@@ -7492,8 +7492,22 @@ window.TVE.isPhone = function () {
         'display:flex;flex-wrap:wrap;gap:6px;width:100%;box-sizing:border-box;' +
         'margin:' + (isMobile ? '12px 0' : '0 0 16px') + ';';
 
-      items.forEach(function (it) {
-        var pill = document.createElement('span');
+      
+    /* A chip whose subject the site has a page for becomes a link. `language` has no
+       page, so it stays a plain span rather than pointing somewhere invented. */
+    var QF_HREF = {
+      money: 'Trip-Essentials/Budget-Guide.html',
+      plug:  'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html',
+      sun:   'Trip-Essentials/When-to-Go.html'
+    };
+items.forEach(function (it) {
+        var _href = QF_HREF[it[0]];
+        var pill = document.createElement(_href ? 'a' : 'span');
+        if (_href) {
+          pill.href = base + _href;
+          pill.style.textDecoration = 'none';
+          pill.style.cursor = 'pointer';
+        }
         pill.title = it[1];
         pill.style.cssText =
           'display:inline-flex;align-items:center;gap:5px;' +
