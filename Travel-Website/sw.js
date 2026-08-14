@@ -1113,8 +1113,10 @@
    case-sensitive; the capitalised folder made the obvious typed URL a 404).
    Every guide URL changed prefix, so every cached page under the old path is
    stale and the whole cache must roll. New 404.html repairs the first path
-   segment for old capitalised links. CACHE to v864. */
-var CACHE = 'travel-cache-v864';
+   segment for old capitalised links. toolbar.js carries the rewritten guide
+   paths, so its MIN_VERSIONS floor goes to 635 — without it every returning
+   browser keeps a toolbar pointing at the old capitalised folder. CACHE v865. */
+var CACHE = 'travel-cache-v865';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1122,7 +1124,7 @@ var CACHE = 'travel-cache-v864';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 634, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 635, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
