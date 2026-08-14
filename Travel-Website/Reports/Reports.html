@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports — Guide My Days Hub</title>
-<!-- built: 2026-08-13 16:11 UTC | backlog: 148 | scouting-open: 46 -->
+<!-- built: 2026-08-14 09:04 UTC | backlog: 148 | scouting-open: 46 -->
 <style>
   :root{ --bg:#f6f2ec; --surface:#fffdf9; --surface2:#f1ece3; --ink:#2f2a22; --muted:#736c60; --faint:#a49b8c; --line:#e4ddd0;
     --rust:#b0501f; --open:#b23a22; --partial:#a86f16; --unsure:#7a7368; --pending:#1a4d8c;
@@ -238,14 +238,14 @@
     <div class="stat s-open"><b>145</b><span>Open</span></div>
     <div class="stat s-partial"><b>3</b><span>Partial</span></div>
     <div class="stat s-unsure"><b>0</b><span>Unsure</span></div>
-    <div class="stat s-pending"><b>13</b><span>Pending approval</span></div>
+    <div class="stat s-pending"><b>15</b><span>Pending approval</span></div>
   </div>
   <div class="controls">
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=true)">Expand all tiles</button>
     <button onclick="document.querySelectorAll('.tile').forEach(t=>t.open=false)">Collapse all tiles</button>
   </div>
 </header>
-<nav class="nav"><a href="#mobile-ux" class="navchip">📱 Mobile UX <span class="navcount">13</span></a><a href="#ux-desktop" class="navchip">🖥️ UX/Desktop <span class="navcount">3</span></a><a href="#layout" class="navchip">📐 Layout <span class="navcount">8</span></a><a href="#new-features" class="navchip">🆕 New Features <span class="navcount">56</span></a><a href="#new-pages" class="navchip">📄 New Pages <span class="navcount">68</span></a><a href="#rules-change-approval" class="navchip">⚖️ Rules Change Approval <span class="navcount">13</span></a><a href="#new-guides" class="navchip">🗺️ New Guides <span class="navcount">46</span></a><a href="#guide-drift-log" class="navchip">🔍 Guide Drift Log</a><a href="#photo-audit-log" class="navchip">📸 Photo Audit Log</a><a href="#ux-research-log" class="navchip">🎨 UX Research Log</a><a href="#validator-audit" class="navchip">✅ Validator Audit</a><a href="#section-coverage" class="navchip">📊 Section Coverage</a></nav>
+<nav class="nav"><a href="#mobile-ux" class="navchip">📱 Mobile UX <span class="navcount">13</span></a><a href="#ux-desktop" class="navchip">🖥️ UX/Desktop <span class="navcount">3</span></a><a href="#layout" class="navchip">📐 Layout <span class="navcount">8</span></a><a href="#new-features" class="navchip">🆕 New Features <span class="navcount">56</span></a><a href="#new-pages" class="navchip">📄 New Pages <span class="navcount">68</span></a><a href="#rules-change-approval" class="navchip">⚖️ Rules Change Approval <span class="navcount">15</span></a><a href="#new-guides" class="navchip">🗺️ New Guides <span class="navcount">46</span></a><a href="#guide-drift-log" class="navchip">🔍 Guide Drift Log</a><a href="#photo-audit-log" class="navchip">📸 Photo Audit Log</a><a href="#ux-research-log" class="navchip">🎨 UX Research Log</a><a href="#validator-audit" class="navchip">✅ Validator Audit</a><a href="#section-coverage" class="navchip">📊 Section Coverage</a></nav>
 
   <section class="cat" id="mobile-ux">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -2214,7 +2214,7 @@
   <section class="cat" id="rules-change-approval">
     <button class="cathead" onclick="this.parentElement.classList.toggle('collapsed')">
       <span class="catname">⚖️ Rules Change Approval</span>
-      <span class="catcount">13</span>
+      <span class="catcount">15</span>
       <span class="catchev">&rsaquo;</span>
     </button>
     <div class="catbody">
@@ -2395,6 +2395,36 @@ Three ways to close it, owner&#x27;s call:
 
 Also worth deciding in the same breath: delta_routes_check.py currently cross-checks the Delta Full page&#x27;s #sea section against Delta-Routes-SEA.html and warns on expired dates. The date-expiry half applies just as well to the two new pages and is not wired to them.</p>
           <div class="tmeta"><span class="badge tgt">Brain/Routines/delta-audit.md · Brain/Routines/flights-helpers-audit.md · Brain/Routines/Index/Routines-Index.html · Brain/scripts/delta_routes_check.py · Travel-Website/Trip-Essentials/United-Routes-Full.html · Travel-Website/Trip-Essentials/American-Routes-Full.html</span><span class="badge src">the crib that built the two pages, 2026-08-13</span></div>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-pending">PENDING</span>
+          <span class="ttitle">Guides still carry 62,114 authored emoji glyphs — moving them to numbered icon references is an architecture change, not a cleanup</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Owner rule 2026-08-14: no emoji in code, refer to an icon by its catalogue number. That was applied everywhere it is safe — 422 references in the shared assets, 453 across the CORE RULES docs, the whole Icons Library — leaving one place untouched: guide HTML, which holds 62,114 glyphs across 245 guides.
+
+They cannot simply be stripped. The glyph is what the system READS. _injectRowMarks keys off it to decide which icon to draw; validate_itinerary.py reads it off disk for the row-format checks; and _injectAddrCopy, _injectShareStopButtons and the ICS and clipboard exports all test textContent for the address glyph. Removing them stops every icon in every guide drawing and breaks three exports with no error — which is exactly why the Twenty-fourth non-negotiable keeps the authored glyph and hides it in a .gm-mk-src span rather than replacing it.
+
+The end state the owner wants is the packing-page model: data-icon=&quot;N&quot; plus a &lt;use&gt; reference, no glyph. Getting there means retiring the mark system, re-pointing every validator that reads a glyph, fixing the three export consumers, and rewriting 245 guides — with a migration that can be verified guide-by-guide rather than in one pass. That is a scoped piece of work for the owner to schedule, not something a crib should start inside a cleanup.</p>
+          <div class="tmeta"><span class="badge tgt">Travel-Website/Guides/*.html (245 guides, 62,114 glyphs) · assets/toolbar.js MARKS + _injectRowMarks · Brain/scripts/validate/validate_itinerary.py · the ICS and clipboard exports</span><span class="badge src">icon-cleanup session 2026-08-14</span></div>
+        </div>
+      </details>
+      <details class="tile">
+        <summary>
+          <span class="tstatus st-pending">PENDING</span>
+          <span class="ttitle">461 guide section titles are supplied by CSS, not authored — the last two :empty fallbacks cannot be deleted until the guides carry their own titles</span>
+          <span class="chev">&rsaquo;</span>
+        </summary>
+        <div class="tbody">
+          <p class="tdetail">Fifteen of the seventeen .extras-title:empty::before fallbacks were deleted on 2026-08-14 because they had never fired: measured across all 237 guides, an empty section title occurs in exactly two sections. Those two are real and load-bearing — also-on-this-site (234 guides) and nearby-guides (227) ship &lt;div class=&quot;extras-title&quot;&gt;&lt;/div&gt; and let the stylesheet supply the words.
+
+Owner, on the fallbacks generally: &#x27;we dont have fall back of anything. this is all drift.&#x27; Agreed in principle, but deleting these two blanks 461 section headings until each guide authors its own title. The fix is a fleet edit — write the title into both sections of all 237 guides, then delete the two CSS rules.
+
+One rule retires with them: [also-on-site-emoji] pins the also-on-this-site fallback string to its glyph (owner 2026-08-06), which now conflicts with the 2026-08-14 no-emoji rule. Once the title lives in the guide, that check has nothing to guard and should be removed in the same pass — it is currently the only reason a glyph survives in guide-style.css.</p>
+          <div class="tmeta"><span class="badge tgt">assets/guide-style.css (2 rules) · Travel-Website/Guides/*.html (237 guides, 461 titles) · brain_check [also-on-site-emoji]</span><span class="badge src">icon-cleanup session 2026-08-14</span></div>
         </div>
       </details><p class="rules-hint">Scope: CORE RULES edits &middot; toolbar structural changes &middot; new design decisions &middot; stray-file delete approvals. Everything else goes to the To&nbsp;Do&nbsp;List for cribs to resolve. To propose: add an entry to <code>Brain/scripts/open_recs/rules_changes.json</code> and rebuild.</p></div>
   </section>
