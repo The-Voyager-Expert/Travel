@@ -1109,7 +1109,12 @@
    Trains.html. The navigate fallback below still resolves to 'index.html' on
    purpose — offline navigation should land on the site's front door.
    toolbar.js is not in MIN_VERSIONS, so CACHE goes to v863. */
-var CACHE = 'travel-cache-v863';
+/* 2026-08-14: Guides/ -> guides/ so guidemydays.com/guides resolves (Pages is
+   case-sensitive; the capitalised folder made the obvious typed URL a 404).
+   Every guide URL changed prefix, so every cached page under the old path is
+   stale and the whole cache must roll. New 404.html repairs the first path
+   segment for old capitalised links. CACHE to v864. */
+var CACHE = 'travel-cache-v864';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
