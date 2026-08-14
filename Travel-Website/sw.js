@@ -1116,7 +1116,11 @@
    segment for old capitalised links. toolbar.js carries the rewritten guide
    paths, so its MIN_VERSIONS floor goes to 635 — without it every returning
    browser keeps a toolbar pointing at the old capitalised folder. CACHE v865. */
-var CACHE = 'travel-cache-v865';
+/* 2026-08-14: toolbar cut to 4 tabs (Guides · Best Of · Plan · Contact) — owner
+   directed. Both dropdown child loops now render a `null` child as a divider;
+   before this one null aborted the whole render. toolbar.js floor -> 636,
+   CACHE v866 so returning browsers do not keep the 14-tab bar. */
+var CACHE = 'travel-cache-v866';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1124,7 +1128,7 @@ var CACHE = 'travel-cache-v865';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 635, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 636, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

@@ -910,39 +910,26 @@ window.TVE.isPhone = function () {
   }
 
   /* ── Links ─────────────────────────────────────────────────────────────── */
+    /* 2026-08-14 — OWNER-DIRECTED: the bar carries only what you need from deep
+     inside a guide. Everything else reaches through the home page, which now
+     carries a section for every area of the site.
+
+       Guides   — the product
+       Best Of  — the differentiator, 34 pages deep
+       Plan     — the mid-trip lookups: visas, safety, weather, money, time
+       Contact  — anchors to the form on the home page
+
+     Travel (flights/trains/maps), Stay and Recommended came off the bar; each has
+     its own section on the landing page, and check_best_of_toolbar_coverage now
+     accepts landing-page reachability so nothing can be stranded silently.
+
+     Separators inside a group are `null`, which BOTH child loops now render as a
+     divider — before this they went straight to ch.href, so a single null aborted
+     the whole render and every page printed the no-JS fallback. */
   var ITEMS = [
-    null,
     { href: base + 'guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
-    null,
-    /* OWNER-DIRECTED 2026-08-09: 👕 Packing and 🔌 Plug Adapters were standalone
-       top-strip tabs; both are now children here, Packing first. Before You Go
-       itself is the FIRST child because a group's parent button carries no href
-       of its own (see the ITEMS render loop) — without that row the pre-trip
-       dashboard would drop out of the nav entirely. Top strip: 13 tabs -> 11.
-       Children keep their own icons, so '🧳 Before You Go' is in
-       check_toolbar_group_icon_consistency's EXEMPT_GROUPS alongside
-       Flights / Safety / Time Zones. */
-    { group: '🧳 Before You Go', groupIcon: 'luggage', children: [
-        { href: base + 'Trip-Essentials/Before-You-Go.html',                   text: 'Before You Go', icon: 'luggage' },
-        { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: 'Packing Checklist', icon: 'packing' },
-        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters', icon: 'live-plug' },
-      ] },
-    null,
-    { group: '🏨 Where to Stay', groupIcon: 'hotel', children: [
-        { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods',           icon: 'boutique' },
-        { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: 'Hotels & Stays',          icon: 'hotel' },
-        { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: 'Most Luxurious Hotels',   icon: 'gem-yellow' },
-        { href: base + 'Trip-Essentials/Best-Unique-Hotels.html',           text: 'Unique Hotels',           icon: 'wand' },
-        { href: base + 'Trip-Essentials/Best-Resorts.html',                 text: 'Resorts',                 icon: 'beach' },
-        { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: 'Ultra-Luxurious Resorts', icon: 'star6-yellow' },
-      ] },
-    null,
-    /* OWNER-DIRECTED 2026-08-09: every Best-Of page on the top strip, mirroring
-       the hamburger's Best Of section (which stays the source for the mobile
-       list). Browse by category leads, then A–Z. 35 rows is far taller than a
-       viewport, so .tb-menu carries a max-height + scroll — see the styleEl. */
-    { group: '🏆 Best Of', groupIcon: 'star-cup', children: [
-        { href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: 'Browse by category', icon: 'category' },
+    { group: 'Best Of', groupIcon: 'star-cup', children: [
+{ href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: 'Browse by category', icon: 'category' },
         { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: 'Amusement Parks', icon: 'ferris' },
         { href: base + 'Trip-Essentials/Best-Animal-Encounters.html',             text: 'Animal Encounters', icon: 'giraffe' },
         { href: base + 'Trip-Essentials/Best-Aquariums.html',                     text: 'Aquariums', icon: 'fish' },
@@ -988,12 +975,8 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Volcanoes.html',                     text: 'Volcanoes', icon: 'volcano-erupting' },
         { href: base + 'Trip-Essentials/Best-Wine-Regions.html',                  text: 'Wine Regions', icon: 'wine' },
         { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World', icon: 'mosque' },
-      ] },
-    null,
-    { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', full: 'World Map', icon: 'folded-map' },
-    null,
-    { group: '📊 Stats', groupIcon: 'chart', children: [
-        { href: base + 'Trip-Essentials/Destination-Records.html',        text: 'Destination Records',        icon: 'bar-chart' },
+        null,   /* ── */
+{ href: base + 'Trip-Essentials/Destination-Records.html',        text: 'Destination Records',        icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: 'Stats Across US',            icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: 'Stats Across Canada',        icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Europe-Stats.html',               text: 'Stats Across Europe',        icon: 'bar-chart' },
@@ -1002,122 +985,36 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/South-America-Stats.html',        text: 'Stats Across South America', icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: 'Stats Across the Caribbean', icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: 'Stats Across Oceania',        icon: 'bar-chart' },
-      ]},
-    null,
-    { group: '✈️ Flights', groupIcon: 'flight-nav', children: [
-        { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: 'Airlines', icon: 'plane', newSince: '2026-08-09' },
-        /* Delta Seattle Hub retired from the site 2026-08-13 (owner: "retire the
-           Delta Seattle hub from the site but i will still use"). The file stays
-           at Trip-Essentials/Delta-Routes-SEA.html and the delta-audit routine
-           still maintains it — it is simply no longer linked from anywhere. */
-        { href: base + 'Trip-Essentials/Delta-Routes-Full.html', text: 'Delta Full Network', icon: 'plane' },
-        { href: base + 'Trip-Essentials/United-Routes-Full.html', text: 'United Full Network', icon: 'plane', newSince: '2026-08-13' },
-        { href: base + 'Trip-Essentials/American-Routes-Full.html', text: 'American Full Network', icon: 'plane', newSince: '2026-08-13' },
-        { href: base + 'Trip-Essentials/Airport-Connection-Times.html', text: 'Connection Times', icon: 'wristwatch', newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Lounges-US.html',        text: 'US Lounges',        icon: 'laptop' },
-        { href: base + 'Trip-Essentials/Lounges-Europe.html',    text: 'EU Lounges',        icon: 'laptop' },
-        { href: base + 'Trip-Essentials/Trusted-Traveler.html',         text: 'Global Entry & CLEAR', icon: 'trusted' },
-        { href: base + 'Trip-Essentials/Baggage.html',            text: 'Baggage',         icon: 'luggage-colour' },
-        { href: base + 'Trip-Essentials/Luggage-Storage.html',        text: 'Luggage Storage', icon: 'luggage-hardcase', newSince: '2026-08-07' },
-        { href: base + 'Trip-Essentials/Passport.html',          text: 'Passport',          icon: 'passport' },
-      ] },
-    null,
-    /* OWNER-DIRECTED 2026-08-11: the tab carries the drawn train; the four rows
-       do NOT repeat it. Four identical 🚆 stacked in one flyout told the reader
-       nothing — the same defect the Visas group had. The mark on the tab is the
-       group's identity, so a child inherits it by being in the menu. */
-    { group: '🚆 Trains', groupIcon: 'train', children: [
-        { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: 'European Train Guide',      full: 'European Train Guide',      icon: 'high-speed-train' },
-        { href: base + 'Trip-Essentials/Day-Trips.html',              text: 'Day Trips by Train',        full: 'Day Trips by Train',        icon: 'calendar-date' },
-        { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: 'Scenic Train Journeys',    full: 'Scenic Train Journeys',    newSince: '2026-08-07', icon: 'mountain' },
-        { href: base + 'Trip-Essentials/Train-Passes.html',           text: 'Train Pass Comparison',    full: 'Train Pass Comparison',    newSince: '2026-08-07', icon: 'card' },
-      ] },
-    null,
-    { href: base + 'Trip-Essentials/Currency-Guide.html', text: 'Currency', full: 'Currency', icon: 'coin-circle' },
-    null,
-    { group: '🕐 Time Zones', groupIcon: 'wall-clock', children: [
-        /* Group icon and its same-named child must be the SAME mark
-           (check_toolbar_group_icon_consistency) — both move together. */
-        { href: base + 'Trip-Essentials/Time-Zones.html',        text: 'Time Zones',       full: 'Time Zones',       icon: 'wall-clock' },
-        { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: 'Sunrise & Sunset', full: 'Sunrise & Sunset', icon: 'horizon-sun' },
-      ] },
-    null,
-    /* Icons added 2026-08-11 (owner: "climate finder and when to go also need
-       their icons back") — this was the one dropdown whose children rendered
-       bare while every sibling group drew one. NOT a structural change: no
-       entry added, removed, renamed, reordered or re-nested, and
-       TOOLBAR_ITEMS_LOCK records depth|href only, so the lock is untouched and
-       still enforced. The same icons now flow to the "Also on this site"
-       footer pills, which resolve from ITEMS first. */
-    { group: '🌤️ Weather', groupIcon: 'sun-cloud-colour', children: [
-        { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'sun-clear' },
-        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'partly-cloudy' },
-        { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
-      ] },
-    null,
-    { group: '🛡️ Safety', groupIcon: 'safety-guide', children: [
-        { href: base + 'Trip-Essentials/Safety-Guide.html',      text: 'Safety Guide',      icon: 'safety-guide' },
+    ] },
+    { group: 'Plan', groupIcon: 'luggage', children: [
+{ href: base + 'Trip-Essentials/Before-You-Go.html',                   text: 'Before You Go', icon: 'luggage' },
+        { href: base + 'Trip-Essentials/Travel-Packing.html',                  text: 'Packing Checklist', icon: 'packing' },
+        { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters', icon: 'live-plug' },
+        null,   /* ── */
+{ href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
+        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'id-card-check' },
+        { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'laptop' },
+        { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: 'Visa Processing Times', icon: 'clock-hourglass' },
+        null,   /* ── */
+{ href: base + 'Trip-Essentials/Safety-Guide.html',      text: 'Safety Guide',      icon: 'safety-guide' },
         { href: base + 'Trip-Essentials/Vaccines.html',          text: 'Vaccines',          icon: 'syringe-colour' },
         { href: base + 'Trip-Essentials/Tap-Water.html',         text: 'Tap Water',         icon: 'tap-water' },
         { href: base + 'Trip-Essentials/Travel-Insurance.html',  text: 'Travel Insurance',  icon: 'insurance' },
         { href: base + 'Trip-Essentials/First-Timer-Mistakes.html', text: 'First-Timer Mistakes', icon: 'first-timer', newSince: '2026-08-07' },
         { href: base + 'Trip-Essentials/Scams-By-City.html',     text: 'Scams & Traps',     icon: 'scams', newSince: '2026-08-07' },
-      ] },
-    null,
-    /* OWNER-DIRECTED 2026-08-10: all four children carried the SAME 🪪 emoji —
-       four identical glyphs stacked in one flyout, which told the reader
-       nothing. Each row now draws its own page's .page-intro-icon SVG instead
-       (globe · ID card · laptop · clock). See NAV_ICONS above. */
-    { group: '🪪 Visas', groupIcon: 'passport', children: [
-        { href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
-        { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'id-card-check' },
-        { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'laptop' },
-        { href: base + 'Trip-Essentials/Visa-Processing-Times.html',                    text: 'Visa Processing Times', icon: 'clock-hourglass' },
-      ] },
-    null,
-    /* OWNER-DIRECTED 2026-08-10: new group, built from the width freed by
-       removing the desktop site title. These pages previously lived ONLY in the
-       "Also Recommended" and "We Recommend" panels on index.html, so they were
-       reachable from the homepage and nowhere else; they are now in the nav on
-       every page.
-
-       THEY ARE STILL IN THE PANELS TOO, AND THAT IS DELIBERATE. Owner, same day:
-       "yes we need to change all that they will be in both now" — the panel is a
-       browsable homepage grid, this dropdown is nav reachable from every page,
-       and the duplication is the point. So: never delete a homepage card because
-       its page is in this group. check_also_recommended_excludes_toolbar_pages,
-       which used to forbid exactly that, is a deliberate NO-OP; the live check is
-       check_also_rec_dropdown_matches_sidebar, which WARNS when this group and
-       the also-on-site panel stop matching, and whose fix is to add the missing
-       PANEL CARD — never to edit ITEMS (Nineteenth non-negotiable).
-
-       (This comment previously stated the opposite — that both panels had been
-       deleted and a toolbar page "must never also sit in Also Recommended", citing
-       a hard-fail that does not exist. It described the 2026-08-08 rule the owner
-       reversed on 2026-08-10, and following it would have deleted the 11 live
-       cards this group is supposed to mirror. Corrected 2026-08-14.)
-
-       Count moves with the group: 15 at creation, 11 now — Cruise Lines, Disney
-       Parks, Festival Finder and Pickleball moved to Best Of on 2026-08-12.
-
-       Children carry their own icons, so this group belongs in
-       check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
-    { group: '📋 Also Recommended', groupShort: '📋 Recommended', groupIcon: 'rosette-award', children: [
-        { href: base + 'Trip-Essentials/Budget-Guide.html',       text: 'Budget', icon: 'budget' },
-        { href: base + 'Trip-Essentials/Rental-Cars.html',        text: 'Car Rental & Private', icon: 'app-car' },
-        { href: base + 'Trip-Essentials/Cards-ATM.html',          text: 'Cards & ATM', icon: 'card' },
-        { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: 'City Transit Cards', icon: 'transit' },
-        /* Cruise Lines, Disney Parks, Festival Finder and Pickleball left this
-           group on 2026-08-12 (owner-directed) for 🏆 Best Of — see the comment
-           on the Cruise Lines row there. */
-        { href: base + 'Trip-Essentials/More-Resources.html',     text: 'More Resources', icon: 'faq-book' },
-        { href: base + 'Trip-Essentials/Restaurants.html',        text: 'Restaurants', icon: 'restaurants' },
-        { href: base + 'Trip-Essentials/SIM-Cards.html',          text: 'SIM Cards', icon: 'sim' },
-        { href: base + 'Trip-Essentials/Sports-Calendar.html',    text: 'Sports Calendar', icon: 'pennant' },
-        { href: base + 'Trip-Essentials/Tipping-Guide.html',      text: 'Tipping', icon: 'tipping' },
-        { href: base + 'Trip-Essentials/Tours-Tickets.html',      text: 'Tours & Tickets', icon: 'boarding-pass' },
-        { href: base + 'Trip-Essentials/Travel-Apps.html',        text: 'Travel Apps', icon: 'travel-apps' },
-      ] },
+        null,   /* ── */
+{ href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'sun-clear' },
+        { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'partly-cloudy' },
+        { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
+        null,   /* ── */
+/* Group icon and its same-named child must be the SAME mark
+           (check_toolbar_group_icon_consistency) — both move together. */
+        { href: base + 'Trip-Essentials/Time-Zones.html',        text: 'Time Zones',       full: 'Time Zones',       icon: 'wall-clock' },
+        { href: base + 'Trip-Essentials/Sunrise-Sunset.html',    text: 'Sunrise & Sunset', full: 'Sunrise & Sunset', icon: 'horizon-sun' },
+        null,   /* ── */
+        { href: base + 'Trip-Essentials/Currency-Guide.html', text: 'Currency', icon: 'coin-circle' },
+    ] },
+    { href: base + 'index.html#contact', text: 'Contact', icon: 'faq-book' }
   ];
   // isGuide: only fires when data-toolbar-theme="guide" is explicitly set (guides_index).
   // Guide pages now share the #f5f4f0 warm background with essentials — colour detection
@@ -1671,6 +1568,18 @@ window.TVE.isPhone = function () {
       menu.className = 'tb-menu';
       var groupActive = false;
       item.children.forEach(function (ch) {
+        /* A null child is a SEPARATOR. `null` has meant a divider at the top
+           level of ITEMS since the bar was built, but the two child loops never
+           handled it — they went straight to ch.href, so one null aborted the
+           whole render and #toolbar-mount:empty printed the no-JS fallback on
+           every page. Supporting it here is what lets a consolidated group hold
+           several former groups without the dropdown reading as one long list. */
+        if (ch === null) {
+          var hr = document.createElement('div');
+          hr.className = 'tb-menu-sep';
+          menu.appendChild(hr);
+          return;
+        }
         var ca = document.createElement('a');
         ca.href = ch.href;
         setEntryLabel(ca, ch.text, ch, 'tb-new');
@@ -1969,6 +1878,12 @@ window.TVE.isPhone = function () {
       hdrG.textContent = item.group.replace(/^[^\x00-\x7E\s]*\s*/, '').trim() || item.group;
       hamMenu.appendChild(hdrG);
       item.children.forEach(function (ch) {
+        if (ch === null) {          /* separator — see the desktop loop above */
+          var mhr = document.createElement('div');
+          mhr.className = 'tb-ham-sep';
+          hamMenu.appendChild(mhr);
+          return;
+        }
         var a = document.createElement('a');
         a.href = ch.href;
         setEntryLabel(a, ch.full || ch.text, ch, 'tb-ham-new');
