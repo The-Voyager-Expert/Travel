@@ -639,6 +639,45 @@ a:hover { text-decoration: underline; }
   #ics-pill-row > .overview-extra-link { font-size: 12px; padding: 5px 6px; gap: 4px; }
 }
 
+/* NARROW DESKTOP — the 2-column row a phone gets, on a mouse (owner 2026-08-14:
+   "can scroll all the way down" · "when close bug").
+   Under 600px the comment above says the row "is already a 2-column grid" — and
+   it is, but only for a FINGER: that grid lives in the
+   `(max-width:600px) and (pointer:coarse)` block, so a desktop window narrowed
+   past 600px, or a page zoomed in far enough that the CSS viewport is, kept all
+   seven pills in one nowrap flex row. min-width:0 lets them shrink without
+   bound and overflow-wrap:anywhere then breaks each label mid-word, so at a
+   300px row every pill measured 34px wide and 302px TALL — a column of single
+   letters, and a page suddenly thousands of pixels long, which is the scrolling
+   the owner saw. Same shape of bug, same range, same cause as the toolbar's
+   `(max-width:1259px) and (pointer:fine)` rule: nothing had ever asked what
+   this row does at a narrow width on a mouse.
+   Two columns is the answer already designed for it — the labels get ~150px
+   and wrap to two lines like they do on a phone. Borders are the desktop
+   row's own 1px, re-joined for a grid: the left seam collapses on the right
+   column instead of on every pill but the first, and the top seam collapses
+   from row 2 down.
+   `!important` throughout, for the same reason the phone block carries it:
+   toolbar.js builds this row with an INLINE `display:flex;gap:0;width:100%`,
+   which no stylesheet rule beats without it, and the seam rules have to
+   outrank the one-row `:not(:first-child)` pair above (1,2,0). */
+@media (max-width: 600px) and (pointer: fine) {
+  #ics-pill-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0 !important;
+  }
+  #ics-pill-row > .overview-extra-link {
+    font-size: 12px;
+    padding: 6px 8px;
+    gap: 4px;
+    border-radius: 0 !important;
+    border-left-width: 1px !important;
+  }
+  #ics-pill-row > .overview-extra-link:nth-child(even) { border-left-width: 0 !important; }
+  #ics-pill-row > .overview-extra-link:nth-child(n+3)  { border-top-width: 0 !important; }
+}
+
 #ams-advisory { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:var(--c-alt-bg); border-top:1px solid var(--c-alt-border); border-bottom:1px solid var(--c-alt-border); }
 #ams-advisory .ams-icon  { font-size:16px; line-height:1.5; flex-shrink:0; }
 #ams-advisory .ams-body  { flex:1; min-width:0; }
