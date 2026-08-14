@@ -1084,7 +1084,9 @@
 /* 2026-08-14: Nearby Guides header icon toolbar.js -> v632. CACHE to v855. */
 /* 2026-08-14: Getting Around / Food Delivery card — the link sits beside the name, not at the card edge. guide-style.css -> v204. CACHE to v856. */
 /* 2026-08-14: action pill row — 2-column grid under 600px on a mouse, not seven shredded pills. guide-style.css -> v205. CACHE to v857. */
-var CACHE = 'travel-cache-v857';
+/* 2026-08-14: index.html — delete the Also Recommended dropdown wiring, dead since
+   commit 5d6f1ce0 removed the pill markup it drives. Page HTML, no asset floor. CACHE to v858. */
+var CACHE = 'travel-cache-v858';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
