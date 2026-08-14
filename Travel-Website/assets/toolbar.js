@@ -512,6 +512,8 @@ window.TVE.isPhone = function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    'cal-export': ['0 0 24 24', '<rect x="2.6" y="4" width="18.8" height="17.2" rx="2.4" fill="url(#gm-paper)" stroke="var(--c-rim-warm)" stroke-width="1" stroke-linejoin="round" /> <path d="M2.6 6.4A2.4 2.4 0 0 1 5 4h14a2.4 2.4 0 0 1 2.4 2.4v2.4H2.6z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/> <rect x="6.3" y="1.9" width="2.2" height="4" rx="1.1" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/> <rect x="15.5" y="1.9" width="2.2" height="4" rx="1.1" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/> <text x="12" y="18.6" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10.6" font-weight="700" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5" text-anchor="middle">17</text>'],
+
     'country-map': ['0 0 24 24', '<defs><clipPath id="gm-c32-cpm1"><path d="M1.6 8.4 8 5.6v13.2l-6.4 2.8z"/></clipPath><clipPath id="gm-c32-cpm2"><path d="M8 5.6 15.4 8.4v13.2L8 18.8z"/></clipPath><clipPath id="gm-c32-cpm3"><path d="M15.4 8.4 22.4 5.6v13.2l-7 2.8z"/></clipPath></defs><path d="M1.6 8.4 8 5.6v13.2l-6.4 2.8z" fill="url(#gm-green)" stroke="var(--c-green-rim)" stroke-width="0.5"/><path d="M8 5.6 15.4 8.4v13.2L8 18.8z" fill="url(#gm-cream)" stroke="var(--c-rim-warm)" stroke-width="0.6"/><path d="M15.4 8.4 22.4 5.6v13.2l-7 2.8z" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/><g clip-path="url(#gm-c32-cpm1)"><path d="M1 13.6c2.4-1 4.6-1.4 7.6-1.2v3.4c-3-.2-5.2.2-7.6 1.2z" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/></g><g clip-path="url(#gm-c32-cpm2)"><path d="M7.6 13.4c2.6.5 4.8 1.4 6.6 2.6l-.4 3.8c-1.8-1.4-4-2.4-6.6-3z" fill="url(#gm-green)" stroke="var(--c-green-rim)" stroke-width="0.5"/><path d="M9.2 7.6c1.8.4 3.4 1 4.8 1.8l-.3 2.8c-1.4-.9-3-1.5-4.8-1.9z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/></g><g clip-path="url(#gm-c32-cpm3)"><path d="M15 16c2.4-1.2 4.6-1.8 7.6-1.8v3.6c-3 0-5.2.6-7.6 1.8z" fill="url(#gm-green)" stroke="var(--c-green-rim)" stroke-width="0.5"/></g><g fill="none" stroke="var(--c-cocoa)" stroke-width="0.8" stroke-linecap="round" opacity="0.5" stroke-dasharray="0.1 2.4"><path d="M3.4 17.4c3.2-3.4 6.4-4.4 9.6-3 3.2 1.4 6 .6 8.4-2.4"/></g><path d="M12.6 1.6a4.2 4.2 0 0 0-4.2 4.2c0 3.1 4.2 7.6 4.2 7.6s4.2-4.5 4.2-7.6a4.2 4.2 0 0 0-4.2-4.2z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><circle cx="12.6" cy="5.8" r="1.7" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/>'],
 
     'open-book': ['0 0 24 24', '<path d="M1.6 5.6c3-1.4 6.2-1.4 9.4.4v13.4c-3.2-1.8-6.4-1.9-9.4-.4z" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/><path d="M22.4 5.6c-3-1.4-6.2-1.4-9.4.4v13.4c3.2-1.8 6.4-1.9 9.4-.4z" fill="url(#gm-cream)" stroke="var(--c-rim-warm)" stroke-width="0.6"/><path d="M11 6c.6.3 1 .8 1 1.4V21c0-.6-.4-1.1-1-1.4zM13 6c-.6.3-1 .8-1 1.4V21c0-.6.4-1.1 1-1.4z" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/><g fill="none" stroke="var(--c-stone)" stroke-width="0.85" stroke-linecap="round" opacity="0.8"><path d="M3.8 8.4h5M3.8 11h5M3.8 13.6h3.6M15.2 8.4h5M15.2 11h5M15.2 13.6h3.6"/></g>'],
@@ -736,7 +738,7 @@ window.TVE.isPhone = function () {
     '--c-leaf:#5fbf2a;--c-teal:#21e8d0;--c-blue:#3caefe;--c-navy:#2f7fc4;' +
     '--c-sky:#66caff;--c-grape:#9d5fd6;--c-wine:#c9584a;--c-pine:#3fa876;--c-slate:#8ea3b2;--c-paper-shade:#dad4cb;--c-cream-shade:#cfc3ae;' +
     '--c-rim-warm:#e0873f;--c-rim-cool:#a9bac8;--c-tire-shade:#38312d;--c-tire-rim:#8d8480;--c-stone-shade:#736a60;--c-stone-rim:#b8b0a6;--c-tan-shade:#c79050;--c-tan-rim:#ffcd94;--c-cocoa-shade:#8e4e19;--c-cocoa-rim:#d39764;--c-rust-shade:#c46619;--c-rust-rim:#ffa963;--c-clay-shade:#c4653a;--c-clay-rim:#ffa881;--c-red-shade:#c25141;--c-red-rim:#ff9788;--c-rose-shade:#c24e65;--c-rose-rim:#ff94aa;--c-plum-shade:#a937ae;--c-plum-rim:#eb80ef;--c-sun-shade:#c7a13c;--c-sun-rim:#ffdd82;--c-amber-shade:#c47728;--c-amber-rim:#ffb871;--c-green-shade:#5aba31;--c-green-rim:#9ef479;--c-leaf-shade:#499320;--c-leaf-rim:#8fd26a;--c-teal-shade:#1ab5a2;--c-teal-rim:#64efde;--c-blue-shade:#2e86c4;--c-blue-rim:#76c6fe;--c-navy-shade:#225d8f;--c-navy-rim:#6da5d6;--c-sky-shade:#509ec7;--c-sky-rim:#94daff;--c-grape-shade:#73459c;--c-grape-rim:#ba8fe2;--c-wine-shade:#934036;--c-wine-rim:#d98a80;--c-pine-shade:#30805a;--c-pine-rim:#79c29f;--c-slate-shade:#6c7c87;--c-slate-rim:#b0bfc9}}' +
-    '.gm-ic{display:inline-block;vertical-align:-0.15em}' +
+    '.gm-ic{display:inline-block;vertical-align:-0.15em;flex-shrink:0}' +
     '.gm-mk.gm-mk-c{background:none;-webkit-mask:none;mask:none;line-height:0;'
     /* the svg inside is 1.2em; without matching the BOX to it the mark
        overflows its own 1em width and sits on top of the text. */
@@ -2699,7 +2701,7 @@ window.TVE.isPhone = function () {
           var pill = document.createElement('a');
           pill.className = 'overview-extra-link';
           pill.href = mapHref;
-          pill.innerHTML = iconSVG(NAV_ICONS['map'], 15, 'map') + ' All Stops Map';
+          pill.innerHTML = iconSVG(GM_SPRITE['country-map'] && 'country-map', 15, 'country-map') + ' All Stops Map';
           gelRow.appendChild(pill);
         }
       };
@@ -3513,7 +3515,7 @@ window.TVE.isPhone = function () {
     var bTitle = document.createElement('div');
     bTitle.style.cssText = 'margin-bottom:5px;padding-right:28px;';
     var bTitleText = document.createElement('span');
-    bTitleText.innerHTML = iconSVG(NAV_ICONS['calendar'], 15, 'calendar') + ' Export to Calendar';
+    bTitleText.innerHTML = iconSVG(GM_SPRITE['cal-export'] && 'cal-export', 15, 'cal-export') + ' Export to Calendar';
     bTitleText.style.cssText = 'font-size:15px;font-weight:700;color:#1b2531;';
     bTitle.appendChild(bTitleText);
 
@@ -3643,7 +3645,7 @@ window.TVE.isPhone = function () {
     /* ── Trigger link — <a> matches the other pills exactly, terracotta border only ── */
     var trigBtn = document.createElement('a');
     trigBtn.href = 'javascript:void(0)';
-    trigBtn.innerHTML = iconSVG(NAV_ICONS['calendar'], 15, 'calendar') + ' Export to Calendar';
+    trigBtn.innerHTML = iconSVG(GM_SPRITE['cal-export'] && 'cal-export', 15, 'cal-export') + ' Export to Calendar';
     trigBtn.className = 'overview-extra-link';
     trigBtn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
