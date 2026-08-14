@@ -512,6 +512,10 @@ window.TVE.isPhone = function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    'pine-forest-chip': ['0 0 24 24', '<ellipse cx="12" cy="20.8" rx="10.4" ry="1.7" fill="url(#gm-green)" stroke="var(--c-green-rim)" stroke-width="0.5"/><path d="M7 4.4 11.4 11H2.6zM7 8 12 15.4H2z" fill="url(#gm-leaf)" stroke="var(--c-leaf-rim)" stroke-width="0.5"/><rect x="6.2" y="14.8" width="1.6" height="4.6" rx="0.5" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/><path d="M16.8 7 20.4 12.4h-7.2zM16.8 10.2 21 16.4h-8.4z" fill="url(#gm-green)" stroke="var(--c-green-rim)" stroke-width="0.5"/><path d="M16.8 7 20.4 12.4h-7.2zM16.8 10.2 21 16.4h-8.4z" fill="url(#gm-sheen)"/><rect x="16.1" y="15.8" width="1.5" height="3.8" rx="0.5" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/>'],
+
+    'stage': ['0 0 24 24', '<rect x="1.6" y="3.4" width="20.8" height="17.2" rx="1.8" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/><path d="M1.6 3.4h20.8v3H1.6z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><path d="M3.2 6.4h5.4c0 5.2-1 9.8-2.8 13.8H3.2z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><path d="M20.8 6.4h-5.4c0 5.2 1 9.8 2.8 13.8h2.6z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><rect x="8.4" y="15" width="7.2" height="5.6" rx="0.8" fill="url(#gm-clay)" stroke="var(--c-clay-rim)" stroke-width="0.5"/><circle cx="12" cy="11.6" r="2.4" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/>'],
+
     'language-roundel': ['0 0 24 24', '<circle cx="12" cy="12" r="11" fill="url(#gm-blue)" stroke="var(--c-blue-rim)" stroke-width="0.5"/> <circle cx="10.2" cy="9.2" r="2.7" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/> <path d="M10.2 12.6c2.9 0 5.3 2 5.3 4.5v3.2H4.9v-3.2c0-2.5 2.4-4.5 5.3-4.5z" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/> <path d="M15 3.6h5a1.4 1.4 0 0 1 1.4 1.4v3.4A1.4 1.4 0 0 1 20 9.8h-2.6L15 11.6V9.8a1.4 1.4 0 0 1-1.4-1.4V5a1.4 1.4 0 0 1 1.4-1.4z" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/>'],
     'person-question': ['0 0 24 24', '<circle cx="9.4" cy="7.2" r="3.6" fill="url(#gm-tan)" stroke="var(--c-tan-rim)" stroke-width="0.5"/> <path d="M9.4 12c3.6 0 6.6 2.4 6.6 5.4v4.2H2.8v-4.2c0-3 3-5.4 6.6-5.4z" fill="url(#gm-clay)" stroke="var(--c-clay-rim)" stroke-width="0.5"/> <circle cx="18.4" cy="7" r="4.8" fill="url(#gm-amber)" stroke="var(--c-amber-rim)" stroke-width="0.5"/> <text x="18.4" y="9.8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="7.4" font-weight="700" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5" text-anchor="middle">?</text>'],
 
@@ -9057,7 +9061,7 @@ window.TVE.isPhone = function () {
          that is what blocked the previous pass, which only had the mask path
          in mind and would have blanked the row. */
       '🏖': 'beach',  /* Beach chip */
-      '🌲': 'tree',  /* Nature chip */
+      '🌲': 'pine-forest-chip',  /* Nature chip */
       '🎨': 'artframe',  /* Art & museums chip */
       '🌃': 'night-sky',  /* Nightlife chip */
       '🏝': 'island',  /* Islands chip */
@@ -9458,8 +9462,8 @@ window.TVE.isPhone = function () {
     '🚌': 'transit', '🚢': 'ship', '⛴': 'ship',
     '🏝': 'island', '🏖': 'beach', '🎿': 'ski', '🎨': 'artframe',
     '🎢': 'ferris', '🛝': 'blocks', '🍽': 'restaurants', '🍷': 'wine',
-    '🌴': 'palm', '🌲': 'tree', '🍂': 'tree', '🏛': 'unesco',
-    '🌃': 'tower', '☀': 'sun', '🌤': 'sun', '❄': 'aurora', '🌡': 'sun'
+    '🌴': 'palm', '🌲': 'pine-forest-chip', '🍂': 'tree', '🏛': 'unesco',
+    '🌃': 'stage', '☀': 'sun', '🌤': 'sun', '❄': 'aurora', '🌡': 'sun'
   };
   function _injectIndexPillIcons() {
     var isIndex = /\/(index\.html)?$/.test(location.pathname) ||
