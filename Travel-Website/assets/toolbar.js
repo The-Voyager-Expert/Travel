@@ -9225,7 +9225,7 @@ window.TVE.isPhone = function () {
          fits and reusing `map` would have put one silhouette on two chips in
          the same row. */
       '🌍': 'globe',        /* World Map */
-      '⛲': 'fountain',     /* Day Trips — 128 sections */
+      '⛲': 'cathedral',     /* Day Trips — 128 sections */
       '🏓': 'paddle'        /* Pickleball — 54 sections */
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
