@@ -1090,7 +1090,10 @@
    2026-08-08 'never both surfaces' rule the owner reversed on 2026-08-10 and pointed at a
    hard-fail that is a no-op. Comment-only, but a changed shared asset still needs its floor
    raised or no returning browser loads it. toolbar.js -> v633. CACHE to v859. */
-var CACHE = 'travel-cache-v859';
+/* 2026-08-14: index.html — Compare cities label wrapped in <span class="pl"> so it is a real
+   flex item like every other pill label in the row; as a bare text node it wrapped and left
+   its icon detached, 7.9px off centre. Page HTML, no asset floor. CACHE to v860. */
+var CACHE = 'travel-cache-v860';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
