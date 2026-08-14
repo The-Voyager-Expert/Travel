@@ -1100,7 +1100,16 @@
 /* 2026-08-14: index.html — delete the four dead data-short attributes; nothing ever read
    them, so the render is byte-identical and this bump is only for tidiness of the cached
    copy. Page HTML, no asset floor. CACHE to v862. */
-var CACHE = 'travel-cache-v862';
+/* 2026-08-14: RESTRUCTURE — the guides listing moved from the site root to
+   Travel-Website/Guides/index.html (served at /Guides/) and the root became an
+   editorial landing page. toolbar.js repoints the Guides tab, the hamburger
+   label, the back-to-guides strip and the back-to-guide pill at the new path,
+   and the weather.js gate now tests the PATH because both pages are called
+   index.html. New pages: Trip-Essentials/Recommended.html, Flights.html,
+   Trains.html. The navigate fallback below still resolves to 'index.html' on
+   purpose — offline navigation should land on the site's front door.
+   toolbar.js is not in MIN_VERSIONS, so CACHE goes to v863. */
+var CACHE = 'travel-cache-v863';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1108,7 +1117,7 @@ var CACHE = 'travel-cache-v862';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 633, 'mobile.css': 78, 'web-travel-style.css': 46, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 634, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

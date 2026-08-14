@@ -912,7 +912,7 @@ window.TVE.isPhone = function () {
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     null,
-    { href: base + 'index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
+    { href: base + 'Guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
     null,
     /* OWNER-DIRECTED 2026-08-09: 👕 Packing and 🔌 Plug Adapters were standalone
        top-strip tabs; both are now children here, Packing first. Before You Go
@@ -1850,6 +1850,10 @@ window.TVE.isPhone = function () {
   var hamLabel = document.createElement('a');
   hamLabel.className = 'tb-ham-label';
   hamLabel.textContent = 'GUIDE MY DAYS';
+  /* The brand title goes to the site's FRONT DOOR, which since 2026-08-14 is the
+     landing page at the root — not the guides listing. Every other jump in this
+     file that meant "the guides listing" moved to Guides/index.html; this one
+     deliberately did not. Toolbar.html § 4. */
   hamLabel.href = base + 'index.html';
   hamLabel.style.cssText = 'text-decoration:none;color:#7a3b1e;';
   bar.appendChild(hamLabel);
@@ -2183,7 +2187,7 @@ window.TVE.isPhone = function () {
       if (/\-stops-map\.html$/.test(location.pathname)) {
         window.history.back();
       } else {
-        window.location.href = base + 'index.html';
+        window.location.href = base + 'Guides/index.html';
       }
       return;
     }
@@ -2320,7 +2324,7 @@ window.TVE.isPhone = function () {
         }
       });
     } else {
-      backGuides.href = base + 'index.html';
+      backGuides.href = base + 'Guides/index.html';
       backGuides.textContent = '‹ All Guides';
     }
     backGuides.style.cssText = pillStyle;
@@ -8412,7 +8416,13 @@ items.forEach(function (it) {
      panel) and per-guide hover weather on the cards. Deliberately NOT loaded
      on individual guide pages. Bump the ?v= below whenever weather.js changes
      so the browser refreshes it (it has no version tag on the page itself). */
-  if (curr === 'Guides-Index.html' || curr === 'index.html') {
+  /* 2026-08-14: the guides listing moved to /Guides/index.html and the site
+     root became a landing page. `curr` is only the BASENAME, so both pages
+     answer to 'index.html' — this has to test the path or weather.js loads
+     on the landing page, which has no cards for it to attach to. */
+  var _isGuidesIndex = curr === 'Guides-Index.html' ||
+                       /\/Guides\/(index\.html)?$/.test(location.pathname);
+  if (_isGuidesIndex) {
     var _wx = document.createElement('script');
     _wx.src = base + 'assets/weather.js?v=4';
     document.head.appendChild(_wx);
@@ -9006,7 +9016,7 @@ items.forEach(function (it) {
 
     var pill = document.createElement('a');
     pill.id = 'tve-map-back';
-    pill.href = base + 'index.html';
+    pill.href = base + 'Guides/index.html';
     pill.textContent = '← All Guides';
     document.body.appendChild(pill);
   }
