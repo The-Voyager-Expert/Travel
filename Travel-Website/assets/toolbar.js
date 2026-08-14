@@ -10205,7 +10205,7 @@ window.TVE.isPhone = function () {
     var cHdr   = document.createElement('div'); cHdr.className = 'tve-notes-hdr';
     var cTitle = document.createElement('span'); cTitle.className = 'tve-notes-hdr-t';
     var cPrint = document.createElement('button');
-    cPrint.type = 'button'; cPrint.className = 'tve-notes-act'; cPrint.textContent = '🖨 Print';
+    cPrint.type = 'button'; cPrint.className = 'tve-notes-act'; cPrint.innerHTML = iconSVG(NAV_ICONS['printer'], 13, 'printer') + ' Print';
     cPrint.setAttribute('aria-label', 'Print my trip notes');
     var cClear = document.createElement('button');
     cClear.type = 'button'; cClear.className = 'tve-notes-act'; cClear.textContent = 'Clear all';
