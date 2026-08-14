@@ -512,6 +512,9 @@ window.TVE.isPhone = function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    'ticket-solid': ['1 5.5 22 13', '<path fill-rule="evenodd" fill="url(#gm-rust)" stroke="var(--c-rust-rim)" stroke-width="0.5" d="M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z"/><path d="M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5ZM16.3 8.5h1.3v1.7h-1.3ZM16.3 11.15h1.3v1.7h-1.3ZM16.3 13.8h1.3v1.7h-1.3Z" fill="url(#gm-gloss)"/>'],
+    'ticket-torn': ['1 5.5 22 13', '<path d="M4 6.5H20A2 2 0 0 1 22 8.5V10A2 2 0 0 0 22 14V15.5A2 2 0 0 1 20 17.5H4A2 2 0 0 1 2 15.5V14A2 2 0 0 0 2 10V8.5A2 2 0 0 1 4 6.5Z" fill="none" stroke="var(--c-sun)" stroke-width="1.9" stroke-linejoin="round"/> <path d="M12 6.5l0.9 2.2-1.8 2.2 1.8 2.2-1.8 2.2 0.9 2.2" fill="none" stroke="var(--c-clay)" stroke-width="1.6" stroke-linejoin="round"/>'],
+
     'train-station': ['0.10 -0.90 23.81 23.81', '<rect x="6" y="5" width="12" height="5" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/><rect x="6" y="5" width="12" height="5" fill="url(#gm-gloss)"/> <circle cx="12" cy="15" r="2" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/> <path d="M4 15.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V5c0-3.5-3.58-4-8-4S4 1.5 4 5v10.5zm8 1.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-7H6V5h12v5z" fill="url(#gm-clay)" stroke="var(--c-clay-rim)" stroke-width="0.5"/>'],
 
     'restaurants-hotel': ['0 0 24 24', '<path d="M3.2 14.4a8.8 8.8 0 0 1 17.6 0z" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/> <path d="M6.2 14.4a5.8 5.8 0 0 1 9.4-4.5A8.8 8.8 0 0 0 6.2 14.4z" fill="url(#gm-blue)" stroke="var(--c-blue-rim)" stroke-width="0.5"/> <circle cx="12" cy="4.4" r="1.6" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/> <rect x="11.4" y="5.6" width="1.2" height="1.4" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/> <rect x="1.8" y="14.8" width="20.4" height="2.6" rx="1.3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/> <rect x="4.6" y="18.6" width="14.8" height="2" rx="1" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5" opacity="0.5"/>'],
@@ -9474,6 +9477,35 @@ items.forEach(function (it) {
   } else {
     _injectRowMarks();
   }
+
+  /* ── The booking and free ticket marks, drawn ────────────────────────────────
+     .ticket-flag / .free-flag paint through a CSS mask, which is monochrome and so
+     cannot carry the gradient-plus-rim treatment every neighbouring icon has. The
+     mask cannot reach --c-* custom properties from inside a data URI, so the only
+     way to treat them is an inline <use>, exactly as the coloured marks do.
+     The class is left in place: guide markup is untouched and the mask stays as the
+     fallback if this never runs. gm-drawn tells the stylesheet to drop the mask. */
+  function _injectTicketFlags() {
+    var pairs = [['.ticket-flag', 'ticket-solid'], ['.free-flag', 'ticket-torn']];
+    for (var p = 0; p < pairs.length; p++) {
+      var list = document.querySelectorAll(pairs[p][0]);
+      for (var i = 0; i < list.length; i++) {
+        var el = list[i];
+        if (el.getAttribute('data-gm-tf')) continue;
+        if (!GM_SPRITE[pairs[p][1]]) continue;
+        el.setAttribute('data-gm-tf', '1');
+        el.classList.add('gm-drawn');
+        var sp = document.createElement('span');
+        sp.className = 'gm-tf-ico';
+        sp.setAttribute('aria-hidden', 'true');
+        sp.innerHTML = '<svg viewBox="0 0 24 24"><use href="#gm-i-' + pairs[p][1] + '"/></svg>';
+        el.insertBefore(sp, el.firstChild);
+      }
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _injectTicketFlags);
+  } else { _injectTicketFlags(); }
 
   /* ── "Also on this site" footer pills — icons restored as drawings ────────
      Owner 2026-08-11: "we have these toolbars everywhere that the previous crib
