@@ -9117,7 +9117,7 @@ window.TVE.isPhone = function () {
       /* extras-sub rows. The survey is closed: across the fleet these rows
          lead with exactly six glyphs — 📅 2342 · 🚕 375 · 🚊 148 · 🚄 56 ·
          🚢 29 · 🚎 17 — so covering them leaves no mixed state in that band. */
-      '📅': 'calendar',
+      '📅': 'cal-export',
       '🚊': 'van',        /* tram — the van shape is a boxy vehicle front and */
       '🚎': 'van',        /* trolleybus — reads for all three at 15px */
       '🚄': 'train',
