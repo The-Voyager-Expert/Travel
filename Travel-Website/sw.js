@@ -1097,7 +1097,10 @@
    (Sofitel Aswan, Grande Bretagne, Hôtel de Paris, Al Bustan Palace, Al Maha, Masseria
    Torre Coccaro, Patina Maldives, Singita Sabi Sand, Malliouhana, Easter Island, Ibiza,
    Angkor, Ladakh). Page HTML, no asset floor. CACHE to v861. */
-var CACHE = 'travel-cache-v861';
+/* 2026-08-14: index.html — delete the four dead data-short attributes; nothing ever read
+   them, so the render is byte-identical and this bump is only for tidiness of the cached
+   copy. Page HTML, no asset floor. CACHE to v862. */
+var CACHE = 'travel-cache-v862';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
