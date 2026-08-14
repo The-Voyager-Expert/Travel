@@ -44,6 +44,46 @@
   color: rgb(253, 248, 240);
 }
 </style>
+<style>
+/* ═══ 2026-08-14 — THIS PAGE SHOWS GUIDES AND NOTHING ELSE ═══════════════════
+   Owner directive: the guides page is a banner and the guides. Every filter now
+   lives on the landing page, which explains each one and then offers it.
+
+   The controls are HIDDEN, not deleted — deliberately. The landing-page pills
+   work by driving these exact controls: /Guides/?type=beach finds the real Trip
+   Type chip and clicks it, so every rule those handlers enforce (mutual
+   exclusivity, islands-implies-beach, the result count) still applies. Delete
+   the markup and all 66 pills on the front page land on an unfiltered list.
+
+   The active-filter bar stays VISIBLE. Someone arriving from a pill is looking
+   at a filtered subset, and with the filter bar hidden that clear chip is their
+   only way to see everything again — without it they are stuck in a filter they
+   cannot see. */
+/* GUIDES PAGE IS ONLY GUIDES — a banner, then the guides. Nothing else.
+   Everything that explains, filters or recommends now lives on the landing page. */
+.topbar { display: none !important; }
+.page-intro-card { display: none !important; }
+/* The facet panels live OUTSIDE .topbar, so hiding the bar left them able to
+   appear — arriving from a landing pill popped the Trip Type panel open above
+   the guides. The controls inside them still work when clicked programmatically
+   while hidden, which is all the deep-link handler needs. */
+#theme-panel, #filters-panel, #lang-panel,
+#trip-twin-panel, #help-choose-panel { display: none !important; }
+/* #filter-active-bar sits OUTSIDE .topbar, so it is unaffected by the rule above
+   and keeps its own show/hide logic — it appears only when a filter is actually
+   applied, which is exactly what someone arriving from a landing-page pill needs
+   in order to get back to the full list. Forcing it visible here printed an empty
+   "clear" chip on every visit. */
+
+/* The sidebar held the Best Of list and the Also Recommended list — neither is
+   a guide, and both now live on the landing page (Best Of as icon tiles, the
+   rest behind Recommended). Hidden rather than deleted for the same reason as
+   the filters: check_best_of_sidebar_coverage HARD-FAILS if a Best-*.html page
+   has no dest-card here, so deleting the markup would break the build for a
+   purely visual change. The mosaic reclaims the freed column. */
+.mosaic-sidebar { display: none !important; }
+.mosaic-wrap { grid-template-columns: 1fr !important; }
+</style>
 <link rel="stylesheet" href="../assets/mobile.css?v=53">
 </head>
 <body>
@@ -61,7 +101,7 @@
   <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-orbited-globe"/></svg></div>
   <div>
     <div class="page-intro-head">Free travel guides, city by city — what to see, where to stay, how long to spend</div>
-    <div class="page-intro-sub">Day-by-day itineraries for cities around the world, each built the same way: what to see and in what order, how long each stop takes, how to get between them on foot or by taxi, where to stay, and what is honestly worth skipping. Search by city or country, or filter by trip length, continent, climate, language or the month you can travel. If you have not picked a destination yet, Help me choose narrows it down from what you want rather than from a map.</div>
+    <div class="page-intro-sub">Day-by-day itineraries for cities around the world, each built the same way: what to see and in what order, how long each stop takes, how to get between them on foot or by taxi, where to stay, and what is honestly worth skipping. Every guide is listed here, grouped by country. To narrow the list by trip type, length, region or language, start from the <a href="../index.html">home page</a> &mdash; each filter is explained there.</div>
   </div>
 </div>
 
@@ -4647,6 +4687,36 @@
       if (/^(10plus|[1-9]|10)$/.test(days)) {
         var item = document.querySelector('.days-jump-item[data-days="' + days + '"]');
         if (item) item.click();
+      }
+    }
+
+    /* When to go — .mchip carries a 0-11 month index, inside #filters-panel. */
+    var month = param('month');
+    if (month && /^(1[01]|[0-9])$/.test(month)) {
+      var mc = document.querySelector('.mchip[data-m="' + month + '"]');
+      if (mc && !mc.classList.contains('on')) {
+        openPanel('btn-filters-toggle');
+        mc.click();
+      }
+    }
+
+    /* Language — .lchip carries an ISO code. */
+    var lang = param('lang');
+    if (lang && /^[a-z]{2}$/.test(lang)) {
+      var lc = document.querySelector('#lang-chips .lchip[data-l="' + lang + '"]');
+      if (lc && !lc.classList.contains('on')) {
+        openPanel('btn-lang-toggle');
+        lc.click();
+      }
+    }
+
+    /* Continent — the menu is built at runtime from the CONTINENT map, so match
+       the item by its data-cont value rather than assuming a fixed order. */
+    var cont = param('continent');
+    if (cont && /^[A-Za-z ]{4,20}$/.test(cont)) {
+      var items = document.querySelectorAll('#continentJumpList .days-jump-item');
+      for (var i = 0; i < items.length; i++) {
+        if ((items[i].getAttribute('data-cont') || '') === cont) { items[i].click(); break; }
       }
     }
 

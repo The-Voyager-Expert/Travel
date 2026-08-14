@@ -57,6 +57,238 @@
 
 .chip-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
 
+/* The shared .wrap caps interior pages at a reading column. This page is not
+   an interior page — it is the front door, and it was rendering as a narrow
+   strip against the left edge of a wide display. Widened and centred here
+   only; every other page keeps the shared value. */
+.wrap { max-width: min(96vw, 100rem) !important; margin-inline: auto; }
+
+/* ═══ LANDING PAGE — fluid editorial blocks ══════════════════════════════════
+   Owner directive: this page does NOT follow the rest of the site's page format,
+   and it should feel fluid. So every size, gap and measure below is a clamp()
+   against viewport width — the page scales continuously instead of jumping at
+   breakpoints — and blocks are separated by space rather than by rules.
+
+   One block = one filter. It explains what the filter does and what data sits
+   behind it, then puts that filter's pills across the full width of the card.
+   The pills ARE the guides-index controls: each href drives the real control on
+   /Guides/ via the deep-link handler there, so nothing is duplicated or faked. */
+.lp-hero {
+  padding: clamp(2.25rem, 6vw, 4.5rem) 0 clamp(1.75rem, 4vw, 3rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+}
+/* Below ~62rem the mosaic would squeeze the copy, so it drops away entirely
+   rather than shrinking to postage stamps. */
+@media (max-width: 62rem) {
+  .lp-hero { grid-template-columns: 1fr; }
+  .lp-hero-art { display: none; }
+}
+.lp-hero-art {
+  display: grid;
+  grid-template-areas: "a a b" "a a c" "d d c";
+  gap: clamp(0.4rem, 0.8vw, 0.6rem);
+  aspect-ratio: 1 / 0.82;
+}
+.lp-hero-art a {
+  position: relative;
+  overflow: hidden;
+  border-radius: clamp(0.5rem, 1vw, 0.85rem);
+  text-decoration: none;
+  background: var(--surface2, #faf7f2);
+}
+.lp-hero-art img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .5s cubic-bezier(.2,.6,.2,1);
+}
+.lp-hero-art a:hover img { transform: scale(1.06); }
+.lp-hero-art span {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 1.6em 0.85em 0.6em;
+  font-size: clamp(0.72rem, 0.85vw, 0.82rem);
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0,0,0,0.55), transparent);
+}
+.lp-hero h1 {
+  font-size: clamp(2rem, 5.6vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+  color: var(--text, #3d3a32);
+  margin: 0 0 clamp(0.85rem, 2vw, 1.35rem);
+  max-width: 17ch;
+  text-wrap: balance;
+}
+.lp-hero h1 em { font-style: normal; color: var(--rust, #b85c2a); }
+.lp-hero p {
+  font-size: clamp(0.98rem, 1.4vw, 1.16rem);
+  line-height: 1.62;
+  color: var(--muted, #6a6660);
+  max-width: 60ch;
+  margin: 0 0 clamp(1.4rem, 3vw, 2rem);
+}
+.lp-actions { display: flex; flex-wrap: wrap; gap: clamp(0.55rem, 1.2vw, 0.85rem); }
+
+.lp-btn {
+  display: inline-flex; align-items: center; gap: 0.45em;
+  font: inherit; font-size: clamp(0.87rem, 1vw, 0.96rem); font-weight: 600;
+  padding: 0.72em 1.5em;
+  border-radius: 999px;
+  border: 1.5px solid var(--rust, #b85c2a);
+  background: var(--rust, #b85c2a);
+  color: rgb(253, 248, 240);
+  text-decoration: none; cursor: pointer;
+  transition: background .18s ease, color .18s ease;
+}
+a.lp-btn:visited { color: rgb(253, 248, 240); }
+.lp-btn:hover, .lp-btn:focus-visible, a.lp-btn:hover:visited {
+  background: transparent; color: var(--rust, #b85c2a);
+}
+.lp-btn.ghost { background: transparent; color: var(--text, #3d3a32); border-color: var(--border, #e3ddd2); }
+a.lp-btn.ghost:visited { color: #3d3a32; }  /* literal: var() is inert in :visited */
+.lp-btn.ghost:hover, a.lp-btn.ghost:hover:visited { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+
+/* The white editorial card. */
+.lp-block {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e3ddd2);
+  border-radius: clamp(0.7rem, 1.4vw, 1.1rem);
+  padding: clamp(1.5rem, 3.6vw, 2.75rem) clamp(1.3rem, 3.2vw, 2.5rem);
+  margin: 0 0 clamp(1rem, 2.4vw, 1.75rem);
+}
+.lp-block h2 {
+  font-size: clamp(1.3rem, 2.6vw, 1.95rem);
+  line-height: 1.16;
+  letter-spacing: -0.016em;
+  font-weight: 700;
+  color: var(--text, #3d3a32);
+  margin: 0 0 clamp(0.6rem, 1.3vw, 0.9rem);
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.lp-block p {
+  font-size: clamp(0.93rem, 1.1vw, 1.04rem);
+  line-height: 1.68;
+  color: var(--muted, #6a6660);
+  max-width: 64ch;
+  margin: 0 0 0.85rem;
+}
+.lp-block p strong { color: var(--text, #3d3a32); font-weight: 600; }
+.lp-block p:last-of-type { margin-bottom: clamp(1.1rem, 2.4vw, 1.6rem); }
+
+/* The filter itself — full width of the card, fluid columns, never a ragged
+   half-empty row. */
+.lp-pills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(8.5rem, 100%), 1fr));
+  gap: clamp(0.4rem, 0.9vw, 0.6rem);
+}
+.lp-pills a {
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  font-size: clamp(0.82rem, 0.95vw, 0.9rem);
+  font-weight: 500;
+  padding: 0.7em 0.9em;
+  border-radius: 999px;
+  border: 1px solid var(--border, #e3ddd2);
+  background: transparent;
+  color: var(--text, #3d3a32);
+  text-decoration: none;
+  transition: border-color .16s ease, color .16s ease, background .16s ease;
+}
+.lp-pills a:visited { color: #3d3a32; }  /* literal: var() is inert in :visited */
+.lp-pills a:hover, .lp-pills a:hover:visited {
+  border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); background: var(--surface2, #faf7f2);
+}
+
+/* 34 category names in a plain column read as a directory listing, which is
+   exactly what this block is arguing against. Each category already has a drawn
+   icon assigned in toolbar.js, so reuse those: a tile grid that scans visually
+   instead of a wall of words. Icons come from the shared sprite — no new art. */
+.lp-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(8.5rem, 100%), 1fr));
+  gap: clamp(0.35rem, 0.8vw, 0.55rem);
+  margin: clamp(1.1rem, 2.4vw, 1.7rem) 0 clamp(1.2rem, 2.6vw, 1.8rem);
+}
+.lp-tiles a {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  gap: 0.45rem;
+  padding: clamp(0.75rem, 1.5vw, 1rem) 0.4rem;
+  border-radius: clamp(0.5rem, 1vw, 0.8rem);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  text-align: center;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+.lp-tiles a:hover {
+  background: #fff;
+  border-color: rgba(184, 92, 42, 0.35);
+  transform: translateY(-2px);
+}
+.lp-tiles svg { width: clamp(1.5rem, 2.2vw, 1.9rem); height: clamp(1.5rem, 2.2vw, 1.9rem); flex-shrink: 0; }
+.lp-tiles span {
+  font-size: clamp(0.73rem, 0.85vw, 0.81rem);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text, #3d3a32);
+}
+.lp-tiles a:hover span { color: var(--rust, #b85c2a); }
+
+/* Best Of is the pitch, so its card gets a warmer ground than the rest. */
+.lp-block.feature {
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(184, 92, 42, 0.075), transparent 60%),
+    var(--surface2, #faf7f2);
+  border-color: rgba(184, 92, 42, 0.2);
+}
+.lp-kicker {
+  font-size: clamp(0.66rem, 0.78vw, 0.73rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rust, #b85c2a);
+  margin: 0 0 0.6rem;
+}
+/* The "skip the filters" card sits above everything and reads as an opening
+   move rather than a filter, so it carries no border. */
+.lp-block.open { background: transparent; border-color: transparent; padding-left: 0; padding-right: 0; }
+
+/* A control row: a button next to a native select. The select is native on
+   purpose — it is searchable by typing on every platform, and on a phone it
+   opens the OS picker rather than a bespoke menu that has to be re-learnt. */
+.lp-jump { display: flex; flex-wrap: wrap; gap: clamp(0.5rem, 1.1vw, 0.8rem); align-items: center; }
+.lp-jump label { font-size: 0.82rem; font-weight: 600; color: var(--muted, #6a6660); }
+.lp-jump select {
+  font: inherit;
+  font-size: clamp(0.85rem, 0.98vw, 0.93rem);
+  padding: 0.65em 2.2em 0.65em 1em;
+  border: 1px solid var(--border, #e3ddd2);
+  border-radius: 999px;
+  background: var(--surface, #fff);
+  color: var(--accent);
+  cursor: pointer;
+  min-width: min(18rem, 100%);
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted, #6a6660) 50%),
+                    linear-gradient(135deg, var(--muted, #6a6660) 50%, transparent 50%);
+  background-position: right 1.15em top 55%, right 0.85em top 55%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+.lp-jump select:focus { outline: none; border-color: var(--rust, #b85c2a); }
+.lp-btn.big { font-size: clamp(0.95rem, 1.2vw, 1.08rem); padding: 0.85em 1.9em; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
 
 /* Primary CTA for this page. NOT .apply-btn — that class carries the shared
    external-link chevron (::after in web-travel-style.css) and is meant for
@@ -212,248 +444,324 @@ a.land-cta:hover:visited {
 <body>
 <div class="wrap">
 
-<div id="toolbar-mount" data-depth="0" data-maxwidth="940" data-toolbar-theme="guide"></div>
+<div id="toolbar-mount" data-depth="0" data-maxwidth="1600" data-toolbar-theme="guide"></div>
 <script src="./assets/toolbar.js?v=100"></script>
 
-<div class="header">
-  <h1>GUIDE MY DAYS</h1>
-</div>
+<!-- 2026-08-14: the uppercase .header title and the .page-intro-card were removed
+     from the landing page. toolbar.js already injects the Guide My Days wordmark
+     directly above the bar, so the h1 was a second title for the same name, and
+     the intro card is the standard interior-page chrome — both made the front
+     door read as just another page of the site. Owner: this page does not follow
+     the rest of the site's page format. -->
 
-<div class="page-intro-card">
-  <div class="page-intro-icon"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><use href="#gm-i-orbited-globe"/></svg></div>
-  <div>
-    <div class="page-intro-head">Free travel guides, planned day by day — and the practical answers around them</div>
-    <div class="page-intro-sub">Every guide is built the same way: what to see and in what order, how long each stop takes, and how to get between them on foot or by ride. Around the guides sit the things you look up once and need again — visas, plugs, trains, lounges, weather windows, safety.</div>
+<header class="lp-hero">
+  <div class="lp-hero-copy">
+  <h1>Every trip, planned <em>day by day</em>.</h1>
+  <p>
+    237 cities, each written the same way — what to see and in what order, how long every
+    stop really takes, and how to get between them on foot or by ride. If you already know
+    where you're going, go straight to the guide. If you don't, each block below explains
+    one way of narrowing it down, and ends with the filter itself.
+  </p>
+  <div class="lp-actions">
+    <a class="lp-btn" href="./Guides/">Browse all 237 guides</a>
+    </div>
   </div>
-</div>
 
-<p class="lede">
-  There is more than one way in. Below, one section per tool — what it's for, what it
-  looks at, and the filter itself. Start wherever your question actually is.
-</p>
-
-<div class="land-sec">
-  <div class="land-sec-head">No destination in mind yet</div>
-  <div class="land-sec-body">
-    <strong>Help me choose</strong> is the place to start if the answer is "somewhere warm
-    in March, about a week, not too expensive." It asks four questions — when you're
-    travelling, how long for, what weather you want, and what kind of trip it is — then
-    returns only the cities that satisfy all four. It reads the real month-by-month climate
-    data behind each guide, so "warm in March" means warm in March, not warm on average.
-  </div>
-  <div class="chip-wrap">
-    <a class="land-cta" href="./Guides/#help-choose">Answer four questions</a>
-  </div>
-</div>
-
-<div class="bestof-block">
-  <div class="bestof-kicker">The part you won't find elsewhere</div>
-  <div class="bestof-head">Start from the thing you want to see, not the city</div>
-  <div class="bestof-body">
-    Most travel sites are organised by destination: pick a city, read what's in it. That's
-    backwards for a lot of trips. Nobody decides to go to Slovenia and then discovers caves
-    — they want to see a cave, and the question is which one is worth the flight.
-  </div>
-  <div class="bestof-body">
-    <strong>Best Of ranks a single category across every destination on the site.</strong>
-    Not a top-ten listicle per country, but one comparable list: every castle worth routing
-    a day around, ranked against each other, each with the city it sits in and a link
-    straight into that city's guide. Thirty-four categories, from the obvious ones to the
-    ones nobody else bothers to rank.
-  </div>
-  <div class="bestof-cats">
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Amusement-Parks.html">Amusement Parks</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Animal-Encounters.html">Animal Encounters</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Aquariums.html">Aquariums</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Architecture.html">Architecture</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Art-Museums.html">Art Museums</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Beaches.html">Beaches</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Castles.html">Castles</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Cathedrals.html">Cathedrals</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Caves.html">Caves</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Cruise-Ships.html">Cruise Lines</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Disney-Parks.html">Disney Parks</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Festival-Finder.html">Festival Finder</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Gardens.html">Gardens</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Hard-to-Reach-Places.html">Hard-to-Reach Places</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Hot-Springs.html">Hot Springs</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Islands.html">Islands</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Kids-Friendly-Places.html">Kid-Friendly Destinations</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Lakes.html">Lakes</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Mountains-and-Rock-Formations.html">Mountains &amp; Rock Formations</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Museums.html">Museums</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-National-Parks-by-Country.html">National Parks</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Natural-Phenomena.html">Natural Phenomena</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Observation-Decks.html">Observation Decks</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Pickleball.html">Pickleball</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Safari.html">Safari</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Scuba-Diving.html">Scuba Diving</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Ski-Resorts.html">Ski Resorts</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Surfing.html">Surfing</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-UNESCO-Sites.html">UNESCO Sites</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Unique-Museums.html">Unique Museums</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Volcanoes.html">Volcanoes</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Wine-Regions.html">Wine Regions</a>
-    <a class="bestof-cat" href="./Trip-Essentials/Best-Wonders-of-the-World.html">Wonders of the World</a>
-  </div>
-  <div class="bestof-body" style="margin-top:14px">
-    Same idea, different question: <a class="chevron-link-pill" href="./Trip-Essentials/Destination-Records.html">Destination records</a>
-    covers the superlatives rather than the rankings — the highest, oldest, longest and
-    largest across every destination on the site.
-  </div>
-  <a class="land-cta" href="./Trip-Essentials/Best-Of-Index.html">Browse every category</a>
-</div>
-
-<div class="land-sec">
-  <div class="land-sec-head">Flying there</div>
-  <div class="land-sec-body">
-    Everything about the flight that isn't the ticket price: which airline actually flies
-    the route, how long a connection really needs at that specific airport, what the bag
-    will cost, and where the lounge is once you're through security. Eleven pages, grouped
-    by when you'll need them.
-  </div>
-  <div class="chip-wrap">
-    <a class="land-cta" href="./Trip-Essentials/Flights.html">Flights</a>
-  </div>
-</div>
-
-<div class="land-sec">
-  <div class="land-sec-head">Going by train</div>
-  <div class="land-sec-body">
-    Counted door to door — the trip out to the airport, security, the wait — rail beats
-    flying on more European city pairs than people expect. Whether it does on your route,
-    whether a pass is worth buying, and the journeys worth taking for the ride itself.
-  </div>
-  <div class="chip-wrap">
-    <a class="land-cta" href="./Trip-Essentials/Trains.html">Trains</a>
-  </div>
-</div>
-
-<div class="land-sec">
-  <div class="land-sec-head">You already know the city</div>
-  <div class="land-sec-body">
-    Then none of the filters matter. Every guide is a day-by-day plan for one destination:
-    stops in walking order, realistic timings, and the transport between them. Search by
-    city or country, or open the full list.
-  </div>
-  <div class="chip-wrap">
-    <a class="land-cta" href="./Guides/">Browse all 231 guides</a>
-  </div>
-</div>
-
-<div class="land-sec">
-  <div class="land-sec-head">You know the kind of trip, not the place</div>
-  <div class="land-sec-body">
-    Every guide is tagged by what it's genuinely good for — not by what the city is famous
-    for. Pick the shape of the trip and the list narrows to the cities that deliver it.
-    Each chip opens the guides list already filtered.
-  </div>
-  <div class="chip-wrap">
-    <a class="hcchip" href="./Guides/?type=beach">Beach</a>
-    <a class="hcchip" href="./Guides/?type=islands">Islands</a>
-    <a class="hcchip" href="./Guides/?type=history">History</a>
-    <a class="hcchip" href="./Guides/?type=art">Art &amp; museums</a>
-    <a class="hcchip" href="./Guides/?type=foodie">Food scene</a>
-    <a class="hcchip" href="./Guides/?type=wine">Wine</a>
-    <a class="hcchip" href="./Guides/?type=nature">Nature</a>
-    <a class="hcchip" href="./Guides/?type=snow">Snow &amp; ski</a>
-    <a class="hcchip" href="./Guides/?type=nightlife">Nightlife</a>
-    <a class="hcchip" href="./Guides/?type=kids">Kid-friendly</a>
-    <a class="hcchip" href="./Guides/?type=amusement">Theme parks</a>
-  </div>
-</div>
-
-<div class="land-sec">
-  <div class="land-sec-head">Your dates are already fixed</div>
-  <div class="land-sec-body">
-    Most trips are decided by the fortnight you can take off, not by the destination. Work
-    the other way round: name the weather you want and let the dates pick the place.
-    <strong>Browse by Climate</strong> matches month against destination; <strong>When to
-    Go</strong> gives the best window per city and the months worth avoiding.
-  </div>
-  <div class="land-grid">
-    <a class="land-card" href="./Trip-Essentials/Climate-Finder.html">
-      <span class="land-card-name"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><use href="#gm-i-sun-cloud-colour"/></svg> Browse by Climate</span>
-      <span class="land-card-desc">Name the weather and the month; it returns what matches.</span>
+  <!-- Real photography from real guides — a travel site whose front door had no
+       pictures was the single biggest thing making it feel like a directory.
+       Each tile links into the guide the photo came from, so it is navigation
+       rather than decoration. Lazy + async so it never blocks first paint. -->
+  <div class="lp-hero-art" aria-label="Photographs from four guides">
+    <a href="./Guides/Santorini/santorini.html" style="grid-area:a">
+      <img src="./Guides/Santorini/_build/assets/800px-Amoudi_Bay.jpg" alt="Amoudi Bay, Santorini" loading="lazy" decoding="async">
+      <span>Santorini</span>
     </a>
-    <a class="land-card" href="./Trip-Essentials/When-to-Go.html">
-      <span class="land-card-name"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><use href="#gm-i-wall-calendar"/></svg> When to Go</span>
-      <span class="land-card-desc">Best window per destination, and what to avoid.</span>
+    <a href="./Guides/Kyoto/kyoto.html" style="grid-area:b">
+      <img src="./Guides/Kyoto/_build/assets/800px-150124_Gion_Kyoto_Japan01s3.jpg" alt="Gion, Kyoto" loading="lazy" decoding="async">
+      <span>Kyoto</span>
     </a>
-    <a class="land-card" href="./Trip-Essentials/Maps/World-Map.html">
-      <span class="land-card-name"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><use href="#gm-i-blue-marble"/></svg> World Map</span>
-      <span class="land-card-desc">Every guide as a pin, for thinking in regions.</span>
+    <a href="./Guides/Petra/petra.html" style="grid-area:c">
+      <img src="./Guides/Petra/_build/assets/800px-Ad_Deir_(The_Monastery),_El_Deir,_Petra,_Jordan.jpg" alt="The Monastery, Petra" loading="lazy" decoding="async">
+      <span>Petra</span>
+    </a>
+    <a href="./Guides/Marrakech/marrakech.html" style="grid-area:d">
+      <img src="./Guides/Marrakech/_build/assets/800px-A01_-_Marrakech_Koutoubia.jpg" alt="Koutoubia, Marrakech" loading="lazy" decoding="async">
+      <span>Marrakech</span>
     </a>
   </div>
-</div>
+</header>
 
-<div class="land-sec">
-  <div class="land-sec-head">You have a fixed number of days</div>
-  <div class="land-sec-body">
+<!-- ═══ BLOCK 0 — straight to the guides ═══════════════════════════════════════
+     Two ways in, both without touching a filter: the whole list, or one city.
+     The city picker is built at runtime from assets/search_index.json — the same
+     file the site search uses — so it can never drift from the shipped guides. -->
+<section class="lp-block open">
+  <h2>Or skip all of it.</h2>
+  <p>
+    If you already know where you're going, none of the filters below matter. Take the
+    whole list, or jump straight into one city's guide.
+  </p>
+  <div class="lp-jump">
+    <a class="lp-btn big" href="./Guides/">Browse all my guides</a>
+    <label for="guide-pick" class="sr-only">Jump to one guide</label>
+    <select id="guide-pick">
+      <option value="">…or pick one city</option>
+    </select>
+  </div>
+</section>
+
+<!-- ═══ BLOCK 1 — trip type ═══════════════════════════════════════════════════
+     The shape every block on this page follows: a wide white editorial card that
+     explains what one filter actually does and what data sits behind it, with
+     that filter's own pills running the full width at the foot of the card. The
+     reader never meets a control before the sentence that explains it. -->
+<section class="lp-block">
+  <h2>You know the kind of trip. Not the place.</h2>
+  <p>
+    Every guide is tagged by what it is genuinely good for — not by what the city is famous
+    for. Lisbon is tagged for food and nightlife but not for museums; Vienna is the other
+    way round. The tags come from what actually ends up in the itinerary, so a city only
+    carries one if the guide really spends time on it.
+  </p>
+  <p>
+    Pick the shape of the trip and the list narrows to the cities that deliver it. Each pill
+    opens the guides list with that filter already applied.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Guides/?type=beach">Beach</a>
+    <a href="./Guides/?type=islands">Islands</a>
+    <a href="./Guides/?type=history">History</a>
+    <a href="./Guides/?type=art">Art &amp; museums</a>
+    <a href="./Guides/?type=foodie">Food scene</a>
+    <a href="./Guides/?type=wine">Wine</a>
+    <a href="./Guides/?type=nature">Nature</a>
+    <a href="./Guides/?type=snow">Snow &amp; ski</a>
+    <a href="./Guides/?type=nightlife">Nightlife</a>
+    <a href="./Guides/?type=kids">Kid-friendly</a>
+    <a href="./Guides/?type=amusement">Theme parks</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 2 — when to go ═══════════════════════════════════════════════
+     NOTE: this block deliberately does NOT link month pills into /Guides/.
+     The listing's "When to go" filter returns zero results on a bare month
+     click — only 31 of 286 dest-cards carry data-climate, and every card is
+     season-hidden regardless of where the temperature sliders sit. Verified
+     against the pre-move backup (identical counts), so it predates the
+     restructure. Until that is fixed, this card sends readers to the two
+     pages that genuinely answer the question. -->
+<section class="lp-block">
+  <h2>Your dates are fixed. The destination isn't.</h2>
+  <p>
+    Most trips are decided by the fortnight you can actually take off, not by the place.
+    So work it the other way round: start from the month you're free, and let the dates
+    pick the destination.
+  </p>
+  <p>
+    <strong>Browse by Climate</strong> matches the weather you want against the month you
+    have and returns what fits. <strong>When to Go</strong> does it per destination — the
+    best window for each city, and the months worth avoiding.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Climate-Finder.html">Browse by climate</a>
+    <a href="./Trip-Essentials/When-to-Go.html">When to go</a>
+    <a href="./Trip-Essentials/Maps/World-Map.html">World map</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 3 — trip length ══════════════════════════════════════════════ -->
+<section class="lp-block">
+  <h2>You know how many days you've got.</h2>
+  <p>
     Length decides which cities are worth it at all. Three days suits one dense city and
-    not a country; ten opens up loops and day trips. Guides are written to a length rather
-    than padded to fill one.
-  </div>
-  <!-- Lengths shown are the ones that actually have guides behind them
-       (2 days:17 · 3:58 · 4:45 · 5:44 · 6:53 · 7:9 — from DAYS_DATA in
-       Guides/index.html). 8, 9 and 10 have 8, 1 and 2 guides; "10plus" has
-       none at all, so a chip for it would land the reader on an empty list. -->
-  <div class="chip-wrap">
-    <a class="hcchip" href="./Guides/?days=2">2 days</a>
-    <a class="hcchip" href="./Guides/?days=3">3 days</a>
-    <a class="hcchip" href="./Guides/?days=4">4 days</a>
-    <a class="hcchip" href="./Guides/?days=5">5 days</a>
-    <a class="hcchip" href="./Guides/?days=6">6 days</a>
-    <a class="hcchip" href="./Guides/?days=7">7 days</a>
-  </div>
-</div>
+    not a country; a week opens up loops and day trips; ten days is a different trip
+    entirely.
+  </p>
+  <p>
+    Every guide here is <strong>written to a length</strong> rather than padded to fill
+    one — a 3-day Lisbon is a genuinely different plan from a 6-day Lisbon, not the same
+    plan stretched. Pick your number and you only see guides built for it.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Guides/?days=2">2 days</a>
+    <a href="./Guides/?days=3">3 days</a>
+    <a href="./Guides/?days=4">4 days</a>
+    <a href="./Guides/?days=5">5 days</a>
+    <a href="./Guides/?days=6">6 days</a>
+    <a href="./Guides/?days=7">7 days</a>
+  </nav>
+</section>
 
+<!-- ═══ BLOCK 4 — continent ════════════════════════════════════════════════ -->
+<section class="lp-block">
+  <h2>You already know the part of the world.</h2>
+  <p>
+    Sometimes the decision is made before the city is — you have miles to Asia, family in
+    Europe, or a fortnight and a wish to go somewhere far. Start from the region and let
+    the shortlist come to you.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Guides/?continent=Europe">Europe</a>
+    <a href="./Guides/?continent=Asia">Asia</a>
+    <a href="./Guides/?continent=North%20America">North America</a>
+    <a href="./Guides/?continent=South%20America">South America</a>
+    <a href="./Guides/?continent=Africa">Africa</a>
+    <a href="./Guides/?continent=Oceania">Oceania</a>
+  </nav>
+</section>
 
-<div class="land-sec">
-  <div class="land-sec-head">Once the trip is booked</div>
-  <div class="land-sec-body">
-    The practical layer — the things that are irritating to discover at the airport or on
-    arrival. Look them up once, then forget them.
-  </div>
-  <div class="land-grid">
-    <a class="land-card" href="./Trip-Essentials/Visas.html">
-      <span class="land-card-name"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><use href="#gm-i-passport"/></svg> Visas &amp; Entry</span>
-      <span class="land-card-desc">What you need to get in, by passport and destination.</span>
-    </a>
-    <a class="land-card" href="./Trip-Essentials/Travel-Packing.html">
-      <span class="land-card-name"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><use href="#gm-i-luggage"/></svg> Packing Checklist</span>
-      <span class="land-card-desc">Built from the trip rather than a generic list.</span>
-    </a>
-    <a class="land-card" href="./Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html">
-      <span class="land-card-name">Plug Adapters</span>
-      <span class="land-card-desc">Which plug and which voltage, per country.</span>
-    </a>
-    <a class="land-card" href="./Trip-Essentials/Safety-Guide.html">
-      <span class="land-card-name"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><use href="#gm-i-safety-guide"/></svg> Safety</span>
-      <span class="land-card-desc">Current advisory level per destination, plainly stated.</span>
-    </a>
-    <a class="land-card" href="./Trip-Essentials/Hotels-Stays.html">
-      <span class="land-card-name"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><use href="#gm-i-hotel"/></svg> Hotels &amp; Stays</span>
-      <span class="land-card-desc">Choosing the neighbourhood before the hotel.</span>
-    </a>
-    <a class="land-card" href="./Trip-Essentials/Before-You-Go.html">
-      <span class="land-card-name">Before You Go</span>
-      <span class="land-card-desc">Everything above, gathered per destination.</span>
-    </a>
-  </div>
-</div>
+<!-- ═══ BLOCK 5 — language ═════════════════════════════════════════════════ -->
+<section class="lp-block">
+  <h2>You'd rather not be lost in translation.</h2>
+  <p>
+    Travelling somewhere you can read the menu and ask for directions changes the trip —
+    especially with kids, on a first trip abroad, or anywhere you'll be driving.
+  </p>
+  <p>
+    Every guide records <strong>the languages actually spoken</strong> at the destination,
+    not just the official one. Pick yours and see everywhere you'd get by comfortably.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Guides/?lang=en">English</a>
+    <a href="./Guides/?lang=es">Spanish</a>
+    <a href="./Guides/?lang=fr">French</a>
+    <a href="./Guides/?lang=de">German</a>
+    <a href="./Guides/?lang=it">Italian</a>
+    <a href="./Guides/?lang=pt">Portuguese</a>
+    <a href="./Guides/?lang=nl">Dutch</a>
+    <a href="./Guides/?lang=ja">Japanese</a>
+    <a href="./Guides/?lang=zh">Chinese</a>
+    <a href="./Guides/?lang=ko">Korean</a>
+    <a href="./Guides/?lang=ar">Arabic</a>
+    <a href="./Guides/?lang=th">Thai</a>
+    <a href="./Guides/?lang=tr">Turkish</a>
+    <a href="./Guides/?lang=sv">Swedish</a>
+    <a href="./Guides/?lang=no">Norwegian</a>
+    <a href="./Guides/?lang=da">Danish</a>
+    <a href="./Guides/?lang=fi">Finnish</a>
+  </nav>
+</section>
 
-<div class="land-sec">
-  <div class="land-sec-head">Everything else</div>
-  <div class="land-sec-body">
-    Money, SIM cards, tipping, transit cards, car hire, booking windows — the
-    practical questions that belong to no single part of a trip. They are gathered
-    on one page rather than scattered through the nav.
-  </div>
-  <div class="chip-wrap">
-    <a class="land-cta" href="./Trip-Essentials/Recommended.html">Recommended</a>
-  </div>
-</div>
+<!-- ═══ BLOCK 6 — Best Of ═════════════════════════════════════════════════
+     The centre of the page and the strongest pitch on it. 34 categories is too
+     many to lay out as pills without swamping every other block, so they go in
+     a select — one control, the full list, and it jumps on choice. -->
+<section class="lp-block feature">
+  <p class="lp-kicker">The part you won't find elsewhere</p>
+  <h2>Start from the thing you want to see. Not the city.</h2>
+  <p>
+    Most travel sites are organised by destination: pick a city, then read what's inside
+    it. That's backwards for a lot of trips. Nobody decides to visit Slovenia and then
+    discovers caves — they want to see a cave, and the real question is which one is worth
+    the flight.
+  </p>
+  <p>
+    <strong>Best Of ranks one category across every destination on the site.</strong> Not a
+    top-ten per country, but a single comparable list — every castle worth routing a day
+    around, ranked against each other, each with the city it sits in and a link straight
+    into that city's guide. Thirty-four categories, from the obvious to the ones nobody
+    else bothers to rank.
+  </p>
+  <nav class="lp-tiles">
+    <a href="./Trip-Essentials/Best-Amusement-Parks.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-ferris"/></svg><span>Amusement Parks</span></a>
+    <a href="./Trip-Essentials/Best-Animal-Encounters.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-giraffe"/></svg><span>Animal Encounters</span></a>
+    <a href="./Trip-Essentials/Best-Aquariums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-fish"/></svg><span>Aquariums</span></a>
+    <a href="./Trip-Essentials/Best-Architecture.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-mosque"/></svg><span>Architecture</span></a>
+    <a href="./Trip-Essentials/Best-Art-Museums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-artframe"/></svg><span>Art Museums</span></a>
+    <a href="./Trip-Essentials/Best-Beaches.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-beach"/></svg><span>Beaches</span></a>
+    <a href="./Trip-Essentials/Best-Castles.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-castle"/></svg><span>Castles</span></a>
+    <a href="./Trip-Essentials/Best-Cathedrals.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-cathedral"/></svg><span>Cathedrals</span></a>
+    <a href="./Trip-Essentials/Best-Caves.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-cave"/></svg><span>Caves</span></a>
+    <a href="./Trip-Essentials/Cruise-Ships.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-ship"/></svg><span>Cruise Lines</span></a>
+    <a href="./Trip-Essentials/Disney-Parks.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-disney-parks"/></svg><span>Disney Parks</span></a>
+    <a href="./Trip-Essentials/Festival-Finder.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-bunting"/></svg><span>Festival Finder</span></a>
+    <a href="./Trip-Essentials/Best-Gardens.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-flower"/></svg><span>Gardens</span></a>
+    <a href="./Trip-Essentials/Best-Hard-to-Reach-Places.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-compass-classic"/></svg><span>Hard-to-Reach</span></a>
+    <a href="./Trip-Essentials/Best-Hot-Springs.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-hot-pool"/></svg><span>Hot Springs</span></a>
+    <a href="./Trip-Essentials/Best-Islands.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-island"/></svg><span>Islands</span></a>
+    <a href="./Trip-Essentials/Best-Kids-Friendly-Places.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pagoda"/></svg><span>Kid-Friendly</span></a>
+    <a href="./Trip-Essentials/Best-Lakes.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-lake-jetty"/></svg><span>Lakes</span></a>
+    <a href="./Trip-Essentials/Best-Mountains-and-Rock-Formations.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-mountain"/></svg><span>Mountains</span></a>
+    <a href="./Trip-Essentials/Best-Museums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-museumstar"/></svg><span>Museums</span></a>
+    <a href="./Trip-Essentials/Best-National-Parks-by-Country.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pine-forest"/></svg><span>National Parks</span></a>
+    <a href="./Trip-Essentials/Best-Natural-Phenomena.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-aurora"/></svg><span>Natural Phenomena</span></a>
+    <a href="./Trip-Essentials/Best-Observation-Decks.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-tower"/></svg><span>Observation Decks</span></a>
+    <a href="./Trip-Essentials/Pickleball.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pickleball-clear"/></svg><span>Pickleball</span></a>
+    <a href="./Trip-Essentials/Best-Safari.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-lion"/></svg><span>Safari</span></a>
+    <a href="./Trip-Essentials/Best-Scuba-Diving.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-scuba"/></svg><span>Scuba Diving</span></a>
+    <a href="./Trip-Essentials/Best-Ski-Resorts.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-ski"/></svg><span>Ski Resorts</span></a>
+    <a href="./Trip-Essentials/Best-Surfing.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-surf"/></svg><span>Surfing</span></a>
+    <a href="./Trip-Essentials/Best-UNESCO-Sites.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-pagoda"/></svg><span>UNESCO Sites</span></a>
+    <a href="./Trip-Essentials/Best-Unique-Museums.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-museum-amber"/></svg><span>Unique Museums</span></a>
+    <a href="./Trip-Essentials/Best-Volcanoes.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-volcano-erupting"/></svg><span>Volcanoes</span></a>
+    <a href="./Trip-Essentials/Best-Wine-Regions.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-wine"/></svg><span>Wine Regions</span></a>
+    <a href="./Trip-Essentials/Best-Wonders-of-the-World.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-mosque"/></svg><span>Wonders</span></a>
+    <a href="./Trip-Essentials/Destination-Records.html"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-chart"/></svg><span>Records & Stats</span></a>
+  </nav>
+  <a class="lp-btn" href="./Trip-Essentials/Best-Of-Index.html">Browse every category</a>
+</section>
+
+<!-- ═══ BLOCK 7 — flights ══════════════════════════════════════════════════ -->
+<section class="lp-block">
+  <h2>Everything about the flight that isn't the price.</h2>
+  <p>
+    Which airline actually flies the route, how long a connection really needs at that
+    specific airport, what the bag will cost, and where the lounge is once you're through
+    security. The route maps are the <strong>full published networks</strong> for the three
+    US carriers — so you can see whether a nonstop exists before you start pricing.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Flights.html">All flight pages</a>
+    <a href="./Trip-Essentials/Airlines-of-the-World.html">Airlines</a>
+    <a href="./Trip-Essentials/Airport-Connection-Times.html">Connection times</a>
+    <a href="./Trip-Essentials/Lounges-US.html">US lounges</a>
+    <a href="./Trip-Essentials/Lounges-Europe.html">EU lounges</a>
+    <a href="./Trip-Essentials/Baggage.html">Baggage</a>
+    <a href="./Trip-Essentials/Luggage-Storage.html">Luggage storage</a>
+    <a href="./Trip-Essentials/Trusted-Traveler.html">Global Entry</a>
+    <a href="./Trip-Essentials/Passport.html">Passport</a>
+    <a href="./Trip-Essentials/Delta-Routes-Full.html">Delta network</a>
+    <a href="./Trip-Essentials/United-Routes-Full.html">United network</a>
+    <a href="./Trip-Essentials/American-Routes-Full.html">American network</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 8 — trains ═══════════════════════════════════════════════════ -->
+<section class="lp-block">
+  <h2>On a lot of European routes, the train just wins.</h2>
+  <p>
+    Counted properly — the trip out to the airport, security, the wait, and the journey
+    back into the city at the other end — rail beats flying on more city pairs than people
+    expect. And on a few routes the journey is the reason to go rather than the cost of
+    getting there.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Trains.html">All rail pages</a>
+    <a href="./Trip-Essentials/European-Train-Guide.html">European train guide</a>
+    <a href="./Trip-Essentials/Train-Passes.html">Train pass comparison</a>
+    <a href="./Trip-Essentials/Day-Trips.html">Day trips by train</a>
+    <a href="./Trip-Essentials/Scenic-Train-Journeys.html">Scenic journeys</a>
+  </nav>
+</section>
+
+<!-- ═══ BLOCK 9 — recommended (last, deliberately the least real estate) ════ -->
+<section class="lp-block">
+  <h2>And the rest of it.</h2>
+  <p>
+    Money, SIM cards, tipping, transit cards, car hire, booking windows — the practical
+    questions that belong to no single part of a trip. They're gathered on one page rather
+    than scattered through the nav.
+  </p>
+  <nav class="lp-pills">
+    <a href="./Trip-Essentials/Recommended.html">Recommended</a>
+    <a href="./Trip-Essentials/Hotels-Stays.html">Hotels &amp; stays</a>
+    <a href="./Trip-Essentials/Visas.html">Visas &amp; entry</a>
+    <a href="./Trip-Essentials/Safety-Guide.html">Safety</a>
+    <a href="./Trip-Essentials/Travel-Packing.html">Packing</a>
+    <a href="./Trip-Essentials/Before-You-Go.html">Before you go</a>
+  </nav>
+</section>
 
 <div class="contact-card">
   <div class="contact-head">Questions or suggestions?</div>
@@ -489,6 +797,53 @@ a.land-cta:hover:visited {
 
   <p class="cf-note">Prefer your own mail app? <a href="mailto:contact@guidemydays.com?subject=Guide%20My%20Days">contact@guidemydays.com</a></p>
 </div>
+
+<script>
+/* ── The two jump menus ─────────────────────────────────────────────────────
+   Best Of is a static list (34 categories, they change rarely and a wrong one
+   is a 404 you'd notice). The guide picker is built from search_index.json —
+   the same file the site search reads — so it lists exactly the guides that
+   shipped and cannot drift as guides are added. If the fetch fails the select
+   simply stays disabled with a note; the "Browse all my guides" button beside
+   it is a plain link and always works. */
+(function () {
+  var best = document.getElementById('bestof-pick');
+  if (best) {
+    best.addEventListener('change', function () {
+      if (best.value) location.href = best.value;
+    });
+  }
+
+  var pick = document.getElementById('guide-pick');
+  if (!pick || !window.fetch) return;
+
+  fetch('./assets/search_index.json')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var guides = (data && data.guides) || [];
+      if (!guides.length) throw new Error('no guides');
+      guides.slice().sort(function (a, b) {
+        return (a.c || '').localeCompare(b.c || '');
+      }).forEach(function (g) {
+        if (!g.u || !g.c) return;
+        var o = document.createElement('option');
+        /* `u` is WEB_ROOT-relative ("Guides/City/city.html") and this page IS
+           the web root, so it is already the correct href from here. */
+        o.value = './' + g.u;
+        o.textContent = g.c;
+        pick.appendChild(o);
+      });
+      pick.options[0].textContent = '…or pick one of ' + guides.length + ' cities';
+      pick.addEventListener('change', function () {
+        if (pick.value) location.href = pick.value;
+      });
+    })
+    .catch(function () {
+      pick.disabled = true;
+      pick.options[0].textContent = 'City list unavailable — use Browse all';
+    });
+})();
+</script>
 
 <script>
 /* Submit the contact form without leaving the page, so a sent message does not

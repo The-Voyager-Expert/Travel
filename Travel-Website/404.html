@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found — Guide My Days</title>
+<link rel="stylesheet" href="/assets/web-travel-style.css">
+<style>
+/* 2026-08-14: GitHub Pages serves this for any unmatched path.
+
+   Its first job is case-repair. Pages is case-SENSITIVE while the folders on
+   disk are capitalised (Guides/, Trip-Essentials/), so a hand-typed
+   guidemydays.com/guides — the obvious thing to type — returned a hard 404.
+   A lowercase folder cannot simply be added: macOS is case-insensitive, so
+   guides/ and Guides/ are the same directory and cannot coexist. Renaming the
+   folder instead would rewrite the URL of all 237 guides and every one of the
+   97 files that reference them, for a purely cosmetic gain.
+
+   So this redirects the known case variants instead — no renames, no reference
+   chase, and a typed lowercase URL lands where the reader expected. Anything it
+   cannot repair gets a plain, honest page rather than the GitHub default. */
+.nf { max-width: min(92vw, 40rem); margin: 0 auto; padding: clamp(3rem, 12vh, 7rem) 1.25rem; }
+.nf h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 0.75rem; }
+.nf p { font-size: 1rem; line-height: 1.65; color: var(--muted, #6a6660); margin: 0 0 1.5rem; }
+.nf a.btn {
+  display: inline-flex; align-items: center; font-weight: 600; font-size: 0.95rem;
+  padding: 0.72em 1.5em; border-radius: 999px;
+  border: 1.5px solid var(--rust, #b85c2a); background: var(--rust, #b85c2a);
+  color: rgb(253, 248, 240); text-decoration: none; margin-right: 0.5rem;
+}
+a.btn:visited { color: rgb(253, 248, 240); }
+.nf a.btn.ghost { background: transparent; color: #3d3a32; border-color: var(--border, #e3ddd2); }
+.nf a.btn.ghost:visited { color: #3d3a32; }
+</style>
+</head>
+<body>
+<script>
+/* Repair before paint where possible, so a corrected URL never flashes this
+   page. Only rewrites the FIRST path segment, and only to a known folder — it
+   never invents a destination, so an genuinely unknown URL still lands here. */
+(function () {
+  var FOLDERS = ['Guides', 'Trip-Essentials', 'Reports', 'assets'];
+  var parts = location.pathname.split('/');
+  var i, seg, f;
+  for (i = 0; i < parts.length; i++) {
+    seg = parts[i];
+    if (!seg) continue;
+    for (f = 0; f < FOLDERS.length; f++) {
+      if (seg !== FOLDERS[f] && seg.toLowerCase() === FOLDERS[f].toLowerCase()) {
+        parts[i] = FOLDERS[f];
+        location.replace(parts.join('/') + location.search + location.hash);
+        return;
+      }
+    }
+    break; /* only the first non-empty segment is repaired */
+  }
+})();
+</script>
+
+<div id="toolbar-mount" data-depth="0" data-maxwidth="940" data-toolbar-theme="guide" data-updated="2026-08-14"></div>
+<script src="/assets/toolbar.js?v=100"></script>
+
+<div class="nf">
+  <h1>That page isn't here.</h1>
+  <p>
+    The link may be out of date, or the address slightly off. The guides are all in one
+    place, and the home page explains the rest.
+  </p>
+  <a class="btn" href="/Guides/">Browse all guides</a>
+  <a class="btn ghost" href="/">Home</a>
+</div>
+</body>
+</html>
