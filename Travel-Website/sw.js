@@ -1070,7 +1070,8 @@
 /* 2026-08-14: neighborhoods #1323, tower #1331, ticket-torn resync toolbar.js -> v618. CACHE to v841. */
 /* 2026-08-14: Day Trips #1363, Museums #1346 toolbar.js -> v619. CACHE to v842. */
 /* 2026-08-14: dish-cloche resync toolbar.js -> v620. CACHE to v843. */
-var CACHE = 'travel-cache-v843';
+/* 2026-08-14: kids #1299, restaurants #1342, local tastes #1378 toolbar.js -> v621. CACHE to v844. */
+var CACHE = 'travel-cache-v844';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1078,7 +1079,7 @@ var CACHE = 'travel-cache-v843';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 203, 'toolbar.js': 620, 'mobile.css': 78, 'web-travel-style.css': 46, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 203, 'toolbar.js': 621, 'mobile.css': 78, 'web-travel-style.css': 46, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
