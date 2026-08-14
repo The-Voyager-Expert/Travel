@@ -1105,7 +1105,9 @@ window.TVE.isPhone = function () {
        them here together — the gutter and the tab gap must stay equal
        (check_toolbar_font_size_unified), and now the ring follows for free. */
     '.tb-inner{flex:0 1 auto;min-width:0;' +
-      '--tb-gap:clamp(5px,6.67vw - 88.7px,11px);--tb-ring-off:calc(var(--tb-gap)/2 - 1.75px);' +
+      /* 2026-08-14: the 5-11px gap was tuned when fourteen tabs had to fit a bar
+   with no spare width. There are five now, so the tabs get real air. */
+      '--tb-gap:clamp(8px,1.5vw,24px);--tb-ring-off:calc(var(--tb-gap)/2 - 1.75px);' +
       'padding-left:var(--tb-gap);padding-right:var(--tb-gap)}' +
     /* NARROW DESKTOP ONLY — added 2026-08-10 with the desktop-holds change, and
        deliberately NOT on the base .tb-inner rule, which Cleanliness Rule 582
@@ -1193,12 +1195,12 @@ window.TVE.isPhone = function () {
       /* Re-point --tb-gap rather than restating the value in three places: the
          gutter, the column gap AND the ring offset all follow it, so the ring
          widens back out with the roomier wrapped spacing automatically. */
-      '.tb-inner{--tb-gap:clamp(6px,0.72vw,11px);padding-left:var(--tb-gap);padding-right:var(--tb-gap)}' +
+      '.tb-inner{--tb-gap:clamp(8px,1.2vw,20px);padding-left:var(--tb-gap);padding-right:var(--tb-gap)}' +
     '}' +
     /* Desktop nav links — white text on gradient bar.
        Colours use !important so a page's own `a{}` / `a:visited{}` rules
        (e.g. guide-style.css link colours) can NEVER bleed into the shared bar. */
-    '.tb a,.tb a:visited{font-size:14px;font-weight:700;color:#7a3b1e!important;text-decoration:none;padding:2px 2px;' +
+    '.tb a,.tb a:visited{font-size:14px;font-weight:600;color:#7a3b1e!important;text-decoration:none;padding:8px 18px;border:1px solid transparent;border-radius:999px;' +
       'border:none;border-radius:4px;background:transparent;white-space:nowrap;flex-shrink:0;' +
       'transition:color .15s,background .15s}' +
     '.tb a:hover{color:#7a3b1e!important;background:transparent}' +
@@ -1213,14 +1215,14 @@ window.TVE.isPhone = function () {
        no space at all, so the row is now exactly one width in every state.
        .tb-ddbtn.tb-active below already worked this way; these two now match
        it. Never put this back to border+padding. */
-    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:transparent;outline:1.5px solid rgba(184,92,42,0.85);outline-offset:5px;border-radius:14px;font-weight:600;line-height:1.2}' +
+    '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;padding:8px 18px;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(184,92,42,0.55);border-radius:999px;font-weight:600;line-height:1.2}' +
     /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
-    '.tb-ddbtn{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:#7a3b1e!important;' +
-      'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
+    '.tb-ddbtn{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:600;color:#7a3b1e!important;' +
+      'padding:8px 18px;border:1px solid transparent;border-radius:999px;background:transparent;white-space:nowrap;' +
       'cursor:pointer;font-family:inherit;transition:color .15s,background .15s}' +
     '.tb-ddbtn:hover{color:#7a3b1e!important;background:transparent}' +
-    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:transparent;outline:1.5px solid rgba(184,92,42,0.85);outline-offset:5px;border-radius:14px;font-weight:600;line-height:1.2}' +
+    '.tb-ddbtn.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:#fdf4ed;border:1px solid rgba(184,92,42,0.55);border-radius:999px;font-weight:600;line-height:1.2}' +
     /* An OPEN dropdown gets the same terracotta ring as the active tab, so the
    menu is visibly attached to the tab it came from. It only changed text
    colour before, which was invisible against the other tabs. */
@@ -1264,6 +1266,11 @@ window.TVE.isPhone = function () {
        flex:1 is what pushes the badge to the right edge, not space-between. */
     '.tb-menu a.tb-has-ico.tb-has-new{gap:9px;justify-content:flex-start}' +
     '.tb a.tb-has-ico{display:inline-flex;align-items:center;gap:5px}' +
+    /* 2026-08-14 OWNER: no icons on the bar. The emoji/SVG mark beside each tab
+   was the last thing making the nav look dated, and with five plain words
+   the label carries it alone. Hidden rather than removed from the data, so
+   groupIcon stays intact for the dropdown headers and the hamburger. */
+    '.tb .tb-ico,.tb-ddbtn .tb-ico{display:none!important}' +
     '.tb-ico{flex-shrink:0;display:inline-flex;align-items:center;line-height:0}' +
     '.tb-menu a.tb-has-new{display:flex;align-items:center;justify-content:space-between;gap:12px}' +
     '.tb-new,.tb-ham-new{flex-shrink:0;font-size:7.5px;font-weight:700;letter-spacing:.07em;' +

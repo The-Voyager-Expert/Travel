@@ -556,24 +556,39 @@ a.land-cta:hover:visited {
    the text wrapped every few words. 82rem keeps a comfortable measure in both
    cells; below it the sections stack full width. */
 @media (min-width: 82rem) {
+  /* ── Varied widths ────────────────────────────────────────────────────────
+     A 1.55fr/1fr pair repeated down the page gave every row the same two boxes
+     (782 / 504, over and over) — asymmetric, but monotonous. A 12-column track
+     lets each section take a different span, so no two boxes in sequence share
+     a width and the page reads as a composed layout rather than a template.
+
+     The cycle is 5+7 · 8+4 · full · 4+8 · 7+5 · 9+3, which never repeats a
+     width adjacently and always sums to 12. Dense flow keeps the rows packed if
+     a full-width block interrupts the cycle. */
   .lp-grid {
     display: grid;
-    /* Not half and half. A wide reading column and a narrower companion, the
-       way a travel-site page sets a main column against a sidebar — equal cells
-       gave two mediocre measures instead of one good one. */
-    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-    gap: clamp(1.25rem, 2.6vw, 2rem);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-flow: dense;
+    column-gap: clamp(1.25rem, 2.6vw, 2.25rem);
+    row-gap: clamp(1.25rem, 2.6vw, 2.25rem);
     align-items: start;
   }
   .lp-grid > .lp-block { margin: 0; }
-  /* Only the genuinely wide ones span. A stacked column is a NARROW list by
-     design, so it takes one grid column and shares the row with whatever sits
-     beside it — spanning left two-thirds of the row empty. */
-  .lp-grid > .lp-block.open,
-  .lp-grid > .lp-block.feature,
-  .lp-grid > .lp-block.dark { grid-column: 1 / -1; }
-  /* the right-hand stacked column keeps its right alignment inside its cell */
-  .lp-grid > .lp-block.stack.right { text-align: right; }
+
+  /* the six-step cycle */
+  .lp-grid > .lp-block:nth-of-type(6n+1) { grid-column: span 5; }
+  .lp-grid > .lp-block:nth-of-type(6n+2) { grid-column: span 7; }
+  .lp-grid > .lp-block:nth-of-type(6n+3) { grid-column: span 8; }
+  .lp-grid > .lp-block:nth-of-type(6n+4) { grid-column: span 4; }
+  .lp-grid > .lp-block:nth-of-type(6n+5) { grid-column: span 7; }
+  .lp-grid > .lp-block:nth-of-type(6n+6) { grid-column: span 5; }
+
+  /* overrides that beat the cycle */
+  .lp-grid > .lp-block.dark    { grid-column: span 12; }   /* the one banner */
+  .lp-grid > .lp-block.feature { grid-column: span 12; }
+  .lp-grid > .lp-block.open    { grid-column: span 12; }
+  .lp-grid > .lp-block.stack   { grid-column: span 4; }    /* ~19rem lists */
+  .lp-grid > .lp-block.stack.right { text-align: left; }
 }
 
 </style>

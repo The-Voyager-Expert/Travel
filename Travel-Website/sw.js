@@ -1131,7 +1131,9 @@
    separators, so every guide threw on ch.href and rendered no toolbar at all.
    Guards restored; four regexes that had the /i flag mangled INTO the character
    class ([^\\/i] instead of [^\\/]) repaired. floor -> 638, CACHE v868. */
-var CACHE = 'travel-cache-v868';
+/* 2026-08-14: toolbar restyle — icons hidden, tabs spaced, rounded pills.
+   floor -> 639, CACHE v869. */
+var CACHE = 'travel-cache-v869';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1139,7 +1141,7 @@ var CACHE = 'travel-cache-v868';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 638, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 639, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
