@@ -1093,7 +1093,11 @@
 /* 2026-08-14: index.html — Compare cities label wrapped in <span class="pl"> so it is a real
    flex item like every other pill label in the row; as a bare text node it wrapped and left
    its icon detached, 7.9px off centre. Page HTML, no asset floor. CACHE to v860. */
-var CACHE = 'travel-cache-v860';
+/* 2026-08-14: Best-Of pages — 13 dead outbound links repointed at verified live URLs
+   (Sofitel Aswan, Grande Bretagne, Hôtel de Paris, Al Bustan Palace, Al Maha, Masseria
+   Torre Coccaro, Patina Maldives, Singita Sabi Sand, Malliouhana, Easter Island, Ibiza,
+   Angkor, Ladakh). Page HTML, no asset floor. CACHE to v861. */
+var CACHE = 'travel-cache-v861';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
