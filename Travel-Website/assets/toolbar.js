@@ -1,7 +1,7 @@
 /**
  * toolbar.js — shared travel navigation bar
  *
- * ⚠️ HOME: Travel Website/assets/toolbar.js — site-wide shared asset.
+ * #992️ HOME: Travel Website/assets/toolbar.js — site-wide shared asset.
  * The shared scripts/styles (toolbar.js, weather.js,
  * guide-style.css, mobile.css, climate.json) all live in assets/. Every page
  * loads them from assets/ at its own relative depth below the site root:
@@ -113,8 +113,8 @@ window.TVE.isPhone = function () {
 
    That is not just a flash of unstyled content. Everything toolbar.js measures
    at DOMContentLoaded measures an UNSTYLED document: _phFit() read a
-   .ticket-box gutter of 0 and stepped every 🕐 hours band on every guide one
-   full 14px gutter right of the 🎟 / 📍 rows around it, for as long as the
+   .ticket-box gutter of 0 and stepped every #60 hours band on every guide one
+   full 14px gutter right of the 🎟 / #34 rows around it, for as long as the
    feature had shipped (owner report 2026-08-11, "this is not aligned … look at
    the time"). Any future pass that reads geometry early would inherit the same
    trap silently.
@@ -391,7 +391,7 @@ window.TVE.isPhone = function () {
      row and the page it opens are visibly one thing. (Do not switch this to
      currentColor: the glyph then takes the row's near-black label colour and
      the icons go grey — owner caught exactly that on 2026-08-10.)
-     Two flat Apple-emoji rows (🪪 Visas ×4) were indistinguishable at a
+     Two flat Apple-emoji rows (#442 Visas ×4) were indistinguishable at a
      glance; these are not. Adding an `icon:` key also exempts the child from
      check_toolbar_group_icon_consistency's shared-emoji rule — the SVG IS the
      icon, so there is no leading emoji left to match against. */
@@ -839,7 +839,7 @@ window.TVE.isPhone = function () {
 
      That is not hypothetical and it is why this function exists: c79854ea
      (2026-08-13) added `groupIcon:'hotel'`, `icon:'hotel'` and `icon:'sparkle'`
-     — all three sprite-only — and 🏨 Where to Stay shipped to the live top
+     — all three sprite-only — and #218 Where to Stay shipped to the live top
      strip rendering the emoji, with the two dropdown rows drawing nothing.
      Owner: "this has been fixed and came back several times." It comes back
      because adding art to the sprite is the normal way to add an icon, and the
@@ -907,7 +907,7 @@ window.TVE.isPhone = function () {
     null,
     { href: base + 'index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
     null,
-    /* OWNER-DIRECTED 2026-08-09: 👕 Packing and 🔌 Plug Adapters were standalone
+    /* OWNER-DIRECTED 2026-08-09: 👕 Packing and #457 Plug Adapters were standalone
        top-strip tabs; both are now children here, Packing first. Before You Go
        itself is the FIRST child because a group's parent button carries no href
        of its own (see the ITEMS render loop) — without that row the pre-trip
@@ -921,7 +921,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Plug-Adapter/Plug-Adapter-Guide.html', text: 'Plug Adapters', icon: 'live-plug' },
       ] },
     null,
-    { group: '🏨 Where to Stay', groupIcon: 'hotel', children: [
+    { group: '#218 Where to Stay', groupIcon: 'hotel', children: [
         { href: base + 'Trip-Essentials/Neighborhoods.html',                text: 'Neighborhoods',           icon: 'boutique' },
         { href: base + 'Trip-Essentials/Hotels-Stays.html',                 text: 'Hotels & Stays',          icon: 'hotel' },
         { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html',   text: 'Most Luxurious Hotels',   icon: 'gem-yellow' },
@@ -934,7 +934,7 @@ window.TVE.isPhone = function () {
        the hamburger's Best Of section (which stays the source for the mobile
        list). Browse by category leads, then A–Z. 35 rows is far taller than a
        viewport, so .tb-menu carries a max-height + scroll — see the styleEl. */
-    { group: '🏆 Best Of', groupIcon: 'star-cup', children: [
+    { group: '#1216 Best Of', groupIcon: 'star-cup', children: [
         { href: base + 'Trip-Essentials/Best-Of-Index.html',                      text: 'Browse by category', icon: 'category' },
         { href: base + 'Trip-Essentials/Best-Amusement-Parks.html',               text: 'Amusement Parks', icon: 'ferris' },
         { href: base + 'Trip-Essentials/Best-Animal-Encounters.html',             text: 'Animal Encounters', icon: 'giraffe' },
@@ -946,7 +946,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Cathedrals.html',                    text: 'Cathedrals', icon: 'cathedral' },
         { href: base + 'Trip-Essentials/Best-Caves.html',                         text: 'Caves', icon: 'cave' },
         /* OWNER-DIRECTED 2026-08-12: Cruise Lines, Disney Parks, Festival Finder
-           and Pickleball moved here out of 📋 Also Recommended. All four are
+           and Pickleball moved here out of #1207 Also Recommended. All four are
            "the best X in the world" collections, not utilities, so they belong
            with the rest of Best Of. Their FILES keep their existing names —
            renaming them Best-*.html would sweep them into the country-ordered
@@ -985,7 +985,7 @@ window.TVE.isPhone = function () {
     null,
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', full: 'World Map', icon: 'folded-map' },
     null,
-    { group: '📊 Stats', groupIcon: 'chart', children: [
+    { group: '#548 Stats', groupIcon: 'chart', children: [
         { href: base + 'Trip-Essentials/Destination-Records.html',        text: 'Destination Records',        icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: 'Stats Across US',            icon: 'bar-chart' },
         { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: 'Stats Across Canada',        icon: 'bar-chart' },
@@ -997,7 +997,7 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: 'Stats Across Oceania',        icon: 'bar-chart' },
       ]},
     null,
-    { group: '✈️ Flights', groupIcon: 'flight-nav', children: [
+    { group: '#127️ Flights', groupIcon: 'flight-nav', children: [
         { href: base + 'Trip-Essentials/Airlines-of-the-World.html', text: 'Airlines', icon: 'plane', newSince: '2026-08-09' },
         /* Delta Seattle Hub retired from the site 2026-08-13 (owner: "retire the
            Delta Seattle hub from the site but i will still use"). The file stays
@@ -1016,10 +1016,10 @@ window.TVE.isPhone = function () {
       ] },
     null,
     /* OWNER-DIRECTED 2026-08-11: the tab carries the drawn train; the four rows
-       do NOT repeat it. Four identical 🚆 stacked in one flyout told the reader
+       do NOT repeat it. Four identical #174 stacked in one flyout told the reader
        nothing — the same defect the Visas group had. The mark on the tab is the
        group's identity, so a child inherits it by being in the menu. */
-    { group: '🚆 Trains', groupIcon: 'train', children: [
+    { group: '#174 Trains', groupIcon: 'train', children: [
         { href: base + 'Trip-Essentials/European-Train-Guide.html',    text: 'European Train Guide',      full: 'European Train Guide',      icon: 'high-speed-train' },
         { href: base + 'Trip-Essentials/Day-Trips.html',              text: 'Day Trips by Train',        full: 'Day Trips by Train',        icon: 'calendar-date' },
         { href: base + 'Trip-Essentials/Scenic-Train-Journeys.html',  text: 'Scenic Train Journeys',    full: 'Scenic Train Journeys',    newSince: '2026-08-07', icon: 'mountain' },
@@ -1028,7 +1028,7 @@ window.TVE.isPhone = function () {
     null,
     { href: base + 'Trip-Essentials/Currency-Guide.html', text: 'Currency', full: 'Currency', icon: 'coin-circle' },
     null,
-    { group: '🕐 Time Zones', groupIcon: 'wall-clock', children: [
+    { group: '#60 Time Zones', groupIcon: 'wall-clock', children: [
         /* Group icon and its same-named child must be the SAME mark
            (check_toolbar_group_icon_consistency) — both move together. */
         { href: base + 'Trip-Essentials/Time-Zones.html',        text: 'Time Zones',       full: 'Time Zones',       icon: 'wall-clock' },
@@ -1042,13 +1042,13 @@ window.TVE.isPhone = function () {
        TOOLBAR_ITEMS_LOCK records depth|href only, so the lock is untouched and
        still enforced. The same icons now flow to the "Also on this site"
        footer pills, which resolve from ITEMS first. */
-    { group: '🌤️ Weather', groupIcon: 'sun-cloud-colour', children: [
+    { group: '#314️ Weather', groupIcon: 'sun-cloud-colour', children: [
         { href: base + 'Trip-Essentials/Climate-Finder.html',    text: 'Browse by Climate', icon: 'sun-clear' },
         { href: base + 'Trip-Essentials/Weather.html',           text: 'Browse by City',    icon: 'partly-cloudy' },
         { href: base + 'Trip-Essentials/When-to-Go.html',        text: 'When to Go',        icon: 'calendar' },
       ] },
     null,
-    { group: '🛡️ Safety', groupIcon: 'safety-guide', children: [
+    { group: '#1000️ Safety', groupIcon: 'safety-guide', children: [
         { href: base + 'Trip-Essentials/Safety-Guide.html',      text: 'Safety Guide',      icon: 'safety-guide' },
         { href: base + 'Trip-Essentials/Vaccines.html',          text: 'Vaccines',          icon: 'syringe-colour' },
         { href: base + 'Trip-Essentials/Tap-Water.html',         text: 'Tap Water',         icon: 'tap-water' },
@@ -1057,11 +1057,11 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Scams-By-City.html',     text: 'Scams & Traps',     icon: 'scams', newSince: '2026-08-07' },
       ] },
     null,
-    /* OWNER-DIRECTED 2026-08-10: all four children carried the SAME 🪪 emoji —
+    /* OWNER-DIRECTED 2026-08-10: all four children carried the SAME #442 emoji —
        four identical glyphs stacked in one flyout, which told the reader
        nothing. Each row now draws its own page's .page-intro-icon SVG instead
        (globe · ID card · laptop · clock). See NAV_ICONS above. */
-    { group: '🪪 Visas', groupIcon: 'passport', children: [
+    { group: '#442 Visas', groupIcon: 'passport', children: [
         { href: base + 'Trip-Essentials/Visas.html',                                    text: 'Visas',                icon: 'visas' },
         { href: base + 'Trip-Essentials/Entry-Requirements.html',                       text: 'Entry Requirements',   icon: 'id-card-check' },
         { href: base + 'Trip-Essentials/Digital-Nomad-Visas.html',                      text: 'Digital Nomad Visas',  icon: 'laptop' },
@@ -1078,13 +1078,13 @@ window.TVE.isPhone = function () {
        hard-fails otherwise, and the fix is always to drop the panel card).
        Children carry their own icons, so this group belongs in
        check_toolbar_group_icon_consistency's EXEMPT_GROUPS. */
-    { group: '📋 Also Recommended', groupShort: '📋 Recommended', groupIcon: 'rosette-award', children: [
+    { group: '#1207 Also Recommended', groupShort: '#1207 Recommended', groupIcon: 'rosette-award', children: [
         { href: base + 'Trip-Essentials/Budget-Guide.html',       text: 'Budget', icon: 'phone-payment' },
         { href: base + 'Trip-Essentials/Rental-Cars.html',        text: 'Car Rental & Private', icon: 'app-car' },
         { href: base + 'Trip-Essentials/Cards-ATM.html',          text: 'Cards & ATM', icon: 'card' },
         { href: base + 'Trip-Essentials/City-Transit-Cards.html', text: 'City Transit Cards', icon: 'transit' },
         /* Cruise Lines, Disney Parks, Festival Finder and Pickleball left this
-           group on 2026-08-12 (owner-directed) for 🏆 Best Of — see the comment
+           group on 2026-08-12 (owner-directed) for #1216 Best Of — see the comment
            on the Cruise Lines row there. */
         { href: base + 'Trip-Essentials/More-Resources.html',     text: 'More Resources', icon: 'faq-book' },
         { href: base + 'Trip-Essentials/Restaurants.html',        text: 'Restaurants', icon: 'restaurants' },
@@ -1135,7 +1135,7 @@ window.TVE.isPhone = function () {
        everywhere else. Anchoring to the toolbar's own gutter keeps it in the same
        place on every page, whatever the content below it does.
        The 120px left inset is deliberate (owner 2026-08-10: "start about there
-       before you go start") — it clears the 🌐 Guides pill so the wordmark's left
+       before you go start") — it clears the #1204 Guides pill so the wordmark's left
        edge lines up with the SECOND tab rather than the first. That number tracks
        the rendered width of the Guides pill (~100px + the 10px gutter + the 10px
        tab gap); if that pill's label, padding or font-size changes, re-measure it.
@@ -1325,7 +1325,7 @@ window.TVE.isPhone = function () {
        .tb-ddbtn.tb-active below already worked this way; these two now match
        it. Never put this back to border+padding. */
     '.tb a.tb-active{box-sizing:border-box;display:inline-flex;align-items:center;color:#7a3b1e!important;background:transparent;outline:1.5px solid rgba(184,92,42,0.85);outline-offset:5px;border-radius:14px;font-weight:600;line-height:1.2}' +
-    /* Dropdown group (e.g. 🚆 Trains) — parent button + absolute flyout menu */
+    /* Dropdown group (e.g. #174 Trains) — parent button + absolute flyout menu */
     '.tb-dd{position:relative;display:inline-flex;flex-shrink:0}' +
     '.tb-ddbtn{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:#7a3b1e!important;' +
       'padding:2px 2px;border:none;border-radius:4px;background:transparent;white-space:nowrap;' +
@@ -1351,7 +1351,7 @@ window.TVE.isPhone = function () {
     '.tb-menu{position:fixed;transform:translateX(-50%);' +
       'background:#fff;border:1px solid #e6e2da;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.13);' +
       'padding:4px 4px 12px;display:none;flex-direction:column;gap:0;min-width:196px;z-index:1000;' +
-      /* 🏆 Best Of carries 35 rows — far taller than any viewport. Cap the
+      /* #1216 Best Of carries 35 rows — far taller than any viewport. Cap the
          flyout and let it scroll rather than running off the bottom of the
          screen. Every other group is well under the cap and is unaffected. */
       'max-height:calc(100vh - 90px);overflow-y:auto;overscroll-behavior:contain}' +
@@ -1978,7 +1978,7 @@ window.TVE.isPhone = function () {
         aTrips.href = base + 'Trip-Essentials/Trips.html';
         /* These two rows are hand-built rather than ITEMS-driven, and they were
            the last two in the hamburger still carrying an AUTHORED EMOJI in
-           textContent ('✈️ My Trips' / '📊 Travel Stats') — every other row
+           textContent ('#127️ My Trips' / '#548 Travel Stats') — every other row
            draws an SVG. Routed through setEntryLabel so they take the same
            drawn marks their own destinations already use in PAGE_ICON below
            (plane / chart). The guard on this injection matches "My Trips", not
@@ -2039,7 +2039,7 @@ window.TVE.isPhone = function () {
       ['Castles',                   'Best-Castles.html'],
       ['Cathedrals',                'Best-Cathedrals.html'],
       ['Caves',                     'Best-Caves.html'],
-      /* OWNER-DIRECTED 2026-08-12 — mirrors the 🏆 Best Of group in ITEMS.
+      /* OWNER-DIRECTED 2026-08-12 — mirrors the #1216 Best Of group in ITEMS.
          These four are the only rows here whose file is not Best-*.html;
          check_best_of_toolbar_coverage matches on the Best- prefix, so they
          are invisible to it in both directions. */
@@ -2701,7 +2701,7 @@ window.TVE.isPhone = function () {
 
     /* ── Per-guide stops map pill — injected when {slug}-stops-map.html exists.
        Appended at the END of the .gel overview-extras row, after all static
-       pills (including ✨ Worth Knowing). Uses a HEAD request so the guide
+       pills (including #642 Worth Knowing). Uses a HEAD request so the guide
        HTML never needs editing; the pill appears automatically once the map file
        has been generated. No-op if the file is absent (404). */
     function injectStopsMapPill() {
@@ -2945,8 +2945,8 @@ window.TVE.isPhone = function () {
                 var walkM = Math.round(km / (5 / 60));
                 var taxiM = Math.max(2, Math.round(km / (20 / 60)));
                 banner.textContent = walkM <= 30
-                  ? '🚶 ' + walkM + ' min · 🚕 ' + taxiM + ' min → ' + stop.name
-                  : '🚕 ' + taxiM + ' min → ' + stop.name;
+                  ? '#138 ' + walkM + ' min · #189 ' + taxiM + ' min → ' + stop.name
+                  : '#189 ' + taxiM + ' min → ' + stop.name;
               } else {
                 banner.textContent = '→ ' + stop.name;
               }
@@ -3009,10 +3009,10 @@ window.TVE.isPhone = function () {
         var m = /^Day\s+\d+/.exec(text);
         if (!m) return;
         var rest = text.slice(m[0].length).replace(/^\s*–\s*/, ' · ');
-        /* Strip any legacy 🚆 that may still be in guides during migration
-           (validator now hard-fails on 🚆 in overview-day-title; this keeps
+        /* Strip any legacy #174 that may still be in guides during migration
+           (validator now hard-fails on #174 in overview-day-title; this keeps
            the render correct while guides are being updated). */
-        rest = rest.replace(/🚆\s*(?:·\s*)?(?=Train\s+Day)/g, '');
+        rest = rest.replace(/#174\s*(?:·\s*)?(?=Train\s+Day)/g, '');
         var num = document.createElement('span');
         num.className = 'overview-day-num';
         num.textContent = m[0];
@@ -3482,7 +3482,7 @@ window.TVE.isPhone = function () {
           if (!stopAddr && mapsEl) {
             stopAddr = mapsEl.textContent.trim();
             stopAddrHref = mapsEl.href;
-          } else if (!stopDesc && !txt.startsWith('📖')) {
+          } else if (!stopDesc && !txt.startsWith('#652')) {
             stopDesc = txt;
           }
         });
@@ -3490,11 +3490,11 @@ window.TVE.isPhone = function () {
         [].forEach.call(sb.querySelectorAll('.ticket-box > div, .tour-box > div'), function (div) {
           var txt = div.textContent.trim();
           var first = txt.charAt(0);
-          if (!stopHours && (first === '🏛' || txt.slice(0,2) === '🏛')) {
+          if (!stopHours && (first === '#60' || txt.slice(0,2) === '#60')) {
             stopHours = txt;
           } else if (!stopDuration && (first === '⏰' || txt.slice(0,2) === '⏰')) {
             stopDuration = txt;
-          } else if (!stopWarning && (first === '⚠' || txt.slice(0,2) === '⚠')) {
+          } else if (!stopWarning && (first === '#992' || txt.slice(0,2) === '#992')) {
             stopWarning = txt;
           } else if (!stopTicketUrl) {
             var ticketLink = div.querySelector('a[href]:not([href*="google.com/maps"])');
@@ -3614,7 +3614,7 @@ window.TVE.isPhone = function () {
           /* Location block */
           var hasLoc = s.addr || s.href;
           if (hasLoc) lines.push('');
-          if (s.addr) lines.push('📍 ' + s.addr);
+          if (s.addr) lines.push('#34 ' + s.addr);
           if (s.href) lines.push(s.href);
           /* Practical info block */
           var hasPractical = s.hours || s.duration || s.ticketUrl || s.warning;
@@ -3965,18 +3965,18 @@ window.TVE.isPhone = function () {
 
 
   /* ── Stop hours — collapsed row, hover-expand week schedule ──────────────────
-     Every guide already writes opening hours as a structured 🏛️ row inside the
+     Every guide already writes opening hours as a structured #60️ row inside the
      stop's .tour-box / .ticket-box, in one consistent authored shape:
 
-         🏛️ Daily 9:00am - 4:00pm
-         🏛️ Open 24/7
-         🏛️ Tuesday - Sunday 10:00am - 5:00pm
-         🏛️ Monday - Saturday 8:30am - 6:00pm · Sunday 1:00pm - 6:00pm
+         #60️ Daily 9:00am - 4:00pm
+         #60️ Open 24/7
+         #60️ Tuesday - Sunday 10:00am - 5:00pm
+         #60️ Monday - Saturday 8:30am - 6:00pm · Sunday 1:00pm - 6:00pm
 
      Segments are separated by " · ". This pass UPGRADES those rows — it reads
      only authored data and never parses narrative prose. (An earlier version
-     parsed stop prose instead and skipped any stop that already had a 🏛️ row;
-     since 235/235 guides carry 🏛️ rows on essentially every stop, it matched
+     parsed stop prose instead and skipped any stop that already had a #60️ row;
+     since 235/235 guides carry #60️ rows on essentially every stop, it matched
      nothing anywhere on the site.)
 
        · one segment  → left exactly as authored. A chevron that expands to a
@@ -3989,9 +3989,9 @@ window.TVE.isPhone = function () {
      Tuesday–Sunday is universally read as "shut on Monday".
 
      🔒 Coupling with the Open Now filter: that filter reads the FIRST
-     .tour-box/.ticket-box child whose text starts with 🏛 and parses it. The
+     .tour-box/.ticket-box child whose text starts with #60 and parses it. The
      authored row is therefore kept in the DOM (hidden with .tve-ph-src, which
-     leaves textContent intact) and the replacement row starts with 🕐, not 🏛,
+     leaves textContent intact) and the replacement row starts with #60, not #60,
      so the filter still resolves to the authored string either way.
 
      "Today" comes from _tveDestNow() — the DESTINATION's weekday, never the
@@ -4002,7 +4002,7 @@ window.TVE.isPhone = function () {
     if (!isRealGuide) return;
     var srcRows = [];
     [].forEach.call(document.querySelectorAll('.tour-box > div, .ticket-box > div'), function (d) {
-      if (d.textContent.trim().slice(0, 2) === '🏛') srcRows.push(d);
+      if (d.textContent.trim().slice(0, 2) === '#60') srcRows.push(d);
     });
     if (!srcRows.length) return;
 
@@ -4025,8 +4025,8 @@ window.TVE.isPhone = function () {
         /* Base row */
         /* HORIZONTAL — the band is a FULL-BLEED strip. Its negative side margins
            cancel the card's 14px padding, so the rail sits flush to the card edge
-           and the 🕐 lands on exactly the same x as every other icon row in the
-           card (🎟️ ⚠️ 🚫 📍). Inset by 10px inside the content column the glyph
+           and the #60 lands on exactly the same x as every other icon row in the
+           card (🎟️ #992️ #984 #34). Inset by 10px inside the content column the glyph
            sat 12.5px right of that column and the icon run visibly stepped in and
            back out on every stop (owner report 2026-08-08, "look the spaces it is
            a mess all over the place"). border-left(2.5) + padding-left(11.5) = the
@@ -4111,9 +4111,9 @@ window.TVE.isPhone = function () {
         '.tour-box > .tve-ph + *,.ticket-box > .tve-ph + *,' +
         '.tour-box > .tve-ph-wrap + *,.ticket-box > .tve-ph-wrap + *{' +
         'margin-top:6px!important;}' +
-        /* First VISIBLE row of the card. The authored 🏛️ rows the band replaces
+        /* First VISIBLE row of the card. The authored #60️ rows the band replaces
            stay in the DOM as display:none, so :first-child never matches it — JS
-           stamps this class instead. 2,127 cards across the fleet lead with 🏛️,
+           stamps this class instead. 2,127 cards across the fleet lead with #60️,
            so this is the common case, not an edge one: without it the band starts
            14px below the card's top edge where every plain first row starts at 8. */
         '.tour-box > .tve-ph-top,.ticket-box > .tve-ph-top{margin-top:0!important;}' +
@@ -4137,7 +4137,7 @@ window.TVE.isPhone = function () {
            check_stop_hours_contract hard-fails a tve-ph-* class with no CSS. */
         '.tve-ph-24{background:transparent!important;' +
         'border-right-color:rgba(187,160,112,.45)!important;color:#b85c2a!important;}' +
-        /* Authored 🏛️ row: hidden, but kept in the DOM so the Open Now
+        /* Authored #60️ row: hidden, but kept in the DOM so the Open Now
            filter can still read its textContent. */
                 /* DESKTOP WIDTH — the band stops at the horizontal centre of the screen
            and no further (owner rule 2026-08-08: "make sure this stops in the
@@ -4303,8 +4303,8 @@ window.TVE.isPhone = function () {
         /* A bare time range is the second half of a SPLIT-HOURS listing:
            "Daily 9:00am - 12:00pm · 3:00pm - 6:00pm" names the day once and
            lets the afternoon inherit it. Returning null here failed the whole
-           stop (69 stops across 46 guides), which left the authored 🏛️ line
-           on screen — the exact leak the 🏛️ ban names. Only the caller knows
+           stop (69 stops across 46 guides), which left the authored #60️ line
+           on screen — the exact leak the #60️ ban names. Only the caller knows
            which days came before, so hand it back as a continuation and let
            the merge loop attach it. A bare "Closed" stays unreadable: there is
            no sane way to append "shut" to a set of opening hours. */
@@ -4421,7 +4421,7 @@ window.TVE.isPhone = function () {
        computation is then garbage: margin-left lands on -0, the negative bleed
        never happens, `.tve-ph{padding:0 14px}` from the injected sheet survives,
        and every hours band on the page sits ONE FULL 14px GUTTER right of the
-       🎟 / 📍 / ⚠️ rows above and below it (owner report 2026-08-11, on a Prague
+       🎟 / #34 / #992️ rows above and below it (owner report 2026-08-11, on a Prague
        stop card: "this is not aligned … look at the time" — all 19 bands on that
        page were stepped in).
 
@@ -4465,8 +4465,8 @@ window.TVE.isPhone = function () {
       });
     }
 
-    /* ── Walk the authored 🏛️ rows, GROUPED BY STOP ─────────────────────────
-       A stop can carry more than one 🏛️ row — Carmel Mission ships
+    /* ── Walk the authored #60️ rows, GROUPED BY STOP ─────────────────────────
+       A stop can carry more than one #60️ row — Carmel Mission ships
        "Mon-Sat 9:30am - 5:00pm" on one and "Sun 10:30am - 5:00pm" on the
        next. That is ONE weekly schedule split across two lines, not two
        schedules, and rendering a band per row stacked two near-identical
@@ -4485,7 +4485,7 @@ window.TVE.isPhone = function () {
     groups.forEach(function (grp) {
       var parts = [];
       grp.rows.forEach(function (r) {
-        r.textContent.replace(/^🏛️?\s*/, '').trim().split('·').forEach(function (x) {
+        r.textContent.replace(/^#60️?\s*/, '').trim().split('·').forEach(function (x) {
           x = x.trim();
           if (x) parts.push(x);
         });
@@ -4545,7 +4545,7 @@ window.TVE.isPhone = function () {
       /* Nothing VISIBLE above it → the band is the card's first row and must not
          carry the 6px row margin, or it starts 14px below the card's top edge
          where a plain first row starts at 8px. :first-child cannot express this:
-         the authored 🏛️ rows are still there, just display:none. Rect count is
+         the authored #60️ rows are still there, just display:none. Rect count is
          the test rather than the .tve-ph-src class, so any other hidden row a
          later pass leaves behind is skipped too. */
       var prev = el.previousElementSibling, lead = true;
@@ -4584,8 +4584,8 @@ window.TVE.isPhone = function () {
   }
 
 
-  /* ── Address copy — multi-format clipboard popover on 📍 stop rows ─────────
-     Adds a small copy icon button after every 📍 Google Maps address link on
+  /* ── Address copy — multi-format clipboard popover on #34 stop rows ─────────
+     Adds a small copy icon button after every #34 Google Maps address link on
      real guide pages. Clicking opens a fixed-position popover with:
        • Copy address (plain text, decoded from Maps URL query param)
        • Copy Maps link (the full Google Maps URL)
@@ -4599,9 +4599,9 @@ window.TVE.isPhone = function () {
     var pop = document.createElement('div');
     pop.className = 'addr-copy-pop';
     var optAddr = document.createElement('button');
-    optAddr.type = 'button'; optAddr.className = 'acp-btn'; optAddr.textContent = '📋  Copy address';
+    optAddr.type = 'button'; optAddr.className = 'acp-btn'; optAddr.textContent = '#1207  Copy address';
     var optMaps = document.createElement('button');
-    optMaps.type = 'button'; optMaps.className = 'acp-btn'; optMaps.textContent = '🗺  Copy Maps link';
+    optMaps.type = 'button'; optMaps.className = 'acp-btn'; optMaps.textContent = '#32  Copy Maps link';
     var done = document.createElement('div');
     done.className = 'addr-copy-done'; done.textContent = '✓ Copied';
     pop.appendChild(optAddr); pop.appendChild(optMaps);
@@ -4654,7 +4654,7 @@ window.TVE.isPhone = function () {
       '<path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
       '</svg>';
     [].forEach.call(rows, function (row) {
-      if (!row.textContent.trimStart().startsWith('📍')) return;
+      if (!row.textContent.trimStart().startsWith('#34')) return;
       var anchor = row.querySelector('a[href*="google.com/maps"]');
       if (!anchor) return;
       var addr = anchor.textContent.trim();
@@ -4677,7 +4677,7 @@ window.TVE.isPhone = function () {
   }
 
   /* ── Day Jump — floating pill + overlay on guide pages ────────────────────
-     Shows a small "📅 N days" pill fixed at bottom-right of the viewport.
+     Shows a small "#50 N days" pill fixed at bottom-right of the viewport.
      Clicking opens a centered overlay card listing every day in the guide with
      the first three stops as a preview. Tapping a day row smooth-scrolls there
      and closes the overlay. CSS lives in guide-style.css (.day-jump-*). */
@@ -6705,7 +6705,7 @@ window.TVE.isPhone = function () {
     wrap.id = 'hotel-alternatives';
     var h = document.createElement('div');
     h.className = 'extras-title';
-    h.textContent = '🏨 Alternative Hotel Recommendations';
+    h.textContent = '#218 Alternative Hotel Recommendations';
     var grid = document.createElement('div');
     grid.className = 'neigh-grid';
     entry.h.forEach(function (hotel) {
@@ -6739,7 +6739,7 @@ window.TVE.isPhone = function () {
       var anLink = document.createElement('a');
       anLink.className = 'also-on-this-site-pill';
       anLink.href = base + 'Trip-Essentials/Neighborhoods.html#' + encodeURIComponent(anCity);
-      anLink.textContent = '🏘 Which neighborhood to stay in';
+      anLink.textContent = '#1239 Which neighborhood to stay in';
       anPills.appendChild(anLink);
       wrap.appendChild(anPills);
     }
@@ -7203,7 +7203,7 @@ window.TVE.isPhone = function () {
       /* Body IS a Train Day body — same icon, same "Train Day", same dot before
          the city (owner rule 2026-08-09: "the rest of the format follow what we
          use already"). The single added word is "from", which is not decoration:
-         this row is the INBOUND view, so "🚆 · Train Day · Vienna" would read as
+         this row is the INBOUND view, so "#174 · Train Day · Vienna" would read as
          a train day TO Vienna and state the opposite of the truth. */
       var lead = document.createElement('span');
       lead.innerHTML = iconSVG(NAV_ICONS['train'], 15, 'train') + ' · Train Day from · ';
@@ -7315,7 +7315,7 @@ window.TVE.isPhone = function () {
     var _epPage = location.pathname.split('/').pop() || '';
     var _epMatch = _epPage.match(/^(.+?)(?:_v\d+)?\.html$/);
     if (_epMatch && HOTEL_ALT_DATA[_epMatch[1]]) {
-      addPill('#hotel-alternatives', '🏨 Alt. Hotels');
+      addPill('#hotel-alternatives', '#218 Alt. Hotels');
     }
     /* 5. Also in Country — async; pill is appended by the XHR _build() callback below */
   }
@@ -7438,7 +7438,7 @@ window.TVE.isPhone = function () {
 
   /* ── Quick Facts strip — real guide pages only ────────────────────────────
      The four facts a reader checks before committing to an itinerary:
-     🗣️ language · 💰 cost tier · 🔌 plug type · 🌤️ best months. Each one
+     #934️ language · #374 cost tier · #457 plug type · #314️ best months. Each one
      already lives on a Trip-Essentials page (Budget-Guide, Plug-Adapter-Guide,
      When-to-Go); assets/quick_facts.json joins them per guide so reading all
      four no longer costs four page visits. Built by
@@ -7468,7 +7468,7 @@ window.TVE.isPhone = function () {
 
       /* [mark name, title-attribute label, value] — order is the reading order
          the feature was specified with; a missing fact drops its pill entirely.
-         These were 🗣️ 💰 🔌 🌤️ as literal emoji until 2026-08-11. The strip is
+         These were #934️ #374 #457 #314️ as literal emoji until 2026-08-11. The strip is
          BUILT here rather than authored in the guide, so the render-time mark
          pass could not reach it — it has no markup to walk and the pills are
          unclassed spans. Naming the mark at the source is the fix, and it drops
@@ -7786,7 +7786,7 @@ window.TVE.isPhone = function () {
 
   /* ── Hotels & Flights search — collapsed pill on the action row ───────────
      A 🔎 Hotels & Flights pill appended to #ics-pill-row that expands, in
-     place, into a two-tab deep-link panel: 🏨 Hotels and ✈️ Flights. Submitting
+     place, into a two-tab deep-link panel: #218 Hotels and #127️ Flights. Submitting
      opens a pre-filled Google Hotels / Google Flights tab. Nothing is fetched
      for results, nothing is priced here, and no booking state is stored — the
      whole feature is a well-addressed link out. That ceiling was named to the
@@ -8236,7 +8236,7 @@ window.TVE.isPhone = function () {
             note.textContent = 'Add where you are flying from — a city or an airport code.';
             return;
           }
-          /* ⚠️ TWO THINGS HERE ARE LOAD-BEARING. Both were measured against the
+          /* #992️ TWO THINGS HERE ARE LOAD-BEARING. Both were measured against the
              live Google Flights on 2026-08-10, and both look like fussy string
              formatting until you try the combination that breaks.
 
@@ -8316,7 +8316,7 @@ window.TVE.isPhone = function () {
 
       _select('h');
 
-      /* ⚠️ Pill ORDER must not depend on which fetch returns first. This pill
+      /* #992️ Pill ORDER must not depend on which fetch returns first. This pill
          and 💱 Currency are both appended from async callbacks, so a plain
          appendChild in each makes the row order a race — Currency sixth on one
          load, seventh on the next, visibly reshuffling between page loads on
@@ -8346,7 +8346,7 @@ window.TVE.isPhone = function () {
 
   /* ── Weather widget — loaded on the Guides index ONLY ─────────────────────
      weather.js lives in assets/ (permanent home). On the index it adds the
-     🌡 Weather control in the title banner (city picker + monthly high/low
+     #314 Weather control in the title banner (city picker + monthly high/low
      panel) and per-guide hover weather on the cards. Deliberately NOT loaded
      on individual guide pages. Bump the ?v= below whenever weather.js changes
      so the browser refreshes it (it has no version tag on the page itself). */
@@ -8358,7 +8358,7 @@ window.TVE.isPhone = function () {
 
   /* ── Sticky stop-name strip — guide pages only ──────────────────────────────
      A slim fixed strip at the top of the viewport that shows the name of the
-     stop currently being read — "📍 1. Panthéon" — so context is never lost on
+     stop currently being read — "#34 1. Panthéon" — so context is never lost on
      long days where the stop header has scrolled off screen. Uses
      IntersectionObserver on every .stop-header element. The strip appears when
      a header exits the top of the viewport and clears when no headers remain
@@ -8394,7 +8394,7 @@ window.TVE.isPhone = function () {
           var numEl  = current.querySelector('.stop-num');
           var num    = numEl  ? numEl.textContent.trim()  : '';
           var name   = nameEl ? nameEl.textContent.trim() : '';
-          strip.textContent = '📍 ' + (num ? num + ' ' : '') + name;
+          strip.textContent = '#34 ' + (num ? num + ' ' : '') + name;
           strip.style.display = 'flex';
         } else {
           strip.style.display = 'none';
@@ -8448,15 +8448,15 @@ window.TVE.isPhone = function () {
 
     /* WMO weather-code → emoji */
     var WMO = {
-      0:'☀️', 1:'🌤️', 2:'🌥️', 3:'☁️',
+      0:'#299️', 1:'#314️', 2:'🌥️', 3:'☁️',
       45:'🌫️', 48:'🌫️',
       51:'🌦️', 53:'🌦️', 55:'🌧️',
       56:'🌧️', 57:'🌧️',
       61:'🌧️', 63:'🌧️', 65:'🌧️',
       66:'🌧️', 67:'🌧️',
-      71:'🌨️', 73:'🌨️', 75:'❄️', 77:'🌨️',
+      71:'🌨️', 73:'🌨️', 75:'#1281️', 77:'🌨️',
       80:'🌦️', 81:'🌧️', 82:'⛈️',
-      85:'🌨️', 86:'❄️',
+      85:'🌨️', 86:'#1281️',
       95:'⛈️', 96:'⛈️', 99:'⛈️'
     };
     var DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -8511,7 +8511,7 @@ window.TVE.isPhone = function () {
 
         var iconDiv = document.createElement('div');
         iconDiv.style.cssText = 'font-size:' + (isMobile ? '17px' : '22px') + ';line-height:1.2;';
-        iconDiv.textContent = WMO[daily.weathercode[i]] || '🌡️';
+        iconDiv.textContent = WMO[daily.weathercode[i]] || '#314️';
 
         var tempDiv = document.createElement('div');
         tempDiv.style.cssText =
@@ -8542,7 +8542,7 @@ window.TVE.isPhone = function () {
 
         var nowIcon = document.createElement('div');
         nowIcon.style.cssText = 'font-size:' + (isMobile ? '16px' : '20px') + ';line-height:1.2;';
-        nowIcon.textContent = WMO[data.current.weather_code] || '🌡️';
+        nowIcon.textContent = WMO[data.current.weather_code] || '#314️';
         nowBlock.appendChild(nowIcon);
 
         var nowTemp = document.createElement('div');
@@ -8841,7 +8841,7 @@ window.TVE.isPhone = function () {
     var defaultLabel = label.textContent.trim();
     function syncLabel() {
       var cur = label.textContent.trim();
-      pill.textContent = '🌍 ' + (cur === defaultLabel ? countLabel : cur);
+      pill.textContent = '#1204 ' + (cur === defaultLabel ? countLabel : cur);
       rowEls.forEach(function (r, i) {
         r.classList.toggle('tve-bo-row--on', items[i].classList.contains('on'));
       });
@@ -9011,7 +9011,7 @@ window.TVE.isPhone = function () {
         var addrText = '';
         [].forEach.call(block.querySelectorAll('.stop-row'), function(row) {
           if (addrText) return;
-          if (row.textContent.indexOf('📍') >= 0) {
+          if (row.textContent.indexOf('#34') >= 0) {
             var a = row.querySelector('a');
             if (a) addrText = a.textContent.trim();
           }
@@ -9061,7 +9061,7 @@ window.TVE.isPhone = function () {
   }
   _injectShareStopButtons();
 
-  /* ── Row marks — 📍 / 🚶 / 🚕 drawn instead of Apple emoji (owner 2026-08-11) ─
+  /* ── Row marks — #34 / #138 / #189 drawn instead of Apple emoji (owner 2026-08-11) ─
      Owner, on the motion row: "do this rows … has the walk and car time from
      stops to stops", and on the address row: "pin needs to get done too".
 
@@ -9069,24 +9069,24 @@ window.TVE.isPhone = function () {
      .gm-mk-src span next to a .gm-mk mark, so the row's textContent comes out
      byte-identical. That is deliberate and load-bearing — three consumers read
      these rows as text and would break on a substitution:
-       · _injectAddrCopy  — `textContent.trimStart().startsWith('📍')`
-       · _injectShareStopButtons — `textContent.indexOf('📍') >= 0`
-       · the ICS + clipboard exports, which rebuild '📍 ' + addr
+       · _injectAddrCopy  — `textContent.trimStart().startsWith('#34')`
+       · _injectShareStopButtons — `textContent.indexOf('#34') >= 0`
+       · the ICS + clipboard exports, which rebuild '#34 ' + addr
      Registering last is belt-and-braces on top of that, not the mechanism.
 
      Guide HTML is untouched. The glyphs stay authored in all 245 guides where
      Motion Rule.html and Icon Order and Format.html govern them and the
      validators read them off disk — this is render-time only, exactly like the
-     ⏰ duration chip and the 🏛 hours band. Marks are drawn in guide-style.css.
+     ⏰ duration chip and the #60 hours band. Marks are drawn in guide-style.css.
 
-     Scope is deliberately narrow: motion rows, and box rows that LEAD with 📍.
+     Scope is deliberately narrow: motion rows, and box rows that LEAD with #34.
      A .stop-row of prose can legitimately contain any of these glyphs and is
-     left alone. 🚤 🚢 🚊 🚝 🚆 🚡 (about 50 rows, car-free and rail cities) have
+     left alone. #195 #195 #191 🚝 #174 🚡 (about 50 rows, car-free and rail cities) have
      no mask yet and still render as emoji — they are not in MARKS. */
   function _injectRowMarks() {
     /* The isRealGuide gate used to sit HERE, on the first line, so this whole
        function was a no-op on every non-guide page. That is why the budget
-       chips on index.html still showed Apple emoji although 💰 and ✨ have had
+       chips on index.html still showed Apple emoji although #374 and #642 have had
        marks for months (owner 2026-08-12) — the missing selector was the
        obvious cause and not the real one. The gate now sits below, after the
        shared machinery, so a non-guide surface can opt in explicitly by name.
@@ -9102,44 +9102,44 @@ window.TVE.isPhone = function () {
          so markRow draws <use href="#gm-i-KEY"> and NO css mask is needed;
          that is what blocked the previous pass, which only had the mask path
          in mind and would have blanked the row. */
-      '🏖': 'beach',  /* Beach chip */
-      '🌲': 'pine-forest-chip',  /* Nature chip */
-      '🎨': 'artframe',  /* Art & museums chip */
-      '🌃': 'night-sky',  /* Nightlife chip */
-      '🏝': 'island',  /* Islands chip */
-      '🎿': 'ski',  /* Snow / ski chip */
-      '🍷': 'wine',  /* Wine chip */
-      '🛝': 'kids',  /* Kids friendly chip */
-      '🎢': 'ferris',  /* Amusement chip */
-      '🌴': 'palm',  /* Hot & humid chip */
-      '☀': 'sun-clear',  /* Warm & sunny chip */
-      '🌤': 'partly-cloudy',  /* Mild chip */
-      '🍂': 'leaf-autumn',  /* Cool chip */
-      '❄': 'snowflake',  /* Cold chip */
+      '#242': 'beach',  /* Beach chip */
+      '#280': 'pine-forest-chip',  /* Nature chip */
+      '#223': 'artframe',  /* Art & museums chip */
+      '#1277': 'night-sky',  /* Nightlife chip */
+      '#260': 'island',  /* Islands chip */
+      '#517': 'ski',  /* Snow / ski chip */
+      '#362': 'wine',  /* Wine chip */
+      '#293': 'kids',  /* Kids friendly chip */
+      '#201': 'ferris',  /* Amusement chip */
+      '#1210': 'palm',  /* Hot & humid chip */
+      '#299': 'sun-clear',  /* Warm & sunny chip */
+      '#314': 'partly-cloudy',  /* Mild chip */
+      '#1270': 'leaf-autumn',  /* Cool chip */
+      '#1281': 'snowflake',  /* Cold chip */
 
-      /* Mid-range budget chip on index.html — the only 💳 anywhere under
+      /* Mid-range budget chip on index.html — the only #395 anywhere under
          Travel-Website/. Mask lives in guides-index-style.css, and a copy sits
          in guide-style.css so a guide that authors one later draws a card
          instead of a blank span. */
-      '💳': 'card',
-      '📍': 'pin',
-      '🚶': 'walk',
-      '🚕': 'ride',
-      '🚗': 'delivery-car',       /* a few guides author the car — same mark */
-      '🚐': 'van',        /* tour hotel-pickup row, 548 fleet-wide */
-      '🏨': 'hotel',      /* the other half of that row */
+      '#395': 'card',
+      '#34': 'pin',
+      '#138': 'walk',
+      '#189': 'ride',
+      '#184': 'delivery-car',       /* a few guides author the car — same mark */
+      '#191': 'van',        /* tour hotel-pickup row, 548 fleet-wide */
+      '#218': 'hotel',      /* the other half of that row */
       /* extras-sub rows. The survey is closed: across the fleet these rows
-         lead with exactly six glyphs — 📅 2342 · 🚕 375 · 🚊 148 · 🚄 56 ·
-         🚢 29 · 🚎 17 — so covering them leaves no mixed state in that band. */
-      '📅': 'cal-export',
-      '🚊': 'van',        /* tram — the van shape is a boxy vehicle front and */
-      '🚎': 'van',        /* trolleybus — reads for all three at 15px */
-      '🚄': 'train',
-      '🚢': 'ship',
-      '🚤': 'ship',       /* island transfers — Maldives et al */
-      /* Tour/Day-Trip stat row: "⏳ 5 hr 30 min · 👥 Small group". */
+         lead with exactly six glyphs — #50 2342 · #189 375 · #191 148 · #1237 56 ·
+         #195 29 · #191 17 — so covering them leaves no mixed state in that band. */
+      '#50': 'cal-export',
+      '#191': 'van',        /* tram — the van shape is a boxy vehicle front and */
+      '#191': 'van',        /* trolleybus — reads for all three at 15px */
+      '#1237': 'train',
+      '#195': 'ship',
+      '#195': 'ship',       /* island transfers — Maldives et al */
+      /* Tour/Day-Trip stat row: "⏳ 5 hr 30 min · #953 Small group". */
       '⏳': 'hourglass',
-      '👥': 'people',
+      '#953': 'people',
       /* Closed-day row, position 3 — 1,436 fleet-wide and the loudest emoji
          left on a stop: the Apple sign is saturated red-and-white and sat
          directly under the terracotta clock of the hours band, so one two-row
@@ -9148,33 +9148,33 @@ window.TVE.isPhone = function () {
          picked it by pointing at that row (2026-08-11: "replace by the icon
          drawing we are using now this is the one it should be there"), so the
          site has ONE prohibition mark, not two drawings of the same idea. */
-      '🚫': 'closed',
-      /* Booking row — "🎫 book at: {operator}", 619 fleet-wide. U+1F3AB, NOT
+      '#984': 'closed',
+      /* Booking row — "#532 book at: {operator}", 619 fleet-wide. U+1F3AB, NOT
          the U+1F39F 🎟 that .ticket-flag retired in 2026-08, which is exactly
          why it survived that pass and kept showing an emoji next to drawn
          siblings. Same whole-ticket silhouette as .ticket-flag. */
-      '🎫': 'ticket',
-      '💵': 'money',      /* "💵 Cash Only" — same shape the 💰 rows draw */
+      '#532': 'ticket',
+      '#374': 'money',      /* "#374 Cash Only" — same shape the #374 rows draw */
       /* 3,496 rows — one on EVERY stop, the most-repeated emoji left on the
          site. Lives on the Wikipedia link under the stop description, so it
          appeared once per stop in full Apple colour against a terracotta
          column. Reached through the .stop-row > a selector below. */
-      '📖': 'book',
-      /* Hours. On a STOP the authored 🏛 row is hidden and _upgradeStopHours
+      '#652': 'book',
+      /* Hours. On a STOP the authored #60 row is hidden and _upgradeStopHours
          redraws it as the .tve-ph band, which leads with the clock — so the
          restaurant, cafe and bar entries, which get no band, were the one
          place hours still showed the classical-building emoji, directly above
          a drawn pin. Mapping it to the SAME clock is what makes those rows
          match a stop (owner: "we are not using emojis on these anymore we need
          to match he stops look"). */
-      '🏛': 'clock-stop',
+      '#60': 'clock-stop',
       /* Caveat row, position 6 — 691 fleet-wide. It sat between the drawn free
          flag above it and the drawn pin below, the last emoji in the box. No
          warning triangle existed in NAV_ICONS (scams is a circle-slash), so
          this one is authored: a solid triangle with the bar and dot cut out by
          fill-rule evenodd, weighted to match the pin and the ticket flag. */
-      '⚠': 'warn',
-      /* 🗺 U+1F5FA — the All Stops Map action pill. Every other pill in that
+      '#992': 'warn',
+      /* #32 U+1F5FA — the All Stops Map action pill. Every other pill in that
          row (Export to Calendar, Preview Optimized, Save for Offline, I've
          Been, Hotels & Flights, Currency) is drawn by toolbar.js, but this one
          could not be: its label is authored in each guide's HTML, not in the
@@ -9183,54 +9183,54 @@ window.TVE.isPhone = function () {
          is exactly what a render-time pass over authored markup is for. Same
          `map` shape and viewBox the toolbar uses. Also covers the Nearby
          Guides pill, which leads with the same glyph. */
-      '🗺': 'country-map',
+      '#32': 'country-map',
       /* Section pills + their matching .extras-title headings (owner: "can you
          change pills after and match the sections?"). Both surfaces move on the
          same table, so a pill and the section it jumps to can never drift apart.
          Six reuse shapes already in the set; six are authored because the
          toolbar had no equivalent. the station glyph is deliberately absent — it is banned
          site-wide (CLAUDE.md twentieth non-negotiable) and the Train Stations
-         pill correctly authors 🚆. */
-      '🚌': 'van',          /* Getting Around */
-      '🚆': 'train-station',        /* Train Stations */
-      '🗓': 'wall-calendar',     /* Weekly Closures */
-      '⭐': 'star',          /* Michelin · Best Of */
-      '🫕': 'restaurants-hotel',  /* Restaurants Near Hotel */
-      '🍽': 'restaurants',  /* Downtown Restaurants — same shape, same thing */
-      '☕': 'coffee',        /* Cappuccino */
-      '🍮': 'dessert',      /* Local Tastes */
-      '🎭': 'theatre',      /* Shows */
-      '❗': 'bang',          /* Heads Up */
-      '✨': 'sparkle',      /* Worth Knowing */
-      '💥': 'burst',        /* Also on this site */
+         pill correctly authors #174. */
+      '#191': 'van',          /* Getting Around */
+      '#174': 'train-station',        /* Train Stations */
+      '#55': 'wall-calendar',     /* Weekly Closures */
+      '#1084': 'star',          /* Michelin · Best Of */
+      '#372': 'restaurants-hotel',  /* Restaurants Near Hotel */
+      '#1211': 'restaurants',  /* Downtown Restaurants — same shape, same thing */
+      '#358': 'coffee',        /* Cappuccino */
+      '#347': 'dessert',      /* Local Tastes */
+      '#482': 'theatre',      /* Shows */
+      '#996': 'bang',          /* Heads Up */
+      '#642': 'sparkle',      /* Worth Knowing */
+      '#942': 'burst',        /* Also on this site */
       /* "Also on this site" pills + the title-card facts. Every one of these
          links to a Trip-Essentials page that ALREADY has a toolbar icon, so
          they reuse it verbatim — the pill and the nav entry for the same page
-         now draw the same shape. 🏘 takes the neighbourhoods house (owner
+         now draw the same shape. #1239 takes the neighbourhoods house (owner
          2026-08-11: "no idea what this icon is i cant see it" — the Apple
          glyph is three tiny houses, illegible at 15px). */
-      '🌅': 'sunset',
-      '🔌': 'plug',
-      '💰': 'money',
-      '🛡': 'safety-guide',
-      '🪪': 'visas',
-      '📊': 'chart',
-      '🗣': 'language',
-      '🕐': 'clock-stop',        /* Time Zones pill · the local-time chip */
-      '🏘': 'boutique',        /* Which neighborhood to stay in */
+      '#317': 'sunset',
+      '#457': 'plug',
+      '#374': 'money',
+      '#1000': 'safety-guide',
+      '#442': 'visas',
+      '#548': 'chart',
+      '#934': 'language',
+      '#60': 'clock-stop',        /* Time Zones pill · the local-time chip */
+      '#1239': 'boutique',        /* Which neighborhood to stay in */
       /* The last three emoji left on a section chip — the row the owner was
          looking at when they said "all pills should look right" (2026-08-11).
-         🌍 reuses NAV_ICONS.globe so the World Map pill and the World Map nav
-         entry draw the same shape; ⛲ and 🏓 are authored because no nav icon
+         #1204 reuses NAV_ICONS.globe so the World Map pill and the World Map nav
+         entry draw the same shape; #210 and #511 are authored because no nav icon
          fits and reusing `map` would have put one silhouette on two chips in
          the same row. */
-      '🌍': 'globe',        /* World Map */
-      '⛲': 'cathedral',     /* Day Trips — 128 sections */
-      '🏓': 'paddle'        /* Pickleball — 54 sections */
+      '#1204': 'globe',        /* World Map */
+      '#210': 'cathedral',     /* Day Trips — 128 sections */
+      '#511': 'paddle'        /* Pickleball — 54 sections */
     };
     /* Built FROM MARKS rather than hand-written. The previous hand-kept
        pattern had to be edited in lockstep with the table and the two leads
-       differ (📍 is \uD83D, 🏨 is \uD83C, ⏳ is BMP), which is exactly the kind
+       differ (#34 is \uD83D, #218 is \uD83C, ⏳ is BMP), which is exactly the kind
        of edit that silently half-lands. Add a row to MARKS and the matcher
        follows. Trailing ️ is swallowed into the match so the variation
        selector rides inside the hidden span instead of being left behind to
@@ -9241,7 +9241,7 @@ window.TVE.isPhone = function () {
 
     /* CSS-INJECTED TITLES. Fifteen section titles are not DOM text at all —
        guide-style.css writes them with `#tours .extras-title:empty::before {
-       content: "📅 Tours" }`. Pseudo-element content is not in the DOM, so the
+       content: "#50 Tours" }`. Pseudo-element content is not in the DOM, so the
        walker below cannot see those glyphs and those headers were the ones
        still showing emoji after every other surface was drawn.
 
@@ -9319,15 +9319,15 @@ window.TVE.isPhone = function () {
 
     /* ── NON-GUIDE SURFACES ─────────────────────────────────────────────────
        Runs on every page, above the guide gate. The Travel-budget filter chips
-       on index.html author "💰 Budget (under $100)", "💳 Mid-range", "✨
+       on index.html author "#374 Budget (under $100)", "#395 Mid-range", "#642
        Premium" and were the last authored emoji on the Guides Index. Their
        stylesheet (guides-index-style.css) carries its own copy of the .gm-mk
        rules — without that this pass would blank them, so the two ship
        together.
 
        SCOPED TO #tt-budget-chips, NOT to .ttchip. There is a second chip row
-       above it — the climate filter: 🌴 Hot & humid · ☀️ Warm & sunny · 🌤 Mild
-       · 🍂 Cool · ❄️ Cold. Only 🌤 is in MARKS, and gm-mk-sun has no mask in
+       above it — the climate filter: #1210 Hot & humid · #299️ Warm & sunny · #314 Mild
+       · #1270 Cool · #1281️ Cold. Only #314 is in MARKS, and gm-mk-sun has no mask in
        guides-index-style.css, so a bare `.ttchip` sweep BLANKED that chip and
        left one drawn icon among four Apple emoji — measurably worse than the
        all-emoji row it replaced. Drawing that row means four new marks (palm,
@@ -9356,7 +9356,7 @@ window.TVE.isPhone = function () {
       function (row) { markRow(row); });
     /* Box rows — only where the glyph LEADS the row, matching _injectAddrCopy's
        own test, so a description that happens to mention a pin or a taxi is
-       untouched. Covers the 📍 address row and the 🚶/🚕 rows that Tours, Day
+       untouched. Covers the #34 address row and the #138/#189 rows that Tours, Day
        Trips, Shows and Train Stations entries carry.
 
        The four box families are the ones guide-style.css already groups as one
@@ -9366,7 +9366,7 @@ window.TVE.isPhone = function () {
        child of any of them.
 
        .extras-sub IS a row and is included — it is the per-entry heading that
-       carries "🚕 Uber", "📅 1. {tour name}", "🚊 {tram line}". Its glyph is a
+       carries "#189 Uber", "#50 1. {tour name}", "#191 {tram line}". Its glyph is a
        row mark in every sense: it labels one entry, not a section.
 
        .extras-title and .overview-extra-link are BOTH included — the section
@@ -9378,7 +9378,7 @@ window.TVE.isPhone = function () {
        what keeps a pill and its section from ever drifting apart.
 
        NOT included: the floating "currently reading" strip, which builds its
-       own '📍 ' text in _injectStopStrip rather than carrying authored markup. */
+       own '#34 ' text in _injectStopStrip rather than carrying authored markup. */
     [].forEach.call(
       document.querySelectorAll('.tour-box > div,.ticket-box > div,' +
                                 '.entry-body > div,.station-box > div,.shows-box > div,' +
@@ -9427,8 +9427,8 @@ window.TVE.isPhone = function () {
             RE.lastIndex = 0;
             hm = RE.exec(ht);
             /* ANY mark on the header is enough — not just an identical one.
-               Train Stations pairs a 🚆 header with 🚊 entries and Getting
-               Around a 🚌 header with 🚕 entries, so a same-glyph test left both
+               Train Stations pairs a #174 header with #191 entries and Getting
+               Around a #191 header with #189 entries, so a same-glyph test left both
                repeating down the column, which is the thing being removed. */
             if (hm && hm.index === 0) bare = true;
           }
@@ -9438,22 +9438,22 @@ window.TVE.isPhone = function () {
     /* RATING STARS MID-LINE. A row that LEADS with a glyph already has its
        star drawn, because markRow converts every mark in the row — that is why
        Tours entries came out right. Restaurant and Michelin entries lead with
-       the venue name instead ("ALMA Buenos Aires · 4.4⭐ · 640+ reviews"), so
+       the venue name instead ("ALMA Buenos Aires · 4.4#1084 · 640+ reviews"), so
        the whole row was skipped and kept the gold Apple star mid-sentence
        (owner 2026-08-11: "the starts in the middle is a emoji"). This sweep
-       picks those up, restricted to ⭐ so a description that mentions anything
+       picks those up, restricted to #1084 so a description that mentions anything
        else is untouched.
 
        The box families are in this sweep for a second reason of their own: a
        .ticket-box booking row LEADS with a .ticket-flag span, not a glyph, so
        the leading-glyph pass above returns early on it and never reaches the
-       rating star at the end of the line — "… Skip-the-Line Access · 4.7⭐ ·
+       rating star at the end of the line — "… Skip-the-Line Access · 4.7#1084 ·
        165+ reviews" kept a gold Apple star directly under a drawn ticket and a
        drawn clock (owner 2026-08-11, on that exact row). */
     [].forEach.call(
       document.querySelectorAll('.extras-sub,.entry-body > div,.shows-box > div,' +
                                 '.ticket-box > div,.tour-box > div,.station-box > div'),
-      function (row) { if (row.textContent.indexOf('⭐') >= 0) markRow(row, false, '⭐'); });
+      function (row) { if (row.textContent.indexOf('#1084') >= 0) markRow(row, false, '#1084'); });
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _injectRowMarks);
@@ -9481,7 +9481,7 @@ window.TVE.isPhone = function () {
      trip escape lost too" · "we have most of them". Commit a4701fa3 (a SECOND
      emoji sweep, separate from 043c9fe6 which did the Trip-Essentials pages)
      stripped 76 lines of index.html — every pill, every Trip Escape option,
-     and even the text of the "LOCKED ICONS: Stats = 📊, Compare = 📶" comment
+     and even the text of the "LOCKED ICONS: Stats = #548, Compare = #548" comment
      that was there to stop exactly this.
 
      The markup is restored, so the glyph is once again the authored source of
@@ -9494,17 +9494,17 @@ window.TVE.isPhone = function () {
      load. ✓ and ✕ are deliberately absent — they are text glyphs with their
      own locked treatment, not emoji. */
   var INDEX_GLYPH_ICON = {
-    '✈': 'plane', '🛫': 'plane', '📊': 'chart', '📶': 'compare',
-    '🌆': 'triptype', '📅': 'calendar', '🗓': 'calendar', '🗣': 'language',
-    '📍': 'pin', '🌐': 'globe', '🌍': 'globe', '🌎': 'globe', '🌏': 'globe',
-    '🗺': 'country-map', '🏆': 'trophy', '📋': 'list', '💰': 'money', '💳': 'card',
-    '🏠': 'neighborhoods', '🛡': 'safety-guide', '✨': 'star',
-    '🚗': 'rental-cars', '🚕': 'rental-cars', '🚆': 'train', '🚄': 'train',
-    '🚌': 'transit', '🚢': 'ship', '⛴': 'ship',
-    '🏝': 'island', '🏖': 'beach', '🎿': 'ski', '🎨': 'artframe',
-    '🎢': 'ferris', '🛝': 'kids', '🍽': 'restaurants', '🍷': 'wine',
-    '🌴': 'palm', '🌲': 'pine-forest-chip', '🍂': 'tree', '🏛': 'unesco',
-    '🌃': 'stage', '☀': 'sun', '🌤': 'sun', '❄': 'aurora', '🌡': 'sun'
+    '#127': 'plane', '#127': 'plane', '#548': 'chart', '#548': 'compare',
+    '#1268': 'triptype', '#50': 'calendar', '#55': 'calendar', '#934': 'language',
+    '#34': 'pin', '#1204': 'globe', '#1204': 'globe', '#1204': 'globe', '#1204': 'globe',
+    '#32': 'country-map', '#1216': 'trophy', '#1207': 'list', '#374': 'money', '#395': 'card',
+    '#1284': 'neighborhoods', '#1000': 'safety-guide', '#642': 'star',
+    '#184': 'rental-cars', '#189': 'rental-cars', '#174': 'train', '#1237': 'train',
+    '#191': 'transit', '#195': 'ship', '#195': 'ship',
+    '#260': 'island', '#242': 'beach', '#517': 'ski', '#223': 'artframe',
+    '#201': 'ferris', '#293': 'kids', '#1211': 'restaurants', '#362': 'wine',
+    '#1210': 'palm', '#280': 'pine-forest-chip', '#1270': 'tree', '#60': 'unesco',
+    '#1277': 'stage', '#299': 'sun', '#314': 'sun', '#1281': 'aurora', '#314': 'sun'
   };
   function _injectIndexPillIcons() {
     var isIndex = /\/(index\.html)?$/.test(location.pathname) ||
@@ -10584,7 +10584,7 @@ window.TVE.isPhone = function () {
      not the reader's decision to make — "it should tell me if it is open or
      not period. it cant be my decision."
 
-     Hours are read from .tour-box/.ticket-box children starting with 🏛.
+     Hours are read from .tour-box/.ticket-box children starting with #60.
      Timezone: data-timezone on toolbar-mount → city lookup map. With no
      timezone we show nothing rather than judge the destination by the
      reader's own clock. */
@@ -10668,8 +10668,8 @@ window.TVE.isPhone = function () {
       [].forEach.call(sb.querySelectorAll('.tour-box > div, .ticket-box > div'), function(d) {
         if (txt) return;
         var t = d.textContent.trim();
-        /* 🏛 is surrogate pair 🏛; slice(0,2) covers both bare and VS16 variants */
-        if (t.slice(0, 2) === '🏛') {
+        /* #60 is surrogate pair #60; slice(0,2) covers both bare and VS16 variants */
+        if (t.slice(0, 2) === '#60') {
           /* Strip emoji + optional VS16 + space */
           txt = t.slice(t.indexOf(' ') + 1).trim();
         }
@@ -10769,7 +10769,7 @@ window.TVE.isPhone = function () {
         _mk.style.marginRight = '5px';
         var _src = document.createElement('span');
         _src.className = 'gm-mk-src';
-        _src.textContent = '🕐 ';
+        _src.textContent = '#60 ';
         timeLabel.appendChild(_mk);
         timeLabel.appendChild(_src);
         timeLabel.appendChild(document.createTextNode(info.city + ' \xb7 ' + info.timeStr));
@@ -11118,7 +11118,7 @@ window.TVE.isPhone = function () {
            row can reach it; it inserts its own. */
         '<span class="lac-iata"><span class="gm-mk gm-mk-c" aria-hidden="true">' +
         '<svg viewBox="0 0 24 24"><use href="#gm-i-plane"/></svg></span><span' +
-        ' style="margin-right:4px"></span><span class="gm-mk-src">✈ </span>' +
+        ' style="margin-right:4px"></span><span class="gm-mk-src">#127 </span>' +
         info.iata + '</span>' +
         '<span class="lac-div">|</span>' +
         '<span class="lac-name">' + info.name + '</span>' +
@@ -11251,7 +11251,7 @@ window.TVE.isPhone = function () {
      than half-transformed — a guide with an unexpected format degrades to the
      old rendering instead of losing its stop names.
 
-     Train Days keep their full "🚆 Train Day · {Destination}" body and get no
+     Train Days keep their full "#174 Train Day · {Destination}" body and get no
      stop count: per Trip Overview.html §2 a Train Day card carries no inline
      stop list, and the validator's own count-sync skips them for that reason. */
   (function _dayRowRail() {
@@ -11589,7 +11589,7 @@ window.TVE.isPhone = function () {
           );
           if (mapEl) {
             var addr = mapEl.textContent.replace(/\s+/g, ' ').trim();
-            if (addr) out.push('   📍 ' + addr);
+            if (addr) out.push('   #34 ' + addr);
           }
           return;
         }
@@ -11702,7 +11702,7 @@ window.TVE.isPhone = function () {
      every place string is already in the DOM.
 
      ── Where the place string comes from, and why not "{name}, {city}" ──
-     Each stop carries an authored 📍 row whose href is a Maps search URL
+     Each stop carries an authored #34 row whose href is a Maps search URL
      (?api=1&query=Louvre Abu Dhabi Saadiyat Cultural District Abu Dhabi). That
      query is the exact string the guide author already confirmed resolves to
      the right pin, so reusing it lands the route on the same places the
@@ -11713,7 +11713,7 @@ window.TVE.isPhone = function () {
 
      ── travelmode=walking ──
      A guide day is a walking cluster by construction — optimize_route.py groups
-     each day geographically and the .next banners lead with 🚶. Google's own
+     each day geographically and the .next banners lead with #138. Google's own
      default is driving, which sends a compact old-town day the long way round
      one-way systems and pedestrian zones. Switching mode inside Maps is one
      tap; landing on the wrong one costs more than that.
@@ -11802,7 +11802,7 @@ window.TVE.isPhone = function () {
         /* A repeat of the previous token makes Maps draw a zero-length leg. */
         if (p && p !== places[places.length - 1]) places.push(p);
       });
-      /* One stop is not a route — the stop's own 📍 link already covers it. */
+      /* One stop is not a route — the stop's own #34 link already covers it. */
       if (places.length < 2) return '';
 
       var origin = places.shift();
@@ -11874,10 +11874,10 @@ window.TVE.isPhone = function () {
      stop. "All" puts the guide back exactly as it shipped.
 
      ── NO ICONS ON THE CHIPS (owner rule 2026-08-09) ──
-     The row shipped as "🏛 Museums 8 · ⛪ Historic 5 · …" and the owner cut the
+     The row shipped as "#60 Museums 8 · ⛪ Historic 5 · …" and the owner cut the
      glyphs outright: "i do not want the icon! remove!" The chips carry the
      word and the count, nothing else. This is the same call already made for
-     the day opener (🏨, 2026-08-08) and the train-day arrival banner (,
+     the day opener (#218, 2026-08-08) and the train-day arrival banner (,
      2026-08-09) — a control leads with words, not a picture. There is no
      `emoji` field on a category any more, deliberately: an unused one is an
      invitation to put them back.
@@ -11887,8 +11887,8 @@ window.TVE.isPhone = function () {
      emoji that could simply be read off. It does not: of 2,932 stop headers
      across the 216 shipped guides, 16 carry any emoji at all (0.5%), and those
      16 are part of the place name, not a category mark. Icon Order and Format
-     confirms it by design — the per-stop icon vocabulary is FUNCTIONAL (🕐
-     hours, ⏰ duration, 🚫 closed days, 📍 address, 🚶/🚕 motion), and 🏛 is
+     confirms it by design — the per-stop icon vocabulary is FUNCTIONAL (#60
+     hours, ⏰ duration, #984 closed days, #34 address, #138/#189 motion), and #60 is
      banned inside a stop outright. There is no authored stop-type signal
      anywhere in a guide, so one is derived here from the text that IS there.
 
@@ -11913,7 +11913,7 @@ window.TVE.isPhone = function () {
      Name signal covers 65.7% of stops, description a further 14.7%.
 
      ── Why the route lines go with the stops ──
-     A .next banner reads "🚶 6 min · 🚕 4 min → Trevi Fountain". With Trevi
+     A .next banner reads "#138 6 min · #189 4 min → Trevi Fountain". With Trevi
      Fountain filtered out that banner is pointing at nothing, and the walking
      times between the stops that DO remain are not the authored ones anyway.
      So while a filter is on, every .next / .next-tram / .next-metro /
