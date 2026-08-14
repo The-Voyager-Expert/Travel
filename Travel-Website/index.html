@@ -568,29 +568,94 @@ a.land-cta:hover:visited {
   .lp-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
+    /* Dense is safe now that spans are hand-assigned and the two corner lists
+       carry explicit column positions — an explicitly placed item is never moved,
+       so dense only backfills the holes those placements leave. Without it, the
+       last two blocks each sat alone on their own row. */
     grid-auto-flow: dense;
     column-gap: clamp(1.25rem, 2.6vw, 2.25rem);
+    /* Cards STRETCH to their row instead of sitting at its top. Masonry packed
+       tighter but reordered blocks, so a deliberate three-across row could never
+       be guaranteed; stretching keeps the composition exact and removes the gaps
+       between cards — a shorter card simply carries more internal space, which
+       reads as deliberate rather than as a hole in the page. */
+    align-items: stretch;
     row-gap: clamp(1.25rem, 2.6vw, 2.25rem);
-    align-items: start;
   }
   .lp-grid > .lp-block { margin: 0; }
 
-  /* the six-step cycle */
-  .lp-grid > .lp-block:nth-of-type(6n+1) { grid-column: span 5; }
-  .lp-grid > .lp-block:nth-of-type(6n+2) { grid-column: span 7; }
-  .lp-grid > .lp-block:nth-of-type(6n+3) { grid-column: span 8; }
-  .lp-grid > .lp-block:nth-of-type(6n+4) { grid-column: span 4; }
-  .lp-grid > .lp-block:nth-of-type(6n+5) { grid-column: span 7; }
-  .lp-grid > .lp-block:nth-of-type(6n+6) { grid-column: span 5; }
+  /* Spans assigned per block rather than by a repeating cycle. A cycle could not
+     hold: the narrow-list override (span 4) cut across it, so rows stopped
+     summing to twelve and blocks wrapped, leaving one alone on its own row.
+     Hand-assigned, every row sums to 12 and the composition is a mix — two-up,
+     three-up, wide-and-narrow — rather than the same split repeated:
+       4+8 · 5+4+3 · 7+5 · 4+8 · 5+4+3 · 8+4 · 4+8
+     Blocks 1, 14 and 15 are the reference lists and take 4 (~19rem). */
+  .lp-grid > .lp-block:nth-of-type(1) { grid-column: span 4; }
+  .lp-grid > .lp-block:nth-of-type(2) { grid-column: span 8; }
+  .lp-grid > .lp-block:nth-of-type(3) { grid-column: span 5; }
+  .lp-grid > .lp-block:nth-of-type(4) { grid-column: span 4; }
+  .lp-grid > .lp-block:nth-of-type(5) { grid-column: span 3; }
+  .lp-grid > .lp-block:nth-of-type(6) { grid-column: span 7; }
+  .lp-grid > .lp-block:nth-of-type(7) { grid-column: span 5; }
+  .lp-grid > .lp-block:nth-of-type(8) { grid-column: span 4; }
+  .lp-grid > .lp-block:nth-of-type(9) { grid-column: span 8; }
+  .lp-grid > .lp-block:nth-of-type(10) { grid-column: span 5; }
+  .lp-grid > .lp-block:nth-of-type(11) { grid-column: span 4; }
+  .lp-grid > .lp-block:nth-of-type(12) { grid-column: span 3; }
+  .lp-grid > .lp-block:nth-of-type(13) { grid-column: span 8; }
+  .lp-grid > .lp-block:nth-of-type(14) { grid-column: span 4; }
+  /* Stats sits lower-RIGHT — pinned to the last four columns rather than just
+     given a width, so it lands on the right of its row instead of the left.
+     Same column treatment as Best Of at the top-left: the page opens with one
+     reference list and closes with another, on opposite corners. */
+  .lp-grid > .lp-block:nth-of-type(15) { grid-column: 9 / span 4; }
+  .lp-grid > .lp-block:nth-of-type(16) { grid-column: 1 / span 8; }
 
-  /* overrides that beat the cycle */
-  .lp-grid > .lp-block.dark    { grid-column: span 12; }   /* the one banner */
-  .lp-grid > .lp-block.feature { grid-column: span 12; }
-  .lp-grid > .lp-block.open    { grid-column: span 12; }
-  .lp-grid > .lp-block.stack   { grid-column: span 4; }    /* ~19rem lists */
+  /* Nothing spans the full row — every section shares with a neighbour.
+     Spans are chosen so each block gets a width that suits its content and its
+     partner completes the twelve. */
+  /* A long reference list is far taller than a prose card. Spanning rows lets
+     two or three shorter blocks stack beside it instead of leaving a 1,400px
+     void — the list runs down the page while its neighbours fill the space. */
   .lp-grid > .lp-block.stack.right { text-align: left; }
 }
 
+
+/* Weather & climate — the one section that gets three columns of its own. It is
+   the site's strongest planning argument (real month data, not annual averages)
+   and it was previously a four-link list called "Chase the light", which buried
+   it. Full span, warm ground, three sub-arguments side by side. */
+
+.wx-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+.wx-cols h3 {
+  font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+  font-weight: 700;
+  color: var(--ink, #17150f);
+  margin: 0 0 0.5rem;
+  line-height: 1.25;
+}
+.wx-cols p {
+  font-size: clamp(0.88rem, 1vw, 0.95rem);
+  line-height: 1.65;
+  margin: 0 0 0.9rem;
+  max-width: none;
+}
+.wx-cols .lp-links { display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-start; }
+.wx-cols .lp-links a {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--brand, #a94e1c);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.wx-cols .lp-links a:visited { color: #a94e1c; }
+.wx-cols .lp-links a:hover { border-bottom-color: #a94e1c; }
 </style>
 <link rel="stylesheet" href="./assets/mobile.css?v=53">
 </head>
@@ -961,25 +1026,54 @@ a.land-cta:hover:visited {
 </section>
 
 <!-- ═══ BLOCK 13 — weather & time ══════════════════════════════════════════ -->
-<section class="lp-block tint">
-  <h2>Chase the light.</h2>
+<section class="lp-block feature weather">
+  <p class="lp-kicker">Weather &amp; climate</p>
+  <h2>Most trips are decided by a fortnight, not a place.</h2>
   <p>
-    The single most underrated planning input. Daylight decides how much actually fits in a
-    day — a January day in Reykjavík gives you about four usable hours, the same date in
-    Cape Town gives you fourteen. Sunrise and sunset times per destination, month by month,
-    so you plan the day you will really get rather than the one the itinerary assumes.
+    You rarely get to pick both. The dates come from work, school or whoever you're
+    travelling with — so the useful question is not "when should I go to Lisbon", it is
+    "where is good in the two weeks I actually have". Every tool here works in that
+    direction.
   </p>
-  <p>
-    And the same for weather: month-by-month climate for every destination, the best window
-    per city, and the months worth avoiding entirely.
-  </p>
-  <nav class="lp-pills">
-    <a href="./Trip-Essentials/Sunrise-Sunset.html">Sunrise &amp; sunset</a>
-    <a href="./Trip-Essentials/Weather.html">Weather by city</a>
-    <a href="./Trip-Essentials/Climate-Finder.html">Browse by climate</a>
-    <a href="./Trip-Essentials/When-to-Go.html">When to go</a>
-    <a href="./Trip-Essentials/Time-Zones.html">Time zones</a>
-  </nav>
+
+  <div class="wx-cols">
+    <div>
+      <h3>Real months, not yearly averages</h3>
+      <p>
+        Every guide carries month-by-month climate — the average high and low for that
+        specific month, not a smoothed annual figure. March in Marrakesh and March in Munich
+        are two entirely different answers, and an average hides exactly that.
+      </p>
+      <div class="lp-links">
+        <a href="./Trip-Essentials/Climate-Finder.html">Browse by climate</a>
+        <a href="./Trip-Essentials/Weather.html">Weather by city</a>
+      </div>
+    </div>
+
+    <div>
+      <h3>The window, and the months to avoid</h3>
+      <p>
+        Every destination has a season that works and one that quietly ruins the trip —
+        monsoon, closure season, the fortnight the whole country is on holiday and every
+        hotel doubles. Stated plainly, per city.
+      </p>
+      <div class="lp-links">
+        <a href="./Trip-Essentials/When-to-Go.html">When to go</a>
+      </div>
+    </div>
+
+    <div>
+      <h3>Daylight decides how much fits</h3>
+      <p>
+        The most underrated input on this site. A January day in Reykjavík gives you about
+        four usable hours; the same date in Cape Town gives fourteen. That is the difference
+        between a five-stop day and a two-stop day, and no itinerary survives ignoring it.
+      </p>
+      <div class="lp-links">
+        <a href="./Trip-Essentials/Sunrise-Sunset.html">Sunrise &amp; sunset</a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section class="lp-block stack right">
@@ -1158,5 +1252,6 @@ a.land-cta:hover:visited {
 </script>
 
 </div>
+
 </body>
 </html>
