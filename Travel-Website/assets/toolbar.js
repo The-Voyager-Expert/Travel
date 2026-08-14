@@ -7,7 +7,7 @@
  * loads them from assets/ at its own relative depth below the site root:
  *   · depth-1 pages (Guides-Index.html,
  *     Trip-Essentials/*.html):                    src="./assets/toolbar.js"
- *   · depth-2 pages (Guides/City/*.html,
+ *   · depth-2 pages (guides/City/*.html,
  *     Trip-Essentials/Maps|Plug Adapter/*.html):  src="../../assets/toolbar.js"
  *
  * Each page needs:
@@ -912,7 +912,7 @@ window.TVE.isPhone = function () {
   /* ── Links ─────────────────────────────────────────────────────────────── */
   var ITEMS = [
     null,
-    { href: base + 'Guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
+    { href: base + 'guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
     null,
     /* OWNER-DIRECTED 2026-08-09: 👕 Packing and 🔌 Plug Adapters were standalone
        top-strip tabs; both are now children here, Packing first. Before You Go
@@ -1852,7 +1852,7 @@ window.TVE.isPhone = function () {
   hamLabel.textContent = 'GUIDE MY DAYS';
   /* The brand title goes to the site's FRONT DOOR, which since 2026-08-14 is the
      landing page at the root — not the guides listing. Every other jump in this
-     file that meant "the guides listing" moved to Guides/index.html; this one
+     file that meant "the guides listing" moved to guides/index.html; this one
      deliberately did not. Toolbar.html § 4. */
   hamLabel.href = base + 'index.html';
   hamLabel.style.cssText = 'text-decoration:none;color:#7a3b1e;';
@@ -2187,7 +2187,7 @@ window.TVE.isPhone = function () {
       if (/\-stops-map\.html$/.test(location.pathname)) {
         window.history.back();
       } else {
-        window.location.href = base + 'Guides/index.html';
+        window.location.href = base + 'guides/index.html';
       }
       return;
     }
@@ -2324,7 +2324,7 @@ window.TVE.isPhone = function () {
         }
       });
     } else {
-      backGuides.href = base + 'Guides/index.html';
+      backGuides.href = base + 'guides/index.html';
       backGuides.textContent = '‹ All Guides';
     }
     backGuides.style.cssText = pillStyle;
@@ -3965,7 +3965,7 @@ window.TVE.isPhone = function () {
 
   /* ── Destination weekday + clock (shared) ────────────────────────────────────
      Resolves the destination timezone from data-timezone on #toolbar-mount, or
-     failing that the Guides/{City}/ folder slug, and reports the weekday index
+     failing that the guides/{City}/ folder slug, and reports the weekday index
      and formatted time for THAT city — never the reader's own clock. A guide is
      read weeks before the trip and often from another continent, so "today" has
      to mean today at the destination or it means nothing. `local` is false when
@@ -8416,7 +8416,7 @@ items.forEach(function (it) {
      panel) and per-guide hover weather on the cards. Deliberately NOT loaded
      on individual guide pages. Bump the ?v= below whenever weather.js changes
      so the browser refreshes it (it has no version tag on the page itself). */
-  /* 2026-08-14: the guides listing moved to /Guides/index.html and the site
+  /* 2026-08-14: the guides listing moved to /guides/index.html and the site
      root became a landing page. `curr` is only the BASENAME, so both pages
      answer to 'index.html' — this has to test the path or weather.js loads
      on the landing page, which has no cards for it to attach to. */
@@ -9016,7 +9016,7 @@ items.forEach(function (it) {
 
     var pill = document.createElement('a');
     pill.id = 'tve-map-back';
-    pill.href = base + 'Guides/index.html';
+    pill.href = base + 'guides/index.html';
     pill.textContent = '← All Guides';
     document.body.appendChild(pill);
   }
@@ -10780,7 +10780,7 @@ items.forEach(function (it) {
 
     /* ── Destination time ── */
     function _destInfo() {
-      /* Derive slug from URL path: …/Guides/Geneva/geneva.html → "geneva" */
+      /* Derive slug from URL path: …/guides/Geneva/geneva.html → "geneva" */
       var parts = location.pathname.split('/');
       var gi = parts.indexOf('Guides');
       var slug = gi >= 0 && parts[gi + 1] ? parts[gi + 1].toLowerCase() : '';
