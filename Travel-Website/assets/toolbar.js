@@ -512,6 +512,8 @@ window.TVE.isPhone = function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    'restaurants-hotel': ['0 0 24 24', '<path d="M3.2 14.4a8.8 8.8 0 0 1 17.6 0z" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/> <path d="M6.2 14.4a5.8 5.8 0 0 1 9.4-4.5A8.8 8.8 0 0 0 6.2 14.4z" fill="url(#gm-blue)" stroke="var(--c-blue-rim)" stroke-width="0.5"/> <circle cx="12" cy="4.4" r="1.6" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/> <rect x="11.4" y="5.6" width="1.2" height="1.4" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/> <rect x="1.8" y="14.8" width="20.4" height="2.6" rx="1.3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/> <rect x="4.6" y="18.6" width="14.8" height="2" rx="1" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5" opacity="0.5"/>'],
+
     'delivery-car': ['0 0 24 24', '<path d="M5.8 10.4 7.5 6.6c.3-.8 1-1.3 1.9-1.3h5.2c.9 0 1.6.5 1.9 1.3l1.7 3.8z" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/><path d="M11.6 5.3h0.9v5.1h-0.9z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><rect x="2.4" y="9.9" width="19.2" height="6.5" rx="2.4" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><rect x="6.6" y="6.4" width="4" height="2.4" rx="0.6" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/><circle cx="8.6" cy="7.6" r="0.75" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><rect x="2.7" y="11.4" width="3.1" height="1.9" rx="0.95" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><rect x="18.2" y="11.4" width="3.1" height="1.9" rx="0.95" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><circle cx="6.8" cy="17.3" r="2.6" fill="url(#gm-tire)" stroke="var(--c-tire-rim)" stroke-width="0.5"/><circle cx="6.8" cy="17.3" r="1.1" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5"/><circle cx="17.2" cy="17.3" r="2.6" fill="url(#gm-tire)" stroke="var(--c-tire-rim)" stroke-width="0.5"/><circle cx="17.2" cy="17.3" r="1.1" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5"/>'],
 
     'cal-export': ['0 0 24 24', '<rect x="2.6" y="4" width="18.8" height="17.2" rx="2.4" fill="url(#gm-paper)" stroke="var(--c-rim-warm)" stroke-width="1" stroke-linejoin="round" /> <path d="M2.6 6.4A2.4 2.4 0 0 1 5 4h14a2.4 2.4 0 0 1 2.4 2.4v2.4H2.6z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/> <rect x="6.3" y="1.9" width="2.2" height="4" rx="1.1" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/> <rect x="15.5" y="1.9" width="2.2" height="4" rx="1.1" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5"/> <text x="12" y="18.6" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10.6" font-weight="700" fill="url(#gm-cocoa)" stroke="var(--c-cocoa-rim)" stroke-width="0.5" text-anchor="middle">17</text>'],
@@ -9177,7 +9179,7 @@ window.TVE.isPhone = function () {
       '🚆': 'train',        /* Train Stations */
       '🗓': 'calendar',     /* Weekly Closures */
       '⭐': 'star',          /* Michelin · Best Of */
-      '🫕': 'restaurants',  /* Restaurants Near Hotel */
+      '🫕': 'restaurants-hotel',  /* Restaurants Near Hotel */
       '🍽': 'restaurants',  /* Downtown Restaurants — same shape, same thing */
       '☕': 'coffee',        /* Cappuccino */
       '🍮': 'dessert',      /* Local Tastes */
