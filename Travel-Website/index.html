@@ -584,33 +584,41 @@ a.land-cta:hover:visited {
   }
   .lp-grid > .lp-block { margin: 0; }
 
-  /* Spans assigned per block rather than by a repeating cycle. A cycle could not
-     hold: the narrow-list override (span 4) cut across it, so rows stopped
-     summing to twelve and blocks wrapped, leaving one alone on its own row.
-     Hand-assigned, every row sums to 12 and the composition is a mix — two-up,
-     three-up, wide-and-narrow — rather than the same split repeated:
-       4+8 · 5+4+3 · 7+5 · 4+8 · 5+4+3 · 8+4 · 4+8
-     Blocks 1, 14 and 15 are the reference lists and take 4 (~19rem). */
-  .lp-grid > .lp-block:nth-of-type(1) { grid-column: span 4; }
-  .lp-grid > .lp-block:nth-of-type(2) { grid-column: span 8; }
-  .lp-grid > .lp-block:nth-of-type(3) { grid-column: span 5; }
-  .lp-grid > .lp-block:nth-of-type(4) { grid-column: span 4; }
-  .lp-grid > .lp-block:nth-of-type(5) { grid-column: span 3; }
-  .lp-grid > .lp-block:nth-of-type(6) { grid-column: span 7; }
-  .lp-grid > .lp-block:nth-of-type(7) { grid-column: span 5; }
-  .lp-grid > .lp-block:nth-of-type(8) { grid-column: span 4; }
-  .lp-grid > .lp-block:nth-of-type(9) { grid-column: span 8; }
-  .lp-grid > .lp-block:nth-of-type(10) { grid-column: span 5; }
-  .lp-grid > .lp-block:nth-of-type(11) { grid-column: span 4; }
-  .lp-grid > .lp-block:nth-of-type(12) { grid-column: span 3; }
-  .lp-grid > .lp-block:nth-of-type(13) { grid-column: span 8; }
-  .lp-grid > .lp-block:nth-of-type(14) { grid-column: span 4; }
-  /* Stats sits lower-RIGHT — pinned to the last four columns rather than just
-     given a width, so it lands on the right of its row instead of the left.
-     Same column treatment as Best Of at the top-left: the page opens with one
-     reference list and closes with another, on opposite corners. */
-  .lp-grid > .lp-block:nth-of-type(15) { grid-column: 9 / span 4; }
-  .lp-grid > .lp-block:nth-of-type(16) { grid-column: 1 / span 8; }
+  /* Widths come from what a block IS, not from its position. Hand-assigning
+     nth-of-type(1..16) composed perfect rows but was brittle — adding or moving
+     one section broke every row after it. These rules survive edits:
+
+       reference list (.stack)   4   a ~19rem column of links
+       feature (.feature)        8   needs room for its three sub-columns
+       banner (.dark)            7
+       tinted card (.tint)       5
+       plain card                6
+       light card (.bare)        4
+
+     Dense flow packs whatever the sizes leave over, so rows compose themselves
+     — two-up mostly, three-up where the widths allow — and the page stays right
+     when a section is added or removed. */
+  /* Sizes are 4, 6 and 8 — the widths that actually COMBINE into twelve:
+       4+4+4 (three across) · 6+6 · 8+4 · 4+8
+     Using 5 and 7 as well produced rows summing to 9 or 10, which left holes and
+     dropped the page to 79% filled with no three-across row surviving. */
+  .lp-grid > .lp-block          { grid-column: span 8; }
+  .lp-grid > .lp-block.tint     { grid-column: span 4; }
+  .lp-grid > .lp-block.bare     { grid-column: span 4; }
+  .lp-grid > .lp-block.dark     { grid-column: span 8; }
+  .lp-grid > .lp-block.feature  { grid-column: span 8; }
+  /* Weather & climate is half the page: the sunset/daylight strip will pull a
+     banner into it, and a banner in a 2/3-width card would sit awkwardly wide.
+     Half leaves it room to hold a visual without dominating the row. */
+  .lp-grid > .lp-block.feature.weather { grid-column: span 6; }
+  .lp-grid > .lp-block.stack    { grid-column: span 4; }
+  /* Whatever ends up last takes the wide span, so an odd count never strands a
+     block alone on the final row. Positional, but position-independent — it
+     follows the last section rather than naming one. */
+  .lp-grid > .lp-block:last-child { grid-column: span 8; }
+  /* the two reference lists anchor opposite corners */
+  .lp-grid > .lp-block.stack:first-child { grid-column: 1 / span 4; }
+  .lp-grid > .lp-block.stack.right       { grid-column: 9 / span 4; }
 
   /* Nothing spans the full row — every section shares with a neighbour.
      Spans are chosen so each block gets a width that suits its content and its
@@ -629,7 +637,7 @@ a.land-cta:hover:visited {
 
 .wx-cols {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
   gap: clamp(1.5rem, 3.5vw, 3rem);
   margin-top: clamp(1.5rem, 3vw, 2.25rem);
 }
