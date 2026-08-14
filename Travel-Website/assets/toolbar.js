@@ -9193,7 +9193,7 @@ window.TVE.isPhone = function () {
          pill correctly authors 🚆. */
       '🚌': 'van',          /* Getting Around */
       '🚆': 'train-station',        /* Train Stations */
-      '🗓': 'calendar',     /* Weekly Closures */
+      '🗓': 'wall-calendar',     /* Weekly Closures */
       '⭐': 'star',          /* Michelin · Best Of */
       '🫕': 'restaurants-hotel',  /* Restaurants Near Hotel */
       '🍽': 'restaurants',  /* Downtown Restaurants — same shape, same thing */
