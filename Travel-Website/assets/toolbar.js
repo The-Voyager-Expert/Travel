@@ -7378,7 +7378,7 @@ window.TVE.isPhone = function () {
         var _aicPill = document.createElement('a');
         _aicPill.className = 'overview-extra-link';
         _aicPill.href = '#also-in-country';
-        _aicPill.innerHTML = iconSVG(NAV_ICONS['globe'], 15, 'globe') + ' Also in ' + country;
+        _aicPill.innerHTML = iconSVG(NAV_ICONS['map'], 15, 'map') + ' Also in ' + country;
         _aicPill.addEventListener('click', function () {
           if (wrap.classList.contains('collapsed')) wrap.classList.remove('collapsed');
         });
