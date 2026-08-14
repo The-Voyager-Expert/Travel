@@ -2266,7 +2266,7 @@ window.TVE.isPhone = function () {
         if (sf) {
           var fp = document.createElement('button');
           fp.type = 'button';
-          fp.textContent = '🖨 Print';
+          fp.innerHTML = iconSVG(NAV_ICONS['printer'], 15, 'printer') + ' Print';
           fp.style.cssText = 'font-size:13px;font-weight:500;color:var(--c-float-text,#8a6c1a);' +
             'background:none;border:none;padding:0;cursor:pointer;font-family:inherit;' +
             'transition:color .12s;-webkit-appearance:none;';
