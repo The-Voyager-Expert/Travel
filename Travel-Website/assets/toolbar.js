@@ -512,6 +512,8 @@ window.TVE.isPhone = function () {
      A key with no entry here keeps the old mask path untouched, so this can be
      completed icon by icon without a flag day. */
   var GM_SPRITE = {
+    'train-station': ['0.10 -0.90 23.81 23.81', '<rect x="6" y="5" width="12" height="5" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/> <circle cx="12" cy="15" r="2" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/> <path d="M4 15.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V5c0-3.5-3.58-4-8-4S4 1.5 4 5v10.5zm8 1.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-7H6V5h12v5z" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/>'],
+
     'restaurants-hotel': ['0 0 24 24', '<path d="M3.2 14.4a8.8 8.8 0 0 1 17.6 0z" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/> <path d="M6.2 14.4a5.8 5.8 0 0 1 9.4-4.5A8.8 8.8 0 0 0 6.2 14.4z" fill="url(#gm-blue)" stroke="var(--c-blue-rim)" stroke-width="0.5"/> <circle cx="12" cy="4.4" r="1.6" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/> <rect x="11.4" y="5.6" width="1.2" height="1.4" fill="url(#gm-navy)" stroke="var(--c-navy-rim)" stroke-width="0.5"/> <rect x="1.8" y="14.8" width="20.4" height="2.6" rx="1.3" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/> <rect x="4.6" y="18.6" width="14.8" height="2" rx="1" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5" opacity="0.5"/>'],
 
     'delivery-car': ['0 0 24 24', '<path d="M5.8 10.4 7.5 6.6c.3-.8 1-1.3 1.9-1.3h5.2c.9 0 1.6.5 1.9 1.3l1.7 3.8z" fill="url(#gm-sky)" stroke="var(--c-sky-rim)" stroke-width="0.5"/><path d="M11.6 5.3h0.9v5.1h-0.9z" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><rect x="2.4" y="9.9" width="19.2" height="6.5" rx="2.4" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><rect x="6.6" y="6.4" width="4" height="2.4" rx="0.6" fill="url(#gm-paper)" stroke="var(--c-rim-cool)" stroke-width="0.6"/><circle cx="8.6" cy="7.6" r="0.75" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><rect x="2.7" y="11.4" width="3.1" height="1.9" rx="0.95" fill="url(#gm-sun)" stroke="var(--c-sun-rim)" stroke-width="0.5"/><rect x="18.2" y="11.4" width="3.1" height="1.9" rx="0.95" fill="url(#gm-red)" stroke="var(--c-red-rim)" stroke-width="0.5"/><circle cx="6.8" cy="17.3" r="2.6" fill="url(#gm-tire)" stroke="var(--c-tire-rim)" stroke-width="0.5"/><circle cx="6.8" cy="17.3" r="1.1" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5"/><circle cx="17.2" cy="17.3" r="2.6" fill="url(#gm-tire)" stroke="var(--c-tire-rim)" stroke-width="0.5"/><circle cx="17.2" cy="17.3" r="1.1" fill="url(#gm-stone)" stroke="var(--c-stone-rim)" stroke-width="0.5"/>'],
@@ -9176,7 +9178,7 @@ window.TVE.isPhone = function () {
          site-wide (CLAUDE.md twentieth non-negotiable) and the Train Stations
          pill correctly authors 🚆. */
       '🚌': 'van',          /* Getting Around */
-      '🚆': 'train',        /* Train Stations */
+      '🚆': 'train-station',        /* Train Stations */
       '🗓': 'calendar',     /* Weekly Closures */
       '⭐': 'star',          /* Michelin · Best Of */
       '🫕': 'restaurants-hotel',  /* Restaurants Near Hotel */
@@ -9201,7 +9203,7 @@ window.TVE.isPhone = function () {
       '📊': 'chart',
       '🗣': 'language',
       '🕐': 'clock-stop',        /* Time Zones pill · the local-time chip */
-      '🏘': 'hotel',        /* Which neighborhood to stay in */
+      '🏘': 'boutique',        /* Which neighborhood to stay in */
       /* The last three emoji left on a section chip — the row the owner was
          looking at when they said "all pills should look right" (2026-08-11).
          🌍 reuses NAV_ICONS.globe so the World Map pill and the World Map nav
