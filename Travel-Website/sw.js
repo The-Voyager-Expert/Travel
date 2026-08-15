@@ -1149,7 +1149,9 @@
    already moved to v873 in this same working tree by the landing-page pass. */
 /* 2026-08-14: toolbar tab -> Climate Finder (the thermometer page). floor -> 643,
    CACHE v874. */
-var CACHE = 'travel-cache-v874';
+/* 2026-08-14: toolbar — Before You Go opens the standalone page again, not the
+   landing-page section. floor -> 644, CACHE v875. */
+var CACHE = 'travel-cache-v875';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1157,7 +1159,7 @@ var CACHE = 'travel-cache-v874';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 643, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 644, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
