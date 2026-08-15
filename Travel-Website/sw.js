@@ -1,3 +1,7 @@
+/* 2026-08-14: landing page rebuilt over several commits — filters layer, pills
+   only for filters, When to go, Compare cities, flight time, photo tiles.
+   index.html changed 8 times since the last bump and readers were being served
+   the old page, which looked exactly like a regression. CACHE to v871. */
 /* 2026-08-14: Best Of dropdown — 9 Stats pages removed (owner: "best of should NOT have anything else"). toolbar.js -> v640. CACHE to v870. */
 /* 2026-08-13: index.html — remove Also Recommended pill from topbar. CACHE to v765. */
 /* 2026-08-13: index.html — remove Trips, Travel Stats, Best of pills from topbar; Trips.html — remove Back to site link. CACHE to v763. */
@@ -1134,7 +1138,7 @@
    class ([^\\/i] instead of [^\\/]) repaired. floor -> 638, CACHE v868. */
 /* 2026-08-14: toolbar restyle — icons hidden, tabs spaced, rounded pills.
    floor -> 639, CACHE v869. */
-var CACHE = 'travel-cache-v870';
+var CACHE = 'travel-cache-v871';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
