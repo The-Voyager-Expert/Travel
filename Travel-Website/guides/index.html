@@ -98,34 +98,6 @@
    reader can see which group they were dropped into. */
 .country-target { outline: 2px solid #b85c2a; outline-offset: 6px; border-radius: 10px; transition: outline-color .4s ease; }
 .page-intro-card { display: none !important; }
-/* ── Europe contextual days bar ── */
-#europe-days-bar {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  padding: 9px 16px;
-  background: #fff9f5;
-  border-bottom: 1.5px solid #f0d5c0;
-  border-top: 1px solid #f5e8dc;
-}
-.edb-label {
-  font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
-  color: #7a3b1e; opacity: .75; white-space: nowrap; flex-shrink: 0;
-}
-.edb-chips { display: flex; gap: 7px; flex-wrap: wrap; }
-.edb-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: var(--warm, #fdf8f2); border: 1px solid var(--border, #e3ddd2);
-  border-radius: 999px; padding: 4px 12px;
-  font-size: 12.5px; font-weight: 500; color: var(--text2, #5b564c);
-  cursor: pointer; font-family: inherit;
-  transition: border-color .12s, color .12s, background .12s;
-}
-.edb-chip:hover { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
-.edb-chip.on { background: var(--rust, #b85c2a); border-color: var(--rust, #b85c2a); color: #fff; }
-.edb-count {
-  font-size: 10px; font-weight: 700; opacity: .55;
-  background: rgba(0,0,0,.07); border-radius: 99px; padding: 1px 5px;
-}
-.edb-chip.on .edb-count { background: rgba(255,255,255,.22); opacity: 1; }
 /* The facet panels live OUTSIDE .topbar, so hiding the bar left them able to
    appear — arriving from a landing pill popped the Trip Type panel open above
    the guides. The controls inside them still work when clicked programmatically
@@ -540,10 +512,6 @@
 <div id="pinned-strip" hidden></div>
 <div id="filter-active-bar">
   <button type="button" id="clear-all-filters">✕ clear</button>
-</div>
-<div id="europe-days-bar" hidden>
-  <span class="edb-label">Days planned</span>
-  <div id="edb-chips" class="edb-chips"></div>
 </div>
 <div class="mosaic-wrap">
 <div class="mosaic">
@@ -2081,7 +2049,7 @@
           c.classList.toggle('match-alias', match && q !== '' && !textMatch && (aliasMatch || fuzzyMatch));
           /* a card only counts toward its section + the result tally if it also
              survives the season + theme filters (which hide via !important class) */
-          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('edb-hide') && !c.classList.contains('country-hide') && !c.classList.contains('continent-hide') && !c.classList.contains('new-hide');
+          var visible = match && !c.classList.contains('season-hide') && !c.classList.contains('theme-hide') && !c.classList.contains('lang-hide') && !c.classList.contains('days-hide') && !c.classList.contains('country-hide') && !c.classList.contains('continent-hide') && !c.classList.contains('new-hide');
           if (visible) { any = true; shown++; sectionVisible++; }
         });
         r.style.display = any ? '' : 'none';
@@ -3686,93 +3654,6 @@
   document.addEventListener('click', function (e) { if (!jump.contains(e.target)) closeMenu(); }, true);
 }());
 
-/* ══ Europe contextual days-planned filter ══
-   Appears only when Europe is the active continent. Chips are built from real
-   day counts on data-days attributes added to each European dest-card.
-   Selecting a chip adds edb-hide to non-matching cards and re-runs the search
-   pass so section/country visibility stays consistent. ══ */
-(function () {
-  var bar   = document.getElementById('europe-days-bar');
-  var chips = document.getElementById('edb-chips');
-  if (!(bar && chips)) return;
-
-  var activeDays = null;
-
-  /* Build chips from real data-days values on European cards */
-  function buildChips() {
-    var counts = {};
-    [].slice.call(document.querySelectorAll('.dest-card[data-days]')).forEach(function (c) {
-      if (c.classList.contains('continent-hide')) return;
-      var d = parseInt(c.dataset.days, 10);
-      if (!d) return;
-      var key = d >= 8 ? '8+' : String(d);
-      counts[key] = (counts[key] || 0) + 1;
-    });
-    /* Build in order 2 3 4 5 6 7 8+ */
-    var order = ['2','3','4','5','6','7','8+'];
-    chips.innerHTML = '';
-    order.forEach(function (k) {
-      if (!counts[k]) return;
-      var label = k === '8+' ? '8+ days' : k + ' day' + (k === '1' ? '' : 's');
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'edb-chip' + (activeDays === k ? ' on' : '');
-      btn.dataset.edbd = k;
-      btn.innerHTML = label + ' <span class="edb-count">' + counts[k] + '</span>';
-      btn.addEventListener('click', function () { pickDays(k); });
-      chips.appendChild(btn);
-    });
-  }
-
-  function pickDays(k) {
-    activeDays = (activeDays === k) ? null : k;
-    [].slice.call(chips.querySelectorAll('.edb-chip')).forEach(function (b) {
-      b.classList.toggle('on', b.dataset.edbd === activeDays);
-    });
-    applyDaysFilter();
-  }
-
-  function applyDaysFilter() {
-    [].slice.call(document.querySelectorAll('.dest-card')).forEach(function (c) {
-      if (!c.dataset.days) { c.classList.remove('edb-hide'); return; }
-      if (activeDays === null) { c.classList.remove('edb-hide'); return; }
-      var d = parseInt(c.dataset.days, 10);
-      var key = d >= 8 ? '8+' : String(d);
-      c.classList.toggle('edb-hide', key !== activeDays);
-    });
-    var inp = document.getElementById('guide-search');
-    if (inp) { var ev = document.createEvent('Event'); ev.initEvent('input', true, true); inp.dispatchEvent(ev); }
-  }
-
-  function clearDays() {
-    activeDays = null;
-    applyDaysFilter();
-    chips.innerHTML = '';
-  }
-
-  /* Show/hide bar whenever continent filter changes */
-  var _origApply = window._applyContinentFilter;
-  window._applyContinentFilter = function () {
-    if (_origApply) _origApply.apply(this, arguments);
-    /* Check if Europe is now active */
-    var euActive = (document.querySelector('#continentJumpList .days-jump-item.on[data-cont="Europe"]') !== null);
-    if (euActive) {
-      bar.removeAttribute('hidden');
-      buildChips();
-    } else {
-      bar.setAttribute('hidden', '');
-      clearDays();
-    }
-  };
-
-  /* Also hook clear-continent */
-  var _origClear = window._clearContinentFilter;
-  window._clearContinentFilter = function () {
-    if (_origClear) _origClear.apply(this, arguments);
-    bar.setAttribute('hidden', '');
-    clearDays();
-  };
-}());
 
 /* ══ Browse-by view pills — single-select: Flight time (Country is default) ══ */
 (function () {
