@@ -1229,7 +1229,7 @@
 
    v893: Trips.html again — the calendar export's event titles are now the name
    alone and every other fact moved into labelled notes lines. CACHE to v893. */
-var CACHE = 'travel-cache-v894';
+var CACHE = 'travel-cache-v895';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
