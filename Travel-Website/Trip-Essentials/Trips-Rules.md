@@ -285,6 +285,8 @@ A train section is a `.sec` with its who-pill, then a `.trains-block` wrapper ho
 
 The last column is the **booking link**, red and bold, pointing at the operator's site.
 
+**The time column is a service WINDOW, not a departure** (owner 2026-08-15 — *"the train times is ALL times from 10 to 5"*). A corridor with trains every half hour is written once as `10:00–5:00 PM`, not as an invented single departure. Only write a clock time when a specific train is actually booked. Guessing a departure and printing it as fact is the failure this prevents — the row exists to say *"go any time in this window, book it here"*.
+
 ### Trains are never exported (owner 2026-08-15)
 
 Per owner (*"i dont need anything here no need of export for trains just add the website to book"*): the calendar export covers **flights and hotels only**. A train gets no chooser row and no `.ics` — the booking link on the row is the whole point. Don't "complete" the export by adding trains.
@@ -426,8 +428,24 @@ These are the locked CSS values for internal card spacing. Do not drift from the
 ### No Hubby notes box anywhere
 Per owner 2026-05-18: *"i dont need anything that Hubby wrote. i will give you any updates as he gives to me."* Do not reintroduce the yellow `.leo-notes` box. If owner pastes Hubby content, it gets folded into the structured fields (dates, addresses, flights) — never preserved as a prose block.
 
-### No Wifey / Hubby / Together sections
-Per owner 2026-05-18: one consolidated section per trip. Hotels list in chronological order regardless of who's staying where. If a hotel is for Hubby only or Wifey only, that's clear from the dates and context — no need for a section divider.
+### Hubby's block always sits ABOVE Wifey's — never chronological (owner 2026-06-25, restated 2026-08-15)
+
+Per owner 2026-06-25 (*"his hotel always comes first when we are staying separately"*) and again 2026-08-15 (*"this is wifey hotel and needs to be below hubby place always"*):
+
+**Once a trip splits, the card orders by PERSON, not by date.** Fixed order, every time:
+
+1. `Both | Flights`
+2. `Both | Hotels` — the nights before the split
+3. `Hubby | Hotel + Venue` — **always first of the two**
+4. `Wifey | Hotels` — **always below Hubby**, every Wifey night in one section, chronological within it
+5. `Wifey | Trains`
+6. `Both | Hotels` — the reunion nights and onward
+
+**A Wifey hotel never moves above Hubby's block just because its check-in is earlier.** The Aug 16 → 17 Munich night checks in the same day Hubby reaches Herrsching, and it still sits below him. Date order applies *within* a person's section, never *between* them.
+
+Every Wifey hotel carries `class="hotel wifey-block"` and every Hubby one `class="hotel hubby-block"` — the coloured left border is what makes the split readable at a glance, so a block placed in the right section with the wrong class is still wrong.
+
+*Superseded, kept for context — owner 2026-05-18: "no more wifey and hubby sections … hotels list in chronological order regardless of who's staying where." That was written before the separation/reunion trips, and the 2026-06-25 rule replaced it. Do not restore chronological-across-people ordering.*
 
 ### No prose
 Per owner 2026-05-18: *"cut any prose. keep just the things that matter. dates, address of venue."* Walking distance from hotel to venue is **not** prose — it's structured travel data and stays. Special-needs reminders, account ownership notes, rate-plan annotations, and similar are prose — cut them.
