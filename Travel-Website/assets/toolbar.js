@@ -10063,18 +10063,24 @@ window.TVE.home = (function () {
       var ovSec = document.querySelector('.overview-section');
       var overviewDays = document.querySelectorAll('.overview-day');
       if (!ovSec || !overviewDays.length) return;
-      if (document.getElementById('tve-open-now-row')) return;
-
-      /* Build row */
-      var row = document.createElement('div');
-      row.id = 'tve-open-now-row';
-      row.className = 'open-now-row';
+      if (document.getElementById('tve-open-now-time')) return;
 
       var timeLabel = document.createElement('span');
       timeLabel.className = 'open-now-local-time';
       timeLabel.id = 'tve-open-now-time';
-      row.appendChild(timeLabel);
-      ovSec.appendChild(row);
+
+      /* Moved to Quick Facts pill strip (owner rule 2026-08-15) — sits beside the
+         language/cost/plug/season pills above Trip Overview on both mobile and
+         desktop. QF loads via XHR so it may not exist yet; observe until it does. */
+      function _attachToQF() {
+        var qf = document.getElementById('tve-quick-facts');
+        if (qf) { qf.appendChild(timeLabel); return true; }
+        return false;
+      }
+      if (!_attachToQF()) {
+        var _qfObs = new MutationObserver(function () { if (_attachToQF()) _qfObs.disconnect(); });
+        _qfObs.observe(ovSec.parentNode || document.body, { childList: true });
+      }
 
       function _updateLabel() {
         var info = _destInfo();
