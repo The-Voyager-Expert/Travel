@@ -1372,6 +1372,57 @@ a.cf-card:hover .cf-city-arrow { opacity: 1; color: var(--rust); }
      The city picker is built at runtime from assets/search_index.json — the same
      file the site search uses — so it can never drift from the shipped guides. -->
 <div class="lp-grid">
+<section class="lp-block" id="trip-escape">
+  <details class="lp-sec">
+    <summary><h2>Trip Escape</h2></summary>
+    <div class="lp-sec-body">
+      <button id="btn-trip-twin" hidden aria-hidden="true"></button>
+<div id="trip-twin-panel" hidden>
+  <div id="tt-inner">
+    <p class="tt-tagline">Find guides that are nothing like home — the opposite climate, opposite budget, total change of scene.</p>
+    <div id="tt-city-row">
+      <div class="tt-label">Where you are <span style="font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;color:var(--muted)">(optional — any fleet city as a proxy)</span></div>
+      <div id="tt-city-wrap">
+        <input type="text" id="tt-city" placeholder="e.g. Miami, London, Sedona" autocomplete="off" spellcheck="false" aria-label="Your current city">
+        <div id="tt-suggest-list" hidden></div>
+      </div>
+      <span id="tt-city-badge" hidden></span>
+    </div>
+    <div class="tt-or">or describe your home</div>
+    <div class="tt-section">
+      <div class="tt-label">Climate</div>
+      <div class="ttchip-row" id="tt-climate-chips">
+        <button type="button" class="ttchip" data-v="hot"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-sun-palms"/></svg> Hot &amp; humid</button>
+        <button type="button" class="ttchip" data-v="warm"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-clear"/></svg> Warm &amp; sunny</button>
+        <button type="button" class="ttchip" data-v="mild"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-partly"/></svg> Mild</button>
+        <button type="button" class="ttchip" data-v="cool"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-overcast"/></svg> Cool</button>
+        <button type="button" class="ttchip" data-v="cold"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-wx-snow"/></svg> Cold</button>
+      </div>
+    </div>
+    <div class="tt-section">
+      <div class="tt-label">Travel budget (per night)</div>
+      <div class="ttchip-row" id="tt-budget-chips">
+        <button type="button" class="ttchip" data-v="budget"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-bills"/></svg> Budget (under $100)</button>
+        <button type="button" class="ttchip" data-v="mid"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-credit-card"/></svg> Mid-range ($100–$250)</button>
+        <button type="button" class="ttchip" data-v="premium"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="vertical-align:middle;flex-shrink:0"><use href="#gm-i-money-bag"/></svg> Premium ($250+)</button>
+      </div>
+    </div>
+    <div class="tt-safe-row">
+      <label class="tt-check-lbl"><input type="checkbox" id="tt-safe"> Safe destinations only</label>
+    </div>
+    <button id="tt-go" type="button" class="tt-go-btn" disabled>Find My Escape</button>
+    <p id="tt-err" hidden></p>
+  </div>
+  <div id="tt-results" hidden>
+    <p class="tt-res-head">Your escape destinations</p>
+    <div id="tt-res-cards"></div>
+    <button id="tt-back" type="button" class="tt-back-btn">← Try again</button>
+  </div>
+</div>
+    </div>
+  </details>
+</section>
+
 <section class="lp-block" id="help-choose">
   <details class="lp-sec">
     <summary><h2>Help me choose</h2></summary>
@@ -3843,7 +3894,7 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
    then run the two panels. They are unmodified inside. */
 (function () {
   var hc = document.getElementById('help-choose-panel');
-  var tt = null;
+  var tt = document.getElementById('trip-twin-panel');
   if (!hc && !tt) return;
   if (!window.fetch || !window.DOMParser) return;
   var started = false;
@@ -3881,6 +3932,29 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
         host.appendChild(mos);
         document.body.appendChild(host);
       }
+
+      /* Trip Escape does NOT read the globals — it reads data-climate,
+         data-cost and data-safety off each card, and scoreCard() returns -1 the
+         moment data-climate is missing. Only 31 of 286 cards carry them in the
+         source HTML and nothing stamps the rest at runtime, so it has been
+         scoring 31 guides out of 237 on the guides index too. Stamp them all
+         from the data we just loaded; keyed by folder, which is how
+         CLIMATE_INLINE / COST_DATA / SAFETY_DATA are keyed. */
+      var stamped = 0;
+      [].forEach.call(document.querySelectorAll('a.dest-card'), function (c) {
+        var h = c.getAttribute('href') || '';
+        var mm = h.match(/(?:^|\/)guides\/([^\/]+)\//) || h.match(/^\.\/([^\/]+)\//);
+        var folder = mm ? mm[1] : null;
+        if (!folder) return;
+        if (!c.hasAttribute('data-climate') && window._CLIMATE[folder])
+          c.setAttribute('data-climate', JSON.stringify(window._CLIMATE[folder]));
+        if (!c.hasAttribute('data-cost') && window._COST_DATA[folder])
+          c.setAttribute('data-cost', JSON.stringify(window._COST_DATA[folder]));
+        if (!c.hasAttribute('data-safety') && window._SAFETY_DATA[folder])
+          c.setAttribute('data-safety', JSON.stringify(window._SAFETY_DATA[folder]));
+        if (c.hasAttribute('data-climate')) stamped++;
+      });
+      window.__ttStamped = stamped;
       run();
     }).catch(function () { /* panels simply stay inert */ });
   }
@@ -4390,6 +4464,285 @@ var CLIMATE_KEY = {"Abu-Dhabi":"Abu Dhabi","Aix-en-Provence":"Aix-en-Provence","
   });
 }());
     } catch (e) { /* one panel failing must not take the other down */ }
+    try {
+/* ── Trip Twin ── */
+(function () {
+  var btnTT   = document.getElementById('btn-trip-twin');
+  var panel   = document.getElementById('trip-twin-panel');
+  var inner   = document.getElementById('tt-inner');
+  var results = document.getElementById('tt-results');
+  var cityIn  = document.getElementById('tt-city');
+  var sugList = document.getElementById('tt-suggest-list');
+  var badge   = document.getElementById('tt-city-badge');
+  var goBtn   = document.getElementById('tt-go');
+  var errP    = document.getElementById('tt-err');
+  var cards   = document.getElementById('tt-res-cards');
+  var backBtn = document.getElementById('tt-back');
+  var safeBox = document.getElementById('tt-safe');
+  if (!btnTT) return;
+
+  var allCards = Array.from(document.querySelectorAll('a.dest-card'));
+  var matchedCard = null;
+
+  function closeTT() {
+    panel.hidden = true;
+    btnTT.setAttribute('aria-expanded', 'false');
+  }
+
+  // Register so other panels can close Trip Escape
+  window._closeTripTwin = closeTT;
+
+  // Patch _collapseFacetPanels to also close Trip Escape
+  var _origCollapse = window._collapseFacetPanels;
+  window._collapseFacetPanels = function () {
+    if (_origCollapse) _origCollapse();
+    closeTT();
+  };
+
+  // Panel toggle — close all other panels first when opening
+  btnTT.addEventListener('click', function () {
+    var opening = panel.hidden;
+    if (opening) {
+      if (window._collapseFacetPanels) window._collapseFacetPanels();
+      if (window._closeDaysMenu) window._closeDaysMenu();
+      if (window._closeCountryMenu) window._closeCountryMenu();
+      if (window._closeBestofMenu) window._closeBestofMenu();
+      if (window._closeContinentMenu) window._closeContinentMenu();
+    }
+    panel.hidden = !panel.hidden;
+    btnTT.setAttribute('aria-expanded', String(!panel.hidden));
+  });
+
+  // Close panel on outside click
+  document.addEventListener('click', function (e) {
+    if (!panel.hidden && !panel.contains(e.target) && e.target !== btnTT) closeTT();
+  }, true);
+
+  backBtn.addEventListener('click', function () {
+    results.hidden = true;
+    inner.hidden = false;
+  });
+
+  // Exclusive chip groups
+  ['tt-climate-chips','tt-budget-chips'].forEach(function (id) {
+    var group = document.querySelectorAll('#' + id + ' .ttchip');
+    Array.from(group).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        Array.from(group).forEach(function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+        updateGo();
+      });
+    });
+  });
+
+  function selVal(id) {
+    var on = document.querySelector('#' + id + ' .ttchip.on');
+    return on ? on.getAttribute('data-v') : null;
+  }
+
+  function updateGo() {
+    var hasCity    = matchedCard !== null;
+    var hasClimate = selVal('tt-climate-chips') !== null;
+    var hasBudget  = selVal('tt-budget-chips') !== null;
+    goBtn.disabled = !(hasCity || (hasClimate && hasBudget));
+  }
+
+  // Data extractors
+  function hiData(card) {
+    var raw = card.getAttribute('data-climate');
+    if (!raw) return null;
+    var d; try { d = JSON.parse(raw); } catch (e) { return null; }
+    var arr;
+    if (Array.isArray(d.hi)) {
+      arr = d.hi.slice();
+    } else {
+      var mo = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+      arr = [];
+      for (var i = 0; i < mo.length; i++) {
+        if (d[mo[i]] && d[mo[i]].hi !== undefined) arr.push(d[mo[i]].hi);
+      }
+    }
+    if (arr.length < 6) return null;
+    var mx = Math.max.apply(null, arr);
+    if (mx <= 55) arr = arr.map(function (v) { return v * 9 / 5 + 32; });
+    var avg = arr.reduce(function (a, b) { return a + b; }, 0) / arr.length;
+    return { avg: avg };
+  }
+
+  function costMid(card) {
+    var raw = card.getAttribute('data-cost');
+    if (!raw) return null;
+    var d; try { d = JSON.parse(raw); } catch (e) { return null; }
+    if (d.mid) return +d.mid;
+    var t = (d.tier || '').toLowerCase();
+    if (t === 'budget') return 60;
+    if (t === 'mid' || t === 'mid-range') return 150;
+    if (t === 'premium') return 350;
+    if (t === 'luxury') return 550;
+    if (t === 'upscale') return 420;
+    return null;
+  }
+
+  function safety(card) {
+    var raw = card.getAttribute('data-safety');
+    if (!raw) return null;
+    var d; try { d = JSON.parse(raw); } catch (e) { return null; }
+    var l = d.level;
+    if (l === 1 || l === '1' || l === 'Safe' || l === 'safe' || l === 'Low' || l === 'low') return 1;
+    if (l === 2 || l === '2' || l === 'Moderate' || l === 'moderate') return 2;
+    if (l === 3 || l === '3' || l === 'High' || l === 'high') return 3;
+    if (l === 4 || l === '4') return 4;
+    return null;
+  }
+
+  function cityName(card) { var s = card.querySelector('.dest-name'); return s ? s.textContent.trim() : ''; }
+  function flagOf(card)   { var s = card.querySelector('.dest-flag');  return s ? s.textContent.trim() : ''; }
+
+  // City search
+  cityIn.addEventListener('input', function () {
+    var q = cityIn.value.trim().toLowerCase();
+    matchedCard = null;
+    badge.hidden = true;
+    sugList.innerHTML = '';
+    if (q.length < 2) { sugList.hidden = true; updateGo(); return; }
+
+    var hits = allCards.filter(function (c) {
+      return cityName(c).toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 6);
+
+    if (!hits.length) { sugList.hidden = true; updateGo(); return; }
+
+    hits.forEach(function (c) {
+      var btn = document.createElement('button');
+      btn.className = 'tt-sug-item';
+      btn.type = 'button';
+      btn.textContent = flagOf(c) + ' ' + cityName(c);
+      btn.addEventListener('click', function () {
+        cityIn.value = cityName(c);
+        matchedCard = c;
+        sugList.hidden = true;
+        badge.textContent = '✓ Escaping from ' + cityName(c);
+        badge.hidden = false;
+        updateGo();
+      });
+      sugList.appendChild(btn);
+    });
+    sugList.hidden = false;
+    updateGo();
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!sugList.contains(e.target) && e.target !== cityIn) sugList.hidden = true;
+  });
+  cityIn.addEventListener('keydown', function (e) { if (e.key === 'Escape') sugList.hidden = true; });
+
+  // Scoring
+  var CLIM = { hot: 92, warm: 82, mild: 65, cool: 55, cold: 42 };
+  var BUDG = { budget: 70, mid: 150, premium: 380 };
+
+  function buildRef() {
+    if (matchedCard) {
+      var cl = hiData(matchedCard);
+      return { avgHi: cl ? cl.avg : null, costMid: costMid(matchedCard), safetyLvl: safety(matchedCard) };
+    }
+    return {
+      avgHi: CLIM[selVal('tt-climate-chips')] || null,
+      costMid: BUDG[selVal('tt-budget-chips')] || null,
+      safetyLvl: null
+    };
+  }
+
+  function scoreCard(ref, card) {
+    var cl = hiData(card);
+    if (!cl) return -1;
+    var cContrast = ref.avgHi !== null ? Math.min(1, Math.abs(ref.avgHi - cl.avg) / 50) : 0.5;
+    var co = costMid(card);
+    var coContrast = (ref.costMid !== null && co !== null) ? Math.min(1, Math.abs(ref.costMid - co) / 280) : 0.5;
+    var sa = safety(card);
+    var saScore = sa !== null ? (sa === 1 ? 1.0 : sa === 2 ? 0.7 : 0.4) : 0.65;
+    return 0.60 * cContrast + 0.25 * coContrast + 0.15 * saScore;
+  }
+
+  function whyReasons(ref, card) {
+    var list = [];
+    var cl = hiData(card);
+    if (cl && ref.avgHi !== null) {
+      var d = Math.abs(ref.avgHi - cl.avg);
+      if (d > 35) list.push('Complete climate flip');
+      else if (d > 22) list.push('Strong climate contrast');
+      else if (d > 10) list.push('Different climate');
+    }
+    var co = costMid(card);
+    if (co !== null && ref.costMid !== null) {
+      var cd = Math.abs(ref.costMid - co);
+      if (cd > 200) list.push('Opposite budget range');
+      else if (cd > 90) list.push('Different budget tier');
+    }
+    var sa = safety(card);
+    if (sa === 1) { list.push('Very safe'); }
+    if (!list.length) list.push('Strong contrast');
+    return list.slice(0, 3);
+  }
+
+  goBtn.addEventListener('click', function () {
+    errP.hidden = true;
+    var ref = buildRef();
+    if (ref.avgHi === null) {
+      errP.textContent = 'Please enter your current city or select a climate type to continue.';
+      errP.hidden = false;
+      return;
+    }
+    var safeOnly = safeBox.checked;
+    var scored = allCards.map(function (c) {
+      if (c === matchedCard) return null;
+      var sa = safety(c);
+      if (safeOnly && sa !== null && sa > 1) return null;
+      var s = scoreCard(ref, c);
+      return s >= 0 ? { card: c, score: s } : null;
+    }).filter(Boolean);
+    scored.sort(function (a, b) { return b.score - a.score; });
+    var seenNames = {};
+    scored = scored.filter(function (item) {
+      var n = cityName(item.card);
+      if (seenNames[n]) return false;
+      seenNames[n] = true;
+      return true;
+    });
+    var top = scored.slice(0, 3);
+    if (!top.length) {
+      errP.textContent = 'No escape destinations found. Try adjusting your preferences.';
+      errP.hidden = false;
+      return;
+    }
+    cards.innerHTML = '';
+    top.forEach(function (item) {
+      var pct  = Math.round(item.score * 100);
+      var name = cityName(item.card);
+      var flag = flagOf(item.card);
+      var href = item.card.getAttribute('href');
+      var rsns = whyReasons(ref, item.card);
+      var a = document.createElement('a');
+      a.className = 'tt-res-card';
+      a.href = href;
+      a.innerHTML =
+        '<span class="tt-res-flag">' + flag + '</span>' +
+        '<span class="tt-res-body">' +
+          '<span class="tt-res-name">' + name + '</span>' +
+          '<span class="tt-res-reasons">' +
+            rsns.map(function (r) { return '<span class="tt-res-pill">' + r + '</span>'; }).join('') +
+          '</span>' +
+        '</span>' +
+        '<span class="tt-res-score">' +
+          '<span class="tt-res-pct">' + pct + '%</span>' +
+          '<span class="tt-res-pct-lbl">contrast</span>' +
+        '</span>';
+      cards.appendChild(a);
+    });
+    inner.hidden = true;
+    results.hidden = false;
+  });
+}());
+    } catch (e) { /* ditto */ }
   }
 
   /* Only pay for it when a reader actually opens one of the two sections. */
