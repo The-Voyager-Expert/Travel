@@ -1242,7 +1242,7 @@
 /* 2026-08-15: Lounge arrival chip: remove label text (Before You Go / Lounges), chip links directly to lounge page. toolbar.js -> v656. CACHE to v906. */
 /* 2026-08-15: Trip Escape city autocomplete: exclude data-special Best Of cards. CACHE to v907. */
 /* 2026-08-15: index.html finder — Stops filter + badge count fixes; routing pill hidden for non-SEA airports. CACHE to v909. */
-var CACHE = 'travel-cache-v909';
+var CACHE = 'travel-cache-v910';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1250,7 +1250,7 @@ var CACHE = 'travel-cache-v909';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 211,'toolbar.js': 656, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 211,'toolbar.js': 657, 'mobile.css': 80, 'web-travel-style.css': 48, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

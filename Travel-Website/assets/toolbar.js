@@ -10424,9 +10424,27 @@ window.TVE.home = (function () {
       'Zurich':            {iata:'ZRH', name:'Zurich International'}
     };
 
-    /* Sets of IATAs covered by each Lounges page */
+    /* US airport → lowercase IATA anchor in Lounges-US.html */
     var US_IATAS = ['ATL','BOS','DTW','JFK','LAX','MSP','SAN','SEA','SFO','SLC','IAD','IAH','LGA','MIA','ORD'];
-    var EU_IATAS = ['AMS','CDG','ORY','NCE','LYS','LHR','LGW','MAN','EDI','VIE','BRU','DBV','SPU','ZAG','CPH','HEL','FRA','MUC','BER','DUS','HAM','ATH','HER','SKG','DUB','FCO','MXP','VCE','NAP','LUX','OSL','BGO','LIS','OPO','FAO','MAD','BCN','AGP','PMI','VLC','ARN','GOT','GVA','ZRH'];
+    /* EU airport → country anchor in Lounges-Europe.html */
+    var EU_ANCHOR = {
+      'AMS':'nl',
+      'CDG':'fr','ORY':'fr','NCE':'fr','LYS':'fr',
+      'LHR':'uk','LGW':'uk','MAN':'uk','EDI':'uk',
+      'VIE':'at','BRU':'be',
+      'DBV':'hr','SPU':'hr','ZAG':'hr',
+      'CPH':'dk','HEL':'fi',
+      'FRA':'de','MUC':'de','BER':'de','DUS':'de','HAM':'de',
+      'ATH':'gr','HER':'gr','SKG':'gr',
+      'DUB':'ie',
+      'FCO':'it','MXP':'it','VCE':'it','NAP':'it',
+      'LUX':'lu',
+      'OSL':'no','BGO':'no',
+      'LIS':'pt','OPO':'pt','FAO':'pt',
+      'MAD':'es','BCN':'es','AGP':'es','PMI':'es','VLC':'es',
+      'ARN':'se','GOT':'se',
+      'GVA':'ch','ZRH':'ch'
+    };
 
     function _inject() {
       var parts = location.pathname.split('/');
@@ -10444,16 +10462,13 @@ window.TVE.home = (function () {
       var mountEl = document.getElementById('toolbar-mount');
       var dep = mountEl ? parseInt(mountEl.dataset.depth || '2', 10) : 2;
       var base = new Array(dep + 1).join('../');
-      var href, label;
+      var href;
       if (US_IATAS.indexOf(info.iata) >= 0) {
-        href = base + 'Trip-Essentials/Lounges-US.html';
-        label = 'US Lounges';
-      } else if (EU_IATAS.indexOf(info.iata) >= 0) {
-        href = base + 'Trip-Essentials/Lounges-Europe.html';
-        label = 'EU Lounges';
+        href = base + 'Trip-Essentials/Lounges-US.html#' + info.iata.toLowerCase();
+      } else if (EU_ANCHOR[info.iata]) {
+        href = base + 'Trip-Essentials/Lounges-Europe.html#' + EU_ANCHOR[info.iata];
       } else {
-        href = base + 'Trip-Essentials/Before-You-Go.html#lounges';
-        label = 'Before You Go';
+        return; /* no lounge page for this airport — don't show chip */
       }
 
       var chip = document.createElement('a');
