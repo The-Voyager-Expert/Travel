@@ -1380,25 +1380,16 @@ a.land-cta:hover:visited {
 </section>
 
 <!-- ═══ BLOCK 14 — maps & records ══════════════════════════════════════════ -->
-<section class="lp-block stack">
-  <h2>For when you're thinking in regions, not cities.</h2>
+<!-- ═══ BLOCK 9 — recommended (last, deliberately the least real estate) ════ -->
+<section class="lp-block stack" id="stats">
+  <p class="lp-kicker">Numbers</p>
+  <h2>Stats by region.</h2>
   <p>
-    Every guide as a pin on a map, and the superlatives across all of them — the highest,
-    oldest, longest and largest, by continent.
+    Guide counts, day counts and averages for each part of the world, plus one page of
+    records &mdash; the highest, oldest, longest and largest across all of them.
   </p>
   <nav class="lp-pills">
     <a href="./Trip-Essentials/Maps/World-Map.html">World map</a>
-  </nav>
-</section>
-
-<!-- ═══ BLOCK 9 — recommended (last, deliberately the least real estate) ════ -->
-<section class="lp-block bare" id="stats">
-  <h2>Superlatives, by continent.</h2>
-  <p>
-    The highest, oldest, longest and largest across every guide. Not how anyone plans a
-    trip &mdash; here for when you are simply curious.
-  </p>
-  <nav class="lp-pills">
     <a href="./Trip-Essentials/Destination-Records.html">Destination records</a>
     <a href="./Trip-Essentials/Europe-Stats.html">Europe</a>
     <a href="./Trip-Essentials/Asia-Stats.html">Asia</a>
@@ -1411,7 +1402,7 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
-<section class="lp-block bare">
+<section class="lp-block stack" id="travelers-help">
   <p class="lp-kicker">Travelers help</p>
   <h2>The practical half of a trip.</h2>
   <p>
@@ -1659,12 +1650,19 @@ a.land-cta:hover:visited {
     return true;
   }
 
-  /* The layering itself: a guide has to satisfy EVERY active dimension. */
+  /* Two different joins, and they are not interchangeable:
+       WITHIN a group  -> OR  (beach or islands or history — more pills, MORE results)
+       ACROSS groups   -> AND (beach-ish AND 3 days AND Europe — narrower)
+     Picking a second trip type has to widen the list, not replace the first. */
   function matches(d) {
     var kinds = Object.keys(active);
     return d.guides.filter(function (g) {
       for (var i = 0; i < kinds.length; i++) {
-        if (!one(d, g, kinds[i], active[kinds[i]].value)) return false;
+        var k = kinds[i], vals = active[k], hit = false;
+        for (var j = 0; j < vals.length; j++) {
+          if (one(d, g, k, vals[j].value)) { hit = true; break; }
+        }
+        if (!hit) return false;
       }
       return true;
     }).sort(function (a, b) { return a.name.localeCompare(b.name); });
@@ -1690,8 +1688,12 @@ a.land-cta:hover:visited {
   function syncPills() {
     [].forEach.call(document.querySelectorAll('.lp-pills a'), function (a) {
       var m = (a.getAttribute('href') || '').match(/[?&](type|days|lang|continent)=([^&#]+)/);
-      var on = m && active[m[1]] && active[m[1]].value === decodeURIComponent(m[2]);
-      a.classList.toggle('on', !!on);
+      var on = false;
+      if (m && active[m[1]]) {
+        var v = decodeURIComponent(m[2]);
+        on = active[m[1]].some(function (x) { return x.value === v; });
+      }
+      a.classList.toggle('on', on);
     });
   }
 
@@ -1715,14 +1717,21 @@ a.land-cta:hover:visited {
       /* Every active dimension is listed and individually removable, so it is
          always visible WHY the list is this short. */
       kinds.forEach(function (k) {
-        var chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'lp-res-clear';
-        chip.textContent = active[k].label + ' ×';
-        chip.addEventListener('click', function () { delete active[k]; render(); });
-        head.appendChild(chip);
+        active[k].forEach(function (sel) {
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'lp-res-clear';
+          chip.textContent = sel.label + ' \u00d7';
+          chip.addEventListener('click', function () {
+            active[k] = active[k].filter(function (x) { return x.value !== sel.value; });
+            if (!active[k].length) delete active[k];
+            render();
+          });
+          head.appendChild(chip);
+        });
       });
-      if (kinds.length > 1) {
+      var total = kinds.reduce(function (n, k) { return n + active[k].length; }, 0);
+      if (total > 1) {
         var all = document.createElement('button');
         all.type = 'button'; all.className = 'lp-res-clear';
         all.textContent = 'clear all';
@@ -1761,8 +1770,12 @@ a.land-cta:hover:visited {
     var kind = m[1], value = decodeURIComponent(m[2]);
     lastNav = pill.parentNode;
 
-    if (active[kind] && active[kind].value === value) delete active[kind];
-    else active[kind] = { value: value, label: pill.textContent.trim() };
+    var group = active[kind] || [];
+    var at = -1;
+    for (var i = 0; i < group.length; i++) if (group[i].value === value) { at = i; break; }
+    if (at > -1) group.splice(at, 1);                       /* clicking an on pill turns it off */
+    else group.push({ value: value, label: pill.textContent.trim() });
+    if (group.length) active[kind] = group; else delete active[kind];
     render();
   });
 }());
