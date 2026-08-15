@@ -1191,6 +1191,8 @@
    Stay (new dropdown, 6 lodging pages) · Before You Go · Maps · Contact; landing
    page drops the Sunrise picker and the Before-you-go heading. floor -> 646,
    CACHE v887. */
+/* 2026-08-14: Day-Trips.html rebuilt around journey time — hero, time bands,
+   city chips, trip cards. Page HTML, so it needs the bump. CACHE to v888. */
 /* 2026-08-15: HOME CITY — the landing finder's "from Seattle" is now a picker.
    New TVE.home store in toolbar.js (localStorage tve_home_city, mirrored to
    tve_book_origin); airports.json grows an `xy` position map for the 198
@@ -1201,8 +1203,10 @@
    guide card (.dest-card in .flt-grid) instead of the two bespoke result cards
    a look pass had invented — owner, "results from search are guides not this
    nonsense". mobile.css exempts #fnd-home from the 40px/16px tap-target floors.
-   toolbar.js -> v647, mobile.css -> v79. CACHE to v888. */
-var CACHE = 'travel-cache-v888';
+   toolbar.js -> v647, mobile.css -> v79. CACHE to v889 — v888 was already
+   the Day Trips rebuild's, whose changelog line above this one was dropped
+   by the merge that landed this and is restored here. */
+var CACHE = 'travel-cache-v889';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
