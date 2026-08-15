@@ -1153,7 +1153,10 @@
    landing-page section. floor -> 644, CACHE v875. */
 /* 2026-08-14: toolbar tab renamed to When to Go (the climate page). floor -> 645,
    CACHE v876. */
-var CACHE = 'travel-cache-v876';
+/* 2026-08-14: World-Map.html — per-visitor Visited + Mark mine; Before-You-Go.html
+   — new hero. Both are page HTML, which this SW caches, so returning visitors
+   were still being served the old pages. CACHE to v877. */
+var CACHE = 'travel-cache-v877';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
