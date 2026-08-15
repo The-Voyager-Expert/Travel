@@ -1,7 +1,15 @@
-/* 2026-08-15: Sunrise & Sunset results reverted to the sky card — the redesign
-   brief was the hero and the search, not the results (owner). Climate Finder
-   keeps its WHEN TO GO banner: 84 of 100 Trip-Essentials pages carry one, so a
-   page without it stops reading as part of the set. CACHE to v880. */
+/* 2026-08-15: Sunrise & Sunset — hero and search only. The boxed intro card and
+   the two small centred controls become one hero holding a labelled full-size
+   search and twelve month pills; the <select> stays hidden underneath so
+   render() and its listeners are untouched, as are the sky card, the arc and
+   the city label. Climate Finder keeps its WHEN TO GO banner — 84 of the 100
+   Trip-Essentials pages carry one. CACHE to v880.
+
+   Correction: the two entries below claimed v880 and v881, but the constant
+   never moved off v879 — the bump hunk was lost in a shared_asset merge while
+   its changelog line landed. So the results revert shipped with NO cache bust
+   and readers holding the replaced version kept it. This entry is the first
+   real bump since v879; check the constant, not the comment. */
 /* 2026-08-15: Sunrise & Sunset rebuilt (sky card -> three stats + a twelve-month
    daylight chart); Climate Finder hero gains the temperature spill; the When to
    Go block leaves the landing page. Three HTML pages, no asset floors. CACHE to

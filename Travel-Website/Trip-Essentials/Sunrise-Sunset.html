@@ -6,37 +6,109 @@
 <link rel="stylesheet" href="../assets/web-travel-style.css">
 <title>Sunrise &amp; Sunset</title>
 <style>
-/* ── Intro banner ── */
-.sun-band {
-  display: grid; grid-template-columns: auto 1fr; align-items: start;
-  gap: 20px; background: var(--surface, #fff);
-  border: 1px solid var(--border2, #e6e2da); border-radius: 12px;
-  padding: 16px 20px; margin-bottom: 24px;
-  box-shadow: 0 1px 6px rgba(92,61,17,.05);
-  max-width: 1120px;
+/* ═══ HERO + SEARCH ═══════════════════════════════════════════════════════
+   Rebuilt 2026-08-15. Scope is everything ABOVE the results and nothing else:
+   the sky card, the day arc and the city label below are untouched.
+
+   What was here: a boxed white .sun-band whose head restated the page title in
+   smaller type, and two undersized controls floating centred in the middle of
+   an empty page with no labels — the reader could not tell they were the only
+   thing standing between them and the answer.
+
+   What replaces it: the Climate Finder hero treatment, so the two timing pages
+   read as a pair — warm radial wash, clamp()ed type that scales with the
+   viewport, the accent carried by one <em>. The search moves INSIDE the hero
+   and gets labels and real size, because on this page the search is the whole
+   interface, not a filter on something already shown. */
+.sun-hero {
+  margin: clamp(0.5rem, 1.5vw, 1.2rem) 0 clamp(1.2rem, 2.6vw, 1.9rem);
+  padding: clamp(1.7rem, 3.6vw, 2.9rem) clamp(1.4rem, 3.4vw, 2.6rem);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(184, 92, 42, 0.085), transparent 62%),
+    var(--surface2, #faf7f2);
+  border: 1px solid rgba(184, 92, 42, 0.2);
+  border-radius: clamp(0.7rem, 1.4vw, 1.1rem);
 }
-.sun-band-icon { display: flex; align-items: center; color: var(--rust, #b85c2a); flex-shrink: 0; }
-.sun-band-head { font-size: 16px; font-weight: 800; color: var(--text); margin: 0 0 3px; letter-spacing: -.01em; }
-.sun-band-sub  { font-size: 12.5px; color: var(--muted); margin: 0; }
-@media (max-width: 600px) and (pointer: coarse) {
-  .sun-band { gap: 14px; padding: 18px 16px; }
-  .sun-band-head { font-size: 14px; }
+.sun-hero-top { display: flex; align-items: flex-start; gap: 16px; }
+.sun-hero-ic {
+  flex-shrink: 0; color: var(--rust, #b85c2a);
+  display: flex; align-items: center; margin-top: 4px;
+}
+.sun-hero-h {
+  font-size: clamp(1.6rem, 3.9vw, 2.9rem); line-height: 1.05;
+  letter-spacing: -.03em; font-weight: 700; color: var(--text, #3d3a32);
+  margin: 0 0 clamp(0.5rem, 1.2vw, 0.85rem); max-width: 20ch;
+  text-wrap: balance; text-transform: none;
+}
+.sun-hero-h em { font-style: normal; color: var(--rust, #b85c2a); }
+.sun-hero-lede {
+  font-size: clamp(0.93rem, 1.1vw, 1.05rem); line-height: 1.65;
+  color: var(--muted, #6a6660); max-width: 64ch; margin: 0;
 }
 
-/* ── Pickers ── */
-.sun-pickers {
-  display: flex; flex-direction: row; align-items: center; gap: 10px;
-  margin: 20px auto 28px; max-width: 520px;
+/* The search, in the hero. Two labelled fields on one baseline: the city is
+   the decision, so it takes the width; the month is a refinement and stays at
+   its content size. Labels are the same 10px caps the result card uses for
+   SUNRISE / SUNSET, so the page reads as one thing top to bottom. */
+.sun-search {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  gap: 12px; margin-top: clamp(1.1rem, 2.4vw, 1.6rem);
 }
+.sun-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.sun-field-city { flex: 1 1 320px; }
+.sun-field-lab {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted, #6a6660);
+}
+.sun-pickers { display: contents; }
 .sun-pickers select {
-  width: 130px; flex: 0 0 130px; height: 44px;
-  padding: 0 36px 0 14px;
-  border: 1.5px solid var(--border); border-radius: 8px;
-  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238a6c1a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  width: auto; min-width: 150px; height: 52px;
+  padding: 0 40px 0 16px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%238a6c1a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 16px center;
   color: var(--accent); font-size: 16px; font-family: inherit;
   cursor: pointer; appearance: none; -webkit-appearance: none;
 }
+.sun-pickers select:hover { border-color: var(--rust, #b85c2a); }
 .sun-pickers select:focus { border-color: var(--c-search-focus-border); outline: none; }
+.sun-search .search-input {
+  width: 100%; height: 52px; box-sizing: border-box;
+  font-size: 16px; border-radius: 10px;
+}
+/* Paired with pointer: coarse — a narrowed desktop window must not turn into
+   the mobile site (Toolbar.html § 42). */
+@media (max-width: 600px) and (pointer: coarse) {
+  .sun-hero-top { gap: 12px; }
+  .sun-field-city { flex: 1 1 100%; }
+}
+
+/* ── Month pills ────────────────────────────────────────────────────────────
+   Twelve chips instead of a dropdown, the same move Climate Finder and Before
+   You Go already made: the whole year is visible, and picking a month is one
+   click rather than open-scan-click. The <select> stays in the DOM, hidden —
+   it is what render() reads and what the city-fallback listener hangs off, so
+   driving it from the chips keeps every existing behaviour intact.
+
+   Selected and hover are OUTLINED, never a filled terracotta gradient — the
+   Twenty-fourth non-negotiable. Filled is for true CTAs only. */
+#sun-month { display: none; }
+.sun-months { display: flex; flex-wrap: wrap; gap: 5px; }
+.sun-mon {
+  font: inherit; font-size: 13px; font-weight: 600;
+  padding: 9px 14px; min-width: 52px;
+  border: 1.5px solid var(--border2, #e6e2da); border-radius: 999px;
+  background: var(--surface, #fff); color: var(--text, #3d3a32);
+  cursor: pointer; transition: border-color .16s ease, color .16s ease;
+}
+.sun-mon:hover { border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a); }
+.sun-mon.on {
+  border-color: var(--rust, #b85c2a); color: var(--rust, #b85c2a);
+  background: var(--surface, #fff);
+}
+.sun-mon:focus-visible { outline: 2px solid var(--c-search-focus-border); outline-offset: 2px; }
+@media (max-width: 600px) and (pointer: coarse) {
+  .sun-mon { flex: 1 1 auto; padding: 9px 10px; min-width: 46px; }
+}
 
 /* ── Sky card ── */
 .sky-card {
@@ -182,24 +254,35 @@
     <h1>SUNRISE &amp; SUNSET</h1>
   </div>
 
-  <div class="sun-band">
-    <div class="sun-band-icon"><svg class="sun-band-icon" width="36" height="36" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-horizon-sun"/></svg></div>
-    <div>
-      <div class="sun-band-head">Sunrise and sunset in every destination, month by month</div>
-      <div class="sun-band-sub">Sunrise and sunset for every destination on the site, month by month — enough to plan a sunrise viewpoint, judge how much daylight a short winter day leaves you, or work out whether a late arrival lands in the dark.</div>
-      <ul class="sun-note">
-        <li>Times are approximate (±15–30 min)</li>
-        <li>Mid-month estimate</li>
-        <li>Computed from latitude</li>
-      </ul>
+  <header class="sun-hero">
+    <div class="sun-hero-top">
+      <span class="sun-hero-ic"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><use href="#gm-i-horizon-sun"/></svg></span>
+      <div>
+        <h2 class="sun-hero-h">When the sun comes up, <em>and how long it stays</em>.</h2>
+        <p class="sun-hero-lede">Sunrise and sunset for every destination on the site,
+        month by month &mdash; enough to plan a sunrise viewpoint, judge how much daylight
+        a short winter day leaves you, or work out whether a late arrival lands in the
+        dark.</p>
+        <ul class="sun-note">
+          <li>Times are approximate (±15–30 min)</li>
+          <li>Mid-month estimate</li>
+          <li>Computed from latitude</li>
+        </ul>
+      </div>
     </div>
-  </div>
 
-  <div class="sun-pickers">
+    <div class="sun-search">
+      <div class="sun-field sun-field-city">
+        <span class="sun-field-lab">Destination</span>
+        <div id="sun-city-search-wrap">
+          <input id="sun-city-search" class="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="City" aria-label="Search city for sunrise and sunset times">
+        </div>
+      </div>
+      <div class="sun-field sun-field-month">
+        <span class="sun-field-lab">Month</span>
+        <div class="sun-months" id="sun-months" role="group" aria-label="Month"></div>
+        <div class="sun-pickers">
     <select id="sun-city" aria-label="Select city for sunrise and sunset times"></select>
-    <div id="sun-city-search-wrap">
-      <input id="sun-city-search" class="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="City" aria-label="Search city for sunrise and sunset times">
-    </div>
     <select id="sun-month" aria-label="Select month for sunrise and sunset times">
       <option value="">Month</option>
       <option value="0">January</option>
@@ -215,7 +298,10 @@
       <option value="10">November</option>
       <option value="11">December</option>
     </select>
-  </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <div id="sun-output"></div>
 </div>
@@ -715,6 +801,31 @@ function render() {
     }
     render();
   });
+
+  /* Build the month chips off the <select>'s own options, so the two can never
+     drift apart. Each chip sets the select and dispatches 'change', which is
+     the same event the dropdown fired — every listener below still runs. */
+  var wrap = document.getElementById('sun-months');
+  if (wrap) {
+    var ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    ABBR.forEach(function (label, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sun-mon';
+      b.textContent = label;
+      b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function () {
+        mon.value = String(i);
+        mon.dispatchEvent(new Event('change'));
+        [].forEach.call(wrap.children, function (c) {
+          var on = c === b;
+          c.classList.toggle('on', on);
+          c.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      });
+      wrap.appendChild(b);
+    });
+  }
 }());
 </script>
 
