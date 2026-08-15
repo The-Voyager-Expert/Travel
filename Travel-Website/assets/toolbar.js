@@ -922,8 +922,8 @@ window.TVE.isPhone = function () {
      SHOW ONLY chips. Never re-pin these to one capitalisation. */
   var ITEMS = [
     { href: base + 'guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
-    { href: base + 'index.html#before-you-go', text: 'Before You Go', icon: 'luggage' },  /* owner 2026-08-14: the tool itself is on the landing page now, so the tab
-     goes there rather than to the standalone page it was lifted from. */
+    { href: base + 'Trip-Essentials/Before-You-Go.html', text: 'Before You Go', icon: 'luggage' },  /* owner 2026-08-14: back to the standalone
+     page — the tab opens Before You Go itself, not the landing-page section. */
     /* OWNER-DIRECTED 2026-08-14: Best Of out of the toolbar, When to Go in.
        Best Of keeps its own section on the landing page and its Browse-by-
        category page — it loses the nav dropdown, not the content. When to Go
