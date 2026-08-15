@@ -730,12 +730,49 @@ a.land-cta:hover:visited {
    select just drives them, so there is still exactly one source of truth. */
 .lp-select {
   font: inherit; font-size: 0.95rem; width: 100%; max-width: 14rem;
-  margin-top: clamp(0.8rem, 2vw, 1.2rem);
+  /* Space BELOW as well as above: where a select is followed by a pill row
+     (When to go), the two sat flush and read as one stacked control. */
+  margin: clamp(0.8rem, 2vw, 1.2rem) 0 clamp(0.7rem, 1.6vw, 1rem);
   padding: 0.7em 2.2em 0.7em 1em;
   border: 1px solid var(--border2, #e6e2da); border-radius: 6px;
   background: var(--surface, #fff); color: var(--accent); cursor: pointer;
 }
 .lp-select:focus { outline: none; border-color: #c8b99a; }
+
+/* [hidden] specificity trap: the UA rule is [hidden]{display:none}, and any
+   class rule that sets display beats it. .lp-pills sets display:flex and
+   .lp-links sets display:grid, so a nav marked hidden rendered anyway — which
+   is why the trip-length card showed the select AND the full list of days. */
+.lp-pills[hidden], .lp-links[hidden] { display: none !important; }
+
+/* Photo tiles. They are grid items like any block, so grid-auto-flow:dense uses
+   them to backfill the holes that align-items:start leaves when a short card
+   sits beside a tall one — the page reads as a magazine instead of a form.
+   Each one links to that city's guide, so they are navigation, not decoration. */
+.lp-photo {
+  position: relative; display: block; overflow: hidden;
+  border-radius: 14px; text-decoration: none;
+  min-height: 13rem; background: #e8e2d8;
+}
+.lp-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.lp-photo::after {
+  content: ''; position: absolute; inset: auto 0 0 0; height: 55%;
+  background: linear-gradient(to top, rgba(20,16,10,.62), rgba(20,16,10,0));
+}
+.lp-photo-cap {
+  position: absolute; left: 1rem; bottom: 0.85rem; z-index: 1;
+  color: #fff; font-size: 0.95rem; font-weight: 700; letter-spacing: .01em;
+  text-shadow: 0 1px 3px rgba(0,0,0,.45);
+}
+.lp-photo:hover img { transform: scale(1.04); }
+.lp-photo img { transition: transform .5s ease; }
+@media (min-width: 60rem) {
+  .lp-grid > .lp-photo      { grid-column: span 6; min-height: 15rem; }
+}
+@media (min-width: 82rem) {
+  .lp-grid > .lp-photo      { grid-column: span 4; min-height: 16rem; }
+  .lp-grid > .lp-photo.wide { grid-column: span 8; min-height: 20rem; }
+}
 
 /* Before You Go rides in an iframe — see the loader for why. */
 #byg-mount { margin-top: clamp(1rem, 2.2vw, 1.6rem); }
@@ -1073,6 +1110,12 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
+<a class="lp-photo " href="./guides/Santorini/santorini.html">
+  <img src="./guides/Santorini/_build/assets/800px-Amoudi_Bay.jpg" width="800" height="567" loading="lazy" decoding="async" alt="Santorini">
+  <span class="lp-photo-cap">Santorini</span>
+</a>
+
+
 <section class="lp-block dark" id="best-of">
   <p class="lp-kicker">The part you won't find elsewhere</p>
   <h2>Start from the thing, not the city.</h2>
@@ -1146,6 +1189,12 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
+<a class="lp-photo wide" href="./guides/Bora-Bora/bora-bora.html">
+  <img src="./guides/Bora-Bora/_build/assets/800px-Bora_Bora_Vaitape_from_above.jpg" width="1280" height="960" loading="lazy" decoding="async" alt="Bora Bora">
+  <span class="lp-photo-cap">Bora Bora</span>
+</a>
+
+
 <section class="lp-block stack" id="trip-length">
   <p class="lp-kicker">Trip length</p>
   <h2>How many days?</h2>
@@ -1200,6 +1249,12 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
+<a class="lp-photo " href="./guides/Marrakech/marrakech.html">
+  <img src="./guides/Marrakech/_build/assets/800px-A01_-_Marrakech_Koutoubia.jpg" width="960" height="640" loading="lazy" decoding="async" alt="Marrakech">
+  <span class="lp-photo-cap">Marrakech</span>
+</a>
+
+
 <section class="lp-block">
   <h2>Can you actually get in?</h2>
   <p>
@@ -1247,6 +1302,12 @@ a.land-cta:hover:visited {
     <a href="./guides/?warm=cold">Cold &mdash; under 8&deg;C</a>
   </nav>
 </section>
+
+<a class="lp-photo " href="./guides/Kyoto/kyoto.html">
+  <img src="./guides/Kyoto/_build/assets/800px-150124_Gion_Kyoto_Japan01s3.jpg" width="800" height="533" loading="lazy" decoding="async" alt="Kyoto">
+  <span class="lp-photo-cap">Kyoto</span>
+</a>
+
 
 <section class="lp-block" id="where">
   <p class="lp-kicker">Where</p>
@@ -1360,6 +1421,12 @@ a.land-cta:hover:visited {
   </nav>
 </section>
 
+<a class="lp-photo " href="./guides/Petra/petra.html">
+  <img src="./guides/Petra/_build/assets/800px-Ad_Deir_(The_Monastery),_El_Deir,_Petra,_Jordan.jpg" width="800" height="533" loading="lazy" decoding="async" alt="Petra">
+  <span class="lp-photo-cap">Petra</span>
+</a>
+
+
 <section class="lp-block bare" id="flight-time">
   <p class="lp-kicker">Flight time</p>
   <h2>How far you're willing to fly.</h2>
@@ -1390,6 +1457,12 @@ a.land-cta:hover:visited {
     <a href="./guides/#compare">Compare cities</a>
   </nav>
 </section>
+
+<a class="lp-photo " href="./guides/Rio-de-Janeiro/rio-de-janeiro.html">
+  <img src="./guides/Rio-de-Janeiro/_build/assets/800px-catete-palace.jpg" width="960" height="640" loading="lazy" decoding="async" alt="Rio de Janeiro">
+  <span class="lp-photo-cap">Rio de Janeiro</span>
+</a>
+
 
 <section class="lp-block tint" id="power">
   <p class="lp-kicker">Before you pack</p>
@@ -1423,6 +1496,12 @@ a.land-cta:hover:visited {
     <a href="./Trip-Essentials/Best-Ultra-Luxurious-Resorts.html">Ultra-luxurious resorts</a>
   </nav>
 </section>
+
+<a class="lp-photo wide" href="./guides/Banff/banff.html">
+  <img src="./guides/Banff/_build/assets/800px-Banff_Bow_Falls.jpg" width="800" height="450" loading="lazy" decoding="async" alt="Banff">
+  <span class="lp-photo-cap">Banff</span>
+</a>
+
 
 <section class="lp-block tint">
   <h2>You'd rather not be lost in translation.</h2>
@@ -1503,6 +1582,12 @@ a.land-cta:hover:visited {
     </div>
   </div>
 </section>
+
+<a class="lp-photo " href="./guides/Cape-Town/cape-town.html">
+  <img src="./guides/Cape-Town/_build/assets/800px-Camps_Bay_Cape_Town.jpg" width="800" height="548" loading="lazy" decoding="async" alt="Cape Town">
+  <span class="lp-photo-cap">Cape Town</span>
+</a>
+
 
 <section class="lp-block feature weather" id="sunrise">
   <p class="lp-kicker">Light &amp; daylight</p>
