@@ -921,16 +921,36 @@ window.TVE.isPhone = function () {
      removed the weather strip, the info pills, the Trip Overview carousel and the
      SHOW ONLY chips. Never re-pin these to one capitalisation. */
   var ITEMS = [
-    { href: base + 'guides/index.html', text: 'Guides', full: 'Travel Guides', icon: 'orbited-globe' },
-    { href: base + 'Trip-Essentials/Before-You-Go.html', text: 'Before You Go', icon: 'luggage' },  /* owner 2026-08-14: back to the standalone
-     page — the tab opens Before You Go itself, not the landing-page section. */
-    /* OWNER-DIRECTED 2026-08-14: Best Of out of the toolbar, When to Go in.
-       Best Of keeps its own section on the landing page and its Browse-by-
-       category page — it loses the nav dropdown, not the content. When to Go
-       takes the freed slot rather than being appended, so the top strip stays
-       at five tabs; a sixth is what pushes the bar out of shape.
-       TOOLBAR_ITEMS_LOCK moved with this change. */
+    /* "Where to Go", not "Guides" (owner 2026-08-14). The four planning tabs now
+       read as one set — Where to Go · When to Go · Where to Stay · Before You Go
+       — naming the question the reader has rather than the kind of document they
+       will get. The href is unchanged; only the label moved. */
+    { href: base + 'guides/index.html', text: 'Where to Go', full: 'Travel Guides', icon: 'orbited-globe' },
+    /* OWNER-DIRECTED 2026-08-14, order: Guides · When to Go · Where to Stay ·
+       Before You Go · Maps · Contact. It follows the order a trip is actually
+       decided in — when to travel, then where to sleep, then what to sort out
+       before leaving — rather than the order the tabs happened to be added. */
     { href: base + 'Trip-Essentials/Climate-Finder.html', text: 'When to Go', icon: 'sun-clear' },
+    /* OWNER-DIRECTED 2026-08-14: Where to Stay, a dropdown of the six lodging
+       pages previously reachable only from the landing page's Where to Stay
+       column. SIXTH top-strip entry and the first dropdown since the bar was cut
+       back to five plain links — both deliberate, both the owner's call.
+       TOOLBAR_ITEMS_LOCK moved in the same pass. */
+    /* A dropdown entry is a different shape from a tab: the label comes from
+       `group` (with `groupShort` for the strip) and the icon from `groupIcon`.
+       `text`/`icon` are the TAB fields and are ignored here — an entry that
+       carries them instead throws in the hamburger loop, which reads
+       item.group.replace(...), and the whole toolbar renders as the no-JS
+       fallback on every page. */
+    { group: 'Where to Stay', groupIcon: 'building', children: [
+      { href: base + 'Trip-Essentials/Neighborhoods.html', text: 'Neighbourhoods' },
+      { href: base + 'Trip-Essentials/Hotels-Stays.html', text: 'Hotels & stays' },
+      { href: base + 'Trip-Essentials/Best-Unique-Hotels.html', text: 'Unique hotels' },
+      { href: base + 'Trip-Essentials/Best-Most-Luxurious-Hotels.html', text: 'Most luxurious' },
+      { href: base + 'Trip-Essentials/Best-Resorts.html', text: 'Resorts' },
+      { href: base + 'Trip-Essentials/Best-Ultra-Luxurious-Resorts.html', text: 'Ultra-luxurious resorts' }
+    ] },
+    { href: base + 'Trip-Essentials/Before-You-Go.html', text: 'Before You Go', icon: 'luggage' },
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', icon: 'folded-map' },
     { href: 'mailto:contact@guidemydays.com?subject=Guide%20My%20Days', text: 'Contact', icon: 'faq-book' }  /* owner 2026-08-14: opens the reader's own mail app rather than scrolling
      to the form. NOT base + ... — a mailto must not be depth-prefixed. */
