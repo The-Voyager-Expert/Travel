@@ -1207,7 +1207,16 @@
    the Day Trips rebuild's, whose changelog line above this one was dropped
    by the merge that landed this and is restored here. */
 /* 2026-08-15: mobile toolbar fixed to the top on every page; hamburger cut to the toolbar items; all hand-built mobile back navigation removed toolbar.js -> v648. CACHE to v890. */
-var CACHE = 'travel-cache-v890';
+/* 2026-08-15: the two stylesheets that changed in the same pass. guide-style.css
+   carries the "Request a different hotel" link under every guide's hotel banner,
+   the .stop-actions rail that keeps the four per-stop controls together, the
+   spacer chain moved from .stop-mark-btn to .stop-name, and the ::before that
+   finally gives Worth Knowing a title. mobile.css drops the four removed back
+   pills from the floating-control tap-target exemption. Both were left out of
+   the toolbar.js bump above and the push guard caught it — the code would have
+   reached Pages and no returning browser or installed PWA would ever have
+   loaded either sheet. guide-style.css -> v206, mobile.css -> v80. CACHE to v891. */
+var CACHE = 'travel-cache-v891';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1215,7 +1224,7 @@ var CACHE = 'travel-cache-v890';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 648, 'mobile.css': 79, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 206, 'toolbar.js': 648, 'mobile.css': 80, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;
