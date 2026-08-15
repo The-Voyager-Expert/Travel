@@ -1562,7 +1562,7 @@ window.TVE.home = (function () {
       '-webkit-appearance:none;font-family:inherit;line-height:0}' +
     '.tb-theme-toggle:hover{background:transparent;border-color:rgba(122,59,30,.85)}' +
     '.tb-theme-toggle:active{transform:scale(.93)}' +
-    '@media (max-width: 1260px) and (pointer: coarse){.tb-theme-toggle{order:-1;margin-left:14px;margin-right:0}}' +
+    '@media (max-width: 1260px) and (pointer: coarse){.tb-theme-toggle{order:1;margin-left:0;margin-right:14px}}' +
     /* ── Dark-mode token override — mirrors @media(prefers-color-scheme:dark) ── */
     /* Covers all tokens from web-travel-style.css + guide-style.css dark blocks. */
     /* html[data-theme="dark"] specificity (0,1,1) > :root (0,1,0) — always wins. */
@@ -2010,8 +2010,8 @@ window.TVE.home = (function () {
 
        Hamburger showing (<=1260px): moved back to a direct child of .tb, because
        .tb-inner is display:none there and the toggle would vanish with it. That
-       is also the shipped mobile design — sun far left, wordmark centre,
-       hamburger right (.tb-theme-toggle{order:-1} in the 1260 block).
+       is also the shipped mobile design — hamburger left, wordmark centre,
+       sun far right (.tb-theme-toggle{order:1} in the 1260 block).
 
        Re-parented live on a matchMedia change so dragging a window across the
        breakpoint lands it in the right place without a reload. */
