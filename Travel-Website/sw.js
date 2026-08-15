@@ -1,3 +1,4 @@
+/* 2026-08-14: Best Of dropdown — 9 Stats pages removed (owner: "best of should NOT have anything else"). toolbar.js -> v640. CACHE to v870. */
 /* 2026-08-13: index.html — remove Also Recommended pill from topbar. CACHE to v765. */
 /* 2026-08-13: index.html — remove Trips, Travel Stats, Best of pills from topbar; Trips.html — remove Back to site link. CACHE to v763. */
 /* 2026-08-13: icons: Baggage→luggage-colour, Luggage Storage→luggage-hardcase ITEMS fix toolbar.js -> v554. CACHE to v762. */
@@ -1133,7 +1134,7 @@
    class ([^\\/i] instead of [^\\/]) repaired. floor -> 638, CACHE v868. */
 /* 2026-08-14: toolbar restyle — icons hidden, tabs spaced, rounded pills.
    floor -> 639, CACHE v869. */
-var CACHE = 'travel-cache-v869';
+var CACHE = 'travel-cache-v870';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1141,7 +1142,7 @@ var CACHE = 'travel-cache-v869';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 639, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 205, 'toolbar.js': 640, 'mobile.css': 78, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

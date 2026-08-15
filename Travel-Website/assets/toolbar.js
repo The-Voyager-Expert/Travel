@@ -970,16 +970,6 @@ window.TVE.isPhone = function () {
         { href: base + 'Trip-Essentials/Best-Volcanoes.html',                     text: 'Volcanoes', icon: 'volcano-erupting' },
         { href: base + 'Trip-Essentials/Best-Wine-Regions.html',                  text: 'Wine Regions', icon: 'wine' },
         { href: base + 'Trip-Essentials/Best-Wonders-of-the-World.html',          text: 'Wonders of the World', icon: 'mosque' },
-        null,   /* ── */
-{ href: base + 'Trip-Essentials/Destination-Records.html',        text: 'Destination Records',        icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/Stats-Across-US.html',            text: 'Stats Across US',            icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/Stats-Across-Canada.html',        text: 'Stats Across Canada',        icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/Europe-Stats.html',               text: 'Stats Across Europe',        icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/Asia-Stats.html',                 text: 'Stats Across Asia',          icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/Africa-Stats.html',              text: 'Stats Across Africa',         icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/South-America-Stats.html',        text: 'Stats Across South America', icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/Caribbean-Stats.html',            text: 'Stats Across the Caribbean', icon: 'bar-chart' },
-        { href: base + 'Trip-Essentials/Oceania-Stats.html',             text: 'Stats Across Oceania',        icon: 'bar-chart' },
     ] },
     { href: base + 'Trip-Essentials/Maps/World-Map.html', text: 'Maps', icon: 'folded-map' },
     { href: base + 'index.html#contact', text: 'Contact', icon: 'faq-book' }
