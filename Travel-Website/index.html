@@ -1476,6 +1476,37 @@ a.land-cta:hover:visited {
 </script>
 
 <script>
+/* Arriving at #contact must OPEN the form, not just scroll to it.
+   The toolbar's Contact tab points here, and #contact is the <details> element
+   itself — browsers auto-expand a <details> only when the fragment targets a
+   DESCENDANT, so as the target it stays collapsed and the reader lands on a
+   one-line summary after clicking a tab called "Contact".
+
+   Re-scrolls after opening because the sections above this one fill in lazily,
+   so the browser's initial scroll lands short once their real height arrives. */
+(function () {
+  var d = document.getElementById('contact');
+  if (!d) return;
+  function reveal() {
+    if (location.hash !== '#contact') return;
+    d.open = true;
+    /* Re-scroll repeatedly rather than once: the Before You Go frame above this
+       loads lazily and then grows to fit its content, so anything measured before
+       it settles lands short — a single scroll leaves the form at the bottom edge
+       of the viewport. Keep correcting until the position stops moving. */
+    var last = null, tries = 0;
+    (function settle() {
+      d.scrollIntoView({ block: 'start' });
+      var top = Math.round(d.getBoundingClientRect().top);
+      if (top !== last && tries++ < 12) { last = top; setTimeout(settle, 250); }
+    }());
+  }
+  reveal();
+  window.addEventListener('hashchange', reveal);
+}());
+</script>
+
+<script>
 /* Submit the contact form without leaving the page, so a sent message does not
    dump the reader on the Web3Forms success screen and lose the site. Falls back
    to a normal form POST if fetch is unavailable. */
