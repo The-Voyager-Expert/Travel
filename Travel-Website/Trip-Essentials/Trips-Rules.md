@@ -160,7 +160,32 @@ Rules:
 - Add `.city-sub` to every `🏨 Hotel`/`🏨 Hotels` section — even when the section only has one hotel. Consistency over brevity; owner scans by city.
 - Trains and flights don't get city-subs — those rows already carry the route inline.
 
+### Booking link — mandatory on every hotel (owner 2026-08-14, REVERSES the old "no hotel link" rule)
+
+Per owner 2026-08-14 (*"lets add the hotel link from now on"* + *"add if i didnt book at the hotel the link where i booked"*): every hotel block carries a link, placed directly below the hotel name and above the address — the same `<p><a>` slot venue blocks use.
+
+**Which link:** the one that takes owner back to *where the booking lives*.
+- Booked direct with the hotel → the hotel's own site (`sofitel-munich.com`, `nh-hotels.com`).
+- Booked anywhere else — Booking.com, Expedia, Marriott/Hyatt/Accor loyalty site, a conference block, an agent → **link that**, not the hotel site. The point is to reach the reservation, not the brochure.
+
+Label the link with the bare domain or a short readable name, never the full URL:
+```html
+<p><a href="https://www.sofitel-munich.com/" target="_blank" rel="noopener">sofitel-munich.com</a></p>
+```
+
+**Supersedes** the former hard rule *"Hotel name is never a hyperlink … we don't need a link for the hotel website"* — that rule is retired. The hotel **name** still links to Maps; the new link is a separate line below it.
+
 ### Plain-text address format
+
+**The address follows the guides, exactly (owner 2026-08-14 — *"fix the style look how the guides handle address"* · *"all the rule should follow like undeline etc"*).** A guide renders its `📍` row as a Google Maps anchor — blue `--c-link`, no underline at rest, **underline on hover** — with a copy button beside it that opens the shared three-option popover (📋 Copy address · 🗺 Copy Maps link · Open in Apple Maps · ✓ Copied). `Trips.html` now does the same:
+
+```html
+<span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=..." target="_blank" rel="noopener">Bayerstrasse 12, 80335 Munich, Germany</a></span>
+```
+
+The `.addr-copy` button is **injected by script** — never author it in the HTML. The CSS (`.addr-copy`, `.addr-copy-pop`, `.acp-btn`, `.addr-copy-done`) and the injector are ported verbatim from `guide-style.css` / `toolbar.js` `_injectAddrCopy` into this page, because `_injectAddrCopy` is gated on `isRealGuide` and this page doesn't load `guide-style.css`. **Retired, do not reintroduce:** the plain-grey address text, the inline `.addr-hint` SVG, the whole-line click-to-copy, and the green "Copied!" toast.
+
+⚠️ Anything reading the address in JS must read it **from the anchor** — the ICS export's old `firstChild.nodeType===3` read returns `''` once the text is wrapped, which ships calendar events with an empty `location`.
 
 Use a clean, rideshare-friendly format with commas: `Street Number, Postal Code City, Country`. Examples:
 - `Sarphatistraat 104, 1018 GV Amsterdam, Netherlands`
@@ -395,8 +420,8 @@ No flight cost, no hotel cost, no totals — ever. Cost lives in email/booking c
 ### Final bookings always go in Trips.html
 Every finalized booking (flight, train, hotel, car rental, tour) saves directly in Trips.html. Not chat-only, not Apple Notes, not email, not a side doc.
 
-### Hotel name is never a hyperlink
-Hotel name is plain text only. The only link on a hotel block is the 📍 Maps pin. Per owner: *"we don't need a link for the hotel website."*
+### Hotel booking link is mandatory — RETIRED the "no hotel link" rule (owner 2026-08-14)
+Reversed. Every hotel block carries a booking link below the name — see § "Booking link" above. (Superseded rule, kept for context: *"Hotel name is plain text only … we don't need a link for the hotel website."*)
 
 ### Venue blocks must have a website link — never miss this
 Per owner 2026-06-25: every venue entry must include a 🌐 website link in addition to the 📍 Maps pin. For conferences, link the conference website. For event venues, link the venue or event page. Look it up if unknown — don't ship a venue block without it.

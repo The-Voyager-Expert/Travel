@@ -146,11 +146,33 @@
 .ap-name a { color: var(--muted); font-weight: 400; }
 .ap-name a:visited { color: #6a6660; font-weight: 400; }
 .ap-name a:hover { color: var(--accent); }
-/* ── Hotel address (copy only) ── */
-.hotel-addr { font-size: 14px; color: var(--text); cursor: pointer; margin: 3px 0 0; position: relative; display: block; }
-.hotel-addr:hover { text-decoration: none; }
-.hotel-addr .addr-hint { font-size: 11px; color: var(--muted); vertical-align: middle; }
-.hotel-addr .addr-hint svg { width: 13px; height: 13px; display: inline-block; vertical-align: middle; opacity: 0.55; }
+/* ── Hotel address — same treatment as a guide's 📍 address row ──────────────
+   Guides render the address as a Maps anchor (blue --c-link, no underline at
+   rest, underline on hover) with a copy button injected beside it that opens
+   the shared three-option popover. This page carried its own variant instead:
+   plain grey text, the whole line click-to-copy, a green toast. Owner
+   2026-08-14 ("fix the style look how the guides handle address" · "all the
+   rule should follow like undeline etc") — the guide treatment is the rule, so
+   the classes, the anchor styling and the popover below are ported verbatim
+   from guide-style.css. Do not re-invent a page-local address style. */
+.hotel-addr { font-size: 14px; color: var(--text); margin: 3px 0 0; position: relative; display: block; }
+.hotel-addr a { color: var(--c-link, #2867c4); text-decoration: none; border-bottom: none; }
+.hotel-addr a:visited { color: #2867c4; border-bottom: none; }  /* literal hex — var() blocked in :visited */
+.hotel-addr a:hover { text-decoration: underline; }
+/* Copy button + shared popover — ported from guide-style.css § .addr-copy */
+.addr-copy { display: inline-flex; align-items: center; vertical-align: middle; margin-left: 5px; padding: 2px 3px;
+  background: none; border: none; border-radius: 3px; cursor: pointer; color: var(--muted); opacity: 0.55;
+  transition: opacity .15s, color .15s; line-height: 1; flex-shrink: 0; }
+.addr-copy svg { width: 13px; height: 13px; display: block; }
+.addr-copy:hover, .addr-copy:focus { color: var(--rust); opacity: 1; outline: none; }
+.addr-copy-pop { position: fixed; background: var(--surface, #fff); border: 1px solid var(--border2, #e6e2da); border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.14); z-index: 600; padding: 4px; min-width: 172px; display: none; }
+.addr-copy-pop.open { display: block; }
+.addr-copy-pop .acp-btn { display: flex; align-items: center; gap: 7px; width: 100%; text-align: left; background: none;
+  border: none; padding: 8px 11px; font-size: 13px; font-family: inherit; color: var(--text); cursor: pointer;
+  border-radius: 5px; white-space: nowrap; line-height: 1.2; }
+.addr-copy-pop .acp-btn:hover { background: rgba(184,92,42,.07); color: var(--rust); }
+.addr-copy-done { font-size: 12px; color: #4a7a25; padding: 4px 11px 5px; display: none; }
 /* ── Hotel → venue distance ── */
 .venue-distance { font-size: 13px; color: var(--muted) !important; padding: 4px 0 0; margin: 0; }
 .hotel p { font-size: 14px; padding: 2px 0 0; margin: 0; color: var(--muted); }
@@ -346,6 +368,12 @@ a.trip-jump-pill:visited { color: #3d3a32; }
   .action, .action-box { background: var(--surface); border-left-color: #c8a060; }
   .sec-divider { color: var(--muted); }
   .ap-dash { color: var(--muted); }
+  /* Guide dark value for --c-link */
+  .hotel-addr a, .hotel-addr a:visited { color: #5a9aee; }
+  .addr-copy-pop { background: var(--surface2); border-color: var(--border); }
+  .addr-copy-pop .acp-btn { color: var(--text); }
+  .addr-copy-pop .acp-btn:hover { color: #d4784a; }
+  .addr-copy-done { color: #7ab84a; }
   .nu-c { color: #d4784a; }
   .trip-header { background: #2d1b5e; border-bottom-color: rgba(192,132,252,.35); }
   .trip-dates, .trip-title { color: #c084fc; }
@@ -375,6 +403,12 @@ a.trip-jump-pill:visited { color: #3d3a32; }
 :root[data-theme="dark"] .action-box { background: var(--surface); border-left-color: #c8a060; }
 :root[data-theme="dark"] .sec-divider { color: var(--muted); }
 :root[data-theme="dark"] .ap-dash { color: var(--muted); }
+:root[data-theme="dark"] .hotel-addr a,
+:root[data-theme="dark"] .hotel-addr a:visited { color: #5a9aee; }
+:root[data-theme="dark"] .addr-copy-pop { background: var(--surface2); border-color: var(--border); }
+:root[data-theme="dark"] .addr-copy-pop .acp-btn { color: var(--text); }
+:root[data-theme="dark"] .addr-copy-pop .acp-btn:hover { color: #d4784a; }
+:root[data-theme="dark"] .addr-copy-done { color: #7ab84a; }
 :root[data-theme="dark"] .nu-c { color: #d4784a; }
 :root[data-theme="dark"] .trip-header { background: #2d1b5e; border-bottom-color: rgba(192,132,252,.35); }
 :root[data-theme="dark"] .trip-dates,
@@ -515,7 +549,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     <div class="hotel">
       <div class="hotel-meta">Munich <span class="hotel-sep">·</span> Aug 15 → Aug 16</div>
       <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=Sofitel+Munich+Bayerpost+Bayerstrasse+12+80335+Munich">Sofitel Munich Bayerpost</a></div>
-      <span class="hotel-addr">Bayerstrasse 12, 80335 Munich, Germany <span class="addr-hint"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="5.5" y="2" width="8.5" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span></span>
+      <p><a href="https://www.sofitel-munich.com/" target="_blank" rel="noopener">sofitel-munich.com</a></p>
+      <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Bayerstrasse+12+80335+Munich+Germany" target="_blank" rel="noopener">Bayerstrasse 12, 80335 Munich, Germany</a></span>
     </div>
 
     <div class="sec"><span class="who hubby">Hubby</span><span class="sec-divider">|</span>Hotel + Venue</div>
@@ -523,21 +558,23 @@ document.addEventListener('DOMContentLoaded',()=>{
       <div class="hotel-meta">Herrsching am Ammersee <span class="hotel-sep">·</span> Aug 16 → Aug 22</div>
       <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=Haus+der+bayerischen+Landwirtschaft+Herrsching+Rieder+Str+70+82211+Herrsching+am+Ammersee">Haus der bayerischen Landwirtschaft Herrsching</a></div>
       <p><a href="https://sites.google.com/view/marktoberdorf2026">sites.google.com/view/marktoberdorf2026</a></p>
-      <span class="hotel-addr">Rieder Str. 70, 82211 Herrsching am Ammersee, Germany <span class="addr-hint"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="5.5" y="2" width="8.5" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span></span>
+      <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Rieder+Str+70+82211+Herrsching+am+Ammersee+Germany" target="_blank" rel="noopener">Rieder Str. 70, 82211 Herrsching am Ammersee, Germany</a></span>
     </div>
 
     <div class="sec"><span class="who wifey">Wifey</span><span class="sec-divider">|</span>Hotel</div>
     <div class="hotel wifey-block">
       <div class="hotel-meta">Salzburg <span class="hotel-sep">·</span> Aug 16 → Aug 22</div>
       <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=NH+Collection+Salzburg+City+Franz-Josef-Strasse+26+5020+Salzburg">NH Collection Salzburg City</a></div>
-      <span class="hotel-addr">Franz-Josef-Strasse 26, 5020 Salzburg, Austria <span class="addr-hint"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="5.5" y="2" width="8.5" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span></span>
+      <p><a href="https://www.nh-hotels.com/en/hotel/nh-collection-salzburg-city" target="_blank" rel="noopener">nh-hotels.com</a></p>
+      <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Franz-Josef-Strasse+26+5020+Salzburg+Austria" target="_blank" rel="noopener">Franz-Josef-Strasse 26, 5020 Salzburg, Austria</a></span>
     </div>
 
     <div class="sec"><span class="who both">Both</span><span class="sec-divider">|</span>Hotels</div>
     <div class="hotel">
       <div class="hotel-meta">Munich <span class="hotel-sep">·</span> Aug 22 → Aug 23</div>
       <div class="hotel-name"><a href="https://www.google.com/maps/search/?api=1&query=Sofitel+Munich+Bayerpost+Bayerstrasse+12+80335+Munich">Sofitel Munich Bayerpost</a></div>
-      <span class="hotel-addr">Bayerstrasse 12, 80335 Munich, Germany <span class="addr-hint"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="5.5" y="2" width="8.5" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span></span>
+      <p><a href="https://www.sofitel-munich.com/" target="_blank" rel="noopener">sofitel-munich.com</a></p>
+      <span class="hotel-addr"><a href="https://www.google.com/maps/search/?api=1&query=Bayerstrasse+12+80335+Munich+Germany" target="_blank" rel="noopener">Bayerstrasse 12, 80335 Munich, Germany</a></span>
     </div>
 
   </div>
@@ -577,18 +614,87 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 <script>
-document.querySelectorAll('.hotel-addr').forEach(function(el){
-  var toast=document.createElement('span');
-  toast.style.cssText='position:absolute;left:0;top:-22px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:#2e7d32;color:#fff;padding:2px 7px;border-radius:3px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;';
-  el.appendChild(toast);
-  el.addEventListener('click',function(){
-    var addr=el.firstChild.textContent.trim();
-    navigator.clipboard.writeText(addr).then(function(){
-      toast.textContent='Copied!';toast.style.opacity='1';
-      setTimeout(function(){toast.style.opacity='0';},1400);
+/* ── Address copy — the guide behaviour, ported from toolbar.js _injectAddrCopy.
+   That function is gated on isRealGuide, and this page does not load
+   guide-style.css, so the popover lives here with its CSS above rather than
+   being reached from the shared bundle. Same markup, same classes, same three
+   options, so the two surfaces behave identically: tap the address to open
+   Maps, tap the button to copy. Owner 2026-08-14. */
+(function(){
+  var rows=document.querySelectorAll('.hotel-addr');
+  if(!rows.length)return;
+  var pop=document.createElement('div');
+  pop.className='addr-copy-pop';
+  var optAddr=document.createElement('button');
+  optAddr.type='button';optAddr.className='acp-btn';optAddr.textContent='📋  Copy address';
+  var optMaps=document.createElement('button');
+  optMaps.type='button';optMaps.className='acp-btn';optMaps.textContent='🗺  Copy Maps link';
+  var done=document.createElement('div');
+  done.className='addr-copy-done';done.textContent='✓ Copied';
+  pop.appendChild(optAddr);pop.appendChild(optMaps);
+  var optApple=null;
+  if(/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)){
+    optApple=document.createElement('button');
+    optApple.type='button';optApple.className='acp-btn';optApple.textContent='Open in Apple Maps';
+    pop.appendChild(optApple);
+  }
+  pop.appendChild(done);
+  document.body.appendChild(pop);
+  var curAddr='',curMapsUrl='';
+  function copyText(str){
+    if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(str);
+    var ta=document.createElement('textarea');
+    ta.value=str;ta.style.cssText='position:fixed;left:-9999px;top:-9999px';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    return Promise.resolve();
+  }
+  function showDone(){
+    done.style.display='block';
+    setTimeout(function(){done.style.display='none';pop.classList.remove('open');},900);
+  }
+  function openPop(btn,addr,mapsUrl){
+    curAddr=addr;curMapsUrl=mapsUrl;done.style.display='none';
+    if(optApple)optApple.setAttribute('data-q',addr);
+    var r=btn.getBoundingClientRect();
+    pop.style.top=Math.round(r.bottom+6)+'px';
+    pop.classList.add('open');
+    var pw=pop.offsetWidth||180;
+    var left=Math.round(r.left);
+    if(left+pw>window.innerWidth-8)left=window.innerWidth-pw-8;
+    if(left<8)left=8;
+    pop.style.left=left+'px';
+  }
+  function closePop(){pop.classList.remove('open');done.style.display='none';}
+  optAddr.addEventListener('click',function(e){e.stopPropagation();copyText(curAddr).then(showDone).catch(closePop);});
+  optMaps.addEventListener('click',function(e){e.stopPropagation();copyText(curMapsUrl).then(showDone).catch(closePop);});
+  if(optApple){
+    optApple.addEventListener('click',function(e){
+      e.stopPropagation();
+      window.location.href='maps://?q='+encodeURIComponent(optApple.getAttribute('data-q')||curAddr);
+      closePop();
     });
+  }
+  document.addEventListener('click',function(){closePop();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closePop();});
+  var ICON='<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+
+    '<rect x="5.5" y="2" width="8.5" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/>'+
+    '<path d="M3 4.5H2.5C1.67 4.5 1 5.17 1 6V14C1 14.83 1.67 15.5 2.5 15.5H9.5C10.33 15.5 11 14.83 11 14V13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'+
+    '</svg>';
+  [].forEach.call(rows,function(row){
+    var anchor=row.querySelector('a[href*="google.com/maps"]');
+    if(!anchor)return;
+    var addr=anchor.textContent.trim();
+    var mapsUrl=anchor.href;
+    var btn=document.createElement('button');
+    btn.type='button';btn.className='addr-copy';btn.setAttribute('aria-label','Copy address');btn.innerHTML=ICON;
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(pop.classList.contains('open')){closePop();return;}
+      openPop(btn,addr,mapsUrl);
+    });
+    row.appendChild(btn);
   });
-});
+})();
 </script>
 
 <script>
@@ -948,7 +1054,13 @@ document.querySelectorAll('.hotel-addr').forEach(function(el){
     var nameEl=card.querySelector('.hotel-name');
     var name=nameEl?nameEl.textContent.replace(/\s+/g,' ').replace(/📍/g,'').trim():'Stay';
     var addrEl=card.querySelector('.hotel-addr');
-    var addr=(addrEl&&addrEl.firstChild&&addrEl.firstChild.nodeType===3)?addrEl.firstChild.textContent.trim():'';
+    /* The address is a Maps anchor now (guide treatment, 2026-08-14) — read it
+       from there. The old firstChild-text-node read returned '' the moment the
+       text was wrapped, which silently shipped calendar events with no
+       location. Text-node branch kept as the fallback. */
+    var addrA=addrEl?addrEl.querySelector('a'):null;
+    var addr=addrA?addrA.textContent.replace(/\s+/g,' ').trim()
+      :((addrEl&&addrEl.firstChild&&addrEl.firstChild.nodeType===3)?addrEl.firstChild.textContent.trim():'');
     var mapEl=card.querySelector('.hotel-name a');
     var siteEl=card.querySelector('p a');
     return {
