@@ -1,3 +1,9 @@
+/* 2026-08-15: Zhangjiajie HOTEL_ALT_DATA — the Avic Hotel entry pulled in the
+   2026-08-12 hotel swap left the city with three alternatives, one under the
+   floor of four, and the FINAL GATE hard-failed the guide. Hilton Garden Inn
+   Zhangjiajie Tianmen Mountain restores the fourth: a distinct property in
+   Yongding District, not the Wulingyuan sibling on the title card. toolbar.js
+   floor +1. CACHE to v894. */
 /* 2026-08-15: Climate Finder foot pills — the two squared sibling rows cancelled
    the canonical terracotta hover fill but could not cancel the shared rule's
    color:#fff !important, so every pill rendered white-on-near-white and vanished
@@ -1223,7 +1229,7 @@
 
    v893: Trips.html again — the calendar export's event titles are now the name
    alone and every other fact moved into labelled notes lines. CACHE to v893. */
-var CACHE = 'travel-cache-v893';
+var CACHE = 'travel-cache-v894';
 
 /* Minimum asset versions — any request with a lower v= is rewritten to this version
    so the browser is forced to fetch fresh content even when it has an older copy
@@ -1231,7 +1237,7 @@ var CACHE = 'travel-cache-v893';
    THIS IS THE ONLY PLACE to bump toolbar.js / guide-style.css versions.
    NEVER bump ?v= inside guide HTML — it breaks HMAC stamps and forces re-validation
    of 230+ guides. Instead, bump MIN_VERSIONS here + increment the CACHE version. */
-var MIN_VERSIONS = { 'guide-style.css': 206, 'toolbar.js': 648, 'mobile.css': 80, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
+var MIN_VERSIONS = { 'guide-style.css': 206, 'toolbar.js': 649, 'mobile.css': 80, 'web-travel-style.css': 47, 'guides-index-style.css': 8, 'Read-About.css': 2, 'best-of-features.js': 1, 'best-of-cross-data.js': 14, 'weather.js': 6 };
 
 function rewriteAssetUrl(urlStr) {
   var u;

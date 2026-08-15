@@ -5975,7 +5975,8 @@ window.TVE.home = (function () {
     'zhangjiajie': { h: [
       { name: 'Pullman Zhangjiajie', note: 'Accor Pullman brand — modern full-service hotel in Zhangjiajie city, pool, 30 minutes from Wulingyuan park gate', url: 'https://www.expedia.com/Zhangjiajie-Hotels-Pullman-Zhangjiajie.h3633242.Hotel-Information' },
       { name: 'Wyndham Zhangjiajie', note: 'Wyndham brand — city center near the national park, outdoor pool, international restaurant · 8.3 Booking.com', url: 'https://www.booking.com/hotel/cn/wyndham-zhangjiajie.html' },
-      { name: 'InterContinental Zhangjiajie', note: 'IHG brand — city center, outdoor pool, all-day dining, views of Tianmen Mountain · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cn/intercontinental-zhangjiajie.html' }
+      { name: 'InterContinental Zhangjiajie', note: 'IHG brand — city center, outdoor pool, all-day dining, views of Tianmen Mountain · 8.8 Booking.com', url: 'https://www.booking.com/hotel/cn/intercontinental-zhangjiajie.html' },
+      { name: 'Hilton Garden Inn Zhangjiajie Tianmen Mountain', note: 'Hilton brand — Yongding District at the foot of Tianmen Mountain, free airport shuttle, outdoor pool, 24h reception · 9.3 Booking.com', url: 'https://www.booking.com/hotel/cn/hilton-garden-inn-zhangjiajie-tianmen-mountain.html' }
     ] },
     'zurich': { h: [
       { name: 'The Dolder Grand', note: 'Independent luxury — 1899 hillside monument, two-Michelin-star The Restaurant, 4,000 sq m spa, ice rink · 9.4 Booking.com', url: 'https://www.booking.com/hotel/ch/the-dolder-grand.html' },
